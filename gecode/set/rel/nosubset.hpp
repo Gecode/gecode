@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,65 +36,68 @@
 
 namespace Gecode { namespace Set { namespace Rel {
 
-  /*
-   * "No Subset" propagator
-   *
-   */
+    /*
+     * "No Subset" propagator
+     *
+     */
 
-  template<class View0, class View1>
-  forceinline
-  NoSubset<View0,View1>::NoSubset(Home home, View0 y0, View1 y1)
-    : MixBinaryPropagator<View0,PC_SET_CLUB,
-                            View1,PC_SET_CGLB>(home,y0,y1) {}
+    template <class View0, class View1>
+    forceinline
+    NoSubset<View0, View1>::NoSubset(Home home, View0 y0, View1 y1)
+        : MixBinaryPropagator<View0, PC_SET_CLUB, View1, PC_SET_CGLB>(home, y0, y1) {}
 
-  template<class View0, class View1>
-  forceinline
-  NoSubset<View0,View1>::NoSubset(Space& home, NoSubset<View0,View1>& p)
-    : MixBinaryPropagator<View0,PC_SET_CLUB,
-                            View1,PC_SET_CGLB>(home,p) {}
+    template <class View0, class View1>
+    forceinline
+    NoSubset<View0, View1>::NoSubset(Space& home, NoSubset<View0, View1>& p)
+        : MixBinaryPropagator<View0, PC_SET_CLUB, View1, PC_SET_CGLB>(home, p) {}
 
-  template<class View0, class View1>
-  ExecStatus
-  NoSubset<View0,View1>::post(Home home, View0 x, View1 y) {
-    if (same(x,y))
-      return ES_FAILED;
-    if (me_failed(x.cardMin(home,1)))
-      return ES_FAILED;
-    (void) new (home) NoSubset<View0,View1>(home,x,y);
-    return ES_OK;
-  }
-
-  template<class View0, class View1>
-  Actor*
-  NoSubset<View0,View1>::copy(Space& home) {
-    return new (home) NoSubset<View0,View1>(home,*this);
-  }
-
-  template<class View0, class View1>
-  ExecStatus
-  NoSubset<View0,View1>::propagate(Space& home, const ModEventDelta&) {
-    GlbRanges<View0> x0lb(x0);
-    LubRanges<View1> x1ub(x1);
-    if (!Iter::Ranges::subset(x0lb, x1ub))
-      return home.ES_SUBSUMED(*this);
-    if (x0.cardMin()>x1.cardMax()) { return home.ES_SUBSUMED(*this); }
-    LubRanges<View0> x0ub(x0);
-    GlbRanges<View1> x1lb(x1);
-    Iter::Ranges::Diff<LubRanges<View0>,GlbRanges<View1> >
-      breakers(x0ub,x1lb);
-    if (!breakers()) { return ES_FAILED; }
-    if (breakers.min() == breakers.max()) {
-      int b1 = breakers.min();
-      ++breakers;
-      if (breakers()) { return ES_FIX; }
-      //Only one subsetness-breaker element left:
-      GECODE_ME_CHECK( x0.include(home,b1) );
-      GECODE_ME_CHECK( x1.exclude(home,b1) );
-      return home.ES_SUBSUMED(*this);
+    template <class View0, class View1>
+    ExecStatus
+    NoSubset<View0, View1>::post(Home home, View0 x, View1 y) {
+        if (same(x, y))
+            return ES_FAILED;
+        if (me_failed(x.cardMin(home, 1)))
+            return ES_FAILED;
+        (void)new (home) NoSubset<View0, View1>(home, x, y);
+        return ES_OK;
     }
-    return ES_FIX;
-  }
 
-}}}
+    template <class View0, class View1>
+    Actor*
+    NoSubset<View0, View1>::copy(Space& home) {
+        return new (home) NoSubset<View0, View1>(home, *this);
+    }
+
+    template <class View0, class View1>
+    ExecStatus
+    NoSubset<View0, View1>::propagate(Space& home, const ModEventDelta&) {
+        GlbRanges<View0> x0lb(x0);
+        LubRanges<View1> x1ub(x1);
+        if (!Iter::Ranges::subset(x0lb, x1ub))
+            return home.ES_SUBSUMED(*this);
+        if (x0.cardMin() > x1.cardMax()) {
+            return home.ES_SUBSUMED(*this);
+        }
+        LubRanges<View0> x0ub(x0);
+        GlbRanges<View1> x1lb(x1);
+        Iter::Ranges::Diff<LubRanges<View0>, GlbRanges<View1>> breakers(x0ub, x1lb);
+        if (!breakers()) {
+            return ES_FAILED;
+        }
+        if (breakers.min() == breakers.max()) {
+            int b1 = breakers.min();
+            ++breakers;
+            if (breakers()) {
+                return ES_FIX;
+            }
+            // Only one subsetness-breaker element left:
+            GECODE_ME_CHECK(x0.include(home, b1));
+            GECODE_ME_CHECK(x1.exclude(home, b1));
+            return home.ES_SUBSUMED(*this);
+        }
+        return ES_FIX;
+    }
+
+}}} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

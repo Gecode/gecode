@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,263 +32,249 @@
 
 namespace Gecode {
 
-  /**
-   * \brief %Archive representation
-   *
-   * An Archive is an array of unsigned integers, used as an external
-   * representation of internal data structures (such as Choice objects).
-   */
-  class Archive {
-  private:
-    /// Size of array
-    int _size;
-    /// Used size of array
-    int _n;
-    /// Array elements
-    unsigned int* _a;
-    /// Current position of read iterator
-    int _pos;
-    /// Resize to at least \a n + 1 elements
-    GECODE_KERNEL_EXPORT void resize(int n);
-  public:
-    /// Construct empty representation
-    Archive(void);
-    /// Destructor
-    GECODE_KERNEL_EXPORT ~Archive(void);
-    /// Copy constructor
-    GECODE_KERNEL_EXPORT Archive(const Archive& e);
-    /// Assignment operator
-    GECODE_KERNEL_EXPORT Archive& operator =(const Archive& e);
-    /// Add \a i to the contents
-    void put(unsigned int i);
-    /// Return size
-    int size(void) const;
-    /// Return array element \a i
-    unsigned int operator [](int i) const;
-    /// Return next element to read
-    unsigned int get(void);
-  };
+    /**
+     * \brief %Archive representation
+     *
+     * An Archive is an array of unsigned integers, used as an external
+     * representation of internal data structures (such as Choice objects).
+     */
+    class Archive {
+    private:
+        /// Size of array
+        int _size;
+        /// Used size of array
+        int _n;
+        /// Array elements
+        unsigned int* _a;
+        /// Current position of read iterator
+        int _pos;
+        /// Resize to at least \a n + 1 elements
+        GECODE_KERNEL_EXPORT void resize(int n);
 
-  /** Add \a i to the end of \a e
-   * \relates Archive
-   */
-  Archive&
-  operator <<(Archive& e, unsigned int i);
-  /** Add \a i to the end of \a e
-   * \relates Archive
-   */
-  Archive&
-  operator <<(Archive& e, int i);
-  /** Add \a i to the end of \a e
-   * \relates Archive
-   */
-  Archive&
-  operator <<(Archive& e, unsigned short i);
-  /** Add \a i to the end of \a e
-   * \relates Archive
-   */
-  Archive&
-  operator <<(Archive& e, short i);
-  /** Add \a i to the end of \a e
-   * \relates Archive
-   */
-  Archive&
-  operator <<(Archive& e, unsigned char i);
-  /** Add \a i to the end of \a e
-   * \relates Archive
-   */
-  Archive&
-  operator <<(Archive& e, char i);
-  /** Add \a i to the end of \a e
-   * \relates Archive
-   */
-  Archive&
-  operator <<(Archive& e, bool i);
-  /** Add \a d to the end of \a e
-   * \relates Archive
-   */
-  Archive&
-  operator <<(Archive& e, float d);
-  /** Add \a d to the end of \a e
-   * \relates Archive
-   */
-  Archive&
-  operator <<(Archive& e, double d);
+    public:
+        /// Construct empty representation
+        Archive(void);
+        /// Destructor
+        GECODE_KERNEL_EXPORT ~Archive(void);
+        /// Copy constructor
+        GECODE_KERNEL_EXPORT Archive(const Archive& e);
+        /// Assignment operator
+        GECODE_KERNEL_EXPORT Archive& operator=(const Archive& e);
+        /// Add \a i to the contents
+        void put(unsigned int i);
+        /// Return size
+        int size(void) const;
+        /// Return array element \a i
+        unsigned int operator[](int i) const;
+        /// Return next element to read
+        unsigned int get(void);
+    };
 
-  /** Read next element from \a e into \a i
-   * \relates Archive
-   */
-  Archive&
-  operator >>(Archive& e, unsigned int& i);
-  /** Read next element from \a e into \a i
-   * \relates Archive
-   */
-  Archive&
-  operator >>(Archive& e, int& i);
-  /** Read next element from \a e into \a i
-   * \relates Archive
-   */
-  Archive&
-  operator >>(Archive& e, unsigned short& i);
-  /** Read next element from \a e into \a i
-   * \relates Archive
-   */
-  Archive&
-  operator >>(Archive& e, short& i);
-  /** Read next element from \a e into \a i
-   * \relates Archive
-   */
-  Archive&
-  operator >>(Archive& e, unsigned char& i);
-  /** Read next element from \a e into \a i
-   * \relates Archive
-   */
-  Archive&
-  operator >>(Archive& e, char& i);
-  /** Read next element from \a e into \a i
-   * \relates Archive
-   */
-  Archive&
-  operator >>(Archive& e, bool& i);
-  /** Read next element from \a e into \a d
-   * \relates Archive
-   */
-  Archive&
-  operator >>(Archive& e, float& d);
-  /** Read next element from \a e into \a d
-   * \relates Archive
-   */
-  Archive&
-  operator >>(Archive& e, double& d);
+    /** Add \a i to the end of \a e
+     * \relates Archive
+     */
+    Archive& operator<<(Archive& e, unsigned int i);
+    /** Add \a i to the end of \a e
+     * \relates Archive
+     */
+    Archive& operator<<(Archive& e, int i);
+    /** Add \a i to the end of \a e
+     * \relates Archive
+     */
+    Archive& operator<<(Archive& e, unsigned short i);
+    /** Add \a i to the end of \a e
+     * \relates Archive
+     */
+    Archive& operator<<(Archive& e, short i);
+    /** Add \a i to the end of \a e
+     * \relates Archive
+     */
+    Archive& operator<<(Archive& e, unsigned char i);
+    /** Add \a i to the end of \a e
+     * \relates Archive
+     */
+    Archive& operator<<(Archive& e, char i);
+    /** Add \a i to the end of \a e
+     * \relates Archive
+     */
+    Archive& operator<<(Archive& e, bool i);
+    /** Add \a d to the end of \a e
+     * \relates Archive
+     */
+    Archive& operator<<(Archive& e, float d);
+    /** Add \a d to the end of \a e
+     * \relates Archive
+     */
+    Archive& operator<<(Archive& e, double d);
 
-  /*
-   * Implementation
-   *
-   */
+    /** Read next element from \a e into \a i
+     * \relates Archive
+     */
+    Archive& operator>>(Archive& e, unsigned int& i);
+    /** Read next element from \a e into \a i
+     * \relates Archive
+     */
+    Archive& operator>>(Archive& e, int& i);
+    /** Read next element from \a e into \a i
+     * \relates Archive
+     */
+    Archive& operator>>(Archive& e, unsigned short& i);
+    /** Read next element from \a e into \a i
+     * \relates Archive
+     */
+    Archive& operator>>(Archive& e, short& i);
+    /** Read next element from \a e into \a i
+     * \relates Archive
+     */
+    Archive& operator>>(Archive& e, unsigned char& i);
+    /** Read next element from \a e into \a i
+     * \relates Archive
+     */
+    Archive& operator>>(Archive& e, char& i);
+    /** Read next element from \a e into \a i
+     * \relates Archive
+     */
+    Archive& operator>>(Archive& e, bool& i);
+    /** Read next element from \a e into \a d
+     * \relates Archive
+     */
+    Archive& operator>>(Archive& e, float& d);
+    /** Read next element from \a e into \a d
+     * \relates Archive
+     */
+    Archive& operator>>(Archive& e, double& d);
 
-  forceinline
-  Archive::Archive(void) : _size(0), _n(0), _a(nullptr), _pos(0) {}
+    /*
+     * Implementation
+     *
+     */
 
-  forceinline void
-  Archive::put(unsigned int i) {
-    if (_n==_size)
-      resize(_n+1);
-    _a[_n++] = i;
-  }
+    forceinline
+    Archive::Archive(void)
+        : _size(0), _n(0), _a(nullptr), _pos(0) {}
 
-  forceinline int
-  Archive::size(void) const { return _n; }
+    forceinline void
+    Archive::put(unsigned int i) {
+        if (_n == _size)
+            resize(_n + 1);
+        _a[_n++] = i;
+    }
 
-  forceinline unsigned int
-  Archive::operator [](int i) const {
-    assert(i < _n);
-    return _a[i];
-  }
+    forceinline int
+    Archive::size(void) const {
+        return _n;
+    }
 
-  forceinline unsigned int
-  Archive::get(void) {
-    assert(_pos < _n);
-    return _a[_pos++];
-  }
+    forceinline unsigned int
+    Archive::operator[](int i) const {
+        assert(i < _n);
+        return _a[i];
+    }
 
-  forceinline Archive&
-  operator <<(Archive& e, unsigned int i) {
-    e.put(i);
-    return e;
-  }
-  forceinline Archive&
-  operator <<(Archive& e, int i) {
-    e.put(static_cast<unsigned int>(i));
-    return e;
-  }
-  forceinline Archive&
-  operator <<(Archive& e, unsigned short i) {
-    e.put(i);
-    return e;
-  }
-  forceinline Archive&
-  operator <<(Archive& e, short i) {
-    e.put(static_cast<unsigned int>(i));
-    return e;
-  }
-  forceinline Archive&
-  operator <<(Archive& e, unsigned char i) {
-    e.put(i);
-    return e;
-  }
-  forceinline Archive&
-  operator <<(Archive& e, char i) {
-    e.put(static_cast<unsigned int>(i));
-    return e;
-  }
-  forceinline Archive&
-  operator <<(Archive& e, bool i) {
-    e.put(static_cast<unsigned int>(i));
-    return e;
-  }
-  forceinline Archive&
-  operator <<(Archive& e, float d) {
-    for (size_t i=0; i<sizeof(float); i++)
-      e.put(static_cast<unsigned int>(reinterpret_cast<char*>(&d)[i]));
-    return e;
-  }
-  forceinline Archive&
-  operator <<(Archive& e, double d) {
-    for (size_t i=0; i<sizeof(double); i++)
-      e.put(static_cast<unsigned int>(reinterpret_cast<char*>(&d)[i]));
-    return e;
-  }
+    forceinline unsigned int
+    Archive::get(void) {
+        assert(_pos < _n);
+        return _a[_pos++];
+    }
 
-  forceinline Archive&
-  operator >>(Archive& e, unsigned int& i) {
-    i = e.get();
-    return e;
-  }
-  forceinline Archive&
-  operator >>(Archive& e, int& i) {
-    i = static_cast<int>(e.get());
-    return e;
-  }
-  forceinline Archive&
-  operator >>(Archive& e, unsigned short& i) {
-    i = static_cast<unsigned short>(e.get());
-    return e;
-  }
-  forceinline Archive&
-  operator >>(Archive& e, short& i) {
-    i = static_cast<short>(e.get());
-    return e;
-  }
-  forceinline Archive&
-  operator >>(Archive& e, unsigned char& i) {
-    i = static_cast<unsigned char>(e.get());
-    return e;
-  }
-  forceinline Archive&
-  operator >>(Archive& e, char& i) {
-    i = static_cast<char>(e.get());
-    return e;
-  }
-  forceinline Archive&
-  operator >>(Archive& e, bool& i) {
-    i = (e.get() != 0);
-    return e;
-  }
-  forceinline Archive&
-  operator >>(Archive& e, float& d) {
-    char* cd = reinterpret_cast<char*>(&d);
-    for (size_t i=0; i<sizeof(float); i++)
-      cd[i] = static_cast<char>(e.get());
-    return e;
-  }
-  forceinline Archive&
-  operator >>(Archive& e, double& d) {
-    char* cd = reinterpret_cast<char*>(&d);
-    for (size_t i=0; i<sizeof(double); i++)
-      cd[i] = static_cast<char>(e.get());
-    return e;
-  }
+    forceinline Archive&
+    operator<<(Archive& e, unsigned int i) {
+        e.put(i);
+        return e;
+    }
+    forceinline Archive&
+    operator<<(Archive& e, int i) {
+        e.put(static_cast<unsigned int>(i));
+        return e;
+    }
+    forceinline Archive&
+    operator<<(Archive& e, unsigned short i) {
+        e.put(i);
+        return e;
+    }
+    forceinline Archive&
+    operator<<(Archive& e, short i) {
+        e.put(static_cast<unsigned int>(i));
+        return e;
+    }
+    forceinline Archive&
+    operator<<(Archive& e, unsigned char i) {
+        e.put(i);
+        return e;
+    }
+    forceinline Archive&
+    operator<<(Archive& e, char i) {
+        e.put(static_cast<unsigned int>(i));
+        return e;
+    }
+    forceinline Archive&
+    operator<<(Archive& e, bool i) {
+        e.put(static_cast<unsigned int>(i));
+        return e;
+    }
+    forceinline Archive&
+    operator<<(Archive& e, float d) {
+        for (size_t i = 0; i < sizeof(float); i++)
+            e.put(static_cast<unsigned int>(reinterpret_cast<char*>(&d)[i]));
+        return e;
+    }
+    forceinline Archive&
+    operator<<(Archive& e, double d) {
+        for (size_t i = 0; i < sizeof(double); i++)
+            e.put(static_cast<unsigned int>(reinterpret_cast<char*>(&d)[i]));
+        return e;
+    }
 
-}
+    forceinline Archive&
+    operator>>(Archive& e, unsigned int& i) {
+        i = e.get();
+        return e;
+    }
+    forceinline Archive&
+    operator>>(Archive& e, int& i) {
+        i = static_cast<int>(e.get());
+        return e;
+    }
+    forceinline Archive&
+    operator>>(Archive& e, unsigned short& i) {
+        i = static_cast<unsigned short>(e.get());
+        return e;
+    }
+    forceinline Archive&
+    operator>>(Archive& e, short& i) {
+        i = static_cast<short>(e.get());
+        return e;
+    }
+    forceinline Archive&
+    operator>>(Archive& e, unsigned char& i) {
+        i = static_cast<unsigned char>(e.get());
+        return e;
+    }
+    forceinline Archive&
+    operator>>(Archive& e, char& i) {
+        i = static_cast<char>(e.get());
+        return e;
+    }
+    forceinline Archive&
+    operator>>(Archive& e, bool& i) {
+        i = (e.get() != 0);
+        return e;
+    }
+    forceinline Archive&
+    operator>>(Archive& e, float& d) {
+        char* cd = reinterpret_cast<char*>(&d);
+        for (size_t i = 0; i < sizeof(float); i++)
+            cd[i] = static_cast<char>(e.get());
+        return e;
+    }
+    forceinline Archive&
+    operator>>(Archive& e, double& d) {
+        char* cd = reinterpret_cast<char*>(&d);
+        for (size_t i = 0; i < sizeof(double); i++)
+            cd[i] = static_cast<char>(e.get());
+        return e;
+    }
+
+} // namespace Gecode
 
 // STATISTICS: kernel-branch

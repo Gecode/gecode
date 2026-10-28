@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,54 +35,54 @@
 #include <sstream>
 
 namespace Gecode { namespace Float {
-  namespace Linear {
-    class NoView;
-  }
-
-  template<class Char, class Traits, class View>
-  std::basic_ostream<Char,Traits>&
-  print_view(std::basic_ostream<Char,Traits>& os, const View& x) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    if (x.assigned()) {
-      s << "[[" << x.med() << "]]";
-    } else {
-      s << "[[" << x.min() << ".." << x.max() << "]]";
+    namespace Linear {
+        class NoView;
     }
-    return os << s.str();
-  }
 
-  template<class Char, class Traits>
-  inline std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const FloatView& x) {
-    return print_view(os,x);
-  }
+    template <class Char, class Traits, class View>
+    std::basic_ostream<Char, Traits>&
+    print_view(std::basic_ostream<Char, Traits>& os, const View& x) {
+        std::basic_ostringstream<Char, Traits> s;
+        s.copyfmt(os);
+        s.width(0);
+        if (x.assigned()) {
+            s << "[[" << x.med() << "]]";
+        } else {
+            s << "[[" << x.min() << ".." << x.max() << "]]";
+        }
+        return os << s.str();
+    }
 
-  template<class Char, class Traits>
-  inline std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const MinusView& x) {
-    return print_view(os,x);
-  }
+    template <class Char, class Traits>
+    inline std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const FloatView& x) {
+        return print_view(os, x);
+    }
 
-  template<class Char, class Traits>
-  inline std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x) {
-    return print_view(os,x);
-  }
+    template <class Char, class Traits>
+    inline std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const MinusView& x) {
+        return print_view(os, x);
+    }
 
-  template<class Char, class Traits>
-  inline std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ScaleView& x) {
-    return print_view(os,x);
-  }
+    template <class Char, class Traits>
+    inline std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const OffsetView& x) {
+        return print_view(os, x);
+    }
 
-  template<class Char, class Traits>
-  inline std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const Linear::NoView&) {
-    return os << "NoView";
-  }
+    template <class Char, class Traits>
+    inline std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const ScaleView& x) {
+        return print_view(os, x);
+    }
 
-}}
+    template <class Char, class Traits>
+    inline std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const Linear::NoView&) {
+        return os << "NoView";
+    }
+
+}} // namespace Gecode::Float
 
 // STATISTICS: float-var
-

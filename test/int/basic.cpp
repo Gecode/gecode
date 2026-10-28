@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,45 +34,44 @@
 
 namespace Test { namespace Int {
 
-   /// %Tests for basic setup
-   namespace Basic {
+    /// %Tests for basic setup
+    namespace Basic {
 
-     /**
-      * \defgroup TaskTestIntBasic Basic setup
-      * \ingroup TaskTestInt
-      */
-     //@{
+        /**
+         * \defgroup TaskTestIntBasic Basic setup
+         * \ingroup TaskTestInt
+         */
+        //@{
 
-     /// %Test whether testing infrastructure for integer variables works
-     class Basic : public Test {
-     public:
-       /// Initialize test
-       Basic(int n)
-         : Test("Basic::A",3,-n,n,true) {}
-       /// Initialize test
-       Basic(Gecode::IntArgs& i)
-         : Test("Basic::B",3,Gecode::IntSet(i),true) {}
-       /// Check whether \a x is a solution
-       virtual bool solution(const Assignment&) const {
-         return true;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space&, Gecode::IntVarArray&) {
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray&,
-                         Gecode::Reify r) {
-         if (r.mode() != Gecode::RM_IMP)
-           Gecode::rel(home, r.var(), Gecode::IRT_EQ, 1);
-       }
-     };
+        /// %Test whether testing infrastructure for integer variables works
+        class Basic : public Test {
+        public:
+            /// Initialize test
+            Basic(int n) : Test("Basic::A", 3, -n, n, true) {}
+            /// Initialize test
+            Basic(Gecode::IntArgs& i) : Test("Basic::B", 3, Gecode::IntSet(i), true) {}
+            /// Check whether \a x is a solution
+            virtual bool
+            solution(const Assignment&) const {
+                return true;
+            }
+            /// Post constraint on \a x
+            virtual void
+            post(Gecode::Space&, Gecode::IntVarArray&) {}
+            /// Post reified constraint on \a x for \a r
+            virtual void
+            post(Gecode::Space& home, Gecode::IntVarArray&, Gecode::Reify r) {
+                if (r.mode() != Gecode::RM_IMP)
+                    Gecode::rel(home, r.var(), Gecode::IRT_EQ, 1);
+            }
+        };
 
-     Gecode::IntArgs i({1,2,3,4});
-     Basic b1(3);
-     Basic b2(i);
-     //@}
+        Gecode::IntArgs i({1, 2, 3, 4});
+        Basic b1(3);
+        Basic b2(i);
+        //@}
 
-   }
-}}
+    } // namespace Basic
+}} // namespace Test::Int
 
 // STATISTICS: test-int

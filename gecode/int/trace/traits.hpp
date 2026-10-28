@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,24 +32,24 @@
 
 namespace Gecode {
 
-  /// Trace traits for integer views
-  template<>
-  class TraceTraits<Int::IntView> {
-  public:
-    typedef Int::IntTraceView      TraceView;
-    typedef IntTraceDelta          TraceDelta;
-    typedef unsigned long long int SlackValue;
-  };
+    /// Trace traits for integer views
+    template <>
+    class TraceTraits<Int::IntView> {
+    public:
+        typedef Int::IntTraceView TraceView;
+        typedef IntTraceDelta TraceDelta;
+        typedef unsigned long long int SlackValue;
+    };
 
-  /// Trace traits for Boolean views
-  template<>
-  class TraceTraits<Int::BoolView> {
-  public:
-    typedef Int::BoolTraceView TraceView;
-    typedef BoolTraceDelta     TraceDelta;
-    typedef unsigned int       SlackValue;
-  };
+    /// Trace traits for Boolean views
+    template <>
+    class TraceTraits<Int::BoolView> {
+    public:
+        typedef Int::BoolTraceView TraceView;
+        typedef BoolTraceDelta TraceDelta;
+        typedef unsigned int SlackValue;
+    };
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-trace

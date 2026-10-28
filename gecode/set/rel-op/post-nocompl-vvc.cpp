@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,12 +38,11 @@
 
 namespace Gecode { namespace Set { namespace RelOp {
 
-  void
-  post_nocompl(Home home, SetView x, SetOpType op, SetView y,
-               SetRelType r, ConstSetView z) {
-    rel_op_post_nocompl<SetView,SetView,ConstSetView>(home, x, op, y, r, z);
-  }
+    void
+    post_nocompl(Home home, SetView x, SetOpType op, SetView y, SetRelType r, ConstSetView z) {
+        rel_op_post_nocompl<SetView, SetView, ConstSetView>(home, x, op, y, r, z);
+    }
 
-}}}
+}}} // namespace Gecode::Set::RelOp
 
 // STATISTICS: set-prop

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -39,329 +38,317 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  template<class Collect>
-  forceinline
-  Slave<Collect>::Completion::Completion(void) {
-    // A slave has not been submitted yet.  This initial signal lets the
-    // first submission use the same consume-before-reuse handshake as all
-    // subsequent submissions.
-    done.signal();
-  }
-
-  template<class Collect>
-  forceinline void
-  Slave<Collect>::Completion::terminated(void) {
-    done.signal();
-  }
-
-  template<class Collect>
-  forceinline void
-  Slave<Collect>::Completion::wait(void) {
-    done.wait();
-  }
-
-
-  forceinline
-  CollectAll::CollectAll(void)
-    : solutions(heap) {}
-  forceinline bool
-  CollectAll::add(Space* s, Slave<CollectAll>*) {
-    solutions.push(s);
-    return true;
-  }
-  forceinline bool
-  CollectAll::constrain(const Space& b) {
-    (void) b;
-    return false;
-  }
-  forceinline bool
-  CollectAll::empty(void) const {
-    return solutions.empty();
-  }
-  forceinline Space*
-  CollectAll::get(Slave<CollectAll>*&) {
-    return solutions.pop();
-  }
-  forceinline
-  CollectAll::~CollectAll(void) {
-    while (!solutions.empty())
-      delete solutions.pop();
-  }
-
-
-  forceinline
-  CollectBest::CollectBest(void)
-    : b(nullptr), reporter(nullptr) {}
-  forceinline bool
-  CollectBest::add(Space* s, Slave<CollectBest>* r) {
-    if (b != nullptr) {
-      b->constrain(*s);
-      if (b->status() == SS_FAILED) {
-        delete b;
-      } else {
-        delete s;
-        return false;
-      }
+    template <class Collect>
+    forceinline
+    Slave<Collect>::Completion::Completion(void) {
+        // A slave has not been submitted yet.  This initial signal lets the
+        // first submission use the same consume-before-reuse handshake as all
+        // subsequent submissions.
+        done.signal();
     }
-    b = s;
-    reporter = r;
-    return true;
-  }
-  forceinline bool
-  CollectBest::constrain(const Space& s) {
-    if (b != nullptr) {
-      b->constrain(s);
-      if (b->status() == SS_FAILED) {
-        delete b;
-      } else {
-        return false;
-      }
+
+    template <class Collect>
+    forceinline void
+    Slave<Collect>::Completion::terminated(void) {
+        done.signal();
     }
-    b = s.clone();
-    reporter = nullptr;
-    return true;
-  }
-  forceinline bool
-  CollectBest::empty(void) const {
-    return reporter == nullptr;
-  }
-  forceinline Space*
-  CollectBest::get(Slave<CollectBest>*& r) {
-    assert(!empty());
-    r = reporter;
-    reporter = nullptr;
-    return b->clone();
-  }
-  forceinline
-  CollectBest::~CollectBest(void) {
-    delete b;
-  }
 
+    template <class Collect>
+    forceinline void
+    Slave<Collect>::Completion::wait(void) {
+        done.wait();
+    }
 
-  forceinline
-  PortfolioStop::PortfolioStop(Stop* so0, const WorkerControl& control)
-    : so(so0), worker_control(control), tostop(nullptr) {}
+    forceinline
+    CollectAll::CollectAll(void)
+        : solutions(heap) {}
+    forceinline bool
+    CollectAll::add(Space* s, Slave<CollectAll>*) {
+        solutions.push(s);
+        return true;
+    }
+    forceinline bool
+    CollectAll::constrain(const Space& b) {
+        (void)b;
+        return false;
+    }
+    forceinline bool
+    CollectAll::empty(void) const {
+        return solutions.empty();
+    }
+    forceinline Space*
+    CollectAll::get(Slave<CollectAll>*&) {
+        return solutions.pop();
+    }
+    forceinline CollectAll::~CollectAll(void) {
+        while (!solutions.empty())
+            delete solutions.pop();
+    }
 
-  forceinline void
-  PortfolioStop::share(std::atomic<bool>* ts) {
-    tostop = ts;
-  }
+    forceinline
+    CollectBest::CollectBest(void)
+        : b(nullptr), reporter(nullptr) {}
+    forceinline bool
+    CollectBest::add(Space* s, Slave<CollectBest>* r) {
+        if (b != nullptr) {
+            b->constrain(*s);
+            if (b->status() == SS_FAILED) {
+                delete b;
+            } else {
+                delete s;
+                return false;
+            }
+        }
+        b = s;
+        reporter = r;
+        return true;
+    }
+    forceinline bool
+    CollectBest::constrain(const Space& s) {
+        if (b != nullptr) {
+            b->constrain(s);
+            if (b->status() == SS_FAILED) {
+                delete b;
+            } else {
+                return false;
+            }
+        }
+        b = s.clone();
+        reporter = nullptr;
+        return true;
+    }
+    forceinline bool
+    CollectBest::empty(void) const {
+        return reporter == nullptr;
+    }
+    forceinline Space*
+    CollectBest::get(Slave<CollectBest>*& r) {
+        assert(!empty());
+        r = reporter;
+        reporter = nullptr;
+        return b->clone();
+    }
+    forceinline CollectBest::~CollectBest(void) {
+        delete b;
+    }
 
+    forceinline
+    PortfolioStop::PortfolioStop(Stop* so0, const WorkerControl& control)
+        : so(so0), worker_control(control), tostop(nullptr) {}
 
-  template<class Collect>
-  forceinline
-  Slave<Collect>::Slave(PBS<Collect>* m, Engine* s, Stop* so)
-    : Support::Runnable(false), master(m), slave(s), stop(so) {}
-  template<class Collect>
-  forceinline Statistics
-  Slave<Collect>::statistics(void) const {
-    return slave->statistics();
-  }
-  template<class Collect>
-  forceinline bool
-  Slave<Collect>::stopped(void) const {
-    return slave->stopped();
-  }
-  template<class Collect>
-  forceinline bool
-  Slave<Collect>::limited(void) const {
+    forceinline void
+    PortfolioStop::share(std::atomic<bool>* ts) {
+        tostop = ts;
+    }
+
+    template <class Collect>
+    forceinline
+    Slave<Collect>::Slave(PBS<Collect>* m, Engine* s, Stop* so)
+        : Support::Runnable(false), master(m), slave(s), stop(so) {}
+    template <class Collect>
+    forceinline Statistics
+    Slave<Collect>::statistics(void) const {
+        return slave->statistics();
+    }
+    template <class Collect>
+    forceinline bool
+    Slave<Collect>::stopped(void) const {
+        return slave->stopped();
+    }
+    template <class Collect>
+    forceinline bool
+    Slave<Collect>::limited(void) const {
 #ifdef GECODE_HAS_EXPERIMENTAL
-    return slave->limited();
+        return slave->limited();
 #else
-    return false;
+        return false;
 #endif
-  }
-  template<class Collect>
-  forceinline Support::Terminator*
-  Slave<Collect>::terminator(void) const {
-    return const_cast<Completion*>(&completion);
-  }
-  template<class Collect>
-  forceinline void
-  Slave<Collect>::wait(void) {
-    completion.wait();
-  }
-  template<class Collect>
-  forceinline void
-  Slave<Collect>::wake(void) {
-    static_cast<PortfolioStop*>(stop)->wake();
-  }
-  template<class Collect>
-  forceinline void
-  Slave<Collect>::constrain(const Space& b) {
-    slave->constrain(b);
-  }
-  template<class Collect>
-  Slave<Collect>::~Slave(void) {
-    delete slave;
-    delete stop;
-  }
-
-
-
-  template<class Collect>
-  forceinline
-  PBS<Collect>::PBS(Engine** engines, Stop** stops, unsigned int n,
-                    const Statistics& stat0)
-    : stat(stat0), slaves(heap.alloc<Slave<Collect>*>(n)),
-      n_slaves(n), n_active(n),
-      slave_stop(false), incomplete(false), tostop(false), n_busy(0) {
-    // Initialize slaves
-    for (unsigned int i=0U; i<n_slaves; i++) {
-      slaves[i] = new Slave<Collect>(this,engines[i],stops[i]);
-      static_cast<PortfolioStop*>(stops[i])->share(&tostop);
     }
-  }
-
-
-  template<class Collect>
-  forceinline bool
-  PBS<Collect>::report(Slave<Collect>* slave, Space* s) {
-    // If b is false the report should be repeated (solution was worse)
-    bool b = true;
-    bool wake = false;
-    m.acquire();
-    if (s != nullptr) {
-      b = solutions.add(s,slave);
-      if (b) {
-        tostop.store(true, std::memory_order_release);
-        wake = true;
-      }
-    } else if (slave->stopped() && !slave->limited()) {
-      if (!tostop.load(std::memory_order_acquire)) {
-        slave_stop.store(true, std::memory_order_release);
-        tostop.store(true, std::memory_order_release);
-        wake = true;
-      }
-    } else {
-      // The slave is done or stopped at a local limit (then search is incomplete)
-      if (slave->limited())
-        incomplete = true;
-      // Move slave to inactive
-      unsigned int i=0;
-      while (slaves[i] != slave)
-        i++;
-      assert(i < n_active);
-      assert(n_active > 0);
-      std::swap(slaves[i],slaves[--n_active]);
-      tostop.store(true, std::memory_order_release);
-      wake = true;
+    template <class Collect>
+    forceinline Support::Terminator*
+    Slave<Collect>::terminator(void) const {
+        return const_cast<Completion*>(&completion);
     }
-    if (wake)
-      for (unsigned int i=0U; i<n_active; i++)
-        slaves[i]->wake();
-    if (b) {
-      if (--n_busy == 0)
-        idle.signal();
+    template <class Collect>
+    forceinline void
+    Slave<Collect>::wait(void) {
+        completion.wait();
     }
-    m.release();
-    return b;
-  }
-
-  template<class Collect>
-  void
-  Slave<Collect>::run(void) {
-    Space* s;
-    do {
-      s = slave->next();
-    } while (!master->report(this,s));
-  }
-
-  template<class Collect>
-  Space*
-  PBS<Collect>::next(void) {
-    m.acquire();
-    if (solutions.empty())
-      slave_stop.store(false, std::memory_order_release);
-    while (solutions.empty() && (n_active > 0) &&
-           !slave_stop.load(std::memory_order_acquire)) {
-      // Clear the internal stop used to interrupt sibling slaves
-      tostop.store(false, std::memory_order_release);
-
-      // Invariant: all slaves are idle!
-      assert(n_busy == 0);
-      assert(!tostop.load(std::memory_order_acquire));
-
-      // Run all active slaves
-      n_busy = n_active;
-      for (unsigned int i=0U; i<n_active; i++) {
-        // Consume the previous completion before reusing this slave.  The
-        // initial signal handles the first submission.
-        slaves[i]->wait();
-        Support::Thread::run(slaves[i]);
-      }
-      m.release();
-      // Wait for all slaves to become idle
-      idle.wait();
-      m.acquire();
+    template <class Collect>
+    forceinline void
+    Slave<Collect>::wake(void) {
+        static_cast<PortfolioStop*>(stop)->wake();
+    }
+    template <class Collect>
+    forceinline void
+    Slave<Collect>::constrain(const Space& b) {
+        slave->constrain(b);
+    }
+    template <class Collect>
+    Slave<Collect>::~Slave(void) {
+        delete slave;
+        delete stop;
     }
 
-    // Invariant all slaves are idle!
-    assert(n_busy == 0);
-
-    if (solutions.empty() && (n_active == 0) && incomplete)
-      slave_stop.store(true, std::memory_order_release);
-
-    Space* s;
-
-    // Process solutions
-    if (solutions.empty()) {
-      s = nullptr;
-    } else {
-      Slave<Collect>* r;
-      s = solutions.get(r);
-      if (Collect::best)
-        for (unsigned int i=0U; i<n_active; i++)
-          if (slaves[i] != r)
-            slaves[i]->constrain(*s);
+    template <class Collect>
+    forceinline
+    PBS<Collect>::PBS(Engine** engines, Stop** stops, unsigned int n, const Statistics& stat0)
+        : stat(stat0), slaves(heap.alloc<Slave<Collect>*>(n)), n_slaves(n), n_active(n), slave_stop(false),
+          incomplete(false), tostop(false), n_busy(0) {
+        // Initialize slaves
+        for (unsigned int i = 0U; i < n_slaves; i++) {
+            slaves[i] = new Slave<Collect>(this, engines[i], stops[i]);
+            static_cast<PortfolioStop*>(stops[i])->share(&tostop);
+        }
     }
 
-    m.release();
-    return s;
-  }
-
-  template<class Collect>
-  bool
-  PBS<Collect>::stopped(void) const {
-    return slave_stop.load(std::memory_order_acquire);
-  }
-
-  template<class Collect>
-  Statistics
-  PBS<Collect>::statistics(void) const {
-    assert(n_busy == 0);
-    Statistics s(stat);
-    for (unsigned int i=0U; i<n_slaves; i++)
-      s += slaves[i]->statistics();
-    return s;
-  }
-
-  template<class Collect>
-  void
-  PBS<Collect>::constrain(const Space& b) {
-    assert(n_busy == 0);
-    if (!Collect::best)
-      throw NoBest("PBS::constrain");
-    if (solutions.constrain(b)) {
-      // The solution is better
-      for (unsigned int i=0U; i<n_active; i++)
-        slaves[i]->constrain(b);
+    template <class Collect>
+    forceinline bool
+    PBS<Collect>::report(Slave<Collect>* slave, Space* s) {
+        // If b is false the report should be repeated (solution was worse)
+        bool b = true;
+        bool wake = false;
+        m.acquire();
+        if (s != nullptr) {
+            b = solutions.add(s, slave);
+            if (b) {
+                tostop.store(true, std::memory_order_release);
+                wake = true;
+            }
+        } else if (slave->stopped() && !slave->limited()) {
+            if (!tostop.load(std::memory_order_acquire)) {
+                slave_stop.store(true, std::memory_order_release);
+                tostop.store(true, std::memory_order_release);
+                wake = true;
+            }
+        } else {
+            // The slave is done or stopped at a local limit (then search is incomplete)
+            if (slave->limited())
+                incomplete = true;
+            // Move slave to inactive
+            unsigned int i = 0;
+            while (slaves[i] != slave)
+                i++;
+            assert(i < n_active);
+            assert(n_active > 0);
+            std::swap(slaves[i], slaves[--n_active]);
+            tostop.store(true, std::memory_order_release);
+            wake = true;
+        }
+        if (wake)
+            for (unsigned int i = 0U; i < n_active; i++)
+                slaves[i]->wake();
+        if (b) {
+            if (--n_busy == 0)
+                idle.signal();
+        }
+        m.release();
+        return b;
     }
-  }
 
-  template<class Collect>
-  PBS<Collect>::~PBS(void) {
-    // A report can make n_busy zero before Slave::run and Thread::Run::exec
-    // have returned.  Wait for the completion handshake before deleting the
-    // PBS-owned slaves.
-    for (unsigned int i=0U; i<n_slaves; i++)
-      slaves[i]->wait();
-    assert(n_busy == 0);
-    for (unsigned int i=0U; i<n_slaves; i++)
-      delete slaves[i];
-    heap.free<Slave<Collect>*>(slaves,n_slaves);
-  }
+    template <class Collect>
+    void
+    Slave<Collect>::run(void) {
+        Space* s;
+        do {
+            s = slave->next();
+        } while (!master->report(this, s));
+    }
 
-}}}
+    template <class Collect>
+    Space*
+    PBS<Collect>::next(void) {
+        m.acquire();
+        if (solutions.empty())
+            slave_stop.store(false, std::memory_order_release);
+        while (solutions.empty() && (n_active > 0) && !slave_stop.load(std::memory_order_acquire)) {
+            // Clear the internal stop used to interrupt sibling slaves
+            tostop.store(false, std::memory_order_release);
+
+            // Invariant: all slaves are idle!
+            assert(n_busy == 0);
+            assert(!tostop.load(std::memory_order_acquire));
+
+            // Run all active slaves
+            n_busy = n_active;
+            for (unsigned int i = 0U; i < n_active; i++) {
+                // Consume the previous completion before reusing this slave.  The
+                // initial signal handles the first submission.
+                slaves[i]->wait();
+                Support::Thread::run(slaves[i]);
+            }
+            m.release();
+            // Wait for all slaves to become idle
+            idle.wait();
+            m.acquire();
+        }
+
+        // Invariant all slaves are idle!
+        assert(n_busy == 0);
+
+        if (solutions.empty() && (n_active == 0) && incomplete)
+            slave_stop.store(true, std::memory_order_release);
+
+        Space* s;
+
+        // Process solutions
+        if (solutions.empty()) {
+            s = nullptr;
+        } else {
+            Slave<Collect>* r;
+            s = solutions.get(r);
+            if (Collect::best)
+                for (unsigned int i = 0U; i < n_active; i++)
+                    if (slaves[i] != r)
+                        slaves[i]->constrain(*s);
+        }
+
+        m.release();
+        return s;
+    }
+
+    template <class Collect>
+    bool
+    PBS<Collect>::stopped(void) const {
+        return slave_stop.load(std::memory_order_acquire);
+    }
+
+    template <class Collect>
+    Statistics
+    PBS<Collect>::statistics(void) const {
+        assert(n_busy == 0);
+        Statistics s(stat);
+        for (unsigned int i = 0U; i < n_slaves; i++)
+            s += slaves[i]->statistics();
+        return s;
+    }
+
+    template <class Collect>
+    void
+    PBS<Collect>::constrain(const Space& b) {
+        assert(n_busy == 0);
+        if (!Collect::best)
+            throw NoBest("PBS::constrain");
+        if (solutions.constrain(b)) {
+            // The solution is better
+            for (unsigned int i = 0U; i < n_active; i++)
+                slaves[i]->constrain(b);
+        }
+    }
+
+    template <class Collect>
+    PBS<Collect>::~PBS(void) {
+        // A report can make n_busy zero before Slave::run and Thread::Run::exec
+        // have returned.  Wait for the completion handshake before deleting the
+        // PBS-owned slaves.
+        for (unsigned int i = 0U; i < n_slaves; i++)
+            slaves[i]->wait();
+        assert(n_busy == 0);
+        for (unsigned int i = 0U; i < n_slaves; i++)
+            delete slaves[i];
+        heap.free<Slave<Collect>*>(slaves, n_slaves);
+    }
+
+}}} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

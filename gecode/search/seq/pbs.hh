@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,100 +37,102 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  /// Shared stop information
-  class SharedStopInfo {
-  public:
-    /// Whether search stopped because the slice is done
-    bool done;
-    /// The current failure limit, incremented for each slice
-    unsigned long long int l;
-  };
+    /// Shared stop information
+    class SharedStopInfo {
+    public:
+        /// Whether search stopped because the slice is done
+        bool done;
+        /// The current failure limit, incremented for each slice
+        unsigned long long int l;
+    };
 
-  /// Stop object used for controlling slaves in a portfolio
-  class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
-  private:
-    /// The stop object for the slaves
-    Stop* so;
-    /// Pointer to shared stop information
-    SharedStopInfo* ssi;
-  public:
-    /// Initialize
-    PortfolioStop(Stop* so);
-    /// Initialize shared stop information
-    void share(SharedStopInfo* ssi);
-    /// Return true if portfolio engine must be stopped
-    virtual bool stop(const Statistics& s, const Options& o);
-  };
+    /// Stop object used for controlling slaves in a portfolio
+    class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
+    private:
+        /// The stop object for the slaves
+        Stop* so;
+        /// Pointer to shared stop information
+        SharedStopInfo* ssi;
 
-  /// Runnable slave of a portfolio master
-  class Slave {
-  protected:
-    /// The slave engine
-    Engine* slave;
-    /// Stop object
-    Stop* stop;
-  public:
-    /// Default constructor
-    Slave(void);
-    /// Copy constructor
-    Slave(const Slave& s) = default;
-    /// Assignment operator
-    Slave& operator =(const Slave& s) = default;
-    /// Initialize with slave \a s and its stop object \a so
-    void init(Engine* s, Stop* so);
-    /// Return next solution
-    Space* next(void);
-    /// Return statistics of slave
-    Statistics statistics(void) const;
-    /// Check whether slave has been stopped
-    bool stopped(void) const;
-    /// Check whether slave stopped at a local limit
-    bool limited(void) const;
-    /// Constrain with better solution \a b
-    void constrain(const Space& b);
-    /// Perform one run
-    void run(void);
-    /// Delete slave
-    ~Slave(void);
-  };
+    public:
+        /// Initialize
+        PortfolioStop(Stop* so);
+        /// Initialize shared stop information
+        void share(SharedStopInfo* ssi);
+        /// Return true if portfolio engine must be stopped
+        virtual bool stop(const Statistics& s, const Options& o);
+    };
 
-  /// Sequential portfolio engine implementation
-  template<bool best>
-  class GECODE_SEARCH_EXPORT PBS : public Engine {
-  protected:
-    /// Master statistics
-    Statistics stat;
-    /// Shared slave information
-    SharedStopInfo ssi;
-    /// Size of a slice
-    unsigned int slice;
-    /// Slaves
-    Slave* slaves;
-    /// Number of slave engines
-    unsigned int n_slaves;
-    /// Current slave to run
-    unsigned int cur;
-    /// Whether a slave has been stopped
-    bool slave_stop;
-    /// Whether a slave stopped at a local limit
-    bool incomplete;
-  public:
-    /// Initialize
-    PBS(Engine** slaves, Stop** stops, unsigned int n,
-        const Statistics& stat, const Search::Options& opt);
-    /// Return next solution (nullptr, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
-    /// Constrain future solutions to be better than \a b
-    virtual void constrain(const Space& b);
-    /// Destructor
-    virtual ~PBS(void);
-  };
+    /// Runnable slave of a portfolio master
+    class Slave {
+    protected:
+        /// The slave engine
+        Engine* slave;
+        /// Stop object
+        Stop* stop;
 
-}}}
+    public:
+        /// Default constructor
+        Slave(void);
+        /// Copy constructor
+        Slave(const Slave& s) = default;
+        /// Assignment operator
+        Slave& operator=(const Slave& s) = default;
+        /// Initialize with slave \a s and its stop object \a so
+        void init(Engine* s, Stop* so);
+        /// Return next solution
+        Space* next(void);
+        /// Return statistics of slave
+        Statistics statistics(void) const;
+        /// Check whether slave has been stopped
+        bool stopped(void) const;
+        /// Check whether slave stopped at a local limit
+        bool limited(void) const;
+        /// Constrain with better solution \a b
+        void constrain(const Space& b);
+        /// Perform one run
+        void run(void);
+        /// Delete slave
+        ~Slave(void);
+    };
+
+    /// Sequential portfolio engine implementation
+    template <bool best>
+    class GECODE_SEARCH_EXPORT PBS : public Engine {
+    protected:
+        /// Master statistics
+        Statistics stat;
+        /// Shared slave information
+        SharedStopInfo ssi;
+        /// Size of a slice
+        unsigned int slice;
+        /// Slaves
+        Slave* slaves;
+        /// Number of slave engines
+        unsigned int n_slaves;
+        /// Current slave to run
+        unsigned int cur;
+        /// Whether a slave has been stopped
+        bool slave_stop;
+        /// Whether a slave stopped at a local limit
+        bool incomplete;
+
+    public:
+        /// Initialize
+        PBS(Engine** slaves, Stop** stops, unsigned int n, const Statistics& stat, const Search::Options& opt);
+        /// Return next solution (nullptr, if none exists or search has been stopped)
+        virtual Space* next(void);
+        /// Return statistics
+        virtual Statistics statistics(void) const;
+        /// Check whether engine has been stopped
+        virtual bool stopped(void) const;
+        /// Constrain future solutions to be better than \a b
+        virtual void constrain(const Space& b);
+        /// Destructor
+        virtual ~PBS(void);
+    };
+
+}}} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/pbs.hpp>
 

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -61,69 +60,67 @@ using namespace Gecode;
  */
 class Sudoku : public Script {
 protected:
-  /// The side of the grid
-  int nn;
-  /// Values for the fields
-  IntVarArray x;
+    /// The side of the grid
+    int nn;
+    /// Values for the fields
+    IntVarArray x;
+
 public:
+    /// Constructor
+    Sudoku(const InstanceOptions& opt) : Script(opt) {
+        SudokuInstance si(opt);
+        nn = si.nn;
+        x = IntVarArray(*this, nn * nn, 1, nn);
+        Matrix<IntVarArray> m(x, nn, nn);
 
-  /// Constructor
-  Sudoku(const InstanceOptions& opt) : Script(opt) {
-    SudokuInstance si(opt);
-    nn = si.nn;
-    x = IntVarArray(*this, nn*nn, 1, nn);
-    Matrix<IntVarArray> m(x, nn, nn);
+        // Constraints for rows and columns
+        for (int i = 0; i < nn; i++) {
+            distinct(*this, m.row(i), opt.ipl());
+            distinct(*this, m.col(i), opt.ipl());
+        }
 
-    // Constraints for rows and columns
-    for (int i=0; i<nn; i++) {
-      distinct(*this, m.row(i), opt.ipl());
-      distinct(*this, m.col(i), opt.ipl());
+        // Constraints for boxes
+        for (int i = 0; i < nn; i += si.bw) {
+            for (int j = 0; j < nn; j += si.bh) {
+                distinct(*this, m.slice(i, i + si.bw, j, j + si.bh), opt.ipl());
+            }
+        }
+
+        // Fill-in predefined fields
+        for (int i = 0; i < nn; i++)
+            for (int j = 0; j < nn; j++)
+                if (int v = si.givens[j * nn + i])
+                    rel(*this, m(i, j), IRT_EQ, v);
+
+        branch(*this, x, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
     }
 
-    // Constraints for boxes
-    for (int i=0; i<nn; i+=si.bw) {
-      for (int j=0; j<nn; j+=si.bh) {
-        distinct(*this, m.slice(i, i+si.bw, j, j+si.bh), opt.ipl());
-      }
+    /// Constructor for cloning \a s
+    Sudoku(Sudoku& s) : Script(s), nn(s.nn) {
+        x.update(*this, s.x);
     }
 
-    // Fill-in predefined fields
-    for (int i=0; i<nn; i++)
-      for (int j=0; j<nn; j++)
-        if (int v = si.givens[j*nn+i])
-          rel(*this, m(i,j), IRT_EQ, v );
-
-    branch(*this, x, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
-  }
-
-  /// Constructor for cloning \a s
-  Sudoku(Sudoku& s) : Script(s), nn(s.nn) {
-    x.update(*this, s.x);
-  }
-
-  /// Perform copying during cloning
-  virtual Space*
-  copy(void) {
-    return new Sudoku(*this);
-  }
-
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    os << "  ";
-    for (int i = 0; i<nn*nn; i++) {
-      if (x[i].assigned()) {
-        print_value(os, x[i].val());
-        os << " ";
-      }
-      else
-        os << ". ";
-      if((i+1)%nn == 0)
-        os << std::endl << "  ";
+    /// Perform copying during cloning
+    virtual Space*
+    copy(void) {
+        return new Sudoku(*this);
     }
-    os << std::endl;
-  }
 
+    /// Print solution
+    virtual void
+    print(std::ostream& os) const {
+        os << "  ";
+        for (int i = 0; i < nn * nn; i++) {
+            if (x[i].assigned()) {
+                print_value(os, x[i].val());
+                os << " ";
+            } else
+                os << ". ";
+            if ((i + 1) % nn == 0)
+                os << std::endl << "  ";
+        }
+        os << std::endl;
+    }
 };
 
 /** \brief Main-function
@@ -131,22 +128,23 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  InstanceOptions opt("Sudoku", instance_spec);
-  opt.instance("0");
-  opt.ipl(IPL_DOM);
-  opt.solutions(1);
-  opt.parse(argc,argv);
-  try {
-    if (!SudokuInstance(opt).valid()) {
-      std::cerr << "Error: instance must be a number between 0 and " << n_examples-1 << " or a file" << std::endl;
-      return 1;
+    InstanceOptions opt("Sudoku", instance_spec);
+    opt.instance("0");
+    opt.ipl(IPL_DOM);
+    opt.solutions(1);
+    opt.parse(argc, argv);
+    try {
+        if (!SudokuInstance(opt).valid()) {
+            std::cerr << "Error: instance must be a number between 0 and " << n_examples - 1 << " or a file"
+                      << std::endl;
+            return 1;
+        }
+    } catch (const Instance::Error& e) {
+        std::cerr << e.what() << std::endl;
+        return 1;
     }
-  } catch (const Instance::Error& e) {
-    std::cerr << e.what() << std::endl;
-    return 1;
-  }
-  Script::run<Sudoku,DFS,InstanceOptions>(opt);
-  return 0;
+    Script::run<Sudoku, DFS, InstanceOptions>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,15 +36,14 @@
 
 namespace Gecode {
 
-  FloatVar::FloatVar(Space& home, FloatNum min, FloatNum max)
-    : VarImpVar<Float::FloatVarImp>(new (home) Float::FloatVarImp(home,FloatVal(min,max))) {
-    Float::Limits::check(min,"FloatVar::FloatVar");
-    Float::Limits::check(max,"FloatVar::FloatVar");
-    if (min > max)
-      throw Float::VariableEmptyDomain("FloatVar::FloatVar");
-  }
+    FloatVar::FloatVar(Space& home, FloatNum min, FloatNum max)
+        : VarImpVar<Float::FloatVarImp>(new (home) Float::FloatVarImp(home, FloatVal(min, max))) {
+        Float::Limits::check(min, "FloatVar::FloatVar");
+        Float::Limits::check(max, "FloatVar::FloatVar");
+        if (min > max)
+            throw Float::VariableEmptyDomain("FloatVar::FloatVar");
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-var
-

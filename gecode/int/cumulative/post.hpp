@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,36 +32,38 @@
 
 namespace Gecode { namespace Int { namespace Cumulative {
 
-  template<class ManTask, class Cap>
-  forceinline ExecStatus
-  manpost(Home home, Cap c, TaskArray<ManTask>& t, IntPropLevel ipl) {
-    switch (ba(ipl)) {
-    case IPL_BASIC: default:
-      return ManProp<ManTask,Cap,PLB>::post(home,c,t);
-    case IPL_ADVANCED:
-      return ManProp<ManTask,Cap,PLA>::post(home,c,t);
-    case IPL_BASIC_ADVANCED:
-      return ManProp<ManTask,Cap,PLBA>::post(home,c,t);
+    template <class ManTask, class Cap>
+    forceinline ExecStatus
+    manpost(Home home, Cap c, TaskArray<ManTask>& t, IntPropLevel ipl) {
+        switch (ba(ipl)) {
+        case IPL_BASIC:
+        default:
+            return ManProp<ManTask, Cap, PLB>::post(home, c, t);
+        case IPL_ADVANCED:
+            return ManProp<ManTask, Cap, PLA>::post(home, c, t);
+        case IPL_BASIC_ADVANCED:
+            return ManProp<ManTask, Cap, PLBA>::post(home, c, t);
+        }
+        GECODE_NEVER;
+        return ES_OK;
     }
-    GECODE_NEVER;
-    return ES_OK;
-  }
 
-  template<class OptTask, class Cap>
-  forceinline ExecStatus
-  optpost(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl) {
-    switch (ba(ipl)) {
-    case IPL_BASIC: default:
-      return OptProp<OptTask,Cap,PLB>::post(home,c,t);
-    case IPL_ADVANCED:
-      return OptProp<OptTask,Cap,PLA>::post(home,c,t);
-    case IPL_BASIC_ADVANCED:
-      return OptProp<OptTask,Cap,PLBA>::post(home,c,t);
+    template <class OptTask, class Cap>
+    forceinline ExecStatus
+    optpost(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl) {
+        switch (ba(ipl)) {
+        case IPL_BASIC:
+        default:
+            return OptProp<OptTask, Cap, PLB>::post(home, c, t);
+        case IPL_ADVANCED:
+            return OptProp<OptTask, Cap, PLA>::post(home, c, t);
+        case IPL_BASIC_ADVANCED:
+            return OptProp<OptTask, Cap, PLBA>::post(home, c, t);
+        }
+        GECODE_NEVER;
+        return ES_OK;
     }
-    GECODE_NEVER;
-    return ES_OK;
-  }
 
-}}}
+}}} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-post

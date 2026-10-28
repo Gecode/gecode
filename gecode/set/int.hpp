@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,16 +32,16 @@
 
 namespace Gecode {
 
-  forceinline void
-  rel(Home home, IntVar x, IntRelType rt, SetVar s) {
-    rel(home, s, swap(rt), x);
-  }
+    forceinline void
+    rel(Home home, IntVar x, IntRelType rt, SetVar s) {
+        rel(home, s, swap(rt), x);
+    }
 
-  forceinline void
-  rel(Home home, IntVar x, IntRelType rt, SetVar s, Reify r) {
-    rel(home, s, swap(rt), x, r);
-  }
+    forceinline void
+    rel(Home home, IntVar x, IntRelType rt, SetVar s, Reify r) {
+        rel(home, s, swap(rt), x, r);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-post

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,32 +36,32 @@
 
 namespace Gecode { namespace Int {
 
-  forceinline
-  IntDelta::IntDelta(void)
-    : _min(1), _max(0) {}
-  forceinline
-  IntDelta::IntDelta(int min, int max)
-    : _min(min), _max(max) {}
-  forceinline
-  IntDelta::IntDelta(int min)
-    : _min(min) {}
-  forceinline int
-  IntDelta::min(void) const {
-    return _min;
-  }
-  forceinline int
-  IntDelta::max(void) const {
-    return _max;
-  }
-  forceinline unsigned int
-  IntDelta::width(void) const {
-    return static_cast<unsigned int>(_max) - static_cast<unsigned int>(_min) + 1U;
-  }
-  forceinline bool
-  IntDelta::any(void) const {
-    return _min > _max;
-  }
+    forceinline
+    IntDelta::IntDelta(void)
+        : _min(1), _max(0) {}
+    forceinline
+    IntDelta::IntDelta(int min, int max)
+        : _min(min), _max(max) {}
+    forceinline
+    IntDelta::IntDelta(int min)
+        : _min(min) {}
+    forceinline int
+    IntDelta::min(void) const {
+        return _min;
+    }
+    forceinline int
+    IntDelta::max(void) const {
+        return _max;
+    }
+    forceinline unsigned int
+    IntDelta::width(void) const {
+        return static_cast<unsigned int>(_max) - static_cast<unsigned int>(_min) + 1U;
+    }
+    forceinline bool
+    IntDelta::any(void) const {
+        return _min > _max;
+    }
 
-}}
+}} // namespace Gecode::Int
 
 // STATISTICS: int-var

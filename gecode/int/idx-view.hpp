@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,148 +36,149 @@
 
 namespace Gecode { namespace Int {
 
-  /// VarArg type for integer views
-  template<>
-  class ViewToVarArg<IntView> {
-  public:
-    typedef IntVarArgs argtype;
-  };
-  /// VarArg type for minus views
-  template<>
-  class ViewToVarArg<MinusView> {
-  public:
-    typedef IntVarArgs argtype;
-  };
-  /// VarArg type for Boolean views
-  template<>
-  class ViewToVarArg<BoolView> {
-  public:
-    typedef BoolVarArgs argtype;
-  };
-  /// VarArg type for Boolean views
-  template<>
-  class ViewToVarArg<NegBoolView> {
-  public:
-    typedef BoolVarArgs argtype;
-  };
+    /// VarArg type for integer views
+    template <>
+    class ViewToVarArg<IntView> {
+    public:
+        typedef IntVarArgs argtype;
+    };
+    /// VarArg type for minus views
+    template <>
+    class ViewToVarArg<MinusView> {
+    public:
+        typedef IntVarArgs argtype;
+    };
+    /// VarArg type for Boolean views
+    template <>
+    class ViewToVarArg<BoolView> {
+    public:
+        typedef BoolVarArgs argtype;
+    };
+    /// VarArg type for Boolean views
+    template <>
+    class ViewToVarArg<NegBoolView> {
+    public:
+        typedef BoolVarArgs argtype;
+    };
 
-  template<class View>
-  forceinline IdxView<View>*
-  IdxView<View>::allocate(Space& home, int n) {
-    return home.alloc<IdxView<View> >(n);
-  }
-
-  template<class View>
-  forceinline
-  IdxViewArray<View>::IdxViewArray(void) : xs(nullptr), n(0) {}
-
-  template<class View>
-  forceinline
-  IdxViewArray<View>::IdxViewArray(const IdxViewArray<View>& a) {
-    n = a.n; xs = a.xs;
-  }
-
-  template<class View>
-  forceinline
-  IdxViewArray<View>::IdxViewArray(Space& home,
-    const typename ViewToVarArg<View>::argtype& xa) : xs(nullptr) {
-    n = xa.size();
-    if (n>0) {
-      xs = IdxView<View>::allocate(home, n);
-      for (int i=0; i<n; i++) {
-        xs[i].idx = i; xs[i].view = xa[i];
-      }
+    template <class View>
+    forceinline IdxView<View>*
+    IdxView<View>::allocate(Space& home, int n) {
+        return home.alloc<IdxView<View>>(n);
     }
-  }
 
-  template<class View>
-  forceinline
-  IdxViewArray<View>::IdxViewArray(Space& home, int n0) : xs(nullptr) {
-    n = n0;
-    if (n>0) {
-      xs = IdxView<View>::allocate(home, n);
+    template <class View>
+    forceinline
+    IdxViewArray<View>::IdxViewArray(void)
+        : xs(nullptr), n(0) {}
+
+    template <class View>
+    forceinline
+    IdxViewArray<View>::IdxViewArray(const IdxViewArray<View>& a) {
+        n = a.n;
+        xs = a.xs;
     }
-  }
 
-  template<class View>
-  forceinline int
-  IdxViewArray<View>::size(void) const {
-    return n;
-  }
-
-  template<class View>
-  forceinline void
-  IdxViewArray<View>::size(int n0) {
-    n = n0;
-  }
-
-  template<class View>
-  forceinline IdxView<View>&
-  IdxViewArray<View>::operator [](int i) {
-    assert((i >= 0) && (i < size()));
-    return xs[i];
-  }
-
-  template<class View>
-  forceinline const IdxView<View>&
-  IdxViewArray<View>::operator [](int i) const {
-    assert((i >= 0) && (i < size()));
-    return xs[i];
-  }
-
-  template<class View>
-  forceinline void
-  IdxViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc,
-                                bool process) {
-    for (int i=0; i<n; i++)
-      xs[i].view.subscribe(home,p,pc,process);
-  }
-
-  template<class View>
-  forceinline void
-  IdxViewArray<View>::cancel(Space& home, Propagator& p, PropCond pc) {
-    for (int i=0; i<n; i++)
-      xs[i].view.cancel(home,p,pc);
-  }
-
-  template<class View>
-  forceinline void
-  IdxViewArray<View>::reschedule(Space& home, Propagator& p, PropCond pc) {
-    for (int i=0; i<n; i++)
-      xs[i].view.reschedule(home,p,pc);
-  }
-
-  template<class View>
-  forceinline void
-  IdxViewArray<View>::update(Space& home, IdxViewArray<View>& a) {
-    n = a.size();
-    if (n>0) {
-      xs = IdxView<View>::allocate(home,n);
-      for (int i=0; i<n; i++) {
-        xs[i].idx = a[i].idx;
-        xs[i].view.update(home,a[i].view);
-      }
+    template <class View>
+    forceinline
+    IdxViewArray<View>::IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& xa)
+        : xs(nullptr) {
+        n = xa.size();
+        if (n > 0) {
+            xs = IdxView<View>::allocate(home, n);
+            for (int i = 0; i < n; i++) {
+                xs[i].idx = i;
+                xs[i].view = xa[i];
+            }
+        }
     }
-  }
 
-
-  template<class Char, class Traits, class View>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os,
-              const IdxViewArray<View>& x) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << '{';
-    if (x.size() > 0) {
-      s << x[0].idx << ':' << x[0].view;
-      for (int i=1; i<x.size(); i++)
-        s << ", " << x[i].idx << ':' << x[i].view;
+    template <class View>
+    forceinline
+    IdxViewArray<View>::IdxViewArray(Space& home, int n0)
+        : xs(nullptr) {
+        n = n0;
+        if (n > 0) {
+            xs = IdxView<View>::allocate(home, n);
+        }
     }
-    s << '}';
-    return os << s.str();
-  }
 
-}}
+    template <class View>
+    forceinline int
+    IdxViewArray<View>::size(void) const {
+        return n;
+    }
+
+    template <class View>
+    forceinline void
+    IdxViewArray<View>::size(int n0) {
+        n = n0;
+    }
+
+    template <class View>
+    forceinline IdxView<View>&
+    IdxViewArray<View>::operator[](int i) {
+        assert((i >= 0) && (i < size()));
+        return xs[i];
+    }
+
+    template <class View>
+    forceinline const IdxView<View>&
+    IdxViewArray<View>::operator[](int i) const {
+        assert((i >= 0) && (i < size()));
+        return xs[i];
+    }
+
+    template <class View>
+    forceinline void
+    IdxViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc, bool process) {
+        for (int i = 0; i < n; i++)
+            xs[i].view.subscribe(home, p, pc, process);
+    }
+
+    template <class View>
+    forceinline void
+    IdxViewArray<View>::cancel(Space& home, Propagator& p, PropCond pc) {
+        for (int i = 0; i < n; i++)
+            xs[i].view.cancel(home, p, pc);
+    }
+
+    template <class View>
+    forceinline void
+    IdxViewArray<View>::reschedule(Space& home, Propagator& p, PropCond pc) {
+        for (int i = 0; i < n; i++)
+            xs[i].view.reschedule(home, p, pc);
+    }
+
+    template <class View>
+    forceinline void
+    IdxViewArray<View>::update(Space& home, IdxViewArray<View>& a) {
+        n = a.size();
+        if (n > 0) {
+            xs = IdxView<View>::allocate(home, n);
+            for (int i = 0; i < n; i++) {
+                xs[i].idx = a[i].idx;
+                xs[i].view.update(home, a[i].view);
+            }
+        }
+    }
+
+    template <class Char, class Traits, class View>
+    std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const IdxViewArray<View>& x) {
+        std::basic_ostringstream<Char, Traits> s;
+        s.copyfmt(os);
+        s.width(0);
+        s << '{';
+        if (x.size() > 0) {
+            s << x[0].idx << ':' << x[0].view;
+            for (int i = 1; i < x.size(); i++)
+                s << ", " << x[i].idx << ':' << x[i].view;
+        }
+        s << '}';
+        return os << s.str();
+    }
+
+}} // namespace Gecode::Int
 
 // STATISTICS: int-prop
-

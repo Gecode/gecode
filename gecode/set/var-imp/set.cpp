@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,123 +34,118 @@
 
 #include <gecode/set.hh>
 
-
 namespace Gecode { namespace Set {
 
-  /*
-   * "Standard" tell operations
-   *
-   */
-  ModEvent
-  SetVarImp::cardMin_full(Space& home) {
-    ModEvent me = ME_SET_CARD;
-    if (cardMin() == lub.size()) {
-      glb.become(home, lub);
-      me = ME_SET_VAL;
+    /*
+     * "Standard" tell operations
+     *
+     */
+    ModEvent
+    SetVarImp::cardMin_full(Space& home) {
+        ModEvent me = ME_SET_CARD;
+        if (cardMin() == lub.size()) {
+            glb.become(home, lub);
+            me = ME_SET_VAL;
+        }
+        SetDelta d;
+        return notify(home, me, d);
     }
-    SetDelta d;
-    return notify(home, me, d);
-  }
 
-  ModEvent
-  SetVarImp::cardMax_full(Space& home) {
-    ModEvent me = ME_SET_CARD;
-    if (cardMax() == glb.size()) {
-      lub.become(home, glb);
-      me = ME_SET_VAL;
+    ModEvent
+    SetVarImp::cardMax_full(Space& home) {
+        ModEvent me = ME_SET_CARD;
+        if (cardMax() == glb.size()) {
+            lub.become(home, glb);
+            me = ME_SET_VAL;
+        }
+        SetDelta d;
+        return notify(home, me, d);
     }
-    SetDelta d;
-    return notify(home, me, d);
-  }
 
-  ModEvent
-  SetVarImp::processLubChange(Space& home, SetDelta& d) {
-    ModEvent me = ME_SET_LUB;
-    if (cardMax() > lub.size()) {
-      lub.card(lub.size());
-      if (cardMin() > cardMax()) {
-        glb.become(home, lub);
-        glb.card(glb.size());
-        lub.card(glb.size());
-        return fail(home);
-      }
-      me = ME_SET_CLUB;
+    ModEvent
+    SetVarImp::processLubChange(Space& home, SetDelta& d) {
+        ModEvent me = ME_SET_LUB;
+        if (cardMax() > lub.size()) {
+            lub.card(lub.size());
+            if (cardMin() > cardMax()) {
+                glb.become(home, lub);
+                glb.card(glb.size());
+                lub.card(glb.size());
+                return fail(home);
+            }
+            me = ME_SET_CLUB;
+        }
+        if (cardMax() == lub.size() && cardMin() == cardMax()) {
+            glb.become(home, lub);
+            me = ME_SET_VAL;
+            assert(d.glbMin() == 1);
+            assert(d.glbMax() == 0);
+        }
+        return notify(home, me, d);
     }
-    if (cardMax() == lub.size() && cardMin() == cardMax()) {
-      glb.become(home, lub);
-      me = ME_SET_VAL;
-      assert(d.glbMin() == 1);
-      assert(d.glbMax() == 0);
+
+    ModEvent
+    SetVarImp::processGlbChange(Space& home, SetDelta& d) {
+        ModEvent me = ME_SET_GLB;
+        if (cardMin() < glb.size()) {
+            glb.card(glb.size());
+            if (cardMin() > cardMax()) {
+                glb.become(home, lub);
+                glb.card(glb.size());
+                lub.card(glb.size());
+                return fail(home);
+            }
+            me = ME_SET_CGLB;
+        }
+        if (cardMin() == glb.size() && cardMin() == cardMax()) {
+            lub.become(home, glb);
+            me = ME_SET_VAL;
+            assert(d.lubMin() == 1);
+            assert(d.lubMax() == 0);
+        }
+        return notify(home, me, d);
     }
-    return notify(home, me, d);
-  }
 
-  ModEvent
-  SetVarImp::processGlbChange(Space& home, SetDelta& d) {
-    ModEvent me = ME_SET_GLB;
-    if (cardMin() < glb.size()) {
-      glb.card(glb.size());
-      if (cardMin() > cardMax()) {
-        glb.become(home, lub);
-        glb.card(glb.size());
-        lub.card(glb.size());
-        return fail(home);
-      }
-      me = ME_SET_CGLB;
+    /*
+     * Copying variables
+     *
+     */
+
+    forceinline
+    SetVarImp::SetVarImp(Space& home, SetVarImp& x)
+        : SetVarImpBase(home, x) {
+        lub.update(home, x.lub);
+        glb.card(x.cardMin());
+        lub.card(x.cardMax());
+        if (x.assigned()) {
+            glb.become(home, lub);
+        } else {
+            glb.update(home, x.glb);
+        }
     }
-    if (cardMin() == glb.size() && cardMin() == cardMax()) {
-      lub.become(home, glb);
-      me = ME_SET_VAL;
-      assert(d.lubMin() == 1);
-      assert(d.lubMax() == 0);
+
+    SetVarImp*
+    SetVarImp::perform_copy(Space& home) {
+        return new (home) SetVarImp(home, *this);
     }
-    return notify(home, me, d);
-  }
 
-  /*
-   * Copying variables
-   *
-   */
-
-  forceinline
-  SetVarImp::SetVarImp(Space& home, SetVarImp& x)
-    : SetVarImpBase(home,x) {
-    lub.update(home, x.lub);
-    glb.card(x.cardMin());
-    lub.card(x.cardMax());
-    if (x.assigned()) {
-      glb.become(home,lub);
-    } else {
-      glb.update(home,x.glb);
+    /*
+     * Dependencies
+     *
+     */
+    void
+    SetVarImp::subscribe(Space& home, Propagator& p, PropCond pc, bool schedule) {
+        SetVarImpBase::subscribe(home, p, pc, assigned(), schedule);
     }
-  }
+    void
+    SetVarImp::subscribe(Space& home, Advisor& a, bool fail) {
+        SetVarImpBase::subscribe(home, a, assigned(), fail);
+    }
+    void
+    SetVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
+        SetVarImpBase::reschedule(home, p, pc, assigned());
+    }
 
-
-  SetVarImp*
-  SetVarImp::perform_copy(Space& home) {
-    return new (home) SetVarImp(home,*this);
-  }
-
-  /*
-   * Dependencies
-   *
-   */
-  void
-  SetVarImp::subscribe(Space& home, Propagator& p, PropCond pc,
-                       bool schedule) {
-    SetVarImpBase::subscribe(home,p,pc,assigned(),schedule);
-  }
-  void
-  SetVarImp::subscribe(Space& home, Advisor& a, bool fail) {
-    SetVarImpBase::subscribe(home,a,assigned(),fail);
-  }
-  void
-  SetVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
-    SetVarImpBase::reschedule(home,p,pc,assigned());
-  }
-
-
-}}
+}} // namespace Gecode::Set
 
 // STATISTICS: set-var
-

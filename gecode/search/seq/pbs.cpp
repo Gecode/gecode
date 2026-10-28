@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,19 +34,19 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  bool
-  PortfolioStop::stop(const Statistics& s, const Options& o) {
-    if ((so != nullptr) && so->stop(s,o)) {
-      ssi->done = false;
-      return true;
+    bool
+    PortfolioStop::stop(const Statistics& s, const Options& o) {
+        if ((so != nullptr) && so->stop(s, o)) {
+            ssi->done = false;
+            return true;
+        }
+        if (s.fail >= ssi->l) {
+            ssi->done = true;
+            return true;
+        }
+        return false;
     }
-    if (s.fail >= ssi->l) {
-      ssi->done = true;
-      return true;
-    }
-    return false;
-  }
 
-}}}
+}}} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

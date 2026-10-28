@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -50,76 +49,73 @@
 
 namespace Gecode { namespace Support {
 
-  /**
-   * \brief Default memory allocator
-   *
-   * Acts as a wrapper around memory allocation functionality.
-   *
-   * Can be disabled by giving a "-disable-allocator" option to
-   * configure and the be re-implemented before including any other
-   * Gecode header.
-   *
-   * \ingroup FuncMem
-   */
-  class Allocator {
-  public:
-    /// Default constructor
-    Allocator(void);
-    /// Allocate memory block of size \a n
+    /**
+     * \brief Default memory allocator
+     *
+     * Acts as a wrapper around memory allocation functionality.
+     *
+     * Can be disabled by giving a "-disable-allocator" option to
+     * configure and the be re-implemented before including any other
+     * Gecode header.
+     *
+     * \ingroup FuncMem
+     */
+    class Allocator {
+    public:
+        /// Default constructor
+        Allocator(void);
+        /// Allocate memory block of size \a n
 #ifdef GECODE_MIMALLOC
-    GECODE_SUPPORT_EXPORT
+        GECODE_SUPPORT_EXPORT
 #endif
-    void* alloc(size_t n);
-    /// Return address of reallocated memory block \a p of size \a n
+        void* alloc(size_t n);
+        /// Return address of reallocated memory block \a p of size \a n
 #ifdef GECODE_MIMALLOC
-    GECODE_SUPPORT_EXPORT
+        GECODE_SUPPORT_EXPORT
 #endif
-    void* realloc(void* p, size_t n);
-    /// Free memory block \a p
+        void* realloc(void* p, size_t n);
+        /// Free memory block \a p
 #ifdef GECODE_MIMALLOC
-    GECODE_SUPPORT_EXPORT
+        GECODE_SUPPORT_EXPORT
 #endif
-    void free(void* p);
-    /// Copy \a n bytes from source \a s directly to \a d and returns \a d
-    void* memcpy(void *d, const void *s, size_t n);
-  };
+        void free(void* p);
+        /// Copy \a n bytes from source \a s directly to \a d and returns \a d
+        void* memcpy(void* d, const void* s, size_t n);
+    };
 
-
-  forceinline
-  Allocator::Allocator(void) {
-  }
+    forceinline
+    Allocator::Allocator(void) {}
 #ifndef GECODE_MIMALLOC
-  forceinline void*
-  Allocator::alloc(size_t n) {
-    return ::malloc(n);
-  }
-  forceinline void*
-  Allocator::realloc(void* p, size_t n) {
-    return ::realloc(p,n);
-  }
-  forceinline void
-  Allocator::free(void* p) {
-    ::free(p);
-  }
+    forceinline void*
+    Allocator::alloc(size_t n) {
+        return ::malloc(n);
+    }
+    forceinline void*
+    Allocator::realloc(void* p, size_t n) {
+        return ::realloc(p, n);
+    }
+    forceinline void
+    Allocator::free(void* p) {
+        ::free(p);
+    }
 #endif
-  forceinline void*
-  Allocator::memcpy(void *d, const void *s, size_t n) {
-    return ::memcpy(d,s,n);
-  }
+    forceinline void*
+    Allocator::memcpy(void* d, const void* s, size_t n) {
+        return ::memcpy(d, s, n);
+    }
 
-}}
+}} // namespace Gecode::Support
 
 #endif
 
 namespace Gecode { namespace Support {
 
-  /**
-   * \brief The single global default memory allocator
-   * \ingroup FuncMem
-   */
-  extern GECODE_SUPPORT_EXPORT
-  Allocator allocator;
+    /**
+     * \brief The single global default memory allocator
+     * \ingroup FuncMem
+     */
+    extern GECODE_SUPPORT_EXPORT Allocator allocator;
 
-}}
+}} // namespace Gecode::Support
 
 // STATISTICS: support-any

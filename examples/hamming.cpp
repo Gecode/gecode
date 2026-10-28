@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -45,31 +44,38 @@ using namespace Gecode;
 
 class HammingOptions : public Options {
 private:
-  /// Number of bits
-  Driver::UnsignedIntOption _bits;
-  /// Minimum distance
-  Driver::UnsignedIntOption _distance;
-  /// Number of symbols
-  Driver::UnsignedIntOption _size;
+    /// Number of bits
+    Driver::UnsignedIntOption _bits;
+    /// Minimum distance
+    Driver::UnsignedIntOption _distance;
+    /// Number of symbols
+    Driver::UnsignedIntOption _size;
 
 public:
-  /// Initialize options for example with name \a s
-  HammingOptions(const char* s, unsigned int bits0,
-                 unsigned int distance0, unsigned int size0)
-  : Options(s),
-    _bits("bits","word size in bits",bits0),
-    _distance("distance","minimum distance",distance0),
-    _size("size","number of symbols",size0) {
-    add(_bits); add(_distance); add(_size);
-  }
+    /// Initialize options for example with name \a s
+    HammingOptions(const char* s, unsigned int bits0, unsigned int distance0, unsigned int size0)
+        : Options(s), _bits("bits", "word size in bits", bits0), _distance("distance", "minimum distance", distance0),
+          _size("size", "number of symbols", size0) {
+        add(_bits);
+        add(_distance);
+        add(_size);
+    }
 
-  /// Return number of bits
-  unsigned int bits(void) const { return _bits.value(); }
-  /// Return minimum distance
-  unsigned int distance(void) const { return _distance.value(); }
-  /// Return number of symbols
-  unsigned int size(void) const { return _size.value(); }
-
+    /// Return number of bits
+    unsigned int
+    bits(void) const {
+        return _bits.value();
+    }
+    /// Return minimum distance
+    unsigned int
+    distance(void) const {
+        return _distance.value();
+    }
+    /// Return number of symbols
+    unsigned int
+    size(void) const {
+        return _size.value();
+    }
 };
 
 /**
@@ -85,49 +91,45 @@ public:
  */
 class Hamming : public Script {
 private:
-  /// The hamming code
-  SetVarArray x;
+    /// The hamming code
+    SetVarArray x;
+
 public:
-  /// Actual model
-  Hamming(const HammingOptions& opt) :
-    Script(opt),
-    x(*this,opt.size(),IntSet::empty,1,opt.bits()) {
+    /// Actual model
+    Hamming(const HammingOptions& opt) : Script(opt), x(*this, opt.size(), IntSet::empty, 1, opt.bits()) {
 
-    if (opt.trace() != 0)
-      trace(*this, x, opt.trace());
+        if (opt.trace() != 0)
+            trace(*this, x, opt.trace());
 
-    SetVarArgs cx(x.size());
+        SetVarArgs cx(x.size());
 
-    for (int i=x.size(); i--;)
-      cx[i] = expr(*this, -x[i]);
+        for (int i = x.size(); i--;)
+            cx[i] = expr(*this, -x[i]);
 
-    for (int i=0; i<x.size(); i++)
-      for (int j=i+1; j<x.size(); j++)
-        rel(*this,
-            cardinality(x[j] & cx[i]) +
-            cardinality(x[i] & cx[j]) >= opt.distance());
+        for (int i = 0; i < x.size(); i++)
+            for (int j = i + 1; j < x.size(); j++)
+                rel(*this, cardinality(x[j] & cx[i]) + cardinality(x[i] & cx[j]) >= opt.distance());
 
-    branch(*this, x, SET_VAR_NONE(), SET_VAL_MIN_INC());
-  }
-
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    for (int i=0; i<x.size(); i++) {
-      os << "\t[" << i << "] = " << x[i] << std::endl;
+        branch(*this, x, SET_VAR_NONE(), SET_VAL_MIN_INC());
     }
-  }
 
-  /// Constructor for copying \a s
-  Hamming(Hamming& s) : Script(s) {
-    x.update(*this, s.x);
-  }
-  /// Copy during cloning
-  virtual Space*
-  copy(void) {
-    return new Hamming(*this);
-  }
+    /// Print solution
+    virtual void
+    print(std::ostream& os) const {
+        for (int i = 0; i < x.size(); i++) {
+            os << "\t[" << i << "] = " << x[i] << std::endl;
+        }
+    }
 
+    /// Constructor for copying \a s
+    Hamming(Hamming& s) : Script(s) {
+        x.update(*this, s.x);
+    }
+    /// Copy during cloning
+    virtual Space*
+    copy(void) {
+        return new Hamming(*this);
+    }
 };
 
 /** \brief Main-function
@@ -135,12 +137,10 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  HammingOptions opt("Hamming",20,3,32);
-  opt.parse(argc,argv);
-  Script::run<Hamming,DFS,HammingOptions>(opt);
-  return 0;
+    HammingOptions opt("Hamming", 20, 3, 32);
+    opt.parse(argc, argv);
+    Script::run<Hamming, DFS, HammingOptions>(opt);
+    return 0;
 }
 
-
 // STATISTICS: example-any
-

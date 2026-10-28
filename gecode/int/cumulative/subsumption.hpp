@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,37 +32,37 @@
 
 namespace Gecode { namespace Int { namespace Cumulative {
 
-  template<class Task>
-  forceinline ExecStatus
-  subsumed(Space& home, Propagator& p, int c, TaskArray<Task>& t) {
-    Region r;
+    template <class Task>
+    forceinline ExecStatus
+    subsumed(Space& home, Propagator& p, int c, TaskArray<Task>& t) {
+        Region r;
 
-    if (Event* e = Event::events(r,t)) {
-      // Process events, use ccur as the capacity that is still free
-      do {
-        // Current time
-        int time = e->time();
-        // Process events for completion of required part
-        for ( ; (e->type() == Event::LRT) && (e->time() == time); e++)
-          c += t[e->idx()].c();
-        // Process events for zero-length task
-        for ( ; (e->type() == Event::ZRO) && (e->time() == time); e++)
-          if (c < t[e->idx()].c())
-            return ES_FAILED;
-        // Process events for start of required part
-        for ( ;  (e->type() == Event::ERT) && (e->time() == time); e++) {
-          c -= t[e->idx()].c();
-          if (c < 0)
-            return ES_FAILED;
+        if (Event* e = Event::events(r, t)) {
+            // Process events, use ccur as the capacity that is still free
+            do {
+                // Current time
+                int time = e->time();
+                // Process events for completion of required part
+                for (; (e->type() == Event::LRT) && (e->time() == time); e++)
+                    c += t[e->idx()].c();
+                // Process events for zero-length task
+                for (; (e->type() == Event::ZRO) && (e->time() == time); e++)
+                    if (c < t[e->idx()].c())
+                        return ES_FAILED;
+                // Process events for start of required part
+                for (; (e->type() == Event::ERT) && (e->time() == time); e++) {
+                    c -= t[e->idx()].c();
+                    if (c < 0)
+                        return ES_FAILED;
+                }
+            } while (e->type() != Event::END);
+        } else {
+            return ES_OK;
         }
-      } while (e->type() != Event::END);
-    } else {
-      return ES_OK;
+
+        return home.ES_SUBSUMED(p);
     }
 
-    return home.ES_SUBSUMED(p);
-  }
-
-}}}
+}}} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

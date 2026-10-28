@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest(TestTags::check(),"magic_square::4",
-"predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest(TestTags::check(), "magic_square::4",
+                                   "predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -105,15 +101,14 @@ constraint int_lin_eq([1, 1, 1, 1], [a[5], a[6], a[7], a[8]], 34);\n\
 constraint int_lin_eq([1, 1, 1, 1], [a[9], a[10], a[11], a[12]], 34);\n\
 constraint int_lin_eq([1, 1, 1, 1], [a[13], a[14], a[15], a[16]], 34);\n\
 solve satisfy;\n\
-", "a = array2d(1..4, 1..4, [4, 5, 10, 15, 9, 16, 3, 6, 7, 2, 13, 12, 14, 11, 8, 1]);\n\
+",
+                                   "a = array2d(1..4, 1..4, [4, 5, 10, 15, 9, 16, 3, 6, 7, 2, 13, 12, 14, 11, 8, 1]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

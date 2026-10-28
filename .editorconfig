@@ -1,10 +1,5 @@
-# EditorConfig file for Gecode
-# See https://EditorConfig.org for more information about the .editorconfig format
-
-# top-most EditorConfig file
 root = true
 
-# Unix-style newlines with a newline ending every file
 [*]
 end_of_line = lf
 insert_final_newline = true
@@ -13,6 +8,12 @@ charset = utf-8
 indent_style = space
 indent_size = 2
 
-# Makefiles need to use Tab indentation
-[Makefile*]
-indent_style = tab
+[*.{c,cc,cpp,cxx,h,hh,hpp,hxx,lxx,yxx,vis}]
+indent_size = 4
+max_line_length = 120
+
+[*.py]
+indent_size = 4
+
+[{CMakeLists.txt,*.cmake,*.yml,*.yaml}]
+indent_size = 2

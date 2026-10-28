@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -53,60 +52,65 @@ using namespace Gecode;
  */
 class OpenRoute : public Script {
 protected:
-  /// Number of graph nodes and maximal route length
-  static const int node_count = 5;
-  /// Node IDs in route order, including source and destination
-  OpenIntVarList route;
+    /// Number of graph nodes and maximal route length
+    static const int node_count = 5;
+    /// Node IDs in route order, including source and destination
+    OpenIntVarList route;
+
 public:
-  /// Branching to use for the route
-  enum {
-    BRANCH_INCREMENTAL, ///< Assign the current prefix before extending it
-    BRANCH_LENGTH      ///< Choose the complete route length first
-  };
+    /// Branching to use for the route
+    enum {
+        BRANCH_INCREMENTAL, ///< Assign the current prefix before extending it
+        BRANCH_LENGTH       ///< Choose the complete route length first
+    };
 
-  /// Construct the model
-  OpenRoute(const Options& opt)
-    : Script(opt), route(*this,IntSet(0,node_count-1),node_count) {
-    // State 5 consumes the source node. Transitions along graph arcs consume
-    // their destination node; only node 4 is an accepting state.
-    DFA paths(5,{
-      {5,0,0},
-      {0,1,1}, {0,2,2}, {0,4,4},
-      {1,2,2}, {1,4,4},
-      {2,1,1}, {2,3,3},
-      {3,2,2}, {3,4,4}
-    },{4});
-    extensional(*this,route,paths);
-    distinct(*this,route);
+    /// Construct the model
+    OpenRoute(const Options& opt) : Script(opt), route(*this, IntSet(0, node_count - 1), node_count) {
+        // State 5 consumes the source node. Transitions along graph arcs consume
+        // their destination node; only node 4 is an accepting state.
+        DFA paths(5,
+                  {{5, 0, 0},
+                   {0, 1, 1},
+                   {0, 2, 2},
+                   {0, 4, 4},
+                   {1, 2, 2},
+                   {1, 4, 4},
+                   {2, 1, 1},
+                   {2, 3, 3},
+                   {3, 2, 2},
+                   {3, 4, 4}},
+                  {4});
+        extensional(*this, route, paths);
+        distinct(*this, route);
 
-    // Posting the length brancher first selects a length before assigning nodes.
-    if (opt.branching() == BRANCH_LENGTH)
-      branch(*this,route.length(),INT_VAL_MIN());
-    branch(*this,route,INT_VAR_NONE(),INT_VAL_MIN());
-  }
-
-  /// Constructor for cloning \a s, including the space-local open list
-  OpenRoute(OpenRoute& s) : Script(s) {
-    route.update(*this,s.route);
-  }
-
-  /// Perform copying during cloning
-  Space*
-  copy(void) override {
-    return new OpenRoute(*this);
-  }
-
-  /// Print the materialized route (complete in a solution)
-  void
-  print(std::ostream& os) const override {
-    os << "\t";
-    for (int i=0; i<route.known_length(); i++) {
-      if (i > 0)
-        os << " -> ";
-      os << route[i];
+        // Posting the length brancher first selects a length before assigning nodes.
+        if (opt.branching() == BRANCH_LENGTH)
+            branch(*this, route.length(), INT_VAL_MIN());
+        branch(*this, route, INT_VAR_NONE(), INT_VAL_MIN());
     }
-    os << " (length " << route.length() << ")" << std::endl;
-  }
+
+    /// Constructor for cloning \a s, including the space-local open list
+    OpenRoute(OpenRoute& s) : Script(s) {
+        route.update(*this, s.route);
+    }
+
+    /// Perform copying during cloning
+    Space*
+    copy(void) override {
+        return new OpenRoute(*this);
+    }
+
+    /// Print the materialized route (complete in a solution)
+    void
+    print(std::ostream& os) const override {
+        os << "\t";
+        for (int i = 0; i < route.known_length(); i++) {
+            if (i > 0)
+                os << " -> ";
+            os << route[i];
+        }
+        os << " (length " << route.length() << ")" << std::endl;
+    }
 };
 
 /** \brief Main-function
@@ -114,16 +118,14 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("OpenRoute");
-  opt.solutions(0);
-  opt.branching(OpenRoute::BRANCH_INCREMENTAL);
-  opt.branching(OpenRoute::BRANCH_INCREMENTAL,"incremental",
-                "Assign the current prefix before extending the route");
-  opt.branching(OpenRoute::BRANCH_LENGTH,"length",
-                "Choose the complete route length first");
-  opt.parse(argc,argv);
-  Script::run<OpenRoute,DFS,Options>(opt);
-  return 0;
+    Options opt("OpenRoute");
+    opt.solutions(0);
+    opt.branching(OpenRoute::BRANCH_INCREMENTAL);
+    opt.branching(OpenRoute::BRANCH_INCREMENTAL, "incremental", "Assign the current prefix before extending the route");
+    opt.branching(OpenRoute::BRANCH_LENGTH, "length", "Choose the complete route length first");
+    opt.parse(argc, argv);
+    Script::run<OpenRoute, DFS, Options>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,62 +32,61 @@
 
 namespace Gecode { namespace Int {
 
-  template<class IntType>
-  forceinline IntType
-  ceil_div_pp(IntType x, IntType y) {
-    assert((x >= 0) && (y >= 0));
-    /*
-     * This is smarter than it looks: for many cpus, % and / are
-     * implemented by the same instruction and an optimizing compiler
-     * will generate the instruction only once.
-     */
-    return ((x % y) == 0) ? x/y : (x/y + 1);
-  }
-  template<class IntType>
-  forceinline IntType
-  floor_div_pp(IntType x, IntType y) {
-    assert((x >= 0) && (y >= 0));
-    return x / y;
-  }
+    template <class IntType>
+    forceinline IntType
+    ceil_div_pp(IntType x, IntType y) {
+        assert((x >= 0) && (y >= 0));
+        /*
+         * This is smarter than it looks: for many cpus, % and / are
+         * implemented by the same instruction and an optimizing compiler
+         * will generate the instruction only once.
+         */
+        return ((x % y) == 0) ? x / y : (x / y + 1);
+    }
+    template <class IntType>
+    forceinline IntType
+    floor_div_pp(IntType x, IntType y) {
+        assert((x >= 0) && (y >= 0));
+        return x / y;
+    }
 
-  template<class IntType>
-  forceinline IntType
-  ceil_div_px(IntType x, IntType y) {
-    assert(x >= 0);
-    return (y >= 0) ? ceil_div_pp(x,y) : -floor_div_pp(x,-y);
-  }
-  template<class IntType>
-  forceinline IntType
-  floor_div_px(IntType x, IntType y) {
-    assert(x >= 0);
-    return (y >= 0) ? floor_div_pp(x,y) : -ceil_div_pp(x,-y);
-  }
+    template <class IntType>
+    forceinline IntType
+    ceil_div_px(IntType x, IntType y) {
+        assert(x >= 0);
+        return (y >= 0) ? ceil_div_pp(x, y) : -floor_div_pp(x, -y);
+    }
+    template <class IntType>
+    forceinline IntType
+    floor_div_px(IntType x, IntType y) {
+        assert(x >= 0);
+        return (y >= 0) ? floor_div_pp(x, y) : -ceil_div_pp(x, -y);
+    }
 
-  template<class IntType>
-  forceinline IntType
-  ceil_div_xp(IntType x, IntType y) {
-    assert(y >= 0);
-    return (x >= 0) ? ceil_div_pp(x,y) : -floor_div_pp(-x,y);
-  }
-  template<class IntType>
-  forceinline IntType
-  floor_div_xp(IntType x, IntType y) {
-    assert(y >= 0);
-    return (x >= 0) ? floor_div_pp(x,y) : -ceil_div_pp(-x,y);
-  }
+    template <class IntType>
+    forceinline IntType
+    ceil_div_xp(IntType x, IntType y) {
+        assert(y >= 0);
+        return (x >= 0) ? ceil_div_pp(x, y) : -floor_div_pp(-x, y);
+    }
+    template <class IntType>
+    forceinline IntType
+    floor_div_xp(IntType x, IntType y) {
+        assert(y >= 0);
+        return (x >= 0) ? floor_div_pp(x, y) : -ceil_div_pp(-x, y);
+    }
 
-  template<class IntType>
-  forceinline IntType
-  ceil_div_xx(IntType x, IntType y) {
-    return (x >= 0) ? ceil_div_px(x,y) : -floor_div_px(-x,y);
-  }
-  template<class IntType>
-  forceinline IntType
-  floor_div_xx(IntType x, IntType y) {
-    return (x >= 0) ? floor_div_px(x,y) : -ceil_div_px(-x,y);
-  }
+    template <class IntType>
+    forceinline IntType
+    ceil_div_xx(IntType x, IntType y) {
+        return (x >= 0) ? ceil_div_px(x, y) : -floor_div_px(-x, y);
+    }
+    template <class IntType>
+    forceinline IntType
+    floor_div_xx(IntType x, IntType y) {
+        return (x >= 0) ? floor_div_px(x, y) : -ceil_div_px(-x, y);
+    }
 
-}}
+}} // namespace Gecode::Int
 
 // STATISTICS: int-prop
-

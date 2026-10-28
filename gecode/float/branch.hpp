@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,18 +32,16 @@
 
 namespace Gecode {
 
-  forceinline void
-  branch(Home home, const FloatVarArgs& x, FloatValBranch vals,
-         FloatBranchFilter bf, FloatVarValPrint vvp) {
-    branch(home, x, FLOAT_VAR_NONE(), vals, bf, vvp);
-  }
+    forceinline void
+    branch(Home home, const FloatVarArgs& x, FloatValBranch vals, FloatBranchFilter bf, FloatVarValPrint vvp) {
+        branch(home, x, FLOAT_VAR_NONE(), vals, bf, vvp);
+    }
 
-  forceinline void
-  assign(Home home, const FloatVarArgs& x, FloatAssign vals,
-         FloatBranchFilter bf, FloatVarValPrint vvp) {
-    assign(home, x, FLOAT_VAR_NONE(), vals, bf, vvp);
-  }
+    forceinline void
+    assign(Home home, const FloatVarArgs& x, FloatAssign vals, FloatBranchFilter bf, FloatVarValPrint vvp) {
+        assign(home, x, FLOAT_VAR_NONE(), vals, bf, vvp);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-branch

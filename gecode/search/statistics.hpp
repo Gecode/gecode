@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,34 +34,37 @@
 
 namespace Gecode { namespace Search {
 
-  forceinline void
-  Statistics::reset(void) {
-    StatusStatistics::reset();
-    fail=0ULL; node=0ULL; depth=0UL; restart=0UL; nogood=0UL;
-  }
+    forceinline void
+    Statistics::reset(void) {
+        StatusStatistics::reset();
+        fail = 0ULL;
+        node = 0ULL;
+        depth = 0UL;
+        restart = 0UL;
+        nogood = 0UL;
+    }
 
-  forceinline
-  Statistics::Statistics(void)
-    : fail(0ULL), node(0ULL),
-      depth(0UL), restart(0UL), nogood(0UL) {}
+    forceinline
+    Statistics::Statistics(void)
+        : fail(0ULL), node(0ULL), depth(0UL), restart(0UL), nogood(0UL) {}
 
-  forceinline Statistics&
-  Statistics::operator +=(const Statistics& s) {
-    (void) StatusStatistics::operator +=(s);
-    fail += s.fail;
-    node += s.node;
-    depth = std::max(depth,s.depth);
-    restart += s.restart;
-    nogood += s.nogood;
-    return *this;
-  }
+    forceinline Statistics&
+    Statistics::operator+=(const Statistics& s) {
+        (void)StatusStatistics::operator+=(s);
+        fail += s.fail;
+        node += s.node;
+        depth = std::max(depth, s.depth);
+        restart += s.restart;
+        nogood += s.nogood;
+        return *this;
+    }
 
-  forceinline Statistics
-  Statistics::operator +(const Statistics& s) {
-    Statistics t(s);
-    return t += *this;
-  }
+    forceinline Statistics
+    Statistics::operator+(const Statistics& s) {
+        Statistics t(s);
+        return t += *this;
+    }
 
-}}
+}} // namespace Gecode::Search
 
 // STATISTICS: search-other

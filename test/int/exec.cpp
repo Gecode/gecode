@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,156 +36,161 @@
 
 namespace Test { namespace Int {
 
-   /// %Tests for synchronized execution
-   namespace Exec {
+    /// %Tests for synchronized execution
+    namespace Exec {
 
-     /**
-      * \defgroup TaskTestIntExec Synchronized execution
-      * \ingroup TaskTestInt
-      */
-     //@{
-     /// Simple test for wait (integer variables)
-     class IntWait : public Test {
-     protected:
-       /// Whether to use std::function
-       bool sf;
-     public:
-       /// Create and register test
-       IntWait(int n, bool sf0)
-         : Test("Wait::Int::"+str(n)+"::"+
-                (sf0 ? "std::function" : "funptr"),n,0,n,false), sf(sf0) {}
-       /// Check whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         for (int i=0; i<x.size(); i++)
-           for (int j=i+1; j<x.size(); j++)
-             if (x[i] == x[j])
-               return false;
-         return true;
-       }
-       /// Post wait on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         auto f = static_cast<std::function<void(Space&)>>
-           ([](Space& home) { c(home); });
-         if (x.size() > 1) {
-           if (sf)
-             Gecode::wait(home, x, f);
-           else
-             Gecode::wait(home, x, &c);
-         } else {
-           if (sf)
-             Gecode::wait(home, x[0], f);
-           else
-             Gecode::wait(home, x[0], &c);
-         }
-       }
-       /// Continuation to be executed
-       static void c(Gecode::Space& _home) {
-         TestSpace& home = static_cast<TestSpace&>(_home);
-         for (int i=0; i<home.x.size(); i++)
-           for (int j=i+1; j<home.x.size(); j++)
-             if (home.x[i].val() == home.x[j].val())
-               home.fail();
-       }
-     };
+        /**
+         * \defgroup TaskTestIntExec Synchronized execution
+         * \ingroup TaskTestInt
+         */
+        //@{
+        /// Simple test for wait (integer variables)
+        class IntWait : public Test {
+        protected:
+            /// Whether to use std::function
+            bool sf;
 
-     /// Simple test for wait (Boolean variables)
-     class BoolWait : public Test {
-     protected:
-       /// Whether to use std::function
-       bool sf;
-     public:
-       /// Create and register test
-       BoolWait(int n, bool sf0)
-         : Test("Wait::Bool::"+str(n)+"::"+
-                (sf0 ? "std::function" : "funptr"),n,0,1,false), sf(sf0) {}
-       /// Check whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int t=0;
-         for (int i=0; i<x.size(); i++)
-           t += x[i];
-         return t==2;
-       }
-       /// Post wait on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         BoolVarArgs b(x.size());
-         for (int i=b.size(); i--; )
-           b[i]=channel(home,x[i]);
-         auto f = static_cast<std::function<void(Space&)>>
-           ([](Space& home) { c(home); });
-         if (b.size() > 1) {
-           if (sf)
-             Gecode::wait(home, b, f);
-           else
-             Gecode::wait(home, b, &c);
-         } else {
-           if (sf)
-             Gecode::wait(home, b[0], f);
-           else
-             Gecode::wait(home, b[0], &c);
-         }
-       }
-       /// Continuation to be executed
-       static void c(Gecode::Space& _home) {
-         TestSpace& home = static_cast<TestSpace&>(_home);
-         int t=0;
-         for (int i=0; i<home.x.size(); i++)
-           t += home.x[i].val();
-         if (t!=2)
-           home.fail();
-       }
-     };
+        public:
+            /// Create and register test
+            IntWait(int n, bool sf0)
+                : Test("Wait::Int::" + str(n) + "::" + (sf0 ? "std::function" : "funptr"), n, 0, n, false), sf(sf0) {}
+            /// Check whether \a x is solution
+            virtual bool
+            solution(const Assignment& x) const {
+                for (int i = 0; i < x.size(); i++)
+                    for (int j = i + 1; j < x.size(); j++)
+                        if (x[i] == x[j])
+                            return false;
+                return true;
+            }
+            /// Post wait on \a x
+            virtual void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+                using namespace Gecode;
+                auto f = static_cast<std::function<void(Space&)>>([](Space& home) { c(home); });
+                if (x.size() > 1) {
+                    if (sf)
+                        Gecode::wait(home, x, f);
+                    else
+                        Gecode::wait(home, x, &c);
+                } else {
+                    if (sf)
+                        Gecode::wait(home, x[0], f);
+                    else
+                        Gecode::wait(home, x[0], &c);
+                }
+            }
+            /// Continuation to be executed
+            static void
+            c(Gecode::Space& _home) {
+                TestSpace& home = static_cast<TestSpace&>(_home);
+                for (int i = 0; i < home.x.size(); i++)
+                    for (int j = i + 1; j < home.x.size(); j++)
+                        if (home.x[i].val() == home.x[j].val())
+                            home.fail();
+            }
+        };
 
-     /// Simple test for when
-     class When : public Test {
-     protected:
-       /// Whether to use std::function
-       bool sf;
-     public:
-       /// Create and register test
-       When(bool sf0) 
-         : Test(std::string("When::")+
-                (sf0 ? "std::function" : "funptr"),1,0,1,false), sf(sf0) {}
-       /// Check whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return x[0]==0;
-       }
-       /// Post when on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         if (sf) {
-           auto sft = static_cast<std::function<void(Space&)>>
-             ([](Space& home) { t(home); });
-           auto sfe = static_cast<std::function<void(Space&)>>
-             ([](Space& home) { e(home); });
-           when(home, channel(home, x[0]), sft, sfe);
-         } else {
-           when(home, channel(home, x[0]), &t, &e);
-         }
-       }
-       /// Then-function to be executed
-       static void t(Gecode::Space& home) {
-         home.fail();
-       }
-       /// Else-function to be executed
-       static void e(Gecode::Space& home) {
-         (void) home;
-       }
-     };
+        /// Simple test for wait (Boolean variables)
+        class BoolWait : public Test {
+        protected:
+            /// Whether to use std::function
+            bool sf;
 
-     IntWait iw1t(1,true), iw2t(2,true), iw3t(3,true), iw4t(4,true);
-     IntWait iw1f(1,false), iw2f(2,false), iw3f(3,false), iw4f(4,false);
-     BoolWait bw1t(1,true), bw2t(2,true), bw3t(3,true), bw4t(4,true);
-     BoolWait bw1f(1,false), bw2f(2,false), bw3f(3,false), bw4f(4,false);
+        public:
+            /// Create and register test
+            BoolWait(int n, bool sf0)
+                : Test("Wait::Bool::" + str(n) + "::" + (sf0 ? "std::function" : "funptr"), n, 0, 1, false), sf(sf0) {}
+            /// Check whether \a x is solution
+            virtual bool
+            solution(const Assignment& x) const {
+                int t = 0;
+                for (int i = 0; i < x.size(); i++)
+                    t += x[i];
+                return t == 2;
+            }
+            /// Post wait on \a x
+            virtual void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+                using namespace Gecode;
+                BoolVarArgs b(x.size());
+                for (int i = b.size(); i--;)
+                    b[i] = channel(home, x[i]);
+                auto f = static_cast<std::function<void(Space&)>>([](Space& home) { c(home); });
+                if (b.size() > 1) {
+                    if (sf)
+                        Gecode::wait(home, b, f);
+                    else
+                        Gecode::wait(home, b, &c);
+                } else {
+                    if (sf)
+                        Gecode::wait(home, b[0], f);
+                    else
+                        Gecode::wait(home, b[0], &c);
+                }
+            }
+            /// Continuation to be executed
+            static void
+            c(Gecode::Space& _home) {
+                TestSpace& home = static_cast<TestSpace&>(_home);
+                int t = 0;
+                for (int i = 0; i < home.x.size(); i++)
+                    t += home.x[i].val();
+                if (t != 2)
+                    home.fail();
+            }
+        };
 
+        /// Simple test for when
+        class When : public Test {
+        protected:
+            /// Whether to use std::function
+            bool sf;
 
-     When whent(true);
-     When whenf(false);
-     //@}
+        public:
+            /// Create and register test
+            When(bool sf0)
+                : Test(std::string("When::") + (sf0 ? "std::function" : "funptr"), 1, 0, 1, false), sf(sf0) {}
+            /// Check whether \a x is solution
+            virtual bool
+            solution(const Assignment& x) const {
+                return x[0] == 0;
+            }
+            /// Post when on \a x
+            virtual void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+                using namespace Gecode;
+                if (sf) {
+                    auto sft = static_cast<std::function<void(Space&)>>([](Space& home) { t(home); });
+                    auto sfe = static_cast<std::function<void(Space&)>>([](Space& home) { e(home); });
+                    when(home, channel(home, x[0]), sft, sfe);
+                } else {
+                    when(home, channel(home, x[0]), &t, &e);
+                }
+            }
+            /// Then-function to be executed
+            static void
+            t(Gecode::Space& home) {
+                home.fail();
+            }
+            /// Else-function to be executed
+            static void
+            e(Gecode::Space& home) {
+                (void)home;
+            }
+        };
 
-   }
+        IntWait iw1t(1, true), iw2t(2, true), iw3t(3, true), iw4t(4, true);
+        IntWait iw1f(1, false), iw2f(2, false), iw3f(3, false), iw4f(4, false);
+        BoolWait bw1t(1, true), bw2t(2, true), bw3t(3, true), bw4t(4, true);
+        BoolWait bw1f(1, false), bw2f(2, false), bw3f(3, false), bw4f(4, false);
 
-}}
+        When whent(true);
+        When whenf(false);
+        //@}
+
+    } // namespace Exec
+
+}} // namespace Test::Int
 
 // STATISTICS: test-int

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -43,44 +42,43 @@
 
 namespace Gecode { namespace Float { namespace Bool {
 
-  /**
-   * \brief If-then-else propagator
-   *
-   * Requires \code #include <gecode/float/bool.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class View>
-  class Ite : public Propagator {
-  protected:
-    /// View for condition
-    Int::BoolView b;
-    /// Views
-    View x0, x1, x2;
-    /// Constructor for cloning \a p
-    Ite(Space& home, Ite& p);
-    /// Constructor for creation
-    Ite(Home home, Int::BoolView b, View x0, View x1, View x2);
-  public:
-    /// Cost function (defined as low ternary)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post if-then-else propagator
-    static ExecStatus post(Home home, Int::BoolView b,
-                           View x0, View x1, View x2);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
+    /**
+     * \brief If-then-else propagator
+     *
+     * Requires \code #include <gecode/float/bool.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class View>
+    class Ite : public Propagator {
+    protected:
+        /// View for condition
+        Int::BoolView b;
+        /// Views
+        View x0, x1, x2;
+        /// Constructor for cloning \a p
+        Ite(Space& home, Ite& p);
+        /// Constructor for creation
+        Ite(Home home, Int::BoolView b, View x0, View x1, View x2);
 
-}}}
+    public:
+        /// Cost function (defined as low ternary)
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Copy propagator during cloning
+        virtual Actor* copy(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post if-then-else propagator
+        static ExecStatus post(Home home, Int::BoolView b, View x0, View x1, View x2);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+    };
+
+}}} // namespace Gecode::Float::Bool
 
 #include <gecode/float/bool/ite.hpp>
 
 #endif
 
 // STATISTICS: float-prop
-

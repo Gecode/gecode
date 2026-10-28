@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Gregory Crosswhite <gcross@phys.washington.edu>
@@ -39,267 +38,283 @@
 #include "test/test.hh"
 
 /// Check the test result and handle failed test
-#define CHECK_TEST(T,M)                                         \
-do {                                                            \
-if (opt.log)                                                    \
-  olog << ind(3) << "Check: " << (M) << std::endl;              \
-if (!(T)) {                                                     \
-  problem = (M); goto failed;                                   \
-}                                                               \
-} while (false)
+#define CHECK_TEST(T, M)                                                                                               \
+    do {                                                                                                               \
+        if (opt.log)                                                                                                   \
+            olog << ind(3) << "Check: " << (M) << std::endl;                                                           \
+        if (!(T)) {                                                                                                    \
+            problem = (M);                                                                                             \
+            goto failed;                                                                                               \
+        }                                                                                                              \
+    } while (false)
 
 /// Start new test
-#define START_TEST(T)                                           \
-do {                                                            \
-  if (opt.log) {                                                \
-     olog.str("");                                              \
-     olog << ind(2) << "Testing: " << (T) << std::endl;         \
-  }                                                             \
-  test = (T);                                                   \
-} while (false)
+#define START_TEST(T)                                                                                                  \
+    do {                                                                                                               \
+        if (opt.log) {                                                                                                 \
+            olog.str("");                                                                                              \
+            olog << ind(2) << "Testing: " << (T) << std::endl;                                                         \
+        }                                                                                                              \
+        test = (T);                                                                                                    \
+    } while (false)
 
 namespace Test {
 
-  /// Tests for arrays
-  namespace Array {
+    /// Tests for arrays
+    namespace Array {
 
-  /// Test name prefix
-  static const std::string prefix("Array::Iterator::");
+        /// Test name prefix
+        static const std::string prefix("Array::Iterator::");
 
-  /// %Base class for testing iterators
-  class Iterator : public Test::Base {
-  protected:
-    /// Maximum array size
-    static const int n = 16;
-    /// Initialize test
-    Iterator(const std::string& name) : Test::Base(prefix + name) {}
-    /// Perform actual tests
-    template<class Array> bool runTestForArray(Array& a) {
-      // Test/problem information.
-      const char* test    = "NONE";
-      const char* problem = "NONE";
-      // Constant reference to the array
-      const Array& const_a = a;
+        /// %Base class for testing iterators
+        class Iterator : public Test::Base {
+        protected:
+            /// Maximum array size
+            static const int n = 16;
+            /// Initialize test
+            Iterator(const std::string& name) : Test::Base(prefix + name) {}
+            /// Perform actual tests
+            template <class Array>
+            bool
+            runTestForArray(Array& a) {
+                // Test/problem information.
+                const char* test = "NONE";
+                const char* problem = "NONE";
+                // Constant reference to the array
+                const Array& const_a = a;
 
-      START_TEST("Iteration");
-      {
-        typedef typename Array::reference reference;
-        typedef typename Array::pointer pointer;
-        typedef typename Array::iterator iterator;
-        const iterator begin = a.begin(), end = a.end();
-        CHECK_TEST(end-begin==a.size(),"Distance != size");
-        int index = 0;
-        iterator iter = begin;
-        for(; iter != end; ++iter, ++index) {
-          reference ref = *iter;
-          const pointer ptr = &ref;
-          CHECK_TEST(ptr==&a[index],"Iterator points to the wrong element (going forward)");
-        }
-        CHECK_TEST(index==a.size(),"Iteration covered the wrong number of elements (going forward)");
-        for(; iter != begin; --iter, --index) {
-          reference ref = *(iter-1);
-          const pointer ptr = &ref;
-          CHECK_TEST(ptr==&a[index-1],"Iterator points to the wrong element (going backwards)");
-        }
-        CHECK_TEST(index==0,"Iteration covered the wrong number of elements (going backward)");
-      }
-      START_TEST("Read-only iteration");
-      {
-        typedef typename Array::const_reference reference;
-        typedef typename Array::const_pointer pointer;
-        typedef typename Array::const_iterator iterator;
-        const iterator begin = const_a.begin(), end = const_a.end();
-        CHECK_TEST(end-begin==const_a.size(),"Distance != size");
-        int index = 0;
-        iterator iter = begin;
-        for(; iter != end; ++iter, ++index) {
-          reference ref = *iter;
-          const pointer ptr = &ref;
-          CHECK_TEST(ptr==&const_a[index],"Iterator points to the wrong element (going forward)");
-        }
-        CHECK_TEST(index==const_a.size(),"Iteration covered the wrong number of elements (going forward)");
-        for(; iter != begin; --iter, --index) {
-          reference ref = *(iter-1);
-          const pointer ptr = &ref;
-          CHECK_TEST(ptr==&const_a[index-1],"Iterator points to the wrong element (going backwards)");
-        }
-        CHECK_TEST(index==0,"Iteration covered the wrong number of elements (going backward)");
-      }
+                START_TEST("Iteration");
+                {
+                    typedef typename Array::reference reference;
+                    typedef typename Array::pointer pointer;
+                    typedef typename Array::iterator iterator;
+                    const iterator begin = a.begin(), end = a.end();
+                    CHECK_TEST(end - begin == a.size(), "Distance != size");
+                    int index = 0;
+                    iterator iter = begin;
+                    for (; iter != end; ++iter, ++index) {
+                        reference ref = *iter;
+                        const pointer ptr = &ref;
+                        CHECK_TEST(ptr == &a[index], "Iterator points to the wrong element (going forward)");
+                    }
+                    CHECK_TEST(index == a.size(), "Iteration covered the wrong number of elements (going forward)");
+                    for (; iter != begin; --iter, --index) {
+                        reference ref = *(iter - 1);
+                        const pointer ptr = &ref;
+                        CHECK_TEST(ptr == &a[index - 1], "Iterator points to the wrong element (going backwards)");
+                    }
+                    CHECK_TEST(index == 0, "Iteration covered the wrong number of elements (going backward)");
+                }
+                START_TEST("Read-only iteration");
+                {
+                    typedef typename Array::const_reference reference;
+                    typedef typename Array::const_pointer pointer;
+                    typedef typename Array::const_iterator iterator;
+                    const iterator begin = const_a.begin(), end = const_a.end();
+                    CHECK_TEST(end - begin == const_a.size(), "Distance != size");
+                    int index = 0;
+                    iterator iter = begin;
+                    for (; iter != end; ++iter, ++index) {
+                        reference ref = *iter;
+                        const pointer ptr = &ref;
+                        CHECK_TEST(ptr == &const_a[index], "Iterator points to the wrong element (going forward)");
+                    }
+                    CHECK_TEST(index == const_a.size(),
+                               "Iteration covered the wrong number of elements (going forward)");
+                    for (; iter != begin; --iter, --index) {
+                        reference ref = *(iter - 1);
+                        const pointer ptr = &ref;
+                        CHECK_TEST(ptr == &const_a[index - 1],
+                                   "Iterator points to the wrong element (going backwards)");
+                    }
+                    CHECK_TEST(index == 0, "Iteration covered the wrong number of elements (going backward)");
+                }
 
-      START_TEST("Reverse iteration");
-      {
-        typedef typename Array::reference reference;
-        typedef typename Array::pointer pointer;
-        typedef typename Array::reverse_iterator iterator;
-        const iterator begin = a.rbegin(), end = a.rend();
-        CHECK_TEST(end-begin==a.size(),"Distance != size");
-        int index = a.size();
-        iterator iter = begin;
-        for(; iter != end; ++iter, --index) {
-          reference ref = *iter;
-          const pointer ptr = &ref;
-          CHECK_TEST(ptr==&a[index-1],"Iterator points to the wrong element (going forward)");
-        }
-        CHECK_TEST(index==0,"Iteration covered the wrong number of elements (going forward)");
-        for(; iter != begin; --iter, ++index) {
-          reference ref = *(iter-1);
-          const pointer ptr = &ref;
-          CHECK_TEST(ptr==&a[index],"Iterator points to the wrong element (going backwards)");
-        }
-        CHECK_TEST(index==a.size(),"Iteration covered the wrong number of elements (going backward)");
-      }
+                START_TEST("Reverse iteration");
+                {
+                    typedef typename Array::reference reference;
+                    typedef typename Array::pointer pointer;
+                    typedef typename Array::reverse_iterator iterator;
+                    const iterator begin = a.rbegin(), end = a.rend();
+                    CHECK_TEST(end - begin == a.size(), "Distance != size");
+                    int index = a.size();
+                    iterator iter = begin;
+                    for (; iter != end; ++iter, --index) {
+                        reference ref = *iter;
+                        const pointer ptr = &ref;
+                        CHECK_TEST(ptr == &a[index - 1], "Iterator points to the wrong element (going forward)");
+                    }
+                    CHECK_TEST(index == 0, "Iteration covered the wrong number of elements (going forward)");
+                    for (; iter != begin; --iter, ++index) {
+                        reference ref = *(iter - 1);
+                        const pointer ptr = &ref;
+                        CHECK_TEST(ptr == &a[index], "Iterator points to the wrong element (going backwards)");
+                    }
+                    CHECK_TEST(index == a.size(), "Iteration covered the wrong number of elements (going backward)");
+                }
 
-      START_TEST("Reverse read-only iteration");
-      {
-        typedef typename Array::const_reference reference;
-        typedef typename Array::const_pointer pointer;
-        typedef typename Array::const_reverse_iterator iterator;
-        const iterator begin = const_a.rbegin(), end = const_a.rend();
-        CHECK_TEST(end-begin==const_a.size(),"Distance != size");
-        int index = a.size();
-        iterator iter = begin;
-        for(; iter != end; ++iter, --index) {
-          reference ref = *iter;
-          const pointer ptr = &ref;
-          CHECK_TEST(ptr==&const_a[index-1],"Iterator points to the wrong element (going forward)");
-        }
-        CHECK_TEST(index==0,"Iteration covered the wrong number of elements (going forward)");
-        for(; iter != begin; --iter, ++index) {
-          reference ref = *(iter-1);
-          const pointer ptr = &ref;
-          CHECK_TEST(ptr==&const_a[index],"Iterator points to the wrong element (going backwards)");
-        }
-        CHECK_TEST(index==a.size(),"Iteration covered the wrong number of elements (going backward)");
-      }
+                START_TEST("Reverse read-only iteration");
+                {
+                    typedef typename Array::const_reference reference;
+                    typedef typename Array::const_pointer pointer;
+                    typedef typename Array::const_reverse_iterator iterator;
+                    const iterator begin = const_a.rbegin(), end = const_a.rend();
+                    CHECK_TEST(end - begin == const_a.size(), "Distance != size");
+                    int index = a.size();
+                    iterator iter = begin;
+                    for (; iter != end; ++iter, --index) {
+                        reference ref = *iter;
+                        const pointer ptr = &ref;
+                        CHECK_TEST(ptr == &const_a[index - 1], "Iterator points to the wrong element (going forward)");
+                    }
+                    CHECK_TEST(index == 0, "Iteration covered the wrong number of elements (going forward)");
+                    for (; iter != begin; --iter, ++index) {
+                        reference ref = *(iter - 1);
+                        const pointer ptr = &ref;
+                        CHECK_TEST(ptr == &const_a[index], "Iterator points to the wrong element (going backwards)");
+                    }
+                    CHECK_TEST(index == a.size(), "Iteration covered the wrong number of elements (going backward)");
+                }
 
-      return true;
-    failed:
-      if (opt.log)
-        olog << "FAILURE" << std::endl
-        << ind(1) << "Test:       " << test << std::endl
-        << ind(1) << "Problem:    " << problem << std::endl;
-      return false;
-    }
-  };
+                return true;
+            failed:
+                if (opt.log)
+                    olog << "FAILURE" << std::endl
+                         << ind(1) << "Test:       " << test << std::endl
+                         << ind(1) << "Problem:    " << problem << std::endl;
+                return false;
+            }
+        };
 
-  /// Test space
-  class TestSpace : public Gecode::Space {
-  public:
-    TestSpace(void) : Space() {}
-    TestSpace(TestSpace& s) : Space(s) {}
-    virtual Space* copy(void) {
-      return new TestSpace(*this);
-    }
-  };
+        /// Test space
+        class TestSpace : public Gecode::Space {
+        public:
+            TestSpace(void) : Space() {}
+            TestSpace(TestSpace& s) : Space(s) {}
+            virtual Space*
+            copy(void) {
+                return new TestSpace(*this);
+            }
+        };
 
-  /// Test name prefix for vector construction
-  static const std::string vectorPrefix("Array::Vector::");
+        /// Test name prefix for vector construction
+        static const std::string vectorPrefix("Array::Vector::");
 
-  /// %Class for testing construction from empty vectors
-  class EmptyVector : public Test::Base {
-  public:
-    /// Initialize test
-    EmptyVector(void) : Test::Base(vectorPrefix + "Empty") {}
-    /// Perform actual tests
-    bool run(void) {
-      std::vector<int> ints;
-      Gecode::IntArgs ia(ints);
-      if (ia.size() != 0)
-        return false;
+        /// %Class for testing construction from empty vectors
+        class EmptyVector : public Test::Base {
+        public:
+            /// Initialize test
+            EmptyVector(void) : Test::Base(vectorPrefix + "Empty") {}
+            /// Perform actual tests
+            bool
+            run(void) {
+                std::vector<int> ints;
+                Gecode::IntArgs ia(ints);
+                if (ia.size() != 0)
+                    return false;
 
-      std::vector<Gecode::IntVar> intVars;
-      Gecode::IntVarArgs iva(intVars);
-      if (iva.size() != 0)
-        return false;
+                std::vector<Gecode::IntVar> intVars;
+                Gecode::IntVarArgs iva(intVars);
+                if (iva.size() != 0)
+                    return false;
 
-      std::vector<Gecode::BoolVar> boolVars;
-      Gecode::BoolVarArgs bva(boolVars);
-      return bva.size() == 0;
-    }
-  } emptyVectorTest;
+                std::vector<Gecode::BoolVar> boolVars;
+                Gecode::BoolVarArgs bva(boolVars);
+                return bva.size() == 0;
+            }
+        } emptyVectorTest;
 
-  /// %Class for testing the VarArray iterator
-  class VarArrayIterator : public Iterator {
-  protected:
-    /// Maximum array size
-    static const int n = 16;
-    /// Array type being tested
-    typedef Gecode::VarArray<Gecode::IntVar> Array;
-  public:
-    /// Initialize test
-    VarArrayIterator(void) : Iterator("VarArray") {}
-    /// Perform actual tests
-    bool run(void) {
-      // Space for the test
-      TestSpace s;
-      // VarArray for the test
-      Array a(s,_rand(n));
-      // Run the iterator test
-      return runTestForArray(a);
-    }
-  } varArrayIteratorTest;
+        /// %Class for testing the VarArray iterator
+        class VarArrayIterator : public Iterator {
+        protected:
+            /// Maximum array size
+            static const int n = 16;
+            /// Array type being tested
+            typedef Gecode::VarArray<Gecode::IntVar> Array;
 
-  /// %Class for testing the VarArgs iterator
-  class VarArgsIterator : public Iterator {
-  protected:
-    /// Maximum array size
-    static const int n = 16;
-    /// Array type being tested
-    typedef Gecode::ArgArrayBase<int> Array;
-  public:
-    /// Initialize test
-    VarArgsIterator(void) : Iterator("VarArgs") {}
-    /// Perform actual tests
-    bool run(void) {
-      // Space for the test
-      TestSpace s;
-      // VarArray for the test
-      Array a(_rand(n));
-      // Run the iterator test
-      return runTestForArray(a);
-    }
-  } varArgsIteratorTest;
+        public:
+            /// Initialize test
+            VarArrayIterator(void) : Iterator("VarArray") {}
+            /// Perform actual tests
+            bool
+            run(void) {
+                // Space for the test
+                TestSpace s;
+                // VarArray for the test
+                Array a(s, _rand(n));
+                // Run the iterator test
+                return runTestForArray(a);
+            }
+        } varArrayIteratorTest;
 
-  /// %Class for testing the ViewArray iterator
-  class ViewArrayIterator : public Iterator {
-  protected:
-    /// Maximum array size
-    static const int n = 16;
-    /// Array type being tested
-    typedef Gecode::ViewArray<Gecode::IntVar> Array;
-  public:
-    /// Initialize test
-    ViewArrayIterator(void) : Iterator("ViewArray") {}
-    /// Perform actual tests
-    bool run(void) {
-      // Space for the test
-      TestSpace s;
-      // VarArray for the test
-      Array a(s,_rand(n));
-      // Run the iterator test
-      return runTestForArray(a);
-    }
-  } viewArrayIteratorTest;
+        /// %Class for testing the VarArgs iterator
+        class VarArgsIterator : public Iterator {
+        protected:
+            /// Maximum array size
+            static const int n = 16;
+            /// Array type being tested
+            typedef Gecode::ArgArrayBase<int> Array;
 
-  /// %Class for testing the SharedArray iterator
-  class SharedArrayIterator : public Iterator {
-  protected:
-    /// Maximum array size
-    static const int n = 16;
-    /// Array type being tested
-    typedef Gecode::SharedArray<int> Array;
-  public:
-    /// Initialize test
-    SharedArrayIterator(void) : Iterator("SharedArray") {}
-    /// Perform actual tests
-    bool run(void) {
-      // SharedArray for the test
-      Array a(_rand(n));
-      // Run the iterator test
-      return runTestForArray(a);
-    }
-  } sharedArrayIteratorTest;
+        public:
+            /// Initialize test
+            VarArgsIterator(void) : Iterator("VarArgs") {}
+            /// Perform actual tests
+            bool
+            run(void) {
+                // Space for the test
+                TestSpace s;
+                // VarArray for the test
+                Array a(_rand(n));
+                // Run the iterator test
+                return runTestForArray(a);
+            }
+        } varArgsIteratorTest;
 
-}}
+        /// %Class for testing the ViewArray iterator
+        class ViewArrayIterator : public Iterator {
+        protected:
+            /// Maximum array size
+            static const int n = 16;
+            /// Array type being tested
+            typedef Gecode::ViewArray<Gecode::IntVar> Array;
+
+        public:
+            /// Initialize test
+            ViewArrayIterator(void) : Iterator("ViewArray") {}
+            /// Perform actual tests
+            bool
+            run(void) {
+                // Space for the test
+                TestSpace s;
+                // VarArray for the test
+                Array a(s, _rand(n));
+                // Run the iterator test
+                return runTestForArray(a);
+            }
+        } viewArrayIteratorTest;
+
+        /// %Class for testing the SharedArray iterator
+        class SharedArrayIterator : public Iterator {
+        protected:
+            /// Maximum array size
+            static const int n = 16;
+            /// Array type being tested
+            typedef Gecode::SharedArray<int> Array;
+
+        public:
+            /// Initialize test
+            SharedArrayIterator(void) : Iterator("SharedArray") {}
+            /// Perform actual tests
+            bool
+            run(void) {
+                // SharedArray for the test
+                Array a(_rand(n));
+                // Run the iterator test
+                return runTestForArray(a);
+            }
+        } sharedArrayIteratorTest;
+
+    } // namespace Array
+} // namespace Test
 
 // STATISTICS: test-core

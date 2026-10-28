@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,185 +32,164 @@
 
 namespace Gecode {
 
-  /**
-   * \defgroup TaskBranchValSelCommit Generic value selection and value commit for brancher based on view and value selection
-   *
-   * \ingroup TaskBranchViewVal
-   */
-  //@{
-  /// Base class for value selection and commit
-  template<class View_, class Val_>
-  class ValSelCommitBase {
-  public:
-    /// View type
-    typedef View_ View;
-    /// Corresponding variable type
-    typedef typename View::VarType Var;
-    /// Value type
-    typedef Val_ Val;
-  public:
-    /// Constructor for initialization
-    ValSelCommitBase(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelCommitBase(Space& home, ValSelCommitBase<View,Val>& vsc);
-    /// Return value of view \a x at position \a i
-    virtual Val val(const Space& home, View x, int i) = 0;
-    /// Commit view \a x at position \a i to value \a n for alternative \a a
-    virtual ModEvent commit(Space& home, unsigned int a,
-                            View x, int i, Val n) = 0;
-    /// Create no-good literal for choice \a c and alternative \a a
-    virtual NGL* ngl(Space& home, unsigned int a,
-                     View x, Val n) const = 0;
-    /// Print on \a o branch for alternative \a a, view \a x at position \a i, and value \a n
-    virtual void print(const Space& home, unsigned int a,
-                       View x, int i, const Val& n,
-                       std::ostream& o) const = 0;
-    /// Perform cloning
-    virtual ValSelCommitBase<View,Val>* copy(Space& home) = 0;
-    /// Whether dispose must always be called (that is, notice is needed)
-    virtual bool notice(void) const = 0;
-    /// Delete value selection
-    virtual void dispose(Space& home) = 0;
-    /// Unused destructor
-    virtual ~ValSelCommitBase(void);
-    /// \name Memory management
+    /**
+     * \defgroup TaskBranchValSelCommit Generic value selection and value commit for brancher based on view and value selection
+     *
+     * \ingroup TaskBranchViewVal
+     */
     //@{
-    /// Allocate memory from space
-    static void* operator new(size_t s, Space& home);
-    /// Return memory to space
-    static void operator delete(void* p, Space& home);
-    /// Needed for exceptions
-    static void operator delete(void* p);
+    /// Base class for value selection and commit
+    template <class View_, class Val_>
+    class ValSelCommitBase {
+    public:
+        /// View type
+        typedef View_ View;
+        /// Corresponding variable type
+        typedef typename View::VarType Var;
+        /// Value type
+        typedef Val_ Val;
+
+    public:
+        /// Constructor for initialization
+        ValSelCommitBase(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValSelCommitBase(Space& home, ValSelCommitBase<View, Val>& vsc);
+        /// Return value of view \a x at position \a i
+        virtual Val val(const Space& home, View x, int i) = 0;
+        /// Commit view \a x at position \a i to value \a n for alternative \a a
+        virtual ModEvent commit(Space& home, unsigned int a, View x, int i, Val n) = 0;
+        /// Create no-good literal for choice \a c and alternative \a a
+        virtual NGL* ngl(Space& home, unsigned int a, View x, Val n) const = 0;
+        /// Print on \a o branch for alternative \a a, view \a x at position \a i, and value \a n
+        virtual void print(const Space& home, unsigned int a, View x, int i, const Val& n, std::ostream& o) const = 0;
+        /// Perform cloning
+        virtual ValSelCommitBase<View, Val>* copy(Space& home) = 0;
+        /// Whether dispose must always be called (that is, notice is needed)
+        virtual bool notice(void) const = 0;
+        /// Delete value selection
+        virtual void dispose(Space& home) = 0;
+        /// Unused destructor
+        virtual ~ValSelCommitBase(void);
+        /// \name Memory management
+        //@{
+        /// Allocate memory from space
+        static void* operator new(size_t s, Space& home);
+        /// Return memory to space
+        static void operator delete(void* p, Space& home);
+        /// Needed for exceptions
+        static void operator delete(void* p);
+        //@}
+    };
+
+    /// Class for value selection and commit
+    template <class ValSel, class ValCommit>
+    class ValSelCommit : public ValSelCommitBase<typename ValSel::View, typename ValSel::Val> {
+    protected:
+        typedef typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Var Var;
+        typedef typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Val Val;
+        typedef typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::View View;
+        /// The value selection object used
+        ValSel s;
+        /// The commit object used
+        ValCommit c;
+
+    public:
+        /// Constructor for initialization
+        ValSelCommit(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValSelCommit(Space& home, ValSelCommit<ValSel, ValCommit>& vsc);
+        /// Return value of view \a x at position \a i
+        virtual Val val(const Space& home, View x, int i);
+        /// Commit view \a x at position \a i to value \a n for alternative \a a
+        virtual ModEvent commit(Space& home, unsigned int a, View x, int i, Val n);
+        /// Create no-good literal for choice \a c and alternative \a a
+        virtual NGL* ngl(Space& home, unsigned int a, View x, Val n) const;
+        /// Print on \a o branch for alternative \a a, view \a x at position \a i, and value \a n
+        virtual void print(const Space& home, unsigned int a, View x, int i, const Val& n, std::ostream& o) const;
+        /// Perform cloning
+        virtual ValSelCommit<ValSel, ValCommit>* copy(Space& home);
+        /// Whether dispose must always be called (that is, notice is needed)
+        virtual bool notice(void) const;
+        /// Delete value selection
+        virtual void dispose(Space& home);
+    };
     //@}
-  };
 
-  /// Class for value selection and commit
-  template<class ValSel, class ValCommit>
-  class ValSelCommit
-    : public ValSelCommitBase<typename ValSel::View,typename ValSel::Val> {
-  protected:
-    typedef typename ValSelCommitBase<typename ValSel::View,
-                                      typename ValSel::Val>::Var Var;
-    typedef typename ValSelCommitBase<typename ValSel::View,
-                                      typename ValSel::Val>::Val Val;
-    typedef typename ValSelCommitBase<typename ValSel::View,
-                                      typename ValSel::Val>::View View;
-    /// The value selection object used
-    ValSel s;
-    /// The commit object used
-    ValCommit c;
-  public:
-    /// Constructor for initialization
-    ValSelCommit(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelCommit(Space& home, ValSelCommit<ValSel,ValCommit>& vsc);
-    /// Return value of view \a x at position \a i
-    virtual Val val(const Space& home, View x, int i);
-    /// Commit view \a x at position \a i to value \a n for alternative \a a
-    virtual ModEvent commit(Space& home, unsigned int a, View x, int i, Val n);
-    /// Create no-good literal for choice \a c and alternative \a a
-    virtual NGL* ngl(Space& home, unsigned int a,
-                     View x, Val n) const;
-    /// Print on \a o branch for alternative \a a, view \a x at position \a i, and value \a n
-    virtual void print(const Space& home, unsigned int a,
-                       View x, int i, const Val& n,
-                       std::ostream& o) const;
-    /// Perform cloning
-    virtual ValSelCommit<ValSel,ValCommit>* copy(Space& home);
-    /// Whether dispose must always be called (that is, notice is needed)
-    virtual bool notice(void) const;
-    /// Delete value selection
-    virtual void dispose(Space& home);
-  };
-  //@}
+    template <class View, class Val>
+    forceinline
+    ValSelCommitBase<View, Val>::ValSelCommitBase(Space&, const ValBranch<Var>&) {}
+    template <class View, class Val>
+    forceinline
+    ValSelCommitBase<View, Val>::ValSelCommitBase(Space&, ValSelCommitBase<View, Val>&) {}
+    template <class View, class Val>
+    ValSelCommitBase<View, Val>::~ValSelCommitBase(void) {}
 
+    template <class View, class Val>
+    forceinline void
+    ValSelCommitBase<View, Val>::operator delete(void*) {}
+    template <class View, class Val>
+    forceinline void
+    ValSelCommitBase<View, Val>::operator delete(void*, Space&) {}
+    template <class View, class Val>
+    forceinline void*
+    ValSelCommitBase<View, Val>::operator new(size_t s, Space& home) {
+        return home.ralloc(s);
+    }
 
-  template<class View, class Val>
-  forceinline
-  ValSelCommitBase<View,Val>::ValSelCommitBase(Space&,
-                                               const ValBranch<Var>&) {}
-  template<class View, class Val>
-  forceinline
-  ValSelCommitBase<View,Val>::
-    ValSelCommitBase(Space&, ValSelCommitBase<View,Val>&) {}
-  template<class View, class Val>
-  ValSelCommitBase<View,Val>::~ValSelCommitBase(void) {}
+    template <class ValSel, class ValCommit>
+    forceinline
+    ValSelCommit<ValSel, ValCommit>::ValSelCommit(Space& home, const ValBranch<Var>& vb)
+        : ValSelCommitBase<View, Val>(home, vb), s(home, vb), c(home, vb) {}
 
-  template<class View, class Val>
-  forceinline void
-  ValSelCommitBase<View,Val>::operator delete(void*) {}
-  template<class View, class Val>
-  forceinline void
-  ValSelCommitBase<View,Val>::operator delete(void*, Space&) {}
-  template<class View, class Val>
-  forceinline void*
-  ValSelCommitBase<View,Val>::operator new(size_t s, Space& home) {
-    return home.ralloc(s);
-  }
+    template <class ValSel, class ValCommit>
+    forceinline
+    ValSelCommit<ValSel, ValCommit>::ValSelCommit(Space& home, ValSelCommit<ValSel, ValCommit>& vsc)
+        : ValSelCommitBase<View, Val>(home, vsc), s(home, vsc.s), c(home, vsc.c) {}
 
+    template <class ValSel, class ValCommit>
+    typename ValSelCommit<ValSel, ValCommit>::Val
+    ValSelCommit<ValSel, ValCommit>::val(const Space& home, View x, int i) {
+        return s.val(home, x, i);
+    }
 
+    template <class ValSel, class ValCommit>
+    ModEvent
+    ValSelCommit<ValSel, ValCommit>::commit(Space& home, unsigned int a, View x, int i, Val n) {
+        return c.commit(home, a, x, i, n);
+    }
 
+    template <class ValSel, class ValCommit>
+    NGL*
+    ValSelCommit<ValSel, ValCommit>::ngl(Space& home, unsigned int a, View x, Val n) const {
+        return c.ngl(home, a, x, n);
+    }
 
-  template<class ValSel, class ValCommit>
-  forceinline
-  ValSelCommit<ValSel,ValCommit>::ValSelCommit(Space& home,
-                                               const ValBranch<Var>& vb)
-    : ValSelCommitBase<View,Val>(home,vb), s(home,vb), c(home,vb) {}
+    template <class ValSel, class ValCommit>
+    void
+    ValSelCommit<ValSel, ValCommit>::print(const Space& home, unsigned int a, View x, int i, const Val& n,
+                                           std::ostream& o) const {
+        c.print(home, a, x, i, n, o);
+    }
 
-  template<class ValSel, class ValCommit>
-  forceinline
-  ValSelCommit<ValSel,ValCommit>::ValSelCommit(Space& home,
-                                               ValSelCommit<ValSel,ValCommit>& vsc)
-    : ValSelCommitBase<View,Val>(home,vsc),
-      s(home,vsc.s), c(home,vsc.c) {}
+    template <class ValSel, class ValCommit>
+    ValSelCommit<ValSel, ValCommit>*
+    ValSelCommit<ValSel, ValCommit>::copy(Space& home) {
+        return new (home) ValSelCommit<ValSel, ValCommit>(home, *this);
+    }
 
-  template<class ValSel, class ValCommit>
-  typename ValSelCommit<ValSel,ValCommit>::Val
-  ValSelCommit<ValSel,ValCommit>::val(const Space& home, View x, int i) {
-    return s.val(home,x,i);
-  }
+    template <class ValSel, class ValCommit>
+    bool
+    ValSelCommit<ValSel, ValCommit>::notice(void) const {
+        return s.notice() || c.notice();
+    }
 
-  template<class ValSel, class ValCommit>
-  ModEvent
-  ValSelCommit<ValSel,ValCommit>::commit(Space& home, unsigned int a,
-                                         View x, int i, Val n) {
-    return c.commit(home,a,x,i,n);
-  }
+    template <class ValSel, class ValCommit>
+    void
+    ValSelCommit<ValSel, ValCommit>::dispose(Space& home) {
+        s.dispose(home);
+        c.dispose(home);
+    }
 
-  template<class ValSel, class ValCommit>
-  NGL*
-  ValSelCommit<ValSel,ValCommit>::ngl(Space& home, unsigned int a,
-                                      View x, Val n) const {
-    return c.ngl(home, a, x, n);
-  }
-
-  template<class ValSel, class ValCommit>
-  void
-  ValSelCommit<ValSel,ValCommit>::print(const Space& home, unsigned int a,
-                                        View x, int i, const Val& n,
-                                        std::ostream& o) const {
-    c.print(home,a,x,i,n,o);
-  }
-
-  template<class ValSel, class ValCommit>
-  ValSelCommit<ValSel,ValCommit>*
-  ValSelCommit<ValSel,ValCommit>::copy(Space& home) {
-    return new (home) ValSelCommit<ValSel,ValCommit>(home,*this);
-  }
-
-  template<class ValSel, class ValCommit>
-  bool
-  ValSelCommit<ValSel,ValCommit>::notice(void) const {
-    return s.notice() || c.notice();
-  }
-
-  template<class ValSel, class ValCommit>
-  void
-  ValSelCommit<ValSel,ValCommit>::dispose(Space& home) {
-    s.dispose(home);
-    c.dispose(home);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-branch

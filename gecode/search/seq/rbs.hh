@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -42,84 +41,87 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  class RBS;
+    class RBS;
 
-  /// %Stop-object for restart engine
-  class GECODE_SEARCH_EXPORT RestartStop : public Stop {
-    template<class,template<class>class> friend class ::Gecode::RBS;
-    friend class ::Gecode::Search::Seq::RBS;
-  private:
-    /// Mutex protecting restart stop state
-    mutable Support::Mutex m;
-    /// The failure limit for the engine
-    unsigned long long int l;
-    /// The stop object for the meta engine
-    Stop* m_stop;
-    /// Whether the engine was stopped
-    bool e_stopped;
-    /// Accumulated statistics for the meta engine
-    Statistics m_stat;
-  public:
-    /// Stop the meta engine if indicated by the stop object \a s
-    RestartStop(Stop* s);
-    /// Return true if meta engine must be stopped
-    virtual bool stop(const Statistics& s, const Options& o);
-    /// Return current restart count
-    unsigned long int restarts(void) const;
-    /// Increment current restart count
-    void restart(void);
-    /// Add no-goods to meta statistics
-    void nogood(unsigned long int n);
-    /// Test master status with meta statistics
-    SpaceStatus status(Space* s);
-    /// Set current limit for the engine to \a l fails
-    void limit(const Statistics& s, unsigned long long int l);
-    /// Update statistics
-    void update(const Search::Statistics& s);
-    /// Return whether the engine has been stopped
-    bool enginestopped(void) const;
-    /// Return statistics for the meta engine
-    Statistics metastatistics(void) const;
-  };
+    /// %Stop-object for restart engine
+    class GECODE_SEARCH_EXPORT RestartStop : public Stop {
+        template <class, template <class> class>
+        friend class ::Gecode::RBS;
+        friend class ::Gecode::Search::Seq::RBS;
 
-  /// Engine for restart-based search
-  class GECODE_SEARCH_EXPORT RBS : public Engine {
-  protected:
-    /// The actual engine
-    Engine* e;
-    /// The master space to restart from
-    Space* master;
-    /// The last solution space (possibly nullptr)
-    Space* last;
-    /// The cutoff object
-    Cutoff* co;
-    /// The stop control object
-    RestartStop* stop;
-    /// How many solutions since the last restart
-    unsigned long int sslr;
-    /// Whether search for the next solution will be complete
-    bool complete;
-    /// Whether a restart must be performed when next is called
-    bool restart;
-    /// Whether the engine performs best solution search
-    bool best;
-  public:
-    /// Constructor
-    RBS(Space* s, RestartStop* stop0, Engine* e0,
-        const Search::Statistics& stat, const Options& o, bool best);
-    /// Return next solution (nullptr, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
-    /// Constrain future solutions to be better than \a b
-    virtual void constrain(const Space& b);
-    /// Destructor
-    virtual ~RBS(void);
-  };
+    private:
+        /// Mutex protecting restart stop state
+        mutable Support::Mutex m;
+        /// The failure limit for the engine
+        unsigned long long int l;
+        /// The stop object for the meta engine
+        Stop* m_stop;
+        /// Whether the engine was stopped
+        bool e_stopped;
+        /// Accumulated statistics for the meta engine
+        Statistics m_stat;
 
-}}}
+    public:
+        /// Stop the meta engine if indicated by the stop object \a s
+        RestartStop(Stop* s);
+        /// Return true if meta engine must be stopped
+        virtual bool stop(const Statistics& s, const Options& o);
+        /// Return current restart count
+        unsigned long int restarts(void) const;
+        /// Increment current restart count
+        void restart(void);
+        /// Add no-goods to meta statistics
+        void nogood(unsigned long int n);
+        /// Test master status with meta statistics
+        SpaceStatus status(Space* s);
+        /// Set current limit for the engine to \a l fails
+        void limit(const Statistics& s, unsigned long long int l);
+        /// Update statistics
+        void update(const Search::Statistics& s);
+        /// Return whether the engine has been stopped
+        bool enginestopped(void) const;
+        /// Return statistics for the meta engine
+        Statistics metastatistics(void) const;
+    };
+
+    /// Engine for restart-based search
+    class GECODE_SEARCH_EXPORT RBS : public Engine {
+    protected:
+        /// The actual engine
+        Engine* e;
+        /// The master space to restart from
+        Space* master;
+        /// The last solution space (possibly nullptr)
+        Space* last;
+        /// The cutoff object
+        Cutoff* co;
+        /// The stop control object
+        RestartStop* stop;
+        /// How many solutions since the last restart
+        unsigned long int sslr;
+        /// Whether search for the next solution will be complete
+        bool complete;
+        /// Whether a restart must be performed when next is called
+        bool restart;
+        /// Whether the engine performs best solution search
+        bool best;
+
+    public:
+        /// Constructor
+        RBS(Space* s, RestartStop* stop0, Engine* e0, const Search::Statistics& stat, const Options& o, bool best);
+        /// Return next solution (nullptr, if none exists or search has been stopped)
+        virtual Space* next(void);
+        /// Return statistics
+        virtual Statistics statistics(void) const;
+        /// Check whether engine has been stopped
+        virtual bool stopped(void) const;
+        /// Constrain future solutions to be better than \a b
+        virtual void constrain(const Space& b);
+        /// Destructor
+        virtual ~RBS(void);
+    };
+
+}}} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/rbs.hpp>
 

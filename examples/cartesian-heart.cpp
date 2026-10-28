@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
@@ -62,56 +61,55 @@ using namespace Gecode;
  */
 class CartesianHeart : public Script {
 protected:
-  /// The numbers
-  FloatVarArray f;
-  /// Minimum distance between two solutions
-  FloatNum step;
-public:
-  /// Actual model
-  CartesianHeart(const Options& opt)
-    : Script(opt), f(*this,2,-20,20), step(opt.step()) {
-    int q = 2;
-    FloatNum p = 0.5;
-    // Post equation
-    rel(*this, sqr(f[0]) + 2*sqr(f[1]-p*nroot(abs(f[0]),q)) == 1);
-    branch(*this, f[0], FLOAT_VAL_SPLIT_MIN());
-    branch(*this, f[1], FLOAT_VAL_SPLIT_MIN());
-  }
-  /// Constructor for cloning \a p
-  CartesianHeart(CartesianHeart& p)
-    : Script(p), step(p.step) {
-    f.update(*this, p.f);
-  }
-  /// Copy during cloning
-  virtual Space* copy(void) {
-    return new CartesianHeart(*this);
-  }
-  /// Add constraints to current model to get next solution (not too close)
-  virtual void constrain(const Space& _b) {
-    const CartesianHeart& b = static_cast<const CartesianHeart&>(_b);
-    rel(*this,
-        (f[0] >= (b.f[0].max()+step)) ||
-        (f[1] >= (b.f[1].max()+step)) ||
-        (f[1] <= (b.f[1].min()-step)));
-  }
-  /// Print solution coordinates
-  virtual void print(std::ostream& os) const {
-    os << "XY " << f[0].med() << " " << f[1].med()
-       << std::endl;
-  }
+    /// The numbers
+    FloatVarArray f;
+    /// Minimum distance between two solutions
+    FloatNum step;
 
+public:
+    /// Actual model
+    CartesianHeart(const Options& opt) : Script(opt), f(*this, 2, -20, 20), step(opt.step()) {
+        int q = 2;
+        FloatNum p = 0.5;
+        // Post equation
+        rel(*this, sqr(f[0]) + 2 * sqr(f[1] - p * nroot(abs(f[0]), q)) == 1);
+        branch(*this, f[0], FLOAT_VAL_SPLIT_MIN());
+        branch(*this, f[1], FLOAT_VAL_SPLIT_MIN());
+    }
+    /// Constructor for cloning \a p
+    CartesianHeart(CartesianHeart& p) : Script(p), step(p.step) {
+        f.update(*this, p.f);
+    }
+    /// Copy during cloning
+    virtual Space*
+    copy(void) {
+        return new CartesianHeart(*this);
+    }
+    /// Add constraints to current model to get next solution (not too close)
+    virtual void
+    constrain(const Space& _b) {
+        const CartesianHeart& b = static_cast<const CartesianHeart&>(_b);
+        rel(*this,
+            (f[0] >= (b.f[0].max() + step)) || (f[1] >= (b.f[1].max() + step)) || (f[1] <= (b.f[1].min() - step)));
+    }
+    /// Print solution coordinates
+    virtual void
+    print(std::ostream& os) const {
+        os << "XY " << f[0].med() << " " << f[1].med() << std::endl;
+    }
 };
 
 /** \brief Main-function
  *  \relates CartesianHeart
  */
-int main(int argc, char* argv[]) {
-  Options opt("CartesianHeart");
-  opt.solutions(0);
-  opt.step(0.01);
-  opt.parse(argc,argv);
-  Script::run<CartesianHeart,BAB,Options>(opt);
-  return 0;
+int
+main(int argc, char* argv[]) {
+    Options opt("CartesianHeart");
+    opt.solutions(0);
+    opt.step(0.01);
+    opt.parse(argc, argv);
+    Script::run<CartesianHeart, BAB, Options>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any

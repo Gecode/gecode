@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -48,33 +47,33 @@
 
 namespace Gecode { namespace Float { namespace Channel {
 
-  /**
-   * \brief %Propagator for bounds consistent integer part operator
-   *
-   * Requires \code #include <gecode/float/arithmetic.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class Channel :
-    public MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND>::x1;
+    /**
+     * \brief %Propagator for bounds consistent integer part operator
+     *
+     * Requires \code #include <gecode/float/arithmetic.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class A, class B>
+    class Channel : public MixBinaryPropagator<A, PC_FLOAT_BND, B, Gecode::Int::PC_INT_BND> {
+    protected:
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, Gecode::Int::PC_INT_BND>::x0;
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, Gecode::Int::PC_INT_BND>::x1;
 
-    /// Constructor for cloning \a p
-    Channel(Space& home, Channel& p);
-    /// Constructor for creation
-    Channel(Home home, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ int(x_0) = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
-  };
+        /// Constructor for cloning \a p
+        Channel(Space& home, Channel& p);
+        /// Constructor for creation
+        Channel(Home home, A x0, B x1);
 
-}}}
+    public:
+        /// Create copy during cloning
+        virtual Actor* copy(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for \f$ int(x_0) = x_1\f$
+        static ExecStatus post(Home home, A x0, B x1);
+    };
+
+}}} // namespace Gecode::Float::Channel
 
 #include <gecode/float/channel/channel.hpp>
 

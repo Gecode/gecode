@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christopher Mears <chris.mears@monash.edu>
@@ -34,124 +33,124 @@
 #include <gecode/set/ldsb.hh>
 
 namespace Gecode { namespace Set { namespace LDSB {
-  // XXX: implementation of equalValues could be improved?
+    // XXX: implementation of equalValues could be improved?
 
-  /// Do two set variables have equal least-upper-bounds?
-  bool
-  equalLUB(const Set::SetView& x, const Set::SetView& y) {
-    unsigned int n = x.lubSize();
-    if (n != y.lubSize()) return false;
-    for (unsigned int i = 0 ; i < n ; i++)
-      if (x.lubMinN(i) != y.lubMinN(i))
-        return false;
-    return true;
-  }
-}}}
+    /// Do two set variables have equal least-upper-bounds?
+    bool
+    equalLUB(const Set::SetView& x, const Set::SetView& y) {
+        unsigned int n = x.lubSize();
+        if (n != y.lubSize())
+            return false;
+        for (unsigned int i = 0; i < n; i++)
+            if (x.lubMinN(i) != y.lubMinN(i))
+                return false;
+        return true;
+    }
+}}} // namespace Gecode::Set::LDSB
 
 // Note carefully that this is in the Gecode::Int::LDSB namespace, not
 // Gecode::Set::LDSB.
 namespace Gecode { namespace Int { namespace LDSB {
-  template <>
-  ArgArray<Literal>
-  VariableSymmetryImp<Set::SetView>
-  ::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
-    (void) x;
-    if (indices.valid(l._variable) && indices.get(l._variable)) {
-      int n = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(indices) ; i() ; ++i)
-        n++;
-      ArgArray<Literal> lits(n);
-      int j = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(indices) ; i() ; ++i) {
-        lits[j++] = Literal(i.val(), l._value);
-      }
-      return lits;
-    } else {
-      return ArgArray<Literal>(0);
+    template <>
+    ArgArray<Literal>
+    VariableSymmetryImp<Set::SetView>::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
+        (void)x;
+        if (indices.valid(l._variable) && indices.get(l._variable)) {
+            int n = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(indices); i(); ++i)
+                n++;
+            ArgArray<Literal> lits(n);
+            int j = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(indices); i(); ++i) {
+                lits[j++] = Literal(i.val(), l._value);
+            }
+            return lits;
+        } else {
+            return ArgArray<Literal>(0);
+        }
     }
-  }
 
-  template <>
-  ArgArray<Literal>
-  ValueSymmetryImp<Set::SetView>
-  ::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
-    (void) x;
-    if (values.valid(l._value) && values.get(l._value)) {
-      int n = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(values) ; i() ; ++i)
-        n++;
-      ArgArray<Literal> lits(n);
-      int j = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(values) ; i() ; ++i) {
-        lits[j++] = Literal(l._variable, i.val());
-      }
-      return lits;
-    } else {
-      return ArgArray<Literal>(0);
+    template <>
+    ArgArray<Literal>
+    ValueSymmetryImp<Set::SetView>::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
+        (void)x;
+        if (values.valid(l._value) && values.get(l._value)) {
+            int n = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(values); i(); ++i)
+                n++;
+            ArgArray<Literal> lits(n);
+            int j = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(values); i(); ++i) {
+                lits[j++] = Literal(l._variable, i.val());
+            }
+            return lits;
+        } else {
+            return ArgArray<Literal>(0);
+        }
     }
-  }
 
-  template <>
-  ArgArray<Literal>
-  VariableSequenceSymmetryImp<Set::SetView>
-  ::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
-    Region region;
-    Support::DynamicStack<Literal,Region> s(region);
-    if (l._variable < (int)lookup_size) {
-      int posIt = lookup[l._variable];
-      if (posIt == -1) {
+    template <>
+    ArgArray<Literal>
+    VariableSequenceSymmetryImp<Set::SetView>::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
+        Region region;
+        Support::DynamicStack<Literal, Region> s(region);
+        if (l._variable < (int)lookup_size) {
+            int posIt = lookup[l._variable];
+            if (posIt == -1) {
+                return dynamicStackToArgArray(s);
+            }
+            unsigned int seqNum = posIt / seq_size;
+            unsigned int seqPos = posIt % seq_size;
+            for (unsigned int seq = 0; seq < n_seqs; seq++) {
+                if (seq == seqNum) {
+                    continue;
+                }
+                if (x[getVal(seq, seqPos)].assigned()) {
+                    continue;
+                }
+                bool active = true;
+                const unsigned int* firstSeq = &indices[seqNum * seq_size];
+                const unsigned int* secondSeq = &indices[seq * seq_size];
+                for (unsigned int i = 0; i < seq_size; i++) {
+                    const Set::SetView& xv = x[firstSeq[i]];
+                    const Set::SetView& yv = x[secondSeq[i]];
+                    if ((!xv.assigned() && !yv.assigned()) ||
+                        (xv.assigned() && yv.assigned() && Set::LDSB::equalLUB(xv, yv))) {
+                        continue;
+                    } else {
+                        active = false;
+                        break;
+                    }
+                }
+
+                if (active) {
+                    s.push(Literal(secondSeq[seqPos], l._value));
+                }
+            }
+        }
         return dynamicStackToArgArray(s);
-      }
-      unsigned int seqNum = posIt / seq_size;
-      unsigned int seqPos = posIt % seq_size;
-      for (unsigned int seq = 0 ; seq < n_seqs ; seq++) {
-        if (seq == seqNum) {
-          continue;
-        }
-        if (x[getVal(seq, seqPos)].assigned()) {
-          continue;
-        }
-        bool active = true;
-        const unsigned int *firstSeq = &indices[seqNum*seq_size];
-        const unsigned int *secondSeq = &indices[seq*seq_size];
-        for (unsigned int i = 0 ; i < seq_size ; i++) {
-          const Set::SetView& xv = x[firstSeq[i]];
-          const Set::SetView& yv = x[secondSeq[i]];
-          if ((!xv.assigned() && !yv.assigned())
-              || (xv.assigned() && yv.assigned() && Set::LDSB::equalLUB(xv, yv))) {
-            continue;
-          } else {
-            active = false;
-            break;
-          }
-        }
-
-        if (active) {
-          s.push(Literal(secondSeq[seqPos], l._value));
-        }
-      }
     }
-    return dynamicStackToArgArray(s);
-  }
 
-  template <>
-  ArgArray<Literal>
-  ValueSequenceSymmetryImp<Set::SetView>
-  ::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
-    (void) x;
-    Region region;
-    Support::DynamicStack<Literal,Region> s(region);
-    std::pair<int,int> location = findVar(values, n_values, seq_size, l._value);
-    if (location.first == -1) return dynamicStackToArgArray(s);
-    unsigned int seqNum = location.first;
-    unsigned int seqPos = location.second;
-    for (unsigned int seq = 0 ; seq < n_seqs ; seq++) {
-      if (seq == seqNum) continue;
-      if (dead_sequences.get(seq)) continue;
-      s.push(Literal(l._variable, getVal(seq,seqPos)));
+    template <>
+    ArgArray<Literal>
+    ValueSequenceSymmetryImp<Set::SetView>::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
+        (void)x;
+        Region region;
+        Support::DynamicStack<Literal, Region> s(region);
+        std::pair<int, int> location = findVar(values, n_values, seq_size, l._value);
+        if (location.first == -1)
+            return dynamicStackToArgArray(s);
+        unsigned int seqNum = location.first;
+        unsigned int seqPos = location.second;
+        for (unsigned int seq = 0; seq < n_seqs; seq++) {
+            if (seq == seqNum)
+                continue;
+            if (dead_sequences.get(seq))
+                continue;
+            s.push(Literal(l._variable, getVal(seq, seqPos)));
+        }
+        return dynamicStackToArgArray(s);
     }
-    return dynamicStackToArgArray(s);
-  }
-}}}
+}}} // namespace Gecode::Int::LDSB
 
 // STATISTICS: set-branch

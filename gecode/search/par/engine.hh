@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -47,233 +46,240 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  /// %Parallel depth-first search engine
-  template<class Tracer>
-  class Engine : public Search::Engine, public Support::Terminator {
-  protected:
-    /// %Parallel depth-first search worker
-    class Worker : public Search::Worker, public Support::Runnable {
-    public:
-      /// Search tracer
-      Tracer tracer;
+    /// %Parallel depth-first search engine
+    template <class Tracer>
+    class Engine : public Search::Engine, public Support::Terminator {
     protected:
-      /// Reference to engine
-      Engine& _engine;
-      /// Mutex for access to worker
-      Support::Mutex m;
-      /// Current path ins search tree
-      Path<Tracer> path;
-      /// Current space being explored
-      Space* cur;
-      /// Distance until next clone
-      unsigned int d;
-      /// Whether the worker is idle
-      bool idle;
+        /// %Parallel depth-first search worker
+        class Worker : public Search::Worker, public Support::Runnable {
+        public:
+            /// Search tracer
+            Tracer tracer;
+
+        protected:
+            /// Reference to engine
+            Engine& _engine;
+            /// Mutex for access to worker
+            Support::Mutex m;
+            /// Current path ins search tree
+            Path<Tracer> path;
+            /// Current space being explored
+            Space* cur;
+            /// Distance until next clone
+            unsigned int d;
+            /// Whether the worker is idle
+            bool idle;
+
+        public:
+            /// Initialize for space \a s with engine \a e
+            Worker(Space* s, Engine& e);
+            /// Hand over some work (nullptr if no work available)
+            Space* steal(unsigned long int& d, Tracer& myt, Tracer& ot);
+            /// Return statistics
+            Statistics statistics(void);
+            /// Provide access to engine
+            Engine& engine(void) const;
+            /// Return no-goods
+            NoGoods& nogoods(void);
+            /// Destructor
+            virtual ~Worker(void);
+            /// Terminator (engine)
+            virtual Support::Terminator* terminator(void) const;
+        };
+        /// Search options
+        Options _opt;
+        /**
+         * \brief Logical worker state used by adjustable parallel admission
+         *
+         * Construction and reset count every worker in n_busy. A pending worker
+         * must receive a lease and report idle even if it starts without a tree.
+         */
+        enum class SchedulerLogical {
+            /// Owns local search or has not yet reported its exhaustion
+            OWNER,
+            /// Has not yet reported its initial idle state
+            PENDING,
+            /// Has reported idle and owns no local search
+            IDLE
+        };
+        /// Per-worker adjustable parallel admission state
+        struct SchedulerWorker {
+            /// Permission to execute exploration actions
+            bool lease;
+            /// Waiting or due to wait for admission
+            bool parked;
+            SchedulerLogical logical;
+        };
+        /// Whether adjustable parallel admission is enabled
+        bool scheduler_enabled;
+        /// Unchanged-capacity admission fast path
+        const std::atomic<bool>* scheduler_fast_admit;
+        /**
+         * \brief Mutex for adjustable parallel admission
+         *
+         * Protects scheduler_worker, scheduler_requested, scheduler_leases, and
+         * scheduler_cursor. Initial setup runs before worker threads start;
+         * scheduler_enabled and scheduler_fast_admit remain fixed after setup.
+         */
+        Support::Mutex scheduler_mutex;
+        /// Per-worker adjustable parallel admission state
+        SchedulerWorker* scheduler_worker;
+        /// Current requested lease count
+        unsigned int scheduler_requested;
+        /// Current lease count
+        unsigned int scheduler_leases;
+        /// Round-robin cursor for lease handoff
+        unsigned int scheduler_cursor;
+        /// Last request generation reconciled by the scheduler
+        std::atomic<unsigned long long int> scheduler_generation;
+        /// Select a no-lease worker by logical state (scheduler_mutex held)
+        unsigned int scheduler_select(SchedulerLogical logical, unsigned int exclude) const;
+        /// Grant leases up to the current request (scheduler_mutex held)
+        bool scheduler_grow(void);
+
     public:
-      /// Initialize for space \a s with engine \a e
-      Worker(Space* s, Engine& e);
-      /// Hand over some work (nullptr if no work available)
-      Space* steal(unsigned long int& d, Tracer& myt, Tracer& ot);
-      /// Return statistics
-      Statistics statistics(void);
-      /// Provide access to engine
-      Engine& engine(void) const;
-      /// Return no-goods
-      NoGoods& nogoods(void);
-      /// Destructor
-      virtual ~Worker(void);
-      /// Terminator (engine)
-      virtual Support::Terminator* terminator(void) const;
+        /// Provide access to search options
+        const Options& opt(void) const;
+        /// Return number of workers
+        unsigned int workers(void) const;
+        /// Enable adjustable parallel admission
+        void scheduler_enable(bool root_owner);
+        /// Reset adjustable parallel state while all workers are blocked
+        void scheduler_reset(bool root_owner);
+        /// Admit worker \a worker for one exploration action
+        bool scheduler_admit(unsigned int worker);
+        /// Whether the external worker request currently pauses the engine
+        bool scheduler_paused(void) const;
+        /// Record that worker \a worker owns search
+        void scheduler_owner(unsigned int worker);
+        /// Record that worker \a worker is idle
+        void scheduler_idle(unsigned int worker);
+        /// Hand worker \a worker's lease to a parked logical worker
+        void scheduler_handoff(unsigned int worker, bool work_remains);
+
+        /// \name Commands from engine to workers and wait management
+        //@{
+        /// Commands from engine to workers
+        enum Cmd {
+            C_WORK,     ///< Perform work
+            C_WAIT,     ///< Run into wait lock
+            C_RESET,    ///< Perform reset operation
+            C_TERMINATE ///< Terminate
+        };
+
+    protected:
+        /// The current command
+        std::atomic<Cmd> _cmd;
+        /// Mutex for forcing workers to wait
+        Support::Mutex _m_wait;
+
+    public:
+        /// Return current command
+        Cmd cmd(void) const;
+        /// Block all workers
+        void block(void);
+        /// Release all workers
+        void release(Cmd c);
+        /// Ensure that worker waits
+        void wait(void);
+        //@}
+
+        /// \name Termination control
+        //@{
+    protected:
+        /// Mutex for access to termination information
+        Support::Mutex _m_term;
+        /// Number of workers that have not yet acknowledged termination
+        volatile unsigned int _n_term_not_ack;
+        /// Event for termination acknowledgment
+        Support::Event _e_term_ack;
+        /// Mutex for waiting for termination
+        Support::Mutex _m_wait_terminate;
+        /// Number of not yet terminated workers
+        volatile unsigned int _n_not_terminated;
+        /// Event for termination (all threads have terminated)
+        Support::Event _e_terminate;
+
+    public:
+        /// For worker to acknowledge termination command
+        void ack_terminate(void);
+        /// For worker to register termination
+        virtual void terminated(void);
+        /// For worker to wait until termination is legal
+        void wait_terminate(void);
+        /// For engine to perform thread termination
+        void terminate(void);
+        //@}
+
+        /// \name Reset control
+        //@{
+    protected:
+        /// Mutex for access to reset information
+        Support::Mutex _m_reset;
+        /// Number of workers that have not yet acknowledged reset
+        volatile unsigned int _n_reset_not_ack;
+        /// Event for reset acknowledgment started
+        Support::Event e_reset_ack_start;
+        /// Event for reset acknowledgment stopped
+        Support::Event e_reset_ack_stop;
+        /// Mutex for waiting for reset
+        Support::Mutex m_wait_reset;
+
+    public:
+        /// For worker to acknowledge start of reset cycle
+        void ack_reset_start(void);
+        /// For worker to acknowledge stop of reset cycle
+        void ack_reset_stop(void);
+        /// For worker to wait for all workers to reset
+        void wait_reset(void);
+        //@}
+
+        /// \name Search control
+        //@{
+    protected:
+        /// Mutex for search
+        Support::Mutex m_search;
+        /// Event for search (solution found, no more solutions, search stopped)
+        Support::Event e_search;
+        /// Queue of solutions
+        Support::DynamicQueue<Space*, Heap> solutions;
+        /// Number of busy workers
+        volatile unsigned int n_busy;
+        /// Whether a worker had been stopped
+        std::atomic<bool> has_stopped;
+        /// Number of calls to next() that have started search
+        std::atomic<unsigned long long int> n_runs;
+        /// Whether search state changed such that signal is needed
+        bool signal(void) const;
+
+    public:
+        /// Report that worker is idle
+        void idle(void);
+        /// Report that worker is busy
+        void busy(void);
+        /// Return the current call of next()
+        unsigned long long int run(void) const;
+        /// Report that a worker was stopped during call \a r of next()
+        void stop(unsigned long long int r);
+        /// Whether logical search work remains
+        bool work_remains(void);
+        //@}
+
+        /// \name Engine interface
+        //@{
+        /// Initialize with options \a o
+        Engine(const Options& o);
+        /// Return next solution (nullptr, if none exists or search has been stopped)
+        virtual Space* next(void);
+        /// Check whether engine has been stopped
+        virtual bool stopped(void) const;
+        //@}
+
+        /// Destructor
+        virtual ~Engine(void);
     };
-    /// Search options
-    Options _opt;
-    /**
-     * \brief Logical worker state used by adjustable parallel admission
-     *
-     * Construction and reset count every worker in n_busy. A pending worker
-     * must receive a lease and report idle even if it starts without a tree.
-     */
-    enum class SchedulerLogical {
-      /// Owns local search or has not yet reported its exhaustion
-      OWNER,
-      /// Has not yet reported its initial idle state
-      PENDING,
-      /// Has reported idle and owns no local search
-      IDLE
-    };
-    /// Per-worker adjustable parallel admission state
-    struct SchedulerWorker {
-      /// Permission to execute exploration actions
-      bool lease;
-      /// Waiting or due to wait for admission
-      bool parked;
-      SchedulerLogical logical;
-    };
-    /// Whether adjustable parallel admission is enabled
-    bool scheduler_enabled;
-    /// Unchanged-capacity admission fast path
-    const std::atomic<bool>* scheduler_fast_admit;
-    /**
-     * \brief Mutex for adjustable parallel admission
-     *
-     * Protects scheduler_worker, scheduler_requested, scheduler_leases, and
-     * scheduler_cursor. Initial setup runs before worker threads start;
-     * scheduler_enabled and scheduler_fast_admit remain fixed after setup.
-     */
-    Support::Mutex scheduler_mutex;
-    /// Per-worker adjustable parallel admission state
-    SchedulerWorker* scheduler_worker;
-    /// Current requested lease count
-    unsigned int scheduler_requested;
-    /// Current lease count
-    unsigned int scheduler_leases;
-    /// Round-robin cursor for lease handoff
-    unsigned int scheduler_cursor;
-    /// Last request generation reconciled by the scheduler
-    std::atomic<unsigned long long int> scheduler_generation;
-    /// Select a no-lease worker by logical state (scheduler_mutex held)
-    unsigned int scheduler_select(SchedulerLogical logical,
-                                  unsigned int exclude) const;
-    /// Grant leases up to the current request (scheduler_mutex held)
-    bool scheduler_grow(void);
-  public:
-    /// Provide access to search options
-    const Options& opt(void) const;
-    /// Return number of workers
-    unsigned int workers(void) const;
-    /// Enable adjustable parallel admission
-    void scheduler_enable(bool root_owner);
-    /// Reset adjustable parallel state while all workers are blocked
-    void scheduler_reset(bool root_owner);
-    /// Admit worker \a worker for one exploration action
-    bool scheduler_admit(unsigned int worker);
-    /// Whether the external worker request currently pauses the engine
-    bool scheduler_paused(void) const;
-    /// Record that worker \a worker owns search
-    void scheduler_owner(unsigned int worker);
-    /// Record that worker \a worker is idle
-    void scheduler_idle(unsigned int worker);
-    /// Hand worker \a worker's lease to a parked logical worker
-    void scheduler_handoff(unsigned int worker, bool work_remains);
 
-    /// \name Commands from engine to workers and wait management
-    //@{
-    /// Commands from engine to workers
-    enum Cmd {
-      C_WORK,     ///< Perform work
-      C_WAIT,     ///< Run into wait lock
-      C_RESET,    ///< Perform reset operation
-      C_TERMINATE ///< Terminate
-    };
-  protected:
-    /// The current command
-    std::atomic<Cmd> _cmd;
-    /// Mutex for forcing workers to wait
-    Support::Mutex _m_wait;
-  public:
-    /// Return current command
-    Cmd cmd(void) const;
-    /// Block all workers
-    void block(void);
-    /// Release all workers
-    void release(Cmd c);
-    /// Ensure that worker waits
-    void wait(void);
-    //@}
-
-    /// \name Termination control
-    //@{
-  protected:
-    /// Mutex for access to termination information
-    Support::Mutex _m_term;
-    /// Number of workers that have not yet acknowledged termination
-    volatile unsigned int _n_term_not_ack;
-    /// Event for termination acknowledgment
-    Support::Event _e_term_ack;
-    /// Mutex for waiting for termination
-    Support::Mutex _m_wait_terminate;
-    /// Number of not yet terminated workers
-    volatile unsigned int _n_not_terminated;
-    /// Event for termination (all threads have terminated)
-    Support::Event _e_terminate;
-  public:
-    /// For worker to acknowledge termination command
-    void ack_terminate(void);
-    /// For worker to register termination
-    virtual void terminated(void);
-    /// For worker to wait until termination is legal
-    void wait_terminate(void);
-    /// For engine to perform thread termination
-    void terminate(void);
-    //@}
-
-    /// \name Reset control
-    //@{
-  protected:
-    /// Mutex for access to reset information
-    Support::Mutex _m_reset;
-    /// Number of workers that have not yet acknowledged reset
-    volatile unsigned int _n_reset_not_ack;
-    /// Event for reset acknowledgment started
-    Support::Event e_reset_ack_start;
-    /// Event for reset acknowledgment stopped
-    Support::Event e_reset_ack_stop;
-    /// Mutex for waiting for reset
-    Support::Mutex m_wait_reset;
-  public:
-    /// For worker to acknowledge start of reset cycle
-    void ack_reset_start(void);
-    /// For worker to acknowledge stop of reset cycle
-    void ack_reset_stop(void);
-    /// For worker to wait for all workers to reset
-    void wait_reset(void);
-    //@}
-
-    /// \name Search control
-    //@{
-  protected:
-    /// Mutex for search
-    Support::Mutex m_search;
-    /// Event for search (solution found, no more solutions, search stopped)
-    Support::Event e_search;
-    /// Queue of solutions
-    Support::DynamicQueue<Space*,Heap> solutions;
-    /// Number of busy workers
-    volatile unsigned int n_busy;
-    /// Whether a worker had been stopped
-    std::atomic<bool> has_stopped;
-    /// Number of calls to next() that have started search
-    std::atomic<unsigned long long int> n_runs;
-    /// Whether search state changed such that signal is needed
-    bool signal(void) const;
-  public:
-    /// Report that worker is idle
-    void idle(void);
-    /// Report that worker is busy
-    void busy(void);
-    /// Return the current call of next()
-    unsigned long long int run(void) const;
-    /// Report that a worker was stopped during call \a r of next()
-    void stop(unsigned long long int r);
-    /// Whether logical search work remains
-    bool work_remains(void);
-    //@}
-
-    /// \name Engine interface
-    //@{
-    /// Initialize with options \a o
-    Engine(const Options& o);
-    /// Return next solution (nullptr, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
-    //@}
-
-    /// Destructor
-    virtual ~Engine(void);
-  };
-
-}}}
+}}} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/engine.hpp>
 

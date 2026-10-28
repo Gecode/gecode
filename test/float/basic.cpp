@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -39,86 +38,82 @@
 
 namespace Test { namespace Float {
 
-   /// %Tests for basic setup
-   namespace Basic {
+    /// %Tests for basic setup
+    namespace Basic {
 
-     /**
-      * \defgroup TaskTestFloatBasic Basic setup
-      * \ingroup TaskTestFloat
-      */
-     //@{
+        /**
+         * \defgroup TaskTestFloatBasic Basic setup
+         * \ingroup TaskTestFloat
+         */
+        //@{
 
-     /// %Test whether testing infrastructure for float variables works
-     class Basic : public Test {
-     public:
-       /// Initialize test
-       Basic(Gecode::FloatNum n, Gecode::FloatNum s)
-         : Test("Basic",3,-n,n,s,CPLT_ASSIGNMENT,false) {}
-       /// Initialize test
-       Basic(Gecode::FloatVal v, Gecode::FloatNum s)
-          : Test("Basic",3,v,s,CPLT_ASSIGNMENT,false) {}
-       /// Check whether \a x is a solution
-       virtual MaybeType solution(const Assignment&) const {
-         return MT_TRUE;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space&, Gecode::FloatVarArray&) {
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space&, Gecode::FloatVarArray&, Gecode::Reify) {
-         // Reification for no constraint is not interesting
-         GECODE_NEVER;
-       }
-     };
+        /// %Test whether testing infrastructure for float variables works
+        class Basic : public Test {
+        public:
+            /// Initialize test
+            Basic(Gecode::FloatNum n, Gecode::FloatNum s) : Test("Basic", 3, -n, n, s, CPLT_ASSIGNMENT, false) {}
+            /// Initialize test
+            Basic(Gecode::FloatVal v, Gecode::FloatNum s) : Test("Basic", 3, v, s, CPLT_ASSIGNMENT, false) {}
+            /// Check whether \a x is a solution
+            virtual MaybeType
+            solution(const Assignment&) const {
+                return MT_TRUE;
+            }
+            /// Post constraint on \a x
+            virtual void
+            post(Gecode::Space&, Gecode::FloatVarArray&) {}
+            /// Post reified constraint on \a x for \a r
+            virtual void
+            post(Gecode::Space&, Gecode::FloatVarArray&, Gecode::Reify) {
+                // Reification for no constraint is not interesting
+                GECODE_NEVER;
+            }
+        };
 
-     namespace {
-       Basic b1(3,1.5);
-       Basic b2(Gecode::FloatVal(-2,10),1.5);
-     }
+        namespace {
+            Basic b1(3, 1.5);
+            Basic b2(Gecode::FloatVal(-2, 10), 1.5);
+        } // namespace
 
-     /// Test interval medians at the numerical limits and special values
-     class Median : public Base {
-     private:
-       /// Test median inclusion and splitting of non-tight intervals
-       static bool valid(const Gecode::FloatVal& x) {
-         const Gecode::FloatNum m = x.med();
-         return (m >= x.min()) && (m <= x.max()) &&
-           (x.tight() || ((m > x.min()) && (m < x.max())));
-       }
-     public:
-       /// Create and register test
-       Median(void) : Base("Float::Basic::Median") {}
-       /// Perform test
-       virtual bool run(void) {
-         using namespace Gecode;
-         const FloatNum m = Gecode::Float::Limits::max;
-         const FloatNum i = std::numeric_limits<FloatNum>::infinity();
-         const FloatNum d = std::numeric_limits<FloatNum>::denorm_min();
-         const FloatVal negative(-m, -m / 2.0);
-         const FloatVal positive(m / 2.0, m);
-         const FloatVal mixed(-m, m);
-         // The subtraction-based formula rounds this median one ULP upward.
-         const FloatVal closest(3.07187504409887e-53,
-                                7.805365587017815e-45);
-         return valid(negative) && valid(positive) && valid(mixed) &&
-           (closest.med() == 3.902682808868283e-45) &&
-           (FloatVal(-i,-1.0).med() == -i) &&
-           (FloatVal(1.0,i).med() == i) &&
-           (FloatVal(-i,i).med() == 0.0) &&
-           (FloatVal(-i,-i).med() == -i) &&
-           (FloatVal(i,i).med() == i) &&
-           !std::signbit(FloatVal(-0.0,0.0).med()) &&
-           (FloatVal(0.0,2.0*d).med() == d) &&
-           (FloatVal(-2.0*d,0.0).med() == -d);
-       }
-     };
+        /// Test interval medians at the numerical limits and special values
+        class Median : public Base {
+        private:
+            /// Test median inclusion and splitting of non-tight intervals
+            static bool
+            valid(const Gecode::FloatVal& x) {
+                const Gecode::FloatNum m = x.med();
+                return (m >= x.min()) && (m <= x.max()) && (x.tight() || ((m > x.min()) && (m < x.max())));
+            }
 
-     namespace {
-       Median median;
-     }
-     //@}
+        public:
+            /// Create and register test
+            Median(void) : Base("Float::Basic::Median") {}
+            /// Perform test
+            virtual bool
+            run(void) {
+                using namespace Gecode;
+                const FloatNum m = Gecode::Float::Limits::max;
+                const FloatNum i = std::numeric_limits<FloatNum>::infinity();
+                const FloatNum d = std::numeric_limits<FloatNum>::denorm_min();
+                const FloatVal negative(-m, -m / 2.0);
+                const FloatVal positive(m / 2.0, m);
+                const FloatVal mixed(-m, m);
+                // The subtraction-based formula rounds this median one ULP upward.
+                const FloatVal closest(3.07187504409887e-53, 7.805365587017815e-45);
+                return valid(negative) && valid(positive) && valid(mixed) && (closest.med() == 3.902682808868283e-45) &&
+                       (FloatVal(-i, -1.0).med() == -i) && (FloatVal(1.0, i).med() == i) &&
+                       (FloatVal(-i, i).med() == 0.0) && (FloatVal(-i, -i).med() == -i) &&
+                       (FloatVal(i, i).med() == i) && !std::signbit(FloatVal(-0.0, 0.0).med()) &&
+                       (FloatVal(0.0, 2.0 * d).med() == d) && (FloatVal(-2.0 * d, 0.0).med() == -d);
+            }
+        };
 
-   }
-}}
+        namespace {
+            Median median;
+        }
+        //@}
+
+    } // namespace Basic
+}} // namespace Test::Float
 
 // STATISTICS: test-float

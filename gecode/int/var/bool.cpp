@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,15 +34,14 @@
 
 namespace Gecode {
 
-  BoolVar::BoolVar(Space& home, int min, int max) {
-    if ((min < 0) || (max > 1))
-      throw Int::NotZeroOne("BoolVar::BoolVar");
-    if (min > max)
-      throw Int::VariableEmptyDomain("BoolVar::BoolVar");
-    _init(home,min,max);
-  }
+    BoolVar::BoolVar(Space& home, int min, int max) {
+        if ((min < 0) || (max > 1))
+            throw Int::NotZeroOne("BoolVar::BoolVar");
+        if (min > max)
+            throw Int::VariableEmptyDomain("BoolVar::BoolVar");
+        _init(home, min, max);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-var
-

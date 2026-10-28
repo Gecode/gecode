@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,55 +32,52 @@
 
 namespace Gecode { namespace Search {
 
-  /// Create lds engine
-  GECODE_SEARCH_EXPORT Engine*
-  ldsengine(Space* s, const Options& o);
+    /// Create lds engine
+    GECODE_SEARCH_EXPORT Engine* ldsengine(Space* s, const Options& o);
 
-  /// A DFS engine builder
-  template<class T>
-  class LdsBuilder : public Builder {
-    using Builder::opt;
-  public:
-    /// The constructor
-    LdsBuilder(const Options& opt);
-    /// The actual build function
-    virtual Engine* operator() (Space* s) const;
-  };
+    /// A DFS engine builder
+    template <class T>
+    class LdsBuilder : public Builder {
+        using Builder::opt;
 
-  template<class T>
-  inline
-  LdsBuilder<T>::LdsBuilder(const Options& opt)
-    : Builder(opt,LDS<T>::best) {}
+    public:
+        /// The constructor
+        LdsBuilder(const Options& opt);
+        /// The actual build function
+        virtual Engine* operator()(Space* s) const;
+    };
 
-  template<class T>
-  Engine*
-  LdsBuilder<T>::operator() (Space* s) const {
-    return build<T,LDS>(s,opt);
-  }
+    template <class T>
+    inline LdsBuilder<T>::LdsBuilder(const Options& opt) : Builder(opt, LDS<T>::best) {}
 
+    template <class T>
+    Engine*
+    LdsBuilder<T>::operator()(Space* s) const {
+        return build<T, LDS>(s, opt);
+    }
 
-}}
+}} // namespace Gecode::Search
 
 namespace Gecode {
 
-  template<class T>
-  forceinline
-  LDS<T>::LDS(T* s, const Search::Options& o)
-    : Search::Base<T>(Search::ldsengine(s,o)) {}
+    template <class T>
+    forceinline
+    LDS<T>::LDS(T* s, const Search::Options& o)
+        : Search::Base<T>(Search::ldsengine(s, o)) {}
 
-  template<class T>
-  T*
-  lds(T* s, const Search::Options& o) {
-    LDS<T> lds(s,o);
-    return lds.next();
-  }
+    template <class T>
+    T*
+    lds(T* s, const Search::Options& o) {
+        LDS<T> lds(s, o);
+        return lds.next();
+    }
 
-  template<class T>
-  SEB
-  lds(const Search::Options& o) {
-    return new Search::LdsBuilder<T>(o);
-  }
+    template <class T>
+    SEB
+    lds(const Search::Options& o) {
+        return new Search::LdsBuilder<T>(o);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: search-other

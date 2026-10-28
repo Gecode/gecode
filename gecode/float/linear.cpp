@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
 o *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,158 +36,166 @@ o *  Main authors:
 
 namespace Gecode {
 
-  void
-  linear(Home home,
-         const FloatVarArgs& x, FloatRelType frt, FloatVal c) {
-    using namespace Float;
-    GECODE_POST;
-    Region re;
-    Linear::Term* t = re.alloc<Linear::Term>(x.size());
-    for (int i = x.size(); i--; ) {
-      t[i].a=1.0; t[i].x=x[i];
+    void
+    linear(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c) {
+        using namespace Float;
+        GECODE_POST;
+        Region re;
+        Linear::Term* t = re.alloc<Linear::Term>(x.size());
+        for (int i = x.size(); i--;) {
+            t[i].a = 1.0;
+            t[i].x = x[i];
+        }
+        Linear::post(home, t, x.size(), frt, c);
     }
-    Linear::post(home,t,x.size(),frt,c);
-  }
 
-  void
-  linear(Home home,
-         const FloatVarArgs& x, FloatRelType frt, FloatVal c, Reify r) {
-    using namespace Float;
-    GECODE_POST;
-    Region re;
-    Linear::Term* t = re.alloc<Linear::Term>(x.size());
-    for (int i = x.size(); i--; ) {
-      t[i].a=1.0; t[i].x=x[i];
+    void
+    linear(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c, Reify r) {
+        using namespace Float;
+        GECODE_POST;
+        Region re;
+        Linear::Term* t = re.alloc<Linear::Term>(x.size());
+        for (int i = x.size(); i--;) {
+            t[i].a = 1.0;
+            t[i].x = x[i];
+        }
+        Linear::post(home, t, x.size(), frt, c, r);
     }
-    Linear::post(home,t,x.size(),frt,c,r);
-  }
 
-  void
-  linear(Home home,
-         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt,
-         FloatVal c) {
-    using namespace Float;
-    if (a.size() != x.size())
-      throw ArgumentSizeMismatch("Float::linear");
-    GECODE_POST;
-    Region re;
-    Linear::Term* t = re.alloc<Linear::Term>(x.size());
-    for (int i = x.size(); i--; ) {
-      t[i].a=a[i]; t[i].x=x[i];
+    void
+    linear(Home home, const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatVal c) {
+        using namespace Float;
+        if (a.size() != x.size())
+            throw ArgumentSizeMismatch("Float::linear");
+        GECODE_POST;
+        Region re;
+        Linear::Term* t = re.alloc<Linear::Term>(x.size());
+        for (int i = x.size(); i--;) {
+            t[i].a = a[i];
+            t[i].x = x[i];
+        }
+        Linear::post(home, t, x.size(), frt, c);
     }
-    Linear::post(home,t,x.size(),frt,c);
-  }
 
-  void
-  linear(Home home,
-         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt,
-         FloatVal c, Reify r) {
-    using namespace Float;
-    if (a.size() != x.size())
-      throw ArgumentSizeMismatch("Float::linear");
-    GECODE_POST;
-    Region re;
-    Linear::Term* t = re.alloc<Linear::Term >(x.size());
-    for (int i = x.size(); i--; ) {
-      t[i].a=a[i]; t[i].x=x[i];
+    void
+    linear(Home home, const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatVal c, Reify r) {
+        using namespace Float;
+        if (a.size() != x.size())
+            throw ArgumentSizeMismatch("Float::linear");
+        GECODE_POST;
+        Region re;
+        Linear::Term* t = re.alloc<Linear::Term>(x.size());
+        for (int i = x.size(); i--;) {
+            t[i].a = a[i];
+            t[i].x = x[i];
+        }
+        Linear::post(home, t, x.size(), frt, c, r);
     }
-    Linear::post(home,t,x.size(),frt,c,r);
-  }
 
-  void
-  linear(Home home,
-         const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
-    using namespace Float;
-    GECODE_POST;
-    Region re;
-    Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
-    for (int i = x.size(); i--; ) {
-      t[i].a=1.0; t[i].x=x[i];
+    void
+    linear(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
+        using namespace Float;
+        GECODE_POST;
+        Region re;
+        Linear::Term* t = re.alloc<Linear::Term>(x.size() + 1);
+        for (int i = x.size(); i--;) {
+            t[i].a = 1.0;
+            t[i].x = x[i];
+        }
+        FloatNum min, max;
+        estimate(t, x.size(), 0.0, min, max);
+        FloatView v(y);
+        switch (frt) {
+        case FRT_EQ:
+            GECODE_ME_FAIL(v.gq(home, min));
+            GECODE_ME_FAIL(v.lq(home, max));
+            break;
+        case FRT_GQ:
+        case FRT_GR:
+            GECODE_ME_FAIL(v.lq(home, max));
+            break;
+        case FRT_LQ:
+        case FRT_LE:
+            GECODE_ME_FAIL(v.gq(home, min));
+            break;
+        default:;
+        }
+        if (home.failed())
+            return;
+        t[x.size()].a = -1.0;
+        t[x.size()].x = y;
+        Linear::post(home, t, x.size() + 1, frt, 0.0);
     }
-    FloatNum min, max;
-    estimate(t,x.size(),0.0,min,max);
-    FloatView v(y);
-    switch (frt) {
-    case FRT_EQ:
-      GECODE_ME_FAIL(v.gq(home,min)); GECODE_ME_FAIL(v.lq(home,max));
-      break;
-    case FRT_GQ: case FRT_GR:
-      GECODE_ME_FAIL(v.lq(home,max));
-      break;
-    case FRT_LQ: case FRT_LE:
-      GECODE_ME_FAIL(v.gq(home,min));
-      break;
-    default: ;
-    }
-    if (home.failed()) return;
-    t[x.size()].a=-1.0; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,frt,0.0);
-  }
 
-  void
-  linear(Home home,
-         const FloatVarArgs& x, FloatRelType frt, FloatVar y, Reify r) {
-    using namespace Float;
-    GECODE_POST;
-    Region re;
-    Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
-    for (int i = x.size(); i--; ) {
-      t[i].a=1.0; t[i].x=x[i];
+    void
+    linear(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVar y, Reify r) {
+        using namespace Float;
+        GECODE_POST;
+        Region re;
+        Linear::Term* t = re.alloc<Linear::Term>(x.size() + 1);
+        for (int i = x.size(); i--;) {
+            t[i].a = 1.0;
+            t[i].x = x[i];
+        }
+        t[x.size()].a = -1;
+        t[x.size()].x = y;
+        Linear::post(home, t, x.size() + 1, frt, 0.0, r);
     }
-    t[x.size()].a=-1; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,frt,0.0,r);
-  }
 
-  void
-  linear(Home home,
-         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt,
-         FloatVar y) {
-    using namespace Float;
-    if (a.size() != x.size())
-      throw ArgumentSizeMismatch("Float::linear");
-    GECODE_POST;
-    Region re;
-    Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
-    for (int i = x.size(); i--; ) {
-      t[i].a=a[i]; t[i].x=x[i];
+    void
+    linear(Home home, const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
+        using namespace Float;
+        if (a.size() != x.size())
+            throw ArgumentSizeMismatch("Float::linear");
+        GECODE_POST;
+        Region re;
+        Linear::Term* t = re.alloc<Linear::Term>(x.size() + 1);
+        for (int i = x.size(); i--;) {
+            t[i].a = a[i];
+            t[i].x = x[i];
+        }
+        FloatNum min, max;
+        estimate(t, x.size(), 0.0, min, max);
+        FloatView v(y);
+        switch (frt) {
+        case FRT_EQ:
+            GECODE_ME_FAIL(v.gq(home, min));
+            GECODE_ME_FAIL(v.lq(home, max));
+            break;
+        case FRT_GQ:
+        case FRT_GR:
+            GECODE_ME_FAIL(v.lq(home, max));
+            break;
+        case FRT_LQ:
+        case FRT_LE:
+            GECODE_ME_FAIL(v.gq(home, min));
+            break;
+        default:;
+        }
+        if (home.failed())
+            return;
+        t[x.size()].a = -1.0;
+        t[x.size()].x = y;
+        Linear::post(home, t, x.size() + 1, frt, 0.0);
     }
-    FloatNum min, max;
-    estimate(t,x.size(),0.0,min,max);
-    FloatView v(y);
-    switch (frt) {
-    case FRT_EQ:
-      GECODE_ME_FAIL(v.gq(home,min)); GECODE_ME_FAIL(v.lq(home,max));
-      break;
-    case FRT_GQ: case FRT_GR:
-      GECODE_ME_FAIL(v.lq(home,max));
-      break;
-    case FRT_LQ: case FRT_LE:
-      GECODE_ME_FAIL(v.gq(home,min));
-      break;
-    default: ;
-    }
-    if (home.failed()) return;
-    t[x.size()].a=-1.0; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,frt,0.0);
-  }
 
-  void
-  linear(Home home,
-         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt,
-         FloatVar y, Reify r) {
-    using namespace Float;
-    if (a.size() != x.size())
-      throw ArgumentSizeMismatch("Float::linear");
-    GECODE_POST;
-    Region re;
-    Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
-    for (int i = x.size(); i--; ) {
-      t[i].a=a[i]; t[i].x=x[i];
+    void
+    linear(Home home, const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatVar y, Reify r) {
+        using namespace Float;
+        if (a.size() != x.size())
+            throw ArgumentSizeMismatch("Float::linear");
+        GECODE_POST;
+        Region re;
+        Linear::Term* t = re.alloc<Linear::Term>(x.size() + 1);
+        for (int i = x.size(); i--;) {
+            t[i].a = a[i];
+            t[i].x = x[i];
+        }
+        t[x.size()].a = -1.0;
+        t[x.size()].x = y;
+        Linear::post(home, t, x.size() + 1, frt, 0.0, r);
     }
-    t[x.size()].a=-1.0; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,frt,0.0,r);
-  }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-post

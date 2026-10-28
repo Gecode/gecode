@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,20 +34,19 @@
 
 namespace Gecode { namespace Kernel {
 
-  Support::Mutex& SharedMemory::m(void) {
-    static Support::Mutex _m;
-    return _m;
-  }
+    Support::Mutex&
+    SharedMemory::m(void) {
+        static Support::Mutex _m;
+        return _m;
+    }
 
-  void
-  MemoryManager::alloc_refill(SharedMemory& sm, size_t sz) {
-    // Try to reuse the not used memory
-    reuse(start,lsz);
-    alloc_fill(sm,sz,false);
-  }
+    void
+    MemoryManager::alloc_refill(SharedMemory& sm, size_t sz) {
+        // Try to reuse the not used memory
+        reuse(start, lsz);
+        alloc_fill(sm, sz, false);
+    }
 
-}}
+}} // namespace Gecode::Kernel
 
 // STATISTICS: kernel-memory
-
-

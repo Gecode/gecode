@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -35,259 +34,235 @@
 
 namespace Gecode { namespace Search {
 
-  class WorkerControl::State : public Support::RefCount {
-  public:
-    enum class Lifecycle {
-      READY_TO_BIND,
-      ATTACHED,
-      DETACHED
+    class WorkerControl::State : public Support::RefCount {
+    public:
+        enum class Lifecycle { READY_TO_BIND, ATTACHED, DETACHED };
+
+        std::atomic<unsigned int> requested;
+        std::atomic<unsigned int> capacity;
+        std::atomic<unsigned long long int> generation;
+        std::atomic<bool> fast_admit;
+        Support::Mutex mutex;
+        Lifecycle lifecycle;
+        Support::Event* events;
+
+        State(unsigned int workers)
+            : RefCount(1U), requested(workers), capacity(0U), generation(0U), fast_admit(false),
+              lifecycle(Lifecycle::READY_TO_BIND), events(nullptr) {}
+        ~State(void) {
+            delete[] events;
+        }
     };
 
-    std::atomic<unsigned int> requested;
-    std::atomic<unsigned int> capacity;
-    std::atomic<unsigned long long int> generation;
-    std::atomic<bool> fast_admit;
-    Support::Mutex mutex;
-    Lifecycle lifecycle;
-    Support::Event* events;
+    WorkerControl::WorkerControl(void) noexcept : state(nullptr) {}
 
-    State(unsigned int workers)
-      : RefCount(1U), requested(workers), capacity(0U), generation(0U),
-        fast_admit(false), lifecycle(Lifecycle::READY_TO_BIND), events(nullptr) {}
-    ~State(void) {
-      delete [] events;
+    WorkerControl::WorkerControl(unsigned int requested) : state(new State(requested)) {}
+
+    WorkerControl::WorkerControl(const WorkerControl& control) : state(control.state) {
+        if (state != nullptr)
+            state->inc();
     }
-  };
 
-  WorkerControl::WorkerControl(void) noexcept
-    : state(nullptr) {}
+    WorkerControl&
+    WorkerControl::operator=(const WorkerControl& control) {
+        if (control.state != nullptr)
+            control.state->inc();
+        if ((state != nullptr) && state->dec())
+            delete state;
+        state = control.state;
+        return *this;
+    }
 
-  WorkerControl::WorkerControl(unsigned int requested)
-    : state(new State(requested)) {}
+    WorkerControl::~WorkerControl(void) {
+        if ((state != nullptr) && state->dec())
+            delete state;
+    }
 
-  WorkerControl::WorkerControl(const WorkerControl& control)
-    : state(control.state) {
-    if (state != nullptr)
-      state->inc();
-  }
+    bool
+    WorkerControl::engaged(void) const noexcept {
+        return state != nullptr;
+    }
 
-  WorkerControl&
-  WorkerControl::operator =(const WorkerControl& control) {
-    if (control.state != nullptr)
-      control.state->inc();
-    if ((state != nullptr) && state->dec())
-      delete state;
-    state = control.state;
-    return *this;
-  }
+    unsigned int
+    WorkerControl::requested(void) const noexcept {
+        return (state == nullptr) ? 0U : state->requested.load(std::memory_order_acquire);
+    }
 
-  WorkerControl::~WorkerControl(void) {
-    if ((state != nullptr) && state->dec())
-      delete state;
-  }
-
-  bool
-  WorkerControl::engaged(void) const noexcept {
-    return state != nullptr;
-  }
-
-  unsigned int
-  WorkerControl::requested(void) const noexcept {
-    return (state == nullptr) ? 0U :
-      state->requested.load(std::memory_order_acquire);
-  }
-
-  void
-  WorkerControl::request(unsigned int workers) {
-    if (state == nullptr)
-      throw UninitializedWorkerControl("WorkerControl::request");
+    void
+    WorkerControl::request(unsigned int workers) {
+        if (state == nullptr)
+            throw UninitializedWorkerControl("WorkerControl::request");
 #ifndef GECODE_HAS_THREADS
-    if (workers == 0U)
-      throw InvalidWorkerRequest("WorkerControl::request");
+        if (workers == 0U)
+            throw InvalidWorkerRequest("WorkerControl::request");
 #endif
-    bool changed = false;
-    {
-      Support::Lock lock(state->mutex);
-      unsigned int capacity =
-        state->capacity.load(std::memory_order_relaxed);
-      if ((capacity != 0U) && (workers > capacity))
-        throw InvalidWorkerRequest("WorkerControl::request");
-      unsigned int old =
-        state->requested.load(std::memory_order_relaxed);
-      if (old != workers) {
-        state->fast_admit.store(false,std::memory_order_release);
-        state->requested.store(workers,std::memory_order_release);
-        (void) state->generation.fetch_add(1U,std::memory_order_release);
-        changed = true;
-      }
+        bool changed = false;
+        {
+            Support::Lock lock(state->mutex);
+            unsigned int capacity = state->capacity.load(std::memory_order_relaxed);
+            if ((capacity != 0U) && (workers > capacity))
+                throw InvalidWorkerRequest("WorkerControl::request");
+            unsigned int old = state->requested.load(std::memory_order_relaxed);
+            if (old != workers) {
+                state->fast_admit.store(false, std::memory_order_release);
+                state->requested.store(workers, std::memory_order_release);
+                (void)state->generation.fetch_add(1U, std::memory_order_release);
+                changed = true;
+            }
+        }
+        if (changed)
+            WorkerControlAccess::signal_all(*this);
     }
-    if (changed)
-      WorkerControlAccess::signal_all(*this);
-  }
 
-  unsigned int
-  WorkerControl::capacity(void) const noexcept {
-    return (state == nullptr) ? 0U :
-      state->capacity.load(std::memory_order_acquire);
-  }
+    unsigned int
+    WorkerControl::capacity(void) const noexcept {
+        return (state == nullptr) ? 0U : state->capacity.load(std::memory_order_acquire);
+    }
 
-  void
-  WorkerControlAccess::attach(WorkerControl& control,
-                              unsigned int capacity) {
-    if (control.state == nullptr)
-      return;
-    WorkerControl::State* state = control.state;
-    Support::Lock lock(state->mutex);
-    if (state->lifecycle != WorkerControl::State::Lifecycle::READY_TO_BIND)
-      throw WorkerControlInUse("WorkerControlAccess::attach");
-    const unsigned int retained_capacity =
-      state->capacity.load(std::memory_order_relaxed);
+    void
+    WorkerControlAccess::attach(WorkerControl& control, unsigned int capacity) {
+        if (control.state == nullptr)
+            return;
+        WorkerControl::State* state = control.state;
+        Support::Lock lock(state->mutex);
+        if (state->lifecycle != WorkerControl::State::Lifecycle::READY_TO_BIND)
+            throw WorkerControlInUse("WorkerControlAccess::attach");
+        const unsigned int retained_capacity = state->capacity.load(std::memory_order_relaxed);
 #ifndef GECODE_HAS_THREADS
-    if (state->requested.load(std::memory_order_relaxed) == 0U)
-      throw InvalidWorkerRequest("WorkerControlAccess::attach");
+        if (state->requested.load(std::memory_order_relaxed) == 0U)
+            throw InvalidWorkerRequest("WorkerControlAccess::attach");
 #endif
-    if ((capacity == 0U) ||
-        ((retained_capacity != 0U) && (retained_capacity != capacity)) ||
-        (state->requested.load(std::memory_order_relaxed) > capacity))
-      throw InvalidWorkerRequest("WorkerControlAccess::attach");
-    if (state->events == nullptr)
-      state->events = new Support::Event[capacity];
-    state->capacity.store(capacity,std::memory_order_release);
-    state->fast_admit.store(
-      state->requested.load(std::memory_order_relaxed) == capacity,
-      std::memory_order_release);
-    state->lifecycle = WorkerControl::State::Lifecycle::ATTACHED;
-  }
-
-  void
-  WorkerControlAccess::detach(WorkerControl& control) {
-    if (control.state == nullptr)
-      return;
-    WorkerControl::State* state = control.state;
-    {
-      Support::Lock lock(state->mutex);
-      if (state->lifecycle == WorkerControl::State::Lifecycle::ATTACHED)
-        state->lifecycle = WorkerControl::State::Lifecycle::DETACHED;
+        if ((capacity == 0U) || ((retained_capacity != 0U) && (retained_capacity != capacity)) ||
+            (state->requested.load(std::memory_order_relaxed) > capacity))
+            throw InvalidWorkerRequest("WorkerControlAccess::attach");
+        if (state->events == nullptr)
+            state->events = new Support::Event[capacity];
+        state->capacity.store(capacity, std::memory_order_release);
+        state->fast_admit.store(state->requested.load(std::memory_order_relaxed) == capacity,
+                                std::memory_order_release);
+        state->lifecycle = WorkerControl::State::Lifecycle::ATTACHED;
     }
-    signal_all(control);
-  }
 
-  void
-  WorkerControlAccess::prepare_reuse(WorkerControl& control) {
-    if (control.state == nullptr)
-      return;
-    WorkerControl::State* state = control.state;
-    Support::Lock lock(state->mutex);
-    if (state->lifecycle == WorkerControl::State::Lifecycle::ATTACHED)
-      throw WorkerControlInUse("WorkerControlAccess::prepare_reuse");
-    state->lifecycle = WorkerControl::State::Lifecycle::READY_TO_BIND;
-  }
-
-  unsigned long long int
-  WorkerControlAccess::generation(const WorkerControl& control) {
-    return (control.state == nullptr) ? 0U :
-      control.state->generation.load(std::memory_order_acquire);
-  }
-
-  const std::atomic<bool>*
-  WorkerControlAccess::fast_admission(const WorkerControl& control) {
-    return (control.state == nullptr) ? nullptr :
-      &control.state->fast_admit;
-  }
-
-  void
-  WorkerControlAccess::fast_admission(
-    WorkerControl& control, unsigned long long int generation) {
-    if (control.state == nullptr)
-      return;
-    WorkerControl::State* state = control.state;
-    Support::Lock lock(state->mutex);
-    if ((state->generation.load(std::memory_order_relaxed) == generation) &&
-        (state->requested.load(std::memory_order_relaxed) ==
-         state->capacity.load(std::memory_order_relaxed)))
-      state->fast_admit.store(true,std::memory_order_release);
-  }
-
-  bool
-  WorkerControlAccess::same_identity(const WorkerControl& x,
-                                     const WorkerControl& y) {
-    return x.state == y.state;
-  }
-
-  unsigned int
-  WorkerControlAccess::requested(const WorkerControl& control) {
-    return (control.state == nullptr) ? 0U :
-      control.state->requested.load(std::memory_order_acquire);
-  }
-
-  void
-  WorkerControlAccess::snapshot(const WorkerControl& control,
-                                unsigned int& requested,
-                                unsigned long long int& generation) {
-    WorkerControl::State* state = control.state;
-    if (state == nullptr) {
-      requested = 0U;
-      generation = 0U;
-      return;
+    void
+    WorkerControlAccess::detach(WorkerControl& control) {
+        if (control.state == nullptr)
+            return;
+        WorkerControl::State* state = control.state;
+        {
+            Support::Lock lock(state->mutex);
+            if (state->lifecycle == WorkerControl::State::Lifecycle::ATTACHED)
+                state->lifecycle = WorkerControl::State::Lifecycle::DETACHED;
+        }
+        signal_all(control);
     }
-    Support::Lock lock(state->mutex);
-    requested = state->requested.load(std::memory_order_relaxed);
-    generation = state->generation.load(std::memory_order_relaxed);
-  }
 
-  void
-  WorkerControlAccess::wait(WorkerControl& control, unsigned int worker) {
-    WorkerControl::State* state = control.state;
-    if (state == nullptr)
-      return;
-    Support::Event* event = nullptr;
-    {
-      Support::Lock lock(state->mutex);
-      unsigned int capacity =
-        state->capacity.load(std::memory_order_relaxed);
-      assert((state->events == nullptr) || (worker < capacity));
-      if ((state->events != nullptr) && (worker < capacity))
-        event = &state->events[worker];
+    void
+    WorkerControlAccess::prepare_reuse(WorkerControl& control) {
+        if (control.state == nullptr)
+            return;
+        WorkerControl::State* state = control.state;
+        Support::Lock lock(state->mutex);
+        if (state->lifecycle == WorkerControl::State::Lifecycle::ATTACHED)
+            throw WorkerControlInUse("WorkerControlAccess::prepare_reuse");
+        state->lifecycle = WorkerControl::State::Lifecycle::READY_TO_BIND;
     }
-    if (event != nullptr)
-      event->wait();
-  }
 
-  void
-  WorkerControlAccess::signal(WorkerControl& control, unsigned int worker) {
-    WorkerControl::State* state = control.state;
-    if (state == nullptr)
-      return;
-    Support::Event* event = nullptr;
-    {
-      Support::Lock lock(state->mutex);
-      unsigned int capacity =
-        state->capacity.load(std::memory_order_relaxed);
-      assert((state->events == nullptr) || (worker < capacity));
-      if ((state->events != nullptr) && (worker < capacity))
-        event = &state->events[worker];
+    unsigned long long int
+    WorkerControlAccess::generation(const WorkerControl& control) {
+        return (control.state == nullptr) ? 0U : control.state->generation.load(std::memory_order_acquire);
     }
-    if (event != nullptr)
-      event->signal();
-  }
 
-  void
-  WorkerControlAccess::signal_all(WorkerControl& control) {
-    WorkerControl::State* state = control.state;
-    if (state == nullptr)
-      return;
-    Support::Event* events;
-    unsigned int capacity;
-    {
-      Support::Lock lock(state->mutex);
-      events = state->events;
-      capacity = state->capacity.load(std::memory_order_relaxed);
+    const std::atomic<bool>*
+    WorkerControlAccess::fast_admission(const WorkerControl& control) {
+        return (control.state == nullptr) ? nullptr : &control.state->fast_admit;
     }
-    if (events != nullptr)
-      for (unsigned int i=0U; i<capacity; i++)
-        events[i].signal();
-  }
 
-}}
+    void
+    WorkerControlAccess::fast_admission(WorkerControl& control, unsigned long long int generation) {
+        if (control.state == nullptr)
+            return;
+        WorkerControl::State* state = control.state;
+        Support::Lock lock(state->mutex);
+        if ((state->generation.load(std::memory_order_relaxed) == generation) &&
+            (state->requested.load(std::memory_order_relaxed) == state->capacity.load(std::memory_order_relaxed)))
+            state->fast_admit.store(true, std::memory_order_release);
+    }
+
+    bool
+    WorkerControlAccess::same_identity(const WorkerControl& x, const WorkerControl& y) {
+        return x.state == y.state;
+    }
+
+    unsigned int
+    WorkerControlAccess::requested(const WorkerControl& control) {
+        return (control.state == nullptr) ? 0U : control.state->requested.load(std::memory_order_acquire);
+    }
+
+    void
+    WorkerControlAccess::snapshot(const WorkerControl& control, unsigned int& requested,
+                                  unsigned long long int& generation) {
+        WorkerControl::State* state = control.state;
+        if (state == nullptr) {
+            requested = 0U;
+            generation = 0U;
+            return;
+        }
+        Support::Lock lock(state->mutex);
+        requested = state->requested.load(std::memory_order_relaxed);
+        generation = state->generation.load(std::memory_order_relaxed);
+    }
+
+    void
+    WorkerControlAccess::wait(WorkerControl& control, unsigned int worker) {
+        WorkerControl::State* state = control.state;
+        if (state == nullptr)
+            return;
+        Support::Event* event = nullptr;
+        {
+            Support::Lock lock(state->mutex);
+            unsigned int capacity = state->capacity.load(std::memory_order_relaxed);
+            assert((state->events == nullptr) || (worker < capacity));
+            if ((state->events != nullptr) && (worker < capacity))
+                event = &state->events[worker];
+        }
+        if (event != nullptr)
+            event->wait();
+    }
+
+    void
+    WorkerControlAccess::signal(WorkerControl& control, unsigned int worker) {
+        WorkerControl::State* state = control.state;
+        if (state == nullptr)
+            return;
+        Support::Event* event = nullptr;
+        {
+            Support::Lock lock(state->mutex);
+            unsigned int capacity = state->capacity.load(std::memory_order_relaxed);
+            assert((state->events == nullptr) || (worker < capacity));
+            if ((state->events != nullptr) && (worker < capacity))
+                event = &state->events[worker];
+        }
+        if (event != nullptr)
+            event->signal();
+    }
+
+    void
+    WorkerControlAccess::signal_all(WorkerControl& control) {
+        WorkerControl::State* state = control.state;
+        if (state == nullptr)
+            return;
+        Support::Event* events;
+        unsigned int capacity;
+        {
+            Support::Lock lock(state->mutex);
+            events = state->events;
+            capacity = state->capacity.load(std::memory_order_relaxed);
+        }
+        if (events != nullptr)
+            for (unsigned int i = 0U; i < capacity; i++)
+                events[i].signal();
+    }
+
+}} // namespace Gecode::Search
 
 // STATISTICS: search-other

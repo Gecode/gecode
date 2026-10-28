@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,32 +36,31 @@
 
 namespace Test { namespace Assign {
 
-  /// %Test assignment with disjoint union propagator
-  class Set : public SetTest {
-  public:
-    /// Create and register test
-    Set(const std::string& s, const Gecode::IntSet& d, int n)
-      : SetTest(s,n,d) {}
-    /// Post propagators on variables \a x
-    virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) {
-      Gecode::SetVarArgs y(x.size()-1);
-      for (int i=0; i<x.size()-1; i++)
-        y[i]=x[i];
-      Gecode::rel(home, Gecode::SOT_UNION, y, x[x.size()-1]);
-    }
-  };
+    /// %Test assignment with disjoint union propagator
+    class Set : public SetTest {
+    public:
+        /// Create and register test
+        Set(const std::string& s, const Gecode::IntSet& d, int n) : SetTest(s, n, d) {}
+        /// Post propagators on variables \a x
+        virtual void
+        post(Gecode::Space& home, Gecode::SetVarArray& x) {
+            Gecode::SetVarArgs y(x.size() - 1);
+            for (int i = 0; i < x.size() - 1; i++)
+                y[i] = x[i];
+            Gecode::rel(home, Gecode::SOT_UNION, y, x[x.size() - 1]);
+        }
+    };
 
-  namespace {
-    Gecode::IntArgs s({-100,-10,0,10,100});
-    Set d_3("Dense::3",Gecode::IntSet(-2,2),3);
-    Set d_4("Dense::4",Gecode::IntSet(-2,2),4);
-    Set s_3("Sparse::3",Gecode::IntSet(s),3);
-    Set s_4("Sparse::4",Gecode::IntSet(s),4);
-  }
+    namespace {
+        Gecode::IntArgs s({-100, -10, 0, 10, 100});
+        Set d_3("Dense::3", Gecode::IntSet(-2, 2), 3);
+        Set d_4("Dense::4", Gecode::IntSet(-2, 2), 4);
+        Set s_3("Sparse::3", Gecode::IntSet(s), 3);
+        Set s_4("Sparse::4", Gecode::IntSet(s), 4);
+    } // namespace
 
-}}
+}} // namespace Test::Assign
 
 #endif
 
 // STATISTICS: test-branch
-

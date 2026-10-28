@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,75 +36,66 @@
 #include <gecode/set/rel-op.hh>
 
 namespace Gecode {
-  using namespace Gecode::Set;
-  using namespace Gecode::Set::Rel;
-  using namespace Gecode::Set::RelOp;
+    using namespace Gecode::Set;
+    using namespace Gecode::Set::Rel;
+    using namespace Gecode::Set::RelOp;
 
-  void
-  rel(Home home, SetOpType op, const IntVarArgs& x, SetVar y) {
-    GECODE_POST;
-    ViewArray<SingletonView> xa(home,x.size());
-    for (int i=x.size(); i--;) {
-      Int::IntView iv(x[i]);
-      SingletonView sv(iv);
-      xa[i] = sv;
+    void
+    rel(Home home, SetOpType op, const IntVarArgs& x, SetVar y) {
+        GECODE_POST;
+        ViewArray<SingletonView> xa(home, x.size());
+        for (int i = x.size(); i--;) {
+            Int::IntView iv(x[i]);
+            SingletonView sv(iv);
+            xa[i] = sv;
+        }
+
+        switch (op) {
+        case SOT_UNION:
+            GECODE_ES_FAIL((RelOp::UnionN<SingletonView, SetView>::post(home, xa, y)));
+            break;
+        case SOT_DUNION:
+            GECODE_ES_FAIL((RelOp::PartitionN<SingletonView, SetView>::post(home, xa, y)));
+            break;
+        case SOT_INTER:
+            GECODE_ES_FAIL((RelOp::IntersectionN<SingletonView, SetView>::post(home, xa, y)));
+            break;
+        case SOT_MINUS:
+            throw IllegalOperation("Set::rel");
+            break;
+        default:
+            throw UnknownOperation("Set::rel");
+        }
     }
 
-    switch (op) {
-    case SOT_UNION:
-      GECODE_ES_FAIL((RelOp::UnionN<SingletonView,SetView>
-                           ::post(home, xa, y)));
-      break;
-    case SOT_DUNION:
-      GECODE_ES_FAIL((RelOp::PartitionN<SingletonView,SetView>
-                           ::post(home, xa, y)));
-      break;
-    case SOT_INTER:
-      GECODE_ES_FAIL(
-                     (RelOp::IntersectionN<SingletonView,SetView>
-                      ::post(home, xa, y)));
-      break;
-    case SOT_MINUS:
-      throw IllegalOperation("Set::rel");
-      break;
-    default:
-      throw UnknownOperation("Set::rel");
-    }
-  }
+    void
+    rel(Home home, SetOpType op, const IntVarArgs& x, const IntSet& z, SetVar y) {
+        GECODE_POST;
+        Set::Limits::check(z, "Set::rel");
+        ViewArray<SingletonView> xa(home, x.size());
+        for (int i = x.size(); i--;) {
+            Int::IntView iv(x[i]);
+            SingletonView sv(iv);
+            xa[i] = sv;
+        }
 
-  void
-  rel(Home home, SetOpType op, const IntVarArgs& x, const IntSet& z,
-      SetVar y) {
-    GECODE_POST;
-    Set::Limits::check(z, "Set::rel");
-    ViewArray<SingletonView> xa(home,x.size());
-    for (int i=x.size(); i--;) {
-      Int::IntView iv(x[i]);
-      SingletonView sv(iv);
-      xa[i] = sv;
+        switch (op) {
+        case SOT_UNION:
+            GECODE_ES_FAIL((RelOp::UnionN<SingletonView, SetView>::post(home, xa, z, y)));
+            break;
+        case SOT_DUNION:
+            GECODE_ES_FAIL((RelOp::PartitionN<SingletonView, SetView>::post(home, xa, z, y)));
+            break;
+        case SOT_INTER:
+            GECODE_ES_FAIL((RelOp::IntersectionN<SingletonView, SetView>::post(home, xa, z, y)));
+            break;
+        case SOT_MINUS:
+            throw IllegalOperation("set::rel");
+            break;
+        default:
+            throw UnknownOperation("Set::rel");
+        }
     }
-
-    switch (op) {
-    case SOT_UNION:
-      GECODE_ES_FAIL((RelOp::UnionN<SingletonView,SetView>
-                           ::post(home, xa, z, y)));
-      break;
-    case SOT_DUNION:
-      GECODE_ES_FAIL((RelOp::PartitionN<SingletonView,SetView>
-                           ::post(home, xa, z, y)));
-      break;
-    case SOT_INTER:
-      GECODE_ES_FAIL(
-                     (RelOp::IntersectionN<SingletonView,SetView>
-                      ::post(home, xa, z, y)));
-      break;
-    case SOT_MINUS:
-      throw IllegalOperation("set::rel");
-      break;
-    default:
-      throw UnknownOperation("Set::rel");
-    }
-  }
-}
+} // namespace Gecode
 
 // STATISTICS: set-post

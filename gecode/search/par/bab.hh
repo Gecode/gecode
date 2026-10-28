@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,101 +37,103 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  /// %Parallel branch-and-bound engine
-  template<class Tracer>
-  class BAB : public Engine<Tracer> {
-  protected:
-    using Engine<Tracer>::idle;
-    using Engine<Tracer>::busy;
-    using Engine<Tracer>::stop;
-    using Engine<Tracer>::block;
-    using Engine<Tracer>::e_search;
-    using Engine<Tracer>::e_reset_ack_start;
-    using Engine<Tracer>::e_reset_ack_stop;
-    using Engine<Tracer>::n_busy;
-    using Engine<Tracer>::m_search;
-    using Engine<Tracer>::m_wait_reset;
-    using Engine<Tracer>::opt;
-    using Engine<Tracer>::release;
-    using Engine<Tracer>::signal;
-    using Engine<Tracer>::solutions;
-    using Engine<Tracer>::terminate;
-    using Engine<Tracer>::workers;
-    using Engine<Tracer>::C_WAIT;
-    using Engine<Tracer>::C_RESET;
-    using Engine<Tracer>::C_TERMINATE;
-    using Engine<Tracer>::C_WORK;
-    /// %Parallel branch-and-bound search worker
-    class Worker : public Engine<Tracer>::Worker {
+    /// %Parallel branch-and-bound engine
+    template <class Tracer>
+    class BAB : public Engine<Tracer> {
     protected:
-      using Engine<Tracer>::Worker::_engine;
-      using Engine<Tracer>::Worker::m;
-      using Engine<Tracer>::Worker::path;
-      using Engine<Tracer>::Worker::cur;
-      using Engine<Tracer>::Worker::d;
-      using Engine<Tracer>::Worker::idle;
-      using Engine<Tracer>::Worker::node;
-      using Engine<Tracer>::Worker::fail;
-      using Engine<Tracer>::Worker::start;
-      using Engine<Tracer>::Worker::tracer;
-      using Engine<Tracer>::Worker::stop;
-      /// Number of entries not yet constrained to be better
-      int mark;
-      /// Best solution found so far
-      Space* best;
-      /// Fixed worker index
-      unsigned int index;
+        using Engine<Tracer>::idle;
+        using Engine<Tracer>::busy;
+        using Engine<Tracer>::stop;
+        using Engine<Tracer>::block;
+        using Engine<Tracer>::e_search;
+        using Engine<Tracer>::e_reset_ack_start;
+        using Engine<Tracer>::e_reset_ack_stop;
+        using Engine<Tracer>::n_busy;
+        using Engine<Tracer>::m_search;
+        using Engine<Tracer>::m_wait_reset;
+        using Engine<Tracer>::opt;
+        using Engine<Tracer>::release;
+        using Engine<Tracer>::signal;
+        using Engine<Tracer>::solutions;
+        using Engine<Tracer>::terminate;
+        using Engine<Tracer>::workers;
+        using Engine<Tracer>::C_WAIT;
+        using Engine<Tracer>::C_RESET;
+        using Engine<Tracer>::C_TERMINATE;
+        using Engine<Tracer>::C_WORK;
+        /// %Parallel branch-and-bound search worker
+        class Worker : public Engine<Tracer>::Worker {
+        protected:
+            using Engine<Tracer>::Worker::_engine;
+            using Engine<Tracer>::Worker::m;
+            using Engine<Tracer>::Worker::path;
+            using Engine<Tracer>::Worker::cur;
+            using Engine<Tracer>::Worker::d;
+            using Engine<Tracer>::Worker::idle;
+            using Engine<Tracer>::Worker::node;
+            using Engine<Tracer>::Worker::fail;
+            using Engine<Tracer>::Worker::start;
+            using Engine<Tracer>::Worker::tracer;
+            using Engine<Tracer>::Worker::stop;
+            /// Number of entries not yet constrained to be better
+            int mark;
+            /// Best solution found so far
+            Space* best;
+            /// Fixed worker index
+            unsigned int index;
+
+        public:
+            /// Initialize for space \a s with engine \a e
+            Worker(Space* s, BAB& e, unsigned int index);
+            /// Provide access to engine
+            BAB& engine(void) const;
+            /// Start execution of worker
+            virtual void run(void);
+            /// Accept better solution \a b
+            void better(Space* b);
+            /// Try to find some work
+            bool find(void);
+            /// Reset engine to restart at space \a s
+            void reset(Space* s, unsigned int ngdl);
+            /// Whether this worker currently owns local search
+            bool owns_work(void) const;
+            /// Destructor
+            virtual ~Worker(void);
+        };
+        /// Array of worker references
+        Worker** _worker;
+        /// Best solution so far
+        Space* best;
+
     public:
-      /// Initialize for space \a s with engine \a e
-      Worker(Space* s, BAB& e, unsigned int index);
-      /// Provide access to engine
-      BAB& engine(void) const;
-      /// Start execution of worker
-      virtual void run(void);
-      /// Accept better solution \a b
-      void better(Space* b);
-      /// Try to find some work
-      bool find(void);
-      /// Reset engine to restart at space \a s
-      void reset(Space* s, unsigned int ngdl);
-      /// Whether this worker currently owns local search
-      bool owns_work(void) const;
-      /// Destructor
-      virtual ~Worker(void);
+        /// Provide access to worker \a i
+        Worker* worker(unsigned int i) const;
+
+        /// \name Search control
+        //@{
+        /// Report solution \a s
+        void solution(Space* s);
+        //@}
+
+        /// \name Engine interface
+        //@{
+        /// Initialize for space \a s with options \a o
+        BAB(Space* s, const Options& o);
+        /// Return statistics
+        virtual Statistics statistics(void) const;
+        /// Reset engine to restart at space \a s
+        virtual void reset(Space* s);
+        /// Constrain future solutions to be better than \a b
+        virtual void constrain(const Space& b);
+        /// Constrain
+        /// Return no-goods
+        virtual NoGoods& nogoods(void);
+        /// Destructor
+        virtual ~BAB(void);
+        //@}
     };
-    /// Array of worker references
-    Worker** _worker;
-    /// Best solution so far
-    Space* best;
-  public:
-    /// Provide access to worker \a i
-    Worker* worker(unsigned int i) const;
 
-    /// \name Search control
-    //@{
-    /// Report solution \a s
-    void solution(Space* s);
-    //@}
-
-    /// \name Engine interface
-    //@{
-    /// Initialize for space \a s with options \a o
-    BAB(Space* s, const Options& o);
-    /// Return statistics
-    virtual Statistics statistics(void) const;
-    /// Reset engine to restart at space \a s
-    virtual void reset(Space* s);
-    /// Constrain future solutions to be better than \a b
-    virtual void constrain(const Space& b);
-    /// Constrain
-    /// Return no-goods
-    virtual NoGoods& nogoods(void);
-    /// Destructor
-    virtual ~BAB(void);
-    //@}
-  };
-
-}}}
+}}} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/bab.hpp>
 

@@ -25,7 +25,9 @@ solution so far.
 
 ## Code conventions
 
-New code follows these rules, even where older code does not:
+Formatting, naming, and the format and lint commands are described in
+[the code style guide](docs/code-style.md). New code follows these rules, even
+where older code does not:
 
 - Name functions and variables in snake_case (`read_file`, `parse_int`).
 - Use `enum class`, unless an existing API requires a plain `enum`.

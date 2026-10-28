@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,58 +34,45 @@
 
 namespace Gecode { namespace Int {
 
-  OutOfLimits::OutOfLimits(const char* l)
-    : Exception(l,"Number out of limits") {}
+    OutOfLimits::OutOfLimits(const char* l) : Exception(l, "Number out of limits") {}
 
-  VariableEmptyDomain::VariableEmptyDomain(const char* l)
-    : Exception(l,"Attempt to create variable with empty domain") {}
+    VariableEmptyDomain::VariableEmptyDomain(const char* l)
+        : Exception(l, "Attempt to create variable with empty domain") {}
 
-  NotZeroOne::NotZeroOne(const char* l)
-    : Exception(l,"Not a zero/one integer value") {}
+    NotZeroOne::NotZeroOne(const char* l) : Exception(l, "Not a zero/one integer value") {}
 
-  TooFewArguments::TooFewArguments(const char* l)
-    : Exception(l,"Passed argument array has too few elements") {}
+    TooFewArguments::TooFewArguments(const char* l) : Exception(l, "Passed argument array has too few elements") {}
 
-  ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
-    : Exception(l,"Sizes of argument arrays mismatch") {}
+    ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l) : Exception(l, "Sizes of argument arrays mismatch") {}
 
-  ArgumentSame::ArgumentSame(const char* l)
-    : Exception(l,"Argument array contains same variable multiply") {}
+    ArgumentSame::ArgumentSame(const char* l) : Exception(l, "Argument array contains same variable multiply") {}
 
-  UnknownRelation::UnknownRelation(const char* l)
-    : Exception(l,"Unknown relation type") {}
+    UnknownRelation::UnknownRelation(const char* l) : Exception(l, "Unknown relation type") {}
 
-  UnknownOperation::UnknownOperation(const char* l)
-    : Exception(l,"Unknown operation type") {}
+    UnknownOperation::UnknownOperation(const char* l) : Exception(l, "Unknown operation type") {}
 
-  IllegalOperation::IllegalOperation(const char* l)
-    : Exception(l,"Illegal operation type") {}
+    IllegalOperation::IllegalOperation(const char* l) : Exception(l, "Illegal operation type") {}
 
-  UnknownBranching::UnknownBranching(const char* l)
-    : Exception(l,"Unknown branching type") {}
+    UnknownBranching::UnknownBranching(const char* l) : Exception(l, "Unknown branching type") {}
 
-  UnknownReifyMode::UnknownReifyMode(const char* l)
-    : Exception(l,"Unknown reification mode") {}
+    UnknownReifyMode::UnknownReifyMode(const char* l) : Exception(l, "Unknown reification mode") {}
 
-  ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
-    : Exception(l,"Attempt to access value of unassigned variable") {}
+    ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
+        : Exception(l, "Attempt to access value of unassigned variable") {}
 
-  UninitializedTupleSet::UninitializedTupleSet(const char* l)
-    : Exception(l,"Attempt to use uninitialized tuple set") {}
+    UninitializedTupleSet::UninitializedTupleSet(const char* l)
+        : Exception(l, "Attempt to use uninitialized tuple set") {}
 
-  NotYetFinalized::NotYetFinalized(const char* l)
-    : Exception(l,"Tuple set not yet finalized") {}
+    NotYetFinalized::NotYetFinalized(const char* l) : Exception(l, "Tuple set not yet finalized") {}
 
-  AlreadyFinalized::AlreadyFinalized(const char* l)
-    : Exception(l,"Tuple set already finalized") {}
+    AlreadyFinalized::AlreadyFinalized(const char* l) : Exception(l, "Tuple set already finalized") {}
 
-  LDSBUnbranchedVariable::LDSBUnbranchedVariable(const char* l)
-    : Exception(l,"Variable in symmetry not branched on") {}
+    LDSBUnbranchedVariable::LDSBUnbranchedVariable(const char* l)
+        : Exception(l, "Variable in symmetry not branched on") {}
 
-  LDSBBadValueSelection::LDSBBadValueSelection(const char* l)
-    : Exception(l,"Value selection incompatible with LDSB") {}
+    LDSBBadValueSelection::LDSBBadValueSelection(const char* l)
+        : Exception(l, "Value selection incompatible with LDSB") {}
 
-}}
+}} // namespace Gecode::Int
 
 // STATISTICS: int-other
-

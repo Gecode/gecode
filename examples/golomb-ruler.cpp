@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -61,65 +60,64 @@ using namespace Gecode;
  */
 class GolombRuler : public IntMinimizeScript {
 protected:
-  /// Array for ruler marks
-  IntVarArray m;
+    /// Array for ruler marks
+    IntVarArray m;
+
 public:
-  /// Actual model
-  GolombRuler(const SizeOptions& opt)
-    : IntMinimizeScript(opt),
-      m(*this,opt.size(),0,
-        (opt.size() < 31) ? (1 << (opt.size()-1))-1 : Int::Limits::max) {
+    /// Actual model
+    GolombRuler(const SizeOptions& opt)
+        : IntMinimizeScript(opt),
+          m(*this, opt.size(), 0, (opt.size() < 31) ? (1 << (opt.size() - 1)) - 1 : Int::Limits::max) {
 
-    // Assume first mark to be zero
-    rel(*this, m[0], IRT_EQ, 0);
+        // Assume first mark to be zero
+        rel(*this, m[0], IRT_EQ, 0);
 
-    // Order marks
-    rel(*this, m, IRT_LE);
+        // Order marks
+        rel(*this, m, IRT_LE);
 
-    // Number of marks and differences
-    const int n = m.size();
-    const int n_d = (n*n-n)/2;
+        // Number of marks and differences
+        const int n = m.size();
+        const int n_d = (n * n - n) / 2;
 
-    // Array of differences
-    IntVarArgs d(n_d);
+        // Array of differences
+        IntVarArgs d(n_d);
 
-    // Setup difference constraints
-    for (int k=0, i=0; i<n-1; i++)
-      for (int j=i+1; j<n; j++, k++)
-        // d[k] is m[j]-m[i] and must be at least sum of first j-i integers
-        rel(*this, d[k] = expr(*this, m[j]-m[i]),
-                   IRT_GQ, (j-i)*(j-i+1)/2);
+        // Setup difference constraints
+        for (int k = 0, i = 0; i < n - 1; i++)
+            for (int j = i + 1; j < n; j++, k++)
+                // d[k] is m[j]-m[i] and must be at least sum of first j-i integers
+                rel(*this, d[k] = expr(*this, m[j] - m[i]), IRT_GQ, (j - i) * (j - i + 1) / 2);
 
-    distinct(*this, d, opt.ipl());
+        distinct(*this, d, opt.ipl());
 
-    // Symmetry breaking
-    if (n > 2)
-      rel(*this, d[0], IRT_LE, d[n_d-1]);
+        // Symmetry breaking
+        if (n > 2)
+            rel(*this, d[0], IRT_LE, d[n_d - 1]);
 
-    branch(*this, m, INT_VAR_NONE(), INT_VAL_MIN());
-  }
+        branch(*this, m, INT_VAR_NONE(), INT_VAL_MIN());
+    }
 
-  /// Return cost
-  virtual IntVar cost(void) const {
-    return m[m.size()-1];
-  }
+    /// Return cost
+    virtual IntVar
+    cost(void) const {
+        return m[m.size() - 1];
+    }
 
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    os << "\tm[" << m.size() << "] = " << m << std::endl;
-  }
+    /// Print solution
+    virtual void
+    print(std::ostream& os) const {
+        os << "\tm[" << m.size() << "] = " << m << std::endl;
+    }
 
-  /// Constructor for cloning \a s
-  GolombRuler(GolombRuler& s)
-    : IntMinimizeScript(s) {
-    m.update(*this, s.m);
-  }
-  /// Copy during cloning
-  virtual Space*
-  copy(void) {
-    return new GolombRuler(*this);
-  }
+    /// Constructor for cloning \a s
+    GolombRuler(GolombRuler& s) : IntMinimizeScript(s) {
+        m.update(*this, s.m);
+    }
+    /// Copy during cloning
+    virtual Space*
+    copy(void) {
+        return new GolombRuler(*this);
+    }
 };
 
 /** \brief Main-function
@@ -127,15 +125,14 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("GolombRuler");
-  opt.solutions(0);
-  opt.size(10);
-  opt.ipl(IPL_BND);
-  opt.parse(argc,argv);
-  if (opt.size() > 0)
-    IntMinimizeScript::run<GolombRuler,BAB,SizeOptions>(opt);
-  return 0;
+    SizeOptions opt("GolombRuler");
+    opt.solutions(0);
+    opt.size(10);
+    opt.ipl(IPL_BND);
+    opt.parse(argc, argv);
+    if (opt.size() > 0)
+        IntMinimizeScript::run<GolombRuler, BAB, SizeOptions>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any
-

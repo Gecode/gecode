@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jason Nguyen <jason.nguyen@monash.edu>
@@ -33,31 +32,27 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("cumulatives_full::8",
-R"FZN(
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest("cumulatives_full::8",
+                                   R"FZN(
 % The two overlapping tasks exceed machine 0's capacity.
 constraint gecode_cumulatives([0, 0], [1, 1], [2, 2], [0, 0], [3, 1], true);
 solve satisfy;
 )FZN",
-"=====UNSATISFIABLE=====\n");
-        (void) new FlatZincTest("cumulatives_full::8::feasible",
-          "constraint gecode_cumulatives([0,1],[1,1],[2,2],[0,0],[3,1],true); "
-          "solve satisfy;", "----------\n");
-      }
+                                   "=====UNSATISFIABLE=====\n");
+            (void)new FlatZincTest("cumulatives_full::8::feasible",
+                                   "constraint gecode_cumulatives([0,1],[1,1],[2,2],[0,0],[3,1],true); "
+                                   "solve satisfy;",
+                                   "----------\n");
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

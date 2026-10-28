@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,48 +32,42 @@
 
 namespace Gecode { namespace Gist {
 
-  inline void
-  DrawingCursor::moveUpwards(void) {
-    x -= node()->getOffset();
-    y -= Layout::dist_y;
-    NodeCursor<VisualNode>::moveUpwards();
-  }
+    inline void
+    DrawingCursor::moveUpwards(void) {
+        x -= node()->getOffset();
+        y -= Layout::dist_y;
+        NodeCursor<VisualNode>::moveUpwards();
+    }
 
-  forceinline bool
-  DrawingCursor::isClipped(void) {
-    if (clippingRect.width() == 0 && clippingRect.x() == 0
-        && clippingRect.height() == 0 && clippingRect.y() == 0)
-      return false;
-    BoundingBox b = node()->getBoundingBox();
-    return (x + b.left > clippingRect.x() + clippingRect.width() ||
-            x + b.right < clippingRect.x() ||
-            y > clippingRect.y() + clippingRect.height() ||
-            y + (node()->getShape()->depth()+1) * Layout::dist_y <
-            clippingRect.y());
-  }
+    forceinline bool
+    DrawingCursor::isClipped(void) {
+        if (clippingRect.width() == 0 && clippingRect.x() == 0 && clippingRect.height() == 0 && clippingRect.y() == 0)
+            return false;
+        BoundingBox b = node()->getBoundingBox();
+        return (x + b.left > clippingRect.x() + clippingRect.width() || x + b.right < clippingRect.x() ||
+                y > clippingRect.y() + clippingRect.height() ||
+                y + (node()->getShape()->depth() + 1) * Layout::dist_y < clippingRect.y());
+    }
 
-  inline bool
-  DrawingCursor::mayMoveDownwards(void) {
-    return NodeCursor<VisualNode>::mayMoveDownwards() &&
-           !node()->isHidden() &&
-           node()->childrenLayoutIsDone() &&
-           !isClipped();
-  }
+    inline bool
+    DrawingCursor::mayMoveDownwards(void) {
+        return NodeCursor<VisualNode>::mayMoveDownwards() && !node()->isHidden() && node()->childrenLayoutIsDone() &&
+               !isClipped();
+    }
 
-  inline void
-  DrawingCursor::moveDownwards(void) {
-    NodeCursor<VisualNode>::moveDownwards();
-    x += node()->getOffset();
-    y += Layout::dist_y;
-  }
+    inline void
+    DrawingCursor::moveDownwards(void) {
+        NodeCursor<VisualNode>::moveDownwards();
+        x += node()->getOffset();
+        y += Layout::dist_y;
+    }
 
-  inline void
-  DrawingCursor::moveSidewards(void) {
-    x -= node()->getOffset();
-    NodeCursor<VisualNode>::moveSidewards();
-    x += node()->getOffset();
-  }
+    inline void
+    DrawingCursor::moveSidewards(void) {
+        x -= node()->getOffset();
+        NodeCursor<VisualNode>::moveSidewards();
+        x += node()->getOffset();
+    }
 
-
-}}
+}} // namespace Gecode::Gist
 // STATISTICS: gist-any

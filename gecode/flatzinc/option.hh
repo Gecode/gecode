@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -36,31 +35,43 @@
 
 namespace Gecode { namespace FlatZinc {
 
-  /// Optional value
-  template<class Val>
-  struct Option {
-  private:
-    bool _some;
-    Val _v;
-  public:
-    bool operator()(void) const { return _some; }
-    const Val& some(void) const { return _v; }
-    Val& some(void) { return _v; }
-    static Option<Val> none(void) {
-      Option<Val> o;
-      o._some = false;
-      new (&o._v) Val();
-      return o;
-    }
-    static Option<Val> some(const Val& v) {
-      Option<Val> o;
-      o._some = true;
-      o._v = v;
-      return o;
-    }
-  };
+    /// Optional value
+    template <class Val>
+    struct Option {
+    private:
+        bool _some;
+        Val _v;
 
-}}
+    public:
+        bool
+        operator()(void) const {
+            return _some;
+        }
+        const Val&
+        some(void) const {
+            return _v;
+        }
+        Val&
+        some(void) {
+            return _v;
+        }
+        static Option<Val>
+        none(void) {
+            Option<Val> o;
+            o._some = false;
+            new (&o._v) Val();
+            return o;
+        }
+        static Option<Val>
+        some(const Val& v) {
+            Option<Val> o;
+            o._some = true;
+            o._v = v;
+            return o;
+        }
+    };
+
+}} // namespace Gecode::FlatZinc
 
 #endif
 

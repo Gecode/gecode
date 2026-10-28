@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,78 +34,68 @@
 
 namespace Gecode {
 
-  void
-  member(Home home, const IntVarArgs& x, IntVar y,
-         IntPropLevel) {
-    using namespace Int;
-    GECODE_POST;
+    void
+    member(Home home, const IntVarArgs& x, IntVar y, IntPropLevel) {
+        using namespace Int;
+        GECODE_POST;
 
-    ViewArray<IntView> xv(home,x);
-    GECODE_ES_FAIL(Member::Prop<IntView>::post(home,xv,y));
-  }
-
-  void
-  member(Home home, const BoolVarArgs& x, BoolVar y,
-         IntPropLevel) {
-    using namespace Int;
-    GECODE_POST;
-
-    ViewArray<BoolView> xv(home,x);
-    GECODE_ES_FAIL(Member::Prop<BoolView>::post(home,xv,y));
-  }
-
-  void
-  member(Home home, const IntVarArgs& x, IntVar y, Reify r,
-         IntPropLevel) {
-    using namespace Int;
-    GECODE_POST;
-
-    ViewArray<IntView> xv(home,x);
-
-    switch (r.mode()) {
-    case RM_EQV:
-      GECODE_ES_FAIL((Member::ReProp<IntView,RM_EQV>
-                      ::post(home,xv,y,r.var())));
-      break;
-    case RM_IMP:
-      GECODE_ES_FAIL((Member::ReProp<IntView,RM_IMP>
-                      ::post(home,xv,y,r.var())));
-      break;
-    case RM_PMI:
-      GECODE_ES_FAIL((Member::ReProp<IntView,RM_PMI>
-                      ::post(home,xv,y,r.var())));
-      break;
-    default: throw UnknownReifyMode("Int::member");
-    }
-  }
-
-  void
-  member(Home home, const BoolVarArgs& x, BoolVar y, Reify r,
-         IntPropLevel) {
-    using namespace Int;
-    GECODE_POST;
-
-    ViewArray<BoolView> xv(home,x);
-
-    switch (r.mode()) {
-    case RM_EQV:
-      GECODE_ES_FAIL((Member::ReProp<BoolView,RM_EQV>
-                      ::post(home,xv,y,r.var())));
-      break;
-    case RM_IMP:
-      GECODE_ES_FAIL((Member::ReProp<BoolView,RM_IMP>
-                      ::post(home,xv,y,r.var())));
-      break;
-    case RM_PMI:
-      GECODE_ES_FAIL((Member::ReProp<BoolView,RM_PMI>
-                      ::post(home,xv,y,r.var())));
-      break;
-    default: throw UnknownReifyMode("Int::member");
+        ViewArray<IntView> xv(home, x);
+        GECODE_ES_FAIL(Member::Prop<IntView>::post(home, xv, y));
     }
 
-  }
+    void
+    member(Home home, const BoolVarArgs& x, BoolVar y, IntPropLevel) {
+        using namespace Int;
+        GECODE_POST;
 
-}
+        ViewArray<BoolView> xv(home, x);
+        GECODE_ES_FAIL(Member::Prop<BoolView>::post(home, xv, y));
+    }
+
+    void
+    member(Home home, const IntVarArgs& x, IntVar y, Reify r, IntPropLevel) {
+        using namespace Int;
+        GECODE_POST;
+
+        ViewArray<IntView> xv(home, x);
+
+        switch (r.mode()) {
+        case RM_EQV:
+            GECODE_ES_FAIL((Member::ReProp<IntView, RM_EQV>::post(home, xv, y, r.var())));
+            break;
+        case RM_IMP:
+            GECODE_ES_FAIL((Member::ReProp<IntView, RM_IMP>::post(home, xv, y, r.var())));
+            break;
+        case RM_PMI:
+            GECODE_ES_FAIL((Member::ReProp<IntView, RM_PMI>::post(home, xv, y, r.var())));
+            break;
+        default:
+            throw UnknownReifyMode("Int::member");
+        }
+    }
+
+    void
+    member(Home home, const BoolVarArgs& x, BoolVar y, Reify r, IntPropLevel) {
+        using namespace Int;
+        GECODE_POST;
+
+        ViewArray<BoolView> xv(home, x);
+
+        switch (r.mode()) {
+        case RM_EQV:
+            GECODE_ES_FAIL((Member::ReProp<BoolView, RM_EQV>::post(home, xv, y, r.var())));
+            break;
+        case RM_IMP:
+            GECODE_ES_FAIL((Member::ReProp<BoolView, RM_IMP>::post(home, xv, y, r.var())));
+            break;
+        case RM_PMI:
+            GECODE_ES_FAIL((Member::ReProp<BoolView, RM_PMI>::post(home, xv, y, r.var())));
+            break;
+        default:
+            throw UnknownReifyMode("Int::member");
+        }
+    }
+
+} // namespace Gecode
 
 // STATISTICS: int-post
-

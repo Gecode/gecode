@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -43,179 +42,185 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  /// Stop object used for controlling slaves in a portfolio
-  class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
-  private:
-    /// The stop object for the slaves
-    Stop* so;
-    /// Worker control for waking a paused asset
-    WorkerControl worker_control;
-    /// Whether search must be stopped
-    std::atomic<bool>* tostop;
-  public:
-    /// Initialize
-    PortfolioStop(Stop* so, const WorkerControl& control);
-    /// Set pointer to shared \a tostop variable
-    void share(std::atomic<bool>* ts);
-    /// Return true if portfolio engine must be stopped
-    virtual bool stop(const Statistics& s, const Options& o);
-    /// Wake workers so that a paused asset can observe the portfolio stop
-    void wake(void);
-    /// Signal whether search must be stopped
-    void stop(bool s);
-    /// Whether search must be stopped
-    bool stop(void) const;
-  };
+    /// Stop object used for controlling slaves in a portfolio
+    class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
+    private:
+        /// The stop object for the slaves
+        Stop* so;
+        /// Worker control for waking a paused asset
+        WorkerControl worker_control;
+        /// Whether search must be stopped
+        std::atomic<bool>* tostop;
 
-  // Forward declaration
-  template<class Collect>
-  class PBS;
-
-  /// Runnable slave of a portfolio master
-  template<class Collect>
-  class GECODE_SEARCH_EXPORT Slave : public Support::Runnable {
-  protected:
-    /// Completion event for the current run
-    class Completion : public Support::Terminator {
-    protected:
-      /// The completion event
-      Support::Event done;
     public:
-      /// Initialize as completed
-      Completion(void);
-      /// Signal completion
-      virtual void terminated(void);
-      /// Wait for completion and consume the signal
-      void wait(void);
-    } completion;
-    /// The master engine
-    PBS<Collect>* master;
-    /// The slave engine
-    Engine* slave;
-    /// Stop object
-    Stop* stop;
-  public:
-    /// Initialize with master \a m, slave \a s, and its stop object \a so
-    Slave(PBS<Collect>* m, Engine* s, Stop* so);
-    /// Return statistics of slave
-    Statistics statistics(void) const;
-    /// Check whether slave has been stopped
-    bool stopped(void) const;
-    /// Check whether slave stopped at a local limit
-    bool limited(void) const;
-    /// Return the completion terminator
-    virtual Support::Terminator* terminator(void) const;
-    /// Wait for the slave to complete its current run
-    void wait(void);
-    /// Wake a paused slave so that it can observe the portfolio stop
-    void wake(void);
-    /// Constrain with better solution \a b
-    void constrain(const Space& b);
-    /// Perform one run
-    virtual void run(void);
-    /// Delete slave
-    virtual ~Slave(void);
-  };
+        /// Initialize
+        PortfolioStop(Stop* so, const WorkerControl& control);
+        /// Set pointer to shared \a tostop variable
+        void share(std::atomic<bool>* ts);
+        /// Return true if portfolio engine must be stopped
+        virtual bool stop(const Statistics& s, const Options& o);
+        /// Wake workers so that a paused asset can observe the portfolio stop
+        void wake(void);
+        /// Signal whether search must be stopped
+        void stop(bool s);
+        /// Whether search must be stopped
+        bool stop(void) const;
+    };
 
-  /// Collect all solutions
-  class CollectAll {
-  protected:
-    /// Queue of solutions
-    Support::DynamicQueue<Space*,Heap> solutions;
-  public:
-    /// Whether it collects best solutions
-    static const bool best = false;
-    /// Initialize
-    CollectAll(void);
-    /// Add a solution \a a reported by \a r and always return true
-    bool add(Space* s, Slave<CollectAll>* r);
-    /// Dummy function
-    bool constrain(const Space& b);
-    /// Check whether there is any solution left
-    bool empty(void) const;
-    /// Return solution reported by \a r
-    Space* get(Slave<CollectAll>*& r);
-    /// Destructor
-    ~CollectAll(void);
-  };
+    // Forward declaration
+    template <class Collect>
+    class PBS;
 
-  /// Collect best solutions
-  class CollectBest {
-  protected:
-    /// Currently best solution
-    Space* b;
-    /// Who has reported the best solution (nullptr if solution has already been reported)
-    Slave<CollectBest>* reporter;
-  public:
-    /// Whether it collects best solutions
-    static const bool best = true;
-    /// Initialize
-    CollectBest(void);
-    /// Add a solution \a s by \a r and return whether is was better
-    bool add(Space* s, Slave<CollectBest>* r);
-    /// Check whether \a b better and update accordingly
-    bool constrain(const Space& b);
-    /// Check whether there is any solution left
-    bool empty(void) const;
-    /// Return solution reported by \a r (only if a better one was found)
-    Space* get(Slave<CollectBest>*& r);
-    /// Destructor
-    ~CollectBest(void);
-  };
+    /// Runnable slave of a portfolio master
+    template <class Collect>
+    class GECODE_SEARCH_EXPORT Slave : public Support::Runnable {
+    protected:
+        /// Completion event for the current run
+        class Completion : public Support::Terminator {
+        protected:
+            /// The completion event
+            Support::Event done;
 
-  /// Parallel portfolio engine implementation
-  template<class Collect>
-  class GECODE_SEARCH_EXPORT PBS : public Engine {
-    friend class Slave<Collect>;
-  protected:
-    /// Master statistics
-    Statistics stat;
-    /// Slave engines
-    Slave<Collect>** slaves;
-    /// Number of slave engines
-    unsigned int n_slaves;
-    /// Number of active slave engines
-    unsigned int n_active;
-    /// Whether a slave has been stopped
-    std::atomic<bool> slave_stop;
-    /// Whether a slave stopped at a local limit
-    bool incomplete;
-    /// Shared stop flag
-    std::atomic<bool> tostop;
-    /// Collect solutions in this
-    Collect solutions;
-    /// Mutex for synchronization
-    Support::Mutex m;
-    /// Number of busy slaves
-    unsigned int n_busy;
-    /// Signal that number of busy slaves becomes zero
-    Support::Event idle;
-    /// Process report from slave, return false if solution was ignored
-    bool report(Slave<Collect>* slave, Space* s);
-    /**
-     * The key invariant of the engine is as follows:
-     *  - n_busy is always zero outside the next() function.
-     *  - that entails, that locking is only needed inside next().
-     *  - the slaves 0..n_active-1 still might not have exhausted their
-     *    search space.
-     *  - the slaves n_active..n_slaves-1 have exhausted their search space.
-     */
-  public:
-    /// Initialize
-    PBS(Engine** s, Stop** so, unsigned int n, const Statistics& stat);
-    /// Return next solution (nullptr, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
-    /// Constrain future solutions to be better than \a b
-    virtual void constrain(const Space& b);
-    /// Destructor
-    virtual ~PBS(void);
-  };
+        public:
+            /// Initialize as completed
+            Completion(void);
+            /// Signal completion
+            virtual void terminated(void);
+            /// Wait for completion and consume the signal
+            void wait(void);
+        } completion;
+        /// The master engine
+        PBS<Collect>* master;
+        /// The slave engine
+        Engine* slave;
+        /// Stop object
+        Stop* stop;
 
-}}}
+    public:
+        /// Initialize with master \a m, slave \a s, and its stop object \a so
+        Slave(PBS<Collect>* m, Engine* s, Stop* so);
+        /// Return statistics of slave
+        Statistics statistics(void) const;
+        /// Check whether slave has been stopped
+        bool stopped(void) const;
+        /// Check whether slave stopped at a local limit
+        bool limited(void) const;
+        /// Return the completion terminator
+        virtual Support::Terminator* terminator(void) const;
+        /// Wait for the slave to complete its current run
+        void wait(void);
+        /// Wake a paused slave so that it can observe the portfolio stop
+        void wake(void);
+        /// Constrain with better solution \a b
+        void constrain(const Space& b);
+        /// Perform one run
+        virtual void run(void);
+        /// Delete slave
+        virtual ~Slave(void);
+    };
+
+    /// Collect all solutions
+    class CollectAll {
+    protected:
+        /// Queue of solutions
+        Support::DynamicQueue<Space*, Heap> solutions;
+
+    public:
+        /// Whether it collects best solutions
+        static const bool best = false;
+        /// Initialize
+        CollectAll(void);
+        /// Add a solution \a a reported by \a r and always return true
+        bool add(Space* s, Slave<CollectAll>* r);
+        /// Dummy function
+        bool constrain(const Space& b);
+        /// Check whether there is any solution left
+        bool empty(void) const;
+        /// Return solution reported by \a r
+        Space* get(Slave<CollectAll>*& r);
+        /// Destructor
+        ~CollectAll(void);
+    };
+
+    /// Collect best solutions
+    class CollectBest {
+    protected:
+        /// Currently best solution
+        Space* b;
+        /// Who has reported the best solution (nullptr if solution has already been reported)
+        Slave<CollectBest>* reporter;
+
+    public:
+        /// Whether it collects best solutions
+        static const bool best = true;
+        /// Initialize
+        CollectBest(void);
+        /// Add a solution \a s by \a r and return whether is was better
+        bool add(Space* s, Slave<CollectBest>* r);
+        /// Check whether \a b better and update accordingly
+        bool constrain(const Space& b);
+        /// Check whether there is any solution left
+        bool empty(void) const;
+        /// Return solution reported by \a r (only if a better one was found)
+        Space* get(Slave<CollectBest>*& r);
+        /// Destructor
+        ~CollectBest(void);
+    };
+
+    /// Parallel portfolio engine implementation
+    template <class Collect>
+    class GECODE_SEARCH_EXPORT PBS : public Engine {
+        friend class Slave<Collect>;
+
+    protected:
+        /// Master statistics
+        Statistics stat;
+        /// Slave engines
+        Slave<Collect>** slaves;
+        /// Number of slave engines
+        unsigned int n_slaves;
+        /// Number of active slave engines
+        unsigned int n_active;
+        /// Whether a slave has been stopped
+        std::atomic<bool> slave_stop;
+        /// Whether a slave stopped at a local limit
+        bool incomplete;
+        /// Shared stop flag
+        std::atomic<bool> tostop;
+        /// Collect solutions in this
+        Collect solutions;
+        /// Mutex for synchronization
+        Support::Mutex m;
+        /// Number of busy slaves
+        unsigned int n_busy;
+        /// Signal that number of busy slaves becomes zero
+        Support::Event idle;
+        /// Process report from slave, return false if solution was ignored
+        bool report(Slave<Collect>* slave, Space* s);
+        /**
+         * The key invariant of the engine is as follows:
+         *  - n_busy is always zero outside the next() function.
+         *  - that entails, that locking is only needed inside next().
+         *  - the slaves 0..n_active-1 still might not have exhausted their
+         *    search space.
+         *  - the slaves n_active..n_slaves-1 have exhausted their search space.
+         */
+    public:
+        /// Initialize
+        PBS(Engine** s, Stop** so, unsigned int n, const Statistics& stat);
+        /// Return next solution (nullptr, if none exists or search has been stopped)
+        virtual Space* next(void);
+        /// Return statistics
+        virtual Statistics statistics(void) const;
+        /// Check whether engine has been stopped
+        virtual bool stopped(void) const;
+        /// Constrain future solutions to be better than \a b
+        virtual void constrain(const Space& b);
+        /// Destructor
+        virtual ~PBS(void);
+    };
+
+}}} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/pbs.hpp>
 

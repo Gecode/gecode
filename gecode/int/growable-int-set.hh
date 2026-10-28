@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -39,64 +38,68 @@
 
 namespace Gecode { namespace Int {
 
-  class GrowableIntSetRanges;
+    class GrowableIntSetRanges;
 
-  /// A Space-owned set of integer values with growable canonical range storage
-  class GrowableIntSet {
-    friend class GrowableIntSetRanges;
-  private:
-    struct Range {
-      int min;
-      int max;
-      Range(void) {}
+    /// A Space-owned set of integer values with growable canonical range storage
+    class GrowableIntSet {
+        friend class GrowableIntSetRanges;
+
+    private:
+        struct Range {
+            int min;
+            int max;
+            Range(void) {}
+        };
+        Range* _ranges;
+        unsigned int _count;
+        unsigned int _capacity;
+
+        /// Largest capacity supported by both counts and allocation sizes
+        static unsigned int max_capacity(void);
+        /// Ensure capacity, copying only initialized ranges
+        void reserve(Space& home, unsigned int required);
+        /// First range whose maximum is at least value
+        unsigned int first_max_ge(int value) const;
+        /// Add one range, allocating only when a new range is inserted
+        void add(Space& home, int min, int max);
+
+        GrowableIntSet(const GrowableIntSet&) = delete;
+        GrowableIntSet& operator=(const GrowableIntSet&) = delete;
+
+    public:
+        /// Initialize an empty set
+        GrowableIntSet(void);
+        /// Test membership
+        bool in(int value) const;
+        /** \brief Add the ranges from a copyable, independent canonical iterator
+         *
+         * Endpoints must be within Int::Limits. Mutation invalidates borrowed
+         * range iterators. The input must not refer to this set's storage.
+         */
+        template <class I>
+        void add_r(Space& home, I added);
+        /// Copy exactly the live ranges into independent storage in home
+        void update(Space& home, const GrowableIntSet& source);
+        /// Return allocated storage to home
+        void dispose(Space& home);
     };
-    Range* _ranges;
-    unsigned int _count;
-    unsigned int _capacity;
 
-    /// Largest capacity supported by both counts and allocation sizes
-    static unsigned int max_capacity(void);
-    /// Ensure capacity, copying only initialized ranges
-    void reserve(Space& home, unsigned int required);
-    /// First range whose maximum is at least value
-    unsigned int first_max_ge(int value) const;
-    /// Add one range, allocating only when a new range is inserted
-    void add(Space& home, int min, int max);
+    /// Borrowed forward iterator over a growable set's ranges
+    class GrowableIntSetRanges {
+    private:
+        const GrowableIntSet::Range* current;
+        const GrowableIntSet::Range* end;
 
-    GrowableIntSet(const GrowableIntSet&) = delete;
-    GrowableIntSet& operator =(const GrowableIntSet&) = delete;
-  public:
-    /// Initialize an empty set
-    GrowableIntSet(void);
-    /// Test membership
-    bool in(int value) const;
-    /** \brief Add the ranges from a copyable, independent canonical iterator
-     *
-     * Endpoints must be within Int::Limits. Mutation invalidates borrowed
-     * range iterators. The input must not refer to this set's storage.
-     */
-    template<class I> void add_r(Space& home, I added);
-    /// Copy exactly the live ranges into independent storage in home
-    void update(Space& home, const GrowableIntSet& source);
-    /// Return allocated storage to home
-    void dispose(Space& home);
-  };
+    public:
+        GrowableIntSetRanges(const GrowableIntSet& set);
+        bool operator()(void) const;
+        void operator++(void);
+        int min(void) const;
+        int max(void) const;
+        unsigned int width(void) const;
+    };
 
-  /// Borrowed forward iterator over a growable set's ranges
-  class GrowableIntSetRanges {
-  private:
-    const GrowableIntSet::Range* current;
-    const GrowableIntSet::Range* end;
-  public:
-    GrowableIntSetRanges(const GrowableIntSet& set);
-    bool operator ()(void) const;
-    void operator ++(void);
-    int min(void) const;
-    int max(void) const;
-    unsigned int width(void) const;
-  };
-
-}}
+}} // namespace Gecode::Int
 
 #include <gecode/int/growable-int-set.hpp>
 

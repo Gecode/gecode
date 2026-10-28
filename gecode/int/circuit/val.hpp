@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,69 +32,68 @@
 
 namespace Gecode { namespace Int { namespace Circuit {
 
-  /*
-   * The actual propagator
-   *
-   */
-  template<class View, class Offset>
-  forceinline
-  Val<View,Offset>::Val(Home home, ViewArray<View>& x, Offset& o)
-    : Base<View,Offset>(home,x,o) {}
-
-  template<class View, class Offset>
-  forceinline
-  Val<View,Offset>::Val(Space& home, Val<View,Offset>& p)
-    : Base<View,Offset>(home,p) {}
-
-  template<class View, class Offset>
-  Actor*
-  Val<View,Offset>::copy(Space& home) {
-    return new (home) Val<View,Offset>(home,*this);
-  }
-
-  template<class View, class Offset>
-  PropCost
-  Val<View,Offset>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI, x.size());
-  }
-
-  template<class View, class Offset>
-  ExecStatus
-  Val<View,Offset>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ES_CHECK((Int::Distinct::prop_val<View,true>(home,y)));
-    ExecStatus esc = connected(home);
-    if (esc != ES_FIX)
-      return esc;
     /*
-     * One cannot have a single unassigned view as the views constitute
-     * a permutation.
+     * The actual propagator
+     *
      */
-    if (y.size() < 2)
-      return home.ES_SUBSUMED(*this);
-    return path(home);
-  }
+    template <class View, class Offset>
+    forceinline
+    Val<View, Offset>::Val(Home home, ViewArray<View>& x, Offset& o)
+        : Base<View, Offset>(home, x, o) {}
 
-  template<class View, class Offset>
-  ExecStatus
-  Val<View,Offset>::post(Home home, ViewArray<View>& x, Offset& o) {
-    int n = x.size();
-    if (n == 1) {
-      GECODE_ME_CHECK(o(x[0]).eq(home,0));
-    } else if (n == 2) {
-      GECODE_ME_CHECK(o(x[0]).eq(home,1));
-      GECODE_ME_CHECK(o(x[1]).eq(home,0));
-    } else {
-      for (int i=0; i<n; i++) {
-        GECODE_ME_CHECK(o(x[i]).gq(home,0));
-        GECODE_ME_CHECK(o(x[i]).le(home,n));
-        GECODE_ME_CHECK(o(x[i]).nq(home,i));
-      }
-      (void) new (home) Val<View,Offset>(home,x,o);
+    template <class View, class Offset>
+    forceinline
+    Val<View, Offset>::Val(Space& home, Val<View, Offset>& p)
+        : Base<View, Offset>(home, p) {}
+
+    template <class View, class Offset>
+    Actor*
+    Val<View, Offset>::copy(Space& home) {
+        return new (home) Val<View, Offset>(home, *this);
     }
-    return ES_OK;
-  }
 
-}}}
+    template <class View, class Offset>
+    PropCost
+    Val<View, Offset>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::linear(PropCost::HI, x.size());
+    }
+
+    template <class View, class Offset>
+    ExecStatus
+    Val<View, Offset>::propagate(Space& home, const ModEventDelta&) {
+        GECODE_ES_CHECK((Int::Distinct::prop_val<View, true>(home, y)));
+        ExecStatus esc = connected(home);
+        if (esc != ES_FIX)
+            return esc;
+        /*
+         * One cannot have a single unassigned view as the views constitute
+         * a permutation.
+         */
+        if (y.size() < 2)
+            return home.ES_SUBSUMED(*this);
+        return path(home);
+    }
+
+    template <class View, class Offset>
+    ExecStatus
+    Val<View, Offset>::post(Home home, ViewArray<View>& x, Offset& o) {
+        int n = x.size();
+        if (n == 1) {
+            GECODE_ME_CHECK(o(x[0]).eq(home, 0));
+        } else if (n == 2) {
+            GECODE_ME_CHECK(o(x[0]).eq(home, 1));
+            GECODE_ME_CHECK(o(x[1]).eq(home, 0));
+        } else {
+            for (int i = 0; i < n; i++) {
+                GECODE_ME_CHECK(o(x[i]).gq(home, 0));
+                GECODE_ME_CHECK(o(x[i]).le(home, n));
+                GECODE_ME_CHECK(o(x[i]).nq(home, i));
+            }
+            (void)new (home) Val<View, Offset>(home, x, o);
+        }
+        return ES_OK;
+    }
+
+}}} // namespace Gecode::Int::Circuit
 
 // STATISTICS: int-prop
-

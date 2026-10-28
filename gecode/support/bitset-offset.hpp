@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christopher Mears <chris.mears@monash.edu>
@@ -43,125 +42,122 @@
 
 namespace Gecode { namespace Support {
 
-  /// Bitsets with index offset.
-  ///
-  /// The valid range of indices for a \a BitSetOffset with \a s bits
-  /// and an offset of \a o is [o, o+1, ..., o+s-1].
-  template<class A>
-  class BitSetOffset : public BitSetBase {
-  protected:
-    /// Allocator
-    A& a;
-    /// Offset
-    int _offset;
-  public:
-    /// Bit set with space for \a s bits with offset of \a o
-    BitSetOffset(A& a, unsigned int s, int o);
-    /// Copy bit set \a bs
-    BitSetOffset(A& a, const BitSetOffset& bs);
-    /// Destructor
-    ~BitSetOffset(void);
+    /// Bitsets with index offset.
+    ///
+    /// The valid range of indices for a \a BitSetOffset with \a s bits
+    /// and an offset of \a o is [o, o+1, ..., o+s-1].
+    template <class A>
+    class BitSetOffset : public BitSetBase {
+    protected:
+        /// Allocator
+        A& a;
+        /// Offset
+        int _offset;
 
-    // As for the ordinary bitset, most operations can be inherited
-    // directly from BitSetBase.  We only modify the operations that
-    // involve indices or the offset itself.
+    public:
+        /// Bit set with space for \a s bits with offset of \a o
+        BitSetOffset(A& a, unsigned int s, int o);
+        /// Copy bit set \a bs
+        BitSetOffset(A& a, const BitSetOffset& bs);
+        /// Destructor
+        ~BitSetOffset(void);
 
-    /// Access value at bit \a i
-    bool get(int i) const;
-    /// Set bit \a i
-    void set(int i);
-    /// Clear bit \a i
-    void clear(int i);
-    /// Return position greater or equal \a i of next set bit (\a i is allowed to be equal to size)
-    int next(int i) const;
-    /// Resize bitset to \a n elements with specified offset.
-    void resize(A& a, unsigned int n, int offset, bool set=false);
+        // As for the ordinary bitset, most operations can be inherited
+        // directly from BitSetBase.  We only modify the operations that
+        // involve indices or the offset itself.
 
-    /// Retrieve the minimum valid index (the offset).
-    int offset(void) const;
-    /// Retrieve the maximum valid index.
-    int max_bit(void) const;
-    /// Is the bit index valid for this bitset?
-    bool valid(int i) const;
-  };
+        /// Access value at bit \a i
+        bool get(int i) const;
+        /// Set bit \a i
+        void set(int i);
+        /// Clear bit \a i
+        void clear(int i);
+        /// Return position greater or equal \a i of next set bit (\a i is allowed to be equal to size)
+        int next(int i) const;
+        /// Resize bitset to \a n elements with specified offset.
+        void resize(A& a, unsigned int n, int offset, bool set = false);
 
-  template<class A>
-  forceinline
-  BitSetOffset<A>::BitSetOffset(A& a0, unsigned int s, int o)
-    : BitSetBase(a0,s), a(a0), _offset(o) {}
+        /// Retrieve the minimum valid index (the offset).
+        int offset(void) const;
+        /// Retrieve the maximum valid index.
+        int max_bit(void) const;
+        /// Is the bit index valid for this bitset?
+        bool valid(int i) const;
+    };
 
-  template<class A>
-  forceinline
-  BitSetOffset<A>::BitSetOffset(A& a0, const BitSetOffset<A>& bs)
-    : BitSetBase(a0,bs), a(a0), _offset(bs._offset) {}
+    template <class A>
+    forceinline
+    BitSetOffset<A>::BitSetOffset(A& a0, unsigned int s, int o)
+        : BitSetBase(a0, s), a(a0), _offset(o) {}
 
-  template<class A>
-  forceinline
-  BitSetOffset<A>::~BitSetOffset(void) {
-    dispose(a);
-  }
+    template <class A>
+    forceinline
+    BitSetOffset<A>::BitSetOffset(A& a0, const BitSetOffset<A>& bs)
+        : BitSetBase(a0, bs), a(a0), _offset(bs._offset) {}
 
-  template<class A>
-  forceinline bool
-  BitSetOffset<A>::get(int i) const {
-    return BitSetBase::get(static_cast<unsigned int>(i-_offset));
-  }
+    template <class A>
+    forceinline BitSetOffset<A>::~BitSetOffset(void) {
+        dispose(a);
+    }
 
-  template<class A>
-  forceinline void
-  BitSetOffset<A>::set(int i) {
-    BitSetBase::set(static_cast<unsigned int>(i-_offset));
-  }
+    template <class A>
+    forceinline bool
+    BitSetOffset<A>::get(int i) const {
+        return BitSetBase::get(static_cast<unsigned int>(i - _offset));
+    }
 
-  template<class A>
-  forceinline void
-  BitSetOffset<A>::clear(int i) {
-    BitSetBase::clear(static_cast<unsigned int>(i-_offset));
-  }
+    template <class A>
+    forceinline void
+    BitSetOffset<A>::set(int i) {
+        BitSetBase::set(static_cast<unsigned int>(i - _offset));
+    }
 
-  template<class A>
-  forceinline int
-  BitSetOffset<A>::next(int i) const {
-    return _offset + static_cast<int>
-      (BitSetBase::next(static_cast<unsigned int>(i-_offset)));
-  }
+    template <class A>
+    forceinline void
+    BitSetOffset<A>::clear(int i) {
+        BitSetBase::clear(static_cast<unsigned int>(i - _offset));
+    }
 
-  template<class A>
-  void
-  BitSetOffset<A>::resize(A& a, unsigned int n, int offset, bool set) {
-    BitSetBase::resize(a, n, set);
-    _offset = offset;
-  }
+    template <class A>
+    forceinline int
+    BitSetOffset<A>::next(int i) const {
+        return _offset + static_cast<int>(BitSetBase::next(static_cast<unsigned int>(i - _offset)));
+    }
 
-  template<class A>
-  forceinline int
-  BitSetOffset<A>::offset(void) const {
-    return _offset;
-  }
+    template <class A>
+    void
+    BitSetOffset<A>::resize(A& a, unsigned int n, int offset, bool set) {
+        BitSetBase::resize(a, n, set);
+        _offset = offset;
+    }
 
-  template<class A>
-  forceinline int
-  BitSetOffset<A>::max_bit(void) const {
-    return _offset + static_cast<int>(size()) - 1;
-  }
+    template <class A>
+    forceinline int
+    BitSetOffset<A>::offset(void) const {
+        return _offset;
+    }
 
-  template<class A>
-  forceinline bool
-  BitSetOffset<A>::valid(int i) const {
-    return ((_offset <= i) &&
-            (i <= _offset + static_cast<int>(size()) - 1));
-  }
+    template <class A>
+    forceinline int
+    BitSetOffset<A>::max_bit(void) const {
+        return _offset + static_cast<int>(size()) - 1;
+    }
 
-  template <class A, class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const BitSetOffset<A>& bs) {
-    for (int i = bs.offset() ; i < bs.offset()+static_cast<int>(bs.size()) ; i++)
-      if (bs.get(i))
-        os << i << " ";
-    return os;
-  }
+    template <class A>
+    forceinline bool
+    BitSetOffset<A>::valid(int i) const {
+        return ((_offset <= i) && (i <= _offset + static_cast<int>(size()) - 1));
+    }
 
-}}
+    template <class A, class Char, class Traits>
+    std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const BitSetOffset<A>& bs) {
+        for (int i = bs.offset(); i < bs.offset() + static_cast<int>(bs.size()); i++)
+            if (bs.get(i))
+                os << i << " ";
+        return os;
+    }
+
+}} // namespace Gecode::Support
 
 // STATISTICS: support-any
-

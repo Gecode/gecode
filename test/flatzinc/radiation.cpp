@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,15 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest(TestTags::sweep(),"radiation",
-std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest(
+                TestTags::sweep(), "radiation",
+                std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -291,7 +288,8 @@ var -25..25: INT____00239 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00240 :: is_defined_var :: var_is_introduced;\n\
 var -25..25: INT____00241 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00242 :: is_defined_var :: var_is_introduced;\n\
-var -25..25: INT____00243 :: is_defined_var :: var_is_introduced;\n")+"\
+var -25..25: INT____00243 :: is_defined_var :: var_is_introduced;\n") +
+                    "\
 var 0..25: INT____00244 :: is_defined_var :: var_is_introduced;\n\
 var -25..25: INT____00245 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00246 :: is_defined_var :: var_is_introduced;\n\
@@ -493,7 +491,8 @@ var -25..25: INT____00441 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00442 :: is_defined_var :: var_is_introduced;\n\
 var -25..25: INT____00443 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00444 :: is_defined_var :: var_is_introduced;\n\
-var -25..25: INT____00445 :: is_defined_var :: var_is_introduced;\n"+"\
+var -25..25: INT____00445 :: is_defined_var :: var_is_introduced;\n" +
+                    "\
 var 0..25: INT____00446 :: is_defined_var :: var_is_introduced;\n\
 var -25..25: INT____00447 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00448 :: is_defined_var :: var_is_introduced;\n\
@@ -693,7 +692,8 @@ constraint int_lin_eq([-1, -1, 1], [INT____00151, Q[103], Q[117]], 0) :: defines
 constraint int_lin_eq([-1, -1, 1], [INT____00153, Q[117], Q[131]], 0) :: defines_var(INT____00153);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00155, Q[76], Q[90]], 0) :: defines_var(INT____00155);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00157, Q[90], Q[104]], 0) :: defines_var(INT____00157);\n\
-constraint int_lin_eq([-1, -1, 1], [INT____00159, Q[104], Q[118]], 0) :: defines_var(INT____00159);\n"+"\
+constraint int_lin_eq([-1, -1, 1], [INT____00159, Q[104], Q[118]], 0) :: defines_var(INT____00159);\n" +
+                    "\
 constraint int_lin_eq([-1, -1, 1], [INT____00161, Q[118], Q[132]], 0) :: defines_var(INT____00161);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00163, Q[77], Q[91]], 0) :: defines_var(INT____00163);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00165, Q[91], Q[105]], 0) :: defines_var(INT____00165);\n\
@@ -843,7 +843,8 @@ constraint int_lin_eq([-1, -1, 1], [INT____00451, Q[281], Q[295]], 0) :: defines
 constraint int_lin_eq([-1, -1, 1], [INT____00453, Q[295], Q[309]], 0) :: defines_var(INT____00453);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00455, Q[309], Q[323]], 0) :: defines_var(INT____00455);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00457, Q[323], Q[337]], 0) :: defines_var(INT____00457);\n\
-constraint int_lin_eq([-1, -1, 1], [INT____00459, Q[282], Q[296]], 0) :: defines_var(INT____00459);\n"+"\
+constraint int_lin_eq([-1, -1, 1], [INT____00459, Q[282], Q[296]], 0) :: defines_var(INT____00459);\n" +
+                    "\
 constraint int_lin_eq([-1, -1, 1], [INT____00461, Q[296], Q[310]], 0) :: defines_var(INT____00461);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00463, Q[310], Q[324]], 0) :: defines_var(INT____00463);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00465, Q[324], Q[338]], 0) :: defines_var(INT____00465);\n\
@@ -943,7 +944,8 @@ constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00132, INT____00134, INT____0
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00140, INT____00142, INT____00144, INT____00146, N[4], Q[74]], 0);\n\
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00148, INT____00150, INT____00152, INT____00154, N[5], Q[75]], 0);\n\
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00156, INT____00158, INT____00160, INT____00162, N[6], Q[76]], 0);\n\
-constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00164, INT____00166, INT____00168, INT____00170, N[7], Q[77]], 0);\n"+"\
+constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00164, INT____00166, INT____00168, INT____00170, N[7], Q[77]], 0);\n" +
+                    "\
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00172, INT____00174, INT____00176, INT____00178, N[8], Q[78]], 0);\n\
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00180, INT____00182, INT____00184, INT____00186, N[9], Q[79]], 0);\n\
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00188, INT____00190, INT____00192, INT____00194, N[10], Q[80]], 0);\n\
@@ -1093,7 +1095,8 @@ constraint int_max(INT____00195, 0, INT____00196) :: defines_var(INT____00196);\
 constraint int_max(INT____00197, 0, INT____00198) :: defines_var(INT____00198);\n\
 constraint int_max(INT____00199, 0, INT____00200) :: defines_var(INT____00200);\n\
 constraint int_max(INT____00201, 0, INT____00202) :: defines_var(INT____00202);\n\
-constraint int_max(INT____00203, 0, INT____00204) :: defines_var(INT____00204);\n"+"\
+constraint int_max(INT____00203, 0, INT____00204) :: defines_var(INT____00204);\n" +
+                    "\
 constraint int_max(INT____00205, 0, INT____00206) :: defines_var(INT____00206);\n\
 constraint int_max(INT____00207, 0, INT____00208) :: defines_var(INT____00208);\n\
 constraint int_max(INT____00209, 0, INT____00210) :: defines_var(INT____00210);\n\
@@ -1243,7 +1246,8 @@ constraint int_max(INT____00495, 0, INT____00496) :: defines_var(INT____00496);\
 constraint int_max(INT____00497, 0, INT____00498) :: defines_var(INT____00498);\n\
 constraint int_max(INT____00499, 0, INT____00500) :: defines_var(INT____00500);\n\
 constraint int_max(INT____00501, 0, INT____00502) :: defines_var(INT____00502);\n\
-constraint int_max(INT____00503, 0, INT____00504) :: defines_var(INT____00504);\n"+"\
+constraint int_max(INT____00503, 0, INT____00504) :: defines_var(INT____00504);\n" +
+                    "\
 constraint int_max(INT____00505, 0, INT____00506) :: defines_var(INT____00506);\n\
 constraint int_max(INT____00507, 0, INT____00508) :: defines_var(INT____00508);\n\
 constraint int_max(INT____00509, 0, INT____00510) :: defines_var(INT____00510);\n\
@@ -1274,17 +1278,16 @@ constraint int_max(INT____00557, 0, INT____00558) :: defines_var(INT____00558);\
 constraint int_max(INT____00559, 0, INT____00560) :: defines_var(INT____00560);\n\
 constraint int_max(INT____00561, 0, INT____00562) :: defines_var(INT____00562);\n\
 solve  :: int_search([INT____00001, N[1], N[2], N[3], N[4], N[5], N[6], N[7], N[8], N[9], N[10], N[11], N[12], N[13], N[14], Q[1], Q[2], Q[3], Q[4], Q[5], Q[6], Q[7], Q[8], Q[9], Q[10], Q[11], Q[12], Q[13], Q[14], Q[15], Q[16], Q[17], Q[18], Q[19], Q[20], Q[21], Q[22], Q[23], Q[24], Q[25], Q[26], Q[27], Q[28], Q[29], Q[30], Q[31], Q[32], Q[33], Q[34], Q[35], Q[36], Q[37], Q[38], Q[39], Q[40], Q[41], Q[42], Q[43], Q[44], Q[45], Q[46], Q[47], Q[48], Q[49], Q[50], Q[51], Q[52], Q[53], Q[54], Q[55], Q[56], Q[57], Q[58], Q[59], Q[60], Q[61], Q[62], Q[63], Q[64], Q[65], Q[66], Q[67], Q[68], Q[69], Q[70], Q[71], Q[72], Q[73], Q[74], Q[75], Q[76], Q[77], Q[78], Q[79], Q[80], Q[81], Q[82], Q[83], Q[84], Q[85], Q[86], Q[87], Q[88], Q[89], Q[90], Q[91], Q[92], Q[93], Q[94], Q[95], Q[96], Q[97], Q[98], Q[99], Q[100], Q[101], Q[102], Q[103], Q[104], Q[105], Q[106], Q[107], Q[108], Q[109], Q[110], Q[111], Q[112], Q[113], Q[114], Q[115], Q[116], Q[117], Q[118], Q[119], Q[120], Q[121], Q[122], Q[123], Q[124], Q[125], Q[126], Q[127], Q[128], Q[129], Q[130], Q[131], Q[132], Q[133], Q[134], Q[135], Q[136], Q[137], Q[138], Q[139], Q[140], Q[141], Q[142], Q[143], Q[144], Q[145], Q[146], Q[147], Q[148], Q[149], Q[150], Q[151], Q[152], Q[153], Q[154], Q[155], Q[156], Q[157], Q[158], Q[159], Q[160], Q[161], Q[162], Q[163], Q[164], Q[165], Q[166], Q[167], Q[168], Q[169], Q[170], Q[171], Q[172], Q[173], Q[174], Q[175], Q[176], Q[177], Q[178], Q[179], Q[180], Q[181], Q[182], Q[183], Q[184], Q[185], Q[186], Q[187], Q[188], Q[189], Q[190], Q[191], Q[192], Q[193], Q[194], Q[195], Q[196], Q[197], Q[198], Q[199], Q[200], Q[201], Q[202], Q[203], Q[204], Q[205], Q[206], Q[207], Q[208], Q[209], Q[210], Q[211], Q[212], Q[213], Q[214], Q[215], Q[216], Q[217], Q[218], Q[219], Q[220], Q[221], Q[222], Q[223], Q[224], Q[225], Q[226], Q[227], Q[228], Q[229], Q[230], Q[231], Q[232], Q[233], Q[234], Q[235], Q[236], Q[237], Q[238], Q[239], Q[240], Q[241], Q[242], Q[243], Q[244], Q[245], Q[246], Q[247], Q[248], Q[249], Q[250], Q[251], Q[252], Q[253], Q[254], Q[255], Q[256], Q[257], Q[258], Q[259], Q[260], Q[261], Q[262], Q[263], Q[264], Q[265], Q[266], Q[267], Q[268], Q[269], Q[270], Q[271], Q[272], Q[273], Q[274], Q[275], Q[276], Q[277], Q[278], Q[279], Q[280], Q[281], Q[282], Q[283], Q[284], Q[285], Q[286], Q[287], Q[288], Q[289], Q[290], Q[291], Q[292], Q[293], Q[294], Q[295], Q[296], Q[297], Q[298], Q[299], Q[300], Q[301], Q[302], Q[303], Q[304], Q[305], Q[306], Q[307], Q[308], Q[309], Q[310], Q[311], Q[312], Q[313], Q[314], Q[315], Q[316], Q[317], Q[318], Q[319], Q[320], Q[321], Q[322], Q[323], Q[324], Q[325], Q[326], Q[327], Q[328], Q[329], Q[330], Q[331], Q[332], Q[333], Q[334], Q[335], Q[336], Q[337], Q[338], Q[339], Q[340], Q[341], Q[342], Q[343], Q[344], Q[345], Q[346], Q[347], Q[348], Q[349], Q[350]], input_order, indomain_split, complete) minimize INT____00563;\n\
-", "Beamtime = 21;\n\
+",
+                "Beamtime = 21;\n\
 K = 7;\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

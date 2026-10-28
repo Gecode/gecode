@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,44 +34,43 @@
 
 namespace Gecode { namespace Int { namespace Distinct {
 
-  /*
-   * The propagation controller
-   *
-   */
+    /*
+     * The propagation controller
+     *
+     */
 
-  template<class View>
-  forceinline
-  DomCtrl<View>::DomCtrl(void) {}
+    template <class View>
+    forceinline
+    DomCtrl<View>::DomCtrl(void) {}
 
-  template<class View>
-  forceinline bool
-  DomCtrl<View>::available(void) {
-    return g;
-  }
+    template <class View>
+    forceinline bool
+    DomCtrl<View>::available(void) {
+        return g;
+    }
 
-  template<class View>
-  ExecStatus
-  DomCtrl<View>::init(Space& home, ViewArray<View>& x) {
-    return g.init(home,x);
-  }
+    template <class View>
+    ExecStatus
+    DomCtrl<View>::init(Space& home, ViewArray<View>& x) {
+        return g.init(home, x);
+    }
 
-  template<class View>
-  ExecStatus
-  DomCtrl<View>::sync(void) {
-    g.purge();
-    return g.sync() ? ES_OK : ES_FAILED;
-  }
+    template <class View>
+    ExecStatus
+    DomCtrl<View>::sync(void) {
+        g.purge();
+        return g.sync() ? ES_OK : ES_FAILED;
+    }
 
-  template<class View>
-  ExecStatus
-  DomCtrl<View>::propagate(Space& home, bool& assigned) {
-    assigned = false;
-    if (!g.mark())
-      return ES_OK;
-    return g.prune(home,assigned);
-  }
+    template <class View>
+    ExecStatus
+    DomCtrl<View>::propagate(Space& home, bool& assigned) {
+        assigned = false;
+        if (!g.mark())
+            return ES_OK;
+        return g.prune(home, assigned);
+    }
 
-}}}
+}}} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop
-

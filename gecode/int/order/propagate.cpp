@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -32,55 +31,53 @@
  */
 
 #include <gecode/int/order.hh>
- 
+
 namespace Gecode { namespace Int { namespace Order {
 
-  Actor*
-  OrderProp::copy(Space& home) {
-    return new (home) OrderProp(home,*this);
-  }
-
-  PropCost
-  OrderProp::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::binary(PropCost::LO);
-  }
-
-  void
-  OrderProp::reschedule(Space& home) {
-    s0.reschedule(home,*this,PC_INT_BND);
-    s1.reschedule(home,*this,PC_INT_BND);
-    b.reschedule(home,*this,PC_INT_VAL);
-  }
-
-  ExecStatus
-  OrderProp::propagate(Space& home, const ModEventDelta&) {
-    if (s0.max() + p0 <= s1.min()) {
-      GECODE_ME_CHECK(b.zero(home));
-      return home.ES_SUBSUMED(*this);
-    } else if (s1.max() + p1 <= s0.min()) {
-      GECODE_ME_CHECK(b.one(home));
-      return home.ES_SUBSUMED(*this);
-    } else if ((s1.min() + p1 > s0.max()) || b.zero()) {
-      GECODE_ME_CHECK(b.zero(home));
-      GECODE_REWRITE(*this,(Rel::Lq<OffsetView,IntView>::post
-                            (home(*this),OffsetView(s0,p0),s1)));
-    } else if ((s0.min() + p0 > s1.max()) || b.one()) {
-      GECODE_ME_CHECK(b.one(home));      
-      GECODE_REWRITE(*this,(Rel::Lq<OffsetView,IntView>::post
-                            (home(*this),OffsetView(s1,p1),s0)));
+    Actor*
+    OrderProp::copy(Space& home) {
+        return new (home) OrderProp(home, *this);
     }
-    return ES_FIX;
-  }
 
-  size_t
-  OrderProp::dispose(Space& home) {
-    s0.cancel(home,*this,PC_INT_BND);
-    s1.cancel(home,*this,PC_INT_BND);
-    b.cancel(home,*this,PC_INT_VAL);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
+    PropCost
+    OrderProp::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::binary(PropCost::LO);
+    }
 
-}}}
+    void
+    OrderProp::reschedule(Space& home) {
+        s0.reschedule(home, *this, PC_INT_BND);
+        s1.reschedule(home, *this, PC_INT_BND);
+        b.reschedule(home, *this, PC_INT_VAL);
+    }
+
+    ExecStatus
+    OrderProp::propagate(Space& home, const ModEventDelta&) {
+        if (s0.max() + p0 <= s1.min()) {
+            GECODE_ME_CHECK(b.zero(home));
+            return home.ES_SUBSUMED(*this);
+        } else if (s1.max() + p1 <= s0.min()) {
+            GECODE_ME_CHECK(b.one(home));
+            return home.ES_SUBSUMED(*this);
+        } else if ((s1.min() + p1 > s0.max()) || b.zero()) {
+            GECODE_ME_CHECK(b.zero(home));
+            GECODE_REWRITE(*this, (Rel::Lq<OffsetView, IntView>::post(home(*this), OffsetView(s0, p0), s1)));
+        } else if ((s0.min() + p0 > s1.max()) || b.one()) {
+            GECODE_ME_CHECK(b.one(home));
+            GECODE_REWRITE(*this, (Rel::Lq<OffsetView, IntView>::post(home(*this), OffsetView(s1, p1), s0)));
+        }
+        return ES_FIX;
+    }
+
+    size_t
+    OrderProp::dispose(Space& home) {
+        s0.cancel(home, *this, PC_INT_BND);
+        s1.cancel(home, *this, PC_INT_BND);
+        b.cancel(home, *this, PC_INT_VAL);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
+
+}}} // namespace Gecode::Int::Order
 
 // STATISTICS: int-prop

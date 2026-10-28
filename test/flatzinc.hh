@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -45,62 +44,56 @@
 
 namespace Test {
 
-  /// Tests for FlatZinc
-  namespace FlatZinc {
+    /// Tests for FlatZinc
+    namespace FlatZinc {
 
-    /**
-     * \brief %Base class for tests for FlatZinc
-     *
-     */
-    class FlatZincTest : public Base {
-    protected:
-      typedef std::function<bool(const std::string&)> OutputCheck;
-      typedef std::function<void(void)> BeforeRun;
-      std::string _name;
-      std::string _source;
-      std::string _expected;
-      bool _allSolutions;
-      std::vector<std::string> _cmdlineOpt;
-      OutputCheck _check;
-      BeforeRun _before;
-    public:
-      /// Construct and register test
-      FlatZincTest(const std::string& name, const std::string& source,
-                   const std::string& expected, bool allSolutions = false,
-                   std::vector<std::string> cmdlineOpt = {},
-                   OutputCheck check = OutputCheck(),
-                   BeforeRun before = BeforeRun());
-      /// Construct and register a test with explicitly assigned tags
-      FlatZincTest(TestTags tags, const std::string& name,
-                   const std::string& source, const std::string& expected,
-                   bool allSolutions = false,
-                   std::vector<std::string> cmdlineOpt = {},
-                   OutputCheck check = OutputCheck(),
-                   BeforeRun before = BeforeRun());
-      /// Perform test
-      virtual bool run(void);
-    };
+        /**
+         * \brief %Base class for tests for FlatZinc
+         *
+         */
+        class FlatZincTest : public Base {
+        protected:
+            typedef std::function<bool(const std::string&)> OutputCheck;
+            typedef std::function<void(void)> BeforeRun;
+            std::string _name;
+            std::string _source;
+            std::string _expected;
+            bool _allSolutions;
+            std::vector<std::string> _cmdlineOpt;
+            OutputCheck _check;
+            BeforeRun _before;
 
-    class FlatZincErrorTest : public FlatZincTest {
-    private:
-      std::string _expectedMessage;
-    public:
-      /// Construct and register test
-      FlatZincErrorTest(const std::string& name, const std::string& source,
-                        std::vector<std::string> cmdlineOpt = {},
-                        std::string expectedMessage = "");
-      /// Construct and register an error test with explicitly assigned tags
-      FlatZincErrorTest(TestTags tags, const std::string& name,
-                        const std::string& source,
-                        std::vector<std::string> cmdlineOpt = {},
-                        std::string expectedMessage = "");
-      /// Perform test
-      virtual bool run(void);
-    };
+        public:
+            /// Construct and register test
+            FlatZincTest(const std::string& name, const std::string& source, const std::string& expected,
+                         bool allSolutions = false, std::vector<std::string> cmdlineOpt = {},
+                         OutputCheck check = OutputCheck(), BeforeRun before = BeforeRun());
+            /// Construct and register a test with explicitly assigned tags
+            FlatZincTest(TestTags tags, const std::string& name, const std::string& source, const std::string& expected,
+                         bool allSolutions = false, std::vector<std::string> cmdlineOpt = {},
+                         OutputCheck check = OutputCheck(), BeforeRun before = BeforeRun());
+            /// Perform test
+            virtual bool run(void);
+        };
 
-  }
+        class FlatZincErrorTest : public FlatZincTest {
+        private:
+            std::string _expectedMessage;
 
-}
+        public:
+            /// Construct and register test
+            FlatZincErrorTest(const std::string& name, const std::string& source,
+                              std::vector<std::string> cmdlineOpt = {}, std::string expectedMessage = "");
+            /// Construct and register an error test with explicitly assigned tags
+            FlatZincErrorTest(TestTags tags, const std::string& name, const std::string& source,
+                              std::vector<std::string> cmdlineOpt = {}, std::string expectedMessage = "");
+            /// Perform test
+            virtual bool run(void);
+        };
+
+    } // namespace FlatZinc
+
+} // namespace Test
 
 #endif
 

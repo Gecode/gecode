@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,140 +32,138 @@
 
 namespace Gecode { namespace Support {
 
-  /**
-   * \brief Stack with arbitrary number of elements
-   *
-   * \ingroup FuncSupport
-   */
-  template<class T, class A>
-  class DynamicStack {
-  private:
-    /// Memory allocator
-    A& a;
-    /// Current size of the stack
-    int limit;
-    /// Top of stack
-    int tos;
-    /// Elements on stack
-    T*  stack;
-    /// Resize stack (increase size)
-    void resize(void);
-  public:
-    /// Initialize stack with \a n elements
-    DynamicStack(A& a, int n=64);
-    /// Release memory
-    ~DynamicStack(void);
-
-    /// Test whether stack is empty
-    bool empty(void) const;
-    /// Return number of entries currently on stack
-    int entries(void) const;
-
-    /// Pop topmost element from stack and return it
-    T pop(void);
-    /// Return element on top of stack
-    T& top(void) const;
-    /// Return element that has just been popped
-    T& last(void) const;
-    /// Push element \a x on top of stack
-    void push(const T& x);
-
-
-    /** \brief Return entry at position \a i
+    /**
+     * \brief Stack with arbitrary number of elements
      *
-     * Position 0 corresponds to the element first pushed,
-     * whereas position \c entries()-1 corresponds to the
-     * element pushed last.
+     * \ingroup FuncSupport
      */
-    T& operator [](int i);
-    /** \brief Return entry at position \a i
-     *
-     * Position 0 corresponds to the element first pushed,
-     * whereas position \c entries()-1 corresponds to the
-     * element pushed last.
-     */
-    const T& operator [](int i) const;
+    template <class T, class A>
+    class DynamicStack {
+    private:
+        /// Memory allocator
+        A& a;
+        /// Current size of the stack
+        int limit;
+        /// Top of stack
+        int tos;
+        /// Elements on stack
+        T* stack;
+        /// Resize stack (increase size)
+        void resize(void);
 
-    /// Allocate memory from heap (disabled)
-    static void* operator new(size_t s) = delete;
-    /// Free memory allocated from heap (disabled)
-    static void  operator delete(void* p) = delete;
-    /// Copy constructor (disabled)
-    DynamicStack(const DynamicStack& s) = delete;
-    /// Assignment operator (disabled)
-    const DynamicStack& operator =(const DynamicStack&) = delete;
-  };
+    public:
+        /// Initialize stack with \a n elements
+        DynamicStack(A& a, int n = 64);
+        /// Release memory
+        ~DynamicStack(void);
 
+        /// Test whether stack is empty
+        bool empty(void) const;
+        /// Return number of entries currently on stack
+        int entries(void) const;
 
-  template<class T, class A>
-  void
-  DynamicStack<T,A>::resize(void) {
-    int nl = (limit * 3) / 2;
-    stack = a.template realloc<T>(stack,limit,nl);
-    limit = nl;
-  }
+        /// Pop topmost element from stack and return it
+        T pop(void);
+        /// Return element on top of stack
+        T& top(void) const;
+        /// Return element that has just been popped
+        T& last(void) const;
+        /// Push element \a x on top of stack
+        void push(const T& x);
 
-  template<class T, class A>
-  forceinline
-  DynamicStack<T,A>::DynamicStack(A& a0, int n)
-    : a(a0), limit(n), tos(0), stack(a.template alloc<T>(n)) {}
+        /** \brief Return entry at position \a i
+         *
+         * Position 0 corresponds to the element first pushed,
+         * whereas position \c entries()-1 corresponds to the
+         * element pushed last.
+         */
+        T& operator[](int i);
+        /** \brief Return entry at position \a i
+         *
+         * Position 0 corresponds to the element first pushed,
+         * whereas position \c entries()-1 corresponds to the
+         * element pushed last.
+         */
+        const T& operator[](int i) const;
 
-  template<class T, class A>
-  forceinline
-  DynamicStack<T,A>::~DynamicStack(void) {
-    a.free(stack,limit);
-  }
+        /// Allocate memory from heap (disabled)
+        static void* operator new(size_t s) = delete;
+        /// Free memory allocated from heap (disabled)
+        static void operator delete(void* p) = delete;
+        /// Copy constructor (disabled)
+        DynamicStack(const DynamicStack& s) = delete;
+        /// Assignment operator (disabled)
+        const DynamicStack& operator=(const DynamicStack&) = delete;
+    };
 
-  template<class T, class A>
-  forceinline T
-  DynamicStack<T,A>::pop(void) {
-    return stack[--tos];
-  }
+    template <class T, class A>
+    void
+    DynamicStack<T, A>::resize(void) {
+        int nl = (limit * 3) / 2;
+        stack = a.template realloc<T>(stack, limit, nl);
+        limit = nl;
+    }
 
-  template<class T, class A>
-  forceinline T&
-  DynamicStack<T,A>::top(void) const {
-    return stack[tos-1];
-  }
+    template <class T, class A>
+    forceinline
+    DynamicStack<T, A>::DynamicStack(A& a0, int n)
+        : a(a0), limit(n), tos(0), stack(a.template alloc<T>(n)) {}
 
-  template<class T, class A>
-  forceinline T&
-  DynamicStack<T,A>::last(void) const {
-    return stack[tos];
-  }
+    template <class T, class A>
+    forceinline DynamicStack<T, A>::~DynamicStack(void) {
+        a.free(stack, limit);
+    }
 
-  template<class T, class A>
-  forceinline void
-  DynamicStack<T,A>::push(const T& x) {
-    stack[tos++] = x;
-    if (tos==limit)
-      resize();
-  }
+    template <class T, class A>
+    forceinline T
+    DynamicStack<T, A>::pop(void) {
+        return stack[--tos];
+    }
 
-  template<class T, class A>
-  forceinline bool
-  DynamicStack<T,A>::empty(void) const {
-    return tos==0;
-  }
+    template <class T, class A>
+    forceinline T&
+    DynamicStack<T, A>::top(void) const {
+        return stack[tos - 1];
+    }
 
-  template<class T, class A>
-  forceinline int
-  DynamicStack<T,A>::entries(void) const {
-    return tos;
-  }
+    template <class T, class A>
+    forceinline T&
+    DynamicStack<T, A>::last(void) const {
+        return stack[tos];
+    }
 
-  template<class T, class A>
-  forceinline T&
-  DynamicStack<T,A>::operator [](int i) {
-    return stack[i];
-  }
+    template <class T, class A>
+    forceinline void
+    DynamicStack<T, A>::push(const T& x) {
+        stack[tos++] = x;
+        if (tos == limit)
+            resize();
+    }
 
-  template<class T, class A>
-  forceinline const T&
-  DynamicStack<T,A>::operator [](int i) const {
-    return stack[i];
-  }
+    template <class T, class A>
+    forceinline bool
+    DynamicStack<T, A>::empty(void) const {
+        return tos == 0;
+    }
 
-}}
+    template <class T, class A>
+    forceinline int
+    DynamicStack<T, A>::entries(void) const {
+        return tos;
+    }
+
+    template <class T, class A>
+    forceinline T&
+    DynamicStack<T, A>::operator[](int i) {
+        return stack[i];
+    }
+
+    template <class T, class A>
+    forceinline const T&
+    DynamicStack<T, A>::operator[](int i) const {
+        return stack[i];
+    }
+
+}} // namespace Gecode::Support
 
 // STATISTICS: support-any

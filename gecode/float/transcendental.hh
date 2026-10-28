@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
@@ -43,63 +42,64 @@
 
 namespace Gecode { namespace Float { namespace Transcendental {
 
-  /**
-   * \brief %Propagator for bounds consistent exp operator
-   *
-   * The types \a A and \a B give the types of the views.
-   *
-   * Requires \code #include <gecode/float/transcendental.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class Exp : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
+    /**
+     * \brief %Propagator for bounds consistent exp operator
+     *
+     * The types \a A and \a B give the types of the views.
+     *
+     * Requires \code #include <gecode/float/transcendental.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class A, class B>
+    class Exp : public MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND> {
+    protected:
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
 
-    /// Constructor for cloning \a p
-    Exp(Space& home, Exp& p);
-    /// Constructor for creation
-    Exp(Home home, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$e^{x_0} = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
-  };
+        /// Constructor for cloning \a p
+        Exp(Space& home, Exp& p);
+        /// Constructor for creation
+        Exp(Home home, A x0, B x1);
 
+    public:
+        /// Create copy during cloning
+        virtual Actor* copy(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for \f$e^{x_0} = x_1\f$
+        static ExecStatus post(Home home, A x0, B x1);
+    };
 
-  /**
-   * \brief %Propagator for bounds consistent pow operator
-   *
-   * The types \a A and \a B give the types of the views.
-   *
-   * Requires \code #include <gecode/float/transcendental.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class Pow : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
-    FloatNum base;
+    /**
+     * \brief %Propagator for bounds consistent pow operator
+     *
+     * The types \a A and \a B give the types of the views.
+     *
+     * Requires \code #include <gecode/float/transcendental.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class A, class B>
+    class Pow : public MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND> {
+    protected:
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
+        FloatNum base;
 
-    /// Constructor for cloning \a p
-    Pow(Space& home, Pow& p);
-    /// Constructor for creation
-    Pow(Home home, FloatNum base, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\mathit{base}^{x_0} = x_1\f$
-    static ExecStatus post(Home home, FloatNum base, A x0, B x1);
-  };
+        /// Constructor for cloning \a p
+        Pow(Space& home, Pow& p);
+        /// Constructor for creation
+        Pow(Home home, FloatNum base, A x0, B x1);
 
-}}}
+    public:
+        /// Create copy during cloning
+        virtual Actor* copy(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for \f$\mathit{base}^{x_0} = x_1\f$
+        static ExecStatus post(Home home, FloatNum base, A x0, B x1);
+    };
+
+}}} // namespace Gecode::Float::Transcendental
 
 #include <gecode/float/transcendental/exp-log.hpp>
 

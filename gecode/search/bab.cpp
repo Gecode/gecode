@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -41,29 +40,29 @@
 
 namespace Gecode { namespace Search {
 
-  Engine*
-  babengine(Space* s, const Options& o) {
-    Options to = o.expand();
+    Engine*
+    babengine(Space* s, const Options& o) {
+        Options to = o.expand();
 #ifdef GECODE_HAS_THREADS
-    if (to.threads == 1.0) {
-      if (to.tracer)
-        return new WorkerToEngine<Seq::BAB<TraceRecorder>>(s,to);
-      else
-        return new WorkerToEngine<Seq::BAB<NoTraceRecorder>>(s,to);
-    } else {
-      if (to.tracer)
-        return new Par::BAB<EdgeTraceRecorder>(s,to);
-      else
-        return new Par::BAB<NoTraceRecorder>(s,to);
-    }
+        if (to.threads == 1.0) {
+            if (to.tracer)
+                return new WorkerToEngine<Seq::BAB<TraceRecorder>>(s, to);
+            else
+                return new WorkerToEngine<Seq::BAB<NoTraceRecorder>>(s, to);
+        } else {
+            if (to.tracer)
+                return new Par::BAB<EdgeTraceRecorder>(s, to);
+            else
+                return new Par::BAB<NoTraceRecorder>(s, to);
+        }
 #else
-    if (to.tracer)
-      return new WorkerToEngine<Seq::BAB<TraceRecorder>>(s,to);
-    else
-      return new WorkerToEngine<Seq::BAB<NoTraceRecorder>>(s,to);
+        if (to.tracer)
+            return new WorkerToEngine<Seq::BAB<TraceRecorder>>(s, to);
+        else
+            return new WorkerToEngine<Seq::BAB<NoTraceRecorder>>(s, to);
 #endif
-  }
+    }
 
-}}
+}} // namespace Gecode::Search
 
 // STATISTICS: search-other

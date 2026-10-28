@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,52 +32,50 @@
 
 namespace Gecode {
 
-  forceinline
-  IntAFC::IntAFC(void) {}
+    forceinline
+    IntAFC::IntAFC(void) {}
 
-  forceinline
-  IntAFC::IntAFC(const IntAFC& a)
-    : AFC(a) {}
+    forceinline
+    IntAFC::IntAFC(const IntAFC& a)
+        : AFC(a) {}
 
-  forceinline IntAFC&
-  IntAFC::operator =(const IntAFC& a) {
-    return static_cast<IntAFC&>(AFC::operator =(a));
-  }
+    forceinline IntAFC&
+    IntAFC::operator=(const IntAFC& a) {
+        return static_cast<IntAFC&>(AFC::operator=(a));
+    }
 
-  forceinline
-  IntAFC::IntAFC(Home home, const IntVarArgs& x, double d, bool share) {
-    AFC::init(home,x,d,share);
-  }
+    forceinline
+    IntAFC::IntAFC(Home home, const IntVarArgs& x, double d, bool share) {
+        AFC::init(home, x, d, share);
+    }
 
-  forceinline void
-  IntAFC::init(Home home, const IntVarArgs& x, double d, bool share) {
-    AFC::init(home,x,d,share);
-  }
+    forceinline void
+    IntAFC::init(Home home, const IntVarArgs& x, double d, bool share) {
+        AFC::init(home, x, d, share);
+    }
 
+    forceinline
+    BoolAFC::BoolAFC(void) {}
 
+    forceinline
+    BoolAFC::BoolAFC(const BoolAFC& a)
+        : AFC(a) {}
 
-  forceinline
-  BoolAFC::BoolAFC(void) {}
+    forceinline BoolAFC&
+    BoolAFC::operator=(const BoolAFC& a) {
+        return static_cast<BoolAFC&>(AFC::operator=(a));
+    }
 
-  forceinline
-  BoolAFC::BoolAFC(const BoolAFC& a)
-    : AFC(a) {}
+    forceinline
+    BoolAFC::BoolAFC(Home home, const BoolVarArgs& x, double d, bool share) {
+        AFC::init(home, x, d, share);
+    }
 
-  forceinline BoolAFC&
-  BoolAFC::operator =(const BoolAFC& a) {
-    return static_cast<BoolAFC&>(AFC::operator =(a));
-  }
+    forceinline void
+    BoolAFC::init(Home home, const BoolVarArgs& x, double d, bool share) {
+        AFC::init(home, x, d, share);
+    }
 
-  forceinline
-  BoolAFC::BoolAFC(Home home, const BoolVarArgs& x, double d, bool share) {
-    AFC::init(home,x,d,share);
-  }
-
-  forceinline void
-  BoolAFC::init(Home home, const BoolVarArgs& x, double d, bool share) {
-    AFC::init(home,x,d,share);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-branch

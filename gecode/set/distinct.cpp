@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,16 +36,16 @@ using namespace Gecode::Set;
 
 namespace Gecode {
 
-  void
-  atmostOne(Home home, const SetVarArgs& xa, unsigned int c) {
-    Set::Limits::check(c, "Set::atmostOne");
-    GECODE_POST;
-    if (xa.size() < 2)
-      return;
-    ViewArray<SetView> x(home,xa);
-    GECODE_ES_FAIL(Distinct::AtmostOne::post(home, x, c));
-  }
+    void
+    atmostOne(Home home, const SetVarArgs& xa, unsigned int c) {
+        Set::Limits::check(c, "Set::atmostOne");
+        GECODE_POST;
+        if (xa.size() < 2)
+            return;
+        ViewArray<SetView> x(home, xa);
+        GECODE_ES_FAIL(Distinct::AtmostOne::post(home, x, c));
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-post

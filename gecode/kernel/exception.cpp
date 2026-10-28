@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,54 +34,42 @@
 
 namespace Gecode {
 
-  SpaceFailed::SpaceFailed(const char* l)
-    : Exception(l,"Attempt to invoke operation on failed space") {}
+    SpaceFailed::SpaceFailed(const char* l) : Exception(l, "Attempt to invoke operation on failed space") {}
 
-  SpaceNotStable::SpaceNotStable(const char* l)
-    : Exception(l,"Attempt to invoke operation on not stable space") {}
+    SpaceNotStable::SpaceNotStable(const char* l) : Exception(l, "Attempt to invoke operation on not stable space") {}
 
-  SpaceNotCloned::SpaceNotCloned(const char* l)
-    : Exception(l,"Copy constructor of space did not call base class copy constructor") {}
+    SpaceNotCloned::SpaceNotCloned(const char* l)
+        : Exception(l, "Copy constructor of space did not call base class copy constructor") {}
 
-  SpaceNoBrancher::SpaceNoBrancher(const char* l)
-    : Exception(l,"Attempt to commit with no brancher") {}
+    SpaceNoBrancher::SpaceNoBrancher(const char* l) : Exception(l, "Attempt to commit with no brancher") {}
 
-  SpaceIllegalAlternative::SpaceIllegalAlternative(const char* l)
-    : Exception(l,"Attempt to commit with illegal alternative") {}
+    SpaceIllegalAlternative::SpaceIllegalAlternative(const char* l)
+        : Exception(l, "Attempt to commit with illegal alternative") {}
 
-  TooManyGroups::TooManyGroups(const char* l)
-    : Exception(l,"Too many groups created") {}
+    TooManyGroups::TooManyGroups(const char* l) : Exception(l, "Too many groups created") {}
 
-  UnknownPropagator::UnknownPropagator(const char* l)
-    : Exception(l,"Unknown propagator (illegal id)") {}
+    UnknownPropagator::UnknownPropagator(const char* l) : Exception(l, "Unknown propagator (illegal id)") {}
 
-  TooManyBranchers::TooManyBranchers(const char* l)
-    : Exception(l,"Too many branchers created") {}
+    TooManyBranchers::TooManyBranchers(const char* l) : Exception(l, "Too many branchers created") {}
 
-  UnknownBrancher::UnknownBrancher(const char* l)
-    : Exception(l,"Unknown brancher (illegal id)") {}
+    UnknownBrancher::UnknownBrancher(const char* l) : Exception(l, "Unknown brancher (illegal id)") {}
 
-  UninitializedAFC::UninitializedAFC(const char* l)
-    : Exception(l,"Uninitialized AFC information for branching") {}
+    UninitializedAFC::UninitializedAFC(const char* l) : Exception(l, "Uninitialized AFC information for branching") {}
 
-  UninitializedAction::UninitializedAction(const char* l)
-    : Exception(l,"Uninitialized action information for branching") {}
+    UninitializedAction::UninitializedAction(const char* l)
+        : Exception(l, "Uninitialized action information for branching") {}
 
-  UninitializedCHB::UninitializedCHB(const char* l)
-    : Exception(l,"Uninitialized CHB information for branching") {}
+    UninitializedCHB::UninitializedCHB(const char* l) : Exception(l, "Uninitialized CHB information for branching") {}
 
-  UninitializedRnd::UninitializedRnd(const char* l)
-    : Exception(l,"Uninitialized random generator for branching") {}
+    UninitializedRnd::UninitializedRnd(const char* l) : Exception(l, "Uninitialized random generator for branching") {}
 
-  IllegalDecay::IllegalDecay(const char* l)
-    : Exception(l,"Illegal decay factor") {}
+    IllegalDecay::IllegalDecay(const char* l) : Exception(l, "Illegal decay factor") {}
 
-  InvalidFunction::InvalidFunction(const char* l)
-    : Exception(l,"Invalid function") {}
+    InvalidFunction::InvalidFunction(const char* l) : Exception(l, "Invalid function") {}
 
-  MoreThanOneTracer::MoreThanOneTracer(const char* l)
-    : Exception(l,"Attempt create more than one non-variable tracer") {}
+    MoreThanOneTracer::MoreThanOneTracer(const char* l)
+        : Exception(l, "Attempt create more than one non-variable tracer") {}
 
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-other

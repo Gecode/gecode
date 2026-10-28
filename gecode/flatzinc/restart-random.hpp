@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -36,31 +35,28 @@
 
 namespace Gecode { namespace FlatZinc { namespace Internal {
 
-  /// Sample an offset for an inclusive integer restart range
-  template<class Random>
-  unsigned long long int
-  uniform_int_offset(Random& random, unsigned long long int width) {
-    const unsigned long long int chunk_width = 1ULL << 31;
+    /// Sample an offset for an inclusive integer restart range
+    template <class Random>
+    unsigned long long int
+    uniform_int_offset(Random& random, unsigned long long int width) {
+        const unsigned long long int chunk_width = 1ULL << 31;
 
-    // Retain the established seeded sequence for ordinary integer ranges.
-    if ((width <= chunk_width) || (width > (1ULL << 32)))
-      return random(width);
+        // Retain the established seeded sequence for ordinary integer ranges.
+        if ((width <= chunk_width) || (width > (1ULL << 32)))
+            return random(width);
 
-    // Draw uniformly from [0,2^62), rejecting its incomplete final bucket.
-    const unsigned long long int source_width = 1ULL << 62;
-    const unsigned long long int limit =
-      source_width - (source_width % width);
-    unsigned long long int sample;
-    do {
-      sample =
-        (static_cast<unsigned long long int>(
-           random(static_cast<unsigned int>(chunk_width))) << 31) |
-        random(static_cast<unsigned int>(chunk_width));
-    } while (sample >= limit);
-    return sample % width;
-  }
+        // Draw uniformly from [0,2^62), rejecting its incomplete final bucket.
+        const unsigned long long int source_width = 1ULL << 62;
+        const unsigned long long int limit = source_width - (source_width % width);
+        unsigned long long int sample;
+        do {
+            sample = (static_cast<unsigned long long int>(random(static_cast<unsigned int>(chunk_width))) << 31) |
+                     random(static_cast<unsigned int>(chunk_width));
+        } while (sample >= limit);
+        return sample % width;
+    }
 
-}}}
+}}} // namespace Gecode::FlatZinc::Internal
 
 #endif
 

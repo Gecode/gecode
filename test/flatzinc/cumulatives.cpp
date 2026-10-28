@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,24 +32,18 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("cumulatives",
-"constraint cumulatives([0, 0], [1, 1], [0,1], 1); solve satisfy;",
-"----------\n");
-      }
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest("cumulatives", "constraint cumulatives([0, 0], [1, 1], [0,1], 1); solve satisfy;",
+                                   "----------\n");
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

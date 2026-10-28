@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,43 +34,42 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
-  NGL*
-  IncNGL::copy(Space& home) {
-    return new (home) IncNGL(home,*this);
-  }
-  NGL::Status
-  IncNGL::status(const Space&) const {
-    // Is n in the glb(x)?
-    if (x.contains(n))
-      return NGL::SUBSUMED;
-    else
-      // Is n not in the lub(x)?
-      return x.notContains(n) ? NGL::FAILED : NGL::NONE;
-  }
-  ExecStatus
-  IncNGL::prune(Space& home) {
-    return me_failed(x.exclude(home,n)) ? ES_FAILED : ES_OK;
-  }
+    NGL*
+    IncNGL::copy(Space& home) {
+        return new (home) IncNGL(home, *this);
+    }
+    NGL::Status
+    IncNGL::status(const Space&) const {
+        // Is n in the glb(x)?
+        if (x.contains(n))
+            return NGL::SUBSUMED;
+        else
+            // Is n not in the lub(x)?
+            return x.notContains(n) ? NGL::FAILED : NGL::NONE;
+    }
+    ExecStatus
+    IncNGL::prune(Space& home) {
+        return me_failed(x.exclude(home, n)) ? ES_FAILED : ES_OK;
+    }
 
+    NGL*
+    ExcNGL::copy(Space& home) {
+        return new (home) ExcNGL(home, *this);
+    }
+    NGL::Status
+    ExcNGL::status(const Space&) const {
+        // Is n not in the lub(x)?
+        if (x.notContains(n))
+            return NGL::SUBSUMED;
+        else
+            // Is n in the lub(x)?
+            return x.contains(n) ? NGL::FAILED : NGL::NONE;
+    }
+    ExecStatus
+    ExcNGL::prune(Space& home) {
+        return me_failed(x.include(home, n)) ? ES_FAILED : ES_OK;
+    }
 
-  NGL*
-  ExcNGL::copy(Space& home) {
-    return new (home) ExcNGL(home,*this);
-  }
-  NGL::Status
-  ExcNGL::status(const Space&) const {
-    // Is n not in the lub(x)?
-    if (x.notContains(n))
-      return NGL::SUBSUMED;
-    else
-      // Is n in the lub(x)?
-      return x.contains(n) ? NGL::FAILED : NGL::NONE;
-  }
-  ExecStatus
-  ExcNGL::prune(Space& home) {
-    return me_failed(x.include(home,n)) ? ES_FAILED : ES_OK;
-  }
-
-}}}
+}}} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

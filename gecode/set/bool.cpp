@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,16 +34,17 @@
 
 namespace Gecode {
 
-  void
-  ite(Home home, BoolVar b, SetVar x, SetVar y, SetVar z) {
-    GECODE_POST;      
-    IntVar i(home,0,1);
-    channel(home, b, i);
-    SetVarArgs yx(2);
-    yx[0]=y; yx[1]=x;
-    element(home, yx, i, z);
-  }
+    void
+    ite(Home home, BoolVar b, SetVar x, SetVar y, SetVar z) {
+        GECODE_POST;
+        IntVar i(home, 0, 1);
+        channel(home, b, i);
+        SetVarArgs yx(2);
+        yx[0] = y;
+        yx[1] = x;
+        element(home, yx, i, z);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-post

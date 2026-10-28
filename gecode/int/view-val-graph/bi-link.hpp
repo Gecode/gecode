@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,53 +32,57 @@
 
 namespace Gecode { namespace Int { namespace ViewValGraph {
 
-  forceinline
-  BiLink::BiLink(void) {
-    _prev = this; _next = this;
-  }
+    forceinline
+    BiLink::BiLink(void) {
+        _prev = this;
+        _next = this;
+    }
 
-  forceinline BiLink*
-  BiLink::prev(void) const {
-    return _prev;
-  }
-  forceinline BiLink*
-  BiLink::next(void) const {
-    return _next;
-  }
-  forceinline void
-  BiLink::prev(BiLink* l) {
-    _prev = l;
-  }
-  forceinline void
-  BiLink::next(BiLink* l) {
-    _next = l;
-  }
+    forceinline BiLink*
+    BiLink::prev(void) const {
+        return _prev;
+    }
+    forceinline BiLink*
+    BiLink::next(void) const {
+        return _next;
+    }
+    forceinline void
+    BiLink::prev(BiLink* l) {
+        _prev = l;
+    }
+    forceinline void
+    BiLink::next(BiLink* l) {
+        _next = l;
+    }
 
-  forceinline void
-  BiLink::add(BiLink* l) {
-    l->_prev = this; l->_next = _next;
-    _next->_prev = l; _next = l;
-  }
-  forceinline void
-  BiLink::unlink(void) {
-    BiLink* p = _prev; BiLink* n = _next;
-    p->_next = n; n->_prev = p;
-  }
+    forceinline void
+    BiLink::add(BiLink* l) {
+        l->_prev = this;
+        l->_next = _next;
+        _next->_prev = l;
+        _next = l;
+    }
+    forceinline void
+    BiLink::unlink(void) {
+        BiLink* p = _prev;
+        BiLink* n = _next;
+        p->_next = n;
+        n->_prev = p;
+    }
 
-  forceinline void
-  BiLink::mark(void) {
-    _next = nullptr;
-  }
-  forceinline bool
-  BiLink::marked(void) const {
-    return _next == nullptr;
-  }
-  forceinline bool
-  BiLink::empty(void) const {
-    return _prev == this;
-  }
+    forceinline void
+    BiLink::mark(void) {
+        _next = nullptr;
+    }
+    forceinline bool
+    BiLink::marked(void) const {
+        return _next == nullptr;
+    }
+    forceinline bool
+    BiLink::empty(void) const {
+        return _prev == this;
+    }
 
-}}}
+}}} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop
-

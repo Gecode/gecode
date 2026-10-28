@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -39,69 +38,65 @@
 
 namespace Gecode { namespace Search {
 
-   /*
-    * Creation functions for stop objects
-    *
-    */
-  Stop*
-  Stop::node(unsigned long long int l) {
-    return new NodeStop(l);
-  }
-  Stop*
-  Stop::fail(unsigned long long int l) {
-    return new FailStop(l);
-  }
-  Stop*
-  Stop::time(double l) {
-    return new TimeStop(l);
-  }
-  Stop*
-  Stop::restart(unsigned long long int  l) {
-    return new RestartStop(l);
-  }
+    /*
+     * Creation functions for stop objects
+     *
+     */
+    Stop*
+    Stop::node(unsigned long long int l) {
+        return new NodeStop(l);
+    }
+    Stop*
+    Stop::fail(unsigned long long int l) {
+        return new FailStop(l);
+    }
+    Stop*
+    Stop::time(double l) {
+        return new TimeStop(l);
+    }
+    Stop*
+    Stop::restart(unsigned long long int l) {
+        return new RestartStop(l);
+    }
 
+    /*
+     * Stopping for node limit
+     *
+     */
+    bool
+    NodeStop::stop(const Statistics& s, const Options&) {
+        return s.node > l.load(std::memory_order_acquire);
+    }
 
-  /*
-   * Stopping for node limit
-   *
-   */
-  bool
-  NodeStop::stop(const Statistics& s, const Options&) {
-    return s.node > l.load(std::memory_order_acquire);
-  }
+    /*
+     * Stopping for failure limit
+     *
+     */
+    bool
+    FailStop::stop(const Statistics& s, const Options&) {
+        return s.fail > l.load(std::memory_order_acquire);
+    }
 
+    /*
+     * Stopping for time limit
+     *
+     */
+    bool
+    TimeStop::stop(const Statistics&, const Options&) {
+        const clock::rep now = clock::now().time_since_epoch().count();
+        const clock::duration elapsed(now - t0.load(std::memory_order_acquire));
+        return std::chrono::duration<double, std::milli>(elapsed).count() > l.load(std::memory_order_acquire);
+    }
 
-  /*
-   * Stopping for failure limit
-   *
-   */
-  bool
-  FailStop::stop(const Statistics& s, const Options&) {
-    return s.fail > l.load(std::memory_order_acquire);
-  }
+    /*
+     * Stopping for restart limit
+     *
+     */
+    bool
+    RestartStop::stop(const Statistics& s, const Options&) {
+        return s.restart > l.load(std::memory_order_acquire);
+    }
 
-
-  /*
-   * Stopping for time limit
-   *
-   */
-  bool
-  TimeStop::stop(const Statistics&, const Options&) {
-    const clock::rep now = clock::now().time_since_epoch().count();
-    const clock::duration elapsed(now - t0.load(std::memory_order_acquire));
-    return std::chrono::duration<double, std::milli>(elapsed).count() >
-      l.load(std::memory_order_acquire);
-  }
-
-  /*
-   * Stopping for restart limit
-   *
-   */
-  bool
-  RestartStop::stop(const Statistics& s, const Options&) {
-    return s.restart > l.load(std::memory_order_acquire);
-  }
-
-}}
+}} // namespace Gecode::Search
 
 // STATISTICS: search-other

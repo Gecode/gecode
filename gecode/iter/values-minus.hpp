@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,69 +32,68 @@
 
 namespace Gecode { namespace Iter { namespace Values {
 
-  /**
-   * \brief Value iterator for pointwise minus of a value iterator
-   *
-   * This iterator in effect changes the order of how values
-   * are iterated: the first values of the input iterator defines
-   * the last value of the Minus iterator. Upon initialization
-   * all values of the input iterator are stored in an array
-   * which later allows iteration in inverse direction.
-   *
-   * \ingroup FuncIterValues
-   */
-  class Minus : public ValueListIter {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Minus(void);
-    /// Copy constructor
-    Minus(const Minus& m);
-    /// Initialize with values from \a i
-    template<class I>
-    Minus(Region& r, I& i);
-    /// Initialize with values from \a i
-    template<class I>
-    void init(Region& r, I& i);
-    /// Assignment operator (both iterators must be allocated from the same region)
-    Minus& operator =(const Minus& m);
-    //@}
-  };
+    /**
+     * \brief Value iterator for pointwise minus of a value iterator
+     *
+     * This iterator in effect changes the order of how values
+     * are iterated: the first values of the input iterator defines
+     * the last value of the Minus iterator. Upon initialization
+     * all values of the input iterator are stored in an array
+     * which later allows iteration in inverse direction.
+     *
+     * \ingroup FuncIterValues
+     */
+    class Minus : public ValueListIter {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Minus(void);
+        /// Copy constructor
+        Minus(const Minus& m);
+        /// Initialize with values from \a i
+        template <class I>
+        Minus(Region& r, I& i);
+        /// Initialize with values from \a i
+        template <class I>
+        void init(Region& r, I& i);
+        /// Assignment operator (both iterators must be allocated from the same region)
+        Minus& operator=(const Minus& m);
+        //@}
+    };
 
+    forceinline
+    Minus::Minus(void) {}
 
-  forceinline
-  Minus::Minus(void) {}
+    forceinline
+    Minus::Minus(const Minus& m)
+        : ValueListIter(m) {}
 
-  forceinline
-  Minus::Minus(const Minus& m)
-    : ValueListIter(m) {}
-
-  template<class I>
-  void
-  Minus::init(Region& r, I& i) {
-    ValueListIter::init(r);
-    ValueList* p = nullptr;
-    for (; i(); ++i) {
-      ValueList* t = new (*vlio) ValueList;
-      t->next = p;
-      t->val = -i.val();
-      p = t;
+    template <class I>
+    void
+    Minus::init(Region& r, I& i) {
+        ValueListIter::init(r);
+        ValueList* p = nullptr;
+        for (; i(); ++i) {
+            ValueList* t = new (*vlio) ValueList;
+            t->next = p;
+            t->val = -i.val();
+            p = t;
+        }
+        ValueListIter::set(p);
     }
-    ValueListIter::set(p);
-  }
 
-  template<class I>
-  forceinline
-  Minus::Minus(Region& r, I& i) {
-    init(r,i);
-  }
+    template <class I>
+    forceinline
+    Minus::Minus(Region& r, I& i) {
+        init(r, i);
+    }
 
-  forceinline Minus&
-  Minus::operator =(const Minus& m) {
-    return static_cast<Minus&>(ValueListIter::operator =(m));
-  }
+    forceinline Minus&
+    Minus::operator=(const Minus& m) {
+        return static_cast<Minus&>(ValueListIter::operator=(m));
+    }
 
-}}}
+}}} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

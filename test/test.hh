@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -48,15 +47,14 @@
 #include <vector>
 
 /* Configure linking, as for the Gecode variable libraries. */
-#if !defined(GECODE_STATIC_LIBS) && \
-    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
+#if !defined(GECODE_STATIC_LIBS) && (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 #ifdef GECODE_BUILD_TEST
-#define GECODE_TEST_EXPORT __declspec( dllexport )
+#define GECODE_TEST_EXPORT __declspec(dllexport)
 #else
-#define GECODE_TEST_EXPORT __declspec( dllimport )
+#define GECODE_TEST_EXPORT __declspec(dllimport)
 #endif
 #elif defined(GECODE_GCC_HAS_CLASS_VISIBILITY)
-#define GECODE_TEST_EXPORT __attribute__ ((visibility("default")))
+#define GECODE_TEST_EXPORT __attribute__((visibility("default")))
 #else
 #define GECODE_TEST_EXPORT
 #endif
@@ -64,211 +62,212 @@
 /// General test support
 namespace Test {
 
-  /**
-   * \defgroup TaskTestTest General test support
-   *
-   * \ingroup TaskTest
-   */
-  //@{
-  /**
-   * \brief Stream used for logging
-   *
-   * The olog is buffered and printed only if an error has
-   * occurred.
-   */
-  extern GECODE_TEST_EXPORT std::ostringstream olog;
+    /**
+     * \defgroup TaskTestTest General test support
+     *
+     * \ingroup TaskTest
+     */
+    //@{
+    /**
+     * \brief Stream used for logging
+     *
+     * The olog is buffered and printed only if an error has
+     * occurred.
+     */
+    extern GECODE_TEST_EXPORT std::ostringstream olog;
 
-  /// Simple class for describing indentation
-  class GECODE_TEST_EXPORT ind {
-  public:
-    /// Which indentation level
-    int l;
-    /// Indent by level \a i
-    ind(int i) : l(i) {}
-  };
+    /// Simple class for describing indentation
+    class GECODE_TEST_EXPORT ind {
+    public:
+        /// Which indentation level
+        int l;
+        /// Indent by level \a i
+        ind(int i) : l(i) {}
+    };
 
-  /// How to match
-  enum MatchType {
-    MT_ANY,  //< Positive match anywhere in string
-    MT_NOT,  //< Negative match
-    MT_FIRST //< Positive match at beginning
-  };
+    /// How to match
+    enum MatchType {
+        MT_ANY,  //< Positive match anywhere in string
+        MT_NOT,  //< Negative match
+        MT_FIRST //< Positive match at beginning
+    };
 
-  /// Tags for test selection
-  enum class TestTag : unsigned int {
-    check  = 1U << 0, ///< Basic integrity tests
-    standard = 1U << 1, ///< Standard test suite
-    sweep  = 1U << 2  ///< Really heavy sweep tests
-  };
+    /// Tags for test selection
+    enum class TestTag : unsigned int {
+        check = 1U << 0,    ///< Basic integrity tests
+        standard = 1U << 1, ///< Standard test suite
+        sweep = 1U << 2     ///< Really heavy sweep tests
+    };
 
-  /// Set of test tags
-  class GECODE_TEST_EXPORT TestTags {
-  private:
-    /// Bit mask for tags
-    unsigned int _mask;
-  public:
-    /// Initialize with no tags
-    TestTags(void);
-    /// Initialize with tag \a t
-    TestTags(TestTag t);
-    /// Initialize with tags \a t0 and \a t1
-    TestTags(TestTag t0, TestTag t1);
-    /// Integrity tests, also part of the standard suite
-    static TestTags check(void);
-    /// Standard suite without expensive sweeps
-    static TestTags standard(void);
-    /// Expensive parameter sweeps
-    static TestTags sweep(void);
-    /// Return set with all known tags
-    static TestTags all(void);
-    /// Whether no tags are set
-    bool empty(void) const;
-    /// Whether this set contains any tag from \a t
-    bool overlaps(TestTags t) const;
-    /// Add tags \a t
-    void add(TestTags t);
-  };
+    /// Set of test tags
+    class GECODE_TEST_EXPORT TestTags {
+    private:
+        /// Bit mask for tags
+        unsigned int _mask;
 
-  /// Commandline options
-  class GECODE_TEST_EXPORT Options {
-  public:
-    /// Number of threads to use
-    unsigned int threads;
-    /// The random seed to be used
-    unsigned int seed;
-    /// Replay one named test from its reported random state
-    bool replay;
-    /// Number of iterations for each test
-    unsigned int iter;
-    /// Default number of iterations
-    static const int defiter = 5;
-    /// The probability for computing a fixpoint
-    unsigned int fixprob;
-    /// Default fixpoint probability
-    static const unsigned int deffixprob = 10;
-    /// Whether to stop on an error
-    bool stop;
-    /// Whether to log the tests
-    bool log;
-    /// Patterns to test against
-    std::vector<std::pair<MatchType, const char*> > testpat;
-    /// Tags to test against
-    TestTags testtags;
-    /// Name of first test to start with
-    const char* start_from;
-    /// Whether to list all tests
-    bool list;
-    /// Whether to list known tags
-    bool list_tags;
-    /// Whether to include tags when listing tests
-    bool list_with_tags;
+    public:
+        /// Initialize with no tags
+        TestTags(void);
+        /// Initialize with tag \a t
+        TestTags(TestTag t);
+        /// Initialize with tags \a t0 and \a t1
+        TestTags(TestTag t0, TestTag t1);
+        /// Integrity tests, also part of the standard suite
+        static TestTags check(void);
+        /// Standard suite without expensive sweeps
+        static TestTags standard(void);
+        /// Expensive parameter sweeps
+        static TestTags sweep(void);
+        /// Return set with all known tags
+        static TestTags all(void);
+        /// Whether no tags are set
+        bool empty(void) const;
+        /// Whether this set contains any tag from \a t
+        bool overlaps(TestTags t) const;
+        /// Add tags \a t
+        void add(TestTags t);
+    };
 
-    /// Initialize options with defaults
-    Options(void);
-    /// Parse commandline arguments
-    void parse(int argc, char* argv[]);
+    /// Commandline options
+    class GECODE_TEST_EXPORT Options {
+    public:
+        /// Number of threads to use
+        unsigned int threads;
+        /// The random seed to be used
+        unsigned int seed;
+        /// Replay one named test from its reported random state
+        bool replay;
+        /// Number of iterations for each test
+        unsigned int iter;
+        /// Default number of iterations
+        static const int defiter = 5;
+        /// The probability for computing a fixpoint
+        unsigned int fixprob;
+        /// Default fixpoint probability
+        static const unsigned int deffixprob = 10;
+        /// Whether to stop on an error
+        bool stop;
+        /// Whether to log the tests
+        bool log;
+        /// Patterns to test against
+        std::vector<std::pair<MatchType, const char*>> testpat;
+        /// Tags to test against
+        TestTags testtags;
+        /// Name of first test to start with
+        const char* start_from;
+        /// Whether to list all tests
+        bool list;
+        /// Whether to list known tags
+        bool list_tags;
+        /// Whether to include tags when listing tests
+        bool list_with_tags;
+
+        /// Initialize options with defaults
+        Options(void);
+        /// Parse commandline arguments
+        void parse(int argc, char* argv[]);
+
+        /**
+         * \brief Test whether a test name should be executed
+         *
+         * Replay requires one exact test name. Otherwise, match the configured
+         * patterns; with no patterns, every test name matches.
+         */
+        bool is_test_name_matching(const std::string& test_name) const;
+        /// True iff test tags should be executed according to the requested tags. With no tag request, always true.
+        bool is_test_tags_matching(TestTags tags) const;
+    };
+
+    /// The options
+    extern GECODE_TEST_EXPORT Options opt;
+
+    /// %Base class for all tests to be run
+    class GECODE_TEST_EXPORT Base {
+    private:
+        /// Name of the test
+        std::string _name;
+        /// Tags assigned to the test
+        TestTags _tags;
+        /// Next test
+        Base* _next;
+        /// All tests
+        static Base* _tests;
+        /// How many tests
+        static unsigned int _n_tests;
+
+    public:
+        /// Create and register a standard test with name \a s
+        Base(std::string s);
+        /** \brief Create and register test with name \a s and tags \a t
+         *
+         * The supplied tags determine membership independently of the name.
+         */
+        Base(std::string s, TestTags t);
+        /// Sort tests alphabetically
+        static void sort(void);
+        /// Return name of test
+        const std::string& name(void) const;
+        /// Return tags for test
+        TestTags tags(void) const;
+        /// Return all tests
+        static Base* tests(void);
+        /// Return next test
+        Base* next(void) const;
+        /// Set next test
+        void next(Base* n);
+        /// Run test
+        virtual bool run(void) = 0;
+        /// Throw a coin whether to compute a fixpoint
+        bool fixpoint(void);
+        /// Throw a coin whether to compute a fixpoint
+        static bool fixpoint(Gecode::Support::RandomGenerator& rand);
+        /// Destructor
+        virtual ~Base(void);
+
+        /// \name Mapping scalar values to strings
+        //@{
+        /// Map bool to string
+        static std::string str(bool b);
+        /// Map integer to string
+        static std::string str(int i);
+        /// Map integer array to string
+        static std::string str(const Gecode::IntArgs& i);
+        //@}
+
+        /// Random number generator
+        mutable Gecode::Support::RandomGenerator _rand;
+    };
 
     /**
-     * \brief Test whether a test name should be executed
+     * \brief Run the tests in the process-wide registry
      *
-     * Replay requires one exact test name. Otherwise, match the configured
-     * patterns; with no patterns, every test name matches.
-     */
-    bool is_test_name_matching(const std::string& test_name) const;
-    /// True iff test tags should be executed according to the requested tags. With no tag request, always true.
-    bool is_test_tags_matching(TestTags tags) const;
-  };
-
-  /// The options
-  extern GECODE_TEST_EXPORT Options opt;
-
-  /// %Base class for all tests to be run
-  class GECODE_TEST_EXPORT Base {
-  private:
-    /// Name of the test
-    std::string _name;
-    /// Tags assigned to the test
-    TestTags _tags;
-    /// Next test
-    Base* _next;
-    /// All tests
-    static Base* _tests;
-    /// How many tests
-    static unsigned int _n_tests;
-  public:
-    /// Create and register a standard test with name \a s
-    Base(std::string  s);
-    /** \brief Create and register test with name \a s and tags \a t
+     * Tests register during construction. They must remain alive until every
+     * runner call has returned; destruction does not remove a test from the
+     * process-wide registry. Runner calls must not overlap. Option parsing exits
+     * the process after printing help or reporting a malformed option.
      *
-     * The supplied tags determine membership independently of the name.
+     * Use -help to list options and -list to list registered tests. Failure
+     * reports provide a -replay state and exact -test name. Replay runs that
+     * test once on one thread, starting from the failing iteration's state.
+     * -log prints the buffered log on failure and requires one thread.
+     *
+     * Repeated -tag options select the union of their tags. With no -tag,
+     * all tests are eligible, including tests without tags; -tag all selects
+     * tests with at least one known tag. Name and tag filters must both match.
+     * -list and -list-with-tags list every registered test, ignoring -test,
+     * -tag, and -start.
+     * \relates Test::Base
      */
-    Base(std::string s, TestTags t);
-    /// Sort tests alphabetically
-    static void sort(void);
-    /// Return name of test
-    const std::string& name(void) const;
-    /// Return tags for test
-    TestTags tags(void) const;
-    /// Return all tests
-    static Base* tests(void);
-    /// Return next test
-    Base* next(void) const;
-    /// Set next test
-    void next(Base* n);
-    /// Run test
-    virtual bool run(void) = 0;
-    /// Throw a coin whether to compute a fixpoint
-    bool fixpoint(void);
-    /// Throw a coin whether to compute a fixpoint
-    static bool fixpoint(Gecode::Support::RandomGenerator& rand);
-    /// Destructor
-    virtual ~Base(void);
-
-    /// \name Mapping scalar values to strings
-    //@{
-    /// Map bool to string
-    static std::string str(bool b);
-    /// Map integer to string
-    static std::string str(int i);
-    /// Map integer array to string
-    static std::string str(const Gecode::IntArgs& i);
+    GECODE_TEST_EXPORT int run_registered_tests(int argc, char* argv[]);
     //@}
 
-    /// Random number generator
-    mutable Gecode::Support::RandomGenerator _rand;
-  };
-
-  /**
-   * \brief Run the tests in the process-wide registry
-   *
-   * Tests register during construction. They must remain alive until every
-   * runner call has returned; destruction does not remove a test from the
-   * process-wide registry. Runner calls must not overlap. Option parsing exits
-   * the process after printing help or reporting a malformed option.
-   *
-   * Use -help to list options and -list to list registered tests. Failure
-   * reports provide a -replay state and exact -test name. Replay runs that
-   * test once on one thread, starting from the failing iteration's state.
-   * -log prints the buffered log on failure and requires one thread.
-   *
-   * Repeated -tag options select the union of their tags. With no -tag,
-   * all tests are eligible, including tests without tags; -tag all selects
-   * tests with at least one known tag. Name and tag filters must both match.
-   * -list and -list-with-tags list every registered test, ignoring -test,
-   * -tag, and -start.
-   * \relates Test::Base
-   */
-  GECODE_TEST_EXPORT int run_registered_tests(int argc, char* argv[]);
-  //@}
-
-}
+} // namespace Test
 
 /**
  * \brief Print indentation
  * \relates Test::ind
  */
-GECODE_TEST_EXPORT std::ostream&
-operator<<(std::ostream& os, const Test::ind& i);
+GECODE_TEST_EXPORT std::ostream& operator<<(std::ostream& os, const Test::ind& i);
 
 #include "test/test.hpp"
 

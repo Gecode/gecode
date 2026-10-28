@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -39,55 +38,50 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
-  forceinline
-  ValCommitInc::ValCommitInc(Space& home, const ValBranch<Var>& vb)
-    : ValCommit<SetView,int>(home,vb) {}
-  forceinline
-  ValCommitInc::ValCommitInc(Space& home, ValCommitInc& vc)
-    : ValCommit<SetView,int>(home,vc) {}
-  forceinline ModEvent
-  ValCommitInc::commit(Space& home, unsigned int a, SetView x, int, int n) {
-    return (a == 0) ? x.include(home,n) : x.exclude(home,n);
-  }
-  forceinline NGL*
-  ValCommitInc::ngl(Space& home, unsigned int a, SetView x, int n) const {
-    if (a == 0)
-      return new (home) IncNGL(home,x,n);
-    else
-      return nullptr;
-  }
-  forceinline void
-  ValCommitInc::print(const Space&, unsigned int a, SetView, int i, int n,
-                      std::ostream& o) const {
-    o << "var[" << i << "]."
-      << ((a == 0) ? "include" : "exclude") << "(" << n << ")";
-  }
+    forceinline
+    ValCommitInc::ValCommitInc(Space& home, const ValBranch<Var>& vb)
+        : ValCommit<SetView, int>(home, vb) {}
+    forceinline
+    ValCommitInc::ValCommitInc(Space& home, ValCommitInc& vc)
+        : ValCommit<SetView, int>(home, vc) {}
+    forceinline ModEvent
+    ValCommitInc::commit(Space& home, unsigned int a, SetView x, int, int n) {
+        return (a == 0) ? x.include(home, n) : x.exclude(home, n);
+    }
+    forceinline NGL*
+    ValCommitInc::ngl(Space& home, unsigned int a, SetView x, int n) const {
+        if (a == 0)
+            return new (home) IncNGL(home, x, n);
+        else
+            return nullptr;
+    }
+    forceinline void
+    ValCommitInc::print(const Space&, unsigned int a, SetView, int i, int n, std::ostream& o) const {
+        o << "var[" << i << "]." << ((a == 0) ? "include" : "exclude") << "(" << n << ")";
+    }
 
-  forceinline
-  ValCommitExc::ValCommitExc(Space& home, const ValBranch<Var>& vb)
-    : ValCommit<SetView,int>(home,vb) {}
-  forceinline
-  ValCommitExc::ValCommitExc(Space& home, ValCommitExc& vc)
-    : ValCommit<SetView,int>(home,vc) {}
-  forceinline ModEvent
-  ValCommitExc::commit(Space& home, unsigned int a, SetView x, int, int n) {
-    return (a == 0) ? x.exclude(home,n) : x.include(home,n);
-  }
-  forceinline NGL*
-  ValCommitExc::ngl(Space& home, unsigned int a, SetView x, int n) const {
-    if (a == 0)
-      return new (home) ExcNGL(home,x,n);
-    else
-      return nullptr;
-  }
-  forceinline void
-  ValCommitExc::print(const Space&, unsigned int a, SetView, int i, int n,
-                      std::ostream& o) const {
-    o << "var[" << i << "]."
-      << ((a == 0) ? "exclude" : "include") << "(" << n << ")";
-  }
+    forceinline
+    ValCommitExc::ValCommitExc(Space& home, const ValBranch<Var>& vb)
+        : ValCommit<SetView, int>(home, vb) {}
+    forceinline
+    ValCommitExc::ValCommitExc(Space& home, ValCommitExc& vc)
+        : ValCommit<SetView, int>(home, vc) {}
+    forceinline ModEvent
+    ValCommitExc::commit(Space& home, unsigned int a, SetView x, int, int n) {
+        return (a == 0) ? x.exclude(home, n) : x.include(home, n);
+    }
+    forceinline NGL*
+    ValCommitExc::ngl(Space& home, unsigned int a, SetView x, int n) const {
+        if (a == 0)
+            return new (home) ExcNGL(home, x, n);
+        else
+            return nullptr;
+    }
+    forceinline void
+    ValCommitExc::print(const Space&, unsigned int a, SetView, int i, int n, std::ostream& o) const {
+        o << "var[" << i << "]." << ((a == 0) ? "exclude" : "include") << "(" << n << ")";
+    }
 
-}}}
+}}} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch
-

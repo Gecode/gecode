@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,20 +36,17 @@
 
 namespace Gecode {
 
-  void
-  order(Home home, IntVar s0, int p0, IntVar s1, int p1, BoolVar b,
-        IntPropLevel) {
-    using namespace Gecode::Int;
-    Int::Limits::nonnegative(p0,"Int::order");
-    Int::Limits::nonnegative(p1,"Int::order");
-    Int::Limits::check(static_cast<long long int>(s0.max()) + p0,
-                       "Int::order");
-    Int::Limits::check(static_cast<long long int>(s1.max()) + p1,
-                       "Int::order");
-    GECODE_POST;
-    GECODE_ES_FAIL(Order::OrderProp::post(home,s0,p0,s1,p1,b));
-  }
+    void
+    order(Home home, IntVar s0, int p0, IntVar s1, int p1, BoolVar b, IntPropLevel) {
+        using namespace Gecode::Int;
+        Int::Limits::nonnegative(p0, "Int::order");
+        Int::Limits::nonnegative(p1, "Int::order");
+        Int::Limits::check(static_cast<long long int>(s0.max()) + p0, "Int::order");
+        Int::Limits::check(static_cast<long long int>(s1.max()) + p1, "Int::order");
+        GECODE_POST;
+        GECODE_ES_FAIL(Order::OrderProp::post(home, s0, p0, s1, p1, b));
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-post

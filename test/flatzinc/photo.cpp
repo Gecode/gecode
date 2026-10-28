@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,13 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("photo",
-"predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest("photo", "predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -212,17 +207,16 @@ constraint int_lin_eq_reif([1, -1], [pos[7], pos[8]], -1, BOOL____00059) :: defi
 constraint int_lin_eq_reif([1, -1], [pos[8], pos[9]], -1, BOOL____00062) :: defines_var(BOOL____00062);\n\
 constraint int_lt(pos[1], pos[2]);\n\
 solve  :: int_search(pos, first_fail, indomain, complete) maximize INT____00018;\n\
-", "pos = array1d(0..8, [0, 1, 4, 3, 2, 8, 5, 6, 7]);\n\
+",
+                                   "pos = array1d(0..8, [0, 1, 4, 3, 2, 8, 5, 6, 7]);\n\
 satisfies = 8;\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

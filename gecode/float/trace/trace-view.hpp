@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,34 +32,34 @@
 
 namespace Gecode { namespace Float {
 
-  /// Float trace view
-  class FloatTraceView {
-  public:
-    /// Default constructor (initializes with no view)
-    FloatTraceView(void);
-    /// Duplicate view \a y
-    FloatTraceView(Space& home, FloatView y);
-    /// Update duplicated view from view \a y and delta \a d
-    void prune(Space& home, FloatView y, const Delta& d);
-    /// Update during cloning
-    void update(Space& home, FloatTraceView x);
-    /// Return slack of \a x
-    static FloatNum slack(FloatView x);
-  };
+    /// Float trace view
+    class FloatTraceView {
+    public:
+        /// Default constructor (initializes with no view)
+        FloatTraceView(void);
+        /// Duplicate view \a y
+        FloatTraceView(Space& home, FloatView y);
+        /// Update duplicated view from view \a y and delta \a d
+        void prune(Space& home, FloatView y, const Delta& d);
+        /// Update during cloning
+        void update(Space& home, FloatTraceView x);
+        /// Return slack of \a x
+        static FloatNum slack(FloatView x);
+    };
 
-  forceinline
-  FloatTraceView::FloatTraceView(void) {}
-  forceinline
-  FloatTraceView::FloatTraceView(Space&, FloatView) {}
-  forceinline void
-  FloatTraceView::prune(Space&, FloatView, const Delta&) {}
-  forceinline void
-  FloatTraceView::update(Space&, FloatTraceView) {}
-  forceinline FloatNum
-  FloatTraceView::slack(FloatView x) {
-    return x.size();
-  }
+    forceinline
+    FloatTraceView::FloatTraceView(void) {}
+    forceinline
+    FloatTraceView::FloatTraceView(Space&, FloatView) {}
+    forceinline void
+    FloatTraceView::prune(Space&, FloatView, const Delta&) {}
+    forceinline void
+    FloatTraceView::update(Space&, FloatTraceView) {}
+    forceinline FloatNum
+    FloatTraceView::slack(FloatView x) {
+        return x.size();
+    }
 
-}}
+}} // namespace Gecode::Float
 
 // STATISTICS: float-trace

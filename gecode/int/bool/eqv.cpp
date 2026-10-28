@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,66 +34,66 @@
 
 namespace Gecode { namespace Int { namespace Bool {
 
-  /*
-   * N-ary Boolean equivalence propagator
-   *
-   */
+    /*
+     * N-ary Boolean equivalence propagator
+     *
+     */
 
-  PropCost
-  NaryEqv::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::binary(PropCost::LO);
-  }
-
-  Actor*
-  NaryEqv::copy(Space& home) {
-    return new (home) NaryEqv(home,*this);
-  }
-
-  ExecStatus
-  NaryEqv::post(Home home, ViewArray<BoolView>& x, int pm2) {
-    int n = x.size();
-    for (int i=n; i--; )
-      if (x[i].assigned()) {
-        pm2 ^= x[i].val();
-        x[i] = x[--n];
-      }
-    if (n == 0)
-      return (pm2 == 1) ? ES_OK : ES_FAILED;
-    if (n == 1) {
-      GECODE_ME_CHECK(x[0].eq(home,1^pm2));
-      return ES_OK;
+    PropCost
+    NaryEqv::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::binary(PropCost::LO);
     }
-    if (n == 2) {
-      if (pm2 == 1) {
-        return Bool::Eq<BoolView,BoolView>::post(home,x[0],x[1]);
-      } else {
-        NegBoolView nx(x[1]);
-        return Bool::Eq<BoolView,NegBoolView>::post(home,x[0],nx);
-      }
-    }
-    x.size(n);
-    (void) new (home) NaryEqv(home,x,pm2);
-    return ES_OK;
-  }
 
-  ExecStatus
-  NaryEqv::propagate(Space& home, const ModEventDelta&) {
-    resubscribe(home,x0);
-    resubscribe(home,x1);
-    if (x.size() == 0) {
-      if (x0.assigned() && x1.assigned()) {
-        return (pm2 == 1) ? home.ES_SUBSUMED(*this) : ES_FAILED;
-      } else if (x0.assigned()) {
-        GECODE_ME_CHECK(x1.eq(home,1^pm2));
-        return home.ES_SUBSUMED(*this);
-      } else if (x1.assigned()) {
-        GECODE_ME_CHECK(x0.eq(home,1^pm2));
-        return home.ES_SUBSUMED(*this);
-      }
+    Actor*
+    NaryEqv::copy(Space& home) {
+        return new (home) NaryEqv(home, *this);
     }
-    return ES_FIX;
-  }
 
-}}}
+    ExecStatus
+    NaryEqv::post(Home home, ViewArray<BoolView>& x, int pm2) {
+        int n = x.size();
+        for (int i = n; i--;)
+            if (x[i].assigned()) {
+                pm2 ^= x[i].val();
+                x[i] = x[--n];
+            }
+        if (n == 0)
+            return (pm2 == 1) ? ES_OK : ES_FAILED;
+        if (n == 1) {
+            GECODE_ME_CHECK(x[0].eq(home, 1 ^ pm2));
+            return ES_OK;
+        }
+        if (n == 2) {
+            if (pm2 == 1) {
+                return Bool::Eq<BoolView, BoolView>::post(home, x[0], x[1]);
+            } else {
+                NegBoolView nx(x[1]);
+                return Bool::Eq<BoolView, NegBoolView>::post(home, x[0], nx);
+            }
+        }
+        x.size(n);
+        (void)new (home) NaryEqv(home, x, pm2);
+        return ES_OK;
+    }
+
+    ExecStatus
+    NaryEqv::propagate(Space& home, const ModEventDelta&) {
+        resubscribe(home, x0);
+        resubscribe(home, x1);
+        if (x.size() == 0) {
+            if (x0.assigned() && x1.assigned()) {
+                return (pm2 == 1) ? home.ES_SUBSUMED(*this) : ES_FAILED;
+            } else if (x0.assigned()) {
+                GECODE_ME_CHECK(x1.eq(home, 1 ^ pm2));
+                return home.ES_SUBSUMED(*this);
+            } else if (x1.assigned()) {
+                GECODE_ME_CHECK(x0.eq(home, 1 ^ pm2));
+                return home.ES_SUBSUMED(*this);
+            }
+        }
+        return ES_FIX;
+    }
+
+}}} // namespace Gecode::Int::Bool
 
 // STATISTICS: int-prop

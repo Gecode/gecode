@@ -913,7 +913,7 @@ if(GECODE_REGENERATE_VARIMP)
       -DOUT_FILE=${GECODE_VAR_TYPE_HPP}
       -DVIS_FILES_SERIALIZED=${GECODE_VIS_FILES_SERIALIZED}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateVarImp.cmake
-    DEPENDS ${GECODE_VIS_DEPENDS} ${CMAKE_CURRENT_SOURCE_DIR}/misc/genvarimp.py ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+    DEPENDS ${GECODE_VIS_DEPENDS} ${CMAKE_CURRENT_SOURCE_DIR}/misc/genvarimp.py ${CMAKE_CURRENT_SOURCE_DIR}/.clang-format ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
   )
@@ -926,13 +926,17 @@ if(GECODE_REGENERATE_VARIMP)
       -DOUT_FILE=${GECODE_VAR_IMP_HPP}
       -DVIS_FILES_SERIALIZED=${GECODE_VIS_FILES_SERIALIZED}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateVarImp.cmake
-    DEPENDS ${GECODE_VIS_DEPENDS} ${CMAKE_CURRENT_SOURCE_DIR}/misc/genvarimp.py ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+    DEPENDS ${GECODE_VIS_DEPENDS} ${CMAKE_CURRENT_SOURCE_DIR}/misc/genvarimp.py ${CMAKE_CURRENT_SOURCE_DIR}/.clang-format ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
   )
   add_custom_target(gecode-varimp-gen DEPENDS ${GECODE_VAR_TYPE_HPP} ${GECODE_VAR_IMP_HPP})
 else()
   add_custom_target(gecode-varimp-gen)
+endif()
+
+if(PROJECT_IS_TOP_LEVEL)
+  include(cmake/GecodeChecks.cmake)
 endif()
 
 # Regenerate the checked-in parser and variable headers with pinned tools.

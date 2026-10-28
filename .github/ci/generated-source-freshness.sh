@@ -78,10 +78,12 @@ prepend_brew_bin() {
   fi
 }
 
-# Homebrew keeps bison and flex keg-only on macOS. Make the same helper
+# Homebrew keeps these tools keg-only on macOS. Make the same helper
 # work from a developer shell without requiring them to edit PATH manually.
 prepend_brew_bin bison
 prepend_brew_bin flex
+prepend_brew_bin llvm
+prepend_brew_bin llvm@22
 export PATH
 
 require_version() {
@@ -121,7 +123,7 @@ vis_files=(
 # at the end-of-archive marker before the writer has written its final
 # padding, which fails the writer with a write error.
 tar -C "$repo_root" -cf "$workspace/source.tar" \
-  misc/genvarimp.py "${vis_files[@]}" \
+  .clang-format misc/genvarimp.py "${vis_files[@]}" \
   gecode/flatzinc/parser.yxx gecode/flatzinc/lexer.lxx
 tar -C "$source_copy" -xf "$workspace/source.tar"
 rm -f -- "$workspace/source.tar"
@@ -196,7 +198,7 @@ if [ "$mode" = update ]; then
 fi
 
 if [ "$stale" -ne 0 ]; then
-  echo "Regenerate with GNU Bison 3.8.2, GNU Flex 2.6.4, and uv, then commit the reviewed outputs." >&2
+  echo "Regenerate with GNU Bison 3.8.2, GNU Flex 2.6.4, clang-format 22, and uv, then commit the reviewed outputs." >&2
   echo "Run 'bash .github/ci/generated-source-freshness.sh --update' to use the canonical generator workflow." >&2
   exit 1
 fi

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -44,53 +43,51 @@
 
 namespace Gecode { namespace Int { namespace Sorted {
 
-  /**
-   * \brief Bounds consistent sortedness propagator
-   *
-   * The algorithm is taken from: Sven Thiel, Efficient Algorithms
-   * for Constraint Propagation and for Processing Tree Descriptions,
-   * PhD thesis, Universität des Saarlandes, Germany, 2004, pages 39-59.
-   *
-   * Requires \code #include <gecode/int/sorted.hh> \endcode
-   * \ingroup FuncIntProp
-   */
+    /**
+     * \brief Bounds consistent sortedness propagator
+     *
+     * The algorithm is taken from: Sven Thiel, Efficient Algorithms
+     * for Constraint Propagation and for Processing Tree Descriptions,
+     * PhD thesis, Universität des Saarlandes, Germany, 2004, pages 39-59.
+     *
+     * Requires \code #include <gecode/int/sorted.hh> \endcode
+     * \ingroup FuncIntProp
+     */
 
-  template<class View, bool Perm>
-  class Sorted : public Propagator {
-  protected:
-    /// Views to be sorted
-    ViewArray<View> x;
-    /// Views denoting the sorted version of \a x
-    ViewArray<View> y;
-    /// Permutation variables (none, if Perm is false)
-    ViewArray<View> z;
-    /// Original \a y array
-    ViewArray<View> w;
-    /// connection to dropped view
-    int reachable;
-    /// Constructor for posting
-    Sorted(Home home,
-           ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
-    /// Constructor for cloning
-    Sorted(Space& home, Sorted<View,Perm>& p);
-  public:
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function returning low linear
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for views \a x, \a y, and \a z
-    static  ExecStatus post(Home home, ViewArray<View>& x, ViewArray<View>& y,
-                            ViewArray<View>& z);
-  };
+    template <class View, bool Perm>
+    class Sorted : public Propagator {
+    protected:
+        /// Views to be sorted
+        ViewArray<View> x;
+        /// Views denoting the sorted version of \a x
+        ViewArray<View> y;
+        /// Permutation variables (none, if Perm is false)
+        ViewArray<View> z;
+        /// Original \a y array
+        ViewArray<View> w;
+        /// connection to dropped view
+        int reachable;
+        /// Constructor for posting
+        Sorted(Home home, ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
+        /// Constructor for cloning
+        Sorted(Space& home, Sorted<View, Perm>& p);
 
+    public:
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+        /// Copy propagator during cloning
+        virtual Actor* copy(Space& home);
+        /// Cost function returning low linear
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for views \a x, \a y, and \a z
+        static ExecStatus post(Home home, ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
+    };
 
-}}}
+}}} // namespace Gecode::Int::Sorted
 
 #include <gecode/int/sorted/sortsup.hpp>
 #include <gecode/int/sorted/order.hpp>
@@ -100,6 +97,4 @@ namespace Gecode { namespace Int { namespace Sorted {
 
 #endif
 
-
 // STATISTICS: int-prop
-

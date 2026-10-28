@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,34 +34,33 @@
 
 namespace Gecode {
 
-  Propagator*
-  TraceRecorder::copy(Space& home) {
-    return new (home) TraceRecorder(home, *this);
-  }
+    Propagator*
+    TraceRecorder::copy(Space& home) {
+        return new (home) TraceRecorder(home, *this);
+    }
 
-  size_t
-  TraceRecorder::dispose(Space& home) {
-    home.ignore(*this, AP_DISPOSE);
-    home.ignore(*this, AP_TRACE);
-    tf.~TraceFilter();
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
+    size_t
+    TraceRecorder::dispose(Space& home) {
+        home.ignore(*this, AP_DISPOSE);
+        home.ignore(*this, AP_TRACE);
+        tf.~TraceFilter();
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
 
-  PropCost
-  TraceRecorder::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::record();
-  }
+    PropCost
+    TraceRecorder::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::record();
+    }
 
-  void
-  TraceRecorder::reschedule(Space&) {
-  }
+    void
+    TraceRecorder::reschedule(Space&) {}
 
-  ExecStatus
-  TraceRecorder::propagate(Space&, const ModEventDelta&) {
-    return ES_FIX;
-  }
+    ExecStatus
+    TraceRecorder::propagate(Space&, const ModEventDelta&) {
+        return ES_FIX;
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-trace

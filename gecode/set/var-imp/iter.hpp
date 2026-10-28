@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,25 +34,25 @@
 
 namespace Gecode { namespace Set {
 
-  template<class T>
-  forceinline
-  UnknownRanges<T>::UnknownRanges(void) {}
+    template <class T>
+    forceinline
+    UnknownRanges<T>::UnknownRanges(void) {}
 
-  template<class T>
-  forceinline
-  UnknownRanges<T>::UnknownRanges(const T& v) : i1(v), i2(v) {
-    Iter::Ranges::Diff<LubRanges<T>, GlbRanges<T> >::init(i1,i2);
-  }
+    template <class T>
+    forceinline
+    UnknownRanges<T>::UnknownRanges(const T& v)
+        : i1(v), i2(v) {
+        Iter::Ranges::Diff<LubRanges<T>, GlbRanges<T>>::init(i1, i2);
+    }
 
-  template<class T>
-  forceinline void
-  UnknownRanges<T>::init(const T& v) {
-    i1.init(v);
-    i2.init(v);
-    Iter::Ranges::Diff<LubRanges<T>, GlbRanges<T> >::init(i1,i2);
-  }
+    template <class T>
+    forceinline void
+    UnknownRanges<T>::init(const T& v) {
+        i1.init(v);
+        i2.init(v);
+        Iter::Ranges::Diff<LubRanges<T>, GlbRanges<T>>::init(i1, i2);
+    }
 
-}}
+}} // namespace Gecode::Set
 
 // STATISTICS: set-var
-

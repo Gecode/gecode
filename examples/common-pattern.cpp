@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -43,106 +42,117 @@ using namespace Gecode;
 /// Sequence database and restrictions on the patterns to mine
 class CommonPatternOptions : public Options {
 protected:
-  Driver::StringValueOption _sequences;
-  Driver::StringValueOption _file;
-  Driver::StringValueOption _support;
-  Driver::StringValueOption _required;
-  Driver::StringOption _format;
-  Driver::StringOption _language;
-  Driver::UnsignedIntOption _min_length;
-  Driver::BoolOption _motif;
-  std::unique_ptr<PatternMining::Database> input;
-  std::vector<int> required_items;
-  int threshold;
+    Driver::StringValueOption _sequences;
+    Driver::StringValueOption _file;
+    Driver::StringValueOption _support;
+    Driver::StringValueOption _required;
+    Driver::StringOption _format;
+    Driver::StringOption _language;
+    Driver::UnsignedIntOption _min_length;
+    Driver::BoolOption _motif;
+    std::unique_ptr<PatternMining::Database> input;
+    std::vector<int> required_items;
+    int threshold;
+
 public:
-  CommonPatternOptions(void)
-    : Options("CommonPattern"),
-      _sequences("sequences","comma-separated sequences over A..Z","ABCBC,BABC,ABDC"),
-      _file("file","sequence database; one sequence per line",""),
-      _support("support","minimum supporting sequences, as a percentage","100"),
-      _required("required","items that must occur, comma-separated letters or IDs",""),
-      _format("format","database format",
-              static_cast<int>(PatternMining::Format::LETTERS)),
-      _language("language","pattern language",
-                static_cast<int>(PatternMining::Language::DEFAULT)),
-      _min_length("min-length","minimum pattern length",1),
-      _motif("motif","default language starts with A and ends with C",true),
-      threshold(0) {
-    _format.add(static_cast<int>(PatternMining::Format::LETTERS),"letters");
-    _format.add(static_cast<int>(PatternMining::Format::INTEGERS),"integers");
-    _format.add(static_cast<int>(PatternMining::Format::SPMF),"spmf");
-    _language.add(static_cast<int>(PatternMining::Language::DEFAULT),
-                  "default","use -motif");
-    _language.add(static_cast<int>(PatternMining::Language::NONE),"none");
-    _language.add(static_cast<int>(PatternMining::Language::MOTIF),"motif");
-    _language.add(static_cast<int>(PatternMining::Language::RE10),"re10");
-    _language.add(static_cast<int>(PatternMining::Language::RE14),"re14");
-    _language.add(static_cast<int>(PatternMining::Language::RE2),"re2");
-    add(_sequences);
-    add(_file);
-    add(_format);
-    add(_support);
-    add(_min_length);
-    add(_required);
-    add(_language);
-    add(_motif);
-  }
-
-  /// Validate external input before constructing a space
-  void read(void) {
-    if (_min_length.value() < 1 || _min_length.value() > Int::Limits::max)
-      throw std::invalid_argument("Minimum length must be a positive Gecode integer");
-    PatternMining::Sequences sequences;
-    const std::string filename(_file.value());
-    if (filename.empty()) {
-      if (format() != PatternMining::Format::LETTERS)
-        throw std::invalid_argument("Integer and SPMF formats require -file");
-      const std::string text(_sequences.value());
-      if (text.empty() || text.back() == ',')
-        throw std::invalid_argument("Expected comma-separated nonempty A..Z sequences");
-      std::istringstream stream(text);
-      std::string sequence;
-      while (std::getline(stream,sequence,','))
-        sequences.push_back(PatternMining::read_sequence(
-          sequence,PatternMining::Format::LETTERS));
-    } else {
-      std::ifstream stream(filename);
-      sequences = PatternMining::read_database(stream,format());
+    CommonPatternOptions(void)
+        : Options("CommonPattern"), _sequences("sequences", "comma-separated sequences over A..Z", "ABCBC,BABC,ABDC"),
+          _file("file", "sequence database; one sequence per line", ""),
+          _support("support", "minimum supporting sequences, as a percentage", "100"),
+          _required("required", "items that must occur, comma-separated letters or IDs", ""),
+          _format("format", "database format", static_cast<int>(PatternMining::Format::LETTERS)),
+          _language("language", "pattern language", static_cast<int>(PatternMining::Language::DEFAULT)),
+          _min_length("min-length", "minimum pattern length", 1),
+          _motif("motif", "default language starts with A and ends with C", true), threshold(0) {
+        _format.add(static_cast<int>(PatternMining::Format::LETTERS), "letters");
+        _format.add(static_cast<int>(PatternMining::Format::INTEGERS), "integers");
+        _format.add(static_cast<int>(PatternMining::Format::SPMF), "spmf");
+        _language.add(static_cast<int>(PatternMining::Language::DEFAULT), "default", "use -motif");
+        _language.add(static_cast<int>(PatternMining::Language::NONE), "none");
+        _language.add(static_cast<int>(PatternMining::Language::MOTIF), "motif");
+        _language.add(static_cast<int>(PatternMining::Language::RE10), "re10");
+        _language.add(static_cast<int>(PatternMining::Language::RE14), "re14");
+        _language.add(static_cast<int>(PatternMining::Language::RE2), "re2");
+        add(_sequences);
+        add(_file);
+        add(_format);
+        add(_support);
+        add(_min_length);
+        add(_required);
+        add(_language);
+        add(_motif);
     }
-    input.reset(new PatternMining::Database(sequences));
-    threshold = PatternMining::minimum_support(_support.value(),input->ends.size());
-    const std::string items(_required.value());
-    if (!items.empty()) {
-      if (items.back() == ',')
-        throw std::invalid_argument("Empty required item");
-      std::istringstream stream(items);
-      std::string item;
-      while (std::getline(stream,item,',')) {
-        const std::vector<int> parsed = PatternMining::read_sequence(item,
-          letters() ? PatternMining::Format::LETTERS
-                    : PatternMining::Format::INTEGERS);
-        if (parsed.size() != 1)
-          throw std::invalid_argument("Required items must be single letters or IDs");
-        required_items.push_back(parsed[0]);
-      }
-    }
-  }
 
-  const PatternMining::Database& database(void) const { return *input; }
-  const std::vector<int>& required(void) const { return required_items; }
-  int support(void) const { return threshold; }
-  int min_length(void) const { return static_cast<int>(_min_length.value()); }
-  PatternMining::Format format(void) const {
-    return static_cast<PatternMining::Format>(_format.value());
-  }
-  bool letters(void) const { return format() == PatternMining::Format::LETTERS; }
-  PatternMining::Language language(void) const {
-    const auto selected = static_cast<PatternMining::Language>(_language.value());
-    if (selected == PatternMining::Language::DEFAULT)
-      return _motif.value() ? PatternMining::Language::MOTIF
-                            : PatternMining::Language::NONE;
-    return selected;
-  }
+    /// Validate external input before constructing a space
+    void
+    read(void) {
+        if (_min_length.value() < 1 || _min_length.value() > Int::Limits::max)
+            throw std::invalid_argument("Minimum length must be a positive Gecode integer");
+        PatternMining::Sequences sequences;
+        const std::string filename(_file.value());
+        if (filename.empty()) {
+            if (format() != PatternMining::Format::LETTERS)
+                throw std::invalid_argument("Integer and SPMF formats require -file");
+            const std::string text(_sequences.value());
+            if (text.empty() || text.back() == ',')
+                throw std::invalid_argument("Expected comma-separated nonempty A..Z sequences");
+            std::istringstream stream(text);
+            std::string sequence;
+            while (std::getline(stream, sequence, ','))
+                sequences.push_back(PatternMining::read_sequence(sequence, PatternMining::Format::LETTERS));
+        } else {
+            std::ifstream stream(filename);
+            sequences = PatternMining::read_database(stream, format());
+        }
+        input.reset(new PatternMining::Database(sequences));
+        threshold = PatternMining::minimum_support(_support.value(), input->ends.size());
+        const std::string items(_required.value());
+        if (!items.empty()) {
+            if (items.back() == ',')
+                throw std::invalid_argument("Empty required item");
+            std::istringstream stream(items);
+            std::string item;
+            while (std::getline(stream, item, ',')) {
+                const std::vector<int> parsed = PatternMining::read_sequence(
+                    item, letters() ? PatternMining::Format::LETTERS : PatternMining::Format::INTEGERS);
+                if (parsed.size() != 1)
+                    throw std::invalid_argument("Required items must be single letters or IDs");
+                required_items.push_back(parsed[0]);
+            }
+        }
+    }
+
+    const PatternMining::Database&
+    database(void) const {
+        return *input;
+    }
+    const std::vector<int>&
+    required(void) const {
+        return required_items;
+    }
+    int
+    support(void) const {
+        return threshold;
+    }
+    int
+    min_length(void) const {
+        return static_cast<int>(_min_length.value());
+    }
+    PatternMining::Format
+    format(void) const {
+        return static_cast<PatternMining::Format>(_format.value());
+    }
+    bool
+    letters(void) const {
+        return format() == PatternMining::Format::LETTERS;
+    }
+    PatternMining::Language
+    language(void) const {
+        const auto selected = static_cast<PatternMining::Language>(_language.value());
+        if (selected == PatternMining::Language::DEFAULT)
+            return _motif.value() ? PatternMining::Language::MOTIF : PatternMining::Language::NONE;
+        return selected;
+    }
 };
 
 /**
@@ -188,57 +198,63 @@ public:
  */
 class CommonPattern : public IntMaximizeScript {
 protected:
-  OpenIntVarList pattern;
-  IntVar frequency;
-  PatternMining::Database database;
-  bool letters;
+    OpenIntVarList pattern;
+    IntVar frequency;
+    PatternMining::Database database;
+    bool letters;
+
 public:
-  enum { SEARCH_BAB, SEARCH_DFS };
+    enum { SEARCH_BAB, SEARCH_DFS };
 
-  CommonPattern(const CommonPatternOptions& opt)
-    : IntMaximizeScript(opt), database(opt.database()), letters(opt.letters()) {
-    pattern = OpenIntVarList(*this,database.domain(),database.max_length());
-    rel(*this,pattern.length(),IRT_GQ,opt.min_length());
-    frequency = PatternMining::frequent(*this,pattern,database,opt.support());
-    if (opt.language() != PatternMining::Language::NONE)
-      extensional(*this,pattern,PatternMining::language(opt.language(),database));
-    if (!opt.required().empty()) {
-      REG alphabet(IntArgs(database.alphabet));
-      for (int item : opt.required())
-        extensional(*this,pattern,*alphabet + REG(item) + *alphabet);
+    CommonPattern(const CommonPatternOptions& opt)
+        : IntMaximizeScript(opt), database(opt.database()), letters(opt.letters()) {
+        pattern = OpenIntVarList(*this, database.domain(), database.max_length());
+        rel(*this, pattern.length(), IRT_GQ, opt.min_length());
+        frequency = PatternMining::frequent(*this, pattern, database, opt.support());
+        if (opt.language() != PatternMining::Language::NONE)
+            extensional(*this, pattern, PatternMining::language(opt.language(), database));
+        if (!opt.required().empty()) {
+            REG alphabet(IntArgs(database.alphabet));
+            for (int item : opt.required())
+                extensional(*this, pattern, *alphabet + REG(item) + *alphabet);
+        }
+        branch(*this, pattern, INT_VAR_NONE(), INT_VAL_MIN());
     }
-    branch(*this,pattern,INT_VAR_NONE(),INT_VAL_MIN());
-  }
 
-  IntVar cost(void) const override { return pattern.length(); }
-
-  CommonPattern(CommonPattern& s)
-    : IntMaximizeScript(s), database(s.database), letters(s.letters) {
-    pattern.update(*this,s.pattern);
-    frequency.update(*this,s.frequency);
-  }
-
-  Space* copy(void) override { return new CommonPattern(*this); }
-
-  void print(std::ostream& os) const override {
-    os << "\t";
-    for (int i=0; i<pattern.known_length(); i++) {
-      if (i && !letters)
-        os << ' ';
-      if (pattern[i].assigned()) {
-        const int item = pattern[i].val();
-        if (letters)
-          os << static_cast<char>('A'+item-1);
-        else
-          os << item;
-      } else {
-        os << pattern[i];
-      }
+    IntVar
+    cost(void) const override {
+        return pattern.length();
     }
-    os << " (length " << pattern.length()
-       << ", support " << frequency << '/' << database.ends.size()
-       << ")" << std::endl;
-  }
+
+    CommonPattern(CommonPattern& s) : IntMaximizeScript(s), database(s.database), letters(s.letters) {
+        pattern.update(*this, s.pattern);
+        frequency.update(*this, s.frequency);
+    }
+
+    Space*
+    copy(void) override {
+        return new CommonPattern(*this);
+    }
+
+    void
+    print(std::ostream& os) const override {
+        os << "\t";
+        for (int i = 0; i < pattern.known_length(); i++) {
+            if (i && !letters)
+                os << ' ';
+            if (pattern[i].assigned()) {
+                const int item = pattern[i].val();
+                if (letters)
+                    os << static_cast<char>('A' + item - 1);
+                else
+                    os << item;
+            } else {
+                os << pattern[i];
+            }
+        }
+        os << " (length " << pattern.length() << ", support " << frequency << '/' << database.ends.size() << ")"
+           << std::endl;
+    }
 };
 
 /** \brief Main-function
@@ -246,23 +262,23 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  CommonPatternOptions opt;
-  opt.solutions(0);
-  opt.search(CommonPattern::SEARCH_DFS);
-  opt.search(CommonPattern::SEARCH_BAB,"bab","find a longest pattern");
-  opt.search(CommonPattern::SEARCH_DFS,"dfs","enumerate frequent patterns");
-  opt.parse(argc,argv);
-  try {
-    opt.read();
-  } catch (const std::invalid_argument& error) {
-    std::cerr << error.what() << std::endl;
-    return 1;
-  }
-  if (opt.search() == CommonPattern::SEARCH_DFS)
-    IntMaximizeScript::run<CommonPattern,DFS,CommonPatternOptions>(opt);
-  else
-    IntMaximizeScript::run<CommonPattern,BAB,CommonPatternOptions>(opt);
-  return 0;
+    CommonPatternOptions opt;
+    opt.solutions(0);
+    opt.search(CommonPattern::SEARCH_DFS);
+    opt.search(CommonPattern::SEARCH_BAB, "bab", "find a longest pattern");
+    opt.search(CommonPattern::SEARCH_DFS, "dfs", "enumerate frequent patterns");
+    opt.parse(argc, argv);
+    try {
+        opt.read();
+    } catch (const std::invalid_argument& error) {
+        std::cerr << error.what() << std::endl;
+        return 1;
+    }
+    if (opt.search() == CommonPattern::SEARCH_DFS)
+        IntMaximizeScript::run<CommonPattern, DFS, CommonPatternOptions>(opt);
+    else
+        IntMaximizeScript::run<CommonPattern, BAB, CommonPatternOptions>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any

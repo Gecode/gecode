@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,31 +34,32 @@
 
 namespace Gecode { namespace Int { namespace NValues {
 
-  forceinline int
-  SymBitMatrix::pos(int x, int y) const {
-    assert(x < y);
-    return (x*(2*n-x-1)) / 2 + y - x - 1;
-  }
+    forceinline int
+    SymBitMatrix::pos(int x, int y) const {
+        assert(x < y);
+        return (x * (2 * n - x - 1)) / 2 + y - x - 1;
+    }
 
-  forceinline
-  SymBitMatrix::SymBitMatrix(Region& r, int n0)
-    : Support::BitSet<Region>(r,static_cast<unsigned int>((n0*n0-n0)/2)),
-      n(n0) {}
+    forceinline
+    SymBitMatrix::SymBitMatrix(Region& r, int n0)
+        : Support::BitSet<Region>(r, static_cast<unsigned int>((n0 * n0 - n0) / 2)), n(n0) {}
 
-  forceinline bool
-  SymBitMatrix::get(int x, int y) const {
-    assert(x != y);
-    if (x > y) std::swap(x,y);
-    return Support::BitSet<Region>::get(static_cast<unsigned int>(pos(x,y)));
-  }
+    forceinline bool
+    SymBitMatrix::get(int x, int y) const {
+        assert(x != y);
+        if (x > y)
+            std::swap(x, y);
+        return Support::BitSet<Region>::get(static_cast<unsigned int>(pos(x, y)));
+    }
 
-  forceinline void
-  SymBitMatrix::set(int x, int y) {
-    assert(x != y);
-    if (x > y) std::swap(x,y);
-    Support::BitSet<Region>::set(static_cast<unsigned int>(pos(x,y)));
-  }
+    forceinline void
+    SymBitMatrix::set(int x, int y) {
+        assert(x != y);
+        if (x > y)
+            std::swap(x, y);
+        Support::BitSet<Region>::set(static_cast<unsigned int>(pos(x, y)));
+    }
 
-}}}
+}}} // namespace Gecode::Int::NValues
 
 // STATISTICS: int-prop

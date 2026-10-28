@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -53,19 +52,18 @@
  * Configure linking
  *
  */
-#if !defined(GECODE_STATIC_LIBS) && \
-    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
+#if !defined(GECODE_STATIC_LIBS) && (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
 #ifdef GECODE_BUILD_KERNEL
-#define GECODE_KERNEL_EXPORT __declspec( dllexport )
+#define GECODE_KERNEL_EXPORT __declspec(dllexport)
 #else
-#define GECODE_KERNEL_EXPORT __declspec( dllimport )
+#define GECODE_KERNEL_EXPORT __declspec(dllimport)
 #endif
 
 #else
 
 #ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
-#define GECODE_KERNEL_EXPORT __attribute__ ((visibility("default")))
+#define GECODE_KERNEL_EXPORT __attribute__((visibility("default")))
 #else
 #define GECODE_KERNEL_EXPORT
 #endif
@@ -93,24 +91,24 @@
 
 namespace Gecode {
 
-  /// Kernel configuration parameters
-  namespace Kernel { namespace Config {
-    /// Rescale factor for action and afc values
-    const double rescale = 1e-50;
-    /// Rescale action and afc values when larger than this
-    const double rescale_limit = DBL_MAX * rescale;
+    /// Kernel configuration parameters
+    namespace Kernel { namespace Config {
+        /// Rescale factor for action and afc values
+        const double rescale = 1e-50;
+        /// Rescale action and afc values when larger than this
+        const double rescale_limit = DBL_MAX * rescale;
 
-    /// Initial value for alpha in CHB
-    const double chb_alpha_init = 0.4;
-    /// Limit for decreasing alpha in CHB
-    const double chb_alpha_limit = 0.06;
-    /// Alpha decrement in CHB
-    const double chb_alpha_decrement = 1e-6;
-    /// Initial value for Q-score in CHB
-    const double chb_qscore_init = 0.05;
-  }}
+        /// Initial value for alpha in CHB
+        const double chb_alpha_init = 0.4;
+        /// Limit for decreasing alpha in CHB
+        const double chb_alpha_limit = 0.06;
+        /// Alpha decrement in CHB
+        const double chb_alpha_decrement = 1e-6;
+        /// Initial value for Q-score in CHB
+        const double chb_qscore_init = 0.05;
+    }} // namespace Kernel::Config
 
-}
+} // namespace Gecode
 
 /*
  * General exceptions and kernel exceptions
@@ -118,8 +116,6 @@ namespace Gecode {
  */
 
 #include <gecode/kernel/exception.hpp>
-
-
 
 /*
  * Basic kernel services and memory management
@@ -138,7 +134,6 @@ namespace Gecode {
 
 #include <gecode/kernel/macros.hpp>
 
-
 /*
  * Gecode kernel
  *
@@ -151,7 +146,6 @@ namespace Gecode {
 #include <gecode/kernel/modevent.hpp>
 #include <gecode/kernel/range-list.hpp>
 
-
 /*
  * Variables and testing for shared variables
  *
@@ -159,14 +153,12 @@ namespace Gecode {
 
 #include <gecode/kernel/var.hpp>
 
-
 /*
  * Views
  *
  */
 
 #include <gecode/kernel/view.hpp>
-
 
 /*
  * Arrays and other data
@@ -178,7 +170,6 @@ namespace Gecode {
 #include <gecode/kernel/data/shared-data.hpp>
 #include <gecode/kernel/data/rnd.hpp>
 
-
 /*
  * Common propagator patterns
  *
@@ -189,7 +180,6 @@ namespace Gecode {
 #include <gecode/kernel/propagator/advisor.hpp>
 #include <gecode/kernel/propagator/wait.hpp>
 
-
 /*
  * Abstractions for branching
  *
@@ -197,32 +187,31 @@ namespace Gecode {
 
 namespace Gecode {
 
-  /**
-   * \defgroup TaskModelBranch Generic branching support
-   *
-   * Support for randomization and tie-breaking that are independent
-   * of a particular variable domain.
-   *
-   * \ingroup TaskModel
-   */
+    /**
+     * \defgroup TaskModelBranch Generic branching support
+     *
+     * Support for randomization and tie-breaking that are independent
+     * of a particular variable domain.
+     *
+     * \ingroup TaskModel
+     */
 
-  /**
-   * \defgroup TaskModelBranchExec Branch with a function
-   *
-   * This does not really branch (it just offers a single alternative) but
-   * executes a single function during branching. A typical
-   * application is to post more constraints after another brancher
-   * has finished.
-   *
-   * \ingroup TaskModelBranch
-   */
-  //@{
-  /// Call the function \a f (with the current space as argument) for branching
-  GECODE_KERNEL_EXPORT void
-  branch(Home home, std::function<void(Space& home)> f);
-  //@}
+    /**
+     * \defgroup TaskModelBranchExec Branch with a function
+     *
+     * This does not really branch (it just offers a single alternative) but
+     * executes a single function during branching. A typical
+     * application is to post more constraints after another brancher
+     * has finished.
+     *
+     * \ingroup TaskModelBranch
+     */
+    //@{
+    /// Call the function \a f (with the current space as argument) for branching
+    GECODE_KERNEL_EXPORT void branch(Home home, std::function<void(Space& home)> f);
+    //@}
 
-}
+} // namespace Gecode
 
 #include <gecode/kernel/branch/traits.hpp>
 #include <gecode/kernel/branch/action.hpp>
@@ -241,14 +230,12 @@ namespace Gecode {
 #include <gecode/kernel/branch/val-sel-commit.hpp>
 #include <gecode/kernel/branch/view-val.hpp>
 
-
 /*
  * Automatically generated variable implementations
  *
  */
 
 #include <gecode/kernel/var-imp.hpp>
-
 
 /*
  * Trace support
@@ -263,24 +250,19 @@ namespace Gecode {
 
 namespace Gecode {
 
-  /**
-   * \brief Create tracer
-   * \ingroup TaskTrace
-   */
-  GECODE_KERNEL_EXPORT void
-  trace(Home home, TraceFilter tf,
-        int te = (TE_PROPAGATE | TE_COMMIT | TE_POST),
-        Tracer& t = StdTracer::def);
-  /**
-   * \brief Create tracer
-   * \ingroup TaskTrace
-   */
-  void
-  trace(Home home,
-        int te = (TE_PROPAGATE | TE_COMMIT | TE_POST),
-        Tracer& t = StdTracer::def);
+    /**
+     * \brief Create tracer
+     * \ingroup TaskTrace
+     */
+    GECODE_KERNEL_EXPORT void trace(Home home, TraceFilter tf, int te = (TE_PROPAGATE | TE_COMMIT | TE_POST),
+                                    Tracer& t = StdTracer::def);
+    /**
+     * \brief Create tracer
+     * \ingroup TaskTrace
+     */
+    void trace(Home home, int te = (TE_PROPAGATE | TE_COMMIT | TE_POST), Tracer& t = StdTracer::def);
 
-}
+} // namespace Gecode
 
 #include <gecode/kernel/trace/general.hpp>
 
@@ -290,7 +272,6 @@ namespace Gecode {
  */
 
 #include <gecode/kernel/memory/allocators.hpp>
-
 
 #endif
 

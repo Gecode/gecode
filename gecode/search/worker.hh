@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,90 +37,88 @@
 
 namespace Gecode { namespace Search {
 
-  /**
-   * \brief %Search worker statistics
-   */
-  class Worker : public Statistics {
-  protected:
-    /// Whether engine has been stopped
-    bool _stopped;
-    /// Depth of root node (for work stealing)
-    unsigned long int root_depth;
-  public:
-    /// Initialize
-    Worker(void);
-    /// Reset stop information
-    void start(void);
-    /// Check whether engine must be stopped
-    bool stop(const Options& o);
-    /// Check stop and wait for admission of a sequential worker
-    bool stop_seq(Options& o);
-    /// Check whether engine has been stopped
-    bool stopped(void) const;
-    /// Reset statistics with root depth \a d
-    void reset(unsigned long int d=0);
-    /// Record stack depth \a d
-    void stack_depth(unsigned long int d);
-    /// Return steal depth
-    unsigned long int steal_depth(unsigned long int d) const;
-  };
+    /**
+     * \brief %Search worker statistics
+     */
+    class Worker : public Statistics {
+    protected:
+        /// Whether engine has been stopped
+        bool _stopped;
+        /// Depth of root node (for work stealing)
+        unsigned long int root_depth;
 
+    public:
+        /// Initialize
+        Worker(void);
+        /// Reset stop information
+        void start(void);
+        /// Check whether engine must be stopped
+        bool stop(const Options& o);
+        /// Check stop and wait for admission of a sequential worker
+        bool stop_seq(Options& o);
+        /// Check whether engine has been stopped
+        bool stopped(void) const;
+        /// Reset statistics with root depth \a d
+        void reset(unsigned long int d = 0);
+        /// Record stack depth \a d
+        void stack_depth(unsigned long int d);
+        /// Return steal depth
+        unsigned long int steal_depth(unsigned long int d) const;
+    };
 
+    forceinline
+    Worker::Worker(void)
+        : _stopped(false), root_depth(0) {}
 
-  forceinline
-  Worker::Worker(void)
-    : _stopped(false), root_depth(0) {}
-
-  forceinline void
-  Worker::start(void) {
-    _stopped = false;
-  }
-
-  forceinline bool
-  Worker::stop(const Options& o) {
-    if (o.stop == nullptr)
-      return false;
-    _stopped |= o.stop->stop(*this,o);
-    return _stopped;
-  }
-
-  forceinline bool
-  Worker::stop_seq(Options& o) {
-    // A paused portfolio asset must still observe the round's stop signal.
-    while (!stop(o)) {
-      if (!o.worker_control.engaged() ||
-          (WorkerControlAccess::requested(o.worker_control) != 0U))
-        return false;
-      WorkerControlAccess::wait(o.worker_control,0U);
+    forceinline void
+    Worker::start(void) {
+        _stopped = false;
     }
-    return true;
-  }
 
-  forceinline bool
-  Worker::stopped(void) const {
-    return _stopped;
-  }
+    forceinline bool
+    Worker::stop(const Options& o) {
+        if (o.stop == nullptr)
+            return false;
+        _stopped |= o.stop->stop(*this, o);
+        return _stopped;
+    }
 
-  forceinline void
-  Worker::reset(unsigned long int d) {
-    Statistics::reset();
-    root_depth = d;
-    if (depth < d)
-      depth = d;
-  }
+    forceinline bool
+    Worker::stop_seq(Options& o) {
+        // A paused portfolio asset must still observe the round's stop signal.
+        while (!stop(o)) {
+            if (!o.worker_control.engaged() || (WorkerControlAccess::requested(o.worker_control) != 0U))
+                return false;
+            WorkerControlAccess::wait(o.worker_control, 0U);
+        }
+        return true;
+    }
 
-  forceinline void
-  Worker::stack_depth(unsigned long int d) {
-    if (depth < root_depth + d)
-      depth = root_depth + d;
-  }
+    forceinline bool
+    Worker::stopped(void) const {
+        return _stopped;
+    }
 
-  forceinline unsigned long int
-  Worker::steal_depth(unsigned long int d) const {
-    return root_depth + d;
-  }
+    forceinline void
+    Worker::reset(unsigned long int d) {
+        Statistics::reset();
+        root_depth = d;
+        if (depth < d)
+            depth = d;
+    }
 
-}}
+    forceinline void
+    Worker::stack_depth(unsigned long int d) {
+        if (depth < root_depth + d)
+            depth = root_depth + d;
+    }
+
+    forceinline unsigned long int
+    Worker::steal_depth(unsigned long int d) const {
+        return root_depth + d;
+    }
+
+}} // namespace Gecode::Search
 
 #endif
 

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -36,8 +35,7 @@
 
 class MyPlugin : public QObject, public Gecode::FlatZinc::BranchPlugin {
 public:
-  Q_OBJECT
-  Q_INTERFACES(Gecode::FlatZinc::BranchPlugin)
-  virtual void branch(Gecode::FlatZinc::FlatZincSpace& s,
-                      Gecode::FlatZinc::AST::Call* c);
+    Q_OBJECT
+    Q_INTERFACES(Gecode::FlatZinc::BranchPlugin)
+    virtual void branch(Gecode::FlatZinc::FlatZincSpace& s, Gecode::FlatZinc::AST::Call* c);
 };

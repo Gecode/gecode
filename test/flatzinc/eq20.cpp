@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("eq20",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest(
+                "eq20", "predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -69,15 +65,14 @@ constraint int_lin_eq([85268, 54180, -18810, -48219, 6013, 78169, -79785], [x[1]
 constraint int_lin_eq([87059, -29101, -5513, -21219, 22128, 7276, 57308], [x[1], x[2], x[3], x[4], x[5], x[6], x[7]], 22167);\n\
 constraint int_lin_eq([94016, -82071, 35961, 66597, -30705, -44404, -38304], [x[1], x[2], x[3], x[4], x[5], x[6], x[7]], 25334);\n\
 solve satisfy;\n\
-", "x = array1d(0..6, [1, 4, 6, 6, 6, 3, 1]);\n\
+",
+                "x = array1d(0..6, [1, 4, 6, 6, 6, 3, 1]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

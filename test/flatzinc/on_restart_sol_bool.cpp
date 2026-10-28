@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("on_restart::sol_bool",
-R"FZN(
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest("on_restart::sol_bool",
+                                   R"FZN(
 predicate gecode_on_restart_sol_bool(var bool: input,var bool: out);
 predicate gecode_on_restart_status(var int: s);
 predicate int_eq_imp(var int: a,var int: b,var bool: r);
@@ -67,7 +63,7 @@ constraint bool_eq_reif(y,X_INTRODUCED_4_,X_INTRODUCED_5_):: defines_var(X_INTRO
 constraint int_eq_imp(X_INTRODUCED_6_,1,X_INTRODUCED_7_):: defines_var(X_INTRODUCED_7_);
 solve :: int_search(X_INTRODUCED_3_,input_order,indomain_min,complete) maximize X_INTRODUCED_1_;
 )FZN",
-R"OUT(is_even = false;
+                                   R"OUT(is_even = false;
 x = -1;
 y = false;
 ----------
@@ -80,13 +76,12 @@ x = 3;
 y = true;
 ----------
 ==========
-)OUT", true, {"--restart", "constant", "--restart-base", "100"});
-      }
+)OUT",
+                                   true, {"--restart", "constant", "--restart-base", "100"});
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

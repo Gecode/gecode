@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,18 +32,16 @@
 
 namespace Gecode {
 
-  inline void
-  trace(Home home, const IntVarArgs& x,
-        int te, IntTracer& t) {
-    trace(home,x,TraceFilter::all,te,t);
-  }
+    inline void
+    trace(Home home, const IntVarArgs& x, int te, IntTracer& t) {
+        trace(home, x, TraceFilter::all, te, t);
+    }
 
-  inline void
-  trace(Home home, const BoolVarArgs& x,
-        int te, BoolTracer& t) {
-    trace(home,x,TraceFilter::all,te,t);
-  }
+    inline void
+    trace(Home home, const BoolVarArgs& x, int te, BoolTracer& t) {
+        trace(home, x, TraceFilter::all, te, t);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-trace

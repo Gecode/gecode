@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -43,46 +42,43 @@
 
 namespace Gecode { namespace Int { namespace Exec {
 
-  /**
-   * \brief Conditional propagator
-   *
-   * Requires \code #include <gecode/int/exec.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  class When : public UnaryPropagator<BoolView,PC_BOOL_VAL> {
-  protected:
-    using UnaryPropagator<BoolView,PC_BOOL_VAL>::x0;
-    /// Then function
-    SharedData<std::function<void(Space& home)>> t;
-    /// Else function pointer
-    SharedData<std::function<void(Space& home)>> e;
-    /// Constructor for cloning \a p
-    When(Space& home, When& p);
-    /// Constructor for creation
-    When(Home home, BoolView x,
-         std::function<void(Space& home)> t,
-         std::function<void(Space& home)> e);
-  public:
-    /// Copy propagator during cloning
-    GECODE_INT_EXPORT
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    GECODE_INT_EXPORT
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator
-    static ExecStatus post(Home home, BoolView x,
-                           std::function<void(Space& home)> t,
-                           std::function<void(Space& home)> e);
-    /// Dispose propagator
-    GECODE_INT_EXPORT
-    virtual size_t dispose(Space& home);
-  };
+    /**
+     * \brief Conditional propagator
+     *
+     * Requires \code #include <gecode/int/exec.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    class When : public UnaryPropagator<BoolView, PC_BOOL_VAL> {
+    protected:
+        using UnaryPropagator<BoolView, PC_BOOL_VAL>::x0;
+        /// Then function
+        SharedData<std::function<void(Space& home)>> t;
+        /// Else function pointer
+        SharedData<std::function<void(Space& home)>> e;
+        /// Constructor for cloning \a p
+        When(Space& home, When& p);
+        /// Constructor for creation
+        When(Home home, BoolView x, std::function<void(Space& home)> t, std::function<void(Space& home)> e);
 
-}}}
+    public:
+        /// Copy propagator during cloning
+        GECODE_INT_EXPORT
+        virtual Actor* copy(Space& home);
+        /// Perform propagation
+        GECODE_INT_EXPORT
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator
+        static ExecStatus post(Home home, BoolView x, std::function<void(Space& home)> t,
+                               std::function<void(Space& home)> e);
+        /// Dispose propagator
+        GECODE_INT_EXPORT
+        virtual size_t dispose(Space& home);
+    };
+
+}}} // namespace Gecode::Int::Exec
 
 #include <gecode/int/exec/when.hpp>
 
 #endif
 
 // STATISTICS: int-prop
-

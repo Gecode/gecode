@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,54 +35,51 @@
 
 namespace Gecode { namespace Int {
 
-  /// Class for posting equalities for non-relaxed variables
-  class Relax {
-  public:
-    /// Post the actual equality for non-relaxed variables
-    ExecStatus operator ()(Home home, IntVar x, IntVar sx);
-    /// Post the actual equality for non-relaxed variables
-    ExecStatus operator ()(Home home, BoolVar x, BoolVar sx);
-  };
+    /// Class for posting equalities for non-relaxed variables
+    class Relax {
+    public:
+        /// Post the actual equality for non-relaxed variables
+        ExecStatus operator()(Home home, IntVar x, IntVar sx);
+        /// Post the actual equality for non-relaxed variables
+        ExecStatus operator()(Home home, BoolVar x, BoolVar sx);
+    };
 
-  forceinline ExecStatus
-  Relax::operator ()(Home home, IntVar x, IntVar sx) {
-    IntView xv(x);
-    return me_failed(xv.eq(home,sx.val())) ? ES_FAILED : ES_OK;
-  }
+    forceinline ExecStatus
+    Relax::operator()(Home home, IntVar x, IntVar sx) {
+        IntView xv(x);
+        return me_failed(xv.eq(home, sx.val())) ? ES_FAILED : ES_OK;
+    }
 
-  forceinline ExecStatus
-  Relax::operator ()(Home home, BoolVar x, BoolVar sx) {
-    BoolView xv(x);
-    return me_failed(xv.eq(home,sx.val())) ? ES_FAILED : ES_OK;
-  }
+    forceinline ExecStatus
+    Relax::operator()(Home home, BoolVar x, BoolVar sx) {
+        BoolView xv(x);
+        return me_failed(xv.eq(home, sx.val())) ? ES_FAILED : ES_OK;
+    }
 
-}}
+}} // namespace Gecode::Int
 
 namespace Gecode {
 
-  void
-  relax(Home home, const IntVarArgs& x, const IntVarArgs& sx,
-        Rnd r, double p) {
-    if (x.size() != sx.size())
-      throw Int::ArgumentSizeMismatch("Int::relax");
-    if ((p < 0.0) || (p > 1.0))
-      throw Int::OutOfLimits("Int::relax");
-    Int::Relax ir;
-    Search::relax<IntVarArgs,Int::Relax>(home,x,sx,r,p,ir);
-  }
+    void
+    relax(Home home, const IntVarArgs& x, const IntVarArgs& sx, Rnd r, double p) {
+        if (x.size() != sx.size())
+            throw Int::ArgumentSizeMismatch("Int::relax");
+        if ((p < 0.0) || (p > 1.0))
+            throw Int::OutOfLimits("Int::relax");
+        Int::Relax ir;
+        Search::relax<IntVarArgs, Int::Relax>(home, x, sx, r, p, ir);
+    }
 
-  void
-  relax(Home home, const BoolVarArgs& x, const BoolVarArgs& sx,
-        Rnd r, double p) {
-    if (x.size() != sx.size())
-      throw Int::ArgumentSizeMismatch("Int::relax");
-    if ((p < 0.0) || (p > 1.0))
-      throw Int::OutOfLimits("Int::relax");
-    Int::Relax ir;
-    Search::relax<BoolVarArgs,Int::Relax>(home,x,sx,r,p,ir);
-  }
+    void
+    relax(Home home, const BoolVarArgs& x, const BoolVarArgs& sx, Rnd r, double p) {
+        if (x.size() != sx.size())
+            throw Int::ArgumentSizeMismatch("Int::relax");
+        if ((p < 0.0) || (p > 1.0))
+            throw Int::OutOfLimits("Int::relax");
+        Int::Relax ir;
+        Search::relax<BoolVarArgs, Int::Relax>(home, x, sx, r, p, ir);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-other
-

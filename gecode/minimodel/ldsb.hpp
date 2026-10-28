@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christopher Mears <chris.mears@monash.edu>
@@ -33,97 +32,99 @@
 
 namespace Gecode {
 
-  /** \brief Interchangeable rows symmetry specification.
-   */
-  template<class A>
-  SymmetryHandle
-  rows_interchange(const Matrix<A>& m) {
-    typename Matrix<A>::ArgsType xs;
-    for (int r = 0 ; r < m.height() ; r++)
-      xs << m.row(r);
-    return VariableSequenceSymmetry(xs, m.width());
-  }
-
-  /** \brief Interchangeable columns symmetry specification.
-   */
-  template<class A>
-  SymmetryHandle
-  columns_interchange(const Matrix<A>& m) {
-    typename Matrix<A>::ArgsType xs;
-    for (int c = 0 ; c < m.width() ; c++)
-      xs << m.col(c);
-    return VariableSequenceSymmetry(xs, m.height());
-  }
-
-  /** \brief Reflect rows symmetry specification.
-   */
-  template<class A>
-  SymmetryHandle
-  rows_reflect(const Matrix<A>& m) {
-    int nrows = m.height();
-    int ncols = m.width();
-    // Length of each sequence in the symmetry.
-    int length = (nrows/2) * ncols;
-    typename Matrix<A>::ArgsType xs(length * 2);
-    for (int i = 0 ; i < length ; i++) {
-      // Break position i into its coordinates
-      int r1 = i/ncols;
-      int c1 = i%ncols;
-      // r2 is the row symmetric with r1
-      int r2 = nrows - r1 - 1;
-      // The column remains the same
-      int c2 = c1;
-      xs[i] = m(c1,r1);
-      xs[length+i] = m(c2,r2);
-    }
-    return VariableSequenceSymmetry(xs, length);
-  }
-
-  /** \brief Reflect columns symmetry specification.
-   */
-  template<class A>
-  SymmetryHandle columns_reflect(const Matrix<A>& m) {
-    int nrows = m.height();
-    int ncols = m.width();
-    // Length of each sequence in the symmetry.
-    int length = (ncols/2) * nrows;
-    typename Matrix<A>::ArgsType xs(length * 2);
-    for (int i = 0 ; i < length ; i++) {
-      // Break position i into its coordinates
-      int r1 = i/ncols;
-      int c1 = i%ncols;
-      // c2 is the column symmetric with c1
-      int c2 = ncols - c1 - 1;
-      // The row remains the same
-      int r2 = r1;
-      xs[i] = m(c1,r1);
-      xs[length+i] = m(c2,r2);
-    }
-    return VariableSequenceSymmetry(xs, length);
-  }
-
-  /** \brief Reflect around main diagonal symmetry specification.
-   */
-  template<class A>
-  SymmetryHandle diagonal_reflect(const Matrix<A>& m) {
-    int nrows = m.height();
-    int ncols = m.width();
-
-    typename Matrix<A>::ArgsType a1;
-    typename Matrix<A>::ArgsType a2;
-
-    for (int i = 0 ; i < nrows ; i++) {
-      for (int j = i+1 ; j < ncols ; j++) {
-        a1 << m(j,i);
-        a2 << m(i,j);
-      }
+    /** \brief Interchangeable rows symmetry specification.
+     */
+    template <class A>
+    SymmetryHandle
+    rows_interchange(const Matrix<A>& m) {
+        typename Matrix<A>::ArgsType xs;
+        for (int r = 0; r < m.height(); r++)
+            xs << m.row(r);
+        return VariableSequenceSymmetry(xs, m.width());
     }
 
-    typename Matrix<A>::ArgsType aboth;
-    aboth << a1;
-    aboth << a2;
-    return VariableSequenceSymmetry(aboth, a1.size());
-  }
-}
+    /** \brief Interchangeable columns symmetry specification.
+     */
+    template <class A>
+    SymmetryHandle
+    columns_interchange(const Matrix<A>& m) {
+        typename Matrix<A>::ArgsType xs;
+        for (int c = 0; c < m.width(); c++)
+            xs << m.col(c);
+        return VariableSequenceSymmetry(xs, m.height());
+    }
+
+    /** \brief Reflect rows symmetry specification.
+     */
+    template <class A>
+    SymmetryHandle
+    rows_reflect(const Matrix<A>& m) {
+        int nrows = m.height();
+        int ncols = m.width();
+        // Length of each sequence in the symmetry.
+        int length = (nrows / 2) * ncols;
+        typename Matrix<A>::ArgsType xs(length * 2);
+        for (int i = 0; i < length; i++) {
+            // Break position i into its coordinates
+            int r1 = i / ncols;
+            int c1 = i % ncols;
+            // r2 is the row symmetric with r1
+            int r2 = nrows - r1 - 1;
+            // The column remains the same
+            int c2 = c1;
+            xs[i] = m(c1, r1);
+            xs[length + i] = m(c2, r2);
+        }
+        return VariableSequenceSymmetry(xs, length);
+    }
+
+    /** \brief Reflect columns symmetry specification.
+     */
+    template <class A>
+    SymmetryHandle
+    columns_reflect(const Matrix<A>& m) {
+        int nrows = m.height();
+        int ncols = m.width();
+        // Length of each sequence in the symmetry.
+        int length = (ncols / 2) * nrows;
+        typename Matrix<A>::ArgsType xs(length * 2);
+        for (int i = 0; i < length; i++) {
+            // Break position i into its coordinates
+            int r1 = i / ncols;
+            int c1 = i % ncols;
+            // c2 is the column symmetric with c1
+            int c2 = ncols - c1 - 1;
+            // The row remains the same
+            int r2 = r1;
+            xs[i] = m(c1, r1);
+            xs[length + i] = m(c2, r2);
+        }
+        return VariableSequenceSymmetry(xs, length);
+    }
+
+    /** \brief Reflect around main diagonal symmetry specification.
+     */
+    template <class A>
+    SymmetryHandle
+    diagonal_reflect(const Matrix<A>& m) {
+        int nrows = m.height();
+        int ncols = m.width();
+
+        typename Matrix<A>::ArgsType a1;
+        typename Matrix<A>::ArgsType a2;
+
+        for (int i = 0; i < nrows; i++) {
+            for (int j = i + 1; j < ncols; j++) {
+                a1 << m(j, i);
+                a2 << m(i, j);
+            }
+        }
+
+        typename Matrix<A>::ArgsType aboth;
+        aboth << a1;
+        aboth << a2;
+        return VariableSequenceSymmetry(aboth, a1.size());
+    }
+} // namespace Gecode
 
 // STATISTICS: minimodel-any

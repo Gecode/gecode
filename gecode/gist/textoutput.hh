@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -38,33 +37,33 @@
 #include <QTextEdit>
 
 namespace Gecode { namespace Gist {
-  /// \brief Window with associated ostream, used for inspecting %Gist nodes
-  class TextOutputI : public QMainWindow {
-    Q_OBJECT
-  private:
-    /// Action used for toggling stay-on-top behavior
-    QAction* stayOnTop;
-    /// The QTextEditor used for text display
-    QTextEdit *editor;
-    /// The ostream that prints to the editor
-    std::ostream *os;
+    /// \brief Window with associated ostream, used for inspecting %Gist nodes
+    class TextOutputI : public QMainWindow {
+        Q_OBJECT
+    private:
+        /// Action used for toggling stay-on-top behavior
+        QAction* stayOnTop;
+        /// The QTextEditor used for text display
+        QTextEdit* editor;
+        /// The ostream that prints to the editor
+        std::ostream* os;
 
-  public:
-    /// Constructor
-    TextOutputI(const std::string& name, QWidget *parent = 0);
-    /// Destructor
-    ~TextOutputI(void);
-    /// Return stream that prints to the text display
-    std::ostream& getStream(void);
-    /// Add html string \a s to the output
-    void insertHtml(const QString& s);
-    /// Flush output
-    void flush(void);
-  protected Q_SLOTS:
-    void changeStayOnTop(void);
-  };
+    public:
+        /// Constructor
+        TextOutputI(const std::string& name, QWidget* parent = 0);
+        /// Destructor
+        ~TextOutputI(void);
+        /// Return stream that prints to the text display
+        std::ostream& getStream(void);
+        /// Add html string \a s to the output
+        void insertHtml(const QString& s);
+        /// Flush output
+        void flush(void);
+    protected Q_SLOTS:
+        void changeStayOnTop(void);
+    };
 
-}}
+}} // namespace Gecode::Gist
 
 #endif
 

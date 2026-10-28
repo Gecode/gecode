@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -38,35 +37,36 @@
 
 namespace Gecode { namespace Set { namespace Distinct {
 
-  /**
-   * \namespace Gecode::Set::Distinct
-   * \brief Propagators for global distinctness constraints
-   */
+    /**
+     * \namespace Gecode::Set::Distinct
+     * \brief Propagators for global distinctness constraints
+     */
 
-  /**
-   * \brief %Propagator for the AtMostOneIntersection constraint
-   *
-   * Requires \code #include <gecode/set/distinct.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  class AtmostOne : public NaryPropagator<SetView, PC_SET_ANY> {
-  protected:
-    /// Cardinality of the sets
-    unsigned int c;
-    /// Constructor for cloning \a p
-    AtmostOne(Space& home, AtmostOne& p);
-    /// Constructor for posting
-    AtmostOne(Home home, ViewArray<SetView>&,unsigned int);
-  public:
-    /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor* copy(Space& home);
-    /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
-    static ExecStatus post(Home home,ViewArray<SetView> x,unsigned int c);
-  };
+    /**
+     * \brief %Propagator for the AtMostOneIntersection constraint
+     *
+     * Requires \code #include <gecode/set/distinct.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    class AtmostOne : public NaryPropagator<SetView, PC_SET_ANY> {
+    protected:
+        /// Cardinality of the sets
+        unsigned int c;
+        /// Constructor for cloning \a p
+        AtmostOne(Space& home, AtmostOne& p);
+        /// Constructor for posting
+        AtmostOne(Home home, ViewArray<SetView>&, unsigned int);
 
-}}}
+    public:
+        /// Copy propagator during cloning
+        GECODE_SET_EXPORT virtual Actor* copy(Space& home);
+        /// Perform propagation
+        GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
+        static ExecStatus post(Home home, ViewArray<SetView> x, unsigned int c);
+    };
+
+}}} // namespace Gecode::Set::Distinct
 
 #include <gecode/set/distinct/atmostOne.hpp>
 

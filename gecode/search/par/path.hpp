@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,423 +36,417 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  /*
-   * Edge for recomputation
-   *
-   */
-  template<class Tracer>
-  forceinline
-  Path<Tracer>::Edge::Edge(void) {}
+    /*
+     * Edge for recomputation
+     *
+     */
+    template <class Tracer>
+    forceinline
+    Path<Tracer>::Edge::Edge(void) {}
 
-  template<class Tracer>
-  forceinline
-  Path<Tracer>::Edge::Edge(Space* s, Space* c, unsigned int nid)
-    : _space(c), _alt(0), _choice(s->choice()), _nid(nid) {
-    _alt_max = _choice->alternatives()-1;
-  }
-
-  template<class Tracer>
-  forceinline Space*
-  Path<Tracer>::Edge::space(void) const {
-    return _space;
-  }
-  template<class Tracer>
-  forceinline void
-  Path<Tracer>::Edge::space(Space* s) {
-    _space = s;
-  }
-
-  template<class Tracer>
-  forceinline unsigned int
-  Path<Tracer>::Edge::alt(void) const {
-    return _alt;
-  }
-
-  template<class Tracer>
-  forceinline unsigned int
-  Path<Tracer>::Edge::nid(void) const {
-    return _nid;
-  }
-
-  template<class Tracer>
-  forceinline unsigned int
-  Path<Tracer>::Edge::truealt(void) const {
-    return std::min(_alt,_choice->alternatives()-1);
-  }
-  template<class Tracer>
-  forceinline bool
-  Path<Tracer>::Edge::rightmost(void) const {
-    return _alt >= _alt_max;
-  }
-  template<class Tracer>
-  forceinline bool
-  Path<Tracer>::Edge::lao(void) const {
-    return _alt > _alt_max;
-  }
-  template<class Tracer>
-  forceinline bool
-  Path<Tracer>::Edge::work(void) const {
-    return _alt < _alt_max;
-  }
-  template<class Tracer>
-  forceinline void
-  Path<Tracer>::Edge::next(void) {
-    _alt++;
-  }
-  template<class Tracer>
-  forceinline unsigned int
-  Path<Tracer>::Edge::steal(void) {
-    assert(work());
-    return _alt_max--;
-  }
-
-  template<class Tracer>
-  forceinline const Choice*
-  Path<Tracer>::Edge::choice(void) const {
-    return _choice;
-  }
-
-  template<class Tracer>
-  forceinline void
-  Path<Tracer>::Edge::dispose(void) {
-    delete _space;
-    delete _choice;
-  }
-
-
-
-  /*
-   * Depth-first stack with recomputation
-   *
-   */
-
-  template<class Tracer>
-  forceinline
-  Path<Tracer>::Path(unsigned int l)
-    : ds(heap), _ngdl(l), n_work(0) {}
-
-  template<class Tracer>
-  forceinline unsigned int
-  Path<Tracer>::ngdl(void) const {
-    return _ngdl;
-  }
-
-  template<class Tracer>
-  forceinline void
-  Path<Tracer>::ngdl(unsigned int l) {
-    _ngdl = l;
-  }
-
-  template<class Tracer>
-  forceinline const Choice*
-  Path<Tracer>::push(Worker& stat, Space* s, Space* c, unsigned int nid) {
-    if (!ds.empty() && ds.top().lao()) {
-      // Topmost stack entry was LAO -> reuse
-      ds.pop().dispose();
+    template <class Tracer>
+    forceinline
+    Path<Tracer>::Edge::Edge(Space* s, Space* c, unsigned int nid)
+        : _space(c), _alt(0), _choice(s->choice()), _nid(nid) {
+        _alt_max = _choice->alternatives() - 1;
     }
-    Edge sn(s,c,nid);
-    if (sn.work())
-      n_work++;
-    ds.push(sn);
-    stat.stack_depth(static_cast<unsigned long int>(ds.entries()));
-    return sn.choice();
-  }
 
-  template<class Tracer>
-  forceinline void
-  Path<Tracer>::next(void) {
-    while (!ds.empty())
-      if (ds.top().rightmost()) {
-        ds.pop().dispose();
-      } else {
-        assert(ds.top().work());
-        ds.top().next();
-        if (!ds.top().work())
-          n_work--;
-        return;
-      }
-  }
+    template <class Tracer>
+    forceinline Space*
+    Path<Tracer>::Edge::space(void) const {
+        return _space;
+    }
+    template <class Tracer>
+    forceinline void
+    Path<Tracer>::Edge::space(Space* s) {
+        _space = s;
+    }
 
-  template<class Tracer>
-  forceinline typename Path<Tracer>::Edge&
-  Path<Tracer>::top(void) const {
-    assert(!ds.empty());
-    return ds.top();
-  }
+    template <class Tracer>
+    forceinline unsigned int
+    Path<Tracer>::Edge::alt(void) const {
+        return _alt;
+    }
 
-  template<class Tracer>
-  forceinline bool
-  Path<Tracer>::empty(void) const {
-    return ds.empty();
-  }
+    template <class Tracer>
+    forceinline unsigned int
+    Path<Tracer>::Edge::nid(void) const {
+        return _nid;
+    }
 
-  template<class Tracer>
-  forceinline void
-  Path<Tracer>::commit(Space* s, int i) const {
-    const Edge& n = ds[i];
-    s->commit(*n.choice(),n.alt());
-  }
+    template <class Tracer>
+    forceinline unsigned int
+    Path<Tracer>::Edge::truealt(void) const {
+        return std::min(_alt, _choice->alternatives() - 1);
+    }
+    template <class Tracer>
+    forceinline bool
+    Path<Tracer>::Edge::rightmost(void) const {
+        return _alt >= _alt_max;
+    }
+    template <class Tracer>
+    forceinline bool
+    Path<Tracer>::Edge::lao(void) const {
+        return _alt > _alt_max;
+    }
+    template <class Tracer>
+    forceinline bool
+    Path<Tracer>::Edge::work(void) const {
+        return _alt < _alt_max;
+    }
+    template <class Tracer>
+    forceinline void
+    Path<Tracer>::Edge::next(void) {
+        _alt++;
+    }
+    template <class Tracer>
+    forceinline unsigned int
+    Path<Tracer>::Edge::steal(void) {
+        assert(work());
+        return _alt_max--;
+    }
 
-  template<class Tracer>
-  forceinline int
-  Path<Tracer>::lc(void) const {
-    int l = ds.entries()-1;
-    while (ds[l].space() == nullptr)
-      l--;
-    return l;
-  }
+    template <class Tracer>
+    forceinline const Choice*
+    Path<Tracer>::Edge::choice(void) const {
+        return _choice;
+    }
 
-  template<class Tracer>
-  forceinline int
-  Path<Tracer>::entries(void) const {
-    return ds.entries();
-  }
+    template <class Tracer>
+    forceinline void
+    Path<Tracer>::Edge::dispose(void) {
+        delete _space;
+        delete _choice;
+    }
 
-  template<class Tracer>
-  forceinline void
-  Path<Tracer>::unwind(int l, Tracer& t) {
-    assert((ds[l].space() == nullptr) || ds[l].space()->failed());
-    int n = ds.entries();
-    if (t) {
-      for (int i=l; i<n; i++) {
-        Path<Tracer>::Edge& top = ds.top();
-        unsigned int fa = (i != l) ? top.alt() + 1 : top.alt();
-        for (unsigned int a = fa; a < top.choice()->alternatives(); a++) {
-          SearchTracer::EdgeInfo ei(t.wid(), top.nid(), a);
-          t.skip(ei);
+    /*
+     * Depth-first stack with recomputation
+     *
+     */
+
+    template <class Tracer>
+    forceinline
+    Path<Tracer>::Path(unsigned int l)
+        : ds(heap), _ngdl(l), n_work(0) {}
+
+    template <class Tracer>
+    forceinline unsigned int
+    Path<Tracer>::ngdl(void) const {
+        return _ngdl;
+    }
+
+    template <class Tracer>
+    forceinline void
+    Path<Tracer>::ngdl(unsigned int l) {
+        _ngdl = l;
+    }
+
+    template <class Tracer>
+    forceinline const Choice*
+    Path<Tracer>::push(Worker& stat, Space* s, Space* c, unsigned int nid) {
+        if (!ds.empty() && ds.top().lao()) {
+            // Topmost stack entry was LAO -> reuse
+            ds.pop().dispose();
         }
-        if (ds.top().work())
-          n_work--;
-        ds.pop().dispose();
-      }
-    } else {
-      for (int i=l; i<n; i++) {
-        if (ds.top().work())
-          n_work--;
-        ds.pop().dispose();
-      }
+        Edge sn(s, c, nid);
+        if (sn.work())
+            n_work++;
+        ds.push(sn);
+        stat.stack_depth(static_cast<unsigned long int>(ds.entries()));
+        return sn.choice();
     }
-    assert(ds.entries() == l);
-  }
 
-  template<class Tracer>
-  forceinline void
-  Path<Tracer>::reset(unsigned int l) {
-    n_work = 0;
-    while (!ds.empty())
-      ds.pop().dispose();
-    _ngdl = l;
-  }
+    template <class Tracer>
+    forceinline void
+    Path<Tracer>::next(void) {
+        while (!ds.empty())
+            if (ds.top().rightmost()) {
+                ds.pop().dispose();
+            } else {
+                assert(ds.top().work());
+                ds.top().next();
+                if (!ds.top().work())
+                    n_work--;
+                return;
+            }
+    }
 
-  template<class Tracer>
-  forceinline bool
-  Path<Tracer>::steal(void) const {
-    return n_work > Config::steal_limit;
-  }
+    template <class Tracer>
+    forceinline typename Path<Tracer>::Edge&
+    Path<Tracer>::top(void) const {
+        assert(!ds.empty());
+        return ds.top();
+    }
 
-  template<class Tracer>
-  forceinline Space*
-  Path<Tracer>::steal(Worker& stat, unsigned long int& d,
-                      Tracer& myt, Tracer& ot) {
-    // Find position to steal: leave sufficient work
-    int n = ds.entries()-1;
-    unsigned int w = 0;
-    while (n >= 0) {
-      if (ds[n].work())
-        w++;
-      if (w > Config::steal_limit) {
-        // Okay, there is sufficient work left
-        int l=n;
-        // Find last copy
+    template <class Tracer>
+    forceinline bool
+    Path<Tracer>::empty(void) const {
+        return ds.empty();
+    }
+
+    template <class Tracer>
+    forceinline void
+    Path<Tracer>::commit(Space* s, int i) const {
+        const Edge& n = ds[i];
+        s->commit(*n.choice(), n.alt());
+    }
+
+    template <class Tracer>
+    forceinline int
+    Path<Tracer>::lc(void) const {
+        int l = ds.entries() - 1;
         while (ds[l].space() == nullptr)
-          l--;
-        Space* c = ds[l].space()->clone();
-        // Recompute, if necessary
-        for (int i=l; i<n; i++)
-          commit(c,i);
-        unsigned int a = ds[n].steal();
-        c->commit(*ds[n].choice(),a);
-        if (!ds[n].work())
-          n_work--;
-        // No no-goods can be extracted above n
-        ngdl(std::min(ngdl(),static_cast<unsigned int>(n)));
-        d = stat.steal_depth(static_cast<unsigned long int>(n+1));
-        if (myt && ot) {
-          ot.ei()->init(myt.wid(),ds[n].nid(), a, *c, *ds[n].choice());
+            l--;
+        return l;
+    }
+
+    template <class Tracer>
+    forceinline int
+    Path<Tracer>::entries(void) const {
+        return ds.entries();
+    }
+
+    template <class Tracer>
+    forceinline void
+    Path<Tracer>::unwind(int l, Tracer& t) {
+        assert((ds[l].space() == nullptr) || ds[l].space()->failed());
+        int n = ds.entries();
+        if (t) {
+            for (int i = l; i < n; i++) {
+                Path<Tracer>::Edge& top = ds.top();
+                unsigned int fa = (i != l) ? top.alt() + 1 : top.alt();
+                for (unsigned int a = fa; a < top.choice()->alternatives(); a++) {
+                    SearchTracer::EdgeInfo ei(t.wid(), top.nid(), a);
+                    t.skip(ei);
+                }
+                if (ds.top().work())
+                    n_work--;
+                ds.pop().dispose();
+            }
+        } else {
+            for (int i = l; i < n; i++) {
+                if (ds.top().work())
+                    n_work--;
+                ds.pop().dispose();
+            }
         }
-        return c;
-      }
-      n--;
+        assert(ds.entries() == l);
     }
-    return nullptr;
-  }
 
-  template<class Tracer>
-  forceinline Space*
-  Path<Tracer>::recompute(unsigned int& d, unsigned int a_d, Worker& stat,
-                          Tracer& t) {
-    assert(!ds.empty());
-    // Recompute space according to path
-    // Also say distance to copy (d == 0) requires immediate copying
-
-    // Check for LAO
-    if ((ds.top().space() != nullptr) && ds.top().rightmost()) {
-      Space* s = ds.top().space();
-      s->commit(*ds.top().choice(),ds.top().alt());
-      assert(ds.entries()-1 == lc());
-      ds.top().space(nullptr);
-      // Mark as reusable
-      if (static_cast<unsigned int>(ds.entries()) > ngdl())
-        ds.top().next();
-      d = 0;
-      return s;
+    template <class Tracer>
+    forceinline void
+    Path<Tracer>::reset(unsigned int l) {
+        n_work = 0;
+        while (!ds.empty())
+            ds.pop().dispose();
+        _ngdl = l;
     }
-    // General case for recomputation
-    int l = lc();             // Position of last clone
-    int n = ds.entries();     // Number of stack entries
-    // New distance, if no adaptive recomputation
-    d = static_cast<unsigned int>(n - l);
 
-    Space* s = ds[l].space()->clone(); // Last clone
+    template <class Tracer>
+    forceinline bool
+    Path<Tracer>::steal(void) const {
+        return n_work > Config::steal_limit;
+    }
 
-    if (d < a_d) {
-      // No adaptive recomputation
-      for (int i=l; i<n; i++)
-        commit(s,i);
-    } else {
-      int m = l + static_cast<int>(d >> 1); // Middle between copy and top
-      int i = l; // To iterate over all entries
-      // Recompute up to middle
-      for (; i<m; i++ )
-        commit(s,i);
-      // Skip over all rightmost branches
-      for (; (i<n) && ds[i].rightmost(); i++)
-        commit(s,i);
-      // Is there any point to make a copy?
-      if (i<n-1) {
-        // Propagate to fixpoint
-        SpaceStatus ss = s->status(stat);
-        /*
-         * Again, the space might already propagate to failure (due to
-         * weakly monotonic propagators).
-         */
-        if (ss == SS_FAILED) {
-          // s must be deleted as it is not on the stack
-          delete s;
-          stat.fail++;
-          unwind(i,t);
-          return nullptr;
+    template <class Tracer>
+    forceinline Space*
+    Path<Tracer>::steal(Worker& stat, unsigned long int& d, Tracer& myt, Tracer& ot) {
+        // Find position to steal: leave sufficient work
+        int n = ds.entries() - 1;
+        unsigned int w = 0;
+        while (n >= 0) {
+            if (ds[n].work())
+                w++;
+            if (w > Config::steal_limit) {
+                // Okay, there is sufficient work left
+                int l = n;
+                // Find last copy
+                while (ds[l].space() == nullptr)
+                    l--;
+                Space* c = ds[l].space()->clone();
+                // Recompute, if necessary
+                for (int i = l; i < n; i++)
+                    commit(c, i);
+                unsigned int a = ds[n].steal();
+                c->commit(*ds[n].choice(), a);
+                if (!ds[n].work())
+                    n_work--;
+                // No no-goods can be extracted above n
+                ngdl(std::min(ngdl(), static_cast<unsigned int>(n)));
+                d = stat.steal_depth(static_cast<unsigned long int>(n + 1));
+                if (myt && ot) {
+                    ot.ei()->init(myt.wid(), ds[n].nid(), a, *c, *ds[n].choice());
+                }
+                return c;
+            }
+            n--;
         }
-        ds[i].space(s->clone());
-        d = static_cast<unsigned int>(n-i);
-      }
-      // Finally do the remaining commits
-      for (; i<n; i++)
-        commit(s,i);
-    }
-    return s;
-  }
-
-  template<class Tracer>
-  forceinline Space*
-  Path<Tracer>::recompute(unsigned int& d, unsigned int a_d, Worker& stat,
-                          const Space* best, int& mark,
-                          Tracer& t) {
-    assert(!ds.empty());
-    // Recompute space according to path
-    // Also say distance to copy (d == 0) requires immediate copying
-
-    // Check for LAO
-    if ((ds.top().space() != nullptr) && ds.top().rightmost()) {
-      Space* s = ds.top().space();
-      s->commit(*ds.top().choice(),ds.top().alt());
-      assert(ds.entries()-1 == lc());
-      if ((best != nullptr) && (mark > ds.entries()-1)) {
-        mark = ds.entries()-1;
-        s->constrain(*best);
-      }
-      ds.top().space(nullptr);
-      // Mark as reusable
-      if (static_cast<unsigned int>(ds.entries()) > ngdl())
-        ds.top().next();
-      d = 0;
-      return s;
-    }
-    // General case for recomputation
-    int l = lc();             // Position of last clone
-    int n = ds.entries();     // Number of stack entries
-    // New distance, if no adaptive recomputation
-    d = static_cast<unsigned int>(n - l);
-
-    Space* s = ds[l].space(); // Last clone
-
-    if ((best != nullptr) && (l < mark)) {
-      mark = l;
-      s->constrain(*best);
-      // The space on the stack could be failed now as an additional
-      // constraint might have been added.
-      if (s->status(stat) == SS_FAILED) {
-        // s does not need deletion as it is on the stack (unwind does this)
-        stat.fail++;
-        unwind(l,t);
         return nullptr;
-      }
-      // It is important to replace the space on the stack with the
-      // copy: a copy might be much smaller due to flushed caches
-      // of propagators
-      Space* c = s->clone();
-      ds[l].space(c);
-    } else {
-      s = s->clone();
     }
 
-    if (d < a_d) {
-      // No adaptive recomputation
-      for (int i=l; i<n; i++)
-        commit(s,i);
-    } else {
-      int m = l + static_cast<int>(d >> 1); // Middle between copy and top
-      int i = l;            // To iterate over all entries
-      // Recompute up to middle
-      for (; i<m; i++ )
-        commit(s,i);
-      // Skip over all rightmost branches
-      for (; (i<n) && ds[i].rightmost(); i++)
-        commit(s,i);
-      // Is there any point to make a copy?
-      if (i<n-1) {
-        // Propagate to fixpoint
-        SpaceStatus ss = s->status(stat);
-        /*
-         * Again, the space might already propagate to failure
-         *
-         * This can be for two reasons:
-         *  - constrain is true, so we fail
-         *  - the space has weakly monotonic propagators
-         */
-        if (ss == SS_FAILED) {
-          // s must be deleted as it is not on the stack
-          delete s;
-          stat.fail++;
-          unwind(i,t);
-          return nullptr;
+    template <class Tracer>
+    forceinline Space*
+    Path<Tracer>::recompute(unsigned int& d, unsigned int a_d, Worker& stat, Tracer& t) {
+        assert(!ds.empty());
+        // Recompute space according to path
+        // Also say distance to copy (d == 0) requires immediate copying
+
+        // Check for LAO
+        if ((ds.top().space() != nullptr) && ds.top().rightmost()) {
+            Space* s = ds.top().space();
+            s->commit(*ds.top().choice(), ds.top().alt());
+            assert(ds.entries() - 1 == lc());
+            ds.top().space(nullptr);
+            // Mark as reusable
+            if (static_cast<unsigned int>(ds.entries()) > ngdl())
+                ds.top().next();
+            d = 0;
+            return s;
         }
-        ds[i].space(s->clone());
-        d = static_cast<unsigned int>(n-i);
-      }
-      // Finally do the remaining commits
-      for (; i<n; i++)
-        commit(s,i);
+        // General case for recomputation
+        int l = lc();         // Position of last clone
+        int n = ds.entries(); // Number of stack entries
+        // New distance, if no adaptive recomputation
+        d = static_cast<unsigned int>(n - l);
+
+        Space* s = ds[l].space()->clone(); // Last clone
+
+        if (d < a_d) {
+            // No adaptive recomputation
+            for (int i = l; i < n; i++)
+                commit(s, i);
+        } else {
+            int m = l + static_cast<int>(d >> 1); // Middle between copy and top
+            int i = l;                            // To iterate over all entries
+            // Recompute up to middle
+            for (; i < m; i++)
+                commit(s, i);
+            // Skip over all rightmost branches
+            for (; (i < n) && ds[i].rightmost(); i++)
+                commit(s, i);
+            // Is there any point to make a copy?
+            if (i < n - 1) {
+                // Propagate to fixpoint
+                SpaceStatus ss = s->status(stat);
+                /*
+                 * Again, the space might already propagate to failure (due to
+                 * weakly monotonic propagators).
+                 */
+                if (ss == SS_FAILED) {
+                    // s must be deleted as it is not on the stack
+                    delete s;
+                    stat.fail++;
+                    unwind(i, t);
+                    return nullptr;
+                }
+                ds[i].space(s->clone());
+                d = static_cast<unsigned int>(n - i);
+            }
+            // Finally do the remaining commits
+            for (; i < n; i++)
+                commit(s, i);
+        }
+        return s;
     }
-    return s;
-  }
 
-  template<class Tracer>
-  void
-  Path<Tracer>::post(Space& home) const {
-    GECODE_ES_FAIL(NoGoodsProp::post(home,*this));
-  }
+    template <class Tracer>
+    forceinline Space*
+    Path<Tracer>::recompute(unsigned int& d, unsigned int a_d, Worker& stat, const Space* best, int& mark, Tracer& t) {
+        assert(!ds.empty());
+        // Recompute space according to path
+        // Also say distance to copy (d == 0) requires immediate copying
 
-}}}
+        // Check for LAO
+        if ((ds.top().space() != nullptr) && ds.top().rightmost()) {
+            Space* s = ds.top().space();
+            s->commit(*ds.top().choice(), ds.top().alt());
+            assert(ds.entries() - 1 == lc());
+            if ((best != nullptr) && (mark > ds.entries() - 1)) {
+                mark = ds.entries() - 1;
+                s->constrain(*best);
+            }
+            ds.top().space(nullptr);
+            // Mark as reusable
+            if (static_cast<unsigned int>(ds.entries()) > ngdl())
+                ds.top().next();
+            d = 0;
+            return s;
+        }
+        // General case for recomputation
+        int l = lc();         // Position of last clone
+        int n = ds.entries(); // Number of stack entries
+        // New distance, if no adaptive recomputation
+        d = static_cast<unsigned int>(n - l);
+
+        Space* s = ds[l].space(); // Last clone
+
+        if ((best != nullptr) && (l < mark)) {
+            mark = l;
+            s->constrain(*best);
+            // The space on the stack could be failed now as an additional
+            // constraint might have been added.
+            if (s->status(stat) == SS_FAILED) {
+                // s does not need deletion as it is on the stack (unwind does this)
+                stat.fail++;
+                unwind(l, t);
+                return nullptr;
+            }
+            // It is important to replace the space on the stack with the
+            // copy: a copy might be much smaller due to flushed caches
+            // of propagators
+            Space* c = s->clone();
+            ds[l].space(c);
+        } else {
+            s = s->clone();
+        }
+
+        if (d < a_d) {
+            // No adaptive recomputation
+            for (int i = l; i < n; i++)
+                commit(s, i);
+        } else {
+            int m = l + static_cast<int>(d >> 1); // Middle between copy and top
+            int i = l;                            // To iterate over all entries
+            // Recompute up to middle
+            for (; i < m; i++)
+                commit(s, i);
+            // Skip over all rightmost branches
+            for (; (i < n) && ds[i].rightmost(); i++)
+                commit(s, i);
+            // Is there any point to make a copy?
+            if (i < n - 1) {
+                // Propagate to fixpoint
+                SpaceStatus ss = s->status(stat);
+                /*
+                 * Again, the space might already propagate to failure
+                 *
+                 * This can be for two reasons:
+                 *  - constrain is true, so we fail
+                 *  - the space has weakly monotonic propagators
+                 */
+                if (ss == SS_FAILED) {
+                    // s must be deleted as it is not on the stack
+                    delete s;
+                    stat.fail++;
+                    unwind(i, t);
+                    return nullptr;
+                }
+                ds[i].space(s->clone());
+                d = static_cast<unsigned int>(n - i);
+            }
+            // Finally do the remaining commits
+            for (; i < n; i++)
+                commit(s, i);
+        }
+        return s;
+    }
+
+    template <class Tracer>
+    void
+    Path<Tracer>::post(Space& home) const {
+        GECODE_ES_FAIL(NoGoodsProp::post(home, *this));
+    }
+
+}}} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

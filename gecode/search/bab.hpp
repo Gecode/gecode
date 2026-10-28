@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,58 +36,55 @@
 
 namespace Gecode { namespace Search {
 
-  /// Create branch and bound engine
-  GECODE_SEARCH_EXPORT Engine*
-  babengine(Space* s, const Options& o);
+    /// Create branch and bound engine
+    GECODE_SEARCH_EXPORT Engine* babengine(Space* s, const Options& o);
 
-  /// A BAB engine builder
-  template<class T>
-  class BabBuilder : public Builder {
-    using Builder::opt;
-  public:
-    /// The constructor
-    BabBuilder(const Options& opt);
-    /// The actual build function
-    virtual Engine* operator() (Space* s) const;
-  };
+    /// A BAB engine builder
+    template <class T>
+    class BabBuilder : public Builder {
+        using Builder::opt;
 
-  template<class T>
-  inline
-  BabBuilder<T>::BabBuilder(const Options& opt)
-    : Builder(opt,BAB<T>::best) {}
+    public:
+        /// The constructor
+        BabBuilder(const Options& opt);
+        /// The actual build function
+        virtual Engine* operator()(Space* s) const;
+    };
 
-  template<class T>
-  Engine*
-  BabBuilder<T>::operator() (Space* s) const {
-    return build<T,BAB>(s,opt);
-  }
+    template <class T>
+    inline BabBuilder<T>::BabBuilder(const Options& opt) : Builder(opt, BAB<T>::best) {}
 
-}}
+    template <class T>
+    Engine*
+    BabBuilder<T>::operator()(Space* s) const {
+        return build<T, BAB>(s, opt);
+    }
+
+}} // namespace Gecode::Search
 
 namespace Gecode {
 
-  template<class T>
-  inline
-  BAB<T>::BAB(T* s, const Search::Options& o)
-    : Search::Base<T>(Search::babengine(s,o)) {}
+    template <class T>
+    inline BAB<T>::BAB(T* s, const Search::Options& o) : Search::Base<T>(Search::babengine(s, o)) {}
 
-  template<class T>
-  inline T*
-  bab(T* s, const Search::Options& o) {
-    BAB<T> b(s,o);
-    T* l = nullptr;
-    while (T* n = b.next()) {
-      delete l; l = n;
+    template <class T>
+    inline T*
+    bab(T* s, const Search::Options& o) {
+        BAB<T> b(s, o);
+        T* l = nullptr;
+        while (T* n = b.next()) {
+            delete l;
+            l = n;
+        }
+        return l;
     }
-    return l;
-  }
 
-  template<class T>
-  SEB
-  bab(const Search::Options& o) {
-    return new Search::BabBuilder<T>(o);
-  }
+    template <class T>
+    SEB
+    bab(const Search::Options& o) {
+        return new Search::BabBuilder<T>(o);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: search-other

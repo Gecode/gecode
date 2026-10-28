@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -40,38 +39,36 @@
 #include <QLibrary>
 
 namespace Gecode { namespace FlatZinc {
-  /**
-   * \brief Interface for branch plugins
-   *
-   * This interface has to be implemented as a Qt Plugin. It then
-   * provides custom branch methods that can be loaded at runtime
-   * from a FlatZinc file.
-   *
-   * In order to use a custom branching, add an annotation to the
-   * FlatZinc solve item like the following:
-   *
-   * ::gecode_search(mybranch(some,arguments,x,y,z))
-   *
-   * This will load the plugin called mybranch and invoke its branch
-   * method with the arguments encoded in an AST.
-   *
-   * The plugin mybranch must reside in a file called mybranch.dll
-   * on Windows, libmybranch.dylib on Mac OS and libmybranch.so on
-   * Linux systems.
-   *
-   * An example plugin can be found in the Gecode source tree under
-   * gecode/flatzinc/exampleplugin.
-   *
-   */
-  class GECODE_VTABLE_EXPORT BranchPlugin {
-  public:
-    /// The custom branch method that this plugin provides
-    virtual void branch(Gecode::FlatZinc::FlatZincSpace& s,
-                        Gecode::FlatZinc::AST::Call* c) = 0;
-  };
-}}
-Q_DECLARE_INTERFACE(Gecode::FlatZinc::BranchPlugin,
-  "org.gecode.FlatZinc.BranchPlugin/1.0");
+    /**
+     * \brief Interface for branch plugins
+     *
+     * This interface has to be implemented as a Qt Plugin. It then
+     * provides custom branch methods that can be loaded at runtime
+     * from a FlatZinc file.
+     *
+     * In order to use a custom branching, add an annotation to the
+     * FlatZinc solve item like the following:
+     *
+     * ::gecode_search(mybranch(some,arguments,x,y,z))
+     *
+     * This will load the plugin called mybranch and invoke its branch
+     * method with the arguments encoded in an AST.
+     *
+     * The plugin mybranch must reside in a file called mybranch.dll
+     * on Windows, libmybranch.dylib on Mac OS and libmybranch.so on
+     * Linux systems.
+     *
+     * An example plugin can be found in the Gecode source tree under
+     * gecode/flatzinc/exampleplugin.
+     *
+     */
+    class GECODE_VTABLE_EXPORT BranchPlugin {
+    public:
+        /// The custom branch method that this plugin provides
+        virtual void branch(Gecode::FlatZinc::FlatZincSpace& s, Gecode::FlatZinc::AST::Call* c) = 0;
+    };
+}} // namespace Gecode::FlatZinc
+Q_DECLARE_INTERFACE(Gecode::FlatZinc::BranchPlugin, "org.gecode.FlatZinc.BranchPlugin/1.0");
 #endif
 
 #endif

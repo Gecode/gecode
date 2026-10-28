@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,121 +32,118 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
-  template<class View>
-  forceinline
-  EqNGL<View>::EqNGL(Space& home, View x, int n)
-    : ViewValNGL<View,int,PC_INT_VAL>(home,x,n) {}
-  template<class View>
-  forceinline
-  EqNGL<View>::EqNGL(Space& home, EqNGL& ngl)
-    : ViewValNGL<View,int,PC_INT_VAL>(home,ngl) {}
-  template<class View>
-  NGL*
-  EqNGL<View>::copy(Space& home) {
-    return new (home) EqNGL<View>(home,*this);
-  }
-  template<class View>
-  NGL::Status
-  EqNGL<View>::status(const Space&) const {
-    if (x.assigned())
-      return (x.val() == n) ? NGL::SUBSUMED : NGL::FAILED;
-    else
-      return x.in(n) ? NGL::NONE : NGL::FAILED;
-  }
-  template<class View>
-  ExecStatus
-  EqNGL<View>::prune(Space& home) {
-    return me_failed(x.nq(home,n)) ? ES_FAILED : ES_OK;
-  }
+    template <class View>
+    forceinline
+    EqNGL<View>::EqNGL(Space& home, View x, int n)
+        : ViewValNGL<View, int, PC_INT_VAL>(home, x, n) {}
+    template <class View>
+    forceinline
+    EqNGL<View>::EqNGL(Space& home, EqNGL& ngl)
+        : ViewValNGL<View, int, PC_INT_VAL>(home, ngl) {}
+    template <class View>
+    NGL*
+    EqNGL<View>::copy(Space& home) {
+        return new (home) EqNGL<View>(home, *this);
+    }
+    template <class View>
+    NGL::Status
+    EqNGL<View>::status(const Space&) const {
+        if (x.assigned())
+            return (x.val() == n) ? NGL::SUBSUMED : NGL::FAILED;
+        else
+            return x.in(n) ? NGL::NONE : NGL::FAILED;
+    }
+    template <class View>
+    ExecStatus
+    EqNGL<View>::prune(Space& home) {
+        return me_failed(x.nq(home, n)) ? ES_FAILED : ES_OK;
+    }
 
+    template <class View>
+    forceinline
+    NqNGL<View>::NqNGL(Space& home, View x, int n)
+        : ViewValNGL<View, int, PC_INT_DOM>(home, x, n) {}
+    template <class View>
+    forceinline
+    NqNGL<View>::NqNGL(Space& home, NqNGL& ngl)
+        : ViewValNGL<View, int, PC_INT_DOM>(home, ngl) {}
+    template <class View>
+    NGL*
+    NqNGL<View>::copy(Space& home) {
+        return new (home) NqNGL<View>(home, *this);
+    }
+    template <class View>
+    NGL::Status
+    NqNGL<View>::status(const Space&) const {
+        if (x.assigned())
+            return (x.val() == n) ? NGL::FAILED : NGL::SUBSUMED;
+        else
+            return x.in(n) ? NGL::NONE : NGL::SUBSUMED;
+    }
+    template <class View>
+    ExecStatus
+    NqNGL<View>::prune(Space& home) {
+        return me_failed(x.eq(home, n)) ? ES_FAILED : ES_OK;
+    }
 
-  template<class View>
-  forceinline
-  NqNGL<View>::NqNGL(Space& home, View x, int n)
-    : ViewValNGL<View,int,PC_INT_DOM>(home,x,n) {}
-  template<class View>
-  forceinline
-  NqNGL<View>::NqNGL(Space& home, NqNGL& ngl)
-    : ViewValNGL<View,int,PC_INT_DOM>(home,ngl) {}
-  template<class View>
-  NGL*
-  NqNGL<View>::copy(Space& home) {
-    return new (home) NqNGL<View>(home,*this);
-  }
-  template<class View>
-  NGL::Status
-  NqNGL<View>::status(const Space&) const {
-    if (x.assigned())
-      return (x.val() == n) ? NGL::FAILED : NGL::SUBSUMED;
-    else
-      return x.in(n) ? NGL::NONE : NGL::SUBSUMED;
-  }
-  template<class View>
-  ExecStatus
-  NqNGL<View>::prune(Space& home) {
-    return me_failed(x.eq(home,n)) ? ES_FAILED : ES_OK;
-  }
+    template <class View>
+    forceinline
+    LqNGL<View>::LqNGL(Space& home, View x, int n)
+        : ViewValNGL<View, int, PC_INT_BND>(home, x, n) {}
+    template <class View>
+    forceinline
+    LqNGL<View>::LqNGL(Space& home, LqNGL& ngl)
+        : ViewValNGL<View, int, PC_INT_BND>(home, ngl) {}
+    template <class View>
+    NGL*
+    LqNGL<View>::copy(Space& home) {
+        return new (home) LqNGL<View>(home, *this);
+    }
+    template <class View>
+    NGL::Status
+    LqNGL<View>::status(const Space&) const {
+        if (x.max() <= n)
+            return NGL::SUBSUMED;
+        else if (x.min() > n)
+            return NGL::FAILED;
+        else
+            return NGL::NONE;
+    }
+    template <class View>
+    ExecStatus
+    LqNGL<View>::prune(Space& home) {
+        return me_failed(x.gr(home, n)) ? ES_FAILED : ES_OK;
+    }
 
+    template <class View>
+    forceinline
+    GqNGL<View>::GqNGL(Space& home, View x, int n)
+        : ViewValNGL<View, int, PC_INT_BND>(home, x, n) {}
+    template <class View>
+    forceinline
+    GqNGL<View>::GqNGL(Space& home, GqNGL& ngl)
+        : ViewValNGL<View, int, PC_INT_BND>(home, ngl) {}
+    template <class View>
+    NGL*
+    GqNGL<View>::copy(Space& home) {
+        return new (home) GqNGL<View>(home, *this);
+    }
+    template <class View>
+    NGL::Status
+    GqNGL<View>::status(const Space&) const {
+        if (x.min() >= n)
+            return NGL::SUBSUMED;
+        else if (x.max() < n)
+            return NGL::FAILED;
+        else
+            return NGL::NONE;
+    }
+    template <class View>
+    ExecStatus
+    GqNGL<View>::prune(Space& home) {
+        return me_failed(x.le(home, n)) ? ES_FAILED : ES_OK;
+    }
 
-  template<class View>
-  forceinline
-  LqNGL<View>::LqNGL(Space& home, View x, int n)
-    : ViewValNGL<View,int,PC_INT_BND>(home,x,n) {}
-  template<class View>
-  forceinline
-  LqNGL<View>::LqNGL(Space& home, LqNGL& ngl)
-    : ViewValNGL<View,int,PC_INT_BND>(home,ngl) {}
-  template<class View>
-  NGL*
-  LqNGL<View>::copy(Space& home) {
-    return new (home) LqNGL<View>(home,*this);
-  }
-  template<class View>
-  NGL::Status
-  LqNGL<View>::status(const Space&) const {
-    if (x.max() <= n)
-      return NGL::SUBSUMED;
-    else if (x.min() > n)
-      return NGL::FAILED;
-    else
-      return NGL::NONE;
-  }
-  template<class View>
-  ExecStatus
-  LqNGL<View>::prune(Space& home) {
-    return me_failed(x.gr(home,n)) ? ES_FAILED : ES_OK;
-  }
-
-
-  template<class View>
-  forceinline
-  GqNGL<View>::GqNGL(Space& home, View x, int n)
-    : ViewValNGL<View,int,PC_INT_BND>(home,x,n) {}
-  template<class View>
-  forceinline
-  GqNGL<View>::GqNGL(Space& home, GqNGL& ngl)
-    : ViewValNGL<View,int,PC_INT_BND>(home,ngl) {}
-  template<class View>
-  NGL*
-  GqNGL<View>::copy(Space& home) {
-    return new (home) GqNGL<View>(home,*this);
-  }
-  template<class View>
-  NGL::Status
-  GqNGL<View>::status(const Space&) const {
-    if (x.min() >= n)
-      return NGL::SUBSUMED;
-    else if (x.max() < n)
-      return NGL::FAILED;
-    else
-      return NGL::NONE;
-  }
-  template<class View>
-  ExecStatus
-  GqNGL<View>::prune(Space& home) {
-    return me_failed(x.le(home,n)) ? ES_FAILED : ES_OK;
-  }
-
-}}}
+}}} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

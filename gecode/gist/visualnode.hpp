@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,180 +32,190 @@
 
 namespace Gecode { namespace Gist {
 
-  forceinline
-  Extent::Extent(void) : l(-1), r(-1) {}
+    forceinline
+    Extent::Extent(void)
+        : l(-1), r(-1) {}
 
-  forceinline
-  Extent::Extent(int l0, int r0) : l(l0), r(r0) {}
+    forceinline
+    Extent::Extent(int l0, int r0)
+        : l(l0), r(r0) {}
 
-  inline
-  Extent::Extent(int width) {
-    int halfWidth = width / 2;
-    l = 0 - halfWidth;
-    r = 0 + halfWidth;
-  }
-
-  inline void
-  Extent::extend(int deltaL, int deltaR) {
-    l += deltaL; r += deltaR;
-  }
-
-  inline void
-  Extent::move(int delta) {
-    l += delta; r += delta;
-  }
-
-  forceinline int
-  Shape::depth(void) const { return _depth; }
-
-  forceinline void
-  Shape::setDepth(int d) {
-    assert(d <= _depth);
-    _depth = d;
-  }
-
-  forceinline const Extent&
-  Shape::operator [](int i) const {
-    assert(i < _depth);
-    return shape[i];
-  }
-
-  forceinline Extent&
-  Shape::operator [](int i) {
-    assert(i < _depth);
-    return shape[i];
-  }
-
-  inline Shape*
-  Shape::allocate(int d) {
-    assert(d >= 1);
-    Shape* ret;
-    ret =
-      static_cast<Shape*>(heap.ralloc(sizeof(Shape)+(d-1)*sizeof(Extent)));
-    ret->_depth = d;
-    return ret;
-  }
-
-  forceinline void
-  Shape::deallocate(Shape* shape) {
-    if (shape != hidden && shape != leaf)
-      heap.rfree(shape);
-  }
-
-  forceinline bool
-  Shape::getExtentAtDepth(int d, Extent& extent) {
-    if (d > depth())
-      return false;
-    extent = Extent(0,0);
-    for (int i=0; i <= d; i++) {
-      Extent currentExtent = (*this)[i];
-      extent.l += currentExtent.l;
-      extent.r += currentExtent.r;
+    inline Extent::Extent(int width) {
+        int halfWidth = width / 2;
+        l = 0 - halfWidth;
+        r = 0 + halfWidth;
     }
-    return true;
-  }
 
-  forceinline void
-  Shape::computeBoundingBox(void) {
-    int lastLeft = 0;
-    int lastRight = 0;
-    bb.left = 0;
-    bb.right = 0;
-    for (int i=0; i<depth(); i++) {
-      lastLeft = lastLeft + (*this)[i].l;
-      lastRight = lastRight + (*this)[i].r;
-      bb.left = std::min(bb.left,lastLeft);
-      bb.right = std::max(bb.right,lastRight);
+    inline void
+    Extent::extend(int deltaL, int deltaR) {
+        l += deltaL;
+        r += deltaR;
     }
-  }
 
-  forceinline const BoundingBox&
-  Shape::getBoundingBox(void) const {
-    return bb;
-  }
+    inline void
+    Extent::move(int delta) {
+        l += delta;
+        r += delta;
+    }
 
-  forceinline bool
-  VisualNode::isHidden(void) {
-    return getFlag(HIDDEN);
-  }
+    forceinline int
+    Shape::depth(void) const {
+        return _depth;
+    }
 
-  forceinline void
-  VisualNode::setHidden(bool h) {
-    setFlag(HIDDEN, h);
-  }
+    forceinline void
+    Shape::setDepth(int d) {
+        assert(d <= _depth);
+        _depth = d;
+    }
 
-  forceinline void
-  VisualNode::setStop(bool h) {
-    if (getStatus() == BRANCH && h)
-      setStatus(STOP);
-    else if (getStatus() == STOP && !h)
-      setStatus(UNSTOP);
-  }
+    forceinline const Extent&
+    Shape::operator[](int i) const {
+        assert(i < _depth);
+        return shape[i];
+    }
 
-  forceinline int
-  VisualNode::getOffset(void) { return offset; }
+    forceinline Extent&
+    Shape::operator[](int i) {
+        assert(i < _depth);
+        return shape[i];
+    }
 
-  forceinline void
-  VisualNode::setOffset(int n) { offset = n; }
+    inline Shape*
+    Shape::allocate(int d) {
+        assert(d >= 1);
+        Shape* ret;
+        ret = static_cast<Shape*>(heap.ralloc(sizeof(Shape) + (d - 1) * sizeof(Extent)));
+        ret->_depth = d;
+        return ret;
+    }
 
-  forceinline bool
-  VisualNode::isDirty(void) {
-    return getFlag(DIRTY);
-  }
+    forceinline void
+    Shape::deallocate(Shape* shape) {
+        if (shape != hidden && shape != leaf)
+            heap.rfree(shape);
+    }
 
-  forceinline void
-  VisualNode::setDirty(bool d) {
-    setFlag(DIRTY, d);
-  }
+    forceinline bool
+    Shape::getExtentAtDepth(int d, Extent& extent) {
+        if (d > depth())
+            return false;
+        extent = Extent(0, 0);
+        for (int i = 0; i <= d; i++) {
+            Extent currentExtent = (*this)[i];
+            extent.l += currentExtent.l;
+            extent.r += currentExtent.r;
+        }
+        return true;
+    }
 
-  forceinline bool
-  VisualNode::childrenLayoutIsDone(void) {
-    return getFlag(CHILDRENLAYOUTDONE);
-  }
+    forceinline void
+    Shape::computeBoundingBox(void) {
+        int lastLeft = 0;
+        int lastRight = 0;
+        bb.left = 0;
+        bb.right = 0;
+        for (int i = 0; i < depth(); i++) {
+            lastLeft = lastLeft + (*this)[i].l;
+            lastRight = lastRight + (*this)[i].r;
+            bb.left = std::min(bb.left, lastLeft);
+            bb.right = std::max(bb.right, lastRight);
+        }
+    }
 
-  forceinline void
-  VisualNode::setChildrenLayoutDone(bool d) {
-    setFlag(CHILDRENLAYOUTDONE, d);
-  }
+    forceinline const BoundingBox&
+    Shape::getBoundingBox(void) const {
+        return bb;
+    }
 
-  forceinline bool
-  VisualNode::isMarked(void) {
-    return getFlag(MARKED);
-  }
+    forceinline bool
+    VisualNode::isHidden(void) {
+        return getFlag(HIDDEN);
+    }
 
-  forceinline void
-  VisualNode::setMarked(bool m) {
-    setFlag(MARKED, m);
-  }
+    forceinline void
+    VisualNode::setHidden(bool h) {
+        setFlag(HIDDEN, h);
+    }
 
-  forceinline bool
-  VisualNode::isBookmarked(void) {
-    return getFlag(BOOKMARKED);
-  }
+    forceinline void
+    VisualNode::setStop(bool h) {
+        if (getStatus() == BRANCH && h)
+            setStatus(STOP);
+        else if (getStatus() == STOP && !h)
+            setStatus(UNSTOP);
+    }
 
-  forceinline void
-  VisualNode::setBookmarked(bool m) {
-    setFlag(BOOKMARKED, m);
-  }
+    forceinline int
+    VisualNode::getOffset(void) {
+        return offset;
+    }
 
-  forceinline bool
-  VisualNode::isOnPath(void) {
-    return getFlag(ONPATH);
-  }
+    forceinline void
+    VisualNode::setOffset(int n) {
+        offset = n;
+    }
 
-  forceinline void
-  VisualNode::setOnPath(bool b) {
-    setFlag(ONPATH, b);
-  }
+    forceinline bool
+    VisualNode::isDirty(void) {
+        return getFlag(DIRTY);
+    }
 
-  forceinline Shape*
-  VisualNode::getShape(void) {
-    return isHidden() ? Shape::hidden : shape;
-  }
+    forceinline void
+    VisualNode::setDirty(bool d) {
+        setFlag(DIRTY, d);
+    }
 
-  forceinline BoundingBox
-  VisualNode::getBoundingBox(void) { return getShape()->getBoundingBox(); }
+    forceinline bool
+    VisualNode::childrenLayoutIsDone(void) {
+        return getFlag(CHILDRENLAYOUTDONE);
+    }
 
-}}
+    forceinline void
+    VisualNode::setChildrenLayoutDone(bool d) {
+        setFlag(CHILDRENLAYOUTDONE, d);
+    }
+
+    forceinline bool
+    VisualNode::isMarked(void) {
+        return getFlag(MARKED);
+    }
+
+    forceinline void
+    VisualNode::setMarked(bool m) {
+        setFlag(MARKED, m);
+    }
+
+    forceinline bool
+    VisualNode::isBookmarked(void) {
+        return getFlag(BOOKMARKED);
+    }
+
+    forceinline void
+    VisualNode::setBookmarked(bool m) {
+        setFlag(BOOKMARKED, m);
+    }
+
+    forceinline bool
+    VisualNode::isOnPath(void) {
+        return getFlag(ONPATH);
+    }
+
+    forceinline void
+    VisualNode::setOnPath(bool b) {
+        setFlag(ONPATH, b);
+    }
+
+    forceinline Shape*
+    VisualNode::getShape(void) {
+        return isHidden() ? Shape::hidden : shape;
+    }
+
+    forceinline BoundingBox
+    VisualNode::getBoundingBox(void) {
+        return getShape()->getBoundingBox();
+    }
+
+}} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

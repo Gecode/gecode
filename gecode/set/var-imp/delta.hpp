@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,40 +34,39 @@
 
 namespace Gecode { namespace Set {
 
-  forceinline
-  SetDelta::SetDelta(void) : _glbMin(1), _glbMax(0), _lubMin(1), _lubMax(0) {}
+    forceinline
+    SetDelta::SetDelta(void)
+        : _glbMin(1), _glbMax(0), _lubMin(1), _lubMax(0) {}
 
-  forceinline
-  SetDelta::SetDelta(int glbMin, int glbMax,
-                     int lubMin, int lubMax)
-    : _glbMin(glbMin), _glbMax(glbMax),
-      _lubMin(lubMin), _lubMax(lubMax) {}
+    forceinline
+    SetDelta::SetDelta(int glbMin, int glbMax, int lubMin, int lubMax)
+        : _glbMin(glbMin), _glbMax(glbMax), _lubMin(lubMin), _lubMax(lubMax) {}
 
-  forceinline int
-  SetDelta::glbMin(void) const {
-    return _glbMin;
-  }
-  forceinline int
-  SetDelta::glbMax(void) const {
-    return _glbMax;
-  }
-  forceinline int
-  SetDelta::lubMin(void) const {
-    return _lubMin;
-  }
-  forceinline int
-  SetDelta::lubMax(void) const {
-    return _lubMax;
-  }
-  forceinline bool
-  SetDelta::glbAny(void) const {
-    return _glbMin > _glbMax;
-  }
-  forceinline bool
-  SetDelta::lubAny(void) const {
-    return _lubMin > _lubMax;
-  }
+    forceinline int
+    SetDelta::glbMin(void) const {
+        return _glbMin;
+    }
+    forceinline int
+    SetDelta::glbMax(void) const {
+        return _glbMax;
+    }
+    forceinline int
+    SetDelta::lubMin(void) const {
+        return _lubMin;
+    }
+    forceinline int
+    SetDelta::lubMax(void) const {
+        return _lubMax;
+    }
+    forceinline bool
+    SetDelta::glbAny(void) const {
+        return _glbMin > _glbMax;
+    }
+    forceinline bool
+    SetDelta::lubAny(void) const {
+        return _lubMin > _lubMax;
+    }
 
-}}
+}} // namespace Gecode::Set
 
 // STATISTICS: set-var

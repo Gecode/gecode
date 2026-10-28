@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,57 +37,58 @@
 
 namespace Gecode { namespace Search {
 
-  /// Class for a sentinel no-good literal
-  class GECODE_VTABLE_EXPORT NoNGL : public NGL {
-  public:
-    /// Constructor for creation
-    NoNGL(void);
-    /// Constructor for creation
-    NoNGL(Space& home);
-    /// Constructor for cloning \a ngl
-    NoNGL(Space& home, NoNGL& ngl);
-    /// Subscribe propagator \a p to all views of the no-good literal
-    virtual void subscribe(Space& home, Propagator& p);
-    /// Schedule propagator \a p for all views of the no-good literal
-    virtual void reschedule(Space& home, Propagator& p);
-    /// Cancel propagator \a p from all views of the no-good literal
-    virtual void cancel(Space& home, Propagator& p);
-    /// Test the status of the no-good literal
-    virtual NGL::Status status(const Space& home) const;
-    /// Propagate the negation of the no-good literal
-    virtual ExecStatus prune(Space& home);
-    /// Create copy
-    virtual NGL* copy(Space& home);
-  };
+    /// Class for a sentinel no-good literal
+    class GECODE_VTABLE_EXPORT NoNGL : public NGL {
+    public:
+        /// Constructor for creation
+        NoNGL(void);
+        /// Constructor for creation
+        NoNGL(Space& home);
+        /// Constructor for cloning \a ngl
+        NoNGL(Space& home, NoNGL& ngl);
+        /// Subscribe propagator \a p to all views of the no-good literal
+        virtual void subscribe(Space& home, Propagator& p);
+        /// Schedule propagator \a p for all views of the no-good literal
+        virtual void reschedule(Space& home, Propagator& p);
+        /// Cancel propagator \a p from all views of the no-good literal
+        virtual void cancel(Space& home, Propagator& p);
+        /// Test the status of the no-good literal
+        virtual NGL::Status status(const Space& home) const;
+        /// Propagate the negation of the no-good literal
+        virtual ExecStatus prune(Space& home);
+        /// Create copy
+        virtual NGL* copy(Space& home);
+    };
 
-  /// No-good propagator
-  class GECODE_SEARCH_EXPORT NoGoodsProp : public Propagator {
-  protected:
-    /// Root of no-good literal tree
-    NGL* root;
-    /// Number of no-good literals with subscriptions
-    unsigned int n;
-    /// Constructor for creation
-    NoGoodsProp(Space& home, NGL* root);
-    /// Constructor for cloning \a p
-    NoGoodsProp(Space& home, NoGoodsProp& p);
-  public:
-    /// Perform copying during cloning
-    virtual Actor* copy(Space& home);
-    /// Const function (defined as low unary)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for path \a p
-    template<class Path>
-    static ExecStatus post(Space& home, const Path& p);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
+    /// No-good propagator
+    class GECODE_SEARCH_EXPORT NoGoodsProp : public Propagator {
+    protected:
+        /// Root of no-good literal tree
+        NGL* root;
+        /// Number of no-good literals with subscriptions
+        unsigned int n;
+        /// Constructor for creation
+        NoGoodsProp(Space& home, NGL* root);
+        /// Constructor for cloning \a p
+        NoGoodsProp(Space& home, NoGoodsProp& p);
 
-}}
+    public:
+        /// Perform copying during cloning
+        virtual Actor* copy(Space& home);
+        /// Const function (defined as low unary)
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for path \a p
+        template <class Path>
+        static ExecStatus post(Space& home, const Path& p);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+    };
+
+}} // namespace Gecode::Search
 
 #include <gecode/search/nogoods.hpp>
 

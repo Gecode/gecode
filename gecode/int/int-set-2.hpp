@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,17 +32,17 @@
 
 namespace Gecode {
 
-  /// Initialize integer set with integer arguments
-  template<>
-  class IntSetInit<IntArgs> {
-  public:
-    static void init(IntSet& s, const IntArgs& i) {
-      if (i.size() > 0)
-        s.init(&i[0],i.size());
-    }
-  };
+    /// Initialize integer set with integer arguments
+    template <>
+    class IntSetInit<IntArgs> {
+    public:
+        static void
+        init(IntSet& s, const IntArgs& i) {
+            if (i.size() > 0)
+                s.init(&i[0], i.size());
+        }
+    };
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-var
-

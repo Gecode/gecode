@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,76 +37,72 @@
 
 namespace Gecode { namespace Search {
 
-  /// Clone space \a s depending on options \a o
-  forceinline Space*
-  snapshot(Space* s, const Options& o);
+    /// Clone space \a s depending on options \a o
+    forceinline Space* snapshot(Space* s, const Options& o);
 
-  /// Virtualize a worker to an engine
-  template<class Worker>
-  class WorkerToEngine : public Engine {
-  protected:
-    /// The worker to wrap into an engine
-    Worker w;
-  public:
-    /// Initialization
-    WorkerToEngine(Space* s, const Options& o);
-    /// Return next solution (nullptr, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Search::Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
-    /// Constrain future solutions to be better than \a b
-    virtual void constrain(const Space& b);
-    /// Reset engine to restart at space \a s
-    virtual void reset(Space* s);
-    /// Return no-goods
-    virtual NoGoods& nogoods(void);
-  };
+    /// Virtualize a worker to an engine
+    template <class Worker>
+    class WorkerToEngine : public Engine {
+    protected:
+        /// The worker to wrap into an engine
+        Worker w;
 
+    public:
+        /// Initialization
+        WorkerToEngine(Space* s, const Options& o);
+        /// Return next solution (nullptr, if none exists or search has been stopped)
+        virtual Space* next(void);
+        /// Return statistics
+        virtual Search::Statistics statistics(void) const;
+        /// Check whether engine has been stopped
+        virtual bool stopped(void) const;
+        /// Constrain future solutions to be better than \a b
+        virtual void constrain(const Space& b);
+        /// Reset engine to restart at space \a s
+        virtual void reset(Space* s);
+        /// Return no-goods
+        virtual NoGoods& nogoods(void);
+    };
 
+    forceinline Space*
+    snapshot(Space* s, const Options& o) {
+        return o.clone ? s->clone() : s;
+    }
 
-  forceinline Space*
-  snapshot(Space* s, const Options& o) {
-    return o.clone ? s->clone() : s;
-  }
+    template <class Worker>
+    WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o) : Engine(o, 1U), w(s, o) {}
+    template <class Worker>
+    Space*
+    WorkerToEngine<Worker>::next(void) {
+        return w.next();
+    }
+    template <class Worker>
+    Search::Statistics
+    WorkerToEngine<Worker>::statistics(void) const {
+        return w.statistics();
+    }
+    template <class Worker>
+    bool
+    WorkerToEngine<Worker>::stopped(void) const {
+        return w.stopped();
+    }
+    template <class Worker>
+    void
+    WorkerToEngine<Worker>::reset(Space* s) {
+        w.reset(s);
+    }
+    template <class Worker>
+    void
+    WorkerToEngine<Worker>::constrain(const Space& b) {
+        w.constrain(b);
+    }
+    template <class Worker>
+    NoGoods&
+    WorkerToEngine<Worker>::nogoods(void) {
+        return w.nogoods();
+    }
 
-
-  template<class Worker>
-  WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o)
-    : Engine(o,1U), w(s,o) {}
-  template<class Worker>
-  Space*
-  WorkerToEngine<Worker>::next(void) {
-    return w.next();
-  }
-  template<class Worker>
-  Search::Statistics
-  WorkerToEngine<Worker>::statistics(void) const {
-    return w.statistics();
-  }
-  template<class Worker>
-  bool
-  WorkerToEngine<Worker>::stopped(void) const {
-    return w.stopped();
-  }
-  template<class Worker>
-  void
-  WorkerToEngine<Worker>::reset(Space* s) {
-    w.reset(s);
-  }
-  template<class Worker>
-  void
-  WorkerToEngine<Worker>::constrain(const Space& b) {
-    w.constrain(b);
-  }
-  template<class Worker>
-  NoGoods&
-  WorkerToEngine<Worker>::nogoods(void) {
-    return w.nogoods();
-  }
-
-}}
+}} // namespace Gecode::Search
 
 #endif
 

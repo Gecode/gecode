@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
@@ -51,127 +50,146 @@ using namespace Gecode::Int;
 #ifdef GECODE_HAS_FLOAT_VARS
 namespace Gecode { namespace Int {
 
-  /// VarArg type for %Set views
-  template<>
-  class ViewToVarArg<Gecode::Float::FloatView> {
-  public:
-    typedef Gecode::FloatVarArgs argtype;
-  };
+    /// VarArg type for %Set views
+    template <>
+    class ViewToVarArg<Gecode::Float::FloatView> {
+    public:
+        typedef Gecode::FloatVarArgs argtype;
+    };
 
-}}
+}} // namespace Gecode::Int
 #endif
 
 namespace Gecode { namespace FlatZinc {
 
-  template<class View, class SetLastVal>
-  class LastVal : public Propagator {
-  protected:
-    /// Array of views and their indices
-    IdxViewArray<View> x;
+    template <class View, class SetLastVal>
+    class LastVal : public Propagator {
+    protected:
+        /// Array of views and their indices
+        IdxViewArray<View> x;
 
-    /// Constructor for cloning \a p
-    LastVal(Space& home, LastVal& p) : Propagator(home,p) {
-      x.update(home, p.x);
-    };
-    /// Constructor for posting
-    LastVal(FlatZincSpace& home, IdxViewArray<View> x0) : Propagator(home), x(x0) {
-      x.subscribe(home, *this, PC_GEN_ASSIGNED);
-      for (int i = 0; i < x.size(); ++i) {
-        SetLastVal::init_last_val(home, x[i].idx, x[i].view);
-      }
-    }
-  public:
-    /// Record (and forget) the values of any assigned views in \a x in the right position in \a last_val.
-    static void record_assigned(FlatZincSpace& home, IdxViewArray<View>& x) {
-      int n = x.size();
-      for (int i = n; i--; ) {
-        if (x[i].view.assigned()) {
-          SetLastVal::set_last_val(home, x[i].idx, x[i].view);
-          x[i] = x[--n];
+        /// Constructor for cloning \a p
+        LastVal(Space& home, LastVal& p) : Propagator(home, p) {
+            x.update(home, p.x);
+        };
+        /// Constructor for posting
+        LastVal(FlatZincSpace& home, IdxViewArray<View> x0) : Propagator(home), x(x0) {
+            x.subscribe(home, *this, PC_GEN_ASSIGNED);
+            for (int i = 0; i < x.size(); ++i) {
+                SetLastVal::init_last_val(home, x[i].idx, x[i].view);
+            }
         }
-      }
-      x.size(n);
-    }
 
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home){ return new (home) LastVal(home,*this); }
-    virtual void reschedule(Space &home) {
-      x.reschedule(home, *this, PC_GEN_ASSIGNED);
-    }
-    /// Cost function
-    virtual PropCost cost(const Space& /* home */, const ModEventDelta& /* med */) const { return PropCost::record(); }
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& /* med */) {
-      record_assigned(static_cast<FlatZincSpace&>(home), x);
-      if (x.size() == 0) {
-        return home.ES_SUBSUMED(*this);
-      } else {
-        return ES_FIX;
-      }
-    }
+    public:
+        /// Record (and forget) the values of any assigned views in \a x in the right position in \a last_val.
+        static void
+        record_assigned(FlatZincSpace& home, IdxViewArray<View>& x) {
+            int n = x.size();
+            for (int i = n; i--;) {
+                if (x[i].view.assigned()) {
+                    SetLastVal::set_last_val(home, x[i].idx, x[i].view);
+                    x[i] = x[--n];
+                }
+            }
+            x.size(n);
+        }
 
-    /// Post propagator
-    static ExecStatus post(FlatZincSpace& home, const typename ViewToVarArg<View>::argtype& x) {
-      IdxViewArray<View> ix(home, x);
-      record_assigned(home, ix);
-      if (ix.size() > 0) {
-        (void) new (home) LastVal(home, ix);
-      }
-      return ES_OK;
-    }
-  };
+        /// Copy propagator during cloning
+        virtual Actor*
+        copy(Space& home) {
+            return new (home) LastVal(home, *this);
+        }
+        virtual void
+        reschedule(Space& home) {
+            x.reschedule(home, *this, PC_GEN_ASSIGNED);
+        }
+        /// Cost function
+        virtual PropCost
+        cost(const Space& /* home */, const ModEventDelta& /* med */) const {
+            return PropCost::record();
+        }
+        /// Perform propagation
+        virtual ExecStatus
+        propagate(Space& home, const ModEventDelta& /* med */) {
+            record_assigned(static_cast<FlatZincSpace&>(home), x);
+            if (x.size() == 0) {
+                return home.ES_SUBSUMED(*this);
+            } else {
+                return ES_FIX;
+            }
+        }
 
-  class SetIntLastVal {
-  public:
-    static void init_last_val(FlatZincSpace& home, size_t idx, IntView& var) {
-      home.restart_data().last_val_int[idx] = var.min();
-    }
-    static void set_last_val(FlatZincSpace& home, size_t idx, IntView& var) {
-      home.restart_data().last_val_int[idx] = var.val();
-    }
-  };
-  typedef LastVal<IntView, SetIntLastVal> LastValInt;
+        /// Post propagator
+        static ExecStatus
+        post(FlatZincSpace& home, const typename ViewToVarArg<View>::argtype& x) {
+            IdxViewArray<View> ix(home, x);
+            record_assigned(home, ix);
+            if (ix.size() > 0) {
+                (void)new (home) LastVal(home, ix);
+            }
+            return ES_OK;
+        }
+    };
 
-  class SetBoolLastVal {
-  public:
-    static void init_last_val(FlatZincSpace& home, size_t idx, BoolView& var) {
-      home.restart_data().last_val_bool[idx] = var.min();
-    }
-    static void set_last_val(FlatZincSpace& home, size_t idx, BoolView& var) {
-      home.restart_data().last_val_bool[idx] = var.val();
-    }
-  };
-  typedef LastVal<BoolView, SetBoolLastVal> LastValBool;
+    class SetIntLastVal {
+    public:
+        static void
+        init_last_val(FlatZincSpace& home, size_t idx, IntView& var) {
+            home.restart_data().last_val_int[idx] = var.min();
+        }
+        static void
+        set_last_val(FlatZincSpace& home, size_t idx, IntView& var) {
+            home.restart_data().last_val_int[idx] = var.val();
+        }
+    };
+    typedef LastVal<IntView, SetIntLastVal> LastValInt;
+
+    class SetBoolLastVal {
+    public:
+        static void
+        init_last_val(FlatZincSpace& home, size_t idx, BoolView& var) {
+            home.restart_data().last_val_bool[idx] = var.min();
+        }
+        static void
+        set_last_val(FlatZincSpace& home, size_t idx, BoolView& var) {
+            home.restart_data().last_val_bool[idx] = var.val();
+        }
+    };
+    typedef LastVal<BoolView, SetBoolLastVal> LastValBool;
 
 #ifdef GECODE_HAS_FLOAT_VARS
-  class SetFloatLastVal {
-  public:
-    static void init_last_val(FlatZincSpace& home, size_t idx, Float::FloatView& var) {
-      home.restart_data().last_val_float[idx] = var.min();
-    }
-    static void set_last_val(FlatZincSpace& home, size_t idx, Float::FloatView& var) {
-      home.restart_data().last_val_float[idx] = var.val();
-    }
-  };
-  typedef LastVal<Float::FloatView, SetFloatLastVal> LastValFloat;
+    class SetFloatLastVal {
+    public:
+        static void
+        init_last_val(FlatZincSpace& home, size_t idx, Float::FloatView& var) {
+            home.restart_data().last_val_float[idx] = var.min();
+        }
+        static void
+        set_last_val(FlatZincSpace& home, size_t idx, Float::FloatView& var) {
+            home.restart_data().last_val_float[idx] = var.val();
+        }
+    };
+    typedef LastVal<Float::FloatView, SetFloatLastVal> LastValFloat;
 #endif
 
 #ifdef GECODE_HAS_SET_VARS
-  class SetIntSetLastVal {
-  public:
-    static void init_last_val(FlatZincSpace& home, size_t idx, Set::SetView& var) {
-      Set::GlbRanges<Set::SetView> lb(var);
-      home.restart_data().last_val_set[idx] = IntSet(lb);
-    }
-    static void set_last_val(FlatZincSpace& home, size_t idx, Set::SetView& var) {
-      Set::GlbRanges<Set::SetView> lb(var);
-      home.restart_data().last_val_set[idx] = IntSet(lb);
-    }
-  };
-  typedef LastVal<Set::SetView, SetIntSetLastVal> LastValSet;
+    class SetIntSetLastVal {
+    public:
+        static void
+        init_last_val(FlatZincSpace& home, size_t idx, Set::SetView& var) {
+            Set::GlbRanges<Set::SetView> lb(var);
+            home.restart_data().last_val_set[idx] = IntSet(lb);
+        }
+        static void
+        set_last_val(FlatZincSpace& home, size_t idx, Set::SetView& var) {
+            Set::GlbRanges<Set::SetView> lb(var);
+            home.restart_data().last_val_set[idx] = IntSet(lb);
+        }
+    };
+    typedef LastVal<Set::SetView, SetIntSetLastVal> LastValSet;
 #endif
 
-}}
+}} // namespace Gecode::FlatZinc
 
 #endif //__FLATZINC_LASTVAL_HH__
 

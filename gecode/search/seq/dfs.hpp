@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,153 +32,147 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  template<class Tracer>
-  forceinline
-  DFS<Tracer>::DFS(Space* s, const Options& o)
-    : tracer(o.tracer), opt(o), path(opt.nogoods_limit), d(0) {
-    if (tracer) {
-      tracer.engine(SearchTracer::EngineType::DFS, 1U);
-      tracer.worker();
-    }
-    if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
-      fail++;
-      cur = nullptr;
-      if (!opt.clone)
-        delete s;
-    } else {
-      cur = snapshot(s,opt);
-    }
-  }
-
-  template<class Tracer>
-  forceinline void
-  DFS<Tracer>::reset(Space* s) {
-    tracer.round();
-    delete cur;
-    path.reset();
-    d = 0;
-    if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
-      delete s;
-      cur = nullptr;
-    } else {
-      cur = s;
-    }
-    Worker::reset();
-  }
-
-  template<class Tracer>
-  forceinline NoGoods&
-  DFS<Tracer>::nogoods(void) {
-    return path;
-  }
-
-  template<class Tracer>
-  forceinline Space*
-  DFS<Tracer>::next(void) {
-    /*
-     * The engine maintains the following invariant:
-     *  - If the current space (cur) is not nullptr, the path always points
-     *    to exactly that space.
-     *  - If the current space (cur) is nullptr, the path always points
-     *    to the next space (if there is any).
-     *
-     * This invariant is needed so that no-goods can be extracted properly
-     * when the engine is stopped or has found a solution.
-     *
-     */
-    start();
-    while (true) {
-      if (stop_seq(opt))
-        return nullptr;
-      while (cur == nullptr) {
-        if (path.empty())
-          return nullptr;
-        cur = path.recompute(d,opt.a_d,*this,tracer);
-        if (cur != nullptr)
-          break;
-        path.next();
-      }
-      node++;
-      SearchTracer::EdgeInfo ei;
-      if (tracer && (path.entries() > 0)) {
-        typename Path<Tracer>::Edge& top = path.top();
-        ei.init(tracer.wid(), top.nid(), top.truealt(), *cur, *top.choice());
-      }
-      unsigned int nid = tracer.nid();
-      switch (cur->status(*this)) {
-      case SS_FAILED:
+    template <class Tracer>
+    forceinline
+    DFS<Tracer>::DFS(Space* s, const Options& o)
+        : tracer(o.tracer), opt(o), path(opt.nogoods_limit), d(0) {
         if (tracer) {
-          SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED,
-                                    tracer.wid(), nid, *cur);
-          tracer.node(ei,ni);
+            tracer.engine(SearchTracer::EngineType::DFS, 1U);
+            tracer.worker();
         }
-        fail++;
-        delete cur;
-        cur = nullptr;
-        path.next();
-        break;
-      case SS_SOLVED:
-        {
-          if (tracer) {
-            SearchTracer::NodeInfo ni(SearchTracer::NodeType::SOLVED,
-                                      tracer.wid(), nid, *cur);
-            tracer.node(ei,ni);
-          }
-          // Deletes all pending branchers
-          (void) cur->choice();
-          Space* s = cur;
-          cur = nullptr;
-          path.next();
-          return s;
+        if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
+            fail++;
+            cur = nullptr;
+            if (!opt.clone)
+                delete s;
+        } else {
+            cur = snapshot(s, opt);
         }
-      case SS_BRANCH:
-        {
-          Space* c;
-          if ((d == 0) || (d >= opt.c_d)) {
-            c = cur->clone();
-            d = 1;
-          } else {
-            c = nullptr;
-            d++;
-          }
-          const Choice* ch = path.push(*this,cur,c,nid);
-          if (tracer) {
-            SearchTracer::NodeInfo ni(SearchTracer::NodeType::BRANCH,
-                                      tracer.wid(), nid, *cur, ch);
-            tracer.node(ei,ni);
-          }
-          cur->commit(*ch,0);
-          break;
-        }
-      default:
-        GECODE_NEVER;
-      }
     }
-    GECODE_NEVER;
-    return nullptr;
-  }
 
-  template<class Tracer>
-  forceinline Statistics
-  DFS<Tracer>::statistics(void) const {
-    return *this;
-  }
+    template <class Tracer>
+    forceinline void
+    DFS<Tracer>::reset(Space* s) {
+        tracer.round();
+        delete cur;
+        path.reset();
+        d = 0;
+        if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
+            delete s;
+            cur = nullptr;
+        } else {
+            cur = s;
+        }
+        Worker::reset();
+    }
 
-  template<class Tracer>
-  forceinline void
-  DFS<Tracer>::constrain(const Space& b) {
-    (void) b;
-    assert(false);
-  }
+    template <class Tracer>
+    forceinline NoGoods&
+    DFS<Tracer>::nogoods(void) {
+        return path;
+    }
 
-  template<class Tracer>
-  forceinline
-  DFS<Tracer>::~DFS(void) {
-    delete cur;
-    tracer.done();
-    path.reset();
-  }
+    template <class Tracer>
+    forceinline Space*
+    DFS<Tracer>::next(void) {
+        /*
+         * The engine maintains the following invariant:
+         *  - If the current space (cur) is not nullptr, the path always points
+         *    to exactly that space.
+         *  - If the current space (cur) is nullptr, the path always points
+         *    to the next space (if there is any).
+         *
+         * This invariant is needed so that no-goods can be extracted properly
+         * when the engine is stopped or has found a solution.
+         *
+         */
+        start();
+        while (true) {
+            if (stop_seq(opt))
+                return nullptr;
+            while (cur == nullptr) {
+                if (path.empty())
+                    return nullptr;
+                cur = path.recompute(d, opt.a_d, *this, tracer);
+                if (cur != nullptr)
+                    break;
+                path.next();
+            }
+            node++;
+            SearchTracer::EdgeInfo ei;
+            if (tracer && (path.entries() > 0)) {
+                typename Path<Tracer>::Edge& top = path.top();
+                ei.init(tracer.wid(), top.nid(), top.truealt(), *cur, *top.choice());
+            }
+            unsigned int nid = tracer.nid();
+            switch (cur->status(*this)) {
+            case SS_FAILED:
+                if (tracer) {
+                    SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED, tracer.wid(), nid, *cur);
+                    tracer.node(ei, ni);
+                }
+                fail++;
+                delete cur;
+                cur = nullptr;
+                path.next();
+                break;
+            case SS_SOLVED: {
+                if (tracer) {
+                    SearchTracer::NodeInfo ni(SearchTracer::NodeType::SOLVED, tracer.wid(), nid, *cur);
+                    tracer.node(ei, ni);
+                }
+                // Deletes all pending branchers
+                (void)cur->choice();
+                Space* s = cur;
+                cur = nullptr;
+                path.next();
+                return s;
+            }
+            case SS_BRANCH: {
+                Space* c;
+                if ((d == 0) || (d >= opt.c_d)) {
+                    c = cur->clone();
+                    d = 1;
+                } else {
+                    c = nullptr;
+                    d++;
+                }
+                const Choice* ch = path.push(*this, cur, c, nid);
+                if (tracer) {
+                    SearchTracer::NodeInfo ni(SearchTracer::NodeType::BRANCH, tracer.wid(), nid, *cur, ch);
+                    tracer.node(ei, ni);
+                }
+                cur->commit(*ch, 0);
+                break;
+            }
+            default:
+                GECODE_NEVER;
+            }
+        }
+        GECODE_NEVER;
+        return nullptr;
+    }
 
-}}}
+    template <class Tracer>
+    forceinline Statistics
+    DFS<Tracer>::statistics(void) const {
+        return *this;
+    }
+
+    template <class Tracer>
+    forceinline void
+    DFS<Tracer>::constrain(const Space& b) {
+        (void)b;
+        assert(false);
+    }
+
+    template <class Tracer>
+    forceinline DFS<Tracer>::~DFS(void) {
+        delete cur;
+        tracer.done();
+        path.reset();
+    }
+
+}}} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

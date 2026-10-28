@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -41,39 +40,35 @@
 
 namespace Gecode {
 
-  void
-  exp(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Transcendental::Exp<FloatView,FloatView>
-                    ::post(home,x0,x1)));
-  }
+    void
+    exp(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Transcendental::Exp<FloatView, FloatView>::post(home, x0, x1)));
+    }
 
-  void
-  log(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Transcendental::Exp<FloatView,FloatView>
-                    ::post(home,x1,x0)));
-  }
+    void
+    log(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Transcendental::Exp<FloatView, FloatView>::post(home, x1, x0)));
+    }
 
-  void
-  log(Home home, FloatNum base, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Transcendental::Pow<FloatView,FloatView>
-                    ::post(home,base,x1,x0)));
-  }
+    void
+    log(Home home, FloatNum base, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Transcendental::Pow<FloatView, FloatView>::post(home, base, x1, x0)));
+    }
 
-  void
-  pow(Home home, FloatNum base, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Transcendental::Pow<FloatView,FloatView>
-                    ::post(home,base,x0,x1)));
-  }
+    void
+    pow(Home home, FloatNum base, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Transcendental::Pow<FloatView, FloatView>::post(home, base, x0, x1)));
+    }
 
-}
+} // namespace Gecode
 
 #endif
 

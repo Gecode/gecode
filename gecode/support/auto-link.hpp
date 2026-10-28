@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -54,10 +53,8 @@
 #define GECODE_DLL_RELEASE "r"
 #endif
 
-#pragma comment(lib, \
-  GECODE_DLL_USERPREFIX "Gecode" GECODE_LIBRARY_NAME\
-  "-" GECODE_LIBRARY_VERSION \
-  "-" GECODE_DLL_RELEASE "-" GECODE_DLL_PLATFORM GECODE_DLL_USERSUFFIX)
+#pragma comment(lib, GECODE_DLL_USERPREFIX "Gecode" GECODE_LIBRARY_NAME "-" GECODE_LIBRARY_VERSION                     \
+                                           "-" GECODE_DLL_RELEASE "-" GECODE_DLL_PLATFORM GECODE_DLL_USERSUFFIX)
 
 #undef GECODE_DLL_PLATFORM
 #undef GECODE_DLL_RELEASE

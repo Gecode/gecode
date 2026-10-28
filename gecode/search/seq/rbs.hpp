@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,74 +34,69 @@
  *
  */
 
-
 namespace Gecode { namespace Search { namespace Seq {
 
-  forceinline
-  RestartStop::RestartStop(Stop* s)
-    : l(0U), m_stop(s), e_stopped(false) {}
+    forceinline
+    RestartStop::RestartStop(Stop* s)
+        : l(0U), m_stop(s), e_stopped(false) {}
 
-  forceinline unsigned long int
-  RestartStop::restarts(void) const {
-    Support::Lock lock(m);
-    return m_stat.restart;
-  }
+    forceinline unsigned long int
+    RestartStop::restarts(void) const {
+        Support::Lock lock(m);
+        return m_stat.restart;
+    }
 
-  forceinline void
-  RestartStop::restart(void) {
-    Support::Lock lock(m);
-    m_stat.restart++;
-  }
+    forceinline void
+    RestartStop::restart(void) {
+        Support::Lock lock(m);
+        m_stat.restart++;
+    }
 
-  forceinline void
-  RestartStop::nogood(unsigned long int n) {
-    Support::Lock lock(m);
-    m_stat.nogood += n;
-  }
+    forceinline void
+    RestartStop::nogood(unsigned long int n) {
+        Support::Lock lock(m);
+        m_stat.nogood += n;
+    }
 
-  forceinline SpaceStatus
-  RestartStop::status(Space* s) {
-    Support::Lock lock(m);
-    return s->status(m_stat);
-  }
+    forceinline SpaceStatus
+    RestartStop::status(Space* s) {
+        Support::Lock lock(m);
+        return s->status(m_stat);
+    }
 
-  forceinline void
-  RestartStop::limit(const Search::Statistics& s, unsigned long long int l0) {
-    Support::Lock lock(m);
-    l = l0;
-    m_stat += s;
-    e_stopped = false;
-  }
+    forceinline void
+    RestartStop::limit(const Search::Statistics& s, unsigned long long int l0) {
+        Support::Lock lock(m);
+        l = l0;
+        m_stat += s;
+        e_stopped = false;
+    }
 
-  forceinline void
-  RestartStop::update(const Search::Statistics& s) {
-    Support::Lock lock(m);
-    m_stat += s;
-  }
+    forceinline void
+    RestartStop::update(const Search::Statistics& s) {
+        Support::Lock lock(m);
+        m_stat += s;
+    }
 
-  forceinline bool
-  RestartStop::enginestopped(void) const {
-    Support::Lock lock(m);
-    return e_stopped;
-  }
+    forceinline bool
+    RestartStop::enginestopped(void) const {
+        Support::Lock lock(m);
+        return e_stopped;
+    }
 
-  forceinline Statistics
-  RestartStop::metastatistics(void) const {
-    Support::Lock lock(m);
-    return m_stat;
-  }
+    forceinline Statistics
+    RestartStop::metastatistics(void) const {
+        Support::Lock lock(m);
+        return m_stat;
+    }
 
+    forceinline
+    RBS::RBS(Space* s, RestartStop* stop0, Engine* e0, const Search::Statistics& stat, const Options& opt, bool best0)
+        : e(e0), master(s), last(nullptr), co(opt.cutoff), stop(stop0), sslr(0), complete(true), restart(false),
+          best(best0) {
+        stop->limit(stat, (*co)());
+    }
 
-  forceinline
-  RBS::RBS(Space* s, RestartStop* stop0,
-           Engine* e0, const Search::Statistics& stat, const Options& opt,
-           bool best0)
-    : e(e0), master(s), last(nullptr), co(opt.cutoff), stop(stop0),
-      sslr(0),
-      complete(true), restart(false), best(best0) {
-    stop->limit(stat,(*co)());
-  }
-
-}}}
+}}} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

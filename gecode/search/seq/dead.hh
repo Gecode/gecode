@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,10 +37,10 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  GECODE_SEARCH_EXPORT
-  Engine* dead(const Options& o, const Statistics& stat);
+    GECODE_SEARCH_EXPORT
+    Engine* dead(const Options& o, const Statistics& stat);
 
-}}}
+}}} // namespace Gecode::Search::Seq
 
 #endif
 

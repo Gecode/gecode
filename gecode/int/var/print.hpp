@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,20 +32,20 @@
 
 namespace Gecode {
 
-  template<class Char, class Traits>
-  inline std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const IntVar& x) {
-    Int::IntView vx(x);
-    return os << vx;
-  }
+    template <class Char, class Traits>
+    inline std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const IntVar& x) {
+        Int::IntView vx(x);
+        return os << vx;
+    }
 
-  template<class Char, class Traits>
-  inline std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const BoolVar& x) {
-    Int::BoolView vx(x);
-    return os << vx;
-  }
+    template <class Char, class Traits>
+    inline std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const BoolVar& x) {
+        Int::BoolView vx(x);
+        return os << vx;
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-var

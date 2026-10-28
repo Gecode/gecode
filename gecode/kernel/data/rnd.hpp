@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,149 +34,151 @@
 
 namespace Gecode {
 
-  /**
-   * \brief Random number generator
-   * \ingroup TaskModel
-   */
-  class Rnd : public SharedHandle {
-  private:
-    /// Implementation of generator
-    class IMP : public SharedHandle::Object {
-    protected:
-      /// Mutex for locking
-      GECODE_KERNEL_EXPORT static Support::Mutex m;
-      /// The actual generator
-      Support::RandomGenerator rg;
+    /**
+     * \brief Random number generator
+     * \ingroup TaskModel
+     */
+    class Rnd : public SharedHandle {
+    private:
+        /// Implementation of generator
+        class IMP : public SharedHandle::Object {
+        protected:
+            /// Mutex for locking
+            GECODE_KERNEL_EXPORT static Support::Mutex m;
+            /// The actual generator
+            Support::RandomGenerator rg;
+
+        public:
+            /// Initialize generator with seed \a s
+            IMP(unsigned int s);
+            /// Return seed
+            unsigned int seed(void) const;
+            /// Set seed to \a s
+            void seed(unsigned int s);
+            /// Returns a random integer from the interval \f$[0\ldots n)\f$
+            unsigned int operator()(unsigned int n);
+            /// Returns a random integer from the interval \f$[0\ldots n)\f$
+            int operator()(int n);
+            /// Returns a random integer from the interval \f$[0\ldots n)\f$
+            unsigned long long int operator()(unsigned long long int n);
+            /// Returns a random integer from the interval \f$[0\ldots n)\f$
+            long long int operator()(long long int n);
+            /// Delete implemenentation
+            virtual ~IMP(void);
+        };
+        /// Set the current seed to \a s (initializes if needed)
+        void _seed(unsigned int s);
+
     public:
-      /// Initialize generator with seed \a s
-      IMP(unsigned int s);
-      /// Return seed
-      unsigned int seed(void) const;
-      /// Set seed to \a s
-      void seed(unsigned int s);
-      /// Returns a random integer from the interval \f$[0\ldots n)\f$
-      unsigned int operator ()(unsigned int n);
-      /// Returns a random integer from the interval \f$[0\ldots n)\f$
-      int operator ()(int n);
-      /// Returns a random integer from the interval \f$[0\ldots n)\f$
-      unsigned long long int operator ()(unsigned long long int n);
-      /// Returns a random integer from the interval \f$[0\ldots n)\f$
-      long long int operator ()(long long int n);
-      /// Delete implemenentation
-      virtual ~IMP(void);
+        /// Default constructor that does not initialize the generator
+        GECODE_KERNEL_EXPORT
+        Rnd(void);
+        /// Initialize from generator \a r
+        GECODE_KERNEL_EXPORT
+        Rnd(const Rnd& r);
+        /// Assignment operator
+        GECODE_KERNEL_EXPORT
+        Rnd& operator=(const Rnd& r);
+        /// Destructor
+        GECODE_KERNEL_EXPORT
+        ~Rnd(void);
+        /// Initialize with seed \a s
+        GECODE_KERNEL_EXPORT
+        Rnd(unsigned int s);
+        /// Set the current seed to \a s (initializes if needed)
+        GECODE_KERNEL_EXPORT
+        void seed(unsigned int s);
+        /// Set current seed based on time (initializes if needed)
+        GECODE_KERNEL_EXPORT
+        void time(void);
+        /// Set current seed to hardware-based random number (initializes if needed)
+        GECODE_KERNEL_EXPORT
+        void hw(void);
+        /// Return current seed
+        unsigned int seed(void) const;
+        /// Returns a random integer from the interval \f$[0\ldots n)\f$
+        unsigned int operator()(unsigned int n);
+        /// Returns a random integer from the interval \f$[0\ldots n)\f$
+        int operator()(int n);
+        /// Returns a random integer from the interval \f$[0\ldots n)\f$
+        unsigned long long int operator()(unsigned long long int n);
+        /// Returns a random integer from the interval \f$[0\ldots n)\f$
+        long long int operator()(long long int n);
     };
-    /// Set the current seed to \a s (initializes if needed)
-    void _seed(unsigned int s);
-  public:
-    /// Default constructor that does not initialize the generator
-    GECODE_KERNEL_EXPORT
-    Rnd(void);
-    /// Initialize from generator \a r
-    GECODE_KERNEL_EXPORT
-    Rnd(const Rnd& r);
-    /// Assignment operator
-    GECODE_KERNEL_EXPORT
-    Rnd& operator =(const Rnd& r);
-    /// Destructor
-    GECODE_KERNEL_EXPORT
-    ~Rnd(void);
-    /// Initialize with seed \a s
-    GECODE_KERNEL_EXPORT
-    Rnd(unsigned int s);
-    /// Set the current seed to \a s (initializes if needed)
-    GECODE_KERNEL_EXPORT
-    void seed(unsigned int s);
-    /// Set current seed based on time (initializes if needed)
-    GECODE_KERNEL_EXPORT
-    void time(void);
-    /// Set current seed to hardware-based random number (initializes if needed)
-    GECODE_KERNEL_EXPORT
-    void hw(void);
-    /// Return current seed
-    unsigned int seed(void) const;
-    /// Returns a random integer from the interval \f$[0\ldots n)\f$
-    unsigned int operator ()(unsigned int n);
-    /// Returns a random integer from the interval \f$[0\ldots n)\f$
-    int operator ()(int n);
-    /// Returns a random integer from the interval \f$[0\ldots n)\f$
-    unsigned long long int operator ()(unsigned long long int n);
-    /// Returns a random integer from the interval \f$[0\ldots n)\f$
-    long long int operator ()(long long int n);
-  };
 
-  forceinline unsigned int
-  Rnd::IMP::seed(void) const {
-    unsigned int s;
-    const_cast<Rnd::IMP&>(*this).m.acquire();
-    s = rg.seed();
-    const_cast<Rnd::IMP&>(*this).m.release();
-    return s;
-  }
-  forceinline void
-  Rnd::IMP::seed(unsigned int s) {
-    m.acquire();
-    rg.seed(s);
-    m.release();
-  }
-  forceinline unsigned int
-  Rnd::IMP::operator ()(unsigned int n) {
-    unsigned int r;
-    m.acquire();
-    r=rg(n);
-    m.release();
-    return r;
-  }
-  forceinline int
-  Rnd::IMP::operator ()(int n) {
-    int r;
-    m.acquire();
-    r=rg(n);
-    m.release();
-    return r;
-  }
-  forceinline unsigned long long int
-  Rnd::IMP::operator ()(unsigned long long int n) {
-    unsigned long long int r;
-    m.acquire();
-    r=rg(n);
-    m.release();
-    return r;
-  }
-  forceinline long long int
-  Rnd::IMP::operator ()(long long int n) {
-    long long int r;
-    m.acquire();
-    r=rg(n);
-    m.release();
-    return r;
-  }
+    forceinline unsigned int
+    Rnd::IMP::seed(void) const {
+        unsigned int s;
+        const_cast<Rnd::IMP&>(*this).m.acquire();
+        s = rg.seed();
+        const_cast<Rnd::IMP&>(*this).m.release();
+        return s;
+    }
+    forceinline void
+    Rnd::IMP::seed(unsigned int s) {
+        m.acquire();
+        rg.seed(s);
+        m.release();
+    }
+    forceinline unsigned int
+    Rnd::IMP::operator()(unsigned int n) {
+        unsigned int r;
+        m.acquire();
+        r = rg(n);
+        m.release();
+        return r;
+    }
+    forceinline int
+    Rnd::IMP::operator()(int n) {
+        int r;
+        m.acquire();
+        r = rg(n);
+        m.release();
+        return r;
+    }
+    forceinline unsigned long long int
+    Rnd::IMP::operator()(unsigned long long int n) {
+        unsigned long long int r;
+        m.acquire();
+        r = rg(n);
+        m.release();
+        return r;
+    }
+    forceinline long long int
+    Rnd::IMP::operator()(long long int n) {
+        long long int r;
+        m.acquire();
+        r = rg(n);
+        m.release();
+        return r;
+    }
 
-  forceinline unsigned int
-  Rnd::seed(void) const {
-    const IMP* i = static_cast<const IMP*>(object());
-    return i->seed();
-  }
-  forceinline unsigned int
-  Rnd::operator ()(unsigned int n) {
-    IMP* i = static_cast<IMP*>(object());
-    return (*i)(n);
-  }
-  forceinline int
-  Rnd::operator ()(int n) {
-    IMP* i = static_cast<IMP*>(object());
-    return (*i)(n);
-  }
-  forceinline unsigned long long int
-  Rnd::operator ()(unsigned long long int n) {
-    IMP* i = static_cast<IMP*>(object());
-    return (*i)(n);
-  }
-  forceinline long long int
-  Rnd::operator ()(long long int n) {
-    IMP* i = static_cast<IMP*>(object());
-    return (*i)(n);
-  }
+    forceinline unsigned int
+    Rnd::seed(void) const {
+        const IMP* i = static_cast<const IMP*>(object());
+        return i->seed();
+    }
+    forceinline unsigned int
+    Rnd::operator()(unsigned int n) {
+        IMP* i = static_cast<IMP*>(object());
+        return (*i)(n);
+    }
+    forceinline int
+    Rnd::operator()(int n) {
+        IMP* i = static_cast<IMP*>(object());
+        return (*i)(n);
+    }
+    forceinline unsigned long long int
+    Rnd::operator()(unsigned long long int n) {
+        IMP* i = static_cast<IMP*>(object());
+        return (*i)(n);
+    }
+    forceinline long long int
+    Rnd::operator()(long long int n) {
+        IMP* i = static_cast<IMP*>(object());
+        return (*i)(n);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-other
