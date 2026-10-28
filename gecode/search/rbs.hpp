@@ -124,9 +124,9 @@ namespace Gecode {
             hub->reserve_brancher_ids(*spoke);
             std::unique_ptr<Search::Engine> leaf(Search::build<T, E>(spoke.get(), e_opt));
             e = Search::Seq::make_rbs_engine(hub.get(), stop.get(), leaf.get(), stat, m_opt, E<T>::best, sc.coverage());
-            hub.release();
-            stop.release();
-            leaf.release();
+            (void)hub.release();
+            (void)stop.release();
+            (void)leaf.release();
         }
     }
 

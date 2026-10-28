@@ -111,7 +111,7 @@ void yyerror(void* parm, const char *str) {
   ParserState* pp = static_cast<ParserState*>(parm);
   pp->err << "Error: " << str
           << " in line no. " << yyget_lineno(pp->yyscanner)
-          << std::endl;
+          << '\n' << std::flush;
   pp->had_error = true;
 }
 
@@ -120,7 +120,7 @@ void yyassert(ParserState* pp, bool cond, const char* str)
   if (!cond) {
     pp->err << "Error: " << str
             << " in line no. " << yyget_lineno(pp->yyscanner)
-            << std::endl;
+            << '\n' << std::flush;
     pp->had_error = true;
   }
 }
@@ -204,7 +204,7 @@ AST::Node* get_array_element(ParserState* pp, string id, int offset,
 error:
   pp->err << "Error: array access to " << id << " invalid"
           << " in line no. "
-          << yyget_lineno(pp->yyscanner) << std::endl;
+          << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
   pp->had_error = true;
   return new AST::IntVar(0); // keep things consistent
 }
@@ -227,7 +227,7 @@ AST::Node* get_var_ref_arg(ParserState* pp, string id, bool annotation = false) 
     return new AST::Atom(id);
   pp->err << "Error: undefined variable " << id
           << " in line no. "
-          << yyget_lineno(pp->yyscanner) << std::endl;
+          << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
   pp->had_error = true;
   return new AST::IntVar(0); // keep things consistent
 }
@@ -600,18 +600,18 @@ namespace Gecode { namespace FlatZinc {
     struct stat sbuf;
     fd = open(filename.c_str(), O_RDONLY);
     if (fd == -1) {
-      err << "Cannot open file " << filename << endl;
+      err << "Cannot open file " << filename << '\n' << std::flush;
       return nullptr;
     }
     if (fstat(fd, &sbuf) == -1) {
       close(fd);
-      err << "Cannot stat file " << filename << endl;
+      err << "Cannot stat file " << filename << '\n' << std::flush;
       return nullptr;
     }
     data = static_cast<char*>(mmap(nullptr, sbuf.st_size, PROT_READ, MAP_SHARED, fd,0));
     close(fd);
     if (data == MAP_FAILED) {
-      err << "Cannot mmap file " << filename << endl;
+      err << "Cannot mmap file " << filename << '\n' << std::flush;
       return nullptr;
     }
     auto unmap = [size=sbuf.st_size](char* p) { munmap(p,size); };
@@ -626,7 +626,7 @@ namespace Gecode { namespace FlatZinc {
     std::ifstream file;
     file.open(filename.c_str());
     if (!file.is_open()) {
-      err << "Cannot open file " << filename << endl;
+      err << "Cannot open file " << filename << '\n' << std::flush;
       return nullptr;
     }
     std::string s = string(istreambuf_iterator<char>(file),
@@ -645,7 +645,7 @@ namespace Gecode { namespace FlatZinc {
 
     if (pp.had_error)
       return nullptr;
-    owned.release();
+    (void)owned.release();
     return pp.fg;
   }
 
@@ -668,7 +668,7 @@ namespace Gecode { namespace FlatZinc {
 
     if (pp.had_error)
       return nullptr;
-    owned.release();
+    (void)owned.release();
     return pp.fg;
   }
 
@@ -2950,7 +2950,7 @@ yyreduce:
         else {
           pp->err << "Error: undefined identifier for type int " << (yyvsp[0].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           (yyval.var_spec) = new IntVarSpec(0,false,false); // keep things consistent
         }
@@ -2975,7 +2975,7 @@ yyreduce:
         } else {
           pp->err << "Error: undefined array identifier for type int " << (yyvsp[-3].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           (yyval.var_spec) = new IntVarSpec(0,false,false); // keep things consistent
         }
@@ -3030,7 +3030,7 @@ yyreduce:
         else {
           pp->err << "Error: undefined identifier for type float " << (yyvsp[0].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           (yyval.var_spec) = new FloatVarSpec(0.0,false,false);
         }
@@ -3054,7 +3054,7 @@ yyreduce:
         } else {
           pp->err << "Error: undefined array identifier for type float " << (yyvsp[-3].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           (yyval.var_spec) = new FloatVarSpec(0.0,false,false);
         }
@@ -3109,7 +3109,7 @@ yyreduce:
         else {
           pp->err << "Error: undefined identifier for type bool " << (yyvsp[0].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           (yyval.var_spec) = new BoolVarSpec(false,false,false);
         }
@@ -3133,7 +3133,7 @@ yyreduce:
         } else {
           pp->err << "Error: undefined array identifier for type bool " << (yyvsp[-3].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           (yyval.var_spec) = new BoolVarSpec(false,false,false);
         }
@@ -3188,7 +3188,7 @@ yyreduce:
         else {
           pp->err << "Error: undefined identifier for type set " << (yyvsp[0].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           (yyval.var_spec) = new SetVarSpec(Alias(0),false,false);
         }
@@ -3212,7 +3212,7 @@ yyreduce:
         } else {
           pp->err << "Error: undefined array identifier for type set " << (yyvsp[-3].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           (yyval.var_spec) = new SetVarSpec(Alias(0),false,false);
         }
@@ -3464,13 +3464,13 @@ yyreduce:
                        cid=="int_eq" || cid=="int_ne") &&
                       ((yyvsp[-2].arg_nodes)->a[0]->is_int() || (yyvsp[-2].arg_nodes)->a[1]->is_int()) ) {
             pp->domain_constraints.push_back(ce.get());
-            ce.release();
+            (void)ce.release();
           } else if ( cid=="set_in" && ((yyvsp[-2].arg_nodes)->a[0]->is_set() || (yyvsp[-2].arg_nodes)->a[1]->is_set()) ) {
             pp->domain_constraints.push_back(ce.get());
-            ce.release();
+            (void)ce.release();
           } else {
             pp->constraints.push_back(ce.get());
-            ce.release();
+            (void)ce.release();
           }
         }
       }
@@ -3486,7 +3486,7 @@ yyreduce:
         if (!pp->had_error) {
           try {
             pp->fg->solve(ann.get());
-            ann.release();
+            (void)ann.release();
           } catch (Gecode::FlatZinc::Error& e) {
             yyerror(pp, e.to_string().c_str());
           }
@@ -3509,7 +3509,7 @@ yyreduce:
               pp->fg->minimize(v,vi,ann.get());
             else
               pp->fg->maximize(v,vi,ann.get());
-            ann.release();
+            (void)ann.release();
           } catch (Gecode::FlatZinc::Error& e) {
             yyerror(pp, e.to_string().c_str());
           }
@@ -3831,7 +3831,7 @@ yyreduce:
         } else {
           pp->err << "Error: undefined identifier " << (yyvsp[0].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           (yyval.arg) = nullptr;
         }
@@ -3903,14 +3903,14 @@ yyreduce:
           default:
             pp->err << "Error: unknown int or float variable " << (yyvsp[0].string_value)
                     << " in line no. "
-                    << yyget_lineno(pp->yyscanner) << std::endl;
+                    << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
             pp->had_error = true;
             break;
           }
         } else {
           pp->err << "Error: unknown int or float variable " << (yyvsp[0].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
         }
         free((yyvsp[0].string_value));
@@ -3949,13 +3949,13 @@ yyreduce:
              (e.t != ST_INTVARARRAY && e.t != ST_FLOATVARARRAY)) {
           pp->err << "Error: unknown int or float variable array " << (yyvsp[-3].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
         }
         if ((yyvsp[-1].int_value) == 0 || (yyvsp[-1].int_value) > pp->arrays[e.i]) {
           pp->err << "Error: array index out of bounds for array " << (yyvsp[-3].string_value)
                   << " in line no. "
-                  << yyget_lineno(pp->yyscanner) << std::endl;
+                  << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
         } else {
           if (e.t == ST_INTVARARRAY)

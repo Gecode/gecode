@@ -254,28 +254,28 @@ public:
     /// Print instance and solution
     void
     print(std::ostream& os) const override {
-        os << "Layout:" << std::endl;
+        os << "Layout:" << '\n';
         for (int i = 0; i < 17; i++) {
             for (int j = 0; j < 3; j++)
                 os << card(layout[i][j]) << " ";
             if ((i + 1) % 3 == 0)
-                os << std::endl;
+                os << '\n';
             else
                 os << "  \t";
         }
-        os << std::endl << std::endl;
+        os << '\n' << '\n';
 
-        os << "Solution:" << std::endl;
+        os << "Solution:" << '\n';
         for (int i = 0; i < 52; ++i) {
             if (x[i].assigned())
                 os << card(x[i].val()) << " ";
             else
                 os << "   ";
             if ((i + 1) % 13 == 0)
-                os << std::endl;
+                os << '\n';
         }
-        os << std::endl;
-        os << std::endl;
+        os << '\n';
+        os << '\n';
     }
 
     /// Constructor for cloning \a s

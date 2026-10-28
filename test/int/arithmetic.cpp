@@ -239,7 +239,7 @@ namespace Test { namespace Int {
         bool
         arithmetic_failed(const std::string& what, const Gecode::VarArgArray<Gecode::IntVar>& x) {
             if (opt.log)
-                olog << what << ": " << x << std::endl;
+                olog << what << ": " << x << '\n';
             return false;
         }
 
@@ -1096,7 +1096,7 @@ namespace Test { namespace Int {
                         if (opt.log)
                             olog << "Inverse bounds, cofactor [" << cases[i].qmin << "," << cases[i].qmax
                                  << "]: x=" << x << ", q=" << q << ", y=" << y << "; expected x=[" << cases[i].xmin
-                                 << "," << cases[i].xmax << "]" << std::endl;
+                                 << "," << cases[i].xmax << "]" << '\n';
                         return false;
                     }
                 }

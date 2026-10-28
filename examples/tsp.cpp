@@ -412,14 +412,14 @@ public:
                 os << i << " -> ";
                 i = succ[i].val();
             } while (i != 0);
-            os << 0 << std::endl;
-            os << "\tCost: " << total << std::endl;
+            os << 0 << '\n';
+            os << "\tCost: " << total << '\n';
         } else {
-            os << "\tTour: " << std::endl;
+            os << "\tTour: " << '\n';
             for (int i = 0; i < succ.size(); i++) {
-                os << "\t" << i << " -> " << succ[i] << std::endl;
+                os << "\t" << i << " -> " << succ[i] << '\n';
             }
-            os << "\tCost: " << total << std::endl;
+            os << "\tCost: " << total << '\n';
         }
     }
 };
@@ -437,12 +437,11 @@ main(int argc, char* argv[]) {
 
     try {
         if (!problem(opt).valid()) {
-            std::cerr << "Error: instance must be a number between 0 and " << ps_n - 1 << " or a TSPLIB file"
-                      << std::endl;
+            std::cerr << "Error: instance must be a number between 0 and " << ps_n - 1 << " or a TSPLIB file" << '\n';
             return 1;
         }
     } catch (const Instance::Error& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
         return 1;
     }
 

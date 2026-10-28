@@ -125,9 +125,9 @@ public:
                 else
                     os << ". ";
             }
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
 
     /// Constructor for cloning \a s
@@ -150,7 +150,7 @@ main(int argc, char* argv[]) {
     opt.size(0);
     opt.parse(argc, argv);
     if (opt.size() >= n_examples) {
-        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << '\n';
         return 1;
     }
     Script::run<MineSweeper, DFS, SizeOptions>(opt);

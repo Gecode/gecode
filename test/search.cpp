@@ -1517,9 +1517,7 @@ namespace Test {
                 }
                 int live = 0;
                 std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
-                PortfolioSeed* seed = root.get();
-                if (!clone)
-                    root.release();
+                PortfolioSeed* seed = clone ? root.get() : root.release();
                 Gecode::Search::Options o;
                 o.assets = 1;
                 o.threads = threads;
@@ -1531,7 +1529,8 @@ namespace Test {
                 try {
                     if (restart) {
                         Gecode::RBS<PortfolioSeed> engine(seed, o);
-                        cutoff.release();
+                        // The completed RBS engine owns the cutoff.
+                        (void)cutoff.release();
                     } else {
                         Gecode::PBS<PortfolioSeed> engine(seed, o);
                     }
@@ -1552,9 +1551,7 @@ namespace Test {
                         for (int failing : {-1, 0, 1}) {
                             int live = 0;
                             std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
-                            PortfolioSeed* seed = root.get();
-                            if (!clone)
-                                root.release();
+                            PortfolioSeed* seed = clone ? root.get() : root.release();
                             Gecode::Search::Options o;
                             o.assets = 2;
                             o.threads = threads;
@@ -1710,6 +1707,7 @@ namespace Test {
                   int& solutions, bool& best) {
                 std::atomic<bool> done(false);
                 std::vector<std::thread> resizers;
+                resizers.reserve(controls.size());
                 for (Gecode::Search::WorkerControl& control : controls)
                     resizers.emplace_back([&done, &control, capacity, seed = _rand.next()] {
                         Gecode::Support::RandomGenerator rand(seed);
@@ -2305,7 +2303,7 @@ namespace Test {
                     bool correct = (s != nullptr) && (s->x.val() == v);
                     delete s;
                     if (!correct) {
-                        olog << "Pending solution violates bound " << bound << "; expected " << v << std::endl;
+                        olog << "Pending solution violates bound " << bound << "; expected " << v << '\n';
                         return false;
                     }
                 }
@@ -2313,7 +2311,7 @@ namespace Test {
                 bool exhausted = (s == nullptr);
                 delete s;
                 if (!exhausted)
-                    olog << "Unexpected pending solution after bound " << bound << std::endl;
+                    olog << "Unexpected pending solution after bound " << bound << '\n';
                 return exhausted;
             }
             static bool
@@ -2343,7 +2341,7 @@ namespace Test {
                 }
                 if (!reported || !preserved)
                     olog << "Pending failure: nogoods reported=" << reported << ", constrain preserved=" << preserved
-                         << std::endl;
+                         << '\n';
                 return reported && preserved && (live == 0);
             }
             static bool
@@ -2544,7 +2542,7 @@ namespace Test {
                 }
                 if (!reported || !preserved)
                     olog << "Pending failure: next reported=" << reported << ", constrain preserved=" << preserved
-                         << std::endl;
+                         << '\n';
                 return reported && preserved && (live == 0);
             }
 

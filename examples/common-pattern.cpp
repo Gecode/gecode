@@ -253,7 +253,7 @@ public:
             }
         }
         os << " (length " << pattern.length() << ", support " << frequency << '/' << database.ends.size() << ")"
-           << std::endl;
+           << '\n';
     }
 };
 
@@ -271,7 +271,7 @@ main(int argc, char* argv[]) {
     try {
         opt.read();
     } catch (const std::invalid_argument& error) {
-        std::cerr << error.what() << std::endl;
+        std::cerr << error.what() << '\n';
         return 1;
     }
     if (opt.search() == CommonPattern::SEARCH_DFS)

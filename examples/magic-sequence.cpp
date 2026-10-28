@@ -100,9 +100,9 @@ public:
         for (int i = 0; i < n; i++) {
             os << s[i] << ", ";
             if ((i + 1) % 20 == 0)
-                os << std::endl << "\t";
+                os << '\n' << "\t";
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 

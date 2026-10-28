@@ -331,7 +331,7 @@ public:
         os << "\tTour: 0";
         for (int i = 0; i < x.size(); i++)
             os << " -> " << x[i];
-        os << " -> 0" << std::endl << "\tTravel time: " << total << std::endl;
+        os << " -> 0" << '\n' << "\tTravel time: " << total << '\n';
     }
 };
 
@@ -353,12 +353,11 @@ main(int argc, char* argv[]) {
     try {
         Problem p(opt);
         if (!p.valid()) {
-            std::cerr << "Error: instance must be a number between 0 and " << n_instances - 1 << " or a file"
-                      << std::endl;
+            std::cerr << "Error: instance must be a number between 0 and " << n_instances - 1 << " or a file" << '\n';
             return 1;
         }
     } catch (const Instance::Error& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
         return 1;
     }
     switch (opt.search()) {

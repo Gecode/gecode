@@ -30,6 +30,8 @@
  *
  */
 
+#include <utility>
+
 namespace Gecode {
 
     forceinline
@@ -38,7 +40,7 @@ namespace Gecode {
 
     forceinline
     SetVarBranch::SetVarBranch(Select s0, BranchTbl t)
-        : VarBranch<SetVar>(t), s(s0) {}
+        : VarBranch<SetVar>(std::move(t)), s(s0) {}
 
     forceinline
     SetVarBranch::SetVarBranch(Rnd r)
@@ -46,23 +48,23 @@ namespace Gecode {
 
     forceinline
     SetVarBranch::SetVarBranch(Select s0, double d, BranchTbl t)
-        : VarBranch<SetVar>(d, t), s(s0) {}
+        : VarBranch<SetVar>(d, std::move(t)), s(s0) {}
 
     forceinline
     SetVarBranch::SetVarBranch(Select s0, SetAFC a, BranchTbl t)
-        : VarBranch<SetVar>(a, t), s(s0) {}
+        : VarBranch<SetVar>(a, std::move(t)), s(s0) {}
 
     forceinline
     SetVarBranch::SetVarBranch(Select s0, SetAction a, BranchTbl t)
-        : VarBranch<SetVar>(a, t), s(s0) {}
+        : VarBranch<SetVar>(a, std::move(t)), s(s0) {}
 
     forceinline
     SetVarBranch::SetVarBranch(Select s0, SetCHB c, BranchTbl t)
-        : VarBranch<SetVar>(c, t), s(s0) {}
+        : VarBranch<SetVar>(c, std::move(t)), s(s0) {}
 
     forceinline
     SetVarBranch::SetVarBranch(Select s0, SetBranchMerit mf, BranchTbl t)
-        : VarBranch<SetVar>(mf, t), s(s0) {}
+        : VarBranch<SetVar>(std::move(mf), std::move(t)), s(s0) {}
 
     forceinline SetVarBranch::Select
     SetVarBranch::select(void) const {

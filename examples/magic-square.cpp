@@ -124,7 +124,7 @@ public:
                 os.width(2);
                 os << m(i, j) << "  ";
             }
-            os << std::endl;
+            os << '\n';
         }
     }
 };

@@ -38,5 +38,5 @@ void
 MyPlugin::branch(Gecode::FlatZinc::FlatZincSpace&, Gecode::FlatZinc::AST::Call* call) {
     std::cerr << "MyPlugin::branch ";
     call->print(std::cerr);
-    std::cerr << std::endl;
+    std::cerr << '\n' << std::flush;
 }

@@ -190,9 +190,9 @@ public:
                 char c = val < 10 ? '0' + val : 'A' + (val - 10);
                 os << c;
             }
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
     /// Constructor for cloning \a s
     Domino(Domino& s) : Script(s), spec(s.spec), width(s.width), height(s.height) {
@@ -217,7 +217,7 @@ main(int argc, char* argv[]) {
     opt.propagation(Domino::PROP_EXTENSIONAL, "extensional");
     opt.parse(argc, argv);
     if (opt.size() >= n_examples) {
-        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << '\n';
         return 1;
     }
     Script::run<Domino, DFS, SizeOptions>(opt);

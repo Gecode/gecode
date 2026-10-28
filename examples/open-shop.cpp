@@ -304,9 +304,9 @@ public:
             os << "Machine " << i << ": ";
             for (int j = 0; j < spec.n; j++)
                 os << "\t" << m[j].job << "(" << m[j].p << ")";
-            os << " = " << m[spec.n - 1].start + m[spec.n - 1].p << std::endl;
+            os << " = " << m[spec.n - 1].start + m[spec.n - 1].p << '\n';
         }
-        os << "Makespan: " << makespan << std::endl;
+        os << "Makespan: " << makespan << '\n';
     }
 };
 
@@ -321,7 +321,7 @@ main(int argc, char* argv[]) {
     opt.solutions(0);
     opt.parse(argc, argv);
     if (opt.size() >= n_examples) {
-        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << '\n';
         return 1;
     }
     IntMinimizeScript::run<OpenShop, BAB, SizeOptions>(opt);

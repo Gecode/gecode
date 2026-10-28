@@ -30,6 +30,8 @@
  *
  */
 
+#include <utility>
+
 namespace Gecode {
 
     forceinline
@@ -38,7 +40,7 @@ namespace Gecode {
 
     forceinline
     FloatVarBranch::FloatVarBranch(Select s0, BranchTbl t)
-        : VarBranch<FloatVar>(t), s(s0) {}
+        : VarBranch<FloatVar>(std::move(t)), s(s0) {}
 
     forceinline
     FloatVarBranch::FloatVarBranch(Rnd r)
@@ -46,23 +48,23 @@ namespace Gecode {
 
     forceinline
     FloatVarBranch::FloatVarBranch(Select s0, double d, BranchTbl t)
-        : VarBranch<FloatVar>(d, t), s(s0) {}
+        : VarBranch<FloatVar>(d, std::move(t)), s(s0) {}
 
     forceinline
     FloatVarBranch::FloatVarBranch(Select s0, FloatAFC a, BranchTbl t)
-        : VarBranch<FloatVar>(a, t), s(s0) {}
+        : VarBranch<FloatVar>(a, std::move(t)), s(s0) {}
 
     forceinline
     FloatVarBranch::FloatVarBranch(Select s0, FloatAction a, BranchTbl t)
-        : VarBranch<FloatVar>(a, t), s(s0) {}
+        : VarBranch<FloatVar>(a, std::move(t)), s(s0) {}
 
     forceinline
     FloatVarBranch::FloatVarBranch(Select s0, FloatCHB c, BranchTbl t)
-        : VarBranch<FloatVar>(c, t), s(s0) {}
+        : VarBranch<FloatVar>(c, std::move(t)), s(s0) {}
 
     forceinline
     FloatVarBranch::FloatVarBranch(Select s0, FloatBranchMerit mf, BranchTbl t)
-        : VarBranch<FloatVar>(mf, t), s(s0) {}
+        : VarBranch<FloatVar>(std::move(mf), std::move(t)), s(s0) {}
 
     forceinline FloatVarBranch::Select
     FloatVarBranch::select(void) const {

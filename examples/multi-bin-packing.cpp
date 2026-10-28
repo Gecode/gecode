@@ -209,7 +209,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\tInstance: " << spec.iname() << std::endl;
+        os << "\tInstance: " << spec.iname() << '\n';
         if (bin.assigned()) {
             for (int j = 0; j < spec.bins(); j++) {
                 os << "\tbin[" << j << "]: ";
@@ -219,10 +219,10 @@ public:
                 os << "\n\t\tloads: ";
                 for (int k = 0; k < spec.dimension(); k++)
                     os << load[j * spec.dimension() + k] << " ";
-                os << std::endl;
+                os << '\n';
             }
         } else {
-            os << "\tbins: " << bin << std::endl << "\tload: " << load << std::endl;
+            os << "\tbins: " << bin << '\n' << "\tload: " << load << '\n';
         }
     }
 };
@@ -247,7 +247,7 @@ main(int argc, char* argv[]) {
     opt.solutions(1);
     opt.parse(argc, argv);
     if (!Spec(opt.instance()).valid()) {
-        std::cerr << "Error: unknown instance" << std::endl;
+        std::cerr << "Error: unknown instance" << '\n';
         return 1;
     }
     Script::run<MultiBinPacking, DFS, InstanceOptions>(opt);

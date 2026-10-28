@@ -109,9 +109,9 @@ public:
         for (int i = 0; i < q.size(); i++) {
             os << q[i] << ", ";
             if ((i + 1) % 10 == 0)
-                os << std::endl << "\t";
+                os << '\n' << "\t";
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 
