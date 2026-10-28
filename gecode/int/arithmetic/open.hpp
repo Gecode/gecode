@@ -80,21 +80,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         }
 
     public:
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) OpenMax(home, *this);
         }
 
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             const int size = list.known_length();
             return PropCost::linear(PropCost::LO,
                                     ((closed() && !witness) || (result.max() < upper)) ? size : size - processed);
         }
 
-        virtual ExecStatus
-        advise(Space& home, Advisor& advisor, const Delta& d) {
-            if (View::modevent(d) == ME_INT_DOM)
+        ExecStatus
+        advise(Space& home, Advisor& advisor, const Delta& d) override {
+            if (View::modification_event(d) == ME_INT_DOM)
                 return ES_FIX;
             Index& a = static_cast<Index&>(advisor);
             View x = list[a.i];
@@ -104,8 +104,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             return ((lower > result.min()) || (witness && closed() && c.empty())) ? ES_NOFIX : ES_FIX;
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             const int size = list.known_length();
             if (result.max() < upper) {
                 for (int i = 0; i < processed; i++) {
@@ -144,14 +144,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             GECODE_REWRITE(*this, (Arithmetic::NaryMaxBnd<View>::post(home(*this), variables, y)));
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             OpenListPropagator<View>::reschedule(home);
             result.reschedule(home, *this, PC_INT_BND);
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             if (!home.failed())
                 for (Advisors<Index> as(c); as(); ++as) {
                     View x = list[as.advisor().i];

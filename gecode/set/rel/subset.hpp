@@ -69,15 +69,15 @@ namespace Gecode { namespace Set { namespace Rel {
         unsigned int x0glbsize;
         do {
             GlbRanges<View0> x0lb(x0);
-            GECODE_ME_CHECK(x1.includeI(home, x0lb));
-            GECODE_ME_CHECK(x1.cardMin(home, x0.cardMin()));
+            GECODE_ME_CHECK(x1.include_i(home, x0lb));
+            GECODE_ME_CHECK(x1.card_min(home, x0.card_min()));
             LubRanges<View1> x1ub(x1);
-            x0glbsize = x0.glbSize();
-            GECODE_ME_CHECK(x0.intersectI(home, x1ub));
-            GECODE_ME_CHECK(x0.cardMax(home, x1.cardMax()));
-        } while (x0.glbSize() > x0glbsize);
+            x0glbsize = x0.glb_size();
+            GECODE_ME_CHECK(x0.intersect_i(home, x1ub));
+            GECODE_ME_CHECK(x0.card_max(home, x1.card_max()));
+        } while (x0.glb_size() > x0glbsize);
 
-        if (x0.cardMin() == x1.cardMax())
+        if (x0.card_min() == x1.card_max())
             GECODE_REWRITE(*this, (Eq<View0, View1>::post(home(*this), x0, x1)));
 
         if (shared(x0, x1)) {

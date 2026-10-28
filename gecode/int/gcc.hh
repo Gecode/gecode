@@ -72,15 +72,15 @@ namespace Gecode { namespace Int { namespace GCC {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function returning high linear
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Destructor
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Post propagator for views \a x and cardinalities \a k
         static ExecStatus post(Home home, ViewArray<IntView>& x, ViewArray<Card>& k);
     };
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace GCC {
         Bnd(Space& home, Bnd<Card>& p);
 
         /// Prune cardinality variables with 0 maximum occurrence
-        ExecStatus pruneCards(Space& home);
+        ExecStatus prune_cards(Space& home);
 
         /**
          * \brief Lower Bounds constraint (LBC) stating
@@ -188,15 +188,15 @@ namespace Gecode { namespace Int { namespace GCC {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Destructor
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Post propagator for views \a x and cardinalities \a k
         static ExecStatus post(Home home, ViewArray<IntView>& x, ViewArray<Card>& k);
     };
@@ -240,15 +240,15 @@ namespace Gecode { namespace Int { namespace GCC {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Destructor
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Post propagator for views \a x and cardinalities \a k
         static ExecStatus post(Home home, ViewArray<IntView>& x, ViewArray<Card>& k);
     };

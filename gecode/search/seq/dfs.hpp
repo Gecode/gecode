@@ -102,7 +102,7 @@ namespace Gecode { namespace Search { namespace Seq {
             SearchTracer::EdgeInfo ei;
             if (tracer && (path.entries() > 0)) {
                 typename Path<Tracer>::Edge& top = path.top();
-                ei.init(tracer.wid(), top.nid(), top.truealt(), *cur, *top.choice());
+                ei.init(tracer.wid(), top.nid(), top.true_alternative(), *cur, *top.choice());
             }
             unsigned int nid = tracer.nid();
             switch (cur->status(*this)) {

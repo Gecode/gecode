@@ -67,8 +67,8 @@ namespace Test { namespace Set {
                 : SetTest(TestTags::sweep(), "Precede::Single::" + str(s0) + "<" + str(t0), 4, ds, false), s(s0),
                   t(t0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 int n = x.size();
                 for (int i = 0; i < n; i++) {
                     if (!in(s, x[i]) && in(t, x[i]))
@@ -79,8 +79,8 @@ namespace Test { namespace Set {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray&) {
+            void
+            post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray&) override {
                 Gecode::precede(home, x, s, t);
             }
         };
@@ -104,8 +104,8 @@ namespace Test { namespace Set {
             Multi(TestTags tags, const Gecode::IntArgs& c0)
                 : SetTest(tags, "Precede::Multi::" + str(c0), 4, ds, false), c(c0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 for (int j = 0; j < c.size() - 1; j++)
                     for (int i = 0; i < x.size(); i++) {
                         if (!in(c[j], x[i]) && in(c[j + 1], x[i]))
@@ -116,8 +116,8 @@ namespace Test { namespace Set {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray&) {
+            void
+            post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray&) override {
                 Gecode::precede(home, x, c);
             }
         };

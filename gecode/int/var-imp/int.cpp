@@ -223,8 +223,8 @@ namespace Gecode { namespace Int {
             } else {
                 RangeList* f = new (home) RangeList(dom.min(), m - 1);
                 RangeList* l = new (home) RangeList(m + 1, dom.max());
-                f->prevnext(nullptr, l);
-                l->prevnext(f, nullptr);
+                f->set_prev_next(nullptr, l);
+                l->set_prev_next(f, nullptr);
                 fst(f);
                 lst(l);
                 holes = 1;
@@ -260,7 +260,7 @@ namespace Gecode { namespace Int {
             } else {
                 // Create new hole
                 RangeList* f = new (home) RangeList(f_min, m - 1);
-                f->prevnext(nullptr, fst());
+                f->set_prev_next(nullptr, fst());
                 fst()->min(m + 1);
                 fst()->prev(nullptr, f);
                 fst(f);
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int {
                 holes += 1;
             } else { // Create new hole
                 RangeList* l = new (home) RangeList(m + 1, l_max);
-                l->prevnext(lst(), nullptr);
+                l->set_prev_next(lst(), nullptr);
                 lst()->max(m - 1);
                 lst()->next(nullptr, l);
                 lst(l);
@@ -346,7 +346,7 @@ namespace Gecode { namespace Int {
                 c->max(m - 1);
                 if (c_max != m) {
                     RangeList* l = new (home) RangeList(m + 1, c_max);
-                    l->prevnext(c, n);
+                    l->set_prev_next(c, n);
                     c->next(n, l);
                     n->prev(c, l);
                 }
@@ -383,13 +383,13 @@ namespace Gecode { namespace Int {
             lst(d_c + m - 1);
             d_c->min(x.fst()->min());
             d_c->max(x.fst()->max());
-            d_c->prevnext(nullptr, nullptr);
+            d_c->set_prev_next(nullptr, nullptr);
             RangeList* s_p = x.fst();
             RangeList* s_c = s_p->next(nullptr);
             do {
                 RangeList* d_n = d_c + 1;
                 d_c->next(nullptr, d_n);
-                d_n->prevnext(d_c, nullptr);
+                d_n->set_prev_next(d_c, nullptr);
                 d_n->min(s_c->min());
                 d_n->max(s_c->max());
                 d_c = d_n;

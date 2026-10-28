@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         int xs = x.size();
         OfflineMin seq(sequence, vertices, xs);
         int s = 0;
-        seq.makeset();
+        seq.initialize_sets();
 
         for (int z = 0; z < xs; z++) { // forall y nodes
             int maxy = y[z].max();
@@ -109,13 +109,13 @@ namespace Gecode { namespace Int { namespace Sorted {
      */
     template <class View>
     inline bool
-    revglover(ViewArray<View>& x, ViewArray<View>& y, int tau[], int phiprime[], OfflineMinItem sequence[],
-              int vertices[]) {
+    reverse_glover(ViewArray<View>& x, ViewArray<View>& y, int tau[], int phiprime[], OfflineMinItem sequence[],
+                   int vertices[]) {
 
         int xs = x.size();
         OfflineMin seq(sequence, vertices, xs);
         int s = xs - 1;
-        seq.makeset();
+        seq.initialize_sets();
 
         int miny = 0;
         for (int z = xs; z--;) { // forall y nodes

@@ -50,14 +50,14 @@ namespace Gecode { namespace Set { namespace Sequence {
     forceinline
     SeqU::SeqU(Space& home, SeqU& p)
         : NaryOnePropagator<SetView, PC_SET_ANY>(home, p) {
-        unionOfDets.update(home, p.unionOfDets);
+        union_of_dets.update(home, p.union_of_dets);
     }
 
     forceinline ExecStatus
     SeqU::post(Home home, ViewArray<SetView> x, SetView y) {
         switch (x.size()) {
         case 0:
-            GECODE_ME_CHECK(y.cardMax(home, 0));
+            GECODE_ME_CHECK(y.card_max(home, 0));
             return ES_OK;
         case 1:
             return Rel::Eq<SetView, SetView>::post(home, x[0], y);

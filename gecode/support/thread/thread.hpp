@@ -39,11 +39,11 @@ namespace Gecode { namespace Support {
     Runnable::Runnable(bool d0)
         : d(d0) {}
     forceinline void
-    Runnable::todelete(bool d0) {
+    Runnable::delete_after_run(bool d0) {
         d = d0;
     }
     forceinline bool
-    Runnable::todelete(void) const {
+    Runnable::delete_after_run(void) const {
         return d;
     }
     forceinline void
@@ -77,7 +77,7 @@ namespace Gecode { namespace Support {
     }
 
     forceinline bool
-    Mutex::tryacquire(void) {
+    Mutex::try_acquire(void) {
 #ifdef GECODE_HAS_THREADS
 #ifndef GECODE_USE_OSX_UNFAIR_MUTEX
         return m.try_lock();

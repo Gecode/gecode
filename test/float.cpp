@@ -71,7 +71,7 @@ namespace Test { namespace Float {
             FloatNum ns = dsv[i].min() + step;
             dsv[i] = FloatVal(ns, nextafter(ns, ns + 1));
             if ((dsv[i].max() < d.max()) || (i == 0)) {
-                if (curPb->extendAssignment(*this))
+                if (cur_pb->extend_assignment(*this))
                     return;
                 if ((dsv[i].max() >= d.max()) && (i == 0))
                     return;
@@ -88,7 +88,7 @@ namespace Test { namespace Float {
     void
     RandomAssignment::next(Gecode::Support::RandomGenerator& rand) {
         for (int i = n; i--;)
-            vals[i] = randval(rand);
+            vals[i] = random_value(rand);
         a--;
     }
 
@@ -106,7 +106,7 @@ operator<<(std::ostream& os, const Test::Float::Assignment& a) {
 namespace Test { namespace Float {
 
     Gecode::FloatNum
-    randFValDown(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
+    rand_f_val_down(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         using namespace Gecode::Float;
         Rounding r;
@@ -116,7 +116,7 @@ namespace Test { namespace Float {
     }
 
     Gecode::FloatNum
-    randFValUp(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
+    rand_f_val_up(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         using namespace Gecode::Float;
         Rounding r;
@@ -172,7 +172,7 @@ namespace Test { namespace Float {
     }
 
     void
-    TestSpace::dropUntil(const Assignment& a) {
+    TestSpace::drop_until(const Assignment& a) {
         for (int i = x.size(); i--;)
             Gecode::rel(*this, x[i], Gecode::FRT_GQ, a[i].min());
     }
@@ -186,7 +186,7 @@ namespace Test { namespace Float {
     }
 
     bool
-    TestSpace::matchAssignment(const Assignment& a) const {
+    TestSpace::match_assignment(const Assignment& a) const {
         for (int i = x.size(); i--;)
             if ((x[i].min() < a[i].min()) && (x[i].max() > a[i].max()))
                 return false;
@@ -289,7 +289,7 @@ namespace Test { namespace Float {
     }
 
     Gecode::FloatNum
-    TestSpace::cut(int* cutDirections) {
+    TestSpace::cut(int* cut_directions) {
         using namespace Gecode;
         using namespace Gecode::Float;
         // Select variable to be cut
@@ -301,7 +301,7 @@ namespace Test { namespace Float {
                 i = j;
         }
         Rounding rounding;
-        if (cutDirections[i]) {
+        if (cut_directions[i]) {
             FloatNum m = rounding.div_up(rounding.add_up(x[i].min(), x[i].max()), 2);
             FloatNum n = nextafter(x[i].min(), x[i].max());
             if (m > n)
@@ -324,12 +324,12 @@ namespace Test { namespace Float {
         using namespace Gecode;
         // Prune values
         if (rand(2) && !x[i].assigned()) {
-            Gecode::FloatNum v = randFValUp(x[i].min(), x[i].max(), rand);
+            Gecode::FloatNum v = rand_f_val_up(x[i].min(), x[i].max(), rand);
             assert((v >= x[i].min()) && (v <= x[i].max()));
             rel(i, Gecode::FRT_LQ, v);
         }
         if (rand(2) && !x[i].assigned()) {
-            Gecode::FloatNum v = randFValDown(x[i].min(), x[i].max(), rand);
+            Gecode::FloatNum v = rand_f_val_down(x[i].min(), x[i].max(), rand);
             assert((v <= x[i].max()) && (v >= x[i].min()));
             rel(i, Gecode::FRT_GQ, v);
         }
@@ -347,7 +347,7 @@ namespace Test { namespace Float {
     }
 
     bool
-    TestSpace::prune(const Assignment& a, bool testfix, Gecode::Support::RandomGenerator& rand) {
+    TestSpace::prune(const Assignment& a, bool test_fixpoint, Gecode::Support::RandomGenerator& rand) {
         // Select variable to be pruned
         int i = rand(x.size());
         while (x[i].assigned())
@@ -356,7 +356,7 @@ namespace Test { namespace Float {
         switch (rand(2)) {
         case 0:
             if (a[i].max() < x[i].max()) {
-                Gecode::FloatNum v = randFValDown(a[i].max(), x[i].max(), rand);
+                Gecode::FloatNum v = rand_f_val_down(a[i].max(), x[i].max(), rand);
                 if (v == x[i].max())
                     v = a[i].max();
                 assert((v >= a[i].max()) && (v <= x[i].max()));
@@ -365,7 +365,7 @@ namespace Test { namespace Float {
             break;
         case 1:
             if (a[i].min() > x[i].min()) {
-                Gecode::FloatNum v = randFValUp(x[i].min(), a[i].min(), rand);
+                Gecode::FloatNum v = rand_f_val_up(x[i].min(), a[i].min(), rand);
                 if (v == x[i].min())
                     v = a[i].min();
                 assert((v <= a[i].min()) && (v >= x[i].min()));
@@ -374,7 +374,7 @@ namespace Test { namespace Float {
             break;
         }
         if (Base::fixpoint(rand)) {
-            if (failed() || !testfix)
+            if (failed() || !test_fixpoint)
                 return true;
             TestSpace* c = static_cast<TestSpace*>(clone());
             if (opt.log)
@@ -410,7 +410,7 @@ namespace Test { namespace Float {
 
     Assignment*
     Test::assignment(void) const {
-        switch (assignmentType) {
+        switch (assignment_type) {
         case CPLT_ASSIGNMENT:
             return new CpltAssignment(arity, dom, step);
         case RANDOM_ASSIGNMENT:
@@ -424,18 +424,18 @@ namespace Test { namespace Float {
     }
 
     bool
-    Test::extendAssignment(Assignment&) const {
+    Test::extend_assignment(Assignment&) const {
         GECODE_NEVER;
         return false;
     }
 
     bool
     Test::subsumed(const TestSpace& ts) const {
-        if (!testsubsumed)
+        if (!test_subsumption)
             return true;
         if (const_cast<TestSpace&>(ts).propagators() == 0)
             return true;
-        if (assignmentType == EXTEND_ASSIGNMENT)
+        if (assignment_type == EXTEND_ASSIGNMENT)
             return true;
         return false;
     }
@@ -618,8 +618,8 @@ namespace Test { namespace Float {
             {
                 TestSpace* s = new TestSpace(arity, dom, step, this);
                 s->post();
-                while (!s->failed() && !s->assigned() && !s->matchAssignment(a))
-                    if (!s->prune(a, testfix, _rand)) {
+                while (!s->failed() && !s->assigned() && !s->match_assignment(a))
+                    if (!s->prune(a, test_fixpoint, _rand)) {
                         problem = "No fixpoint";
                         delete s;
                         goto failed;
@@ -790,8 +790,8 @@ namespace Test { namespace Float {
                     START_TEST("Prune reified, <=>");
                     TestSpace* s = new TestSpace(arity, dom, step, this, RM_EQV);
                     s->post();
-                    while (!s->failed() && !s->matchAssignment(a) && (!s->assigned() || !s->r.var().assigned()))
-                        if (!s->prune(a, testfix, _rand)) {
+                    while (!s->failed() && !s->match_assignment(a) && (!s->assigned() || !s->r.var().assigned()))
+                        if (!s->prune(a, test_fixpoint, _rand)) {
                             problem = "No fixpoint";
                             delete s;
                             goto failed;
@@ -811,9 +811,9 @@ namespace Test { namespace Float {
                     START_TEST("Prune reified, =>");
                     TestSpace* s = new TestSpace(arity, dom, step, this, RM_IMP);
                     s->post();
-                    while (!s->failed() && !s->matchAssignment(a) &&
+                    while (!s->failed() && !s->match_assignment(a) &&
                            (!s->assigned() || ((sol == MT_FALSE) && !s->r.var().assigned())))
-                        if (!s->prune(a, testfix, _rand)) {
+                        if (!s->prune(a, test_fixpoint, _rand)) {
                             problem = "No fixpoint";
                             delete s;
                             goto failed;
@@ -831,9 +831,9 @@ namespace Test { namespace Float {
                     START_TEST("Prune reified, <=");
                     TestSpace* s = new TestSpace(arity, dom, step, this, RM_PMI);
                     s->post();
-                    while (!s->failed() && !s->matchAssignment(a) &&
+                    while (!s->failed() && !s->match_assignment(a) &&
                            (!s->assigned() || ((sol == MT_TRUE) && !s->r.var().assigned())))
-                        if (!s->prune(a, testfix, _rand)) {
+                        if (!s->prune(a, test_fixpoint, _rand)) {
                             problem = "No fixpoint";
                             delete s;
                             goto failed;
@@ -849,12 +849,12 @@ namespace Test { namespace Float {
                 }
             }
 
-            if (testsearch) {
+            if (test_search) {
                 if (sol == MT_TRUE) {
                     START_TEST("Search");
                     if (!search_s->failed()) {
                         TestSpace* ss = static_cast<TestSpace*>(search_s->clone());
-                        ss->dropUntil(a);
+                        ss->drop_until(a);
                         delete e_s;
                         e_s = new DFS<TestSpace>(ss, search_o);
                         delete ss;
@@ -873,11 +873,11 @@ namespace Test { namespace Float {
             a.next(_rand);
         }
 
-        if (testsearch) {
+        if (test_search) {
             test = "Search";
             if (!search_s->failed()) {
                 TestSpace* ss = static_cast<TestSpace*>(search_s->clone());
-                ss->dropUntil(a);
+                ss->drop_until(a);
                 delete e_s;
                 e_s = new DFS<TestSpace>(ss, search_o);
                 delete ss;

@@ -42,15 +42,15 @@ namespace Test {
         : _mask(static_cast<unsigned int>(t0) | static_cast<unsigned int>(t1)) {}
     inline TestTags
     TestTags::check(void) {
-        return TestTags(TestTag::standard, TestTag::check);
+        return TestTags(TestTag::STANDARD, TestTag::CHECK);
     }
     inline TestTags
     TestTags::standard(void) {
-        return TestTags(TestTag::standard);
+        return TestTags(TestTag::STANDARD);
     }
     inline TestTags
     TestTags::sweep(void) {
-        return TestTags(TestTag::sweep);
+        return TestTags(TestTag::SWEEP);
     }
     inline bool
     TestTags::empty(void) const {
@@ -70,8 +70,9 @@ namespace Test {
      *
      */
     inline Options::Options(void)
-        : threads(1), seed(0), replay(false), iter(defiter), fixprob(deffixprob), stop(true), log(false), testpat(),
-          testtags(), start_from(nullptr), list(false), list_tags(false), list_with_tags(false) {}
+        : threads(1), seed(0), replay(false), iter(default_iterations),
+          fixpoint_probability_denominator(default_fixpoint_probability_denominator), stop(true), log(false),
+          test_patterns(), test_tags(), start_from(nullptr), list(false), list_tags(false), list_with_tags(false) {}
 
     /*
      * Base class for tests
@@ -104,7 +105,7 @@ namespace Test {
 
     inline bool
     Base::fixpoint(Gecode::Support::RandomGenerator& rand) {
-        return rand(opt.fixprob) == 0;
+        return rand(opt.fixpoint_probability_denominator) == 0;
     }
 
     inline std::string

@@ -34,7 +34,7 @@
 namespace Gecode { namespace Search {
 
     /// Create CABS engine
-    GECODE_SEARCH_EXPORT Engine* cabsengine(Space* s, const Options& o);
+    GECODE_SEARCH_EXPORT Engine* make_cabs_engine(Space* s, const Options& o);
 
     /// A CABS engine builder
     template <class T>
@@ -45,7 +45,7 @@ namespace Gecode { namespace Search {
         /// The constructor
         CABSBuilder(const Options& opt);
         /// The actual build function
-        virtual Engine* operator()(Space* s) const;
+        Engine* operator()(Space* s) const override;
     };
 
     template <class T>
@@ -62,7 +62,7 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
     template <class T>
-    inline CABS<T>::CABS(T* s, const Search::Options& o) : Search::Base<T>(Search::cabsengine(s, o)) {}
+    inline CABS<T>::CABS(T* s, const Search::Options& o) : Search::Base<T>(Search::make_cabs_engine(s, o)) {}
 
     template <class T>
     inline T*

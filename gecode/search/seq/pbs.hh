@@ -60,7 +60,7 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize shared stop information
         void share(SharedStopInfo* ssi);
         /// Return true if portfolio engine must be stopped
-        virtual bool stop(const Statistics& s, const Options& o);
+        bool stop(const Statistics& s, const Options& o) override;
     };
 
     /// Runnable slave of a portfolio master
@@ -121,15 +121,15 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize
         PBS(Engine** slaves, Stop** stops, unsigned int n, const Statistics& stat, const Search::Options& opt);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual Space* next(void);
+        Space* next(void) override;
         /// Return statistics
-        virtual Statistics statistics(void) const;
+        Statistics statistics(void) const override;
         /// Check whether engine has been stopped
-        virtual bool stopped(void) const;
+        bool stopped(void) const override;
         /// Constrain future solutions to be better than \a b
-        virtual void constrain(const Space& b);
+        void constrain(const Space& b) override;
         /// Destructor
-        virtual ~PBS(void);
+        ~PBS(void) override;
     };
 
 }}} // namespace Gecode::Search::Seq

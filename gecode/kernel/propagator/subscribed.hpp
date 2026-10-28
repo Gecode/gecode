@@ -78,7 +78,7 @@ namespace Gecode {
     forceinline void
     SubscribedPropagators::init(VarImp<VIC>& x) {
         c = x.actor(0);
-        ep = x.actorNonZero(x.pc_max + 1);
+        ep = x.actor_non_zero(x.pc_max + 1);
         ea = x.b.base + x.entries;
     }
     template <class VIC>

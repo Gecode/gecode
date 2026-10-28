@@ -79,8 +79,8 @@ namespace Test { namespace Branch {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new IntTestSpace(*this);
         }
     };
@@ -97,8 +97,8 @@ namespace Test { namespace Branch {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new BoolTestSpace(*this);
         }
     };
@@ -116,8 +116,8 @@ namespace Test { namespace Branch {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new SetTestSpace(*this);
         }
     };
@@ -136,8 +136,8 @@ namespace Test { namespace Branch {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new FloatTestSpace(*this);
         }
     };
@@ -280,9 +280,9 @@ namespace Test { namespace Branch {
     public:
         std::string var, val;
         unsigned int a_d, c_d;
-        RunInfo(const std::string& vara, const std::string& varb, const std::string& valname,
+        RunInfo(const std::string& vara, const std::string& varb, const std::string& value_name,
                 const Gecode::Search::Options& o)
-            : var(vara + "::" + varb), val(valname), a_d(o.a_d), c_d(o.c_d) {}
+            : var(vara + "::" + varb), val(value_name), a_d(o.a_d), c_d(o.c_d) {}
         void
         print(std::ostream& o) const {
             o << "(" << var << ", " << val << ", " << a_d << ", " << c_d << ")";
@@ -302,7 +302,7 @@ namespace Test { namespace Branch {
     /// Find number of solutions
     template <class TestSpace>
     int
-    solutions(TestSpace* c, Gecode::Search::Options& o, Gecode::Support::RandomGenerator& rand, int maxNbSol = -1) {
+    solutions(TestSpace* c, Gecode::Search::Options& o, Gecode::Support::RandomGenerator& rand, int max_nb_sol = -1) {
         o.a_d = rand(10);
         o.c_d = rand(10);
         Gecode::DFS<TestSpace> e_s(c, o);
@@ -316,7 +316,7 @@ namespace Test { namespace Branch {
                 break;
             delete ex;
             ++s;
-            if ((maxNbSol >= 0) && (maxNbSol == s))
+            if ((max_nb_sol >= 0) && (max_nb_sol == s))
                 break;
         } while (true);
         return s;
@@ -600,25 +600,25 @@ namespace Test { namespace Branch {
                             branch(*c, c->x, ivbb, ivb);
                             break;
                         case 2U:
-                            branch(*c, c->x, tiebreak(ivba, ivbb), ivb);
+                            branch(*c, c->x, tie_break(ivba, ivbb), ivb);
                             break;
                         case 3U:
-                            branch(*c, c->x, tiebreak(ivbb, ivba), ivb);
+                            branch(*c, c->x, tie_break(ivbb, ivba), ivb);
                             break;
                         case 4U:
-                            branch(*c, c->x, tiebreak(ivba, ivba, ivbb), ivb);
+                            branch(*c, c->x, tie_break(ivba, ivba, ivbb), ivb);
                             break;
                         case 5U:
-                            branch(*c, c->x, tiebreak(ivba, ivbb, ivbb), ivb);
+                            branch(*c, c->x, tie_break(ivba, ivbb, ivbb), ivb);
                             break;
                         case 6U:
-                            branch(*c, c->x, tiebreak(ivbb, ivba, ivba), ivb);
+                            branch(*c, c->x, tie_break(ivbb, ivba, ivba), ivb);
                             break;
                         case 7U:
-                            branch(*c, c->x, tiebreak(ivba, ivba, ivbb, ivba), ivb);
+                            branch(*c, c->x, tie_break(ivba, ivba, ivbb, ivba), ivb);
                             break;
                         case 8U:
-                            branch(*c, c->x, tiebreak(ivbb, ivba, ivbb, ivba), ivb);
+                            branch(*c, c->x, tie_break(ivbb, ivba, ivbb, ivba), ivb);
                             break;
                         }
                     }
@@ -791,25 +791,25 @@ namespace Test { namespace Branch {
                             branch(*c, c->x, bvbb, bvb);
                             break;
                         case 2U:
-                            branch(*c, c->x, tiebreak(bvba, bvbb), bvb);
+                            branch(*c, c->x, tie_break(bvba, bvbb), bvb);
                             break;
                         case 3U:
-                            branch(*c, c->x, tiebreak(bvbb, bvba), bvb);
+                            branch(*c, c->x, tie_break(bvbb, bvba), bvb);
                             break;
                         case 4U:
-                            branch(*c, c->x, tiebreak(bvba, bvba, bvbb), bvb);
+                            branch(*c, c->x, tie_break(bvba, bvba, bvbb), bvb);
                             break;
                         case 5U:
-                            branch(*c, c->x, tiebreak(bvba, bvbb, bvbb), bvb);
+                            branch(*c, c->x, tie_break(bvba, bvbb, bvbb), bvb);
                             break;
                         case 6U:
-                            branch(*c, c->x, tiebreak(bvbb, bvba, bvba), bvb);
+                            branch(*c, c->x, tie_break(bvbb, bvba, bvba), bvb);
                             break;
                         case 7U:
-                            branch(*c, c->x, tiebreak(bvba, bvba, bvbb, bvba), bvb);
+                            branch(*c, c->x, tie_break(bvba, bvba, bvbb, bvba), bvb);
                             break;
                         case 8U:
-                            branch(*c, c->x, tiebreak(bvbb, bvba, bvbb, bvba), bvb);
+                            branch(*c, c->x, tie_break(bvbb, bvba, bvbb, bvba), bvb);
                             break;
                         }
                     }
@@ -1082,25 +1082,25 @@ namespace Test { namespace Branch {
                             branch(*c, c->x, svbb, svb);
                             break;
                         case 2U:
-                            branch(*c, c->x, tiebreak(svba, svbb), svb);
+                            branch(*c, c->x, tie_break(svba, svbb), svb);
                             break;
                         case 3U:
-                            branch(*c, c->x, tiebreak(svbb, svba), svb);
+                            branch(*c, c->x, tie_break(svbb, svba), svb);
                             break;
                         case 4U:
-                            branch(*c, c->x, tiebreak(svba, svba, svbb), svb);
+                            branch(*c, c->x, tie_break(svba, svba, svbb), svb);
                             break;
                         case 5U:
-                            branch(*c, c->x, tiebreak(svba, svbb, svbb), svb);
+                            branch(*c, c->x, tie_break(svba, svbb, svbb), svb);
                             break;
                         case 6U:
-                            branch(*c, c->x, tiebreak(svbb, svba, svba), svb);
+                            branch(*c, c->x, tie_break(svbb, svba, svba), svb);
                             break;
                         case 7U:
-                            branch(*c, c->x, tiebreak(svba, svba, svbb, svba), svb);
+                            branch(*c, c->x, tie_break(svba, svba, svbb, svba), svb);
                             break;
                         case 8U:
-                            branch(*c, c->x, tiebreak(svbb, svba, svbb, svba), svb);
+                            branch(*c, c->x, tie_break(svbb, svba, svbb, svba), svb);
                             break;
                         }
                     }
@@ -1130,7 +1130,7 @@ namespace Test { namespace Branch {
 
 #ifdef GECODE_HAS_FLOAT_VARS
     FloatTest::FloatTest(const std::string& s, int a, const Gecode::FloatVal& d, int nbs)
-        : Base("Float::Branch::" + s), arity(a), dom(d), nbSols(nbs) {}
+        : Base("Float::Branch::" + s), arity(a), dom(d), nb_sols(nbs) {}
 
     bool
     FloatTest::run(void) {
@@ -1356,30 +1356,30 @@ namespace Test { namespace Branch {
                             branch(*c, c->x, fvbb, fvb);
                             break;
                         case 2U:
-                            branch(*c, c->x, tiebreak(fvba, fvbb), fvb);
+                            branch(*c, c->x, tie_break(fvba, fvbb), fvb);
                             break;
                         case 3U:
-                            branch(*c, c->x, tiebreak(fvbb, fvba), fvb);
+                            branch(*c, c->x, tie_break(fvbb, fvba), fvb);
                             break;
                         case 4U:
-                            branch(*c, c->x, tiebreak(fvba, fvba, fvbb), fvb);
+                            branch(*c, c->x, tie_break(fvba, fvba, fvbb), fvb);
                             break;
                         case 5U:
-                            branch(*c, c->x, tiebreak(fvba, fvbb, fvbb), fvb);
+                            branch(*c, c->x, tie_break(fvba, fvbb, fvbb), fvb);
                             break;
                         case 6U:
-                            branch(*c, c->x, tiebreak(fvbb, fvba, fvba), fvb);
+                            branch(*c, c->x, tie_break(fvbb, fvba, fvba), fvb);
                             break;
                         case 7U:
-                            branch(*c, c->x, tiebreak(fvba, fvba, fvbb, fvba), fvb);
+                            branch(*c, c->x, tie_break(fvba, fvba, fvbb, fvba), fvb);
                             break;
                         case 8U:
-                            branch(*c, c->x, tiebreak(fvbb, fvba, fvbb, fvba), fvb);
+                            branch(*c, c->x, tie_break(fvbb, fvba, fvbb, fvba), fvb);
                             break;
                         }
                     }
                     Gecode::Search::Options o;
-                    results[solutions(c, o, _rand, nbSols)].push_back(RunInfo(
+                    results[solutions(c, o, _rand, nb_sols)].push_back(RunInfo(
                         float_var_branch_name[vara], float_var_branch_name[varb], float_val_branch_name[val], o));
                 }
             }

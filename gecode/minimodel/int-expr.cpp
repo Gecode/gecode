@@ -133,7 +133,7 @@ namespace Gecode {
     forceinline void*
     LinIntExpr::Node::operator new(size_t size) {
 #ifdef GECODE_HAS_FAULT_INJECTION
-        Support::FailPoint::check(Support::FailPoint::Phase::MiniModel);
+        Support::FailPoint::check(Support::FailPoint::Phase::MINI_MODEL);
 #endif
         void* p = heap.ralloc(size);
 #ifdef GECODE_HAS_FAULT_INJECTION
@@ -573,23 +573,29 @@ namespace Gecode {
             d += m * c;
             break;
         case NT_VAR_INT:
+            assert(ti != nullptr);
             Int::Limits::check(m * a, "MiniModel::LinIntExpr");
             ti->a = static_cast<int>(m * a);
             ti->x = x_int;
             ti++;
             break;
         case NT_NONLIN:
+            assert(ti != nullptr);
             ti->a = static_cast<int>(m);
             ti->x = sum.ne->post(home, nullptr, ipls);
             ti++;
             break;
         case NT_VAR_BOOL:
+            assert(tb != nullptr);
             Int::Limits::check(m * a, "MiniModel::LinIntExpr");
             tb->a = static_cast<int>(m * a);
             tb->x = x_bool;
             tb++;
             break;
         case NT_SUM_INT:
+            if (n_int == 0)
+                break;
+            assert(ti != nullptr);
             for (int i = n_int; i--;) {
                 Int::Limits::check(m * sum.ti[i].a, "MiniModel::LinIntExpr");
                 ti[i].x = sum.ti[i].x;
@@ -598,6 +604,9 @@ namespace Gecode {
             ti += n_int;
             break;
         case NT_SUM_BOOL:
+            if (n_bool == 0)
+                break;
+            assert(tb != nullptr);
             for (int i = n_bool; i--;) {
                 Int::Limits::check(m * sum.tb[i].a, "MiniModel::LinIntExpr");
                 tb[i].x = sum.tb[i].x;

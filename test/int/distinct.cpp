@@ -60,8 +60,8 @@ namespace Test { namespace Int {
                        std::string(useCount ? "Count::Distinct::" : "Distinct::") + str(ipl) + "::Dense", 6, min, max,
                        false, ipl) {}
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < x.size(); i++)
                     for (int j = i + 1; j < x.size(); j++)
                         if (x[i] == x[j])
@@ -69,8 +69,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 if (!useCount) {
                     Gecode::distinct(home, x, ipl);
                 } else {
@@ -95,8 +95,8 @@ namespace Test { namespace Int {
                 : Test(ipl == Gecode::IPL_BND ? TestTags::standard() : TestTags::sweep(),
                        "Distinct::Offset::Dense::" + str(ipl), 6, min, max, false, ipl) {}
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < x.size(); i++)
                     for (int j = i + 1; j < x.size(); j++)
                         if (x[i] + i == x[j] + j)
@@ -104,8 +104,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntArgs c(x.size());
                 for (int i = 0; i < x.size(); i++)
                     c[i] = i;
@@ -120,8 +120,8 @@ namespace Test { namespace Int {
             Optional(const Gecode::IntArgs& d, Gecode::IntPropLevel ipl)
                 : Test("Distinct::Optional::" + str(ipl) + "::" + str(d), 6, Gecode::IntSet(d), false, ipl) {}
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() / 2;
                 for (int i = 0; i < n; i++)
                     if ((x[i] < 0) || (x[i] > 1))
@@ -133,8 +133,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a bx
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& bx) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& bx) override {
                 int n = bx.size() / 2;
                 Gecode::BoolVarArgs b(n);
                 Gecode::IntVarArgs x(n);
@@ -152,11 +152,11 @@ namespace Test { namespace Int {
             /// Create and register test
             Except(const Gecode::IntArgs& d, Gecode::IntPropLevel ipl)
                 : Test("Distinct::Except::" + str(ipl) + "::" + str(d), 3, Gecode::IntSet(d), false, ipl) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < x.size(); i++)
                     for (int j = i + 1; j < x.size(); j++)
                         if ((x[i] != 0) && (x[j] != 0) && (x[i] == x[j]))
@@ -164,8 +164,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a bx
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::distinct(home, x, 0, ipl);
             }
         };
@@ -176,16 +176,16 @@ namespace Test { namespace Int {
             /// Create and register test
             Random(int n, int min, int max, Gecode::IntPropLevel ipl)
                 : Test(TestTags::check(), "Distinct::Random::" + str(ipl), n, min, max, false, ipl) {
-                testsearch = false;
+                test_search = false;
             }
             /// Create and register initial assignment
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 return new RandomAssignment(arity, dom, 100, _rand);
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < x.size(); i++)
                     for (int j = i + 1; j < x.size(); j++)
                         if (x[i] == x[j])
@@ -193,8 +193,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::distinct(home, x, ipl);
             }
         };
@@ -214,8 +214,8 @@ namespace Test { namespace Int {
                 /// Constructor for cloning \a s
                 TestSpace(TestSpace& s) : Gecode::Space(s) {}
                 /// Copy space during cloning
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new TestSpace(*this);
                 }
             };
@@ -226,8 +226,8 @@ namespace Test { namespace Int {
                 : Base("Int::Distinct::Pathological::" + Test::str(n0) + "::" + Test::str(ipl0), TestTags::sweep()),
                   n(n0), ipl(ipl0) {}
             /// Perform test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 {
                     TestSpace* s = new TestSpace;

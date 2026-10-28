@@ -117,8 +117,8 @@ namespace Test { namespace Instance {
         /// Create test \a n running \a f0
         Case(const std::string& n, std::function<bool(void)> f0) : Base("Instance::" + n), f(f0) {}
         /// Run the test
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             try {
                 return f();
             } catch (const Error& e) {

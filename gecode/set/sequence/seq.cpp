@@ -57,7 +57,7 @@ namespace Gecode { namespace Set { namespace Sequence {
         do {
             assigned = false;
             modified = false;
-            GECODE_ES_CHECK(propagateSeq(home, modified, assigned, x));
+            GECODE_ES_CHECK(propagate_seq(home, modified, assigned, x));
         } while (assigned || modified);
 
         for (int i = x.size(); i--;)

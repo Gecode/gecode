@@ -301,13 +301,13 @@ public:
         game.update(*this, s.game);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new SportsLeague(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         // print period index
         os << "\t       ";
         for (int p = 0; p < periods(); p++) {

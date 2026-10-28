@@ -37,9 +37,9 @@ namespace Gecode { namespace Set { namespace Channel {
     ChannelSet<View>::ChannelSet(Home home, ViewArray<CachedView<View>>& xs0, ViewArray<CachedView<View>>& ys0)
         : Propagator(home), xs(xs0), ys(ys0) {
         for (int i = xs.size(); i--;)
-            xs[i].initCache(home, IntSet::empty, IntSet(0, ys.size() - 1));
+            xs[i].init_cache(home, IntSet::empty, IntSet(0, ys.size() - 1));
         for (int i = ys.size(); i--;)
-            ys[i].initCache(home, IntSet::empty, IntSet(0, xs.size() - 1));
+            ys[i].init_cache(home, IntSet::empty, IntSet(0, xs.size() - 1));
         xs.subscribe(home, *this, PC_SET_ANY);
         ys.subscribe(home, *this, PC_SET_ANY);
     }
@@ -108,40 +108,40 @@ namespace Gecode { namespace Set { namespace Channel {
             for (int i = xs.size(); i--;) {
                 if (xs[i].assigned())
                     ++assigned;
-                if (xs[i].glbModified()) {
+                if (xs[i].glb_modified()) {
                     GlbDiffRanges<View> xilb(xs[i]);
                     Iter::Ranges::ToValues<GlbDiffRanges<View>> dv(xilb);
                     for (; dv(); ++dv)
                         GECODE_ME_CHECK(ys[dv.val()].include(home, i));
-                    xs[i].cacheGlb(home);
+                    xs[i].cache_glb(home);
                     again = true;
                 }
-                if (xs[i].lubModified()) {
+                if (xs[i].lub_modified()) {
                     LubDiffRanges<View> xiub(xs[i]);
                     Iter::Ranges::ToValues<LubDiffRanges<View>> dv(xiub);
                     for (; dv(); ++dv)
                         GECODE_ME_CHECK(ys[dv.val()].exclude(home, i));
-                    xs[i].cacheLub(home);
+                    xs[i].cache_lub(home);
                     again = true;
                 }
             }
             for (int i = ys.size(); i--;) {
                 if (ys[i].assigned())
                     ++assigned;
-                if (ys[i].glbModified()) {
+                if (ys[i].glb_modified()) {
                     GlbDiffRanges<View> yilb(ys[i]);
                     Iter::Ranges::ToValues<GlbDiffRanges<View>> dv(yilb);
                     for (; dv(); ++dv)
                         GECODE_ME_CHECK(xs[dv.val()].include(home, i));
-                    ys[i].cacheGlb(home);
+                    ys[i].cache_glb(home);
                     again = true;
                 }
-                if (ys[i].lubModified()) {
+                if (ys[i].lub_modified()) {
                     LubDiffRanges<View> yiub(ys[i]);
                     Iter::Ranges::ToValues<LubDiffRanges<View>> dv(yiub);
                     for (; dv(); ++dv)
                         GECODE_ME_CHECK(xs[dv.val()].exclude(home, i));
-                    ys[i].cacheLub(home);
+                    ys[i].cache_lub(home);
                     again = true;
                 }
             }

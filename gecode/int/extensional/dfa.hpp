@@ -74,7 +74,7 @@ namespace Gecode {
         /// Initialize automaton implementation as empty
         GECODE_INT_EXPORT DFAI(void);
         /// Delete automaton implemenentation
-        virtual ~DFAI(void);
+        ~DFAI(void) override;
     };
 
     forceinline

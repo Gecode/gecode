@@ -83,213 +83,213 @@ namespace Gecode { namespace Gist {
         /// The canvas implementation
         TreeCanvas* canvas;
         /// The time slider
-        QSlider* timeBar;
+        QSlider* time_bar;
         /// Context menu
-        QMenu* contextMenu;
+        QMenu* context_menu;
         /// Action used when no solution inspector is registered
-        QAction* nullSolutionInspector;
+        QAction* null_solution_inspector;
         /// Menu of solution inspectors
-        QMenu* solutionInspectorMenu;
+        QMenu* solution_inspector_menu;
         /// Action used when no double click inspector is registered
-        QAction* nullDoubleClickInspector;
+        QAction* null_double_click_inspector;
         /// Menu of double click inspectors
-        QMenu* doubleClickInspectorMenu;
+        QMenu* double_click_inspector_menu;
         /// Action used when no double click inspector is registered
-        QAction* nullMoveInspector;
+        QAction* null_move_inspector;
         /// Menu of double click inspectors
-        QMenu* moveInspectorMenu;
+        QMenu* move_inspector_menu;
         /// Action used when no comparator is registered
-        QAction* nullComparator;
+        QAction* null_comparator;
         /// Menu of comparators
-        QMenu* comparatorMenu;
+        QMenu* comparator_menu;
         /// Action used when no bookmark exists
-        QAction* nullBookmark;
+        QAction* null_bookmark;
         /// Bookmark menu
-        QMenu* bookmarksMenu;
+        QMenu* bookmarks_menu;
         /// Menu for direct node inspection
-        QMenu* inspectNodeMenu;
+        QMenu* inspect_node_menu;
         /// Menu for direct node inspection before fixpoint
-        QMenu* inspectNodeBeforeFPMenu;
+        QMenu* inspect_node_before_fp_menu;
         /// Information about individual nodes
-        NodeStatInspector* nodeStatInspector;
+        NodeStatInspector* node_stat_inspector;
 
     public:
         /// Inspect current node
         QAction* inspect;
         /// Inspect current node before fixpoint
-        QAction* inspectBeforeFP;
+        QAction* inspect_before_fp;
         /// Stop search
         QAction* stop;
         /// Reset %Gist
         QAction* reset;
         /// Navigate to parent node
-        QAction* navUp;
+        QAction* nav_up;
         /// Navigate to leftmost child node
-        QAction* navDown;
+        QAction* nav_down;
         /// Navigate to left sibling
-        QAction* navLeft;
+        QAction* nav_left;
         /// Navigate to right sibling
-        QAction* navRight;
+        QAction* nav_right;
         /// Navigate to root node
-        QAction* navRoot;
+        QAction* nav_root;
         /// Navigate to next solution (to the left)
-        QAction* navNextSol;
+        QAction* nav_next_sol;
         /// Navigate to previous solution (to the right)
-        QAction* navPrevSol;
+        QAction* nav_prev_sol;
         /// Search next solution in current subtree
-        QAction* searchNext;
+        QAction* search_next;
         /// Search all solutions in current subtree
-        QAction* searchAll;
+        QAction* search_all;
         /// Toggle whether current node is hidden
-        QAction* toggleHidden;
+        QAction* toggle_hidden;
         /// Hide failed subtrees under current node
-        QAction* hideFailed;
+        QAction* hide_failed;
         /// Unhide all hidden subtrees under current node
-        QAction* unhideAll;
+        QAction* unhide_all;
         /// Label branches under current node
-        QAction* labelBranches;
+        QAction* label_branches;
         /// Label branches on path to root
-        QAction* labelPath;
+        QAction* label_path;
         /// Zoom tree to fit window
-        QAction* zoomToFit;
+        QAction* zoom_to_fit;
         /// Center on current node
         QAction* center;
         /// Export PDF of current subtree
-        QAction* exportPDF;
+        QAction* export_pdf;
         /// Export PDF of whole tree
-        QAction* exportWholeTreePDF;
+        QAction* export_whole_tree_pdf;
         /// Print tree
         QAction* print;
 
         /// Bookmark current node
-        QAction* bookmarkNode;
+        QAction* bookmark_node;
         /// Compare current node to other node
-        QAction* compareNode;
+        QAction* compare_node;
         /// Compare current node to other node before fixpoint
-        QAction* compareNodeBeforeFP;
+        QAction* compare_node_before_fp;
         /// Set path from current node to the root
-        QAction* setPath;
+        QAction* set_path;
         /// Inspect all nodes on selected path
-        QAction* inspectPath;
+        QAction* inspect_path;
         /// Open node statistics inspector
-        QAction* showNodeStats;
+        QAction* show_node_stats;
         /// Bookmark current node
-        QAction* toggleStop;
+        QAction* toggle_stop;
         /// Bookmark current node
-        QAction* unstopAll;
+        QAction* unstop_all;
 
         /// Group of all actions for solution inspectors
-        QActionGroup* solutionInspectorGroup;
+        QActionGroup* solution_inspector_group;
         /// Group of all actions for double click inspectors
-        QActionGroup* doubleClickInspectorGroup;
+        QActionGroup* double_click_inspector_group;
         /// Group of all actions for move inspectors
-        QActionGroup* moveInspectorGroup;
+        QActionGroup* move_inspector_group;
         /// Group of all actions for comparators
-        QActionGroup* comparatorGroup;
+        QActionGroup* comparator_group;
         /// Group of all actions for bookmarks
-        QActionGroup* bookmarksGroup;
+        QActionGroup* bookmarks_group;
         /// Group of all actions for direct inspector selection
-        QActionGroup* inspectGroup;
+        QActionGroup* inspect_group;
         /// Group of all actions for direct inspector selection
-        QActionGroup* inspectBeforeFPGroup;
+        QActionGroup* inspect_before_fp_group;
 
     public:
         /// Constructor
         Gist(Space* root, bool bab, QWidget* parent, const Options& opt);
         /// Destructor
-        ~Gist(void);
+        ~Gist(void) override;
 
         /// Add double click inspector \a i0
-        void addDoubleClickInspector(Inspector* i0);
+        void add_double_click_inspector(Inspector* i0);
         /// Add solution inspector \a i0
-        void addSolutionInspector(Inspector* i0);
+        void add_solution_inspector(Inspector* i0);
         /// Add move inspector \a i0
-        void addMoveInspector(Inspector* i0);
+        void add_move_inspector(Inspector* i0);
         /// Add comparator \a c0
-        void addComparator(Comparator* c0);
+        void add_comparator(Comparator* c0);
 
         /// Set preference whether to automatically hide failed subtrees
-        void setAutoHideFailed(bool b);
+        void set_auto_hide_failed(bool b);
         /// Set preference whether to automatically zoom to fit
-        void setAutoZoom(bool b);
+        void set_auto_zoom(bool b);
         /// Return preference whether to automatically hide failed subtrees
-        bool getAutoHideFailed(void);
+        bool get_auto_hide_failed(void);
         /// Return preference whether to automatically zoom to fit
-        bool getAutoZoom(void);
+        bool get_auto_zoom(void);
         /// Set preference whether to show copies in the tree
-        void setShowCopies(bool b);
+        void set_show_copies(bool b);
         /// Return preference whether to show copies in the tree
-        bool getShowCopies(void);
+        bool get_show_copies(void);
 
         /// Set refresh rate
-        void setRefresh(int i);
+        void set_refresh(int i);
         /// Set refresh pause in msec
-        void setRefreshPause(int i);
+        void set_refresh_pause(int i);
         /// Return preference whether to use smooth scrolling and zooming
-        bool getSmoothScrollAndZoom(void);
+        bool get_smooth_scroll_and_zoom(void);
         /// Set preference whether to use smooth scrolling and zooming
-        void setSmoothScrollAndZoom(bool b);
+        void set_smooth_scroll_and_zoom(bool b);
         /// Return preference whether to move cursor during search
-        bool getMoveDuringSearch(void);
+        bool get_move_during_search(void);
         /// Set preference whether to move cursor during search
-        void setMoveDuringSearch(bool b);
+        void set_move_during_search(bool b);
 
         /// Set recomputation parameters \a c_d and \a a_d
-        void setRecompDistances(int c_d, int a_d);
+        void set_recomp_distances(int c_d, int a_d);
         /// Return recomputation distance
-        int getCd(void);
+        int get_cd(void);
         /// Return adaptive recomputation distance
-        int getAd(void);
+        int get_ad(void);
 
         /// Stop search and wait until finished
         bool finish(void);
 
         /// Handle resize event
-        void resizeEvent(QResizeEvent*);
+        void resizeEvent(QResizeEvent*) override;
 
     Q_SIGNALS:
         /// Signals that the tree has changed
-        void statusChanged(const Statistics&, bool);
+        void status_changed(const Statistics&, bool);
 
         /// Signals that a solution has been found
         void solution(const Space*);
 
         /// Signals that %Gist is ready to be closed
-        void searchFinished(void);
+        void search_finished(void);
 
     private Q_SLOTS:
         /// Displays the context menu for a node
-        void on_canvas_contextMenu(QContextMenuEvent*);
+        void on_canvas_context_menu(QContextMenuEvent*);
         /// Reacts on status changes
-        void on_canvas_statusChanged(VisualNode*, const Statistics&, bool);
+        void on_canvas_status_changed(VisualNode*, const Statistics&, bool);
         /// Reacts on double click inspector selection
-        void selectDoubleClickInspector(QAction*);
+        void select_double_click_inspector(QAction*);
         /// Reacts on solution inspector selection
-        void selectSolutionInspector(QAction*);
+        void select_solution_inspector(QAction*);
         /// Reacts on move inspector selection
-        void selectMoveInspector(QAction*);
+        void select_move_inspector(QAction*);
         /// Reacts on comparator selection
-        void selectComparator(QAction*);
+        void select_comparator(QAction*);
         /// Reacts on bookmark selection
-        void selectBookmark(QAction*);
+        void select_bookmark(QAction*);
         /// Reacts on adding a bookmark
-        void addBookmark(const QString& id);
+        void add_bookmark(const QString& id);
         /// Reacts on removing a bookmark
-        void removeBookmark(int idx);
+        void remove_bookmark(int idx);
         /// Populate the inspector menus from the actions found in Gist
-        void populateInspectors(void);
+        void populate_inspectors(void);
         /// Populate the bookmarks menu
-        void populateBookmarksMenu(void);
+        void populate_bookmarks_menu(void);
         /// Shows node status information
-        void showStats(void);
+        void show_stats(void);
         /// Inspect current node with inspector described by \a a
-        void inspectWithAction(QAction* a);
+        void inspect_with_action(QAction* a);
         /// Inspect current node with inspector described by \a a
-        void inspectBeforeFPWithAction(QAction* a);
+        void inspect_before_fp_with_action(QAction* a);
 
     protected:
         /// Add inspector \a i0
-        void addInspector(Inspector* i, QAction*& nas, QAction*& nad, QAction*& nam);
+        void add_inspector(Inspector* i, QAction*& nas, QAction*& nad, QAction*& nam);
     };
 
 }} // namespace Gecode::Gist

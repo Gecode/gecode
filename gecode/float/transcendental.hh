@@ -63,9 +63,9 @@ namespace Gecode { namespace Float { namespace Transcendental {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$e^{x_0} = x_1\f$
         static ExecStatus post(Home home, A x0, B x1);
     };
@@ -92,9 +92,9 @@ namespace Gecode { namespace Float { namespace Transcendental {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\mathit{base}^{x_0} = x_1\f$
         static ExecStatus post(Home home, FloatNum base, A x0, B x1);
     };

@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
         for (int i = n; i--;) {
             int min_idx;
-            if (!lookupValue(k, x[i].min(), min_idx))
+            if (!lookup_value(k, x[i].min(), min_idx))
                 return ES_FAILED;
             if (x[i].assigned()) {
                 rv[min_idx].minb++;
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace GCC {
                 // with lower bound k[min_idx].card()
                 rv[min_idx].minb++;
                 int max_idx;
-                if (!lookupValue(k, x[i].max(), max_idx))
+                if (!lookup_value(k, x[i].max(), max_idx))
                     return ES_FAILED;
                 // count the number of variables
                 // with upper bound k[max_idx].card()
@@ -240,7 +240,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     public:
         /// Sentinels indicating whether an end of sum is reached
-        int firstValue, lastValue;
+        int first_value, last_value;
         /// \name Initialization
         //@{
         /// Constructor
@@ -257,13 +257,13 @@ namespace Gecode { namespace Int { namespace GCC {
         /// Compute the maximum capacity of an interval
         int sumup(int from, int to) const;
         /// Return smallest bound of variables
-        int minValue(void) const;
+        int min_value(void) const;
         /// Return largest bound of variables
-        int maxValue(void) const;
+        int max_value(void) const;
         /// Skip neighbouring array entries if their values do not differ
-        int skipNonNullElementsRight(int v) const;
+        int skip_non_null_elements_right(int v) const;
         /// Skip neighbouring array entries if their values do not differ
-        int skipNonNullElementsLeft(int v) const;
+        int skip_non_null_elements_left(int v) const;
         //@}
         /// \name Update
         //@{
@@ -320,8 +320,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
         int first = elements[0].card();
 
-        firstValue = first - 3;
-        lastValue = first + elements.size() + holes + 1;
+        first_value = first - 3;
+        last_value = first + elements.size() + holes + 1;
 
         // the first three elements
         for (i = 3; i--;)
@@ -330,10 +330,10 @@ namespace Gecode { namespace Int { namespace GCC {
         /*
          * copy the bounds into sum, filling up holes with zeroes
          */
-        int prevCard = elements[0].card() - 1;
+        int prev_card = elements[0].card() - 1;
         i = 0;
         for (j = 2; j < elements.size() + holes + 2; j++) {
-            if (elements[i].card() != prevCard + 1) {
+            if (elements[i].card() != prev_card + 1) {
                 sum[j + 1] = sum[j];
             } else if (up) {
                 sum[j + 1] = sum[j] + elements[i].max();
@@ -342,7 +342,7 @@ namespace Gecode { namespace Int { namespace GCC {
                 sum[j + 1] = sum[j] + elements[i].min();
                 i++;
             }
-            prevCard++;
+            prev_card++;
         }
         sum[j + 1] = sum[j] + 1;
         sum[j + 2] = sum[j + 1] + 1;
@@ -373,40 +373,40 @@ namespace Gecode { namespace Int { namespace GCC {
     forceinline int
     PartialSum<Card>::sumup(int from, int to) const {
         if (from <= to) {
-            return sum[to - firstValue] - sum[from - firstValue - 1];
+            return sum[to - first_value] - sum[from - first_value - 1];
         } else {
-            assert(to - firstValue - 1 >= 0);
-            assert(to - firstValue - 1 < size);
-            assert(from - firstValue >= 0);
-            assert(from - firstValue < size);
-            return sum[to - firstValue - 1] - sum[from - firstValue];
+            assert(to - first_value - 1 >= 0);
+            assert(to - first_value - 1 < size);
+            assert(from - first_value >= 0);
+            assert(from - first_value < size);
+            return sum[to - first_value - 1] - sum[from - first_value];
         }
     }
 
     template <class Card>
     forceinline int
-    PartialSum<Card>::minValue(void) const {
-        return firstValue + 3;
+    PartialSum<Card>::min_value(void) const {
+        return first_value + 3;
     }
     template <class Card>
     forceinline int
-    PartialSum<Card>::maxValue(void) const {
-        return lastValue - 2;
+    PartialSum<Card>::max_value(void) const {
+        return last_value - 2;
     }
 
     template <class Card>
     forceinline int
-    PartialSum<Card>::skipNonNullElementsRight(int value) const {
-        value -= firstValue;
+    PartialSum<Card>::skip_non_null_elements_right(int value) const {
+        value -= first_value;
         int* ds = &sum[size];
-        return (ds[value] < value ? value : ds[value]) + firstValue;
+        return (ds[value] < value ? value : ds[value]) + first_value;
     }
     template <class Card>
     forceinline int
-    PartialSum<Card>::skipNonNullElementsLeft(int value) const {
-        value -= firstValue;
+    PartialSum<Card>::skip_non_null_elements_left(int value) const {
+        value -= first_value;
         int* ds = &sum[size];
-        return (ds[value] > value ? ds[ds[value]] : value) + firstValue;
+        return (ds[value] > value ? ds[ds[value]] : value) + first_value;
     }
 
     template <class Card>
@@ -415,7 +415,7 @@ namespace Gecode { namespace Int { namespace GCC {
         int j = 0;
         for (int i = 3; i < size - 2; i++) {
             int max = 0;
-            if (k[j].card() == i + firstValue)
+            if (k[j].card() == i + first_value)
                 max = k[j++].max();
             if ((sum[i] - sum[i - 1]) != max)
                 return true;
@@ -429,7 +429,7 @@ namespace Gecode { namespace Int { namespace GCC {
         int j = 0;
         for (int i = 3; i < size - 2; i++) {
             int min = 0;
-            if (k[j].card() == i + firstValue)
+            if (k[j].card() == i + first_value)
                 min = k[j++].min();
             if ((sum[i] - sum[i - 1]) != min)
                 return true;
@@ -485,7 +485,7 @@ namespace Gecode { namespace Int { namespace GCC {
          * \a newBound contains either a narrowed domain bound
          * or is stores the old domain bound of a variable.
          */
-        int newBound;
+        int new_bound;
     };
 
     /**

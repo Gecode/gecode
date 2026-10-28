@@ -407,7 +407,8 @@ namespace Gecode {
                     for (int i = 0; i < n_tuples; i++) {
                         while (tuples[i][a] > vd[a].r[j].max)
                             j++;
-                        set(const_cast<BitSetData*>(vd[a].r[j].supports(n_words, tuples[i][a])), tuple2idx(tuples[i]));
+                        set(const_cast<BitSetData*>(vd[a].r[j].supports(n_words, tuples[i][a])),
+                            tuple_to_index(tuples[i]));
                     }
                 }
             }

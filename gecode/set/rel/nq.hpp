@@ -117,11 +117,11 @@ namespace Gecode { namespace Set { namespace Rel {
                 return home.ES_SUBSUMED(*this);
             }
         }
-        assert(x0.lubSize() - x0.glbSize() > 0);
-        if (x0.cardMin() > y.cardMax()) {
+        assert(x0.lub_size() - x0.glb_size() > 0);
+        if (x0.card_min() > y.card_max()) {
             return home.ES_SUBSUMED(*this);
         }
-        if (x0.cardMax() < y.cardMin()) {
+        if (x0.card_max() < y.card_min()) {
             return home.ES_SUBSUMED(*this);
         }
         // These tests are too expensive, we should only do them
@@ -138,12 +138,12 @@ namespace Gecode { namespace Set { namespace Rel {
         }
         // from here, we know y\subseteq lub(x) and glb(x)\subseteq y
 
-        if (x0.lubSize() == y.cardMin() && x0.lubSize() > 0) {
-            GECODE_ME_CHECK(x0.cardMax(home, x0.lubSize() - 1));
+        if (x0.lub_size() == y.card_min() && x0.lub_size() > 0) {
+            GECODE_ME_CHECK(x0.card_max(home, x0.lub_size() - 1));
             return home.ES_SUBSUMED(*this);
         }
-        if (x0.glbSize() == y.cardMin()) {
-            GECODE_ME_CHECK(x0.cardMin(home, x0.glbSize() + 1));
+        if (x0.glb_size() == y.card_min()) {
+            GECODE_ME_CHECK(x0.card_min(home, x0.glb_size() + 1));
             return home.ES_SUBSUMED(*this);
         }
         return ES_FIX;

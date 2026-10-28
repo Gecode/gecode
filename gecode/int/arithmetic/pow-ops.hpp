@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     inline int
-    PowOps::fnroot(int x) const {
+    PowOps::floor_nth_root(int x) const {
         if (x < 2)
             return x;
         /*
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     inline int
-    PowOps::cnroot(int x) const {
+    PowOps::ceil_nth_root(int x) const {
         if (x < 2)
             return x;
         /*
@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     inline int
-    SqrOps::fnroot(int x) const {
+    SqrOps::floor_nth_root(int x) const {
         if (x < 2)
             return x;
         /*
@@ -232,7 +232,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     inline int
-    SqrOps::cnroot(int x) const {
+    SqrOps::ceil_nth_root(int x) const {
         if (x < 2)
             return x;
         /*

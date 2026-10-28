@@ -326,8 +326,8 @@ public:
         return _tbf.value();
     }
     /// Print help text for list of instances
-    virtual void
-    help(void) {
+    void
+    help(void) override {
         InstanceOptions::help();
         std::cerr << "\tAvailable instances:" << std::endl << "\t\t";
         for (int i = 1; ::name[i] != nullptr; i++) {
@@ -383,7 +383,7 @@ public:
     }
     /// Do not overload machines
     void
-    nooverload(void) {
+    post_no_overload(void) {
         // Number of jobs and machines/steps
         int n = spec.jobs(), m = spec.machines();
 
@@ -407,8 +407,8 @@ public:
         }
     }
     /// Return cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return makespan;
     }
     /// Constructor for cloning \a s
@@ -417,8 +417,8 @@ public:
         makespan.update(*this, s.makespan);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\t\t" << spec.name() << " [makespan: " << makespan << "]" << std::endl;
         if (opt.verbose()) {
             // Number of jobs
@@ -453,7 +453,7 @@ class JobShopProbe : public JobShopBase {
 public:
     /// Actual model
     JobShopProbe(const JobShopOptions& o) : JobShopBase(o) {
-        nooverload();
+        post_no_overload();
     }
     void
     branch(unsigned int p, Rnd r) {
@@ -468,10 +468,10 @@ public:
             Gecode::branch(*this, start, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
             break;
         case 3U:
-            Gecode::branch(*this, start, tiebreak(INT_VAR_MIN_MIN(), INT_VAR_RND(r)), INT_VAL_MIN());
+            Gecode::branch(*this, start, tie_break(INT_VAR_MIN_MIN(), INT_VAR_RND(r)), INT_VAL_MIN());
             break;
         case 4U:
-            Gecode::branch(*this, start, tiebreak(INT_VAR_MAX_MIN(), INT_VAR_RND(r)), INT_VAL_MIN());
+            Gecode::branch(*this, start, tie_break(INT_VAR_MAX_MIN(), INT_VAR_RND(r)), INT_VAL_MIN());
             break;
         default:
             if (p & 1U)
@@ -485,8 +485,8 @@ public:
     /// Constructor for cloning \a s
     JobShopProbe(JobShopProbe& s) : JobShopBase(s) {}
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new JobShopProbe(*this);
     }
 };
@@ -509,7 +509,7 @@ protected:
     }
     /// Trampoline function for AFC-based cost
     static double
-    afcmerit(const Space& home, BoolVar x, int i) {
+    afc_merit(const Space& home, BoolVar x, int i) {
         return static_cast<const JobShopSolve&>(home).afc(x, i);
     }
     /// Action information
@@ -522,7 +522,7 @@ protected:
     }
     /// Trampoline function for Action-based cost
     static double
-    actionmerit(const Space& home, BoolVar, int i) {
+    action_merit(const Space& home, BoolVar, int i) {
         return static_cast<const JobShopSolve&>(home).action(i);
     }
     /// CHB information
@@ -535,7 +535,7 @@ protected:
     }
     /// Trampoline function for CHB-based cost
     static double
-    chbmerit(const Space& home, BoolVar, int i) {
+    chb_merit(const Space& home, BoolVar, int i) {
         return static_cast<const JobShopSolve&>(home).chb(i);
     }
     /// Random number generator for probing and relaxation
@@ -557,7 +557,7 @@ public:
     JobShopSolve(const JobShopOptions& o)
         : JobShopBase(o), sorder(*this, spec.machines() * spec.jobs() * (spec.jobs() - 1) / 2, 0, 1), rnd(o.seed()) {
         if (opt.propagation() == PROP_UNARY)
-            nooverload();
+            post_no_overload();
 
         // Number of jobs and machines/steps
         int n = spec.jobs(), m = spec.machines();
@@ -602,9 +602,10 @@ public:
                     assert(b >= w);
                     return b - (b - w) * tbf;
                 };
-                branch(*this, sorder, tiebreak(BOOL_VAR_MERIT_MAX(&afcmerit, tbl), BOOL_VAR_RND(rnd)), BOOL_VAL_MIN());
+                branch(*this, sorder, tie_break(BOOL_VAR_MERIT_MAX(&afc_merit, tbl), BOOL_VAR_RND(rnd)),
+                       BOOL_VAL_MIN());
             } else {
-                branch(*this, sorder, BOOL_VAR_MERIT_MAX(&afcmerit), BOOL_VAL_MIN());
+                branch(*this, sorder, BOOL_VAR_MERIT_MAX(&afc_merit), BOOL_VAL_MIN());
             }
             break;
         case BRANCH_ACTION:
@@ -615,10 +616,10 @@ public:
                     assert(b >= w);
                     return b - (b - w) * tbf;
                 };
-                branch(*this, sorder, tiebreak(BOOL_VAR_MERIT_MAX(&actionmerit, tbl), BOOL_VAR_RND(rnd)),
+                branch(*this, sorder, tie_break(BOOL_VAR_MERIT_MAX(&action_merit, tbl), BOOL_VAR_RND(rnd)),
                        BOOL_VAL_MIN());
             } else {
-                branch(*this, sorder, BOOL_VAR_MERIT_MAX(&actionmerit), BOOL_VAL_MIN());
+                branch(*this, sorder, BOOL_VAR_MERIT_MAX(&action_merit), BOOL_VAL_MIN());
             }
             break;
         case BRANCH_CHB:
@@ -629,9 +630,10 @@ public:
                     assert(b >= w);
                     return b - (b - w) * tbf;
                 };
-                branch(*this, sorder, tiebreak(BOOL_VAR_MERIT_MAX(&chbmerit, tbl), BOOL_VAR_RND(rnd)), BOOL_VAL_MIN());
+                branch(*this, sorder, tie_break(BOOL_VAR_MERIT_MAX(&chb_merit, tbl), BOOL_VAR_RND(rnd)),
+                       BOOL_VAL_MIN());
             } else {
-                branch(*this, sorder, BOOL_VAR_MERIT_MAX(&chbmerit), BOOL_VAL_MIN());
+                branch(*this, sorder, BOOL_VAR_MERIT_MAX(&chb_merit), BOOL_VAL_MIN());
             }
             break;
         }
@@ -643,8 +645,8 @@ public:
         : JobShopBase(s), sorder(s.sorder), fst(s.fst), snd(s.snd), iafc(s.iafc), iaction(s.iaction),
           baction(s.baction), ichb(s.ichb), bchb(s.bchb), rnd(s.rnd) {}
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new JobShopSolve(*this);
     }
 };
@@ -659,8 +661,8 @@ public:
     FailTimeStop(unsigned int fail, unsigned int time)
         : fs(new Search::FailStop(fail)), ts(new Search::TimeStop(time)) {}
     /// Test whether search must be stopped
-    virtual bool
-    stop(const Search::Statistics& s, const Search::Options& o) {
+    bool
+    stop(const Search::Statistics& s, const Search::Options& o) override {
         return fs->stop(s, o) || ts->stop(s, o);
     }
     /// Whether the stop was due to failures
@@ -674,7 +676,7 @@ public:
         return ts->stop(s, o);
     }
     /// Destructor
-    ~FailTimeStop(void) {
+    ~FailTimeStop(void) override {
         delete fs;
         delete ts;
     }

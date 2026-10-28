@@ -69,7 +69,7 @@ namespace Gecode { namespace Int {
                 n++;
                 return;
             } else {
-                p = c->nextRef();
+                p = c->next_ref();
                 c = *p;
             }
         }

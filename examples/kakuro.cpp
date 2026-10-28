@@ -261,8 +261,8 @@ namespace {
             x.update(*this, s.x);
         }
         /// Perform copying during cloning
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new DistinctLinear(*this);
         }
         /// Return a solution
@@ -365,7 +365,7 @@ public:
     }
     /// Post a distinct-linear constraint on variables \a x with sum \a c
     void
-    distinctlinear(Cache& dc, const IntVarArgs& x, int c, const SizeOptions& opt) {
+    distinct_linear(Cache& dc, const IntVarArgs& x, int c, const SizeOptions& opt) {
         int n = x.size();
         if (opt.model() == MODEL_DECOMPOSE) {
             if (n < 8)
@@ -436,7 +436,7 @@ public:
             IntVarArgs col(n);
             for (int i = n; i--;)
                 col[i] = init(b(x, y + i + 1));
-            distinctlinear(cache, col, s, opt);
+            distinct_linear(cache, col, s, opt);
         }
         k++;
 
@@ -449,7 +449,7 @@ public:
             IntVarArgs row(n);
             for (int i = n; i--;)
                 row[i] = init(b(x + i + 1, y));
-            distinctlinear(cache, row, s, opt);
+            distinct_linear(cache, row, s, opt);
         }
         branch(*this, f, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN());
     }
@@ -458,13 +458,13 @@ public:
         f.update(*this, s.f);
     }
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Kakuro(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         Matrix<IntVarArray> b(f, w, h);
         for (int y = 0; y < h; y++) {
             os << '\t';

@@ -45,8 +45,8 @@ namespace Test { namespace FlatZinc { namespace {
         /// Create and register test
         UniformIntInvalidRange(void) : Base("FlatZinc::on_restart::uniform_int_invalid_range") {}
         /// Perform test
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             std::stringstream source(R"FZN(
 predicate gecode_on_restart_uniform_int(int: low,int: high,var int: out);
 var 0..1: y;
@@ -97,8 +97,8 @@ solve satisfy;
         /// Create and register test
         WideUniformInt(void) : Base("FlatZinc::on_restart::uniform_int_wide_endpoints") {}
         /// Perform test
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             {
                 const unsigned int chunks[] = {(1U << 31) - 1U, (1U << 31) - 1U, 1U, 0U};
                 ScriptedRandom random(chunks, 4);

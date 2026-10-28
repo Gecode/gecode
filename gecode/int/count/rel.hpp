@@ -41,13 +41,13 @@ namespace Gecode { namespace Int { namespace Count {
 
     template <class VY>
     forceinline bool
-    isintset(VY y) {
+    is_int_set(VY y) {
         (void)y;
         return false;
     }
     template <>
     forceinline bool
-    isintset(IntSet y) {
+    is_int_set(IntSet y) {
         (void)y;
         return true;
     }

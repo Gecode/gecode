@@ -51,17 +51,17 @@ namespace Gecode { namespace Search {
         /// Initialization
         WorkerToEngine(Space* s, const Options& o);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual Space* next(void);
+        Space* next(void) override;
         /// Return statistics
-        virtual Search::Statistics statistics(void) const;
+        Search::Statistics statistics(void) const override;
         /// Check whether engine has been stopped
-        virtual bool stopped(void) const;
+        bool stopped(void) const override;
         /// Constrain future solutions to be better than \a b
-        virtual void constrain(const Space& b);
+        void constrain(const Space& b) override;
         /// Reset engine to restart at space \a s
-        virtual void reset(Space* s);
+        void reset(Space* s) override;
         /// Return no-goods
-        virtual NoGoods& nogoods(void);
+        NoGoods& nogoods(void) override;
     };
 
     forceinline Space*

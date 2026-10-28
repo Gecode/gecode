@@ -59,7 +59,7 @@ namespace Gecode { namespace Support {
                 Runnable* e = r.exchange(nullptr);
                 assert(e != nullptr);
                 e->run();
-                const bool delete_after_run = e->todelete();
+                const bool delete_after_run = e->delete_after_run();
                 Terminator* t = e->terminator();
                 if (delete_after_run) {
                     delete e;
@@ -100,8 +100,8 @@ namespace Gecode { namespace Support {
 
         public:
             GlobalMutexRunnable(void) : _to_acquire(nullptr), _to_release(nullptr) {}
-            virtual void
-            run(void) {
+            void
+            run(void) override {
                 while (true) {
                     _m.acquire();
                     if (_to_acquire) {
@@ -148,20 +148,20 @@ namespace Gecode { namespace Support {
         };
 
         GlobalMutexRunnable&
-        globalMutexRunnable(void) {
+        global_mutex_runnable(void) {
             static GlobalMutexRunnableInit gmri;
             return *gmri.gmr;
         }
     } // namespace
 
     void
-    Thread::acquireGlobalMutex(Mutex* m) {
-        globalMutexRunnable().acquire(m);
+    Thread::acquire_global_mutex(Mutex* m) {
+        global_mutex_runnable().acquire(m);
     }
 
     void
-    Thread::releaseGlobalMutex(Mutex* m) {
-        globalMutexRunnable().release(m);
+    Thread::release_global_mutex(Mutex* m) {
+        global_mutex_runnable().release(m);
     }
 
 }} // namespace Gecode::Support

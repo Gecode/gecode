@@ -117,12 +117,12 @@ public:
 
     /// Actual model
     BACP(const SizeOptions& opt) : IntMinimizeScript(opt), curr(curriculum[opt.size()]) {
-        std::map<std::string, int> courseMap; // Map names to course numbers
-        int maxCredit = 0;
-        int numberOfCourses = 0;
-        for (const Course* co = curr.courses; co->name != 0; co++) {
-            courseMap[co->name] = numberOfCourses++;
-            maxCredit += co->credit;
+        std::map<std::string, int> course_map; // Map names to course numbers
+        int max_credit = 0;
+        int number_of_courses = 0;
+        for (const Course* co = curr.courses; co->name != nullptr; co++) {
+            course_map[co->name] = number_of_courses++;
+            max_credit += co->credit;
         }
 
         int p = curr.p;
@@ -132,14 +132,14 @@ public:
         int d = curr.d;
 
         l = IntVarArray(*this, p, a, b);
-        u = IntVar(*this, 0, maxCredit);
+        u = IntVar(*this, 0, max_credit);
         q = IntVarArray(*this, p, c, d);
-        x = IntVarArray(*this, numberOfCourses, 0, p - 1);
+        x = IntVarArray(*this, number_of_courses, 0, p - 1);
 
         for (int j = 0; j < p; j++) {
-            BoolVarArgs xij(*this, numberOfCourses, 0, 1);
-            IntArgs t(numberOfCourses);
-            for (int i = 0; i < numberOfCourses; i++) {
+            BoolVarArgs xij(*this, number_of_courses, 0, 1);
+            IntArgs t(number_of_courses);
+            for (int i = 0; i < number_of_courses; i++) {
                 rel(*this, (x[i] == j) == xij[i]);
                 t[i] = curr.courses[i].credit;
             }
@@ -150,15 +150,15 @@ public:
         }
 
         // Precedence
-        for (const char** prereq = curr.prereqs; *prereq != 0; prereq += 2)
-            rel(*this, x[courseMap[*prereq]] < x[courseMap[*(prereq + 1)]]);
+        for (const char** prereq = curr.prereqs; *prereq != nullptr; prereq += 2)
+            rel(*this, x[course_map[*prereq]] < x[course_map[*(prereq + 1)]]);
 
         // Optimization criterion: minimize u
         max(*this, l, u);
 
         // Redundant constraints
-        linear(*this, l, IRT_EQ, maxCredit);
-        linear(*this, q, IRT_EQ, numberOfCourses);
+        linear(*this, l, IRT_EQ, max_credit);
+        linear(*this, q, IRT_EQ, number_of_courses);
 
         switch (opt.branching()) {
         case BRANCHING_NAIVE:
@@ -213,18 +213,18 @@ public:
         x.update(*this, bacp.x);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new BACP(*this);
     }
     /// Return solution cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return u;
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         std::vector<std::list<int>> period(curr.p);
         for (int i = x.size(); i--;)
             period[x[i].val()].push_back(i);
@@ -277,7 +277,7 @@ namespace {
                                {"hxwxx2", 1}, {"iei231", 4}, {"iei241", 4}, {"iei271", 3}, {"iei281", 3}, {"iwn261", 3},
                                {"hfw120", 2}, {"iei233", 4}, {"iei238", 3}, {"iei261", 3}, {"iei272", 3}, {"iei273", 3},
                                {"iei161", 3}, {"iei232", 3}, {"iei262", 3}, {"iei274", 3}, {"iwi365", 3}, {"iwn270", 3},
-                               {"hrw130", 2}, {"iei218", 3}, {"iei219", 3}, {"iei248", 3}, {0, 0}};
+                               {"hrw130", 2}, {"iei218", 3}, {"iei219", 3}, {"iei248", 3}, {nullptr, 0}};
 
     /// Prerequisites for first example
     const char* prereqs8[] = {"dew101", "dew100", "fis101", "fis100",  "fis101", "mat192", "mat191", "mat190", "mat193",
@@ -288,7 +288,7 @@ namespace {
                               "iei231", "iei238", "iei231", "iei261",  "iwn261", "iei272", "iei271", "iei273", "iei271",
                               "iei273", "iei271", "iei161", "iwn261",  "iei161", "iwn261", "iei232", "iei273", "iei232",
                               "iei273", "iei262", "iwn261", "iei274",  "iei273", "iei274", "iei273", "iei219", "iei232",
-                              "iei248", "iei233", "iei248", "iei233",  0,        0};
+                              "iei248", "iei233", "iei248", "iei233",  nullptr,  nullptr};
 
     /// Courses for second example
     const Course courses10[] = {
@@ -298,7 +298,7 @@ namespace {
         {"ili260", 3}, {"iwn261", 3}, {"mat024", 4}, {"fis130", 4}, {"ili239", 4}, {"ili245", 4}, {"ili253", 4},
         {"fis140", 4}, {"ili236", 4}, {"ili243", 4}, {"ili270", 3}, {"ili280", 4}, {"ici344", 4}, {"ili263", 3},
         {"ili332", 4}, {"ili355", 4}, {"iwn170", 3}, {"icdxx1", 3}, {"ili362", 3}, {"iwn270", 3}, {"icdxx2", 3},
-        {0, 0}};
+        {nullptr, 0}};
 
     /// Prerequisites for second example
     const char* prereqs10[] = {"dew101", "dew100", "fis110", "fis100", "fis110", "mat021", "mat022", "mat021", "dewxx0",
@@ -308,7 +308,7 @@ namespace {
                                "ili245", "ili153", "ili253", "ili153", "fis140", "fis120", "fis140", "fis130", "ili236",
                                "ili239", "ili243", "ili245", "ili270", "ili260", "ili270", "iwn261", "ili280", "mat024",
                                "ici344", "ili243", "ili263", "ili260", "ili263", "iwn261", "ili332", "ili236", "ili355",
-                               "ili153", "ili355", "ili280", "ili362", "ili263", 0,        0};
+                               "ili153", "ili355", "ili280", "ili362", "ili263", nullptr,  nullptr};
 
     /// Courses for third example
     const Course courses12[] = {
@@ -321,7 +321,7 @@ namespace {
         {"ili238", 4}, {"ili242", 3}, {"ili275", 3}, {"ili355", 4}, {"hrw110", 2}, {"ici393", 4}, {"ili237", 4},
         {"ili334", 4}, {"ili363", 3}, {"iwn261", 3}, {"hrw100", 2}, {"ici382", 4}, {"ili331", 4}, {"ili362", 3},
         {"ili381", 3}, {"iln230", 3}, {"ici313", 2}, {"ici315", 2}, {"ici332", 3}, {"ici344", 4}, {"icn336", 3},
-        {"iwi365", 3}, {"ici314", 2}, {"ici367", 2}, {0, 0}};
+        {"iwi365", 3}, {"ici314", 2}, {"ici367", 2}, {nullptr, 0}};
 
     /// Prerequisites for third example
     const char* prereqs12[] = {
@@ -336,7 +336,7 @@ namespace {
         "hrw110", "hrw150", "ici393", "mat210", "ici393", "mat260", "ili237", "ili231", "ili237", "ili252", "ili334",
         "ili238", "ili363", "ili273", "hrw100", "hrw110", "ici382", "ili334", "ili331", "ili238", "ili331", "ili274",
         "ili362", "ili363", "ili381", "ili281", "ili381", "mat210", "iln230", "iwn170", "ici313", "ili331", "ici332",
-        "ici393", "ici332", "ili331", "ici344", "ili243", "icn336", "ici393", "ici314", "ici313", 0,        0};
+        "ici393", "ici332", "ili331", "ici344", "ili243", "icn336", "ici393", "ici314", "ici313", nullptr,  nullptr};
 
     /// The example specifications
     const Curriculum curriculum[] = {{8, 10, 24, 2, 10, courses8, prereqs8},

@@ -82,9 +82,9 @@ namespace Gecode { namespace Search { namespace Par {
             /// Return no-goods
             NoGoods& nogoods(void);
             /// Destructor
-            virtual ~Worker(void);
+            ~Worker(void) override;
             /// Terminator (engine)
-            virtual Support::Terminator* terminator(void) const;
+            Support::Terminator* terminator(void) const override;
         };
         /// Search options
         Options _opt;
@@ -190,13 +190,13 @@ namespace Gecode { namespace Search { namespace Par {
         /// Mutex for access to termination information
         Support::Mutex _m_term;
         /// Number of workers that have not yet acknowledged termination
-        volatile unsigned int _n_term_not_ack;
+        unsigned int _n_term_not_ack;
         /// Event for termination acknowledgment
         Support::Event _e_term_ack;
         /// Mutex for waiting for termination
         Support::Mutex _m_wait_terminate;
         /// Number of not yet terminated workers
-        volatile unsigned int _n_not_terminated;
+        unsigned int _n_not_terminated;
         /// Event for termination (all threads have terminated)
         Support::Event _e_terminate;
 
@@ -204,7 +204,7 @@ namespace Gecode { namespace Search { namespace Par {
         /// For worker to acknowledge termination command
         void ack_terminate(void);
         /// For worker to register termination
-        virtual void terminated(void);
+        void terminated(void) override;
         /// For worker to wait until termination is legal
         void wait_terminate(void);
         /// For engine to perform thread termination
@@ -217,7 +217,7 @@ namespace Gecode { namespace Search { namespace Par {
         /// Mutex for access to reset information
         Support::Mutex _m_reset;
         /// Number of workers that have not yet acknowledged reset
-        volatile unsigned int _n_reset_not_ack;
+        unsigned int _n_reset_not_ack;
         /// Event for reset acknowledgment started
         Support::Event e_reset_ack_start;
         /// Event for reset acknowledgment stopped
@@ -244,7 +244,7 @@ namespace Gecode { namespace Search { namespace Par {
         /// Queue of solutions
         Support::DynamicQueue<Space*, Heap> solutions;
         /// Number of busy workers
-        volatile unsigned int n_busy;
+        unsigned int n_busy;
         /// Whether a worker had been stopped
         std::atomic<bool> has_stopped;
         /// Number of calls to next() that have started search
@@ -270,13 +270,13 @@ namespace Gecode { namespace Search { namespace Par {
         /// Initialize with options \a o
         Engine(const Options& o);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual Space* next(void);
+        Space* next(void) override;
         /// Check whether engine has been stopped
-        virtual bool stopped(void) const;
+        bool stopped(void) const override;
         //@}
 
         /// Destructor
-        virtual ~Engine(void);
+        ~Engine(void) override;
     };
 
 }}} // namespace Gecode::Search::Par

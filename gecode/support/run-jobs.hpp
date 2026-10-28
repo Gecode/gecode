@@ -89,9 +89,9 @@ namespace Gecode { namespace Support {
             /// Initialize worker
             Worker(Job<RetType>* j, Master* m, int i);
             /// Run jobs
-            virtual void run(void);
+            void run(void) override;
             /// Nothing to delete (done in run)
-            virtual ~Worker(void);
+            ~Worker(void) override;
         };
         class Master {
         protected:
@@ -128,9 +128,9 @@ namespace Gecode { namespace Support {
             /// Whether a job has thrown a \a JobStop exception
             bool stopped(void) const;
             /// Return index of first job that has thrown a \a JobStop exception (-1 if none) with its result
-            int stoppedjob(RetType& r) const;
+            int stopped_job(RetType& r) const;
             /// Whether a new thread is needed for deletion
-            bool needthread(void);
+            bool needs_cleanup_thread(void);
             /// Destructor
             ~Master(void);
         };
@@ -144,7 +144,7 @@ namespace Gecode { namespace Support {
             /// Initialize with master \a m
             Deleter(Master* m);
             /// Perform deletion
-            virtual void run(void);
+            void run(void) override;
         };
         /// The actual master
         Master* master;
@@ -181,7 +181,7 @@ namespace Gecode { namespace Support {
 
     template <class Jobs, class RetType>
     inline int
-    RunJobs<Jobs, RetType>::Master::stoppedjob(RetType& r) const {
+    RunJobs<Jobs, RetType>::Master::stopped_job(RetType& r) const {
         r = sres;
         return sidx;
     }
@@ -299,7 +299,7 @@ namespace Gecode { namespace Support {
 
     template <class Jobs, class RetType>
     inline bool
-    RunJobs<Jobs, RetType>::Master::needthread(void) {
+    RunJobs<Jobs, RetType>::Master::needs_cleanup_thread(void) {
         bool n;
         m.acquire();
         while (!rs.empty())
@@ -332,7 +332,7 @@ namespace Gecode { namespace Support {
     template <class Jobs, class RetType>
     inline bool
     RunJobs<Jobs, RetType>::stopped(int& i, RetType& r) const {
-        i = master->stoppedjob(r);
+        i = master->stopped_job(r);
         return i >= 0;
     }
 
@@ -347,7 +347,7 @@ namespace Gecode { namespace Support {
 
     template <class Jobs, class RetType>
     inline RunJobs<Jobs, RetType>::~RunJobs(void) {
-        if (!master->needthread())
+        if (!master->needs_cleanup_thread())
             delete master;
         else
             Thread::run(new Deleter(master));

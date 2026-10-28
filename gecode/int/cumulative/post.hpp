@@ -34,7 +34,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     template <class ManTask, class Cap>
     forceinline ExecStatus
-    manpost(Home home, Cap c, TaskArray<ManTask>& t, IntPropLevel ipl) {
+    post_mandatory(Home home, Cap c, TaskArray<ManTask>& t, IntPropLevel ipl) {
         switch (ba(ipl)) {
         case IPL_BASIC:
         default:
@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     template <class OptTask, class Cap>
     forceinline ExecStatus
-    optpost(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl) {
+    post_optional(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl) {
         switch (ba(ipl)) {
         case IPL_BASIC:
         default:

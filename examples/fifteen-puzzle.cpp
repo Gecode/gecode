@@ -408,6 +408,13 @@ run(PuzzleOptions& opt) {
         Search::HeuristicGuidance guidance(Search::HeuristicGuidance::MINIMIZE, [](const Space& home) -> std::int64_t {
             return static_cast<const Model&>(home).bound();
         });
+        struct RestoreGuidance {
+            PuzzleOptions& options;
+            const Search::HeuristicGuidance* previous;
+            ~RestoreGuidance() {
+                options.guidance(previous);
+            }
+        } restore_guidance{opt, opt.guidance()};
         opt.guidance(&guidance);
         if (opt.search() == PuzzleOptions::SEARCH_ASTAR)
             Script::run<Model, AStar, PuzzleOptions>(opt);

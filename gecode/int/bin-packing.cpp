@@ -37,7 +37,7 @@
 namespace Gecode {
 
     void
-    binpacking(Home home, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s, IntPropLevel ipl) {
+    bin_packing(Home home, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s, IntPropLevel ipl) {
         using namespace Int;
         if (same(l, b))
             throw ArgumentSame("Int::binpacking");
@@ -59,8 +59,8 @@ namespace Gecode {
     }
 
     IntSet
-    binpacking(Home home, int d, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s, const IntArgs& c,
-               IntPropLevel ipl) {
+    bin_packing(Home home, int d, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s, const IntArgs& c,
+                IntPropLevel ipl) {
         using namespace Int;
 
         if (same(l, b))
@@ -94,7 +94,7 @@ namespace Gecode {
                 }
             }
 
-        // Post a binpacking constraint for each dimension
+        // Post a bin_packing constraint for each dimension
         for (int k = 0; k < d; k++) {
             ViewArray<OffsetView> lv(home, m);
             for (int j = 0; j < m; j++)
@@ -146,7 +146,7 @@ namespace Gecode {
                 home.fail();
 
             // The clique can be computed even if home is failed
-            return cg.maxclique();
+            return cg.maximum_clique();
         }
     }
 

@@ -48,7 +48,7 @@ namespace Gecode { namespace Set { namespace Int {
     forceinline ExecStatus
     Card<View>::post(Home home, View x0, Gecode::Int::IntView x1) {
         GECODE_ME_CHECK(x1.gq(home, 0));
-        GECODE_ME_CHECK(x0.cardMax(home, Gecode::Int::Limits::max));
+        GECODE_ME_CHECK(x0.card_max(home, Gecode::Int::Limits::max));
         (void)new (home) Card(home, x0, x1);
         return ES_OK;
     }
@@ -71,10 +71,10 @@ namespace Gecode { namespace Set { namespace Int {
         do {
             x1min = x1.min();
             x1max = x1.max();
-            GECODE_ME_CHECK(x0.cardMin(home, static_cast<unsigned int>(x1min)));
-            GECODE_ME_CHECK(x0.cardMax(home, static_cast<unsigned int>(x1max)));
-            GECODE_ME_CHECK(x1.gq(home, static_cast<int>(x0.cardMin())));
-            GECODE_ME_CHECK(x1.lq(home, static_cast<int>(x0.cardMax())));
+            GECODE_ME_CHECK(x0.card_min(home, static_cast<unsigned int>(x1min)));
+            GECODE_ME_CHECK(x0.card_max(home, static_cast<unsigned int>(x1max)));
+            GECODE_ME_CHECK(x1.gq(home, static_cast<int>(x0.card_min())));
+            GECODE_ME_CHECK(x1.lq(home, static_cast<int>(x0.card_max())));
         } while (x1.min() > x1min || x1.max() < x1max);
         if (x1.assigned())
             return home.ES_SUBSUMED(*this);

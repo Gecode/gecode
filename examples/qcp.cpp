@@ -198,7 +198,7 @@ public:
             switch (opt.branching()) {
             case BRANCH_CBS_MAX_SD:
 #ifdef GECODE_HAS_CBS
-                cbsbranch(*this, e);
+                cbs_branch(*this, e);
 #endif
             case BRANCH_SIZE:
                 branch(*this, e, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
@@ -210,8 +210,8 @@ public:
         }
     }
     /// Slave function for portfolio search
-    virtual bool
-    slave(const MetaInfo& mi) {
+    bool
+    slave(const MetaInfo& mi) override {
         if (mi.type() == MetaInfo::PORTFOLIO) {
             double tbf = opt.tbf();
             Rnd r(seeds[mi.asset() % n_seeds]);
@@ -221,14 +221,14 @@ public:
                     assert(w >= b);
                     return b + (w - b) * tbf;
                 };
-                branch(*this, e, tiebreak(INT_VAR_SIZE_MIN(tbl), INT_VAR_RND(r)), INT_VAL_MIN());
+                branch(*this, e, tie_break(INT_VAR_SIZE_MIN(tbl), INT_VAR_RND(r)), INT_VAL_MIN());
             } break;
             case BRANCH_AFC_SIZE: {
                 auto tbl = [tbf](const Space&, double w, double b) {
                     assert(b >= w);
                     return b - (b - w) * tbf;
                 };
-                branch(*this, e, tiebreak(INT_VAR_AFC_SIZE_MAX(opt.decay(), tbl), INT_VAR_RND(r)), INT_VAL_MIN());
+                branch(*this, e, tie_break(INT_VAR_AFC_SIZE_MAX(opt.decay(), tbl), INT_VAR_RND(r)), INT_VAL_MIN());
             } break;
             default:;
             }
@@ -240,13 +240,13 @@ public:
         e.update(*this, s.e);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new QCP(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         int n = spec.size();
         Matrix<IntVarArray> m(e, n);
 

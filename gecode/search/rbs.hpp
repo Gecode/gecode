@@ -39,11 +39,11 @@
 namespace Gecode { namespace Search { namespace Seq {
 
     /// Create stop object
-    GECODE_SEARCH_EXPORT Stop* rbsstop(Stop* so);
+    GECODE_SEARCH_EXPORT Stop* rbs_stop(Stop* so);
 
     /// Create restart engine
-    GECODE_SEARCH_EXPORT Engine* rbsengine(Space* master, Stop* stop, Engine* slave, const Search::Statistics& stat,
-                                           const Options& opt, bool best);
+    GECODE_SEARCH_EXPORT Engine* make_rbs_engine(Space* master, Stop* stop, Engine* slave,
+                                                 const Search::Statistics& stat, const Options& opt, bool best);
 
 }}} // namespace Gecode::Search::Seq
 
@@ -58,7 +58,7 @@ namespace Gecode { namespace Search {
         /// The constructor
         RbsBuilder(const Options& opt);
         /// The actual build function
-        virtual Engine* operator()(Space* s) const;
+        Engine* operator()(Space* s) const override;
     };
 
     template <class T, template <class> class E>
@@ -80,7 +80,7 @@ namespace Gecode {
             throw Search::UninitializedCutoff("RBS::RBS");
         Search::Options e_opt(m_opt.expand());
         Search::Statistics stat;
-        std::unique_ptr<Search::Stop> stop(Search::Seq::rbsstop(m_opt.stop));
+        std::unique_ptr<Search::Stop> stop(Search::Seq::rbs_stop(m_opt.stop));
         e_opt.stop = stop.get();
         // Retain the seed while a potentially nested builder owns its clone.
         e_opt.clone = true;
@@ -98,7 +98,7 @@ namespace Gecode {
             MetaInfo mi(0, MetaInfo::RR_INIT, 0, 0, nullptr, NoGoods::eng);
             slave->slave(mi);
             std::unique_ptr<Search::Engine> leaf(Search::build<T, E>(slave.get(), e_opt));
-            e = Search::Seq::rbsengine(master.get(), stop.get(), leaf.get(), stat, m_opt, E<T>::best);
+            e = Search::Seq::make_rbs_engine(master.get(), stop.get(), leaf.get(), stat, m_opt, E<T>::best);
             master.release();
             stop.release();
             leaf.release();

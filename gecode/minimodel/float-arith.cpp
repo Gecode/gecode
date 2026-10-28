@@ -68,19 +68,19 @@ namespace Gecode { namespace MiniModel {
         /// Size of variable array
         int n;
         /// Integer argument (used in nroot for example)
-        int aInt;
+        int a_int;
         /// Constructors
         ArithNonLinFloatExpr(ArithNonLinFloatExprType t0, int n0)
-            : t(t0), a(heap.alloc<LinFloatExpr>(n0)), n(n0), aInt(-1) {}
+            : t(t0), a(heap.alloc<LinFloatExpr>(n0)), n(n0), a_int(-1) {}
         ArithNonLinFloatExpr(ArithNonLinFloatExprType t0, int n0, int a0)
-            : t(t0), a(heap.alloc<LinFloatExpr>(n0)), n(n0), aInt(a0) {}
+            : t(t0), a(heap.alloc<LinFloatExpr>(n0)), n(n0), a_int(a0) {}
         /// Destructor
-        ~ArithNonLinFloatExpr(void) {
+        ~ArithNonLinFloatExpr(void) override {
             heap.free<LinFloatExpr>(a, n);
         }
         /// Post expression
-        virtual FloatVar
-        post(Home home, FloatVar* ret) const {
+        FloatVar
+        post(Home home, FloatVar* ret) const override {
             FloatVar y;
             switch (t) {
             case ANLFE_ABS: {
@@ -189,21 +189,21 @@ namespace Gecode { namespace MiniModel {
             case ANLFE_POW: {
                 assert(n == 1);
                 FloatVar x = a[0].post(home);
-                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)) && (aInt >= 0))
+                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)) && (a_int >= 0))
                     y = result(home, ret, x);
                 else {
                     y = result(home, ret);
-                    pow(home, x, aInt, y);
+                    pow(home, x, a_int, y);
                 }
             } break;
             case ANLFE_NROOT: {
                 assert(n == 1);
                 FloatVar x = a[0].post(home);
-                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)) && (aInt >= 0))
+                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)) && (a_int >= 0))
                     y = result(home, ret, x);
                 else {
                     y = result(home, ret);
-                    nroot(home, x, aInt, y);
+                    nroot(home, x, a_int, y);
                 }
             } break;
 #ifdef GECODE_HAS_MPFR
@@ -266,8 +266,8 @@ namespace Gecode { namespace MiniModel {
             }
             return y;
         }
-        virtual void
-        post(Home home, FloatRelType frt, FloatVal c) const {
+        void
+        post(Home home, FloatRelType frt, FloatVal c) const override {
             if ((t == ANLFE_MIN && frt == FRT_GQ) || (t == ANLFE_MAX && frt == FRT_LQ)) {
                 FloatVarArgs x(n);
                 for (int i = n; i--;)
@@ -277,14 +277,14 @@ namespace Gecode { namespace MiniModel {
                 rel(home, post(home, nullptr), frt, c);
             }
         }
-        virtual void
-        post(Home home, FloatRelType frt, FloatVal c, BoolVar b) const {
+        void
+        post(Home home, FloatRelType frt, FloatVal c, BoolVar b) const override {
             rel(home, post(home, nullptr), frt, c, b);
         }
     };
     /// Check if \a e is of type \a t
     bool
-    hasType(const LinFloatExpr& e, ArithNonLinFloatExpr::ArithNonLinFloatExprType t) {
+    has_type(const LinFloatExpr& e, ArithNonLinFloatExpr::ArithNonLinFloatExprType t) {
         return e.nlfe() && dynamic_cast<ArithNonLinFloatExpr*>(e.nlfe()) != nullptr &&
                dynamic_cast<ArithNonLinFloatExpr*>(e.nlfe())->t == t;
     }
@@ -296,7 +296,7 @@ namespace Gecode {
     LinFloatExpr
     abs(const LinFloatExpr& e) {
         using namespace MiniModel;
-        if (hasType(e, ArithNonLinFloatExpr::ANLFE_ABS))
+        if (has_type(e, ArithNonLinFloatExpr::ANLFE_ABS))
             return e;
         ArithNonLinFloatExpr* ae = new ArithNonLinFloatExpr(ArithNonLinFloatExpr::ANLFE_ABS, 1);
         ae->a[0] = e;
@@ -307,28 +307,28 @@ namespace Gecode {
     min(const LinFloatExpr& e0, const LinFloatExpr& e1) {
         using namespace MiniModel;
         int n = 0;
-        if (hasType(e0, ArithNonLinFloatExpr::ANLFE_MIN))
+        if (has_type(e0, ArithNonLinFloatExpr::ANLFE_MIN))
             n += static_cast<ArithNonLinFloatExpr*>(e0.nlfe())->n;
         else
             n += 1;
-        if (hasType(e1, ArithNonLinFloatExpr::ANLFE_MIN))
+        if (has_type(e1, ArithNonLinFloatExpr::ANLFE_MIN))
             n += static_cast<ArithNonLinFloatExpr*>(e1.nlfe())->n;
         else
             n += 1;
         ArithNonLinFloatExpr* ae = new ArithNonLinFloatExpr(ArithNonLinFloatExpr::ANLFE_MIN, n);
         int i = 0;
-        if (hasType(e0, ArithNonLinFloatExpr::ANLFE_MIN)) {
+        if (has_type(e0, ArithNonLinFloatExpr::ANLFE_MIN)) {
             ArithNonLinFloatExpr* e0e = static_cast<ArithNonLinFloatExpr*>(e0.nlfe());
             for (; i < e0e->n; i++)
                 ae->a[i] = e0e->a[i];
         } else {
             ae->a[i++] = e0;
         }
-        if (hasType(e1, ArithNonLinFloatExpr::ANLFE_MIN)) {
+        if (has_type(e1, ArithNonLinFloatExpr::ANLFE_MIN)) {
             ArithNonLinFloatExpr* e1e = static_cast<ArithNonLinFloatExpr*>(e1.nlfe());
-            int curN = i;
-            for (; i < curN + e1e->n; i++)
-                ae->a[i] = e1e->a[i - curN];
+            int cur_n = i;
+            for (; i < cur_n + e1e->n; i++)
+                ae->a[i] = e1e->a[i - cur_n];
         } else {
             ae->a[i++] = e1;
         }
@@ -348,28 +348,28 @@ namespace Gecode {
     max(const LinFloatExpr& e0, const LinFloatExpr& e1) {
         using namespace MiniModel;
         int n = 0;
-        if (hasType(e0, ArithNonLinFloatExpr::ANLFE_MAX))
+        if (has_type(e0, ArithNonLinFloatExpr::ANLFE_MAX))
             n += static_cast<ArithNonLinFloatExpr*>(e0.nlfe())->n;
         else
             n += 1;
-        if (hasType(e1, ArithNonLinFloatExpr::ANLFE_MAX))
+        if (has_type(e1, ArithNonLinFloatExpr::ANLFE_MAX))
             n += static_cast<ArithNonLinFloatExpr*>(e1.nlfe())->n;
         else
             n += 1;
         ArithNonLinFloatExpr* ae = new ArithNonLinFloatExpr(ArithNonLinFloatExpr::ANLFE_MAX, n);
         int i = 0;
-        if (hasType(e0, ArithNonLinFloatExpr::ANLFE_MAX)) {
+        if (has_type(e0, ArithNonLinFloatExpr::ANLFE_MAX)) {
             ArithNonLinFloatExpr* e0e = static_cast<ArithNonLinFloatExpr*>(e0.nlfe());
             for (; i < e0e->n; i++)
                 ae->a[i] = e0e->a[i];
         } else {
             ae->a[i++] = e0;
         }
-        if (hasType(e1, ArithNonLinFloatExpr::ANLFE_MAX)) {
+        if (has_type(e1, ArithNonLinFloatExpr::ANLFE_MAX)) {
             ArithNonLinFloatExpr* e1e = static_cast<ArithNonLinFloatExpr*>(e1.nlfe());
-            int curN = i;
-            for (; i < curN + e1e->n; i++)
-                ae->a[i] = e1e->a[i - curN];
+            int cur_n = i;
+            for (; i < cur_n + e1e->n; i++)
+                ae->a[i] = e1e->a[i - cur_n];
         } else {
             ae->a[i++] = e1;
         }

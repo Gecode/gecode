@@ -234,9 +234,9 @@ protected:
         switch (opt.distinct_except_0()) {
         case DISTINCT_EXCEPT_0_REIFIED:
             for (int i = v.size(); i--;) {
-                BoolVar viIsZero = expr(*this, v[i] == 0);
+                BoolVar vi_is_zero = expr(*this, v[i] == 0);
                 for (int j = i; j--;) {
-                    rel(*this, viIsZero || (v[i] != v[j]));
+                    rel(*this, vi_is_zero || (v[i] != v[j]));
                 }
             }
             break;
@@ -427,18 +427,18 @@ public:
             }
         }
 
-        branch(*this, x, tiebreak(INT_VAR_MIN_MIN(), INT_VAR_SIZE_MIN()), INT_VAL_MIN());
+        branch(*this, x, tie_break(INT_VAR_MIN_MIN(), INT_VAR_SIZE_MIN()), INT_VAL_MIN());
     }
 
     /// Return cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return max_color;
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         Matrix<IntVarArray> m(x, width, height);
         for (int r = 0; r < height; ++r) {
             os << "\t";
@@ -459,8 +459,8 @@ public:
         max_color.update(*this, s.max_color);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new ColoredMatrix(*this);
     }
 };

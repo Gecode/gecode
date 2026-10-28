@@ -58,58 +58,58 @@ namespace Gecode {
      */
 
     forceinline unsigned int
-    SetVar::glbSize(void) const {
-        return x->glbSize();
+    SetVar::glb_size(void) const {
+        return x->glb_size();
     }
 
     forceinline unsigned int
-    SetVar::lubSize(void) const {
-        return x->lubSize();
+    SetVar::lub_size(void) const {
+        return x->lub_size();
     }
 
     forceinline unsigned int
-    SetVar::unknownSize(void) const {
-        return x->lubSize() - x->glbSize();
+    SetVar::unknown_size(void) const {
+        return x->lub_size() - x->glb_size();
     }
 
     forceinline bool
     SetVar::contains(int i) const {
-        return x->knownIn(i);
+        return x->known_in(i);
     }
 
     forceinline bool
-    SetVar::notContains(int i) const {
-        return x->knownOut(i);
+    SetVar::not_contains(int i) const {
+        return x->known_out(i);
     }
 
     forceinline unsigned int
-    SetVar::cardMin(void) const {
-        return x->cardMin();
+    SetVar::card_min(void) const {
+        return x->card_min();
     }
 
     forceinline unsigned int
-    SetVar::cardMax(void) const {
-        return x->cardMax();
+    SetVar::card_max(void) const {
+        return x->card_max();
     }
 
     forceinline int
-    SetVar::lubMin(void) const {
-        return x->lubMin();
+    SetVar::lub_min(void) const {
+        return x->lub_min();
     }
 
     forceinline int
-    SetVar::lubMax(void) const {
-        return x->lubMax();
+    SetVar::lub_max(void) const {
+        return x->lub_max();
     }
 
     forceinline int
-    SetVar::glbMin(void) const {
-        return x->glbMin();
+    SetVar::glb_min(void) const {
+        return x->glb_min();
     }
 
     forceinline int
-    SetVar::glbMax(void) const {
-        return x->glbMax();
+    SetVar::glb_max(void) const {
+        return x->glb_max();
     }
 
     /*

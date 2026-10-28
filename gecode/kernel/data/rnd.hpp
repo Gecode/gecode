@@ -64,7 +64,7 @@ namespace Gecode {
             /// Returns a random integer from the interval \f$[0\ldots n)\f$
             long long int operator()(long long int n);
             /// Delete implemenentation
-            virtual ~IMP(void);
+            ~IMP(void) override;
         };
         /// Set the current seed to \a s (initializes if needed)
         void _seed(unsigned int s);

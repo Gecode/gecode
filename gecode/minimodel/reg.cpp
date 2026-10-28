@@ -69,7 +69,7 @@ namespace Gecode {
         } data;
 
         /// Compute the follow positions
-        MiniModel::PosSet* followpos(MiniModel::PosSetAllocator&, MiniModel::PosInfo*);
+        MiniModel::PosSet* follow_positions(MiniModel::PosSetAllocator&, MiniModel::PosInfo*);
         /// Increment use counter of \a e
         static void inc(Exp* e);
         /// Decrement use counter of \a e
@@ -77,9 +77,9 @@ namespace Gecode {
         /// Return number of positions of \a e
         static int n_pos(Exp* e);
         /// Print expression to \a os
-        void toString(std::ostringstream& os) const;
+        void to_string(std::ostringstream& os) const;
         /// Print expression
-        std::string toString(void) const;
+        std::string to_string(void) const;
 
         static void* operator new(size_t);
         static void operator delete(void*);
@@ -142,7 +142,7 @@ namespace Gecode {
     }
 
     void
-    REG::Exp::toString(std::ostringstream& os) const {
+    REG::Exp::to_string(std::ostringstream& os) const {
         switch (type) {
         case ET_SYMBOL:
             os << "[" << data.symbol << "]";
@@ -154,7 +154,7 @@ namespace Gecode {
             if (data.kids[0] == nullptr) {
                 os << "[]";
             } else {
-                data.kids[0]->toString(os);
+                data.kids[0]->to_string(os);
             }
             os << (par ? ")" : "");
             return;
@@ -165,7 +165,7 @@ namespace Gecode {
             if (data.kids[0] == nullptr) {
                 os << "[]";
             } else {
-                data.kids[0]->toString(os);
+                data.kids[0]->to_string(os);
             }
             os << (par0 ? ")+" : "+");
             bool par1 = ((data.kids[1] != nullptr) && (data.kids[1]->type == ET_OR));
@@ -173,7 +173,7 @@ namespace Gecode {
             if (data.kids[1] == nullptr) {
                 os << "[]";
             } else {
-                data.kids[1]->toString(os);
+                data.kids[1]->to_string(os);
             }
             os << (par1 ? ")" : "");
             return;
@@ -182,13 +182,13 @@ namespace Gecode {
             if (data.kids[0] == nullptr) {
                 os << "[]";
             } else {
-                data.kids[0]->toString(os);
+                data.kids[0]->to_string(os);
             }
             os << "|";
             if (data.kids[1] == nullptr) {
                 os << "[]";
             } else {
-                data.kids[1]->toString(os);
+                data.kids[1]->to_string(os);
             }
             return;
         default:
@@ -199,9 +199,9 @@ namespace Gecode {
     }
 
     std::string
-    REG::Exp::toString(void) const {
+    REG::Exp::to_string(void) const {
         std::ostringstream os;
-        toString(os);
+        to_string(os);
         return os.str();
     }
 
@@ -426,11 +426,11 @@ namespace Gecode {
     }
 
     std::string
-    REG::toString(void) const {
+    REG::to_string(void) const {
         if (e == nullptr) {
             return "[]";
         }
-        return e->toString();
+        return e->to_string();
     }
 
     namespace MiniModel {
@@ -530,8 +530,8 @@ namespace Gecode {
         class NodeInfo {
         public:
             bool nullable;
-            PosSet* firstpos;
-            PosSet* lastpos;
+            PosSet* first_positions;
+            PosSet* last_positions;
             NodeInfo(bool n = false, PosSet* fp = nullptr, PosSet* lp = nullptr);
         };
 
@@ -550,12 +550,12 @@ namespace Gecode {
         class PosInfo {
         public:
             int symbol;
-            PosSet* followpos;
+            PosSet* follow_positions;
         };
 
         forceinline
         NodeInfo::NodeInfo(bool n, PosSet* fp, PosSet* lp)
-            : nullable(n), firstpos(fp), lastpos(lp) {}
+            : nullable(n), first_positions(fp), last_positions(lp) {}
 
         forceinline
         ExpInfo::ExpInfo(REG::Exp* e)
@@ -564,7 +564,7 @@ namespace Gecode {
     } // namespace MiniModel
 
     forceinline MiniModel::PosSet*
-    REG::Exp::followpos(MiniModel::PosSetAllocator& psm, MiniModel::PosInfo* pi) {
+    REG::Exp::follow_positions(MiniModel::PosSetAllocator& psm, MiniModel::PosInfo* pi) {
         int p = 0;
 
         using MiniModel::ExpInfo;
@@ -598,9 +598,10 @@ namespace Gecode {
                     } else {
                         todo.pop();
                         NodeInfo ni = done.pop();
-                        for (PosSet* ps = ni.lastpos; ps != nullptr; ps = ps->next)
-                            pi[ps->pos].followpos = PosSet::cup(psm, pi[ps->pos].followpos, ni.firstpos);
-                        done.push(NodeInfo(true, ni.firstpos, ni.lastpos));
+                        for (PosSet* ps = ni.last_positions; ps != nullptr; ps = ps->next)
+                            pi[ps->pos].follow_positions =
+                                PosSet::cup(psm, pi[ps->pos].follow_positions, ni.first_positions);
+                        done.push(NodeInfo(true, ni.first_positions, ni.last_positions));
                     }
                     break;
                 case ET_CONC:
@@ -614,11 +615,14 @@ namespace Gecode {
                         todo.pop();
                         NodeInfo ni1 = done.pop();
                         NodeInfo ni0 = done.pop();
-                        for (PosSet* ps = ni0.lastpos; ps != nullptr; ps = ps->next)
-                            pi[ps->pos].followpos = PosSet::cup(psm, pi[ps->pos].followpos, ni1.firstpos);
+                        for (PosSet* ps = ni0.last_positions; ps != nullptr; ps = ps->next)
+                            pi[ps->pos].follow_positions =
+                                PosSet::cup(psm, pi[ps->pos].follow_positions, ni1.first_positions);
                         done.push(NodeInfo(ni0.nullable & ni1.nullable,
-                                           ni0.nullable ? PosSet::cup(psm, ni0.firstpos, ni1.firstpos) : ni0.firstpos,
-                                           ni1.nullable ? PosSet::cup(psm, ni0.lastpos, ni1.lastpos) : ni1.lastpos));
+                                           ni0.nullable ? PosSet::cup(psm, ni0.first_positions, ni1.first_positions)
+                                                        : ni0.first_positions,
+                                           ni1.nullable ? PosSet::cup(psm, ni0.last_positions, ni1.last_positions)
+                                                        : ni1.last_positions));
                     }
                     break;
                 case ET_OR:
@@ -632,8 +636,9 @@ namespace Gecode {
                         todo.pop();
                         NodeInfo ni1 = done.pop();
                         NodeInfo ni0 = done.pop();
-                        done.push(NodeInfo(ni0.nullable | ni1.nullable, PosSet::cup(psm, ni0.firstpos, ni1.firstpos),
-                                           PosSet::cup(psm, ni0.lastpos, ni1.lastpos)));
+                        done.push(NodeInfo(ni0.nullable | ni1.nullable,
+                                           PosSet::cup(psm, ni0.first_positions, ni1.first_positions),
+                                           PosSet::cup(psm, ni0.last_positions, ni1.last_positions)));
                     }
                     break;
                 default:
@@ -641,7 +646,7 @@ namespace Gecode {
                 }
             }
         } while (!todo.empty());
-        return done.top().firstpos;
+        return done.top().first_positions;
     }
 
     namespace MiniModel {
@@ -855,9 +860,11 @@ namespace Gecode {
 
         PosInfo* pi = region.alloc<PosInfo>(n_pos);
         for (int i = n_pos; i--;)
-            pi[i].followpos = nullptr;
+            pi[i].follow_positions = nullptr;
 
-        PosSet* firstpos = r.e->followpos(psm, &pi[0]);
+        PosSet* first_positions = r.e->follow_positions(psm, &pi[0]);
+        // The appended sentinel gives even an empty expression a first position.
+        assert(first_positions != nullptr);
 
         // Compute symbols
         int* symbols = region.alloc<int>(n_pos);
@@ -872,14 +879,14 @@ namespace Gecode {
 
         // Compute states and transitions
         TransitionBag tb;
-        StatePool sp(firstpos);
+        StatePool sp(first_positions);
         while (!sp.empty()) {
             StateNode* sn = sp.pop();
             for (int i = n_symbols; i--;) {
                 PosSet* u = nullptr;
                 for (PosSet* ps = sn->pos; ps != nullptr; ps = ps->next)
                     if (pi[ps->pos].symbol == symbols[i])
-                        u = PosSet::cup(psm, u, pi[ps->pos].followpos);
+                        u = PosSet::cup(psm, u, pi[ps->pos].follow_positions);
                 if (u != nullptr)
                     tb.add(sn->state, symbols[i], sp.state(spm, u));
             }

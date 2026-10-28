@@ -118,7 +118,7 @@ namespace Gecode { namespace Set {
 
     // nth smallest element
     forceinline int
-    BndSet::minN(unsigned int n) const {
+    BndSet::min_n(unsigned int n) const {
         for (RangeList* c = fst(); c != nullptr; c = c->next()) {
             if (c->width() > n)
                 return static_cast<int>(c->min() + n);
@@ -223,7 +223,7 @@ namespace Gecode { namespace Set {
         fst(that.fst());
         lst(that.lst());
         _size = that.size();
-        assert(isConsistent());
+        assert(is_consistent());
     }
 
     forceinline bool
@@ -289,24 +289,24 @@ namespace Gecode { namespace Set {
             fst(p);
             lst(p);
             _size = static_cast<unsigned int>(ma - mi + 1);
-            d._glbMin = mi;
-            d._glbMax = ma;
+            d._glb_min = mi;
+            d._glb_max = ma;
             return true;
         }
         bool ret = include_full(home, mi, ma, d);
-        assert(isConsistent());
+        assert(is_consistent());
         return ret;
     }
 
     template <class I>
     bool
-    GLBndSet::includeI(Space& home, I& i) {
+    GLBndSet::include_i(Space& home, I& i) {
         if (!i())
             return false;
         BndSetRanges j(*this);
         Iter::Ranges::Union<BndSetRanges, I> ij(j, i);
         bool me = overwrite(home, ij);
-        assert(isConsistent());
+        assert(is_consistent());
         return me;
     }
 
@@ -345,8 +345,8 @@ namespace Gecode { namespace Set {
             return false;
         }
         if (mi <= min() && ma >= max()) { // the range covers the whole set
-            d._lubMin = min();
-            d._lubMax = max();
+            d._lub_min = min();
+            d._lub_max = max();
             fst()->dispose(home, lst());
             fst(nullptr);
             lst(nullptr);
@@ -354,7 +354,7 @@ namespace Gecode { namespace Set {
             return true;
         }
         bool ret = exclude_full(home, mi, ma, d);
-        assert(isConsistent());
+        assert(is_consistent());
         return ret;
     }
 
@@ -374,13 +374,13 @@ namespace Gecode { namespace Set {
             return true;
         }
         bool ret = intersect_full(home, mi, ma);
-        assert(isConsistent());
+        assert(is_consistent());
         return ret;
     }
 
     template <class I>
     bool
-    LUBndSet::intersectI(Space& home, I& i) {
+    LUBndSet::intersect_i(Space& home, I& i) {
         if (fst() == nullptr) {
             return false;
         }
@@ -394,25 +394,25 @@ namespace Gecode { namespace Set {
         BndSetRanges j(*this);
         Iter::Ranges::Inter<BndSetRanges, I> ij(j, i);
         bool ret = overwrite(home, ij);
-        assert(isConsistent());
+        assert(is_consistent());
         return ret;
     }
 
     template <class I>
     bool
-    LUBndSet::excludeI(Space& home, I& i) {
+    LUBndSet::exclude_i(Space& home, I& i) {
         if (!i()) {
             return false;
         }
         BndSetRanges j(*this);
         Iter::Ranges::Diff<BndSetRanges, I> ij(j, i);
         bool ret = overwrite(home, ij);
-        assert(isConsistent());
+        assert(is_consistent());
         return ret;
     }
 
     forceinline void
-    LUBndSet::excludeAll(Space& home) {
+    LUBndSet::exclude_all(Space& home) {
         fst()->dispose(home, lst());
         fst(nullptr);
         lst(nullptr);

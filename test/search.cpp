@@ -397,8 +397,8 @@ namespace Test {
             /// Verify that this is best solution
             virtual bool best(void) const = 0;
             /// Master configuration function that does not restart
-            virtual bool
-            master(const MetaInfo& mi) {
+            bool
+            master(const MetaInfo& mi) override {
                 if (mi.type() == MetaInfo::RESTART) {
                     if (mi.last() != nullptr)
                         constrain(*mi.last());
@@ -423,21 +423,21 @@ namespace Test {
                 x.update(*this, s.x);
             }
             /// Copy during cloning
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new FailImmediate(*this);
             }
             /// Add constraint for next better solution
-            virtual void
-            constrain(const Space&) {}
+            void
+            constrain(const Space&) override {}
             /// Return number of solutions
-            virtual int
-            solutions(void) const {
+            int
+            solutions(void) const override {
                 return 0;
             }
             /// Verify that this is best solution
-            virtual bool
-            best(void) const {
+            bool
+            best(void) const override {
                 return false;
             }
             /// Return name
@@ -459,23 +459,23 @@ namespace Test {
                 x.update(*this, s.x);
             }
             /// Copy during cloning
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new SolveImmediate(*this);
             }
             /// Add constraint for next better solution
-            virtual void
-            constrain(const Space&) {
+            void
+            constrain(const Space&) override {
                 fail();
             }
             /// Return number of solutions
-            virtual int
-            solutions(void) const {
+            int
+            solutions(void) const override {
                 return 1;
             }
             /// Verify that this is best solution
-            virtual bool
-            best(void) const {
+            bool
+            best(void) const override {
                 return true;
             }
             /// Return name
@@ -537,13 +537,13 @@ namespace Test {
                 x.update(*this, s.x);
             }
             /// Copy during cloning
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new HasSolutions(*this);
             }
             /// Add constraint for next better solution
-            virtual void
-            constrain(const Space& _s) {
+            void
+            constrain(const Space& _s) override {
                 const HasSolutions& s = static_cast<const HasSolutions&>(_s);
                 switch (htc) {
                 case HTC_NONE:
@@ -571,8 +571,8 @@ namespace Test {
                 }
             }
             /// Return number of solutions
-            virtual int
-            solutions(void) const {
+            int
+            solutions(void) const override {
                 if (htb1 == HTB_NONE) {
                     assert((htb2 == HTB_NONE) && (htb3 == HTB_NONE));
                     return 1;
@@ -584,8 +584,8 @@ namespace Test {
                 return 8;
             }
             /// Verify that this is best solution
-            virtual bool
-            best(void) const {
+            bool
+            best(void) const override {
                 if ((htb1 == HTB_NONE) || (htb2 == HTB_NONE) || (htb3 == HTB_NONE) || (htb1 == HTB_UNARY) ||
                     (htb2 == HTB_UNARY) || (htb3 == HTB_UNARY))
                     return true;
@@ -615,8 +615,8 @@ namespace Test {
                 return "Sol";
             }
             /// Rule out that solution is found more than once during restarts
-            virtual bool
-            master(const MetaInfo& mi) {
+            bool
+            master(const MetaInfo& mi) override {
                 switch (mi.type()) {
                 case MetaInfo::RESTART:
                     if (mi.last() != nullptr) {
@@ -1183,8 +1183,8 @@ namespace Test {
                        htb1, htb2, htb3),
                   c_d(c_d0), a_d(a_d0), t(t0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -1224,8 +1224,8 @@ namespace Test {
                        htb1, htb2, htb3),
                   t(t0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -1270,8 +1270,8 @@ namespace Test {
                        htb1, htb2, htb3, htc),
                   c_d(c_d0), a_d(a_d0), t(t0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(htb1, htb2, htb3, htc);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -1311,8 +1311,8 @@ namespace Test {
                 : Test("RBS::" + e + "::" + Model::name() + "::" + str(t0), HTB_BINARY, HTB_BINARY, HTB_BINARY), t(t0) {
             }
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -1355,8 +1355,8 @@ namespace Test {
                        HTB_BINARY),
                   best(b), a(a0), t(t0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -1417,8 +1417,8 @@ namespace Test {
                        HTB_BINARY, HTB_BINARY),
                   best(b), mt(mt0), st(st0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);

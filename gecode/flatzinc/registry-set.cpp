@@ -45,26 +45,26 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_SET_VARS
     namespace {
         void
-        p_set_OP(FlatZincSpace& s, SetOpType op, const ConExpr& ce, AST::Node*) {
-            rel(s, s.arg2SetVar(ce[0]), op, s.arg2SetVar(ce[1]), SRT_EQ, s.arg2SetVar(ce[2]));
+        p_set_op(FlatZincSpace& s, SetOpType op, const ConExpr& ce, AST::Node*) {
+            rel(s, s.arg_to_set_var(ce[0]), op, s.arg_to_set_var(ce[1]), SRT_EQ, s.arg_to_set_var(ce[2]));
         }
         void
         p_set_union(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_set_OP(s, SOT_UNION, ce, ann);
+            p_set_op(s, SOT_UNION, ce, ann);
         }
         void
         p_set_intersect(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_set_OP(s, SOT_INTER, ce, ann);
+            p_set_op(s, SOT_INTER, ce, ann);
         }
         void
         p_set_diff(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_set_OP(s, SOT_MINUS, ce, ann);
+            p_set_op(s, SOT_MINUS, ce, ann);
         }
 
         void
         p_set_symdiff(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            SetVar x = s.arg2SetVar(ce[0]);
-            SetVar y = s.arg2SetVar(ce[1]);
+            SetVar x = s.arg_to_set_var(ce[0]);
+            SetVar y = s.arg_to_set_var(ce[1]);
 
             SetVarLubRanges xub(x);
             IntSet xubs(xub);
@@ -76,26 +76,26 @@ namespace Gecode { namespace FlatZinc {
             SetVar y_x(s, IntSet::empty, yubs);
             rel(s, y, SOT_MINUS, x, SRT_EQ, y_x);
 
-            rel(s, x_y, SOT_UNION, y_x, SRT_EQ, s.arg2SetVar(ce[2]));
+            rel(s, x_y, SOT_UNION, y_x, SRT_EQ, s.arg_to_set_var(ce[2]));
         }
 
         void
-        p_array_set_OP(FlatZincSpace& s, SetOpType op, const ConExpr& ce, AST::Node*) {
-            SetVarArgs xs = s.arg2setvarargs(ce[0]);
-            rel(s, op, xs, s.arg2SetVar(ce[1]));
+        p_array_set_op(FlatZincSpace& s, SetOpType op, const ConExpr& ce, AST::Node*) {
+            SetVarArgs xs = s.arg_to_set_var_args(ce[0]);
+            rel(s, op, xs, s.arg_to_set_var(ce[1]));
         }
         void
         p_array_set_union(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_array_set_OP(s, SOT_UNION, ce, ann);
+            p_array_set_op(s, SOT_UNION, ce, ann);
         }
         void
         p_array_set_partition(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_array_set_OP(s, SOT_DUNION, ce, ann);
+            p_array_set_op(s, SOT_DUNION, ce, ann);
         }
 
         void
         p_set_rel(FlatZincSpace& s, SetRelType srt, const ConExpr& ce) {
-            rel(s, s.arg2SetVar(ce[0]), srt, s.arg2SetVar(ce[1]));
+            rel(s, s.arg_to_set_var(ce[0]), srt, s.arg_to_set_var(ce[1]));
         }
 
         void
@@ -124,17 +124,17 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_set_card(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            if (!ce[1]->isIntVar()) {
-                cardinality(s, s.arg2SetVar(ce[0]), ce[1]->getInt(), ce[1]->getInt());
+            if (!ce[1]->is_int_var()) {
+                cardinality(s, s.arg_to_set_var(ce[0]), ce[1]->get_int(), ce[1]->get_int());
             } else {
-                cardinality(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]));
+                cardinality(s, s.arg_to_set_var(ce[0]), s.arg_to_int_var(ce[1]));
             }
         }
         void
         p_set_in(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            if (!ce[1]->isSetVar()) {
-                IntSet d = s.arg2intset(ce[1]);
-                if (ce[0]->isBoolVar()) {
+            if (!ce[1]->is_set_var()) {
+                IntSet d = s.arg_to_int_set(ce[1]);
+                if (ce[0]->is_bool_var()) {
                     IntSetRanges dr(d);
                     Iter::Ranges::Singleton sr(0, 1);
                     Iter::Ranges::Inter<IntSetRanges, Iter::Ranges::Singleton> i(dr, sr);
@@ -142,23 +142,23 @@ namespace Gecode { namespace FlatZinc {
                     if (d01.size() == 0) {
                         s.fail();
                     } else {
-                        rel(s, s.arg2BoolVar(ce[0]), IRT_GQ, d01.min());
-                        rel(s, s.arg2BoolVar(ce[0]), IRT_LQ, d01.max());
+                        rel(s, s.arg_to_bool_var(ce[0]), IRT_GQ, d01.min());
+                        rel(s, s.arg_to_bool_var(ce[0]), IRT_LQ, d01.max());
                     }
                 } else {
-                    dom(s, s.arg2IntVar(ce[0]), d);
+                    dom(s, s.arg_to_int_var(ce[0]), d);
                 }
             } else {
-                if (!ce[0]->isIntVar()) {
-                    dom(s, s.arg2SetVar(ce[1]), SRT_SUP, ce[0]->getInt());
+                if (!ce[0]->is_int_var()) {
+                    dom(s, s.arg_to_set_var(ce[1]), SRT_SUP, ce[0]->get_int());
                 } else {
-                    rel(s, s.arg2SetVar(ce[1]), SRT_SUP, s.arg2IntVar(ce[0]));
+                    rel(s, s.arg_to_set_var(ce[1]), SRT_SUP, s.arg_to_int_var(ce[0]));
                 }
             }
         }
         void
         p_set_rel_reif(FlatZincSpace& s, SetRelType srt, const ConExpr& ce) {
-            rel(s, s.arg2SetVar(ce[0]), srt, s.arg2SetVar(ce[1]), s.arg2BoolVar(ce[2]));
+            rel(s, s.arg_to_set_var(ce[0]), srt, s.arg_to_set_var(ce[1]), s.arg_to_bool_var(ce[2]));
         }
 
         void
@@ -187,7 +187,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_set_in_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann, ReifyMode rm) {
-            if (!ce[1]->isSetVar()) {
+            if (!ce[1]->is_set_var()) {
                 if (rm == RM_EQV) {
                     RegistryDetail::post_int_in_reif(s, ce, ann);
                 } else {
@@ -195,10 +195,11 @@ namespace Gecode { namespace FlatZinc {
                     RegistryDetail::post_int_in_imp(s, ce, ann);
                 }
             } else {
-                if (!ce[0]->isIntVar()) {
-                    dom(s, s.arg2SetVar(ce[1]), SRT_SUP, ce[0]->getInt(), Reify(s.arg2BoolVar(ce[2]), rm));
+                if (!ce[0]->is_int_var()) {
+                    dom(s, s.arg_to_set_var(ce[1]), SRT_SUP, ce[0]->get_int(), Reify(s.arg_to_bool_var(ce[2]), rm));
                 } else {
-                    rel(s, s.arg2SetVar(ce[1]), SRT_SUP, s.arg2IntVar(ce[0]), Reify(s.arg2BoolVar(ce[2]), rm));
+                    rel(s, s.arg_to_set_var(ce[1]), SRT_SUP, s.arg_to_int_var(ce[0]),
+                        Reify(s.arg_to_bool_var(ce[2]), rm));
                 }
             }
         }
@@ -212,60 +213,60 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_set_disjoint(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            rel(s, s.arg2SetVar(ce[0]), SRT_DISJ, s.arg2SetVar(ce[1]));
+            rel(s, s.arg_to_set_var(ce[0]), SRT_DISJ, s.arg_to_set_var(ce[1]));
         }
 
         void
         p_link_set_to_booleans(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            SetVar x = s.arg2SetVar(ce[0]);
-            int idx = ce[2]->getInt();
+            SetVar x = s.arg_to_set_var(ce[0]);
+            int idx = ce[2]->get_int();
             assert(idx >= 0);
             rel(s, x || IntSet(Set::Limits::min, idx - 1));
-            BoolVarArgs y = s.arg2boolvarargs(ce[1], idx);
+            BoolVarArgs y = s.arg_to_bool_var_args(ce[1], idx);
             unshare(s, y);
             channel(s, y, x);
         }
 
         void
         p_array_set_element(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            bool isConstant = true;
-            AST::Array* a = ce[1]->getArray();
+            bool is_constant = true;
+            AST::Array* a = ce[1]->get_array();
             for (int i = a->a.size(); i--;) {
-                if (a->a[i]->isSetVar()) {
-                    isConstant = false;
+                if (a->a[i]->is_set_var()) {
+                    is_constant = false;
                     break;
                 }
             }
-            IntVar selector = s.arg2IntVar(ce[0]);
+            IntVar selector = s.arg_to_int_var(ce[0]);
             rel(s, selector > 0);
-            if (isConstant) {
-                IntSetArgs sv = s.arg2intsetargs(ce[1], 1);
-                element(s, sv, selector, s.arg2SetVar(ce[2]));
+            if (is_constant) {
+                IntSetArgs sv = s.arg_to_int_set_args(ce[1], 1);
+                element(s, sv, selector, s.arg_to_set_var(ce[2]));
             } else {
-                SetVarArgs sv = s.arg2setvarargs(ce[1], 1);
-                element(s, sv, selector, s.arg2SetVar(ce[2]));
+                SetVarArgs sv = s.arg_to_set_var_args(ce[1], 1);
+                element(s, sv, selector, s.arg_to_set_var(ce[2]));
             }
         }
 
         void
         p_array_set_element_op(FlatZincSpace& s, const ConExpr& ce, AST::Node*, SetOpType op,
                                const IntSet& universe = IntSet(Set::Limits::min, Set::Limits::max)) {
-            bool isConstant = true;
-            AST::Array* a = ce[1]->getArray();
+            bool is_constant = true;
+            AST::Array* a = ce[1]->get_array();
             for (int i = a->a.size(); i--;) {
-                if (a->a[i]->isSetVar()) {
-                    isConstant = false;
+                if (a->a[i]->is_set_var()) {
+                    is_constant = false;
                     break;
                 }
             }
-            SetVar selector = s.arg2SetVar(ce[0]);
+            SetVar selector = s.arg_to_set_var(ce[0]);
             dom(s, selector, SRT_DISJ, 0);
-            if (isConstant) {
-                IntSetArgs sv = s.arg2intsetargs(ce[1], 1);
-                element(s, op, sv, selector, s.arg2SetVar(ce[2]), universe);
+            if (is_constant) {
+                IntSetArgs sv = s.arg_to_int_set_args(ce[1], 1);
+                element(s, op, sv, selector, s.arg_to_set_var(ce[2]), universe);
             } else {
-                SetVarArgs sv = s.arg2setvarargs(ce[1], 1);
-                element(s, op, sv, selector, s.arg2SetVar(ce[2]), universe);
+                SetVarArgs sv = s.arg_to_set_var_args(ce[1], 1);
+                element(s, op, sv, selector, s.arg_to_set_var(ce[2]), universe);
             }
         }
 
@@ -281,7 +282,7 @@ namespace Gecode { namespace FlatZinc {
 
         void
         p_array_set_element_intersect_in(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            IntSet d = s.arg2intset(ce[3]);
+            IntSet d = s.arg_to_int_set(ce[3]);
             p_array_set_element_op(s, ce, ann, SOT_INTER, d);
         }
 
@@ -292,30 +293,30 @@ namespace Gecode { namespace FlatZinc {
 
         void
         p_set_convex(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            convex(s, s.arg2SetVar(ce[0]));
+            convex(s, s.arg_to_set_var(ce[0]));
         }
 
         void
         p_array_set_seq(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            SetVarArgs sv = s.arg2setvarargs(ce[0]);
+            SetVarArgs sv = s.arg_to_set_var_args(ce[0]);
             if (sv.size() > 0)
                 sequence(s, sv);
         }
 
         void
         p_array_set_seq_union(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            SetVarArgs sv = s.arg2setvarargs(ce[0]);
-            sequence(s, sv, s.arg2SetVar(ce[1]));
+            SetVarArgs sv = s.arg_to_set_var_args(ce[0]);
+            sequence(s, sv, s.arg_to_set_var(ce[1]));
         }
 
         void
         p_int_set_channel(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            int xoff = ce[1]->getInt();
+            int xoff = ce[1]->get_int();
             assert(xoff >= 0);
-            int yoff = ce[3]->getInt();
+            int yoff = ce[3]->get_int();
             assert(yoff >= 0);
-            IntVarArgs xv = s.arg2intvarargs(ce[0], xoff);
-            SetVarArgs yv = s.arg2setvarargs(ce[2], yoff, 1, IntSet(0, xoff - 1));
+            IntVarArgs xv = s.arg_to_int_var_args(ce[0], xoff);
+            SetVarArgs yv = s.arg_to_set_var_args(ce[2], yoff, 1, IntSet(0, xoff - 1));
             IntSet xd(yoff, yv.size() - 1);
             for (int i = xoff; i < xv.size(); i++) {
                 dom(s, xv[i], xd);
@@ -329,41 +330,41 @@ namespace Gecode { namespace FlatZinc {
 
         void
         p_range(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            int xoff = ce[1]->getInt();
+            int xoff = ce[1]->get_int();
             assert(xoff >= 0);
-            IntVarArgs xv = s.arg2intvarargs(ce[0], xoff);
-            element(s, SOT_UNION, xv, s.arg2SetVar(ce[2]), s.arg2SetVar(ce[3]));
+            IntVarArgs xv = s.arg_to_int_var_args(ce[0], xoff);
+            element(s, SOT_UNION, xv, s.arg_to_set_var(ce[2]), s.arg_to_set_var(ce[3]));
         }
 
         void
         p_weights(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            IntArgs e = s.arg2intargs(ce[0]);
-            IntArgs w = s.arg2intargs(ce[1]);
-            SetVar x = s.arg2SetVar(ce[2]);
-            IntVar y = s.arg2IntVar(ce[3]);
+            IntArgs e = s.arg_to_int_args(ce[0]);
+            IntArgs w = s.arg_to_int_args(ce[1]);
+            SetVar x = s.arg_to_set_var(ce[2]);
+            IntVar y = s.arg_to_int_var(ce[3]);
             weights(s, e, w, x, y);
         }
 
         void
         p_inverse_set(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            int xoff = ce[2]->getInt();
-            int yoff = ce[3]->getInt();
-            SetVarArgs x = s.arg2setvarargs(ce[0], xoff);
-            SetVarArgs y = s.arg2setvarargs(ce[1], yoff);
+            int xoff = ce[2]->get_int();
+            int yoff = ce[3]->get_int();
+            SetVarArgs x = s.arg_to_set_var_args(ce[0], xoff);
+            SetVarArgs y = s.arg_to_set_var_args(ce[1], yoff);
             channel(s, x, y);
         }
 
         void
         p_precede_set(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            SetVarArgs x = s.arg2setvarargs(ce[0]);
-            int p_s = ce[1]->getInt();
-            int p_t = ce[2]->getInt();
+            SetVarArgs x = s.arg_to_set_var_args(ce[0]);
+            int p_s = ce[1]->get_int();
+            int p_t = ce[2]->get_int();
             precede(s, x, p_s, p_t);
         }
 
         SetRelType
         set_relation(AST::Node* arg) {
-            switch (arg->getInt()) {
+            switch (arg->get_int()) {
             case 1:
                 return SRT_EQ;
             case 2:
@@ -390,67 +391,68 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_set_ite(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            ite(s, s.arg2BoolVar(ce[0]), s.arg2SetVar(ce[1]), s.arg2SetVar(ce[2]), s.arg2SetVar(ce[3]));
+            ite(s, s.arg_to_bool_var(ce[0]), s.arg_to_set_var(ce[1]), s.arg_to_set_var(ce[2]), s.arg_to_set_var(ce[3]));
         }
         void
         p_set_convex_hull(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            convex(s, s.arg2SetVar(ce[0]), s.arg2SetVar(ce[1]));
+            convex(s, s.arg_to_set_var(ce[0]), s.arg_to_set_var(ce[1]));
         }
         void
         p_set_atmost_one(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            int cardinality = ce[1]->getInt();
+            int cardinality = ce[1]->get_int();
             if (cardinality < 0)
                 throw FlatZinc::Error("Registry", "set cardinality must be nonnegative");
-            SetVarArgs x = s.arg2setvarargs(ce[0]);
+            SetVarArgs x = s.arg_to_set_var_args(ce[0]);
             if ((x.size() < 2) || (cardinality <= 1)) {
-                // The intersection bound is trivial here. atmostOne skips cardinality
+                // The intersection bound is trivial here. atmost_one skips cardinality
                 // for fewer than two sets, and its filter divides by cardinality - 1.
                 for (int i = 0; i < x.size(); i++)
                     Gecode::cardinality(s, x[i], cardinality, cardinality);
             } else {
-                atmostOne(s, x, static_cast<unsigned int>(cardinality));
+                atmost_one(s, x, static_cast<unsigned int>(cardinality));
             }
         }
         void
         p_set_channel_sorted(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            channelSorted(s, s.arg2intvarargs(ce[0]), s.arg2SetVar(ce[1]));
+            channel_sorted(s, s.arg_to_int_var_args(ce[0]), s.arg_to_set_var(ce[1]));
         }
         void
         p_array_set_intersect(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            rel(s, SOT_INTER, s.arg2setvarargs(ce[0]), s.arg2SetVar(ce[1]));
+            rel(s, SOT_INTER, s.arg_to_set_var_args(ce[0]), s.arg_to_set_var(ce[1]));
         }
         void
         p_set_element2d(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            SetVarArgs x = s.arg2setvarargs(ce[0]);
-            int width = ce[2]->getInt(), height = ce[4]->getInt();
+            SetVarArgs x = s.arg_to_set_var_args(ce[0]);
+            int width = ce[2]->get_int(), height = ce[4]->get_int();
             if ((width <= 0) || (height <= 0) || (static_cast<long long>(width) * height != x.size()))
                 throw FlatZinc::Error("Registry", "invalid set matrix dimensions");
-            element(s, x, s.arg2IntVar(ce[1]), width, s.arg2IntVar(ce[3]), height, s.arg2SetVar(ce[5]));
+            element(s, x, s.arg_to_int_var(ce[1]), width, s.arg_to_int_var(ce[3]), height, s.arg_to_set_var(ce[5]));
         }
 
         void
         p_set_min(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            min(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]));
+            min(s, s.arg_to_set_var(ce[0]), s.arg_to_int_var(ce[1]));
         }
         template <ReifyMode mode>
         void
         p_set_min_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            min(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]), Reify(s.arg2BoolVar(ce[2]), mode));
+            min(s, s.arg_to_set_var(ce[0]), s.arg_to_int_var(ce[1]), Reify(s.arg_to_bool_var(ce[2]), mode));
         }
 
         void
         p_set_max(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            max(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]));
+            max(s, s.arg_to_set_var(ce[0]), s.arg_to_int_var(ce[1]));
         }
         template <ReifyMode mode>
         void
         p_set_max_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            max(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]), Reify(s.arg2BoolVar(ce[2]), mode));
+            max(s, s.arg_to_set_var(ce[0]), s.arg_to_int_var(ce[1]), Reify(s.arg_to_bool_var(ce[2]), mode));
         }
 
         void
         p_set_rel_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            rel(s, s.arg2SetVar(ce[0]), set_relation(ce[1]), s.arg2SetVar(ce[2]), Reify(s.arg2BoolVar(ce[3]), RM_IMP));
+            rel(s, s.arg_to_set_var(ce[0]), set_relation(ce[1]), s.arg_to_set_var(ce[2]),
+                Reify(s.arg_to_bool_var(ce[3]), RM_IMP));
         }
 
     } // namespace

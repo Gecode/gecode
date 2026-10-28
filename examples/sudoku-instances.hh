@@ -38,7 +38,7 @@ namespace {
     extern const char* examples[];
     extern const unsigned int n_examples;
     int example_size(const char* s);
-    int sudokuField(const char* s, int n, int i, int j);
+    int sudoku_field(const char* s, int n, int i, int j);
 
     /** \name %Sudoku specifications
      *
@@ -1770,7 +1770,7 @@ namespace {
 
     /// Return value at position (\a i,\a j) in the example \a s of size \a n
     int
-    sudokuField(const char* s, int n, int i, int j) {
+    sudoku_field(const char* s, int n, int i, int j) {
         assert(example_size(s) == std::sqrt(static_cast<float>(n)));
         assert(i >= 0 && i < n);
         assert(j >= 0 && j < n);
@@ -1842,7 +1842,7 @@ instances {
                 givens = IntArgs(nn * nn);
                 for (int r = 0; r < nn; r++)
                     for (int c = 0; c < nn; c++)
-                        givens[r * nn + c] = sudokuField(examples[i], nn, c, r);
+                        givens[r * nn + c] = sudoku_field(examples[i], nn, c, r);
             } else if (opt.is_file()) {
                 // The spec has checked the data
                 Instance::Data d = opt.data();

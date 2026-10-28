@@ -70,11 +70,11 @@ namespace Gecode { namespace Int { namespace Channel {
 
     public:
         /// Propagation cost (defined as low quadratic)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -108,9 +108,9 @@ namespace Gecode { namespace Int { namespace Channel {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for channeling
         static ExecStatus post(Home home, int n, ValInfo<View>* xy, Offset& ox, Offset& oy);
     };
@@ -148,16 +148,16 @@ namespace Gecode { namespace Int { namespace Channel {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /**
          * \brief Cost function
          *
          * If in stage for naive value propagation, the cost is
          * low quadratic. Otherwise it is high quadratic.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for channeling on \a xy
         static ExecStatus post(Home home, int n, DomInfo<View, Offset>* xy, Offset& ox, Offset& oy);
     };
@@ -180,11 +180,11 @@ namespace Gecode { namespace Int { namespace Channel {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as low unary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ x_0 = x_1\f$
         static ExecStatus post(Home home, BoolView x0, IntView x1);
     };
@@ -219,24 +219,24 @@ namespace Gecode { namespace Int { namespace Channel {
     public:
         /// Copy propagator during cloning
         GECODE_INT_EXPORT
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (low unary if \a y is assigned, low linear otherwise)
         GECODE_INT_EXPORT
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
         GECODE_INT_EXPORT
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Give advice to propagator
         GECODE_INT_EXPORT
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Perform propagation
         GECODE_INT_EXPORT
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ x_i = 1\leftrightarrow y=i+o\f$
         static ExecStatus post(Home home, ViewArray<BoolView>& x, IntView y, int o);
         /// Delete propagator and return its size
         GECODE_INT_EXPORT
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::Channel

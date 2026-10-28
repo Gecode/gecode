@@ -45,8 +45,8 @@ namespace Gecode {
         Set::Limits::check(j, "Set::cardinality");
         GECODE_POST;
         Set::SetView _x(x);
-        GECODE_ME_FAIL(_x.cardMin(home, i));
-        GECODE_ME_FAIL(_x.cardMax(home, j));
+        GECODE_ME_FAIL(_x.card_min(home, i));
+        GECODE_ME_FAIL(_x.card_max(home, j));
     }
 
     void
@@ -56,8 +56,8 @@ namespace Gecode {
         GECODE_POST;
         for (int k = x.size(); k--;) {
             Set::SetView _x(x[k]);
-            GECODE_ME_FAIL(_x.cardMin(home, i));
-            GECODE_ME_FAIL(_x.cardMax(home, j));
+            GECODE_ME_FAIL(_x.card_min(home, i));
+            GECODE_ME_FAIL(_x.card_max(home, j));
         }
     }
 

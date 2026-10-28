@@ -40,8 +40,8 @@ namespace Test { namespace FlatZinc { namespace {
     class AlgorithmAnnotations : public Base {
     public:
         AlgorithmAnnotations(void) : Base("FlatZinc::NativeRegistry::AlgorithmAnnotations") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             const char* names[] = {"gecode_basic_propagation", "gecode_advanced_propagation",
                                    "gecode_full_propagation"};
             const Gecode::IntPropLevel levels[] = {Gecode::IPL_BASIC, Gecode::IPL_ADVANCED, Gecode::IPL_FULL};
@@ -50,7 +50,7 @@ namespace Test { namespace FlatZinc { namespace {
                 Gecode::FlatZinc::AST::Array ann;
                 ann.a.push_back(new Gecode::FlatZinc::AST::Atom(names[i]));
                 ann.a.push_back(new Gecode::FlatZinc::AST::Atom("domain"));
-                if (space.ann2ipl(&ann) != (Gecode::IPL_DOM | levels[i]))
+                if (space.annotation_to_int_prop_level(&ann) != (Gecode::IPL_DOM | levels[i]))
                     return false;
             }
             return true;
@@ -62,8 +62,8 @@ namespace Test { namespace FlatZinc { namespace {
     public:
         CumulativeAlgorithmAnnotations(void)
             : Base("FlatZinc::NativeRegistry::CumulativeAlgorithmAnnotations", TestTags::check()) {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             const char* levels[] = {"gecode_basic_propagation", "gecode_advanced_propagation",
                                     "gecode_full_propagation"};
             for (int i = 0; i < 3; i++) {

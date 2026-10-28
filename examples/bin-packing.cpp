@@ -146,26 +146,29 @@ namespace {
 
             int u = 0;
             for (int i = 0; i < n; i++) {
+                const int item_size = size(i);
                 int j = 0;
                 // Skip bins with insufficient free space
-                while (f[j] < size(i))
+                while ((j < n) && (f[j] < item_size))
                     j++;
+                // Every instance item fits in an empty bin.
+                assert(j < n);
                 if (j > u) {
                     // A new bin is needed
                     u = j;
-                    f[u] -= size(i);
+                    f[u] -= item_size;
                 } else {
                     // The slack of the best-fit bin
                     int b = j++;
-                    int s = f[b] - size(i);
+                    int s = f[b] - item_size;
                     while (j <= u) {
-                        if ((f[j] >= size(i)) && (f[j] - size(i) < s)) {
+                        if ((f[j] >= item_size) && (f[j] - item_size < s)) {
                             b = j;
-                            s = f[b] - size(i);
+                            s = f[b] - item_size;
                         }
                         j++;
                     }
-                    f[b] -= size(i);
+                    f[b] -= item_size;
                 }
             }
             delete[] f;
@@ -241,15 +244,15 @@ protected:
                 same[k] = s[k];
         }
         /// Archive into \a e
-        virtual void
-        archive(Archive& e) const {
+        void
+        archive(Archive& e) const override {
             Gecode::Choice::archive(e);
             e << alternatives() << item << n_same;
             for (int i = n_same; i--;)
                 e << same[i];
         }
         /// Destructor
-        virtual ~Choice(void) {
+        ~Choice(void) override {
             heap.free<int>(same, n_same);
         }
     };
@@ -271,21 +274,21 @@ public:
         bin.update(home, cdbf.bin);
     }
     /// Copy brancher
-    virtual Actor*
-    copy(Space& home) {
+    Actor*
+    copy(Space& home) override {
         return new (home) CDBF(home, *this);
     }
     /// Delete brancher and return its size
-    virtual size_t
-    dispose(Space& home) {
+    size_t
+    dispose(Space& home) override {
         home.ignore(*this, AP_DISPOSE);
         size.~IntSharedArray();
         (void)Brancher::dispose(home);
         return sizeof(*this);
     }
     /// Check status of brancher, return true if alternatives left
-    virtual bool
-    status(const Space&) const {
+    bool
+    status(const Space&) const override {
         for (int i = item; i < bin.size(); i++)
             if (!bin[i].assigned()) {
                 item = i;
@@ -294,8 +297,8 @@ public:
         return false;
     }
     /// Return choice
-    virtual Gecode::Choice*
-    choice(Space&) {
+    Gecode::Choice*
+    choice(Space&) override {
         assert(!bin[item].assigned());
 
         int n = bin.size(), m = load.size();
@@ -349,8 +352,8 @@ public:
             return new Choice(*this, 2, item, same, n_same);
     }
     /// Return choice
-    virtual const Gecode::Choice*
-    choice(const Space&, Archive& e) {
+    const Gecode::Choice*
+    choice(const Space&, Archive& e) override {
         int alt, item, n_same;
         e >> alt >> item >> n_same;
         Region re;
@@ -360,8 +363,8 @@ public:
         return new Choice(*this, alt, item, same, n_same);
     }
     /// Perform commit for choice \a _c and alternative \a a
-    virtual ExecStatus
-    commit(Space& home, const Gecode::Choice& _c, unsigned int a) {
+    ExecStatus
+    commit(Space& home, const Gecode::Choice& _c, unsigned int a) override {
         const Choice& c = static_cast<const Choice&>(_c);
         // This catches also the case that the choice has a single aternative only
         if (a == 0) {
@@ -379,8 +382,8 @@ public:
         return ES_OK;
     }
     /// Print explanation
-    virtual void
-    print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const {
+    void
+    print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const override {
         const Choice& c = static_cast<const Choice&>(_c);
         if (a == 0) {
             o << "bin[" << c.item << "] = " << c.same[0];
@@ -470,7 +473,7 @@ public:
                 linear(*this, sizes, x.row(j), IRT_EQ, load[j]);
         } break;
         case MODEL_PACKING:
-            binpacking(*this, load, bin, sizes);
+            bin_packing(*this, load, bin, sizes);
             break;
         }
 
@@ -506,8 +509,8 @@ public:
         }
     }
     /// Return cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return bins;
     }
     /// Constructor for cloning \a s
@@ -517,13 +520,13 @@ public:
         bins.update(*this, s.bins);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new BinPacking(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         int n = bin.size();
         int m = load.size();
         os << "Bins used: " << bins << " (from " << m << " bins)." << std::endl;

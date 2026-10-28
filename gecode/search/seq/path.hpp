@@ -67,7 +67,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
     template <class Tracer>
     forceinline unsigned int
-    Path<Tracer>::Edge::truealt(void) const {
+    Path<Tracer>::Edge::true_alternative(void) const {
         return std::min(_alt, _choice->alternatives() - 1);
     }
     template <class Tracer>

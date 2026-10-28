@@ -59,7 +59,7 @@ namespace Test { namespace Fault {
     protected:
         ThrowingPropagator(Home home) : Propagator(home) {}
         ThrowingPropagator(Space& home, ThrowingPropagator& p) : Propagator(home, p) {
-            Support::FailPoint::check(Phase::PropagatorCopy);
+            Support::FailPoint::check(Phase::PROPAGATOR_COPY);
         }
 
     public:
@@ -67,22 +67,22 @@ namespace Test { namespace Fault {
         post(Home home) {
             (void)new (home) ThrowingPropagator(home);
         }
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) ThrowingPropagator(home, *this);
         }
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return PropCost::unary(PropCost::LO);
         }
-        virtual void
-        reschedule(Space&) {}
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        void
+        reschedule(Space&) override {}
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             return home.ES_SUBSUMED(*this);
         }
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             (void)Propagator::dispose(home);
             return sizeof(*this);
         }
@@ -98,7 +98,7 @@ namespace Test { namespace Fault {
         ThrowingAdvisor(Space& home, Propagator& p, Council<ThrowingAdvisor>& c, int id0)
             : Advisor(home, p, c), id(id0) {}
         ThrowingAdvisor(Space& home, ThrowingAdvisor& a) : Advisor(home, a), id(a.id) {
-            Support::FailPoint::check(Phase::AdvisorCopy);
+            Support::FailPoint::check(Phase::ADVISOR_COPY);
         }
         Propagator*
         owner(void) const {
@@ -138,22 +138,22 @@ namespace Test { namespace Fault {
             }
             return n == 2;
         }
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) AdvisorCopyPropagator(home, *this);
         }
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return PropCost::unary(PropCost::LO);
         }
-        virtual void
-        reschedule(Space&) {}
-        virtual ExecStatus
-        propagate(Space&, const ModEventDelta&) {
+        void
+        reschedule(Space&) override {}
+        ExecStatus
+        propagate(Space&, const ModEventDelta&) override {
             return ES_FIX;
         }
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             c.dispose(home);
             (void)Propagator::dispose(home);
             return sizeof(*this);
@@ -163,8 +163,8 @@ namespace Test { namespace Fault {
     class ThrowingChoice : public Choice {
     public:
         ThrowingChoice(const Brancher& b) : Choice(b, 1) {}
-        virtual void
-        archive(Archive& e) const {
+        void
+        archive(Archive& e) const override {
             Choice::archive(e);
         }
     };
@@ -174,7 +174,7 @@ namespace Test { namespace Fault {
         bool done;
         ThrowingBrancher(Home home) : Brancher(home), done(false) {}
         ThrowingBrancher(Space& home, ThrowingBrancher& b) : Brancher(home, b), done(b.done) {
-            Support::FailPoint::check(Phase::BrancherCopy);
+            Support::FailPoint::check(Phase::BRANCHER_COPY);
         }
 
     public:
@@ -182,31 +182,31 @@ namespace Test { namespace Fault {
         post(Home home) {
             (void)new (home) ThrowingBrancher(home);
         }
-        virtual bool
-        status(const Space&) const {
+        bool
+        status(const Space&) const override {
             return !done;
         }
-        virtual const Choice*
-        choice(Space&) {
+        const Choice*
+        choice(Space&) override {
             return new ThrowingChoice(*this);
         }
-        virtual const Choice*
-        choice(const Space&, Archive&) {
+        const Choice*
+        choice(const Space&, Archive&) override {
             return new ThrowingChoice(*this);
         }
-        virtual ExecStatus
-        commit(Space&, const Choice&, unsigned int) {
+        ExecStatus
+        commit(Space&, const Choice&, unsigned int) override {
             done = true;
             return ES_OK;
         }
-        virtual void
-        print(const Space&, const Choice&, unsigned int, std::ostream&) const {}
-        virtual Actor*
-        copy(Space& home) {
+        void
+        print(const Space&, const Choice&, unsigned int, std::ostream&) const override {}
+        Actor*
+        copy(Space& home) override {
             return new (home) ThrowingBrancher(home, *this);
         }
-        virtual size_t
-        dispose(Space&) {
+        size_t
+        dispose(Space&) override {
             return sizeof(*this);
         }
     };
@@ -220,8 +220,8 @@ namespace Test { namespace Fault {
             ThrowingBrancher::post(*this);
         }
         CloneCopySpace(CloneCopySpace& s) : Space(s) {}
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new CloneCopySpace(*this);
         }
     };
@@ -235,8 +235,8 @@ namespace Test { namespace Fault {
         DisposeSpace(DisposeSpace& s) : Space(s) {
             x.update(*this, s.x);
         }
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new DisposeSpace(*this);
         }
     };
@@ -252,12 +252,12 @@ namespace Test { namespace Fault {
         post(Home home) {
             (void)new (home) NoticeDisposeActor(home);
         }
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) NoticeDisposeActor(home);
         }
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE);
             disposed++;
             return sizeof(*this);
@@ -272,15 +272,15 @@ namespace Test { namespace Fault {
             for (int i = 0; i < registered; i++)
                 NoticeDisposeActor::post(*this);
             if (fail_next) {
-                Support::FailPoint::fail_after(Phase::SpaceDisposeNoticeArray, 0);
+                Support::FailPoint::fail_after(Phase::SPACE_DISPOSE_NOTICE_ARRAY, 0);
                 NoticeDisposeActor::post(*this);
             } else if (registered == 0) {
                 NoticeDisposeActor::post(*this);
             }
         }
         NoticeDisposeSpace(NoticeDisposeSpace& s) : Space(s) {}
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new NoticeDisposeSpace(*this);
         }
     };
@@ -289,8 +289,8 @@ namespace Test { namespace Fault {
     public:
         MiniModelSpace(void) {}
         MiniModelSpace(MiniModelSpace& s) : Space(s) {}
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new MiniModelSpace(*this);
         }
     };
@@ -303,11 +303,11 @@ namespace Test { namespace Fault {
             ThrowingBrancher::post(*this);
         }
         DerivedCopySpace(DerivedCopySpace& s) : Space(s) {
-            Support::FailPoint::check(Phase::DerivedSpaceCopy);
+            Support::FailPoint::check(Phase::DERIVED_SPACE_COPY);
             x.update(*this, s.x);
         }
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new DerivedCopySpace(*this);
         }
     };
@@ -321,10 +321,10 @@ namespace Test { namespace Fault {
         }
         DerivedUpdateSpace(DerivedUpdateSpace& s) : Space(s) {
             x.update(*this, s.x);
-            Support::FailPoint::check(Phase::DerivedSpaceCopy);
+            Support::FailPoint::check(Phase::DERIVED_SPACE_COPY);
         }
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new DerivedUpdateSpace(*this);
         }
     };
@@ -334,14 +334,14 @@ namespace Test { namespace Fault {
         int value;
         FaultLocalObject(Home home, int v) : LocalObject(home), value(v) {}
         FaultLocalObject(Space& home, FaultLocalObject& o) : LocalObject(home, o), value(o.value) {
-            Support::FailPoint::check(Phase::LocalObjectCopy);
+            Support::FailPoint::check(Phase::LOCAL_OBJECT_COPY);
         }
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) FaultLocalObject(home, *this);
         }
-        virtual size_t
-        dispose(Space&) {
+        size_t
+        dispose(Space&) override {
             return sizeof(*this);
         }
     };
@@ -367,8 +367,8 @@ namespace Test { namespace Fault {
         LocalCopySpace(LocalCopySpace& s) : Space(s) {
             h.update(*this, s.h);
         }
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new LocalCopySpace(*this);
         }
     };
@@ -378,8 +378,8 @@ namespace Test { namespace Fault {
         AdvisorCopyPropagator* p;
         AdvisorCopySpace(void) : p(AdvisorCopyPropagator::post(*this)) {}
         AdvisorCopySpace(AdvisorCopySpace& s) : Space(s), p(nullptr) {}
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new AdvisorCopySpace(*this);
         }
         bool
@@ -397,8 +397,8 @@ namespace Test { namespace Fault {
         BranchPostSpace(BranchPostSpace& s) : Space(s) {
             x.update(*this, s.x);
         }
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new BranchPostSpace(*this);
         }
         void
@@ -480,7 +480,7 @@ namespace Test { namespace Fault {
         FaultScope scope;
         LocalCopySpace s;
         Support::FailPoint::reset();
-        Support::FailPoint::fail_after(Phase::LocalObjectCopy, 0);
+        Support::FailPoint::fail_after(Phase::LOCAL_OBJECT_COPY, 0);
         try {
             Space* c = s.clone();
             delete c;
@@ -507,7 +507,7 @@ namespace Test { namespace Fault {
         if (!s.advisors_point_to_source())
             return false;
         Support::FailPoint::reset();
-        Support::FailPoint::fail_after(Phase::AdvisorCopy, 1);
+        Support::FailPoint::fail_after(Phase::ADVISOR_COPY, 1);
         try {
             Space* c = s.clone();
             delete c;
@@ -534,7 +534,7 @@ namespace Test { namespace Fault {
         if (s.status() == SS_FAILED)
             return false;
         Support::FailPoint::reset();
-        Support::FailPoint::fail_after(Phase::SpaceDisposalArray, 0);
+        Support::FailPoint::fail_after(Phase::SPACE_DISPOSAL_ARRAY, 0);
         try {
             Space* c = s.clone();
             delete c;
@@ -573,7 +573,7 @@ namespace Test { namespace Fault {
         if (s.status() == SS_FAILED)
             return false;
         Support::FailPoint::reset();
-        Support::FailPoint::fail_after(Phase::DerivedSpaceCopy, 0);
+        Support::FailPoint::fail_after(Phase::DERIVED_SPACE_COPY, 0);
         try {
             Space* c = s.clone();
             delete c;
@@ -592,7 +592,7 @@ namespace Test { namespace Fault {
     heap_allocation_failpoint_throws(void) {
         FaultScope scope;
         Support::FailPoint::reset();
-        Support::FailPoint::fail_after(Phase::Heap, 0);
+        Support::FailPoint::fail_after(Phase::HEAP, 0);
         try {
             int* x = heap.alloc<int>(1);
             heap.free<int>(x, 1);
@@ -612,7 +612,7 @@ namespace Test { namespace Fault {
         FaultScope scope;
         int* x = heap.alloc<int>(1);
         Support::FailPoint::reset();
-        Support::FailPoint::fail_after(Phase::Heap, 0);
+        Support::FailPoint::fail_after(Phase::HEAP, 0);
         try {
             int* y = heap.realloc<int>(x, 1, 2);
             Support::FailPoint::reset();
@@ -638,7 +638,7 @@ namespace Test { namespace Fault {
         bool saw_failure = false;
         for (unsigned long long budget = 0; budget < 32; budget++) {
             Support::FailPoint::reset();
-            Support::FailPoint::fail_after(Phase::Heap, budget);
+            Support::FailPoint::fail_after(Phase::HEAP, budget);
             try {
                 Space* c = s.clone();
                 unsigned long long checks = Support::FailPoint::count();
@@ -667,7 +667,7 @@ namespace Test { namespace Fault {
             if (s.status() == SS_FAILED)
                 return false;
             Support::FailPoint::reset();
-            Support::FailPoint::fail_after(Phase::Heap, budget);
+            Support::FailPoint::fail_after(Phase::HEAP, budget);
             try {
                 if (chb)
                     s.post_chb_branch();
@@ -706,7 +706,7 @@ namespace Test { namespace Fault {
         for (unsigned long long budget = 0; budget < 8; budget++) {
             IntSet::fault_reset_allocations();
             Support::FailPoint::reset();
-            Support::FailPoint::fail_after(Phase::Heap, budget);
+            Support::FailPoint::fail_after(Phase::HEAP, budget);
             try {
                 unsigned long long checks;
                 {
@@ -738,7 +738,7 @@ namespace Test { namespace Fault {
             try {
                 MiniModelSpace home;
                 IntVarArgs x(home, 4, 0, 3);
-                Support::FailPoint::fail_after(Phase::Heap, budget);
+                Support::FailPoint::fail_after(Phase::HEAP, budget);
                 {
                     LinIntExpr e = min(x);
                     (void)e;
@@ -771,7 +771,7 @@ namespace Test { namespace Fault {
                 IntVarArgs x(home, 4, 0, 3);
                 BoolVarArgs b(home, 4, 0, 1);
                 IntArgs a({1, 2, 3, 4});
-                Support::FailPoint::fail_after(Phase::Heap, budget);
+                Support::FailPoint::fail_after(Phase::HEAP, budget);
                 switch (kind) {
                 case 0: {
                     LinIntExpr e(x);
@@ -826,7 +826,7 @@ namespace Test { namespace Fault {
             try {
                 MiniModelSpace home;
                 FloatVarArgs x(home, 4, 0.0, 3.0);
-                Support::FailPoint::fail_after(Phase::Heap, budget);
+                Support::FailPoint::fail_after(Phase::HEAP, budget);
                 {
                     LinFloatExpr e = min(x);
                     (void)e;
@@ -856,9 +856,9 @@ namespace Test { namespace Fault {
             try {
                 MiniModelSpace home;
                 SetVarArgs x(home, 4, IntSet::empty, 1, 1);
-                Support::FailPoint::fail_after(Phase::Heap, budget);
+                Support::FailPoint::fail_after(Phase::HEAP, budget);
                 {
-                    SetExpr e = setunion(x);
+                    SetExpr e = set_union(x);
                     (void)e;
                 }
                 unsigned long long checks = Support::FailPoint::count();
@@ -881,7 +881,7 @@ namespace Test { namespace Fault {
         FaultScope scope;
         NoticeDisposeActor::disposed = 0;
         Support::FailPoint::reset();
-        Support::FailPoint::fail_after(Phase::SpaceDisposeNoticeArray, 0);
+        Support::FailPoint::fail_after(Phase::SPACE_DISPOSE_NOTICE_ARRAY, 0);
         try {
             NoticeDisposeSpace s;
             Support::FailPoint::reset();
@@ -921,7 +921,7 @@ namespace Test { namespace Fault {
         try {
             MiniModelSpace home;
             IntVarArgs x(home, 2, 0, 1);
-            Support::FailPoint::fail_after(Phase::MiniModel, 1);
+            Support::FailPoint::fail_after(Phase::MINI_MODEL, 1);
             LinIntExpr e = min(x);
             (void)e;
             Support::FailPoint::reset();
@@ -940,11 +940,11 @@ namespace Test { namespace Fault {
         static int disposed;
 
         FaultBoolMisc(void) {}
-        virtual ~FaultBoolMisc(void) {
+        ~FaultBoolMisc(void) override {
             disposed++;
         }
-        virtual void
-        post(Home, BoolVar, bool, const IntPropLevels&) {}
+        void
+        post(Home, BoolVar, bool, const IntPropLevels&) override {}
     };
 
     int FaultBoolMisc::disposed = 0;
@@ -955,7 +955,7 @@ namespace Test { namespace Fault {
         FaultBoolMisc::disposed = 0;
         FaultBoolMisc* m = new FaultBoolMisc;
         Support::FailPoint::reset();
-        Support::FailPoint::fail_after(Phase::Heap, 0);
+        Support::FailPoint::fail_after(Phase::HEAP, 0);
         try {
             BoolExpr b(m);
             (void)b;
@@ -973,8 +973,8 @@ namespace Test { namespace Fault {
     class MiniModelDefaultNodes : public Base {
     public:
         MiniModelDefaultNodes(void) : Base("Fault::MiniModel::DefaultNodes") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return minimodel_failure_releases_default_nodes();
         }
     };
@@ -982,8 +982,8 @@ namespace Test { namespace Fault {
     class DisposeNoticeArray : public Base {
     public:
         DisposeNoticeArray(void) : Base("Fault::Dispose::NoticeArray") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return dispose_notice_initial_failure_does_not_dispose_actor();
         }
     };
@@ -991,8 +991,8 @@ namespace Test { namespace Fault {
     class DisposeNoticeArrayResize : public Base {
     public:
         DisposeNoticeArrayResize(void) : Base("Fault::Dispose::NoticeArrayResize") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return dispose_notice_resize_failure_does_not_dispose_unregistered_actor();
         }
     };
@@ -1000,8 +1000,8 @@ namespace Test { namespace Fault {
     class CloneDisposalArray : public Base {
     public:
         CloneDisposalArray(void) : Base("Fault::Clone::DisposalArray") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return clone_after_failed_disposal_array();
         }
     };
@@ -1009,8 +1009,8 @@ namespace Test { namespace Fault {
     class CloneDerivedSpaceUpdate : public Base {
     public:
         CloneDerivedSpaceUpdate(void) : Base("Fault::Clone::DerivedSpaceUpdate") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return clone_after_failed_derived_update();
         }
     };
@@ -1018,8 +1018,8 @@ namespace Test { namespace Fault {
     class HeapAllocation : public Base {
     public:
         HeapAllocation(void) : Base("Fault::Heap::Allocation") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return heap_allocation_failpoint_throws();
         }
     };
@@ -1027,8 +1027,8 @@ namespace Test { namespace Fault {
     class HeapReallocation : public Base {
     public:
         HeapReallocation(void) : Base("Fault::Heap::Reallocation") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return heap_reallocation_failpoint_throws();
         }
     };
@@ -1036,8 +1036,8 @@ namespace Test { namespace Fault {
     class CloneHeapFailures : public Base {
     public:
         CloneHeapFailures(void) : Base("Fault::Clone::HeapFailures") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return clone_heap_failures_recover_source();
         }
     };
@@ -1045,8 +1045,8 @@ namespace Test { namespace Fault {
     class BranchActionHeapFailures : public Base {
     public:
         BranchActionHeapFailures(void) : Base("Fault::Branch::ActionHeapFailures") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return branch_post_heap_failures_are_recoverable(false);
         }
     };
@@ -1054,8 +1054,8 @@ namespace Test { namespace Fault {
     class BranchChbHeapFailures : public Base {
     public:
         BranchChbHeapFailures(void) : Base("Fault::Branch::ChbHeapFailures") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return branch_post_heap_failures_are_recoverable(true);
         }
     };
@@ -1063,8 +1063,8 @@ namespace Test { namespace Fault {
     class IntSetHeapFailures : public Base {
     public:
         IntSetHeapFailures(void) : Base("Fault::IntSet::HeapFailures") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return int_set_heap_failures_release_object();
         }
     };
@@ -1072,8 +1072,8 @@ namespace Test { namespace Fault {
     class MiniModelHeapFailures : public Base {
     public:
         MiniModelHeapFailures(void) : Base("Fault::MiniModel::HeapFailures") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return minimodel_heap_failures_release_nodes();
         }
     };
@@ -1081,8 +1081,8 @@ namespace Test { namespace Fault {
     class MiniModelLinearSumHeapFailures : public Base {
     public:
         MiniModelLinearSumHeapFailures(void) : Base("Fault::MiniModel::LinearSumHeapFailures") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return minimodel_linear_sum_heap_failures_release_nodes();
         }
     };
@@ -1090,8 +1090,8 @@ namespace Test { namespace Fault {
     class MiniModelBoolMiscHeapFailure : public Base {
     public:
         MiniModelBoolMiscHeapFailure(void) : Base("Fault::MiniModel::BoolMiscHeapFailure") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return minimodel_heap_failure_releases_bool_misc();
         }
     };
@@ -1100,8 +1100,8 @@ namespace Test { namespace Fault {
     class MiniModelFloatHeapFailures : public Base {
     public:
         MiniModelFloatHeapFailures(void) : Base("Fault::MiniModel::FloatHeapFailures") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return minimodel_float_heap_failures_are_recoverable();
         }
     };
@@ -1111,8 +1111,8 @@ namespace Test { namespace Fault {
     class MiniModelSetHeapFailures : public Base {
     public:
         MiniModelSetHeapFailures(void) : Base("Fault::MiniModel::SetHeapFailures") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return minimodel_set_heap_failures_are_recoverable();
         }
     };
@@ -1121,27 +1121,27 @@ namespace Test { namespace Fault {
     class ClonePropagatorCopy : public Base {
     public:
         ClonePropagatorCopy(void) : Base("Fault::Clone::PropagatorCopy") {}
-        virtual bool
-        run(void) {
-            return clone_after_failed_copy(Phase::PropagatorCopy, 0) &&
-                   clone_after_failed_copy(Phase::PropagatorCopy, 1);
+        bool
+        run(void) override {
+            return clone_after_failed_copy(Phase::PROPAGATOR_COPY, 0) &&
+                   clone_after_failed_copy(Phase::PROPAGATOR_COPY, 1);
         }
     };
 
     class CloneBrancherCopy : public Base {
     public:
         CloneBrancherCopy(void) : Base("Fault::Clone::BrancherCopy") {}
-        virtual bool
-        run(void) {
-            return clone_after_failed_copy(Phase::BrancherCopy, 0) && clone_after_failed_copy(Phase::BrancherCopy, 1);
+        bool
+        run(void) override {
+            return clone_after_failed_copy(Phase::BRANCHER_COPY, 0) && clone_after_failed_copy(Phase::BRANCHER_COPY, 1);
         }
     };
 
     class CloneAdvisorCopy : public Base {
     public:
         CloneAdvisorCopy(void) : Base("Fault::Clone::AdvisorCopy") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return clone_after_failed_advisor_copy();
         }
     };
@@ -1149,17 +1149,17 @@ namespace Test { namespace Fault {
     class CloneDerivedSpaceCopy : public Base {
     public:
         CloneDerivedSpaceCopy(void) : Base("Fault::Clone::DerivedSpaceCopy") {}
-        virtual bool
-        run(void) {
-            return expect_memory_exhausted(Phase::DerivedSpaceCopy, 0);
+        bool
+        run(void) override {
+            return expect_memory_exhausted(Phase::DERIVED_SPACE_COPY, 0);
         }
     };
 
     class CloneLocalObjectCopy : public Base {
     public:
         CloneLocalObjectCopy(void) : Base("Fault::Clone::LocalObjectCopy") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return clone_after_failed_local_object_copy();
         }
     };

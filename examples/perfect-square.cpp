@@ -155,7 +155,7 @@ public:
         IntArgs sa(n, s);
 
         // Squares do not overlap
-        nooverlap(*this, x, sa, y, sa);
+        no_overlap(*this, x, sa, y, sa);
 
         /*
          * Capacity constraints
@@ -214,13 +214,13 @@ public:
         y.update(*this, s.y);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new PerfectSquare(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\t";
         for (int i = 0; i < x.size(); i++)
             os << "(" << x[i] << "," << y[i] << ") ";

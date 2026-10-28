@@ -122,18 +122,20 @@ namespace Gecode { namespace Iter { namespace Ranges {
     template <class I, class J>
     inline void
     Union<I, J>::operator++(void) {
-        if (!i() && !j()) {
+        const bool i_valid = i();
+        const bool j_valid = j();
+        if (!i_valid && !j_valid) {
             finish();
             return;
         }
 
-        if (!i() || (j() && (j.max() + 1 < i.min()))) {
+        if (!i_valid || (j_valid && (j.max() + 1 < i.min()))) {
             mi = j.min();
             ma = j.max();
             ++j;
             return;
         }
-        if (!j() || (i() && (i.max() + 1 < j.min()))) {
+        if (!j_valid || (i_valid && (i.max() + 1 < j.min()))) {
             mi = i.min();
             ma = i.max();
             ++i;

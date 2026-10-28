@@ -440,8 +440,10 @@ namespace Gecode { namespace Int { namespace Extensional {
                 const int a = gid_var[gid];
                 if ((a < 0) || (a >= arity))
                     continue;
-                if (x[a].in(gid_val[gid]))
+                if (x[a].in(gid_val[gid])) {
+                    assert((rm[a] != nullptr) && (p_rm[a] < n_rm[a]));
                     rm[a][p_rm[a]++] = gid_val[gid];
+                }
             }
 
             zero_queue_size = 0U;
@@ -449,6 +451,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             for (int i = 0; i < arity; i++) {
                 if (p_rm[i] == 0U)
                     continue;
+                assert((rm[i] != nullptr) && (p_rm[i] <= n_rm[i]));
                 if (x[i].assigned())
                     continue;
                 if (p_rm[i] == 1U) {
@@ -472,7 +475,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
         bool
-        atmostone(void) const {
+        at_most_one(void) const {
             Advisors<SparseAdvisor> as(c);
             if (!as())
                 return true;
@@ -572,23 +575,23 @@ namespace Gecode { namespace Int { namespace Extensional {
             return ES_OK;
         }
 
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) SparseInc<View, pos>(home, *this);
         }
 
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return PropCost::quadratic(PropCost::HI, x.size());
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             View::schedule(home, *this, ME_INT_DOM);
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE);
             c.dispose(home);
             ts.~TupleSet();
@@ -596,8 +599,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             return sizeof(*this);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             if (pos) {
                 if (active_limit == 0U)
                     return ES_FAILED;
@@ -610,7 +613,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
                 if (active_limit == 0U)
                     return ES_FAILED;
-                return atmostone() ? home.ES_SUBSUMED(*this) : ES_FIX;
+                return at_most_one() ? home.ES_SUBSUMED(*this) : ES_FIX;
             }
 
             if (active_limit == 0U)
@@ -668,8 +671,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             return ES_FIX;
         }
 
-        virtual ExecStatus
-        advise(Space& home, Advisor& a0, const Delta& d) {
+        ExecStatus
+        advise(Space& home, Advisor& a0, const Delta& d) override {
             SparseAdvisor& sa = static_cast<SparseAdvisor&>(a0);
             if (active_limit == 0U) {
                 if (pos)
@@ -773,23 +776,23 @@ namespace Gecode { namespace Int { namespace Extensional {
             return ES_OK;
         }
 
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) SparseReifInc<View, CtrlView, rm>(home, *this);
         }
 
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return PropCost::quadratic(PropCost::HI, x.size());
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             View::schedule(home, *this, ME_INT_DOM);
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE);
             c.dispose(home);
             b.cancel(home, *this, PC_BOOL_VAL);
@@ -798,8 +801,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             return sizeof(*this);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             if (b.one()) {
                 if (rm == RM_PMI)
                     return home.ES_SUBSUMED(*this);
@@ -829,8 +832,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             return ES_FIX;
         }
 
-        virtual ExecStatus
-        advise(Space& home, Advisor& a0, const Delta& d) {
+        ExecStatus
+        advise(Space& home, Advisor& a0, const Delta& d) override {
             SparseAdvisor& sa = static_cast<SparseAdvisor&>(a0);
             if (b.assigned())
                 return home.ES_NOFIX_DISPOSE(c, sa);
@@ -854,11 +857,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     post_tuple_set(Home home, ViewArray<View>& x, const TupleSet& t, bool pos) {
         switch (t.representation()) {
         case EPK_DENSE:
-            return pos ? postposcompact<View>(home, x, t) : postnegcompact<View>(home, x, t);
+            return pos ? post_positive_compact<View>(home, x, t) : post_negative_compact<View>(home, x, t);
         case EPK_SPARSE:
             return pos ? SparseInc<View, true>::post(home, x, t) : SparseInc<View, false>::post(home, x, t);
         case EPK_DENSE_COMPRESSED:
-            return pos ? postposcompact_compressed<View>(home, x, t) : postnegcompact_compressed<View>(home, x, t);
+            return pos ? post_positive_compact_compressed<View>(home, x, t)
+                       : post_negative_compact_compressed<View>(home, x, t);
         case EPK_AUTO:
         default:
             GECODE_NEVER;
@@ -901,11 +905,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     post_dense_reified(Home home, ViewArray<View>& x, const TupleSet& t, CtrlView b, ReifyMode mode) {
         switch (mode) {
         case RM_EQV:
-            return postrecompact<View, CtrlView, RM_EQV>(home, x, t, b);
+            return post_reified_compact<View, CtrlView, RM_EQV>(home, x, t, b);
         case RM_IMP:
-            return postrecompact<View, CtrlView, RM_IMP>(home, x, t, b);
+            return post_reified_compact<View, CtrlView, RM_IMP>(home, x, t, b);
         case RM_PMI:
-            return postrecompact<View, CtrlView, RM_PMI>(home, x, t, b);
+            return post_reified_compact<View, CtrlView, RM_PMI>(home, x, t, b);
         default:
             throw UnknownReifyMode("Int::extensional");
         }
@@ -916,11 +920,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     post_compressed_reified(Home home, ViewArray<View>& x, const TupleSet& t, CtrlView b, ReifyMode mode) {
         switch (mode) {
         case RM_EQV:
-            return postrecompact_compressed<View, CtrlView, RM_EQV>(home, x, t, b);
+            return post_reified_compact_compressed<View, CtrlView, RM_EQV>(home, x, t, b);
         case RM_IMP:
-            return postrecompact_compressed<View, CtrlView, RM_IMP>(home, x, t, b);
+            return post_reified_compact_compressed<View, CtrlView, RM_IMP>(home, x, t, b);
         case RM_PMI:
-            return postrecompact_compressed<View, CtrlView, RM_PMI>(home, x, t, b);
+            return post_reified_compact_compressed<View, CtrlView, RM_PMI>(home, x, t, b);
         default:
             throw UnknownReifyMode("Int::extensional");
         }

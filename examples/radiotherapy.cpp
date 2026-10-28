@@ -57,22 +57,22 @@ public:
     const int n;          ///< Width of intensity matrix
     const int* intensity; ///< Intensity matrix
 
-    int btMin;   ///< Minimal beam time (computed from other parameters)
-    int btMax;   ///< Maximal beam time (computed from other parameters)
-    int intsSum; ///< Sum of all intensities
+    int bt_min;   ///< Minimal beam time (computed from other parameters)
+    int bt_max;   ///< Maximal beam time (computed from other parameters)
+    int ints_sum; ///< Sum of all intensities
 
     /// Construct instance data
     RadiotherapyData(int m0, int n0, const int* intensity0) : m(m0), n(n0), intensity(intensity0) {
-        btMax = 0;
-        intsSum = 0;
+        bt_max = 0;
+        ints_sum = 0;
         for (int i = 0; i < m * n; i++) {
-            btMax = std::max(btMax, intensity[i]);
-            intsSum += intensity[i];
+            bt_max = std::max(bt_max, intensity[i]);
+            ints_sum += intensity[i];
         }
 
-        btMin = 0;
+        bt_min = 0;
         for (int i = 0; i < m; i++)
-            btMin = std::max(btMin, incr_sum(i));
+            bt_min = std::max(bt_min, incr_sum(i));
     }
 };
 
@@ -103,9 +103,9 @@ private:
     /// Total beam-on time
     IntVar beamtime;
     /// Number of shape matrices
-    IntVar K;
+    IntVar k;
     /// n[b] is the number of shape matrices with associated beam-on time b
-    IntVarArray N;
+    IntVarArray n;
     /// Q[i,j,b] is the number of shape matrices with associated beam-on time b that expose cell (i,j)
     IntVarArray q;
 
@@ -117,42 +117,42 @@ public:
     Radiotherapy(const SizeOptions& opt) : IntMinimizeScript(opt), rd(rds[opt.size()]) {
 
         // Initialize variables
-        beamtime = IntVar(*this, rd.btMin, rd.intsSum);
-        K = IntVar(*this, 0, rd.m * rd.n);
-        N = IntVarArray(*this, rd.btMax, 0, rd.m * rd.n);
-        q = IntVarArray(*this, rd.m * rd.n * rd.btMax, 0, rd.m * rd.n);
+        beamtime = IntVar(*this, rd.bt_min, rd.ints_sum);
+        k = IntVar(*this, 0, rd.m * rd.n);
+        n = IntVarArray(*this, rd.bt_max, 0, rd.m * rd.n);
+        q = IntVarArray(*this, rd.m * rd.n * rd.bt_max, 0, rd.m * rd.n);
 
-        IntArgs coeffs(rd.btMax);
-        for (int i = 0; i < rd.btMax; i++)
+        IntArgs coeffs(rd.bt_max);
+        for (int i = 0; i < rd.bt_max; i++)
             coeffs[i] = i + 1;
-        linear(*this, coeffs, N, IRT_EQ, beamtime);
-        linear(*this, N, IRT_EQ, K);
+        linear(*this, coeffs, n, IRT_EQ, beamtime);
+        linear(*this, n, IRT_EQ, k);
 
         for (int i = 0; i < rd.m; i++) {
             for (int j = 0; j < rd.n; j++) {
-                IntVarArgs qs(rd.btMax);
-                for (int b = 0; b < rd.btMax; b++)
-                    qs[b] = q[i * rd.n * rd.btMax + j * rd.btMax + b];
+                IntVarArgs qs(rd.bt_max);
+                for (int b = 0; b < rd.bt_max; b++)
+                    qs[b] = q[i * rd.n * rd.bt_max + j * rd.bt_max + b];
                 linear(*this, coeffs, qs, IRT_EQ, rd.intensity[i * rd.n + j], IPL_DOM);
             }
         }
 
         for (int i = 0; i < rd.m; i++) {
-            for (int b = 0; b < rd.btMax; b++) {
+            for (int b = 0; b < rd.bt_max; b++) {
                 IntVarArgs qs(rd.n);
                 for (int j = 0; j < rd.n; j++)
-                    qs[j] = q[i * rd.n * rd.btMax + j * rd.btMax + b];
-                incr_sum(N[b], qs, rd.m * rd.n);
+                    qs[j] = q[i * rd.n * rd.bt_max + j * rd.bt_max + b];
+                incr_sum(n[b], qs, rd.m * rd.n);
             }
         }
 
-        _cost = IntVar(*this, 0, (rd.m * rd.n + 1) * (rd.intsSum + 1));
-        rel(*this, _cost == beamtime * (rd.m * rd.n + 1) + K);
+        _cost = IntVar(*this, 0, (rd.m * rd.n + 1) * (rd.ints_sum + 1));
+        rel(*this, _cost == beamtime * (rd.m * rd.n + 1) + k);
 
         // First branch over beamtime and N
         IntVarArgs ba({beamtime});
         branch(*this, ba, INT_VAR_NONE(), INT_VAL_MIN());
-        branch(*this, N, INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
+        branch(*this, n, INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
 
         // Then perform a nested search over q
         NestedSearch::post(*this);
@@ -174,28 +174,28 @@ public:
     /// Constructor for cloning \a s
     Radiotherapy(Radiotherapy& s) : IntMinimizeScript(s), rd(s.rd) {
         beamtime.update(*this, s.beamtime);
-        N.update(*this, s.N);
-        K.update(*this, s.K);
+        n.update(*this, s.n);
+        k.update(*this, s.k);
         _cost.update(*this, s._cost);
         q.update(*this, s.q);
     }
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Radiotherapy(*this);
     }
 
     /// Cost to be minimized
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return _cost;
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        os << std::endl << "B / K = " << beamtime << " / " << K << ",\nN = " << N << std::endl;
+    void
+    print(std::ostream& os) const override {
+        os << std::endl << "B / K = " << beamtime << " / " << k << ",\nN = " << n << std::endl;
     }
 
     /// Nested search on the q variables
@@ -223,8 +223,8 @@ public:
             /// Initialize choice for brancher \a b
             Choice(const Brancher& b, bool fail0) : Gecode::Choice(b, 1), fail(fail0) {}
             /// Archive into \a e
-            virtual void
-            archive(Archive& e) const {
+            void
+            archive(Archive& e) const override {
                 Gecode::Choice::archive(e);
                 e.put(fail);
             }
@@ -252,24 +252,24 @@ public:
         NestedSearch(Space& home, NestedSearch& b) : Brancher(home, b), done(b.done), index(b.index) {}
 
     public:
-        virtual bool
-        status(const Space&) const {
+        bool
+        status(const Space&) const override {
             return !done;
         }
 
         IntVarArgs
-        getRow(Radiotherapy* row, int i) {
-            IntVarArgs ri(row->rd.n * row->rd.btMax);
+        get_row(Radiotherapy* row, int i) {
+            IntVarArgs ri(row->rd.n * row->rd.bt_max);
             for (int j = 0; j < row->rd.n; j++) {
-                for (int b = 0; b < row->rd.btMax; b++) {
-                    ri[j * row->rd.btMax + b] = row->q[i * row->rd.n * row->rd.btMax + j * row->rd.btMax + b];
+                for (int b = 0; b < row->rd.bt_max; b++) {
+                    ri[j * row->rd.bt_max + b] = row->q[i * row->rd.n * row->rd.bt_max + j * row->rd.bt_max + b];
                 }
             }
             return ri;
         }
         /// Return choice
-        virtual Gecode::Choice*
-        choice(Space& home) {
+        Gecode::Choice*
+        choice(Space& home) override {
             done = true;
             Radiotherapy& rt = static_cast<Radiotherapy&>(home);
 
@@ -282,12 +282,12 @@ public:
                 Radiotherapy* row = static_cast<Radiotherapy*>(rt.clone());
 
                 // Branch over row i
-                branch(*row, getRow(row, index[i].idx), INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
+                branch(*row, get_row(row, index[i].idx), INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
                 Search::Options o;
                 o.clone = false;
-                if (Radiotherapy* newSol = dfs(row, o)) {
+                if (Radiotherapy* new_sol = dfs(row, o)) {
                     // Found a solution for row i, so try to find one for i+1
-                    delete newSol;
+                    delete new_sol;
                     std::cerr << index[i].idx;
                 } else {
                     // Found no solution for row i, so back to search the N variables
@@ -302,26 +302,26 @@ public:
             return new Choice(*this, fail);
         }
         /// Return choice
-        virtual Choice*
-        choice(const Space&, Archive& e) {
+        Choice*
+        choice(const Space&, Archive& e) override {
             bool fail;
             e >> fail;
             return new Choice(*this, fail);
         }
         /// Perform commit for choice \a _c and alternative \a a
-        virtual ExecStatus
-        commit(Space&, const Gecode::Choice& _c, unsigned int) {
+        ExecStatus
+        commit(Space&, const Gecode::Choice& _c, unsigned int) override {
             return static_cast<const Choice&>(_c).fail ? ES_FAILED : ES_OK;
         }
         /// Print explanation
-        virtual void
-        print(const Space&, const Gecode::Choice& _c, unsigned int, std::ostream& o) const {
+        void
+        print(const Space&, const Gecode::Choice& _c, unsigned int, std::ostream& o) const override {
             const Choice& c = static_cast<const Choice&>(_c);
             o << (c.fail ? "fail" : "ok");
         }
         /// Copy brancher
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) NestedSearch(home, *this);
         }
         /// Post brancher
@@ -331,7 +331,7 @@ public:
         }
         /// Dispose member function
         size_t
-        dispose(Space& home) {
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE);
             // Periodic scaling of weights
             if (!--index[index.size() - 1].idx) {

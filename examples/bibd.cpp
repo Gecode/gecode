@@ -68,8 +68,8 @@ public:
         derive();
     }
     /// Print help message
-    virtual void
-    help(void) {
+    void
+    help(void) override {
         Options::help();
         std::cerr << "\t(unsigned int) default: " << v << std::endl
                   << "\t\tparameter v" << std::endl
@@ -141,8 +141,8 @@ public:
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\tBIBD(" << opt.v << "," << opt.k << "," << opt.lambda << ")" << std::endl;
         Matrix<BoolVarArray> p(_p, opt.b, opt.v);
         for (int i = 0; i < opt.v; i++) {
@@ -160,8 +160,8 @@ public:
     }
 
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new BIBD(*this);
     }
 };

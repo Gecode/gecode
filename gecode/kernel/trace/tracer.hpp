@@ -212,21 +212,21 @@ namespace Gecode {
          * The propagate function is called when a propagator has been
          * executed.
          */
-        virtual void propagate(const Space& home, const PropagateTraceInfo& pti);
+        void propagate(const Space& home, const PropagateTraceInfo& pti) override;
         /**
          * \brief Commit function
          *
          * The commit function is called when a brancher has executed
          * a commit operation.
          */
-        virtual void commit(const Space& home, const CommitTraceInfo& cti);
+        void commit(const Space& home, const CommitTraceInfo& cti) override;
         /**
          * \brief Post function
          *
          * The post function is called when an attempt to post a propagator
          * has been executed.
          */
-        virtual void post(const Space& home, const PostTraceInfo& pti);
+        void post(const Space& home, const PostTraceInfo& pti) override;
         /// Default tracer (printing to std::cerr)
         static StdTracer def;
     };

@@ -120,7 +120,7 @@ public:
             branch(*this, pos, INT_VAR_NONE(), INT_VAL_MIN());
             break;
         case BRANCH_DEGREE:
-            branch(*this, pos, tiebreak(INT_VAR_DEGREE_MAX(), INT_VAR_SIZE_MIN()), INT_VAL_MIN());
+            branch(*this, pos, tie_break(INT_VAR_DEGREE_MAX(), INT_VAR_SIZE_MIN()), INT_VAL_MIN());
             break;
         case BRANCH_AFC_SIZE:
             branch(*this, pos, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
@@ -129,7 +129,7 @@ public:
     }
     /// Slave function for restarts
     bool
-    slave(const MetaInfo& mi) {
+    slave(const MetaInfo& mi) override {
         if ((mi.type() == MetaInfo::RESTART) && (mi.restart() > 0) && (p > 0.0)) {
             const Photo& l = static_cast<const Photo&>(*mi.last());
             relax(*this, pos, l.pos, rnd, p);
@@ -144,18 +144,18 @@ public:
         violations.update(*this, s.violations);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Photo(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\tpos[] = " << pos << std::endl << "\tviolations: " << violations << std::endl;
     }
     /// Return solution cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return violations;
     }
 };

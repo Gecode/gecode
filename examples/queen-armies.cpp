@@ -41,7 +41,7 @@ using namespace Gecode;
  *
  * \relates QueenArmies
  */
-IntSet* A;
+IntSet* a;
 
 /**
  * \brief %Example: Peaceable co-existing armies of queens
@@ -65,11 +65,11 @@ IntSet* A;
 class QueenArmies : public IntMaximizeScript {
 public:
     const int n;
-    SetVar U,       ///< Set of un-attacked squares
-        W;          ///< Set of squares occupied by white queens
-    BoolVarArray w, ///< The placement of the white queens
-        b;          ///< The placement of the black queens
-    IntVar q;       ///< The number of white queens placed.
+    SetVar u,                  ///< Set of un-attacked squares
+        white_positions;       ///< Set of squares occupied by white queens
+    BoolVarArray white_matrix, ///< The placement of the white queens
+        b;                     ///< The placement of the black queens
+    IntVar q;                  ///< The number of white queens placed.
 
     /// Branching to use for model
     enum {
@@ -79,29 +79,30 @@ public:
 
     /// Constructor
     QueenArmies(const SizeOptions& opt)
-        : IntMaximizeScript(opt), n(opt.size()), U(*this, IntSet::empty, IntSet(0, n * n)),
-          W(*this, IntSet::empty, IntSet(0, n * n)), w(*this, n * n, 0, 1), b(*this, n * n, 0, 1), q(*this, 0, n * n) {
+        : IntMaximizeScript(opt), n(opt.size()), u(*this, IntSet::empty, IntSet(0, n * n)),
+          white_positions(*this, IntSet::empty, IntSet(0, n * n)), white_matrix(*this, n * n, 0, 1),
+          b(*this, n * n, 0, 1), q(*this, 0, n * n) {
         // Basic rules of the model
         for (int i = n * n; i--;) {
             // w[i] means that no blacks are allowed on A[i]
-            rel(*this, w[i] == (U || A[i]));
+            rel(*this, white_matrix[i] == (u || a[i]));
             // Make sure blacks and whites are disjoint.
-            rel(*this, !w[i] || !b[i]);
+            rel(*this, !white_matrix[i] || !b[i]);
             // If i in U, then b[i] has a piece.
-            rel(*this, b[i] == (singleton(i) <= U));
+            rel(*this, b[i] == (singleton(i) <= u));
         }
 
         // Connect optimization variable to number of pieces
-        linear(*this, w, IRT_EQ, q);
+        linear(*this, white_matrix, IRT_EQ, q);
         linear(*this, b, IRT_GQ, q);
 
         // Connect cardinality of U to the number of black pieces.
-        IntVar unknowns = expr(*this, cardinality(U));
+        IntVar unknowns = expr(*this, cardinality(u));
         rel(*this, q <= unknowns);
         linear(*this, b, IRT_EQ, unknowns);
 
         if (opt.branching() == BRANCH_NAIVE) {
-            branch(*this, w, BOOL_VAR_NONE(), BOOL_VAL_MAX());
+            branch(*this, white_matrix, BOOL_VAR_NONE(), BOOL_VAL_MAX());
             branch(*this, b, BOOL_VAR_NONE(), BOOL_VAL_MAX());
         } else {
             QueenBranch::post(*this);
@@ -110,32 +111,32 @@ public:
     }
     /// Constructor for cloning
     QueenArmies(QueenArmies& s) : IntMaximizeScript(s), n(s.n) {
-        U.update(*this, s.U);
-        W.update(*this, s.W);
-        w.update(*this, s.w);
+        u.update(*this, s.u);
+        white_positions.update(*this, s.white_positions);
+        white_matrix.update(*this, s.white_matrix);
         b.update(*this, s.b);
         q.update(*this, s.q);
     }
     /// Return copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new QueenArmies(*this);
     }
     /// Return solution cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return q;
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << '\t';
         for (int i = 0; i < n * n; ++i) {
-            if (w[i].assigned() && w[i].val())
+            if (white_matrix[i].assigned() && white_matrix[i].val())
                 os << "W";
             else if (b[i].assigned() && b[i].val())
                 os << "B";
-            else if (!w[i].assigned() && !b[i].assigned())
+            else if (!white_matrix[i].assigned() && !b[i].assigned())
                 os << " ";
             else
                 os << ".";
@@ -168,8 +169,8 @@ public:
              */
             Choice(const Brancher& b, int pos0, bool val0) : Gecode::Choice(b, 2), pos(pos0), val(val0) {}
             /// Archive into \a e
-            virtual void
-            archive(Archive& e) const {
+            void
+            archive(Archive& e) const override {
                 Gecode::Choice::archive(e);
                 e << pos << val;
             }
@@ -182,11 +183,11 @@ public:
 
     public:
         /// Check status of brancher, return true if alternatives left.
-        virtual bool
-        status(const Space& home) const {
+        bool
+        status(const Space& home) const override {
             const QueenArmies& q = static_cast<const QueenArmies&>(home);
             for (int i = start; i < q.n * q.n; ++i)
-                if (!q.w[i].assigned()) {
+                if (!q.white_matrix[i].assigned()) {
                     start = i;
                     return true;
                 }
@@ -194,18 +195,18 @@ public:
             return false;
         }
         /// Return choice
-        virtual Gecode::Choice*
-        choice(Space& home) {
+        Gecode::Choice*
+        choice(Space& home) override {
             const QueenArmies& q = static_cast<const QueenArmies&>(home);
             int maxsize = -1;
             int pos = -1;
 
             for (int i = start; i < q.n * q.n; ++i) {
-                if (q.w[i].assigned())
+                if (q.white_matrix[i].assigned())
                     continue;
-                IntSetRanges ai(A[i]);
-                SetVarUnknownRanges qU(q.U);
-                Iter::Ranges::Inter<IntSetRanges, SetVarUnknownRanges> r(ai, qU);
+                IntSetRanges ai(a[i]);
+                SetVarUnknownRanges q_u(q.u);
+                Iter::Ranges::Inter<IntSetRanges, SetVarUnknownRanges> r(ai, q_u);
                 int size = Iter::Ranges::size(r);
                 if (size > maxsize) {
                     maxsize = size;
@@ -217,8 +218,8 @@ public:
             return new Choice(*this, pos, true);
         }
         /// Return choice
-        virtual Choice*
-        choice(const Space&, Archive& e) {
+        Choice*
+        choice(const Space&, Archive& e) override {
             int pos, val;
             e >> pos >> val;
             return new Choice(*this, pos, val);
@@ -226,23 +227,23 @@ public:
         /** \brief Perform commit for choice \a _c and
          * alternative \a a.
          */
-        virtual ExecStatus
-        commit(Space& home, const Gecode::Choice& _c, unsigned int a) {
+        ExecStatus
+        commit(Space& home, const Gecode::Choice& _c, unsigned int a) override {
             QueenArmies& q = static_cast<QueenArmies&>(home);
             const Choice& c = static_cast<const Choice&>(_c);
             bool val = (a == 0) ? c.val : !c.val;
-            return me_failed(Int::BoolView(q.w[c.pos]).eq(q, val)) ? ES_FAILED : ES_OK;
+            return me_failed(Int::BoolView(q.white_matrix[c.pos]).eq(q, val)) ? ES_FAILED : ES_OK;
         }
         /// Print explanation
-        virtual void
-        print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const {
+        void
+        print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const override {
             const Choice& c = static_cast<const Choice&>(_c);
             bool val = (a == 0) ? c.val : !c.val;
             o << "w[" << c.pos << "] = " << val;
         }
         /// Copy brancher during cloning
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) QueenBranch(home, *this);
         }
         /// Post brancher
@@ -251,8 +252,8 @@ public:
             (void)new (home) QueenBranch(home);
         }
         /// Delete brancher and return its size
-        virtual size_t
-        dispose(Space&) {
+        size_t
+        dispose(Space&) override {
             return sizeof(*this);
         }
     };
@@ -278,7 +279,7 @@ main(int argc, char* argv[]) {
     // Set up the A-sets
     // A[i] will contain the values attacked by a queen at position i
     int n = opt.size();
-    A = new IntSet[n * n];
+    a = new IntSet[n * n];
     int* p = new int[std::max(n * n, 25)];
     int pn = 0;
     for (int i = n; i--;) {
@@ -293,7 +294,7 @@ main(int argc, char* argv[]) {
                 }
             }
 
-            A[pos(i, j, n)] = IntSet(p, pn);
+            a[pos(i, j, n)] = IntSet(p, pn);
 
             pn = 0;
         }

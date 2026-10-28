@@ -43,8 +43,8 @@ namespace Gecode { namespace Int {
     template <class Task>
     forceinline
     TaskArray<Task>::TaskArray(Space& home, int n0)
-        : n(n0), t(home.alloc<Task>(n)) {
-        assert(n > 0);
+        : n(n0), t(n > 0 ? home.alloc<Task>(n) : nullptr) {
+        assert(n >= 0);
     }
     template <class Task>
     forceinline

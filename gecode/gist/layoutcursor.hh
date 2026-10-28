@@ -42,14 +42,14 @@ namespace Gecode { namespace Gist {
     class LayoutCursor : public NodeCursor<VisualNode> {
     public:
         /// Constructor
-        LayoutCursor(VisualNode* theNode, const VisualNode::NodeAllocator& na);
+        LayoutCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na);
 
         /// \name Cursor interface
         //@{
         /// Test if the cursor may move to the first child node
-        bool mayMoveDownwards(void);
+        bool may_move_downwards(void);
         /// Compute layout for current node
-        void processCurrentNode(void);
+        void process_current_node(void);
         //@}
     };
 

@@ -73,7 +73,7 @@ namespace Gecode { namespace Int {
         return GECODE_INT_PI2RL(GECODE_INT_RL2PI(_next) ^ GECODE_INT_RL2PI(n));
     }
     forceinline void
-    IntVarImp::RangeList::prevnext(RangeList* p, RangeList* n) {
+    IntVarImp::RangeList::set_prev_next(RangeList* p, RangeList* n) {
         _next = GECODE_INT_PI2RL(GECODE_INT_RL2PI(p) ^ GECODE_INT_RL2PI(n));
     }
     forceinline void
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int {
 
     forceinline void
     IntVarImp::fst(IntVarImp::RangeList* f) {
-        dom.prevnext(nullptr, f);
+        dom.set_prev_next(nullptr, f);
     }
 
     forceinline IntVarImp::RangeList*
@@ -205,17 +205,17 @@ namespace Gecode { namespace Int {
             h -= d.width(0);
             r[0].min(d.min(0));
             r[0].max(d.max(0));
-            r[0].prevnext(nullptr, &r[1]);
+            r[0].set_prev_next(nullptr, &r[1]);
             for (int i = 1; i < n - 1; i++) {
                 h -= d.width(i);
                 r[i].min(d.min(i));
                 r[i].max(d.max(i));
-                r[i].prevnext(&r[i - 1], &r[i + 1]);
+                r[i].set_prev_next(&r[i - 1], &r[i + 1]);
             }
             h -= d.width(n - 1);
             r[n - 1].min(d.min(n - 1));
             r[n - 1].max(d.max(n - 1));
-            r[n - 1].prevnext(&r[n - 2], nullptr);
+            r[n - 1].set_prev_next(&r[n - 2], nullptr);
             holes = h;
         } else {
             fst(nullptr);
@@ -569,8 +569,8 @@ namespace Gecode { namespace Int {
             // Set up two sentinel elements
             RangeList f, l;
             // Put all ranges between sentinels
-            f.prevnext(nullptr, fst());
-            l.prevnext(lst(), nullptr);
+            f.set_prev_next(nullptr, fst());
+            l.set_prev_next(lst(), nullptr);
             fst()->prev(nullptr, &f);
             lst()->next(nullptr, &l);
 
@@ -741,12 +741,12 @@ namespace Gecode { namespace Int {
         if (range()) {
             // Create a new rangelist just for simplicity
             RangeList* n = new (home) RangeList(min(), max(), &f, &l);
-            f.prevnext(nullptr, n);
-            l.prevnext(n, nullptr);
+            f.set_prev_next(nullptr, n);
+            l.set_prev_next(n, nullptr);
         } else {
             // Link the two sentinel elements
-            f.prevnext(nullptr, fst());
-            l.prevnext(lst(), nullptr);
+            f.set_prev_next(nullptr, fst());
+            l.set_prev_next(lst(), nullptr);
             fst()->prev(nullptr, &f);
             lst()->next(nullptr, &l);
         }
@@ -925,12 +925,12 @@ namespace Gecode { namespace Int {
         if (range()) {
             // Create a new rangelist just for simplicity
             RangeList* n = new (home) RangeList(min(), max(), &f, &l);
-            f.prevnext(nullptr, n);
-            l.prevnext(n, nullptr);
+            f.set_prev_next(nullptr, n);
+            l.set_prev_next(n, nullptr);
         } else {
             // Link the two sentinel elements
-            f.prevnext(nullptr, fst());
-            l.prevnext(lst(), nullptr);
+            f.set_prev_next(nullptr, fst());
+            l.set_prev_next(lst(), nullptr);
             fst()->prev(nullptr, &f);
             lst()->next(nullptr, &l);
         }

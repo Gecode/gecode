@@ -52,7 +52,7 @@ namespace Gecode {
         PosValChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n);
         const Val& val(void) const;
         /// Archive into \a e
-        virtual void archive(Archive& e) const;
+        void archive(Archive& e) const override;
     };
 
     /// View-value no-good literal
@@ -70,13 +70,13 @@ namespace Gecode {
         /// Constructor for cloning \a ngl
         ViewValNGL(Space& home, ViewValNGL& ngl);
         /// Create subscription for no-good literal
-        virtual void subscribe(Space& home, Propagator& p);
+        void subscribe(Space& home, Propagator& p) override;
         /// Cancel subscription for no-good literal
-        virtual void cancel(Space& home, Propagator& p);
+        void cancel(Space& home, Propagator& p) override;
         /// Schedule propagator \a p
-        virtual void reschedule(Space& home, Propagator& p);
+        void reschedule(Space& home, Propagator& p) override;
         /// Dispose
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -106,13 +106,13 @@ namespace Gecode {
 
     public:
         /// Return choice
-        virtual const Choice* choice(Space& home);
+        const Choice* choice(Space& home) override;
         /// Return choice
-        virtual const Choice* choice(const Space& home, Archive& e);
+        const Choice* choice(const Space& home, Archive& e) override;
         /// Perform commit for choice \a c and alternative \a b
-        virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
+        ExecStatus commit(Space& home, const Choice& c, unsigned int b) override;
         /// Create no-good literal for choice \a c and alternative \a b
-        virtual NGL* ngl(Space& home, const Choice& c, unsigned int b) const;
+        NGL* ngl(Space& home, const Choice& c, unsigned int b) const override;
         /**
          * \brief Print branch for choice \a c and alternative \a b
          *
@@ -120,11 +120,11 @@ namespace Gecode {
          * on the stream \a o.
          *
          */
-        virtual void print(const Space& home, const Choice& c, unsigned int b, std::ostream& o) const;
+        void print(const Space& home, const Choice& c, unsigned int b, std::ostream& o) const override;
         /// Perform cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Delete brancher and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Brancher post function
         static void post(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
                          BranchFilter<Var> bf, VarValPrint<Var, Val> vvp);
@@ -132,8 +132,9 @@ namespace Gecode {
 
     /// Post view value brancher
     template <class View, int n, class Val, unsigned int a>
-    void postviewvalbrancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
-                             BranchFilter<typename View::VarType> bf, VarValPrint<typename View::VarType, Val> vvp);
+    void post_view_value_brancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
+                                  BranchFilter<typename View::VarType> bf,
+                                  VarValPrint<typename View::VarType, Val> vvp);
     //@}
 
     /*
@@ -294,8 +295,8 @@ namespace Gecode {
 
     template <class View, int n, class Val, unsigned int a>
     forceinline void
-    postviewvalbrancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
-                        BranchFilter<typename View::VarType> bf, VarValPrint<typename View::VarType, Val> vvp) {
+    post_view_value_brancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
+                             BranchFilter<typename View::VarType> bf, VarValPrint<typename View::VarType, Val> vvp) {
         if (bf) {
             if (vvp) {
                 ViewValBrancher<View, n, Val, a, BrancherFilter<View>, BrancherPrint<View, Val>>::post(home, x, vs, vsc,

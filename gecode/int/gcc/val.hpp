@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace GCC {
         for (int i = 0; i < x.size(); i++)
             if (x[i].assigned()) {
                 int idx;
-                if (!lookupValue(k, x[i].val(), idx)) {
+                if (!lookup_value(k, x[i].val(), idx)) {
                     return ES_FAILED;
                 }
                 count[idx]++;
@@ -204,7 +204,7 @@ namespace Gecode { namespace Int { namespace GCC {
             for (int i = n_x; i--;) {
                 if (x[i].assigned()) {
                     int idx;
-                    if (!lookupValue(k, x[i].val(), idx)) {
+                    if (!lookup_value(k, x[i].val(), idx)) {
                         return ES_FAILED;
                     }
                     if (rem.get(static_cast<unsigned int>(idx)))
@@ -235,7 +235,7 @@ namespace Gecode { namespace Int { namespace GCC {
             for (int i = x.size(); i--;) {
                 if (x[i].assigned()) {
                     int idx;
-                    if (!lookupValue(k, x[i].val(), idx)) {
+                    if (!lookup_value(k, x[i].val(), idx)) {
                         return ES_FAILED;
                     }
                     count[idx]++;
@@ -282,9 +282,9 @@ namespace Gecode { namespace Int { namespace GCC {
     template <class Card>
     ExecStatus
     Val<Card>::post(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
-        GECODE_ES_CHECK((postSideConstraints<Card>(home, x, k)));
+        GECODE_ES_CHECK((post_side_constraints<Card>(home, x, k)));
 
-        if (isDistinct<Card>(x, k))
+        if (is_distinct<Card>(x, k))
             return Distinct::Val<IntView>::post(home, x);
 
         (void)new (home) Val<Card>(home, x, k);

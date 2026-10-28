@@ -75,7 +75,7 @@ namespace Gecode {
         /// Return next element
         RangeList* next(void) const;
         /// Return pointer to next element
-        RangeList** nextRef(void);
+        RangeList** next_ref(void);
         //@}
 
         /// \name Update
@@ -143,8 +143,8 @@ namespace Gecode {
     }
 
     forceinline RangeList**
-    RangeList::nextRef(void) {
-        return reinterpret_cast<RangeList**>(FreeList::nextRef());
+    RangeList::next_ref(void) {
+        return reinterpret_cast<RangeList**>(FreeList::next_ref());
     }
 
     forceinline void

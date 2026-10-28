@@ -58,7 +58,7 @@ namespace Gecode { namespace Search { namespace Par {
         /// Set pointer to shared \a tostop variable
         void share(std::atomic<bool>* ts);
         /// Return true if portfolio engine must be stopped
-        virtual bool stop(const Statistics& s, const Options& o);
+        bool stop(const Statistics& s, const Options& o) override;
         /// Wake workers so that a paused asset can observe the portfolio stop
         void wake(void);
         /// Signal whether search must be stopped
@@ -85,7 +85,7 @@ namespace Gecode { namespace Search { namespace Par {
             /// Initialize as completed
             Completion(void);
             /// Signal completion
-            virtual void terminated(void);
+            void terminated(void) override;
             /// Wait for completion and consume the signal
             void wait(void);
         } completion;
@@ -106,7 +106,7 @@ namespace Gecode { namespace Search { namespace Par {
         /// Check whether slave stopped at a local limit
         bool limited(void) const;
         /// Return the completion terminator
-        virtual Support::Terminator* terminator(void) const;
+        Support::Terminator* terminator(void) const override;
         /// Wait for the slave to complete its current run
         void wait(void);
         /// Wake a paused slave so that it can observe the portfolio stop
@@ -114,9 +114,9 @@ namespace Gecode { namespace Search { namespace Par {
         /// Constrain with better solution \a b
         void constrain(const Space& b);
         /// Perform one run
-        virtual void run(void);
+        void run(void) override;
         /// Delete slave
-        virtual ~Slave(void);
+        ~Slave(void) override;
     };
 
     /// Collect all solutions
@@ -209,15 +209,15 @@ namespace Gecode { namespace Search { namespace Par {
         /// Initialize
         PBS(Engine** s, Stop** so, unsigned int n, const Statistics& stat);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual Space* next(void);
+        Space* next(void) override;
         /// Return statistics
-        virtual Statistics statistics(void) const;
+        Statistics statistics(void) const override;
         /// Check whether engine has been stopped
-        virtual bool stopped(void) const;
+        bool stopped(void) const override;
         /// Constrain future solutions to be better than \a b
-        virtual void constrain(const Space& b);
+        void constrain(const Space& b) override;
         /// Destructor
-        virtual ~PBS(void);
+        ~PBS(void) override;
     };
 
 }}} // namespace Gecode::Search::Par

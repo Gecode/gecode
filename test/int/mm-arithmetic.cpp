@@ -49,19 +49,19 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             Mult(const std::string& s, const Gecode::IntSet& d) : Test("MiniModel::Mult::" + s, 3, d) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 double d2 = static_cast<double>(x[2]);
                 return d0 * d1 == d2;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 rel(home, expr(home, x[0] * x[1]), IRT_EQ, x[2], IPL_DOM);
             }
@@ -72,16 +72,16 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             Div(const std::string& s, const Gecode::IntSet& d) : Test("MiniModel::Div::" + s, 3, d) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[1] != 0) && (x[0] / x[1] == x[2]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 rel(home, expr(home, x[0] / x[1]), IRT_EQ, x[2], IPL_DOM);
             }
@@ -92,16 +92,16 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             Mod(const std::string& s, const Gecode::IntSet& d) : Test("MiniModel::Mod::" + s, 3, d) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[1] != 0) && (x[0] % x[1] == x[2]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 rel(home, expr(home, x[0] % x[1]), IRT_EQ, x[2], IPL_DOM);
             }
@@ -112,11 +112,11 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             Plus(const std::string& s, const Gecode::IntSet& d) : Test("MiniModel::Plus::" + s, 3, d) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 double d2 = static_cast<double>(x[2]);
@@ -124,8 +124,8 @@ namespace Test { namespace Int {
                         (d0 + d1 == d2));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 rel(home, expr(home, x[0] + x[1]), IRT_EQ, x[2], IPL_DOM);
             }
@@ -136,11 +136,11 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             Minus(const std::string& s, const Gecode::IntSet& d) : Test("MiniModel::Minus::" + s, 3, d) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 double d2 = static_cast<double>(x[2]);
@@ -148,8 +148,8 @@ namespace Test { namespace Int {
                         (d0 - d1 == d2));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 rel(home, expr(home, x[0] - x[1]), IRT_EQ, x[2], IPL_DOM);
             }
@@ -160,18 +160,18 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             Sqr(const std::string& s, const Gecode::IntSet& d) : Test("MiniModel::Sqr::" + s, 2, d) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 return d0 * d0 == d1;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 rel(home, expr(home, sqr(x[0])), IRT_EQ, x[1], IPL_DOM);
             }
@@ -182,18 +182,18 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             Sqrt(const std::string& s, const Gecode::IntSet& d) : Test("MiniModel::Sqrt::" + s, 2, d) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 return (d0 >= 0) && (d0 >= d1 * d1) && (d0 < (d1 + 1) * (d1 + 1));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 rel(home, expr(home, sqrt(x[0])), IRT_EQ, x[1], IPL_DOM);
             }
@@ -205,18 +205,18 @@ namespace Test { namespace Int {
             /// Create and register test
             Abs(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("MiniModel::Abs::" + str(ipl) + "::" + s, 2, d, false, ipl) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 return (d0 < 0.0 ? -d0 : d0) == d1;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 rel(home, expr(home, abs(x[0]), ipl), IRT_EQ, x[1], IPL_DOM);
             }
@@ -227,16 +227,16 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             Min(const std::string& s, const Gecode::IntSet& d) : Test("MiniModel::Min::Bin::" + s, 3, d) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::min(x[0], x[1]) == x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 rel(home, expr(home, min(x[0], x[1])), IRT_EQ, x[2], IPL_DOM);
             }
@@ -247,16 +247,16 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             Max(const std::string& s, const Gecode::IntSet& d) : Test("MiniModel::Max::Bin::" + s, 3, d) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::max(x[0], x[1]) == x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 rel(home, expr(home, max(x[0], x[1])), IRT_EQ, x[2], IPL_DOM);
             }
@@ -267,16 +267,16 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             MinNary(void) : Test("MiniModel::Min::Nary", 4, -4, 4) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::min(std::min(x[0], x[1]), x[2]) == x[3];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntVarArgs m(3);
                 m[0] = x[0];
@@ -291,16 +291,16 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             MaxNary(void) : Test("MiniModel::Max::Nary", 4, -4, 4) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::max(std::max(x[0], x[1]), x[2]) == x[3];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntVarArgs m(3);
                 m[0] = x[0];

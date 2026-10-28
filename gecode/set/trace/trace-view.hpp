@@ -91,7 +91,7 @@ namespace Gecode { namespace Set {
 
     forceinline unsigned long long int
     SetTraceView::slack(SetView x) {
-        return x.unknownSize();
+        return x.unknown_size();
     }
 
 }} // namespace Gecode::Set

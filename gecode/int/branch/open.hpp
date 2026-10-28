@@ -121,8 +121,8 @@ namespace Gecode { namespace Int { namespace Branch {
         }
 
     public:
-        virtual bool
-        status(const Space& home) const {
+        bool
+        status(const Space& home) const override {
             for (int i = start; i < list.known_length(); i++)
                 if (!list[i].assigned() && filter(home, list[i], i)) {
                     start = i;
@@ -131,8 +131,8 @@ namespace Gecode { namespace Int { namespace Branch {
             return list.length().max() > list.known_length();
         }
 
-        virtual const Choice*
-        choice(Space& home) {
+        const Choice*
+        choice(Space& home) override {
             for (int i = start; i < list.known_length(); i++)
                 if (!list[i].assigned() && filter(home, list[i], i)) {
                     start = i;
@@ -145,8 +145,8 @@ namespace Gecode { namespace Int { namespace Branch {
             return new PosValChoice<int>(*this, 2, Pos(-1), list.known_length());
         }
 
-        virtual const Choice*
-        choice(const Space&, Archive& e) {
+        const Choice*
+        choice(const Space&, Archive& e) override {
             int p;
             e >> p;
             if ((p < 0) || vsc) {
@@ -159,8 +159,8 @@ namespace Gecode { namespace Int { namespace Branch {
             return new PosValuesChoice(*this, a, Pos(p), e);
         }
 
-        virtual ExecStatus
-        commit(Space& home, const Choice& c, unsigned int a) {
+        ExecStatus
+        commit(Space& home, const Choice& c, unsigned int a) override {
             const int p = static_cast<const PosChoice&>(c).pos().pos;
             if (p >= 0) {
                 // Recomputation can replay choices before propagation grows the prefix.
@@ -181,8 +181,8 @@ namespace Gecode { namespace Int { namespace Branch {
             return home.failed() ? ES_FAILED : ES_OK;
         }
 
-        virtual NGL*
-        ngl(Space& home, const Choice& c, unsigned int a) const {
+        NGL*
+        ngl(Space& home, const Choice& c, unsigned int a) const override {
             const int p = static_cast<const PosChoice&>(c).pos().pos;
             if (p < 0)
                 return (a == 0)
@@ -197,8 +197,8 @@ namespace Gecode { namespace Int { namespace Branch {
                        : new (home) EqNGL<View>(home, x, value(c, a));
         }
 
-        virtual void
-        print(const Space& home, const Choice& c, unsigned int a, std::ostream& o) const {
+        void
+        print(const Space& home, const Choice& c, unsigned int a, std::ostream& o) const override {
             const int p = static_cast<const PosChoice&>(c).pos().pos;
             if (p < 0) {
                 o << "list length " << ((a == 0) ? "=" : ">") << " " << static_cast<const PosValChoice<int>&>(c).val();
@@ -219,13 +219,13 @@ namespace Gecode { namespace Int { namespace Branch {
             }
         }
 
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) OpenListBrancher(home, *this);
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE, true);
             for (int i = 0; i < n; i++)
                 vs[i]->dispose(home);
@@ -244,7 +244,7 @@ namespace Gecode { namespace Int { namespace Branch {
              BranchFilter<Var> bf, VarValPrint<Var, int> vvp) {
             ViewSel<View>* vs[n];
             for (int i = 0; i < n; i++)
-                vs[i] = viewsel(home, vars[i]);
+                vs[i] = view_selection(home, vars[i]);
             (void)new (home)
                 OpenListBrancher(home, list, vs, vsc, values_min, vars[0].select() == VarBranch::SEL_NONE, bf, vvp);
         }
@@ -291,14 +291,14 @@ namespace Gecode { namespace Int { namespace Branch {
         values_min = vals.select() != IntValBranch::SEL_VALUES_MAX;
         return ((vals.select() == IntValBranch::SEL_VALUES_MIN) || (vals.select() == IntValBranch::SEL_VALUES_MAX))
                    ? nullptr
-                   : valselcommit(home, vals);
+                   : value_selection_commit(home, vals);
     }
 
     /// Boolean value branching always uses a binary selector
     inline ValSelCommitBase<BoolView, int>*
     open_valselcommit(Home home, BoolValBranch vals, bool& values_min) {
         values_min = true;
-        return valselcommit(home, vals);
+        return value_selection_commit(home, vals);
     }
 
     /// Choose the native filtered or unfiltered brancher policy

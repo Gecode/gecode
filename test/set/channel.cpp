@@ -63,8 +63,8 @@ namespace Test { namespace Set {
             /// Create and register test
             ChannelSorted(const char* t) : SetTest(TestTags::sweep(), t, 1, ds_33, false, 3) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 if (x.ints()[0] >= x.ints()[1] || x.ints()[1] >= x.ints()[2])
                     return false;
                 CountableSetValues xr(x.lub, x[0]);
@@ -88,12 +88,12 @@ namespace Test { namespace Set {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
-                Gecode::channelSorted(home, y, x[0]);
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
+                Gecode::channel_sorted(home, y, x[0]);
             }
         };
-        ChannelSorted _channelSorted("Channel::Sorted");
+        ChannelSorted _channel_sorted("Channel::Sorted");
 
         /// %Test for integer channel constraint
         class ChannelInt : public SetTest {
@@ -105,8 +105,8 @@ namespace Test { namespace Set {
             ChannelInt(const char* t, const IntSet& d, int _ssize, int _isize)
                 : SetTest(TestTags::sweep(), t, _ssize, d, false, _isize), ssize(_ssize), isize(_isize) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 for (int i = 0; i < isize; i++) {
                     if (x.ints()[i] < 0 || x.ints()[i] >= ssize)
                         return false;
@@ -126,8 +126,8 @@ namespace Test { namespace Set {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 Gecode::channel(home, y, x);
             }
         };
@@ -145,8 +145,8 @@ namespace Test { namespace Set {
             ChannelBool(TestTags tags, const char* t, const IntSet& d, int _isize)
                 : SetTest(tags, t, 1, d, false, _isize), isize(_isize) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 for (int i = 0; i < isize; i++) {
                     if (x.ints()[i] < 0 || x.ints()[i] > 1)
                         return false;
@@ -168,8 +168,8 @@ namespace Test { namespace Set {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 BoolVarArgs b(y.size());
                 for (int i = y.size(); i--;)
                     b[i] = channel(home, y[i]);
@@ -191,8 +191,8 @@ namespace Test { namespace Set {
             ChannelSet(const char* t, const IntSet& d, int x0size, int x1size)
                 : SetTest(TestTags::sweep(), t, x0size + x1size, d, false), _x0size(x0size), _x1size(x1size) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 for (int i = 0; i < _x0size; i++) {
                     CountableSetRanges x0ir(x.lub, x[i]);
                     IntSet x0is(x0ir);
@@ -203,29 +203,29 @@ namespace Test { namespace Set {
                         IntSet x1is(x1ir);
                         if (x1is.min() < 0 || x1is.max() >= _x0size)
                             return false;
-                        bool jInI = x0is.in(j);
-                        bool iInJ = x1is.in(i);
-                        if (jInI != iInJ)
+                        bool j_in_i = x0is.in(j);
+                        bool i_in_j = x1is.in(i);
+                        if (j_in_i != i_in_j)
                             return false;
                     }
                 }
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 SetVarArgs x0(x.slice(0, 1, _x0size));
                 SetVarArgs x1(x.slice(_x0size));
                 Gecode::channel(home, x0, x1);
             }
         };
 
-        ChannelSet _channelSet12("Channel::Set::1::2", d1, 2, 2);
-        ChannelSet _channelSet13("Channel::Set::1::3", d1, 2, 3);
-        ChannelSet _channelSet22("Channel::Set::2::2", d3, 2, 2);
-        ChannelSet _channelSet23("Channel::Set::2::3", d3, 2, 3);
-        ChannelSet _channelSet32("Channel::Set::3::2", d_12, 2, 2);
-        ChannelSet _channelSet33("Channel::Set::3::3", d_12, 2, 3);
+        ChannelSet _channel_set12("Channel::Set::1::2", d1, 2, 2);
+        ChannelSet _channel_set13("Channel::Set::1::3", d1, 2, 3);
+        ChannelSet _channel_set22("Channel::Set::2::2", d3, 2, 2);
+        ChannelSet _channel_set23("Channel::Set::2::3", d3, 2, 3);
+        ChannelSet _channel_set32("Channel::Set::3::2", d_12, 2, 2);
+        ChannelSet _channel_set33("Channel::Set::3::3", d_12, 2, 3);
 
     } // namespace Channel
 }} // namespace Test::Set

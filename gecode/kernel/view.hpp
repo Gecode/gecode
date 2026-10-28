@@ -54,7 +54,7 @@ namespace Gecode {
         /// Return accumulated failure count
         double afc(void) const;
         /// Return whether this view is derived from a VarImpView
-        static bool varderived(void);
+        static bool is_variable_derived(void);
         /// Return dummy variable implementation of view
         VarImpType* varimp(void) const;
 #ifdef GECODE_HAS_CBS
@@ -106,7 +106,7 @@ namespace Gecode {
         /// \name Delta information for advisors
         //@{
         /// Return modification event
-        static ModEvent modevent(const Delta& d);
+        static ModEvent modification_event(const Delta& d);
         //@}
 
         /// \name Cloning
@@ -148,7 +148,7 @@ namespace Gecode {
         /// \name Generic view information
         //@{
         /// Return whether this view is derived from a VarImpView
-        static bool varderived(void);
+        static bool is_variable_derived(void);
         /// Return variable implementation of view
         VarImpType* varimp(void) const;
         /// Return degree (number of subscribed propagators and advisors)
@@ -204,7 +204,7 @@ namespace Gecode {
         /// \name Delta information for advisors
         //@{
         /// Return modification event
-        static ModEvent modevent(const Delta& d);
+        static ModEvent modification_event(const Delta& d);
         //@}
 
         /// \name Cloning
@@ -244,7 +244,7 @@ namespace Gecode {
         /// \name Generic view information
         //@{
         /// Return whether this view is derived from a VarImpView
-        static bool varderived(void);
+        static bool is_variable_derived(void);
         /// Return variable implementation of view
         VarImpType* varimp(void) const;
         /// Return view from which this view is derived
@@ -302,7 +302,7 @@ namespace Gecode {
         /// \name Delta information for advisors
         //@{
         /// Return modification event
-        static ModEvent modevent(const Delta& d);
+        static ModEvent modification_event(const Delta& d);
         //@}
 
         /// \name Cloning
@@ -389,7 +389,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    ConstView<View>::varderived(void) {
+    ConstView<View>::is_variable_derived(void) {
         return false;
     }
     template <class View>
@@ -446,7 +446,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline ModEvent
-    ConstView<View>::modevent(const Delta& d) {
+    ConstView<View>::modification_event(const Delta& d) {
         (void)d;
         return ME_GEN_NONE;
     }
@@ -478,7 +478,7 @@ namespace Gecode {
     }
     template <class Var>
     forceinline bool
-    VarImpView<Var>::varderived(void) {
+    VarImpView<Var>::is_variable_derived(void) {
         return true;
     }
     template <class Var>
@@ -550,8 +550,8 @@ namespace Gecode {
     }
     template <class Var>
     forceinline ModEvent
-    VarImpView<Var>::modevent(const Delta& d) {
-        return VarImpType::modevent(d);
+    VarImpView<Var>::modification_event(const Delta& d) {
+        return VarImpType::modification_event(d);
     }
     template <class Var>
     forceinline void
@@ -580,8 +580,8 @@ namespace Gecode {
 
     template <class View>
     forceinline bool
-    DerivedView<View>::varderived(void) {
-        return View::varderived();
+    DerivedView<View>::is_variable_derived(void) {
+        return View::is_variable_derived();
     }
 
     template <class View>
@@ -662,8 +662,8 @@ namespace Gecode {
     }
     template <class View>
     forceinline ModEvent
-    DerivedView<View>::modevent(const Delta& d) {
-        return View::modevent(d);
+    DerivedView<View>::modification_event(const Delta& d) {
+        return View::modification_event(d);
     }
     template <class View>
     forceinline void
@@ -829,17 +829,19 @@ namespace Gecode {
     template <class Var, class View>
     forceinline bool
     shared(const VarImpView<Var>& x, const DerivedView<View>& y) {
-        return (View::varderived() && static_cast<VarImpBase*>(x.varimp()) == static_cast<VarImpBase*>(y.varimp()));
+        return (View::is_variable_derived() &&
+                static_cast<VarImpBase*>(x.varimp()) == static_cast<VarImpBase*>(y.varimp()));
     }
     template <class View, class Var>
     forceinline bool
     shared(const DerivedView<View>& x, const VarImpView<Var>& y) {
-        return (View::varderived() && static_cast<VarImpBase*>(x.varimp()) == static_cast<VarImpBase*>(y.varimp()));
+        return (View::is_variable_derived() &&
+                static_cast<VarImpBase*>(x.varimp()) == static_cast<VarImpBase*>(y.varimp()));
     }
     template <class ViewA, class ViewB>
     forceinline bool
     shared(const DerivedView<ViewA>& x, const DerivedView<ViewB>& y) {
-        return (ViewA::varderived() && ViewB::varderived() &&
+        return (ViewA::is_variable_derived() && ViewB::is_variable_derived() &&
                 static_cast<VarImpBase*>(x.varimp()) == static_cast<VarImpBase*>(y.varimp()));
     }
 

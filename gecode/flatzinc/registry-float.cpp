@@ -47,22 +47,22 @@ namespace Gecode { namespace FlatZinc {
 
         void
         p_int2float(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            IntVar x0 = s.arg2IntVar(ce[0]);
-            FloatVar x1 = s.arg2FloatVar(ce[1]);
+            IntVar x0 = s.arg_to_int_var(ce[0]);
+            FloatVar x1 = s.arg_to_float_var(ce[1]);
             channel(s, x0, x1);
         }
 
         void
         p_float_lin_cmp(FlatZincSpace& s, FloatRelType frt, const ConExpr& ce, AST::Node*) {
-            FloatValArgs fa = s.arg2floatargs(ce[0]);
-            FloatVarArgs fv = s.arg2floatvarargs(ce[1]);
-            linear(s, fa, fv, frt, ce[2]->getFloat());
+            FloatValArgs fa = s.arg_to_float_args(ce[0]);
+            FloatVarArgs fv = s.arg_to_float_var_args(ce[1]);
+            linear(s, fa, fv, frt, ce[2]->get_float());
         }
         void
         p_float_lin_cmp_reif(FlatZincSpace& s, FloatRelType frt, const ConExpr& ce, AST::Node*) {
-            FloatValArgs fa = s.arg2floatargs(ce[0]);
-            FloatVarArgs fv = s.arg2floatvarargs(ce[1]);
-            linear(s, fa, fv, frt, ce[2]->getFloat(), s.arg2BoolVar(ce[3]));
+            FloatValArgs fa = s.arg_to_float_args(ce[0]);
+            FloatVarArgs fv = s.arg_to_float_var_args(ce[1]);
+            linear(s, fa, fv, frt, ce[2]->get_float(), s.arg_to_bool_var(ce[3]));
         }
         void
         p_float_lin_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -91,95 +91,95 @@ namespace Gecode { namespace FlatZinc {
 
         void
         p_float_times(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
-            FloatVar z = s.arg2FloatVar(ce[2]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
+            FloatVar z = s.arg_to_float_var(ce[2]);
             mult(s, x, y, z);
         }
 
         void
         p_float_div(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
-            FloatVar z = s.arg2FloatVar(ce[2]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
+            FloatVar z = s.arg_to_float_var(ce[2]);
             div(s, x, y, z);
         }
 
         void
         p_float_plus(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
-            FloatVar z = s.arg2FloatVar(ce[2]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
+            FloatVar z = s.arg_to_float_var(ce[2]);
             rel(s, x + y == z);
         }
 
         void
         p_float_sqrt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
             sqrt(s, x, y);
         }
 
         void
         p_float_abs(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
             abs(s, x, y);
         }
 
         void
         p_float_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
             rel(s, x, FRT_EQ, y);
         }
         void
         p_float_eq_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
-            BoolVar b = s.arg2BoolVar(ce[2]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
+            BoolVar b = s.arg_to_bool_var(ce[2]);
             rel(s, x, FRT_EQ, y, b);
         }
         void
         p_float_le(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
             rel(s, x, FRT_LQ, y);
         }
         void
         p_float_le_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
-            BoolVar b = s.arg2BoolVar(ce[2]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
+            BoolVar b = s.arg_to_bool_var(ce[2]);
             rel(s, x, FRT_LQ, y, b);
         }
         void
         p_float_max(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
-            FloatVar z = s.arg2FloatVar(ce[2]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
+            FloatVar z = s.arg_to_float_var(ce[2]);
             max(s, x, y, z);
         }
         void
         p_float_min(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
-            FloatVar z = s.arg2FloatVar(ce[2]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
+            FloatVar z = s.arg_to_float_var(ce[2]);
             min(s, x, y, z);
         }
         void
         p_float_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
             rel(s, x, FRT_LQ, y);
             rel(s, x, FRT_EQ, y, BoolVar(s, 0, 0));
         }
 
         void
         p_float_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
-            BoolVar b = s.arg2BoolVar(ce[2]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
+            BoolVar b = s.arg_to_bool_var(ce[2]);
             BoolVar b0(s, 0, 1);
             BoolVar b1(s, 0, 1);
             rel(s, b == (b0 && !b1));
@@ -189,16 +189,16 @@ namespace Gecode { namespace FlatZinc {
 
         void
         p_float_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
             rel(s, x, FRT_EQ, y, BoolVar(s, 0, 0));
         }
 
 #ifdef GECODE_HAS_MPFR
 #define P_FLOAT_OP(Op)                                                                                                 \
     void p_float_##Op(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {                                               \
-        FloatVar x = s.arg2FloatVar(ce[0]);                                                                            \
-        FloatVar y = s.arg2FloatVar(ce[1]);                                                                            \
+        FloatVar x = s.arg_to_float_var(ce[0]);                                                                        \
+        FloatVar y = s.arg_to_float_var(ce[1]);                                                                        \
         Op(s, x, y);                                                                                                   \
     }
         P_FLOAT_OP(acos)
@@ -215,20 +215,20 @@ namespace Gecode { namespace FlatZinc {
 
         void
         p_float_ln(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
             log(s, x, y);
         }
         void
         p_float_log10(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
             log(s, 10.0, x, y);
         }
         void
         p_float_log2(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            FloatVar x = s.arg2FloatVar(ce[0]);
-            FloatVar y = s.arg2FloatVar(ce[1]);
+            FloatVar x = s.arg_to_float_var(ce[0]);
+            FloatVar y = s.arg_to_float_var(ce[1]);
             log(s, 2.0, x, y);
         }
 
@@ -236,31 +236,32 @@ namespace Gecode { namespace FlatZinc {
 
         void
         p_float_ite(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            ite(s, s.arg2BoolVar(ce[0]), s.arg2FloatVar(ce[1]), s.arg2FloatVar(ce[2]), s.arg2FloatVar(ce[3]));
+            ite(s, s.arg_to_bool_var(ce[0]), s.arg_to_float_var(ce[1]), s.arg_to_float_var(ce[2]),
+                s.arg_to_float_var(ce[3]));
         }
         void
         p_float_pow(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            pow(s, s.arg2FloatVar(ce[0]), ce[1]->getInt(), s.arg2FloatVar(ce[2]));
+            pow(s, s.arg_to_float_var(ce[0]), ce[1]->get_int(), s.arg_to_float_var(ce[2]));
         }
         void
         p_float_array_min(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            min(s, s.arg2floatvarargs(ce[0]), s.arg2FloatVar(ce[1]));
+            min(s, s.arg_to_float_var_args(ce[0]), s.arg_to_float_var(ce[1]));
         }
         void
         p_float_array_max(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            max(s, s.arg2floatvarargs(ce[0]), s.arg2FloatVar(ce[1]));
+            max(s, s.arg_to_float_var_args(ce[0]), s.arg_to_float_var(ce[1]));
         }
 #ifdef GECODE_HAS_MPFR
         void
         p_float_pow_base(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            pow(s, ce[0]->getFloat(), s.arg2FloatVar(ce[1]), s.arg2FloatVar(ce[2]));
+            pow(s, ce[0]->get_float(), s.arg_to_float_var(ce[1]), s.arg_to_float_var(ce[2]));
         }
 #endif
 
         void
         p_float_rel_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
             FloatRelType r;
-            switch (ce[1]->getInt()) {
+            switch (ce[1]->get_int()) {
             case 1:
                 r = FRT_EQ;
                 break;
@@ -282,7 +283,7 @@ namespace Gecode { namespace FlatZinc {
             default:
                 throw FlatZinc::Error("Registry", "invalid float relation");
             }
-            rel(s, s.arg2FloatVar(ce[0]), r, s.arg2FloatVar(ce[2]), Reify(s.arg2BoolVar(ce[3]), RM_IMP));
+            rel(s, s.arg_to_float_var(ce[0]), r, s.arg_to_float_var(ce[2]), Reify(s.arg_to_bool_var(ce[3]), RM_IMP));
         }
 
     } // namespace

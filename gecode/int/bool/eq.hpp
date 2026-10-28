@@ -83,29 +83,29 @@ namespace Gecode { namespace Int { namespace Bool {
     template <class BVA, class BVB>
     ExecStatus
     Eq<BVA, BVB>::propagate(Space& home, const ModEventDelta&) {
-#define GECODE_INT_STATUS(S0, S1) ((BVA::S0 << (1 * BVA::BITS)) | (BVB::S1 << (0 * BVB::BITS)))
-        switch ((x0.status() << (1 * BVA::BITS)) | (x1.status() << (0 * BVB::BITS))) {
-        case GECODE_INT_STATUS(NONE, NONE):
+#define GECODE_INT_STATUS(S0, S1) ((BVA::S0 << (1 * BVA::bits)) | (BVB::S1 << (0 * BVB::bits)))
+        switch ((x0.status() << (1 * BVA::bits)) | (x1.status() << (0 * BVB::bits))) {
+        case GECODE_INT_STATUS(unassigned_status, unassigned_status):
             GECODE_NEVER;
-        case GECODE_INT_STATUS(NONE, ZERO):
+        case GECODE_INT_STATUS(unassigned_status, zero_status):
             GECODE_ME_CHECK(x0.zero_none(home));
             break;
-        case GECODE_INT_STATUS(NONE, ONE):
+        case GECODE_INT_STATUS(unassigned_status, one_status):
             GECODE_ME_CHECK(x0.one_none(home));
             break;
-        case GECODE_INT_STATUS(ZERO, NONE):
+        case GECODE_INT_STATUS(zero_status, unassigned_status):
             GECODE_ME_CHECK(x1.zero_none(home));
             break;
-        case GECODE_INT_STATUS(ZERO, ZERO):
+        case GECODE_INT_STATUS(zero_status, zero_status):
             break;
-        case GECODE_INT_STATUS(ZERO, ONE):
+        case GECODE_INT_STATUS(zero_status, one_status):
             return ES_FAILED;
-        case GECODE_INT_STATUS(ONE, NONE):
+        case GECODE_INT_STATUS(one_status, unassigned_status):
             GECODE_ME_CHECK(x1.one_none(home));
             break;
-        case GECODE_INT_STATUS(ONE, ZERO):
+        case GECODE_INT_STATUS(one_status, zero_status):
             return ES_FAILED;
-        case GECODE_INT_STATUS(ONE, ONE):
+        case GECODE_INT_STATUS(one_status, one_status):
             break;
         default:
             GECODE_NEVER;

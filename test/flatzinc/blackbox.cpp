@@ -50,7 +50,7 @@
 #endif
 
 #if defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
-#include <signal.h>
+#include <csignal>
 #include <unistd.h>
 #endif
 
@@ -243,8 +243,8 @@ namespace Test { namespace FlatZinc {
         class NativeProtocol : public Base {
         public:
             NativeProtocol(void) : Base("FlatZinc::blackbox::native_protocol", TestTags::check()) {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 std::vector<int64_t> int_input{-2};
                 std::vector<double> float_input{1.25};
                 std::vector<int64_t> int_output(1);
@@ -309,8 +309,8 @@ namespace Test { namespace FlatZinc {
         public:
             NativeExecParallelSessions(const std::string& executable0, const std::string& log0)
                 : Base("FlatZinc::blackbox::native_exec_parallel_sessions"), executable(executable0), log(log0) {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 reset_log(log);
                 bool ok = false;
                 try {
@@ -332,8 +332,8 @@ namespace Test { namespace FlatZinc {
         public:
             NativeDllParallelCalls(const std::string& library0, const std::string& log0)
                 : Base("FlatZinc::blackbox::native_dll_parallel_calls"), library(library0), log(log0) {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 reset_log(log);
                 bool ok = false;
                 try {

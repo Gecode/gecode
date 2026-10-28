@@ -255,10 +255,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
     /// Return view selectors for integer views
     GECODE_INT_EXPORT
-    ViewSel<IntView>* viewsel(Space& home, const IntVarBranch& ivb);
+    ViewSel<IntView>* view_selection(Space& home, const IntVarBranch& ivb);
     /// Return view selectors for Boolean views
     GECODE_INT_EXPORT
-    ViewSel<BoolView>* viewsel(Space& home, const BoolVarBranch& bvb);
+    ViewSel<BoolView>* view_selection(Space& home, const BoolVarBranch& bvb);
 
 }}} // namespace Gecode::Int::Branch
 
@@ -425,11 +425,11 @@ namespace Gecode { namespace Int { namespace Branch {
         /// Constructor for cloning \a ngl
         EqNGL(Space& home, EqNGL& ngl);
         /// Test the status of the no-good literal
-        virtual NGL::Status status(const Space& home) const;
+        NGL::Status status(const Space& home) const override;
         /// Propagate the negation of the no-good literal
-        virtual ExecStatus prune(Space& home);
+        ExecStatus prune(Space& home) override;
         /// Create copy
-        virtual NGL* copy(Space& home);
+        NGL* copy(Space& home) override;
     };
 
     /// No-good literal for disequality
@@ -463,11 +463,11 @@ namespace Gecode { namespace Int { namespace Branch {
         /// Constructor for cloning \a ngl
         LqNGL(Space& home, LqNGL& ngl);
         /// Test the status of the no-good literal
-        virtual NGL::Status status(const Space& home) const;
+        NGL::Status status(const Space& home) const override;
         /// Propagate the negation of the no-good literal
-        virtual ExecStatus prune(Space& home);
+        ExecStatus prune(Space& home) override;
         /// Create copy
-        virtual NGL* copy(Space& home);
+        NGL* copy(Space& home) override;
     };
 
     /// No-good literal for greater or equal
@@ -482,11 +482,11 @@ namespace Gecode { namespace Int { namespace Branch {
         /// Constructor for cloning \a ngl
         GqNGL(Space& home, GqNGL& ngl);
         /// Test the status of the no-good literal
-        virtual NGL::Status status(const Space& home) const;
+        NGL::Status status(const Space& home) const override;
         /// Propagate the negation of the no-good literal
-        virtual ExecStatus prune(Space& home);
+        ExecStatus prune(Space& home) override;
         /// Create copy
-        virtual NGL* copy(Space& home);
+        NGL* copy(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::Branch
@@ -603,19 +603,19 @@ namespace Gecode { namespace Int { namespace Branch {
 
     /// Return value and commit for integer views
     GECODE_INT_EXPORT
-    ValSelCommitBase<IntView, int>* valselcommit(Space& home, const IntValBranch& ivb);
+    ValSelCommitBase<IntView, int>* value_selection_commit(Space& home, const IntValBranch& ivb);
 
     /// Return value and commit for Boolean views
     GECODE_INT_EXPORT
-    ValSelCommitBase<BoolView, int>* valselcommit(Space& home, const BoolValBranch& bvb);
+    ValSelCommitBase<BoolView, int>* value_selection_commit(Space& home, const BoolValBranch& bvb);
 
     /// Return value and commit for integer views
     GECODE_INT_EXPORT
-    ValSelCommitBase<IntView, int>* valselcommit(Space& home, const IntAssign& ia);
+    ValSelCommitBase<IntView, int>* value_selection_commit(Space& home, const IntAssign& ia);
 
     /// Return value and commit for Boolean views
     GECODE_INT_EXPORT
-    ValSelCommitBase<BoolView, int>* valselcommit(Space& home, const BoolAssign& ba);
+    ValSelCommitBase<BoolView, int>* value_selection_commit(Space& home, const BoolAssign& ba);
 
 }}} // namespace Gecode::Int::Branch
 
@@ -640,13 +640,13 @@ namespace Gecode { namespace Int { namespace Branch {
 
     public:
         /// Return choice
-        virtual const Choice* choice(Space& home);
+        const Choice* choice(Space& home) override;
         /// Return choice
-        virtual const Choice* choice(const Space& home, Archive& e);
+        const Choice* choice(const Space& home, Archive& e) override;
         /// Perform commit for choice \a c and alternative \a a
-        virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
+        ExecStatus commit(Space& home, const Choice& c, unsigned int a) override;
         /// Create no-good literal for choice \a c and alternative \a a
-        virtual NGL* ngl(Space& home, const Choice& c, unsigned int a) const;
+        NGL* ngl(Space& home, const Choice& c, unsigned int a) const override;
         /**
          * \brief Print branch for choice \a c and alternative \a a
          *
@@ -654,20 +654,20 @@ namespace Gecode { namespace Int { namespace Branch {
          * on the stream \a o.
          *
          */
-        virtual void print(const Space& home, const Choice& c, unsigned int a, std::ostream& o) const;
+        void print(const Space& home, const Choice& c, unsigned int a, std::ostream& o) const override;
         /// Perform cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Post function for creation
         static void post(Home home, ViewArray<IntView>& x, ViewSel<IntView>* vs[n], IntBranchFilter bf,
                          IntVarValPrint vvp);
         /// Delete brancher and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /// Post brancher for view and values
     template <int n, bool min>
-    void postviewvaluesbrancher(Home home, ViewArray<IntView>& x, ViewSel<IntView>* vs[n], IntBranchFilter bf,
-                                IntVarValPrint vvp);
+    void post_view_values_brancher(Home home, ViewArray<IntView>& x, ViewSel<IntView>* vs[n], IntBranchFilter bf,
+                                   IntVarValPrint vvp);
 
 }}} // namespace Gecode::Int::Branch
 
@@ -699,13 +699,13 @@ namespace Gecode { namespace Int { namespace Branch {
             class VarIdToPosO : public SharedHandle::Object {
             public:
                 /// The map we want to share
-                std::unordered_map<unsigned int, unsigned int> _varIdToPos;
+                std::unordered_map<unsigned int, unsigned int> _var_id_to_pos;
 
             public:
                 /// Default constructor
                 VarIdToPosO(void) = default;
                 /// Delete implementation
-                virtual ~VarIdToPosO(void) = default;
+                ~VarIdToPosO(void) override = default;
             };
 
         public:
@@ -714,12 +714,12 @@ namespace Gecode { namespace Int { namespace Branch {
             /// Allocation of the shared handle
             void init(void);
             /// Tests if a variable id is in the map
-            bool isIn(unsigned int var_id) const;
+            bool is_in(unsigned int var_id) const;
             /// Returns the position of the variable id in \a x
             int operator[](unsigned int var_id) const;
             /// Inserts a new position for a variable id
             void insert(unsigned int var_id, unsigned int pos);
-        } varIdToPos;
+        } var_id_to_pos;
 
         /**
          * \brief Propagator information for counting-based search
@@ -748,13 +748,13 @@ namespace Gecode { namespace Int { namespace Branch {
          * Any active propagator that:
          *
          *   - shares a variable with \a x
-         *   - has a counting algorithm (i.e. overloads solndistrib)
+         *   - has a counting algorithm (i.e. overloads solution_distribution)
          *
          * will have an entry in this map.
          */
         std::unordered_map<unsigned int, PropInfo, std::hash<unsigned int>, std::equal_to<unsigned int>,
                            space_allocator<std::pair<const unsigned int, PropInfo>>>
-            logProp;
+            log_prop;
 
     public:
         /// Constructor for creation
@@ -764,23 +764,23 @@ namespace Gecode { namespace Int { namespace Branch {
         /// Post brancher
         static void post(Home home, ViewArray<View>& x);
         /// Copy brancher during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Delete brancher and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Check status of brancher, return true if alternatives left
-        virtual bool status(const Space& home) const;
+        bool status(const Space& home) const override;
         /// Return choice
-        virtual const Choice* choice(Space& home);
+        const Choice* choice(Space& home) override;
         /// Return choice
-        virtual const Choice* choice(const Space&, Archive& e);
+        const Choice* choice(const Space&, Archive& e) override;
         /// Commit choice \a c for alternative \a a
-        virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
+        ExecStatus commit(Space& home, const Choice& c, unsigned int a) override;
         /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
-        virtual void print(const Space& home, const Choice& c, unsigned int a, std::ostream& o) const;
+        void print(const Space& home, const Choice& c, unsigned int a, std::ostream& o) const override;
 
     private:
         /// Returns whether a variable is in \a x or not
-        bool inbrancher(unsigned int varId) const;
+        bool in_brancher(unsigned int var_id) const;
     };
 
 }}} // namespace Gecode::Int::Branch

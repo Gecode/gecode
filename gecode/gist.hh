@@ -167,11 +167,11 @@ namespace Gecode {
             /// Initialize the implementation object
             void init(void);
             /// Get the stream that is used to output text
-            std::ostream& getStream(void);
+            std::ostream& get_stream(void);
             /// Flush stream
             void flush(void);
             /// Add html text \a s to the output
-            void addHtml(const char* s);
+            void add_html(const char* s);
 
         public:
             /// Constructor
@@ -191,11 +191,11 @@ namespace Gecode {
             /// Constructor
             Print(const std::string& name);
             /// Use the print method of the template class S to print a space
-            virtual void inspect(const Space& node);
+            void inspect(const Space& node) override;
             /// Return name
-            virtual std::string name(void);
+            std::string name(void) override;
             /// Clean up when Gist exits
-            virtual void finalize(void);
+            void finalize(void) override;
         };
 
         /**
@@ -214,16 +214,16 @@ namespace Gecode {
             /// Constructor
             VarComparator(std::string name);
             /// Compare \a s0 to \a s1
-            virtual void compare(const Space& s0, const Space& s1);
+            void compare(const Space& s0, const Space& s1) override;
             /// Return name
-            virtual std::string name(void);
+            std::string name(void) override;
             /// Finalize when Gist exits
-            virtual void finalize(void);
+            void finalize(void) override;
         };
 
         /// A branching that stops exploration
         GECODE_GIST_EXPORT
-        void stopBranch(Space& home);
+        void stop_branch(Space& home);
 
         /**
          * \brief %Options for %Gist

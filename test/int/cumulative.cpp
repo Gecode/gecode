@@ -70,23 +70,24 @@ namespace Test { namespace Int {
             /// Create and register test
             ManFixPCumulative(int c0, const Gecode::IntArgs& p0, const Gecode::IntArgs& u0, int o0,
                               Gecode::IntPropLevel ipl0)
-                : Test((o0 == 0) && (c0 == 4) ? TestTags::check() : TestTags(TestTags::sweep()),
+                : Test(((u0.size() == 1) && (u0[0] == 0)) || ((o0 == 0) && (c0 == 4)) ? TestTags::check()
+                                                                                      : TestTags(TestTags::sweep()),
                        "Cumulative::Man::Fix::" + str(o0) + "::" + str(c0) + "::" + str(p0) + "::" + str(u0) +
                            "::" + str(ipl0),
                        (c0 >= 0) ? p0.size() : p0.size() + 1, 0, st(c0, p0, u0), false, ipl0),
                   c(c0), p(p0), u(u0), o(o0) {
-                testsearch = false;
-                testfix = false;
-                contest = CTL_NONE;
+                test_search = false;
+                test_fixpoint = false;
+                consistency_test_level = CTL_NONE;
             }
             /// Create and register initial assignment
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 return new RandomAssignment(arity, dom, 500, _rand);
             }
             /// Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int cmax = (c >= 0) ? c : x[x.size() - 1];
                 int n = (c >= 0) ? x.size() : x.size() - 1;
 
@@ -128,8 +129,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = (c >= 0) ? x.size() : x.size() - 1;
                 Gecode::IntVarArgs xx;
                 if (o == 0) {
@@ -174,24 +175,25 @@ namespace Test { namespace Int {
             /// Create and register test
             OptFixPCumulative(int c0, const Gecode::IntArgs& p0, const Gecode::IntArgs& u0, int o0,
                               Gecode::IntPropLevel ipl0)
-                : Test((o0 == Gecode::Int::Limits::min) && (c0 == -1) ? TestTags(TestTags::standard())
-                                                                      : TestTags(TestTags::sweep()),
+                : Test((u0.size() == 1) && (u0[0] == 0)                 ? TestTags::check()
+                       : (o0 == Gecode::Int::Limits::min) && (c0 == -1) ? TestTags(TestTags::standard())
+                                                                        : TestTags(TestTags::sweep()),
                        "Cumulative::Opt::Fix::" + str(o0) + "::" + str(c0) + "::" + str(p0) + "::" + str(u0) +
                            "::" + str(ipl0),
                        (c0 >= 0) ? 2 * p0.size() : 2 * p0.size() + 1, 0, st(c0, p0, u0), false, ipl0),
                   c(c0), p(p0), u(u0), l(st(c, p, u) / 2), o(o0) {
-                testsearch = false;
-                testfix = false;
-                contest = CTL_NONE;
+                test_search = false;
+                test_fixpoint = false;
+                consistency_test_level = CTL_NONE;
             }
             /// Create and register initial assignment
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 return new RandomAssignment(arity, dom, 500, _rand);
             }
             /// Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int nn = (c >= 0) ? x.size() : x.size() - 1;
                 int cmax = (c >= 0) ? c : x[nn];
 
@@ -237,8 +239,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int nn = (c >= 0) ? x.size() : x.size() - 1;
                 int n = nn / 2;
                 Gecode::IntVarArgs s(n);
@@ -264,17 +266,17 @@ namespace Test { namespace Int {
             /// Capacity of resource
             int c;
             /// Minimum processing time
-            int _minP;
+            int _min_p;
             /// Maximum processing time
-            int _maxP;
+            int _max_p;
             /// The resource usage
             Gecode::IntArgs u;
             /// Get a reasonable maximal start time
             static int
-            st(int c, int maxP, const Gecode::IntArgs& u) {
+            st(int c, int max_p, const Gecode::IntArgs& u) {
                 double e = 0;
                 for (int i = u.size(); i--;)
-                    e += static_cast<double>(maxP) * u[i];
+                    e += static_cast<double>(max_p) * u[i];
                 return e / std::max(1, std::abs(c));
             }
             /// Offset
@@ -282,25 +284,27 @@ namespace Test { namespace Int {
 
         public:
             /// Create and register test
-            ManFlexCumulative(int c0, int minP, int maxP, const Gecode::IntArgs& u0, int o0, Gecode::IntPropLevel ipl0)
-                : Test(TestTags::sweep(),
-                       "Cumulative::Man::Flex::" + str(o0) + "::" + str(c0) + "::" + str(minP) + "::" + str(maxP) +
+            ManFlexCumulative(int c0, int min_p, int max_p, const Gecode::IntArgs& u0, int o0,
+                              Gecode::IntPropLevel ipl0)
+                : Test((u0.size() == 1) && (u0[0] == 0) ? TestTags::check() : TestTags::sweep(),
+                       "Cumulative::Man::Flex::" + str(o0) + "::" + str(c0) + "::" + str(min_p) + "::" + str(max_p) +
                            "::" + str(u0) + "::" + str(ipl0),
-                       (c0 >= 0) ? 2 * u0.size() : 2 * u0.size() + 1, 0, std::max(maxP, st(c0, maxP, u0)), false, ipl0),
-                  c(c0), _minP(minP), _maxP(maxP), u(u0), o(o0) {
-                testsearch = false;
-                testfix = false;
-                contest = CTL_NONE;
+                       (c0 >= 0) ? 2 * u0.size() : 2 * u0.size() + 1, 0, std::max(max_p, st(c0, max_p, u0)), false,
+                       ipl0),
+                  c(c0), _min_p(min_p), _max_p(max_p), u(u0), o(o0) {
+                test_search = false;
+                test_fixpoint = false;
+                consistency_test_level = CTL_NONE;
             }
             /// Create and register initial assignment
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 return new RandomMixAssignment((c >= 0) ? arity / 2 : arity / 2 + 1, dom, arity / 2,
-                                               Gecode::IntSet(_minP, _maxP), 500, _rand);
+                                               Gecode::IntSet(_min_p, _max_p), 500, _rand);
             }
             /// Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int nn = (c >= 0) ? x.size() : x.size() - 1;
                 int n = nn / 2;
                 int cmax = (c >= 0) ? c : x[n];
@@ -344,8 +348,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int nn = (c >= 0) ? x.size() : x.size() - 1;
                 int n = nn / 2;
                 int pstart = (c >= 0) ? n : n + 1;
@@ -355,8 +359,8 @@ namespace Test { namespace Int {
                 for (int i = s.size(); i--;) {
                     s[i] = expr(home, o + x[i], Gecode::IPL_DOM);
                     rel(home, s[i] + px[i] == e[i]);
-                    rel(home, _minP <= px[i]);
-                    rel(home, _maxP >= px[i]);
+                    rel(home, _min_p <= px[i]);
+                    rel(home, _max_p >= px[i]);
                 }
                 if (c >= 0) {
                     Gecode::cumulative(home, c, s, px, e, u, ipl);
@@ -373,9 +377,9 @@ namespace Test { namespace Int {
             /// Capacity of resource
             int c;
             /// Minimum processing time
-            int _minP;
+            int _min_p;
             /// Maximum processing time
-            int _maxP;
+            int _max_p;
             /// The resource usage
             Gecode::IntArgs u;
             /// Limit for optional tasks
@@ -384,36 +388,39 @@ namespace Test { namespace Int {
             int o;
             /// Get a reasonable maximal start time
             static int
-            st(int c, int maxP, const Gecode::IntArgs& u) {
+            st(int c, int max_p, const Gecode::IntArgs& u) {
                 double e = 0;
                 for (int i = u.size(); i--;)
-                    e += static_cast<double>(maxP) * u[i];
+                    e += static_cast<double>(max_p) * u[i];
                 return e / std::max(1, std::abs(c));
             }
 
         public:
             /// Create and register test
-            OptFlexCumulative(int c0, int minP, int maxP, const Gecode::IntArgs& u0, int o0, Gecode::IntPropLevel ipl0)
-                : Test((o0 == Gecode::Int::Limits::min) && (c0 == 4) && (minP == 0) && (maxP == 2)
+            OptFlexCumulative(int c0, int min_p, int max_p, const Gecode::IntArgs& u0, int o0,
+                              Gecode::IntPropLevel ipl0)
+                : Test((u0.size() == 1) && (u0[0] == 0) ? TestTags::check()
+                       : (o0 == Gecode::Int::Limits::min) && (c0 == 4) && (min_p == 0) && (max_p == 2)
                            ? TestTags(TestTags::standard())
                            : TestTags(TestTags::sweep()),
-                       "Cumulative::Opt::Flex::" + str(o0) + "::" + str(c0) + "::" + str(minP) + "::" + str(maxP) +
+                       "Cumulative::Opt::Flex::" + str(o0) + "::" + str(c0) + "::" + str(min_p) + "::" + str(max_p) +
                            "::" + str(u0) + "::" + str(ipl0),
-                       (c0 >= 0) ? 3 * u0.size() : 3 * u0.size() + 1, 0, std::max(maxP, st(c0, maxP, u0)), false, ipl0),
-                  c(c0), _minP(minP), _maxP(maxP), u(u0), l(std::max(maxP, st(c0, maxP, u0)) / 2), o(o0) {
-                testsearch = false;
-                testfix = false;
-                contest = CTL_NONE;
+                       (c0 >= 0) ? 3 * u0.size() : 3 * u0.size() + 1, 0, std::max(max_p, st(c0, max_p, u0)), false,
+                       ipl0),
+                  c(c0), _min_p(min_p), _max_p(max_p), u(u0), l(std::max(max_p, st(c0, max_p, u0)) / 2), o(o0) {
+                test_search = false;
+                test_fixpoint = false;
+                consistency_test_level = CTL_NONE;
             }
             /// Create and register initial assignment
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 return new RandomMixAssignment((c >= 0) ? 2 * (arity / 3) : 2 * (arity / 3) + 1, dom, arity / 3,
-                                               Gecode::IntSet(_minP, _maxP), 500, _rand);
+                                               Gecode::IntSet(_min_p, _max_p), 500, _rand);
             }
             /// Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int nn = (c >= 0) ? x.size() : x.size() - 1;
                 int n = nn / 3;
                 int cmax = (c >= 0) ? c : x[2 * n];
@@ -457,8 +464,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int nn = (c >= 0) ? x.size() : x.size() - 1;
                 int n = nn / 3;
                 int pstart = (c >= 0) ? 2 * n : 2 * n + 1;
@@ -470,8 +477,8 @@ namespace Test { namespace Int {
                     s[i] = expr(home, o + x[i]);
                     px[i] = x[pstart + i];
                     rel(home, s[i] + px[i] == e[i]);
-                    rel(home, _minP <= px[i]);
-                    rel(home, _maxP >= px[i]);
+                    rel(home, _min_p <= px[i]);
+                    rel(home, _max_p >= px[i]);
                 }
                 Gecode::BoolVarArgs m(n);
                 for (int i = 0; i < n; i++)
@@ -490,11 +497,11 @@ namespace Test { namespace Int {
         public:
             ManFixECumulative(void)
                 : Test("Cumulative::Man::FixE", 4, Gecode::IntSet({0, 9, 19, 29, 39}), false, Gecode::IPL_ADVANCED) {
-                testfix = false;
-                contest = CTL_NONE;
+                test_fixpoint = false;
+                consistency_test_level = CTL_NONE;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < 4; i++)
                     if (x[i] >= 10 * (i + 1))
                         return false;
@@ -508,8 +515,8 @@ namespace Test { namespace Int {
                 }
                 return true;
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntArgs ends({10, 20, 30, 40});
                 Gecode::TaskTypeArgs types(4);
                 for (int i = 0; i < 4; i++) {
@@ -519,7 +526,7 @@ namespace Test { namespace Int {
                 Gecode::cumulative(home, 4, types, x, ends, Gecode::IntArgs({2, 2, 2, 2}), ipl);
             }
         };
-        ManFixECumulative manFixECumulative;
+        ManFixECumulative man_fix_e_cumulative;
 
         /// Check overload detection before search, including capacity wakeups
         // Complete assignments cannot distinguish basic from advanced propagation.
@@ -540,8 +547,8 @@ namespace Test { namespace Int {
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {
                     starts.update(*this, fixture.starts);
                 }
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new Fixture(*this);
                 }
             };
@@ -563,8 +570,8 @@ namespace Test { namespace Int {
                     starts.update(*this, fixture.starts);
                     capacity.update(*this, fixture.capacity);
                 }
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new VariableCapacityFixture(*this);
                 }
             };
@@ -607,8 +614,8 @@ namespace Test { namespace Int {
                         Gecode::cumulative(*this, 3, starts, processing, demand, mandatory, level);
                     }
                     OptionalSubsetFixture(OptionalSubsetFixture& fixture) : Gecode::Space(fixture) {}
-                    virtual Gecode::Space*
-                    copy(void) {
+                    Gecode::Space*
+                    copy(void) override {
                         return new OptionalSubsetFixture(*this);
                     }
                 };
@@ -621,8 +628,8 @@ namespace Test { namespace Int {
         public:
             KnapsackAugmentedOverload(void) : Test::Base("Cumulative::KnapsackAugmentedOverload") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Fixture basic(Gecode::IPL_BASIC);
                 Fixture advanced(Gecode::IPL_ADVANCED);
                 return (basic.status() != Gecode::SS_FAILED) && (advanced.status() == Gecode::SS_FAILED) &&
@@ -630,7 +637,7 @@ namespace Test { namespace Int {
             }
         };
 
-        KnapsackAugmentedOverload knapsackAugmentedOverload;
+        KnapsackAugmentedOverload knapsack_augmented_overload;
 
         /// Help class to create and register tests
         class Create {
@@ -651,6 +658,13 @@ namespace Test { namespace Int {
                 IntArgs u5({1, 3, 2});
 
                 for (IntPropBasicAdvanced ipba; ipba(); ++ipba) {
+                    // Tasks with no resource usage leave an empty task array.
+                    for (int c : {4, -1}) {
+                        (void)new ManFixPCumulative(c, IntArgs{1}, IntArgs{0}, 0, ipba.ipl());
+                        (void)new OptFixPCumulative(c, IntArgs{1}, IntArgs{0}, 0, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 0, 2, IntArgs{0}, 0, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 0, 2, IntArgs{0}, 0, ipba.ipl());
+                    }
                     // Regression test: check correct detection of disjunctive case
                     (void)new ManFixPCumulative(3, p5, u5, 0, ipba.ipl());
 

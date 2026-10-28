@@ -109,13 +109,13 @@ public:
     }
 
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new MagicSquare(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         // Matrix-wrapper for the square
         Matrix<IntVarArray> m(x, n, n);
         for (int i = 0; i < n; i++) {

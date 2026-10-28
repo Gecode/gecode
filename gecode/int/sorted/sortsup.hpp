@@ -164,7 +164,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         /// Unite two sets \a a and \a b and label the union with \a c
         void unite(int a, int b, int c);
         /// Initialization of the datastructure
-        void makeset(void);
+        void initialize_sets(void);
         /// Return the size of the Offline-Min item
         int size(void);
         OfflineMinItem& operator[](int);
@@ -226,7 +226,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     }
 
     forceinline void
-    OfflineMin::makeset(void) {
+    OfflineMin::initialize_sets(void) {
         for (int i = n; i--;) {
             OfflineMinItem& cur = sequence[i];
             cur.rank = 0;   // initially each set is empty

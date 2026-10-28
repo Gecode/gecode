@@ -50,10 +50,10 @@ namespace Gecode { namespace Set { namespace Precede {
 
     template <class View>
     forceinline ExecStatus
-    Single<View>::updateAlpha(Space& home) {
+    Single<View>::update_alpha(Space& home) {
         int n = x.size();
         while (alpha < n) {
-            if (x[alpha].notContains(s)) {
+            if (x[alpha].not_contains(s)) {
                 GECODE_ME_CHECK(x[alpha].exclude(home, t));
             } else if (x[alpha].contains(t)) {
                 GECODE_ME_CHECK(x[alpha].include(home, s));
@@ -67,11 +67,11 @@ namespace Gecode { namespace Set { namespace Precede {
 
     template <class View>
     forceinline ExecStatus
-    Single<View>::updateBeta(Space& home) {
+    Single<View>::update_beta(Space& home) {
         int n = x.size();
         do {
             beta++;
-        } while ((beta < n) && (x[beta].notContains(s) || x[beta].contains(t)));
+        } while ((beta < n) && (x[beta].not_contains(s) || x[beta].contains(t)));
         if (beta > gamma) {
             GECODE_ME_CHECK(x[alpha].exclude(home, t));
             GECODE_ME_CHECK(x[alpha].include(home, s));
@@ -95,7 +95,7 @@ namespace Gecode { namespace Set { namespace Precede {
         {
             int alpha = 0;
             while (alpha < x.size()) {
-                if (x[alpha].notContains(s)) {
+                if (x[alpha].not_contains(s)) {
                     GECODE_ME_CHECK(x[alpha].exclude(home, t));
                 } else if (x[alpha].contains(t)) {
                     GECODE_ME_CHECK(x[alpha].include(home, s));
@@ -112,10 +112,10 @@ namespace Gecode { namespace Set { namespace Precede {
         int beta = 0, gamma = 0;
         do {
             gamma++;
-        } while ((gamma < x.size()) && (!x[gamma].notContains(s) || !x[gamma].contains(t)));
+        } while ((gamma < x.size()) && (!x[gamma].not_contains(s) || !x[gamma].contains(t)));
         do {
             beta++;
-        } while ((beta < x.size()) && (x[beta].notContains(s) || x[beta].contains(t)));
+        } while ((beta < x.size()) && (x[beta].not_contains(s) || x[beta].contains(t)));
         if (beta > gamma) {
             GECODE_ME_CHECK(x[0].exclude(home, t));
             GECODE_ME_CHECK(x[0].include(home, s));
@@ -187,7 +187,7 @@ namespace Gecode { namespace Set { namespace Precede {
         Index& a(static_cast<Index&>(a0));
         int i = a.i;
         // Check for gamma
-        if ((beta <= gamma) && (i < gamma) && x[i].notContains(s) && x[i].contains(t))
+        if ((beta <= gamma) && (i < gamma) && x[i].not_contains(s) && x[i].contains(t))
             gamma = i;
         if (x[i].assigned()) {
             a.dispose(home, c);
@@ -214,27 +214,27 @@ namespace Gecode { namespace Set { namespace Precede {
             GECODE_ME_CHECK(x[alpha].include(home, s));
             return home.ES_SUBSUMED(*this);
         }
-        if (alpha < n && (x[alpha].notContains(s) || x[alpha].contains(t))) {
-            if (x[alpha].notContains(s)) {
+        if (alpha < n && (x[alpha].not_contains(s) || x[alpha].contains(t))) {
+            if (x[alpha].not_contains(s)) {
                 GECODE_ME_CHECK(x[alpha].exclude(home, t));
             } else {
                 GECODE_ME_CHECK(x[alpha].include(home, s));
             }
             alpha++;
             while (alpha < beta) {
-                if (x[alpha].notContains(s)) {
+                if (x[alpha].not_contains(s)) {
                     GECODE_ME_CHECK(x[alpha].exclude(home, t));
                 } else {
                     GECODE_ME_CHECK(x[alpha].include(home, s));
                 }
                 alpha++;
             }
-            GECODE_ES_CHECK(updateAlpha(home));
+            GECODE_ES_CHECK(update_alpha(home));
             beta = alpha;
             if (alpha < n)
-                GECODE_ES_CHECK(updateBeta(home));
-        } else if ((beta < n) && (x[beta].notContains(s) || x[beta].contains(t))) {
-            GECODE_ES_CHECK(updateBeta(home));
+                GECODE_ES_CHECK(update_beta(home));
+        } else if ((beta < n) && (x[beta].not_contains(s) || x[beta].contains(t))) {
+            GECODE_ES_CHECK(update_beta(home));
         }
 
         return (c.empty()) ? home.ES_SUBSUMED(*this) : ES_FIX;

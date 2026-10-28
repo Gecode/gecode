@@ -75,14 +75,14 @@ namespace Test { namespace Int {
             /// Create and register test
             RegSimpleA(void) : Test("Extensional::Reg::Simple::A", 4, 2, 2) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (((x[0] == 0) || (x[0] == 2)) && ((x[1] == -1) || (x[1] == 1)) && ((x[2] == 0) || (x[2] == 1)) &&
                         ((x[3] == 0) || (x[3] == 1)));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 extensional(home, x,
                             (REG(0) | REG(2)) + (REG(-1) | REG(1)) + (REG(7) | REG(0) | REG(1)) + (REG(0) | REG(1)));
@@ -95,13 +95,13 @@ namespace Test { namespace Int {
             /// Create and register test
             RegSimpleB(void) : Test("Extensional::Reg::Simple::B", 4, 2, 2) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] < x[1]) && (x[1] < x[2]) && (x[2] < x[3]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 extensional(home, x,
                             (REG(-2) + REG(-1) + REG(0) + REG(1)) | (REG(-2) + REG(-1) + REG(0) + REG(2)) |
@@ -116,8 +116,8 @@ namespace Test { namespace Int {
             /// Create and register test
             RegSimpleC(void) : Test("Extensional::Reg::Simple::C", 6, 0, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int pos = 0;
                 int s = x.size();
 
@@ -149,8 +149,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 extensional(home, x, *REG(0) + REG(1)(2, 2) + +REG(0) + REG(1)(1, 1) + *REG(0));
             }
@@ -162,8 +162,8 @@ namespace Test { namespace Int {
             /// Create and register test
             RegDistinct(void) : Test("Extensional::Reg::Distinct", 4, -1, 4) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < x.size(); i++) {
                     if ((x[i] < 0) || (x[i] > 3))
                         return false;
@@ -174,8 +174,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 extensional(home, x,
                             (REG(0) + REG(1) + REG(2) + REG(3)) | (REG(0) + REG(1) + REG(3) + REG(2)) |
@@ -199,14 +199,14 @@ namespace Test { namespace Int {
             /// Create and register test
             RegRoland(int n) : Test("Extensional::Reg::Roland::" + str(n), n, 0, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size();
                 return ((n > 1) && (x[n - 2] == 0)) || ((n > 0) && (x[n - 1] == 0));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 REG r0(0), r1(1);
                 REG r01 = r0 | r1;
@@ -220,14 +220,14 @@ namespace Test { namespace Int {
             /// Create and register test
             RegSharedA(void) : Test("Extensional::Reg::Shared::A", 4, 2, 2) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (((x[0] == 0) || (x[0] == 2)) && ((x[1] == -1) || (x[1] == 1)) && ((x[2] == 0) || (x[2] == 1)) &&
                         ((x[3] == 0) || (x[3] == 1)));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntVarArgs y(8);
                 for (int i = 0; i < 4; i++)
@@ -245,14 +245,14 @@ namespace Test { namespace Int {
             /// Create and register test
             RegSharedB(void) : Test("Extensional::Reg::Shared::B", 4, 2, 2) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (((x[0] == 0) || (x[0] == 2)) && ((x[1] == -1) || (x[1] == 1)) && ((x[2] == 0) || (x[2] == 1)) &&
                         ((x[3] == 0) || (x[3] == 1)));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntVarArgs y(12);
                 for (int i = 0; i < 4; i++)
@@ -270,13 +270,13 @@ namespace Test { namespace Int {
             /// Create and register test
             RegSharedC(void) : Test("Extensional::Reg::Shared::C", 4, 0, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[1] == 1) && (x[2] == 0) && (x[3] == 1);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::BoolVarArgs y(8);
                 for (int i = 0; i < 4; i++)
@@ -292,13 +292,13 @@ namespace Test { namespace Int {
             /// Create and register test
             RegSharedD(void) : Test("Extensional::Reg::Shared::D", 4, 0, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[1] == 1) && (x[2] == 0) && (x[3] == 1);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::BoolVarArgs y(12);
                 for (int i = 0; i < 4; i++)
@@ -313,17 +313,17 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             RegEmptyDFA(void) : Test("Extensional::Reg::Empty::DFA", 1, 0, 0) {
-                testsearch = false;
+                test_search = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 (void)x;
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::DFA d;
                 Gecode::extensional(home, x, d);
             }
@@ -334,17 +334,17 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             RegEmptyREG(void) : Test("Extensional::Reg::Empty::REG", 1, 0, 0) {
-                testsearch = false;
+                test_search = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 (void)x;
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::REG r;
                 Gecode::extensional(home, x, r);
             }
@@ -360,13 +360,13 @@ namespace Test { namespace Int {
             /// Create and register test
             RegOpt(int n0) : Test("Extensional::Reg::Opt::" + str(n0), 1, 0, 15), n(n0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] < n) && ((x[0] & 1) == 0);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 DFA::Transition* t = new DFA::Transition[n + 1];
                 DFA::Transition* ti = t;
@@ -398,14 +398,14 @@ namespace Test { namespace Int {
             RegAcyclicReconvergence(void)
                 : Test("Extensional::Reg::Sparse::AcyclicReconvergence", 4, 0, 3, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return ((x[0] == 0) && (x[1] == 2) && (x[2] == 2) && (x[3] == 2)) ||
                        ((x[0] == 1) && (x[1] == 0) && (x[2] == 3) && (x[3] == 3));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 // State 1 is reached at depth one by 0 and at depth two by 1,0.
                 // Its two acyclic suffixes have the corresponding lengths.
@@ -422,16 +422,16 @@ namespace Test { namespace Int {
             RegCyclicFrontier(void)
                 : Test("Extensional::Reg::Sparse::CyclicFrontier", 7, 0, 1, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int parity = 0;
                 for (int i = 0; i < x.size(); i++)
                     parity ^= x[i];
                 return parity == 0;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 0}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0}}, {0}, false);
                 extensional(home, x, d);
@@ -445,13 +445,13 @@ namespace Test { namespace Int {
             RegSparseStateNumbering(void)
                 : Test("Extensional::Reg::Sparse::StateNumbering", 2, 0, 1, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] == 0) && (x[1] == 1);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 DFA d(1000000, {{1000000, 0, 2000000}, {2000000, 1, 3000000}}, {3000000}, false);
                 extensional(home, x, d);
@@ -471,13 +471,13 @@ namespace Test { namespace Int {
                        1, 0, 1, false, Gecode::IPL_DOM),
                   minimize(minimize0), sparse(sparse0) {}
 
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return x[0] == 0;
             }
 
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 const int start = sparse ? 100 : 0;
                 const int final = sparse ? 200 : 1;
@@ -493,16 +493,16 @@ namespace Test { namespace Int {
             RegBoolCyclicFrontier(void)
                 : Test("Extensional::Reg::Sparse::BoolCyclicFrontier", 7, 0, 1, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int parity = 0;
                 for (int i = 0; i < x.size(); i++)
                     parity ^= x[i];
                 return parity == 0;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolVarArgs b(x.size());
                 for (int i = 0; i < x.size(); i++)
@@ -547,8 +547,8 @@ namespace Test { namespace Int {
                 finals = 1U + ((random >> 16) % 15U);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int state = 0;
                 for (int i = 0; i < x.size(); i++) {
                     const int symbol = x[i];
@@ -559,8 +559,8 @@ namespace Test { namespace Int {
                 return (finals & (1U << state)) != 0U;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 DFA::Transition transitions[n_dfa_states * n_symbols + 1];
                 int n_transitions = 0;
@@ -625,8 +625,8 @@ namespace Test { namespace Int {
                 allowed[1] |= 6U;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 unsigned int states = 1U;
                 for (int i = 0; i < x.size(); i++) {
                     const int symbol = x[i];
@@ -643,8 +643,8 @@ namespace Test { namespace Int {
                 return (states & (1U << 3)) != 0U;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 DFA::Transition transitions[n_fa_states * n_symbols * n_fa_states + 1];
                 int n_transitions = 0;
@@ -677,13 +677,13 @@ namespace Test { namespace Int {
                        0, 1, false, Gecode::IPL_DOM),
                   boolean(b) {}
             /// %Test whether \a x is a solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] == 0) && (x[1] == 0) && (x[2] == x[3]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 // The first assigned layer has one edge and can be discarded on
                 // cloning. The second has two edges and must be retained. Two
@@ -718,13 +718,13 @@ namespace Test { namespace Int {
             RegPositionDomainPruning(void)
                 : Test("Extensional::Reg::Sparse::PositionDomainPruning", 3, 0, 1, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] == 0) && (x[1] == 0) && (x[2] == 0);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {0, 1, 2}, {1, 0, 3}, {2, 1, 4}, {3, 0, 5}, {4, 1, 6}}, {5, 6}, false);
                 rel(home, x[2], IRT_EQ, 0);
@@ -738,17 +738,17 @@ namespace Test { namespace Int {
             /// Create and register test
             RegNoAcceptingPath(void)
                 : Test("Extensional::Reg::Sparse::NoAcceptingPath", 3, 0, 0, false, Gecode::IPL_DOM) {
-                testsearch = false;
+                test_search = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 (void)x;
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 // Every position has a forward transition, but the sole final state
                 // is only reached after four symbols.
@@ -764,14 +764,14 @@ namespace Test { namespace Int {
             RegTerminalMerged(void)
                 : Test("Extensional::Reg::Sparse::TerminalMerged", 1, 0, 2, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 (void)x;
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {0, 1, 2}, {0, 2, 3}}, {1, 2, 3}, false);
                 extensional(home, x, d);
@@ -785,13 +785,13 @@ namespace Test { namespace Int {
             RegTerminalUnmerged(void)
                 : Test("Extensional::Reg::Sparse::TerminalUnmerged", 8, 0, 1, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return x[7] == 0;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 // Symbols are unique per level. No symbol labels more than 128
                 // transitions, selecting the smallest Degree type, but 256 edges
@@ -842,8 +842,8 @@ namespace Test { namespace Int {
                 list.update(*this, s.list);
             }
 
-            virtual Gecode::Space*
-            copy(void) {
+            Gecode::Space*
+            copy(void) override {
                 return new OpenRegularSpace(*this);
             }
         };
@@ -853,8 +853,8 @@ namespace Test { namespace Int {
         public:
             OpenRegularIncremental(void) : ::Test::Base("Int::Extensional::OpenReg::Incremental", TestTags::check()) {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {1, 1, 2}}, {2}, false);
                 OpenRegularSpace s(d);
@@ -884,8 +884,8 @@ namespace Test { namespace Int {
         public:
             OpenRegularLengthWake(void) : ::Test::Base("Int::Extensional::OpenReg::LengthWake") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {1, 1, 2}}, {2}, false);
                 OpenRegularSpace s(d, 3);
@@ -902,8 +902,8 @@ namespace Test { namespace Int {
         public:
             OpenRegularMaxLength(void) : ::Test::Base("Int::Extensional::OpenReg::MaxLength", TestTags::check()) {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 // Accept 00 or 1000: only the first word fits a maximum of three.
                 DFA d(0, {{0, 0, 1}, {1, 0, 5}, {0, 1, 2}, {2, 0, 3}, {3, 0, 4}, {4, 0, 5}}, {5}, false);
@@ -963,8 +963,8 @@ namespace Test { namespace Int {
         public:
             OpenRegularBackward(void) : ::Test::Base("Int::Extensional::OpenReg::Backward") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {0, 1, 2}, {1, 0, 3}, {2, 1, 4}, {3, 2, 5}, {4, 2, 5}}, {5}, false);
                 OpenRegularSpace s(d);
@@ -982,8 +982,8 @@ namespace Test { namespace Int {
         public:
             OpenRegularDomainWake(void) : ::Test::Base("Int::Extensional::OpenReg::DomainWake") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {0, 1, 2}, {1, 0, 3}, {2, 1, 4}, {3, 2, 5}, {4, 2, 5}}, {5}, false);
                 OpenRegularSpace s(d);
@@ -1001,8 +1001,8 @@ namespace Test { namespace Int {
         public:
             OpenRegularClone(void) : ::Test::Base("Int::Extensional::OpenReg::Clone", TestTags::check()) {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {1, 1, 2}}, {2}, false);
                 OpenRegularSpace source(d);
@@ -1033,12 +1033,12 @@ namespace Test { namespace Int {
         public:
             OpenRegularEmpty(Kind k)
                 : Test("Extensional::OpenReg::Empty::" + str(static_cast<int>(k)), 1, 0, 0), kind(k) {}
-            virtual bool
-            solution(const Assignment&) const {
+            bool
+            solution(const Assignment&) const override {
                 return kind == Kind::ACCEPT;
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray&) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray&) override {
                 using namespace Gecode;
                 OpenIntVarList list(home, 8);
                 if (kind == Kind::ACCEPT) {
@@ -1057,8 +1057,8 @@ namespace Test { namespace Int {
         class OpenRegularClosed : public Test {
         public:
             OpenRegularClosed(void) : Test("Extensional::OpenReg::Closed", 3, 0, 2, false, Gecode::IPL_DOM) {}
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int parity = 0;
                 for (int i = 0; i < x.size(); i++) {
                     if (x[i] == 2)
@@ -1067,8 +1067,8 @@ namespace Test { namespace Int {
                 }
                 return parity == 0;
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 OpenIntVarList list(home, x.size());
                 for (int i = 0; i < x.size(); i++)
@@ -1081,7 +1081,7 @@ namespace Test { namespace Int {
 
         ///% Transform a TupleSet into a DFA
         Gecode::DFA
-        tupleset2dfa(Gecode::TupleSet ts) {
+        tuple_set_to_dfa(Gecode::TupleSet ts) {
             using namespace Gecode;
             REG expression;
             for (int i = 0; i < ts.tuples(); i++) {
@@ -1153,8 +1153,8 @@ namespace Test { namespace Int {
                     .finalize(epk);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return pos == ((x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
                                (x[0] == 2 && x[1] == 1 && x[2] == 2 && x[3] == 4) ||
                                (x[0] == 2 && x[1] == 2 && x[2] == 1 && x[3] == 4) ||
@@ -1162,17 +1162,17 @@ namespace Test { namespace Int {
                                (x[0] == 4 && x[1] == 3 && x[2] == 4 && x[3] == 1));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
-                TupleSet ts = TupleSet(t.arity(), tupleset2dfa(t), epk);
+                TupleSet ts = TupleSet(t.arity(), tuple_set_to_dfa(t), epk);
                 assert(t == ts);
                 assert(ts.representation() == epk);
                 extensional(home, x, t, pos, ipl);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 extensional(home, x, t, pos, r, ipl);
             }
         };
@@ -1187,7 +1187,7 @@ namespace Test { namespace Int {
             /// The tuple set to use
             Gecode::TupleSet ts;
             /// Whether to validate dfa2tupleset
-            bool toDFA;
+            bool to_dfa;
 
         public:
             /// Create and register test
@@ -1195,10 +1195,10 @@ namespace Test { namespace Int {
                          Gecode::ExtensionalPropKind epk0, TestTags tags = TestTags::sweep())
                 : Test(tags, "Extensional::TupleSet::" + extensional_kind_name(epk0) + "::" + str(p) + "::" + s,
                        ts0.arity(), d0, true, Gecode::IPL_DOM),
-                  pos(p), epk(epk0), ts(ts0), toDFA(td) {}
+                  pos(p), epk(epk0), ts(ts0), to_dfa(td) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 using namespace Gecode;
                 for (int i = ts.tuples(); i--;) {
                     TupleSet::Tuple t = ts[i];
@@ -1212,19 +1212,19 @@ namespace Test { namespace Int {
                 return !pos;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
-                if (toDFA) {
-                    TupleSet t = TupleSet(ts.arity(), tupleset2dfa(ts), epk);
+                if (to_dfa) {
+                    TupleSet t = TupleSet(ts.arity(), tuple_set_to_dfa(ts), epk);
                     assert(ts == t);
                     assert(t.representation() == epk);
                 }
                 extensional(home, x, ts, pos, ipl);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 extensional(home, x, ts, pos, r, ipl);
             }
@@ -1236,11 +1236,11 @@ namespace Test { namespace Int {
             RandomTupleSetTest(const std::string& s, bool p, Gecode::IntSet d0, Gecode::TupleSet ts0,
                                Gecode::ExtensionalPropKind epk0)
                 : TupleSetTest(s, p, d0, ts0, false, epk0) {
-                testsearch = false;
+                test_search = false;
             }
             /// Create and register initial assignment
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 using namespace Gecode;
                 return new RandomAssignment(arity, dom, 1000, _rand);
             }
@@ -1264,8 +1264,8 @@ namespace Test { namespace Int {
                 : RandomAssignment(t0.arity(), d, 32, rand), t(t0) {
                 tuple(rand);
             }
-            virtual void
-            next(Gecode::Support::RandomGenerator& rand) {
+            void
+            next(Gecode::Support::RandomGenerator& rand) override {
                 RandomAssignment::next(rand);
                 tuple(rand);
             }
@@ -1286,15 +1286,15 @@ namespace Test { namespace Int {
                     t.add(row);
                 }
                 t.finalize(Gecode::EPK_SPARSE);
-                testsearch = false;
-                contest = CTL_NONE;
+                test_search = false;
+                consistency_test_level = CTL_NONE;
             }
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 return new SparseAssignment(t, dom, _rand);
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 const int size = dom.max() + 1;
                 const int factors[] = {1, arity == 3 ? 7 : 3, arity == 3 ? 11 : 5, 7, 11, 13};
                 for (int i = 1; i < arity; i++)
@@ -1302,8 +1302,8 @@ namespace Test { namespace Int {
                         return false;
                 return true;
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::extensional(home, x, t, true, ipl);
             }
         };
@@ -1320,12 +1320,12 @@ namespace Test { namespace Int {
                     t.add(Gecode::IntArgs(0));
                 t.finalize(Gecode::EPK_SPARSE);
             }
-            virtual bool
-            solution(const Assignment&) const {
+            bool
+            solution(const Assignment&) const override {
                 return nonempty;
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray&) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray&) override {
                 Gecode::extensional(home, Gecode::IntVarArgs(), t, true, Gecode::IPL_DOM);
             }
         };
@@ -1350,16 +1350,16 @@ namespace Test { namespace Int {
                         .add(IntArgs({3, 3}));
                 t.finalize(EPK_SPARSE);
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 if (kind == 0)
                     return (x[0] == 2) && (x[1] == 2);
                 if (kind == 1)
                     return false;
                 return (x[0] == 1) && (x[1] == 0);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 if (kind == 2) {
                     BoolVarArgs b(2);
@@ -1386,8 +1386,8 @@ namespace Test { namespace Int {
         public:
             SparseTupleSetDisabledFailure(void) : ::Test::Base("Int::Extensional::TupleSet::Sparse::DisabledFailure") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
 
                 class DisabledSpace : public Space {
@@ -1399,8 +1399,8 @@ namespace Test { namespace Int {
                     DisabledSpace(DisabledSpace& s) : Space(s) {
                         x.update(*this, s.x);
                     }
-                    virtual Space*
-                    copy(void) {
+                    Space*
+                    copy(void) override {
                         return new DisabledSpace(*this);
                     }
                 };
@@ -1434,8 +1434,8 @@ namespace Test { namespace Int {
         public:
             SparseTupleSetWideDelta(void) : ::Test::Base("Int::Extensional::TupleSet::Sparse::WideDelta") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
 
                 const int gap = 1000000000;
@@ -1454,8 +1454,8 @@ namespace Test { namespace Int {
                     NegativeSpace(NegativeSpace& s) : Space(s) {
                         x.update(*this, s.x);
                     }
-                    virtual Space*
-                    copy(void) {
+                    Space*
+                    copy(void) override {
                         return new NegativeSpace(*this);
                     }
                 };
@@ -1479,8 +1479,8 @@ namespace Test { namespace Int {
                         x.update(*this, s.x);
                         b.update(*this, s.b);
                     }
-                    virtual Space*
-                    copy(void) {
+                    Space*
+                    copy(void) override {
                         return new ReifiedSpace(*this);
                     }
                 };
@@ -1499,8 +1499,8 @@ namespace Test { namespace Int {
             TupleSetSingleRepresentation(void)
                 : ::Test::Base("Int::Extensional::TupleSet::Support::SingleRepresentation") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 TupleSet ts(2);
                 for (int i = 0; i < 100; i++)
@@ -1562,8 +1562,8 @@ namespace Test { namespace Int {
         public:
             TupleSetSupportOffsetBoundary(void) : ::Test::Base("Int::Extensional::TupleSet::Support::OffsetBoundary") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using Gecode::Int::Extensional::support_offsets_size;
                 const unsigned long long max =
                     static_cast<unsigned long long>(std::numeric_limits<unsigned int>::max());
@@ -1583,8 +1583,8 @@ namespace Test { namespace Int {
             TupleSetTerminalFinalizationFailure(void)
                 : ::Test::Base("Int::Extensional::TupleSet::Support::TerminalFailure") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
 
                 const int n = 371000;
@@ -1628,8 +1628,8 @@ namespace Test { namespace Int {
                     PostingSpace(PostingSpace& s) : Space(s) {
                         x.update(*this, s.x);
                     }
-                    virtual Space*
-                    copy(void) {
+                    Space*
+                    copy(void) override {
                         return new PostingSpace(*this);
                     }
                 };
@@ -1649,8 +1649,8 @@ namespace Test { namespace Int {
         public:
             TupleSetDFARepresentation(void) : ::Test::Base("Int::Extensional::TupleSet::Support::DFARepresentation") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
 
                 DFA dfa((REG(0) + REG(1)) | (REG(2) + REG(3)));
@@ -1676,8 +1676,8 @@ namespace Test { namespace Int {
         public:
             TupleSetDisabledClone(void) : ::Test::Base("Int::Extensional::TupleSet::Support::DisabledClone") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
 
                 enum Mode { MODE_POSITIVE, MODE_NEGATIVE, MODE_REIFIED };
@@ -1696,8 +1696,8 @@ namespace Test { namespace Int {
                         x.update(*this, s.x);
                         b.update(*this, s.b);
                     }
-                    virtual Space*
-                    copy(void) {
+                    Space*
+                    copy(void) override {
                         return new CloneSpace(*this);
                     }
                 };
@@ -1794,8 +1794,8 @@ namespace Test { namespace Int {
             TupleSetAutoDefaultDispatch(void)
                 : ::Test::Base("Int::Extensional::TupleSet::Auto::DefaultDispatch", TestTags::check()) {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
 
                 TupleSet dense(2);
@@ -1816,8 +1816,8 @@ namespace Test { namespace Int {
                     PositiveSpace(PositiveSpace& s) : Space(s) {
                         x.update(*this, s.x);
                     }
-                    virtual Space*
-                    copy(void) {
+                    Space*
+                    copy(void) override {
                         return new PositiveSpace(*this);
                     }
                 };
@@ -1861,8 +1861,8 @@ namespace Test { namespace Int {
                         x.update(*this, s.x);
                         b.update(*this, s.b);
                     }
-                    virtual Space*
-                    copy(void) {
+                    Space*
+                    copy(void) override {
                         return new ReifiedSpace(*this);
                     }
                 };
@@ -1888,8 +1888,8 @@ namespace Test { namespace Int {
             DenseCompressedTupleSetWideGap(void)
                 : ::Test::Base("Int::Extensional::TupleSet::DenseCompressed::WideGap") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
 
                 const int gap = 1000000000;
@@ -1906,8 +1906,8 @@ namespace Test { namespace Int {
                     NegativeSpace(NegativeSpace& s) : Space(s) {
                         x.update(*this, s.x);
                     }
-                    virtual Space*
-                    copy(void) {
+                    Space*
+                    copy(void) override {
                         return new NegativeSpace(*this);
                     }
                 };
@@ -1938,8 +1938,8 @@ namespace Test { namespace Int {
                         x.update(*this, s.x);
                         b.update(*this, s.b);
                     }
-                    virtual Space*
-                    copy(void) {
+                    Space*
+                    copy(void) override {
                         return new ReifiedSpace(*this);
                     }
                 };
@@ -1972,8 +1972,8 @@ namespace Test { namespace Int {
                     PositiveDeltaSpace(PositiveDeltaSpace& s) : Space(s) {
                         x.update(*this, s.x);
                     }
-                    virtual Space*
-                    copy(void) {
+                    Space*
+                    copy(void) override {
                         return new PositiveDeltaSpace(*this);
                     }
                 };
@@ -2025,8 +2025,8 @@ namespace Test { namespace Int {
                 t.finalize(epk);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 using namespace Gecode;
                 for (int i = 0; i < t.tuples(); ++i) {
                     TupleSet::Tuple l = t[i];
@@ -2040,14 +2040,14 @@ namespace Test { namespace Int {
                 return !pos;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 extensional(home, x, t, pos, ipl);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 extensional(home, x, t, pos, r, ipl);
             }
@@ -2085,8 +2085,8 @@ namespace Test { namespace Int {
                 t.finalize(epk);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 using namespace Gecode;
                 for (int i = 0; i < t.tuples(); ++i) {
                     TupleSet::Tuple l = t[i];
@@ -2100,8 +2100,8 @@ namespace Test { namespace Int {
                 return !pos;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolVarArgs y(x.size());
                 for (int i = x.size(); i--;)
@@ -2109,8 +2109,8 @@ namespace Test { namespace Int {
                 extensional(home, y, t, pos, ipl);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 BoolVarArgs y(x.size());
                 for (int i = x.size(); i--;)
@@ -2152,8 +2152,8 @@ namespace Test { namespace Int {
         };
 
         Gecode::TupleSet
-        randomTupleSet(int n, int min, int max, double prob, Gecode::ExtensionalPropKind epk,
-                       Gecode::Support::RandomGenerator& rand) {
+        random_tuple_set(int n, int min, int max, double prob, Gecode::ExtensionalPropKind epk,
+                         Gecode::Support::RandomGenerator& rand) {
             using namespace Gecode;
             TupleSet t(n);
             CpltAssignment ass(n, IntSet(min, max));
@@ -2231,28 +2231,30 @@ namespace Test { namespace Int {
                             (void)new TupleSetTest("Min", pos, IntSet(m, m + 7), ts, true, epk);
                         }
                         {
-                            int M = Gecode::Int::Limits::max;
+                            int m = Gecode::Int::Limits::max;
                             TupleSet ts(3);
-                            ts.add({M - 0, M - 1, M - 2})
-                                .add({M - 4, M - 1, M - 3})
-                                .add({M - 2, M - 3, M - 0})
-                                .add({M - 2, M - 3, M - 0})
-                                .add({M - 1, M - 2, M - 5})
-                                .add({M - 2, M - 3, M - 0})
-                                .add({M - 3, M - 6, M - 5})
+                            ts.add({m - 0, m - 1, m - 2})
+                                .add({m - 4, m - 1, m - 3})
+                                .add({m - 2, m - 3, m - 0})
+                                .add({m - 2, m - 3, m - 0})
+                                .add({m - 1, m - 2, m - 5})
+                                .add({m - 2, m - 3, m - 0})
+                                .add({m - 3, m - 6, m - 5})
                                 .finalize(epk);
-                            (void)new TupleSetTest("Max", pos, IntSet(M - 7, M), ts, true, epk);
+                            (void)new TupleSetTest("Max", pos, IntSet(m - 7, m), ts, true, epk);
                         }
                         {
-                            int m = Gecode::Int::Limits::min;
-                            int M = Gecode::Int::Limits::max;
+                            int lower_limit = Gecode::Int::Limits::min;
+                            int upper_limit = Gecode::Int::Limits::max;
                             TupleSet ts(3);
-                            ts.add({M - 0, m + 1, M - 2})
-                                .add({m + 4, M - 1, M - 3})
-                                .add({m + 2, M - 3, m + 0})
-                                .add({M - 2, M - 3, M - 0})
+                            ts.add({upper_limit - 0, lower_limit + 1, upper_limit - 2})
+                                .add({lower_limit + 4, upper_limit - 1, upper_limit - 3})
+                                .add({lower_limit + 2, upper_limit - 3, lower_limit + 0})
+                                .add({upper_limit - 2, upper_limit - 3, upper_limit - 0})
                                 .finalize(epk);
-                            (void)new TupleSetTest("MinMax", pos, IntSet(IntArgs({m, m + 1, m + 4, M - 3, M - 2, M})),
+                            (void)new TupleSetTest("MinMax", pos,
+                                                   IntSet(IntArgs({lower_limit, lower_limit + 1, lower_limit + 4,
+                                                                   upper_limit - 3, upper_limit - 2, upper_limit})),
                                                    ts, true, epk);
                         }
                         {
@@ -2275,10 +2277,10 @@ namespace Test { namespace Int {
                         {
                             const double prob_small = (epk == EPK_DENSE) ? 0.05 : 0.01;
                             (void)new RandomTupleSetTest("Rand(10,-1,2)", pos, IntSet(-1, 2),
-                                                         randomTupleSet(10, -1, 2, prob_small, epk, rand), epk);
+                                                         random_tuple_set(10, -1, 2, prob_small, epk, rand), epk);
                             if (epk == EPK_DENSE)
                                 (void)new RandomTupleSetTest("Rand(5,-10,10)", pos, IntSet(-10, 10),
-                                                             randomTupleSet(5, -10, 10, 0.05, epk, rand), epk);
+                                                             random_tuple_set(5, -10, 10, 0.05, epk, rand), epk);
                         }
                         {
                             TupleSet t(5);

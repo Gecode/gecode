@@ -94,18 +94,18 @@ public:
         f.update(*this, p.f);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new DescartesFolium(*this);
     }
     /// Cost function
-    virtual FloatVar
-    cost(void) const {
+    FloatVar
+    cost(void) const override {
         return f[0];
     }
     /// Print solution coordinates
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "XY " << f[1].med() << " " << f[2].med() << std::endl;
     }
 };

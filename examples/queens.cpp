@@ -97,14 +97,14 @@ public:
     }
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Queens(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "queens\t";
         for (int i = 0; i < q.size(); i++) {
             os << q[i] << ", ";
@@ -130,13 +130,15 @@ public:
     /// Constructor
     QueensInspector(void) : scene(nullptr), mw(nullptr) {}
     /// Inspect space \a s
-    virtual void
-    inspect(const Space& s) {
+    void
+    inspect(const Space& s) override {
         const Queens& q = static_cast<const Queens&>(s);
+        const int inset = unit / 4;
+        const int diameter = unit / 2;
 
         if (!scene)
             initialize();
-        QList<QGraphicsItem*> itemList = scene->items();
+        QList<QGraphicsItem*> item_list = scene->items();
         foreach (QGraphicsItem* i, scene->items()) {
             scene->removeItem(i);
             delete i;
@@ -149,7 +151,7 @@ public:
             QBrush b(q.q[i].assigned() ? Qt::black : Qt::red);
             QPen p(q.q[i].assigned() ? Qt::black : Qt::white);
             for (IntVarValues xv(q.q[i]); xv(); ++xv) {
-                scene->addEllipse(QRectF(i * unit + unit / 4, xv.val() * unit + unit / 4, unit / 2, unit / 2), p, b);
+                scene->addEllipse(QRectF(i * unit + inset, xv.val() * unit + inset, diameter, diameter), p, b);
             }
         }
         mw->show();
@@ -165,20 +167,20 @@ public:
         mw->setCentralWidget(view);
         mw->setAttribute(Qt::WA_QuitOnClose, false);
         mw->setAttribute(Qt::WA_DeleteOnClose, false);
-        QAction* closeWindow = new QAction("Close window", mw);
-        closeWindow->setShortcut(QKeySequence("Ctrl+W"));
-        mw->connect(closeWindow, SIGNAL(triggered()), mw, SLOT(close()));
-        mw->addAction(closeWindow);
+        QAction* close_window = new QAction("Close window", mw);
+        close_window->setShortcut(QKeySequence("Ctrl+W"));
+        mw->connect(close_window, SIGNAL(triggered()), mw, SLOT(close()));
+        mw->addAction(close_window);
     }
 
     /// Name of the inspector
-    virtual std::string
-    name(void) {
+    std::string
+    name(void) override {
         return "Board";
     }
     /// Finalize inspector
-    virtual void
-    finalize(void) {
+    void
+    finalize(void) override {
         delete mw;
         mw = nullptr;
     }

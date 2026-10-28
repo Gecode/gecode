@@ -47,17 +47,13 @@
 void yyerror(void*, const char*);
 #define yyerror(s) yyerror(yyextra, s)
 
-#include <errno.h>
-#include <stdlib.h>
+#include <cerrno>
+#include <cstdlib>
 
 #include <gecode/flatzinc/parser.hh>
 
-const char* stringbuf;
-int stringbuflen;
-int stringbufpos;
-
-bool parseInt(const char* text, int& value) {
-  long int result = strtol(text,NULL,0);
+bool parse_int(const char* text, int& value) {
+  long int result = strtol(text,nullptr,0);
   if ( (result == LONG_MAX || result == LONG_MIN) && errno == ERANGE )
     return false;
   if (result < Gecode::Int::Limits::min || result > Gecode::Int::Limits::max)
@@ -77,9 +73,9 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 [ \t\r]           { /* ignore whitespace */ }
 %.*               { /* ignore comments */ }
 
-"true"            { yylval->iValue = 1; return FZ_BOOL_LIT; }
-"false"           { yylval->iValue = 0; return FZ_BOOL_LIT; }
--?[0-9]+          { if (parseInt(yytext,yylval->iValue))
+"true"            { yylval->int_value = 1; return FZ_BOOL_LIT; }
+"false"           { yylval->int_value = 0; return FZ_BOOL_LIT; }
+-?[0-9]+          { if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
@@ -88,7 +84,7 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
                       + ".." + std::to_string(Gecode::Int::Limits::max)
                       + ")").c_str());
                   }
--?0x[0-9A-Fa-f]+  {  if (parseInt(yytext,yylval->iValue))
+-?0x[0-9A-Fa-f]+  {  if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
@@ -97,7 +93,7 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
                       + ".." + std::to_string(Gecode::Int::Limits::max)
                       + ")").c_str());
                   }
--?0o[0-7]+        { if (parseInt(yytext,yylval->iValue))
+-?0o[0-7]+        { if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
@@ -106,11 +102,11 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
                       + ".." + std::to_string(Gecode::Int::Limits::max)
                       + ")").c_str());
                   }
--?[0-9]+\.[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+-?[0-9]+\.[0-9]+  { yylval->float_value = strtod(yytext,nullptr);
                     return FZ_FLOAT_LIT; }
--?[0-9]+\.[0-9]+[Ee][+-]?[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+-?[0-9]+\.[0-9]+[Ee][+-]?[0-9]+  { yylval->float_value = strtod(yytext,nullptr);
                                    return FZ_FLOAT_LIT; }
--?[0-9]+[Ee][+-]?[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+-?[0-9]+[Ee][+-]?[0-9]+  { yylval->float_value = strtod(yytext,nullptr);
                            return FZ_FLOAT_LIT; }
 [=:;{}(),\[\]\.]    { return *yytext; }
 \.\.              { return FZ_DOTDOT; }
@@ -132,12 +128,12 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 "include"         { return FZ_INCLUDE; }
 "int"             { return FZ_INT; }
 "let"             { return FZ_LET; }
-"maximize"        { yylval->bValue = false; return FZ_MAXIMIZE; }
-"minimize"        { yylval->bValue = true; return FZ_MINIMIZE; }
+"maximize"        { yylval->bool_value = false; return FZ_MAXIMIZE; }
+"minimize"        { yylval->bool_value = true; return FZ_MINIMIZE; }
 "of"              { return FZ_OF; }
 "satisfy"         { return FZ_SATISFY; }
 "output"          { return FZ_OUTPUT; }
-"par"             { yylval->bValue = false; return FZ_PAR; }
+"par"             { yylval->bool_value = false; return FZ_PAR; }
 "predicate"       { return FZ_PREDICATE; }
 "record"          { return FZ_RECORD; }
 "set"             { return FZ_SET; }
@@ -149,21 +145,21 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 "then"            { return FZ_THEN; }
 "tuple"           { return FZ_TUPLE; }
 "type"            { return FZ_TYPE; }
-"var"             { yylval->bValue = true; return FZ_VAR; }
+"var"             { yylval->bool_value = true; return FZ_VAR; }
 "variant_record"  { return FZ_VARIANT_RECORD; }
 "where"           { return FZ_WHERE; }
-[A-Za-z][A-Za-z0-9_]* { yylval->sValue = strdup(yytext); return FZ_ID; }
-_[_]*[A-Za-z][A-Za-z0-9_]* { yylval->sValue = strdup(yytext); return FZ_U_ID; }
+[A-Za-z][A-Za-z0-9_]* { yylval->string_value = strdup(yytext); return FZ_ID; }
+_[_]*[A-Za-z][A-Za-z0-9_]* { yylval->string_value = strdup(yytext); return FZ_U_ID; }
 \"[^"\n]*\"       {
-                    yylval->sValue = strdup(yytext+1);
-                    yylval->sValue[strlen(yytext)-2] = 0;
+                    yylval->string_value = strdup(yytext+1);
+                    yylval->string_value[strlen(yytext)-2] = 0;
                     return FZ_STRING_LIT; }
 .                 { yyerror("Unknown character"); }
 %%
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {
   Gecode::FlatZinc::ParserState* parm =
     static_cast<Gecode::FlatZinc::ParserState*>(yyget_extra(yyscanner));
-  return parm->fillBuffer(buf, size);
+  return parm->fill_buffer(buf, size);
   // work around warning that yyunput is unused
   yyunput (0,buf,yyscanner);
 }

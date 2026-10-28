@@ -62,8 +62,8 @@ namespace Test {
                 Gecode::rel(*this, x, Gecode::IRT_LE, y);
             }
             /// Copy during cloning
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new TestSpace(*this);
             }
         };
@@ -90,7 +90,7 @@ namespace Test {
         AFC(void) : Test::Base("AFC") {}
         /// Perform actual tests
         bool
-        run(void) {
+        run(void) override {
             // Array of spaces for tests
             TestSpace* s[n];
             // How many spaces exist in s
@@ -157,8 +157,8 @@ namespace Test {
                 y.update(*this, s.y);
                 b.update(*this, s.b);
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new TestSpace(*this);
             }
             /// Find a surviving propagator by its identifier
@@ -177,6 +177,7 @@ namespace Test {
                 for (Propagators ps(*this); ps(); ++ps)
                     if ((p == nullptr) || (ps.propagator().id() > p->id()))
                         p = &ps.propagator();
+                assert(p != nullptr);
                 return *p;
             }
         };
@@ -330,8 +331,8 @@ namespace Test {
 
     public:
         NoGPI(void) : Test::Base("AFC::NoGPI") {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return scopes() && lifetime() && failure(false) && failure(true) && rewrite(false) && rewrite(true);
         }
     };

@@ -40,47 +40,50 @@ namespace Gecode {
 
     SetVar::SetVar(Space& home) : VarImpVar<Set::SetVarImp>(new (home) Set::SetVarImp(home)) {}
 
-    SetVar::SetVar(Space& home, int lbMin, int lbMax, int ubMin, int ubMax, unsigned int minCard, unsigned int maxCard)
-        : VarImpVar<Set::SetVarImp>(new (home) Set::SetVarImp(home, lbMin, lbMax, ubMin, ubMax, minCard, maxCard)) {
-        Set::Limits::check(lbMin, "SetVar::SetVar");
-        Set::Limits::check(lbMax, "SetVar::SetVar");
-        Set::Limits::check(ubMin, "SetVar::SetVar");
-        Set::Limits::check(ubMax, "SetVar::SetVar");
-        Set::Limits::check(maxCard, "SetVar::SetVar");
-        if (minCard > maxCard || minCard > lubSize() || maxCard < glbSize() || lbMin < ubMin || lbMax > ubMax)
+    SetVar::SetVar(Space& home, int lb_min, int lb_max, int ub_min, int ub_max, unsigned int min_card,
+                   unsigned int max_card)
+        : VarImpVar<Set::SetVarImp>(new (home)
+                                        Set::SetVarImp(home, lb_min, lb_max, ub_min, ub_max, min_card, max_card)) {
+        Set::Limits::check(lb_min, "SetVar::SetVar");
+        Set::Limits::check(lb_max, "SetVar::SetVar");
+        Set::Limits::check(ub_min, "SetVar::SetVar");
+        Set::Limits::check(ub_max, "SetVar::SetVar");
+        Set::Limits::check(max_card, "SetVar::SetVar");
+        if (min_card > max_card || min_card > lub_size() || max_card < glb_size() || lb_min < ub_min || lb_max > ub_max)
             throw Set::VariableEmptyDomain("SetVar::SetVar");
     }
 
-    SetVar::SetVar(Space& home, const IntSet& glb, int ubMin, int ubMax, unsigned int minCard, unsigned int maxCard)
-        : VarImpVar<Set::SetVarImp>(new (home) Set::SetVarImp(home, glb, ubMin, ubMax, minCard, maxCard)) {
+    SetVar::SetVar(Space& home, const IntSet& glb, int ub_min, int ub_max, unsigned int min_card, unsigned int max_card)
+        : VarImpVar<Set::SetVarImp>(new (home) Set::SetVarImp(home, glb, ub_min, ub_max, min_card, max_card)) {
         Set::Limits::check(glb, "SetVar::SetVar");
-        Set::Limits::check(ubMin, "SetVar::SetVar");
-        Set::Limits::check(ubMax, "SetVar::SetVar");
-        Set::Limits::check(maxCard, "SetVar::SetVar");
-        if (minCard > maxCard || minCard > lubSize() || maxCard < glbSize() || glb.min() < ubMin || glb.max() > ubMax)
+        Set::Limits::check(ub_min, "SetVar::SetVar");
+        Set::Limits::check(ub_max, "SetVar::SetVar");
+        Set::Limits::check(max_card, "SetVar::SetVar");
+        if (min_card > max_card || min_card > lub_size() || max_card < glb_size() || glb.min() < ub_min ||
+            glb.max() > ub_max)
             throw Set::VariableEmptyDomain("SetVar::SetVar");
     }
 
-    SetVar::SetVar(Space& home, int lbMin, int lbMax, const IntSet& lub, unsigned int minCard, unsigned int maxCard)
-        : VarImpVar<Set::SetVarImp>(new (home) Set::SetVarImp(home, lbMin, lbMax, lub, minCard, maxCard)) {
-        Set::Limits::check(lbMin, "SetVar::SetVar");
-        Set::Limits::check(lbMax, "SetVar::SetVar");
+    SetVar::SetVar(Space& home, int lb_min, int lb_max, const IntSet& lub, unsigned int min_card, unsigned int max_card)
+        : VarImpVar<Set::SetVarImp>(new (home) Set::SetVarImp(home, lb_min, lb_max, lub, min_card, max_card)) {
+        Set::Limits::check(lb_min, "SetVar::SetVar");
+        Set::Limits::check(lb_max, "SetVar::SetVar");
         Set::Limits::check(lub, "SetVar::SetVar");
-        Set::Limits::check(maxCard, "SetVar::SetVar");
-        Iter::Ranges::Singleton glbr(lbMin, lbMax);
+        Set::Limits::check(max_card, "SetVar::SetVar");
+        Iter::Ranges::Singleton glbr(lb_min, lb_max);
         IntSetRanges lubr(lub);
-        if (minCard > maxCard || minCard > lubSize() || maxCard < glbSize() || !Iter::Ranges::subset(glbr, lubr))
+        if (min_card > max_card || min_card > lub_size() || max_card < glb_size() || !Iter::Ranges::subset(glbr, lubr))
             throw Set::VariableEmptyDomain("SetVar::SetVar");
     }
 
-    SetVar::SetVar(Space& home, const IntSet& glb, const IntSet& lub, unsigned int minCard, unsigned int maxCard)
-        : VarImpVar<Set::SetVarImp>(new (home) Set::SetVarImp(home, glb, lub, minCard, maxCard)) {
+    SetVar::SetVar(Space& home, const IntSet& glb, const IntSet& lub, unsigned int min_card, unsigned int max_card)
+        : VarImpVar<Set::SetVarImp>(new (home) Set::SetVarImp(home, glb, lub, min_card, max_card)) {
         Set::Limits::check(glb, "SetVar::SetVar");
         Set::Limits::check(lub, "SetVar::SetVar");
-        Set::Limits::check(maxCard, "SetVar::SetVar");
+        Set::Limits::check(max_card, "SetVar::SetVar");
         IntSetRanges glbr(glb);
         IntSetRanges lubr(lub);
-        if (minCard > maxCard || minCard > lubSize() || maxCard < glbSize() || !Iter::Ranges::subset(glbr, lubr))
+        if (min_card > max_card || min_card > lub_size() || max_card < glb_size() || !Iter::Ranges::subset(glbr, lubr))
             throw Set::VariableEmptyDomain("SetVar::SetVar");
     }
 

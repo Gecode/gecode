@@ -115,8 +115,8 @@ namespace Gecode { namespace FlatZinc {
         vars.expand(home, x, y);
         ViewArray<Int::IntView> xv(home, x);
         ViewArray<Int::BoolView> yv(home, y);
-        ValSelCommitBase<Int::IntView, int>* xvsc = Int::Branch::valselcommit(home, vals);
-        ValSelCommitBase<Int::BoolView, int>* yvsc = Int::Branch::valselcommit(home, i2b(vals));
+        ValSelCommitBase<Int::IntView, int>* xvsc = Int::Branch::value_selection_commit(home, vals);
+        ValSelCommitBase<Int::BoolView, int>* yvsc = Int::Branch::value_selection_commit(home, i2b(vals));
         switch (vars.select()) {
         case IntBoolVarBranch::SEL_AFC_MAX: {
             MeritMaxAFC m(home, vars);

@@ -42,7 +42,7 @@ namespace Gecode { namespace Gist {
     class NodeCursor {
     private:
         /// The node where the iteration starts
-        Node* _startNode;
+        Node* _start_node;
         /// The current node
         Node* _node;
         /// The current alternative
@@ -54,11 +54,11 @@ namespace Gecode { namespace Gist {
         /// Set current node to \a n
         void node(Node* n);
         /// Return start node
-        Node* startNode(void);
+        Node* start_node(void);
 
     public:
-        /// Construct cursor, initially set to \a theNode
-        NodeCursor(Node* theNode, const typename Node::NodeAllocator& na);
+        /// Construct cursor, initially set to \a current_node
+        NodeCursor(Node* current_node, const typename Node::NodeAllocator& na);
         /// Return current node
         Node* node(void);
         /// Return current alternative
@@ -69,34 +69,34 @@ namespace Gecode { namespace Gist {
         /// \name Cursor interface
         //@{
         /// Test if the cursor may move to the parent node
-        bool mayMoveUpwards(void);
+        bool may_move_upwards(void);
         /// Move cursor to the parent node
-        void moveUpwards(void);
+        void move_upwards(void);
         /// Test if cursor may move to the first child node
-        bool mayMoveDownwards(void);
+        bool may_move_downwards(void);
         /// Move cursor to the first child node
-        void moveDownwards(void);
+        void move_downwards(void);
         /// Test if cursor may move to the first sibling
-        bool mayMoveSidewards(void);
+        bool may_move_sidewards(void);
         /// Move cursor to the first sibling
-        void moveSidewards(void);
+        void move_sidewards(void);
         //@}
     };
 
     /// \brief A cursor that marks failed subtrees as hidden
     class HideFailedCursor : public NodeCursor<VisualNode> {
     private:
-        bool onlyDirty;
+        bool only_dirty;
 
     public:
         /// Constructor
-        HideFailedCursor(VisualNode* theNode, const VisualNode::NodeAllocator& na, bool onlyDirtyNodes);
+        HideFailedCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na, bool only_dirty_nodes);
         /// \name Cursor interface
         //@{
         /// Test if the cursor may move to the first child node
-        bool mayMoveDownwards(void);
+        bool may_move_downwards(void);
         /// Process node
-        void processCurrentNode(void);
+        void process_current_node(void);
         //@}
     };
 
@@ -104,11 +104,11 @@ namespace Gecode { namespace Gist {
     class UnhideAllCursor : public NodeCursor<VisualNode> {
     public:
         /// Constructor
-        UnhideAllCursor(VisualNode* theNode, const VisualNode::NodeAllocator& na);
+        UnhideAllCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na);
         /// \name Cursor interface
         //@{
         /// Process node
-        void processCurrentNode(void);
+        void process_current_node(void);
         //@}
     };
 
@@ -116,11 +116,11 @@ namespace Gecode { namespace Gist {
     class UnstopAllCursor : public NodeCursor<VisualNode> {
     public:
         /// Constructor
-        UnstopAllCursor(VisualNode* theNode, const VisualNode::NodeAllocator& na);
+        UnstopAllCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na);
         /// \name Cursor interface
         //@{
         /// Process node
-        void processCurrentNode(void);
+        void process_current_node(void);
         //@}
     };
 
@@ -130,25 +130,25 @@ namespace Gecode { namespace Gist {
         /// Whether to search backwards
         bool back;
         /// Whether the current node is not a solution
-        bool notOnSol(void);
+        bool not_on_sol(void);
 
     public:
         /// Constructor
-        NextSolCursor(VisualNode* theNode, bool backwards, const VisualNode::NodeAllocator& na);
+        NextSolCursor(VisualNode* the_node, bool backwards, const VisualNode::NodeAllocator& na);
         /// \name Cursor interface
         //@{
         /// Do nothing
-        void processCurrentNode(void);
+        void process_current_node(void);
         /// Test if the cursor may move to the parent node
-        bool mayMoveUpwards(void);
+        bool may_move_upwards(void);
         /// Test if cursor may move to the first child node
-        bool mayMoveDownwards(void);
+        bool may_move_downwards(void);
         /// Move cursor to the first child node
-        void moveDownwards(void);
+        void move_downwards(void);
         /// Test if cursor may move to the first sibling
-        bool mayMoveSidewards(void);
+        bool may_move_sidewards(void);
         /// Move cursor to the first sibling
-        void moveSidewards(void);
+        void move_sidewards(void);
         //@}
     };
 
@@ -156,7 +156,7 @@ namespace Gecode { namespace Gist {
     class StatCursor : public NodeCursor<VisualNode> {
     private:
         /// Current depth
-        int curDepth;
+        int cur_depth;
 
     public:
         /// Depth of the search tree
@@ -171,16 +171,16 @@ namespace Gecode { namespace Gist {
         int open;
 
         /// Constructor
-        StatCursor(VisualNode* theNode, const VisualNode::NodeAllocator& na);
+        StatCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na);
 
         /// \name Cursor interface
         //@{
         /// Collect statistics
-        void processCurrentNode(void);
+        void process_current_node(void);
         /// Move cursor to the first child node
-        void moveDownwards(void);
+        void move_downwards(void);
         /// Move cursor to the parent node
-        void moveUpwards(void);
+        void move_upwards(void);
         //@}
     };
 
@@ -190,7 +190,7 @@ namespace Gecode { namespace Gist {
         /// The node allocator
         VisualNode::NodeAllocator& _na;
         /// Current best solution
-        BestNode* _curBest;
+        BestNode* _cur_best;
         /// Recomputation distance
         int _c_d;
         /// Adaptive rcomputation distance
@@ -200,11 +200,11 @@ namespace Gecode { namespace Gist {
 
     public:
         /// Constructor
-        BranchLabelCursor(VisualNode* theNode, BestNode* curBest, int c_d, int a_d, bool clear,
+        BranchLabelCursor(VisualNode* the_node, BestNode* cur_best, int c_d, int a_d, bool clear,
                           VisualNode::NodeAllocator& na);
         /// \name Cursor interface
         //@{
-        void processCurrentNode(void);
+        void process_current_node(void);
         //@}
     };
 
@@ -212,12 +212,12 @@ namespace Gecode { namespace Gist {
     class DisposeCursor : public NodeCursor<VisualNode> {
     public:
         /// Constructor
-        DisposeCursor(VisualNode* theNode, const VisualNode::NodeAllocator& na);
+        DisposeCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na);
 
         /// \name Cursor interface
         //@{
         /// Dispose node
-        void processCurrentNode(void);
+        void process_current_node(void);
         //@}
     };
 

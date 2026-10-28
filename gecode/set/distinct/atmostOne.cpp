@@ -60,39 +60,39 @@ namespace Gecode { namespace Set { namespace Distinct {
         for (int i = x.size(); i--;) {
             lubs[i].init(x[i]);
         }
-        Iter::Ranges::NaryUnion bigT(r, lubs, x.size());
+        Iter::Ranges::NaryUnion big_t(r, lubs, x.size());
 
-        Iter::Ranges::ToValues<Iter::Ranges::NaryUnion> as(bigT);
+        Iter::Ranges::ToValues<Iter::Ranges::NaryUnion> as(big_t);
 
         while (as()) {
             int a = as.val();
             ++as;
 
             // cardSa is the number of sets that contain a in the glb
-            int cardSa = 0;
+            int card_sa = 0;
             for (int i = x.size(); i--;)
                 if (x[i].contains(a))
-                    cardSa++;
+                    card_sa++;
 
             // bigTa is the union of all lubs that contain a
-            GLBndSet bigTa(home);
+            GLBndSet big_ta(home);
             for (int i = x.size(); i--;) {
-                if (!x[i].notContains(a)) {
+                if (!x[i].not_contains(a)) {
                     LubRanges<SetView> xilub(x[i]);
-                    bigTa.includeI(home, xilub);
+                    big_ta.include_i(home, xilub);
                 }
             }
 
             // maxa is the maximum number of sets that can contain a
-            int maxa = static_cast<int>((bigTa.size() - 1) / (c - 1));
-            bigTa.dispose(home);
+            int maxa = static_cast<int>((big_ta.size() - 1) / (c - 1));
+            big_ta.dispose(home);
 
             // Conditional Rule A:
             // If more sets already contain a than allowed, fail.
-            if (maxa < cardSa)
+            if (maxa < card_sa)
                 return ES_FAILED;
 
-            if (maxa == cardSa) {
+            if (maxa == card_sa) {
                 // Conditional Rule B:
                 // All a used up. All other sets (those that don't have a in their
                 // glb already) cannot contain a.
@@ -106,9 +106,9 @@ namespace Gecode { namespace Set { namespace Distinct {
                 for (int i = x.size(); i--;) {
                     lubs2[i].init(x[i]);
                 }
-                Iter::Ranges::NaryUnion bigT2(r, lubs2, x.size());
+                Iter::Ranges::NaryUnion big_t2(r, lubs2, x.size());
 
-                GlbRanges<SetView>* glbs = r.alloc<GlbRanges<SetView>>(cardSa);
+                GlbRanges<SetView>* glbs = r.alloc<GlbRanges<SetView>>(card_sa);
                 int count = 0;
                 for (int i = x.size(); i--;) {
                     if (x[i].contains(a)) {
@@ -116,14 +116,14 @@ namespace Gecode { namespace Set { namespace Distinct {
                         count++;
                     }
                 }
-                Iter::Ranges::NaryUnion glbsa(r, glbs, cardSa);
-                Iter::Ranges::Diff<Iter::Ranges::NaryUnion, Iter::Ranges::NaryUnion> deltaA(bigT2, glbsa);
-                Iter::Ranges::Cache deltaAC(r, deltaA);
+                Iter::Ranges::NaryUnion glbsa(r, glbs, card_sa);
+                Iter::Ranges::Diff<Iter::Ranges::NaryUnion, Iter::Ranges::NaryUnion> delta_a(big_t2, glbsa);
+                Iter::Ranges::Cache delta_ac(r, delta_a);
                 // deltaAC contains all elements that are not yet known to be
                 // in a set together with a.
                 // Formally: \cup_i lub(x_i) - \cup_i {glb(s_i) | a\in glb(s_i)}
 
-                if (Iter::Ranges::size(deltaAC) == c - 1) {
+                if (Iter::Ranges::size(delta_ac) == c - 1) {
                     // Conditional Rule C:
                     // If deltaA has exactly c-1 elements, all sets that are not yet
                     // known to contain a cannot contain a if it is impossible that
@@ -133,10 +133,10 @@ namespace Gecode { namespace Set { namespace Distinct {
                     // with another set that has a in its lower bound.
                     // Weird, eh?
                     for (int i = x.size(); i--;) {
-                        if (!x[i].contains(a) && !x[i].notContains(a)) {
-                            deltaAC.reset();
+                        if (!x[i].contains(a) && !x[i].not_contains(a)) {
+                            delta_ac.reset();
                             LubRanges<SetView> xilub(x[i]);
-                            if (!Iter::Ranges::subset(deltaAC, xilub)) {
+                            if (!Iter::Ranges::subset(delta_ac, xilub)) {
                                 GECODE_ME_CHECK(x[i].exclude(home, a));
                             }
                         }

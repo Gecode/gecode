@@ -623,9 +623,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// Energy envelope for subtree
         long long int lenv;
         /// Node which is responsible for le
-        int resLe;
+        int res_le;
         /// Node which is responsible for lenv
-        int resLenv;
+        int res_lenv;
         /// Initialize node from left child \a l and right child \a r
         void init(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
         /// Update node from left child \a l and right child \a r
@@ -650,7 +650,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// Shift task with index \a i from omega to lambda
         void shift(int i);
         /// Remove task with index \a i from lambda
-        void lremove(int i);
+        void remove_lambda(int i);
         /// Whether has responsible task
         bool lempty(void) const;
         /// Return responsible task
@@ -712,7 +712,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     /// Propagate by edge-finding
     template <class Task>
-    ExecStatus edgefinding(Space& home, int c, TaskArray<Task>& t);
+    ExecStatus edge_finding(Space& home, int c, TaskArray<Task>& t);
 
     /**
      * \brief Scheduling propagator for cumulative resource with mandatory tasks
@@ -733,15 +733,15 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     public:
         /// Return propagation cost
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator that schedules tasks on cumulative resource
         static ExecStatus post(Home home, Cap c, TaskArray<ManTask>& t);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -763,24 +763,24 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     public:
         /// Return propagation cost
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator that schedules tasks on cumulative resource
         static ExecStatus post(Home home, Cap c, TaskArray<OptTask>& t);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /// Post mandatory task propagator according to propagation level
     template <class ManTask, class Cap>
-    ExecStatus cmanpost(Home home, Cap c, TaskArray<ManTask>& t, IntPropLevel ipl);
+    ExecStatus post_mandatory(Home home, Cap c, TaskArray<ManTask>& t, IntPropLevel ipl);
 
     /// Post optional task propagator according to propagation level
     template <class OptTask, class Cap>
-    ExecStatus coptpost(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl);
+    ExecStatus post_optional(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl);
 
 }}} // namespace Gecode::Int::Cumulative
 

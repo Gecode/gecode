@@ -70,13 +70,13 @@ namespace Gecode { namespace Int {
         }
 
     public:
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return PropCost::linear(PropCost::LO, list.known_length() - processed);
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             length.reschedule(home, *this, PC_INT_BND);
             list.reschedule(home, *this);
         }

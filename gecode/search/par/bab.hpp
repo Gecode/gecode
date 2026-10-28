@@ -287,7 +287,7 @@ namespace Gecode { namespace Search { namespace Par {
                             if (tracer) {
                                 if (path.entries() > 0) {
                                     typename Path<Tracer>::Edge& top = path.top();
-                                    ei.init(tracer.wid(), top.nid(), top.truealt(), *cur, *top.choice());
+                                    ei.init(tracer.wid(), top.nid(), top.true_alternative(), *cur, *top.choice());
                                 } else if (*tracer.ei()) {
                                     ei = *tracer.ei();
                                     tracer.invalidate();

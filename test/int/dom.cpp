@@ -50,24 +50,24 @@ namespace Test { namespace Int {
             /// Create and register test
             DomInt(int n) : Test("Dom::Int::" + str(n), n, -4, 4, n == 1, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = x.size(); i--;)
                     if (x[i] != -2)
                         return false;
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 if (x.size() == 1)
                     Gecode::dom(home, x[0], -2);
                 else
                     Gecode::dom(home, x, -2);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 assert(x.size() == 1);
                 if (_rand(2) != 0) {
                     Gecode::dom(home, x[0], -2, r);
@@ -95,24 +95,24 @@ namespace Test { namespace Int {
             /// Create and register test
             DomRange(int n) : Test("Dom::Range::" + str(n), n, -4, 4, n == 1, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = x.size(); i--;)
                     if ((x[i] < -2) || (x[i] > 2))
                         return false;
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 if (x.size() == 1)
                     Gecode::dom(home, x[0], -2, 2);
                 else
                     Gecode::dom(home, x, -2, 2);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 assert(x.size() == 1);
                 if (_rand(2) != 0) {
                     Gecode::dom(home, x[0], -2, 2, r);
@@ -140,18 +140,18 @@ namespace Test { namespace Int {
             /// Create and register test
             DomRangeEmpty(void) : Test("Dom::Range::Empty", 1, -4, 4, true) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment&) const {
+            bool
+            solution(const Assignment&) const override {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray&) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray&) override {
                 home.fail();
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::dom(home, x[0], 3, 2, r);
             }
         };
@@ -165,8 +165,8 @@ namespace Test { namespace Int {
             /// Create and register test
             DomDom(int n) : Test("Dom::Dom::" + str(n), n, -6, 6, n == 1, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = x.size(); i--;)
                     if (!(((x[i] >= -4) && (x[i] <= -3)) || ((x[i] >= -1) && (x[i] <= -1)) ||
                           ((x[i] >= 1) && (x[i] <= 1)) || ((x[i] >= 3) && (x[i] <= 5))))
@@ -174,16 +174,16 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 if (x.size() == 1)
                     Gecode::dom(home, x[0], d);
                 else
                     Gecode::dom(home, x, d);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 assert(x.size() == 1);
                 if (_rand(2) != 0) {
                     Gecode::dom(home, x[0], d, r);

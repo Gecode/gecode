@@ -39,7 +39,7 @@ namespace Gecode { namespace Set {
     /// Print bound of a set view or variable
     template <class Char, class Traits, class I>
     void
-    printBound(std::basic_ostream<Char, Traits>& s, I& r) {
+    print_bound(std::basic_ostream<Char, Traits>& s, I& r) {
         s << '{';
         while (r()) {
             if (r.min() == r.max()) {
@@ -60,18 +60,18 @@ namespace Gecode { namespace Set {
     /// Print set view
     template <class Char, class Traits, class IL, class IU>
     void
-    print(std::basic_ostream<Char, Traits>& s, bool assigned, IL& lb, IU& ub, unsigned int cardMin,
-          unsigned int cardMax) {
+    print(std::basic_ostream<Char, Traits>& s, bool assigned, IL& lb, IU& ub, unsigned int card_min,
+          unsigned int card_max) {
         if (assigned) {
-            printBound(s, ub);
+            print_bound(s, ub);
         } else {
-            printBound(s, lb);
+            print_bound(s, lb);
             s << "..";
-            printBound(s, ub);
-            if (cardMin == cardMax) {
-                s << "#(" << cardMin << ")";
+            print_bound(s, ub);
+            if (card_min == card_max) {
+                s << "#(" << card_min << ")";
             } else {
-                s << "#(" << cardMin << "," << cardMax << ")";
+                s << "#(" << card_min << "," << card_max << ")";
             }
         }
     }
@@ -84,7 +84,7 @@ namespace Gecode { namespace Set {
         s.width(0);
         LubRanges<SetView> ub(x);
         GlbRanges<SetView> lb(x);
-        print(s, x.assigned(), lb, ub, x.cardMin(), x.cardMax());
+        print(s, x.assigned(), lb, ub, x.card_min(), x.card_max());
         return os << s.str();
     }
 
@@ -112,8 +112,8 @@ namespace Gecode { namespace Set {
         s.copyfmt(os);
         s.width(0);
         LubRanges<ConstSetView> ub(x);
-        printBound(s, ub);
-        s << "#(" << x.cardMin() << ")";
+        print_bound(s, ub);
+        s << "#(" << x.card_min() << ")";
         return os << s.str();
     }
 
@@ -124,11 +124,11 @@ namespace Gecode { namespace Set {
         s.copyfmt(os);
         s.width(0);
         if (x.assigned()) {
-            s << "{" << x.glbMin() << "}#(1)";
+            s << "{" << x.glb_min() << "}#(1)";
         } else {
             LubRanges<SingletonView> ub(x);
             s << "{}..";
-            printBound(s, ub);
+            print_bound(s, ub);
             s << "#(1)";
         }
         return os << s.str();

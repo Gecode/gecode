@@ -78,6 +78,23 @@ changes downstream code needs.
 
 [ENTRY]
 Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Require C++23 and adopt four-space indentation and a 120-column limit with
+clang-format 22.
+Functions, variables, and members use snake_case; types retain PascalCase.
+Constants and functions that stand for constant values, such as ME_INT_VAL,
+ES_SUBSUMED, and INT_VAR_SIZE_MIN, retain UPPER_CASE. Public API names
+change, including no_overlap, bin_packing, and modification_event_delta.
+Update downstream source code before recompiling.
+[MORE]
+Add formatting, clang-tidy, and extended repository check commands. Extended
+checks include generated sources, CTest suites, installed-package consumers,
+and documentation. EditorConfig replaces per-file indentation headers.
+
+[ENTRY]
+Module: other
 What:   removed
 Rank:   major
 [DESCRIPTION]

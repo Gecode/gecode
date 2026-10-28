@@ -111,9 +111,9 @@ public:
         Matrix<SetVarArray> schedule(groups, g, w);
 
         // Groups in one week must be disjoint
-        SetVar allPlayers(*this, 0, g * s - 1, 0, g * s - 1);
+        SetVar all_players(*this, 0, g * s - 1, 0, g * s - 1);
         for (int i = 0; i < w; i++)
-            rel(*this, setdunion(schedule.row(i)) == allPlayers);
+            rel(*this, set_disjoint_union(schedule.row(i)) == all_players);
 
         // No two golfers play in the same group more than once
         if (opt.propagation() == PROP_SET || opt.propagation() == PROP_MIXED) {
@@ -125,12 +125,12 @@ public:
         if (opt.propagation() == PROP_INT || opt.propagation() == PROP_MIXED) {
             // Set up table mapping from pairs (p1,p2) (where p1<p2) of players to
             // unique integer identifiers
-            int playerCount = g * s;
+            int player_count = g * s;
             TupleSet ts(3);
-            int pairCount = 0;
-            for (int p1 = 0; p1 < playerCount - 1; p1++)
-                for (int p2 = p1 + 1; p2 < playerCount; p2++)
-                    ts.add({p1, p2, pairCount++});
+            int pair_count = 0;
+            for (int p1 = 0; p1 < player_count - 1; p1++)
+                for (int p2 = p1 + 1; p2 < player_count; p2++)
+                    ts.add({p1, p2, pair_count++});
             ts.finalize(EPK_AUTO);
 
             // Collect pairs of golfers into pairs
@@ -138,12 +138,12 @@ public:
             for (int i = 0; i < groups.size() - 1; i++) {
                 // Channel sorted will ensure that for i<j, group[i]<group[j],
                 // ensuring that the tuple set has a valid mapping.
-                IntVarArgs group(*this, s, 0, playerCount - 1);
-                channelSorted(*this, group, groups[i]);
+                IntVarArgs group(*this, s, 0, player_count - 1);
+                channel_sorted(*this, group, groups[i]);
                 // Collect all pairs in current group
                 for (int p1 = 0; p1 < group.size() - 1; ++p1) {
                     for (int p2 = p1 + 1; p2 < group.size(); ++p2) {
-                        IntVar pair(*this, 0, pairCount);
+                        IntVar pair(*this, 0, pair_count);
 
                         IntVarArgs args;
                         args << group[p1] << group[p2] << pair;
@@ -203,8 +203,8 @@ public:
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "Tournament plan" << std::endl;
         Matrix<SetVarArray> schedule(groups, g, w);
         for (int j = 0; j < w; j++) {
@@ -218,8 +218,8 @@ public:
         groups.update(*this, s.groups);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Golf(*this);
     }
 };

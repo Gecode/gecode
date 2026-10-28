@@ -65,7 +65,7 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Stop the meta engine if indicated by the stop object \a s
         RestartStop(Stop* s);
         /// Return true if meta engine must be stopped
-        virtual bool stop(const Statistics& s, const Options& o);
+        bool stop(const Statistics& s, const Options& o) override;
         /// Return current restart count
         unsigned long int restarts(void) const;
         /// Increment current restart count
@@ -110,15 +110,15 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Constructor
         RBS(Space* s, RestartStop* stop0, Engine* e0, const Search::Statistics& stat, const Options& o, bool best);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual Space* next(void);
+        Space* next(void) override;
         /// Return statistics
-        virtual Statistics statistics(void) const;
+        Statistics statistics(void) const override;
         /// Check whether engine has been stopped
-        virtual bool stopped(void) const;
+        bool stopped(void) const override;
         /// Constrain future solutions to be better than \a b
-        virtual void constrain(const Space& b);
+        void constrain(const Space& b) override;
         /// Destructor
-        virtual ~RBS(void);
+        ~RBS(void) override;
     };
 
 }}} // namespace Gecode::Search::Seq

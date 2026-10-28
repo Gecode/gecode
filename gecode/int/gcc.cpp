@@ -70,7 +70,7 @@ namespace Gecode {
         /// Remove duplicate entries in \a v from both \a v and \a c
         template <class A>
         void
-        removeDuplicates(Home home, A& c, IntArgs& v) {
+        remove_duplicates(Home home, A& c, IntArgs& v) {
             typedef typename A::value_type S;
             typedef std::pair<S, int> P;
             Region re;
@@ -110,7 +110,7 @@ namespace Gecode {
 
         GECODE_POST;
 
-        removeDuplicates(home, c, v);
+        remove_duplicates(home, c, v);
 
         ViewArray<IntView> xv(home, x);
         ViewArray<GCC::CardView> cv(home, c.size());
@@ -156,7 +156,7 @@ namespace Gecode {
 
         GECODE_POST;
 
-        removeDuplicates(home, c, v);
+        remove_duplicates(home, c, v);
 
         ViewArray<IntView> xv(home, x);
 

@@ -117,14 +117,16 @@ namespace Test { namespace Int {
         class LinExprDefault : public Test {
         public:
             LinExprDefault(void) : Test("MiniModel::LinExpr::Default", 1, -5, 5) {}
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return x[0] == 1;
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 LinIntExpr e;
+                // Exercise copying a default-constructed expression.
+                // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
                 LinIntExpr c(e);
                 LinIntExpr a = e + x[0];
                 LinIntExpr b = 2 + c;
@@ -143,17 +145,17 @@ namespace Test { namespace Int {
             /// Create and register test
             LinExprInt(const LinInstr* lis0, const std::string& s)
                 : Test(TestTags::sweep(), "MiniModel::LinExpr::Int::" + s, 4, -3, 3), lis(lis0) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int reg[3] = {x[0], x[1], x[2]};
                 return eval(lis, reg) == x[3];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::LinIntExpr reg[3] = {x[0], x[1], x[2]};
                 rel(home, x[3], IRT_EQ, Gecode::expr(home, eval(lis, reg)));
@@ -170,11 +172,11 @@ namespace Test { namespace Int {
             /// Create and register test
             LinExprBool(TestTags tags, const LinInstr* lis0, const std::string& s)
                 : Test(tags, "MiniModel::LinExpr::Bool::" + s, 4, -3, 3), lis(lis0) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 3; i--;)
                     if ((x[i] < 0) || (x[i] > 1))
                         return false;
@@ -182,8 +184,8 @@ namespace Test { namespace Int {
                 return eval(lis, reg) == x[3];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::LinIntExpr reg[3] = {channel(home, x[0]), channel(home, x[1]), channel(home, x[2])};
                 rel(home, x[3], IRT_EQ, Gecode::expr(home, eval(lis, reg)));
@@ -200,19 +202,19 @@ namespace Test { namespace Int {
             /// Create and register test
             LinExprMixed(const LinInstr* lis0, const std::string& s)
                 : Test(TestTags::sweep(), "MiniModel::LinExpr::Mixed::" + s, 4, -3, 3), lis(lis0) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 if ((x[2] < 0) || (x[2] > 1))
                     return false;
                 int reg[3] = {x[0], x[1], x[2]};
                 return eval(lis, reg) == x[3];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::LinIntExpr reg[3] = {x[0], x[1], channel(home, x[2])};
                 rel(home, x[3], IRT_EQ, Gecode::expr(home, eval(lis, reg)));
@@ -234,19 +236,19 @@ namespace Test { namespace Int {
             LinRelInt(const LinInstr* l_lis0, const LinInstr* r_lis0, Gecode::IntRelType irt0, const std::string& s)
                 : Test("MiniModel::LinRel::Int::" + s + "::" + str(irt0), 3, -3, 3, true), l_lis(l_lis0), r_lis(r_lis0),
                   irt(irt0) {
-                testfix = false;
+                test_fixpoint = false;
                 rms = (1 << Gecode::RM_EQV);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int l_reg[3] = {x[0], x[1], x[2]};
                 int r_reg[3] = {x[0], x[1], x[2]};
                 return cmp(eval(l_lis, l_reg), irt, eval(r_lis, r_reg));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::LinIntExpr l_reg[3] = {x[0], x[1], x[2]};
                 Gecode::LinIntExpr r_reg[3] = {x[0], x[1], x[2]};
@@ -280,8 +282,8 @@ namespace Test { namespace Int {
                 }
             }
             /// Post constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 assert(r.mode() == RM_EQV);
                 Gecode::LinIntExpr l_reg[3] = {x[0], x[1], x[2]};
@@ -326,19 +328,19 @@ namespace Test { namespace Int {
             LinRelBool(const LinInstr* l_lis0, const LinInstr* r_lis0, Gecode::IntRelType irt0, const std::string& s)
                 : Test("MiniModel::LinRel::Bool::" + s + "::" + str(irt0), 3, 0, 1, true), l_lis(l_lis0), r_lis(r_lis0),
                   irt(irt0) {
-                testfix = false;
+                test_fixpoint = false;
                 rms = (1 << Gecode::RM_EQV);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int l_reg[3] = {x[0], x[1], x[2]};
                 int r_reg[3] = {x[0], x[1], x[2]};
                 return cmp(eval(l_lis, l_reg), irt, eval(r_lis, r_reg));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolVarArgs y(3);
                 y[0] = channel(home, x[0]);
@@ -376,8 +378,8 @@ namespace Test { namespace Int {
                 }
             }
             /// Post constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 assert(r.mode() == RM_EQV);
                 BoolVarArgs y(3);
@@ -426,19 +428,19 @@ namespace Test { namespace Int {
             LinRelMixed(const LinInstr* l_lis0, const LinInstr* r_lis0, Gecode::IntRelType irt0, const std::string& s)
                 : Test("MiniModel::LinRel::Mixed::" + s + "::" + str(irt0), 6, 0, 1, true), l_lis(l_lis0),
                   r_lis(r_lis0), irt(irt0) {
-                testfix = false;
+                test_fixpoint = false;
                 rms = (1 << Gecode::RM_EQV);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int l_reg[3] = {x[0], x[1], x[2]};
                 int r_reg[3] = {x[3], x[4], x[5]};
                 return cmp(eval(l_lis, l_reg), irt, eval(r_lis, r_reg));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::LinIntExpr l_reg[3] = {channel(home, x[0]), x[1], x[2]};
                 Gecode::LinIntExpr r_reg[3] = {channel(home, x[3]), x[4], channel(home, x[5])};
@@ -466,8 +468,8 @@ namespace Test { namespace Int {
                 }
             }
             /// Post constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 assert(r.mode() == RM_EQV);
                 Gecode::LinIntExpr l_reg[3] = {channel(home, x[0]), x[1], x[2]};
@@ -2555,9 +2557,9 @@ namespace Test { namespace Int {
                 for (int i = 0; i < n; i++) {
                     std::string s = Test::str(i);
                     if (i < 10) {
-                        s = "00" + s;
+                        s.insert(0, "00");
                     } else if (i < 100) {
-                        s = "0" + s;
+                        s.insert(0, "0");
                     }
                     (void)new LinExprInt(li[i], s);
                     TestTags bool_tags = (i == 352) ? TestTags::check() : TestTags(TestTags::sweep());
@@ -2568,9 +2570,9 @@ namespace Test { namespace Int {
                 for (int i = 0; i < n / 2; i++) {
                     std::string s = Test::str(i);
                     if (i < 10) {
-                        s = "00" + s;
+                        s.insert(0, "00");
                     } else if (i < 100) {
-                        s = "0" + s;
+                        s.insert(0, "0");
                     }
                     (void)new LinRelInt(li[2 * i], li[2 * i + 1], irts.irt(), s);
                     (void)new LinRelBool(li[2 * i], li[2 * i + 1], irts.irt(), s);

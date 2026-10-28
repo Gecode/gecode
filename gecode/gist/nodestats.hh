@@ -49,19 +49,19 @@ namespace Gecode { namespace Gist {
         Q_OBJECT
     private:
         /// Label for node depth indicator
-        QGraphicsTextItem* nodeDepthLabel;
+        QGraphicsTextItem* node_depth_label;
         /// Label for subtree depth indicator
-        QGraphicsTextItem* subtreeDepthLabel;
+        QGraphicsTextItem* subtree_depth_label;
         /// Label for number of solutions
-        QGraphicsTextItem* solvedLabel;
+        QGraphicsTextItem* solved_label;
         /// Label for number of failures
-        QGraphicsTextItem* failedLabel;
+        QGraphicsTextItem* failed_label;
         /// Label for number of choices
-        QGraphicsTextItem* choicesLabel;
+        QGraphicsTextItem* choices_label;
         /// Label for number of open nodes
-        QGraphicsTextItem* openLabel;
+        QGraphicsTextItem* open_label;
         /// Layout
-        QVBoxLayout* boxLayout;
+        QVBoxLayout* box_layout;
 
     public:
         NodeStatInspector(QWidget* parent);
@@ -69,7 +69,7 @@ namespace Gecode { namespace Gist {
         void node(const VisualNode::NodeAllocator&, VisualNode* n, const Statistics& stat, bool finished);
     public Q_SLOTS:
         /// Show this window and bring it to the front
-        void showStats(void);
+        void show_stats(void);
     };
 
 }} // namespace Gecode::Gist

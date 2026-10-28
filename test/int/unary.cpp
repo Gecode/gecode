@@ -67,17 +67,17 @@ namespace Test { namespace Int { namespace Unary {
             : Test(tags, "Unary::Man::Fix::" + str(o) + "::" + str(p0) + "::" + str(ipl0), p0.size(), o, o + st(p0),
                    false, ipl0),
               p(p0) {
-            testsearch = false;
-            contest = CTL_NONE;
+            test_search = false;
+            consistency_test_level = CTL_NONE;
         }
         /// Create and register initial assignment
-        virtual Assignment*
-        assignment(void) const {
+        Assignment*
+        assignment(void) const override {
             return new RandomAssignment(arity, dom, 500, _rand);
         }
         /// %Test whether \a x is solution
-        virtual bool
-        solution(const Assignment& x) const {
+        bool
+        solution(const Assignment& x) const override {
             for (int i = 0; i < x.size(); i++)
                 for (int j = i + 1; j < x.size(); j++)
                     if ((x[i] + p[i] > x[j]) && (x[j] + p[j] > x[i]))
@@ -85,8 +85,8 @@ namespace Test { namespace Int { namespace Unary {
             return true;
         }
         /// Post constraint on \a x
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             Gecode::unary(home, x, p, ipl);
         }
     };
@@ -113,17 +113,17 @@ namespace Test { namespace Int { namespace Unary {
             : Test(tags, "Unary::Opt::Fix::" + str(o) + "::" + str(p0) + "::" + str(ipl0), 2 * p0.size(), o, o + st(p0),
                    false, ipl0),
               p(p0), l(o + st(p) / 2) {
-            testsearch = false;
-            contest = CTL_NONE;
+            test_search = false;
+            consistency_test_level = CTL_NONE;
         }
         /// Create and register initial assignment
-        virtual Assignment*
-        assignment(void) const {
+        Assignment*
+        assignment(void) const override {
             return new RandomAssignment(arity, dom, 500, _rand);
         }
         /// %Test whether \a x is solution
-        virtual bool
-        solution(const Assignment& x) const {
+        bool
+        solution(const Assignment& x) const override {
             int n = x.size() / 2;
             for (int i = 0; i < n; i++)
                 if (x[n + i] > l)
@@ -134,8 +134,8 @@ namespace Test { namespace Int { namespace Unary {
             return true;
         }
         /// Post constraint on \a x
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             int n = x.size() / 2;
             Gecode::IntVarArgs s(n);
             Gecode::BoolVarArgs m(n);
@@ -151,32 +151,32 @@ namespace Test { namespace Int { namespace Unary {
     class ManFlexUnary : public Test {
     protected:
         /// Minimum processing time
-        int _minP;
+        int _min_p;
         /// Maximum processing time
-        int _maxP;
+        int _max_p;
         /// Offset for start times
         int off;
 
     public:
         /// Create and register test
-        ManFlexUnary(TestTags tags, int n, int minP, int maxP, int o, Gecode::IntPropLevel ipl0)
+        ManFlexUnary(TestTags tags, int n, int min_p, int max_p, int o, Gecode::IntPropLevel ipl0)
             : Test(tags,
-                   "Unary::Man::Flex::" + str(o) + "::" + str(n) + "::" + str(minP) + "::" + str(maxP) +
+                   "Unary::Man::Flex::" + str(o) + "::" + str(n) + "::" + str(min_p) + "::" + str(max_p) +
                        "::" + str(ipl0),
-                   2 * n, 0, n * maxP, false, ipl0),
-              _minP(minP), _maxP(maxP), off(o) {
-            testsearch = false;
-            testfix = false;
-            contest = CTL_NONE;
+                   2 * n, 0, n * max_p, false, ipl0),
+              _min_p(min_p), _max_p(max_p), off(o) {
+            test_search = false;
+            test_fixpoint = false;
+            consistency_test_level = CTL_NONE;
         }
         /// Create and register initial assignment
-        virtual Assignment*
-        assignment(void) const {
-            return new RandomMixAssignment(arity / 2, dom, arity / 2, Gecode::IntSet(_minP, _maxP), 500, _rand);
+        Assignment*
+        assignment(void) const override {
+            return new RandomMixAssignment(arity / 2, dom, arity / 2, Gecode::IntSet(_min_p, _max_p), 500, _rand);
         }
         /// %Test whether \a x is solution
-        virtual bool
-        solution(const Assignment& x) const {
+        bool
+        solution(const Assignment& x) const override {
             int n = x.size() / 2;
             for (int i = 0; i < n; i++)
                 for (int j = i + 1; j < n; j++)
@@ -185,16 +185,16 @@ namespace Test { namespace Int { namespace Unary {
             return true;
         }
         /// Post constraint on \a x
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             Gecode::IntVarArgs s(x.size() / 2);
             Gecode::IntVarArgs px(x.slice(x.size() / 2));
             Gecode::IntVarArgs e(home, x.size() / 2, Gecode::Int::Limits::min, Gecode::Int::Limits::max);
             for (int i = s.size(); i--;) {
                 s[i] = expr(home, off + x[i]);
                 rel(home, s[i] + px[i] == e[i]);
-                rel(home, _minP <= px[i]);
-                rel(home, _maxP >= px[i]);
+                rel(home, _min_p <= px[i]);
+                rel(home, _max_p >= px[i]);
             }
             Gecode::unary(home, s, px, e, ipl);
         }
@@ -204,9 +204,9 @@ namespace Test { namespace Int { namespace Unary {
     class OptFlexUnary : public Test {
     protected:
         /// Minimum processing time
-        int _minP;
+        int _min_p;
         /// Maximum processing time
-        int _maxP;
+        int _max_p;
         /// Offset for start times
         int off;
         /// Threshold for taking a task as optional
@@ -222,24 +222,24 @@ namespace Test { namespace Int { namespace Unary {
 
     public:
         /// Create and register test
-        OptFlexUnary(TestTags tags, int n, int minP, int maxP, int o, Gecode::IntPropLevel ipl0)
+        OptFlexUnary(TestTags tags, int n, int min_p, int max_p, int o, Gecode::IntPropLevel ipl0)
             : Test(tags,
-                   "Unary::Opt::Flex::" + str(o) + "::" + str(n) + "::" + str(minP) + "::" + str(maxP) +
+                   "Unary::Opt::Flex::" + str(o) + "::" + str(n) + "::" + str(min_p) + "::" + str(max_p) +
                        "::" + str(ipl0),
-                   3 * n, 0, n * maxP, false, ipl0),
-              _minP(minP), _maxP(maxP), off(o), l(n * maxP / 2) {
-            testsearch = false;
-            testfix = false;
-            contest = CTL_NONE;
+                   3 * n, 0, n * max_p, false, ipl0),
+              _min_p(min_p), _max_p(max_p), off(o), l(n * max_p / 2) {
+            test_search = false;
+            test_fixpoint = false;
+            consistency_test_level = CTL_NONE;
         }
         /// Create and register initial assignment
-        virtual Assignment*
-        assignment(void) const {
-            return new RandomMixAssignment(2 * (arity / 3), dom, arity / 3, Gecode::IntSet(_minP, _maxP), 500, _rand);
+        Assignment*
+        assignment(void) const override {
+            return new RandomMixAssignment(2 * (arity / 3), dom, arity / 3, Gecode::IntSet(_min_p, _max_p), 500, _rand);
         }
         /// %Test whether \a x is solution
-        virtual bool
-        solution(const Assignment& x) const {
+        bool
+        solution(const Assignment& x) const override {
             int n = x.size() / 3;
             for (int i = 0; i < n; i++)
                 if (x[n + i] > l)
@@ -250,8 +250,8 @@ namespace Test { namespace Int { namespace Unary {
             return true;
         }
         /// Post constraint on \a x
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             int n = x.size() / 3;
 
             Gecode::IntVarArgs s(n);
@@ -261,8 +261,8 @@ namespace Test { namespace Int { namespace Unary {
                 s[i] = expr(home, off + x[i]);
                 px[i] = x[2 * n + i];
                 rel(home, s[i] + px[i] == e[i]);
-                rel(home, _minP <= px[i]);
-                rel(home, _maxP >= px[i]);
+                rel(home, _min_p <= px[i]);
+                rel(home, _max_p >= px[i]);
             }
             Gecode::BoolVarArgs m(n);
             for (int i = 0; i < n; i++)

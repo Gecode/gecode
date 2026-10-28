@@ -49,10 +49,10 @@ namespace Gecode { namespace Gist {
         UNSTOP,       ///< Node representing ignored stop point
     };
 
-    static const unsigned int FIRSTBIT = 24;                //< First free bit in status word
-    static const unsigned int STATUSMASK = 7 << 20;         //< Mask for accessing status
-    static const unsigned int MAXDISTANCE = (1 << 20) - 1;  //< Maximum representable distance
-    static const unsigned int DISTANCEMASK = (1 << 20) - 1; //< Mask for accessing distance
+    static const unsigned int first_bit = 24;                //< First free bit in status word
+    static const unsigned int status_mask = 7 << 20;         //< Mask for accessing status
+    static const unsigned int max_distance = (1 << 20) - 1;  //< Maximum representable distance
+    static const unsigned int distance_mask = (1 << 20) - 1; //< Mask for accessing distance
 
     /// %Statistics about the search tree
     class Statistics : public StatusStatistics {
@@ -66,10 +66,10 @@ namespace Gecode { namespace Gist {
         /// Number of open, undetermined nodes
         int undetermined;
         /// Maximum depth of the tree
-        int maxDepth;
+        int max_depth;
 
         /// Constructor
-        Statistics(void) : solutions(0), failures(0), choices(0), undetermined(1), maxDepth(0) {}
+        Statistics(void) : solutions(0), failures(0), choices(0), undetermined(1), max_depth(0) {}
     };
 
     class SpaceNode;
@@ -102,44 +102,44 @@ namespace Gecode { namespace Gist {
          * to the closest copy. The next 5 bits encode the NodeStatus, and the
          * remaining bits are used by the VisualNode class for further flags.
          */
-        unsigned int nstatus;
+        unsigned int status_bits;
 
         /// Set distance from copy
-        void setDistance(unsigned int d);
+        void set_distance(unsigned int d);
 
         /// Return distance from copy
-        unsigned int getDistance(void) const;
+        unsigned int get_distance(void) const;
 
         /// Set status flag
-        void setFlag(int flag, bool value);
+        void set_flag(int flag, bool value);
 
         /// Return status flag
-        bool getFlag(int flag) const;
+        bool get_flag(int flag) const;
 
         /// Flags for SpaceNodes
-        enum SpaceNodeFlags { HASOPENCHILDREN = FIRSTBIT, HASFAILEDCHILDREN, HASSOLVEDCHILDREN };
+        enum SpaceNodeFlags { HAS_OPEN_CHILDREN = first_bit, HAS_FAILED_CHILDREN, HAS_SOLVED_CHILDREN };
         /// Last bit used for SpaceNode flags
-        static const int LASTBIT = HASSOLVEDCHILDREN;
+        static const int last_bit = HAS_SOLVED_CHILDREN;
 
     private:
         /// Set whether the node has children that are not fully explored
-        void setHasOpenChildren(bool b);
+        void set_has_open_children(bool b);
         /// Set whether the subtree of this node is known to contain failure
-        void setHasFailedChildren(bool b);
+        void set_has_failed_children(bool b);
         /// Set whether the subtree of this node is known to contain solutions
-        void setHasSolvedChildren(bool b);
+        void set_has_solved_children(bool b);
 
         /// Recompute workingSpace from a copy higher up, return distance to copy
-        int recompute(NodeAllocator& na, BestNode* curBest, int c_d, int a_d);
+        int recompute(NodeAllocator& na, BestNode* cur_best, int c_d, int a_d);
 
         /// Book-keeping of open children
-        void closeChild(const NodeAllocator& na, bool hadFailures, bool hadSolutions);
+        void close_child(const NodeAllocator& na, bool had_failures, bool had_solutions);
 
     protected:
         /// Set status to \a s
-        void setStatus(NodeStatus s);
+        void set_status(NodeStatus s);
         /// Acquire working space, either from parent or by recomputation
-        void acquireSpace(NodeAllocator& na, BestNode* curBest, int c_d, int a_d);
+        void acquire_space(NodeAllocator& na, BestNode* cur_best, int c_d, int a_d);
 
     public:
         /// Construct node with parent \a p
@@ -148,10 +148,10 @@ namespace Gecode { namespace Gist {
         SpaceNode(Space* root);
 
         /// Return working space.  Receiver must delete the space.
-        Space* getSpace(NodeAllocator& na, BestNode* curBest, int c_d, int a_d);
+        Space* get_space(NodeAllocator& na, BestNode* cur_best, int c_d, int a_d);
 
         /// Return working space (if present).
-        const Space* getWorkingSpace(void) const;
+        const Space* get_working_space(void) const;
 
         /// Clear working space and copy (if present and this is not the root).
         void purge(const NodeAllocator& na);
@@ -160,7 +160,7 @@ namespace Gecode { namespace Gist {
         void dispose(void);
 
         /// Return whether this node is the currently best solution
-        bool isCurrentBest(BestNode* curBest);
+        bool is_current_best(BestNode* cur_best);
 
         /** \brief Compute and return the number of children
          *
@@ -172,32 +172,32 @@ namespace Gecode { namespace Gist {
          * Otherwise, the status is SS_BRANCH, and as many new children will
          * be created as the branch has alternatives, and the number returned.
          */
-        int getNumberOfChildNodes(NodeAllocator& na, BestNode* curBest, Statistics& stats, int c_d, int a_d);
+        int get_number_of_child_nodes(NodeAllocator& na, BestNode* cur_best, Statistics& stats, int c_d, int a_d);
 
         /// Return current status of the node
-        NodeStatus getStatus(void) const;
+        NodeStatus get_status(void) const;
 
         /// Return whether this node still has open children
-        bool isOpen(void);
+        bool is_open(void);
         /// Return whether the subtree of this node has any failed children
-        bool hasFailedChildren(void);
+        bool has_failed_children(void);
         /// Return whether the subtree of this node has any solved children
-        bool hasSolvedChildren(void);
+        bool has_solved_children(void);
         /// Return whether the subtree of this node has any open children
-        bool hasOpenChildren(void);
+        bool has_open_children(void);
         /// Return number of open children
-        int getNoOfOpenChildren(const NodeAllocator& na);
+        int get_no_of_open_children(const NodeAllocator& na);
         /// Set number of open children to \a n
-        void setNoOfOpenChildren(int n);
+        void set_no_of_open_children(int n);
         /// Return whether the node has a copy
-        bool hasCopy(void);
+        bool has_copy(void);
         /// Return whether the node has a working space
-        bool hasWorkingSpace(void);
+        bool has_working_space(void);
 
         /// Return alternative number of this node
-        int getAlternative(const NodeAllocator& na) const;
+        int get_alternative(const NodeAllocator& na) const;
         /// Return choice of this node
-        const Choice* getChoice(void);
+        const Choice* get_choice(void);
     };
 
 }} // namespace Gecode::Gist

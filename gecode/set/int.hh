@@ -62,9 +62,9 @@ namespace Gecode { namespace Set { namespace Int {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \a x is the minimal element of \a s
         static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
     };
@@ -87,9 +87,9 @@ namespace Gecode { namespace Set { namespace Int {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \a x is not the minimal element of \a s
         static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
     };
@@ -117,9 +117,9 @@ namespace Gecode { namespace Set { namespace Int {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post reified propagator for \a b iff \a x is the minimal element of \a s
         static ExecStatus post(Home home, View s, Gecode::Int::IntView x, Gecode::Int::BoolView b);
     };
@@ -142,9 +142,9 @@ namespace Gecode { namespace Set { namespace Int {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \a x is the largest element of \a s
         static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
     };
@@ -167,9 +167,9 @@ namespace Gecode { namespace Set { namespace Int {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \a x is not the largest element of \a s
         static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
     };
@@ -197,9 +197,9 @@ namespace Gecode { namespace Set { namespace Int {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post reified propagator for \a b iff \a x is the largest element of \a s
         static ExecStatus post(Home home, View s, Gecode::Int::IntView x, Gecode::Int::BoolView b);
     };
@@ -222,9 +222,9 @@ namespace Gecode { namespace Set { namespace Int {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ |s|=x \f$
         static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
     };
@@ -255,15 +255,15 @@ namespace Gecode { namespace Set { namespace Int {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as PC_LINEAR_LO)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$
         static ExecStatus post(Home home, const SharedArray<int>& elements, const SharedArray<int>& weights, View x,
                                Gecode::Int::IntView y);

@@ -47,7 +47,7 @@ namespace Gecode { namespace Int {
     template <class View>
     forceinline
     CachedView<View>::CachedView(const View& y)
-        : DerivedView<View>(y), _firstRange(nullptr), _lastRange(nullptr), _size(0) {}
+        : DerivedView<View>(y), _first_range(nullptr), _last_range(nullptr), _size(0) {}
 
     /*
      * Value access
@@ -76,7 +76,7 @@ namespace Gecode { namespace Int {
 #ifdef GECODE_HAS_CBS
     template <class View>
     forceinline int
-    CachedView<View>::baseval(int val) const {
+    CachedView<View>::base_value(int val) const {
         return val;
     }
 #endif
@@ -271,16 +271,16 @@ namespace Gecode { namespace Int {
     void
     CachedView<View>::update(Space& home, CachedView<View>& y) {
         DerivedView<View>::update(home, y);
-        if (y._firstRange) {
-            _firstRange = new (home) RangeList(y._firstRange->min(), y._firstRange->max(), nullptr);
-            RangeList* cur = _firstRange;
+        if (y._first_range) {
+            _first_range = new (home) RangeList(y._first_range->min(), y._first_range->max(), nullptr);
+            RangeList* cur = _first_range;
 
-            for (RangeList* y_cur = y._firstRange->next(); y_cur != nullptr; y_cur = y_cur->next()) {
+            for (RangeList* y_cur = y._first_range->next(); y_cur != nullptr; y_cur = y_cur->next()) {
                 RangeList* next = new (home) RangeList(y_cur->min(), y_cur->max(), nullptr);
                 cur->next(next);
                 cur = next;
             }
-            _lastRange = cur;
+            _last_range = cur;
             _size = y._size;
         }
     }
@@ -291,12 +291,12 @@ namespace Gecode { namespace Int {
      */
     template <class View>
     void
-    CachedView<View>::initCache(Space& home, const IntSet& s) {
-        _firstRange = nullptr;
+    CachedView<View>::init_cache(Space& home, const IntSet& s) {
+        _first_range = nullptr;
         for (int i = s.ranges(); i--;) {
-            _firstRange = new (home) RangeList(s.min(i), s.max(i), _firstRange);
+            _first_range = new (home) RangeList(s.min(i), s.max(i), _first_range);
             if (i == s.ranges() - 1)
-                _lastRange = _firstRange;
+                _last_range = _first_range;
         }
         _size = s.size();
     }
@@ -304,17 +304,17 @@ namespace Gecode { namespace Int {
     template <class View>
     void
     CachedView<View>::cache(Space& home) {
-        _firstRange->dispose(home, _lastRange);
+        _first_range->dispose(home, _last_range);
         ViewRanges<View> xr(x);
-        _firstRange = new (home) RangeList(xr.min(), xr.max(), nullptr);
+        _first_range = new (home) RangeList(xr.min(), xr.max(), nullptr);
         ++xr;
-        RangeList* cur = _firstRange;
+        RangeList* cur = _first_range;
         for (; xr(); ++xr) {
             RangeList* next = new (home) RangeList(xr.min(), xr.max(), nullptr);
             cur->next(next);
             cur = next;
         }
-        _lastRange = cur;
+        _last_range = cur;
         _size = x.size();
     }
 
@@ -365,7 +365,7 @@ namespace Gecode { namespace Int {
     template <class View>
     forceinline
     ViewDiffRanges<View>::ViewDiffRanges(const CachedView<View>& x)
-        : cr(x._firstRange), dr(x.base()) {
+        : cr(x._first_range), dr(x.base()) {
         Super::init(cr, dr);
     }
 

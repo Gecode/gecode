@@ -64,9 +64,10 @@ namespace Test { namespace Int {
     }
 
     forceinline int
-    RandomAssignment::randval(Gecode::Support::RandomGenerator& rand) {
+    RandomAssignment::random_value(Gecode::Support::RandomGenerator& rand) {
+        assert(d.size() > 0);
         unsigned int skip = rand(d.size());
-        for (Gecode::IntSetRanges it(d); true; ++it) {
+        for (Gecode::IntSetRanges it(d); it(); ++it) {
             if (it.width() > skip)
                 return it.min() + static_cast<int>(skip);
             skip -= it.width();
@@ -79,7 +80,7 @@ namespace Test { namespace Int {
                                               Gecode::Support::RandomGenerator& rand)
         : Assignment(n, d), vals(new int[static_cast<size_t>(n)]), a(a0) {
         for (int i = n; i--;)
-            vals[i] = randval(rand);
+            vals[i] = random_value(rand);
     }
 
     inline bool
@@ -96,9 +97,10 @@ namespace Test { namespace Int {
     }
 
     forceinline int
-    RandomMixAssignment::randval(const Gecode::IntSet& d, Gecode::Support::RandomGenerator& rand) {
+    RandomMixAssignment::random_value(const Gecode::IntSet& d, Gecode::Support::RandomGenerator& rand) {
+        assert(d.size() > 0);
         unsigned int skip = rand(d.size());
-        for (Gecode::IntSetRanges it(d); true; ++it) {
+        for (Gecode::IntSetRanges it(d); it(); ++it) {
             if (it.width() > skip)
                 return it.min() + static_cast<int>(skip);
             skip -= it.width();
@@ -111,9 +113,9 @@ namespace Test { namespace Int {
                                                     int a0, Gecode::Support::RandomGenerator& rand)
         : Assignment(n0 + n1, d0), vals(new int[static_cast<size_t>(n0 + n1)]), a(a0), _n1(n1), _d1(d1) {
         for (int i = n0; i--;)
-            vals[i] = randval(d, rand);
+            vals[i] = random_value(d, rand);
         for (int i = n1; i--;)
-            vals[n0 + i] = randval(_d1, rand);
+            vals[n0 + i] = random_value(_d1, rand);
     }
 
     inline bool
@@ -151,7 +153,8 @@ namespace Test { namespace Int {
                       Gecode::IntPropLevel i)
         : Base(p + s, tags), arity(a), dom(d), reified(r),
           rms((1 << Gecode::RM_EQV) | (1 << Gecode::RM_IMP) | (1 << Gecode::RM_PMI)), ipl(i),
-          contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), testsearch(true), testfix(true) {}
+          consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
+          test_fixpoint(true) {}
 
     inline Test::Test(const std::string& p, const std::string& s, int a, const Gecode::IntSet& d, bool r,
                       Gecode::IntPropLevel i)
@@ -161,7 +164,8 @@ namespace Test { namespace Int {
                       Gecode::IntPropLevel i)
         : Base("Int::" + s, tags), arity(a), dom(d), reified(r),
           rms((1 << Gecode::RM_EQV) | (1 << Gecode::RM_IMP) | (1 << Gecode::RM_PMI)), ipl(i),
-          contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), testsearch(true), testfix(true) {}
+          consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
+          test_fixpoint(true) {}
 
     inline Test::Test(const std::string& s, int a, const Gecode::IntSet& d, bool r, Gecode::IntPropLevel i)
         : Test(TestTags::standard(), s, a, d, r, i) {}
@@ -170,7 +174,8 @@ namespace Test { namespace Int {
                       Gecode::IntPropLevel i)
         : Base(p + s, tags), arity(a), dom(min, max), reified(r),
           rms((1 << Gecode::RM_EQV) | (1 << Gecode::RM_IMP) | (1 << Gecode::RM_PMI)), ipl(i),
-          contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), testsearch(true), testfix(true) {}
+          consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
+          test_fixpoint(true) {}
 
     inline Test::Test(const std::string& p, const std::string& s, int a, int min, int max, bool r,
                       Gecode::IntPropLevel i)
@@ -179,7 +184,8 @@ namespace Test { namespace Int {
     inline Test::Test(TestTags tags, const std::string& s, int a, int min, int max, bool r, Gecode::IntPropLevel i)
         : Base("Int::" + s, tags), arity(a), dom(min, max), reified(r),
           rms((1 << Gecode::RM_EQV) | (1 << Gecode::RM_IMP) | (1 << Gecode::RM_PMI)), ipl(i),
-          contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), testsearch(true), testfix(true) {}
+          consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
+          test_fixpoint(true) {}
 
     inline Test::Test(const std::string& s, int a, int min, int max, bool r, Gecode::IntPropLevel i)
         : Test(TestTags::standard(), s, a, min, max, r, i) {}

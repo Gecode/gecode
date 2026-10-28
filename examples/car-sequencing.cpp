@@ -55,13 +55,13 @@ namespace {
     class CarOptions : public SizeOptions {
     private:
         /// Max slack parameter
-        Driver::UnsignedIntOption _maxstall;
+        Driver::UnsignedIntOption _max_stalls;
 
     public:
         /// Initialize options for example with name \a s
-        CarOptions(const char* s) : SizeOptions(s), _maxstall("maxstall", "Maximum numbere of stalls", 30) {
+        CarOptions(const char* s) : SizeOptions(s), _max_stalls("maxstall", "Maximum numbere of stalls", 30) {
             // Add options
-            add(_maxstall);
+            add(_max_stalls);
         }
         /// Parse options from arguments \a argv (number is \a argc)
         void
@@ -70,8 +70,8 @@ namespace {
         }
         /// Get max stalls
         int
-        maxstall(void) const {
-            return _maxstall.value();
+        max_stalls(void) const {
+            return _max_stalls.value();
         }
     };
 
@@ -108,9 +108,9 @@ namespace {
         /// Constructor for rewriting \a p during cloning
         PushToEnd(Space& home, Propagator& p, ViewArray<View>& x0, View y0, int val0);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Space& home, ViewArray<View>& x0, View y0, int val0);
     };
@@ -180,7 +180,7 @@ namespace {
     /** \brief Post PushToEnd propagator.
      */
     void
-    pushtoend(Space& home, IntVarArgs x, IntVar y, int val) {
+    push_to_end(Space& home, IntVarArgs x, IntVar y, int val) {
         ViewArray<Int::IntView> vx(home, x);
         Int::IntView vy(y);
         GECODE_ES_FAIL(PushToEnd<Int::IntView>::post(home, vx, vy, val));
@@ -216,88 +216,89 @@ protected:
     /// Problem number
     const int problem;
     /// Number of cars
-    const int ncars;
+    const int car_count;
     /// Number of options
-    const int noptions;
+    const int option_count;
     /// Number of classes
-    const int nclasses;
+    const int class_count;
     /// Maximum number of stalls
-    const int maxstall;
+    const int max_stalls;
     /// Stall number
-    const int stallval;
+    const int stall_value;
     /// End number
-    const int endval;
+    const int end_value;
     /// Number of stalls (cost to minimize)
-    IntVar nstall;
+    IntVar stall_count;
     /// Number of end markers
-    IntVar nend;
+    IntVar end_count;
     /// Sequence of cars produced
     IntVarArray s;
 
 public:
     /// Initial model
     CarSequencing(const CarOptions& opt)
-        : Script(opt), problem(opt.size()), ncars(problems[problem][0]), noptions(problems[problem][1]),
-          nclasses(problems[problem][2]), maxstall(opt.maxstall()), stallval(nclasses), endval(nclasses + 1),
-          nstall(*this, 0, maxstall), nend(*this, 0, maxstall), s(*this, ncars + maxstall, 0, nclasses + 1) {
+        : Script(opt), problem(opt.size()), car_count(problems[problem][0]), option_count(problems[problem][1]),
+          class_count(problems[problem][2]), max_stalls(opt.max_stalls()), stall_value(class_count),
+          end_value(class_count + 1), stall_count(*this, 0, max_stalls), end_count(*this, 0, max_stalls),
+          s(*this, car_count + max_stalls, 0, class_count + 1) {
         // Read problem
-        const int* probit = problems[problem] + 3;
+        const int* problem_cursor = problems[problem] + 3;
 
         // Sequence requirements for the options.
-        IntArgs max(noptions), block(noptions);
-        for (int i = 0; i < noptions; ++i) {
-            max[i] = *probit++;
+        IntArgs max(option_count), block(option_count);
+        for (int i = 0; i < option_count; ++i) {
+            max[i] = *problem_cursor++;
         }
-        for (int i = 0; i < noptions; ++i) {
-            block[i] = *probit++;
+        for (int i = 0; i < option_count; ++i) {
+            block[i] = *problem_cursor++;
         }
         // Number of cars per class
-        IntArgs ncc(nclasses);
+        IntArgs ncc(class_count);
         // What classes require an option
-        IntSetArgs classes(noptions);
-        int** cdata = new int*[noptions];
-        for (int i = noptions; i--;)
-            cdata[i] = new int[nclasses];
-        int* n = new int[noptions];
-        for (int i = noptions; i--;)
+        IntSetArgs classes(option_count);
+        int** class_data = new int*[option_count];
+        for (int i = option_count; i--;)
+            class_data[i] = new int[class_count];
+        int* n = new int[option_count];
+        for (int i = option_count; i--;)
             n[i] = 0;
         // Read data
-        for (int c = 0; c < nclasses; ++c) {
-            probit++;
-            ncc[c] = *probit++;
-            for (int o = 0; o < noptions; ++o) {
-                if (*probit++) {
-                    cdata[o][n[o]++] = c;
+        for (int c = 0; c < class_count; ++c) {
+            problem_cursor++;
+            ncc[c] = *problem_cursor++;
+            for (int o = 0; o < option_count; ++o) {
+                if (*problem_cursor++) {
+                    class_data[o][n[o]++] = c;
                 }
             }
         }
         // Transfer specification data to int-sets
-        for (int o = noptions; o--;) {
-            classes[o] = IntSet(cdata[o], n[o]);
-            delete[] cdata[o];
+        for (int o = option_count; o--;) {
+            classes[o] = IntSet(class_data[o], n[o]);
+            delete[] class_data[o];
         }
-        delete[] cdata;
+        delete[] class_data;
         delete[] n;
 
         // Count the cars
         {
-            IntSetArgs c(nclasses + 2);
-            for (int i = nclasses; i--;) {
+            IntSetArgs c(class_count + 2);
+            for (int i = class_count; i--;) {
                 c[i] = IntSet(ncc[i], ncc[i]);
             }
-            c[stallval] = IntSet(0, maxstall);
-            c[endval] = IntSet(0, maxstall);
+            c[stall_value] = IntSet(0, max_stalls);
+            c[end_value] = IntSet(0, max_stalls);
             count(*this, s, c);
         }
 
         // Count number of end and stalls
-        count(*this, s, stallval, IRT_EQ, nstall);
-        count(*this, s, endval, IRT_EQ, nend);
-        rel(*this, nstall + nend == maxstall);
+        count(*this, s, stall_value, IRT_EQ, stall_count);
+        count(*this, s, end_value, IRT_EQ, end_count);
+        rel(*this, stall_count + end_count == max_stalls);
 
         // Make sure nothing is overloaded
         IntSet one(1, 1);
-        for (int o = noptions; o--;) {
+        for (int o = option_count; o--;) {
             // sb[i] reflects if car s[i] has option o
             BoolVarArgs sb(s.size());
             for (int i = s.size(); i--;) {
@@ -311,20 +312,20 @@ public:
         // End-markers located at end only
         switch (opt.propagation()) {
         case PROP_REGULAR: {
-            IntArgs notend(nclasses), notstallend(nclasses + 1);
-            for (int i = nclasses; i--;) {
-                notend[i] = i;
-                notstallend[i] = i;
+            IntArgs class_values(class_count), class_or_stall_values(class_count + 1);
+            for (int i = class_count; i--;) {
+                class_values[i] = i;
+                class_or_stall_values[i] = i;
             }
-            notstallend[nclasses] = stallval;
-            REG r = *REG(notend) + REG(notstallend) + *REG(endval);
+            class_or_stall_values[class_count] = stall_value;
+            REG r = *REG(class_values) + REG(class_or_stall_values) + *REG(end_value);
             extensional(*this, s, r);
-            for (int pos = s.size() - 1, i = 0; i < maxstall; ++i, --pos) {
-                rel(*this, (nend > i) >> (s[pos] == endval));
+            for (int pos = s.size() - 1, i = 0; i < max_stalls; ++i, --pos) {
+                rel(*this, (end_count > i) >> (s[pos] == end_value));
             }
         } break;
         case PROP_CUSTOM: {
-            pushtoend(*this, s, nend, endval);
+            push_to_end(*this, s, end_count, end_value);
         } break;
         }
 
@@ -352,25 +353,25 @@ public:
     }
 
     /// Return cost
-    virtual void
-    constrain(const Space& _best) {
+    void
+    constrain(const Space& _best) override {
         const CarSequencing& best = static_cast<const CarSequencing&>(_best);
-        rel(*this, nstall, IRT_LE, best.nstall.val());
+        rel(*this, stall_count, IRT_LE, best.stall_count.val());
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        int width = nclasses > 9 ? 2 : 1;
-        const char* space = nclasses > 9 ? " " : "";
-        os << "Stall slots=" << nstall << ", End slots=" << nend << std::endl;
+    void
+    print(std::ostream& os) const override {
+        int width = class_count > 9 ? 2 : 1;
+        const char* space = class_count > 9 ? " " : "";
+        os << "Stall slots=" << stall_count << ", End slots=" << end_count << std::endl;
         int i = 0;
         for (; i < s.size(); ++i) {
             if (s[i].assigned()) {
                 int v = s[i].val();
-                if (v == endval)
+                if (v == end_value)
                     break;
-                if (v == stallval)
+                if (v == stall_value)
                     os << space << "_ ";
                 else
                     os << std::setw(width) << v << " ";
@@ -387,15 +388,15 @@ public:
 
     /// Constructor for cloning \a s
     CarSequencing(CarSequencing& cs)
-        : Script(cs), problem(cs.problem), ncars(cs.ncars), noptions(cs.noptions), nclasses(cs.nclasses),
-          maxstall(cs.maxstall), stallval(cs.stallval), endval(cs.endval) {
-        nstall.update(*this, cs.nstall);
-        nend.update(*this, cs.nend);
+        : Script(cs), problem(cs.problem), car_count(cs.car_count), option_count(cs.option_count),
+          class_count(cs.class_count), max_stalls(cs.max_stalls), stall_value(cs.stall_value), end_value(cs.end_value) {
+        stall_count.update(*this, cs.stall_count);
+        end_count.update(*this, cs.end_count);
         s.update(*this, cs.s);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new CarSequencing(*this);
     }
 };

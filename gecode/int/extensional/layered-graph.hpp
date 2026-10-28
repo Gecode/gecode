@@ -478,7 +478,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         if (layers[i].size <= layers[i].x.size()) {
             // Propagator has already done everything
-            if (View::modevent(d) == ME_INT_VAL) {
+            if (View::modification_event(d) == ME_INT_VAL) {
                 a.dispose(home, c);
                 return c.empty() ? ES_NOFIX : ES_FIX;
             } else {
@@ -489,7 +489,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         bool i_mod = false;
         bool o_mod = false;
 
-        if (View::modevent(d) == ME_INT_VAL) {
+        if (View::modification_event(d) == ME_INT_VAL) {
             Val n = static_cast<Val>(layers[i].x.val());
             ValSize j = 0;
             for (; layers[i].support[j].val < n; j++) {
@@ -587,13 +587,13 @@ namespace Gecode { namespace Int { namespace Extensional {
             fix = false;
         }
         if (fix) {
-            if (View::modevent(d) == ME_INT_VAL) {
+            if (View::modification_event(d) == ME_INT_VAL) {
                 a.dispose(home, c);
                 return c.empty() ? ES_NOFIX : ES_FIX;
             }
             return ES_FIX;
         } else {
-            return (View::modevent(d) == ME_INT_VAL) ? home.ES_NOFIX_DISPOSE(c, a) : ES_NOFIX;
+            return (View::modification_event(d) == ME_INT_VAL) ? home.ES_NOFIX_DISPOSE(c, a) : ES_NOFIX;
         }
     }
 

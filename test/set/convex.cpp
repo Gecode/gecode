@@ -53,8 +53,8 @@ namespace Test { namespace Set {
             /// Create and register test
             Convex(const char* t) : SetTest(t, 1, ds_33, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges xr0(x.lub, x[0]);
                 if (!xr0())
                     return true;
@@ -64,8 +64,8 @@ namespace Test { namespace Set {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 Gecode::convex(home, x[0]);
             }
         };
@@ -77,8 +77,8 @@ namespace Test { namespace Set {
             /// Create and register test
             ConvexHull(const char* t) : SetTest(t, 2, ds_33, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges xr0(x.lub, x[0]);
                 CountableSetRanges xr1(x.lub, x[1]);
 
@@ -105,8 +105,8 @@ namespace Test { namespace Set {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 Gecode::convex(home, x[1], x[0]);
             }
         };
@@ -118,8 +118,8 @@ namespace Test { namespace Set {
             /// Create and register test
             ConvexHullS(const char* t) : SetTest(t, 1, ds_33, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges xr0(x.lub, x[0]);
                 if (!xr0())
                     return true;
@@ -129,8 +129,8 @@ namespace Test { namespace Set {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 Gecode::convex(home, x[0], x[0]);
             }
         };

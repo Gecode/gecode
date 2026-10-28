@@ -41,9 +41,9 @@ namespace Gecode { namespace Set {
      *
      */
     ModEvent
-    SetVarImp::cardMin_full(Space& home) {
+    SetVarImp::card_min_full(Space& home) {
         ModEvent me = ME_SET_CARD;
-        if (cardMin() == lub.size()) {
+        if (card_min() == lub.size()) {
             glb.become(home, lub);
             me = ME_SET_VAL;
         }
@@ -52,9 +52,9 @@ namespace Gecode { namespace Set {
     }
 
     ModEvent
-    SetVarImp::cardMax_full(Space& home) {
+    SetVarImp::card_max_full(Space& home) {
         ModEvent me = ME_SET_CARD;
-        if (cardMax() == glb.size()) {
+        if (card_max() == glb.size()) {
             lub.become(home, glb);
             me = ME_SET_VAL;
         }
@@ -63,11 +63,11 @@ namespace Gecode { namespace Set {
     }
 
     ModEvent
-    SetVarImp::processLubChange(Space& home, SetDelta& d) {
+    SetVarImp::process_lub_change(Space& home, SetDelta& d) {
         ModEvent me = ME_SET_LUB;
-        if (cardMax() > lub.size()) {
+        if (card_max() > lub.size()) {
             lub.card(lub.size());
-            if (cardMin() > cardMax()) {
+            if (card_min() > card_max()) {
                 glb.become(home, lub);
                 glb.card(glb.size());
                 lub.card(glb.size());
@@ -75,21 +75,21 @@ namespace Gecode { namespace Set {
             }
             me = ME_SET_CLUB;
         }
-        if (cardMax() == lub.size() && cardMin() == cardMax()) {
+        if (card_max() == lub.size() && card_min() == card_max()) {
             glb.become(home, lub);
             me = ME_SET_VAL;
-            assert(d.glbMin() == 1);
-            assert(d.glbMax() == 0);
+            assert(d.glb_min() == 1);
+            assert(d.glb_max() == 0);
         }
         return notify(home, me, d);
     }
 
     ModEvent
-    SetVarImp::processGlbChange(Space& home, SetDelta& d) {
+    SetVarImp::process_glb_change(Space& home, SetDelta& d) {
         ModEvent me = ME_SET_GLB;
-        if (cardMin() < glb.size()) {
+        if (card_min() < glb.size()) {
             glb.card(glb.size());
-            if (cardMin() > cardMax()) {
+            if (card_min() > card_max()) {
                 glb.become(home, lub);
                 glb.card(glb.size());
                 lub.card(glb.size());
@@ -97,11 +97,11 @@ namespace Gecode { namespace Set {
             }
             me = ME_SET_CGLB;
         }
-        if (cardMin() == glb.size() && cardMin() == cardMax()) {
+        if (card_min() == glb.size() && card_min() == card_max()) {
             lub.become(home, glb);
             me = ME_SET_VAL;
-            assert(d.lubMin() == 1);
-            assert(d.lubMax() == 0);
+            assert(d.lub_min() == 1);
+            assert(d.lub_max() == 0);
         }
         return notify(home, me, d);
     }
@@ -115,8 +115,8 @@ namespace Gecode { namespace Set {
     SetVarImp::SetVarImp(Space& home, SetVarImp& x)
         : SetVarImpBase(home, x) {
         lub.update(home, x.lub);
-        glb.card(x.cardMin());
-        lub.card(x.cardMax());
+        glb.card(x.card_min());
+        lub.card(x.card_max());
         if (x.assigned()) {
             glb.become(home, lub);
         } else {

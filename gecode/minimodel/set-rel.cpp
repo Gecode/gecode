@@ -86,7 +86,7 @@ namespace Gecode {
             /// Constructor
             SetIRTRel(const SetExpr&, IntRelType, const LinIntExpr&);
             /// Constrain \a b to be equivalent to the expression (negated if \a neg)
-            virtual void post(Home, BoolVar b, bool neg, const IntPropLevels&) override;
+            void post(Home, BoolVar b, bool neg, const IntPropLevels&) override;
         };
 
         SetIRTRel::SetIRTRel(const SetExpr& s, IntRelType irt, const LinIntExpr& x) : _s(s), _x(x), _irt(irt) {}

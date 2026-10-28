@@ -56,21 +56,21 @@ namespace Test { namespace Int {
             IntInt(TestTags tags, int n, int m0, Gecode::IntRelType irt0)
                 : Test(tags, "NValues::Int::Int::" + str(irt0) + "::" + str(n) + "::" + str(m0), n, 0, n), irt(irt0),
                   m(m0) {
-                testfix = false;
+                test_fixpoint = false;
                 if (arity > 5)
-                    testsearch = false;
+                    test_search = false;
             }
             /// Create and register initial assignment
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 if (arity > 5)
                     return new RandomAssignment(arity, dom, 500, _rand);
                 else
                     return new CpltAssignment(arity, dom);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size();
                 bool* v = new bool[n + 1];
                 for (int i = n + 1; i--;)
@@ -85,8 +85,8 @@ namespace Test { namespace Int {
                 return cmp(k, irt, m);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::nvalues(home, x, irt, m);
             }
         };
@@ -101,11 +101,11 @@ namespace Test { namespace Int {
             /// Create and register test
             IntVar(TestTags tags, int n, Gecode::IntRelType irt0)
                 : Test(tags, "NValues::Int::Var::" + str(irt0) + "::" + str(n), n + 1, 0, n), irt(irt0) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 bool* v = new bool[n + 1];
                 for (int i = n + 1; i--;)
@@ -120,8 +120,8 @@ namespace Test { namespace Int {
                 return cmp(k, irt, x[n]);
             }
             /// Post constraint on \a xy
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xy) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xy) override {
                 int n = xy.size() - 1;
                 Gecode::IntVarArgs x(n);
                 for (int i = n; i--;)
@@ -144,8 +144,8 @@ namespace Test { namespace Int {
                 : Test("NValues::Bool::Int::" + str(irt0) + "::" + str(n) + "::" + str(m0), n, 0, 2), irt(irt0), m(m0) {
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size();
                 for (int i = n; i--;)
                     if (x[i] > 1)
@@ -163,8 +163,8 @@ namespace Test { namespace Int {
                 return cmp(k, irt, m);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolVarArgs y(x.size());
                 for (int i = x.size(); i--;)
@@ -184,8 +184,8 @@ namespace Test { namespace Int {
             BoolVar(int n, Gecode::IntRelType irt0)
                 : Test("NValues::Bool::Var::" + str(irt0) + "::" + str(n), n + 1, 0, 2), irt(irt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 for (int i = n; i--;)
                     if (x[i] > 1)
@@ -203,8 +203,8 @@ namespace Test { namespace Int {
                 return cmp(k, irt, x[n]);
             }
             /// Post constraint on \a xy
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xy) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xy) override {
                 using namespace Gecode;
                 int n = xy.size() - 1;
                 BoolVarArgs x(n);

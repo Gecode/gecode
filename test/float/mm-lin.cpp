@@ -120,17 +120,17 @@ namespace Test { namespace Float {
             /// Create and register test
             LinExpr(TestTags tags, const LinInstr* lis0, const std::string& s)
                 : Test(tags, "Float::", "MiniModel::LinExpr::" + s, 4, -3, 3), lis(lis0) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Int::Assignment& x) const {
+            bool
+            solution(const Int::Assignment& x) const override {
                 int reg[3] = {x[0], x[1], x[2]};
                 return eval(lis, reg) == x[3];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 FloatVarArray y(home, 4, dom.min(), dom.max());
                 channel(home, x[0], y[0]);
@@ -157,11 +157,11 @@ namespace Test { namespace Float {
             LinRel(const LinInstr* l_lis0, const LinInstr* r_lis0, Gecode::FloatRelType frt0, const std::string& s)
                 : Test("Float::", "MiniModel::LinRel::" + s + "::" + Float::Test::str(frt0), 3, -3, 3), l_lis(l_lis0),
                   r_lis(r_lis0), frt(frt0) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Int::Assignment& x) const {
+            bool
+            solution(const Int::Assignment& x) const override {
                 using namespace Gecode;
                 int l_reg[3] = {x[0], x[1], x[2]};
                 int l = eval(l_lis, l_reg);
@@ -186,8 +186,8 @@ namespace Test { namespace Float {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 FloatVarArray y(home, 3, dom.min(), dom.max());
                 channel(home, x[0], y[0]);
@@ -2278,9 +2278,9 @@ namespace Test { namespace Float {
                 for (int i = 0; i < n; i++) {
                     std::string s = Test::str(i);
                     if (i < 10) {
-                        s = "00" + s;
+                        s.insert(0, "00");
                     } else if (i < 100) {
-                        s = "0" + s;
+                        s.insert(0, "0");
                     }
                     (void)new LinExpr(i == 0 ? TestTags::standard() : TestTags::sweep(), li[i], s);
                 }
@@ -2288,9 +2288,9 @@ namespace Test { namespace Float {
                 for (int i = 0; i < n / 2; i++) {
                     std::string s = Test::str(i);
                     if (i < 10) {
-                        s = "00" + s;
+                        s.insert(0, "00");
                     } else if (i < 100) {
-                        s = "0" + s;
+                        s.insert(0, "0");
                     }
                     (void)new LinRel(li[2 * i], li[2 * i + 1], frts.frt(), s);
                     ++frts;

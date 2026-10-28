@@ -41,7 +41,7 @@ namespace Gecode { namespace Gist {
         /// Initialize choice for brancher \a b
         StopChoice(const Brancher& b);
         /// Archive into \a e
-        virtual void archive(Archive& e) const;
+        void archive(Archive& e) const override;
     };
 
     /// %Brancher that stops exploration in %Gist
@@ -56,21 +56,21 @@ namespace Gecode { namespace Gist {
 
     public:
         /// Check status of brancher, return true if alternatives left
-        virtual bool status(const Space&) const;
+        bool status(const Space&) const override;
         /// Return choice
-        virtual Choice* choice(Space&);
+        Choice* choice(Space&) override;
         /// Return choice
-        virtual Choice* choice(const Space& home, Archive&);
+        Choice* choice(const Space& home, Archive&) override;
         /// Perform commit for choice \a _c and alternative \a a
-        virtual ExecStatus commit(Space&, const Choice&, unsigned int);
+        ExecStatus commit(Space&, const Choice&, unsigned int) override;
         /// Print explanation
-        virtual void print(const Space& home, const Gecode::Choice& c, unsigned int, std::ostream& o) const;
+        void print(const Space& home, const Gecode::Choice& c, unsigned int, std::ostream& o) const override;
         /// Copy brancher
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Post brancher
         static void post(Home home);
         /// Delete brancher and return its size
-        virtual size_t dispose(Space&);
+        size_t dispose(Space&) override;
     };
 
 }} // namespace Gecode::Gist

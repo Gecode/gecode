@@ -76,7 +76,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline unsigned int
-    Path<Tracer>::Edge::truealt(void) const {
+    Path<Tracer>::Edge::true_alternative(void) const {
         return std::min(_alt, _choice->alternatives() - 1);
     }
     template <class Tracer>
@@ -273,7 +273,7 @@ namespace Gecode { namespace Search { namespace Par {
                     n_work--;
                 // No no-goods can be extracted above n
                 ngdl(std::min(ngdl(), static_cast<unsigned int>(n)));
-                d = stat.steal_depth(static_cast<unsigned long int>(n + 1));
+                d = stat.steal_depth(static_cast<unsigned long int>(n) + 1UL);
                 if (myt && ot) {
                     ot.ei()->init(myt.wid(), ds[n].nid(), a, *c, *ds[n].choice());
                 }

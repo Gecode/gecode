@@ -209,7 +209,7 @@ namespace Gecode {
             /// Perform equality test on ranges
             GECODE_INT_EXPORT bool equal(const IntSetObject& so) const;
             /// Delete object
-            GECODE_INT_EXPORT virtual ~IntSetObject(void);
+            GECODE_INT_EXPORT ~IntSetObject(void) override;
         };
         /// Sort ranges according to increasing minimum
         class MinInc;
@@ -2736,7 +2736,7 @@ namespace Gecode {
             /// Get bit \a n in bitset data \a d
             static bool get(const BitSetData* d, unsigned int n);
             /// Map tuple address to index
-            unsigned int tuple2idx(Tuple t) const;
+            unsigned int tuple_to_index(Tuple t) const;
             /// Return first range for position \a i
             const Range* fst(int i) const;
             /// Return last range for position \a i
@@ -2769,7 +2769,7 @@ namespace Gecode {
             Data(int a);
             /// Delete implementation
             GECODE_INT_EXPORT
-            virtual ~Data(void);
+            ~Data(void) override;
         };
 
         /// Get data (must be initialized and finalized)
@@ -3136,7 +3136,7 @@ namespace Gecode {
             const std::function<int(int, int)> function; ///< Computed distance
             Data(int n, const IntArgs& matrix);
             Data(int n, std::function<int(int, int)> function);
-            virtual ~Data(void);
+            ~Data(void) override;
         };
 
     public:
@@ -3283,90 +3283,90 @@ namespace Gecode {
     /** \brief Post propagator for \f$ \operatorname{argmin}(x)=y\f$
      *
      * In case of ties, the smallest value for \a y is chosen
-     * (provided \a tiebreak is true).
+     * (provided \a tie_break is true).
      *
      * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
      * If \a y occurs in \a x, an exception of type Int::ArgumentSame
      * is thrown.
      */
-    GECODE_INT_EXPORT void argmin(Home home, const IntVarArgs& x, IntVar y, bool tiebreak = true,
+    GECODE_INT_EXPORT void argmin(Home home, const IntVarArgs& x, IntVar y, bool tie_break = true,
                                   IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for \f$ \operatorname{argmin}(x)+o=y\f$
      *
      * In case of ties, the smallest value for \a y is chosen
-     * (provided \a tiebreak is true).
+     * (provided \a tie_break is true).
      *
      * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
      * If \a y occurs in \a x, an exception of type Int::ArgumentSame
      * is thrown.
      */
-    GECODE_INT_EXPORT void argmin(Home home, const IntVarArgs& x, int o, IntVar y, bool tiebreak = true,
+    GECODE_INT_EXPORT void argmin(Home home, const IntVarArgs& x, int o, IntVar y, bool tie_break = true,
                                   IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for \f$ \operatorname{argmax}(x)=y\f$
      *
      * In case of ties, the smallest value for \a y is chosen
-     * (provided \a tiebreak is true).
+     * (provided \a tie_break is true).
      *
      * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
      * If \a y occurs in \a x, an exception of type Int::ArgumentSame
      * is thrown.
      */
-    GECODE_INT_EXPORT void argmax(Home home, const IntVarArgs& x, IntVar y, bool tiebreak = true,
+    GECODE_INT_EXPORT void argmax(Home home, const IntVarArgs& x, IntVar y, bool tie_break = true,
                                   IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for \f$ \operatorname{argmax}(x)+o=y\f$
      *
      * In case of ties, the smallest value for \a y is chosen
-     * (provided \a tiebreak is true).
+     * (provided \a tie_break is true).
      *
      * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
      * If \a y occurs in \a x, an exception of type Int::ArgumentSame
      * is thrown.
      */
-    GECODE_INT_EXPORT void argmax(Home home, const IntVarArgs& x, int o, IntVar y, bool tiebreak = true,
+    GECODE_INT_EXPORT void argmax(Home home, const IntVarArgs& x, int o, IntVar y, bool tie_break = true,
                                   IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for \f$ \operatorname{argmin}(x)=y\f$
      *
      * In case of ties, the smallest value for \a y is chosen
-     * (provided \a tiebreak is true).
+     * (provided \a tie_break is true).
      *
      * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
      * If \a y occurs in \a x, an exception of type Int::ArgumentSame
      * is thrown.
      */
-    GECODE_INT_EXPORT void argmin(Home home, const BoolVarArgs& x, IntVar y, bool tiebreak = true,
+    GECODE_INT_EXPORT void argmin(Home home, const BoolVarArgs& x, IntVar y, bool tie_break = true,
                                   IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for \f$ \operatorname{argmin}(x)-o=y\f$
      *
      * In case of ties, the smallest value for \a y is chosen
-     * (provided \a tiebreak is true).
+     * (provided \a tie_break is true).
      *
      * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
      * If \a y occurs in \a x, an exception of type Int::ArgumentSame
      * is thrown.
      */
-    GECODE_INT_EXPORT void argmin(Home home, const BoolVarArgs& x, int o, IntVar y, bool tiebreak = true,
+    GECODE_INT_EXPORT void argmin(Home home, const BoolVarArgs& x, int o, IntVar y, bool tie_break = true,
                                   IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for \f$ \operatorname{argmax}(x)=y\f$
      *
      * In case of ties, the smallest value for \a y is chosen
-     * (provided \a tiebreak is true).
+     * (provided \a tie_break is true).
      *
      * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
      * If \a y occurs in \a x, an exception of type Int::ArgumentSame
      * is thrown.
      */
-    GECODE_INT_EXPORT void argmax(Home home, const BoolVarArgs& x, IntVar y, bool tiebreak = true,
+    GECODE_INT_EXPORT void argmax(Home home, const BoolVarArgs& x, IntVar y, bool tie_break = true,
                                   IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for \f$ \operatorname{argmax}(x)-o=y\f$
      *
      * In case of ties, the smallest value for \a y is chosen
-     * (provided \a tiebreak is true).
+     * (provided \a tie_break is true).
      *
      * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
      * If \a y occurs in \a x, an exception of type Int::ArgumentSame
      * is thrown.
      */
-    GECODE_INT_EXPORT void argmax(Home home, const BoolVarArgs& x, int o, IntVar y, bool tiebreak = true,
+    GECODE_INT_EXPORT void argmax(Home home, const BoolVarArgs& x, int o, IntVar y, bool tie_break = true,
                                   IntPropLevel ipl = IPL_DEF);
 
     /** \brief Post propagator for \f$ |x_0|=x_1\f$
@@ -3729,8 +3729,8 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBinPacking
      */
-    GECODE_INT_EXPORT void binpacking(Home home, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s,
-                                      IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void bin_packing(Home home, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s,
+                                       IntPropLevel ipl = IPL_DEF);
     /* \brief Post propagator for multi-dimensional bin packing
      *
      * In the following \a n refers to the number of items and \a m
@@ -3751,7 +3751,7 @@ namespace Gecode {
      * The constraint is implemented by the decomposition
      * introduced in: Stefano Gualandi and Michele Lombardi. A
      * simple and effective decomposition for the multidimensional
-     * binpacking constraint. CP 2013, pages 356--364.
+     * bin_packing constraint. CP 2013, pages 356--364.
      *
      * Posting the constraint returns a maximal set containing conflicting
      * items that require pairwise different bins.
@@ -3777,8 +3777,8 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBinPacking
      */
-    GECODE_INT_EXPORT IntSet binpacking(Home home, int d, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s,
-                                        const IntArgs& c, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT IntSet bin_packing(Home home, int d, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s,
+                                         const IntArgs& c, IntPropLevel ipl = IPL_DEF);
 
     /**
      * \defgroup TaskModelIntGeoPacking Geometrical packing constraints
@@ -3798,8 +3798,8 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntGeoPacking
      */
-    GECODE_INT_EXPORT void nooverlap(Home home, const IntVarArgs& x, const IntArgs& w, const IntVarArgs& y,
-                                     const IntArgs& h, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void no_overlap(Home home, const IntVarArgs& x, const IntArgs& w, const IntVarArgs& y,
+                                      const IntArgs& h, IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for rectangle packing
      *
      * Propagate that no two rectangles as described by the coordinates
@@ -3813,8 +3813,8 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntGeoPacking
      */
-    GECODE_INT_EXPORT void nooverlap(Home home, const IntVarArgs& x, const IntArgs& w, const IntVarArgs& y,
-                                     const IntArgs& h, const BoolVarArgs& o, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void no_overlap(Home home, const IntVarArgs& x, const IntArgs& w, const IntVarArgs& y,
+                                      const IntArgs& h, const BoolVarArgs& o, IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for rectangle packing
      *
      * Propagate that no two rectangles as described by the start coordinates
@@ -3831,9 +3831,9 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntGeoPacking
      */
-    GECODE_INT_EXPORT void nooverlap(Home home, const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
-                                     const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
-                                     IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void no_overlap(Home home, const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
+                                      const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
+                                      IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for rectangle packing
      *
      * Propagate that no two rectangles as described by the start coordinates
@@ -3851,9 +3851,9 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntGeoPacking
      */
-    GECODE_INT_EXPORT void nooverlap(Home home, const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
-                                     const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
-                                     const BoolVarArgs& o, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void no_overlap(Home home, const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
+                                      const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
+                                      const BoolVarArgs& o, IntPropLevel ipl = IPL_DEF);
 
     /**
      * \defgroup TaskModelIntScheduling Scheduling constraints
@@ -5967,38 +5967,38 @@ namespace Gecode {
     // overloading of the "branch" function.
 
     /// Variables in \a x are interchangeable
-    GECODE_INT_EXPORT SymmetryHandle VariableSymmetry(const IntVarArgs& x);
+    GECODE_INT_EXPORT SymmetryHandle variable_symmetry(const IntVarArgs& x);
     /// Variables in \a x are interchangeable
-    GECODE_INT_EXPORT SymmetryHandle VariableSymmetry(const BoolVarArgs& x);
+    GECODE_INT_EXPORT SymmetryHandle variable_symmetry(const BoolVarArgs& x);
     /// Specified variables in \a x are interchangeable
-    GECODE_INT_EXPORT SymmetryHandle VariableSymmetry(const IntVarArgs& x, const IntArgs& indices);
+    GECODE_INT_EXPORT SymmetryHandle variable_symmetry(const IntVarArgs& x, const IntArgs& indices);
     /// Values in \a v are interchangeable
-    GECODE_INT_EXPORT SymmetryHandle ValueSymmetry(const IntArgs& v);
+    GECODE_INT_EXPORT SymmetryHandle value_symmetry(const IntArgs& v);
     /// Values in \a v are interchangeable
-    GECODE_INT_EXPORT SymmetryHandle ValueSymmetry(const IntSet& v);
+    GECODE_INT_EXPORT SymmetryHandle value_symmetry(const IntSet& v);
     /// All values in the domain of the given variable are interchangeable
-    GECODE_INT_EXPORT SymmetryHandle ValueSymmetry(IntVar vars);
+    GECODE_INT_EXPORT SymmetryHandle value_symmetry(IntVar vars);
     /**
      * \brief Variable sequences in \a x of size \a ss are interchangeable
      *
      * The size of \a x must be a multiple of \a ss.
      */
     GECODE_INT_EXPORT
-    SymmetryHandle VariableSequenceSymmetry(const IntVarArgs& x, int ss);
+    SymmetryHandle variable_sequence_symmetry(const IntVarArgs& x, int ss);
     /**
      * \brief Variable sequences in \a x of size \a ss are interchangeable
      *
      * The size of \a x must be a multiple of \a ss.
      */
     GECODE_INT_EXPORT
-    SymmetryHandle VariableSequenceSymmetry(const BoolVarArgs& x, int ss);
+    SymmetryHandle variable_sequence_symmetry(const BoolVarArgs& x, int ss);
     /**
      * \brief Value sequences in \a v of size \a ss are interchangeable
      *
      * The size of \a v must be a multiple of \a ss.
      */
     GECODE_INT_EXPORT
-    SymmetryHandle ValueSequenceSymmetry(const IntArgs& v, int ss);
+    SymmetryHandle value_sequence_symmetry(const IntArgs& v, int ss);
 
     /// The values from \a lower to \a upper (inclusive) can be reflected
     GECODE_INT_EXPORT SymmetryHandle values_reflect(int lower, int upper);
@@ -6081,7 +6081,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void cbsbranch(Home home, const IntVarArgs& x);
+    GECODE_INT_EXPORT void cbs_branch(Home home, const IntVarArgs& x);
 
     /**
      * \brief Branch over \a x using counting-based search
@@ -6103,7 +6103,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void cbsbranch(Home home, const BoolVarArgs& x);
+    GECODE_INT_EXPORT void cbs_branch(Home home, const BoolVarArgs& x);
 
 #endif
 
@@ -6255,16 +6255,16 @@ namespace Gecode {
         /// Initialize with output stream \a os0 and events \ e
         StdIntTracer(std::ostream& os0 = std::cerr);
         /// Print init information
-        virtual void init(const Space& home, const IntTraceRecorder& t);
+        void init(const Space& home, const IntTraceRecorder& t) override;
         /// Print prune information
-        virtual void prune(const Space& home, const IntTraceRecorder& t, const ViewTraceInfo& vti, int i,
-                           IntTraceDelta& d);
+        void prune(const Space& home, const IntTraceRecorder& t, const ViewTraceInfo& vti, int i,
+                   IntTraceDelta& d) override;
         /// Print fixpoint information
-        virtual void fix(const Space& home, const IntTraceRecorder& t);
+        void fix(const Space& home, const IntTraceRecorder& t) override;
         /// Print failure information
-        virtual void fail(const Space& home, const IntTraceRecorder& t);
+        void fail(const Space& home, const IntTraceRecorder& t) override;
         /// Print that trace recorder is done
-        virtual void done(const Space& home, const IntTraceRecorder& t);
+        void done(const Space& home, const IntTraceRecorder& t) override;
         /// Default tracer (printing to std::cerr)
         static StdIntTracer def;
     };
@@ -6293,16 +6293,16 @@ namespace Gecode {
         /// Initialize with output stream \a os0
         StdBoolTracer(std::ostream& os0 = std::cerr);
         /// Print init information
-        virtual void init(const Space& home, const BoolTraceRecorder& t);
+        void init(const Space& home, const BoolTraceRecorder& t) override;
         /// Print prune information
-        virtual void prune(const Space& home, const BoolTraceRecorder& t, const ViewTraceInfo& vti, int i,
-                           BoolTraceDelta& d);
+        void prune(const Space& home, const BoolTraceRecorder& t, const ViewTraceInfo& vti, int i,
+                   BoolTraceDelta& d) override;
         /// Print fixpoint information
-        virtual void fix(const Space& home, const BoolTraceRecorder& t);
+        void fix(const Space& home, const BoolTraceRecorder& t) override;
         /// Print failure information
-        virtual void fail(const Space& home, const BoolTraceRecorder& t);
+        void fail(const Space& home, const BoolTraceRecorder& t) override;
         /// Print that trace recorder is done
-        virtual void done(const Space& home, const BoolTraceRecorder& t);
+        void done(const Space& home, const BoolTraceRecorder& t) override;
         /// Default tracer (printing to std::cerr)
         static StdBoolTracer def;
     };

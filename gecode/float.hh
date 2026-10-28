@@ -2025,16 +2025,16 @@ namespace Gecode {
         /// Initialize with output stream \a os0
         StdFloatTracer(std::ostream& os0 = std::cerr);
         /// Print init information
-        virtual void init(const Space& home, const FloatTraceRecorder& t);
+        void init(const Space& home, const FloatTraceRecorder& t) override;
         /// Print prune information
-        virtual void prune(const Space& home, const FloatTraceRecorder& t, const ViewTraceInfo& vti, int i,
-                           FloatTraceDelta& d);
+        void prune(const Space& home, const FloatTraceRecorder& t, const ViewTraceInfo& vti, int i,
+                   FloatTraceDelta& d) override;
         /// Print fixpoint information
-        virtual void fix(const Space& home, const FloatTraceRecorder& t);
+        void fix(const Space& home, const FloatTraceRecorder& t) override;
         /// Print failure information
-        virtual void fail(const Space& home, const FloatTraceRecorder& t);
+        void fail(const Space& home, const FloatTraceRecorder& t) override;
         /// Print that trace recorder is done
-        virtual void done(const Space& home, const FloatTraceRecorder& t);
+        void done(const Space& home, const FloatTraceRecorder& t) override;
         /// Default tracer (printing to std::cerr)
         static StdFloatTracer def;
     };

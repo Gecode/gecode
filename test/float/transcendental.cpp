@@ -62,11 +62,11 @@ namespace Test { namespace Float {
                            (log ? "::Log" : "::Pow") + (share ? "::Shared" : "::Separate"),
                        share ? 1 : 2, -4.0, 8.0, 1.0, CPLT_ASSIGNMENT, false),
                   base(b), input(x), output(y), logarithm(log), shared(share), expected(valid) {
-                testsearch = false;
+                test_search = false;
             }
             /// Check one exact example through the standard posting/assignment tests
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 Assignment* a = new RandomAssignment(arity, dom, 1, _rand);
                 a->set(0, input);
                 if (!shared)
@@ -74,12 +74,12 @@ namespace Test { namespace Float {
                 return a;
             }
             /// Use exact expected results instead of computing them with exp/log
-            virtual MaybeType
-            solution(const Assignment&) const {
+            MaybeType
+            solution(const Assignment&) const override {
                 return expected ? MT_TRUE : MT_FALSE;
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::FloatVar y = shared ? x[0] : x[1];
                 if (!shared)
                     Gecode::rel(home, y, Gecode::FRT_GQ, 0.0);
@@ -112,13 +112,13 @@ namespace Test { namespace Float {
             ExpXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Transcendental::Exp::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(exp(x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::exp(home, x[0], x[1]);
                 else
@@ -133,13 +133,13 @@ namespace Test { namespace Float {
             ExpXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Transcendental::Exp::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(exp(x[0]), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = exp(x[0]);
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
@@ -149,8 +149,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::exp(home, x[0], x[1]);
             }
         };
@@ -162,13 +162,13 @@ namespace Test { namespace Float {
             ExpXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Transcendental::Exp::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(exp(x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::exp(home, x[0], x[0]);
             }
         };
@@ -180,15 +180,15 @@ namespace Test { namespace Float {
             LogXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Transcendental::Log::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if (x[0].max() < 0.0)
                     return MT_FALSE;
                 return eq(log(x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::log(home, x[0], x[1]);
                 else
@@ -203,15 +203,15 @@ namespace Test { namespace Float {
             LogXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Transcendental::Log::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if (x[0].max() < 0.0)
                     return MT_FALSE;
                 return eq(log(x[0]), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 if (x[0].max() < 0.0)
                     return false;
                 Gecode::FloatVal d = log(x[0]);
@@ -223,8 +223,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::log(home, x[0], x[1]);
             }
         };
@@ -236,15 +236,15 @@ namespace Test { namespace Float {
             LogXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Transcendental::Log::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if (x[0].max() < 0.0)
                     return MT_FALSE;
                 return eq(log(x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::log(home, x[0], x[0]);
             }
         };
@@ -260,15 +260,15 @@ namespace Test { namespace Float {
                        CPLT_ASSIGNMENT, false),
                   base(_base) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((x[0].max() <= 0.0) || (base <= 0.0))
                     return MT_FALSE;
                 return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::log(home, base, x[0], x[1]);
             }
         };
@@ -284,15 +284,15 @@ namespace Test { namespace Float {
                        EXTEND_ASSIGNMENT, false),
                   base(_base) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((x[0].max() <= 0.0) || (base <= 0.0))
                     return MT_FALSE;
                 return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 if ((x[0].max() <= 0.0) || (base <= 0.0))
                     return false;
                 Gecode::FloatVal d = log(x[0]) / log(Gecode::FloatVal(base));
@@ -304,8 +304,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::log(home, base, x[0], x[1]);
             }
         };
@@ -321,15 +321,15 @@ namespace Test { namespace Float {
                        CPLT_ASSIGNMENT, false),
                   base(_base) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((x[0].max() <= 0.0) || (base <= 0.0))
                     return MT_FALSE;
                 return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::log(home, base, x[0], x[0]);
             }
         };
@@ -345,15 +345,15 @@ namespace Test { namespace Float {
                        CPLT_ASSIGNMENT, false),
                   base(_base) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if (base <= 0.0)
                     return MT_FALSE;
                 return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::pow(home, base, x[0], x[1]);
             }
         };
@@ -369,15 +369,15 @@ namespace Test { namespace Float {
                        EXTEND_ASSIGNMENT, false),
                   base(_base) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if (base <= 0.0)
                     return MT_FALSE;
                 return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 if (base <= 0.0)
                     return false;
                 Gecode::FloatVal d = exp(x[0] * log(Gecode::FloatVal(base)));
@@ -389,8 +389,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::pow(home, base, x[0], x[1]);
             }
         };
@@ -406,15 +406,15 @@ namespace Test { namespace Float {
                 : Test(tags, "Transcendental::Pow::N::" + str(_base) + "::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false),
                   base(_base) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((x[0].max() <= 0.0) || (base <= 0.0))
                     return MT_FALSE;
                 return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::pow(home, base, x[0], x[0]);
             }
         };

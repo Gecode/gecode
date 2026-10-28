@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     template <class View>
     inline void
-    computesccs(ViewArray<View>& x, ViewArray<View>& y, int phi[], SccComponent sinfo[], int scclist[]) {
+    compute_sccs(ViewArray<View>& x, ViewArray<View>& y, int phi[], SccComponent sinfo[], int scclist[]) {
 
         // number of sccs is bounded by xs (number of x-nodes)
         int xs = x.size();
@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace Sorted {
      * analogously to the x views we take
      *    - for the upper bounds the matching \f$\phi\f$ computed in  glover
      *      and compute the new upper bound by \f$T_j=min(E_j, D_{\phi(j)})\f$
-     *    - for the lower bounds the matching \f$\phi'\f$ computed in  revglover
+     *    - for the lower bounds the matching \f$\phi'\f$ computed in  reverse_glover
      *      and update the new lower bound by \f$T_j=max(E_j, D_{\phi'(j)})\f$
      */
 

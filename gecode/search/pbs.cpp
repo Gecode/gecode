@@ -35,13 +35,13 @@
 namespace Gecode { namespace Search { namespace Seq {
 
     Stop*
-    pbsstop(Stop* so) {
+    pbs_stop(Stop* so) {
         return new PortfolioStop(so);
     }
 
     Engine*
-    pbsengine(Engine** slaves, Stop** stops, unsigned int n_slaves, const Statistics& stat, const Search::Options& opt,
-              bool best) {
+    make_pbs_engine(Engine** slaves, Stop** stops, unsigned int n_slaves, const Statistics& stat,
+                    const Search::Options& opt, bool best) {
         if (best)
             return new PBS<true>(slaves, stops, n_slaves, stat, opt);
         else
@@ -57,12 +57,12 @@ namespace Gecode { namespace Search { namespace Seq {
 namespace Gecode { namespace Search { namespace Par {
 
     Stop*
-    pbsstop(Stop* so, const WorkerControl& control) {
+    pbs_stop(Stop* so, const WorkerControl& control) {
         return new PortfolioStop(so, control);
     }
 
     Engine*
-    pbsengine(Engine** slaves, Stop** stops, unsigned int n_slaves, const Statistics& stat, bool best) {
+    make_pbs_engine(Engine** slaves, Stop** stops, unsigned int n_slaves, const Statistics& stat, bool best) {
         if (best)
             return new PBS<CollectBest>(slaves, stops, n_slaves, stat);
         else

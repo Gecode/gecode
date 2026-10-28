@@ -53,8 +53,8 @@ namespace Test { namespace Int {
             IntAllMinMax(Gecode::IntPropLevel ipl)
                 : Test(TestTags::sweep(), "GCC::Int::All::MinMax::" + str(ipl), 4, -1, 3, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n[5];
                 for (int i = 5; i--;)
                     n[i] = 0;
@@ -68,8 +68,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntArgs values(5);
                 IntSet fixed(0, 2);
@@ -90,8 +90,8 @@ namespace Test { namespace Int {
             IntAllMinMaxDef(Gecode::IntPropLevel ipl)
                 : Test(TestTags::sweep(), "GCC::Int::All::MinMaxDef::" + str(ipl), 4, 0, 3, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n[4];
                 for (int i = 4; i--;)
                     n[i] = 0;
@@ -105,8 +105,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntSet fixed(0, 2);
                 IntSetArgs cards(4);
@@ -126,8 +126,8 @@ namespace Test { namespace Int {
                 : Test(ipl == Gecode::IPL_BND ? TestTags::standard() : TestTags::sweep(),
                        "GCC::Int::All::Max::" + str(ipl), 4, 1, 2, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n[2];
                 for (int i = 2; i--;)
                     n[i] = 0;
@@ -138,8 +138,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntArgs values({1, 2});
                 Gecode::count(home, x, Gecode::IntSet(2, 2), values, ipl);
             }
@@ -154,8 +154,8 @@ namespace Test { namespace Int {
                 : Test(TestTags::sweep(), std::string("GCC::Int::Some::") + (hole ? "::Hole" : "::Full") + str(ipl), 4,
                        1, 4, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n[4];
                 for (int i = 4; i--;)
                     n[i] = 0;
@@ -166,8 +166,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntArgs values({1, 2});
                 Gecode::IntSet fixed;
@@ -195,8 +195,8 @@ namespace Test { namespace Int {
             VarAll(Gecode::IntPropLevel ipl)
                 : Test(TestTags::sweep(), "GCC::Var::All::" + str(ipl), 7, 0, 2, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // Number of cardinality variables
                 int m = x.size() - n;
                 for (int i = 0; i < n; i++)
@@ -221,8 +221,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a xy
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xy) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xy) override {
                 using namespace Gecode;
                 // Number of cardinality variables
                 int m = xy.size() - n;
@@ -242,7 +242,7 @@ namespace Test { namespace Int {
             /// Number of non-cardinality variables
             int n;
             /// Arity beyond which to use randomized tests
-            static const int randomArity = 7;
+            static const int random_arity = 7;
 
         public:
             /// Create and register test
@@ -250,13 +250,13 @@ namespace Test { namespace Int {
                 : Test(TestTags::sweep(), "GCC::Var::Some::" + s + "::" + str(ipl), n0 + (max - min) + 1, min, max,
                        false, ipl),
                   n(n0) {
-                contest = CTL_NONE;
-                if (arity > randomArity)
-                    testsearch = false;
+                consistency_test_level = CTL_NONE;
+                if (arity > random_arity)
+                    test_search = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // Number of cardinality variables
                 int m = x.size() - n;
                 int* card = new int[m];
@@ -278,16 +278,16 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Create and register initial assignment
-            virtual Assignment*
-            assignment(void) const {
-                if (arity > randomArity)
+            Assignment*
+            assignment(void) const override {
+                if (arity > random_arity)
                     return new RandomAssignment(arity, dom, 4000, _rand);
                 else
                     return new CpltAssignment(arity, dom);
             }
             /// Post constraint on \a xy
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xy) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xy) override {
                 using namespace Gecode;
                 // Number of cardinality variables
                 int m = xy.size() - n;

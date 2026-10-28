@@ -92,8 +92,8 @@ namespace Gecode { namespace Set { namespace Channel {
             Gecode::Int::BoolView::schedule(home, *this, Gecode::Int::ME_BOOL_VAL);
         View::schedule(home, *this, y.assigned() ? ME_SET_VAL : ME_SET_BB);
         if (y.assigned()) {
-            if (y.glbSize() == static_cast<unsigned int>(y.glbMax() - y.glbMin() + 1)) {
-                new (&delta) SetDelta(y.glbMin(), y.glbMax(), 2, 0);
+            if (y.glb_size() == static_cast<unsigned int>(y.glb_max() - y.glb_min() + 1)) {
+                new (&delta) SetDelta(y.glb_min(), y.glb_max(), 2, 0);
             } else {
                 new (&delta) SetDelta(2, 0, 2, 0);
             }
@@ -149,19 +149,19 @@ namespace Gecode { namespace Set { namespace Channel {
         running = true;
         if (zeros.size() > 0) {
             BndSetRanges zi(zeros);
-            GECODE_ME_CHECK(y.excludeI(home, zi));
+            GECODE_ME_CHECK(y.exclude_i(home, zi));
             zeros.init(home);
         }
         if (ones.size() > 0) {
             BndSetRanges oi(ones);
-            GECODE_ME_CHECK(y.includeI(home, oi));
+            GECODE_ME_CHECK(y.include_i(home, oi));
             ones.init(home);
         }
         running = false;
 
-        if (delta.glbMin() != 1 || delta.glbMax() != 0) {
-            if (!delta.glbAny()) {
-                for (int i = delta.glbMin(); i <= delta.glbMax(); i++)
+        if (delta.glb_min() != 1 || delta.glb_max() != 0) {
+            if (!delta.glb_any()) {
+                for (int i = delta.glb_min(); i <= delta.glb_max(); i++)
                     GECODE_ME_CHECK(x[i].one(home));
             } else {
                 GlbRanges<View> glb(y);
@@ -170,9 +170,9 @@ namespace Gecode { namespace Set { namespace Channel {
                 }
             }
         }
-        if (delta.lubMin() != 1 || delta.lubMax() != 0) {
-            if (!delta.lubAny()) {
-                for (int i = delta.lubMin(); i <= delta.lubMax(); i++)
+        if (delta.lub_min() != 1 || delta.lub_max() != 0) {
+            if (!delta.lub_any()) {
+                for (int i = delta.lub_min(); i <= delta.lub_max(); i++)
                     GECODE_ME_CHECK(x[i].zero(home));
             } else {
                 int cur = 0;
@@ -199,7 +199,7 @@ namespace Gecode { namespace Set { namespace Channel {
         IndexAdvisor& a = static_cast<IndexAdvisor&>(_a);
         const SetDelta& d = static_cast<const SetDelta&>(_d);
 
-        ModEvent me = View::modevent(d);
+        ModEvent me = View::modification_event(d);
         int index = a.index();
         if ((running && index == -1 && me != ME_SET_VAL) || (index == -1 && me == ME_SET_CARD)) {
             return ES_OK;
@@ -217,39 +217,41 @@ namespace Gecode { namespace Set { namespace Channel {
             return home.ES_NOFIX_DISPOSE(co, a);
         }
 
-        if ((a.index() == -1) && Rel::testSetEventLB(me)) {
-            if (d.glbAny()) {
-                new (&delta) SetDelta(2, 0, delta.lubMin(), delta.lubMax());
+        if ((a.index() == -1) && Rel::test_set_event_lb(me)) {
+            if (d.glb_any()) {
+                new (&delta) SetDelta(2, 0, delta.lub_min(), delta.lub_max());
             } else {
-                if (delta.glbMin() == 1 && delta.glbMax() == 0) {
-                    new (&delta) SetDelta(d.glbMin(), d.glbMax(), delta.lubMin(), delta.lubMax());
+                if (delta.glb_min() == 1 && delta.glb_max() == 0) {
+                    new (&delta) SetDelta(d.glb_min(), d.glb_max(), delta.lub_min(), delta.lub_max());
                 } else {
-                    if (delta.glbMin() != 2 || delta.glbMax() != 0) {
-                        if ((delta.glbMin() <= d.glbMin() && delta.glbMax() >= d.glbMin()) ||
-                            (delta.glbMin() <= d.glbMax() && delta.glbMax() >= d.glbMax())) {
-                            new (&delta) SetDelta(std::min(delta.glbMin(), d.glbMin()),
-                                                  std::max(delta.glbMax(), d.glbMax()), delta.lubMin(), delta.lubMax());
+                    if (delta.glb_min() != 2 || delta.glb_max() != 0) {
+                        if ((delta.glb_min() <= d.glb_min() && delta.glb_max() >= d.glb_min()) ||
+                            (delta.glb_min() <= d.glb_max() && delta.glb_max() >= d.glb_max())) {
+                            new (&delta)
+                                SetDelta(std::min(delta.glb_min(), d.glb_min()), std::max(delta.glb_max(), d.glb_max()),
+                                         delta.lub_min(), delta.lub_max());
                         } else {
-                            new (&delta) SetDelta(2, 0, delta.lubMin(), delta.lubMax());
+                            new (&delta) SetDelta(2, 0, delta.lub_min(), delta.lub_max());
                         }
                     }
                 }
             }
         }
-        if ((a.index() == -1) && Rel::testSetEventUB(me)) {
-            if (d.lubAny()) {
-                new (&delta) SetDelta(delta.glbMin(), delta.glbMax(), 2, 0);
+        if ((a.index() == -1) && Rel::test_set_event_ub(me)) {
+            if (d.lub_any()) {
+                new (&delta) SetDelta(delta.glb_min(), delta.glb_max(), 2, 0);
             } else {
-                if (delta.lubMin() == 1 && delta.lubMax() == 0) {
-                    new (&delta) SetDelta(delta.glbMin(), delta.glbMax(), d.lubMin(), d.lubMax());
+                if (delta.lub_min() == 1 && delta.lub_max() == 0) {
+                    new (&delta) SetDelta(delta.glb_min(), delta.glb_max(), d.lub_min(), d.lub_max());
                 } else {
-                    if (delta.lubMin() != 2 || delta.lubMax() != 0) {
-                        if ((delta.lubMin() <= d.lubMin() && delta.lubMax() >= d.lubMin()) ||
-                            (delta.lubMin() <= d.lubMax() && delta.lubMax() >= d.lubMax())) {
-                            new (&delta) SetDelta(delta.lubMin(), delta.lubMax(), std::min(delta.lubMin(), d.lubMin()),
-                                                  std::max(delta.lubMax(), d.lubMax()));
+                    if (delta.lub_min() != 2 || delta.lub_max() != 0) {
+                        if ((delta.lub_min() <= d.lub_min() && delta.lub_max() >= d.lub_min()) ||
+                            (delta.lub_min() <= d.lub_max() && delta.lub_max() >= d.lub_max())) {
+                            new (&delta)
+                                SetDelta(delta.lub_min(), delta.lub_max(), std::min(delta.lub_min(), d.lub_min()),
+                                         std::max(delta.lub_max(), d.lub_max()));
                         } else {
-                            new (&delta) SetDelta(delta.glbMin(), delta.glbMax(), 2, 0);
+                            new (&delta) SetDelta(delta.glb_min(), delta.glb_max(), 2, 0);
                         }
                     }
                 }

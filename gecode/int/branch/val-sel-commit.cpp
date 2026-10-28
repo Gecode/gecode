@@ -35,7 +35,7 @@
 namespace Gecode { namespace Int { namespace Branch {
 
     ValSelCommitBase<IntView, int>*
-    valselcommit(Space& home, const IntValBranch& ivb) {
+    value_selection_commit(Space& home, const IntValBranch& ivb) {
         assert((ivb.select() != IntValBranch::SEL_VALUES_MIN) && (ivb.select() != IntValBranch::SEL_VALUES_MAX));
         switch (ivb.select()) {
         case IntValBranch::SEL_MIN:
@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
 
     ValSelCommitBase<IntView, int>*
-    valselcommit(Space& home, const IntAssign& ia) {
+    value_selection_commit(Space& home, const IntAssign& ia) {
         switch (ia.select()) {
         case IntAssign::SEL_MIN:
             return new (home) ValSelCommit<ValSelMin<IntView>, ValCommitEq<IntView>>(home, ia);
@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
 
     ValSelCommitBase<BoolView, int>*
-    valselcommit(Space& home, const BoolValBranch& bvb) {
+    value_selection_commit(Space& home, const BoolValBranch& bvb) {
         switch (bvb.select()) {
         case BoolValBranch::SEL_MIN:
             return new (home) ValSelCommit<ValSelMin<BoolView>, ValCommitEq<BoolView>>(home, bvb);
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
 
     ValSelCommitBase<BoolView, int>*
-    valselcommit(Space& home, const BoolAssign& ba) {
+    value_selection_commit(Space& home, const BoolAssign& ba) {
         switch (ba.select()) {
         case BoolAssign::SEL_MIN:
             return new (home) ValSelCommit<ValSelMin<BoolView>, ValCommitEq<BoolView>>(home, ba);

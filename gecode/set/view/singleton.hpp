@@ -90,18 +90,18 @@ namespace Gecode { namespace Set {
     }
 
     forceinline unsigned int
-    SingletonView::glbSize(void) const {
+    SingletonView::glb_size(void) const {
         return x.assigned() ? 1U : 0U;
     }
 
     forceinline unsigned int
-    SingletonView::lubSize(void) const {
+    SingletonView::lub_size(void) const {
         return x.size();
     }
 
     forceinline unsigned int
-    SingletonView::unknownSize(void) const {
-        return lubSize() - glbSize();
+    SingletonView::unknown_size(void) const {
+        return lub_size() - glb_size();
     }
 
     forceinline bool
@@ -110,47 +110,47 @@ namespace Gecode { namespace Set {
     }
 
     forceinline bool
-    SingletonView::notContains(int n) const {
+    SingletonView::not_contains(int n) const {
         return !x.in(n);
     }
 
     forceinline unsigned int
-    SingletonView::cardMin() const {
+    SingletonView::card_min() const {
         return 1;
     }
 
     forceinline unsigned int
-    SingletonView::cardMax() const {
+    SingletonView::card_max() const {
         return 1;
     }
 
     forceinline int
-    SingletonView::lubMin() const {
+    SingletonView::lub_min() const {
         return x.min();
     }
 
     forceinline int
-    SingletonView::lubMax() const {
+    SingletonView::lub_max() const {
         return x.max();
     }
 
     forceinline int
-    SingletonView::glbMin() const {
+    SingletonView::glb_min() const {
         return x.assigned() ? x.val() : BndSet::MIN_OF_EMPTY;
     }
 
     forceinline int
-    SingletonView::glbMax() const {
+    SingletonView::glb_max() const {
         return x.assigned() ? x.val() : BndSet::MAX_OF_EMPTY;
     }
 
     forceinline ModEvent
-    SingletonView::cardMin(Space&, unsigned int c) {
+    SingletonView::card_min(Space&, unsigned int c) {
         return c <= 1 ? ME_SET_NONE : ME_SET_FAILED;
     }
 
     forceinline ModEvent
-    SingletonView::cardMax(Space&, unsigned int c) {
+    SingletonView::card_max(Space&, unsigned int c) {
         return c < 1 ? ME_SET_FAILED : ME_SET_NONE;
     }
 
@@ -212,13 +212,13 @@ namespace Gecode { namespace Set {
 
     template <class I>
     ModEvent
-    SingletonView::excludeI(Space& home, I& iter) {
+    SingletonView::exclude_i(Space& home, I& iter) {
         return me_inttoset(x.minus_r(home, iter));
     }
 
     template <class I>
     ModEvent
-    SingletonView::includeI(Space& home, I& iter) {
+    SingletonView::include_i(Space& home, I& iter) {
         if (!iter())
             return ME_SET_NONE;
 
@@ -235,7 +235,7 @@ namespace Gecode { namespace Set {
 
     template <class I>
     ModEvent
-    SingletonView::intersectI(Space& home, I& iter) {
+    SingletonView::intersect_i(Space& home, I& iter) {
         return me_inttoset(x.inter_r(home, iter));
     }
 
@@ -283,37 +283,37 @@ namespace Gecode { namespace Set {
      */
 
     forceinline ModEvent
-    SingletonView::modevent(const Delta& d) {
-        return me_inttoset(Int::IntView::modevent(d));
+    SingletonView::modification_event(const Delta& d) {
+        return me_inttoset(Int::IntView::modification_event(d));
     }
 
     forceinline int
-    SingletonView::glbMin(const Delta& d) const {
+    SingletonView::glb_min(const Delta& d) const {
         return x.min(d);
     }
 
     forceinline int
-    SingletonView::glbMax(const Delta& d) const {
+    SingletonView::glb_max(const Delta& d) const {
         return x.max(d);
     }
 
     forceinline bool
-    SingletonView::glbAny(const Delta& d) const {
+    SingletonView::glb_any(const Delta& d) const {
         return x.any(d);
     }
 
     forceinline int
-    SingletonView::lubMin(const Delta& d) const {
+    SingletonView::lub_min(const Delta& d) const {
         return x.min(d);
     }
 
     forceinline int
-    SingletonView::lubMax(const Delta& d) const {
+    SingletonView::lub_max(const Delta& d) const {
         return x.max(d);
     }
 
     forceinline bool
-    SingletonView::lubAny(const Delta& d) const {
+    SingletonView::lub_any(const Delta& d) const {
         return x.any(d);
     }
 

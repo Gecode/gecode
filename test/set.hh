@@ -177,7 +177,7 @@ namespace Test {
             /// The common superset for all domains
             Gecode::IntSet lub;
             /// How many integer variables to iterate
-            int withInt;
+            int with_int;
             /// Initialize with \a n set variables, initial bound \a d and \a i int variables
             SetAssignment(int n, const Gecode::IntSet& d, int i = 0);
             /// Test whether all assignments have been iterated
@@ -195,7 +195,7 @@ namespace Test {
             }
             /// Return value for first integer variable
             int
-            intval(void) const {
+            int_value(void) const {
                 return ir[0];
             }
             /// Return assignment for integer variables
@@ -226,7 +226,7 @@ namespace Test {
             /// Int variables to be tested
             Gecode::IntVarArray y;
             /// How many integer variables are used by the test
-            int withInt;
+            int with_int;
             /// Reification information
             Gecode::Reify r;
             /// Whether the test is for a reified propagator
@@ -257,7 +257,7 @@ namespace Test {
             /// Constructor for cloning \a s
             SetTestSpace(SetTestSpace& s);
             /// Copy space during cloning
-            virtual Gecode::Space* copy(void);
+            Gecode::Space* copy(void) override;
             /// Post propagator
             void post(void);
             /// Compute a fixpoint and check for failure
@@ -267,7 +267,7 @@ namespace Test {
             /// Perform set tell operation on \a x[i]
             void rel(int i, Gecode::SetRelType srt, const Gecode::IntSet& is);
             /// Perform cardinality tell operation on \a x[i]
-            void cardinality(int i, int cmin, int cmax);
+            void cardinality(int i, int min_cardinality, int max_cardinality);
             /// Perform integer tell operation on \a y[i]
             void rel(int i, Gecode::IntRelType irt, int n);
             /// Perform Boolean tell on \a b
@@ -277,15 +277,15 @@ namespace Test {
             /// Test whether all variables are assigned
             bool assigned(void) const;
             /// Remove value \a v from the upper bound of \a x[i]
-            void removeFromLub(int v, int i, const SetAssignment& a);
+            void remove_from_lub(int v, int i, const SetAssignment& a);
             /// Remove value \a v from the upper bound of \a x[i]
-            void removeFromLub(int v, int i, const SetAssignment& a, SetTestSpace& c);
+            void remove_from_lub(int v, int i, const SetAssignment& a, SetTestSpace& c);
             /// Remove value \a v from the lower bound of \a x[i]
-            void addToGlb(int v, int i, const SetAssignment& a);
+            void add_to_glb(int v, int i, const SetAssignment& a);
             /// Remove value \a v from the lower bound of \a x[i]
-            void addToGlb(int v, int i, const SetAssignment& a, SetTestSpace& c);
-            /// Perform fixpoint computation
-            bool fixprob(void);
+            void add_to_glb(int v, int i, const SetAssignment& a, SetTestSpace& c);
+            /// Check fixpoint stability after reposting in a clone
+            bool check_fixpoint(void);
             /// Perform random pruning
             bool prune(const SetAssignment& a, Gecode::Support::RandomGenerator& rand);
             /// Return the number of propagators
@@ -313,13 +313,13 @@ namespace Test {
             /// Does the constraint also exist as reified constraint
             bool reified;
             /// Number of additional integer variables
-            int withInt;
+            int with_int;
 
         protected:
             /// Whether to perform full tests for disabled propagators
             bool disabled;
             /// Whether to check for subsumption
-            bool testsubsumed;
+            bool test_subsumption;
 
         public:
             /**
@@ -334,8 +334,8 @@ namespace Test {
                 : SetTest(TestTags::standard(), s, a, d, r, w) {}
             /// Construct and register a test with explicitly assigned tags
             SetTest(TestTags tags, const std::string& s, int a, const Gecode::IntSet& d, bool r = false, int w = 0)
-                : Base("Set::" + s, tags), arity(a), lub(d), reified(r), withInt(w), disabled(true),
-                  testsubsumed(true) {}
+                : Base("Set::" + s, tags), arity(a), lub(d), reified(r), with_int(w), disabled(true),
+                  test_subsumption(true) {}
             /// Check for solution
             virtual bool solution(const SetAssignment&) const = 0;
             /// Post propagator
@@ -344,7 +344,7 @@ namespace Test {
             virtual void
             post(Gecode::Space&, Gecode::SetVarArray&, Gecode::IntVarArray&, Gecode::Reify) {}
             /// Perform test
-            virtual bool run(void);
+            bool run(void) override;
 
             /// \name Mapping scalar values to strings
             //@{

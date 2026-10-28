@@ -42,7 +42,7 @@ namespace Gecode { namespace Gist {
         Q_OBJECT
     private:
         /// Action used for toggling stay-on-top behavior
-        QAction* stayOnTop;
+        QAction* stay_on_top;
         /// The QTextEditor used for text display
         QTextEdit* editor;
         /// The ostream that prints to the editor
@@ -50,17 +50,17 @@ namespace Gecode { namespace Gist {
 
     public:
         /// Constructor
-        TextOutputI(const std::string& name, QWidget* parent = 0);
+        TextOutputI(const std::string& name, QWidget* parent = nullptr);
         /// Destructor
-        ~TextOutputI(void);
+        ~TextOutputI(void) override;
         /// Return stream that prints to the text display
-        std::ostream& getStream(void);
+        std::ostream& get_stream(void);
         /// Add html string \a s to the output
-        void insertHtml(const QString& s);
+        void insert_html(const QString& s);
         /// Flush output
         void flush(void);
     protected Q_SLOTS:
-        void changeStayOnTop(void);
+        void change_stay_on_top(void);
     };
 
 }} // namespace Gecode::Gist

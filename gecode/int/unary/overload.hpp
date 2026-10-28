@@ -64,16 +64,16 @@ namespace Gecode { namespace Int { namespace Unary {
 
         for (int i = 0; i < f.size(); i++) {
             if (f[i].optional()) {
-                ol.linsert(i);
+                ol.insert_lambda(i);
             } else if (f[i].mandatory()) {
-                ol.oinsert(i);
+                ol.insert_omega(i);
                 if (ol.ect() > f[i].lct())
                     return ES_FAILED;
             }
             while (!ol.lempty() && (ol.lect() > f[i].lct())) {
                 int j = ol.responsible();
                 GECODE_ME_CHECK(f[j].excluded(home));
-                ol.lremove(j);
+                ol.remove_lambda(j);
                 to_purge = true;
             }
         }

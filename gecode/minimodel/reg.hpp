@@ -35,7 +35,7 @@ namespace Gecode {
     template <class Char, class Traits>
     inline std::basic_ostream<Char, Traits>&
     REG::print(std::basic_ostream<Char, Traits>& os) const {
-        return os << toString();
+        return os << to_string();
     }
 
     template <class Char, class Traits>

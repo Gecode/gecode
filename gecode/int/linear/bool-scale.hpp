@@ -305,14 +305,14 @@ namespace Gecode { namespace Int { namespace Linear {
         sl_p += x.max() + c;
         su_n -= x.min() + c;
 
-        const int MOD_SL = 1 << 0;
-        const int MOD_SU = 1 << 1;
+        const int mod_sl = 1 << 0;
+        const int mod_su = 1 << 1;
 
-        int mod = MOD_SL | MOD_SU;
+        int mod = mod_sl | mod_su;
 
         do {
-            if ((mod & MOD_SL) != 0) {
-                mod -= MOD_SL;
+            if ((mod & mod_sl) != 0) {
+                mod -= mod_sl;
                 // Propagate lower bound for positive Boolean views
                 {
                     ScaleBool* f = p.fst();
@@ -322,7 +322,7 @@ namespace Gecode { namespace Int { namespace Linear {
                     }
                     if (f > p.fst()) {
                         p.fst(f);
-                        mod |= MOD_SU;
+                        mod |= mod_su;
                     }
                 }
                 // Propagate lower bound for negative Boolean views
@@ -335,7 +335,7 @@ namespace Gecode { namespace Int { namespace Linear {
                     }
                     if (f > n.fst()) {
                         n.fst(f);
-                        mod |= MOD_SU;
+                        mod |= mod_su;
                     }
                 }
                 // Propagate lower bound for integer view
@@ -346,12 +346,12 @@ namespace Gecode { namespace Int { namespace Linear {
                         return ES_FAILED;
                     if (me_modified(me)) {
                         su_n -= x.min() - x_min;
-                        mod |= MOD_SU;
+                        mod |= mod_su;
                     }
                 }
             }
-            if ((mod & MOD_SU) != 0) {
-                mod -= MOD_SU;
+            if ((mod & mod_su) != 0) {
+                mod -= mod_su;
                 // Propagate upper bound for positive Boolean views
                 {
                     ScaleBool* f = p.fst();
@@ -362,7 +362,7 @@ namespace Gecode { namespace Int { namespace Linear {
                     }
                     if (f > p.fst()) {
                         p.fst(f);
-                        mod |= MOD_SL;
+                        mod |= mod_sl;
                         ;
                     }
                 }
@@ -375,7 +375,7 @@ namespace Gecode { namespace Int { namespace Linear {
                     }
                     if (f > n.fst()) {
                         n.fst(f);
-                        mod |= MOD_SL;
+                        mod |= mod_sl;
                         ;
                     }
                 }
@@ -387,7 +387,7 @@ namespace Gecode { namespace Int { namespace Linear {
                         return ES_FAILED;
                     if (me_modified(me)) {
                         sl_p += x.max() - x_max;
-                        mod |= MOD_SL;
+                        mod |= mod_sl;
                         ;
                     }
                 }

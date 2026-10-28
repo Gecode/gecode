@@ -38,7 +38,7 @@
 namespace Gecode { namespace Int { namespace LDSB {
 
     std::pair<int, int>
-    findVar(int* indices, unsigned int n_values, unsigned int seq_size, int index) {
+    find_var(int* indices, unsigned int n_values, unsigned int seq_size, int index) {
         unsigned int seq = 0;
         unsigned int pos = 0;
         for (unsigned int i = 0U; i < n_values; i++) {
@@ -59,54 +59,54 @@ namespace Gecode {
     using namespace Int::LDSB;
 
     SymmetryHandle
-    VariableSymmetry(const IntVarArgs& vars) {
+    variable_symmetry(const IntVarArgs& vars) {
         ArgArray<VarImpBase*> a(vars.size());
         for (int i = 0; i < vars.size(); i++)
             a[i] = vars[i].varimp();
         return SymmetryHandle(new VariableSymmetryObject(a));
     }
     SymmetryHandle
-    VariableSymmetry(const BoolVarArgs& vars) {
+    variable_symmetry(const BoolVarArgs& vars) {
         ArgArray<VarImpBase*> a(vars.size());
         for (int i = 0; i < vars.size(); i++)
             a[i] = vars[i].varimp();
         return SymmetryHandle(new VariableSymmetryObject(a));
     }
     SymmetryHandle
-    VariableSymmetry(const IntVarArgs& x, const IntArgs& indices) {
+    variable_symmetry(const IntVarArgs& x, const IntArgs& indices) {
         IntVarArgs xs(indices.size());
         for (int i = 0; i < indices.size(); i++)
             xs[i] = x[indices[i]];
-        return VariableSymmetry(xs);
+        return variable_symmetry(xs);
     }
     SymmetryHandle
-    ValueSymmetry(const IntArgs& vs) {
+    value_symmetry(const IntArgs& vs) {
         return SymmetryHandle(new ValueSymmetryObject(IntSet(vs)));
     }
     SymmetryHandle
-    ValueSymmetry(const IntSet& vs) {
+    value_symmetry(const IntSet& vs) {
         return SymmetryHandle(new ValueSymmetryObject(vs));
     }
     SymmetryHandle
-    ValueSymmetry(IntVar x) {
-        return ValueSymmetry(IntSet(x.min(), x.max()));
+    value_symmetry(IntVar x) {
+        return value_symmetry(IntSet(x.min(), x.max()));
     }
     SymmetryHandle
-    VariableSequenceSymmetry(const IntVarArgs& vars, int ss) {
+    variable_sequence_symmetry(const IntVarArgs& vars, int ss) {
         ArgArray<VarImpBase*> a(vars.size());
         for (int i = 0; i < vars.size(); i++)
             a[i] = vars[i].varimp();
         return SymmetryHandle(new VariableSequenceSymmetryObject(a, ss));
     }
     SymmetryHandle
-    VariableSequenceSymmetry(const BoolVarArgs& vars, int ss) {
+    variable_sequence_symmetry(const BoolVarArgs& vars, int ss) {
         ArgArray<VarImpBase*> a(vars.size());
         for (int i = 0; i < vars.size(); i++)
             a[i] = vars[i].varimp();
         return SymmetryHandle(new VariableSequenceSymmetryObject(a, ss));
     }
     SymmetryHandle
-    ValueSequenceSymmetry(const IntArgs& vs, int ss) {
+    value_sequence_symmetry(const IntArgs& vs, int ss) {
         return SymmetryHandle(new ValueSequenceSymmetryObject(vs, ss));
     }
 
@@ -124,7 +124,7 @@ namespace Gecode {
             j--;
             k++;
         }
-        return ValueSequenceSymmetry(a, n);
+        return value_sequence_symmetry(a, n);
     }
     SymmetryHandle
     values_reflect(const IntVar& x) {
@@ -138,14 +138,14 @@ namespace Gecode { namespace Int { namespace LDSB {
     class VariableMap : public std::map<VarImpBase*, int> {};
 
     /*
-     * The duplication in createIntSym/createBoolSym is undesirable,
+     * The duplication in create_int_sym/create_bool_sym is undesirable,
      * and so is the use of dynamic_cast to tell the symmetries
      * apart.
      */
 
     /// Create an integer symmetry implementation from a symmetry handle
     SymmetryImp<IntView>*
-    createIntSym(Space& home, const SymmetryHandle& s, VariableMap variableMap) {
+    create_int_sym(Space& home, const SymmetryHandle& s, VariableMap variable_map) {
         VariableSymmetryObject* varref = dynamic_cast<VariableSymmetryObject*>(s.ref);
         ValueSymmetryObject* valref = dynamic_cast<ValueSymmetryObject*>(s.ref);
         VariableSequenceSymmetryObject* varseqref = dynamic_cast<VariableSequenceSymmetryObject*>(s.ref);
@@ -154,8 +154,8 @@ namespace Gecode { namespace Int { namespace LDSB {
             int n = varref->nxs;
             int* indices = home.alloc<int>(n);
             for (int i = 0; i < n; i++) {
-                VariableMap::const_iterator index = variableMap.find(varref->xs[i]);
-                if (index == variableMap.end())
+                VariableMap::const_iterator index = variable_map.find(varref->xs[i]);
+                if (index == variable_map.end())
                     throw LDSBUnbranchedVariable("VariableSymmetryObject::createInt");
                 indices[i] = index->second;
             }
@@ -175,8 +175,8 @@ namespace Gecode { namespace Int { namespace LDSB {
             int n = varseqref->nxs;
             int* indices = home.alloc<int>(n);
             for (int i = 0; i < n; i++) {
-                VariableMap::const_iterator index = variableMap.find(varseqref->xs[i]);
-                if (index == variableMap.end())
+                VariableMap::const_iterator index = variable_map.find(varseqref->xs[i]);
+                if (index == variable_map.end())
                     throw LDSBUnbranchedVariable("VariableSequenceSymmetryObject::createInt");
                 indices[i] = index->second;
             }
@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     /// Create a boolean symmetry implementation from a symmetry handle
     SymmetryImp<BoolView>*
-    createBoolSym(Space& home, const SymmetryHandle& s, VariableMap variableMap) {
+    create_bool_sym(Space& home, const SymmetryHandle& s, VariableMap variable_map) {
         VariableSymmetryObject* varref = dynamic_cast<VariableSymmetryObject*>(s.ref);
         ValueSymmetryObject* valref = dynamic_cast<ValueSymmetryObject*>(s.ref);
         VariableSequenceSymmetryObject* varseqref = dynamic_cast<VariableSequenceSymmetryObject*>(s.ref);
@@ -204,8 +204,8 @@ namespace Gecode { namespace Int { namespace LDSB {
             int n = varref->nxs;
             int* indices = home.alloc<int>(n);
             for (int i = 0; i < n; i++) {
-                VariableMap::const_iterator index = variableMap.find(varref->xs[i]);
-                if (index == variableMap.end())
+                VariableMap::const_iterator index = variable_map.find(varref->xs[i]);
+                if (index == variable_map.end())
                     throw LDSBUnbranchedVariable("VariableSymmetryObject::createBool");
                 indices[i] = index->second;
             }
@@ -225,8 +225,8 @@ namespace Gecode { namespace Int { namespace LDSB {
             int n = varseqref->nxs;
             int* indices = home.alloc<int>(n);
             for (int i = 0; i < n; i++) {
-                VariableMap::const_iterator index = variableMap.find(varseqref->xs[i]);
-                if (index == variableMap.end())
+                VariableMap::const_iterator index = variable_map.find(varseqref->xs[i]);
+                if (index == variable_map.end())
                     throw LDSBUnbranchedVariable("VariableSequenceSymmetryObject::createBool");
                 indices[i] = index->second;
             }
@@ -256,7 +256,7 @@ namespace Gecode {
             return;
         vars.expand(home, x);
         ViewArray<IntView> xv(home, x);
-        ViewSel<IntView>* vs[1] = {Branch::viewsel(home, vars)};
+        ViewSel<IntView>* vs[1] = {Branch::view_selection(home, vars)};
         switch (vals.select()) {
         case IntValBranch::SEL_SPLIT_MIN:
         case IntValBranch::SEL_SPLIT_MAX:
@@ -275,19 +275,20 @@ namespace Gecode {
         default:
             // Construct mapping from each variable in the array to its index
             // in the array.
-            VariableMap variableMap;
+            VariableMap variable_map;
             for (int i = 0; i < x.size(); i++)
-                variableMap[x[i].varimp()] = i;
+                variable_map[x[i].varimp()] = i;
 
             // Convert the modelling-level Symmetries object into an array of
             // SymmetryImp objects.
             int n = syms.size();
             SymmetryImp<IntView>** array = static_cast<Space&>(home).alloc<SymmetryImp<IntView>*>(n);
             for (int i = 0; i < n; i++) {
-                array[i] = createIntSym(home, syms[i], variableMap);
+                array[i] = create_int_sym(home, syms[i], variable_map);
             }
 
-            postldsbbrancher<IntView, 1, int, 2>(home, xv, vs, Branch::valselcommit(home, vals), array, n, bf, vvp);
+            post_ldsb_brancher<IntView, 1, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals), array, n,
+                                                   bf, vvp);
         }
     }
 
@@ -312,21 +313,21 @@ namespace Gecode {
         } else {
             // Construct mapping from each variable in the array to its index
             // in the array.
-            VariableMap variableMap;
+            VariableMap variable_map;
             for (int i = 0; i < x.size(); i++)
-                variableMap[x[i].varimp()] = i;
+                variable_map[x[i].varimp()] = i;
 
             // Convert the modelling-level Symmetries object into an array of
             // SymmetryImp objects.
             int n = syms.size();
             SymmetryImp<IntView>** array = static_cast<Space&>(home).alloc<SymmetryImp<IntView>*>(n);
             for (int i = 0; i < n; i++) {
-                array[i] = createIntSym(home, syms[i], variableMap);
+                array[i] = create_int_sym(home, syms[i], variable_map);
             }
 
             ViewArray<IntView> xv(home, x);
             if (vars.c.select() == IntVarBranch::SEL_NONE) {
-                ViewSel<IntView>* vs[2] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b)};
+                ViewSel<IntView>* vs[2] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b)};
                 switch (vals.select()) {
                 case IntValBranch::SEL_SPLIT_MIN:
                 case IntValBranch::SEL_SPLIT_MAX:
@@ -343,12 +344,12 @@ namespace Gecode {
                     // binary branching, which is OK for LDSB, so we
                     // fall through
                 default:
-                    postldsbbrancher<IntView, 2, int, 2>(home, xv, vs, Branch::valselcommit(home, vals), array, n, bf,
-                                                         vvp);
+                    post_ldsb_brancher<IntView, 2, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals),
+                                                           array, n, bf, vvp);
                 }
             } else if (vars.d.select() == IntVarBranch::SEL_NONE) {
-                ViewSel<IntView>* vs[3] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                           Branch::viewsel(home, vars.c)};
+                ViewSel<IntView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                           Branch::view_selection(home, vars.c)};
                 switch (vals.select()) {
                 case IntValBranch::SEL_SPLIT_MIN:
                 case IntValBranch::SEL_SPLIT_MAX:
@@ -365,12 +366,12 @@ namespace Gecode {
                     // binary branching, which is OK for LDSB, so we
                     // fall through
                 default:
-                    postldsbbrancher<IntView, 3, int, 2>(home, xv, vs, Branch::valselcommit(home, vals), array, n, bf,
-                                                         vvp);
+                    post_ldsb_brancher<IntView, 3, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals),
+                                                           array, n, bf, vvp);
                 }
             } else {
-                ViewSel<IntView>* vs[4] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                           Branch::viewsel(home, vars.c), Branch::viewsel(home, vars.d)};
+                ViewSel<IntView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                           Branch::view_selection(home, vars.c), Branch::view_selection(home, vars.d)};
                 switch (vals.select()) {
                 case IntValBranch::SEL_SPLIT_MIN:
                 case IntValBranch::SEL_SPLIT_MAX:
@@ -387,8 +388,8 @@ namespace Gecode {
                     // binary branching, which is OK for LDSB, so we
                     // fall through
                 default:
-                    postldsbbrancher<IntView, 4, int, 2>(home, xv, vs, Branch::valselcommit(home, vals), array, n, bf,
-                                                         vvp);
+                    post_ldsb_brancher<IntView, 4, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals),
+                                                           array, n, bf, vvp);
                 }
             }
         }
@@ -402,20 +403,20 @@ namespace Gecode {
             return;
         vars.expand(home, x);
         ViewArray<BoolView> xv(home, x);
-        ViewSel<BoolView>* vs[1] = {Branch::viewsel(home, vars)};
+        ViewSel<BoolView>* vs[1] = {Branch::view_selection(home, vars)};
 
         // Construct mapping from each variable in the array to its index
         // in the array.
-        VariableMap variableMap;
+        VariableMap variable_map;
         for (int i = 0; i < x.size(); i++)
-            variableMap[x[i].varimp()] = i;
+            variable_map[x[i].varimp()] = i;
 
         // Convert the modelling-level Symmetries object into an array of
         // SymmetryImp objects.
         int n = syms.size();
         SymmetryImp<BoolView>** array = static_cast<Space&>(home).alloc<SymmetryImp<BoolView>*>(n);
         for (int i = 0; i < n; i++) {
-            array[i] = createBoolSym(home, syms[i], variableMap);
+            array[i] = create_bool_sym(home, syms[i], variable_map);
         }
 
         // Technically these "bad" value selection could in fact work with
@@ -430,7 +431,8 @@ namespace Gecode {
             // binary branching, which is OK for LDSB, so we
             // fall through
         default:
-            postldsbbrancher<BoolView, 1, int, 2>(home, xv, vs, Branch::valselcommit(home, vals), array, n, bf, vvp);
+            post_ldsb_brancher<BoolView, 1, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals), array, n,
+                                                    bf, vvp);
         }
     }
 
@@ -455,16 +457,16 @@ namespace Gecode {
         } else {
             // Construct mapping from each variable in the array to its index
             // in the array.
-            VariableMap variableMap;
+            VariableMap variable_map;
             for (int i = 0; i < x.size(); i++)
-                variableMap[x[i].varimp()] = i;
+                variable_map[x[i].varimp()] = i;
 
             // Convert the modelling-level Symmetries object into an array of
             // SymmetryImp objects.
             int n = syms.size();
             SymmetryImp<BoolView>** array = static_cast<Space&>(home).alloc<SymmetryImp<BoolView>*>(n);
             for (int i = 0; i < n; i++) {
-                array[i] = createBoolSym(home, syms[i], variableMap);
+                array[i] = create_bool_sym(home, syms[i], variable_map);
             }
 
             // Technically these "bad" value selection could in fact work with
@@ -483,18 +485,18 @@ namespace Gecode {
             }
 
             ViewArray<BoolView> xv(home, x);
-            ValSelCommitBase<BoolView, int>* vsc = Branch::valselcommit(home, vals);
+            ValSelCommitBase<BoolView, int>* vsc = Branch::value_selection_commit(home, vals);
             if (vars.c.select() == BoolVarBranch::SEL_NONE) {
-                ViewSel<BoolView>* vs[2] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b)};
-                postldsbbrancher<BoolView, 2, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
+                ViewSel<BoolView>* vs[2] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b)};
+                post_ldsb_brancher<BoolView, 2, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
             } else if (vars.d.select() == BoolVarBranch::SEL_NONE) {
-                ViewSel<BoolView>* vs[3] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                            Branch::viewsel(home, vars.c)};
-                postldsbbrancher<BoolView, 3, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
+                ViewSel<BoolView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                            Branch::view_selection(home, vars.c)};
+                post_ldsb_brancher<BoolView, 3, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
             } else {
-                ViewSel<BoolView>* vs[4] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                            Branch::viewsel(home, vars.c), Branch::viewsel(home, vars.d)};
-                postldsbbrancher<BoolView, 4, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
+                ViewSel<BoolView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                            Branch::view_selection(home, vars.c), Branch::view_selection(home, vars.d)};
+                post_ldsb_brancher<BoolView, 4, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
             }
         }
     }

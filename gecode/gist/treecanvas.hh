@@ -54,13 +54,13 @@ namespace Gecode { namespace Gist {
     /// \brief Parameters for the tree layout
     namespace LayoutConfig {
         /// Minimum scale factor
-        const int minScale = 10;
+        const int min_scale = 10;
         /// Maximum scale factor
-        const int maxScale = 400;
+        const int max_scale = 400;
         /// Default scale factor
-        const int defScale = 100;
+        const int def_scale = 100;
         /// Maximum scale factor for automatic zoom
-        const int maxAutoZoomScale = defScale;
+        const int max_auto_zoom_scale = def_scale;
     } // namespace LayoutConfig
 
     class TreeCanvas;
@@ -73,21 +73,21 @@ namespace Gecode { namespace Gist {
         int depth;
         bool a;
         TreeCanvas* t;
-        void updateCanvas(void);
+        void update_canvas(void);
 
     public:
         void search(VisualNode* n, bool all, TreeCanvas* ti);
 
     Q_SIGNALS:
         void update(int w, int h, int scale0);
-        void statusChanged(bool);
-        void scaleChanged(int);
+        void status_changed(bool);
+        void scale_changed(int);
         void solution(const Space*);
-        void searchFinished(void);
-        void moveToNode(VisualNode* n, bool);
+        void search_finished(void);
+        void move_to_node(VisualNode* n, bool);
 
     protected:
-        void run(void);
+        void run(void) override;
     };
 
     /// \brief A canvas that displays the search tree
@@ -99,55 +99,55 @@ namespace Gecode { namespace Gist {
 
     public:
         /// Constructor
-        TreeCanvas(Space* rootSpace, bool bab, QWidget* parent, const Options& opt);
+        TreeCanvas(Space* root_space, bool bab, QWidget* parent, const Options& opt);
         /// Destructor
-        ~TreeCanvas(void);
+        ~TreeCanvas(void) override;
 
         /// Add inspector \a i
-        void addDoubleClickInspector(Inspector* i);
+        void add_double_click_inspector(Inspector* i);
         /// Set active inspector
-        void activateDoubleClickInspector(int i, bool active);
+        void activate_double_click_inspector(int i, bool active);
         /// Add inspector \a i
-        void addSolutionInspector(Inspector* i);
+        void add_solution_inspector(Inspector* i);
         /// Set active inspector
-        void activateSolutionInspector(int i, bool active);
+        void activate_solution_inspector(int i, bool active);
         /// Add inspector \a i
-        void addMoveInspector(Inspector* i);
+        void add_move_inspector(Inspector* i);
         /// Set active inspector
-        void activateMoveInspector(int i, bool active);
+        void activate_move_inspector(int i, bool active);
         /// Add comparator \a c
-        void addComparator(Comparator* c);
+        void add_comparator(Comparator* c);
         /// Set active comparator
-        void activateComparator(int i, bool active);
+        void activate_comparator(int i, bool active);
 
     public Q_SLOTS:
         /// Set scale factor to \a scale0
-        void scaleTree(int scale0, int zoomx = -1, int zoomy = -1);
+        void scale_tree(int scale0, int zoomx = -1, int zoomy = -1);
 
         /// Explore complete subtree of selected node
-        void searchAll(void);
+        void search_all(void);
         /// Find next solution below selected node
-        void searchOne(void);
+        void search_one(void);
         /// Toggle hidden state of selected node
-        void toggleHidden(void);
+        void toggle_hidden(void);
         /// Hide failed subtrees of selected node
-        void hideFailed(void);
+        void hide_failed(void);
         /// Unhide all nodes below selected node
-        void unhideAll(void);
+        void unhide_all(void);
         /// Do not stop at selected stop node
-        void toggleStop(void);
+        void toggle_stop(void);
         /// Do not stop at any stop node
-        void unstopAll(void);
+        void unstop_all(void);
         /// Export pdf of the current subtree
-        void exportPDF(void);
+        void export_pdf(void);
         /// Export pdf of the whole tree
-        void exportWholeTreePDF(void);
+        void export_whole_tree_pdf(void);
         /// Print the tree
         void print(void);
         /// Zoom the canvas so that the whole tree fits
-        void zoomToFit(void);
+        void zoom_to_fit(void);
         /// Center the view on the currently selected node
-        void centerCurrentNode(void);
+        void center_current_node(void);
         /**
          * \brief Call the double click inspector for the currently selected node
          *
@@ -155,126 +155,126 @@ namespace Gecode { namespace Gist {
          * computation, otherwise its status after branching but before
          * fixpoint computation is inspected.
          */
-        void inspectCurrentNode(bool fix = true, int inspectorNo = -1);
-        /// Calls inspectCurrentNode(false)
-        void inspectBeforeFP(void);
+        void inspect_current_node(bool fix = true, int inspector_no = -1);
+        /// Calls inspect_current_node(false)
+        void inspect_before_fp(void);
         /// Label all branches in subtree under current node
-        void labelBranches(void);
+        void label_branches(void);
         /// Label all branches on path to root node
-        void labelPath(void);
+        void label_path(void);
 
         /// Stop current search
-        void stopSearch(void);
+        void stop_search(void);
 
         /// Reset
         void reset(void);
 
         /// Move selection to the parent of the selected node
-        void navUp(void);
+        void nav_up(void);
         /// Move selection to the first child of the selected node
-        void navDown(void);
+        void nav_down(void);
         /// Move selection to the left sibling of the selected node
-        void navLeft(void);
+        void nav_left(void);
         /// Move selection to the right sibling of the selected node
-        void navRight(void);
+        void nav_right(void);
         /// Move selection to the root node
-        void navRoot(void);
+        void nav_root(void);
         /// Move selection to next solution (in DFS order)
-        void navNextSol(bool back = false);
+        void nav_next_sol(bool back = false);
         /// Move selection to previous solution (in DFS order)
-        void navPrevSol(void);
+        void nav_prev_sol(void);
 
         /// Bookmark current node
-        void bookmarkNode(void);
+        void bookmark_node(void);
         /// Set the current node to be the head of the path
-        void setPath(void);
+        void set_path(void);
         /// Call the double click inspector for all nodes on the path from root to head of the path
-        void inspectPath(void);
+        void inspect_path(void);
         /// Wait for click on node to compare with current node
-        void startCompareNodes(void);
+        void start_compare_nodes(void);
         /// Wait for click on node to compare with current node before fixpoint
-        void startCompareNodesBeforeFP(void);
+        void start_compare_nodes_before_fp(void);
 
         /// Re-emit status change information for current node
-        void emitStatusChanged(void);
+        void emit_status_changed(void);
 
         /// Set recomputation distances
-        void setRecompDistances(int c_d, int a_d);
+        void set_recomp_distances(int c_d, int a_d);
         /// Set preference whether to automatically hide failed subtrees
-        void setAutoHideFailed(bool b);
+        void set_auto_hide_failed(bool b);
         /// Set preference whether to automatically zoom to fit
-        void setAutoZoom(bool b);
+        void set_auto_zoom(bool b);
         /// Return preference whether to automatically hide failed subtrees
-        bool getAutoHideFailed(void);
+        bool get_auto_hide_failed(void);
         /// Return preference whether to automatically zoom to fit
-        bool getAutoZoom(void);
+        bool get_auto_zoom(void);
         /// Set preference whether to show copies in the tree
-        void setShowCopies(bool b);
+        void set_show_copies(bool b);
         /// Return preference whether to show copies in the tree
-        bool getShowCopies(void);
+        bool get_show_copies(void);
         /// Set refresh rate
-        void setRefresh(int i);
+        void set_refresh(int i);
         /// Set refresh pause in msec
-        void setRefreshPause(int i);
+        void set_refresh_pause(int i);
         /// Return preference whether to use smooth scrolling and zooming
-        bool getSmoothScrollAndZoom(void);
+        bool get_smooth_scroll_and_zoom(void);
         /// Set preference whether to use smooth scrolling and zooming
-        void setSmoothScrollAndZoom(bool b);
+        void set_smooth_scroll_and_zoom(bool b);
         /// Return preference whether to move cursor during search
-        bool getMoveDuringSearch(void);
+        bool get_move_during_search(void);
         /// Set preference whether to move cursor during search
-        void setMoveDuringSearch(bool b);
+        void set_move_during_search(bool b);
         /// Resize to the outer widget size if auto zoom is enabled
-        void resizeToOuter(void);
+        void resize_to_outer(void);
 
         /// Stop search and wait for it to finish
         bool finish(void);
 
     Q_SIGNALS:
         /// The scale factor has changed
-        void scaleChanged(int);
+        void scale_changed(int);
         /// The auto-zoom state was changed
-        void autoZoomChanged(bool);
+        void auto_zoom_changed(bool);
         /// Context menu triggered
-        void contextMenu(QContextMenuEvent*);
+        void context_menu(QContextMenuEvent*);
         /// Status bar update
-        void statusChanged(VisualNode*, const Statistics&, bool);
+        void status_changed(VisualNode*, const Statistics&, bool);
         /// Signals that a solution has been found
         void solution(const Space*);
         /// Signals that %Gist is finished
-        void searchFinished(void);
+        void search_finished(void);
         /// Signals that a bookmark has been added
-        void addedBookmark(const QString& id);
+        void added_bookmark(const QString& id);
         /// Signals that a bookmark has been removed
-        void removedBookmark(int idx);
+        void removed_bookmark(int idx);
 
     protected:
         /// Mutex for synchronizing access to the tree
         GecodeQMutex mutex;
         /// Mutex for synchronizing layout and drawing
-        GecodeQMutex layoutMutex;
+        GecodeQMutex layout_mutex;
         /// Search engine thread
         SearcherThread searcher;
         /// Flag signalling the search to stop
-        bool stopSearchFlag;
+        bool stop_search_flag;
         /// Flag signalling that Gist is ready to be closed
-        bool finishedFlag;
+        bool finished_flag;
         /// Allocator for nodes
         Node::NodeAllocator* na;
         /// The root node of the tree
         VisualNode* root;
         /// The currently best solution (for branch-and-bound)
-        BestNode* curBest;
+        BestNode* cur_best;
         /// The currently selected node
-        VisualNode* currentNode;
+        VisualNode* current_node;
         /// The head of the currently selected path
-        VisualNode* pathHead;
+        VisualNode* path_head;
         /// The registered click inspectors, and whether they are active
-        QVector<QPair<Inspector*, bool>> doubleClickInspectors;
+        QVector<QPair<Inspector*, bool>> double_click_inspectors;
         /// The registered solution inspectors, and whether they are active
-        QVector<QPair<Inspector*, bool>> solutionInspectors;
+        QVector<QPair<Inspector*, bool>> solution_inspectors;
         /// The registered move inspectors, and whether they are active
-        QVector<QPair<Inspector*, bool>> moveInspectors;
+        QVector<QPair<Inspector*, bool>> move_inspectors;
         /// The registered comparators, and whether they are active
         QVector<QPair<Comparator*, bool>> comparators;
 
@@ -282,12 +282,12 @@ namespace Gecode { namespace Gist {
         QVector<VisualNode*> bookmarks;
 
         /// Whether node comparison action is running
-        bool compareNodes;
+        bool compare_nodes;
         /// Whether node comparison action computes fixpoint
-        bool compareNodesBeforeFP;
+        bool compare_nodes_before_fp;
 
         /// The scale bar
-        QSlider* scaleBar;
+        QSlider* scale_bar;
 
         /// Statistics about the search tree
         Statistics stats;
@@ -298,19 +298,19 @@ namespace Gecode { namespace Gist {
         int xtrans;
 
         /// Whether to hide failed subtrees automatically
-        bool autoHideFailed;
+        bool auto_hide_failed;
         /// Whether to zoom automatically
-        bool autoZoom;
+        bool auto_zoom;
         /// Whether to show copies in the tree
-        bool showCopies;
+        bool show_copies;
         /// Refresh rate
         int refresh;
         /// Time (in msec) to pause after each refresh
-        int refreshPause;
+        int refresh_pause;
         /// Whether to use smooth scrolling and zooming
-        bool smoothScrollAndZoom;
+        bool smooth_scroll_and_zoom;
         /// Whether to move cursor during search
-        bool moveDuringSearch;
+        bool move_during_search;
 
         /// The recomputation distance
         int c_d;
@@ -318,46 +318,46 @@ namespace Gecode { namespace Gist {
         int a_d;
 
         /// Return the node corresponding to the \a event position
-        VisualNode* eventNode(QEvent* event);
+        VisualNode* event_node(QEvent* event);
         /// General event handler, used for displaying tool tips
-        bool event(QEvent* event);
+        bool event(QEvent* event) override;
         /// Paint the tree
-        void paintEvent(QPaintEvent* event);
+        void paintEvent(QPaintEvent* event) override;
         /// Handle mouse press event
-        void mousePressEvent(QMouseEvent* event);
+        void mousePressEvent(QMouseEvent* event) override;
         /// Handle mouse double click event
-        void mouseDoubleClickEvent(QMouseEvent* event);
+        void mouseDoubleClickEvent(QMouseEvent* event) override;
         /// Handle context menu event
-        void contextMenuEvent(QContextMenuEvent* event);
+        void contextMenuEvent(QContextMenuEvent* event) override;
         /// Handle resize event
-        void resizeEvent(QResizeEvent* event);
+        void resizeEvent(QResizeEvent* event) override;
         /// Handle mouse wheel events
-        void wheelEvent(QWheelEvent* event);
+        void wheelEvent(QWheelEvent* event) override;
 
         /// Timer for smooth zooming
-        QTimeLine zoomTimeLine;
+        QTimeLine zoom_time_line;
         /// Timer for smooth scrolling
-        QTimeLine scrollTimeLine;
+        QTimeLine scroll_time_line;
         /// Target x coordinate after smooth scrolling
-        int targetX;
+        int target_x;
         /// Source x coordinate after smooth scrolling
-        int sourceX;
+        int source_x;
         /// Target y coordinate after smooth scrolling
-        int targetY;
+        int target_y;
         /// Target y coordinate after smooth scrolling
-        int sourceY;
+        int source_y;
 
         /// Target width after layout
-        int targetW;
+        int target_w;
         /// Target height after layout
-        int targetH;
+        int target_h;
         /// Target scale after layout
-        int targetScale;
+        int target_scale;
         /// Timer id for delaying the update
-        int layoutDoneTimerId;
+        int layout_done_timer_id;
 
         /// Timer invoked for smooth zooming and scrolling
-        virtual void timerEvent(QTimerEvent* e);
+        void timerEvent(QTimerEvent* e) override;
 
     public Q_SLOTS:
         /// Update display
@@ -365,16 +365,16 @@ namespace Gecode { namespace Gist {
         /// React to scroll events
         void scroll(void);
         /// Layout done
-        void layoutDone(int w, int h, int scale0);
+        void layout_done(int w, int h, int scale0);
         /// Set the selected node to \a n
-        void setCurrentNode(VisualNode* n, bool finished = true, bool update = true);
+        void set_current_node(VisualNode* n, bool finished = true, bool update = true);
     private Q_SLOTS:
         /// Search has finished
-        void statusChanged(bool);
+        void status_changed(bool);
         /// Export PDF of the subtree of \a n
-        void exportNodePDF(VisualNode* n);
+        void export_node_pdf(VisualNode* n);
         /// A new solution \a s has been found
-        void inspectSolution(const Space* s);
+        void inspect_solution(const Space* s);
         /// Scroll to \a i percent of the target
         void scroll(int i);
     };

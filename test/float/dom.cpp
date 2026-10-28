@@ -56,27 +56,27 @@ namespace Test { namespace Float {
             /// Create and register test
             Val(int n, Gecode::FloatVal c0, Gecode::FloatNum st)
                 : Test("Dom::Val::" + str(n) + "::" + str(c0), n, -3, 3, st, CPLT_ASSIGNMENT, n == 1), c(c0) {
-                testsubsumed = false;
+                test_subsumption = false;
             }
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 for (int i = x.size(); i--;)
                     if ((x[i].max() > c.max()) || (x[i].min() < c.min()))
                         return MT_FALSE;
                 return MT_TRUE;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (x.size() == 1)
                     Gecode::dom(home, x[0], c);
                 else
                     Gecode::dom(home, x, c);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
                 assert(x.size() == 1);
                 Gecode::dom(home, x[0], c, r);
             }
@@ -96,11 +96,11 @@ namespace Test { namespace Float {
                 : Test("Dom::Num::" + str(n) + "::" + str(min0) + "::" + str(max0), n, -3, 3, st, CPLT_ASSIGNMENT,
                        n == 1),
                   min(min0), max(max0) {
-                testsubsumed = false;
+                test_subsumption = false;
             }
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if (max < min)
                     return MT_FALSE;
                 for (int i = x.size(); i--;)
@@ -109,16 +109,16 @@ namespace Test { namespace Float {
                 return MT_TRUE;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (x.size() == 1)
                     Gecode::dom(home, x[0], min, max);
                 else
                     Gecode::dom(home, x, min, max);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
                 assert(x.size() == 1);
                 Gecode::dom(home, x[0], min, max, r);
             }

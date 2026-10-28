@@ -143,9 +143,9 @@ namespace Gecode {
          * \brief Initialize variable with given bounds and cardinality
          *
          * The variable is created with
-         * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
-         * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
-         * cardinality minimum \a cardMin and maximum \a cardMax.
+         * greatest lower bound \f$\{\mathit{glb_min},\dots,\mathit{glb_max}\}\f$,
+         * least upper bound \f$\{\mathit{lub_min},\dots,\mathit{lub_max}\}\f$, and
+         * cardinality minimum \a card_min and maximum \a card_max.
          * The following exceptions might be thrown:
          *  - If the bounds are no legal set bounds (between Set::Limits::min
          *    and Set::Limits::max), an exception of type
@@ -153,19 +153,19 @@ namespace Gecode {
          *  - If the cardinality is greater than Set::Limits::max_set_size, an
          *    exception of type Gecode::Set::OutOfLimits is
          *    thrown.
-         *  - If \a cardMin > \a cardMax, an exception of type
+         *  - If \a card_min > \a card_max, an exception of type
          *    Gecode::Set::VariableEmptyDomain is thrown.
          */
         GECODE_SET_EXPORT
-        SetVar(Space& home, int glbMin, int glbMax, int lubMin, int lubMax, unsigned int cardMin = 0,
-               unsigned int cardMax = Set::Limits::card);
+        SetVar(Space& home, int glb_min, int glb_max, int lub_min, int lub_max, unsigned int card_min = 0,
+               unsigned int card_max = Set::Limits::card);
 
         /**
          * \brief Initialize variable with given bounds and cardinality
          *
          * The variable is created with greatest lower bound \a glbD,
-         * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
-         * cardinality minimum \a cardMin and maximum \a cardMax.
+         * least upper bound \f$\{\mathit{lub_min},\dots,\mathit{lub_max}\}\f$, and
+         * cardinality minimum \a card_min and maximum \a card_max.
          * The following exceptions might be thrown:
          *  - If the bounds are no legal set bounds (between Set::Limits::min
          *    and Set::Limits::max), an exception of type
@@ -173,20 +173,20 @@ namespace Gecode {
          *  - If the cardinality is greater than Set::Limits::max_set_size, an
          *    exception of type Gecode::Set::OutOfLimits is
          *    thrown.
-         *  - If \a cardMin > \a cardMax, an exception of type
+         *  - If \a card_min > \a card_max, an exception of type
          *    Gecode::Set::VariableEmptyDomain is thrown.
          */
         GECODE_SET_EXPORT
-        SetVar(Space& home, const IntSet& glbD, int lubMin, int lubMax, unsigned int cardMin = 0,
-               unsigned int cardMax = Set::Limits::card);
+        SetVar(Space& home, const IntSet& glb_d, int lub_min, int lub_max, unsigned int card_min = 0,
+               unsigned int card_max = Set::Limits::card);
 
         /**
          * \brief Initialize variable with given bounds and cardinality
          *
          * The variable is created with
-         * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+         * greatest lower bound \f$\{\mathit{glb_min},\dots,\mathit{glb_max}\}\f$,
          * least upper bound \a lubD, and
-         * cardinality minimum \a cardMin and maximum \a cardMax.
+         * cardinality minimum \a card_min and maximum \a card_max.
          * The following exceptions might be thrown:
          *  - If the bounds are no legal set bounds (between Set::Limits::min
          *    and Set::Limits::max), an exception of type
@@ -198,8 +198,8 @@ namespace Gecode {
          *    Gecode::Set::VariableEmptyDomain is thrown.
          */
         GECODE_SET_EXPORT
-        SetVar(Space& home, int glbMin, int glbMax, const IntSet& lubD, unsigned int cardMin = 0,
-               unsigned int cardMax = Set::Limits::card);
+        SetVar(Space& home, int glb_min, int glb_max, const IntSet& lub_d, unsigned int card_min = 0,
+               unsigned int card_max = Set::Limits::card);
 
         /**
          * \brief Initialize variable with given bounds and cardinality
@@ -207,7 +207,7 @@ namespace Gecode {
          * The variable is created with
          * greatest lower bound \a glbD,
          * least upper bound \a lubD, and
-         * cardinality minimum \a cardMin and maximum \a cardMax.
+         * cardinality minimum \a card_min and maximum \a card_max.
          * The following exceptions might be thrown:
          *  - If the bounds are no legal set bounds (between Set::Limits::min
          *    and Set::Limits::max), an exception of type
@@ -219,30 +219,30 @@ namespace Gecode {
          *    Gecode::Set::VariableEmptyDomain is thrown.
          */
         GECODE_SET_EXPORT
-        SetVar(Space& home, const IntSet& glbD, const IntSet& lubD, unsigned int cardMin = 0,
-               unsigned int cardMax = Set::Limits::card);
+        SetVar(Space& home, const IntSet& glb_d, const IntSet& lub_d, unsigned int card_min = 0,
+               unsigned int card_max = Set::Limits::card);
         //@}
 
         /// \name Value access
         //@{
         /// Return number of elements in the greatest lower bound
-        unsigned int glbSize(void) const;
+        unsigned int glb_size(void) const;
         /// Return number of elements in the least upper bound
-        unsigned int lubSize(void) const;
+        unsigned int lub_size(void) const;
         /// Return number of unknown elements (elements in lub but not in glb)
-        unsigned int unknownSize(void) const;
+        unsigned int unknown_size(void) const;
         /// Return cardinality minimum
-        unsigned int cardMin(void) const;
+        unsigned int card_min(void) const;
         /// Return cardinality maximum
-        unsigned int cardMax(void) const;
+        unsigned int card_max(void) const;
         /// Return minimum element of least upper bound
-        int lubMin(void) const;
+        int lub_min(void) const;
         /// Return maximum element of least upper bound
-        int lubMax(void) const;
+        int lub_max(void) const;
         /// Return minimum element of greatest lower bound
-        int glbMin(void) const;
+        int glb_min(void) const;
         /// Return maximum of greatest lower bound
-        int glbMax(void) const;
+        int glb_max(void) const;
         //@}
 
         /// \name Domain tests
@@ -250,7 +250,7 @@ namespace Gecode {
         /// Test whether \a i is in greatest lower bound
         bool contains(int i) const;
         /// Test whether \a i is not in the least upper bound
-        bool notContains(int i) const;
+        bool not_contains(int i) const;
         //@}
 
         /// Assignment operator
@@ -513,8 +513,8 @@ namespace Gecode {
          * given by the arguments.
          */
         GECODE_SET_EXPORT
-        SetVarArgs(Space& home, int n, int glbMin, int glbMax, int lubMin, int lubMax, unsigned int minCard = 0,
-                   unsigned int maxCard = Set::Limits::card);
+        SetVarArgs(Space& home, int n, int glb_min, int glb_max, int lub_min, int lub_max, unsigned int min_card = 0,
+                   unsigned int max_card = Set::Limits::card);
         /**
          * \brief Create an array of size \a n.
          *
@@ -522,8 +522,8 @@ namespace Gecode {
          * given by the arguments.
          */
         GECODE_SET_EXPORT
-        SetVarArgs(Space& home, int n, const IntSet& glb, int lubMin, int lubMax, unsigned int minCard = 0,
-                   unsigned int maxCard = Set::Limits::card);
+        SetVarArgs(Space& home, int n, const IntSet& glb, int lub_min, int lub_max, unsigned int min_card = 0,
+                   unsigned int max_card = Set::Limits::card);
         /**
          * \brief Create an array of size \a n.
          *
@@ -531,8 +531,8 @@ namespace Gecode {
          * given by the arguments.
          */
         GECODE_SET_EXPORT
-        SetVarArgs(Space& home, int n, int glbMin, int glbMax, const IntSet& lub, unsigned int minCard = 0,
-                   unsigned int maxCard = Set::Limits::card);
+        SetVarArgs(Space& home, int n, int glb_min, int glb_max, const IntSet& lub, unsigned int min_card = 0,
+                   unsigned int max_card = Set::Limits::card);
         /**
          * \brief Create an array of size \a n.
          *
@@ -540,8 +540,8 @@ namespace Gecode {
          * given by the arguments.
          */
         GECODE_SET_EXPORT
-        SetVarArgs(Space& home, int n, const IntSet& glb, const IntSet& lub, unsigned int minCard = 0,
-                   unsigned int maxCard = Set::Limits::card);
+        SetVarArgs(Space& home, int n, const IntSet& glb, const IntSet& lub, unsigned int min_card = 0,
+                   unsigned int max_card = Set::Limits::card);
         /// Assignment operator
         SetVarArgs& operator=(const SetVarArgs&) = default;
         //@}
@@ -582,8 +582,8 @@ namespace Gecode {
          * given by the arguments.
          */
         GECODE_SET_EXPORT
-        SetVarArray(Space& home, int n, int glbMin, int glbMax, int lubMin, int lubMax, unsigned int minCard = 0,
-                    unsigned int maxCard = Set::Limits::card);
+        SetVarArray(Space& home, int n, int glb_min, int glb_max, int lub_min, int lub_max, unsigned int min_card = 0,
+                    unsigned int max_card = Set::Limits::card);
         /**
          * \brief Create an array of size \a n.
          *
@@ -591,8 +591,8 @@ namespace Gecode {
          * given by the arguments.
          */
         GECODE_SET_EXPORT
-        SetVarArray(Space& home, int n, const IntSet& glb, int lubMin, int lubMax, unsigned int minCard = 0,
-                    unsigned int maxCard = Set::Limits::card);
+        SetVarArray(Space& home, int n, const IntSet& glb, int lub_min, int lub_max, unsigned int min_card = 0,
+                    unsigned int max_card = Set::Limits::card);
         /**
          * \brief Create an array of size \a n.
          *
@@ -600,8 +600,8 @@ namespace Gecode {
          * given by the arguments.
          */
         GECODE_SET_EXPORT
-        SetVarArray(Space& home, int n, int glbMin, int glbMax, const IntSet& lub, unsigned int minCard = 0,
-                    unsigned int maxCard = Set::Limits::card);
+        SetVarArray(Space& home, int n, int glb_min, int glb_max, const IntSet& lub, unsigned int min_card = 0,
+                    unsigned int max_card = Set::Limits::card);
         /**
          * \brief Create an array of size \a n.
          *
@@ -609,8 +609,8 @@ namespace Gecode {
          * given by the arguments.
          */
         GECODE_SET_EXPORT
-        SetVarArray(Space& home, int n, const IntSet& glb, const IntSet& lub, unsigned int minCard = 0,
-                    unsigned int maxCard = Set::Limits::card);
+        SetVarArray(Space& home, int n, const IntSet& glb, const IntSet& lub, unsigned int min_card = 0,
+                    unsigned int max_card = Set::Limits::card);
         /// Assignment operator
         SetVarArray& operator=(const SetVarArray&) = default;
         //@}
@@ -789,7 +789,7 @@ namespace Gecode {
      */
     //@{
     /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
-    GECODE_SET_EXPORT void atmostOne(Home home, const SetVarArgs& x, unsigned int c);
+    GECODE_SET_EXPORT void atmost_one(Home home, const SetVarArgs& x, unsigned int c);
     //@}
 
     /**
@@ -804,7 +804,7 @@ namespace Gecode {
     /** \brief Post propagator that \a x is not the minimal element of \a s
      * \ingroup TaskModelSetConnect
      */
-    GECODE_SET_EXPORT void notMin(Home home, SetVar s, IntVar x);
+    GECODE_SET_EXPORT void not_min(Home home, SetVar s, IntVar x);
     /** \brief Post reified propagator for \a b iff \a x is the minimal element of \a s
      * \ingroup TaskModelSetConnect
      */
@@ -816,7 +816,7 @@ namespace Gecode {
     /** \brief Post propagator that \a x is not the maximal element of \a s
      * \ingroup TaskModelSetConnect
      */
-    GECODE_SET_EXPORT void notMax(Home home, SetVar s, IntVar x);
+    GECODE_SET_EXPORT void not_max(Home home, SetVar s, IntVar x);
     /** \brief Post reified propagator for \a b iff \a x is the maximal element of \a s
      * \ingroup TaskModelSetConnect
      */
@@ -852,7 +852,7 @@ namespace Gecode {
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
     GECODE_SET_EXPORT void channel(Home home, const IntVarArgs& x, const SetVarArgs& y);
     /// Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$ and \f$x_i<x_{i+1}\f$
-    GECODE_SET_EXPORT void channelSorted(Home home, const IntVarArgs& x, SetVar y);
+    GECODE_SET_EXPORT void channel_sorted(Home home, const IntVarArgs& x, SetVar y);
     /// Post propagator for \f$x_i=1 \Leftrightarrow i\in y\f$
     GECODE_SET_EXPORT void channel(Home home, const BoolVarArgs& x, SetVar y);
     /// Post propagator for \f$j\in x_i \Leftrightarrow i\in y_j\f$
@@ -1559,14 +1559,14 @@ namespace Gecode {
 // LDSB-related declarations.
 namespace Gecode {
     /// Variables in \a x are interchangeable
-    GECODE_SET_EXPORT SymmetryHandle VariableSymmetry(const SetVarArgs& x);
+    GECODE_SET_EXPORT SymmetryHandle variable_symmetry(const SetVarArgs& x);
     /**
      * \brief Variable sequences in \a x of size \a ss are interchangeable
      *
      * The size of \a x must be a multiple of \a ss.
      */
     GECODE_SET_EXPORT
-    SymmetryHandle VariableSequenceSymmetry(const SetVarArgs& x, int ss);
+    SymmetryHandle variable_sequence_symmetry(const SetVarArgs& x, int ss);
     /**
      * \brief Branch over \a x with variable selection \a vars and value
      * selection \a vals with symmetry breaking
@@ -1707,16 +1707,16 @@ namespace Gecode {
         /// Initialize with output stream \a os0
         StdSetTracer(std::ostream& os0 = std::cerr);
         /// Print init information
-        virtual void init(const Space& home, const SetTraceRecorder& t);
+        void init(const Space& home, const SetTraceRecorder& t) override;
         /// Print prune information
-        virtual void prune(const Space& home, const SetTraceRecorder& t, const ViewTraceInfo& vti, int i,
-                           SetTraceDelta& d);
+        void prune(const Space& home, const SetTraceRecorder& t, const ViewTraceInfo& vti, int i,
+                   SetTraceDelta& d) override;
         /// Print fixpoint information
-        virtual void fix(const Space& home, const SetTraceRecorder& t);
+        void fix(const Space& home, const SetTraceRecorder& t) override;
         /// Print failure information
-        virtual void fail(const Space& home, const SetTraceRecorder& t);
+        void fail(const Space& home, const SetTraceRecorder& t) override;
         /// Print that trace recorder is done
-        virtual void done(const Space& home, const SetTraceRecorder& t);
+        void done(const Space& home, const SetTraceRecorder& t) override;
         /// Default tracer (printing to std::cerr)
         static StdSetTracer def;
     };

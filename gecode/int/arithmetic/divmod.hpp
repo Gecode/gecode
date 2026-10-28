@@ -304,9 +304,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     template <class View>
     ExecStatus
     DivMod<View>::propagate(Space& home, const ModEventDelta&) {
-        bool signIsSame;
+        bool sign_is_same;
         do {
-            signIsSame = true;
+            sign_is_same = true;
             // The sign of x0 and x2 is the same
             if (x0.min() >= 0) {
                 GECODE_ME_CHECK(x2.gq(home, 0));
@@ -317,7 +317,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             } else if (x2.max() < 0) {
                 GECODE_ME_CHECK(x0.lq(home, 0));
             } else {
-                signIsSame = false;
+                sign_is_same = false;
             }
 
             // abs(x2) is less than abs(x1)
@@ -328,9 +328,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             int x2absmin = any(x2) ? 0 : (pos(x2) ? x2.min() : -x2.max());
             Iter::Ranges::Singleton sr(-x2absmin, x2absmin);
             GECODE_ME_CHECK(x1.minus_r(home, sr, false));
-        } while (!signIsSame && (x0.min() > 0 || x0.max() < 0 || x2.min() > 0 || x2.max() < 0));
+        } while (!sign_is_same && (x0.min() > 0 || x0.max() < 0 || x2.min() > 0 || x2.max() < 0));
 
-        if (signIsSame) {
+        if (sign_is_same) {
             int x2max = std::max(x2.max(), std::max(-x2.max(), std::max(x2.min(), -x2.min())));
             int x1absmin = any(x1) ? 0 : (pos(x1) ? x1.min() : -x1.max());
             if (x2max < x1absmin)

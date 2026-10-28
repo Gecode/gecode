@@ -71,8 +71,8 @@ protected:
          */
         Choice(const Brancher& b, int pos0, int val0) : Gecode::Choice(b, 2), pos(pos0), val(val0) {}
         /// Archive into \a e
-        virtual void
-        archive(Archive& e) const {
+        void
+        archive(Archive& e) const override {
             Gecode::Choice::archive(e);
             e << pos << val;
         }
@@ -87,8 +87,8 @@ protected:
 
 public:
     /// Check status of brancher, return true if alternatives left
-    virtual bool
-    status(const Space&) const {
+    bool
+    status(const Space&) const override {
         // A path to follow can be at most x.size() long
         for (int n = x.size(); n--;) {
             if (!x[start].assigned())
@@ -99,8 +99,8 @@ public:
         return false;
     }
     /// Return choice
-    virtual Gecode::Choice*
-    choice(Space&) {
+    Gecode::Choice*
+    choice(Space&) override {
         Int::ViewValues<Int::IntView> iv(x[start]);
         int n = iv.val();
         unsigned int min = x[n].size();
@@ -116,15 +116,15 @@ public:
         return new Choice(*this, start, n);
     }
     /// Return choice
-    virtual Choice*
-    choice(const Space&, Archive& e) {
+    Choice*
+    choice(const Space&, Archive& e) override {
         int pos, val;
         e >> pos >> val;
         return new Choice(*this, pos, val);
     }
     /// Perform commit for choice \a _c and alternative \a a
-    virtual ExecStatus
-    commit(Space& home, const Gecode::Choice& _c, unsigned int a) {
+    ExecStatus
+    commit(Space& home, const Gecode::Choice& _c, unsigned int a) override {
         const Choice& c = static_cast<const Choice&>(_c);
         if (a == 0)
             return me_failed(x[c.pos].eq(home, c.val)) ? ES_FAILED : ES_OK;
@@ -132,14 +132,14 @@ public:
             return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
     }
     /// Print explanation
-    virtual void
-    print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const {
+    void
+    print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const override {
         const Choice& c = static_cast<const Choice&>(_c);
         o << "x[" << c.pos << "] " << ((a == 0) ? "=" : "!=") << " " << c.val;
     }
     /// Copy brancher
-    virtual Actor*
-    copy(Space& home) {
+    Actor*
+    copy(Space& home) override {
         return new (home) Warnsdorff(home, *this);
     }
     /// Post brancher
@@ -149,8 +149,8 @@ public:
         (void)new (home) Warnsdorff(home, xv);
     }
     /// Delete brancher and return its size
-    virtual size_t
-    dispose(Space&) {
+    size_t
+    dispose(Space&) override {
         return sizeof(*this);
     }
 };
@@ -216,8 +216,8 @@ public:
         succ.update(*this, s.succ);
     }
     /// Print board
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         int* jump = new int[n * n];
         {
             int j = 0;
@@ -285,8 +285,8 @@ public:
     /// Constructor for cloning \a s
     KnightsReified(KnightsReified& s) : Knights(s) {}
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new KnightsReified(*this);
     }
 };
@@ -315,8 +315,8 @@ public:
     /// Constructor for cloning \a s
     KnightsCircuit(KnightsCircuit& s) : Knights(s) {}
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new KnightsCircuit(*this);
     }
 };
@@ -342,13 +342,14 @@ public:
     /// Constructor
     KnightsInspector(void) : scene(nullptr), mw(nullptr) {}
     /// Inspect space \a s
-    virtual void
-    inspect(const Space& s) {
+    void
+    inspect(const Space& s) override {
         const Knights& k = static_cast<const Knights&>(s);
+        const int half_unit = unit / 2;
 
         if (!scene)
             initialize();
-        QList<QGraphicsItem*> itemList = scene->items();
+        QList<QGraphicsItem*> item_list = scene->items();
         foreach (QGraphicsItem* i, scene->items()) {
             scene->removeItem(i);
             delete i;
@@ -367,8 +368,8 @@ public:
                 for (IntVarValues xv(k.succ[i * k.n + j]); xv(); ++xv) {
                     int ky = xv.val() % k.n;
                     int kx = xv.val() / k.n;
-                    scene->addLine(i * unit + unit / 2, j * unit + unit / 2, kx * unit + unit / 2, ky * unit + unit / 2,
-                                   pen);
+                    scene->addLine(i * unit + half_unit, j * unit + half_unit, kx * unit + half_unit,
+                                   ky * unit + half_unit, pen);
                 }
             }
         }
@@ -385,20 +386,20 @@ public:
         mw->setCentralWidget(view);
         mw->setAttribute(Qt::WA_QuitOnClose, false);
         mw->setAttribute(Qt::WA_DeleteOnClose, false);
-        QAction* closeWindow = new QAction("Close window", mw);
-        closeWindow->setShortcut(QKeySequence("Ctrl+W"));
-        mw->connect(closeWindow, SIGNAL(triggered()), mw, SLOT(close()));
-        mw->addAction(closeWindow);
+        QAction* close_window = new QAction("Close window", mw);
+        close_window->setShortcut(QKeySequence("Ctrl+W"));
+        mw->connect(close_window, SIGNAL(triggered()), mw, SLOT(close()));
+        mw->addAction(close_window);
     }
 
     /// Name of the inspector
-    virtual std::string
-    name(void) {
+    std::string
+    name(void) override {
         return "Board";
     }
     /// Finalize inspector
-    virtual void
-    finalize(void) {
+    void
+    finalize(void) override {
         delete mw;
         mw = nullptr;
     }

@@ -176,17 +176,17 @@ namespace Gecode { namespace Int { namespace Element {
 
     public:
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as high binary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$i_{x_0}=x_1\f$
         static ExecStatus post(Home home, IntSharedArray& i, V0 x0, V1 x1);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /// Post propagator with appropriate index and value types
@@ -213,11 +213,11 @@ namespace Gecode { namespace Int { namespace Element {
 
     public:
         // Cost function (defined as low linear)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -240,9 +240,9 @@ namespace Gecode { namespace Int { namespace Element {
 
     public:
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$iv_{x_0}=x_1\f$
         static ExecStatus post(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
     };
@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace Element {
 
     public:
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /**
          * \brief Cost function
          *
@@ -279,9 +279,9 @@ namespace Gecode { namespace Int { namespace Element {
          * otherwise as high linear.
          *
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$iv_{x_0}=x_1\f$
         static ExecStatus post(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
     };
@@ -309,9 +309,9 @@ namespace Gecode { namespace Int { namespace Element {
         /// Post propagator \f$x_0+x_1\cdot w=x_2\f$
         static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2, int w, int h);
         /// Copy propagator during cloning
-        GECODE_INT_EXPORT virtual Actor* copy(Space& home);
+        GECODE_INT_EXPORT Actor* copy(Space& home) override;
         /// Perform propagation
-        GECODE_INT_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        GECODE_INT_EXPORT ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
     /**
@@ -337,9 +337,9 @@ namespace Gecode { namespace Int { namespace Element {
         /// Post propagator \f$x_0+x_1\cdot w=x_2\f$
         static ExecStatus post(Home home, OffsetView x0, OffsetView x1, IntView x2, int w, int h);
         /// Copy propagator during cloning
-        GECODE_INT_EXPORT virtual Actor* copy(Space& home);
+        GECODE_INT_EXPORT Actor* copy(Space& home) override;
         /// Perform propagation
-        GECODE_INT_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        GECODE_INT_EXPORT ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
 }}} // namespace Gecode::Int::Element

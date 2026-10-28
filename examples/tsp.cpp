@@ -47,22 +47,22 @@ using namespace Gecode;
 namespace {
 
     /// This instance is taken from SICStus Prolog
-    const int PA_n = 7;
-    const int PA_d[PA_n * PA_n] = {0,   205, 677, 581, 461, 878, 345, 205, 0,   882, 427,  390, 1105,
+    const int pa_n = 7;
+    const int pa_d[pa_n * pa_n] = {0,   205, 677, 581, 461, 878, 345, 205, 0,   882, 427,  390, 1105,
                                    540, 677, 882, 0,   619, 316, 201, 470, 581, 427, 619,  0,   412,
                                    592, 570, 461, 390, 316, 412, 0,   517, 190, 878, 1105, 201, 592,
                                    517, 0,   691, 345, 540, 470, 570, 190, 691, 0};
 
     /// This instance is taken from SICStus Prolog
-    const int PB_n = 10;
-    const int PB_d[PB_n * PB_n] = {2, 4, 4, 1, 9, 2, 4, 4, 1, 9, 2, 9, 5, 5, 5, 2, 9, 5, 5, 5, 1, 5, 2, 3, 3,
+    const int pb_n = 10;
+    const int pb_d[pb_n * pb_n] = {2, 4, 4, 1, 9, 2, 4, 4, 1, 9, 2, 9, 5, 5, 5, 2, 9, 5, 5, 5, 1, 5, 2, 3, 3,
                                    1, 5, 2, 3, 3, 2, 6, 8, 9, 5, 2, 6, 8, 9, 5, 3, 7, 1, 6, 4, 3, 7, 1, 6, 4,
                                    1, 2, 4, 1, 7, 1, 2, 4, 1, 7, 3, 5, 2, 7, 6, 3, 5, 2, 7, 6, 2, 7, 9, 5, 5,
                                    2, 7, 9, 5, 5, 3, 9, 7, 3, 4, 3, 9, 7, 3, 4, 4, 1, 5, 9, 2, 4, 1, 5, 9, 2};
 
     /// This instance is br17.atsp from TSPLIB
-    const int PC_n = 17;
-    const int PC_d[PC_n * PC_n] = {
+    const int pc_n = 17;
+    const int pc_d[pc_n * pc_n] = {
         0,  3,  5,  48, 48, 8,  8,  5,  5,  3,  3,  0,  3,  5,  8,  8,  5,  3,  0,  3,  48, 48, 8,  8,  5,  5,  0,
         0,  3,  0,  3,  8,  8,  5,  5,  3,  0,  72, 72, 48, 48, 24, 24, 3,  3,  5,  3,  0,  48, 48, 24, 48, 48, 74,
         0,  0,  6,  6,  12, 12, 48, 48, 48, 48, 74, 6,  6,  12, 48, 48, 74, 0,  0,  6,  6,  12, 12, 48, 48, 48, 48,
@@ -76,8 +76,8 @@ namespace {
         0,  8,  5,  5,  26, 12, 12, 8,  8,  0,  0,  5,  5,  5,  5,  26, 8,  8,  0};
 
     /// This instance is ftv33.atsp from TSPLIB
-    const int PD_n = 34;
-    const int PD_d[PD_n * PD_n] = {
+    const int pd_n = 34;
+    const int pd_d[pd_n * pd_n] = {
         0,   26,  82,  65,  100, 147, 134, 69,  117, 42,  89,  125, 38,  13,  38,  31,  22,  103, 143, 94,  104, 123,
         98,  58,  38,  30,  67,  120, 149, 100, 93,  162, 62,  66,  66,  0,   56,  39,  109, 156, 140, 135, 183, 108,
         155, 190, 104, 79,  104, 97,  88,  130, 176, 121, 131, 150, 125, 85,  65,  57,  94,  147, 160, 80,  67,  189,
@@ -184,12 +184,12 @@ namespace {
         return m * _n;
     }
 
-    Problem PA(PA_n, PA_d);
-    Problem PB(PB_n, PB_d);
-    Problem PC(PC_n, PC_d);
-    Problem PD(PD_n, PD_d);
+    Problem pa(pa_n, pa_d);
+    Problem pb(pb_n, pb_d);
+    Problem pc(pc_n, pc_d);
+    Problem pd(pd_n, pd_d);
 
-    Problem ps[] = {PA, PB, PC, PD};
+    Problem ps[] = {pa, pb, pc, pd};
     const unsigned int ps_n = sizeof(ps) / sizeof(Problem);
 
     /**
@@ -381,8 +381,8 @@ public:
         branch(*this, succ, INT_VAR_MIN_MIN(), INT_VAL_MIN());
     }
     /// Return solution cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return total;
     }
     /// Constructor for cloning \a s
@@ -391,13 +391,13 @@ public:
         total.update(*this, s.total);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new TSP(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         bool assigned = true;
         for (int i = 0; i < succ.size(); i++) {
             if (!succ[i].assigned()) {

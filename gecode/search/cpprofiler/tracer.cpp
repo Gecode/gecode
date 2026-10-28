@@ -84,10 +84,10 @@ namespace Gecode {
             label = ei.string();
         }
 
-        auto node = connector->createNode(dummy_node, parent, alt, 0, CPProfiler::NodeStatus::SKIPPED)
+        auto node = connector->create_node(dummy_node, parent, alt, 0, CPProfiler::NodeStatus::SKIPPED)
                         .set_label(label)
                         .set_info("");
-        connector->sendNode(node);
+        connector->send_node(node);
     }
 
     void
@@ -126,11 +126,11 @@ namespace Gecode {
 
         std::string info;
         if (pgi) {
-            info = pgi->getInfo(ni.space());
+            info = pgi->get_info(ni.space());
         }
 
-        auto node = connector->createNode(this_node, parent, alt, alts, ns).set_label(label).set_info(info);
-        connector->sendNode(node);
+        auto node = connector->create_node(this_node, parent, alt, alts, ns).set_label(label).set_info(info);
+        connector->send_node(node);
     }
 
     void

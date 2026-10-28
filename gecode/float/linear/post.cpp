@@ -114,7 +114,7 @@ namespace Gecode { namespace Float { namespace Linear {
     }
 
     void
-    dopost(Home home, Term* t, int n, FloatRelType frt, FloatVal c) {
+    post_linear(Home home, Term* t, int n, FloatRelType frt, FloatVal c) {
         Limits::check(c, "Float::linear");
 
         for (int i = n; i--;) {
@@ -268,14 +268,14 @@ namespace Gecode { namespace Float { namespace Linear {
         default:
             throw UnknownRelation("Float::linear");
         }
-        dopost(home, t, n, frt, c);
+        post_linear(home, t, n, frt, c);
     }
 
     void
     post(Home home, Term* t, int n, FloatRelType frt, FloatVal c, Reify r) {
         Region re;
         rel(home, extend(home, re, t, n), frt, c, r);
-        dopost(home, t, n, FRT_EQ, 0.0);
+        post_linear(home, t, n, FRT_EQ, 0.0);
     }
 
 }}} // namespace Gecode::Float::Linear

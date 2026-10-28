@@ -44,9 +44,9 @@ namespace Gecode { namespace Set { namespace Channel {
                                  ViewArray<CachedView<View>>& ys0)
         : Propagator(home), xs(xs0), ys(ys0) {
         for (int i = xs.size(); i--;)
-            xs[i].initCache(home, IntSet(0, ys.size() - 1));
+            xs[i].init_cache(home, IntSet(0, ys.size() - 1));
         for (int i = ys.size(); i--;)
-            ys[i].initCache(home, IntSet::empty, IntSet(0, xs.size() - 1));
+            ys[i].init_cache(home, IntSet::empty, IntSet(0, xs.size() - 1));
         xs.subscribe(home, *this, Gecode::Int::PC_INT_DOM);
         ys.subscribe(home, *this, PC_SET_ANY);
     }
@@ -131,19 +131,19 @@ namespace Gecode { namespace Set { namespace Channel {
         }
 
         for (int i = ys.size(); i--;) {
-            if (ys[i].glbModified()) {
+            if (ys[i].glb_modified()) {
                 GlbDiffRanges<View> yilb(ys[i]);
                 Iter::Ranges::ToValues<GlbDiffRanges<View>> dv(yilb);
                 for (; dv(); ++dv)
                     GECODE_ME_CHECK(xs[dv.val()].eq(home, i));
-                ys[i].cacheGlb(home);
+                ys[i].cache_glb(home);
             }
-            if (ys[i].lubModified()) {
+            if (ys[i].lub_modified()) {
                 LubDiffRanges<View> yiub(ys[i]);
                 Iter::Ranges::ToValues<LubDiffRanges<View>> dv(yiub);
                 for (; dv(); ++dv)
                     GECODE_ME_CHECK(xs[dv.val()].nq(home, i));
-                ys[i].cacheLub(home);
+                ys[i].cache_lub(home);
             }
         }
 

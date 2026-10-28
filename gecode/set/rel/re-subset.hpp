@@ -108,7 +108,7 @@ namespace Gecode { namespace Set { namespace Rel {
         }
 
         // check whether cardinalities still allow subset
-        if (x0.cardMin() > x1.cardMax()) {
+        if (x0.card_min() > x1.card_max()) {
             if (rm != RM_PMI)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
@@ -142,7 +142,7 @@ namespace Gecode { namespace Set { namespace Rel {
             }
         }
 
-        if (x0.cardMin() > 0) {
+        if (x0.card_min() > 0) {
             LubRanges<View0> x0ub(x0);
             LubRanges<View1> x1ub(x1);
             Iter::Ranges::Inter<LubRanges<View0>, LubRanges<View1>> i(x0ub, x1ub);

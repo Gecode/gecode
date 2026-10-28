@@ -55,16 +55,16 @@ namespace Test { namespace Float {
             /// Initialize test
             Basic(Gecode::FloatVal v, Gecode::FloatNum s) : Test("Basic", 3, v, s, CPLT_ASSIGNMENT, false) {}
             /// Check whether \a x is a solution
-            virtual MaybeType
-            solution(const Assignment&) const {
+            MaybeType
+            solution(const Assignment&) const override {
                 return MT_TRUE;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space&, Gecode::FloatVarArray&) {}
+            void
+            post(Gecode::Space&, Gecode::FloatVarArray&) override {}
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space&, Gecode::FloatVarArray&, Gecode::Reify) {
+            void
+            post(Gecode::Space&, Gecode::FloatVarArray&, Gecode::Reify) override {
                 // Reification for no constraint is not interesting
                 GECODE_NEVER;
             }
@@ -89,8 +89,8 @@ namespace Test { namespace Float {
             /// Create and register test
             Median(void) : Base("Float::Basic::Median") {}
             /// Perform test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 const FloatNum m = Gecode::Float::Limits::max;
                 const FloatNum i = std::numeric_limits<FloatNum>::infinity();

@@ -170,18 +170,18 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
     public:
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) OpenRegular(home, *this);
         }
 
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return PropCost::linear(PropCost::HI, subscribed - offset);
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             length.reschedule(home, *this, PC_INT_BND);
             list.reschedule(home, *this);
             for (int i = offset; i < subscribed; i++)
@@ -189,8 +189,8 @@ namespace Gecode { namespace Int { namespace Extensional {
                     list[i].reschedule(home, *this, pc);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             const int size = list.known_length();
             assert(size <= length.max());
 
@@ -275,8 +275,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             return ES_FIX;
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE);
             length.cancel(home, *this, PC_INT_BND);
             list.cancel(home, *this);

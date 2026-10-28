@@ -204,7 +204,7 @@ namespace Gecode { namespace Set { namespace Branch {
 
     /// Return view selectors for set views
     GECODE_SET_EXPORT
-    ViewSel<SetView>* viewsel(Space& home, const SetVarBranch& svb);
+    ViewSel<SetView>* view_selection(Space& home, const SetVarBranch& svb);
 
 }}} // namespace Gecode::Set::Branch
 
@@ -309,13 +309,13 @@ namespace Gecode { namespace Set { namespace Branch {
         IncNGL(Space& home, IncNGL& ngl);
         /// Test the status of the no-good literal
         GECODE_SET_EXPORT
-        virtual NGL::Status status(const Space& home) const;
+        NGL::Status status(const Space& home) const override;
         /// Propagate the negation of the no-good literal
         GECODE_SET_EXPORT
-        virtual ExecStatus prune(Space& home);
+        ExecStatus prune(Space& home) override;
         /// Create copy
         GECODE_SET_EXPORT
-        virtual NGL* copy(Space& home);
+        NGL* copy(Space& home) override;
     };
 
     /// No-good literal for exclusion
@@ -327,13 +327,13 @@ namespace Gecode { namespace Set { namespace Branch {
         ExcNGL(Space& home, ExcNGL& ngl);
         /// Test the status of the no-good literal
         GECODE_SET_EXPORT
-        virtual NGL::Status status(const Space& home) const;
+        NGL::Status status(const Space& home) const override;
         /// Propagate the negation of the no-good literal
         GECODE_SET_EXPORT
-        virtual ExecStatus prune(Space& home);
+        ExecStatus prune(Space& home) override;
         /// Create copy
         GECODE_SET_EXPORT
-        virtual NGL* copy(Space& home);
+        NGL* copy(Space& home) override;
     };
 
 }}} // namespace Gecode::Set::Branch
@@ -402,11 +402,11 @@ namespace Gecode { namespace Set { namespace Branch {
 
     /// Return value and commit for set views
     GECODE_SET_EXPORT
-    ValSelCommitBase<SetView, int>* valselcommit(Space& home, const SetValBranch& svb);
+    ValSelCommitBase<SetView, int>* value_selection_commit(Space& home, const SetValBranch& svb);
 
     /// Return value and commit for set views
     GECODE_SET_EXPORT
-    ValSelCommitBase<SetView, int>* valselcommit(Space& home, const SetAssign& ia);
+    ValSelCommitBase<SetView, int>* value_selection_commit(Space& home, const SetAssign& ia);
 
 }}} // namespace Gecode::Set::Branch
 

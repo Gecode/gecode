@@ -43,8 +43,8 @@ namespace Test { namespace FlatZinc {
         public:
             TupleSetAutoRepresentation(void) : Base("FlatZinc::TupleSet::AutoRepresentation") {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
 
                 const int n = 4096;
@@ -55,7 +55,7 @@ namespace Test { namespace FlatZinc {
                 }
 
                 Gecode::FlatZinc::FlatZincSpace space;
-                TupleSet ts = space.arg2tupleset(tuples, 2);
+                TupleSet ts = space.arg_to_tuple_set(tuples, 2);
                 return ts.finalized() && (ts.representation() == EPK_DENSE_COMPRESSED) && (ts.tuples() == n);
             }
         };
@@ -81,8 +81,8 @@ namespace Test { namespace FlatZinc {
         public:
             GistStatisticsMode(void) : Base("FlatZinc::Options::GistStatisticsMode", TestTags::check()) {}
 
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 return (mode({"-s"}) == Gecode::SM_STAT) && (mode({"-mode", "gist", "-s"}) == Gecode::SM_GIST) &&
                        (mode({"-s", "-mode", "gist"}) == Gecode::SM_GIST);
             }
@@ -100,23 +100,23 @@ namespace Test { namespace FlatZinc {
     } // namespace
 
     FlatZincTest::FlatZincTest(const std::string& name, const std::string& source, const std::string& expected,
-                               bool allSolutions, std::vector<std::string> cmdlineOpt, OutputCheck check,
+                               bool all_solutions, std::vector<std::string> cmdline_opt, OutputCheck check,
                                BeforeRun before)
-        : FlatZincTest(TestTags::standard(), name, source, expected, allSolutions, cmdlineOpt, check, before) {}
+        : FlatZincTest(TestTags::standard(), name, source, expected, all_solutions, cmdline_opt, check, before) {}
 
     FlatZincTest::FlatZincTest(TestTags tags, const std::string& name, const std::string& source,
-                               const std::string& expected, bool allSolutions, std::vector<std::string> cmdlineOpt,
+                               const std::string& expected, bool all_solutions, std::vector<std::string> cmdline_opt,
                                OutputCheck check, BeforeRun before)
         : Base("FlatZinc::" + name, tags), _name(name), _source(source), _expected(expected),
-          _allSolutions(allSolutions), _cmdlineOpt(cmdlineOpt), _check(check), _before(before) {}
+          _all_solutions(all_solutions), _cmdline_opt(cmdline_opt), _check(check), _before(before) {}
 
     FlatZincErrorTest::FlatZincErrorTest(const std::string& name, const std::string& source,
-                                         std::vector<std::string> cmdlineOpt, std::string expectedMessage)
-        : FlatZincErrorTest(TestTags::standard(), name, source, cmdlineOpt, expectedMessage) {}
+                                         std::vector<std::string> cmdline_opt, std::string expected_message)
+        : FlatZincErrorTest(TestTags::standard(), name, source, cmdline_opt, expected_message) {}
 
     FlatZincErrorTest::FlatZincErrorTest(TestTags tags, const std::string& name, const std::string& source,
-                                         std::vector<std::string> cmdlineOpt, std::string expectedMessage)
-        : FlatZincTest(tags, name, source, "", false, cmdlineOpt), _expectedMessage(expectedMessage) {}
+                                         std::vector<std::string> cmdline_opt, std::string expected_message)
+        : FlatZincTest(tags, name, source, "", false, cmdline_opt), _expected_message(expected_message) {}
 
     bool
     FlatZincTest::run(void) {
@@ -124,17 +124,17 @@ namespace Test { namespace FlatZinc {
         Support::Timer t_total;
         t_total.start();
         Gecode::FlatZinc::FlatZincOptions fznopt("Gecode/FlatZinc");
-        if (!_cmdlineOpt.empty()) {
+        if (!_cmdline_opt.empty()) {
             std::string cmd("fzn-gecode");
-            int argc = static_cast<int>(_cmdlineOpt.size()) + 1;
+            int argc = static_cast<int>(_cmdline_opt.size()) + 1;
             std::vector<char*> argv(argc);
             argv[0] = const_cast<char*>(cmd.data());
             for (int i = 1; i < argc; ++i) {
-                argv[i] = const_cast<char*>(_cmdlineOpt[i - 1].data());
+                argv[i] = const_cast<char*>(_cmdline_opt[i - 1].data());
             }
             fznopt.parse(argc, argv.data());
         }
-        fznopt.allSolutions(_allSolutions);
+        fznopt.all_solutions(_all_solutions);
         Gecode::FlatZinc::Printer p;
         try {
             if (_before) {
@@ -144,8 +144,8 @@ namespace Test { namespace FlatZinc {
             std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> fg(Gecode::FlatZinc::parse(ss, p, olog));
 
             if (fg) {
-                fg->createBranchers(p, fg->solveAnnotations(), fznopt, false, olog);
-                fg->shrinkArrays(p);
+                fg->create_branchers(p, fg->solve_annotations(), fznopt, false, olog);
+                fg->shrink_arrays(p);
                 std::ostringstream os;
                 fg->run(os, p, fznopt, t_total);
 
@@ -164,7 +164,7 @@ namespace Test { namespace FlatZinc {
             }
         } catch (Gecode::FlatZinc::Error& e) {
             if (opt.log)
-                olog << ind(2) << "FlatZinc error : " << e.toString() << std::endl;
+                olog << ind(2) << "FlatZinc error : " << e.to_string() << std::endl;
             return false;
         }
         return true;
@@ -176,13 +176,13 @@ namespace Test { namespace FlatZinc {
         Support::Timer t_total;
         t_total.start();
         Gecode::FlatZinc::FlatZincOptions fznopt("Gecode/FlatZinc");
-        if (!_cmdlineOpt.empty()) {
+        if (!_cmdline_opt.empty()) {
             std::string cmd("fzn-gecode");
-            int argc = static_cast<int>(_cmdlineOpt.size()) + 1;
+            int argc = static_cast<int>(_cmdline_opt.size()) + 1;
             std::vector<char*> argv(argc);
             argv[0] = const_cast<char*>(cmd.data());
             for (int i = 1; i < argc; ++i) {
-                argv[i] = const_cast<char*>(_cmdlineOpt[i - 1].data());
+                argv[i] = const_cast<char*>(_cmdline_opt[i - 1].data());
             }
             fznopt.parse(argc, argv.data());
         }
@@ -192,23 +192,23 @@ namespace Test { namespace FlatZinc {
             std::stringstream ss(_source);
             std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> fg(Gecode::FlatZinc::parse(ss, p, olog));
             if (fg) {
-                fg->createBranchers(p, fg->solveAnnotations(), fznopt, false, olog);
-                fg->shrinkArrays(p);
+                fg->create_branchers(p, fg->solve_annotations(), fznopt, false, olog);
+                fg->shrink_arrays(p);
                 fg->run(os, p, fznopt, t_total);
             }
             return false;
         } catch (Gecode::FlatZinc::Error& e) {
-            const std::string message = e.toString();
+            const std::string& message = e.to_string();
             if (opt.log)
                 olog << ind(2) << "Expected FlatZinc error : " << message << std::endl;
             return (os.str().find("----------") == std::string::npos) &&
-                   (_expectedMessage.empty() || (message.find(_expectedMessage) != std::string::npos));
+                   (_expected_message.empty() || (message.find(_expected_message) != std::string::npos));
         } catch (Gecode::Exception& e) {
             const std::string message = e.what();
             if (opt.log)
                 olog << ind(2) << "Expected Gecode exception : " << message << std::endl;
             return (os.str().find("----------") == std::string::npos) &&
-                   (_expectedMessage.empty() || (message.find(_expectedMessage) != std::string::npos));
+                   (_expected_message.empty() || (message.find(_expected_message) != std::string::npos));
         }
         return false;
     }

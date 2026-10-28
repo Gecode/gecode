@@ -243,14 +243,14 @@ public:
     }
 
     /// Copy space during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Nonogram(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         Matrix<BoolVarArray> m(b, width(), height());
         for (int h = 0; h < height(); ++h) {
             os << '\t';

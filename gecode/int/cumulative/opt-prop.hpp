@@ -154,13 +154,13 @@ namespace Gecode { namespace Int { namespace Cumulative {
                 t.size(i);
                 if (IntView::me(med) != ME_INT_DOM)
                     GECODE_ES_CHECK(knapsack_overload(home, c.max(), t));
-                GECODE_ES_CHECK(edgefinding(home, c.max(), t));
+                GECODE_ES_CHECK(edge_finding(home, c.max(), t));
                 // Restore to also include optional tasks
                 t.size(n);
             }
         }
 
-        if (Cap::varderived() && c.assigned() && c.val() == 1) {
+        if (Cap::is_variable_derived() && c.assigned() && c.val() == 1) {
             // Check that tasks do not overload resource
             for (int i = 0; i < t.size(); i++)
                 if (t[i].c() > 1)

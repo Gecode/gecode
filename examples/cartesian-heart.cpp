@@ -81,20 +81,20 @@ public:
         f.update(*this, p.f);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new CartesianHeart(*this);
     }
     /// Add constraints to current model to get next solution (not too close)
-    virtual void
-    constrain(const Space& _b) {
+    void
+    constrain(const Space& _b) override {
         const CartesianHeart& b = static_cast<const CartesianHeart&>(_b);
         rel(*this,
             (f[0] >= (b.f[0].max() + step)) || (f[1] >= (b.f[1].max() + step)) || (f[1] <= (b.f[1].min() - step)));
     }
     /// Print solution coordinates
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "XY " << f[0].med() << " " << f[1].med() << std::endl;
     }
 };

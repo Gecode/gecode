@@ -152,7 +152,7 @@ namespace Gecode { namespace Int {
         int val(void) const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
-        int baseval(int val) const;
+        int base_value(int val) const;
 #endif
 
         /// Return size (cardinality) of domain
@@ -302,7 +302,7 @@ namespace Gecode { namespace Int {
         int val(void) const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
-        int baseval(int val) const;
+        int base_value(int val) const;
 #endif
 
         /// Return size (cardinality) of domain
@@ -469,7 +469,7 @@ namespace Gecode { namespace Int {
         int val(void) const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
-        int baseval(int val) const;
+        int base_value(int val) const;
 #endif
 
         /// Return size (cardinality) of domain
@@ -732,7 +732,7 @@ namespace Gecode { namespace Int {
         Val val(void) const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
-        Val baseval(Val val) const;
+        Val base_value(Val val) const;
 #endif
 
         /// Return size (cardinality) of domain
@@ -1163,9 +1163,9 @@ namespace Gecode { namespace Int {
     protected:
         using DerivedView<View>::x;
         /// First cached range
-        RangeList* _firstRange;
+        RangeList* _first_range;
         /// Last cached range
-        RangeList* _lastRange;
+        RangeList* _last_range;
         /// Size of cached domain
         unsigned int _size;
 
@@ -1190,7 +1190,7 @@ namespace Gecode { namespace Int {
         int val(void) const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
-        int baseval(int val) const;
+        int base_value(int val) const;
 #endif
 
         /// Return size (cardinality) of domain
@@ -1303,7 +1303,7 @@ namespace Gecode { namespace Int {
         /// \name Domain cache operations
         //@{
         /// Initialize cache to set \a s
-        void initCache(Space& home, const IntSet& s);
+        void init_cache(Space& home, const IntSet& s);
         /// Update cache to current domain
         void cache(Space& home);
         /// Check whether cache differs from current domain
@@ -1390,13 +1390,13 @@ namespace Gecode { namespace Int {
         /// \name Domain status access
         //@{
         /// How many bits does the status have
-        static const int BITS = BoolVarImp::BITS;
+        static const int bits = BoolVarImp::status_bits;
         /// Status of domain assigned to zero
-        static const BoolStatus ZERO = BoolVarImp::ZERO;
+        static const BoolStatus zero_status = BoolVarImp::zero_status;
         /// Status of domain assigned to one
-        static const BoolStatus ONE = BoolVarImp::ONE;
+        static const BoolStatus one_status = BoolVarImp::one_status;
         /// Status of domain not yet assigned
-        static const BoolStatus NONE = BoolVarImp::NONE;
+        static const BoolStatus unassigned_status = BoolVarImp::unassigned_status;
         /// Return current domain status
         BoolStatus status(void) const;
         //@}
@@ -1413,7 +1413,7 @@ namespace Gecode { namespace Int {
         int val(void) const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
-        int baseval(int val) const;
+        int base_value(int val) const;
 #endif
 
         /// Return size (cardinality) of domain
@@ -1580,13 +1580,13 @@ namespace Gecode { namespace Int {
         /// \name Domain status access
         //@{
         /// How many bits does the status have
-        static const int BITS = BoolView::BITS;
+        static const int bits = BoolView::bits;
         /// Status of domain assigned to zero
-        static const BoolStatus ZERO = BoolView::ONE;
+        static const BoolStatus zero_status = BoolView::one_status;
         /// Status of domain assigned to one
-        static const BoolStatus ONE = BoolView::ZERO;
+        static const BoolStatus one_status = BoolView::zero_status;
         /// Status of domain not yet assigned
-        static const BoolStatus NONE = BoolView::NONE;
+        static const BoolStatus unassigned_status = BoolView::unassigned_status;
         /// Return current domain status
         BoolStatus status(void) const;
         //@}
@@ -1656,7 +1656,7 @@ namespace Gecode { namespace Int {
         int val(void) const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
-        int baseval(int val) const;
+        int base_value(int val) const;
 #endif
         //@}
 

@@ -45,7 +45,7 @@ namespace Gecode { namespace Gist {
 
     protected:
         NodeStatus status;
-        void paintEvent(QPaintEvent*);
+        void paintEvent(QPaintEvent*) override;
     };
 
 }} // namespace Gecode::Gist

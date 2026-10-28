@@ -934,10 +934,10 @@ namespace Gecode {
 
     template <class Var>
     typename ArrayTraits<VarArgArray<Var>>::ArgsType
-    VarArray<Var>::slice(int start, int inc, int maxN) {
+    VarArray<Var>::slice(int start, int inc, int max_n) {
         assert(n == 0 || start < n);
-        if (n == 0 || maxN < 0)
-            maxN = n;
+        if (n == 0 || max_n < 0)
+            max_n = n;
         int s;
         if (inc == 0)
             s = n - start;
@@ -945,7 +945,7 @@ namespace Gecode {
             s = (n - start) / inc + ((n - start) % inc == 0 ? 0 : 1);
         else
             s = (start + 1) / -inc + ((start + 1) % -inc == 0 ? 0 : 1);
-        typename ArrayTraits<VarArgArray<Var>>::ArgsType r(std::min(maxN, s));
+        typename ArrayTraits<VarArgArray<Var>>::ArgsType r(std::min(max_n, s));
         for (int i = 0; i < r.size(); i++, start += inc)
             r[i] = x[start];
         return r;
@@ -1512,15 +1512,15 @@ namespace Gecode {
     ArgArrayBase<T>::resize(int i) {
         if (n + i >= capacity) {
             assert(n + i >= onstack_size);
-            int newCapacity = (3 * capacity) / 2;
-            if (newCapacity <= n + i)
-                newCapacity = n + i;
-            T* newA = allocate(newCapacity);
-            heap.copy<T>(newA, a, n);
+            int new_capacity = (3 * capacity) / 2;
+            if (new_capacity <= n + i)
+                new_capacity = n + i;
+            T* new_a = allocate(new_capacity);
+            heap.copy<T>(new_a, a, n);
             if (capacity > onstack_size)
                 heap.free(a, capacity);
-            capacity = newCapacity;
-            a = newA;
+            capacity = new_capacity;
+            a = new_a;
         }
     }
 
@@ -1646,10 +1646,10 @@ namespace Gecode {
     template <class T>
     template <class A>
     A
-    ArgArrayBase<T>::slice(int start, int inc, int maxN) {
+    ArgArrayBase<T>::slice(int start, int inc, int max_n) {
         assert(n == 0 || start < n);
-        if (n == 0 || maxN < 0)
-            maxN = n;
+        if (n == 0 || max_n < 0)
+            max_n = n;
         int s;
         if (inc == 0)
             s = n - start;
@@ -1657,7 +1657,7 @@ namespace Gecode {
             s = (n - start) / inc + ((n - start) % inc == 0 ? 0 : 1);
         else
             s = (start + 1) / -inc + ((start + 1) % -inc == 0 ? 0 : 1);
-        A r(std::min(maxN, s));
+        A r(std::min(max_n, s));
         for (int i = 0; i < r.size(); i++, start += inc)
             new (&r[i]) T(a[start]);
         return r;
@@ -1758,8 +1758,8 @@ namespace Gecode {
 
     template <class T>
     forceinline typename ArrayTraits<ArgArray<T>>::ArgsType
-    ArgArray<T>::slice(int start, int inc, int maxN) {
-        return ArgArrayBase<T>::template slice<typename ArrayTraits<ArgArray<T>>::ArgsType>(start, inc, maxN);
+    ArgArray<T>::slice(int start, int inc, int max_n) {
+        return ArgArrayBase<T>::template slice<typename ArrayTraits<ArgArray<T>>::ArgsType>(start, inc, max_n);
     }
 
     template <class T>
@@ -1837,8 +1837,8 @@ namespace Gecode {
 
     template <class Var>
     forceinline typename ArrayTraits<VarArgArray<Var>>::ArgsType
-    VarArgArray<Var>::slice(int start, int inc, int maxN) {
-        return ArgArrayBase<Var>::template slice<typename ArrayTraits<VarArgArray<Var>>::ArgsType>(start, inc, maxN);
+    VarArgArray<Var>::slice(int start, int inc, int max_n) {
+        return ArgArrayBase<Var>::template slice<typename ArrayTraits<VarArgArray<Var>>::ArgsType>(start, inc, max_n);
     }
 
     template <class Var>

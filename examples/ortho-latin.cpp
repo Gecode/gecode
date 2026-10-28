@@ -133,13 +133,13 @@ public:
     }
 
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new OrthoLatinSquare(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         for (int i = 0; i < n; i++) {
             os << "\t";
             for (int j = 0; j < n; j++) {

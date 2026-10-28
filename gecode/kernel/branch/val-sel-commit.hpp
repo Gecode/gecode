@@ -99,19 +99,19 @@ namespace Gecode {
         /// Constructor for cloning
         ValSelCommit(Space& home, ValSelCommit<ValSel, ValCommit>& vsc);
         /// Return value of view \a x at position \a i
-        virtual Val val(const Space& home, View x, int i);
+        Val val(const Space& home, View x, int i) override;
         /// Commit view \a x at position \a i to value \a n for alternative \a a
-        virtual ModEvent commit(Space& home, unsigned int a, View x, int i, Val n);
+        ModEvent commit(Space& home, unsigned int a, View x, int i, Val n) override;
         /// Create no-good literal for choice \a c and alternative \a a
-        virtual NGL* ngl(Space& home, unsigned int a, View x, Val n) const;
+        NGL* ngl(Space& home, unsigned int a, View x, Val n) const override;
         /// Print on \a o branch for alternative \a a, view \a x at position \a i, and value \a n
-        virtual void print(const Space& home, unsigned int a, View x, int i, const Val& n, std::ostream& o) const;
+        void print(const Space& home, unsigned int a, View x, int i, const Val& n, std::ostream& o) const override;
         /// Perform cloning
-        virtual ValSelCommit<ValSel, ValCommit>* copy(Space& home);
+        ValSelCommit<ValSel, ValCommit>* copy(Space& home) override;
         /// Whether dispose must always be called (that is, notice is needed)
-        virtual bool notice(void) const;
+        bool notice(void) const override;
         /// Delete value selection
-        virtual void dispose(Space& home);
+        void dispose(Space& home) override;
     };
     //@}
 

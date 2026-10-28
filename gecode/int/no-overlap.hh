@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         /// Modify largest end coordinate
         ExecStatus lec(Space& home, int n);
         /// Dimension must not overlap with coordinates \a n to \a m
-        ExecStatus nooverlap(Space& home, int n, int m);
+        ExecStatus no_overlap(Space& home, int n, int m);
 
     public:
         /// Default constructor
@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         int lec(void) const;
 
         /// Dimension must not overlap with \a d
-        ExecStatus nooverlap(Space& home, FixDim& d);
+        ExecStatus no_overlap(Space& home, FixDim& d);
 
         /// Update dimension during cloning
         void update(Space& home, FixDim& d);
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         /// Modify largest end coordinate
         ExecStatus lec(Space& home, int n);
         /// Dimension must not overlap with coordinates \a n to \a m
-        ExecStatus nooverlap(Space& home, int n, int m);
+        ExecStatus no_overlap(Space& home, int n, int m);
 
     public:
         /// Default constructor
@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         int lec(void) const;
 
         /// Dimension must not overlap with \a d
-        ExecStatus nooverlap(Space& home, FlexDim& d);
+        ExecStatus no_overlap(Space& home, FlexDim& d);
 
         /// Update dimension during cloning
         void update(Space& home, FlexDim& d);
@@ -168,12 +168,12 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         ExecStatus exclude(Space& home);
 
         /// Check whether this box does not any longer overlap with \a b
-        bool nooverlap(const ManBox<Dim, n>& b) const;
+        bool no_overlap(const ManBox<Dim, n>& b) const;
         /// Check whether this box overlaps with \a b
         bool overlap(const ManBox<Dim, n>& b) const;
 
         /// Propagate that this box does not overlap with \a b
-        ExecStatus nooverlap(Space& home, ManBox<Dim, n>& b);
+        ExecStatus no_overlap(Space& home, ManBox<Dim, n>& b);
 
         /// Update box during cloning
         void update(Space& home, ManBox<Dim, n>& r);
@@ -253,11 +253,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     public:
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Destructor
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -281,11 +281,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         /// Post propagator for boxes \a b
         static ExecStatus post(Home home, Box* b, int n);
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Destructor
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -311,11 +311,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         /// Post propagator for boxes \a b
         static ExecStatus post(Home home, Box* b, int n);
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Destructor
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::NoOverlap

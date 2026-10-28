@@ -53,16 +53,16 @@ namespace Test { namespace Int {
             /// Create and register test
             Int(int _p0, int _p1) : Test("Order::" + str(_p0) + "::" + str(_p1), 3, 0, 6), p0(_p0), p1(_p1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int s0 = x[0], s1 = x[1], b = x[2];
                 if (b > 1)
                     return false;
                 return ((s0 + p0 <= s1) && (b == 0)) || ((s1 + p1 <= s0) && (b == 1));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 order(home, x[0], p0, x[1], p1, channel(home, x[2]));
             }

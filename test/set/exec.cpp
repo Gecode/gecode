@@ -55,14 +55,14 @@ namespace Test { namespace Set {
                           Gecode::IntSet(0, n), false),
                   sf(sf0) {}
             /// Check whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 (void)x;
                 return true;
             }
             /// Post wait on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray&) {
+            void
+            post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray&) override {
                 using namespace Gecode;
                 auto f = static_cast<std::function<void(Space&)>>([](Space& home) { c(home); });
                 if (x.size() > 1) {

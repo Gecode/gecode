@@ -51,23 +51,23 @@ namespace Gecode { namespace Set { namespace Sequence {
     }
 
     ExecStatus
-    SeqU::propagateSeqUnion(Space& home, bool& modified, ViewArray<SetView>& x, SetView& y) {
+    SeqU::propagate_seq_union(Space& home, bool& modified, ViewArray<SetView>& x, SetView& y) {
         Region r;
-        GlbRanges<SetView>* XLBs = r.alloc<GlbRanges<SetView>>(x.size());
+        GlbRanges<SetView>* xl_bs = r.alloc<GlbRanges<SetView>>(x.size());
         for (int i = x.size(); i--;) {
             GlbRanges<SetView> lb(x[i]);
-            XLBs[i] = lb;
+            xl_bs[i] = lb;
         }
-        Iter::Ranges::NaryAppend<GlbRanges<SetView>> u(XLBs, x.size());
-        GECODE_ME_CHECK_MODIFIED(modified, y.includeI(home, u));
+        Iter::Ranges::NaryAppend<GlbRanges<SetView>> u(xl_bs, x.size());
+        GECODE_ME_CHECK_MODIFIED(modified, y.include_i(home, u));
 
         GLBndSet before(home);
         for (int i = 0; i < x.size(); i++) {
             LubRanges<SetView> xiub(x[i]);
-            before.includeI(home, xiub);
-            BndSetRanges beforeR(before);
+            before.include_i(home, xiub);
+            BndSetRanges before_r(before);
             GlbRanges<SetView> ylb(y);
-            Iter::Ranges::Diff<GlbRanges<SetView>, BndSetRanges> diff(ylb, beforeR);
+            Iter::Ranges::Diff<GlbRanges<SetView>, BndSetRanges> diff(ylb, before_r);
             if (diff()) {
                 GECODE_ME_CHECK_MODIFIED(modified, x[i].exclude(home, diff.min(), Limits::max));
             }
@@ -77,10 +77,10 @@ namespace Gecode { namespace Set { namespace Sequence {
         GLBndSet after(home);
         for (int i = x.size(); i--;) {
             LubRanges<SetView> xiub(x[i]);
-            after.includeI(home, xiub);
-            BndSetRanges afterR(after);
+            after.include_i(home, xiub);
+            BndSetRanges after_r(after);
             GlbRanges<SetView> ylb(y);
-            Iter::Ranges::Diff<GlbRanges<SetView>, BndSetRanges> diff(ylb, afterR);
+            Iter::Ranges::Diff<GlbRanges<SetView>, BndSetRanges> diff(ylb, after_r);
             if (diff()) {
                 int max = diff.max();
                 for (; diff(); ++diff)
@@ -97,30 +97,30 @@ namespace Gecode { namespace Set { namespace Sequence {
     ExecStatus
     SeqU::propagate(Space& home, const ModEventDelta& med) {
         ModEvent me0 = SetView::me(med);
-        bool ubevent = Rel::testSetEventUB(me0);
-        bool anybevent = Rel::testSetEventAnyB(me0);
-        bool cardevent = Rel::testSetEventCard(me0);
+        bool ubevent = Rel::test_set_event_ub(me0);
+        bool anybevent = Rel::test_set_event_any_b(me0);
+        bool cardevent = Rel::test_set_event_card(me0);
 
         bool modified = false;
         bool assigned = false;
-        bool oldModified = false;
+        bool old_modified = false;
 
         do {
-            oldModified = modified;
+            old_modified = modified;
             modified = false;
 
-            if (oldModified || modified || anybevent || cardevent)
-                GECODE_ES_CHECK(propagateSeq(home, modified, assigned, x));
-            if (oldModified || modified || anybevent)
-                GECODE_ES_CHECK(propagateSeqUnion(home, modified, x, y));
-            if (oldModified || modified || ubevent)
-                GECODE_ES_CHECK(RelOp::unionNXiUB(home, modified, x, y, unionOfDets));
-            if (oldModified || modified || ubevent)
-                GECODE_ES_CHECK(RelOp::partitionNYUB(home, modified, x, y, unionOfDets));
-            if (oldModified || modified || anybevent)
-                GECODE_ES_CHECK(RelOp::partitionNXiLB(home, modified, x, y, unionOfDets));
-            if (oldModified || modified || cardevent || ubevent)
-                GECODE_ES_CHECK(RelOp::partitionNCard(home, modified, x, y, unionOfDets));
+            if (old_modified || modified || anybevent || cardevent)
+                GECODE_ES_CHECK(propagate_seq(home, modified, assigned, x));
+            if (old_modified || modified || anybevent)
+                GECODE_ES_CHECK(propagate_seq_union(home, modified, x, y));
+            if (old_modified || modified || ubevent)
+                GECODE_ES_CHECK(RelOp::union_n_xi_ub(home, modified, x, y, union_of_dets));
+            if (old_modified || modified || ubevent)
+                GECODE_ES_CHECK(RelOp::partition_nyub(home, modified, x, y, union_of_dets));
+            if (old_modified || modified || anybevent)
+                GECODE_ES_CHECK(RelOp::partition_n_xi_lb(home, modified, x, y, union_of_dets));
+            if (old_modified || modified || cardevent || ubevent)
+                GECODE_ES_CHECK(RelOp::partition_n_card(home, modified, x, y, union_of_dets));
 
         } while (modified);
 

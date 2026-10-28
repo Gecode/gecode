@@ -213,17 +213,17 @@ namespace Gecode { namespace Int { namespace Extensional {
         template <class Var>
         LayeredGraph(Home home, const VarArgArray<Var>& x, const DFA& dfa);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as high linear)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Post propagator on views \a x and DFA \a dfa
         template <class Var>
         static ExecStatus post(Home home, const VarArgArray<Var>& x, const DFA& dfa);
@@ -583,7 +583,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Whether all variables are assigned
         bool all(void) const;
         /// Whether at most one variable is unassigned
-        bool atmostone(void) const;
+        bool at_most_one(void) const;
         //@}
     protected:
         /// Number of words in supports
@@ -609,9 +609,9 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     public:
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Delete propagator and return its size
-        size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -641,7 +641,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         using Compact<View, true>::setup;
         using Compact<View, true>::supports;
         using Compact<View, true>::all;
-        using Compact<View, true>::atmostone;
+        using Compact<View, true>::at_most_one;
         using Compact<View, true>::c;
         using Compact<View, true>::ts;
 
@@ -663,25 +663,25 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     public:
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Post propagator for views \a x and table \a t
         static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& ts);
         /// Delete propagator and return its size
-        size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
     };
 
     /// Post function for positive compact table propagator
     template <class View>
-    ExecStatus postposcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+    ExecStatus post_positive_compact(Home home, ViewArray<View>& x, const TupleSet& ts);
     /// Post function for positive compact table with compressed supports
     template <class View>
-    ExecStatus postposcompact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts);
+    ExecStatus post_positive_compact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts);
 
     /**
      * \brief Domain consistent negative extensional propagator
@@ -712,7 +712,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         using Compact<View, false>::setup;
         using Compact<View, false>::full;
         using Compact<View, false>::supports;
-        using Compact<View, false>::atmostone;
+        using Compact<View, false>::at_most_one;
         using Compact<View, false>::c;
         using Compact<View, false>::ts;
 
@@ -726,25 +726,25 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     public:
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Post propagator for views \a x and table \a t
         static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& ts);
         /// Delete propagator and return its size
-        size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
     };
 
     /// Post function for compact table propagator
     template <class View>
-    ExecStatus postnegcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+    ExecStatus post_negative_compact(Home home, ViewArray<View>& x, const TupleSet& ts);
     /// Post function for negative compact table with compressed supports
     template <class View>
-    ExecStatus postnegcompact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts);
+    ExecStatus post_negative_compact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts);
 
     /// Domain consistent reified extensional propagator
     template <class View, class Table, class CtrlView, ReifyMode rm>
@@ -781,25 +781,25 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     public:
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Post propagator for views \a x and table \a t
         static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b);
         /// Delete propagator and return its size
-        size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
     };
 
     /// Post function for compact table propagator
     template <class View, class CtrlView, ReifyMode rm>
-    ExecStatus postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b);
+    ExecStatus post_reified_compact(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b);
     /// Post function for reified compact table with compressed supports
     template <class View, class CtrlView, ReifyMode rm>
-    ExecStatus postrecompact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b);
+    ExecStatus post_reified_compact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b);
 
 }}} // namespace Gecode::Int::Extensional
 

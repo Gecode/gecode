@@ -67,9 +67,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         /// Post propagator \f$x_0\cdot x_0=x_1\f$
         static ExecStatus post(Home home, VA x0, VB x1);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
     /**
@@ -91,9 +91,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_0^2 = x_1\f$
         static ExecStatus post(Home home, View x0, View x1);
     };
@@ -119,9 +119,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_0^2 = x_1\f$
         static ExecStatus post(Home home, A x0, B x1);
     };
@@ -149,9 +149,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         /// Constructor for rewriting \a p during cloning
         Abs(Space& home, Propagator& p, A x0, B x1);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ |x_0| = x_1\f$
         static ExecStatus post(Home home, A x0, B x1);
     };
@@ -178,9 +178,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_0^n = x_1\f$
         static ExecStatus post(Home home, A x0, B x1, int n);
     };
@@ -207,9 +207,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_0^(1/n) = x_1\f$
         static ExecStatus post(Home home, A x0, B x1, int n);
     };
@@ -233,9 +233,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$x_0\cdot x_1=x_0\f$
         static ExecStatus post(Home home, View x0, View x1);
     };
@@ -288,9 +288,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         /// Post propagator \f$x_0\cdot x_1=x_2\f$
         static ExecStatus post(Home home, View x0, View x1, View x2);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
     /**
@@ -314,9 +314,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ x_0 / x_1 = x_2\f$
         static ExecStatus post(Home home, A x0, B x1, C x2);
     };
@@ -344,9 +344,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         /// Constructor for rewriting \a p during cloning
         Min(Space& home, Propagator& p, A x0, B x1, C x2);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ min(x_0, x_1) = x_2\f$
         static ExecStatus post(Home home, A x0, B x1, C x2);
     };
@@ -374,9 +374,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         /// Constructor for rewriting \a p during cloning
         Max(Space& home, Propagator& p, A x0, B x1, C x2);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ max(x_0, x_1) = x_2\f$
         static ExecStatus post(Home home, A x0, B x1, C x2);
     };
@@ -400,9 +400,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ \max x=y\f$
         static ExecStatus post(Home home, ViewArray<View>& x, View y);
     };

@@ -35,12 +35,13 @@
 namespace Gecode { namespace Search { namespace Seq {
 
     Stop*
-    rbsstop(Stop* stop) {
+    rbs_stop(Stop* stop) {
         return new RestartStop(stop);
     }
 
     Engine*
-    rbsengine(Space* master, Stop* stop, Engine* slave, const Search::Statistics& stat, const Options& opt, bool best) {
+    make_rbs_engine(Space* master, Stop* stop, Engine* slave, const Search::Statistics& stat, const Options& opt,
+                    bool best) {
         return new RBS(master, static_cast<RestartStop*>(stop), slave, stat, opt, best);
     }
 

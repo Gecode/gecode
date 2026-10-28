@@ -71,7 +71,7 @@ namespace Gecode { namespace Int {
     }
 #ifdef GECODE_HAS_CBS
     forceinline int
-    IntView::baseval(int val) const {
+    IntView::base_value(int val) const {
         return val;
     }
 #endif

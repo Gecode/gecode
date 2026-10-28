@@ -49,44 +49,45 @@ namespace Gecode { namespace Set { namespace Convex {
     ConvexHull::propagate(Space& home, const ModEventDelta&) {
         // x1 is the convex hull of x0
 
-        GECODE_ME_CHECK(x1.cardMin(home, x0.cardMin()));
-        GECODE_ME_CHECK(x0.cardMax(home, x1.cardMax()));
+        GECODE_ME_CHECK(x1.card_min(home, x0.card_min()));
+        GECODE_ME_CHECK(x0.card_max(home, x1.card_max()));
 
         do {
 
-            // intersect x1 with (x0.lubMin(),x0.lubMax())
+            // intersect x1 with (x0.lub_min(),x0.lub_max())
             // This empties x1 if x0.ub is empty. twice.
-            GECODE_ME_CHECK(x1.exclude(home, Limits::min, x0.lubMin() - 1));
-            GECODE_ME_CHECK(x1.exclude(home, x0.lubMax() + 1, Limits::max));
+            GECODE_ME_CHECK(x1.exclude(home, Limits::min, x0.lub_min() - 1));
+            GECODE_ME_CHECK(x1.exclude(home, x0.lub_max() + 1, Limits::max));
 
-            int minElement = std::min(x1.glbMin(), x0.glbMin());
-            int maxElement = std::max(x1.glbMax(), x0.glbMax());
+            int min_element = std::min(x1.glb_min(), x0.glb_min());
+            int max_element = std::max(x1.glb_max(), x0.glb_max());
 
-            if (minElement < maxElement) {
-                GECODE_ME_CHECK(x1.include(home, minElement, maxElement));
+            if (min_element < max_element) {
+                GECODE_ME_CHECK(x1.include(home, min_element, max_element));
             }
 
-            unsigned int cardMin = x1.cardMin();
+            unsigned int card_min = x1.card_min();
 
             Region r;
-            LubRanges<SetView> ubRangeIt(x1);
-            Iter::Ranges::Cache ubRangeItC(r, ubRangeIt);
-            for (; ubRangeItC(); ++ubRangeItC) {
-                if (ubRangeItC.width() < cardMin || ubRangeItC.min() > minElement // No need to test for empty lb.
-                    || ubRangeItC.max() < maxElement) {
-                    GECODE_ME_CHECK(x1.exclude(home, ubRangeItC.min(), ubRangeItC.max()));
+            LubRanges<SetView> ub_range_it(x1);
+            Iter::Ranges::Cache ub_range_it_c(r, ub_range_it);
+            for (; ub_range_it_c(); ++ub_range_it_c) {
+                if (ub_range_it_c.width() < card_min ||
+                    ub_range_it_c.min() > min_element // No need to test for empty lb.
+                    || ub_range_it_c.max() < max_element) {
+                    GECODE_ME_CHECK(x1.exclude(home, ub_range_it_c.min(), ub_range_it_c.max()));
                 }
             }
 
-            LubRanges<SetView> ubRangeIt2(x1);
-            GECODE_ME_CHECK(x0.intersectI(home, ubRangeIt2));
+            LubRanges<SetView> ub_range_it2(x1);
+            GECODE_ME_CHECK(x0.intersect_i(home, ub_range_it2));
 
-            if (x1.lubMin() != BndSet::MIN_OF_EMPTY) {
-                if (x1.lubMin() == x1.glbMin()) {
-                    GECODE_ME_CHECK(x0.include(home, x1.lubMin()));
+            if (x1.lub_min() != BndSet::MIN_OF_EMPTY) {
+                if (x1.lub_min() == x1.glb_min()) {
+                    GECODE_ME_CHECK(x0.include(home, x1.lub_min()));
                 }
-                if (x1.lubMax() == x1.glbMax()) {
-                    GECODE_ME_CHECK(x0.include(home, x1.lubMax()));
+                if (x1.lub_max() == x1.glb_max()) {
+                    GECODE_ME_CHECK(x0.include(home, x1.lub_max()));
                 }
             }
         } while (x0.assigned() && !x1.assigned());

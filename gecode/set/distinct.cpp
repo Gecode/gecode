@@ -37,7 +37,7 @@ using namespace Gecode::Set;
 namespace Gecode {
 
     void
-    atmostOne(Home home, const SetVarArgs& xa, unsigned int c) {
+    atmost_one(Home home, const SetVarArgs& xa, unsigned int c) {
         Set::Limits::check(c, "Set::atmostOne");
         GECODE_POST;
         if (xa.size() < 2)

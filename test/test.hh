@@ -94,9 +94,9 @@ namespace Test {
 
     /// Tags for test selection
     enum class TestTag : unsigned int {
-        check = 1U << 0,    ///< Basic integrity tests
-        standard = 1U << 1, ///< Standard test suite
-        sweep = 1U << 2     ///< Really heavy sweep tests
+        CHECK = 1U << 0,    ///< Basic integrity tests
+        STANDARD = 1U << 1, ///< Standard test suite
+        SWEEP = 1U << 2     ///< Really heavy sweep tests
     };
 
     /// Set of test tags
@@ -140,19 +140,19 @@ namespace Test {
         /// Number of iterations for each test
         unsigned int iter;
         /// Default number of iterations
-        static const int defiter = 5;
-        /// The probability for computing a fixpoint
-        unsigned int fixprob;
-        /// Default fixpoint probability
-        static const unsigned int deffixprob = 10;
+        static const int default_iterations = 5;
+        /// Compute a fixpoint with probability one divided by this value
+        unsigned int fixpoint_probability_denominator;
+        /// Default denominator for the fixpoint probability
+        static const unsigned int default_fixpoint_probability_denominator = 10;
         /// Whether to stop on an error
         bool stop;
         /// Whether to log the tests
         bool log;
         /// Patterns to test against
-        std::vector<std::pair<MatchType, const char*>> testpat;
+        std::vector<std::pair<MatchType, const char*>> test_patterns;
         /// Tags to test against
-        TestTags testtags;
+        TestTags test_tags;
         /// Name of first test to start with
         const char* start_from;
         /// Whether to list all tests

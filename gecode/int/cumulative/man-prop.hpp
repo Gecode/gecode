@@ -106,12 +106,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
         }
 
         if (PL::advanced)
-            GECODE_ES_CHECK(edgefinding(home, c.max(), t));
+            GECODE_ES_CHECK(edge_finding(home, c.max(), t));
 
         if (PL::basic)
             GECODE_ES_CHECK(timetabling(home, *this, c, t));
 
-        if (Cap::varderived() && c.assigned() && (c.val() == 1)) {
+        if (Cap::is_variable_derived() && c.assigned() && (c.val() == 1)) {
             // Check that tasks do not overload resource
             for (int i = 0; i < t.size(); i++)
                 if (t[i].c() > 1)

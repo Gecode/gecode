@@ -55,7 +55,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
         using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
         using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
         /// Perform actual propagation
-        static ExecStatus dopropagate(Space& home, A x0, B x1);
+        static ExecStatus propagate_bounds(Space& home, A x0, B x1);
         /// Constructor for cloning \a p
         Sin(Space& home, Sin& p);
         /// Constructor for creation
@@ -63,9 +63,9 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$sin(x_0) = x_1\f$
         static ExecStatus post(Home home, A x0, B x1);
     };
@@ -84,7 +84,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
         using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
         using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
         /// Perform actual propagation
-        static ExecStatus dopropagate(Space& home, A x0, B x1);
+        static ExecStatus propagate_bounds(Space& home, A x0, B x1);
         /// Constructor for cloning \a p
         Cos(Space& home, Cos& p);
         /// Constructor for creation
@@ -92,9 +92,9 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$cos(x_0) = x_1\f$
         static ExecStatus post(Home home, A x0, B x1);
     };
@@ -120,9 +120,9 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$asin(x_0) = x_1\f$
         static ExecStatus post(Home home, A x0, B x1);
     };
@@ -148,9 +148,9 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$acos(x_0) = x_1\f$
         static ExecStatus post(Home home, A x0, B x1);
     };
@@ -169,7 +169,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
         using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
         using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
         /// Perform actual propagation
-        static ExecStatus dopropagate(Space& home, A x0, B x1);
+        static ExecStatus propagate_bounds(Space& home, A x0, B x1);
         /// Constructor for cloning \a p
         Tan(Space& home, Tan& p);
         /// Constructor for creation
@@ -177,9 +177,9 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$tan(x_0) = x_1\f$
         static ExecStatus post(Home home, A x0, B x1);
     };
@@ -205,9 +205,9 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$atan(x_0) = x_1\f$
         static ExecStatus post(Home home, A x0, B x1);
     };

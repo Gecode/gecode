@@ -689,7 +689,7 @@ namespace Gecode {
         return r;
     }
     SetExpr
-    setunion(const SetVarArgs& x) {
+    set_union(const SetVarArgs& x) {
         if (x.size() == 0)
             return SetExpr(IntSet::empty);
         SetExpr r(x[0]);
@@ -698,7 +698,7 @@ namespace Gecode {
         return r;
     }
     SetExpr
-    setdunion(const SetVarArgs& x) {
+    set_disjoint_union(const SetVarArgs& x) {
         if (x.size() == 0)
             return SetExpr(IntSet::empty);
         SetExpr r(x[0]);
@@ -722,8 +722,8 @@ namespace Gecode {
             /// Constructor
             SetNonLinIntExpr(const SetExpr& e0, SetNonLinIntExprType t0) : t(t0), e(e0) {}
             /// Post expression
-            virtual IntVar
-            post(Home home, IntVar* ret, const IntPropLevels&) const {
+            IntVar
+            post(Home home, IntVar* ret, const IntPropLevels&) const override {
                 IntVar m = result(home, ret);
                 switch (t) {
                 case SNLE_CARD:
@@ -741,8 +741,8 @@ namespace Gecode {
                 }
                 return m;
             }
-            virtual void
-            post(Home home, IntRelType irt, int c, const IntPropLevels& ipls) const {
+            void
+            post(Home home, IntRelType irt, int c, const IntPropLevels& ipls) const override {
                 if (t == SNLE_CARD && irt != IRT_NQ) {
                     switch (irt) {
                     case IRT_LQ:
@@ -773,8 +773,8 @@ namespace Gecode {
                     rel(home, post(home, nullptr, ipls), irt, c);
                 }
             }
-            virtual void
-            post(Home home, IntRelType irt, int c, BoolVar b, const IntPropLevels& ipls) const {
+            void
+            post(Home home, IntRelType irt, int c, BoolVar b, const IntPropLevels& ipls) const override {
                 if (t == SNLE_MIN && (irt == IRT_GR || irt == IRT_GQ)) {
                     c = (irt == IRT_GQ ? c : c + 1);
                     dom(home, e.post(home), SRT_SUB, c, Set::Limits::max, b);

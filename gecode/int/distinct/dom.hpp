@@ -77,14 +77,14 @@ namespace Gecode { namespace Int { namespace Distinct {
 #ifdef GECODE_HAS_CBS
     template <class View>
     void
-    Dom<View>::solndistrib(Space& home, Propagator::SendMarginal send) const {
-        cbsdistinct(home, this->id(), x, send);
+    Dom<View>::solution_distribution(Space& home, Propagator::SendMarginal send) const {
+        cbs_distinct(home, this->id(), x, send);
     }
 
     template <class View>
     void
-    Dom<View>::domainsizesum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const {
-        cbssize(x, in, size, size_b);
+    Dom<View>::domain_size_sum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const {
+        cbs_size(x, in, size, size_b);
     }
 #endif
 

@@ -56,13 +56,13 @@ namespace Test { namespace Int {
             IntIntVar(const std::string& s, const Gecode::IntArgs& c0, int min, int max)
                 : Test("Element::Int::Int::Var::" + s, 2, min, max), c(c0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] >= 0) && (x[0] < c.size()) && c[x[0]] == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::element(home, c, x[0], x[1]);
             }
         };
@@ -80,13 +80,13 @@ namespace Test { namespace Int {
             IntIntInt(const std::string& s, const Gecode::IntArgs& c0, int r0)
                 : Test("Element::Int::Int::Int::" + s + "::" + str(r0), 1, -4, 8), c(c0), r(r0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] >= 0) && (x[0] < c.size()) && c[x[0]] == r;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::element(home, c, x[0], r);
             }
         };
@@ -99,16 +99,16 @@ namespace Test { namespace Int {
 
         public:
             /// Create and register test
-            IntIntShared(const std::string& s, const Gecode::IntArgs& c0, int minDomain = -4)
-                : Test("Element::Int::Int::Shared::" + s, 1, minDomain, 8), c(c0) {}
+            IntIntShared(const std::string& s, const Gecode::IntArgs& c0, int min_domain = -4)
+                : Test("Element::Int::Int::Shared::" + s, 1, min_domain, 8), c(c0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] >= 0) && (x[0] < c.size()) && c[x[0]] == x[0];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::element(home, c, x[0], x[0]);
             }
         };
@@ -124,13 +124,13 @@ namespace Test { namespace Int {
             IntBoolVar(const std::string& s, const Gecode::IntArgs& c0)
                 : Test("Element::Int::Bool::Var::" + s, 2, -4, 8), c(c0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] >= 0) && (x[0] < c.size()) && c[x[0]] == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::element(home, c, x[0], Gecode::channel(home, x[1]));
             }
         };
@@ -148,13 +148,13 @@ namespace Test { namespace Int {
             IntBoolInt(const std::string& s, const Gecode::IntArgs& c0, int r0)
                 : Test("Element::Int::Bool::Int::" + s + "::" + str(r0), 1, -4, 8), c(c0), r(r0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] >= 0) && (x[0] < c.size()) && c[x[0]] == r;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::element(home, c, x[0], r);
             }
         };
@@ -165,13 +165,13 @@ namespace Test { namespace Int {
             /// Create and register test
             VarIntVar(Gecode::IntPropLevel ipl) : Test("Element::Var::Int::Var::" + str(ipl), 6, -1, 3, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] >= 0) && (x[0] < x.size() - 2) && x[2 + x[0]] == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs c(x.size() - 2);
                 for (int i = 0; i < x.size() - 2; i++)
                     c[i] = x[2 + i];
@@ -189,16 +189,16 @@ namespace Test { namespace Int {
             /// Create and register test
             VarIntInt(Gecode::IntPropLevel ipl, int r0)
                 : Test("Element::Var::Int::Int::" + str(ipl) + "::" + str(r0), 5, -1, 3, false, ipl), r(r0) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] >= 0) && (x[0] < x.size() - 1) && x[1 + x[0]] == r;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs c(x.size() - 1);
                 for (int i = 0; i < x.size() - 1; i++)
                     c[i] = x[1 + i];
@@ -212,16 +212,16 @@ namespace Test { namespace Int {
             /// Create and register test
             VarIntShared(Gecode::IntPropLevel ipl)
                 : Test("Element::Var::Int::Shared::" + str(ipl), 5, -1, 3, false, ipl) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] >= 0) && (x[0] < x.size() - 1) && x[1 + x[0]] == x[0];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs c(x.size() - 1);
                 for (int i = 0; i < x.size() - 1; i++)
                     c[i] = x[1 + i];
@@ -235,16 +235,16 @@ namespace Test { namespace Int {
             /// Create and register test
             VarBoolVar(void) : Test("Element::Var::Bool::Var", 6, -1, 3, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < x.size() - 2; i++)
                     if ((x[2 + i] < 0) || (x[2 + i] > 1))
                         return false;
                 return ((x[0] >= 0) && (x[0] < x.size() - 2) && x[2 + x[0]] == x[1] && (x[1] >= 0) && (x[1] <= 1));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolVarArgs c(x.size() - 2);
                 for (int i = 0; i < x.size() - 2; i++)
@@ -263,16 +263,16 @@ namespace Test { namespace Int {
             /// Create and register test
             VarBoolInt(int r0) : Test("Element::Var::Bool::Int::" + str(r0), 5, -1, 3, false), r(r0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < x.size() - 1; i++)
                     if ((x[1 + i] < 0) || (x[1 + i] > 1))
                         return false;
                 return ((x[0] >= 0) && (x[0] < x.size() - 1) && x[1 + x[0]] == r);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolVarArgs c(x.size() - 1);
                 for (int i = 0; i < x.size() - 1; i++)
@@ -309,8 +309,8 @@ namespace Test { namespace Int {
             MatrixIntIntVarXY(void)
                 : Test("Element::Matrix::Int::IntVar::XY", 3, 0, 5, false), tm({0, 1, 2, 3, 4, 5}) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
                 using namespace Gecode;
                 if ((x[0] > 2) || (x[1] > 1))
@@ -319,8 +319,8 @@ namespace Test { namespace Int {
                 return m(x[0], x[1]) == x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
                 using namespace Gecode;
                 Matrix<IntArgs> m(tm, 3, 2);
@@ -338,8 +338,8 @@ namespace Test { namespace Int {
             /// Create and register test
             MatrixIntIntVarXX(void) : Test("Element::Matrix::Int::IntVar::XX", 2, 0, 3, false), tm({0, 1, 2, 3}) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
                 using namespace Gecode;
                 if (x[0] > 1)
@@ -348,8 +348,8 @@ namespace Test { namespace Int {
                 return m(x[0], x[0]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
                 using namespace Gecode;
                 Matrix<IntArgs> m(tm, 2, 2);
@@ -367,8 +367,8 @@ namespace Test { namespace Int {
             /// Create and register test
             MatrixIntBoolVarXY(void) : Test("Element::Matrix::Int::BoolVar::XY", 3, 0, 3, false), tm({0, 1, 1, 0}) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
                 using namespace Gecode;
                 if ((x[0] > 1) || (x[1] > 1))
@@ -377,8 +377,8 @@ namespace Test { namespace Int {
                 return m(x[0], x[1]) == x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
                 using namespace Gecode;
                 Matrix<IntArgs> m(tm, 2, 2);
@@ -396,8 +396,8 @@ namespace Test { namespace Int {
             /// Create and register test
             MatrixIntBoolVarXX(void) : Test("Element::Matrix::Int::BoolVar::XX", 2, 0, 3, false), tm({0, 1, 1, 0}) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
                 using namespace Gecode;
                 if (x[0] > 1)
@@ -406,8 +406,8 @@ namespace Test { namespace Int {
                 return m(x[0], x[0]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
                 using namespace Gecode;
                 Matrix<IntArgs> m(tm, 2, 2);
@@ -421,8 +421,8 @@ namespace Test { namespace Int {
             /// Create and register test
             MatrixIntVarIntVarXY(void) : Test("Element::Matrix::IntVar::IntVar::XY", 3 + 4, 0, 3, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
                 // remaining: matrix
                 using namespace Gecode;
@@ -437,8 +437,8 @@ namespace Test { namespace Int {
                 return m(x[0], x[1]) == x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
                 using namespace Gecode;
                 IntVarArgs tm(4);
@@ -457,8 +457,8 @@ namespace Test { namespace Int {
             /// Create and register test
             MatrixIntVarIntVarXX(void) : Test("Element::Matrix::IntVar::IntVar::XX", 2 + 4, 0, 3, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
                 // remaining: matrix
                 using namespace Gecode;
@@ -473,8 +473,8 @@ namespace Test { namespace Int {
                 return m(x[0], x[0]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[1]
                 using namespace Gecode;
                 IntVarArgs tm(4);
@@ -493,8 +493,8 @@ namespace Test { namespace Int {
             /// Create and register test
             MatrixBoolVarBoolVarXY(void) : Test("Element::Matrix::BoolVar::BoolVar::XY", 3 + 4, 0, 1, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
                 // remaining: matrix
                 using namespace Gecode;
@@ -507,8 +507,8 @@ namespace Test { namespace Int {
                 return m(x[0], x[1]) == x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
                 using namespace Gecode;
                 BoolVarArgs tm(4);
@@ -527,8 +527,8 @@ namespace Test { namespace Int {
             /// Create and register test
             MatrixBoolVarBoolVarXX(void) : Test("Element::Matrix::BoolVar::BoolVar::XX", 2 + 4, 0, 1, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
                 // remaining: matrix
                 using namespace Gecode;
@@ -541,8 +541,8 @@ namespace Test { namespace Int {
                 return m(x[0], x[0]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[1]
                 using namespace Gecode;
                 BoolVarArgs tm(4);

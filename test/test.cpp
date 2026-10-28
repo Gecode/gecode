@@ -60,7 +60,7 @@ namespace Test {
 
     /// Tags supported by the test runner
     static const TestTagDescription test_tag_descriptions[] = {
-        {"check", TestTag::check}, {"standard", TestTag::standard}, {"sweep", TestTag::sweep}};
+        {"check", TestTag::CHECK}, {"standard", TestTag::STANDARD}, {"sweep", TestTag::SWEEP}};
 
     TestTags
     TestTags::all(void) {
@@ -144,11 +144,13 @@ namespace Test {
         unsigned int i = 0;
         for (Base* t = _tests; t != nullptr; t = t->next())
             b[i++] = t;
+        assert(i == _n_tests);
+        const unsigned int count = i;
         SortByName sbn;
-        Gecode::Support::quicksort(b, _n_tests, sbn);
+        Gecode::Support::quicksort(b, count, sbn);
         i = 0;
         _tests = nullptr;
-        for (; i < _n_tests; i++) {
+        for (; i < count; i++) {
             b[i]->next(_tests);
             _tests = b[i];
         }
@@ -158,14 +160,14 @@ namespace Test {
     Base::~Base() = default;
 
     Options opt;
-    const int Options::defiter;
-    const unsigned int Options::deffixprob;
+    const int Options::default_iterations;
+    const unsigned int Options::default_fixpoint_probability_denominator;
 
     void
     report_error(const std::string& name, unsigned int seed, const Options& options, std::ostream& ostream) {
         ostream << "Options: -replay " << seed;
-        if (options.fixprob != Test::Options::deffixprob)
-            ostream << " -fixprob " << options.fixprob;
+        if (options.fixpoint_probability_denominator != Test::Options::default_fixpoint_probability_denominator)
+            ostream << " -fixprob " << options.fixpoint_probability_denominator;
         ostream << " -test " << name << std::endl;
         if (options.log)
             ostream << olog.str();
@@ -186,7 +188,7 @@ namespace Test {
                           << "current time" << std::endl
                           << "\t-replay (unsigned int)\n"
                           << "\t\treplay the exact -test name once, on one thread\n"
-                          << "\t-fixprob (unsigned int) default: " << fixprob << std::endl
+                          << "\t-fixprob (unsigned int) default: " << fixpoint_probability_denominator << std::endl
                           << "\t\t1/fixprob is the probability of computing a fixpoint" << std::endl
                           << "\t-iter (unsigned int) default: " << iter << std::endl
                           << "\t\tthe number of iterations" << std::endl
@@ -238,16 +240,16 @@ namespace Test {
             } else if (!strcmp(argv[i], "-fixprob")) {
                 if (++i == argc)
                     goto missing;
-                fixprob = static_cast<unsigned int>(atoi(argv[i]));
+                fixpoint_probability_denominator = static_cast<unsigned int>(atoi(argv[i]));
             } else if (!strcmp(argv[i], "-test")) {
                 if (++i == argc)
                     goto missing;
                 if (argv[i][0] == '^')
-                    testpat.emplace_back(MT_FIRST, argv[i] + 1);
+                    test_patterns.emplace_back(MT_FIRST, argv[i] + 1);
                 else if (argv[i][0] == '-')
-                    testpat.emplace_back(MT_NOT, argv[i] + 1);
+                    test_patterns.emplace_back(MT_NOT, argv[i] + 1);
                 else
-                    testpat.emplace_back(MT_ANY, argv[i]);
+                    test_patterns.emplace_back(MT_ANY, argv[i]);
             } else if (!strcmp(argv[i], "-tag")) {
                 if (++i == argc)
                     goto missing;
@@ -256,7 +258,7 @@ namespace Test {
                     std::cerr << "Erroneous argument (-tag)" << std::endl << "  unknown tag: " << argv[i] << std::endl;
                     exit(EXIT_FAILURE);
                 }
-                testtags.add(tag);
+                test_tags.add(tag);
             } else if (!strcmp(argv[i], "-start")) {
                 if (++i == argc)
                     goto missing;
@@ -282,7 +284,7 @@ namespace Test {
         }
 
         if (replay) {
-            if (testpat.size() != 1 || testpat[0].first != MT_ANY || start_from != nullptr) {
+            if (test_patterns.size() != 1 || test_patterns[0].first != MT_ANY || start_from != nullptr) {
                 std::cerr << "-replay requires one exact -test name." << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -304,11 +306,11 @@ namespace Test {
     bool
     Options::is_test_name_matching(const std::string& test_name) const {
         if (replay)
-            return testpat.size() == 1 && test_name == testpat[0].second;
-        if (!testpat.empty()) {
+            return test_patterns.size() == 1 && test_name == test_patterns[0].second;
+        if (!test_patterns.empty()) {
             bool positive_patterns = false;
             bool match_found = false;
-            for (const auto& type_pattern : testpat) {
+            for (const auto& type_pattern : test_patterns) {
                 const auto& type = type_pattern.first;
                 const auto& pattern = type_pattern.second;
                 if (type == MT_NOT) { // Negative pattern
@@ -346,7 +348,7 @@ namespace Test {
 
     bool
     Options::is_test_tags_matching(TestTags tags) const {
-        return testtags.empty() || tags.overlaps(testtags);
+        return test_tags.empty() || tags.overlaps(test_tags);
     }
 
     /// Run a single test, returning true iff the test succeeded
@@ -527,7 +529,7 @@ namespace Test {
         const int initial_seed;
 
     public:
-        TestExecutor(TestExecutionControl& tec, const int initialSeed) : tec(tec), initial_seed(initialSeed) {}
+        TestExecutor(TestExecutionControl& tec, const int initial_seed) : tec(tec), initial_seed(initial_seed) {}
 
         void
         run(void) override {

@@ -63,16 +63,16 @@ namespace Gecode { namespace Int { namespace Exec {
     public:
         /// Copy propagator during cloning
         GECODE_INT_EXPORT
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
         GECODE_INT_EXPORT
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Home home, BoolView x, std::function<void(Space& home)> t,
                                std::function<void(Space& home)> e);
         /// Dispose propagator
         GECODE_INT_EXPORT
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::Exec

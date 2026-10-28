@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
         for (int i = 0; i < n; i++)
             for (int j = 0; j < i; j++)
-                if (b[i].nooverlap(b[j])) {
+                if (b[i].no_overlap(b[j])) {
                     assert(db[i] > 0);
                     assert(db[j] > 0);
                     if (--db[i] == 0)
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
                         e++;
                     continue;
                 } else {
-                    GECODE_ES_CHECK(b[i].nooverlap(home, b[j]));
+                    GECODE_ES_CHECK(b[i].no_overlap(home, b[j]));
                 }
 
         if (e == n)

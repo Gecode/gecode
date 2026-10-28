@@ -58,49 +58,49 @@ namespace Gecode { namespace Set { namespace RelOp {
 
         do {
             // lub(x2) <= lub(x0) u lub(x1)
-            if (modified || Rel::testSetEventUB(me0, me1)) {
+            if (modified || Rel::test_set_event_ub(me0, me1)) {
                 LubRanges<View0> ub0(x0);
                 LubRanges<View1> ub1(x1);
                 Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1>> u(ub0, ub1);
-                GECODE_ME_CHECK(x2.intersectI(home, u));
+                GECODE_ME_CHECK(x2.intersect_i(home, u));
             }
 
             // x1 <= glb(x2)-lub(x0)
             // x0 <= glb(x2)-lub(x1)
-            if (modified || Rel::testSetEventAnyB(me0, me1, me2)) {
+            if (modified || Rel::test_set_event_any_b(me0, me1, me2)) {
                 {
                     modified = false;
                     GlbRanges<View2> lb2(x2);
                     LubRanges<View0> ub0(x0);
                     Iter::Ranges::Diff<GlbRanges<View2>, LubRanges<View0>> diff(lb2, ub0);
-                    GECODE_ME_CHECK_MODIFIED(modified, x1.includeI(home, diff));
+                    GECODE_ME_CHECK_MODIFIED(modified, x1.include_i(home, diff));
                 }
                 {
                     GlbRanges<View2> lb2(x2);
                     LubRanges<View1> ub1(x1);
                     Iter::Ranges::Diff<GlbRanges<View2>, LubRanges<View1>> diff(lb2, ub1);
-                    GECODE_ME_CHECK_MODIFIED(modified, x0.includeI(home, diff));
+                    GECODE_ME_CHECK_MODIFIED(modified, x0.include_i(home, diff));
                 }
             } else {
                 modified = false;
             }
 
             // cardinality propagation
-            if (modified || Rel::testSetEventCard(me0, me1, me2) || Rel::testSetEventLB(me0, me1)) {
+            if (modified || Rel::test_set_event_card(me0, me1, me2) || Rel::test_set_event_lb(me0, me1)) {
                 GlbRanges<View0> lb0c(x0);
                 GlbRanges<View1> lb1c(x1);
                 Iter::Ranges::Inter<GlbRanges<View0>, GlbRanges<View1>> inter(lb0c, lb1c);
 
                 unsigned int m = Iter::Ranges::size(inter);
 
-                if (m < x0.cardMax() + x1.cardMax()) {
-                    GECODE_ME_CHECK_MODIFIED(modified, x2.cardMax(home, x0.cardMax() + x1.cardMax() - m));
+                if (m < x0.card_max() + x1.card_max()) {
+                    GECODE_ME_CHECK_MODIFIED(modified, x2.card_max(home, x0.card_max() + x1.card_max() - m));
                 }
-                if (m + x2.cardMin() > x1.cardMax()) {
-                    GECODE_ME_CHECK_MODIFIED(modified, x0.cardMin(home, m + x2.cardMin() - x1.cardMax()));
+                if (m + x2.card_min() > x1.card_max()) {
+                    GECODE_ME_CHECK_MODIFIED(modified, x0.card_min(home, m + x2.card_min() - x1.card_max()));
                 }
-                if (m + x2.cardMin() > x0.cardMax()) {
-                    GECODE_ME_CHECK_MODIFIED(modified, x1.cardMin(home, m + x2.cardMin() - x0.cardMax()));
+                if (m + x2.card_min() > x0.card_max()) {
+                    GECODE_ME_CHECK_MODIFIED(modified, x1.card_min(home, m + x2.card_min() - x0.card_max()));
                 }
             }
 

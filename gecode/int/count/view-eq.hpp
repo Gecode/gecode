@@ -67,15 +67,15 @@ namespace Gecode { namespace Int { namespace Count {
     EqView<VX, VY, VZ, shr, dom>::propagate(Space& home, const ModEventDelta&) {
         count(home);
 
-        GECODE_ME_CHECK(z.gq(home, atleast()));
-        GECODE_ME_CHECK(z.lq(home, atmost()));
+        GECODE_ME_CHECK(z.gq(home, at_least()));
+        GECODE_ME_CHECK(z.lq(home, at_most()));
 
         if (z.assigned()) {
-            if (z.val() == atleast()) {
+            if (z.val() == at_least()) {
                 GECODE_ES_CHECK(post_false(home, x, y));
                 return home.ES_SUBSUMED(*this);
             }
-            if (z.val() == atmost()) {
+            if (z.val() == at_most()) {
                 GECODE_ES_CHECK(post_true(home, x, y));
                 return home.ES_SUBSUMED(*this);
             }
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Count {
              * when things are shared: the reason is that prune
              * requires that the views in x overlap with y!
              */
-            if (shr && (VX::me(Propagator::modeventdelta()) != ME_INT_NONE))
+            if (shr && (VX::me(Propagator::modification_event_delta()) != ME_INT_NONE))
                 return ES_NOFIX;
 
             GECODE_ES_CHECK(prune(home, x, y));

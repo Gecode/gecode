@@ -585,7 +585,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, bool pos>
     forceinline bool
-    Compact<View, pos>::atmostone(void) const {
+    Compact<View, pos>::at_most_one(void) const {
         return compact_atmostone(c);
     }
 
@@ -693,7 +693,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             }
             actor.status.none();
             assert(!actor.table.empty());
-            return actor.atmostone() ? home.ES_SUBSUMED(actor) : ES_FIX;
+            return actor.at_most_one() ? home.ES_SUBSUMED(actor) : ES_FIX;
         }
 
         static ExecStatus
@@ -828,7 +828,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
             if (actor.table.ones() == product)
                 return ES_FAILED;
-            if (actor.table.empty() || actor.atmostone())
+            if (actor.table.empty() || actor.at_most_one())
                 return home.ES_SUBSUMED(actor);
             return ES_FIX;
         }
@@ -1004,7 +1004,7 @@ namespace Gecode { namespace Int { namespace Extensional {
      */
     template <class View>
     ExecStatus
-    postposcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
+    post_positive_compact(Home home, ViewArray<View>& x, const TupleSet& ts) {
         if (ts.tuples() == 0)
             return (x.size() == 0) ? ES_OK : ES_FAILED;
 
@@ -1107,7 +1107,7 @@ namespace Gecode { namespace Int { namespace Extensional {
      */
     template <class View>
     ExecStatus
-    postnegcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
+    post_negative_compact(Home home, ViewArray<View>& x, const TupleSet& ts) {
         if (ts.tuples() == 0)
             return ES_OK;
 
@@ -1182,12 +1182,12 @@ namespace Gecode { namespace Int { namespace Extensional {
         if (b.one()) {
             if (rm == RM_PMI)
                 return ES_OK;
-            return postposcompact(home, x, ts);
+            return post_positive_compact(home, x, ts);
         }
         if (b.zero()) {
             if (rm == RM_IMP)
                 return ES_OK;
-            return postnegcompact(home, x, ts);
+            return post_negative_compact(home, x, ts);
         }
         (void)new (home) ReCompact(home, x, ts, b);
         return ES_OK;
@@ -1196,13 +1196,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, class Table, class CtrlView, ReifyMode rm>
     ExecStatus
     ReCompact<View, Table, CtrlView, rm>::post_pos(Home home, ViewArray<View>& x, const TupleSet& ts) {
-        return postposcompact(home, x, ts);
+        return post_positive_compact(home, x, ts);
     }
 
     template <class View, class Table, class CtrlView, ReifyMode rm>
     ExecStatus
     ReCompact<View, Table, CtrlView, rm>::post_neg(Home home, ViewArray<View>& x, const TupleSet& ts) {
-        return postnegcompact(home, x, ts);
+        return post_negative_compact(home, x, ts);
     }
 
     template <class View, class Table, class CtrlView, ReifyMode rm>
@@ -1236,7 +1236,7 @@ namespace Gecode { namespace Int { namespace Extensional {
      */
     template <class View, class CtrlView, ReifyMode rm>
     ExecStatus
-    postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b) {
+    post_reified_compact(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b) {
         // Enforce invariant that there is at least one tuple...
         if (ts.tuples() == 0) {
             if (x.size() != 0) {
@@ -1443,7 +1443,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             return compact_all(c);
         }
         bool
-        atmostone(void) const {
+        at_most_one(void) const {
             return compact_atmostone(c);
         }
 
@@ -1482,12 +1482,12 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
     public:
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return compact_cost(c);
         }
         size_t
-        dispose(Space& home) {
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE);
             c.dispose(home);
             ts.~TupleSet();
@@ -1509,7 +1509,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         typedef typename Base::LostSupports LostSupports;
 
         using Base::all;
-        using Base::atmostone;
+        using Base::at_most_one;
         using Base::c;
         using Base::setup;
         using Base::supports;
@@ -1530,8 +1530,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             setup(home, table, x);
         }
 
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             typedef CompactActorFactory<PosCompactCompressed, View> Factory;
             return compact_copy<Factory, Table>(home, *this);
         }
@@ -1543,31 +1543,31 @@ namespace Gecode { namespace Int { namespace Extensional {
             return ct->table.empty() ? ES_FAILED : ES_OK;
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             (void)Base::dispose(home);
             return sizeof(*this);
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             PosCompactAlgorithm<PosCompactCompressed>::reschedule(*this, home);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             return PosCompactAlgorithm<PosCompactCompressed>::propagate(*this, home);
         }
 
-        virtual ExecStatus
-        advise(Space& home, Advisor& advisor, const Delta& delta) {
+        ExecStatus
+        advise(Space& home, Advisor& advisor, const Delta& delta) override {
             return PosCompactAlgorithm<PosCompactCompressed>::advise(*this, home, advisor, delta);
         }
     };
 
     template <class View>
     ExecStatus
-    postposcompact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts) {
+    post_positive_compact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts) {
         if (ts.tuples() == 0)
             return (x.size() == 0) ? ES_OK : ES_FAILED;
 
@@ -1617,7 +1617,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         typedef typename Base::ValidSupports ValidSupports;
         typedef typename Base::CTAdvisor CTAdvisor;
 
-        using Base::atmostone;
+        using Base::at_most_one;
         using Base::c;
         using Base::full;
         using Base::setup;
@@ -1633,8 +1633,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             setup(home, table, x);
         }
 
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             typedef CompactActorFactory<NegCompactCompressed, View> Factory;
             return compact_copy<Factory, Table>(home, *this);
         }
@@ -1645,31 +1645,31 @@ namespace Gecode { namespace Int { namespace Extensional {
             return ct->full(ct->table) ? ES_FAILED : ES_OK;
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             (void)Base::dispose(home);
             return sizeof(*this);
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             NegCompactAlgorithm<NegCompactCompressed>::reschedule(*this, home);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             return NegCompactAlgorithm<NegCompactCompressed>::propagate(*this, home);
         }
 
-        virtual ExecStatus
-        advise(Space& home, Advisor& advisor, const Delta&) {
+        ExecStatus
+        advise(Space& home, Advisor& advisor, const Delta&) override {
             return NegCompactAlgorithm<NegCompactCompressed>::advise(*this, home, advisor);
         }
     };
 
     template <class View>
     ExecStatus
-    postnegcompact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts) {
+    post_negative_compact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts) {
         if (ts.tuples() == 0)
             return ES_OK;
 
@@ -1741,8 +1741,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             setup(home, table, x);
         }
 
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             typedef ReCompactActorFactory<ReCompactCompressed, View, CtrlView, rm> Factory;
             return compact_copy<Factory, Table>(home, *this);
         }
@@ -1752,12 +1752,12 @@ namespace Gecode { namespace Int { namespace Extensional {
             if (b.one()) {
                 if (rm == RM_PMI)
                     return ES_OK;
-                return postposcompact_compressed(home, x, ts);
+                return post_positive_compact_compressed(home, x, ts);
             }
             if (b.zero()) {
                 if (rm == RM_IMP)
                     return ES_OK;
-                return postnegcompact_compressed(home, x, ts);
+                return post_negative_compact_compressed(home, x, ts);
             }
             (void)new (home) ReCompactCompressed(home, x, ts, b);
             return ES_OK;
@@ -1765,40 +1765,40 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         static ExecStatus
         post_pos(Home home, ViewArray<View>& x, const TupleSet& ts) {
-            return postposcompact_compressed(home, x, ts);
+            return post_positive_compact_compressed(home, x, ts);
         }
 
         static ExecStatus
         post_neg(Home home, ViewArray<View>& x, const TupleSet& ts) {
-            return postnegcompact_compressed(home, x, ts);
+            return post_negative_compact_compressed(home, x, ts);
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             b.cancel(home, *this, PC_BOOL_VAL);
             (void)Base::dispose(home);
             return sizeof(*this);
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             ReCompactAlgorithm<ReCompactCompressed>::reschedule(*this, home);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             return ReCompactAlgorithm<ReCompactCompressed>::propagate(*this, home);
         }
 
-        virtual ExecStatus
-        advise(Space& home, Advisor& advisor, const Delta&) {
+        ExecStatus
+        advise(Space& home, Advisor& advisor, const Delta&) override {
             return ReCompactAlgorithm<ReCompactCompressed>::advise(*this, home, advisor);
         }
     };
 
     template <class View, class CtrlView, ReifyMode rm>
     ExecStatus
-    postrecompact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b) {
+    post_reified_compact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b) {
         if (ts.tuples() == 0) {
             if (x.size() != 0) {
                 if (rm != RM_PMI)

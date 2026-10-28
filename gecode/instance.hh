@@ -341,7 +341,7 @@ namespace Gecode { namespace Instance {
         /// Initialize with message \a m
         explicit Error(const std::string& m);
         /// Return the full message
-        virtual const char* what(void) const noexcept override;
+        const char* what(void) const noexcept override;
     };
 
     /// Type of the values in a data entry

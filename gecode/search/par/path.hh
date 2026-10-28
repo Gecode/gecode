@@ -97,7 +97,7 @@ namespace Gecode { namespace Search { namespace Par {
             /// Return number for alternatives
             unsigned int alt(void) const;
             /// Return true number for alternatives (excluding lao optimization)
-            unsigned int truealt(void) const;
+            unsigned int true_alternative(void) const;
             /// Test whether current alternative is rightmost
             bool rightmost(void) const;
             /// Test whether current alternative was LAO
@@ -158,7 +158,7 @@ namespace Gecode { namespace Search { namespace Par {
         /// Steal work at depth \a d
         Space* steal(Worker& stat, unsigned long int& d, Tracer& myt, Tracer& ot);
         /// Post no-goods
-        void virtual post(Space& home) const;
+        void post(Space& home) const override;
     };
 
 }}} // namespace Gecode::Search::Par

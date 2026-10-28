@@ -35,7 +35,7 @@
 namespace Gecode { namespace Set { namespace Branch {
 
     ViewSel<SetView>*
-    viewsel(Space& home, const SetVarBranch& svb) {
+    view_selection(Space& home, const SetVarBranch& svb) {
         switch (svb.select()) {
         case SetVarBranch::SEL_NONE:
             return new (home) ViewSelNone<SetView>(home, svb);

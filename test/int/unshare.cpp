@@ -50,14 +50,14 @@ namespace Test { namespace Int {
             /// Create and register test
             Int(Gecode::IntPropLevel ipl) : Test("Unshare::Int::" + str(ipl), 9, -1, 1, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return ((x[0] == x[3]) && (x[1] == x[4]) && (x[1] == x[6]) && (x[2] == x[5]) && (x[2] == x[7]) &&
                         (x[2] == x[8]));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntVarArgs y(6);
                 y[0] = x[0];
@@ -75,14 +75,14 @@ namespace Test { namespace Int {
             /// Create and register test
             Bool(void) : Test("Unshare::Bool", 9, 0, 1, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return ((x[0] == x[3]) && (x[1] == x[4]) && (x[1] == x[6]) && (x[2] == x[5]) && (x[2] == x[7]) &&
                         (x[2] == x[8]));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolVarArgs y(6);
                 y[0] = channel(home, x[0]);
@@ -100,14 +100,14 @@ namespace Test { namespace Int {
             /// Create and register test
             Failed(void) : Test("Unshare::Failed", 1, -1, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 (void)x;
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 home.fail();
                 IntVarArgs y(2);

@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Precede {
 
     template <class View>
     forceinline ExecStatus
-    Single<View>::updateAlpha(Space& home) {
+    Single<View>::update_alpha(Space& home) {
         int n = x.size();
         while ((alpha < n) && !x[alpha].in(s))
             GECODE_ME_CHECK(x[alpha++].nq(home, t));
@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Precede {
 
     template <class View>
     forceinline ExecStatus
-    Single<View>::updateBeta(Space& home) {
+    Single<View>::update_beta(Space& home) {
         int n = x.size();
         do {
             beta++;
@@ -210,12 +210,12 @@ namespace Gecode { namespace Int { namespace Precede {
             alpha++;
             while (alpha < beta)
                 GECODE_ME_CHECK(x[alpha++].nq(home, t));
-            GECODE_ES_CHECK(updateAlpha(home));
+            GECODE_ES_CHECK(update_alpha(home));
             beta = alpha;
             if (alpha < n)
-                GECODE_ES_CHECK(updateBeta(home));
+                GECODE_ES_CHECK(update_beta(home));
         } else if ((beta < n) && !x[beta].in(s)) {
-            GECODE_ES_CHECK(updateBeta(home));
+            GECODE_ES_CHECK(update_beta(home));
         }
 
         return (c.empty()) ? home.ES_SUBSUMED(*this) : ES_FIX;

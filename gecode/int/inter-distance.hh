@@ -80,13 +80,13 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
     public:
         /// Copy during cloning
-        virtual Propagator* copy(Space& home);
+        Propagator* copy(Space& home) override;
         /// Cost of the current stage
-        virtual PropCost cost(const Space&, const ModEventDelta&) const;
+        PropCost cost(const Space&, const ModEventDelta&) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta&);
+        ExecStatus propagate(Space& home, const ModEventDelta&) override;
         /// Cancel subscriptions and dispose
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Post propagator
         static ExecStatus post(Home home, ViewArray<IntView>& x, PView p, bool advanced);
     };

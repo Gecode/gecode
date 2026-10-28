@@ -77,9 +77,9 @@ namespace Gecode { namespace Int { namespace Precede {
         /// Pointers updated during propagation
         int alpha, beta, gamma;
         /// Update the alpha pointer
-        ExecStatus updateAlpha(Space& home);
+        ExecStatus update_alpha(Space& home);
         /// Update the beta pointer
-        ExecStatus updateBeta(Space& home);
+        ExecStatus update_beta(Space& home);
         /// Constructor for posting
         Single(Home home, ViewArray<View>& x, int s, int t, int beta, int gamma);
         /// Constructor for cloning \a p
@@ -87,17 +87,17 @@ namespace Gecode { namespace Int { namespace Precede {
 
     public:
         /// Copy propagator during cloning
-        virtual Propagator* copy(Space& home);
+        Propagator* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space&, const ModEventDelta&) const;
+        PropCost cost(const Space&, const ModEventDelta&) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator that \a s precedes \a t in \a x
         static ExecStatus post(Home home, ViewArray<View>& x, int s, int t);
     };

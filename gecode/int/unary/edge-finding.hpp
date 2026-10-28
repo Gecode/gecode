@@ -36,7 +36,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     template <class TaskView>
     forceinline ExecStatus
-    edgefinding(Space& home, TaskViewArray<TaskView>& t) {
+    edge_finding(Space& home, TaskViewArray<TaskView>& t) {
         Region r;
 
         OmegaLambdaTree<TaskView> ol(r, t);
@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace Unary {
             while (!ol.lempty() && (ol.lect() > t[j].lct())) {
                 int i = ol.responsible();
                 GECODE_ME_CHECK(t[i].est(home, ol.ect()));
-                ol.lremove(i);
+                ol.remove_lambda(i);
             }
         }
 
@@ -61,11 +61,11 @@ namespace Gecode { namespace Int { namespace Unary {
 
     template <class Task>
     ExecStatus
-    edgefinding(Space& home, TaskArray<Task>& t) {
+    edge_finding(Space& home, TaskArray<Task>& t) {
         TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
-        GECODE_ES_CHECK(edgefinding(home, f));
+        GECODE_ES_CHECK(edge_finding(home, f));
         TaskViewArray<typename TaskTraits<Task>::TaskViewBwd> b(t);
-        return edgefinding(home, b);
+        return edge_finding(home, b);
     }
 
 }}} // namespace Gecode::Int::Unary

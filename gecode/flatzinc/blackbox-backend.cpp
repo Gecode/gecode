@@ -235,7 +235,7 @@ namespace Gecode { namespace FlatZinc {
     BlackBoxLibrary::BlackBoxLibrary(const std::string& name, const std::vector<std::string>& args)
         : library(nullptr), library_fzn_init(nullptr), library_fzn_clone(nullptr), library_fzn_blackbox(nullptr),
           library_fzn_free(nullptr), root_instance(nullptr) {
-        std::string loadError;
+        std::string load_error;
         void* loaded = nullptr;
 #ifdef _WIN32
         DWORD err = ERROR_FILE_NOT_FOUND;
@@ -249,13 +249,13 @@ namespace Gecode { namespace FlatZinc {
             err = GetLastError();
         }
         if (loaded == nullptr) {
-            loadError = std::string("unable to locate library `") + name + "' (" +
-                        windows_error("LoadLibraryW failed for `" + failed_candidate + "'", err) + ")";
+            load_error = std::string("unable to locate library `") + name + "' (" +
+                         windows_error("LoadLibraryW failed for `" + failed_candidate + "'", err) + ")";
         }
 #else
         loaded = dlopen(name.c_str(), RTLD_LAZY);
         if (!loaded) {
-            loadError = std::string(dlerror());
+            load_error = std::string(dlerror());
             loaded = dlopen((name + ".so").c_str(), RTLD_NOW);
         }
         if (!loaded) {
@@ -271,7 +271,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
 #endif
         if (!loaded) {
-            throw Error("Blackbox", "Unable to open dynamic library: " + loadError);
+            throw Error("Blackbox", "Unable to open dynamic library: " + load_error);
         }
 
         bool root_initialized = false;
@@ -281,17 +281,17 @@ namespace Gecode { namespace FlatZinc {
             dlerror();
 #endif
             library_fzn_blackbox = library_symbol<decltype(library_fzn_blackbox)>(loaded, "fzn_blackbox", 36);
-            std::string symError(".");
+            std::string sym_error(".");
             if (library_fzn_blackbox == nullptr) {
 #ifdef _WIN32
-                symError += " (" + windows_error("GetProcAddress failed", GetLastError()) + ")";
+                sym_error += " (" + windows_error("GetProcAddress failed", GetLastError()) + ")";
 #else
                 const char* error = dlerror();
                 if (error != nullptr) {
-                    symError += std::string(": ") + error;
+                    sym_error += std::string(": ") + error;
                 }
 #endif
-                throw Error("Blackbox", "Unable to find symbol `fzn_blackbox` in dynamic library" + symError);
+                throw Error("Blackbox", "Unable to find symbol `fzn_blackbox` in dynamic library" + sym_error);
             }
 
             library_fzn_init = library_symbol<decltype(library_fzn_init)>(loaded, "fzn_init", 8);

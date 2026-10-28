@@ -57,8 +57,8 @@ namespace Gecode { namespace Gist {
                 editor->append(buffer);
                 buffer.clear();
             }
-            virtual int
-            overflow(int v = std::char_traits<char>::eof()) {
+            int
+            overflow(int v = std::char_traits<char>::eof()) override {
                 if (v == '\n') {
                     flush();
                 } else {
@@ -84,13 +84,13 @@ namespace Gecode { namespace Gist {
     TextOutputI::TextOutputI(const std::string& name, QWidget* parent) : QMainWindow(parent) {
         Logos logos;
 
-        QPixmap myPic;
-        myPic.loadFromData(logos.gistLogo, logos.gistLogoSize);
-        setWindowIcon(myPic);
+        QPixmap my_pic;
+        my_pic.loadFromData(logos.gist_logo, logos.gist_logo_size);
+        setWindowIcon(my_pic);
 
         QFont font;
-        QString fontFamily("Courier");
-        font.setFamily(fontFamily);
+        QString font_family("Courier");
+        font.setFamily(font_family);
         font.setFixedPitch(true);
         font.setPointSize(12);
 
@@ -101,27 +101,27 @@ namespace Gecode { namespace Gist {
         editor->setLineWrapColumnOrWidth(80);
         os = new GistOutputStream(editor);
 
-        QAction* clearText = new QAction("Clear", this);
-        clearText->setShortcut(QKeySequence("Ctrl+K"));
-        this->addAction(clearText);
-        connect(clearText, SIGNAL(triggered()), editor, SLOT(clear()));
+        QAction* clear_text = new QAction("Clear", this);
+        clear_text->setShortcut(QKeySequence("Ctrl+K"));
+        this->addAction(clear_text);
+        connect(clear_text, SIGNAL(triggered()), editor, SLOT(clear()));
 
-        QAction* closeWindow = new QAction("Close window", this);
-        closeWindow->setShortcut(QKeySequence("Ctrl+W"));
-        this->addAction(closeWindow);
-        connect(closeWindow, SIGNAL(triggered()), this, SLOT(close()));
+        QAction* close_window = new QAction("Close window", this);
+        close_window->setShortcut(QKeySequence("Ctrl+W"));
+        this->addAction(close_window);
+        connect(close_window, SIGNAL(triggered()), this, SLOT(close()));
 
         QToolBar* t = addToolBar("Tools");
         t->setFloatable(false);
         t->setMovable(false);
-        t->addAction(clearText);
+        t->addAction(clear_text);
 
-        stayOnTop = new QAction("Stay on top", this);
-        stayOnTop->setCheckable(true);
-        t->addAction(stayOnTop);
-        connect(stayOnTop, SIGNAL(changed()), this, SLOT(changeStayOnTop()));
+        stay_on_top = new QAction("Stay on top", this);
+        stay_on_top->setCheckable(true);
+        t->addAction(stay_on_top);
+        connect(stay_on_top, SIGNAL(changed()), this, SLOT(change_stay_on_top()));
 
-        changeStayOnTop();
+        change_stay_on_top();
         setCentralWidget(editor);
         setWindowTitle(QString((std::string("Gist Console: ") + name).c_str()));
 
@@ -135,7 +135,7 @@ namespace Gecode { namespace Gist {
     }
 
     std::ostream&
-    TextOutputI::getStream(void) {
+    TextOutputI::get_stream(void) {
         return *os;
     }
 
@@ -145,7 +145,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TextOutputI::insertHtml(const QString& s) {
+    TextOutputI::insert_html(const QString& s) {
         QTextBlockFormat bf = editor->textCursor().blockFormat();
         bf.setBottomMargin(0);
         editor->textCursor().setBlockFormat(bf);
@@ -154,9 +154,9 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TextOutputI::changeStayOnTop(void) {
+    TextOutputI::change_stay_on_top(void) {
         QPoint p = pos();
-        if (stayOnTop->isChecked()) {
+        if (stay_on_top->isChecked()) {
             setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
         } else {
             setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);

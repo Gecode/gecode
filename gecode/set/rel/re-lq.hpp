@@ -112,13 +112,13 @@ namespace Gecode { namespace Set { namespace Rel {
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (Lq<View1, View0, !strict>::post(home(*this), x1, x0)));
         }
-        if (x0.cardMax() == 0) {
-            if ((!strict) || x1.cardMin() > 0) {
+        if (x0.card_max() == 0) {
+            if ((!strict) || x1.card_min() > 0) {
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one_none(home));
                 return home.ES_SUBSUMED(*this);
             }
-            if (strict && x1.cardMax() == 0) {
+            if (strict && x1.card_max() == 0) {
                 if (rm != RM_PMI)
                     GECODE_ME_CHECK(b.zero_none(home));
                 return home.ES_SUBSUMED(*this);
@@ -133,7 +133,7 @@ namespace Gecode { namespace Set { namespace Rel {
                 GlbRanges<View1> x1l(x1);
                 Iter::Ranges::Diff<GlbRanges<View1>, GlbRanges<View0>> d(x1l, x0l);
                 if (!d()) {
-                    if ((!strict) && x0.cardMax() == x1.cardMax()) {
+                    if ((!strict) && x0.card_max() == x1.card_max()) {
                         // equal
                         if (rm != RM_IMP)
                             GECODE_ME_CHECK(b.one_none(home));
@@ -152,7 +152,7 @@ namespace Gecode { namespace Set { namespace Rel {
                 GlbRanges<View1> x1l(x1);
                 Iter::Ranges::Diff<GlbRanges<View0>, GlbRanges<View1>> d(x0l, x1l);
                 if (!d()) {
-                    if (strict && x0.cardMax() == x1.cardMax()) {
+                    if (strict && x0.card_max() == x1.card_max()) {
                         // equal
                         if (rm != RM_PMI)
                             GECODE_ME_CHECK(b.zero_none(home));
@@ -178,7 +178,7 @@ namespace Gecode { namespace Set { namespace Rel {
         }
 
         // min(x0lb - x1ub) < min(x1ub) -> b=0
-        if (x1.cardMax() > 0) {
+        if (x1.card_max() > 0) {
             GlbRanges<View0> x0l(x0);
             LubRanges<View1> x1u(x1);
             int x1umin = x1u.min();
@@ -190,7 +190,7 @@ namespace Gecode { namespace Set { namespace Rel {
             }
         }
         // min(x1lb - x0ub) < min(x0ub) -> b=1
-        if (x0.cardMax() > 0) {
+        if (x0.card_max() > 0) {
             LubRanges<View0> x0u(x0);
             GlbRanges<View1> x1l(x1);
             int x0umin = x0u.min();

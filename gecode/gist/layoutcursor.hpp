@@ -33,28 +33,28 @@
 namespace Gecode { namespace Gist {
 
     forceinline bool
-    LayoutCursor::mayMoveDownwards(void) {
-        return NodeCursor<VisualNode>::mayMoveDownwards() && node()->isDirty();
+    LayoutCursor::may_move_downwards(void) {
+        return NodeCursor<VisualNode>::may_move_downwards() && node()->is_dirty();
     }
 
-    inline LayoutCursor::LayoutCursor(VisualNode* theNode, const VisualNode::NodeAllocator& na)
-        : NodeCursor<VisualNode>(theNode, na) {}
+    inline LayoutCursor::LayoutCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na)
+        : NodeCursor<VisualNode>(the_node, na) {}
 
     forceinline void
-    LayoutCursor::processCurrentNode(void) {
-        VisualNode* currentNode = node();
-        if (currentNode->isDirty()) {
-            if (currentNode->isHidden()) {
+    LayoutCursor::process_current_node(void) {
+        VisualNode* current_node = node();
+        if (current_node->is_dirty()) {
+            if (current_node->is_hidden()) {
                 // do nothing
-            } else if (false && currentNode->getNumberOfChildren() < 1) {
-                currentNode->setShape(Shape::leaf);
+            } else if (false && current_node->get_number_of_children() < 1) {
+                current_node->set_shape(Shape::leaf);
             } else {
-                currentNode->computeShape(na);
+                current_node->compute_shape(na);
             }
-            currentNode->setDirty(false);
+            current_node->set_dirty(false);
         }
-        if (currentNode->getNumberOfChildren() >= 1)
-            currentNode->setChildrenLayoutDone(true);
+        if (current_node->get_number_of_children() >= 1)
+            current_node->set_children_layout_done(true);
     }
 
 }} // namespace Gecode::Gist

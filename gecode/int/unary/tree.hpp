@@ -107,31 +107,31 @@ namespace Gecode { namespace Int { namespace Unary {
         OmegaNode::init(l, r);
         lp = p;
         lect = ect;
-        resEct = undef;
-        resLp = undef;
+        res_ect = undef;
+        res_lp = undef;
     }
 
     forceinline void
     OmegaLambdaNode::update(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
         OmegaNode::update(l, r);
         if (l.lp + r.p > l.p + r.lp) {
-            resLp = l.resLp;
+            res_lp = l.res_lp;
             lp = l.lp + r.p;
         } else {
-            resLp = r.resLp;
+            res_lp = r.res_lp;
             lp = l.p + r.lp;
         }
         if ((r.lect >= plus(l.ect, r.lp)) && (r.lect >= plus(l.lect, r.p))) {
             lect = r.lect;
-            resEct = r.resEct;
+            res_ect = r.res_ect;
         } else if (plus(l.ect, r.lp) >= plus(l.lect, r.p)) {
             assert(plus(l.ect, r.lp) > r.lect);
             lect = plus(l.ect, r.lp);
-            resEct = r.resLp;
+            res_ect = r.res_lp;
         } else {
             assert((plus(l.lect, r.p) > r.lect) && (plus(l.lect, r.p) > plus(l.ect, r.lp)));
             lect = plus(l.lect, r.p);
-            resEct = l.resEct;
+            res_ect = l.res_ect;
         }
     }
 
@@ -144,8 +144,8 @@ namespace Gecode { namespace Int { namespace Unary {
             for (int i = 0; i < tasks.size(); i++) {
                 leaf(i).p = leaf(i).lp = tasks[i].pmin();
                 leaf(i).ect = leaf(i).lect = tasks[i].est() + tasks[i].pmin();
-                leaf(i).resEct = OmegaLambdaNode::undef;
-                leaf(i).resLp = OmegaLambdaNode::undef;
+                leaf(i).res_ect = OmegaLambdaNode::undef;
+                leaf(i).res_lp = OmegaLambdaNode::undef;
             }
             update();
         } else {
@@ -153,8 +153,8 @@ namespace Gecode { namespace Int { namespace Unary {
             for (int i = 0; i < tasks.size(); i++) {
                 leaf(i).p = leaf(i).lp = 0;
                 leaf(i).ect = leaf(i).lect = -Limits::infinity;
-                leaf(i).resEct = OmegaLambdaNode::undef;
-                leaf(i).resLp = OmegaLambdaNode::undef;
+                leaf(i).res_ect = OmegaLambdaNode::undef;
+                leaf(i).res_lp = OmegaLambdaNode::undef;
             }
             init();
         }
@@ -167,14 +167,14 @@ namespace Gecode { namespace Int { namespace Unary {
         assert(leaf(i).ect > -Limits::infinity);
         leaf(i).p = 0;
         leaf(i).ect = -Limits::infinity;
-        leaf(i).resEct = i;
-        leaf(i).resLp = i;
+        leaf(i).res_ect = i;
+        leaf(i).res_lp = i;
         update(i);
     }
 
     template <class TaskView>
     forceinline void
-    OmegaLambdaTree<TaskView>::oinsert(int i) {
+    OmegaLambdaTree<TaskView>::insert_omega(int i) {
         leaf(i).p = tasks[i].pmin();
         leaf(i).ect = tasks[i].est() + tasks[i].pmin();
         update(i);
@@ -182,34 +182,34 @@ namespace Gecode { namespace Int { namespace Unary {
 
     template <class TaskView>
     forceinline void
-    OmegaLambdaTree<TaskView>::linsert(int i) {
+    OmegaLambdaTree<TaskView>::insert_lambda(int i) {
         leaf(i).lp = tasks[i].pmin();
         leaf(i).lect = tasks[i].est() + tasks[i].pmin();
-        leaf(i).resEct = i;
-        leaf(i).resLp = i;
+        leaf(i).res_ect = i;
+        leaf(i).res_lp = i;
         update(i);
     }
 
     template <class TaskView>
     forceinline void
-    OmegaLambdaTree<TaskView>::lremove(int i) {
+    OmegaLambdaTree<TaskView>::remove_lambda(int i) {
         leaf(i).lp = 0;
         leaf(i).lect = -Limits::infinity;
-        leaf(i).resEct = OmegaLambdaNode::undef;
-        leaf(i).resLp = OmegaLambdaNode::undef;
+        leaf(i).res_ect = OmegaLambdaNode::undef;
+        leaf(i).res_lp = OmegaLambdaNode::undef;
         update(i);
     }
 
     template <class TaskView>
     forceinline bool
     OmegaLambdaTree<TaskView>::lempty(void) const {
-        return root().resEct < 0;
+        return root().res_ect < 0;
     }
 
     template <class TaskView>
     forceinline int
     OmegaLambdaTree<TaskView>::responsible(void) const {
-        return root().resEct;
+        return root().res_ect;
     }
 
     template <class TaskView>

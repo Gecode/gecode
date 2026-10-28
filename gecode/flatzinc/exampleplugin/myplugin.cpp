@@ -35,10 +35,8 @@
 #include "myplugin.hh"
 
 void
-MyPlugin::branch(Gecode::FlatZinc::FlatZincSpace& s, Gecode::FlatZinc::AST::Call* c) {
+MyPlugin::branch(Gecode::FlatZinc::FlatZincSpace&, Gecode::FlatZinc::AST::Call* call) {
     std::cerr << "MyPlugin::branch ";
-    c->print(std::cerr);
+    call->print(std::cerr);
     std::cerr << std::endl;
 }
-
-Q_EXPORT_PLUGIN2(myplugin, MyPlugin)

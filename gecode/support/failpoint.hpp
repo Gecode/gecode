@@ -46,16 +46,16 @@ namespace Gecode { namespace Support { namespace FailPoint {
 
     /// Named phase for deterministic test failure injection
     enum class Phase {
-        Disabled,
-        Heap,
-        PropagatorCopy,
-        BrancherCopy,
-        AdvisorCopy,
-        DerivedSpaceCopy,
-        LocalObjectCopy,
-        SpaceDisposeNoticeArray,
-        SpaceDisposalArray,
-        MiniModel
+        DISABLED,
+        HEAP,
+        PROPAGATOR_COPY,
+        BRANCHER_COPY,
+        ADVISOR_COPY,
+        DERIVED_SPACE_COPY,
+        LOCAL_OBJECT_COPY,
+        SPACE_DISPOSE_NOTICE_ARRAY,
+        SPACE_DISPOSAL_ARRAY,
+        MINI_MODEL
     };
 
     /// Reset all failpoint state

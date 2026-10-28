@@ -33,7 +33,7 @@
 namespace Gecode { namespace Search {
 
     /// Create lds engine
-    GECODE_SEARCH_EXPORT Engine* ldsengine(Space* s, const Options& o);
+    GECODE_SEARCH_EXPORT Engine* make_lds_engine(Space* s, const Options& o);
 
     /// A DFS engine builder
     template <class T>
@@ -44,7 +44,7 @@ namespace Gecode { namespace Search {
         /// The constructor
         LdsBuilder(const Options& opt);
         /// The actual build function
-        virtual Engine* operator()(Space* s) const;
+        Engine* operator()(Space* s) const override;
     };
 
     template <class T>
@@ -63,7 +63,7 @@ namespace Gecode {
     template <class T>
     forceinline
     LDS<T>::LDS(T* s, const Search::Options& o)
-        : Search::Base<T>(Search::ldsengine(s, o)) {}
+        : Search::Base<T>(Search::make_lds_engine(s, o)) {}
 
     template <class T>
     T*

@@ -73,22 +73,22 @@ namespace Test { namespace Float {
                        a0.size(), d, st, CPLT_ASSIGNMENT, true),
                   a(a0), frt(frt0), c(c0) {
                 using namespace Gecode;
-                testfix = false;
+                test_fixpoint = false;
                 if ((frt == FRT_NQ) || (frt == FRT_LE) || (frt == FRT_GR) || reified)
-                    testsubsumed = false;
+                    test_subsumption = false;
             }
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 Gecode::FloatVal e = 0.0;
                 for (int i = x.size(); i--;)
                     e += a[i] * x[i];
                 switch (cmp(e, frt, Gecode::FloatVal(c))) {
                 case MT_FALSE: {
-                    Gecode::FloatVal eError = e;
+                    Gecode::FloatVal e_error = e;
                     for (int i = x.size(); i--;)
-                        eError -= a[i] * x[i];
-                    if (cmp(e + eError, frt, Gecode::FloatVal(c)) == MT_FALSE)
+                        e_error -= a[i] * x[i];
+                    if (cmp(e + e_error, frt, Gecode::FloatVal(c)) == MT_FALSE)
                         return MT_FALSE;
                     else
                         return MT_MAYBE;
@@ -102,16 +102,16 @@ namespace Test { namespace Float {
                 return MT_FALSE;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (one(a))
                     Gecode::linear(home, x, frt, c);
                 else
                     Gecode::linear(home, a, x, frt, c);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
                 if (one(a))
                     Gecode::linear(home, x, frt, c, r);
                 else
@@ -135,22 +135,22 @@ namespace Test { namespace Float {
                        CPLT_ASSIGNMENT, true),
                   a(a0), frt(frt0) {
                 using namespace Gecode;
-                testfix = false;
+                test_fixpoint = false;
                 if ((frt == FRT_NQ) || (frt == FRT_LE) || (frt == FRT_GR) || reified)
-                    testsubsumed = false;
+                    test_subsumption = false;
             }
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 Gecode::FloatVal e = 0.0;
                 for (int i = a.size(); i--;)
                     e += a[i] * x[i];
                 switch (cmp(e, frt, x[a.size()])) {
                 case MT_FALSE: {
-                    Gecode::FloatVal eError = e;
+                    Gecode::FloatVal e_error = e;
                     for (int i = a.size(); i--;)
-                        eError -= a[i] * x[i];
-                    if (cmp(e + eError, frt, x[a.size()]) == MT_FALSE)
+                        e_error -= a[i] * x[i];
+                    if (cmp(e + e_error, frt, x[a.size()]) == MT_FALSE)
                         return MT_FALSE;
                     else
                         return MT_MAYBE;
@@ -164,8 +164,8 @@ namespace Test { namespace Float {
                 return MT_FALSE;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 int n = a.size();
                 Gecode::FloatVarArgs y(n);
                 for (int i = n; i--;)
@@ -176,8 +176,8 @@ namespace Test { namespace Float {
                     Gecode::linear(home, a, y, frt, x[n]);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
                 int n = a.size();
                 Gecode::FloatVarArgs y(n);
                 for (int i = n; i--;)

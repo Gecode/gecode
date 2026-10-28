@@ -63,7 +63,7 @@ namespace Test { namespace Set {
                           "Rel::Bin::" + str(srt0) + "::S" + (shared0 ? "1" : "0"), shared0 ? 1 : 2, ds_33, true),
                   srt(srt0), shared(shared0) {}
             int
-            minSymDiff(const SetAssignment& x) const {
+            min_sym_diff(const SetAssignment& x) const {
                 int x1 = shared ? x[0] : x[1];
                 typedef Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges> Diff;
                 CountableSetRanges xr00(x.lub, x[0]);
@@ -84,7 +84,7 @@ namespace Test { namespace Set {
             }
             /// %Test whether \a x is solution
             bool
-            solution(const SetAssignment& x) const {
+            solution(const SetAssignment& x) const override {
                 int x1 = shared ? x[0] : x[1];
                 CountableSetRanges xr0(x.lub, x[0]);
                 CountableSetRanges xr1(x.lub, x1);
@@ -95,13 +95,13 @@ namespace Test { namespace Set {
                     return !Iter::Ranges::equal(xr0, xr1);
 
                 case SRT_LQ:
-                    return (!xr0()) || in(minSymDiff(x), xr1, true);
+                    return (!xr0()) || in(min_sym_diff(x), xr1, true);
                 case SRT_LE:
-                    return xr0() ? in(minSymDiff(x), xr1) : xr1();
+                    return xr0() ? in(min_sym_diff(x), xr1) : xr1();
                 case SRT_GQ:
-                    return (!xr1()) || in(minSymDiff(x), xr0, true);
+                    return (!xr1()) || in(min_sym_diff(x), xr0, true);
                 case SRT_GR:
-                    return xr1() ? in(minSymDiff(x), xr0) : xr0();
+                    return xr1() ? in(min_sym_diff(x), xr0) : xr0();
 
                 case SRT_SUB:
                     return Iter::Ranges::subset(xr0, xr1);
@@ -123,7 +123,7 @@ namespace Test { namespace Set {
             }
             /// Post constraint on \a x
             void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 if (!shared)
                     Gecode::rel(home, x[0], srt, x[1]);
                 else
@@ -131,7 +131,7 @@ namespace Test { namespace Set {
             }
             /// Post reified constraint on \a x for \a b
             void
-            post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
+            post(Space& home, SetVarArray& x, IntVarArray&, Reify r) override {
                 if (!shared)
                     Gecode::rel(home, x[0], srt, x[1], r);
                 else
@@ -145,11 +145,11 @@ namespace Test { namespace Set {
             /// Construct and register test
             ITE(void) : SetTest("ITE", 3, ds_03, false, 1) {}
             /// Check whether \a x is a solution
-            virtual bool
-            solution(const SetAssignment& x) const {
-                if ((x.intval() < 0) || (x.intval() > 1))
+            bool
+            solution(const SetAssignment& x) const override {
+                if ((x.int_value() < 0) || (x.int_value() > 1))
                     return false;
-                if (x.intval() == 1) {
+                if (x.int_value() == 1) {
                     CountableSetRanges xr0(x.lub, x[0]);
                     CountableSetRanges xr2(x.lub, x[2]);
                     return Iter::Ranges::equal(xr0, xr2);
@@ -161,7 +161,7 @@ namespace Test { namespace Set {
             }
             /// Post constraint on \a x and \a y
             void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 Gecode::ite(home, Gecode::channel(home, y[0]), x[0], x[1], x[2]);
             }
         };

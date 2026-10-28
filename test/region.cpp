@@ -52,7 +52,7 @@ namespace Test {
         Region(void) : Test::Base("Region") {}
         /// Perform actual tests
         bool
-        run(void) {
+        run(void) override {
             for (int i = n_repeat; i--;) {
                 Gecode::Region r;
                 for (int j = n_blocks; j--;)

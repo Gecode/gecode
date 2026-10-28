@@ -86,7 +86,7 @@ namespace Gecode {
      * Modification event deltas are used by propagators. A
      * propagator stores a modification event for each variable type.
      * They can be accessed through a variable or a view from a given
-     * propagator. They can be constructed from a given modevent by
+     * propagator. They can be constructed from a given modification_event by
      * a variable or view.
      * \ingroup TaskActor
      */
@@ -204,7 +204,7 @@ namespace Gecode {
         /// Constructor (registers disposer with kernel)
         VarImpDisposer(void);
         /// Dispose list of variable implementations starting at \a x
-        virtual void dispose(Space& home, VarImpBase* x);
+        void dispose(Space& home, VarImpBase* x) override;
     };
 
     /// Generic domain change information to be supplied to advisors
@@ -289,7 +289,7 @@ namespace Gecode {
         /// Return subscribed actor at index \a pc
         ActorLink** actor(PropCond pc);
         /// Return subscribed actor at index \a pc, where \a pc is non-zero
-        ActorLink** actorNonZero(PropCond pc);
+        ActorLink** actor_non_zero(PropCond pc);
         /// Return reference to index \a pc, where \a pc is non-zero
         unsigned int& idx(PropCond pc);
         /// Return index \a pc, where \a pc is non-zero
@@ -444,7 +444,7 @@ namespace Gecode {
         /// \name Delta information for advisors
         //@{
         /// Return modification event
-        static ModEvent modevent(const Delta& d);
+        static ModEvent modification_event(const Delta& d);
         //@}
 
         /// \name Bit management
@@ -919,9 +919,9 @@ namespace Gecode {
         /// Return propagator (or nullptr) for currently rewritten propagator
         Propagator* propagator(void) const;
         /// Return propagator group
-        PropagatorGroup propagatorgroup(void) const;
+        PropagatorGroup propagator_group(void) const;
         /// Return brancher group
-        BrancherGroup branchergroup(void) const;
+        BrancherGroup brancher_group(void) const;
         //@}
         /// \name Forwarding of common space operations
         //@{
@@ -1198,7 +1198,7 @@ namespace Gecode {
          * executing propagator and hence can only be called within the
          * propagate function of a propagator.
          */
-        ModEventDelta modeventdelta(void) const;
+        ModEventDelta modification_event_delta(void) const;
         /**
          * \brief Advise function
          *
@@ -1256,7 +1256,7 @@ namespace Gecode {
          */
         /// Signature for function transmitting marginal distributions
         typedef std::function<void(unsigned int prop_id, unsigned int var_id, int val, double dens)> SendMarginal;
-        virtual void solndistrib(Space& home, SendMarginal send) const;
+        virtual void solution_distribution(Space& home, SendMarginal send) const;
         /**
          * \brief Sum of variable cardinalities
          *
@@ -1266,7 +1266,7 @@ namespace Gecode {
          */
         /// Signature for function testing if variables are candidates to branching decisions
         typedef std::function<bool(unsigned int var_id)> InDecision;
-        virtual void domainsizesum(InDecision in, unsigned int& size, unsigned int& size_b) const;
+        virtual void domain_size_sum(InDecision in, unsigned int& size, unsigned int& size_b) const;
         //@}
 #endif
         /// \name Id and group support
@@ -1612,7 +1612,7 @@ namespace Gecode {
 
     private:
         /// Make copy and set forwarding pointer
-        GECODE_KERNEL_EXPORT void fwdcopy(Space& home);
+        GECODE_KERNEL_EXPORT void copy_and_forward(Space& home);
 
     public:
         /// Return forwarding pointer
@@ -2075,11 +2075,11 @@ namespace Gecode {
          *    of alternatives supported by the choice \a c.
          */
         GECODE_KERNEL_EXPORT
-        void _trycommit(const Choice& c, unsigned int a);
+        void _try_commit(const Choice& c, unsigned int a);
 
         /// Find trace recorder if exists
         GECODE_KERNEL_EXPORT
-        TraceRecorder* findtracerecorder(void);
+        TraceRecorder* find_trace_recorder(void);
         /// Trace posting event
         GECODE_KERNEL_EXPORT
         void post(const PostInfo& pi);
@@ -2415,9 +2415,9 @@ namespace Gecode {
          * \ingroup TaskSearch
          */
         /// If possible, commit choice \a c for alternative \a a without collecting statistics
-        void trycommit(const Choice& c, unsigned int a);
+        void try_commit(const Choice& c, unsigned int a);
         /// If possible, commit choice \a c for alternative \a a
-        void trycommit(const Choice& c, unsigned int a, CommitStatistics& stat);
+        void try_commit(const Choice& c, unsigned int a, CommitStatistics& stat);
         /**
          * \brief Create no-good literal for choice \a c and alternative \a a
          *
@@ -3437,14 +3437,14 @@ namespace Gecode {
     }
 
     forceinline void
-    Space::trycommit(const Choice& c, unsigned int a) {
+    Space::try_commit(const Choice& c, unsigned int a) {
         CommitStatistics stat;
-        trycommit(c, a, stat);
+        try_commit(c, a, stat);
     }
 
     forceinline void
-    Space::trycommit(const Choice& c, unsigned int a, CommitStatistics&) {
-        _trycommit(c, a);
+    Space::try_commit(const Choice& c, unsigned int a, CommitStatistics&) {
+        _try_commit(c, a);
     }
 
     forceinline double
@@ -3513,11 +3513,11 @@ namespace Gecode {
         return p;
     }
     forceinline PropagatorGroup
-    Home::propagatorgroup(void) const {
+    Home::propagator_group(void) const {
         return pg;
     }
     forceinline BrancherGroup
-    Home::branchergroup(void) const {
+    Home::brancher_group(void) const {
         return bg;
     }
 
@@ -3567,7 +3567,7 @@ namespace Gecode {
      */
     forceinline
     PostInfo::PostInfo(Home home)
-        : h(home), pg(home.propagatorgroup()), pid(h.ssd.data().gpi.pid()),
+        : h(home), pg(home.propagator_group()), pid(h.ssd.data().gpi.pid()),
           nested(h.pc.p.vti.what() != ViewTraceInfo::OTHER) {
         h.pc.p.vti.post(pg);
     }
@@ -3716,12 +3716,12 @@ namespace Gecode {
     forceinline void
     Propagator::enable(Space& home) {
         (void)home;
-        gpi_disabled = Support::funmark(gpi_disabled);
+        gpi_disabled = Support::clear_pointer_tag_bits(gpi_disabled);
     }
 
     forceinline Kernel::GPI::Info&
     Propagator::gpi(void) {
-        return *static_cast<Kernel::GPI::Info*>(Support::funmark<2>(gpi_disabled));
+        return *static_cast<Kernel::GPI::Info*>(Support::clear_pointer_tag_bits<2>(gpi_disabled));
     }
 
     forceinline
@@ -3731,10 +3731,10 @@ namespace Gecode {
                            // Inherit propagator information
                            home.propagator()->gpi_disabled
                            : static_cast<Space&>(home).no_gpi
-                                 ? static_cast<Space&>(home).local_info(home.propagatorgroup().gid)
+                                 ? static_cast<Space&>(home).local_info(home.propagator_group().gid)
                                  :
                                  // New propagator information
-                                 static_cast<Space&>(home).ssd.data().gpi.allocate(home.propagatorgroup().gid)) {
+                                 static_cast<Space&>(home).ssd.data().gpi.allocate(home.propagator_group().gid)) {
         u.advisors = nullptr;
         assert((u.med == 0) && (u.size == 0));
         static_cast<Space&>(home).pl.head(this);
@@ -3746,7 +3746,7 @@ namespace Gecode {
         if (p.local_info()) {
             Kernel::GPI::Info* i = home.alloc<Kernel::GPI::Info>(1);
             *i = p.gpi();
-            gpi_disabled = Support::ptrjoin(i, p.disabled() ? 0b11 : 0b10);
+            gpi_disabled = Support::join_pointer(i, p.disabled() ? 0b11 : 0b10);
         }
         u.advisors = nullptr;
         assert((u.med == 0) && (u.size == 0));
@@ -3755,7 +3755,7 @@ namespace Gecode {
     }
 
     forceinline ModEventDelta
-    Propagator::modeventdelta(void) const {
+    Propagator::modification_event_delta(void) const {
         return u.med;
     }
 
@@ -3766,10 +3766,10 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_CBS
     forceinline void
-    Propagator::solndistrib(Space&, SendMarginal) const {}
+    Propagator::solution_distribution(Space&, SendMarginal) const {}
 
     forceinline void
-    Propagator::domainsizesum(InDecision, unsigned int& size, unsigned int& size_b) const {
+    Propagator::domain_size_sum(InDecision, unsigned int& size, unsigned int& size_b) const {
         size = 0;
         size_b = 0;
     }
@@ -3838,7 +3838,7 @@ namespace Gecode {
 
     forceinline
     Brancher::Brancher(Home _home)
-        : gid(_home.branchergroup().gid) {
+        : gid(_home.brancher_group().gid) {
         Space& home = static_cast<Space&>(_home);
         bid = home.pc.p.bid_sc >> Space::sc_bits;
         home.pc.p.bid_sc += (1 << Space::sc_bits);
@@ -3976,7 +3976,7 @@ namespace Gecode {
     forceinline LocalObject*
     LocalObject::fwd(Space& home) {
         if (prev() == nullptr)
-            fwdcopy(home);
+            copy_and_forward(home);
         return LocalObject::cast(prev());
     }
 
@@ -4038,11 +4038,11 @@ namespace Gecode {
     }
     forceinline NGL*
     NGL::next(void) const {
-        return static_cast<NGL*>(Support::funmark(nl));
+        return static_cast<NGL*>(Support::clear_pointer_tag_bits(nl));
     }
     forceinline void
     NGL::leaf(bool l) {
-        nl = l ? Support::fmark(nl) : Support::funmark(nl);
+        nl = l ? Support::fmark(nl) : Support::clear_pointer_tag_bits(nl);
     }
     forceinline void
     NGL::next(NGL* n) {
@@ -4360,7 +4360,7 @@ namespace Gecode {
 
     template <class VIC>
     forceinline ActorLink**
-    VarImp<VIC>::actorNonZero(PropCond pc) {
+    VarImp<VIC>::actor_non_zero(PropCond pc) {
         assert((pc > 0) && (pc < pc_max + 2));
         return b.base + u.idx[pc - 1];
     }
@@ -4432,7 +4432,7 @@ namespace Gecode {
         // Count the afc of each propagator
         {
             ActorLink** a = const_cast<VarImp<VIC>*>(this)->actor(0);
-            ActorLink** e = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max + 1);
+            ActorLink** e = const_cast<VarImp<VIC>*>(this)->actor_non_zero(pc_max + 1);
             while (a < e) {
                 d += Propagator::cast(*a)->afc();
                 a++;
@@ -4440,10 +4440,10 @@ namespace Gecode {
         }
         // Count the afc of each advisor's propagator
         {
-            ActorLink** a = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max + 1);
+            ActorLink** a = const_cast<VarImp<VIC>*>(this)->actor_non_zero(pc_max + 1);
             ActorLink** e = const_cast<VarImp<VIC>*>(this)->b.base + entries;
             while (a < e) {
-                d += Advisor::cast(static_cast<ActorLink*>(Support::funmark(*a)))->propagator().afc();
+                d += Advisor::cast(static_cast<ActorLink*>(Support::clear_pointer_tag_bits(*a)))->propagator().afc();
                 a++;
             }
         }
@@ -4452,7 +4452,7 @@ namespace Gecode {
 
     template <class VIC>
     forceinline ModEvent
-    VarImp<VIC>::modevent(const Delta& d) {
+    VarImp<VIC>::modification_event(const Delta& d) {
         return d.me;
     }
 
@@ -4562,7 +4562,7 @@ namespace Gecode {
         if (b.base == nullptr)
             return;
         ActorLink** begin = actor(pc1);
-        ActorLink** end = actorNonZero(pc2 + 1);
+        ActorLink** end = actor_non_zero(pc2 + 1);
         while (end > begin) {
             end--;
             schedule(home, *Propagator::cast(*end), me);
@@ -4607,19 +4607,19 @@ namespace Gecode {
         free_and_bits -= 1 << free_bits;
 
         // Enter subscription
-        b.base[entries] = *actorNonZero(pc_max + 1);
+        b.base[entries] = *actor_non_zero(pc_max + 1);
         entries++;
         for (PropCond j = pc_max; j > pc; j--) {
-            *actorNonZero(j + 1) = *actorNonZero(j);
+            *actor_non_zero(j + 1) = *actor_non_zero(j);
             idx(j + 1)++;
         }
-        *actorNonZero(pc + 1) = *actor(pc);
+        *actor_non_zero(pc + 1) = *actor(pc);
         idx(pc + 1)++;
         *actor(pc) = ActorLink::cast(p);
 
 #ifdef GECODE_AUDIT
         ActorLink** f = actor(pc);
-        while (f < (pc == pc_max + 1 ? b.base + entries : actorNonZero(pc + 1)))
+        while (f < (pc == pc_max + 1 ? b.base + entries : actor_non_zero(pc + 1)))
             if (*f == p)
                 goto found;
             else
@@ -4640,8 +4640,8 @@ namespace Gecode {
         free_and_bits -= 1 << free_bits;
 
         // Enter subscription
-        b.base[entries++] = *actorNonZero(pc_max + 1);
-        *actorNonZero(pc_max + 1) = a;
+        b.base[entries++] = *actor_non_zero(pc_max + 1);
+        *actor_non_zero(pc_max + 1) = a;
     }
 
     template <class VIC>
@@ -4663,7 +4663,7 @@ namespace Gecode {
     forceinline void
     VarImp<VIC>::subscribe(Space& home, Advisor& a, bool assigned, bool fail) {
         if (!assigned) {
-            ActorLink* ma = static_cast<ActorLink*>(Support::ptrjoin(Advisor::link(a), fail ? 1 : 0));
+            ActorLink* ma = static_cast<ActorLink*>(Support::join_pointer(Advisor::link(a), fail ? 1 : 0));
             enter(home, ma);
         }
     }
@@ -4685,7 +4685,7 @@ namespace Gecode {
         // Find actor in dependency array
         ActorLink** f = actor(pc);
 #ifdef GECODE_AUDIT
-        while (f < actorNonZero(pc + 1))
+        while (f < actor_non_zero(pc + 1))
             if (*f == a)
                 goto found;
             else
@@ -4697,12 +4697,12 @@ namespace Gecode {
             f++;
 #endif
         // Remove actor
-        *f = *(actorNonZero(pc + 1) - 1);
+        *f = *(actor_non_zero(pc + 1) - 1);
         for (PropCond j = pc + 1; j < pc_max + 1; j++) {
-            *(actorNonZero(j) - 1) = *(actorNonZero(j + 1) - 1);
+            *(actor_non_zero(j) - 1) = *(actor_non_zero(j + 1) - 1);
             idx(j)--;
         }
-        *(actorNonZero(pc_max + 1) - 1) = b.base[entries - 1];
+        *(actor_non_zero(pc_max + 1) - 1) = b.base[entries - 1];
         idx(pc_max + 1)--;
         entries--;
         free_and_bits += 1 << free_bits;
@@ -4721,7 +4721,7 @@ namespace Gecode {
     VarImp<VIC>::remove(Space& home, ActorLink* a) {
         // Note that a might be a marked pointer
         // Find actor in dependency array
-        ActorLink** f = actorNonZero(pc_max + 1);
+        ActorLink** f = actor_non_zero(pc_max + 1);
 #ifdef GECODE_AUDIT
         while (f < b.base + entries)
             if (*f == a)
@@ -4744,7 +4744,7 @@ namespace Gecode {
     forceinline void
     VarImp<VIC>::cancel(Space& home, Advisor& a, bool fail) {
         if ((b.base != nullptr) && !home.is_partial_clone()) {
-            ActorLink* ma = static_cast<ActorLink*>(Support::ptrjoin(Advisor::link(a), fail ? 1 : 0));
+            ActorLink* ma = static_cast<ActorLink*>(Support::join_pointer(Advisor::link(a), fail ? 1 : 0));
             remove(home, ma);
         }
     }
@@ -4774,7 +4774,7 @@ namespace Gecode {
          * As entries are removed from front to back, the advisors must
          * be iterated in forward direction.
          */
-        ActorLink** la = actorNonZero(pc_max + 1);
+        ActorLink** la = actor_non_zero(pc_max + 1);
         ActorLink** le = b.base + entries;
         if (la == le)
             return true;
@@ -4783,7 +4783,7 @@ namespace Gecode {
         // As removal is done from the back the advisors have to be executed
         // in inverse order.
         do {
-            Advisor* a = Advisor::cast(static_cast<ActorLink*>(Support::funmark(*la)));
+            Advisor* a = Advisor::cast(static_cast<ActorLink*>(Support::clear_pointer_tag_bits(*la)));
             assert(!a->disposed());
             Propagator& p = a->propagator();
             switch (p.advise(home, *a, d)) {
@@ -4813,7 +4813,7 @@ namespace Gecode {
          * As entries are removed from front to back, the advisors must
          * be iterated in forward direction.
          */
-        ActorLink** la = actorNonZero(pc_max + 1);
+        ActorLink** la = actor_non_zero(pc_max + 1);
         ActorLink** le = b.base + entries;
         if (la == le)
             return;
@@ -4853,8 +4853,8 @@ namespace Gecode {
         if (pc_max > 0 && sizeof(ActorLink**) > sizeof(unsigned int))
             x->u.idx[1] = u.idx[1];
 
-        unsigned int np = static_cast<unsigned int>(x->actorNonZero(pc_max + 1) - x->actor(0));
-        unsigned int na = static_cast<unsigned int>(x->b.base + x->entries - x->actorNonZero(pc_max + 1));
+        unsigned int np = static_cast<unsigned int>(x->actor_non_zero(pc_max + 1) - x->actor(0));
+        unsigned int na = static_cast<unsigned int>(x->b.base + x->entries - x->actor_non_zero(pc_max + 1));
         unsigned int n = na + np;
         assert(n == x->degree());
 
@@ -4895,32 +4895,32 @@ namespace Gecode {
         // Process advisor subscriptions
         while (na >= 4) {
             ptrdiff_t m0, m1, m2, m3;
-            ActorLink* p3 = static_cast<ActorLink*>(Support::ptrsplit(f[3], m3))->prev();
-            ActorLink* p0 = static_cast<ActorLink*>(Support::ptrsplit(f[0], m0))->prev();
-            ActorLink* p1 = static_cast<ActorLink*>(Support::ptrsplit(f[1], m1))->prev();
-            ActorLink* p2 = static_cast<ActorLink*>(Support::ptrsplit(f[2], m2))->prev();
-            t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0, m0));
-            t[1] = static_cast<ActorLink*>(Support::ptrjoin(p1, m1));
-            t[2] = static_cast<ActorLink*>(Support::ptrjoin(p2, m2));
-            t[3] = static_cast<ActorLink*>(Support::ptrjoin(p3, m3));
+            ActorLink* p3 = static_cast<ActorLink*>(Support::split_pointer(f[3], m3))->prev();
+            ActorLink* p0 = static_cast<ActorLink*>(Support::split_pointer(f[0], m0))->prev();
+            ActorLink* p1 = static_cast<ActorLink*>(Support::split_pointer(f[1], m1))->prev();
+            ActorLink* p2 = static_cast<ActorLink*>(Support::split_pointer(f[2], m2))->prev();
+            t[0] = static_cast<ActorLink*>(Support::join_pointer(p0, m0));
+            t[1] = static_cast<ActorLink*>(Support::join_pointer(p1, m1));
+            t[2] = static_cast<ActorLink*>(Support::join_pointer(p2, m2));
+            t[3] = static_cast<ActorLink*>(Support::join_pointer(p3, m3));
             na -= 4;
             t += 4;
             f += 4;
         }
         if (na >= 2) {
             ptrdiff_t m0, m1;
-            ActorLink* p0 = static_cast<ActorLink*>(Support::ptrsplit(f[0], m0))->prev();
-            ActorLink* p1 = static_cast<ActorLink*>(Support::ptrsplit(f[1], m1))->prev();
-            t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0, m0));
-            t[1] = static_cast<ActorLink*>(Support::ptrjoin(p1, m1));
+            ActorLink* p0 = static_cast<ActorLink*>(Support::split_pointer(f[0], m0))->prev();
+            ActorLink* p1 = static_cast<ActorLink*>(Support::split_pointer(f[1], m1))->prev();
+            t[0] = static_cast<ActorLink*>(Support::join_pointer(p0, m0));
+            t[1] = static_cast<ActorLink*>(Support::join_pointer(p1, m1));
             na -= 2;
             t += 2;
             f += 2;
         }
         if (na > 0) {
             ptrdiff_t m0;
-            ActorLink* p0 = static_cast<ActorLink*>(Support::ptrsplit(f[0], m0))->prev();
-            t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0, m0));
+            ActorLink* p0 = static_cast<ActorLink*>(Support::split_pointer(f[0], m0))->prev();
+            t[0] = static_cast<ActorLink*>(Support::join_pointer(p0, m0));
         }
     }
 #pragma clang diagnostic pop

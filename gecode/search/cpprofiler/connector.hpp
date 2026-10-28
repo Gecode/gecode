@@ -88,8 +88,8 @@ namespace Gecode { namespace CPProfiler {
         int alt() const;
         int kids() const;
         NodeStatus status() const;
-        NodeUID nodeUID() const;
-        NodeUID parentUID() const;
+        NodeUID node_uid() const;
+        NodeUID parent_uid() const;
         int node_id() const;
         int parent_id() const;
         int node_thread_id() const;
@@ -104,15 +104,15 @@ namespace Gecode { namespace CPProfiler {
 
         const unsigned int port;
 
-        int sockfd;
+        int socket_fd;
         bool _connected;
 #if defined(_WIN32)
         bool _winsock_started;
 #endif
 
-        static int sendall(int s, const char* buf, int* len);
-        void sendOverSocket(void);
-        void sendRawMsg(const std::vector<char>& buf);
+        static int send_all(int s, const char* buf, int* len);
+        void send_over_socket(void);
+        void send_raw_msg(const std::vector<char>& buf);
 
     public:
         Connector(unsigned int port);
@@ -131,8 +131,8 @@ namespace Gecode { namespace CPProfiler {
         /// disconnect from a socket
         void disconnect(void);
 
-        void sendNode(const Node& node);
-        Node createNode(NodeUID node, NodeUID parent, int alt, int kids, NodeStatus status);
+        void send_node(const Node& node);
+        Node create_node(NodeUID node, NodeUID parent, int alt, int kids, NodeStatus status);
     };
 
     /*
@@ -195,11 +195,11 @@ namespace Gecode { namespace CPProfiler {
     }
 
     inline NodeUID
-    Node::nodeUID() const {
+    Node::node_uid() const {
         return node_;
     }
     inline NodeUID
-    Node::parentUID() const {
+    Node::parent_uid() const {
         return parent_;
     }
 
@@ -232,7 +232,7 @@ namespace Gecode { namespace CPProfiler {
      * Connector
      */
     inline Connector::Connector(unsigned int port)
-        : port(port), sockfd(-1), _connected(false)
+        : port(port), socket_fd(-1), _connected(false)
 #if defined(_WIN32)
           ,
           _winsock_started(false)
@@ -259,18 +259,18 @@ namespace Gecode { namespace CPProfiler {
      * Contact beej@beej.us for more information.
      */
     inline int
-    Connector::sendall(int s, const char* buf, int* len) {
-        int total = 0;        // how many bytes we've sent
-        int bytesleft = *len; // how many we have left to send
-        ssize_t n;
+    Connector::send_all(int s, const char* buf, int* len) {
+        int total = 0;         // how many bytes we've sent
+        int bytes_left = *len; // how many we have left to send
+        ssize_t n = 0;         // An empty message succeeds without calling send.
 
         while (total < *len) {
-            n = send(s, buf + total, static_cast<size_t>(bytesleft), 0);
+            n = send(s, buf + total, static_cast<size_t>(bytes_left), 0);
             if (n == -1) {
                 break;
             }
             total += static_cast<int>(n);
-            bytesleft -= static_cast<int>(n);
+            bytes_left -= static_cast<int>(n);
         }
 
         *len = static_cast<int>(total); // return number actually sent here
@@ -279,36 +279,36 @@ namespace Gecode { namespace CPProfiler {
     }
 
     inline void
-    Connector::sendRawMsg(const std::vector<char>& buf) {
-        uint32_t bufSize = static_cast<uint32_t>(buf.size());
-        int bufSizeLen = sizeof(uint32_t);
-        sendall(sockfd, reinterpret_cast<char*>(&bufSize), &bufSizeLen);
-        int bufSizeInt = static_cast<int>(bufSize);
-        sendall(sockfd, reinterpret_cast<const char*>(buf.data()), &bufSizeInt);
+    Connector::send_raw_msg(const std::vector<char>& buf) {
+        uint32_t buf_size = static_cast<uint32_t>(buf.size());
+        int buf_size_len = sizeof(uint32_t);
+        send_all(socket_fd, reinterpret_cast<char*>(&buf_size), &buf_size_len);
+        int buf_size_int = static_cast<int>(buf_size);
+        send_all(socket_fd, reinterpret_cast<const char*>(buf.data()), &buf_size_int);
     }
 
     inline void
-    Connector::sendOverSocket(void) {
+    Connector::send_over_socket(void) {
         if (!_connected)
             return;
 
         std::vector<char> buf = marshalling.serialize();
 
-        sendRawMsg(buf);
+        send_raw_msg(buf);
     }
 
     inline void
     Connector::connect(void) {
-        struct addrinfo hints, *servinfo, *p;
+        struct addrinfo hints, *server_info, *p;
         int rv;
 
 #if defined(_WIN32)
         // Initialise Winsock.
-        WSADATA wsaData;
-        int startupResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-        if (startupResult != 0) {
-            printf("WSAStartup failed with error: %d\n", startupResult);
-            goto giveup;
+        WSADATA winsock_data;
+        int startup_result = WSAStartup(MAKEWORD(2, 2), &winsock_data);
+        if (startup_result != 0) {
+            printf("WSAStartup failed with error: %d\n", startup_result);
+            goto give_up;
         }
         _winsock_started = true;
 #endif
@@ -317,25 +317,25 @@ namespace Gecode { namespace CPProfiler {
         hints.ai_family = AF_UNSPEC;
         hints.ai_socktype = SOCK_STREAM;
 
-        if ((rv = getaddrinfo("localhost", std::to_string(port).c_str(), &hints, &servinfo)) != 0) {
+        if ((rv = getaddrinfo("localhost", std::to_string(port).c_str(), &hints, &server_info)) != 0) {
             std::cerr << "getaddrinfo: " << gai_strerror(rv) << "\n";
-            goto giveup;
+            goto give_up;
         }
 
         // loop through all the results and connect to the first we can
-        for (p = servinfo; p != nullptr; p = p->ai_next) {
-            if ((sockfd = static_cast<int>(socket(p->ai_family, p->ai_socktype, p->ai_protocol))) == -1) {
+        for (p = server_info; p != nullptr; p = p->ai_next) {
+            if ((socket_fd = static_cast<int>(socket(p->ai_family, p->ai_socktype, p->ai_protocol))) == -1) {
                 // errno is set here, but we don't examine it.
                 continue;
             }
 
-            if (::connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            if (::connect(socket_fd, p->ai_addr, p->ai_addrlen) == -1) {
 #if defined(_WIN32)
-                closesocket(sockfd);
+                closesocket(socket_fd);
 #else
-                close(sockfd);
+                close(socket_fd);
 #endif
-                sockfd = -1;
+                socket_fd = -1;
                 // errno is set here, but we don't examine it.
                 continue;
             }
@@ -345,16 +345,16 @@ namespace Gecode { namespace CPProfiler {
 
         // Connection failed; give up.
         if (p == nullptr) {
-            freeaddrinfo(servinfo);
-            goto giveup;
+            freeaddrinfo(server_info);
+            goto give_up;
         }
 
-        freeaddrinfo(servinfo); // all done with this structure
+        freeaddrinfo(server_info); // all done with this structure
 
         _connected = true;
 
         return;
-    giveup:
+    give_up:
         _connected = false;
 #if defined(_WIN32)
         if (_winsock_started) {
@@ -389,8 +389,8 @@ namespace Gecode { namespace CPProfiler {
             info = ss.str();
         }
 
-        marshalling.makeStart(info);
-        sendOverSocket();
+        marshalling.make_start(info);
+        send_over_socket();
     }
 
     inline void
@@ -405,25 +405,25 @@ namespace Gecode { namespace CPProfiler {
             info = ss.str();
         }
 
-        marshalling.makeRestart(info);
-        sendOverSocket();
+        marshalling.make_restart(info);
+        send_over_socket();
     }
 
     inline void
     Connector::done() {
-        marshalling.makeDone();
-        sendOverSocket();
+        marshalling.make_done();
+        send_over_socket();
     }
 
     inline void
     Connector::disconnect() {
-        if (sockfd != -1) {
+        if (socket_fd != -1) {
 #if defined(_WIN32)
-            closesocket(sockfd);
+            closesocket(socket_fd);
 #else
-            close(sockfd);
+            close(socket_fd);
 #endif
-            sockfd = -1;
+            socket_fd = -1;
         }
         _connected = false;
 #if defined(_WIN32)
@@ -435,11 +435,11 @@ namespace Gecode { namespace CPProfiler {
     }
 
     inline void
-    Connector::sendNode(const Node& node) {
+    Connector::send_node(const Node& node) {
         if (!_connected)
             return;
 
-        auto& msg = marshalling.makeNode(node.nodeUID(), node.parentUID(), node.alt(), node.kids(), node.status());
+        auto& msg = marshalling.make_node(node.node_uid(), node.parent_uid(), node.alt(), node.kids(), node.status());
 
         if (node.label().valid())
             msg.set_label(node.label().value());
@@ -448,11 +448,11 @@ namespace Gecode { namespace CPProfiler {
         if (node.info().valid())
             msg.set_info(node.info().value());
 
-        sendOverSocket();
+        send_over_socket();
     }
 
     inline Node
-    Connector::createNode(NodeUID node, NodeUID parent, int alt, int kids, NodeStatus status) {
+    Connector::create_node(NodeUID node, NodeUID parent, int alt, int kids, NodeStatus status) {
         return Node(node, parent, alt, kids, status);
     }
 

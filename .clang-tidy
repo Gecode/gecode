@@ -1,6 +1,7 @@
 # Use clang-tidy 22. Keep checks focused on correctness and useful modernization.
 Checks: >-
   -*,
+  clang-analyzer-core.*,
   bugprone-assert-side-effect,
   bugprone-dangling-handle,
   bugprone-integer-division,
@@ -17,8 +18,26 @@ Checks: >-
   performance-inefficient-string-concatenation,
   performance-move-const-arg,
   performance-unnecessary-copy-initialization,
-  performance-unnecessary-value-param
+  readability-identifier-naming
 WarningsAsErrors: '*'
 HeaderFilterRegex: '(gecode|test|examples|tools)/'
 ExcludeHeaderFilterRegex: 'gecode/third-party/|gecode/flatzinc/(parser\.tab\.(cpp|hpp)|lexer\.yy\.cpp)$'
 FormatStyle: file
+
+CheckOptions:
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.MethodCase: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
+  readability-identifier-naming.ConstantCase: lower_case
+  # Constants and functions standing for constant values, such as
+  # ME_INT_VAL, ES_SUBSUMED, and INT_VAR_SIZE_MIN, may use UPPER_CASE.
+  readability-identifier-naming.ConstantIgnoredRegexp: '^(_?[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_|[A-Z][A-Z0-9_]*)$'
+  readability-identifier-naming.FunctionIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[A-Z][A-Z0-9_]*)$'
+  readability-identifier-naming.MethodIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[A-Z][A-Z0-9_]*)$'
+  readability-identifier-naming.VariableIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_)$'
+  readability-identifier-naming.MemberIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_)$'
+  readability-identifier-naming.ParameterIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_)$'
+  readability-identifier-naming.EnumConstantIgnoredRegexp: '^[A-Z][A-Z0-9_]*_$'

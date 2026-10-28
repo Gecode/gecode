@@ -61,16 +61,16 @@ namespace Test { namespace Int {
     void
     RandomAssignment::next(Gecode::Support::RandomGenerator& rand) {
         for (int i = this->n; i--;)
-            this->vals[i] = this->randval(rand);
+            this->vals[i] = this->random_value(rand);
         this->a--;
     }
 
     void
     RandomMixAssignment::next(Gecode::Support::RandomGenerator& rand) {
         for (int i = n - _n1; i--;)
-            vals[i] = randval(d, rand);
+            vals[i] = random_value(d, rand);
         for (int i = _n1; i--;)
-            vals[n - _n1 + i] = randval(_d1, rand);
+            vals[n - _n1 + i] = random_value(_d1, rand);
         a--;
     }
 
@@ -324,7 +324,7 @@ namespace Test { namespace Int {
     }
 
     bool
-    TestSpace::prune(const Assignment& a, bool testfix, Gecode::Support::RandomGenerator& rand) {
+    TestSpace::prune(const Assignment& a, bool test_fixpoint, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         // Select variable to be pruned
         int i = rndvar(rand);
@@ -335,7 +335,7 @@ namespace Test { namespace Int {
         if (irt != IRT_EQ)
             rel(i, irt, v);
         if (Base::fixpoint(rand)) {
-            if (failed() || !testfix)
+            if (failed() || !test_fixpoint)
                 return true;
             TestSpace* c = static_cast<TestSpace*>(clone());
             if (opt.log)
@@ -379,7 +379,7 @@ namespace Test { namespace Int {
     }
 
     bool
-    TestSpace::disabled(const Assignment& a, TestSpace& c, bool testfix, Gecode::Support::RandomGenerator& rand) {
+    TestSpace::disabled(const Assignment& a, TestSpace& c, bool test_fixpoint, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         // Disable propagators
         c.disable();
@@ -395,7 +395,7 @@ namespace Test { namespace Int {
         }
         // Enable propagators
         c.enable();
-        if (!testfix)
+        if (!test_fixpoint)
             return true;
         if (failed()) {
             if (!c.failed()) {
@@ -616,7 +616,7 @@ namespace Test { namespace Int {
                 TestSpace* s = new TestSpace(arity, dom, this);
                 s->post();
                 while (!s->failed() && !s->assigned())
-                    if (!s->prune(a, testfix, _rand)) {
+                    if (!s->prune(a, test_fixpoint, _rand)) {
                         problem = "No fixpoint";
                         delete s;
                         goto failed;
@@ -637,13 +637,13 @@ namespace Test { namespace Int {
                 s->post();
                 c->post();
                 while (!s->failed() && !s->assigned())
-                    if (!s->disabled(a, *c, testfix, _rand)) {
+                    if (!s->disabled(a, *c, test_fixpoint, _rand)) {
                         problem = "Different result after re-enable";
                         delete s;
                         delete c;
                         goto failed;
                     }
-                if (testfix && (s->failed() != c->failed())) {
+                if (test_fixpoint && (s->failed() != c->failed())) {
                     problem = "Different failure after re-enable";
                     delete s;
                     delete c;
@@ -744,7 +744,7 @@ namespace Test { namespace Int {
                         TestSpace* s = new TestSpace(arity, dom, this, RM_EQV);
                         s->post();
                         while (!s->failed() && (!s->assigned() || !s->r.var().assigned()))
-                            if (!s->prune(a, testfix, _rand)) {
+                            if (!s->prune(a, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 goto failed;
@@ -766,7 +766,7 @@ namespace Test { namespace Int {
                         s->post();
                         c->post();
                         while (!s->failed() && (!s->assigned() || !s->r.var().assigned()))
-                            if (!s->disabled(a, *c, testfix, _rand)) {
+                            if (!s->disabled(a, *c, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 delete c;
@@ -886,7 +886,7 @@ namespace Test { namespace Int {
                         TestSpace* s = new TestSpace(arity, dom, this, RM_IMP);
                         s->post();
                         while (!s->failed() && (!s->assigned() || (!sol && !s->r.var().assigned())))
-                            if (!s->prune(a, testfix, _rand)) {
+                            if (!s->prune(a, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 goto failed;
@@ -908,7 +908,7 @@ namespace Test { namespace Int {
                         s->post();
                         c->post();
                         while (!s->failed() && (!s->assigned() || (!sol && !s->r.var().assigned())))
-                            if (!s->disabled(a, *c, testfix, _rand)) {
+                            if (!s->disabled(a, *c, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 delete c;
@@ -1028,7 +1028,7 @@ namespace Test { namespace Int {
                         TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
                         s->post();
                         while (!s->failed() && (!s->assigned() || (sol && !s->r.var().assigned())))
-                            if (!s->prune(a, testfix, _rand)) {
+                            if (!s->prune(a, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 goto failed;
@@ -1050,7 +1050,7 @@ namespace Test { namespace Int {
                         s->post();
                         c->post();
                         while (!s->failed() && (!s->assigned() || (sol && !s->r.var().assigned())))
-                            if (!s->disabled(a, *c, testfix, _rand)) {
+                            if (!s->disabled(a, *c, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 delete c;
@@ -1070,7 +1070,7 @@ namespace Test { namespace Int {
                 }
             }
 
-            if (testsearch) {
+            if (test_search) {
                 if (sol) {
                     START_TEST("Search");
                     TestSpace* s = e_s.next();
@@ -1087,7 +1087,7 @@ namespace Test { namespace Int {
             a.next(_rand);
         }
 
-        if (testsearch) {
+        if (test_search) {
             test = "Search";
             if (e_s.next() != nullptr) {
                 problem = "Excess solutions";
@@ -1095,7 +1095,7 @@ namespace Test { namespace Int {
             }
         }
 
-        switch (contest) {
+        switch (consistency_test_level) {
         case CTL_NONE:
             break;
         case CTL_DOMAIN: {

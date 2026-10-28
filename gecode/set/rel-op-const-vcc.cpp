@@ -103,7 +103,7 @@ namespace Gecode {
                 SetVar tmp(home);
                 SetView tmpv(tmp);
                 IntSetRanges zi(z);
-                GECODE_ME_FAIL(tmpv.excludeI(home, zi));
+                GECODE_ME_FAIL(tmpv.exclude_i(home, zi));
 
                 GlbRanges<ConstSetView> yr(yv);
                 RangesCompl<GlbRanges<ConstSetView>> yrc(yr);

@@ -145,7 +145,7 @@ namespace Gecode { namespace Search { namespace Seq {
 namespace Gecode { namespace Search {
 
     Engine*
-    cabsengine(Space* s, const Options& o) {
+    make_cabs_engine(Space* s, const Options& o) {
         Options e = o.expand();
         if (e.tracer != nullptr)
             throw UnsupportedTracer("CABS::CABS");

@@ -63,8 +63,8 @@ namespace Gecode { namespace FlatZinc {
         /// Initialize this context if it is empty.
         void init(void);
         /// Return the backend selected for one constraint as an opaque handle.
-        SharedHandle backendForConstraint(const std::string& mode, const std::string& target,
-                                          const std::vector<std::string>& args) const;
+        SharedHandle backend_for_constraint(const std::string& mode, const std::string& target,
+                                            const std::vector<std::string>& args) const;
         /// Record the first exception raised during blackbox propagation.
         void fail(std::exception_ptr e) const;
         /// Whether blackbox propagation raised an exception.

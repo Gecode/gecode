@@ -49,8 +49,8 @@
 #endif
 
 #ifdef HAVE_MMAP
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -77,7 +77,7 @@ void yyerror(void* parm, const char *str) {
   pp->err << "Error: " << str
           << " in line no. " << yyget_lineno(pp->yyscanner)
           << std::endl;
-  pp->hadError = true;
+  pp->had_error = true;
 }
 
 void yyassert(ParserState* pp, bool cond, const char* str)
@@ -86,7 +86,7 @@ void yyassert(ParserState* pp, bool cond, const char* str)
     pp->err << "Error: " << str
             << " in line no. " << yyget_lineno(pp->yyscanner)
             << std::endl;
-    pp->hadError = true;
+    pp->had_error = true;
   }
 }
 
@@ -95,7 +95,7 @@ void yyassert(ParserState* pp, bool cond, const char* str)
  *
  */
 
-AST::Node* getArrayElement(ParserState* pp, string id, int offset,
+AST::Node* get_array_element(ParserState* pp, string id, int offset,
                            bool annotation) {
   if (offset > 0) {
     SymbolEntry e;
@@ -156,11 +156,11 @@ AST::Node* getArrayElement(ParserState* pp, string id, int offset,
       case ST_SETVALARRAY:
         if (offset > pp->arrays[e.i])
           goto error;
-        return new AST::SetLit(pp->setvals[pp->arrays[e.i+1]+offset-1]);
+        return new AST::SetLit(pp->set_values[pp->arrays[e.i+1]+offset-1]);
       case ST_FLOATVALARRAY:
         if (offset > pp->arrays[e.i])
           goto error;
-        return new AST::FloatLit(pp->floatvals[pp->arrays[e.i+1]+offset-1]);
+        return new AST::FloatLit(pp->float_values[pp->arrays[e.i+1]+offset-1]);
       default:
         break;
       }
@@ -170,10 +170,10 @@ error:
   pp->err << "Error: array access to " << id << " invalid"
           << " in line no. "
           << yyget_lineno(pp->yyscanner) << std::endl;
-  pp->hadError = true;
+  pp->had_error = true;
   return new AST::IntVar(0); // keep things consistent
 }
-AST::Node* getVarRefArg(ParserState* pp, string id, bool annotation = false) {
+AST::Node* get_var_ref_arg(ParserState* pp, string id, bool annotation = false) {
   SymbolEntry e;
   string n;
   if (annotation)
@@ -193,21 +193,21 @@ AST::Node* getVarRefArg(ParserState* pp, string id, bool annotation = false) {
   pp->err << "Error: undefined variable " << id
           << " in line no. "
           << yyget_lineno(pp->yyscanner) << std::endl;
-  pp->hadError = true;
+  pp->had_error = true;
   return new AST::IntVar(0); // keep things consistent
 }
 
-void addDomainConstraint(ParserState* pp, std::string id, AST::Node* var,
+void add_domain_constraint(ParserState* pp, std::string id, AST::Node* var,
                          Option<AST::SetLit* >& dom) {
   if (!dom())
     return;
   AST::Array* args = new AST::Array(2);
   args->a[0] = var;
   args->a[1] = dom.some();
-  pp->domainConstraints.push_back(new ConExpr(id, args, NULL));
+  pp->domain_constraints.push_back(new ConExpr(id, args, nullptr));
 }
 
-void addDomainConstraint(ParserState* pp, AST::Node* var,
+void add_domain_constraint(ParserState* pp, AST::Node* var,
                          Option<std::pair<double,double>* > dom) {
   if (!dom())
     return;
@@ -215,51 +215,51 @@ void addDomainConstraint(ParserState* pp, AST::Node* var,
     AST::Array* args = new AST::Array(2);
     args->a[0] = new AST::FloatLit(dom.some()->first);
     args->a[1] = var;
-    pp->domainConstraints.push_back(new ConExpr("float_le", args, NULL));
+    pp->domain_constraints.push_back(new ConExpr("float_le", args, nullptr));
   }
   {
     AST::Array* args = new AST::Array(2);
     AST::FloatVar* fv = static_cast<AST::FloatVar*>(var);
     args->a[0] = new AST::FloatVar(fv->i,fv->n);
     args->a[1] = new AST::FloatLit(dom.some()->second);
-    pp->domainConstraints.push_back(new ConExpr("float_le", args, NULL));
+    pp->domain_constraints.push_back(new ConExpr("float_le", args, nullptr));
   }
   delete dom.some();
 }
 
-int getBaseIntVar(ParserState* pp, int i) {
+int get_base_int_var(ParserState* pp, int i) {
   int base = i;
-  IntVarSpec* ivs = static_cast<IntVarSpec*>(pp->intvars[base].second);
+  IntVarSpec* ivs = static_cast<IntVarSpec*>(pp->int_vars[base].second);
   while (ivs->alias) {
     base = ivs->i;
-    ivs = static_cast<IntVarSpec*>(pp->intvars[base].second);
+    ivs = static_cast<IntVarSpec*>(pp->int_vars[base].second);
   }
   return base;
 }
-int getBaseBoolVar(ParserState* pp, int i) {
+int get_base_bool_var(ParserState* pp, int i) {
   int base = i;
-  BoolVarSpec* ivs = static_cast<BoolVarSpec*>(pp->boolvars[base].second);
+  BoolVarSpec* ivs = static_cast<BoolVarSpec*>(pp->bool_vars[base].second);
   while (ivs->alias) {
     base = ivs->i;
-    ivs = static_cast<BoolVarSpec*>(pp->boolvars[base].second);
+    ivs = static_cast<BoolVarSpec*>(pp->bool_vars[base].second);
   }
   return base;
 }
-int getBaseFloatVar(ParserState* pp, int i) {
+int get_base_float_var(ParserState* pp, int i) {
   int base = i;
-  FloatVarSpec* ivs = static_cast<FloatVarSpec*>(pp->floatvars[base].second);
+  FloatVarSpec* ivs = static_cast<FloatVarSpec*>(pp->float_vars[base].second);
   while (ivs->alias) {
     base = ivs->i;
-    ivs = static_cast<FloatVarSpec*>(pp->floatvars[base].second);
+    ivs = static_cast<FloatVarSpec*>(pp->float_vars[base].second);
   }
   return base;
 }
-int getBaseSetVar(ParserState* pp, int i) {
+int get_base_set_var(ParserState* pp, int i) {
   int base = i;
-  SetVarSpec* ivs = static_cast<SetVarSpec*>(pp->setvars[base].second);
+  SetVarSpec* ivs = static_cast<SetVarSpec*>(pp->set_vars[base].second);
   while (ivs->alias) {
     base = ivs->i;
-    ivs = static_cast<SetVarSpec*>(pp->setvars[base].second);
+    ivs = static_cast<SetVarSpec*>(pp->set_vars[base].second);
   }
   return base;
 }
@@ -269,60 +269,60 @@ int getBaseSetVar(ParserState* pp, int i) {
  *
  */
 
-void initfg(ParserState* pp) {
-  if (!pp->hadError)
-    pp->fg->init(pp->intvars.size(),
-                 pp->boolvars.size(),
-                 pp->setvars.size(),
-                 pp->floatvars.size());
+void initialize_space(ParserState* pp) {
+  if (!pp->had_error)
+    pp->fg->init(pp->int_vars.size(),
+                 pp->bool_vars.size(),
+                 pp->set_vars.size(),
+                 pp->float_vars.size());
 
-  for (unsigned int i=0; i<pp->intvars.size(); i++) {
-    if (!pp->hadError) {
+  for (unsigned int i=0; i<pp->int_vars.size(); i++) {
+    if (!pp->had_error) {
       try {
-        pp->fg->newIntVar(static_cast<IntVarSpec*>(pp->intvars[i].second));
+        pp->fg->new_int_var(static_cast<IntVarSpec*>(pp->int_vars[i].second));
       } catch (Gecode::FlatZinc::Error& e) {
-        yyerror(pp, e.toString().c_str());
+        yyerror(pp, e.to_string().c_str());
       }
     }
-    delete pp->intvars[i].second;
-    pp->intvars[i].second = NULL;
+    delete pp->int_vars[i].second;
+    pp->int_vars[i].second = nullptr;
   }
-  for (unsigned int i=0; i<pp->boolvars.size(); i++) {
-    if (!pp->hadError) {
+  for (unsigned int i=0; i<pp->bool_vars.size(); i++) {
+    if (!pp->had_error) {
       try {
-        pp->fg->newBoolVar(
-          static_cast<BoolVarSpec*>(pp->boolvars[i].second));
+        pp->fg->new_bool_var(
+          static_cast<BoolVarSpec*>(pp->bool_vars[i].second));
       } catch (Gecode::FlatZinc::Error& e) {
-        yyerror(pp, e.toString().c_str());
+        yyerror(pp, e.to_string().c_str());
       }
     }
-    delete pp->boolvars[i].second;
-    pp->boolvars[i].second = NULL;
+    delete pp->bool_vars[i].second;
+    pp->bool_vars[i].second = nullptr;
   }
-  for (unsigned int i=0; i<pp->setvars.size(); i++) {
-    if (!pp->hadError) {
+  for (unsigned int i=0; i<pp->set_vars.size(); i++) {
+    if (!pp->had_error) {
       try {
-        pp->fg->newSetVar(static_cast<SetVarSpec*>(pp->setvars[i].second));
+        pp->fg->new_set_var(static_cast<SetVarSpec*>(pp->set_vars[i].second));
       } catch (Gecode::FlatZinc::Error& e) {
-        yyerror(pp, e.toString().c_str());
+        yyerror(pp, e.to_string().c_str());
       }
     }
-    delete pp->setvars[i].second;
-    pp->setvars[i].second = NULL;
+    delete pp->set_vars[i].second;
+    pp->set_vars[i].second = nullptr;
   }
-  for (unsigned int i=0; i<pp->floatvars.size(); i++) {
-    if (!pp->hadError) {
+  for (unsigned int i=0; i<pp->float_vars.size(); i++) {
+    if (!pp->had_error) {
       try {
-        pp->fg->newFloatVar(
-          static_cast<FloatVarSpec*>(pp->floatvars[i].second));
+        pp->fg->new_float_var(
+          static_cast<FloatVarSpec*>(pp->float_vars[i].second));
       } catch (Gecode::FlatZinc::Error& e) {
-        yyerror(pp, e.toString().c_str());
+        yyerror(pp, e.to_string().c_str());
       }
     }
-    delete pp->floatvars[i].second;
-    pp->floatvars[i].second = NULL;
+    delete pp->float_vars[i].second;
+    pp->float_vars[i].second = nullptr;
   }
-  if (!pp->hadError) {
+  if (!pp->had_error) {
     int iv_size = pp->sol_int.size() * 2;
     iv_size += pp->last_val_int.size();
     iv_size += pp->uniform_int.size();
@@ -364,7 +364,7 @@ void initfg(ParserState* pp) {
       assert(base == iv_size);
     }
   }
-  if (!pp->hadError) {
+  if (!pp->had_error) {
     int bv_size = pp->sol_bool.size() * 2;
     bv_size += pp->last_val_bool.size();
 
@@ -395,7 +395,7 @@ void initfg(ParserState* pp) {
     }
   }
 #ifdef GECODE_HAS_SET_VARS
-  if (!pp->hadError) {
+  if (!pp->had_error) {
     int sv_size = pp->sol_set.size() * 2;
     sv_size += pp->last_val_set.size();
 
@@ -424,7 +424,7 @@ void initfg(ParserState* pp) {
   }
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-  if (!pp->hadError) {
+  if (!pp->had_error) {
     int fv_size = pp->sol_float.size() * 2;
     fv_size += pp->last_val_float.size();
     fv_size += pp->uniform_float.size();
@@ -460,45 +460,45 @@ void initfg(ParserState* pp) {
     }
   }
 #endif
-  if (!pp->hadError) {
-    pp->fg->postConstraints(pp->domainConstraints);
-    pp->fg->postConstraints(pp->constraints);
+  if (!pp->had_error) {
+    pp->fg->post_constraints(pp->domain_constraints);
+    pp->fg->post_constraints(pp->constraints);
   }
 }
 
-void fillPrinter(ParserState& pp, Gecode::FlatZinc::Printer& p) {
-  p.init(pp.getOutput());
-  for (unsigned int i=0; i<pp.intvars.size(); i++) {
-    if (!pp.hadError) {
-      p.addIntVarName(pp.intvars[i].first);
+void fill_printer(ParserState& pp, Gecode::FlatZinc::Printer& p) {
+  p.init(pp.get_output());
+  for (unsigned int i=0; i<pp.int_vars.size(); i++) {
+    if (!pp.had_error) {
+      p.add_int_var_name(pp.int_vars[i].first);
     }
   }
-  for (unsigned int i=0; i<pp.boolvars.size(); i++) {
-    if (!pp.hadError) {
-      p.addBoolVarName(pp.boolvars[i].first);
+  for (unsigned int i=0; i<pp.bool_vars.size(); i++) {
+    if (!pp.had_error) {
+      p.add_bool_var_name(pp.bool_vars[i].first);
     }
   }
 #ifdef GECODE_HAS_FLOAT_VARS
-  for (unsigned int i=0; i<pp.floatvars.size(); i++) {
-    if (!pp.hadError) {
-      p.addFloatVarName(pp.floatvars[i].first);
+  for (unsigned int i=0; i<pp.float_vars.size(); i++) {
+    if (!pp.had_error) {
+      p.add_float_var_name(pp.float_vars[i].first);
     }
   }
 #endif
 #ifdef GECODE_HAS_SET_VARS
-  for (unsigned int i=0; i<pp.setvars.size(); i++) {
-    if (!pp.hadError) {
-      p.addSetVarName(pp.setvars[i].first);
+  for (unsigned int i=0; i<pp.set_vars.size(); i++) {
+    if (!pp.had_error) {
+      p.add_set_var_name(pp.set_vars[i].first);
     }
   }
 #endif
 }
 
-AST::Node* arrayOutput(AST::Call* ann) {
-  AST::Array* a = NULL;
+AST::Node* array_output(AST::Call* ann) {
+  AST::Array* a = nullptr;
 
-  if (ann->args->isArray()) {
-    a = ann->args->getArray();
+  if (ann->args->is_array()) {
+    a = ann->args->get_array();
   } else {
     a = new AST::Array(ann->args);
   }
@@ -507,7 +507,7 @@ AST::Node* arrayOutput(AST::Call* ann) {
 
   oss << "array" << a->a.size() << "d(";
   for (unsigned int i=0; i<a->a.size(); i++) {
-    AST::SetLit* s = a->a[i]->getSet();
+    AST::SetLit* s = a->a[i]->get_set();
     if (s->empty())
       oss << "{}, ";
     else if (s->interval)
@@ -523,8 +523,8 @@ AST::Node* arrayOutput(AST::Call* ann) {
     }
   }
 
-  if (!ann->args->isArray()) {
-    a->a[0] = NULL;
+  if (!ann->args->is_array()) {
+    a->a[0] = nullptr;
     delete a;
   }
   return new AST::String(oss.str());
@@ -540,19 +540,19 @@ namespace Gecode { namespace FlatZinc {
   ParserState::~ParserState(void) {
     if (yyscanner)
       yylex_destroy(yyscanner);
-    for (auto& var : intvars)
+    for (auto& var : int_vars)
       delete var.second;
-    for (auto& var : boolvars)
+    for (auto& var : bool_vars)
       delete var.second;
-    for (auto& var : setvars)
+    for (auto& var : set_vars)
       delete var.second;
-    for (auto& var : floatvars)
+    for (auto& var : float_vars)
       delete var.second;
-    for (auto* constraint : domainConstraints)
+    for (auto* constraint : domain_constraints)
       delete constraint;
     for (auto* constraint : constraints)
       delete constraint;
-    for (auto& output : _output)
+    for (auto& output : output_items)
       delete output.second;
   }
 
@@ -566,23 +566,23 @@ namespace Gecode { namespace FlatZinc {
     fd = open(filename.c_str(), O_RDONLY);
     if (fd == -1) {
       err << "Cannot open file " << filename << endl;
-      return NULL;
+      return nullptr;
     }
     if (fstat(fd, &sbuf) == -1) {
       close(fd);
       err << "Cannot stat file " << filename << endl;
-      return NULL;
+      return nullptr;
     }
     data = static_cast<char*>(mmap(nullptr, sbuf.st_size, PROT_READ, MAP_SHARED, fd,0));
     close(fd);
     if (data == MAP_FAILED) {
       err << "Cannot mmap file " << filename << endl;
-      return NULL;
+      return nullptr;
     }
     auto unmap = [size=sbuf.st_size](char* p) { munmap(p,size); };
     std::unique_ptr<char,decltype(unmap)> mapping(data,unmap);
 
-    if (fzs == NULL) {
+    if (fzs == nullptr) {
       owned.reset(new FlatZincSpace(rnd));
       fzs = owned.get();
     }
@@ -592,11 +592,11 @@ namespace Gecode { namespace FlatZinc {
     file.open(filename.c_str());
     if (!file.is_open()) {
       err << "Cannot open file " << filename << endl;
-      return NULL;
+      return nullptr;
     }
     std::string s = string(istreambuf_iterator<char>(file),
                            istreambuf_iterator<char>());
-    if (fzs == NULL) {
+    if (fzs == nullptr) {
       owned.reset(new FlatZincSpace(rnd));
       fzs = owned.get();
     }
@@ -606,10 +606,10 @@ namespace Gecode { namespace FlatZinc {
     yyset_extra(&pp, pp.yyscanner);
     // yydebug = 1;
     yyparse(&pp);
-    fillPrinter(pp, p);
+    fill_printer(pp, p);
 
-    if (pp.hadError)
-      return NULL;
+    if (pp.had_error)
+      return nullptr;
     owned.release();
     return pp.fg;
   }
@@ -620,7 +620,7 @@ namespace Gecode { namespace FlatZinc {
                            istreambuf_iterator<char>());
     std::unique_ptr<FlatZincSpace> owned;
 
-    if (fzs == NULL) {
+    if (fzs == nullptr) {
       owned.reset(new FlatZincSpace(rnd));
       fzs = owned.get();
     }
@@ -629,10 +629,10 @@ namespace Gecode { namespace FlatZinc {
     yyset_extra(&pp, pp.yyscanner);
     // yydebug = 1;
     yyparse(&pp);
-    fillPrinter(pp, p);
+    fill_printer(pp, p);
 
-    if (pp.hadError)
-      return NULL;
+    if (pp.had_error)
+      return nullptr;
     owned.release();
     return pp.fg;
   }
@@ -641,28 +641,28 @@ namespace Gecode { namespace FlatZinc {
 
 %}
 
-%union { int iValue; char* sValue; bool bValue; double dValue;
-         std::vector<int>* setValue;
-         Gecode::FlatZinc::AST::SetLit* setLit;
-         std::vector<double>* floatSetValue;
-         std::vector<Gecode::FlatZinc::AST::SetLit>* setValueList;
-         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::SetLit* > oSet;
-         Gecode::FlatZinc::Option<std::pair<double,double>* > oPFloat;
-         Gecode::FlatZinc::VarSpec* varSpec;
-         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::Node*> oArg;
-         std::vector<Gecode::FlatZinc::VarSpec*>* varSpecVec;
-         Gecode::FlatZinc::Option<std::vector<Gecode::FlatZinc::VarSpec*>* > oVarSpecVec;
+%union { int int_value; char* string_value; bool bool_value; double float_value;
+         std::vector<int>* set_values;
+         Gecode::FlatZinc::AST::SetLit* set_literal;
+         std::vector<double>* float_values;
+         std::vector<Gecode::FlatZinc::AST::SetLit>* set_value_list;
+         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::SetLit* > optional_set;
+         Gecode::FlatZinc::Option<std::pair<double,double>* > optional_float_bounds;
+         Gecode::FlatZinc::VarSpec* var_spec;
+         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::Node*> optional_arg;
+         std::vector<Gecode::FlatZinc::VarSpec*>* var_specs;
+         Gecode::FlatZinc::Option<std::vector<Gecode::FlatZinc::VarSpec*>* > optional_var_specs;
          Gecode::FlatZinc::AST::Node* arg;
-         Gecode::FlatZinc::AST::Array* argVec;
+         Gecode::FlatZinc::AST::Array* arg_nodes;
        }
 
 %define parse.error verbose
 
-%token <iValue> FZ_INT_LIT FZ_BOOL_LIT
-%token <dValue> FZ_FLOAT_LIT
-%token <sValue> FZ_ID FZ_U_ID FZ_STRING_LIT
+%token <int_value> FZ_INT_LIT FZ_BOOL_LIT
+%token <float_value> FZ_FLOAT_LIT
+%token <string_value> FZ_ID FZ_U_ID FZ_STRING_LIT
 
-%token <bValue> FZ_VAR FZ_PAR
+%token <bool_value> FZ_VAR FZ_PAR
 
 %token FZ_ANNOTATION
 %token FZ_ANY
@@ -683,8 +683,8 @@ namespace Gecode { namespace FlatZinc {
 %token FZ_INCLUDE
 %token FZ_INT
 %token FZ_LET
-%token <bValue> FZ_MAXIMIZE
-%token <bValue> FZ_MINIMIZE
+%token <bool_value> FZ_MAXIMIZE
+%token <bool_value> FZ_MINIMIZE
 %token FZ_OF
 %token FZ_SATISFY
 %token FZ_OUTPUT
@@ -702,39 +702,39 @@ namespace Gecode { namespace FlatZinc {
 %token FZ_VARIANT_RECORD
 %token FZ_WHERE
 
-%type <sValue> var_par_id
-%type <setLit> set_literal
+%type <string_value> var_par_id
+%type <set_literal> set_literal
 
-%type <varSpec> int_init bool_init set_init float_init
-%type <oSet> int_ti_expr_tail bool_ti_expr_tail
-%type <oPFloat> float_ti_expr_tail
+%type <var_spec> int_init bool_init set_init float_init
+%type <optional_set> int_ti_expr_tail bool_ti_expr_tail
+%type <optional_float_bounds> float_ti_expr_tail
 
-%type <oVarSpecVec> vardecl_int_var_array_init
-%type <oVarSpecVec> vardecl_bool_var_array_init
-%type <oVarSpecVec> vardecl_float_var_array_init
-%type <oVarSpecVec> vardecl_set_var_array_init
-%type <varSpecVec> int_var_array_literal
-%type <varSpecVec> bool_var_array_literal
-%type <varSpecVec> float_var_array_literal
-%type <varSpecVec> set_var_array_literal
-%type <varSpecVec> int_init_list int_init_list_head
-%type <varSpecVec> bool_init_list bool_init_list_head
-%type <varSpecVec> float_init_list float_init_list_head
-%type <varSpecVec> set_init_list set_init_list_head
+%type <optional_var_specs> vardecl_int_var_array_init
+%type <optional_var_specs> vardecl_bool_var_array_init
+%type <optional_var_specs> vardecl_float_var_array_init
+%type <optional_var_specs> vardecl_set_var_array_init
+%type <var_specs> int_var_array_literal
+%type <var_specs> bool_var_array_literal
+%type <var_specs> float_var_array_literal
+%type <var_specs> set_var_array_literal
+%type <var_specs> int_init_list int_init_list_head
+%type <var_specs> bool_init_list bool_init_list_head
+%type <var_specs> float_init_list float_init_list_head
+%type <var_specs> set_init_list set_init_list_head
 
-%type <setValue> int_list int_list_head
-%type <setValue> bool_list bool_list_head
-%type <setValueList> set_literal_list set_literal_list_head
-%type <floatSetValue> float_list float_list_head
+%type <set_values> int_list int_list_head
+%type <set_values> bool_list bool_list_head
+%type <set_value_list> set_literal_list set_literal_list_head
+%type <float_values> float_list float_list_head
 
 %type <arg> flat_expr non_array_expr annotation_expr ann_non_array_expr
-%type <oArg> non_array_expr_opt
-%type <argVec> flat_expr_list non_array_expr_list non_array_expr_list_head
+%type <optional_arg> non_array_expr_opt
+%type <arg_nodes> flat_expr_list non_array_expr_list non_array_expr_list_head
 
-%type <iValue> solve_expr
-%type <bValue> minmax
+%type <int_value> solve_expr
+%type <bool_value> minmax
 
-%type <argVec> annotations annotations_head
+%type <arg_nodes> annotations annotations_head
 %type <arg> annotation annotation_list
 
 %%
@@ -821,94 +821,94 @@ vardecl_item:
       FZ_VAR int_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $5 != NULL && $5->hasAtom("output_var");
-        bool funcDep = $5 != NULL && $5->hasAtom("is_defined_var");
+        bool print = $5 != nullptr && $5->has_atom("output_var");
+        bool func_dep = $5 != nullptr && $5->has_atom("is_defined_var");
         yyassert(pp,
-          pp->symbols.put($4, se_iv(pp->intvars.size())),
+          pp->symbols.put($4, se_iv(pp->int_vars.size())),
           "Duplicate symbol");
         if (print) {
-          pp->output(std::string($4), new AST::IntVar(pp->intvars.size()));
+          pp->output(std::string($4), new AST::IntVar(pp->int_vars.size()));
         }
         if ($6()) {
           AST::Node* arg = $6.some();
-          if (arg->isInt()) {
-            pp->intvars.push_back(varspec($4,
-              new IntVarSpec(arg->getInt(),!print,funcDep)));
-          } else if (arg->isIntVar()) {
-            pp->intvars.push_back(varspec($4,
-              new IntVarSpec(Alias(arg->getIntVar()),!print,funcDep)));
+          if (arg->is_int()) {
+            pp->int_vars.push_back(NamedVarSpec($4,
+              new IntVarSpec(arg->get_int(),!print,func_dep)));
+          } else if (arg->is_int_var()) {
+            pp->int_vars.push_back(NamedVarSpec($4,
+              new IntVarSpec(Alias(arg->get_int_var()),!print,func_dep)));
           } else {
             yyassert(pp, false, "Invalid var int initializer");
           }
-          if (!pp->hadError)
-            addDomainConstraint(pp, "int_in",
-                                new AST::IntVar(pp->intvars.size()-1), $2);
+          if (!pp->had_error)
+            add_domain_constraint(pp, "int_in",
+                                new AST::IntVar(pp->int_vars.size()-1), $2);
           delete arg;
         } else {
-          pp->intvars.push_back(varspec($4,
-            new IntVarSpec($2,!print,funcDep)));
+          pp->int_vars.push_back(NamedVarSpec($4,
+            new IntVarSpec($2,!print,func_dep)));
         }
         delete $5; free($4);
       }
     | FZ_VAR bool_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $5 != NULL && $5->hasAtom("output_var");
-        bool funcDep = $5 != NULL && $5->hasAtom("is_defined_var");
+        bool print = $5 != nullptr && $5->has_atom("output_var");
+        bool func_dep = $5 != nullptr && $5->has_atom("is_defined_var");
         yyassert(pp,
-          pp->symbols.put($4, se_bv(pp->boolvars.size())),
+          pp->symbols.put($4, se_bv(pp->bool_vars.size())),
           "Duplicate symbol");
         if (print) {
-          pp->output(std::string($4), new AST::BoolVar(pp->boolvars.size()));
+          pp->output(std::string($4), new AST::BoolVar(pp->bool_vars.size()));
         }
         if ($6()) {
           AST::Node* arg = $6.some();
-          if (arg->isBool()) {
-            pp->boolvars.push_back(varspec($4,
-              new BoolVarSpec(arg->getBool(),!print,funcDep)));
-          } else if (arg->isBoolVar()) {
-            pp->boolvars.push_back(varspec($4,
-              new BoolVarSpec(Alias(arg->getBoolVar()),!print,funcDep)));
+          if (arg->is_bool()) {
+            pp->bool_vars.push_back(NamedVarSpec($4,
+              new BoolVarSpec(arg->get_bool(),!print,func_dep)));
+          } else if (arg->is_bool_var()) {
+            pp->bool_vars.push_back(NamedVarSpec($4,
+              new BoolVarSpec(Alias(arg->get_bool_var()),!print,func_dep)));
           } else {
             yyassert(pp, false, "Invalid var bool initializer");
           }
-          if (!pp->hadError)
-            addDomainConstraint(pp, "int_in",
-                                new AST::BoolVar(pp->boolvars.size()-1), $2);
+          if (!pp->had_error)
+            add_domain_constraint(pp, "int_in",
+                                new AST::BoolVar(pp->bool_vars.size()-1), $2);
           delete arg;
         } else {
-          pp->boolvars.push_back(varspec($4,
-            new BoolVarSpec($2,!print,funcDep)));
+          pp->bool_vars.push_back(NamedVarSpec($4,
+            new BoolVarSpec($2,!print,func_dep)));
         }
         delete $5; free($4);
       }
     | FZ_VAR float_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $5 != NULL && $5->hasAtom("output_var");
-        bool funcDep = $5 != NULL && $5->hasAtom("is_defined_var");
+        bool print = $5 != nullptr && $5->has_atom("output_var");
+        bool func_dep = $5 != nullptr && $5->has_atom("is_defined_var");
         yyassert(pp,
-          pp->symbols.put($4, se_fv(pp->floatvars.size())),
+          pp->symbols.put($4, se_fv(pp->float_vars.size())),
           "Duplicate symbol");
         if (print) {
           pp->output(std::string($4),
-                     new AST::FloatVar(pp->floatvars.size()));
+                     new AST::FloatVar(pp->float_vars.size()));
         }
         if ($6()) {
           AST::Node* arg = $6.some();
-          if (arg->isFloat()) {
-            pp->floatvars.push_back(varspec($4,
-              new FloatVarSpec(arg->getFloat(),!print,funcDep)));
-          } else if (arg->isFloatVar()) {
-            pp->floatvars.push_back(varspec($4,
+          if (arg->is_float()) {
+            pp->float_vars.push_back(NamedVarSpec($4,
+              new FloatVarSpec(arg->get_float(),!print,func_dep)));
+          } else if (arg->is_float_var()) {
+            pp->float_vars.push_back(NamedVarSpec($4,
               new FloatVarSpec(
-                Alias(arg->getFloatVar()),!print,funcDep)));
+                Alias(arg->get_float_var()),!print,func_dep)));
           } else {
             yyassert(pp, false, "Invalid var float initializer");
           }
-          if (!pp->hadError && $2()) {
-            AST::FloatVar* fv = new AST::FloatVar(pp->floatvars.size()-1);
-            addDomainConstraint(pp, fv, $2);
+          if (!pp->had_error && $2()) {
+            AST::FloatVar* fv = new AST::FloatVar(pp->float_vars.size()-1);
+            add_domain_constraint(pp, fv, $2);
           }
           delete arg;
         } else {
@@ -916,80 +916,80 @@ vardecl_item:
             $2() ? Option<std::pair<double,double> >::some(*$2.some())
                  : Option<std::pair<double,double> >::none();
           if ($2()) delete $2.some();
-          pp->floatvars.push_back(varspec($4,
-            new FloatVarSpec(dom,!print,funcDep)));
+          pp->float_vars.push_back(NamedVarSpec($4,
+            new FloatVarSpec(dom,!print,func_dep)));
         }
         delete $5; free($4);
       }
     | FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $7 != NULL && $7->hasAtom("output_var");
-        bool funcDep = $7 != NULL && $7->hasAtom("is_defined_var");
+        bool print = $7 != nullptr && $7->has_atom("output_var");
+        bool func_dep = $7 != nullptr && $7->has_atom("is_defined_var");
         yyassert(pp,
-          pp->symbols.put($6, se_sv(pp->setvars.size())),
+          pp->symbols.put($6, se_sv(pp->set_vars.size())),
           "Duplicate symbol");
         if (print) {
-          pp->output(std::string($6), new AST::SetVar(pp->setvars.size()));
+          pp->output(std::string($6), new AST::SetVar(pp->set_vars.size()));
         }
         if ($8()) {
           AST::Node* arg = $8.some();
-          if (arg->isSet()) {
-            pp->setvars.push_back(varspec($6,
-              new SetVarSpec(arg->getSet(),!print,funcDep)));
-          } else if (arg->isSetVar()) {
-            pp->setvars.push_back(varspec($6,
-              new SetVarSpec(Alias(arg->getSetVar()),!print,funcDep)));
+          if (arg->is_set()) {
+            pp->set_vars.push_back(NamedVarSpec($6,
+              new SetVarSpec(arg->get_set(),!print,func_dep)));
+          } else if (arg->is_set_var()) {
+            pp->set_vars.push_back(NamedVarSpec($6,
+              new SetVarSpec(Alias(arg->get_set_var()),!print,func_dep)));
             delete arg;
           } else {
             yyassert(pp, false, "Invalid var set initializer");
             delete arg;
           }
-          if (!pp->hadError)
-            addDomainConstraint(pp, "set_subset",
-                                new AST::SetVar(pp->setvars.size()-1), $4);
+          if (!pp->had_error)
+            add_domain_constraint(pp, "set_subset",
+                                new AST::SetVar(pp->set_vars.size()-1), $4);
         } else {
-          pp->setvars.push_back(varspec($6,
-            new SetVarSpec($4,!print,funcDep)));
+          pp->set_vars.push_back(NamedVarSpec($6,
+            new SetVarSpec($4,!print,func_dep)));
         }
         delete $7; free($6);
       }
     | FZ_INT ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, $6->isInt(), "Invalid int initializer");
+        yyassert(pp, $6->is_int(), "Invalid int initializer");
         yyassert(pp,
-          pp->symbols.put($3, se_i($6->getInt())),
+          pp->symbols.put($3, se_i($6->get_int())),
           "Duplicate symbol");
         delete $6; delete $4; free($3);
       }
     | FZ_FLOAT ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, $6->isFloat(), "Invalid float initializer");
-        pp->floatvals.push_back($6->getFloat());
+        yyassert(pp, $6->is_float(), "Invalid float initializer");
+        pp->float_values.push_back($6->get_float());
         yyassert(pp,
-          pp->symbols.put($3, se_f(pp->floatvals.size()-1)),
+          pp->symbols.put($3, se_f(pp->float_values.size()-1)),
           "Duplicate symbol");
         delete $6; delete $4; free($3);
       }
     | FZ_BOOL ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, $6->isBool(), "Invalid bool initializer");
+        yyassert(pp, $6->is_bool(), "Invalid bool initializer");
         yyassert(pp,
-          pp->symbols.put($3, se_b($6->getBool())),
+          pp->symbols.put($3, se_b($6->get_bool())),
           "Duplicate symbol");
         delete $6; delete $4; free($3);
       }
     | FZ_SET FZ_OF FZ_INT ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, $8->isSet(), "Invalid set initializer");
-        AST::SetLit* set = $8->getSet();
-        pp->setvals.push_back(*set);
+        yyassert(pp, $8->is_set(), "Invalid set initializer");
+        AST::SetLit* set = $8->get_set();
+        pp->set_values.push_back(*set);
         yyassert(pp,
-          pp->symbols.put($5, se_s(pp->setvals.size()-1)),
+          pp->symbols.put($5, se_s(pp->set_values.size()-1)),
           "Duplicate symbol");
         delete set;
         delete $6; free($5);
@@ -999,32 +999,32 @@ vardecl_item:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $3==1, "Arrays must start at 1");
-        if (!pp->hadError) {
-          bool print = $12 != NULL && $12->hasCall("output_array");
+        if (!pp->had_error) {
+          bool print = $12 != nullptr && $12->has_call("output_array");
           vector<int> vars($5);
-          if (!pp->hadError) {
+          if (!pp->had_error) {
             if ($13()) {
               vector<VarSpec*>* vsv = $13.some();
               yyassert(pp, vsv->size() == static_cast<unsigned int>($5),
                        "Initializer size does not match array dimension");
-              if (!pp->hadError) {
+              if (!pp->had_error) {
                 for (int i=0; i<$5; i++) {
                   IntVarSpec* ivsv = static_cast<IntVarSpec*>((*vsv)[i]);
                   if (ivsv->alias) {
                     if (print)
-                      static_cast<IntVarSpec*>(pp->intvars[ivsv->i].second)->introduced = false;
+                      static_cast<IntVarSpec*>(pp->int_vars[ivsv->i].second)->introduced = false;
                     vars[i] = ivsv->i;
                     delete ivsv;
                   } else {
                     if (print)
                       ivsv->introduced = false;
-                    vars[i] = pp->intvars.size();
-                    pp->intvars.push_back(varspec($11, ivsv));
+                    vars[i] = pp->int_vars.size();
+                    pp->int_vars.push_back(NamedVarSpec($11, ivsv));
                   }
-                  if (!pp->hadError && $9()) {
+                  if (!pp->had_error && $9()) {
                     Option<AST::SetLit*> opt =
                       Option<AST::SetLit*>::some(new AST::SetLit(*$9.some()));
-                    addDomainConstraint(pp, "int_in",
+                    add_domain_constraint(pp, "int_in",
                                         new AST::IntVar(vars[i]),
                                         opt);
                   }
@@ -1038,15 +1038,15 @@ vardecl_item:
                     $9() ? Option<AST::SetLit*>::some(new AST::SetLit($9.some()))
                          : Option<AST::SetLit*>::none();
                   IntVarSpec* ispec = new IntVarSpec(dom,!print,false);
-                  vars[i] = pp->intvars.size();
-                  pp->intvars.push_back(varspec($11, ispec));
+                  vars[i] = pp->int_vars.size();
+                  pp->int_vars.push_back(NamedVarSpec($11, ispec));
                 }
               }
             }
           }
           if (print) {
             AST::Array* a = new AST::Array();
-            a->a.push_back(arrayOutput($12->getCall("output_array")));
+            a->a.push_back(array_output($12->get_call("output_array")));
             AST::Array* output = new AST::Array();
             for (int i=0; i<$5; i++)
               output->a.push_back(new AST::IntVar(vars[i]));
@@ -1069,32 +1069,32 @@ vardecl_item:
         var_par_id annotations vardecl_bool_var_array_init
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $12 != NULL && $12->hasCall("output_array");
+        bool print = $12 != nullptr && $12->has_call("output_array");
         yyassert(pp, $3==1, "Arrays must start at 1");
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           vector<int> vars($5);
           if ($13()) {
             vector<VarSpec*>* vsv = $13.some();
             yyassert(pp, vsv->size() == static_cast<unsigned int>($5),
                      "Initializer size does not match array dimension");
-            if (!pp->hadError) {
+            if (!pp->had_error) {
               for (int i=0; i<$5; i++) {
                 BoolVarSpec* bvsv = static_cast<BoolVarSpec*>((*vsv)[i]);
                 if (bvsv->alias) {
                   if (print)
-                    static_cast<BoolVarSpec*>(pp->boolvars[bvsv->i].second)->introduced = false;
+                    static_cast<BoolVarSpec*>(pp->bool_vars[bvsv->i].second)->introduced = false;
                   vars[i] = bvsv->i;
                   delete bvsv;
                 } else {
                   if (print)
                     bvsv->introduced = false;
-                  vars[i] = pp->boolvars.size();
-                  pp->boolvars.push_back(varspec($11, (*vsv)[i]));
+                  vars[i] = pp->bool_vars.size();
+                  pp->bool_vars.push_back(NamedVarSpec($11, (*vsv)[i]));
                 }
-                if (!pp->hadError && $9()) {
+                if (!pp->had_error && $9()) {
                   Option<AST::SetLit*> opt =
                     Option<AST::SetLit*>::some(new AST::SetLit(*$9.some()));
-                  addDomainConstraint(pp, "int_in",
+                  add_domain_constraint(pp, "int_in",
                                       new AST::BoolVar(vars[i]),
                                       opt);
                 }
@@ -1106,14 +1106,14 @@ vardecl_item:
               Option<AST::SetLit*> dom =
                 $9() ? Option<AST::SetLit*>::some(new AST::SetLit($9.some()))
                      : Option<AST::SetLit*>::none();
-              vars[i] = pp->boolvars.size();
-              pp->boolvars.push_back(varspec($11,
+              vars[i] = pp->bool_vars.size();
+              pp->bool_vars.push_back(NamedVarSpec($11,
                                        new BoolVarSpec(dom,!print,false)));
             }
           }
           if (print) {
             AST::Array* a = new AST::Array();
-            a->a.push_back(arrayOutput($12->getCall("output_array")));
+            a->a.push_back(array_output($12->get_call("output_array")));
             AST::Array* output = new AST::Array();
             for (int i=0; i<$5; i++)
               output->a.push_back(new AST::BoolVar(vars[i]));
@@ -1138,33 +1138,33 @@ vardecl_item:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $3==1, "Arrays must start at 1");
-        if (!pp->hadError) {
-          bool print = $12 != NULL && $12->hasCall("output_array");
+        if (!pp->had_error) {
+          bool print = $12 != nullptr && $12->has_call("output_array");
           vector<int> vars($5);
-          if (!pp->hadError) {
+          if (!pp->had_error) {
             if ($13()) {
               vector<VarSpec*>* vsv = $13.some();
               yyassert(pp, vsv->size() == static_cast<unsigned int>($5),
                        "Initializer size does not match array dimension");
-              if (!pp->hadError) {
+              if (!pp->had_error) {
                 for (int i=0; i<$5; i++) {
                   FloatVarSpec* ivsv = static_cast<FloatVarSpec*>((*vsv)[i]);
                   if (ivsv->alias) {
                     if (print)
-                      static_cast<FloatVarSpec*>(pp->floatvars[ivsv->i].second)->introduced = false;
+                      static_cast<FloatVarSpec*>(pp->float_vars[ivsv->i].second)->introduced = false;
                     vars[i] = ivsv->i;
                     delete ivsv;
                   } else {
                     if (print)
                       ivsv->introduced = false;
-                    vars[i] = pp->floatvars.size();
-                    pp->floatvars.push_back(varspec($11, ivsv));
+                    vars[i] = pp->float_vars.size();
+                    pp->float_vars.push_back(NamedVarSpec($11, ivsv));
                   }
-                  if (!pp->hadError && $9()) {
+                  if (!pp->had_error && $9()) {
                     Option<std::pair<double,double>*> opt =
                       Option<std::pair<double,double>*>::some(
                         new std::pair<double,double>(*$9.some()));
-                    addDomainConstraint(pp, new AST::FloatVar(vars[i]),
+                    add_domain_constraint(pp, new AST::FloatVar(vars[i]),
                                         opt);
                   }
                 }
@@ -1177,15 +1177,15 @@ vardecl_item:
                        : Option<std::pair<double,double> >::none();
                 for (int i=0; i<$5; i++) {
                   FloatVarSpec* ispec = new FloatVarSpec(dom,!print,false);
-                  vars[i] = pp->floatvars.size();
-                  pp->floatvars.push_back(varspec($11, ispec));
+                  vars[i] = pp->float_vars.size();
+                  pp->float_vars.push_back(NamedVarSpec($11, ispec));
                 }
               }
             }
           }
           if (print) {
             AST::Array* a = new AST::Array();
-            a->a.push_back(arrayOutput($12->getCall("output_array")));
+            a->a.push_back(array_output($12->get_call("output_array")));
             AST::Array* output = new AST::Array();
             for (int i=0; i<$5; i++)
               output->a.push_back(new AST::FloatVar(vars[i]));
@@ -1208,32 +1208,32 @@ vardecl_item:
         var_par_id annotations vardecl_set_var_array_init
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $14 != NULL && $14->hasCall("output_array");
+        bool print = $14 != nullptr && $14->has_call("output_array");
         yyassert(pp, $3==1, "Arrays must start at 1");
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           vector<int> vars($5);
           if ($15()) {
             vector<VarSpec*>* vsv = $15.some();
             yyassert(pp, vsv->size() == static_cast<unsigned int>($5),
                      "Initializer size does not match array dimension");
-            if (!pp->hadError) {
+            if (!pp->had_error) {
               for (int i=0; i<$5; i++) {
                 SetVarSpec* svsv = static_cast<SetVarSpec*>((*vsv)[i]);
                 if (svsv->alias) {
                   if (print)
-                    static_cast<SetVarSpec*>(pp->setvars[svsv->i].second)->introduced = false;
+                    static_cast<SetVarSpec*>(pp->set_vars[svsv->i].second)->introduced = false;
                   vars[i] = svsv->i;
                   delete svsv;
                 } else {
                   if (print)
                     svsv->introduced = false;
-                  vars[i] = pp->setvars.size();
-                  pp->setvars.push_back(varspec($13, (*vsv)[i]));
+                  vars[i] = pp->set_vars.size();
+                  pp->set_vars.push_back(NamedVarSpec($13, (*vsv)[i]));
                 }
-                if (!pp->hadError && $11()) {
+                if (!pp->had_error && $11()) {
                   Option<AST::SetLit*> opt =
                     Option<AST::SetLit*>::some(new AST::SetLit(*$11.some()));
-                  addDomainConstraint(pp, "set_subset",
+                  add_domain_constraint(pp, "set_subset",
                                       new AST::SetVar(vars[i]),
                                       opt);
                 }
@@ -1247,14 +1247,14 @@ vardecl_item:
                   $11() ? Option<AST::SetLit*>::some(new AST::SetLit($11.some()))
                         : Option<AST::SetLit*>::none();
                 SetVarSpec* ispec = new SetVarSpec(dom,!print,false);
-                vars[i] = pp->setvars.size();
-                pp->setvars.push_back(varspec($13, ispec));
+                vars[i] = pp->set_vars.size();
+                pp->set_vars.push_back(NamedVarSpec($13, ispec));
               }
             }
           }
           if (print) {
             AST::Array* a = new AST::Array();
-            a->a.push_back(arrayOutput($14->getCall("output_array")));
+            a->a.push_back(array_output($14->get_call("output_array")));
             AST::Array* output = new AST::Array();
             for (int i=0; i<$5; i++)
               output->a.push_back(new AST::SetVar(vars[i]));
@@ -1281,7 +1281,7 @@ vardecl_item:
         yyassert(pp, $14->size() == static_cast<unsigned int>($5),
                  "Initializer size does not match array dimension");
 
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           int ia = pp->arrays.size();
           pp->arrays.push_back($14->size());
           for (unsigned int i=0; i<$14->size(); i++)
@@ -1301,7 +1301,7 @@ vardecl_item:
         yyassert(pp, $3==1, "Arrays must start at 1");
         yyassert(pp, $14->size() == static_cast<unsigned int>($5),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           int ia = pp->arrays.size();
           pp->arrays.push_back($14->size());
           for (unsigned int i=0; i<$14->size(); i++)
@@ -1321,12 +1321,12 @@ vardecl_item:
         yyassert(pp, $3==1, "Arrays must start at 1");
         yyassert(pp, $14->size() == static_cast<unsigned int>($5),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           int fa = pp->arrays.size();
           pp->arrays.push_back($14->size());
-          pp->arrays.push_back(pp->floatvals.size());
+          pp->arrays.push_back(pp->float_values.size());
           for (unsigned int i=0; i<$14->size(); i++)
-            pp->floatvals.push_back((*$14)[i]);
+            pp->float_values.push_back((*$14)[i]);
           yyassert(pp,
             pp->symbols.put($10, se_fa(fa)),
             "Duplicate symbol");
@@ -1341,12 +1341,12 @@ vardecl_item:
         yyassert(pp, $3==1, "Arrays must start at 1");
         yyassert(pp, $16->size() == static_cast<unsigned int>($5),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           int sa = pp->arrays.size();
           pp->arrays.push_back($16->size());
-          pp->arrays.push_back(pp->setvals.size());
+          pp->arrays.push_back(pp->set_values.size());
           for (unsigned int i=0; i<$16->size(); i++)
-            pp->setvals.push_back((*$16)[i]);
+            pp->set_values.push_back((*$16)[i]);
           yyassert(pp,
             pp->symbols.put($12, se_sa(sa)),
             "Duplicate symbol");
@@ -1371,7 +1371,7 @@ int_init :
           pp->err << "Error: undefined identifier for type int " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
           $$ = new IntVarSpec(0,false,false); // keep things consistent
         }
         free($1);
@@ -1384,7 +1384,7 @@ int_init :
         if (pp->symbols.get($1, e) && e.t == ST_INTVARARRAY) {
           yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
-          if (!pp->hadError)
+          if (!pp->had_error)
             $$ = new IntVarSpec(Alias(pp->arrays[e.i+$3]),false,false);
           else
             $$ = new IntVarSpec(0,false,false); // keep things consistent
@@ -1392,7 +1392,7 @@ int_init :
           pp->err << "Error: undefined array identifier for type int " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
           $$ = new IntVarSpec(0,false,false); // keep things consistent
         }
         free($1);
@@ -1428,7 +1428,7 @@ float_init :
           pp->err << "Error: undefined identifier for type float " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
           $$ = new FloatVarSpec(0.0,false,false);
         }
         free($1);
@@ -1440,7 +1440,7 @@ float_init :
         if (pp->symbols.get($1, e) && e.t == ST_FLOATVARARRAY) {
           yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
-          if (!pp->hadError)
+          if (!pp->had_error)
             $$ = new FloatVarSpec(Alias(pp->arrays[e.i+$3]),false,false);
           else
             $$ = new FloatVarSpec(0.0,false,false);
@@ -1448,7 +1448,7 @@ float_init :
           pp->err << "Error: undefined array identifier for type float " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
           $$ = new FloatVarSpec(0.0,false,false);
         }
         free($1);
@@ -1483,7 +1483,7 @@ bool_init :
           pp->err << "Error: undefined identifier for type bool " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
           $$ = new BoolVarSpec(false,false,false);
         }
         free($1);
@@ -1495,7 +1495,7 @@ bool_init :
         if (pp->symbols.get($1, e) && e.t == ST_BOOLVARARRAY) {
           yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
-          if (!pp->hadError)
+          if (!pp->had_error)
             $$ = new BoolVarSpec(Alias(pp->arrays[e.i+$3]),false,false);
           else
             $$ = new BoolVarSpec(false,false,false);
@@ -1503,7 +1503,7 @@ bool_init :
           pp->err << "Error: undefined array identifier for type bool " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
           $$ = new BoolVarSpec(false,false,false);
         }
         free($1);
@@ -1536,7 +1536,7 @@ set_init :
           pp->err << "Error: undefined identifier for type set " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
           $$ = new SetVarSpec(Alias(0),false,false);
         }
         free($1);
@@ -1548,7 +1548,7 @@ set_init :
         if (pp->symbols.get($1, e) && e.t == ST_SETVARARRAY) {
           yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
-          if (!pp->hadError)
+          if (!pp->had_error)
             $$ = new SetVarSpec(Alias(pp->arrays[e.i+$3]),false,false);
           else
             $$ = new SetVarSpec(Alias(0),false,false);
@@ -1556,7 +1556,7 @@ set_init :
           pp->err << "Error: undefined array identifier for type set " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
           $$ = new SetVarSpec(Alias(0),false,false);
         }
         free($1);
@@ -1607,83 +1607,83 @@ constraint_item :
         ParserState *pp = static_cast<ParserState*>(parm);
         std::unique_ptr<ConExpr> ce(new ConExpr($2, $4, $6));
         free($2);
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           const std::string& cid = ce->id;
-          if (cid=="gecode_on_restart_status" && $4->a[0]->isIntVar()) {
-            pp->status_idx = getBaseIntVar(pp,$4->a[0]->getIntVar());
-          } else if (cid=="gecode_on_restart_complete" && $4->a[0]->isBoolVar()) {
-            pp->complete_idx = getBaseBoolVar(pp,$4->a[0]->getBoolVar());
-          } else if (cid=="gecode_on_restart_last_val_int" && $4->a[0]->isIntVar() && $4->a[1]->isIntVar()) {
-            int base0 = getBaseIntVar(pp,$4->a[0]->getIntVar());
-            int base1 = getBaseIntVar(pp,$4->a[1]->getIntVar());
+          if (cid=="gecode_on_restart_status" && $4->a[0]->is_int_var()) {
+            pp->status_idx = get_base_int_var(pp,$4->a[0]->get_int_var());
+          } else if (cid=="gecode_on_restart_complete" && $4->a[0]->is_bool_var()) {
+            pp->complete_idx = get_base_bool_var(pp,$4->a[0]->get_bool_var());
+          } else if (cid=="gecode_on_restart_last_val_int" && $4->a[0]->is_int_var() && $4->a[1]->is_int_var()) {
+            int base0 = get_base_int_var(pp,$4->a[0]->get_int_var());
+            int base1 = get_base_int_var(pp,$4->a[1]->get_int_var());
             pp->last_val_int.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_sol_int" && $4->a[0]->isIntVar() && $4->a[1]->isIntVar()) {
-            int base0 = getBaseIntVar(pp,$4->a[0]->getIntVar());
-            int base1 = getBaseIntVar(pp,$4->a[1]->getIntVar());
+          } else if (cid=="gecode_on_restart_sol_int" && $4->a[0]->is_int_var() && $4->a[1]->is_int_var()) {
+            int base0 = get_base_int_var(pp,$4->a[0]->get_int_var());
+            int base1 = get_base_int_var(pp,$4->a[1]->get_int_var());
             pp->sol_int.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_uniform_int" && $4->a[0]->isInt() && $4->a[1]->isInt() && $4->a[2]->isIntVar()) {
-            const int low = $4->a[0]->getInt();
-            const int high = $4->a[1]->getInt();
+          } else if (cid=="gecode_on_restart_uniform_int" && $4->a[0]->is_int() && $4->a[1]->is_int() && $4->a[2]->is_int_var()) {
+            const int low = $4->a[0]->get_int();
+            const int high = $4->a[1]->get_int();
             if (low > high) {
               std::ostringstream oss;
               oss << "gecode_on_restart_uniform_int requires low (" << low
                   << ") <= high (" << high << ")";
               yyerror(pp, oss.str().c_str());
             } else {
-              int base = getBaseIntVar(pp,$4->a[2]->getIntVar());
+              int base = get_base_int_var(pp,$4->a[2]->get_int_var());
               pp->uniform_int.emplace_back(std::array<int, 3>{ low, high, base });
             }
-          } else if (cid=="gecode_on_restart_last_val_bool" && $4->a[0]->isBoolVar() && $4->a[1]->isBoolVar()) {
-            int base0 = getBaseBoolVar(pp,$4->a[0]->getBoolVar());
-            int base1 = getBaseBoolVar(pp,$4->a[1]->getBoolVar());
+          } else if (cid=="gecode_on_restart_last_val_bool" && $4->a[0]->is_bool_var() && $4->a[1]->is_bool_var()) {
+            int base0 = get_base_bool_var(pp,$4->a[0]->get_bool_var());
+            int base1 = get_base_bool_var(pp,$4->a[1]->get_bool_var());
             pp->last_val_bool.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_sol_bool" && $4->a[0]->isBoolVar() && $4->a[1]->isBoolVar()) {
-            int base0 = getBaseBoolVar(pp,$4->a[0]->getBoolVar());
-            int base1 = getBaseBoolVar(pp,$4->a[1]->getBoolVar());
+          } else if (cid=="gecode_on_restart_sol_bool" && $4->a[0]->is_bool_var() && $4->a[1]->is_bool_var()) {
+            int base0 = get_base_bool_var(pp,$4->a[0]->get_bool_var());
+            int base1 = get_base_bool_var(pp,$4->a[1]->get_bool_var());
             pp->sol_bool.emplace_back(std::array<int, 2>{ base0, base1 });
 #ifdef GECODE_HAS_SET_VARS
-          } else if (cid=="gecode_on_restart_last_val_set" && $4->a[0]->isSetVar() && $4->a[1]->isSetVar()) {
-            int base0 = getBaseSetVar(pp,$4->a[0]->getSetVar());
-            int base1 = getBaseSetVar(pp,$4->a[1]->getSetVar());
+          } else if (cid=="gecode_on_restart_last_val_set" && $4->a[0]->is_set_var() && $4->a[1]->is_set_var()) {
+            int base0 = get_base_set_var(pp,$4->a[0]->get_set_var());
+            int base1 = get_base_set_var(pp,$4->a[1]->get_set_var());
             pp->last_val_set.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_sol_set" && $4->a[0]->isSetVar() && $4->a[1]->isSetVar()) {
-            int base0 = getBaseSetVar(pp,$4->a[0]->getSetVar());
-            int base1 = getBaseSetVar(pp,$4->a[1]->getSetVar());
+          } else if (cid=="gecode_on_restart_sol_set" && $4->a[0]->is_set_var() && $4->a[1]->is_set_var()) {
+            int base0 = get_base_set_var(pp,$4->a[0]->get_set_var());
+            int base1 = get_base_set_var(pp,$4->a[1]->get_set_var());
             pp->sol_set.emplace_back(std::array<int, 2>{ base0, base1 });
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-          } else if (cid=="gecode_on_restart_last_val_float" && $4->a[0]->isFloatVar() && $4->a[1]->isFloatVar()) {
-            int base0 = getBaseFloatVar(pp,$4->a[0]->getFloatVar());
-            int base1 = getBaseFloatVar(pp,$4->a[1]->getFloatVar());
+          } else if (cid=="gecode_on_restart_last_val_float" && $4->a[0]->is_float_var() && $4->a[1]->is_float_var()) {
+            int base0 = get_base_float_var(pp,$4->a[0]->get_float_var());
+            int base1 = get_base_float_var(pp,$4->a[1]->get_float_var());
             pp->last_val_float.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_sol_float" && $4->a[0]->isFloatVar() && $4->a[1]->isFloatVar()) {
-            int base0 = getBaseFloatVar(pp,$4->a[0]->getFloatVar());
-            int base1 = getBaseFloatVar(pp,$4->a[1]->getFloatVar());
+          } else if (cid=="gecode_on_restart_sol_float" && $4->a[0]->is_float_var() && $4->a[1]->is_float_var()) {
+            int base0 = get_base_float_var(pp,$4->a[0]->get_float_var());
+            int base1 = get_base_float_var(pp,$4->a[1]->get_float_var());
             pp->sol_float.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_uniform_float" && $4->a[0]->isFloat() && $4->a[1]->isFloat() && $4->a[2]->isFloatVar()) {
-            int base = getBaseFloatVar(pp,$4->a[2]->getFloatVar());
-            pp->uniform_float.emplace_back( $4->a[0]->getFloat(), $4->a[1]->getFloat(), base );
+          } else if (cid=="gecode_on_restart_uniform_float" && $4->a[0]->is_float() && $4->a[1]->is_float() && $4->a[2]->is_float_var()) {
+            int base = get_base_float_var(pp,$4->a[2]->get_float_var());
+            pp->uniform_float.emplace_back( $4->a[0]->get_float(), $4->a[1]->get_float(), base );
 #endif
-          } else if (cid=="int_eq" && $4->a[0]->isIntVar() && $4->a[1]->isIntVar()) {
-            int base0 = getBaseIntVar(pp,$4->a[0]->getIntVar());
-            int base1 = getBaseIntVar(pp,$4->a[1]->getIntVar());
+          } else if (cid=="int_eq" && $4->a[0]->is_int_var() && $4->a[1]->is_int_var()) {
+            int base0 = get_base_int_var(pp,$4->a[0]->get_int_var());
+            int base1 = get_base_int_var(pp,$4->a[1]->get_int_var());
             if (base0 > base1) {
               std::swap(base0, base1);
             }
             if (base0==base1) {
               // do nothing, already aliased
             } else {
-              IntVarSpec* ivs1 = static_cast<IntVarSpec*>(pp->intvars[base1].second);
-              AST::SetLit* sl = NULL;
+              IntVarSpec* ivs1 = static_cast<IntVarSpec*>(pp->int_vars[base1].second);
+              AST::SetLit* sl = nullptr;
               if (ivs1->assigned) {
                 sl = new AST::SetLit(ivs1->i,ivs1->i);
               } else if (ivs1->domain()) {
-                sl = new AST::SetLit(ivs1->domain.some()->getSet());
+                sl = new AST::SetLit(ivs1->domain.some()->get_set());
               }
               if (sl) {
-                Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
-                addDomainConstraint(pp, "int_in",
-                                    new AST::IntVar(base0), newdom);
+                Option<AST::SetLit*> new_domain = Option<AST::SetLit*>::some(sl);
+                add_domain_constraint(pp, "int_in",
+                                    new AST::IntVar(base0), new_domain);
                 if (ivs1->domain())
                   delete ivs1->domain.some();
                 ivs1->domain = Option<AST::SetLit*>::none();
@@ -1691,26 +1691,26 @@ constraint_item :
               ivs1->alias = true;
               ivs1->i = base0;
             }
-          } else if (cid=="bool_eq" && $4->a[0]->isBoolVar() && $4->a[1]->isBoolVar()) {
-            int base0 = getBaseBoolVar(pp,$4->a[0]->getBoolVar());
-            int base1 = getBaseBoolVar(pp,$4->a[1]->getBoolVar());
+          } else if (cid=="bool_eq" && $4->a[0]->is_bool_var() && $4->a[1]->is_bool_var()) {
+            int base0 = get_base_bool_var(pp,$4->a[0]->get_bool_var());
+            int base1 = get_base_bool_var(pp,$4->a[1]->get_bool_var());
             if (base0 > base1) {
               std::swap(base0, base1);
             }
             if (base0==base1) {
               // do nothing, already aliased
             } else {
-              BoolVarSpec* ivs1 = static_cast<BoolVarSpec*>(pp->boolvars[base1].second);
-              AST::SetLit* sl = NULL;
+              BoolVarSpec* ivs1 = static_cast<BoolVarSpec*>(pp->bool_vars[base1].second);
+              AST::SetLit* sl = nullptr;
               if (ivs1->assigned) {
                 sl = new AST::SetLit(ivs1->i,ivs1->i);
               } else if (ivs1->domain()) {
-                sl = new AST::SetLit(ivs1->domain.some()->getSet());
+                sl = new AST::SetLit(ivs1->domain.some()->get_set());
               }
               if (sl) {
-                Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
-                addDomainConstraint(pp, "int_in",
-                                    new AST::BoolVar(base0), newdom);
+                Option<AST::SetLit*> new_domain = Option<AST::SetLit*>::some(sl);
+                add_domain_constraint(pp, "int_in",
+                                    new AST::BoolVar(base0), new_domain);
                 if (ivs1->domain())
                   delete ivs1->domain.some();
                 ivs1->domain = Option<AST::SetLit*>::none();
@@ -1718,57 +1718,57 @@ constraint_item :
               ivs1->alias = true;
               ivs1->i = base0;
             }
-          } else if (cid=="float_eq" && $4->a[0]->isFloatVar() && $4->a[1]->isFloatVar()) {
-            int base0 = getBaseFloatVar(pp,$4->a[0]->getFloatVar());
-            int base1 = getBaseFloatVar(pp,$4->a[1]->getFloatVar());
+          } else if (cid=="float_eq" && $4->a[0]->is_float_var() && $4->a[1]->is_float_var()) {
+            int base0 = get_base_float_var(pp,$4->a[0]->get_float_var());
+            int base1 = get_base_float_var(pp,$4->a[1]->get_float_var());
             if (base0 > base1) {
               std::swap(base0, base1);
             }
             if (base0==base1) {
               // do nothing, already aliased
             } else {
-              FloatVarSpec* ivs1 = static_cast<FloatVarSpec*>(pp->floatvars[base1].second);
+              FloatVarSpec* ivs1 = static_cast<FloatVarSpec*>(pp->float_vars[base1].second);
               ivs1->alias = true;
               ivs1->i = base0;
               if (ivs1->domain()) {
                 std::pair<double,double>* dom = new std::pair<double,double>(ivs1->domain.some());
-                addDomainConstraint(pp, new AST::FloatVar(base0), Option<std::pair<double,double>* >::some(dom));
+                add_domain_constraint(pp, new AST::FloatVar(base0), Option<std::pair<double,double>* >::some(dom));
                 ivs1->domain = Option<std::pair<double,double> >::none();
               }
             }
-          } else if (cid=="set_eq" && $4->a[0]->isSetVar() && $4->a[1]->isSetVar()) {
-            int base0 = getBaseSetVar(pp,$4->a[0]->getSetVar());
-            int base1 = getBaseSetVar(pp,$4->a[1]->getSetVar());
+          } else if (cid=="set_eq" && $4->a[0]->is_set_var() && $4->a[1]->is_set_var()) {
+            int base0 = get_base_set_var(pp,$4->a[0]->get_set_var());
+            int base1 = get_base_set_var(pp,$4->a[1]->get_set_var());
             if (base0 > base1) {
               std::swap(base0, base1);
             }
             if (base0==base1) {
               // do nothing, already aliased
             } else {
-              SetVarSpec* ivs1 = static_cast<SetVarSpec*>(pp->setvars[base1].second);
+              SetVarSpec* ivs1 = static_cast<SetVarSpec*>(pp->set_vars[base1].second);
               ivs1->alias = true;
               ivs1->i = base0;
-              if (ivs1->upperBound()) {
-                AST::SetLit* sl = new AST::SetLit(ivs1->upperBound.some()->getSet());
-                Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
+              if (ivs1->upper_bound()) {
+                AST::SetLit* sl = new AST::SetLit(ivs1->upper_bound.some()->get_set());
+                Option<AST::SetLit*> new_domain = Option<AST::SetLit*>::some(sl);
                 if (ivs1->assigned) {
-                  addDomainConstraint(pp, "set_eq",
-                                      new AST::SetVar(base0), newdom);
+                  add_domain_constraint(pp, "set_eq",
+                                      new AST::SetVar(base0), new_domain);
                 } else {
-                  addDomainConstraint(pp, "set_subset",
-                                      new AST::SetVar(base0), newdom);
+                  add_domain_constraint(pp, "set_subset",
+                                      new AST::SetVar(base0), new_domain);
                 }
-                delete ivs1->upperBound.some();
-                ivs1->upperBound = Option<AST::SetLit*>::none();
+                delete ivs1->upper_bound.some();
+                ivs1->upper_bound = Option<AST::SetLit*>::none();
               }
             }
           } else if ( (cid=="int_le" || cid=="int_lt" || cid=="int_ge" || cid=="int_gt"  ||
                        cid=="int_eq" || cid=="int_ne") &&
-                      ($4->a[0]->isInt() || $4->a[1]->isInt()) ) {
-            pp->domainConstraints.push_back(ce.get());
+                      ($4->a[0]->is_int() || $4->a[1]->is_int()) ) {
+            pp->domain_constraints.push_back(ce.get());
             ce.release();
-          } else if ( cid=="set_in" && ($4->a[0]->isSet() || $4->a[1]->isSet()) ) {
-            pp->domainConstraints.push_back(ce.get());
+          } else if ( cid=="set_in" && ($4->a[0]->is_set() || $4->a[1]->is_set()) ) {
+            pp->domain_constraints.push_back(ce.get());
             ce.release();
           } else {
             pp->constraints.push_back(ce.get());
@@ -1781,13 +1781,13 @@ solve_item :
       {
         ParserState *pp = static_cast<ParserState*>(parm);
         std::unique_ptr<AST::Array> ann($2);
-        initfg(pp);
-        if (!pp->hadError) {
+        initialize_space(pp);
+        if (!pp->had_error) {
           try {
             pp->fg->solve(ann.get());
             ann.release();
           } catch (Gecode::FlatZinc::Error& e) {
-            yyerror(pp, e.toString().c_str());
+            yyerror(pp, e.to_string().c_str());
           }
         }
       }
@@ -1795,8 +1795,8 @@ solve_item :
       {
         ParserState *pp = static_cast<ParserState*>(parm);
         std::unique_ptr<AST::Array> ann($2);
-        initfg(pp);
-        if (!pp->hadError) {
+        initialize_space(pp);
+        if (!pp->had_error) {
           try {
             int v = $4 < 0 ? (-$4-1) : $4;
             bool vi = $4 >= 0;
@@ -1806,7 +1806,7 @@ solve_item :
               pp->fg->maximize(v,vi,ann.get());
             ann.release();
           } catch (Gecode::FlatZinc::Error& e) {
-            yyerror(pp, e.toString().c_str());
+            yyerror(pp, e.to_string().c_str());
           }
         }
       }
@@ -1829,15 +1829,15 @@ bool_ti_expr_tail :
       FZ_BOOL
       { $$ = Option<AST::SetLit* >::none(); }
     | '{' bool_list_head list_tail '}'
-      { bool haveTrue = false;
-        bool haveFalse = false;
+      { bool have_true = false;
+        bool have_false = false;
         for (int i=$2->size(); i--;) {
-          haveTrue |= ((*$2)[i] == 1);
-          haveFalse |= ((*$2)[i] == 0);
+          have_true |= ((*$2)[i] == 1);
+          have_false |= ((*$2)[i] == 0);
         }
         delete $2;
         $$ = Option<AST::SetLit* >::some(
-          new AST::SetLit(!haveFalse,haveTrue));
+          new AST::SetLit(!have_false,have_true));
       }
 
 float_ti_expr_tail :
@@ -1997,7 +1997,7 @@ non_array_expr :
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               int idx = pp->arrays[e.i+1];
               for (int i=pp->arrays[e.i]; i--;)
-                v->a[i] = new AST::SetLit(pp->setvals[idx+i]);
+                v->a[i] = new AST::SetLit(pp->set_values[idx+i]);
               $$ = v;
             }
             break;
@@ -2006,7 +2006,7 @@ non_array_expr :
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               int idx = pp->arrays[e.i+1];
               for (int i=pp->arrays[e.i]; i--;)
-                v->a[i] = new AST::FloatLit(pp->floatvals[idx+i]);
+                v->a[i] = new AST::FloatLit(pp->float_values[idx+i]);
               $$ = v;
             }
             break;
@@ -2017,20 +2017,20 @@ non_array_expr :
             $$ = new AST::BoolLit(e.i);
             break;
           case ST_FLOAT:
-            $$ = new AST::FloatLit(pp->floatvals[e.i]);
+            $$ = new AST::FloatLit(pp->float_values[e.i]);
             break;
           case ST_SET:
-            $$ = new AST::SetLit(pp->setvals[e.i]);
+            $$ = new AST::SetLit(pp->set_values[e.i]);
             break;
           default:
-            $$ = getVarRefArg(pp,$1);
+            $$ = get_var_ref_arg(pp,$1);
           }
         } else {
           pp->err << "Error: undefined identifier " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
-          $$ = NULL;
+          pp->had_error = true;
+          $$ = nullptr;
         }
         free($1);
       }
@@ -2038,9 +2038,9 @@ non_array_expr :
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         int i = -1;
-        yyassert(pp, $3->isInt(i), "Non-integer array index");
-        if (!pp->hadError)
-          $$ = getArrayElement(static_cast<ParserState*>(parm),$1,i,false);
+        yyassert(pp, $3->is_int(i), "Non-integer array index");
+        if (!pp->had_error)
+          $$ = get_array_element(static_cast<ParserState*>(parm),$1,i,false);
         else
           $$ = new AST::IntLit(0); // keep things consistent
         delete $3;
@@ -2068,8 +2068,8 @@ solve_expr:
       {
         ParserState *pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        bool haveSym = pp->symbols.get($1,e);
-        if (haveSym) {
+        bool have_symbol = pp->symbols.get($1,e);
+        if (have_symbol) {
           switch (e.t) {
           case ST_INTVAR:
             $$ = e.i;
@@ -2079,38 +2079,38 @@ solve_expr:
             break;
           case ST_INT:
           case ST_FLOAT:
-            pp->intvars.push_back(varspec("OBJ_CONST_INTRODUCED",
+            pp->int_vars.push_back(NamedVarSpec("OBJ_CONST_INTRODUCED",
               new IntVarSpec(0,true,false)));
-            $$ = pp->intvars.size()-1;
+            $$ = pp->int_vars.size()-1;
             break;
           default:
             pp->err << "Error: unknown int or float variable " << $1
                     << " in line no. "
                     << yyget_lineno(pp->yyscanner) << std::endl;
-            pp->hadError = true;
+            pp->had_error = true;
             break;
           }
         } else {
           pp->err << "Error: unknown int or float variable " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
         }
         free($1);
       }
     | FZ_INT_LIT
       {
         ParserState *pp = static_cast<ParserState*>(parm);
-        pp->intvars.push_back(varspec("OBJ_CONST_INTRODUCED",
+        pp->int_vars.push_back(NamedVarSpec("OBJ_CONST_INTRODUCED",
           new IntVarSpec(0,true,false)));
-        $$ = pp->intvars.size()-1;
+        $$ = pp->int_vars.size()-1;
       }
     | FZ_FLOAT_LIT
       {
         ParserState *pp = static_cast<ParserState*>(parm);
-        pp->intvars.push_back(varspec("OBJ_CONST_INTRODUCED",
+        pp->int_vars.push_back(NamedVarSpec("OBJ_CONST_INTRODUCED",
           new IntVarSpec(0,true,false)));
-        $$ = pp->intvars.size()-1;
+        $$ = pp->int_vars.size()-1;
       }
     | var_par_id '[' FZ_INT_LIT ']'
       {
@@ -2121,13 +2121,13 @@ solve_expr:
           pp->err << "Error: unknown int or float variable array " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
         }
         if ($3 == 0 || $3 > pp->arrays[e.i]) {
           pp->err << "Error: array index out of bounds for array " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
         } else {
           if (e.t == ST_INTVARARRAY)
             $$ = pp->arrays[e.i+$3];
@@ -2147,7 +2147,7 @@ minmax:
 
 annotations :
       /* empty */
-      { $$ = NULL; }
+      { $$ = nullptr; }
     | annotations_head
       { $$ = $1; }
 
@@ -2160,7 +2160,7 @@ annotations_head :
 annotation :
       FZ_ID '(' annotation_list ')'
       {
-        $$ = new AST::Call($1, AST::extractSingleton($3)); free($1);
+        $$ = new AST::Call($1, AST::extract_singleton($3)); free($1);
       }
     | annotation_expr
       { $$ = $1; }
@@ -2194,9 +2194,9 @@ ann_non_array_expr :
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        bool gotSymbol = false;
+        bool got_symbol = false;
         if (pp->symbols.get($1, e)) {
-          gotSymbol = true;
+          got_symbol = true;
           switch (e.t) {
           case ST_INTVARARRAY:
             {
@@ -2263,7 +2263,7 @@ ann_non_array_expr :
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               int idx = pp->arrays[e.i+1];
               for (int i=pp->arrays[e.i]; i--;)
-                v->a[i] = new AST::SetLit(pp->setvals[idx+i]);
+                v->a[i] = new AST::SetLit(pp->set_values[idx+i]);
               $$ = v;
             }
             break;
@@ -2272,7 +2272,7 @@ ann_non_array_expr :
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               int idx = pp->arrays[e.i+1];
               for (int i=pp->arrays[e.i]; i--;)
-                v->a[i] = new AST::FloatLit(pp->floatvals[idx+i]);
+                v->a[i] = new AST::FloatLit(pp->float_values[idx+i]);
               $$ = v;
             }
             break;
@@ -2283,26 +2283,26 @@ ann_non_array_expr :
             $$ = new AST::BoolLit(e.i);
             break;
           case ST_FLOAT:
-            $$ = new AST::FloatLit(pp->floatvals[e.i]);
+            $$ = new AST::FloatLit(pp->float_values[e.i]);
             break;
           case ST_SET:
-            $$ = new AST::SetLit(pp->setvals[e.i]);
+            $$ = new AST::SetLit(pp->set_values[e.i]);
             break;
           default:
-            gotSymbol = false;
+            got_symbol = false;
           }
         }
-        if (!gotSymbol)
-          $$ = getVarRefArg(pp,$1,true);
+        if (!got_symbol)
+          $$ = get_var_ref_arg(pp,$1,true);
         free($1);
       }
     | var_par_id '[' ann_non_array_expr ']' /* array access */
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         int i = -1;
-        yyassert(pp, $3->isInt(i), "Non-integer array index");
-        if (!pp->hadError)
-          $$ = getArrayElement(static_cast<ParserState*>(parm),$1,i,true);
+        yyassert(pp, $3->is_int(i), "Non-integer array index");
+        if (!pp->had_error)
+          $$ = get_array_element(static_cast<ParserState*>(parm),$1,i,true);
         else
           $$ = new AST::IntLit(0); // keep things consistent
         delete $3;

@@ -67,17 +67,17 @@ namespace Gecode { namespace Int { namespace Member {
 
     public:
         /// Cost function
-        virtual PropCost cost(const Space&, const ModEventDelta& med) const;
+        PropCost cost(const Space&, const ModEventDelta& med) const override;
         /// Copy propagator during cloning
-        virtual Propagator* copy(Space& home);
+        Propagator* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
         static ExecStatus post(Home home, ViewArray<View>& x, View y);
         /// Post propagator for \f$y\in vs\cup \{x_0,\ldots,x_{|x|-1}\}\f$
         static ExecStatus post(Home home, ValSet& vs, ViewArray<View>& x, View y);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -103,13 +103,13 @@ namespace Gecode { namespace Int { namespace Member {
 
     public:
         /// Copy propagator during cloning
-        virtual Propagator* copy(Space& home);
+        Propagator* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
         static ExecStatus post(Home home, ViewArray<View>& x, View y, BoolView b);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::Member

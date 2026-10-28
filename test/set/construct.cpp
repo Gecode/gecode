@@ -45,16 +45,16 @@ namespace Test { namespace Set {
             /// Create and register test
             Construct(void) : SetTest("Var::Construct", 1, IntSet(0, 0), false, 0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment&) const {
+            bool
+            solution(const SetAssignment&) const override {
                 return true;
             }
             void
-            con(Space& home, int glbMin, int glbMax, int lubMin, int lubMax, unsigned int minCard = 0,
-                unsigned int maxCard = Gecode::Set::Limits::card, bool fail = true) {
+            con(Space& home, int glb_min, int glb_max, int lub_min, int lub_max, unsigned int min_card = 0,
+                unsigned int max_card = Gecode::Set::Limits::card, bool fail = true) {
                 bool ok = false;
                 try {
-                    SetVar x(home, glbMin, glbMax, lubMin, lubMax, minCard, maxCard);
+                    SetVar x(home, glb_min, glb_max, lub_min, lub_max, min_card, max_card);
                     ok = true;
                 } catch (Gecode::Set::VariableEmptyDomain&) {
                     if (!fail) {
@@ -66,7 +66,7 @@ namespace Test { namespace Set {
 
                 if (ok) {
                     try {
-                        SetVarArray xs(home, 1, glbMin, glbMax, lubMin, lubMax, minCard, maxCard);
+                        SetVarArray xs(home, 1, glb_min, glb_max, lub_min, lub_max, min_card, max_card);
                     } catch (Gecode::Set::VariableEmptyDomain&) {
                         if (!fail) {
                             home.fail();
@@ -81,11 +81,11 @@ namespace Test { namespace Set {
                 }
             }
             void
-            con(Space& home, const IntSet& glb, int lubMin, int lubMax, unsigned int minCard = 0,
-                unsigned int maxCard = Gecode::Set::Limits::card, bool fail = true) {
+            con(Space& home, const IntSet& glb, int lub_min, int lub_max, unsigned int min_card = 0,
+                unsigned int max_card = Gecode::Set::Limits::card, bool fail = true) {
                 bool ok = false;
                 try {
-                    SetVar x(home, glb, lubMin, lubMax, minCard, maxCard);
+                    SetVar x(home, glb, lub_min, lub_max, min_card, max_card);
                     ok = true;
                 } catch (Gecode::Set::VariableEmptyDomain&) {
                     if (!fail) {
@@ -96,7 +96,7 @@ namespace Test { namespace Set {
                 }
                 if (ok) {
                     try {
-                        SetVarArray xs(home, 1, glb, lubMin, lubMax, minCard, maxCard);
+                        SetVarArray xs(home, 1, glb, lub_min, lub_max, min_card, max_card);
                     } catch (Gecode::Set::VariableEmptyDomain&) {
                         if (!fail) {
                             home.fail();
@@ -111,11 +111,11 @@ namespace Test { namespace Set {
                 }
             }
             void
-            con(Space& home, int glbMin, int glbMax, const IntSet& lub, unsigned int minCard = 0,
-                unsigned int maxCard = Gecode::Set::Limits::card, bool fail = true) {
+            con(Space& home, int glb_min, int glb_max, const IntSet& lub, unsigned int min_card = 0,
+                unsigned int max_card = Gecode::Set::Limits::card, bool fail = true) {
                 bool ok = false;
                 try {
-                    SetVar x(home, glbMin, glbMax, lub, minCard, maxCard);
+                    SetVar x(home, glb_min, glb_max, lub, min_card, max_card);
                     ok = true;
                 } catch (Gecode::Set::VariableEmptyDomain&) {
                     if (!fail) {
@@ -126,7 +126,7 @@ namespace Test { namespace Set {
                 }
                 if (ok) {
                     try {
-                        SetVarArray xs(home, 1, glbMin, glbMax, lub, minCard, maxCard);
+                        SetVarArray xs(home, 1, glb_min, glb_max, lub, min_card, max_card);
                     } catch (Gecode::Set::VariableEmptyDomain&) {
                         if (!fail) {
                             home.fail();
@@ -141,11 +141,11 @@ namespace Test { namespace Set {
                 }
             }
             void
-            con(Space& home, const IntSet& glb, const IntSet& lub, unsigned int minCard = 0,
-                unsigned int maxCard = Gecode::Set::Limits::card, bool fail = true) {
+            con(Space& home, const IntSet& glb, const IntSet& lub, unsigned int min_card = 0,
+                unsigned int max_card = Gecode::Set::Limits::card, bool fail = true) {
                 bool ok = false;
                 try {
-                    SetVar x(home, glb, lub, minCard, maxCard);
+                    SetVar x(home, glb, lub, min_card, max_card);
                     ok = true;
                 } catch (Gecode::Set::VariableEmptyDomain&) {
                     if (!fail) {
@@ -156,7 +156,7 @@ namespace Test { namespace Set {
                 }
                 if (ok) {
                     try {
-                        SetVarArray xs(home, 1, glb, lub, minCard, maxCard);
+                        SetVarArray xs(home, 1, glb, lub, min_card, max_card);
                     } catch (Gecode::Set::VariableEmptyDomain&) {
                         if (!fail) {
                             home.fail();
@@ -171,8 +171,8 @@ namespace Test { namespace Set {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray&, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray&, IntVarArray&) override {
                 // Check non-empty lower, empty upper bound
                 con(home, 1, 1, 1, 0);
                 con(home, IntSet(1, 1), 1, 0);

@@ -98,13 +98,13 @@ public:
         y.update(*this, s.y);
     }
     /// Copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Partition(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\t";
         int a, b;
         a = b = 0;

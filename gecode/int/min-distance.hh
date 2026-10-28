@@ -77,13 +77,13 @@ namespace Gecode { namespace Int { namespace MinDistance {
         /// Post propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2, const IntDistance& d, int r);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space&, const ModEventDelta&) const;
+        PropCost cost(const Space&, const ModEventDelta&) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta&);
+        ExecStatus propagate(Space& home, const ModEventDelta&) override;
         /// Cancel subscriptions and dispose shared data
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -108,13 +108,13 @@ namespace Gecode { namespace Int { namespace MinDistance {
         static ExecStatus post(Home home, ViewArray<IntView>& x, IntView z, const IntDistance& d,
                                const IntSharedArray& r);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space&, const ModEventDelta&) const;
+        PropCost cost(const Space&, const ModEventDelta&) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta&);
+        ExecStatus propagate(Space& home, const ModEventDelta&) override;
         /// Cancel subscriptions and dispose shared data
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -163,17 +163,17 @@ namespace Gecode { namespace Int { namespace MinDistance {
         static ExecStatus post(Home home, ViewArray<IntView>& x, IntView z, const IntDistance& d,
                                const IntSharedArray& r);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space&, const ModEventDelta&) const;
+        PropCost cost(const Space&, const ModEventDelta&) const override;
         /// Reschedule propagation
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Record a changed selected-site domain
-        virtual ExecStatus advise(Space&, Advisor& a, const Delta&);
+        ExecStatus advise(Space&, Advisor& a, const Delta&) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta&);
+        ExecStatus propagate(Space& home, const ModEventDelta&) override;
         /// Cancel subscriptions and dispose stored data
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -197,13 +197,13 @@ namespace Gecode { namespace Int { namespace MinDistance {
         /// Post propagator
         static ExecStatus post(Home home, ViewArray<IntView>& x, IntView z, const IntDistance& d);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space&, const ModEventDelta&) const;
+        PropCost cost(const Space&, const ModEventDelta&) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta&);
+        ExecStatus propagate(Space& home, const ModEventDelta&) override;
         /// Cancel subscriptions and dispose shared data
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::MinDistance

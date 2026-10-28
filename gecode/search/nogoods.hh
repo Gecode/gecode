@@ -47,17 +47,17 @@ namespace Gecode { namespace Search {
         /// Constructor for cloning \a ngl
         NoNGL(Space& home, NoNGL& ngl);
         /// Subscribe propagator \a p to all views of the no-good literal
-        virtual void subscribe(Space& home, Propagator& p);
+        void subscribe(Space& home, Propagator& p) override;
         /// Schedule propagator \a p for all views of the no-good literal
-        virtual void reschedule(Space& home, Propagator& p);
+        void reschedule(Space& home, Propagator& p) override;
         /// Cancel propagator \a p from all views of the no-good literal
-        virtual void cancel(Space& home, Propagator& p);
+        void cancel(Space& home, Propagator& p) override;
         /// Test the status of the no-good literal
-        virtual NGL::Status status(const Space& home) const;
+        NGL::Status status(const Space& home) const override;
         /// Propagate the negation of the no-good literal
-        virtual ExecStatus prune(Space& home);
+        ExecStatus prune(Space& home) override;
         /// Create copy
-        virtual NGL* copy(Space& home);
+        NGL* copy(Space& home) override;
     };
 
     /// No-good propagator
@@ -74,18 +74,18 @@ namespace Gecode { namespace Search {
 
     public:
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Const function (defined as low unary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for path \a p
         template <class Path>
         static ExecStatus post(Space& home, const Path& p);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }} // namespace Gecode::Search

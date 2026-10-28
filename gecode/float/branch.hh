@@ -200,7 +200,7 @@ namespace Gecode { namespace Float { namespace Branch {
 
     /// Return view selectors for float views
     GECODE_FLOAT_EXPORT
-    ViewSel<FloatView>* viewsel(Space& home, const FloatVarBranch& fvb);
+    ViewSel<FloatView>* view_selection(Space& home, const FloatVarBranch& fvb);
 
 }}} // namespace Gecode::Float::Branch
 
@@ -320,11 +320,11 @@ namespace Gecode { namespace Float { namespace Branch {
 
     /// Return value and commit for float views
     GECODE_FLOAT_EXPORT
-    ValSelCommitBase<FloatView, FloatNumBranch>* valselcommit(Space& home, const FloatValBranch& svb);
+    ValSelCommitBase<FloatView, FloatNumBranch>* value_selection_commit(Space& home, const FloatValBranch& svb);
 
     /// Return value and commit for float views
     GECODE_FLOAT_EXPORT
-    ValSelCommitBase<FloatView, FloatNumBranch>* valselcommit(Space& home, const FloatAssign& ia);
+    ValSelCommitBase<FloatView, FloatNumBranch>* value_selection_commit(Space& home, const FloatAssign& ia);
 
 }}} // namespace Gecode::Float::Branch
 

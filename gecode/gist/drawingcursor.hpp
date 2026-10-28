@@ -33,40 +33,41 @@
 namespace Gecode { namespace Gist {
 
     inline void
-    DrawingCursor::moveUpwards(void) {
-        x -= node()->getOffset();
+    DrawingCursor::move_upwards(void) {
+        x -= node()->get_offset();
         y -= Layout::dist_y;
-        NodeCursor<VisualNode>::moveUpwards();
+        NodeCursor<VisualNode>::move_upwards();
     }
 
     forceinline bool
-    DrawingCursor::isClipped(void) {
-        if (clippingRect.width() == 0 && clippingRect.x() == 0 && clippingRect.height() == 0 && clippingRect.y() == 0)
+    DrawingCursor::is_clipped(void) {
+        if (clipping_rect.width() == 0 && clipping_rect.x() == 0 && clipping_rect.height() == 0 &&
+            clipping_rect.y() == 0)
             return false;
-        BoundingBox b = node()->getBoundingBox();
-        return (x + b.left > clippingRect.x() + clippingRect.width() || x + b.right < clippingRect.x() ||
-                y > clippingRect.y() + clippingRect.height() ||
-                y + (node()->getShape()->depth() + 1) * Layout::dist_y < clippingRect.y());
+        BoundingBox b = node()->get_bounding_box();
+        return (x + b.left > clipping_rect.x() + clipping_rect.width() || x + b.right < clipping_rect.x() ||
+                y > clipping_rect.y() + clipping_rect.height() ||
+                y + (node()->get_shape()->depth() + 1) * Layout::dist_y < clipping_rect.y());
     }
 
     inline bool
-    DrawingCursor::mayMoveDownwards(void) {
-        return NodeCursor<VisualNode>::mayMoveDownwards() && !node()->isHidden() && node()->childrenLayoutIsDone() &&
-               !isClipped();
+    DrawingCursor::may_move_downwards(void) {
+        return NodeCursor<VisualNode>::may_move_downwards() && !node()->is_hidden() &&
+               node()->children_layout_is_done() && !is_clipped();
     }
 
     inline void
-    DrawingCursor::moveDownwards(void) {
-        NodeCursor<VisualNode>::moveDownwards();
-        x += node()->getOffset();
+    DrawingCursor::move_downwards(void) {
+        NodeCursor<VisualNode>::move_downwards();
+        x += node()->get_offset();
         y += Layout::dist_y;
     }
 
     inline void
-    DrawingCursor::moveSidewards(void) {
-        x -= node()->getOffset();
-        NodeCursor<VisualNode>::moveSidewards();
-        x += node()->getOffset();
+    DrawingCursor::move_sidewards(void) {
+        x -= node()->get_offset();
+        NodeCursor<VisualNode>::move_sidewards();
+        x += node()->get_offset();
     }
 
 }} // namespace Gecode::Gist

@@ -56,17 +56,17 @@ namespace Gecode { namespace FlatZinc {
         /// Which variable to select
         Select s;
         /// Integer AFC
-        IntAFC iafc;
+        IntAFC int_afc_data;
         /// Boolean AFC
-        BoolAFC bafc;
+        BoolAFC bool_afc_data;
         /// Integer action
-        IntAction iaction;
+        IntAction int_action_data;
         /// Boolean action
-        BoolAction baction;
+        BoolAction bool_action_data;
         /// Integer CHB
-        IntCHB ichb;
+        IntCHB int_chb_data;
         /// Boolean CHB
-        BoolCHB bchb;
+        BoolCHB bool_chb_data;
 
     public:
         /// Initialize with selection strategy \a s and decay factor \a d
@@ -80,17 +80,17 @@ namespace Gecode { namespace FlatZinc {
         /// Return selection strategy
         Select select(void) const;
         /// Return integer AFC
-        IntAFC intafc(void) const;
+        IntAFC int_afc(void) const;
         /// Return Boolean AFC
-        BoolAFC boolafc(void) const;
+        BoolAFC bool_afc(void) const;
         /// Return integer action
-        IntAction intaction(void) const;
+        IntAction int_action(void) const;
         /// Return Boolean action
-        BoolAction boolaction(void) const;
+        BoolAction bool_action(void) const;
         /// Return integer CHB
-        IntCHB intchb(void) const;
+        IntCHB int_chb(void) const;
         /// Return Boolean AFC
-        BoolCHB boolchb(void) const;
+        BoolCHB bool_chb(void) const;
         /// Expand AFC, action, and CHB
         void expand(Home home, const IntVarArgs& x, const BoolVarArgs& y);
     };
@@ -98,38 +98,38 @@ namespace Gecode { namespace FlatZinc {
     /// Variable selection for both integer and Boolean variables
     //@{
     /// Select variable with largest accumulated failure count
-    IntBoolVarBranch INTBOOL_VAR_AFC_MAX(double d = 1.0);
+    IntBoolVarBranch int_bool_var_afc_max(double d = 1.0);
     /// Select variable with largest accumulated failure count
-    IntBoolVarBranch INTBOOL_VAR_AFC_MAX(IntAFC ia, BoolAFC ba);
+    IntBoolVarBranch int_bool_var_afc_max(IntAFC ia, BoolAFC ba);
     /// Select variable with highest action
-    IntBoolVarBranch INTBOOL_VAR_ACTION_MAX(double d = 1.0);
+    IntBoolVarBranch int_bool_var_action_max(double d = 1.0);
     /// Select variable with highest action
-    IntBoolVarBranch INTBOOL_VAR_ACTION_MAX(IntAction ia, BoolAction ba);
+    IntBoolVarBranch int_bool_var_action_max(IntAction ia, BoolAction ba);
     /// Select variable with largest CHB Q-score
-    IntBoolVarBranch INTBOOL_VAR_CHB_MAX(double d = 1.0);
+    IntBoolVarBranch int_bool_var_chb_max(double d = 1.0);
     /// Select variable with largest CHB Q-score
-    IntBoolVarBranch INTBOOL_VAR_CHB_MAX(IntCHB ic, BoolCHB bc);
+    IntBoolVarBranch int_bool_var_chb_max(IntCHB ic, BoolCHB bc);
     /// Select variable with largest accumulated failure count divided by domain size
-    IntBoolVarBranch INTBOOL_VAR_AFC_SIZE_MAX(double d = 1.0);
+    IntBoolVarBranch int_bool_var_afc_size_max(double d = 1.0);
     /// Select variable with largest accumulated failure count divided by domain size
-    IntBoolVarBranch INTBOOL_VAR_AFC_SIZE_MAX(IntAFC ia, BoolAFC ba);
+    IntBoolVarBranch int_bool_var_afc_size_max(IntAFC ia, BoolAFC ba);
     /// Select variable with largest action divided by domain size
-    IntBoolVarBranch INTBOOL_VAR_ACTION_SIZE_MAX(double d = 1.0);
+    IntBoolVarBranch int_bool_var_action_size_max(double d = 1.0);
     /// Select variable with largest action divided by domain size
-    IntBoolVarBranch INTBOOL_VAR_ACTION_SIZE_MAX(IntAction ia, BoolAction ba);
+    IntBoolVarBranch int_bool_var_action_size_max(IntAction ia, BoolAction ba);
     /// Select variable with largest CHB Q-score divided by domain size
-    IntBoolVarBranch INTBOOL_VAR_CHB_SIZE_MAX(double d = 1.0);
+    IntBoolVarBranch int_bool_var_chb_size_max(double d = 1.0);
     /// Select variable with largest CHB Q-score divided by domain size
-    IntBoolVarBranch INTBOOL_VAR_CHB_SIZE_MAX(IntCHB ic, BoolCHB bc);
+    IntBoolVarBranch int_bool_var_chb_size_max(IntCHB ic, BoolCHB bc);
     //@}
 
     /// Select by maximal AFC
     class MeritMaxAFC {
     protected:
         /// Integer AFC information
-        IntAFC iafc;
+        IntAFC int_afc_data;
         /// Boolean AFC information
-        BoolAFC bafc;
+        BoolAFC bool_afc_data;
 
     public:
         /// Constructor for initialization
@@ -148,9 +148,9 @@ namespace Gecode { namespace FlatZinc {
     class MeritMaxAFCSize {
     protected:
         /// Integer AFC information
-        IntAFC iafc;
+        IntAFC int_afc_data;
         /// Boolean AFC information
-        BoolAFC bafc;
+        BoolAFC bool_afc_data;
 
     public:
         /// Constructor for initialization
@@ -169,9 +169,9 @@ namespace Gecode { namespace FlatZinc {
     class MeritMaxAction {
     protected:
         /// Integer Action information
-        IntAction iaction;
+        IntAction int_action_data;
         /// Boolean Action information
-        BoolAction baction;
+        BoolAction bool_action_data;
 
     public:
         /// Constructor for initialization
@@ -190,9 +190,9 @@ namespace Gecode { namespace FlatZinc {
     class MeritMaxActionSize {
     protected:
         /// Integer Action information
-        IntAction iaction;
+        IntAction int_action_data;
         /// Boolean Action information
-        BoolAction baction;
+        BoolAction bool_action_data;
 
     public:
         /// Constructor for initialization
@@ -211,9 +211,9 @@ namespace Gecode { namespace FlatZinc {
     class MeritMaxCHB {
     protected:
         /// Integer CHB information
-        IntCHB ichb;
+        IntCHB int_chb_data;
         /// Boolean CHB information
-        BoolCHB bchb;
+        BoolCHB bool_chb_data;
 
     public:
         /// Constructor for initialization
@@ -232,9 +232,9 @@ namespace Gecode { namespace FlatZinc {
     class MeritMaxCHBSize {
     protected:
         /// Integer CHB information
-        IntCHB ichb;
+        IntCHB int_chb_data;
         /// Boolean CHB information
-        BoolCHB bchb;
+        BoolCHB bool_chb_data;
 
     public:
         /// Constructor for initialization
@@ -265,7 +265,7 @@ namespace Gecode { namespace FlatZinc {
         /// Return value to assign to
         int val(void) const;
         /// Archive into \a e
-        virtual void archive(Archive& e) const;
+        void archive(Archive& e) const override;
     };
 
     /// Base-class for brancher for integer and Boolean views
@@ -289,19 +289,19 @@ namespace Gecode { namespace FlatZinc {
 
     public:
         /// Check status of brancher, return true if alternatives left
-        virtual bool status(const Space& home) const;
+        bool status(const Space& home) const override;
         /// Return choice
-        virtual const Choice* choice(Space& home) = 0;
+        const Choice* choice(Space& home) override = 0;
         /// Return choice
-        virtual const Choice* choice(const Space& home, Archive& e);
+        const Choice* choice(const Space& home, Archive& e) override;
         /// Perform commit for choice \a c and alternative \a b
-        virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
+        ExecStatus commit(Space& home, const Choice& c, unsigned int b) override;
         /// Create no-good literal for choice \a c and alternative \a b
-        virtual NGL* ngl(Space& home, const Choice& c, unsigned int b) const;
+        NGL* ngl(Space& home, const Choice& c, unsigned int b) const override;
         /// Print branch for choice \a c and alternative \a b
-        virtual void print(const Space& home, const Choice& c, unsigned int b, std::ostream& o) const;
+        void print(const Space& home, const Choice& c, unsigned int b, std::ostream& o) const override;
         /// Delete brancher and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /// Brancher for integer and Boolean views
@@ -318,14 +318,14 @@ namespace Gecode { namespace FlatZinc {
 
     public:
         /// Return choice
-        virtual const Choice* choice(Space& home);
+        const Choice* choice(Space& home) override;
         /// Perform cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Post brancher
         static void post(Home home, ViewArray<Int::IntView> x, ViewArray<Int::BoolView> y, Merit& m,
                          ValSelCommitBase<Int::IntView, int>* xvsc, ValSelCommitBase<Int::BoolView, int>* yvsc);
         /// Delete brancher and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /// Map respective integer value selection to Boolean value selection

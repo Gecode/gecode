@@ -44,7 +44,7 @@ namespace Gecode { namespace Support {
     }
 
     /// Perform quicksort only for more elements
-    int const QuickSortCutoff = 20;
+    int const quick_sort_cutoff = 20;
 
     /// Static stack for quicksort
     template <class Type>
@@ -145,22 +145,22 @@ namespace Gecode { namespace Support {
             exchange(*(r - 1), *r, less);
             Type* i = partition(l + 1, r - 1, less);
             if (i - l > r - i) {
-                if (r - i > QuickSortCutoff) {
+                if (r - i > quick_sort_cutoff) {
                     s.push(l, i - 1);
                     l = i + 1;
                     continue;
                 }
-                if (i - l > QuickSortCutoff) {
+                if (i - l > quick_sort_cutoff) {
                     r = i - 1;
                     continue;
                 }
             } else {
-                if (i - l > QuickSortCutoff) {
+                if (i - l > quick_sort_cutoff) {
                     s.push(i + 1, r);
                     r = i - 1;
                     continue;
                 }
-                if (r - i > QuickSortCutoff) {
+                if (r - i > quick_sort_cutoff) {
                     l = i + 1;
                     continue;
                 }
@@ -247,7 +247,7 @@ namespace Gecode { namespace Support {
         if (n < 2)
             return;
         assert(!l(x[0], x[0]));
-        if (n > QuickSortCutoff)
+        if (n > quick_sort_cutoff)
             quicksort(x, x + n - 1, l);
         insertion(x, x + n - 1, l);
     }
@@ -270,7 +270,7 @@ namespace Gecode { namespace Support {
             return;
         Less<Type> l;
         assert(!l(x[0], x[0]));
-        if (n > QuickSortCutoff)
+        if (n > quick_sort_cutoff)
             quicksort(x, x + n - 1, l);
         insertion(x, x + n - 1, l);
     }

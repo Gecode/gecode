@@ -90,7 +90,7 @@ namespace Gecode { namespace Search { namespace Par {
 namespace Gecode { namespace Search {
 
     Engine*
-    astarengine(Space* s, const Options& o) {
+    make_astar_engine(Space* s, const Options& o) {
         Options e = o.expand();
         if (e.tracer != nullptr)
             throw UnsupportedTracer("AStar::AStar");

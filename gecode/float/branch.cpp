@@ -42,8 +42,9 @@ namespace Gecode {
             return;
         vars.expand(home, x);
         ViewArray<FloatView> xv(home, x);
-        ViewSel<FloatView>* vs[1] = {Branch::viewsel(home, vars)};
-        postviewvalbrancher<FloatView, 1, FloatNumBranch, 2>(home, xv, vs, Branch::valselcommit(home, vals), bf, vvp);
+        ViewSel<FloatView>* vs[1] = {Branch::view_selection(home, vars)};
+        post_view_value_brancher<FloatView, 1, FloatNumBranch, 2>(home, xv, vs,
+                                                                  Branch::value_selection_commit(home, vals), bf, vvp);
     }
 
     void
@@ -66,18 +67,20 @@ namespace Gecode {
             branch(home, x, vars.a, vals, bf, vvp);
         } else {
             ViewArray<FloatView> xv(home, x);
-            ValSelCommitBase<FloatView, FloatNumBranch>* vsc = Branch::valselcommit(home, vals);
+            ValSelCommitBase<FloatView, FloatNumBranch>* vsc = Branch::value_selection_commit(home, vals);
             if (vars.c.select() == FloatVarBranch::SEL_NONE) {
-                ViewSel<FloatView>* vs[2] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b)};
-                postviewvalbrancher<FloatView, 2, FloatNumBranch, 2>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<FloatView>* vs[2] = {Branch::view_selection(home, vars.a),
+                                             Branch::view_selection(home, vars.b)};
+                post_view_value_brancher<FloatView, 2, FloatNumBranch, 2>(home, xv, vs, vsc, bf, vvp);
             } else if (vars.d.select() == FloatVarBranch::SEL_NONE) {
-                ViewSel<FloatView>* vs[3] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                             Branch::viewsel(home, vars.c)};
-                postviewvalbrancher<FloatView, 3, FloatNumBranch, 2>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<FloatView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                             Branch::view_selection(home, vars.c)};
+                post_view_value_brancher<FloatView, 3, FloatNumBranch, 2>(home, xv, vs, vsc, bf, vvp);
             } else {
-                ViewSel<FloatView>* vs[4] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                             Branch::viewsel(home, vars.c), Branch::viewsel(home, vars.d)};
-                postviewvalbrancher<FloatView, 4, FloatNumBranch, 2>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<FloatView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                             Branch::view_selection(home, vars.c),
+                                             Branch::view_selection(home, vars.d)};
+                post_view_value_brancher<FloatView, 4, FloatNumBranch, 2>(home, xv, vs, vsc, bf, vvp);
             }
         }
     }
@@ -97,7 +100,8 @@ namespace Gecode {
             return;
         ViewArray<FloatView> xv(home, x);
         ViewSel<FloatView>* vs[1] = {new (home) ViewSelNone<FloatView>(home, vars)};
-        postviewvalbrancher<FloatView, 1, FloatNumBranch, 1>(home, xv, vs, Branch::valselcommit(home, vals), bf, vvp);
+        post_view_value_brancher<FloatView, 1, FloatNumBranch, 1>(home, xv, vs,
+                                                                  Branch::value_selection_commit(home, vals), bf, vvp);
     }
 
     void
@@ -120,18 +124,20 @@ namespace Gecode {
             assign(home, x, vars.a, vals, bf, vvp);
         } else {
             ViewArray<FloatView> xv(home, x);
-            ValSelCommitBase<FloatView, FloatNumBranch>* vsc = Branch::valselcommit(home, vals);
+            ValSelCommitBase<FloatView, FloatNumBranch>* vsc = Branch::value_selection_commit(home, vals);
             if (vars.c.select() == FloatVarBranch::SEL_NONE) {
-                ViewSel<FloatView>* vs[2] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b)};
-                postviewvalbrancher<FloatView, 2, FloatNumBranch, 1>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<FloatView>* vs[2] = {Branch::view_selection(home, vars.a),
+                                             Branch::view_selection(home, vars.b)};
+                post_view_value_brancher<FloatView, 2, FloatNumBranch, 1>(home, xv, vs, vsc, bf, vvp);
             } else if (vars.d.select() == FloatVarBranch::SEL_NONE) {
-                ViewSel<FloatView>* vs[3] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                             Branch::viewsel(home, vars.c)};
-                postviewvalbrancher<FloatView, 3, FloatNumBranch, 1>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<FloatView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                             Branch::view_selection(home, vars.c)};
+                post_view_value_brancher<FloatView, 3, FloatNumBranch, 1>(home, xv, vs, vsc, bf, vvp);
             } else {
-                ViewSel<FloatView>* vs[4] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                             Branch::viewsel(home, vars.c), Branch::viewsel(home, vars.d)};
-                postviewvalbrancher<FloatView, 4, FloatNumBranch, 1>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<FloatView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                             Branch::view_selection(home, vars.c),
+                                             Branch::view_selection(home, vars.d)};
+                post_view_value_brancher<FloatView, 4, FloatNumBranch, 1>(home, xv, vs, vsc, bf, vvp);
             }
         }
     }

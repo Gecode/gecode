@@ -1299,7 +1299,10 @@ namespace Gecode { namespace Instance {
                 for (int k = 0; k < s.arms.size(); k++)
                     if (!s.arms[k].optional && (seen[k] == 0)) {
                         std::string p = "\"" + s.arms[k].pattern.source + "\"";
-                        std::string e = located("expected a line matching " + p + " before " + end, end_at);
+                        std::string m = "expected a line matching " + p;
+                        m += " before ";
+                        m += end;
+                        std::string e = located(m, end_at);
                         // At the end of the input, no later instance can be hidden
                         if (!in.skip_to_data())
                             throw Error(e);

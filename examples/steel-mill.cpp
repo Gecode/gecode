@@ -85,7 +85,7 @@ public:
           _maxcapacity(csplib_maxcapacity), _loss(csplib_loss), _orders(&(csplib_orders[0])), _ncolors(csplib_ncolors),
           _norders(csplib_norders) {}
     /// Print help text
-    virtual void help(void);
+    void help(void) override;
     /// Parse options from arguments \a argv (number is \a argc)
     bool parse(int& argc, char* argv[]);
 
@@ -106,7 +106,7 @@ public:
     }
     /// Return maximum of capacities
     int
-    maxcapacity(void) const {
+    max_capacity(void) const {
         return _maxcapacity;
     }
     /// Return loss values
@@ -183,7 +183,7 @@ protected:
     //@{
     int* capacities;      ///< Capacities
     int ncapacities;      ///< Number of capacities
-    int maxcapacity;      ///< Maximum capacity
+    int max_capacity;     ///< Maximum capacity
     int* loss;            ///< Loss for all sizes
     int ncolors;          ///< Number of colors
     order_t orders;       ///< Orders
@@ -195,8 +195,8 @@ protected:
      */
     //@{
     IntVarArray slab,  ///< Slab assigned to order i
-        slabload,      ///< Load of slab j
-        slabcost;      ///< Cost of slab j
+        slab_load,     ///< Load of slab j
+        slab_cost;     ///< Cost of slab j
     IntVar total_cost; ///< Total cost
                        //@}
 
@@ -212,17 +212,17 @@ public:
     SteelMill(const SteelMillOptions& opt)
         : // Initialize instance data
           IntMinimizeScript(opt), capacities(opt.capacities()), ncapacities(opt.ncapacities()),
-          maxcapacity(opt.maxcapacity()), loss(opt.loss()), ncolors(opt.ncolors()), orders(opt.orders()),
+          max_capacity(opt.max_capacity()), loss(opt.loss()), ncolors(opt.ncolors()), orders(opt.orders()),
           norders(opt.size()), nslabs(opt.size()),
           // Initialize problem variables
-          slab(*this, norders, 0, nslabs - 1), slabload(*this, nslabs, 0, 45),
-          slabcost(*this, nslabs, 0, Int::Limits::max), total_cost(*this, 0, Int::Limits::max) {
+          slab(*this, norders, 0, nslabs - 1), slab_load(*this, nslabs, 0, 45),
+          slab_cost(*this, nslabs, 0, Int::Limits::max), total_cost(*this, 0, Int::Limits::max) {
         // Boolean variables for slab[o]==s
-        BoolVarArgs boolslab(norders * nslabs);
+        BoolVarArgs order_in_slab(norders * nslabs);
         for (unsigned int i = 0; i < norders; ++i) {
             BoolVarArgs tmp(nslabs);
             for (int j = nslabs; j--;) {
-                boolslab[j + i * nslabs] = tmp[j] = BoolVar(*this, 0, 1);
+                order_in_slab[j + i * nslabs] = tmp[j] = BoolVar(*this, 0, 1);
             }
             channel(*this, tmp, slab[i]);
         }
@@ -233,52 +233,52 @@ public:
             BoolVarArgs x(norders);
             for (int i = norders; i--;) {
                 c[i] = orders[i][order_weight];
-                x[i] = boolslab[s + i * nslabs];
+                x[i] = order_in_slab[s + i * nslabs];
             }
-            linear(*this, c, x, IRT_EQ, slabload[s]);
+            linear(*this, c, x, IRT_EQ, slab_load[s]);
         }
         // Redundant packing constraint
         int totalweight = 0;
         for (unsigned int i = norders; i--;)
             totalweight += orders[i][order_weight];
-        linear(*this, slabload, IRT_EQ, totalweight);
+        linear(*this, slab_load, IRT_EQ, totalweight);
 
         // Color constraints
-        IntArgs nofcolor(ncolors);
+        IntArgs color_order_count(ncolors);
         for (int c = ncolors; c--;) {
-            nofcolor[c] = 0;
+            color_order_count[c] = 0;
             for (int o = norders; o--;) {
                 if (orders[o][order_color] == c)
-                    nofcolor[c] += 1;
+                    color_order_count[c] += 1;
             }
         }
         BoolVar f(*this, 0, 0);
         for (unsigned int s = 0; s < nslabs; ++s) {
-            BoolVarArgs hascolor(ncolors);
+            BoolVarArgs has_color(ncolors);
             for (int c = ncolors; c--;) {
-                if (nofcolor[c]) {
-                    BoolVarArgs hasc(nofcolor[c]);
+                if (color_order_count[c]) {
+                    BoolVarArgs hasc(color_order_count[c]);
                     int pos = 0;
                     for (int o = norders; o--;) {
                         if (orders[o][order_color] == c)
-                            hasc[pos++] = boolslab[s + o * nslabs];
+                            hasc[pos++] = order_in_slab[s + o * nslabs];
                     }
-                    assert(pos == nofcolor[c]);
-                    hascolor[c] = BoolVar(*this, 0, 1);
-                    rel(*this, BOT_OR, hasc, hascolor[c]);
+                    assert(pos == color_order_count[c]);
+                    has_color[c] = BoolVar(*this, 0, 1);
+                    rel(*this, BOT_OR, hasc, has_color[c]);
                 } else {
-                    hascolor[c] = f;
+                    has_color[c] = f;
                 }
             }
-            linear(*this, hascolor, IRT_LQ, 2);
+            linear(*this, has_color, IRT_LQ, 2);
         }
 
-        // Compute slabcost
-        IntArgs l(maxcapacity, loss);
+        // Compute slab_cost
+        IntArgs l(max_capacity, loss);
         for (int s = nslabs; s--;) {
-            element(*this, l, slabload[s], slabcost[s]);
+            element(*this, l, slab_load[s], slab_cost[s]);
         }
-        linear(*this, slabcost, IRT_EQ, total_cost);
+        linear(*this, slab_cost, IRT_EQ, total_cost);
 
         // Add branching
         if (opt.symmetry() == SYMMETRY_BRANCHING) {
@@ -289,7 +289,7 @@ public:
         } else { // opt.symmetry() == SYMMETRY_LDSB
             // There is one symmetry: the values (slabs) are interchangeable.
             Symmetries syms;
-            syms << ValueSymmetry(IntArgs::create(nslabs, 0));
+            syms << value_symmetry(IntArgs::create(nslabs, 0));
 
             // For variable order we mimic the custom brancher.  We use
             // min-size domain, breaking ties by maximum weight (preferring
@@ -309,23 +309,23 @@ public:
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "What slab=" << slab << std::endl;
-        os << "Slab load=" << slabload << std::endl;
-        os << "Slab cost=" << slabcost << std::endl;
+        os << "Slab load=" << slab_load << std::endl;
+        os << "Slab cost=" << slab_cost << std::endl;
         os << "Total cost=" << total_cost << std::endl;
         int nslabsused = 0;
         int nslabscost = 0;
         bool unassigned = false;
         for (int i = nslabs; i--;) {
-            if (!slabload[i].assigned() || !slabcost[i].assigned()) {
+            if (!slab_load[i].assigned() || !slab_cost[i].assigned()) {
                 unassigned = true;
                 break;
             }
-            if (slabload[i].min() > 0)
+            if (slab_load[i].min() > 0)
                 ++nslabsused;
-            if (slabcost[i].min() > 0)
+            if (slab_cost[i].min() > 0)
                 ++nslabscost;
         }
         if (!unassigned)
@@ -335,21 +335,21 @@ public:
 
     /// Constructor for cloning \a s
     SteelMill(SteelMill& s)
-        : IntMinimizeScript(s), capacities(s.capacities), ncapacities(s.ncapacities), maxcapacity(s.maxcapacity),
+        : IntMinimizeScript(s), capacities(s.capacities), ncapacities(s.ncapacities), max_capacity(s.max_capacity),
           loss(s.loss), ncolors(s.ncolors), orders(s.orders), norders(s.norders), nslabs(s.nslabs) {
         slab.update(*this, s.slab);
-        slabload.update(*this, s.slabload);
-        slabcost.update(*this, s.slabcost);
+        slab_load.update(*this, s.slab_load);
+        slab_cost.update(*this, s.slab_cost);
         total_cost.update(*this, s.total_cost);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new SteelMill(*this);
     }
     /// Return solution cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return total_cost;
     }
 
@@ -378,8 +378,8 @@ public:
             Choice(const Brancher& b, unsigned int a, int pos0, int val0)
                 : Gecode::Choice(b, a), pos(pos0), val(val0) {}
             /// Archive into \a e
-            virtual void
-            archive(Archive& e) const {
+            void
+            archive(Archive& e) const override {
                 Gecode::Choice::archive(e);
                 e << alternatives() << pos << val;
             }
@@ -392,8 +392,8 @@ public:
 
     public:
         /// Check status of brancher, return true if alternatives left.
-        virtual bool
-        status(const Space& home) const {
+        bool
+        status(const Space& home) const override {
             const SteelMill& sm = static_cast<const SteelMill&>(home);
             for (unsigned int i = start; i < sm.norders; ++i)
                 if (!sm.slab[i].assigned()) {
@@ -404,8 +404,8 @@ public:
             return false;
         }
         /// Return choice
-        virtual Gecode::Choice*
-        choice(Space& home) {
+        Gecode::Choice*
+        choice(Space& home) override {
             SteelMill& sm = static_cast<SteelMill&>(home);
             assert(!sm.slab[start].assigned());
             // Find order with a) minimum size, b) largest weight
@@ -427,21 +427,21 @@ public:
             unsigned int val = sm.slab[pos].min();
             // Find first still empty slab (all such slabs are symmetric)
             unsigned int firstzero = 0;
-            while (firstzero < sm.nslabs && sm.slabload[firstzero].min() > 0)
+            while (firstzero < sm.nslabs && sm.slab_load[firstzero].min() > 0)
                 ++firstzero;
             assert(pos < sm.nslabs && val < sm.norders);
             return new Choice(*this, (val < firstzero) ? 2 : 1, pos, val);
         }
-        virtual Choice*
-        choice(const Space&, Archive& e) {
+        Choice*
+        choice(const Space&, Archive& e) override {
             unsigned int alt;
             int pos, val;
             e >> alt >> pos >> val;
             return new Choice(*this, alt, pos, val);
         }
         /// Perform commit for choice \a _c and alternative \a a
-        virtual ExecStatus
-        commit(Space& home, const Gecode::Choice& _c, unsigned int a) {
+        ExecStatus
+        commit(Space& home, const Gecode::Choice& _c, unsigned int a) override {
             SteelMill& sm = static_cast<SteelMill&>(home);
             const Choice& c = static_cast<const Choice&>(_c);
             if (a)
@@ -450,14 +450,14 @@ public:
                 return me_failed(Int::IntView(sm.slab[c.pos]).eq(home, c.val)) ? ES_FAILED : ES_OK;
         }
         /// Print explanation
-        virtual void
-        print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const {
+        void
+        print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const override {
             const Choice& c = static_cast<const Choice&>(_c);
             o << "slab[" << c.pos << "] " << ((a == 0) ? "=" : "!=") << " " << c.val;
         }
         /// Copy brancher
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) SteelMillBranch(home, *this);
         }
         /// Post brancher
@@ -466,8 +466,8 @@ public:
             (void)new (home) SteelMillBranch(home);
         }
         /// Delete brancher and return its size
-        virtual size_t
-        dispose(Space&) {
+        size_t
+        dispose(Space&) override {
             return sizeof(*this);
         }
     };

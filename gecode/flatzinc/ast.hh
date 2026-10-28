@@ -76,68 +76,68 @@ namespace Gecode { namespace FlatZinc { namespace AST {
         void append(Node* n);
 
         /// Test if node has atom with \a id
-        bool hasAtom(const std::string& id);
+        bool has_atom(const std::string& id);
         /// Test if node is int, if yes set \a i to the value
-        bool isInt(int& i);
+        bool is_int(int& i);
         /// Test if node is float, if yes set \a d to the value
-        bool isFloat(double& i);
+        bool is_float(double& i);
         /// Test if node is function call with \a id
-        bool isCall(const std::string& id);
+        bool is_call(const std::string& id);
         /// Return function call
-        Call* getCall(void);
+        Call* get_call(void);
         /// Test if node is function call or array containing function call \a id
-        bool hasCall(const std::string& id);
+        bool has_call(const std::string& id);
         /// Return function call \a id
-        Call* getCall(const std::string& id);
+        Call* get_call(const std::string& id);
         /// Cast this node to an array node
-        Array* getArray(void);
+        Array* get_array(void);
         /// Cast this node to an Atom node
-        Atom* getAtom(void);
+        Atom* get_atom(void);
         /// Return name of variable represented by this node
-        std::string getVarName(void);
+        std::string get_var_name(void);
         /// Cast this node to an integer variable node
-        int getIntVar(void);
+        int get_int_var(void);
         /// Cast this node to a Boolean variable node
-        int getBoolVar(void);
+        int get_bool_var(void);
         /// Cast this node to a Float variable node
-        int getFloatVar(void);
+        int get_float_var(void);
         /// Cast this node to a set variable node
-        int getSetVar(void);
+        int get_set_var(void);
 
         /// Cast this node to an integer node
-        int getInt(void);
+        int get_int(void);
         /// Cast this node to a Boolean node
-        bool getBool(void);
+        bool get_bool(void);
         /// Cast this node to a Float node
-        double getFloat(void);
+        double get_float(void);
         /// Cast this node to a set literal node
-        SetLit* getSet(void);
+        SetLit* get_set(void);
 
         /// Cast this node to a string node
-        std::string getString(void);
+        std::string get_string(void);
 
         /// Test if node is an integer variable node
-        bool isIntVar(void);
+        bool is_int_var(void);
         /// Test if node is a Boolean variable node
-        bool isBoolVar(void);
+        bool is_bool_var(void);
         /// Test if node is a set variable node
-        bool isSetVar(void);
+        bool is_set_var(void);
         /// Test if node is a float variable node
-        bool isFloatVar(void);
+        bool is_float_var(void);
         /// Test if node is an integer node
-        bool isInt(void);
+        bool is_int(void);
         /// Test if node is a float node
-        bool isFloat(void);
+        bool is_float(void);
         /// Test if node is a Boolean node
-        bool isBool(void);
+        bool is_bool(void);
         /// Test if node is a string node
-        bool isString(void);
+        bool is_string(void);
         /// Test if node is an array node
-        bool isArray(void);
+        bool is_array(void);
         /// Test if node is a set literal node
-        bool isSet(void);
+        bool is_set(void);
         /// Test if node is an atom node
-        bool isAtom(void);
+        bool is_atom(void);
 
         /// Output string representation
         virtual void print(std::ostream&) = 0;
@@ -148,8 +148,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     public:
         bool b;
         BoolLit(bool b0) : b(b0) {}
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << "b(" << (b ? "true" : "false") << ")";
         }
     };
@@ -158,8 +158,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     public:
         int i;
         IntLit(int i0) : i(i0) {}
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << "i(" << i << ")";
         }
     };
@@ -168,8 +168,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     public:
         double d;
         FloatLit(double d0) : d(d0) {}
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << "f(" << d << ")";
         }
     };
@@ -188,8 +188,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
         empty(void) const {
             return ((interval && min > max) || (!interval && s.size() == 0));
         }
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << "s()";
         }
     };
@@ -207,8 +207,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     public:
         /// Constructor
         BoolVar(int i0, const std::string& n0 = "") : Var(i0, n0) {}
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << "xb(" << i << ")";
         }
     };
@@ -216,8 +216,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     class GECODE_VTABLE_EXPORT IntVar : public Var {
     public:
         IntVar(int i0, const std::string& n0 = "") : Var(i0, n0) {}
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << "xi(" << i << ")";
         }
     };
@@ -225,8 +225,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     class GECODE_VTABLE_EXPORT FloatVar : public Var {
     public:
         FloatVar(int i0, const std::string& n0 = "") : Var(i0, n0) {}
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << "xf(" << i << ")";
         }
     };
@@ -234,8 +234,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     class GECODE_VTABLE_EXPORT SetVar : public Var {
     public:
         SetVar(int i0, const std::string& n0 = "") : Var(i0, n0) {}
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << "xs(" << i << ")";
         }
     };
@@ -249,8 +249,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
             a[0] = n;
         }
         Array(int n = 0) : a(n) {}
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << "[";
             for (unsigned int i = 0; i < a.size(); i++) {
                 a[i]->print(os);
@@ -259,7 +259,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
             }
             os << "]";
         }
-        ~Array(void) {
+        ~Array(void) override {
             for (int i = a.size(); i--;)
                 delete a[i];
         }
@@ -271,18 +271,18 @@ namespace Gecode { namespace FlatZinc { namespace AST {
         std::string id;
         Node* args;
         Call(const std::string& id0, Node* args0) : id(id0), args(args0) {}
-        ~Call(void) {
+        ~Call(void) override {
             delete args;
         }
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << id << "(";
             args->print(os);
             os << ")";
         }
         Array*
-        getArgs(unsigned int n) {
-            Array* a = args->getArray();
+        get_args(unsigned int n) {
+            Array* a = args->get_array();
             if (a->a.size() != n)
                 throw TypeError("arity mismatch");
             return a;
@@ -295,12 +295,12 @@ namespace Gecode { namespace FlatZinc { namespace AST {
         Node* a;
         Node* idx;
         ArrayAccess(Node* a0, Node* idx0) : a(a0), idx(idx0) {}
-        ~ArrayAccess(void) {
+        ~ArrayAccess(void) override {
             delete a;
             delete idx;
         }
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             a->print(os);
             os << "[";
             idx->print(os);
@@ -313,8 +313,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     public:
         std::string id;
         Atom(const std::string& id0) : id(id0) {}
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << id;
         }
     };
@@ -324,8 +324,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     public:
         std::string s;
         String(const std::string& s0) : s(s0) {}
-        virtual void
-        print(std::ostream& os) {
+        void
+        print(std::ostream& os) override {
             os << "s(\"" << s << "\")";
         }
     };
@@ -333,15 +333,15 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     inline Node::~Node(void) {}
 
     inline void
-    Node::append(Node* newNode) {
+    Node::append(Node* new_node) {
         Array* a = dynamic_cast<Array*>(this);
         if (!a)
             throw TypeError("array expected");
-        a->a.push_back(newNode);
+        a->a.push_back(new_node);
     }
 
     inline bool
-    Node::hasAtom(const std::string& id) {
+    Node::has_atom(const std::string& id) {
         if (Array* a = dynamic_cast<Array*>(this)) {
             for (int i = a->a.size(); i--;)
                 if (Atom* at = dynamic_cast<Atom*>(a->a[i]))
@@ -354,7 +354,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
 
     inline bool
-    Node::isCall(const std::string& id) {
+    Node::is_call(const std::string& id) {
         if (Call* a = dynamic_cast<Call*>(this)) {
             if (a->id == id)
                 return true;
@@ -363,14 +363,14 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
 
     inline Call*
-    Node::getCall(void) {
+    Node::get_call(void) {
         if (Call* a = dynamic_cast<Call*>(this))
             return a;
         throw TypeError("call expected");
     }
 
     inline bool
-    Node::hasCall(const std::string& id) {
+    Node::has_call(const std::string& id) {
         if (Array* a = dynamic_cast<Array*>(this)) {
             for (int i = a->a.size(); i--;)
                 if (Call* at = dynamic_cast<Call*>(a->a[i]))
@@ -384,7 +384,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
 
     inline bool
-    Node::isInt(int& i) {
+    Node::is_int(int& i) {
         if (IntLit* il = dynamic_cast<IntLit*>(this)) {
             i = il->i;
             return true;
@@ -393,7 +393,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
 
     inline bool
-    Node::isFloat(double& d) {
+    Node::is_float(double& d) {
         if (FloatLit* fl = dynamic_cast<FloatLit*>(this)) {
             d = fl->d;
             return true;
@@ -402,7 +402,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
 
     inline Call*
-    Node::getCall(const std::string& id) {
+    Node::get_call(const std::string& id) {
         if (Array* a = dynamic_cast<Array*>(this)) {
             for (int i = a->a.size(); i--;)
                 if (Call* at = dynamic_cast<Call*>(a->a[i]))
@@ -416,126 +416,126 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
 
     inline Array*
-    Node::getArray(void) {
+    Node::get_array(void) {
         if (Array* a = dynamic_cast<Array*>(this))
             return a;
         throw TypeError("array expected");
     }
 
     inline Atom*
-    Node::getAtom(void) {
+    Node::get_atom(void) {
         if (Atom* a = dynamic_cast<Atom*>(this))
             return a;
         throw TypeError("atom expected");
     }
 
     inline std::string
-    Node::getVarName(void) {
+    Node::get_var_name(void) {
         if (Var* a = dynamic_cast<Var*>(this))
             return a->n;
         throw TypeError("variable expected");
     }
     inline int
-    Node::getIntVar(void) {
+    Node::get_int_var(void) {
         if (IntVar* a = dynamic_cast<IntVar*>(this))
             return a->i;
         throw TypeError("integer variable expected");
     }
     inline int
-    Node::getBoolVar(void) {
+    Node::get_bool_var(void) {
         if (BoolVar* a = dynamic_cast<BoolVar*>(this))
             return a->i;
         throw TypeError("bool variable expected");
     }
     inline int
-    Node::getFloatVar(void) {
+    Node::get_float_var(void) {
         if (FloatVar* a = dynamic_cast<FloatVar*>(this))
             return a->i;
         throw TypeError("integer variable expected");
     }
     inline int
-    Node::getSetVar(void) {
+    Node::get_set_var(void) {
         if (SetVar* a = dynamic_cast<SetVar*>(this))
             return a->i;
         throw TypeError("set variable expected");
     }
     inline int
-    Node::getInt(void) {
+    Node::get_int(void) {
         if (IntLit* a = dynamic_cast<IntLit*>(this))
             return a->i;
         throw TypeError("integer literal expected");
     }
     inline bool
-    Node::getBool(void) {
+    Node::get_bool(void) {
         if (BoolLit* a = dynamic_cast<BoolLit*>(this))
             return a->b;
         throw TypeError("bool literal expected");
     }
     inline double
-    Node::getFloat(void) {
+    Node::get_float(void) {
         if (FloatLit* a = dynamic_cast<FloatLit*>(this))
             return a->d;
         throw TypeError("float literal expected");
     }
     inline SetLit*
-    Node::getSet(void) {
+    Node::get_set(void) {
         if (SetLit* a = dynamic_cast<SetLit*>(this))
             return a;
         throw TypeError("set literal expected");
     }
     inline std::string
-    Node::getString(void) {
+    Node::get_string(void) {
         if (String* a = dynamic_cast<String*>(this))
             return a->s;
         throw TypeError("string literal expected");
     }
     inline bool
-    Node::isIntVar(void) {
+    Node::is_int_var(void) {
         return (dynamic_cast<IntVar*>(this) != nullptr);
     }
     inline bool
-    Node::isBoolVar(void) {
+    Node::is_bool_var(void) {
         return (dynamic_cast<BoolVar*>(this) != nullptr);
     }
     inline bool
-    Node::isSetVar(void) {
+    Node::is_set_var(void) {
         return (dynamic_cast<SetVar*>(this) != nullptr);
     }
     inline bool
-    Node::isFloatVar(void) {
+    Node::is_float_var(void) {
         return (dynamic_cast<FloatVar*>(this) != nullptr);
     }
     inline bool
-    Node::isInt(void) {
+    Node::is_int(void) {
         return (dynamic_cast<IntLit*>(this) != nullptr);
     }
     inline bool
-    Node::isBool(void) {
+    Node::is_bool(void) {
         return (dynamic_cast<BoolLit*>(this) != nullptr);
     }
     inline bool
-    Node::isFloat(void) {
+    Node::is_float(void) {
         return (dynamic_cast<FloatLit*>(this) != nullptr);
     }
     inline bool
-    Node::isSet(void) {
+    Node::is_set(void) {
         return (dynamic_cast<SetLit*>(this) != nullptr);
     }
     inline bool
-    Node::isString(void) {
+    Node::is_string(void) {
         return (dynamic_cast<String*>(this) != nullptr);
     }
     inline bool
-    Node::isArray(void) {
+    Node::is_array(void) {
         return (dynamic_cast<Array*>(this) != nullptr);
     }
     inline bool
-    Node::isAtom(void) {
+    Node::is_atom(void) {
         return (dynamic_cast<Atom*>(this) != nullptr);
     }
 
     inline Node*
-    extractSingleton(Node* n) {
+    extract_singleton(Node* n) {
         if (Array* a = dynamic_cast<Array*>(n)) {
             if (a->a.size() == 1) {
                 Node* ret = a->a[0];

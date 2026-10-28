@@ -58,7 +58,7 @@ namespace Gecode { namespace Set { namespace Element {
 
         // s2 \subseteq {0,...,n-1}
         Iter::Ranges::Singleton s(0, n - 1);
-        GECODE_ME_CHECK(x1.intersectI(home, s));
+        GECODE_ME_CHECK(x1.intersect_i(home, s));
         (void)new (home) ElementDisjoint(home, xs, x1);
         return ES_OK;
     }
@@ -104,12 +104,12 @@ namespace Gecode { namespace Set { namespace Element {
             // Compute union of all selected elements' lower bounds
             GlbRanges<RView> x1lb(x1);
             Iter::Ranges::ToValues<GlbRanges<RView>> vx1lb(x1lb);
-            GLBndSet unionOfSelected(home);
+            GLBndSet union_of_selected(home);
             for (int i = 0; vx1lb(); ++vx1lb) {
                 while (iv[i].idx < vx1lb.val())
                     i++;
                 GlbRanges<SView> clb(iv[i].view);
-                unionOfSelected.includeI(home, clb);
+                union_of_selected.include_i(home, clb);
             }
 
             {
@@ -154,13 +154,13 @@ namespace Gecode { namespace Set { namespace Element {
                     assert(iv[i].idx == vx1u.val());
 
                     SView candidate = iv[i].view;
-                    int candidateInd = iv[i].idx;
+                    int candidate_ind = iv[i].idx;
 
                     GlbRanges<SView> clb(candidate);
-                    BndSetRanges uos(unionOfSelected);
+                    BndSetRanges uos(union_of_selected);
                     Iter::Ranges::Inter<GlbRanges<SView>, BndSetRanges> inter(clb, uos);
                     if (inter()) {
-                        ModEvent me = x1.exclude(home, candidateInd);
+                        ModEvent me = x1.exclude(home, candidate_ind);
                         fix_flag |= me_modified(me);
                         GECODE_ME_CHECK(me);
 
@@ -175,7 +175,7 @@ namespace Gecode { namespace Set { namespace Element {
                     ++j;
                 }
 
-                unionOfSelected.dispose(home);
+                union_of_selected.dispose(home);
 
                 // copy remaining variables
                 for (int k = i; k < n; k++) {
@@ -186,7 +186,7 @@ namespace Gecode { namespace Set { namespace Element {
                 iv.size(n);
             }
 
-            if (x1.cardMax() == 0) {
+            if (x1.card_max() == 0) {
                 // Selector is empty, we're done
                 return home.ES_SUBSUMED(*this);
             }
@@ -209,7 +209,7 @@ namespace Gecode { namespace Set { namespace Element {
                         assert(iv[j].idx == vx1lb2.val());
                         if (iv[i].idx != iv[j].idx) {
                             GlbRanges<SView> xilb(iv[i].view);
-                            ModEvent me = iv[j].view.excludeI(home, xilb);
+                            ModEvent me = iv[j].view.exclude_i(home, xilb);
                             fix_flag |= me_modified(me);
                             GECODE_ME_CHECK(me);
                         }
@@ -220,12 +220,12 @@ namespace Gecode { namespace Set { namespace Element {
             // remove all elements from the selector that overlap
             // with all other possibly selected elements, if
             // at least two more elements need to be selected
-            if (x1.cardMin() - x1.glbSize() > 1) {
+            if (x1.card_min() - x1.glb_size() > 1) {
                 UnknownRanges<RView> x1u(x1);
                 Iter::Ranges::Cache x1uc(r, x1u);
                 Iter::Ranges::ToValues<Iter::Ranges::Cache> vx1u(x1uc);
 
-                for (; vx1u() && x1.cardMin() - x1.glbSize() > 1; ++vx1u) {
+                for (; vx1u() && x1.card_min() - x1.glb_size() > 1; ++vx1u) {
                     int i = 0;
                     while (iv[i].idx < vx1u.val())
                         i++;
@@ -265,7 +265,7 @@ namespace Gecode { namespace Set { namespace Element {
             Iter::Ranges::Cache x1uc(r, x1u);
             Iter::Ranges::ToValues<Iter::Ranges::Cache> vx1u(x1uc);
 
-            for (; x1.cardMin() - x1.glbSize() == 2 && vx1u(); ++vx1u) {
+            for (; x1.card_min() - x1.glb_size() == 2 && vx1u(); ++vx1u) {
                 int i = 0;
                 while (iv[i].idx < vx1u.val())
                     i++;

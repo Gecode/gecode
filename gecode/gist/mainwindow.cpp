@@ -42,135 +42,135 @@ namespace Gecode { namespace Gist {
     AboutGist::AboutGist(QWidget* parent) : QDialog(parent) {
 
         Logos logos;
-        QPixmap myPic;
-        myPic.loadFromData(logos.logo, logos.logoSize);
+        QPixmap my_pic;
+        my_pic.loadFromData(logos.logo, logos.logo_size);
 
-        QPixmap myPic2;
-        myPic2.loadFromData(logos.gistLogo, logos.gistLogoSize);
-        setWindowIcon(myPic2);
+        QPixmap my_pic2;
+        my_pic2.loadFromData(logos.gist_logo, logos.gist_logo_size);
+        setWindowIcon(my_pic2);
 
         setMinimumSize(300, 240);
         setMaximumSize(300, 240);
         QVBoxLayout* layout = new QVBoxLayout();
         QLabel* logo = new QLabel();
-        logo->setPixmap(myPic);
+        logo->setPixmap(my_pic);
         layout->addWidget(logo, 0, Qt::AlignCenter);
-        QLabel* aboutLabel = new QLabel(tr("<h2>Gist</h2>"
-                                           "<p><b>The Gecode Interactive Search Tool</b</p> "
-                                           "<p>You can find more information about Gecode and Gist "
-                                           "at</p>"
-                                           "<p><a href='http://www.gecode.dev'>www.gecode.dev</a>"
-                                           "</p"));
-        aboutLabel->setOpenExternalLinks(true);
-        aboutLabel->setWordWrap(true);
-        aboutLabel->setAlignment(Qt::AlignCenter);
-        layout->addWidget(aboutLabel);
+        QLabel* about_label = new QLabel(tr("<h2>Gist</h2>"
+                                            "<p><b>The Gecode Interactive Search Tool</b</p> "
+                                            "<p>You can find more information about Gecode and Gist "
+                                            "at</p>"
+                                            "<p><a href='http://www.gecode.dev'>www.gecode.dev</a>"
+                                            "</p"));
+        about_label->setOpenExternalLinks(true);
+        about_label->setWordWrap(true);
+        about_label->setAlignment(Qt::AlignCenter);
+        layout->addWidget(about_label);
         setLayout(layout);
         setWindowTitle(tr("About Gist"));
         setAttribute(Qt::WA_QuitOnClose, false);
         setAttribute(Qt::WA_DeleteOnClose, false);
     }
 
-    GistMainWindow::GistMainWindow(Space* root, bool bab, const Options& opt0) : opt(opt0), aboutGist(this) {
+    GistMainWindow::GistMainWindow(Space* root, bool bab, const Options& opt0) : opt(opt0), about_gist(this) {
         c = new Gist(root, bab, this, opt);
         setCentralWidget(c);
         setWindowTitle(tr("Gist"));
 
         Logos logos;
-        QPixmap myPic;
-        myPic.loadFromData(logos.gistLogo, logos.gistLogoSize);
-        setWindowIcon(myPic);
+        QPixmap my_pic;
+        my_pic.loadFromData(logos.gist_logo, logos.gist_logo_size);
+        setWindowIcon(my_pic);
 
         resize(500, 500);
         setMinimumSize(400, 200);
 
-        menuBar = new QMenuBar(0);
+        menu_bar = new QMenuBar(nullptr);
 
-        QMenu* fileMenu = menuBar->addMenu(tr("&File"));
-        fileMenu->addAction(c->print);
+        QMenu* file_menu = menu_bar->addMenu(tr("&File"));
+        file_menu->addAction(c->print);
 #if QT_VERSION >= 0x040400
-        fileMenu->addAction(c->exportWholeTreePDF);
+        file_menu->addAction(c->export_whole_tree_pdf);
 #endif
-        QAction* quitAction = fileMenu->addAction(tr("Quit"));
-        quitAction->setShortcut(QKeySequence("Ctrl+Q"));
-        connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
-        prefAction = fileMenu->addAction(tr("Preferences"));
-        connect(prefAction, SIGNAL(triggered()), this, SLOT(preferences()));
+        QAction* quit_action = file_menu->addAction(tr("Quit"));
+        quit_action->setShortcut(QKeySequence("Ctrl+Q"));
+        connect(quit_action, SIGNAL(triggered()), this, SLOT(close()));
+        pref_action = file_menu->addAction(tr("Preferences"));
+        connect(pref_action, SIGNAL(triggered()), this, SLOT(preferences()));
 
-        QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
+        QMenu* node_menu = menu_bar->addMenu(tr("&Node"));
 
-        inspectNodeMenu = new QMenu("Inspect");
-        inspectNodeMenu->addAction(c->inspect);
-        connect(inspectNodeMenu, SIGNAL(aboutToShow()), this, SLOT(populateInspectors()));
+        inspect_node_menu = new QMenu("Inspect");
+        inspect_node_menu->addAction(c->inspect);
+        connect(inspect_node_menu, SIGNAL(aboutToShow()), this, SLOT(populate_inspectors()));
 
-        inspectNodeBeforeFPMenu = new QMenu("Inspect before fixpoint");
-        inspectNodeBeforeFPMenu->addAction(c->inspectBeforeFP);
-        connect(inspectNodeBeforeFPMenu, SIGNAL(aboutToShow()), this, SLOT(populateInspectors()));
-        populateInspectors();
+        inspect_node_before_fp_menu = new QMenu("Inspect before fixpoint");
+        inspect_node_before_fp_menu->addAction(c->inspect_before_fp);
+        connect(inspect_node_before_fp_menu, SIGNAL(aboutToShow()), this, SLOT(populate_inspectors()));
+        populate_inspectors();
 
-        nodeMenu->addMenu(inspectNodeMenu);
-        nodeMenu->addMenu(inspectNodeBeforeFPMenu);
-        nodeMenu->addAction(c->compareNode);
-        nodeMenu->addAction(c->compareNodeBeforeFP);
-        nodeMenu->addAction(c->setPath);
-        nodeMenu->addAction(c->inspectPath);
-        nodeMenu->addAction(c->showNodeStats);
-        bookmarksMenu = new QMenu("Bookmarks");
-        bookmarksMenu->addAction(c->bookmarkNode);
-        connect(bookmarksMenu, SIGNAL(aboutToShow()), this, SLOT(populateBookmarks()));
-        nodeMenu->addMenu(bookmarksMenu);
-        nodeMenu->addSeparator();
-        nodeMenu->addAction(c->navUp);
-        nodeMenu->addAction(c->navDown);
-        nodeMenu->addAction(c->navLeft);
-        nodeMenu->addAction(c->navRight);
-        nodeMenu->addAction(c->navRoot);
-        nodeMenu->addAction(c->navNextSol);
-        nodeMenu->addAction(c->navPrevSol);
-        nodeMenu->addSeparator();
-        nodeMenu->addAction(c->toggleHidden);
-        nodeMenu->addAction(c->hideFailed);
-        nodeMenu->addAction(c->unhideAll);
-        nodeMenu->addAction(c->labelBranches);
-        nodeMenu->addAction(c->labelPath);
-        nodeMenu->addAction(c->toggleStop);
-        nodeMenu->addAction(c->unstopAll);
-        nodeMenu->addSeparator();
-        nodeMenu->addAction(c->zoomToFit);
-        nodeMenu->addAction(c->center);
+        node_menu->addMenu(inspect_node_menu);
+        node_menu->addMenu(inspect_node_before_fp_menu);
+        node_menu->addAction(c->compare_node);
+        node_menu->addAction(c->compare_node_before_fp);
+        node_menu->addAction(c->set_path);
+        node_menu->addAction(c->inspect_path);
+        node_menu->addAction(c->show_node_stats);
+        bookmarks_menu = new QMenu("Bookmarks");
+        bookmarks_menu->addAction(c->bookmark_node);
+        connect(bookmarks_menu, SIGNAL(aboutToShow()), this, SLOT(populate_bookmarks()));
+        node_menu->addMenu(bookmarks_menu);
+        node_menu->addSeparator();
+        node_menu->addAction(c->nav_up);
+        node_menu->addAction(c->nav_down);
+        node_menu->addAction(c->nav_left);
+        node_menu->addAction(c->nav_right);
+        node_menu->addAction(c->nav_root);
+        node_menu->addAction(c->nav_next_sol);
+        node_menu->addAction(c->nav_prev_sol);
+        node_menu->addSeparator();
+        node_menu->addAction(c->toggle_hidden);
+        node_menu->addAction(c->hide_failed);
+        node_menu->addAction(c->unhide_all);
+        node_menu->addAction(c->label_branches);
+        node_menu->addAction(c->label_path);
+        node_menu->addAction(c->toggle_stop);
+        node_menu->addAction(c->unstop_all);
+        node_menu->addSeparator();
+        node_menu->addAction(c->zoom_to_fit);
+        node_menu->addAction(c->center);
 #if QT_VERSION >= 0x040400
-        nodeMenu->addAction(c->exportPDF);
+        node_menu->addAction(c->export_pdf);
 #endif
 
-        QMenu* searchMenu = menuBar->addMenu(tr("&Search"));
-        searchMenu->addAction(c->searchNext);
-        searchMenu->addAction(c->searchAll);
-        searchMenu->addSeparator();
-        searchMenu->addAction(c->stop);
-        searchMenu->addSeparator();
-        searchMenu->addAction(c->reset);
+        QMenu* search_menu = menu_bar->addMenu(tr("&Search"));
+        search_menu->addAction(c->search_next);
+        search_menu->addAction(c->search_all);
+        search_menu->addSeparator();
+        search_menu->addAction(c->stop);
+        search_menu->addSeparator();
+        search_menu->addAction(c->reset);
 
-        QMenu* toolsMenu = menuBar->addMenu(tr("&Tools"));
-        doubleClickInspectorsMenu = new QMenu("Double click Inspectors");
-        connect(doubleClickInspectorsMenu, SIGNAL(aboutToShow()), this, SLOT(populateInspectorSelection()));
-        toolsMenu->addMenu(doubleClickInspectorsMenu);
-        solutionInspectorsMenu = new QMenu("Solution inspectors");
-        connect(solutionInspectorsMenu, SIGNAL(aboutToShow()), this, SLOT(populateInspectorSelection()));
-        toolsMenu->addMenu(solutionInspectorsMenu);
-        moveInspectorsMenu = new QMenu("Move inspectors");
-        connect(moveInspectorsMenu, SIGNAL(aboutToShow()), this, SLOT(populateInspectorSelection()));
-        toolsMenu->addMenu(moveInspectorsMenu);
-        comparatorsMenu = new QMenu("Comparators");
-        connect(comparatorsMenu, SIGNAL(aboutToShow()), this, SLOT(populateInspectorSelection()));
-        toolsMenu->addMenu(comparatorsMenu);
+        QMenu* tools_menu = menu_bar->addMenu(tr("&Tools"));
+        double_click_inspectors_menu = new QMenu("Double click Inspectors");
+        connect(double_click_inspectors_menu, SIGNAL(aboutToShow()), this, SLOT(populate_inspector_selection()));
+        tools_menu->addMenu(double_click_inspectors_menu);
+        solution_inspectors_menu = new QMenu("Solution inspectors");
+        connect(solution_inspectors_menu, SIGNAL(aboutToShow()), this, SLOT(populate_inspector_selection()));
+        tools_menu->addMenu(solution_inspectors_menu);
+        move_inspectors_menu = new QMenu("Move inspectors");
+        connect(move_inspectors_menu, SIGNAL(aboutToShow()), this, SLOT(populate_inspector_selection()));
+        tools_menu->addMenu(move_inspectors_menu);
+        comparators_menu = new QMenu("Comparators");
+        connect(comparators_menu, SIGNAL(aboutToShow()), this, SLOT(populate_inspector_selection()));
+        tools_menu->addMenu(comparators_menu);
 
-        QMenu* helpMenu = menuBar->addMenu(tr("&Help"));
-        QAction* aboutAction = helpMenu->addAction(tr("About"));
-        connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
+        QMenu* help_menu = menu_bar->addMenu(tr("&Help"));
+        QAction* about_action = help_menu->addAction(tr("About"));
+        connect(about_action, SIGNAL(triggered()), this, SLOT(about()));
 
         // Don't add the menu bar on Mac OS X
 #ifndef Q_WS_MAC
-        setMenuBar(menuBar);
+        setMenuBar(menu_bar);
 #endif
 
         // Set up status bar
@@ -178,29 +178,30 @@ namespace Gecode { namespace Gist {
         QHBoxLayout* hbl = new QHBoxLayout();
         hbl->setContentsMargins(0, 0, 0, 0);
         hbl->addWidget(new QLabel("Depth:"));
-        depthLabel = new QLabel("0");
-        hbl->addWidget(depthLabel);
+        depth_label = new QLabel("0");
+        hbl->addWidget(depth_label);
         hbl->addWidget(new NodeWidget(SOLVED));
-        solvedLabel = new QLabel("0");
-        hbl->addWidget(solvedLabel);
+        solved_label = new QLabel("0");
+        hbl->addWidget(solved_label);
         hbl->addWidget(new NodeWidget(FAILED));
-        failedLabel = new QLabel("0");
-        hbl->addWidget(failedLabel);
+        failed_label = new QLabel("0");
+        hbl->addWidget(failed_label);
         hbl->addWidget(new NodeWidget(BRANCH));
-        choicesLabel = new QLabel("0");
-        hbl->addWidget(choicesLabel);
+        choices_label = new QLabel("0");
+        hbl->addWidget(choices_label);
         hbl->addWidget(new NodeWidget(UNDETERMINED));
-        openLabel = new QLabel("     0");
-        hbl->addWidget(openLabel);
+        open_label = new QLabel("     0");
+        hbl->addWidget(open_label);
         stw->setLayout(hbl);
         statusBar()->addPermanentWidget(stw);
 
-        isSearching = false;
+        is_searching = false;
         statusBar()->showMessage("Ready");
 
-        connect(c, SIGNAL(statusChanged(const Statistics&, bool)), this, SLOT(statusChanged(const Statistics&, bool)));
+        connect(c, SIGNAL(status_changed(const Statistics&, bool)), this,
+                SLOT(status_changed(const Statistics&, bool)));
 
-        connect(c, SIGNAL(searchFinished(void)), this, SLOT(close(void)));
+        connect(c, SIGNAL(search_finished(void)), this, SLOT(close(void)));
 
         preferences(true);
         show();
@@ -216,14 +217,14 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    GistMainWindow::statusChanged(const Statistics& stats, bool finished) {
-        if (stats.maxDepth == 0) {
-            isSearching = false;
+    GistMainWindow::status_changed(const Statistics& stats, bool finished) {
+        if (stats.max_depth == 0) {
+            is_searching = false;
             statusBar()->showMessage("Ready");
-            prefAction->setEnabled(true);
-        } else if (isSearching && finished) {
-            isSearching = false;
-            double ms = searchTimer.stop();
+            pref_action->setEnabled(true);
+        } else if (is_searching && finished) {
+            is_searching = false;
+            double ms = search_timer.stop();
             double s = std::floor(ms / 1000.0);
             ms -= s * 1000.0;
             double m = std::floor(s / 60.0);
@@ -243,74 +244,74 @@ namespace Gecode { namespace Gist {
             // t += "."+QString().setNum(static_cast<int>(ms))+"s";
             // statusBar()->showMessage(QString("Ready (search time ")+t+")");
             statusBar()->showMessage("Ready");
-            prefAction->setEnabled(true);
-        } else if (!isSearching && !finished) {
-            prefAction->setEnabled(false);
+            pref_action->setEnabled(true);
+        } else if (!is_searching && !finished) {
+            pref_action->setEnabled(false);
             statusBar()->showMessage("Searching");
-            isSearching = true;
-            searchTimer.start();
+            is_searching = true;
+            search_timer.start();
         }
-        depthLabel->setNum(stats.maxDepth);
-        solvedLabel->setNum(stats.solutions);
-        failedLabel->setNum(stats.failures);
-        choicesLabel->setNum(stats.choices);
-        openLabel->setNum(stats.undetermined);
+        depth_label->setNum(stats.max_depth);
+        solved_label->setNum(stats.solutions);
+        failed_label->setNum(stats.failures);
+        choices_label->setNum(stats.choices);
+        open_label->setNum(stats.undetermined);
     }
 
     void
     GistMainWindow::about(void) {
-        aboutGist.show();
+        about_gist.show();
     }
 
     void
     GistMainWindow::preferences(bool setup) {
         PreferencesDialog pd(opt, this);
         if (setup) {
-            c->setAutoZoom(pd.zoom);
+            c->set_auto_zoom(pd.zoom);
         }
         if (setup || pd.exec() == QDialog::Accepted) {
-            c->setAutoHideFailed(pd.hideFailed);
-            c->setRefresh(pd.refresh);
-            c->setRefreshPause(pd.refreshPause);
-            c->setSmoothScrollAndZoom(pd.smoothScrollAndZoom);
-            c->setMoveDuringSearch(pd.moveDuringSearch);
-            c->setRecompDistances(pd.c_d, pd.a_d);
+            c->set_auto_hide_failed(pd.hide_failed);
+            c->set_refresh(pd.refresh);
+            c->set_refresh_pause(pd.refresh_pause);
+            c->set_smooth_scroll_and_zoom(pd.smooth_scroll_and_zoom);
+            c->set_move_during_search(pd.move_during_search);
+            c->set_recomp_distances(pd.c_d, pd.a_d);
             opt.c_d = pd.c_d;
             opt.a_d = pd.a_d;
-            c->setShowCopies(pd.copies);
+            c->set_show_copies(pd.copies);
         }
     }
 
     void
-    GistMainWindow::populateInspectorSelection(void) {
-        doubleClickInspectorsMenu->clear();
-        doubleClickInspectorsMenu->addActions(c->doubleClickInspectorGroup->actions());
-        solutionInspectorsMenu->clear();
-        solutionInspectorsMenu->addActions(c->solutionInspectorGroup->actions());
-        moveInspectorsMenu->clear();
-        moveInspectorsMenu->addActions(c->moveInspectorGroup->actions());
-        comparatorsMenu->clear();
-        comparatorsMenu->addActions(c->comparatorGroup->actions());
+    GistMainWindow::populate_inspector_selection(void) {
+        double_click_inspectors_menu->clear();
+        double_click_inspectors_menu->addActions(c->double_click_inspector_group->actions());
+        solution_inspectors_menu->clear();
+        solution_inspectors_menu->addActions(c->solution_inspector_group->actions());
+        move_inspectors_menu->clear();
+        move_inspectors_menu->addActions(c->move_inspector_group->actions());
+        comparators_menu->clear();
+        comparators_menu->addActions(c->comparator_group->actions());
     }
 
     void
-    GistMainWindow::populateBookmarks(void) {
-        bookmarksMenu->clear();
-        bookmarksMenu->addAction(c->bookmarkNode);
-        bookmarksMenu->addSeparator();
-        bookmarksMenu->addActions(c->bookmarksGroup->actions());
+    GistMainWindow::populate_bookmarks(void) {
+        bookmarks_menu->clear();
+        bookmarks_menu->addAction(c->bookmark_node);
+        bookmarks_menu->addSeparator();
+        bookmarks_menu->addActions(c->bookmarks_group->actions());
     }
 
     void
-    GistMainWindow::populateInspectors(void) {
-        inspectNodeMenu->clear();
-        inspectNodeMenu->addAction(c->inspect);
-        inspectNodeMenu->addSeparator();
-        inspectNodeMenu->addActions(c->inspectGroup->actions());
-        inspectNodeBeforeFPMenu->clear();
-        inspectNodeBeforeFPMenu->addAction(c->inspectBeforeFP);
-        inspectNodeBeforeFPMenu->addSeparator();
-        inspectNodeBeforeFPMenu->addActions(c->inspectBeforeFPGroup->actions());
+    GistMainWindow::populate_inspectors(void) {
+        inspect_node_menu->clear();
+        inspect_node_menu->addAction(c->inspect);
+        inspect_node_menu->addSeparator();
+        inspect_node_menu->addActions(c->inspect_group->actions());
+        inspect_node_before_fp_menu->clear();
+        inspect_node_before_fp_menu->addAction(c->inspect_before_fp);
+        inspect_node_before_fp_menu->addSeparator();
+        inspect_node_before_fp_menu->addActions(c->inspect_before_fp_group->actions());
     }
 
 }} // namespace Gecode::Gist

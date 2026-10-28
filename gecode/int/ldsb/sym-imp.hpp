@@ -35,7 +35,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Convert a \a DynamicStack<T,A> into an \a ArgArray<T>
     template <class T, class A>
     ArgArray<T>
-    dynamicStackToArgArray(const Support::DynamicStack<T, A>& s) {
+    dynamic_stack_to_arg_array(const Support::DynamicStack<T, A>& s) {
         ArgArray<T> a(s.entries());
         for (int i = 0; i < s.entries(); ++i) {
             a[i] = s[i];
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     template <class View>
     int
-    VariableSequenceSymmetryImp<View>::getVal(unsigned int sequence, unsigned int position) const {
+    VariableSequenceSymmetryImp<View>::get_val(unsigned int sequence, unsigned int position) const {
         return indices[sequence * seq_size + position];
     }
 
@@ -206,25 +206,25 @@ namespace Gecode { namespace Int { namespace LDSB {
         Region region;
         Support::DynamicStack<Literal, Region> s(region);
         if (l._variable < (int)lookup_size) {
-            int posIt = lookup[l._variable];
-            if (posIt == -1) {
-                return dynamicStackToArgArray(s);
+            int pos_it = lookup[l._variable];
+            if (pos_it == -1) {
+                return dynamic_stack_to_arg_array(s);
             }
-            unsigned int seqNum = posIt / seq_size;
-            unsigned int seqPos = posIt % seq_size;
+            unsigned int seq_num = pos_it / seq_size;
+            unsigned int seq_pos = pos_it % seq_size;
             for (unsigned int seq = 0; seq < n_seqs; seq++) {
-                if (seq == seqNum) {
+                if (seq == seq_num) {
                     continue;
                 }
-                if (x[getVal(seq, seqPos)].assigned()) {
+                if (x[get_val(seq, seq_pos)].assigned()) {
                     continue;
                 }
                 bool active = true;
-                const unsigned int* firstSeq = &indices[seqNum * seq_size];
-                const unsigned int* secondSeq = &indices[seq * seq_size];
+                const unsigned int* first_seq = &indices[seq_num * seq_size];
+                const unsigned int* second_seq = &indices[seq * seq_size];
                 for (unsigned int i = 0; i < seq_size; i++) {
-                    const View& xv = x[firstSeq[i]];
-                    const View& yv = x[secondSeq[i]];
+                    const View& xv = x[first_seq[i]];
+                    const View& yv = x[second_seq[i]];
                     if ((!xv.assigned() && !yv.assigned()) ||
                         (xv.assigned() && yv.assigned() && xv.val() == yv.val())) {
                         continue;
@@ -235,11 +235,11 @@ namespace Gecode { namespace Int { namespace LDSB {
                 }
 
                 if (active) {
-                    s.push(Literal(secondSeq[seqPos], l._value));
+                    s.push(Literal(second_seq[seq_pos], l._value));
                 }
             }
         }
-        return dynamicStackToArgArray(s);
+        return dynamic_stack_to_arg_array(s);
     }
 
     template <class View>
@@ -257,7 +257,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     template <class View>
     int
-    ValueSequenceSymmetryImp<View>::getVal(unsigned int sequence, unsigned int position) const {
+    ValueSequenceSymmetryImp<View>::get_val(unsigned int sequence, unsigned int position) const {
         return values[sequence * seq_size + position];
     }
 

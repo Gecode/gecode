@@ -51,8 +51,8 @@ namespace Test { namespace Int {
             /// Create and register test
             Single(int s0, int t0) : Test("Precede::Single::" + str(s0) + "<" + str(t0), 8, 1, 4), s(s0), t(t0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size();
                 for (int i = 0; i < n; i++) {
                     if (x[i] == t)
@@ -63,8 +63,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::precede(home, x, s, t);
             }
         };
@@ -78,11 +78,11 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             Multi(const Gecode::IntArgs& c0) : Test("Precede::Multi::" + str(c0), 6, 1, 5), c(c0) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int j = 0; j < c.size() - 1; j++)
                     for (int i = 0; i < x.size(); i++) {
                         if (x[i] == c[j + 1])
@@ -93,8 +93,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::precede(home, x, c);
             }
         };

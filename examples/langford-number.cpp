@@ -60,8 +60,8 @@ public:
         k = atoi(argv[2]);
     }
     /// Print help message
-    virtual void
-    help(void) {
+    void
+    help(void) override {
         Options::help();
         std::cerr << "\t(unsigned int) default: " << n << std::endl
                   << "\t\tparameter n" << std::endl
@@ -157,8 +157,8 @@ public:
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\t" << y << std::endl;
     }
 
@@ -167,8 +167,8 @@ public:
         y.update(*this, l.y);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new LangfordNumber(*this);
     }
 };

@@ -42,7 +42,7 @@ namespace {
     extern const char* specs[];
     extern const unsigned int n_examples;
     int spec_size(const char* s);
-    int mineField(const char* s, int n, int i, int j);
+    int mine_field(const char* s, int n, int i, int j);
 } // namespace
 
 /**
@@ -75,7 +75,7 @@ private:
 
     /// Return the fields in \a m around position (\a x,\a y)
     BoolVarArgs
-    fieldsAround(Matrix<BoolVarArray>& m, int x, int y) {
+    fields_around(Matrix<BoolVarArray>& m, int x, int y) {
         int bvsize = 0;
         for (int ix = std::max(0, x - 1); ix <= x + 1 && ix < size; ix++)
             for (int iy = std::max(0, y - 1); iy <= y + 1 && iy < size; iy++)
@@ -100,10 +100,10 @@ public:
         // Initialize matrix and post constraints
         for (int h = 0; h < size; h++)
             for (int w = 0; w < size; w++) {
-                int v = mineField(spec, size, h, w);
+                int v = mine_field(spec, size, h, w);
                 if (v != -1) {
                     rel(*this, m(w, h), IRT_EQ, 0);
-                    linear(*this, fieldsAround(m, w, h), IRT_EQ, v);
+                    linear(*this, fields_around(m, w, h), IRT_EQ, v);
                 }
             }
 
@@ -112,12 +112,12 @@ public:
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         for (int h = 0; h < size; ++h) {
             os << '\t';
             for (int w = 0; w < size; ++w) {
-                int v = mineField(spec, size, h, w);
+                int v = mine_field(spec, size, h, w);
                 if (v != -1)
                     os << v << " ";
                 else if (pos(h, w).val() == 1)
@@ -135,8 +135,8 @@ public:
         b.update(*this, s.b);
     }
     /// Copy space during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new MineSweeper(*this);
     }
 };
@@ -280,7 +280,7 @@ namespace {
 
     /// Return value at position (\a i,\a j) in the example \a s of size \a n
     int
-    mineField(const char* s, int n, int i, int j) {
+    mine_field(const char* s, int n, int i, int j) {
         assert(spec_size(s) == n);
         assert(i >= 0 && i < n);
         assert(j >= 0 && j < n);

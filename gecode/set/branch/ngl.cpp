@@ -45,7 +45,7 @@ namespace Gecode { namespace Set { namespace Branch {
             return NGL::SUBSUMED;
         else
             // Is n not in the lub(x)?
-            return x.notContains(n) ? NGL::FAILED : NGL::NONE;
+            return x.not_contains(n) ? NGL::FAILED : NGL::NONE;
     }
     ExecStatus
     IncNGL::prune(Space& home) {
@@ -59,7 +59,7 @@ namespace Gecode { namespace Set { namespace Branch {
     NGL::Status
     ExcNGL::status(const Space&) const {
         // Is n not in the lub(x)?
-        if (x.notContains(n))
+        if (x.not_contains(n))
             return NGL::SUBSUMED;
         else
             // Is n in the lub(x)?

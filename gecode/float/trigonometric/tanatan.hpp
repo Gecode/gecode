@@ -37,7 +37,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
      */
     template <class V>
     void
-    aTanProject(Rounding& r, const V& aTanIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min, int& n_max) {
+    a_tan_project(Rounding& r, const V& aTanIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min, int& n_max) {
 #define I0_PI_2I FloatVal(0, pi_half_upper())
 #define POS(X) ((I0_PI_2I.in(X)) ? 0 : 1)
 #define ATANINF_DOWN r.atan_down(aTanIv.min())
@@ -104,7 +104,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
     template <class A, class B>
     ExecStatus
-    Tan<A, B>::dopropagate(Space& home, A x0, B x1) {
+    Tan<A, B>::propagate_bounds(Space& home, A x0, B x1) {
         Rounding r;
         int n_min = static_cast<int>(r.div_up(x0.min() + pi_half_upper(), pi_upper()));
         int n_max = static_cast<int>(r.div_up(x0.max() + pi_half_upper(), pi_upper()));
@@ -151,7 +151,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
                 n_max--;
             FloatNum iv_min = r.sub_down(x0.min(), r.mul_down(n_min, pi_upper()));
             FloatNum iv_max = r.sub_up(x0.max(), r.mul_down(n_max, pi_upper()));
-            aTanProject(r, x1, iv_min, iv_max, n_min, n_max);
+            a_tan_project(r, x1, iv_min, iv_max, n_min, n_max);
             FloatNum n_iv_min = r.add_down(iv_min, r.mul_down(n_min, pi_upper()));
             FloatNum n_iv_max = r.add_up(iv_max, r.mul_down(n_max, pi_upper()));
             if (n_iv_min > n_iv_max)
@@ -179,7 +179,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
                 GECODE_ME_CHECK(x0.gq(home, 0));
 #undef I0_PI_2I
         }
-        GECODE_ES_CHECK(dopropagate(home, x0, x1));
+        GECODE_ES_CHECK(propagate_bounds(home, x0, x1));
         (void)new (home) Tan<A, B>(home, x0, x1);
         return ES_OK;
     }
@@ -198,7 +198,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     template <class A, class B>
     ExecStatus
     Tan<A, B>::propagate(Space& home, const ModEventDelta&) {
-        GECODE_ES_CHECK(dopropagate(home, x0, x1));
+        GECODE_ES_CHECK(propagate_bounds(home, x0, x1));
         return (x0.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 

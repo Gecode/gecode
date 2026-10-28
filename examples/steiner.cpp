@@ -55,23 +55,23 @@ public:
     /// Order of the Steiner problem
     int n;
     /// Number of Steiner triples
-    int noOfTriples;
+    int no_of_triples;
 
     /// The steiner triples
     SetVarArray triples;
 
     /// Actual model
     Steiner(const SizeOptions& opt)
-        : Script(opt), n(opt.size()), noOfTriples((n * (n - 1)) / 6),
-          triples(*this, noOfTriples, IntSet::empty, 1, n, 3U, 3U) {
+        : Script(opt), n(opt.size()), no_of_triples((n * (n - 1)) / 6),
+          triples(*this, no_of_triples, IntSet::empty, 1, n, 3U, 3U) {
 
-        for (int i = 0; i < noOfTriples; i++) {
-            for (int j = i + 1; j < noOfTriples; j++) {
+        for (int i = 0; i < no_of_triples; i++) {
+            for (int j = i + 1; j < no_of_triples; j++) {
                 SetVar x = triples[i];
                 SetVar y = triples[j];
 
-                SetVar atmostOne(*this, IntSet::empty, 1, n, 0U, 1U);
-                rel(*this, (x & y) == atmostOne);
+                SetVar atmost_one(*this, IntSet::empty, 1, n, 0U, 1U);
+                rel(*this, (x & y) == atmost_one);
 
                 IntVar x1(*this, 1, n);
                 IntVar x2(*this, 1, n);
@@ -96,8 +96,8 @@ public:
                      * Using matching constraints
                      */
 
-                    channelSorted(*this, {x1, x2, x3}, x);
-                    channelSorted(*this, {y1, y2, y3}, y);
+                    channel_sorted(*this, {x1, x2, x3}, x);
+                    channel_sorted(*this, {y1, y2, y3}, y);
                 } else if (opt.model() == MODEL_SEQ) {
                     SetVar sx1 = expr(*this, singleton(x1));
                     SetVar sx2 = expr(*this, singleton(x2));
@@ -126,19 +126,19 @@ public:
         branch(*this, triples, SET_VAR_NONE(), SET_VAL_MIN_INC());
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        for (int i = 0; i < noOfTriples; i++) {
+    void
+    print(std::ostream& os) const override {
+        for (int i = 0; i < no_of_triples; i++) {
             os << "\t[" << i << "] = " << triples[i] << std::endl;
         }
     }
     /// Constructor for copying \a s
-    Steiner(Steiner& s) : Script(s), n(s.n), noOfTriples(s.noOfTriples) {
+    Steiner(Steiner& s) : Script(s), n(s.n), no_of_triples(s.no_of_triples) {
         triples.update(*this, s.triples);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Steiner(*this);
     }
 };

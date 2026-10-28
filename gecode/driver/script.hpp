@@ -74,8 +74,8 @@ namespace Gecode { namespace Driver {
             SR_INT = 1 << 4      ///< Interrupted by user
         };
         /// Test whether search must be stopped
-        virtual bool
-        stop(const Search::Statistics& s, const Search::Options& o) {
+        bool
+        stop(const Search::Statistics& s, const Search::Options& o) override {
             return sigint || ((ns != nullptr) && ns->stop(s, o)) || ((fs != nullptr) && fs->stop(s, o)) ||
                    ((ts != nullptr) && ts->stop(s, o)) || ((rs != nullptr) && rs->stop(s, o));
         }
@@ -102,7 +102,7 @@ namespace Gecode { namespace Driver {
         interrupt(DWORD t) noexcept {
             if (t == CTRL_C_EVENT) {
                 sigint = true;
-                installCtrlHandler(false, true);
+                install_ctrl_handler(false, true);
                 return true;
             }
             return false;
@@ -112,12 +112,12 @@ namespace Gecode { namespace Driver {
         static void
         interrupt(int) {
             sigint = true;
-            installCtrlHandler(false, true);
+            install_ctrl_handler(false, true);
         }
 #endif
         /// Install handler for catching Ctrl-C
         static void
-        installCtrlHandler(bool install, bool force = false) {
+        install_ctrl_handler(bool install, bool force = false) {
             if (force || !sigint) {
 #ifdef GECODE_THREADS_WINDOWS
                 SetConsoleCtrlHandler((PHANDLER_ROUTINE)interrupt, install);
@@ -127,7 +127,7 @@ namespace Gecode { namespace Driver {
             }
         }
         /// Destructor
-        ~CombinedStop(void) {
+        ~CombinedStop(void) override {
             delete ns;
             delete fs;
             delete ts;
@@ -154,7 +154,7 @@ namespace Gecode { namespace Driver {
     /// Create cutoff object from options
     template <class Options>
     inline Search::Cutoff*
-    createCutoff(const Options& o) {
+    create_cutoff(const Options& o) {
         switch (o.restart()) {
         case RM_NONE:
             return nullptr;
@@ -227,7 +227,7 @@ namespace Gecode { namespace Driver {
         /// Initialize
         ScriptGetInfo(void);
         /// Return info for a space (which must be a script)
-        virtual std::string getInfo(const Space& home) const;
+        std::string get_info(const Space& home) const override;
     };
 
 #endif
@@ -272,7 +272,7 @@ namespace Gecode { namespace Driver {
 
     template <class BaseSpace>
     std::string
-    ScriptGetInfo<BaseSpace>::getInfo(const Space& home) const {
+    ScriptGetInfo<BaseSpace>::get_info(const Space& home) const {
         std::stringstream ss;
         if (const ScriptBase<BaseSpace>* sb = dynamic_cast<const ScriptBase<BaseSpace>*>(&home))
             sb->print(ss);
@@ -299,11 +299,11 @@ namespace Gecode { namespace Driver {
             exit(EXIT_FAILURE);
         }
         if (o.restart() != RM_NONE) {
-            runMeta<Script, Engine, Options, RBS>(o, s);
+            run_meta<Script, Engine, Options, RBS>(o, s);
         } else if (o.assets() > 0) {
-            runMeta<Script, Engine, Options, PBS>(o, s);
+            run_meta<Script, Engine, Options, PBS>(o, s);
         } else {
-            runMeta<Script, Engine, Options, EngineToMeta>(o, s);
+            run_meta<Script, Engine, Options, EngineToMeta>(o, s);
         }
     }
 
@@ -311,7 +311,7 @@ namespace Gecode { namespace Driver {
     template <class Script, template <class> class Engine, class Options,
               template <class, template <class> class> class Meta>
     void
-    ScriptBase<BaseSpace>::runMeta(const Options& o, Script* s) {
+    ScriptBase<BaseSpace>::run_meta(const Options& o, Script* s) {
         using namespace std;
 
         ofstream sol_file, log_file;
@@ -357,9 +357,9 @@ namespace Gecode { namespace Driver {
             {
 #ifdef GECODE_HAS_CPPROFILER
                 if (o.profiler_port()) {
-                    CPProfilerSearchTracer::GetInfo* getInfo = nullptr;
-                    getInfo = new ScriptGetInfo<BaseSpace>;
-                    so.tracer = new CPProfilerSearchTracer(o.profiler_id(), o.name(), o.profiler_port(), getInfo);
+                    CPProfilerSearchTracer::GetInfo* get_info = nullptr;
+                    get_info = new ScriptGetInfo<BaseSpace>;
+                    so.tracer = new CPProfilerSearchTracer(o.profiler_id(), o.name(), o.profiler_port(), get_info);
                 }
 #endif
                 l_out << o.name() << endl;
@@ -378,14 +378,14 @@ namespace Gecode { namespace Driver {
                 so.assets = o.assets();
                 so.slice = o.slice();
                 so.stop = CombinedStop::create(o.node(), o.fail(), o.time(), o.restart_limit(), o.interrupt());
-                so.cutoff = createCutoff(o);
+                so.cutoff = create_cutoff(o);
 #ifdef GECODE_HAS_EXPERIMENTAL
                 so.guidance = o.guidance();
 #endif
                 so.clone = false;
                 so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
                 if (o.interrupt())
-                    CombinedStop::installCtrlHandler(true);
+                    CombinedStop::install_ctrl_handler(true);
                 {
                     Meta<Script, Engine> e(s, so);
                     if (o.print_last()) {
@@ -415,7 +415,7 @@ namespace Gecode { namespace Driver {
                         } while (s_n < s_l);
                     }
                     if (o.interrupt())
-                        CombinedStop::installCtrlHandler(false);
+                        CombinedStop::install_ctrl_handler(false);
                     Search::Statistics stat = e.statistics();
                     s_out << endl;
                     if (e.stopped()) {
@@ -477,13 +477,13 @@ namespace Gecode { namespace Driver {
                 so.a_d = o.a_d();
                 so.d_l = o.d_l();
                 so.stop = CombinedStop::create(o.node(), o.fail(), o.time(), o.restart_limit(), o.interrupt());
-                so.cutoff = createCutoff(o);
+                so.cutoff = create_cutoff(o);
 #ifdef GECODE_HAS_EXPERIMENTAL
                 so.guidance = o.guidance();
 #endif
                 so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
                 if (o.interrupt())
-                    CombinedStop::installCtrlHandler(true);
+                    CombinedStop::install_ctrl_handler(true);
                 {
                     Meta<Script, Engine> e(s, so);
                     do {
@@ -494,7 +494,7 @@ namespace Gecode { namespace Driver {
                         s_n++;
                     } while (s_n < s_l);
                     if (o.interrupt())
-                        CombinedStop::installCtrlHandler(false);
+                        CombinedStop::install_ctrl_handler(false);
                     Search::Statistics stat = e.statistics();
                     l_out << endl
                           << "\tpropagators:  " << n_p << endl
@@ -536,7 +536,7 @@ namespace Gecode { namespace Driver {
                         sok.a_d = o.a_d();
                         sok.d_l = o.d_l();
                         sok.stop = CombinedStop::create(o.node(), o.fail(), o.time(), o.restart_limit(), false);
-                        sok.cutoff = createCutoff(o);
+                        sok.cutoff = create_cutoff(o);
 #ifdef GECODE_HAS_EXPERIMENTAL
                         sok.guidance = o.guidance();
 #endif

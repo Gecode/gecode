@@ -72,27 +72,27 @@ namespace Test { namespace Int {
                            "::" + str(a0.size()),
                        a0.size(), d, ipl != Gecode::IPL_DOM, ipl),
                   a(a0), irt(irt0), c(c0) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double e = 0.0;
                 for (int i = 0; i < x.size(); i++)
                     e += a[i] * x[i];
                 return cmp(e, irt, static_cast<double>(c));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 if (one(a))
                     Gecode::linear(home, x, irt, c, ipl);
                 else
                     Gecode::linear(home, a, x, irt, c, ipl);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 if (one(a))
                     Gecode::linear(home, x, irt, c, r, ipl);
                 else
@@ -116,19 +116,19 @@ namespace Test { namespace Int {
                        "Linear::Int::Var::" + str(irt0) + "::" + str(ipl) + "::" + s + "::" + str(a0.size()),
                        a0.size() + 1, d, ipl != Gecode::IPL_DOM, ipl),
                   a(a0), irt(irt0) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double e = 0.0;
                 for (int i = 0; i < a.size(); i++)
                     e += a[i] * x[i];
                 return cmp(e, irt, static_cast<double>(x[a.size()]));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = a.size();
                 Gecode::IntVarArgs y(n);
                 for (int i = n; i--;)
@@ -139,8 +139,8 @@ namespace Test { namespace Int {
                     Gecode::linear(home, a, y, irt, x[n], ipl);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 int n = a.size();
                 Gecode::IntVarArgs y(n);
                 for (int i = n; i--;)
@@ -169,19 +169,19 @@ namespace Test { namespace Int {
                        "Linear::Bool::Int::" + str(irt0) + "::" + s + "::" + str(a0.size()) + "::" + str(c0), a0.size(),
                        0, 1, true, Gecode::IPL_DEF),
                   a(a0), irt(irt0), c(c0) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double e = 0.0;
                 for (int i = 0; i < x.size(); i++)
                     e += a[i] * x[i];
                 return cmp(e, irt, static_cast<double>(c));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::BoolVarArgs y(x.size());
                 for (int i = x.size(); i--;)
                     y[i] = Gecode::channel(home, x[i]);
@@ -191,8 +191,8 @@ namespace Test { namespace Int {
                     Gecode::linear(home, a, y, irt, c, Gecode::IPL_DEF);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::BoolVarArgs y(x.size());
                 for (int i = x.size(); i--;)
                     y[i] = Gecode::channel(home, x[i]);
@@ -216,11 +216,11 @@ namespace Test { namespace Int {
             BoolVar(const std::string& s, int min, int max, const Gecode::IntArgs& a0, Gecode::IntRelType irt0)
                 : Test(TestTags::sweep(), "Linear::Bool::Var::" + str(irt0) + "::" + s, a0.size() + 1, min, max, true),
                   a(a0), irt(irt0) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 for (int i = 0; i < n; i++)
                     if ((x[i] < 0) || (x[i] > 1))
@@ -231,16 +231,16 @@ namespace Test { namespace Int {
                 return cmp(e, irt, static_cast<double>(x[n]));
             }
             /// %Test whether \a x is to be ignored
-            virtual bool
-            ignore(const Assignment& x) const {
+            bool
+            ignore(const Assignment& x) const override {
                 for (int i = x.size() - 1; i--;)
                     if ((x[i] < 0) || (x[i] > 1))
                         return true;
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = x.size() - 1;
                 Gecode::BoolVarArgs y(n);
                 for (int i = n; i--;)
@@ -251,8 +251,8 @@ namespace Test { namespace Int {
                     Gecode::linear(home, a, y, irt, x[n]);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 int n = x.size() - 1;
                 Gecode::BoolVarArgs y(n);
                 for (int i = n; i--;)

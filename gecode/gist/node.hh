@@ -47,14 +47,14 @@ namespace Gecode { namespace Gist {
     class NodeAllocatorBase {
     private:
         /// Size of each block of nodes
-        static const int NodeBlockSize = 1 << 14;
+        static const int node_block_size = 1 << 14;
         /// Blocks of nodes
         class Block {
         public:
             /// The actual nodes
-            T b[NodeBlockSize];
+            T b[node_block_size];
             /// The index of the best known previous solution for each node
-            int best[NodeBlockSize];
+            int best[node_block_size];
         };
         /// Array of blocks
         Block** b;
@@ -85,21 +85,21 @@ namespace Gecode { namespace Gist {
         /// Return index of best node before \a i
         T* best(int i) const;
         /// Set index of best node before \a i to \a b
-        void setBest(int i, int b);
+        void set_best(int i, int b);
         /// Return branch-and-bound flag
         bool bab(void) const;
         /// Return branching label flag
-        bool showLabels(void) const;
+        bool show_labels(void) const;
         /// Set branching label flag
-        void showLabels(bool b);
+        void show_labels(bool b);
         /// Return whether node \a n has a label
-        bool hasLabel(T* n) const;
+        bool has_label(T* n) const;
         /// Set label of node \a n to \a l
-        void setLabel(T* n, const QString& l);
+        void set_label(T* n, const QString& l);
         /// Remove label of node \a n
-        void clearLabel(T* n);
+        void clear_label(T* n);
         /// Get label of node \a n
-        QString getLabel(T* n) const;
+        QString get_label(T* n) const;
     };
 
     /// \brief Base class for nodes of the search tree
@@ -114,31 +114,31 @@ namespace Gecode { namespace Gist {
         };
 
         /// The children, or in case there are at most two, the first child
-        void* childrenOrFirstChild;
+        void* children_or_first_child;
 
         /** The number of children, in case it is greater than 2, or the first
          *  child (if negative)
          */
-        int noOfChildren;
+        int no_of_children;
 
         /// The parent of this node, or nullptr for the root
         int parent;
 
         /// Read the tag of childrenOrFirstChild
-        unsigned int getTag(void) const;
+        unsigned int get_tag(void) const;
         /// Set the tag of childrenOrFirstChild
-        void setTag(unsigned int tag);
+        void set_tag(unsigned int tag);
         /// Return childrenOrFirstChild without tag
-        void* getPtr(void) const;
+        void* get_ptr(void) const;
         /// Return childrenOrFirstChild as integer
-        int getFirstChild(void) const;
+        int get_first_child(void) const;
 
     protected:
         /// Return whether this node is undetermined
-        bool isUndetermined(void) const;
+        bool is_undetermined(void) const;
 
         /// Return index of child no \a n
-        int getChild(int n) const;
+        int get_child(int n) const;
 
     public:
         typedef NodeAllocatorBase<VisualNode> NodeAllocator;
@@ -147,23 +147,23 @@ namespace Gecode { namespace Gist {
         Node(int p, bool failed = false);
 
         /// Return the parent
-        int getParent(void) const;
+        int get_parent(void) const;
         /// Return the parent
-        VisualNode* getParent(const NodeAllocator& na) const;
+        VisualNode* get_parent(const NodeAllocator& na) const;
         /// Return child no \a n
-        VisualNode* getChild(const NodeAllocator& na, int n) const;
+        VisualNode* get_child(const NodeAllocator& na, int n) const;
 
         /// Return index of this node
-        int getIndex(const NodeAllocator& na) const;
+        int get_index(const NodeAllocator& na) const;
 
         /// Check if this node is the root of a tree
-        bool isRoot(void) const;
+        bool is_root(void) const;
 
         /// Set the number of children to \a n and initialize children
-        void setNumberOfChildren(unsigned int n, NodeAllocator& na);
+        void set_number_of_children(unsigned int n, NodeAllocator& na);
 
         /// Return the number of children
-        unsigned int getNumberOfChildren(void) const;
+        unsigned int get_number_of_children(void) const;
     };
 
 }} // namespace Gecode::Gist

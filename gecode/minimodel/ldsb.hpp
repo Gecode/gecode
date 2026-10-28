@@ -40,7 +40,7 @@ namespace Gecode {
         typename Matrix<A>::ArgsType xs;
         for (int r = 0; r < m.height(); r++)
             xs << m.row(r);
-        return VariableSequenceSymmetry(xs, m.width());
+        return variable_sequence_symmetry(xs, m.width());
     }
 
     /** \brief Interchangeable columns symmetry specification.
@@ -51,7 +51,7 @@ namespace Gecode {
         typename Matrix<A>::ArgsType xs;
         for (int c = 0; c < m.width(); c++)
             xs << m.col(c);
-        return VariableSequenceSymmetry(xs, m.height());
+        return variable_sequence_symmetry(xs, m.height());
     }
 
     /** \brief Reflect rows symmetry specification.
@@ -75,7 +75,7 @@ namespace Gecode {
             xs[i] = m(c1, r1);
             xs[length + i] = m(c2, r2);
         }
-        return VariableSequenceSymmetry(xs, length);
+        return variable_sequence_symmetry(xs, length);
     }
 
     /** \brief Reflect columns symmetry specification.
@@ -99,7 +99,7 @@ namespace Gecode {
             xs[i] = m(c1, r1);
             xs[length + i] = m(c2, r2);
         }
-        return VariableSequenceSymmetry(xs, length);
+        return variable_sequence_symmetry(xs, length);
     }
 
     /** \brief Reflect around main diagonal symmetry specification.
@@ -123,7 +123,7 @@ namespace Gecode {
         typename Matrix<A>::ArgsType aboth;
         aboth << a1;
         aboth << a2;
-        return VariableSequenceSymmetry(aboth, a1.size());
+        return variable_sequence_symmetry(aboth, a1.size());
     }
 } // namespace Gecode
 

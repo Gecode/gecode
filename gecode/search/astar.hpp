@@ -34,7 +34,7 @@
 namespace Gecode { namespace Search {
 
     /// Create A* engine
-    GECODE_SEARCH_EXPORT Engine* astarengine(Space* s, const Options& o);
+    GECODE_SEARCH_EXPORT Engine* make_astar_engine(Space* s, const Options& o);
 
     /// An A* engine builder
     template <class T>
@@ -45,7 +45,7 @@ namespace Gecode { namespace Search {
         /// The constructor
         AStarBuilder(const Options& opt);
         /// The actual build function
-        virtual Engine* operator()(Space* s) const;
+        Engine* operator()(Space* s) const override;
     };
 
     template <class T>
@@ -62,7 +62,7 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
     template <class T>
-    inline AStar<T>::AStar(T* s, const Search::Options& o) : Search::Base<T>(Search::astarengine(s, o)) {}
+    inline AStar<T>::AStar(T* s, const Search::Options& o) : Search::Base<T>(Search::make_astar_engine(s, o)) {}
 
     template <class T>
     inline T*

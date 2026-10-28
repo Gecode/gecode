@@ -165,7 +165,7 @@ namespace Gecode { namespace Int {
     }
 #ifdef GECODE_HAS_CBS
     forceinline int
-    NegBoolView::baseval(int val) const {
+    NegBoolView::base_value(int val) const {
         return 1 - val;
     }
 #endif

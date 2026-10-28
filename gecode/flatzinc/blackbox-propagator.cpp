@@ -82,8 +82,8 @@ namespace Gecode { namespace FlatZinc {
 
     public:
         BlackBoxContext(void) : error_recorded(false) {}
-        BlackBoxHandle backendForConstraint(const std::string& mode, const std::string& target,
-                                            const std::vector<std::string>& args);
+        BlackBoxHandle backend_for_constraint(const std::string& mode, const std::string& target,
+                                              const std::vector<std::string>& args);
         void fail(std::exception_ptr e);
         bool failed(void) const;
         void rethrow(void) const;
@@ -97,9 +97,9 @@ namespace Gecode { namespace FlatZinc {
     }
 
     SharedHandle
-    BlackBoxContextHandle::backendForConstraint(const std::string& mode, const std::string& target,
-                                                const std::vector<std::string>& args) const {
-        return static_cast<BlackBoxContext*>(object())->backendForConstraint(mode, target, args);
+    BlackBoxContextHandle::backend_for_constraint(const std::string& mode, const std::string& target,
+                                                  const std::vector<std::string>& args) const {
+        return static_cast<BlackBoxContext*>(object())->backend_for_constraint(mode, target, args);
     }
 
     void
@@ -120,8 +120,8 @@ namespace Gecode { namespace FlatZinc {
     }
 
     BlackBoxHandle
-    BlackBoxContext::backendForConstraint(const std::string& mode, const std::string& target,
-                                          const std::vector<std::string>& args) {
+    BlackBoxContext::backend_for_constraint(const std::string& mode, const std::string& target,
+                                            const std::vector<std::string>& args) {
         if (mode == "exec") {
             Support::Lock lock(mutex);
             for (const ExecEntry& e : exec) {
@@ -384,7 +384,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
                    const BlackBoxContextHandle& context, const std::string& mode, const std::string& target,
                    const std::vector<std::string>& args) {
-        BlackBoxHandle backend(context.backendForConstraint(mode, target, args));
+        BlackBoxHandle backend(context.backend_for_constraint(mode, target, args));
         if ((int_input.size() == 0)
 #ifdef GECODE_HAS_FLOAT_VARS
             && (float_input.size() == 0)
@@ -429,7 +429,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
                          const BlackBoxContextHandle& context, const std::string& mode, const std::string& target,
                          const std::vector<std::string>& args) {
-        BlackBoxHandle backend(context.backendForConstraint(mode, target, args));
+        BlackBoxHandle backend(context.backend_for_constraint(mode, target, args));
         bool has_subscription = false;
         for (int i = 0; i < ivar.size(); i++)
             has_subscription = has_subscription || sub_int[i];

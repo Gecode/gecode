@@ -37,28 +37,28 @@
 
 namespace Gecode { namespace Int {
 
-    /// Compute \f$\lceil x/y\rceil\f$ where \a x and \a y are non-negative
+    /// Compute \f$\lceil x/y\rceil\f$ where \a x is non-negative and \a y is positive
     template <class IntType>
     IntType ceil_div_pp(IntType x, IntType y);
-    /// Compute \f$\lfloor x/y\rfloor\f$ where \a x and \a y are non-negative
+    /// Compute \f$\lfloor x/y\rfloor\f$ where \a x is non-negative and \a y is positive
     template <class IntType>
     IntType floor_div_pp(IntType x, IntType y);
-    /// Compute \f$\lceil x/y\rceil\f$ where \a x is non-negative
+    /// Compute \f$\lceil x/y\rceil\f$ where \a x is non-negative and \a y is nonzero
     template <class IntType>
     IntType ceil_div_px(IntType x, IntType y);
-    /// Compute \f$\lfloor x/y\rfloor\f$ where \a x is non-negative
+    /// Compute \f$\lfloor x/y\rfloor\f$ where \a x is non-negative and \a y is nonzero
     template <class IntType>
     IntType floor_div_px(IntType x, IntType y);
-    /// Compute \f$\lceil x/y\rceil\f$ where \a y is non-negative
+    /// Compute \f$\lceil x/y\rceil\f$ where \a y is positive
     template <class IntType>
     IntType ceil_div_xp(IntType x, IntType y);
-    /// Compute \f$\lfloor x/y\rfloor\f$ where \a y is non-negative
+    /// Compute \f$\lfloor x/y\rfloor\f$ where \a y is positive
     template <class IntType>
     IntType floor_div_xp(IntType x, IntType y);
-    /// Compute \f$\lceil x/y\rceil\f$
+    /// Compute \f$\lceil x/y\rceil\f$ where \a y is nonzero
     template <class IntType>
     IntType ceil_div_xx(IntType x, IntType y);
-    /// Compute \f$\lfloor x/y\rfloor\f$
+    /// Compute \f$\lfloor x/y\rfloor\f$ where \a y is nonzero
     template <class IntType>
     IntType floor_div_xx(IntType x, IntType y);
 

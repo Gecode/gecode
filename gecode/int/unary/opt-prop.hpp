@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
         if (PL::advanced) {
             GECODE_ES_CHECK((detectable<OptTask, PL>(home, *this, t)));
-            GECODE_ES_CHECK((notfirstnotlast<OptTask, PL>(home, *this, t)));
+            GECODE_ES_CHECK((not_first_not_last<OptTask, PL>(home, *this, t)));
 
             // Partition into mandatory and optional activities
             int n = t.size();
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Unary {
             if (i > 1) {
                 // Truncate array to only contain mandatory tasks
                 t.size(i);
-                GECODE_ES_CHECK(edgefinding(home, t));
+                GECODE_ES_CHECK(edge_finding(home, t));
                 // Restore to also include optional tasks
                 t.size(n);
             }

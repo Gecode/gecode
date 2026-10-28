@@ -43,32 +43,32 @@ namespace Gecode { namespace Int { namespace Branch {
 
     template <class View>
     forceinline bool
-    CBSBrancher<View>::VarIdToPos::isIn(unsigned int var_id) const {
-        auto* hm = &static_cast<VarIdToPosO*>(object())->_varIdToPos;
+    CBSBrancher<View>::VarIdToPos::is_in(unsigned int var_id) const {
+        auto* hm = &static_cast<VarIdToPosO*>(object())->_var_id_to_pos;
         return hm->find(var_id) != hm->end();
     }
 
     template <class View>
     forceinline int
     CBSBrancher<View>::VarIdToPos::operator[](unsigned int i) const {
-        return static_cast<VarIdToPosO*>(object())->_varIdToPos.at(i);
+        return static_cast<VarIdToPosO*>(object())->_var_id_to_pos.at(i);
     }
 
     template <class View>
     forceinline void
     CBSBrancher<View>::VarIdToPos::insert(unsigned int var_id, unsigned int pos) {
-        static_cast<VarIdToPosO*>(object())->_varIdToPos.insert(std::make_pair(var_id, pos));
+        static_cast<VarIdToPosO*>(object())->_var_id_to_pos.insert(std::make_pair(var_id, pos));
     }
 
     template <class View>
     CBSBrancher<View>::CBSBrancher(Home home, ViewArray<View>& x0)
         : Brancher(home), x(x0),
-          logProp(typename decltype(logProp)::size_type(), typename decltype(logProp)::hasher(),
-                  typename decltype(logProp)::key_equal(), typename decltype(logProp)::allocator_type(home)) {
+          log_prop(typename decltype(log_prop)::size_type(), typename decltype(log_prop)::hasher(),
+                   typename decltype(log_prop)::key_equal(), typename decltype(log_prop)::allocator_type(home)) {
         home.notice(*this, AP_DISPOSE);
-        varIdToPos.init();
+        var_id_to_pos.init();
         for (int i = 0; i < x.size(); i++)
-            varIdToPos.insert(x[i].id(), i);
+            var_id_to_pos.insert(x[i].id(), i);
     }
 
     template <class View>
@@ -87,17 +87,17 @@ namespace Gecode { namespace Int { namespace Branch {
     forceinline size_t
     CBSBrancher<View>::dispose(Space& home) {
         home.ignore(*this, AP_DISPOSE);
-        varIdToPos.~VarIdToPos();
+        var_id_to_pos.~VarIdToPos();
         (void)Brancher::dispose(home);
         return sizeof(*this);
     }
 
     template <class View>
     CBSBrancher<View>::CBSBrancher(Space& home, CBSBrancher& b)
-        : Brancher(home, b), varIdToPos(b.varIdToPos),
-          logProp(b.logProp.begin(), b.logProp.end(), typename decltype(logProp)::size_type(),
-                  typename decltype(logProp)::hasher(), typename decltype(logProp)::key_equal(),
-                  typename decltype(logProp)::allocator_type(home)) {
+        : Brancher(home, b), var_id_to_pos(b.var_id_to_pos),
+          log_prop(b.log_prop.begin(), b.log_prop.end(), typename decltype(log_prop)::size_type(),
+                   typename decltype(log_prop)::hasher(), typename decltype(log_prop)::key_equal(),
+                   typename decltype(log_prop)::allocator_type(home)) {
         x.update(home, b.x);
     }
 
@@ -112,7 +112,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
             // If the propagator doesn't support counting-based search, domsum and
             // domsum_b are going to be equal to 0.
-            p.propagator().domainsizesum([this](unsigned int var_id) { return inbrancher(var_id); }, domsum, domsum_b);
+            p.propagator().domain_size_sum([this](unsigned int var_id) { return in_brancher(var_id); }, domsum,
+                                           domsum_b);
 
             if (domsum_b > 0)
                 return true;
@@ -123,8 +124,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
     template <class View>
     forceinline bool
-    CBSBrancher<View>::inbrancher(unsigned int varId) const {
-        return varIdToPos.isIn(varId);
+    CBSBrancher<View>::in_brancher(unsigned int var_id) const {
+        return var_id_to_pos.is_in(var_id);
     }
 
     template <class View>
@@ -135,18 +136,18 @@ namespace Gecode { namespace Int { namespace Branch {
             unsigned int var_id;
             int val;
             double dens;
-        } maxSD{0, 0, -1};
+        } max_sd{0, 0, -1};
 
-        // Lambda we pass to propagators via solndistrib to query solution densities
-        auto SendMarginal = [this](unsigned int prop_id, unsigned int var_id, int val, double dens) {
-            if (logProp[prop_id].dens < dens) {
-                logProp[prop_id].var_id = var_id;
-                logProp[prop_id].val = val;
-                logProp[prop_id].dens = dens;
+        // Lambda we pass to propagators via solution_distribution to query solution densities
+        auto send_marginal = [this](unsigned int prop_id, unsigned int var_id, int val, double dens) {
+            if (log_prop[prop_id].dens < dens) {
+                log_prop[prop_id].var_id = var_id;
+                log_prop[prop_id].val = val;
+                log_prop[prop_id].dens = dens;
             }
         };
 
-        for (auto& kv : logProp)
+        for (auto& kv : log_prop)
             kv.second.visited = false;
 
         for (Propagators p(home, PropagatorGroup::all); p(); ++p) {
@@ -154,7 +155,8 @@ namespace Gecode { namespace Int { namespace Branch {
             unsigned int domsum;
             unsigned int domsum_b;
 
-            p.propagator().domainsizesum([this](unsigned int var_id) { return inbrancher(var_id); }, domsum, domsum_b);
+            p.propagator().domain_size_sum([this](unsigned int var_id) { return in_brancher(var_id); }, domsum,
+                                           domsum_b);
 
             // If the propagator doesn't share any unasigned variables with this
             // brancher, we continue and it will be deleted from the log afterwards.
@@ -163,38 +165,38 @@ namespace Gecode { namespace Int { namespace Branch {
 
             // New propagators can be created as we solve the problem. If this is the
             // case we create a new entry in the log.
-            if (logProp.find(prop_id) == logProp.end())
-                logProp.insert(std::make_pair(prop_id, PropInfo{0, 0, 0, -1, true}));
+            if (log_prop.find(prop_id) == log_prop.end())
+                log_prop.insert(std::make_pair(prop_id, PropInfo{0, 0, 0, -1, true}));
             else
-                logProp[prop_id].visited = true;
+                log_prop[prop_id].visited = true;
 
             // If the domain size sum of all variables in the propagator has changed
             // since the last time we called this function, we need to recompute
             // solution densities. Otherwise, we can reuse them.
-            if (logProp[prop_id].domsum != domsum) {
-                logProp[prop_id].dens = -1;
+            if (log_prop[prop_id].domsum != domsum) {
+                log_prop[prop_id].dens = -1;
                 // Solution density computation
-                p.propagator().solndistrib(home, SendMarginal);
-                logProp[prop_id].domsum = domsum;
+                p.propagator().solution_distribution(home, send_marginal);
+                log_prop[prop_id].domsum = domsum;
             }
         }
 
         // We delete unvisited propagators from the log and look for the highest
         // solution density across all propagators.
-        for (auto i = logProp.begin(); i != logProp.end();) {
+        for (auto i = log_prop.begin(); i != log_prop.end();) {
             if (!i->second.visited) {
-                i = logProp.erase(i);
+                i = log_prop.erase(i);
             } else {
                 const PropInfo& info = i->second;
-                if (info.dens > maxSD.dens)
-                    maxSD = {info.var_id, info.val, info.dens};
+                if (info.dens > max_sd.dens)
+                    max_sd = {info.var_id, info.val, info.dens};
                 ++i;
             }
         }
 
-        assert(maxSD.dens != -1);
-        assert(!x[varIdToPos[maxSD.var_id]].assigned());
-        return new PosValChoice<int>(*this, 2, varIdToPos[maxSD.var_id], maxSD.val);
+        assert(max_sd.dens != -1);
+        assert(!x[var_id_to_pos[max_sd.var_id]].assigned());
+        return new PosValChoice<int>(*this, 2, var_id_to_pos[max_sd.var_id], max_sd.val);
     }
 
     template <class View>

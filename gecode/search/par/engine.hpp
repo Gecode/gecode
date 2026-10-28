@@ -72,7 +72,7 @@ namespace Gecode { namespace Search { namespace Par {
     forceinline void
     Engine<Tracer>::block(void) {
         _cmd.store(C_WAIT, std::memory_order_release);
-        Support::Thread::acquireGlobalMutex(&_m_wait);
+        Support::Thread::acquire_global_mutex(&_m_wait);
     }
     template <class Tracer>
     forceinline void
@@ -80,7 +80,7 @@ namespace Gecode { namespace Search { namespace Par {
         _cmd.store(c, std::memory_order_release);
         if (scheduler_enabled && ((c == C_WORK) || (c == C_RESET) || (c == C_TERMINATE)))
             WorkerControlAccess::signal_all(worker_control);
-        Support::Thread::releaseGlobalMutex(&_m_wait);
+        Support::Thread::release_global_mutex(&_m_wait);
     }
     template <class Tracer>
     forceinline void

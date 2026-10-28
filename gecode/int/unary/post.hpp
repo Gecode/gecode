@@ -34,7 +34,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     template <class ManTask>
     forceinline ExecStatus
-    manpost(Home home, TaskArray<ManTask>& t, IntPropLevel ipl) {
+    post_mandatory(Home home, TaskArray<ManTask>& t, IntPropLevel ipl) {
         switch (ba(ipl)) {
         case IPL_BASIC:
             return ManProp<ManTask, PLB>::post(home, t);
@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     template <class OptTask>
     forceinline ExecStatus
-    optpost(Home home, TaskArray<OptTask>& t, IntPropLevel ipl) {
+    post_optional(Home home, TaskArray<OptTask>& t, IntPropLevel ipl) {
         switch (ba(ipl)) {
         case IPL_BASIC:
             return OptProp<OptTask, PLB>::post(home, t);

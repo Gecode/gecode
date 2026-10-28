@@ -65,8 +65,8 @@ main(int argc, char** argv) {
         }
 
         if (fg) {
-            fg->createBranchers(p, fg->solveAnnotations(), opt, false, std::cerr);
-            fg->shrinkArrays(p);
+            fg->create_branchers(p, fg->solve_annotations(), opt, false, std::cerr);
+            fg->shrink_arrays(p);
             if (opt.output()) {
                 std::ofstream os(opt.output());
                 if (!os.good()) {
@@ -83,7 +83,7 @@ main(int argc, char** argv) {
         }
         delete fg;
     } catch (FlatZinc::Error& e) {
-        std::cerr << "Error: " << e.toString() << std::endl;
+        std::cerr << "Error: " << e.to_string() << std::endl;
         return 1;
     }
 

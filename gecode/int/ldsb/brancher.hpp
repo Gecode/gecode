@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         int nsyms, BranchFilter<typename LDSBBrancher<View, n, Val, a, Filter, Print>::Var> bf,
         VarValPrint<typename LDSBBrancher<View, n, Val, a, Filter, Print>::Var, Val> vvp)
         : ViewValBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, bf, vvp), _syms(syms), _nsyms(nsyms),
-          _prevPos(-1) {
+          _prev_pos(-1) {
         home.notice(*this, AP_DISPOSE, true);
     }
 
@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     forceinline
     LDSBBrancher<View, n, Val, a, Filter, Print>::LDSBBrancher(Space& home,
                                                                LDSBBrancher<View, n, Val, a, Filter, Print>& b)
-        : ViewValBrancher<View, n, Val, a, Filter, Print>(home, b), _nsyms(b._nsyms), _prevPos(b._prevPos) {
+        : ViewValBrancher<View, n, Val, a, Filter, Print>(home, b), _nsyms(b._nsyms), _prev_pos(b._prev_pos) {
         _syms = home.alloc<SymmetryImp<View>*>(_nsyms);
         for (int i = 0; i < _nsyms; i++)
             _syms[i] = b._syms[i]->copy(home);
@@ -132,30 +132,30 @@ namespace Gecode { namespace Int { namespace LDSB {
 
         // Compute symmetries.
 
-        int choicePos = pvc->pos().pos;
-        int choiceVal = pvc->val();
+        int choice_pos = pvc->pos().pos;
+        int choice_val = pvc->val();
         delete c;
 
-        _prevPos = choicePos;
+        _prev_pos = choice_pos;
 
         // TODO: It should be possible to use simpler containers than the
         // STL ones here.
         std::deque<Literal> queue;
         std::set<Literal> seen;
 
-        seen.insert(Literal(choicePos, choiceVal));
-        queue.push_back(Literal(choicePos, choiceVal));
+        seen.insert(Literal(choice_pos, choice_val));
+        queue.push_back(Literal(choice_pos, choice_val));
 
         do {
             Literal l = queue[0];
             queue.pop_front();
 
             for (int i = 0; i < _nsyms; i++) {
-                ArgArray<Literal> toExclude = _syms[i]->symmetric(l, this->x);
-                for (int j = 0; j < toExclude.size(); ++j) {
-                    if (seen.find(toExclude[j]) == seen.end())
-                        queue.push_back(toExclude[j]);
-                    seen.insert(toExclude[j]);
+                ArgArray<Literal> to_exclude = _syms[i]->symmetric(l, this->x);
+                for (int j = 0; j < to_exclude.size(); ++j) {
+                    if (seen.find(to_exclude[j]) == seen.end())
+                        queue.push_back(to_exclude[j]);
+                    seen.insert(to_exclude[j]);
                 }
             }
         } while (queue.size() > 0);
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace LDSB {
             ++it;
         }
 
-        return new LDSBChoice<Val>(*this, a, choicePos, choiceVal, literals, nliterals);
+        return new LDSBChoice<Val>(*this, a, choice_pos, choice_val, literals, nliterals);
     }
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
@@ -206,19 +206,19 @@ namespace Gecode { namespace Int { namespace LDSB {
     ExecStatus
     LDSBBrancher<View, n, Val, a, Filter, Print>::commit(Space& home, const Choice& c, unsigned int b) {
         const LDSBChoice<Val>& pvc = static_cast<const LDSBChoice<Val>&>(c);
-        int choicePos = pvc.pos().pos;
-        int choiceVal = pvc.val();
+        int choice_pos = pvc.pos().pos;
+        int choice_val = pvc.val();
 
         if (b == 0) {
             // Post the branching constraint.
-            ExecStatus fromBase = ViewValBrancher<View, n, Val, a, Filter, Print>::commit(home, c, b);
-            GECODE_ES_CHECK(fromBase);
+            ExecStatus from_base = ViewValBrancher<View, n, Val, a, Filter, Print>::commit(home, c, b);
+            GECODE_ES_CHECK(from_base);
             for (int i = 0; i < this->_nsyms; i++)
-                this->_syms[i]->update(Literal(choicePos, choiceVal));
+                this->_syms[i]->update(Literal(choice_pos, choice_val));
         } else if (b == 1) {
             // Post the branching constraint.
-            ExecStatus fromBase = ViewValBrancher<View, n, Val, a, Filter, Print>::commit(home, c, b);
-            GECODE_ES_CHECK(fromBase);
+            ExecStatus from_base = ViewValBrancher<View, n, Val, a, Filter, Print>::commit(home, c, b);
+            GECODE_ES_CHECK(from_base);
 
             // Post prunings.
             int nliterals = pvc.nliterals();
@@ -243,9 +243,9 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     template <class View, int n, class Val, unsigned int a>
     forceinline void
-    postldsbbrancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
-                     SymmetryImp<View>** syms, int nsyms, BranchFilter<typename View::VarType> bf,
-                     VarValPrint<typename View::VarType, Val> vvp) {
+    post_ldsb_brancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
+                       SymmetryImp<View>** syms, int nsyms, BranchFilter<typename View::VarType> bf,
+                       VarValPrint<typename View::VarType, Val> vvp) {
         if (bf) {
             if (vvp) {
                 LDSBBrancher<View, n, Val, a, BrancherFilter<View>, BrancherPrint<View, Val>>::post(

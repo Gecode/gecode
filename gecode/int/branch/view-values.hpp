@@ -59,10 +59,10 @@ namespace Gecode { namespace Int { namespace Branch {
         int val(unsigned int a) const;
         /// Deallocate
         GECODE_INT_EXPORT
-        virtual ~PosValuesChoice(void);
+        ~PosValuesChoice(void) override;
         /// Archive into \a e
         GECODE_INT_EXPORT
-        virtual void archive(Archive& e) const;
+        void archive(Archive& e) const override;
     };
 
     forceinline int
@@ -172,8 +172,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
     template <int n, bool min>
     forceinline void
-    postviewvaluesbrancher(Home home, ViewArray<IntView>& x, ViewSel<IntView>* vs[n], IntBranchFilter bf,
-                           IntVarValPrint vvp) {
+    post_view_values_brancher(Home home, ViewArray<IntView>& x, ViewSel<IntView>* vs[n], IntBranchFilter bf,
+                              IntVarValPrint vvp) {
         if (bf) {
             if (vvp) {
                 ViewValuesBrancher<n, min, BrancherFilter<IntView>, BrancherPrint<IntView, int>>::post(home, x, vs, bf,

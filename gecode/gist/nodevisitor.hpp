@@ -39,38 +39,38 @@ namespace Gecode { namespace Gist {
 
     template <class Cursor>
     forceinline void
-    NodeVisitor<Cursor>::setCursor(const Cursor& c0) {
+    NodeVisitor<Cursor>::set_cursor(const Cursor& c0) {
         c = c0;
     }
 
     template <class Cursor>
     forceinline Cursor&
-    NodeVisitor<Cursor>::getCursor(void) {
+    NodeVisitor<Cursor>::get_cursor(void) {
         return c;
     }
 
     template <class Cursor>
     forceinline void
-    PostorderNodeVisitor<Cursor>::moveToLeaf(void) {
-        while (c.mayMoveDownwards()) {
-            c.moveDownwards();
+    PostorderNodeVisitor<Cursor>::move_to_leaf(void) {
+        while (c.may_move_downwards()) {
+            c.move_downwards();
         }
     }
 
     template <class Cursor>
     PostorderNodeVisitor<Cursor>::PostorderNodeVisitor(const Cursor& c0) : NodeVisitor<Cursor>(c0) {
-        moveToLeaf();
+        move_to_leaf();
     }
 
     template <class Cursor>
     forceinline bool
     PostorderNodeVisitor<Cursor>::next(void) {
-        c.processCurrentNode();
-        if (c.mayMoveSidewards()) {
-            c.moveSidewards();
-            moveToLeaf();
-        } else if (c.mayMoveUpwards()) {
-            c.moveUpwards();
+        c.process_current_node();
+        if (c.may_move_sidewards()) {
+            c.move_sidewards();
+            move_to_leaf();
+        } else if (c.may_move_upwards()) {
+            c.move_upwards();
         } else {
             return false;
         }
@@ -87,13 +87,13 @@ namespace Gecode { namespace Gist {
     template <class Cursor>
     forceinline bool
     PreorderNodeVisitor<Cursor>::backtrack(void) {
-        while (!c.mayMoveSidewards() && c.mayMoveUpwards()) {
-            c.moveUpwards();
+        while (!c.may_move_sidewards() && c.may_move_upwards()) {
+            c.move_upwards();
         }
-        if (!c.mayMoveUpwards()) {
+        if (!c.may_move_upwards()) {
             return false;
         } else {
-            c.moveSidewards();
+            c.move_sidewards();
         }
         return true;
     }
@@ -104,11 +104,11 @@ namespace Gecode { namespace Gist {
     template <class Cursor>
     forceinline bool
     PreorderNodeVisitor<Cursor>::next(void) {
-        c.processCurrentNode();
-        if (c.mayMoveDownwards()) {
-            c.moveDownwards();
-        } else if (c.mayMoveSidewards()) {
-            c.moveSidewards();
+        c.process_current_node();
+        if (c.may_move_downwards()) {
+            c.move_downwards();
+        } else if (c.may_move_sidewards()) {
+            c.move_sidewards();
         } else {
             return backtrack();
         }

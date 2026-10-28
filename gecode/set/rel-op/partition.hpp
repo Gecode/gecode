@@ -47,23 +47,23 @@ namespace Gecode { namespace Set { namespace RelOp {
     forceinline
     PartitionN<View0, View1>::PartitionN(Home home, ViewArray<View0>& x, View1 y)
         : MixNaryOnePropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, x, y) {
-        shared = Gecode::shared(x) || viewarrayshared(x, y);
+        shared = Gecode::shared(x) || view_array_shared(x, y);
     }
 
     template <class View0, class View1>
     forceinline
     PartitionN<View0, View1>::PartitionN(Home home, ViewArray<View0>& x, const IntSet& z, View1 y)
         : MixNaryOnePropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, x, y) {
-        shared = Gecode::shared(x) || viewarrayshared(x, y);
+        shared = Gecode::shared(x) || view_array_shared(x, y);
         IntSetRanges rz(z);
-        unionOfDets.includeI(home, rz);
+        union_of_dets.include_i(home, rz);
     }
 
     template <class View0, class View1>
     forceinline
     PartitionN<View0, View1>::PartitionN(Space& home, PartitionN& p)
         : MixNaryOnePropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, p), shared(p.shared) {
-        unionOfDets.update(home, p.unionOfDets);
+        union_of_dets.update(home, p.union_of_dets);
     }
 
     template <class View0, class View1>
@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     PartitionN<View0, View1>::post(Home home, ViewArray<View0>& x, View1 y) {
         switch (x.size()) {
         case 0:
-            GECODE_ME_CHECK(y.cardMax(home, 0));
+            GECODE_ME_CHECK(y.card_max(home, 0));
             return ES_OK;
         case 1:
             return Rel::Eq<View0, View1>::post(home, x[0], y);
@@ -106,29 +106,29 @@ namespace Gecode { namespace Set { namespace RelOp {
 
         ModEvent me0 = View0::me(med);
         ModEvent me1 = View1::me(med);
-        bool ubevent = Rel::testSetEventUB(me0, me1);
-        bool lbevent = Rel::testSetEventLB(me0, me1);
-        bool anybevent = Rel::testSetEventAnyB(me0, me1);
-        bool cardevent = Rel::testSetEventCard(me0, me1);
+        bool ubevent = Rel::test_set_event_ub(me0, me1);
+        bool lbevent = Rel::test_set_event_lb(me0, me1);
+        bool anybevent = Rel::test_set_event_any_b(me0, me1);
+        bool cardevent = Rel::test_set_event_card(me0, me1);
 
         bool modified = false;
-        bool oldModified = false;
+        bool old_modified = false;
 
         do {
-            oldModified = modified;
+            old_modified = modified;
             modified = false;
-            if (oldModified || anybevent)
-                GECODE_ES_CHECK(partitionNXiUB(home, modified, x, y, unionOfDets));
-            if (modified || oldModified || anybevent)
-                GECODE_ES_CHECK(partitionNXiLB(home, modified, x, y, unionOfDets));
-            if (modified || oldModified || ubevent)
-                GECODE_ES_CHECK(partitionNYUB(home, modified, x, y, unionOfDets));
-            if (modified || oldModified || lbevent)
-                GECODE_ES_CHECK(partitionNYLB(home, modified, x, y, unionOfDets));
-            if (modified || oldModified || ubevent)
-                GECODE_ES_CHECK(unionNXiUB(home, modified, x, y, unionOfDets));
-            if (modified || oldModified || cardevent)
-                GECODE_ES_CHECK(partitionNCard(home, modified, x, y, unionOfDets));
+            if (old_modified || anybevent)
+                GECODE_ES_CHECK(partition_n_xi_ub(home, modified, x, y, union_of_dets));
+            if (modified || old_modified || anybevent)
+                GECODE_ES_CHECK(partition_n_xi_lb(home, modified, x, y, union_of_dets));
+            if (modified || old_modified || ubevent)
+                GECODE_ES_CHECK(partition_nyub(home, modified, x, y, union_of_dets));
+            if (modified || old_modified || lbevent)
+                GECODE_ES_CHECK(partition_nylb(home, modified, x, y, union_of_dets));
+            if (modified || old_modified || ubevent)
+                GECODE_ES_CHECK(union_n_xi_ub(home, modified, x, y, union_of_dets));
+            if (modified || old_modified || cardevent)
+                GECODE_ES_CHECK(partition_n_card(home, modified, x, y, union_of_dets));
         } while (modified);
 
         // removing assigned sets from x, accumulating the value:
@@ -136,17 +136,17 @@ namespace Gecode { namespace Set { namespace RelOp {
             // Do not reverse! Eats away the end of the array!
             while (i < x.size() && x[i].assigned()) {
                 GlbRanges<View0> det(x[i]);
-                unionOfDets.includeI(home, det);
+                union_of_dets.include_i(home, det);
                 x.move_lst(i);
             }
         }
         // When we run out of variables, make a final check and dissolve:
         if (x.size() == 0) {
-            BndSetRanges all1(unionOfDets);
-            GECODE_ME_CHECK(y.intersectI(home, all1));
-            BndSetRanges all2(unionOfDets);
-            GECODE_ME_CHECK(y.includeI(home, all2));
-            unionOfDets.dispose(home);
+            BndSetRanges all1(union_of_dets);
+            GECODE_ME_CHECK(y.intersect_i(home, all1));
+            BndSetRanges all2(union_of_dets);
+            GECODE_ME_CHECK(y.include_i(home, all2));
+            union_of_dets.dispose(home);
             return home.ES_SUBSUMED(*this);
         }
 

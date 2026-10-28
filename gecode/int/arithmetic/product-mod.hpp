@@ -263,8 +263,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         GECODE_ME_CHECK(y.lq(home, m - 1));
 
         Region region;
-        ProductInterval* prefix = NULL;
-        ProductInterval* suffix = NULL;
+        ProductInterval* prefix = nullptr;
+        ProductInterval* suffix = nullptr;
         bool modified;
         do {
             modified = false;
@@ -316,7 +316,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                     }
 
                     // Allocate cofactors only when interval inversion can contribute.
-                    if (prefix == NULL) {
+                    if (prefix == nullptr) {
                         prefix = region.alloc<ProductInterval>(x.size() + 1);
                         suffix = region.alloc<ProductInterval>(x.size() + 1);
                     }
@@ -418,8 +418,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     inline ExecStatus
     product_mod_var_ranges(Home home, ViewArray<IntView>& x, IntView m, IntView y) {
         Region region;
-        ProductInterval* prefix = NULL;
-        ProductInterval* suffix = NULL;
+        ProductInterval* prefix = nullptr;
+        ProductInterval* suffix = nullptr;
         bool modified;
         do {
             modified = false;
@@ -466,7 +466,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                 modified |= me_modified(me);
             }
 
-            if (prefix == NULL) {
+            if (prefix == nullptr) {
                 prefix = region.alloc<ProductInterval>(x.size() + 1);
                 suffix = region.alloc<ProductInterval>(x.size() + 1);
             }

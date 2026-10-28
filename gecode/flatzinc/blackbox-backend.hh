@@ -68,7 +68,7 @@ namespace Gecode { namespace FlatZinc {
     /// Backend for a deterministic FlatZinc blackbox function.
     class BlackBoxBackend : public SharedHandle::Object {
     public:
-        virtual ~BlackBoxBackend(void) {}
+        ~BlackBoxBackend(void) override {}
         virtual void run(BlackBoxCall& call) = 0;
         void
         run(const std::vector<int64_t>& int_input, const std::vector<double>& float_input,
@@ -83,7 +83,7 @@ namespace Gecode { namespace FlatZinc {
     public:
         using BlackBoxBackend::run;
         BlackBoxLibrary(const std::string& name, const std::vector<std::string>& args);
-        ~BlackBoxLibrary();
+        ~BlackBoxLibrary() override;
         void run(BlackBoxCall& call) override;
 
     protected:
@@ -108,7 +108,7 @@ namespace Gecode { namespace FlatZinc {
     public:
         using BlackBoxBackend::run;
         BlackBoxExec(const std::string& program, const std::vector<std::string>& args);
-        ~BlackBoxExec();
+        ~BlackBoxExec() override;
         void run(BlackBoxCall& call) override;
 
     protected:

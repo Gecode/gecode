@@ -54,19 +54,19 @@ namespace {
     };
 
     /// Instance rbg010a (Ascheuer)
-    const int PA_n = 11;
-    const int PA_d[PA_n * PA_n] = {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  71, 0,  85, 85, 85, 96, 85, 85, 97, 85,
+    const int pa_n = 11;
+    const int pa_d[pa_n * pa_n] = {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  71, 0,  85, 85, 85, 96, 85, 85, 97, 85,
                                    77, 50, 65, 0,  77, 77, 62, 77, 77, 62, 77, 74, 64, 74, 88, 0,  88, 80, 88, 88, 82,
                                    88, 87, 44, 54, 68, 68, 0,  60, 68, 68, 62, 68, 67, 51, 75, 51, 51, 51, 0,  51, 51,
                                    80, 51, 65, 53, 64, 78, 78, 78, 68, 0,  78, 69, 78, 76, 51, 67, 69, 69, 69, 75, 69,
                                    0,  75, 69, 63, 43, 61, 71, 71, 71, 43, 71, 71, 0,  71, 68, 53, 64, 78, 78, 78, 68,
                                    78, 78, 69, 0,  80, 42, 66, 52, 52, 52, 70, 52, 52, 70, 52, 0};
-    const int PA_w[2 * PA_n] = {0,    9396, 0,    865,  399,  1299, 550,  1450, 685,  1585, 819,
+    const int pa_w[2 * pa_n] = {0,    9396, 0,    865,  399,  1299, 550,  1450, 685,  1585, 819,
                                 1719, 1208, 2108, 1412, 2312, 1701, 2330, 2413, 3313, 3798, 4698};
 
     /// Instance n20w20.001 (Dumas et al.)
-    const int PB_n = 21;
-    const int PB_d[PB_n * PB_n] = {
+    const int pb_n = 21;
+    const int pb_d[pb_n * pb_n] = {
         0,  19, 17, 34, 7,  20, 10, 17, 28, 15, 23, 29, 23, 29, 21, 20, 9,  16, 21, 13, 12, 19, 0,  10, 41, 26, 3,  27,
         25, 15, 17, 17, 14, 18, 48, 17, 6,  21, 14, 17, 13, 31, 17, 10, 0,  47, 23, 13, 26, 15, 25, 22, 26, 24, 27, 44,
         7,  5,  23, 21, 25, 18, 29, 34, 41, 47, 0,  36, 39, 25, 51, 36, 24, 27, 38, 25, 44, 54, 45, 25, 28, 26, 28, 27,
@@ -83,12 +83,12 @@ namespace {
         31, 13, 4,  7,  14, 7,  42, 28, 19, 11, 0,  5,  3,  21, 21, 17, 25, 26, 28, 14, 21, 36, 11, 7,  2,  13, 2,  46,
         32, 22, 15, 5,  0,  8,  25, 13, 13, 18, 28, 20, 11, 15, 28, 15, 4,  10, 17, 10, 40, 25, 17, 9,  3,  8,  0,  19,
         12, 31, 29, 27, 10, 30, 4,  27, 35, 18, 27, 36, 26, 21, 33, 32, 10, 21, 25, 19, 0};
-    const int PB_w[2 * PB_n] = {0,   408, 62,  68,  181, 205, 306, 324, 214, 217, 51, 61, 102, 129,
+    const int pb_w[2 * pb_n] = {0,   408, 62,  68,  181, 205, 306, 324, 214, 217, 51, 61, 102, 129,
                                 175, 186, 250, 263, 3,   23,  21,  49,  79,  90,  78, 96, 140, 154,
                                 354, 386, 42,  63,  2,   13,  24,  42,  20,  33,  9,  21, 275, 300};
 
     /// The instances
-    const Builtin instances[] = {{PA_n, PA_d, PA_w}, {PB_n, PB_d, PB_w}};
+    const Builtin instances[] = {{pa_n, pa_d, pa_w}, {pb_n, pb_d, pb_w}};
     /// Number of instances
     const unsigned int n_instances = sizeof(instances) / sizeof(Builtin);
 
@@ -251,8 +251,8 @@ public:
         branch(*this, x, INT_VAR_NONE(), INT_VALUES_MIN());
     }
     /// Return cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return total;
     }
     /// Return the number of positions assigned from the start
@@ -321,13 +321,13 @@ public:
         total.update(*this, s.total);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new TSPTW(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\tTour: 0";
         for (int i = 0; i < x.size(); i++)
             os << " -> " << x[i];

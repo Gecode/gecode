@@ -54,9 +54,8 @@ namespace Gecode { namespace Support {
      *
      * Acts as a wrapper around memory allocation functionality.
      *
-     * Can be disabled by giving a "-disable-allocator" option to
-     * configure and the be re-implemented before including any other
-     * Gecode header.
+     * Can be disabled with "-DGECODE_ENABLE_ALLOCATOR=OFF" in CMake
+     * and then re-implemented before including any other Gecode header.
      *
      * \ingroup FuncMem
      */

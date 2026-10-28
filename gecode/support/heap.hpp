@@ -357,7 +357,7 @@ namespace Gecode {
     forceinline void*
     Heap::ralloc(size_t s) {
 #ifdef GECODE_HAS_FAULT_INJECTION
-        Support::FailPoint::check(Support::FailPoint::Phase::Heap);
+        Support::FailPoint::check(Support::FailPoint::Phase::HEAP);
 #endif
         void* p = Support::allocator.alloc(s);
 #ifdef GECODE_PEAKHEAP
@@ -394,7 +394,7 @@ namespace Gecode {
     forceinline void*
     Heap::rrealloc(void* p, size_t s) {
 #ifdef GECODE_HAS_FAULT_INJECTION
-        Support::FailPoint::check(Support::FailPoint::Phase::Heap);
+        Support::FailPoint::check(Support::FailPoint::Phase::HEAP);
 #endif
 #ifdef GECODE_PEAKHEAP
         _m.acquire();

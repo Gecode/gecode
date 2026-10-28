@@ -120,17 +120,17 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize for space \a s with options \a o
         LDS(Space* s, const Options& o);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual Space* next(void);
+        Space* next(void) override;
         /// Return statistics
-        virtual Statistics statistics(void) const;
+        Statistics statistics(void) const override;
         /// Constrain future solutions to be better than \a b (should never be called)
-        void constrain(const Space& b);
+        void constrain(const Space& b) override;
         /// Reset engine to restart at space \a s
-        void reset(Space* s);
+        void reset(Space* s) override;
         /// Check whether engine has been stopped
-        virtual bool stopped(void) const;
+        bool stopped(void) const override;
         /// Destructor
-        virtual ~LDS(void);
+        ~LDS(void) override;
     };
 
 }}} // namespace Gecode::Search::Seq
