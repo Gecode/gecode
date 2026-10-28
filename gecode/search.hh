@@ -719,10 +719,54 @@ namespace Gecode { namespace Search {
    * \brief External control for the requested number of search workers
    *
    * A worker control is a copyable handle. Copies share the same request
-   * and can be used concurrently. The worker capacity is fixed when the
-   * handle is first attached to a search engine.
-   * Without thread support, concurrent use and pausing are unsupported:
-   * attaching a zero request or calling request(0) raises InvalidWorkerRequest.
+   * and can be used concurrently. An empty handle disables adjustment.
+   * DFS and BAB support worker control, as do experimental AStar and CABS.
+   * The resolved Options::threads value fixes the engine's worker capacity.
+   * Requests range from zero to that capacity; zero pauses search without
+   * discarding its state. This also applies to an engine with capacity one.
+   * Without thread support, use controls from one thread; attaching a zero
+   * request or calling request(0) raises InvalidWorkerRequest.
+   *
+   * For example, the caller can keep a handle for an external scheduler:
+   * \code
+   * Search::Options options;
+   * options.threads = 8;
+   * Search::WorkerControl control(2);
+   * options.worker_control = control;
+   * DFS<Model> engine(root,options);
+   *
+   * // Safe from another thread while engine.next() is running.
+   * control.request(6);
+   * control.request(0); // Pause
+   * control.request(1); // Resume
+   * \endcode
+   *
+   * Requests take effect cooperatively at scheduler boundaries. A decrease
+   * lets excess workers finish their current search action before parking.
+   * An increase wakes parked workers. Parked operating-system threads retain
+   * their stacks and search state, so capacity should cover the largest
+   * allocation the engine may receive. Adjustment preserves search correctness;
+   * parallel exploration order and search statistics remain nondeterministic.
+   *
+   * A shared control identity can attach to one leaf engine only. Sharing it
+   * between engines, attaching it to an enclosing meta-engine, or reusing it
+   * after engine destruction raises WorkerControlInUse. Copies may outlive
+   * the engine; subsequent in-range requests are harmless. Engine destruction
+   * detaches its state but does not make the identity reusable.
+   *
+   * Restart-based search retains its DFS or BAB leaf control across restarts.
+   * For portfolio search, give each asset a distinct control through its
+   * engine builder. Controlled assets require a parallel outer PBS; sequential
+   * PBS rejects them with WorkerControlInUse before consuming roots or builders.
+   * PBS completes each next() round after every active asset reports. A paused
+   * asset observes the internal round stop and reports without resuming search;
+   * if all active assets are paused, next() waits until one resumes.
+   *
+   * The caller enforces any shared worker budget. Decrease one asset's request
+   * before increasing another's to keep the requested sum within that budget.
+   * Workers finishing their current actions can still cause temporary
+   * oversubscription. Gecode provides no acknowledgement that a decrease has
+   * taken effect and chooses no allocation policy.
    *
    * \ingroup TaskModelSearch
    */
@@ -746,7 +790,14 @@ namespace Gecode { namespace Search {
     bool engaged(void) const noexcept;
     /// Return the requested number of workers (zero also denotes an empty handle)
     unsigned int requested(void) const noexcept;
-    /// Request \a workers workers (zero pauses the engine)
+    /**
+     * \brief Request \a workers workers (zero pauses the engine)
+     *
+     * Returns without waiting for workers to reach the requested count.
+     * Throws UninitializedWorkerControl for an empty handle, or
+     * InvalidWorkerRequest if \a workers exceeds the fixed capacity or
+     * is zero in a build without thread support.
+     */
     void request(unsigned int workers);
     /// Return the fixed worker capacity, or zero before attachment
     unsigned int capacity(void) const noexcept;
@@ -804,7 +855,8 @@ namespace Gecode { namespace Search {
        * External worker control
        *
        * After option expansion, \a threads is the immutable worker capacity.
-       * Requests through this handle never change \a threads.
+       * Requests through this handle never change \a threads. An empty handle
+       * disables adjustment; see WorkerControl for lifetime and scheduling rules.
        */
       WorkerControl worker_control;
       /// Create a clone after every \a c_d commits (commit distance)
@@ -944,6 +996,11 @@ namespace Gecode { namespace Search {
 
   /**
    * \brief %Stop-object based on time
+   *
+   * Time limits are checked at search boundaries. Expiry does not wake an
+   * engine paused by WorkerControl; next() remains blocked until a positive
+   * request resumes the engine and it reaches a normal stop check.
+   *
    * \ingroup TaskModelSearchStop
    */
   class GECODE_SEARCH_EXPORT TimeStop : public Stop {

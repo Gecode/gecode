@@ -47,7 +47,9 @@ namespace Gecode { namespace Search {
      *
      * The owner must have destroyed the previous engine and joined its
      * workers. Requests and event storage survive the transition. Preparing
-     * an attached control fails; otherwise this operation is idempotent.
+     * an attached control raises WorkerControlInUse; otherwise this operation
+     * is idempotent. Attaching the prepared control with a different capacity
+     * raises InvalidWorkerRequest. This is an internal engine-owner operation.
      */
     static void prepare_reuse(WorkerControl& control);
     /// Return the request generation
