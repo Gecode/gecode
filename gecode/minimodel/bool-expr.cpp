@@ -100,9 +100,6 @@ namespace Gecode {
 
   void*
   BoolExpr::Node::operator new(size_t size) {
-#ifdef GECODE_HAS_FAULT_INJECTION
-    Support::FailPoint::check(Support::FailPoint::Phase::MiniModel);
-#endif
     return heap.ralloc(size);
   }
   void

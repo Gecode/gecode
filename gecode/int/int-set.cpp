@@ -75,9 +75,6 @@ namespace Gecode {
     o->n = 0;
     o->r = nullptr;
     try {
-#ifdef GECODE_HAS_FAULT_INJECTION
-      Support::FailPoint::check(Support::FailPoint::Phase::IntSet);
-#endif
       o->r = heap.alloc<Range>(n);
     } catch (...) {
       delete o;

@@ -56,7 +56,6 @@ namespace Gecode { namespace Support { namespace FailPoint {
     LocalObjectCopy,
     SpaceDisposeNoticeArray,
     SpaceDisposalArray,
-    IntSet,
     MiniModel
   };
 
