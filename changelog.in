@@ -71,9 +71,33 @@
 
 [RELEASE]
 Version: 6.5.0
-Date: unreleased
+Date: 2026-10-31
 [DESCRIPTION]
-This is the development changelog for the next Gecode release.
+This release makes Gecode's test harness available to downstream propagator
+projects. Custom propagators can use the same testing framework as Gecode's
+built-in constraints. The harness can be installed with Gecode and supports
+test tags for different coverage levels and replay of failed iterations.
+
+Search worker control lets applications adjust the number of active workers
+in parallel DFS and BAB engines without rebuilding them. Search can be paused
+and resumed without losing its state.
+
+Open variable lists let models decide a list's length during search. Other
+additions include new arithmetic and distance constraints and support for
+nondeterministic finite automata. MiniZinc models gain access to more native
+constraints and scheduling interfaces with explicit end variables.
+
+Regular constraints use less temporary memory during construction. The release
+also fixes floating-point rounding and arithmetic errors, memory leaks in
+branchers and search engines, integer overflow near the integer limits, stop
+handling in portfolio search, and several FlatZinc issues.
+
+The release also includes experimental A* (AStar) and complete anytime beam
+search (CABS). These engines are disabled by default and require an explicit
+build option. Their APIs may change or be removed in future feature releases.
+
+For workloads that do substantial parallel search, we recommend enabling the
+new mimalloc backend for Gecode's heap and space storage in CMake builds.
 
 [ENTRY]
 Module: kernel
