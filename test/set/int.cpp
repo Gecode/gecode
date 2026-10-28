@@ -346,7 +346,7 @@ namespace Test { namespace Set {
                         if (swapped && xr.val() > x.int_value())
                             return false;
                         break;
-                    case Gecode::IRT_LE:
+                    case Gecode::IRT_LT:
                         if (!swapped && xr.val() >= x.int_value())
                             return false;
                         if (swapped && xr.val() <= x.int_value())
@@ -389,7 +389,7 @@ namespace Test { namespace Set {
                     case Gecode::IRT_NQ:
                         Gecode::rel(home, (y[0] != x[0]) == r.var());
                         break;
-                    case Gecode::IRT_LE:
+                    case Gecode::IRT_LT:
                         Gecode::rel(home, (y[0] < x[0]) == r.var());
                         break;
                     case Gecode::IRT_LQ:
@@ -412,7 +412,7 @@ namespace Test { namespace Set {
                     case Gecode::IRT_NQ:
                         Gecode::rel(home, (x[0] != y[0]) == r.var());
                         break;
-                    case Gecode::IRT_LE:
+                    case Gecode::IRT_LT:
                         Gecode::rel(home, (x[0] < y[0]) == r.var());
                         break;
                     case Gecode::IRT_LQ:
@@ -434,13 +434,13 @@ namespace Test { namespace Set {
         IntRel _intrel_nq(Gecode::IRT_NQ, false);
         IntRel _intrel_gr(Gecode::IRT_GR, false);
         IntRel _intrel_gq(Gecode::IRT_GQ, false);
-        IntRel _intrel_le(Gecode::IRT_LE, false);
+        IntRel _intrel_lt(Gecode::IRT_LT, false);
         IntRel _intrel_lq(Gecode::IRT_LQ, false);
         IntRel _intrel_eqs(Gecode::IRT_EQ, true);
         IntRel _intrel_nqs(Gecode::IRT_NQ, true);
         IntRel _intrel_grs(Gecode::IRT_GR, true);
         IntRel _intrel_gqs(Gecode::IRT_GQ, true);
-        IntRel _intrel_les(Gecode::IRT_LE, true);
+        IntRel _intrel_lts(Gecode::IRT_LT, true);
         IntRel _intrel_lqs(Gecode::IRT_LQ, true);
 
         template <class I>

@@ -162,63 +162,63 @@ namespace Gecode {
 
     LinIntRel
     operator<(int l, const IntVar& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(int l, const BoolVar& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(int l, const LinIntExpr& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const IntVar& l, int r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const BoolVar& l, int r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const LinIntExpr& l, int r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const IntVar& l, const IntVar& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const IntVar& l, const BoolVar& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const BoolVar& l, const IntVar& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const BoolVar& l, const BoolVar& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const IntVar& l, const LinIntExpr& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const BoolVar& l, const LinIntExpr& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const LinIntExpr& l, const IntVar& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const LinIntExpr& l, const BoolVar& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
     LinIntRel
     operator<(const LinIntExpr& l, const LinIntExpr& r) {
-        return LinIntRel(l, IRT_LE, r);
+        return LinIntRel(l, IRT_LT, r);
     }
 
     LinIntRel

@@ -115,7 +115,7 @@ namespace Gecode {
             GECODE_ME_FAIL(v.lq(home, max));
             break;
         case FRT_LQ:
-        case FRT_LE:
+        case FRT_LT:
             GECODE_ME_FAIL(v.gq(home, min));
             break;
         default:;
@@ -167,7 +167,7 @@ namespace Gecode {
             GECODE_ME_FAIL(v.lq(home, max));
             break;
         case FRT_LQ:
-        case FRT_LE:
+        case FRT_LT:
             GECODE_ME_FAIL(v.gq(home, min));
             break;
         default:;

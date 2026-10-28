@@ -2044,7 +2044,7 @@ namespace Gecode { namespace FlatZinc {
         const FlatZincSpace& b = static_cast<const FlatZincSpace&>(s);
         if (_opt_var_is_int) {
             if (_method == MIN)
-                rel(*this, iv[_opt_var], IRT_LE, b.iv[b._opt_var].val());
+                rel(*this, iv[_opt_var], IRT_LT, b.iv[b._opt_var].val());
             else if (_method == MAX)
                 rel(*this, iv[_opt_var], IRT_GR, b.iv[b._opt_var].val());
         } else {

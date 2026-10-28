@@ -339,14 +339,14 @@ namespace Gecode {
                 case SRT_LQ:
                     invsrt = SRT_GQ;
                     break;
-                case SRT_LE:
+                case SRT_LT:
                     invsrt = SRT_GR;
                     break;
                 case SRT_GQ:
                     invsrt = SRT_LQ;
                     break;
                 case SRT_GR:
-                    invsrt = SRT_LE;
+                    invsrt = SRT_LT;
                     break;
                 case SRT_EQ:
                 case SRT_NQ:
@@ -748,7 +748,7 @@ namespace Gecode {
                     case IRT_LQ:
                         cardinality(home, e.post(home), 0U, static_cast<unsigned int>(c));
                         break;
-                    case IRT_LE:
+                    case IRT_LT:
                         cardinality(home, e.post(home), 0U, static_cast<unsigned int>(c - 1));
                         break;
                     case IRT_GQ:
@@ -766,7 +766,7 @@ namespace Gecode {
                 } else if (t == SNLE_MIN && (irt == IRT_GR || irt == IRT_GQ)) {
                     c = (irt == IRT_GQ ? c : c + 1);
                     dom(home, e.post(home), SRT_SUB, c, Set::Limits::max);
-                } else if (t == SNLE_MAX && (irt == IRT_LE || irt == IRT_LQ)) {
+                } else if (t == SNLE_MAX && (irt == IRT_LT || irt == IRT_LQ)) {
                     c = (irt == IRT_LQ ? c : c - 1);
                     dom(home, e.post(home), SRT_SUB, Set::Limits::min, c);
                 } else {
@@ -778,7 +778,7 @@ namespace Gecode {
                 if (t == SNLE_MIN && (irt == IRT_GR || irt == IRT_GQ)) {
                     c = (irt == IRT_GQ ? c : c + 1);
                     dom(home, e.post(home), SRT_SUB, c, Set::Limits::max, b);
-                } else if (t == SNLE_MAX && (irt == IRT_LE || irt == IRT_LQ)) {
+                } else if (t == SNLE_MAX && (irt == IRT_LT || irt == IRT_LQ)) {
                     c = (irt == IRT_LQ ? c : c - 1);
                     dom(home, e.post(home), SRT_SUB, Set::Limits::min, c, b);
                 } else {

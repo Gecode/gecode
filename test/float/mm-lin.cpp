@@ -172,7 +172,7 @@ namespace Test { namespace Float {
                     return l == r;
                 case FRT_NQ:
                     return l != r;
-                case FRT_LE:
+                case FRT_LT:
                     return l < r;
                 case FRT_GR:
                     return l > r;
@@ -205,7 +205,7 @@ namespace Test { namespace Float {
                 case FRT_LQ:
                     Gecode::rel(home, eval(l_lis, l_reg) <= eval(r_lis, r_reg));
                     break;
-                case FRT_LE:
+                case FRT_LT:
                     Gecode::rel(home, eval(l_lis, l_reg) < eval(r_lis, r_reg));
                     break;
                 case FRT_GQ:

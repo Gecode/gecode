@@ -154,14 +154,14 @@ namespace Gecode {
             case FRT_LQ:
                 frt = FRT_GQ;
                 break;
-            case FRT_LE:
+            case FRT_LT:
                 frt = FRT_GR;
                 break;
             case FRT_GQ:
                 frt = FRT_LQ;
                 break;
             case FRT_GR:
-                frt = FRT_LE;
+                frt = FRT_LT;
                 break;
             default:
                 break;
@@ -192,14 +192,14 @@ namespace Gecode {
             case FRT_LQ:
                 frt = FRT_GQ;
                 break;
-            case FRT_LE:
+            case FRT_LT:
                 frt = FRT_GR;
                 break;
             case FRT_GQ:
                 frt = FRT_LQ;
                 break;
             case FRT_GR:
-                frt = FRT_LE;
+                frt = FRT_LT;
                 break;
             default:
                 break;

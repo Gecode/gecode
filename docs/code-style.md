@@ -58,12 +58,16 @@ Representative API changes include:
 
 | Previous spelling | Current spelling |
 |---|---|
+| `IRT_LE`, `FRT_LE`, `SRT_LE` | `IRT_LT`, `FRT_LT`, `SRT_LT` |
 | `nooverlap(...)` | `no_overlap(...)` |
 | `binpacking(...)` | `bin_packing(...)` |
 | `modeventdelta(...)` | `modevent_delta(...)` |
 | `dfsengine(...)` | `make_dfs_engine(...)` |
 | `clearall(value)` | `clear_all(value)` |
 | `arg2intvarargs(...)` | `to_int_var_args(...)` |
+
+Strict-less relation constants use `_LT`; `_LQ` continues to mean less-or-equal.
+The former `_LE` names have no compatibility aliases.
 
 Qt overrides and other external interfaces retain the spellings their APIs
 require. Parser tokens and protocol strings remain unchanged.
