@@ -86,7 +86,7 @@ namespace {
     bool
     require(bool condition, const std::string& message) {
         if (!condition) {
-            std::cerr << "public-runner-smoke: " << message << std::endl;
+            std::cerr << "public-runner-smoke: " << message << '\n' << std::flush;
             return false;
         }
         return true;

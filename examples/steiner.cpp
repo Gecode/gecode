@@ -129,7 +129,7 @@ public:
     void
     print(std::ostream& os) const override {
         for (int i = 0; i < no_of_triples; i++) {
-            os << "\t[" << i << "] = " << triples[i] << std::endl;
+            os << "\t[" << i << "] = " << triples[i] << '\n';
         }
     }
     /// Constructor for copying \a s

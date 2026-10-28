@@ -109,7 +109,7 @@ public:
                 os << " -> ";
             os << route[i];
         }
-        os << " (length " << route.length() << ")" << std::endl;
+        os << " (length " << route.length() << ")" << '\n';
     }
 };
 

@@ -421,10 +421,8 @@ namespace Gecode { namespace FlatZinc {
             }
         }
         std::unique_ptr<BlackBoxProcessSession> s(create_blackbox_process(program, args));
-        BlackBoxProcessSession* r = s.get();
-        sessions.push_back(r);
-        s.release();
-        return *r;
+        sessions.push_back(s.get());
+        return *s.release();
     }
 
     std::string

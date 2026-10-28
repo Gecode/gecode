@@ -42,7 +42,7 @@ namespace Gecode {
         os << "trace<Set>::init(id:" << t.id();
         if (t.group().in())
             os << ",g:" << t.group().id();
-        os << ") slack: 100.00% (" << t.slack().initial() << " values)" << std::endl;
+        os << ") slack: 100.00% (" << t.slack().initial() << " values)" << '\n' << std::flush;
     }
 
     void
@@ -74,7 +74,7 @@ namespace Gecode {
                 }
             }
         }
-        os << "} by " << vti << std::endl;
+        os << "} by " << vti << '\n' << std::flush;
     }
 
     void
@@ -89,7 +89,8 @@ namespace Gecode {
         double p_c = 100.0 * (sl_c / sl_i);
         double p_d = 100.0 * (sl_p / sl_i) - p_c;
         os << std::showpoint << std::setprecision(4) << p_c << "% - " << std::showpoint << std::setprecision(4) << p_d
-           << '%' << std::endl;
+           << '%' << '\n'
+           << std::flush;
     }
 
     void
@@ -104,7 +105,8 @@ namespace Gecode {
         double p_c = 100.0 * (sl_c / sl_i);
         double p_d = 100.0 * (sl_p / sl_i) - p_c;
         os << std::showpoint << std::setprecision(4) << p_c << "% - " << std::showpoint << std::setprecision(4) << p_d
-           << '%' << std::endl;
+           << '%' << '\n'
+           << std::flush;
     }
 
     void
@@ -112,7 +114,7 @@ namespace Gecode {
         os << "trace<Set>::done(id:" << t.id();
         if (t.group().in())
             os << ",g:" << t.group().id();
-        os << ") slack: 0%" << std::endl;
+        os << ") slack: 0%" << '\n' << std::flush;
     }
 
     StdSetTracer StdSetTracer::def;

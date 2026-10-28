@@ -445,11 +445,11 @@ public:
             for (int c = 0; c < width; ++c) {
                 os << m(c, r) << " ";
             }
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
-        os << "\tmax color: " << max_color << std::endl;
-        os << std::endl;
+        os << '\n';
+        os << "\tmax color: " << max_color << '\n';
+        os << '\n';
     }
 
     /// Constructor for cloning \a s

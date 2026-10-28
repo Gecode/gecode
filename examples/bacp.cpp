@@ -229,15 +229,15 @@ public:
         for (int i = x.size(); i--;)
             period[x[i].val()].push_back(i);
 
-        os << "Solution with load " << u.val() << ":" << std::endl;
+        os << "Solution with load " << u.val() << ":" << '\n';
         for (int i = 0; i < curr.p; i++) {
             os << "\tPeriod " << i + 1 << ": ";
             for (std::list<int>::iterator v = period[i].begin(); v != period[i].end(); ++v) {
                 os << curr.courses[*v].name << " ";
             }
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 
@@ -256,7 +256,7 @@ main(int argc, char* argv[]) {
     opt.iterations(20);
     opt.parse(argc, argv);
     if (opt.size() >= n_examples) {
-        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << '\n';
         return 1;
     }
     IntMinimizeScript::run<BACP, BAB, SizeOptions>(opt);

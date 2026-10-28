@@ -131,9 +131,9 @@ public:
                 } else {
                     os << ".";
                 }
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 
@@ -150,7 +150,7 @@ main(int argc, char* argv[]) {
     opt.parse(argc, argv);
     dict.init(opt.file());
     if (opt.size() > static_cast<unsigned int>(dict.len())) {
-        std::cerr << "Error: size must be between 0 and " << dict.len() << std::endl;
+        std::cerr << "Error: size must be between 0 and " << dict.len() << '\n';
         return 1;
     }
     Script::run<WordSquare, DFS, SizeOptions>(opt);

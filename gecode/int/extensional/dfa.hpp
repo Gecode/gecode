@@ -294,14 +294,14 @@ namespace Gecode {
         std::basic_ostringstream<Char, Traits> st;
         st.copyfmt(os);
         st.width(0);
-        st << "Start state: 0" << std::endl << "States:      0..." << d.n_states() - 1 << std::endl << "Transitions:";
+        st << "Start state: 0" << '\n' << "States:      0..." << d.n_states() - 1 << '\n' << "Transitions:";
         for (int s = 0; s < static_cast<int>(d.n_states()); s++) {
             DFA::Transitions t(d);
             int n = 0;
             while (t()) {
                 if (t.i_state() == s) {
                     if ((n % 4) == 0)
-                        st << std::endl << "\t";
+                        st << '\n' << "\t";
                     st << "[" << t.i_state() << "]"
                        << "- " << t.symbol() << " >"
                        << "[" << t.o_state() << "]  ";
@@ -310,9 +310,9 @@ namespace Gecode {
                 ++t;
             }
         }
-        st << std::endl
-           << "Final states: " << std::endl
-           << "\t[" << d.final_fst() << "] ... [" << d.final_lst() - 1 << "]" << std::endl;
+        st << '\n'
+           << "Final states: " << '\n'
+           << "\t[" << d.final_fst() << "] ... [" << d.final_lst() - 1 << "]" << '\n';
         return os << st.str();
     }
 

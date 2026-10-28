@@ -96,6 +96,7 @@ namespace Test { namespace FlatZinc { namespace {
         Opt opt("random-options");
         args.insert(args.begin(), "random-options");
         std::vector<char*> argv;
+        argv.reserve(args.size());
         for (std::string& a : args)
             argv.push_back(a.data());
         int argc = static_cast<int>(argv.size());

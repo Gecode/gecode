@@ -141,9 +141,9 @@ public:
             else
                 os << ".";
             if ((i + 1) % n == 0)
-                os << std::endl << (i != (n * n - 1) ? "\t" : "");
+                os << '\n' << (i != (n * n - 1) ? "\t" : "");
         }
-        os << "Number of white queens: " << q << std::endl << std::endl;
+        os << "Number of white queens: " << q << '\n' << '\n';
     }
 
     /** \brief Custom brancher for Peacable queens

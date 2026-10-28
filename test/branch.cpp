@@ -633,13 +633,14 @@ namespace Test { namespace Branch {
         delete root;
         return true;
     failed:
-        std::cout << "FAILURE" << std::endl;
+        std::cout << "FAILURE" << '\n';
         for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << std::endl;
+            std::cout << "Number of solutions: " << it->first << '\n';
             for (unsigned int i = 0; i < it->second.size(); ++i)
                 std::cout << it->second[i] << " ";
-            std::cout << std::endl;
+            std::cout << '\n';
         }
+        std::cout.flush();
 
         delete root;
         return results.size() == 1;
@@ -824,13 +825,14 @@ namespace Test { namespace Branch {
         delete root;
         return true;
     failed:
-        std::cout << "FAILURE" << std::endl;
+        std::cout << "FAILURE" << '\n';
         for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << std::endl;
+            std::cout << "Number of solutions: " << it->first << '\n';
             for (unsigned int i = 0; i < it->second.size(); ++i)
                 std::cout << it->second[i] << " ";
-            std::cout << std::endl;
+            std::cout << '\n';
         }
+        std::cout.flush();
 
         delete root;
         return results.size() == 1;
@@ -1115,13 +1117,14 @@ namespace Test { namespace Branch {
         delete root;
         return true;
     failed:
-        std::cout << "FAILURE" << std::endl;
+        std::cout << "FAILURE" << '\n';
         for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << std::endl;
+            std::cout << "Number of solutions: " << it->first << '\n';
             for (unsigned int i = 0; i < it->second.size(); ++i)
                 std::cout << it->second[i] << " ";
-            std::cout << std::endl;
+            std::cout << '\n';
         }
+        std::cout.flush();
 
         delete root;
         return results.size() == 1;
@@ -1389,13 +1392,14 @@ namespace Test { namespace Branch {
         delete root;
         return true;
     failed:
-        std::cout << "FAILURE" << std::endl;
+        std::cout << "FAILURE" << '\n';
         for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << std::endl;
+            std::cout << "Number of solutions: " << it->first << '\n';
             for (unsigned int i = 0; i < it->second.size(); ++i)
                 std::cout << it->second[i] << " ";
-            std::cout << std::endl;
+            std::cout << '\n';
         }
+        std::cout.flush();
 
         delete root;
         return results.size() == 1;

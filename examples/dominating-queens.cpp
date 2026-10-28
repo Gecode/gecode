@@ -132,9 +132,10 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\tNumber of Queens: " << q << std::endl;
-        os << "\tBoard: " << b << std::endl;
+        os << "\tNumber of Queens: " << q << '\n';
+        os << "\tBoard: " << b << '\n';
         if (b.assigned()) {
+            os << std::flush;
             // Print a nice board
             bool* placed = new bool[n * n];
             for (int i = 0; i < n * n; i++)
@@ -145,11 +146,12 @@ public:
                 std::cout << "\t\t";
                 for (int i = 0; i < n; i++)
                     std::cout << (placed[xy(i, j)] ? 'Q' : '.') << ' ';
-                std::cout << std::endl;
+                std::cout << '\n';
             }
+            std::cout << std::flush;
             delete[] placed;
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 

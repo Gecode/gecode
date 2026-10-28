@@ -129,7 +129,7 @@ namespace Test { namespace Set {
         if (opt.log && log) {
             olog << ind(2) << "Initial: x[]=" << x;
             olog << " y[]=" << y;
-            olog << std::endl;
+            olog << '\n';
         }
     }
 
@@ -140,7 +140,7 @@ namespace Test { namespace Set {
             olog << ind(2) << "Initial: x[]=" << x;
             olog << " y[]=" << y;
             olog << " b=" << r.var();
-            olog << std::endl;
+            olog << '\n';
         }
     }
 
@@ -165,20 +165,20 @@ namespace Test { namespace Set {
         if (reified) {
             test->post(*this, x, y, r);
             if (opt.log)
-                olog << ind(3) << "Posting reified propagator" << std::endl;
+                olog << ind(3) << "Posting reified propagator" << '\n';
         } else {
             test->post(*this, x, y);
             if (opt.log)
-                olog << ind(3) << "Posting propagator" << std::endl;
+                olog << ind(3) << "Posting propagator" << '\n';
         }
     }
 
     bool
     SetTestSpace::failed(void) {
         if (opt.log) {
-            olog << ind(3) << "Fixpoint: x[]=" << x << " y[]=" << y << std::endl;
+            olog << ind(3) << "Fixpoint: x[]=" << x << " y[]=" << y << '\n';
             bool f = (status() == Gecode::SS_FAILED);
-            olog << ind(3) << "     -->  x[]=" << x << " y[]=" << y << std::endl;
+            olog << ind(3) << "     -->  x[]=" << x << " y[]=" << y << '\n';
             return f;
         } else {
             return status() == Gecode::SS_FAILED;
@@ -226,7 +226,7 @@ namespace Test { namespace Set {
                 olog << "^-1 = ";
                 break;
             }
-            olog << is << std::endl;
+            olog << is << '\n';
         }
         Gecode::dom(*this, x[i], srt, is);
     }
@@ -234,7 +234,7 @@ namespace Test { namespace Set {
     void
     SetTestSpace::cardinality(int i, int min_cardinality, int max_cardinality) {
         if (opt.log) {
-            olog << ind(4) << min_cardinality << " <= #(x[" << i << "]) <= " << max_cardinality << std::endl;
+            olog << ind(4) << min_cardinality << " <= #(x[" << i << "]) <= " << max_cardinality << '\n';
         }
         Gecode::cardinality(*this, x[i], min_cardinality, max_cardinality);
     }
@@ -263,7 +263,7 @@ namespace Test { namespace Set {
                 olog << ">";
                 break;
             }
-            olog << " " << n << std::endl;
+            olog << " " << n << '\n';
         }
         Gecode::rel(*this, y[i], irt, n);
     }
@@ -273,7 +273,7 @@ namespace Test { namespace Set {
         int n = sol ? 1 : 0;
         assert(reified);
         if (opt.log)
-            olog << ind(4) << "b = " << n << std::endl;
+            olog << ind(4) << "b = " << n << '\n';
         Gecode::rel(*this, r.var(), Gecode::IRT_EQ, n);
     }
 
@@ -364,7 +364,7 @@ namespace Test { namespace Set {
             return true;
         SetTestSpace* c = static_cast<SetTestSpace*>(clone());
         if (opt.log)
-            olog << ind(3) << "Testing fixpoint on copy" << std::endl;
+            olog << ind(3) << "Testing fixpoint on copy" << '\n';
         c->post();
         if (c->failed()) {
             delete c;
@@ -387,7 +387,7 @@ namespace Test { namespace Set {
             return false;
         }
         if (opt.log)
-            olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
+            olog << ind(3) << "Finished testing fixpoint on copy" << '\n';
         delete c;
         return true;
     }
@@ -395,7 +395,7 @@ namespace Test { namespace Set {
     bool
     SetTestSpace::same(SetTestSpace& c) {
         if (opt.log)
-            olog << ind(3) << "Testing whether enabled space is the same" << std::endl;
+            olog << ind(3) << "Testing whether enabled space is the same" << '\n';
         bool f = failed();
         bool cf = c.failed();
         if (f != cf)
@@ -415,7 +415,7 @@ namespace Test { namespace Set {
         if (reified && (r.var().size() != c.r.var().size()))
             return false;
         if (opt.log)
-            olog << ind(3) << "Finished testing whether enabled space is the same" << std::endl;
+            olog << ind(3) << "Finished testing whether enabled space is the same" << '\n';
         return true;
     }
 
@@ -709,7 +709,7 @@ namespace Test { namespace Set {
 #define CHECK_TEST(T, M)                                                                                               \
     do {                                                                                                               \
         if (opt.log)                                                                                                   \
-            olog << ind(3) << "Check: " << (M) << std::endl;                                                           \
+            olog << ind(3) << "Check: " << (M) << '\n';                                                                \
         if (!(T)) {                                                                                                    \
             problem = (M);                                                                                             \
             delete s;                                                                                                  \
@@ -722,7 +722,7 @@ namespace Test { namespace Set {
     do {                                                                                                               \
         if (opt.log) {                                                                                                 \
             olog.str("");                                                                                              \
-            olog << ind(2) << "Testing: " << (T) << std::endl;                                                         \
+            olog << ind(2) << "Testing: " << (T) << '\n';                                                              \
         }                                                                                                              \
         test = (T);                                                                                                    \
     } while (false)
@@ -738,7 +738,7 @@ namespace Test { namespace Set {
         while (a()) {
             bool is_sol = solution(a);
             if (opt.log)
-                olog << ind(1) << "Assignment: " << a << (is_sol ? " (solution)" : " (no solution)") << std::endl;
+                olog << ind(1) << "Assignment: " << a << (is_sol ? " (solution)" : " (no solution)") << '\n';
             START_TEST("Assignment (after posting)");
             {
                 SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this);
@@ -747,13 +747,13 @@ namespace Test { namespace Set {
                 switch (_rand(2)) {
                 case 0:
                     if (opt.log)
-                        olog << ind(3) << "No copy" << std::endl;
+                        olog << ind(3) << "No copy" << '\n';
                     sc = s;
                     s = nullptr;
                     break;
                 case 1:
                     if (opt.log)
-                        olog << ind(3) << "Copy" << std::endl;
+                        olog << ind(3) << "Copy" << '\n';
                     if (s->status() != Gecode::SS_FAILED) {
                         sc = static_cast<SetTestSpace*>(s->clone());
                     } else {
@@ -1191,11 +1191,11 @@ namespace Test { namespace Set {
         return true;
     failed:
         if (opt.log)
-            olog << "FAILURE" << std::endl
-                 << ind(1) << "Test:       " << test << std::endl
-                 << ind(1) << "Problem:    " << problem << std::endl;
+            olog << "FAILURE" << '\n'
+                 << ind(1) << "Test:       " << test << '\n'
+                 << ind(1) << "Problem:    " << problem << '\n';
         if (a() && opt.log)
-            olog << ind(1) << "Assignment: " << a << std::endl;
+            olog << ind(1) << "Assignment: " << a << '\n';
         delete ap;
 
         return false;

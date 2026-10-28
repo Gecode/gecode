@@ -101,7 +101,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\t" << le << std::endl;
+        os << "\t" << le << '\n';
         ;
     }
 };

@@ -311,10 +311,10 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "What slab=" << slab << std::endl;
-        os << "Slab load=" << slab_load << std::endl;
-        os << "Slab cost=" << slab_cost << std::endl;
-        os << "Total cost=" << total_cost << std::endl;
+        os << "What slab=" << slab << '\n';
+        os << "Slab load=" << slab_load << '\n';
+        os << "Slab cost=" << slab_cost << '\n';
+        os << "Total cost=" << total_cost << '\n';
         int nslabsused = 0;
         int nslabscost = 0;
         bool unassigned = false;
@@ -329,8 +329,8 @@ public:
                 ++nslabscost;
         }
         if (!unassigned)
-            os << "Number of slabs used=" << nslabsused << ", slabs with cost=" << nslabscost << std::endl;
-        os << std::endl;
+            os << "Number of slabs used=" << nslabsused << ", slabs with cost=" << nslabscost << '\n';
+        os << '\n';
     }
 
     /// Constructor for cloning \a s
@@ -493,12 +493,12 @@ main(int argc, char* argv[]) {
 void
 SteelMillOptions::help(void) {
     Options::help();
-    std::cerr << "\t(string), optional" << std::endl
-              << "\t\tBenchmark to load." << std::endl
-              << "\t\tIf none is given, the standard CSPLib instance is used." << std::endl;
-    std::cerr << "\t(unsigned int), optional" << std::endl
-              << "\t\tNumber of orders to use, in the interval [0..norders]." << std::endl
-              << "\t\tIf none is given, all orders are used." << std::endl;
+    std::cerr << "\t(string), optional" << '\n'
+              << "\t\tBenchmark to load." << '\n'
+              << "\t\tIf none is given, the standard CSPLib instance is used." << '\n';
+    std::cerr << "\t(unsigned int), optional" << '\n'
+              << "\t\tNumber of orders to use, in the interval [0..norders]." << '\n'
+              << "\t\tIf none is given, all orders are used." << '\n';
 }
 
 bool
@@ -512,7 +512,7 @@ SteelMillOptions::parse(int& argc, char* argv[]) {
             if (i < argc - 1)
                 std::cerr << ",";
         }
-        std::cerr << "})." << std::endl;
+        std::cerr << "})." << '\n';
         return false;
     }
     // Parse options
@@ -525,8 +525,7 @@ SteelMillOptions::parse(int& argc, char* argv[]) {
         } else {
             std::ifstream instance(argv[argc - 1]);
             if (instance.fail()) {
-                std::cerr << "Argument \"" << argv[argc - 1] << "\" is neither an integer nor a readable file"
-                          << std::endl;
+                std::cerr << "Argument \"" << argv[argc - 1] << "\" is neither an integer nor a readable file" << '\n';
                 return false;
             }
             // Read file instance
@@ -563,7 +562,7 @@ SteelMillOptions::parse(int& argc, char* argv[]) {
     }
     // Check size reasonability
     if (_size == 0 || _size > _norders) {
-        std::cerr << "Size must be between 1 and " << _norders << std::endl;
+        std::cerr << "Size must be between 1 and " << _norders << '\n';
         return false;
     }
     return true;

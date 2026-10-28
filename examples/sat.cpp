@@ -135,7 +135,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "solution:\n" << x << std::endl;
+        os << "solution:\n" << x << '\n';
     }
 };
 
@@ -148,22 +148,22 @@ main(int argc, char* argv[]) {
     InstanceOptions opt("SAT", instance_spec);
     opt.parse(argc, argv);
     if (argc > 2) {
-        std::cerr << "Error: unexpected arguments after the DIMACS file" << std::endl;
+        std::cerr << "Error: unexpected arguments after the DIMACS file" << '\n';
         return 1;
     }
 
     if (!opt.is_file()) {
         if (opt.instance() == nullptr)
-            std::cerr << "Error: no DIMACS file given" << std::endl;
+            std::cerr << "Error: no DIMACS file given" << '\n';
         else
-            std::cerr << "Error: cannot read file '" << opt.instance() << "'" << std::endl;
+            std::cerr << "Error: cannot read file '" << opt.instance() << "'" << '\n';
         return 1;
     }
     try {
         // Read here to report errors before solving starts
         (void)opt.data();
     } catch (const Instance::Error& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
         return 1;
     }
 

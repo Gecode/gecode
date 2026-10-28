@@ -46,8 +46,8 @@ main(int argc, char** argv) {
     opt.parse(argc, argv);
 
     if (argc != 2) {
-        cerr << "Usage: " << argv[0] << " [options] <file>" << endl;
-        cerr << "       " << argv[0] << " -help for more information" << endl;
+        cerr << "Usage: " << argv[0] << " [options] <file>" << '\n' << std::flush;
+        cerr << "       " << argv[0] << " -help for more information" << '\n' << std::flush;
         exit(EXIT_FAILURE);
     }
 
@@ -70,7 +70,7 @@ main(int argc, char** argv) {
             if (opt.output()) {
                 std::ofstream os(opt.output());
                 if (!os.good()) {
-                    std::cerr << "Could not open file " << opt.output() << " for output." << std::endl;
+                    std::cerr << "Could not open file " << opt.output() << " for output." << '\n' << std::flush;
                     exit(EXIT_FAILURE);
                 }
                 fg->run(os, p, opt, t_total);
@@ -83,7 +83,7 @@ main(int argc, char** argv) {
         }
         delete fg;
     } catch (FlatZinc::Error& e) {
-        std::cerr << "Error: " << e.to_string() << std::endl;
+        std::cerr << "Error: " << e.to_string() << '\n' << std::flush;
         return 1;
     }
 

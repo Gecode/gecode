@@ -315,7 +315,7 @@ public:
             os.width(2);
             os << p << "] ";
         }
-        os << std::endl;
+        os << '\n';
         // print entries
         for (int w = 0; w < weeks(); w++) {
             os << "\tW[";
@@ -327,7 +327,7 @@ public:
                 os.width(2);
                 os << a(p, w).val() << " ";
             }
-            os << std::endl;
+            os << '\n';
         }
     }
 };
@@ -342,11 +342,11 @@ main(int argc, char* argv[]) {
     opt.size(18);
     opt.parse(argc, argv);
     if (opt.size() < 5) {
-        std::cerr << "No Solution for less than 5 teams!" << std::endl;
+        std::cerr << "No Solution for less than 5 teams!" << '\n';
         return 1;
     }
     if (opt.size() % 2 != 0) {
-        std::cerr << "Number of teams has to be even!" << std::endl;
+        std::cerr << "Number of teams has to be even!" << '\n';
         return 1;
     }
     Script::run<SportsLeague, DFS, SizeOptions>(opt);
