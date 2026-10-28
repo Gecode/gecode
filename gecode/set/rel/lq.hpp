@@ -404,7 +404,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
         if (i == n) { // case: $
             if (strict)
-                goto rewrite_le;
+                goto rewrite_lt;
             else
                 goto rewrite_lq;
         }
@@ -413,7 +413,7 @@ namespace Gecode { namespace Set { namespace Rel {
             goto rewrite_lq;
 
         if (cs.xmin(i) > cs.ymax(i)) // case: >
-            goto rewrite_le;
+            goto rewrite_lt;
 
         if (cs.xmax(i) <= cs.ymin(i)) {
             // case: <= (invariant: not =, <)
@@ -460,7 +460,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
             if (i == n) { // case: $
                 if (strict) {
-                    goto rewrite_le;
+                    goto rewrite_lt;
                 } else {
                     GECODE_ES_CHECK(cs.prune(home, x0, x1));
                     return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
@@ -468,7 +468,7 @@ namespace Gecode { namespace Set { namespace Rel {
             }
 
             if (cs.xmin(i) > cs.ymax(i)) // case: >
-                goto rewrite_le;
+                goto rewrite_lt;
 
             GECODE_ES_CHECK(cs.prune(home, x0, x1));
             return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
@@ -477,7 +477,7 @@ namespace Gecode { namespace Set { namespace Rel {
         GECODE_ES_CHECK(cs.prune(home, x0, x1));
         return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
 
-    rewrite_le:
+    rewrite_lt:
         GECODE_ME_CHECK(cs.xlq(firsti, false));
         GECODE_ME_CHECK(cs.ygq(firsti, true));
         GECODE_ES_CHECK(cs.prune(home, x0, x1));

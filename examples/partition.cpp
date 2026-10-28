@@ -55,10 +55,10 @@ public:
         const int n = opt.size();
 
         // Break symmetries by ordering numbers in each group
-        rel(*this, x, IRT_LE);
-        rel(*this, y, IRT_LE);
+        rel(*this, x, IRT_LT);
+        rel(*this, y, IRT_LT);
 
-        rel(*this, x[0], IRT_LE, y[0]);
+        rel(*this, x[0], IRT_LT, y[0]);
 
         IntVarArgs xy(2 * n);
         for (int i = n; i--;) {

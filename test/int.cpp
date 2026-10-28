@@ -184,7 +184,7 @@ namespace Test { namespace Int {
                 unsigned int offset = rand(n);
                 v = static_cast<int>(static_cast<long long>(a[i]) + 1LL + offset);
                 assert((v > a[i]) && (v <= x[i].max()));
-                irt = IRT_LE;
+                irt = IRT_LT;
             }
             break;
         case 1:
@@ -237,7 +237,7 @@ namespace Test { namespace Int {
             case Gecode::IRT_LQ:
                 olog << "<=";
                 break;
-            case Gecode::IRT_LE:
+            case Gecode::IRT_LT:
                 olog << "<";
                 break;
             case Gecode::IRT_GQ:
@@ -291,7 +291,7 @@ namespace Test { namespace Int {
                 unsigned int offset = rand(n);
                 int v = static_cast<int>(static_cast<long long>(x[i].min()) + 1LL + offset);
                 assert((v > x[i].min()) && (v <= x[i].max()));
-                rel(i, Gecode::IRT_LE, v);
+                rel(i, Gecode::IRT_LT, v);
             }
             if (rand(2) && !x[i].assigned()) {
                 unsigned int n = static_cast<unsigned int>(x[i].max()) - static_cast<unsigned int>(x[i].min());
@@ -436,7 +436,7 @@ namespace Test { namespace Int {
                                                                Gecode::IPL_BASIC};
 
     const Gecode::IntRelType IntRelTypes::irts[] = {Gecode::IRT_EQ, Gecode::IRT_NQ, Gecode::IRT_LQ,
-                                                    Gecode::IRT_LE, Gecode::IRT_GQ, Gecode::IRT_GR};
+                                                    Gecode::IRT_LT, Gecode::IRT_GQ, Gecode::IRT_GR};
 
     const Gecode::BoolOpType BoolOpTypes::bots[] = {Gecode::BOT_AND, Gecode::BOT_OR, Gecode::BOT_IMP, Gecode::BOT_EQV,
                                                     Gecode::BOT_XOR};

@@ -124,7 +124,7 @@ public:
 
                     // If the piece is symmetrical, order the locations
                     if (i == j)
-                        rel(*this, p1[domino_count], IRT_LE, p2[domino_count]);
+                        rel(*this, p1[domino_count], IRT_LT, p2[domino_count]);
 
                     // Link the current piece to the board
                     element(*this, board, p1[domino_count], i);

@@ -132,7 +132,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_int_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_int_cmp(s, IRT_LE, ce, ann);
+            p_int_cmp(s, IRT_LT, ce, ann);
         }
         void
         p_int_cmp_reif(FlatZincSpace& s, IntRelType irt, ReifyMode rm, const ConExpr& ce, AST::Node* ann) {
@@ -181,7 +181,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_int_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_int_cmp_reif(s, IRT_LE, RM_EQV, ce, ann);
+            p_int_cmp_reif(s, IRT_LT, RM_EQV, ce, ann);
         }
 
         void
@@ -206,7 +206,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_int_lt_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_int_cmp_reif(s, IRT_LE, RM_IMP, ce, ann);
+            p_int_cmp_reif(s, IRT_LT, RM_IMP, ce, ann);
         }
 
         /* linear (in-)equations */
@@ -320,15 +320,15 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_int_lin_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_int_lin_cmp(s, IRT_LE, ce, ann);
+            p_int_lin_cmp(s, IRT_LT, ce, ann);
         }
         void
         p_int_lin_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_int_lin_cmp_reif(s, IRT_LE, RM_EQV, ce, ann);
+            p_int_lin_cmp_reif(s, IRT_LT, RM_EQV, ce, ann);
         }
         void
         p_int_lin_lt_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_int_lin_cmp_reif(s, IRT_LE, RM_IMP, ce, ann);
+            p_int_lin_cmp_reif(s, IRT_LT, RM_IMP, ce, ann);
         }
         void
         p_int_lin_ge(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -421,15 +421,15 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_bool_lin_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_bool_lin_cmp(s, IRT_LE, ce, ann);
+            p_bool_lin_cmp(s, IRT_LT, ce, ann);
         }
         void
         p_bool_lin_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_bool_lin_cmp_reif(s, IRT_LE, RM_EQV, ce, ann);
+            p_bool_lin_cmp_reif(s, IRT_LT, RM_EQV, ce, ann);
         }
         void
         p_bool_lin_lt_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_bool_lin_cmp_reif(s, IRT_LE, RM_IMP, ce, ann);
+            p_bool_lin_cmp_reif(s, IRT_LT, RM_IMP, ce, ann);
         }
         void
         p_bool_lin_ge(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -617,15 +617,15 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_bool_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_bool_cmp(s, IRT_LE, ce, ann);
+            p_bool_cmp(s, IRT_LT, ce, ann);
         }
         void
         p_bool_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_bool_cmp_reif(s, IRT_LE, RM_EQV, ce, ann);
+            p_bool_cmp_reif(s, IRT_LT, RM_EQV, ce, ann);
         }
         void
         p_bool_lt_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_bool_cmp_reif(s, IRT_LE, RM_IMP, ce, ann);
+            p_bool_cmp_reif(s, IRT_LT, RM_IMP, ce, ann);
         }
 
 #define BOOL_OP(op)                                                                                                    \
@@ -990,7 +990,7 @@ namespace Gecode { namespace FlatZinc {
         p_array_int_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
             IntVarArgs iv0 = s.arg_to_int_var_args(ce[0]);
             IntVarArgs iv1 = s.arg_to_int_var_args(ce[1]);
-            rel(s, iv0, IRT_LE, iv1, s.annotation_to_int_prop_level(ann));
+            rel(s, iv0, IRT_LT, iv1, s.annotation_to_int_prop_level(ann));
         }
 
         void
@@ -1004,7 +1004,7 @@ namespace Gecode { namespace FlatZinc {
         p_array_bool_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
             BoolVarArgs bv0 = s.arg_to_bool_var_args(ce[0]);
             BoolVarArgs bv1 = s.arg_to_bool_var_args(ce[1]);
-            rel(s, bv0, IRT_LE, bv1, s.annotation_to_int_prop_level(ann));
+            rel(s, bv0, IRT_LT, bv1, s.annotation_to_int_prop_level(ann));
         }
 
         void
@@ -1730,7 +1730,7 @@ namespace Gecode { namespace FlatZinc {
             case 3:
                 return IRT_LQ;
             case 4:
-                return IRT_LE;
+                return IRT_LT;
             case 5:
                 return IRT_GQ;
             case 6:

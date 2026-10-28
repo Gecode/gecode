@@ -2038,7 +2038,7 @@ namespace Gecode { namespace FlatZinc {
     FlatZincSpace::constrain(const Space& s) {
         if (_opt_var_is_int) {
             if (_method == MIN)
-                rel(*this, iv[_opt_var], IRT_LE, static_cast<const FlatZincSpace*>(&s)->iv[_opt_var].val());
+                rel(*this, iv[_opt_var], IRT_LT, static_cast<const FlatZincSpace*>(&s)->iv[_opt_var].val());
             else if (_method == MAX)
                 rel(*this, iv[_opt_var], IRT_GR, static_cast<const FlatZincSpace*>(&s)->iv[_opt_var].val());
         } else {

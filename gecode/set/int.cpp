@@ -62,9 +62,9 @@ namespace Gecode {
             rel(home, tmp, IRT_LQ, x);
             GECODE_ES_FAIL(Set::Int::MaxElement<Set::SetView>::post(home, s, tmp));
         } break;
-        case IRT_LE: {
+        case IRT_LT: {
             IntVar tmp(home, Int::Limits::min, Int::Limits::max);
-            rel(home, tmp, IRT_LE, x);
+            rel(home, tmp, IRT_LT, x);
             GECODE_ES_FAIL(Set::Int::MaxElement<Set::SetView>::post(home, s, tmp));
         } break;
         case IRT_GQ: {
@@ -176,9 +176,9 @@ namespace Gecode {
             rel(home, tmp, IRT_LQ, x, r);
             Gecode::Set::Int::remax(home, s, tmp, r);
         } break;
-        case IRT_LE: {
+        case IRT_LT: {
             IntVar tmp(home, Int::Limits::min, Int::Limits::max);
-            rel(home, tmp, IRT_LE, x, r);
+            rel(home, tmp, IRT_LT, x, r);
             Gecode::Set::Int::remax(home, s, tmp, r);
         } break;
         case IRT_GQ: {

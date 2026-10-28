@@ -69,7 +69,7 @@ namespace Gecode { namespace Set {
         case SRT_LQ:
             GECODE_ES_FAIL((Lq<View0, View1, false>::post(home, x0, x1)));
             break;
-        case SRT_LE:
+        case SRT_LT:
             GECODE_ES_FAIL((Lq<View0, View1, true>::post(home, x0, x1)));
             break;
         case SRT_GQ:
@@ -129,7 +129,7 @@ namespace Gecode { namespace Set {
         case SRT_LQ:
             GECODE_ES_FAIL((ReLq<View0, View1, rm, false>::post(home, x, y, b)));
             break;
-        case SRT_LE:
+        case SRT_LT:
             GECODE_ES_FAIL((ReLq<View0, View1, rm, true>::post(home, x, y, b)));
             break;
         case SRT_GQ:

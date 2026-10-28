@@ -248,14 +248,14 @@ public:
         /// (h,a) and (a,h) are the same game, focus on home (that is, h<a)
         for (int p = 0; p < periods(); p++)
             for (int w = 0; w < teams; w++)
-                rel(*this, h(p, w), IRT_LE, a(p, w));
+                rel(*this, h(p, w), IRT_LT, a(p, w));
 
         // Home teams in first week are ordered
         {
             IntVarArgs h0(periods());
             for (int p = 0; p < periods(); p++)
                 h0[p] = h(p, 0);
-            rel(*this, h0, IRT_LE);
+            rel(*this, h0, IRT_LT);
         }
 
         // Fix first pair

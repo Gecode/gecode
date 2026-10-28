@@ -97,7 +97,7 @@ public:
         }
 
         // Symmetry breaking: the last word must be later in the wordlist
-        rel(*this, words[0], IRT_LE, words[w_l - 1]);
+        rel(*this, words[0], IRT_LT, words[w_l - 1]);
 
         switch (opt.branching()) {
         case BRANCH_WORDS:

@@ -72,7 +72,7 @@ namespace Gecode { namespace Float {
 
     template <class View>
     forceinline RelTest
-    rtest_le(View x, View y) {
+    rtest_lt(View x, View y) {
         if (x.max() < y.min())
             return RT_TRUE;
         if (x.min() >= y.max())
@@ -82,7 +82,7 @@ namespace Gecode { namespace Float {
 
     template <class View>
     forceinline RelTest
-    rtest_le(View x, FloatVal n) {
+    rtest_lt(View x, FloatVal n) {
         if (x.max() < n.min())
             return RT_TRUE;
         if (x.min() >= n.max())
