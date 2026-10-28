@@ -549,20 +549,24 @@ namespace Gecode { namespace FlatZinc {
       err << "Cannot open file " << filename << endl;
       return NULL;
     }
-    if (stat(filename.c_str(), &sbuf) == -1) {
+    if (fstat(fd, &sbuf) == -1) {
+      close(fd);
       err << "Cannot stat file " << filename << endl;
       return NULL;
     }
-    data = (char*)mmap((caddr_t)0, sbuf.st_size, PROT_READ, MAP_SHARED, fd,0);
-    if (data == (caddr_t)(-1)) {
+    data = static_cast<char*>(mmap(nullptr, sbuf.st_size, PROT_READ, MAP_SHARED, fd,0));
+    close(fd);
+    if (data == MAP_FAILED) {
       err << "Cannot mmap file " << filename << endl;
       return NULL;
     }
+    auto unmap = [size=sbuf.st_size](char* p) { munmap(p,size); };
+    std::unique_ptr<char,decltype(unmap)> mapping(data,unmap);
 
     if (fzs == NULL) {
       fzs = new FlatZincSpace(rnd);
     }
-    ParserState pp(data, sbuf.st_size, err, fzs);
+    ParserState pp(mapping.get(), sbuf.st_size, err, fzs);
 #else
     std::ifstream file;
     file.open(filename.c_str());
