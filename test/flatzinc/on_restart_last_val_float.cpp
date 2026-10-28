@@ -33,9 +33,36 @@
 
 #include "test/flatzinc.hh"
 
+#include <cmath>
+#include <sstream>
+
 namespace Test { namespace FlatZinc {
 
   namespace {
+    /// Check the restart sequence without depending on final decimal digits.
+    bool check(const std::string& output) {
+      std::istringstream is(output);
+      const int expected[] = {-1, 2, 3, 4};
+      for (int i=0; i<4; i++) {
+        char name, eq, semi;
+        int x;
+        double y;
+        std::string separator;
+        if (!(is >> name >> eq >> x >> semi) ||
+            (name != 'x') || (eq != '=') || (semi != ';') ||
+            (x != expected[i]))
+          return false;
+        if (!(is >> name >> eq >> y >> semi >> separator) ||
+            (name != 'y') || (eq != '=') || (semi != ';') ||
+            !(std::abs(y-(0.1+0.25*i)) <= 1e-12) ||
+            (separator != "----------"))
+          return false;
+      }
+      std::string end;
+      return (is >> end) && (end == "==========") &&
+        (is >> std::ws).eof();
+    }
+
     /// Helper class to create and register tests
     class Create {
     public:
@@ -66,20 +93,7 @@ constraint float_eq_reif(y,0.1,X_INTRODUCED_14_):: defines_var(X_INTRODUCED_14_)
 constraint float_lin_eq_reif(X_INTRODUCED_15_,[y,X_INTRODUCED_5_],0.25,X_INTRODUCED_16_):: defines_var(X_INTRODUCED_16_);
 solve :: int_search(X_INTRODUCED_2_,input_order,indomain_min,complete) maximize X_INTRODUCED_1_;
 )FZN",
-R"OUT(x = -1;
-y = 0.100000000000001;
-----------
-x = 2;
-y = 0.35;
-----------
-x = 3;
-y = 0.6;
-----------
-x = 4;
-y = 0.85;
-----------
-==========
-)OUT", true, {"--restart", "constant", "--restart-base", "100"});
+"", true, {"--restart", "constant", "--restart-base", "100"}, check);
       }
     };
 
