@@ -249,9 +249,8 @@ namespace Gecode {
   TraceRecorder*
   Space::findtracerecorder(void) {
     for (Actor** a=d_fst; a<d_cur; a++) {
-      Propagator* p = Propagator::cast(*a);
-      if (!p->disabled())
-        if (TraceRecorder* tr = dynamic_cast<TraceRecorder*>(p)) {
+      if (TraceRecorder* tr = dynamic_cast<TraceRecorder*>(*a))
+        if (!tr->disabled()) {
           std::swap(*d_fst,*a);
           return tr;
         }

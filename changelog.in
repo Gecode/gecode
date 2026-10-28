@@ -92,6 +92,13 @@ Rank:   minor
 Release branch filter and print callbacks when their branchers are disposed.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Avoid reading propagator state from branchers when enabling tracing.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   major
