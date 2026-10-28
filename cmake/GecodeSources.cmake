@@ -262,6 +262,9 @@ set(GECODE_FLATZINC_SOURCES
   gecode/flatzinc/lexer.yy.cpp
   gecode/flatzinc/parser.tab.cpp
   gecode/flatzinc/registry.cpp
+  gecode/flatzinc/registry-scheduling.cpp
+  gecode/flatzinc/registry-set.cpp
+  gecode/flatzinc/registry-float.cpp
 )
 
 set(GECODE_TEST_CORE_SOURCES

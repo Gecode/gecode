@@ -21,6 +21,7 @@ New-Item -ItemType Directory -Force -Path `
   (Join-Path $work "a"), `
   (Join-Path $work "b"), `
   (Join-Path $work "c"), `
+  (Join-Path $work "flatzinc"), `
   (Join-Path $work "manual") | Out-Null
 
 @'
@@ -63,6 +64,54 @@ endif()
 
 @'
 cmake_minimum_required(VERSION 3.21)
+project(consumer_flatzinc LANGUAGES CXX)
+find_package(Gecode CONFIG REQUIRED COMPONENTS flatzinc)
+add_executable(consumer_flatzinc main.cpp)
+target_link_libraries(consumer_flatzinc PRIVATE Gecode::gecodeflatzinc)
+'@ | Set-Content -Encoding utf8 (Join-Path $work "flatzinc\CMakeLists.txt")
+@'
+#include <gecode/flatzinc.hh>
+#include <iostream>
+#include <memory>
+#include <sstream>
+
+bool check(const char* name, const char* model, bool expect_failed = false) {
+  std::istringstream source(model);
+  std::ostringstream errors;
+  Gecode::FlatZinc::Printer printer;
+  std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> space(
+    Gecode::FlatZinc::parse(source, printer, errors));
+  if (!space || (space->status() == Gecode::SS_FAILED) != expect_failed) {
+    std::cerr << name << ": unexpected parse or propagation result\n"
+              << errors.str();
+    return false;
+  }
+  return true;
+}
+
+int main() {
+  // Each registry family lives in its own object file of the library.
+  bool ok = check("integer constraints",
+    "var 0..0:x; constraint set_in(x,{1}); solve satisfy;", true);
+  ok = check("scheduling constraints",
+    "constraint fzn_cumulatives([0,0],[2,2],[1,1],1); solve satisfy;",
+    true) && ok;
+#ifdef GECODE_HAS_SET_VARS
+  ok = check("set constraints",
+    "var set of 1..2:s; constraint set_eq(s,{1}); "
+    "constraint fzn_set_card(s,2); solve satisfy;", true) && ok;
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+  ok = check("float constraints",
+    "var 0.0..1.0:x; constraint fzn_float_eq(x,2.0); solve satisfy;",
+    true) && ok;
+#endif
+  return ok ? 0 : 1;
+}
+'@ | Set-Content -Encoding utf8 (Join-Path $work "flatzinc\main.cpp")
+
+@'
+cmake_minimum_required(VERSION 3.21)
 project(manual_consumer LANGUAGES CXX)
 set(GECODE_PREFIX "" CACHE PATH "Installed Gecode prefix")
 find_path(GECODE_INCLUDE_DIR
@@ -102,6 +151,19 @@ Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_b build"
 
 cmake -S (Join-Path $work "c") -B (Join-Path $work "c\build") -G "Visual Studio 17 2022" -A x64 "-DCMAKE_PREFIX_PATH=$prefix"
 Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_c configure"
+
+# Parsing must reach every enabled registry family, including from static
+# libraries, and the registry's private header must not be installed.
+if (Test-Path (Join-Path $prefix "include\gecode\flatzinc\registry-internal.hh")) {
+  throw "The private FlatZinc registry header was installed."
+}
+cmake -S (Join-Path $work "flatzinc") -B (Join-Path $work "flatzinc\build") -G "Visual Studio 17 2022" -A x64 "-DCMAKE_PREFIX_PATH=$prefix"
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_flatzinc configure"
+cmake --build (Join-Path $work "flatzinc\build") --config $env:BUILD_TYPE
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_flatzinc build"
+$env:PATH = "$(Join-Path $prefix 'bin');$env:PATH"
+& (Join-Path $work "flatzinc\build\$env:BUILD_TYPE\consumer_flatzinc.exe")
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_flatzinc run"
 
 # Exercise the installed headers and library without loading the CMake package
 # or inheriting compile definitions from an exported target.

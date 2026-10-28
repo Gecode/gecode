@@ -1745,6 +1745,7 @@ if(GECODE_INSTALL)
       PATTERN "**.hpp"
       PATTERN "LICENSE_1_0.txt"
       PATTERN "mznlib" EXCLUDE
+      PATTERN "flatzinc/registry-internal.hh" EXCLUDE
       PATTERN "flatzinc/blackbox.hh" EXCLUDE
       PATTERN "flatzinc/blackbox-backend.hh" EXCLUDE
       PATTERN "flatzinc/blackbox-process.hh" EXCLUDE
