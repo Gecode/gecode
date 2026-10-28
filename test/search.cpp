@@ -44,6 +44,7 @@
 #include <atomic>
 #include <chrono>
 #include <future>
+#include <limits>
 #include <memory>
 #include <thread>
 #include <type_traits>
@@ -82,6 +83,235 @@ namespace Test {
 
     using namespace Gecode;
     using namespace Gecode::Int;
+
+#ifdef GECODE_HAS_EXPERIMENTAL
+    /// Explicit finite tree with prefix costs, admissible bounds, and ranks
+    class TreeSpace : public Space {
+    public:
+      /// Tree node
+      struct Node {
+        int cost, bound, rank, best;
+        std::vector<int> children;
+      };
+      typedef std::vector<Node> Graph;
+      std::shared_ptr<const Graph> graph;
+      bool maximize;
+      int vertex, ceiling;
+      /// Brancher choosing a child of the current node
+      class Decisions : public Brancher {
+        class Decision : public Choice {
+        public:
+          int vertex;
+          Decision(const Brancher& b, int v, unsigned int n)
+            : Choice(b,n), vertex(v) {}
+          void archive(Archive& e) const override {
+            Choice::archive(e); e << vertex << alternatives();
+          }
+        };
+      public:
+        Decisions(Home home) : Brancher(home) {}
+        Decisions(Space& home, Decisions& b) : Brancher(home,b) {}
+        bool status(const Space& s) const override {
+          return !static_cast<const TreeSpace&>(s).node().children.empty();
+        }
+        const Choice* choice(Space& s) override {
+          const TreeSpace& t = static_cast<const TreeSpace&>(s);
+          return new Decision(*this,t.vertex,
+            static_cast<unsigned int>(t.node().children.size()));
+        }
+        const Choice* choice(const Space&, Archive& e) override {
+          int v; unsigned int n; e >> v >> n;
+          return new Decision(*this,v,n);
+        }
+        ExecStatus commit(Space& s, const Choice& c, unsigned int a) override {
+          TreeSpace& t = static_cast<TreeSpace&>(s);
+          t.vertex = (*t.graph)[static_cast<const Decision&>(c).vertex].children[a];
+          return t.node().cost >= t.ceiling ? ES_FAILED : ES_OK;
+        }
+        Actor* copy(Space& home) override {
+          return new (home) Decisions(home,*this);
+        }
+        size_t dispose(Space& home) override {
+          (void) Brancher::dispose(home);
+          return sizeof(*this);
+        }
+      };
+      TreeSpace(std::shared_ptr<const Graph> g, bool max)
+        : graph(g), maximize(max), vertex(0),
+          ceiling(std::numeric_limits<int>::max()) {
+        (void) new (*this) Decisions(*this);
+      }
+      TreeSpace(TreeSpace& s)
+        : Space(s), graph(s.graph), maximize(s.maximize), vertex(s.vertex),
+          ceiling(s.ceiling) {}
+      Space* copy(void) override { return new TreeSpace(*this); }
+      bool master(const MetaInfo&) override { return true; }
+      const Node& node(void) const { return (*graph)[vertex]; }
+      void constrain(const Space& s) override {
+        ceiling = static_cast<const TreeSpace&>(s).node().cost;
+        if (node().cost >= ceiling) fail();
+      }
+      /// Guidance minimizing cost, or maximizing negated cost
+      static Gecode::Search::HeuristicGuidance
+      guidance(bool max, bool ranked, bool dominance, bool keyed) {
+        using Gecode::Search::HeuristicGuidance;
+        HeuristicGuidance g(max ? HeuristicGuidance::MAXIMIZE :
+                                  HeuristicGuidance::MINIMIZE,
+          [](const Space& s) -> std::int64_t {
+            const TreeSpace& t = static_cast<const TreeSpace&>(s);
+            return t.maximize ? -t.node().bound : t.node().bound;
+          });
+        if (ranked)
+          g.rank = [](const Space& s) -> std::int64_t {
+            return static_cast<const TreeSpace&>(s).node().rank;
+          };
+        if (dominance)
+          g.dominates = [](const Space& a, const Space& b) {
+            return static_cast<const TreeSpace&>(a).node().best <=
+              static_cast<const TreeSpace&>(b).node().best;
+          };
+        if (keyed)
+          g.dominance_key = [](const Space& s) -> std::size_t {
+            return static_cast<std::size_t>
+              (static_cast<const TreeSpace&>(s).node().best % 3);
+          };
+        return g;
+      }
+      /// Return a random tree where all nodes above depth \a d branch
+      static std::shared_ptr<const Graph>
+      random(Gecode::Support::RandomGenerator& r, int d=1) {
+        Graph g;
+        g.push_back({0,0,0,0,{}});
+        grow(g,0,0,d,r);
+        return std::make_shared<const Graph>(std::move(g));
+      }
+    private:
+      static void grow(Graph& g, int v, int depth, int d,
+                       Gecode::Support::RandomGenerator& r) {
+        if ((depth < d) || ((depth < 5) && (r(4U) != 0U))) {
+          unsigned int n = (depth < d ? 2U : 1U) + r(3U);
+          for (unsigned int i=0; i<n; i++) {
+            int c = static_cast<int>(g.size());
+            g.push_back({g[v].cost+static_cast<int>(r(5U)),0,
+                         static_cast<int>(r(10U)),0,{}});
+            g[v].children.push_back(c);
+            grow(g,c,depth+1,d,r);
+          }
+        }
+        if (g[v].children.empty()) {
+          g[v].best = g[v].bound = g[v].cost;
+        } else {
+          g[v].best = std::numeric_limits<int>::max();
+          for (int c : g[v].children)
+            g[v].best = std::min(g[v].best,g[c].best);
+          g[v].bound = g[v].cost +
+            static_cast<int>(r(static_cast<unsigned int>(g[v].best-g[v].cost+1)));
+        }
+      }
+    };
+
+    /// Stop object raising its node limit on each stop
+    class Increasing : public Gecode::Search::Stop {
+      unsigned long long int limit, step;
+    public:
+      unsigned int stops;
+      Increasing(unsigned long long int s) : limit(s), step(s), stops(0) {}
+      bool stop(const Gecode::Search::Statistics& s,
+                const Gecode::Search::Options&) override {
+        if (s.node <= limit)
+          return false;
+        limit += step;
+        stops++;
+        return true;
+      }
+    };
+
+    /// Check that improving solutions reach the optimum unless search stops
+    template<class Engine>
+    static bool improving(Engine& e, const TreeSpace& root,
+                          const Increasing* stop=nullptr) {
+      int last = std::numeric_limits<int>::max();
+      unsigned int stops = 0;
+      while (true) {
+        if (TreeSpace* s = e.next()) {
+          int cost = s->node().cost;
+          delete s;
+          if (cost >= last)
+            return false;
+          last = cost;
+        } else if ((stop != nullptr) && (stop->stops != stops)) {
+          // Resume after the stop object stopped search
+          stops = stop->stops;
+        } else {
+          break;
+        }
+      }
+      return e.stopped() || (last == (*root.graph)[0].best);
+    }
+
+    /// Heuristic search engines on random trees
+    template<template<class> class E>
+    class Heuristic : public Base {
+    public:
+      Heuristic(const std::string& name)
+        : Base("Search::"+name,TestTags::check()) {}
+      bool run(void) override {
+        for (bool max : {false,true})
+          for (bool ranked : {false,true})
+            for (bool dominance : {false,true})
+              for (unsigned int threads : {1U,2U,4U})
+                for (unsigned int step : {0U,1U,7U}) {
+#ifndef GECODE_HAS_THREADS
+                  if (threads > 1U) continue;
+#endif
+                  TreeSpace root(TreeSpace::random(_rand),max);
+                  Gecode::Search::HeuristicGuidance g =
+                    TreeSpace::guidance(max,ranked,dominance,_rand(2U) == 0U);
+                  Increasing stop(step);
+                  Gecode::Search::Options o;
+                  o.threads = threads;
+                  o.guidance = &g;
+                  if (step > 0U)
+                    o.stop = &stop;
+                  if (_rand(3U) == 0U)
+                    o.max_width = 1UL << _rand(3U);
+                  E<TreeSpace> e(&root,o);
+                  if (!improving(e,root,step > 0U ? &stop : nullptr))
+                    return false;
+                  if ((o.max_width == 0UL) && e.stopped())
+                    return false;
+                }
+        return true;
+      }
+    };
+
+    Heuristic<Gecode::AStar> astar_test("AStar");
+    Heuristic<Gecode::CABS> cabs_test("CABS");
+
+    /// Portfolio of BAB, A*, and CABS assets
+    class HeuristicPortfolio : public Base {
+    public:
+      HeuristicPortfolio(void)
+        : Base("Search::Heuristic::Portfolio",TestTags::check()) {}
+      bool run(void) override {
+        TreeSpace root(TreeSpace::random(_rand),false);
+        Gecode::Search::HeuristicGuidance g =
+          TreeSpace::guidance(false,true,false,false);
+        Gecode::Search::Options a;
+        a.threads = 1;
+        a.guidance = &g;
+        SEBs assets({bab<TreeSpace>(a),astar<TreeSpace>(a),
+                     cabs<TreeSpace>(a)});
+        Gecode::Search::Options o;
+#ifdef GECODE_HAS_THREADS
+        o.threads = 3;
+#endif
+        PBS<TreeSpace,BAB> e(&root,assets,o);
+        return improving(e,root);
+      }
+    } heuristic_portfolio;
+#endif
+
 
     /// Values for selecting branchers
     enum HowToBranch {
@@ -584,11 +814,49 @@ namespace Test {
         }
         return ok && !engine.stopped() && (solutions == root.solutions());
       }
+#ifdef GECODE_HAS_EXPERIMENTAL
+      template<template<class> class E>
+      bool heuristic(unsigned int node, unsigned int threads) {
+        Gecode::Search::WorkerControl control(node == 0U ? 0U : 1U);
+        Pause pause(control,node);
+        TreeSpace root(TreeSpace::random(_rand,4),false);
+        Gecode::Search::HeuristicGuidance g =
+          TreeSpace::guidance(false,true,false,false);
+        Gecode::Search::Options o;
+        o.threads = threads;
+        o.worker_control = control;
+        o.stop = &pause;
+        o.guidance = &g;
+        E<TreeSpace> engine(&root,o);
+        int last = std::numeric_limits<int>::max();
+        auto consume = [&] {
+          while (TreeSpace* s = engine.next()) {
+            last = s->node().cost;
+            delete s;
+          }
+        };
+        auto result = std::async(std::launch::async,consume);
+        pause.reached.get_future().wait();
+        bool ok = result.wait_for(std::chrono::milliseconds(20)) ==
+          std::future_status::timeout;
+        control.request(threads);
+        result.get();
+        return ok && !engine.stopped() && (last == (*root.graph)[0].best);
+      }
+#endif
+
     public:
       WorkerControlSequentialPause(void)
         : Base("Search::WorkerControl::SequentialPause", TestTags::check()) {}
       bool run(void) override {
 #ifdef GECODE_HAS_THREADS
+#ifdef GECODE_HAS_EXPERIMENTAL
+        for (unsigned int node : {0U,1U})
+          for (unsigned int threads : {1U,4U})
+            if (!heuristic<Gecode::AStar>(node,threads) ||
+                !heuristic<Gecode::CABS>(node,threads))
+              return false;
+#endif
         return check<Gecode::DFS>(0U) && check<Gecode::DFS>(1U) &&
           check<Gecode::BAB>(0U) && check<Gecode::BAB>(1U);
 #else

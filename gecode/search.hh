@@ -47,6 +47,10 @@
 #include <chrono>
 #include <initializer_list>
 #include <atomic>
+#ifdef GECODE_HAS_EXPERIMENTAL
+#include <cstdint>
+#include <functional>
+#endif
 
 #include <gecode/kernel.hh>
 
@@ -749,6 +753,9 @@ namespace Gecode { namespace Search {
   };
 
     class Stop;
+#ifdef GECODE_HAS_EXPERIMENTAL
+    class HeuristicGuidance;
+#endif
 
     /**
      * \brief %Search engine options
@@ -818,6 +825,14 @@ namespace Gecode { namespace Search {
       Cutoff* cutoff;
       /// Tracer object for tracing search
       SearchTracer* tracer;
+#ifdef GECODE_HAS_EXPERIMENTAL
+      /// Guidance for heuristic search (AStar and CABS, not copied)
+      const HeuristicGuidance* guidance;
+      /// Maximal beam width for CABS (zero for no limit)
+      unsigned long int max_width;
+      /// Maximal number of stored nodes for CABS (zero for no limit)
+      unsigned long int frontier_limit;
+#endif
       /// Default options
       GECODE_SEARCH_EXPORT static const Options def;
       /// Initialize with default values
@@ -1152,6 +1167,128 @@ namespace Gecode {
 
 #include <gecode/search/dfs.hpp>
 
+#ifdef GECODE_HAS_EXPERIMENTAL
+namespace Gecode { namespace Search {
+
+  /**
+   * \brief Guidance for heuristic search engines (experimental)
+   *
+   * The bound is an optimistic objective value for a stable space: a lower
+   * bound when minimizing, an upper bound when maximizing, and the exact
+   * objective for a solution. It must agree with the model's constrain
+   * function. The optional rank orders nodes (lower first) but is never
+   * used for pruning.
+   *
+   * The optional dominance predicate returns whether every completion of
+   * the second space is matched by a completion of the first that is not
+   * worse. It must be transitive. CABS uses it to prune nodes in the same
+   * layer. If a dominance key is given, only nodes with equal keys are
+   * compared.
+   *
+   * Callbacks must only read the space passed to them. With several threads
+   * they can run concurrently.
+   * \ingroup TaskModelSearch
+   */
+  class HeuristicGuidance {
+  public:
+    /// Objective direction
+    enum Sense { MINIMIZE, MAXIMIZE };
+    /// Function evaluating a stable space
+    typedef std::function<std::int64_t(const Space&)> Evaluate;
+    /// Objective direction
+    Sense sense;
+    /// Optimistic objective bound (required)
+    Evaluate bound;
+    /// Node rank (optional, lower first)
+    Evaluate rank;
+    /// Whether the first space dominates the second (optional)
+    std::function<bool(const Space&,const Space&)> dominates;
+    /// Dominance key (optional)
+    std::function<std::size_t(const Space&)> dominance_key;
+    /// Initialize guidance
+    HeuristicGuidance(Sense s, Evaluate b, Evaluate r=Evaluate())
+      : sense(s), bound(std::move(b)), rank(std::move(r)) {}
+  };
+
+}}
+
+namespace Gecode {
+
+  /**
+   * \brief A* search engine (experimental)
+   *
+   * Expands nodes in order of their bound, then their rank, using the
+   * guidance from Search::Options::guidance. Like BAB, next() returns
+   * improving solutions and exhausting the search proves the last
+   * solution optimal.
+   *
+   * All open nodes are stored as clones, so c_d and a_d are ignored.
+   * Tracing is not supported.
+   * \ingroup TaskModelSearch
+   */
+  template<class T>
+  class AStar : public Search::Base<T> {
+  public:
+    /// Initialize engine for space \a s and options \a o
+    AStar(T* s, const Search::Options& o=Search::Options::def);
+    /// Whether engine does best solution search
+    static const bool best = true;
+  };
+
+  /// Perform A* search for subclass \a T of space \a s and options \a o
+  template<class T>
+  T* astar(T* s, const Search::Options& o=Search::Options::def);
+
+  /// Return an A* search engine builder
+  template<class T>
+  SEB astar(const Search::Options& o=Search::Options::def);
+
+}
+
+#include <gecode/search/astar.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Complete anytime beam search engine (experimental)
+   *
+   * Explores the tree layer by layer and keeps the best nodes of each
+   * layer, ordered by rank or, without rank, by bound. The first pass
+   * keeps one node per layer. If a pass discarded nodes that could
+   * improve the incumbent, the search restarts with twice the width.
+   * The guidance is taken from Search::Options::guidance. Like BAB,
+   * next() returns improving solutions and exhausting the search proves
+   * the last solution optimal.
+   *
+   * Search stops when the width would exceed Search::Options::max_width or
+   * the stored nodes would exceed Search::Options::frontier_limit. Nodes are
+   * stored as clones, so c_d and a_d are ignored. Tracing is not supported.
+   * Statistics::restart counts the restarts.
+   * \ingroup TaskModelSearch
+   */
+  template<class T>
+  class CABS : public Search::Base<T> {
+  public:
+    /// Initialize engine for space \a s and options \a o
+    CABS(T* s, const Search::Options& o=Search::Options::def);
+    /// Whether engine does best solution search
+    static const bool best = true;
+  };
+
+  /// Perform CABS search for subclass \a T of space \a s and options \a o
+  template<class T>
+  T* cabs(T* s, const Search::Options& o=Search::Options::def);
+
+  /// Return a CABS search engine builder
+  template<class T>
+  SEB cabs(const Search::Options& o=Search::Options::def);
+
+}
+
+#include <gecode/search/cabs.hpp>
+
+#endif
+
 namespace Gecode {
 
   /**
@@ -1349,6 +1486,11 @@ namespace Gecode {
      *
      * The outer options must not contain a worker control. Each builder can
      * instead supply a distinct control for its underlying engine.
+     * In parallel PBS, the outer thread count limits how many builders run,
+     * in array order; each builder's options set its own engine's thread count.
+     *
+     * With experimental search, AStar and CABS builders can be used
+     * together with BAB builders.
      */
     PBS(T* s, SEBs& sebs, const Search::Options& o=Search::Options::def);
     /// Constrain future portfolio solutions to be better than \a b

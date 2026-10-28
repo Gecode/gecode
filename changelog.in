@@ -119,6 +119,21 @@ Honor propagation annotations in cumulative and unary scheduling bindings,
 including the unary specializations of cumulative constraints.
 
 [ENTRY]
+Module: search
+What:   new
+Rank:   major
+Experimental: true
+[DESCRIPTION]
+Add experimental A* (AStar) and complete anytime beam search (CABS).
+[MORE]
+Both engines take an objective bound and an optional rank from
+Search::Options::guidance. They support parallel search, dynamic worker
+control, and portfolios with BAB. CABS also supports model-defined dominance.
+Enable with --enable-experimental or GECODE_ENABLE_EXPERIMENTAL=ON; the
+preview is disabled by default and its APIs may change in future releases.
+The fifteen-puzzle and tsptw examples demonstrate both engines.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major

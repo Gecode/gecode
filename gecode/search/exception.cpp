@@ -34,6 +34,13 @@
 #include <gecode/search.hh>
 
 namespace Gecode { namespace Search {
+#ifdef GECODE_HAS_EXPERIMENTAL
+  UninitializedGuidance::UninitializedGuidance(const char* l)
+    : Exception(l,"Heuristic guidance is missing") {}
+
+  UnsupportedTracer::UnsupportedTracer(const char* l)
+    : Exception(l,"Search engine does not support tracing") {}
+#endif
 
   UninitializedCutoff::UninitializedCutoff(const char* l)
     : Exception(l,"Cutoff for restart-based search is missing") {}
