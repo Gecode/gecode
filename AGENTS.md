@@ -41,7 +41,7 @@ minimodel modules) stores data in Gecode's own containers and memory:
 `Region`, and heap or space allocation. Other standard library facilities, such
 as `std::optional`, `std::unique_ptr`, and `<algorithm>`, are fine there. The
 instance and FlatZinc modules, tools, examples, and tests may use STL containers
-when that is clearer. Gecode builds as C++17.
+when that is clearer. Gecode builds as C++23.
 
 Add abstractions only when they solve a concrete maintenance or correctness
 problem.
