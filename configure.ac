@@ -264,6 +264,7 @@ dnl ------------------------------------------------------------------
 AC_GECODE_MPFR
 AC_GECODE_QT
 AC_GECODE_GIST
+AC_GECODE_EXPERIMENTAL
 AC_GECODE_CBS
 AC_GECODE_CPPROFILER
 AC_GECODE_FLEXBISON
