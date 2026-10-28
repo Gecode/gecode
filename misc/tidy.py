@@ -263,7 +263,7 @@ def validate_changelog_entries(generated: str) -> list[str]:
         if entry.issue:
             expected.append(f"issue {entry.issue}")
         if entry.thanks:
-            expected.append(f"thanks to {entry.thanks}")
+            expected.append("thanks to " + entry.thanks.replace("@", r"\@"))
         if entry.author:
             expected.append(f"contributed by {entry.author}")
         for item in expected:
