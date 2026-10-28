@@ -9,6 +9,9 @@ Formatting includes owned headers and generated variable headers. Vendored code
 and the Bison/Flex outputs retain their upstream formatting. Lint covers owned
 translation units in the selected compilation database and their owned headers;
 optional features and platform branches require corresponding build settings.
+The all command runs CTest, installed-package fixtures, and documentation
+(Doxygen >= 1.18 required). check-standard and check-sweep remain separate
+deliberate long runs.
 """
 
 from __future__ import annotations
@@ -33,8 +36,8 @@ GENERATED_PARSER = {
 }
 
 
-def run(command: list[str]) -> None:
-    subprocess.run(command, cwd=ROOT, check=True)
+def run(command: list[str], *, env: dict[str, str] | None = None) -> None:
+    subprocess.run(command, cwd=ROOT, env=env, check=True)
 
 
 def llvm_tool(name: str) -> str:
@@ -77,7 +80,7 @@ def format_sources(fix: bool) -> None:
              *(str(path) for path in files[start:start + 100])])
 
 
-def lint(build_dir: Path, jobs: int) -> None:
+def lint(build_dir: Path, jobs: int, *, report_missing: bool = True) -> None:
     configuration = ROOT / ".clang-tidy"
     if not configuration.is_file():
         raise ValueError(f"Missing {configuration}")
@@ -103,7 +106,7 @@ def lint(build_dir: Path, jobs: int) -> None:
     missing = sorted(sources - compiled)
     print(f"Linting {len(selected)} source files and their owned headers", flush=True)
     print("Coverage follows this build's enabled features and platform branches.", flush=True)
-    if missing:
+    if missing and report_missing:
         print(f"{len(missing)} owned source files are outside this build:", flush=True)
         for path in missing:
             print(f"  {path.relative_to(ROOT)}", flush=True)
@@ -126,10 +129,85 @@ def lint(build_dir: Path, jobs: int) -> None:
                       + separator + r"(parser\.tab\.(cpp|hpp)|lexer\.yy\.cpp)$")
     runner_command = [sys.executable, runner] if os.name == "nt" else [runner]
     run([*runner_command, "-clang-tidy-binary", tidy, "-config-file", str(configuration),
-         "-p", str(build_dir), "-j", str(jobs),
+         "-p", str(build_dir), "-j", str(jobs), "-extra-arg=-UNDEBUG",
          "-header-filter", f"({header_filter}|{generated_headers})",
          "-exclude-header-filter", exclude_filter, "-source-filter", source_filter,
          "-warnings-as-errors", "*"])
+    # Line filters use physical generated-file locations, not #line filenames.
+    for generated, grammar in (("parser.tab.cpp", "parser.yxx"), ("lexer.yy.cpp", "lexer.lxx")):
+        source = ROOT / "gecode/flatzinc" / generated
+        if source not in compiled:
+            continue
+        ranges = []
+        start = None
+        lines = source.read_text().splitlines()
+        for number, line in enumerate(lines, 1):
+            directive = re.match(r'#line \d+ "([^"]+)"', line)
+            if directive:
+                if start is not None and number > start:
+                    ranges.append([start, number - 1])
+                start = number + 1 if Path(directive[1]).name == grammar else None
+        if start is not None:
+            ranges.append([start, len(lines)])
+        if not ranges:
+            raise ValueError(f"No owned source mappings found in {source}")
+        print(f"Linting C++ actions from {grammar}", flush=True)
+        run([tidy, "--extra-arg=-UNDEBUG", "-p", str(build_dir),
+             f"--config-file={configuration}",
+             "--line-filter=" + json.dumps([{"name": str(source), "lines": ranges}]),
+             "--warnings-as-errors=*", str(source)])
+    # This owned header is otherwise reached only through excluded Bison/Flex
+    # translation units. Clang borrows the parser's compilation command.
+    if ROOT / "gecode/flatzinc/parser.tab.cpp" in compiled:
+        parser_header = ROOT / "gecode/flatzinc/parser.hh"
+        print("Linting parser.hh with the parser compilation settings", flush=True)
+        run([tidy, "--extra-arg=-UNDEBUG", "-p", str(build_dir),
+             f"--config-file={configuration}",
+             f"--header-filter=({header_filter}|{generated_headers})",
+             f"--exclude-header-filter={exclude_filter}", "--warnings-as-errors=*",
+             str(parser_header)])
+
+
+def check_packages(build_dir: Path, jobs: int, config: str | None,
+                   settings: dict[str, str]) -> None:
+    prefix = build_dir / "check-install"
+    install = ["cmake", "--install", str(build_dir), "--prefix", str(prefix)]
+    if config:
+        install += ["--config", config]
+    run(install)
+    variant = "shared" if settings.get("GECODE_BUILD_SHARED", "").upper() in {
+        "ON", "TRUE", "1", "YES"
+    } else "static"
+    build_type = config or settings.get("CMAKE_BUILD_TYPE", "")
+    environment = os.environ.copy()
+    if os.name == "nt":
+        environment["PATH"] = str(prefix / "bin") + os.pathsep + environment.get("PATH", "")
+    for package in ("allocator", "public-test-component"):
+        package_build = build_dir / "check-packages" / package
+        print(f"Checking installed package: {package}", flush=True)
+        configure = ["cmake", "-S", str(ROOT / "test/package" / package),
+                     "-B", str(package_build), "-G", "Ninja",
+                     "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                     f"-DCMAKE_BUILD_TYPE={build_type}", f"-DCMAKE_PREFIX_PATH={prefix}"]
+        for setting in ("CMAKE_C_COMPILER", "CMAKE_CXX_COMPILER", "CMAKE_C_FLAGS",
+                        "CMAKE_CXX_FLAGS", "CMAKE_OSX_SYSROOT", "CMAKE_OSX_ARCHITECTURES",
+                        "CMAKE_OSX_DEPLOYMENT_TARGET", "CMAKE_TOOLCHAIN_FILE"):
+            if settings.get(setting):
+                configure.append(f"-D{setting}={settings[setting]}")
+        if package == "allocator":
+            configure.append(f"-DGECODE_LINK_VARIANT={variant}")
+            mimalloc = settings.get("GECODE_ENABLE_MIMALLOC", "").upper() in {"ON", "TRUE", "1", "YES"}
+            configure.append(f"-DGECODE_EXPECT_MIMALLOC={'ON' if mimalloc else 'OFF'}")
+            if mimalloc:
+                source = settings.get("FETCHCONTENT_SOURCE_DIR_GECODE_MIMALLOC") or str(
+                    Path(settings.get("FETCHCONTENT_BASE_DIR", str(build_dir / "_deps")))
+                    / "gecode_mimalloc-src"
+                )
+                configure.append(f"-DMIMALLOC_SOURCE_DIR={source}")
+        run(configure)
+        run(["cmake", "--build", str(package_build), "--parallel", str(jobs)])
+        run(["ctest", "--test-dir", str(package_build), "--output-on-failure"], env=environment)
+        lint(package_build, jobs, report_missing=False)
 
 
 def check_all(build_dir: Path, jobs: int, config: str | None) -> None:
@@ -138,9 +216,12 @@ def check_all(build_dir: Path, jobs: int, config: str | None) -> None:
         raise ValueError(f"Missing {cache}; configure the CMake build first")
     settings = dict(re.findall(r"^([^#/:]+):[^=]+=(.*)$", cache.read_text(), re.MULTILINE))
     for option in ("BUILD_TESTING", "GECODE_ENABLE_SEARCH", "GECODE_ENABLE_INT_VARS",
-                   "GECODE_ENABLE_MINIMODEL", "GECODE_ENABLE_DRIVER"):
+                   "GECODE_ENABLE_MINIMODEL", "GECODE_ENABLE_DRIVER",
+                   "GECODE_INSTALL", "GECODE_ENABLE_ALLOCATOR"):
         if settings.get(option, "").upper() not in {"ON", "TRUE", "1", "YES"}:
-            raise ValueError(f"The all command requires {option}=ON for runtime checks")
+            raise ValueError(f"The all command requires {option}=ON for runtime and package checks")
+    if settings.get("CMAKE_CONFIGURATION_TYPES") and not config:
+        raise ValueError("The all command requires --config for multi-config builds")
     format_sources(False)
     run(["uv", "run", "misc/tidy.py", "--check"])
     run(["bash", ".github/ci/generated-source-freshness.sh"])
@@ -150,11 +231,12 @@ def check_all(build_dir: Path, jobs: int, config: str | None) -> None:
         build += ["--config", config]
     run(build)
     lint(build_dir, jobs)
-    run([*build, "--target", "check-standard"])
     ctest = ["ctest", "--test-dir", str(build_dir), "--output-on-failure"]
     if config:
         ctest += ["--build-config", config]
     run(ctest)
+    check_packages(build_dir, jobs, config, settings)
+    run([*build, "--target", "doc"])
 
 
 def main() -> int:
