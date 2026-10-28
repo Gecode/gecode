@@ -40,6 +40,8 @@ or
 
 We happily accept smaller contributions and fixes, please provide them as pull requests against the main branch. For larger contributions, please get in touch.
 
+For source changes, see the [repository guide for agents](AGENTS.md).
+
 ## Gecode License
 
 Gecode is licensed under the
