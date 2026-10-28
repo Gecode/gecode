@@ -119,14 +119,11 @@ vis_files=(
 
 # Copy generator inputs with their source-relative paths. Generated outputs stay
 # isolated until --update explicitly copies them back to the source tree.
-# The copy goes through an archive file: in a pipe, bsdtar may stop reading
-# at the end-of-archive marker before the writer has written its final
-# padding, which fails the writer with a write error.
-tar -C "$repo_root" -cf "$workspace/source.tar" \
-  .clang-format misc/genvarimp.py "${vis_files[@]}" \
-  gecode/flatzinc/parser.yxx gecode/flatzinc/lexer.lxx
-tar -C "$source_copy" -xf "$workspace/source.tar"
-rm -f -- "$workspace/source.tar"
+for input in .clang-format misc/genvarimp.py "${vis_files[@]}" \
+    gecode/flatzinc/parser.yxx gecode/flatzinc/lexer.lxx; do
+  mkdir -p "$source_copy/$(dirname "$input")"
+  cp "$repo_root/$input" "$source_copy/$input"
+done
 mkdir -p "$source_copy/gecode/kernel"
 
 normalize_generated_whitespace() {
