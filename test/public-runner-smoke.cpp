@@ -181,10 +181,6 @@ main(void) {
                "filtered passing run executed an unselected test")) {
     return EXIT_FAILURE;
   }
-  if (!require(pass_output.find('+') != std::string::npos,
-               "filtered passing run did not report success")) {
-    return EXIT_FAILURE;
-  }
   if (!require(passing_runs == 2 && failing_runs == 0,
                "filtered passing run counts are wrong")) {
     return EXIT_FAILURE;

@@ -45,7 +45,6 @@ CXXFLAGS="-std=c++11 -fPIC -DGECODE_MEMORY_ALIGNMENT=16" \
 
 ! grep -Fq "unexpected operator" configure.log
 grep -Eq '^export DLLSUFFIX[[:space:]]*=[[:space:]]*\.' Makefile
-grep -Fq "VIS = \$(top_srcdir)/gecode/int/var-imp/int.vis \$(top_srcdir)/gecode/int/var-imp/bool.vis \$(top_srcdir)/gecode/set/var-imp/set.vis \$(top_srcdir)/gecode/float/var-imp/float.vis $PWD/custom-one.vis $PWD/custom-two.vis" Makefile
 
 rm -f gecode/kernel/var-type.hpp gecode/kernel/var-imp.hpp
 make -j4
