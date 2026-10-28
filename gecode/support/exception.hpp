@@ -49,7 +49,7 @@ namespace Gecode {
         /// Initialize with location \a l and information \a i
         Exception(const char* l, const char* i) noexcept;
         /// Return information
-        virtual const char* what(void) const noexcept;
+        const char* what(void) const noexcept override;
     };
 
     /**

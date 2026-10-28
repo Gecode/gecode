@@ -1611,6 +1611,12 @@ endif()
 
 if(GECODE_ENABLE_EXAMPLES)
   add_subdirectory(examples)
+  if(GECODE_BUILD_GIST_TARGET)
+    add_subdirectory(gecode/gist/standalone-example)
+  endif()
+  if(GECODE_ENABLE_FLATZINC AND GECODE_HAS_QT_RUNTIME AND GECODE_BUILD_SHARED)
+    add_subdirectory(gecode/flatzinc/exampleplugin)
+  endif()
 endif()
 
 # ---------------------------------------------------------------------------

@@ -36,7 +36,7 @@ namespace Gecode { namespace Int { namespace Count {
     forceinline
     ViewBase<VX, VY, VZ>::ViewBase(Home home, ViewArray<VX>& x0, VY y0, VZ z0, int c0)
         : Propagator(home), x(x0), y(y0), z(z0), c(c0) {
-        if (isintset(y))
+        if (is_int_set(y))
             home.notice(*this, AP_DISPOSE);
         x.subscribe(home, *this, PC_INT_DOM);
         subscribe(home, *this, y);
@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Count {
     template <class VX, class VY, class VZ>
     forceinline size_t
     ViewBase<VX, VY, VZ>::dispose(Space& home) {
-        if (isintset(y))
+        if (is_int_set(y))
             home.ignore(*this, AP_DISPOSE);
         x.cancel(home, *this, PC_INT_DOM);
         cancel(home, *this, y);
@@ -103,13 +103,13 @@ namespace Gecode { namespace Int { namespace Count {
 
     template <class VX, class VY, class VZ>
     forceinline int
-    ViewBase<VX, VY, VZ>::atleast(void) const {
+    ViewBase<VX, VY, VZ>::at_least(void) const {
         return -c;
     }
 
     template <class VX, class VY, class VZ>
     forceinline int
-    ViewBase<VX, VY, VZ>::atmost(void) const {
+    ViewBase<VX, VY, VZ>::at_most(void) const {
         return x.size() - c;
     }
 

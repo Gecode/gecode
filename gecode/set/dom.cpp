@@ -82,9 +82,9 @@ namespace Gecode {
                 GECODE_ME_FAIL(_s.intersect(home, is.min(), is.max()));
             } else {
                 IntSetRanges rd1(is);
-                GECODE_ME_FAIL(_s.includeI(home, rd1));
+                GECODE_ME_FAIL(_s.include_i(home, rd1));
                 IntSetRanges rd2(is);
-                GECODE_ME_FAIL(_s.intersectI(home, rd2));
+                GECODE_ME_FAIL(_s.intersect_i(home, rd2));
             }
         } break;
         case SRT_LQ: {
@@ -108,7 +108,7 @@ namespace Gecode {
                 GECODE_ME_FAIL(_s.exclude(home, is.min(), is.max()));
             } else {
                 IntSetRanges rd(is);
-                GECODE_ME_FAIL(_s.excludeI(home, rd));
+                GECODE_ME_FAIL(_s.exclude_i(home, rd));
             }
         } break;
         case SRT_NQ: {
@@ -120,7 +120,7 @@ namespace Gecode {
                 GECODE_ME_FAIL(_s.intersect(home, is.min(), is.max()));
             } else {
                 IntSetRanges rd(is);
-                GECODE_ME_FAIL(_s.intersectI(home, rd));
+                GECODE_ME_FAIL(_s.intersect_i(home, rd));
             }
         } break;
         case SRT_SUP: {
@@ -128,7 +128,7 @@ namespace Gecode {
                 GECODE_ME_FAIL(_s.include(home, is.min(), is.max()));
             } else {
                 IntSetRanges rd(is);
-                GECODE_ME_FAIL(_s.includeI(home, rd));
+                GECODE_ME_FAIL(_s.include_i(home, rd));
             }
         } break;
         case SRT_CMPL: {
@@ -138,11 +138,11 @@ namespace Gecode {
                 GECODE_ME_FAIL(_s.include(home, is.max() + 1, Set::Limits::max));
             } else {
                 IntSetRanges rd1(is);
-                Set::RangesCompl<IntSetRanges> rdC1(rd1);
-                GECODE_ME_FAIL(_s.includeI(home, rdC1));
+                Set::RangesCompl<IntSetRanges> rd_c1(rd1);
+                GECODE_ME_FAIL(_s.include_i(home, rd_c1));
                 IntSetRanges rd2(is);
-                Set::RangesCompl<IntSetRanges> rdC2(rd2);
-                GECODE_ME_FAIL(_s.intersectI(home, rdC2));
+                Set::RangesCompl<IntSetRanges> rd_c2(rd2);
+                GECODE_ME_FAIL(_s.intersect_i(home, rd_c2));
             }
         } break;
         default:
@@ -167,9 +167,9 @@ namespace Gecode {
                 for (int i = s.size(); i--;) {
                     Set::SetView _s(s[i]);
                     IntSetRanges rd1(is);
-                    GECODE_ME_FAIL(_s.includeI(home, rd1));
+                    GECODE_ME_FAIL(_s.include_i(home, rd1));
                     IntSetRanges rd2(is);
-                    GECODE_ME_FAIL(_s.intersectI(home, rd2));
+                    GECODE_ME_FAIL(_s.intersect_i(home, rd2));
                 }
             }
         } break;
@@ -211,7 +211,7 @@ namespace Gecode {
                 for (int i = s.size(); i--;) {
                     Set::SetView _s(s[i]);
                     IntSetRanges rd(is);
-                    GECODE_ME_FAIL(_s.excludeI(home, rd));
+                    GECODE_ME_FAIL(_s.exclude_i(home, rd));
                 }
             }
         } break;
@@ -232,7 +232,7 @@ namespace Gecode {
                 for (int i = s.size(); i--;) {
                     Set::SetView _s(s[i]);
                     IntSetRanges rd(is);
-                    GECODE_ME_FAIL(_s.intersectI(home, rd));
+                    GECODE_ME_FAIL(_s.intersect_i(home, rd));
                 }
             }
         } break;
@@ -246,7 +246,7 @@ namespace Gecode {
                 for (int i = s.size(); i--;) {
                     Set::SetView _s(s[i]);
                     IntSetRanges rd(is);
-                    GECODE_ME_FAIL(_s.includeI(home, rd));
+                    GECODE_ME_FAIL(_s.include_i(home, rd));
                 }
             }
         } break;
@@ -262,11 +262,11 @@ namespace Gecode {
                 for (int i = s.size(); i--;) {
                     Set::SetView _s(s[i]);
                     IntSetRanges rd1(is);
-                    Set::RangesCompl<IntSetRanges> rdC1(rd1);
-                    GECODE_ME_FAIL(_s.includeI(home, rdC1));
+                    Set::RangesCompl<IntSetRanges> rd_c1(rd1);
+                    GECODE_ME_FAIL(_s.include_i(home, rd_c1));
                     IntSetRanges rd2(is);
-                    Set::RangesCompl<IntSetRanges> rdC2(rd2);
-                    GECODE_ME_FAIL(_s.intersectI(home, rdC2));
+                    Set::RangesCompl<IntSetRanges> rd_c2(rd2);
+                    GECODE_ME_FAIL(_s.intersect_i(home, rd_c2));
                 }
             }
         } break;
@@ -462,22 +462,22 @@ namespace Gecode {
             IntSetRanges dr1(is);
             Set::RangesCompl<IntSetRanges> dc1(dr1);
             IntSet dcompl(dc1);
-            Set::ConstSetView cvcompl(home, dcompl);
+            Set::ConstSetView complement_view(home, dcompl);
             switch (r.mode()) {
             case RM_EQV:
                 GECODE_ES_FAIL(
                     (Set::Rel::ReSubset<Set::SetView, Set::ConstSetView, Gecode::Int::BoolView, RM_EQV>::post(
-                        home, s, cvcompl, r.var())));
+                        home, s, complement_view, r.var())));
                 break;
             case RM_IMP:
                 GECODE_ES_FAIL(
                     (Set::Rel::ReSubset<Set::SetView, Set::ConstSetView, Gecode::Int::BoolView, RM_IMP>::post(
-                        home, s, cvcompl, r.var())));
+                        home, s, complement_view, r.var())));
                 break;
             case RM_PMI:
                 GECODE_ES_FAIL(
                     (Set::Rel::ReSubset<Set::SetView, Set::ConstSetView, Gecode::Int::BoolView, RM_PMI>::post(
-                        home, s, cvcompl, r.var())));
+                        home, s, complement_view, r.var())));
                 break;
             default:
                 throw Gecode::Int::UnknownReifyMode("Set::dom");
@@ -489,20 +489,20 @@ namespace Gecode {
             IntSetRanges dr1(is);
             Set::RangesCompl<IntSetRanges> dc1(dr1);
             IntSet dcompl(dc1);
-            Set::ConstSetView cvcompl(home, dcompl);
+            Set::ConstSetView complement_view(home, dcompl);
 
             switch (r.mode()) {
             case RM_EQV:
                 GECODE_ES_FAIL((Set::Rel::ReEq<Set::SetView, Set::ConstSetView, Gecode::Int::BoolView, RM_EQV>::post(
-                    home, s, cvcompl, r.var())));
+                    home, s, complement_view, r.var())));
                 break;
             case RM_IMP:
                 GECODE_ES_FAIL((Set::Rel::ReEq<Set::SetView, Set::ConstSetView, Gecode::Int::BoolView, RM_IMP>::post(
-                    home, s, cvcompl, r.var())));
+                    home, s, complement_view, r.var())));
                 break;
             case RM_PMI:
                 GECODE_ES_FAIL((Set::Rel::ReEq<Set::SetView, Set::ConstSetView, Gecode::Int::BoolView, RM_PMI>::post(
-                    home, s, cvcompl, r.var())));
+                    home, s, complement_view, r.var())));
                 break;
             default:
                 throw Gecode::Int::UnknownReifyMode("Set::dom");
@@ -519,12 +519,12 @@ namespace Gecode {
         GECODE_POST;
         SetView xv(x), dv(d);
         if (xv != dv) {
-            GECODE_ME_FAIL(xv.cardMax(home, dv.cardMax()));
-            GECODE_ME_FAIL(xv.cardMin(home, dv.cardMin()));
+            GECODE_ME_FAIL(xv.card_max(home, dv.card_max()));
+            GECODE_ME_FAIL(xv.card_min(home, dv.card_min()));
             GlbRanges<SetView> lb(dv);
-            GECODE_ME_FAIL(xv.includeI(home, lb));
+            GECODE_ME_FAIL(xv.include_i(home, lb));
             LubRanges<SetView> ub(dv);
-            GECODE_ME_FAIL(xv.intersectI(home, ub));
+            GECODE_ME_FAIL(xv.intersect_i(home, ub));
         }
     }
 
@@ -537,12 +537,12 @@ namespace Gecode {
             GECODE_POST;
             SetView xv(x[i]), dv(d[i]);
             if (xv != dv) {
-                GECODE_ME_FAIL(xv.cardMax(home, dv.cardMax()));
-                GECODE_ME_FAIL(xv.cardMin(home, dv.cardMin()));
+                GECODE_ME_FAIL(xv.card_max(home, dv.card_max()));
+                GECODE_ME_FAIL(xv.card_min(home, dv.card_min()));
                 GlbRanges<SetView> lb(dv);
-                GECODE_ME_FAIL(xv.includeI(home, lb));
+                GECODE_ME_FAIL(xv.include_i(home, lb));
                 LubRanges<SetView> ub(dv);
-                GECODE_ME_FAIL(xv.intersectI(home, ub));
+                GECODE_ME_FAIL(xv.intersect_i(home, ub));
             }
         }
     }

@@ -41,12 +41,12 @@ namespace Gecode { namespace Gist {
         /// The Gecode logo
         const unsigned char* logo;
         /// Size of the Gecode logo
-        const unsigned int logoSize;
+        const unsigned int logo_size;
 
         /// A smaller logo used as a window icon
-        const unsigned char* gistLogo;
+        const unsigned char* gist_logo;
         /// Size of the smaller logo
-        const unsigned int gistLogoSize;
+        const unsigned int gist_logo_size;
 
         /// Constructor
         Logos(void);

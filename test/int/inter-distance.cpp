@@ -48,16 +48,16 @@ namespace Test { namespace Int { namespace InterDistance {
                    "InterDistance::" + str(n) + "::" + str(p0) + "::" + str(min) + "::" + str(ipl0), n, min, max, false,
                    ipl0),
               p(p0) {
-            contest = Gecode::ba(ipl) == Gecode::IPL_BASIC ? CTL_NONE : CTL_BOUNDS_Z;
+            consistency_test_level = Gecode::ba(ipl) == Gecode::IPL_BASIC ? CTL_NONE : CTL_BOUNDS_Z;
         }
         Distance(int n, int p0, const Gecode::IntSet& domain)
             : Test(TestTags::standard(), "InterDistance::Holes::" + str(n) + "::" + str(p0), n, domain, false,
                    Gecode::IPL_DEF),
               p(p0) {
-            contest = CTL_BOUNDS_Z;
+            consistency_test_level = CTL_BOUNDS_Z;
         }
-        virtual bool
-        solution(const Assignment& x) const {
+        bool
+        solution(const Assignment& x) const override {
             for (int i = 0; i < x.size(); i++)
                 for (int j = 0; j < i; j++) {
                     long long int d = static_cast<long long int>(x[i]) - x[j];
@@ -66,8 +66,8 @@ namespace Test { namespace Int { namespace InterDistance {
                 }
             return true;
         }
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             Gecode::inter_distance(home, x, p, ipl);
         }
     };
@@ -78,10 +78,10 @@ namespace Test { namespace Int { namespace InterDistance {
         Variable(int n, Gecode::IntPropLevel ipl0)
             : Test(n == 3 ? TestTags::check() : TestTags::standard(),
                    "InterDistance::Variable::" + str(n) + "::" + str(ipl0), n + 1, -2, 3, false, ipl0) {
-            contest = Gecode::ba(ipl) == Gecode::IPL_BASIC ? CTL_NONE : CTL_BOUNDS_Z;
+            consistency_test_level = Gecode::ba(ipl) == Gecode::IPL_BASIC ? CTL_NONE : CTL_BOUNDS_Z;
         }
-        virtual bool
-        solution(const Assignment& x) const {
+        bool
+        solution(const Assignment& x) const override {
             int p = x[x.size() - 1];
             if (p < 0)
                 return false;
@@ -91,8 +91,8 @@ namespace Test { namespace Int { namespace InterDistance {
                         return false;
             return true;
         }
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             Gecode::IntVarArgs a(x.size() - 1);
             for (int i = 0; i < a.size(); i++)
                 a[i] = x[i];
@@ -109,8 +109,8 @@ namespace Test { namespace Int { namespace InterDistance {
     public:
         DistanceAssignment(int n, const Gecode::IntSet& d, int p0, bool v, Gecode::Support::RandomGenerator& rand)
             : RandomAssignment(n, d, 100, rand), p(p0), variable(v) {}
-        virtual void
-        next(Gecode::Support::RandomGenerator& rand) {
+        void
+        next(Gecode::Support::RandomGenerator& rand) override {
             RandomAssignment::next(rand);
             if (a % 2 == 0) {
                 int m = n - static_cast<int>(variable);
@@ -147,14 +147,14 @@ namespace Test { namespace Int { namespace InterDistance {
                        "::" + str(level),
                    n + static_cast<int>(v), 0, (n - 1) * p0 + slack, false, level),
               p(p0), variable(v) {
-            testsearch = false;
+            test_search = false;
         }
-        virtual Assignment*
-        assignment(void) const {
+        Assignment*
+        assignment(void) const override {
             return new DistanceAssignment(arity, dom, p, variable, _rand);
         }
-        virtual bool
-        solution(const Assignment& x) const {
+        bool
+        solution(const Assignment& x) const override {
             int n = x.size() - static_cast<int>(variable);
             int distance = variable ? x[n] : p;
             for (int i = 0; i < n; i++)
@@ -163,8 +163,8 @@ namespace Test { namespace Int { namespace InterDistance {
                         return false;
             return true;
         }
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             Gecode::IntVarArgs y(x.size() - static_cast<int>(variable));
             for (int i = 0; i < y.size(); i++)
                 y[i] = x[i];
@@ -187,12 +187,12 @@ namespace Test { namespace Int { namespace InterDistance {
                 values[i].init(domains[i]);
             }
         }
-        virtual bool
-        has_more(void) const {
+        bool
+        has_more(void) const override {
             return values[0]();
         }
-        virtual void
-        next(Gecode::Support::RandomGenerator&) {
+        void
+        next(Gecode::Support::RandomGenerator&) override {
             int i = n - 1;
             while (true) {
                 ++values[i];
@@ -201,8 +201,8 @@ namespace Test { namespace Int { namespace InterDistance {
                 values[i--].init(domains[i]);
             }
         }
-        virtual int
-        operator[](int i) const {
+        int
+        operator[](int i) const override {
             return values[i].val();
         }
     };
@@ -218,14 +218,14 @@ namespace Test { namespace Int { namespace InterDistance {
             : Test(TestTags::check(), "InterDistance::" + name + "::" + str(level), n, domain, false, level) {
             for (int i = 0; i < n; i++)
                 domains[i] = d[i];
-            testsearch = false;
+            test_search = false;
         }
-        virtual Assignment*
-        assignment(void) const {
+        Assignment*
+        assignment(void) const override {
             return new ExampleAssignment(arity, domains);
         }
-        virtual bool
-        solution(const Assignment& x) const {
+        bool
+        solution(const Assignment& x) const override {
             for (int i = 0; i < x.size(); i++)
                 if (!domains[i].in(x[i]))
                     return false;
@@ -238,8 +238,8 @@ namespace Test { namespace Int { namespace InterDistance {
                 }
             return true;
         }
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             for (int i = 0; i < x.size(); i++)
                 Gecode::dom(home, x[i], domains[i]);
             Gecode::IntVarArgs y(x.size() - 1);
@@ -262,7 +262,7 @@ namespace Test { namespace Int { namespace InterDistance {
             inter_distance(s, duplicate, 0);
             bool same = false;
             bool negative = false;
-            bool tooLarge = false;
+            bool too_large = false;
             try {
                 inter_distance(s, duplicate, 2);
             } catch (const Gecode::Int::ArgumentSame&) {
@@ -276,14 +276,14 @@ namespace Test { namespace Int { namespace InterDistance {
             try {
                 inter_distance(s, IntVarArgs(), std::numeric_limits<int>::max());
             } catch (const Gecode::Int::OutOfLimits&) {
-                tooLarge = true;
+                too_large = true;
             }
 
             inter_distance(s, IntVarArgs(), 2);
             IntVarArgs singleton(1);
             singleton[0] = v;
             inter_distance(s, singleton, 2);
-            if (!same || !negative || !tooLarge || (s.status() == SS_FAILED))
+            if (!same || !negative || !too_large || (s.status() == SS_FAILED))
                 return false;
 
             TestSpace t(0, domain, nullptr);
@@ -305,10 +305,10 @@ namespace Test { namespace Int { namespace InterDistance {
             if ((empty.status() == SS_FAILED) || (distance.min() != 0))
                 return false;
 
-            TestSpace negativeDistance(0, domain, nullptr);
-            IntVar negativeVar(negativeDistance, -3, -1);
-            inter_distance(negativeDistance, IntVarArgs(), negativeVar);
-            if (negativeDistance.status() != SS_FAILED)
+            TestSpace negative_distance(0, domain, nullptr);
+            IntVar negative_var(negative_distance, -3, -1);
+            inter_distance(negative_distance, IntVarArgs(), negative_var);
+            if (negative_distance.status() != SS_FAILED)
                 return false;
 
             TestSpace shared(0, domain, nullptr);
@@ -338,8 +338,8 @@ namespace Test { namespace Int { namespace InterDistance {
 
     public:
         Posting(void) : Base("Int::InterDistance::Posting", TestTags::check()) {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             if (!constant_contracts()) {
                 olog << "Constant posting contracts failed" << std::endl;
                 return false;

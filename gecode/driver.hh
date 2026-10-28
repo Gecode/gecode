@@ -134,7 +134,7 @@ namespace Gecode {
             /// Create heap-allocated copy of string \a s
             static char* strdup(const char* s);
             /// Create heap-allocated copy of string \a s with hyphen added
-            static char* stredup(const char* s);
+            static char* duplicate_option_flag(const char* s);
             /// Delete heap-allocated copy of string \a s
             static void strdel(const char* s);
         };
@@ -162,10 +162,10 @@ namespace Gecode {
             void value(uint64_t v);
             /// Construct an independent generator at the configured initial state.
             Rnd rnd(void) const;
-            virtual int parse(int argc, char* argv[]);
-            virtual void help(void);
+            int parse(int argc, char* argv[]) override;
+            void help(void) override;
             /// Destructor
-            virtual ~RandomOption(void);
+            ~RandomOption(void) override;
         };
 
         /**
@@ -183,11 +183,11 @@ namespace Gecode {
             /// Return current option value
             const char* value(void) const;
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
             /// Print help text
-            virtual void help(void);
+            void help(void) override;
             /// Destructor
-            virtual ~StringValueOption(void);
+            ~StringValueOption(void) override;
         };
 
         /**
@@ -200,7 +200,7 @@ namespace Gecode {
             /// Initialize for option \a o and explanation \a e
             StringListOption(const char* o, const char* e);
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
         };
 
         /**
@@ -230,11 +230,11 @@ namespace Gecode {
             /// Add option value for value \a v, string \a o, and help text \a h
             void add(int v, const char* o, const char* h = nullptr);
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
             /// Print help text
-            virtual void help(void);
+            void help(void) override;
             /// Destructor
-            virtual ~StringOption(void);
+            ~StringOption(void) override;
         };
 
         /**
@@ -252,9 +252,9 @@ namespace Gecode {
             /// Return current option value
             int value(void) const;
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
             /// Print help text
-            virtual void help(void);
+            void help(void) override;
         };
 
         /**
@@ -272,9 +272,9 @@ namespace Gecode {
             /// Return current option value
             unsigned int value(void) const;
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
             /// Print help text
-            virtual void help(void);
+            void help(void) override;
         };
 
         /**
@@ -292,9 +292,9 @@ namespace Gecode {
             /// Return current option value
             unsigned long long int value(void) const;
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
             /// Print help text
-            virtual void help(void);
+            void help(void) override;
         };
 
         /**
@@ -312,9 +312,9 @@ namespace Gecode {
             /// Return current option value
             double value(void) const;
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
             /// Print help text
-            virtual void help(void);
+            void help(void) override;
         };
 
         /**
@@ -332,9 +332,9 @@ namespace Gecode {
             /// Return current option value
             bool value(void) const;
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
             /// Print help text
-            virtual void help(void);
+            void help(void) override;
         };
 
         /**
@@ -352,9 +352,9 @@ namespace Gecode {
             /// Return current option value
             IntPropLevel value(void) const;
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
             /// Print help text
-            virtual void help(void);
+            void help(void) override;
         };
 
         /**
@@ -372,9 +372,9 @@ namespace Gecode {
             /// Return current option value
             int value(void) const;
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
             /// Print help text
-            virtual void help(void);
+            void help(void) override;
         };
 
         /**
@@ -397,9 +397,9 @@ namespace Gecode {
             /// Return current execution ID
             int execution_id(void) const;
             /// Parse option at first position and return number of parsed arguments
-            virtual int parse(int argc, char* argv[]);
+            int parse(int argc, char* argv[]) override;
             /// Print help text
-            virtual void help(void);
+            void help(void) override;
         };
     } // namespace Driver
 
@@ -794,7 +794,7 @@ namespace Gecode {
         /// Initialize options for script with name \a s
         SizeOptions(const char* s);
         /// Print help text
-        virtual void help(void);
+        void help(void) override;
         /// Parse options from arguments \a argv (number is \a argc)
         void parse(int& argc, char* argv[]);
         /**
@@ -871,7 +871,7 @@ namespace Gecode {
          */
         InstanceOptions(const char* s, const char* spec);
         /// Print help text
-        virtual void help(void);
+        void help(void) override;
         /// Parse options from arguments \a argv (number is \a argc)
         void parse(int& argc, char* argv[]);
         /**
@@ -927,7 +927,7 @@ namespace Gecode {
          */
         Instance::Data data(void) const;
         /// Destructor
-        ~InstanceOptions(void);
+        ~InstanceOptions(void) override;
     };
 
 } // namespace Gecode
@@ -972,7 +972,7 @@ namespace Gecode { namespace Driver {
     private:
         template <class Script, template <class> class Engine, class Options,
                   template <class, template <class> class> class Meta>
-        static void runMeta(const Options& opt, Script* s);
+        static void run_meta(const Options& opt, Script* s);
     };
 
 #ifdef GECODE_HAS_FLOAT_VARS

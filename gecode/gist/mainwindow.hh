@@ -42,7 +42,7 @@ namespace Gecode { namespace Gist {
     class AboutGist : public QDialog {
     public:
         /// Constructor
-        AboutGist(QWidget* parent = 0);
+        AboutGist(QWidget* parent = nullptr);
     };
 
     /**
@@ -56,57 +56,57 @@ namespace Gecode { namespace Gist {
         /// Options
         Options opt;
         /// Whether search is currently running
-        bool isSearching;
+        bool is_searching;
         /// Measure search time
-        Support::Timer searchTimer;
+        Support::Timer search_timer;
         /// Status bar label for maximum depth indicator
-        QLabel* depthLabel;
+        QLabel* depth_label;
         /// Status bar label for number of solutions
-        QLabel* solvedLabel;
+        QLabel* solved_label;
         /// Status bar label for number of failures
-        QLabel* failedLabel;
+        QLabel* failed_label;
         /// Status bar label for number of choices
-        QLabel* choicesLabel;
+        QLabel* choices_label;
         /// Status bar label for number of open nodes
-        QLabel* openLabel;
+        QLabel* open_label;
         /// Menu for solution inspectors
-        QMenu* solutionInspectorsMenu;
+        QMenu* solution_inspectors_menu;
         /// Menu for double click inspectors
-        QMenu* doubleClickInspectorsMenu;
+        QMenu* double_click_inspectors_menu;
         /// Menu for move inspectors
-        QMenu* moveInspectorsMenu;
+        QMenu* move_inspectors_menu;
         /// Menu for comparators
-        QMenu* comparatorsMenu;
+        QMenu* comparators_menu;
         /// Menu for bookmarks
-        QMenu* bookmarksMenu;
+        QMenu* bookmarks_menu;
         /// Menu for direct node inspection
-        QMenu* inspectNodeMenu;
+        QMenu* inspect_node_menu;
         /// Menu for direct node inspection before fixpoint
-        QMenu* inspectNodeBeforeFPMenu;
+        QMenu* inspect_node_before_fp_menu;
         /// Action for activating the preferences menu
-        QAction* prefAction;
+        QAction* pref_action;
 
     protected:
         /// The contained %Gist object
         Gist* c;
         /// A menu bar
-        QMenuBar* menuBar;
+        QMenuBar* menu_bar;
         /// About dialog
-        AboutGist aboutGist;
+        AboutGist about_gist;
 
     protected Q_SLOTS:
         /// The status has changed (e.g., new solutions have been found)
-        void statusChanged(const Statistics& stats, bool finished);
+        void status_changed(const Statistics& stats, bool finished);
         /// Open the about dialog
         void about(void);
         /// Open the preferences dialog
         void preferences(bool setup = false);
         /// Populate the inspector menus from the actions found in Gist
-        void populateInspectorSelection(void);
+        void populate_inspector_selection(void);
         /// Populate the inspector menus from the actions found in Gist
-        void populateInspectors(void);
+        void populate_inspectors(void);
         /// Populate the bookmarks menus from the actions found in Gist
-        void populateBookmarks(void);
+        void populate_bookmarks(void);
 
     public:
         /// Constructor
@@ -114,7 +114,7 @@ namespace Gecode { namespace Gist {
 
     protected:
         /// Close Gist
-        void closeEvent(QCloseEvent* event);
+        void closeEvent(QCloseEvent* event) override;
     };
 
 }} // namespace Gecode::Gist

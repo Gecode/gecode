@@ -133,7 +133,7 @@ namespace Gecode { namespace Set { namespace Rel {
         }
 
         // check whether cardinalities still allow equality
-        if (x0.cardMin() > x1.cardMax() || x1.cardMin() > x0.cardMax()) {
+        if (x0.card_min() > x1.card_max() || x1.card_min() > x0.card_max()) {
             if (rm != RM_PMI)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);

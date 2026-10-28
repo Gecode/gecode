@@ -65,9 +65,9 @@ namespace Gecode { namespace Int { namespace Count {
     ExecStatus
     LqView<VX, VY, VZ, shr>::propagate(Space& home, const ModEventDelta&) {
         count(home);
-        GECODE_ME_CHECK(z.gq(home, atleast()));
+        GECODE_ME_CHECK(z.gq(home, at_least()));
 
-        if (z.max() == atleast()) {
+        if (z.max() == at_least()) {
             GECODE_ES_CHECK(post_false(home, x, y));
             return home.ES_SUBSUMED(*this);
         }

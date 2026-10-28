@@ -498,7 +498,7 @@ namespace Gecode {
 
         /// Return view array
         ViewArray<Int::ConstIntView>
-        viewarray(Space& home, const IntArgs& x) {
+        make_view_array(Space& home, const IntArgs& x) {
             ViewArray<Int::ConstIntView> xv(home, x.size());
             for (int i = 0; i < x.size(); i++) {
                 Int::Limits::check(x[i], "Int::rel");
@@ -517,22 +517,22 @@ namespace Gecode {
         switch (irt) {
         case IRT_GR: {
             ViewArray<IntView> xv(home, x);
-            ViewArray<ConstIntView> yv(viewarray(home, y));
+            ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexLqLe<ConstIntView, IntView>::post(home, yv, xv, true)));
         } break;
         case IRT_LE: {
             ViewArray<IntView> xv(home, x);
-            ViewArray<ConstIntView> yv(viewarray(home, y));
+            ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexLqLe<IntView, ConstIntView>::post(home, xv, yv, true)));
         } break;
         case IRT_GQ: {
             ViewArray<IntView> xv(home, x);
-            ViewArray<ConstIntView> yv(viewarray(home, y));
+            ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexLqLe<ConstIntView, IntView>::post(home, yv, xv, false)));
         } break;
         case IRT_LQ: {
             ViewArray<IntView> xv(home, x);
-            ViewArray<ConstIntView> yv(viewarray(home, y));
+            ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexLqLe<IntView, ConstIntView>::post(home, xv, yv, false)));
         } break;
         case IRT_EQ:
@@ -545,7 +545,7 @@ namespace Gecode {
             break;
         case IRT_NQ: {
             ViewArray<IntView> xv(home, x);
-            ViewArray<ConstIntView> yv(viewarray(home, y));
+            ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexNq<IntView, ConstIntView>::post(home, xv, yv)));
         } break;
         default:

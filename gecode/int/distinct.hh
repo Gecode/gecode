@@ -72,14 +72,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     public:
 #ifdef GECODE_HAS_CBS
         /// Solution distribution computation for branching
-        virtual void solndistrib(Space& home, Propagator::SendMarginal send) const;
+        void solution_distribution(Space& home, Propagator::SendMarginal send) const override;
         /// Sum of variables cardinalities
-        virtual void domainsizesum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const;
+        void domain_size_sum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const override;
 #endif
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for view array \a x
         static ExecStatus post(Home home, ViewArray<View>& x);
     };
@@ -96,10 +96,10 @@ namespace Gecode { namespace Int { namespace Distinct {
      *        Available at http://www.polymtl.ca/labo-quosseca/en/publications
      */
     template <class View>
-    void cbsdistinct(Space& home, unsigned int prop_id, const ViewArray<View>& x, Propagator::SendMarginal send);
+    void cbs_distinct(Space& home, unsigned int prop_id, const ViewArray<View>& x, Propagator::SendMarginal send);
 
     template <class View>
-    void cbssize(const ViewArray<View>& x, Propagator::InDecision in, unsigned int& size, unsigned int& size_b);
+    void cbs_size(const ViewArray<View>& x, Propagator::InDecision in, unsigned int& size, unsigned int& size_b);
 #endif
 
     /**
@@ -162,27 +162,27 @@ namespace Gecode { namespace Int { namespace Distinct {
     public:
 #ifdef GECODE_HAS_CBS
         /// Solution distribution computation for branching
-        virtual void solndistrib(Space& home, Propagator::SendMarginal send) const;
+        void solution_distribution(Space& home, Propagator::SendMarginal send) const override;
         /// Sum of variables cardinalities
-        virtual void domainsizesum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const;
+        void domain_size_sum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const override;
 #endif
         /// Post propagator for view array \a x
         static ExecStatus post(Home home, ViewArray<View>& x);
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /**
          * \brief Cost function
          *
          * If in stage for naive value propagation, the cost is
          * low linear. Otherwise it is low quadratic.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Destructor
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -288,21 +288,21 @@ namespace Gecode { namespace Int { namespace Distinct {
     public:
 #ifdef GECODE_HAS_CBS
         /// Solution distribution computation for branching
-        virtual void solndistrib(Space& home, Propagator::SendMarginal send) const;
+        void solution_distribution(Space& home, Propagator::SendMarginal send) const override;
         /// Sum of variables cardinalities
-        virtual void domainsizesum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const;
+        void domain_size_sum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const override;
 #endif
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /**
          * \brief Cost function
          *
          * If in stage for naive value propagation, the cost is
          * low linear. Otherwise it is high quadratic.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Post propagator for views \a x
         static ExecStatus post(Home home, ViewArray<View>& x);
     };
@@ -327,9 +327,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     public:
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Post propagator for views \a x
         static ExecStatus post(Home home, View x0, View x1, View x2);
     };
@@ -356,13 +356,13 @@ namespace Gecode { namespace Int { namespace Distinct {
     public:
         /// Copy propagator during cloning
         GECODE_INT_EXPORT
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as high ternary)
         GECODE_INT_EXPORT
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
         GECODE_INT_EXPORT
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post if-then-else propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, int c0, int c1);
     };

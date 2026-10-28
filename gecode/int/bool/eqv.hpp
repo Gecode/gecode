@@ -91,72 +91,72 @@ namespace Gecode { namespace Int { namespace Bool {
     ExecStatus
     Eqv<BVA, BVB, BVC>::propagate(Space& home, const ModEventDelta&) {
 #define GECODE_INT_STATUS(S0, S1, S2)                                                                                  \
-    ((BVA::S0 << (2 * BVA::BITS)) | (BVB::S1 << (1 * BVB::BITS)) | (BVC::S2 << (0 * BVC::BITS)))
-        switch ((x0.status() << (2 * BVA::BITS)) | (x1.status() << (1 * BVB::BITS)) |
-                (x2.status() << (0 * BVC::BITS))) {
-        case GECODE_INT_STATUS(NONE, NONE, NONE):
+    ((BVA::S0 << (2 * BVA::bits)) | (BVB::S1 << (1 * BVB::bits)) | (BVC::S2 << (0 * BVC::bits)))
+        switch ((x0.status() << (2 * BVA::bits)) | (x1.status() << (1 * BVB::bits)) |
+                (x2.status() << (0 * BVC::bits))) {
+        case GECODE_INT_STATUS(unassigned_status, unassigned_status, unassigned_status):
             GECODE_NEVER;
-        case GECODE_INT_STATUS(NONE, NONE, ZERO):
-        case GECODE_INT_STATUS(NONE, NONE, ONE):
-        case GECODE_INT_STATUS(NONE, ZERO, NONE):
+        case GECODE_INT_STATUS(unassigned_status, unassigned_status, zero_status):
+        case GECODE_INT_STATUS(unassigned_status, unassigned_status, one_status):
+        case GECODE_INT_STATUS(unassigned_status, zero_status, unassigned_status):
             return ES_FIX;
-        case GECODE_INT_STATUS(NONE, ZERO, ZERO):
+        case GECODE_INT_STATUS(unassigned_status, zero_status, zero_status):
             GECODE_ME_CHECK(x0.one_none(home));
             break;
-        case GECODE_INT_STATUS(NONE, ZERO, ONE):
+        case GECODE_INT_STATUS(unassigned_status, zero_status, one_status):
             GECODE_ME_CHECK(x0.zero_none(home));
             break;
-        case GECODE_INT_STATUS(NONE, ONE, NONE):
+        case GECODE_INT_STATUS(unassigned_status, one_status, unassigned_status):
             return ES_FIX;
-        case GECODE_INT_STATUS(NONE, ONE, ZERO):
+        case GECODE_INT_STATUS(unassigned_status, one_status, zero_status):
             GECODE_ME_CHECK(x0.zero_none(home));
             break;
-        case GECODE_INT_STATUS(NONE, ONE, ONE):
+        case GECODE_INT_STATUS(unassigned_status, one_status, one_status):
             GECODE_ME_CHECK(x0.one_none(home));
             break;
-        case GECODE_INT_STATUS(ZERO, NONE, NONE):
+        case GECODE_INT_STATUS(zero_status, unassigned_status, unassigned_status):
             return ES_FIX;
-        case GECODE_INT_STATUS(ZERO, NONE, ZERO):
+        case GECODE_INT_STATUS(zero_status, unassigned_status, zero_status):
             GECODE_ME_CHECK(x1.one_none(home));
             break;
-        case GECODE_INT_STATUS(ZERO, NONE, ONE):
+        case GECODE_INT_STATUS(zero_status, unassigned_status, one_status):
             GECODE_ME_CHECK(x1.zero_none(home));
             break;
-        case GECODE_INT_STATUS(ZERO, ZERO, NONE):
+        case GECODE_INT_STATUS(zero_status, zero_status, unassigned_status):
             GECODE_ME_CHECK(x2.one_none(home));
             break;
-        case GECODE_INT_STATUS(ZERO, ZERO, ZERO):
+        case GECODE_INT_STATUS(zero_status, zero_status, zero_status):
             return ES_FAILED;
-        case GECODE_INT_STATUS(ZERO, ZERO, ONE):
+        case GECODE_INT_STATUS(zero_status, zero_status, one_status):
             break;
-        case GECODE_INT_STATUS(ZERO, ONE, NONE):
+        case GECODE_INT_STATUS(zero_status, one_status, unassigned_status):
             GECODE_ME_CHECK(x2.zero_none(home));
             break;
-        case GECODE_INT_STATUS(ZERO, ONE, ZERO):
+        case GECODE_INT_STATUS(zero_status, one_status, zero_status):
             break;
-        case GECODE_INT_STATUS(ZERO, ONE, ONE):
+        case GECODE_INT_STATUS(zero_status, one_status, one_status):
             return ES_FAILED;
-        case GECODE_INT_STATUS(ONE, NONE, NONE):
+        case GECODE_INT_STATUS(one_status, unassigned_status, unassigned_status):
             return ES_FIX;
-        case GECODE_INT_STATUS(ONE, NONE, ZERO):
+        case GECODE_INT_STATUS(one_status, unassigned_status, zero_status):
             GECODE_ME_CHECK(x1.zero_none(home));
             break;
-        case GECODE_INT_STATUS(ONE, NONE, ONE):
+        case GECODE_INT_STATUS(one_status, unassigned_status, one_status):
             GECODE_ME_CHECK(x1.one_none(home));
             break;
-        case GECODE_INT_STATUS(ONE, ZERO, NONE):
+        case GECODE_INT_STATUS(one_status, zero_status, unassigned_status):
             GECODE_ME_CHECK(x2.zero_none(home));
             break;
-        case GECODE_INT_STATUS(ONE, ZERO, ZERO):
+        case GECODE_INT_STATUS(one_status, zero_status, zero_status):
             break;
-        case GECODE_INT_STATUS(ONE, ZERO, ONE):
+        case GECODE_INT_STATUS(one_status, zero_status, one_status):
             return ES_FAILED;
-        case GECODE_INT_STATUS(ONE, ONE, NONE):
+        case GECODE_INT_STATUS(one_status, one_status, unassigned_status):
             GECODE_ME_CHECK(x2.one_none(home));
             break;
-        case GECODE_INT_STATUS(ONE, ONE, ZERO):
+        case GECODE_INT_STATUS(one_status, one_status, zero_status):
             return ES_FAILED;
-        case GECODE_INT_STATUS(ONE, ONE, ONE):
+        case GECODE_INT_STATUS(one_status, one_status, one_status):
             break;
         default:
             GECODE_NEVER;

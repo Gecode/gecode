@@ -79,8 +79,8 @@ namespace Test { namespace Branch {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new IntTestSpace(*this);
         }
     };
@@ -97,8 +97,8 @@ namespace Test { namespace Branch {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new BoolTestSpace(*this);
         }
     };
@@ -116,8 +116,8 @@ namespace Test { namespace Branch {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new SetTestSpace(*this);
         }
     };
@@ -136,8 +136,8 @@ namespace Test { namespace Branch {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new FloatTestSpace(*this);
         }
     };
@@ -280,9 +280,9 @@ namespace Test { namespace Branch {
     public:
         std::string var, val;
         unsigned int a_d, c_d;
-        RunInfo(const std::string& vara, const std::string& varb, const std::string& valname,
+        RunInfo(const std::string& vara, const std::string& varb, const std::string& value_name,
                 const Gecode::Search::Options& o)
-            : var(vara + "::" + varb), val(valname), a_d(o.a_d), c_d(o.c_d) {}
+            : var(vara + "::" + varb), val(value_name), a_d(o.a_d), c_d(o.c_d) {}
         void
         print(std::ostream& o) const {
             o << "(" << var << ", " << val << ", " << a_d << ", " << c_d << ")";
@@ -302,7 +302,7 @@ namespace Test { namespace Branch {
     /// Find number of solutions
     template <class TestSpace>
     int
-    solutions(TestSpace* c, Gecode::Search::Options& o, Gecode::Support::RandomGenerator& rand, int maxNbSol = -1) {
+    solutions(TestSpace* c, Gecode::Search::Options& o, Gecode::Support::RandomGenerator& rand, int max_nb_sol = -1) {
         o.a_d = rand(10);
         o.c_d = rand(10);
         Gecode::DFS<TestSpace> e_s(c, o);
@@ -316,7 +316,7 @@ namespace Test { namespace Branch {
                 break;
             delete ex;
             ++s;
-            if ((maxNbSol >= 0) && (maxNbSol == s))
+            if ((max_nb_sol >= 0) && (max_nb_sol == s))
                 break;
         } while (true);
         return s;
@@ -1130,7 +1130,7 @@ namespace Test { namespace Branch {
 
 #ifdef GECODE_HAS_FLOAT_VARS
     FloatTest::FloatTest(const std::string& s, int a, const Gecode::FloatVal& d, int nbs)
-        : Base("Float::Branch::" + s), arity(a), dom(d), nbSols(nbs) {}
+        : Base("Float::Branch::" + s), arity(a), dom(d), nb_sols(nbs) {}
 
     bool
     FloatTest::run(void) {
@@ -1379,7 +1379,7 @@ namespace Test { namespace Branch {
                         }
                     }
                     Gecode::Search::Options o;
-                    results[solutions(c, o, _rand, nbSols)].push_back(RunInfo(
+                    results[solutions(c, o, _rand, nb_sols)].push_back(RunInfo(
                         float_var_branch_name[vara], float_var_branch_name[varb], float_val_branch_name[val], o));
                 }
             }

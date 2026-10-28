@@ -115,21 +115,21 @@ namespace Gecode { namespace Int { namespace LDSB {
         (void)x;
         Region region;
         Support::DynamicStack<Literal, Region> s(region);
-        std::pair<int, int> location = findVar(values, n_values, seq_size, l._value);
+        std::pair<int, int> location = find_var(values, n_values, seq_size, l._value);
         if (location.first == -1)
-            return dynamicStackToArgArray(s);
-        unsigned int seqNum = location.first;
-        unsigned int seqPos = location.second;
-        if (!dead_sequences.get(seqNum)) {
+            return dynamic_stack_to_arg_array(s);
+        unsigned int seq_num = location.first;
+        unsigned int seq_pos = location.second;
+        if (!dead_sequences.get(seq_num)) {
             for (unsigned int seq = 0; seq < n_seqs; seq++) {
-                if (seq == seqNum)
+                if (seq == seq_num)
                     continue;
                 if (dead_sequences.get(seq))
                     continue;
-                s.push(Literal(l._variable, getVal(seq, seqPos)));
+                s.push(Literal(l._variable, get_val(seq, seq_pos)));
             }
         }
-        return dynamicStackToArgArray(s);
+        return dynamic_stack_to_arg_array(s);
     }
     /// Compute symmetric literals
     template <>
@@ -138,21 +138,21 @@ namespace Gecode { namespace Int { namespace LDSB {
         (void)x;
         Region region;
         Support::DynamicStack<Literal, Region> s(region);
-        std::pair<int, int> location = findVar(values, n_values, seq_size, l._value);
+        std::pair<int, int> location = find_var(values, n_values, seq_size, l._value);
         if (location.first == -1)
-            return dynamicStackToArgArray(s);
-        unsigned int seqNum = location.first;
-        unsigned int seqPos = location.second;
-        if (!dead_sequences.get(seqNum)) {
+            return dynamic_stack_to_arg_array(s);
+        unsigned int seq_num = location.first;
+        unsigned int seq_pos = location.second;
+        if (!dead_sequences.get(seq_num)) {
             for (unsigned int seq = 0; seq < n_seqs; seq++) {
-                if (seq == seqNum)
+                if (seq == seq_num)
                     continue;
                 if (dead_sequences.get(seq))
                     continue;
-                s.push(Literal(l._variable, getVal(seq, seqPos)));
+                s.push(Literal(l._variable, get_val(seq, seq_pos)));
             }
         }
-        return dynamicStackToArgArray(s);
+        return dynamic_stack_to_arg_array(s);
     }
 
 }}} // namespace Gecode::Int::LDSB

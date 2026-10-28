@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace LDSB {
      * that sequence (both zero-based).
      */
     GECODE_INT_EXPORT
-    std::pair<int, int> findVar(int* indices, unsigned int n_values, unsigned int seq_size, int index);
+    std::pair<int, int> find_var(int* indices, unsigned int n_values, unsigned int seq_size, int index);
 }}} // namespace Gecode::Int::LDSB
 
 namespace Gecode {
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Constructor for creation
         VariableSymmetryObject(ArgArray<VarImpBase*> vars);
         /// Destructor
-        ~VariableSymmetryObject(void);
+        ~VariableSymmetryObject(void) override;
     };
     /// Implementation of a value symmetry at the modelling level
     class GECODE_INT_EXPORT ValueSymmetryObject : public SymmetryObject {
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Constructor for creation
         VariableSequenceSymmetryObject(ArgArray<VarImpBase*> vars, int ss);
         /// Destructor
-        ~VariableSequenceSymmetryObject();
+        ~VariableSequenceSymmetryObject() override;
     };
     /// Implementation of a value sequence symmetry at the modelling level
     class GECODE_INT_EXPORT ValueSequenceSymmetryObject : public SymmetryObject {
@@ -189,13 +189,13 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Copy constructor
         VariableSymmetryImp(Space& home, const VariableSymmetryImp<View>& other);
         /// Disposal
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Left-branch update
-        void update(Literal);
+        void update(Literal) override;
         /// Compute symmetric literals
-        virtual ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const;
+        ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const override;
         /// Copy function
-        SymmetryImp<View>* copy(Space& home) const;
+        SymmetryImp<View>* copy(Space& home) const override;
     };
     /// Implementation of a value symmetry.
     template <class View>
@@ -208,13 +208,13 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Copy constructor
         ValueSymmetryImp(Space& home, const ValueSymmetryImp<View>& other);
         /// Disposal
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Left-branch update
-        void update(Literal);
+        void update(Literal) override;
         /// Compute symmetric literals
-        virtual ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const;
+        ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const override;
         /// Copy function
-        SymmetryImp<View>* copy(Space& home) const;
+        SymmetryImp<View>* copy(Space& home) const override;
     };
     /// Implementation of a variable sequence symmetry.
     template <class View>
@@ -242,7 +242,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
         /// Get the value in the specified sequence at the specified
         /// position.  (Both are zero-based.)
-        int getVal(unsigned int sequence, unsigned int position) const;
+        int get_val(unsigned int sequence, unsigned int position) const;
 
     public:
         /// Constructor for creation
@@ -250,13 +250,13 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Copy constructor
         VariableSequenceSymmetryImp(Space& home, const VariableSequenceSymmetryImp<View>& s);
         /// Disposal
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Search left-branch update
-        void update(Literal);
+        void update(Literal) override;
         /// Compute symmetric literals
-        virtual ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const;
+        ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const override;
         /// Copy function
-        SymmetryImp<View>* copy(Space& home) const;
+        SymmetryImp<View>* copy(Space& home) const override;
     };
     /// Implementation of a value sequence symmetry.
     template <class View>
@@ -274,7 +274,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         Support::BitSet<Space> dead_sequences;
         /// Get the value in the specified sequence at the specified
         /// position.  (Both are zero-based.)
-        int getVal(unsigned int sequence, unsigned int position) const;
+        int get_val(unsigned int sequence, unsigned int position) const;
 
     private:
         ValueSequenceSymmetryImp(const ValueSequenceSymmetryImp<View>&);
@@ -285,13 +285,13 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Copy constructor
         ValueSequenceSymmetryImp(Space& home, const ValueSequenceSymmetryImp<View>& vss);
         /// Disposal
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Left-branch update
-        void update(Literal);
+        void update(Literal) override;
         /// Compute symmetric literals
-        virtual ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const;
+        ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const override;
         /// Copy function
-        SymmetryImp<View>* copy(Space& home) const;
+        SymmetryImp<View>* copy(Space& home) const override;
     };
 
     /// %Choice storing position and value, and symmetric literals to be
@@ -310,13 +310,13 @@ namespace Gecode { namespace Int { namespace LDSB {
         LDSBChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n, const Literal* literals,
                    int nliterals);
         /// Destructor
-        ~LDSBChoice(void);
+        ~LDSBChoice(void) override;
         /// Return literals
         const Literal* literals(void) const;
         /// Return number of literals
         int nliterals(void) const;
         /// Archive into \a e
-        virtual void archive(Archive& e) const;
+        void archive(Archive& e) const override;
     };
 
     /**
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Number of symmetry implementations
         int _nsyms;
         // Position of variable that last choice was created for
-        int _prevPos;
+        int _prev_pos;
 
     protected:
         /// Constructor for cloning \a b
@@ -347,15 +347,15 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     public:
         /// Return choice
-        virtual const Choice* choice(Space& home);
+        const Choice* choice(Space& home) override;
         /// Return choice
-        virtual const Choice* choice(const Space& home, Archive& e);
+        const Choice* choice(const Space& home, Archive& e) override;
         /// Perform commit for choice \a c and alternative \a b
-        virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
+        ExecStatus commit(Space& home, const Choice& c, unsigned int b) override;
         /// Perform cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Delete brancher and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Brancher post function
         static void post(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
                          SymmetryImp<View>** syms, int nsyms, BranchFilter<Var> bf, VarValPrint<Var, Val> vvp);
@@ -363,9 +363,9 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     /// Post LDSB brancher
     template <class View, int n, class Val, unsigned int a>
-    void postldsbbrancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
-                          SymmetryImp<View>** syms, int nsyms, BranchFilter<typename View::VarType> bf,
-                          VarValPrint<typename View::VarType, Val> vvp);
+    void post_ldsb_brancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
+                            SymmetryImp<View>** syms, int nsyms, BranchFilter<typename View::VarType> bf,
+                            VarValPrint<typename View::VarType, Val> vvp);
 
     /// Exclude value \a v from variable view \a x
     template <class View>

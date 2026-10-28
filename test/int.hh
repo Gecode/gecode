@@ -95,13 +95,13 @@ namespace Test {
             /// Initialize assignments for \a n0 variables and values \a d0
             CpltAssignment(int n, const Gecode::IntSet& d);
             /// Test whether all assignments have been iterated
-            virtual bool has_more(void) const;
+            bool has_more(void) const override;
             /// Move to next assignment
-            virtual void next(Gecode::Support::RandomGenerator& rand);
+            void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
-            virtual int operator[](int i) const;
+            int operator[](int i) const override;
             /// Destructor
-            virtual ~CpltAssignment(void);
+            ~CpltAssignment(void) override;
         };
 
         /// Generate random selection of assignments
@@ -110,19 +110,19 @@ namespace Test {
             int* vals; ///< The current values for the variables
             int a;     ///< How many assignments still to be generated
             /// Generate new value according to domain
-            int randval(Gecode::Support::RandomGenerator& rand);
+            int random_value(Gecode::Support::RandomGenerator& rand);
 
         public:
             /// Initialize for \a a assignments for \a n0 variables and values \a d0
             RandomAssignment(int n, const Gecode::IntSet& d, int a0, Gecode::Support::RandomGenerator& rand);
             /// Test whether all assignments have been iterated
-            virtual bool has_more(void) const;
+            bool has_more(void) const override;
             /// Move to next assignment
-            virtual void next(Gecode::Support::RandomGenerator& rand);
+            void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
-            virtual int operator[](int i) const;
+            int operator[](int i) const override;
             /// Destructor
-            virtual ~RandomAssignment(void);
+            ~RandomAssignment(void) override;
         };
 
         /// Generate random selection of assignments
@@ -133,20 +133,20 @@ namespace Test {
             int _n1;            ///< How many variables in the second set
             Gecode::IntSet _d1; ///< Domain for second set of variables
             /// Generate new value according to domain \a d
-            int randval(const Gecode::IntSet& d, Gecode::Support::RandomGenerator& rand);
+            int random_value(const Gecode::IntSet& d, Gecode::Support::RandomGenerator& rand);
 
         public:
             /// Initialize for \a a assignments for \a n0 variables and values \a d0
             RandomMixAssignment(int n0, const Gecode::IntSet& d0, int n1, const Gecode::IntSet& d1, int a0,
                                 Gecode::Support::RandomGenerator& rand);
             /// Test whether all assignments have been iterated
-            virtual bool has_more(void) const;
+            bool has_more(void) const override;
             /// Move to next assignment
-            virtual void next(Gecode::Support::RandomGenerator& rand);
+            void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
-            virtual int operator[](int i) const;
+            int operator[](int i) const override;
             /// Destructor
-            virtual ~RandomMixAssignment(void);
+            ~RandomMixAssignment(void) override;
         };
 
         /// Level of consistency to test for
@@ -191,7 +191,7 @@ namespace Test {
             /// Constructor for cloning \a s
             TestSpace(TestSpace& s);
             /// Copy space during cloning
-            virtual Gecode::Space* copy(void);
+            Gecode::Space* copy(void) override;
             /// Test whether all variables are assigned
             bool assigned(void) const;
             /// Post propagator
@@ -220,13 +220,14 @@ namespace Test {
             /// Prune some random values for some random variable
             void prune(Gecode::Support::RandomGenerator& rand);
             /// Prune values but not those in assignment \a a
-            bool prune(const Assignment& a, bool testfix, Gecode::Support::RandomGenerator& rand);
+            bool prune(const Assignment& a, bool test_fixpoint, Gecode::Support::RandomGenerator& rand);
             /// Disable propagators in space and compute fixpoint (make all idle)
             void disable(void);
             /// Enable propagators in space
             void enable(void);
             /// Prune values also in a space \a c with disabled propagators, but not those in assignment \a a
-            bool disabled(const Assignment& a, TestSpace& c, bool testfix, Gecode::Support::RandomGenerator& rand);
+            bool disabled(const Assignment& a, TestSpace& c, bool test_fixpoint,
+                          Gecode::Support::RandomGenerator& rand);
             /// Return the number of propagators
             unsigned int propagators(void);
         };
@@ -262,8 +263,8 @@ namespace Test {
          * include them in solution(). Use the complete assignment generator
          * when checking the full relation.
          *
-         * IPL_DOM initializes contest to CTL_DOMAIN; other levels initialize
-         * it to CTL_NONE. Set contest to CTL_BOUNDS_D or CTL_BOUNDS_Z only when
+         * IPL_DOM initializes consistency_test_level to CTL_DOMAIN; other levels initialize
+         * it to CTL_NONE. Set consistency_test_level to CTL_BOUNDS_D or CTL_BOUNDS_Z only when
          * the propagator promises that consistency. For reified constraints,
          * enable reification in the constructor and override the reified post().
          * \see Test::run_registered_tests
@@ -281,11 +282,11 @@ namespace Test {
             /// Propagation level
             Gecode::IntPropLevel ipl;
             /// Whether to test for certain consistency
-            ConTestLevel contest;
+            ConTestLevel consistency_test_level;
             /// Whether to perform search test
-            bool testsearch;
+            bool test_search;
             /// Whether to perform fixpoint test
-            bool testfix;
+            bool test_fixpoint;
             /// \name Test for reification modes
             //@{
             /// Test whether equivalence as reification mode is supported
@@ -363,7 +364,7 @@ namespace Test {
             /// Post reified constraint
             virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r);
             /// Perform test
-            virtual bool run(void);
+            bool run(void) override;
             /// \name Mapping scalar values to strings
             //@{
             /// Map bool to string

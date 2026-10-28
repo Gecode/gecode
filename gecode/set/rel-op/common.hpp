@@ -43,27 +43,27 @@ namespace Gecode {
 
     template <class View0, class View1>
     forceinline bool
-    viewarrayshared(const ViewArray<View0>& va, const View1& y) {
+    view_array_shared(const ViewArray<View0>& va, const View1& y) {
         return shared(va, y);
     }
 
     template <>
     forceinline bool
-    viewarrayshared<Set::SingletonView, Set::SetView>(const ViewArray<Set::SingletonView>&, const Set::SetView&) {
+    view_array_shared<Set::SingletonView, Set::SetView>(const ViewArray<Set::SingletonView>&, const Set::SetView&) {
         return false;
     }
 
     /// \cond INTERNAL
     template <>
     forceinline bool
-    viewarrayshared<Set::ComplementView<Set::SingletonView>, Set::SetView>(
+    view_array_shared<Set::ComplementView<Set::SingletonView>, Set::SetView>(
         const ViewArray<Set::ComplementView<Set::SingletonView>>&, const Set::SetView&) {
         return false;
     }
 
     template <>
     forceinline bool
-    viewarrayshared<Set::ComplementView<Set::SingletonView>, Set::ComplementView<Set::SetView>>(
+    view_array_shared<Set::ComplementView<Set::SingletonView>, Set::ComplementView<Set::SetView>>(
         const ViewArray<Set::ComplementView<Set::SingletonView>>&, const Set::ComplementView<Set::SetView>&) {
         return false;
     }
@@ -83,7 +83,7 @@ namespace Gecode {
 
         template <class View0, class View1, class View2>
         ExecStatus
-        interCard(Space& home, bool& retmodified, View0& x0, View1& x1, View2& x2) {
+        inter_card(Space& home, bool& retmodified, View0& x0, View1& x1, View2& x2) {
             bool modified = false;
             do {
                 retmodified |= modified;
@@ -95,16 +95,16 @@ namespace Gecode {
                     Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1>> u1(x0ub, x1ub);
                     unsigned int s1 = Iter::Ranges::size(u1);
 
-                    if (x0.cardMin() + x1.cardMin() > s1) {
-                        GECODE_ME_CHECK_MODIFIED(modified, x2.cardMin(home, x0.cardMin() + x1.cardMin() - s1));
+                    if (x0.card_min() + x1.card_min() > s1) {
+                        GECODE_ME_CHECK_MODIFIED(modified, x2.card_min(home, x0.card_min() + x1.card_min() - s1));
                     }
 
-                    // unsigned int res = std::max(x0.cardMin()+
-                    //                             (x1.cardMin()<s1 ?
-                    //                              0 : x1.cardMin()-s1),
-                    //                             std::max(x0.cardMin(),
-                    //                                      x1.cardMin()));
-                    // GECODE_ME_CHECK_MODIFIED(modified, x2.cardMin(home,res));
+                    // unsigned int res = std::max(x0.card_min()+
+                    //                             (x1.card_min()<s1 ?
+                    //                              0 : x1.card_min()-s1),
+                    //                             std::max(x0.card_min(),
+                    //                                      x1.card_min()));
+                    // GECODE_ME_CHECK_MODIFIED(modified, x2.card_min(home,res));
                 }
 
                 {
@@ -112,25 +112,25 @@ namespace Gecode {
                     GlbRanges<View1> x1lb(x1);
                     Iter::Ranges::Union<GlbRanges<View0>, GlbRanges<View1>> u1(x0lb, x1lb);
                     unsigned int s1 = Iter::Ranges::size(u1);
-                    GECODE_ME_CHECK_MODIFIED(modified, x2.cardMax(home, x0.cardMax() + x1.cardMax() - s1));
+                    GECODE_ME_CHECK_MODIFIED(modified, x2.card_max(home, x0.card_max() + x1.card_max() - s1));
                 }
 
-                if (x2.cardMax() < x1.cardMin())
+                if (x2.card_max() < x1.card_min())
                     GECODE_ME_CHECK_MODIFIED(modified,
-                                             x0.cardMax(home, Set::Limits::card + x2.cardMax() - x1.cardMin()));
+                                             x0.card_max(home, Set::Limits::card + x2.card_max() - x1.card_min()));
 
-                if (x2.cardMax() < x0.cardMin())
+                if (x2.card_max() < x0.card_min())
                     GECODE_ME_CHECK_MODIFIED(modified,
-                                             x1.cardMax(home, Set::Limits::card + x2.cardMax() - x0.cardMin()));
+                                             x1.card_max(home, Set::Limits::card + x2.card_max() - x0.card_min()));
 
-                GECODE_ME_CHECK_MODIFIED(modified, x0.cardMin(home, x2.cardMin()));
-                GECODE_ME_CHECK_MODIFIED(modified, x1.cardMin(home, x2.cardMin()));
+                GECODE_ME_CHECK_MODIFIED(modified, x0.card_min(home, x2.card_min()));
+                GECODE_ME_CHECK_MODIFIED(modified, x1.card_min(home, x2.card_min()));
             } while (modified);
             return ES_FIX;
         }
         template <class View0, class View1, class View2>
         ExecStatus
-        unionCard(Space& home, bool& retmodified, View0& x0, View1& x1, View2& x2) {
+        union_card(Space& home, bool& retmodified, View0& x0, View1& x1, View2& x2) {
             bool modified = false;
             do {
                 retmodified |= modified;
@@ -141,9 +141,9 @@ namespace Gecode {
                     LubRanges<View1> x1ub(x1);
                     Iter::Ranges::Inter<LubRanges<View0>, LubRanges<View1>> i1(x0ub, x1ub);
                     unsigned int s1 = Iter::Ranges::size(i1);
-                    unsigned int res = std::max(x0.cardMin() + (x1.cardMin() < s1 ? 0 : x1.cardMin() - s1),
-                                                std::max(x0.cardMin(), x1.cardMin()));
-                    GECODE_ME_CHECK_MODIFIED(modified, x2.cardMin(home, res));
+                    unsigned int res = std::max(x0.card_min() + (x1.card_min() < s1 ? 0 : x1.card_min() - s1),
+                                                std::max(x0.card_min(), x1.card_min()));
+                    GECODE_ME_CHECK_MODIFIED(modified, x2.card_min(home, res));
                 }
 
                 {
@@ -151,41 +151,41 @@ namespace Gecode {
                     LubRanges<View1> x1ub(x1);
                     Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1>> u1(x0ub, x1ub);
                     unsigned int s1 = Iter::Ranges::size(u1);
-                    GECODE_ME_CHECK_MODIFIED(modified, x2.cardMax(home, std::min(x0.cardMax() + x1.cardMax(), s1)));
+                    GECODE_ME_CHECK_MODIFIED(modified, x2.card_max(home, std::min(x0.card_max() + x1.card_max(), s1)));
                 }
 
-                if (x2.cardMin() > x1.cardMax())
-                    GECODE_ME_CHECK_MODIFIED(modified, x0.cardMin(home, x2.cardMin() - x1.cardMax()));
+                if (x2.card_min() > x1.card_max())
+                    GECODE_ME_CHECK_MODIFIED(modified, x0.card_min(home, x2.card_min() - x1.card_max()));
 
-                if (x2.cardMin() > x0.cardMax())
-                    GECODE_ME_CHECK_MODIFIED(modified, x1.cardMin(home, x2.cardMin() - x0.cardMax()));
+                if (x2.card_min() > x0.card_max())
+                    GECODE_ME_CHECK_MODIFIED(modified, x1.card_min(home, x2.card_min() - x0.card_max()));
 
-                GECODE_ME_CHECK_MODIFIED(modified, x0.cardMax(home, x2.cardMax()));
-                GECODE_ME_CHECK_MODIFIED(modified, x1.cardMax(home, x2.cardMax()));
+                GECODE_ME_CHECK_MODIFIED(modified, x0.card_max(home, x2.card_max()));
+                GECODE_ME_CHECK_MODIFIED(modified, x1.card_max(home, x2.card_max()));
             } while (modified);
             return ES_FIX;
         }
 
         template <class View0, class View1>
         ExecStatus
-        unionNCard(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& unionOfDets) {
+        union_n_card(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& union_of_dets) {
             int xsize = x.size();
-            // Max(Xi.cardMin) <= y.card <= Sum(Xi.cardMax)
-            // Xi.card <=y.cardMax
-            unsigned int cardMaxSum = unionOfDets.size();
-            bool maxValid = true;
+            // Max(Xi.card_min) <= y.card <= Sum(Xi.card_max)
+            // Xi.card <=y.card_max
+            unsigned int card_max_sum = union_of_dets.size();
+            bool max_valid = true;
             for (int i = xsize; i--;) {
-                cardMaxSum += x[i].cardMax();
-                if (cardMaxSum < x[i].cardMax()) {
-                    maxValid = false;
+                card_max_sum += x[i].card_max();
+                if (card_max_sum < x[i].card_max()) {
+                    max_valid = false;
                 } // overflow
-                GECODE_ME_CHECK_MODIFIED(modified, y.cardMin(home, x[i].cardMin()));
-                GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMax(home, y.cardMax()));
+                GECODE_ME_CHECK_MODIFIED(modified, y.card_min(home, x[i].card_min()));
+                GECODE_ME_CHECK_MODIFIED(modified, x[i].card_max(home, y.card_max()));
             }
-            if (maxValid) {
-                GECODE_ME_CHECK_MODIFIED(modified, y.cardMax(home, cardMaxSum));
+            if (max_valid) {
+                GECODE_ME_CHECK_MODIFIED(modified, y.card_max(home, card_max_sum));
             }
-            // y.cardMin - Sum(Xj.cardMax) <= Xi.card
+            // y.card_min - Sum(Xj.card_max) <= Xi.card
 
             if (x.size() == 0)
                 return ES_NOFIX;
@@ -193,70 +193,70 @@ namespace Gecode {
             Region r;
             // TODO: overflow management is a waste now.
             {
-                unsigned int* rightSum = r.alloc<unsigned int>(xsize);
-                rightSum[xsize - 1] = 0;
+                unsigned int* right_sum = r.alloc<unsigned int>(xsize);
+                right_sum[xsize - 1] = 0;
 
                 for (int i = x.size() - 1; i--;) {
-                    rightSum[i] = rightSum[i + 1] + x[i + 1].cardMax();
-                    if (rightSum[i] < rightSum[i + 1]) {
+                    right_sum[i] = right_sum[i + 1] + x[i + 1].card_max();
+                    if (right_sum[i] < right_sum[i + 1]) {
                         // overflow, fill the rest of the array.
                         for (int j = i; j > 0; j--) {
-                            rightSum[j] = Limits::card;
+                            right_sum[j] = Limits::card;
                         }
                         break;
                     }
                 }
 
                 // Size of union of determied vars missing from x sneaked in here:
-                unsigned int leftAcc = unionOfDets.size();
+                unsigned int left_acc = union_of_dets.size();
 
                 for (int i = 0; i < xsize; i++) {
-                    unsigned int jsum = leftAcc + rightSum[i];
-                    // If jsum did not overflow and is less than y.cardMin:
-                    if (jsum >= leftAcc && jsum < y.cardMin()) {
-                        GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMin(home, y.cardMin() - jsum));
+                    unsigned int jsum = left_acc + right_sum[i];
+                    // If jsum did not overflow and is less than y.card_min:
+                    if (jsum >= left_acc && jsum < y.card_min()) {
+                        GECODE_ME_CHECK_MODIFIED(modified, x[i].card_min(home, y.card_min() - jsum));
                     }
-                    leftAcc += x[i].cardMax();
-                    if (leftAcc < x[i].cardMax()) {
-                        leftAcc = Limits::card;
+                    left_acc += x[i].card_max();
+                    if (left_acc < x[i].card_max()) {
+                        left_acc = Limits::card;
                     }
                 }
             }
 
-            // y.cardMin - |U(Xj.ub)| <= Xi.card
+            // y.card_min - |U(Xj.ub)| <= Xi.card
 
             {
-                GLBndSet* rightUnion = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
-                new (&rightUnion[xsize - 1]) GLBndSet(home);
+                GLBndSet* right_union = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
+                new (&right_union[xsize - 1]) GLBndSet(home);
                 for (int i = xsize - 1; i--;) {
-                    BndSetRanges prev(rightUnion[i + 1]);
-                    LubRanges<View0> prevX(x[i + 1]);
-                    Iter::Ranges::Union<BndSetRanges, LubRanges<View0>> iter(prev, prevX);
-                    new (&rightUnion[i]) GLBndSet(home);
-                    rightUnion[i].includeI(home, iter);
+                    BndSetRanges prev(right_union[i + 1]);
+                    LubRanges<View0> prev_x(x[i + 1]);
+                    Iter::Ranges::Union<BndSetRanges, LubRanges<View0>> iter(prev, prev_x);
+                    new (&right_union[i]) GLBndSet(home);
+                    right_union[i].include_i(home, iter);
                 }
 
                 // union of determied vars missing from x sneaked in here:
-                GLBndSet leftAcc;
-                leftAcc.update(home, unionOfDets);
+                GLBndSet left_acc;
+                left_acc.update(home, union_of_dets);
                 for (int i = 0; i < xsize; i++) {
-                    BndSetRanges left(leftAcc);
-                    BndSetRanges right(rightUnion[i]);
+                    BndSetRanges left(left_acc);
+                    BndSetRanges right(right_union[i]);
                     Iter::Ranges::Union<BndSetRanges, BndSetRanges> iter(left, right);
-                    unsigned int unionSize = Iter::Ranges::size(iter);
-                    if (y.cardMin() > unionSize) {
-                        GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMin(home, y.cardMin() - unionSize));
+                    unsigned int union_size = Iter::Ranges::size(iter);
+                    if (y.card_min() > union_size) {
+                        GECODE_ME_CHECK_MODIFIED(modified, x[i].card_min(home, y.card_min() - union_size));
                     }
                     LubRanges<View0> xiub(x[i]);
-                    leftAcc.includeI(home, xiub);
+                    left_acc.include_i(home, xiub);
                 }
 
                 for (int i = xsize; i--;)
-                    rightUnion[i].dispose(home);
-                leftAcc.dispose(home);
+                    right_union[i].dispose(home);
+                left_acc.dispose(home);
             }
 
-            // no need for this: |y.lb - U(Xj.cardMax)| <= S.card
+            // no need for this: |y.lb - U(Xj.card_max)| <= S.card
 
             return ES_NOFIX;
         }
@@ -267,11 +267,11 @@ namespace Gecode {
          */
         template <class View0, class View1>
         ExecStatus
-        unionNXiUB(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet&) {
+        union_n_xi_ub(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet&) {
             int xsize = x.size();
             for (int i = xsize; i--;) {
                 LubRanges<View1> yub(y);
-                GECODE_ME_CHECK_MODIFIED(modified, x[i].intersectI(home, yub));
+                GECODE_ME_CHECK_MODIFIED(modified, x[i].intersect_i(home, yub));
             }
             return ES_FIX;
         }
@@ -279,26 +279,26 @@ namespace Gecode {
         // cardinality rules for PartitionN constraint
         template <class View0, class View1>
         ExecStatus
-        partitionNCard(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& unionOfDets) {
-            unsigned int cardMinSum = unionOfDets.size();
-            unsigned int cardMaxSum = unionOfDets.size();
+        partition_n_card(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& union_of_dets) {
+            unsigned int card_min_sum = union_of_dets.size();
+            unsigned int card_max_sum = union_of_dets.size();
             int xsize = x.size();
             for (int i = xsize; i--;) {
-                cardMinSum += x[i].cardMin();
-                if (cardMinSum < x[i].cardMin()) {
+                card_min_sum += x[i].card_min();
+                if (card_min_sum < x[i].card_min()) {
                     // sum of mins overflows: fail the space.
                     GECODE_ME_CHECK(ME_SET_FAILED);
                 }
             }
-            GECODE_ME_CHECK_MODIFIED(modified, y.cardMin(home, cardMinSum));
+            GECODE_ME_CHECK_MODIFIED(modified, y.card_min(home, card_min_sum));
             for (int i = xsize; i--;) {
-                cardMaxSum += x[i].cardMax();
-                if (cardMaxSum < x[i].cardMax()) {
+                card_max_sum += x[i].card_max();
+                if (card_max_sum < x[i].card_max()) {
                     // sum of maxes overflows: no useful information to tell.
                     goto overflow;
                 }
             }
-            GECODE_ME_CHECK_MODIFIED(modified, y.cardMax(home, cardMaxSum));
+            GECODE_ME_CHECK_MODIFIED(modified, y.card_max(home, card_max_sum));
 
             if (x.size() == 0)
                 return ES_NOFIX;
@@ -309,51 +309,51 @@ namespace Gecode {
 
             {
                 Region r;
-                unsigned int* rightMinSum = r.alloc<unsigned int>(xsize);
-                unsigned int* rightMaxSum = r.alloc<unsigned int>(xsize);
-                rightMinSum[xsize - 1] = 0;
-                rightMaxSum[xsize - 1] = 0;
+                unsigned int* right_min_sum = r.alloc<unsigned int>(xsize);
+                unsigned int* right_max_sum = r.alloc<unsigned int>(xsize);
+                right_min_sum[xsize - 1] = 0;
+                right_max_sum[xsize - 1] = 0;
 
                 for (int i = x.size() - 1; i--;) {
-                    rightMaxSum[i] = rightMaxSum[i + 1] + x[i + 1].cardMax();
-                    if (rightMaxSum[i] < rightMaxSum[i + 1]) {
+                    right_max_sum[i] = right_max_sum[i + 1] + x[i + 1].card_max();
+                    if (right_max_sum[i] < right_max_sum[i + 1]) {
                         // overflow, fill the rest of the array.
                         for (int j = i; j > 0; j--) {
-                            rightMaxSum[j] = Limits::card;
+                            right_max_sum[j] = Limits::card;
                         }
                         break;
                     }
                 }
                 for (int i = x.size() - 1; i--;) {
-                    rightMinSum[i] = rightMinSum[i + 1] + x[i + 1].cardMin();
-                    if (rightMinSum[i] < rightMinSum[i + 1]) {
+                    right_min_sum[i] = right_min_sum[i + 1] + x[i + 1].card_min();
+                    if (right_min_sum[i] < right_min_sum[i + 1]) {
                         // overflow, fail the space
                         GECODE_ME_CHECK(ME_SET_FAILED);
                     }
                 }
-                unsigned int leftMinAcc = unionOfDets.size();
-                unsigned int leftMaxAcc = unionOfDets.size();
+                unsigned int left_min_acc = union_of_dets.size();
+                unsigned int left_max_acc = union_of_dets.size();
 
                 for (int i = 0; i < xsize; i++) {
-                    unsigned int maxSum = leftMaxAcc + rightMaxSum[i];
-                    unsigned int minSum = leftMinAcc + rightMinSum[i];
-                    // If maxSum did not overflow and is less than y.cardMin:
-                    if (maxSum >= leftMaxAcc && maxSum < y.cardMin()) {
-                        GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMin(home, y.cardMin() - maxSum));
+                    unsigned int max_sum = left_max_acc + right_max_sum[i];
+                    unsigned int min_sum = left_min_acc + right_min_sum[i];
+                    // If maxSum did not overflow and is less than y.card_min:
+                    if (max_sum >= left_max_acc && max_sum < y.card_min()) {
+                        GECODE_ME_CHECK_MODIFIED(modified, x[i].card_min(home, y.card_min() - max_sum));
                     }
 
                     // Overflow, fail.
-                    if (minSum < leftMinAcc || y.cardMax() < minSum) {
+                    if (min_sum < left_min_acc || y.card_max() < min_sum) {
                         GECODE_ME_CHECK(ME_SET_FAILED);
                     } else {
-                        GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMax(home, y.cardMax() - minSum));
+                        GECODE_ME_CHECK_MODIFIED(modified, x[i].card_max(home, y.card_max() - min_sum));
                     }
 
-                    leftMaxAcc += x[i].cardMax();
-                    if (leftMaxAcc < x[i].cardMax())
-                        leftMaxAcc = Limits::card;
-                    leftMinAcc += x[i].cardMin();
-                    if (leftMinAcc < x[i].cardMin())
+                    left_max_acc += x[i].card_max();
+                    if (left_max_acc < x[i].card_max())
+                        left_max_acc = Limits::card;
+                    left_min_acc += x[i].card_min();
+                    if (left_min_acc < x[i].card_min())
                         GECODE_ME_CHECK(ME_SET_FAILED);
                 }
             }
@@ -365,61 +365,61 @@ namespace Gecode {
         // Xi UB is subset of YUB minus union of Xj LBs
         template <class View0, class View1>
         ExecStatus
-        partitionNXi(Space& home, bool& modified, ViewArray<View0>& x, View1& y) {
+        partition_n_xi(Space& home, bool& modified, ViewArray<View0>& x, View1& y) {
             int xsize = x.size();
             Region r;
-            GLBndSet* afterUB = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
-            GLBndSet* afterLB = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
+            GLBndSet* after_ub = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
+            GLBndSet* after_lb = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
 
             {
-                GLBndSet sofarAfterUB;
-                GLBndSet sofarAfterLB;
+                GLBndSet sofar_after_ub;
+                GLBndSet sofar_after_lb;
                 for (int i = xsize; i--;) {
-                    new (&afterUB[i]) GLBndSet(home);
-                    new (&afterLB[i]) GLBndSet(home);
-                    afterUB[i].update(home, sofarAfterUB);
-                    afterLB[i].update(home, sofarAfterLB);
+                    new (&after_ub[i]) GLBndSet(home);
+                    new (&after_lb[i]) GLBndSet(home);
+                    after_ub[i].update(home, sofar_after_ub);
+                    after_lb[i].update(home, sofar_after_lb);
                     LubRanges<View0> xiub(x[i]);
                     GlbRanges<View0> xilb(x[i]);
-                    sofarAfterUB.includeI(home, xiub);
-                    sofarAfterLB.includeI(home, xilb);
+                    sofar_after_ub.include_i(home, xiub);
+                    sofar_after_lb.include_i(home, xilb);
                 }
-                sofarAfterUB.dispose(home);
-                sofarAfterLB.dispose(home);
+                sofar_after_ub.dispose(home);
+                sofar_after_lb.dispose(home);
             }
 
             {
-                GLBndSet sofarBeforeUB;
-                GLBndSet sofarBeforeLB;
+                GLBndSet sofar_before_ub;
+                GLBndSet sofar_before_lb;
                 for (int i = 0; i < xsize; i++) {
                     LubRanges<View1> yub(y);
-                    BndSetRanges slb(sofarBeforeLB);
-                    BndSetRanges afterlb(afterLB[i]);
-                    Iter::Ranges::Union<BndSetRanges, BndSetRanges> xjlb(slb, afterlb);
+                    BndSetRanges slb(sofar_before_lb);
+                    BndSetRanges after_lower_bound_ranges(after_lb[i]);
+                    Iter::Ranges::Union<BndSetRanges, BndSetRanges> xjlb(slb, after_lower_bound_ranges);
                     Iter::Ranges::Diff<LubRanges<View1>, Iter::Ranges::Union<BndSetRanges, BndSetRanges>> diff1(yub,
                                                                                                                 xjlb);
-                    GECODE_ME_CHECK_MODIFIED(modified, x[i].intersectI(home, diff1));
+                    GECODE_ME_CHECK_MODIFIED(modified, x[i].intersect_i(home, diff1));
 
                     GlbRanges<View1> ylb(y);
-                    BndSetRanges sub(sofarBeforeUB);
-                    BndSetRanges afterub(afterUB[i]);
-                    Iter::Ranges::Union<BndSetRanges, BndSetRanges> xjub(sub, afterub);
+                    BndSetRanges sub(sofar_before_ub);
+                    BndSetRanges after_upper_bound_ranges(after_ub[i]);
+                    Iter::Ranges::Union<BndSetRanges, BndSetRanges> xjub(sub, after_upper_bound_ranges);
                     Iter::Ranges::Diff<GlbRanges<View1>, Iter::Ranges::Union<BndSetRanges, BndSetRanges>> diff2(ylb,
                                                                                                                 xjub);
-                    GECODE_ME_CHECK_MODIFIED(modified, x[i].includeI(home, diff2));
+                    GECODE_ME_CHECK_MODIFIED(modified, x[i].include_i(home, diff2));
 
                     LubRanges<View0> xiub(x[i]);
                     GlbRanges<View0> xilb(x[i]);
-                    sofarBeforeUB.includeI(home, xiub);
-                    sofarBeforeLB.includeI(home, xilb);
+                    sofar_before_ub.include_i(home, xiub);
+                    sofar_before_lb.include_i(home, xilb);
                 }
-                sofarBeforeLB.dispose(home);
-                sofarBeforeUB.dispose(home);
+                sofar_before_lb.dispose(home);
+                sofar_before_ub.dispose(home);
             }
 
             for (int i = xsize; i--;) {
-                afterUB[i].dispose(home);
-                afterLB[i].dispose(home);
+                after_ub[i].dispose(home);
+                after_lb[i].dispose(home);
             }
 
             return ES_NOFIX;
@@ -428,107 +428,107 @@ namespace Gecode {
         // Xi UB is subset of YUB minus union of Xj LBs
         template <class View0, class View1>
         ExecStatus
-        partitionNXiUB(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& unionOfDets) {
+        partition_n_xi_ub(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& union_of_dets) {
             int xsize = x.size();
             Region r;
-            GLBndSet* afterLB = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
+            GLBndSet* after_lb = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
 
             {
-                GLBndSet sofarAfterLB;
+                GLBndSet sofar_after_lb;
                 for (int i = xsize; i--;) {
-                    new (&afterLB[i]) GLBndSet(home);
-                    afterLB[i].update(home, sofarAfterLB);
+                    new (&after_lb[i]) GLBndSet(home);
+                    after_lb[i].update(home, sofar_after_lb);
                     GlbRanges<View0> xilb(x[i]);
-                    sofarAfterLB.includeI(home, xilb);
+                    sofar_after_lb.include_i(home, xilb);
                 }
-                sofarAfterLB.dispose(home);
+                sofar_after_lb.dispose(home);
             }
 
             {
-                GLBndSet sofarBeforeLB;
-                sofarBeforeLB.update(home, unionOfDets);
+                GLBndSet sofar_before_lb;
+                sofar_before_lb.update(home, union_of_dets);
                 for (int i = 0; i < xsize; i++) {
                     LubRanges<View1> yub(y);
-                    BndSetRanges slb(sofarBeforeLB);
-                    BndSetRanges afterlb(afterLB[i]);
-                    Iter::Ranges::Union<BndSetRanges, BndSetRanges> xjlb(slb, afterlb);
+                    BndSetRanges slb(sofar_before_lb);
+                    BndSetRanges after_lower_bound_ranges(after_lb[i]);
+                    Iter::Ranges::Union<BndSetRanges, BndSetRanges> xjlb(slb, after_lower_bound_ranges);
                     Iter::Ranges::Diff<LubRanges<View1>, Iter::Ranges::Union<BndSetRanges, BndSetRanges>> diff1(yub,
                                                                                                                 xjlb);
-                    GECODE_ME_CHECK_MODIFIED(modified, x[i].intersectI(home, diff1));
+                    GECODE_ME_CHECK_MODIFIED(modified, x[i].intersect_i(home, diff1));
 
                     GlbRanges<View0> xilb(x[i]);
-                    sofarBeforeLB.includeI(home, xilb);
+                    sofar_before_lb.include_i(home, xilb);
                 }
-                sofarBeforeLB.dispose(home);
+                sofar_before_lb.dispose(home);
             }
             for (int i = xsize; i--;)
-                afterLB[i].dispose(home);
+                after_lb[i].dispose(home);
             return ES_NOFIX;
         }
 
         // Xi LB includes YLB minus union Xj UB
         template <class View0, class View1>
         ExecStatus
-        partitionNXiLB(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& unionOfDets) {
+        partition_n_xi_lb(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& union_of_dets) {
             int xsize = x.size();
             Region r;
-            GLBndSet* afterUB = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
+            GLBndSet* after_ub = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
 
             {
-                GLBndSet sofarAfterUB;
+                GLBndSet sofar_after_ub;
                 for (int i = xsize; i--;) {
-                    new (&afterUB[i]) GLBndSet(home);
-                    afterUB[i].update(home, sofarAfterUB);
+                    new (&after_ub[i]) GLBndSet(home);
+                    after_ub[i].update(home, sofar_after_ub);
                     LubRanges<View0> xiub(x[i]);
-                    sofarAfterUB.includeI(home, xiub);
+                    sofar_after_ub.include_i(home, xiub);
                 }
-                sofarAfterUB.dispose(home);
+                sofar_after_ub.dispose(home);
             }
 
             {
                 // The union of previously determined x[j]-s is added to the mix here:
-                GLBndSet sofarBeforeUB;
-                sofarBeforeUB.update(home, unionOfDets);
+                GLBndSet sofar_before_ub;
+                sofar_before_ub.update(home, union_of_dets);
                 for (int i = 0; i < xsize; i++) {
                     GlbRanges<View1> ylb(y);
-                    BndSetRanges sub(sofarBeforeUB);
-                    BndSetRanges afterub(afterUB[i]);
-                    Iter::Ranges::Union<BndSetRanges, BndSetRanges> xjub(sub, afterub);
+                    BndSetRanges sub(sofar_before_ub);
+                    BndSetRanges after_upper_bound_ranges(after_ub[i]);
+                    Iter::Ranges::Union<BndSetRanges, BndSetRanges> xjub(sub, after_upper_bound_ranges);
                     Iter::Ranges::Diff<GlbRanges<View1>, Iter::Ranges::Union<BndSetRanges, BndSetRanges>> diff2(ylb,
                                                                                                                 xjub);
-                    GECODE_ME_CHECK_MODIFIED(modified, x[i].includeI(home, diff2));
+                    GECODE_ME_CHECK_MODIFIED(modified, x[i].include_i(home, diff2));
 
                     LubRanges<View0> xiub(x[i]);
-                    sofarBeforeUB.includeI(home, xiub);
+                    sofar_before_ub.include_i(home, xiub);
                 }
-                sofarBeforeUB.dispose(home);
+                sofar_before_ub.dispose(home);
             }
             for (int i = xsize; i--;)
-                afterUB[i].dispose(home);
+                after_ub[i].dispose(home);
             return ES_NOFIX;
         }
 
         // Y LB contains union of X LBs
         template <class View0, class View1>
         ExecStatus
-        partitionNYLB(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& unionOfDets) {
-            assert(unionOfDets.isConsistent());
+        partition_nylb(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& union_of_dets) {
+            assert(union_of_dets.is_consistent());
             int xsize = x.size();
             Region reg;
-            GlbRanges<View0>* xLBs = reg.alloc<GlbRanges<View0>>(xsize);
-            int nonEmptyCounter = 0;
+            GlbRanges<View0>* x_l_bs = reg.alloc<GlbRanges<View0>>(xsize);
+            int non_empty_counter = 0;
             for (int i = xsize; i--;) {
                 GlbRanges<View0> r(x[i]);
                 if (r()) {
-                    xLBs[nonEmptyCounter] = r;
-                    nonEmptyCounter++;
+                    x_l_bs[non_empty_counter] = r;
+                    non_empty_counter++;
                 }
             }
-            if (nonEmptyCounter != 0) {
-                Iter::Ranges::NaryUnion xLBUnion(reg, xLBs, nonEmptyCounter);
-                BndSetRanges dets(unionOfDets);
-                xLBUnion |= dets;
-                GECODE_ME_CHECK_MODIFIED(modified, y.includeI(home, xLBUnion));
+            if (non_empty_counter != 0) {
+                Iter::Ranges::NaryUnion x_lb_union(reg, x_l_bs, non_empty_counter);
+                BndSetRanges dets(union_of_dets);
+                x_lb_union |= dets;
+                GECODE_ME_CHECK_MODIFIED(modified, y.include_i(home, x_lb_union));
             }
             return ES_FIX;
         }
@@ -536,23 +536,23 @@ namespace Gecode {
         // Y UB is subset of union of X UBs
         template <class View0, class View1>
         ExecStatus
-        partitionNYUB(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& unionOfDets) {
+        partition_nyub(Space& home, bool& modified, ViewArray<View0>& x, View1& y, GLBndSet& union_of_dets) {
             int xsize = x.size();
             Region reg;
-            LubRanges<View0>* xUBs = reg.alloc<LubRanges<View0>>(xsize);
-            int nonEmptyCounter = 0;
+            LubRanges<View0>* x_u_bs = reg.alloc<LubRanges<View0>>(xsize);
+            int non_empty_counter = 0;
             for (int i = xsize; i--;) {
                 LubRanges<View0> r(x[i]);
                 if (r()) {
-                    xUBs[nonEmptyCounter] = r;
-                    nonEmptyCounter++;
+                    x_u_bs[non_empty_counter] = r;
+                    non_empty_counter++;
                 }
             }
-            if (nonEmptyCounter != 0) {
-                Iter::Ranges::NaryUnion xUBUnion(reg, xUBs, nonEmptyCounter);
-                BndSetRanges dets(unionOfDets);
-                xUBUnion |= dets;
-                GECODE_ME_CHECK_MODIFIED(modified, y.intersectI(home, xUBUnion));
+            if (non_empty_counter != 0) {
+                Iter::Ranges::NaryUnion x_ub_union(reg, x_u_bs, non_empty_counter);
+                BndSetRanges dets(union_of_dets);
+                x_ub_union |= dets;
+                GECODE_ME_CHECK_MODIFIED(modified, y.intersect_i(home, x_ub_union));
             }
             return ES_FIX;
         }

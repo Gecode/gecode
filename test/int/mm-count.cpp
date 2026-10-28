@@ -71,8 +71,8 @@ namespace Test { namespace Int {
             /// Create and register test
             IntInt(Gecode::IntRelType irt0) : Test("MiniModel::" + expand(irt0) + "::Int::Int", 4, -2, 2), irt(irt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int m = 0;
                 for (int i = x.size(); i--;)
                     if (x[i] == 0)
@@ -80,17 +80,17 @@ namespace Test { namespace Int {
                 return cmp(m, irt, 2);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 switch (irt) {
                 case Gecode::IRT_EQ:
                     Gecode::exactly(home, x, 0, 2);
                     break;
                 case Gecode::IRT_LQ:
-                    Gecode::atmost(home, x, 0, 2);
+                    Gecode::at_most(home, x, 0, 2);
                     break;
                 case Gecode::IRT_GQ:
-                    Gecode::atleast(home, x, 0, 2);
+                    Gecode::at_least(home, x, 0, 2);
                     break;
                 default:
                     GECODE_NEVER;
@@ -108,8 +108,8 @@ namespace Test { namespace Int {
             /// Create and register test
             IntVar(Gecode::IntRelType irt0) : Test("MiniModel::" + expand(irt0) + "::Int::Var", 5, -2, 2), irt(irt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int m = 0;
                 for (int i = 0; i < 4; i++)
                     if (x[i] == 0)
@@ -117,8 +117,8 @@ namespace Test { namespace Int {
                 return cmp(m, irt, x[4]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs y(4);
                 for (int i = 0; i < 4; i++)
                     y[i] = x[i];
@@ -127,10 +127,10 @@ namespace Test { namespace Int {
                     Gecode::exactly(home, y, 0, x[4]);
                     break;
                 case Gecode::IRT_LQ:
-                    Gecode::atmost(home, y, 0, x[4]);
+                    Gecode::at_most(home, y, 0, x[4]);
                     break;
                 case Gecode::IRT_GQ:
-                    Gecode::atleast(home, y, 0, x[4]);
+                    Gecode::at_least(home, y, 0, x[4]);
                     break;
                 default:
                     GECODE_NEVER;
@@ -148,8 +148,8 @@ namespace Test { namespace Int {
             /// Create and register test
             VarVar(Gecode::IntRelType irt0) : Test("MiniModel::" + expand(irt0) + "::Var::Var", 5, -2, 2), irt(irt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int m = 0;
                 for (int i = 0; i < 3; i++)
                     if (x[i] == x[3])
@@ -157,8 +157,8 @@ namespace Test { namespace Int {
                 return cmp(m, irt, x[4]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs y(3);
                 for (int i = 0; i < 3; i++)
                     y[i] = x[i];
@@ -167,10 +167,10 @@ namespace Test { namespace Int {
                     Gecode::exactly(home, y, x[3], x[4]);
                     break;
                 case Gecode::IRT_LQ:
-                    Gecode::atmost(home, y, x[3], x[4]);
+                    Gecode::at_most(home, y, x[3], x[4]);
                     break;
                 case Gecode::IRT_GQ:
-                    Gecode::atleast(home, y, x[3], x[4]);
+                    Gecode::at_least(home, y, x[3], x[4]);
                     break;
                 default:
                     GECODE_NEVER;
@@ -188,8 +188,8 @@ namespace Test { namespace Int {
             /// Create and register test
             VarInt(Gecode::IntRelType irt0) : Test("MiniModel::" + expand(irt0) + "::Var::Int", 4, -2, 2), irt(irt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int m = 0;
                 for (int i = 0; i < 3; i++)
                     if (x[i] == x[3])
@@ -197,8 +197,8 @@ namespace Test { namespace Int {
                 return cmp(m, irt, 2);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs y(3);
                 for (int i = 0; i < 3; i++)
                     y[i] = x[i];
@@ -207,10 +207,10 @@ namespace Test { namespace Int {
                     Gecode::exactly(home, y, x[3], 2);
                     break;
                 case Gecode::IRT_LQ:
-                    Gecode::atmost(home, y, x[3], 2);
+                    Gecode::at_most(home, y, x[3], 2);
                     break;
                 case Gecode::IRT_GQ:
-                    Gecode::atleast(home, y, x[3], 2);
+                    Gecode::at_least(home, y, x[3], 2);
                     break;
                 default:
                     GECODE_NEVER;
@@ -231,8 +231,8 @@ namespace Test { namespace Int {
             IntArrayInt(Gecode::IntRelType irt0)
                 : Test("MiniModel::" + expand(irt0) + "::IntArray::Int", 5, -2, 2), irt(irt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int m = 0;
                 for (int i = 0; i < 4; i++)
                     if (x[i] == ints[i])
@@ -240,8 +240,8 @@ namespace Test { namespace Int {
                 return cmp(m, irt, 2);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs y(4);
                 for (int i = 0; i < 4; i++)
                     y[i] = x[i];
@@ -250,10 +250,10 @@ namespace Test { namespace Int {
                     Gecode::exactly(home, y, ints, 2);
                     break;
                 case Gecode::IRT_LQ:
-                    Gecode::atmost(home, y, ints, 2);
+                    Gecode::at_most(home, y, ints, 2);
                     break;
                 case Gecode::IRT_GQ:
-                    Gecode::atleast(home, y, ints, 2);
+                    Gecode::at_least(home, y, ints, 2);
                     break;
                 default:
                     GECODE_NEVER;
@@ -272,8 +272,8 @@ namespace Test { namespace Int {
             IntArrayVar(Gecode::IntRelType irt0)
                 : Test("MiniModel::" + expand(irt0) + "::IntArray::Var", 5, -2, 2), irt(irt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int m = 0;
                 for (int i = 0; i < 4; i++)
                     if (x[i] == ints[i])
@@ -281,8 +281,8 @@ namespace Test { namespace Int {
                 return cmp(m, irt, x[4]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs y(4);
                 for (int i = 0; i < 4; i++)
                     y[i] = x[i];
@@ -291,10 +291,10 @@ namespace Test { namespace Int {
                     Gecode::exactly(home, y, ints, x[4]);
                     break;
                 case Gecode::IRT_LQ:
-                    Gecode::atmost(home, y, ints, x[4]);
+                    Gecode::at_most(home, y, ints, x[4]);
                     break;
                 case Gecode::IRT_GQ:
-                    Gecode::atleast(home, y, ints, x[4]);
+                    Gecode::at_least(home, y, ints, x[4]);
                     break;
                 default:
                     GECODE_NEVER;

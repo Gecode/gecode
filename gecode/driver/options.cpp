@@ -62,7 +62,7 @@ namespace Gecode {
         }
 
         char*
-        BaseOption::stredup(const char* s) {
+        BaseOption::duplicate_option_flag(const char* s) {
             if (s == nullptr)
                 return nullptr;
             size_t l = strlen(s) + 1;
@@ -100,7 +100,8 @@ namespace Gecode {
             return argv[2];
         }
 
-        BaseOption::BaseOption(const char* o, const char* e) : eopt(strdup(o)), iopt(stredup(o)), exp(strdup(e)) {}
+        BaseOption::BaseOption(const char* o, const char* e)
+            : eopt(strdup(o)), iopt(duplicate_option_flag(o)), exp(strdup(e)) {}
 
         BaseOption::~BaseOption(void) {
             strdel(eopt);
@@ -109,7 +110,7 @@ namespace Gecode {
         }
 
         RandomOption::RandomOption(const char* o, const char* e, uint64_t v, const char* s)
-            : BaseOption(o, e), sopt(strdup(s)), siopt(stredup(s)) {
+            : BaseOption(o, e), sopt(strdup(s)), siopt(duplicate_option_flag(s)) {
             value(v);
         }
         RandomOption::~RandomOption(void) {

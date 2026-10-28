@@ -55,19 +55,19 @@ namespace Test { namespace Int {
                 : Test(TestTags::sweep(), "Channel::Full::" + str(xoff0) + "::" + str(yoff0) + "::" + str(ipl), 8, 0, 3,
                        false, ipl),
                   xoff(xoff0), yoff(yoff0) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < 4; i++)
                     if (x[4 + x[i]] != i)
                         return false;
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntVarArgs xa(4);
                 IntVarArgs ya(4);
@@ -97,11 +97,11 @@ namespace Test { namespace Int {
             /// Construct and register test
             ChannelHalf(Gecode::IntPropLevel ipl)
                 : Test(TestTags::sweep(), "Channel::Half::" + str(ipl), 6, 0, 5, false, ipl) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < 6; i++)
                     for (int j = i + 1; j < 6; j++)
                         if (x[i] == x[j])
@@ -109,8 +109,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::IntVarArgs y(home, 6, dom);
                 for (int i = 0; i < 6; i++)
@@ -129,19 +129,19 @@ namespace Test { namespace Int {
             /// Construct and register test
             ChannelShared(Gecode::IntPropLevel ipl)
                 : Test(TestTags::sweep(), "Channel::Shared::" + str(ipl), 6, 0, 5, false, ipl) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < 6; i++)
                     if (x[x[i]] != i)
                         return false;
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 channel(home, x, x, ipl);
             }
@@ -152,16 +152,16 @@ namespace Test { namespace Int {
         public:
             /// Construct and register test
             ChannelLinkSingle(void) : Test(TestTags::sweep(), "Channel::Bool::Single", 2, -1, 2) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return ((x[0] == 0) || (x[0] == 1)) && (x[0] == x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::BoolVar b(home, 0, 1);
                 channel(home, x[0], b);
@@ -179,8 +179,8 @@ namespace Test { namespace Int {
             ChannelLinkMulti(TestTags tags, const std::string& s, int min, int max, int o0)
                 : Test(tags, "Channel::Bool::Multi::" + s, 7, min, max), o(o0) {}
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 for (int i = n; i--;)
                     if ((x[i] != 0) && (x[i] != 1))
@@ -197,8 +197,8 @@ namespace Test { namespace Int {
                 return x[k] == 1;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 int n = x.size() - 1;
                 Gecode::BoolVarArgs b(n);

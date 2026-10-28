@@ -94,13 +94,13 @@ public:
         le.update(*this, s.le);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Donald(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\t" << le << std::endl;
         ;
     }

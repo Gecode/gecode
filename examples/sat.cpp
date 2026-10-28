@@ -127,14 +127,14 @@ public:
     }
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Sat(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "solution:\n" << x << std::endl;
     }
 };

@@ -82,7 +82,7 @@ namespace Gecode { namespace Search { namespace Par {
             /// Provide access to engine
             DFS& engine(void) const;
             /// Start execution of worker
-            virtual void run(void);
+            void run(void) override;
             /// Try to find some work
             bool find(void);
             /// Reset worker to restart at space \a s
@@ -108,13 +108,13 @@ namespace Gecode { namespace Search { namespace Par {
         /// Initialize for space \a s with options \a o
         DFS(Space* s, const Options& o);
         /// Return statistics
-        virtual Statistics statistics(void) const;
+        Statistics statistics(void) const override;
         /// Reset engine to restart at space \a s
-        virtual void reset(Space* s);
+        void reset(Space* s) override;
         /// Return no-goods
-        virtual NoGoods& nogoods(void);
+        NoGoods& nogoods(void) override;
         /// Destructor
-        virtual ~DFS(void);
+        ~DFS(void) override;
         //@}
     };
 

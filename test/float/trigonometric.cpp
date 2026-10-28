@@ -52,13 +52,13 @@ namespace Test { namespace Float {
             SinXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::Sin::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(sin(x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::sin(home, x[0], x[1]);
                 else
@@ -73,13 +73,13 @@ namespace Test { namespace Float {
             SinXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::Sin::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(sin(x[0]), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = sin(x[0]);
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
@@ -89,8 +89,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::sin(home, x[0], x[1]);
             }
         };
@@ -102,13 +102,13 @@ namespace Test { namespace Float {
             SinXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Trigonometric::Sin::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(sin(x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::sin(home, x[0], x[0]);
             }
         };
@@ -120,13 +120,13 @@ namespace Test { namespace Float {
             CosXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::Cos::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(cos(x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::cos(home, x[0], x[1]);
                 else
@@ -141,13 +141,13 @@ namespace Test { namespace Float {
             CosXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::Cos::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(cos(x[0]), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = cos(x[0]);
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
@@ -157,8 +157,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::cos(home, x[0], x[1]);
             }
         };
@@ -170,13 +170,13 @@ namespace Test { namespace Float {
             CosXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Trigonometric::Cos::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(cos(x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::cos(home, x[0], x[0]);
             }
         };
@@ -188,13 +188,13 @@ namespace Test { namespace Float {
             TanXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::Tan::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(tan(x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::tan(home, x[0], x[1]);
                 else
@@ -209,13 +209,13 @@ namespace Test { namespace Float {
             TanXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::Tan::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(tan(x[0]), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = tan(x[0]);
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
@@ -225,8 +225,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::tan(home, x[0], x[1]);
             }
         };
@@ -238,13 +238,13 @@ namespace Test { namespace Float {
             TanXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Trigonometric::Tan::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(tan(x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::tan(home, x[0], x[0]);
             }
         };
@@ -256,15 +256,15 @@ namespace Test { namespace Float {
             ASinXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::ASin::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
                     return MT_FALSE;
                 return eq(asin(x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::asin(home, x[0], x[1]);
                 else
@@ -279,15 +279,15 @@ namespace Test { namespace Float {
             ASinXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::ASin::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
                     return MT_FALSE;
                 return eq(asin(x[0]), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
                     return false;
                 Gecode::FloatVal d = asin(x[0]);
@@ -299,8 +299,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::asin(home, x[0], x[1]);
             }
         };
@@ -312,15 +312,15 @@ namespace Test { namespace Float {
             ASinXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Trigonometric::ASin::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
                     return MT_FALSE;
                 return eq(asin(x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::asin(home, x[0], x[0]);
             }
         };
@@ -332,15 +332,15 @@ namespace Test { namespace Float {
             ACosXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::ACos::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
                     return MT_FALSE;
                 return eq(acos(x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::acos(home, x[0], x[1]);
                 else
@@ -355,15 +355,15 @@ namespace Test { namespace Float {
             ACosXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::ACos::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
                     return MT_FALSE;
                 return eq(acos(x[0]), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
                     return false;
                 Gecode::FloatVal d = acos(x[0]);
@@ -375,8 +375,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::acos(home, x[0], x[1]);
             }
         };
@@ -388,15 +388,15 @@ namespace Test { namespace Float {
             ACosXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Trigonometric::ACos::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
                     return MT_FALSE;
                 return eq(acos(x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::acos(home, x[0], x[0]);
             }
         };
@@ -408,13 +408,13 @@ namespace Test { namespace Float {
             ATanXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::ATan::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(atan(x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::atan(home, x[0], x[1]);
                 else
@@ -429,13 +429,13 @@ namespace Test { namespace Float {
             ATanXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Trigonometric::ATan::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(atan(x[0]), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = atan(x[0]);
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
@@ -445,8 +445,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::atan(home, x[0], x[1]);
             }
         };
@@ -458,13 +458,13 @@ namespace Test { namespace Float {
             ATanXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Trigonometric::ATan::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(atan(x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::atan(home, x[0], x[0]);
             }
         };

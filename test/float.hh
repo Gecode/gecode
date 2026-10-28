@@ -115,21 +115,21 @@ namespace Test {
             /// Initialize assignments for \a n variables and values \a d with step \a s
             CpltAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s);
             /// Test whether all assignments have been iterated
-            virtual bool has_more(void) const;
+            bool has_more(void) const override;
             /// Move to next assignment
-            virtual void next(Gecode::Support::RandomGenerator& rand);
+            void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
-            virtual Gecode::FloatVal operator[](int i) const;
+            Gecode::FloatVal operator[](int i) const override;
             /// Set assignment to value \a val for variable \a i
-            virtual void set(int i, const Gecode::FloatVal& val);
+            void set(int i, const Gecode::FloatVal& val) override;
             /// Destructor
-            virtual ~CpltAssignment(void);
+            ~CpltAssignment(void) override;
         };
 
         /// Generate all assignments except the last variable and complete it to get a solution
         class GECODE_TESTFLOAT_EXPORT ExtAssignment : public Assignment {
         protected:
-            const Test* curPb;     ///< Current problem used to complete assignment
+            const Test* cur_pb;    ///< Current problem used to complete assignment
             Gecode::FloatVal* dsv; ///< Iterator for each variable
             Gecode::FloatNum step; ///< Step for next assignment
         public:
@@ -137,15 +137,15 @@ namespace Test {
             ExtAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s, const Test* pb,
                           Gecode::Support::RandomGenerator& rand);
             /// Test whether all assignments have been iterated
-            virtual bool has_more(void) const;
+            bool has_more(void) const override;
             /// Move to next assignment
-            virtual void next(Gecode::Support::RandomGenerator& rand);
+            void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
-            virtual Gecode::FloatVal operator[](int i) const;
+            Gecode::FloatVal operator[](int i) const override;
             /// Set assignment to value \a val for variable \a i
-            virtual void set(int i, const Gecode::FloatVal& val);
+            void set(int i, const Gecode::FloatVal& val) override;
             /// Destructor
-            virtual ~ExtAssignment(void);
+            ~ExtAssignment(void) override;
         };
 
         /// Generate random selection of assignments
@@ -154,21 +154,21 @@ namespace Test {
             Gecode::FloatVal* vals; ///< The current values for the variables
             int a;                  ///< How many assignments still to be generated
             /// Generate new value according to domain
-            Gecode::FloatNum randval(Gecode::Support::RandomGenerator& rand);
+            Gecode::FloatNum random_value(Gecode::Support::RandomGenerator& rand);
 
         public:
             /// Initialize for \a a assignments for \a n variables and values \a d
             RandomAssignment(int n, const Gecode::FloatVal& d, int a0, Gecode::Support::RandomGenerator& rand);
             /// Test whether all assignments have been iterated
-            virtual bool has_more(void) const;
+            bool has_more(void) const override;
             /// Move to next assignment
-            virtual void next(Gecode::Support::RandomGenerator& rand);
+            void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
-            virtual Gecode::FloatVal operator[](int i) const;
+            Gecode::FloatVal operator[](int i) const override;
             /// Set assignment to value \a val for variable \a i
-            virtual void set(int i, const Gecode::FloatVal& val);
+            void set(int i, const Gecode::FloatVal& val) override;
             /// Destructor
-            virtual ~RandomAssignment(void);
+            ~RandomAssignment(void) override;
         };
 
         /// Space for executing tests
@@ -206,13 +206,13 @@ namespace Test {
             /// Constructor for cloning \a s
             TestSpace(TestSpace& s);
             /// Copy space during cloning
-            virtual Gecode::Space* copy(void);
+            Gecode::Space* copy(void) override;
             /// Add constraints to skip solutions to the \a a assignment
-            virtual void dropUntil(const Assignment& a);
+            virtual void drop_until(const Assignment& a);
             /// Test whether all variables are assigned
             bool assigned(void) const;
             /// Test whether all variables match assignment \a a
-            bool matchAssignment(const Assignment& a) const;
+            bool match_assignment(const Assignment& a) const;
             /// Post propagator
             void post(void);
             /// Compute a fixpoint and check for failure
@@ -230,13 +230,13 @@ namespace Test {
             /// Cut the bigger variable to an half sized interval. It returns
             /// the new size of the cut interval. \a cutDirections gives the direction
             /// to follow (upper part or lower part of the interval).
-            Gecode::FloatNum cut(int* cutDirections);
+            Gecode::FloatNum cut(int* cut_directions);
             /// Prune some random values from variable \a i
             void prune(int i, Gecode::Support::RandomGenerator& rand);
             /// Prune some random values for some random variable
             void prune(Gecode::Support::RandomGenerator& rand);
             /// Prune values but not those in assignment \a a
-            bool prune(const Assignment& a, bool testfix, Gecode::Support::RandomGenerator& rand);
+            bool prune(const Assignment& a, bool test_fixpoint, Gecode::Support::RandomGenerator& rand);
             /// Disable propagators in space and compute fixpoint (make all idle)
             void disable(void);
             /// Enable propagators in space
@@ -258,17 +258,17 @@ namespace Test {
             /// Step for going to next solution
             Gecode::FloatNum step;
             /// Gives the type of assignment to use
-            AssignmentType assignmentType;
+            AssignmentType assignment_type;
             /// Does the constraint also exist as reified constraint
             bool reified;
             /// Supported reification modes, encoded as a bit mask of 1 << Gecode::RM_*
             int rms;
             /// Whether to perform search test
-            bool testsearch;
+            bool test_search;
             /// Whether to perform fixpoint test
-            bool testfix;
+            bool test_fixpoint;
             /// Whether to test for subsumption
-            bool testsubsumed;
+            bool test_subsumption;
             /// \name Test for reification modes
             //@{
             /// Test whether equivalence as reification mode is supported
@@ -307,7 +307,7 @@ namespace Test {
             virtual Assignment* assignment(void) const;
             /// Complete the current assignment to get a feasible one (which satisfies all constraint).
             /// If such an assignment is computed, it returns true, false otherwise
-            virtual bool extendAssignment(Assignment& a) const;
+            virtual bool extend_assignment(Assignment& a) const;
             /// Check an interval assignment using MT_TRUE, MT_FALSE, or MT_MAYBE; see cmp()
             virtual MaybeType solution(const Assignment&) const = 0;
             /// Test if \a ts is subsumed or not (i.e. if there is no more propagator unless
@@ -320,7 +320,7 @@ namespace Test {
             /// Post reified constraint
             virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r);
             /// Perform test
-            virtual bool run(void);
+            bool run(void) override;
             /// \name Mapping scalar values to strings
             //@{
             /// Map float relation to string

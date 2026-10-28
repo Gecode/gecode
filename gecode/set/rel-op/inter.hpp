@@ -83,20 +83,20 @@ namespace Gecode { namespace Set { namespace RelOp {
                     GlbRanges<View0> x0lb(x0);
                     GlbRanges<View1> x1lb(x1);
                     Iter::Ranges::Inter<GlbRanges<View0>, GlbRanges<View1>> i2(x0lb, x1lb);
-                    GECODE_ME_CHECK_MODIFIED(modified, x2.includeI(home, i2));
+                    GECODE_ME_CHECK_MODIFIED(modified, x2.include_i(home, i2));
                 }
 
-                if (modified || Rel::testSetEventLB(me2)) {
+                if (modified || Rel::test_set_event_lb(me2)) {
                     modified = false;
                     // 5) x2 <= x0
                     GlbRanges<View2> x2lb1(x2);
-                    GECODE_ME_CHECK_MODIFIED(modified, x0.includeI(home, x2lb1));
+                    GECODE_ME_CHECK_MODIFIED(modified, x0.include_i(home, x2lb1));
                     x0lbmod |= modified;
 
                     // 6) x2 <= x1
                     bool modified2 = false;
                     GlbRanges<View2> x2lb2(x2);
-                    GECODE_ME_CHECK_MODIFIED(modified2, x1.includeI(home, x2lb2));
+                    GECODE_ME_CHECK_MODIFIED(modified2, x1.include_i(home, x2lb2));
                     x1lbmod |= modified2;
                     modified |= modified2;
                 }
@@ -105,32 +105,32 @@ namespace Gecode { namespace Set { namespace RelOp {
 
             modified = false;
             do {
-                bool modifiedOld = modified;
+                bool modified_old = modified;
                 modified = false;
 
-                if (Rel::testSetEventUB(me2) || Rel::testSetEventLB(me0) || x0lbmod || modifiedOld) {
+                if (Rel::test_set_event_ub(me2) || Rel::test_set_event_lb(me0) || x0lbmod || modified_old) {
                     // 1) lub(x2) \ glb(x0) => lub(x1)
                     GlbRanges<View0> x0lb(x0);
                     LubRanges<View2> x2ub(x2);
                     Iter::Ranges::Diff<GlbRanges<View0>, LubRanges<View2>> diff(x0lb, x2ub);
-                    GECODE_ME_CHECK_MODIFIED(modified, x1.excludeI(home, diff));
+                    GECODE_ME_CHECK_MODIFIED(modified, x1.exclude_i(home, diff));
                 }
 
-                if (Rel::testSetEventUB(me2) || Rel::testSetEventLB(me1) || x1lbmod || modifiedOld) {
+                if (Rel::test_set_event_ub(me2) || Rel::test_set_event_lb(me1) || x1lbmod || modified_old) {
                     // 2) lub(x2) \ glb(x1) => lub(x0)
                     GlbRanges<View1> x1lb(x1);
                     LubRanges<View2> x2ub(x2);
                     Iter::Ranges::Diff<GlbRanges<View1>, LubRanges<View2>> diff(x1lb, x2ub);
-                    GECODE_ME_CHECK_MODIFIED(modified, x0.excludeI(home, diff));
+                    GECODE_ME_CHECK_MODIFIED(modified, x0.exclude_i(home, diff));
                 }
 
-                if (Rel::testSetEventUB(me0, me1) || modified) {
+                if (Rel::test_set_event_ub(me0, me1) || modified) {
                     //            modified = false;
                     // 3) lub(x0) \cap lub(x1) <= lub(x2)
                     LubRanges<View0> x0ub(x0);
                     LubRanges<View1> x1ub(x1);
                     Iter::Ranges::Inter<LubRanges<View0>, LubRanges<View1>> i1(x0ub, x1ub);
-                    GECODE_ME_CHECK_MODIFIED(modified, x2.intersectI(home, i1));
+                    GECODE_ME_CHECK_MODIFIED(modified, x2.intersect_i(home, i1));
                 }
 
             } while (modified);
@@ -138,19 +138,19 @@ namespace Gecode { namespace Set { namespace RelOp {
             modified = false;
             {
                 // cardinality
-                ExecStatus ret = interCard(home, modified, x0, x1, x2);
+                ExecStatus ret = inter_card(home, modified, x0, x1, x2);
                 GECODE_ES_CHECK(ret);
             }
 
-            if (x2.cardMin() == Set::Limits::card) {
-                GECODE_ME_CHECK(x0.cardMin(home, Set::Limits::card));
-                GECODE_ME_CHECK(x1.cardMin(home, Set::Limits::card));
+            if (x2.card_min() == Set::Limits::card) {
+                GECODE_ME_CHECK(x0.card_min(home, Set::Limits::card));
+                GECODE_ME_CHECK(x1.card_min(home, Set::Limits::card));
                 return home.ES_SUBSUMED(*this);
             }
 
-            if (x0.cardMin() == Set::Limits::card)
+            if (x0.card_min() == Set::Limits::card)
                 GECODE_REWRITE(*this, (Rel::Eq<View1, View2>::post(home(*this), x1, x2)));
-            if (x1.cardMin() == Set::Limits::card)
+            if (x1.card_min() == Set::Limits::card)
                 GECODE_REWRITE(*this, (Rel::Eq<View0, View2>::post(home(*this), x0, x2)));
 
         } while (modified);
@@ -186,24 +186,24 @@ namespace Gecode { namespace Set { namespace RelOp {
     template <class View0, class View1>
     forceinline
     IntersectionN<View0, View1>::IntersectionN(Home home, ViewArray<View0>& x, View1 y)
-        : MixNaryOnePropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, x, y), intOfDets(home) {
-        shared = Gecode::shared(x) || viewarrayshared(x, y);
+        : MixNaryOnePropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, x, y), int_of_dets(home) {
+        shared = Gecode::shared(x) || view_array_shared(x, y);
     }
 
     template <class View0, class View1>
     forceinline
     IntersectionN<View0, View1>::IntersectionN(Home home, ViewArray<View0>& x, const IntSet& z, View1 y)
-        : MixNaryOnePropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, x, y), intOfDets(home) {
-        shared = Gecode::shared(x) || viewarrayshared(x, y);
+        : MixNaryOnePropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, x, y), int_of_dets(home) {
+        shared = Gecode::shared(x) || view_array_shared(x, y);
         IntSetRanges rz(z);
-        intOfDets.intersectI(home, rz);
+        int_of_dets.intersect_i(home, rz);
     }
 
     template <class View0, class View1>
     forceinline
     IntersectionN<View0, View1>::IntersectionN(Space& home, IntersectionN& p)
-        : MixNaryOnePropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, p), shared(p.shared), intOfDets() {
-        intOfDets.update(home, p.intOfDets);
+        : MixNaryOnePropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, p), shared(p.shared), int_of_dets() {
+        int_of_dets.update(home, p.int_of_dets);
     }
 
     template <class View0, class View1>
@@ -211,7 +211,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     IntersectionN<View0, View1>::post(Home home, ViewArray<View0>& x, View1 y) {
         switch (x.size()) {
         case 0:
-            GECODE_ME_CHECK(y.cardMin(home, Limits::card));
+            GECODE_ME_CHECK(y.card_min(home, Limits::card));
             return ES_OK;
         case 1:
             return Rel::Eq<View0, View1>::post(home, x[0], y);
@@ -252,97 +252,97 @@ namespace Gecode { namespace Set { namespace RelOp {
             if (xsize == 0)
                 goto size0;
             for (int i = xsize; i--;) {
-                GECODE_ME_CHECK(y.cardMax(home, x[i].cardMax()));
-                GECODE_ME_CHECK(x[i].cardMin(home, y.cardMin()));
-                if (x[i].cardMax() == 0) {
-                    GECODE_ME_CHECK(y.cardMax(home, 0));
-                    intOfDets.dispose(home);
+                GECODE_ME_CHECK(y.card_max(home, x[i].card_max()));
+                GECODE_ME_CHECK(x[i].card_min(home, y.card_min()));
+                if (x[i].card_max() == 0) {
+                    GECODE_ME_CHECK(y.card_max(home, 0));
+                    int_of_dets.dispose(home);
                     return home.ES_SUBSUMED(*this);
                 }
             }
             {
                 Region r;
-                GlbRanges<View0>* xLBs = r.alloc<GlbRanges<View0>>(xsize);
-                LubRanges<View0>* xUBs = r.alloc<LubRanges<View0>>(xsize);
+                GlbRanges<View0>* x_l_bs = r.alloc<GlbRanges<View0>>(xsize);
+                LubRanges<View0>* x_u_bs = r.alloc<LubRanges<View0>>(xsize);
                 for (int i = xsize; i--;) {
                     GlbRanges<View0> lb(x[i]);
                     LubRanges<View0> ub(x[i]);
-                    xLBs[i] = lb;
-                    xUBs[i] = ub;
+                    x_l_bs[i] = lb;
+                    x_u_bs[i] = ub;
                 }
                 {
-                    Iter::Ranges::NaryInter lbi(r, xLBs, xsize);
-                    BndSetRanges dets(intOfDets);
+                    Iter::Ranges::NaryInter lbi(r, x_l_bs, xsize);
+                    BndSetRanges dets(int_of_dets);
                     lbi &= dets;
-                    GECODE_ME_CHECK(y.includeI(home, lbi));
+                    GECODE_ME_CHECK(y.include_i(home, lbi));
                 }
                 {
-                    Iter::Ranges::NaryInter ubi(r, xUBs, xsize);
-                    BndSetRanges dets(intOfDets);
+                    Iter::Ranges::NaryInter ubi(r, x_u_bs, xsize);
+                    BndSetRanges dets(int_of_dets);
                     ubi &= dets;
-                    GECODE_ME_CHECK(y.intersectI(home, ubi));
+                    GECODE_ME_CHECK(y.intersect_i(home, ubi));
                 }
             }
 
             for (int i = xsize; i--;) {
                 GlbRanges<View1> ylb(y);
-                GECODE_ME_CHECK(x[i].includeI(home, ylb));
+                GECODE_ME_CHECK(x[i].include_i(home, ylb));
             }
 
             // xi.exclude (Intersection(xj.lb) - y.ub)
             {
                 Region r;
-                GLBndSet* rightSet = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
-                new (&rightSet[xsize - 1]) GLBndSet(home);
-                rightSet[xsize - 1].update(home, intOfDets);
+                GLBndSet* right_set = static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet) * xsize));
+                new (&right_set[xsize - 1]) GLBndSet(home);
+                right_set[xsize - 1].update(home, int_of_dets);
                 for (int i = xsize - 1; i--;) {
                     GlbRanges<View0> xilb(x[i + 1]);
-                    BndSetRanges prev(rightSet[i + 1]);
+                    BndSetRanges prev(right_set[i + 1]);
                     Iter::Ranges::Inter<GlbRanges<View0>, BndSetRanges> inter(xilb, prev);
-                    new (&rightSet[i]) GLBndSet(home);
-                    rightSet[i].includeI(home, inter);
+                    new (&right_set[i]) GLBndSet(home);
+                    right_set[i].include_i(home, inter);
                 }
 
-                LUBndSet leftAcc(home);
+                LUBndSet left_acc(home);
 
                 for (int i = 0; i < xsize; i++) {
-                    BndSetRanges left(leftAcc);
-                    BndSetRanges right(rightSet[i]);
+                    BndSetRanges left(left_acc);
+                    BndSetRanges right(right_set[i]);
                     Iter::Ranges::Inter<BndSetRanges, BndSetRanges> inter(left, right);
                     LubRanges<View1> yub(y);
                     Iter::Ranges::Diff<Iter::Ranges::Inter<BndSetRanges, BndSetRanges>, LubRanges<View1>> forbidden(
                         inter, yub);
-                    GECODE_ME_CHECK(x[i].excludeI(home, forbidden));
+                    GECODE_ME_CHECK(x[i].exclude_i(home, forbidden));
                     GlbRanges<View0> xlb(x[i]);
-                    leftAcc.intersectI(home, xlb);
+                    left_acc.intersect_i(home, xlb);
                 }
                 for (int i = xsize; i--;)
-                    rightSet[i].dispose(home);
-                leftAcc.dispose(home);
+                    right_set[i].dispose(home);
+                left_acc.dispose(home);
             }
 
             for (int i = 0; i < x.size(); i++) {
                 // Do not reverse! Eats away the end of the array!
                 while (i < x.size() && x[i].assigned()) {
                     GlbRanges<View0> det(x[i]);
-                    if (intOfDets.intersectI(home, det)) {
+                    if (int_of_dets.intersect_i(home, det)) {
                         repeat = true;
                     }
                     x.move_lst(i);
-                    if (intOfDets.size() == 0) {
-                        GECODE_ME_CHECK(y.cardMax(home, 0));
-                        intOfDets.dispose(home);
+                    if (int_of_dets.size() == 0) {
+                        GECODE_ME_CHECK(y.card_max(home, 0));
+                        int_of_dets.dispose(home);
                         return home.ES_SUBSUMED(*this);
                     }
                 }
             }
         size0:
             if (x.size() == 0) {
-                BndSetRanges all1(intOfDets);
-                GECODE_ME_CHECK(y.intersectI(home, all1));
-                BndSetRanges all2(intOfDets);
-                GECODE_ME_CHECK(y.includeI(home, all2));
-                intOfDets.dispose(home);
+                BndSetRanges all1(int_of_dets);
+                GECODE_ME_CHECK(y.intersect_i(home, all1));
+                BndSetRanges all2(int_of_dets);
+                GECODE_ME_CHECK(y.include_i(home, all2));
+                int_of_dets.dispose(home);
                 return home.ES_SUBSUMED(*this);
             }
 

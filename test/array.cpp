@@ -76,7 +76,7 @@ namespace Test {
             /// Perform actual tests
             template <class Array>
             bool
-            runTestForArray(Array& a) {
+            run_test_for_array(Array& a) {
                 // Test/problem information.
                 const char* test = "NONE";
                 const char* problem = "NONE";
@@ -191,38 +191,38 @@ namespace Test {
         public:
             TestSpace(void) : Space() {}
             TestSpace(TestSpace& s) : Space(s) {}
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new TestSpace(*this);
             }
         };
 
         /// Test name prefix for vector construction
-        static const std::string vectorPrefix("Array::Vector::");
+        static const std::string vector_prefix("Array::Vector::");
 
         /// %Class for testing construction from empty vectors
         class EmptyVector : public Test::Base {
         public:
             /// Initialize test
-            EmptyVector(void) : Test::Base(vectorPrefix + "Empty") {}
+            EmptyVector(void) : Test::Base(vector_prefix + "Empty") {}
             /// Perform actual tests
             bool
-            run(void) {
+            run(void) override {
                 std::vector<int> ints;
                 Gecode::IntArgs ia(ints);
                 if (ia.size() != 0)
                     return false;
 
-                std::vector<Gecode::IntVar> intVars;
-                Gecode::IntVarArgs iva(intVars);
+                std::vector<Gecode::IntVar> int_vars;
+                Gecode::IntVarArgs iva(int_vars);
                 if (iva.size() != 0)
                     return false;
 
-                std::vector<Gecode::BoolVar> boolVars;
-                Gecode::BoolVarArgs bva(boolVars);
+                std::vector<Gecode::BoolVar> bool_vars;
+                Gecode::BoolVarArgs bva(bool_vars);
                 return bva.size() == 0;
             }
-        } emptyVectorTest;
+        } empty_vector_test;
 
         /// %Class for testing the VarArray iterator
         class VarArrayIterator : public Iterator {
@@ -237,15 +237,15 @@ namespace Test {
             VarArrayIterator(void) : Iterator("VarArray") {}
             /// Perform actual tests
             bool
-            run(void) {
+            run(void) override {
                 // Space for the test
                 TestSpace s;
                 // VarArray for the test
                 Array a(s, _rand(n));
                 // Run the iterator test
-                return runTestForArray(a);
+                return run_test_for_array(a);
             }
-        } varArrayIteratorTest;
+        } var_array_iterator_test;
 
         /// %Class for testing the VarArgs iterator
         class VarArgsIterator : public Iterator {
@@ -260,15 +260,15 @@ namespace Test {
             VarArgsIterator(void) : Iterator("VarArgs") {}
             /// Perform actual tests
             bool
-            run(void) {
+            run(void) override {
                 // Space for the test
                 TestSpace s;
                 // VarArray for the test
                 Array a(_rand(n));
                 // Run the iterator test
-                return runTestForArray(a);
+                return run_test_for_array(a);
             }
-        } varArgsIteratorTest;
+        } var_args_iterator_test;
 
         /// %Class for testing the ViewArray iterator
         class ViewArrayIterator : public Iterator {
@@ -283,15 +283,15 @@ namespace Test {
             ViewArrayIterator(void) : Iterator("ViewArray") {}
             /// Perform actual tests
             bool
-            run(void) {
+            run(void) override {
                 // Space for the test
                 TestSpace s;
                 // VarArray for the test
                 Array a(s, _rand(n));
                 // Run the iterator test
-                return runTestForArray(a);
+                return run_test_for_array(a);
             }
-        } viewArrayIteratorTest;
+        } view_array_iterator_test;
 
         /// %Class for testing the SharedArray iterator
         class SharedArrayIterator : public Iterator {
@@ -306,13 +306,13 @@ namespace Test {
             SharedArrayIterator(void) : Iterator("SharedArray") {}
             /// Perform actual tests
             bool
-            run(void) {
+            run(void) override {
                 // SharedArray for the test
                 Array a(_rand(n));
                 // Run the iterator test
-                return runTestForArray(a);
+                return run_test_for_array(a);
             }
-        } sharedArrayIteratorTest;
+        } shared_array_iterator_test;
 
     } // namespace Array
 } // namespace Test

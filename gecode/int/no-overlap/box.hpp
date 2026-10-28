@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     template <class Dim, int n>
     forceinline bool
-    ManBox<Dim, n>::nooverlap(const ManBox<Dim, n>& box) const {
+    ManBox<Dim, n>::no_overlap(const ManBox<Dim, n>& box) const {
         for (int i = 0; i < n; i++)
             if ((d[i].lec() <= box.d[i].ssc()) || (box.d[i].lec() <= d[i].ssc()))
                 return true;
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     template <class Dim, int n>
     forceinline ExecStatus
-    ManBox<Dim, n>::nooverlap(Space& home, ManBox<Dim, n>& box) {
+    ManBox<Dim, n>::no_overlap(Space& home, ManBox<Dim, n>& box) {
         for (int i = 0; i < n; i++)
             if ((d[i].sec() <= box.d[i].lsc()) || (box.d[i].sec() <= d[i].lsc())) {
                 // Does not overlap for dimension i
@@ -104,8 +104,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
                     if ((d[j].sec() <= box.d[j].lsc()) || (box.d[j].sec() <= d[j].lsc()))
                         return ES_OK;
                 // Does not overlap for only dimension i, hence propagate
-                d[i].nooverlap(home, box.d[i]);
-                box.d[i].nooverlap(home, d[i]);
+                d[i].no_overlap(home, box.d[i]);
+                box.d[i].no_overlap(home, d[i]);
                 return ES_OK;
             }
         // Overlaps in all dimensions

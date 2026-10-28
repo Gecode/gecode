@@ -660,9 +660,9 @@ namespace Gecode {
         /// Constructor
         BElementExpr(const BoolVarArgs& b, const LinIntExpr& idx);
         /// Destructor
-        virtual ~BElementExpr(void);
+        ~BElementExpr(void) override;
         /// Constrain \a b to be equivalent to the expression (negated if \a neg)
-        virtual void post(Home home, BoolVar b, bool neg, const IntPropLevels& ipls);
+        void post(Home home, BoolVar b, bool neg, const IntPropLevels& ipls) override;
     };
 
     BElementExpr::BElementExpr(const BoolVarArgs& b, const LinIntExpr& idx)

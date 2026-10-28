@@ -51,13 +51,13 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize, next() returns no solution for reason \a r
         Dead(const Options& o, const Statistics& stat0, EndReason r);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual Space* next(void);
+        Space* next(void) override;
         /// Return statistics
-        virtual Statistics statistics(void) const;
+        Statistics statistics(void) const override;
         /// Return why the last call to next() returned no solution
-        virtual EndReason end_reason(void) const;
+        EndReason end_reason(void) const override;
         /// Delete
-        virtual ~Dead(void);
+        ~Dead(void) override;
     };
 
     template <class Tracer>

@@ -52,8 +52,8 @@ namespace Test { namespace Assign {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new IntTestSpace(*this);
         }
     };
@@ -70,8 +70,8 @@ namespace Test { namespace Assign {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new BoolTestSpace(*this);
         }
     };
@@ -90,8 +90,8 @@ namespace Test { namespace Assign {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new SetTestSpace(*this);
         }
     };
@@ -112,8 +112,8 @@ namespace Test { namespace Assign {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new FloatTestSpace(*this);
         }
     };

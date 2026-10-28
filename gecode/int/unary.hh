@@ -690,9 +690,9 @@ namespace Gecode { namespace Int { namespace Unary {
         /// Earliest completion times for subtree
         int lect;
         /// Node which is responsible for lect
-        int resEct;
+        int res_ect;
         /// Node which is responsible for lp
-        int resLp;
+        int res_lp;
         /// Initialize node from left child \a l and right child \a r
         void init(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
         /// Update node from left child \a l and right child \a r
@@ -715,11 +715,11 @@ namespace Gecode { namespace Int { namespace Unary {
         /// Shift task with index \a i from omega to lambda
         void shift(int i);
         /// Insert task with index \a i to omega
-        void oinsert(int i);
+        void insert_omega(int i);
         /// Insert task with index \a i to lambda
-        void linsert(int i);
+        void insert_lambda(int i);
         /// Remove task with index \a i from lambda
-        void lremove(int i);
+        void remove_lambda(int i);
         /// Whether has responsible task
         bool lempty(void) const;
         /// Return responsible task
@@ -760,14 +760,14 @@ namespace Gecode { namespace Int { namespace Unary {
 
     /// Propagate not-first and not-last
     template <class ManTask>
-    ExecStatus notfirstnotlast(Space& home, TaskArray<ManTask>& t);
+    ExecStatus not_first_not_last(Space& home, TaskArray<ManTask>& t);
     /// Propagate not-first and not-last
     template <class OptTask, class PL>
-    ExecStatus notfirstnotlast(Space& home, Propagator& p, TaskArray<OptTask>& t);
+    ExecStatus not_first_not_last(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
     /// Propagate by edge-finding
     template <class Task>
-    ExecStatus edgefinding(Space& home, TaskArray<Task>& t);
+    ExecStatus edge_finding(Space& home, TaskArray<Task>& t);
 
     /**
      * \brief %Scheduling propagator for unary resource with mandatory tasks
@@ -786,9 +786,9 @@ namespace Gecode { namespace Int { namespace Unary {
 
     public:
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator that schedules tasks on unary resource
         static ExecStatus post(Home home, TaskArray<ManTask>& t);
     };
@@ -810,20 +810,20 @@ namespace Gecode { namespace Int { namespace Unary {
 
     public:
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator that schedules tasks on unary resource
         static ExecStatus post(Home home, TaskArray<OptTask>& t);
     };
 
     /// Post mandatory task propagator according to propagation level
     template <class ManTask>
-    ExecStatus manpost(Home home, TaskArray<ManTask>& t, IntPropLevel ipl);
+    ExecStatus post_mandatory(Home home, TaskArray<ManTask>& t, IntPropLevel ipl);
 
     /// Post optional task propagator according to propagation level
     template <class OptTask>
-    ExecStatus optpost(Home home, TaskArray<OptTask>& t, IntPropLevel ipl);
+    ExecStatus post_optional(Home home, TaskArray<OptTask>& t, IntPropLevel ipl);
 
 }}} // namespace Gecode::Int::Unary
 

@@ -42,7 +42,7 @@ namespace Gecode { namespace Int {
         /// Return index of \a v in array \a a
         template <class T>
         forceinline bool
-        lookupValue(T& a, int v, int& i) {
+        lookup_value(T& a, int v, int& i) {
             int l = 0;
             int r = a.size() - 1;
 

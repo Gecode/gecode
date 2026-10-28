@@ -89,7 +89,7 @@ namespace Test { namespace Set {
                   sot(sot0), srt(srt0), share(share0) {}
             /// %Test whether \a x is solution
             bool
-            solution(const SetAssignment& x) const {
+            solution(const SetAssignment& x) const override {
                 int a = 0, b = 0, c = 0;
                 switch (share) {
                 case 0:
@@ -149,7 +149,7 @@ namespace Test { namespace Set {
             }
             /// Post constraint on \a x
             void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 SetVar a, b, c;
                 switch (share) {
                 case 0:
@@ -206,27 +206,27 @@ namespace Test { namespace Set {
             Gecode::SetOpType sot;
             int n;
             int shared;
-            bool withConst;
+            bool with_const;
             IntSet is;
 
         public:
             /// Create and register test
-            RelN(Gecode::SetOpType sot0, int n0, int shared0, bool withConst0)
+            RelN(Gecode::SetOpType sot0, int n0, int shared0, bool with_const0)
                 : SetTest(TestTags::sweep(),
                           "RelOp::N::" + str(sot0) + "::" + str(n0) + "::S" + str(shared0) + "::C" +
-                              str(withConst0 ? 1 : 0),
+                              str(with_const0 ? 1 : 0),
                           shared0 == 0 ? n0 + 1 : (shared0 <= 2 ? 3 : 2), ds_12, false),
-                  sot(sot0), n(n0), shared(shared0), withConst(withConst0), is(0, 1) {}
+                  sot(sot0), n(n0), shared(shared0), with_const(with_const0), is(0, 1) {}
             /// %Test whether \a x is solution
             bool
-            solution(const SetAssignment& x) const {
-                int realN = shared == 0 ? n : 3;
+            solution(const SetAssignment& x) const override {
+                int real_n = shared == 0 ? n : 3;
 
-                CountableSetRanges* isrs = new CountableSetRanges[realN];
+                CountableSetRanges* isrs = new CountableSetRanges[real_n];
 
                 switch (shared) {
                 case 0:
-                    for (int i = realN; i--;)
+                    for (int i = real_n; i--;)
                         isrs[i].init(x.lub, x[i]);
                     break;
                 case 1:
@@ -261,20 +261,20 @@ namespace Test { namespace Set {
                         delete[] isrs;
                         return false;
                     }
-                    unsigned int cardSum = 0;
+                    unsigned int card_sum = 0;
                     if (shared == 1 || shared == 3) {
                         CountableSetRanges x1r(x.lub, x[1]);
-                        cardSum = Iter::Ranges::size(x1r);
+                        card_sum = Iter::Ranges::size(x1r);
                     } else {
-                        for (int i = 0; i < realN; i++) {
+                        for (int i = 0; i < real_n; i++) {
                             CountableSetRanges xir(x.lub, x[i]);
-                            cardSum += Iter::Ranges::size(xir);
+                            card_sum += Iter::Ranges::size(xir);
                         }
                     }
-                    if (withConst)
-                        cardSum += 2;
+                    if (with_const)
+                        card_sum += 2;
                     CountableSetRanges xnr2(x.lub, x[result]);
-                    if (cardSum != Iter::Ranges::size(xnr2)) {
+                    if (card_sum != Iter::Ranges::size(xnr2)) {
                         delete[] isrs;
                         return false;
                     }
@@ -282,34 +282,34 @@ namespace Test { namespace Set {
                     // fall through to union case
                 case SOT_UNION: {
                     bool eq;
-                    if (withConst) {
+                    if (with_const) {
                         Region r;
-                        Iter::Ranges::NaryUnion u(r, isrs, realN);
+                        Iter::Ranges::NaryUnion u(r, isrs, real_n);
                         IntSetRanges isr(is);
                         Iter::Ranges::Union<IntSetRanges, Iter::Ranges::NaryUnion> uu(isr, u);
                         eq = Iter::Ranges::equal(uu, xnr);
                     } else {
                         Region r;
-                        Iter::Ranges::NaryUnion u(r, isrs, realN);
+                        Iter::Ranges::NaryUnion u(r, isrs, real_n);
                         eq = Iter::Ranges::equal(u, xnr);
                     }
                     delete[] isrs;
                     return eq;
                 }
                 case SOT_INTER: {
-                    if (withConst) {
+                    if (with_const) {
                         bool eq;
                         {
                             Region r;
-                            Iter::Ranges::NaryInter u(r, isrs, realN);
+                            Iter::Ranges::NaryInter u(r, isrs, real_n);
                             IntSetRanges isr(is);
                             Iter::Ranges::Inter<IntSetRanges, Iter::Ranges::NaryInter> uu(isr, u);
-                            eq = (realN == 0 ? Iter::Ranges::equal(isr, xnr) : Iter::Ranges::equal(uu, xnr));
+                            eq = (real_n == 0 ? Iter::Ranges::equal(isr, xnr) : Iter::Ranges::equal(uu, xnr));
                             delete[] isrs;
                         }
                         return eq;
                     } else {
-                        if (realN == 0) {
+                        if (real_n == 0) {
                             bool ret = Iter::Ranges::size(xnr) == Gecode::Set::Limits::card;
                             delete[] isrs;
                             return ret;
@@ -317,7 +317,7 @@ namespace Test { namespace Set {
                             bool eq;
                             {
                                 Region r;
-                                Iter::Ranges::NaryInter u(r, isrs, realN);
+                                Iter::Ranges::NaryInter u(r, isrs, real_n);
                                 eq = Iter::Ranges::equal(u, xnr);
                             }
                             delete[] isrs;
@@ -333,7 +333,7 @@ namespace Test { namespace Set {
             }
             /// Post constraint on \a x
             void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 int size = shared == 0 ? x.size() - 1 : 3;
                 SetVarArgs xs(size);
                 SetVar xn;
@@ -365,7 +365,7 @@ namespace Test { namespace Set {
                     GECODE_NEVER;
                     break;
                 }
-                if (!withConst)
+                if (!with_const)
                     Gecode::rel(home, sot, xs, xn);
                 else
                     Gecode::rel(home, sot, xs, is, xn);
@@ -400,19 +400,20 @@ namespace Test { namespace Set {
         private:
             Gecode::SetOpType sot;
             int n;
-            bool withConst;
+            bool with_const;
             IntSet is;
 
         public:
             /// Create and register test
-            RelIntN(Gecode::SetOpType sot0, int n0, bool withConst0)
+            RelIntN(Gecode::SetOpType sot0, int n0, bool with_const0)
                 : SetTest(TestTags::sweep(),
-                          "RelOp::IntN::" + str(sot0) + "::" + str(n0) + "::C" + str(withConst0 ? 1 : 0), 1, ds_12,
+                          "RelOp::IntN::" + str(sot0) + "::" + str(n0) + "::C" + str(with_const0 ? 1 : 0), 1, ds_12,
                           false, n0),
-                  sot(sot0), n(n0), withConst(withConst0), is(0, 1) {}
+                  sot(sot0), n(n0), with_const(with_const0), is(0, 1) {}
             /// %Test whether \a x is solution
             bool
-            solution(const SetAssignment& x) const {
+            solution(const SetAssignment& x) const override {
+                assert(n >= 0);
                 int* isrs = new int[n];
                 for (int i = 0; i < n; i++)
                     isrs[i] = x.ints()[i];
@@ -423,24 +424,24 @@ namespace Test { namespace Set {
                 switch (sot) {
                 case SOT_DUNION: {
                     IntSetRanges issr(iss);
-                    unsigned int cardSum = Iter::Ranges::size(issr);
-                    if (cardSum != static_cast<unsigned int>(n)) {
+                    unsigned int card_sum = Iter::Ranges::size(issr);
+                    if (card_sum != static_cast<unsigned int>(n)) {
                         delete[] isrs;
                         return false;
                     }
-                    if (withConst) {
+                    if (with_const) {
                         IntSetRanges isr(is);
-                        cardSum += Iter::Ranges::size(isr);
+                        card_sum += Iter::Ranges::size(isr);
                     }
                     CountableSetRanges xnr2(x.lub, x[0]);
-                    if (cardSum != Iter::Ranges::size(xnr2)) {
+                    if (card_sum != Iter::Ranges::size(xnr2)) {
                         delete[] isrs;
                         return false;
                     }
                 }
                     // fall through to union case
                 case SOT_UNION: {
-                    if (withConst) {
+                    if (with_const) {
                         IntSetRanges issr(iss);
                         IntSetRanges isr(is);
                         Iter::Ranges::Union<IntSetRanges, IntSetRanges> uu(isr, issr);
@@ -453,15 +454,15 @@ namespace Test { namespace Set {
                     }
                 }
                 case SOT_INTER: {
-                    bool allEqual = true;
+                    bool all_equal = true;
                     for (int i = 1; i < n; i++) {
                         if (isrs[i] != isrs[0]) {
-                            allEqual = false;
+                            all_equal = false;
                             break;
                         }
                     }
-                    if (withConst) {
-                        if (allEqual) {
+                    if (with_const) {
+                        if (all_equal) {
                             if (n == 0) {
                                 IntSetRanges isr(is);
                                 delete[] isrs;
@@ -478,7 +479,7 @@ namespace Test { namespace Set {
                             return Iter::Ranges::size(xnr) == 0;
                         }
                     } else {
-                        if (allEqual) {
+                        if (all_equal) {
                             if (n == 0) {
                                 delete[] isrs;
                                 return Iter::Ranges::size(xnr) == Gecode::Set::Limits::card;
@@ -501,8 +502,8 @@ namespace Test { namespace Set {
             }
             /// Post constraint on \a x
             void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
-                if (!withConst)
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
+                if (!with_const)
                     Gecode::rel(home, sot, y, x[0]);
                 else
                     Gecode::rel(home, sot, y, is, x[0]);

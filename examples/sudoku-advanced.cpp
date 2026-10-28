@@ -177,14 +177,14 @@ public:
     }
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new SudokuInt(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "  ";
         for (int i = 0; i < nn * nn; i++) {
             if (x[i].assigned()) {
@@ -341,14 +341,14 @@ public:
     }
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new SudokuSet(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << '\t';
         for (int i = 0; i < nn * nn; i++) {
             for (int j = 0; j < nn; j++) {
@@ -377,14 +377,14 @@ public:
     SudokuMixed(const InstanceOptions& opt) : Sudoku(opt), SudokuInt(opt), SudokuSet(opt) {
 
         IntSet is0(0, 0);
-        SetVar dummySet0(*this, is0, is0);
-        IntVar dummyInt0(*this, 0, 0);
+        SetVar dummy_set0(*this, is0, is0);
+        IntVar dummy_int0(*this, 0, 0);
         SetVarArgs ys(nn + 1);
-        ys[0] = dummySet0;
+        ys[0] = dummy_set0;
         for (int i = 0; i < nn; i++)
             ys[i + 1] = y[i];
         IntVarArgs xs(nn * nn + 1);
-        xs[0] = dummyInt0;
+        xs[0] = dummy_int0;
         for (int i = 0; i < nn * nn; i++)
             xs[i + 1] = x[i];
 
@@ -400,14 +400,14 @@ public:
     SudokuMixed(SudokuMixed& s) : Sudoku(s), SudokuInt(s), SudokuSet(s) {}
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new SudokuMixed(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         SudokuInt::print(os);
     }
 };

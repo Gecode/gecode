@@ -486,7 +486,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class CtrlView>
     forceinline void
-    posteqint(Home home, IntView& x, int c, CtrlView b, ReifyMode rm, IntPropLevel ipl) {
+    post_reified_int_equality(Home home, IntView& x, int c, CtrlView b, ReifyMode rm, IntPropLevel ipl) {
         if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
             switch (rm) {
             case RM_EQV:
@@ -591,9 +591,9 @@ namespace Gecode { namespace Int { namespace Linear {
                 switch (irt) {
                 case IRT_EQ:
                     if (n_p == 1) {
-                        posteqint<BoolView>(home, t_p[0].x, c, r.var(), r.mode(), ipl);
+                        post_reified_int_equality<BoolView>(home, t_p[0].x, c, r.var(), r.mode(), ipl);
                     } else {
-                        posteqint<BoolView>(home, t_p[0].x, -c, r.var(), r.mode(), ipl);
+                        post_reified_int_equality<BoolView>(home, t_p[0].x, -c, r.var(), r.mode(), ipl);
                     }
                     break;
                 case IRT_NQ: {
@@ -609,9 +609,9 @@ namespace Gecode { namespace Int { namespace Linear {
                     default:;
                     }
                     if (n_p == 1) {
-                        posteqint<NegBoolView>(home, t_p[0].x, c, nb, rm, ipl);
+                        post_reified_int_equality<NegBoolView>(home, t_p[0].x, c, nb, rm, ipl);
                     } else {
-                        posteqint<NegBoolView>(home, t_p[0].x, -c, nb, rm, ipl);
+                        post_reified_int_equality<NegBoolView>(home, t_p[0].x, -c, nb, rm, ipl);
                     }
                 } break;
                 case IRT_LQ:

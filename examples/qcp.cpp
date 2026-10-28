@@ -198,7 +198,7 @@ public:
             switch (opt.branching()) {
             case BRANCH_CBS_MAX_SD:
 #ifdef GECODE_HAS_CBS
-                cbsbranch(*this, e);
+                cbs_branch(*this, e);
 #endif
             case BRANCH_SIZE:
                 branch(*this, e, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
@@ -210,8 +210,8 @@ public:
         }
     }
     /// Post a different branching for each asset of portfolio search
-    virtual void
-    spoke(SpokeContext& sc) {
+    void
+    spoke(SpokeContext& sc) override {
         if (sc.engine() == MetaEngine::Portfolio) {
             double tbf = opt.tbf();
             Rnd r(seeds[sc.asset() % n_seeds]);
@@ -239,13 +239,13 @@ public:
         e.update(*this, s.e);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new QCP(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         int n = spec.size();
         Matrix<IntVarArray> m(e, n);
 

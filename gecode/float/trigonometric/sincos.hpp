@@ -38,7 +38,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
      */
     template <class V>
     void
-    aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min, int& n_max) {
+    a_sin_project(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min, int& n_max) {
 #define I0_PI_2I FloatVal(0, pi_half_upper())
 #define IPI_2_PII FloatVal(pi_half_lower(), pi_upper())
 #define IPI_3PI_2I FloatVal(pi_lower(), 3 * pi_half_upper())
@@ -150,7 +150,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
     template <class A, class B>
     ExecStatus
-    Sin<A, B>::dopropagate(Space& home, A x0, B x1) {
+    Sin<A, B>::propagate_bounds(Space& home, A x0, B x1) {
         GECODE_ME_CHECK(x1.eq(home, sin(x0.val())));
         Rounding r;
         int n_min = 2 * static_cast<int>(r.div_up(x0.min(), pi_twice_upper()));
@@ -161,7 +161,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
             n_max -= 2;
         FloatNum iv_min = r.sub_down(x0.min(), r.mul_down(n_min, pi_upper()));
         FloatNum iv_max = r.sub_up(x0.max(), r.mul_down(n_max, pi_upper()));
-        aSinProject(r, x1, iv_min, iv_max, n_min, n_max);
+        a_sin_project(r, x1, iv_min, iv_max, n_min, n_max);
         FloatNum n_iv_min = r.add_down(iv_min, r.mul_down(n_min, pi_upper()));
         FloatNum n_iv_max = r.add_up(iv_max, r.mul_down(n_max, pi_upper()));
         if (n_iv_min > n_iv_max)
@@ -184,7 +184,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
         } else {
             GECODE_ME_CHECK(x1.gq(home, -1.0));
             GECODE_ME_CHECK(x1.lq(home, 1.0));
-            GECODE_ES_CHECK(dopropagate(home, x0, x1));
+            GECODE_ES_CHECK(propagate_bounds(home, x0, x1));
             (void)new (home) Sin<A, B>(home, x0, x1);
         }
 
@@ -205,7 +205,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     template <class A, class B>
     ExecStatus
     Sin<A, B>::propagate(Space& home, const ModEventDelta&) {
-        GECODE_ES_CHECK(dopropagate(home, x0, x1));
+        GECODE_ES_CHECK(propagate_bounds(home, x0, x1));
         return (x0.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
@@ -216,19 +216,19 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
     template <class A, class B>
     ExecStatus
-    Cos<A, B>::dopropagate(Space& home, A x0, B x1) {
+    Cos<A, B>::propagate_bounds(Space& home, A x0, B x1) {
         GECODE_ME_CHECK(x1.eq(home, cos(x0.val())));
         Rounding r;
-        FloatVal x0Trans = x0.val() + FloatVal::pi_half();
-        int n_min = 2 * static_cast<int>(r.div_up(x0Trans.min(), pi_twice_upper()));
-        int n_max = 2 * static_cast<int>(r.div_up(x0Trans.max(), pi_twice_upper()));
-        if (x0Trans.min() < 0)
+        FloatVal x0_trans = x0.val() + FloatVal::pi_half();
+        int n_min = 2 * static_cast<int>(r.div_up(x0_trans.min(), pi_twice_upper()));
+        int n_max = 2 * static_cast<int>(r.div_up(x0_trans.max(), pi_twice_upper()));
+        if (x0_trans.min() < 0)
             n_min -= 2;
-        if (x0Trans.max() < 0)
+        if (x0_trans.max() < 0)
             n_max -= 2;
-        FloatNum iv_min = r.sub_down(x0Trans.min(), r.mul_down(n_min, pi_upper()));
-        FloatNum iv_max = r.sub_up(x0Trans.max(), r.mul_down(n_max, pi_upper()));
-        aSinProject(r, x1, iv_min, iv_max, n_min, n_max);
+        FloatNum iv_min = r.sub_down(x0_trans.min(), r.mul_down(n_min, pi_upper()));
+        FloatNum iv_max = r.sub_up(x0_trans.max(), r.mul_down(n_max, pi_upper()));
+        a_sin_project(r, x1, iv_min, iv_max, n_min, n_max);
         FloatNum n_iv_min = r.add_down(iv_min, r.mul_down(n_min, pi_upper()));
         FloatNum n_iv_max = r.add_up(iv_max, r.mul_down(n_max, pi_upper()));
         if (n_iv_min > n_iv_max)
@@ -257,7 +257,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
         } else {
             GECODE_ME_CHECK(x1.gq(home, -1.0));
             GECODE_ME_CHECK(x1.lq(home, 1.0));
-            GECODE_ES_CHECK(dopropagate(home, x0, x1));
+            GECODE_ES_CHECK(propagate_bounds(home, x0, x1));
             (void)new (home) Cos<A, B>(home, x0, x1);
         }
         return ES_OK;
@@ -277,7 +277,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     template <class A, class B>
     ExecStatus
     Cos<A, B>::propagate(Space& home, const ModEventDelta&) {
-        GECODE_ES_CHECK(dopropagate(home, x0, x1));
+        GECODE_ES_CHECK(propagate_bounds(home, x0, x1));
         return (x0.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 

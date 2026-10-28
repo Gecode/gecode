@@ -54,7 +54,7 @@ namespace Gecode { namespace Set {
             r[n - 1].next(nullptr);
             _size = s;
         }
-        assert(isConsistent());
+        assert(is_consistent());
     }
 
     bool
@@ -69,8 +69,8 @@ namespace Gecode { namespace Set {
             if (c->max() >= mi - 1) {
                 if (c->min() > ma + 1) { // in a hole before c
                     _size += (ma - mi + 1);
-                    d._glbMin = mi;
-                    d._glbMax = ma;
+                    d._glb_min = mi;
+                    d._glb_max = ma;
                     RangeList* q = new (home) RangeList(mi, ma, c);
                     if (p == nullptr)
                         // the new range is the first
@@ -84,45 +84,45 @@ namespace Gecode { namespace Set {
                 if (c->min() > mi) {
                     _size += (c->min() - mi);
                     c->min(mi);
-                    d._glbMin = mi;
+                    d._glb_min = mi;
                     result = true;
                 } else {
-                    d._glbMin = c->max() + 1;
+                    d._glb_min = c->max() + 1;
                 }
                 assert(c->min() <= mi);
                 assert(c->max() + 1 >= mi);
                 if (c->max() >= ma) {
-                    d._glbMax = c->min() - 1;
+                    d._glb_max = c->min() - 1;
                     return result;
                 }
                 RangeList* q = c;
                 // sum up the size of holes eaten
-                int prevMax = c->max();
+                int prev_max = c->max();
                 int growth = 0;
                 // invariant: q->min()<=ma+1
                 while (q->next() != nullptr && q->next()->min() <= ma + 1) {
                     q = q->next();
-                    growth += q->min() - prevMax - 1;
-                    prevMax = q->max();
+                    growth += q->min() - prev_max - 1;
+                    prev_max = q->max();
                 }
                 assert(growth >= 0);
                 _size += growth;
                 if (q->max() < ma) {
                     _size += ma - q->max();
-                    d._glbMax = ma;
+                    d._glb_max = ma;
                 } else {
-                    d._glbMax = q->min() - 1;
+                    d._glb_max = q->min() - 1;
                 }
                 c->max(std::max(ma, q->max()));
                 if (c != q) {
-                    RangeList* oldCNext = c->next();
-                    assert(oldCNext != nullptr); // q would have stayed c if c was last.
+                    RangeList* old_c_next = c->next();
+                    assert(old_c_next != nullptr); // q would have stayed c if c was last.
                     c->next(q->next());
                     if (q->next() == nullptr) {
                         assert(q == lst());
                         lst(c);
                     }
-                    oldCNext->dispose(home, q);
+                    old_c_next->dispose(home, q);
                 }
                 return true;
             }
@@ -136,8 +136,8 @@ namespace Gecode { namespace Set {
         lst()->next(q);
         lst(q);
         _size += q->width();
-        d._glbMin = mi;
-        d._glbMax = ma;
+        d._glb_min = mi;
+        d._glb_max = ma;
         return true;
     }
 
@@ -217,7 +217,7 @@ namespace Gecode { namespace Set {
 
         RangeList* p = nullptr;
         RangeList* c = fst();
-        d._lubMin = Limits::max + 1;
+        d._lub_min = Limits::max + 1;
         while (c != nullptr) {
             if (c->max() >= mi) {
                 if (c->min() > ma) {
@@ -232,14 +232,14 @@ namespace Gecode { namespace Set {
                     }
                     c->next(q);
                     _size -= (ma - mi + 1);
-                    d._lubMin = mi;
-                    d._lubMax = ma;
+                    d._lub_min = mi;
+                    d._lub_max = ma;
                     return true;
                 }
 
                 if (c->max() > ma) { // start of range clipped, end remains
-                    d._lubMin = std::min(d._lubMin, c->min());
-                    d._lubMax = ma;
+                    d._lub_min = std::min(d._lub_min, c->min());
+                    d._lub_max = ma;
                     _size -= (ma - c->min() + 1);
                     c->min(ma + 1);
                     return true;
@@ -247,19 +247,19 @@ namespace Gecode { namespace Set {
 
                 if (c->min() < mi) { // end of range clipped, start remains
                     _size -= (c->max() - mi + 1);
-                    d._lubMin = mi;
-                    d._lubMax = c->max();
+                    d._lub_min = mi;
+                    d._lub_max = c->max();
                     c->max(mi - 1);
                     result = true;
                 } else { // range *c destroyed
-                    d._lubMin = c->min();
+                    d._lub_min = c->min();
                     _size -= c->width();
                     RangeList* cend = c;
                     while ((cend->next() != nullptr) && (cend->next()->max() <= ma)) {
                         cend = cend->next();
                         _size -= cend->width();
                     }
-                    d._lubMax = cend->max();
+                    d._lub_max = cend->max();
                     if (fst() == c) {
                         fst(cend->next());
                     } else {
@@ -276,7 +276,7 @@ namespace Gecode { namespace Set {
                         // start of range clipped, end remains
                         _size -= (ma - c->min() + 1);
                         c->min(ma + 1);
-                        d._lubMax = ma;
+                        d._lub_max = ma;
                     }
                     return true;
                 }
@@ -293,7 +293,7 @@ namespace Gecode { namespace Set {
 #endif
 
     bool
-    BndSet::isConsistent(void) const {
+    BndSet::is_consistent(void) const {
 #ifndef NDEBUG
         if (fst() == nullptr) {
             if (lst() != nullptr || size() != 0) {

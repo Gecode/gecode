@@ -128,9 +128,9 @@ namespace Gecode {
             using DomArgs<Args...>::DomArgs;
 
             /// Constrain \a b to be equivalent to the expression (negated if \a neg)
-            virtual void post(Home, BoolVar b, bool neg, const IntPropLevels&) override;
+            void post(Home, BoolVar b, bool neg, const IntPropLevels&) override;
             /// Destructor
-            virtual ~DomExpr() = default;
+            ~DomExpr() override = default;
         };
 
         template <typename... Args>

@@ -48,13 +48,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         do {
             mod = false;
             {
-                ModEvent me = x0.lq(home, ops.fnroot(x1.max()));
+                ModEvent me = x0.lq(home, ops.floor_nth_root(x1.max()));
                 if (me_failed(me))
                     return ES_FAILED;
                 mod |= me_modified(me);
             }
             {
-                ModEvent me = x0.gq(home, ops.cnroot(x1.min()));
+                ModEvent me = x0.gq(home, ops.ceil_nth_root(x1.min()));
                 if (me_failed(me))
                     return ES_FAILED;
                 mod |= me_modified(me);
@@ -122,14 +122,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         assert((x0.min() < 0) && (0 < x0.max()));
         if (ops.even()) {
             assert(x1.min() >= 0);
-            int u = ops.fnroot(x1.max());
+            int u = ops.floor_nth_root(x1.max());
             GECODE_ME_CHECK(x0.lq(home, u));
             GECODE_ME_CHECK(x0.gq(home, -u));
             GECODE_ME_CHECK(x1.lq(home, std::max(ops.pow(x0.max()), ops.pow(-x0.min()))));
         } else {
             assert((x1.min() < 0) && (0 < x1.max()));
-            GECODE_ME_CHECK(x0.lq(home, ops.fnroot(x1.max())));
-            GECODE_ME_CHECK(x0.gq(home, -ops.fnroot(-x1.min())));
+            GECODE_ME_CHECK(x0.lq(home, ops.floor_nth_root(x1.max())));
+            GECODE_ME_CHECK(x0.gq(home, -ops.floor_nth_root(-x1.min())));
             GECODE_ME_CHECK(x1.lq(home, ops.pow(x0.max())));
             GECODE_ME_CHECK(x1.gq(home, ops.pow(x0.min())));
         }
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         // Limits values such that no overflow can occur
         assert(Limits::max == -Limits::min);
         {
-            int l = ops.fnroot(Limits::max);
+            int l = ops.floor_nth_root(Limits::max);
             GECODE_ME_CHECK(x0.lq(home, l));
             GECODE_ME_CHECK(x0.gq(home, -l));
         }
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Perform mapping
         forceinline int
         val(int x) const {
-            return ops.fnroot(x);
+            return ops.floor_nth_root(x);
         }
     };
 
@@ -290,9 +290,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         forceinline int
         val(int x) const {
             if (x < 0)
-                return -ops.fnroot(-x);
+                return -ops.floor_nth_root(-x);
             else
-                return ops.fnroot(x);
+                return ops.floor_nth_root(x);
         }
     };
 
@@ -403,7 +403,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         // Limits values such that no overflow can occur
         assert(Limits::max == -Limits::min);
         {
-            int l = ops.fnroot(Limits::max);
+            int l = ops.floor_nth_root(Limits::max);
             GECODE_ME_CHECK(x0.lq(home, l));
             GECODE_ME_CHECK(x0.gq(home, -l));
         }

@@ -57,11 +57,11 @@ namespace Test { namespace Float {
             FloatVarXY(Gecode::FloatRelType frt0, int n, Gecode::FloatNum st)
                 : Test("Rel::Float::Var::XY::" + str(frt0) + "::" + str(n), n + 1, -3, 3, st, CPLT_ASSIGNMENT, n == 1),
                   frt(frt0) {
-                testsubsumed = false;
+                test_subsumption = false;
             }
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if (x.size() == 2) {
                     return cmp(x[0], frt, x[1]);
                 } else {
@@ -76,8 +76,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 using namespace Gecode;
                 if (x.size() == 2) {
                     rel(home, x[0], frt, x[1]);
@@ -89,8 +89,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
                 assert(x.size() == 2);
                 Gecode::rel(home, x[0], frt, x[1], r);
             }
@@ -106,21 +106,21 @@ namespace Test { namespace Float {
             /// Create and register test
             FloatVarXX(Gecode::FloatRelType frt0, Gecode::FloatNum st)
                 : Test("Rel::Float::Var::XX::" + str(frt0), 1, -3, 3, st, CPLT_ASSIGNMENT, true), frt(frt0) {
-                testsubsumed = false;
+                test_subsumption = false;
             }
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return cmp(x[0], frt, x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::rel(home, x[0], frt, x[0]);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
                 Gecode::rel(home, x[0], frt, x[0], r);
             }
         };
@@ -139,11 +139,11 @@ namespace Test { namespace Float {
                 : Test("Rel::Float::Float::" + str(frt0) + "::" + str(n) + "::" + str(c0), n, -3, 3, st,
                        CPLT_ASSIGNMENT, n == 1),
                   frt(frt0), c(c0) {
-                testsubsumed = false;
+                test_subsumption = false;
             }
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if (x.size() == 1) {
                     return cmp(x[0], frt, c);
                 } else {
@@ -151,8 +151,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 using namespace Gecode;
                 if (x.size() == 1)
                     rel(home, x[0], frt, c);
@@ -160,8 +160,8 @@ namespace Test { namespace Float {
                     rel(home, x, frt, c);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
                 assert(x.size() == 1);
                 Gecode::rel(home, x[0], frt, c, r);
             }

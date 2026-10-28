@@ -239,7 +239,7 @@ namespace Gecode {
      */
 
     TraceRecorder*
-    Space::findtracerecorder(void) {
+    Space::find_trace_recorder(void) {
         for (Actor** a = d_fst; a < d_cur; a++) {
             if (TraceRecorder* tr = dynamic_cast<TraceRecorder*>(*a))
                 if (!tr->disabled()) {
@@ -253,7 +253,7 @@ namespace Gecode {
     void
     Space::post(const PostInfo& pi) {
         assert(pc.p.bid_sc & sc_trace);
-        TraceRecorder* tr = findtracerecorder();
+        TraceRecorder* tr = find_trace_recorder();
         if ((tr != nullptr) && (tr->events() & TE_POST)) {
             GECODE_ASSUME(ssd.data().gpi.pid() >= pi.pid);
             unsigned int n = ssd.data().gpi.pid() - pi.pid;
@@ -417,7 +417,7 @@ namespace Gecode {
     }
 
                 // Find a non-disabled tracer recorder (possibly null)
-                TraceRecorder* tr = findtracerecorder();
+                TraceRecorder* tr = find_trace_recorder();
                 // Remember post information
                 ViewTraceInfo vti(pc.p.vti);
                 goto t_unstable;
@@ -614,7 +614,7 @@ namespace Gecode {
         if (Brancher* b = brancher(c.bid)) {
             // There is a matching brancher
             if (pc.p.bid_sc & sc_trace) {
-                TraceRecorder* tr = findtracerecorder();
+                TraceRecorder* tr = find_trace_recorder();
                 if ((tr != nullptr) && (tr->events() & TE_COMMIT) && tr->filter()(b->group())) {
                     CommitTraceInfo cti(*b, c, a);
                     tr->tracer()._commit(*this, cti);
@@ -636,7 +636,7 @@ namespace Gecode {
     }
 
     void
-    Space::_trycommit(const Choice& c, unsigned int a) {
+    Space::_try_commit(const Choice& c, unsigned int a) {
         if (a >= c.alternatives())
             throw SpaceIllegalAlternative("Space::commit");
         if (failed())
@@ -644,7 +644,7 @@ namespace Gecode {
         if (Brancher* b = brancher(c.bid)) {
             // There is a matching brancher
             if (pc.p.bid_sc & sc_trace) {
-                TraceRecorder* tr = findtracerecorder();
+                TraceRecorder* tr = find_trace_recorder();
                 if ((tr != nullptr) && (tr->events() & TE_COMMIT) && tr->filter()(b->group())) {
                     CommitTraceInfo cti(*b, c, a);
                     tr->tracer()._commit(*this, cti);
@@ -830,9 +830,9 @@ namespace Gecode {
                     c->d_lst = c->d_fst + n + 1;
                     for (Actor** d_fst_iter = d_fst; d_fst_iter != d_cur; d_fst_iter++) {
                         ptrdiff_t m;
-                        Actor* a = static_cast<Actor*>(Support::ptrsplit(*d_fst_iter, m));
+                        Actor* a = static_cast<Actor*>(Support::split_pointer(*d_fst_iter, m));
                         if (a->prev())
-                            *(c->d_cur++) = Actor::cast(static_cast<ActorLink*>(Support::ptrjoin(a->prev(), m)));
+                            *(c->d_cur++) = Actor::cast(static_cast<ActorLink*>(Support::join_pointer(a->prev(), m)));
                     }
                 } catch (...) {
                     c->recover(*this);
@@ -938,7 +938,7 @@ namespace Gecode {
         Kernel::GPI::Info* i = alloc<Kernel::GPI::Info>(1);
         i->init(ssd.data().gpi.next_pid(), gid);
         i->afc = 0.0;
-        return Support::ptrjoin(i, 0b10);
+        return Support::join_pointer(i, 0b10);
     }
 
     void
@@ -958,7 +958,7 @@ namespace Gecode {
     }
 
     void
-    LocalObject::fwdcopy(Space& home) {
+    LocalObject::copy_and_forward(Space& home) {
         ActorLink::cast(this)->prev(copy(home));
         next(home.pc.c.local);
         home.pc.c.local = this;

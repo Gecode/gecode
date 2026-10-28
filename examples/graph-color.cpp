@@ -298,7 +298,7 @@ public:
             // Branching while considering value symmetry breaking
             // (every permutation of color values gives equivalent solutions)
             Symmetries syms;
-            syms << ValueSymmetry(IntArgs::create(g.n_v, 0));
+            syms << value_symmetry(IntArgs::create(g.n_v, 0));
             switch (opt.branching()) {
             case BRANCH_SIZE:
                 branch(*this, v, INT_VAR_SIZE_MIN(), INT_VAL_MIN(), syms);
@@ -319,8 +319,8 @@ public:
         }
     }
     /// Cost function
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return m;
     }
     /// Constructor for cloning \a s
@@ -329,13 +329,13 @@ public:
         m.update(*this, s.m);
     }
     /// Copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new GraphColor(*this);
     }
     /// Print the solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\tm = " << m << std::endl << "\tv[] = {";
         for (int i = 0; i < v.size(); i++) {
             os << v[i] << ", ";

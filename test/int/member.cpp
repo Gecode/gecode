@@ -49,8 +49,8 @@ namespace Test { namespace Int {
             /// Create and register test
             Int(int n) : Test("Member::Int::" + str(n), n + 1, 0, n, true) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 for (int i = n; i--;)
                     if (x[i] == x[n])
@@ -58,8 +58,8 @@ namespace Test { namespace Int {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 int n = x.size() - 1;
                 IntVarArgs y(n);
@@ -68,8 +68,8 @@ namespace Test { namespace Int {
                 member(home, y, x[n]);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 int n = x.size() - 1;
                 IntVarArgs y(n);
@@ -85,8 +85,8 @@ namespace Test { namespace Int {
             /// Create and register test
             Bool(int n) : Test("Member::Bool::" + str(n), n + 1, 0, 1, true) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 for (int i = n; i--;)
                     if (x[i] == x[n])
@@ -94,8 +94,8 @@ namespace Test { namespace Int {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 int n = x.size() - 1;
                 BoolVarArgs y(n);
@@ -104,8 +104,8 @@ namespace Test { namespace Int {
                 member(home, y, channel(home, x[n]));
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 int n = x.size() - 1;
                 BoolVarArgs y(n);

@@ -146,14 +146,14 @@ namespace Test { namespace Int {
             BoolExprInt(const BoolInstr* bis0, const std::string& s, int c0)
                 : Test("MiniModel::BoolExpr::Int::" + s + "::" + str(c0), 4, 0, 1), bis(bis0), c(c0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int reg[4] = {(x[0] != x[2]), x[1], (x[2] > 0), x[3]};
                 return eval(bis, reg) == c;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::BoolExpr reg[4] = {(x[0] != x[2]), channel(home, x[1]), (x[2] > 0), channel(home, x[3])};
                 if (c == 0)
@@ -174,14 +174,14 @@ namespace Test { namespace Int {
             BoolExprVar(const BoolInstr* bis0, const std::string& s)
                 : Test("MiniModel::BoolExpr::Var::" + s, 5, 0, 1), bis(bis0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int reg[4] = {(x[0] > x[2]), x[1], (x[2] != 1), x[3]};
                 return eval(bis, reg) == x[4];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::BoolExpr reg[4] = {(x[0] > x[2]), channel(home, x[1]), (channel(home, x[2]) != 1),
                                            channel(home, x[3])};
@@ -214,8 +214,8 @@ namespace Test { namespace Int {
                 : Test(TestTags::check(), "MiniModel::BoolExpr::Constant::" + str(value0) + "::" + str(mode0), 3, 0, 1),
                   value(value0), mode(mode0) {}
             /// %Test whether an assignment is a solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 switch (mode) {
                 case 0:
                     return x[2] == value;
@@ -249,8 +249,8 @@ namespace Test { namespace Int {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolExpr e = value;
                 switch (mode) {
@@ -319,14 +319,14 @@ namespace Test { namespace Int {
                        3, 0, 1),
                   o(o0), rhs(rhs0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int r = (o == BO_AND) ? (x[0] & x[1]) : (x[0] | x[1]);
                 return r == x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::BoolExpr e;
                 Gecode::BoolExpr x0(channel(home, x[0]));
@@ -370,13 +370,13 @@ namespace Test { namespace Int {
             BoolExprInvalid(BoolExprInvalidKind k0, const std::string& s)
                 : Test("MiniModel::BoolExpr::Invalid::" + s, 1, 0, 1), k(k0) {}
             /// %Test whether an assignment is a solution
-            virtual bool
-            solution(const Assignment&) const {
+            bool
+            solution(const Assignment&) const override {
                 return false;
             }
             /// Post expression and check that materialization fails
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolExpr empty;
                 BoolExpr v(channel(home, x[0]));
@@ -1924,13 +1924,13 @@ namespace Test { namespace Int {
             /// Create and register test
             BoolElement(const std::string& s, int m) : Test("MiniModel::BoolElement::" + s, 2, 0, 1), mode(m) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] == 0) && (x[1] == 1);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolVarArgs l(2);
                 l[0] = channel(home, x[0]);
@@ -1963,9 +1963,9 @@ namespace Test { namespace Int {
                 for (int i = 0; i < n; i++) {
                     std::string s = Test::str(i);
                     if (i < 10) {
-                        s = "00" + s;
+                        s.insert(0, "00");
                     } else if (i < 100) {
-                        s = "0" + s;
+                        s.insert(0, "0");
                     }
                     (void)new BoolExprInt(bi[i], s, 0);
                     (void)new BoolExprInt(bi[i], s, 1);

@@ -93,7 +93,7 @@ namespace Gecode { namespace Search {
         unsigned long int n_nogood = 0;
 
         // Eliminate the alternatives which are not no-goods at the end
-        while ((n > s) && (p.ds[n - 1].truealt() == 0U))
+        while ((n > s) && (p.ds[n - 1].true_alternative() == 0U))
             n--;
 
         // A sentinel element
@@ -102,15 +102,15 @@ namespace Gecode { namespace Search {
         NGL* c = &nn;
 
         // Commit no-goods at the beginning
-        while ((s < n) && (p.ds[s].truealt() > 0U))
+        while ((s < n) && (p.ds[s].true_alternative() > 0U))
             // Try whether this is a rightmost alternative
             if (p.ds[s].rightmost()) {
                 // No literal needed, directly try to commit
-                home.trycommit(*p.ds[s].choice(), p.ds[s].truealt());
+                home.try_commit(*p.ds[s].choice(), p.ds[s].true_alternative());
                 s++;
             } else {
                 // Prune using no-good literals
-                for (unsigned int a = 0U; a < p.ds[s].truealt(); a++) {
+                for (unsigned int a = 0U; a < p.ds[s].true_alternative(); a++) {
                     NGL* l = home.ngl(*p.ds[s].choice(), a);
                     // Does the brancher support no-good literals?
                     if (l == nullptr)
@@ -118,7 +118,7 @@ namespace Gecode { namespace Search {
                     GECODE_ES_CHECK(l->prune(home));
                 }
                 // Add literal as root if needed and stop
-                if (NGL* l = home.ngl(*p.ds[s].choice(), p.ds[s].truealt())) {
+                if (NGL* l = home.ngl(*p.ds[s].choice(), p.ds[s].true_alternative())) {
                     c = c->add(l, false);
                     s++;
                     break;
@@ -140,7 +140,7 @@ namespace Gecode { namespace Search {
         // Create literals
         for (int i = s; i < n; i++) {
             // Add leaves
-            for (unsigned int a = 0U; a < p.ds[i].truealt(); a++) {
+            for (unsigned int a = 0U; a < p.ds[i].true_alternative(); a++) {
                 NGL* l = home.ngl(*p.ds[i].choice(), a);
                 if (l == nullptr) {
                     // The brancher does not support no-goods
@@ -154,7 +154,7 @@ namespace Gecode { namespace Search {
                 n_nogood++;
             }
             // Check whether to add an additional subtree
-            if (NGL* l = home.ngl(*p.ds[i].choice(), p.ds[i].truealt())) {
+            if (NGL* l = home.ngl(*p.ds[i].choice(), p.ds[i].true_alternative())) {
                 c = c->add(l, false);
             } else if (!p.ds[i].rightmost()) {
                 // The brancher does not support no-goods

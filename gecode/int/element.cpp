@@ -263,7 +263,7 @@ namespace Gecode {
         }
 
         IntVar
-        pairWithOffsets(Home home, IntVar x, int xoff, int w, IntVar y, int yoff, int h) {
+        pair_with_offsets(Home home, IntVar x, int xoff, int w, IntVar y, int yoff, int h) {
             IntVar xy(home, 0, w * h - 1);
             if (xoff == 0 && yoff == 0) {
                 if (Int::Element::Pair::post(home, x, y, xy, w, h) != ES_OK)
@@ -294,7 +294,7 @@ namespace Gecode {
         if (a.size() != w * h)
             throw Int::ArgumentSizeMismatch("Int::element");
         GECODE_POST;
-        element(home, a, pairWithOffsets(home, x, xoff, w, y, yoff, h), z, ipl);
+        element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
     }
 
     void
@@ -313,7 +313,7 @@ namespace Gecode {
         if (a.size() != w * h)
             throw Int::ArgumentSizeMismatch("Int::element");
         GECODE_POST;
-        element(home, a, pairWithOffsets(home, x, xoff, w, y, yoff, h), z, ipl);
+        element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
     }
 
     void
@@ -332,7 +332,7 @@ namespace Gecode {
         if (a.size() != w * h)
             throw Int::ArgumentSizeMismatch("Int::element");
         GECODE_POST;
-        element(home, a, pairWithOffsets(home, x, xoff, w, y, yoff, h), z, ipl);
+        element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
     }
 
     void
@@ -351,7 +351,7 @@ namespace Gecode {
         if (a.size() != w * h)
             throw Int::ArgumentSizeMismatch("Int::element");
         GECODE_POST;
-        element(home, a, pairWithOffsets(home, x, xoff, w, y, yoff, h), z, ipl);
+        element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
     }
 
 } // namespace Gecode

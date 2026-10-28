@@ -102,12 +102,13 @@ namespace Gecode {
 
     void
     element(Home home, SetOpType op, const IntSetArgs& x, SetVar y, SetVar z, const IntSet& universe) {
+        const int n = x.size();
         GECODE_POST;
 
         switch (op) {
         case SOT_DUNION: {
-            Set::Element::ElementDisjoint<ConstSetView, SetView>::IdxViewArray iv(home, x.size());
-            for (int i = x.size(); i--;) {
+            Set::Element::ElementDisjoint<ConstSetView, SetView>::IdxViewArray iv(home, n);
+            for (int i = n; i--;) {
                 iv[i].idx = i;
                 iv[i].view = ConstSetView(home, x[i]);
             }
@@ -118,8 +119,8 @@ namespace Gecode {
             GECODE_ES_FAIL((Element::ElementUnionConst<SetView, SetView>::post(home, z, x, y)));
         } break;
         case SOT_INTER: {
-            Set::Element::ElementIntersection<ConstSetView, SetView, SetView>::IdxViewArray iv(home, x.size());
-            for (int i = x.size(); i--;) {
+            Set::Element::ElementIntersection<ConstSetView, SetView, SetView>::IdxViewArray iv(home, n);
+            for (int i = n; i--;) {
                 iv[i].idx = i;
                 iv[i].view = ConstSetView(home, x[i]);
             }
@@ -136,8 +137,9 @@ namespace Gecode {
 
     void
     element(Home home, SetOpType op, const IntArgs& x, SetVar y, SetVar z, const IntSet& universe) {
-        IntSetArgs xs(x.size());
-        for (int i = x.size(); i--;)
+        const int n = x.size();
+        IntSetArgs xs(n);
+        for (int i = n; i--;)
             xs[i] = IntSet(x[i], x[i]);
         element(home, op, xs, y, z, universe);
     }
