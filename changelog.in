@@ -146,6 +146,8 @@ variables and constraints for an unused suffix of a fixed-size array.
 [MORE]
 OpenVarList supports storage and cloning for other variable types through a
 factory; constraint and branching overloads remain specific to each type.
+OpenViewList gives propagators and branchers access through views to the same
+source list, including positions constructed after posting.
 Regular-language filtering excludes prefixes whose shortest accepting
 continuation exceeds the maximum list length.
 Branching uses standard variable and value selectors, with either incremental
@@ -410,7 +412,9 @@ register and run Gecode-style tests. Add exact replay of a failed iteration
 with -replay.
 [MORE]
 Harness libraries follow the configured shared and static Gecode library
-variants and support each configured variable family.
+variants and support each configured variable family. Test::Int::OpenTest
+extends the integer harness with bounded randomized histories that grow,
+prune, clone, and close open variable lists.
 
 [ENTRY]
 Module: test
