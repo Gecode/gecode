@@ -20,7 +20,7 @@ esac
 work="$RUNNER_TEMP/gecode-consumers"
 rm -rf "$work"
 mkdir -p "$work/a" "$work/b" "$work/c" "$work/d/cmake" "$work/e/cmake" "$work/e/stale" \
-  "$work/f" "$work/g" "$work/h" "$work/i" "$work/j" "$work/k" \
+  "$work/f" "$work/g" "$work/h" "$work/i" "$work/j" "$work/k" "$work/l" \
   "$work/mpfr-prefix/lib/cmake/MPFR"
 
 cat > "$work/a/CMakeLists.txt" <<'EOF'
@@ -231,6 +231,77 @@ cat > "$work/k/main.cpp" <<'EOF'
 int main(void) { Gecode::Float::Rounding rounding; return rounding.sqrt_down(4.0) == 2.0 ? 0 : 1; }
 EOF
 
+cat > "$work/l/CMakeLists.txt" <<'EOF'
+cmake_minimum_required(VERSION 3.21)
+project(consumer_l LANGUAGES CXX)
+find_package(Gecode CONFIG REQUIRED COMPONENTS flatzinc)
+add_executable(consumer_l main.cpp)
+target_link_libraries(consumer_l PRIVATE Gecode::gecodeflatzinc)
+EOF
+cat > "$work/l/main.cpp" <<'EOF'
+#include <gecode/flatzinc.hh>
+#include <iostream>
+#include <memory>
+#include <sstream>
+
+bool check(const char* name, const char* model, bool expect_failed = false) {
+  std::istringstream source(model);
+  std::ostringstream errors;
+  Gecode::FlatZinc::Printer printer;
+  std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> space(
+    Gecode::FlatZinc::parse(source, printer, errors));
+  if (!space || (space->status() == Gecode::SS_FAILED) != expect_failed) {
+    std::cerr << name << ": unexpected parse or propagation result\n"
+              << errors.str();
+    return false;
+  }
+  return true;
+}
+
+int main() {
+  bool ok = check("integer and boolean aliases",
+    "var 0..1:x; var bool:b; constraint fzn_int_eq(x,1); "
+    "constraint gecode_bool_eq(b,true); constraint bool2int(b,x); "
+    "constraint fzn_gecode_all_different_offset_fzn([0,0],[x,2]); "
+    "solve satisfy;");
+  ok = check("scheduling aliases",
+    "constraint fzn_cumulatives([0,0],[2,2],[1,1],1); solve satisfy;",
+    true) && ok;
+  ok = check("flexible scheduling alias",
+    "constraint fzn_gecode_cumulatives_flex([0,0],[2,2],[2,2],"
+    "[3,-2],[0,0],[1],true); solve satisfy;") && ok;
+  ok = check("membership and fallback aliases",
+    "var 0..2:x; var bool:b; constraint set_in(x,{1}); "
+    "constraint fzn_set_in_reif(x,{1},b); constraint bool_eq(b,true); "
+    "constraint gecode_set_in_imp(x,{1},b); solve satisfy;") && ok;
+  ok = check("membership propagation",
+    "var 0..0:x; constraint set_in(x,{1}); solve satisfy;", true) && ok;
+#ifdef GECODE_HAS_SET_VARS
+  ok = check("set aliases",
+    "var set of 1..2:s; constraint fzn_gecode_set_ite(true,{1},{2},s); "
+    "constraint gecode_set_eq(s,{1}); constraint set_card(s,1); "
+    "solve satisfy;") && ok;
+  ok = check("set propagation",
+    "var set of 1..2:s; constraint set_eq(s,{1}); "
+    "constraint fzn_set_card(s,2); solve satisfy;", true) && ok;
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+  ok = check("float aliases",
+    "var 0.0..4.0:x; constraint fzn_int2float(2,x); "
+    "constraint gecode_float_plus(x,2.0,4.0); "
+    "constraint fzn_gecode_float_pow(x,2,4.0); solve satisfy;") && ok;
+  ok = check("float propagation",
+    "var 0.0..1.0:x; constraint fzn_float_eq(x,2.0); solve satisfy;",
+    true) && ok;
+#ifdef GECODE_HAS_MPFR
+  ok = check("MPFR aliases",
+    "constraint gecode_float_exp(0.0,1.0); solve satisfy;") && ok;
+#endif
+#endif
+  return ok ? 0 : 1;
+}
+EOF
+
 cat > "$work/mpfr-prefix/lib/cmake/MPFR/MPFRConfig.cmake" <<'EOF'
 get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
 if(NOT TARGET MPFR::MPFR)
@@ -330,3 +401,9 @@ cmake -S "$source_root/test/package/public-test-component" -B "$work/test" \
   -DCMAKE_PREFIX_PATH="$cmake_prefix_path"
 cmake --build "$work/test" -j4
 ctest --test-dir "$work/test" --output-on-failure
+
+# Parsing pulls every enabled registry family from an ordinary static archive.
+test ! -e "$expected_include/gecode/flatzinc/registry-internal.hh"
+cmake -S "$work/l" -B "$work/l/build" -DCMAKE_PREFIX_PATH="$prefix"
+cmake --build "$work/l/build" -j4
+"$work/l/build/consumer_l"
