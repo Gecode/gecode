@@ -101,8 +101,8 @@ def is_tracked(path: Path) -> bool:
     return run(["git", "ls-files", "--error-unmatch", rel]).returncode == 0
 
 
-def parse_changelog() -> tuple[list[Release], list[Entry]]:
-    lines = CHANGELOG_IN.read_text().splitlines(keepends=True)
+def parse_changelog(source: str | None = None) -> tuple[list[Release], list[Entry]]:
+    lines = (CHANGELOG_IN.read_text() if source is None else source).splitlines(keepends=True)
     releases: list[Release] = []
     entries: list[Entry] = []
     current_release: Release | None = None
@@ -130,7 +130,7 @@ def parse_changelog() -> tuple[list[Release], list[Entry]]:
                     date = match.group(1).rstrip("\n")
                 if "[DESCRIPTION]" in current:
                     break
-            while idx < len(lines) and "[ENTRY]" not in lines[idx]:
+            while idx < len(lines) and "[ENTRY]" not in lines[idx] and "[RELEASE]" not in lines[idx]:
                 idx += 1
             current_release = Release(start, version, date)
             releases.append(current_release)
@@ -435,6 +435,32 @@ Previous release.
                 context="current-release exact-entry regression",
             )
         )
+
+    empty_source = (
+        "[RELEASE]\nVersion: 1.1.0\nDate: unreleased\n[DESCRIPTION]\n"
+        "Next development release.\n\n" + regression_source
+    )
+    empty_releases, empty_entries = parse_changelog(empty_source)
+    if [release.version for release in empty_releases] != ["1.1.0", "1.0.0", "0.9.0"]:
+        errors.append("changelog parser lost an empty release section")
+    if any(entry.release.version != "1.0.0" for entry in empty_entries):
+        errors.append("changelog parser assigned entries to an empty release")
+    for generator in (GEN_CURRENT_CHANGELOG, GEN_CHANGELOG, ROOT / "misc" / "gentxtchangelog.py"):
+        rendered = run(["uv", "run", str(generator)], stdin=empty_source)
+        if rendered.returncode != 0:
+            errors.append(f"{generator.name}: empty-release regression failed to generate")
+        elif generator == GEN_CURRENT_CHANGELOG:
+            errors.extend(compare_current_descriptions(rendered.stdout, [], context="empty current release"))
+        else:
+            if "[RELEASE]" in rendered.stdout:
+                errors.append(f"{generator.name}: release header leaked into its description")
+            if generator == GEN_CHANGELOG:
+                empty_section = generated_section(rendered.stdout, "1.1.0")
+                previous_section = generated_section(rendered.stdout, "1.0.0")
+            else:
+                empty_section, _, previous_section = rendered.stdout.partition("Changes in Version 1.0.0")
+            if "Short." in empty_section or "Short." not in previous_section:
+                errors.append(f"{generator.name}: entries moved across an empty release boundary")
 
     invalid_fields = {
         "Module": ("unknown module", "invalid-module"),
