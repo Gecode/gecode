@@ -18,16 +18,9 @@ including how to download, compile, install, and use it.
 In particular,
 Gecode comes with
 [extensive tutorial and reference documentation](https://gecode.github.io/documentation.html).
-
-The tutorial, *Modeling and Programming with Gecode* (MPG), explains how to
-model and solve problems. API and implementation contracts belong in the
-Doxygen comments alongside the source.
-
-## Building Gecode
-
-See the [CMake build and package reference](docs/cmake-build.md) for build,
-installation, and downstream package options. The repository also supports
-Autoconf builds.
+The tutorial *Modeling and Programming with Gecode* explains how to model
+and solve problems with Gecode, and the reference documentation describes
+the complete API.
 
 ## Download Gecode
 
@@ -36,11 +29,19 @@ Gecode 6.5.0 is distributed as source code. Source archives can be downloaded fr
 or
 [Gecode's webpages](https://gecode.github.io/download.html).
 
+## Building Gecode
+
+Gecode builds with CMake or Autoconf. The
+[CMake build and package reference](docs/cmake-build.md) describes the build
+options, installation, and how downstream projects use the installed package
+with `find_package(Gecode)`.
+
 ## Contributing to Gecode
 
 We happily accept smaller contributions and fixes, please provide them as pull requests against the main branch. For larger contributions, please get in touch.
 
-For source changes, see the [repository guide for agents](AGENTS.md).
+The [repository guide](AGENTS.md) describes how the sources are
+organized, how to build and test a change, and how to document it.
 
 ## Gecode License
 
