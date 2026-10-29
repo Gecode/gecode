@@ -36,9 +36,12 @@
 
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
+#include <gecode/instance.hh>
 #ifdef GECODE_HAS_GIST
 #include <gecode/gist.hh>
 #endif
+
+#include <memory>
 
 /*
  * Configure linking
@@ -163,6 +166,19 @@ namespace Gecode {
       virtual void help(void);
       /// Destructor
       virtual ~StringValueOption(void);
+    };
+
+    /**
+     * \brief String-valued option that may be given several times
+     *
+     * The values are joined by commas, in the order given.
+     */
+    class GECODE_DRIVER_EXPORT StringListOption : public StringValueOption {
+    public:
+      /// Initialize for option \a o and explanation \a e
+      StringListOption(const char* o, const char* e);
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
     };
 
 
@@ -753,14 +769,56 @@ namespace Gecode {
 
   /**
    * \brief %Options for scripts with additional instance parameter
+   *
+   * The instance is given as the last command line argument. It is either
+   * the name of an instance built into the script, or an instance file.
+   * A script that reads instance files gives the reader spec for its file
+   * format (see Instance::Spec) to the constructor, for example
+   * \code
+   * const char* dimacs = R"(
+   *   comment "c"
+   *   line "p cnf {vars:int} {clauses:int}"
+   *   repeat clauses { list clause: int until 0 }
+   * )";
+   * InstanceOptions opt("SAT", dimacs);
+   * opt.parse(argc, argv);
+   * Instance::Data d = opt.data();
+   * \endcode
+   * The option \c -spec then reads instance files with the spec in another
+   * file instead, and \c -param gives a value to one of the spec's
+   * parameters as \c name=value (for example \c instance=3 to select an
+   * instance in a file with several instances). For several parameters,
+   * \c -param is given several times, or the pairs are separated by commas
+   * as in <tt>-param a=1,b=2</tt>. A script may rely
+   * on the checks in its own spec, so a replacement spec must define the
+   * same data and is responsible for the same checks.
+   *
+   * Reading an instance reports errors by throwing Instance::Error; the
+   * command line itself is parsed as for all options. The driver library
+   * requires the instance library.
+   *
    * \ingroup TaskDriverCmd
    */
   class GECODE_DRIVER_EXPORT InstanceOptions : public Options {
   protected:
     const char* _inst; ///< Instance string
+    const char* _spec; ///< Reader spec for instance files
+    Driver::StringValueOption _spec_file; ///< File with a reader spec
+    Driver::StringListOption _param;      ///< Parameters for the spec
+    mutable std::unique_ptr<Instance::Data> _data; ///< Data read, or null
+    /// Forget the data read
+    void forget(void) const;
   public:
     /// Initialize options for script with name \a s
     InstanceOptions(const char* s);
+    /**
+     * \brief Initialize options for script \a s that reads instance files
+     *
+     * Instance files are read with the reader spec \a spec. Only scripts
+     * created with this constructor accept the options \c -spec and
+     * \c -param.
+     */
+    InstanceOptions(const char* s, const char* spec);
     /// Print help text
     virtual void help(void);
     /// Parse options from arguments \a argv (number is \a argc)
@@ -770,6 +828,39 @@ namespace Gecode {
     void instance(const char* s);
     /// Return instance name
     const char* instance(void) const;
+    /**
+     * \brief Test whether the instance is the number of a built-in instance
+     *
+     * Returns true and sets \a i to the number if the instance is a
+     * non-negative decimal number of at most nine digits (so that it
+     * cannot overflow). Otherwise returns false and leaves \a i
+     * unchanged. Whether there is a built-in instance with that number is
+     * up to the script.
+     */
+    bool builtin(unsigned int& i) const;
+
+    /// Set the reader spec for instance files
+    void spec(const char* s);
+    /// Return the reader spec for instance files (may be null)
+    const char* spec(void) const;
+    /// Set the file with a reader spec that replaces spec()
+    void spec_file(const char* f);
+    /// Return the file with a reader spec (may be null)
+    const char* spec_file(void) const;
+    /// Set the spec parameters (\c name=value, separated by commas)
+    void param(const char* p);
+    /// Return the spec parameters (may be null)
+    const char* param(void) const;
+    /// Test whether the instance names a readable file
+    bool is_file(void) const;
+    /**
+     * \brief Read the instance file
+     *
+     * The file is read once; later calls return the same data. Throws
+     * Instance::Error if there is no spec, if the file cannot be read, or
+     * if it does not match the spec.
+     */
+    Instance::Data data(void) const;
     /// Destructor
     ~InstanceOptions(void);
   };

@@ -38,6 +38,9 @@
 
 #include <chrono>
 #include <climits>
+#include <cstdio>
+#include <cstdlib>
+#include <fstream>
 #include <functional>
 #include <sstream>
 
@@ -608,6 +611,60 @@ namespace Test { namespace Instance {
     // Literal tokens are not a setting
     CHECK(read("repeat 2 { expect \"x\"  a: int }", "x 1 x 2").size("a") == 2);
     return true;
+  });
+
+  Case options("Driver::InstanceOptions", [](void) {
+    // Unique names in the temporary directory
+    const char* tmp = std::getenv("TMPDIR");
+    if (tmp == nullptr) tmp = std::getenv("TEMP");
+    std::string base = std::string(tmp == nullptr ? "." : tmp) +
+      "/gecode-instance-test-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());
+    std::string fs = base + ".txt", os = base + ".reader";
+    const char* file = fs.c_str();
+    const char* other = os.c_str();
+    {
+      std::ofstream f(file);
+      f << "2 3 4\n";
+      std::ofstream g(other);
+      g << "a: int  b: int  c: int\n";
+    }
+    bool ok = true;
+    try {
+      // The script's own spec, with parameters given by repeated options
+      const char* with_params = "param k = 3  param m = 0  n: int  x[n * k - m]: int";
+      Gecode::InstanceOptions o("Test", with_params);
+      char a0[] = "test", a1[] = "-param", a2[] = "k=2", a3[] = "", a4[] = "m=2";
+      std::string inst(file);
+      char* argv[] = {a0, a1, a2, a1, a4, &inst[0], a3};
+      int argc = 6;
+      o.parse(argc, argv);
+      ok = ok && o.is_file();
+      ok = ok && equal(o.data().ints("x"), {3,4});
+      // The same parameters separated by commas
+      Gecode::InstanceOptions c("Test", with_params);
+      char c2[] = "k=2,m=2";
+      char* argu[] = {a0, a1, c2, &inst[0], a3};
+      int argcu = 4;
+      c.parse(argcu, argu);
+      ok = ok && equal(c.data().ints("x"), {3,4});
+      // A spec file replaces the script's spec
+      Gecode::InstanceOptions s("Test", "n: int");
+      char b1[] = "-spec";
+      std::string spec(other);
+      char* argw[] = {a0, b1, &spec[0], &inst[0], a3};
+      int argcw = 4;
+      s.parse(argcw, argw);
+      ok = ok && (s.data().integer("c") == 4);
+      // Directories are not instance files
+      s.instance(".");
+      ok = ok && !s.is_file();
+    } catch (const Error& e) {
+      olog << e.what() << "\n";
+      ok = false;
+    }
+    std::remove(file);
+    std::remove(other);
+    return ok;
   });
 
   Case errors("Read::Errors", [](void) {
