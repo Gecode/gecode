@@ -112,7 +112,7 @@ to inspect test assignments.
   - If set directly, these override `BUILD_SHARED_LIBS`-based defaults.
 - `GECODE_INSTALL`: enables install/export/package rules
   - Defaults to `ON` when Gecode is top-level; defaults to `OFF` as subproject.
-- `GECODE_ENABLE_*`: module toggles (search/int/set/float/minimodel/driver/flatzinc/gist, etc.)
+- `GECODE_ENABLE_*`: module toggles (search/int/set/float/minimodel/instance/driver/flatzinc/gist, etc.)
   - Higher-level modules force their required lower-level modules on. For
     example, examples and FlatZinc require the core modeling modules, and
     minimodel requires int, set, and search support.
@@ -197,7 +197,7 @@ target_link_libraries(app PRIVATE Gecode::gecode)
 
 Canonical component names:
 
-- `support`, `kernel`, `search`, `int`, `set`, `float`, `minimodel`, `driver`,
+- `support`, `kernel`, `search`, `int`, `set`, `float`, `minimodel`, `instance`, `driver`,
   `flatzinc`, `gist`, `test`
 
 Example:
@@ -254,7 +254,7 @@ also require their corresponding Gecode libraries.
 Legacy component spellings are also accepted in `COMPONENTS`:
 
 - `gecodesupport`, `gecodekernel`, `gecodesearch`, `gecodeint`, `gecodeset`,
-  `gecodefloat`, `gecodeminimodel`, `gecodedriver`, `gecodeflatzinc`,
+  `gecodefloat`, `gecodeminimodel`, `gecodeinstance`, `gecodedriver`, `gecodeflatzinc`,
   `gecodegist`
 
 ### Package location hints

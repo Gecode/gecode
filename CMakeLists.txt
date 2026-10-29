@@ -119,6 +119,7 @@ option(GECODE_ENABLE_INT_VARS "Build int variables module" ON)
 option(GECODE_ENABLE_SET_VARS "Build set variables module" ON)
 option(GECODE_ENABLE_FLOAT_VARS "Build float variables module" ON)
 option(GECODE_ENABLE_MINIMODEL "Build minimodel module" ON)
+option(GECODE_ENABLE_INSTANCE "Build instance reader module" ON)
 option(GECODE_ENABLE_DRIVER "Build driver module" ON)
 option(GECODE_ENABLE_FLATZINC "Build FlatZinc module" ON)
 
@@ -270,6 +271,16 @@ if(GECODE_ENABLE_EXAMPLES)
   gecode_force_option_on(GECODE_ENABLE_INT_VARS "Examples require int variables")
   gecode_force_option_on(GECODE_ENABLE_MINIMODEL "Examples require minimodel")
   gecode_force_option_on(GECODE_ENABLE_DRIVER "Examples require driver")
+endif()
+# After every block that can enable the driver
+if(GECODE_ENABLE_DRIVER)
+  gecode_force_option_on(GECODE_ENABLE_INSTANCE "Driver requires instance reader")
+endif()
+# The instance reader returns IntArgs. Leave it out of builds without int
+# variables rather than enable them (the driver has enabled them already).
+if(GECODE_ENABLE_INSTANCE AND NOT GECODE_ENABLE_INT_VARS)
+  message(STATUS "Disabling GECODE_ENABLE_INSTANCE: instance reader requires int variables")
+  set(GECODE_ENABLE_INSTANCE OFF)
 endif()
 
 include(CheckCXXCompilerFlag)
@@ -985,7 +996,7 @@ HAVE_DOT = ${GECODE_DOXYGEN_DOT}
 ")
 
 set(GECODE_DOC_SOURCE_INPUTS)
-foreach(component SUPPORT KERNEL SEARCH INT SET FLOAT MINIMODEL DRIVER GIST FLATZINC TEST)
+foreach(component SUPPORT KERNEL SEARCH INT SET FLOAT MINIMODEL INSTANCE DRIVER GIST FLATZINC TEST)
   list(APPEND GECODE_DOC_SOURCE_INPUTS ${GECODE_${component}_SOURCES})
 endforeach()
 list(APPEND GECODE_DOC_SOURCE_INPUTS ${GECODE_FLATZINC_EXE_SOURCE})
@@ -1128,6 +1139,9 @@ if(GECODE_ENABLE_FLOAT_VARS)
 endif()
 if(GECODE_ENABLE_MINIMODEL)
   list(APPEND GECODE_LIBRARY_COMPONENTS minimodel)
+endif()
+if(GECODE_ENABLE_INSTANCE)
+  list(APPEND GECODE_LIBRARY_COMPONENTS instance)
 endif()
 if(GECODE_ENABLE_DRIVER)
   list(APPEND GECODE_LIBRARY_COMPONENTS driver)
@@ -1311,8 +1325,11 @@ if(GECODE_ENABLE_MINIMODEL)
   endif()
   gecode_link_component(minimodel ${mm_deps})
 endif()
+if(GECODE_ENABLE_INSTANCE)
+  gecode_link_component(instance int)
+endif()
 if(GECODE_ENABLE_DRIVER)
-  set(driver_deps int search)
+  set(driver_deps int search instance)
   if(GECODE_ENABLE_MINIMODEL)
     list(APPEND driver_deps minimodel)
   endif()
@@ -1362,7 +1379,7 @@ endif()
 
 # Compatibility aggregate target for downstream projects expecting Gecode::gecode.
 add_library(gecode INTERFACE)
-foreach(component IN ITEMS support kernel search int set float minimodel driver flatzinc gist)
+foreach(component IN ITEMS support kernel search int set float minimodel instance driver flatzinc gist)
   if(TARGET gecode${component})
     target_link_libraries(gecode INTERFACE gecode${component})
   endif()
@@ -1385,6 +1402,21 @@ if(GECODE_ENABLE_FLATZINC)
       INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
   endif()
   list(APPEND GECODE_INSTALL_TARGETS fzn-gecode)
+endif()
+
+if(GECODE_ENABLE_INSTANCE)
+  add_executable(gecode-instance ${GECODE_INSTANCE_EXE_SOURCE})
+  # The int headers include the search headers, whose inline code can refer
+  # to the search library in unoptimized builds
+  target_link_libraries(gecode-instance PRIVATE gecodeinstance gecodesearch)
+  if(APPLE)
+    set_target_properties(gecode-instance PROPERTIES
+      INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}")
+  elseif(UNIX)
+    set_target_properties(gecode-instance PROPERTIES
+      INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+  endif()
+  list(APPEND GECODE_INSTALL_TARGETS gecode-instance)
 endif()
 
 if(BUILD_TESTING)
@@ -1489,6 +1521,9 @@ if(BUILD_TESTING)
   if(NOT GECODE_ENABLE_FLATZINC)
     list(FILTER GECODE_TEST_SOURCES_SELECTED EXCLUDE REGEX "^test/flatzinc(/|\\.cpp)")
   endif()
+  if(NOT TARGET gecodeinstance)
+    list(REMOVE_ITEM GECODE_TEST_SOURCES_SELECTED test/instance.cpp)
+  endif()
 
   if(GECODE_CAN_BUILD_TESTS)
     add_executable(gecode-test EXCLUDE_FROM_ALL ${GECODE_TEST_MAIN_SOURCE} ${GECODE_TEST_SOURCES_SELECTED})
@@ -1500,6 +1535,9 @@ if(BUILD_TESTING)
     endif()
     if(TARGET gecodetestfloat)
       list(APPEND GECODE_TEST_LINK_LIBS gecodetestfloat)
+    endif()
+    if(TARGET gecodeinstance)
+      list(APPEND GECODE_TEST_LINK_LIBS gecodeinstance gecodedriver)
     endif()
     if(GECODE_ENABLE_FLATZINC)
       list(APPEND GECODE_TEST_LINK_LIBS gecodeflatzinc)
@@ -1710,6 +1748,8 @@ if(GECODE_INSTALL)
       PATTERN "flatzinc/blackbox.hh" EXCLUDE
       PATTERN "flatzinc/blackbox-backend.hh" EXCLUDE
       PATTERN "flatzinc/blackbox-process.hh" EXCLUDE
+      PATTERN "instance/eval.hpp" EXCLUDE
+      PATTERN "instance/impl.hpp" EXCLUDE
       PATTERN "exampleplugin" EXCLUDE
       PATTERN "standalone-example" EXCLUDE
       PATTERN "abi*" EXCLUDE)
@@ -1822,7 +1862,8 @@ foreach(gecode_option IN ITEMS
     GECODE_ENABLE_EXPERIMENTAL
     GECODE_ENABLE_EXAMPLES GECODE_INSTALL
     GECODE_ENABLE_SEARCH GECODE_ENABLE_INT_VARS GECODE_ENABLE_SET_VARS
-    GECODE_ENABLE_FLOAT_VARS GECODE_ENABLE_MINIMODEL GECODE_ENABLE_DRIVER
+    GECODE_ENABLE_FLOAT_VARS GECODE_ENABLE_MINIMODEL GECODE_ENABLE_INSTANCE
+    GECODE_ENABLE_DRIVER
     GECODE_ENABLE_FLATZINC GECODE_ENABLE_ALLOCATOR GECODE_ENABLE_MIMALLOC GECODE_ENABLE_AUDIT
     GECODE_ENABLE_FAULT_INJECTION GECODE_REGENERATE_VARIMP
     GECODE_DOC_SEARCH GECODE_DOC_TAGFILE)

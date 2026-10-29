@@ -34,6 +34,7 @@ MODULES = {
     "minimodel",
     "graph",
     "scheduling",
+    "instance",
     "driver",
     "iter",
     "support",

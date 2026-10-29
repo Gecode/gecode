@@ -17,6 +17,7 @@ def main() -> int:
         "Set": "finite integer sets",
         "Float": "floats",
         "Minimodel": "minimal modeling support",
+        "Instance": "instance reader",
         "Driver": "script commandline driver",
         "FlatZinc": "FlatZinc interpreter library",
         "Gist": "Gist",

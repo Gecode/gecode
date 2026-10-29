@@ -743,6 +743,15 @@ namespace Gecode {
     ArgArray& operator =(const ArgArray&) = default;
   };
 
+  /// Traits of arrays of doubles
+  template<>
+  class ArrayTraits<ArgArray<double>> {
+  public:
+    typedef ArgArray<double> StorageType;
+    typedef double           ValueType;
+    typedef ArgArray<double> ArgsType;
+  };
+
   template<class> class VarArgArray;
 
   /** Concatenate \a x and \a y and return result

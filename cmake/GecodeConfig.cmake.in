@@ -10,6 +10,7 @@ set(_gecode_supported_components
   set
   float
   minimodel
+  instance
   driver
   flatzinc
   gist
@@ -118,8 +119,10 @@ while(_gecode_dependency_queue)
     set(_gecode_component_dependencies int set search float)
   elseif(_gecode_dependency_component STREQUAL gist)
     set(_gecode_component_dependencies search int set float)
+  elseif(_gecode_dependency_component STREQUAL instance)
+    set(_gecode_component_dependencies int)
   elseif(_gecode_dependency_component STREQUAL driver)
-    set(_gecode_component_dependencies int search minimodel gist)
+    set(_gecode_component_dependencies int search minimodel instance gist)
   elseif(_gecode_dependency_component STREQUAL flatzinc)
     set(_gecode_component_dependencies minimodel driver gist)
   elseif(_gecode_dependency_component STREQUAL test)

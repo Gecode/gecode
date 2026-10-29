@@ -662,6 +662,7 @@ VERSION
 subdirs
 enable_search
 enable_minimodel
+enable_instance
 enable_examples
 enable_flatzinc
 enable_driver
@@ -707,6 +708,7 @@ GECODE_DOXYGEN_DOT
 DOT
 LINKATOMIC
 DRIVER
+INSTANCE
 FLATZINC
 GIST
 MM
@@ -735,6 +737,7 @@ LIBEXT
 SBJEXT
 MANIFEST
 GECODE_BUILD_DRIVER_FLAG
+GECODE_BUILD_INSTANCE_FLAG
 GECODE_BUILD_FLATZINC_FLAG
 GECODE_BUILD_GIST_FLAG
 GECODE_BUILD_MINIMODEL_FLAG
@@ -866,6 +869,7 @@ enable_cpprofiler
 enable_driver
 enable_flatzinc
 enable_examples
+enable_instance
 enable_minimodel
 enable_search
 '
@@ -1542,6 +1546,8 @@ Optional Features:
   --enable-flatzinc       build FlatZinc interpreter [default=yes]
   --enable-examples       build examples for the enabled variable types
                           [default=yes]
+  --enable-instance       build instance reader library (needs
+                          --enable-int-vars) [default=yes]
   --enable-minimodel      build modeling support library for the enabled
                           variable types [default=yes]
   --enable-search         build search engines [default=yes]
@@ -7545,6 +7551,8 @@ gnu)
 
    GECODE_BUILD_FLATZINC_FLAG=""
 
+   GECODE_BUILD_INSTANCE_FLAG=""
+
    GECODE_BUILD_DRIVER_FLAG=""
 
        ;;
@@ -7589,6 +7597,8 @@ gnu)
 
    GECODE_BUILD_FLATZINC_FLAG="-DGECODE_BUILD_FLATZINC"
 
+   GECODE_BUILD_INSTANCE_FLAG="-DGECODE_BUILD_INSTANCE"
+
    GECODE_BUILD_DRIVER_FLAG="-DGECODE_BUILD_DRIVER"
 
        ;;
@@ -7623,6 +7633,8 @@ gnu)
    GECODE_BUILD_GIST_FLAG=""
 
    GECODE_BUILD_FLATZINC_FLAG=""
+
+   GECODE_BUILD_INSTANCE_FLAG=""
 
    GECODE_BUILD_DRIVER_FLAG=""
 
@@ -8720,6 +8732,8 @@ fi
   GIST="gist"
 
   FLATZINC="flatzinc"
+
+  INSTANCE="instance"
 
   DRIVER="driver"
 
@@ -10441,6 +10455,8 @@ fi
 
    GECODE_BUILD_FLATZINC_FLAG="-DGECODE_BUILD_FLATZINC"
 
+   GECODE_BUILD_INSTANCE_FLAG="-DGECODE_BUILD_INSTANCE"
+
    GECODE_BUILD_DRIVER_FLAG="-DGECODE_BUILD_DRIVER"
 
 
@@ -10478,6 +10494,8 @@ fi
   GIST="Gist"
 
   FLATZINC="FlatZinc"
+
+  INSTANCE="Instance"
 
   DRIVER="Driver"
 
@@ -10608,6 +10626,8 @@ printf "%s\n" "no" >&6; }
 
    GECODE_BUILD_FLATZINC_FLAG=""
 
+   GECODE_BUILD_INSTANCE_FLAG=""
+
    GECODE_BUILD_DRIVER_FLAG=""
 
        ;;
@@ -10652,6 +10672,8 @@ printf "%s\n" "no" >&6; }
 
    GECODE_BUILD_FLATZINC_FLAG="-DGECODE_BUILD_FLATZINC"
 
+   GECODE_BUILD_INSTANCE_FLAG="-DGECODE_BUILD_INSTANCE"
+
    GECODE_BUILD_DRIVER_FLAG="-DGECODE_BUILD_DRIVER"
 
        ;;
@@ -10686,6 +10708,8 @@ printf "%s\n" "no" >&6; }
    GECODE_BUILD_GIST_FLAG=""
 
    GECODE_BUILD_FLATZINC_FLAG=""
+
+   GECODE_BUILD_INSTANCE_FLAG=""
 
    GECODE_BUILD_DRIVER_FLAG=""
 
@@ -11784,6 +11808,8 @@ fi
 
   FLATZINC="flatzinc"
 
+  INSTANCE="instance"
+
   DRIVER="driver"
 
 
@@ -12586,6 +12612,8 @@ fi
 
    GECODE_BUILD_FLATZINC_FLAG="-DGECODE_BUILD_FLATZINC"
 
+   GECODE_BUILD_INSTANCE_FLAG="-DGECODE_BUILD_INSTANCE"
+
    GECODE_BUILD_DRIVER_FLAG="-DGECODE_BUILD_DRIVER"
 
 
@@ -12623,6 +12651,8 @@ fi
   GIST="Gist"
 
   FLATZINC="FlatZinc"
+
+  INSTANCE="Instance"
 
   DRIVER="Driver"
 
@@ -14388,6 +14418,7 @@ printf %s "checking whether to build driver... " >&6; }
 printf "%s\n" "yes" >&6; }
         enable_search="yes";
          enable_int="yes";
+         enable_instance="yes";
 
      else
         enable_driver="no";
@@ -14437,6 +14468,7 @@ printf %s "checking whether to build driver... " >&6; }
 printf "%s\n" "yes" >&6; }
         enable_search="yes";
          enable_int="yes";
+         enable_instance="yes";
 
      else
         enable_driver="no";
@@ -14461,6 +14493,7 @@ printf %s "checking whether to build examples... " >&6; }
 printf "%s\n" "yes" >&6; }
         enable_search="yes";
          enable_driver="yes";
+         enable_instance="yes";
          enable_minimodel="yes";
 
      else
@@ -14469,6 +14502,33 @@ printf "%s\n" "yes" >&6; }
 printf "%s\n" "no" >&6; }
      fi
         enable_examples=${enable_examples}
+
+
+
+     # Check whether --enable-instance was given.
+if test ${enable_instance+y}
+then :
+  enableval=$enable_instance;
+fi
+
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether to build instance" >&5
+printf %s "checking whether to build instance... " >&6; }
+     if test "${enable_instance:-yes}" = "yes"; then
+        enable_instance="yes";
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+        if test "${enable_int_vars}" != "yes"; then
+	   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: the instance reader needs int variables, not building it" >&5
+printf "%s\n" "$as_me: WARNING: the instance reader needs int variables, not building it" >&2;}
+	   enable_instance="no";
+	 fi
+
+     else
+        enable_instance="no";
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+     fi
+        enable_instance=${enable_instance}
 
 
 
