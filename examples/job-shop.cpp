@@ -79,6 +79,43 @@ namespace JobShopConfig {
 // Instance data
 namespace {
 
+  /**
+   * \brief Reader spec for job shop files
+   *
+   * Free text and \c # comments, then the numbers of jobs and machines,
+   * then for each job a (machine, duration) pair per step, with 0-based
+   * machines. This is the layout of the OR-Library and JSPLIB files. A file
+   * may contain several instances, each optionally introduced by a line
+   * <tt>instance NAME</tt>, as in OR-Library's \c jobshop1.txt. See
+   * Instance::Spec for the spec language.
+   *
+   * \relates JobShop
+   */
+  const char* instance_spec = R"(format jobshop
+
+comment "#" "+++"
+instances {
+  sections skip other {
+    "instance {name:word}" optional
+    "{n_jobs:1..} {n_machines:1..}" last {
+      check n_jobs <= (gecode.int_max - 2) / 2 / n_machines "there are too many jobs and machines"
+
+      repeat n_jobs as jobs {
+        each job
+        repeat n_machines as steps {
+          each step
+          machine: 0..<n_machines
+          duration: 0..
+        }
+      }
+    }
+  }
+
+  check distinct(job.machine) "a job uses a machine twice; each job must use every machine once"
+  check sum(j in jobs: sum(j.duration)) <= gecode.int_max "the total duration is too large"
+}
+)";
+
   // Instances
   extern const int* js[];
   // Instance names
@@ -89,6 +126,8 @@ namespace {
   protected:
     /// Raw instance data
     const int* data;
+    /// Instance data read from a file
+    IntSharedArray file;
     /// Lower and upper bound
     int l, u;
     /// Name
@@ -117,6 +156,8 @@ namespace {
   protected:
     /// Find instance by name \a s
     static const int* find(const char* s) {
+      if (s == nullptr)
+        return nullptr;
       for (int i=0; ::name[i] != nullptr; i++)
         if (!strcmp(s,::name[i]))
           return js[i];
@@ -149,9 +190,31 @@ namespace {
           u += duration(i,j);
       return u;
     }
+    /// Read instance file in \a opt, in the same layout as built-in data
+    void read(const InstanceOptions& opt) {
+      // The spec has checked the data
+      Instance::Data d = opt.data();
+      int j = static_cast<int>(d.integer("n_jobs")), m = static_cast<int>(d.integer("n_machines"));
+      IntArgs mach = d.ints("machine"), dur = d.ints("duration");
+      IntArgs a(2 + 2*j*m);
+      a[0] = j; a[1] = m;
+      for (int i=0; i<j*m; i++) {
+        a[2 + 2*i] = mach[i];
+        a[2 + 2*i + 1] = dur[i];
+      }
+      file = IntSharedArray(a);
+      data = &file[0];
+    }
   public:
-    /// Initialize
-    Spec(const char* s) : data(find(s)), l(0), u(0), n(s) {
+    /**
+     * \brief Initialize from the instance in \a opt
+     *
+     * The instance is a built-in instance name, or a file in the format
+     * of \a opt. Throws Instance::Error if the file cannot be read.
+     */
+    Spec(const InstanceOptions& opt) : data(find(opt.instance())), l(0), u(0), n(opt.instance()) {
+      if ((data == nullptr) && opt.is_file())
+        read(opt);
       if (valid()) {
         l = clower(); u = cupper();
       }
@@ -195,7 +258,7 @@ private:
 public:
   /// Initialize options for example with name \a s
   JobShopOptions(const char* s)
-    : InstanceOptions(s),
+    : InstanceOptions(s, instance_spec),
       _verbose("verbose","whether to print schedule",
                JobShopConfig::verbose),
       _probes("probes","how many probes to perform",
@@ -262,6 +325,14 @@ public:
 /**
  * \brief %Example: Job Shop Scheduling
  *
+ * The instance is either the name of a built-in instance (such as
+ * \c ft06) or a file in the OR-Library and JSPLIB layout. In a file
+ * with several instances, such as OR-Library's \c jobshop1.txt, select
+ * one with \c -param \c instance=la01 (or by number). Use
+ * \c -spec with a spec file for other layouts; like the example's
+ * own spec, it must define \c n_jobs, \c n_machines, \c machine, and
+ * \c duration, and check them in the same way.
+ *
  * \ingroup Example
  *
  */
@@ -278,7 +349,7 @@ protected:
 public:
   /// Actual model
   JobShopBase(const JobShopOptions& o)
-    : IntMinimizeScript(o), opt(o), spec(opt.instance()),
+    : IntMinimizeScript(o), opt(o), spec(opt),
       start(*this, spec.machines() * spec.jobs(), 0, spec.upper()),
       makespan(*this, spec.lower(), spec.upper()) {
     // Number of jobs and machines/steps
@@ -817,8 +888,13 @@ main(int argc, char* argv[]) {
   opt.nogoods(true);
 
   opt.parse(argc,argv);
-  if (!Spec(opt.instance()).valid()) {
-    std::cerr << "Error: unknown instance" << std::endl;
+  try {
+    if (!Spec(opt).valid()) {
+      std::cerr << "Error: unknown instance" << std::endl;
+      return 1;
+    }
+  } catch (const Instance::Error& e) {
+    std::cerr << e.what() << std::endl;
     return 1;
   }
   solve(opt);

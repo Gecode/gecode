@@ -4,9 +4,13 @@
  *     Raphael Reischuk <reischuk@cs.uni-sb.de>
  *     Guido Tack <tack@gecode.dev>
  *
+ *  Contributing authors:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
  *  Copyright:
  *     Raphael Reischuk, 2008
  *     Guido Tack, 2008
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -36,42 +40,30 @@
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 
-#include <fstream>
 #include <string>
-#include <vector>
 
 using namespace Gecode;
 
-/** \brief Options for %SAT problems
- *
- * \relates SAT
- */
-class SatOptions : public Options {
-public:
-  /// Name of the DIMACS file to parse
-  std::string filename;
-  /// Initialize options with file name \a s
-  SatOptions(const char* s)
-    : Options(s) {}
-  /// Parse options from arguments \a argv (number is \a argc)
-  void parse(int& argc, char* argv[]) {
-    // Parse regular options
-    Options::parse(argc,argv);
-    // Filename, should be at position 1
-    if (argc == 1) {
-      help();
-      exit(1);
-    }
-    filename = argv[1];
-    argc--;
-  }
-  /// Print help message
-  virtual void help(void) {
-    Options::help();
-    std::cerr << "\t(string) " << std::endl
-              << "\t\tdimacs file to parse (.cnf)" << std::endl;
-  }
-};
+namespace {
+
+  /**
+   * \brief Reader spec for DIMACS CNF files
+   *
+   * See Instance::Spec for the spec language.
+   *
+   * \relates Sat
+   */
+  const char* instance_spec = R"(format dimacs-cnf
+
+comment "c"
+stop "%"                    # SATLIB files end with "%" and "0"
+line "p cnf {vars:0..gecode.int_max} {clauses:0..}"
+repeat clauses {
+  list clause: -vars..vars until 0   # the terminating 0 is not stored
+}
+)";
+
+}
 
 /**
  * \brief %Example: CNF SAT solver
@@ -80,9 +72,9 @@ public:
  * that a set of clauses is satisfied or shows that
  * no such assignment exists.
  *
- * This example parses a dimacs CNF file in which
- * the constraints are specified. For each line of
- * the file a clause propagator is posted.
+ * The clauses are read from a DIMACS CNF file with a
+ * reader spec, and a clause propagator is posted for each
+ * of them.
  *
  * Format of dimacs CNF files:
  *
@@ -92,11 +84,10 @@ public:
  *
  *    p cnf \<variables\> \<clauses\>
  *
- * Each of the subsequent lines specifies a clause.
- * A positive literal is denoted by a positive
- * integer, a negative literal is denoted by the
- * corresponding negative integer. Each line is
- * terminated by 0.
+ * Then follow the clauses. A positive literal is denoted
+ * by a positive integer, a negative literal is denoted by
+ * the corresponding negative integer. Each clause is
+ * terminated by 0, and clauses may span several lines.
  *
  * c sample CNF file
  * p cnf 3 2
@@ -114,9 +105,20 @@ private:
   BoolVarArray x;
 public:
   /// The actual problem
-  Sat(const SatOptions& opt)
+  Sat(const InstanceOptions& opt)
     : Script(opt) {
-    parseDIMACS(opt.filename.c_str());
+    Instance::Data d = opt.data();
+    x = BoolVarArray(*this, static_cast<int>(d.integer("vars")), 0, 1);
+    for (int c=0; c<d.size("clause"); c++) {
+      IntArgs literals = d.ints("clause", {c});
+      BoolVarArgs positives, negatives;
+      for (int l : literals)
+        if (l > 0)
+          positives << x[l-1];
+        else
+          negatives << x[-l-1];
+      clause(*this, BOT_OR, positives, negatives, 1);
+    }
     branch(*this, x, BOOL_VAR_AFC_MAX(), BOOL_VAL_MIN());
   }
 
@@ -136,101 +138,6 @@ public:
   print(std::ostream& os) const {
     os << "solution:\n" << x << std::endl;
   }
-
-  /// Post constraints according to DIMACS file \a f
-  void parseDIMACS(const char* f) {
-    int variables = 0;
-    int clauses = 0;
-    std::ifstream dimacs(f);
-    if (!dimacs) {
-      std::cerr << "error: file '" << f << "' not found" << std::endl;
-      exit(1);
-    }
-    std::cout << "Solving problem from DIMACS file '" << f << "'"
-              << std::endl;
-    std::string line;
-    int c = 0;
-    while (dimacs.good()) {
-      std::getline(dimacs,line);
-      // Comments (ignore them)
-      if (line[0] == 'c' || line == "") {
-      }
-      // Line has format "p cnf <variables> <clauses>"
-      else if (variables == 0 && clauses == 0 &&
-               line[0] == 'p' && line[1] == ' ' &&
-               line[2] == 'c' && line[3] == 'n' &&
-               line[4] == 'f' && line[5] == ' ') {
-        int i = 6;
-        while (line[i] >= '0' && line[i] <= '9') {
-          variables = 10*variables + line[i] - '0';
-          i++;
-        }
-        i++;
-        while (line[i] >= '0' && line[i] <= '9') {
-          clauses = 10*clauses + line[i] - '0';
-          i++;
-        }
-        std::cout << "(" << variables << " variables, "
-                  << clauses << " clauses)" << std::endl << std::endl;
-        // Add variables to array
-        x = BoolVarArray(*this, variables, 0, 1);
-      }
-      // Parse regular clause
-      else if (variables > 0 &&
-      ((line[0] >= '0' && line[0] <= '9') || line[0] == '-' || line[0] == ' ')) {
-        c++;
-        std::vector<int> pos;
-        std::vector<int> neg;
-        int i = 0;
-        while (line[i] != 0) {
-          if (line[i] == ' ') {
-            i++;
-            continue;
-          }
-          bool positive = true;
-          if (line[i] == '-') {
-            positive = false;
-            i++;
-          }
-          int value = 0;
-          while (line[i] >= '0' && line[i] <= '9') {
-            value = 10 * value + line[i] - '0';
-            i++;
-          }
-          if (value != 0) {
-            if (positive)
-              pos.push_back(value-1);
-            else
-              neg.push_back(value-1);
-            i++;
-          }
-        }
-
-        // Create positive BoolVarArgs
-        BoolVarArgs positives(pos.size());
-        for (int i=pos.size(); i--;)
-          positives[i] = x[pos[i]];
-
-        BoolVarArgs negatives(neg.size());
-        for (int i=neg.size(); i--;)
-          negatives[i] = x[neg[i]];
-
-        // Post propagators
-        clause(*this, BOT_OR, positives, negatives, 1);
-      }
-      else {
-        std::cerr << "format error in dimacs file" << std::endl;
-        std::cerr << "context: '" << line << "'" << std::endl;
-        std::exit(EXIT_FAILURE);
-      }
-    }
-    dimacs.close();
-    if (clauses != c) {
-      std::cerr << "error: number of specified clauses seems to be wrong."
-                << std::endl;
-      std::exit(EXIT_FAILURE);
-    }
-  }
 };
 
 
@@ -239,18 +146,30 @@ public:
  */
 int main(int argc, char* argv[]) {
 
-  SatOptions opt("SAT");
+  InstanceOptions opt("SAT", instance_spec);
   opt.parse(argc,argv);
+  if (argc > 2) {
+    std::cerr << "Error: unexpected arguments after the DIMACS file" << std::endl;
+    return 1;
+  }
 
-  // Check whether all arguments are successfully parsed
-  if (argc > 1) {
-    std::cerr << "Could not parse all arguments." << std::endl;
-    opt.help();
-    std::exit(EXIT_FAILURE);
+  if (!opt.is_file()) {
+    if (opt.instance() == nullptr)
+      std::cerr << "Error: no DIMACS file given" << std::endl;
+    else
+      std::cerr << "Error: cannot read file '" << opt.instance() << "'" << std::endl;
+    return 1;
+  }
+  try {
+    // Read here to report errors before solving starts
+    (void) opt.data();
+  } catch (const Instance::Error& e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
   }
 
   // Run SAT solver
-  Script::run<Sat,DFS,SatOptions>(opt);
+  Script::run<Sat,DFS,InstanceOptions>(opt);
   return 0;
 }
 

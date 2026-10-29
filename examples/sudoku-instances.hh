@@ -1874,6 +1874,85 @@ namespace {
     else return res;
   }
   //@}
+
+  /**
+   * \brief Reader spec for sudoku files
+   *
+   * The format of the scaled sudoku corpus: a line such as
+   * <tt># size=6 box=3x2</tt>, then the rows of the grid with \c . for
+   * blank cells and the symbols \c 1-9, \c A-Z, and \c 0 for the values
+   * 1 to 36. A file may contain several puzzles, one after the other;
+   * select one with \c -param \c instance=K. See Instance::Spec for the
+   * spec language.
+   *
+   * \relates Sudoku
+   */
+  const char* instance_spec = R"(format sudoku
+
+instances {
+  line "# size={n:1..} box={box_width:1..}x{box_height:1..}"
+  cells[n][n]: alphabet "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0" blank "."
+
+  check box_width * box_height == n "boxes must tile the grid"
+  check max(cells) <= n "a value is larger than the size of the grid"
+}
+)";
+
+  /// Read the sudoku givens of the instance in \a opt
+  class SudokuInstance {
+  public:
+    /// Side of the grid
+    int nn;
+    /// Width of a box
+    int bw;
+    /// Height of a box
+    int bh;
+    /// Given values in row-major order (0 for blank)
+    IntArgs givens;
+    /**
+     * \brief Initialize from \a opt
+     *
+     * A number selects a built-in instance, anything else is a file in the
+     * format of \a opt. Throws Instance::Error if the file cannot be read.
+     */
+    SudokuInstance(const InstanceOptions& opt)
+      : nn(0), bw(0), bh(0) {
+      unsigned int i;
+      if (opt.builtin(i)) {
+        if (i >= n_examples)
+          return;
+        int n = example_size(examples[i]);
+        nn = n*n; bw = n; bh = n;
+        givens = IntArgs(nn*nn);
+        for (int r=0; r<nn; r++)
+          for (int c=0; c<nn; c++)
+            givens[r*nn+c] = sudokuField(examples[i], nn, c, r);
+      } else if (opt.is_file()) {
+        // The spec has checked the data
+        Instance::Data d = opt.data();
+        nn = static_cast<int>(d.integer("n"));
+        bw = static_cast<int>(d.integer("box_width"));
+        bh = static_cast<int>(d.integer("box_height"));
+        givens = d.ints("cells");
+      }
+    }
+    /// Whether an instance was found
+    bool valid(void) const {
+      return nn > 0;
+    }
+  };
+
+  /// Print value \a v of a field, with the symbols of the scaled sudoku corpus
+  void print_value(std::ostream& os, int v) {
+    if (v < 10)
+      os << v;
+    else if (v < 36)
+      os << static_cast<char>(v+'A'-10);
+    else if (v == 36)
+      os << '0';
+    else
+      os << v;
+  }
 }
 
 // STATISTICS: example-any

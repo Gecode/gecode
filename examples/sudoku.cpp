@@ -42,6 +42,7 @@
 #include <string>
 #include <cmath>
 #include <cctype>
+#include <cstring>
 
 using namespace Gecode;
 
@@ -50,23 +51,27 @@ using namespace Gecode;
 /**
  * \brief %Example: Solving %Sudoku puzzles using integer constraints
  *
+ * The instance is either the number of a built-in instance or a file in
+ * the format of the scaled sudoku corpus: a line such as
+ * <tt># size=6 box=3x2</tt>, then the rows of the grid with \c . for
+ * blank cells and the symbols \c 1-9, \c A-Z, and \c 0 for the values 1
+ * to 36.
+ *
  * \ingroup Example
  */
 class Sudoku : public Script {
 protected:
-  /// The size of the problem
-  const int n;
+  /// The side of the grid
+  int nn;
   /// Values for the fields
   IntVarArray x;
 public:
 
   /// Constructor
-  Sudoku(const SizeOptions& opt)
-    : Script(opt),
-      n(example_size(examples[opt.size()])),
-      x(*this, n*n*n*n, 1, n*n) {
-
-    const int nn = n*n;
+  Sudoku(const InstanceOptions& opt) : Script(opt) {
+    SudokuInstance si(opt);
+    nn = si.nn;
+    x = IntVarArray(*this, nn*nn, 1, nn);
     Matrix<IntVarArray> m(x, nn, nn);
 
     // Constraints for rows and columns
@@ -75,24 +80,24 @@ public:
       distinct(*this, m.col(i), opt.ipl());
     }
 
-    // Constraints for squares
-    for (int i=0; i<nn; i+=n) {
-      for (int j=0; j<nn; j+=n) {
-        distinct(*this, m.slice(i, i+n, j, j+n), opt.ipl());
+    // Constraints for boxes
+    for (int i=0; i<nn; i+=si.bw) {
+      for (int j=0; j<nn; j+=si.bh) {
+        distinct(*this, m.slice(i, i+si.bw, j, j+si.bh), opt.ipl());
       }
     }
 
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-        if (int v = sudokuField(examples[opt.size()], nn, i, j))
+        if (int v = si.givens[j*nn+i])
           rel(*this, m(i,j), IRT_EQ, v );
 
     branch(*this, x, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
   }
 
   /// Constructor for cloning \a s
-  Sudoku(Sudoku& s) : Script(s), n(s.n) {
+  Sudoku(Sudoku& s) : Script(s), nn(s.nn) {
     x.update(*this, s.x);
   }
 
@@ -106,16 +111,14 @@ public:
   virtual void
   print(std::ostream& os) const {
     os << "  ";
-    for (int i = 0; i<n*n*n*n; i++) {
+    for (int i = 0; i<nn*nn; i++) {
       if (x[i].assigned()) {
-        if (x[i].val()<10)
-          os << x[i] << " ";
-        else
-          os << (char)(x[i].val()+'A'-10) << " ";
+        print_value(os, x[i].val());
+        os << " ";
       }
       else
         os << ". ";
-      if((i+1)%(n*n) == 0)
+      if((i+1)%nn == 0)
         os << std::endl << "  ";
     }
     os << std::endl;
@@ -128,17 +131,21 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("Sudoku");
-  opt.size(0);
+  InstanceOptions opt("Sudoku", instance_spec);
+  opt.instance("0");
   opt.ipl(IPL_DOM);
   opt.solutions(1);
   opt.parse(argc,argv);
-  if (opt.size() >= n_examples) {
-    std::cerr << "Error: size must be between 0 and "
-              << n_examples-1 << std::endl;
+  try {
+    if (!SudokuInstance(opt).valid()) {
+      std::cerr << "Error: instance must be a number between 0 and " << n_examples-1 << " or a file" << std::endl;
+      return 1;
+    }
+  } catch (const Instance::Error& e) {
+    std::cerr << e.what() << std::endl;
     return 1;
   }
-  Script::run<Sudoku,DFS,SizeOptions>(opt);
+  Script::run<Sudoku,DFS,InstanceOptions>(opt);
   return 0;
 }
 

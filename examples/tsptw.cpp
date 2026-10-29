@@ -36,14 +36,15 @@
 #include <gecode/minimodel.hh>
 
 #include <algorithm>
+#include <string>
 
 using namespace Gecode;
 
 /// Instances for TSPTW
 namespace {
 
-  /// TSPTW instance
-  class Instance {
+  /// Built-in TSPTW instance
+  class Builtin {
   public:
     /// Number of nodes, node 0 is the depot
     int n;
@@ -106,12 +107,81 @@ namespace {
   };
 
   /// The instances
-  const Instance instances[] = {
+  const Builtin instances[] = {
     {PA_n, PA_d, PA_w},
     {PB_n, PB_d, PB_w}
   };
   /// Number of instances
-  const unsigned int n_instances = sizeof(instances)/sizeof(Instance);
+  const unsigned int n_instances = sizeof(instances)/sizeof(Builtin);
+
+  /**
+   * \brief Reader spec for TSPTW files
+   *
+   * The format of López-Ibáñez and Blum's collection: the number of nodes
+   * (including the depot), the travel time matrix, and the ready and due
+   * time of each node. See Instance::Spec for the spec language.
+   *
+   * \relates TSPTW
+   */
+  const char* instance_spec = R"(format tsptw
+
+comment "#"
+n: 2..1000
+dist[n][n]: 0..gecode.int_max / 2 / n
+
+type time = 0..gecode.int_max / 2
+repeat n as nodes {
+  each node
+  ready: time
+  due: time
+}
+
+check node.ready <= node.due "the time window of a node is invalid"
+check nodes[0].ready == 0 "the depot (node 0) must open at time 0"
+)";
+
+  /// TSPTW instance
+  class Problem {
+  public:
+    /// Number of nodes, node 0 is the depot (0 if invalid)
+    int n;
+    /// Travel times
+    IntSharedArray d;
+    /// Ready and due time for each node
+    IntSharedArray w;
+    /**
+     * \brief Initialize from the instance in \a opt
+     *
+     * A number selects a built-in instance, anything else is a file.
+     * Throws Instance::Error if the file cannot be read.
+     */
+    Problem(const InstanceOptions& opt) : n(0) {
+      unsigned int b;
+      if (opt.builtin(b)) {
+        if (b >= n_instances)
+          return;
+        n = instances[b].n;
+        d = IntSharedArray(IntArgs(n*n, instances[b].d));
+        w = IntSharedArray(IntArgs(2*n, instances[b].w));
+      } else if (opt.is_file()) {
+        // The spec has checked the data
+        Instance::Data data = opt.data();
+        int m = static_cast<int>(data.integer("n"));
+        IntArgs ready = data.ints("ready"), due = data.ints("due");
+        IntArgs win(2*m);
+        for (int i=0; i<m; i++) {
+          win[2*i] = ready[i]; win[2*i+1] = due[i];
+        }
+        d = IntSharedArray(data.ints("dist"));
+        w = IntSharedArray(win);
+        n = m;
+      }
+    }
+    /// Whether an instance was found
+    bool valid(void) const {
+      return n > 0;
+    }
+  };
 
 }
 
@@ -122,7 +192,8 @@ namespace {
  * service at each customer starts within its time window (waiting is
  * allowed). Minimize the total travel time. The instances are from
  * <a href="https://lopez-ibanez.eu/tsptw-instances">López-Ibáñez and
- * Blum's collection</a>.
+ * Blum's collection</a>. The instance is either the number of a built-in
+ * instance or a file from that collection.
  *
  * The tour is built from the depot one customer at a time. With the
  * experimental heuristic search engines, the minimal total travel time
@@ -135,7 +206,7 @@ namespace {
 class TSPTW : public IntMinimizeScript {
 protected:
   /// The instance
-  const Instance& p;
+  const Problem p;
   /// Customer at each position of the tour
   IntVarArray x;
   /// Position of each customer
@@ -152,13 +223,15 @@ public:
     SEARCH_BAB, SEARCH_ASTAR, SEARCH_CABS
   };
   /// The actual problem
-  TSPTW(const SizeOptions& opt)
-    : IntMinimizeScript(opt), p(instances[opt.size()]),
+  TSPTW(const InstanceOptions& opt)
+    : IntMinimizeScript(opt), p(opt),
       x(*this,p.n-1,1,p.n-1), pos(*this,p.n-1,0,p.n-2),
       c(*this,p.n,0,Int::Limits::max),
       t(*this,p.n-1,0,p.w[1]), total(*this,0,Int::Limits::max) {
     int n = p.n;
-    IntArgs d(n*n,p.d), from(n), to(n), ready(n), due(n);
+    IntArgs d(n*n), from(n), to(n), ready(n), due(n);
+    for (int i=0; i<n*n; i++)
+      d[i] = p.d[i];
     for (int i=0; i<n; i++) {
       from[i] = p.d[i]; to[i] = p.d[i*n];
       ready[i] = p.w[2*i]; due[i] = p.w[2*i+1];
@@ -209,12 +282,21 @@ public:
       k++;
     return k;
   }
-  /// Return the set of customers in the first \a k positions
-  unsigned long long int visited(int k) const {
-    unsigned long long int v = 0;
+  /// Store the customers in the first \a k positions in \a v
+  void visited(int k, Support::BitSet<Region>& v) const {
     for (int i=0; i<k; i++)
-      v |= 1ULL << x[i].val();
-    return v;
+      v.set(static_cast<unsigned int>(x[i].val()));
+  }
+  /// Whether the first \a k positions of this and \a s visit the same customers
+  bool same_visited(const TSPTW& s, int k) const {
+    Region r;
+    Support::BitSet<Region> v(r, static_cast<unsigned int>(p.n));
+    visited(k, v);
+    // Both prefixes visit k different customers, so inclusion is equality
+    for (int i=0; i<k; i++)
+      if (!v.get(static_cast<unsigned int>(s.x[i].val())))
+        return false;
+    return true;
   }
   /// Return the travel time of the first \a k (assigned) positions
   int prefix_cost(int k) const {
@@ -226,15 +308,21 @@ public:
   /// Whether this partial tour dominates \a s
   bool dominates(const TSPTW& s) const {
     int k = prefix();
-    return (k > 0) && (k == s.prefix()) &&
-      (x[k-1].val() == s.x[k-1].val()) && (visited(k) == s.visited(k)) &&
-      (t[k-1].val() <= s.t[k-1].val()) &&
-      (prefix_cost(k) <= s.prefix_cost(k));
+    if ((k == 0) || (k != s.prefix()) || (x[k-1].val() != s.x[k-1].val()))
+      return false;
+    return (t[k-1].val() <= s.t[k-1].val()) && (prefix_cost(k) <= s.prefix_cost(k)) && same_visited(s, k);
   }
   /// Return a key for dominance
   std::size_t key(void) const {
     int k = prefix();
-    std::size_t h = static_cast<std::size_t>(visited(k));
+    Region r;
+    unsigned int n = static_cast<unsigned int>(p.n);
+    Support::BitSet<Region> v(r, n);
+    visited(k, v);
+    // The customers in increasing order, so that equal sets hash equally
+    std::size_t h = 0;
+    for (unsigned int i = v.next(0); i < n; i = v.next(i+1))
+      cmb_hash(h, i);
     cmb_hash(h, k > 0 ? x[k-1].val() : 0);
     return h;
   }
@@ -265,8 +353,8 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("TSPTW");
-  opt.size(0);
+  InstanceOptions opt("TSPTW", instance_spec);
+  opt.instance("0");
   opt.solutions(0);
   opt.search(TSPTW::SEARCH_BAB);
   opt.search(TSPTW::SEARCH_BAB, "bab", "branch and bound");
@@ -275,14 +363,19 @@ main(int argc, char* argv[]) {
   opt.search(TSPTW::SEARCH_CABS, "cabs", "complete anytime beam search");
 #endif
   opt.parse(argc,argv);
-  if (opt.size() >= n_instances) {
-    std::cerr << "Error: size must be between 0 and "
-              << n_instances-1 << std::endl;
+  try {
+    Problem p(opt);
+    if (!p.valid()) {
+      std::cerr << "Error: instance must be a number between 0 and " << n_instances-1 << " or a file" << std::endl;
+      return 1;
+    }
+  } catch (const Instance::Error& e) {
+    std::cerr << e.what() << std::endl;
     return 1;
   }
   switch (opt.search()) {
   case TSPTW::SEARCH_BAB:
-    IntMinimizeScript::run<TSPTW,BAB,SizeOptions>(opt);
+    IntMinimizeScript::run<TSPTW,BAB,InstanceOptions>(opt);
     break;
 #ifdef GECODE_HAS_EXPERIMENTAL
   case TSPTW::SEARCH_ASTAR:
@@ -301,9 +394,9 @@ main(int argc, char* argv[]) {
       };
       opt.guidance(&g);
       if (opt.search() == TSPTW::SEARCH_ASTAR)
-        IntMinimizeScript::run<TSPTW,AStar,SizeOptions>(opt);
+        IntMinimizeScript::run<TSPTW,AStar,InstanceOptions>(opt);
       else
-        IntMinimizeScript::run<TSPTW,CABS,SizeOptions>(opt);
+        IntMinimizeScript::run<TSPTW,CABS,InstanceOptions>(opt);
     }
     break;
 #endif

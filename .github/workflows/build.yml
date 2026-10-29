@@ -248,6 +248,10 @@ jobs:
       shell: bash
       run: bash .github/ci/cmake-example-feature-smoke.sh
 
+    - name: Examples reading instance files
+      shell: bash
+      run: bash .github/ci/instance-example-smoke.sh "$GITHUB_WORKSPACE/build-ninja/bin"
+
     - name: Check
       shell: bash
       run: >
