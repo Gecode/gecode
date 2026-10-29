@@ -31,7 +31,7 @@ Autoconf builds.
 
 ## Download Gecode
 
-Gecode 6.4.0 is distributed as source code. Source archives can be downloaded from
+Gecode 6.5.0 is distributed as source code. Source archives can be downloaded from
 [GitHub](https://github.com/Gecode/gecode/releases)
 or
 [Gecode's webpages](https://gecode.github.io/download.html).
