@@ -132,7 +132,7 @@ def main() -> int:
                 l = lines[idx]
                 idx += 1
                 l = l.replace("%Gecode", "Gecode")
-                if re.search(r"\[ENTRY\]", l):
+                if re.search(r"\[ENTRY\]", l) or re.search(r"\[RELEASE\]", l):
                     current = l
                     break
                 info = info + " " + l

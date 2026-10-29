@@ -144,7 +144,7 @@ def main() -> int:
             while idx < len(lines):
                 l = lines[idx]
                 idx += 1
-                if re.search(r"\[ENTRY\]", l):
+                if re.search(r"\[ENTRY\]", l) or re.search(r"\[RELEASE\]", l):
                     current = l
                     break
                 info = info + l
