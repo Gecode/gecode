@@ -34,7 +34,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-15, ubuntu-latest]
+        include:
+          - os: macos-15
+            configure_args: ""
+          - os: ubuntu-latest
+            configure_args: --enable-experimental
 
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -69,7 +73,7 @@ jobs:
 
     - name: Configure
       shell: bash
-      run: ./configure --enable-experimental
+      run: ./configure ${{ matrix.configure_args }}
 
     - name: Build
       shell: bash
@@ -683,7 +687,7 @@ jobs:
       shell: msys2 {0}
       run: |
         export PATH="$UV_DIR:$PATH"
-        CC=gcc CXX=g++ ./configure --with-host-os=Windows --disable-qt --disable-gist --disable-mpfr --enable-experimental
+        CC=gcc CXX=g++ ./configure --with-host-os=Windows --disable-qt --disable-gist --disable-mpfr
 
     - name: Build
       shell: msys2 {0}
