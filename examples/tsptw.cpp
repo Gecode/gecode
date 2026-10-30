@@ -187,7 +187,8 @@ public:
     element(*this, to, x[n-2], c[n-1]);
     rel(*this, t[n-2] + c[n-1] <= due[0]);
     linear(*this, c, IRT_EQ, total);
-    // Each branch picks the next customer, as dominance compares prefixes
+    // Assign the next customer on every alternative: CABS prefix dominance
+    // does not account for value exclusions on the unassigned suffix.
     branch(*this, x, INT_VAR_NONE(), INT_VALUES_MIN());
   }
   /// Return cost
