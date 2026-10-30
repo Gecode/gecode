@@ -178,8 +178,15 @@ public:
           rel(*this, pos[j-1] < pos[k-1]);
     element(*this, from, x[0], c[0]);
     rel(*this, t[0] == max(element(ready,x[0]), c[0]));
+    // Travel time between consecutive customers
+    TupleSet legs(3);
+    for (int j=1; j<n; j++)
+      for (int k=1; k<n; k++)
+        if (j != k)
+          legs.add({j, k, d[j*n+k]});
+    legs.finalize();
     for (int i=1; i<n-1; i++) {
-      element(*this, d, x[i], n, x[i-1], n, c[i]);
+      extensional(*this, IntVarArgs({x[i-1], x[i], c[i]}), legs);
       rel(*this, t[i] == max(element(ready,x[i]), t[i-1]+c[i]));
     }
     for (int i=0; i<n-1; i++)

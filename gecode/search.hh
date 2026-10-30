@@ -1187,7 +1187,13 @@ namespace Gecode { namespace Search {
    * the second space is matched by a completion of the first that is not
    * worse. It must be transitive. CABS uses it to prune nodes in the same
    * layer. If a dominance key is given, only nodes with equal keys are
-   * compared.
+   * compared. Without a key, every node offered to the beam is compared
+   * with every node already in it.
+   *
+   * A* and CABS clone and propagate every child of every node they
+   * expand, also close to the root where domains are large. The cost of a
+   * node is thus a clone plus propagation at shallow depth, so models
+   * should use propagators that stay cheap there.
    *
    * Callbacks must only read the space passed to them. With several threads
    * they can run concurrently.
