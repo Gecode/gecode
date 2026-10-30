@@ -109,7 +109,8 @@ namespace Gecode { namespace Search { namespace Par {
         delete runners[i];
       heap.free<Runner*>(runners,n);
       runners = nullptr;
-      { Support::Lock lock(mutex); shutdown = false; }
+      // All started runners have terminated, so there are no concurrent readers.
+      shutdown = false;
       throw;
     }
   }
