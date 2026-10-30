@@ -1419,6 +1419,31 @@ AC_DEFUN([AC_GECODE_GIST],
 
 dnl
 dnl Macro:
+dnl   AC_GECODE_EXPERIMENTAL
+dnl
+dnl Description:
+dnl   Produces the configure switch --enable-experimental
+dnl   for compiling experimental preview APIs.
+dnl
+dnl Authors:
+dnl   Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+AC_DEFUN([AC_GECODE_EXPERIMENTAL],
+  [
+  AC_ARG_ENABLE([experimental],
+    AS_HELP_STRING([--enable-experimental],
+      [build experimental preview APIs @<:@default=no@:>@]),
+    [], [enable_experimental=no])
+  AC_MSG_CHECKING(whether to build experimental preview APIs)
+  AS_CASE([$enable_experimental],
+    [yes], [AC_DEFINE([GECODE_HAS_EXPERIMENTAL],[],[Whether experimental preview APIs are available])],
+    [no], [],
+    [AC_MSG_ERROR([--enable-experimental accepts only yes or no])])
+  AC_MSG_RESULT([$enable_experimental])
+  AC_SUBST([enable_experimental])
+])
+
+dnl
+dnl Macro:
 dnl   AC_GECODE_CBS
 dnl
 dnl Description:

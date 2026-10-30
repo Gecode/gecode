@@ -3,7 +3,8 @@
 ## Purpose
 
 `Search::WorkerControl` lets an external scheduler change how many workers a
-running DFS or BAB engine may use. A portfolio with a fixed thread budget can
+running DFS or BAB engine may use. Experimental AStar and CABS engines also
+support worker control. A portfolio with a fixed thread budget can
 move workers among its engines at runtime.
 
 The engine still starts with a fixed maximum:
@@ -26,8 +27,8 @@ control.request(1); // Resume
 Gecode resolves the `threads` option when it constructs the engine. The result
 is the fixed worker capacity. A request must be between zero and that capacity,
 inclusive. Zero pauses the engine without discarding its search state.
-This also applies when the resolved capacity is one: sequential DFS and BAB
-wait at search boundaries until the control resumes them.
+This also applies when the resolved capacity is one: sequential DFS, BAB,
+AStar, and CABS wait at search boundaries until the control resumes them.
 Pausing requires a build with thread support. Without thread support, attaching
 an initially paused control or calling `request(0)` raises
 `Search::InvalidWorkerRequest`; controls must be used from one thread.
@@ -80,8 +81,9 @@ An empty default-constructed handle means that worker adjustment is disabled.
 Calling `request` on an empty handle raises
 `Search::UninitializedWorkerControl`.
 
-A shared identity can be bound to only one leaf engine at a time. It cannot be
-shared by two DFS/BAB engines or attached directly to an enclosing meta-engine.
+A shared identity can be bound to only one leaf engine at a time (DFS, BAB,
+AStar, or CABS). It cannot be shared by two engines or attached directly to an
+enclosing meta-engine.
 Ordinary reuse for a replacement engine after destruction is also rejected.
 These uses raise `Search::WorkerControlInUse`.
 

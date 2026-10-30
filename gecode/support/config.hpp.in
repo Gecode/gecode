@@ -67,6 +67,9 @@
 /* Whether CPProfiler support available */
 #undef GECODE_HAS_CPPROFILER
 
+/* Whether experimental preview APIs are available */
+#undef GECODE_HAS_EXPERIMENTAL
+
 /* Whether to build FLOAT variables */
 #undef GECODE_HAS_FLOAT_VARS
 

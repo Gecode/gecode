@@ -80,6 +80,21 @@ namespace Gecode { namespace Search {
     /// Initialize with location \a l
     WorkerControlInUse(const char* l);
   };
+#ifdef GECODE_HAS_EXPERIMENTAL
+  /// %Exception: Missing guidance for heuristic search
+  class GECODE_SEARCH_EXPORT UninitializedGuidance : public Exception {
+  public:
+    /// Initialize with location \a l
+    UninitializedGuidance(const char* l);
+  };
+  /// %Exception: Search engine does not support tracing
+  class GECODE_SEARCH_EXPORT UnsupportedTracer : public Exception {
+  public:
+    /// Initialize with location \a l
+    UnsupportedTracer(const char* l);
+  };
+#endif
+
   //@}
 }}
 

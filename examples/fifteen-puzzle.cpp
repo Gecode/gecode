@@ -34,8 +34,10 @@
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+#include <gecode/search.hh>
 
 #include <algorithm>
+#include <cstdint>
 #include <array>
 #include <cstdlib>
 #include <iomanip>
@@ -52,6 +54,7 @@ class PuzzleOptions : public Options {
 public:
   enum { MODEL_OPEN, MODEL_FIXED };
   enum { BRANCH_MIN, BRANCH_MANHATTAN };
+  enum { SEARCH_BAB, SEARCH_ASTAR, SEARCH_CABS };
   PuzzleOptions(void)
     : Options("FifteenPuzzle"),
       _scramble("scramble","number of random slides from the goal",12),
@@ -65,6 +68,12 @@ public:
     branching(BRANCH_MIN,"min","try the lowest blank position first");
     branching(BRANCH_MANHATTAN,"manhattan",
               "try the slide with least Manhattan distance first");
+    search(SEARCH_BAB);
+    search(SEARCH_BAB,"bab","depth-first branch and bound");
+#ifdef GECODE_HAS_EXPERIMENTAL
+    search(SEARCH_ASTAR,"astar","A* with Manhattan distance");
+    search(SEARCH_CABS,"cabs","complete anytime beam search");
+#endif
     solutions(0);
     seed(1);
   }
@@ -222,6 +231,8 @@ post_goal(Home home, const IntVarArgs& tiles, IntVar length,
  * Each new board uses the same slide and goal constraints as the fixed
  * representation. Propagation determines how much of the path is constructed;
  * the initial Manhattan distance bounds the number of moves from below.
+ * With A* and CABS, the moves so far plus the Manhattan distance of the
+ * current board is the bound.
  *
  * The goal closes the path. Length counts states including the start, so
  * branch and bound minimizes moves by minimizing length minus one.
@@ -284,6 +295,19 @@ public:
     for (int j=0; j<16; j++)
       result[j] = tiles[16*i+j];
     return result;
+  }
+  int
+  depth(void) const {
+    int i = 0;
+    while (i+1 < path.known_length() && path[i+1].assigned())
+      i++;
+    return i;
+  }
+  int
+  bound(void) const {
+    const int g = depth();
+    const int h = manhattan(values(state(g)));
+    return std::max(g+h,path.length().min()-1);
   }
   void
   constrain(const Space& solution) override {
@@ -363,6 +387,12 @@ public:
       i++;
     return i;
   }
+  int
+  bound(void) const {
+    const int g = depth();
+    const int h = manhattan(values(state(g)));
+    return std::max(g+h,length.min()-1);
+  }
   void
   constrain(const Space& solution) override {
     const FixedPuzzle& best = static_cast<const FixedPuzzle&>(solution);
@@ -377,6 +407,32 @@ public:
   }
 };
 
+template<class Model>
+static void
+run(PuzzleOptions& opt) {
+  switch (opt.search()) {
+  case PuzzleOptions::SEARCH_BAB:
+    Script::run<Model,BAB,PuzzleOptions>(opt);
+    break;
+#ifdef GECODE_HAS_EXPERIMENTAL
+  case PuzzleOptions::SEARCH_ASTAR:
+  case PuzzleOptions::SEARCH_CABS:
+    {
+      Search::HeuristicGuidance guidance(Search::HeuristicGuidance::MINIMIZE,
+        [](const Space& home) -> std::int64_t {
+          return static_cast<const Model&>(home).bound();
+        });
+      opt.guidance(&guidance);
+      if (opt.search() == PuzzleOptions::SEARCH_ASTAR)
+        Script::run<Model,AStar,PuzzleOptions>(opt);
+      else
+        Script::run<Model,CABS,PuzzleOptions>(opt);
+    }
+    break;
+#endif
+  }
+}
+
 /** \brief Main-function
  *  \relates OpenPuzzle
  */
@@ -389,9 +445,9 @@ main(int argc, char* argv[]) {
     print_board(std::cout,initial_board(opt));
   }
   if (opt.model() == PuzzleOptions::MODEL_OPEN)
-    Script::run<OpenPuzzle,BAB,PuzzleOptions>(opt);
+    run<OpenPuzzle>(opt);
   else
-    Script::run<FixedPuzzle,BAB,PuzzleOptions>(opt);
+    run<FixedPuzzle>(opt);
   return 0;
 }
 

@@ -326,6 +326,17 @@ namespace Gecode {
     return _threads.value();
   }
 
+#ifdef GECODE_HAS_EXPERIMENTAL
+  inline void
+  Options::guidance(const Search::HeuristicGuidance* g) {
+    _guidance = g;
+  }
+  inline const Search::HeuristicGuidance*
+  Options::guidance(void) const {
+    return _guidance;
+  }
+#endif
+
   inline void
   Options::c_d(unsigned int d) {
     _c_d.value(d);

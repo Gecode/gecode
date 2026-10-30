@@ -61,6 +61,7 @@ set(GECODE_EXAMPLE_SOURCES
   sudoku-advanced.cpp
   sudoku.cpp
   tsp.cpp
+  tsptw.cpp
   warehouses.cpp
   word-square.cpp)
 

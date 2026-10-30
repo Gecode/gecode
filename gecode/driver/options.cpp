@@ -650,6 +650,9 @@ namespace Gecode {
       _interrupt("interrupt","whether to catch Ctrl-C (true) or not (false)",
                  true),
 
+#ifdef GECODE_HAS_EXPERIMENTAL
+      _guidance(nullptr),
+#endif
       _mode("mode","how to execute script",SM_SOLUTION),
       _samples("samples","how many samples (time mode)",1),
       _iterations("iterations","iterations per sample (time mode)",1),

@@ -85,6 +85,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Statistics statistics(void) const;
     /// Check whether slave has been stopped
     bool stopped(void) const;
+    /// Check whether slave stopped at a local limit
+    bool limited(void) const;
     /// Constrain with better solution \a b
     void constrain(const Space& b);
     /// Perform one run
@@ -111,6 +113,8 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned int cur;
     /// Whether a slave has been stopped
     bool slave_stop;
+    /// Whether a slave stopped at a local limit
+    bool incomplete;
   public:
     /// Initialize
     PBS(Engine** slaves, Stop** stops, unsigned int n,

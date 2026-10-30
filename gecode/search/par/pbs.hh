@@ -101,6 +101,8 @@ namespace Gecode { namespace Search { namespace Par {
     Statistics statistics(void) const;
     /// Check whether slave has been stopped
     bool stopped(void) const;
+    /// Check whether slave stopped at a local limit
+    bool limited(void) const;
     /// Return the completion terminator
     virtual Support::Terminator* terminator(void) const;
     /// Wait for the slave to complete its current run
@@ -176,6 +178,8 @@ namespace Gecode { namespace Search { namespace Par {
     unsigned int n_active;
     /// Whether a slave has been stopped
     std::atomic<bool> slave_stop;
+    /// Whether a slave stopped at a local limit
+    bool incomplete;
     /// Shared stop flag
     std::atomic<bool> tostop;
     /// Collect solutions in this

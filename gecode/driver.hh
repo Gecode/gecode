@@ -446,6 +446,10 @@ namespace Gecode {
     Driver::UnsignedIntOption _nogoods_limit; ///< Limit for no-good extraction
     Driver::DoubleOption      _relax;         ///< Probability to relax variable
     Driver::BoolOption        _interrupt;     ///< Whether to catch SIGINT
+#ifdef GECODE_HAS_EXPERIMENTAL
+    /// Guidance for heuristic search
+    const Search::HeuristicGuidance* _guidance;
+#endif
     //@}
 
     /// \name Execution options
@@ -667,6 +671,16 @@ namespace Gecode {
     unsigned int profiler_port(void) const;
 #endif
     //@}
+
+#ifdef GECODE_HAS_EXPERIMENTAL
+    /// \name Heuristic search options
+    //@{
+    /// Set guidance for heuristic search (not copied)
+    void guidance(const Search::HeuristicGuidance* g);
+    /// Return guidance for heuristic search
+    const Search::HeuristicGuidance* guidance(void) const;
+    //@}
+#endif
 
 #ifdef GECODE_HAS_GIST
     /// Helper class storing Gist inspectors
