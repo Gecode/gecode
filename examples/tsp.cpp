@@ -39,6 +39,8 @@
 #include <gecode/minimodel.hh>
 
 #include <algorithm>
+#include <cmath>
+#include <string>
 
 using namespace Gecode;
 
@@ -167,11 +169,18 @@ namespace {
   /// Problem instance
   class Problem {
   private:
-    const int  _n; ///< Size
-    const int* _d; ///< Distances
+    int  _n;            ///< Size
+    IntSharedArray _s;  ///< Distances read from a file
+    const int* _d;      ///< Distances
   public:
+    /// Initialize as invalid problem instance
+    Problem(void);
     /// Initialize problem instance
     Problem(const int n, const int* d);
+    /// Initialize problem instance with distances \a d read from a file
+    Problem(const int n, const IntArgs& d);
+    /// Whether the problem instance is valid
+    bool valid(void) const;
     /// Return size of instance
     int size(void) const;
     /// Return distance between node \a i and \a j
@@ -183,8 +192,18 @@ namespace {
   };
 
   inline
+  Problem::Problem(void)
+    : _n(0), _d(nullptr) {}
+  inline
   Problem::Problem(const int n, const int* d)
     : _n(n), _d(d) {}
+  inline
+  Problem::Problem(const int n, const IntArgs& d)
+    : _n(n), _s(d), _d(&_s[0]) {}
+  inline bool
+  Problem::valid(void) const {
+    return _n > 0;
+  }
   inline int
   Problem::size(void) const {
     return _n;
@@ -213,6 +232,138 @@ namespace {
   Problem ps[] = {PA,PB,PC,PD};
   const unsigned int ps_n = sizeof(ps) / sizeof(Problem);
 
+  /**
+   * \brief Reader spec for TSPLIB files
+   *
+   * Header keys and sections may come in any order, except that
+   * \c DIMENSION, which gives the length of a section, must come before
+   * the sections. \c COMMENT lines are skipped. Explicit edge weights may
+   * be given in any of the TSPLIB matrix layouts. See Instance::Spec for
+   * the spec language.
+   *
+   * \relates TSP
+   */
+  const char* instance_spec = R"(format tsplib
+
+comment "COMMENT"
+sections until "EOF" {
+  "NAME : {name:rest}" optional
+  "TYPE : {type:word}" optional
+  "DIMENSION : {n:2..46340}"
+  "EDGE_WEIGHT_TYPE : {edge_weight_type:word}" optional
+  "EDGE_WEIGHT_FORMAT : {edge_weight_format:word}" optional
+  "NODE_COORD_TYPE : {node_coord_type:word}" optional
+  "DISPLAY_DATA_TYPE : {display_data_type:word}" optional
+  "NODE_COORD_SECTION" optional {
+    repeat n { node: int  x: float  y: float }
+  }
+  "EDGE_WEIGHT_SECTION" optional {
+    if !defined(edge_weight_format) { let edge_weight_format = "FULL_MATRIX" }
+    weight[n][n]: 0..gecode.int_max / n layout edge_weight_format
+  }
+  "DISPLAY_DATA_SECTION" optional {
+    repeat n { display_node: int  display_x: float  display_y: float }
+  }
+}
+if !defined(edge_weight_type) { let edge_weight_type = "EXPLICIT" }
+
+if edge_weight_type == "EXPLICIT" {
+  check defined(weight) "no EDGE_WEIGHT_SECTION"
+  check size(weight) == n "edge weights do not match DIMENSION"
+} else {
+  check edge_weight_type == "EUC_2D" || edge_weight_type == "CEIL_2D" || edge_weight_type == "ATT" ||
+        edge_weight_type == "GEO" "EDGE_WEIGHT_TYPE must be EXPLICIT, EUC_2D, CEIL_2D, ATT, or GEO"
+  check defined(x) "no NODE_COORD_SECTION"
+  check size(x) == n "coordinates do not match DIMENSION"
+  check x >= -1e9 && x <= 1e9 && y >= -1e9 && y <= 1e9 "coordinates must be between -1e9 and 1e9"
+}
+)";
+
+  /// Nearest integer as in the TSPLIB documentation
+  long long int nint(double x) {
+    return static_cast<long long int>(x + 0.5);
+  }
+
+  /// Latitude or longitude in radians of TSPLIB GEO coordinate \a x
+  double geo(double x) {
+    const double pi = 3.141592;
+    // Truncation, as in Concorde: the TSPLIB documentation says nint,
+    // which is wrong for coordinates with 30 minutes or more
+    double deg = std::trunc(x);
+    double min = x - deg;
+    return pi * (deg + 5.0 * min / 3.0) / 180.0;
+  }
+
+  /// Return the error \a m for TSPLIB file \a file
+  Instance::Error error(const std::string& file, const std::string& m) {
+    return Instance::Error(file + ": " + m);
+  }
+
+  /**
+   * \brief Return the distance matrix of TSPLIB instance \a d from \a file
+   *
+   * Explicit edge weights are returned as given. Distances of the types
+   * \c EUC_2D, \c CEIL_2D, \c ATT, and \c GEO follow the rounding rules of
+   * the TSPLIB documentation. Throws Instance::Error if the instance is not
+   * usable.
+   */
+  IntArgs distances(const Instance::Data& d, const std::string& file) {
+    // The spec has checked the data
+    int n = static_cast<int>(d.integer("n"));
+    std::string type = d.text("edge_weight_type");
+    if (type == "EXPLICIT")
+      return d.ints("weight");
+    ArgArray<double> x = d.numbers("x"), y = d.numbers("y");
+    IntArgs dist(n*n);
+    for (int i=0; i<n; i++)
+      for (int j=0; j<n; j++) {
+        double dx = x[i]-x[j], dy = y[i]-y[j];
+        // With coordinates of at most 1e9, all distances are below 1e10
+        long long int v;
+        if (i == j) {
+          v = 0;
+        } else if (type == "EUC_2D") {
+          v = nint(std::sqrt(dx*dx + dy*dy));
+        } else if (type == "CEIL_2D") {
+          v = static_cast<long long int>(std::ceil(std::sqrt(dx*dx + dy*dy)));
+        } else if (type == "ATT") {
+          double r = std::sqrt((dx*dx + dy*dy) / 10.0);
+          long long int t = nint(r);
+          v = (static_cast<double>(t) < r) ? t+1 : t;
+        } else {
+          // GEO, the last type that the spec accepts
+          const double rrr = 6378.388;
+          double q1 = std::cos(geo(y[i]) - geo(y[j]));
+          double q2 = std::cos(geo(x[i]) - geo(x[j]));
+          double q3 = std::cos(geo(x[i]) + geo(x[j]));
+          // Rounding can take the argument slightly outside [-1,1]
+          double a = std::max(-1.0, std::min(1.0, 0.5*((1.0+q1)*q2 - (1.0-q1)*q3)));
+          v = static_cast<long long int>(rrr * std::acos(a) + 1.0);
+        }
+        // The tour cost adds n distances
+        if (v > Int::Limits::max / n)
+          throw error(file, "distance too large");
+        dist[i*n+j] = static_cast<int>(v);
+      }
+    return dist;
+  }
+
+  /**
+   * \brief Return the problem instance in \a opt
+   *
+   * A number selects a built-in instance, anything else is a TSPLIB
+   * file. Throws Instance::Error if the file cannot be read.
+   */
+  Problem problem(const InstanceOptions& opt) {
+    unsigned int i;
+    if (opt.builtin(i))
+      return (i < ps_n) ? ps[i] : Problem();
+    if (!opt.is_file())
+      return Problem();
+    Instance::Data d = opt.data();
+    return Problem(static_cast<int>(d.integer("n")), distances(d, opt.instance()));
+  }
+
 }
 
 /**
@@ -220,6 +371,9 @@ namespace {
  *
  * Simple travelling salesman problem instances. Just meant
  * as a test for circuit.
+ *
+ * The instance is either the number of a built-in instance or a TSPLIB
+ * file with explicit edge weights or coordinates.
  *
  * \ingroup Example
  *
@@ -234,9 +388,9 @@ protected:
   IntVar      total;
 public:
   /// Actual model
-  TSP(const SizeOptions& opt)
+  TSP(const InstanceOptions& opt)
     : IntMinimizeScript(opt),
-      p(ps[opt.size()]),
+      p(problem(opt)),
       succ(*this, p.size(), 0, p.size()-1),
       total(*this, 0, p.max()) {
     int n = p.size();
@@ -313,18 +467,23 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("TSP");
+  InstanceOptions opt("TSP", instance_spec);
+  opt.instance("0");
   opt.solutions(0);
   opt.ipl(IPL_DOM);
   opt.parse(argc,argv);
 
-  if (opt.size() >= ps_n) {
-    std::cerr << "Error: size must be between 0 and "
-              << ps_n-1 << std::endl;
+  try {
+    if (!problem(opt).valid()) {
+      std::cerr << "Error: instance must be a number between 0 and " << ps_n-1 << " or a TSPLIB file" << std::endl;
+      return 1;
+    }
+  } catch (const Instance::Error& e) {
+    std::cerr << e.what() << std::endl;
     return 1;
   }
 
-  IntMinimizeScript::run<TSP,BAB,SizeOptions>(opt);
+  IntMinimizeScript::run<TSP,BAB,InstanceOptions>(opt);
   return 0;
 }
 

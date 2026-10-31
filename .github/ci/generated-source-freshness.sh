@@ -191,9 +191,13 @@ fi
 
 # Copy the current tracked worktree content, including local tracked changes,
 # without copying build products or allowing generators to touch the source.
+# The copy goes through an archive file: in a pipe, bsdtar may stop reading
+# at the end-of-archive marker before the writer has written its final
+# padding, which fails the writer with a write error.
 git -C "$repo_root" ls-files -z |
-  tar -C "$repo_root" --null -T - -cf - |
-  tar -C "$source_copy" -xf -
+  tar -C "$repo_root" --null -T - -cf "$workspace/source.tar"
+tar -C "$source_copy" -xf "$workspace/source.tar"
+rm -f -- "$workspace/source.tar"
 
 vis_files=(
   ./gecode/int/var-imp/int.vis

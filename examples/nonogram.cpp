@@ -35,6 +35,7 @@
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
+#include <string>
 
 using namespace Gecode;
 
@@ -44,6 +45,70 @@ namespace {
   extern const int* specs[];
   /// Number of specifications
   extern const unsigned int n_examples;
+
+  /**
+   * \brief Reader spec for nonogram files
+   *
+   * The \c .non format exported by webpbn.com: keyword lines such as
+   * <tt>width 20</tt> and <tt>height 15</tt>, then \c rows and
+   * \c columns, each followed by one line of comma-separated clues per row
+   * or column, where \c 0 stands for an empty line. Other keywords
+   * (\c title, \c by, \c copyright, \c goal, ...) are ignored. See
+   * Instance::Spec for the spec language.
+   *
+   * \relates Nonogram
+   */
+  const char* instance_spec = R"(format nonogram
+
+separators ","
+sections skip other {
+  "width {width:1..}"
+  "height {height:1..}"
+  "rows" { repeat height { list row: 0.. until eol } }
+  "columns" { repeat width { list col: 0.. until eol } }
+}
+
+check height <= 1000000 / width "the board must have at most a million fields"
+check size(row) == height && size(col) == width "the numbers of rows and columns differ from the board size"
+check count(row) <= 1 || min(row) > 0 "a 0 must be the only clue of its row"
+check count(col) <= 1 || min(col) > 0 "a 0 must be the only clue of its column"
+check sum(row) + count(row) - 1 <= width "the clues of a row do not fit into the width of the board"
+check sum(col) + count(col) - 1 <= height "the clues of a column do not fit into the height of the board"
+)";
+
+  /**
+   * \brief Return the specification for the instance in \a opt
+   *
+   * A number selects a built-in specification, anything else is a file
+   * that is converted into the same layout and stored in \a file. Returns
+   * null if there is no such instance. Throws Instance::Error if the file
+   * cannot be read.
+   */
+  const int* specification(const InstanceOptions& opt, IntSharedArray& file) {
+    unsigned int i;
+    if (opt.builtin(i))
+      return (i < n_examples) ? specs[i] : nullptr;
+    if (!opt.is_file())
+      return nullptr;
+    // The spec has checked the data, so clues are at most a million
+    Instance::Data d = opt.data();
+    int w = static_cast<int>(d.integer("width")), h = static_cast<int>(d.integer("height"));
+    // Width and height, then columns and rows: number of clues and clues
+    IntArgs s;
+    s << w << h;
+    for (int k=0; k<w+h; k++) {
+      bool column = (k < w);
+      IntArgs line = column ? d.ints("col", {k}) : d.ints("row", {k-w});
+      IntArgs clues;
+      for (int c : line)
+        if (c > 0)
+          clues << c;
+      s << clues.size();
+      s << clues;
+    }
+    file = IntSharedArray(s);
+    return &file[0];
+  }
 
 }
 
@@ -58,6 +123,9 @@ namespace {
  *
  * See problem 12 at http://www.csplib.org/.
  *
+ * The instance is either the number of a built-in specification or a
+ * file in the \c .non format exported by webpbn.com.
+ *
  * Note that "Modeling and Programming with Gecode" uses this example
  * as a case study.
  *
@@ -66,6 +134,8 @@ namespace {
  */
 class Nonogram : public Script {
 protected:
+  /// Specification read from a file
+  IntSharedArray file;
   /// Specification to be used
   const int* spec;
   /// Fields of board
@@ -104,8 +174,8 @@ public:
   };
 
   /// Construction of the model.
-  Nonogram(const SizeOptions& opt)
-    : Script(opt), spec(specs[opt.size()]), b(*this,width()*height(),0,1) {
+  Nonogram(const InstanceOptions& opt)
+    : Script(opt), spec(specification(opt,file)), b(*this,width()*height(),0,1) {
     Matrix<BoolVarArray> m(b, width(), height());
 
     {
@@ -167,7 +237,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Nonogram(Nonogram& s) : Script(s), spec(s.spec) {
+  Nonogram(Nonogram& s) : Script(s), file(s.file), spec(s.spec) {
     b.update(*this, s.b);
   }
 
@@ -197,20 +267,25 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("Nonogram");
-  opt.size(8);
+  InstanceOptions opt("Nonogram", instance_spec);
+  opt.instance("8");
   opt.branching(Nonogram::BRANCH_AFC);
   opt.branching(Nonogram::BRANCH_NONE, "none",
                 "Branch on rows/columns in order");
   opt.branching(Nonogram::BRANCH_AFC, "afc",
                 "Use AFC for branching");
   opt.parse(argc,argv);
-  if (opt.size() >= n_examples) {
-    std::cerr << "Error: size must be between 0 and "
-              << n_examples-1 << std::endl;
+  try {
+    IntSharedArray file;
+    if (specification(opt,file) == nullptr) {
+      std::cerr << "Error: instance must be a number between 0 and " << n_examples-1 << " or a file" << std::endl;
+      return 1;
+    }
+  } catch (const Instance::Error& e) {
+    std::cerr << e.what() << std::endl;
     return 1;
   }
-  Script::run<Nonogram,DFS,SizeOptions>(opt);
+  Script::run<Nonogram,DFS,InstanceOptions>(opt);
   return 0;
 }
 

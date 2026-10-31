@@ -43,19 +43,35 @@
 #include <gecode/set.hh>
 #endif
 
+#include <algorithm>
 #include <string>
 #include <cmath>
 #include <cctype>
+#include <cstring>
 
 using namespace Gecode;
 
 #include <examples/sudoku-instances.hh>
 
-/// Base class for %Sudoku puzzles
+/**
+ * \brief Base class for %Sudoku puzzles
+ *
+ * The instance is either the number of a built-in instance or a file in
+ * the format of the scaled sudoku corpus: a line such as
+ * <tt># size=6 box=3x2</tt>, then the rows of the grid with \c . for
+ * blank cells and the symbols \c 1-9, \c A-Z, and \c 0 for the values 1
+ * to 36.
+ */
 class Sudoku : public Script {
 protected:
-  /// The size of the problem
-  const int n;
+  /// The side of the grid
+  int nn;
+  /// The width of a box
+  int bw;
+  /// The height of a box
+  int bh;
+  /// Given values in row-major order (0 for blank)
+  IntSharedArray givens;
 public:
 #ifdef GECODE_HAS_SET_VARS
   /// Model variants
@@ -75,12 +91,16 @@ public:
   };
 
   /// Constructor
-  Sudoku(const SizeOptions& opt)
-    : Script(opt),
-      n(example_size(examples[opt.size()])) {}
+  Sudoku(const InstanceOptions& opt)
+    : Script(opt) {
+    SudokuInstance si(opt);
+    nn = si.nn; bw = si.bw; bh = si.bh;
+    givens = IntSharedArray(si.givens);
+  }
 
   /// Constructor for cloning \a s
-  Sudoku(Sudoku& s) : Script(s), n(s.n) {}
+  Sudoku(Sudoku& s)
+    : Script(s), nn(s.nn), bw(s.bw), bh(s.bh), givens(s.givens) {}
 
 };
 
@@ -102,9 +122,8 @@ public:
   };
 #endif
   /// Constructor
-  SudokuInt(const SizeOptions& opt)
-    : Sudoku(opt), x(*this, n*n*n*n, 1, n*n) {
-    const int nn = n*n;
+  SudokuInt(const InstanceOptions& opt)
+    : Sudoku(opt), x(*this, nn*nn, 1, nn) {
     Matrix<IntVarArray> m(x, nn, nn);
 
     // Constraints for rows and columns
@@ -113,56 +132,31 @@ public:
       distinct(*this, m.col(i), opt.ipl());
     }
 
-    // Constraints for squares
-    for (int i=0; i<nn; i+=n) {
-      for (int j=0; j<nn; j+=n) {
-        distinct(*this, m.slice(i, i+n, j, j+n), opt.ipl());
+    // Constraints for boxes
+    for (int i=0; i<nn; i+=bw) {
+      for (int j=0; j<nn; j+=bh) {
+        distinct(*this, m.slice(i, i+bw, j, j+bh), opt.ipl());
       }
     }
 
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-        if (int v = sudokuField(examples[opt.size()], nn, i, j))
+        if (int v = givens[j*nn+i])
           rel(*this, m(i,j), IRT_EQ, v );
 
 #ifdef GECODE_HAS_SET_VARS
     if (opt.propagation() == PROP_SAME) {
-      // Implied constraints linking squares and rows
-      for (int b=0; b<n; b++) {
-        int b1c = 0;
-        int b2c = 0;
-        IntVarArgs bc1(nn-n);
-        IntVarArgs bc2(nn-n);
-        IntVarArgs br1(nn-n);
-        IntVarArgs br2(nn-n);
-        for (int i=0; i<n; i++)
-          for (int j=0; j<n; j++) {
-            b1c = 0; b2c = 0;
-            for (int k=0; k<n; k++) {
-              if (k != j) {
-                IntVarArgs bc1s = block_col(m, b, i, k);
-                IntVarArgs br1s = block_row(m, b, i, k);
-                for (int count=0; count<n; count++) {
-                  bc1[b1c] = bc1s[count];
-                  br1[b1c] = br1s[count];
-                  ++b1c;
-                }
-              }
-              if (k != i) {
-                IntVarArgs bc2s = block_col(m, b, k, j);
-                IntVarArgs br2s = block_row(m, b, k, j);
-                for (int count=0; count<n; count++) {
-                  bc2[b2c] = bc2s[count];
-                  br2[b2c] = br2s[count];
-                  ++b2c;
-                }
-              }
-            }
-            same(*this, nn, bc1, bc2);
-            same(*this, nn, br1, br2);
-          }
-      }
+      // Implied constraints linking boxes with columns and rows: the
+      // fields of a line outside a box take the values that the fields of
+      // the box outside the line take
+      for (int l=0; l<nn; l++)
+        for (int j=0; j<std::max(bw,bh); j++) {
+          if (j < bw)
+            same(*this, nn, column_outside_box(m, l, j), box_outside_column(m, l, j));
+          if (j < bh)
+            same(*this, nn, row_outside_box(m, l, j), box_outside_row(m, l, j));
+        }
     }
 #endif
     if (opt.branching() == BRANCH_NONE) {
@@ -193,16 +187,14 @@ public:
   virtual void
   print(std::ostream& os) const {
     os << "  ";
-    for (int i = 0; i<n*n*n*n; i++) {
+    for (int i = 0; i<nn*nn; i++) {
       if (x[i].assigned()) {
-        if (x[i].val()<10)
-          os << x[i] << " ";
-        else
-          os << (char)(x[i].val()+'A'-10) << " ";
+        print_value(os, x[i].val());
+        os << " ";
       }
       else
         os << ". ";
-      if((i+1)%(n*n) == 0)
+      if((i+1)%nn == 0)
         os << std::endl << "  ";
     }
     os << std::endl;
@@ -217,16 +209,46 @@ private:
     rel(home, SOT_DUNION, b, u);
   }
 
-  /// Extract column \a bc from block starting at (\a i,\a j)
+  /// The fields of column \a c outside box row \a j
   IntVarArgs
-  block_col(Matrix<IntVarArray> m, int bc, int i, int j) {
-    return m.slice(bc*n+i, bc*n+i+1, j*n, (j+1)*n);
+  column_outside_box(const Matrix<IntVarArray>& m, int c, int j) const {
+    IntVarArgs a;
+    for (int k=0; k<bw; k++)
+      if (k != j)
+        a << m.slice(c, c+1, k*bh, (k+1)*bh);
+    return a;
   }
 
-  /// Extract row \a br from block starting at (\a i,\a j)
+  /// The fields of the box in box row \a j of column \a c outside column \a c
   IntVarArgs
-  block_row(Matrix<IntVarArray> m, int br, int i, int j) {
-    return m.slice(j*n, (j+1)*n, br*n+i, br*n+i+1);
+  box_outside_column(const Matrix<IntVarArray>& m, int c, int j) const {
+    IntVarArgs a;
+    int first = (c / bw) * bw;
+    for (int k=first; k<first+bw; k++)
+      if (k != c)
+        a << m.slice(k, k+1, j*bh, (j+1)*bh);
+    return a;
+  }
+
+  /// The fields of row \a r outside box column \a j
+  IntVarArgs
+  row_outside_box(const Matrix<IntVarArray>& m, int r, int j) const {
+    IntVarArgs a;
+    for (int k=0; k<bh; k++)
+      if (k != j)
+        a << m.slice(k*bw, (k+1)*bw, r, r+1);
+    return a;
+  }
+
+  /// The fields of the box in box column \a j of row \a r outside row \a r
+  IntVarArgs
+  box_outside_row(const Matrix<IntVarArray>& m, int r, int j) const {
+    IntVarArgs a;
+    int first = (r / bh) * bh;
+    for (int k=first; k<first+bh; k++)
+      if (k != r)
+        a << m.slice(j*bw, (j+1)*bw, k, k+1);
+    return a;
   }
 #endif
 };
@@ -243,12 +265,10 @@ protected:
   SetVarArray y;
 public:
   /// Constructor
-  SudokuSet(const SizeOptions& opt)
+  SudokuSet(const InstanceOptions& opt)
     : Sudoku(opt),
-      y(*this,n*n,IntSet::empty,1,n*n*n*n,
-        static_cast<unsigned int>(n*n),static_cast<unsigned int>(n*n)) {
-
-    const int nn = n*n;
+      y(*this,nn,IntSet::empty,1,nn*nn,
+        static_cast<unsigned int>(nn),static_cast<unsigned int>(nn)) {
 
     Region r;
     IntSet* row = r.alloc<IntSet>(nn);
@@ -266,17 +286,18 @@ public:
       col[i] = IntSet(dsc, nn);
     }
 
-    // Set up the block set constants
+    // Set up the block set constants, for the box in box column i and
+    // box row j
     int* dsb_arr = r.alloc<int>(nn);
-    for (int i=0; i<n; i++) {
-      for (int j=0; j<n; j++) {
+    for (int i=0; i<bh; i++) {
+      for (int j=0; j<bw; j++) {
 
-        for (int ii=0; ii<n; ii++) {
-          for (int jj=0; jj<n; jj++) {
-            dsb_arr[ii*n+jj] = j*nn*n+i*n+jj*nn+ii+1;
+        for (int ii=0; ii<bw; ii++) {
+          for (int jj=0; jj<bh; jj++) {
+            dsb_arr[ii*bh+jj] = (j*bh+jj)*nn+i*bw+ii+1;
           }
         }
-        block[i*n+j] = IntSet(dsb_arr, nn);
+        block[i*bw+j] = IntSet(dsb_arr, nn);
       }
     }
 
@@ -299,7 +320,7 @@ public:
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-        if (int idx = sudokuField(examples[opt.size()], nn, i, j))
+        if (int idx = givens[j*nn+i])
           dom(*this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
     if (opt.branching() == BRANCH_NONE) {
@@ -330,17 +351,15 @@ public:
   virtual void
   print(std::ostream& os) const {
     os << '\t';
-    for (int i = 0; i<n*n*n*n; i++) {
-      for (int j=0; j<n*n; j++) {
+    for (int i = 0; i<nn*nn; i++) {
+      for (int j=0; j<nn; j++) {
         if (y[j].contains(i+1)) {
-          if (j+1<10)
-            os << j+1 << " ";
-          else
-            os << (char)(j+1+'A'-10) << " ";
+          print_value(os, j+1);
+          os << " ";
           break;
         }
       }
-      if((i+1)%(n*n) == 0)
+      if((i+1)%nn == 0)
         os << std::endl << '\t';
     }
     os << std::endl;
@@ -357,9 +376,8 @@ public:
 class SudokuMixed : public SudokuInt, public SudokuSet {
 public:
   /// Constructor
-  SudokuMixed(const SizeOptions& opt)
+  SudokuMixed(const InstanceOptions& opt)
   : Sudoku(opt), SudokuInt(opt), SudokuSet(opt) {
-    const int nn = n*n;
 
     IntSet is0(0,0);
     SetVar dummySet0(*this, is0, is0);
@@ -403,8 +421,8 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("Sudoku");
-  opt.size(0);
+  InstanceOptions opt("Sudoku", instance_spec);
+  opt.instance("0");
   opt.ipl(IPL_DOM);
   opt.solutions(1);
 #ifdef GECODE_HAS_SET_VARS
@@ -425,25 +443,29 @@ main(int argc, char* argv[]) {
   opt.branching(Sudoku::BRANCH_SIZE_AFC, "sizeafc", "min size over afc");
   opt.branching(Sudoku::BRANCH_AFC, "afc", "maximum afc");
   opt.parse(argc,argv);
-  if (opt.size() >= n_examples) {
-    std::cerr << "Error: size must be between 0 and "
-              << n_examples-1 << std::endl;
+  try {
+    if (!SudokuInstance(opt).valid()) {
+      std::cerr << "Error: instance must be a number between 0 and " << n_examples-1 << " or a file" << std::endl;
+      return 1;
+    }
+  } catch (const Instance::Error& e) {
+    std::cerr << e.what() << std::endl;
     return 1;
   }
 #ifdef GECODE_HAS_SET_VARS
   switch (opt.model()) {
   case Sudoku::MODEL_INT:
-    Script::run<SudokuInt,DFS,SizeOptions>(opt);
+    Script::run<SudokuInt,DFS,InstanceOptions>(opt);
     break;
   case Sudoku::MODEL_SET:
-    Script::run<SudokuSet,DFS,SizeOptions>(opt);
+    Script::run<SudokuSet,DFS,InstanceOptions>(opt);
     break;
   case Sudoku::MODEL_MIXED:
-    Script::run<SudokuMixed,DFS,SizeOptions>(opt);
+    Script::run<SudokuMixed,DFS,InstanceOptions>(opt);
     break;
   }
 #else
-  Script::run<SudokuInt,DFS,SizeOptions>(opt);
+  Script::run<SudokuInt,DFS,InstanceOptions>(opt);
 #endif
   return 0;
 }

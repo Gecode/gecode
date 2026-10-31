@@ -53,7 +53,7 @@
 #   [ENTRY]
 #   Module:
 #     kernel|search|int|set|float|cpltset|scheduling|graph|minimodel|
-#     driver|iter|support|example|test|gist|flatzinc|other
+#     driver|instance|iter|support|example|test|gist|flatzinc|other
 #   What:   bug|documentation|performance|new|removed|change
 #   Rank:   minor|major
 #   Experimental: true|false <optional, defaults to false>
@@ -74,6 +74,42 @@ Version: 6.5.0
 Date: unreleased
 [DESCRIPTION]
 This is the development changelog for the next Gecode release.
+
+[ENTRY]
+Module: instance
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add the instance module for reading benchmark instance files. A short
+declarative spec describes the format of a file and checks its data.
+[MORE]
+A file with several instances is read by selecting one of them. Errors give
+the file, line, and column. The new gecode-instance tool prints the data in a
+file or converts it to MiniZinc data.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Let InstanceOptions read instance files with a reader spec. The driver
+library now requires the instance library.
+[MORE]
+The option -spec reads files with a spec from a file, and -param sets spec
+parameters.
+
+[ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Read instance files in the SAT, TSP, TSPTW, job shop, sudoku, advanced
+sudoku, and nonogram examples. SAT replaces its own parser, which assumed one
+clause per line.
+[MORE]
+The examples read TSPLIB files, the López-Ibáñez and Blum TSPTW collection,
+OR-Library and JSPLIB job shop files, the scaled sudoku corpus format, and
+the .non files exported by webpbn.com.
 
 [ENTRY]
 Module: minimodel

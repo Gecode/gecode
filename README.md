@@ -52,6 +52,7 @@ state.
 | `--enable-set-vars` | `GECODE_ENABLE_SET_VARS` | Supported directly | Default `ON` |
 | `--enable-float-vars` | `GECODE_ENABLE_FLOAT_VARS` | Supported directly | Default `ON` |
 | `--enable-minimodel` | `GECODE_ENABLE_MINIMODEL` | Supported directly | Default `ON` |
+| `--enable-instance` | `GECODE_ENABLE_INSTANCE` | Supported directly | Default `ON`; enabled with the driver |
 | `--enable-driver` | `GECODE_ENABLE_DRIVER` | Supported directly | Default `ON` |
 | `--enable-flatzinc` | `GECODE_ENABLE_FLATZINC` | Supported directly | Default `ON` |
 | `--enable-mpfr` | `GECODE_ENABLE_MPFR` | Supported directly | Default `ON`; uses `find_package(MPFR)` |

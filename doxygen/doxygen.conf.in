@@ -469,7 +469,8 @@ INPUT                  = doxygen.hh \
                          @top_srcdir@/gecode \
                          @top_srcdir@/examples \
                          @top_srcdir@/test \
-                         @top_srcdir@/tools/flatzinc
+                         @top_srcdir@/tools/flatzinc \
+                         @top_srcdir@/tools/instance
 
 # If the value of the INPUT tag contains directories, you can use the
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp

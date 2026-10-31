@@ -34,9 +34,13 @@
 
 #include <gecode/driver.hh>
 
+#include <sys/stat.h>
+
+#include <fstream>
 #include <iostream>
 #include <iomanip>
 
+#include <cctype>
 #include <cstdlib>
 #include <cstring>
 
@@ -132,6 +136,24 @@ namespace Gecode {
     }
     StringValueOption::~StringValueOption(void) {
       strdel(cur);
+    }
+
+
+    StringListOption::StringListOption(const char* o, const char* e)
+      : StringValueOption(o,e) {}
+    int
+    StringListOption::parse(int argc, char* argv[]) {
+      if (char* a = argument(argc,argv)) {
+        if (cur == nullptr) {
+          cur = strdup(a);
+        } else {
+          std::string v = std::string(cur) + "," + a;
+          strdel(cur);
+          cur = strdup(v.c_str());
+        }
+        return 2;
+      }
+      return 0;
     }
 
 
@@ -720,31 +742,118 @@ namespace Gecode {
 
 
   InstanceOptions::InstanceOptions(const char* e)
-    : Options(e), _inst(nullptr) {}
+    : Options(e), _inst(nullptr), _spec(nullptr),
+      _spec_file("spec","file with a reader spec for instance files (default: the script's own spec)"),
+      _param("param","parameter for the reader spec (name=value; repeat or separate by commas for several)") {}
+
+  InstanceOptions::InstanceOptions(const char* e, const char* s)
+    : InstanceOptions(e) {
+    add(_spec_file); add(_param);
+    spec(s);
+  }
+
+  void
+  InstanceOptions::forget(void) const {
+    _data.reset();
+  }
 
   void
   InstanceOptions::instance(const char* s) {
     Driver::BaseOption::strdel(_inst);
     _inst = Driver::BaseOption::strdup(s);
+    forget();
+  }
+
+  void
+  InstanceOptions::spec(const char* s) {
+    Driver::BaseOption::strdel(_spec);
+    _spec = Driver::BaseOption::strdup(s);
+    forget();
+  }
+
+  void
+  InstanceOptions::spec_file(const char* f) {
+    _spec_file.value(f);
+    forget();
+  }
+
+  void
+  InstanceOptions::param(const char* p) {
+    _param.value(p);
+    forget();
   }
 
   void
   InstanceOptions::help(void) {
     Options::help();
-    std::cerr << "\t(string) default: " << instance() << std::endl
-              << "\t\twhich instance for script" << std::endl;
+    std::cerr << "\t(string) default: " << ((instance() == nullptr) ? "NONE" : instance()) << std::endl
+              << "\t\twhich instance for script (name or file)" << std::endl;
   }
 
   void
   InstanceOptions::parse(int& argc, char* argv[]) {
     Options::parse(argc,argv);
+    // The spec file and parameters may have changed
+    forget();
     if (argc < 2)
       return;
     instance(argv[1]);
   }
 
+  bool
+  InstanceOptions::builtin(unsigned int& i) const {
+    const char* s = instance();
+    // At most nine digits, so that the conversion cannot overflow
+    if ((s == nullptr) || (*s == 0) || (strlen(s) > 9))
+      return false;
+    for (const char* c = s; *c != 0; c++)
+      if (!isdigit(static_cast<unsigned char>(*c)))
+        return false;
+    i = static_cast<unsigned int>(atoi(s));
+    return true;
+  }
+
+  /// Test whether \a f names a directory
+  static bool
+  is_directory(const char* f) {
+    struct stat st;
+    return (stat(f, &st) == 0) && ((st.st_mode & S_IFMT) == S_IFDIR);
+  }
+
+  bool
+  InstanceOptions::is_file(void) const {
+    if (instance() == nullptr)
+      return false;
+    // Directories can be opened on some systems, but not read
+    if (is_directory(instance()))
+      return false;
+    std::ifstream f(instance());
+    return f.good();
+  }
+
+  Instance::Data
+  InstanceOptions::data(void) const {
+    if (_data)
+      return *_data;
+    if (instance() == nullptr)
+      throw Instance::Error("no instance file given");
+    Instance::Params p;
+    if (param() != nullptr)
+      p.set(param());
+    Instance::Spec r;
+    if (spec_file() != nullptr)
+      r = Instance::Spec::load(spec_file());
+    else if (spec() != nullptr)
+      r = Instance::Spec::parse(spec(), std::string(name()) + " spec");
+    else
+      throw Instance::Error("no reader spec for instance files");
+    _data = std::make_unique<Instance::Data>(r.read(instance(), p));
+    return *_data;
+  }
+
   InstanceOptions::~InstanceOptions(void) {
     Driver::BaseOption::strdel(_inst);
+    Driver::BaseOption::strdel(_spec);
   }
 
 }

@@ -640,6 +640,20 @@ namespace Gecode {
     return _inst;
   }
 
+  inline const char*
+  InstanceOptions::spec(void) const {
+    return _spec;
+  }
+
+  inline const char*
+  InstanceOptions::spec_file(void) const {
+    return _spec_file.value();
+  }
+
+  inline const char*
+  InstanceOptions::param(void) const {
+    return _param.value();
+  }
 }
 
 // STATISTICS: driver-any

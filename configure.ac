@@ -331,6 +331,7 @@ AC_GECODE_ENABLE_MODULE(driver, yes,
 	[build script commandline driver library],
 	[enable_search="yes";
          enable_int="yes";
+         enable_instance="yes";
 	])
 
 AC_GECODE_ENABLE_MODULE(flatzinc, yes,
@@ -344,13 +345,23 @@ AC_GECODE_ENABLE_MODULE(driver, yes,
 	[build script commandline driver library],
 	[enable_search="yes";
          enable_int="yes";
+         enable_instance="yes";
 	])
 
 AC_GECODE_ENABLE_MODULE(examples, yes,
 	[build examples for the enabled variable types],
 	[enable_search="yes";
          enable_driver="yes";
+         enable_instance="yes";
          enable_minimodel="yes";
+	])
+
+AC_GECODE_ENABLE_MODULE(instance, yes,
+	[build instance reader library (needs --enable-int-vars)],
+	[if test "${enable_int_vars}" != "yes"; then
+	   AC_MSG_WARN([the instance reader needs int variables, not building it])
+	   enable_instance="no";
+	 fi
 	])
 
 AC_GECODE_ENABLE_MODULE(minimodel, yes,

@@ -221,6 +221,14 @@ set(GECODE_MINIMODEL_SOURCES
   gecode/minimodel/set-rel.cpp
 )
 
+set(GECODE_INSTANCE_SOURCES
+  gecode/instance/data.cpp
+  gecode/instance/eval.cpp
+  gecode/instance/reader.cpp
+  gecode/instance/resolve.cpp
+  gecode/instance/spec.cpp
+)
+
 set(GECODE_DRIVER_SOURCES
   gecode/driver/options.cpp
   gecode/driver/script.cpp
@@ -445,6 +453,7 @@ set(GECODE_TEST_SOURCES
   test/int/sorted.cpp
   test/int/unary.cpp
   test/int/unshare.cpp
+  test/instance.cpp
   test/ldsb.cpp
   test/nogoods.cpp
   test/region.cpp
@@ -470,3 +479,4 @@ set(GECODE_TEST_BLACKBOX_EXEC_SOURCE test/flatzinc/blackbox-exec.cpp)
 set(GECODE_TEST_BLACKBOX_DLL_SOURCE test/flatzinc/blackbox-dll.cpp)
 
 set(GECODE_FLATZINC_EXE_SOURCE tools/flatzinc/fzn-gecode.cpp)
+set(GECODE_INSTANCE_EXE_SOURCE tools/instance/gecode-instance.cpp)
