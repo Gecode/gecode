@@ -328,6 +328,13 @@ Avoid signed integer overflow in unary scheduling and bounds-consistent
 distinct near the integer limits.
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Release the left-branch value set of LDSB set branchers when they are disposed.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
