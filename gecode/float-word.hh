@@ -282,6 +282,18 @@ namespace Gecode {
   /// Clear the sign bit, preserving payloads and signaling NaNs.
   GECODE_WORD_EXPORT void fp_abs(Home home, FloatWordVar x, FloatWordVar y);
 
+  /** \brief Same-format exact square root, with optional correlated flags
+   *
+   * Supports E2M1, E4M3FN, BF16 and FP32. Tiny handles require shared
+   * encoding bindings; wide filtering uses rounding regions and may retain
+   * unsupported interior encodings until assignment.
+   */
+  GECODE_WORD_EXPORT void fp_sqrt(Home home, const FloatWordPolicy& policy,
+                                  FloatWordVar source, FloatWordVar result);
+  GECODE_WORD_EXPORT void fp_sqrt(Home home, const FloatWordPolicy& policy,
+                                  FloatWordVar source, FloatWordVar result,
+                                  IntVar status);
+
   /** \brief Numerical relations between floating words
    *
    * All ordered relations are false when an operand is a NaN.
@@ -362,6 +374,60 @@ namespace Gecode {
   GECODE_WORD_EXPORT void
   fp_maximum_number(Home home, const FloatWordPolicy& policy, FloatWordVar x,
                     FloatWordVar y, FloatWordVar result, IntVar status);
+  /** \brief Exact encoded arithmetic with optional correlated status
+   *
+   * All handles must have the same format: E2M1, E4M3FN, BF16 or FP32.
+   * E2M1/E4M3FN use shared encoding bindings. Every policy field combination
+   * is supported. Status is the correlated five-flag mask in 0..31. Omitting
+   * it allocates no status variable. Wide filtering is sound and incomplete;
+   * assigned tuples always obey the exact operation contract.
+   */
+  GECODE_WORD_EXPORT void fp_add(Home home, const FloatWordPolicy& policy,
+                                 FloatWordVar a, FloatWordVar b,
+                                 FloatWordVar result);
+  GECODE_WORD_EXPORT void fp_add(Home home, const FloatWordPolicy& policy,
+                                 FloatWordVar a, FloatWordVar b,
+                                 FloatWordVar result, IntVar status);
+  GECODE_WORD_EXPORT void fp_subtract(Home home, const FloatWordPolicy& policy,
+                                      FloatWordVar a, FloatWordVar b,
+                                      FloatWordVar result);
+  GECODE_WORD_EXPORT void fp_subtract(Home home, const FloatWordPolicy& policy,
+                                      FloatWordVar a, FloatWordVar b,
+                                      FloatWordVar result, IntVar status);
+  GECODE_WORD_EXPORT void fp_multiply(Home home, const FloatWordPolicy& policy,
+                                      FloatWordVar a, FloatWordVar b,
+                                      FloatWordVar result);
+  GECODE_WORD_EXPORT void fp_multiply(Home home, const FloatWordPolicy& policy,
+                                      FloatWordVar a, FloatWordVar b,
+                                      FloatWordVar result, IntVar status);
+  GECODE_WORD_EXPORT void fp_divide(Home home, const FloatWordPolicy& policy,
+                                    FloatWordVar a, FloatWordVar b,
+                                    FloatWordVar result);
+  GECODE_WORD_EXPORT void fp_divide(Home home, const FloatWordPolicy& policy,
+                                    FloatWordVar a, FloatWordVar b,
+                                    FloatWordVar result, IntVar status);
+
+  /** \brief Exact single-rounding fused multiply-add
+   *
+   * Supports matching E2M1, E4M3FN, BF16 or FP32 handles and
+   * BF16*BF16+FP32 with FP32 result. Tiny handles require shared encoding
+   * bindings. Status is the optional correlated mask in 0..31.
+   * Aliases preserve variable identities. Per propagation, at most 2,048
+   * assignments to distinct wide inputs, or 32,768 to distinct tiny inputs,
+   * are scanned; the count is computed before any enumeration. Larger wide
+   * domains use conservative finite interval projections; larger tiny domains
+   * defer.
+   * Assigned inputs always receive exact checking. No intermediate product
+   * rounding or full ternary table is used.
+   */
+  GECODE_WORD_EXPORT void fp_fma(Home home, const FloatWordPolicy& policy,
+                                 FloatWordVar a, FloatWordVar b,
+                                 FloatWordVar c, FloatWordVar result);
+  GECODE_WORD_EXPORT void fp_fma(Home home, const FloatWordPolicy& policy,
+                                 FloatWordVar a, FloatWordVar b,
+                                 FloatWordVar c, FloatWordVar result,
+                                 IntVar status);
+
 } // namespace Gecode
 #endif
 

@@ -337,6 +337,9 @@ namespace Test {
           BoolVar truth = s.classes[0];
           return rejects([&] { fp_compare(s, p, a, FWRT_EQ, b, truth); }) &&
                  rejects([&] { fp_minimum(s, p, a, b, r); }) &&
+                 rejects([&] { fp_add(s, p, a, b, r); }) &&
+                 rejects([&] { fp_fma(s, p, a, b, a, r); }) &&
+                 rejects([&] { fp_sqrt(s, p, a, r); }) &&
                  s.status() != SS_FAILED;
         }
         // A posting keeps its own policy copy.
