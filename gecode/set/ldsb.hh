@@ -97,6 +97,8 @@ namespace Gecode { namespace Set { namespace LDSB {
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
     /// Perform cloning
     virtual Actor* copy(Space& home);
+    /// Delete brancher and return its size
+    virtual size_t dispose(Space& home);
     /// Brancher post function
     static void post(Home home,
                      ViewArray<View>& x,

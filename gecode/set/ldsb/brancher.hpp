@@ -251,6 +251,15 @@ namespace Gecode { namespace Set { namespace LDSB {
 
   template<class View, int n, class Val, unsigned int a,
            class Filter, class Print>
+  size_t
+  LDSBSetBrancher<View,n,Val,a,Filter,Print>::dispose(Space& home) {
+    _leftBranchValues.~IntSet();
+    (void) LDSBBrancher<View,n,Val,a,Filter,Print>::dispose(home);
+    return sizeof(LDSBSetBrancher<View,n,Val,a,Filter,Print>);
+  }
+
+  template<class View, int n, class Val, unsigned int a,
+           class Filter, class Print>
   forceinline void
   LDSBSetBrancher<View,n,Val,a,Filter,Print>::
   post(Home home, ViewArray<View>& x,
