@@ -35,6 +35,19 @@
 
 namespace Gecode { namespace Int { namespace Unary {
 
+  /**
+   * \brief Clamp a time point for the no-run ranges to the integer limits
+   *
+   * The ends of the ranges removed by \c norun are computed with long long
+   * to avoid overflow near the limits. Values outside the limits are never
+   * in a domain, so clamping them does not change the removed values.
+   */
+  forceinline int
+  norun_bound(long long v) {
+    return static_cast<int>(std::min(std::max(v, static_cast<long long>(Limits::min)),
+                                     static_cast<long long>(Limits::max) + 1));
+  }
+
   /*
    * Mandatory fixed task
    */
@@ -118,7 +131,7 @@ namespace Gecode { namespace Int { namespace Unary {
   forceinline ModEvent
   ManFixPTask::norun(Space& home, int e, int l) {
     if (e <= l) {
-      Iter::Ranges::Singleton r(e-_p+1,l);
+      Iter::Ranges::Singleton r(norun_bound(static_cast<long long>(e)-_p+1),l);
       return _s.minus_r(home,r,false);
     } else {
       return ME_INT_NONE;
@@ -275,7 +288,7 @@ namespace Gecode { namespace Int { namespace Unary {
       switch (_t) {
       case TT_FIXP:
         {
-          Iter::Ranges::Singleton r(e-_p+1,l);
+          Iter::Ranges::Singleton r(norun_bound(static_cast<long long>(e)-_p+1),l);
           return _s.minus_r(home,r,false);
         }
       case TT_FIXE:
@@ -401,10 +414,11 @@ namespace Gecode { namespace Int { namespace Unary {
   forceinline ModEvent
   ManFlexTask::norun(Space& home, int e, int l) {
     if (e <= l) {
-      Iter::Ranges::Singleton sr(e-_p.min()+1,l);
+      Iter::Ranges::Singleton sr(norun_bound(static_cast<long long>(e)-_p.min()+1),l);
       if (me_failed(_s.minus_r(home,sr,false)))
         return ME_INT_FAILED;
-      Iter::Ranges::Singleton er(e+1,_p.min()+l);
+      Iter::Ranges::Singleton er(norun_bound(static_cast<long long>(e)+1),
+                                 norun_bound(static_cast<long long>(_p.min())+l));
       return _e.minus_r(home,er,false);
     } else {
       return ME_INT_NONE;
