@@ -1235,7 +1235,7 @@ static const yytype_int16 yyrline[] =
     1940,  1942,  2038,  2053,  2054,  2058,  2060,  2068,  2102,  2109,
     2116,  2142,  2143,  2151,  2152,  2156,  2158,  2162,  2166,  2170,
     2172,  2176,  2178,  2180,  2183,  2183,  2186,  2188,  2190,  2192,
-    2194,  2300,  2311
+    2194,  2300,  2312
 };
 #endif
 
@@ -4180,22 +4180,23 @@ yyreduce:
           (yyval.arg) = getArrayElement(static_cast<ParserState*>(parm),(yyvsp[-3].sValue),i,true);
         else
           (yyval.arg) = new AST::IntLit(0); // keep things consistent
+        delete (yyvsp[-1].arg);
         free((yyvsp[-3].sValue));
       }
-#line 4186 "gecode/flatzinc/parser.tab.cpp"
+#line 4187 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 162: /* ann_non_array_expr: FZ_STRING_LIT  */
-#line 2312 "./gecode/flatzinc/parser.yxx"
+#line 2313 "./gecode/flatzinc/parser.yxx"
       {
         (yyval.arg) = new AST::String((yyvsp[0].sValue));
         free((yyvsp[0].sValue));
       }
-#line 4195 "gecode/flatzinc/parser.tab.cpp"
+#line 4196 "gecode/flatzinc/parser.tab.cpp"
     break;
 
 
-#line 4199 "gecode/flatzinc/parser.tab.cpp"
+#line 4200 "gecode/flatzinc/parser.tab.cpp"
 
       default: break;
     }
