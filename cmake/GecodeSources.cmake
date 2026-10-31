@@ -209,6 +209,9 @@ set(GECODE_WORD_SOURCES
   gecode/word/arithmetic.cpp
   gecode/word/array.cpp
   gecode/word/branch.cpp
+  gecode/word/float.cpp
+  gecode/word/float-convert.cpp
+  gecode/word/float-rel.cpp
   gecode/word/channel.cpp
   gecode/word/channel/bit.cpp
   gecode/word/conditional.cpp
@@ -507,6 +510,9 @@ set(GECODE_TEST_SOURCES
   test/word/bounded.cpp
   test/word/sparse-wide.cpp
   test/word/branch.cpp
+  test/word/float.cpp
+  test/word/float-convert.cpp
+  test/word/float-rel.cpp
   test/word/channel.cpp
   test/word/conditional.cpp
   test/word/count.cpp

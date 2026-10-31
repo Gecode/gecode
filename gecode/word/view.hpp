@@ -271,6 +271,27 @@ namespace Gecode { namespace Word {
     }
   };
 
+  /** \brief Narrow an untyped \a x under the rule, dispatching on its order
+   *
+   * A cube view has no persistent interval, so it takes only \a cube.
+   */
+  forceinline ModEvent
+  narrow_significant_domain(Space& home, WordView x, WordCube cube,
+                            WordRankInterval proposed) {
+    switch (x.domain_type()) {
+    case WDT_CUBE:
+      return x.narrow(home,cube.lo,cube.hi);
+    case WDT_UNSIGNED:
+      return narrow_significant_domain(home,UnsignedWordView(x.varimp()),
+                                       cube,proposed);
+    case WDT_SIGNED:
+      return narrow_significant_domain(home,SignedWordView(x.varimp()),
+                                       cube,proposed);
+    }
+    GECODE_NEVER;
+    return ME_WORD_FAILED;
+  }
+
   /**
    * \brief Constant view of an explicitly-sized word value
    * \ingroup TaskModelWordVars

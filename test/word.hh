@@ -37,6 +37,7 @@
 #include "test/test.hh"
 
 #include <gecode/word.hh>
+#include <gecode/float-word.hh>
 
 #include <vector>
 
@@ -289,6 +290,22 @@ std::ostream& operator<<(std::ostream& os, const Test::Word::Domain& d);
 std::ostream& operator<<(std::ostream& os, const Test::Word::Assignment& a);
 /// Print the name of domain representation \a t
 std::ostream& operator<<(std::ostream& os, Gecode::WordDomainType t);
+/// Print the name of floating word format \a f
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordFormat f);
+/// Print the name of rounding direction \a r
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Rounding r);
+/// Print the name of subnormal treatment \a s
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Subnormals s);
+/// Print the name of overflow result \a o
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Overflow o);
+/// Print the name of zero sign treatment \a z
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Zeros z);
+/// Print the name of NaN selection \a n
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Nan n);
+/// Print the name of tininess detection \a t
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Tininess t);
+/// Print the name of comparison signaling \a c
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Comparison c);
 
 #include "test/word.hpp"
 

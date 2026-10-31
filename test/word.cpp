@@ -249,6 +249,84 @@ operator<<(std::ostream& os, Gecode::WordDomainType t) {
   return os;
 }
 
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordFormat f) {
+  switch (f) {
+  case Gecode::FWF_FP32: return os << "FWF_FP32";
+  case Gecode::FWF_BF16: return os << "FWF_BF16";
+  case Gecode::FWF_BINARY16: return os << "FWF_BINARY16";
+  case Gecode::FWF_E4M3FN: return os << "FWF_E4M3FN";
+  case Gecode::FWF_E2M1: return os << "FWF_E2M1";
+  }
+  return os << static_cast<int>(f);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Rounding r) {
+  switch (r) {
+  case Gecode::FloatWordPolicy::RNE: return os << "RNE";
+  case Gecode::FloatWordPolicy::RTZ: return os << "RTZ";
+  case Gecode::FloatWordPolicy::RDN: return os << "RDN";
+  case Gecode::FloatWordPolicy::RUP: return os << "RUP";
+  }
+  return os << static_cast<int>(r);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Subnormals s) {
+  switch (s) {
+  case Gecode::FloatWordPolicy::Preserve: return os << "Preserve";
+  case Gecode::FloatWordPolicy::SignedZero: return os << "SignedZero";
+  }
+  return os << static_cast<int>(s);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Overflow o) {
+  switch (o) {
+  case Gecode::FloatWordPolicy::Format: return os << "Format";
+  case Gecode::FloatWordPolicy::SaturateFinite: return os << "SaturateFinite";
+  }
+  return os << static_cast<int>(o);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Zeros z) {
+  switch (z) {
+  case Gecode::FloatWordPolicy::Signed: return os << "Signed";
+  case Gecode::FloatWordPolicy::Positive: return os << "Positive";
+  }
+  return os << static_cast<int>(z);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Nan n) {
+  switch (n) {
+  case Gecode::FloatWordPolicy::SignalFirst: return os << "SignalFirst";
+  case Gecode::FloatWordPolicy::OperandFirst: return os << "OperandFirst";
+  case Gecode::FloatWordPolicy::Canonical: return os << "Canonical";
+  }
+  return os << static_cast<int>(n);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Tininess t) {
+  switch (t) {
+  case Gecode::FloatWordPolicy::AfterPrecision: return os << "AfterPrecision";
+  case Gecode::FloatWordPolicy::BeforeRounding: return os << "BeforeRounding";
+  }
+  return os << static_cast<int>(t);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Comparison c) {
+  switch (c) {
+  case Gecode::FloatWordPolicy::Quiet: return os << "Quiet";
+  case Gecode::FloatWordPolicy::Signaling: return os << "Signaling";
+  }
+  return os << static_cast<int>(c);
+}
+
 namespace Test { namespace Word {
 
   TestSpace::TestSpace(int n, const Domain& d0, Test* t)

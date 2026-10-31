@@ -155,6 +155,8 @@ namespace Gecode {
    * with WordVarBranch and WordValBranch, and observe changes with WordTracer.
    * For expression syntax and domain policies, see \ref TaskModelMiniModelWord.
    * Propagator implementation notes are in \ref FuncWordProp.
+   * For format-tagged floating encodings and raw observations, include
+   * gecode/float-word.hh and use FloatWordVar.
    *
    * \ingroup TaskModel
    */
