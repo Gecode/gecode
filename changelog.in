@@ -102,14 +102,28 @@ by a bounded actor, and the remaining logical, structural, and mixed
 constraints deliberately retain their complete cube propagation path.
 
 [ENTRY]
+Module: word
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add bit-exact floating-point constraints over WordVar for FP32, BF16,
+FP8 E4M3FN, and FP4 E2M1 encodings, and conversion to and from binary16.
+Constraints cover classification, negation and absolute value, numerical
+comparison, minimum and maximum, format conversion, addition, subtraction,
+multiplication, division, fused multiply-add, square root, and ULP distance.
+Rounding direction, subnormal, overflow, and NaN handling are selected by a
+policy, and the IEEE exception flags can be observed as a status variable.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor
 [DESCRIPTION]
 Add Word examples that patch a firmware record so that it keeps its CRC-32,
 check bit-twiddling routines against their reference by finding a
-counterexample or proving agreement, and recover a message block for a
-reduced-round SHA-1 digest.
+counterexample or proving agreement, recover a message block for a
+reduced-round SHA-1 digest, and prove the worst-case error of an FP8
+multiply-accumulate against FP32.
 
 [RELEASE]
 Version: 6.5.0

@@ -1141,6 +1141,14 @@ namespace Gecode {
         }
     }
 
+    // Cancellation bound for finite nonzero sums with gradual inputs and
+    // outputs and Format overflow, in every rounding direction. In the exact
+    // integer scale let C(z) = (2*normal-1)*2^ctz(|z|). A positive result z
+    // admits operands only within [-C(z), z+C(z)], a negative one within
+    // [z-C(z), C(z)]; subtraction negates the enclosure of operand two. Zero,
+    // nonfinite, maximum-finite and flushing alternatives keep conservative
+    // bounds.
+    //
     // A fixed exponent and trailing-significand-zero count fixes C(z).
     // Intersect the class with the actual cube before taking its endpoints:
     // an interior power of two can have a much larger C than either endpoint.

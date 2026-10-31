@@ -50,7 +50,7 @@ namespace Gecode {
        * \name Operation status flags
        *
        * The bits of an operation status in 0..31, as documented in
-       * docs/float-word-contracts.md.
+       * \ref TaskModelWordFloat.
        */
       //@{
       /// Invalid operation

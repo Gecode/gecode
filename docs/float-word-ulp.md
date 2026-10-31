@@ -79,9 +79,9 @@ error = |r8 - r32| / ulp_E4M3FN(r32)
 the distance between the E4M3FN result `r8` and `r32`, in units of the E4M3FN
 spacing at `r32`. The model posts `ulp_error` with E4M3FN as the reference format
 and `r32` as the reference value, and maximizes its fixed-point digits
-lexicographically. The
-[ULP error contract](float-word-contracts.md#exact-normalized-ulp-error) defines
-the digits and the spacing. The model does not use `ulp_steps`, which needs both
+lexicographically. The documentation of `ulp_error` in
+[`gecode/float-word.hh`](../gecode/float-word.hh) defines the digits and the
+spacing. The model does not use `ulp_steps`, which needs both
 values on the E4M3FN grid: `r32` mostly lies between E4M3FN values.
 
 ## Proved results

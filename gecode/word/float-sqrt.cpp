@@ -117,6 +117,9 @@ namespace Gecode {
                   (b.significand << (b.exponent - exponent)),
               exponent - 1};
     }
+    // Round the exact root of a positive finite input without computing it:
+    // low is the largest encoding whose square is at most the input, and
+    // RNE compares the input with the square of the midpoint to low + 1.
     WordValue rounded_root(const Format& f, Policy::Rounding rounding,
                            WordValue input) {
       const Dyadic value = decode(f, input);
