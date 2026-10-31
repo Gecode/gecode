@@ -410,6 +410,7 @@ namespace Gecode {
       stat.fail++;
       if (!opt.clone)
         delete s;
+      Search::pbscleanup(sebs);
       e = Search::Seq::dead(opt,stat);
       return;
     }

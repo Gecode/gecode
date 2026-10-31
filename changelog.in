@@ -173,6 +173,21 @@ although no stop object requested it. A worker could act on the internal stop
 of the previous portfolio run; worker control made this more likely.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Free the engine builders and cutoffs passed to portfolio and restart-based
+search when the root space fails.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Free pending choices when limited discrepancy search is reset or deleted.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major

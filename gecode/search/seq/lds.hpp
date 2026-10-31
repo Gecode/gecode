@@ -108,8 +108,11 @@ namespace Gecode { namespace Search { namespace Seq {
   Probe<Tracer>::reset(Space* s, unsigned int d0) {
     tracer.round();
     delete cur;
-    while (!ds.empty())
-      delete ds.pop().space();
+    while (!ds.empty()) {
+      Node n = ds.pop();
+      delete n.space();
+      delete n.choice();
+    }
     cur = s; d = d0; exhausted = true;
     if (tracer)
       tracer.ei()->invalidate();
@@ -133,8 +136,11 @@ namespace Gecode { namespace Search { namespace Seq {
   Probe<Tracer>::~Probe(void) {
     tracer.done();
     delete cur;
-    while (!ds.empty())
-      delete ds.pop().space();
+    while (!ds.empty()) {
+      Node n = ds.pop();
+      delete n.space();
+      delete n.choice();
+    }
   }
 
   template<class Tracer>
