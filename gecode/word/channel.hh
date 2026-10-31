@@ -129,6 +129,31 @@ namespace Gecode { namespace Word { namespace Channel {
     static ExecStatus post(Home home, View x, Int::IntView y);
   };
 
+  /**
+   * \brief Channel a small word's unsigned encoding to an exact Int subset
+   *
+   * Requires \code #include <gecode/word/channel.hh> \endcode
+   * \ingroup FuncWordProp
+   */
+  class Encoding : public MixBinaryPropagator<WordView, PC_WORD_DOM,
+                                              Int::IntView, Int::PC_INT_DOM> {
+  protected:
+    /// Constructor for cloning \a p
+    Encoding(Space& home, Encoding& p);
+    /// Constructor for creation
+    Encoding(Home home, WordView x, Int::IntView y);
+    /// Retain common encodings and publish their Word hulls
+    static ExecStatus narrow(Home home, WordView x, Int::IntView y);
+
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator for a word with at most eight bits
+    static ExecStatus post(Home home, WordView x, Int::IntView y);
+  };
+
   /// Word-to-Boolean reduction operation
   enum class ReductionType {
     AND, ///< Conjunction of all significant bits

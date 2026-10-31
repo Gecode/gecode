@@ -33,6 +33,69 @@
 
 #include <gecode/word/channel.hh>
 
+namespace Gecode { namespace Word { namespace Channel {
+
+  Encoding::Encoding(Home home, WordView x, Int::IntView y)
+      : MixBinaryPropagator<WordView, PC_WORD_DOM, Int::IntView,
+                            Int::PC_INT_DOM>(home, x, y) {}
+
+  Encoding::Encoding(Space& home, Encoding& p)
+      : MixBinaryPropagator<WordView, PC_WORD_DOM, Int::IntView,
+                            Int::PC_INT_DOM>(home, p) {}
+
+  ExecStatus
+  Encoding::narrow(Home home, WordView x, Int::IntView y) {
+    assert(x.width() <= 8U);
+    int supported[256];
+    unsigned int count = 0;
+    WordValue lo = x.mask(), hi = 0;
+    WordValue minimum = x.mask(), maximum = 0;
+    for (WordValue code = 0; code <= x.mask(); code++) {
+      if (!x.in(code) || !y.in(static_cast<int>(code)))
+        continue;
+      supported[count++] = static_cast<int>(code);
+      lo &= code;
+      hi |= code;
+      if (x.bounded()) {
+        const WordValue r = rank(x.domain_type(), x.width(), code);
+        minimum = std::min(minimum, r);
+        maximum = std::max(maximum, r);
+      }
+    }
+    if (count == 0)
+      return ES_FAILED;
+
+    Iter::Values::Array values(supported, count);
+    GECODE_ME_CHECK(y.inter_v(home, values, false));
+    GECODE_ME_CHECK(x.narrow(home, lo, hi));
+    if (x.bounded())
+      GECODE_ME_CHECK(x.narrow_rank_range(home, minimum, maximum));
+    // Every surviving encoding remains in both Word hulls: this is a fixpoint.
+    return ES_OK;
+  }
+
+  ExecStatus
+  Encoding::post(Home home, WordView x, Int::IntView y) {
+    GECODE_ES_CHECK(narrow(home, x, y));
+    if (!x.assigned() || !y.assigned())
+      (void)new (home) Encoding(home, x, y);
+    return ES_OK;
+  }
+
+  Actor*
+  Encoding::copy(Space& home) {
+    return new (home) Encoding(home, *this);
+  }
+
+  ExecStatus
+  Encoding::propagate(Space& home, const ModEventDelta&) {
+    GECODE_ES_CHECK(narrow(home, x0, x1));
+    return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this)
+                                            : ES_FIX;
+  }
+
+}}}
+
 namespace Gecode {
 
   void
@@ -86,6 +149,15 @@ namespace Gecode {
         Word::SignedWordView,Word::PC_WORD_BND,WI_SIGNED>::post(
           home,Word::SignedWordView(x),Int::IntView(y))));
     }
+  }
+
+  void
+  channel_encoding(Home home, WordVar x, IntVar y) {
+    if (x.width() > 8U)
+      throw Word::OutOfLimits("Word::channel_encoding");
+    GECODE_POST;
+    GECODE_ES_FAIL(Word::Channel::Encoding::post(home, Word::WordView(x),
+                                                 Int::IntView(y)));
   }
 
   void

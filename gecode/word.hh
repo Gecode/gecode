@@ -544,6 +544,20 @@ namespace Gecode {
    */
   GECODE_WORD_EXPORT void channel(Home home, WordVar x, IntVar y,
                                   WordInterpretation interpretation);
+  /** \brief Channel the unsigned encoding of word \a x to integer \a y
+   *
+   * Widths from 1 through 8 are supported with any Word domain type.
+   * The channel retains exactly the encodings common to both domains in
+   * \a y and publishes their bit hull and, for bounded words, endpoint
+   * hull to \a x. Interior holes remain in \a y. Signed Word storage still
+   * maps to unsigned encoding IDs, not signed integer values.
+   *
+   * Adjacent constraints, including tiny floating-point operations, must
+   * share the same IntVar to communicate encoding holes through this channel.
+   * Separate IntVars linked only through a WordVar can lose that information.
+   * Throws Word::OutOfLimits if the word is wider than eight bits.
+   */
+  GECODE_WORD_EXPORT void channel_encoding(Home home, WordVar x, IntVar y);
   /// Reduce all significant bits of \a x by conjunction into \a b
   GECODE_WORD_EXPORT void reduce_and(Home home, WordVar x, BoolVar b);
   /// Reduce all significant bits of \a x by disjunction into \a b
