@@ -48,9 +48,6 @@ namespace Gecode { namespace Search {
   Builder::best(void) const {
     return b;
   }
-  forceinline
-  Builder::~Builder(void) {
-  }
 
 
   template<class T, class E>

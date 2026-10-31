@@ -1406,9 +1406,7 @@ endif()
 
 if(GECODE_ENABLE_INSTANCE)
   add_executable(gecode-instance ${GECODE_INSTANCE_EXE_SOURCE})
-  # The int headers include the search headers, whose inline code can refer
-  # to the search library in unoptimized builds
-  target_link_libraries(gecode-instance PRIVATE gecodeinstance gecodesearch)
+  target_link_libraries(gecode-instance PRIVATE gecodeinstance)
   if(APPLE)
     set_target_properties(gecode-instance PROPERTIES
       INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}")

@@ -69,6 +69,12 @@ namespace Gecode { namespace Search {
     WorkerControlAccess::detach(worker_control);
   }
 
+  /*
+   * Defined out of line so that the vtable, and with it the destructor of
+   * the options, is only emitted in the search library.
+   */
+  Builder::~Builder(void) {}
+
 }}
 
 // STATISTICS: search-other
