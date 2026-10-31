@@ -428,6 +428,57 @@ namespace Gecode {
                                  FloatWordVar c, FloatWordVar result,
                                  IntVar status);
 
+  /** \brief Exact local spacing 2^exponent in a named reference format
+   *
+   * Finite values use max(floor(log2(abs(reference))), emin) - (p-1).
+   * Both zeros use emin-(p-1). Values need not belong to the reference lattice;
+   * spacing above its maximum finite value is not capped. Tiny operands require
+   * their shared encoding binding. Unknown formats throw Word::OutOfLimits.
+   * Filtering is sound but can be incomplete; nonfinite inputs fail.
+   */
+  GECODE_WORD_EXPORT void ulp_spacing(Home home, FloatWordFormat reference_format,
+                                      FloatWordVar reference, IntVar exponent);
+  /** \brief Exact unsigned distance between finite representable values
+   *
+   * Endpoints must belong exactly to reference_format, without rounding.
+   * Both zero signs have rank zero; original encodings keep their signs.
+   * distance has float_word_width(reference_format) bits, including all 32 bits
+   * for FP32. Storage may be cube, unsigned-bound or signed-bound.
+   * Tiny operands require their shared encoding bindings. Unknown formats or
+   * missing bindings throw Word::OutOfLimits; wrong result width throws
+   * Word::WidthMismatch. Nonfinite or unrepresentable fixed endpoints fail.
+   * Filtering is sound but can be incomplete. Input/result aliases are allowed.
+   */
+  GECODE_WORD_EXPORT void ulp_steps(Home home, FloatWordFormat reference_format,
+                                    FloatWordVar a, FloatWordVar b,
+                                    WordVar distance);
+  /** \brief Exact normalized absolute error abs(a-b)/ulp(reference)
+   *
+   * Each value retains its own format and must be finite. No value needs to
+   * belong to reference_format's lattice. Tiny values require shared encoding
+   * bindings. The error is Q * 2^-ulp_error_scale(reference_format), where the
+   * unsigned numerator Q is written as most-significant-first base-2^30
+   * digits, with leading zeros retained. Create the digit array with
+   * ulp_error_digits(); the relation also bounds every digit. Unknown
+   * formats, missing tiny bindings or a digit array of another size throw
+   * Word::OutOfLimits. Nonfinite inputs or incompatible digit bounds fail.
+   * Aliases are allowed; filtering is sound but can be incomplete. Ordinary
+   * lexical array relations and IntLexMaximizeSpace consume the digits
+   * without rounding the objective.
+   */
+  GECODE_WORD_EXPORT void ulp_error(Home home, FloatWordFormat reference_format,
+                                    FloatWordVar a, FloatWordVar b,
+                                    FloatWordVar reference,
+                                    const IntVarArgs& numerator_digits);
+  /** \brief Fresh ulp_error numerator digits for reference_format
+   *
+   * The array has the size ulp_error requires, and each digit has the range
+   * of its position. Unknown formats throw Word::OutOfLimits.
+   */
+  GECODE_WORD_EXPORT IntVarArray
+  ulp_error_digits(Space& home, FloatWordFormat reference_format);
+  /// Return S in error = Q * 2^-S; unknown formats throw Word::OutOfLimits.
+  GECODE_WORD_EXPORT int ulp_error_scale(FloatWordFormat reference_format);
 } // namespace Gecode
 #endif
 
