@@ -162,8 +162,8 @@ CMake exposes options aligned with the Autoconf switches:
 | None | `GECODE_ENABLE_MIMALLOC` | CMake-only | Default `OFF`; private allocator backend |
 
 Higher-level modules enable the lower-level modules they require. Examples
-and FlatZinc require the core modelling modules; minimodel requires int, set,
-and search support.
+and FlatZinc require the core modelling modules; minimodel requires int and
+search support.
 
 `GECODE_ENABLE_QT` and `GECODE_ENABLE_GIST` accept `AUTO`, `ON`, and `OFF`.
 `ON` requires their dependencies; `AUTO` uses them when available. Enabling
