@@ -850,8 +850,9 @@ namespace Gecode {
   }
   template<class Choose, class Merit>
   void
-  ViewSelChooseTbl<Choose,Merit>::dispose(Space&) {
+  ViewSelChooseTbl<Choose,Merit>::dispose(Space& home) {
     tbl.~SharedData<BranchTbl>();
+    ViewSelChoose<Choose,Merit>::dispose(home);
   }
 
 

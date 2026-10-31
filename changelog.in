@@ -106,6 +106,14 @@ Rank:   minor
 Fix invalid downcasts of the end markers of propagator and brancher lists.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Release the merit functions, and the action and CHB information, of variable
+selections that use a tie-break limit function.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   major
