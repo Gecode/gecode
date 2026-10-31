@@ -1331,6 +1331,7 @@ namespace Test {
         o.stop = &f;
         Gecode::PBS<Model,Engine> pbs(m,o);
         if (best) {
+          delete m;
           Model* b = nullptr;
           while (true) {
             Model* s = pbs.next();
