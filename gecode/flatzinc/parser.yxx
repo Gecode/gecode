@@ -2306,6 +2306,7 @@ ann_non_array_expr :
           $$ = getArrayElement(static_cast<ParserState*>(parm),$1,i,true);
         else
           $$ = new AST::IntLit(0); // keep things consistent
+        delete $3;
         free($1);
       }
     | FZ_STRING_LIT
