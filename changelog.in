@@ -320,6 +320,14 @@ Rank:   minor
 Fix iterator invalidation during counting-based search cache cleanup.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Avoid signed integer overflow in unary scheduling and bounds-consistent
+distinct near the integer limits.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor

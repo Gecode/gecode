@@ -314,7 +314,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     int* minsorted = r.alloc<int>(n);
     int* maxsorted = r.alloc<int>(n);
 
-    unsigned int d = static_cast<unsigned int>(max_x - min_x) + 1;
+    unsigned int d = static_cast<unsigned int>(max_x) - static_cast<unsigned int>(min_x) + 1;
 
     if (d < static_cast<unsigned int>(n))
       return ES_FAILED;
@@ -359,7 +359,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     max_x = x[maxsorted[n-1]].max();
 
 
-    if (d > (static_cast<unsigned int>(Int::Limits::max) / 2U))
+    // The Hall bounds reach max_x+3, which overflows int near the limit
+    if ((d > (static_cast<unsigned int>(Int::Limits::max) / 2U)) ||
+        (max_x > Int::Limits::max - 2))
       return prop_bnd<View,long long int>(home,x,minsorted,maxsorted);
     else
       return prop_bnd<View,int>(home,x,minsorted,maxsorted);
@@ -403,7 +405,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     if ((n > 2*y.size()) && (n > 6)) {
       // If there are many assigned views, try to eliminate them
-      unsigned int d = static_cast<unsigned int>(max_x - min_x) + 1;
+      unsigned int d = static_cast<unsigned int>(max_x) - static_cast<unsigned int>(min_x) + 1;
       if (d > 2*static_cast<unsigned int>(n)) {
         MinInc<View> min_inc;
         Support::quicksort<View,MinInc<View> >(&x[0], n, min_inc);
