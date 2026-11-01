@@ -70,6 +70,13 @@ shape, so each fixed posting family needs one regression test.
   instead. Do not add allocator instrumentation only to make a test fail.
 - Run focused tests with `-test <pattern>`, then `check-standard` in Debug.
 
+## Background
+
+- [Empty-array posting audit](background/empty-array-audit.md): which public
+  posting functions were checked for empty arrays, how, and what each does
+  now; the FlatZinc and instance-reader findings; and the zero-size requests
+  recorded but not fixed.
+
 ## Validation
 
 - Debug build with audit enabled (`build/full` configuration) and `ctest`.

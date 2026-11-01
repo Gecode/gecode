@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-002"
 key = "audit"
 area = "empty-arrays"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 blocked_by = ["empty-arrays-001", "empty-arrays-003", "empty-arrays-004", "empty-arrays-005", "empty-arrays-006", "empty-arrays-007"]
@@ -24,11 +24,23 @@ Use the brief's Terms and settled decisions: fix at the posting site, and check 
 
 ## Done when
 
-- [ ] .zdev/empty-arrays/background/empty-array-audit.md lists every posting function checked, how it was checked (driver, source trace, or both), and the result for empty input (posts nothing, fails, throws, or was fixed), plus the FlatZinc and instance-reader findings, and the brief indexes it.
-- [ ] Each repaired posting family has focused coverage of its documented empty-input result. Where the original path aborts or gives a wrong result, that coverage fails before the fix in a Debug build. For zero-size Region or heap requests that already give the correct result (for example the Region allocation in gecode/float/linear.cpp), the audit records the before and after allocation sizes from a source trace instead; do not add allocator instrumentation only to make a test fail.
-- [ ] changelog.in has a 7.0.0 entry that names the affected constraints.
+- [x] .zdev/empty-arrays/background/empty-array-audit.md lists every posting function checked, how it was checked (driver, source trace, or both), and the result for empty input (posts nothing, fails, throws, or was fixed), plus the FlatZinc and instance-reader findings, and the brief indexes it.
+- [x] Each repaired posting family has focused coverage of its documented empty-input result. Where the original path aborts or gives a wrong result, that coverage fails before the fix in a Debug build. For zero-size Region or heap requests that already give the correct result (for example the Region allocation in gecode/float/linear.cpp), the audit records the before and after allocation sizes from a source trace instead; do not add allocator instrumentation only to make a test fail.
+- [x] changelog.in has a 7.0.0 entry that names the affected constraints.
 
 ## Validation
 
 - Run the focused tests in build/full, then `ctest` and the check-standard suite in Debug.
 - Last task in the area: run `uv run misc/check.py all --build-dir build/full --jobs N`. Fix failures that this area caused. Report failures that already exist at the area base.
+
+## Result
+
+Audited all 427 array-taking declarations in int.hh, set.hh, float.hh and minimodel.hh (391 by driver, 36 by source trace); repairs split into 003-007; audit in background/empty-array-audit.md; 7.0.0 changelog entries for int, set and search
+
+Validation:
+
+- Header-to-inventory comparison: 427 declarations, 391 driven with empty arrays (status and search), 36 traced; no remaining abort or zero-size request in owned posting code
+- 20 focused Empty tests pass in build/full; ctest 8/8; check-standard 6801/6801
+- uv run misc/check.py all --build-dir build/full --jobs 12: exit 0
+- uv run misc/tidy.py --check passed
+- Independent Codex verifier: pass after one rework round (coverage claim and GCC wording)

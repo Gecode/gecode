@@ -3,14 +3,14 @@
 # Tasks: empty-arrays
 
 - Total: 7
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 6
+- Done: 7
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [empty-arrays-001](tasks/001-post-nothing-for-empty-no-overlap.md) | Post nothing for empty no_overlap | done | — |
-| [empty-arrays-002](tasks/002-find-and-fix-other-zero-size-allocations-on-empty-input.md) | Find and fix other zero-size allocations on empty input | ready | empty-arrays-001, empty-arrays-003, empty-arrays-004, empty-arrays-005, empty-arrays-006, empty-arrays-007 |
+| [empty-arrays-002](tasks/002-find-and-fix-other-zero-size-allocations-on-empty-input.md) | Find and fix other zero-size allocations on empty input | done | empty-arrays-001, empty-arrays-003, empty-arrays-004, empty-arrays-005, empty-arrays-006, empty-arrays-007 |
 | [empty-arrays-003](tasks/003-post-nothing-for-empty-gcc-and-bin-packing-input.md) | Post nothing for empty GCC and bin-packing input | done | — |
 | [empty-arrays-004](tasks/004-branch-with-empty-symmetries-and-relax-empty-arrays.md) | Branch with empty symmetries and relax empty arrays | done | — |
 | [empty-arrays-005](tasks/005-decide-empty-set-channel-element-rel-op-and-weights-at-posti.md) | Decide empty set channel, element, rel-op and weights at posting | done | — |
