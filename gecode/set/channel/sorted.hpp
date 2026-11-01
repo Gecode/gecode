@@ -62,6 +62,8 @@ namespace Gecode { namespace Set { namespace Channel {
         unsigned int xs_size = static_cast<unsigned int>(xs.size());
         GECODE_ME_CHECK(x0.card_min(home, xs_size));
         GECODE_ME_CHECK(x0.card_max(home, xs_size));
+        if (xs_size == 0)
+            return ES_OK;
         if (xs_size == 1) {
             SingletonView sv(xs[0]);
             GECODE_ES_CHECK((Rel::Eq<View, SingletonView>::post(home, x0, sv)));
