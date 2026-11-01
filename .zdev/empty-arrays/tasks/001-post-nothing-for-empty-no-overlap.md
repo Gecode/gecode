@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-001"
 key = "no-overlap"
 area = "empty-arrays"
-status = "open"
+status = "done"
 afk = true
 priority = "high"
 blocked_by = []
@@ -25,11 +25,22 @@ The brief has the reproduction: `no_overlap(home, IntVarArgs(), IntArgs(), IntVa
 
 ## Done when
 
-- [ ] Posting each no_overlap overload with empty arrays in a Debug build gives a space whose status() is SS_SOLVED and does not abort.
-- [ ] A regression test next to the existing no_overlap tests covers the empty case of each overload and fails before the fix in a Debug build.
-- [ ] Doxygen comments on Space::alloc, Space::ralloc, and MemoryManager::alloc state that sizes must be greater than zero.
+- [x] Posting each no_overlap overload with empty arrays in a Debug build gives a space whose status() is SS_SOLVED and does not abort.
+- [x] A regression test next to the existing no_overlap tests covers the empty case of each overload and fails before the fix in a Debug build.
+- [x] Doxygen comments on Space::alloc, Space::ralloc, and MemoryManager::alloc state that sizes must be greater than zero.
 
 ## Validation
 
 - In build/full (Debug, audit): run the new regression test by its exact name before and after the fix, then `bin/gecode-test -test NoOverlap -tag standard`.
 - Build the default Release configuration and run the same tests.
+
+## Result
+
+Every no_overlap overload posts nothing for zero boxes after its size checks and GECODE_POST; the allocator's size-greater-than-zero contract is documented on Space::alloc, Space::ralloc and MemoryManager::alloc
+
+Validation:
+
+- New Test::Base regression Int::NoOverlap::Empty covers all four overloads; on the base tree it aborts in Debug with audit (exit 134, manager.hpp:289), after the fix it passes
+- Debug (build/full) and Release (build/local): NoOverlap standard 2/2 and full Int::NoOverlap 17/17
+- ASan/UBSan standard NoOverlap tests, tidy, format-check and documentation build passed
+- Independent Codex verifier: pass, no findings

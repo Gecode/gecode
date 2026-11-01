@@ -143,7 +143,11 @@ namespace Gecode { namespace Kernel {
         void alloc_fill(SharedMemory& sm, size_t s, bool first);
 
     public:
-        /// Allocate memory of size \a s
+        /**
+         * \brief Allocate memory of size \a s
+         *
+         * The size \a s must be greater than zero.
+         */
         void* alloc(SharedMemory& sm, size_t s);
         /// Get the memory area for subscriptions
         void* subscriptions(void) const;

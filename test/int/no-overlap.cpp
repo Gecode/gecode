@@ -266,6 +266,40 @@ namespace Test { namespace Int {
             }
         };
 
+        /// %Test that every no-overlap overload posts nothing for zero boxes
+        class Empty : public Base {
+        private:
+            /// Space without variables
+            class Fixture : public Gecode::Space {
+            public:
+                Fixture(void) = default;
+                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+                Gecode::Space*
+                copy(void) override {
+                    return new Fixture(*this);
+                }
+            };
+
+        public:
+            Empty(void) : Base("Int::NoOverlap::Empty") {}
+            bool
+            run(void) override {
+                using namespace Gecode;
+                IntVarArgs x;
+                IntArgs w;
+                BoolVarArgs m;
+                Fixture fix, fix_opt, var, var_opt;
+                no_overlap(fix, x, w, x, w);
+                no_overlap(fix_opt, x, w, x, w, m);
+                no_overlap(var, x, x, x, x, x, x);
+                no_overlap(var_opt, x, x, x, x, x, x, m);
+                return (fix.status() == SS_SOLVED) && (fix_opt.status() == SS_SOLVED) && (var.status() == SS_SOLVED) &&
+                       (var_opt.status() == SS_SOLVED);
+            }
+        };
+
+        Empty empty;
+
         /// Help class to create and register tests
         class Create {
         public:

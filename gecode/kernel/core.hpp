@@ -2606,6 +2606,8 @@ namespace Gecode {
          *
          * Note that this function implements C++ semantics: the default
          * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
          */
         template <class T>
         T* alloc(long unsigned int n);
@@ -2614,6 +2616,8 @@ namespace Gecode {
          *
          * Note that this function implements C++ semantics: the default
          * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
          */
         template <class T>
         T* alloc(long int n);
@@ -2622,6 +2626,8 @@ namespace Gecode {
          *
          * Note that this function implements C++ semantics: the default
          * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
          */
         template <class T>
         T* alloc(unsigned int n);
@@ -2630,6 +2636,8 @@ namespace Gecode {
          *
          * Note that this function implements C++ semantics: the default
          * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
          */
         template <class T>
         T* alloc(int n);
@@ -2765,7 +2773,11 @@ namespace Gecode {
          */
         template <class T>
         T** realloc(T** b, int n, int m);
-        /// Allocate memory on space heap
+        /**
+         * \brief Allocate memory of size \a s on space heap
+         *
+         * The size \a s must be greater than zero.
+         */
         void* ralloc(size_t s);
         /// Free memory previously allocated with alloc (might be reused later)
         void rfree(void* p, size_t s);
