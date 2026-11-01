@@ -88,12 +88,6 @@
 
 #endif
 
-// Configure auto-linking
-#ifndef GECODE_BUILD_INT
-#define GECODE_LIBRARY_NAME "Int"
-#include <gecode/support/auto-link.hpp>
-#endif
-
 /**
  * \namespace Gecode::Int
  * \brief Finite domain integers
