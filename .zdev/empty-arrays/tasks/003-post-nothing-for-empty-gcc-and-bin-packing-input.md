@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-003"
 key = "gcc-binpack"
 area = "empty-arrays"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 blocked_by = []
@@ -43,9 +43,9 @@ Append a section for this child's families to build/zdev-audit/empty-array-audit
 
 ## Done when
 
-- [ ] The GCC probes (`count(...) gcc*` and `count(x=[y],c[],v[])`) and the bin_packing probes give SS_SOLVED or SS_FAILED as documented in build/full, with no abort and no zero-size request in a fresh instrumented build.
-- [ ] New Test::Base tests Int::GCC::Empty (test/int/gcc.cpp) and Int::BinPacking::Empty (test/int/bin-packing.cpp) cover every overload's empty case, abort before the fix in build/full and pass after it.
-- [ ] build/zdev-audit/empty-array-audit.md has a section for this child's families listing each posting function, how it was checked (driver, source trace, or both), its result before and after, and the zero-size request sizes before and after.
+- [x] The GCC probes (`count(...) gcc*` and `count(x=[y],c[],v[])`) and the bin_packing probes give SS_SOLVED or SS_FAILED as documented in build/full, with no abort and no zero-size request in a fresh instrumented build.
+- [x] New Test::Base tests Int::GCC::Empty (test/int/gcc.cpp) and Int::BinPacking::Empty (test/int/bin-packing.cpp) cover every overload's empty case, abort before the fix in build/full and pass after it.
+- [x] build/zdev-audit/empty-array-audit.md has a section for this child's families listing each posting function, how it was checked (driver, source trace, or both), its result before and after, and the zero-size request sizes before and after.
 
 ## Validation
 
@@ -53,3 +53,15 @@ Append a section for this child's families to build/zdev-audit/empty-array-audit
 - Rerun the GCC and bin_packing probes against build/full and against a fresh instrumented build of the edited tree.
 - `bin/gecode-test -test Int::GCC -tag standard` and `bin/gecode-test -test Int::BinPacking -tag standard` in build/full.
 - Run `uv run misc/check.py format-check --build-dir build/full` and the lint check (`uv run misc/check.py lint --build-dir build/full --jobs 12`) for the touched files.
+
+## Result
+
+count with empty x forces every count to 0 and posts nothing; non-empty x with no values fails; bin_packing with no items sets loads to 0 and skips the conflict graph
+
+Validation:
+
+- Int::GCC::Empty and Int::BinPacking::Empty abort (exit 134) before the fix in a Debug audit build and pass after it
+- build/full and build/local: Int::GCC standard 2/2 (all 25/25), Int::BinPacking standard 38/38
+- Fresh instrumented build: no zero-size Region or Space request on the GCC and bin_packing empty probes
+- format-check (LLVM 22) and lint passed
+- Independent Codex verifier: pass, no findings

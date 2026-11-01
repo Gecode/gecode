@@ -303,6 +303,70 @@ namespace Test { namespace Int {
             }
         };
 
+        /// %Test every count overload with no variables or no values
+        class Empty : public Base {
+        private:
+            /// Space without variables
+            class Fixture : public Gecode::Space {
+            public:
+                Fixture(void) = default;
+                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+                Gecode::Space*
+                copy(void) override {
+                    return new Fixture(*this);
+                }
+            };
+
+        public:
+            Empty(void) : Base("Int::GCC::Empty") {}
+            bool
+            run(void) override {
+                using namespace Gecode;
+                IntVarArgs x;
+                IntVarArgs c;
+                IntSetArgs cs;
+                IntArgs v;
+                Fixture var, var_v, var_val, var_bnd, var_dom, set, set_v, set_c;
+                count(var, x, c);
+                count(var_v, x, c, v);
+                count(var_val, x, c, v, IPL_VAL);
+                count(var_bnd, x, c, v, IPL_BND);
+                count(var_dom, x, c, v, IPL_DOM);
+                count(set, x, cs);
+                count(set_v, x, cs, v);
+                count(set_c, x, IntSet(0, 1), v);
+                bool empty_solved = (var.status() == SS_SOLVED) && (var_v.status() == SS_SOLVED) &&
+                                    (var_val.status() == SS_SOLVED) && (var_bnd.status() == SS_SOLVED) &&
+                                    (var_dom.status() == SS_SOLVED) && (set.status() == SS_SOLVED) &&
+                                    (set_v.status() == SS_SOLVED) && (set_c.status() == SS_SOLVED);
+
+                // Without variables, every value occurs zero times
+                Fixture card, card_zero, card_one, card_hole;
+                IntVarArgs y(card, 2, 0, 2);
+                count(card, x, y, IntArgs({1, 1}));
+                count(card_zero, x, IntSetArgs({IntSet({0, 2})}), IntArgs({1}));
+                count(card_one, x, IntSetArgs({IntSet(1, 2)}), IntArgs({1}));
+                count(card_hole, x, IntSet({1, 3}), IntArgs({1}));
+                bool card_counted = (card.status() == SS_SOLVED) && y[0].assigned() && (y[0].val() == 0) &&
+                                    y[1].assigned() && (y[1].val() == 0) && (card_zero.status() == SS_SOLVED) &&
+                                    (card_one.status() == SS_FAILED) && (card_hole.status() == SS_FAILED);
+
+                // Without values, no variable can take a value
+                Fixture no_var, no_var_v, no_set, no_set_v, no_set_c;
+                count(no_var, IntVarArgs(no_var, 1, 0, 2), c);
+                count(no_var_v, IntVarArgs(no_var_v, 1, 0, 2), c, v);
+                count(no_set, IntVarArgs(no_set, 1, 0, 2), cs);
+                count(no_set_v, IntVarArgs(no_set_v, 1, 0, 2), cs, v);
+                count(no_set_c, IntVarArgs(no_set_c, 1, 0, 2), IntSet(0, 1), v);
+                bool no_value_failed = (no_var.status() == SS_FAILED) && (no_var_v.status() == SS_FAILED) &&
+                                       (no_set.status() == SS_FAILED) && (no_set_v.status() == SS_FAILED) &&
+                                       (no_set_c.status() == SS_FAILED);
+                return empty_solved && card_counted && no_value_failed;
+            }
+        };
+
+        Empty empty;
+
         /// Help class to create and register tests
         class Create {
         public:

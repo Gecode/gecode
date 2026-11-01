@@ -110,6 +110,18 @@ namespace Gecode {
 
         GECODE_POST;
 
+        if (x.size() == 0) {
+            // Without variables, every value occurs zero times
+            for (int i = 0; i < c.size(); i++)
+                GECODE_ME_FAIL(IntView(c[i]).eq(home, 0));
+            return;
+        }
+        if (v.size() == 0) {
+            // No value is allowed for the variables
+            home.fail();
+            return;
+        }
+
         remove_duplicates(home, c, v);
 
         ViewArray<IntView> xv(home, x);
@@ -155,6 +167,21 @@ namespace Gecode {
         }
 
         GECODE_POST;
+
+        if (x.size() == 0) {
+            // Without variables, every value occurs zero times
+            for (int i = 0; i < c.size(); i++)
+                if (!c[i].in(0)) {
+                    home.fail();
+                    return;
+                }
+            return;
+        }
+        if (v.size() == 0) {
+            // No value is allowed for the variables
+            home.fail();
+            return;
+        }
 
         remove_duplicates(home, c, v);
 

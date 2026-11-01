@@ -110,6 +110,10 @@ namespace Gecode {
             }
         }
 
+        // Without items there are no conflicts
+        if (n == 0)
+            return IntSet::empty;
+
         // Clique Finding and distinct posting
         {
             // First construct the conflict graph

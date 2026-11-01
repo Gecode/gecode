@@ -360,6 +360,47 @@ namespace Test { namespace Int {
             }
         };
 
+        /// %Test that both bin-packing overloads post nothing for zero items
+        class Empty : public Base {
+        private:
+            /// Space without variables
+            class Fixture : public Gecode::Space {
+            public:
+                Fixture(void) = default;
+                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+                Gecode::Space*
+                copy(void) override {
+                    return new Fixture(*this);
+                }
+            };
+
+        public:
+            Empty(void) : Base("Int::BinPacking::Empty") {}
+            bool
+            run(void) override {
+                using namespace Gecode;
+                IntVarArgs e;
+                IntArgs s;
+                Fixture none, loads, loaded, multi_none, multi_loads, multi_loaded;
+                bin_packing(none, e, e, s);
+                IntVarArgs l(loads, 2, 0, 3);
+                bin_packing(loads, l, e, s);
+                bin_packing(loaded, IntVarArgs(loaded, 1, 1, 3), e, s);
+                IntSet clique_none = bin_packing(multi_none, 1, e, e, s, IntArgs({1}));
+                IntVarArgs ml(multi_loads, 2, 0, 3);
+                IntSet clique_loads = bin_packing(multi_loads, 2, ml, e, s, IntArgs({1, 1}));
+                bin_packing(multi_loaded, 1, IntVarArgs(multi_loaded, 1, 1, 3), e, s, IntArgs({3}));
+                return (none.status() == SS_SOLVED) && (loads.status() == SS_SOLVED) && l[0].assigned() &&
+                       (l[0].val() == 0) && l[1].assigned() && (l[1].val() == 0) && (loaded.status() == SS_FAILED) &&
+                       (multi_none.status() == SS_SOLVED) && (clique_none.size() == 0) &&
+                       (multi_loads.status() == SS_SOLVED) && ml[0].assigned() && (ml[0].val() == 0) &&
+                       ml[1].assigned() && (ml[1].val() == 0) && (clique_loads.size() == 0) &&
+                       (multi_loaded.status() == SS_FAILED);
+            }
+        };
+
+        Empty empty;
+
         /// Large weights must preserve every feasible bin assignment.
         class DFFLargeWeights : public Test {
             int capacity;

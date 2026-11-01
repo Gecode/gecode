@@ -364,7 +364,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
     ExecStatus
     Pack::post(Home home, ViewArray<OffsetView>& l, ViewArray<Item>& bs, IntPropLevel ipl) {
         // Sort according to size
-        Support::quicksort(&bs[0], bs.size());
+        if (bs.size() > 0)
+            Support::quicksort(&bs[0], bs.size());
         // Total size of items
         int s = 0;
         // Constrain bins
