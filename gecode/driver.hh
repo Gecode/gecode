@@ -66,12 +66,6 @@
 
 #endif
 
-// Configure auto-linking
-#ifndef GECODE_BUILD_DRIVER
-#define GECODE_LIBRARY_NAME "Driver"
-#include <gecode/support/auto-link.hpp>
-#endif
-
 /**
  * \namespace Gecode::Driver
  * \brief Script commandline driver
