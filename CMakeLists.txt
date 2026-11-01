@@ -717,16 +717,6 @@ if((GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT AND
   set(GECODE_HAS_POSIX_BLACKBOX_EXEC 1)
 endif()
 
-include(CheckCSourceCompiles)
-check_c_source_compiles("int main() { return __builtin_ffsll(0); }" HAVE_BUILTIN_FFSLL)
-if(HAVE_BUILTIN_FFSLL)
-  set(GECODE_HAS_BUILTIN_FFSLL 1)
-endif()
-check_c_source_compiles("int main() { return __builtin_popcountll(0); }" HAVE_BUILTIN_POPCOUNTLL)
-if(HAVE_BUILTIN_POPCOUNTLL)
-  set(GECODE_HAS_BUILTIN_POPCOUNTLL 1)
-endif()
-
 if(GECODE_ENABLE_MIMALLOC)
   if(NOT GECODE_ENABLE_ALLOCATOR)
     message(FATAL_ERROR "GECODE_ENABLE_MIMALLOC requires GECODE_ENABLE_ALLOCATOR=ON")

@@ -35,6 +35,7 @@
 
 #include <algorithm>
 #include <array>
+#include <bit>
 #include <charconv>
 #include <cstdint>
 #include <limits>
@@ -237,16 +238,7 @@ namespace Gecode { namespace Support {
       z = (z ^ (z >> 33)) * UINT64_C(0xc4ceb9fe1a85ec53);
       z = (z ^ (z >> 33)) | 1;
       uint64_t bits = z ^ (z >> 1);
-#ifdef GECODE_HAS_BUILTIN_POPCOUNTLL
-      unsigned int n = __builtin_popcountll(bits);
-#else
-      bits -= (bits >> 1) & UINT64_C(0x5555555555555555);
-      bits = (bits & UINT64_C(0x3333333333333333)) +
-             ((bits >> 2) & UINT64_C(0x3333333333333333));
-      bits = (bits + (bits >> 4)) & UINT64_C(0x0f0f0f0f0f0f0f0f);
-      unsigned int n = static_cast<unsigned int>
-        ((bits * UINT64_C(0x0101010101010101)) >> 56);
-#endif
+      unsigned int n = static_cast<unsigned int>(std::popcount(bits));
       return (n < 24) ? z ^ UINT64_C(0xaaaaaaaaaaaaaaaa) : z;
     }
   public:
