@@ -6,7 +6,7 @@ area = "value-params"
 status = "open"
 complexity = "advanced"
 afk = true
-blocked_by = ["value-params-001"]
+blocked_by = ["value-params-001", "value-params-004", "value-params-005", "value-params-006", "value-params-007", "value-params-008"]
 +++
 # Fix value-parameter copies by repair group
 
