@@ -1157,8 +1157,58 @@ namespace Test { namespace Int { namespace OpenList {
         }
     };
 
+    /// Space posting distinct on an initially empty open list
+    class EmptyDistinctSpace : public Gecode::Space {
+    public:
+        Gecode::OpenIntVarList list;
+
+        EmptyDistinctSpace(int max, Gecode::IntPropLevel ipl) : list(*this, Gecode::IntSet(0, 2), max) {
+            distinct(*this, list, ipl);
+        }
+
+        EmptyDistinctSpace(EmptyDistinctSpace& s) : Gecode::Space(s) {
+            list.update(*this, s.list);
+        }
+
+        Gecode::Space*
+        copy(void) override {
+            return new EmptyDistinctSpace(*this);
+        }
+    };
+
+    /// Distinct on a closed empty list posts nothing; an open one still grows
+    class DistinctEmpty : public ::Test::Base {
+    public:
+        DistinctEmpty(void) : ::Test::Base("Int::OpenList::DistinctEmpty") {}
+
+        bool
+        run(void) override {
+            using namespace Gecode;
+            for (IntPropLevel ipl : {IPL_DEF, IPL_DOM}) {
+                EmptyDistinctSpace closed(0, ipl);
+                if ((PropagatorGroup::all.size(closed) != 0) || (closed.status() != SS_SOLVED))
+                    return false;
+
+                EmptyDistinctSpace source(Gecode::Int::Limits::max, ipl);
+                if (source.status() != SS_SOLVED)
+                    return false;
+                std::unique_ptr<EmptyDistinctSpace> duplicate(static_cast<EmptyDistinctSpace*>(source.clone()));
+                source.list.append(source, IntVar(source, 1, 1));
+                source.list.append(source, IntVar(source, 0, 1));
+                if ((source.status() == SS_FAILED) || !source.list[1].assigned() || (source.list[1].val() != 0))
+                    return false;
+                duplicate->list.append(*duplicate, IntVar(*duplicate, 2, 2));
+                duplicate->list.append(*duplicate, IntVar(*duplicate, 2, 2));
+                if (duplicate->status() != SS_FAILED)
+                    return false;
+            }
+            return true;
+        }
+    };
+
     GrowableIntSet growable_int_set;
     DistinctWaves distinct_waves;
+    DistinctEmpty distinct_empty;
 
     class GroupSpace : public Gecode::Space {
     public:
