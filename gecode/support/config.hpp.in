@@ -55,12 +55,6 @@
 /* Whether gcc understands visibility attributes */
 #cmakedefine GECODE_GCC_HAS_CLASS_VISIBILITY 1
 
-/* whether __builtin_ffsll is available */
-#cmakedefine GECODE_HAS_BUILTIN_FFSLL 1
-
-/* whether __builtin_popcountll is available */
-#cmakedefine GECODE_HAS_BUILTIN_POPCOUNTLL 1
-
 /* Whether counting-based search support available */
 #cmakedefine GECODE_HAS_CBS 1
 
