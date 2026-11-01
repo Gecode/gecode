@@ -2,10 +2,12 @@
 
 # Tasks: empty-arrays
 
-- Total: 0
-- Ready: 0
-- Blocked: 0
+- Total: 2
+- Ready: 1
+- Blocked: 1
 - Done: 0
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
+| [empty-arrays-001](tasks/001-post-nothing-for-empty-no-overlap.md) | Post nothing for empty no_overlap | ready | — |
+| [empty-arrays-002](tasks/002-find-and-fix-other-zero-size-allocations-on-empty-input.md) | Find and fix other zero-size allocations on empty input | blocked | empty-arrays-001 |

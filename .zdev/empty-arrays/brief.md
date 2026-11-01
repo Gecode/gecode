@@ -62,8 +62,12 @@ shape, so each fixed posting family needs one regression test.
   zero, add a small `Test::Base` test that posts on an empty `Space`, calls
   `status()`, and checks the documented result (`SS_SOLVED`, `SS_FAILED`, or
   an exception).
-- Each test fails before its fix in a Debug build. Release passing before the
-  fix is expected.
+- Where the original path aborts or gives a wrong result, its test fails
+  before the fix in a Debug build. Release passing before the fix is expected.
+- A zero-size `Region` or heap request that already gives the correct result
+  cannot fail a test, because `Region::ralloc` has no size assertion. Record
+  the before and after allocation sizes from a source trace in the audit
+  instead. Do not add allocator instrumentation only to make a test fail.
 - Run focused tests with `-test <pattern>`, then `check-standard` in Debug.
 
 ## Validation
