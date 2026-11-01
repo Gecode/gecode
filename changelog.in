@@ -91,6 +91,15 @@ defined as empty, such as GECODE_HAS_FLOAT_VARS, are now defined as 1; tests
 with #ifdef behave as before.
 
 [ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Remove GECODE_HAS_BUILTIN_FFSLL and GECODE_HAS_BUILTIN_POPCOUNTLL from the
+installed gecode/support/config.hpp. Bitsets now use std::countr_zero and
+std::popcount.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor

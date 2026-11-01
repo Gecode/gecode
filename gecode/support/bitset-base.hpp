@@ -36,25 +36,8 @@
  *
  */
 
+#include <bit>
 #include <climits>
-
-#ifdef _MSC_VER
-
-#include <intrin.h>
-
-#if defined(_M_IX86)
-#pragma intrinsic(_BitScanForward)
-#pragma intrinsic(__popcnt)
-#define GECODE_SUPPORT_MSVC_32
-#endif
-
-#if defined(_M_X64) || defined(_M_IA64)
-#pragma intrinsic(_BitScanForward64)
-#pragma intrinsic(__popcnt64)
-#define GECODE_SUPPORT_MSVC_64
-#endif
-
-#endif
 
 namespace Gecode { namespace Support {
 
@@ -65,7 +48,7 @@ namespace Gecode { namespace Support {
         friend class RawBitSetBase;
 
     protected:
-#if defined(GECODE_SUPPORT_MSVC_32)
+#if defined(_MSC_VER) && defined(_M_IX86)
         /// Basetype for bits
         typedef unsigned long int Base;
 #else
@@ -271,28 +254,8 @@ namespace Gecode { namespace Support {
     }
     forceinline unsigned int
     BitSetData::next(unsigned int i) const {
-        assert(bits != static_cast<Base>(0));
-#if defined(GECODE_SUPPORT_MSVC_32)
-        assert(bpb == 32);
-        unsigned long int p;
-        _BitScanForward(&p, bits >> i);
-        return static_cast<unsigned int>(p) + i;
-#elif defined(GECODE_SUPPORT_MSVC_64)
-        assert(bpb == 64);
-        unsigned long int p;
-        _BitScanForward64(&p, bits >> i);
-        return static_cast<unsigned int>(p) + i;
-#elif defined(GECODE_HAS_BUILTIN_FFSLL)
-        if (bpb == 64) {
-            int p = __builtin_ffsll(bits >> i);
-            assert(p > 0);
-            return static_cast<unsigned int>(p - 1) + i;
-        }
-#else
-        while (!get(i))
-            i++;
-        return i;
-#endif
+        assert((bits >> i) != static_cast<Base>(0));
+        return static_cast<unsigned int>(std::countr_zero(bits >> i)) + i;
     }
     forceinline bool
     BitSetData::all(void) const {
@@ -315,28 +278,7 @@ namespace Gecode { namespace Support {
 
     forceinline unsigned int
     BitSetData::ones(void) const {
-#if defined(GECODE_SUPPORT_MSVC_32)
-        assert(bpb == 32);
-        return static_cast<unsigned int>(__popcnt(bits));
-#elif defined(GECODE_SUPPORT_MSVC_64)
-        assert(bpb == 64);
-        return static_cast<unsigned int>(__popcnt64(bits));
-#elif defined(GECODE_HAS_BUILTIN_POPCOUNTLL)
-        if (bpb == 64)
-            return static_cast<unsigned int>(__builtin_popcountll(bits));
-#else
-        const unsigned long long int m1 = 0x5555555555555555;
-        const unsigned long long int m2 = 0x3333333333333333;
-        const unsigned long long int m4 = 0x0f0f0f0f0f0f0f0f;
-        unsigned long long int b = bits;
-        b -= (b >> 1) & m1;
-        b = (b & m2) + ((b >> 2) & m2);
-        b = (b + (b >> 4)) & m4;
-        b += b >> 8;
-        b += b >> 16;
-        b += b >> 32;
-        return static_cast<unsigned int>(b & 0x7f);
-#endif
+        return static_cast<unsigned int>(std::popcount(bits));
     }
     forceinline unsigned int
     BitSetData::zeroes(void) const {
@@ -627,12 +569,5 @@ namespace Gecode { namespace Support {
     }
 
 }} // namespace Gecode::Support
-
-#ifdef GECODE_SUPPORT_MSVC_32
-#undef GECODE_SUPPORT_MSVC_32
-#endif
-#ifdef GECODE_SUPPORT_MSVC_64
-#undef GECODE_SUPPORT_MSVC_64
-#endif
 
 // STATISTICS: support-any
