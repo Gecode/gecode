@@ -613,48 +613,9 @@ endif()
 # ---------------------------------------------------------------------------
 # Configure-time metadata and config.hpp generation
 # ---------------------------------------------------------------------------
-file(READ gecode/support/config.hpp.in CONFIG)
-string(REGEX REPLACE "^/\\*([^*]|\\*[^/])*\\*/" "" CONFIG ${CONFIG})
-string(REGEX MATCHALL "[^\n]*\n" CONFIG
-"${CONFIG}
-/* Define to 1 if you have a working `mmap' system call. */
-#undef HAVE_MMAP
-
-/* Whether legacy MSVC automatic library selection is disabled. */
-#undef GECODE_NO_AUTOLINK
-
-/* Define to the address where bug reports for this package should be sent. */
-#undef PACKAGE_BUGREPORT
-
-/* Define to the full name of this package. */
-#undef PACKAGE_NAME
-
-/* Define to the full name and version of this package. */
-#undef PACKAGE_STRING
-
-/* Define to the one symbol short name of this package. */
-#undef PACKAGE_TARNAME
-
-/* Define to the home page for this package. */
-#undef PACKAGE_URL
-
-/* Define to the version of this package. */
-#undef PACKAGE_VERSION
-")
-
 set(VERSION "${PROJECT_VERSION}")
-
-set(PACKAGE "GECODE")
-set(PACKAGE_BUGREPORT "users@gecode.dev")
-
-set(PACKAGE_NAME ${PACKAGE})
-string(TOLOWER ${PACKAGE} PACKAGE_TARNAME)
-set(PACKAGE_URL "")
-set(PACKAGE_VERSION ${VERSION})
-set(${PACKAGE}_VERSION ${VERSION})
 set(GECODE_PROJECT_VERSION ${VERSION})
 string(REPLACE "." "-" GECODE_LIBRARY_VERSION "${VERSION}")
-set(PACKAGE_STRING "${PACKAGE} ${VERSION}")
 if(VERSION MATCHES "(.*)\\.(.*)\\.(.*)")
   math(EXPR GECODE_VERSION_NUMBER
     "${CMAKE_MATCH_1} * 100000 + ${CMAKE_MATCH_2} * 100 + ${CMAKE_MATCH_3}")
@@ -667,52 +628,52 @@ set(GECODE_DLL_USERSUFFIX "${GECODE_LIB_SUFFIX}")
 # injecting legacy MSVC library names.
 set(GECODE_NO_AUTOLINK 1)
 if(GECODE_ENABLE_INT_VARS)
-  set(GECODE_HAS_INT_VARS "/**/")
+  set(GECODE_HAS_INT_VARS 1)
 endif()
 if(GECODE_ENABLE_SET_VARS)
-  set(GECODE_HAS_SET_VARS "/**/")
+  set(GECODE_HAS_SET_VARS 1)
 endif()
 if(GECODE_ENABLE_FLOAT_VARS)
-  set(GECODE_HAS_FLOAT_VARS "/**/")
+  set(GECODE_HAS_FLOAT_VARS 1)
 endif()
 if(GECODE_BUILD_STATIC)
   set(GECODE_STATIC_LIBS 1)
 endif()
 if(GECODE_ENABLE_ALLOCATOR)
-  set(GECODE_ALLOCATOR "/**/")
+  set(GECODE_ALLOCATOR 1)
 endif()
 if(GECODE_ENABLE_AUDIT)
-  set(GECODE_AUDIT "/**/")
+  set(GECODE_AUDIT 1)
 endif()
 if(GECODE_ENABLE_FAULT_INJECTION)
   set(GECODE_HAS_FAULT_INJECTION 1)
 endif()
 if(GECODE_ENABLE_CPPROFILER)
-  set(GECODE_HAS_CPPROFILER "/**/")
+  set(GECODE_HAS_CPPROFILER 1)
 endif()
 if(GECODE_ENABLE_EXPERIMENTAL)
-  set(GECODE_HAS_EXPERIMENTAL "/**/")
+  set(GECODE_HAS_EXPERIMENTAL 1)
 endif()
 if(GECODE_ENABLE_CBS)
-  set(GECODE_HAS_CBS "/**/")
+  set(GECODE_HAS_CBS 1)
 endif()
 if(GECODE_ENABLE_MPFR AND MPFR_FOUND AND GECODE_ENABLE_FLOAT_VARS)
-  set(GECODE_HAS_MPFR "/**/")
+  set(GECODE_HAS_MPFR 1)
 endif()
 if(GECODE_EFFECTIVE_ENABLE_GCC_VISIBILITY AND HAVE_VISIBILITY_HIDDEN_FLAG)
-  set(GECODE_GCC_HAS_CLASS_VISIBILITY "/**/")
+  set(GECODE_GCC_HAS_CLASS_VISIBILITY 1)
 endif()
 if(GECODE_ENABLE_THREAD)
   set(GECODE_HAS_THREADS 1)
 endif()
 if(APPLE AND GECODE_ENABLE_THREAD AND GECODE_ENABLE_OSX_UNFAIR_MUTEX)
-  set(GECODE_USE_OSX_UNFAIR_MUTEX "/**/")
+  set(GECODE_USE_OSX_UNFAIR_MUTEX 1)
 endif()
 if(GECODE_HAS_QT_RUNTIME)
-  set(GECODE_HAS_QT "/**/")
+  set(GECODE_HAS_QT 1)
 endif()
 if(GECODE_BUILD_GIST_TARGET)
-  set(GECODE_HAS_GIST "/**/")
+  set(GECODE_HAS_GIST 1)
 endif()
 if(GECODE_FREELIST32_SIZE_MAX)
   set(GECODE_FREELIST_SIZE_MAX32 ${GECODE_FREELIST32_SIZE_MAX})
@@ -723,17 +684,6 @@ endif()
 
 include(CheckSymbolExists)
 check_symbol_exists(mmap sys/mman.h HAVE_MMAP)
-
-include(CheckCSourceCompiles)
-check_c_source_compiles("inline __attribute__ ((__always_inline__)) void foo(void) {}\nint main() {}" HAVE_ALWAYS_INLINE)
-check_c_source_compiles("__forceinline void foo(void) {}\nint main() {}" HAVE_FORCE_INLINE)
-set(forceinline inline)
-if(HAVE_ALWAYS_INLINE)
-  set(forceinline "inline __attribute__ ((__always_inline__))")
-endif()
-if(HAVE_FORCE_INLINE)
-  set(forceinline "__forceinline")
-endif()
 
 include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("#include <spawn.h>
@@ -767,13 +717,14 @@ if((GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT AND
   set(GECODE_HAS_POSIX_BLACKBOX_EXEC 1)
 endif()
 
+include(CheckCSourceCompiles)
 check_c_source_compiles("int main() { return __builtin_ffsll(0); }" HAVE_BUILTIN_FFSLL)
 if(HAVE_BUILTIN_FFSLL)
-  set(GECODE_HAS_BUILTIN_FFSLL "/**/")
+  set(GECODE_HAS_BUILTIN_FFSLL 1)
 endif()
 check_c_source_compiles("int main() { return __builtin_popcountll(0); }" HAVE_BUILTIN_POPCOUNTLL)
 if(HAVE_BUILTIN_POPCOUNTLL)
-  set(GECODE_HAS_BUILTIN_POPCOUNTLL "/**/")
+  set(GECODE_HAS_BUILTIN_POPCOUNTLL 1)
 endif()
 
 if(GECODE_ENABLE_MIMALLOC)
@@ -785,44 +736,11 @@ if(GECODE_ENABLE_MIMALLOC)
   endif()
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/GecodeMimalloc.cmake)
   gecode_configure_mimalloc()
+  set(GECODE_MIMALLOC 1)
 endif()
 
 # Fill the configuration template with detected features and build options.
-list(LENGTH CONFIG length)
-math(EXPR length "${length} - 1")
-foreach(i RANGE ${length})
-  list(GET CONFIG ${i} line)
-  if(line MATCHES "^#( *)undef (.*)\n")
-    set(space "${CMAKE_MATCH_1}")
-    set(var ${CMAKE_MATCH_2})
-    if(NOT DEFINED ${var} OR (var MATCHES "HAVE_.*" AND NOT ${var}))
-      set(line "/* #${space}undef ${var} */\n")
-    else()
-      if("${${var}}" STREQUAL "/**/" OR "${var}" STREQUAL "GECODE_VERSION_NUMBER" OR
-         "${var}" STREQUAL "forceinline" OR var MATCHES "SIZEOF_.*")
-        set(value ${${var}})
-      elseif(NOT (var MATCHES ^HAVE OR ${var} EQUAL 0 OR ${var} EQUAL 1))
-        set(value \"${${var}}\")
-      elseif(${var})
-        set(value 1)
-      else()
-        set(value 0)
-      endif()
-      set(line "#${space}define ${var} ${value}\n")
-    endif()
-  endif()
-  string(REPLACE "<semi>" ";" line "${line}")
-  set(CONFIG_OUT "${CONFIG_OUT}${line}")
-endforeach()
-
-if(GECODE_ENABLE_MIMALLOC)
-  string(APPEND CONFIG_OUT "\n/* Use the private mimalloc backend. */\n#define GECODE_MIMALLOC 1\n")
-endif()
-
-file(CONFIGURE OUTPUT "${GECODE_BINARY_DIR}/gecode/support/config.hpp" CONTENT
-"/* gecode/support/config.hpp.  Generated by CMake from config.hpp.in.  */
-
-${CONFIG_OUT}")
+configure_file(gecode/support/config.hpp.in "${GECODE_BINARY_DIR}/gecode/support/config.hpp" @ONLY)
 
 # ---------------------------------------------------------------------------
 # Source inventory
