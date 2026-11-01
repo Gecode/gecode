@@ -118,6 +118,14 @@ Define the GECODE_FREELIST32_SIZE_MAX and GECODE_FREELIST64_SIZE_MAX build
 options as numbers in config.hpp. A quoted value broke compilation.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Post nothing for no_overlap with zero rectangles. Debug builds aborted with a
+failed assertion in the memory manager.
+
+[ENTRY]
 Module: other
 What:   performance
 Rank:   minor
