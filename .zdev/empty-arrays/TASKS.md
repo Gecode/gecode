@@ -2,16 +2,17 @@
 
 # Tasks: empty-arrays
 
-- Total: 6
+- Total: 7
 - Ready: 1
-- Blocked: 0
+- Blocked: 1
 - Done: 5
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [empty-arrays-001](tasks/001-post-nothing-for-empty-no-overlap.md) | Post nothing for empty no_overlap | done | — |
-| [empty-arrays-002](tasks/002-find-and-fix-other-zero-size-allocations-on-empty-input.md) | Find and fix other zero-size allocations on empty input | ready | empty-arrays-001, empty-arrays-003, empty-arrays-004, empty-arrays-005, empty-arrays-006 |
+| [empty-arrays-002](tasks/002-find-and-fix-other-zero-size-allocations-on-empty-input.md) | Find and fix other zero-size allocations on empty input | blocked | empty-arrays-001, empty-arrays-003, empty-arrays-004, empty-arrays-005, empty-arrays-006, empty-arrays-007 |
 | [empty-arrays-003](tasks/003-post-nothing-for-empty-gcc-and-bin-packing-input.md) | Post nothing for empty GCC and bin-packing input | done | — |
 | [empty-arrays-004](tasks/004-branch-with-empty-symmetries-and-relax-empty-arrays.md) | Branch with empty symmetries and relax empty arrays | done | — |
 | [empty-arrays-005](tasks/005-decide-empty-set-channel-element-rel-op-and-weights-at-posti.md) | Decide empty set channel, element, rel-op and weights at posting | done | — |
 | [empty-arrays-006](tasks/006-skip-empty-term-buffers-in-linear-posting-and-minimodel-expr.md) | Skip empty term buffers in linear posting and minimodel expressions | done | — |
+| [empty-arrays-007](tasks/007-skip-empty-buffers-in-open-list-distinct.md) | Skip empty buffers in open-list distinct | ready | — |

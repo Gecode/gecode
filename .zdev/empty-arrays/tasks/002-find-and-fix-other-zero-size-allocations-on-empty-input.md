@@ -6,7 +6,7 @@ area = "empty-arrays"
 status = "open"
 complexity = "advanced"
 afk = true
-blocked_by = ["empty-arrays-001", "empty-arrays-003", "empty-arrays-004", "empty-arrays-005", "empty-arrays-006"]
+blocked_by = ["empty-arrays-001", "empty-arrays-003", "empty-arrays-004", "empty-arrays-005", "empty-arrays-006", "empty-arrays-007"]
 +++
 # Find and fix other zero-size allocations on empty input
 
