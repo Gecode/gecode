@@ -126,6 +126,38 @@ Post nothing for no_overlap with zero rectangles. Debug builds aborted with a
 failed assertion in the memory manager.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Decide count with an array of counts (global cardinality) and bin_packing
+with no variables or items when posting: every count and load becomes 0.
+Count with variables but no values fails. Branching with LDSB symmetries,
+for integer, Boolean, and set variables, ignores symmetries over no
+variables or values and accepts an empty Symmetries. Debug builds aborted
+with failed assertions. Distinct over an open list with maximum length 0
+also posts nothing.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Post nothing for channel_sorted, channel with Boolean variables, and union
+or disjoint-union element over constant sets when the array is empty, and
+make the set variables empty. Debug builds aborted with failed assertions.
+Element over set variables, rel with union or disjoint union and a constant
+set, and weights also post nothing for empty arrays.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Post nothing for relax with empty variable arrays. Debug builds aborted with
+a failed assertion.
+
+[ENTRY]
 Module: other
 What:   performance
 Rank:   minor
