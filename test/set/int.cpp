@@ -499,6 +499,57 @@ namespace Test { namespace Set {
         IntArgs w4(7, w4v);
         Weights _weights4("Int::Weights::4", el1, w4);
 
+        /// Space with a set and a weight variable for tests without elements
+        class WeightsFixture : public Gecode::Space {
+        public:
+            /// Weighted set
+            SetVar x;
+            /// Weight of \a x
+            IntVar y;
+            /// Create fixture with greatest lower bound \a glb for \a x and minimal weight \a min
+            WeightsFixture(const IntSet& glb, int min) : x(*this, glb, ds_33), y(*this, min, 2) {}
+            /// Constructor for cloning \a fixture
+            WeightsFixture(WeightsFixture& fixture) : Gecode::Space(fixture) {
+                x.update(*this, fixture.x);
+                y.update(*this, fixture.y);
+            }
+            /// Copy during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new WeightsFixture(*this);
+            }
+        };
+
+        /// %Test weights without elements: the set is empty and weighs 0
+        class WeightsEmpty : public Base {
+        public:
+            /// Create and register test
+            WeightsEmpty(void) : Base("Set::Int::Weights::Empty") {}
+            /// Perform test
+            bool
+            run(void) override {
+                IntArgs none;
+                WeightsFixture empty(IntSet::empty, -2);
+                weights(empty, none, none, empty.x, empty.y);
+                bool solved = (empty.status() == SS_SOLVED) && (empty.x.lub_size() == 0) && empty.y.assigned() &&
+                              (empty.y.val() == 0);
+
+                WeightsFixture nonempty(IntSet(0, 0), -2), heavy(IntSet::empty, 1);
+                weights(nonempty, none, none, nonempty.x, nonempty.y);
+                weights(heavy, none, none, heavy.x, heavy.y);
+                bool failed = (nonempty.status() == SS_FAILED) && (heavy.status() == SS_FAILED);
+
+                WeightsFixture mismatch(IntSet::empty, -2);
+                try {
+                    weights(mismatch, none, IntArgs({1}), mismatch.x, mismatch.y);
+                    return false;
+                } catch (Gecode::Set::ArgumentSizeMismatch&) {
+                    return solved && failed;
+                }
+            }
+        };
+        WeightsEmpty _weights_empty;
+
     } // namespace Int
 }} // namespace Test::Set
 

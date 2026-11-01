@@ -313,6 +313,62 @@ namespace Test { namespace Set {
             }
         };
 
+        /// Space with one set variable for tests without operands
+        class EmptyFixture : public Gecode::Space {
+        public:
+            /// Result set
+            SetVar y;
+            /// Create fixture, where \a glb is the greatest lower bound of \a y
+            EmptyFixture(const IntSet& glb = IntSet::empty) : y(*this, glb, ds_33) {}
+            /// Constructor for cloning \a fixture
+            EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
+                y.update(*this, fixture.y);
+            }
+            /// Copy during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new EmptyFixture(*this);
+            }
+            /// Test whether the space is solved with \a y equal to \a result
+            bool
+            is_solved(const IntSet& result) {
+                if ((status() != SS_SOLVED) || !y.assigned())
+                    return false;
+                SetVarGlbRanges yr(y);
+                IntSetRanges rr(result);
+                return Iter::Ranges::equal(yr, rr);
+            }
+        };
+
+        /// Test whether the operation \a op on empty \a Args and a constant \a z gives \a z
+        template <class Args>
+        bool
+        is_result_constant(SetOpType op) {
+            Args x;
+            IntSet z(-1, 1);
+            EmptyFixture equal, larger(IntSet(2, 2));
+            rel(equal, op, x, z, equal.y);
+            rel(larger, op, x, z, larger.y);
+            return equal.is_solved(z) && (larger.status() == SS_FAILED);
+        }
+
+        /// %Test operations with a constant and no variables
+        class Empty : public Base {
+        public:
+            /// Create and register test
+            Empty(void) : Base("Set::RelOpConst::Empty") {}
+            /// Perform test
+            bool
+            run(void) override {
+                for (SetOpType op : {SOT_UNION, SOT_DUNION, SOT_INTER}) {
+                    if (!is_result_constant<SetVarArgs>(op) || !is_result_constant<IntVarArgs>(op))
+                        return false;
+                }
+                return true;
+            }
+        };
+        Empty _empty;
+
         /// Help class to create and register tests
         class Create {
         public:
