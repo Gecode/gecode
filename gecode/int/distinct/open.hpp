@@ -133,6 +133,8 @@ namespace Gecode { namespace Int { namespace Distinct {
                     x.subscribe(home, *this, PC_INT_VAL, false);
             }
             processed = size;
+            if (active_count == 0)
+                return closed() ? home.ES_SUBSUMED(*this) : ES_FIX;
 
             Region region;
             const int capacity = active_count;
@@ -190,6 +192,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
         static void
         post(Home home, OpenViewList<View> list) {
+            if (list.length().max() == 0)
+                return;
             (void)new (home) Open(home, list);
         }
     };
