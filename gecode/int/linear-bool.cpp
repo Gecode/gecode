@@ -42,7 +42,7 @@ namespace Gecode {
 
         int n = x.size();
         Region re;
-        Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
         for (int i = 0; i < n; i++) {
             t[i].a = 1;
             t[i].x = x[i];
@@ -57,7 +57,7 @@ namespace Gecode {
 
         int n = x.size();
         Region re;
-        Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
         for (int i = 0; i < n; i++) {
             t[i].a = 1;
             t[i].x = x[i];
@@ -75,7 +75,7 @@ namespace Gecode {
 
         int n = x.size();
         Region re;
-        Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
         for (int i = 0; i < n; i++) {
             t[i].a = a[i];
             t[i].x = x[i];
@@ -93,7 +93,7 @@ namespace Gecode {
 
         int n = x.size();
         Region re;
-        Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
         for (int i = 0; i < n; i++) {
             t[i].a = a[i];
             t[i].x = x[i];
@@ -125,7 +125,7 @@ namespace Gecode {
 
         int n = x.size();
         Region re;
-        Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
         for (int i = 0; i < n; i++) {
             t[i].a = 1;
             t[i].x = x[i];
@@ -140,7 +140,7 @@ namespace Gecode {
 
         int n = x.size();
         Region re;
-        Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
         for (int i = 0; i < n; i++) {
             t[i].a = 1;
             t[i].x = x[i];
@@ -157,7 +157,7 @@ namespace Gecode {
 
         int n = x.size();
         Region re;
-        Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
         for (int i = 0; i < n; i++) {
             t[i].a = a[i];
             t[i].x = x[i];
@@ -174,7 +174,7 @@ namespace Gecode {
 
         int n = x.size();
         Region re;
-        Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
         for (int i = 0; i < n; i++) {
             t[i].a = a[i];
             t[i].x = x[i];

@@ -1618,6 +1618,45 @@ namespace Test { namespace Float {
         MinNaryShared min_s_nary;
         MaxNary max_nary;
         MaxNaryShared max_s_nary;
+
+        /// Space without variables for minimum and maximum over no variables
+        class EmptyFixture : public Gecode::Space {
+        public:
+            /// Create fixture
+            EmptyFixture(void) = default;
+            /// Constructor for cloning \a fixture
+            EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {}
+            /// Copy during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new EmptyFixture(*this);
+            }
+        };
+
+        /// %Test that minimum and maximum expressions over no variables throw at posting
+        class MinMaxEmpty : public Base {
+        public:
+            /// Create and register test
+            MinMaxEmpty(void) : Base("Float::Arithmetic::MinMax::Empty") {}
+            /// Test whether posting \a e throws TooFewArguments
+            static bool
+            throws_too_few(const Gecode::LinFloatExpr& e) {
+                EmptyFixture home;
+                try {
+                    (void)Gecode::expr(home, e);
+                } catch (Gecode::Float::TooFewArguments&) {
+                    return true;
+                }
+                return false;
+            }
+            /// Perform test
+            bool
+            run(void) override {
+                Gecode::FloatVarArgs x;
+                return throws_too_few(Gecode::min(x)) && throws_too_few(Gecode::max(x));
+            }
+        };
+        MinMaxEmpty min_max_empty;
         //@}
 
     } // namespace Arithmetic

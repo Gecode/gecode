@@ -264,6 +264,59 @@ namespace Test { namespace Int {
             }
         };
 
+        /// Space with an integer and a Boolean variable for sums without terms
+        class EmptyFixture : public Gecode::Space {
+        public:
+            /// Right-hand side variable
+            Gecode::IntVar y;
+            /// Reification variable
+            Gecode::BoolVar b;
+            /// Create fixture
+            EmptyFixture(void) : y(*this, -2, 2), b(*this, 0, 1) {}
+            /// Constructor for cloning \a fixture
+            EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
+                y.update(*this, fixture.y);
+                b.update(*this, fixture.b);
+            }
+            /// Copy during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new EmptyFixture(*this);
+            }
+            /// Test whether the space is solved with \a b equal to \a val
+            bool
+            is_solved_with_b(int val) {
+                return (status() == Gecode::SS_SOLVED) && b.assigned() && (b.val() == val);
+            }
+        };
+
+        /// %Test linear constraints over no variables
+        class Empty : public Base {
+        public:
+            /// Create and register test
+            Empty(void) : Base("Int::Linear::Empty") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using namespace Gecode;
+                IntVarArgs x;
+                BoolVarArgs bx;
+                IntArgs a;
+                EmptyFixture eq, nq, bool_lq, bool_y, reified, imp, pmi;
+                linear(eq, x, IRT_EQ, 0, IPL_DOM);
+                linear(nq, a, x, IRT_NQ, 0);
+                linear(bool_lq, a, bx, IRT_LQ, -1);
+                linear(bool_y, bx, IRT_EQ, bool_y.y);
+                linear(reified, x, IRT_EQ, 1, Reify(reified.b));
+                linear(imp, a, bx, IRT_GQ, 1, Reify(imp.b, RM_IMP));
+                linear(pmi, bx, IRT_LQ, 0, Reify(pmi.b, RM_PMI));
+                return (eq.status() == SS_SOLVED) && (nq.status() == SS_FAILED) && (bool_lq.status() == SS_FAILED) &&
+                       (bool_y.status() == SS_SOLVED) && bool_y.y.assigned() && (bool_y.y.val() == 0) &&
+                       reified.is_solved_with_b(0) && imp.is_solved_with_b(0) && pmi.is_solved_with_b(1);
+            }
+        };
+        Empty empty;
+
         /// Help class to create and register tests
         class Create {
         public:

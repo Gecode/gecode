@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-006"
 key = "linear-buffers"
 area = "empty-arrays"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 blocked_by = []
@@ -42,9 +42,9 @@ Append a section for this child's families to build/zdev-audit/empty-array-audit
 
 ## Done when
 
-- [ ] The linear*, float linear*, `mm rel(sum..)`, `mm float ...`, `mm expr(element(bool x,y))` and `mm float expr(min/max)` probes keep their results from build/zdev-probe/out.txt and show no zero-size request in a fresh instrumented build.
-- [ ] New Test::Base Empty tests next to the existing tests (test/int/linear.cpp, test/float/linear.cpp, test/int/mm-lin.cpp, test/float/mm-lin.cpp, test/int/mm-bool.cpp, test/float/arithmetic.cpp) document the decided results and the kept exceptions.
-- [ ] build/zdev-audit/empty-array-audit.md has a section for this child's families listing each posting function, how it was checked (driver, source trace, or both), its result before and after, and the zero-size request sizes before and after.
+- [x] The linear*, float linear*, `mm rel(sum..)`, `mm float ...`, `mm expr(element(bool x,y))` and `mm float expr(min/max)` probes keep their results from build/zdev-probe/out.txt and show no zero-size request in a fresh instrumented build.
+- [x] New Test::Base Empty tests next to the existing tests (test/int/linear.cpp, test/float/linear.cpp, test/int/mm-lin.cpp, test/float/mm-lin.cpp, test/int/mm-bool.cpp, test/float/arithmetic.cpp) document the decided results and the kept exceptions.
+- [x] build/zdev-audit/empty-array-audit.md has a section for this child's families listing each posting function, how it was checked (driver, source trace, or both), its result before and after, and the zero-size request sizes before and after.
 
 ## Validation
 
@@ -52,3 +52,15 @@ Append a section for this child's families to build/zdev-audit/empty-array-audit
 - Rerun the family's probes against build/full and against a fresh instrumented build of the edited tree, and record the before (0-byte Region or heap request) and after (none) sizes.
 - `bin/gecode-test -test Int::Linear`, `-test Float::Linear` and `-test MiniModel` in build/full, then each with `-tag standard`.
 - Run `uv run misc/check.py format-check --build-dir build/full` and the lint check (`uv run misc/check.py lint --build-dir build/full --jobs 12`) for the touched files.
+
+## Result
+
+Int, Bool and float linear posting and the LinIntExpr and LinFloatExpr relations allocate term buffers only for non-empty sums; BElementExpr and float min/max expressions allocate nothing for zero operands and still throw TooFewArguments
+
+Validation:
+
+- Six new Empty tests (int, float linear; int, float minimodel linear relations; Boolean element; float min/max) pass in build/full and build/local
+- build/full and build/local standard: Int::Linear 126/126, Float::Linear 3/3, MiniModel 3544/3544; Release untagged Int::Linear, Float::Linear and MiniModel pass
+- 46 probes: identical results; fresh instrumented build shows no zero-size request (before: one on each of 32 probes)
+- format-check and lint (LLVM 22) passed
+- Independent Codex verifier: pass, no findings

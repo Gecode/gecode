@@ -40,24 +40,26 @@ namespace Gecode {
     linear(Home home, const IntVarArgs& x, IntRelType irt, int c, IntPropLevel ipl) {
         GECODE_POST;
         Region re;
-        Linear::Term<IntView>* t = re.alloc<Linear::Term<IntView>>(x.size());
-        for (int i = 0; i < x.size(); i++) {
+        int n = x.size();
+        Linear::Term<IntView>* t = (n > 0) ? re.alloc<Linear::Term<IntView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
             t[i].a = 1;
             t[i].x = x[i];
         }
-        Linear::post(home, t, x.size(), irt, c, ipl);
+        Linear::post(home, t, n, irt, c, ipl);
     }
 
     void
     linear(Home home, const IntVarArgs& x, IntRelType irt, int c, Reify r, IntPropLevel) {
         GECODE_POST;
         Region re;
-        Linear::Term<IntView>* t = re.alloc<Linear::Term<IntView>>(x.size());
-        for (int i = 0; i < x.size(); i++) {
+        int n = x.size();
+        Linear::Term<IntView>* t = (n > 0) ? re.alloc<Linear::Term<IntView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
             t[i].a = 1;
             t[i].x = x[i];
         }
-        Linear::post(home, t, x.size(), irt, c, r);
+        Linear::post(home, t, n, irt, c, r);
     }
 
     void
@@ -66,12 +68,13 @@ namespace Gecode {
             throw ArgumentSizeMismatch("Int::linear");
         GECODE_POST;
         Region re;
-        Linear::Term<IntView>* t = re.alloc<Linear::Term<IntView>>(x.size());
-        for (int i = 0; i < x.size(); i++) {
+        int n = x.size();
+        Linear::Term<IntView>* t = (n > 0) ? re.alloc<Linear::Term<IntView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
             t[i].a = a[i];
             t[i].x = x[i];
         }
-        Linear::post(home, t, x.size(), irt, c, ipl);
+        Linear::post(home, t, n, irt, c, ipl);
     }
 
     void
@@ -80,12 +83,13 @@ namespace Gecode {
             throw ArgumentSizeMismatch("Int::linear");
         GECODE_POST;
         Region re;
-        Linear::Term<IntView>* t = re.alloc<Linear::Term<IntView>>(x.size());
-        for (int i = 0; i < x.size(); i++) {
+        int n = x.size();
+        Linear::Term<IntView>* t = (n > 0) ? re.alloc<Linear::Term<IntView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
             t[i].a = a[i];
             t[i].x = x[i];
         }
-        Linear::post(home, t, x.size(), irt, c, r);
+        Linear::post(home, t, n, irt, c, r);
     }
 
     void

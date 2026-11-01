@@ -41,12 +41,13 @@ namespace Gecode {
         using namespace Float;
         GECODE_POST;
         Region re;
-        Linear::Term* t = re.alloc<Linear::Term>(x.size());
-        for (int i = x.size(); i--;) {
+        int n = x.size();
+        Linear::Term* t = (n > 0) ? re.alloc<Linear::Term>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
             t[i].a = 1.0;
             t[i].x = x[i];
         }
-        Linear::post(home, t, x.size(), frt, c);
+        Linear::post(home, t, n, frt, c);
     }
 
     void
@@ -54,12 +55,13 @@ namespace Gecode {
         using namespace Float;
         GECODE_POST;
         Region re;
-        Linear::Term* t = re.alloc<Linear::Term>(x.size());
-        for (int i = x.size(); i--;) {
+        int n = x.size();
+        Linear::Term* t = (n > 0) ? re.alloc<Linear::Term>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
             t[i].a = 1.0;
             t[i].x = x[i];
         }
-        Linear::post(home, t, x.size(), frt, c, r);
+        Linear::post(home, t, n, frt, c, r);
     }
 
     void
@@ -69,12 +71,13 @@ namespace Gecode {
             throw ArgumentSizeMismatch("Float::linear");
         GECODE_POST;
         Region re;
-        Linear::Term* t = re.alloc<Linear::Term>(x.size());
-        for (int i = x.size(); i--;) {
+        int n = x.size();
+        Linear::Term* t = (n > 0) ? re.alloc<Linear::Term>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
             t[i].a = a[i];
             t[i].x = x[i];
         }
-        Linear::post(home, t, x.size(), frt, c);
+        Linear::post(home, t, n, frt, c);
     }
 
     void
@@ -84,12 +87,13 @@ namespace Gecode {
             throw ArgumentSizeMismatch("Float::linear");
         GECODE_POST;
         Region re;
-        Linear::Term* t = re.alloc<Linear::Term>(x.size());
-        for (int i = x.size(); i--;) {
+        int n = x.size();
+        Linear::Term* t = (n > 0) ? re.alloc<Linear::Term>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
             t[i].a = a[i];
             t[i].x = x[i];
         }
-        Linear::post(home, t, x.size(), frt, c, r);
+        Linear::post(home, t, n, frt, c, r);
     }
 
     void

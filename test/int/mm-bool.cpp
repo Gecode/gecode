@@ -1954,6 +1954,45 @@ namespace Test { namespace Int {
             }
         };
 
+        /// Space with an index variable for element over no Boolean variables
+        class EmptyFixture : public Gecode::Space {
+        public:
+            /// Index variable
+            Gecode::IntVar y;
+            /// Create fixture
+            EmptyFixture(void) : y(*this, 0, 1) {}
+            /// Constructor for cloning \a fixture
+            EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
+                y.update(*this, fixture.y);
+            }
+            /// Copy during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new EmptyFixture(*this);
+            }
+        };
+
+        /// %Test that element over no Boolean variables throws at posting
+        class BoolElementEmpty : public Base {
+        public:
+            /// Create and register test
+            BoolElementEmpty(void) : Base("Int::MiniModel::BoolElement::Empty") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using namespace Gecode;
+                BoolVarArgs x;
+                EmptyFixture home;
+                try {
+                    (void)expr(home, element(x, home.y));
+                } catch (Gecode::Int::TooFewArguments&) {
+                    return true;
+                }
+                return false;
+            }
+        };
+        BoolElementEmpty bool_element_empty;
+
         /// Help class to create and register tests
         class Create {
         public:

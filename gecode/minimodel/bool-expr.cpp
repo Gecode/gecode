@@ -666,13 +666,15 @@ namespace Gecode {
     };
 
     BElementExpr::BElementExpr(const BoolVarArgs& b, const LinIntExpr& idx)
-        : a(static_cast<BoolExpr*>(heap.ralloc(sizeof(BoolExpr) * b.size()))), n(b.size()), idx(idx) {
+        : a((b.size() > 0) ? static_cast<BoolExpr*>(heap.ralloc(sizeof(BoolExpr) * b.size())) : nullptr), n(b.size()),
+          idx(idx) {
         for (int i = b.size(); i--;)
             new (&a[i]) BoolExpr(b[i]);
     }
 
     BElementExpr::~BElementExpr(void) {
-        heap.free<BoolExpr>(a, n);
+        if (a != nullptr)
+            heap.free<BoolExpr>(a, n);
     }
 
     void
