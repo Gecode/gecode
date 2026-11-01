@@ -58,6 +58,8 @@ namespace Gecode {
             throw Float::ArgumentSizeMismatch("Float::relax");
         if ((p < 0.0) || (p > 1.0))
             throw Float::OutOfLimits("Float::relax");
+        if (x.size() == 0)
+            return;
         Float::Relax fr;
         Search::relax<FloatVarArgs, Float::Relax>(home, x, sx, r, p, fr);
     }

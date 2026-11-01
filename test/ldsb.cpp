@@ -1711,6 +1711,188 @@ namespace Test { namespace LDSB {
 
 #endif
 
+    /// Space with an array \a x of variables for the empty-symmetry tests
+    template <class VarArray>
+    class EmptyFixture : public Space {
+    public:
+        /// Variables
+        VarArray x;
+        /// Constructor for creation of \a n variables with domain \a d
+        template <class... Domain>
+        EmptyFixture(int n, Domain... d) : x(*this, n, d...) {}
+        /// Constructor for cloning \a s
+        EmptyFixture(EmptyFixture& s) : Space(s) {
+            x.update(*this, s.x);
+        }
+        /// Copy during cloning
+        Space*
+        copy(void) override {
+            return new EmptyFixture(*this);
+        }
+    };
+
+    /// Symmetries that the empty-symmetry tests branch with
+    enum class SymmetrySpec {
+        NONE,           ///< No symmetry handles
+        EMPTY,          ///< Handles that describe no variables and no values
+        INTERCHANGEABLE ///< The empty handles and interchangeable variables
+    };
+
+    /// Return the symmetries described by \a spec for the variables \a x
+    template <class VarArgs>
+    Symmetries
+    symmetries(SymmetrySpec spec, const VarArgs& x) {
+        Symmetries s;
+        if (spec == SymmetrySpec::NONE)
+            return s;
+        VarArgs none;
+        Matrix<VarArgs> m(none, 0, 0);
+        s << variable_symmetry(none);
+        s << variable_sequence_symmetry(none, 2);
+        s << rows_interchange(m);
+        s << columns_interchange(m);
+        s << value_symmetry(IntArgs());
+        s << value_symmetry(IntSet::empty);
+        s << value_sequence_symmetry(IntArgs(), 2);
+        s << values_reflect(0, -1);
+        if (spec == SymmetrySpec::INTERCHANGEABLE)
+            s << variable_symmetry(x);
+        return s;
+    }
+
+    /// Return the number of solutions of \a s and delete \a s
+    template <class T>
+    int
+    count_solutions(T* s) {
+        DFS<T> e(s);
+        delete s;
+        int n = 0;
+        while (T* t = e.next()) {
+            n++;
+            delete t;
+        }
+        return n;
+    }
+
+    /// %Test that int LDSB branching ignores symmetries without variables or values
+    class EmptyInt : public Base {
+    private:
+        /// Space with variables of domain 0..1
+        using Fixture = EmptyFixture<IntVarArray>;
+        /// Branch on the variables of \a s with symmetries \a spec, tie-breaking if \a tie
+        static void
+        post_branching(Fixture& s, SymmetrySpec spec, bool tie, IntValBranch vals) {
+            IntVarArgs x(s.x);
+            Symmetries syms = symmetries(spec, x);
+            if (spec != SymmetrySpec::NONE)
+                syms << variable_symmetry(x, IntArgs());
+            if (tie)
+                branch(s, x, tie_break(INT_VAR_DEGREE_MAX(), INT_VAR_SIZE_MIN()), vals, syms);
+            else
+                branch(s, x, INT_VAR_NONE(), vals, syms);
+        }
+        /// Return the number of solutions for \a n variables
+        static int
+        solutions(int n, SymmetrySpec spec, bool tie) {
+            Fixture* s = new Fixture(n, 0, 1);
+            post_branching(*s, spec, tie, INT_VAL_MIN());
+            return count_solutions(s);
+        }
+        /// Test whether splitting value selection is rejected without variables
+        static bool
+        rejects_split(bool tie) {
+            Fixture s(0, 0, 1);
+            try {
+                post_branching(s, SymmetrySpec::NONE, tie, INT_VAL_SPLIT_MIN());
+            } catch (const Int::LDSBBadValueSelection&) {
+                return true;
+            }
+            return false;
+        }
+
+    public:
+        /// Initialize test
+        EmptyInt(void) : Base("LDSB::EmptyInt") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            for (bool tie : {false, true})
+                if ((solutions(0, SymmetrySpec::NONE, tie) != 1) || (solutions(0, SymmetrySpec::EMPTY, tie) != 1) ||
+                    (solutions(2, SymmetrySpec::NONE, tie) != 4) || (solutions(2, SymmetrySpec::EMPTY, tie) != 4) ||
+                    (solutions(2, SymmetrySpec::INTERCHANGEABLE, tie) != 3) || !rejects_split(tie))
+                    return false;
+            return true;
+        }
+    };
+
+    /// %Test that Boolean LDSB branching ignores symmetries without variables or values
+    class EmptyBool : public Base {
+    private:
+        /// Space with Boolean variables
+        using Fixture = EmptyFixture<BoolVarArray>;
+        /// Return the number of solutions for \a n variables, tie-breaking if \a tie
+        static int
+        solutions(int n, SymmetrySpec spec, bool tie) {
+            Fixture* s = new Fixture(n, 0, 1);
+            BoolVarArgs x(s->x);
+            if (tie)
+                branch(*s, x, tie_break(BOOL_VAR_DEGREE_MAX(), BOOL_VAR_DEGREE_MIN()), BOOL_VAL_MIN(),
+                       symmetries(spec, x));
+            else
+                branch(*s, x, BOOL_VAR_NONE(), BOOL_VAL_MIN(), symmetries(spec, x));
+            return count_solutions(s);
+        }
+
+    public:
+        /// Initialize test
+        EmptyBool(void) : Base("LDSB::EmptyBool") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            for (bool tie : {false, true})
+                if ((solutions(0, SymmetrySpec::NONE, tie) != 1) || (solutions(0, SymmetrySpec::EMPTY, tie) != 1) ||
+                    (solutions(2, SymmetrySpec::NONE, tie) != 4) || (solutions(2, SymmetrySpec::EMPTY, tie) != 4) ||
+                    (solutions(2, SymmetrySpec::INTERCHANGEABLE, tie) != 3))
+                    return false;
+            return true;
+        }
+    };
+
+#ifdef GECODE_HAS_SET_VARS
+    /// %Test that set LDSB branching ignores symmetries without variables or values
+    class EmptySet : public Base {
+    private:
+        /// Space with set variables
+        using Fixture = EmptyFixture<SetVarArray>;
+        /// Return the number of solutions for \a n subsets of {0}, tie-breaking if \a tie
+        static int
+        solutions(int n, SymmetrySpec spec, bool tie) {
+            Fixture* s = new Fixture(n, IntSet::empty, 0, 0);
+            SetVarArgs x(s->x);
+            if (tie)
+                branch(*s, x, tie_break(SET_VAR_DEGREE_MAX(), SET_VAR_SIZE_MIN()), SET_VAL_MIN_INC(),
+                       symmetries(spec, x));
+            else
+                branch(*s, x, SET_VAR_NONE(), SET_VAL_MIN_INC(), symmetries(spec, x));
+            return count_solutions(s);
+        }
+
+    public:
+        /// Initialize test
+        EmptySet(void) : Base("LDSB::EmptySet") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            for (bool tie : {false, true})
+                if ((solutions(0, SymmetrySpec::NONE, tie) != 1) || (solutions(0, SymmetrySpec::EMPTY, tie) != 1) ||
+                    (solutions(2, SymmetrySpec::NONE, tie) != 4) || (solutions(2, SymmetrySpec::EMPTY, tie) != 4) ||
+                    (solutions(2, SymmetrySpec::INTERCHANGEABLE, tie) != 3))
+                    return false;
+            return true;
+        }
+    };
+#endif
+
     LDSB<VarSym1> varsym1("VarSym1");
     LDSB<VarSym1b> varsym1b("VarSym1b");
     LDSB<VarSym2> varsym2("VarSym2");
@@ -1738,6 +1920,8 @@ namespace Test { namespace LDSB {
     LDSBLatin latin("Latin");
     LDSB<Recomputation> recomp("Recomputation", 999, 999);
     LDSB<TieBreak> tie_break("TieBreak");
+    EmptyInt empty_int;
+    EmptyBool empty_bool;
 
 #ifdef GECODE_HAS_SET_VARS
     LDSB<ReflectSym1> reflectsym1("ReflectSym1");
@@ -1749,6 +1933,7 @@ namespace Test { namespace LDSB {
     LDSBSet<SetValSym2> setvalsym2("SetValSym2", 0, 1);
     LDSBSet<SetVarSeqSym1> setvarseqsym1("SetVarSeqSym1");
     LDSBSet<SetVarSeqSym2> setvarseqsym2("SetVarSeqSym2");
+    EmptySet empty_set;
 #endif
 }} // namespace Test::LDSB
 
