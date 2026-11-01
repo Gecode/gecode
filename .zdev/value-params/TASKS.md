@@ -2,10 +2,13 @@
 
 # Tasks: value-params
 
-- Total: 0
-- Ready: 0
-- Blocked: 0
+- Total: 3
+- Ready: 1
+- Blocked: 2
 - Done: 0
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
+| [value-params-001](tasks/001-measure-performance-unnecessary-value-param-findings.md) | Measure performance-unnecessary-value-param findings | ready | — |
+| [value-params-002](tasks/002-fix-value-parameter-copies-by-repair-group.md) | Fix value-parameter copies by repair group | blocked | value-params-001 |
+| [value-params-003](tasks/003-enable-the-check-and-document-the-rule.md) | Enable the check and document the rule | blocked | value-params-002 |
