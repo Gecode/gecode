@@ -36,6 +36,11 @@ affect runtime behaviour. Platform-specific checks remain in CI.
   see `code-style.md`.
 - Functions, variables, and members use snake_case; types retain PascalCase,
   enum constants retain UPPER_CASE, and external API overrides keep their names.
+- Constants, and functions that stand for constant values, keep UPPER_CASE:
+  `ME_*`, `PC_*`, `ES_SUBSUMED` and the other status helpers, and branching
+  selectors such as `INT_VAR_SIZE_MIN()`. They form one vocabulary with enum
+  constants such as `ES_FIX` and `IRT_EQ`; lowercasing them made propagator
+  code mix both spellings and changed every model without a readability gain.
 
 ## Other modernization ideas
 
@@ -53,31 +58,20 @@ affect runtime behaviour. Platform-specific checks remain in CI.
 
 ## Verified checkpoints
 
-- CMake-only build: 536 integrity tests passed; generator freshness and
-  changelog checks passed. Commit `d5b07b083b`.
-- C++23 requirement: exported targets require C++23; strict-mode core build
-  passed. Commit `fe7d10b566`.
-- LLVM 22 formatting: 1,128 maintained C/C++ files formatted; 1,123 indentation
-  headers removed. Formatting and generated freshness passed. C++23 build with
-  experimental search, CBS, fault injection, audit, Qt and Gist passed all
-  539 selected integrity tests.
-- API naming and focused Clang diagnostic fixes: full optional-feature Debug
-  build passed. Commit `46b6934132`. The final LLVM 22 lint pass checked all
-  479 configured translation units, owned grammar actions, and the parser
-  header without diagnostics.
-- The full extended command passed in the optional-feature Debug build:
-  563 integrity cases, 21 fault-injection cases, all eight CTest entries, both
-  installed-package fixtures and their lints, generated freshness, changelog
-  checks, and Doxygen 1.18 documentation.
+The branch was rebased onto the 6.5.0 release. Formatting was rerun on the
+release tree rather than replayed, and the later commits were applied as diffs
+between formatted trees. Release code that is new since the original branch
+(the instance reader, rewritten examples) was moved to the renamed API and the
+lint profile.
+
+- Each commit builds and passes the integrity suite.
+- The full extended command passed in a Debug build with experimental search,
+  CBS, fault injection, audit, Qt and Gist: formatting of 1,138 files, the
+  changelog and generated-source checks, lint of 486 translation units with
+  the grammar actions and parser header, all eight CTest entries including the
+  fault suite, both installed-package fixtures, and Doxygen 1.18.
 - The full standard and sweep stress suites remain explicit long-running
   targets. Windows and Qt5 branches were reviewed but not executed locally.
-
-- 120-column formatting: commit `96277faa2c`; generated headers use the same
-  limit. Seven performance and five correctness checks were added after a
-  full-tree audit. All 479 translation units and owned grammar actions pass
-  the expanded lint profile; the integrity, fault, package, and documentation
-  checks pass as well.
-- Counted callback probes showed branch callback copies reduced from three to
-  one and open-variable-list callback copies from five to two. Six example
-  outputs stayed unchanged, apart from excluded runtime measurements. A pipe
-  probe confirmed solutions remain visible before delayed cleanup.
+- Before the rebase, counted callback probes showed branch callback copies
+  reduced from three to one and open-variable-list callback copies from five
+  to two, with unchanged example output.
