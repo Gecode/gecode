@@ -2,10 +2,15 @@
 
 # Tasks: boost
 
-- Total: 0
-- Ready: 0
-- Blocked: 0
+- Total: 5
+- Ready: 1
+- Blocked: 4
 - Done: 0
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
+| [boost-001](tasks/001-check-that-directed-rounding-survives-optimization.md) | Check that directed rounding survives optimization | ready | — |
+| [boost-002](tasks/002-measure-nextafter-outward-rounding-against-switched-rounding.md) | Measure nextafter outward rounding against switched rounding modes | blocked | boost-001 |
+| [boost-003](tasks/003-compare-the-refreshed-copy-improved-copy-and-support-library.md) | Compare the refreshed-copy, improved-copy, and support-library approaches | blocked | boost-001, boost-002 |
+| [boost-004](tasks/004-decide-the-interval-arithmetic-approach.md) | Decide the interval-arithmetic approach | blocked | boost-003 |
+| [boost-005](tasks/005-implement-the-chosen-interval-arithmetic-approach.md) | Implement the chosen interval-arithmetic approach | blocked | boost-004 |
