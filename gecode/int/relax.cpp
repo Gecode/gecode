@@ -66,6 +66,8 @@ namespace Gecode {
             throw Int::ArgumentSizeMismatch("Int::relax");
         if ((p < 0.0) || (p > 1.0))
             throw Int::OutOfLimits("Int::relax");
+        if (x.size() == 0)
+            return;
         Int::Relax ir;
         Search::relax<IntVarArgs, Int::Relax>(home, x, sx, r, p, ir);
     }
@@ -76,6 +78,8 @@ namespace Gecode {
             throw Int::ArgumentSizeMismatch("Int::relax");
         if ((p < 0.0) || (p > 1.0))
             throw Int::OutOfLimits("Int::relax");
+        if (x.size() == 0)
+            return;
         Int::Relax ir;
         Search::relax<BoolVarArgs, Int::Relax>(home, x, sx, r, p, ir);
     }

@@ -63,6 +63,8 @@ namespace Gecode {
             throw Set::ArgumentSizeMismatch("Set::relax");
         if ((p < 0.0) || (p > 1.0))
             throw Set::OutOfLimits("Set::relax");
+        if (x.size() == 0)
+            return;
         Set::Relax ir;
         Search::relax<SetVarArgs, Set::Relax>(home, x, sx, r, p, ir);
     }
