@@ -3,7 +3,7 @@ schema_version = 1
 id = "value-params-001"
 key = "inventory"
 area = "value-params"
-status = "open"
+status = "done"
 afk = true
 priority = "high"
 blocked_by = []
@@ -24,8 +24,19 @@ The brief defines shallow handles and lists the owned or reference-counted types
 
 ## Done when
 
-- [ ] .zdev/value-params/background/value-param-inventory.md records the command, the --config used, the AllowedTypes regex, one row per unique parameter with the fields listed in Context, and the repair groups, and the brief indexes it.
+- [x] .zdev/value-params/background/value-param-inventory.md records the command, the --config used, the AllowedTypes regex, one row per unique parameter with the fields listed in Context, and the repair groups, and the brief indexes it.
 
 ## Validation
 
 - The recorded command reproduces the recorded counts.
+
+## Result
+
+Inventory of performance-unnecessary-value-param findings: 834 unique diagnostics on 708 parameters with the brief-conforming AllowedTypes (FloatVal as a separate exception: 776/655), each row with declarations, use, treatment and coupling, grouped G1-G16 with order
+
+Validation:
+
+- clang-tidy 22 over build/full with misc/check.py lint coverage (parser and lexer action passes): no AllowedTypes 172584 raw / 2016 unique; default 117975 / 834; with FloatVal 113879 / 776
+- Appendix scripts extracted from the document reproduce every table byte-identically (replayed by the implementer and two verifiers)
+- Prescribed DomArgs change passes a syntax-only compile
+- Independent Codex verifier: pass after two rework rounds

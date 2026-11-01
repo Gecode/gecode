@@ -63,6 +63,14 @@ moves, and the integrity suite and lint cover both.
   throwaway copy-counting callback under `build/`) to confirm the counts do
   not regress. Do not commit it.
 
+## Background
+
+- [Value-parameter inventory](background/value-param-inventory.md): the
+  clang-tidy command and `--config` that measure the check, the proposed
+  `AllowedTypes` value, counts per module, one row per reported parameter
+  with its treatment, the traced DFA and `SharedData` cases, and the repair
+  groups with their order.
+
 ## Validation
 
 - `uv run misc/check.py lint --build-dir <dir>` with the check enabled, on a
