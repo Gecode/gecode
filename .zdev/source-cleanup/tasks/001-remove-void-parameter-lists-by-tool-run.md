@@ -1,0 +1,35 @@
++++
+schema_version = 1
+id = "source-cleanup-001"
+key = "void-args"
+area = "source-cleanup"
+status = "open"
+complexity = "routine"
+afk = true
+priority = "low"
+blocked_by = ["scoped-enums-004"]
++++
+# Remove (void) parameter lists by tool run
+
+## Outcome
+
+Maintained C++ code has no (void) parameter lists, generators emit none, and modernize-redundant-void-arg is enabled in .clang-tidy. The mass edit is one commit made by a deterministic command sequence, recorded in full in the commit message, that reproduces it from the parent commit.
+
+## Context
+
+Use the ownership distinctions in misc/check.py: owned sources, third-party headers, generated variable headers, and grammar-owned ranges. Run clang-tidy 22 with `-checks=-*,modernize-redundant-void-arg --fix` over the owned translation units with the lint header filter. Change generated code through its inputs (misc/genvarimp.py and the C++ actions in the FlatZinc Bison and Flex inputs) with a scripted, deterministic edit, leave Bison and Flex scaffolding untouched, then build the regenerate target and run `uv run misc/check.py format`. Cover maintained headers that no translation unit includes in the build, and record how. Verify the sequence by running it again on a fresh checkout of the parent commit under build/ and comparing the result with the commit.
+
+## Boundaries
+
+- Do not hand-merge the mass edit. If it conflicts with other work, rerun the tool.
+
+## Done when
+
+- [ ] No `(void)` parameter list remains in maintained C++ files or generator output, checked with a recorded grep that excludes casts to void; casts to void are unchanged.
+- [ ] .clang-tidy enables modernize-redundant-void-arg, and docs/code-style.md states the rule and that forceinline stays lowercase so it reads like inline.
+- [ ] The commit message gives the complete command sequence, and rerunning it on the parent commit reproduces the commit exactly.
+
+## Validation
+
+- Build target regenerate, then run .github/ci/generated-source-freshness.sh.
+- Run `uv run misc/check.py all --build-dir build/full --jobs N` and build the default Release configuration with ctest.

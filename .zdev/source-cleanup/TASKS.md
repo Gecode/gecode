@@ -2,10 +2,11 @@
 
 # Tasks: source-cleanup
 
-- Total: 0
+- Total: 1
 - Ready: 0
-- Blocked: 0
+- Blocked: 1
 - Done: 0
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
+| [source-cleanup-001](tasks/001-remove-void-parameter-lists-by-tool-run.md) | Remove (void) parameter lists by tool run | blocked | scoped-enums-004 (scoped-enums: open) |
