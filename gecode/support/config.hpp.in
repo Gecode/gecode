@@ -35,111 +35,124 @@
  */
 
 /* Whether to build with default memory allocator */
-#undef GECODE_ALLOCATOR
+#cmakedefine GECODE_ALLOCATOR 1
 
 /* Whether to include audit code */
-#undef GECODE_AUDIT
+#cmakedefine GECODE_AUDIT 1
 
 /* User-defined prefix of dll names */
-#undef GECODE_DLL_USERPREFIX
+#define GECODE_DLL_USERPREFIX "@GECODE_DLL_USERPREFIX@"
 
 /* User-defined suffix of dll names */
-#undef GECODE_DLL_USERSUFFIX
+#define GECODE_DLL_USERSUFFIX "@GECODE_DLL_USERSUFFIX@"
 
 /* max freelist size on 32 bit platforms */
-#undef GECODE_FREELIST_SIZE_MAX32
+#cmakedefine GECODE_FREELIST_SIZE_MAX32 @GECODE_FREELIST_SIZE_MAX32@
 
 /* max freelist size on 64 bit platforms */
-#undef GECODE_FREELIST_SIZE_MAX64
+#cmakedefine GECODE_FREELIST_SIZE_MAX64 @GECODE_FREELIST_SIZE_MAX64@
 
 /* Whether gcc understands visibility attributes */
-#undef GECODE_GCC_HAS_CLASS_VISIBILITY
+#cmakedefine GECODE_GCC_HAS_CLASS_VISIBILITY 1
 
 /* whether __builtin_ffsll is available */
-#undef GECODE_HAS_BUILTIN_FFSLL
+#cmakedefine GECODE_HAS_BUILTIN_FFSLL 1
 
 /* whether __builtin_popcountll is available */
-#undef GECODE_HAS_BUILTIN_POPCOUNTLL
+#cmakedefine GECODE_HAS_BUILTIN_POPCOUNTLL 1
 
 /* Whether counting-based search support available */
-#undef GECODE_HAS_CBS
+#cmakedefine GECODE_HAS_CBS 1
 
 /* Whether CPProfiler support available */
-#undef GECODE_HAS_CPPROFILER
+#cmakedefine GECODE_HAS_CPPROFILER 1
 
 /* Whether experimental preview APIs are available */
-#undef GECODE_HAS_EXPERIMENTAL
-
-/* Whether to build FLOAT variables */
-#undef GECODE_HAS_FLOAT_VARS
-
-/* Whether Gist is available */
-#undef GECODE_HAS_GIST
-
-/* Whether to build INT variables */
-#undef GECODE_HAS_INT_VARS
-
-/* Whether MPFR is available */
-#undef GECODE_HAS_MPFR
-
-/* Whether we have mtrace for memory leak debugging */
-#undef GECODE_HAS_MTRACE
-
-/* Whether persistent process blackboxes are supported */
-#undef GECODE_HAS_POSIX_BLACKBOX_EXEC
-
-/* Whether posix_spawn_file_actions_addclosefrom_np is available */
-#undef GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP
-
-/* Whether posix_spawn_file_actions_addinherit_np is available */
-#undef GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP
-
-/* Whether POSIX_SPAWN_CLOEXEC_DEFAULT is available */
-#undef GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT
-
-/* Whether Qt is available */
-#undef GECODE_HAS_QT
-
-/* Whether to build SET variables */
-#undef GECODE_HAS_SET_VARS
-
-/* Gecode version */
-#undef GECODE_LIBRARY_VERSION
-
-/* Heap memory alignment */
-#undef GECODE_MEMORY_ALIGNMENT
-
-/* How to check allocation size */
-#undef GECODE_MSIZE
-
-/* Whether to track peak heap size */
-#undef GECODE_PEAKHEAP
-
-/* Whether we need malloc.h */
-#undef GECODE_PEAKHEAP_MALLOC_H
-
-/* Whether we need malloc/malloc.h */
-#undef GECODE_PEAKHEAP_MALLOC_MALLOC_H
-
-/* Whether we are compiling static libraries */
-#undef GECODE_STATIC_LIBS
-
-/* Whether we are compiling with thread support */
-#undef GECODE_HAS_THREADS
+#cmakedefine GECODE_HAS_EXPERIMENTAL 1
 
 /* Whether deterministic test failpoints are enabled */
-#undef GECODE_HAS_FAULT_INJECTION
+#cmakedefine GECODE_HAS_FAULT_INJECTION 1
+
+/* Whether to build FLOAT variables */
+#cmakedefine GECODE_HAS_FLOAT_VARS 1
+
+/* Whether Gist is available */
+#cmakedefine GECODE_HAS_GIST 1
+
+/* Whether to build INT variables */
+#cmakedefine GECODE_HAS_INT_VARS 1
+
+/* Whether MPFR is available */
+#cmakedefine GECODE_HAS_MPFR 1
+
+/* Whether we have mtrace for memory leak debugging */
+#cmakedefine GECODE_HAS_MTRACE 1
+
+/* Whether persistent process blackboxes are supported */
+#cmakedefine GECODE_HAS_POSIX_BLACKBOX_EXEC 1
+
+/* Whether posix_spawn_file_actions_addclosefrom_np is available */
+#cmakedefine GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP 1
+
+/* Whether posix_spawn_file_actions_addinherit_np is available */
+#cmakedefine GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP 1
+
+/* Whether POSIX_SPAWN_CLOEXEC_DEFAULT is available */
+#cmakedefine GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT 1
+
+/* Whether Qt is available */
+#cmakedefine GECODE_HAS_QT 1
+
+/* Whether to build SET variables */
+#cmakedefine GECODE_HAS_SET_VARS 1
+
+/* Whether we are compiling with thread support */
+#cmakedefine GECODE_HAS_THREADS 1
+
+/* Gecode version */
+#define GECODE_LIBRARY_VERSION "@GECODE_LIBRARY_VERSION@"
+
+/* Heap memory alignment */
+#cmakedefine GECODE_MEMORY_ALIGNMENT @GECODE_MEMORY_ALIGNMENT@
+
+/* Use the private mimalloc backend. */
+#cmakedefine GECODE_MIMALLOC 1
+
+/* How to check allocation size */
+#cmakedefine GECODE_MSIZE @GECODE_MSIZE@
+
+/* Whether legacy MSVC automatic library selection is disabled. */
+#cmakedefine GECODE_NO_AUTOLINK 1
+
+/* Whether to track peak heap size */
+#cmakedefine GECODE_PEAKHEAP 1
+
+/* Whether we need malloc.h */
+#cmakedefine GECODE_PEAKHEAP_MALLOC_H 1
+
+/* Whether we need malloc/malloc.h */
+#cmakedefine GECODE_PEAKHEAP_MALLOC_MALLOC_H 1
+
+/* Whether we are compiling static libraries */
+#cmakedefine GECODE_STATIC_LIBS 1
 
 /* Whether to use unfair mutexes on macOS */
-#undef GECODE_USE_OSX_UNFAIR_MUTEX
+#cmakedefine GECODE_USE_OSX_UNFAIR_MUTEX 1
 
 /* Gecode version */
-#undef GECODE_VERSION
+#define GECODE_VERSION "@GECODE_VERSION@"
 
 /* Gecode version */
-#undef GECODE_VERSION_NUMBER
+#define GECODE_VERSION_NUMBER @GECODE_VERSION_NUMBER@
+
+/* Define to 1 if you have a working `mmap' system call. */
+#cmakedefine HAVE_MMAP 1
 
 /* How to tell the compiler to really, really inline */
-#undef forceinline
+#if defined(_MSC_VER)
+#define forceinline __forceinline
+#else
+#define forceinline inline __attribute__ ((__always_inline__))
+#endif
 
 // STATISTICS: support-any
