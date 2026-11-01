@@ -1160,6 +1160,71 @@ namespace Test {
 
         WorkerControlPBSPause worker_control_pbs_pause;
 
+        /// Relaxing empty variable arrays posts nothing
+        class RelaxEmpty : public Base {
+        private:
+            /// Space without variables
+            class Fixture : public Gecode::Space {
+            public:
+                Fixture(void) = default;
+                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+                Gecode::Space*
+                copy(void) override {
+                    return new Fixture(*this);
+                }
+            };
+            /// Test whether relaxing empty \a VarArgs leaves a space with exactly one solution
+            template <class VarArgs>
+            static bool
+            relaxes_empty(void) {
+                Fixture* s = new Fixture;
+                Gecode::relax(*s, VarArgs(), VarArgs(), Gecode::Rnd(1U), 0.5);
+                bool solved = s->status() == Gecode::SS_SOLVED;
+                Gecode::DFS<Fixture> e(s);
+                delete s;
+                int n = 0;
+                while (Fixture* t = e.next()) {
+                    n++;
+                    delete t;
+                }
+                return solved && (n == 1);
+            }
+            /// Test whether relaxing empty arrays still checks the arguments
+            static bool
+            checks_arguments(void) {
+                Fixture s;
+                bool mismatch = false;
+                try {
+                    Gecode::relax(s, Gecode::IntVarArgs(), Gecode::IntVarArgs(s, 1, 0, 0), Gecode::Rnd(1U), 0.5);
+                } catch (const Gecode::Int::ArgumentSizeMismatch&) {
+                    mismatch = true;
+                }
+                bool limits = false;
+                try {
+                    Gecode::relax(s, Gecode::IntVarArgs(), Gecode::IntVarArgs(), Gecode::Rnd(1U), 2.0);
+                } catch (const Gecode::Int::OutOfLimits&) {
+                    limits = true;
+                }
+                return mismatch && limits;
+            }
+
+        public:
+            RelaxEmpty(void) : Base("Search::Relax::Empty") {}
+            bool
+            run(void) override {
+                bool ok = relaxes_empty<Gecode::IntVarArgs>() && relaxes_empty<Gecode::BoolVarArgs>();
+#ifdef GECODE_HAS_SET_VARS
+                ok = ok && relaxes_empty<Gecode::SetVarArgs>();
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+                ok = ok && relaxes_empty<Gecode::FloatVarArgs>();
+#endif
+                return ok && checks_arguments();
+            }
+        };
+
+        RelaxEmpty relax_empty;
+
         /// %Test for depth-first search
         template <class Model>
         class DFS : public Test {

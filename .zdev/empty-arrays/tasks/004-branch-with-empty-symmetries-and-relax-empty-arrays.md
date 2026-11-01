@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-004"
 key = "ldsb-relax"
 area = "empty-arrays"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 blocked_by = []
@@ -46,9 +46,9 @@ No relax test exists yet; test/search.cpp is the home for Search::Relax::Empty.
 
 ## Done when
 
-- [ ] The LDSB probes (int, Bool and set branch with symmetries, including `set branch(sv,Symmetries())`, Symmetries(), values_reflect(0,-1), rows_interchange of a 0x0 matrix) and the int, set and float relax probes give no abort and no zero-size Space request in build/full and in a fresh instrumented build, including after a clone; `branch(y,Symmetries) SPLIT` still throws.
-- [ ] New Test::Base tests LDSB::Empty* (test/ldsb.cpp) for int, Bool and set branching and Search::Relax::Empty (test/search.cpp) for all four relax functions clone and search, abort before the fix in build/full and pass after it.
-- [ ] build/zdev-audit/empty-array-audit.md has a section for this child's families listing each posting function, how it was checked (driver, source trace, or both), its result before and after, and the zero-size request sizes before and after.
+- [x] The LDSB probes (int, Bool and set branch with symmetries, including `set branch(sv,Symmetries())`, Symmetries(), values_reflect(0,-1), rows_interchange of a 0x0 matrix) and the int, set and float relax probes give no abort and no zero-size Space request in build/full and in a fresh instrumented build, including after a clone; `branch(y,Symmetries) SPLIT` still throws.
+- [x] New Test::Base tests LDSB::Empty* (test/ldsb.cpp) for int, Bool and set branching and Search::Relax::Empty (test/search.cpp) for all four relax functions clone and search, abort before the fix in build/full and pass after it.
+- [x] build/zdev-audit/empty-array-audit.md has a section for this child's families listing each posting function, how it was checked (driver, source trace, or both), its result before and after, and the zero-size request sizes before and after.
 
 ## Validation
 
@@ -56,3 +56,15 @@ No relax test exists yet; test/search.cpp is the home for Search::Relax::Empty.
 - Rerun the LDSB and relax probes against build/full and against a fresh instrumented build of the edited tree.
 - `bin/gecode-test -test LDSB` and `bin/gecode-test -test Relax` in build/full, then `bin/gecode-test -test LDSB -tag standard`.
 - Run `uv run misc/check.py format-check --build-dir build/full` and the lint check (`uv run misc/check.py lint --build-dir build/full --jobs 12`) for the touched files.
+
+## Result
+
+LDSB branching skips symmetries over no variables or values and allocates no symmetry array when none remain, at post or clone; int, Bool, set and float relax return after their argument checks for empty x
+
+Validation:
+
+- LDSB::EmptyInt, LDSB::EmptyBool, LDSB::EmptySet and Search::Relax::Empty abort (exit 134) before the fix in a Debug audit build and pass after it
+- build/full and build/local: LDSB 38/38, Search::Relax 1/1; Branch standard 17/17
+- Fresh instrumented build: no zero-size request on the LDSB and relax probes, including after cloning; branch(y,Symmetries) SPLIT still throws
+- format-check and lint (LLVM 22) and the doc target passed
+- Independent Codex verifier: pass, no findings

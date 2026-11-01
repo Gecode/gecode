@@ -111,9 +111,13 @@ namespace Gecode { namespace Int { namespace LDSB {
     LDSBBrancher<View, n, Val, a, Filter, Print>::LDSBBrancher(Space& home,
                                                                LDSBBrancher<View, n, Val, a, Filter, Print>& b)
         : ViewValBrancher<View, n, Val, a, Filter, Print>(home, b), _nsyms(b._nsyms), _prev_pos(b._prev_pos) {
-        _syms = home.alloc<SymmetryImp<View>*>(_nsyms);
-        for (int i = 0; i < _nsyms; i++)
-            _syms[i] = b._syms[i]->copy(home);
+        if (_nsyms > 0) {
+            _syms = home.alloc<SymmetryImp<View>*>(_nsyms);
+            for (int i = 0; i < _nsyms; i++)
+                _syms[i] = b._syms[i]->copy(home);
+        } else {
+            _syms = nullptr;
+        }
     }
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>

@@ -121,6 +121,27 @@ namespace Gecode { namespace Set { namespace LDSB {
         GECODE_NEVER;
         return nullptr;
     }
+
+    /**
+     * \brief Create implementations of the non-empty symmetries in \a syms
+     *
+     * Stores their number in \a nsyms and returns nullptr if there are none.
+     */
+    SymmetryImp<SetView>**
+    create_set_syms(Space& home, const Symmetries& syms, const VariableMap& variable_map, int& nsyms) {
+        nsyms = 0;
+        for (int i = 0; i < syms.size(); i++)
+            if (!is_empty(syms[i]))
+                nsyms++;
+        if (nsyms == 0)
+            return nullptr;
+        SymmetryImp<SetView>** array = home.alloc<SymmetryImp<SetView>*>(nsyms);
+        int created = 0;
+        for (int i = 0; i < syms.size(); i++)
+            if (!is_empty(syms[i]))
+                array[created++] = create_set_sym(home, syms[i], variable_map);
+        return array;
+    }
 }}} // namespace Gecode::Set::LDSB
 
 namespace Gecode {
@@ -145,11 +166,8 @@ namespace Gecode {
 
         // Convert the modelling-level Symmetries object into an array of
         // SymmetryImp objects.
-        int n = syms.size();
-        SymmetryImp<SetView>** array = static_cast<Space&>(home).alloc<SymmetryImp<SetView>*>(n);
-        for (int i = 0; i < n; i++) {
-            array[i] = create_set_sym(home, syms[i], variable_map);
-        }
+        int n = 0;
+        SymmetryImp<SetView>** array = create_set_syms(home, syms, variable_map, n);
 
         post_ldsb_set_brancher<SetView, 1, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals), array, n,
                                                    bf, vvp);
@@ -182,11 +200,8 @@ namespace Gecode {
 
             // Convert the modelling-level Symmetries object into an array of
             // SymmetryImp objects.
-            int n = syms.size();
-            SymmetryImp<SetView>** array = static_cast<Space&>(home).alloc<SymmetryImp<SetView>*>(n);
-            for (int i = 0; i < n; i++) {
-                array[i] = Set::LDSB::create_set_sym(home, syms[i], variable_map);
-            }
+            int n = 0;
+            SymmetryImp<SetView>** array = create_set_syms(home, syms, variable_map, n);
 
             ViewArray<SetView> xv(home, x);
             ValSelCommitBase<SetView, int>* vsc = Branch::value_selection_commit(home, vals);

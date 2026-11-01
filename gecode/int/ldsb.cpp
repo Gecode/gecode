@@ -53,6 +53,19 @@ namespace Gecode { namespace Int { namespace LDSB {
         return std::pair<int, int>(-1, -1);
     }
 
+    bool
+    is_empty(const SymmetryHandle& s) {
+        if (VariableSymmetryObject* varref = dynamic_cast<VariableSymmetryObject*>(s.ref))
+            return varref->nxs == 0;
+        if (ValueSymmetryObject* valref = dynamic_cast<ValueSymmetryObject*>(s.ref))
+            return valref->values.size() == 0;
+        if (VariableSequenceSymmetryObject* varseqref = dynamic_cast<VariableSequenceSymmetryObject*>(s.ref))
+            return varseqref->nxs == 0;
+        if (ValueSequenceSymmetryObject* valseqref = dynamic_cast<ValueSequenceSymmetryObject*>(s.ref))
+            return valseqref->values.size() == 0;
+        return false;
+    }
+
 }}} // namespace Gecode::Int::LDSB
 
 namespace Gecode {
@@ -242,6 +255,30 @@ namespace Gecode { namespace Int { namespace LDSB {
         GECODE_NEVER;
         return nullptr;
     }
+
+    /**
+     * \brief Create implementations of the non-empty symmetries in \a syms
+     *
+     * Each implementation is created by \a create_sym.  Stores their number
+     * in \a nsyms and returns nullptr if there are none.
+     */
+    template <class View>
+    SymmetryImp<View>**
+    create_syms(Space& home, const Symmetries& syms, const VariableMap& variable_map,
+                SymmetryImp<View>* (*create_sym)(Space&, const SymmetryHandle&, VariableMap), int& nsyms) {
+        nsyms = 0;
+        for (int i = 0; i < syms.size(); i++)
+            if (!is_empty(syms[i]))
+                nsyms++;
+        if (nsyms == 0)
+            return nullptr;
+        SymmetryImp<View>** array = home.alloc<SymmetryImp<View>*>(nsyms);
+        int created = 0;
+        for (int i = 0; i < syms.size(); i++)
+            if (!is_empty(syms[i]))
+                array[created++] = create_sym(home, syms[i], variable_map);
+        return array;
+    }
 }}} // namespace Gecode::Int::LDSB
 
 namespace Gecode {
@@ -281,11 +318,8 @@ namespace Gecode {
 
             // Convert the modelling-level Symmetries object into an array of
             // SymmetryImp objects.
-            int n = syms.size();
-            SymmetryImp<IntView>** array = static_cast<Space&>(home).alloc<SymmetryImp<IntView>*>(n);
-            for (int i = 0; i < n; i++) {
-                array[i] = create_int_sym(home, syms[i], variable_map);
-            }
+            int n = 0;
+            SymmetryImp<IntView>** array = create_syms(home, syms, variable_map, create_int_sym, n);
 
             post_ldsb_brancher<IntView, 1, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals), array, n,
                                                    bf, vvp);
@@ -319,11 +353,8 @@ namespace Gecode {
 
             // Convert the modelling-level Symmetries object into an array of
             // SymmetryImp objects.
-            int n = syms.size();
-            SymmetryImp<IntView>** array = static_cast<Space&>(home).alloc<SymmetryImp<IntView>*>(n);
-            for (int i = 0; i < n; i++) {
-                array[i] = create_int_sym(home, syms[i], variable_map);
-            }
+            int n = 0;
+            SymmetryImp<IntView>** array = create_syms(home, syms, variable_map, create_int_sym, n);
 
             ViewArray<IntView> xv(home, x);
             if (vars.c.select() == IntVarBranch::SEL_NONE) {
@@ -413,11 +444,8 @@ namespace Gecode {
 
         // Convert the modelling-level Symmetries object into an array of
         // SymmetryImp objects.
-        int n = syms.size();
-        SymmetryImp<BoolView>** array = static_cast<Space&>(home).alloc<SymmetryImp<BoolView>*>(n);
-        for (int i = 0; i < n; i++) {
-            array[i] = create_bool_sym(home, syms[i], variable_map);
-        }
+        int n = 0;
+        SymmetryImp<BoolView>** array = create_syms(home, syms, variable_map, create_bool_sym, n);
 
         // Technically these "bad" value selection could in fact work with
         // LDSB, because they degenerate to binary splitting for
@@ -463,11 +491,8 @@ namespace Gecode {
 
             // Convert the modelling-level Symmetries object into an array of
             // SymmetryImp objects.
-            int n = syms.size();
-            SymmetryImp<BoolView>** array = static_cast<Space&>(home).alloc<SymmetryImp<BoolView>*>(n);
-            for (int i = 0; i < n; i++) {
-                array[i] = create_bool_sym(home, syms[i], variable_map);
-            }
+            int n = 0;
+            SymmetryImp<BoolView>** array = create_syms(home, syms, variable_map, create_bool_sym, n);
 
             // Technically these "bad" value selection could in fact work with
             // LDSB, because they degenerate to binary splitting for
