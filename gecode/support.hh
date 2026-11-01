@@ -76,12 +76,6 @@
 
 #endif
 
-// Configure auto-linking
-#ifndef GECODE_BUILD_SUPPORT
-#define GECODE_LIBRARY_NAME "Support"
-#include <gecode/support/auto-link.hpp>
-#endif
-
 /*
  * Basic support needed everywhere
  *

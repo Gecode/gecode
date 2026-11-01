@@ -100,6 +100,16 @@ installed gecode/support/config.hpp. Bitsets now use std::countr_zero and
 std::popcount.
 
 [ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Remove MSVC auto-linking, together with the header gecode/support/auto-link.hpp
+and the macros GECODE_NO_AUTOLINK, GECODE_LIBRARY_NAME, GECODE_DLL_USERPREFIX,
+GECODE_DLL_USERSUFFIX, and GECODE_LIBRARY_VERSION. CMake builds always
+disabled it. Consumers link through the Gecode:: CMake targets.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor

@@ -615,18 +615,11 @@ endif()
 # ---------------------------------------------------------------------------
 set(VERSION "${PROJECT_VERSION}")
 set(GECODE_PROJECT_VERSION ${VERSION})
-string(REPLACE "." "-" GECODE_LIBRARY_VERSION "${VERSION}")
 if(VERSION MATCHES "(.*)\\.(.*)\\.(.*)")
   math(EXPR GECODE_VERSION_NUMBER
     "${CMAKE_MATCH_1} * 100000 + ${CMAKE_MATCH_2} * 100 + ${CMAKE_MATCH_3}")
 endif()
 
-set(GECODE_DLL_USERPREFIX "${GECODE_LIB_PREFIX}")
-set(GECODE_DLL_USERSUFFIX "${GECODE_LIB_SUFFIX}")
-# CMake consumers link explicitly, either through the exported targets or by
-# naming the installed libraries.  Keep the installed headers from also
-# injecting legacy MSVC library names.
-set(GECODE_NO_AUTOLINK 1)
 if(GECODE_ENABLE_INT_VARS)
   set(GECODE_HAS_INT_VARS 1)
 endif()
@@ -1084,9 +1077,7 @@ function(add_gecode_component_library lib)
 
   if(GECODE_BUILD_SHARED)
     add_library(gecode${lib}_shared SHARED ${sources})
-    target_compile_definitions(gecode${lib}_shared
-      PUBLIC GECODE_NO_AUTOLINK
-      PRIVATE GECODE_BUILD_${libupper})
+    target_compile_definitions(gecode${lib}_shared PRIVATE GECODE_BUILD_${libupper})
     target_compile_features(gecode${lib}_shared PUBLIC cxx_std_23)
     target_include_directories(gecode${lib}_shared
       PUBLIC
@@ -1116,9 +1107,7 @@ function(add_gecode_component_library lib)
 
   if(GECODE_BUILD_STATIC)
     add_library(gecode${lib}_static STATIC ${sources})
-    target_compile_definitions(gecode${lib}_static
-      PUBLIC GECODE_NO_AUTOLINK
-      PRIVATE GECODE_BUILD_${libupper})
+    target_compile_definitions(gecode${lib}_static PRIVATE GECODE_BUILD_${libupper})
     target_compile_features(gecode${lib}_static PUBLIC cxx_std_23)
     target_include_directories(gecode${lib}_static
       PUBLIC

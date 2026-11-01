@@ -3,7 +3,7 @@ schema_version = 1
 id = "config-header-003"
 key = "remove-autolink"
 area = "config-header"
-status = "open"
+status = "done"
 afk = true
 blocked_by = ["config-header-001", "config-header-002"]
 +++
@@ -23,12 +23,25 @@ The brief records why auto-linking is dead and broken (see Terms and settled dec
 
 ## Done when
 
-- [ ] `grep -rn 'auto-link\|GECODE_NO_AUTOLINK\|GECODE_LIBRARY_NAME\|GECODE_DLL_USER\|GECODE_LIBRARY_VERSION' gecode test examples tools cmake CMakeLists.txt` and the same search over the generated config.hpp find nothing.
-- [ ] A fresh installation contains no auto-link.hpp, and the exported targets carry no GECODE_NO_AUTOLINK compile definition.
-- [ ] changelog.in has a 7.0.0 entry that says MSVC auto-linking was removed, names the removed macros, and says consumers link through the Gecode:: CMake targets.
+- [x] `grep -rn 'auto-link\|GECODE_NO_AUTOLINK\|GECODE_LIBRARY_NAME\|GECODE_DLL_USER\|GECODE_LIBRARY_VERSION' gecode test examples tools cmake CMakeLists.txt` and the same search over the generated config.hpp find nothing.
+- [x] A fresh installation contains no auto-link.hpp, and the exported targets carry no GECODE_NO_AUTOLINK compile definition.
+- [x] changelog.in has a 7.0.0 entry that says MSVC auto-linking was removed, names the removed macros, and says consumers link through the Gecode:: CMake targets.
 
 ## Validation
 
 - uv run misc/tidy.py --check
 - List the removed MSVC-only code in the task result so the PR description can ask Windows CI to confirm.
 - Last task in the area: run `uv run misc/check.py all --build-dir build/full --jobs N` (Debug with experimental, CBS, fault injection, audit, and Gist). This includes ctest and both installed-package fixtures. Fix failures that this area caused. Report failures that already exist at the area base without fixing them.
+
+## Result
+
+MSVC auto-linking removed: auto-link.hpp, the GECODE_LIBRARY_NAME defines in 12 module headers, GECODE_NO_AUTOLINK (template and exported targets), GECODE_DLL_USERPREFIX/SUFFIX and GECODE_LIBRARY_VERSION
+
+Validation:
+
+- Done-when grep over gecode test examples tools cmake CMakeLists.txt and the generated config.hpp finds nothing
+- Fresh install has no auto-link.hpp; GecodeTargets*.cmake carry no GECODE_NO_AUTOLINK
+- Release build and ctest 7/7; cmake-consumer-smoke (MPFR), gist-static-macro-smoke, tidy and format-check passed
+- uv run misc/check.py all --build-dir build/full --jobs 12 (Debug, experimental, CBS, fault injection, audit, Gist): exit 0, ctest 8/8, both package fixtures passed
+- Removed MSVC-only code for Windows CI: auto-link.hpp pragma comment(lib) selection (platform x86/ia64/x64, d/r), the 12 GECODE_LIBRARY_NAME blocks, the GECODE_NO_AUTOLINK check in cmake-consumer-smoke.ps1
+- Independent Codex verifier: pass, no findings

@@ -386,9 +386,8 @@ fi
 
 grep -q "Gecode_VERSION=" "$work/a/configure.log"
 grep -q "Gecode_INCLUDE_DIRS=$expected_include" "$work/a/configure.log"
-grep -q '^#define GECODE_NO_AUTOLINK 1$' "$expected_include/gecode/support/config.hpp"
 if [ "$mode" = "mpfr" ]; then
-  grep -q '^#define GECODE_HAS_MPFR /\*\*/' "$expected_include/gecode/support/config.hpp"
+  grep -q '^#define GECODE_HAS_MPFR 1$' "$expected_include/gecode/support/config.hpp"
 fi
 "$prefix/bin/fzn-gecode" --help
 test -x "$prefix/bin/mzn-gecode"

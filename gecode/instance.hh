@@ -62,12 +62,6 @@
 
 #endif
 
-// Configure auto-linking
-#ifndef GECODE_BUILD_INSTANCE
-#define GECODE_LIBRARY_NAME "Instance"
-#include <gecode/support/auto-link.hpp>
-#endif
-
 /**
  * \namespace Gecode::Instance
  * \brief Reading instance files described by reader specs

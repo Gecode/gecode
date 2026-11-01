@@ -68,12 +68,6 @@
 
 #endif
 
-// Configure auto-linking
-#ifndef GECODE_BUILD_FLOAT
-#define GECODE_LIBRARY_NAME "Float"
-#include <gecode/support/auto-link.hpp>
-#endif
-
 // Include interval implementation
 #include <gecode/third-party/boost/numeric/interval.hpp>
 

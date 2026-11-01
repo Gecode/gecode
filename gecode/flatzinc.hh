@@ -75,12 +75,6 @@
 #endif
 #endif
 
-// Configure auto-linking
-#ifndef GECODE_BUILD_FLATZINC
-#define GECODE_LIBRARY_NAME "FlatZinc"
-#include <gecode/support/auto-link.hpp>
-#endif
-
 #include <gecode/driver.hh>
 
 #include <gecode/flatzinc/conexpr.hh>

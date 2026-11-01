@@ -130,9 +130,6 @@ target_link_libraries(manual_consumer PRIVATE "${GECODE_SUPPORT_LIBRARY}")
 '@ | Set-Content -Encoding utf8 (Join-Path $work "manual\CMakeLists.txt")
 @'
 #include <gecode/support.hh>
-#ifndef GECODE_NO_AUTOLINK
-#error "CMake-installed headers must disable legacy MSVC auto-linking"
-#endif
 int main(void) {
   (void) Gecode::Support::hwrnd();
   return 0;
