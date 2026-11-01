@@ -4,11 +4,11 @@
 
 - Total: 3
 - Ready: 1
-- Blocked: 2
-- Done: 0
+- Blocked: 1
+- Done: 1
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
-| [config-header-001](tasks/001-generate-config-hpp-with-configure-file.md) | Generate config.hpp with configure_file | ready | — |
-| [config-header-002](tasks/002-use-bit-for-bitset-scans-and-population-counts.md) | Use <bit> for bitset scans and population counts | blocked | config-header-001 |
+| [config-header-001](tasks/001-generate-config-hpp-with-configure-file.md) | Generate config.hpp with configure_file | done | — |
+| [config-header-002](tasks/002-use-bit-for-bitset-scans-and-population-counts.md) | Use <bit> for bitset scans and population counts | ready | config-header-001 |
 | [config-header-003](tasks/003-remove-msvc-auto-linking.md) | Remove MSVC auto-linking | blocked | config-header-001, config-header-002 |
