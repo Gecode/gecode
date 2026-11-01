@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-007"
 key = "open-distinct"
 area = "empty-arrays"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 blocked_by = []
@@ -34,9 +34,9 @@ The throwaway driver (build/zdev-probe/probe.cpp, probes.inc) already has open-l
 
 ## Done when
 
-- [ ] The open-list distinct probes (maximum length 0, unbounded before any position, IPL_DOM) give the same results as before in build/full and show no zero-size request in a fresh instrumented build.
-- [ ] A focused test in test/int/open-var-list.cpp documents the empty-list results: a closed empty list is solved with nothing posted, and an empty open list still enforces distinctness once positions are added.
-- [ ] build/zdev-audit/empty-array-audit.md has a section for this child with method, results and zero-size request counts before and after.
+- [x] The open-list distinct probes (maximum length 0, unbounded before any position, IPL_DOM) give the same results as before in build/full and show no zero-size request in a fresh instrumented build.
+- [x] A focused test in test/int/open-var-list.cpp documents the empty-list results: a closed empty list is solved with nothing posted, and an empty open list still enforces distinctness once positions are added.
+- [x] build/zdev-audit/empty-array-audit.md has a section for this child with method, results and zero-size request counts before and after.
 
 ## Validation
 
@@ -44,3 +44,15 @@ The throwaway driver (build/zdev-probe/probe.cpp, probes.inc) already has open-l
 - Rerun the open-list distinct probes against build/full and against a fresh instrumented build of the edited tree.
 - Release build in build/local and the same selections.
 - Run `uv run misc/check.py format-check --build-dir build/full` and `uv run misc/check.py lint --build-dir build/full --jobs 12`.
+
+## Result
+
+Open-list distinct posts nothing for a closed empty list and returns before allocating its Region buffers when no positions are active, staying subscribed so later positions are still processed
+
+Validation:
+
+- Int::OpenList::DistinctEmpty passes in build/full and build/local; its no-propagator check fails before the fix
+- build/full and build/local: Int::OpenList standard 60/60, Int::Distinct standard 33/33; Release Int::OpenList full passes
+- Instrumented probes: open-list distinct cases go from 2 zero-size Region requests to 0; no other probe changes
+- format-check and lint (LLVM 22) passed
+- Independent Codex verifier: pass, no findings
