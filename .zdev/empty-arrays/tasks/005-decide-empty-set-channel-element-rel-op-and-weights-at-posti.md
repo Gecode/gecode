@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-005"
 key = "set-posting"
 area = "empty-arrays"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 blocked_by = []
@@ -47,10 +47,10 @@ Append a section for this child's families to build/zdev-audit/empty-array-audit
 
 ## Done when
 
-- [ ] The `set channel_sorted`, `set channel(bool x,y)`, `set element(...)`, `set rel(...,z,y)`, `set weights` and `mm range` probes give no abort in build/full and no zero-size request in a fresh instrumented build. Probes that report SS_SOLVED, SS_FAILED or an exception in build/zdev-probe/out.txt keep that result; the six that exit 134 now give the documented result (channel_sorted and channel with a Boolean array post nothing with y empty, element UNION/DUNION over constant sets posts nothing with the result empty).
-- [ ] New Test::Base Empty tests for channel_sorted and channel with a Boolean array (test/set/channel.cpp) and for element SOT_UNION/SOT_DUNION over constant sets (test/set/element.cpp) abort before the fix in build/full and pass after it.
-- [ ] New Test::Base Empty tests document the empty-input results of element over variable arrays (test/set/element.cpp), rel with a constant set (test/set/rel-op-const.cpp) and weights (test/set/int.cpp).
-- [ ] build/zdev-audit/empty-array-audit.md has a section for this child's families listing each posting function, how it was checked (driver, source trace, or both), its result before and after, and the zero-size request sizes before and after.
+- [x] The `set channel_sorted`, `set channel(bool x,y)`, `set element(...)`, `set rel(...,z,y)`, `set weights` and `mm range` probes give no abort in build/full and no zero-size request in a fresh instrumented build. Probes that report SS_SOLVED, SS_FAILED or an exception in build/zdev-probe/out.txt keep that result; the six that exit 134 now give the documented result (channel_sorted and channel with a Boolean array post nothing with y empty, element UNION/DUNION over constant sets posts nothing with the result empty).
+- [x] New Test::Base Empty tests for channel_sorted and channel with a Boolean array (test/set/channel.cpp) and for element SOT_UNION/SOT_DUNION over constant sets (test/set/element.cpp) abort before the fix in build/full and pass after it.
+- [x] New Test::Base Empty tests document the empty-input results of element over variable arrays (test/set/element.cpp), rel with a constant set (test/set/rel-op-const.cpp) and weights (test/set/int.cpp).
+- [x] build/zdev-audit/empty-array-audit.md has a section for this child's families listing each posting function, how it was checked (driver, source trace, or both), its result before and after, and the zero-size request sizes before and after.
 
 ## Validation
 
@@ -58,3 +58,15 @@ Append a section for this child's families to build/zdev-audit/empty-array-audit
 - Rerun the `set ...` and `mm range` probes against build/full and against a fresh instrumented build of the edited tree.
 - `bin/gecode-test -test Set::Channel`, `-test Set::Element`, `-test Set::RelOp` and `-test Set::Int` in build/full, then each with `-tag standard`.
 - Run `uv run misc/check.py format-check --build-dir build/full` and the lint check (`uv run misc/check.py lint --build-dir build/full --jobs 12`) for the touched files.
+
+## Result
+
+Set channel_sorted, channel with a Boolean array, element (union, union over constants, intersection, disjoint), n-ary union and partition with a constant set, and weights decide empty input at posting and post nothing
+
+Validation:
+
+- Set::Channel::Sorted::Empty, Set::Channel::Bool::Empty and Set::Element::Const::Empty abort (exit 134) before the fix in a Debug audit build; all six new Empty tests pass after it
+- build/full and build/local: Set::Channel, Set::Element, Set::RelOp and Set::Int standard selections pass
+- Probes: only the six aborting results changed (to SS_SOLVED); fresh instrumented build shows no zero-size request on these families
+- format-check and lint (LLVM 22) passed
+- Independent Codex verifier: pass, no findings

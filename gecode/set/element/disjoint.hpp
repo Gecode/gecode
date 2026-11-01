@@ -59,6 +59,9 @@ namespace Gecode { namespace Set { namespace Element {
         // s2 \subseteq {0,...,n-1}
         Iter::Ranges::Singleton s(0, n - 1);
         GECODE_ME_CHECK(x1.intersect_i(home, s));
+        // Nothing can be selected, so the selected sets are disjoint
+        if (n == 0)
+            return ES_OK;
         (void)new (home) ElementDisjoint(home, xs, x1);
         return ES_OK;
     }

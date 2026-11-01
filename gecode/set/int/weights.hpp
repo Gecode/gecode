@@ -160,6 +160,12 @@ namespace Gecode { namespace Set { namespace Int {
                         Gecode::Int::IntView y) {
         if (elements.size() != weights.size())
             throw ArgumentSizeMismatch("Weights");
+        if (elements.size() == 0) {
+            // The set must be empty, and the empty set weighs 0
+            GECODE_ME_CHECK(x.card_max(home, 0));
+            GECODE_ME_CHECK(y.eq(home, 0));
+            return ES_OK;
+        }
         Region r;
         int* els_arr = r.alloc<int>(elements.size());
         for (int i = elements.size(); i--;)

@@ -3,9 +3,9 @@
 # Tasks: empty-arrays
 
 - Total: 6
-- Ready: 2
+- Ready: 1
 - Blocked: 1
-- Done: 3
+- Done: 4
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -13,5 +13,5 @@
 | [empty-arrays-002](tasks/002-find-and-fix-other-zero-size-allocations-on-empty-input.md) | Find and fix other zero-size allocations on empty input | blocked | empty-arrays-001, empty-arrays-003, empty-arrays-004, empty-arrays-005, empty-arrays-006 |
 | [empty-arrays-003](tasks/003-post-nothing-for-empty-gcc-and-bin-packing-input.md) | Post nothing for empty GCC and bin-packing input | done | — |
 | [empty-arrays-004](tasks/004-branch-with-empty-symmetries-and-relax-empty-arrays.md) | Branch with empty symmetries and relax empty arrays | done | — |
-| [empty-arrays-005](tasks/005-decide-empty-set-channel-element-rel-op-and-weights-at-posti.md) | Decide empty set channel, element, rel-op and weights at posting | ready | — |
+| [empty-arrays-005](tasks/005-decide-empty-set-channel-element-rel-op-and-weights-at-posti.md) | Decide empty set channel, element, rel-op and weights at posting | done | — |
 | [empty-arrays-006](tasks/006-skip-empty-term-buffers-in-linear-posting-and-minimodel-expr.md) | Skip empty term buffers in linear posting and minimodel expressions | ready | — |

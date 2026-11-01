@@ -350,6 +350,87 @@ namespace Test { namespace Set {
         };
         ElementSetConst _elementsetconst("Element::SetConst");
 
+        /// Space with an index and a result set variable for tests without sets
+        class EmptyFixture : public Gecode::Space {
+        public:
+            /// Index set
+            SetVar y;
+            /// Result set
+            SetVar z;
+            /// Create fixture, where \a glb is the greatest lower bound of \a y
+            EmptyFixture(const IntSet& glb = IntSet::empty)
+                : y(*this, glb, IntSet(0, 3)), z(*this, IntSet::empty, IntSet(0, 3)) {}
+            /// Constructor for cloning \a fixture
+            EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
+                y.update(*this, fixture.y);
+                z.update(*this, fixture.z);
+            }
+            /// Copy during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new EmptyFixture(*this);
+            }
+            /// Test whether the space is solved with \a y empty and \a z equal to \a result
+            bool
+            is_solved(const IntSet& result) {
+                if ((status() != SS_SOLVED) || (y.lub_size() != 0) || !z.assigned())
+                    return false;
+                SetVarGlbRanges zr(z);
+                IntSetRanges rr(result);
+                return Iter::Ranges::equal(zr, rr);
+            }
+        };
+
+        /**
+         * \brief Test element over an empty array of type \a Args
+         *
+         * An empty union is empty and an empty intersection is the universe.
+         */
+        template <class Args>
+        bool
+        is_decided_empty(void) {
+            Args x;
+            IntSet universe(0, 3);
+            EmptyFixture union_x, dunion_x, inter_x;
+            element(union_x, SOT_UNION, x, union_x.y, union_x.z);
+            element(dunion_x, SOT_DUNION, x, dunion_x.y, dunion_x.z);
+            element(inter_x, SOT_INTER, x, inter_x.y, inter_x.z, universe);
+            bool decided =
+                union_x.is_solved(IntSet::empty) && dunion_x.is_solved(IntSet::empty) && inter_x.is_solved(universe);
+
+            // No index can be selected, and the default universe does not fit into z
+            EmptyFixture selected(IntSet(0, 0)), inter_default;
+            element(selected, SOT_UNION, x, selected.y, selected.z);
+            element(inter_default, SOT_INTER, x, inter_default.y, inter_default.z);
+            return decided && (selected.status() == SS_FAILED) && (inter_default.status() == SS_FAILED);
+        }
+
+        /// %Test element over no constant sets
+        class ElementConstEmpty : public Base {
+        public:
+            /// Create and register test
+            ElementConstEmpty(void) : Base("Set::Element::Const::Empty") {}
+            /// Perform test
+            bool
+            run(void) override {
+                return is_decided_empty<IntSetArgs>() && is_decided_empty<IntArgs>();
+            }
+        };
+        ElementConstEmpty _element_const_empty;
+
+        /// %Test element over no set or integer variables
+        class ElementVarEmpty : public Base {
+        public:
+            /// Create and register test
+            ElementVarEmpty(void) : Base("Set::Element::Var::Empty") {}
+            /// Perform test
+            bool
+            run(void) override {
+                return is_decided_empty<SetVarArgs>() && is_decided_empty<IntVarArgs>();
+            }
+        };
+        ElementVarEmpty _element_var_empty;
+
         /// %Test for matrix element with integer set array and set variable
         class MatrixIntSet : public SetTest {
         protected:

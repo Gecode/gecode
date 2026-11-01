@@ -111,6 +111,10 @@ namespace Gecode { namespace Set { namespace Channel {
     template <class View>
     forceinline ExecStatus
     ChannelBool<View>::post(Home home, ViewArray<Gecode::Int::BoolView>& x, View y) {
+        if (x.size() == 0) {
+            GECODE_ME_CHECK(y.card_max(home, 0));
+            return ES_OK;
+        }
         GECODE_ME_CHECK(y.intersect(home, 0, x.size() - 1));
         (void)new (home) ChannelBool(home, x, y);
         return ES_OK;

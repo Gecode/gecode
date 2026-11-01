@@ -88,6 +88,11 @@ namespace Gecode { namespace Set { namespace Element {
         // x0 \subseteq {1,...,n}
         Iter::Ranges::Singleton s(0, n - 1);
         GECODE_ME_CHECK(x0.intersect_i(home, s));
+        if (n == 0) {
+            // Nothing can be selected, and the empty union is empty
+            GECODE_ME_CHECK(x1.card_max(home, 0));
+            return ES_OK;
+        }
         (void)new (home) ElementUnion<View, View0, View1>(home, xs, x0, x1);
         return ES_OK;
     }
