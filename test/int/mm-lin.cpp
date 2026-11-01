@@ -2548,6 +2548,52 @@ namespace Test { namespace Int {
             &li396[0], &li397[0], &li398[0], &li399[0],
         };
 
+        /// Space with an integer and a Boolean variable for sums without terms
+        class EmptyFixture : public Gecode::Space {
+        public:
+            /// Right-hand side variable
+            Gecode::IntVar y;
+            /// Reification variable
+            Gecode::BoolVar b;
+            /// Create fixture
+            EmptyFixture(void) : y(*this, -2, 2), b(*this, 0, 1) {}
+            /// Constructor for cloning \a fixture
+            EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
+                y.update(*this, fixture.y);
+                b.update(*this, fixture.b);
+            }
+            /// Copy during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new EmptyFixture(*this);
+            }
+        };
+
+        /// %Test linear relations over sums without variables
+        class LinRelEmpty : public Base {
+        public:
+            /// Create and register test
+            LinRelEmpty(void) : Base("Int::MiniModel::LinRel::Empty") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using namespace Gecode;
+                IntVarArgs x;
+                BoolVarArgs bx;
+                IntArgs a;
+                EmptyFixture eq, gr, bool_eq, constant, reified;
+                rel(eq, sum(x) == 0);
+                rel(gr, sum(a, x) > 0);
+                rel(bool_eq, sum(bx) == 1);
+                rel(constant, sum(a) == 0);
+                rel(reified, (sum(x) == 1) == reified.b);
+                return (eq.status() == SS_SOLVED) && (gr.status() == SS_FAILED) && (bool_eq.status() == SS_FAILED) &&
+                       (constant.status() == SS_SOLVED) && (reified.status() == SS_SOLVED) && reified.b.assigned() &&
+                       (reified.b.val() == 0);
+            }
+        };
+        LinRelEmpty lin_rel_empty;
+
         /// Help class to create and register tests
         class Create {
         public:
