@@ -30,6 +30,9 @@
  *
  */
 
+#include <type_traits>
+#include <utility>
+
 namespace Gecode {
 
     /// Class for sharing data between spaces
@@ -52,8 +55,14 @@ namespace Gecode {
     public:
         /// Initialize with data \a d
         SharedData(const Data& d);
-        /// Initialize by moving data \a d
-        SharedData(Data&& d);
+        /**
+         * \brief Initialize by moving data \a d
+         *
+         * Only for movable data, so that copyable data without a move
+         * constructor still binds to the copying constructor.
+         */
+        SharedData(Data&& d)
+            requires std::is_move_constructible_v<Data>;
         /// Create as uninitialized
         SharedData(void);
         /// Copy constructor
@@ -87,6 +96,7 @@ namespace Gecode {
     template <class Data>
     forceinline
     SharedData<Data>::SharedData(Data&& d)
+        requires std::is_move_constructible_v<Data>
         : SharedHandle(new SDO(std::move(d))) {}
 
     template <class Data>

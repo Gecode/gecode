@@ -314,6 +314,33 @@ namespace Test {
             }
         } shared_array_iterator_test;
 
+        /// Copyable data whose move constructor is deleted
+        class CopyOnlyData {
+        public:
+            /// The stored value
+            int value;
+            /// Initialize with \a v
+            CopyOnlyData(int v) : value(v) {}
+            /// Copy constructor
+            CopyOnlyData(const CopyOnlyData&) = default;
+            /// Deleted move constructor
+            CopyOnlyData(CopyOnlyData&&) = delete;
+        };
+
+        /// %Class for testing SharedData with copyable data that cannot move
+        class SharedDataCopyOnly : public Test::Base {
+        public:
+            /// Initialize test
+            SharedDataCopyOnly(void) : Test::Base("Array::SharedData::CopyOnly") {}
+            /// Perform actual tests
+            bool
+            run(void) override {
+                // A temporary must bind to the copying constructor
+                Gecode::SharedData<CopyOnlyData> d(CopyOnlyData(3));
+                return d().value == 3;
+            }
+        } shared_data_copy_only_test;
+
     } // namespace Array
 } // namespace Test
 

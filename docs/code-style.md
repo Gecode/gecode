@@ -116,10 +116,22 @@ printer should not flush each row of a multi-line solution.
 The unused-return-value check accepts explicit `(void)` discards for reviewed
 operations such as ownership handoff after successful engine construction.
 
-`performance-unnecessary-value-param` is reserved for manual performance audits.
-Its suggestions mix Gecode's small, intentionally copied variable/view handles
-with ownership-sensitive callbacks and argument arrays. Review actual copy
-cost and lifetime requirements before changing those public signatures.
+`performance-unnecessary-value-param` reports parameters that are copied but
+only read. Take such a parameter by `const&`. When the callee keeps the value
+and the type has a real move constructor, such as `std::function`,
+`std::string`, `std::vector`, or a branching configuration, take it by value
+and `std::move` it into place instead.
+
+The check's `AllowedTypes` keeps Gecode's shallow handles passed by value:
+`Home`, the groups, `Pos`, `Reify`, the variables (`IntVar` and so on), the
+variable arrays and `ViewArray`, the open variable and view lists, the views,
+and `View::VarType`. Copying one copies a few pointers or ids, with no
+reference count or allocation, and Gecode code relies on their value
+semantics. Owned and reference-counted types are not exempt: `SharedHandle`
+types such as `IntSet`, `TupleSet`, `DFA`, `Rnd`, `Action`, and `CHB`,
+`SharedArray`, the `*Args` arrays, `REG`, strings, and callbacks. Their copies
+touch a reference count or allocate, so they follow the rule above. `FloatVal`
+is not exempt either: it is two doubles, not a handle.
 
 Other performance checks need focused review: `performance-enum-size` changes
 layouts and ABI, and `performance-no-int-to-ptr` conflicts with deliberate

@@ -175,6 +175,29 @@ Module: other
 What:   change
 Rank:   major
 [DESCRIPTION]
+Pass owned and reference-counted parameters, and FloatVal, by const
+reference instead of by value. Values that a function keeps and whose type
+has a real move constructor, such as callbacks and branching configurations,
+stay by value and are moved into place. This changes the exact signatures
+and the ABI of many public functions: branch and assign with their
+value-selection arguments, the variable- and value-selection functions and
+constructors taking Rnd, AFC, Action, CHB, or merit functions, the Action
+and CHB constructors taking merit functions, relax, trace, extensional with
+a DFA, element with an IntSharedArray, and floating-point posting functions
+and expressions taking a FloatVal. Calls compile unchanged, except that an
+argument passed by value and moved must now be movable: a type with a
+deleted move constructor no longer compiles there. Propagators that override
+solution_distribution or domain_size_sum must take their SendMarginal or
+InDecision argument by const reference.
+[MORE]
+Enable clang-tidy's performance-unnecessary-value-param check. Variables,
+views, variable arrays, and other shallow handles stay passed by value.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
 Rename the strict-less relation constants IRT_LE, FRT_LE, and SRT_LE to
 IRT_LT, FRT_LT, and SRT_LT. Remove the old spellings without compatibility
 aliases to avoid confusion with less-or-equal. Relation values and semantics

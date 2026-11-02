@@ -30,6 +30,7 @@ Checks: >-
   performance-move-constructor-init,
   performance-no-automatic-move,
   performance-unnecessary-copy-initialization,
+  performance-unnecessary-value-param,
   readability-identifier-naming
 WarningsAsErrors: '*'
 HeaderFilterRegex: '(gecode|test|examples|tools)/'
@@ -39,6 +40,9 @@ FormatStyle: file
 CheckOptions:
   # Explicit discards document intentional ownership handoffs.
   bugprone-unused-return-value.AllowCastToVoid: true
+  # Shallow handles stay passed by value: a copy duplicates a few pointers or
+  # ids, with no reference count or allocation. See docs/code-style.md.
+  performance-unnecessary-value-param.AllowedTypes: '^Gecode::(Home|Group|PropagatorGroup|BrancherGroup|Pos|Reify)$;^Gecode::(Int|Bool|Set|Float)Var$;^Gecode::(Int|Bool|Set|Float)VarArray$;^Gecode::(VarArray|ViewArray)(<.*>)?$;^Gecode::(OpenIntVarList|OpenBoolVarList|OpenVarList|OpenViewList)(<.*>)?$;^Gecode::(VarImpView|DerivedView|ConstView)(<.*>)?$;^Gecode::(Int|Set|Float)::[A-Za-z]*View(<.*>)?$;^Gecode::.*::VarType$'
   readability-identifier-naming.FunctionCase: lower_case
   readability-identifier-naming.MethodCase: lower_case
   readability-identifier-naming.VariableCase: lower_case
