@@ -92,8 +92,8 @@ namespace Gecode { namespace Int { namespace LDSB {
         Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc, SymmetryImp<View>** syms,
         int nsyms, BranchFilter<typename LDSBBrancher<View, n, Val, a, Filter, Print>::Var> bf,
         VarValPrint<typename LDSBBrancher<View, n, Val, a, Filter, Print>::Var, Val> vvp)
-        : ViewValBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, bf, vvp), _syms(syms), _nsyms(nsyms),
-          _prev_pos(-1) {
+        : ViewValBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, std::move(bf), std::move(vvp)), _syms(syms),
+          _nsyms(nsyms), _prev_pos(-1) {
         home.notice(*this, AP_DISPOSE, true);
     }
 
@@ -103,7 +103,8 @@ namespace Gecode { namespace Int { namespace LDSB {
         Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc, SymmetryImp<View>** syms,
         int nsyms, BranchFilter<typename LDSBBrancher<View, n, Val, a, Filter, Print>::Var> bf,
         VarValPrint<typename LDSBBrancher<View, n, Val, a, Filter, Print>::Var, Val> vvp) {
-        (void)new (home) LDSBBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, syms, nsyms, bf, vvp);
+        (void)new (home)
+            LDSBBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, syms, nsyms, std::move(bf), std::move(vvp));
     }
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
@@ -253,18 +254,18 @@ namespace Gecode { namespace Int { namespace LDSB {
         if (bf) {
             if (vvp) {
                 LDSBBrancher<View, n, Val, a, BrancherFilter<View>, BrancherPrint<View, Val>>::post(
-                    home, x, vs, vsc, syms, nsyms, bf, vvp);
+                    home, x, vs, vsc, syms, nsyms, std::move(bf), std::move(vvp));
             } else {
                 LDSBBrancher<View, n, Val, a, BrancherFilter<View>, BrancherNoPrint<View, Val>>::post(
-                    home, x, vs, vsc, syms, nsyms, bf, vvp);
+                    home, x, vs, vsc, syms, nsyms, std::move(bf), std::move(vvp));
             }
         } else {
             if (vvp) {
                 LDSBBrancher<View, n, Val, a, BrancherNoFilter<View>, BrancherPrint<View, Val>>::post(
-                    home, x, vs, vsc, syms, nsyms, bf, vvp);
+                    home, x, vs, vsc, syms, nsyms, std::move(bf), std::move(vvp));
             } else {
                 LDSBBrancher<View, n, Val, a, BrancherNoFilter<View>, BrancherNoPrint<View, Val>>::post(
-                    home, x, vs, vsc, syms, nsyms, bf, vvp);
+                    home, x, vs, vsc, syms, nsyms, std::move(bf), std::move(vvp));
             }
         }
     }

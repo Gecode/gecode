@@ -142,7 +142,7 @@ namespace Gecode {
     forceinline
     ViewBrancher<View, Filter, n>::ViewBrancher(Home home, ViewArray<View>& x0, ViewSel<View>* vs0[n],
                                                 BranchFilter<Var> bf)
-        : Brancher(home), x(x0), start(0), random_state(false), f(bf) {
+        : Brancher(home), x(x0), start(0), random_state(false), f(std::move(bf)) {
         for (int i = 0; i < n; i++) {
             vs[i] = vs0[i];
             // Key each selector by brancher and role; value selectors use role 0.
