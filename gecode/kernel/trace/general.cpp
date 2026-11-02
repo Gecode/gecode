@@ -35,7 +35,7 @@
 namespace Gecode {
 
     void
-    trace(Home home, TraceFilter tf, int te, Tracer& t) {
+    trace(Home home, const TraceFilter& tf, int te, Tracer& t) {
         if (static_cast<Space&>(home).find_trace_recorder())
             throw MoreThanOneTracer("trace()");
         GECODE_POST;

@@ -34,7 +34,7 @@ namespace Gecode { namespace Int { namespace Count {
 
     template <class VX, class VY>
     forceinline
-    IntBase<VX, VY>::IntBase(Home home, ViewArray<VX>& x0, int n_s0, VY y0, int c0)
+    IntBase<VX, VY>::IntBase(Home home, ViewArray<VX>& x0, int n_s0, const VY& y0, int c0)
         : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
         if (is_int_set(y))
             home.notice(*this, AP_DISPOSE);

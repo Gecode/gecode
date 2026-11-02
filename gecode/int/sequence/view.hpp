@@ -75,13 +75,13 @@ namespace Gecode { namespace Int { namespace Sequence {
     class ViewValSupport {
     public:
         /// Initialize
-        void init(Space& home, ViewArray<View>& x, Val s, int i, int q);
+        void init(Space& home, ViewArray<View>& x, const Val& s, int i, int q);
         /// Update
         void update(Space& home, ViewValSupport<View, Val, iss>& vvs, int n0);
         /// Advise
-        ExecStatus advise(Space& home, ViewArray<View>& a, Val s, int i, int q, int j, const Delta& d);
+        ExecStatus advise(Space& home, ViewArray<View>& a, const Val& s, int i, int q, int j, const Delta& d);
         /// Propagate
-        ExecStatus propagate(Space& home, ViewArray<View>& a, Val s, int i, int q, int l, int u);
+        ExecStatus propagate(Space& home, ViewArray<View>& a, const Val& s, int i, int q, int l, int u);
         /// Return true if sequence j has been violated
         bool violated(int j, int q, int l, int u) const;
         /// Check if retired
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     private:
         /// Schedules the invoking support to be concluded (to be shaved)
-        ExecStatus schedule_conclusion(ViewArray<View>& a, Val s, int i);
+        ExecStatus schedule_conclusion(ViewArray<View>& a, const Val& s, int i);
         /// Returns true if a conclusion to be made has been scheduled
         bool conlusion_scheduled(void) const;
         /// Retires invoking instance
@@ -99,15 +99,15 @@ namespace Gecode { namespace Int { namespace Sequence {
         /// Return number of forced to s elements in sequence j
         int values(int j, int q) const;
         /// Checks if x[i] has been shaved
-        bool shaved(const View& x, Val s, int i) const;
+        bool shaved(const View& x, const Val& s, int i) const;
         /// Push up the cumulative array
-        bool pushup(ViewArray<View>& a, Val s, int i, int q, int idx, int v);
+        bool pushup(ViewArray<View>& a, const Val& s, int i, int q, int idx, int v);
         /// Make conclusion
-        ExecStatus conclude(Space& home, ViewArray<View>& a, Val s, int i);
+        ExecStatus conclude(Space& home, ViewArray<View>& a, const Val& s, int i);
         /// Returns true if a[idx]=s not possible taking into account a[i]=s if iss or a[i]!=s if ! iss
-        bool s_not_possible(ViewArray<View>& a, Val s, int i, int idx) const;
+        bool s_not_possible(ViewArray<View>& a, const Val& s, int i, int idx) const;
         /// Returns true if a[idx] can be not s taking into account a[i]=s if iss or a[i]!=s if ! iss
-        bool alternative_not_possible(ViewArray<View>& a, Val s, int i, int idx) const;
+        bool alternative_not_possible(ViewArray<View>& a, const Val& s, int i, int idx) const;
         /// Returns true if there are potential violations marked
         bool has_potential_violation(void) const;
         /// Returns next potential violation and removes it
@@ -162,21 +162,21 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     template <class View, class Val, bool iss>
     forceinline bool
-    ViewValSupport<View, Val, iss>::alternative_not_possible(ViewArray<View>& a, Val s, int i, int idx) const {
+    ViewValSupport<View, Val, iss>::alternative_not_possible(ViewArray<View>& a, const Val& s, int i, int idx) const {
         (void)i;
         return includes(a[idx - 1], s) || (iss && (idx - 1 == i));
     }
 
     template <class View, class Val, bool iss>
     forceinline bool
-    ViewValSupport<View, Val, iss>::s_not_possible(ViewArray<View>& a, Val s, int i, int idx) const {
+    ViewValSupport<View, Val, iss>::s_not_possible(ViewArray<View>& a, const Val& s, int i, int idx) const {
         (void)i;
         return excludes(a[idx - 1], s) || (!iss && (i == idx - 1));
     }
 
     template <class View, class Val, bool iss>
     forceinline void
-    ViewValSupport<View, Val, iss>::init(Space& home, ViewArray<View>& a, Val s, int i, int q) {
+    ViewValSupport<View, Val, iss>::init(Space& home, ViewArray<View>& a, const Val& s, int i, int q) {
         y = home.alloc<int>(a.size() + 1);
         v.init(home, static_cast<unsigned int>(a.size()));
         y[0] = 0;
@@ -211,7 +211,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     template <class View, class Val, bool iss>
     forceinline bool
-    ViewValSupport<View, Val, iss>::shaved(const View& x, Val s, int) const {
+    ViewValSupport<View, Val, iss>::shaved(const View& x, const Val& s, int) const {
         if (iss)
             return excludes(x, s);
         else
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     template <class View, class Val, bool iss>
     forceinline ExecStatus
-    ViewValSupport<View, Val, iss>::schedule_conclusion(ViewArray<View>& a, Val s, int i) {
+    ViewValSupport<View, Val, iss>::schedule_conclusion(ViewArray<View>& a, const Val& s, int i) {
         if (!retired()) {
             if ((iss && includes(a[i], s)) || (!iss && excludes(a[i], s)))
                 return ES_FAILED;
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     template <class View, class Val, bool iss>
     forceinline ExecStatus
-    ViewValSupport<View, Val, iss>::conclude(Space& home, ViewArray<View>& a, Val s, int i) {
+    ViewValSupport<View, Val, iss>::conclude(Space& home, ViewArray<View>& a, const Val& s, int i) {
         if (iss) {
             GECODE_ME_CHECK(exclude(home, a[i], s));
         } else {
@@ -286,7 +286,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     template <class View, class Val, bool iss>
     forceinline bool
-    ViewValSupport<View, Val, iss>::pushup(ViewArray<View>& a, Val s, int i, int q, int idx, int v) {
+    ViewValSupport<View, Val, iss>::pushup(ViewArray<View>& a, const Val& s, int i, int q, int idx, int v) {
         if (!retired()) {
             int n = a.size() + 1;
 
@@ -331,7 +331,8 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     template <class View, class Val, bool iss>
     forceinline ExecStatus
-    ViewValSupport<View, Val, iss>::advise(Space&, ViewArray<View>& a, Val s, int i, int q, int j, const Delta&) {
+    ViewValSupport<View, Val, iss>::advise(Space&, ViewArray<View>& a, const Val& s, int i, int q, int j,
+                                           const Delta&) {
         ExecStatus status = ES_FIX;
         if (!retired()) {
             if ((j == i) && shaved(a[j], s, j)) {
@@ -368,7 +369,8 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     template <class View, class Val, bool iss>
     forceinline ExecStatus
-    ViewValSupport<View, Val, iss>::propagate(Space& home, ViewArray<View>& a, Val s, int i, int q, int l, int u) {
+    ViewValSupport<View, Val, iss>::propagate(Space& home, ViewArray<View>& a, const Val& s, int i, int q, int l,
+                                              int u) {
         if (!retired()) {
             if (conlusion_scheduled()) {
                 return conclude(home, a, s, i);
@@ -403,7 +405,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     }
 
     template <class View, class Val, bool iss>
-    ViewValSupportArray<View, Val, iss>::ViewValSupportArray(Space& home, ViewArray<View>& x, Val s, int q)
+    ViewValSupportArray<View, Val, iss>::ViewValSupportArray(Space& home, ViewArray<View>& x, const Val& s, int q)
         : xs(nullptr) {
         n = x.size();
         if (n > 0) {
@@ -456,7 +458,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     template <class View, class Val, bool iss>
     ExecStatus
-    ViewValSupportArray<View, Val, iss>::propagate(Space& home, ViewArray<View>& a, Val s, int q, int l, int u) {
+    ViewValSupportArray<View, Val, iss>::propagate(Space& home, ViewArray<View>& a, const Val& s, int q, int l, int u) {
         for (int i = n; i--;) {
             GECODE_ES_CHECK(xs[i].propagate(home, a, s, i, q, l, u));
         }
@@ -465,7 +467,8 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     template <class View, class Val, bool iss>
     ExecStatus
-    ViewValSupportArray<View, Val, iss>::advise(Space& home, ViewArray<View>& a, Val s, int q, int j, const Delta& d) {
+    ViewValSupportArray<View, Val, iss>::advise(Space& home, ViewArray<View>& a, const Val& s, int q, int j,
+                                                const Delta& d) {
         ExecStatus status = ES_FIX;
         for (int i = n; i--;) {
             if (ES_NOFIX == xs[i].advise(home, a, s, i, q, j, d))

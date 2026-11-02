@@ -105,7 +105,7 @@ namespace Gecode {
     template <class View>
     forceinline
     UnaryWait<View>::UnaryWait(Home home, View x0, std::function<void(Space& home)> c0)
-        : Propagator(home), x(x0), c(c0) {
+        : Propagator(home), x(x0), c(std::move(c0)) {
         x.subscribe(home, *this, PC_GEN_ASSIGNED);
         home.notice(*this, AP_DISPOSE);
     }
@@ -147,7 +147,7 @@ namespace Gecode {
             c(home);
             return home.failed() ? ES_FAILED : ES_OK;
         } else {
-            (void)new (home) UnaryWait<View>(home, x, c);
+            (void)new (home) UnaryWait<View>(home, x, std::move(c));
             return ES_OK;
         }
     }
@@ -168,7 +168,7 @@ namespace Gecode {
     template <class View>
     forceinline
     NaryWait<View>::NaryWait(Home home, ViewArray<View>& x0, std::function<void(Space& home)> c0)
-        : Propagator(home), x(x0), c(c0) {
+        : Propagator(home), x(x0), c(std::move(c0)) {
         assert(!x[0].assigned());
         x[0].subscribe(home, *this, PC_GEN_ASSIGNED);
         home.notice(*this, AP_DISPOSE);
@@ -234,9 +234,9 @@ namespace Gecode {
         } else {
             x.unique();
             if (x.size() == 1) {
-                return UnaryWait<View>::post(home, x[0], c);
+                return UnaryWait<View>::post(home, x[0], std::move(c));
             } else {
-                (void)new (home) NaryWait<View>(home, x, c);
+                (void)new (home) NaryWait<View>(home, x, std::move(c));
                 return ES_OK;
             }
         }

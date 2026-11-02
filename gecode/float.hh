@@ -1950,7 +1950,7 @@ namespace Gecode {
      *
      * \ingroup TaskModeFloat
      */
-    GECODE_FLOAT_EXPORT void relax(Home home, const FloatVarArgs& x, const FloatVarArgs& sx, Rnd r, double p);
+    GECODE_FLOAT_EXPORT void relax(Home home, const FloatVarArgs& x, const FloatVarArgs& sx, const Rnd& r, double p);
 
 } // namespace Gecode
 
@@ -2039,7 +2039,7 @@ namespace Gecode {
      * \brief Create a tracer for float variables
      * \ingroup TaskFloatTrace
      */
-    GECODE_FLOAT_EXPORT void trace(Home home, const FloatVarArgs& x, TraceFilter tf,
+    GECODE_FLOAT_EXPORT void trace(Home home, const FloatVarArgs& x, const TraceFilter& tf,
                                    int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
                                    FloatTracer& t = StdFloatTracer::def);
     /**

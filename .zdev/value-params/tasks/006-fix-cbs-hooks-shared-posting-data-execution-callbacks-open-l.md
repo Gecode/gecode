@@ -3,7 +3,7 @@ schema_version = 1
 id = "value-params-006"
 key = "posting-leftovers"
 area = "value-params"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 blocked_by = ["value-params-005"]
@@ -30,11 +30,11 @@ Repair groups G1 (CBS virtual hooks, 4 parameters), G9 (posting with shared data
 
 ## Done when
 
-- [ ] The G1 base virtuals, all six Distinct overrides, and the two CBS helpers take SendMarginal and InDecision by const&, and build/full (CBS on) compiles them.
-- [ ] The inventory reproduction rerun in build/zdev-audit/value-params-posting-leftovers/ reports no diagnostic for G1, G9, G10, G11, and G12: its rows.tsv has no row in these groups (group column, matched by group number), it has no row (compared by file, function, and parameter) that the baseline build/zdev-audit/value-params/rows.tsv lacks, and checks.txt is empty.
-- [ ] The result lists every parameter changed to const& whose callee keeps a copy, by function, parameter, and file:line (at least the inventory's Verification hooks rows for G9 and G12), with the member or object it initializes and how the copy is made (copy constructor or copy assignment from the const&).
-- [ ] The result shows, with source references, that every by-value-and-move parameter of G10 and G11 reaches its storage through a move constructor (std::function's move constructor at each layer, SDO(Data&&) in UnaryWait, NaryWait, When, FunctionBranch, and OpenVarList<Var>::Object, and the factory lambda's init-capture), and that no std::move binds a copying const& constructor.
-- [ ] build/full and build/local build, and ctest passes in both.
+- [x] The G1 base virtuals, all six Distinct overrides, and the two CBS helpers take SendMarginal and InDecision by const&, and build/full (CBS on) compiles them.
+- [x] The inventory reproduction rerun in build/zdev-audit/value-params-posting-leftovers/ reports no diagnostic for G1, G9, G10, G11, and G12: its rows.tsv has no row in these groups (group column, matched by group number), it has no row (compared by file, function, and parameter) that the baseline build/zdev-audit/value-params/rows.tsv lacks, and checks.txt is empty.
+- [x] The result lists every parameter changed to const& whose callee keeps a copy, by function, parameter, and file:line (at least the inventory's Verification hooks rows for G9 and G12), with the member or object it initializes and how the copy is made (copy constructor or copy assignment from the const&).
+- [x] The result shows, with source references, that every by-value-and-move parameter of G10 and G11 reaches its storage through a move constructor (std::function's move constructor at each layer, SDO(Data&&) in UnaryWait, NaryWait, When, FunctionBranch, and OpenVarList<Var>::Object, and the factory lambda's init-capture), and that no std::move binds a copying const& constructor.
+- [x] build/full and build/local build, and ctest passes in both.
 
 ## Validation
 
@@ -43,3 +43,16 @@ Repair groups G1 (CBS virtual hooks, 4 parameters), G9 (posting with shared data
 - In build/full, run `bin/gecode-test -tag standard` with `-test Int::Branch::CBS`, `-test Int::Distinct`, `-test Int::Wait`, `-test Int::When`, `-test Int::Count`, `-test Int::Extensional`, `-test Int::Sequence`, `-test Int::OpenList`, `-test LDSB`, and `-test Search::RBS`.
 - Run `uv run misc/check.py format-check --build-dir build/full`.
 - Rerun the inventory reproduction (Reproduce steps 2 and 3 in .zdev/value-params/background/value-param-inventory.md) into a fresh directory build/zdev-audit/value-params-posting-leftovers/ so the baseline in build/zdev-audit/value-params/ stays intact: `sh build/zdev-audit/value-params-posting-leftovers/reproduce.sh build/full 10`.
+
+## Result
+
+CBS hooks, their six Distinct overrides and helpers take SendMarginal and InDecision by const&; DFA, IntSet, IntSharedArray, Rnd, IntArgs, Count's VY, Sequence's Val, Matrix's A and TraceFilter are const& down to their member copies (OpenRegular, ValueSequenceSymmetryObject, Matrix, Count IntBase/ViewBase, Sequence, trace recorders); wait, when, function-branch and open-list callbacks move through every layer into SharedData(Data&&) (inventory groups G1, G9-G12)
+
+Validation:
+
+- build/full (Debug, experimental, CBS, fault injection, audit, Gist), gecode-test and build/local (Release) built with 0 warnings; ctest 8/8 and 7/7; check-fault 21/21
+- Standard-tag focused tests: Int::Branch::CBS, Int::Distinct, Int::Wait, Int::When, Int::Count, Int::Extensional, Int::Sequence, Int::OpenList, LDSB, Search::RBS, Set::Wait, Set::Int::Weights, Int::Element::Matrix, Search::Relax all pass
+- format-check with clang-format 22 and clang-tidy 22 with the repository .clang-tidy on 24 changed TUs: clean
+- Scoped inventory rerun: 159 parameters (G13 56, G14 7, G15 43, G16 53), no G1 or G9-G12 row, no new keys versus baseline, empty checks.txt
+- Copy-count probe, lvalue callbacks: wait 4 to 1, when 8 to 2, branch 4 to 1, OpenIntVarList domain and transition 5 to 2; rvalues 0
+- Independent Codex verifier: pass, no findings

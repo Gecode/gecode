@@ -58,7 +58,7 @@ namespace Gecode { namespace Set {
 namespace Gecode {
 
     void
-    relax(Home home, const SetVarArgs& x, const SetVarArgs& sx, Rnd r, double p) {
+    relax(Home home, const SetVarArgs& x, const SetVarArgs& sx, const Rnd& r, double p) {
         if (x.size() != sx.size())
             throw Set::ArgumentSizeMismatch("Set::relax");
         if ((p < 0.0) || (p > 1.0))

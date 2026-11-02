@@ -61,7 +61,7 @@ namespace Gecode { namespace Int {
 namespace Gecode {
 
     void
-    relax(Home home, const IntVarArgs& x, const IntVarArgs& sx, Rnd r, double p) {
+    relax(Home home, const IntVarArgs& x, const IntVarArgs& sx, const Rnd& r, double p) {
         if (x.size() != sx.size())
             throw Int::ArgumentSizeMismatch("Int::relax");
         if ((p < 0.0) || (p > 1.0))
@@ -73,7 +73,7 @@ namespace Gecode {
     }
 
     void
-    relax(Home home, const BoolVarArgs& x, const BoolVarArgs& sx, Rnd r, double p) {
+    relax(Home home, const BoolVarArgs& x, const BoolVarArgs& sx, const Rnd& r, double p) {
         if (x.size() != sx.size())
             throw Int::ArgumentSizeMismatch("Int::relax");
         if ((p < 0.0) || (p > 1.0))

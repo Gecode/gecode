@@ -119,7 +119,7 @@ namespace Gecode {
     }
 
     inline void
-    values(Home home, const IntVarArgs& x, IntSet y, IntPropLevel ipl) {
+    values(Home home, const IntVarArgs& x, const IntSet& y, IntPropLevel ipl) {
         dom(home, x, y, ipl);
         nvalues(home, x, IRT_EQ, static_cast<int>(y.size()), ipl);
     }

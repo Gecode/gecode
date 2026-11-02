@@ -1256,7 +1256,7 @@ namespace Gecode {
          */
         /// Signature for function transmitting marginal distributions
         typedef std::function<void(unsigned int prop_id, unsigned int var_id, int val, double dens)> SendMarginal;
-        virtual void solution_distribution(Space& home, SendMarginal send) const;
+        virtual void solution_distribution(Space& home, const SendMarginal& send) const;
         /**
          * \brief Sum of variable cardinalities
          *
@@ -1266,7 +1266,7 @@ namespace Gecode {
          */
         /// Signature for function testing if variables are candidates to branching decisions
         typedef std::function<bool(unsigned int var_id)> InDecision;
-        virtual void domain_size_sum(InDecision in, unsigned int& size, unsigned int& size_b) const;
+        virtual void domain_size_sum(const InDecision& in, unsigned int& size, unsigned int& size_b) const;
         //@}
 #endif
         /// \name Id and group support
@@ -1846,7 +1846,7 @@ namespace Gecode {
         friend class Region;
         friend class AFC;
         friend class PostInfo;
-        friend GECODE_KERNEL_EXPORT void trace(Home home, TraceFilter tf, int te, Tracer& t);
+        friend GECODE_KERNEL_EXPORT void trace(Home home, const TraceFilter& tf, int te, Tracer& t);
 
     private:
         /// Allocate tagged space-local propagator information
@@ -3778,10 +3778,10 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_CBS
     forceinline void
-    Propagator::solution_distribution(Space&, SendMarginal) const {}
+    Propagator::solution_distribution(Space&, const SendMarginal&) const {}
 
     forceinline void
-    Propagator::domain_size_sum(InDecision, unsigned int& size, unsigned int& size_b) const {
+    Propagator::domain_size_sum(const InDecision&, unsigned int& size, unsigned int& size_b) const {
         size = 0;
         size_b = 0;
     }

@@ -35,7 +35,7 @@
 namespace Gecode {
 
     void
-    trace(Home home, const SetVarArgs& x, TraceFilter tf, int te, SetTracer& t) {
+    trace(Home home, const SetVarArgs& x, const TraceFilter& tf, int te, SetTracer& t) {
         using namespace Gecode::Set;
         GECODE_POST;
         ViewArray<SetView> xv(home, x);

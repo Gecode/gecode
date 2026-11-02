@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Size of each sequence in symmetry
         int seq_size;
         /// Constructor for creation
-        ValueSequenceSymmetryObject(IntArgs vs, int ss);
+        ValueSequenceSymmetryObject(const IntArgs& vs, int ss);
     };
 
     /**

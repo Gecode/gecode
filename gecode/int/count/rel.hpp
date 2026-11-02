@@ -41,25 +41,25 @@ namespace Gecode { namespace Int { namespace Count {
 
     template <class VY>
     forceinline bool
-    is_int_set(VY y) {
+    is_int_set(const VY& y) {
         (void)y;
         return false;
     }
     template <>
     forceinline bool
-    is_int_set(IntSet y) {
+    is_int_set(const IntSet& y) {
         (void)y;
         return true;
     }
 
     template <class VY>
     forceinline bool
-    isval(VY y) {
+    isval(const VY& y) {
         return y.assigned();
     }
     template <>
     forceinline bool
-    isval(IntSet y) {
+    isval(const IntSet& y) {
         (void)y;
         return true;
     }

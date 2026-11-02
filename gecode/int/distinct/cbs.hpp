@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
     void
-    cbs_distinct(Space&, unsigned int prop_id, const ViewArray<View>& x, Propagator::SendMarginal send) {
+    cbs_distinct(Space&, unsigned int prop_id, const ViewArray<View>& x, const Propagator::SendMarginal& send) {
         // Computation of Minc and Brégman and Liang and Bai upper bounds for
         // the permanent of the whole constraint
         struct UB {
@@ -208,7 +208,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
     void
-    cbs_size(const ViewArray<View>& x, Propagator::InDecision in, unsigned int& size, unsigned int& size_b) {
+    cbs_size(const ViewArray<View>& x, const Propagator::InDecision& in, unsigned int& size, unsigned int& size_b) {
         size = 0;
         size_b = 0;
         for (const auto& v : x) {

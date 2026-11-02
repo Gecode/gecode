@@ -81,7 +81,7 @@ namespace Gecode { namespace Set { namespace LDSB {
      */
     template <class View>
     ValueSymmetryImp<View>*
-    special_update(Space& home, ValueSymmetryImp<View>* s, IntSet used_values) {
+    special_update(Space& home, ValueSymmetryImp<View>* s, const IntSet& used_values) {
         // Calculate intersection and difference.
         IntArgs intersection;
         IntArgs difference;

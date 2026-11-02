@@ -105,7 +105,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         int offset;
         int subscribed;
 
-        OpenRegular(Home home, OpenViewList<View> list0, DFA dfa0)
+        OpenRegular(Home home, OpenViewList<View> list0, const DFA& dfa0)
             : Propagator(home), list(list0), length(list0.length()), dfa(dfa0), distance(accepting_distances(dfa0)),
               start(static_cast<Space&>(home).alloc<unsigned char>(dfa.n_states())), offset(0),
               subscribed(list0.known_length()) {
@@ -293,7 +293,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
         static ExecStatus
-        post(Home home, OpenViewList<View> list, DFA dfa) {
+        post(Home home, OpenViewList<View> list, const DFA& dfa) {
             for (int i = 0; i < list.known_length(); i++) {
                 DFA::Symbols symbols(dfa);
                 View x(list[i]);

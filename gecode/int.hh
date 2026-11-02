@@ -1797,7 +1797,7 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      * \f$ w\cdot h\neq|a|\f$.
      */
-    GECODE_INT_EXPORT void element(Home home, IntSharedArray a, IntVar x, int w, IntVar y, int h, IntVar z,
+    GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, IntVar z,
                                    IntPropLevel ipl = IPL_DEF);
     /** \brief Post domain consistent propagator for \f$ a_{x+xoff+w\cdot (y+yoff)}=z\f$
      *
@@ -1812,8 +1812,8 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      * \f$ w\cdot h\neq|a|\f$.
      */
-    GECODE_INT_EXPORT void element(Home home, IntSharedArray a, IntVar x, int xoff, int w, IntVar y, int yoff, int h,
-                                   IntVar z, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff,
+                                   int h, IntVar z, IntPropLevel ipl = IPL_DEF);
     /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
      *
      * If \a a is regarded as a two-dimensional array in row-major
@@ -1826,7 +1826,7 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      * \f$ w\cdot h\neq|a|\f$.
      */
-    GECODE_INT_EXPORT void element(Home home, IntSharedArray a, IntVar x, int w, IntVar y, int h, BoolVar z,
+    GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, BoolVar z,
                                    IntPropLevel ipl = IPL_DEF);
     /** \brief Post domain consistent propagator for \f$ a_{x+xoff+w\cdot (y+yoff)}=z\f$
      *
@@ -1841,8 +1841,8 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      * \f$ w\cdot h\neq|a|\f$.
      */
-    GECODE_INT_EXPORT void element(Home home, IntSharedArray a, IntVar x, int xoff, int w, IntVar y, int yoff, int h,
-                                   BoolVar z, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff,
+                                   int h, BoolVar z, IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
      *
      * If \a a is regarded as a two-dimensional array in row-major
@@ -2954,7 +2954,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntExt
      */
-    GECODE_INT_EXPORT void extensional(Home home, const IntVarArgs& x, DFA d, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void extensional(Home home, const IntVarArgs& x, const DFA& d, IntPropLevel ipl = IPL_DEF);
 
     /**
      * \brief Post domain consistent propagator for extensional constraint described by a DFA
@@ -2968,7 +2968,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntExt
      */
-    GECODE_INT_EXPORT void extensional(Home home, const BoolVarArgs& x, DFA d, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void extensional(Home home, const BoolVarArgs& x, const DFA& d, IntPropLevel ipl = IPL_DEF);
 
     /**
      * \brief Post an open regular-language constraint
@@ -2981,7 +2981,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntExt
      */
-    GECODE_INT_EXPORT void extensional(Home home, OpenIntVarList x, DFA d, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void extensional(Home home, OpenIntVarList x, const DFA& d, IntPropLevel ipl = IPL_DEF);
 
     /**
      * \brief Post an open regular-language constraint on Boolean variables
@@ -2992,7 +2992,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntExt
      */
-    GECODE_INT_EXPORT void extensional(Home home, OpenBoolVarList x, DFA d, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void extensional(Home home, OpenBoolVarList x, const DFA& d, IntPropLevel ipl = IPL_DEF);
 
     /** \brief Post propagator for \f$x\in t\f$.
      *
@@ -6129,7 +6129,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelInt
      */
-    GECODE_INT_EXPORT void relax(Home home, const IntVarArgs& x, const IntVarArgs& sx, Rnd r, double p);
+    GECODE_INT_EXPORT void relax(Home home, const IntVarArgs& x, const IntVarArgs& sx, const Rnd& r, double p);
 
     /*
      * \brief Relaxed assignment of variables in \a x from values in \a sx
@@ -6152,7 +6152,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelInt
      */
-    GECODE_INT_EXPORT void relax(Home home, const BoolVarArgs& x, const BoolVarArgs& sx, Rnd r, double p);
+    GECODE_INT_EXPORT void relax(Home home, const BoolVarArgs& x, const BoolVarArgs& sx, const Rnd& r, double p);
 
 } // namespace Gecode
 
@@ -6308,7 +6308,7 @@ namespace Gecode {
      * \brief Create a tracer for integer variables
      * \ingroup TaskIntTrace
      */
-    GECODE_INT_EXPORT void trace(Home home, const IntVarArgs& x, TraceFilter tf,
+    GECODE_INT_EXPORT void trace(Home home, const IntVarArgs& x, const TraceFilter& tf,
                                  int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
                                  IntTracer& t = StdIntTracer::def);
     /**
@@ -6322,7 +6322,7 @@ namespace Gecode {
      * \brief Create a tracer for Boolean Variables
      * \ingroup TaskIntTrace
      */
-    GECODE_INT_EXPORT void trace(Home home, const BoolVarArgs& x, TraceFilter tf,
+    GECODE_INT_EXPORT void trace(Home home, const BoolVarArgs& x, const TraceFilter& tf,
                                  int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
                                  BoolTracer& t = StdBoolTracer::def);
     /**

@@ -1741,7 +1741,7 @@ namespace Gecode {
 
     /** \brief Post constraint \f$\{x_0,\dots,x_{n-1}\}=y\f$
      */
-    void values(Home home, const IntVarArgs& x, IntSet y, IntPropLevel ipl = IPL_DEF);
+    void values(Home home, const IntVarArgs& x, const IntSet& y, IntPropLevel ipl = IPL_DEF);
     //@}
 
 #ifdef GECODE_HAS_SET_VARS
@@ -1880,7 +1880,7 @@ namespace Gecode {
          *            parameters \a w and \a h doesn't match the size
          *            of the array \a a.
          */
-        Matrix(A a, int w, int h);
+        Matrix(const A& a, int w, int h);
 
         /** \brief Basic constructor
          *
@@ -1894,7 +1894,7 @@ namespace Gecode {
          *            parameter \a n doesn't match the size
          *            of the array \a a.
          */
-        Matrix(A a, int n);
+        Matrix(const A& a, int n);
 
         /// Return the width of the matrix
         int width(void) const;

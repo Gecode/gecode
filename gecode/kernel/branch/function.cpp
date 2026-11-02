@@ -85,7 +85,7 @@ namespace Gecode { namespace Kernel {
 
     forceinline
     FunctionBranch::FunctionBranch(Home home, std::function<void(Space& home)> f0)
-        : Brancher(home), f(f0), done(false) {
+        : Brancher(home), f(std::move(f0)), done(false) {
         if (!f())
             throw InvalidFunction("FunctionBranch::FunctionBranch");
         home.notice(*this, AP_DISPOSE);
@@ -125,7 +125,7 @@ namespace Gecode { namespace Kernel {
     FunctionBranch::post(Home home, std::function<void(Space& home)> f) {
         if (!f)
             throw InvalidFunction("FunctionBranch::post");
-        (void)new (home) FunctionBranch(home, f);
+        (void)new (home) FunctionBranch(home, std::move(f));
     }
     size_t
     FunctionBranch::dispose(Space& home) {
@@ -141,7 +141,7 @@ namespace Gecode {
 
     void
     branch(Home home, std::function<void(Space& home)> f) {
-        Kernel::FunctionBranch::post(home, f);
+        Kernel::FunctionBranch::post(home, std::move(f));
     }
 
 } // namespace Gecode

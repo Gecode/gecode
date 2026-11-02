@@ -279,7 +279,7 @@ namespace Gecode {
     } // namespace
 
     void
-    element(Home home, IntSharedArray a, IntVar x, int w, IntVar y, int h, IntVar z, IntPropLevel ipl) {
+    element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, IntVar z, IntPropLevel ipl) {
         using namespace Int;
         if (a.size() != w * h)
             throw Int::ArgumentSizeMismatch("Int::element");
@@ -288,7 +288,7 @@ namespace Gecode {
     }
 
     void
-    element(Home home, IntSharedArray a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, IntVar z,
+    element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, IntVar z,
             IntPropLevel ipl) {
         using namespace Int;
         if (a.size() != w * h)
@@ -298,7 +298,7 @@ namespace Gecode {
     }
 
     void
-    element(Home home, IntSharedArray a, IntVar x, int w, IntVar y, int h, BoolVar z, IntPropLevel ipl) {
+    element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, BoolVar z, IntPropLevel ipl) {
         using namespace Int;
         if (a.size() != w * h)
             throw Int::ArgumentSizeMismatch("Int::element");
@@ -307,7 +307,7 @@ namespace Gecode {
     }
 
     void
-    element(Home home, IntSharedArray a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, BoolVar z,
+    element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, BoolVar z,
             IntPropLevel ipl) {
         using namespace Int;
         if (a.size() != w * h)
