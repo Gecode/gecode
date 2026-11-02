@@ -140,6 +140,12 @@ failing loudly.
   -O2, and -O3. It records the probe source and matrix script, the expected
   and observed bounds, the mechanisms behind each unsound bound, and why no
   permanent test was added yet.
+- [nextafter study](background/nextafter-study.md): outward rounding with
+  `std::nextafter` (P1, always widening) and with error terms (P2, widening
+  a side only when the residual's sign says so, and always near underflow,
+  overflow, and non-finite values), measured against the switched-mode reference
+  3f4b5272f9 (boost-006) on soundness, tightness, the float suite, the float
+  examples, and runtime.
 
 ## Validation
 
