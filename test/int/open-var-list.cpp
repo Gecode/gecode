@@ -164,7 +164,7 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         Gecode::OpenIntVarList list;
 
-        SelectorSpace(Gecode::IntValBranch vals, bool length_first = false)
+        SelectorSpace(const Gecode::IntValBranch& vals, bool length_first = false)
             : list(*this, [](int i) { return Gecode::IntSet(i, i + 1); }, 3) {
             using namespace Gecode;
             if (length_first)
@@ -271,7 +271,7 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         Gecode::OpenIntVarList list;
 
-        SelectorChoiceSpace(Gecode::IntValBranch vals) : list(*this, Gecode::IntSet({0, 2, 5}), 3) {
+        SelectorChoiceSpace(const Gecode::IntValBranch& vals) : list(*this, Gecode::IntSet({0, 2, 5}), 3) {
             using namespace Gecode;
             list.materialize(*this, 3);
             branch(
@@ -1021,7 +1021,7 @@ namespace Test { namespace Int { namespace OpenList {
         Gecode::OpenIntVarList list;
 
         CallbackSpace(Gecode::OpenIntVarList::Domain domain, Gecode::OpenIntVarList::Transition transition)
-            : list(*this, domain, transition, 8) {}
+            : list(*this, std::move(domain), std::move(transition), 8) {}
 
         CallbackSpace(CallbackSpace& s) : Gecode::Space(s) {
             list.update(*this, s.list);

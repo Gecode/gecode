@@ -131,18 +131,18 @@ namespace Gecode {
 
             /// Return string representation of difference between arrays \a x and \a y, which are called \a x_n
             template <class Var>
-            static std::string compare(std::string x_n, const VarArgArray<Var>& x, const VarArgArray<Var>& y);
+            static std::string compare(const std::string& x_n, const VarArgArray<Var>& x, const VarArgArray<Var>& y);
             /// Return string representation of difference between \a x and \a y, which are called \a x_n
-            static std::string compare(std::string x_n, IntVar x, IntVar y);
+            static std::string compare(const std::string& x_n, IntVar x, IntVar y);
             /// Return string representation of difference between \a x and \a y, which are called \a x_n
-            static std::string compare(std::string x_n, BoolVar x, BoolVar y);
+            static std::string compare(const std::string& x_n, BoolVar x, BoolVar y);
 #ifdef GECODE_HAS_SET_VARS
             /// Return string representation of difference between \a x and \a y, which are called \a x_n
-            static std::string compare(std::string x_n, SetVar x, SetVar y);
+            static std::string compare(const std::string& x_n, SetVar x, SetVar y);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
             /// Return string representation of difference between \a x and \a y, which are called \a x_n
-            static std::string compare(std::string x_n, FloatVar x, FloatVar y);
+            static std::string compare(const std::string& x_n, FloatVar x, FloatVar y);
 #endif
             //@}
         };
@@ -206,7 +206,7 @@ namespace Gecode {
         class VarComparator : public TextOutput, public Comparator {
         public:
             /// Constructor
-            VarComparator(std::string name);
+            VarComparator(const std::string& name);
             /// Compare \a s0 to \a s1
             void compare(const Space& s0, const Space& s1) override;
             /// Return name

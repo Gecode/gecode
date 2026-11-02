@@ -58,7 +58,7 @@ namespace Test {
             /// Position of queens on boards
             IntVarArray q;
             /// The actual problem
-            Queens(IntValBranch ivb, bool assign, bool null) : q(*this, n, 0, n - 1) {
+            Queens(const IntValBranch& ivb, bool assign, bool null) : q(*this, n, 0, n - 1) {
                 distinct(*this, IntArgs::create(n, 0, 1), q, IPL_VAL);
                 distinct(*this, IntArgs::create(n, 0, -1), q, IPL_VAL);
                 distinct(*this, q, IPL_VAL);
@@ -111,7 +111,7 @@ namespace Test {
             }
             /// Return name for branching
             static std::string
-            val(IntValBranch ivb) {
+            val(const IntValBranch& ivb) {
                 switch (ivb.select()) {
                 case IntValBranch::SEL_MIN:
                     return "INT_VAL_MIN";
@@ -147,7 +147,7 @@ namespace Test {
 
         public:
             /// Actual model
-            Hamming(SetValBranch svb, bool assign, bool null) : x(*this, size, IntSet::empty, 1, bits) {
+            Hamming(const SetValBranch& svb, bool assign, bool null) : x(*this, size, IntSet::empty, 1, bits) {
                 SetVarArgs cx(x.size());
                 for (int i = x.size(); i--;)
                     cx[i] = expr(*this, -x[i]);
@@ -207,7 +207,7 @@ namespace Test {
             }
             /// Return name for branching
             static std::string
-            val(SetValBranch svb) {
+            val(const SetValBranch& svb) {
                 switch (svb.select()) {
                 case SetValBranch::SEL_MIN_INC:
                     return "SET_VAL_MIN_INC";
@@ -251,7 +251,7 @@ namespace Test {
                 : Base("NoGoods::" + Model::name() + "::" + Model::val(vb0) + "::" + str(t0) + "::" + (a0 ? "+" : "-") +
                            "::" + (n0 ? "+" : "-"),
                        tags),
-                  vb(vb0), t(t0), a(a0), n(n0) {}
+                  vb(std::move(vb0)), t(t0), a(a0), n(n0) {}
             /// Run test
             bool
             run(void) override {
