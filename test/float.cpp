@@ -219,7 +219,7 @@ namespace Test { namespace Float {
     }
 
     void
-    TestSpace::rel(int i, Gecode::FloatRelType frt, Gecode::FloatVal n) {
+    TestSpace::rel(int i, Gecode::FloatRelType frt, const Gecode::FloatVal& n) {
         if (opt.log) {
             olog << ind(4) << "x[" << i << "] ";
             switch (frt) {

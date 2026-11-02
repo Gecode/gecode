@@ -1078,15 +1078,15 @@ namespace Gecode {
 
     //@{
     /// Propagates \f$x=n\f$
-    GECODE_FLOAT_EXPORT void dom(Home home, FloatVar x, FloatVal n);
+    GECODE_FLOAT_EXPORT void dom(Home home, FloatVar x, const FloatVal& n);
     /// Propagates \f$ x_i=n\f$ for all \f$0\leq i<|x|\f$
-    GECODE_FLOAT_EXPORT void dom(Home home, const FloatVarArgs& x, FloatVal n);
+    GECODE_FLOAT_EXPORT void dom(Home home, const FloatVarArgs& x, const FloatVal& n);
     /// Propagates \f$ l\leq x\leq u\f$
     GECODE_FLOAT_EXPORT void dom(Home home, FloatVar x, FloatNum l, FloatNum m);
     /// Propagates \f$ l\leq x_i\leq u\f$ for all \f$0\leq i<|x|\f$
     GECODE_FLOAT_EXPORT void dom(Home home, const FloatVarArgs& x, FloatNum l, FloatNum u);
     /// Post domain consistent propagator for \f$ (x=n) \equiv r\f$
-    GECODE_FLOAT_EXPORT void dom(Home home, FloatVar x, FloatVal n, Reify r);
+    GECODE_FLOAT_EXPORT void dom(Home home, FloatVar x, const FloatVal& n, Reify r);
     /// Post domain consistent propagator for \f$ (l\leq x \leq u) \equiv r\f$
     GECODE_FLOAT_EXPORT void dom(Home home, FloatVar x, FloatNum l, FloatNum u, Reify r);
     /// Constrain domain of \a x according to domain of \a d
@@ -1107,11 +1107,11 @@ namespace Gecode {
     /** \brief Propagates \f$ x \sim_{frt} c\f$
      * \ingroup TaskModelFloatRelFloat
      */
-    GECODE_FLOAT_EXPORT void rel(Home home, FloatVar x, FloatRelType frt, FloatVal c);
+    GECODE_FLOAT_EXPORT void rel(Home home, FloatVar x, FloatRelType frt, const FloatVal& c);
     /** \brief Post propagator for \f$(x \sim_{frt} c)\equiv r\f$
      * \ingroup TaskModelFloatRelFloat
      */
-    GECODE_FLOAT_EXPORT void rel(Home home, FloatVar x, FloatRelType frt, FloatVal c, Reify r);
+    GECODE_FLOAT_EXPORT void rel(Home home, FloatVar x, FloatRelType frt, const FloatVal& c, Reify r);
     /** \brief Post propagator for \f$(x_0 \sim_{frt} x_1)\equiv r\f$
      * \ingroup TaskModelFloatRelFloat
      */
@@ -1119,7 +1119,7 @@ namespace Gecode {
     /** \brief Propagates \f$ x_i \sim_{frt} c \f$ for all \f$0\leq i<|x|\f$
      * \ingroup TaskModelFloatRelFloat
      */
-    GECODE_FLOAT_EXPORT void rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c);
+    GECODE_FLOAT_EXPORT void rel(Home home, const FloatVarArgs& x, FloatRelType frt, const FloatVal& c);
     /** \brief Propagates \f$ x_i \sim_{frt} y \f$ for all \f$0\leq i<|x|\f$
      * \ingroup TaskModelFloatRelFloat
      */
@@ -1232,7 +1232,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelFloatLI
      */
-    GECODE_FLOAT_EXPORT void linear(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c);
+    GECODE_FLOAT_EXPORT void linear(Home home, const FloatVarArgs& x, FloatRelType frt, const FloatVal& c);
     /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\f$
      * \ingroup TaskModelFloatLI
      *
@@ -1254,7 +1254,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelFloatLI
      */
-    GECODE_FLOAT_EXPORT void linear(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c, Reify r);
+    GECODE_FLOAT_EXPORT void linear(Home home, const FloatVarArgs& x, FloatRelType frt, const FloatVal& c, Reify r);
     /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\right)\equiv r\f$
      *
      * \li Throws an exception of type Float::OutOfLimits, if the variables,
@@ -1279,7 +1279,7 @@ namespace Gecode {
      * \ingroup TaskModelFloatLI
      */
     GECODE_FLOAT_EXPORT void linear(Home home, const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt,
-                                    FloatVal c);
+                                    const FloatVal& c);
     /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\f$
      *
      *
@@ -1309,7 +1309,7 @@ namespace Gecode {
      * \ingroup TaskModelFloatLI
      */
     GECODE_FLOAT_EXPORT void linear(Home home, const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt,
-                                    FloatVal c, Reify r);
+                                    const FloatVal& c, Reify r);
     /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\right)\equiv r\f$
      *
      *

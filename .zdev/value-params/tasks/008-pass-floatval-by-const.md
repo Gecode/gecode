@@ -3,7 +3,7 @@ schema_version = 1
 id = "value-params-008"
 key = "floatval"
 area = "value-params"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 blocked_by = ["value-params-007"]
@@ -30,9 +30,9 @@ Repair group G16 (FloatVal, 53 parameters: gecode/float 39, gecode/minimodel 6, 
 
 ## Done when
 
-- [ ] The inventory reproduction rerun in build/zdev-audit/value-params-floatval/ reports no diagnostic for G16: its rows.tsv has no row in these groups (group column, matched by group number), it has no row (compared by file, function, and parameter) that the baseline build/zdev-audit/value-params/rows.tsv lacks, and checks.txt is empty.
-- [ ] The result lists every parameter changed to const& whose callee keeps a copy, by function, parameter, and file:line (at least the inventory's Verification hooks rows for G16), with the member or object it initializes and how the copy is made (copy constructor or copy assignment from the const&).
-- [ ] No G16 parameter stays by value or is moved, and build/full and build/local build with ctest passing in both.
+- [x] The inventory reproduction rerun in build/zdev-audit/value-params-floatval/ reports no diagnostic for G16: its rows.tsv has no row in these groups (group column, matched by group number), it has no row (compared by file, function, and parameter) that the baseline build/zdev-audit/value-params/rows.tsv lacks, and checks.txt is empty.
+- [x] The result lists every parameter changed to const& whose callee keeps a copy, by function, parameter, and file:line (at least the inventory's Verification hooks rows for G16), with the member or object it initializes and how the copy is made (copy constructor or copy assignment from the const&).
+- [x] No G16 parameter stays by value or is moved, and build/full and build/local build with ctest passing in both.
 
 ## Validation
 
@@ -40,3 +40,15 @@ Repair group G16 (FloatVal, 53 parameters: gecode/float 39, gecode/minimodel 6, 
 - In build/full, run `bin/gecode-test -test Float -tag standard`.
 - Run `uv run misc/check.py format-check --build-dir build/full`.
 - Rerun the inventory reproduction (Reproduce steps 2 and 3 in .zdev/value-params/background/value-param-inventory.md) into a fresh directory build/zdev-audit/value-params-floatval/ so the baseline in build/zdev-audit/value-params/ stays intact: `sh build/zdev-audit/value-params-floatval/reproduce.sh build/full 10`.
+
+## Result
+
+All 53 FloatVal parameters in the float propagators, views, posting functions, minimodel and float tests take const FloatVal&; keepers copy-construct or copy-assign their members once; DomArgs takes const Args&... and copies into its tuple (inventory group G16)
+
+Validation:
+
+- build/full (Debug, experimental, CBS, fault injection, audit, Gist) and build/local (Release) built with 0 warnings; ctest 8/8 and 7/7
+- Standard-tag focused tests: Float 526/526, MiniModel 3544/3544
+- format-check with clang-format 22 and clang-tidy 22 with the repository .clang-tidy on float/rel.cpp, float/linear/post.cpp, minimodel/float-expr.cpp, minimodel/dom.cpp: clean
+- Scoped inventory rerun: 0 parameters, no G16 row, no new keys versus baseline, empty checks.txt
+- Independent Codex verifier: pass, no findings (aliasing and lifetime checked)

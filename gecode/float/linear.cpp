@@ -37,7 +37,7 @@ o *  Main authors:
 namespace Gecode {
 
     void
-    linear(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c) {
+    linear(Home home, const FloatVarArgs& x, FloatRelType frt, const FloatVal& c) {
         using namespace Float;
         GECODE_POST;
         Region re;
@@ -51,7 +51,7 @@ namespace Gecode {
     }
 
     void
-    linear(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c, Reify r) {
+    linear(Home home, const FloatVarArgs& x, FloatRelType frt, const FloatVal& c, Reify r) {
         using namespace Float;
         GECODE_POST;
         Region re;
@@ -65,7 +65,7 @@ namespace Gecode {
     }
 
     void
-    linear(Home home, const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatVal c) {
+    linear(Home home, const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, const FloatVal& c) {
         using namespace Float;
         if (a.size() != x.size())
             throw ArgumentSizeMismatch("Float::linear");
@@ -81,7 +81,7 @@ namespace Gecode {
     }
 
     void
-    linear(Home home, const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatVal c, Reify r) {
+    linear(Home home, const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, const FloatVal& c, Reify r) {
         using namespace Float;
         if (a.size() != x.size())
             throw ArgumentSizeMismatch("Float::linear");

@@ -65,7 +65,7 @@ namespace Gecode { namespace Float { namespace Linear {
         /// Constructor for cloning \a p
         Lin(Space& home, Lin<P, N, pc>& p);
         /// Constructor for creation
-        Lin(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
+        Lin(Home home, ViewArray<P>& x, ViewArray<N>& y, const FloatVal& c);
 
     public:
         /// Cost function (defined as low linear)
@@ -112,13 +112,13 @@ namespace Gecode { namespace Float { namespace Linear {
 
     public:
         /// Constructor for creation
-        Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
+        Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, const FloatVal& c);
         /// Create copy during cloning
         Actor* copy(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
-        static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
+        static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, const FloatVal& c);
     };
 
     /**
@@ -141,13 +141,13 @@ namespace Gecode { namespace Float { namespace Linear {
 
     public:
         /// Constructor for creation
-        Lq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
+        Lq(Home home, ViewArray<P>& x, ViewArray<N>& y, const FloatVal& c);
         /// Create copy during cloning
         Actor* copy(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\f$
-        static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
+        static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, const FloatVal& c);
     };
 
 }}} // namespace Gecode::Float::Linear
@@ -182,7 +182,7 @@ namespace Gecode { namespace Float { namespace Linear {
      * \param u upper bound
      *
      */
-    GECODE_FLOAT_EXPORT void estimate(Term* t, int n, FloatVal c, FloatNum& l, FloatNum& u);
+    GECODE_FLOAT_EXPORT void estimate(Term* t, int n, const FloatVal& c, FloatNum& l, FloatNum& u);
 
     /**
      * \brief Post propagator for linear constraint over floats
@@ -219,7 +219,7 @@ namespace Gecode { namespace Float { namespace Linear {
      * Requires \code #include <gecode/float/linear.hh> \endcode
      * \ingroup FuncFloatProp
      */
-    GECODE_FLOAT_EXPORT void post(Home home, Term* t, int n, FloatRelType frt, FloatVal c, Reify r);
+    GECODE_FLOAT_EXPORT void post(Home home, Term* t, int n, FloatRelType frt, const FloatVal& c, Reify r);
 
 }}} // namespace Gecode::Float::Linear
 

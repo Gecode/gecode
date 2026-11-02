@@ -39,7 +39,7 @@
 namespace Gecode {
 
     void
-    rel(Home home, FloatVar x0, FloatRelType frt, FloatVal n) {
+    rel(Home home, FloatVar x0, FloatRelType frt, const FloatVal& n) {
         using namespace Float;
         Limits::check(n, "Float::rel");
         GECODE_POST;
@@ -175,7 +175,7 @@ namespace Gecode {
     }
 
     void
-    rel(Home home, FloatVar x, FloatRelType frt, FloatVal n, Reify r) {
+    rel(Home home, FloatVar x, FloatRelType frt, const FloatVal& n, Reify r) {
         using namespace Float;
         Limits::check(n, "Float::rel");
         GECODE_POST;
@@ -282,7 +282,7 @@ namespace Gecode {
     }
 
     void
-    rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c) {
+    rel(Home home, const FloatVarArgs& x, FloatRelType frt, const FloatVal& c) {
         using namespace Float;
         Limits::check(c, "Float::rel");
         GECODE_POST;

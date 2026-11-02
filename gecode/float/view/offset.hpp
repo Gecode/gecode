@@ -112,7 +112,7 @@ namespace Gecode { namespace Float {
         return x.lq(home, n - c);
     }
     forceinline ModEvent
-    OffsetView::lq(Space& home, FloatVal n) {
+    OffsetView::lq(Space& home, const FloatVal& n) {
         return x.lq(home, n - c);
     }
 
@@ -125,7 +125,7 @@ namespace Gecode { namespace Float {
         return x.gq(home, n - c);
     }
     forceinline ModEvent
-    OffsetView::gq(Space& home, FloatVal n) {
+    OffsetView::gq(Space& home, const FloatVal& n) {
         return x.gq(home, n - c);
     }
 

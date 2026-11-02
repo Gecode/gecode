@@ -159,7 +159,7 @@ namespace Gecode { namespace Float { namespace Rel {
         /// Constructor for cloning \a p
         ReEqFloat(Space& home, ReEqFloat& p);
         /// Constructor for posting
-        ReEqFloat(Home home, View x, FloatVal c, CtrlView b);
+        ReEqFloat(Home home, View x, const FloatVal& c, CtrlView b);
 
     public:
         /// Copy propagator during cloning
@@ -167,7 +167,7 @@ namespace Gecode { namespace Float { namespace Rel {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post bounds consistent propagator \f$ (x = c)\Leftrightarrow b\f$
-        static ExecStatus post(Home home, View x, FloatVal c, CtrlView b);
+        static ExecStatus post(Home home, View x, const FloatVal& c, CtrlView b);
     };
 
     /**
@@ -216,13 +216,13 @@ namespace Gecode { namespace Float { namespace Rel {
 
     public:
         /// Constructor for posting
-        NqFloat(Home home, View x, FloatVal c);
+        NqFloat(Home home, View x, const FloatVal& c);
         /// Copy propagator during cloning
         Actor* copy(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post bounds consistent propagator \f$ x_0 \neq c\f$
-        static ExecStatus post(Home home, View x0, FloatVal c);
+        static ExecStatus post(Home home, View x0, const FloatVal& c);
     };
 
     /*
@@ -307,7 +307,7 @@ namespace Gecode { namespace Float { namespace Rel {
         /// Constructor for cloning \a p
         ReLqFloat(Space& home, ReLqFloat& p);
         /// Constructor for posting
-        ReLqFloat(Home home, View x, FloatVal c, CtrlView b);
+        ReLqFloat(Home home, View x, const FloatVal& c, CtrlView b);
 
     public:
         /// Copy propagator during cloning
@@ -315,7 +315,7 @@ namespace Gecode { namespace Float { namespace Rel {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ (x \leq c)\Leftrightarrow b\f$
-        static ExecStatus post(Home home, View x, FloatVal c, CtrlView b);
+        static ExecStatus post(Home home, View x, const FloatVal& c, CtrlView b);
     };
 
     /**
@@ -336,7 +336,7 @@ namespace Gecode { namespace Float { namespace Rel {
         /// Constructor for cloning \a p
         ReLeFloat(Space& home, ReLeFloat& p);
         /// Constructor for posting
-        ReLeFloat(Home home, View x, FloatVal c, CtrlView b);
+        ReLeFloat(Home home, View x, const FloatVal& c, CtrlView b);
 
     public:
         /// Copy propagator during cloning
@@ -344,7 +344,7 @@ namespace Gecode { namespace Float { namespace Rel {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ (x < c)\Leftrightarrow b\f$
-        static ExecStatus post(Home home, View x, FloatVal c, CtrlView b);
+        static ExecStatus post(Home home, View x, const FloatVal& c, CtrlView b);
     };
 
     /**

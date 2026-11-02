@@ -103,14 +103,14 @@ namespace Gecode { namespace Float {
         /// Restrict domain values to be less or equal than \a n
         ModEvent lq(Space& home, FloatNum n);
         /// Restrict domain values to be less or equal than \a n
-        ModEvent lq(Space& home, FloatVal n);
+        ModEvent lq(Space& home, const FloatVal& n);
 
         /// Restrict domain values to be greater or equal than \a n
         ModEvent gq(Space& home, int n);
         /// Restrict domain values to be greater or equal than \a n
         ModEvent gq(Space& home, FloatNum n);
         /// Restrict domain values to be greater or equal than \a n
-        ModEvent gq(Space& home, FloatVal n);
+        ModEvent gq(Space& home, const FloatVal& n);
 
         /// Restrict domain values to be equal to \a n
         ModEvent eq(Space& home, int n);
@@ -203,14 +203,14 @@ namespace Gecode { namespace Float {
         /// Restrict domain values to be less or equal than \a n
         ModEvent lq(Space& home, FloatNum n);
         /// Restrict domain values to be less or equal than \a n
-        ModEvent lq(Space& home, FloatVal n);
+        ModEvent lq(Space& home, const FloatVal& n);
 
         /// Restrict domain values to be greater or equal than \a n
         ModEvent gq(Space& home, int n);
         /// Restrict domain values to be greater or equal than \a n
         ModEvent gq(Space& home, FloatNum n);
         /// Restrict domain values to be greater or equal than \a n
-        ModEvent gq(Space& home, FloatVal n);
+        ModEvent gq(Space& home, const FloatVal& n);
 
         /// Restrict domain values to be equal to \a n
         ModEvent eq(Space& home, int n);
@@ -320,14 +320,14 @@ namespace Gecode { namespace Float {
         /// Restrict domain values to be less or equal than \a n
         ModEvent lq(Space& home, FloatNum n);
         /// Restrict domain values to be less or equal than \a n
-        ModEvent lq(Space& home, FloatVal n);
+        ModEvent lq(Space& home, const FloatVal& n);
 
         /// Restrict domain values to be greater or equal than \a n
         ModEvent gq(Space& home, int n);
         /// Restrict domain values to be greater or equal than \a n
         ModEvent gq(Space& home, FloatNum n);
         /// Restrict domain values to be greater or equal than \a n
-        ModEvent gq(Space& home, FloatVal n);
+        ModEvent gq(Space& home, const FloatVal& n);
 
         /// Restrict domain values to be equal to \a n
         ModEvent eq(Space& home, int n);
@@ -402,7 +402,7 @@ namespace Gecode { namespace Float {
         /// Default constructor
         ScaleView(void);
         /// Initialize as \f$b\cdot y\f$
-        ScaleView(FloatVal b, const FloatView& y);
+        ScaleView(const FloatVal& b, const FloatView& y);
         //@}
 
         /// \name Value access
@@ -448,14 +448,14 @@ namespace Gecode { namespace Float {
         /// Restrict domain values to be less or equal than \a n
         ModEvent lq(Space& home, FloatNum n);
         /// Restrict domain values to be less or equal than \a n
-        ModEvent lq(Space& home, FloatVal n);
+        ModEvent lq(Space& home, const FloatVal& n);
 
         /// Restrict domain values to be greater or equal than \a n
         ModEvent gq(Space& home, int n);
         /// Restrict domain values to be greater or equal than \a n
         ModEvent gq(Space& home, FloatNum n);
         /// Restrict domain values to be greater or equal than \a n
-        ModEvent gq(Space& home, FloatVal n);
+        ModEvent gq(Space& home, const FloatVal& n);
 
         /// Restrict domain values to be equal to \a n
         ModEvent eq(Space& home, int n);
@@ -538,21 +538,21 @@ namespace Gecode { namespace Float {
     RelTest rtest_eq(View x, View y);
     /// Test whether view \a x and Float \a n are equal
     template <class View>
-    RelTest rtest_eq(View x, FloatVal n);
+    RelTest rtest_eq(View x, const FloatVal& n);
 
     /// Test whether view \a x is less or equal than view \a y
     template <class View>
     RelTest rtest_lq(View x, View y);
     /// Test whether view \a x is less or equal than float \a n
     template <class View>
-    RelTest rtest_lq(View x, FloatVal n);
+    RelTest rtest_lq(View x, const FloatVal& n);
 
     /// Test whether view \a x is less than view \a y
     template <class View>
     RelTest rtest_lt(View x, View y);
     /// Test whether view \a x is less or equal than float \a n
     template <class View>
-    RelTest rtest_lt(View x, FloatVal n);
+    RelTest rtest_lt(View x, const FloatVal& n);
 
     //@}
 

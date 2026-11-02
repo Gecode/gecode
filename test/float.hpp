@@ -198,7 +198,7 @@ namespace Test { namespace Float {
     }
 
     inline std::string
-    Test::str(Gecode::FloatVal f) {
+    Test::str(const Gecode::FloatVal& f) {
         std::stringstream s;
         s << "[" << f.min() << ":" << f.max() << "]";
         return s.str();
@@ -213,7 +213,7 @@ namespace Test { namespace Float {
     }
 
     inline MaybeType
-    Test::cmp(Gecode::FloatVal x, Gecode::FloatRelType r, Gecode::FloatVal y) {
+    Test::cmp(const Gecode::FloatVal& x, Gecode::FloatRelType r, const Gecode::FloatVal& y) {
         using namespace Gecode;
         switch (r) {
         case FRT_EQ:
@@ -258,7 +258,7 @@ namespace Test { namespace Float {
     }
 
     inline MaybeType
-    Test::eq(Gecode::FloatVal x, Gecode::FloatVal y) {
+    Test::eq(const Gecode::FloatVal& x, const Gecode::FloatVal& y) {
         return cmp(x, Gecode::FRT_EQ, y);
     }
 
