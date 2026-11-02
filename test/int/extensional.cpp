@@ -833,7 +833,7 @@ namespace Test { namespace Int {
             Gecode::IntVarArray x;
             Gecode::OpenIntVarList list;
 
-            OpenRegularSpace(Gecode::DFA d, int max = 8) : x(*this, 3, 0, 2), list(*this, max) {
+            OpenRegularSpace(const Gecode::DFA& d, int max = 8) : x(*this, 3, 0, 2), list(*this, max) {
                 Gecode::extensional(*this, list, d);
             }
 
@@ -1081,7 +1081,7 @@ namespace Test { namespace Int {
 
         ///% Transform a TupleSet into a DFA
         Gecode::DFA
-        tuple_set_to_dfa(Gecode::TupleSet ts) {
+        tuple_set_to_dfa(const Gecode::TupleSet& ts) {
             using namespace Gecode;
             REG expression;
             for (int i = 0; i < ts.tuples(); i++) {
@@ -1191,7 +1191,7 @@ namespace Test { namespace Int {
 
         public:
             /// Create and register test
-            TupleSetTest(const std::string& s, bool p, Gecode::IntSet d0, Gecode::TupleSet ts0, bool td,
+            TupleSetTest(const std::string& s, bool p, const Gecode::IntSet& d0, const Gecode::TupleSet& ts0, bool td,
                          Gecode::ExtensionalPropKind epk0, TestTags tags = TestTags::sweep())
                 : Test(tags, "Extensional::TupleSet::" + extensional_kind_name(epk0) + "::" + str(p) + "::" + s,
                        ts0.arity(), d0, true, Gecode::IPL_DOM),
@@ -1233,7 +1233,7 @@ namespace Test { namespace Int {
         class RandomTupleSetTest : public TupleSetTest {
         public:
             /// Create and register test
-            RandomTupleSetTest(const std::string& s, bool p, Gecode::IntSet d0, Gecode::TupleSet ts0,
+            RandomTupleSetTest(const std::string& s, bool p, const Gecode::IntSet& d0, const Gecode::TupleSet& ts0,
                                Gecode::ExtensionalPropKind epk0)
                 : TupleSetTest(s, p, d0, ts0, false, epk0) {
                 test_search = false;

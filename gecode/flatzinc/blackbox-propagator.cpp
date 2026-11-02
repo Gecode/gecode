@@ -40,6 +40,7 @@
 #include <cstdint>
 #include <exception>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace Gecode { namespace FlatZinc {
@@ -104,7 +105,7 @@ namespace Gecode { namespace FlatZinc {
 
     void
     BlackBoxContextHandle::fail(std::exception_ptr e) const {
-        static_cast<BlackBoxContext*>(object())->fail(e);
+        static_cast<BlackBoxContext*>(object())->fail(std::move(e));
     }
 
     bool
@@ -143,7 +144,7 @@ namespace Gecode { namespace FlatZinc {
     BlackBoxContext::fail(std::exception_ptr e) {
         Support::Lock lock(mutex);
         if (!error_recorded.load(std::memory_order_relaxed)) {
-            exception = e;
+            exception = std::move(e);
             error_recorded.store(true, std::memory_order_release);
         }
     }
@@ -283,9 +284,9 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_FLOAT_VARS
                            ViewArray<Float::FloatView>& fvar0,
 #endif
-                           SharedArray<bool> sub_int0,
+                           const SharedArray<bool>& sub_int0,
 #ifdef GECODE_HAS_FLOAT_VARS
-                           SharedArray<bool> sub_float0,
+                           const SharedArray<bool>& sub_float0,
 #endif
                            const BlackBoxHandle& backend0, const BlackBoxContextHandle& context0)
                 : Propagator(home), ivar(ivar0),

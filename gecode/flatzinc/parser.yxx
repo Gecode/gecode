@@ -95,7 +95,7 @@ void yyassert(ParserState* pp, bool cond, const char* str)
  *
  */
 
-AST::Node* get_array_element(ParserState* pp, string id, int offset,
+AST::Node* get_array_element(ParserState* pp, const string& id, int offset,
                            bool annotation) {
   if (offset > 0) {
     SymbolEntry e;
@@ -173,7 +173,7 @@ error:
   pp->had_error = true;
   return new AST::IntVar(0); // keep things consistent
 }
-AST::Node* get_var_ref_arg(ParserState* pp, string id, bool annotation = false) {
+AST::Node* get_var_ref_arg(ParserState* pp, const string& id, bool annotation = false) {
   SymbolEntry e;
   string n;
   if (annotation)
@@ -197,7 +197,7 @@ AST::Node* get_var_ref_arg(ParserState* pp, string id, bool annotation = false) 
   return new AST::IntVar(0); // keep things consistent
 }
 
-void add_domain_constraint(ParserState* pp, std::string id, AST::Node* var,
+void add_domain_constraint(ParserState* pp, const std::string& id, AST::Node* var,
                          Option<AST::SetLit* >& dom) {
   if (!dom())
     return;

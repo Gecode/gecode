@@ -115,7 +115,7 @@ namespace Test { namespace Instance {
 
     public:
         /// Create test \a n running \a f0
-        Case(const std::string& n, std::function<bool(void)> f0) : Base("Instance::" + n), f(f0) {}
+        Case(const std::string& n, std::function<bool(void)> f0) : Base("Instance::" + n), f(std::move(f0)) {}
         /// Run the test
         bool
         run(void) override {

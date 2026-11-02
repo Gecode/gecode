@@ -72,11 +72,11 @@ namespace Gecode { namespace FlatZinc {
         /// Initialize with selection strategy \a s and decay factor \a d
         IntBoolVarBranch(Select s, double d);
         /// Initialize with selection strategy \a s and AFC \a i and \a b
-        IntBoolVarBranch(Select s, IntAFC i, BoolAFC b);
+        IntBoolVarBranch(Select s, const IntAFC& i, const BoolAFC& b);
         /// Initialize with selection strategy \a s and action \a i and \a b
-        IntBoolVarBranch(Select s, IntAction i, BoolAction b);
+        IntBoolVarBranch(Select s, const IntAction& i, const BoolAction& b);
         /// Initialize with selection strategy \a s and CHB \a i and \a b
-        IntBoolVarBranch(Select s, IntCHB i, BoolCHB b);
+        IntBoolVarBranch(Select s, const IntCHB& i, const BoolCHB& b);
         /// Return selection strategy
         Select select(void) const;
         /// Return integer AFC
@@ -100,27 +100,27 @@ namespace Gecode { namespace FlatZinc {
     /// Select variable with largest accumulated failure count
     IntBoolVarBranch int_bool_var_afc_max(double d = 1.0);
     /// Select variable with largest accumulated failure count
-    IntBoolVarBranch int_bool_var_afc_max(IntAFC ia, BoolAFC ba);
+    IntBoolVarBranch int_bool_var_afc_max(const IntAFC& ia, const BoolAFC& ba);
     /// Select variable with highest action
     IntBoolVarBranch int_bool_var_action_max(double d = 1.0);
     /// Select variable with highest action
-    IntBoolVarBranch int_bool_var_action_max(IntAction ia, BoolAction ba);
+    IntBoolVarBranch int_bool_var_action_max(const IntAction& ia, const BoolAction& ba);
     /// Select variable with largest CHB Q-score
     IntBoolVarBranch int_bool_var_chb_max(double d = 1.0);
     /// Select variable with largest CHB Q-score
-    IntBoolVarBranch int_bool_var_chb_max(IntCHB ic, BoolCHB bc);
+    IntBoolVarBranch int_bool_var_chb_max(const IntCHB& ic, const BoolCHB& bc);
     /// Select variable with largest accumulated failure count divided by domain size
     IntBoolVarBranch int_bool_var_afc_size_max(double d = 1.0);
     /// Select variable with largest accumulated failure count divided by domain size
-    IntBoolVarBranch int_bool_var_afc_size_max(IntAFC ia, BoolAFC ba);
+    IntBoolVarBranch int_bool_var_afc_size_max(const IntAFC& ia, const BoolAFC& ba);
     /// Select variable with largest action divided by domain size
     IntBoolVarBranch int_bool_var_action_size_max(double d = 1.0);
     /// Select variable with largest action divided by domain size
-    IntBoolVarBranch int_bool_var_action_size_max(IntAction ia, BoolAction ba);
+    IntBoolVarBranch int_bool_var_action_size_max(const IntAction& ia, const BoolAction& ba);
     /// Select variable with largest CHB Q-score divided by domain size
     IntBoolVarBranch int_bool_var_chb_size_max(double d = 1.0);
     /// Select variable with largest CHB Q-score divided by domain size
-    IntBoolVarBranch int_bool_var_chb_size_max(IntCHB ic, BoolCHB bc);
+    IntBoolVarBranch int_bool_var_chb_size_max(const IntCHB& ic, const BoolCHB& bc);
     //@}
 
     /// Select by maximal AFC
@@ -333,7 +333,7 @@ namespace Gecode { namespace FlatZinc {
 
     /// Branch function for integer and Boolean variables
     GECODE_FLATZINC_EXPORT void branch(Home home, const IntVarArgs& x, const BoolVarArgs& y, IntBoolVarBranch vars,
-                                       IntValBranch vals);
+                                       const IntValBranch& vals);
 
 }} // namespace Gecode::FlatZinc
 

@@ -33,7 +33,7 @@
 namespace Gecode { namespace Gist {
 
     template <class S>
-    VarComparator<S>::VarComparator(std::string name) : TextOutput(name) {}
+    VarComparator<S>::VarComparator(const std::string& name) : TextOutput(name) {}
 
     template <class S>
     void
@@ -61,7 +61,7 @@ namespace Gecode { namespace Gist {
     }
 
     inline std::string
-    Comparator::compare(std::string x_n, IntVar x, IntVar y) {
+    Comparator::compare(const std::string& x_n, IntVar x, IntVar y) {
         IntVarRanges xr(x), yr(y);
         if (!Iter::Ranges::equal(xr, yr)) {
             std::ostringstream ret;
@@ -71,7 +71,7 @@ namespace Gecode { namespace Gist {
         return "";
     }
     inline std::string
-    Comparator::compare(std::string x_n, BoolVar x, BoolVar y) {
+    Comparator::compare(const std::string& x_n, BoolVar x, BoolVar y) {
         if (!(x.min() == y.min() && x.max() == y.max())) {
             std::ostringstream ret;
             ret << x_n << "=" << x << " -> " << y;
@@ -81,7 +81,7 @@ namespace Gecode { namespace Gist {
     }
 #ifdef GECODE_HAS_SET_VARS
     inline std::string
-    Comparator::compare(std::string x_n, SetVar x, SetVar y) {
+    Comparator::compare(const std::string& x_n, SetVar x, SetVar y) {
         SetVarGlbRanges xglbr(x), yglbr(y);
         SetVarLubRanges xlubr(x), ylubr(y);
         if (!(Iter::Ranges::equal(xglbr, yglbr) && Iter::Ranges::equal(xlubr, ylubr) && x.card_min() == y.card_min() &&
@@ -95,7 +95,7 @@ namespace Gecode { namespace Gist {
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
     inline std::string
-    Comparator::compare(std::string x_n, FloatVar x, FloatVar y) {
+    Comparator::compare(const std::string& x_n, FloatVar x, FloatVar y) {
         if (!(x.min() == y.min() && x.max() == y.max())) {
             std::ostringstream ret;
             ret << x_n << "=" << x << " -> " << y;
@@ -106,7 +106,7 @@ namespace Gecode { namespace Gist {
 #endif
     template <class Var>
     std::string
-    Comparator::compare(std::string x_n, const VarArgArray<Var>& x, const VarArgArray<Var>& y) {
+    Comparator::compare(const std::string& x_n, const VarArgArray<Var>& x, const VarArgArray<Var>& y) {
         if (x.size() != y.size())
             return "Error: array size mismatch";
         std::ostringstream ret;

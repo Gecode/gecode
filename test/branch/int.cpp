@@ -46,7 +46,7 @@ namespace Test { namespace Branch {
         Gecode::IntVarArray x;
 
         /// Initialize space
-        FilteredRndTiesSpace(Gecode::Rnd r) : x(*this, 4, 0, 1) {
+        FilteredRndTiesSpace(const Gecode::Rnd& r) : x(*this, 4, 0, 1) {
             Gecode::IntVarArgs xa(x);
             Gecode::ViewArray<Gecode::Int::IntView> xv(*this, xa);
             Gecode::ViewSel<Gecode::Int::IntView>* vs[2] = {

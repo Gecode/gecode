@@ -135,7 +135,7 @@ namespace Test {
                 }
             };
             TreeSpace(std::shared_ptr<const Graph> g, bool max)
-                : graph(g), maximize(max), vertex(0), ceiling(std::numeric_limits<int>::max()) {
+                : graph(std::move(g)), maximize(max), vertex(0), ceiling(std::numeric_limits<int>::max()) {
                 (void)new (*this) Decisions(*this);
             }
             TreeSpace(TreeSpace& s)

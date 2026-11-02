@@ -246,7 +246,7 @@ namespace Test { namespace Int {
 
         public:
             /// Create and register test
-            VarSome(std::string s, int n0, int min, int max, Gecode::IntPropLevel ipl)
+            VarSome(const std::string& s, int n0, int min, int max, Gecode::IntPropLevel ipl)
                 : Test(TestTags::sweep(), "GCC::Var::Some::" + s + "::" + str(ipl), n0 + (max - min) + 1, min, max,
                        false, ipl),
                   n(n0) {

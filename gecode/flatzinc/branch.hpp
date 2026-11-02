@@ -37,15 +37,15 @@ namespace Gecode { namespace FlatZinc {
         : VarBranch<IntVar>(d), s(s0) {}
 
     forceinline
-    IntBoolVarBranch::IntBoolVarBranch(Select s0, IntAFC i, BoolAFC b)
+    IntBoolVarBranch::IntBoolVarBranch(Select s0, const IntAFC& i, const BoolAFC& b)
         : s(s0), int_afc_data(i), bool_afc_data(b) {}
 
     forceinline
-    IntBoolVarBranch::IntBoolVarBranch(Select s0, IntAction i, BoolAction b)
+    IntBoolVarBranch::IntBoolVarBranch(Select s0, const IntAction& i, const BoolAction& b)
         : s(s0), int_action_data(i), bool_action_data(b) {}
 
     forceinline
-    IntBoolVarBranch::IntBoolVarBranch(Select s0, IntCHB i, BoolCHB b)
+    IntBoolVarBranch::IntBoolVarBranch(Select s0, const IntCHB& i, const BoolCHB& b)
         : s(s0), int_chb_data(i), bool_chb_data(b) {}
 
     forceinline IntBoolVarBranch::Select
@@ -112,7 +112,7 @@ namespace Gecode { namespace FlatZinc {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_MAX, d);
     }
     inline IntBoolVarBranch
-    int_bool_var_afc_max(IntAFC ia, BoolAFC ba) {
+    int_bool_var_afc_max(const IntAFC& ia, const BoolAFC& ba) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_MAX, ia, ba);
     }
     inline IntBoolVarBranch
@@ -120,7 +120,7 @@ namespace Gecode { namespace FlatZinc {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_MAX, d);
     }
     inline IntBoolVarBranch
-    int_bool_var_action_max(IntAction ia, BoolAction ba) {
+    int_bool_var_action_max(const IntAction& ia, const BoolAction& ba) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_MAX, ia, ba);
     }
     inline IntBoolVarBranch
@@ -128,7 +128,7 @@ namespace Gecode { namespace FlatZinc {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_MAX, d);
     }
     inline IntBoolVarBranch
-    int_bool_var_chb_max(IntCHB ic, BoolCHB bc) {
+    int_bool_var_chb_max(const IntCHB& ic, const BoolCHB& bc) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_MAX, ic, bc);
     }
     inline IntBoolVarBranch
@@ -136,7 +136,7 @@ namespace Gecode { namespace FlatZinc {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_SIZE_MAX, d);
     }
     inline IntBoolVarBranch
-    int_bool_var_afc_size_max(IntAFC ia, BoolAFC ba) {
+    int_bool_var_afc_size_max(const IntAFC& ia, const BoolAFC& ba) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_SIZE_MAX, ia, ba);
     }
     inline IntBoolVarBranch
@@ -144,7 +144,7 @@ namespace Gecode { namespace FlatZinc {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_SIZE_MAX, d);
     }
     inline IntBoolVarBranch
-    int_bool_var_action_size_max(IntAction ia, BoolAction ba) {
+    int_bool_var_action_size_max(const IntAction& ia, const BoolAction& ba) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_SIZE_MAX, ia, ba);
     }
     inline IntBoolVarBranch
@@ -152,7 +152,7 @@ namespace Gecode { namespace FlatZinc {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_SIZE_MAX, d);
     }
     inline IntBoolVarBranch
-    int_bool_var_chb_size_max(IntCHB ic, BoolCHB bc) {
+    int_bool_var_chb_size_max(const IntCHB& ic, const BoolCHB& bc) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_SIZE_MAX, ic, bc);
     }
 

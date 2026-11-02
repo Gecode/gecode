@@ -297,7 +297,7 @@ private:
     /// Returns the regular expression for placing a specific tile \a
     /// tile in a specific rotation.
     REG
-    tile_reg(int twidth, int theight, const char* tile, REG mark, REG other, REG eol) const {
+    tile_reg(int twidth, int theight, const char* tile, const REG& mark, REG other, const REG& eol) const {
         REG oe = other | eol;
         REG res = *oe;
         REG color[] = {other, mark};
@@ -317,7 +317,7 @@ private:
     /// Returns the regular expression for placing tile number \a t in
     /// any rotation.
     REG
-    get_constraint(int t, REG mark, REG other, REG eol) {
+    get_constraint(int t, const REG& mark, const REG& other, const REG& eol) {
         // This should be done for all rotations
         REG res;
         char* t2 = new char[width * height];

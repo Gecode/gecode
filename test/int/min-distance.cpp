@@ -113,7 +113,7 @@ namespace Test { namespace Int { namespace MinDistance {
         Model(int n, int sites, int lower, int upper, Gecode::MinDistancePropKind kind, Gecode::IntPropLevel level,
               std::function<int(int, int)> distance)
             : x(*this, n, 0, sites - 1), z(*this, lower, upper) {
-            Gecode::minimum_distance(*this, x, z, Gecode::IntDistance(sites, distance), level, kind);
+            Gecode::minimum_distance(*this, x, z, Gecode::IntDistance(sites, std::move(distance)), level, kind);
         }
         Model(Model& s) : Gecode::Space(s) {
             x.update(*this, s.x);

@@ -119,7 +119,7 @@ namespace Test {
      * Base class for tests
      *
      */
-    Base::Base(std::string s) : Base(s, TestTags::standard()) {}
+    Base::Base(std::string s) : Base(std::move(s), TestTags::standard()) {}
 
     Base::Base(std::string s, TestTags t)
         : _name(std::move(s)), _tags(t), _next(_tests), _rand(Gecode::Support::RandomGenerator()) {
@@ -520,7 +520,7 @@ namespace Test {
 
         /// Write a string to standard output, synchronized across all test runners
         void
-        write_output(std::string output) {
+        write_output(const std::string& output) {
             Gecode::Support::Lock lock(output_mutex);
             std::cout << output;
             std::cout.flush();

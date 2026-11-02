@@ -3,7 +3,7 @@ schema_version = 1
 id = "value-params-007"
 key = "flatzinc-gist-tests"
 area = "value-params"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 blocked_by = ["value-params-006"]
@@ -30,11 +30,11 @@ Repair groups G13 (FlatZinc, 56 parameters), G14 (Gist and search, 7), and G15 (
 
 ## Done when
 
-- [ ] parser.yxx carries the const std::string& changes, and the regenerated parser sources are fresh according to .github/ci/generated-source-freshness.sh.
-- [ ] The inventory reproduction rerun in build/zdev-audit/value-params-flatzinc-gist-tests/ reports no diagnostic for G13, G14, and G15: its rows.tsv has no row in these groups (group column, matched by group number), it has no row (compared by file, function, and parameter) that the baseline build/zdev-audit/value-params/rows.tsv lacks, and checks.txt is empty.
-- [ ] The result lists every parameter changed to const& whose callee keeps a copy, by function, parameter, and file:line (at least the inventory's Verification hooks rows for G13 and G15), with the member or object it initializes and how the copy is made (copy constructor or copy assignment from the const&).
-- [ ] The result shows, with source references, that every by-value-and-move parameter of G13, G14, and G15 reaches its storage through a move constructor (the implicit move constructors of the configuration classes and TieBreak, and the move constructors of std::string, std::vector, std::shared_ptr, std::exception_ptr, and std::function), and that no std::move binds a copying const& constructor.
-- [ ] build/full and build/local build, and ctest passes in both.
+- [x] parser.yxx carries the const std::string& changes, and the regenerated parser sources are fresh according to .github/ci/generated-source-freshness.sh.
+- [x] The inventory reproduction rerun in build/zdev-audit/value-params-flatzinc-gist-tests/ reports no diagnostic for G13, G14, and G15: its rows.tsv has no row in these groups (group column, matched by group number), it has no row (compared by file, function, and parameter) that the baseline build/zdev-audit/value-params/rows.tsv lacks, and checks.txt is empty.
+- [x] The result lists every parameter changed to const& whose callee keeps a copy, by function, parameter, and file:line (at least the inventory's Verification hooks rows for G13 and G15), with the member or object it initializes and how the copy is made (copy constructor or copy assignment from the const&).
+- [x] The result shows, with source references, that every by-value-and-move parameter of G13, G14, and G15 reaches its storage through a move constructor (the implicit move constructors of the configuration classes and TieBreak, and the move constructors of std::string, std::vector, std::shared_ptr, std::exception_ptr, and std::function), and that no std::move binds a copying const& constructor.
+- [x] build/full and build/local build, and ctest passes in both.
 
 ## Validation
 
@@ -43,3 +43,16 @@ Repair groups G13 (FlatZinc, 56 parameters), G14 (Gist and search, 7), and G15 (
 - In build/full, run `bin/gecode-test -tag standard` with `-test FlatZinc`, `-test Instance`, `-test NoGoods`, `-test LDSB`, `-test Int::Extensional`, `-test Int::GCC`, `-test Int::MinDistance`, `-test Int::OpenList`, and `-test Search`. Confirm the Gist translation units and the touched examples build in build/full.
 - Run `uv run misc/check.py format-check --build-dir build/full`.
 - Rerun the inventory reproduction (Reproduce steps 2 and 3 in .zdev/value-params/background/value-param-inventory.md) into a fresh directory build/zdev-audit/value-params-flatzinc-gist-tests/ so the baseline in build/zdev-audit/value-params/ stays intact: `sh build/zdev-audit/value-params-flatzinc-gist-tests/reproduce.sh build/full 10`.
+
+## Result
+
+FlatZinc, Gist, the CPProfiler tracer, tests and examples pass owned values by const& or move them into storage: AuxVarBrancher selectors, BranchInformationO, BlackBoxContext::fail, ParserState::output, the tracer name and the test fixtures move; IntBoolVarBranch handles, BlackBoxBounds arrays, Rnd, Gist comparator names, the parser id strings (parser.yxx, regenerated) and test labels take const& (inventory groups G13-G15)
+
+Validation:
+
+- parser.yxx regenerated with Homebrew Bison 3.8.2 and Flex 2.6.4: only parser.tab.cpp lines 133, 211, 235 changed; generated-source-freshness.sh passed
+- build/full (Debug, experimental, CBS, fault injection, audit, Gist) and build/local (Release) built with 0 warnings; ctest 8/8 and 7/7
+- Standard-tag focused tests: FlatZinc 134/134, Instance 40/40, NoGoods 161/161, LDSB 38/38, Int::Extensional 79/79, Int::GCC 2/2, Int::MinDistance 42/42, Int::OpenList 60/60, Search 799/799, Int::Branch::FilteredRndTies 1/1; sweep TupleSet and GCC Var::Some fixtures pass in build/local
+- format-check with clang-format 22 and clang-tidy 22 with the repository .clang-tidy on the changed library, test and example TUs: clean
+- Scoped inventory rerun: 53 parameters, all G16 FloatVal; no G13-G15 row, no new keys versus baseline, empty checks.txt
+- Independent Codex verifier: pass, no findings

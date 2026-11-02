@@ -102,21 +102,24 @@ namespace Test { namespace FlatZinc {
     FlatZincTest::FlatZincTest(const std::string& name, const std::string& source, const std::string& expected,
                                bool all_solutions, std::vector<std::string> cmdline_opt, OutputCheck check,
                                BeforeRun before)
-        : FlatZincTest(TestTags::standard(), name, source, expected, all_solutions, cmdline_opt, check, before) {}
+        : FlatZincTest(TestTags::standard(), name, source, expected, all_solutions, std::move(cmdline_opt),
+                       std::move(check), std::move(before)) {}
 
     FlatZincTest::FlatZincTest(TestTags tags, const std::string& name, const std::string& source,
                                const std::string& expected, bool all_solutions, std::vector<std::string> cmdline_opt,
                                OutputCheck check, BeforeRun before)
         : Base("FlatZinc::" + name, tags), _name(name), _source(source), _expected(expected),
-          _all_solutions(all_solutions), _cmdline_opt(cmdline_opt), _check(check), _before(before) {}
+          _all_solutions(all_solutions), _cmdline_opt(std::move(cmdline_opt)), _check(std::move(check)),
+          _before(std::move(before)) {}
 
     FlatZincErrorTest::FlatZincErrorTest(const std::string& name, const std::string& source,
                                          std::vector<std::string> cmdline_opt, std::string expected_message)
-        : FlatZincErrorTest(TestTags::standard(), name, source, cmdline_opt, expected_message) {}
+        : FlatZincErrorTest(TestTags::standard(), name, source, std::move(cmdline_opt), std::move(expected_message)) {}
 
     FlatZincErrorTest::FlatZincErrorTest(TestTags tags, const std::string& name, const std::string& source,
                                          std::vector<std::string> cmdline_opt, std::string expected_message)
-        : FlatZincTest(tags, name, source, "", false, cmdline_opt), _expected_message(expected_message) {}
+        : FlatZincTest(tags, name, source, "", false, std::move(cmdline_opt)),
+          _expected_message(std::move(expected_message)) {}
 
     bool
     FlatZincTest::run(void) {

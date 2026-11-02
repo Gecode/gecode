@@ -109,7 +109,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     void
-    branch(Home home, const IntVarArgs& x, const BoolVarArgs& y, IntBoolVarBranch vars, IntValBranch vals) {
+    branch(Home home, const IntVarArgs& x, const BoolVarArgs& y, IntBoolVarBranch vars, const IntValBranch& vals) {
         if (home.failed())
             return;
         vars.expand(home, x, y);
