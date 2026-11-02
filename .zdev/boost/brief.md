@@ -133,6 +133,14 @@ failing loudly.
   (`archimedean-spiral`, `cartesian-heart`, `descartes-folium`,
   `golden-spiral`) before and after the change.
 
+## Background
+
+- [Rounding probe](background/rounding-probe.md): whether directed rounding
+  survives optimization with AppleClang, LLVM 22 clang, and GCC 14 at -O0,
+  -O2, and -O3. It records the probe source and matrix script, the expected
+  and observed bounds, the mechanisms behind each unsound bound, and why no
+  permanent test was added yet.
+
 ## Validation
 
 - Release and Debug builds with float variables both with and without MPFR,
