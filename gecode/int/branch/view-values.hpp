@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Branch {
     ViewValuesBrancher<n, min, Filter, Print>::ViewValuesBrancher(Home home, ViewArray<IntView>& x,
                                                                   ViewSel<IntView>* vs[n], IntBranchFilter bf,
                                                                   IntVarValPrint vvp)
-        : ViewBrancher<IntView, Filter, n>(home, x, vs, bf), p(vvp) {
+        : ViewBrancher<IntView, Filter, n>(home, x, vs, std::move(bf)), p(std::move(vvp)) {
         if (p.notice())
             home.notice(*this, AP_DISPOSE, true);
     }
@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Branch {
     forceinline void
     ViewValuesBrancher<n, min, Filter, Print>::post(Home home, ViewArray<IntView>& x, ViewSel<IntView>* vs[n],
                                                     IntBranchFilter bf, IntVarValPrint vvp) {
-        (void)new (home) ViewValuesBrancher<n, min, Filter, Print>(home, x, vs, bf, vvp);
+        (void)new (home) ViewValuesBrancher<n, min, Filter, Print>(home, x, vs, std::move(bf), std::move(vvp));
     }
 
     template <int n, bool min, class Filter, class Print>
@@ -176,19 +176,19 @@ namespace Gecode { namespace Int { namespace Branch {
                               IntVarValPrint vvp) {
         if (bf) {
             if (vvp) {
-                ViewValuesBrancher<n, min, BrancherFilter<IntView>, BrancherPrint<IntView, int>>::post(home, x, vs, bf,
-                                                                                                       vvp);
+                ViewValuesBrancher<n, min, BrancherFilter<IntView>, BrancherPrint<IntView, int>>::post(
+                    home, x, vs, std::move(bf), std::move(vvp));
             } else {
-                ViewValuesBrancher<n, min, BrancherFilter<IntView>, BrancherNoPrint<IntView, int>>::post(home, x, vs,
-                                                                                                         bf, vvp);
+                ViewValuesBrancher<n, min, BrancherFilter<IntView>, BrancherNoPrint<IntView, int>>::post(
+                    home, x, vs, std::move(bf), std::move(vvp));
             }
         } else {
             if (vvp) {
-                ViewValuesBrancher<n, min, BrancherNoFilter<IntView>, BrancherPrint<IntView, int>>::post(home, x, vs,
-                                                                                                         bf, vvp);
+                ViewValuesBrancher<n, min, BrancherNoFilter<IntView>, BrancherPrint<IntView, int>>::post(
+                    home, x, vs, std::move(bf), std::move(vvp));
             } else {
-                ViewValuesBrancher<n, min, BrancherNoFilter<IntView>, BrancherNoPrint<IntView, int>>::post(home, x, vs,
-                                                                                                           bf, vvp);
+                ViewValuesBrancher<n, min, BrancherNoFilter<IntView>, BrancherNoPrint<IntView, int>>::post(
+                    home, x, vs, std::move(bf), std::move(vvp));
             }
         }
     }

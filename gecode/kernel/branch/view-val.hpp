@@ -210,7 +210,7 @@ namespace Gecode {
                                                                      ViewSel<View>* vs[n],
                                                                      ValSelCommitBase<View, Val>* vsc0,
                                                                      BranchFilter<Var> bf, VarValPrint<Var, Val> vvp)
-        : ViewBrancher<View, Filter, n>(home, x, vs, bf), vsc(vsc0), p(vvp) {
+        : ViewBrancher<View, Filter, n>(home, x, vs, std::move(bf)), vsc(vsc0), p(std::move(vvp)) {
         if (vsc->notice() || f.notice() || p.notice())
             home.notice(*this, AP_DISPOSE, true);
     }
@@ -220,7 +220,8 @@ namespace Gecode {
     ViewValBrancher<View, n, Val, a, Filter, Print>::post(Home home, ViewArray<View>& x, ViewSel<View>* vs[n],
                                                           ValSelCommitBase<View, Val>* vsc, BranchFilter<Var> bf,
                                                           VarValPrint<Var, Val> vvp) {
-        (void)new (home) ViewValBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, bf, vvp);
+        (void)new (home)
+            ViewValBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, std::move(bf), std::move(vvp));
     }
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
@@ -299,19 +300,19 @@ namespace Gecode {
                              BranchFilter<typename View::VarType> bf, VarValPrint<typename View::VarType, Val> vvp) {
         if (bf) {
             if (vvp) {
-                ViewValBrancher<View, n, Val, a, BrancherFilter<View>, BrancherPrint<View, Val>>::post(home, x, vs, vsc,
-                                                                                                       bf, vvp);
+                ViewValBrancher<View, n, Val, a, BrancherFilter<View>, BrancherPrint<View, Val>>::post(
+                    home, x, vs, vsc, std::move(bf), std::move(vvp));
             } else {
-                ViewValBrancher<View, n, Val, a, BrancherFilter<View>, BrancherNoPrint<View, Val>>::post(home, x, vs,
-                                                                                                         vsc, bf, vvp);
+                ViewValBrancher<View, n, Val, a, BrancherFilter<View>, BrancherNoPrint<View, Val>>::post(
+                    home, x, vs, vsc, std::move(bf), std::move(vvp));
             }
         } else {
             if (vvp)
-                ViewValBrancher<View, n, Val, a, BrancherNoFilter<View>, BrancherPrint<View, Val>>::post(home, x, vs,
-                                                                                                         vsc, bf, vvp);
+                ViewValBrancher<View, n, Val, a, BrancherNoFilter<View>, BrancherPrint<View, Val>>::post(
+                    home, x, vs, vsc, std::move(bf), std::move(vvp));
             else
                 ViewValBrancher<View, n, Val, a, BrancherNoFilter<View>, BrancherNoPrint<View, Val>>::post(
-                    home, x, vs, vsc, bf, vvp);
+                    home, x, vs, vsc, std::move(bf), std::move(vvp));
         }
     }
 

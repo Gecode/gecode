@@ -71,8 +71,10 @@ namespace Gecode {
         typedef typename View::VarType Var;
 
     public:
-        /// Initialize
-        BrancherNoFilter(BranchFilter<Var> bf);
+        /// Initialize from the empty filter \a bf
+        BrancherNoFilter(const BranchFilter<Var>& bf);
+        /// Initialize from the empty filter \a bf, moved in as for BrancherFilter
+        BrancherNoFilter(BranchFilter<Var>&& bf);
         /// Initialize during cloning
         BrancherNoFilter(BrancherNoFilter& bf);
         /// Whether filtering is enabled
@@ -88,8 +90,8 @@ namespace Gecode {
     template <class View>
     forceinline
     BrancherFilter<View>::BrancherFilter(BranchFilter<Var> bf)
-        : f(bf) {
-        if (!bf)
+        : f(std::move(bf)) {
+        if (!f())
             throw Gecode::InvalidFunction("BrancherFilter::BrancherFilter");
     }
 
@@ -126,7 +128,14 @@ namespace Gecode {
 
     template <class View>
     forceinline
-    BrancherNoFilter<View>::BrancherNoFilter(BranchFilter<Var> bf) {
+    BrancherNoFilter<View>::BrancherNoFilter(const BranchFilter<Var>& bf) {
+        assert(!bf);
+        (void)bf;
+    }
+
+    template <class View>
+    forceinline
+    BrancherNoFilter<View>::BrancherNoFilter(BranchFilter<Var>&& bf) {
         assert(!bf);
         (void)bf;
     }

@@ -138,7 +138,7 @@ namespace Gecode {
     forceinline
     ViewBrancher<View, Filter, n>::ViewBrancher(Home home, ViewArray<View>& x0, ViewSel<View>* vs0[n],
                                                 BranchFilter<Var> bf)
-        : Brancher(home), x(x0), start(0), f(bf) {
+        : Brancher(home), x(x0), start(0), f(std::move(bf)) {
         for (int i = 0; i < n; i++)
             vs[i] = vs0[i];
         for (int i = 0; i < n; i++)

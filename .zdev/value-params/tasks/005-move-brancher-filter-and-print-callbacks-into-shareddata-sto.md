@@ -3,7 +3,7 @@ schema_version = 1
 id = "value-params-005"
 key = "brancher-posting"
 area = "value-params"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 blocked_by = ["value-params-004"]
@@ -30,12 +30,12 @@ Repair groups G2 (SharedData rvalue sink, no parameters), G7 (kernel and int bra
 
 ## Done when
 
-- [ ] gecode/kernel/data/shared-data.hpp has SharedData(Data&&) and SDO(Data&&) that move the data into the SDO member, and the receivers BrancherFilter, BrancherPrint, OpenListBrancher, ValSelFunction, ValCommitFunction, MeritFunction, and ViewSelChooseTbl reach SDO through it.
-- [ ] BrancherFilter and BrancherPrint no longer read their parameter after moving from it.
-- [ ] The inventory reproduction rerun in build/zdev-audit/value-params-brancher-posting/ reports no diagnostic for G7 and G8: its rows.tsv has no row in these groups (group column, matched by group number), it has no row (compared by file, function, and parameter) that the baseline build/zdev-audit/value-params/rows.tsv lacks, and checks.txt is empty.
-- [ ] The result lists every parameter changed to const& whose callee keeps a copy, by function, parameter, and file:line (at least the inventory's Verification hooks rows for G7 and G8 (the inventory lists none; report any found)), with the member or object it initializes and how the copy is made (copy constructor or copy assignment from the const&).
-- [ ] The result shows, with source references, that every by-value-and-move parameter of G7 and G8 reaches its storage through a move constructor (std::function's move constructor at each layer and SDO(Data&&) at each receiver, traced from each public branch(...) and assign(...) entry point), and that no std::move binds a copying const& constructor.
-- [ ] build/full and build/local build, and ctest passes in both.
+- [x] gecode/kernel/data/shared-data.hpp has SharedData(Data&&) and SDO(Data&&) that move the data into the SDO member, and the receivers BrancherFilter, BrancherPrint, OpenListBrancher, ValSelFunction, ValCommitFunction, MeritFunction, and ViewSelChooseTbl reach SDO through it.
+- [x] BrancherFilter and BrancherPrint no longer read their parameter after moving from it.
+- [x] The inventory reproduction rerun in build/zdev-audit/value-params-brancher-posting/ reports no diagnostic for G7 and G8: its rows.tsv has no row in these groups (group column, matched by group number), it has no row (compared by file, function, and parameter) that the baseline build/zdev-audit/value-params/rows.tsv lacks, and checks.txt is empty.
+- [x] The result lists every parameter changed to const& whose callee keeps a copy, by function, parameter, and file:line (at least the inventory's Verification hooks rows for G7 and G8 (the inventory lists none; report any found)), with the member or object it initializes and how the copy is made (copy constructor or copy assignment from the const&).
+- [x] The result shows, with source references, that every by-value-and-move parameter of G7 and G8 reaches its storage through a move constructor (std::function's move constructor at each layer and SDO(Data&&) at each receiver, traced from each public branch(...) and assign(...) entry point), and that no std::move binds a copying const& constructor.
+- [x] build/full and build/local build, and ctest passes in both.
 
 ## Validation
 
@@ -45,3 +45,16 @@ Repair groups G2 (SharedData rvalue sink, no parameters), G7 (kernel and int bra
 - Run `uv run misc/check.py format-check --build-dir build/full`.
 - Rerun the inventory reproduction (Reproduce steps 2 and 3 in .zdev/value-params/background/value-param-inventory.md) into a fresh directory build/zdev-audit/value-params-brancher-posting/ so the baseline in build/zdev-audit/value-params/ stays intact: `sh build/zdev-audit/value-params-brancher-posting/reproduce.sh build/full 10`.
 - Optional (brief, Testing): rerun the throwaway counted callback probe from 9396a93c24 (build/callback-ownership-probe.cpp) and confirm callback copy counts do not regress. Do not commit it.
+
+## Result
+
+Filter and print callbacks move from the public branch and assign entry points through every posting hop into SharedData via new SharedData(Data&&) and SDO(Data&&) constructors; read-only *ValBranch, *Assign, assign vars and open-list TieBreak parameters take const&; BrancherNoFilter and BrancherNoPrint keep const& constructors and add && constructors (inventory groups G2, G7, G8)
+
+Validation:
+
+- build/full (Debug, experimental, CBS, fault injection, audit, Gist), gecode-test and build/local (Release) built with 0 warnings; ctest 8/8 and 7/7
+- check-fault 21/21; -tag standard: Branch 17/17 (implementer), LDSB 38/38, Int::OpenList 60/60, NoGoods 161/161
+- format-check with clang-format 22 and targeted clang-tidy 22 on the int, set and float branch and LDSB sources: clean
+- Scoped inventory rerun: 248 parameters, no G7 or G8 row, no new keys versus baseline, empty checks.txt; copy-count probe matches the plan (e.g. int filter lvalue 7 to 1, INT_VALUES 13 to 2)
+- Lvalue, const lvalue, rvalue, prvalue and nullptr arguments compile for the NoFilter and NoPrint policies without ambiguity
+- Independent Codex verifier: rework (source compatibility of && only NoFilter/NoPrint constructors, fixed by restoring const& overloads), then pass with no findings

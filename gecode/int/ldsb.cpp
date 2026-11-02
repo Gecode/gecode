@@ -286,7 +286,7 @@ namespace Gecode {
     using namespace Int::LDSB;
 
     void
-    branch(Home home, const IntVarArgs& x, IntVarBranch vars, IntValBranch vals, const Symmetries& syms,
+    branch(Home home, const IntVarArgs& x, IntVarBranch vars, const IntValBranch& vals, const Symmetries& syms,
            IntBranchFilter bf, IntVarValPrint vvp) {
         using namespace Int;
         if (home.failed())
@@ -322,13 +322,13 @@ namespace Gecode {
             SymmetryImp<IntView>** array = create_syms(home, syms, variable_map, create_int_sym, n);
 
             post_ldsb_brancher<IntView, 1, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals), array, n,
-                                                   bf, vvp);
+                                                   std::move(bf), std::move(vvp));
         }
     }
 
     void
-    branch(Home home, const IntVarArgs& x, TieBreak<IntVarBranch> vars, IntValBranch vals, const Symmetries& syms,
-           IntBranchFilter bf, IntVarValPrint vvp) {
+    branch(Home home, const IntVarArgs& x, TieBreak<IntVarBranch> vars, const IntValBranch& vals,
+           const Symmetries& syms, IntBranchFilter bf, IntVarValPrint vvp) {
         using namespace Int;
         if (home.failed())
             return;
@@ -343,7 +343,7 @@ namespace Gecode {
             vars.d = INT_VAR_NONE();
         vars.d.expand(home, x);
         if (vars.b.select() == IntVarBranch::SEL_NONE) {
-            branch(home, x, vars.a, vals, syms, bf, vvp);
+            branch(home, x, std::move(vars.a), vals, syms, std::move(bf), std::move(vvp));
         } else {
             // Construct mapping from each variable in the array to its index
             // in the array.
@@ -376,7 +376,7 @@ namespace Gecode {
                     // fall through
                 default:
                     post_ldsb_brancher<IntView, 2, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals),
-                                                           array, n, bf, vvp);
+                                                           array, n, std::move(bf), std::move(vvp));
                 }
             } else if (vars.d.select() == IntVarBranch::SEL_NONE) {
                 ViewSel<IntView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
@@ -398,7 +398,7 @@ namespace Gecode {
                     // fall through
                 default:
                     post_ldsb_brancher<IntView, 3, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals),
-                                                           array, n, bf, vvp);
+                                                           array, n, std::move(bf), std::move(vvp));
                 }
             } else {
                 ViewSel<IntView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
@@ -420,14 +420,14 @@ namespace Gecode {
                     // fall through
                 default:
                     post_ldsb_brancher<IntView, 4, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals),
-                                                           array, n, bf, vvp);
+                                                           array, n, std::move(bf), std::move(vvp));
                 }
             }
         }
     }
 
     void
-    branch(Home home, const BoolVarArgs& x, BoolVarBranch vars, BoolValBranch vals, const Symmetries& syms,
+    branch(Home home, const BoolVarArgs& x, BoolVarBranch vars, const BoolValBranch& vals, const Symmetries& syms,
            BoolBranchFilter bf, BoolVarValPrint vvp) {
         using namespace Int;
         if (home.failed())
@@ -460,13 +460,13 @@ namespace Gecode {
             // fall through
         default:
             post_ldsb_brancher<BoolView, 1, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals), array, n,
-                                                    bf, vvp);
+                                                    std::move(bf), std::move(vvp));
         }
     }
 
     void
-    branch(Home home, const BoolVarArgs& x, TieBreak<BoolVarBranch> vars, BoolValBranch vals, const Symmetries& syms,
-           BoolBranchFilter bf, BoolVarValPrint vvp) {
+    branch(Home home, const BoolVarArgs& x, TieBreak<BoolVarBranch> vars, const BoolValBranch& vals,
+           const Symmetries& syms, BoolBranchFilter bf, BoolVarValPrint vvp) {
         using namespace Int;
         if (home.failed())
             return;
@@ -481,7 +481,7 @@ namespace Gecode {
             vars.d = BOOL_VAR_NONE();
         vars.d.expand(home, x);
         if (vars.b.select() == BoolVarBranch::SEL_NONE) {
-            branch(home, x, vars.a, vals, syms, bf, vvp);
+            branch(home, x, std::move(vars.a), vals, syms, std::move(bf), std::move(vvp));
         } else {
             // Construct mapping from each variable in the array to its index
             // in the array.
@@ -513,15 +513,15 @@ namespace Gecode {
             ValSelCommitBase<BoolView, int>* vsc = Branch::value_selection_commit(home, vals);
             if (vars.c.select() == BoolVarBranch::SEL_NONE) {
                 ViewSel<BoolView>* vs[2] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b)};
-                post_ldsb_brancher<BoolView, 2, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
+                post_ldsb_brancher<BoolView, 2, int, 2>(home, xv, vs, vsc, array, n, std::move(bf), std::move(vvp));
             } else if (vars.d.select() == BoolVarBranch::SEL_NONE) {
                 ViewSel<BoolView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
                                             Branch::view_selection(home, vars.c)};
-                post_ldsb_brancher<BoolView, 3, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
+                post_ldsb_brancher<BoolView, 3, int, 2>(home, xv, vs, vsc, array, n, std::move(bf), std::move(vvp));
             } else {
                 ViewSel<BoolView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
                                             Branch::view_selection(home, vars.c), Branch::view_selection(home, vars.d)};
-                post_ldsb_brancher<BoolView, 4, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
+                post_ldsb_brancher<BoolView, 4, int, 2>(home, xv, vs, vsc, array, n, std::move(bf), std::move(vvp));
             }
         }
     }

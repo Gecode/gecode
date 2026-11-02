@@ -1489,42 +1489,42 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetBranch
      */
-    GECODE_SET_EXPORT void branch(Home home, const SetVarArgs& x, SetVarBranch vars, SetValBranch vals,
+    GECODE_SET_EXPORT void branch(Home home, const SetVarArgs& x, SetVarBranch vars, const SetValBranch& vals,
                                   SetBranchFilter bf = nullptr, SetVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
      *
      * \ingroup TaskModelSetBranch
      */
-    GECODE_SET_EXPORT void branch(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, SetValBranch vals,
+    GECODE_SET_EXPORT void branch(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, const SetValBranch& vals,
                                   SetBranchFilter bf = nullptr, SetVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with value selection \a vals
      *
      * \ingroup TaskModelSetBranch
      */
-    GECODE_SET_EXPORT void branch(Home home, SetVar x, SetValBranch vals, SetVarValPrint vvp = nullptr);
+    GECODE_SET_EXPORT void branch(Home home, SetVar x, const SetValBranch& vals, SetVarValPrint vvp = nullptr);
 
     /**
      * \brief Assign all \a x with variable selection \a vars and value selection \a vals
      *
      * \ingroup TaskModelSetBranch
      */
-    GECODE_SET_EXPORT void assign(Home home, const SetVarArgs& x, SetVarBranch vars, SetAssign vals,
+    GECODE_SET_EXPORT void assign(Home home, const SetVarArgs& x, const SetVarBranch& vars, const SetAssign& vals,
                                   SetBranchFilter bf = nullptr, SetVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
      *
      * \ingroup TaskModelSetBranch
      */
-    GECODE_SET_EXPORT void assign(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, SetAssign vals,
+    GECODE_SET_EXPORT void assign(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, const SetAssign& vals,
                                   SetBranchFilter bf = nullptr, SetVarValPrint vvp = nullptr);
     /**
      * \brief Assign \a x with value selection \a vals
      *
      * \ingroup TaskModelSetBranch
      */
-    GECODE_SET_EXPORT void assign(Home home, SetVar x, SetAssign vals, SetVarValPrint vvp = nullptr);
+    GECODE_SET_EXPORT void assign(Home home, SetVar x, const SetAssign& vals, SetVarValPrint vvp = nullptr);
 
 } // namespace Gecode
 
@@ -1535,7 +1535,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetBranch
      */
-    void branch(Home home, const SetVarArgs& x, SetValBranch vals, SetBranchFilter bf = nullptr,
+    void branch(Home home, const SetVarArgs& x, const SetValBranch& vals, SetBranchFilter bf = nullptr,
                 SetVarValPrint vvp = nullptr);
 
     /**
@@ -1543,7 +1543,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetBranch
      */
-    void assign(Home home, const SetVarArgs& x, SetAssign vals, SetBranchFilter bf = nullptr,
+    void assign(Home home, const SetVarArgs& x, const SetAssign& vals, SetBranchFilter bf = nullptr,
                 SetVarValPrint vvp = nullptr);
 
 } // namespace Gecode
@@ -1567,7 +1567,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetBranch
      */
-    GECODE_SET_EXPORT void branch(Home home, const SetVarArgs& x, SetVarBranch vars, SetValBranch vals,
+    GECODE_SET_EXPORT void branch(Home home, const SetVarArgs& x, SetVarBranch vars, const SetValBranch& vals,
                                   const Symmetries& syms, SetBranchFilter bf = nullptr, SetVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with tie-breaking variable selection \a
@@ -1575,7 +1575,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetBranch
      */
-    GECODE_SET_EXPORT void branch(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, SetValBranch vals,
+    GECODE_SET_EXPORT void branch(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, const SetValBranch& vals,
                                   const Symmetries& syms, SetBranchFilter bf = nullptr, SetVarValPrint vvp = nullptr);
 } // namespace Gecode
 

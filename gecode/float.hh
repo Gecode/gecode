@@ -1864,7 +1864,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelFloatBranch
      */
-    GECODE_FLOAT_EXPORT void branch(Home home, const FloatVarArgs& x, FloatVarBranch vars, FloatValBranch vals,
+    GECODE_FLOAT_EXPORT void branch(Home home, const FloatVarArgs& x, FloatVarBranch vars, const FloatValBranch& vals,
                                     FloatBranchFilter bf = nullptr, FloatVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
@@ -1872,35 +1872,37 @@ namespace Gecode {
      * \ingroup TaskModelFloatBranch
      */
     GECODE_FLOAT_EXPORT void branch(Home home, const FloatVarArgs& x, TieBreak<FloatVarBranch> vars,
-                                    FloatValBranch vals, FloatBranchFilter bf = nullptr,
+                                    const FloatValBranch& vals, FloatBranchFilter bf = nullptr,
                                     FloatVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with value selection \a vals
      *
      * \ingroup TaskModelFloatBranch
      */
-    GECODE_FLOAT_EXPORT void branch(Home home, FloatVar x, FloatValBranch vals, FloatVarValPrint vvp = nullptr);
+    GECODE_FLOAT_EXPORT void branch(Home home, FloatVar x, const FloatValBranch& vals, FloatVarValPrint vvp = nullptr);
 
     /**
      * \brief Assign all \a x with variable selection \a vars and value selection \a vals
      *
      * \ingroup TaskModelFloatBranch
      */
-    GECODE_FLOAT_EXPORT void assign(Home home, const FloatVarArgs& x, FloatVarBranch vars, FloatAssign vals,
-                                    FloatBranchFilter bf = nullptr, FloatVarValPrint vvp = nullptr);
+    GECODE_FLOAT_EXPORT void assign(Home home, const FloatVarArgs& x, const FloatVarBranch& vars,
+                                    const FloatAssign& vals, FloatBranchFilter bf = nullptr,
+                                    FloatVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
      *
      * \ingroup TaskModelFloatBranch
      */
-    GECODE_FLOAT_EXPORT void assign(Home home, const FloatVarArgs& x, TieBreak<FloatVarBranch> vars, FloatAssign vals,
-                                    FloatBranchFilter bf = nullptr, FloatVarValPrint vvp = nullptr);
+    GECODE_FLOAT_EXPORT void assign(Home home, const FloatVarArgs& x, TieBreak<FloatVarBranch> vars,
+                                    const FloatAssign& vals, FloatBranchFilter bf = nullptr,
+                                    FloatVarValPrint vvp = nullptr);
     /**
      * \brief Assign \a x with value selection \a vals
      *
      * \ingroup TaskModelFloatBranch
      */
-    GECODE_FLOAT_EXPORT void assign(Home home, FloatVar x, FloatAssign vals, FloatVarValPrint vvp = nullptr);
+    GECODE_FLOAT_EXPORT void assign(Home home, FloatVar x, const FloatAssign& vals, FloatVarValPrint vvp = nullptr);
 
 } // namespace Gecode
 
@@ -1911,14 +1913,14 @@ namespace Gecode {
      *
      * \ingroup TaskModelFloatBranch
      */
-    void branch(Home home, const FloatVarArgs& x, FloatValBranch vals, FloatBranchFilter bf = nullptr,
+    void branch(Home home, const FloatVarArgs& x, const FloatValBranch& vals, FloatBranchFilter bf = nullptr,
                 FloatVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with value selection \a vals
      *
      * \ingroup TaskModelFloatBranch
      */
-    void assign(Home home, const FloatVarArgs& x, FloatAssign vals, FloatBranchFilter bf = nullptr,
+    void assign(Home home, const FloatVarArgs& x, const FloatAssign& vals, FloatBranchFilter bf = nullptr,
                 FloatVarValPrint vvp = nullptr);
 
 } // namespace Gecode

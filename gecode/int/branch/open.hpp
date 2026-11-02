@@ -55,8 +55,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
         OpenListBrancher(Home home, OpenViewList<View> list0, ViewSel<View>* vs0[n], ValSelCommitBase<View, int>* vsc0,
                          bool values_min0, bool select_first0, BranchFilter<Var> bf, VarValPrint<Var, int> vvp)
-            : Brancher(home), list(list0), vsc(vsc0), filter(bf), printer(vvp), values_min(values_min0),
-              select_first(select_first0), start(0) {
+            : Brancher(home), list(list0), vsc(vsc0), filter(std::move(bf)), printer(std::move(vvp)),
+              values_min(values_min0), select_first(select_first0), start(0) {
             for (int i = 0; i < n; i++)
                 vs[i] = vs0[i];
             home.notice(*this, AP_DISPOSE, true);
@@ -245,14 +245,14 @@ namespace Gecode { namespace Int { namespace Branch {
             ViewSel<View>* vs[n];
             for (int i = 0; i < n; i++)
                 vs[i] = view_selection(home, vars[i]);
-            (void)new (home)
-                OpenListBrancher(home, list, vs, vsc, values_min, vars[0].select() == VarBranch::SEL_NONE, bf, vvp);
+            (void)new (home) OpenListBrancher(home, list, vs, vsc, values_min, vars[0].select() == VarBranch::SEL_NONE,
+                                              std::move(bf), std::move(vvp));
         }
     };
 
     /// Reject fixed-position statistics while new variables can still appear
     inline void
-    check_open_selector(IntVarBranch vars, bool open) {
+    check_open_selector(const IntVarBranch& vars, bool open) {
         switch (vars.select()) {
         case IntVarBranch::SEL_ACTION_MIN:
         case IntVarBranch::SEL_ACTION_MAX:
@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
 
     inline void
-    check_open_selector(BoolVarBranch vars, bool open) {
+    check_open_selector(const BoolVarBranch& vars, bool open) {
         switch (vars.select()) {
         case BoolVarBranch::SEL_ACTION_MIN:
         case BoolVarBranch::SEL_ACTION_MAX:
@@ -287,7 +287,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
     /// Select binary branching or enumeration of integer domain values
     inline ValSelCommitBase<IntView, int>*
-    open_valselcommit(Home home, IntValBranch vals, bool& values_min) {
+    open_valselcommit(Home home, const IntValBranch& vals, bool& values_min) {
         values_min = vals.select() != IntValBranch::SEL_VALUES_MAX;
         return ((vals.select() == IntValBranch::SEL_VALUES_MIN) || (vals.select() == IntValBranch::SEL_VALUES_MAX))
                    ? nullptr
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
     /// Boolean value branching always uses a binary selector
     inline ValSelCommitBase<BoolView, int>*
-    open_valselcommit(Home home, BoolValBranch vals, bool& values_min) {
+    open_valselcommit(Home home, const BoolValBranch& vals, bool& values_min) {
         values_min = true;
         return value_selection_commit(home, vals);
     }
@@ -308,14 +308,16 @@ namespace Gecode { namespace Int { namespace Branch {
                        bool values_min, BranchFilter<typename View::VarType> bf,
                        VarValPrint<typename View::VarType, int> vvp) {
         if (bf)
-            OpenListBrancher<View, BrancherFilter<View>, n>::post(home, list, vars, vsc, values_min, bf, vvp);
+            OpenListBrancher<View, BrancherFilter<View>, n>::post(home, list, vars, vsc, values_min, std::move(bf),
+                                                                  std::move(vvp));
         else
-            OpenListBrancher<View, BrancherNoFilter<View>, n>::post(home, list, vars, vsc, values_min, bf, vvp);
+            OpenListBrancher<View, BrancherNoFilter<View>, n>::post(home, list, vars, vsc, values_min, std::move(bf),
+                                                                    std::move(vvp));
     }
 
     template <class View, class VarBranch, class ValBranch>
     void
-    post_open_brancher(Home home, OpenViewList<View> list, TieBreak<VarBranch> vars, ValBranch vals,
+    post_open_brancher(Home home, OpenViewList<View> list, const TieBreak<VarBranch>& vars, const ValBranch& vals,
                        BranchFilter<typename View::VarType> bf, VarValPrint<typename View::VarType, int> vvp) {
         VarBranch selectors[4] = {vars.a, vars.b, vars.c, vars.d};
         int n = 1;
@@ -334,16 +336,16 @@ namespace Gecode { namespace Int { namespace Branch {
         ValSelCommitBase<View, int>* vsc = open_valselcommit(home, vals, values_min);
         switch (n) {
         case 1:
-            post_open_brancher<View, 1>(home, list, selectors, vsc, values_min, bf, vvp);
+            post_open_brancher<View, 1>(home, list, selectors, vsc, values_min, std::move(bf), std::move(vvp));
             break;
         case 2:
-            post_open_brancher<View, 2>(home, list, selectors, vsc, values_min, bf, vvp);
+            post_open_brancher<View, 2>(home, list, selectors, vsc, values_min, std::move(bf), std::move(vvp));
             break;
         case 3:
-            post_open_brancher<View, 3>(home, list, selectors, vsc, values_min, bf, vvp);
+            post_open_brancher<View, 3>(home, list, selectors, vsc, values_min, std::move(bf), std::move(vvp));
             break;
         case 4:
-            post_open_brancher<View, 4>(home, list, selectors, vsc, values_min, bf, vvp);
+            post_open_brancher<View, 4>(home, list, selectors, vsc, values_min, std::move(bf), std::move(vvp));
             break;
         }
     }
