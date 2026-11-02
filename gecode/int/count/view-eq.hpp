@@ -34,12 +34,12 @@ namespace Gecode { namespace Int { namespace Count {
 
     template <class VX, class VY, class VZ, bool shr, bool dom>
     forceinline
-    EqView<VX, VY, VZ, shr, dom>::EqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c)
+    EqView<VX, VY, VZ, shr, dom>::EqView(Home home, ViewArray<VX>& x, const VY& y, VZ z, int c)
         : ViewBase<VX, VY, VZ>(home, x, y, z, c) {}
 
     template <class VX, class VY, class VZ, bool shr, bool dom>
     ExecStatus
-    EqView<VX, VY, VZ, shr, dom>::post(Home home, ViewArray<VX>& x, VY y, VZ z, int c) {
+    EqView<VX, VY, VZ, shr, dom>::post(Home home, ViewArray<VX>& x, const VY& y, VZ z, int c) {
         GECODE_ME_CHECK(z.gq(home, -c));
         GECODE_ME_CHECK(z.lq(home, x.size() - c));
         if (isval(y) && z.assigned())

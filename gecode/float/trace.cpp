@@ -35,7 +35,7 @@
 namespace Gecode {
 
     void
-    trace(Home home, const FloatVarArgs& x, TraceFilter tf, int te, FloatTracer& t) {
+    trace(Home home, const FloatVarArgs& x, const TraceFilter& tf, int te, FloatTracer& t) {
         using namespace Gecode::Float;
         GECODE_POST;
         ViewArray<FloatView> xv(home, x);

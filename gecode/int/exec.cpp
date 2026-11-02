@@ -37,38 +37,38 @@ namespace Gecode {
     void
     wait(Home home, IntVar x, std::function<void(Space& home)> c, IntPropLevel) {
         GECODE_POST;
-        GECODE_ES_FAIL(UnaryWait<Int::IntView>::post(home, x, c));
+        GECODE_ES_FAIL(UnaryWait<Int::IntView>::post(home, x, std::move(c)));
     }
 
     void
     wait(Home home, BoolVar x, std::function<void(Space& home)> c, IntPropLevel) {
         GECODE_POST;
-        GECODE_ES_FAIL(UnaryWait<Int::BoolView>::post(home, x, c));
+        GECODE_ES_FAIL(UnaryWait<Int::BoolView>::post(home, x, std::move(c)));
     }
 
     void
     wait(Home home, const IntVarArgs& x, std::function<void(Space& home)> c, IntPropLevel) {
         GECODE_POST;
         ViewArray<Int::IntView> xv(home, x);
-        GECODE_ES_FAIL(NaryWait<Int::IntView>::post(home, xv, c));
+        GECODE_ES_FAIL(NaryWait<Int::IntView>::post(home, xv, std::move(c)));
     }
 
     void
     wait(Home home, const BoolVarArgs& x, std::function<void(Space& home)> c, IntPropLevel) {
         GECODE_POST;
         ViewArray<Int::BoolView> xv(home, x);
-        GECODE_ES_FAIL(NaryWait<Int::BoolView>::post(home, xv, c));
+        GECODE_ES_FAIL(NaryWait<Int::BoolView>::post(home, xv, std::move(c)));
     }
 
     void
     when(Home home, BoolVar x, std::function<void(Space& home)> t, std::function<void(Space& home)> e, IntPropLevel) {
         GECODE_POST;
-        GECODE_ES_FAIL(Int::Exec::When::post(home, x, t, e));
+        GECODE_ES_FAIL(Int::Exec::When::post(home, x, std::move(t), std::move(e)));
     }
 
     void
     when(Home home, BoolVar x, std::function<void(Space& home)> t, IntPropLevel) {
-        when(home, x, t, [](Space&) {});
+        when(home, x, std::move(t), [](Space&) {});
     }
 
 } // namespace Gecode

@@ -257,7 +257,7 @@ namespace Gecode {
     }
 
     void
-    weights(Home home, IntSharedArray elements, IntSharedArray weights, SetVar x, IntVar y) {
+    weights(Home home, const IntSharedArray& elements, const IntSharedArray& weights, SetVar x, IntVar y) {
         GECODE_POST;
         GECODE_ES_FAIL(Set::Int::Weights<Set::SetView>::post(home, elements, weights, x, y));
     }

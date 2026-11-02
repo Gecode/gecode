@@ -120,7 +120,7 @@ namespace Gecode {
 
     public:
         /// Constructor for creation
-        ViewTraceRecorder(Home home, ViewArray<View>& x, TraceFilter tf, int te, ViewTracer<View>& t);
+        ViewTraceRecorder(Home home, ViewArray<View>& x, const TraceFilter& tf, int te, ViewTracer<View>& t);
         /// Copy propagator during cloning
         Propagator* copy(Space& home) override;
         /// Cost function (record so that propagator runs last)
@@ -134,7 +134,7 @@ namespace Gecode {
         /// Delete propagator and return its size
         size_t dispose(Space& home) override;
         /// Post recorder propagator
-        static ExecStatus post(Home home, ViewArray<View>& x, TraceFilter tf, int te, ViewTracer<View>& t);
+        static ExecStatus post(Home home, ViewArray<View>& x, const TraceFilter& tf, int te, ViewTracer<View>& t);
         /// \name Trace information
         //@{
         /// Return variable being traced at position \a i
@@ -167,7 +167,7 @@ namespace Gecode {
 
     public:
         /// Constructor for creation
-        TraceRecorder(Home home, TraceFilter tf, int te, Tracer& t);
+        TraceRecorder(Home home, const TraceFilter& tf, int te, Tracer& t);
         /// Copy propagator during cloning
         Propagator* copy(Space& home) override;
         /// Cost function (record so that propagator runs last)
@@ -179,7 +179,7 @@ namespace Gecode {
         /// Delete propagator and return its size
         size_t dispose(Space& home) override;
         /// Post propagator
-        static ExecStatus post(Home home, TraceFilter tf, int te, Tracer& t);
+        static ExecStatus post(Home home, const TraceFilter& tf, int te, Tracer& t);
         /// \name Trace information
         //@{
         /// Return trace filter
@@ -257,7 +257,7 @@ namespace Gecode {
      */
     template <class View>
     forceinline
-    ViewTraceRecorder<View>::ViewTraceRecorder(Home home, ViewArray<View>& x, TraceFilter tf0, int te0,
+    ViewTraceRecorder<View>::ViewTraceRecorder(Home home, ViewArray<View>& x, const TraceFilter& tf0, int te0,
                                                ViewTracer<View>& t0)
         : Propagator(home), o(home, x.size()), n(x), c(home), tf(tf0), te(te0), t(t0) {
         home.notice(*this, AP_VIEW_TRACE);
@@ -278,7 +278,7 @@ namespace Gecode {
 
     template <class View>
     forceinline ExecStatus
-    ViewTraceRecorder<View>::post(Home home, ViewArray<View>& x, TraceFilter tf, int te, ViewTracer<View>& t) {
+    ViewTraceRecorder<View>::post(Home home, ViewArray<View>& x, const TraceFilter& tf, int te, ViewTracer<View>& t) {
         if ((x.size() > 0) && (te & (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE)))
             (void)new (home) ViewTraceRecorder(home, x, tf, te, t);
         return ES_OK;
@@ -387,14 +387,14 @@ namespace Gecode {
      *
      */
     forceinline
-    TraceRecorder::TraceRecorder(Home home, TraceFilter tf0, int te0, Tracer& t0)
+    TraceRecorder::TraceRecorder(Home home, const TraceFilter& tf0, int te0, Tracer& t0)
         : Propagator(home), tf(tf0), te(te0), t(t0) {
         home.notice(*this, AP_DISPOSE);
         home.notice(*this, AP_TRACE);
     }
 
     forceinline ExecStatus
-    TraceRecorder::post(Home home, TraceFilter tf, int te, Tracer& t) {
+    TraceRecorder::post(Home home, const TraceFilter& tf, int te, Tracer& t) {
         if (te & (TE_PROPAGATE | TE_COMMIT | TE_POST))
             (void)new (home) TraceRecorder(home, tf, te, t);
         return ES_OK;

@@ -35,7 +35,7 @@
 namespace Gecode {
 
     void
-    trace(Home home, const IntVarArgs& x, TraceFilter tf, int te, IntTracer& t) {
+    trace(Home home, const IntVarArgs& x, const TraceFilter& tf, int te, IntTracer& t) {
         using namespace Gecode::Int;
         GECODE_POST;
         ViewArray<IntView> xv(home, x);
@@ -43,7 +43,7 @@ namespace Gecode {
     }
 
     void
-    trace(Home home, const BoolVarArgs& x, TraceFilter tf, int te, BoolTracer& t) {
+    trace(Home home, const BoolVarArgs& x, const TraceFilter& tf, int te, BoolTracer& t) {
         using namespace Gecode::Int;
         GECODE_POST;
         ViewArray<BoolView> xv(home, x);

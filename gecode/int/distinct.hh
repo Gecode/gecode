@@ -72,9 +72,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     public:
 #ifdef GECODE_HAS_CBS
         /// Solution distribution computation for branching
-        void solution_distribution(Space& home, Propagator::SendMarginal send) const override;
+        void solution_distribution(Space& home, const Propagator::SendMarginal& send) const override;
         /// Sum of variables cardinalities
-        void domain_size_sum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const override;
+        void domain_size_sum(const Propagator::InDecision& in, unsigned int& size, unsigned int& size_b) const override;
 #endif
         /// Copy propagator during cloning
         Actor* copy(Space& home) override;
@@ -96,10 +96,11 @@ namespace Gecode { namespace Int { namespace Distinct {
      *        Available at http://www.polymtl.ca/labo-quosseca/en/publications
      */
     template <class View>
-    void cbs_distinct(Space& home, unsigned int prop_id, const ViewArray<View>& x, Propagator::SendMarginal send);
+    void cbs_distinct(Space& home, unsigned int prop_id, const ViewArray<View>& x,
+                      const Propagator::SendMarginal& send);
 
     template <class View>
-    void cbs_size(const ViewArray<View>& x, Propagator::InDecision in, unsigned int& size, unsigned int& size_b);
+    void cbs_size(const ViewArray<View>& x, const Propagator::InDecision& in, unsigned int& size, unsigned int& size_b);
 #endif
 
     /**
@@ -162,9 +163,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     public:
 #ifdef GECODE_HAS_CBS
         /// Solution distribution computation for branching
-        void solution_distribution(Space& home, Propagator::SendMarginal send) const override;
+        void solution_distribution(Space& home, const Propagator::SendMarginal& send) const override;
         /// Sum of variables cardinalities
-        void domain_size_sum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const override;
+        void domain_size_sum(const Propagator::InDecision& in, unsigned int& size, unsigned int& size_b) const override;
 #endif
         /// Post propagator for view array \a x
         static ExecStatus post(Home home, ViewArray<View>& x);
@@ -288,9 +289,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     public:
 #ifdef GECODE_HAS_CBS
         /// Solution distribution computation for branching
-        void solution_distribution(Space& home, Propagator::SendMarginal send) const override;
+        void solution_distribution(Space& home, const Propagator::SendMarginal& send) const override;
         /// Sum of variables cardinalities
-        void domain_size_sum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const override;
+        void domain_size_sum(const Propagator::InDecision& in, unsigned int& size, unsigned int& size_b) const override;
 #endif
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
