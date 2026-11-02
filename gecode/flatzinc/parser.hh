@@ -256,7 +256,7 @@ namespace Gecode { namespace FlatZinc {
 
         void
         output(std::string x, AST::Node* n) {
-            output_items.push_back(std::pair<std::string, AST::Node*>(x, n));
+            output_items.emplace_back(std::move(x), n);
         }
 
         AST::Array*
