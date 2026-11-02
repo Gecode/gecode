@@ -64,7 +64,7 @@ namespace Gecode {
         Node(void);
         /// Generate linear terms from expression
         GECODE_MINIMODEL_EXPORT
-        void fill(Home home, Float::Linear::Term*& tf, FloatVal m, FloatVal& d) const;
+        void fill(Home home, Float::Linear::Term*& tf, const FloatVal& m, FloatVal& d) const;
         /// Generate linear terms for expressions
         FloatVal fill(Home home, Float::Linear::Term* tf) const;
         /// Decrement reference count and possibly free memory
@@ -254,7 +254,7 @@ namespace Gecode {
         n->x_float = x;
     }
 
-    LinFloatExpr::LinFloatExpr(const FloatVar& x, FloatVal a) : n(new Node) {
+    LinFloatExpr::LinFloatExpr(const FloatVar& x, const FloatVal& a) : n(new Node) {
         n->n_float = 1;
         n->t = NT_VAR;
         n->l = n->r = nullptr;
@@ -308,7 +308,7 @@ namespace Gecode {
         n->c = c;
     }
 
-    LinFloatExpr::LinFloatExpr(FloatVal a, const LinFloatExpr& e) : n(new Node) {
+    LinFloatExpr::LinFloatExpr(const FloatVal& a, const LinFloatExpr& e) : n(new Node) {
         n->n_float = e.n->n_float;
         n->t = NT_MUL;
         n->l = e.n;
@@ -342,7 +342,7 @@ namespace Gecode {
     }
 
     void
-    LinFloatExpr::Node::fill(Home home, Float::Linear::Term*& tf, FloatVal m, FloatVal& d) const {
+    LinFloatExpr::Node::fill(Home home, Float::Linear::Term*& tf, const FloatVal& m, FloatVal& d) const {
         switch (this->t) {
         case NT_CONST:
             Float::Limits::check(m * c, "MiniModel::LinFloatExpr");

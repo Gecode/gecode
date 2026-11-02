@@ -54,7 +54,7 @@ namespace Test { namespace Float {
 
         public:
             /// Create and register test
-            Val(int n, Gecode::FloatVal c0, Gecode::FloatNum st)
+            Val(int n, const Gecode::FloatVal& c0, Gecode::FloatNum st)
                 : Test("Dom::Val::" + str(n) + "::" + str(c0), n, -3, 3, st, CPLT_ASSIGNMENT, n == 1), c(c0) {
                 test_subsumption = false;
             }

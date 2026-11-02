@@ -46,11 +46,11 @@ namespace Gecode {
         : e(l - r), frt(frt0) {}
 
     forceinline
-    LinFloatRel::LinFloatRel(const LinFloatExpr& l, FloatRelType frt0, FloatVal r)
+    LinFloatRel::LinFloatRel(const LinFloatExpr& l, FloatRelType frt0, const FloatVal& r)
         : e(l - r), frt(frt0) {}
 
     forceinline
-    LinFloatRel::LinFloatRel(FloatVal l, FloatRelType frt0, const LinFloatExpr& r)
+    LinFloatRel::LinFloatRel(const FloatVal& l, FloatRelType frt0, const LinFloatExpr& r)
         : e(l - r), frt(frt0) {}
 
     forceinline FloatRelType
