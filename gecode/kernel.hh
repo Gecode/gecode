@@ -248,7 +248,7 @@ namespace Gecode {
      * \brief Create tracer
      * \ingroup TaskTrace
      */
-    GECODE_KERNEL_EXPORT void trace(Home home, TraceFilter tf, int te = (TE_PROPAGATE | TE_COMMIT | TE_POST),
+    GECODE_KERNEL_EXPORT void trace(Home home, const TraceFilter& tf, int te = (TE_PROPAGATE | TE_COMMIT | TE_POST),
                                     Tracer& t = StdTracer::def);
     /**
      * \brief Create tracer

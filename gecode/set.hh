@@ -835,7 +835,8 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetConnect
      */
-    GECODE_SET_EXPORT void weights(Home home, IntSharedArray elements, IntSharedArray weights, SetVar x, IntVar y);
+    GECODE_SET_EXPORT void weights(Home home, const IntSharedArray& elements, const IntSharedArray& weights, SetVar x,
+                                   IntVar y);
 
     /**
      * \defgroup TaskModelSetChannel Channel constraints
@@ -1602,7 +1603,7 @@ namespace Gecode {
      *
      * \ingroup TaskModeSet
      */
-    GECODE_SET_EXPORT void relax(Home home, const SetVarArgs& x, const SetVarArgs& sx, Rnd r, double p);
+    GECODE_SET_EXPORT void relax(Home home, const SetVarArgs& x, const SetVarArgs& sx, const Rnd& r, double p);
 
 } // namespace Gecode
 
@@ -1719,7 +1720,7 @@ namespace Gecode {
      * \brief Create a tracer for set variables
      * \ingroup TaskSetTrace
      */
-    GECODE_SET_EXPORT void trace(Home home, const SetVarArgs& x, TraceFilter tf,
+    GECODE_SET_EXPORT void trace(Home home, const SetVarArgs& x, const TraceFilter& tf,
                                  int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
                                  SetTracer& t = StdSetTracer::def);
     /**

@@ -40,7 +40,7 @@ namespace Gecode {
     OpenIntVarList::factory(Domain d) {
         if (!d)
             throw InvalidFunction("OpenIntVarList");
-        return [d](Space& home, int i) { return IntVar(home, d(i)); };
+        return [d = std::move(d)](Space& home, int i) { return IntVar(home, d(i)); };
     }
 
     OpenIntVarList::OpenIntVarList(Space& home, int max)
@@ -50,12 +50,13 @@ namespace Gecode {
         : OpenIntVarList(home, [d](int) { return d; }, max) {}
 
     OpenIntVarList::OpenIntVarList(Space& home, const IntSet& d, Transition t, int max)
-        : OpenIntVarList(home, [d](int) { return d; }, t, max) {}
+        : OpenIntVarList(home, [d](int) { return d; }, std::move(t), max) {}
 
-    OpenIntVarList::OpenIntVarList(Space& home, Domain d, int max) : OpenVarList<IntVar>(home, factory(d), max) {}
+    OpenIntVarList::OpenIntVarList(Space& home, Domain d, int max)
+        : OpenVarList<IntVar>(home, factory(std::move(d)), max) {}
 
     OpenIntVarList::OpenIntVarList(Space& home, Domain d, Transition t, int max)
-        : OpenVarList<IntVar>(home, factory(d), t, max) {}
+        : OpenVarList<IntVar>(home, factory(std::move(d)), std::move(t), max) {}
 
     OpenBoolVarList::OpenBoolVarList(void) {}
 
@@ -63,7 +64,7 @@ namespace Gecode {
         : OpenVarList<BoolVar>(home, [](Space& home, int) { return BoolVar(home, 0, 1); }, max) {}
 
     OpenBoolVarList::OpenBoolVarList(Space& home, Transition t, int max)
-        : OpenVarList<BoolVar>(home, [](Space& home, int) { return BoolVar(home, 0, 1); }, t, max) {}
+        : OpenVarList<BoolVar>(home, [](Space& home, int) { return BoolVar(home, 0, 1); }, std::move(t), max) {}
 
 } // namespace Gecode
 

@@ -37,14 +37,14 @@ namespace Gecode {
     void
     wait(Home home, SetVar x, std::function<void(Space& home)> c) {
         GECODE_POST;
-        GECODE_ES_FAIL(UnaryWait<Set::SetView>::post(home, x, c));
+        GECODE_ES_FAIL(UnaryWait<Set::SetView>::post(home, x, std::move(c)));
     }
 
     void
     wait(Home home, const SetVarArgs& x, std::function<void(Space& home)> c) {
         GECODE_POST;
         ViewArray<Set::SetView> xv(home, x);
-        GECODE_ES_FAIL(NaryWait<Set::SetView>::post(home, xv, c));
+        GECODE_ES_FAIL(NaryWait<Set::SetView>::post(home, xv, std::move(c)));
     }
 
 } // namespace Gecode

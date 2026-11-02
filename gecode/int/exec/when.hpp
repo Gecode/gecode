@@ -34,7 +34,7 @@ namespace Gecode { namespace Int { namespace Exec {
 
     forceinline
     When::When(Home home, BoolView x, std::function<void(Space& home)> t0, std::function<void(Space& home)> e0)
-        : UnaryPropagator<BoolView, PC_BOOL_VAL>(home, x), t(t0), e(e0) {
+        : UnaryPropagator<BoolView, PC_BOOL_VAL>(home, x), t(std::move(t0)), e(std::move(e0)) {
         home.notice(*this, AP_DISPOSE);
     }
 
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Exec {
             t(home);
             return home.failed() ? ES_FAILED : ES_OK;
         } else {
-            (void)new (home) When(home, x, t, e);
+            (void)new (home) When(home, x, std::move(t), std::move(e));
             return ES_OK;
         }
     }

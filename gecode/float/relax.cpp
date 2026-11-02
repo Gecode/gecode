@@ -53,7 +53,7 @@ namespace Gecode { namespace Float {
 namespace Gecode {
 
     void
-    relax(Home home, const FloatVarArgs& x, const FloatVarArgs& sx, Rnd r, double p) {
+    relax(Home home, const FloatVarArgs& x, const FloatVarArgs& sx, const Rnd& r, double p) {
         if (x.size() != sx.size())
             throw Float::ArgumentSizeMismatch("Float::relax");
         if ((p < 0.0) || (p > 1.0))

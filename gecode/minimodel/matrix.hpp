@@ -125,7 +125,7 @@ namespace Gecode {
 
     template <class A>
     forceinline
-    Matrix<A>::Matrix(A a, int w, int h)
+    Matrix<A>::Matrix(const A& a, int w, int h)
         : _a(a), _w(w), _h(h) {
         if ((_w * _h) != _a.size())
             throw MiniModel::ArgumentSizeMismatch("Matrix::Matrix(A, w, h)");
@@ -133,7 +133,7 @@ namespace Gecode {
 
     template <class A>
     forceinline
-    Matrix<A>::Matrix(A a, int n)
+    Matrix<A>::Matrix(const A& a, int n)
         : _a(a), _w(n), _h(n) {
         if (n * n != _a.size())
             throw MiniModel::ArgumentSizeMismatch("Matrix::Matrix(A, n)");
