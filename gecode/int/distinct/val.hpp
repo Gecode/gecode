@@ -157,13 +157,13 @@ namespace Gecode { namespace Int { namespace Distinct {
 #ifdef GECODE_HAS_CBS
     template <class View>
     void
-    Val<View>::solution_distribution(Space& home, Propagator::SendMarginal send) const {
+    Val<View>::solution_distribution(Space& home, const Propagator::SendMarginal& send) const {
         cbs_distinct(home, this->id(), x, send);
     }
 
     template <class View>
     void
-    Val<View>::domain_size_sum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const {
+    Val<View>::domain_size_sum(const Propagator::InDecision& in, unsigned int& size, unsigned int& size_b) const {
         cbs_size(x, in, size, size_b);
     }
 #endif

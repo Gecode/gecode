@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         delete[] xs;
     }
 
-    ValueSequenceSymmetryObject::ValueSequenceSymmetryObject(IntArgs vs, int ss) : values(vs), seq_size(ss) {}
+    ValueSequenceSymmetryObject::ValueSequenceSymmetryObject(const IntArgs& vs, int ss) : values(vs), seq_size(ss) {}
 
 }}} // namespace Gecode::Int::LDSB
 

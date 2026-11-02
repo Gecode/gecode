@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Sequence {
         /// Copy constructor
         ViewValSupportArray(const ViewValSupportArray<View, Val, iss>&);
         /// Construct an ViewValSupportArray from \a x
-        ViewValSupportArray(Space& home, ViewArray<View>&, Val s, int q);
+        ViewValSupportArray(Space& home, ViewArray<View>&, const Val& s, int q);
         /// Construct an ViewValSupportArray of size \a n
         ViewValSupportArray(Space& home, int n);
         /// Return the current size
@@ -86,9 +86,9 @@ namespace Gecode { namespace Int { namespace Sequence {
         /// Cloning
         void update(Space& home, ViewValSupportArray<View, Val, iss>& x);
         /// Propagate
-        ExecStatus propagate(Space& home, ViewArray<View>& a, Val s, int q, int l, int u);
+        ExecStatus propagate(Space& home, ViewArray<View>& a, const Val& s, int q, int l, int u);
         /// Advise
-        ExecStatus advise(Space& home, ViewArray<View>& a, Val s, int q, int j, const Delta& d);
+        ExecStatus advise(Space& home, ViewArray<View>& a, const Val& s, int q, int j, const Delta& d);
     };
 
     /**
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Sequence {
         /// Constructor for cloning \a p
         Sequence(Space& home, Sequence& p);
         /// Constructor for creation
-        Sequence(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
+        Sequence(Home home, ViewArray<View>& x, const Val& s, int q, int l, int u);
 
     public:
         /// Perform copying during cloning
@@ -117,9 +117,9 @@ namespace Gecode { namespace Int { namespace Sequence {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for
-        static ExecStatus post(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
+        static ExecStatus post(Home home, ViewArray<View>& x, const Val& s, int q, int l, int u);
         /// Check for consistency
-        static ExecStatus check(ViewArray<View>& x, Val s, int q, int l, int u);
+        static ExecStatus check(ViewArray<View>& x, const Val& s, int q, int l, int u);
         /// Delete propagator and return its size
         size_t dispose(Space& home) override;
 
