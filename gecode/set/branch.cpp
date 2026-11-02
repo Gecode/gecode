@@ -35,7 +35,7 @@
 namespace Gecode {
 
     void
-    branch(Home home, const SetVarArgs& x, SetVarBranch vars, SetValBranch vals, SetBranchFilter bf,
+    branch(Home home, const SetVarArgs& x, SetVarBranch vars, const SetValBranch& vals, SetBranchFilter bf,
            SetVarValPrint vvp) {
         using namespace Set;
         if (home.failed())
@@ -43,11 +43,12 @@ namespace Gecode {
         vars.expand(home, x);
         ViewArray<SetView> xv(home, x);
         ViewSel<SetView>* vs[1] = {Branch::view_selection(home, vars)};
-        post_view_value_brancher<SetView, 1, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals), bf, vvp);
+        post_view_value_brancher<SetView, 1, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals),
+                                                     std::move(bf), std::move(vvp));
     }
 
     void
-    branch(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, SetValBranch vals, SetBranchFilter bf,
+    branch(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, const SetValBranch& vals, SetBranchFilter bf,
            SetVarValPrint vvp) {
         using namespace Set;
         if (home.failed())
@@ -63,44 +64,46 @@ namespace Gecode {
             vars.d = SET_VAR_NONE();
         vars.d.expand(home, x);
         if (vars.b.select() == SetVarBranch::SEL_NONE) {
-            branch(home, x, vars.a, vals, bf, vvp);
+            branch(home, x, std::move(vars.a), vals, std::move(bf), std::move(vvp));
         } else {
             ViewArray<SetView> xv(home, x);
             ValSelCommitBase<SetView, int>* vsc = Branch::value_selection_commit(home, vals);
             if (vars.c.select() == SetVarBranch::SEL_NONE) {
                 ViewSel<SetView>* vs[2] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b)};
-                post_view_value_brancher<SetView, 2, int, 2>(home, xv, vs, vsc, bf, vvp);
+                post_view_value_brancher<SetView, 2, int, 2>(home, xv, vs, vsc, std::move(bf), std::move(vvp));
             } else if (vars.d.select() == SetVarBranch::SEL_NONE) {
                 ViewSel<SetView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
                                            Branch::view_selection(home, vars.c)};
-                post_view_value_brancher<SetView, 3, int, 2>(home, xv, vs, vsc, bf, vvp);
+                post_view_value_brancher<SetView, 3, int, 2>(home, xv, vs, vsc, std::move(bf), std::move(vvp));
             } else {
                 ViewSel<SetView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
                                            Branch::view_selection(home, vars.c), Branch::view_selection(home, vars.d)};
-                post_view_value_brancher<SetView, 4, int, 2>(home, xv, vs, vsc, bf, vvp);
+                post_view_value_brancher<SetView, 4, int, 2>(home, xv, vs, vsc, std::move(bf), std::move(vvp));
             }
         }
     }
 
     void
-    branch(Home home, SetVar x, SetValBranch vals, SetVarValPrint vvp) {
+    branch(Home home, SetVar x, const SetValBranch& vals, SetVarValPrint vvp) {
         SetVarArgs xv(1);
         xv[0] = x;
-        branch(home, xv, SET_VAR_NONE(), vals, nullptr, vvp);
+        branch(home, xv, SET_VAR_NONE(), vals, nullptr, std::move(vvp));
     }
 
     void
-    assign(Home home, const SetVarArgs& x, SetVarBranch vars, SetAssign vals, SetBranchFilter bf, SetVarValPrint vvp) {
+    assign(Home home, const SetVarArgs& x, const SetVarBranch& vars, const SetAssign& vals, SetBranchFilter bf,
+           SetVarValPrint vvp) {
         using namespace Set;
         if (home.failed())
             return;
         ViewArray<SetView> xv(home, x);
         ViewSel<SetView>* vs[1] = {new (home) ViewSelNone<SetView>(home, vars)};
-        post_view_value_brancher<SetView, 1, int, 1>(home, xv, vs, Branch::value_selection_commit(home, vals), bf, vvp);
+        post_view_value_brancher<SetView, 1, int, 1>(home, xv, vs, Branch::value_selection_commit(home, vals),
+                                                     std::move(bf), std::move(vvp));
     }
 
     void
-    assign(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, SetAssign vals, SetBranchFilter bf,
+    assign(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, const SetAssign& vals, SetBranchFilter bf,
            SetVarValPrint vvp) {
         using namespace Set;
         if (home.failed())
@@ -116,30 +119,30 @@ namespace Gecode {
             vars.d = SET_VAR_NONE();
         vars.d.expand(home, x);
         if (vars.b.select() == SetVarBranch::SEL_NONE) {
-            assign(home, x, vars.a, vals, bf, vvp);
+            assign(home, x, vars.a, vals, std::move(bf), std::move(vvp));
         } else {
             ViewArray<SetView> xv(home, x);
             ValSelCommitBase<SetView, int>* vsc = Branch::value_selection_commit(home, vals);
             if (vars.c.select() == SetVarBranch::SEL_NONE) {
                 ViewSel<SetView>* vs[2] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b)};
-                post_view_value_brancher<SetView, 2, int, 1>(home, xv, vs, vsc, bf, vvp);
+                post_view_value_brancher<SetView, 2, int, 1>(home, xv, vs, vsc, std::move(bf), std::move(vvp));
             } else if (vars.d.select() == SetVarBranch::SEL_NONE) {
                 ViewSel<SetView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
                                            Branch::view_selection(home, vars.c)};
-                post_view_value_brancher<SetView, 3, int, 1>(home, xv, vs, vsc, bf, vvp);
+                post_view_value_brancher<SetView, 3, int, 1>(home, xv, vs, vsc, std::move(bf), std::move(vvp));
             } else {
                 ViewSel<SetView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
                                            Branch::view_selection(home, vars.c), Branch::view_selection(home, vars.d)};
-                post_view_value_brancher<SetView, 4, int, 1>(home, xv, vs, vsc, bf, vvp);
+                post_view_value_brancher<SetView, 4, int, 1>(home, xv, vs, vsc, std::move(bf), std::move(vvp));
             }
         }
     }
 
     void
-    assign(Home home, SetVar x, SetAssign vars, SetVarValPrint vvp) {
+    assign(Home home, SetVar x, const SetAssign& vars, SetVarValPrint vvp) {
         SetVarArgs xv(1);
         xv[0] = x;
-        assign(home, xv, SET_VAR_NONE(), vars, nullptr, vvp);
+        assign(home, xv, SET_VAR_NONE(), vars, nullptr, std::move(vvp));
     }
 
 } // namespace Gecode

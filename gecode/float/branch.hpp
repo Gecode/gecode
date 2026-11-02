@@ -33,13 +33,13 @@
 namespace Gecode {
 
     forceinline void
-    branch(Home home, const FloatVarArgs& x, FloatValBranch vals, FloatBranchFilter bf, FloatVarValPrint vvp) {
-        branch(home, x, FLOAT_VAR_NONE(), vals, bf, vvp);
+    branch(Home home, const FloatVarArgs& x, const FloatValBranch& vals, FloatBranchFilter bf, FloatVarValPrint vvp) {
+        branch(home, x, FLOAT_VAR_NONE(), vals, std::move(bf), std::move(vvp));
     }
 
     forceinline void
-    assign(Home home, const FloatVarArgs& x, FloatAssign vals, FloatBranchFilter bf, FloatVarValPrint vvp) {
-        assign(home, x, FLOAT_VAR_NONE(), vals, bf, vvp);
+    assign(Home home, const FloatVarArgs& x, const FloatAssign& vals, FloatBranchFilter bf, FloatVarValPrint vvp) {
+        assign(home, x, FLOAT_VAR_NONE(), vals, std::move(bf), std::move(vvp));
     }
 
 } // namespace Gecode

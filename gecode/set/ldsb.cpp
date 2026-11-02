@@ -149,7 +149,7 @@ namespace Gecode {
     using namespace Set::LDSB;
 
     void
-    branch(Home home, const SetVarArgs& x, SetVarBranch vars, SetValBranch vals, const Symmetries& syms,
+    branch(Home home, const SetVarArgs& x, SetVarBranch vars, const SetValBranch& vals, const Symmetries& syms,
            SetBranchFilter bf, SetVarValPrint vvp) {
         using namespace Set;
         if (home.failed())
@@ -170,12 +170,12 @@ namespace Gecode {
         SymmetryImp<SetView>** array = create_set_syms(home, syms, variable_map, n);
 
         post_ldsb_set_brancher<SetView, 1, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals), array, n,
-                                                   bf, vvp);
+                                                   std::move(bf), std::move(vvp));
     }
 
     void
-    branch(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, SetValBranch vals, const Symmetries& syms,
-           SetBranchFilter bf, SetVarValPrint vvp) {
+    branch(Home home, const SetVarArgs& x, TieBreak<SetVarBranch> vars, const SetValBranch& vals,
+           const Symmetries& syms, SetBranchFilter bf, SetVarValPrint vvp) {
         using namespace Set;
         if (home.failed())
             return;
@@ -190,7 +190,7 @@ namespace Gecode {
             vars.d = SET_VAR_NONE();
         vars.d.expand(home, x);
         if (vars.b.select() == SetVarBranch::SEL_NONE) {
-            branch(home, x, vars.a, vals, syms, bf, vvp);
+            branch(home, x, std::move(vars.a), vals, syms, std::move(bf), std::move(vvp));
         } else {
             // Construct mapping from each variable in the array to its index
             // in the array.
@@ -207,15 +207,15 @@ namespace Gecode {
             ValSelCommitBase<SetView, int>* vsc = Branch::value_selection_commit(home, vals);
             if (vars.c.select() == SetVarBranch::SEL_NONE) {
                 ViewSel<SetView>* vs[2] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b)};
-                post_ldsb_set_brancher<SetView, 2, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
+                post_ldsb_set_brancher<SetView, 2, int, 2>(home, xv, vs, vsc, array, n, std::move(bf), std::move(vvp));
             } else if (vars.d.select() == SetVarBranch::SEL_NONE) {
                 ViewSel<SetView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
                                            Branch::view_selection(home, vars.c)};
-                post_ldsb_set_brancher<SetView, 3, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
+                post_ldsb_set_brancher<SetView, 3, int, 2>(home, xv, vs, vsc, array, n, std::move(bf), std::move(vvp));
             } else {
                 ViewSel<SetView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
                                            Branch::view_selection(home, vars.c), Branch::view_selection(home, vars.d)};
-                post_ldsb_set_brancher<SetView, 4, int, 2>(home, xv, vs, vsc, array, n, bf, vvp);
+                post_ldsb_set_brancher<SetView, 4, int, 2>(home, xv, vs, vsc, array, n, std::move(bf), std::move(vvp));
             }
         }
     }
