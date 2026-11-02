@@ -3,9 +3,9 @@
 # Tasks: boost
 
 - Total: 6
-- Ready: 2
+- Ready: 1
 - Blocked: 3
-- Done: 1
+- Done: 2
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -14,4 +14,4 @@
 | [boost-003](tasks/003-compare-the-refreshed-copy-improved-copy-and-support-library.md) | Compare the refreshed-copy, improved-copy, and support-library approaches | blocked | boost-001, boost-002 |
 | [boost-004](tasks/004-decide-the-interval-arithmetic-approach.md) | Decide the interval-arithmetic approach | blocked | boost-003 |
 | [boost-005](tasks/005-implement-the-chosen-interval-arithmetic-approach.md) | Implement the chosen interval-arithmetic approach | blocked | boost-004 |
-| [boost-006](tasks/006-keep-directed-rounding-sound-under-optimization.md) | Keep directed rounding sound under optimization | ready | — |
+| [boost-006](tasks/006-keep-directed-rounding-sound-under-optimization.md) | Keep directed rounding sound under optimization | done | — |

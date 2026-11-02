@@ -70,9 +70,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     /// Return a downward-rounded positive integer power
     forceinline FloatNum
     positive_pow_down(FloatNum x, int n) {
-        typedef gecode_boost::numeric::interval_lib::rounded_arith_std<FloatNum> DirectRoundingBase;
-        typedef gecode_boost::numeric::interval_lib::save_state<DirectRoundingBase> DirectRounding;
-        DirectRounding r;
+        Rounding r;
         FloatNum y = 1.0;
         while (n > 0) {
             if ((n & 1) != 0)

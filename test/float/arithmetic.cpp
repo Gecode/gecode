@@ -39,7 +39,11 @@
 #include <cmath>
 #include <algorithm>
 #include <cfenv>
+#include <cstddef>
+#include <ios>
+#include <iterator>
 #include <limits>
+#include <utility>
 
 namespace Test { namespace Float {
 
@@ -112,6 +116,207 @@ namespace Test { namespace Float {
                 return result;
             }
         } rounding_scope;
+
+        /// Directed rounding gives exact bounds for literal and runtime operands
+        class DirectedRounding : public Base {
+        private:
+            /// Operation computed with directed rounding
+            enum class Op { ADD, SUB, MUL, DIV, SQRT, INTEGER };
+            /// Operation and operands (\a y is unused by unary operations)
+            struct Case {
+                Op op;
+                Gecode::FloatNum x;
+                Gecode::FloatNum y;
+            };
+            /// Lower and upper bound
+            struct Bounds {
+                Gecode::FloatNum down;
+                Gecode::FloatNum up;
+            };
+            /// Round-to-nearest result and the sign-carrying rounding error
+            struct Nearest {
+                Gecode::FloatNum value;
+                Gecode::FloatNum error;
+            };
+            /// Bounds observed through both interfaces in one caller mode
+            struct Observed {
+                Bounds rounding;
+                Bounds float_val;
+                bool mode_kept;
+            };
+            /// Cases whose two directed bounds differ
+            static constexpr Case cases[] = {
+                {Op::ADD, 0.1, 0.2},  {Op::ADD, -0.1, -0.2}, {Op::SUB, 0.1, 0.7},     {Op::SUB, -0.1, 0.2},
+                {Op::MUL, 0.1, 0.3},  {Op::MUL, -0.1, 0.3},  {Op::DIV, 1.0, 3.0},     {Op::DIV, -1.0, 3.0},
+                {Op::SQRT, 2.0, 0.0}, {Op::SQRT, 0.1, 0.0},  {Op::INTEGER, 2.5, 0.0}, {Op::INTEGER, -2.5, 0.0},
+            };
+
+            /// Return \a a + \a b and its exact error (TwoSum)
+            static Nearest
+            two_sum(Gecode::FloatNum a, Gecode::FloatNum b) {
+                const Gecode::FloatNum s = a + b;
+                const Gecode::FloatNum b_virtual = s - a;
+                return {s, (a - (s - b_virtual)) + (b - b_virtual)};
+            }
+            /// Return the round-to-nearest result of \a c and its error
+            static Nearest
+            nearest(const Case& c) {
+                switch (c.op) {
+                case Op::ADD:
+                    return two_sum(c.x, c.y);
+                case Op::SUB:
+                    return two_sum(c.x, -c.y);
+                case Op::MUL: {
+                    const Gecode::FloatNum p = c.x * c.y;
+                    return {p, std::fma(c.x, c.y, -p)};
+                }
+                case Op::DIV: {
+                    const Gecode::FloatNum q = c.x / c.y;
+                    return {q, std::fma(-q, c.y, c.x) * (c.y < 0.0 ? -1.0 : 1.0)};
+                }
+                case Op::SQRT: {
+                    const Gecode::FloatNum s = std::sqrt(c.x);
+                    return {s, std::fma(-s, s, c.x)};
+                }
+                case Op::INTEGER:
+                    break;
+                }
+                return {c.x, 0.0};
+            }
+            /// Return the exact directed bounds of \a c (in round-to-nearest mode)
+            static Bounds
+            expected(const Case& c) {
+                if (c.op == Op::INTEGER)
+                    return {std::floor(c.x), std::ceil(c.x)};
+                const Gecode::FloatNum inf = std::numeric_limits<Gecode::FloatNum>::infinity();
+                const Nearest n = nearest(c);
+                return {n.error < 0.0 ? std::nextafter(n.value, -inf) : n.value,
+                        n.error > 0.0 ? std::nextafter(n.value, inf) : n.value};
+            }
+
+            /// Return the bounds computed in one Float::Rounding scope
+            template <Op op>
+            forceinline static Bounds
+            rounding_bounds(Gecode::FloatNum x, Gecode::FloatNum y) {
+                Gecode::Float::Rounding r;
+                if constexpr (op == Op::ADD)
+                    return {r.add_down(x, y), r.add_up(x, y)};
+                else if constexpr (op == Op::SUB)
+                    return {r.sub_down(x, y), r.sub_up(x, y)};
+                else if constexpr (op == Op::MUL)
+                    return {r.mul_down(x, y), r.mul_up(x, y)};
+                else if constexpr (op == Op::DIV)
+                    return {r.div_down(x, y), r.div_up(x, y)};
+                else if constexpr (op == Op::SQRT)
+                    return {r.sqrt_down(x), r.sqrt_up(x)};
+                else
+                    return {r.int_down(x), r.int_up(x)};
+            }
+            /// Return the bounds of the FloatVal result
+            template <Op op>
+            forceinline static Bounds
+            float_val_bounds(Gecode::FloatNum x, Gecode::FloatNum y) {
+                Gecode::FloatVal v;
+                if constexpr (op == Op::ADD)
+                    v = Gecode::FloatVal(x) + Gecode::FloatVal(y);
+                else if constexpr (op == Op::SUB)
+                    v = Gecode::FloatVal(x) - Gecode::FloatVal(y);
+                else if constexpr (op == Op::MUL)
+                    v = Gecode::FloatVal(x) * Gecode::FloatVal(y);
+                else if constexpr (op == Op::DIV)
+                    v = Gecode::FloatVal(x) / Gecode::FloatVal(y);
+                else
+                    v = sqrt(Gecode::FloatVal(x));
+                return {v.min(), v.max()};
+            }
+            /// Observe both interfaces and whether they keep the caller's mode
+            template <Op op>
+            forceinline static Observed
+            observe(Gecode::FloatNum x, Gecode::FloatNum y) {
+                const int mode = std::fegetround();
+                Observed o;
+                o.rounding = rounding_bounds<op>(x, y);
+                o.mode_kept = std::fegetround() == mode;
+                // FloatVal has no integer rounding operation.
+                if constexpr (op == Op::INTEGER)
+                    o.float_val = o.rounding;
+                else
+                    o.float_val = float_val_bounds<op>(x, y);
+                o.mode_kept &= std::fegetround() == mode;
+                return o;
+            }
+            /// Observe case \a i with operands the compiler can fold
+            template <std::size_t i>
+            [[gnu::noinline]] static Observed
+            observe_literal(void) {
+                // Anything else in this function can stop Clang from folding.
+                constexpr Case c = cases[i];
+                return observe<c.op>(c.x, c.y);
+            }
+            /// Observe case \a i with runtime operands
+            template <std::size_t i>
+            [[gnu::noinline]] static Observed
+            observe_volatile(void) {
+                const volatile Gecode::FloatNum x = cases[i].x;
+                const volatile Gecode::FloatNum y = cases[i].y;
+                return observe<cases[i].op>(x, y);
+            }
+
+            /// Log \a b in hexadecimal floating-point notation
+            static void
+            log_bounds(const char* name, const Bounds& b) {
+                olog << ' ' << name << " [" << std::hexfloat << b.down << ", " << b.up << std::defaultfloat << ']';
+            }
+            /// Test whether \a o matches \a e, and log a mismatch
+            static bool
+            matches(int i, const char* kind, int mode, const Bounds& e, const Observed& o) {
+                const bool rounding_exact = (o.rounding.down == e.down) && (o.rounding.up == e.up);
+                const bool float_val_exact = (o.float_val.down == e.down) && (o.float_val.up == e.up);
+                if (o.mode_kept && rounding_exact && float_val_exact)
+                    return true;
+                olog << "Case " << i << ' ' << kind << " in mode " << mode << ':';
+                log_bounds("Rounding", o.rounding);
+                log_bounds("FloatVal", o.float_val);
+                log_bounds("expected", e);
+                olog << (o.mode_kept ? "" : " mode changed") << '\n';
+                return false;
+            }
+            /// Test case \a i under caller mode \a mode
+            template <std::size_t i>
+            static bool
+            check_case(int mode) {
+                std::fesetround(FE_TONEAREST);
+                const Bounds e = expected(cases[i]);
+                std::fesetround(mode);
+                bool result = e.down < e.up;
+                result &= matches(i, "literal", mode, e, observe_literal<i>());
+                result &= matches(i, "volatile", mode, e, observe_volatile<i>());
+                return result;
+            }
+            /// Test all cases under caller mode \a mode
+            template <std::size_t... i>
+            static bool
+            check_cases(int mode, std::index_sequence<i...>) {
+                return (check_case<i>(mode) & ...);
+            }
+
+        public:
+            DirectedRounding(void) : Base("Float::Arithmetic::DirectedRounding", TestTags::check()) {}
+            bool
+            run(void) override {
+                const int previous = std::fegetround();
+                const int modes[] = {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO};
+                bool result = true;
+                for (int mode : modes) {
+                    if (std::fesetround(mode) != 0)
+                        continue;
+                    result &= check_cases(mode, std::make_index_sequence<std::size(cases)>());
+                }
+                if (previous != -1)
+                    std::fesetround(previous);
+                return result;
+            }
+        } directed_rounding;
 
         /// Median queries preserve the caller's floating-point rounding mode
         class MedianRoundingMode : public Base {

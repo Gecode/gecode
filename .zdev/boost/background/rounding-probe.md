@@ -36,6 +36,9 @@ failures (see Mechanisms):
    `-(x / -y)` equals `x / y` under round-to-nearest. Both bounds are then
    rounded the same way.
 
+The fix in boost-006 makes every configuration exact; see
+[Addendum: after boost-006](#addendum-after-boost-006).
+
 ## Question and scope
 
 This answers boost-001 and the brief's first open question: does the build
@@ -504,6 +507,120 @@ with AppleClang.
   the lower one) agree with this.
 - The planned case `sub 0.1 - 0.3` is exactly representable and was replaced
   by `0.1 - 0.7`.
+
+## Addendum: after boost-006
+
+boost-006 makes `Float::RoundingBase` define the ten arithmetic operations
+itself. Each operand and each result passes through `barrier()`: an empty
+`__asm__ __volatile__` with a `"+w"` (AArch64) or `"+x"` (x86-64) register
+operand on GCC and Clang, and a volatile store and reload elsewhere.
+`RoundingControl` now supplies only mode control and the median. The
+vendored Boost files are unchanged. No compiler flag or pragma is added for
+Gecode or for consumers. `int_down`/`int_up` use `std::floor`/`std::ceil`,
+and `positive_pow_down` in `float/arithmetic/pow-nroot.hpp` uses
+`Float::Rounding` instead of an unprotected `rounded_arith_std`.
+
+Measured on the boost-006 working tree on top of `cd03a43b83`, before the
+commit. Commands, from the repository root:
+
+```sh
+cp -R build/rounding-probe/results build/rounding-probe/results-before-boost-006
+cmake --build build/local --target gecode-test
+cmake --install build/local --prefix build/rounding-probe/install
+build/rounding-probe/run.sh
+build/rounding-probe/mechanisms.sh
+```
+
+The probe source and `run.sh` (Appendices A and B) are unchanged. The
+pre-fix results stay in `build/rounding-probe/results-before-boost-006`.
+
+**Matrix.** Every configuration exits 0. Rows are the 160 arithmetic rows;
+restored counts all 168 rows, and the 8 live-scope rows keep upward mode.
+
+| configuration | rows | exact | loose | unsound | mode restored | upward kept |
+|---|---|---|---|---|---|---|
+| AppleClang -O0, -O2, -O3 | 160 | 160 | 0 | 0 | 168/168 | 8/8 |
+| LLVM 22 -O0, -O2, -O3 | 160 | 160 | 0 | 0 | 168/168 | 8/8 |
+| GCC 14 -O0, -O2, -O3 | 160 | 160 | 0 | 0 | 168/168 | 8/8 |
+
+**Mechanisms after the fix** (`results/mechanisms/`):
+
+1. Constant folding. AppleClang -O2 `add_down(0.1, 0.2)` materializes the
+   operands and runs `fsub` inside the upward window:
+
+   ```asm
+   bl    _fesetround             ; 0x400000, upward
+   ...                           ; d0 = -0.1, d1 = 0.2
+   fsub  d8, d0, d1              ; -x - y, rounded upward
+   mov   x0, x19
+   bl    _fesetround             ; restore
+   fneg  d0, d8
+   ```
+
+2. Fused negate-multiply. No configuration emits `fnmul`; every
+   `mul_down_opaque` body has a separate `fneg` and `fmul`
+   (AppleClang -O2: `fneg d0, d8` then `fmul d8, d9, d0` in upward mode).
+3. Shared square root. Every optimized build emits two `fsqrt`, the first
+   between the downward and upward switches (AppleClang -O2):
+
+   ```asm
+   mov   w0, #8388608
+   bl    _fesetround             ; 0x800000, downward
+   fsqrt d9, d0                  ; lower bound
+   mov   w0, #4194304
+   bl    _fesetround             ; upward
+   fsqrt d8, d8                  ; upper bound
+   ```
+
+   GCC 14 has the same two `fsqrt`, each on its non-negative path; at -O0
+   it calls `_sqrt` once in downward and once in upward mode.
+4. Shared division. Every configuration emits two `fdiv`. GCC 14 -O2:
+
+   ```asm
+   bl    _fesetround             ; upward
+   fneg  d13, d15                ; -y
+   fdiv  d13, d31, d13           ; x / (-y)
+   fneg  d13, d13                ; lower bound
+   fdiv  d15, d14, d15           ; x / y, upper bound
+   ```
+
+**x86-64.** This machine cannot run x86-64 code. AppleClang and LLVM 22
+cross-compiled `mechanisms.cpp` with `-target x86_64-apple-macos13` at -O2
+and -O3 (`build/zdev-impl/boost-006/x86/`). `subsd`, `mulsd`, two `divsd`,
+and two `sqrtsd` all lie between the right `fesetround` calls (`0x800`
+upward, `0x400` downward); the first `sqrtsd` runs in downward mode, and
+`mul_down` negates `y` with `xorps` before `mulsd`. Nothing is folded.
+
+**Fallback barriers** (planner prototypes, `build/zdev-plan/boost-006/`).
+With the barrier forced to the volatile store and reload
+(`results-volatile`), and with a simulated MSVC path that switches the mode
+per operation through `rounded_arith_std` (`results-msvcsim`), all nine
+configurations are 160/160 exact with 168/168 restored. The simulated MSVC
+path keeps upward mode in 1 of 8 live-scope rows, as expected when each
+operation sets its own direction.
+
+**Integer rounding.** Before the fix, `int_down`/`int_up` ran `rint` in the
+scope's upward mode. In `build/local` (AppleClang -O3), literal
+`int_up(2.5)` returned 2 and literal `int_down(-2.5)` returned -2 under every
+caller mode. Runtime operands were wrong under three of the four caller
+modes; under a downward caller mode, `int_down(2.5)` returned 3 and
+`int_up(2.5)` returned 2. `std::floor` and `std::ceil` are exact in every mode.
+
+**Regression test.** `Float::Arithmetic::DirectedRounding` failed before the
+fix in `build/local` (70 failing case and mode checks: literal add, sub, mul,
+div, sqrt and integer rounding; runtime mul, sqrt and integer rounding) and in
+`build/full` (Debug, 16 checks, all mul). It passes after the fix in both.
+
+**Cost.** `build/local/bin/gecode-test -test Float::` (without
+DirectedRounding, 1560 tests), minimum of 3 runs: 1292.1 s before
+(1320.1, 1292.1, 1295.2) and 1260.5 s after (1269.8, 1260.5, 1264.6), about
+2% faster. The first run after the fix overlapped with another
+single-threaded test process. The planner's microbenchmark (AppleClang -O3, minimum of 7):
+a `Float::Rounding` loop 54.4 -> 42.9 ns per iteration, a `FloatVal` loop
+208.5 -> 200.0 ns.
+
+**Not verified locally.** x86-64 execution with GCC and Clang, and MSVC.
+CI covers both through the `check` tag.
 
 ## Appendix A: rounding-probe.cpp
 

@@ -3,7 +3,7 @@ schema_version = 1
 id = "boost-006"
 key = "directed-rounding-sound-under-optimization"
 area = "boost"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -27,10 +27,10 @@ boost-001 showed that today's directed rounding is unsound on arm64 macOS. The f
 
 ## Done when
 
-- [ ] Float::Arithmetic::DirectedRounding in test/float/arithmetic.cpp, using the error-term oracle, fails before the fix in the Release build and passes after it in the Release and Debug builds.
-- [ ] The probe from .zdev/boost/background/rounding-probe.md, rerun against a fresh install, is exact and restores the caller's mode in all nine compiler and level configurations.
-- [ ] The rounding implementation documents which compiler flags, pragmas or barriers it relies on.
-- [ ] changelog.in describes the fix.
+- [x] Float::Arithmetic::DirectedRounding in test/float/arithmetic.cpp, using the error-term oracle, fails before the fix in the Release build and passes after it in the Release and Debug builds.
+- [x] The probe from .zdev/boost/background/rounding-probe.md, rerun against a fresh install, is exact and restores the caller's mode in all nine compiler and level configurations.
+- [x] The rounding implementation documents which compiler flags, pragmas or barriers it relies on.
+- [x] changelog.in describes the fix.
 
 ## Validation
 
@@ -38,3 +38,15 @@ boost-001 showed that today's directed rounding is unsound on arm64 macOS. The f
 - bin/gecode-test -test Float:: in the Release and Debug builds
 - Rerun the probe matrix from the note's Appendix B (AppleClang, LLVM 22 and GCC 14 at -O0, -O2 and -O3)
 - uv run misc/tidy.py --check
+
+## Result
+
+Float::RoundingBase now defines the directed operations itself with an optimization barrier on every operand and result (empty volatile asm on GCC/Clang, volatile round trip elsewhere), so directed rounding is sound under optimization without compiler flags; int_down/int_up use floor/ceil and positive_pow_down uses Float::Rounding
+
+Validation:
+
+- Float::Arithmetic::DirectedRounding fails before the fix (Release 70 checks, Debug 16 mul checks) and passes after in build/local and build/full
+- Float:: passes in Release (1560/1560) and Debug (1561/1561); Release time 1292 s before, 1261 s after
+- Fresh-install probe matrix (AppleClang, LLVM 22, GCC 14 at O0/O2/O3): 160/160 exact and 168/168 modes restored in all nine; x86-64 cross-compiled assembly keeps every operation in its rounding window
+- tidy, format-check, lint over build/full, and the doc target clean
+- Independent Codex verifier: pass, no findings; x86-64 execution and MSVC remain for CI

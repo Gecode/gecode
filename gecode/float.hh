@@ -39,6 +39,7 @@
 
 #include <climits>
 #include <cfloat>
+#include <cmath>
 #include <iostream>
 
 #include <functional>
@@ -138,9 +139,48 @@ namespace Gecode { namespace Float {
     /**
      * \brief Floating point rounding operations without state saving
      *
+     * Every lower bound is rounded toward \f$-\infty\f$ and every upper bound
+     * toward \f$+\infty\f$, also when the compiler optimizes and when the
+     * operands are compile-time constants.
+     *
+     * Neither Gecode nor applications need floating-point compiler flags or
+     * pragmas for this: no `-frounding-math`, `-ffp-model=strict`,
+     * `/fp:strict`, or `#pragma STDC FENV_ACCESS`. Compilers assume
+     * round-to-nearest without them, so each operand and each result of the
+     * arithmetic operations passes through barrier(). With GCC and Clang the
+     * barrier is an empty `__asm__ __volatile__` statement with the value as a
+     * floating-point register operand (`"+w"` on AArch64, `"+x"` on x86-64).
+     * Other compilers, including MSVC, use a volatile store and reload. The
+     * barrier hides the value from the optimizer, so constants are not
+     * folded, one result is not shared between the two directions, a negation
+     * is not fused into the operation, and no operation moves across a
+     * rounding-mode change. This relies on GCC and Clang keeping volatile
+     * `asm` statements, and every compiler keeping volatile accesses, in
+     * order with the opaque calls that change the mode (`fesetround` or
+     * `_control87`). IEEE binary64 arithmetic in SSE2 or AArch64 registers is
+     * assumed; x87 arithmetic and `-ffast-math` are not supported.
+     *
+     * RoundingControl supplies only mode control (`init()`, `upward()`,
+     * `downward()`, and the mode access used by save_state) and the median
+     * behind median(). Its vendored Boost arithmetic is not used, so a
+     * replacement for the Boost copy needs only these members. Outside
+     * MSVC with SSE, the mode stays upward between operations. An upper bound
+     * is computed directly, and a lower bound as the negated upper bound of
+     * the negated operation; sqrt_down() switches to downward mode and back.
+     * With MSVC and SSE (`rounded_arith_std` over `_control87`), each
+     * operation sets its own direction. int_down() and int_up() use
+     * `std::floor` and `std::ceil`, which do not depend on the mode.
+     *
+     * The test Float::Arithmetic::DirectedRounding checks the bounds with
+     * literal and runtime operands under every caller mode.
+     *
      * \ingroup TaskModelFloatVars
      */
     class RoundingBase : public RoundingControl {
+    private:
+        /// Return \a x unchanged, hidden from the optimizer (see the class comment)
+        static FloatNum barrier(FloatNum x);
+
     public:
         /// \name Arithmetic operations
         //@{

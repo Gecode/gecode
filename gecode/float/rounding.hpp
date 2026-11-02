@@ -51,50 +51,131 @@ namespace Gecode { namespace Float {
         return RoundingControl::median(l, u);
     }
 
-#define GECODE_ROUND_OP(name)                                                                                          \
-    forceinline FloatNum RoundingBase::name##_down(FloatNum x, FloatNum y) {                                           \
-        return RoundingControl::name##_down(x, y);                                                                     \
-    }                                                                                                                  \
-    forceinline FloatNum RoundingBase::name##_up(FloatNum x, FloatNum y) {                                             \
-        return RoundingControl::name##_up(x, y);                                                                       \
-    }
-
-    GECODE_ROUND_OP(add)
-    GECODE_ROUND_OP(sub)
-    GECODE_ROUND_OP(mul)
-    GECODE_ROUND_OP(div)
-
-#undef GECODE_ROUND_OP
-
-#define GECODE_ROUND_FUN(name)                                                                                         \
-    forceinline FloatNum RoundingBase::name##_down(FloatNum x) {                                                       \
-        return RoundingControl::name##_down(x);                                                                        \
-    }                                                                                                                  \
-    forceinline FloatNum RoundingBase::name##_up(FloatNum x) {                                                         \
-        return RoundingControl::name##_up(x);                                                                          \
-    }
-
-    GECODE_ROUND_FUN(sqrt)
-
-#if defined(_M_X64) || defined(_M_IA64)
-
-    // Workaround as MSVC on x64 does not have a rint function
     forceinline FloatNum
-    RoundingBase::int_down(FloatNum x) {
-        return floor(x);
+    RoundingBase::barrier(FloatNum x) {
+        // See the RoundingBase class comment for what this relies on.
+#if (defined(__GNUC__) || defined(__clang__)) && defined(__aarch64__)
+        __asm__ __volatile__("" : "+w"(x));
+#elif (defined(__GNUC__) || defined(__clang__)) && defined(__x86_64__)
+        __asm__ __volatile__("" : "+x"(x));
+#else
+        volatile FloatNum v = x;
+        x = v;
+#endif
+        return x;
+    }
+
+#if defined(_MSC_VER) && (defined(_M_X64) || (defined(_M_IX86_FP) && (_M_IX86_FP > 0)))
+
+    // RoundingControl is rounded_arith_std: each operation sets its direction.
+    forceinline FloatNum
+    RoundingBase::add_down(FloatNum x, FloatNum y) {
+        RoundingControl::downward();
+        return barrier(barrier(x) + barrier(y));
     }
     forceinline FloatNum
-    RoundingBase::int_up(FloatNum x) {
-        return ceil(x);
+    RoundingBase::add_up(FloatNum x, FloatNum y) {
+        RoundingControl::upward();
+        return barrier(barrier(x) + barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::sub_down(FloatNum x, FloatNum y) {
+        RoundingControl::downward();
+        return barrier(barrier(x) - barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::sub_up(FloatNum x, FloatNum y) {
+        RoundingControl::upward();
+        return barrier(barrier(x) - barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::mul_down(FloatNum x, FloatNum y) {
+        RoundingControl::downward();
+        return barrier(barrier(x) * barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::mul_up(FloatNum x, FloatNum y) {
+        RoundingControl::upward();
+        return barrier(barrier(x) * barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::div_down(FloatNum x, FloatNum y) {
+        RoundingControl::downward();
+        return barrier(barrier(x) / barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::div_up(FloatNum x, FloatNum y) {
+        RoundingControl::upward();
+        return barrier(barrier(x) / barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::sqrt_down(FloatNum x) {
+        RoundingControl::downward();
+        return barrier(std::sqrt(barrier(x)));
+    }
+    forceinline FloatNum
+    RoundingBase::sqrt_up(FloatNum x) {
+        RoundingControl::upward();
+        return barrier(std::sqrt(barrier(x)));
     }
 
 #else
 
-    GECODE_ROUND_FUN(int)
+    // RoundingControl is rounded_arith_opp: the mode stays upward.
+    forceinline FloatNum
+    RoundingBase::add_down(FloatNum x, FloatNum y) {
+        return -barrier(barrier(-x) - barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::add_up(FloatNum x, FloatNum y) {
+        return barrier(barrier(x) + barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::sub_down(FloatNum x, FloatNum y) {
+        return -barrier(barrier(y) - barrier(x));
+    }
+    forceinline FloatNum
+    RoundingBase::sub_up(FloatNum x, FloatNum y) {
+        return barrier(barrier(x) - barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::mul_down(FloatNum x, FloatNum y) {
+        return -barrier(barrier(x) * barrier(-y));
+    }
+    forceinline FloatNum
+    RoundingBase::mul_up(FloatNum x, FloatNum y) {
+        return barrier(barrier(x) * barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::div_down(FloatNum x, FloatNum y) {
+        return -barrier(barrier(x) / barrier(-y));
+    }
+    forceinline FloatNum
+    RoundingBase::div_up(FloatNum x, FloatNum y) {
+        return barrier(barrier(x) / barrier(y));
+    }
+    forceinline FloatNum
+    RoundingBase::sqrt_down(FloatNum x) {
+        RoundingControl::downward();
+        const FloatNum r = barrier(std::sqrt(barrier(x)));
+        RoundingControl::upward();
+        return r;
+    }
+    forceinline FloatNum
+    RoundingBase::sqrt_up(FloatNum x) {
+        return barrier(std::sqrt(barrier(x)));
+    }
 
 #endif
 
-#undef GECODE_ROUND_FUN
+    forceinline FloatNum
+    RoundingBase::int_down(FloatNum x) {
+        return std::floor(x);
+    }
+    forceinline FloatNum
+    RoundingBase::int_up(FloatNum x) {
+        return std::ceil(x);
+    }
 
 }} // namespace Gecode::Float
 

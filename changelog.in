@@ -150,6 +150,24 @@ Element over set variables, rel with union or disjoint union and a constant
 set, and weights also post nothing for empty arrays.
 
 [ENTRY]
+Module: float
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Keep directed rounding sound under compiler optimization. Float::Rounding
+and FloatVal arithmetic could return a bound on the wrong side of the exact
+result: optimizers folded constants in round-to-nearest, shared one square
+root or quotient between both bounds, and fused the negated multiplication,
+even in Clang Debug builds. Each operand and result now passes through an
+optimization barrier, so neither Gecode nor applications need floating-point
+compiler flags.
+[MORE]
+The barrier is an empty volatile asm statement with GCC and Clang, and a
+volatile store and reload with other compilers. Integer rounding uses floor
+and ceil, which do not depend on the rounding mode. The even-root bounds of
+pow and nroot use the same rounding operations.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor
