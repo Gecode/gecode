@@ -146,6 +146,12 @@ failing loudly.
   overflow, and non-finite values), measured against the switched-mode reference
   3f4b5272f9 (boost-006) on soundness, tightness, the float suite, the float
   examples, and runtime.
+- [Approach study](background/approach-study.md): the refreshed copy (Boost
+  1.92.0), the improved 2012 copy (Boost 1.47.0), and a Gecode support
+  library compared on upstream changes, closures, scripted byte-exact
+  reproduction, builds, probes, the float suite and examples, support-library
+  size, and cost and risk. It recommends the support library with
+  switched-mode rounding for the user's decision in boost-004.
 
 ## Validation
 
