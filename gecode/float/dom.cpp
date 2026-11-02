@@ -35,7 +35,7 @@
 namespace Gecode {
 
     void
-    dom(Home home, FloatVar x, FloatVal n) {
+    dom(Home home, FloatVar x, const FloatVal& n) {
         using namespace Float;
         Limits::check(n, "Float::dom");
         GECODE_POST;
@@ -44,7 +44,7 @@ namespace Gecode {
     }
 
     void
-    dom(Home home, const FloatVarArgs& x, FloatVal n) {
+    dom(Home home, const FloatVarArgs& x, const FloatVal& n) {
         using namespace Float;
         Limits::check(n, "Float::dom");
         GECODE_POST;
@@ -79,7 +79,7 @@ namespace Gecode {
     }
 
     void
-    dom(Home home, FloatVar x, FloatVal n, Reify r) {
+    dom(Home home, FloatVar x, const FloatVal& n, Reify r) {
         using namespace Float;
         Limits::check(n, "Float::dom");
         GECODE_POST;

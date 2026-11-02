@@ -223,12 +223,12 @@ namespace Gecode { namespace Float { namespace Rel {
 
     template <class View, class CtrlView, ReifyMode rm>
     forceinline
-    ReLqFloat<View, CtrlView, rm>::ReLqFloat(Home home, View x, FloatVal c0, CtrlView b)
+    ReLqFloat<View, CtrlView, rm>::ReLqFloat(Home home, View x, const FloatVal& c0, CtrlView b)
         : Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView>(home, x, b), c(c0) {}
 
     template <class View, class CtrlView, ReifyMode rm>
     ExecStatus
-    ReLqFloat<View, CtrlView, rm>::post(Home home, View x, FloatVal c, CtrlView b) {
+    ReLqFloat<View, CtrlView, rm>::post(Home home, View x, const FloatVal& c, CtrlView b) {
         if (b.one()) {
             if (rm != RM_PMI)
                 GECODE_ME_CHECK(x.lq(home, c.max()));
@@ -310,12 +310,12 @@ namespace Gecode { namespace Float { namespace Rel {
 
     template <class View, class CtrlView, ReifyMode rm>
     forceinline
-    ReLeFloat<View, CtrlView, rm>::ReLeFloat(Home home, View x, FloatVal c0, CtrlView b)
+    ReLeFloat<View, CtrlView, rm>::ReLeFloat(Home home, View x, const FloatVal& c0, CtrlView b)
         : Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView>(home, x, b), c(c0) {}
 
     template <class View, class CtrlView, ReifyMode rm>
     ExecStatus
-    ReLeFloat<View, CtrlView, rm>::post(Home home, View x, FloatVal c, CtrlView b) {
+    ReLeFloat<View, CtrlView, rm>::post(Home home, View x, const FloatVal& c, CtrlView b) {
         if (b.one()) {
             if (rm != RM_PMI) {
                 GECODE_ME_CHECK(x.lq(home, c.max()));

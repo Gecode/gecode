@@ -104,7 +104,7 @@ namespace Gecode { namespace Float {
         return x.gq(home, -n);
     }
     forceinline ModEvent
-    MinusView::lq(Space& home, FloatVal n) {
+    MinusView::lq(Space& home, const FloatVal& n) {
         return x.gq(home, -n);
     }
 
@@ -117,7 +117,7 @@ namespace Gecode { namespace Float {
         return x.lq(home, -n);
     }
     forceinline ModEvent
-    MinusView::gq(Space& home, FloatVal n) {
+    MinusView::gq(Space& home, const FloatVal& n) {
         return x.lq(home, -n);
     }
 
