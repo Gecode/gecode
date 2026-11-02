@@ -40,7 +40,7 @@ namespace Gecode { namespace Float { namespace Linear {
      */
     template <class P, class N, PropCond pc>
     forceinline
-    Lin<P, N, pc>::Lin(Home home, ViewArray<P>& x0, ViewArray<N>& y0, FloatVal c0)
+    Lin<P, N, pc>::Lin(Home home, ViewArray<P>& x0, ViewArray<N>& y0, const FloatVal& c0)
         : Propagator(home), x(x0), y(y0), c(c0) {
         x.subscribe(home, *this, pc);
         y.subscribe(home, *this, pc);
@@ -119,12 +119,12 @@ namespace Gecode { namespace Float { namespace Linear {
 
     template <class P, class N>
     forceinline
-    Eq<P, N>::Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c)
+    Eq<P, N>::Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, const FloatVal& c)
         : Lin<P, N, PC_FLOAT_BND>(home, x, y, c) {}
 
     template <class P, class N>
     ExecStatus
-    Eq<P, N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c) {
+    Eq<P, N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, const FloatVal& c) {
         (void)new (home) Eq<P, N>(home, x, y, c);
         return ES_OK;
     }
@@ -251,12 +251,12 @@ namespace Gecode { namespace Float { namespace Linear {
 
     template <class P, class N>
     forceinline
-    Lq<P, N>::Lq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c)
+    Lq<P, N>::Lq(Home home, ViewArray<P>& x, ViewArray<N>& y, const FloatVal& c)
         : Lin<P, N, PC_FLOAT_BND>(home, x, y, c) {}
 
     template <class P, class N>
     ExecStatus
-    Lq<P, N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c) {
+    Lq<P, N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, const FloatVal& c) {
         (void)new (home) Lq<P, N>(home, x, y, c);
         return ES_OK;
     }

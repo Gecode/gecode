@@ -83,12 +83,12 @@ namespace Gecode { namespace Float { namespace Rel {
      */
     template <class View>
     forceinline
-    NqFloat<View>::NqFloat(Home home, View x, FloatVal _c)
+    NqFloat<View>::NqFloat(Home home, View x, const FloatVal& _c)
         : UnaryPropagator<View, PC_FLOAT_VAL>(home, x), c(_c) {}
 
     template <class View>
     ExecStatus
-    NqFloat<View>::post(Home home, View x, FloatVal c) {
+    NqFloat<View>::post(Home home, View x, const FloatVal& c) {
         if (x.assigned()) {
             if (overlap(x.val(), c))
                 return ES_FAILED;

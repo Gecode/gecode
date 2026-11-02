@@ -173,7 +173,7 @@ namespace Test { namespace FlatZinc {
         class FloatObjectiveComparison : public Base {
         private:
             static std::unique_ptr<Gecode::FlatZinc::FlatZincSpace>
-            model(Gecode::FloatVal v, bool minimize, Gecode::FloatNum step = 0.0) {
+            model(const Gecode::FloatVal& v, bool minimize, Gecode::FloatNum step = 0.0) {
                 std::stringstream source;
                 source << std::showpoint << std::setprecision(std::numeric_limits<double>::max_digits10)
                        << "var float: x = " << v.min() << "; solve " << (minimize ? "minimize" : "maximize") << " x;\n";
@@ -187,7 +187,7 @@ namespace Test { namespace FlatZinc {
             }
 
             static bool
-            admitted(Gecode::FloatVal candidate, const Gecode::FlatZinc::FlatZincSpace& incumbent, bool minimize,
+            admitted(const Gecode::FloatVal& candidate, const Gecode::FlatZinc::FlatZincSpace& incumbent, bool minimize,
                      Gecode::FloatNum step) {
                 std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> c = model(candidate, minimize, step);
                 c->constrain(incumbent);

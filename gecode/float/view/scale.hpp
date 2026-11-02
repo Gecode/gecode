@@ -41,7 +41,7 @@ namespace Gecode { namespace Float {
     forceinline
     ScaleView::ScaleView(void) {}
     forceinline
-    ScaleView::ScaleView(FloatVal d, const FloatView& y)
+    ScaleView::ScaleView(const FloatVal& d, const FloatView& y)
         : DerivedView<FloatView>(y), a(d) {}
 
     /*
@@ -122,7 +122,7 @@ namespace Gecode { namespace Float {
         return x.lq(home, c.max());
     }
     forceinline ModEvent
-    ScaleView::lq(Space& home, FloatVal n) {
+    ScaleView::lq(Space& home, const FloatVal& n) {
         FloatVal c = n;
         c /= a;
         return x.lq(home, c.max());
@@ -141,7 +141,7 @@ namespace Gecode { namespace Float {
         return x.gq(home, c.min());
     }
     forceinline ModEvent
-    ScaleView::gq(Space& home, FloatVal n) {
+    ScaleView::gq(Space& home, const FloatVal& n) {
         FloatVal c = n;
         c /= a;
         return x.gq(home, c.min());

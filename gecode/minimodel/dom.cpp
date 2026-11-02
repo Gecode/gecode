@@ -34,7 +34,6 @@
 
 #include <cstddef>
 #include <tuple>
-#include <utility>
 
 /// reproduce C++-14 std::index_sequence
 namespace { namespace cxx14 {
@@ -68,7 +67,7 @@ namespace Gecode {
         class DomArgs {
         public:
             /// Constructor
-            DomArgs(Args...);
+            DomArgs(const Args&...);
 
         protected:
             /// Post reified domain constraint using the stored arguments
@@ -85,7 +84,7 @@ namespace Gecode {
         class DomArgs<IntVar, Args...> {
         public:
             /// Constructor
-            DomArgs(IntVar, Args...);
+            DomArgs(IntVar, const Args&...);
 
         protected:
             /// Post reified domain constraint using stored arguments
@@ -102,7 +101,7 @@ namespace Gecode {
          *
          */
         template <typename... Args>
-        DomArgs<Args...>::DomArgs(Args... args) : _args(std::forward<Args>(args)...) {}
+        DomArgs<Args...>::DomArgs(const Args&... args) : _args(args...) {}
 
         template <typename... Args>
         template <std::size_t... I>
@@ -112,7 +111,7 @@ namespace Gecode {
         }
 
         template <typename... Args>
-        DomArgs<IntVar, Args...>::DomArgs(IntVar x, Args... args) : _args(x, std::forward<Args>(args)...) {}
+        DomArgs<IntVar, Args...>::DomArgs(IntVar x, const Args&... args) : _args(x, args...) {}
 
         template <typename... Args>
         template <std::size_t... I>

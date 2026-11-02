@@ -218,7 +218,7 @@ namespace Test {
             /// Compute a fixpoint and check for failure
             bool failed(void);
             /// Perform integer tell operation on \a x[i]
-            void rel(int i, Gecode::FloatRelType frt, Gecode::FloatVal n);
+            void rel(int i, Gecode::FloatRelType frt, const Gecode::FloatVal& n);
             /// Perform Boolean tell on \a b
             void rel(bool sol);
             /// Assign all (or all but one, if \a skip is true) variables to values in \a a
@@ -328,16 +328,16 @@ namespace Test {
             /// Map floatNum to string
             static std::string str(Gecode::FloatNum f);
             /// Map floatVal to string
-            static std::string str(Gecode::FloatVal f);
+            static std::string str(const Gecode::FloatVal& f);
             /// Map float array to string
             static std::string str(const Gecode::FloatValArgs& f);
             //@}
             /// \name General support
             //@{
             /// Compare \a x and \a y with respect to \a r
-            static MaybeType cmp(Gecode::FloatVal x, Gecode::FloatRelType r, Gecode::FloatVal y);
+            static MaybeType cmp(const Gecode::FloatVal& x, Gecode::FloatRelType r, const Gecode::FloatVal& y);
             /// Whether \a x and \a y are equal
-            static MaybeType eq(Gecode::FloatVal x, Gecode::FloatVal y);
+            static MaybeType eq(const Gecode::FloatVal& x, const Gecode::FloatVal& y);
             /// Flip a coin and return true or false randomly
             bool flip(void);
             //@}
