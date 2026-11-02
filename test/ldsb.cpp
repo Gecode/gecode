@@ -213,7 +213,7 @@ namespace Test { namespace LDSB {
         /// Adaptation distance
         unsigned int a_d;
         /// Initialize test
-        LDSB(std::string label, unsigned int c = 0, unsigned int a = 0)
+        LDSB(const std::string& label, unsigned int c = 0, unsigned int a = 0)
             : Test::Base("LDSB::" + label), c_d(c), a_d(a) {}
         /// Perform actual tests
         bool
@@ -242,7 +242,7 @@ namespace Test { namespace LDSB {
         /// Adaptation distance
         unsigned int a_d;
         /// Initialize test
-        LDSBSet(std::string label, unsigned int c = 0, unsigned int a = 0)
+        LDSBSet(const std::string& label, unsigned int c = 0, unsigned int a = 0)
             : Test::Base("LDSB::" + label), c_d(c), a_d(a) {}
         /// Perform actual tests
         bool
@@ -1249,7 +1249,7 @@ namespace Test { namespace LDSB {
             }
         };
         /// Initialize test
-        LDSBLatin(std::string label) : Test::Base("LDSB::" + label) {}
+        LDSBLatin(const std::string& label) : Test::Base("LDSB::" + label) {}
         /// Perform actual tests
         bool
         run(void) override {
@@ -1719,7 +1719,7 @@ namespace Test { namespace LDSB {
         VarArray x;
         /// Constructor for creation of \a n variables with domain \a d
         template <class... Domain>
-        EmptyFixture(int n, Domain... d) : x(*this, n, d...) {}
+        EmptyFixture(int n, const Domain&... d) : x(*this, n, d...) {}
         /// Constructor for cloning \a s
         EmptyFixture(EmptyFixture& s) : Space(s) {
             x.update(*this, s.x);
@@ -1781,7 +1781,7 @@ namespace Test { namespace LDSB {
         using Fixture = EmptyFixture<IntVarArray>;
         /// Branch on the variables of \a s with symmetries \a spec, tie-breaking if \a tie
         static void
-        post_branching(Fixture& s, SymmetrySpec spec, bool tie, IntValBranch vals) {
+        post_branching(Fixture& s, SymmetrySpec spec, bool tie, const IntValBranch& vals) {
             IntVarArgs x(s.x);
             Symmetries syms = symmetries(spec, x);
             if (spec != SymmetrySpec::NONE)
