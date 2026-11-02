@@ -63,27 +63,24 @@ namespace Gecode {
     template <class VarBranch>
     forceinline
     TieBreak<VarBranch>::TieBreak(VarBranch a0, VarBranch b0, VarBranch c0, VarBranch d0)
-        : a(a0), b(b0), c(c0), d(d0) {}
+        : a(std::move(a0)), b(std::move(b0)), c(std::move(c0)), d(std::move(d0)) {}
 
     template <class VarBranch>
     TieBreak<VarBranch>
     tie_break(VarBranch a, VarBranch b) {
-        TieBreak<VarBranch> ab(a, b);
-        return ab;
+        return TieBreak<VarBranch>(std::move(a), std::move(b));
     }
 
     template <class VarBranch>
     TieBreak<VarBranch>
     tie_break(VarBranch a, VarBranch b, VarBranch c) {
-        TieBreak<VarBranch> abc(a, b, c);
-        return abc;
+        return TieBreak<VarBranch>(std::move(a), std::move(b), std::move(c));
     }
 
     template <class VarBranch>
     TieBreak<VarBranch>
     tie_break(VarBranch a, VarBranch b, VarBranch c, VarBranch d) {
-        TieBreak<VarBranch> abcd(a, b, c, d);
-        return abcd;
+        return TieBreak<VarBranch>(std::move(a), std::move(b), std::move(c), std::move(d));
     }
 
 } // namespace Gecode
