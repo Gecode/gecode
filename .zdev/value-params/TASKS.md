@@ -4,14 +4,14 @@
 
 - Total: 8
 - Ready: 1
-- Blocked: 1
-- Done: 6
+- Blocked: 0
+- Done: 7
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [value-params-001](tasks/001-measure-performance-unnecessary-value-param-findings.md) | Measure performance-unnecessary-value-param findings | done | — |
-| [value-params-002](tasks/002-fix-value-parameter-copies-by-repair-group.md) | Fix value-parameter copies by repair group | ready | value-params-001, value-params-004, value-params-005, value-params-006, value-params-007, value-params-008 |
-| [value-params-003](tasks/003-enable-the-check-and-document-the-rule.md) | Enable the check and document the rule | blocked | value-params-002 |
+| [value-params-002](tasks/002-fix-value-parameter-copies-by-repair-group.md) | Fix value-parameter copies by repair group | done | value-params-001, value-params-004, value-params-005, value-params-006, value-params-007, value-params-008 |
+| [value-params-003](tasks/003-enable-the-check-and-document-the-rule.md) | Enable the check and document the rule | ready | value-params-002 |
 | [value-params-004](tasks/004-pass-branch-configuration-handles-by-const-and-move-stored-c.md) | Pass branch configuration handles by const& and move stored callbacks | done | — |
 | [value-params-005](tasks/005-move-brancher-filter-and-print-callbacks-into-shareddata-sto.md) | Move brancher filter and print callbacks into SharedData storage | done | value-params-004 |
 | [value-params-006](tasks/006-fix-cbs-hooks-shared-posting-data-execution-callbacks-open-l.md) | Fix CBS hooks, shared posting data, execution callbacks, open lists, and tracing | done | value-params-005 |

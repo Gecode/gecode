@@ -70,6 +70,11 @@ moves, and the integrity suite and lint cover both.
   `AllowedTypes` value, counts per module, one row per reported parameter
   with its treatment, the traced DFA and `SharedData` cases, and the repair
   groups with their order.
+- [Value-parameter results](background/value-param-results.md): the final
+  record after the repair groups. It lists every parameter changed to
+  `const&` that the callee keeps and how it copies it, every by-value
+  parameter with its move, and the inventory rerun showing no allowed
+  diagnostics.
 
 ## Validation
 
