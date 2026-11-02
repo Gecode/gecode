@@ -37,12 +37,12 @@ namespace Gecode {
         : s(s0) {}
 
     forceinline
-    IntAssign::IntAssign(Rnd r)
+    IntAssign::IntAssign(const Rnd& r)
         : ValBranch<IntVar>(r), s(SEL_RND) {}
 
     forceinline
     IntAssign::IntAssign(IntBranchVal v, IntBranchCommit c)
-        : ValBranch<IntVar>(v, c), s(SEL_VAL_COMMIT) {}
+        : ValBranch<IntVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline IntAssign::Select
     IntAssign::select(void) const {
@@ -65,13 +65,13 @@ namespace Gecode {
     }
 
     inline IntAssign
-    INT_ASSIGN_RND(Rnd r) {
+    INT_ASSIGN_RND(const Rnd& r) {
         return IntAssign(r);
     }
 
     inline IntAssign
     INT_ASSIGN(IntBranchVal v, IntBranchCommit c) {
-        return IntAssign(v, c);
+        return IntAssign(std::move(v), std::move(c));
     }
 
     forceinline
@@ -79,12 +79,12 @@ namespace Gecode {
         : s(s0) {}
 
     forceinline
-    BoolAssign::BoolAssign(Rnd r)
+    BoolAssign::BoolAssign(const Rnd& r)
         : ValBranch<BoolVar>(r), s(SEL_RND) {}
 
     forceinline
     BoolAssign::BoolAssign(BoolBranchVal v, BoolBranchCommit c)
-        : ValBranch<BoolVar>(v, c), s(SEL_VAL_COMMIT) {}
+        : ValBranch<BoolVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline BoolAssign::Select
     BoolAssign::select(void) const {
@@ -102,13 +102,13 @@ namespace Gecode {
     }
 
     inline BoolAssign
-    BOOL_ASSIGN_RND(Rnd r) {
+    BOOL_ASSIGN_RND(const Rnd& r) {
         return BoolAssign(r);
     }
 
     inline BoolAssign
     BOOL_ASSIGN(BoolBranchVal v, BoolBranchCommit c) {
-        return BoolAssign(v, c);
+        return BoolAssign(std::move(v), std::move(c));
     }
 
 } // namespace Gecode

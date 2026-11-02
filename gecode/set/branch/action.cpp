@@ -34,13 +34,13 @@
 
 namespace Gecode {
 
-    SetAction::SetAction(Home home, const SetVarArgs& x, double d, bool p, bool f, SetBranchMerit bm) {
+    SetAction::SetAction(Home home, const SetVarArgs& x, double d, bool p, bool f, const SetBranchMerit& bm) {
         ViewArray<Set::SetView> y(home, x);
         Action::init(home, y, d, p, f, bm);
     }
 
     void
-    SetAction::init(Home home, const SetVarArgs& x, double d, bool p, bool f, SetBranchMerit bm) {
+    SetAction::init(Home home, const SetVarArgs& x, double d, bool p, bool f, const SetBranchMerit& bm) {
         ViewArray<Set::SetView> y(home, x);
         Action::init(home, y, d, p, f, bm);
     }

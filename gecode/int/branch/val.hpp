@@ -37,12 +37,12 @@ namespace Gecode {
         : s(s0) {}
 
     forceinline
-    IntValBranch::IntValBranch(Rnd r)
+    IntValBranch::IntValBranch(const Rnd& r)
         : ValBranch<IntVar>(r), s(SEL_RND) {}
 
     forceinline
     IntValBranch::IntValBranch(IntBranchVal v, IntBranchCommit c)
-        : ValBranch<IntVar>(v, c), s(SEL_VAL_COMMIT) {}
+        : ValBranch<IntVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline IntValBranch::Select
     IntValBranch::select(void) const {
@@ -65,7 +65,7 @@ namespace Gecode {
     }
 
     inline IntValBranch
-    INT_VAL_RND(Rnd r) {
+    INT_VAL_RND(const Rnd& r) {
         return IntValBranch(r);
     }
 
@@ -91,7 +91,7 @@ namespace Gecode {
 
     inline IntValBranch
     INT_VAL(IntBranchVal v, IntBranchCommit c) {
-        return IntValBranch(v, c);
+        return IntValBranch(std::move(v), std::move(c));
     }
 
     inline IntValBranch
@@ -109,12 +109,12 @@ namespace Gecode {
         : s(s0) {}
 
     forceinline
-    BoolValBranch::BoolValBranch(Rnd r)
+    BoolValBranch::BoolValBranch(const Rnd& r)
         : ValBranch<BoolVar>(r), s(SEL_RND) {}
 
     forceinline
     BoolValBranch::BoolValBranch(BoolBranchVal v, BoolBranchCommit c)
-        : ValBranch<BoolVar>(v, c), s(SEL_VAL_COMMIT) {}
+        : ValBranch<BoolVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline BoolValBranch::Select
     BoolValBranch::select(void) const {
@@ -132,13 +132,13 @@ namespace Gecode {
     }
 
     inline BoolValBranch
-    BOOL_VAL_RND(Rnd r) {
+    BOOL_VAL_RND(const Rnd& r) {
         return BoolValBranch(r);
     }
 
     inline BoolValBranch
     BOOL_VAL(BoolBranchVal v, BoolBranchCommit c) {
-        return BoolValBranch(v, c);
+        return BoolValBranch(std::move(v), std::move(c));
     }
 
 } // namespace Gecode

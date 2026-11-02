@@ -34,13 +34,13 @@
 
 namespace Gecode {
 
-    SetCHB::SetCHB(Home home, const SetVarArgs& x, SetBranchMerit bm) {
+    SetCHB::SetCHB(Home home, const SetVarArgs& x, const SetBranchMerit& bm) {
         ViewArray<Set::SetView> y(home, x);
         CHB::init(home, y, bm);
     }
 
     void
-    SetCHB::init(Home home, const SetVarArgs& x, SetBranchMerit bm) {
+    SetCHB::init(Home home, const SetVarArgs& x, const SetBranchMerit& bm) {
         ViewArray<Set::SetView> y(home, x);
         CHB::init(home, y, bm);
     }
