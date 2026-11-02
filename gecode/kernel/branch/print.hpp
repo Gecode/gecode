@@ -73,8 +73,10 @@ namespace Gecode {
         typedef typename View::VarType Var;
 
     public:
-        /// Initialize
-        BrancherNoPrint(VarValPrint<Var, Val> vvp);
+        /// Initialize from the empty print function \a vvp
+        BrancherNoPrint(const VarValPrint<Var, Val>& vvp);
+        /// Initialize from the empty print function \a vvp, moved in as for BrancherPrint
+        BrancherNoPrint(VarValPrint<Var, Val>&& vvp);
         /// Initialize during cloning
         BrancherNoPrint(BrancherNoPrint& bp);
         /// Whether printing is enabled
@@ -91,8 +93,8 @@ namespace Gecode {
     template <class View, class Val>
     forceinline
     BrancherPrint<View, Val>::BrancherPrint(VarValPrint<Var, Val> vvp)
-        : p(vvp) {
-        if (!vvp)
+        : p(std::move(vvp)) {
+        if (!p())
             throw Gecode::InvalidFunction("BrancherPrint::BrancherPrint");
     }
 
@@ -130,7 +132,14 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline
-    BrancherNoPrint<View, Val>::BrancherNoPrint(VarValPrint<Var, Val> vvp) {
+    BrancherNoPrint<View, Val>::BrancherNoPrint(const VarValPrint<Var, Val>& vvp) {
+        assert(!vvp);
+        (void)vvp;
+    }
+
+    template <class View, class Val>
+    forceinline
+    BrancherNoPrint<View, Val>::BrancherNoPrint(VarValPrint<Var, Val>&& vvp) {
         assert(!vvp);
         (void)vvp;
     }
