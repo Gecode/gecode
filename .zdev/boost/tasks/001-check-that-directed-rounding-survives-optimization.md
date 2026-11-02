@@ -3,7 +3,7 @@ schema_version = 1
 id = "boost-001"
 key = "rounding-probe"
 area = "boost"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -26,10 +26,22 @@ The brief's Current state section explains the rounding control: C99 fesetround 
 
 ## Done when
 
-- [ ] .zdev/boost/background/rounding-probe.md records the probe source (or its path), the exact compilers and flags, and the expected and observed bounds for each operation, direction, operand kind, and configuration, and whether the rounding mode was restored. The brief indexes it.
-- [ ] If every configuration is sound and the probe can run inside bin/gecode-test as a Test::Base test without depending on an optimization level, the test is added under test/float/ and passes. Otherwise the result says why it was not added.
+- [x] .zdev/boost/background/rounding-probe.md records the probe source (or its path), the exact compilers and flags, and the expected and observed bounds for each operation, direction, operand kind, and configuration, and whether the rounding mode was restored. The brief indexes it.
+- [x] If every configuration is sound and the probe can run inside bin/gecode-test as a Test::Base test without depending on an optimization level, the test is added under test/float/ and passes. Otherwise the result says why it was not added.
 
 ## Validation
 
 - Run the probe with each compiler at -O0, -O2, and -O3.
 - When a test is added: `bin/gecode-test -test <its name>` in the Release and Debug builds.
+
+## Result
+
+Directed rounding is unsound under optimization on arm64 macOS: unsound rows (of 160 per build) are 32/88/88 for AppleClang and LLVM 22 at -O0/-O2/-O3 and 0/120/128 for GCC 14. Causes are constant folding, fnmul in mul_down (Clang at every level), one shared downward fsqrt for both sqrt bounds, and one shared fdiv for both div bounds (GCC). The rounding mode was restored in every row. No Test::Base test was added because it would fail in both the Release and the AppleClang Debug build. Results are in .zdev/boost/background/rounding-probe.md.
+
+Validation:
+
+- cmake --build build/local and cmake --install build/local --prefix build/rounding-probe/install at HEAD d552491470
+- build/rounding-probe/run.sh: 9 builds (AppleClang, LLVM 22, GCC 14 x -O0/-O2/-O3) compiled and ran; exit 0 for GCC 14 -O0, exit 1 for the other eight, no oracle or operand error (exit 2)
+- MPFR 53-bit RNDD/RNDU bounds agreed with the error-term bounds for all ten cases in every build
+- build/rounding-probe/mechanisms.sh: assembly excerpts for folding, fnmul, shared fsqrt and shared fdiv
+- build/rounding-probe/extra-flags.sh: supplementary -frounding-math and -ffp-model=strict runs
