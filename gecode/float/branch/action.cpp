@@ -34,13 +34,13 @@
 
 namespace Gecode {
 
-    FloatAction::FloatAction(Home home, const FloatVarArgs& x, double d, bool p, bool f, FloatBranchMerit bm) {
+    FloatAction::FloatAction(Home home, const FloatVarArgs& x, double d, bool p, bool f, const FloatBranchMerit& bm) {
         ViewArray<Float::FloatView> y(home, x);
         Action::init(home, y, d, p, f, bm);
     }
 
     void
-    FloatAction::init(Home home, const FloatVarArgs& x, double d, bool p, bool f, FloatBranchMerit bm) {
+    FloatAction::init(Home home, const FloatVarArgs& x, double d, bool p, bool f, const FloatBranchMerit& bm) {
         ViewArray<Float::FloatView> y(home, x);
         Action::init(home, y, d, p, f, bm);
     }

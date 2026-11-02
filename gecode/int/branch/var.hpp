@@ -43,7 +43,7 @@ namespace Gecode {
         : VarBranch<IntVar>(std::move(t)), s(s0) {}
 
     forceinline
-    IntVarBranch::IntVarBranch(Rnd r)
+    IntVarBranch::IntVarBranch(const Rnd& r)
         : VarBranch<IntVar>(r), s(SEL_RND) {}
 
     forceinline
@@ -51,15 +51,15 @@ namespace Gecode {
         : VarBranch<IntVar>(d, std::move(t)), s(s0) {}
 
     forceinline
-    IntVarBranch::IntVarBranch(Select s0, IntAFC a, BranchTbl t)
+    IntVarBranch::IntVarBranch(Select s0, const IntAFC& a, BranchTbl t)
         : VarBranch<IntVar>(a, std::move(t)), s(s0) {}
 
     forceinline
-    IntVarBranch::IntVarBranch(Select s0, IntAction a, BranchTbl t)
+    IntVarBranch::IntVarBranch(Select s0, const IntAction& a, BranchTbl t)
         : VarBranch<IntVar>(a, std::move(t)), s(s0) {}
 
     forceinline
-    IntVarBranch::IntVarBranch(Select s0, IntCHB c, BranchTbl t)
+    IntVarBranch::IntVarBranch(Select s0, const IntCHB& c, BranchTbl t)
         : VarBranch<IntVar>(c, std::move(t)), s(s0) {}
 
     forceinline
@@ -105,208 +105,208 @@ namespace Gecode {
     }
 
     inline IntVarBranch
-    INT_VAR_RND(Rnd r) {
+    INT_VAR_RND(const Rnd& r) {
         return IntVarBranch(r);
     }
 
     inline IntVarBranch
     INT_VAR_MERIT_MIN(IntBranchMerit bm, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_MERIT_MIN, bm, tbl);
+        return IntVarBranch(IntVarBranch::SEL_MERIT_MIN, std::move(bm), std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_MERIT_MAX(IntBranchMerit bm, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_MERIT_MAX, bm, tbl);
+        return IntVarBranch(IntVarBranch::SEL_MERIT_MAX, std::move(bm), std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_DEGREE_MIN(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_DEGREE_MIN, tbl);
+        return IntVarBranch(IntVarBranch::SEL_DEGREE_MIN, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_DEGREE_MAX(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_DEGREE_MAX, tbl);
+        return IntVarBranch(IntVarBranch::SEL_DEGREE_MAX, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_AFC_MIN(double d, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_AFC_MIN, d, tbl);
+        return IntVarBranch(IntVarBranch::SEL_AFC_MIN, d, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_AFC_MIN(IntAFC a, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_AFC_MIN, a, tbl);
+    INT_VAR_AFC_MIN(const IntAFC& a, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_AFC_MIN, a, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_AFC_MAX(double d, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_AFC_MAX, d, tbl);
+        return IntVarBranch(IntVarBranch::SEL_AFC_MAX, d, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_AFC_MAX(IntAFC a, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_AFC_MAX, a, tbl);
+    INT_VAR_AFC_MAX(const IntAFC& a, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_AFC_MAX, a, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_ACTION_MIN(double d, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_ACTION_MIN, d, tbl);
+        return IntVarBranch(IntVarBranch::SEL_ACTION_MIN, d, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_ACTION_MIN(IntAction a, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_ACTION_MIN, a, tbl);
+    INT_VAR_ACTION_MIN(const IntAction& a, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_ACTION_MIN, a, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_ACTION_MAX(double d, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_ACTION_MAX, d, tbl);
+        return IntVarBranch(IntVarBranch::SEL_ACTION_MAX, d, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_ACTION_MAX(IntAction a, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_ACTION_MAX, a, tbl);
+    INT_VAR_ACTION_MAX(const IntAction& a, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_ACTION_MAX, a, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_CHB_MIN(IntCHB c, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_CHB_MIN, c, tbl);
+    INT_VAR_CHB_MIN(const IntCHB& c, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_CHB_MIN, c, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_CHB_MIN(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_CHB_MIN, tbl);
+        return IntVarBranch(IntVarBranch::SEL_CHB_MIN, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_CHB_MAX(IntCHB c, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_CHB_MAX, c, tbl);
+    INT_VAR_CHB_MAX(const IntCHB& c, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_CHB_MAX, c, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_CHB_MAX(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_CHB_MAX, tbl);
+        return IntVarBranch(IntVarBranch::SEL_CHB_MAX, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_MIN_MIN(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_MIN_MIN, tbl);
+        return IntVarBranch(IntVarBranch::SEL_MIN_MIN, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_MIN_MAX(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_MIN_MAX, tbl);
+        return IntVarBranch(IntVarBranch::SEL_MIN_MAX, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_MAX_MIN(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_MAX_MIN, tbl);
+        return IntVarBranch(IntVarBranch::SEL_MAX_MIN, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_MAX_MAX(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_MAX_MAX, tbl);
+        return IntVarBranch(IntVarBranch::SEL_MAX_MAX, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_SIZE_MIN(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_SIZE_MIN, tbl);
+        return IntVarBranch(IntVarBranch::SEL_SIZE_MIN, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_SIZE_MAX(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_SIZE_MAX, tbl);
+        return IntVarBranch(IntVarBranch::SEL_SIZE_MAX, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_DEGREE_SIZE_MIN(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_DEGREE_SIZE_MIN, tbl);
+        return IntVarBranch(IntVarBranch::SEL_DEGREE_SIZE_MIN, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_DEGREE_SIZE_MAX(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_DEGREE_SIZE_MAX, tbl);
+        return IntVarBranch(IntVarBranch::SEL_DEGREE_SIZE_MAX, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_AFC_SIZE_MIN(double d, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MIN, d, tbl);
+        return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MIN, d, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_AFC_SIZE_MIN(IntAFC a, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MIN, a, tbl);
+    INT_VAR_AFC_SIZE_MIN(const IntAFC& a, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MIN, a, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_AFC_SIZE_MAX(double d, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MAX, d, tbl);
+        return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MAX, d, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_AFC_SIZE_MAX(IntAFC a, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MAX, a, tbl);
+    INT_VAR_AFC_SIZE_MAX(const IntAFC& a, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MAX, a, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_ACTION_SIZE_MIN(double d, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MIN, d, tbl);
+        return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MIN, d, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_ACTION_SIZE_MIN(IntAction a, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MIN, a, tbl);
+    INT_VAR_ACTION_SIZE_MIN(const IntAction& a, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MIN, a, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_ACTION_SIZE_MAX(double d, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MAX, d, tbl);
+        return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MAX, d, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_ACTION_SIZE_MAX(IntAction a, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MAX, a, tbl);
+    INT_VAR_ACTION_SIZE_MAX(const IntAction& a, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MAX, a, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_CHB_SIZE_MIN(IntCHB c, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_CHB_SIZE_MIN, c, tbl);
+    INT_VAR_CHB_SIZE_MIN(const IntCHB& c, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_CHB_SIZE_MIN, c, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_CHB_SIZE_MIN(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_CHB_SIZE_MIN, tbl);
+        return IntVarBranch(IntVarBranch::SEL_CHB_SIZE_MIN, std::move(tbl));
     }
 
     inline IntVarBranch
-    INT_VAR_CHB_SIZE_MAX(IntCHB c, BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_CHB_SIZE_MAX, c, tbl);
+    INT_VAR_CHB_SIZE_MAX(const IntCHB& c, BranchTbl tbl) {
+        return IntVarBranch(IntVarBranch::SEL_CHB_SIZE_MAX, c, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_CHB_SIZE_MAX(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_CHB_SIZE_MAX, tbl);
+        return IntVarBranch(IntVarBranch::SEL_CHB_SIZE_MAX, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_REGRET_MIN_MIN(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_REGRET_MIN_MIN, tbl);
+        return IntVarBranch(IntVarBranch::SEL_REGRET_MIN_MIN, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_REGRET_MIN_MAX(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_REGRET_MIN_MAX, tbl);
+        return IntVarBranch(IntVarBranch::SEL_REGRET_MIN_MAX, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_REGRET_MAX_MIN(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_REGRET_MAX_MIN, tbl);
+        return IntVarBranch(IntVarBranch::SEL_REGRET_MAX_MIN, std::move(tbl));
     }
 
     inline IntVarBranch
     INT_VAR_REGRET_MAX_MAX(BranchTbl tbl) {
-        return IntVarBranch(IntVarBranch::SEL_REGRET_MAX_MAX, tbl);
+        return IntVarBranch(IntVarBranch::SEL_REGRET_MAX_MAX, std::move(tbl));
     }
 
     forceinline
@@ -318,7 +318,7 @@ namespace Gecode {
         : VarBranch<BoolVar>(std::move(t)), s(s0) {}
 
     forceinline
-    BoolVarBranch::BoolVarBranch(Rnd r)
+    BoolVarBranch::BoolVarBranch(const Rnd& r)
         : VarBranch<BoolVar>(r), s(SEL_RND) {}
 
     forceinline
@@ -326,15 +326,15 @@ namespace Gecode {
         : VarBranch<BoolVar>(d, std::move(t)), s(s0) {}
 
     forceinline
-    BoolVarBranch::BoolVarBranch(Select s0, BoolAFC a, BranchTbl t)
+    BoolVarBranch::BoolVarBranch(Select s0, const BoolAFC& a, BranchTbl t)
         : VarBranch<BoolVar>(a, std::move(t)), s(s0) {}
 
     forceinline
-    BoolVarBranch::BoolVarBranch(Select s0, BoolAction a, BranchTbl t)
+    BoolVarBranch::BoolVarBranch(Select s0, const BoolAction& a, BranchTbl t)
         : VarBranch<BoolVar>(a, std::move(t)), s(s0) {}
 
     forceinline
-    BoolVarBranch::BoolVarBranch(Select s0, BoolCHB c, BranchTbl t)
+    BoolVarBranch::BoolVarBranch(Select s0, const BoolCHB& c, BranchTbl t)
         : VarBranch<BoolVar>(c, std::move(t)), s(s0) {}
 
     forceinline
@@ -374,88 +374,88 @@ namespace Gecode {
     }
 
     inline BoolVarBranch
-    BOOL_VAR_RND(Rnd r) {
+    BOOL_VAR_RND(const Rnd& r) {
         return BoolVarBranch(r);
     }
 
     inline BoolVarBranch
     BOOL_VAR_MERIT_MIN(BoolBranchMerit bm, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_MERIT_MIN, bm, tbl);
+        return BoolVarBranch(BoolVarBranch::SEL_MERIT_MIN, std::move(bm), std::move(tbl));
     }
 
     inline BoolVarBranch
     BOOL_VAR_MERIT_MAX(BoolBranchMerit bm, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_MERIT_MAX, bm, tbl);
+        return BoolVarBranch(BoolVarBranch::SEL_MERIT_MAX, std::move(bm), std::move(tbl));
     }
 
     inline BoolVarBranch
     BOOL_VAR_DEGREE_MIN(BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_DEGREE_MIN, tbl);
+        return BoolVarBranch(BoolVarBranch::SEL_DEGREE_MIN, std::move(tbl));
     }
 
     inline BoolVarBranch
     BOOL_VAR_DEGREE_MAX(BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_DEGREE_MAX, tbl);
+        return BoolVarBranch(BoolVarBranch::SEL_DEGREE_MAX, std::move(tbl));
     }
 
     inline BoolVarBranch
     BOOL_VAR_AFC_MIN(double d, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_AFC_MIN, d, tbl);
+        return BoolVarBranch(BoolVarBranch::SEL_AFC_MIN, d, std::move(tbl));
     }
 
     inline BoolVarBranch
-    BOOL_VAR_AFC_MIN(BoolAFC a, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_AFC_MIN, a, tbl);
+    BOOL_VAR_AFC_MIN(const BoolAFC& a, BranchTbl tbl) {
+        return BoolVarBranch(BoolVarBranch::SEL_AFC_MIN, a, std::move(tbl));
     }
 
     inline BoolVarBranch
     BOOL_VAR_AFC_MAX(double d, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_AFC_MAX, d, tbl);
+        return BoolVarBranch(BoolVarBranch::SEL_AFC_MAX, d, std::move(tbl));
     }
 
     inline BoolVarBranch
-    BOOL_VAR_AFC_MAX(BoolAFC a, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_AFC_MAX, a, tbl);
+    BOOL_VAR_AFC_MAX(const BoolAFC& a, BranchTbl tbl) {
+        return BoolVarBranch(BoolVarBranch::SEL_AFC_MAX, a, std::move(tbl));
     }
 
     inline BoolVarBranch
     BOOL_VAR_ACTION_MIN(double d, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_ACTION_MIN, d, tbl);
+        return BoolVarBranch(BoolVarBranch::SEL_ACTION_MIN, d, std::move(tbl));
     }
 
     inline BoolVarBranch
-    BOOL_VAR_ACTION_MIN(BoolAction a, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_ACTION_MIN, a, tbl);
+    BOOL_VAR_ACTION_MIN(const BoolAction& a, BranchTbl tbl) {
+        return BoolVarBranch(BoolVarBranch::SEL_ACTION_MIN, a, std::move(tbl));
     }
 
     inline BoolVarBranch
     BOOL_VAR_ACTION_MAX(double d, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_ACTION_MAX, d, tbl);
+        return BoolVarBranch(BoolVarBranch::SEL_ACTION_MAX, d, std::move(tbl));
     }
 
     inline BoolVarBranch
-    BOOL_VAR_ACTION_MAX(BoolAction a, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_ACTION_MAX, a, tbl);
+    BOOL_VAR_ACTION_MAX(const BoolAction& a, BranchTbl tbl) {
+        return BoolVarBranch(BoolVarBranch::SEL_ACTION_MAX, a, std::move(tbl));
     }
 
     inline BoolVarBranch
-    BOOL_VAR_CHB_MIN(BoolCHB c, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_CHB_MIN, c, tbl);
+    BOOL_VAR_CHB_MIN(const BoolCHB& c, BranchTbl tbl) {
+        return BoolVarBranch(BoolVarBranch::SEL_CHB_MIN, c, std::move(tbl));
     }
 
     inline BoolVarBranch
     BOOL_VAR_CHB_MIN(BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_CHB_MIN, tbl);
+        return BoolVarBranch(BoolVarBranch::SEL_CHB_MIN, std::move(tbl));
     }
 
     inline BoolVarBranch
-    BOOL_VAR_CHB_MAX(BoolCHB c, BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_CHB_MAX, c, tbl);
+    BOOL_VAR_CHB_MAX(const BoolCHB& c, BranchTbl tbl) {
+        return BoolVarBranch(BoolVarBranch::SEL_CHB_MAX, c, std::move(tbl));
     }
 
     inline BoolVarBranch
     BOOL_VAR_CHB_MAX(BranchTbl tbl) {
-        return BoolVarBranch(BoolVarBranch::SEL_CHB_MAX, tbl);
+        return BoolVarBranch(BoolVarBranch::SEL_CHB_MAX, std::move(tbl));
     }
 
 } // namespace Gecode

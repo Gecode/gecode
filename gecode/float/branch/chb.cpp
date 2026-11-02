@@ -34,13 +34,13 @@
 
 namespace Gecode {
 
-    FloatCHB::FloatCHB(Home home, const FloatVarArgs& x, FloatBranchMerit bm) {
+    FloatCHB::FloatCHB(Home home, const FloatVarArgs& x, const FloatBranchMerit& bm) {
         ViewArray<Float::FloatView> y(home, x);
         CHB::init(home, y, bm);
     }
 
     void
-    FloatCHB::init(Home home, const FloatVarArgs& x, FloatBranchMerit bm) {
+    FloatCHB::init(Home home, const FloatVarArgs& x, const FloatBranchMerit& bm) {
         ViewArray<Float::FloatView> y(home, x);
         CHB::init(home, y, bm);
     }

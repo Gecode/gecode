@@ -3,7 +3,7 @@ schema_version = 1
 id = "value-params-004"
 key = "branch-configs"
 area = "value-params"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 blocked_by = []
@@ -29,10 +29,10 @@ Repair groups G3 (kernel branch configurations, 27 parameters), then G4 (int and
 
 ## Done when
 
-- [ ] The inventory reproduction rerun in build/zdev-audit/value-params-branch-configs/ reports no diagnostic for G3, G4, G5, and G6: its rows.tsv has no row in these groups (group column, matched by group number), it has no row (compared by file, function, and parameter) that the baseline build/zdev-audit/value-params/rows.tsv lacks, and checks.txt is empty.
-- [ ] The result lists every parameter changed to const& whose callee keeps a copy, by function, parameter, and file:line (at least the inventory's Verification hooks rows for G3-G6), with the member or object it initializes and how the copy is made (copy constructor or copy assignment from the const&).
-- [ ] The result shows, with source references, that every by-value-and-move parameter of G3-G6 reaches its storage through a move constructor (the implicit move constructors of IntVarBranch, BoolVarBranch, SetVarBranch, FloatVarBranch, the *ValBranch and *Assign classes, and TieBreak, and std::function's move into VarBranch::_tbl and _mf and ValBranch::vf and cf), and that no std::move binds a copying const& constructor.
-- [ ] build/full and build/local build, and ctest passes in both.
+- [x] The inventory reproduction rerun in build/zdev-audit/value-params-branch-configs/ reports no diagnostic for G3, G4, G5, and G6: its rows.tsv has no row in these groups (group column, matched by group number), it has no row (compared by file, function, and parameter) that the baseline build/zdev-audit/value-params/rows.tsv lacks, and checks.txt is empty.
+- [x] The result lists every parameter changed to const& whose callee keeps a copy, by function, parameter, and file:line (at least the inventory's Verification hooks rows for G3-G6), with the member or object it initializes and how the copy is made (copy constructor or copy assignment from the const&).
+- [x] The result shows, with source references, that every by-value-and-move parameter of G3-G6 reaches its storage through a move constructor (the implicit move constructors of IntVarBranch, BoolVarBranch, SetVarBranch, FloatVarBranch, the *ValBranch and *Assign classes, and TieBreak, and std::function's move into VarBranch::_tbl and _mf and ValBranch::vf and cf), and that no std::move binds a copying const& constructor.
+- [x] build/full and build/local build, and ctest passes in both.
 
 ## Validation
 
@@ -40,3 +40,16 @@ Repair groups G3 (kernel branch configurations, 27 parameters), then G4 (int and
 - In build/full, run `bin/gecode-test -test Branch -tag standard`, `-test LDSB -tag standard`, and `-test NoGoods -tag standard`.
 - Run `uv run misc/check.py format-check --build-dir build/full`.
 - Rerun the inventory reproduction (Reproduce steps 2 and 3 in .zdev/value-params/background/value-param-inventory.md) into a fresh directory build/zdev-audit/value-params-branch-configs/ so the baseline in build/zdev-audit/value-params/ stays intact: `sh build/zdev-audit/value-params-branch-configs/reproduce.sh build/full 10`.
+
+## Result
+
+G3-G6: Rnd/AFC/Action/CHB handles, VarBranch setters and the Action/CHB merit chain by const&; branch tables, merit, value and commit callbacks and TieBreak arguments by value and moved into std::function and configuration storage
+
+Validation:
+
+- build/full (Debug, experimental, CBS, fault injection, audit, Gist) and build/local (Release) build without warnings; ctest 8/8 and 7/7
+- gecode-test -tag standard: Branch 17/17, LDSB 38/38, NoGoods 161/161
+- format-check clean
+- Scoped inventory rerun: 417 parameters, no G3-G6 row, no new row versus baseline, checks.txt empty
+- Copy-count probe: callback copies 2/1/4/8/8/4/0/0 -> 1/0/2/2/2/0/0/0
+- Independent Codex verifier: pass

@@ -43,7 +43,7 @@ namespace Gecode {
         : VarBranch<FloatVar>(std::move(t)), s(s0) {}
 
     forceinline
-    FloatVarBranch::FloatVarBranch(Rnd r)
+    FloatVarBranch::FloatVarBranch(const Rnd& r)
         : VarBranch<FloatVar>(r), s(SEL_RND) {}
 
     forceinline
@@ -51,15 +51,15 @@ namespace Gecode {
         : VarBranch<FloatVar>(d, std::move(t)), s(s0) {}
 
     forceinline
-    FloatVarBranch::FloatVarBranch(Select s0, FloatAFC a, BranchTbl t)
+    FloatVarBranch::FloatVarBranch(Select s0, const FloatAFC& a, BranchTbl t)
         : VarBranch<FloatVar>(a, std::move(t)), s(s0) {}
 
     forceinline
-    FloatVarBranch::FloatVarBranch(Select s0, FloatAction a, BranchTbl t)
+    FloatVarBranch::FloatVarBranch(Select s0, const FloatAction& a, BranchTbl t)
         : VarBranch<FloatVar>(a, std::move(t)), s(s0) {}
 
     forceinline
-    FloatVarBranch::FloatVarBranch(Select s0, FloatCHB c, BranchTbl t)
+    FloatVarBranch::FloatVarBranch(Select s0, const FloatCHB& c, BranchTbl t)
         : VarBranch<FloatVar>(c, std::move(t)), s(s0) {}
 
     forceinline
@@ -106,187 +106,187 @@ namespace Gecode {
 
     inline FloatVarBranch
     FLOAT_VAR_MERIT_MIN(FloatBranchMerit bm, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_MERIT_MIN, bm, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_MERIT_MIN, std::move(bm), std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_MERIT_MAX(FloatBranchMerit bm, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_MERIT_MAX, bm, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_MERIT_MAX, std::move(bm), std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_RND(Rnd r) {
+    FLOAT_VAR_RND(const Rnd& r) {
         return FloatVarBranch(r);
     }
 
     inline FloatVarBranch
     FLOAT_VAR_DEGREE_MIN(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_DEGREE_MIN, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_DEGREE_MIN, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_DEGREE_MAX(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_DEGREE_MAX, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_DEGREE_MAX, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_AFC_MIN(double d, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_AFC_MIN, d, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_AFC_MIN, d, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_AFC_MIN(FloatAFC a, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_AFC_MIN, a, tbl);
+    FLOAT_VAR_AFC_MIN(const FloatAFC& a, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_AFC_MIN, a, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_AFC_MAX(double d, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_AFC_MAX, d, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_AFC_MAX, d, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_AFC_MAX(FloatAFC a, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_AFC_MAX, a, tbl);
+    FLOAT_VAR_AFC_MAX(const FloatAFC& a, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_AFC_MAX, a, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_ACTION_MIN(double d, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_ACTION_MIN, d, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_ACTION_MIN, d, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_ACTION_MIN(FloatAction a, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_ACTION_MIN, a, tbl);
+    FLOAT_VAR_ACTION_MIN(const FloatAction& a, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_ACTION_MIN, a, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_ACTION_MAX(double d, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_ACTION_MAX, d, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_ACTION_MAX, d, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_ACTION_MAX(FloatAction a, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_ACTION_MAX, a, tbl);
+    FLOAT_VAR_ACTION_MAX(const FloatAction& a, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_ACTION_MAX, a, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_CHB_MIN(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_CHB_MIN, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_CHB_MIN, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_CHB_MIN(FloatCHB c, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_CHB_MIN, c, tbl);
+    FLOAT_VAR_CHB_MIN(const FloatCHB& c, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_CHB_MIN, c, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_CHB_MAX(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_CHB_MAX, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_CHB_MAX, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_CHB_MAX(FloatCHB c, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_CHB_MAX, c, tbl);
+    FLOAT_VAR_CHB_MAX(const FloatCHB& c, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_CHB_MAX, c, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_MIN_MIN(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_MIN_MIN, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_MIN_MIN, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_MIN_MAX(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_MIN_MAX, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_MIN_MAX, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_MAX_MIN(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_MAX_MIN, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_MAX_MIN, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_MAX_MAX(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_MAX_MAX, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_MAX_MAX, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_SIZE_MIN(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_SIZE_MIN, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_SIZE_MIN, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_SIZE_MAX(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_SIZE_MAX, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_SIZE_MAX, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_DEGREE_SIZE_MIN(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_DEGREE_SIZE_MIN, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_DEGREE_SIZE_MIN, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_DEGREE_SIZE_MAX(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_DEGREE_SIZE_MAX, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_DEGREE_SIZE_MAX, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_AFC_SIZE_MIN(double d, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_AFC_SIZE_MIN, d, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_AFC_SIZE_MIN, d, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_AFC_SIZE_MIN(FloatAFC a, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_AFC_SIZE_MIN, a, tbl);
+    FLOAT_VAR_AFC_SIZE_MIN(const FloatAFC& a, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_AFC_SIZE_MIN, a, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_AFC_SIZE_MAX(double d, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_AFC_SIZE_MAX, d, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_AFC_SIZE_MAX, d, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_AFC_SIZE_MAX(FloatAFC a, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_AFC_SIZE_MAX, a, tbl);
+    FLOAT_VAR_AFC_SIZE_MAX(const FloatAFC& a, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_AFC_SIZE_MAX, a, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_ACTION_SIZE_MIN(double d, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MIN, d, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MIN, d, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_ACTION_SIZE_MIN(FloatAction a, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MIN, a, tbl);
+    FLOAT_VAR_ACTION_SIZE_MIN(const FloatAction& a, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MIN, a, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_ACTION_SIZE_MAX(double d, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MAX, d, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MAX, d, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_ACTION_SIZE_MAX(FloatAction a, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MAX, a, tbl);
+    FLOAT_VAR_ACTION_SIZE_MAX(const FloatAction& a, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MAX, a, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_CHB_SIZE_MIN(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MIN, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MIN, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_CHB_SIZE_MIN(FloatCHB c, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MIN, c, tbl);
+    FLOAT_VAR_CHB_SIZE_MIN(const FloatCHB& c, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MIN, c, std::move(tbl));
     }
 
     inline FloatVarBranch
     FLOAT_VAR_CHB_SIZE_MAX(BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MAX, tbl);
+        return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MAX, std::move(tbl));
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_CHB_SIZE_MAX(FloatCHB c, BranchTbl tbl) {
-        return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MAX, c, tbl);
+    FLOAT_VAR_CHB_SIZE_MAX(const FloatCHB& c, BranchTbl tbl) {
+        return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MAX, c, std::move(tbl));
     }
 
 } // namespace Gecode

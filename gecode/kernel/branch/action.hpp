@@ -55,7 +55,8 @@ namespace Gecode {
             double* a;
             /// Initialize action values
             template <class View>
-            Storage(Home home, ViewArray<View>& x, double d, typename BranchTraits<typename View::VarType>::Merit bm);
+            Storage(Home home, ViewArray<View>& x, double d,
+                    const typename BranchTraits<typename View::VarType>::Merit& bm);
             /// Update action value at position \a i
             void update(int i);
             /// Delete object
@@ -97,7 +98,7 @@ namespace Gecode {
          */
         template <class View>
         Action(Home home, ViewArray<View>& x, double d, bool p, bool f,
-               typename BranchTraits<typename View::VarType>::Merit bm);
+               const typename BranchTraits<typename View::VarType>::Merit& bm);
         /**
          * \brief Initialize for views \a x and decay factor \a d and action as defined by \a bm
          *
@@ -105,7 +106,7 @@ namespace Gecode {
          */
         template <class View>
         void init(Home home, ViewArray<View>& x, double d, bool p, bool f,
-                  typename BranchTraits<typename View::VarType>::Merit bm);
+                  const typename BranchTraits<typename View::VarType>::Merit& bm);
         /// Default (empty) action information
         GECODE_KERNEL_EXPORT static const Action def;
         //@}
@@ -269,7 +270,7 @@ namespace Gecode {
     template <class View>
     forceinline
     Action::Storage::Storage(Home home, ViewArray<View>& x, double d,
-                             typename BranchTraits<typename View::VarType>::Merit bm)
+                             const typename BranchTraits<typename View::VarType>::Merit& bm)
         : n(x.size()), invd(1.0 / d), a(heap.alloc<double>(x.size())) {
         if (bm)
             for (int i = 0; i < n; i++) {
@@ -336,7 +337,7 @@ namespace Gecode {
     template <class View>
     forceinline
     Action::Action(Home home, ViewArray<View>& x, double d, bool p, bool f,
-                   typename BranchTraits<typename View::VarType>::Merit bm) {
+                   const typename BranchTraits<typename View::VarType>::Merit& bm) {
         assert(!*this);
         if (!p && !f)
             return;
@@ -351,7 +352,7 @@ namespace Gecode {
     template <class View>
     forceinline void
     Action::init(Home home, ViewArray<View>& x, double d, bool p, bool f,
-                 typename BranchTraits<typename View::VarType>::Merit bm) {
+                 const typename BranchTraits<typename View::VarType>::Merit& bm) {
         assert(!*this);
         if (!p && !f)
             return;

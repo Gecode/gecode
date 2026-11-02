@@ -56,7 +56,7 @@ namespace Gecode {
         /// Initialize
         ValBranch(void);
         /// Initialize with random number generator \a r
-        ValBranch(Rnd r);
+        ValBranch(const Rnd& r);
         /// Initialize with value function \a v and commit function \a c
         ValBranch(BranchVal v, BranchCommit c);
         /// Return random number generator
@@ -71,13 +71,13 @@ namespace Gecode {
     inline ValBranch<Var>::ValBranch(void) : vf(nullptr), cf(nullptr) {}
 
     template <class Var>
-    inline ValBranch<Var>::ValBranch(Rnd r0) : r(r0), vf(nullptr), cf(nullptr) {
+    inline ValBranch<Var>::ValBranch(const Rnd& r0) : r(r0), vf(nullptr), cf(nullptr) {
         if (!r)
             throw UninitializedRnd("ValBranch::ValBranch");
     }
 
     template <class Var>
-    inline ValBranch<Var>::ValBranch(BranchVal v, BranchCommit c) : vf(v), cf(c) {}
+    inline ValBranch<Var>::ValBranch(BranchVal v, BranchCommit c) : vf(std::move(v)), cf(std::move(c)) {}
 
     template <class Var>
     inline Rnd

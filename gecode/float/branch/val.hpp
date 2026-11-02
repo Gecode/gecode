@@ -37,12 +37,12 @@ namespace Gecode {
         : s(s0) {}
 
     forceinline
-    FloatValBranch::FloatValBranch(Rnd r)
+    FloatValBranch::FloatValBranch(const Rnd& r)
         : ValBranch<FloatVar>(r), s(SEL_SPLIT_RND) {}
 
     forceinline
     FloatValBranch::FloatValBranch(FloatBranchVal v, FloatBranchCommit c)
-        : ValBranch<FloatVar>(v, c), s(SEL_VAL_COMMIT) {}
+        : ValBranch<FloatVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline FloatValBranch::Select
     FloatValBranch::select(void) const {
@@ -60,13 +60,13 @@ namespace Gecode {
     }
 
     inline FloatValBranch
-    FLOAT_VAL_SPLIT_RND(Rnd r) {
+    FLOAT_VAL_SPLIT_RND(const Rnd& r) {
         return FloatValBranch(r);
     }
 
     inline FloatValBranch
     FLOAT_VAL(FloatBranchVal v, FloatBranchCommit c) {
-        return FloatValBranch(v, c);
+        return FloatValBranch(std::move(v), std::move(c));
     }
 
 } // namespace Gecode

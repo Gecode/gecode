@@ -1513,7 +1513,7 @@ namespace Gecode {
          */
         GECODE_FLOAT_EXPORT
         FloatAction(Home home, const FloatVarArgs& x, double d = 1.0, bool p = true, bool f = true,
-                    FloatBranchMerit bm = nullptr);
+                    const FloatBranchMerit& bm = nullptr);
         /**
          * \brief Initialize for float variables \a x with decay factor \a d
          *
@@ -1528,7 +1528,7 @@ namespace Gecode {
          *
          */
         GECODE_FLOAT_EXPORT void init(Home home, const FloatVarArgs& x, double d = 1.0, bool p = true, bool f = true,
-                                      FloatBranchMerit bm = nullptr);
+                                      const FloatBranchMerit& bm = nullptr);
     };
 
 } // namespace Gecode
@@ -1565,7 +1565,7 @@ namespace Gecode {
          *
          */
         GECODE_FLOAT_EXPORT
-        FloatCHB(Home home, const FloatVarArgs& x, FloatBranchMerit bm = nullptr);
+        FloatCHB(Home home, const FloatVarArgs& x, const FloatBranchMerit& bm = nullptr);
         /**
          * \brief Initialize for float variables \a x
          *
@@ -1577,7 +1577,7 @@ namespace Gecode {
          * action storage has been constructed with the default constructor.
          *
          */
-        GECODE_FLOAT_EXPORT void init(Home home, const FloatVarArgs& x, FloatBranchMerit bm = nullptr);
+        GECODE_FLOAT_EXPORT void init(Home home, const FloatVarArgs& x, const FloatBranchMerit& bm = nullptr);
     };
 
 } // namespace Gecode
@@ -1640,17 +1640,17 @@ namespace Gecode {
         /// Initialize with strategy SEL_NONE
         FloatVarBranch(void);
         /// Initialize with random number generator \a r
-        FloatVarBranch(Rnd r);
+        FloatVarBranch(const Rnd& r);
         /// Initialize with selection strategy \a s and tie-break limit function \a t
         FloatVarBranch(Select s, BranchTbl t);
         /// Initialize with selection strategy \a s, decay factor \a d, and tie-break limit function \a t
         FloatVarBranch(Select s, double, BranchTbl t);
         /// Initialize with selection strategy \a s, AFC \a a, and tie-break limit function \a t
-        FloatVarBranch(Select s, FloatAFC a, BranchTbl t);
+        FloatVarBranch(Select s, const FloatAFC& a, BranchTbl t);
         /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
-        FloatVarBranch(Select s, FloatAction a, BranchTbl t);
+        FloatVarBranch(Select s, const FloatAction& a, BranchTbl t);
         /// Initialize with selection strategy \a s, CHB \a c, and tie-break limit function \a t
-        FloatVarBranch(Select s, FloatCHB c, BranchTbl t);
+        FloatVarBranch(Select s, const FloatCHB& c, BranchTbl t);
         /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
         FloatVarBranch(Select s, FloatBranchMerit mf, BranchTbl t);
         /// Return selection strategy
@@ -1667,7 +1667,7 @@ namespace Gecode {
     /// Select first unassigned variable
     FloatVarBranch FLOAT_VAR_NONE(void);
     /// Select random variable (uniform distribution, for tie breaking)
-    FloatVarBranch FLOAT_VAR_RND(Rnd r);
+    FloatVarBranch FLOAT_VAR_RND(const Rnd& r);
     /// Select variable with least merit according to branch merit function \a bm
     FloatVarBranch FLOAT_VAR_MERIT_MIN(FloatBranchMerit bm, BranchTbl tbl = nullptr);
     /// Select variable with highest merit according to branch merit function \a bm
@@ -1679,27 +1679,27 @@ namespace Gecode {
     /// Select variable with smallest accumulated failure count with decay factor \a d
     FloatVarBranch FLOAT_VAR_AFC_MIN(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with smallest accumulated failure count
-    FloatVarBranch FLOAT_VAR_AFC_MIN(FloatAFC a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_AFC_MIN(const FloatAFC& a, BranchTbl tbl = nullptr);
     /// Select variable with largest accumulated failure count with decay factor \a d
     FloatVarBranch FLOAT_VAR_AFC_MAX(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with largest accumulated failure count
-    FloatVarBranch FLOAT_VAR_AFC_MAX(FloatAFC a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_AFC_MAX(const FloatAFC& a, BranchTbl tbl = nullptr);
     /// Select variable with lowest action with decay factor \a d
     FloatVarBranch FLOAT_VAR_ACTION_MIN(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with lowest action
-    FloatVarBranch FLOAT_VAR_ACTION_MIN(FloatAction a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_ACTION_MIN(const FloatAction& a, BranchTbl tbl = nullptr);
     /// Select variable with highest action with decay factor \a d
     FloatVarBranch FLOAT_VAR_ACTION_MAX(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with highest action
-    FloatVarBranch FLOAT_VAR_ACTION_MAX(FloatAction a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_ACTION_MAX(const FloatAction& a, BranchTbl tbl = nullptr);
     /// Select variable with lowest CHB Q-score
     FloatVarBranch FLOAT_VAR_CHB_MIN(BranchTbl tbl = nullptr);
     /// Select variable with lowest CHB Q-score
-    FloatVarBranch FLOAT_VAR_CHB_MIN(FloatCHB a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_CHB_MIN(const FloatCHB& a, BranchTbl tbl = nullptr);
     /// Select variable with highest CHB Q-score
     FloatVarBranch FLOAT_VAR_CHB_MAX(BranchTbl tbl = nullptr);
     /// Select variable with highest CHB Q-score
-    FloatVarBranch FLOAT_VAR_CHB_MAX(FloatCHB a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_CHB_MAX(const FloatCHB& a, BranchTbl tbl = nullptr);
     /// Select variable with smallest min
     FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl = nullptr);
     /// Select variable with largest min
@@ -1719,27 +1719,27 @@ namespace Gecode {
     /// Select variable with smalllest accumulated failure count  divided by domain size with decay factor \a d
     FloatVarBranch FLOAT_VAR_AFC_SIZE_MIN(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with smallest accumulated failure count divided by domain size
-    FloatVarBranch FLOAT_VAR_AFC_SIZE_MIN(FloatAFC a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_AFC_SIZE_MIN(const FloatAFC& a, BranchTbl tbl = nullptr);
     /// Select variable with largest accumulated failure count  divided by domain size with decay factor \a d
     FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with largest accumulated failure count divided by domain size
-    FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(FloatAFC a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(const FloatAFC& a, BranchTbl tbl = nullptr);
     /// Select variable with smallest action divided by domain size with decay factor \a d
     FloatVarBranch FLOAT_VAR_ACTION_SIZE_MIN(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with smallest action divided by domain size
-    FloatVarBranch FLOAT_VAR_ACTION_SIZE_MIN(FloatAction a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_ACTION_SIZE_MIN(const FloatAction& a, BranchTbl tbl = nullptr);
     /// Select variable with largest action divided by domain size with decay factor \a d
     FloatVarBranch FLOAT_VAR_ACTION_SIZE_MAX(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with largest action divided by domain size
-    FloatVarBranch FLOAT_VAR_ACTION_SIZE_MAX(FloatAction a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_ACTION_SIZE_MAX(const FloatAction& a, BranchTbl tbl = nullptr);
     /// Select variable with smallest CHB Q-score divided by domain size
     FloatVarBranch FLOAT_VAR_CHB_SIZE_MIN(BranchTbl tbl = nullptr);
     /// Select variable with smallest CHB Q-score divided by domain size
-    FloatVarBranch FLOAT_VAR_CHB_SIZE_MIN(FloatCHB c, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_CHB_SIZE_MIN(const FloatCHB& c, BranchTbl tbl = nullptr);
     /// Select variable with largest CHB Q-score divided by domain size
     FloatVarBranch FLOAT_VAR_CHB_SIZE_MAX(BranchTbl tbl = nullptr);
     /// Select variable with largest CHB Q-score divided by domain size
-    FloatVarBranch FLOAT_VAR_CHB_SIZE_MAX(FloatCHB a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_CHB_SIZE_MAX(const FloatCHB& a, BranchTbl tbl = nullptr);
     //@}
 
 } // namespace Gecode
@@ -1771,7 +1771,7 @@ namespace Gecode {
         /// Initialize with selection strategy \a s
         FloatValBranch(Select s = SEL_SPLIT_MIN);
         /// Initialize with random number generator \a r
-        FloatValBranch(Rnd r);
+        FloatValBranch(const Rnd& r);
         /// Initialize with value function \a f and commit function \a c
         FloatValBranch(FloatBranchVal v, FloatBranchCommit c);
         /// Return selection strategy
@@ -1788,7 +1788,7 @@ namespace Gecode {
     /// Select values greater than mean of smallest and largest value
     FloatValBranch FLOAT_VAL_SPLIT_MAX(void);
     /// Select values randomly which are not greater or not smaller than mean of largest and smallest value
-    FloatValBranch FLOAT_VAL_SPLIT_RND(Rnd r);
+    FloatValBranch FLOAT_VAL_SPLIT_RND(const Rnd& r);
     /**
      * Select value as defined by the value function \a v and commit function \a c
      * The default commit function posts the constraint that the float variable
@@ -1827,7 +1827,7 @@ namespace Gecode {
         /// Initialize with selection strategy \a s
         FloatAssign(Select s = SEL_MIN);
         /// Initialize with random number generator \a r
-        FloatAssign(Rnd r);
+        FloatAssign(const Rnd& r);
         /// Initialize with value function \a f and commit function \a c
         FloatAssign(FloatBranchVal v, FloatBranchCommit c);
         /// Return selection strategy
@@ -1844,7 +1844,7 @@ namespace Gecode {
     /// Select median value of the upper part
     FloatAssign FLOAT_ASSIGN_MAX(void);
     /// Select median value of a randomly chosen part
-    FloatAssign FLOAT_ASSIGN_RND(Rnd r);
+    FloatAssign FLOAT_ASSIGN_RND(const Rnd& r);
     /**
      * Select value as defined by the value function \a v and commit function \a c
      * The default commit function posts the constraint that the float variable

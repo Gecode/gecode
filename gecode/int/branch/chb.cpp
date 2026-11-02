@@ -34,24 +34,24 @@
 
 namespace Gecode {
 
-    IntCHB::IntCHB(Home home, const IntVarArgs& x, IntBranchMerit bm) {
+    IntCHB::IntCHB(Home home, const IntVarArgs& x, const IntBranchMerit& bm) {
         ViewArray<Int::IntView> y(home, x);
         CHB::init(home, y, bm);
     }
 
     void
-    IntCHB::init(Home home, const IntVarArgs& x, IntBranchMerit bm) {
+    IntCHB::init(Home home, const IntVarArgs& x, const IntBranchMerit& bm) {
         ViewArray<Int::IntView> y(home, x);
         CHB::init(home, y, bm);
     }
 
-    BoolCHB::BoolCHB(Home home, const BoolVarArgs& x, BoolBranchMerit bm) {
+    BoolCHB::BoolCHB(Home home, const BoolVarArgs& x, const BoolBranchMerit& bm) {
         ViewArray<Int::BoolView> y(home, x);
         CHB::init(home, y, bm);
     }
 
     void
-    BoolCHB::init(Home home, const BoolVarArgs& x, BoolBranchMerit bm) {
+    BoolCHB::init(Home home, const BoolVarArgs& x, const BoolBranchMerit& bm) {
         ViewArray<Int::BoolView> y(home, x);
         CHB::init(home, y, bm);
     }

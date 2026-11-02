@@ -78,15 +78,15 @@ namespace Gecode {
         /// Initialize with tie-break limit function \a t
         VarBranch(BranchTbl t);
         /// Initialize with random number generator \a r
-        VarBranch(Rnd r);
+        VarBranch(const Rnd& r);
         /// Initialize with decay factor \a d and tie-break limit function \a t
         VarBranch(double d, BranchTbl t);
         /// Initialize with AFC \a a and tie-break limit function \a t
-        VarBranch(AFC a, BranchTbl t);
+        VarBranch(const AFC& a, BranchTbl t);
         /// Initialize with action \a a and tie-break limit function \a t
-        VarBranch(Action a, BranchTbl t);
+        VarBranch(const Action& a, BranchTbl t);
         /// Initialize with CHB \a c and tie-break limit function \a t
-        VarBranch(CHB c, BranchTbl t);
+        VarBranch(const CHB& c, BranchTbl t);
         /// Initialize with merit function \a f and tie-break limit function \a t
         VarBranch(MeritFunction f, BranchTbl t);
         /// Return tie-break limit function
@@ -98,15 +98,15 @@ namespace Gecode {
         /// Return AFC
         AFC afc(void) const;
         /// Set AFC to \a a
-        void afc(AFC a);
+        void afc(const AFC& a);
         /// Return action
         Action action(void) const;
         /// Set action to \a a
-        void action(Action a);
+        void action(const Action& a);
         /// Return CHB
         CHB chb(void) const;
         /// Set CHB to \a chb
-        void chb(CHB chb);
+        void chb(const CHB& chb);
         /// Return merit function
         MeritFunction merit(void) const;
     };
@@ -122,25 +122,25 @@ namespace Gecode {
     inline VarBranch<Var>::VarBranch(double d, BranchTbl t) : _tbl(std::move(t)), _decay(d) {}
 
     template <class Var>
-    inline VarBranch<Var>::VarBranch(AFC a, BranchTbl t) : _tbl(std::move(t)), _decay(1.0), _afc(a) {
+    inline VarBranch<Var>::VarBranch(const AFC& a, BranchTbl t) : _tbl(std::move(t)), _decay(1.0), _afc(a) {
         if (!_afc)
             throw UninitializedAFC("VarBranch<Var>::VarBranch");
     }
 
     template <class Var>
-    inline VarBranch<Var>::VarBranch(Action a, BranchTbl t) : _tbl(std::move(t)), _decay(1.0), _act(a) {
+    inline VarBranch<Var>::VarBranch(const Action& a, BranchTbl t) : _tbl(std::move(t)), _decay(1.0), _act(a) {
         if (!_act)
             throw UninitializedAction("VarBranch<Var>::VarBranch");
     }
 
     template <class Var>
-    inline VarBranch<Var>::VarBranch(CHB c, BranchTbl t) : _tbl(std::move(t)), _decay(1.0), _chb(c) {
+    inline VarBranch<Var>::VarBranch(const CHB& c, BranchTbl t) : _tbl(std::move(t)), _decay(1.0), _chb(c) {
         if (!_chb)
             throw UninitializedCHB("VarBranch<Var>::VarBranch");
     }
 
     template <class Var>
-    inline VarBranch<Var>::VarBranch(Rnd r) : _tbl(nullptr), _rnd(r), _decay(1.0) {
+    inline VarBranch<Var>::VarBranch(const Rnd& r) : _tbl(nullptr), _rnd(r), _decay(1.0) {
         if (!_rnd)
             throw UninitializedRnd("VarBranch<Var>::VarBranch");
     }
@@ -175,7 +175,7 @@ namespace Gecode {
 
     template <class Var>
     inline void
-    VarBranch<Var>::afc(AFC a) {
+    VarBranch<Var>::afc(const AFC& a) {
         _afc = a;
     }
 
@@ -187,7 +187,7 @@ namespace Gecode {
 
     template <class Var>
     inline void
-    VarBranch<Var>::action(Action a) {
+    VarBranch<Var>::action(const Action& a) {
         _act = a;
     }
 
@@ -199,7 +199,7 @@ namespace Gecode {
 
     template <class Var>
     inline void
-    VarBranch<Var>::chb(CHB chb) {
+    VarBranch<Var>::chb(const CHB& chb) {
         _chb = chb;
     }
 
