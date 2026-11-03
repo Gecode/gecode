@@ -1260,8 +1260,6 @@ namespace Gecode { namespace Search {
    */
   class HeuristicGuidance {
   public:
-    /// Objective direction
-    enum Sense { MINIMIZE, MAXIMIZE };
     /// Function evaluating a stable space
     typedef std::function<std::int64_t(const Space&)> Evaluate;
     /// Objective direction

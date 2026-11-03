@@ -84,7 +84,8 @@ Add Space::compare(), which ranks two solutions without modifying them.
 Best-solution search uses it to choose between solutions, for example in
 parallel BAB, portfolios, external incumbents, and the experimental A* and
 CABS engines. constrain() still prunes the search. Optimization models with a
-custom constrain() must now also override compare(). Search
+custom constrain() must now also override compare(). compare_int()
+compares two integer objective values for a given Sense. Search
 engines throw Search::Incomparable when compare() reports incomparable
 solutions.
 

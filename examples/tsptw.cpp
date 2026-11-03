@@ -381,7 +381,7 @@ main(int argc, char* argv[]) {
   case TSPTW::SEARCH_ASTAR:
   case TSPTW::SEARCH_CABS:
     {
-      Search::HeuristicGuidance g(Search::HeuristicGuidance::MINIMIZE,
+      Search::HeuristicGuidance g(Sense::minimize,
         [](const Space& s) -> std::int64_t {
           return static_cast<const TSPTW&>(s).cost().min();
         });
