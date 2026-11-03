@@ -44,6 +44,7 @@ set(GECODE_EXAMPLE_SOURCES
   nonogram.cpp
   open-route.cpp
   open-shop.cpp
+  hub-spoke.cpp
   ortho-latin.cpp
   partition.cpp
   pentominoes.cpp

@@ -461,6 +461,7 @@ set(GECODE_TEST_SOURCES
   test/nogoods.cpp
   test/region.cpp
   test/search.cpp
+  test/search/hub-spoke-api-pass.cpp
   test/set.cpp
   test/set/channel.cpp
   test/set/construct.cpp
