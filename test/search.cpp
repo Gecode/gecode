@@ -649,6 +649,9 @@ namespace Test {
       virtual bool master(const MetaInfo& mi) {
         switch (mi.type()) {
         case MetaInfo::RESTART:
+          // With an objective, restart from a bound improving on the last solution
+          if (htc != HTC_NONE)
+            return Space::master(mi);
           if (mi.last() != nullptr) {
             const HasSolutions* s
               = static_cast<const HasSolutions*>(mi.last());
@@ -857,7 +860,9 @@ namespace Test {
         o.threads = threads;
         o.worker_control = control;
         o.stop = &pause;
-        HasSolutions root(HTB_BINARY,HTB_BINARY,HTB_BINARY);
+        // Best-solution search needs an objective; it then ends with the best
+        HasSolutions root(HTB_BINARY,HTB_BINARY,HTB_BINARY,
+                          E<HasSolutions>::best ? HTC_LEX_LE : HTC_NONE);
         E<HasSolutions> engine(&root,o);
         auto result = std::async(std::launch::async,[&] { return engine.next(); });
         auto reached = pause.reached.get_future();
@@ -866,21 +871,22 @@ namespace Test {
           std::future_status::timeout;
         control.request(1U);
         int solutions = 0;
-        if (HasSolutions* solution = result.get()) {
+        std::unique_ptr<HasSolutions> last(result.get());
+        if (last)
           ++solutions;
-          delete solution;
-        }
         // Alternate expansion and shrinking at solution boundaries. This
-        // exercises each request while preserving complete enumeration.
+        // exercises each request while preserving complete search.
         while (true) {
           control.request((solutions % 2) ? threads : 1U);
           HasSolutions* solution = engine.next();
           if (!solution)
             break;
           ++solutions;
-          delete solution;
+          last.reset(solution);
         }
-        return ok && !engine.stopped() && (solutions == root.solutions());
+        bool complete = E<HasSolutions>::best ?
+          (last && last->best()) : (solutions == root.solutions());
+        return ok && !engine.stopped() && complete;
       }
 #ifdef GECODE_HAS_EXPERIMENTAL
       template<template<class> class E>
@@ -1213,24 +1219,25 @@ namespace Test {
     /// Objective used to test external incumbent updates
     class ExternalObjective : public IntMinimizeSpace {
     public:
-      static int constraints;
+      /// Per-test count of posted improvement constraints (optional)
+      std::atomic<int>* constraints;
       IntVar x;
-      ExternalObjective(void) : x(*this,0,10) {
+      ExternalObjective(std::atomic<int>* c) : constraints(c), x(*this,0,10) {
         Gecode::branch(*this,x,INT_VAL_MIN());
       }
-      ExternalObjective(int v) : x(*this,v,v) {}
-      ExternalObjective(ExternalObjective& s) : IntMinimizeSpace(s) {
+      ExternalObjective(int v) : constraints(nullptr), x(*this,v,v) {}
+      ExternalObjective(ExternalObjective& s)
+        : IntMinimizeSpace(s), constraints(s.constraints) {
         x.update(*this,s.x);
       }
       virtual Space* copy(void) { return new ExternalObjective(*this); }
       virtual IntVar cost(void) const { return x; }
       virtual void constrain(const Space& s) {
-        constraints++;
+        if (constraints != nullptr)
+          constraints->fetch_add(1);
         IntMinimizeSpace::constrain(s);
       }
     };
-
-    int ExternalObjective::constraints = 0;
 
     /// Small objective whose solutions arrive from worst to best
     class ParallelObjective : public IntMinimizeSpace {
@@ -1262,16 +1269,18 @@ namespace Test {
     /// Objective used to exercise asynchronous comparison failures
     class FailingParallelObjective : public Space {
     public:
-      static std::atomic<int> live;
       enum Failure { MISSING, THROWN, INCOMPARABLE };
+      /// Per-test count of live spaces
+      std::atomic<int>& live;
       IntVar x;
       Failure failure;
-      FailingParallelObjective(Failure f) : x(*this,0,10), failure(f) {
+      FailingParallelObjective(Failure f, std::atomic<int>& l)
+        : live(l), x(*this,0,10), failure(f) {
         live++;
         Gecode::branch(*this,x,INT_VAL_MAX());
       }
       FailingParallelObjective(FailingParallelObjective& s)
-        : Space(s), failure(s.failure) {
+        : Space(s), live(s.live), failure(s.failure) {
         live++;
         x.update(*this,s.x);
       }
@@ -1293,7 +1302,6 @@ namespace Test {
       }
     };
 
-    std::atomic<int> FailingParallelObjective::live(0);
 
     /// Objective with a genuine partial-order result
     class IncomparableObjective : public ExternalObjective {
@@ -1318,45 +1326,46 @@ namespace Test {
     class ExternalIncumbent : public Base {
     private:
       template<class Engine>
-      static bool updates(Engine& e) {
+      static bool updates(Engine& e, const std::atomic<int>& constraints) {
         ExternalObjective five(5), equal(5), worse(7), better(3);
-        int n = ExternalObjective::constraints;
+        int n = constraints;
         e.constrain(five);
-        int installed = ExternalObjective::constraints;
+        int installed = constraints;
         e.constrain(equal);
         e.constrain(worse);
-        if ((installed <= n) || (ExternalObjective::constraints != installed))
+        if ((installed <= n) || (constraints != installed))
           return false;
         e.constrain(better);
-        return ExternalObjective::constraints > installed;
+        return constraints > installed;
       }
     public:
       ExternalIncumbent(void) : Base("Search::ExternalIncumbent") {}
       virtual bool run(void) {
         Gecode::Search::Options o;
-        ExternalObjective* bm = new ExternalObjective;
+        std::atomic<int> constraints(0);
+        ExternalObjective* bm = new ExternalObjective(&constraints);
         Gecode::Search::Engine* bab = Gecode::Search::babengine(bm,o);
         delete bm;
-        if (!updates(*bab)) {
+        if (!updates(*bab,constraints)) {
           delete bab;
           return false;
         }
         delete bab;
 
         o.cutoff = Gecode::Search::Cutoff::constant(10);
-        ExternalObjective* rm = new ExternalObjective;
+        ExternalObjective* rm = new ExternalObjective(&constraints);
         Gecode::Search::Engine* rbs =
           Gecode::Search::build<ExternalObjective,
             Gecode::RBS<ExternalObjective,Gecode::BAB> >(rm,o);
         delete rm;
-        if (!updates(*rbs)) {
+        if (!updates(*rbs,constraints)) {
           delete rbs;
           return false;
         }
         delete rbs;
 
         IncomparableObjective incomparable(4), incumbent(5);
-        ExternalObjective* im = new ExternalObjective;
+        ExternalObjective* im = new ExternalObjective(nullptr);
         Gecode::Search::Engine* rejecting = Gecode::Search::babengine(
           im,Gecode::Search::Options());
         delete im;
@@ -1410,12 +1419,12 @@ namespace Test {
         return previous == 0;
       }
       static bool missingFailure(void) {
-        int live = FailingParallelObjective::live;
+        std::atomic<int> live(0);
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o = options();
         o.stop = &stop;
         FailingParallelObjective* m =
-          new FailingParallelObjective(FailingParallelObjective::MISSING);
+          new FailingParallelObjective(FailingParallelObjective::MISSING,live);
         Gecode::Search::Engine* e = Gecode::Search::babengine(m,o);
         delete m;
         bool repeated = false;
@@ -1431,15 +1440,15 @@ namespace Test {
         }
         bool recovered = resetSearch(e);
         delete e;
-        return recovered && (FailingParallelObjective::live == live);
+        return recovered && (live == 0);
       }
       static bool thrownFailure(void) {
-        int live = FailingParallelObjective::live;
+        std::atomic<int> live(0);
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o = options();
         o.stop = &stop;
         FailingParallelObjective* m =
-          new FailingParallelObjective(FailingParallelObjective::THROWN);
+          new FailingParallelObjective(FailingParallelObjective::THROWN,live);
         Gecode::Search::Engine* e = Gecode::Search::babengine(m,o);
         delete m;
         try {
@@ -1447,18 +1456,18 @@ namespace Test {
         } catch (const ComparisonError&) {
           bool recovered = resetSearch(e);
           delete e;
-          return recovered && (FailingParallelObjective::live == live);
+          return recovered && (live == 0);
         }
         delete e;
         return false;
       }
       static bool incomparableFailure(void) {
-        int live = FailingParallelObjective::live;
+        std::atomic<int> live(0);
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o = options();
         o.stop = &stop;
         FailingParallelObjective* m = new FailingParallelObjective(
-          FailingParallelObjective::INCOMPARABLE);
+          FailingParallelObjective::INCOMPARABLE,live);
         Gecode::Search::Engine* e = Gecode::Search::babengine(m,o);
         delete m;
         try {
@@ -1466,7 +1475,7 @@ namespace Test {
         } catch (const Gecode::Search::Incomparable&) {
           bool recovered = resetSearch(e);
           delete e;
-          return recovered && (FailingParallelObjective::live == live);
+          return recovered && (live == 0);
         }
         delete e;
         return false;
@@ -1529,10 +1538,10 @@ namespace Test {
       }
       static bool failure(FailingParallelObjective::Failure f,
                           double threads=2.0) {
-        int live = FailingParallelObjective::live;
+        std::atomic<int> live(0);
         bool caught = false;
         {
-          FailingParallelObjective* m = new FailingParallelObjective(f);
+          FailingParallelObjective* m = new FailingParallelObjective(f,live);
           Gecode::Search::Options o = options();
           o.threads = threads;
           Gecode::PBS<FailingParallelObjective,Gecode::BAB> pbs(m,o);
@@ -1549,7 +1558,7 @@ namespace Test {
             caught = (f == FailingParallelObjective::INCOMPARABLE);
           }
         }
-        return caught && (FailingParallelObjective::live == live);
+        return caught && (live == 0);
       }
     public:
       PortfolioComparison(void) : Base("Search::PortfolioComparison") {}
@@ -1570,24 +1579,25 @@ namespace Test {
         if (previous != 0)
           return false;
 
-        ExternalObjective* em = new ExternalObjective;
+        std::atomic<int> constraints(0);
+        ExternalObjective* em = new ExternalObjective(&constraints);
         Gecode::Search::Engine* external =
           Gecode::Search::build<ExternalObjective,
             Gecode::PBS<ExternalObjective,Gecode::BAB> >(em,o);
         delete em;
         ExternalObjective five(5), equal(5), worse(7), better(3);
-        int n = ExternalObjective::constraints;
+        int n = constraints;
         external->constrain(five);
-        int installed = ExternalObjective::constraints;
+        int installed = constraints;
         external->constrain(equal);
         external->constrain(worse);
         if ((installed <= n) ||
-            (ExternalObjective::constraints != installed)) {
+            (constraints != installed)) {
           delete external;
           return false;
         }
         external->constrain(better);
-        if (ExternalObjective::constraints <= installed) {
+        if (constraints <= installed) {
           delete external;
           return false;
         }
@@ -1978,13 +1988,13 @@ namespace Test {
       /// Number of threads
       unsigned int t;
     public:
-      /// Initialize test
-      RBS(const std::string& e, unsigned int t0)
+      /// Initialize test, enumerating all solutions without an objective
+      RBS(const std::string& e, unsigned int t0, HowToConstrain htc0=HTC_NONE)
         : Test("RBS::"+e+"::"+Model::name()+"::"+str(t0),
-               HTB_BINARY,HTB_BINARY,HTB_BINARY), t(t0) {}
+               HTB_BINARY,HTB_BINARY,HTB_BINARY,htc0), t(t0) {}
       /// Run test
       virtual bool run(void) {
-        Model* m = new Model(htb1,htb2,htb3);
+        Model* m = new Model(htb1,htb2,htb3,htc);
         Gecode::Search::FailStop f(2);
         Gecode::Search::Options o;
         o.threads = t;
@@ -1994,16 +2004,30 @@ namespace Test {
         Gecode::RBS<Model,Engine> rbs(m,o);
         int n = m->solutions();
         delete m;
+        // With an objective, every solution must improve on the previous one
+        Model* b = nullptr;
+        bool improving = true;
         while (true) {
           Model* s = rbs.next();
           if (s != nullptr) {
-            n--; delete s;
+            n--;
+            if (htc == HTC_NONE) {
+              delete s;
+            } else {
+              if ((b != nullptr) && (s->compare(*b) != SC_BETTER))
+                improving = false;
+              delete b; b = s;
+            }
           }
           if ((s == nullptr) && !rbs.stopped())
             break;
           f.limit(f.limit()+2);
         }
-        return n == 0;
+        if (htc == HTC_NONE)
+          return n == 0;
+        bool ok = improving && (b != nullptr) && b->best();
+        delete b;
+        return ok;
       }
     };
 
@@ -2269,7 +2293,7 @@ namespace Test {
         for (unsigned int t=1; t<=4; t++) {
           (void) new RBS<HasSolutions,Gecode::DFS>("DFS",t);
           (void) new RBS<HasSolutions,Gecode::LDS>("LDS",t);
-          (void) new RBS<HasSolutions,Gecode::BAB>("BAB",t);
+          (void) new RBS<HasSolutions,Gecode::BAB>("BAB",t,HTC_LEX_LE);
           (void) new RBS<FailImmediate,Gecode::DFS>("DFS",t);
           (void) new RBS<FailImmediate,Gecode::LDS>("LDS",t);
           (void) new RBS<FailImmediate,Gecode::BAB>("BAB",t);
