@@ -3,14 +3,14 @@
 # Tasks: modern-classes
 
 - Total: 5
-- Ready: 1
-- Blocked: 3
-- Done: 1
+- Ready: 3
+- Blocked: 0
+- Done: 2
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [modern-classes-001](tasks/001-make-the-shallow-handles-trivially-copyable.md) | Make the shallow handles trivially copyable | done | — |
-| [modern-classes-002](tasks/002-inventory-defaultable-members-comparisons-and-overload-pairs.md) | Inventory defaultable members, comparisons, and overload pairs | ready | modern-classes-001 |
-| [modern-classes-003](tasks/003-default-and-delete-special-members-by-tool-run.md) | Default and delete special members by tool run | blocked | modern-classes-002 |
-| [modern-classes-004](tasks/004-use-operator-and-defaulted-operator-where-they-keep-semantic.md) | Use operator<=> and defaulted operator== where they keep semantics | blocked | modern-classes-002 |
-| [modern-classes-005](tasks/005-merge-const-non-const-overload-pairs-with-deducing-this.md) | Merge const/non-const overload pairs with deducing this | blocked | modern-classes-002 |
+| [modern-classes-002](tasks/002-inventory-defaultable-members-comparisons-and-overload-pairs.md) | Inventory defaultable members, comparisons, and overload pairs | done | modern-classes-001 |
+| [modern-classes-003](tasks/003-default-and-delete-special-members-by-tool-run.md) | Default and delete special members by tool run | ready | modern-classes-002 |
+| [modern-classes-004](tasks/004-use-operator-and-defaulted-operator-where-they-keep-semantic.md) | Use operator<=> and defaulted operator== where they keep semantics | ready | modern-classes-002 |
+| [modern-classes-005](tasks/005-merge-const-non-const-overload-pairs-with-deducing-this.md) | Merge const/non-const overload pairs with deducing this | ready | modern-classes-002 |

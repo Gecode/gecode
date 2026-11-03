@@ -3,7 +3,7 @@ schema_version = 1
 id = "modern-classes-002"
 key = "inventory"
 area = "modern-classes"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "normal"
@@ -25,9 +25,17 @@ Read the brief in full, especially Boundaries (expression-building operators, Fl
 
 ## Done when
 
-- [ ] .zdev/modern-classes/background/inventory.md records the clang-tidy commands and counts per check and module, one row per comparison class and per overload pair with its treatment and reason, and the proposed check options, and the brief indexes it.
-- [ ] Every number in the inventory names the command that produced it.
+- [x] .zdev/modern-classes/background/inventory.md records the clang-tidy commands and counts per check and module, one row per comparison class and per overload pair with its treatment and reason, and the proposed check options, and the brief indexes it.
+- [x] Every number in the inventory names the command that produced it.
 
 ## Validation
 
 - Rerun one recorded clang-tidy command and confirm its count.
+
+## Result
+
+Wrote .zdev/modern-classes/background/inventory.md and indexed it in a new Background section of the brief: clang-tidy 22 counts per check and module for three variants with their commands, equals-default placement and risks, manual special-member candidates, 27 comparison rows and 49 const/non-const overload pairs with treatments, a CRTP table, the scripts verbatim, and proposed check options. It also records an ODR violation in BlackBoxProcessSession (gecode/flatzinc/blackbox-process.hh) for the user.
+
+Validation:
+
+- Independent verifier PASS: only the two .zdev files changed; extracted scripts byte-identical; reran the parser.hh clang-tidy command (463 diagnostics, byte-identical log) and summarize; tables match the record; spot-checked classifications; independently confirmed the BlackBoxProcessSession ODR bug (8 vs 16 bytes). The implementer reran the full reproduce.sh (default unique 1195, macros 1199, smf-lenient 355) with matching tables.

@@ -149,6 +149,10 @@ Focused coverage plus existing checks.
 - Mechanical `= default` edits rely on the build, lint, and the integrity
   suite.
 
+## Background
+
+- [Inventory](background/inventory.md): clang-tidy counts per check and module with the commands that rerun them, proposed check options, manual special-member candidates, and one row per comparison class and const/non-const overload pair with its treatment.
+
 ## Validation
 
 - `uv run misc/check.py lint --build-dir <dir>` on a build with experimental,
