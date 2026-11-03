@@ -388,7 +388,7 @@ namespace Gecode { namespace Support {
       uint64_t n = static_cast<uint64_t>(bound);
       // Bucket size: 2^64 raw values, or 2^64-1 for nonzero engines, over n.
       uint64_t bucket;
-      if constexpr (Engine::min() == 0)
+      if (Engine::min() == 0)
         bucket = (uint64_t(0)-n)/n + 1;
       else
         bucket = UINT64_MAX/n;

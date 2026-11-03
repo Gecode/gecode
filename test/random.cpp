@@ -245,18 +245,24 @@ namespace Test {
       return true;
     }
 
+    /// Spaces without a model-owned generator have no owner state to compare.
+    template<class Model>
+    bool owners_agree(const Model&, const Model&) { return true; }
     template<class Random>
-    bool choice_replay(const Random& source, bool different, bool multi, bool callback) {
+    bool owners_agree(const ReplaySpace<Random>& a, const ReplaySpace<Random>& b) {
+      return a.own.state()==b.own.state();
+    }
+
+    /// Committing an archived choice must match committing it directly.
+    template<class Model>
+    bool archive_replay(Model& root) {
       using namespace Gecode;
-      using Model=ReplaySpace<Random>;
-      std::unique_ptr<Model> root(new Model(source,different,multi,callback));
-      while (root->status()==SS_BRANCH) {
-        std::unique_ptr<Model> before(static_cast<Model*>(root->clone()));
-        const auto owner_state=root->own.state();
-        std::unique_ptr<const Choice> choice(root->choice());
-        if (root->own.state()!=owner_state) return false;
+      while (root.status()==SS_BRANCH) {
+        std::unique_ptr<Model> before(static_cast<Model*>(root.clone()));
+        std::unique_ptr<const Choice> choice(root.choice());
+        if (!owners_agree(root,*before)) return false;
         for (unsigned int a=choice->alternatives(); a--;) {
-          std::unique_ptr<Model> direct(static_cast<Model*>(root->clone()));
+          std::unique_ptr<Model> direct(static_cast<Model*>(root.clone()));
           std::unique_ptr<Model> replay(static_cast<Model*>(before->clone()));
           Archive archive; choice->archive(archive);
           std::unique_ptr<const Choice> restored(replay->choice(archive));
@@ -264,7 +270,7 @@ namespace Test {
           direct->commit(*choice,a);
           replay->commit(*restored,a);
           auto status=direct->status();
-          if (status!=replay->status() || direct->own.state()!=replay->own.state())
+          if (status!=replay->status() || !owners_agree(*direct,*replay))
             return false;
           if (status==SS_BRANCH) {
             std::unique_ptr<const Choice> next(direct->choice());
@@ -272,7 +278,7 @@ namespace Test {
             if (!same_archive(*next,*next_replay)) return false;
           }
         }
-        root->commit(*choice,0);
+        root.commit(*choice,0);
       }
       return true;
     }
@@ -301,7 +307,8 @@ namespace Test {
       for (bool different : {false,true})
         for (bool multi : {false,true})
           for (bool callback : {false,true}) {
-            if (!choice_replay(source,different,multi,callback)) return false;
+            ReplaySpace<Random> root(source,different,multi,callback);
+            if (!archive_replay(root)) return false;
             auto cloned=solutions(source,1,different,multi,callback);
             auto recomputed=solutions(source,100,different,multi,callback);
             if (cloned.size()!=81 || cloned!=recomputed) return false;
@@ -327,37 +334,12 @@ namespace Test {
       Space* copy() override { return new LDSBSpace(*this); }
     };
 
-    bool ldsb_replay() {
-      using namespace Gecode;
-      LDSBSpace root;
-      while (root.status()==SS_BRANCH) {
-        std::unique_ptr<Space> before(root.clone());
-        std::unique_ptr<const Choice> choice(root.choice());
-        for (unsigned int a=choice->alternatives(); a--;) {
-          std::unique_ptr<Space> direct(root.clone());
-          std::unique_ptr<Space> replay(before->clone());
-          Archive archive; choice->archive(archive);
-          std::unique_ptr<const Choice> restored(replay->choice(archive));
-          if (!same_archive(*choice,*restored)) return false;
-          direct->commit(*choice,a); replay->commit(*restored,a);
-          auto status=direct->status();
-          if (status!=replay->status()) return false;
-          if (status==SS_BRANCH) {
-            std::unique_ptr<const Choice> next(direct->choice());
-            std::unique_ptr<const Choice> next_replay(replay->choice());
-            if (!same_archive(*next,*next_replay)) return false;
-          }
-        }
-        root.commit(*choice,0);
-      }
-      return true;
-    }
-
     class BranchReplay : public Base {
     public:
       BranchReplay() : Base("Random::BranchReplay", TestTags::check()) {}
       bool run() override {
-        return ldsb_replay() && branch_replay(Gecode::Rnd(42)) &&
+        LDSBSpace ldsb;
+        return archive_replay(ldsb) && branch_replay(Gecode::Rnd(42)) &&
           branch_replay(Gecode::RndGenerator<Xorshift64Star>(42)) &&
           branch_replay(Gecode::RndGenerator<CountedSplitMix>(42));
       }

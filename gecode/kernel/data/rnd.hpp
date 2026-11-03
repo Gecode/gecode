@@ -63,8 +63,7 @@ namespace Gecode {
    * changes them; a custom brancher using one must make its state a
    * function of the path, for example by splitting it on commit. Space
    * cloning does not copy mutable state in shared callback captures. Engine
-   * must meet the Support::Random contract, including splitting. See
-   * examples/random-engine.cpp for a user-defined engine and selectors.
+   * must meet the Support::Random contract, including splitting.
    * \ingroup TaskModel
    */
   template<class Engine>

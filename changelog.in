@@ -73,41 +73,23 @@
 Version: 7.0.0
 Date: unreleased
 [DESCRIPTION]
-Development changes for Gecode 7; source, binary, and seeded-sequence
-compatibility with Gecode 6 is not preserved.
+This is the development changelog for the next Gecode release.
 
 [ENTRY]
 Module: kernel
 What:   new
 Rank:   major
 [DESCRIPTION]
-Added user-extensible random number generators with reproducible
-stream splitting. Splittable SplitMix replaces the old default generator;
-xorshift64* is available as a smaller-state alternative. The default is
-configurable at build time, and users can supply their own engines.
-Randomized branching splits its generator state by alternative on commit,
-so the state at a node depends only on the path and is reproduced during
-recomputation. Restart and portfolio search split each slave's state, the
-first slave included, with separate streams for restarts and portfolio assets,
-so slaves explore different random paths, also when engines nest.
-Complete-state save/restore and command-line state input support exact
-replay, including test failures.
+Replaced the random number generator by splittable engines with complete
+state save/restore: SplitMix by default, xorshift64* at build time, or a
+user-supplied engine. Randomized branching splits its state on commit, so
+cloning and recomputation make the same random decisions, while each
+restart and portfolio asset gets its own stream.
 [MORE]
-Generators store their compact state directly in their consumers, and copying
-a generator produces independent state. Posting splits each selector by its
-brancher and role, so branchers given the same generator draw independent
-streams. Choices store no generator state. Bounded draws take their value
-from the high bits of the raw output. Xorshift64* hashes its seed, as its
-recurrence is linear. Drivers accept checked 64-bit seeds as well as complete
-state. APIs and seeded sequences change; no legacy
-sequence mode is provided. This design remains
-provisional for a future breaking-change release. Replace the old seed()
-snapshot accessor with state() and restore with state(text). The driver and
-FlatZinc options no longer provide a seed() accessor; use opt.rnd() instead
-of Rnd(opt.seed()) to honor time, hardware, and complete-state input.
-The seed constructor is explicit, so an integer no longer converts to a
-generator: write INT_VAL_RND(Rnd(42)) instead of INT_VAL_RND(42).
-Engine contracts are documented on Support::Random and RndGenerator.
+Rnd is a value type with an explicit seed constructor: write
+INT_VAL_RND(Rnd(42)) instead of INT_VAL_RND(42). Use state() and
+state(text) instead of seed(), and opt.rnd() instead of Rnd(opt.seed()).
+Drivers accept -state with a complete state. Seeded sequences change.
 
 [ENTRY]
 Module: search
@@ -115,18 +97,15 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 Restart-based search numbers a restart after a solution like any other
-restart, so every slave's MetaInfo::restart() is unique. FlatZinc
-large neighbourhood search therefore relaxes from the first restart after
-the first solution.
+restart, so MetaInfo::restart() is unique for every slave.
 
 [ENTRY]
 Module: test
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The test harness option -replay takes the complete random state printed for
-a failed iteration instead of a 64-bit seed, together with the failed
-test's name passed to -test.
+The test option -replay takes the complete random state printed for a
+failed iteration.
 
 [RELEASE]
 Version: 6.5.0
