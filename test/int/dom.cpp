@@ -156,6 +156,39 @@ namespace Test { namespace Int {
             }
         };
 
+        /// %Test for domain constraint (set from an empty initializer list)
+        class DomDomEmpty : public Test {
+            /// Whether the list holds ranges rather than values
+            bool ranges;
+            /// Return the empty set built from an empty list
+            Gecode::IntSet
+            empty_set(void) const {
+                if (ranges)
+                    return Gecode::IntSet(std::initializer_list<std::pair<int, int>>{});
+                return Gecode::IntSet(std::initializer_list<int>{});
+            }
+
+        public:
+            /// Create and register test
+            DomDomEmpty(bool r)
+                : Test(std::string("Dom::Dom::Empty::") + (r ? "Ranges" : "Values"), 1, -4, 4, true), ranges(r) {}
+            /// %Test whether \a x is solution
+            bool
+            solution(const Assignment&) const override {
+                return false;
+            }
+            /// Post constraint on \a x
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+                Gecode::dom(home, x[0], empty_set());
+            }
+            /// Post reified constraint on \a x for \a r
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
+                Gecode::dom(home, x[0], empty_set(), r);
+            }
+        };
+
         const int r[4][2] = {{-4, -3}, {-1, -1}, {1, 1}, {3, 5}};
         Gecode::IntSet d(r, 4);
 
@@ -212,6 +245,8 @@ namespace Test { namespace Int {
         DomDom dd1(1);
         DomDom dd3(3);
         DomRangeEmpty dre;
+        DomDomEmpty dde_values(false);
+        DomDomEmpty dde_ranges(true);
         //@}
 
     } // namespace Dom
