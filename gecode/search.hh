@@ -1370,9 +1370,6 @@ namespace Gecode {
    * to the space \a c currently being explored, the engine
    * executes \c c.constrain(t) where \a t is the so-far
    * best solution.
-   * See Space::compare for the ordering and pruning requirements. If objective
-   * comparison throws, destroy the engine; only an internal engine interface
-   * that explicitly supports reset can establish a new search after failure.
    * \ingroup TaskModelSearch
    */
   template<class T>
@@ -1392,8 +1389,6 @@ namespace Gecode {
    * to the space \a c currently being explored, the engine
    * executes \c c.constrain(t) where \a t is the so-far
    * best solution.
-   * See Space::compare for the ordering and pruning requirements. If objective
-   * comparison throws, destroy the engine rather than continuing to use it.
    *
    * \ingroup TaskModelSearch
    */
@@ -1531,10 +1526,8 @@ namespace Gecode {
    * The engine will run a portfolio with a number of assets as defined
    * by the options \a o. The engine supports parallel execution of
    * assets by using the number of threads as defined by the options.
-   * For best-solution assets, incoming solutions replace the retained
-   * incumbent only when Space::compare reports SC_BETTER. Equivalent and
-   * worse solutions are discarded; incomparable solutions are currently
-   * reported as unsupported.
+   * For best-solution assets, a solution replaces the incumbent only if
+   * Space::compare reports SC_BETTER.
    * An external worker control in \a o is supported only for a single
    * homogeneous asset. Multiple controlled assets require explicit engine
    * builders, each with its own control and immutable worker capacity.

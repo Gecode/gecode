@@ -2157,43 +2157,17 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT virtual void constrain(const Space& best);
     /**
-     * \brief Compare this space's objective with \a other
+     * \brief Compare function for best solution search
      *
-     * The comparison is read-only and receiver-relative. Implementations may
-     * require objective information sufficient for the relation they report.
-     * The model owns this readiness rule: comparison does not require every
-     * objective variable to be assigned when the model can establish a sound
-     * result from the available information.
-     * The default implementation throws SpaceNoComparison.
-     * SC_INCOMPARABLE is a model-defined ordering result, not missing
-     * information. Current exact best-solution engines reject it.
+     * Must return whether this solution is better than, equivalent to,
+     * worse than, or incomparable with solution \a other, without modifying
+     * either. The result must agree with constrain: solutions admitted by
+     * constrain(b) are better than b, and a better b admits no more solutions.
      *
-     * Optimization models overriding constrain with a different objective
-     * must also override compare.
-     * constrain remains responsible for posting improvement restrictions;
-     * search does not use it to rank two solutions.
+     * The default function throws SpaceNoComparison, so a space overriding
+     * constrain must also override compare.
      *
-     * Exact best-solution search requires SC_BETTER to be irreflexive and
-     * transitive, SC_WORSE to be its reverse, and SC_EQUIVALENT to be
-     * transitive and preserve comparison with every third solution. On
-     * objective-complete feasible solutions, SC_BETTER must agree with the
-     * improvement relation posted by constrain. A replacement incumbent's
-     * improvement restriction must admit a subset of the solutions admitted
-     * by the old restriction; equivalent incumbents must post interchangeable
-     * restrictions.
-     *
-     * All assets in a best-solution portfolio must use compatible objective
-     * direction, component interpretation, and pruning policy. The MiniModel
-     * float optimization spaces compare the incumbent bound used by their
-     * cuts: the upper bound for minimization and lower bound for maximization.
-     * This ranking is independent of the step used for approximate cuts.
-     * FlatZinc retains its interval-valued cuts and instead ranks the lower
-     * bound for minimization and upper bound for maximization.
-     *
-     * After compare throws during BAB, PBS, or RBS search, destroy and
-     * recreate the public search engine. An internal engine interface that
-     * explicitly supports reset can establish a new search after failure;
-     * other post-exception use has no recovery guarantee.
+     * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT virtual SpaceComparison
     compare(const Space& other) const;
