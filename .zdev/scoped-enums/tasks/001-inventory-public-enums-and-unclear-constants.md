@@ -6,7 +6,7 @@ area = "scoped-enums"
 status = "open"
 complexity = "advanced"
 afk = true
-blocked_by = ["config-header-003", "empty-arrays-002", "value-params-003", "boost-005"]
+blocked_by = ["config-header-003", "empty-arrays-002", "value-params-003", "boost-005", "empty-arrays-011"]
 +++
 # Inventory public enums and unclear constants
 

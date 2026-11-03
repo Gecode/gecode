@@ -7,7 +7,7 @@ status = "open"
 complexity = "routine"
 afk = true
 priority = "low"
-blocked_by = ["scoped-enums-004"]
+blocked_by = ["scoped-enums-004", "modern-classes-003", "modern-classes-004", "modern-classes-005"]
 +++
 # Remove (void) parameter lists by tool run
 

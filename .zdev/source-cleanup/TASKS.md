@@ -9,4 +9,4 @@
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
-| [source-cleanup-001](tasks/001-remove-void-parameter-lists-by-tool-run.md) | Remove (void) parameter lists by tool run | blocked | scoped-enums-004 (scoped-enums: open) |
+| [source-cleanup-001](tasks/001-remove-void-parameter-lists-by-tool-run.md) | Remove (void) parameter lists by tool run | blocked | scoped-enums-004 (scoped-enums: open), modern-classes-003 (modern-classes: open), modern-classes-004 (modern-classes: open), modern-classes-005 (modern-classes: open) |

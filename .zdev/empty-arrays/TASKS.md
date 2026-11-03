@@ -2,9 +2,9 @@
 
 # Tasks: empty-arrays
 
-- Total: 7
-- Ready: 0
-- Blocked: 0
+- Total: 11
+- Ready: 2
+- Blocked: 2
 - Done: 7
 
 | ID | Task | State | Blocked by |
@@ -16,3 +16,7 @@
 | [empty-arrays-005](tasks/005-decide-empty-set-channel-element-rel-op-and-weights-at-posti.md) | Decide empty set channel, element, rel-op and weights at posting | done | — |
 | [empty-arrays-006](tasks/006-skip-empty-term-buffers-in-linear-posting-and-minimodel-expr.md) | Skip empty term buffers in linear posting and minimodel expressions | done | — |
 | [empty-arrays-007](tasks/007-skip-empty-buffers-in-open-list-distinct.md) | Skip empty buffers in open-list distinct | done | — |
+| [empty-arrays-008](tasks/008-find-zero-size-heap-requests-and-null-pointer-library-calls.md) | Find zero-size heap requests and null-pointer library calls | ready | — |
+| [empty-arrays-009](tasks/009-give-empty-action-and-chb-objects-no-element-buffer-and-no-r.md) | Give empty Action and CHB objects no element buffer and no recorder | ready | — |
+| [empty-arrays-010](tasks/010-fix-the-remaining-zero-size-heap-requests-and-null-pointer-l.md) | Fix the remaining zero-size heap requests and null-pointer library calls | blocked | empty-arrays-008 |
+| [empty-arrays-011](tasks/011-state-and-assert-the-heap-size-contract.md) | State and assert the heap size contract | blocked | empty-arrays-009, empty-arrays-010 |

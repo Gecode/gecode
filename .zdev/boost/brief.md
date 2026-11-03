@@ -92,6 +92,11 @@ Boost is ruled out (see Terms and settled decisions).
 - Gecode takes on no external dependency. Boost is not found or required at
   build or consumer time. The user chose this to keep Gecode free of
   dependencies, and Boost in particular.
+- The user has low trust in Boost (2026-11-03). Before deciding in
+  boost-004, the user wants a spike of a fully Gecode-native float interval
+  library (approach 3 with no Boost code at all, rounding control included),
+  together with its wider impacts on the API, ABI, users, and the other
+  Gecode 7 areas.
 - This is a Gecode 7 breaking change. `Float::Rounding`, `RoundingBase`, and
   `FloatVal`'s implementation type may change spelling and base classes.
 
@@ -111,6 +116,8 @@ The investigation answers all but the last. The user decides the last one.
 - For approach 3, does `nextafter` outward rounding change the results or the
   runtime of the float tests and float examples compared with switched
   rounding modes?
+- Does a fully Gecode-native library keep today's bounds, search, and
+  runtime, and what are its wider impacts? The native spike answers this.
 - Which approach does Gecode 7 adopt: a refreshed copy, an improved copy, or
   a Gecode support library?
 
