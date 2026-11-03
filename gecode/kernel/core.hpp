@@ -53,6 +53,28 @@
 
 namespace Gecode {
 
+  /// Result of comparing two spaces according to their objectives
+  enum SpaceComparison {
+    SC_BETTER,     ///< The receiver has a better objective
+    SC_EQUIVALENT, ///< Both objectives are equivalent
+    SC_WORSE,      ///< The receiver has a worse objective
+    SC_INCOMPARABLE ///< Neither objective dominates the other
+  };
+
+  /// Optimization direction
+  enum class Sense {
+    minimize, ///< Smaller objective values are better
+    maximize  ///< Larger objective values are better
+  };
+
+  /// Compare objective value \a x with \a y for direction \a s
+  forceinline SpaceComparison
+  compare_int(int x, int y, Sense s) {
+    if (x == y)
+      return SC_EQUIVALENT;
+    return ((x < y) == (s == Sense::minimize)) ? SC_BETTER : SC_WORSE;
+  }
+
   class Space;
 
   /**
@@ -2148,6 +2170,21 @@ namespace Gecode {
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT virtual void constrain(const Space& best);
+    /**
+     * \brief Compare function for best solution search
+     *
+     * Must return whether this solution is better than, equivalent to,
+     * worse than, or incomparable with solution \a other, without modifying
+     * either. The result must agree with constrain: solutions admitted by
+     * constrain(b) are better than b, and a better b admits no more solutions.
+     *
+     * The default function throws SpaceNoComparison, so a space overriding
+     * constrain must also override compare.
+     *
+     * \ingroup TaskModelScript
+     */
+    GECODE_KERNEL_EXPORT virtual SpaceComparison
+    compare(const Space& other) const;
     /**
      * \brief Master configuration function for meta search engines
      *

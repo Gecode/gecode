@@ -2442,6 +2442,9 @@ namespace Gecode {
     /// Member function constraining according to decreasing cost
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
+    /// Compare integer costs (both costs must be assigned)
+    GECODE_MINIMODEL_EXPORT
+    virtual SpaceComparison compare(const Space& other) const;
     /// Return variable with current cost
     virtual IntVar cost(void) const = 0;
   };
@@ -2459,6 +2462,9 @@ namespace Gecode {
     /// Member function constraining according to increasing cost
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
+    /// Compare integer costs (both costs must be assigned)
+    GECODE_MINIMODEL_EXPORT
+    virtual SpaceComparison compare(const Space& other) const;
     /// Return variable with current cost
     virtual IntVar cost(void) const = 0;
   };
@@ -2476,6 +2482,9 @@ namespace Gecode {
     /// Member function constraining according to decreasing costs
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
+    /// Compare integer costs lexicographically
+    GECODE_MINIMODEL_EXPORT
+    virtual SpaceComparison compare(const Space& other) const;
     /// Return variables with current costs
     virtual IntVarArgs cost(void) const = 0;
   };
@@ -2493,6 +2502,9 @@ namespace Gecode {
     /// Member function constraining according to increasing costs
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
+    /// Compare integer costs lexicographically
+    GECODE_MINIMODEL_EXPORT
+    virtual SpaceComparison compare(const Space& other) const;
     /// Return variables with current costs
     virtual IntVarArgs cost(void) const = 0;
   };
@@ -2505,6 +2517,9 @@ namespace Gecode {
    * The class supports using a step value \a step that will make sure
    * that better solutions must be better by at least the value of
    * \a step.
+   * Comparison ranks the upper endpoint of assigned costs independently of
+   * the step. Both operands must use this base class and the same step.
+   * Assigned costs may be tight intervals between adjacent float values.
    *
    * \ingroup TaskModelMiniModelOptimize
    */
@@ -2520,6 +2535,9 @@ namespace Gecode {
     /// Member function constraining according to cost
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
+    /// Compare upper endpoints of assigned costs with a common step policy
+    GECODE_MINIMODEL_EXPORT
+    virtual SpaceComparison compare(const Space& other) const;
     /// Return variable with current cost
     virtual FloatVar cost(void) const = 0;
   };
@@ -2530,6 +2548,9 @@ namespace Gecode {
    * The class supports using a step value \a step that will make sure
    * that better solutions must be better by at least the value of
    * \a step.
+   * Comparison ranks the lower endpoint of assigned costs independently of
+   * the step. Both operands must use this base class and the same step.
+   * Assigned costs may be tight intervals between adjacent float values.
    *
    * \ingroup TaskModelMiniModelOptimize
    */
@@ -2545,6 +2566,9 @@ namespace Gecode {
     /// Member function constraining according to cost
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
+    /// Compare lower endpoints of assigned costs with a common step policy
+    GECODE_MINIMODEL_EXPORT
+    virtual SpaceComparison compare(const Space& other) const;
     /// Return variable with current cost
     virtual FloatVar cost(void) const = 0;
   };

@@ -1236,8 +1236,10 @@ namespace Gecode { namespace Search {
    *
    * The bound is an optimistic objective value for a stable space: a lower
    * bound when minimizing, an upper bound when maximizing, and the exact
-   * objective for a solution. It must agree with the model's constrain
-   * function. The optional rank orders nodes (lower first) but is never
+   * objective for a solution. It must agree with the model's constrain and
+   * compare functions. The bound orders and prunes open nodes, while
+   * solutions replace the incumbent only when Space::compare reports
+   * SC_BETTER. The optional rank orders nodes (lower first) but is never
    * used for pruning.
    *
    * The optional dominance predicate returns whether every completion of
@@ -1258,8 +1260,6 @@ namespace Gecode { namespace Search {
    */
   class HeuristicGuidance {
   public:
-    /// Objective direction
-    enum Sense { MINIMIZE, MAXIMIZE };
     /// Function evaluating a stable space
     typedef std::function<std::int64_t(const Space&)> Evaluate;
     /// Objective direction
@@ -1287,7 +1287,8 @@ namespace Gecode {
    * Expands nodes in order of their bound, then their rank, using the
    * guidance from Search::Options::guidance. Like BAB, next() returns
    * improving solutions and exhausting the search proves the last
-   * solution optimal.
+   * solution optimal. Additionally, \a T must implement Space::constrain
+   * and Space::compare.
    *
    * All open nodes are stored as clones, so c_d and a_d are ignored.
    * Tracing is not supported.
@@ -1325,7 +1326,8 @@ namespace Gecode {
    * improve the incumbent, the search restarts with twice the width.
    * The guidance is taken from Search::Options::guidance. Like BAB,
    * next() returns improving solutions and exhausting the search proves
-   * the last solution optimal.
+   * the last solution optimal. Additionally, \a T must implement
+   * Space::constrain and Space::compare.
    *
    * Search stops when the width would exceed Search::Options::max_width or
    * the stored nodes would exceed Search::Options::frontier_limit. Nodes are
@@ -1361,8 +1363,7 @@ namespace Gecode {
   /**
    * \brief Depth-first branch-and-bound search engine
    *
-   * Additionally, \a s must implement a member function
-   * \code virtual void constrain(const T& t) \endcode
+   * Additionally, \a s must implement Space::constrain and Space::compare.
    * Whenever exploration requires to add a constraint
    * to the space \a c currently being explored, the engine
    * executes \c c.constrain(t) where \a t is the so-far
@@ -1381,8 +1382,7 @@ namespace Gecode {
   /**
    * \brief Perform depth-first branch-and-bound search for subclass \a T of space \a s and options \a o
    *
-   * Additionally, \a s must implement a member function
-   * \code virtual void constrain(const T& t) \endcode
+   * Additionally, \a s must implement Space::constrain and Space::compare.
    * Whenever exploration requires to add a constraint
    * to the space \a c currently being explored, the engine
    * executes \c c.constrain(t) where \a t is the so-far
@@ -1524,6 +1524,8 @@ namespace Gecode {
    * The engine will run a portfolio with a number of assets as defined
    * by the options \a o. The engine supports parallel execution of
    * assets by using the number of threads as defined by the options.
+   * For best-solution assets, a solution replaces the incumbent only if
+   * Space::compare reports SC_BETTER.
    * An external worker control in \a o is supported only for a single
    * homogeneous asset. Multiple controlled assets require explicit engine
    * builders, each with its own control and immutable worker capacity.
