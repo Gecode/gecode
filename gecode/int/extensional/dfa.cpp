@@ -195,7 +195,7 @@ namespace Gecode {
         }
 
         // Temporary structure for transitions
-        Transition* trans = region.alloc<Transition>(n_trans);
+        Transition* trans = (n_trans > 0) ? region.alloc<Transition>(n_trans) : nullptr;
         if (compact) {
             for (int i = 0; i < n_trans; i++) {
                 trans[i] = t_spec[i];

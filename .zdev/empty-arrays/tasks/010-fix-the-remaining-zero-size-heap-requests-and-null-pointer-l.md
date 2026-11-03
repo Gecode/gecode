@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-010"
 key = "other-sites"
 area = "empty-arrays"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "normal"
@@ -25,10 +25,18 @@ Follow background/heap-zero-size.md; this task owns every site in it except the 
 
 ## Done when
 
-- [ ] Every site the record assigns to this task is fixed with its evidence; none is left open.
-- [ ] The tests that reach the fixed heap-request sites pass with the scratch assertion, and the UBSan run of those tests reports nothing for the fixed sites.
+- [x] Every site the record assigns to this task is fixed with its evidence; none is left open.
+- [x] The tests that reach the fixed heap-request sites pass with the scratch assertion, and the UBSan run of those tests reports nothing for the fixed sites.
 
 ## Validation
 
 - The focused tests for each fixed site in build/full with the scratch assertion, and in a GECODE_SANITIZER=undefined build.
 - check-standard in build/full.
+
+## Result
+
+Fixed sites 3-16 of background/heap-zero-size.md: TupleSet, Archive, Space::rrealloc, FlatZinc vs2is/new_set_var/p_regular, the scowl dictionary, DFA::init and TupleSet(int, DFA) Region requests, and empty initializer-list IntSet; null buffers are freed only when non-null; tests and changelog entries.
+
+Validation:
+
+- scratch s > 0 heap assertion: new/focused tests abort before, pass after; erebor UBSan: Archive and Space::rrealloc reports before, 0 after; build/full check-standard 6820/6820; recheck: focused tests pass, null-free probe clean

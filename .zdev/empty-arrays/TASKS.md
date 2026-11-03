@@ -4,8 +4,8 @@
 
 - Total: 11
 - Ready: 1
-- Blocked: 1
-- Done: 9
+- Blocked: 0
+- Done: 10
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -18,5 +18,5 @@
 | [empty-arrays-007](tasks/007-skip-empty-buffers-in-open-list-distinct.md) | Skip empty buffers in open-list distinct | done | — |
 | [empty-arrays-008](tasks/008-find-zero-size-heap-requests-and-null-pointer-library-calls.md) | Find zero-size heap requests and null-pointer library calls | done | — |
 | [empty-arrays-009](tasks/009-give-empty-action-and-chb-objects-no-element-buffer-and-no-r.md) | Give empty Action and CHB objects no element buffer and no recorder | done | — |
-| [empty-arrays-010](tasks/010-fix-the-remaining-zero-size-heap-requests-and-null-pointer-l.md) | Fix the remaining zero-size heap requests and null-pointer library calls | ready | empty-arrays-008 |
-| [empty-arrays-011](tasks/011-state-and-assert-the-heap-size-contract.md) | State and assert the heap size contract | blocked | empty-arrays-009, empty-arrays-010 |
+| [empty-arrays-010](tasks/010-fix-the-remaining-zero-size-heap-requests-and-null-pointer-l.md) | Fix the remaining zero-size heap requests and null-pointer library calls | done | empty-arrays-008 |
+| [empty-arrays-011](tasks/011-state-and-assert-the-heap-size-contract.md) | State and assert the heap size contract | ready | empty-arrays-009, empty-arrays-010 |

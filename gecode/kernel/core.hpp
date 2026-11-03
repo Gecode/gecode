@@ -3004,8 +3004,10 @@ namespace Gecode {
         char* b = static_cast<char*>(_b);
         if (n < m) {
             char* p = static_cast<char*>(ralloc(m));
-            memcpy(p, b, n);
-            rfree(b, n);
+            if (n > 0) {
+                memcpy(p, b, n);
+                rfree(b, n);
+            }
             return p;
         } else {
             rfree(b + m, m - n);

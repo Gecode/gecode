@@ -41,23 +41,31 @@ namespace Gecode {
         _size = m;
     }
 
-    Archive::Archive(const Archive& e) : _size(e._n), _n(e._n), _pos(e._pos) {
-        _a = heap.alloc<unsigned int>(_n);
-        heap.copy<unsigned int>(_a, e._a, _n);
+    Archive::Archive(const Archive& e) : _size(e._n), _n(e._n), _a(nullptr), _pos(e._pos) {
+        if (_n > 0) {
+            _a = heap.alloc<unsigned int>(_n);
+            heap.copy<unsigned int>(_a, e._a, _n);
+        }
     }
 
     Archive&
     Archive::operator=(const Archive& e) {
         if (this != &e) {
-            _a = heap.realloc<unsigned int>(_a, _size, e._n);
-            heap.copy<unsigned int>(_a, e._a, e._n);
+            if (e._n > 0) {
+                _a = heap.realloc<unsigned int>(_a, _size, e._n);
+                heap.copy<unsigned int>(_a, e._a, e._n);
+            } else if (_a != nullptr) {
+                heap.free<unsigned int>(_a, _size);
+                _a = nullptr;
+            }
             _size = _n = e._n;
         }
         return *this;
     }
 
     Archive::~Archive(void) {
-        heap.free<unsigned int>(_a, _size);
+        if (_a != nullptr)
+            heap.free<unsigned int>(_a, _size);
     }
 
 } // namespace Gecode

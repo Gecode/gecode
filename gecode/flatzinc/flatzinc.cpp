@@ -364,12 +364,7 @@ namespace Gecode { namespace FlatZinc {
             if (sl->interval) {
                 return IntSet(sl->min, sl->max);
             } else {
-                int* newdom = heap.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
-                for (int i = sl->s.size(); i--;)
-                    newdom[i] = sl->s[i];
-                IntSet ret(newdom, sl->s.size());
-                heap.free(newdom, static_cast<unsigned long int>(sl->s.size()));
-                return ret;
+                return IntSet(sl->s.data(), static_cast<int>(sl->s.size()));
             }
         }
         return IntSet(Int::Limits::min, Int::Limits::max);
@@ -965,11 +960,7 @@ namespace Gecode { namespace FlatZinc {
                 IntSet d(vsv->min, vsv->max);
                 sv[set_var_count++] = SetVar(*this, d, d);
             } else {
-                int* is = heap.alloc<int>(static_cast<unsigned long int>(vsv->s.size()));
-                for (int i = vsv->s.size(); i--;)
-                    is[i] = vsv->s[i];
-                IntSet d(is, vsv->s.size());
-                heap.free(is, static_cast<unsigned long int>(vsv->s.size()));
+                IntSet d(vsv->s.data(), static_cast<int>(vsv->s.size()));
                 sv[set_var_count++] = SetVar(*this, d, d);
             }
         } else if (vs->upper_bound()) {
@@ -978,11 +969,7 @@ namespace Gecode { namespace FlatZinc {
                 IntSet d(vsv->min, vsv->max);
                 sv[set_var_count++] = SetVar(*this, IntSet::empty, d);
             } else {
-                int* is = heap.alloc<int>(static_cast<unsigned long int>(vsv->s.size()));
-                for (int i = vsv->s.size(); i--;)
-                    is[i] = vsv->s[i];
-                IntSet d(is, vsv->s.size());
-                heap.free(is, static_cast<unsigned long int>(vsv->s.size()));
+                IntSet d(vsv->s.data(), static_cast<int>(vsv->s.size()));
                 sv[set_var_count++] = SetVar(*this, IntSet::empty, d);
             }
         } else {

@@ -177,6 +177,9 @@ namespace Test { namespace FlatZinc { namespace {
                 "NativeRegistry::NondeterministicPrefix",
                 "constraint gecode_regular_nfa_int_fzn([0,1],3,0,2,[{1,2},{},{},{3},{},{}],1,{3}); solve satisfy;",
                 sat);
+            (void)new FlatZincTest("NativeRegistry::RegularReversedFinals",
+                                   "var 1..1: x; constraint gecode_regular([x], 1, 1, [1], 1, 3..1); solve satisfy;",
+                                   unsat);
             (void)new FlatZincErrorTest("NativeRegistry::SortSize",
                                         "constraint gecode_sort_permutation([1,2],[1],[1,2],1); solve satisfy;", {},
                                         "sort arrays must have equal lengths");

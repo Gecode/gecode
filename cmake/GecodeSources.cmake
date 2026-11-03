@@ -333,6 +333,7 @@ set(GECODE_TEST_SOURCES
   test/flatzinc/cutstock.cpp
   test/flatzinc/empty_domain_1.cpp
   test/flatzinc/empty_domain_2.cpp
+  test/flatzinc/empty_set_literal.cpp
   test/flatzinc/eq20.cpp
   test/flatzinc/factory_planning_instance.cpp
   test/flatzinc/golomb.cpp

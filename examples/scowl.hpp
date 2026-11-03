@@ -7820,7 +7820,9 @@ Dictionary::init(const char* fn) {
             f.close();
         }
 
-        chunk = static_cast<char*>(Gecode::heap.ralloc(sz));
+        // A file with no accepted word and no final newline needs no bytes
+        if (sz > 0)
+            chunk = static_cast<char*>(Gecode::heap.ralloc(sz));
 
         {
             // Initialize start information in chunk
@@ -7900,7 +7902,8 @@ operator<<(std::basic_ostream<Char, Traits>& os, const Dictionary& d) {
 }
 
 inline Dictionary::~Dictionary(void) {
-    Gecode::heap.rfree(chunk);
+    if (chunk != nullptr)
+        Gecode::heap.rfree(chunk);
 }
 
 // STATISTICS: example-ignore

@@ -1270,10 +1270,11 @@ namespace Gecode { namespace FlatZinc {
             // Final states
             int* f;
             if (finals->interval) {
-                f = static_cast<int*>(heap.ralloc(sizeof(int) * (finals->max - finals->min + 2)));
-                for (int i = finals->min; i <= finals->max; i++)
-                    f[i - finals->min] = i;
-                f[finals->max - finals->min + 1] = -1;
+                const int n_finals = (finals->min <= finals->max) ? finals->max - finals->min + 1 : 0;
+                f = static_cast<int*>(heap.ralloc(sizeof(int) * (n_finals + 1)));
+                for (int i = 0; i < n_finals; i++)
+                    f[i] = finals->min + i;
+                f[n_finals] = -1;
             } else {
                 f = static_cast<int*>(heap.ralloc(sizeof(int) * (finals->s.size() + 1)));
                 for (int j = finals->s.size(); j--;)
@@ -1282,7 +1283,7 @@ namespace Gecode { namespace FlatZinc {
             }
 
             DFA dfa(q0, t, f);
-            free(f);
+            heap.rfree(f);
             unshare(s, iv);
             extensional(s, iv, s.get_shared_dfa(dfa), s.annotation_to_int_prop_level(ann));
         }

@@ -1309,16 +1309,20 @@ namespace Test { namespace Int {
         };
 
         /// The assignment harness needs one variable even for a nullary table.
-        class SparseTupleSetNullary : public Test {
+        class TupleSetNullary : public Test {
             bool nonempty;
             Gecode::TupleSet t;
 
         public:
-            SparseTupleSetNullary(bool n)
-                : Test("Extensional::TupleSet::Sparse::Nullary::" + str(n), 1, 0, 0), nonempty(n), t(0) {
+            TupleSetNullary(Gecode::ExtensionalPropKind epk, bool n)
+                : Test("Extensional::TupleSet::" + extensional_kind_name(epk) + "::Nullary::" + str(n), 1, 0, 0),
+                  nonempty(n), t(0) {
+                // More copies of the empty tuple than the initial capacity of
+                // 1024 tuples, so that the tuple storage grows
                 if (nonempty)
-                    t.add(Gecode::IntArgs(0));
-                t.finalize(Gecode::EPK_SPARSE);
+                    for (int i = 0; i < 1025; i++)
+                        t.add(Gecode::IntArgs(0));
+                t.finalize(epk);
             }
             bool
             solution(const Assignment&) const override {
@@ -2427,8 +2431,12 @@ namespace Test { namespace Int {
         SparseTupleSet sparse_tuple_set_unary("Unary", 1, 2000);
         SparseTupleSet sparse_tuple_set_ternary("Ternary", 3, 1500);
         SparseTupleSet sparse_tuple_set_high_arity("HighArity", 6, 1000);
-        SparseTupleSetNullary sparse_tuple_set_nullary(true);
-        SparseTupleSetNullary sparse_tuple_set_empty(false);
+        TupleSetNullary sparse_tuple_set_nullary(Gecode::EPK_SPARSE, true);
+        TupleSetNullary sparse_tuple_set_empty(Gecode::EPK_SPARSE, false);
+        TupleSetNullary dense_tuple_set_nullary(Gecode::EPK_DENSE, true);
+        TupleSetNullary dense_tuple_set_empty(Gecode::EPK_DENSE, false);
+        TupleSetNullary dense_compressed_tuple_set_nullary(Gecode::EPK_DENSE_COMPRESSED, true);
+        TupleSetNullary dense_compressed_tuple_set_empty(Gecode::EPK_DENSE_COMPRESSED, false);
         SparseTupleSetIncremental sparse_tuple_set_incremental_delta("Delta", 0);
         SparseTupleSetIncremental sparse_tuple_set_incremental_assign("Assign", 1);
         SparseTupleSetIncremental sparse_tuple_set_incremental_bool("Bool", 2);

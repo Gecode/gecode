@@ -187,6 +187,45 @@ the C library may answer with a null pointer and thus a MemoryExhausted
 exception.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Copying or assigning an empty Archive requests no heap memory, and growing
+space memory with Space::realloc from an empty block copies nothing. They
+previously requested zero bytes or passed a null pointer to memcpy.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Tuple sets of arity zero request no heap memory for tuples and values, also
+when they grow or are finalized with a dense representation. They previously
+requested zero bytes, which the C library may answer with a null pointer and
+thus a MemoryExhausted exception. An IntSet built from an empty initializer
+list is the empty set; Debug builds aborted with a failed assertion.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Integer and set variables declared with an empty set literal, such as var {}
+or var set of {}, request no heap memory. The final states of a regular
+constraint given as an interval with a maximum below its minimum are treated
+as empty; such an interval previously requested zero bytes or a huge size and
+could write before the allocated block.
+
+[ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+A dictionary file holding no accepted word and no final newline requests no
+heap memory in the crossword and word-square examples.
+
+[ENTRY]
 Module: other
 What:   performance
 Rank:   minor
