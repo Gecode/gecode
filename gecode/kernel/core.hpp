@@ -2414,18 +2414,21 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void print(const Choice& c, unsigned int a, std::ostream& o) const;
     /**
-     * \brief Give the random selectors of all branchers a stream for slave \a i
+     * \brief Give the random selectors of all branchers a stream for slave \a mi
      *
-     * Restart and portfolio engines call this on every slave with its restart
-     * or asset number, so that slaves cloned from one master do not repeat
-     * its random decisions. Index 0 leaves the state unchanged, so the first
-     * slave searches as the model does without a meta engine. Other indices
-     * split by a separator no alternative uses, then by the high and low 32
-     * bits of \a i.
+     * Restart and portfolio engines call this on every slave with the
+     * information they pass to slave(), so that slaves cloned from one master
+     * do not repeat its random decisions. Restart or asset number 0 leaves
+     * the state unchanged, so the first slave searches as the model does
+     * without a meta engine. Other numbers split by a separator that no
+     * alternative uses, one for restarts and another for assets, then by the
+     * high and low 32 bits of the number. Restart and portfolio streams thus
+     * stay apart when engines nest. Branchers posted later, during search,
+     * draw from generators their poster owns and are not split here.
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
-    void random_split(unsigned long long int i);
+    void random_split(const MetaInfo& mi);
 
     /**
      * \brief Notice actor property

@@ -34,7 +34,8 @@ small enough to store directly in the model, selector, or brancher that uses the
    Drivers use one configured engine. Test failures and exceptions report exact
    iteration-state replay commands.
 9. Restart and portfolio engines split every brancher of each slave by the
-   restart or asset number, so slaves explore different random paths.
+   restart or asset number, behind separate separators, so slaves explore
+   different random paths even when the engines nest.
 10. This remains a provisional breaking-change design, not a compatibility release.
 
 ## Implementation
@@ -98,8 +99,11 @@ and any performance costs.
 Splittable SplitMix has two state words and constant-time indexed splitting.
 Xorshift64* has one state word and splits by hashing s + (2a+1)g with Mix13.
 Jumps along its recurrence were rejected: they add up, so split(0) of split(0)
-equals split(1), correlating subtrees. Both engines have documented sibling-state
-arguments in gecode/support/random.hpp. The default remains
+equals split(1), correlating subtrees. A zero input hashes (2a+1)g instead, so
+each split is a bijection on nonzero states. Seeds are hashed the same way, as
+related raw seeds of the linear recurrence give related streams. Bounded draws
+use the high bits, since xorshift64*'s low bits are linear. Both engines have
+documented sibling-state arguments in gecode/support/random.hpp. The default remains
 provisional SplitMix; xorshift64* remains configurable through CMake and Autoconf.
 
 Support::Random<Engine> defines bounded integer conversion and canonical full-state
@@ -110,6 +114,20 @@ substitutes for state restoration.
 Drivers retain -seed (examples), -r (FlatZinc), and -state. Time/hardware
 initialization reports concrete state. Incompatible, malformed, and conflicting
 input is rejected. No legacy sequence mode is required.
+
+## Split analysis
+
+PractRand 0.95 (expanded tests, full folding) passes 32 GB of first draws for
+both engines along leftmost, random binary, and random 10-way paths, in
+depth-first order over complete trees, for all 2^32 siblings of one node, for
+siblings under many parents, for parent and child draws side by side, for
+posting keys, and for restart slaves; binary draws pass 16 GB. Splits without
+the hash fail all of these at 32-64 MB, and the old jump split fails the
+depth-first stream at 32 MB. Single-bit avalanche of every split derivation is
+at the noise floor, and trees of 1.1-1.3 * 10^8 nodes repeat no state.
+Unsplit xorshift64* low bits fail at 128 MB, which motivated high-bit draws.
+Repeated states at about 2^32 nodes are expected for the one-word engine and
+harmless: two nodes then make the same random choices.
 
 ## Verification results
 

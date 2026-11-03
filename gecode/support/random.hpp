@@ -274,15 +274,20 @@ namespace Gecode { namespace Support {
 
   /** \brief One-word xorshift64* engine with hashed indexed splitting
    *
-   * Uses shifts 12, 25, 27 and Vigna's multiplier. Zero seeds map to one;
-   * restoring zero state is an error. Alternative a hashes s + (2a+1)*g with
-   * Mix13, for the odd constant g. For a 32-bit index these inputs are
-   * distinct, as in SplitMix, and Mix13 is bijective, so sibling states
-   * differ. Only a zero input hashes to zero; that sibling instead hashes
-   * s + 2^34*g, which is nonzero and differs from every other input.
-   * Unlike jumps along the recurrence, which add up so that split(0) of
-   * split(0) equals split(1), hashed states of different nodes coincide only
-   * by chance.
+   * Uses shifts 12, 25, 27 and Vigna's multiplier, for the odd constant g.
+   * Seed v starts from Mix13(v + g), the first SplitMix64 output for v, as
+   * the recurrence is linear and related raw seeds would give related
+   * streams. The one seed hashing to zero shares the state of seed 0.
+   * Restoring zero state is an error.
+   *
+   * Alternative a hashes s + (2a+1)*g with Mix13. For a 32-bit index these
+   * inputs are distinct, as in SplitMix, and Mix13 is bijective, so sibling
+   * states differ. Only a zero input hashes to zero; that sibling hashes
+   * (2a+1)*g instead, the input of the excluded state zero. Each split is
+   * thus a bijection on nonzero states, so distinct nodes stay distinct
+   * along equal alternative sequences. Unlike jumps along the recurrence,
+   * which add up so that split(0) of split(0) equals split(1), hashed states
+   * of other nodes coincide only by chance.
    * \ingroup FuncSupport
    */
   class Xorshift64Star {
@@ -300,7 +305,10 @@ namespace Gecode { namespace Support {
     static const char* name(void) { return "xorshift64star-v1"; }
     static constexpr uint64_t min(void) { return 1; }
     static constexpr uint64_t max(void) { return UINT64_MAX; }
-    void seed(uint64_t value) { s = value ? value : 1; }
+    void seed(uint64_t value) {
+      uint64_t z = random_mix(value + UINT64_C(0x9e3779b97f4a7c15));
+      s = z ? z : random_mix(UINT64_C(0x9e3779b97f4a7c15));
+    }
     State state(void) const { return {{s}}; }
     void state(const State& value) {
       if (!value[0])
@@ -312,10 +320,10 @@ namespace Gecode { namespace Support {
       return s * UINT64_C(2685821657736338717);
     }
     Xorshift64Star split(uint32_t alternative) const {
-      const uint64_t g = UINT64_C(0x9e3779b97f4a7c15);
-      uint64_t z = s + (2*uint64_t(alternative)+1)*g;
+      const uint64_t c = (2*uint64_t(alternative)+1)*UINT64_C(0x9e3779b97f4a7c15);
+      uint64_t z = s + c;
       Xorshift64Star child;
-      child.s = random_mix(z ? z : s + (uint64_t(1) << 34)*g);
+      child.s = random_mix(z ? z : c);
       return child;
     }
   };
@@ -364,7 +372,13 @@ namespace Gecode { namespace Support {
     Random split(uint32_t alternative) const {
       return Random(e.split(alternative));
     }
-    /// Bounds <= 1 return zero without consuming a draw.
+    /** \brief Uniform draw from [0,bound)
+     *
+     * Result r stands for the r-th of n equal buckets of consecutive raw
+     * values, so it depends on the high bits; the low bits of engines such as
+     * xorshift64* are linear. Raw values beyond the last full bucket are
+     * rejected. Bounds <= 1 return zero without consuming a draw.
+     */
     template<class Type>
     Type operator ()(Type bound) {
       static_assert(std::is_integral<Type>::value && sizeof(Type) <= 8,
@@ -372,17 +386,15 @@ namespace Gecode { namespace Support {
       if (bound <= 1)
         return 0;
       uint64_t n = static_cast<uint64_t>(bound);
+      // Bucket size: 2^64 raw values, or 2^64-1 for nonzero engines, over n.
+      uint64_t bucket;
+      if constexpr (Engine::min() == 0)
+        bucket = (uint64_t(0)-n)/n + 1;
+      else
+        bucket = UINT64_MAX/n;
       uint64_t value;
-      if constexpr (Engine::min() == 0) {
-        // Accept an exact multiple of n values from the 2^64-value source.
-        uint64_t threshold = (uint64_t(0)-n) % n;
-        do { value = next(); } while (value < threshold);
-      } else {
-        // Nonzero engines have 2^64-1 values, not 2^64.
-        uint64_t limit = UINT64_MAX - (UINT64_MAX % n);
-        do { value = next()-1; } while (value >= limit);
-      }
-      return static_cast<Type>(value % n);
+      do { value = (next()-Engine::min()) / bucket; } while (value >= n);
+      return static_cast<Type>(value);
     }
     /// Canonical identifier followed by fixed-width hexadecimal state words.
     std::string state_string(void) const {

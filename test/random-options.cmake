@@ -46,7 +46,9 @@ foreach(mode IN LISTS modes)
     message(FATAL_ERROR "64-bit seed failed: ${error}")
   endif()
   string(REGEX MATCH "^[^\n]+" state "${expected}")
-  if(NOT state MATCHES "-v1:ffffffffffffffff(:|$)")
+  # SplitMix stores the seed; xorshift64* stores Mix13(seed + golden ratio).
+  if(NOT state MATCHES "^splitmix-v1:ffffffffffffffff:" AND
+     NOT state STREQUAL "xorshift64star-v1:e4d971771b652c20")
     message(FATAL_ERROR "Seed was narrowed: ${state}")
   endif()
   foreach(args "${seed};0xffffffffffffffff" "-state;${state}")

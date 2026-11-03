@@ -68,6 +68,22 @@ namespace Test {
       }
     };
 
+    /// Repeats one raw value, to pin how bounded draws reduce it.
+    template<uint64_t lowest>
+    class FixedEngine {
+      uint64_t v;
+    public:
+      using State = std::array<uint64_t,1>;
+      explicit FixedEngine(uint64_t s=lowest) : v(s) {}
+      static const char* name() { return "fixed-test-v1"; }
+      static constexpr uint64_t min() { return lowest; }
+      static constexpr uint64_t max() { return UINT64_MAX; }
+      void seed(uint64_t s) { v=s; }
+      uint64_t next() { return v; }
+      State state() const { return {{v}}; }
+      void state(const State& s) { v=s[0]; }
+    };
+
     template<class Engine>
     bool replay() {
       Gecode::Support::Random<Engine> original(UINT64_MAX);
@@ -101,8 +117,17 @@ namespace Test {
                                   UINT64_C(0x06c45d188009454f)})
           if (r.next() != expected)
             return false;
-        Xorshift64Star xs(1);
+        Xorshift64Star xs;
+        xs.state({{1}});
         if (xs.next() != UINT64_C(0x47e4ce4b896cdd1d))
+          return false;
+        // Seeds are hashed: seed 0 starts from the first SplitMix64 output.
+        if (Xorshift64Star(0).state()[0] != UINT64_C(0xe220a8397b1dcdaf))
+          return false;
+        // Draws use the high bits, never only the linear low bits.
+        Gecode::Support::Random<FixedEngine<0>> high(UINT64_C(1) << 63);
+        Gecode::Support::Random<FixedEngine<1>> nonzero((UINT64_C(1) << 63)+1);
+        if (high(2)!=1 || high(3)!=1 || high(4)!=2 || nonzero(2)!=1)
           return false;
         if (!replay<SplitMix>() || !replay<Xorshift64Star>() ||
             !replay<CountedSplitMix>())
@@ -110,11 +135,16 @@ namespace Test {
         // Hashed splits do not add up along a path, as jumps would.
         if (xs.split(0).split(0).state()==xs.split(1).state())
           return false;
-        // Alternative 0 hashes zero here, so it must use the fallback input.
+        // Alternative 0 hashes zero here, so it must use the fallback input,
+        // which no other parent reaches.
+        const uint64_t g = UINT64_C(0x9e3779b97f4a7c15);
         Xorshift64Star zero_input;
-        zero_input.state({{uint64_t(0)-UINT64_C(0x9e3779b97f4a7c15)}});
+        zero_input.state({{uint64_t(0)-g}});
+        Xorshift64Star other;
+        other.state({{(uint64_t(1) << 34)*g - 2*g}});
         if ((zero_input.split(0).state()[0]==0) ||
-            (zero_input.split(0).state()==zero_input.split(1).state()))
+            (zero_input.split(0).state()==zero_input.split(1).state()) ||
+            (zero_input.split(0).state()==other.split(0).state()))
           return false;
         for (uint32_t a=1; a<100; ++a)
           if (xs.split(a).state()==xs.split(a-1).state())
@@ -467,6 +497,18 @@ namespace Test {
         (distinct.size()>=8);
     }
 
+    /// Asset 1's first slave must not repeat restart 1 of asset 0.
+    bool meta_streams_differ() {
+      using namespace Gecode;
+      Permutation root(Rnd(3));
+      if (root.status()!=SS_BRANCH) return false;
+      std::unique_ptr<Permutation> asset(static_cast<Permutation*>(root.clone()));
+      asset->random_split(MetaInfo(1U));
+      std::unique_ptr<Permutation> restart(static_cast<Permutation*>(root.clone()));
+      restart->random_split(MetaInfo(1,MetaInfo::RR_LIM,0,0,nullptr,NoGoods::eng));
+      return first_solutions(*asset,1)!=first_solutions(*restart,1);
+    }
+
     class Streams : public Base {
     public:
       Streams() : Base("Random::Streams") {}
@@ -483,7 +525,7 @@ namespace Test {
         OpenPermutation open(Rnd(3));
         auto cloned=first_solutions(open,1);
         return (cloned.size()==40) && (cloned==first_solutions(open,100)) &&
-          restarts_differ();
+          restarts_differ() && meta_streams_differ();
       }
     } streams;
   }

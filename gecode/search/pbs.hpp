@@ -186,8 +186,9 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
-        slave->random_split(static_cast<unsigned long long int>(i));
-        (void) slave->slave(i);
+        const MetaInfo mi(static_cast<unsigned int>(i));
+        slave->random_split(mi);
+        (void) slave->slave(mi);
         slaves[i] = build<T,E>(slave.get(),opt);
       }
       return Seq::pbsengine(
@@ -228,8 +229,9 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
-        slave->random_split(static_cast<unsigned long long int>(i));
-        (void) slave->slave(static_cast<unsigned int>(i));
+        const MetaInfo mi(static_cast<unsigned int>(i));
+        slave->random_split(mi);
+        (void) slave->slave(mi);
         slaves[i] = (*sebs[i])(slave.get());
       }
       pbscleanup(sebs);
@@ -279,8 +281,9 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
-        slave->random_split(static_cast<unsigned long long int>(i));
-        (void) slave->slave(static_cast<unsigned int>(i));
+        const MetaInfo mi(static_cast<unsigned int>(i));
+        slave->random_split(mi);
+        (void) slave->slave(mi);
         slaves[i] = build<T,E>(slave.get(),opt);
       }
       return Par::pbsengine(slaves,stops,n_slaves,stat,E<T>::best);
@@ -324,8 +327,9 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
-        slave->random_split(static_cast<unsigned long long int>(i));
-        (void) slave->slave(static_cast<unsigned int>(i));
+        const MetaInfo mi(static_cast<unsigned int>(i));
+        slave->random_split(mi);
+        (void) slave->slave(mi);
         slaves[i] = (*sebs[i])(slave.get());
       }
       pbscleanup(sebs);

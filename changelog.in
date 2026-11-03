@@ -87,15 +87,18 @@ xorshift64* is available as a smaller-state alternative. The default is
 configurable at build time, and users can supply their own engines.
 Randomized branching splits its generator state by alternative on commit,
 so the state at a node depends only on the path and is reproduced during
-recomputation. Restart and portfolio search split each slave's state, so
-restarts explore different random paths. Complete-state save/restore and
+recomputation. Restart and portfolio search split each slave's state, with
+separate streams for restarts and portfolio assets, so slaves explore
+different random paths. Complete-state save/restore and
 command-line state input support exact replay, including test failures.
 [MORE]
 Generators store their compact state directly in their consumers, and copying
 a generator produces independent state. Posting splits each selector by its
 brancher and role, so branchers given the same generator draw independent
-streams. Choices store no generator state. Drivers accept checked 64-bit seeds
-as well as complete state. APIs and seeded sequences change; no legacy
+streams. Choices store no generator state. Bounded draws take their value
+from the high bits of the raw output. Xorshift64* hashes its seed, as its
+recurrence is linear. Drivers accept checked 64-bit seeds as well as complete
+state. APIs and seeded sequences change; no legacy
 sequence mode is provided. This design remains
 provisional for a future breaking-change release. Replace the old seed()
 snapshot accessor with state() and restore with state(text). The driver and

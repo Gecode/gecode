@@ -80,7 +80,7 @@ namespace Gecode { namespace Search { namespace Seq {
         stop->update(e->statistics());
         Space* slave = master;
         master = master->clone();
-        slave->random_split(mi.restart());
+        slave->random_split(mi);
         complete = slave->slave(mi);
         e->reset(slave);
         sslr = 0;
@@ -113,7 +113,7 @@ namespace Gecode { namespace Search { namespace Seq {
           return nullptr;
         Space* slave = master;
         master = master->clone();
-        slave->random_split(mi.restart());
+        slave->random_split(mi);
         complete = slave->slave(mi);
         e->reset(slave);
       } else {

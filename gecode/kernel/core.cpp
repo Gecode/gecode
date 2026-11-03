@@ -687,12 +687,15 @@ namespace Gecode {
   }
 
   void
-  Space::random_split(unsigned long long int i) {
+  Space::random_split(const MetaInfo& mi) {
+    const bool restart = mi.type() == MetaInfo::RESTART;
+    const unsigned long long int i = restart ? mi.restart() : mi.asset();
     if (i == 0)
       return;
-    // Alternatives are smaller than UINT_MAX, so slave streams stay apart.
+    // No choice has UINT_MAX-1 alternatives, so no commit uses a separator.
+    const unsigned int separator = restart ? UINT_MAX : UINT_MAX-1;
     for (ActorLink* b = bl.next(); b != &bl; b = b->next()) {
-      Brancher::cast(b)->random_split(UINT_MAX);
+      Brancher::cast(b)->random_split(separator);
       Brancher::cast(b)->random_split(static_cast<unsigned int>(i >> 32));
       Brancher::cast(b)->random_split(static_cast<unsigned int>(i));
     }
