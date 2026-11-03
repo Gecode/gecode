@@ -62,9 +62,10 @@ namespace Gecode {
     TupleSet::Data::Data(int a)
         : arity(a), n_words(0U), // To be initialized in finalize
           n_tuples(0), n_free(n_initial_free), min(Int::Limits::max), max(Int::Limits::min), key(0),
-          td(heap.alloc<int>(n_initial_free * a)), vd(heap.alloc<ValueData>(a)), range(nullptr), range_base(nullptr),
-          support(nullptr), state(TS_BUILDING), sparse_n_vals(0U), sparse_offsets(nullptr), sparse_tuples(nullptr),
-          sparse_tv(nullptr), compressed_offsets(nullptr), compressed_words(nullptr), compressed_n_entries(0U) {}
+          td((a > 0) ? heap.alloc<int>(n_initial_free * a) : nullptr), vd((a > 0) ? heap.alloc<ValueData>(a) : nullptr),
+          range(nullptr), range_base(nullptr), support(nullptr), state(TS_BUILDING), sparse_n_vals(0U),
+          sparse_offsets(nullptr), sparse_tuples(nullptr), sparse_tv(nullptr), compressed_offsets(nullptr),
+          compressed_words(nullptr), compressed_n_entries(0U) {}
 
     forceinline bool
     TupleSet::Data::finalized(void) const {
