@@ -61,6 +61,20 @@ namespace Gecode {
     SC_INCOMPARABLE ///< Neither objective dominates the other
   };
 
+  /// Optimization direction
+  enum class Sense {
+    minimize, ///< Smaller objective values are better
+    maximize  ///< Larger objective values are better
+  };
+
+  /// Compare objective value \a x with \a y for direction \a s
+  forceinline SpaceComparison
+  compare_int(int x, int y, Sense s) {
+    if (x == y)
+      return SC_EQUIVALENT;
+    return ((x < y) == (s == Sense::minimize)) ? SC_BETTER : SC_WORSE;
+  }
+
   class Space;
 
   /**

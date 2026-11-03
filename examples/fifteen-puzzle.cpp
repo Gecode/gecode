@@ -418,7 +418,7 @@ run(PuzzleOptions& opt) {
   case PuzzleOptions::SEARCH_ASTAR:
   case PuzzleOptions::SEARCH_CABS:
     {
-      Search::HeuristicGuidance guidance(Search::HeuristicGuidance::MINIMIZE,
+      Search::HeuristicGuidance guidance(Sense::minimize,
         [](const Space& home) -> std::int64_t {
           return static_cast<const Model&>(home).bound();
         });

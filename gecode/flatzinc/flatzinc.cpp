@@ -2092,10 +2092,8 @@ namespace Gecode { namespace FlatZinc {
         ((_method != MIN) && (_method != MAX)))
       throw DynamicCastFailed("FlatZincSpace::compare");
     if (_optVarIsInt) {
-      int a=iv[_optVar].val(), b=other->iv[other->_optVar].val();
-      if (a == b)
-        return SC_EQUIVALENT;
-      return ((a < b) == (_method == MIN)) ? SC_BETTER : SC_WORSE;
+      return compare_int(iv[_optVar].val(),other->iv[other->_optVar].val(),
+                         (_method == MIN) ? Sense::minimize : Sense::maximize);
     }
 #ifdef GECODE_HAS_FLOAT_VARS
     if (step != other->step)
