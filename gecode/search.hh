@@ -1236,8 +1236,10 @@ namespace Gecode { namespace Search {
    *
    * The bound is an optimistic objective value for a stable space: a lower
    * bound when minimizing, an upper bound when maximizing, and the exact
-   * objective for a solution. It must agree with the model's constrain
-   * function. The optional rank orders nodes (lower first) but is never
+   * objective for a solution. It must agree with the model's constrain and
+   * compare functions. The bound orders and prunes open nodes, while
+   * solutions replace the incumbent only when Space::compare reports
+   * SC_BETTER. The optional rank orders nodes (lower first) but is never
    * used for pruning.
    *
    * The optional dominance predicate returns whether every completion of
@@ -1287,7 +1289,8 @@ namespace Gecode {
    * Expands nodes in order of their bound, then their rank, using the
    * guidance from Search::Options::guidance. Like BAB, next() returns
    * improving solutions and exhausting the search proves the last
-   * solution optimal.
+   * solution optimal. Additionally, \a T must implement Space::constrain
+   * and Space::compare.
    *
    * All open nodes are stored as clones, so c_d and a_d are ignored.
    * Tracing is not supported.
@@ -1325,7 +1328,8 @@ namespace Gecode {
    * improve the incumbent, the search restarts with twice the width.
    * The guidance is taken from Search::Options::guidance. Like BAB,
    * next() returns improving solutions and exhausting the search proves
-   * the last solution optimal.
+   * the last solution optimal. Additionally, \a T must implement
+   * Space::constrain and Space::compare.
    *
    * Search stops when the width would exceed Search::Options::max_width or
    * the stored nodes would exceed Search::Options::frontier_limit. Nodes are
