@@ -47,17 +47,17 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned long long int l;
   };
 
-  /// Stop object used for controlling slaves in a portfolio
+  /// Stop object used for controlling spokes in a portfolio
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
-    /// The stop object for the slaves
+    /// The stop object for the spokes
     Stop* so;
     /// The stop object for the portfolio (possibly nullptr)
     Stop* po;
     /// Pointer to shared stop information
     SharedStopInfo* ssi;
   public:
-    /// Initialize with slave stop \a so and portfolio stop \a po
+    /// Initialize with spoke stop \a so and portfolio stop \a po
     PortfolioStop(Stop* so, Stop* po=nullptr);
     /// Initialize shared stop information
     void share(SharedStopInfo* ssi);
@@ -65,61 +65,61 @@ namespace Gecode { namespace Search { namespace Seq {
     virtual bool stop(const Statistics& s, const Options& o);
   };
 
-  /// Runnable slave of a portfolio master
-  class Slave {
+  /// Spoke engine in a sequential portfolio
+  class Spoke {
   protected:
-    /// The slave engine
-    Engine* slave;
+    /// The wrapped search engine
+    Engine* engine;
     /// Stop object
     Stop* stop;
   public:
     /// Default constructor
-    Slave(void);
+    Spoke(void);
     /// Copy constructor
-    Slave(const Slave& s) = default;
+    Spoke(const Spoke& s) = default;
     /// Assignment operator
-    Slave& operator =(const Slave& s) = default;
-    /// Initialize with slave \a s and its stop object \a so
+    Spoke& operator =(const Spoke& s) = default;
+    /// Initialize with engine \a s and its stop object \a so
     void init(Engine* s, Stop* so);
     /// Return next solution
     Space* next(void);
-    /// Return statistics of slave
+    /// Return statistics of spoke
     Statistics statistics(void) const;
-    /// Check whether slave has been stopped
+    /// Check whether spoke has been stopped
     bool stopped(void) const;
-    /// Check whether slave stopped at a local limit
+    /// Check whether spoke stopped at a local limit
     bool limited(void) const;
     /// Constrain with better solution \a b
     void constrain(const Space& b);
     /// Perform one run
     void run(void);
-    /// Delete slave
-    ~Slave(void);
+    /// Delete spoke
+    ~Spoke(void);
   };
 
   /// Sequential portfolio engine implementation
   template<bool best>
   class GECODE_SEARCH_EXPORT PBS : public Engine {
   protected:
-    /// Master statistics
+    /// Initial statistics
     Statistics stat;
-    /// Shared slave information
+    /// Shared spoke information
     SharedStopInfo ssi;
     /// Size of a slice
     unsigned int slice;
-    /// Slaves
-    Slave* slaves;
-    /// Number of slave engines
-    unsigned int n_slaves;
-    /// Current slave to run
+    /// Spokes
+    Spoke* spokes;
+    /// Number of spoke engines
+    unsigned int n_spokes;
+    /// Current spoke to run
     unsigned int cur;
-    /// Whether a slave has been stopped
-    bool slave_stop;
-    /// Whether a slave stopped at a local limit
+    /// Whether a spoke has been stopped
+    bool spoke_stop;
+    /// Whether a spoke stopped at a local limit
     bool incomplete;
   public:
     /// Initialize
-    PBS(Engine** slaves, Stop** stops, unsigned int n,
+    PBS(Engine** spokes, Stop** stops, unsigned int n,
         const Statistics& stat, const Search::Options& opt);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
