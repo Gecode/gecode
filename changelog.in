@@ -80,6 +80,17 @@ Module: search
 What:   change
 Rank:   major
 [DESCRIPTION]
+Rename the meta-search Space hooks master() and slave() to hub() and spoke().
+[MORE]
+There are no compatibility aliases. An override of a removed hook declared
+with override fails to compile, one declared without it is never called. See
+docs/gecode-7-migration.md.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
 Add Space::compare(), which ranks two solutions without modifying them.
 Best-solution search uses it to choose between solutions, for example in
 parallel BAB, portfolios, external incumbents, and the experimental A* and
