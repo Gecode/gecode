@@ -75,6 +75,18 @@ Date: unreleased
 [DESCRIPTION]
 This is the development changelog for the next Gecode release.
 
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Hillel Wayne
+[DESCRIPTION]
+Make the improvement cut for float objectives strict in the objective bound.
+The cut kept the incumbent objective value until the objective was assigned,
+so proving optimality could split other float variables down to single ulps
+and fail to finish. Assigned objectives are accepted exactly as before, also
+with step 0.
+
 [RELEASE]
 Version: 6.5.0
 Date: 2026-10-31

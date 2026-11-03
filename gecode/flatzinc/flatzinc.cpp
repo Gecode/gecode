@@ -49,6 +49,7 @@
 #include <string>
 #include <sstream>
 #include <limits>
+#include <cmath>
 #include <memory>
 #include <unordered_set>
 
@@ -865,7 +866,11 @@ namespace Gecode { namespace FlatZinc {
     intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
     _optVar(-1), _optVarIsInt(true), _lns(0), _lnsInitialSolution(0),
     _random(random),
-    _solveAnnotations(nullptr), needAuxVars(true) {
+    _solveAnnotations(nullptr),
+#ifdef GECODE_HAS_FLOAT_VARS
+    step(0.0),
+#endif
+    needAuxVars(true) {
     branchInfo.init();
   }
 
@@ -1871,6 +1876,9 @@ namespace Gecode { namespace FlatZinc {
   void
   FlatZincSpace::runMeta(std::ostream& out, const Printer& p,
                          const FlatZincOptions& opt, Support::Timer& t_total) {
+#ifdef GECODE_HAS_FLOAT_VARS
+    step = opt.step();
+#endif
 #ifdef GECODE_HAS_GIST
     if (opt.mode() == SM_GIST) {
       BlackBoxContextHandle& black_box_context = BlackBoxAccess::context(*this);
@@ -1917,9 +1925,6 @@ namespace Gecode { namespace FlatZinc {
 
 #endif
 
-#ifdef GECODE_HAS_FLOAT_VARS
-    step = opt.step();
-#endif
     o.threads = opt.threads();
     o.nogoods_limit = opt.nogoods() ? opt.nogoods_limit() : 0;
     if (opt.restart() != RM_NONE)
@@ -2068,12 +2073,27 @@ namespace Gecode { namespace FlatZinc {
                    static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
     } else {
 #ifdef GECODE_HAS_FLOAT_VARS
-      if (_method == MIN)
-        rel(*this, fv[_optVar], FRT_LE,
-                   static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val()-step);
-      else if (_method == MAX)
-        rel(*this, fv[_optVar], FRT_GR,
-                   static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val()+step);
+      FloatVal best = static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val();
+      // When minimizing, an assigned objective is below best - step
+      // exactly when its upper bound is below the lower bound of that
+      // interval (symmetrically when maximizing). Posting this strict
+      // bound prunes the incumbent value before the objective is
+      // assigned, and also guarantees progress when it never is.
+      if (_method == MIN) {
+        FloatNum n = (best-step).min();
+        if (n <= Float::Limits::min)
+          fail();
+        else
+          rel(*this, fv[_optVar], FRT_LQ,
+              std::nextafter(n, Float::Limits::min));
+      } else if (_method == MAX) {
+        FloatNum n = (best+step).max();
+        if (n >= Float::Limits::max)
+          fail();
+        else
+          rel(*this, fv[_optVar], FRT_GQ,
+              std::nextafter(n, Float::Limits::max));
+      }
 #endif
     }
   }

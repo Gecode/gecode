@@ -65,6 +65,54 @@ namespace Test { namespace FlatZinc {
 
     TupleSetAutoRepresentation tuple_set_auto_representation;
 
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// Verify that the float improvement cut prunes the incumbent value
+    /// before the objective is assigned.
+    class FloatCutExcludesIncumbent : public Base {
+    private:
+      /// Return the objective bound after constraining by an incumbent
+      /// with objective 0.5
+      static bool cutBound(const std::string& source,
+                           Gecode::FloatNum& bound) {
+        using Gecode::FlatZinc::FlatZincSpace;
+        Gecode::FlatZinc::Printer p;
+        std::stringstream ss(source);
+        std::unique_ptr<FlatZincSpace>
+          fg(Gecode::FlatZinc::parse(ss, p, olog));
+        if (!fg || (fg->status() == Gecode::SS_FAILED))
+          return false;
+        std::unique_ptr<FlatZincSpace>
+          best(static_cast<FlatZincSpace*>(fg->clone()));
+        Gecode::rel(*best, best->fv[0], Gecode::FRT_EQ, 0.5);
+        if (best->status() == Gecode::SS_FAILED)
+          return false;
+        std::unique_ptr<FlatZincSpace>
+          s(static_cast<FlatZincSpace*>(fg->clone()));
+        s->constrain(*best);
+        if ((s->status() == Gecode::SS_FAILED) || s->fv[0].assigned())
+          return false;
+        bound = (source.find("minimize") != std::string::npos) ?
+          s->fv[0].max() : s->fv[0].min();
+        return true;
+      }
+    public:
+      FloatCutExcludesIncumbent(void)
+        : Base("FlatZinc::Float::CutExcludesIncumbent") {}
+
+      virtual bool run(void) {
+        Gecode::FloatNum minBound, maxBound;
+        return
+          cutBound("var 0.0..1.0: x :: output_var;\nsolve minimize x;\n",
+                   minBound) &&
+          cutBound("var 0.0..1.0: x :: output_var;\nsolve maximize x;\n",
+                   maxBound) &&
+          (minBound < 0.5) && (maxBound > 0.5);
+      }
+    };
+
+    FloatCutExcludesIncumbent float_cut_excludes_incumbent;
+#endif
+
     /// Verify that statistics do not override an explicit Gist mode.
     class GistStatisticsMode : public Base {
     private:
