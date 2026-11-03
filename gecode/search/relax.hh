@@ -42,13 +42,13 @@ namespace Gecode { namespace Search {
   /// Relax variables in \a x from solution \a sx with probability \a p
   template<class VarArgs, class Post>
   forceinline void
-  relax(Home home, const VarArgs& x, const VarArgs& sx, Rnd r,
+  relax(Home home, const VarArgs& x, const VarArgs& sx, Rnd& r,
         double p, Post& post);
 
 
   template<class VarArgs, class Post>
   forceinline void
-  relax(Home home, const VarArgs& x, const VarArgs& sx, Rnd r,
+  relax(Home home, const VarArgs& x, const VarArgs& sx, Rnd& r,
         double p, Post& post) {
     if (home.failed())
       return;

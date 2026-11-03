@@ -1,12 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.dev>
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
- *     Christian Schulte, 2008
- *     Mikael Zayenz Lagerkvist, 2008
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -33,52 +31,26 @@
  *
  */
 
-#include <gecode/kernel.hh>
+// Deliberately failing fixtures for the test runner's state replay protocol.
+#include "test/test.hh"
 
-namespace Gecode {
-
-  Support::Mutex Rnd::IMP::m;
-
-  forceinline
-  Rnd::IMP::IMP(unsigned int s)
-    : rg(s) {}
-
-  Rnd::IMP::~IMP(void) {}
-
-  forceinline void
-  Rnd::_seed(unsigned int s) {
-    if (object() == nullptr) {
-      object(new IMP(s));
-    } else {
-      static_cast<IMP*>(object())->seed(s);
+namespace {
+  class Replay : public Test::Base {
+    bool exception;
+  public:
+    explicit Replay(bool e)
+      : Base(e ? "Random::Replay::Exception" : "Random::Replay::Failure"),
+        exception(e) {}
+    bool run() override {
+      if (_rand(4) != 0)
+        return true;
+      auto child = _rand.split(7);
+      std::cout << "Replay draw: " << child.next() << '\n';
+      if (exception)
+        throw Gecode::Exception("Random::Replay", "deliberate exception");
+      return false;
     }
-  }
-
-  Rnd::Rnd(void) {}
-  Rnd::Rnd(unsigned int s) {
-    object(new IMP(s));
-  }
-  Rnd::Rnd(const Rnd& r)
-    : SharedHandle(r) {}
-  Rnd&
-  Rnd::operator =(const Rnd& r) {
-    (void) SharedHandle::operator =(r);
-    return *this;
-  }
-  Rnd::~Rnd(void) {}
-
-  void
-  Rnd::seed(unsigned int s) {
-    _seed(s);
-  }
-  void
-  Rnd::time(void) {
-    _seed(static_cast<unsigned int>(::time(nullptr)));
-  }
-  void
-  Rnd::hw(void) {
-    _seed(Support::hwrnd());
-  }
+  } failure(false), exception(true);
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: test-core

@@ -35,7 +35,7 @@ namespace Gecode { namespace FlatZinc {
 
   forceinline
   IntBoolVarBranch::IntBoolVarBranch(Select s0, double d)
-    : VarBranch<IntVar>(d), s(s0) {}
+    : VarBranch<IntVar>(d,nullptr), s(s0) {}
 
   forceinline
   IntBoolVarBranch::IntBoolVarBranch(Select s0, IntAFC i, BoolAFC b)
@@ -308,6 +308,11 @@ namespace Gecode { namespace FlatZinc {
                   ValSelCommitBase<Int::IntView,int>* xvsc0,
                   ValSelCommitBase<Int::BoolView,int>* yvsc0)
     : Brancher(home), x(x0), y(y0), start(0), xvsc(xvsc0), yvsc(yvsc0) {
+    // Key each selector by brancher and role, as for ViewValBrancher.
+    xvsc->random_split(id());
+    xvsc->random_split(0U);
+    yvsc->random_split(id());
+    yvsc->random_split(1U);
     home.notice(*this,AP_DISPOSE,true);
   }
 
@@ -442,4 +447,3 @@ namespace Gecode { namespace FlatZinc {
 }}
 
 // STATISTICS: flatzinc-branch
-

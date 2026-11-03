@@ -32,6 +32,7 @@
  */
 
 #include <gecode/minimodel.hh>
+#include <gecode/int/branch.hh>
 #include <gecode/search.hh>
 
 #include "test/test.hh"
@@ -1113,6 +1114,103 @@ namespace Test { namespace Fault {
       return clone_after_failed_local_object_copy();
     }
   };
+
+  // Count inline engine instances across selector cloning and failed clones.
+  class LiveRandom : public Support::SplitMix {
+  public:
+    static int live;
+    /// Number of copies before one throws, or negative to never throw
+    static int copies_before_failure;
+    explicit LiveRandom(uint64_t seed=1) : SplitMix(seed) { ++live; }
+    LiveRandom(const LiveRandom& r) : SplitMix(r) {
+      if (copies_before_failure == 0) {
+        copies_before_failure = -1;
+        throw MemoryExhausted();
+      }
+      if (copies_before_failure > 0)
+        --copies_before_failure;
+      ++live;
+    }
+    explicit LiveRandom(const SplitMix& r) : SplitMix(r) { ++live; }
+    ~LiveRandom() { --live; }
+    LiveRandom split(uint32_t a) const { return LiveRandom(SplitMix::split(a)); }
+  };
+  int LiveRandom::live=0;
+  int LiveRandom::copies_before_failure=-1;
+
+  class RandomSpace : public Space {
+  public:
+    using Random = RndGenerator<LiveRandom>;
+    IntVarArray x;
+    Random r;
+    RandomSpace() : x(*this,3,0,2), r(7) {
+      IntVarArgs vars(x);
+      ViewArray<Int::IntView> views(*this,vars);
+      ViewSel<Int::IntView>* selectors[] = {
+        new (*this) ViewSelRnd<Int::IntView,Random>(*this,r),
+        new (*this) ViewSelRnd<Int::IntView,Random>(*this,r)
+      };
+      using Values = ValSelCommit<Int::Branch::ValSelRnd<Int::IntView,Random>,
+                                  Int::Branch::ValCommitEq<Int::IntView>>;
+      auto* values = new (*this) Values(*this,INT_VAL_MIN(),r);
+      postviewvalbrancher<Int::IntView,2,int,2>(*this,views,selectors,values,nullptr,nullptr);
+      ThrowingBrancher::post(*this);
+    }
+    RandomSpace(RandomSpace& s) : Space(s), r(s.r) {
+      x.update(*this,s.x);
+    }
+    Space* copy() override { return new RandomSpace(*this); }
+  };
+
+  class RandomCloneFailures : public Base {
+  public:
+    RandomCloneFailures() : Base("Fault::Random::CloneFailures") {}
+    bool run() override {
+      FaultScope scope;
+      {
+        RandomSpace root;
+        if (root.status()!=SS_BRANCH)
+          return false;
+        const auto state=root.r.state();
+        const int live=LiveRandom::live;
+        bool succeeded=false;
+        for (unsigned int n=0; n<128 && !succeeded; ++n) {
+          Support::FailPoint::fail_after(Phase::Heap,n);
+          try {
+            std::unique_ptr<Space> copy(root.clone());
+            succeeded=true;
+          } catch (const MemoryExhausted&) {}
+          Support::FailPoint::reset();
+          if (LiveRandom::live!=live || root.r.state()!=state)
+            return false;
+        }
+        if (!succeeded)
+          return false;
+        // Fail after a random brancher and its inline engines have been copied.
+        Support::FailPoint::fail_after(Phase::BrancherCopy,0);
+        try {
+          std::unique_ptr<Space> copy(root.clone());
+          return false;
+        } catch (const MemoryExhausted&) {}
+        Support::FailPoint::reset();
+        if (LiveRandom::live!=live || root.r.state()!=state)
+          return false;
+        // Fail inside each selector copy of the random brancher.
+        for (int n=0; n<3; ++n) {
+          LiveRandom::copies_before_failure=n;
+          try {
+            std::unique_ptr<Space> copy(root.clone());
+            return false;
+          } catch (const MemoryExhausted&) {}
+          LiveRandom::copies_before_failure=-1;
+          if (LiveRandom::live!=live || root.r.state()!=state)
+            return false;
+        }
+        std::unique_ptr<Space> copy(root.clone());
+      }
+      return LiveRandom::live==0;
+    }
+  } random_clone_failures;
 
   BranchActionHeapFailures branch_action_heap_failures;
   BranchChbHeapFailures branch_chb_heap_failures;

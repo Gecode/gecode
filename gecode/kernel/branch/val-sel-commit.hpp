@@ -43,6 +43,8 @@ namespace Gecode {
   template<class View_, class Val_>
   class ValSelCommitBase {
   public:
+    /// \copydoc Gecode::ViewSel::random_split
+    virtual void random_split(unsigned int a) { (void) a; }
     /// View type
     typedef View_ View;
     /// Corresponding variable type
@@ -101,27 +103,32 @@ namespace Gecode {
     /// The commit object used
     ValCommit c;
   public:
+    void random_split(unsigned int a) override { s.random_split(a); }
     /// Constructor for initialization
     ValSelCommit(Space& home, const ValBranch<Var>& vb);
+    /// Construct a user-parameterized selector with an ordinary commit policy.
+    template<class Random>
+    ValSelCommit(Space& home, const ValBranch<Var>& vb, const Random& random)
+      : ValSelCommitBase<View,Val>(home,vb), s(home,random), c(home,vb) {}
     /// Constructor for cloning
     ValSelCommit(Space& home, ValSelCommit<ValSel,ValCommit>& vsc);
     /// Return value of view \a x at position \a i
-    virtual Val val(const Space& home, View x, int i);
+    virtual Val val(const Space& home, View x, int i) override;
     /// Commit view \a x at position \a i to value \a n for alternative \a a
-    virtual ModEvent commit(Space& home, unsigned int a, View x, int i, Val n);
+    virtual ModEvent commit(Space& home, unsigned int a, View x, int i, Val n) override;
     /// Create no-good literal for choice \a c and alternative \a a
     virtual NGL* ngl(Space& home, unsigned int a,
-                     View x, Val n) const;
+                     View x, Val n) const override;
     /// Print on \a o branch for alternative \a a, view \a x at position \a i, and value \a n
     virtual void print(const Space& home, unsigned int a,
                        View x, int i, const Val& n,
-                       std::ostream& o) const;
+                       std::ostream& o) const override;
     /// Perform cloning
-    virtual ValSelCommit<ValSel,ValCommit>* copy(Space& home);
+    virtual ValSelCommit<ValSel,ValCommit>* copy(Space& home) override;
     /// Whether dispose must always be called (that is, notice is needed)
-    virtual bool notice(void) const;
+    virtual bool notice(void) const override;
     /// Delete value selection
-    virtual void dispose(Space& home);
+    virtual void dispose(Space& home) override;
   };
   //@}
 

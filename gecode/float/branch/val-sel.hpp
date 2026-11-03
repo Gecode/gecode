@@ -85,12 +85,13 @@ namespace Gecode { namespace Float { namespace Branch {
   forceinline FloatNumBranch
   ValSelRnd::val(const Space&, FloatView x, int) {
     FloatNumBranch nl;
-    nl.n = x.med(); nl.l = (r(2U) == 0U);
+    Rnd t = r;
+    nl.n = x.med(); nl.l = (t(2U) == 0U);
     return nl;
   }
   forceinline bool
   ValSelRnd::notice(void) const {
-    return true;
+    return false;
   }
   forceinline void
   ValSelRnd::dispose(Space&) {
@@ -100,4 +101,3 @@ namespace Gecode { namespace Float { namespace Branch {
 }}}
 
 // STATISTICS: float-branch
-

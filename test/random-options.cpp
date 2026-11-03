@@ -31,37 +31,36 @@
  *
  */
 
-#ifndef GECODE_FLATZINC_RESTART_RANDOM_HPP
-#define GECODE_FLATZINC_RESTART_RANDOM_HPP
-
-namespace Gecode { namespace FlatZinc { namespace Internal {
-
-  /// Sample an offset for an inclusive integer restart range
-  template<class Random>
-  unsigned long long int
-  uniform_int_offset(Random& random, unsigned long long int width) {
-    const unsigned long long int chunk_width = 1ULL << 31;
-
-    // Retain the established seeded sequence for ordinary integer ranges.
-    if ((width <= chunk_width) || (width > (1ULL << 32)))
-      return random(width);
-
-    // Draw uniformly from [0,2^62), rejecting its incomplete final bucket.
-    const unsigned long long int source_width = 1ULL << 62;
-    const unsigned long long int limit =
-      source_width - (source_width % width);
-    unsigned long long int sample;
-    do {
-      sample =
-        (static_cast<unsigned long long int>(
-           random(static_cast<unsigned int>(chunk_width))) << 31) |
-        random(static_cast<unsigned int>(chunk_width));
-    } while (sample >= limit);
-    return sample % width;
-  }
-
-}}}
-
+#include <gecode/driver.hh>
+#ifdef TEST_RANDOM_FLATZINC
+#include <gecode/flatzinc.hh>
 #endif
+#include <iostream>
 
-// STATISTICS: flatzinc-other
+template<class Options>
+int check(int argc, char* argv[]) {
+  Options opt("random-options");
+  opt.parse(argc,argv);
+  if (argc != 1)
+    return 2;
+  auto first = opt.rnd();
+  auto second = opt.rnd();
+  std::cout << first.state() << '\n';
+  for (int i=0; i<8; ++i) {
+    const auto draw = first(UINT64_MAX);
+    if (draw != second(UINT64_MAX))
+      return 3;
+    std::cout << draw << '\n';
+  }
+  return 0;
+}
+
+int main(int argc, char* argv[]) {
+#ifdef TEST_RANDOM_FLATZINC
+  if (argc > 1 && std::string(argv[1]) == "flatzinc")
+    return check<Gecode::FlatZinc::FlatZincOptions>(argc-1,argv+1);
+#endif
+  return check<Gecode::Options>(argc,argv);
+}
+
+// STATISTICS: test-core

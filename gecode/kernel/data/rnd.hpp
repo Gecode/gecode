@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
  *     Christian Schulte, 2008
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -36,147 +38,62 @@
 namespace Gecode {
 
   /**
-   * \brief Random number generator
+   * \brief Small value-type random generator owned by its consumer
+   *
+   * Copying preserves complete state in independent storage, and split()
+   * derives a different stream:
+   * \code
+   * Rnd parent(42);
+   * Rnd same = parent;
+   * Rnd child = parent.split(1);
+   * \endcode
+   *
+   * Branching descriptions and selectors own their copies. A brancher keys
+   * each selector's copy by the brancher's id and the selector's role, so
+   * passing one generator to several selectors or branchers gives them
+   * independent streams. Selectors draw from a copy of their state and
+   * replace the state by its split for the alternative on commit. The state
+   * at a node is therefore determined by the posted state and the path, and
+   * cloning and recomputation reproduce it. Restart and portfolio engines
+   * split the state for each slave; see Space::random_split(). Replay does
+   * not promise identical parallel scheduling, solution order, or search
+   * trees under weakly monotonic propagation.
+   *
+   * Model-owned or callback-owned generators change only as their owner
+   * changes them; a custom brancher using one must make its state a
+   * function of the path, for example by splitting it on commit. Space
+   * cloning does not copy mutable state in shared callback captures. Engine
+   * must meet the Support::Random contract, including splitting.
    * \ingroup TaskModel
    */
-  class Rnd : public SharedHandle {
-  private:
-    /// Implementation of generator
-    class IMP : public SharedHandle::Object {
-    protected:
-      /// Mutex for locking
-      GECODE_KERNEL_EXPORT static Support::Mutex m;
-      /// The actual generator
-      Support::RandomGenerator rg;
-    public:
-      /// Initialize generator with seed \a s
-      IMP(unsigned int s);
-      /// Return seed
-      unsigned int seed(void) const;
-      /// Set seed to \a s
-      void seed(unsigned int s);
-      /// Returns a random integer from the interval \f$[0\ldots n)\f$
-      unsigned int operator ()(unsigned int n);
-      /// Returns a random integer from the interval \f$[0\ldots n)\f$
-      int operator ()(int n);
-      /// Returns a random integer from the interval \f$[0\ldots n)\f$
-      unsigned long long int operator ()(unsigned long long int n);
-      /// Returns a random integer from the interval \f$[0\ldots n)\f$
-      long long int operator ()(long long int n);
-      /// Delete implemenentation
-      virtual ~IMP(void);
-    };
-    /// Set the current seed to \a s (initializes if needed)
-    void _seed(unsigned int s);
+  template<class Engine>
+  class RndGenerator {
+    Support::Random<Engine> r;
   public:
-    /// Default constructor that does not initialize the generator
-    GECODE_KERNEL_EXPORT
-    Rnd(void);
-    /// Initialize from generator \a r
-    GECODE_KERNEL_EXPORT
-    Rnd(const Rnd& r);
-    /// Assignment operator
-    GECODE_KERNEL_EXPORT
-    Rnd& operator =(const Rnd& r);
-    /// Destructor
-    GECODE_KERNEL_EXPORT
-    ~Rnd(void);
-    /// Initialize with seed \a s
-    GECODE_KERNEL_EXPORT
-    Rnd(unsigned int s);
-    /// Set the current seed to \a s (initializes if needed)
-    GECODE_KERNEL_EXPORT
-    void seed(unsigned int s);
-    /// Set current seed based on time (initializes if needed)
-    GECODE_KERNEL_EXPORT
-    void time(void);
-    /// Set current seed to hardware-based random number (initializes if needed)
-    GECODE_KERNEL_EXPORT
-    void hw(void);
-    /// Return current seed
-    unsigned int seed(void) const;
-    /// Returns a random integer from the interval \f$[0\ldots n)\f$
-    unsigned int operator ()(unsigned int n);
-    /// Returns a random integer from the interval \f$[0\ldots n)\f$
-    int operator ()(int n);
-    /// Returns a random integer from the interval \f$[0\ldots n)\f$
-    unsigned long long int operator ()(unsigned long long int n);
-    /// Returns a random integer from the interval \f$[0\ldots n)\f$
-    long long int operator ()(long long int n);
+    using State = typename Engine::State;
+    /// Generator seeded with 1
+    RndGenerator(void) : r(1) {}
+    /// Seed explicitly, so an integer never converts to a generator
+    explicit RndGenerator(uint64_t seed) : r(seed) {}
+    explicit RndGenerator(const Support::Random<Engine>& source) : r(source) {}
+    RndGenerator copy(void) const { return *this; }
+    RndGenerator split(uint32_t a) const { return RndGenerator(r.split(a)); }
+    void seed(uint64_t value) { r.seed(value); }
+    void time(void) { seed(static_cast<uint64_t>(::time(nullptr))); }
+    void hw(void) {
+      seed((uint64_t(Support::hwrnd()) << 32) | Support::hwrnd());
+    }
+    std::string state(void) const { return r.state_string(); }
+    void state(const std::string& text) { r.state(text); }
+    State state_words(void) const { return r.state(); }
+    void state(const State& words) { r.state(words); }
+    static const char* name(void) { return Engine::name(); }
+    template<class Type>
+    Type operator ()(Type bound) { return r(bound); }
   };
 
-  forceinline unsigned int
-  Rnd::IMP::seed(void) const {
-    unsigned int s;
-    const_cast<Rnd::IMP&>(*this).m.acquire();
-    s = rg.seed();
-    const_cast<Rnd::IMP&>(*this).m.release();
-    return s;
-  }
-  forceinline void
-  Rnd::IMP::seed(unsigned int s) {
-    m.acquire();
-    rg.seed(s);
-    m.release();
-  }
-  forceinline unsigned int
-  Rnd::IMP::operator ()(unsigned int n) {
-    unsigned int r;
-    m.acquire();
-    r=rg(n);
-    m.release();
-    return r;
-  }
-  forceinline int
-  Rnd::IMP::operator ()(int n) {
-    int r;
-    m.acquire();
-    r=rg(n);
-    m.release();
-    return r;
-  }
-  forceinline unsigned long long int
-  Rnd::IMP::operator ()(unsigned long long int n) {
-    unsigned long long int r;
-    m.acquire();
-    r=rg(n);
-    m.release();
-    return r;
-  }
-  forceinline long long int
-  Rnd::IMP::operator ()(long long int n) {
-    long long int r;
-    m.acquire();
-    r=rg(n);
-    m.release();
-    return r;
-  }
-
-  forceinline unsigned int
-  Rnd::seed(void) const {
-    const IMP* i = static_cast<const IMP*>(object());
-    return i->seed();
-  }
-  forceinline unsigned int
-  Rnd::operator ()(unsigned int n) {
-    IMP* i = static_cast<IMP*>(object());
-    return (*i)(n);
-  }
-  forceinline int
-  Rnd::operator ()(int n) {
-    IMP* i = static_cast<IMP*>(object());
-    return (*i)(n);
-  }
-  forceinline unsigned long long int
-  Rnd::operator ()(unsigned long long int n) {
-    IMP* i = static_cast<IMP*>(object());
-    return (*i)(n);
-  }
-  forceinline long long int
-  Rnd::operator ()(long long int n) {
-    IMP* i = static_cast<IMP*>(object());
-    return (*i)(n);
-  }
+  /// Build-configured default, with exactly the engine's inline state size.
+  using Rnd = RndGenerator<Support::RandomGenerator::EngineType>;
 
 }
 

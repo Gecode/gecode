@@ -75,6 +75,38 @@ Date: unreleased
 [DESCRIPTION]
 This is the development changelog for the next Gecode release.
 
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Replaced the random number generator by splittable engines with complete
+state save/restore: SplitMix by default, xorshift64* at build time, or a
+user-supplied engine. Randomized branching splits its state on commit, so
+cloning and recomputation make the same random decisions, while each
+restart and portfolio asset gets its own stream.
+[MORE]
+Rnd is a value type with an explicit seed constructor: write
+INT_VAL_RND(Rnd(42)) instead of INT_VAL_RND(42). Use state() and
+state(text) instead of seed(), and opt.rnd() instead of Rnd(opt.seed()).
+Drivers accept -state with a complete state. Seeded sequences change.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Restart-based search numbers a restart after a solution like any other
+restart, so MetaInfo::restart() is unique for every slave.
+
+[ENTRY]
+Module: test
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The test option -replay takes the complete random state printed for a
+failed iteration.
+
 [RELEASE]
 Version: 6.5.0
 Date: 2026-10-31

@@ -112,6 +112,61 @@ namespace Gecode {
     }
 
 
+    RandomOption::RandomOption(const char* o, const char* e, uint64_t v)
+      : BaseOption(o,e) {
+      value(v);
+    }
+    void RandomOption::value(uint64_t v) {
+      initial.seed(v);
+      seed_given = state_given = false;
+    }
+    Rnd RandomOption::rnd(void) const {
+      return initial;
+    }
+    int RandomOption::parse(int argc, char* argv[]) {
+      bool full = argc >= 2 &&
+        (!strcmp(argv[1],"-state") || !strcmp(argv[1],"--state"));
+      const char* arg;
+      if (full) {
+        if (argc < 3) {
+          std::cerr << "Missing argument for option -state" << std::endl;
+          exit(EXIT_FAILURE);
+        }
+        arg = argv[2];
+      } else {
+        arg = argument(argc,argv);
+        if (!arg)
+          return 0;
+      }
+      try {
+        if ((full && seed_given) || (!full && state_given))
+          throw std::invalid_argument("Seed and state options cannot be combined");
+        if (full) {
+          initial.state(std::string(arg));
+          state_given = true;
+        } else {
+          if (!strcmp(arg,"time") || !strcmp(arg,"hw")) {
+            if (!strcmp(arg,"time")) initial.time(); else initial.hw();
+            std::cerr << "% Random state: -state " << initial.state() << std::endl;
+          } else {
+            initial.seed(Support::random_seed(arg));
+          }
+          seed_given = true;
+        }
+      } catch (const std::exception& e) {
+        std::cerr << "Invalid random option: " << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      return 2;
+    }
+    void RandomOption::help(void) {
+      std::cerr << "\t" << iopt << " (64-bit decimal/hex seed, time, hw)\n"
+                << "\t\t" << exp << "\n"
+                << "\t-state (complete " << Support::RandomGenerator::name()
+                << " state; mutually exclusive with " << iopt << ")\n"
+                << "\t\tCurrent initial state: " << initial.state() << std::endl;
+    }
+
     StringValueOption::StringValueOption(const char* o, const char* e,
                                          const char* v)
       : BaseOption(o,e), cur(strdup(v)) {}

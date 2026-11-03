@@ -104,6 +104,9 @@ namespace Gecode {
                   std::ostream&) const {
   }
 
+  void
+  Brancher::random_split(unsigned int) {}
+
 
   /*
    * Space: Misc
@@ -680,6 +683,20 @@ namespace Gecode {
       return b->ngl(*this,c,a);
     } else {
       return nullptr;
+    }
+  }
+
+  void
+  Space::random_split(const MetaInfo& mi) {
+    const bool restart = mi.type() == MetaInfo::RESTART;
+    const unsigned long long int i = restart ? mi.restart() : mi.asset();
+    // Number 0 splits too, so that nested engines keep their level apart.
+    // No choice has UINT_MAX-1 alternatives, so no commit uses a separator.
+    const unsigned int separator = restart ? UINT_MAX : UINT_MAX-1;
+    for (ActorLink* b = bl.next(); b != &bl; b = b->next()) {
+      Brancher::cast(b)->random_split(separator);
+      Brancher::cast(b)->random_split(static_cast<unsigned int>(i >> 32));
+      Brancher::cast(b)->random_split(static_cast<unsigned int>(i));
     }
   }
 

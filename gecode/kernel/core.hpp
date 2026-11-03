@@ -1530,6 +1530,18 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     virtual void print(const Space& home, const Choice& c, unsigned int a,
                        std::ostream& o) const;
+    /**
+     * \brief Replace the state of each random selector by its split for \a a
+     *
+     * Randomized selectors draw from copies of their state, so a choice
+     * leaves the state unchanged. commit() calls this for the committed
+     * alternative, which makes the state at a node a function of the
+     * posted state and the path, reproduced by cloning and recomputation.
+     * Posting and Space::random_split() use it to derive independent
+     * streams. The default does nothing.
+     */
+    GECODE_KERNEL_EXPORT
+    virtual void random_split(unsigned int a);
     //@}
     /// \name Id and group support
     //@{
@@ -2401,6 +2413,23 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     void print(const Choice& c, unsigned int a, std::ostream& o) const;
+    /**
+     * \brief Give the random selectors of all branchers a stream for slave \a mi
+     *
+     * Restart and portfolio engines call this on every slave with the
+     * information they pass to slave(), so that slaves cloned from one master
+     * do not repeat its random decisions. It splits by a separator that no
+     * alternative uses, one for restarts and another for assets, and then by
+     * the high and low 32 bits of the restart or asset number. Number 0
+     * splits as well, so each level of nested engines adds its own splits:
+     * restart and portfolio streams stay apart, and nested slaves numbered
+     * (0,1) and (1,0) differ. The first slave thus does not repeat a search
+     * without a meta engine. Branchers posted later, during search, draw from
+     * generators their poster owns and are not split here.
+     * \ingroup TaskSearch
+     */
+    GECODE_KERNEL_EXPORT
+    void random_split(const MetaInfo& mi);
 
     /**
      * \brief Notice actor property

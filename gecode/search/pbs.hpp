@@ -186,7 +186,9 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
-        (void) slave->slave(i);
+        const MetaInfo mi(static_cast<unsigned int>(i));
+        slave->random_split(mi);
+        (void) slave->slave(mi);
         slaves[i] = build<T,E>(slave.get(),opt);
       }
       return Seq::pbsengine(
@@ -227,7 +229,9 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
-        (void) slave->slave(static_cast<unsigned int>(i));
+        const MetaInfo mi(static_cast<unsigned int>(i));
+        slave->random_split(mi);
+        (void) slave->slave(mi);
         slaves[i] = (*sebs[i])(slave.get());
       }
       pbscleanup(sebs);
@@ -277,7 +281,9 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
-        (void) slave->slave(static_cast<unsigned int>(i));
+        const MetaInfo mi(static_cast<unsigned int>(i));
+        slave->random_split(mi);
+        (void) slave->slave(mi);
         slaves[i] = build<T,E>(slave.get(),opt);
       }
       return Par::pbsengine(slaves,stops,n_slaves,stat,E<T>::best);
@@ -321,7 +327,9 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
-        (void) slave->slave(static_cast<unsigned int>(i));
+        const MetaInfo mi(static_cast<unsigned int>(i));
+        slave->random_split(mi);
+        (void) slave->slave(mi);
         slaves[i] = (*sebs[i])(slave.get());
       }
       pbscleanup(sebs);
@@ -372,7 +380,9 @@ namespace Gecode {
     // No need to create a portfolio engine but must run slave function
     if (o.assets == 1) {
       std::unique_ptr<T> seed(master);
-      (void) master->slave(0);
+      const MetaInfo mi(0U);
+      master->random_split(mi);
+      (void) master->slave(mi);
       // Retain the seed if a nested builder rejects its worker control.
       opt.clone = true;
       e = Search::build<T,E>(seed.get(),opt);

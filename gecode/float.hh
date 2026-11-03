@@ -2045,7 +2045,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   relax(Home home, const FloatVarArgs& x, const FloatVarArgs& sx,
-        Rnd r, double p);
+        Rnd& r, double p);
 
 }
 

@@ -19,7 +19,6 @@ set(GECODE_KERNEL_SOURCES
   gecode/kernel/branch/function.cpp
   gecode/kernel/core.cpp
   gecode/kernel/data/array.cpp
-  gecode/kernel/data/rnd.cpp
   gecode/kernel/exception.cpp
   gecode/kernel/gpi.cpp
   gecode/kernel/memory/manager.cpp
@@ -373,6 +372,7 @@ set(GECODE_TEST_SOURCES
   test/flatzinc/queen_ip.cpp
   test/flatzinc/queens4.cpp
   test/flatzinc/radiation.cpp
+  test/flatzinc/random_branching.cpp
   test/flatzinc/sat_arith1.cpp
   test/flatzinc/sat_array_bool_and.cpp
   test/flatzinc/sat_array_bool_or.cpp
@@ -460,6 +460,7 @@ set(GECODE_TEST_SOURCES
   test/ldsb.cpp
   test/nogoods.cpp
   test/region.cpp
+  test/random.cpp
   test/search.cpp
   test/set.cpp
   test/set/channel.cpp

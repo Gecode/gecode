@@ -34,6 +34,13 @@
  */
 
 #include <algorithm>
+#include <array>
+#include <charconv>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <string>
+#include <type_traits>
 
 namespace Gecode { namespace Support {
 
@@ -180,7 +187,252 @@ namespace Gecode { namespace Support {
    * \ingroup FuncSupport
    */
   typedef LinearCongruentialGenerator<2147483647, 48271, 44488, 3399>
-  RandomGenerator;
+  LegacyRandomGenerator;
+
+  /// Parse a decimal or hexadecimal 64-bit seed without truncation.
+  inline uint64_t
+  random_seed(const std::string& text) {
+    const char* first = text.data();
+    const char* last = first + text.size();
+    int base = 10;
+    if ((text.size() > 2) && (text[0] == '0') &&
+        ((text[1] == 'x') || (text[1] == 'X'))) {
+      first += 2;
+      base = 16;
+    }
+    uint64_t value;
+    auto r = std::from_chars(first,last,value,base);
+    if ((r.ec != std::errc()) || (r.ptr != last))
+      throw std::invalid_argument("Invalid 64-bit random seed");
+    return value;
+  }
+
+  /// Stafford's Mix13 permutation: bijective, and maps only zero to zero
+  inline uint64_t
+  random_mix(uint64_t z) {
+    z = (z ^ (z >> 30)) * UINT64_C(0xbf58476d1ce4e5b9);
+    z = (z ^ (z >> 27)) * UINT64_C(0x94d049bb133111eb);
+    return z ^ (z >> 31);
+  }
+
+  /** \brief Splittable SplitMix with two 64-bit state words
+   *
+   * Implements the SplitMix design of Steele, Lea, and Flood (OOPSLA 2014),
+   * using Stafford's Mix13 output permutation and the MurmurHash3 finalizer
+   * for gamma selection. Indexed splitting returns the child of the (a+1)th
+   * successive split without changing the parent. For a 32-bit alternative
+   * index, the inputs s + (2*a+1)*gamma are distinct: gamma is odd and the
+   * offsets span less than 2^64. Mix13 is bijective, so child states differ.
+   *
+   * \ingroup FuncSupport
+   */
+  class SplitMix {
+  public:
+    using State = std::array<uint64_t,2>;
+  private:
+    State s;
+    static uint64_t mix(uint64_t z) { return random_mix(z); }
+    static uint64_t gamma(uint64_t z) {
+      z = (z ^ (z >> 33)) * UINT64_C(0xff51afd7ed558ccd);
+      z = (z ^ (z >> 33)) * UINT64_C(0xc4ceb9fe1a85ec53);
+      z = (z ^ (z >> 33)) | 1;
+      uint64_t bits = z ^ (z >> 1);
+#ifdef GECODE_HAS_BUILTIN_POPCOUNTLL
+      unsigned int n = __builtin_popcountll(bits);
+#else
+      bits -= (bits >> 1) & UINT64_C(0x5555555555555555);
+      bits = (bits & UINT64_C(0x3333333333333333)) +
+             ((bits >> 2) & UINT64_C(0x3333333333333333));
+      bits = (bits + (bits >> 4)) & UINT64_C(0x0f0f0f0f0f0f0f0f);
+      unsigned int n = static_cast<unsigned int>
+        ((bits * UINT64_C(0x0101010101010101)) >> 56);
+#endif
+      return (n < 24) ? z ^ UINT64_C(0xaaaaaaaaaaaaaaaa) : z;
+    }
+  public:
+    explicit SplitMix(uint64_t value=1) { seed(value); }
+    static const char* name(void) { return "splitmix-v1"; }
+    static constexpr uint64_t min(void) { return 0; }
+    static constexpr uint64_t max(void) { return UINT64_MAX; }
+    void seed(uint64_t value) {
+      s = {{value, UINT64_C(0x9e3779b97f4a7c15)}};
+    }
+    State state(void) const { return s; }
+    void state(const State& value) {
+      if (!(value[1] & 1))
+        throw std::invalid_argument("SplitMix increment must be odd");
+      s = value;
+    }
+    uint64_t next(void) { return mix(s[0] += s[1]); }
+    SplitMix split(uint32_t alternative) const {
+      uint64_t first = s[0] + (2*uint64_t(alternative)+1)*s[1];
+      SplitMix child;
+      child.s = {{mix(first),gamma(first+s[1])}};
+      return child;
+    }
+  };
+
+  /** \brief One-word xorshift64* engine with hashed indexed splitting
+   *
+   * Uses shifts 12, 25, 27 and Vigna's multiplier, for the odd constant g.
+   * Seed v starts from Mix13(v + g), the first SplitMix64 output for v, as
+   * the recurrence is linear and related raw seeds would give related
+   * streams. The one seed hashing to zero shares the state of seed 0.
+   * Restoring zero state is an error.
+   *
+   * Alternative a hashes s + (2a+1)*g with Mix13. For a 32-bit index these
+   * inputs are distinct, as in SplitMix, and Mix13 is bijective, so sibling
+   * states differ. Only a zero input hashes to zero; that sibling hashes
+   * (2a+1)*g instead, the input of the excluded state zero. Each split is
+   * thus a bijection on nonzero states, so distinct nodes stay distinct
+   * along equal alternative sequences. Unlike jumps along the recurrence,
+   * which add up so that split(0) of split(0) equals split(1), hashed states
+   * of other nodes coincide only by chance.
+   * \ingroup FuncSupport
+   */
+  class Xorshift64Star {
+  public:
+    using State = std::array<uint64_t,1>;
+  private:
+    uint64_t s;
+    static uint64_t transition(uint64_t x) {
+      x ^= x >> 12;
+      x ^= x << 25;
+      return x ^ (x >> 27);
+    }
+  public:
+    explicit Xorshift64Star(uint64_t value=1) { seed(value); }
+    static const char* name(void) { return "xorshift64star-v1"; }
+    static constexpr uint64_t min(void) { return 1; }
+    static constexpr uint64_t max(void) { return UINT64_MAX; }
+    void seed(uint64_t value) {
+      uint64_t z = random_mix(value + UINT64_C(0x9e3779b97f4a7c15));
+      s = z ? z : random_mix(UINT64_C(0x9e3779b97f4a7c15));
+    }
+    State state(void) const { return {{s}}; }
+    void state(const State& value) {
+      if (!value[0])
+        throw std::invalid_argument("Xorshift64* state must be nonzero");
+      s = value[0];
+    }
+    uint64_t next(void) {
+      s = transition(s);
+      return s * UINT64_C(2685821657736338717);
+    }
+    Xorshift64Star split(uint32_t alternative) const {
+      const uint64_t c = (2*uint64_t(alternative)+1)*UINT64_C(0x9e3779b97f4a7c15);
+      uint64_t z = s + c;
+      Xorshift64Star child;
+      child.s = random_mix(z ? z : c);
+      return child;
+    }
+  };
+
+  /** \brief Value-type generator with reproducible bounded draws and state
+   *
+   * Engine supplies a nonempty State = std::array<uint64_t,N> containing
+   * all mutable state and stream parameters. It accepts a uint64_t seed in
+   * its constructor and seed(), with a defined rule for every seed. Its
+   * next(), min(), and max() describe raw output in [0,UINT64_MAX] or
+   * [1,UINT64_MAX]. name() identifies the algorithm and state format.
+   *
+   * state() captures complete state. state(const State&) must validate
+   * before mutation and restore subsequent draws and splits exactly,
+   * without seed expansion. Copying preserves state independently.
+   * Search engines additionally supply split(uint32_t) const, returning
+   * a child without changing the parent. Different sibling indices must
+   * produce distinct states, not merely different first outputs. Branching,
+   * posting, and meta search derive streams by chains of splits, so chains
+   * along different paths should give equal states only by chance; a jump
+   * by an index-dependent distance does not qualify. This does not require
+   * non-overlapping streams across an unbounded tree.
+   * \ingroup FuncSupport
+   */
+  template<class Engine>
+  class Random {
+  private:
+    Engine e;
+  public:
+    using EngineType = Engine;
+    using State = typename Engine::State;
+    using result_type = uint64_t;
+    static_assert(Engine::max() == UINT64_MAX && Engine::min() <= 1,
+                  "Random engine must generate full or nonzero 64-bit words");
+    explicit Random(uint64_t seed=1) : e(seed) {}
+    explicit Random(const Engine& engine) : e(engine) {}
+    static constexpr result_type min(void) { return Engine::min(); }
+    static constexpr result_type max(void) { return Engine::max(); }
+    static const char* name(void) { return Engine::name(); }
+    void seed(uint64_t value) { e.seed(value); }
+    State state(void) const { return e.state(); }
+    void state(const State& value) { e.state(value); }
+    result_type next(void) { return e.next(); }
+    result_type operator ()(void) { return next(); }
+    size_t size(void) const { return sizeof(*this); }
+    Random split(uint32_t alternative) const {
+      return Random(e.split(alternative));
+    }
+    /** \brief Uniform draw from [0,bound)
+     *
+     * Result r stands for the r-th of n equal buckets of consecutive raw
+     * values, so it depends on the high bits; the low bits of engines such as
+     * xorshift64* are linear. Raw values beyond the last full bucket are
+     * rejected. Bounds <= 1 return zero without consuming a draw.
+     */
+    template<class Type>
+    Type operator ()(Type bound) {
+      static_assert(std::is_integral<Type>::value && sizeof(Type) <= 8,
+                    "Random bound must be an integer of at most 64 bits");
+      if (bound <= 1)
+        return 0;
+      uint64_t n = static_cast<uint64_t>(bound);
+      // Bucket size: 2^64 raw values, or 2^64-1 for nonzero engines, over n.
+      uint64_t bucket;
+      if (Engine::min() == 0)
+        bucket = (uint64_t(0)-n)/n + 1;
+      else
+        bucket = UINT64_MAX/n;
+      uint64_t value;
+      do { value = (next()-Engine::min()) / bucket; } while (value >= n);
+      return static_cast<Type>(value);
+    }
+    /// Canonical identifier followed by fixed-width hexadecimal state words.
+    std::string state_string(void) const {
+      std::string text(name());
+      constexpr char digits[] = "0123456789abcdef";
+      for (uint64_t word : state()) {
+        text += ':';
+        for (int shift=60; shift>=0; shift-=4)
+          text += digits[(word >> shift) & 15];
+      }
+      return text;
+    }
+    /// Restore full state, rejecting incompatible identifiers or invalid words.
+    void state(const std::string& text) {
+      const std::string prefix = std::string(name()) + ':';
+      State words{};
+      if ((text.compare(0,prefix.size(),prefix) != 0) ||
+          (text.size() != prefix.size()+17*words.size()-1))
+        throw std::invalid_argument("Invalid or incompatible random state");
+      size_t pos = prefix.size();
+      for (size_t i=0; i<words.size(); ++i) {
+        const char* first = text.data()+pos;
+        auto r = std::from_chars(first,first+16,words[i],16);
+        if ((r.ec != std::errc()) || (r.ptr != first+16) ||
+            ((i+1<words.size()) && (text[pos+16] != ':')))
+          throw std::invalid_argument("Invalid random state word");
+        pos += 17;
+      }
+      state(words);
+    }
+  };
+
+  /// Build-configured default generator, also used by command-line clients.
+#ifdef GECODE_RANDOM_XORSHIFT64STAR
+  using RandomGenerator = Random<Xorshift64Star>;
+#else
+  using RandomGenerator = Random<SplitMix>;
+#endif
 
 }}
 

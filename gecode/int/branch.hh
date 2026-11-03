@@ -349,13 +349,16 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntValSel
    */
-  template<class View>
+  template<class View, class Random = Rnd>
   class ValSelRnd : public ValSel<View,int> {
     using typename ValSel<View,int>::Var;
   protected:
     /// The used random number generator
-    Rnd r;
+    Random r;
   public:
+    ValSelRnd(Space& home, const Random& random)
+      : ValSel<View,int>(home,ValBranch<Var>()), r(random) {}
+    void random_split(unsigned int a) { r = r.split(a); }
     /// Constructor for initialization
     ValSelRnd(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning

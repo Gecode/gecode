@@ -108,7 +108,7 @@ need none.
 Run a focused selection first with `-test <pattern>`, then a suite in
 proportion to the change: `check` (the small `TestTags::check()` set),
 `check-standard` (all but sweeps; new tests are `standard` by default), or
-`check-sweep` (exhaustive). A failure prints `-replay <seed> -test <name>`;
+`check-sweep` (exhaustive). A failure prints `-replay <state> -test '<name>'`;
 rerun with those options to reproduce it. For deeper checks, configure with
 `GECODE_SANITIZER`, and for changes to copying, disposal, or ownership, with
 `GECODE_ENABLE_FAULT_INJECTION` and run `check-fault`.

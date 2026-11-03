@@ -144,6 +144,7 @@ namespace Gecode { namespace Int { namespace Branch {
                                                  unsigned int a) {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);
+    this->random_split(a);
     IntView x(ViewBrancher<IntView,Filter,n>::view(pvc.pos()));
     unsigned int b = min ? a : (pvc.alternatives() - 1 - a);
     return me_failed(x.eq(home,pvc.val(b))) ? ES_FAILED : ES_OK;

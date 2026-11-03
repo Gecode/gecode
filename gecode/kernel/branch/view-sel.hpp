@@ -43,6 +43,14 @@ namespace Gecode {
   template<class View_>
   class ViewSel {
   public:
+    /** \brief Replace random state by its split for \a a
+     *
+     * A randomized selector draws from a copy of its state when selecting,
+     * so selection leaves the state unchanged; only this function changes
+     * it. Its brancher calls it on commit and at posting, as described for
+     * Brancher::random_split(). Selectors without random state do nothing.
+     */
+    virtual void random_split(unsigned int a) { (void) a; }
     /// Define the view type
     typedef View_ View;
     /// The corresponding variable type
@@ -145,47 +153,51 @@ namespace Gecode {
   };
 
   /// Select a view randomly
-  template<class View>
+  template<class View, class Random = Rnd>
   class ViewSelRnd : public ViewSel<View> {
   protected:
     typedef typename ViewSel<View>::Var Var;
     /// The random number generator used
-    Rnd r;
+    Random r;
   public:
+    void random_split(unsigned int a) override { r = r.split(a); }
+    /// Construct a selector with a user-supplied value-type generator.
+    ViewSelRnd(Space& home, const Random& random)
+      : ViewSel<View>(home,VarBranch<Var>()), r(random) {}
     /// \name Initialization
     //@{
     /// Constructor for creation
     ViewSelRnd(Space& home, const VarBranch<Var>& vb);
     /// Constructor for copying during cloning
-    ViewSelRnd(Space& home, ViewSelRnd<View>& vs);
+    ViewSelRnd(Space& home, ViewSelRnd<View,Random>& vs);
     //@}
     /// \name View selection and tie breaking
     //@{
     /// Select a view from \a x starting from \a s and return its position
-    virtual int select(Space& home, ViewArray<View>& x, int s);
+    virtual int select(Space& home, ViewArray<View>& x, int s) override;
     /// Select a view from \a x starting from \a s and return its position
     virtual int select(Space& home, ViewArray<View>& x, int s,
-                       BrancherFilter<View>& f);
+                       BrancherFilter<View>& f) override;
     /// Select ties from \a x starting from \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s,
-                      int* ties, int& n);
+                      int* ties, int& n) override;
     /// Select ties from \a x starting from \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n,
-                      BrancherFilter<View>& f);
+                      BrancherFilter<View>& f) override;
     /// Break ties in \a x and update to new ties
-    virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
+    virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n) override;
     /// Select a view from \a x considering view with positions in \a ties
-    virtual int select(Space& home, ViewArray<View>& x, int* ties, int n);
+    virtual int select(Space& home, ViewArray<View>& x, int* ties, int n) override;
     //@}
     /// \name Resource management and cloning
     //@{
     /// Create copy during cloning
-    virtual ViewSel<View>* copy(Space& home);
+    virtual ViewSel<View>* copy(Space& home) override;
     /// Whether dispose must always be called (that is, notice is needed)
-    virtual bool notice(void) const;
+    virtual bool notice(void) const override;
     /// Delete view selection
-    virtual void dispose(Space& home);
+    virtual void dispose(Space& home) override;
     //@}
   };
 
@@ -479,79 +491,83 @@ namespace Gecode {
   }
 
 
-  template<class View>
+  template<class View, class Random>
   forceinline
-  ViewSelRnd<View>::ViewSelRnd(Space& home, const VarBranch<Var>& vb)
+  ViewSelRnd<View,Random>::ViewSelRnd(Space& home, const VarBranch<Var>& vb)
       : ViewSel<View>(home,vb), r(vb.rnd()) {}
-  template<class View>
+  template<class View, class Random>
   forceinline
-  ViewSelRnd<View>::ViewSelRnd(Space& home, ViewSelRnd<View>& vs)
+  ViewSelRnd<View,Random>::ViewSelRnd(Space& home, ViewSelRnd<View,Random>& vs)
       : ViewSel<View>(home,vs), r(vs.r) {}
-  template<class View>
+  template<class View, class Random>
   int
-  ViewSelRnd<View>::select(Space&, ViewArray<View>& x, int s) {
+  ViewSelRnd<View,Random>::select(Space&, ViewArray<View>& x, int s) {
+    Random t = r;
     unsigned int n=1;
     int j=s;
     for (int i=s+1; i<x.size(); i++)
       if (!x[i].assigned()) {
         n++;
-        if (r(n) == 0U)
+        if (t(n) == 0U)
           j=i;
       }
     return j;
   }
-  template<class View>
+  template<class View, class Random>
   int
-  ViewSelRnd<View>::select(Space& home, ViewArray<View>& x, int s,
+  ViewSelRnd<View,Random>::select(Space& home, ViewArray<View>& x, int s,
                            BrancherFilter<View>& f) {
+    Random t = r;
     unsigned int n=1;
     int j=s;
     for (int i=s+1; i<x.size(); i++)
       if (!x[i].assigned() && f(home,x[i],i)) {
         n++;
-        if (r(n) == 0U)
+        if (t(n) == 0U)
           j=i;
       }
     return j;
   }
-  template<class View>
+  template<class View, class Random>
   void
-  ViewSelRnd<View>::ties(Space& home, ViewArray<View>& x, int s,
+  ViewSelRnd<View,Random>::ties(Space& home, ViewArray<View>& x, int s,
                          int* ties, int& n) {
     n=1; ties[0] = select(home,x,s);
   }
-  template<class View>
+  template<class View, class Random>
   void
-  ViewSelRnd<View>::ties(Space& home, ViewArray<View>& x, int s,
+  ViewSelRnd<View,Random>::ties(Space& home, ViewArray<View>& x, int s,
                          int* ties, int& n,
                          BrancherFilter<View>& f) {
     n=1; ties[0] = select(home,x,s,f);
   }
-  template<class View>
+  template<class View, class Random>
   void
-  ViewSelRnd<View>::brk(Space&, ViewArray<View>&, int* ties, int& n) {
-    ties[0] = ties[static_cast<int>(r(static_cast<unsigned int>(n)))];
+  ViewSelRnd<View,Random>::brk(Space&, ViewArray<View>&, int* ties, int& n) {
+    Random t = r;
+    ties[0] = ties[static_cast<int>(t(static_cast<unsigned int>(n)))];
     n=1;
   }
-  template<class View>
+  template<class View, class Random>
   int
-  ViewSelRnd<View>::select(Space&, ViewArray<View>&, int* ties, int n) {
-    return ties[static_cast<int>(r(static_cast<unsigned int>(n)))];
+  ViewSelRnd<View,Random>::select(Space&, ViewArray<View>&, int* ties, int n) {
+    Random t = r;
+    return ties[static_cast<int>(t(static_cast<unsigned int>(n)))];
   }
-  template<class View>
+  template<class View, class Random>
   ViewSel<View>*
-  ViewSelRnd<View>::copy(Space& home) {
-    return new (home) ViewSelRnd<View>(home,*this);
+  ViewSelRnd<View,Random>::copy(Space& home) {
+    return new (home) ViewSelRnd<View,Random>(home,*this);
   }
-  template<class View>
+  template<class View, class Random>
   forceinline bool
-  ViewSelRnd<View>::notice(void) const {
-    return true;
+  ViewSelRnd<View,Random>::notice(void) const {
+    return !std::is_trivially_destructible<Random>::value;
   }
-  template<class View>
+  template<class View, class Random>
   forceinline void
-  ViewSelRnd<View>::dispose(Space&) {
-    r.~Rnd();
+  ViewSelRnd<View,Random>::dispose(Space&) {
+    r.~Random();
   }
 
 

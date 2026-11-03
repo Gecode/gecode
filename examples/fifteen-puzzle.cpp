@@ -111,7 +111,7 @@ neighbors(int blank) {
 static Board
 initial_board(const PuzzleOptions& opt) {
   Board board = goal();
-  Rnd random(opt.seed());
+  Rnd random = opt.rnd();
   int blank = 15;
   int previous = -1;
   for (unsigned int i=0; i<opt.scramble(); i++) {
@@ -441,7 +441,7 @@ main(int argc, char* argv[]) {
   PuzzleOptions opt;
   opt.parse(argc,argv);
   if (opt.mode() == SM_SOLUTION) {
-    std::cout << "Initial board (seed " << opt.seed() << "):\n";
+    std::cout << "Initial board (random state " << opt.rnd().state() << "):\n";
     print_board(std::cout,initial_board(opt));
   }
   if (opt.model() == PuzzleOptions::MODEL_OPEN)

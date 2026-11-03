@@ -61,6 +61,9 @@
 /* whether __builtin_popcountll is available */
 #undef GECODE_HAS_BUILTIN_POPCOUNTLL
 
+/* Use xorshift64* instead of splittable SplitMix as the default random engine. */
+#undef GECODE_RANDOM_XORSHIFT64STAR
+
 /* Whether counting-based search support available */
 #undef GECODE_HAS_CBS
 

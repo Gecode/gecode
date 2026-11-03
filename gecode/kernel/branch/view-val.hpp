@@ -115,6 +115,8 @@ namespace Gecode {
     virtual const Choice* choice(const Space& home, Archive& e);
     /// Perform commit for choice \a c and alternative \a b
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
+    /// Split the state of every view and value selector for \a b
+    virtual void random_split(unsigned int b);
     /// Create no-good literal for choice \a c and alternative \a b
     virtual NGL* ngl(Space& home, const Choice& c, unsigned int b) const;
     /**
@@ -232,6 +234,8 @@ namespace Gecode {
                   BranchFilter<Var> bf,
                   VarValPrint<Var,Val> vvp)
     : ViewBrancher<View,Filter,n>(home,x,vs,bf), vsc(vsc0), p(vvp) {
+    vsc->random_split(this->id());
+    vsc->random_split(0U);
     if (vsc->notice() || f.notice() || p.notice())
       home.notice(*this,AP_DISPOSE,true);
   }
@@ -254,8 +258,16 @@ namespace Gecode {
   ViewValBrancher<View,n,Val,a,Filter,Print>::
   ViewValBrancher(Space& home,
                   ViewValBrancher<View,n,Val,a,Filter,Print>& b)
-    : ViewBrancher<View,Filter,n>(home,b),
-      vsc(b.vsc->copy(home)), p(b.p) {}
+    : ViewBrancher<View,Filter,n>(home,b), vsc(nullptr), p(b.p) {
+    try {
+      vsc = b.vsc->copy(home);
+    } catch (...) {
+      // A failed clone cannot dispose a brancher that was never constructed.
+      for (int i=0; i<n; i++)
+        vs[i]->dispose(home);
+      throw;
+    }
+  }
 
   template<class View, int n, class Val, unsigned int a,
            class Filter, class Print>
@@ -292,11 +304,20 @@ namespace Gecode {
   ::commit(Space& home, const Choice& c, unsigned int b) {
     const PosValChoice<Val>& pvc
       = static_cast<const PosValChoice<Val>&>(c);
+    random_split(b);
     return me_failed(vsc->commit(home,b,
                                  ViewBrancher<View,Filter,n>::view(pvc.pos()),
                                  pvc.pos().pos,
                                  pvc.val()))
       ? ES_FAILED : ES_OK;
+  }
+
+  template<class View, int n, class Val, unsigned int a,
+           class Filter, class Print>
+  void
+  ViewValBrancher<View,n,Val,a,Filter,Print>::random_split(unsigned int b) {
+    ViewBrancher<View,Filter,n>::random_split(b);
+    vsc->random_split(b);
   }
 
   template<class View, int n, class Val, unsigned int a,
