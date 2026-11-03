@@ -973,7 +973,7 @@ INTEXAMPLESRC0 =						\
 	bin-packing knights tsp perfect-square schurs-lemma     \
 	dominating-queens colored-matrix multi-bin-packing	\
 	qcp job-shop open-route common-pattern fifteen-puzzle	\
-	tsptw
+	tsptw hub-spoke
 
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp) \
@@ -1347,7 +1347,7 @@ BRANCHTESTSRC0 = \
 	test/assign/set.cpp test/assign/float.cpp
 
 SEARCHTESTSRC0 = \
-	test/search.cpp test/nogoods.cpp
+	test/search.cpp test/nogoods.cpp test/search/hub-spoke-api-pass.cpp
 
 ARRAYTESTSRC0 = \
 	test/array.cpp

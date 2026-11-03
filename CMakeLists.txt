@@ -1417,7 +1417,42 @@ if(GECODE_ENABLE_INSTANCE)
   list(APPEND GECODE_INSTALL_TARGETS gecode-instance)
 endif()
 
+# Try to compile test/search/hub-spoke-api-<source>.cpp as a static
+# library with the further compile definitions given, storing the result in
+# <result>.
+function(gecode_try_meta_search_hooks result source)
+  set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+  unset(${result} CACHE)
+  try_compile(${result}
+    "${CMAKE_CURRENT_BINARY_DIR}/hub-spoke-api-${source}"
+    SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/test/search/hub-spoke-api-${source}.cpp"
+    COMPILE_DEFINITIONS ${ARGN}
+    CMAKE_FLAGS
+      "-DINCLUDE_DIRECTORIES=${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}"
+      "-DCMAKE_CXX_STANDARD=17"
+      "-DCMAKE_CXX_STANDARD_REQUIRED=ON"
+      "-DCMAKE_CXX_EXTENSIONS=OFF")
+  set(${result} ${${result}} PARENT_SCOPE)
+endfunction()
+
+# The current hub()/spoke() Space hooks must compile, and each removed
+# master()/slave() override must fail on its own.
+function(gecode_check_meta_search_hooks)
+  gecode_try_meta_search_hooks(GECODE_CURRENT_META_HOOKS_COMPILE pass)
+  if(NOT GECODE_CURRENT_META_HOOKS_COMPILE)
+    message(FATAL_ERROR "Current hub/spoke Space hooks do not compile")
+  endif()
+  foreach(hook MASTER SLAVE)
+    gecode_try_meta_search_hooks(GECODE_REMOVED_${hook}_HOOK_COMPILES fail -DGECODE_TEST_REMOVED_${hook})
+    if(GECODE_REMOVED_${hook}_HOOK_COMPILES)
+      message(FATAL_ERROR "A removed meta-search Space hook (${hook}) unexpectedly compiles")
+    endif()
+  endforeach()
+endfunction()
+
 if(BUILD_TESTING)
+  gecode_check_meta_search_hooks()
+
   set(GECODE_CAN_BUILD_TEST_HARNESS TRUE)
   foreach(required search int)
     if(NOT TARGET gecode${required})
