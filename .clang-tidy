@@ -42,7 +42,7 @@ CheckOptions:
   bugprone-unused-return-value.AllowCastToVoid: true
   # Shallow handles stay passed by value: a copy duplicates a few pointers or
   # ids, with no reference count or allocation. See docs/code-style.md.
-  performance-unnecessary-value-param.AllowedTypes: '^Gecode::(Home|Group|PropagatorGroup|BrancherGroup|Pos|Reify)$;^Gecode::(Int|Bool|Set|Float)Var$;^Gecode::(Int|Bool|Set|Float)VarArray$;^Gecode::(VarArray|ViewArray)(<.*>)?$;^Gecode::(OpenIntVarList|OpenBoolVarList|OpenVarList|OpenViewList)(<.*>)?$;^Gecode::(VarImpView|DerivedView|ConstView)(<.*>)?$;^Gecode::(Int|Set|Float)::[A-Za-z]*View(<.*>)?$;^Gecode::.*::VarType$'
+  performance-unnecessary-value-param.AllowedTypes: '^Gecode::Float::ScaleView$'
   readability-identifier-naming.FunctionCase: lower_case
   readability-identifier-naming.MethodCase: lower_case
   readability-identifier-naming.VariableCase: lower_case

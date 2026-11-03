@@ -32,7 +32,14 @@
 
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
+#ifdef GECODE_HAS_SET_VARS
+#include <gecode/set.hh>
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+#include <gecode/float.hh>
+#endif
 
+#include <type_traits>
 #include <vector>
 
 #include "test/test.hh"
@@ -59,6 +66,49 @@
     } while (false)
 
 namespace Test {
+
+    /*
+     * Shallow handles copy a few pointers or ids and must stay trivially
+     * copyable, so that a hand-written copy member cannot come back.
+     */
+    static_assert(std::is_trivially_copyable_v<Gecode::Home>);
+    static_assert(std::is_trivially_copyable_v<Gecode::Group>);
+    static_assert(std::is_trivially_copyable_v<Gecode::PropagatorGroup>);
+    static_assert(std::is_trivially_copyable_v<Gecode::BrancherGroup>);
+    static_assert(std::is_trivially_copyable_v<Gecode::Pos>);
+    static_assert(std::is_trivially_copyable_v<Gecode::Reify>);
+    static_assert(std::is_trivially_copyable_v<Gecode::LocalHandle>);
+    static_assert(std::is_trivially_copyable_v<Gecode::AFC>);
+    static_assert(std::is_trivially_copyable_v<Gecode::IntVar>);
+    static_assert(std::is_trivially_copyable_v<Gecode::BoolVar>);
+    static_assert(std::is_trivially_copyable_v<Gecode::IntVarArray>);
+    static_assert(std::is_trivially_copyable_v<Gecode::BoolVarArray>);
+    static_assert(std::is_trivially_copyable_v<Gecode::IntAFC>);
+    static_assert(std::is_trivially_copyable_v<Gecode::BoolAFC>);
+    static_assert(std::is_trivially_copyable_v<Gecode::OpenIntVarList>);
+    static_assert(std::is_trivially_copyable_v<Gecode::OpenBoolVarList>);
+    static_assert(std::is_trivially_copyable_v<Gecode::OpenViewList<Gecode::Int::IntView>>);
+    static_assert(std::is_trivially_copyable_v<Gecode::ViewArray<Gecode::Int::IntView>>);
+    static_assert(std::is_trivially_copyable_v<Gecode::ViewArray<Gecode::Int::BoolView>>);
+#ifdef GECODE_HAS_SET_VARS
+    static_assert(std::is_trivially_copyable_v<Gecode::SetVar>);
+    static_assert(std::is_trivially_copyable_v<Gecode::SetVarArray>);
+    static_assert(std::is_trivially_copyable_v<Gecode::SetAFC>);
+    static_assert(std::is_trivially_copyable_v<Gecode::ViewArray<Gecode::Set::SetView>>);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    static_assert(std::is_trivially_copyable_v<Gecode::FloatVar>);
+    static_assert(std::is_trivially_copyable_v<Gecode::FloatVarArray>);
+    static_assert(std::is_trivially_copyable_v<Gecode::FloatAFC>);
+    static_assert(std::is_trivially_copyable_v<Gecode::ViewArray<Gecode::Float::FloatView>>);
+#endif
+
+    /*
+     * A home never changes its space, and a space is copied only by
+     * cloning, so neither is assignable.
+     */
+    static_assert(!std::is_copy_assignable_v<Gecode::Home>);
+    static_assert(!std::is_copy_assignable_v<Gecode::Space>);
 
     /// Tests for arrays
     namespace Array {

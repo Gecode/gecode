@@ -42,9 +42,6 @@ namespace Gecode {
     forceinline
     FloatVar::FloatVar(void) {}
     forceinline
-    FloatVar::FloatVar(const FloatVar& y)
-        : VarImpVar<Float::FloatVarImp>(y.varimp()) {}
-    forceinline
     FloatVar::FloatVar(const Float::FloatView& y)
         : VarImpVar<Float::FloatVarImp>(y.varimp()) {}
 
