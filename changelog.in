@@ -85,19 +85,44 @@ Added user-extensible random number generators with reproducible
 stream splitting. Splittable SplitMix replaces the old default generator;
 xorshift64* is available as a smaller-state alternative. The default is
 configurable at build time, and users can supply their own engines.
-Randomized branching splits the recorded generator state by alternative,
-giving distinct successor states that are reproduced during recomputation.
-Complete-state save/restore and command-line state input support exact replay,
-including test failures.
+Randomized branching splits its generator state by alternative on commit,
+so the state at a node depends only on the path and is reproduced during
+recomputation. Restart and portfolio search split each slave's state, so
+restarts explore different random paths. Complete-state save/restore and
+command-line state input support exact replay, including test failures.
 [MORE]
 Generators store their compact state directly in their consumers, and copying
-a generator produces independent state. Drivers accept checked 64-bit seeds
-as well as complete state. APIs, seeded sequences, and randomized choice
-archives change; no legacy sequence mode is provided. This design remains
+a generator produces independent state. Posting splits each selector by its
+brancher and role, so branchers given the same generator draw independent
+streams. Choices store no generator state. Drivers accept checked 64-bit seeds
+as well as complete state. APIs and seeded sequences change; no legacy
+sequence mode is provided. This design remains
 provisional for a future breaking-change release. Replace the old seed()
-snapshot accessor with state() and restore with state(text). Use opt.rnd()
-instead of Rnd(opt.seed()) to honor complete-state command-line input.
+snapshot accessor with state() and restore with state(text). The driver and
+FlatZinc options no longer provide a seed() accessor; use opt.rnd() instead
+of Rnd(opt.seed()) to honor time, hardware, and complete-state input.
+The seed constructor is explicit, so an integer no longer converts to a
+generator: write INT_VAL_RND(Rnd(42)) instead of INT_VAL_RND(42).
 Engine contracts are documented on Support::Random and RndGenerator.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Restart-based search numbers a restart after a solution like any other
+restart, so every slave's MetaInfo::restart() is unique. FlatZinc
+large neighbourhood search therefore relaxes from the first restart after
+the first solution.
+
+[ENTRY]
+Module: test
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The test harness option -replay takes the complete random state printed for
+a failed iteration instead of a 64-bit seed, together with the failed
+test's name passed to -test.
 
 [RELEASE]
 Version: 6.5.0

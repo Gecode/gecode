@@ -372,6 +372,7 @@ set(GECODE_TEST_SOURCES
   test/flatzinc/queen_ip.cpp
   test/flatzinc/queens4.cpp
   test/flatzinc/radiation.cpp
+  test/flatzinc/random_branching.cpp
   test/flatzinc/sat_arith1.cpp
   test/flatzinc/sat_array_bool_and.cpp
   test/flatzinc/sat_array_bool_or.cpp

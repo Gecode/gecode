@@ -115,6 +115,8 @@ namespace Gecode {
     virtual const Choice* choice(const Space& home, Archive& e);
     /// Perform commit for choice \a c and alternative \a b
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
+    /// Split the state of every view and value selector for \a b
+    virtual void random_split(unsigned int b);
     /// Create no-good literal for choice \a c and alternative \a b
     virtual NGL* ngl(Space& home, const Choice& c, unsigned int b) const;
     /**
@@ -232,6 +234,8 @@ namespace Gecode {
                   BranchFilter<Var> bf,
                   VarValPrint<Var,Val> vvp)
     : ViewBrancher<View,Filter,n>(home,x,vs,bf), vsc(vsc0), p(vvp) {
+    vsc->random_split(this->id());
+    vsc->random_split(0U);
     if (vsc->notice() || f.notice() || p.notice())
       home.notice(*this,AP_DISPOSE,true);
   }
@@ -271,14 +275,7 @@ namespace Gecode {
   ViewValBrancher<View,n,Val,a,Filter,Print>::choice(Space& home) {
     Pos p = ViewBrancher<View,Filter,n>::pos(home);
     View v = ViewBrancher<View,Filter,n>::view(p);
-    Val value = vsc->val(home,v,p.pos);
-    unsigned int words = this->random_words()+vsc->random_words();
-    if (!words)
-      return new PosValChoice<Val>(*this,a,p,value);
-    std::unique_ptr<RndChoice<PosValChoice<Val>>> c(
-      new (words) RndChoice<PosValChoice<Val>>(words,*this,a,p,value));
-    vsc->random_save(this->random_save(c->data()));
-    return c.release();
+    return new PosValChoice<Val>(*this,a,p,vsc->val(home,v,p.pos));
   }
 
   template<class View, int n, class Val, unsigned int a,
@@ -289,13 +286,7 @@ namespace Gecode {
     (void) home;
     int p; e >> p;
     Val v; e >> v;
-    unsigned int words = this->random_words()+vsc->random_words();
-    if (!words)
-      return new PosValChoice<Val>(*this,a,p,v);
-    std::unique_ptr<RndChoice<PosValChoice<Val>>> c(
-      new (words) RndChoice<PosValChoice<Val>>(words,*this,a,p,v));
-    c->read(e);
-    return c.release();
+    return new PosValChoice<Val>(*this,a,p,v);
   }
 
   template<class View, int n, class Val, unsigned int a,
@@ -305,15 +296,20 @@ namespace Gecode {
   ::commit(Space& home, const Choice& c, unsigned int b) {
     const PosValChoice<Val>& pvc
       = static_cast<const PosValChoice<Val>&>(c);
-    if (this->random_words()+vsc->random_words()) {
-      assert(pvc.random_data() != nullptr);
-      vsc->random_commit(this->random_commit(pvc.random_data(),b),b);
-    }
+    random_split(b);
     return me_failed(vsc->commit(home,b,
                                  ViewBrancher<View,Filter,n>::view(pvc.pos()),
                                  pvc.pos().pos,
                                  pvc.val()))
       ? ES_FAILED : ES_OK;
+  }
+
+  template<class View, int n, class Val, unsigned int a,
+           class Filter, class Print>
+  void
+  ViewValBrancher<View,n,Val,a,Filter,Print>::random_split(unsigned int b) {
+    ViewBrancher<View,Filter,n>::random_split(b);
+    vsc->random_split(b);
   }
 
   template<class View, int n, class Val, unsigned int a,

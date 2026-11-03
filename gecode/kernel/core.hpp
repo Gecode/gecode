@@ -1530,6 +1530,18 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     virtual void print(const Space& home, const Choice& c, unsigned int a,
                        std::ostream& o) const;
+    /**
+     * \brief Replace the state of each random selector by its split for \a a
+     *
+     * Randomized selectors draw from copies of their state, so a choice
+     * leaves the state unchanged. commit() calls this for the committed
+     * alternative, which makes the state at a node a function of the
+     * posted state and the path, reproduced by cloning and recomputation.
+     * Posting and Space::random_split() use it to derive independent
+     * streams. The default does nothing.
+     */
+    GECODE_KERNEL_EXPORT
+    virtual void random_split(unsigned int a);
     //@}
     /// \name Id and group support
     //@{
@@ -2401,6 +2413,19 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     void print(const Choice& c, unsigned int a, std::ostream& o) const;
+    /**
+     * \brief Give the random selectors of all branchers a stream for slave \a i
+     *
+     * Restart and portfolio engines call this on every slave with its restart
+     * or asset number, so that slaves cloned from one master do not repeat
+     * its random decisions. Index 0 leaves the state unchanged, so the first
+     * slave searches as the model does without a meta engine. Other indices
+     * split by a separator no alternative uses, then by the high and low 32
+     * bits of \a i.
+     * \ingroup TaskSearch
+     */
+    GECODE_KERNEL_EXPORT
+    void random_split(unsigned long long int i);
 
     /**
      * \brief Notice actor property

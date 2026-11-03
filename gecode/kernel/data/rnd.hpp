@@ -40,26 +40,31 @@ namespace Gecode {
   /**
    * \brief Small value-type random generator owned by its consumer
    *
-   * Copying preserves complete state in independent storage. Branching
-   * descriptions and selectors own their copies; cloning preserves selector
-   * state without drawing or splitting. Split explicitly to start different streams:
+   * Copying preserves complete state in independent storage, and split()
+   * derives a different stream:
    * \code
    * Rnd parent(42);
    * Rnd same = parent;
    * Rnd child = parent.split(1);
    * \endcode
    *
-   * Only the active randomized brancher's selectors are recorded in a choice.
-   * Committing an alternative restores their recorded states and splits by
-   * the public alternative index. Replay reproduces random state along that
-   * path, but does not promise identical parallel scheduling, solution order,
-   * or search trees under weakly monotonic propagation.
+   * Branching descriptions and selectors own their copies. A brancher keys
+   * each selector's copy by the brancher's id and the selector's role, so
+   * passing one generator to several selectors or branchers gives them
+   * independent streams. Selectors draw from a copy of their state and
+   * replace the state by its split for the alternative on commit. The state
+   * at a node is therefore determined by the posted state and the path, and
+   * cloning and recomputation reproduce it. Restart and portfolio engines
+   * split the state for each slave; see Space::random_split(). Replay does
+   * not promise identical parallel scheduling, solution order, or search
+   * trees under weakly monotonic propagation.
    *
-   * Model-owned or callback-owned generators are not recorded automatically.
-   * A custom brancher must preserve their state in its choices when replay
-   * needs it. Space cloning does not copy mutable state in shared callback
-   * captures. Engine must meet the Support::Random contract, including splitting.
-   * See examples/random-engine.cpp for a user-defined engine and selectors.
+   * Model-owned or callback-owned generators change only as their owner
+   * changes them; a custom brancher using one must make its state a
+   * function of the path, for example by splitting it on commit. Space
+   * cloning does not copy mutable state in shared callback captures. Engine
+   * must meet the Support::Random contract, including splitting. See
+   * examples/random-engine.cpp for a user-defined engine and selectors.
    * \ingroup TaskModel
    */
   template<class Engine>
@@ -67,7 +72,10 @@ namespace Gecode {
     Support::Random<Engine> r;
   public:
     using State = typename Engine::State;
-    explicit RndGenerator(uint64_t seed=1) : r(seed) {}
+    /// Generator seeded with 1
+    RndGenerator(void) : r(1) {}
+    /// Seed explicitly, so an integer never converts to a generator
+    explicit RndGenerator(uint64_t seed) : r(seed) {}
     explicit RndGenerator(const Support::Random<Engine>& source) : r(source) {}
     RndGenerator copy(void) const { return *this; }
     RndGenerator split(uint32_t a) const { return RndGenerator(r.split(a)); }
@@ -81,23 +89,8 @@ namespace Gecode {
     State state_words(void) const { return r.state(); }
     void state(const State& words) { r.state(words); }
     static const char* name(void) { return Engine::name(); }
-    static constexpr unsigned int words(void) { return std::tuple_size<State>::value; }
     template<class Type>
     Type operator ()(Type bound) { return r(bound); }
-    /// Save compact choice data and advance the output pointer.
-    uint64_t* save(uint64_t* out) const {
-      auto s = r.state();
-      return std::copy(s.begin(),s.end(),out);
-    }
-    /// Derive this consumer's next state from its recorded choice data.
-    const uint64_t* restore_split(const uint64_t* in, uint32_t a) {
-      State s;
-      std::copy(in,in+s.size(),s.begin());
-      auto parent = r;
-      parent.state(s);
-      r = parent.split(a);
-      return in+s.size();
-    }
   };
 
   /// Build-configured default, with exactly the engine's inline state size.

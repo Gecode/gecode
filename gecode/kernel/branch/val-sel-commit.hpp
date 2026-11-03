@@ -43,12 +43,8 @@ namespace Gecode {
   template<class View_, class Val_>
   class ValSelCommitBase {
   public:
-    /// \copydoc Gecode::ViewSel::random_words
-    virtual unsigned int random_words(void) const { return 0; }
-    /// \copydoc Gecode::ViewSel::random_save
-    virtual uint64_t* random_save(uint64_t* out) const { return out; }
-    /// \copydoc Gecode::ViewSel::random_commit
-    virtual const uint64_t* random_commit(const uint64_t* in, unsigned int) { return in; }
+    /// \copydoc Gecode::ViewSel::random_split
+    virtual void random_split(unsigned int a) { (void) a; }
     /// View type
     typedef View_ View;
     /// Corresponding variable type
@@ -107,11 +103,7 @@ namespace Gecode {
     /// The commit object used
     ValCommit c;
   public:
-    unsigned int random_words(void) const override { return s.random_words(); }
-    uint64_t* random_save(uint64_t* out) const override { return s.random_save(out); }
-    const uint64_t* random_commit(const uint64_t* in, unsigned int a) override {
-      return s.random_commit(in,a);
-    }
+    void random_split(unsigned int a) override { s.random_split(a); }
     /// Constructor for initialization
     ValSelCommit(Space& home, const ValBranch<Var>& vb);
     /// Construct a user-parameterized selector with an ordinary commit policy.

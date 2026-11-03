@@ -117,14 +117,8 @@ namespace Gecode {
       value(v);
     }
     void RandomOption::value(uint64_t v) {
-      cur = v;
       initial.seed(v);
-      seed_given = state_given = state_only = false;
-    }
-    uint64_t RandomOption::value(void) const {
-      if (state_only)
-        throw std::logic_error("Random initialization has no seed; use rnd()");
-      return cur;
+      seed_given = state_given = false;
     }
     Rnd RandomOption::rnd(void) const {
       return initial;
@@ -149,16 +143,13 @@ namespace Gecode {
           throw std::invalid_argument("Seed and state options cannot be combined");
         if (full) {
           initial.state(std::string(arg));
-          state_given = state_only = true;
+          state_given = true;
         } else {
           if (!strcmp(arg,"time") || !strcmp(arg,"hw")) {
             if (!strcmp(arg,"time")) initial.time(); else initial.hw();
-            state_only = true;
             std::cerr << "% Random state: -state " << initial.state() << std::endl;
           } else {
-            cur = Support::random_seed(arg);
-            initial.seed(cur);
-            state_only = false;
+            initial.seed(Support::random_seed(arg));
           }
           seed_given = true;
         }

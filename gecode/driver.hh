@@ -148,20 +148,12 @@ namespace Gecode {
 
     /// Checked seed or complete state for the build-configured random engine.
     class GECODE_DRIVER_EXPORT RandomOption : public BaseOption {
-      uint64_t cur;
       Rnd initial;
       bool seed_given = false;
       bool state_given = false;
-      bool state_only = false;
     public:
       RandomOption(const char* o, const char* e, uint64_t v);
       void value(uint64_t v);
-      /** \brief Return the numeric seed
-       *
-       * Throws std::logic_error after complete-state, time, or hw input.
-       * Use rnd() to honor all initialization forms.
-       */
-      uint64_t value(void) const;
       /// Construct an independent generator at the configured initial state.
       Rnd rnd(void) const;
       virtual int parse(int argc, char* argv[]);
@@ -552,12 +544,6 @@ namespace Gecode {
 
     /// Set default seed value
     void seed(uint64_t s);
-    /** \brief Return the numeric seed
-     *
-     * Throws std::logic_error after complete-state, time, or hw input.
-     * Use rnd() to honor all initialization forms.
-     */
-    uint64_t seed(void) const;
     /// Independent generator initialized from the seed or full-state option
     Rnd rnd(void) const;
 

@@ -103,6 +103,7 @@ namespace Gecode {
       std::unique_ptr<Space> master(m_opt.clone ? s->clone() : s);
       std::unique_ptr<Space> slave(master->clone());
       MetaInfo mi(0,MetaInfo::RR_INIT,0,0,nullptr,NoGoods::eng);
+      slave->random_split(mi.restart());
       slave->slave(mi);
       std::unique_ptr<Search::Engine> leaf(
         Search::build<T,E>(slave.get(),e_opt));

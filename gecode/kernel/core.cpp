@@ -104,6 +104,9 @@ namespace Gecode {
                   std::ostream&) const {
   }
 
+  void
+  Brancher::random_split(unsigned int) {}
+
 
   /*
    * Space: Misc
@@ -680,6 +683,18 @@ namespace Gecode {
       return b->ngl(*this,c,a);
     } else {
       return nullptr;
+    }
+  }
+
+  void
+  Space::random_split(unsigned long long int i) {
+    if (i == 0)
+      return;
+    // Alternatives are smaller than UINT_MAX, so slave streams stay apart.
+    for (ActorLink* b = bl.next(); b != &bl; b = b->next()) {
+      Brancher::cast(b)->random_split(UINT_MAX);
+      Brancher::cast(b)->random_split(static_cast<unsigned int>(i >> 32));
+      Brancher::cast(b)->random_split(static_cast<unsigned int>(i));
     }
   }
 

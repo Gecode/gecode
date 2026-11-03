@@ -43,27 +43,14 @@ namespace Gecode {
   template<class View_>
   class ViewSel {
   public:
-    /** \brief Number of 64-bit words needed to record this selector's random state
+    /** \brief Replace random state by its split for \a a
      *
-     * Count and layout must remain fixed for the selector and its clones.
-     * Selectors without random state return zero.
+     * A randomized selector draws from a copy of its state when selecting,
+     * so selection leaves the state unchanged; only this function changes
+     * it. Its brancher calls it on commit and at posting, as described for
+     * Brancher::random_split(). Selectors without random state do nothing.
      */
-    virtual unsigned int random_words(void) const { return 0; }
-    /** \brief Save random state after position and value selection
-     *
-     * Write exactly random_words() words to \a out without advancing the
-     * generator, and return the pointer past them. The caller supplies that
-     * many writable words. A zero-word selector returns \a out unchanged.
-     */
-    virtual uint64_t* random_save(uint64_t* out) const { return out; }
-    /** \brief Restore recorded random state and split for the given alternative
-     *
-     * Read exactly random_words() words from \a in and return the pointer
-     * past them. Replace the selector's state with the recorded parent's
-     * split for the public alternative index, independently of its current
-     * state. A zero-word selector leaves its state and \a in unchanged.
-     */
-    virtual const uint64_t* random_commit(const uint64_t* in, unsigned int) { return in; }
+    virtual void random_split(unsigned int a) { (void) a; }
     /// Define the view type
     typedef View_ View;
     /// The corresponding variable type
@@ -173,11 +160,7 @@ namespace Gecode {
     /// The random number generator used
     Random r;
   public:
-    unsigned int random_words(void) const override { return r.words(); }
-    uint64_t* random_save(uint64_t* out) const override { return r.save(out); }
-    const uint64_t* random_commit(const uint64_t* in, unsigned int a) override {
-      return r.restore_split(in,a);
-    }
+    void random_split(unsigned int a) override { r = r.split(a); }
     /// Construct a selector with a user-supplied value-type generator.
     ViewSelRnd(Space& home, const Random& random)
       : ViewSel<View>(home,VarBranch<Var>()), r(random) {}
@@ -519,12 +502,13 @@ namespace Gecode {
   template<class View, class Random>
   int
   ViewSelRnd<View,Random>::select(Space&, ViewArray<View>& x, int s) {
+    Random t = r;
     unsigned int n=1;
     int j=s;
     for (int i=s+1; i<x.size(); i++)
       if (!x[i].assigned()) {
         n++;
-        if (r(n) == 0U)
+        if (t(n) == 0U)
           j=i;
       }
     return j;
@@ -533,12 +517,13 @@ namespace Gecode {
   int
   ViewSelRnd<View,Random>::select(Space& home, ViewArray<View>& x, int s,
                            BrancherFilter<View>& f) {
+    Random t = r;
     unsigned int n=1;
     int j=s;
     for (int i=s+1; i<x.size(); i++)
       if (!x[i].assigned() && f(home,x[i],i)) {
         n++;
-        if (r(n) == 0U)
+        if (t(n) == 0U)
           j=i;
       }
     return j;
@@ -559,13 +544,15 @@ namespace Gecode {
   template<class View, class Random>
   void
   ViewSelRnd<View,Random>::brk(Space&, ViewArray<View>&, int* ties, int& n) {
-    ties[0] = ties[static_cast<int>(r(static_cast<unsigned int>(n)))];
+    Random t = r;
+    ties[0] = ties[static_cast<int>(t(static_cast<unsigned int>(n)))];
     n=1;
   }
   template<class View, class Random>
   int
   ViewSelRnd<View,Random>::select(Space&, ViewArray<View>&, int* ties, int n) {
-    return ties[static_cast<int>(r(static_cast<unsigned int>(n)))];
+    Random t = r;
+    return ties[static_cast<int>(t(static_cast<unsigned int>(n)))];
   }
   template<class View, class Random>
   ViewSel<View>*

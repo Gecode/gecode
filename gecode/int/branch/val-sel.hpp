@@ -106,7 +106,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View, class Random>
   forceinline int
   ValSelRnd<View,Random>::val(const Space&, View x, int) {
-    unsigned int p = r(x.size());
+    Random t = r;
+    unsigned int p = t(x.size());
     for (ViewRanges<View> i(x); i(); ++i) {
       if (i.width() > p)
         return i.min() + static_cast<int>(p);

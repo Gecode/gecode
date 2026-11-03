@@ -33,6 +33,8 @@
 
 #include "test/test.hh"
 #include <gecode/int/branch.hh>
+#include <gecode/search.hh>
+#include <set>
 
 namespace Test {
   namespace Random {
@@ -105,12 +107,18 @@ namespace Test {
         if (!replay<SplitMix>() || !replay<Xorshift64Star>() ||
             !replay<CountedSplitMix>())
           return false;
-        if (xs.split(0).split(0).state()!=xs.split(1).state())
+        // Hashed splits do not add up along a path, as jumps would.
+        if (xs.split(0).split(0).state()==xs.split(1).state())
           return false;
-        auto one_step=xs;
-        (void) one_step.next();
-        if (xs.split(UINT32_MAX).state()!=one_step.state())
+        // Alternative 0 hashes zero here, so it must use the fallback input.
+        Xorshift64Star zero_input;
+        zero_input.state({{uint64_t(0)-UINT64_C(0x9e3779b97f4a7c15)}});
+        if ((zero_input.split(0).state()[0]==0) ||
+            (zero_input.split(0).state()==zero_input.split(1).state()))
           return false;
+        for (uint32_t a=1; a<100; ++a)
+          if (xs.split(a).state()==xs.split(a-1).state())
+            return false;
         auto parent = r.state();
         // Indexing skips pairs of parent words, exactly as sequential splits.
         Gecode::Support::Random<SplitMix> sequential = r;
@@ -328,45 +336,26 @@ namespace Test {
     template<class Random>
     bool consumer_states(const Random& source, bool multi) {
       using namespace Gecode;
-      // Inspect original-space selectors only; clones own separate copies.
-      for (unsigned int a=0; a<(multi ? 3U : 2U); ++a) {
-        ReplaySpace<Random> root(source,false,multi);
-        if (root.status()!=SS_BRANCH) return false;
-        auto original=source.state_words();
-        std::vector<uint64_t> observed(Random::words());
-        root.variable->random_save(observed.data());
-        if (!std::equal(original.begin(),original.end(),observed.begin())) return false;
-        std::unique_ptr<const Choice> first(root.choice());
-        const auto& deterministic=static_cast<const PosChoice&>(*first);
-        if (deterministic.random_data()!=nullptr) return false;
-        Archive plain; first->archive(plain);
-        if (plain.size()!=3) return false; // No global RNG pointer/count/archive data.
-        root.commit(*first,0);
-        root.variable->random_save(observed.data());
-        if (!std::equal(original.begin(),original.end(),observed.begin())) return false;
-        if (root.status()!=SS_BRANCH) return false;
-        std::unique_ptr<const Choice> choice(root.choice());
-        const uint64_t* recorded=static_cast<const PosChoice&>(*choice).random_data();
-        if (!recorded) return false;
-        Random expected=source;
-        expected.restore_split(recorded,a);
-        // Perturb the selector after taking the choice. Commit must restore it.
-        root.variable->random_commit(recorded,123);
-        root.commit(*choice,a);
-        root.variable->random_save(observed.data());
-        auto expected_words=expected.state_words();
-        if (!std::equal(expected_words.begin(),expected_words.end(),observed.begin()))
-          return false;
-        if (!multi) {
-          expected.restore_split(recorded+Random::words(),a);
-          root.value->random_save(observed.data());
-          expected_words=expected.state_words();
-          if (!std::equal(expected_words.begin(),expected_words.end(),observed.begin()))
-            return false;
-        }
-        if (root.own.state()!=source.state()) return false;
+      ReplaySpace<Random> root(source,false,multi);
+      // Skip the deterministic brancher on x[0].
+      if (root.status()!=SS_BRANCH) return false;
+      std::unique_ptr<const Choice> first(root.choice());
+      root.commit(*first,0);
+      if (root.status()!=SS_BRANCH) return false;
+      std::unique_ptr<const Choice> choice(root.choice());
+      // Choosing draws from copies, so a clone taken afterwards chooses alike.
+      std::unique_ptr<Space> later(root.clone());
+      if (later->status()!=SS_BRANCH) return false;
+      std::unique_ptr<const Choice> again(later->choice());
+      if (!same_archive(*choice,*again)) return false;
+      // A randomized binary choice archives no random state.
+      Archive plain; choice->archive(plain);
+      if (!multi && (plain.size()!=3)) return false;
+      for (unsigned int a=0; a<choice->alternatives(); ++a) {
+        std::unique_ptr<Space> child(root.clone());
+        child->commit(*choice,a);
       }
-      return true;
+      return root.own.state()==source.state();
     }
 
     class CommitBoundary : public Base {
@@ -376,6 +365,9 @@ namespace Test {
         using namespace Gecode;
         static_assert(sizeof(Rnd)==sizeof(Support::RandomGenerator),
                       "Rnd must contain only inline engine state");
+        static_assert(!std::is_convertible_v<unsigned int,Rnd> &&
+                      !std::is_convertible_v<uint64_t,Rnd>,
+                      "Seeds must not convert implicitly to Rnd");
         Rnd r(7);
         Rnd copy=r;
         auto state=r.state();
@@ -386,6 +378,114 @@ namespace Test {
           consumer_states(RndGenerator<CountedSplitMix>(7),true);
       }
     } commit_boundary;
+
+    /// Two branchers and all their selectors receive the same generator.
+    class SharedSource : public Gecode::Space {
+    public:
+      Gecode::IntVarArray x;
+      Gecode::IntVarArray y;
+      explicit SharedSource(const Gecode::Rnd& r) : x(*this,8,0,9), y(*this,8,0,9) {
+        using namespace Gecode;
+        branch(*this,x,INT_VAR_RND(r),INT_VAL_RND(r));
+        branch(*this,y,INT_VAR_RND(r),INT_VAL_RND(r));
+      }
+      SharedSource(SharedSource& s) : Space(s) {
+        x.update(*this,s.x);
+        y.update(*this,s.y);
+      }
+      Space* copy() override { return new SharedSource(*this); }
+    };
+
+    class Permutation : public Gecode::Space {
+    public:
+      Gecode::IntVarArray x;
+      explicit Permutation(const Gecode::Rnd& r) : x(*this,6,0,5) {
+        using namespace Gecode;
+        distinct(*this,x);
+        branch(*this,x,INT_VAR_RND(r),INT_VAL_RND(r));
+      }
+      Permutation(Permutation& s) : Space(s) { x.update(*this,s.x); }
+      Space* copy() override { return new Permutation(*this); }
+      std::string text() const {
+        std::ostringstream o;
+        o << x;
+        return o.str();
+      }
+    };
+
+    /// Open lists use their own brancher rather than ViewValBrancher.
+    class OpenPermutation : public Gecode::Space {
+    public:
+      Gecode::OpenIntVarList x;
+      explicit OpenPermutation(const Gecode::Rnd& r) : x(*this,Gecode::IntSet(0,3),6) {
+        using namespace Gecode;
+        rel(*this,x.length(),IRT_EQ,6);
+        branch(*this,x,INT_VAR_RND(r),INT_VAL_RND(r));
+      }
+      OpenPermutation(OpenPermutation& s) : Space(s) { x.update(*this,s.x); }
+      Space* copy() override { return new OpenPermutation(*this); }
+      std::string text() const {
+        std::ostringstream o;
+        for (int i=0; i<x.known_length(); i++)
+          o << x[i] << ',';
+        return o.str();
+      }
+    };
+
+    template<class Model>
+    std::vector<std::string> first_solutions(Model& root, unsigned int distance) {
+      using namespace Gecode;
+      Search::Options options;
+      options.c_d=distance; options.a_d=distance;
+      DFS<Model> search(&root,options);
+      std::vector<std::string> result;
+      for (int i=0; i<40; i++) {
+        std::unique_ptr<Model> s(search.next());
+        if (!s) break;
+        result.push_back(s->text());
+      }
+      return result;
+    }
+
+    bool restarts_differ() {
+      using namespace Gecode;
+      Permutation root(Rnd(3));
+      DFS<Permutation> dfs(&root);
+      std::unique_ptr<Permutation> plain(dfs.next());
+      Search::Options options;
+      options.cutoff = Search::Cutoff::constant(1000);
+      RBS<Permutation,DFS> rbs(&root,options);
+      std::vector<std::string> found;
+      for (int i=0; i<10; i++) {
+        std::unique_ptr<Permutation> s(rbs.next());
+        if (!s) return false;
+        found.push_back(s->text());
+      }
+      // The first slave keeps the posted state; every restart gets its own.
+      std::set<std::string> distinct(found.begin(),found.end());
+      return plain && (found[0]==plain->text()) && (found[1]!=found[0]) &&
+        (distinct.size()>=8);
+    }
+
+    class Streams : public Base {
+    public:
+      Streams() : Base("Random::Streams") {}
+      bool run() override {
+        using namespace Gecode;
+        SharedSource shared(Rnd(1));
+        DFS<SharedSource> search(&shared);
+        std::unique_ptr<SharedSource> s(search.next());
+        if (!s) return false;
+        bool same=true;
+        for (int i=0; i<s->x.size(); i++)
+          same = same && (s->x[i].val()==s->y[i].val());
+        if (same) return false;
+        OpenPermutation open(Rnd(3));
+        auto cloned=first_solutions(open,1);
+        return (cloned.size()==40) && (cloned==first_solutions(open,100)) &&
+          restarts_differ();
+      }
+    } streams;
   }
 }
 

@@ -358,9 +358,7 @@ namespace Gecode { namespace Int { namespace Branch {
   public:
     ValSelRnd(Space& home, const Random& random)
       : ValSel<View,int>(home,ValBranch<Var>()), r(random) {}
-    unsigned int random_words(void) const { return r.words(); }
-    uint64_t* random_save(uint64_t* out) const { return r.save(out); }
-    const uint64_t* random_commit(const uint64_t* in, unsigned int a) { return r.restore_split(in,a); }
+    void random_split(unsigned int a) { r = r.split(a); }
     /// Constructor for initialization
     ValSelRnd(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning

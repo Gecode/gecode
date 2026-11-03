@@ -186,6 +186,7 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
+        slave->random_split(static_cast<unsigned long long int>(i));
         (void) slave->slave(i);
         slaves[i] = build<T,E>(slave.get(),opt);
       }
@@ -227,6 +228,7 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
+        slave->random_split(static_cast<unsigned long long int>(i));
         (void) slave->slave(static_cast<unsigned int>(i));
         slaves[i] = (*sebs[i])(slave.get());
       }
@@ -277,6 +279,7 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
+        slave->random_split(static_cast<unsigned long long int>(i));
         (void) slave->slave(static_cast<unsigned int>(i));
         slaves[i] = build<T,E>(slave.get(),opt);
       }
@@ -321,6 +324,7 @@ namespace Gecode { namespace Search {
                                      master : master->clone());
         if (slave.get() == master)
           unowned_master = nullptr;
+        slave->random_split(static_cast<unsigned long long int>(i));
         (void) slave->slave(static_cast<unsigned int>(i));
         slaves[i] = (*sebs[i])(slave.get());
       }

@@ -207,6 +207,14 @@ namespace Gecode { namespace Support {
     return value;
   }
 
+  /// Stafford's Mix13 permutation: bijective, and maps only zero to zero
+  inline uint64_t
+  random_mix(uint64_t z) {
+    z = (z ^ (z >> 30)) * UINT64_C(0xbf58476d1ce4e5b9);
+    z = (z ^ (z >> 27)) * UINT64_C(0x94d049bb133111eb);
+    return z ^ (z >> 31);
+  }
+
   /** \brief Splittable SplitMix with two 64-bit state words
    *
    * Implements the SplitMix design of Steele, Lea, and Flood (OOPSLA 2014),
@@ -223,11 +231,7 @@ namespace Gecode { namespace Support {
     using State = std::array<uint64_t,2>;
   private:
     State s;
-    static uint64_t mix(uint64_t z) {
-      z = (z ^ (z >> 30)) * UINT64_C(0xbf58476d1ce4e5b9);
-      z = (z ^ (z >> 27)) * UINT64_C(0x94d049bb133111eb);
-      return z ^ (z >> 31);
-    }
+    static uint64_t mix(uint64_t z) { return random_mix(z); }
     static uint64_t gamma(uint64_t z) {
       z = (z ^ (z >> 33)) * UINT64_C(0xff51afd7ed558ccd);
       z = (z ^ (z >> 33)) * UINT64_C(0xc4ceb9fe1a85ec53);
@@ -268,12 +272,17 @@ namespace Gecode { namespace Support {
     }
   };
 
-  /** \brief One-word xorshift64* engine with indexed jump splitting
+  /** \brief One-word xorshift64* engine with hashed indexed splitting
    *
    * Uses shifts 12, 25, 27 and Vigna's multiplier. Zero seeds map to one;
-   * restoring zero state is an error. Alternative a jumps (a+1)*2^32 steps
-   * along the native recurrence. Sibling states are distinct since 2^32 is
-   * coprime to the period 2^64-1. Jump matrices are shared, not per-stream state.
+   * restoring zero state is an error. Alternative a hashes s + (2a+1)*g with
+   * Mix13, for the odd constant g. For a 32-bit index these inputs are
+   * distinct, as in SplitMix, and Mix13 is bijective, so sibling states
+   * differ. Only a zero input hashes to zero; that sibling instead hashes
+   * s + 2^34*g, which is nonzero and differs from every other input.
+   * Unlike jumps along the recurrence, which add up so that split(0) of
+   * split(0) equals split(1), hashed states of different nodes coincide only
+   * by chance.
    * \ingroup FuncSupport
    */
   class Xorshift64Star {
@@ -281,23 +290,10 @@ namespace Gecode { namespace Support {
     using State = std::array<uint64_t,1>;
   private:
     uint64_t s;
-    using Matrix = std::array<uint64_t,64>;
     static uint64_t transition(uint64_t x) {
       x ^= x >> 12;
       x ^= x << 25;
       return x ^ (x >> 27);
-    }
-    static uint64_t apply(const Matrix& m, uint64_t x) {
-      uint64_t result=0;
-      for (unsigned int i=0; x; ++i,x>>=1)
-        if (x & 1) result ^= m[i];
-      return result;
-    }
-    static Matrix square(const Matrix& m) {
-      Matrix result;
-      for (unsigned int i=0; i<64; ++i)
-        result[i]=apply(m,m[i]);
-      return result;
     }
   public:
     explicit Xorshift64Star(uint64_t value=1) { seed(value); }
@@ -316,26 +312,10 @@ namespace Gecode { namespace Support {
       return s * UINT64_C(2685821657736338717);
     }
     Xorshift64Star split(uint32_t alternative) const {
-      // Binary powers of the linear transition, starting at T^(2^32).
-      static const std::array<Matrix,32> powers = [] {
-        Matrix m;
-        for (unsigned int i=0; i<64; ++i)
-          m[i]=transition(uint64_t(1)<<i);
-        for (unsigned int i=0; i<32; ++i) m=square(m);
-        std::array<Matrix,32> p;
-        p[0]=m;
-        for (unsigned int i=1; i<32; ++i) p[i]=square(p[i-1]);
-        return p;
-      }();
-      Xorshift64Star child=*this;
-      if (alternative==UINT32_MAX) {
-        // 2^64 steps equal one step modulo the period 2^64-1.
-        child.s=transition(s);
-      } else {
-        uint32_t steps=alternative+1;
-        for (unsigned int i=0; steps; ++i,steps>>=1)
-          if (steps & 1) child.s=apply(powers[i],child.s);
-      }
+      const uint64_t g = UINT64_C(0x9e3779b97f4a7c15);
+      uint64_t z = s + (2*uint64_t(alternative)+1)*g;
+      Xorshift64Star child;
+      child.s = random_mix(z ? z : s + (uint64_t(1) << 34)*g);
       return child;
     }
   };
@@ -353,8 +333,11 @@ namespace Gecode { namespace Support {
    * without seed expansion. Copying preserves state independently.
    * Search engines additionally supply split(uint32_t) const, returning
    * a child without changing the parent. Different sibling indices must
-   * produce distinct states, not merely different first outputs. This
-   * does not require non-overlapping streams across an unbounded tree.
+   * produce distinct states, not merely different first outputs. Branching,
+   * posting, and meta search derive streams by chains of splits, so chains
+   * along different paths should give equal states only by chance; a jump
+   * by an index-dependent distance does not qualify. This does not require
+   * non-overlapping streams across an unbounded tree.
    * \ingroup FuncSupport
    */
   template<class Engine>

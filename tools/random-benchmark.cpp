@@ -134,12 +134,9 @@ int main(int argc, char** argv) {
     std::cout << (random ? "size.random_archive" : "size.plain_archive")
               << '\t' << archive.size()*sizeof(unsigned int) << "\tbytes\t0\n";
 #ifdef RANDOM_NEW
-    std::cout << (random ? "size.random_snapshot" : "size.plain_snapshot")
-              << '\t' << (random ? sizeof(Support::RandomGenerator) : 0)
-              << "\tbytes\t0\n";
+    // Randomized choices store no generator state.
     std::cout << (random ? "size.random_choice" : "size.plain_choice")
-              << '\t' << (random ? sizeof(RndChoice<PosValChoice<int>>)+sizeof(Support::RandomGenerator)
-                                   : sizeof(PosValChoice<int>)) << "\tbytes\t0\n";
+              << '\t' << sizeof(PosValChoice<int>) << "\tbytes\t0\n";
 #endif
     measure(random ? "clone.random" : "clone.plain",10000,[&] {
       uint64_t sum=0;
