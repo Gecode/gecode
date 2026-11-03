@@ -570,8 +570,62 @@ namespace Test { namespace Int { namespace OpenList {
         }
     };
 
+    class EmptyStatisticsSpace : public Gecode::Space {
+    public:
+        Gecode::OpenIntVarList ints;
+        Gecode::OpenBoolVarList bools;
+
+        EmptyStatisticsSpace(void) : ints(*this, Gecode::IntSet(0, 1), 0), bools(*this, 0) {}
+
+        EmptyStatisticsSpace(EmptyStatisticsSpace& s) : Gecode::Space(s) {
+            ints.update(*this, s.ints);
+            bools.update(*this, s.bools);
+        }
+
+        unsigned int
+        propagators(void) {
+            return Gecode::PropagatorGroup::all.size(*this);
+        }
+
+        Gecode::Space*
+        copy(void) override {
+            return new EmptyStatisticsSpace(*this);
+        }
+    };
+
+    class EmptyStatistics : public ::Test::Base {
+    public:
+        EmptyStatistics(void) : ::Test::Base("Int::OpenList::EmptyStatistics") {}
+
+        bool
+        run(void) override {
+            using namespace Gecode;
+            for (bool chb : {false, true}) {
+                EmptyStatisticsSpace* root = new EmptyStatisticsSpace;
+                unsigned int propagators = root->propagators();
+                branch(*root, root->ints, chb ? INT_VAR_CHB_MIN() : INT_VAR_ACTION_MIN(1.0), INT_VAL_MIN());
+                branch(*root, root->bools, chb ? BOOL_VAR_CHB_MIN() : BOOL_VAR_ACTION_MIN(1.0), BOOL_VAL_MIN());
+                if (root->propagators() != propagators) {
+                    delete root;
+                    return false;
+                }
+                DFS<EmptyStatisticsSpace> engine(root);
+                delete root;
+                int solutions = 0;
+                while (EmptyStatisticsSpace* solution = engine.next()) {
+                    solutions++;
+                    delete solution;
+                }
+                if (solutions != 1)
+                    return false;
+            }
+            return true;
+        }
+    };
+
     Factory factory;
     FixedStatistics fixed_statistics;
+    EmptyStatistics empty_statistics;
     Selectors selectors;
     NoGoods no_goods;
     SelectorChoice selector_choice;

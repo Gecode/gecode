@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-009"
 key = "action-chb"
 area = "empty-arrays"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "normal"
@@ -25,9 +25,17 @@ Action::Storage (gecode/kernel/branch/action.hpp:272, destructor gecode/kernel/b
 
 ## Done when
 
-- [ ] With the heap-audit task's scratch assertion applied locally (or the same s > 0 check if that task has not run yet), tests for empty Action and CHB objects and for ACTION/CHB branching on empty arrays pass, and they fail without this fix.
-- [ ] A test checks that an empty Action and an empty CHB are initialized, report size 0, can be copied, and that posting them adds no propagator, and that an empty Action accepts a decay change (CHB has no public decay API).
+- [x] With the heap-audit task's scratch assertion applied locally (or the same s > 0 check if that task has not run yet), tests for empty Action and CHB objects and for ACTION/CHB branching on empty arrays pass, and they fail without this fix.
+- [x] A test checks that an empty Action and an empty CHB are initialized, report size 0, can be copied, and that posting them adds no propagator, and that an empty Action accepts a decay change (CHB has no public decay API).
 
 ## Validation
 
 - bin/gecode-test -test Branch:: and the open-list tests in build/full, then check-standard in build/full.
+
+## Result
+
+Empty Action and CHB keep their shared Storage but allocate and free no element buffer and post no recorder; EmptyStatistics tests for Int, Bool, Set, Float branching and the open list; changelog entry.
+
+Validation:
+
+- build/full: Branch:: 21/21, OpenList 61/61, check-standard 6808/6808; new tests fail without the fix under the scratch s > 0 check; verifier: EmptyStatistics 5/5, OpenList 61/61

@@ -65,7 +65,7 @@ namespace Gecode {
             unsigned long long int nf;
             /// Alpha value
             double alpha;
-            /// CHB information
+            /// CHB information, null when there is none
             Info* chb;
             /// Initialize CHB info
             template <class View>
@@ -110,10 +110,18 @@ namespace Gecode {
         /// Assignment operator
         GECODE_KERNEL_EXPORT
         CHB& operator=(const CHB& a);
-        /// Initialize for views \a x and Q-score as defined by \a bm
+        /**
+         * \brief Initialize for views \a x and Q-score as defined by \a bm
+         *
+         * For empty \a x, store no values and post no recorder.
+         */
         template <class View>
         CHB(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm);
-        /// Initialize for views \a x and Q-score as defined by \a bm
+        /**
+         * \brief Initialize for views \a x and Q-score as defined by \a bm
+         *
+         * For empty \a x, store no values and post no recorder.
+         */
         template <class View>
         void init(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm);
         /// Default (empty) chb information
@@ -255,7 +263,7 @@ namespace Gecode {
     template <class View>
     forceinline
     CHB::Storage::Storage(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm)
-        : n(x.size()), nf(0U), alpha(Kernel::Config::chb_alpha_init), chb(heap.alloc<Info>(x.size())) {
+        : n(x.size()), nf(0U), alpha(Kernel::Config::chb_alpha_init), chb((n > 0) ? heap.alloc<Info>(n) : nullptr) {
         if (bm) {
             for (int i = 0; i < n; i++) {
                 typename View::VarType xi(x[i].varimp());
@@ -337,14 +345,16 @@ namespace Gecode {
     CHB::CHB(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm) {
         assert(!*this);
         object(*new Storage(home, x, bm));
-        (void)Recorder<View>::post(home, x, *this);
+        if (x.size() > 0)
+            (void)Recorder<View>::post(home, x, *this);
     }
     template <class View>
     forceinline void
     CHB::init(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm) {
         assert(!*this);
         object(*new Storage(home, x, bm));
-        (void)Recorder<View>::post(home, x, *this);
+        if (x.size() > 0)
+            (void)Recorder<View>::post(home, x, *this);
     }
 
     template <class Char, class Traits>

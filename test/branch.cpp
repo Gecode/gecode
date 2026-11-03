@@ -1406,6 +1406,217 @@ namespace Test { namespace Branch {
     }
 #endif
 
+    /// Space without variables for tests on empty arrays
+    class EmptySpace : public Gecode::Space {
+    public:
+        /// Initialize space
+        EmptySpace(void) {}
+        /// Constructor for cloning \a s
+        EmptySpace(EmptySpace& s) : Gecode::Space(s) {}
+        /// Return the number of propagators
+        unsigned int
+        propagators(void) {
+            return Gecode::PropagatorGroup::all.size(*this);
+        }
+        /// Copy space during cloning
+        Gecode::Space*
+        copy(void) override {
+            return new EmptySpace(*this);
+        }
+    };
+
+    /// Integer types for testing action and CHB on empty arrays
+    class IntEmptyTraits {
+    public:
+        using VarArgs = Gecode::IntVarArgs;
+        using Action = Gecode::IntAction;
+        using CHB = Gecode::IntCHB;
+        /// Branch on no variables by action \a a, or by a fresh action if null
+        static void
+        branch_action(Gecode::Space& home, const Action* a) {
+            using namespace Gecode;
+            branch(home, VarArgs(), (a != nullptr) ? INT_VAR_ACTION_MIN(*a) : INT_VAR_ACTION_MIN(0.9), INT_VAL_MIN());
+        }
+        /// Branch on no variables by CHB \a c, or by a fresh CHB if null
+        static void
+        branch_chb(Gecode::Space& home, const CHB* c) {
+            using namespace Gecode;
+            branch(home, VarArgs(), (c != nullptr) ? INT_VAR_CHB_MIN(*c) : INT_VAR_CHB_MIN(), INT_VAL_MIN());
+        }
+    };
+
+    /// Boolean types for testing action and CHB on empty arrays
+    class BoolEmptyTraits {
+    public:
+        using VarArgs = Gecode::BoolVarArgs;
+        using Action = Gecode::BoolAction;
+        using CHB = Gecode::BoolCHB;
+        /// Branch on no variables by action \a a, or by a fresh action if null
+        static void
+        branch_action(Gecode::Space& home, const Action* a) {
+            using namespace Gecode;
+            branch(home, VarArgs(), (a != nullptr) ? BOOL_VAR_ACTION_MIN(*a) : BOOL_VAR_ACTION_MIN(0.9),
+                   BOOL_VAL_MIN());
+        }
+        /// Branch on no variables by CHB \a c, or by a fresh CHB if null
+        static void
+        branch_chb(Gecode::Space& home, const CHB* c) {
+            using namespace Gecode;
+            branch(home, VarArgs(), (c != nullptr) ? BOOL_VAR_CHB_MIN(*c) : BOOL_VAR_CHB_MIN(), BOOL_VAL_MIN());
+        }
+    };
+
+#ifdef GECODE_HAS_SET_VARS
+    /// Set types for testing action and CHB on empty arrays
+    class SetEmptyTraits {
+    public:
+        using VarArgs = Gecode::SetVarArgs;
+        using Action = Gecode::SetAction;
+        using CHB = Gecode::SetCHB;
+        /// Branch on no variables by action \a a, or by a fresh action if null
+        static void
+        branch_action(Gecode::Space& home, const Action* a) {
+            using namespace Gecode;
+            branch(home, VarArgs(), (a != nullptr) ? SET_VAR_ACTION_MIN(*a) : SET_VAR_ACTION_MIN(0.9),
+                   SET_VAL_MIN_INC());
+        }
+        /// Branch on no variables by CHB \a c, or by a fresh CHB if null
+        static void
+        branch_chb(Gecode::Space& home, const CHB* c) {
+            using namespace Gecode;
+            branch(home, VarArgs(), (c != nullptr) ? SET_VAR_CHB_MIN(*c) : SET_VAR_CHB_MIN(), SET_VAL_MIN_INC());
+        }
+    };
+#endif
+
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// Float types for testing action and CHB on empty arrays
+    class FloatEmptyTraits {
+    public:
+        using VarArgs = Gecode::FloatVarArgs;
+        using Action = Gecode::FloatAction;
+        using CHB = Gecode::FloatCHB;
+        /// Branch on no variables by action \a a, or by a fresh action if null
+        static void
+        branch_action(Gecode::Space& home, const Action* a) {
+            using namespace Gecode;
+            branch(home, VarArgs(), (a != nullptr) ? FLOAT_VAR_ACTION_MIN(*a) : FLOAT_VAR_ACTION_MIN(0.9),
+                   FLOAT_VAL_SPLIT_MIN());
+        }
+        /// Branch on no variables by CHB \a c, or by a fresh CHB if null
+        static void
+        branch_chb(Gecode::Space& home, const CHB* c) {
+            using namespace Gecode;
+            branch(home, VarArgs(), (c != nullptr) ? FLOAT_VAR_CHB_MIN(*c) : FLOAT_VAR_CHB_MIN(),
+                   FLOAT_VAL_SPLIT_MIN());
+        }
+    };
+#endif
+
+    /**
+     * \brief %Test action and CHB objects and branching on empty arrays
+     *
+     * An empty action or CHB object is initialized with size zero, can be
+     * copied, and posts no recorder. An empty action accepts a decay change.
+     */
+    template <class Traits>
+    class EmptyStatistics : public Base {
+    private:
+        using VarArgs = typename Traits::VarArgs;
+        using Action = typename Traits::Action;
+        using CHB = typename Traits::CHB;
+        /// Test whether \a s is initialized and empty, also when copied
+        template <class Statistics>
+        static bool
+        empty_handle(const Statistics& s) {
+            Statistics copied(s);
+            Statistics assigned;
+            assigned = s;
+            return s && (s.size() == 0) && copied && (copied.size() == 0) && assigned && (assigned.size() == 0);
+        }
+        /// Test an empty action, including a decay change
+        static bool
+        empty_action(void) {
+            EmptySpace home;
+            Action constructed(home, VarArgs(), 0.9);
+            Action initialized;
+            initialized.init(home, VarArgs(), 0.9);
+            if (!empty_handle(constructed) || !empty_handle(initialized) || (home.propagators() != 0))
+                return false;
+            constructed.decay(home, 0.5);
+            return constructed.decay(home) == 0.5;
+        }
+        /// Test an empty CHB
+        static bool
+        empty_chb(void) {
+            EmptySpace home;
+            CHB constructed(home, VarArgs());
+            CHB initialized;
+            initialized.init(home, VarArgs());
+            return empty_handle(constructed) && empty_handle(initialized) && (home.propagators() == 0);
+        }
+        /// Test that the branching posted by \a post adds no propagator and has one solution
+        static bool
+        empty_branching(void (*post)(EmptySpace& home)) {
+            EmptySpace* home = new EmptySpace;
+            post(*home);
+            if (home->propagators() != 0) {
+                delete home;
+                return false;
+            }
+            Gecode::DFS<EmptySpace> engine(home);
+            delete home;
+            int solutions = 0;
+            while (EmptySpace* s = engine.next()) {
+                solutions++;
+                delete s;
+            }
+            return solutions == 1;
+        }
+        /// Branch by a fresh action
+        static void
+        branch_fresh_action(EmptySpace& home) {
+            Traits::branch_action(home, nullptr);
+        }
+        /// Branch by an explicit empty action
+        static void
+        branch_given_action(EmptySpace& home) {
+            Action a(home, VarArgs(), 0.9);
+            Traits::branch_action(home, &a);
+        }
+        /// Branch by a fresh CHB
+        static void
+        branch_fresh_chb(EmptySpace& home) {
+            Traits::branch_chb(home, nullptr);
+        }
+        /// Branch by an explicit empty CHB
+        static void
+        branch_given_chb(EmptySpace& home) {
+            CHB c(home, VarArgs());
+            Traits::branch_chb(home, &c);
+        }
+
+    public:
+        /// Create and register test with name prefix \a prefix
+        EmptyStatistics(const std::string& prefix) : Base(prefix + "::Branch::EmptyStatistics") {}
+        /// Run test
+        bool
+        run(void) override {
+            return empty_action() && empty_chb() && empty_branching(&branch_fresh_action) &&
+                   empty_branching(&branch_given_action) && empty_branching(&branch_fresh_chb) &&
+                   empty_branching(&branch_given_chb);
+        }
+    };
+
+    EmptyStatistics<IntEmptyTraits> int_empty_statistics("Int");
+    EmptyStatistics<BoolEmptyTraits> bool_empty_statistics("Bool");
+#ifdef GECODE_HAS_SET_VARS
+    EmptyStatistics<SetEmptyTraits> set_empty_statistics("Set");
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    EmptyStatistics<FloatEmptyTraits> float_empty_statistics("Float");
+#endif
+
 }} // namespace Test::Branch
 
 // STATISTICS: test-branch

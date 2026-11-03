@@ -176,6 +176,17 @@ Post nothing for relax with empty variable arrays. Debug builds aborted with
 a failed assertion.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Action and CHB information over an empty array, including branching with
+ACTION or CHB merits on no variables, requests no heap memory for its values
+and posts no recorder propagator. It previously requested zero bytes, which
+the C library may answer with a null pointer and thus a MemoryExhausted
+exception.
+
+[ENTRY]
 Module: other
 What:   performance
 Rank:   minor
