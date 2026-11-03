@@ -33,6 +33,8 @@
 
 #include <gecode/minimodel.hh>
 
+#include <cmath>
+
 namespace Gecode {
 
   void
@@ -89,7 +91,15 @@ namespace Gecode {
       dynamic_cast<const FloatMinimizeSpace*>(&_best);
     if (best == nullptr)
       throw DynamicCastFailed("FloatMinimizeSpace::constrain");
-    rel(*this, cost(), FRT_LE, best->cost().max()-step);
+    // An assigned cost is below the bound of the best solution minus the
+    // step exactly when its upper bound is below the lower bound of that
+    // difference. Posting this strict bound prunes the incumbent value
+    // before the cost is assigned.
+    FloatNum n = (FloatVal(best->cost().max())-step).min();
+    if (n <= Float::Limits::min)
+      fail();
+    else
+      rel(*this, cost(), FRT_LQ, std::nextafter(n, Float::Limits::min));
   }
 
 
@@ -99,7 +109,11 @@ namespace Gecode {
       dynamic_cast<const FloatMaximizeSpace*>(&_best);
     if (best == nullptr)
       throw DynamicCastFailed("FloatMaximizeSpace::constrain");
-    rel(*this, cost(), FRT_GR, best->cost().min()+step);
+    FloatNum n = (FloatVal(best->cost().min())+step).max();
+    if (n >= Float::Limits::max)
+      fail();
+    else
+      rel(*this, cost(), FRT_GQ, std::nextafter(n, Float::Limits::max));
   }
 
 #endif

@@ -35,7 +35,10 @@
 
 #include "test/float.hh"
 
+#include <gecode/minimodel.hh>
+
 #include <cmath>
+#include <memory>
 
 namespace Test { namespace Float {
 
@@ -115,6 +118,66 @@ namespace Test { namespace Float {
 
      namespace {
        Median median;
+     }
+
+     /// Space minimizing or maximizing a single float variable
+     template<class Optimize>
+     class OptimizeSpace : public Optimize {
+     public:
+       /// The cost variable
+       Gecode::FloatVar x;
+       /// Create space with cost variable in [0,1]
+       OptimizeSpace(void) : x(*this,0.0,1.0) {}
+       /// Constructor for cloning \a s
+       OptimizeSpace(OptimizeSpace& s) : Optimize(s) {
+         x.update(*this,s.x);
+       }
+       /// Copy during cloning
+       virtual Gecode::Space* copy(void) {
+         return new OptimizeSpace(*this);
+       }
+       /// Return cost
+       virtual Gecode::FloatVar cost(void) const {
+         return x;
+       }
+     };
+
+     /// Test that the MiniModel float cuts prune the incumbent value
+     class OptimizeCut : public Base {
+     private:
+       /// Return whether constraining by an incumbent with cost 0.5 leaves
+       /// an unassigned cost and store its remaining domain in \a d
+       template<class Optimize>
+       static bool cut(Gecode::FloatVal& d) {
+         using namespace Gecode;
+         OptimizeSpace<Optimize> root;
+         std::unique_ptr<OptimizeSpace<Optimize>>
+           best(static_cast<OptimizeSpace<Optimize>*>(root.clone()));
+         rel(*best, best->x, FRT_EQ, 0.5);
+         if (best->status() == SS_FAILED)
+           return false;
+         std::unique_ptr<OptimizeSpace<Optimize>>
+           s(static_cast<OptimizeSpace<Optimize>*>(root.clone()));
+         s->constrain(*best);
+         if ((s->status() == SS_FAILED) || s->x.assigned())
+           return false;
+         d = s->x.domain();
+         return true;
+       }
+     public:
+       /// Create and register test
+       OptimizeCut(void) : Base("Float::Basic::OptimizeCut") {}
+       /// Perform test
+       virtual bool run(void) {
+         using namespace Gecode;
+         FloatVal min, max;
+         return cut<FloatMinimizeSpace>(min) && cut<FloatMaximizeSpace>(max) &&
+           (min.max() < 0.5) && (max.min() > 0.5);
+       }
+     };
+
+     namespace {
+       OptimizeCut optimize_cut;
      }
      //@}
 
