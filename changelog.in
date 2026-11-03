@@ -82,8 +82,10 @@ Rank:   major
 [DESCRIPTION]
 Best-solution search now uses Space::compare() when choosing between
 independently produced solutions, including external incumbents and portfolio
-assets. Optimization spaces with a custom objective must override compare() as
-well as constrain(). compare() ranks solutions without changing them;
+assets. The experimental A* and CABS engines also rank solutions with
+compare(), while their guidance bound still orders and prunes open nodes.
+Optimization spaces with a custom objective must override compare() as well as
+constrain(). compare() ranks solutions without changing them;
 constrain() still posts improvement restrictions. Comparability is defined by
 the model. The built-in floating-point models compare their documented
 objective bounds, independently of the improvement step. Current exact engines

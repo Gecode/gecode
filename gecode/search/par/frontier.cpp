@@ -155,12 +155,10 @@ namespace Gecode { namespace Search { namespace Par {
 
   void
   Frontier::publish(Space* s, std::int64_t b) {
-    if (!best.improves(b)) {
-      delete s;
-      return;
-    }
     std::unique_ptr<Space> incumbent(s);
-    solution.reset(s->clone());
+    if (!best.replaced_by(*incumbent,"Frontier::publish"))
+      return;
+    solution.reset(incumbent->clone());
     best.update(incumbent.release(),b);
     running = false;
   }
@@ -281,7 +279,8 @@ namespace Gecode { namespace Search { namespace Par {
               (void) step.space->choice();
             std::int64_t b = guidance.bound(*step.space);
             if (step.status == SS_SOLVED) {
-              if (!cutoff || better(guidance.sense,b,*cutoff)) {
+              // Comparison decides solutions that tie with the incumbent bound
+              if (!cutoff || !better(guidance.sense,*cutoff,b)) {
                 solved = std::move(step.space);
                 solved_bound = b;
                 break;
@@ -375,7 +374,7 @@ namespace Gecode { namespace Search { namespace Par {
   Frontier::constrain(const Space& s) {
     std::int64_t b = guidance.bound(s);
     Support::Lock lock(mutex);
-    if (best.improves(b)) {
+    if (best.replaced_by(s,"Frontier::constrain")) {
       best.update(s.clone(),b);
       solution.reset();
     }
