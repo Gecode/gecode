@@ -371,13 +371,8 @@ public:
 
   /// Compare objective values
   virtual SpaceComparison compare(const Space& _other) const {
-    const CarSequencing& other =
-      dynamic_cast<const CarSequencing&>(_other);
-    if (nstall.val() < other.nstall.val())
-      return SC_BETTER;
-    if (nstall.val() > other.nstall.val())
-      return SC_WORSE;
-    return SC_EQUIVALENT;
+    const CarSequencing& other = static_cast<const CarSequencing&>(_other);
+    return compare_int(nstall.val(), other.nstall.val(), Sense::minimize);
   }
 
   /// Print solution

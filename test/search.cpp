@@ -162,8 +162,7 @@ namespace Test {
       static Gecode::Search::HeuristicGuidance
       guidance(bool max, bool ranked, bool dominance, bool keyed) {
         using Gecode::Search::HeuristicGuidance;
-        HeuristicGuidance g(max ? HeuristicGuidance::MAXIMIZE :
-                                  HeuristicGuidance::MINIMIZE,
+        HeuristicGuidance g(max ? Sense::maximize : Sense::minimize,
           [](const Space& s) -> std::int64_t {
             const TreeSpace& t = static_cast<const TreeSpace&>(s);
             return t.maximize ? -t.node().bound : t.node().bound;
@@ -1380,7 +1379,7 @@ namespace Test {
         if (!rejects_incomparable(Gecode::Search::babengine(&im,Gecode::Search::Options())))
           return false;
 #ifdef GECODE_HAS_EXPERIMENTAL
-        Gecode::Search::HeuristicGuidance g(Gecode::Search::HeuristicGuidance::MINIMIZE,
+        Gecode::Search::HeuristicGuidance g(Gecode::Sense::minimize,
           [](const Space& s) -> std::int64_t {
             return static_cast<const ExternalObjective&>(s).x.min();
           });
@@ -1840,6 +1839,13 @@ namespace Test {
         MaxObjective high(2), low(1);
         if ((high.compare(low) != SC_BETTER) ||
             (low.compare(high) != SC_WORSE))
+          return false;
+        if ((compare_int(1,2,Sense::minimize) != SC_BETTER) ||
+            (compare_int(2,1,Sense::minimize) != SC_WORSE) ||
+            (compare_int(1,1,Sense::minimize) != SC_EQUIVALENT) ||
+            (compare_int(2,1,Sense::maximize) != SC_BETTER) ||
+            (compare_int(1,2,Sense::maximize) != SC_WORSE) ||
+            (compare_int(1,1,Sense::maximize) != SC_EQUIVALENT))
           return false;
         LexObjective lp(1,0,2), lq(2,0,2);
         if ((lp.compare(lq) != SC_BETTER) ||
