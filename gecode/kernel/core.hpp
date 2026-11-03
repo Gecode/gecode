@@ -748,10 +748,6 @@ namespace Gecode {
         /// Constructor
         GECODE_KERNEL_EXPORT
         Group(void);
-        /// Copy constructor
-        Group(const Group& g);
-        /// Assignment operator
-        Group& operator=(const Group& g);
         /// Return a unique id for the group
         unsigned int id(void) const;
         /// Check whether actor group \a a is included in this group
@@ -786,10 +782,6 @@ namespace Gecode {
         //@{
         /// Constructor
         PropagatorGroup(void);
-        /// Copy constructor
-        PropagatorGroup(const PropagatorGroup& g);
-        /// Assignment operator
-        PropagatorGroup& operator=(const PropagatorGroup& g);
         /// To augment a space argument
         Home operator()(Space& home);
         //@}
@@ -857,10 +849,6 @@ namespace Gecode {
         //@{
         /// Constructor
         BrancherGroup(void);
-        /// Copy constructor
-        BrancherGroup(const BrancherGroup& g);
-        /// Assignment operator
-        BrancherGroup& operator=(const BrancherGroup& g);
         /// To augment a space argument
         Home operator()(Space& home);
         //@}
@@ -924,9 +912,9 @@ namespace Gecode {
         Home(Space& s, Propagator* p = nullptr, PropagatorGroup pg = PropagatorGroup::def,
              BrancherGroup bg = BrancherGroup::def);
         /// Copy constructor
-        Home(const Home& h);
-        /// Assignment operator
-        Home& operator=(const Home& h);
+        Home(const Home& h) = default;
+        /// Homes are not assignable: a home never changes its space
+        Home& operator=(const Home& h) = delete;
         /// Retrieve the space of the home
         operator Space&(void);
         //@}
@@ -1668,15 +1656,11 @@ namespace Gecode {
         /// Create local handle that points to local object \a lo
         LocalHandle(LocalObject* lo);
         /// Copy constructor
-        LocalHandle(const LocalHandle& lh);
+        LocalHandle(const LocalHandle& lh) = default;
 
     public:
-        /// Assignment operator
-        LocalHandle& operator=(const LocalHandle& lh);
         /// Updating during cloning
         void update(Space& home, LocalHandle& lh);
-        /// Destructor
-        ~LocalHandle(void);
 
     protected:
         /// Access to the local object
@@ -2389,8 +2373,8 @@ namespace Gecode {
          */
         GECODE_KERNEL_EXPORT
         Space(Space& s);
-        /// Assignment operator
-        Space& operator=(const Space& s) = default;
+        /// Spaces are not assignable: use cloning to copy a space
+        Space& operator=(const Space& s) = delete;
         /**
          * \brief Destructor
          * \ingroup TaskModelScript
@@ -3800,17 +3784,6 @@ namespace Gecode {
     forceinline
     Home::Home(Space& s0, Propagator* p0, PropagatorGroup pg0, BrancherGroup bg0)
         : s(s0), p(p0), pg(pg0), bg(bg0) {}
-    forceinline
-    Home::Home(const Home& h)
-        : s(h.s), p(h.p), pg(h.pg), bg(h.bg) {}
-    forceinline Home&
-    Home::operator=(const Home& h) {
-        s = h.s;
-        p = h.p;
-        pg = h.pg;
-        bg = h.bg;
-        return *this;
-    }
     forceinline Home::
     operator Space&(void) {
         return s;
@@ -4317,15 +4290,6 @@ namespace Gecode {
     forceinline
     LocalHandle::LocalHandle(LocalObject* lo)
         : o(lo) {}
-    forceinline
-    LocalHandle::LocalHandle(const LocalHandle& lh)
-        : o(lh.o) {}
-    forceinline LocalHandle&
-    LocalHandle::operator=(const LocalHandle& lh) {
-        o = lh.o;
-        return *this;
-    }
-    forceinline LocalHandle::~LocalHandle(void) {}
     forceinline LocalObject*
     LocalHandle::object(void) const {
         return o;
@@ -5591,16 +5555,6 @@ namespace Gecode {
         return (gid != GROUPID_ALL) && (gid != GROUPID_DEF);
     }
 
-    forceinline
-    Group::Group(const Group& g)
-        : gid(g.gid) {}
-
-    forceinline Group&
-    Group::operator=(const Group& g) {
-        gid = g.gid;
-        return *this;
-    }
-
     forceinline unsigned int
     Group::id(void) const {
         return gid;
@@ -5612,15 +5566,6 @@ namespace Gecode {
     forceinline
     PropagatorGroup::PropagatorGroup(unsigned int gid)
         : Group(gid) {}
-
-    forceinline
-    PropagatorGroup::PropagatorGroup(const PropagatorGroup& g)
-        : Group(g) {}
-
-    forceinline PropagatorGroup&
-    PropagatorGroup::operator=(const PropagatorGroup& g) {
-        return static_cast<PropagatorGroup&>(Group::operator=(g));
-    }
 
     forceinline Home
     PropagatorGroup::operator()(Space& home) {
@@ -5649,15 +5594,6 @@ namespace Gecode {
     forceinline
     BrancherGroup::BrancherGroup(unsigned int gid)
         : Group(gid) {}
-
-    forceinline
-    BrancherGroup::BrancherGroup(const BrancherGroup& g)
-        : Group(g) {}
-
-    forceinline BrancherGroup&
-    BrancherGroup::operator=(const BrancherGroup& g) {
-        return static_cast<BrancherGroup&>(Group::operator=(g));
-    }
 
     forceinline Home
     BrancherGroup::operator()(Space& home) {

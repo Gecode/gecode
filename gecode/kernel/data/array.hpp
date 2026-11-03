@@ -150,9 +150,9 @@ namespace Gecode {
         /// Initialize from variable argument array \a a (copy elements)
         VarArray(Space& home, const VarArgArray<Var>&);
         /// Initialize from variable array \a a (share elements)
-        VarArray(const VarArray<Var>& a);
-        /// Initialize from variable array \a a (share elements)
-        const VarArray<Var>& operator=(const VarArray<Var>& a);
+        VarArray(const VarArray<Var>& a) = default;
+        /// Assign variable array \a a (share elements)
+        VarArray<Var>& operator=(const VarArray<Var>& a) = default;
         //@}
 
         /// \name Array size
@@ -287,13 +287,13 @@ namespace Gecode {
         /// Allocate array with \a m views
         ViewArray(Region& r, int m);
         /// Initialize from view array \a a (share elements)
-        ViewArray(const ViewArray<View>& a);
+        ViewArray(const ViewArray<View>& a) = default;
         /// Initialize from view array \a a (copy elements)
         ViewArray(Space& home, const ViewArray<View>& a);
         /// Initialize from view array \a a (copy elements)
         ViewArray(Region& r, const ViewArray<View>& a);
-        /// Initialize from view array \a a (share elements)
-        const ViewArray<View>& operator=(const ViewArray<View>& a);
+        /// Assign view array \a a (share elements)
+        ViewArray<View>& operator=(const ViewArray<View>& a) = default;
         /**
          * \brief Initialize from variable argument array \a a (copy elements)
          *
@@ -898,21 +898,6 @@ namespace Gecode {
     }
 
     template <class Var>
-    forceinline
-    VarArray<Var>::VarArray(const VarArray<Var>& a) {
-        n = a.n;
-        x = a.x;
-    }
-
-    template <class Var>
-    inline const VarArray<Var>&
-    VarArray<Var>::operator=(const VarArray<Var>& a) {
-        n = a.n;
-        x = a.x;
-        return *this;
-    }
-
-    template <class Var>
     forceinline int
     VarArray<Var>::size(void) const {
         return n;
@@ -1116,19 +1101,6 @@ namespace Gecode {
         } else {
             x = nullptr;
         }
-    }
-
-    template <class View>
-    forceinline
-    ViewArray<View>::ViewArray(const ViewArray<View>& a)
-        : n(a.n), x(a.x) {}
-
-    template <class View>
-    forceinline const ViewArray<View>&
-    ViewArray<View>::operator=(const ViewArray<View>& a) {
-        n = a.n;
-        x = a.x;
-        return *this;
     }
 
     template <class View>

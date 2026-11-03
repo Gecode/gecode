@@ -77,6 +77,30 @@ This release contains breaking changes. See the entries below for the
 changes downstream code needs.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Make Home, the groups, Pos, Reify, LocalHandle, the variables, the variable
+arrays, ViewArray, the open variable and view lists, and AFC with its
+subclasses trivially copyable. Their copy constructors and copy assignments
+are now implicit or defaulted, and the AFC classes and LocalHandle no longer
+declare a destructor. Copies behave as before, but the ABI changes, and the
+compiler may now pass these types in registers.
+[MORE]
+VarArray::operator= and ViewArray::operator= now return a non-const
+reference.
+
+[ENTRY]
+Module: kernel
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Delete the copy assignment of Home and of Space. Assigning one Home to
+another copy-assigned the whole Space that the home refers to. A Home never
+changes its space; construct a new Home instead. To copy a Space, clone it.
+
+[ENTRY]
 Module: support
 What:   removed
 Rank:   minor
