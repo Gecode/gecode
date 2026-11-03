@@ -35,6 +35,7 @@
 #define GECODE_SEARCH_HEURISTIC_HH
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
 #include <algorithm>
 #include <climits>
 #include <memory>
@@ -83,7 +84,12 @@ namespace Gecode { namespace Search {
     }
   };
 
-  /// Best solution found so far
+  /**
+   * \brief Best solution found so far
+   *
+   * Solutions are ranked with Space::compare, like in the other best-solution
+   * engines. The bound of the incumbent prunes open nodes.
+   */
   class Incumbent {
   public:
     /// Objective direction
@@ -100,6 +106,10 @@ namespace Gecode { namespace Search {
     /// Whether a node with bound \a b can improve the incumbent
     bool improves(std::int64_t b) const {
       return !space || better(sense,b,bound);
+    }
+    /// Whether solution \a s should replace the incumbent (location \a l)
+    bool replaced_by(const Space& s, const char* l) const {
+      return !space || Search::better(s,*space,l);
     }
     /// Make \a s with objective value \a b the incumbent
     void update(Space* s, std::int64_t b) {

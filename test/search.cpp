@@ -1338,6 +1338,18 @@ namespace Test {
         e.constrain(better);
         return constraints > installed;
       }
+      /// Whether engine \a e reports an incomparable incumbent (deletes \a e)
+      static bool rejects_incomparable(Gecode::Search::Engine* e) {
+        std::unique_ptr<Gecode::Search::Engine> engine(e);
+        IncomparableObjective incomparable(4), incumbent(5);
+        engine->constrain(incumbent);
+        try {
+          engine->constrain(incomparable);
+        } catch (const Gecode::Search::Incomparable&) {
+          return true;
+        }
+        return false;
+      }
     public:
       ExternalIncumbent(void) : Base("Search::ExternalIncumbent") {}
       virtual bool run(void) {
@@ -1364,18 +1376,23 @@ namespace Test {
         }
         delete rbs;
 
-        IncomparableObjective incomparable(4), incumbent(5);
-        ExternalObjective* im = new ExternalObjective(nullptr);
-        Gecode::Search::Engine* rejecting = Gecode::Search::babengine(
-          im,Gecode::Search::Options());
-        delete im;
-        rejecting->constrain(incumbent);
-        try {
-          rejecting->constrain(incomparable);
-          delete rejecting;
+        ExternalObjective im(nullptr);
+        if (!rejects_incomparable(Gecode::Search::babengine(&im,Gecode::Search::Options())))
           return false;
-        } catch (const Gecode::Search::Incomparable&) {}
-        delete rejecting;
+#ifdef GECODE_HAS_EXPERIMENTAL
+        Gecode::Search::HeuristicGuidance g(Gecode::Search::HeuristicGuidance::MINIMIZE,
+          [](const Space& s) -> std::int64_t {
+            return static_cast<const ExternalObjective&>(s).x.min();
+          });
+        for (double threads : {1.0,2.0}) {
+          Gecode::Search::Options ho;
+          ho.threads = threads;
+          ho.guidance = &g;
+          if (!rejects_incomparable(Gecode::Search::build<ExternalObjective,Gecode::AStar>(&im,ho)) ||
+              !rejects_incomparable(Gecode::Search::build<ExternalObjective,Gecode::CABS>(&im,ho)))
+            return false;
+        }
+#endif
 
         UnsupportedObjective unsupported;
         UnsupportedObjective* um =
