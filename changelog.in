@@ -87,6 +87,17 @@ so proving optimality could split other float variables down to single ulps
 and fail to finish. Assigned objectives are accepted exactly as before, also
 with step 0.
 
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Make the improvement cuts of FloatMinimizeSpace and FloatMaximizeSpace strict
+in the cost bound, so the incumbent cost is pruned before the cost is
+assigned. A new solution must now improve by at least the step, without the
+rounding of the step subtraction admitting a smaller improvement. With step 0,
+assigned costs are accepted exactly as before.
+
 [RELEASE]
 Version: 6.5.0
 Date: 2026-10-31
