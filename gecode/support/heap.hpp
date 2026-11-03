@@ -72,6 +72,8 @@ namespace Gecode {
          *
          * Note that this function implements C++ semantics: the default
          * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
          */
         template <class T>
         T* alloc(long unsigned int n);
@@ -80,6 +82,8 @@ namespace Gecode {
          *
          * Note that this function implements C++ semantics: the default
          * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
          */
         template <class T>
         T* alloc(long int n);
@@ -88,6 +92,8 @@ namespace Gecode {
          *
          * Note that this function implements C++ semantics: the default
          * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
          */
         template <class T>
         T* alloc(unsigned int n);
@@ -96,6 +102,8 @@ namespace Gecode {
          *
          * Note that this function implements C++ semantics: the default
          * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
          */
         template <class T>
         T* alloc(int n);
@@ -140,6 +148,9 @@ namespace Gecode {
          * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
          * run for all \a n objects in \a b.
          *
+         * The new number of objects \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
          * Returns the address of the new block.
          */
         template <class T>
@@ -152,6 +163,9 @@ namespace Gecode {
          * constructor of \a T is run for all remaining
          * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
          * run for all \a n objects in \a b.
+         *
+         * The new number of objects \a m must be greater than zero. The old
+         * number \a n may be zero.
          *
          * Returns the address of the new block.
          */
@@ -166,6 +180,9 @@ namespace Gecode {
          * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
          * run for all \a n objects in \a b.
          *
+         * The new number of objects \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
          * Returns the address of the new block.
          */
         template <class T>
@@ -179,12 +196,18 @@ namespace Gecode {
          * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
          * run for all \a n objects in \a b.
          *
+         * The new number of objects \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
          * Returns the address of the new block.
          */
         template <class T>
         T* realloc(T* b, int n, int m);
         /**
          * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
+         *
+         * The new number of pointers \a m must be greater than zero. The old
+         * number \a n may be zero.
          *
          * Returns the address of the new block.
          *
@@ -195,6 +218,9 @@ namespace Gecode {
         /**
          * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
          *
+         * The new number of pointers \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
          * Returns the address of the new block.
          *
          * This is a specialization for performance.
@@ -204,6 +230,9 @@ namespace Gecode {
         /**
          * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
          *
+         * The new number of pointers \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
          * Returns the address of the new block.
          *
          * This is a specialization for performance.
@@ -212,6 +241,9 @@ namespace Gecode {
         T** realloc(T** b, unsigned int n, unsigned int m);
         /**
          * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
+         *
+         * The new number of pointers \a m must be greater than zero. The old
+         * number \a n may be zero.
          *
          * Returns the address of the new block.
          *
@@ -225,6 +257,8 @@ namespace Gecode {
          * Note that this function implements C++ semantics: the assignment
          * operator of \a T is run for all \a n objects.
          *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
          * Returns \a d.
          */
         template <class T>
@@ -234,6 +268,8 @@ namespace Gecode {
          *
          * Note that this function implements C++ semantics: the assignment
          * operator of \a T is run for all \a n objects.
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
          *
          * Returns \a d.
          */
@@ -245,6 +281,8 @@ namespace Gecode {
          * Note that this function implements C++ semantics: the assignment
          * operator of \a T is run for all \a n objects.
          *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
          * Returns \a d.
          */
         template <class T>
@@ -255,12 +293,16 @@ namespace Gecode {
          * Note that this function implements C++ semantics: the assignment
          * operator of \a T is run for all \a n objects.
          *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
          * Returns \a d.
          */
         template <class T>
         static T* copy(T* d, const T* s, int n);
         /**
          * \brief Copy \a n pointers starting at \a s to \a d
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
          *
          * Returns \a d.
          *
@@ -271,6 +313,8 @@ namespace Gecode {
         /**
          * \brief Copy \a n pointers starting at \a s to \a d
          *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
          * Returns \a d.
          *
          * This is a specialization for performance.
@@ -279,6 +323,8 @@ namespace Gecode {
         static T** copy(T** d, const T** s, long int n);
         /**
          * \brief Copy \a n pointers starting at \a s to \a d
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
          *
          * Returns \a d.
          *
@@ -289,6 +335,8 @@ namespace Gecode {
         /**
          * \brief Copy \a n pointers starting at \a s to \a d
          *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
          * Returns \a d.
          *
          * This is a specialization for performance.
@@ -298,13 +346,23 @@ namespace Gecode {
         //@}
         /// \name Raw allocation routines
         //@{
-        /// Allocate \a s bytes from heap
+        /**
+         * \brief Allocate \a s bytes from heap
+         *
+         * The size \a s must be greater than zero. Debug builds check this
+         * with an assertion.
+         */
         void* ralloc(size_t s);
         /// Free memory block starting at \a p
         void rfree(void* p);
         /// Free memory block starting at \a p with size \a s
         void rfree(void* p, size_t s);
-        /// Change memory block starting at \a p to size \a s
+        /**
+         * \brief Change memory block starting at \a p to size \a s
+         *
+         * The size \a s must be greater than zero. Debug builds check this
+         * with an assertion. To release a block, use rfree instead.
+         */
         void* rrealloc(void* p, size_t s);
         //@}
 #ifdef GECODE_PEAKHEAP
@@ -356,6 +414,7 @@ namespace Gecode {
      */
     forceinline void*
     Heap::ralloc(size_t s) {
+        assert(s > 0);
 #ifdef GECODE_HAS_FAULT_INJECTION
         Support::FailPoint::check(Support::FailPoint::Phase::HEAP);
 #endif
@@ -393,6 +452,7 @@ namespace Gecode {
 
     forceinline void*
     Heap::rrealloc(void* p, size_t s) {
+        assert(s > 0);
 #ifdef GECODE_HAS_FAULT_INJECTION
         Support::FailPoint::check(Support::FailPoint::Phase::HEAP);
 #endif
@@ -408,7 +468,7 @@ namespace Gecode {
         _peak = std::max(_peak, _cur);
         _m.release();
 #endif
-        if (p != nullptr || s == 0)
+        if (p != nullptr)
             return p;
         throw MemoryExhausted();
     }

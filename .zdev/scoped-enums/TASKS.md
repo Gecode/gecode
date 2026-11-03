@@ -9,7 +9,7 @@
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
-| [scoped-enums-001](tasks/001-inventory-public-enums-and-unclear-constants.md) | Inventory public enums and unclear constants | blocked | config-header-003 (config-header: done), empty-arrays-002 (empty-arrays: done), value-params-003 (value-params: done), boost-005 (boost: open), empty-arrays-011 (empty-arrays: open) |
+| [scoped-enums-001](tasks/001-inventory-public-enums-and-unclear-constants.md) | Inventory public enums and unclear constants | blocked | config-header-003 (config-header: done), empty-arrays-002 (empty-arrays: done), value-params-003 (value-params: done), boost-005 (boost: open), empty-arrays-011 (empty-arrays: done) |
 | [scoped-enums-002](tasks/002-approve-the-enum-inventory-and-constant-renames.md) | Approve the enum inventory and constant renames | blocked | scoped-enums-001 |
 | [scoped-enums-003](tasks/003-scope-the-approved-enums.md) | Scope the approved enums | blocked | scoped-enums-002 |
 | [scoped-enums-004](tasks/004-apply-the-approved-constant-renames.md) | Apply the approved constant renames | blocked | scoped-enums-003 |

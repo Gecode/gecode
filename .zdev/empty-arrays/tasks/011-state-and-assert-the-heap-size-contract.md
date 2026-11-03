@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-011"
 key = "heap-contract"
 area = "empty-arrays"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "normal"
@@ -25,11 +25,19 @@ This lands the contract after every known site is fixed. Write it on Heap::alloc
 
 ## Done when
 
-- [ ] The assertion is committed, and check-standard passes in build/full.
-- [ ] check-standard in a GECODE_SANITIZER=undefined build reports no nonnull or null-pointer finding.
-- [ ] The Doxygen and changelog entries describe the contract.
+- [x] The assertion is committed, and check-standard passes in build/full.
+- [x] check-standard in a GECODE_SANITIZER=undefined build reports no nonnull or null-pointer finding.
+- [x] The Doxygen and changelog entries describe the contract.
 
 ## Validation
 
 - check-standard in build/full and in a GECODE_SANITIZER=undefined build.
 - uv run misc/check.py all --build-dir build/full --jobs N as the area's last task.
+
+## Result
+
+Documented the heap contract (positive allocation sizes, non-null copy pointers even for zero elements), asserted size > 0 in Heap::ralloc and rrealloc in Debug, removed the zero-size allowance from rrealloc, and added the changelog entry; fixed two lint findings (a NOLINT for an intentional copy in test/branch.cpp and an assert for a clang-analyzer false positive in tuple-set.cpp).
+
+Validation:
+
+- Independent verifier PASS: rebuild, focused tests 202/202, kernel/Region 5/5, doc build with no warnings, tidy and diff checks; Debug check-standard 6820/6820, check.py all, erebor UBSan Debug check-standard 6817/6817 with empty stderr.

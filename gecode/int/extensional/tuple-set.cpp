@@ -381,6 +381,8 @@ namespace Gecode {
                     support_cursor[i].init();
             }
             for (int a = 0; a < arity; a++) {
+                // Every position has at least one range and thus a tuple cell
+                assert(n_ranges > 0U);
                 // Set range pointer
                 vd[a].r = range_cursor;
                 vd[a].base = nullptr;

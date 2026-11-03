@@ -1529,6 +1529,7 @@ namespace Test { namespace Branch {
         template <class Statistics>
         static bool
         empty_handle(const Statistics& s) {
+            // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
             Statistics copied(s);
             Statistics assigned;
             assigned = s;

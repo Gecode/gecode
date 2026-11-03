@@ -226,6 +226,22 @@ A dictionary file holding no accepted word and no final newline requests no
 heap memory in the crossword and word-square examples.
 
 [ENTRY]
+Module: support
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Every request for heap memory must ask for more than zero bytes. Code that
+asks the heap for zero bytes, through Heap::ralloc, Heap::rrealloc, or the
+typed alloc and realloc, now fails an assertion in Debug builds. Reallocating
+from zero objects to a positive number stays valid. Heap::rrealloc no longer
+returns a null pointer for size zero; free the block with rfree instead.
+[MORE]
+The C library may answer a request for zero bytes with a null pointer, which
+the heap reports as MemoryExhausted, and reallocating to zero bytes is
+implementation-defined in C17. Heap::copy also needs non-null pointers, even
+for zero objects, because it passes them to memcpy.
+
+[ENTRY]
 Module: other
 What:   performance
 Rank:   minor
