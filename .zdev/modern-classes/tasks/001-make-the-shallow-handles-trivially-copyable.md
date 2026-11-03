@@ -3,7 +3,7 @@ schema_version = 1
 id = "modern-classes-001"
 key = "trivial-handles"
 area = "modern-classes"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "high"
@@ -26,11 +26,19 @@ The brief's Current state lists the handles that the compile-time probe build/al
 
 ## Done when
 
-- [ ] std::is_trivially_copyable_v holds for Home, Group, PropagatorGroup, BrancherGroup, Pos, Reify, IntVar, BoolVar, SetVar, FloatVar, IntVarArray, BoolVarArray, SetVarArray, FloatVarArray, ViewArray of each view kind, LocalHandle, and AFC with IntAFC, BoolAFC, SetAFC, and FloatAFC, checked by static_asserts in an existing test file. Home keeps its Space& member, and std::is_copy_assignable_v is false for Home and Space, checked the same way. Any type that cannot be made trivially copyable is named in the result with the reason.
-- [ ] AllowedTypes in .clang-tidy lists no type that is now trivially copyable, and uv run misc/check.py lint passes.
-- [ ] docs/code-style.md and changelog.in describe the change.
+- [x] std::is_trivially_copyable_v holds for Home, Group, PropagatorGroup, BrancherGroup, Pos, Reify, IntVar, BoolVar, SetVar, FloatVar, IntVarArray, BoolVarArray, SetVarArray, FloatVarArray, ViewArray of each view kind, LocalHandle, and AFC with IntAFC, BoolAFC, SetAFC, and FloatAFC, checked by static_asserts in an existing test file. Home keeps its Space& member, and std::is_copy_assignable_v is false for Home and Space, checked the same way. Any type that cannot be made trivially copyable is named in the result with the reason.
+- [x] AllowedTypes in .clang-tidy lists no type that is now trivially copyable, and uv run misc/check.py lint passes.
+- [x] docs/code-style.md and changelog.in describe the change.
 
 ## Validation
 
 - Build build/full and build/local; run bin/gecode-test -test Kernel:: -test Array:: and check-standard in build/full.
 - uv run misc/check.py lint --build-dir build/full.
+
+## Result
+
+Made the shallow handles trivially copyable: removed or defaulted on first declaration the hand-written copy members and empty destructors of Group, PropagatorGroup, BrancherGroup, Pos, LocalHandle, AFC and its four subclasses, the four variables, VarArray and its subclasses, and ViewArray. Home keeps Space& with a defaulted copy constructor and deleted copy assignment; Space's copy assignment is deleted. static_asserts in test/array.cpp keep this. AllowedTypes now lists only Float::ScaleView (FloatVal member, depends on boost-005); docs/code-style.md and changelog.in describe the change.
+
+Validation:
+
+- Independent verifier PASS: diff review of all 21 files, extended probe found no missed handle, build/full and build/local (experimental OFF) plus explicit gecode-test targets, focused tests 183/183, kernel 14/14, space/search 2/2, Release Array 78/78, format-check and changelog check; recorded check-standard 6820/6820 and lint clean. Doxygen: 91 warnings, identical to a baseline-HEAD run (pre-existing).

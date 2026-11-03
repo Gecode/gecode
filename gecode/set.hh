@@ -126,7 +126,7 @@ namespace Gecode {
         /// Default constructor
         SetVar(void);
         /// Initialize from set variable \a y
-        SetVar(const SetVar& y);
+        SetVar(const SetVar& y) = default;
         /// Initialize from set view \a y
         SetVar(const Set::SetView& y);
 
@@ -564,7 +564,7 @@ namespace Gecode {
         /// Default constructor (array of size 0)
         SetVarArray(void);
         /// Initialize from set variable array \a a (share elements)
-        SetVarArray(const SetVarArray&);
+        SetVarArray(const SetVarArray&) = default;
         /// Initialize from set variable argument array \a a (copy elements)
         SetVarArray(Space& home, const SetVarArgs&);
         /// Allocate array for \a n set variables (variables are uninitialized)
@@ -1045,10 +1045,6 @@ namespace Gecode {
          *
          */
         SetAFC(void);
-        /// Copy constructor
-        SetAFC(const SetAFC& a);
-        /// Assignment operator
-        SetAFC& operator=(const SetAFC& a);
         /**
          * \brief Initialize for set variables \a x and decay factor \a d
          *

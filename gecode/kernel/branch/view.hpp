@@ -46,8 +46,6 @@ namespace Gecode {
         const int pos;
         /// Create position information
         Pos(int p);
-        /// Create position information
-        Pos(const Pos& p);
     };
 
     /// %Choices storing position
@@ -113,9 +111,6 @@ namespace Gecode {
     forceinline
     Pos::Pos(int p)
         : pos(p) {}
-    forceinline
-    Pos::Pos(const Pos& p)
-        : pos(p.pos) {}
 
     /*
      * Choice with position

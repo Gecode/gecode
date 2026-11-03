@@ -45,10 +45,6 @@ namespace Gecode {
     SetVar::SetVar(void) {}
 
     forceinline
-    SetVar::SetVar(const SetVar& y)
-        : VarImpVar<Set::SetVarImp>(y.varimp()) {}
-
-    forceinline
     SetVar::SetVar(const Set::SetView& y)
         : VarImpVar<Set::SetVarImp>(y.varimp()) {}
 

@@ -122,16 +122,21 @@ and the type has a real move constructor, such as `std::function`,
 `std::string`, `std::vector`, or a branching configuration, take it by value
 and `std::move` it into place instead.
 
-The check's `AllowedTypes` keeps Gecode's shallow handles passed by value:
-`Home`, the groups, `Pos`, `Reify`, the variables (`IntVar` and so on), the
-variable arrays and `ViewArray`, the open variable and view lists, the views,
-and `View::VarType`. Copying one copies a few pointers or ids, with no
-reference count or allocation, and Gecode code relies on their value
-semantics. Owned and reference-counted types are not exempt: `SharedHandle`
-types such as `IntSet`, `TupleSet`, `DFA`, `Rnd`, `Action`, and `CHB`,
-`SharedArray`, the `*Args` arrays, `REG`, strings, and callbacks. Their copies
-touch a reference count or allocate, so they follow the rule above. `FloatVal`
-is not exempt either: it is two doubles, not a handle.
+Gecode's shallow handles are trivially copyable, so the check never reports
+them: `Home`, the groups, `Pos`, `Reify`, the variables (`IntVar` and so
+on), the variable arrays and `ViewArray`, the open variable and view lists,
+`LocalHandle`, `AFC`, and the views. Copying one copies a few pointers or ids,
+with no reference count or allocation, and Gecode code relies on their value
+semantics. Keep them so: define no copy member, move member, or destructor
+for a handle that only copies its members, or default it on its first
+declaration. `test/array.cpp` asserts the property. The check's
+`AllowedTypes` lists only `Float::ScaleView`, a view that is not trivially
+copyable because its `FloatVal` member is not. Owned and reference-counted
+types are not exempt: `SharedHandle` types such as `IntSet`, `TupleSet`,
+`DFA`, `Rnd`, `Action`, and `CHB`, `SharedArray`, the `*Args` arrays, `REG`,
+strings, and callbacks. Their copies touch a reference count or allocate, so
+they follow the rule above. `FloatVal` is not exempt either: it is two
+doubles, not a handle.
 
 Other performance checks need focused review: `performance-enum-size` changes
 layouts and ABI, and `performance-no-int-to-ptr` conflicts with deliberate

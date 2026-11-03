@@ -105,10 +105,6 @@ namespace Gecode {
         : VarArray<FloatVar>(home, n) {}
 
     forceinline
-    FloatVarArray::FloatVarArray(const FloatVarArray& a)
-        : VarArray<FloatVar>(a) {}
-
-    forceinline
     FloatVarArray::FloatVarArray(Space& home, const FloatVarArgs& a)
         : VarArray<FloatVar>(home, a) {}
 

@@ -915,7 +915,7 @@ namespace Gecode {
         /// Default constructor
         FloatVar(void);
         /// Initialize from float variable \a y
-        FloatVar(const FloatVar& y);
+        FloatVar(const FloatVar& y) = default;
         /// Initialize from float view \a y
         FloatVar(const Float::FloatView& y);
         /**
@@ -1070,7 +1070,7 @@ namespace Gecode {
         /// Allocate array for \a n float variables (variables are uninitialized)
         FloatVarArray(Space& home, int n);
         /// Initialize from float variable array \a a (share elements)
-        FloatVarArray(const FloatVarArray& a);
+        FloatVarArray(const FloatVarArray& a) = default;
         /// Initialize from float variable argument array \a a (copy elements)
         FloatVarArray(Space& home, const FloatVarArgs& a);
         /**
@@ -1491,10 +1491,6 @@ namespace Gecode {
          *
          */
         FloatAFC(void);
-        /// Copy constructor
-        FloatAFC(const FloatAFC& a);
-        /// Assignment operator
-        FloatAFC& operator=(const FloatAFC& a);
         /**
          * \brief Initialize for float variables \a x and decay factor \a d
          *

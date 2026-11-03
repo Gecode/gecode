@@ -410,7 +410,7 @@ namespace Gecode {
         /// Default constructor
         IntVar(void);
         /// Initialize from integer variable \a y
-        IntVar(const IntVar& y);
+        IntVar(const IntVar& y) = default;
         /// Initialize from integer view \a y
         IntVar(const Int::IntView& y);
         /**
@@ -548,7 +548,7 @@ namespace Gecode {
         /// Default constructor
         BoolVar(void);
         /// Initialize from Boolean variable \a y
-        BoolVar(const BoolVar& y);
+        BoolVar(const BoolVar& y) = default;
         /// Initialize from Boolean view \a y
         BoolVar(const Int::BoolView& y);
         /**
@@ -795,7 +795,7 @@ namespace Gecode {
         /// Allocate array for \a n integer variables (variables are uninitialized)
         IntVarArray(Space& home, int n);
         /// Initialize from integer variable array \a a (share elements)
-        IntVarArray(const IntVarArray& a);
+        IntVarArray(const IntVarArray& a) = default;
         /// Initialize from integer variable argument array \a a (copy elements)
         IntVarArray(Space& home, const IntVarArgs& a);
         /**
@@ -843,7 +843,7 @@ namespace Gecode {
         /// Allocate array for \a n Boolean variables (variables are uninitialized)
         BoolVarArray(Space& home, int n);
         /// Initialize from Boolean variable array \a a (share elements)
-        BoolVarArray(const BoolVarArray& a);
+        BoolVarArray(const BoolVarArray& a) = default;
         /// Initialize from Boolean variable argument array \a a (copy elements)
         BoolVarArray(Space& home, const BoolVarArgs& a);
         /**
@@ -4925,10 +4925,6 @@ namespace Gecode {
          *
          */
         IntAFC(void);
-        /// Copy constructor
-        IntAFC(const IntAFC& a);
-        /// Assignment operator
-        IntAFC& operator=(const IntAFC& a);
         /**
          * \brief Initialize for integer variables \a x and decay factor \a d
          *
@@ -4965,10 +4961,6 @@ namespace Gecode {
          *
          */
         BoolAFC(void);
-        /// Copy constructor
-        BoolAFC(const BoolAFC& a);
-        /// Assignment operator
-        BoolAFC& operator=(const BoolAFC& a);
         /**
          * \brief Initialize for Boolean variables \a x and decay factor \a d
          *
