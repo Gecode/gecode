@@ -672,6 +672,512 @@ namespace Test {
         }
         return false;
       }
+      /// Use the default completeness contract for each derived exploration
+      bool
+      spoke(const MetaInfo&) override {
+        return true;
+      }
+    };
+
+    /// Return a bit for restart reason \a r
+    static unsigned int
+    reason_bit(MetaInfo::RestartReason r) {
+      return 1U << static_cast<unsigned int>(r);
+    }
+
+    /// Observations shared by meta-search dispatch test spaces
+    struct MetaDispatchState {
+      std::atomic<unsigned int> hub_calls{0};
+      std::atomic<unsigned int> spoke_calls{0};
+      std::atomic<unsigned int> hub_reasons{0};
+      std::atomic<unsigned int> spoke_reasons{0};
+      std::atomic<unsigned int> assets{0};
+      std::atomic<unsigned int> live_spaces{0};
+      std::atomic<unsigned int> copies{0};
+      std::atomic<unsigned int> constrain_calls{0};
+      std::atomic<unsigned int> constrain_hub_calls{0};
+      std::atomic<unsigned int> constrain_spoke_calls{0};
+      std::atomic<unsigned int> constrain_asset_mask{0};
+      std::atomic<unsigned int> constrain_hub_asset_mask{0};
+      std::atomic<unsigned int> constrain_spoke_asset_mask{0};
+      std::atomic<unsigned int> nogood_handoffs{0};
+      bool restart_after_solution = true;
+      bool solution_spoke_complete = true;
+      bool fail_solution_spoke = false;
+      bool nogood_model = false;
+    };
+
+    /// Common implementation for meta-search dispatch test spaces
+    class MetaDispatchSpace : public Space {
+    protected:
+      /// RBS role of a space
+      enum class RestartRole { HUB, SPOKE };
+      /// Variable used to provide two solutions
+      IntVar x;
+      /// Optional queens model used to force restart no-good extraction
+      IntVarArray q;
+      /// Shared hook observations and configuration
+      MetaDispatchState* state;
+      /// RBS role retained across cloning
+      RestartRole restart_role;
+      /// PBS asset identity, or -1 before portfolio dispatch
+      int portfolio_asset;
+
+      /// Record and implement a Hub callback
+      bool
+      observe_hub(const MetaInfo& mi) {
+        state->hub_calls.fetch_add(1, std::memory_order_relaxed);
+        if (mi.type() == MetaInfo::PORTFOLIO)
+          // PBS must ignore the callback result.
+          return false;
+        restart_role = RestartRole::HUB;
+        state->hub_reasons.fetch_or(reason_bit(mi.reason()), std::memory_order_relaxed);
+        bool default_result = Space::hub(mi);
+        if ((mi.type() == MetaInfo::RESTART) && (mi.nogoods().ng() > 0))
+          state->nogood_handoffs.fetch_add(1, std::memory_order_relaxed);
+        return (mi.reason() == MetaInfo::RR_SOL) ? state->restart_after_solution : default_result;
+      }
+      /// Record and implement a Spoke callback
+      bool
+      observe_spoke(const MetaInfo& mi) {
+        state->spoke_calls.fetch_add(1, std::memory_order_relaxed);
+        if (mi.type() == MetaInfo::PORTFOLIO) {
+          portfolio_asset = static_cast<int>(mi.asset());
+          state->assets.fetch_or(1U << mi.asset(), std::memory_order_relaxed);
+          // PBS must ignore the callback result.
+          return false;
+        }
+        state->spoke_reasons.fetch_or(reason_bit(mi.reason()), std::memory_order_relaxed);
+        restart_role = RestartRole::SPOKE;
+        if ((mi.reason() == MetaInfo::RR_SOL) && state->fail_solution_spoke)
+          fail();
+        return (mi.reason() == MetaInfo::RR_SOL) ? state->solution_spoke_complete : true;
+      }
+
+    public:
+      /// Initialize with shared observations \a s
+      MetaDispatchSpace(MetaDispatchState& s)
+        : x(*this, 0, 1), q(*this, s.nogood_model ? 8 : 0, 0, 7), state(&s), restart_role(RestartRole::HUB),
+          portfolio_asset(-1) {
+        state->live_spaces.fetch_add(1, std::memory_order_relaxed);
+        if (state->nogood_model) {
+          distinct(*this, IntArgs::create(q.size(), 0, 1), q, IPL_VAL);
+          distinct(*this, IntArgs::create(q.size(), 0, -1), q, IPL_VAL);
+          distinct(*this, q, IPL_VAL);
+          Gecode::branch(*this, q, INT_VAR_NONE(), INT_VAL_MIN());
+        }
+        Gecode::branch(*this, x, INT_VAL_MIN());
+      }
+      /// Clone \a s
+      MetaDispatchSpace(MetaDispatchSpace& s)
+        : Space(s), state(s.state), restart_role(s.restart_role), portfolio_asset(s.portfolio_asset) {
+        state->live_spaces.fetch_add(1, std::memory_order_relaxed);
+        state->copies.fetch_add(1, std::memory_order_relaxed);
+        x.update(*this, s.x);
+        q.update(*this, s.q);
+      }
+      /// Record destruction for clone-ownership checks
+      ~MetaDispatchSpace(void) override {
+        state->live_spaces.fetch_sub(1, std::memory_order_relaxed);
+      }
+      /// Require a larger value than solution \a s
+      void
+      constrain(const Space& s) override {
+        state->constrain_calls.fetch_add(1, std::memory_order_relaxed);
+        if (restart_role == RestartRole::HUB)
+          state->constrain_hub_calls.fetch_add(1, std::memory_order_relaxed);
+        else
+          state->constrain_spoke_calls.fetch_add(1, std::memory_order_relaxed);
+        if (portfolio_asset >= 0) {
+          const unsigned int asset = 1U << static_cast<unsigned int>(portfolio_asset);
+          state->constrain_asset_mask.fetch_or(asset, std::memory_order_relaxed);
+          if (restart_role == RestartRole::HUB)
+            state->constrain_hub_asset_mask.fetch_or(asset, std::memory_order_relaxed);
+          else
+            state->constrain_spoke_asset_mask.fetch_or(asset, std::memory_order_relaxed);
+        }
+        rel(*this, x, IRT_GR, static_cast<const MetaDispatchSpace&>(s).x.val());
+      }
+      /// Compare with solution \a s, larger values are better
+      SpaceComparison
+      compare(const Space& s) const override {
+        return compare_int(x.val(), static_cast<const MetaDispatchSpace&>(s).x.val(), Sense::Maximize);
+      }
+      /// Return the solution value
+      int
+      value(void) const {
+        return x.val();
+      }
+    };
+
+    /// Dispatch test space overriding only Hub
+    class HubDispatchSpace : public MetaDispatchSpace {
+    public:
+      /// Initialize with shared observations \a s
+      HubDispatchSpace(MetaDispatchState& s) : MetaDispatchSpace(s) {}
+      /// Clone \a s
+      HubDispatchSpace(HubDispatchSpace& s) : MetaDispatchSpace(s) {}
+      /// Copy during cloning
+      Space*
+      copy(void) override {
+        return new HubDispatchSpace(*this);
+      }
+      /// Observe Hub dispatch
+      bool
+      hub(const MetaInfo& mi) override {
+        return observe_hub(mi);
+      }
+    };
+
+    /// Dispatch test space overriding only Spoke
+    class SpokeDispatchSpace : public MetaDispatchSpace {
+    public:
+      /// Initialize with shared observations \a s
+      SpokeDispatchSpace(MetaDispatchState& s) : MetaDispatchSpace(s) {}
+      /// Clone \a s
+      SpokeDispatchSpace(SpokeDispatchSpace& s) : MetaDispatchSpace(s) {}
+      /// Copy during cloning
+      Space*
+      copy(void) override {
+        return new SpokeDispatchSpace(*this);
+      }
+      /// Observe Spoke dispatch
+      bool
+      spoke(const MetaInfo& mi) override {
+        return observe_spoke(mi);
+      }
+    };
+
+    /// Dispatch test space overriding both Hub and Spoke
+    class HubSpokeDispatchSpace : public MetaDispatchSpace {
+    public:
+      /// Initialize with shared observations \a s
+      HubSpokeDispatchSpace(MetaDispatchState& s) : MetaDispatchSpace(s) {}
+      /// Clone \a s
+      HubSpokeDispatchSpace(HubSpokeDispatchSpace& s) : MetaDispatchSpace(s) {}
+      /// Copy during cloning
+      Space*
+      copy(void) override {
+        return new HubSpokeDispatchSpace(*this);
+      }
+      /// Observe Hub dispatch
+      bool
+      hub(const MetaInfo& mi) override {
+        return observe_hub(mi);
+      }
+      /// Observe Spoke dispatch
+      bool
+      spoke(const MetaInfo& mi) override {
+        return observe_spoke(mi);
+      }
+    };
+
+    /// Hub and Spoke hook dispatch through RBS and PBS
+    class MetaDispatch : public Base {
+    public:
+      /// Dispatch scenario
+      enum class Scenario {
+        RBS_HUB_ONLY,
+        RBS_SPOKE_ONLY,
+        RBS_HUB_CONTINUE,
+        RBS_HUB_RESTART,
+        RBS_SPOKE_COMPLETE,
+        RBS_SPOKE_INCOMPLETE,
+        PBS_HUB_ONLY,
+        PBS_SPOKE_ONLY,
+        PBS_SINGLE,
+        PBS_SEQUENTIAL_HUB_ONLY,
+        PBS_SEQUENTIAL_SPOKE_ONLY,
+        PBS_SEQUENTIAL,
+        PBS_PARALLEL_HUB_ONLY,
+        PBS_PARALLEL_SPOKE_ONLY,
+        PBS_PARALLEL,
+        RBS_NOGOODS_RESET_OWNERSHIP,
+        META_STOP_OWNERSHIP,
+        BAB_INCUMBENT
+      };
+
+    protected:
+      /// Scenario under test
+      Scenario scenario;
+
+      /// Return whether \a counter holds \a expected
+      static bool
+      holds(const std::atomic<unsigned int>& counter, unsigned int expected) {
+        return counter.load(std::memory_order_relaxed) == expected;
+      }
+      /// Check independent callback dispatch for one RBS model
+      template <class Model>
+      static bool
+      rbs_dispatch(unsigned int hub_calls, unsigned int spoke_calls) {
+        MetaDispatchState state;
+        Model* m = new Model(state);
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.cutoff = Gecode::Search::Cutoff::constant(100);
+        Gecode::RBS<Model, Gecode::DFS> search(m, o);
+        delete m;
+
+        Model* first = search.next();
+        Model* second = search.next();
+        bool ok = (first != nullptr) && (second != nullptr) && holds(state.hub_calls, hub_calls) &&
+                  holds(state.spoke_calls, spoke_calls);
+        delete first;
+        delete second;
+        return ok;
+      }
+      /// Run one RBS dispatch scenario
+      static bool
+      rbs(bool restart_after_solution, bool fail_solution_spoke, bool solution_spoke_complete) {
+        MetaDispatchState state;
+        state.restart_after_solution = restart_after_solution;
+        state.fail_solution_spoke = fail_solution_spoke;
+        state.solution_spoke_complete = solution_spoke_complete;
+
+        HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(state);
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.cutoff = Gecode::Search::Cutoff::constant(100);
+        Gecode::RBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
+        delete m;
+
+        HubSpokeDispatchSpace* first = search.next();
+        bool ok = first != nullptr;
+        delete first;
+
+        HubSpokeDispatchSpace* second = search.next();
+        if (!fail_solution_spoke) {
+          ok = ok && (second != nullptr) && holds(state.hub_calls, 1U) &&
+               holds(state.spoke_calls, restart_after_solution ? 2U : 1U) &&
+               holds(state.hub_reasons, reason_bit(MetaInfo::RR_SOL)) &&
+               holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) |
+                                              (restart_after_solution ? reason_bit(MetaInfo::RR_SOL) : 0U));
+        } else if (solution_spoke_complete) {
+          ok = ok && (second == nullptr) && holds(state.hub_calls, 1U) && holds(state.spoke_calls, 2U) &&
+               holds(state.hub_reasons, reason_bit(MetaInfo::RR_SOL)) &&
+               holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) | reason_bit(MetaInfo::RR_SOL));
+        } else {
+          ok = ok && (second != nullptr) && holds(state.hub_calls, 2U) && holds(state.spoke_calls, 3U) &&
+               holds(state.hub_reasons, reason_bit(MetaInfo::RR_SOL) | reason_bit(MetaInfo::RR_CMPL)) &&
+               holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) | reason_bit(MetaInfo::RR_SOL) |
+                                              reason_bit(MetaInfo::RR_CMPL));
+        }
+        delete second;
+        return ok;
+      }
+      /// Run one PBS dispatch scenario
+      template <class Model>
+      static bool
+      pbs(unsigned int assets, double threads, unsigned int hub_calls, unsigned int spoke_calls,
+        unsigned int asset_mask) {
+        MetaDispatchState state;
+        Model* m = new Model(state);
+        Gecode::Search::Options o;
+        o.assets = assets;
+        o.threads = threads;
+        Gecode::PBS<Model, Gecode::DFS> search(m, o);
+        delete m;
+
+        Model* solution = search.next();
+        bool ok = (solution != nullptr) && holds(state.hub_calls, hub_calls) &&
+                  holds(state.spoke_calls, spoke_calls) && holds(state.assets, asset_mask);
+        delete solution;
+        return ok;
+      }
+      /// Exercise RBS no-good posting, reset, and clone ownership
+      static bool
+      rbs_nogoods_reset_ownership(void) {
+        MetaDispatchState state;
+        state.nogood_model = true;
+        bool ok = true;
+        {
+          HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(state);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          o.nogoods_limit = 16;
+          o.cutoff = Gecode::Search::Cutoff::constant(1);
+          Gecode::RBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
+          delete m;
+
+          unsigned int solutions = 0;
+          while (HubSpokeDispatchSpace* solution = search.next()) {
+            solutions++;
+            delete solution;
+          }
+          ok = (solutions == 2U) && (state.spoke_calls.load(std::memory_order_relaxed) >= 2U) &&
+               (state.constrain_calls.load(std::memory_order_relaxed) >= 1U) &&
+               (state.nogood_handoffs.load(std::memory_order_relaxed) >= 1U);
+        }
+        return ok && holds(state.live_spaces, 0U) && (state.copies.load(std::memory_order_relaxed) > 0U);
+      }
+      /// Stop RBS and PBS, then verify orderly clone destruction
+      static bool
+      meta_stop_ownership(void) {
+        MetaDispatchState rbs_state;
+        // Continue after a solution, so that the spoke engine prunes with it
+        rbs_state.restart_after_solution = false;
+        bool ok = true;
+        {
+          Gecode::Search::NodeStop stop(0);
+          HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(rbs_state);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          o.stop = &stop;
+          o.cutoff = Gecode::Search::Cutoff::constant(1);
+          Gecode::RBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
+          delete m;
+          HubSpokeDispatchSpace* solution = search.next();
+          ok = (solution == nullptr) && search.stopped();
+          delete solution;
+        }
+        ok = ok && holds(rbs_state.live_spaces, 0U);
+
+        MetaDispatchState pbs_state;
+        {
+          Gecode::Search::NodeStop stop(0);
+          HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(pbs_state);
+          Gecode::Search::Options o;
+          o.assets = 3;
+#ifdef GECODE_HAS_THREADS
+          o.threads = 3;
+#else
+          o.threads = 1;
+#endif
+          o.stop = &stop;
+          Gecode::PBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
+          delete m;
+          HubSpokeDispatchSpace* solution = search.next();
+          ok = ok && (solution == nullptr) && search.stopped();
+          delete solution;
+        }
+        return ok && holds(pbs_state.live_spaces, 0U);
+      }
+      /// Exercise incumbent propagation through RBS and PBS wrappers
+      static bool
+      bab_incumbent(void) {
+        MetaDispatchState rbs_state;
+        // Continue after a solution, so that the spoke engine prunes with it
+        rbs_state.restart_after_solution = false;
+        bool ok = true;
+        {
+          HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(rbs_state);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          o.cutoff = Gecode::Search::Cutoff::constant(100);
+          SEB builder = Gecode::rbs<HubSpokeDispatchSpace, Gecode::BAB>(o);
+          Gecode::Search::Engine* search = (*builder)(m);
+          delete builder;
+          delete m;
+          HubSpokeDispatchSpace* best = nullptr;
+          while (HubSpokeDispatchSpace* solution = static_cast<HubSpokeDispatchSpace*>(search->next())) {
+            search->constrain(*solution);
+            delete best;
+            best = solution;
+          }
+          ok = (best != nullptr) && (best->value() == 1) &&
+               (rbs_state.constrain_hub_calls.load(std::memory_order_relaxed) > 0U) &&
+               (rbs_state.constrain_spoke_calls.load(std::memory_order_relaxed) > 0U);
+          delete best;
+          delete search;
+        }
+        ok = ok && holds(rbs_state.live_spaces, 0U);
+
+        MetaDispatchState pbs_state;
+        {
+          HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(pbs_state);
+          Gecode::Search::Options o;
+          o.assets = 3;
+          o.threads = 1;
+          Gecode::PBS<HubSpokeDispatchSpace, Gecode::BAB> search(m, o);
+          delete m;
+          HubSpokeDispatchSpace* best = nullptr;
+          while (HubSpokeDispatchSpace* solution = search.next()) {
+            delete best;
+            best = solution;
+          }
+          ok = ok && (best != nullptr) && (best->value() == 1) && holds(pbs_state.constrain_asset_mask, 7U);
+          delete best;
+        }
+        ok = ok && holds(pbs_state.live_spaces, 0U);
+
+        MetaDispatchState nested_state;
+        nested_state.restart_after_solution = false;
+        {
+          HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(nested_state);
+          Gecode::Search::Options outer;
+          outer.assets = 3;
+          outer.threads = 1;
+          Gecode::Search::Options inner[3];
+          SEBs spokes(3);
+          for (int i = 0; i < 3; i++) {
+            inner[i].threads = 1;
+            // Each RBS engine owns and deletes its cutoff.
+            inner[i].cutoff = Gecode::Search::Cutoff::constant(100);
+            spokes[i] = Gecode::rbs<HubSpokeDispatchSpace, Gecode::BAB>(inner[i]);
+          }
+          Gecode::PBS<HubSpokeDispatchSpace, Gecode::BAB> search(m, spokes, outer);
+          delete m;
+          HubSpokeDispatchSpace* best = nullptr;
+          while (HubSpokeDispatchSpace* solution = search.next()) {
+            delete best;
+            best = solution;
+          }
+          ok = ok && (best != nullptr) && (best->value() == 1) &&
+               holds(nested_state.constrain_hub_asset_mask, 7U) &&
+               holds(nested_state.constrain_spoke_asset_mask, 7U);
+          delete best;
+        }
+        return ok && holds(nested_state.live_spaces, 0U);
+      }
+
+    public:
+      /// Initialize scenario \a s with name \a n
+      MetaDispatch(const std::string& n, Scenario s) : Base("Search::MetaDispatch::" + n), scenario(s) {}
+      /// Run test
+      bool
+      run(void) override {
+        switch (scenario) {
+        case Scenario::RBS_HUB_ONLY:
+          return rbs_dispatch<HubDispatchSpace>(1, 0);
+        case Scenario::RBS_SPOKE_ONLY:
+          return rbs_dispatch<SpokeDispatchSpace>(0, 2);
+        case Scenario::RBS_HUB_CONTINUE:
+          return rbs(false, false, true);
+        case Scenario::RBS_HUB_RESTART:
+          return rbs(true, false, true);
+        case Scenario::RBS_SPOKE_COMPLETE:
+          return rbs(true, true, true);
+        case Scenario::RBS_SPOKE_INCOMPLETE:
+          return rbs(true, true, false);
+        case Scenario::PBS_HUB_ONLY:
+          return pbs<HubDispatchSpace>(1, 1, 1, 0, 0);
+        case Scenario::PBS_SPOKE_ONLY:
+          return pbs<SpokeDispatchSpace>(1, 1, 0, 1, 1);
+        case Scenario::PBS_SINGLE:
+          return pbs<HubSpokeDispatchSpace>(1, 1, 1, 1, 1);
+        case Scenario::PBS_SEQUENTIAL_HUB_ONLY:
+          return pbs<HubDispatchSpace>(3, 1, 1, 0, 0);
+        case Scenario::PBS_SEQUENTIAL_SPOKE_ONLY:
+          return pbs<SpokeDispatchSpace>(3, 1, 0, 3, 7);
+        case Scenario::PBS_SEQUENTIAL:
+          return pbs<HubSpokeDispatchSpace>(3, 1, 1, 3, 7);
+        case Scenario::PBS_PARALLEL_HUB_ONLY:
+          return pbs<HubDispatchSpace>(3, 3, 1, 0, 0);
+        case Scenario::PBS_PARALLEL_SPOKE_ONLY:
+          return pbs<SpokeDispatchSpace>(3, 3, 0, 3, 7);
+        case Scenario::PBS_PARALLEL:
+          return pbs<HubSpokeDispatchSpace>(3, 3, 1, 3, 7);
+        case Scenario::RBS_NOGOODS_RESET_OWNERSHIP:
+          return rbs_nogoods_reset_ownership();
+        case Scenario::META_STOP_OWNERSHIP:
+          return meta_stop_ownership();
+        case Scenario::BAB_INCUMBENT:
+          return bab_incumbent();
+        default:
+          GECODE_NEVER;
+        }
+        return false;
+      }
     };
 
     /// %Base class for search tests
@@ -2849,6 +3355,16 @@ namespace Test {
                  c_d,a_d,t);
             }
         // Restart-based search
+        (void)new MetaDispatch("RBS::HubOnly", MetaDispatch::Scenario::RBS_HUB_ONLY);
+        (void)new MetaDispatch("RBS::SpokeOnly", MetaDispatch::Scenario::RBS_SPOKE_ONLY);
+        (void)new MetaDispatch("RBS::HubContinue", MetaDispatch::Scenario::RBS_HUB_CONTINUE);
+        (void)new MetaDispatch("RBS::HubRestart", MetaDispatch::Scenario::RBS_HUB_RESTART);
+        (void)new MetaDispatch("RBS::SpokeComplete", MetaDispatch::Scenario::RBS_SPOKE_COMPLETE);
+        (void)new MetaDispatch("RBS::SpokeIncomplete", MetaDispatch::Scenario::RBS_SPOKE_INCOMPLETE);
+        (void)new MetaDispatch("RBS::NoGoodsResetOwnership",
+                               MetaDispatch::Scenario::RBS_NOGOODS_RESET_OWNERSHIP);
+        (void)new MetaDispatch("Lifecycle::StopOwnership", MetaDispatch::Scenario::META_STOP_OWNERSHIP);
+        (void)new MetaDispatch("BAB::Incumbent", MetaDispatch::Scenario::BAB_INCUMBENT);
         for (unsigned int t=1; t<=4; t++) {
           (void) new RBS<HasSolutions,Gecode::DFS>("DFS",t);
           (void) new RBS<HasSolutions,Gecode::LDS>("LDS",t);
@@ -2861,6 +3377,17 @@ namespace Test {
           (void) new RBS<SolveImmediate,Gecode::BAB>("BAB",t);
         }
         // Portfolio-based search
+        (void)new MetaDispatch("PBS::HubOnly", MetaDispatch::Scenario::PBS_HUB_ONLY);
+        (void)new MetaDispatch("PBS::SpokeOnly", MetaDispatch::Scenario::PBS_SPOKE_ONLY);
+        (void)new MetaDispatch("PBS::Single", MetaDispatch::Scenario::PBS_SINGLE);
+        (void)new MetaDispatch("PBS::SequentialHubOnly", MetaDispatch::Scenario::PBS_SEQUENTIAL_HUB_ONLY);
+        (void)new MetaDispatch("PBS::SequentialSpokeOnly", MetaDispatch::Scenario::PBS_SEQUENTIAL_SPOKE_ONLY);
+        (void)new MetaDispatch("PBS::Sequential", MetaDispatch::Scenario::PBS_SEQUENTIAL);
+#ifdef GECODE_HAS_THREADS
+        (void)new MetaDispatch("PBS::ParallelHubOnly", MetaDispatch::Scenario::PBS_PARALLEL_HUB_ONLY);
+        (void)new MetaDispatch("PBS::ParallelSpokeOnly", MetaDispatch::Scenario::PBS_PARALLEL_SPOKE_ONLY);
+        (void)new MetaDispatch("PBS::Parallel", MetaDispatch::Scenario::PBS_PARALLEL);
+#endif
         for (unsigned int a=1; a<=4; a++)
           for (unsigned int t=1; t<=2*a; t++) {
             (void) new PBS<HasSolutions,Gecode::DFS>("DFS",false,a,t);
