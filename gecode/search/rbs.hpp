@@ -43,21 +43,21 @@ namespace Gecode { namespace Search { namespace Seq {
   GECODE_SEARCH_EXPORT Stop*
   rbsstop(Stop* so);
 
-  /// Create restart engine whose first slave search yields valid no-goods
+  /// Create restart engine whose first spoke search yields valid no-goods
   GECODE_SEARCH_EXPORT Engine*
-  rbsengine(Space* master, Stop* stop, Engine* slave,
+  rbsengine(Space* hub, Stop* stop, Engine* spoke,
             const Search::Statistics& stat, const Options& opt,
             bool best);
 
   /**
    * \brief Create restart engine
    *
-   * The value \a complete is the result of the slave configuration of the
-   * space explored by the first engine \a slave. It only determines whether
-   * the no-goods of that search hold in the master.
+   * The value \a complete is the result of the spoke configuration of the
+   * space explored by the first engine \a spoke. It only determines whether
+   * the no-goods of that search hold in the hub.
    */
   GECODE_SEARCH_EXPORT Engine*
-  rbsengine(Space* master, Stop* stop, Engine* slave,
+  rbsengine(Space* hub, Stop* stop, Engine* spoke,
             const Search::Statistics& stat, const Options& opt,
             bool best, bool complete);
 
@@ -112,15 +112,15 @@ namespace Gecode {
       // The engine owns the cutoff, but a dead engine does not take it
       delete m_opt.cutoff;
     } else {
-      std::unique_ptr<Space> master(m_opt.clone ? s->clone() : s);
-      std::unique_ptr<Space> slave(master->clone());
+      std::unique_ptr<Space> hub(m_opt.clone ? s->clone() : s);
+      std::unique_ptr<Space> spoke(hub->clone());
       MetaInfo mi(0,MetaInfo::RR_INIT,0,0,nullptr,NoGoods::eng);
-      bool complete = slave->slave(mi);
+      bool complete = spoke->spoke(mi);
       std::unique_ptr<Search::Engine> leaf(
-        Search::build<T,E>(slave.get(),e_opt));
-      e = Search::Seq::rbsengine(master.get(),stop.get(),leaf.get(),
+        Search::build<T,E>(spoke.get(),e_opt));
+      e = Search::Seq::rbsengine(hub.get(),stop.get(),leaf.get(),
                                 stat,m_opt,E<T>::best,complete);
-      master.release();
+      hub.release();
       stop.release();
       leaf.release();
     }

@@ -150,7 +150,7 @@ namespace Test {
         : Space(s), graph(s.graph), maximize(s.maximize), vertex(s.vertex),
           ceiling(s.ceiling) {}
       Space* copy(void) override { return new TreeSpace(*this); }
-      bool master(const MetaInfo&) override { return true; }
+      bool hub(const MetaInfo&) override { return true; }
       const Node& node(void) const { return (*graph)[vertex]; }
       void constrain(const Space& s) override {
         ceiling = static_cast<const TreeSpace&>(s).node().cost;
@@ -403,8 +403,8 @@ namespace Test {
       virtual int solutions(void) const = 0;
       /// Verify that this is best solution
       virtual bool best(void) const = 0;
-      /// Master configuration function that does not restart
-      virtual bool master(const MetaInfo& mi) {
+      /// Hub configuration function that does not restart
+      virtual bool hub(const MetaInfo& mi) {
         if (mi.type() == MetaInfo::RESTART) {
           if (mi.last() != nullptr)
             constrain(*mi.last());
@@ -649,12 +649,12 @@ namespace Test {
         return "Sol";
       }
       /// Rule out that solution is found more than once during restarts
-      virtual bool master(const MetaInfo& mi) {
+      virtual bool hub(const MetaInfo& mi) {
         switch (mi.type()) {
         case MetaInfo::RESTART:
           // With an objective, restart from a bound improving on the last solution
           if (htc != HTC_NONE)
-            return Space::master(mi);
+            return Space::hub(mi);
           if (mi.last() != nullptr) {
             const HasSolutions* s
               = static_cast<const HasSolutions*>(mi.last());
@@ -1261,10 +1261,10 @@ namespace Test {
       }
       virtual Space* copy(void) { return new ParallelObjective(*this); }
       virtual IntVar cost(void) const { return x; }
-      virtual bool master(const MetaInfo& mi) {
+      virtual bool hub(const MetaInfo& mi) {
         if (mi.type() == MetaInfo::PORTFOLIO)
           return false;
-        return Space::master(mi);
+        return Space::hub(mi);
       }
     };
 
@@ -1304,10 +1304,10 @@ namespace Test {
           throw ComparisonError();
         return SpaceComparison::Incomparable;
       }
-      virtual bool master(const MetaInfo& mi) {
+      virtual bool hub(const MetaInfo& mi) {
         if (mi.type() == MetaInfo::PORTFOLIO)
           return false;
-        return Space::master(mi);
+        return Space::hub(mi);
       }
     };
 
@@ -2265,26 +2265,26 @@ namespace Test {
       }
     };
 
-    /// Space whose first slave search is restricted to x2, x3 in {0,1}
-    class RestrictedFirstSlave : public Gecode::IntMinimizeSpace {
+    /// Space whose first spoke search is restricted to x2, x3 in {0,1}
+    class RestrictedFirstSpoke : public Gecode::IntMinimizeSpace {
     public:
       /// Distinct variables, the cost is x0
       Gecode::IntVarArray x;
-      RestrictedFirstSlave(void) : x(*this,4,0,3) {
+      RestrictedFirstSpoke(void) : x(*this,4,0,3) {
         Gecode::distinct(*this,x);
         Gecode::branch(*this,x,Gecode::INT_VAR_NONE(),Gecode::INT_VAL_MIN());
       }
-      RestrictedFirstSlave(RestrictedFirstSlave& s)
+      RestrictedFirstSpoke(RestrictedFirstSpoke& s)
         : Gecode::IntMinimizeSpace(s) {
         x.update(*this,s.x);
       }
       Gecode::Space* copy(void) override {
-        return new RestrictedFirstSlave(*this);
+        return new RestrictedFirstSpoke(*this);
       }
       Gecode::IntVar cost(void) const override {
         return x[0];
       }
-      bool slave(const Gecode::MetaInfo& mi) override {
+      bool spoke(const Gecode::MetaInfo& mi) override {
         if ((mi.type() == Gecode::MetaInfo::RESTART) &&
             (mi.reason() == Gecode::MetaInfo::RR_INIT)) {
           Gecode::dom(*this,x[2],0,1);
@@ -2295,20 +2295,20 @@ namespace Test {
       }
     };
 
-    /// No-goods from an incomplete slave search are not posted in the master
+    /// No-goods from an incomplete spoke search are not posted in the hub
     class RBSIncompleteNoGoods : public Base {
     public:
       RBSIncompleteNoGoods(void) : Base("Search::RBS::IncompleteNoGoods") {}
       bool run(void) override {
-        RestrictedFirstSlave* m = new RestrictedFirstSlave;
+        RestrictedFirstSpoke* m = new RestrictedFirstSpoke;
         Gecode::Search::Options o;
         o.nogoods_limit = 128U;
         o.cutoff = Gecode::Search::Cutoff::constant(100);
-        Gecode::RBS<RestrictedFirstSlave,Gecode::BAB> rbs(m,o);
+        Gecode::RBS<RestrictedFirstSpoke,Gecode::BAB> rbs(m,o);
         delete m;
         // The restricted search finds x0 = 2 and rules out x0 in {0,1}
         int best = -1;
-        while (RestrictedFirstSlave* s = rbs.next()) {
+        while (RestrictedFirstSpoke* s = rbs.next()) {
           best = s->x[0].val();
           delete s;
         }
@@ -2338,23 +2338,23 @@ namespace Test {
       Gecode::IntVar cost(void) const override {
         return x[0];
       }
-      bool master(const Gecode::MetaInfo& mi) override {
+      bool hub(const Gecode::MetaInfo& mi) override {
         // Keep the branchers for the assets of a portfolio
         if (mi.type() == Gecode::MetaInfo::PORTFOLIO)
           return true;
-        return Gecode::IntMinimizeSpace::master(mi);
+        return Gecode::IntMinimizeSpace::hub(mi);
       }
     };
 
-    /// Space without solutions whose master fails at a restart after a limit
-    class FailingMaster : public NoSolution {
+    /// Space without solutions whose hub fails at a restart after a limit
+    class FailingHub : public NoSolution {
     public:
-      FailingMaster(void) = default;
-      FailingMaster(FailingMaster& s) : NoSolution(s) {}
+      FailingHub(void) = default;
+      FailingHub(FailingHub& s) : NoSolution(s) {}
       Gecode::Space* copy(void) override {
-        return new FailingMaster(*this);
+        return new FailingHub(*this);
       }
-      bool master(const Gecode::MetaInfo& mi) override {
+      bool hub(const Gecode::MetaInfo& mi) override {
         if ((mi.type() == Gecode::MetaInfo::RESTART) &&
             (mi.reason() == Gecode::MetaInfo::RR_LIM))
           fail();
@@ -2362,24 +2362,24 @@ namespace Test {
       }
     };
 
-    /// A master failing at a restart after a limit proves exhaustion
-    class RBSFailedMaster : public Base {
+    /// A hub failing at a restart after a limit proves exhaustion
+    class RBSFailedHub : public Base {
     public:
-      RBSFailedMaster(void) : Base("Search::RBS::FailedMaster") {}
+      RBSFailedHub(void) : Base("Search::RBS::FailedHub") {}
       bool run(void) override {
         for (unsigned int t : {1U,2U}) {
-          FailingMaster* m = new FailingMaster;
+          FailingHub* m = new FailingHub;
           Gecode::Search::Options o;
           o.threads = t;
           o.cutoff = Gecode::Search::Cutoff::constant(1);
-          Gecode::RBS<FailingMaster,Gecode::DFS> rbs(m,o);
+          Gecode::RBS<FailingHub,Gecode::DFS> rbs(m,o);
           delete m;
-          if (FailingMaster* s = rbs.next()) {
+          if (FailingHub* s = rbs.next()) {
             delete s;
             return false;
           }
           Gecode::Search::Statistics s = rbs.statistics();
-          // The failures of the last slave search are counted once
+          // The failures of the last spoke search are counted once
           if (rbs.stopped() || (s.restart != 1U) || (s.fail < 2U) ||
               ((t == 1U) && (s.fail != 2U)))
             return false;
@@ -2392,17 +2392,17 @@ namespace Test {
       }
     };
 
-    RBSFailedMaster rbs_failed_master;
+    RBSFailedHub rbs_failed_hub;
 
-    /// Space without solutions whose restricted slaves fail at the root
-    class FailingSlave : public NoSolution {
+    /// Space without solutions whose restricted spokes fail at the root
+    class FailingSpoke : public NoSolution {
     public:
-      FailingSlave(void) = default;
-      FailingSlave(FailingSlave& s) : NoSolution(s) {}
+      FailingSpoke(void) = default;
+      FailingSpoke(FailingSpoke& s) : NoSolution(s) {}
       Gecode::Space* copy(void) override {
-        return new FailingSlave(*this);
+        return new FailingSpoke(*this);
       }
-      bool slave(const Gecode::MetaInfo& mi) override {
+      bool spoke(const Gecode::MetaInfo& mi) override {
         if ((mi.type() == Gecode::MetaInfo::RESTART) && (mi.restart() > 0)) {
           fail();
           return false;
@@ -2422,19 +2422,19 @@ namespace Test {
       }
     };
 
-    /// Slave searches failing at the root count as failures
+    /// Spoke searches failing at the root count as failures
     class RBSRootFailure : public Base {
       template<template<class> class Engine>
       static bool test(unsigned int threads) {
-        FailingSlave* m = new FailingSlave;
+        FailingSpoke* m = new FailingSpoke;
         FiveFailures f;
         Gecode::Search::Options o;
         o.threads = threads;
         o.stop = &f;
         o.cutoff = Gecode::Search::Cutoff::constant(1);
-        Gecode::RBS<FailingSlave,Engine> rbs(m,o);
+        Gecode::RBS<FailingSpoke,Engine> rbs(m,o);
         delete m;
-        if (FailingSlave* s = rbs.next()) {
+        if (FailingSpoke* s = rbs.next()) {
           delete s;
           return false;
         }
@@ -2452,15 +2452,15 @@ namespace Test {
 
     RBSRootFailure rbs_root_failure;
 
-    /// Space with solutions whose first, incomplete slave fails at the root
-    class FailingFirstSlave : public RestrictedFirstSlave {
+    /// Space with solutions whose first, incomplete spoke fails at the root
+    class FailingFirstSpoke : public RestrictedFirstSpoke {
     public:
-      FailingFirstSlave(void) = default;
-      FailingFirstSlave(FailingFirstSlave& s) : RestrictedFirstSlave(s) {}
+      FailingFirstSpoke(void) = default;
+      FailingFirstSpoke(FailingFirstSpoke& s) : RestrictedFirstSpoke(s) {}
       Gecode::Space* copy(void) override {
-        return new FailingFirstSlave(*this);
+        return new FailingFirstSpoke(*this);
       }
-      bool slave(const Gecode::MetaInfo& mi) override {
+      bool spoke(const Gecode::MetaInfo& mi) override {
         if ((mi.type() == Gecode::MetaInfo::RESTART) &&
             (mi.reason() == Gecode::MetaInfo::RR_INIT)) {
           fail();
@@ -2470,24 +2470,24 @@ namespace Test {
       }
     };
 
-    /// A failed first slave search that is incomplete is not a proof
-    class RBSFailedFirstSlave : public Base {
+    /// A failed first spoke search that is incomplete is not a proof
+    class RBSFailedFirstSpoke : public Base {
       template<template<class> class Engine>
       static bool test(unsigned int threads) {
-        FailingFirstSlave* m = new FailingFirstSlave;
+        FailingFirstSpoke* m = new FailingFirstSpoke;
         Gecode::Search::Options o;
         o.threads = threads;
         o.cutoff = Gecode::Search::Cutoff::constant(1);
-        Gecode::RBS<FailingFirstSlave,Engine> rbs(m,o);
+        Gecode::RBS<FailingFirstSpoke,Engine> rbs(m,o);
         delete m;
-        FailingFirstSlave* s = rbs.next();
+        FailingFirstSpoke* s = rbs.next();
         if (s == nullptr)
           return false;
         delete s;
         return rbs.statistics().restart >= 1U;
       }
     public:
-      RBSFailedFirstSlave(void) : Base("Search::RBS::FailedFirstSlave") {}
+      RBSFailedFirstSpoke(void) : Base("Search::RBS::FailedFirstSpoke") {}
       bool run(void) override {
         return test<Gecode::DFS>(1U) && test<Gecode::DFS>(2U) &&
           test<Gecode::BAB>(1U) && test<Gecode::BAB>(2U) &&
@@ -2495,7 +2495,7 @@ namespace Test {
       }
     };
 
-    RBSFailedFirstSlave rbs_failed_first_slave;
+    RBSFailedFirstSpoke rbs_failed_first_spoke;
 
     /// Stop after a number of failures, or after many checks as a safeguard
     class FailureLimit : public Gecode::Search::Stop {
@@ -2648,9 +2648,9 @@ namespace Test {
     private:
       /// Whether best solution search is used
       bool best;
-      /// Number of master threads
+      /// Number of portfolio threads
       unsigned int mt;
-      /// Number of slave threads
+      /// Number of spoke threads
       unsigned int st;
     public:
       /// Initialize test
@@ -2797,7 +2797,7 @@ namespace Test {
       Gecode::Space* copy(void) override {
         return new FailingAsset(*this);
       }
-      bool slave(const Gecode::MetaInfo& mi) override {
+      bool spoke(const Gecode::MetaInfo& mi) override {
         if ((mi.type() == Gecode::MetaInfo::PORTFOLIO) && (mi.asset() == 0U))
           fail();
         return true;

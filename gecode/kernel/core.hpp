@@ -1730,8 +1730,8 @@ namespace Gecode {
     /**
      * \brief Return no-goods recorded from restart
      *
-     * The no-goods are empty if the search on the slave space was
-     * incomplete, as they only hold in the slave's search space.
+     * The no-goods are empty if the search on the spoke space was
+     * incomplete, as they only hold in the spoke's search space.
      */
     const NoGoods& nogoods(void) const;
     //@}
@@ -2192,13 +2192,13 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT virtual SpaceComparison
     compare(const Space& other) const;
     /**
-     * \brief Master configuration function for meta search engines
+     * \brief Hub configuration function for meta search engines
      *
      * This configuration function is used by both restart and
      * portfolio meta search engines.
      *
      * \li A restart meta search engine calls this function on its
-     *     master space whenever it finds a solution or exploration
+     *     hub space whenever it finds a solution or exploration
      *     restarts. \a mi contains information about the current restart.
      *
      *     If a solution has been found, then search will continue with
@@ -2208,38 +2208,38 @@ namespace Gecode {
      *     The default function posts no-goods obtained from \a mi.
      *
      * \li A portfolio meta engine calls this function once on
-     *     the master space. The return value is ignored.
+     *     the hub space. The return value is ignored.
      *
-     *     The default function does nothing.
+     *     The default function removes all common branchers.
      *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT
-    virtual bool master(const MetaInfo& mi);
+    virtual bool hub(const MetaInfo& mi);
     /**
-     * \brief Slave configuration function for meta search engines
+     * \brief Spoke configuration function for meta search engines
      *
      * This configuration function is used by both restart and
      * portfolio meta search engines.
      *
      * \li A restart meta search engine calls this function on its
-     *     slave space when search starts and whenever it finds a solution or
+     *     spoke space when search starts and whenever it finds a solution or
      *     exploration restarts.  \a mi contains information about the
      *     current restart.
      *
-     *     If the function returns true, the search on the slave space is
+     *     If the function returns true, the search on the spoke space is
      *     considered complete, i.e., if it fails or exhaustively explores the
      *     entire search space, the meta search engine finishes. If the
-     *     function returns false, the search on the slave space is considered
+     *     function returns false, the search on the spoke space is considered
      *     incomplete, and the meta engine will restart the search regardless
-     *     of whether the search on the slave space finishes or times out.
+     *     of whether the search on the spoke space finishes or times out.
      *     The no-goods recorded by an incomplete search only hold in the
-     *     slave's search space, so the meta engine does not pass them to the
-     *     master configuration function. This also holds for the first
+     *     spoke's search space, so the meta engine does not pass them to the
+     *     hub configuration function. This also holds for the first
      *     search when search starts.
      *
      * \li A portfolio meta engine calls this function once on each asset
-     *     (that is, on each slave) and passes the number of the asset,
+     *     (that is, on each spoke) and passes the number of the asset,
      *     starting from zero.
      *
      * The default function does nothing and returns true.
@@ -2247,7 +2247,7 @@ namespace Gecode {
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT
-    virtual bool slave(const MetaInfo& mi);
+    virtual bool spoke(const MetaInfo& mi);
 
     /*
      * Member functions for search engines

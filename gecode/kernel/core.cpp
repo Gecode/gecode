@@ -902,7 +902,7 @@ namespace Gecode {
   }
 
   bool
-  Space::master(const MetaInfo& mi) {
+  Space::hub(const MetaInfo& mi) {
     switch (mi.type()) {
     case MetaInfo::RESTART:
       if (mi.last() != nullptr)
@@ -920,7 +920,7 @@ namespace Gecode {
   }
 
   bool
-  Space::slave(const MetaInfo&) {
+  Space::spoke(const MetaInfo&) {
     return true;
   }
 

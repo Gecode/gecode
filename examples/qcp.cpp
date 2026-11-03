@@ -211,8 +211,8 @@ public:
       }
     }
   }
-  /// Slave function for portfolio search
-  virtual bool slave(const MetaInfo& mi) {
+  /// Spoke function for portfolio search
+  virtual bool spoke(const MetaInfo& mi) {
     if (mi.type() == MetaInfo::PORTFOLIO) {
       double tbf = opt.tbf();
       Rnd r(seeds[mi.asset() % n_seeds]);
