@@ -96,20 +96,31 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 namespace Gecode {
 
+    namespace {
+
+        /// Free the heap buffer \a p unless it was never allocated
+        void
+        free_buffer(void* p) {
+            if (p != nullptr)
+                heap.rfree(p);
+        }
+
+    } // namespace
+
     /*
      * Tuple set data
      *
      */
     void
     TupleSet::Data::clear_support(void) {
-        heap.rfree(range);
-        heap.rfree(range_base);
-        heap.rfree(support);
-        heap.rfree(sparse_offsets);
-        heap.rfree(sparse_tuples);
-        heap.rfree(sparse_tv);
-        heap.rfree(compressed_offsets);
-        heap.rfree(compressed_words);
+        free_buffer(range);
+        free_buffer(range_base);
+        free_buffer(support);
+        free_buffer(sparse_offsets);
+        free_buffer(sparse_tuples);
+        free_buffer(sparse_tv);
+        free_buffer(compressed_offsets);
+        free_buffer(compressed_words);
         range = nullptr;
         range_base = nullptr;
         support = nullptr;
@@ -215,7 +226,7 @@ namespace Gecode {
         // Initialization
         if (n_tuples == 0) {
             const State selected = empty_state(epk);
-            heap.rfree(td);
+            free_buffer(td);
             td = nullptr;
             guard.commit(selected);
             return;
@@ -256,7 +267,7 @@ namespace Gecode {
                 for (int a = 0; a < arity; a++)
                     if (!Int::Limits::valid(tuples[t][a]))
                         throw Int::OutOfLimits("TupleSet::finalize()");
-            int* new_td = heap.alloc<int>(n_tcells);
+            int* new_td = (n_tcells > 0UL) ? heap.alloc<int>(n_tcells) : nullptr;
             for (int t = 0; t < n_tuples; t++) {
                 for (int a = 0; a < arity; a++) {
                     new_td[static_cast<unsigned long>(t) * static_cast<unsigned long>(arity) +
@@ -265,7 +276,7 @@ namespace Gecode {
                 }
                 tuples[t] = new_td + static_cast<unsigned long>(t) * static_cast<unsigned long>(arity);
             }
-            heap.rfree(td);
+            free_buffer(td);
             td = new_td;
         }
 
@@ -349,7 +360,7 @@ namespace Gecode {
              * Pass 2: allocate memory and fill data structures
              */
             // Allocate memory for ranges
-            Range* range_cursor = range = heap.alloc<Range>(n_ranges);
+            Range* range_cursor = range = (n_ranges > 0U) ? heap.alloc<Range>(n_ranges) : nullptr;
             // Allocate and initialize memory for support data.
             support = nullptr;
             sparse_n_vals = 0U;
@@ -364,7 +375,8 @@ namespace Gecode {
             if (build_dense) {
                 assert((n_words == 0U) || (n_vals <= std::numeric_limits<unsigned int>::max() / n_words));
                 n_support_entries_u32 = n_words * n_vals;
-                support_cursor = support = heap.alloc<BitSetData>(n_support_entries_u32);
+                support_cursor = support =
+                    (n_support_entries_u32 > 0U) ? heap.alloc<BitSetData>(n_support_entries_u32) : nullptr;
                 for (unsigned int i = 0; i < n_support_entries_u32; i++)
                     support_cursor[i].init();
             }
@@ -552,14 +564,15 @@ namespace Gecode {
     TupleSet::Data::resize(void) {
         assert(n_free == 0);
         int n = static_cast<int>(1 + n_tuples * 1.5);
-        td = heap.realloc<int>(td, n_tuples * arity, n * arity);
+        if (arity > 0)
+            td = heap.realloc<int>(td, n_tuples * arity, n * arity);
         n_free = n - n_tuples;
     }
 
     TupleSet::Data::~Data(void) {
         clear_support();
-        heap.rfree(td);
-        heap.rfree(vd);
+        free_buffer(td);
+        free_buffer(vd);
     }
 
     /*
@@ -633,8 +646,8 @@ namespace Gecode {
         assert(layers[0].states[0].tuples != nullptr);
 
         // Allocate temporary memory for edges and supports
-        Edge* edges = r.alloc<Edge>(dfa.max_degree());
-        Support* supports = r.alloc<Support>(dfa.n_symbols());
+        Edge* edges = (dfa.max_degree() > 0U) ? r.alloc<Edge>(dfa.max_degree()) : nullptr;
+        Support* supports = (dfa.n_symbols() > 0U) ? r.alloc<Support>(dfa.n_symbols()) : nullptr;
 
         // Forward pass: accumulate
         for (int i = 0; i < a; i++) {
