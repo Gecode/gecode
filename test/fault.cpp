@@ -1119,26 +1119,41 @@ namespace Test { namespace Fault {
   class LiveRandom : public Support::SplitMix {
   public:
     static int live;
+    /// Number of copies before one throws, or negative to never throw
+    static int copies_before_failure;
     explicit LiveRandom(uint64_t seed=1) : SplitMix(seed) { ++live; }
-    LiveRandom(const LiveRandom& r) : SplitMix(r) { ++live; }
+    LiveRandom(const LiveRandom& r) : SplitMix(r) {
+      if (copies_before_failure == 0) {
+        copies_before_failure = -1;
+        throw MemoryExhausted();
+      }
+      if (copies_before_failure > 0)
+        --copies_before_failure;
+      ++live;
+    }
     explicit LiveRandom(const SplitMix& r) : SplitMix(r) { ++live; }
     ~LiveRandom() { --live; }
     LiveRandom split(uint32_t a) const { return LiveRandom(SplitMix::split(a)); }
   };
   int LiveRandom::live=0;
+  int LiveRandom::copies_before_failure=-1;
 
   class RandomSpace : public Space {
   public:
+    using Random = RndGenerator<LiveRandom>;
     IntVarArray x;
-    RndGenerator<LiveRandom> r;
+    Random r;
     RandomSpace() : x(*this,3,0,2), r(7) {
       IntVarArgs vars(x);
       ViewArray<Int::IntView> views(*this,vars);
       ViewSel<Int::IntView>* selectors[] = {
-        new (*this) ViewSelRnd<Int::IntView,RndGenerator<LiveRandom>>(*this,r)
+        new (*this) ViewSelRnd<Int::IntView,Random>(*this,r),
+        new (*this) ViewSelRnd<Int::IntView,Random>(*this,r)
       };
-      auto* values = Int::Branch::valselcommit(*this,INT_VAL_RND(Rnd(7)));
-      postviewvalbrancher<Int::IntView,1,int,2>(*this,views,selectors,values,nullptr,nullptr);
+      using Values = ValSelCommit<Int::Branch::ValSelRnd<Int::IntView,Random>,
+                                  Int::Branch::ValCommitEq<Int::IntView>>;
+      auto* values = new (*this) Values(*this,INT_VAL_MIN(),r);
+      postviewvalbrancher<Int::IntView,2,int,2>(*this,views,selectors,values,nullptr,nullptr);
       ThrowingBrancher::post(*this);
     }
     RandomSpace(RandomSpace& s) : Space(s), r(s.r) {
@@ -1180,6 +1195,17 @@ namespace Test { namespace Fault {
         Support::FailPoint::reset();
         if (LiveRandom::live!=live || root.r.state()!=state)
           return false;
+        // Fail inside each selector copy of the random brancher.
+        for (int n=0; n<3; ++n) {
+          LiveRandom::copies_before_failure=n;
+          try {
+            std::unique_ptr<Space> copy(root.clone());
+            return false;
+          } catch (const MemoryExhausted&) {}
+          LiveRandom::copies_before_failure=-1;
+          if (LiveRandom::live!=live || root.r.state()!=state)
+            return false;
+        }
         std::unique_ptr<Space> copy(root.clone());
       }
       return LiveRandom::live==0;

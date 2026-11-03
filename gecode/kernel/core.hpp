@@ -2418,13 +2418,14 @@ namespace Gecode {
      *
      * Restart and portfolio engines call this on every slave with the
      * information they pass to slave(), so that slaves cloned from one master
-     * do not repeat its random decisions. Restart or asset number 0 leaves
-     * the state unchanged, so the first slave searches as the model does
-     * without a meta engine. Other numbers split by a separator that no
-     * alternative uses, one for restarts and another for assets, then by the
-     * high and low 32 bits of the number. Restart and portfolio streams thus
-     * stay apart when engines nest. Branchers posted later, during search,
-     * draw from generators their poster owns and are not split here.
+     * do not repeat its random decisions. It splits by a separator that no
+     * alternative uses, one for restarts and another for assets, and then by
+     * the high and low 32 bits of the restart or asset number. Number 0
+     * splits as well, so each level of nested engines adds its own splits:
+     * restart and portfolio streams stay apart, and nested slaves numbered
+     * (0,1) and (1,0) differ. The first slave thus does not repeat a search
+     * without a meta engine. Branchers posted later, during search, draw from
+     * generators their poster owns and are not split here.
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT

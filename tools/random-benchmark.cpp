@@ -114,8 +114,6 @@ int main(int argc, char** argv) {
     }
     return sum;
   });
-  // Warm the shared jump table before measuring xorshift splitting.
-  (void) xs.split(0);
   measure("split.xorshift64star",draws,[&] {
     uint64_t sum=0;
     for (uint64_t i=0; i<draws; ++i) {
@@ -176,3 +174,5 @@ int main(int argc, char** argv) {
   });
   std::cout << "queens.nodes\t" << nodes << "\tnodes\t0\n";
 }
+
+// STATISTICS: support-any

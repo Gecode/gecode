@@ -480,8 +480,6 @@ namespace Test {
     bool restarts_differ() {
       using namespace Gecode;
       Permutation root(Rnd(3));
-      DFS<Permutation> dfs(&root);
-      std::unique_ptr<Permutation> plain(dfs.next());
       Search::Options options;
       options.cutoff = Search::Cutoff::constant(1000);
       RBS<Permutation,DFS> rbs(&root,options);
@@ -491,10 +489,9 @@ namespace Test {
         if (!s) return false;
         found.push_back(s->text());
       }
-      // The first slave keeps the posted state; every restart gets its own.
+      // Every restart, including the first, gets its own stream.
       std::set<std::string> distinct(found.begin(),found.end());
-      return plain && (found[0]==plain->text()) && (found[1]!=found[0]) &&
-        (distinct.size()>=8);
+      return (found[1]!=found[0]) && (distinct.size()>=8);
     }
 
     /// Asset 1's first slave must not repeat restart 1 of asset 0.
@@ -507,6 +504,20 @@ namespace Test {
       std::unique_ptr<Permutation> restart(static_cast<Permutation*>(root.clone()));
       restart->random_split(MetaInfo(1,MetaInfo::RR_LIM,0,0,nullptr,NoGoods::eng));
       return first_solutions(*asset,1)!=first_solutions(*restart,1);
+    }
+
+    /// Nested portfolio slaves (0,1) and (1,0) must not share a stream.
+    bool nested_streams_differ() {
+      using namespace Gecode;
+      Permutation root(Rnd(3));
+      if (root.status()!=SS_BRANCH) return false;
+      std::unique_ptr<Permutation> first(static_cast<Permutation*>(root.clone()));
+      first->random_split(MetaInfo(0U));
+      first->random_split(MetaInfo(1U));
+      std::unique_ptr<Permutation> second(static_cast<Permutation*>(root.clone()));
+      second->random_split(MetaInfo(1U));
+      second->random_split(MetaInfo(0U));
+      return first_solutions(*first,1)!=first_solutions(*second,1);
     }
 
     class Streams : public Base {
@@ -525,7 +536,8 @@ namespace Test {
         OpenPermutation open(Rnd(3));
         auto cloned=first_solutions(open,1);
         return (cloned.size()==40) && (cloned==first_solutions(open,100)) &&
-          restarts_differ() && meta_streams_differ();
+          restarts_differ() && meta_streams_differ() &&
+          nested_streams_differ();
       }
     } streams;
   }

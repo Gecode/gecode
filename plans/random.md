@@ -35,7 +35,8 @@ small enough to store directly in the model, selector, or brancher that uses the
    iteration-state replay commands.
 9. Restart and portfolio engines split every brancher of each slave by the
    restart or asset number, behind separate separators, so slaves explore
-   different random paths even when the engines nest.
+   different random paths even when the engines nest. Number 0 splits too, so
+   nested slaves (0,1) and (1,0) differ.
 10. This remains a provisional breaking-change design, not a compatibility release.
 
 ## Implementation
@@ -82,7 +83,8 @@ small enough to store directly in the model, selector, or brancher that uses the
 
 Use the focused Random::Contract, Random::BranchReplay, Random::CommitBoundary,
 Random::Streams, and FlatZinc::random_intbool_branch tests. Fault::Random::CloneFailures counts inline
-custom-engine instances across failed clones. Existing Boolean, set, float,
+custom-engine instances across failed clones, including a failure inside each
+selector copy of a brancher. Existing Boolean, set, float,
 assignment, LDSB, and FlatZinc restart cases cover their integration paths.
 
 Run random-options and random-state-replay CTests with both configured engines.
@@ -139,6 +141,11 @@ example's full-state replay agrees with its output.
 
 The Space and base Choice implementation matches main exactly, and randomized
 choices are as large as deterministic ones. Rnd is 16 bytes with SplitMix and
-8 with xorshift64*, without shared allocation. The cost measurements in the PR
-description predate this design and must be repeated. Draft PR #241 remains
-provisional, for a future breaking-change release only.
+8 with xorshift64*, without shared allocation. Against the merge base
+(f1a6fa4a75), with Apple Clang 21 on ARM64 and seven alternating runs, bounded
+draws take 0.11x (SplitMix) and 0.24x (xorshift64*) of the old time.
+Cloning stays within run-to-run noise (0.92-1.09x). Recomputation in the
+controlled tree is 12-13% (SplitMix) and 6% (xorshift64*) slower with random
+branching, and 5-8% slower with deterministic branching, as every commit now
+calls Brancher::random_split. Draft PR #241 remains provisional, for a future
+breaking-change release only.

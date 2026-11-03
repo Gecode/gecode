@@ -87,10 +87,11 @@ xorshift64* is available as a smaller-state alternative. The default is
 configurable at build time, and users can supply their own engines.
 Randomized branching splits its generator state by alternative on commit,
 so the state at a node depends only on the path and is reproduced during
-recomputation. Restart and portfolio search split each slave's state, with
-separate streams for restarts and portfolio assets, so slaves explore
-different random paths. Complete-state save/restore and
-command-line state input support exact replay, including test failures.
+recomputation. Restart and portfolio search split each slave's state, the
+first slave included, with separate streams for restarts and portfolio assets,
+so slaves explore different random paths, also when engines nest.
+Complete-state save/restore and command-line state input support exact
+replay, including test failures.
 [MORE]
 Generators store their compact state directly in their consumers, and copying
 a generator produces independent state. Posting splits each selector by its

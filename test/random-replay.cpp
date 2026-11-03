@@ -52,3 +52,5 @@ namespace {
     }
   } failure(false), exception(true);
 }
+
+// STATISTICS: test-core

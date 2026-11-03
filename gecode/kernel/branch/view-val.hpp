@@ -258,8 +258,16 @@ namespace Gecode {
   ViewValBrancher<View,n,Val,a,Filter,Print>::
   ViewValBrancher(Space& home,
                   ViewValBrancher<View,n,Val,a,Filter,Print>& b)
-    : ViewBrancher<View,Filter,n>(home,b),
-      vsc(b.vsc->copy(home)), p(b.p) {}
+    : ViewBrancher<View,Filter,n>(home,b), vsc(nullptr), p(b.p) {
+    try {
+      vsc = b.vsc->copy(home);
+    } catch (...) {
+      // A failed clone cannot dispose a brancher that was never constructed.
+      for (int i=0; i<n; i++)
+        vs[i]->dispose(home);
+      throw;
+    }
+  }
 
   template<class View, int n, class Val, unsigned int a,
            class Filter, class Print>

@@ -62,3 +62,5 @@ int main(int argc, char* argv[]) {
 #endif
   return check<Gecode::Options>(argc,argv);
 }
+
+// STATISTICS: test-core

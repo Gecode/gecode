@@ -159,8 +159,16 @@ namespace Gecode {
                                             ViewBrancher<View,Filter,n>& vb)
     : Brancher(home,vb), start(vb.start), f(vb.f) {
     x.update(home,vb.x);
-    for (int i=0; i<n; i++)
-      vs[i] = vb.vs[i]->copy(home);
+    int copied = 0;
+    try {
+      for (; copied<n; copied++)
+        vs[copied] = vb.vs[copied]->copy(home);
+    } catch (...) {
+      // A failed clone cannot dispose a brancher that was never constructed.
+      for (int i=0; i<copied; i++)
+        vs[i]->dispose(home);
+      throw;
+    }
   }
 
   template<class View, class Filter, int n>
