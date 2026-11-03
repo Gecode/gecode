@@ -3,7 +3,7 @@ schema_version = 1
 id = "empty-arrays-008"
 key = "heap-audit"
 area = "empty-arrays"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -25,9 +25,17 @@ Read the brief's second stage, its Terms, and its Testing paragraphs on the thre
 
 ## Done when
 
-- [ ] .zdev/empty-arrays/background/heap-zero-size.md lists every site found by the static audit and the runtime runs with its call path, minimal input, existing test, evidence kind, and proposed fix, plus the exact scratch patch and commands, and the brief indexes it.
-- [ ] The record lists the static audit's scope (functions and directories covered) so it can be checked for completeness.
+- [x] .zdev/empty-arrays/background/heap-zero-size.md lists every site found by the static audit and the runtime runs with its call path, minimal input, existing test, evidence kind, and proposed fix, plus the exact scratch patch and commands, and the brief indexes it.
+- [x] The record lists the static audit's scope (functions and directories covered) so it can be checked for completeness.
 
 ## Validation
 
 - Rerun the recorded commands for one heap-assertion site and confirm it reproduces; if the UBSan run found a site, rerun it too.
+
+## Result
+
+Recorded 16 zero-size heap, null memcpy, and zero-byte Region sites with inputs, evidence, and fixes in background/heap-zero-size.md, from a bounded static audit, a Debug heap-check check-standard run, a Linux UBSan check-standard run, and probes.
+
+Validation:
+
+- Debug heap-check check-standard 6803/6803; UBSan check-standard on erebor 6804/6804, zero reports; TupleSet Nullary site and Archive UBSan probe reproduced; dictionary site 12 reproduced

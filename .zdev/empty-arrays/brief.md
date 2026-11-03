@@ -122,6 +122,9 @@ shape, so each fixed posting family needs one regression test.
   posting functions were checked for empty arrays, how, and what each does
   now; the FlatZinc and instance-reader findings; and the zero-size requests
   recorded but not fixed.
+- [Zero-size heap requests and null-pointer library calls](background/heap-zero-size.md):
+  the bounded static audit, the scratch heap-check and UBSan runs, and each
+  site with its input, evidence, proposed fix, and owning task.
 
 Second stage: once the heap assertion lands, every Debug suite run checks
 the contract. The evidence differs by kind of site:
