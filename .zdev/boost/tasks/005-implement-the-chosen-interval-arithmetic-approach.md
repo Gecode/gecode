@@ -6,7 +6,7 @@ area = "boost"
 status = "open"
 complexity = "advanced"
 afk = true
-blocked_by = ["boost-004"]
+blocked_by = ["boost-004", "boost-008", "boost-009", "boost-010", "boost-011"]
 +++
 # Implement the chosen interval-arithmetic approach
 
