@@ -222,11 +222,6 @@ namespace Gecode {
         return o1->equal(*o2);
     }
 
-    forceinline bool
-    IntSet::operator!=(const IntSet& s) const {
-        return !(*this == s);
-    }
-
     /*
      * Range iterator for integer sets
      *

@@ -106,6 +106,27 @@ namespace Test { namespace Groups {
         }
     };
 
+    /// %Test for comparing propagator and brancher groups
+    class Compare : public Test::Base {
+    public:
+        /// Initialize test
+        Compare(void) : Test::Base("Group::Compare") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            using namespace Gecode;
+            PropagatorGroup p, q;
+            PropagatorGroup p_copy(p);
+            BrancherGroup b, c;
+            BrancherGroup b_copy(b);
+            return compares_equal(p, p_copy) && compares_unequal(p, q) &&
+                   compares_unequal(PropagatorGroup::all, PropagatorGroup::def) && compares_equal(b, b_copy) &&
+                   compares_unequal(b, c) && compares_unequal(BrancherGroup::all, BrancherGroup::def);
+        }
+    };
+
+    Compare compare;
+
     /// Help class to create and register tests
     class Create {
     public:

@@ -205,10 +205,6 @@ namespace Gecode { namespace Int {
     operator==(const NegBoolView& x, const NegBoolView& y) {
         return x.base() == y.base();
     }
-    forceinline bool
-    operator!=(const NegBoolView& x, const NegBoolView& y) {
-        return !(x == y);
-    }
 
     /**
      * \brief %Range iterator for negated Boolean variable views

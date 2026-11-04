@@ -376,12 +376,7 @@ namespace Gecode { namespace Int {
     template <class View>
     forceinline bool
     operator==(const CachedView<View>& x, const CachedView<View>& y) {
-        return (x.base() == y.base()) && (x.offset() == y.offset());
-    }
-    template <class View>
-    forceinline bool
-    operator!=(const CachedView<View>& x, const CachedView<View>& y) {
-        return !(x == y);
+        return x.base() == y.base();
     }
 
 }} // namespace Gecode::Int

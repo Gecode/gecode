@@ -78,8 +78,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
     /// Whether two items are the same
     bool operator==(const Item& i, const Item& j);
-    /// Whether two items are not the same
-    bool operator!=(const Item& i, const Item& j);
 
     /// Order, also for sorting according to size
     bool operator<(const Item& i, const Item& j);
