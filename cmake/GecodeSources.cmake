@@ -417,6 +417,8 @@ set(GECODE_TEST_SOURCES
   test/float/basic.cpp
   test/float/channel.cpp
   test/float/dom.cpp
+  test/float/interval-oracle.cpp
+  test/float/interval.cpp
   test/float/linear.cpp
   test/float/mm-lin.cpp
   test/float/rel.cpp

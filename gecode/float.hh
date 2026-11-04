@@ -308,6 +308,7 @@ namespace Gecode { namespace Float {
 }} // namespace Gecode::Float
 
 #include <gecode/float/rounding.hpp>
+#include <gecode/float/interval.hpp>
 
 namespace Gecode { namespace Float {
 
