@@ -3,7 +3,7 @@ schema_version = 1
 id = "scoped-enums-001"
 key = "inventory"
 area = "scoped-enums"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 blocked_by = ["config-header-003", "empty-arrays-002", "value-params-003", "boost-005", "empty-arrays-011"]
@@ -24,8 +24,18 @@ The brief settles the spelling (`enum class` plus `using enum` at the enclosing 
 
 ## Done when
 
-- [ ] .zdev/scoped-enums/background/enum-inventory.md has one row per unscoped public enum with its location, the blocked operations and their call sites, the proposed operator signatures and results, the conversions that become explicit, and the recommendation. It also has a separate list of candidate constant renames with reasons, and the brief indexes it.
+- [x] .zdev/scoped-enums/background/enum-inventory.md has one row per unscoped public enum with its location, the blocked operations and their call sites, the proposed operator signatures and results, the conversions that become explicit, and the recommendation. It also has a separate list of candidate constant renames with reasons, and the brief indexes it.
 
 ## Validation
 
 - The commands used to find enums and count uses are recorded so the counts can be reproduced.
+
+## Result
+
+background/enum-inventory.md inventories the 80 unscoped enum declarations in the 636 installed headers: 77 named enums, each probed by scoping it and recompiling every dependent TU, plus 2 anonymous holders and Bison's yytokentype out of scope. It recommends scoping 68 (53 compile unchanged, 15 with local fixes) and keeping 9 bit-set enums, including TraceEvent. ExecStatus and SpaceStatus can be scoped; IntPropLevel needs an unsigned underlying type and |, &, |= operators; two enums inside class templates need static constexpr aliases instead of using enum. It lists candidate constant renames with reasons and use counts, and findings outside the enum question (test/float.cpp:722, val-commit.hpp:130, test/set/mm-set.cpp str(srt0), possible MSVC IntPropLevels signedness). The brief indexes it.
+
+Validation:
+
+- Installed header set from cmake --install equals the set derived from the install rules (636). grep and clang-query agree on all 80 declarations over 490 TUs.
+- 77 per-enum compile probes plus patched re-probes; reproduction commands, scripts and patches embedded in the document.
+- Fresh verifier (gpt-6.1-sol high) FAIL with three findings (ev_t excluded, reproduction inputs missing, rename counts); one correction; focused recheck PASS.

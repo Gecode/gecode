@@ -64,6 +64,17 @@ consumer fixtures cover it.
   `static_assert(!std::is_convertible_v<IntRelType, int>)` in an existing test
   file is enough.
 
+## Background
+
+- [Enum inventory](background/enum-inventory.md): every unscoped enum in the
+  installed headers, with how the header set was derived, a compiler probe
+  per enum that lists the operations scoping blocks and their call sites,
+  the operators and explicit conversions each needs, and a scope-or-keep
+  recommendation with its reason. It covers ExecStatus, SpaceStatus,
+  IntPropLevel's bitwise use, the FlatZinc grammar, and the genvarimp
+  output, lists candidate constant renames for task 002, and records the
+  commands and scripts that reproduce every count.
+
 ## Validation
 
 - `uv run misc/check.py all --build-dir <debug-full-dir> --jobs N`, including
