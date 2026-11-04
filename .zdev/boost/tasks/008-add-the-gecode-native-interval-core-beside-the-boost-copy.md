@@ -3,7 +3,7 @@ schema_version = 1
 id = "boost-008"
 key = "interval-core"
 area = "boost"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -28,11 +28,19 @@ The brief records the decision (Terms and settled decisions: Approach, License).
 
 ## Done when
 
-- [ ] Float::Interval in gecode/float/interval.hpp provides every operation that FloatVal and the float propagators use, written in Gecode style, with the decision comment and no Boost copyright or license text.
-- [ ] Test::Base tests cover outward rounding of + - * / and sqrt on values that are not exactly representable, singleton and empty intervals, throwing empty construction, and the comparison truth table.
-- [ ] The temporary differential test compares Float::Interval with the vendored Boost interval over the diffops grid and finds no difference in bounds, truth values, or exceptions, with and without MPFR.
+- [x] Float::Interval in gecode/float/interval.hpp provides every operation that FloatVal and the float propagators use, written in Gecode style, with the decision comment and no Boost copyright or license text.
+- [x] Test::Base tests cover outward rounding of + - * / and sqrt on values that are not exactly representable, singleton and empty intervals, throwing empty construction, and the comparison truth table.
+- [x] The temporary differential test compares Float::Interval with the vendored Boost interval over the diffops grid and finds no difference in bounds, truth values, or exceptions, with and without MPFR.
 
 ## Validation
 
 - Release and Debug builds with and without MPFR; bin/gecode-test -test Float:: in Release and the check and standard tags in Debug.
 - uv run misc/check.py lint --build-dir build/full and format-check on the changed files.
+
+## Result
+
+Added gecode/float/interval.hpp, a Gecode/MIT Float::Interval written in Gecode style from the mathematics of each operation (sign-class case tables, named helpers, one Float::Rounding per public operation), covering every operation FloatVal uses, with the decision comment acknowledging Boost.Interval as the reference and no Boost license text. float.hh includes it; FloatVal, the rounding layer and the Boost copy are unchanged. Three Test::Base tests (OutwardRounding, SingletonAndEmpty, Comparison) and the temporary Float::Interval::MatchesBoost oracle, which finds no bit difference from the vendored Boost interval over the diffops grid in all four caller modes with and without MPFR.
+
+Validation:
+
+- Release/Debug x MPFR on/off builds without warnings; Float:: Release 1567/1567 and 1429/1429, Debug check+standard 533/533 and 512/512; lint, format-check and doc clean. Fresh verifier (codex gpt-6.1-sol high) reran the interval and arithmetic tests in all builds, ASan/UBSan on the new tests, an oracle mutation (8584 mismatches) and the license comparison; its INT_MIN pow overflow and NaN-comment findings were fixed and passed a focused recheck with UBSan.
