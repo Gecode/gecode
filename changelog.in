@@ -251,6 +251,48 @@ and ceil, which do not depend on the rounding mode. The even-root bounds of
 pow and nroot use the same rounding operations.
 
 [ENTRY]
+Module: float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Implement interval arithmetic in Gecode itself, as the new type
+Float::Interval with its free functions in namespace Gecode::Float. Gecode
+no longer contains, or installs, its renamed copy of the Boost interval
+library and Boost's LICENSE_1_0.txt, and it takes on no external dependency in
+their place. Bounds, comparison results, and search behave exactly as
+before. The empty-interval exception is still a std::runtime_error, but its
+message is now "Gecode::Float::Interval: empty interval".
+[MORE]
+The interval code is Gecode code under Gecode's MIT license.
+
+[ENTRY]
+Module: float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Make Float::RoundingBase and Float::Rounding plain Gecode classes. Their
+arithmetic members are unchanged. RoundingBase no longer derives from a Boost
+rounding class: init, upward, downward, and to_nearest are now protected,
+and toward_zero, get_rounding_mode, set_rounding_mode, to_int, conv_down,
+conv_up, force_rounding, and rounding_mode are gone. Rounding is a scope that
+saves the caller's rounding mode and restores it; it cannot be copied and no
+longer has the mode member or unprotected_rounding typedef of Boost's
+save_state. The typedef RoundingControl is gone, FloatVal::FloatValImpType is
+now Float::Interval, and FloatVal's protected typedefs R and P are gone.
+
+[ENTRY]
+Module: float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Make FloatVal trivially copyable. Its layout is unchanged, but on AArch64 and
+SysV x86-64 it is now passed and returned by value in registers instead of
+through memory. A program built against older headers must be rebuilt: the
+symbol names are unchanged, so the dynamic linker does not catch the
+mismatch. Two exported functions take a FloatVal by value and are affected:
+FloatValArgs::create and Float::Linear::post.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor
