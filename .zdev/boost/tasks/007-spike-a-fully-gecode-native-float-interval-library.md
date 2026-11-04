@@ -3,7 +3,7 @@ schema_version = 1
 id = "boost-007"
 key = "native-spike"
 area = "boost"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -26,10 +26,18 @@ Read the brief in full, then background/approach-study.md (its part (3) lists th
 
 ## Done when
 
-- [ ] .zdev/boost/background/native-spike.md records the prototype's design and size, every measurement against HEAD with the command that produced it, the wider impacts listed in the context, and the proposed child split for boost-005, and the brief indexes it.
-- [ ] The prototype builds with and without MPFR in Debug and Release, and any difference from HEAD in bounds, solutions, search statistics, or test results is listed and explained, or the study says the spike failed and why.
+- [x] .zdev/boost/background/native-spike.md records the prototype's design and size, every measurement against HEAD with the command that produced it, the wider impacts listed in the context, and the proposed child split for boost-005, and the brief indexes it.
+- [x] The prototype builds with and without MPFR in Debug and Release, and any difference from HEAD in bounds, solutions, search statistics, or test results is listed and explained, or the study says the spike failed and why.
 
 ## Validation
 
 - Every number in the study names the command or measurement that produced it.
 - Rerun the rounding probe and the Float:: suite with MPFR on the prototype from the recorded commands.
+
+## Result
+
+Spike verdict: success. A Gecode-native double-only Float::Interval and rounding layer, ported from Boost's algorithms with no Boost code, built in a scratch copy, matches HEAD bit for bit on every oracle on arm64 macOS and x86-64 Linux (GCC 15, Clang 21); only the empty-interval exception text differs. 843 new lines, 95 fewer installed headers, identical exports, same or faster runtime. FloatVal becomes trivially copyable. Study: background/native-spike.md, with a proposed four-part boost-005 split. Open for the user: real MSVC execution needs an authorized CI run; whether the ported file's BSL-1.0 attribution is acceptable.
+
+Validation:
+
+- Fresh verifier (codex gpt-6.1-sol high) reran the native MPFR Float:: suite (1563/1563 passed), all nine rounding-probe binaries (identical to HEAD, 0 unsound), -O2 diffops (404800/381920 rows match), nth-root, comparison, pi and copy-trait probes, patch hash and installed-file counts; two study claims (export count, grep scope) corrected and passed a focused recheck.

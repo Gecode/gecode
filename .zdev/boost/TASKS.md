@@ -4,15 +4,15 @@
 
 - Total: 7
 - Ready: 1
-- Blocked: 2
-- Done: 4
+- Blocked: 1
+- Done: 5
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [boost-001](tasks/001-check-that-directed-rounding-survives-optimization.md) | Check that directed rounding survives optimization | done | — |
 | [boost-002](tasks/002-measure-nextafter-outward-rounding-against-switched-rounding.md) | Measure nextafter outward rounding against switched rounding modes | done | boost-001 |
 | [boost-003](tasks/003-compare-the-refreshed-copy-improved-copy-and-support-library.md) | Compare the refreshed-copy, improved-copy, and support-library approaches | done | boost-001, boost-002 |
-| [boost-004](tasks/004-decide-the-interval-arithmetic-approach.md) | Decide the interval-arithmetic approach | blocked | boost-003, boost-007 |
+| [boost-004](tasks/004-decide-the-interval-arithmetic-approach.md) | Decide the interval-arithmetic approach | ready | boost-003, boost-007 |
 | [boost-005](tasks/005-implement-the-chosen-interval-arithmetic-approach.md) | Implement the chosen interval-arithmetic approach | blocked | boost-004 |
 | [boost-006](tasks/006-keep-directed-rounding-sound-under-optimization.md) | Keep directed rounding sound under optimization | done | — |
-| [boost-007](tasks/007-spike-a-fully-gecode-native-float-interval-library.md) | Spike a fully Gecode-native float interval library | ready | boost-003 |
+| [boost-007](tasks/007-spike-a-fully-gecode-native-float-interval-library.md) | Spike a fully Gecode-native float interval library | done | boost-003 |

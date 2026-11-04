@@ -159,6 +159,11 @@ failing loudly.
   reproduction, builds, probes, the float suite and examples, support-library
   size, and cost and risk. It recommends the support library with
   switched-mode rounding for the user's decision in boost-004.
+- [Native spike](background/native-spike.md): a Gecode-native interval type
+  and rounding layer with no Boost code, built in a scratch copy and measured
+  against HEAD on bounds, the float suite, the examples, the probes, runtime,
+  build time, and installed headers, with its API, ABI, and cross-area impacts
+  and a proposed split of boost-005.
 
 ## Validation
 
