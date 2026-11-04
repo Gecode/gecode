@@ -3,7 +3,7 @@ schema_version = 1
 id = "scoped-enums-002"
 key = "approve"
 area = "scoped-enums"
-status = "open"
+status = "done"
 blocked_by = ["scoped-enums-001"]
 +++
 # Approve the enum inventory and constant renames
@@ -18,8 +18,16 @@ Present background/enum-inventory.md and ask the user to approve, change, or rej
 
 ## Done when
 
-- [ ] The brief lists the approved enums with their operator contracts and the approved renames, including any user changes.
+- [x] The brief lists the approved enums with their operator contracts and the approved renames, including any user changes.
 
 ## Validation
+
+- zdev check scoped-enums
+
+## Result
+
+The user approved the inventory and every candidate rename, and asked that enums hold no member counting bits. The brief records the 68 enums to scope, the 9 to keep, the operator contracts, the bit-width decision, the renames, and the implementation groups.
+
+Validation:
 
 - zdev check scoped-enums

@@ -45,13 +45,30 @@ Success:
 - The first task is a read-only inventory. For each enum it recommends whether
   to scope it, based on how its values are used. No enum is changed before the
   user approves the inventory.
-
-## Open questions
-
-The user decides this after the inventory.
-
-- Which constants count as unclear? Candidates come from the inventory, such
-  as single-letter or numeric-suffix names. The user approves a concrete list.
+- Inventory approved (user, 2026-11-04, scoped-enums-002): all recommendations
+  in background/enum-inventory.md stand. Scope the 68 enums whose rows say
+  scope. Keep these 9 unscoped: `TraceEvent`, both `MaxPropStatus` enums,
+  `Int::Linear::BinMod` and `TerMod`, `Int::GCC::Node::NodeFlag` and
+  `Edge::EdgeFlag`, and Gist's `SpaceNodeFlags` and `VisualNodeFlags`.
+- Operator contracts: only `IntPropLevel` gains operators. It becomes
+  `enum class IntPropLevel : unsigned int` with `constexpr` `operator|`,
+  `operator&`, and `operator|=`. Every other scoped enum gets none; its
+  conversions become the explicit forms its inventory row lists.
+  `ExecStatus` keeps its value order, because `GECODE_ES_CHECK` tests
+  `es < ES_OK`. `CompactStatus<Advisor>::StatusType` and
+  `Par::Engine<Tracer>::Cmd` use `static constexpr` aliases, since `using
+  enum` cannot name a dependent type. `ev_t` becomes `enum class EventType`.
+- Bit width (user, 2026-11-04): an enum holds no member that counts bits.
+  `IPL_BITS_` is removed from `IntPropLevel`. All its uses are the bit-fields
+  of `IntPropLevels`, so that class gets a private `static constexpr int`
+  derived from the enum, `std::bit_width(std::to_underlying(IPL_DOM |
+  IPL_FULL))`, which cannot go stale. This replaces the separate `constexpr
+  int` the inventory's rename table proposes.
+- Renames approved (user, 2026-11-04): every row of the inventory's Candidate
+  constant renames tables, public, test component, and internal, with the
+  proposed spellings. `IPL_BITS_` follows the bit-width decision above.
+- Implementation groups for scope-enums, each compiling on its own: the 53
+  enums that compile unchanged, then the 15 with local changes.
 
 ## Testing
 
