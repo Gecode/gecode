@@ -52,7 +52,7 @@ namespace Gecode {
 
     forceinline FloatVal&
     FloatVal::operator=(const FloatNum& n) {
-        x = n;
+        x = Float::Interval(n);
         return *this;
     }
 
@@ -71,7 +71,7 @@ namespace Gecode {
     }
     forceinline FloatNum
     FloatVal::size(void) const {
-        return gecode_boost::numeric::width(x);
+        return Float::width(x);
     }
     forceinline FloatNum
     FloatVal::med(void) const {
@@ -81,19 +81,19 @@ namespace Gecode {
 
     forceinline bool
     FloatVal::tight(void) const {
-        return (gecode_boost::numeric::singleton(x) || (nextafter(x.lower(), x.upper()) == x.upper()));
+        return (Float::singleton(x) || (nextafter(x.lower(), x.upper()) == x.upper()));
     }
     forceinline bool
     FloatVal::singleton(void) const {
-        return gecode_boost::numeric::singleton(x);
+        return Float::singleton(x);
     }
     forceinline bool
     FloatVal::in(FloatNum n) const {
-        return gecode_boost::numeric::in(n, x);
+        return Float::in(n, x);
     }
     forceinline bool
     FloatVal::zero_in(void) const {
-        return gecode_boost::numeric::zero_in(x);
+        return Float::zero_in(x);
     }
 
     forceinline FloatVal
@@ -103,17 +103,17 @@ namespace Gecode {
     }
     forceinline FloatVal
     FloatVal::pi_half(void) {
-        FloatVal p(gecode_boost::numeric::interval_lib::pi_half<FloatValImpType>());
+        FloatVal p(FloatValImpType::pi_half());
         return p;
     }
     forceinline FloatVal
     FloatVal::pi(void) {
-        FloatVal p(gecode_boost::numeric::interval_lib::pi<FloatValImpType>());
+        FloatVal p(FloatValImpType::pi());
         return p;
     }
     forceinline FloatVal
     FloatVal::pi_twice(void) {
-        FloatVal p(gecode_boost::numeric::interval_lib::pi_twice<FloatValImpType>());
+        FloatVal p(FloatValImpType::pi_twice());
         return p;
     }
 
@@ -226,109 +226,70 @@ namespace Gecode {
         return FloatVal(x / y.x);
     }
 
-    inline bool
+    /*
+     * The relations hold only if they hold for every pair of members of
+     * their operands ("certainly"). Equality of two values is equality of
+     * their bounds.
+     *
+     */
+
+    forceinline bool
     operator<(const FloatVal& x, const FloatVal& y) {
-        try {
-            return x.x < y.x;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::certainly_less(x.x, y.x);
     }
-    inline bool
+    forceinline bool
     operator<(const FloatVal& x, const FloatNum& y) {
-        try {
-            return x.x < y;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::certainly_less(x.x, y);
     }
 
-    inline bool
+    forceinline bool
     operator<=(const FloatVal& x, const FloatVal& y) {
-        try {
-            return x.x <= y.x;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::certainly_less_equal(x.x, y.x);
     }
-    inline bool
+    forceinline bool
     operator<=(const FloatVal& x, const FloatNum& y) {
-        try {
-            return x.x <= y;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::certainly_less_equal(x.x, y);
     }
 
-    inline bool
+    forceinline bool
     operator>(const FloatVal& x, const FloatVal& y) {
-        try {
-            return x.x > y.x;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::certainly_greater(x.x, y.x);
     }
-    inline bool
+    forceinline bool
     operator>(const FloatVal& x, const FloatNum& y) {
-        try {
-            return x.x > y;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::certainly_greater(x.x, y);
     }
 
-    inline bool
+    forceinline bool
     operator>=(const FloatVal& x, const FloatVal& y) {
-        try {
-            return x.x >= y.x;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::certainly_greater_equal(x.x, y.x);
     }
-    inline bool
+    forceinline bool
     operator>=(const FloatVal& x, const FloatNum& y) {
-        try {
-            return x.x >= y;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::certainly_greater_equal(x.x, y);
     }
 
-    inline bool
+    forceinline bool
     operator==(const FloatVal& x, const FloatVal& y) {
-        try {
-            return x.x == y.x;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::equal(x.x, y.x);
     }
     inline bool
     operator==(const FloatVal& x, const FloatNum& y) {
-        if (!gecode_boost::numeric::interval_lib::checking_strict<FloatNum>::is_empty(x.x.lower(), x.x.upper())) {
-            if ((x.x.lower() == y) && (x.x.upper() == y))
-                return true;
-        }
+        if ((x.x.lower() == y) && (x.x.upper() == y))
+            return true;
         if (((x.x.lower() == y) && (nextafter(x.x.lower(), x.x.upper()) == x.x.upper())) ||
             ((x.x.upper() == y) && (nextafter(x.x.upper(), x.x.lower()) == x.x.lower())))
             return true;
         return false;
     }
 
-    inline bool
+    forceinline bool
     operator!=(const FloatVal& x, const FloatVal& y) {
-        try {
-            return x.x != y.x;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::certainly_unequal(x.x, y.x);
     }
-    inline bool
+    forceinline bool
     operator!=(const FloatVal& x, const FloatNum& y) {
-        try {
-            return x.x != y;
-        } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
-            return false;
-        }
+        return Float::certainly_unequal(x.x, y);
     }
 
     forceinline bool

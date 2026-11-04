@@ -32,29 +32,34 @@
 
 namespace Gecode {
 
+    /*
+     * The binary64 neighbours of pi, and their exact halves and doubles
+     *
+     */
+
     forceinline FloatNum
     pi_half_lower(void) {
-        return gecode_boost::numeric::interval_lib::constants::pi_half_lower<FloatNum>();
+        return 0x1.921fb54442d18p+0;
     }
     forceinline FloatNum
     pi_half_upper(void) {
-        return gecode_boost::numeric::interval_lib::constants::pi_half_upper<FloatNum>();
+        return 0x1.921fb54442d19p+0;
     }
     forceinline FloatNum
     pi_lower(void) {
-        return gecode_boost::numeric::interval_lib::constants::pi_lower<FloatNum>();
+        return 0x1.921fb54442d18p+1;
     }
     forceinline FloatNum
     pi_upper(void) {
-        return gecode_boost::numeric::interval_lib::constants::pi_upper<FloatNum>();
+        return 0x1.921fb54442d19p+1;
     }
     forceinline FloatNum
     pi_twice_lower(void) {
-        return gecode_boost::numeric::interval_lib::constants::pi_twice_lower<FloatNum>();
+        return 0x1.921fb54442d18p+2;
     }
     forceinline FloatNum
     pi_twice_upper(void) {
-        return gecode_boost::numeric::interval_lib::constants::pi_twice_upper<FloatNum>();
+        return 0x1.921fb54442d19p+2;
     }
 } // namespace Gecode
 

@@ -37,10 +37,12 @@
 #ifndef GECODE_FLOAT_HH
 #define GECODE_FLOAT_HH
 
+#include <cfenv>
 #include <climits>
 #include <cfloat>
 #include <cmath>
 #include <iostream>
+#include <limits>
 
 #include <functional>
 
@@ -69,8 +71,21 @@
 
 #endif
 
-// Include interval implementation
-#include <gecode/third-party/boost/numeric/interval.hpp>
+/*
+ * Configure rounding control
+ *
+ */
+
+// cl.exe on x86 and x64 sets the rounding mode with _control87. clang-cl
+// defines __x86_64__ and uses <cfenv> like every other compiler.
+#if defined(_MSC_VER) && !defined(__x86_64__) && (defined(_M_X64) || defined(_M_IX86))
+#define GECODE_FLOAT_MODE_CONTROL87
+#include <float.h>
+#endif
+// MSVC on x64, or on x86 with SSE, sets the direction in every operation.
+#if defined(_MSC_VER) && (defined(_M_X64) || (defined(_M_IX86_FP) && (_M_IX86_FP > 0)))
+#define GECODE_FLOAT_DIRECTED_PER_OPERATION
+#endif
 
 /**
  * \namespace Gecode::Float
@@ -120,22 +135,6 @@ namespace Gecode {
 
 namespace Gecode { namespace Float {
 
-#if defined(_MSC_VER) && (defined(_M_X64) || (defined(_M_IX86_FP) && (_M_IX86_FP > 0)))
-
-    /*
-     * This is used for the MSVC compiler for x64 or x86 with SSE enabled.
-     *
-     */
-    /// Rounding operations with explicit direction changes (MSVC/SSE)
-    typedef gecode_boost::numeric::interval_lib::rounded_arith_std<FloatNum> RoundingControl;
-
-#else
-
-    /// Rounding operations that keep upward mode between calls
-    typedef gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum> RoundingControl;
-
-#endif
-
     /**
      * \brief Floating point rounding operations without state saving
      *
@@ -160,26 +159,54 @@ namespace Gecode { namespace Float {
      * `_control87`). IEEE binary64 arithmetic in SSE2 or AArch64 registers is
      * assumed; x87 arithmetic and `-ffast-math` are not supported.
      *
-     * RoundingControl supplies only mode control (`init()`, `upward()`,
-     * `downward()`, and the mode access used by save_state) and the median
-     * behind median(). Its vendored Boost arithmetic is not used, so a
-     * replacement for the Boost copy needs only these members. Outside
-     * MSVC with SSE, the mode stays upward between operations. An upper bound
-     * is computed directly, and a lower bound as the negated upper bound of
-     * the negated operation; sqrt_down() switches to downward mode and back.
-     * With MSVC and SSE (`rounded_arith_std` over `_control87`), each
-     * operation sets its own direction. int_down() and int_up() use
-     * `std::floor` and `std::ceil`, which do not depend on the mode.
+     * The rounding mode is read and set with `std::fegetround` and
+     * `std::fesetround`. Under GECODE_FLOAT_MODE_CONTROL87 (cl.exe on x86 and
+     * x64) it is read and set with `_control87`, which also masks all
+     * floating-point exceptions while Gecode sets a mode and, on x86, selects
+     * 64-bit precision and affine infinity; restoring a mode writes back the
+     * caller's bits. Without GECODE_FLOAT_DIRECTED_PER_OPERATION, the mode
+     * stays upward between operations. An upper bound is computed directly,
+     * and a lower bound as the negated upper bound of the negated operation;
+     * sqrt_down() and median() switch the mode and switch back to upward.
+     * With it (MSVC on x64, or on x86 with SSE), each operation sets its own
+     * direction. int_down() and int_up() use `std::floor` and `std::ceil`,
+     * which do not depend on the mode.
      *
      * The test Float::Arithmetic::DirectedRounding checks the bounds with
      * literal and runtime operands under every caller mode.
      *
      * \ingroup TaskModelFloatVars
      */
-    class RoundingBase : public RoundingControl {
+    class RoundingBase {
+    protected:
+        /// \name Rounding mode control
+        //@{
+#ifdef GECODE_FLOAT_MODE_CONTROL87
+        /// Floating-point control word, as returned by `_control87`
+        typedef unsigned int Mode;
+#else
+        /// Rounding mode, one of the `FE_*` values of `<cfenv>`
+        typedef int Mode;
+#endif
+        /// Return the current rounding mode
+        static Mode current_mode(void);
+        /// Restore mode \a m, as returned by current_mode()
+        static void restore_mode(Mode m);
+        /// Round toward \f$+\infty\f$
+        static void upward(void);
+        /// Round toward \f$-\infty\f$
+        static void downward(void);
+        /// Round to nearest
+        static void to_nearest(void);
+        /// Set the mode that the arithmetic operations expect between calls
+        static void init(void);
+        //@}
+
     private:
         /// Return \a x unchanged, hidden from the optimizer (see the class comment)
         static FloatNum barrier(FloatNum x);
+        /// Return the midpoint of \a x and \a y, rounded to nearest
+        static FloatNum nearest_median(FloatNum x, FloatNum y);
 
     public:
         /// \name Arithmetic operations
@@ -296,13 +323,30 @@ namespace Gecode { namespace Float {
     };
 
     /**
-     * \brief Floating point rounding policy that restores the caller's mode
+     * \brief Scope of floating point rounding operations
      *
-     * Saves the mode before initializing rounding operations and restores it
-     * on destruction. Nested policies restore the enclosing policy's mode.
+     * Saves the caller's rounding mode and initializes the rounding
+     * operations on construction, and restores the saved mode on destruction,
+     * also when an operation throws. Nested scopes restore the enclosing
+     * scope's mode. A copy would restore the mode a second time, so a scope
+     * cannot be copied.
      * \ingroup TaskModelFloatVars
      */
-    class Rounding : public gecode_boost::numeric::interval_lib::save_state<RoundingBase> {};
+    class Rounding : public RoundingBase {
+    private:
+        /// The caller's rounding mode
+        Mode saved;
+
+    public:
+        /// Save the caller's mode and initialize the rounding operations
+        Rounding(void);
+        /// Restore the caller's mode
+        ~Rounding(void);
+        /// A scope cannot be copied
+        Rounding(const Rounding&) = delete;
+        /// A scope cannot be assigned
+        Rounding& operator=(const Rounding&) = delete;
+    };
 
 }} // namespace Gecode::Float
 
@@ -443,13 +487,8 @@ namespace Gecode {
         friend FloatVal Float::hull(const FloatNum& x, const FloatNum& y);
 
     protected:
-        /// Used rounding policies
-        typedef Float::Rounding R;
-        /// Used checking policy
-        typedef gecode_boost::numeric::interval_lib::checking_strict<FloatNum> P;
         /// Implementation type for float value
-        typedef gecode_boost::numeric::interval<FloatNum, gecode_boost::numeric::interval_lib::policies<R, P>>
-            FloatValImpType;
+        typedef Float::Interval FloatValImpType;
         /// Implementation of float value
         FloatValImpType x;
         /// Initialize from implementation \a i

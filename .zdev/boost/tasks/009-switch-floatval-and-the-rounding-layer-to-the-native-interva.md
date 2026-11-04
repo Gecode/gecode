@@ -3,7 +3,7 @@ schema_version = 1
 id = "boost-009"
 key = "interval-switch"
 area = "boost"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -28,12 +28,20 @@ Follow the spike's Prototype sections (Rounding per target, Scope rule, From Boo
 
 ## Done when
 
-- [ ] gecode/float.hh, gecode/float/*.hpp, and the float sources include no Boost header, and FloatVal::FloatValImpType is Float::Interval.
-- [ ] The differential test, the rounding probe from background/rounding-probe.md against a fresh install, and the float examples' solutions and search statistics match HEAD before the switch.
-- [ ] RoundingScope checks the same properties with native types, and FloatVal is asserted trivially copyable.
+- [x] gecode/float.hh, gecode/float/*.hpp, and the float sources include no Boost header, and FloatVal::FloatValImpType is Float::Interval.
+- [x] The differential test, the rounding probe from background/rounding-probe.md against a fresh install, and the float examples' solutions and search statistics match HEAD before the switch.
+- [x] RoundingScope checks the same properties with native types, and FloatVal is asserted trivially copyable.
 
 ## Validation
 
 - Release and Debug builds with and without MPFR, ctest, and bin/gecode-test -test Float:: in Release; the check and standard tags in Debug.
 - The rounding probe matrix against a fresh install, and the four float examples compared with HEAD.
 - The syntax-only MSVC check of the _control87 code from the spike (msvc/check.sh).
+
+## Result
+
+FloatVal stores Float::Interval. Float::RoundingBase and Float::Rounding are Gecode classes: mode control with <cfenv>, or _control87 written from Microsoft's documentation under GECODE_FLOAT_MODE_CONTROL87, a non-copyable Rounding scope that saves, initializes and restores the mode, boost-006 barriers kept and documented. val.hpp forwards to the native functions and implements the certainly comparisons without catching exceptions; num.hpp gives pi as hexfloats. No float header includes Boost. RoundingScope keeps all its checks with native types; FloatVal is asserted trivially copyable and Rounding non-copyable; MatchesBoost compares FloatVal with the Boost interval, ignoring only the unspecified sign bit of NaN bounds.
+
+Validation:
+
+- Release/Debug x MPFR on/off builds without warnings; Float:: Release 1567/1567 and 1429/1429, Debug check+standard 533/533 and 512/512; ctest 7/7; rounding probe identical to HEAD in all 9 arm64 configurations; examples identical; diffops at -O2 identical to HEAD (verifier reran it at raw-bit level, 404800 rows); MSVC syntax check unchanged; lint, format and doc clean. erebor x86-64 GCC 15 and Clang 21: examples, probe and diffops match HEAD, Float:: check+standard 533/533. Fresh verifier (codex gpt-6.1-sol high) found the oracle erased all NaN bits; fixed to clear only the sign, rerun locally and on erebor (152/152 each), focused recheck passed.
