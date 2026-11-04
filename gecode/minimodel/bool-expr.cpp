@@ -240,7 +240,7 @@ namespace Gecode {
         return *this;
     }
 
-    BoolExpr::Misc::~Misc(void) {}
+    BoolExpr::Misc::~Misc(void) = default;
 
     BoolExpr::~BoolExpr(void) {
         if (n->decrement())

@@ -146,6 +146,7 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     BrancherNoPrint<View, Val>::BrancherNoPrint(BrancherNoPrint<View, Val>&) {}
 
     template <class View, class Val>

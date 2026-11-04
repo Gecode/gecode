@@ -141,11 +141,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         : s(t) {}
 
     template <class Advisor>
-    forceinline
-    CompactStatus<Advisor>::CompactStatus(const CompactStatus& status)
-        : s(status.s) {}
-
-    template <class Advisor>
     forceinline typename CompactStatus<Advisor>::StatusType
     CompactStatus<Advisor>::type(void) const {
         return static_cast<StatusType>(s & 0b11);

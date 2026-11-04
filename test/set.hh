@@ -77,7 +77,7 @@ namespace Test {
 
         public:
             /// Default constructor
-            CountableSetValues(void) {}
+            CountableSetValues(void) = default;
             /// Initialize with set \a d0 and bit-pattern \a cur0
             CountableSetValues(const Gecode::IntSet& d0, int cur0) : dv(d0), cur(cur0), i(1) {
                 if (!(i & cur))
@@ -120,7 +120,7 @@ namespace Test {
 
         public:
             /// Default constructor
-            CountableSetRanges(void) {}
+            CountableSetRanges(void) = default;
             /// Initialize with set \a d0 and bit-pattern \a cur0
             CountableSetRanges(const Gecode::IntSet& d, int cur) : v(d, cur) {
                 Gecode::Iter::Values::ToRanges<CountableSetValues>::init(v);
@@ -147,7 +147,7 @@ namespace Test {
             /// Initialize with set \a s
             CountableSet(const Gecode::IntSet& s);
             /// Default constructor
-            CountableSet(void) {}
+            CountableSet(void) = default;
             /// Initialize with set \a s
             void init(const Gecode::IntSet& s);
             /// Check if still subsets left

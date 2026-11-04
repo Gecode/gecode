@@ -458,16 +458,13 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void);
+        LubRanges(void) = default;
         /// Initialize with ranges for variable implementation \a x
         LubRanges(const SetVarImp*);
         /// Initialize with ranges for variable implementation \a x
         void init(const SetVarImp*);
         //@}
     };
-
-    forceinline
-    LubRanges<SetVarImp*>::LubRanges(void) {}
 
     forceinline
     LubRanges<SetVarImp*>::LubRanges(const SetVarImp* x)
@@ -492,16 +489,13 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void);
+        GlbRanges(void) = default;
         /// Initialize with ranges for variable implementation \a x
         GlbRanges(const SetVarImp* x);
         /// Initialize with ranges for variable implementation \a x
         void init(const SetVarImp*);
         //@}
     };
-
-    forceinline
-    GlbRanges<SetVarImp*>::GlbRanges(void) {}
 
     forceinline
     GlbRanges<SetVarImp*>::GlbRanges(const SetVarImp* x)

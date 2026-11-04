@@ -59,7 +59,7 @@ namespace Gecode { namespace Int {
 
     public:
         /// Constructor for creating static instance of variable
-        IntVarImpBase(void);
+        IntVarImpBase(void) = default;
         /// Constructor for creating variable
         IntVarImpBase(Gecode::Space& home);
         /// \name Dependencies
@@ -106,7 +106,7 @@ namespace Gecode { namespace Int {
 
     public:
         /// Constructor for creating static instance of variable
-        BoolVarImpBase(void);
+        BoolVarImpBase(void) = default;
         /// Constructor for creating variable
         BoolVarImpBase(Gecode::Space& home);
         /// \name Dependencies
@@ -153,7 +153,7 @@ namespace Gecode { namespace Set {
 
     public:
         /// Constructor for creating static instance of variable
-        SetVarImpBase(void);
+        SetVarImpBase(void) = default;
         /// Constructor for creating variable
         SetVarImpBase(Gecode::Space& home);
         /// \name Dependencies
@@ -200,7 +200,7 @@ namespace Gecode { namespace Float {
 
     public:
         /// Constructor for creating static instance of variable
-        FloatVarImpBase(void);
+        FloatVarImpBase(void) = default;
         /// Constructor for creating variable
         FloatVarImpBase(Gecode::Space& home);
         /// \name Dependencies
@@ -239,9 +239,6 @@ namespace Gecode { namespace Float {
 #endif
 #ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int {
-
-    forceinline
-    IntVarImpBase::IntVarImpBase(void) {}
 
     forceinline
     IntVarImpBase::IntVarImpBase(Gecode::Space& home)
@@ -304,9 +301,6 @@ namespace Gecode { namespace Int {
 namespace Gecode { namespace Int {
 
     forceinline
-    BoolVarImpBase::BoolVarImpBase(void) {}
-
-    forceinline
     BoolVarImpBase::BoolVarImpBase(Gecode::Space& home)
         : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home) {}
 
@@ -346,9 +340,6 @@ namespace Gecode { namespace Int {
 #endif
 #ifdef GECODE_HAS_SET_VARS
 namespace Gecode { namespace Set {
-
-    forceinline
-    SetVarImpBase::SetVarImpBase(void) {}
 
     forceinline
     SetVarImpBase::SetVarImpBase(Gecode::Space& home)
@@ -440,9 +431,6 @@ namespace Gecode { namespace Set {
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
 namespace Gecode { namespace Float {
-
-    forceinline
-    FloatVarImpBase::FloatVarImpBase(void) {}
 
     forceinline
     FloatVarImpBase::FloatVarImpBase(Gecode::Space& home)

@@ -122,7 +122,7 @@ namespace Gecode {
     forceinline
     ValSelCommitBase<View, Val>::ValSelCommitBase(Space&, ValSelCommitBase<View, Val>&) {}
     template <class View, class Val>
-    ValSelCommitBase<View, Val>::~ValSelCommitBase(void) {}
+    ValSelCommitBase<View, Val>::~ValSelCommitBase(void) = default;
 
     template <class View, class Val>
     forceinline void

@@ -103,10 +103,10 @@ namespace Gecode {
          * yet initialized chb storage is init and the assignment operator.
          *
          */
-        CHB(void);
+        CHB(void) = default;
         /// Copy constructor
         GECODE_KERNEL_EXPORT
-        CHB(const CHB& a);
+        CHB(const CHB& a) = default;
         /// Assignment operator
         GECODE_KERNEL_EXPORT
         CHB& operator=(const CHB& a);
@@ -130,7 +130,7 @@ namespace Gecode {
 
         /// Destructor
         GECODE_KERNEL_EXPORT
-        ~CHB(void);
+        ~CHB(void) = default;
 
         /// \name Information access
         //@{
@@ -336,9 +336,6 @@ namespace Gecode {
     CHB::update(int i, bool failed) {
         object().update(i, failed);
     }
-
-    forceinline
-    CHB::CHB(void) {}
 
     template <class View>
     forceinline

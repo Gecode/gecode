@@ -257,7 +257,7 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 // Constructor
-                TestSpace(void) {}
+                TestSpace(void) = default;
                 // Copy function
                 Gecode::Space*
                 copy(void) override {
@@ -322,7 +322,7 @@ namespace Test { namespace Int {
             /// Simple test space class
             class TestSpace : public Gecode::Space {
             public:
-                TestSpace(void) {}
+                TestSpace(void) = default;
                 Gecode::Space*
                 copy(void) override {
                     return nullptr;
@@ -367,6 +367,7 @@ namespace Test { namespace Int {
             class Fixture : public Gecode::Space {
             public:
                 Fixture(void) = default;
+                // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
                 copy(void) override {

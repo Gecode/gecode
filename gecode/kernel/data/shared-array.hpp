@@ -113,7 +113,7 @@ namespace Gecode {
          * yet initialized shared array is init and the assignment operator .
          *
          */
-        SharedArray(void);
+        SharedArray(void) = default;
         /// Initialize as array with \a n elements
         SharedArray(int n);
         /**
@@ -237,10 +237,6 @@ namespace Gecode {
     SharedArray<T>::SAO::end(void) const {
         return a + n;
     }
-
-    template <class T>
-    forceinline
-    SharedArray<T>::SharedArray(void) {}
 
     template <class T>
     forceinline

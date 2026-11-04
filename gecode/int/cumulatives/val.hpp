@@ -131,6 +131,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         Event(ev_t _e, int _task, int _date, int _inc = 0) : e(_e), task(_task), date(_date), inc(_inc) {}
 
         // Default constructor for region-allocated memory
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         Event(void) {}
 
         /// Order events based on date.

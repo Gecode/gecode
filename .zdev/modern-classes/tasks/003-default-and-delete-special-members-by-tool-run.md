@@ -3,7 +3,7 @@ schema_version = 1
 id = "modern-classes-003"
 key = "equals-default"
 area = "modern-classes"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "normal"
@@ -26,12 +26,20 @@ Apply the inventory's treatment for the two checks: run clang-tidy 22 with -chec
 
 ## Done when
 
-- [ ] clang-tidy with both checks reports nothing over the lint configuration, both checks are enabled in .clang-tidy, and every manual candidate in the inventory is applied or kept with the reason in the result.
-- [ ] The commit message gives the complete command sequence, and rerunning it on the parent commit reproduces the commit.
-- [ ] docs/code-style.md states the rule.
+- [x] clang-tidy with both checks reports nothing over the lint configuration, both checks are enabled in .clang-tidy, and every manual candidate in the inventory is applied or kept with the reason in the result.
+- [x] The commit message gives the complete command sequence, and rerunning it on the parent commit reproduces the commit.
+- [x] docs/code-style.md states the rule.
 
 ## Validation
 
 - Build target regenerate, then .github/ci/generated-source-freshness.sh.
 - uv run misc/check.py lint --build-dir build/full and check-standard in build/full.
 - uv run misc/check.py all --build-dir build/full --jobs N before the commit.
+
+## Result
+
+Enabled modernize-use-equals-default and modernize-use-equals-delete. Special members were defaulted and deleted by a reproducible clang-tidy 22 --fix run plus recorded scripts in .zdev/modern-classes/background/equals-default/: genvarimp.py change and regenerate, NOLINT for 68 kept members (26 cloning constructors, a configuration-dependent constructor, 41 default constructors of value-initialized types), relocation of 194 out-of-line defaults in-class, and a manual patch (private undefined members made public = delete, deleted operator new/delete, Heap's PEAKHEAP counters as default member initializers, .clang-tidy, docs/code-style.md, changelog including the const default-initialization source break).
+
+Validation:
+
+- Independent verifier: full review found two issues (Heap PEAKHEAP zeroing lost; changelog missed the const default-init break), fixed in one correction pass, focused recheck PASS. Evidence: reproduce.sh on a fresh git archive of 0ecc0550d2 gives an identical tree; regenerate + generated-source freshness passed; build/full and build/local (Release, experimental OFF) incl. gecode-test with 0 warnings; lint clean; check-standard 6820/6820; focused tests after the fix 26065/26065; check.py all rc=0.

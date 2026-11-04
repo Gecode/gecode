@@ -45,7 +45,7 @@ namespace Test { namespace Float {
     Assignment::size(void) const {
         return n;
     }
-    inline Assignment::~Assignment(void) {}
+    inline Assignment::~Assignment(void) = default;
 
     inline CpltAssignment::CpltAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s)
         : Assignment(n, d), dsv(new Gecode::FloatVal[static_cast<unsigned int>(n)]), step(s) {

@@ -41,8 +41,6 @@ namespace Gecode {
      *
      */
     forceinline
-    FloatVal::FloatVal(void) {}
-    forceinline
     FloatVal::FloatVal(const FloatNum& n)
         : x(n) {}
     forceinline
@@ -51,18 +49,10 @@ namespace Gecode {
     forceinline
     FloatVal::FloatVal(const FloatValImpType& i)
         : x(i) {}
-    forceinline
-    FloatVal::FloatVal(const FloatVal& v)
-        : x(v.x) {}
 
     forceinline FloatVal&
     FloatVal::operator=(const FloatNum& n) {
         x = n;
-        return *this;
-    }
-    forceinline FloatVal&
-    FloatVal::operator=(const FloatVal& v) {
-        x = v.x;
         return *this;
     }
 

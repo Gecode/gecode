@@ -664,7 +664,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
     {d['class']}(Gecode::Space& home, {d['class']}& x);
   public:
     /// Constructor for creating static instance of variable
-    {d['class']}(void);
+    {d['class']}(void) = default;
     /// Constructor for creating variable
     {d['class']}(Gecode::Space& home);
     /// \\name Dependencies
@@ -720,9 +720,6 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
             out.append(
                 f"""
   forceinline
-  {d['class']}::{d['class']}(void) {{}}
-
-  forceinline
   {d['class']}::{d['class']}(Gecode::Space& home)
     : {d['base']}(home) {{
      _next_d = static_cast<{d['class']}*>(vars_d(home)); vars_d(home,this);
@@ -744,9 +741,6 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
         else:
             out.append(
                 f"""
-  forceinline
-  {d['class']}::{d['class']}(void) {{}}
-
   forceinline
   {d['class']}::{d['class']}(Gecode::Space& home)
     : {d['base']}(home) {{}}

@@ -42,6 +42,7 @@ namespace Gecode { namespace Search { namespace Seq {
      */
     template <class Tracer>
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     Path<Tracer>::Edge::Edge(void) {}
 
     template <class Tracer>

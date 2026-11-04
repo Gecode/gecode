@@ -35,10 +35,6 @@
 namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
-    forceinline
-    Graph<View>::Graph(void) {}
-
-    template <class View>
     forceinline ExecStatus
     Graph<View>::init(Space& home, ViewArray<View>& x) {
         using namespace ViewValGraph;

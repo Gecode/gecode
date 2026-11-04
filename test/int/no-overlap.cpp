@@ -273,6 +273,7 @@ namespace Test { namespace Int {
             class Fixture : public Gecode::Space {
             public:
                 Fixture(void) = default;
+                // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
                 copy(void) override {

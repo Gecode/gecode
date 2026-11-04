@@ -1,0 +1,69 @@
+# path	definition line reported by modernize-use-equals-default	reason it stays hand-written
+examples/job-shop.cpp	JobShopProbe(JobShopProbe& s) : JobShopBase(s) {}	cloning constructor (not a copy member; see the brief)
+examples/job-shop.cpp	JobShopSolve(JobShopSolve& s)	cloning constructor (not a copy member; see the brief)
+examples/knights.cpp	KnightsReified(KnightsReified& s) : Knights(s) {}	cloning constructor (not a copy member; see the brief)
+examples/knights.cpp	KnightsCircuit(KnightsCircuit& s) : Knights(s) {}	cloning constructor (not a copy member; see the brief)
+examples/sudoku-advanced.cpp	Sudoku(Sudoku& s) : Script(s), nn(s.nn), bw(s.bw), bh(s.bh), givens(s.givens) {}	cloning constructor (not a copy member; see the brief)
+gecode/kernel/branch/filter.hpp	BrancherNoFilter<View>::BrancherNoFilter(BrancherNoFilter<View>&) {}	cloning constructor (not a copy member; see the brief)
+gecode/kernel/branch/print.hpp	BrancherNoPrint<View, Val>::BrancherNoPrint(BrancherNoPrint<View, Val>&) {}	cloning constructor (not a copy member; see the brief)
+gecode/minimodel/optimize.hpp	IntMinimizeSpace::IntMinimizeSpace(IntMinimizeSpace& s)	cloning constructor (not a copy member; see the brief)
+gecode/minimodel/optimize.hpp	IntMaximizeSpace::IntMaximizeSpace(IntMaximizeSpace& s)	cloning constructor (not a copy member; see the brief)
+gecode/minimodel/optimize.hpp	IntLexMinimizeSpace::IntLexMinimizeSpace(IntLexMinimizeSpace& s)	cloning constructor (not a copy member; see the brief)
+gecode/minimodel/optimize.hpp	FloatMinimizeSpace::FloatMinimizeSpace(FloatMinimizeSpace& s)	cloning constructor (not a copy member; see the brief)
+test/array.cpp	TestSpace(TestSpace& s) : Space(s) {}	cloning constructor (not a copy member; see the brief)
+test/branch.cpp	EmptySpace(EmptySpace& s) : Gecode::Space(s) {}	cloning constructor (not a copy member; see the brief)
+test/fault.cpp	CloneCopySpace(CloneCopySpace& s) : Space(s) {}	cloning constructor (not a copy member; see the brief)
+test/fault.cpp	NoticeDisposeSpace(NoticeDisposeSpace& s) : Space(s) {}	cloning constructor (not a copy member; see the brief)
+test/fault.cpp	MiniModelSpace(MiniModelSpace& s) : Space(s) {}	cloning constructor (not a copy member; see the brief)
+test/float/arithmetic.cpp	EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {}	cloning constructor (not a copy member; see the brief)
+test/int/bin-packing.cpp	Fixture(Fixture& fixture) : Gecode::Space(fixture) {}	cloning constructor (not a copy member; see the brief)
+test/int/cumulative.cpp	OptionalSubsetFixture(OptionalSubsetFixture& fixture) : Gecode::Space(fixture) {}	cloning constructor (not a copy member; see the brief)
+test/int/distinct.cpp	TestSpace(TestSpace& s) : Gecode::Space(s) {}	cloning constructor (not a copy member; see the brief)
+test/int/gcc.cpp	Fixture(Fixture& fixture) : Gecode::Space(fixture) {}	cloning constructor (not a copy member; see the brief)
+test/int/no-overlap.cpp	Fixture(Fixture& fixture) : Gecode::Space(fixture) {}	cloning constructor (not a copy member; see the brief)
+test/region.cpp	EmptySpace(EmptySpace& s) : Gecode::Space(s) {}	cloning constructor (not a copy member; see the brief)
+test/search.cpp	Fixture(Fixture& fixture) : Gecode::Space(fixture) {}	cloning constructor (not a copy member; see the brief)
+test/search.cpp	TreeSpace(TreeSpace& s)	cloning constructor (not a copy member; see the brief)
+test/search.cpp	TestSpace(TestSpace& s) : Space(s) {}	cloning constructor (not a copy member; see the brief)
+gecode/flatzinc/blackbox-process.hh	BlackBoxProcessSession(void)	initializes owner when GECODE_HAS_THREADS is defined; empty only in units that include the header first
+examples/open-shop.cpp	Task(void) {}	value-initialized (zeroing.py); default-initialization leaves j, m, p indeterminate
+gecode/flatzinc/ast.hh	SetLit(void) {}	value-initialized (zeroing.py); default-initialization leaves interval, min, max indeterminate
+gecode/flatzinc/parser.hh	SymbolEntry(void) {}	value-initialized (zeroing.py); default-initialization leaves t, i indeterminate
+gecode/int/bin-packing/conflict-graph.hpp	ConflictGraph::Node::Node(void) {}	value-initialized (zeroing.py); default-initialization leaves d, w indeterminate
+gecode/int/bin-packing/propagate.hpp	SizeSetMinusOne::SizeSetMinusOne(void) {}	value-initialized (zeroing.py); default-initialization leaves n, t, s, p indeterminate
+gecode/int/cumulative/task.hpp	ManFixPTask::ManFixPTask(void) {}	value-initialized (zeroing.py); default-initialization leaves _c and the base's _p indeterminate
+gecode/int/cumulative/task.hpp	ManFixPSETask::ManFixPSETask(void) {}	value-initialized (zeroing.py); default-initialization leaves _c and the base's _t, _p indeterminate
+gecode/int/cumulative/task.hpp	ManFlexTask::ManFlexTask(void) {}	value-initialized (zeroing.py); default-initialization leaves _c indeterminate
+gecode/int/cumulative/task.hpp	OptFixPTask::OptFixPTask(void) {}	value-initialized (zeroing.py); default-initialization leaves the bases' _c, _p indeterminate
+gecode/int/cumulative/task.hpp	OptFixPSETask::OptFixPSETask(void) {}	value-initialized (zeroing.py); default-initialization leaves the bases' _c, _t, _p indeterminate
+gecode/int/cumulative/task.hpp	OptFlexTask::OptFlexTask(void) {}	value-initialized (zeroing.py); default-initialization leaves the base's _c indeterminate
+gecode/int/cumulatives/val.hpp	Event(void) {}	value-initialized (zeroing.py); default-initialization leaves e, task, date, inc indeterminate
+gecode/int/extensional/dfa.hpp	DFA::Transition::Transition(void) {}	value-initialized (zeroing.py); default-initialization leaves i_state, symbol, o_state indeterminate
+gecode/int/gcc/view.hpp	CardConst::CardConst(void) {}	value-initialized (zeroing.py); default-initialization leaves _min, _max, _card, _counter indeterminate
+gecode/int/gcc/view.hpp	CardView::CardView(void) {}	value-initialized (zeroing.py); default-initialization leaves _card, _counter indeterminate
+gecode/int/growable-int-set.hh	Range(void) {}	value-initialized (zeroing.py); default-initialization leaves min, max indeterminate
+gecode/int/trace/int-trace-view.hpp	IntTraceView::IntTraceView(void) {}	value-initialized (zeroing.py); default-initialization leaves dom indeterminate
+gecode/int/unary/task.hpp	ManFixPTask::ManFixPTask(void) {}	value-initialized (zeroing.py); default-initialization leaves _p indeterminate
+gecode/int/unary/task.hpp	ManFixPSETask::ManFixPSETask(void) {}	value-initialized (zeroing.py); default-initialization leaves _t and the base's _p indeterminate
+gecode/int/unary/task.hpp	OptFixPTask::OptFixPTask(void) {}	value-initialized (zeroing.py); default-initialization leaves the base's _p indeterminate
+gecode/int/unary/task.hpp	OptFixPSETask::OptFixPSETask(void) {}	value-initialized (zeroing.py); default-initialization leaves the bases' _t, _p indeterminate
+gecode/int/var-imp/int.hpp	IntVarImp::RangeList::RangeList(void) {}	value-initialized (zeroing.py); default-initialization leaves _min, _max and the base's _next indeterminate
+gecode/int/var/int.hpp	IntVarRanges::IntVarRanges(void) {}	value-initialized (zeroing.py); default-initialization leaves the base's p, c indeterminate
+gecode/int/view/int.hpp	ViewRanges<IntView>::ViewRanges(void) {}	value-initialized (zeroing.py); default-initialization leaves the base's p, c indeterminate
+gecode/int/view/minus.hpp	ViewRanges<MinusView>::ViewRanges(void) {}	value-initialized (zeroing.py); default-initialization leaves the base's p, c indeterminate
+gecode/int/view/constint.hpp	ConstIntView::ConstIntView(void) {}	value-initialized (zeroing.py); default-initialization leaves x indeterminate
+gecode/int/view/offset.hpp	OffsetView::OffsetView(void) {}	value-initialized (zeroing.py); default-initialization leaves c indeterminate
+gecode/int/view/scale.hpp	ScaleView<Val, UnsVal>::ScaleView(void) {}	value-initialized (zeroing.py); default-initialization leaves a indeterminate
+gecode/kernel/range-list.hpp	RangeList::RangeList(void) {}	value-initialized (zeroing.py); default-initialization leaves _min, _max and the base's _next indeterminate
+gecode/kernel/trace/filter.cpp	TraceFilter::TFO::StackFrame::StackFrame(void) {}	value-initialized (zeroing.py); default-initialization leaves n, neg indeterminate
+gecode/search/par/path.hpp	Path<Tracer>::Edge::Edge(void) {}	value-initialized (zeroing.py); default-initialization leaves _space, _alt, _alt_max, _choice, _nid indeterminate
+gecode/search/seq/path.hpp	Path<Tracer>::Edge::Edge(void) {}	value-initialized (zeroing.py); default-initialization leaves _space, _alt, _choice, _nid indeterminate
+gecode/search/seq/lds.hpp	Probe<Tracer>::Node::Node(void) {}	value-initialized (zeroing.py); default-initialization leaves _space, _choice, _alt, _nid indeterminate
+gecode/search/tracer.hpp	SearchTracer::EngineInfo::EngineInfo(void) {}	value-initialized (zeroing.py); default-initialization leaves _type, _fst, _lst indeterminate
+gecode/set/trace/trace-view.hpp	SetTraceView::SetTraceView(void) {}	value-initialized (zeroing.py); default-initialization leaves _glb, _lub indeterminate
+gecode/set/view/const.hpp	LubRanges(void) {}	LubRanges<ConstSetView> is value-initialized (zeroing.py); default-initialization leaves ar's fields indeterminate	2
+gecode/set/view/const.hpp	GlbRanges(void) {}	GlbRanges<ConstSetView> is value-initialized (zeroing.py); default-initialization leaves the base's ar fields indeterminate	2
+gecode/set/view/set.hpp	LubRanges<SetView>::LubRanges(void) {}	value-initialized (zeroing.py); default-initialization leaves the base's c indeterminate
+gecode/set/view/set.hpp	GlbRanges<SetView>::GlbRanges(void) {}	value-initialized (zeroing.py); default-initialization leaves the base's c indeterminate
+gecode/set/view/singleton.hpp	LubRanges<SingletonView>::LubRanges(void) {}	value-initialized (zeroing.py); default-initialization leaves the base's p, c indeterminate
+gecode/set/view/singleton.hpp	GlbRanges<SingletonView>::GlbRanges(void) {}	value-initialized (zeroing.py); default-initialization leaves val, flag indeterminate

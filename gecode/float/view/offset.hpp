@@ -39,8 +39,6 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline
-    OffsetView::OffsetView(void) {}
-    forceinline
     OffsetView::OffsetView(const FloatView& y, FloatNum d)
         : DerivedView<FloatView>(y), c(d) {}
 

@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Offset(void);
+        Offset(void) = default;
         /// Initialize with values from \a i and offset \a c
         Offset(I& i, int c);
         /// Initialize with values from \a i and offset \a c
@@ -70,10 +70,6 @@ namespace Gecode { namespace Iter { namespace Values {
         int val(void) const;
         //@}
     };
-
-    template <class I>
-    forceinline
-    Offset<I>::Offset(void) {}
 
     template <class I>
     forceinline void

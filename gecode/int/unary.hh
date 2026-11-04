@@ -277,7 +277,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFlexTask(void);
+        ManFlexTask(void) = default;
         /// Initialize with start time \a s, processing time \a p, end time \a e
         ManFlexTask(IntVar s, IntVar p, IntVar e);
         /// Initialize with start time \a s, processing time \a p, end time \a e
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFlexTask(void);
+        OptFlexTask(void) = default;
         /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
         OptFlexTask(IntVar s, IntVar p, IntVar e, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m

@@ -125,7 +125,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             const Support* s2; ///< End of support
         public:
             /// Default constructor
-            LayerValues(void);
+            LayerValues(void) = default;
             /// Initialize for support of layer \a l
             LayerValues(const Layer& l);
             /// Initialize for support of layer \a l
@@ -483,7 +483,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Initialize with status \a t
         CompactStatus(StatusType t);
         /// Copy constructor
-        CompactStatus(const CompactStatus& status);
+        CompactStatus(const CompactStatus& status) = default;
         /// Return status type
         StatusType type(void) const;
         /// Test whether only advisor \a a was touched

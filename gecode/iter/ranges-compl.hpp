@@ -56,7 +56,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Compl(void);
+        Compl(void) = default;
         /// Initialize with iterator \a i
         Compl(I& i);
         /// Initialize with iterator \a i
@@ -94,7 +94,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ComplVal(void);
+        ComplVal(void) = default;
         /// Initialize with iterator \a i
         ComplVal(int umin, int umax, I& i);
         /// Initialize with iterator \a i
@@ -128,10 +128,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
             ma = UMAX;
         }
     }
-
-    template <int UMIN, int UMAX, class I>
-    forceinline
-    Compl<UMIN, UMAX, I>::Compl(void) {}
 
     template <int UMIN, int UMAX, class I>
     forceinline
@@ -180,10 +176,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
             ma = universe_max;
         }
     }
-
-    template <class I>
-    forceinline
-    ComplVal<I>::ComplVal(void) {}
 
     template <class I>
     forceinline

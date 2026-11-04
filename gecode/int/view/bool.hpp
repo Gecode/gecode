@@ -41,8 +41,6 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline
-    BoolView::BoolView(void) {}
-    forceinline
     BoolView::BoolView(const BoolVar& y)
         : VarImpView<BoolVar>(y.varimp()) {}
     forceinline
@@ -290,16 +288,13 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges(void) = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const BoolView& x);
         /// Initialize with ranges for view \a x
         void init(const BoolView& x);
         //@}
     };
-
-    forceinline
-    ViewRanges<BoolView>::ViewRanges(void) {}
 
     forceinline
     ViewRanges<BoolView>::ViewRanges(const BoolView& x)

@@ -283,6 +283,7 @@ public:
         }
     }
     /// Constructor for cloning \a s
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     KnightsReified(KnightsReified& s) : Knights(s) {}
     /// Copy during cloning
     Space*
@@ -313,6 +314,7 @@ public:
             dom(*this, succ[f], neighbors(f));
     }
     /// Constructor for cloning \a s
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     KnightsCircuit(KnightsCircuit& s) : Knights(s) {}
     /// Copy during cloning
     Space*

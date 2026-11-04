@@ -54,6 +54,7 @@ namespace Gecode { namespace Int {
     };
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     IntTraceView::IntTraceView(void) {}
 
     forceinline

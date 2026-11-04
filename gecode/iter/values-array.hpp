@@ -55,7 +55,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Array(void);
+        Array(void) = default;
         /// Initialize with \a n values from \a v
         Array(int* v, unsigned int n);
         /// Initialize with \a n values from \a v
@@ -82,9 +82,6 @@ namespace Gecode { namespace Iter { namespace Values {
         int val(void) const;
         //@}
     };
-
-    forceinline
-    Array::Array(void) {}
 
     forceinline
     Array::Array(int* v0, unsigned int n0)

@@ -53,7 +53,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Append(void);
+        Append(void) = default;
         /// Initialize with iterator \a i and \a j
         Append(I& i, J& j);
         /// Initialize with iterator \a i and \a j
@@ -90,7 +90,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        NaryAppend(void);
+        NaryAppend(void) = default;
         /// Initialize with \a n iterators in \a i
         NaryAppend(I* i, int n);
         /// Initialize with \a n iterators in \a i
@@ -128,10 +128,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
             finish();
         }
     }
-
-    template <class I, class J>
-    forceinline
-    Append<I, J>::Append(void) {}
 
     template <class I, class J>
     forceinline
@@ -182,10 +178,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
             }
         }
     }
-
-    template <class I>
-    forceinline
-    NaryAppend<I>::NaryAppend(void) {}
 
     template <class I>
     inline NaryAppend<I>::NaryAppend(I* r0, int n0) : r(r0), n(n0), active(0) {

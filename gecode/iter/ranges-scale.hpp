@@ -60,7 +60,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ScaleUp(void);
+        ScaleUp(void) = default;
         /// Initialize with ranges from \a i and scale factor \a a
         ScaleUp(I& i, int a);
         /// Initialize with ranges from \a i and scale factor \a a
@@ -103,7 +103,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ScaleDown(void);
+        ScaleDown(void) = default;
         /// Initialize with ranges from \a i and scale factor \a a
         ScaleDown(I& i, int a);
         /// Initialize with ranges from \a i and scale factor \a a
@@ -116,10 +116,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         void operator++(void);
         //@}
     };
-
-    template <class Val, class UnsVal, class I>
-    forceinline
-    ScaleUp<Val, UnsVal, I>::ScaleUp(void) {}
 
     template <class Val, class UnsVal, class I>
     inline void
@@ -204,10 +200,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
             ++i;
         }
     }
-
-    template <class I>
-    forceinline
-    ScaleDown<I>::ScaleDown(void) {}
 
     template <class I>
     inline void

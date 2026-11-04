@@ -51,7 +51,7 @@ namespace Gecode {
     void
     VarImpDisposerBase::dispose(Space&, VarImpBase*) {}
 
-    VarImpDisposerBase::~VarImpDisposerBase(void) {}
+    VarImpDisposerBase::~VarImpDisposerBase(void) = default;
 
     /*
      * Actor
@@ -59,7 +59,7 @@ namespace Gecode {
      */
     Actor* Actor::sentinel;
 
-    Actor::~Actor(void) {}
+    Actor::~Actor(void) = default;
 
     /*
      * Propagator
@@ -959,7 +959,7 @@ namespace Gecode {
         return false;
     }
 
-    NGL::~NGL(void) {}
+    NGL::~NGL(void) = default;
 
     /*
      * Groups

@@ -43,8 +43,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
 
     forceinline
-    ConflictGraph::NodeSet::NodeSet(void) {}
-    forceinline
     ConflictGraph::NodeSet::NodeSet(Region& r, int n)
         : Support::RawBitSetBase(r, static_cast<unsigned int>(n)) {}
     forceinline
@@ -106,6 +104,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     ConflictGraph::Node::Node(void) {}
 
     forceinline
@@ -145,8 +144,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
             node[i].d = node[i].w = 0;
         }
     }
-
-    forceinline ConflictGraph::~ConflictGraph(void) {}
 
     forceinline void
     ConflictGraph::edge(int i, int j, bool add) {

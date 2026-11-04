@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Offset(void);
+        Offset(void) = default;
         /// Initialize with ranges from \a i and offset \a c
         Offset(I& i, int c);
         /// Initialize with ranges from \a i and offset \a c
@@ -74,10 +74,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         unsigned int width(void) const;
         //@}
     };
-
-    template <class I>
-    forceinline
-    Offset<I>::Offset(void) {}
 
     template <class I>
     inline void

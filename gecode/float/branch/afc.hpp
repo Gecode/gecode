@@ -33,9 +33,6 @@
 namespace Gecode {
 
     forceinline
-    FloatAFC::FloatAFC(void) {}
-
-    forceinline
     FloatAFC::FloatAFC(Home home, const FloatVarArgs& x, double d, bool share) {
         AFC::init(home, x, d, share);
     }

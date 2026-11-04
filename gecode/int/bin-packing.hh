@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
     public:
         /// Default constructor
-        SizeSet(void);
+        SizeSet(void) = default;
         /// Initialize for at most \a n_max items
         SizeSet(Region& region, int n_max);
         /// Add new size \a s
@@ -233,7 +233,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         class NodeSet : public Support::RawBitSetBase {
         public:
             /// Keep uninitialized
-            NodeSet(void);
+            NodeSet(void) = default;
             /// Initialize node set for \a n nodes
             NodeSet(Region& r, int n);
             /// Initialize node set as copy of \a ns with \a n nodes
@@ -353,7 +353,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         /// Return maximal clique found
         IntSet maximum_clique(void) const;
         /// Destructor
-        ~ConflictGraph(void);
+        ~ConflictGraph(void) = default;
     };
 
 }}} // namespace Gecode::Int::BinPacking

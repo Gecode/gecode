@@ -138,6 +138,7 @@ namespace Test {
                 : graph(std::move(g)), maximize(max), vertex(0), ceiling(std::numeric_limits<int>::max()) {
                 (void)new (*this) Decisions(*this);
             }
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             TreeSpace(TreeSpace& s)
                 : Space(s), graph(s.graph), maximize(s.maximize), vertex(s.vertex), ceiling(s.ceiling) {}
             Space*
@@ -389,8 +390,9 @@ namespace Test {
         class TestSpace : public Space {
         public:
             /// Constructor for space creation
-            TestSpace(void) {}
+            TestSpace(void) = default;
             /// Constructor for cloning \a s
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             TestSpace(TestSpace& s) : Space(s) {}
             /// Return number of solutions
             virtual int solutions(void) const = 0;
@@ -1167,6 +1169,7 @@ namespace Test {
             class Fixture : public Gecode::Space {
             public:
                 Fixture(void) = default;
+                // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
                 copy(void) override {

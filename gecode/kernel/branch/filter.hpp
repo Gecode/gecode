@@ -142,6 +142,7 @@ namespace Gecode {
 
     template <class View>
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     BrancherNoFilter<View>::BrancherNoFilter(BrancherNoFilter<View>&) {}
 
     template <class View>

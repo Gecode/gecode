@@ -264,7 +264,7 @@ namespace Gecode {
             /// Default options
             GECODE_GIST_EXPORT static const Options def;
             /// Initialize with default values
-            Options(void);
+            Options(void) = default;
         };
 
         /// Create a new stand-alone Gist for \a root using \a bab

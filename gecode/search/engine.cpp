@@ -70,7 +70,7 @@ namespace Gecode { namespace Search {
      * Defined out of line so that the vtable, and with it the destructor of
      * the options, is only emitted in the search library.
      */
-    Builder::~Builder(void) {}
+    Builder::~Builder(void) = default;
 
 }} // namespace Gecode::Search
 

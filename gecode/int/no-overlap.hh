@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     public:
         /// Default constructor
-        FlexDim(void);
+        FlexDim(void) = default;
         /// Constructor
         FlexDim(IntView c0, IntView s, IntView c1);
 

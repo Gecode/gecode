@@ -39,8 +39,6 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline
-    FloatView::FloatView(void) {}
-    forceinline
     FloatView::FloatView(const FloatVar& y)
         : VarImpView<FloatVar>(y.varimp()) {}
     forceinline

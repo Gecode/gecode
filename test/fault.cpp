@@ -219,6 +219,7 @@ namespace Test { namespace Fault {
             ThrowingBrancher::post(*this);
             ThrowingBrancher::post(*this);
         }
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         CloneCopySpace(CloneCopySpace& s) : Space(s) {}
         Space*
         copy(void) override {
@@ -278,6 +279,7 @@ namespace Test { namespace Fault {
                 NoticeDisposeActor::post(*this);
             }
         }
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         NoticeDisposeSpace(NoticeDisposeSpace& s) : Space(s) {}
         Space*
         copy(void) override {
@@ -287,7 +289,8 @@ namespace Test { namespace Fault {
 
     class MiniModelSpace : public Space {
     public:
-        MiniModelSpace(void) {}
+        MiniModelSpace(void) = default;
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         MiniModelSpace(MiniModelSpace& s) : Space(s) {}
         Space*
         copy(void) override {
@@ -348,7 +351,7 @@ namespace Test { namespace Fault {
 
     class FaultLocalHandle : public LocalHandle {
     public:
-        FaultLocalHandle(void) {}
+        FaultLocalHandle(void) = default;
         FaultLocalHandle(FaultLocalObject* o) : LocalHandle(o) {}
         void
         update(Space& home, FaultLocalHandle& h) {
@@ -939,7 +942,7 @@ namespace Test { namespace Fault {
     public:
         static int disposed;
 
-        FaultBoolMisc(void) {}
+        FaultBoolMisc(void) = default;
         ~FaultBoolMisc(void) override {
             disposed++;
         }

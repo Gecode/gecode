@@ -586,7 +586,6 @@ namespace Gecode {
     TupleSet::init(int a) {
         object(new Data(a));
     }
-    TupleSet::TupleSet(const TupleSet& ts) : SharedHandle(ts) {}
     TupleSet&
     TupleSet::operator=(const TupleSet& ts) {
         (void)SharedHandle::operator=(ts);

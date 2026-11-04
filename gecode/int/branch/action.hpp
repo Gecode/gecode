@@ -32,24 +32,10 @@
 
 namespace Gecode {
 
-    forceinline
-    IntAction::IntAction(void) {}
-
-    forceinline
-    IntAction::IntAction(const IntAction& a)
-        : Action(a) {}
-
     forceinline IntAction&
     IntAction::operator=(const IntAction& a) {
         return static_cast<IntAction&>(Action::operator=(a));
     }
-
-    forceinline
-    BoolAction::BoolAction(void) {}
-
-    forceinline
-    BoolAction::BoolAction(const BoolAction& a)
-        : Action(a) {}
 
     forceinline BoolAction&
     BoolAction::operator=(const BoolAction& a) {

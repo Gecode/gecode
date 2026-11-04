@@ -48,6 +48,7 @@ namespace Gecode { namespace Int {
         struct Range {
             int min;
             int max;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             Range(void) {}
         };
         Range* _ranges;
@@ -63,10 +64,9 @@ namespace Gecode { namespace Int {
         /// Add one range, allocating only when a new range is inserted
         void add(Space& home, int min, int max);
 
+    public:
         GrowableIntSet(const GrowableIntSet&) = delete;
         GrowableIntSet& operator=(const GrowableIntSet&) = delete;
-
-    public:
         /// Initialize an empty set
         GrowableIntSet(void);
         /// Test membership

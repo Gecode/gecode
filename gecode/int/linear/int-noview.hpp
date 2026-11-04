@@ -43,7 +43,7 @@ namespace Gecode {
             /// \name Constructors and initialization
             //@{
             /// Default constructor
-            NoView(void) {}
+            NoView(void) = default;
             //@}
 
             /// \name Value access
@@ -229,14 +229,14 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor (array of size 0)
-        ViewArray(void) {}
+        ViewArray(void) = default;
         /// Allocate array with \a m variables
         ViewArray(Space& home, int m) {
             (void)home;
             (void)m;
         }
         /// Initialize
-        ViewArray(const ViewArray<Int::Linear::NoView>&) {}
+        ViewArray(const ViewArray<Int::Linear::NoView>&) = default;
         /// Initialize
         ViewArray(Space&, const ViewArray<Int::Linear::NoView>&) {}
         /// Initialize
@@ -326,9 +326,8 @@ namespace Gecode {
             (void)i;
         }
         //@}
-    private:
-        static void* operator new(size_t);
-        static void operator delete(void*, size_t);
+        static void* operator new(size_t) = delete;
+        static void operator delete(void*, size_t) = delete;
     };
 
 } // namespace Gecode

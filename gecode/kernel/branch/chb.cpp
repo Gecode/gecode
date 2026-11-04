@@ -43,15 +43,11 @@ namespace Gecode {
 
     const CHB CHB::def;
 
-    CHB::CHB(const CHB& c) : SharedHandle(c) {}
-
     CHB&
     CHB::operator=(const CHB& c) {
         (void)SharedHandle::operator=(c);
         return *this;
     }
-
-    CHB::~CHB(void) {}
 
 } // namespace Gecode
 

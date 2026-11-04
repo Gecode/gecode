@@ -213,6 +213,7 @@ namespace Gecode { namespace Int {
          *
          */
         forceinline
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         CardConst::CardConst(void) {}
         forceinline void
         CardConst::init(Space&, int min, int max, int c) {
@@ -298,6 +299,7 @@ namespace Gecode { namespace Int {
          *
          */
         forceinline
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         CardView::CardView(void) {}
         forceinline void
         CardView::init(const IntView& y, int c) {

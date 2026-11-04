@@ -60,7 +60,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetView(void);
+        SetView(void) = default;
         /// Initialize from set variable \a y
         SetView(const SetVar& y);
         /// Initialize from set variable implementation \a y
@@ -337,7 +337,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        EmptyView(void);
+        EmptyView(void) = default;
         //@}
 
         /// \name Value access
@@ -463,7 +463,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        UniverseView(void);
+        UniverseView(void) = default;
         //@}
 
         /// \name Value access
@@ -600,7 +600,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SingletonView(void);
+        SingletonView(void) = default;
         /// Initialize with integer view \a y
         SingletonView(Gecode::Int::IntView& y);
         /// Initialize with integer variable \a y
@@ -773,7 +773,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ComplementView(void);
+        ComplementView(void) = default;
         /// Initialize with set view \a y
         explicit ComplementView(View& y);
         //@}
@@ -954,7 +954,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        CachedView(void);
+        CachedView(void) = default;
         /// Initialize with set view \a y
         explicit CachedView(const View& y);
         //@}

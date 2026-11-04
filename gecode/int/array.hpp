@@ -82,15 +82,8 @@ namespace Gecode {
     }
 
     forceinline
-    IntVarArgs::IntVarArgs(void) {}
-
-    forceinline
     IntVarArgs::IntVarArgs(int n)
         : VarArgArray<IntVar>(n) {}
-
-    forceinline
-    IntVarArgs::IntVarArgs(const IntVarArgs& a)
-        : VarArgArray<IntVar>(a) {}
 
     forceinline
     IntVarArgs::IntVarArgs(const VarArray<IntVar>& a)
@@ -110,15 +103,8 @@ namespace Gecode {
         : VarArgArray<IntVar>(first, last) {}
 
     forceinline
-    BoolVarArgs::BoolVarArgs(void) {}
-
-    forceinline
     BoolVarArgs::BoolVarArgs(int n)
         : VarArgArray<BoolVar>(n) {}
-
-    forceinline
-    BoolVarArgs::BoolVarArgs(const BoolVarArgs& a)
-        : VarArgArray<BoolVar>(a) {}
 
     forceinline
     BoolVarArgs::BoolVarArgs(const VarArray<BoolVar>& a)
@@ -138,18 +124,12 @@ namespace Gecode {
         : VarArgArray<BoolVar>(first, last) {}
 
     forceinline
-    IntVarArray::IntVarArray(void) {}
-
-    forceinline
     IntVarArray::IntVarArray(Space& home, int n)
         : VarArray<IntVar>(home, n) {}
 
     forceinline
     IntVarArray::IntVarArray(Space& home, const IntVarArgs& a)
         : VarArray<IntVar>(home, a) {}
-
-    forceinline
-    BoolVarArray::BoolVarArray(void) {}
 
     forceinline
     BoolVarArray::BoolVarArray(Space& home, int n)

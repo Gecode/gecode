@@ -358,7 +358,7 @@ namespace Gecode {
         /// Negate relation type
         static IntRelType neg(IntRelType irt);
         /// Default constructor
-        LinIntRel(void);
+        LinIntRel(void) = default;
 
     public:
         /// Create linear relation for expressions \a l and \a r
@@ -788,7 +788,7 @@ namespace Gecode {
         /// Negate relation type
         static FloatRelType neg(FloatRelType frt);
         /// Default constructor
-        LinFloatRel(void);
+        LinFloatRel(void) = default;
 
     public:
         /// Create linear float relation for expressions \a l and \a r
@@ -1057,7 +1057,7 @@ namespace Gecode {
 
     public:
         /// Default constructor
-        SetRel(void);
+        SetRel(void) = default;
         /// Constructor
         SetRel(const SetExpr& e0, SetRelType srt, const SetExpr& e1);
         /// Constructor
@@ -1142,7 +1142,7 @@ namespace Gecode {
         class GECODE_VTABLE_EXPORT Misc : public HeapAllocated {
         public:
             /// Default constructor
-            Misc(void);
+            Misc(void) = default;
             /** Constrain \a b to be equivalent to the expression
              *  (negated if \a neg) with propagation level
              *  \a ipl.
@@ -2056,7 +2056,7 @@ namespace Gecode {
     class GECODE_VTABLE_EXPORT IntMinimizeSpace : public Space {
     public:
         /// Default constructor
-        IntMinimizeSpace(void);
+        IntMinimizeSpace(void) = default;
         /// Constructor for cloning
         IntMinimizeSpace(IntMinimizeSpace& s);
         /// Member function constraining according to decreasing cost
@@ -2073,7 +2073,7 @@ namespace Gecode {
     class GECODE_VTABLE_EXPORT IntMaximizeSpace : public Space {
     public:
         /// Default constructor
-        IntMaximizeSpace(void);
+        IntMaximizeSpace(void) = default;
         /// Constructor for cloning
         IntMaximizeSpace(IntMaximizeSpace& s);
         /// Member function constraining according to increasing cost
@@ -2090,7 +2090,7 @@ namespace Gecode {
     class GECODE_VTABLE_EXPORT IntLexMinimizeSpace : public Space {
     public:
         /// Default constructor
-        IntLexMinimizeSpace(void);
+        IntLexMinimizeSpace(void) = default;
         /// Constructor for cloning
         IntLexMinimizeSpace(IntLexMinimizeSpace& s);
         /// Member function constraining according to decreasing costs
@@ -2107,7 +2107,7 @@ namespace Gecode {
     class GECODE_VTABLE_EXPORT IntLexMaximizeSpace : public Space {
     public:
         /// Default constructor
-        IntLexMaximizeSpace(void);
+        IntLexMaximizeSpace(void) = default;
         /// Constructor for cloning
         IntLexMaximizeSpace(IntLexMaximizeSpace& s);
         /// Member function constraining according to increasing costs

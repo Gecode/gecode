@@ -44,6 +44,7 @@ namespace Gecode { namespace Int {
      */
     template <class Val, class UnsVal>
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     ScaleView<Val, UnsVal>::ScaleView(void) {}
 
     template <class Val, class UnsVal>
@@ -235,7 +236,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges(void) = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const IntScaleView& x);
         /// Initialize with ranges for view \a x
@@ -243,8 +244,6 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-    forceinline
-    ViewRanges<IntScaleView>::ViewRanges(void) {}
     forceinline
     ViewRanges<IntScaleView>::ViewRanges(const IntScaleView& x) {
         ViewRanges<IntView> xi(x.base());
@@ -267,7 +266,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges(void) = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const LLongScaleView& x);
         /// Initialize with ranges for view \a x
@@ -275,8 +274,6 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-    forceinline
-    ViewRanges<LLongScaleView>::ViewRanges(void) {}
     forceinline
     ViewRanges<LLongScaleView>::ViewRanges(const LLongScaleView& x) {
         ViewRanges<IntView> xi(x.base());

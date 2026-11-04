@@ -52,7 +52,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Inter(void);
+        Inter(void) = default;
         /// Initialize with values from \a i and \a j
         Inter(I& i, J& j);
         /// Initialize with values from \a i and \a j
@@ -73,10 +73,6 @@ namespace Gecode { namespace Iter { namespace Values {
         int val(void) const;
         //@}
     };
-
-    template <class I, class J>
-    forceinline
-    Inter<I, J>::Inter(void) {}
 
     template <class I, class J>
     forceinline void

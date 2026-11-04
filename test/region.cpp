@@ -71,8 +71,9 @@ namespace Test {
         class EmptySpace : public Gecode::Space {
         public:
             /// Initialize space
-            EmptySpace(void) {}
+            EmptySpace(void) = default;
             /// Constructor for cloning \a s
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             EmptySpace(EmptySpace& s) : Gecode::Space(s) {}
             /// Copy space during cloning
             Gecode::Space*

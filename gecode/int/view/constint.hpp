@@ -37,6 +37,7 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     ConstIntView::ConstIntView(void) {}
     forceinline
     ConstIntView::ConstIntView(int n)
@@ -252,7 +253,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges(void) = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const ConstIntView& x);
         /// Initialize with ranges for view \a x
@@ -277,9 +278,6 @@ namespace Gecode { namespace Int {
         unsigned int width(void) const;
         //@}
     };
-
-    forceinline
-    ViewRanges<ConstIntView>::ViewRanges(void) {}
 
     forceinline
     ViewRanges<ConstIntView>::ViewRanges(const ConstIntView& x)

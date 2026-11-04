@@ -36,10 +36,6 @@ namespace Gecode { namespace Set {
 
     template <class T>
     forceinline
-    UnknownRanges<T>::UnknownRanges(void) {}
-
-    template <class T>
-    forceinline
     UnknownRanges<T>::UnknownRanges(const T& v)
         : i1(v), i2(v) {
         Iter::Ranges::Diff<LubRanges<T>, GlbRanges<T>>::init(i1, i2);

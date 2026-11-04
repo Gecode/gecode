@@ -382,7 +382,7 @@ namespace Gecode {
     void
     ViewSel<View>::dispose(Space&) {}
     template <class View>
-    ViewSel<View>::~ViewSel(void) {}
+    ViewSel<View>::~ViewSel(void) = default;
     template <class View>
     forceinline void
     ViewSel<View>::operator delete(void*) {}

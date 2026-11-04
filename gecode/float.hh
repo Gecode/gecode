@@ -458,18 +458,18 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        FloatVal(void);
+        FloatVal(void) = default;
         /// Initialize with float number \a n
         FloatVal(const FloatNum& n);
         /// Initialize with lower bound \a l and upper bound \a u
         FloatVal(const FloatNum& l, const FloatNum& u);
         /// Copy constructor
-        FloatVal(const FloatVal& v);
+        FloatVal(const FloatVal& v) = default;
 
         /// Assignment operator
         FloatVal& operator=(const FloatNum& n);
         /// Assignment operator
-        FloatVal& operator=(const FloatVal& v);
+        FloatVal& operator=(const FloatVal& v) = default;
 
         /// Assign lower bound \a l and upper bound \a u
         void assign(FloatNum const& l, FloatNum const& u);
@@ -913,7 +913,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        FloatVar(void);
+        FloatVar(void) = default;
         /// Initialize from float variable \a y
         FloatVar(const FloatVar& y) = default;
         /// Initialize from float view \a y
@@ -1013,11 +1013,11 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        FloatVarArgs(void);
+        FloatVarArgs(void) = default;
         /// Allocate array with \a n elements
         explicit FloatVarArgs(int n);
         /// Initialize from variable argument array \a a (copy elements)
-        FloatVarArgs(const FloatVarArgs& a);
+        FloatVarArgs(const FloatVarArgs& a) = default;
         /// Initialize from variable array \a a (copy elements)
         FloatVarArgs(const VarArray<FloatVar>& a);
         /// Initialize from vector \a a
@@ -1066,7 +1066,7 @@ namespace Gecode {
         /// \name Creation and initialization
         //@{
         /// Default constructor (array of size 0)
-        FloatVarArray(void);
+        FloatVarArray(void) = default;
         /// Allocate array for \a n float variables (variables are uninitialized)
         FloatVarArray(Space& home, int n);
         /// Initialize from float variable array \a a (share elements)
@@ -1490,7 +1490,7 @@ namespace Gecode {
          * yet initialized AFC storage is init or the assignment operator.
          *
          */
-        FloatAFC(void);
+        FloatAFC(void) = default;
         /**
          * \brief Initialize for float variables \a x and decay factor \a d
          *
@@ -1532,9 +1532,9 @@ namespace Gecode {
          * yet initialized action storage is init or the assignment operator.
          *
          */
-        FloatAction(void);
+        FloatAction(void) = default;
         /// Copy constructor
-        FloatAction(const FloatAction& a);
+        FloatAction(const FloatAction& a) = default;
         /// Assignment operator
         FloatAction& operator=(const FloatAction& a);
         /**
@@ -1587,9 +1587,9 @@ namespace Gecode {
          * yet initialized CHB storage is init or the assignment operator.
          *
          */
-        FloatCHB(void);
+        FloatCHB(void) = default;
         /// Copy constructor
-        FloatCHB(const FloatCHB& chb);
+        FloatCHB(const FloatCHB& chb) = default;
         /// Assignment operator
         FloatCHB& operator=(const FloatCHB& chb);
         /**

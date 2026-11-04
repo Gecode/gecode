@@ -430,7 +430,7 @@ namespace Gecode {
         class GECODE_SEARCH_EXPORT GetInfo : public HeapAllocated {
         public:
             /// Initialize
-            GetInfo(void);
+            GetInfo(void) = default;
             /// Return info for a space
             virtual std::string get_info(const Space& home) const = 0;
             /// Delete
@@ -482,7 +482,7 @@ namespace Gecode { namespace Search {
         /// \name Constructors and member functions
         //@{
         /// Default constructor
-        Cutoff(void);
+        Cutoff(void) = default;
         /// Return the current cutoff value
         virtual unsigned long long int operator()(void) const = 0;
         /// Increment and return the next cutoff value
@@ -918,7 +918,7 @@ namespace Gecode { namespace Search {
         /// \name Constructors and member functions
         //@{
         /// Default constructor
-        Stop(void);
+        Stop(void) = default;
         /// Stop search, if returns true
         virtual bool stop(const Statistics& s, const Options& o) = 0;
         /// Destructor
@@ -1121,11 +1121,11 @@ namespace Gecode { namespace Search {
         /// Destructor
         virtual ~Base(void);
 
-    private:
+    public:
         /// Disallow copy constructor
-        Base(const Base&);
+        Base(const Base&) = delete;
         /// Disallow assignment operator
-        Base& operator=(const Base&);
+        Base& operator=(const Base&) = delete;
     };
 
 }} // namespace Gecode::Search

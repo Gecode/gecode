@@ -84,10 +84,10 @@ namespace Gecode {
          * yet initialized action storage is init and the assignment operator.
          *
          */
-        Action(void);
+        Action(void) = default;
         /// Copy constructor
         GECODE_KERNEL_EXPORT
-        Action(const Action& a);
+        Action(const Action& a) = default;
         /// Assignment operator
         GECODE_KERNEL_EXPORT
         Action& operator=(const Action& a);
@@ -115,7 +115,7 @@ namespace Gecode {
 
         /// Destructor
         GECODE_KERNEL_EXPORT
-        ~Action(void);
+        ~Action(void) = default;
 
         /// \name Information access
         //@{
@@ -332,9 +332,6 @@ namespace Gecode {
     Action::release(void) {
         object().m.release();
     }
-
-    forceinline
-    Action::Action(void) {}
 
     template <class View>
     forceinline

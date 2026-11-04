@@ -43,42 +43,33 @@ namespace Gecode { namespace Kernel {
             /// The global propagator information
             GPI gpi;
             /// Default constructor
-            Data(void);
+            Data(void) = default;
             /// Destructor
             ~Data(void) override;
         };
         /// Initialize
         SharedSpaceData(void);
         /// Initialize from \a ssd
-        SharedSpaceData(const SharedSpaceData& ssd);
+        SharedSpaceData(const SharedSpaceData& ssd) = default;
         /// Assignment operator
         SharedSpaceData& operator=(const SharedSpaceData& r);
         /// Delete
-        ~SharedSpaceData(void);
+        ~SharedSpaceData(void) = default;
         /// Provide access
         Data& data(void) const;
     };
 
-    forceinline
-    SharedSpaceData::Data::Data(void) {}
-
-    forceinline SharedSpaceData::Data::~Data(void) {}
+    forceinline SharedSpaceData::Data::~Data(void) = default;
 
     forceinline
     SharedSpaceData::SharedSpaceData(void)
         : SharedHandle(new Data) {}
-
-    forceinline
-    SharedSpaceData::SharedSpaceData(const SharedSpaceData& ssd)
-        : SharedHandle(ssd) {}
 
     forceinline SharedSpaceData&
     SharedSpaceData::operator=(const SharedSpaceData& ssd) {
         (void)SharedHandle::operator=(ssd);
         return *this;
     }
-
-    forceinline SharedSpaceData::~SharedSpaceData(void) {}
 
     forceinline SharedSpaceData::Data&
     SharedSpaceData::data(void) const {

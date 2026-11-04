@@ -236,7 +236,7 @@ namespace Gecode {
         /// View from which this view is derived
         View x;
         /// Default constructor
-        DerivedView(void);
+        DerivedView(void) = default;
 
     public:
         /// Initialize with view \a y
@@ -568,10 +568,6 @@ namespace Gecode {
      * Derived view: contain the base view from which they are derived
      *
      */
-
-    template <class View>
-    forceinline
-    DerivedView<View>::DerivedView(void) {}
 
     template <class View>
     forceinline

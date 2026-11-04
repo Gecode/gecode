@@ -105,6 +105,7 @@ namespace Gecode { namespace FlatZinc {
         SymbolType t; //< Type of entry
         int i;        //< Value of entry or array start index
         /// Default constructor
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         SymbolEntry(void) {}
         /// Constructor
         SymbolEntry(SymbolType t0, int i0) : t(t0), i(i0) {}

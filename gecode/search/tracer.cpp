@@ -108,7 +108,7 @@ namespace Gecode {
         os << "trace<Search>::done()" << '\n' << std::flush;
     }
 
-    StdSearchTracer::~StdSearchTracer(void) {}
+    StdSearchTracer::~StdSearchTracer(void) = default;
 
     StdSearchTracer StdSearchTracer::def;
 

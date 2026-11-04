@@ -70,7 +70,7 @@ namespace Gecode {
 namespace Gecode { namespace Int { namespace LDSB {
 
     SymmetryObject::SymmetryObject(void) : nrefs(1) {}
-    SymmetryObject::~SymmetryObject(void) {}
+    SymmetryObject::~SymmetryObject(void) = default;
 
     VariableSymmetryObject::VariableSymmetryObject(ArgArray<VarImpBase*> vars) {
         nxs = vars.size();

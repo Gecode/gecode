@@ -32,13 +32,6 @@
 
 namespace Gecode {
 
-    forceinline
-    SetAction::SetAction(void) {}
-
-    forceinline
-    SetAction::SetAction(const SetAction& a)
-        : Action(a) {}
-
     forceinline SetAction&
     SetAction::operator=(const SetAction& a) {
         return static_cast<SetAction&>(Action::operator=(a));

@@ -42,7 +42,7 @@ namespace Gecode {
     Rnd::IMP::IMP(unsigned int s)
         : rg(s) {}
 
-    Rnd::IMP::~IMP(void) {}
+    Rnd::IMP::~IMP(void) = default;
 
     forceinline void
     Rnd::_seed(unsigned int s) {
@@ -53,17 +53,14 @@ namespace Gecode {
         }
     }
 
-    Rnd::Rnd(void) {}
     Rnd::Rnd(unsigned int s) {
         object(new IMP(s));
     }
-    Rnd::Rnd(const Rnd& r) : SharedHandle(r) {}
     Rnd&
     Rnd::operator=(const Rnd& r) {
         (void)SharedHandle::operator=(r);
         return *this;
     }
-    Rnd::~Rnd(void) {}
 
     void
     Rnd::seed(unsigned int s) {

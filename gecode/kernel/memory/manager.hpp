@@ -103,7 +103,7 @@ namespace Gecode {
 
     public:
         /// Use uninitialized
-        FreeList(void);
+        FreeList(void) = default;
         /// Initialize with next freelist object \a n
         FreeList(FreeList* n);
         /// Return next freelist object
@@ -244,9 +244,6 @@ namespace Gecode {
      * Freelists
      *
      */
-
-    forceinline
-    FreeList::FreeList(void) {}
 
     forceinline
     FreeList::FreeList(FreeList* n)

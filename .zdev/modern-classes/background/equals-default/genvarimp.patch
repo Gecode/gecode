@@ -1,0 +1,33 @@
+diff --git i/misc/genvarimp.py w/misc/genvarimp.py
+index d22a5d0d7e..48d061da0d 100644
+--- i/misc/genvarimp.py
++++ w/misc/genvarimp.py
+@@ -664,7 +664,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
+     {d['class']}(Gecode::Space& home, {d['class']}& x);
+   public:
+     /// Constructor for creating static instance of variable
+-    {d['class']}(void);
++    {d['class']}(void) = default;
+     /// Constructor for creating variable
+     {d['class']}(Gecode::Space& home);
+     /// \\name Dependencies
+@@ -719,9 +719,6 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
+         if d["dispose"]:
+             out.append(
+                 f"""
+-  forceinline
+-  {d['class']}::{d['class']}(void) {{}}
+-
+   forceinline
+   {d['class']}::{d['class']}(Gecode::Space& home)
+     : {d['base']}(home) {{
+@@ -744,9 +741,6 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
+         else:
+             out.append(
+                 f"""
+-  forceinline
+-  {d['class']}::{d['class']}(void) {{}}
+-
+   forceinline
+   {d['class']}::{d['class']}(Gecode::Space& home)
+     : {d['base']}(home) {{}}

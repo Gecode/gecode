@@ -70,7 +70,7 @@ namespace Gecode { namespace Set { namespace Rel {
             /// Move iterator to next element
             void operator++(void);
             /// Default constructor
-            CSIter(void);
+            CSIter(void) = default;
             /// Constructor
             CSIter(CharacteristicSets& cs0, unsigned int xoff0, unsigned int yoff0);
             /// Test if iterator is finished
@@ -135,8 +135,6 @@ namespace Gecode { namespace Set { namespace Rel {
         return xsize;
     }
 
-    forceinline
-    CharacteristicSets::CSIter::CSIter(void) {}
     forceinline
     CharacteristicSets::CSIter::CSIter(CharacteristicSets& cs0, unsigned int xoff0, unsigned int yoff0)
         : cs(&cs0), i(0), xoff(xoff0), yoff(yoff0) {

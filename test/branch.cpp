@@ -1410,8 +1410,9 @@ namespace Test { namespace Branch {
     class EmptySpace : public Gecode::Space {
     public:
         /// Initialize space
-        EmptySpace(void) {}
+        EmptySpace(void) = default;
         /// Constructor for cloning \a s
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         EmptySpace(EmptySpace& s) : Gecode::Space(s) {}
         /// Return the number of propagators
         unsigned int

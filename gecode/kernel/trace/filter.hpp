@@ -196,7 +196,7 @@ namespace Gecode {
         TraceFilter(BrancherGroup g);
         /// Copy constructor
         GECODE_KERNEL_EXPORT
-        TraceFilter(const TraceFilter& tf);
+        TraceFilter(const TraceFilter& tf) = default;
         /// Assignment operator
         GECODE_KERNEL_EXPORT
         TraceFilter& operator=(const TraceFilter& tf);

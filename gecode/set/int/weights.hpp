@@ -60,7 +60,7 @@ namespace Gecode { namespace Set { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OverweightValues(void);
+        OverweightValues(void) = default;
         /// Initialize with elements/weights pairs, threshold \a t and iterator \a i
         OverweightValues(int t, SharedArray<int>& elements0, SharedArray<int>& weights0, I& i);
         /// Initialize with elements/weights pairs, threshold \a t and iterator \a i
@@ -94,10 +94,6 @@ namespace Gecode { namespace Set { namespace Int {
             ++iter;
         }
     }
-
-    template <class I>
-    forceinline
-    OverweightValues<I>::OverweightValues(void) {}
 
     template <class I>
     forceinline

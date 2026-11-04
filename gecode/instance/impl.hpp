@@ -479,7 +479,7 @@ namespace Gecode { namespace Instance {
         /// Value
         Value value;
         /// Initialize as the empty integer list without a name
-        Entry(void) {}
+        Entry(void) = default;
         /// Initialize as \a v named \a n
         Entry(const std::string& n, Value&& v) : name(n), value(std::move(v)) {}
     };

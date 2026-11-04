@@ -72,16 +72,16 @@ namespace Gecode {
     public:
         /// Default constructor that does not initialize the generator
         GECODE_KERNEL_EXPORT
-        Rnd(void);
+        Rnd(void) = default;
         /// Initialize from generator \a r
         GECODE_KERNEL_EXPORT
-        Rnd(const Rnd& r);
+        Rnd(const Rnd& r) = default;
         /// Assignment operator
         GECODE_KERNEL_EXPORT
         Rnd& operator=(const Rnd& r);
         /// Destructor
         GECODE_KERNEL_EXPORT
-        ~Rnd(void);
+        ~Rnd(void) = default;
         /// Initialize with seed \a s
         GECODE_KERNEL_EXPORT
         Rnd(unsigned int s);

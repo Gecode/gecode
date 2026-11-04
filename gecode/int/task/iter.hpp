@@ -36,10 +36,6 @@ namespace Gecode { namespace Int {
 
     template <class TaskView, SortTaskOrder sto, bool inc>
     forceinline
-    TaskViewIter<TaskView, sto, inc>::TaskViewIter(void) {}
-
-    template <class TaskView, SortTaskOrder sto, bool inc>
-    forceinline
     TaskViewIter<TaskView, sto, inc>::TaskViewIter(Region& r, const TaskViewArray<TaskView>& t)
         : map(r.alloc<int>(t.size())), i(t.size() - 1) {
         sort<TaskView, sto, !inc>(map, t);

@@ -1830,6 +1830,7 @@ namespace Test { namespace Float {
             /// Create fixture
             EmptyFixture(void) = default;
             /// Constructor for cloning \a fixture
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {}
             /// Copy during cloning
             Gecode::Space*

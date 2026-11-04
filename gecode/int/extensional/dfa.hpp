@@ -125,13 +125,6 @@ namespace Gecode {
         }
     }
 
-    forceinline
-    DFA::DFA(void) {}
-
-    forceinline
-    DFA::DFA(const DFA& d)
-        : SharedHandle(d) {}
-
     forceinline int
     DFA::n_states(void) const {
         const DFAI* d = static_cast<DFAI*>(object());
@@ -192,6 +185,7 @@ namespace Gecode {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     DFA::Transition::Transition(void) {}
 
     forceinline

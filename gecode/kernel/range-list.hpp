@@ -127,6 +127,7 @@ namespace Gecode {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     RangeList::RangeList(void) {}
 
     forceinline

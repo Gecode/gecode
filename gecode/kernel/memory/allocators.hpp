@@ -208,7 +208,7 @@ namespace Gecode {
          * \brief Copy construction
          * @param al The allocator to copy.
          */
-        space_allocator(space_allocator const& al) noexcept : space(al.space) {}
+        space_allocator(space_allocator const& al) noexcept = default;
         /**
          * \brief Assignment operator
          * @param al The allocator to assign.
@@ -384,7 +384,7 @@ namespace Gecode {
          * \brief Copy construction
          * @param al The allocator to copy.
          */
-        region_allocator(region_allocator const& al) noexcept : region(al.region) {}
+        region_allocator(region_allocator const& al) noexcept = default;
         /**
          * \brief Copy from other instantiation.
          * @param al The source allocator.

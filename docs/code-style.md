@@ -138,6 +138,29 @@ strings, and callbacks. Their copies touch a reference count or allocate, so
 they follow the rule above. `FloatVal` is not exempt either: it is two
 doubles, not a handle.
 
+Special members follow the rule of zero: a class whose members copy, move,
+and destroy themselves declares no copy member, move member, or destructor.
+Where a special member must be declared, for example a default constructor
+beside other constructors or a virtual destructor, write `= default` instead
+of an empty body or a member-wise copy, on the member's first declaration in
+the class. A member defaulted out of line is user-provided and keeps the
+class non-trivial. Virtual destructors may stay out of line: their class is
+never trivial, and one defined in a .cpp file decides where the vtable is
+emitted. A member that must not be called is a public `= delete`, not a
+private member without a definition. `modernize-use-equals-default` and
+`modernize-use-equals-delete` enforce these rules.
+
+Some hand-written members stay, each after a
+`// NOLINTNEXTLINE(modernize-use-equals-default)` line. Cloning constructors
+such as `Space(Space&)` are not copy members: they take their source by
+non-const reference because cloning writes forwarding pointers into it, and
+they update their variables with `update()`. An empty default constructor
+stays where defaulting it would change what value-initialization does:
+`T()`, `T{}`, and the `alloc<T>(n)` functions of spaces, regions, and the
+heap zero a class whose default constructor is not user-provided, while the
+empty constructor leaves fields without an initializer untouched. A
+constructor whose body is empty only in some configurations stays as well.
+
 Other performance checks need focused review: `performance-enum-size` changes
 layouts and ABI, and `performance-no-int-to-ptr` conflicts with deliberate
 pointer tagging. Review `noexcept` guarantees, destructor triviality, and math

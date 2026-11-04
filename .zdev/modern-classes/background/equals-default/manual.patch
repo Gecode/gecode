@@ -1,0 +1,415 @@
+diff --git c/.clang-tidy w/.clang-tidy
+index 525b25aaa2..4a2a82d502 100644
+--- c/.clang-tidy
++++ w/.clang-tidy
+@@ -17,6 +17,8 @@ Checks: >-
+   bugprone-use-after-move,
+   bugprone-virtual-near-miss,
+   modernize-deprecated-headers,
++  modernize-use-equals-default,
++  modernize-use-equals-delete,
+   modernize-use-nullptr,
+   modernize-use-override,
+   performance-avoid-endl,
+diff --git c/changelog.in w/changelog.in
+--- c/changelog.in
++++ w/changelog.in
+@@ -100,6 +100,35 @@ Delete the copy assignment of Home and of Space. Assigning one Home to
+ another copy-assigned the whole Space that the home refers to. A Home never
+ changes its space; construct a new Home instead. To copy a Space, clone it.
+ 
++[ENTRY]
++Module: kernel
++What:   change
++Rank:   minor
++[DESCRIPTION]
++Default special members that only construct, copy, or destroy members, and
++delete with = delete the members that must not be called. Across the
++library, default constructors, copy constructors, copy assignments, and
++destructors with empty or member-wise bodies are now defaulted on their first
++declaration; among them are those of the variables, most views, FloatVal,
++IntSet, TupleSet, DFA, Action, CHB, the argument arrays, and the range and
++value iterators. Behaviour is unchanged, but the ABI changes: several
++members that the libraries exported, such as the copy constructors of
++TupleSet, Action, and CHB, are now inline.
++[MORE]
++Copy members that were private and undefined, such as those of Search::Base,
++Support::BitSetBase, Set::GLBndSet, and FlatZinc::Printer, are now public
++and deleted, so copying one is reported as a call to a deleted function.
++
++A defaulted default constructor is no longer user-provided. A class with
++such a constructor and a field without an initializer can no longer be
++default-initialized as a const object: `const Gecode::IntSetRanges r;` no
++longer compiles. Initialize the object, or drop the const. This affects
++most range and value iterators: IntSetRanges, IntSetValues, IntVarValues,
++SetVarGlbRanges, SetVarLubRanges, SetVarUnknownRanges, the iterators in
++Iter::Ranges and Iter::Values, and the range and value iterators of views
++such as Int::ViewRanges and Set::UnknownRanges. It also affects SetRel,
++FreeList, Float::OffsetView, and Search::TraceRecorder::ID.
++
+ [ENTRY]
+ Module: support
+ What:   removed
+diff --git c/docs/code-style.md w/docs/code-style.md
+index e570acaab8..f217967e45 100644
+--- c/docs/code-style.md
++++ w/docs/code-style.md
+@@ -138,6 +138,29 @@ strings, and callbacks. Their copies touch a reference count or allocate, so
+ they follow the rule above. `FloatVal` is not exempt either: it is two
+ doubles, not a handle.
+ 
++Special members follow the rule of zero: a class whose members copy, move,
++and destroy themselves declares no copy member, move member, or destructor.
++Where a special member must be declared, for example a default constructor
++beside other constructors or a virtual destructor, write `= default` instead
++of an empty body or a member-wise copy, on the member's first declaration in
++the class. A member defaulted out of line is user-provided and keeps the
++class non-trivial. Virtual destructors may stay out of line: their class is
++never trivial, and one defined in a .cpp file decides where the vtable is
++emitted. A member that must not be called is a public `= delete`, not a
++private member without a definition. `modernize-use-equals-default` and
++`modernize-use-equals-delete` enforce these rules.
++
++Some hand-written members stay, each after a
++`// NOLINTNEXTLINE(modernize-use-equals-default)` line. Cloning constructors
++such as `Space(Space&)` are not copy members: they take their source by
++non-const reference because cloning writes forwarding pointers into it, and
++they update their variables with `update()`. An empty default constructor
++stays where defaulting it would change what value-initialization does:
++`T()`, `T{}`, and the `alloc<T>(n)` functions of spaces, regions, and the
++heap zero a class whose default constructor is not user-provided, while the
++empty constructor leaves fields without an initializer untouched. A
++constructor whose body is empty only in some configurations stays as well.
++
+ Other performance checks need focused review: `performance-enum-size` changes
+ layouts and ABI, and `performance-no-int-to-ptr` conflicts with deliberate
+ pointer tagging. Review `noexcept` guarantees, destructor triviality, and math
+diff --git c/gecode/flatzinc.hh w/gecode/flatzinc.hh
+index 3c84904777..ef45b0c971 100644
+--- c/gecode/flatzinc.hh
++++ w/gecode/flatzinc.hh
+@@ -202,7 +202,7 @@ namespace Gecode { namespace FlatZinc {
+ #endif
+         );
+ 
+-    private:
++    public:
+         Printer(const Printer&) = delete;
+         Printer& operator=(const Printer&) = delete;
+     };
+diff --git c/gecode/gist/visualnode.hh w/gecode/gist/visualnode.hh
+index 4265787f88..fe944356e6 100644
+--- c/gecode/gist/visualnode.hh
++++ w/gecode/gist/visualnode.hh
+@@ -87,14 +87,14 @@ namespace Gecode { namespace Gist {
+         BoundingBox bb;
+         /// The shape is an array of extents, one for each depth level
+         Extent shape[1];
++
++    public:
+         /// Copy constructor
+         Shape(const Shape&) = delete;
+         /// Assignment operator
+         Shape& operator=(const Shape&) = delete;
+         /// Constructor
+         Shape(void) = delete;
+-
+-    public:
+         /// Construct shape of depth \a d
+         static Shape* allocate(int d);
+         // Destruct
+diff --git c/gecode/int/growable-int-set.hh w/gecode/int/growable-int-set.hh
+index eed08caf32..f37b377728 100644
+--- c/gecode/int/growable-int-set.hh
++++ w/gecode/int/growable-int-set.hh
+@@ -64,10 +64,9 @@ namespace Gecode { namespace Int {
+         /// Add one range, allocating only when a new range is inserted
+         void add(Space& home, int min, int max);
+ 
++    public:
+         GrowableIntSet(const GrowableIntSet&) = delete;
+         GrowableIntSet& operator=(const GrowableIntSet&) = delete;
+-
+-    public:
+         /// Initialize an empty set
+         GrowableIntSet(void);
+         /// Test membership
+diff --git c/gecode/int/ldsb.hh w/gecode/int/ldsb.hh
+index 9401c4aa81..3afadc851f 100644
+--- c/gecode/int/ldsb.hh
++++ w/gecode/int/ldsb.hh
+@@ -285,10 +285,8 @@ namespace Gecode { namespace Int { namespace LDSB {
+         /// position.  (Both are zero-based.)
+         int get_val(unsigned int sequence, unsigned int position) const;
+ 
+-    private:
+-        ValueSequenceSymmetryImp(const ValueSequenceSymmetryImp<View>&);
+-
+     public:
++        ValueSequenceSymmetryImp(const ValueSequenceSymmetryImp<View>&) = delete;
+         /// Constructor for creation
+         ValueSequenceSymmetryImp(Space& home, int* _values, unsigned int n, unsigned int seqsize);
+         /// Copy constructor
+diff --git c/gecode/int/linear/int-noview.hpp w/gecode/int/linear/int-noview.hpp
+index 63d5ef7d73..e541df4694 100644
+--- c/gecode/int/linear/int-noview.hpp
++++ w/gecode/int/linear/int-noview.hpp
+@@ -326,9 +326,8 @@ namespace Gecode {
+             (void)i;
+         }
+         //@}
+-    private:
+-        static void* operator new(size_t);
+-        static void operator delete(void*, size_t);
++        static void* operator new(size_t) = delete;
++        static void operator delete(void*, size_t) = delete;
+     };
+ 
+ } // namespace Gecode
+diff --git c/gecode/int/task.hh w/gecode/int/task.hh
+index 4f16f9442f..22d940a769 100644
+--- c/gecode/int/task.hh
++++ w/gecode/int/task.hh
+@@ -214,9 +214,9 @@ namespace Gecode { namespace Int {
+         void update(Space&, TaskArray& a);
+         //@}
+ 
+-    private:
+-        static void* operator new(size_t);
+-        static void operator delete(void*, size_t);
++    public:
++        static void* operator new(size_t) = delete;
++        static void operator delete(void*, size_t) = delete;
+     };
+ 
+     /**
+@@ -257,9 +257,9 @@ namespace Gecode { namespace Int {
+         /// Return task view at position \a i
+         const TaskView& operator[](int i) const;
+         //@}
+-    private:
+-        static void* operator new(size_t);
+-        static void operator delete(void*, size_t);
++    public:
++        static void* operator new(size_t) = delete;
++        static void operator delete(void*, size_t) = delete;
+     };
+ 
+     /**
+diff --git c/gecode/kernel/core.hpp w/gecode/kernel/core.hpp
+index 3a1f1944cf..0f9b5cea32 100644
+--- c/gecode/kernel/core.hpp
++++ w/gecode/kernel/core.hpp
+@@ -1372,13 +1372,14 @@ namespace Gecode {
+         /// No-op for exceptions
+         static void operator delete(void* p, Space& home);
+         //@}
++        /// Not used
++        static void* operator new(size_t s) = delete;
++
+     private:
+ #ifndef __GNUC__
+         /// Not used (uses dispose instead)
+         static void operator delete(void* p);
+ #endif
+-        /// Not used
+-        static void* operator new(size_t s);
+     };
+ 
+     /**
+@@ -2106,10 +2107,10 @@ namespace Gecode {
+             Space& home;
+             /// Previous setting
+             bool previous;
++
++        public:
+             NoGPI(const NoGPI&) = delete;
+             NoGPI& operator=(const NoGPI&) = delete;
+-
+-        public:
+             /// Suppress global information for new propagators in \a home
+             explicit NoGPI(Space& home);
+             /// Restore the previous setting
+@@ -2129,10 +2130,10 @@ namespace Gecode {
+             Space& home;
+             /// Previous setting
+             bool previous;
++
++        public:
+             UseGPI(const UseGPI&) = delete;
+             UseGPI& operator=(const UseGPI&) = delete;
+-
+-        public:
+             /// Enable global information for new propagators in \a home
+             explicit UseGPI(Space& home);
+             /// Restore the previous setting
+diff --git c/gecode/search.hh w/gecode/search.hh
+index a39519840d..b518fb1779 100644
+--- c/gecode/search.hh
++++ w/gecode/search.hh
+@@ -1121,7 +1121,7 @@ namespace Gecode { namespace Search {
+         /// Destructor
+         virtual ~Base(void);
+ 
+-    private:
++    public:
+         /// Disallow copy constructor
+         Base(const Base&) = delete;
+         /// Disallow assignment operator
+diff --git c/gecode/set/var-imp.hpp w/gecode/set/var-imp.hpp
+index bfb7abb565..918c41bbe9 100644
+--- c/gecode/set/var-imp.hpp
++++ w/gecode/set/var-imp.hpp
+@@ -232,7 +232,7 @@ namespace Gecode { namespace Set {
+         template <class I>
+         bool include_i(Space& home, I& i);
+         //@}
+-    private:
++    public:
+         GLBndSet(const GLBndSet&) = delete;
+         const GLBndSet& operator=(const GLBndSet&) = delete;
+     };
+@@ -279,7 +279,7 @@ namespace Gecode { namespace Set {
+         /// Exclude all elements from this set
+         void exclude_all(Space& home);
+         //@}
+-    private:
++    public:
+         LUBndSet(const LUBndSet&) = delete;
+         const LUBndSet& operator=(const LUBndSet&) = delete;
+     };
+diff --git c/gecode/support/allocator.hpp w/gecode/support/allocator.hpp
+index 7fcfc1247f..3259f3b400 100644
+--- c/gecode/support/allocator.hpp
++++ w/gecode/support/allocator.hpp
+@@ -62,7 +62,7 @@ namespace Gecode { namespace Support {
+     class Allocator {
+     public:
+         /// Default constructor
+-        Allocator(void);
++        Allocator(void) = default;
+         /// Allocate memory block of size \a n
+ #ifdef GECODE_MIMALLOC
+         GECODE_SUPPORT_EXPORT
+@@ -82,8 +82,6 @@ namespace Gecode { namespace Support {
+         void* memcpy(void* d, const void* s, size_t n);
+     };
+ 
+-    forceinline
+-    Allocator::Allocator(void) {}
+ #ifndef GECODE_MIMALLOC
+     forceinline void*
+     Allocator::alloc(size_t n) {
+diff --git c/gecode/support/bitset-base.hpp w/gecode/support/bitset-base.hpp
+index 5be463d655..b9029c0530 100644
+--- c/gecode/support/bitset-base.hpp
++++ w/gecode/support/bitset-base.hpp
+@@ -124,13 +124,11 @@ namespace Gecode { namespace Support {
+         /// Stored bits
+         BitSetData* data;
+ 
+-    private:
++    public:
+         /// Copy constructor (disabled)
+         RawBitSetBase(const RawBitSetBase&) = delete;
+         /// Assignment operator (disabled)
+         RawBitSetBase& operator=(const RawBitSetBase&) = delete;
+-
+-    public:
+         /// Default constructor (yields empty set)
+         RawBitSetBase(void);
+         /// Initialize for \a sz bits and allocator \a a
+@@ -177,13 +175,11 @@ namespace Gecode { namespace Support {
+         /// Size of bitset (number of bits)
+         unsigned int sz;
+ 
+-    private:
++    public:
+         /// Copy constructor (disabled)
+         BitSetBase(const BitSetBase&) = delete;
+         /// Assignment operator (disabled)
+         BitSetBase& operator=(const BitSetBase&) = delete;
+-
+-    public:
+         /// Default constructor (yields empty set)
+         BitSetBase(void);
+         /// Initialize for \a s bits and allocator \a a
+diff --git c/gecode/support/heap.hpp w/gecode/support/heap.hpp
+--- c/gecode/support/heap.hpp
++++ w/gecode/support/heap.hpp
+@@ -370,9 +370,9 @@ namespace Gecode {
+         /// Mutex for accessing heap size
+         Support::Mutex _m;
+         /// Peak heap size
+-        size_t _peak;
++        size_t _peak = 0;
+         /// Current heap size
+-        size_t _cur;
++        size_t _cur = 0;
+ 
+     public:
+         size_t peak(void);
+diff --git c/gecode/support/thread.hpp w/gecode/support/thread.hpp
+index 8cd3a1ff6f..b6b5cb495e 100644
+--- c/gecode/support/thread.hpp
++++ w/gecode/support/thread.hpp
+@@ -99,12 +99,10 @@ namespace Gecode { namespace Support {
+         /// Free memory allocated from heap
+         static void operator delete(void* p);
+ 
+-    private:
+         /// A mutex cannot be copied
+-        Mutex(const Mutex&) {}
++        Mutex(const Mutex&) = delete;
+         /// A mutex cannot be assigned
+-        void
+-        operator=(const Mutex&) {}
++        Mutex& operator=(const Mutex&) = delete;
+     };
+ 
+     /**
+@@ -123,12 +121,10 @@ namespace Gecode { namespace Support {
+         /// Leave lock
+         ~Lock(void);
+ 
+-    private:
+         /// A lock cannot be copied
+-        Lock(const Lock& l) = default;
++        Lock(const Lock&) = delete;
+         /// A lock cannot be assigned
+-        void
+-        operator=(const Lock&) {}
++        Lock& operator=(const Lock&) = delete;
+     };
+ 
+     /**
+@@ -158,12 +154,10 @@ namespace Gecode { namespace Support {
+         /// Wait until the event becomes signalled
+         void wait(void);
+ 
+-    private:
+         /// An event cannot be copied
+-        Event(const Event&) {}
++        Event(const Event&) = delete;
+         /// An event cannot be assigned
+-        void
+-        operator=(const Event&) {}
++        Event& operator=(const Event&) = delete;
+     };
+ 
+     /**
+@@ -268,12 +262,10 @@ namespace Gecode { namespace Support {
+         /// release globally acquired mutex \a m
+         GECODE_SUPPORT_EXPORT static void release_global_mutex(Mutex* m);
+ 
+-    private:
+         /// A thread cannot be copied
+-        Thread(const Thread&) = default;
++        Thread(const Thread&) = delete;
+         /// A thread cannot be assigned
+-        void
+-        operator=(const Thread&) {}
++        Thread& operator=(const Thread&) = delete;
+     };
+ 
+ }} // namespace Gecode::Support

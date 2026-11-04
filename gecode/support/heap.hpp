@@ -64,7 +64,7 @@ namespace Gecode {
     class Heap {
     public:
         /// Default constructor (ensuring that only a single instance is created)
-        Heap(void);
+        Heap(void) = default;
         /// \name Typed allocation routines
         //@{
         /**
@@ -370,9 +370,9 @@ namespace Gecode {
         /// Mutex for accessing heap size
         Support::Mutex _m;
         /// Peak heap size
-        size_t _peak;
+        size_t _peak = 0;
         /// Current heap size
-        size_t _cur;
+        size_t _cur = 0;
 
     public:
         size_t peak(void);

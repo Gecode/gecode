@@ -36,8 +36,6 @@ namespace Gecode { namespace Int {
      * Constructors and initialization
      *
      */
-    forceinline
-    ZeroIntView::ZeroIntView(void) {}
 
     /*
      * Value access
@@ -230,7 +228,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges(void) = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const ZeroIntView& x);
         /// Initialize with ranges for view \a x
@@ -255,9 +253,6 @@ namespace Gecode { namespace Int {
         unsigned int width(void) const;
         //@}
     };
-
-    forceinline
-    ViewRanges<ZeroIntView>::ViewRanges(void) {}
 
     forceinline
     ViewRanges<ZeroIntView>::ViewRanges(const ZeroIntView&)

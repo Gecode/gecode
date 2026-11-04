@@ -48,7 +48,7 @@ namespace Gecode { namespace Gist {
     void
     Inspector::finalize(void) {}
 
-    Inspector::~Inspector(void) {}
+    Inspector::~Inspector(void) = default;
 
     std::string
     Comparator::name(void) {
@@ -58,7 +58,7 @@ namespace Gecode { namespace Gist {
     void
     Comparator::finalize(void) {}
 
-    Comparator::~Comparator(void) {}
+    Comparator::~Comparator(void) = default;
 
     TextOutput::TextOutput(const std::string& name) : t(nullptr), n(name) {}
 

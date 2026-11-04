@@ -46,9 +46,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Cache(void);
+        Cache(void) = default;
         /// Copy constructor
-        Cache(const Cache& m);
+        Cache(const Cache& m) = default;
         /// Initialize with ranges from \a i
         template <class I>
         Cache(Region& r, I& i);
@@ -59,13 +59,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         Cache& operator=(const Cache& m);
         //@}
     };
-
-    forceinline
-    Cache::Cache(void) {}
-
-    forceinline
-    Cache::Cache(const Cache& m)
-        : RangeListIter(m) {}
 
     template <class I>
     void

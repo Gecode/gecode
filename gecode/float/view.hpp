@@ -56,7 +56,7 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        FloatView(void);
+        FloatView(void) = default;
         /// Initialize from float variable \a y
         FloatView(const FloatVar& y);
         /// Initialize from float variable \a y
@@ -158,7 +158,7 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        MinusView(void);
+        MinusView(void) = default;
         /// Initialize with float view \a y
         explicit MinusView(const FloatView& y);
         //@}
@@ -271,7 +271,7 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OffsetView(void);
+        OffsetView(void) = default;
         /// Initialize with float view \a y and an offset c
         explicit OffsetView(const FloatView& y, FloatNum c);
         //@}
@@ -400,7 +400,7 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ScaleView(void);
+        ScaleView(void) = default;
         /// Initialize as \f$b\cdot y\f$
         ScaleView(const FloatVal& b, const FloatView& y);
         //@}

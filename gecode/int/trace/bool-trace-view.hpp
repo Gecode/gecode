@@ -36,7 +36,7 @@ namespace Gecode { namespace Int {
     class BoolTraceView {
     public:
         /// Default constructor (initializes with no view)
-        BoolTraceView(void);
+        BoolTraceView(void) = default;
         /// Duplicate view \a y
         BoolTraceView(Space& home, BoolView y);
         /// Update duplicated view from view \a y and modification delta \a d
@@ -47,8 +47,6 @@ namespace Gecode { namespace Int {
         static unsigned int slack(BoolView x);
     };
 
-    forceinline
-    BoolTraceView::BoolTraceView(void) {}
     forceinline
     BoolTraceView::BoolTraceView(Space&, BoolView) {}
     forceinline void

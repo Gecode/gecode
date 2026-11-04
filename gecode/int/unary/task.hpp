@@ -52,6 +52,7 @@ namespace Gecode { namespace Int { namespace Unary {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     ManFixPTask::ManFixPTask(void) {}
     forceinline
     ManFixPTask::ManFixPTask(IntVar s, int p)
@@ -183,6 +184,7 @@ namespace Gecode { namespace Int { namespace Unary {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     ManFixPSETask::ManFixPSETask(void) {}
     forceinline
     ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p)
@@ -363,8 +365,6 @@ namespace Gecode { namespace Int { namespace Unary {
      */
 
     forceinline
-    ManFlexTask::ManFlexTask(void) {}
-    forceinline
     ManFlexTask::ManFlexTask(IntVar s, IntVar p, IntVar e)
         : _s(s), _p(p), _e(e) {}
     forceinline void
@@ -515,6 +515,7 @@ namespace Gecode { namespace Int { namespace Unary {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     OptFixPTask::OptFixPTask(void) {}
     forceinline
     OptFixPTask::OptFixPTask(IntVar s, int p, BoolVar m) {
@@ -542,6 +543,7 @@ namespace Gecode { namespace Int { namespace Unary {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     OptFixPSETask::OptFixPSETask(void) {}
     forceinline
     OptFixPSETask::OptFixPSETask(TaskType t, IntVar s, int p, BoolVar m) {
@@ -568,8 +570,6 @@ namespace Gecode { namespace Int { namespace Unary {
      * Optional flexible task
      */
 
-    forceinline
-    OptFlexTask::OptFlexTask(void) {}
     forceinline
     OptFlexTask::OptFlexTask(IntVar s, IntVar p, IntVar e, BoolVar m) {
         ManFlexTask::init(s, p, e);

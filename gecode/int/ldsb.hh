@@ -285,10 +285,8 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// position.  (Both are zero-based.)
         int get_val(unsigned int sequence, unsigned int position) const;
 
-    private:
-        ValueSequenceSymmetryImp(const ValueSequenceSymmetryImp<View>&);
-
     public:
+        ValueSequenceSymmetryImp(const ValueSequenceSymmetryImp<View>&) = delete;
         /// Constructor for creation
         ValueSequenceSymmetryImp(Space& home, int* _values, unsigned int n, unsigned int seqsize);
         /// Copy constructor

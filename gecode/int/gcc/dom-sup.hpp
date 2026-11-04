@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Node(void);
+        Node(void) = default;
         /// Constructor for index \a i that sets type to \a t
         Node(NodeFlag nf, int i);
         //@}
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        VarNode(void);
+        VarNode(void) = default;
         /// Creates a variable node with index \a i
         VarNode(int i);
         //@}
@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Constructors and destructors
         //@{
         /// Default constructor
-        ValNode(void);
+        ValNode(void) = default;
         /**
          * \brief Constructor for value node
          *
@@ -299,7 +299,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Constructors
         //@{
         /// Default constructor
-        Edge(void) {}
+        Edge(void) = default;
         /**
          * \brief Construct edge \f$e(x,v)\f$ from variable node \a x
          *  and value node \a y
@@ -501,8 +501,6 @@ namespace Gecode { namespace Int { namespace GCC {
      *
      */
     forceinline
-    Node::Node(void) {}
-    forceinline
     Node::Node(NodeFlag nf0, int i)
         : e(nullptr), fst(nullptr), lst(nullptr), ie(nullptr), idx(i), nf(static_cast<unsigned char>(nf0)), noe(0) {}
 
@@ -560,8 +558,6 @@ namespace Gecode { namespace Int { namespace GCC {
      * Variable nodes
      *
      */
-    forceinline
-    VarNode::VarNode(void) {}
 
     forceinline
     VarNode::VarNode(int x)
@@ -614,8 +610,6 @@ namespace Gecode { namespace Int { namespace GCC {
      * Value nodes
      *
      */
-    forceinline
-    ValNode::ValNode(void) {}
 
     forceinline
     ValNode::ValNode(int min, int max, int value, int kidx, int kshift, int count)

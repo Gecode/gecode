@@ -287,8 +287,8 @@ namespace Gecode { namespace FlatZinc {
         BranchInformationO(std::vector<BI> v0) : v(std::move(v0)) {}
 
     public:
-        BranchInformationO(void) {}
-        ~BranchInformationO(void) override {}
+        BranchInformationO(void) = default;
+        ~BranchInformationO(void) override = default;
         virtual SharedHandle::Object*
         copy(void) const {
             return new BranchInformationO(v);
@@ -315,8 +315,6 @@ namespace Gecode { namespace FlatZinc {
     };
 
     BranchInformation::BranchInformation(void) : SharedHandle(nullptr) {}
-
-    BranchInformation::BranchInformation(const BranchInformation& bi) : SharedHandle(bi) {}
 
     void
     BranchInformation::init(void) {
@@ -791,7 +789,7 @@ namespace Gecode { namespace FlatZinc {
         BlackBoxContextHandle black_box_context;
 
         /// Initialize
-        FlatZincSpaceInitData(void) {}
+        FlatZincSpaceInitData(void) = default;
     };
 
     FlatZincSpace::FlatZincSpace(FlatZincSpace& f)
@@ -1776,7 +1774,7 @@ namespace Gecode { namespace FlatZinc {
             }
             return ss.str();
         }
-        ~FlatZincGetInfo(void) override {};
+        ~FlatZincGetInfo(void) override = default;
     };
 
     void

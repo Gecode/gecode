@@ -95,7 +95,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewValues(void);
+        ViewValues(void) = default;
         /// Initialize with values for \a x
         ViewValues(const View& x);
         /// Initialize with values \a x
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntView(void);
+        IntView(void) = default;
         /// Initialize from integer variable \a y
         IntView(const IntVar& y);
         /// Initialize from integer variable \a y
@@ -285,7 +285,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        MinusView(void);
+        MinusView(void) = default;
         /// Initialize with integer view \a y
         explicit MinusView(const IntView& y);
         //@}
@@ -1011,7 +1011,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ZeroIntView(void);
+        ZeroIntView(void) = default;
         //@}
 
         /// \name Value access
@@ -1358,7 +1358,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewDiffRanges(void);
+        ViewDiffRanges(void) = default;
         /// Initialize with ranges for view \a x
         ViewDiffRanges(const CachedView<View>& x);
         /// Initialize with ranges for view \a x
@@ -1380,7 +1380,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        BoolView(void);
+        BoolView(void) = default;
         /// Initialize from Boolean variable \a y
         BoolView(const BoolVar& y);
         /// Initialize from Boolean variable implementation \a y
@@ -1572,7 +1572,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        NegBoolView(void);
+        NegBoolView(void) = default;
         /// Initialize with Boolean view \a y
         explicit NegBoolView(const BoolView& y);
         //@}
