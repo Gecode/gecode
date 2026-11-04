@@ -210,8 +210,9 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 /// Constructor
-                TestSpace(void) {}
+                TestSpace(void) = default;
                 /// Constructor for cloning \a s
+                // NOLINTNEXTLINE(modernize-use-equals-default)
                 TestSpace(TestSpace& s) : Gecode::Space(s) {}
                 /// Copy space during cloning
                 Gecode::Space*

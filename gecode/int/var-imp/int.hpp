@@ -52,6 +52,7 @@ namespace Gecode { namespace Int {
     }
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     IntVarImp::RangeList::RangeList(void) {}
 
     forceinline
@@ -424,8 +425,6 @@ namespace Gecode { namespace Int {
      */
 
     forceinline
-    IntVarImpFwd::IntVarImpFwd(void) {}
-    forceinline
     IntVarImpFwd::IntVarImpFwd(const IntVarImp* x)
         : p(nullptr), c(x->ranges_fwd()) {}
     forceinline void
@@ -463,8 +462,6 @@ namespace Gecode { namespace Int {
      *
      */
 
-    forceinline
-    IntVarImpBwd::IntVarImpBwd(void) {}
     forceinline
     IntVarImpBwd::IntVarImpBwd(const IntVarImp* x)
         : n(nullptr), c(x->ranges_bwd()) {}

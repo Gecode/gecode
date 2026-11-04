@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Inter(void);
+        Inter(void) = default;
         /// Initialize with iterator \a i and \a j
         Inter(I& i, J& j);
         /// Initialize with iterator \a i and \a j
@@ -79,7 +79,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        NaryInter(void);
+        NaryInter(void) = default;
         /// Initialize with single iterator \a i
         template <class I>
         NaryInter(Region& r, I& i);
@@ -142,10 +142,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I, class J>
     forceinline
-    Inter<I, J>::Inter(void) {}
-
-    template <class I, class J>
-    forceinline
     Inter<I, J>::Inter(I& i0, J& j0)
         : i(i0), j(j0) {
         operator++();
@@ -163,9 +159,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
      * Nary intersection
      *
      */
-
-    forceinline
-    NaryInter::NaryInter(void) {}
 
     template <class I>
     forceinline void

@@ -33,9 +33,6 @@
 namespace Gecode {
 
     forceinline
-    IntAFC::IntAFC(void) {}
-
-    forceinline
     IntAFC::IntAFC(Home home, const IntVarArgs& x, double d, bool share) {
         AFC::init(home, x, d, share);
     }
@@ -44,9 +41,6 @@ namespace Gecode {
     IntAFC::init(Home home, const IntVarArgs& x, double d, bool share) {
         AFC::init(home, x, d, share);
     }
-
-    forceinline
-    BoolAFC::BoolAFC(void) {}
 
     forceinline
     BoolAFC::BoolAFC(Home home, const BoolVarArgs& x, double d, bool share) {

@@ -100,6 +100,7 @@ public:
     }
 
     /// Constructor for cloning \a s
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     Sudoku(Sudoku& s) : Script(s), nn(s.nn), bw(s.bw), bh(s.bh), givens(s.givens) {}
 };
 

@@ -51,7 +51,7 @@ namespace Gecode { namespace FlatZinc {
     class VarSpec {
     public:
         /// Destructor
-        virtual ~VarSpec(void) {}
+        virtual ~VarSpec(void) = default;
         /// Variable index
         int i;
         /// Whether the variable aliases another variable

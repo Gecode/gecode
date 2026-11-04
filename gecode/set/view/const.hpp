@@ -297,9 +297,6 @@ namespace Gecode { namespace Set {
         return false;
     }
 
-    forceinline
-    EmptyView::EmptyView(void) {}
-
     forceinline unsigned int
     EmptyView::glb_size(void) const {
         return 0;
@@ -454,9 +451,6 @@ namespace Gecode { namespace Set {
     }
 
     // Constant universe variable
-
-    forceinline
-    UniverseView::UniverseView(void) {}
 
     forceinline unsigned int
     UniverseView::glb_size(void) const {
@@ -626,7 +620,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void) {}
+        LubRanges(void) = default;
         /// Initialize with ranges for view \a x
         LubRanges(const EmptyView& x) {
             (void)x;
@@ -649,7 +643,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void) {}
+        GlbRanges(void) = default;
         /// Initialize with ranges for view \a x
         GlbRanges(const EmptyView& x) {
             (void)x;
@@ -721,6 +715,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         LubRanges(void) {}
         /// Initialize with ranges for view \a x
         LubRanges(const ConstSetView& x) : ar(x.ranges, x.size) {}
@@ -775,6 +770,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         GlbRanges(void) {}
         /// Initialize with ranges for view \a x
         GlbRanges(const ConstSetView& x) : LubRanges<ConstSetView>(x) {}

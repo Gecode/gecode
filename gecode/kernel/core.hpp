@@ -781,7 +781,7 @@ namespace Gecode {
         /// \name Construction
         //@{
         /// Constructor
-        PropagatorGroup(void);
+        PropagatorGroup(void) = default;
         /// To augment a space argument
         Home operator()(Space& home);
         //@}
@@ -848,7 +848,7 @@ namespace Gecode {
         /// \name Construction
         //@{
         /// Constructor
-        BrancherGroup(void);
+        BrancherGroup(void) = default;
         /// To augment a space argument
         Home operator()(Space& home);
         //@}
@@ -1310,7 +1310,7 @@ namespace Gecode {
 
     public:
         /// Default constructor
-        Council(void);
+        Council(void) = default;
         /// Construct advisor council
         Council(Space& home);
         /// Test whether council has advisor left
@@ -1394,13 +1394,14 @@ namespace Gecode {
         /// No-op for exceptions
         static void operator delete(void* p, Space& home);
         //@}
+        /// Not used
+        static void* operator new(size_t s) = delete;
+
     private:
 #ifndef __GNUC__
         /// Not used (uses dispose instead)
         static void operator delete(void* p);
 #endif
-        /// Not used
-        static void* operator new(size_t s);
     };
 
     /**
@@ -2321,10 +2322,10 @@ namespace Gecode {
             Space& home;
             /// Previous setting
             bool previous;
-            NoGPI(const NoGPI&) = delete;
-            NoGPI& operator=(const NoGPI&) = delete;
 
         public:
+            NoGPI(const NoGPI&) = delete;
+            NoGPI& operator=(const NoGPI&) = delete;
             /// Suppress global information for new propagators in \a home
             explicit NoGPI(Space& home);
             /// Restore the previous setting
@@ -2344,10 +2345,10 @@ namespace Gecode {
             Space& home;
             /// Previous setting
             bool previous;
-            UseGPI(const UseGPI&) = delete;
-            UseGPI& operator=(const UseGPI&) = delete;
 
         public:
+            UseGPI(const UseGPI&) = delete;
+            UseGPI& operator=(const UseGPI&) = delete;
             /// Enable global information for new propagators in \a home
             explicit UseGPI(Space& home);
             /// Restore the previous setting
@@ -3507,7 +3508,7 @@ namespace Gecode {
     NoGoods::ng(unsigned long int n0) {
         n.store(n0, std::memory_order_release);
     }
-    forceinline NoGoods::~NoGoods(void) {}
+    forceinline NoGoods::~NoGoods(void) = default;
 
     /*
      * Contexts of meta search hooks
@@ -4321,7 +4322,7 @@ namespace Gecode {
         return bid;
     }
 
-    forceinline Choice::~Choice(void) {}
+    forceinline Choice::~Choice(void) = default;
 
     /*
      * No-good literal
@@ -4448,9 +4449,6 @@ namespace Gecode {
      * Advisor council
      *
      */
-    template <class A>
-    forceinline
-    Council<A>::Council(void) {}
 
     template <class A>
     forceinline
@@ -5561,9 +5559,6 @@ namespace Gecode {
     }
 
     forceinline
-    PropagatorGroup::PropagatorGroup(void) {}
-
-    forceinline
     PropagatorGroup::PropagatorGroup(unsigned int gid)
         : Group(gid) {}
 
@@ -5587,9 +5582,6 @@ namespace Gecode {
             p.group(*this);
         return *this;
     }
-
-    forceinline
-    BrancherGroup::BrancherGroup(void) {}
 
     forceinline
     BrancherGroup::BrancherGroup(unsigned int gid)

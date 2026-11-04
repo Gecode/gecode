@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Singleton(void);
+        Singleton(void) = default;
         /// Initialize with range \a min to \a max
         Singleton(int min, int max);
         /// Initialize with range \a min to \a max
@@ -56,9 +56,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         void operator++(void);
         //@}
     };
-
-    forceinline
-    Singleton::Singleton(void) {}
 
     forceinline
     Singleton::Singleton(int min, int max)

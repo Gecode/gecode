@@ -48,7 +48,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManToOptTask(void);
+        ManToOptTask(void) = default;
         //@}
 
         /// \name Value access
@@ -214,9 +214,9 @@ namespace Gecode { namespace Int {
         void update(Space&, TaskArray& a);
         //@}
 
-    private:
-        static void* operator new(size_t);
-        static void operator delete(void*, size_t);
+    public:
+        static void* operator new(size_t) = delete;
+        static void operator delete(void*, size_t) = delete;
     };
 
     /**
@@ -257,9 +257,9 @@ namespace Gecode { namespace Int {
         /// Return task view at position \a i
         const TaskView& operator[](int i) const;
         //@}
-    private:
-        static void* operator new(size_t);
-        static void operator delete(void*, size_t);
+    public:
+        static void* operator new(size_t) = delete;
+        static void operator delete(void*, size_t) = delete;
     };
 
     /**
@@ -311,7 +311,7 @@ namespace Gecode { namespace Int {
         /// Current position
         int i;
         /// Default constructor (no initialization)
-        TaskViewIter(void);
+        TaskViewIter(void) = default;
 
     public:
         /// Initialize iterator

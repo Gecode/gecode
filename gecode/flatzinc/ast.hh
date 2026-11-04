@@ -181,6 +181,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
         int min;
         int max;
         std::vector<int> s;
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         SetLit(void) {}
         SetLit(int min0, int max0) : interval(true), min(min0), max(max0) {}
         SetLit(const std::vector<int>& s0) : interval(false), s(s0) {}
@@ -331,7 +332,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
         }
     };
 
-    inline Node::~Node(void) {}
+    inline Node::~Node(void) = default;
 
     inline void
     Node::append(Node* new_node) {

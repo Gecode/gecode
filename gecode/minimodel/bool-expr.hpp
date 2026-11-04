@@ -48,9 +48,6 @@ namespace Gecode {
         return expr(home, LinIntExpr(static_cast<int>(value)), ipls);
     }
 
-    forceinline
-    BoolExpr::Misc::Misc(void) {}
-
 } // namespace Gecode
 
 // STATISTICS: minimodel-any

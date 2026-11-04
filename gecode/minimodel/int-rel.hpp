@@ -36,8 +36,6 @@ namespace Gecode {
      * Operations for linear expressions
      *
      */
-    forceinline
-    LinIntRel::LinIntRel(void) {}
 
     forceinline
     LinIntRel::LinIntRel(const LinIntExpr& l, IntRelType irt0, const LinIntExpr& r)

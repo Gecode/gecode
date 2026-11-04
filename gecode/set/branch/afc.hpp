@@ -33,9 +33,6 @@
 namespace Gecode {
 
     forceinline
-    SetAFC::SetAFC(void) {}
-
-    forceinline
     SetAFC::SetAFC(Home home, const SetVarArgs& x, double d, bool share) {
         AFC::init(home, x, d, share);
     }

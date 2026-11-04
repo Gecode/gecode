@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Positive(void);
+        Positive(void) = default;
         /// Initialize with ranges from \a i
         Positive(I& i);
         /// Initialize with ranges from \a i
@@ -76,10 +76,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         unsigned int width(void) const;
         //@}
     };
-
-    template <class I, bool strict>
-    forceinline
-    Positive<I, strict>::Positive(void) {}
 
     template <class I, bool strict>
     forceinline void

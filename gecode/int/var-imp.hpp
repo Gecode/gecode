@@ -403,7 +403,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntVarImpFwd(void);
+        IntVarImpFwd(void) = default;
         /// Initialize with ranges from variable implementation \a x
         IntVarImpFwd(const IntVarImp* x);
         /// Initialize with ranges from variable implementation \a x
@@ -447,7 +447,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntVarImpBwd(void);
+        IntVarImpBwd(void) = default;
         /// Initialize with ranges from variable implementation \a x
         IntVarImpBwd(const IntVarImp* x);
         /// Initialize with ranges from variable implementation \a x

@@ -189,7 +189,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        BndSetRanges(void);
+        BndSetRanges(void) = default;
         /// Initialize with BndSet \a s
         BndSetRanges(const BndSet& s);
         /// Initialize with BndSet \a s
@@ -213,7 +213,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor. Creates an empty set.
-        GLBndSet(void);
+        GLBndSet(void) = default;
         /// Default constructor. Creates an empty set.
         GLBndSet(Space&);
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
@@ -232,9 +232,9 @@ namespace Gecode { namespace Set {
         template <class I>
         bool include_i(Space& home, I& i);
         //@}
-    private:
-        GLBndSet(const GLBndSet&);
-        const GLBndSet& operator=(const GLBndSet&);
+    public:
+        GLBndSet(const GLBndSet&) = delete;
+        const GLBndSet& operator=(const GLBndSet&) = delete;
     };
 
     /**
@@ -253,7 +253,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor. Creates an empty set.
-        LUBndSet(void);
+        LUBndSet(void) = default;
         /// Initialize as the full set including everything between Limits::min and Limits::max
         LUBndSet(Space& home);
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
@@ -279,9 +279,9 @@ namespace Gecode { namespace Set {
         /// Exclude all elements from this set
         void exclude_all(Space& home);
         //@}
-    private:
-        LUBndSet(const LUBndSet&);
-        const LUBndSet& operator=(const LUBndSet&);
+    public:
+        LUBndSet(const LUBndSet&) = delete;
+        const LUBndSet& operator=(const LUBndSet&) = delete;
     };
 
     /*
@@ -300,7 +300,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        RangesCompl(void);
+        RangesCompl(void) = default;
         /// Initialize with iterator \a i
         RangesCompl(I& i);
         /// Initialize with iterator \a i
@@ -415,7 +415,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        UnknownRanges(void);
+        UnknownRanges(void) = default;
         /// Initialize with unknown set ranges for set variable \a x
         UnknownRanges(const T& x);
         /// Initialize with unknown set ranges for set variable \a x

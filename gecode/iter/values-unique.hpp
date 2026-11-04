@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Unique(void);
+        Unique(void) = default;
         /// Initialize with value iterator \a i
         Unique(I& i);
         /// Initialize with value iterator \a i
@@ -72,10 +72,6 @@ namespace Gecode { namespace Iter { namespace Values {
         int val(void) const;
         //@}
     };
-
-    template <class I>
-    forceinline
-    Unique<I>::Unique(void) {}
 
     template <class I>
     forceinline

@@ -52,7 +52,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Negative(void);
+        Negative(void) = default;
         /// Initialize with ranges from \a i
         Negative(I& i);
         /// Initialize with ranges from \a i
@@ -77,10 +77,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         unsigned int width(void) const;
         //@}
     };
-
-    template <class I, bool strict>
-    forceinline
-    Negative<I, strict>::Negative(void) {}
 
     template <class I, bool strict>
     forceinline void

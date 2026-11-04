@@ -33,9 +33,6 @@
 namespace Gecode { namespace Search {
 
     forceinline
-    NoNGL::NoNGL(void) {}
-
-    forceinline
     NoNGL::NoNGL(Space& home)
         : NGL(home) {}
 

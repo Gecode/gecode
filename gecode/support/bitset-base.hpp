@@ -124,13 +124,11 @@ namespace Gecode { namespace Support {
         /// Stored bits
         BitSetData* data;
 
-    private:
-        /// Copy constructor (disabled)
-        RawBitSetBase(const RawBitSetBase&);
-        /// Assignment operator (disabled)
-        RawBitSetBase& operator=(const RawBitSetBase&);
-
     public:
+        /// Copy constructor (disabled)
+        RawBitSetBase(const RawBitSetBase&) = delete;
+        /// Assignment operator (disabled)
+        RawBitSetBase& operator=(const RawBitSetBase&) = delete;
         /// Default constructor (yields empty set)
         RawBitSetBase(void);
         /// Initialize for \a sz bits and allocator \a a
@@ -177,13 +175,11 @@ namespace Gecode { namespace Support {
         /// Size of bitset (number of bits)
         unsigned int sz;
 
-    private:
-        /// Copy constructor (disabled)
-        BitSetBase(const BitSetBase&);
-        /// Assignment operator (disabled)
-        BitSetBase& operator=(const BitSetBase&);
-
     public:
+        /// Copy constructor (disabled)
+        BitSetBase(const BitSetBase&) = delete;
+        /// Assignment operator (disabled)
+        BitSetBase& operator=(const BitSetBase&) = delete;
         /// Default constructor (yields empty set)
         BitSetBase(void);
         /// Initialize for \a s bits and allocator \a a

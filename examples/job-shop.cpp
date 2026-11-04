@@ -483,6 +483,7 @@ public:
         assign(*this, makespan, INT_ASSIGN_MIN());
     }
     /// Constructor for cloning \a s
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     JobShopProbe(JobShopProbe& s) : JobShopBase(s) {}
     /// Copy during cloning
     Space*
@@ -641,6 +642,7 @@ public:
         assign(*this, makespan, INT_ASSIGN_MIN());
     }
     /// Constructor for cloning \a s
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     JobShopSolve(JobShopSolve& s)
         : JobShopBase(s), sorder(s.sorder), fst(s.fst), snd(s.snd), iafc(s.iafc), iaction(s.iaction),
           baction(s.baction), ichb(s.ichb), bchb(s.bchb), rnd(s.rnd) {}

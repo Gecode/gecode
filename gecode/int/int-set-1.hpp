@@ -42,8 +42,6 @@ namespace Gecode {
      * Integer sets
      *
      */
-    forceinline
-    IntSet::IntSet(void) {}
 
     /**
      * \brief Integer set initialization
@@ -234,8 +232,6 @@ namespace Gecode {
      *
      */
 
-    forceinline
-    IntSetRanges::IntSetRanges(void) {}
     forceinline void
     IntSetRanges::init(const IntSet& s) {
         int n = s.ranges();
@@ -277,8 +273,6 @@ namespace Gecode {
      * Value iterator for integer sets
      *
      */
-    forceinline
-    IntSetValues::IntSetValues(void) {}
 
     forceinline
     IntSetValues::IntSetValues(const IntSet& s) {

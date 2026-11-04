@@ -58,6 +58,7 @@ namespace Gecode { namespace Set {
     };
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     SetTraceView::SetTraceView(void) {}
     forceinline
     SetTraceView::SetTraceView(Space& home, SetView x) {

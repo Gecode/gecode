@@ -60,7 +60,7 @@ namespace Gecode { namespace Search {
 
         public:
             /// Do not initialize
-            ID(void);
+            ID(void) = default;
             /// Initialize
             ID(unsigned int id);
             /// Access
@@ -110,7 +110,7 @@ namespace Gecode { namespace Search {
         class ID {
         public:
             /// Do not initialize
-            ID(void);
+            ID(void) = default;
             /// Initialize
             ID(unsigned int id);
             /// Access
@@ -156,8 +156,6 @@ namespace Gecode { namespace Search {
      * Simple trace recorder for a search tracer
      *
      */
-    forceinline
-    TraceRecorder::ID::ID(void) {}
 
     forceinline
     TraceRecorder::ID::ID(unsigned int id)
@@ -239,8 +237,6 @@ namespace Gecode { namespace Search {
      * Empty trace recorder
      *
      */
-    forceinline
-    NoTraceRecorder::ID::ID(void) {}
 
     forceinline
     NoTraceRecorder::ID::ID(unsigned int) {}

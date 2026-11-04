@@ -146,6 +146,7 @@ namespace Test {
                 : graph(std::move(g)), maximize(max), vertex(0), ceiling(std::numeric_limits<int>::max()) {
                 (void)new (*this) Decisions(*this);
             }
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             TreeSpace(TreeSpace& s)
                 : Space(s), graph(s.graph), maximize(s.maximize), vertex(s.vertex), ceiling(s.ceiling) {}
             Space*
@@ -401,8 +402,9 @@ namespace Test {
         class TestSpace : public Space {
         public:
             /// Constructor for space creation
-            TestSpace(void) {}
+            TestSpace(void) = default;
             /// Constructor for cloning \a s
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             TestSpace(TestSpace& s) : Space(s) {}
             /// Return number of solutions
             virtual int solutions(void) const = 0;
@@ -852,6 +854,7 @@ namespace Test {
             /// Initialize with shared observations \a s
             HubDispatchSpace(MetaDispatchState& s) : MetaDispatchSpace(s) {}
             /// Clone \a s
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             HubDispatchSpace(HubDispatchSpace& s) : MetaDispatchSpace(s) {}
             /// Copy during cloning
             Space*
@@ -871,6 +874,7 @@ namespace Test {
             /// Initialize with shared observations \a s
             SpokeDispatchSpace(MetaDispatchState& s) : MetaDispatchSpace(s) {}
             /// Clone \a s
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             SpokeDispatchSpace(SpokeDispatchSpace& s) : MetaDispatchSpace(s) {}
             /// Copy during cloning
             Space*
@@ -890,6 +894,7 @@ namespace Test {
             /// Initialize with shared observations \a s
             HubSpokeDispatchSpace(MetaDispatchState& s) : MetaDispatchSpace(s) {}
             /// Clone \a s
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             HubSpokeDispatchSpace(HubSpokeDispatchSpace& s) : MetaDispatchSpace(s) {}
             /// Copy during cloning
             Space*
@@ -1952,6 +1957,7 @@ namespace Test {
         class IncomparableObjective : public ExternalObjective {
         public:
             IncomparableObjective(int v) : ExternalObjective(v) {}
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             IncomparableObjective(IncomparableObjective& s) : ExternalObjective(s) {}
             Space*
             copy(void) override {
@@ -1966,7 +1972,8 @@ namespace Test {
         /// Search model without objective comparison support
         class UnsupportedObjective : public Space {
         public:
-            UnsupportedObjective(void) {}
+            UnsupportedObjective(void) = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             UnsupportedObjective(UnsupportedObjective& s) : Space(s) {}
             Space*
             copy(void) override {
@@ -2573,7 +2580,8 @@ namespace Test {
         /// Space without objective comparison support
         class PlainSpace : public Space {
         public:
-            PlainSpace(void) {}
+            PlainSpace(void) = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             PlainSpace(PlainSpace& s) : Space(s) {}
             Space*
             copy(void) override {
@@ -2656,6 +2664,7 @@ namespace Test {
             class Fixture : public Gecode::Space {
             public:
                 Fixture(void) = default;
+                // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
                 copy(void) override {
@@ -3125,6 +3134,7 @@ namespace Test {
         class FailingHub : public NoSolution {
         public:
             FailingHub(void) = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             FailingHub(FailingHub& s) : NoSolution(s) {}
             Gecode::Space*
             copy(void) override {
@@ -3173,6 +3183,7 @@ namespace Test {
         class FailingSpoke : public NoSolution {
         public:
             FailingSpoke(void) = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             FailingSpoke(FailingSpoke& s) : NoSolution(s) {}
             Gecode::Space*
             copy(void) override {
@@ -3233,6 +3244,7 @@ namespace Test {
         class FailingFirstSpoke : public RestrictedFirstSpoke {
         public:
             FailingFirstSpoke(void) = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             FailingFirstSpoke(FailingFirstSpoke& s) : RestrictedFirstSpoke(s) {}
             Gecode::Space*
             copy(void) override {
@@ -3431,6 +3443,7 @@ namespace Test {
             std::vector<Gecode::MetaDecision>* defaults;
             IncompleteEpisodes(Gecode::SpokeCoverage c, std::vector<Gecode::MetaDecision>& d)
                 : coverage(c), defaults(&d) {}
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             IncompleteEpisodes(IncompleteEpisodes& s) : NoSolution(s), coverage(s.coverage), defaults(s.defaults) {}
             Gecode::Space*
             copy(void) override {
@@ -3492,6 +3505,7 @@ namespace Test {
         class RelaxSpace : public Gecode::Space {
         public:
             RelaxSpace(void) = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             RelaxSpace(RelaxSpace& s) : Gecode::Space(s) {}
             Gecode::Space*
             copy(void) override {
@@ -3849,6 +3863,7 @@ namespace Test {
         class IllegalContinue : public NoSolution {
         public:
             IllegalContinue(void) = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             IllegalContinue(IllegalContinue& s) : NoSolution(s) {}
             Gecode::Space*
             copy(void) override {
@@ -4477,6 +4492,7 @@ namespace Test {
         class FailingAsset : public NoSolution {
         public:
             FailingAsset(void) = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             FailingAsset(FailingAsset& s) : NoSolution(s) {}
             Gecode::Space*
             copy(void) override {

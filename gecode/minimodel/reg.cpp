@@ -456,7 +456,7 @@ namespace Gecode {
             int pos;
             PosSet* next;
 
-            PosSet(void);
+            PosSet(void) = default;
             PosSet(int);
 
             bool in(int) const;
@@ -464,8 +464,6 @@ namespace Gecode {
             static PosSet* cup(PosSetAllocator&, PosSet*, PosSet*);
         };
 
-        forceinline
-        PosSet::PosSet(void) {}
         forceinline
         PosSet::PosSet(int p)
             : pos(p), next(nullptr) {}
