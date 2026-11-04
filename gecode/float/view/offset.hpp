@@ -185,10 +185,6 @@ namespace Gecode { namespace Float {
     operator==(const OffsetView& x, const OffsetView& y) {
         return (x.base() == y.base()) && (x.offset() == y.offset());
     }
-    forceinline bool
-    operator!=(const OffsetView& x, const OffsetView& y) {
-        return !(x == y);
-    }
 
 }} // namespace Gecode::Float
 

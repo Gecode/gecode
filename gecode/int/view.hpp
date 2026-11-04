@@ -425,9 +425,6 @@ namespace Gecode { namespace Int {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Int::MinusView
     bool operator==(const MinusView& x, const MinusView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::MinusView
-    bool operator!=(const MinusView& x, const MinusView& y);
     //@}
 
     /**
@@ -604,9 +601,6 @@ namespace Gecode { namespace Int {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Int::OffsetView
     bool operator==(const OffsetView& x, const OffsetView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::OffsetView
-    bool operator!=(const OffsetView& x, const OffsetView& y);
     //@}
 
     /**
@@ -832,10 +826,6 @@ namespace Gecode { namespace Int {
     /// \relates Gecode::Int::ScaleView
     template <class Val, class UnsVal>
     bool operator==(const ScaleView<Val, UnsVal>& x, const ScaleView<Val, UnsVal>& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::ScaleView
-    template <class Val, class UnsVal>
-    bool operator!=(const ScaleView<Val, UnsVal>& x, const ScaleView<Val, UnsVal>& y);
     //@}
 
     /**
@@ -994,9 +984,6 @@ namespace Gecode { namespace Int {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Int::ConstIntView
     bool operator==(const ConstIntView& x, const ConstIntView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::ConstIntView
-    bool operator!=(const ConstIntView& x, const ConstIntView& y);
     //@}
 
     /**
@@ -1138,9 +1125,6 @@ namespace Gecode { namespace Int {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Int::ZeroIntView
     bool operator==(const ZeroIntView& x, const ZeroIntView& y);
-    /// Test whether views \a x and \a y are the same
-    /// \relates Gecode::Int::ZeroIntView
-    bool operator!=(const ZeroIntView& x, const ZeroIntView& y);
     //@}
 
     template <class View>
@@ -1330,10 +1314,6 @@ namespace Gecode { namespace Int {
     /// \relates Gecode::Int::CachedView
     template <class View>
     bool operator==(const CachedView<View>& x, const CachedView<View>& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::CachedView
-    template <class View>
-    bool operator!=(const CachedView<View>& x, const CachedView<View>& y);
     //@}
 
     /**
@@ -1682,9 +1662,6 @@ namespace Gecode { namespace Int {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Int::NegBoolView
     bool operator==(const NegBoolView& x, const NegBoolView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::NegBoolView
-    bool operator!=(const NegBoolView& x, const NegBoolView& y);
     //@}
 
     /**

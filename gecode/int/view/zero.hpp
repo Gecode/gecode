@@ -288,10 +288,6 @@ namespace Gecode { namespace Int {
     operator==(const ZeroIntView&, const ZeroIntView&) {
         return true;
     }
-    forceinline bool
-    operator!=(const ZeroIntView&, const ZeroIntView&) {
-        return false;
-    }
 
 }} // namespace Gecode::Int
 

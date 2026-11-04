@@ -101,10 +101,8 @@ namespace Gecode { namespace Support {
         void o(BitSetData a, unsigned int i);
         /// Return "or" of \a a and \a b
         static BitSetData o(BitSetData a, BitSetData b);
-        /// Check if bits are the same as for \a a
-        bool operator==(BitSetData a) const;
-        /// Check if bits are not the same as for \a a
-        bool operator!=(BitSetData a) const;
+        /// Whether both hold the same bits
+        bool operator==(const BitSetData&) const = default;
         /// Invert all bits in \a b
         BitSetData operator~(void) const;
     };
@@ -322,14 +320,6 @@ namespace Gecode { namespace Support {
         BitSetData iv;
         iv.bits = ~bits;
         return iv;
-    }
-    forceinline bool
-    BitSetData::operator==(BitSetData a) const {
-        return bits == a.bits;
-    }
-    forceinline bool
-    BitSetData::operator!=(BitSetData a) const {
-        return bits != a.bits;
     }
 
     /*

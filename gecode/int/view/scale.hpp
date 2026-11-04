@@ -294,11 +294,6 @@ namespace Gecode { namespace Int {
     operator==(const ScaleView<Val, UnsVal>& x, const ScaleView<Val, UnsVal>& y) {
         return (x.base() == y.base()) && (x.scale() == y.scale());
     }
-    template <class Val, class UnsVal>
-    forceinline bool
-    operator!=(const ScaleView<Val, UnsVal>& x, const ScaleView<Val, UnsVal>& y) {
-        return !(x == y);
-    }
 
 }} // namespace Gecode::Int
 

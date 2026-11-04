@@ -308,10 +308,6 @@ namespace Gecode { namespace Int {
     operator==(const MinusView& x, const MinusView& y) {
         return x.base() == y.base();
     }
-    forceinline bool
-    operator!=(const MinusView& x, const MinusView& y) {
-        return !(x == y);
-    }
 
 }} // namespace Gecode::Int
 
