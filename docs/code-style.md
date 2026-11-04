@@ -184,6 +184,26 @@ operator keeps `operator!=` as well. `TupleSet` is one: without its
 covers only operator expressions, so write `a != b`, not `operator!=(a, b)` or
 `a.operator<(b)`. No clang-tidy check enforces this rule.
 
+A const/non-const overload pair stays a pair unless one member with an
+explicit object parameter, `template <class Self> auto& f(this Self&& self)`,
+removes a duplicated body of more than one statement, not counting `assert`,
+or a `const_cast` forwarding idiom. A pair whose bodies are one statement each
+stays: the merged template is not shorter. Merge only when the merged member
+returns the same type and accepts the same receivers as the pair, including
+rvalues and calls through derived classes. A member reached through `self`
+is looked up in the receiver's class, so a derived class can hide it, and a
+class that inherits privately and re-exports the member with `using` makes
+the base inaccessible, so the call no longer compiles. Storage reached
+through a pointer does not inherit const from `self`; return it through
+`std::forward_like<Self&>`. An explicit-object member cannot be virtual or
+static, takes no trailing cv or ref qualifier, and its address is a plain
+function pointer rather than a member pointer. The merged member is a
+template over `Self`, so its definition must be visible to callers: a pair
+defined in a .cpp file moves to a header. `Matrix::operator()` keeps its pair
+for the derived-class reason: its two bodies duplicate a range check, but a
+merged member would reject a privately derived matrix. No clang-tidy check
+enforces this rule.
+
 Other performance checks need focused review: `performance-enum-size` changes
 layouts and ABI, and `performance-no-int-to-ptr` conflicts with deliberate
 pointer tagging. Review `noexcept` guarantees, destructor triviality, and math

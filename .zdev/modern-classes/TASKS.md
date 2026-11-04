@@ -3,9 +3,9 @@
 # Tasks: modern-classes
 
 - Total: 5
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 4
+- Done: 5
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -13,4 +13,4 @@
 | [modern-classes-002](tasks/002-inventory-defaultable-members-comparisons-and-overload-pairs.md) | Inventory defaultable members, comparisons, and overload pairs | done | modern-classes-001 |
 | [modern-classes-003](tasks/003-default-and-delete-special-members-by-tool-run.md) | Default and delete special members by tool run | done | modern-classes-002 |
 | [modern-classes-004](tasks/004-use-operator-and-defaulted-operator-where-they-keep-semantic.md) | Use operator<=> and defaulted operator== where they keep semantics | done | modern-classes-002 |
-| [modern-classes-005](tasks/005-merge-const-non-const-overload-pairs-with-deducing-this.md) | Merge const/non-const overload pairs with deducing this | ready | modern-classes-002 |
+| [modern-classes-005](tasks/005-merge-const-non-const-overload-pairs-with-deducing-this.md) | Merge const/non-const overload pairs with deducing this | done | modern-classes-002 |
