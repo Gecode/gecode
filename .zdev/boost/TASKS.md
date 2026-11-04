@@ -4,8 +4,8 @@
 
 - Total: 11
 - Ready: 1
-- Blocked: 2
-- Done: 8
+- Blocked: 1
+- Done: 9
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -18,5 +18,5 @@
 | [boost-007](tasks/007-spike-a-fully-gecode-native-float-interval-library.md) | Spike a fully Gecode-native float interval library | done | boost-003 |
 | [boost-008](tasks/008-add-the-gecode-native-interval-core-beside-the-boost-copy.md) | Add the Gecode-native interval core beside the Boost copy | done | — |
 | [boost-009](tasks/009-switch-floatval-and-the-rounding-layer-to-the-native-interva.md) | Switch FloatVal and the rounding layer to the native interval | done | boost-008 |
-| [boost-010](tasks/010-remove-the-vendored-boost-copy.md) | Remove the vendored Boost copy | ready | boost-009 |
-| [boost-011](tasks/011-record-the-native-interval-library-in-the-changelog.md) | Record the native interval library in the changelog | blocked | boost-010 |
+| [boost-010](tasks/010-remove-the-vendored-boost-copy.md) | Remove the vendored Boost copy | done | boost-009 |
+| [boost-011](tasks/011-record-the-native-interval-library-in-the-changelog.md) | Record the native interval library in the changelog | ready | boost-010 |

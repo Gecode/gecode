@@ -60,7 +60,6 @@ def owned_files() -> list[Path]:
     for name in sorted(set(output.decode().split("\0"))):
         path = Path(name)
         if (path.suffix in SOURCE_SUFFIXES | HEADER_SUFFIXES
-                and not name.startswith("gecode/third-party/")
                 and name not in GENERATED_PARSER
                 and (ROOT / path).is_file()):
             files.append(path)
@@ -115,7 +114,7 @@ def lint(build_dir: Path, jobs: int, *, report_missing: bool = True) -> None:
     def path_pattern(path: Path) -> str:
         return separator.join(re.escape(part) for part in path.as_posix().split("/"))
 
-    excluded_sources = path_pattern(Path("gecode/third-party")) + separator + "|" + "|".join(
+    excluded_sources = "|".join(
         path_pattern(Path(path)) + "$" for path in sorted(GENERATED_PARSER)
     )
     owned_directory = "(gecode|test|examples|tools)" + separator
@@ -124,8 +123,7 @@ def lint(build_dir: Path, jobs: int, *, report_missing: bool = True) -> None:
     # LLVM header filters use POSIX regular expressions, without lookarounds.
     header_filter = path_pattern(ROOT) + separator + owned_directory
     generated_headers = path_pattern(build_dir / "gecode/kernel") + separator + r"var-(type|imp)\.hpp$"
-    exclude_filter = (separator + path_pattern(Path("gecode/third-party")) + separator
-                      + "|" + separator + path_pattern(Path("gecode/flatzinc"))
+    exclude_filter = (separator + path_pattern(Path("gecode/flatzinc"))
                       + separator + r"(parser\.tab\.(cpp|hpp)|lexer\.yy\.cpp)$")
     runner_command = [sys.executable, runner] if os.name == "nt" else [runner]
     run([*runner_command, "-clang-tidy-binary", tidy, "-config-file", str(configuration),

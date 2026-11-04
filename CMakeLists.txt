@@ -920,7 +920,7 @@ foreach(input ${GECODE_DOC_SOURCE_INPUTS})
   endif()
 endforeach()
 list(APPEND GECODE_DOC_HELPER_INPUTS ${GECODE_VAR_TYPE_HPP} ${GECODE_VAR_IMP_HPP})
-list(FILTER GECODE_DOC_HELPER_INPUTS EXCLUDE REGEX "/gecode/(third-party|gist/standalone-example|flatzinc/exampleplugin)/")
+list(FILTER GECODE_DOC_HELPER_INPUTS EXCLUDE REGEX "/gecode/(gist/standalone-example|flatzinc/exampleplugin)/")
 list(FILTER GECODE_DOC_HELPER_INPUTS EXCLUDE REGEX "/gecode/flatzinc/(parser\\.tab|lexer\\.)")
 list(REMOVE_DUPLICATES GECODE_DOC_HELPER_INPUTS)
 
@@ -1641,7 +1641,6 @@ if(GECODE_INSTALL)
     FILES_MATCHING
       PATTERN "**.hh"
       PATTERN "**.hpp"
-      PATTERN "LICENSE_1_0.txt"
       PATTERN "mznlib" EXCLUDE
       PATTERN "flatzinc/registry-internal.hh" EXCLUDE
       PATTERN "flatzinc/blackbox.hh" EXCLUDE

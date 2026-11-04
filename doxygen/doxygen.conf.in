@@ -520,7 +520,6 @@ EXCLUDE_PATTERNS       = \
 	*.svn/* \
 	*moc_* \
 	*gecode/gist/standalone-example/* \
-	*gecode/third-party/* \
 	*gecode/flatzinc/exampleplugin/* \
 	*gecode/flatzinc/parser.tab.* *gecode/flatzinc/lexer.*
 

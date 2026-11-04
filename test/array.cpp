@@ -106,6 +106,7 @@ namespace Test {
 #ifdef GECODE_HAS_FLOAT_VARS
     // A float value is two bounds and stays trivially copyable.
     static_assert(std::is_trivially_copyable_v<Gecode::FloatVal>);
+    static_assert(std::is_trivially_copyable_v<Gecode::Float::ScaleView>);
 #endif
 
     /*

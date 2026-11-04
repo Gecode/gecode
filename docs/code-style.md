@@ -2,7 +2,7 @@
 
 Use clang-format **22** for first-party C and C++ sources. `.clang-format`
 defines the exact formatting; `.editorconfig` supplies the matching editor
-defaults. Keep upstream third-party files in their original style.
+defaults.
 
 ## Formatting
 
@@ -129,14 +129,12 @@ on), the variable arrays and `ViewArray`, the open variable and view lists,
 with no reference count or allocation, and Gecode code relies on their value
 semantics. Keep them so: define no copy member, move member, or destructor
 for a handle that only copies its members, or default it on its first
-declaration. `test/array.cpp` asserts the property. The check's
-`AllowedTypes` lists only `Float::ScaleView`, a view that is not trivially
-copyable because its `FloatVal` member is not. Owned and reference-counted
+declaration. `test/array.cpp` asserts the property. Owned and reference-counted
 types are not exempt: `SharedHandle` types such as `IntSet`, `TupleSet`,
 `DFA`, `Rnd`, `Action`, and `CHB`, `SharedArray`, the `*Args` arrays, `REG`,
 strings, and callbacks. Their copies touch a reference count or allocate, so
-they follow the rule above. `FloatVal` is not exempt either: it is two
-doubles, not a handle.
+they follow the rule above. `FloatVal` is trivially copyable, so the check
+does not report it, but it is two doubles, not a handle: pass it by `const&`.
 
 Special members follow the rule of zero: a class whose members copy, move,
 and destroy themselves declares no copy member, move member, or destructor.

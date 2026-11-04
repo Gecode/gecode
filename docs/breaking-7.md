@@ -10,7 +10,7 @@ Each stage is committed locally after focused validation.
       Preserve CMake builds, installation, and generated-source maintenance.
 - [x] Establish clang-format rules from representative Gecode code. Compare
       two- and four-space indentation, update EditorConfig, remove modelines,
-      and format maintained sources. Preserve third-party source conventions.
+      and format maintained sources.
 - [x] Require C++23 through exported CMake targets. Use broadly implemented
       language and library facilities; keep platform CI coverage.
 - [x] Rename identifiers to snake_case and review concatenated and unclear
@@ -46,7 +46,6 @@ affect runtime behaviour. Platform-specific checks remain in CI.
 
 - Replace bespoke configuration-template processing with CMake's native
   `configure_file` / `#cmakedefine`, checking feature-macro compatibility.
-- Audit shipped Boost compatibility headers against the new compiler baseline.
 - Consider scoped enums and descriptive constants after naming stabilizes.
 - Revisit the `forceinline` portability macro and obsolete `(void)` parameter lists.
 - Continue auditing callback, branch-configuration, and shared-handle copying
