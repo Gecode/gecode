@@ -3,7 +3,7 @@ schema_version = 1
 id = "boost-004"
 key = "decide-approach"
 area = "boost"
-status = "open"
+status = "done"
 priority = "normal"
 blocked_by = ["boost-003", "boost-007"]
 +++
@@ -19,8 +19,16 @@ Present the recommendation in background/approach-study.md the measurements in b
 
 ## Done when
 
-- [ ] The brief names the chosen approach, the user's reasons, and any accepted loss of tightness.
+- [x] The brief names the chosen approach, the user's reasons, and any accepted loss of tightness.
 
 ## Validation
+
+- zdev check boost
+
+## Result
+
+User chose the native spike (approach 3, no Boost code, switched-mode rounding) with no accepted loss of tightness; interval code is Gecode/MIT, written in Gecode style with Boost.Interval as the bit-for-bit oracle; CI runs once local validation is complete, via a pull request confirmed with the user. Recorded in the brief's Terms and settled decisions.
+
+Validation:
 
 - zdev check boost

@@ -99,10 +99,37 @@ Boost is ruled out (see Terms and settled decisions).
   Gecode 7 areas.
 - This is a Gecode 7 breaking change. `Float::Rounding`, `RoundingBase`, and
   `FloatVal`'s implementation type may change spelling and base classes.
+- Approach (user, 2026-11-04, boost-004): Gecode 7 adopts the native spike,
+  approach 3 with no Boost code: a Gecode-native `Float::Interval` and
+  rounding layer with today's switched-mode rounding. The user chose it
+  because the spike gives HEAD's bounds, truth values, solutions, and search
+  statistics on every oracle, on arm64 and x86-64, with no external
+  dependency, fewer installed headers, the same exported symbols, and the
+  same or better runtime (background/native-spike.md). The refreshed and
+  improved Boost copies were measured and rejected (approach study). No loss
+  of tightness is accepted: bounds stay bit for bit the same as HEAD's, and
+  `nextafter` rounding stays a separate later decision. boost-005 follows the
+  spike's proposed split.
+- License (user, 2026-11-04): the interval code is Gecode code under
+  Gecode's MIT license, not BSL-1.0. boost-005 writes the core in Gecode's
+  own style, from the mathematics of each operation, rather than translating
+  Boost line for line as the spike did. Boost.Interval is the behavioural
+  oracle: a temporary differential test compares the new code with it bit
+  for bit until the copy is removed. The decision comment acknowledges
+  Boost.Interval as the reference whose results the code reproduces; it
+  carries no Boost copyright or license text. A part that can only be
+  written as a close translation of Boost's text keeps Boost's notice, and
+  the result says which part and why.
+- CI (user, 2026-11-04): MSVC and other CI-only code runs in CI once local
+  validation is complete and the change is expected to pass. Running CI
+  needs a pull request, because the workflow runs only on pull requests and
+  on pushes to `main` and `release/**`; opening one is confirmed with the
+  user at that point.
 
 ## Open questions
 
-The investigation answers all but the last. The user decides the last one.
+The investigation answered these, and the user decided the approach in
+boost-004 (see Terms and settled decisions).
 
 - Does today's build honor directed rounding under optimization, given that
   no floating-point environment flags are set? A small probe that compares
@@ -118,8 +145,6 @@ The investigation answers all but the last. The user decides the last one.
   rounding modes?
 - Does a fully Gecode-native library keep today's bounds, search, and
   runtime, and what are its wider impacts? The native spike answers this.
-- Which approach does Gecode 7 adopt: a refreshed copy, an improved copy, or
-  a Gecode support library?
 
 ## Testing
 
