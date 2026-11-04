@@ -719,7 +719,7 @@ namespace Test { namespace Float {
                     CHECK_TEST(subsumed(*s), "No subsumption");
                     if (sol == MT_TRUE) {
                         CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
-                    } else if ((sol = MT_FALSE) && s->r.var().assigned()) {
+                    } else if ((sol == MT_FALSE) && s->r.var().assigned()) {
                         CHECK_TEST(s->r.var().val() == 0, "One on non-solution");
                     }
                     delete s;
