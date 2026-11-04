@@ -319,11 +319,6 @@ namespace Gecode { namespace Set {
         return x.base() == y.base();
     }
 
-    forceinline bool
-    operator!=(const SingletonView& x, const SingletonView& y) {
-        return x.base() != y.base();
-    }
-
     /*
      * Iterators
      *

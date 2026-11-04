@@ -161,6 +161,29 @@ heap zero a class whose default constructor is not user-provided, while the
 empty constructor leaves fields without an initializer untouched. A
 constructor whose body is empty only in some configurations stays as well.
 
+Comparisons use the C++20 forms. A class whose equality compares every field
+declares `bool operator==(const T&) const = default;`. A class ordered
+lexicographically by its fields in declaration order declares
+`auto operator<=>(const T&) const = default;` instead, which also provides
+`==`; its header includes `<compare>`. Declare no `operator!=` and no `<`,
+`<=`, `>`, or `>=` beside them: the compiler rewrites `a != b` as
+`!(a == b)` and the relational operators through `operator<=>`, in either
+argument order. A hand-written `operator==` stays where equality is not
+field-wise, for example a deep comparison of a shared object or a comparison
+of the address an allocator refers to, and it gets no `operator!=` either. A
+hand-written `operator<` stays where the order is not the field order, such
+as a sort key. Operators that build modelling expressions, such as
+`IntVar < IntVar`, keep all their operators, and so do the possibly/certainly
+interval comparisons of `FloatVal`. The kernel's heterogeneous `ConstView`,
+`VarImpView`, and `DerivedView` templates keep `operator!=`: without it, their
+reversed `operator==` candidates would join every view comparison. A class
+with both an implicit converting constructor and an implicit conversion
+operator keeps `operator!=` as well. `TupleSet` is one: without its
+`operator!=`, `true != t` is ambiguous between its `int` constructor and its
+`bool` conversion. Rewriting
+covers only operator expressions, so write `a != b`, not `operator!=(a, b)` or
+`a.operator<(b)`. No clang-tidy check enforces this rule.
+
 Other performance checks need focused review: `performance-enum-size` changes
 layouts and ABI, and `performance-no-int-to-ptr` conflicts with deliberate
 pointer tagging. Review `noexcept` guarantees, destructor triviality, and math

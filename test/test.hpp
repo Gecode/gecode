@@ -133,6 +133,18 @@ namespace Test {
         return "[" + s + str(x[x.size() - 1]) + "]";
     }
 
+    template <class T1, class T2>
+    inline bool
+    Base::compares_equal(const T1& x, const T2& y) {
+        return (x == y) && (y == x) && !(x != y) && !(y != x);
+    }
+
+    template <class T1, class T2>
+    inline bool
+    Base::compares_unequal(const T1& x, const T2& y) {
+        return !(x == y) && !(y == x) && (x != y) && (y != x);
+    }
+
 } // namespace Test
 
 // STATISTICS: test-core

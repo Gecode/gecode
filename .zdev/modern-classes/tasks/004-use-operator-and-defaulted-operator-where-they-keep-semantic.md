@@ -3,7 +3,7 @@ schema_version = 1
 id = "modern-classes-004"
 key = "comparisons"
 area = "modern-classes"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "normal"
@@ -25,12 +25,20 @@ Follow the comparison rows in background/inventory.md. C++20 rewrites the operat
 
 ## Done when
 
-- [ ] Each convertible inventory row is converted or the result names why it was kept.
-- [ ] Every converted class is compared by at least one test, and the suites pass.
-- [ ] docs/code-style.md states when to use operator<=> and defaulted operator==.
+- [x] Each convertible inventory row is converted or the result names why it was kept.
+- [x] Every converted class is compared by at least one test, and the suites pass.
+- [x] docs/code-style.md states when to use operator<=> and defaulted operator==.
 
 ## Validation
 
 - check-standard in build/full and ctest in build/local.
 - uv run misc/check.py lint --build-dir build/full.
 - uv run misc/check.py all --build-dir build/full --jobs N before the commit.
+
+## Result
+
+Converted the 14 convertible comparison rows: Support::BitSetData has a defaulted operator==, Int::LDSB::Literal a defaulted operator<=> in place of operator<, and operator!= is removed from PropagatorGroup, BrancherGroup, DFA, IntSet, BinPacking::Item, space_allocator, region_allocator, and 16 int/set/float views. TupleSet keeps operator!= because its implicit int constructor and bool conversion would otherwise make true != t ambiguous. The 13 excluded rows are unchanged. Int::CachedView::operator== called a nonexistent offset() and now compares base(). 11 comparison tests, a docs/code-style.md rule, and changelog entries.
+
+Validation:
+
+- Independent verifier: full review found one issue (TupleSet::operator!= removal made true != t ambiguous), fixed in one correction pass, focused recheck PASS with baseline/current compile probes on AppleClang and LLVM 22. Evidence: check-standard 6831/6831 (before the last lint and TupleSet edits); after them focused Int::Extensional and Compare 260/260, Release ctest 7/7, check.py all rc=0; no compiler warnings; Doxygen 91 warnings as at baseline.

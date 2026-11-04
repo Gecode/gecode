@@ -74,10 +74,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
     operator==(const Item& i, const Item& j) {
         return (i.bin() == j.bin()) && (i.size() == j.size());
     }
-    forceinline bool
-    operator!=(const Item& i, const Item& j) {
-        return !(i == j);
-    }
 
     /// For sorting according to size
     forceinline bool

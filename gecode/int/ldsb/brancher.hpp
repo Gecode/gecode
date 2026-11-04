@@ -43,17 +43,6 @@ namespace Gecode { namespace Int { namespace LDSB {
     Literal::Literal(int idx, int val)
         : _variable(idx), _value(val) {}
 
-    forceinline bool
-    Literal::operator<(const Literal& rhs) const {
-        int d = rhs._variable - _variable;
-        if (d > 0)
-            return true;
-        else if (d == 0)
-            return rhs._value > _value;
-        else
-            return false;
-    }
-
     template <class Val>
     inline LDSBChoice<Val>::LDSBChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n,
                                        const Literal* literals, int nliterals)

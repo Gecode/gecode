@@ -783,8 +783,6 @@ namespace Gecode {
         //@{
         /// Test whether this group is equal to group \a g
         bool operator==(PropagatorGroup g) const;
-        /// Test whether this group is different from group \a g
-        bool operator!=(PropagatorGroup g) const;
         /// Return number of propagators in a group
         GECODE_KERNEL_EXPORT
         unsigned int size(Space& home) const;
@@ -850,8 +848,6 @@ namespace Gecode {
         //@{
         /// Test whether this group is equal to group \a g
         bool operator==(BrancherGroup g) const;
-        /// Test whether this group is different from group \a g
-        bool operator!=(BrancherGroup g) const;
         /// Return number of branchers in a group
         GECODE_KERNEL_EXPORT
         unsigned int size(Space& home) const;
@@ -5254,10 +5250,6 @@ namespace Gecode {
     PropagatorGroup::operator==(PropagatorGroup g) const {
         return id() == g.id();
     }
-    forceinline bool
-    PropagatorGroup::operator!=(PropagatorGroup g) const {
-        return id() != g.id();
-    }
 
     forceinline PropagatorGroup&
     PropagatorGroup::move(Space&, Propagator& p) {
@@ -5278,10 +5270,6 @@ namespace Gecode {
     forceinline bool
     BrancherGroup::operator==(BrancherGroup g) const {
         return id() == g.id();
-    }
-    forceinline bool
-    BrancherGroup::operator!=(BrancherGroup g) const {
-        return id() != g.id();
     }
 
     forceinline BrancherGroup&

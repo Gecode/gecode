@@ -69,6 +69,74 @@ namespace Test { namespace Int {
         Gecode::IntArgs i({1, 2, 3, 4});
         Basic b1(3);
         Basic b2(i);
+
+        /// %Test for comparing integer sets
+        class IntSetCompare : public Base {
+        public:
+            /// Create and register test
+            IntSetCompare(void) : Base("Int::Basic::IntSet::Compare") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using namespace Gecode;
+                IntSet s({1, 3, 5});
+                IntSet same({1, 3, 5});
+                IntSet other(1, 5);
+                IntSet s_copy(s);
+                return compares_equal(s, same) && compares_equal(s, s_copy) && compares_unequal(s, other) &&
+                       compares_equal(IntSet::empty, IntSet(1, 0)) && compares_unequal(s, IntSet::empty);
+            }
+        };
+
+        IntSetCompare int_set_compare;
+
+        /// %Test for comparing integer and Boolean views
+        class ViewCompare : public Base {
+        private:
+            /// Space for the variables behind the views
+            class Fixture : public Gecode::Space {
+            public:
+                Fixture(void) = default;
+                // NOLINTNEXTLINE(modernize-use-equals-default)
+                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+                Gecode::Space*
+                copy(void) override {
+                    return new Fixture(*this);
+                }
+            };
+
+        public:
+            /// Create and register test
+            ViewCompare(void) : Base("Int::Basic::View::Compare") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using namespace Gecode;
+                using namespace Gecode::Int;
+                Fixture home;
+                IntView x(IntVar(home, 0, 5));
+                IntView y(IntVar(home, 0, 5));
+                BoolView b(BoolVar(home, 0, 1));
+                BoolView c(BoolVar(home, 0, 1));
+                MinusView mx(x);
+                return compares_equal(mx, MinusView(x)) && compares_unequal(mx, MinusView(y)) &&
+                       compares_equal(OffsetView(x, 2), OffsetView(x, 2)) &&
+                       compares_unequal(OffsetView(x, 2), OffsetView(x, 3)) &&
+                       compares_unequal(OffsetView(x, 2), OffsetView(y, 2)) &&
+                       compares_equal(IntScaleView(2, x), IntScaleView(2, x)) &&
+                       compares_unequal(IntScaleView(2, x), IntScaleView(3, x)) &&
+                       compares_unequal(IntScaleView(2, x), IntScaleView(2, y)) &&
+                       compares_equal(ConstIntView(4), ConstIntView(4)) &&
+                       compares_unequal(ConstIntView(4), ConstIntView(5)) &&
+                       compares_equal(ZeroIntView(), ZeroIntView()) &&
+                       compares_equal(CachedView<IntView>(x), CachedView<IntView>(x)) &&
+                       compares_unequal(CachedView<IntView>(x), CachedView<IntView>(y)) &&
+                       compares_equal(NegBoolView(b), NegBoolView(b)) &&
+                       compares_unequal(NegBoolView(b), NegBoolView(c)) && compares_unequal(x, mx);
+            }
+        };
+
+        ViewCompare view_compare;
         //@}
 
     } // namespace Basic

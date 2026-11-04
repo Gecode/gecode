@@ -813,32 +813,20 @@ namespace Gecode { namespace Set {
     operator==(const ConstSetView& x, const ConstSetView& y) {
         if ((x.size != y.size) || (x.dom_size != y.dom_size))
             return false;
-        for (int i = x.size; i--;)
+        for (int i = 0; i < x.size; i++)
             if ((x.ranges[2 * i] != y.ranges[2 * i]) || (x.ranges[2 * i + 1] != y.ranges[2 * i + 1]))
                 return false;
         return true;
-    }
-    forceinline bool
-    operator!=(const ConstSetView& x, const ConstSetView& y) {
-        return !(x == y);
     }
 
     forceinline bool
     operator==(const EmptyView&, const EmptyView&) {
         return true;
     }
-    forceinline bool
-    operator!=(const EmptyView&, const EmptyView&) {
-        return false;
-    }
 
     forceinline bool
     operator==(const UniverseView&, const UniverseView&) {
         return true;
-    }
-    forceinline bool
-    operator!=(const UniverseView&, const UniverseView&) {
-        return false;
     }
 
 }} // namespace Gecode::Set

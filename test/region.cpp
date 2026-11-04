@@ -64,24 +64,23 @@ namespace Test {
 
     Region r;
 
+    /// Space without variables
+    class EmptySpace : public Gecode::Space {
+    public:
+        /// Initialize space
+        EmptySpace(void) = default;
+        /// Constructor for cloning \a s
+        // NOLINTNEXTLINE(modernize-use-equals-default)
+        EmptySpace(EmptySpace& s) : Gecode::Space(s) {}
+        /// Copy space during cloning
+        Gecode::Space*
+        copy(void) override {
+            return new EmptySpace(*this);
+        }
+    };
+
     /// %Test for growing space memory from an empty block
     class SpaceReallocEmpty : public Test::Base {
-    private:
-        /// Space without variables
-        class EmptySpace : public Gecode::Space {
-        public:
-            /// Initialize space
-            EmptySpace(void) = default;
-            /// Constructor for cloning \a s
-            // NOLINTNEXTLINE(modernize-use-equals-default)
-            EmptySpace(EmptySpace& s) : Gecode::Space(s) {}
-            /// Copy space during cloning
-            Gecode::Space*
-            copy(void) override {
-                return new EmptySpace(*this);
-            }
-        };
-
     public:
         /// Initialize test
         SpaceReallocEmpty(void) : Test::Base("Space::Realloc::Empty") {}
@@ -99,6 +98,30 @@ namespace Test {
     };
 
     SpaceReallocEmpty space_realloc_empty;
+
+    /// %Test for comparing space and region allocators
+    class AllocatorCompare : public Test::Base {
+    public:
+        /// Initialize test
+        AllocatorCompare(void) : Test::Base("Allocator::Compare") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            using namespace Gecode;
+            EmptySpace home, other_home;
+            const space_allocator<int> space_alloc(home);
+            Gecode::Region region, other_region;
+            const region_allocator<int> region_alloc(region);
+            return compares_equal(space_alloc, space_allocator<double>(home)) &&
+                   compares_unequal(space_alloc, space_allocator<double>(other_home)) &&
+                   compares_equal(space_alloc, space_allocator<int>(space_alloc)) &&
+                   compares_equal(region_alloc, region_allocator<double>(region)) &&
+                   compares_unequal(region_alloc, region_allocator<double>(other_region)) &&
+                   compares_equal(region_alloc, region_allocator<int>(region_alloc));
+        }
+    };
+
+    AllocatorCompare allocator_compare;
 
     /// %Test for copying and assigning empty archives
     class ArchiveEmpty : public Test::Base {

@@ -206,6 +206,49 @@ namespace Test { namespace Set {
         };
         Construct _con;
 
+        /// %Test for comparing set views
+        class ViewCompare : public ::Test::Base {
+        private:
+            /// Space for the variables behind the views
+            class Fixture : public Gecode::Space {
+            public:
+                Fixture(void) = default;
+                // NOLINTNEXTLINE(modernize-use-equals-default)
+                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+                Gecode::Space*
+                copy(void) override {
+                    return new Fixture(*this);
+                }
+            };
+
+        public:
+            /// Create and register test
+            ViewCompare(void) : ::Test::Base("Set::Var::View::Compare") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using namespace Gecode::Set;
+                Fixture home;
+                SetView x(SetVar(home, IntSet::empty, 0, 5));
+                SetView y(SetVar(home, IntSet::empty, 0, 5));
+                IntVar i(home, 0, 5);
+                IntVar j(home, 0, 5);
+                ConstSetView c(home, IntSet(1, 3));
+                ComplementView<SetView> cx(x);
+                ComplementView<SetView> cy(y);
+                return compares_equal(c, ConstSetView(home, IntSet(1, 3))) &&
+                       compares_unequal(c, ConstSetView(home, IntSet(1, 4))) &&
+                       compares_equal(EmptyView(), EmptyView()) && compares_equal(UniverseView(), UniverseView()) &&
+                       compares_equal(SingletonView(i), SingletonView(i)) &&
+                       compares_unequal(SingletonView(i), SingletonView(j)) &&
+                       compares_equal(cx, ComplementView<SetView>(x)) && compares_unequal(cx, cy) &&
+                       compares_equal(CachedView<SetView>(x), CachedView<SetView>(x)) &&
+                       compares_unequal(CachedView<SetView>(x), CachedView<SetView>(y));
+            }
+        };
+
+        ViewCompare view_compare;
+
     } // namespace Var
 }} // namespace Test::Set
 

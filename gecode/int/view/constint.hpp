@@ -313,10 +313,6 @@ namespace Gecode { namespace Int {
     operator==(const ConstIntView& x, const ConstIntView& y) {
         return x.min() == y.min();
     }
-    forceinline bool
-    operator!=(const ConstIntView& x, const ConstIntView& y) {
-        return !(x == y);
-    }
 
 }} // namespace Gecode::Int
 

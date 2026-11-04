@@ -307,18 +307,6 @@ namespace Gecode {
         return &al1.space == &al2.space;
     }
 
-    /**
-     * \brief Tests two space allocators for inequality
-     *
-     * Two allocators are equal when each can release storage allocated
-     * from the other.
-     */
-    template <class T1, class T2>
-    bool
-    operator!=(space_allocator<T1> const& al1, space_allocator<T2> const& al2) noexcept {
-        return &al1.space != &al2.space;
-    }
-
     template <class T>
     struct region_allocator;
 
@@ -480,18 +468,6 @@ namespace Gecode {
     bool
     operator==(region_allocator<T1> const& al1, region_allocator<T2> const& al2) noexcept {
         return &al1.region == &al2.region;
-    }
-
-    /*
-     * \brief Tests two region allocators for inequality
-     *
-     * Two allocators are equal when each can release storage allocated
-     * from the other.
-     */
-    template <class T1, class T2>
-    bool
-    operator!=(region_allocator<T1> const& al1, region_allocator<T2> const& al2) noexcept {
-        return &al1.region != &al2.region;
     }
 
 } // namespace Gecode

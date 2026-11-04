@@ -130,6 +130,36 @@ such as Int::ViewRanges and Set::UnknownRanges. It also affects SetRel,
 FreeList, Float::OffsetView, and Search::TraceRecorder::ID.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Remove operator!= where it only negated operator==, and replace the
+operator< of Int::LDSB::Literal with a defaulted operator<=>. C++20 rewrites
+`a != b` as `!(a == b)` and `a < b` through operator<=>, so these expressions
+keep their results. A call that names the operator, such as
+`operator!=(a, b)` or `a.operator<(b)`, no longer compiles; write the
+expression instead.
+[MORE]
+operator!= is removed from PropagatorGroup, BrancherGroup, IntSet, DFA,
+Support::BitSetData, space_allocator, region_allocator,
+Int::BinPacking::Item, and the integer, set, and float views. The kernel's
+ConstView, VarImpView, and DerivedView templates keep theirs, and so does
+TupleSet: without it, `true != t` would be ambiguous between its int
+constructor and its bool conversion.
+Support::BitSetData::operator== is now defaulted and takes its argument by
+const reference. Int::LDSB::Literal now also has ==, !=, <=, >, and >=.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix operator== of Int::CachedView. It used a member that the view does not
+have, so comparing two cached integer views did not compile. It now compares
+the base views, like Set::CachedView.
+
+[ENTRY]
 Module: support
 What:   removed
 Rank:   minor

@@ -327,11 +327,6 @@ namespace Gecode {
         return equal(d);
     }
 
-    forceinline bool
-    DFA::operator!=(const DFA& d) const {
-        return !(*this == d);
-    }
-
 } // namespace Gecode
 
 // STATISTICS: int-prop

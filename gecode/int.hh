@@ -288,8 +288,6 @@ namespace Gecode {
         //@{
         /// Return whether \a s is equal
         bool operator==(const IntSet& s) const;
-        /// Return whether \a s is not equal
-        bool operator!=(const IntSet& s) const;
         //@}
 
         /// \name Predefined value
@@ -2547,8 +2545,6 @@ namespace Gecode {
         /// Test whether DFA is equal to \a d
         GECODE_INT_EXPORT
         bool operator==(const DFA& d) const;
-        /// Test whether DFA is not equal to \a d
-        bool operator!=(const DFA& d) const;
         /// Return the number of states
         int n_states(void) const;
         /// Return the number of transitions
@@ -2804,7 +2800,14 @@ namespace Gecode {
         operator bool(void) const;
         /// Test whether tuple set is equal to \a t
         bool operator==(const TupleSet& t) const;
-        /// Test whether tuple set is different from \a t
+        /**
+         * \brief Test whether tuple set is different from \a t
+         *
+         * Kept although C++20 rewrites \c != from \c ==: without it, the
+         * reversed \c == candidates make \c true \c != \c t ambiguous,
+         * because the implicit \c int constructor competes with the
+         * implicit \c bool conversion.
+         */
         bool operator!=(const TupleSet& t) const;
         //@}
 

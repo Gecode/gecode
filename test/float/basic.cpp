@@ -111,6 +111,47 @@ namespace Test { namespace Float {
         namespace {
             Median median;
         }
+
+        /// Test comparing float views
+        class ViewCompare : public Base {
+        private:
+            /// Space for the variables behind the views
+            class Fixture : public Gecode::Space {
+            public:
+                Fixture(void) = default;
+                // NOLINTNEXTLINE(modernize-use-equals-default)
+                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+                Gecode::Space*
+                copy(void) override {
+                    return new Fixture(*this);
+                }
+            };
+
+        public:
+            /// Create and register test
+            ViewCompare(void) : Base("Float::Basic::View::Compare") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using namespace Gecode;
+                using namespace Gecode::Float;
+                Fixture home;
+                FloatView x(FloatVar(home, 0.0, 1.0));
+                FloatView y(FloatVar(home, 0.0, 1.0));
+                MinusView mx(x);
+                return compares_equal(mx, MinusView(x)) && compares_unequal(mx, MinusView(y)) &&
+                       compares_equal(OffsetView(x, 1.0), OffsetView(x, 1.0)) &&
+                       compares_unequal(OffsetView(x, 1.0), OffsetView(x, 2.0)) &&
+                       compares_unequal(OffsetView(x, 1.0), OffsetView(y, 1.0)) &&
+                       compares_equal(ScaleView(2.0, x), ScaleView(2.0, x)) &&
+                       compares_unequal(ScaleView(2.0, x), ScaleView(3.0, x)) &&
+                       compares_unequal(ScaleView(2.0, x), ScaleView(2.0, y)) && compares_unequal(x, mx);
+            }
+        };
+
+        namespace {
+            ViewCompare view_compare;
+        }
         //@}
 
     } // namespace Basic

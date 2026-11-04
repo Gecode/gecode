@@ -32,6 +32,7 @@
 
 #include "test/int.hh"
 
+#include <gecode/int/bin-packing.hh>
 #include <gecode/minimodel.hh>
 #include <climits>
 
@@ -401,6 +402,39 @@ namespace Test { namespace Int {
         };
 
         Empty empty;
+
+        /// %Test for comparing bin-packing items
+        class ItemCompare : public Base {
+        private:
+            /// Space for the bin variables
+            class Fixture : public Gecode::Space {
+            public:
+                Fixture(void) = default;
+                // NOLINTNEXTLINE(modernize-use-equals-default)
+                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+                Gecode::Space*
+                copy(void) override {
+                    return new Fixture(*this);
+                }
+            };
+
+        public:
+            ItemCompare(void) : Base("Int::BinPacking::Item::Compare") {}
+            bool
+            run(void) override {
+                using namespace Gecode;
+                using Gecode::Int::BinPacking::Item;
+                Fixture home;
+                Gecode::Int::IntView b(IntVar(home, 0, 3));
+                Gecode::Int::IntView c(IntVar(home, 0, 3));
+                const Item i(b, 2);
+                const Item i_copy(i);
+                return compares_equal(i, i_copy) && compares_equal(i, Item(b, 2)) && compares_unequal(i, Item(b, 3)) &&
+                       compares_unequal(i, Item(c, 2));
+            }
+        };
+
+        ItemCompare item_compare;
 
         /// Large weights must preserve every feasible bin assignment.
         class DFFLargeWeights : public Test {

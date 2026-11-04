@@ -33,6 +33,7 @@
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
 #include <gecode/int/branch.hh>
+#include <gecode/int/ldsb.hh>
 
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
@@ -44,6 +45,7 @@
 
 #include "test/test.hh"
 
+#include <compare>
 #include <vector>
 
 /**
@@ -1858,6 +1860,23 @@ namespace Test { namespace LDSB {
         }
     };
 
+    /// %Test that literals order by variable index, then by value
+    class LiteralCompare : public Base {
+    public:
+        /// Initialize test
+        LiteralCompare(void) : Base("LDSB::Literal::Compare") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            using Gecode::Int::LDSB::Literal;
+            const Literal l(0, 1);
+            const Literal l_copy(l);
+            return compares_equal(l, l_copy) && compares_unequal(l, Literal(0, 2)) && (l < Literal(0, 2)) &&
+                   !(Literal(0, 2) < l) && !(l < l_copy) && (Literal(0, 5) < Literal(1, 0)) &&
+                   (Literal() < Literal(0, 0)) && ((l <=> Literal(1, 0)) == std::strong_ordering::less);
+        }
+    };
+
 #ifdef GECODE_HAS_SET_VARS
     /// %Test that set LDSB branching ignores symmetries without variables or values
     class EmptySet : public Base {
@@ -1922,6 +1941,7 @@ namespace Test { namespace LDSB {
     LDSB<TieBreak> tie_break("TieBreak");
     EmptyInt empty_int;
     EmptyBool empty_bool;
+    LiteralCompare literal_compare;
 
 #ifdef GECODE_HAS_SET_VARS
     LDSB<ReflectSym1> reflectsym1("ReflectSym1");
