@@ -3,7 +3,7 @@ schema_version = 1
 id = "found-bugs-001"
 key = "test-harness"
 area = "found-bugs"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "high"
@@ -21,10 +21,19 @@ test/float.cpp:722 reads `(sol = MT_FALSE)`, so the branch never runs and `sol` 
 
 ## Done when
 
-- [ ] test/float.cpp compares `sol` and the corrected branch runs and passes.
-- [ ] mm-set test names show the relation's name.
-- [ ] The MaybeType comments are correct Doxygen.
+- [x] test/float.cpp compares `sol` and the corrected branch runs and passes.
+- [x] mm-set test names show the relation's name.
+- [x] The MaybeType comments are correct Doxygen.
 
 ## Validation
 
 - Build gecode-test and run -test Float:: and -test MiniModel::SetExpr in build/full.
+
+## Result
+
+test/float.cpp:722 compares sol instead of assigning it, so the branch runs and an uncertain MT_MAYBE stays uncertain for the later RM_PMI checks. mm-set test names show the relation through Set::SetTest::str. The MaybeType comments are correct Doxygen. No same slip exists elsewhere in the harnesses.
+
+Validation:
+
+- Float:: 1566/1566 and MiniModel::SetExpr 12280/12280 in build/full; a temporary mutation made Float::Rel fail 44/126, proving the branch runs.
+- Fresh verifier (gpt-6.1-sol high) PASS with no findings.

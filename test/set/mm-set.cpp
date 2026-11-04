@@ -31,6 +31,7 @@
  */
 
 #include "test/int.hh"
+#include "test/set.hh"
 
 #include <gecode/minimodel.hh>
 
@@ -148,8 +149,8 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             SetExprConst(TestTags tags, const SetInstr* bis0, const std::string& s, Gecode::SetRelType srt0, int c0)
-                : Test(tags, "MiniModel::SetExpr::Const::" + s + "::" + str(srt0) + "::" + str(c0), 4, 0, 1,
-                       simple_reified_semantics(bis0)),
+                : Test(tags, "MiniModel::SetExpr::Const::" + s + "::" + Set::SetTest::str(srt0) + "::" + str(c0), 4, 0,
+                       1, simple_reified_semantics(bis0)),
                   bis(bis0), c(c0), srt(srt0) {}
             /// %Test whether \a x is solution
             bool
@@ -275,7 +276,7 @@ namespace Test { namespace Int {
             /// Create and register test
             SetExprExpr(TestTags tags, const SetInstr* bis00, const SetInstr* bis10, const std::string& s,
                         Gecode::SetRelType srt0)
-                : Test(tags, "MiniModel::SetExpr::Expr::" + s + "::" + str(srt0), 8, 0, 1,
+                : Test(tags, "MiniModel::SetExpr::Expr::" + s + "::" + Set::SetTest::str(srt0), 8, 0, 1,
                        simple_reified_semantics(bis00) && simple_reified_semantics(bis10)),
                   bis0(bis00), bis1(bis10), srt(srt0) {}
             /// %Test whether \a x is solution

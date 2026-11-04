@@ -4,13 +4,13 @@
 
 - Total: 6
 - Ready: 1
-- Blocked: 5
-- Done: 0
+- Blocked: 4
+- Done: 1
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
-| [found-bugs-001](tasks/001-fix-the-float-and-set-test-harness-bugs.md) | Fix the float and set test harness bugs | ready | — |
-| [found-bugs-002](tasks/002-fix-the-kernel-and-search-slips.md) | Fix the kernel and search slips | blocked | found-bugs-001 |
+| [found-bugs-001](tasks/001-fix-the-float-and-set-test-harness-bugs.md) | Fix the float and set test harness bugs | done | — |
+| [found-bugs-002](tasks/002-fix-the-kernel-and-search-slips.md) | Fix the kernel and search slips | ready | found-bugs-001 |
 | [found-bugs-003](tasks/003-reject-invalid-posting-arguments.md) | Reject invalid posting arguments | blocked | found-bugs-002 |
 | [found-bugs-004](tasks/004-define-the-declared-but-missing-functions.md) | Define the declared but missing functions | blocked | found-bugs-003 |
 | [found-bugs-005](tasks/005-fix-the-flatzinc-branching-bugs.md) | Fix the FlatZinc branching bugs | blocked | found-bugs-004 |
