@@ -31,13 +31,15 @@
  */
 
 /*
- * Temporary differential test: Float::Interval against the vendored Boost
- * interval that FloatVal uses today. It is removed together with the Boost
- * copy.
+ * Temporary differential test: FloatVal, and Float::Interval where FloatVal
+ * does not forward to it, against the vendored Boost interval that FloatVal
+ * used before. It is removed together with the Boost copy.
  *
  */
 
 #include "test/float.hh"
+
+#include <gecode/third-party/boost/numeric/interval.hpp>
 
 #include <bit>
 #include <cfenv>
@@ -55,14 +57,34 @@
 namespace Test { namespace Float { namespace {
 
     using Gecode::FloatNum;
-    /// The interval type under test
-    using Candidate = Gecode::Float::Interval;
-    /// FloatVal's implementation type, which gives the expected results
-    using Reference = gecode_boost::numeric::interval<
-        FloatNum, gecode_boost::numeric::interval_lib::policies<
-                      Gecode::Float::Rounding, gecode_boost::numeric::interval_lib::checking_strict<FloatNum>>>;
+    using Gecode::FloatVal;
+    using Gecode::Float::Interval;
 
-    namespace candidate = Gecode::Float;
+    /// Boost's rounding interface over Gecode's rounding operations and mode control
+    class ReferenceRounding : public Gecode::Float::RoundingBase {
+    public:
+        /// Rounding mode, as Boost's save_state stores it
+        typedef Mode rounding_mode;
+        /// Store the current rounding mode in \a m
+        static void
+        get_rounding_mode(rounding_mode& m) {
+            m = current_mode();
+        }
+        /// Restore rounding mode \a m
+        static void
+        set_rounding_mode(rounding_mode m) {
+            restore_mode(m);
+        }
+        using RoundingBase::init;
+    };
+
+    /// FloatVal's former implementation type, which gives the expected results
+    using Reference =
+        gecode_boost::numeric::interval<FloatNum,
+                                        gecode_boost::numeric::interval_lib::policies<
+                                            gecode_boost::numeric::interval_lib::save_state<ReferenceRounding>,
+                                            gecode_boost::numeric::interval_lib::checking_strict<FloatNum>>>;
+
     namespace reference = gecode_boost::numeric;
 
     /// Bounds of an operand interval
@@ -143,7 +165,7 @@ namespace Test { namespace Float { namespace {
     /// Observed result of one operation in one caller mode
     struct Outcome {
         Kind kind = Kind::BOUNDS;
-        /// Bit patterns of the bounds, for Kind::BOUNDS
+        /// Bit patterns of the bounds, as bound_bits() gives them, for Kind::BOUNDS
         std::uint64_t lower = 0;
         std::uint64_t upper = 0;
         /// Truth value, for Kind::TRUTH
@@ -155,17 +177,34 @@ namespace Test { namespace Float { namespace {
         bool operator==(const Outcome&) const = default;
     };
 
+    /**
+     * \brief Return the bit pattern of bound \a b, without the sign of a NaN
+     *
+     * IEEE 754 leaves the sign of a NaN result unspecified. On x86-64 it
+     * depends on the operand order that the compiler picks, so GCC and Clang
+     * builds of the same code differ in it. All other bits of a NaN, its
+     * payload and its quiet bit, are compared.
+     */
+    std::uint64_t
+    bound_bits(FloatNum b) {
+        return std::bit_cast<std::uint64_t>(std::isnan(b) ? std::fabs(b) : b);
+    }
     /// Return the outcome for the bounds \a l and \a u
     Outcome
     bounds_outcome(FloatNum l, FloatNum u) {
         Outcome o;
-        o.lower = std::bit_cast<std::uint64_t>(l);
-        o.upper = std::bit_cast<std::uint64_t>(u);
+        o.lower = bound_bits(l);
+        o.upper = bound_bits(u);
         return o;
+    }
+    /// Return the outcome for value \a x
+    Outcome
+    outcome_of(const FloatVal& x) {
+        return bounds_outcome(x.min(), x.max());
     }
     /// Return the outcome for interval \a x
     Outcome
-    outcome_of(const Candidate& x) {
+    outcome_of(const Interval& x) {
         return bounds_outcome(x.lower(), x.upper());
     }
     /// Return the outcome for interval \a x
@@ -247,7 +286,7 @@ namespace Test { namespace Float { namespace {
         return s + (o.mode_kept ? "" : " (mode changed)");
     }
 
-    /// Float::Interval gives the vendored Boost interval's results bit for bit
+    /// FloatVal and Float::Interval give the vendored Boost interval's results bit for bit
     class MatchesBoost : public Base {
     private:
         /// Most mismatches to log
@@ -275,29 +314,29 @@ namespace Test { namespace Float { namespace {
             }
         }
 
-        /// Compare the default interval and the constants
+        /// Compare the default value and the constants
         void
         constants(void) {
             operands = "";
-            compare("default", [] { return Candidate(); }, [] { return Reference(); });
+            compare("default", [] { return FloatVal(); }, [] { return Reference(); });
             compare(
-                "pi_half", [] { return Candidate::pi_half(); },
+                "pi_half", [] { return FloatVal::pi_half(); },
                 [] { return reference::interval_lib::pi_half<Reference>(); });
-            compare("pi", [] { return Candidate::pi(); }, [] { return reference::interval_lib::pi<Reference>(); });
+            compare("pi", [] { return FloatVal::pi(); }, [] { return reference::interval_lib::pi<Reference>(); });
             compare(
-                "pi_twice", [] { return Candidate::pi_twice(); },
+                "pi_twice", [] { return FloatVal::pi_twice(); },
                 [] { return reference::interval_lib::pi_twice<Reference>(); });
         }
         /// Compare construction from \a n
         void
         from_number(FloatNum n) {
             operands = hex(n);
-            compare("from_number", [&] { return Candidate(n); }, [&] { return Reference(n); });
+            compare("from_number", [&] { return FloatVal(n); }, [&] { return Reference(n); });
             compare(
                 "assign_number",
                 [&] {
-                    Candidate z(1.0, 2.0);
-                    z = Candidate(n);
+                    FloatVal z(1.0, 2.0);
+                    z = n;
                     return z;
                 },
                 [&] {
@@ -310,11 +349,11 @@ namespace Test { namespace Float { namespace {
         void
         from_numbers(FloatNum l, FloatNum u) {
             operands = hex(l) + ' ' + hex(u);
-            compare("construct", [&] { return Candidate(l, u); }, [&] { return Reference(l, u); });
+            compare("construct", [&] { return FloatVal(l, u); }, [&] { return Reference(l, u); });
             compare(
                 "assign",
                 [&] {
-                    Candidate z;
+                    FloatVal z;
                     z.assign(l, u);
                     return z;
                 },
@@ -328,60 +367,61 @@ namespace Test { namespace Float { namespace {
         void
         unary(const Bounds& b) {
             operands = hex(b);
-            const Candidate cx = candidate_interval(b);
-            const Reference rx = reference_interval(b);
-            compare("pos", [&] { return +cx; }, [&] { return +rx; });
-            compare("neg", [&] { return -cx; }, [&] { return -rx; });
-            compare("abs", [&] { return candidate::abs(cx); }, [&] { return reference::abs(rx); });
-            compare("sqrt", [&] { return candidate::sqrt(cx); }, [&] { return reference::sqrt(rx); });
-            compare("square", [&] { return candidate::square(cx); }, [&] { return reference::square(rx); });
+            const FloatVal x = value_of(b);
+            const Reference rx = reference_of(b);
+            compare("pos", [&] { return +x; }, [&] { return +rx; });
+            // FloatVal's negation makes zero bounds positive and was never Boost's.
+            const Interval ix = interval_of(b);
+            compare("neg", [&] { return -ix; }, [&] { return -rx; });
+            compare("abs", [&] { return Gecode::abs(x); }, [&] { return reference::abs(rx); });
+            compare("sqrt", [&] { return Gecode::sqrt(x); }, [&] { return reference::sqrt(rx); });
+            compare("sqr", [&] { return Gecode::sqr(x); }, [&] { return reference::square(rx); });
             for (int n = -3; n <= 5; n++) {
                 operands = hex(b) + " pow " + std::to_string(n);
-                compare("pow", [&] { return candidate::pow(cx, n); }, [&] { return reference::pow(rx, n); });
+                compare("pow", [&] { return Gecode::pow(x, n); }, [&] { return reference::pow(rx, n); });
             }
             for (int k = 1; k <= 5; k++) {
                 operands = hex(b) + " root " + std::to_string(k);
-                compare(
-                    "nth_root", [&] { return candidate::nth_root(cx, k); }, [&] { return reference::nth_root(rx, k); });
+                compare("nroot", [&] { return Gecode::nroot(x, k); }, [&] { return reference::nth_root(rx, k); });
             }
             operands = hex(b);
-            compare("width", [&] { return candidate::width(cx); }, [&] { return reference::width(rx); });
-            compare("singleton", [&] { return candidate::singleton(cx); }, [&] { return reference::singleton(rx); });
-            compare("zero_in", [&] { return candidate::zero_in(cx); }, [&] { return reference::zero_in(rx); });
+            compare("size", [&] { return x.size(); }, [&] { return reference::width(rx); });
+            compare("singleton", [&] { return x.singleton(); }, [&] { return reference::singleton(rx); });
+            compare("zero_in", [&] { return x.zero_in(); }, [&] { return reference::zero_in(rx); });
 #ifdef GECODE_HAS_MPFR
-            compare("exp", [&] { return candidate::exp(cx); }, [&] { return reference::exp(rx); });
-            compare("log", [&] { return candidate::log(cx); }, [&] { return reference::log(rx); });
-            compare("sin", [&] { return candidate::sin(cx); }, [&] { return reference::sin(rx); });
-            compare("cos", [&] { return candidate::cos(cx); }, [&] { return reference::cos(rx); });
-            compare("tan", [&] { return candidate::tan(cx); }, [&] { return reference::tan(rx); });
-            compare("asin", [&] { return candidate::asin(cx); }, [&] { return reference::asin(rx); });
-            compare("acos", [&] { return candidate::acos(cx); }, [&] { return reference::acos(rx); });
-            compare("atan", [&] { return candidate::atan(cx); }, [&] { return reference::atan(rx); });
-            compare("sinh", [&] { return candidate::sinh(cx); }, [&] { return reference::sinh(rx); });
-            compare("cosh", [&] { return candidate::cosh(cx); }, [&] { return reference::cosh(rx); });
-            compare("tanh", [&] { return candidate::tanh(cx); }, [&] { return reference::tanh(rx); });
-            compare("asinh", [&] { return candidate::asinh(cx); }, [&] { return reference::asinh(rx); });
-            compare("acosh", [&] { return candidate::acosh(cx); }, [&] { return reference::acosh(rx); });
-            compare("atanh", [&] { return candidate::atanh(cx); }, [&] { return reference::atanh(rx); });
+            compare("exp", [&] { return Gecode::exp(x); }, [&] { return reference::exp(rx); });
+            compare("log", [&] { return Gecode::log(x); }, [&] { return reference::log(rx); });
+            compare("sin", [&] { return Gecode::sin(x); }, [&] { return reference::sin(rx); });
+            compare("cos", [&] { return Gecode::cos(x); }, [&] { return reference::cos(rx); });
+            compare("tan", [&] { return Gecode::tan(x); }, [&] { return reference::tan(rx); });
+            compare("asin", [&] { return Gecode::asin(x); }, [&] { return reference::asin(rx); });
+            compare("acos", [&] { return Gecode::acos(x); }, [&] { return reference::acos(rx); });
+            compare("atan", [&] { return Gecode::atan(x); }, [&] { return reference::atan(rx); });
+            compare("sinh", [&] { return Gecode::sinh(x); }, [&] { return reference::sinh(rx); });
+            compare("cosh", [&] { return Gecode::cosh(x); }, [&] { return reference::cosh(rx); });
+            compare("tanh", [&] { return Gecode::tanh(x); }, [&] { return reference::tanh(rx); });
+            compare("asinh", [&] { return Gecode::asinh(x); }, [&] { return reference::asinh(rx); });
+            compare("acosh", [&] { return Gecode::acosh(x); }, [&] { return reference::acosh(rx); });
+            compare("atanh", [&] { return Gecode::atanh(x); }, [&] { return reference::atanh(rx); });
 #endif
         }
         /// Compare the operations on the intervals \a a and \a b
         void
         binary(const Bounds& a, const Bounds& b) {
             operands = hex(a) + ' ' + hex(b);
-            const Candidate cx = candidate_interval(a);
-            const Candidate cy = candidate_interval(b);
-            const Reference rx = reference_interval(a);
-            const Reference ry = reference_interval(b);
-            compare("add", [&] { return cx + cy; }, [&] { return rx + ry; });
-            compare("sub", [&] { return cx - cy; }, [&] { return rx - ry; });
-            compare("mul", [&] { return cx * cy; }, [&] { return rx * ry; });
-            compare("div", [&] { return cx / cy; }, [&] { return rx / ry; });
+            const FloatVal x = value_of(a);
+            const FloatVal y = value_of(b);
+            const Reference rx = reference_of(a);
+            const Reference ry = reference_of(b);
+            compare("add", [&] { return x + y; }, [&] { return rx + ry; });
+            compare("sub", [&] { return x - y; }, [&] { return rx - ry; });
+            compare("mul", [&] { return x * y; }, [&] { return rx * ry; });
+            compare("div", [&] { return x / y; }, [&] { return rx / ry; });
             compare(
                 "add_assign",
                 [&] {
-                    Candidate z = cx;
-                    return z += cy;
+                    FloatVal z = x;
+                    return z += y;
                 },
                 [&] {
                     Reference z = rx;
@@ -390,8 +430,8 @@ namespace Test { namespace Float { namespace {
             compare(
                 "sub_assign",
                 [&] {
-                    Candidate z = cx;
-                    return z -= cy;
+                    FloatVal z = x;
+                    return z -= y;
                 },
                 [&] {
                     Reference z = rx;
@@ -400,8 +440,8 @@ namespace Test { namespace Float { namespace {
             compare(
                 "mul_assign",
                 [&] {
-                    Candidate z = cx;
-                    return z *= cy;
+                    FloatVal z = x;
+                    return z *= y;
                 },
                 [&] {
                     Reference z = rx;
@@ -410,62 +450,59 @@ namespace Test { namespace Float { namespace {
             compare(
                 "div_assign",
                 [&] {
-                    Candidate z = cx;
-                    return z /= cy;
+                    FloatVal z = x;
+                    return z /= y;
                 },
                 [&] {
                     Reference z = rx;
                     return z /= ry;
                 });
+            compare("lt", [&] { return x < y; }, [&] { return certainly([&] { return rx < ry; }); });
+            compare("le", [&] { return x <= y; }, [&] { return certainly([&] { return rx <= ry; }); });
+            compare("gt", [&] { return x > y; }, [&] { return certainly([&] { return rx > ry; }); });
+            compare("ge", [&] { return x >= y; }, [&] { return certainly([&] { return rx >= ry; }); });
+            compare("eq", [&] { return x == y; }, [&] { return certainly([&] { return rx == ry; }); });
+            compare("ne", [&] { return x != y; }, [&] { return certainly([&] { return rx != ry; }); });
+            compare("equal", [&] { return x == y; }, [&] { return reference::equal(rx, ry); });
+            compare("max", [&] { return Gecode::max(x, y); }, [&] { return reference::max(rx, ry); });
+            compare("min", [&] { return Gecode::min(x, y); }, [&] { return reference::min(rx, ry); });
+            compare("subset", [&] { return Gecode::Float::subset(x, y); }, [&] { return reference::subset(rx, ry); });
             compare(
-                "lt", [&] { return candidate::certainly_less(cx, cy); },
-                [&] { return certainly([&] { return rx < ry; }); });
-            compare(
-                "le", [&] { return candidate::certainly_less_equal(cx, cy); },
-                [&] { return certainly([&] { return rx <= ry; }); });
-            compare(
-                "gt", [&] { return candidate::certainly_greater(cx, cy); },
-                [&] { return certainly([&] { return rx > ry; }); });
-            compare(
-                "ge", [&] { return candidate::certainly_greater_equal(cx, cy); },
-                [&] { return certainly([&] { return rx >= ry; }); });
-            compare(
-                "eq", [&] { return candidate::equal(cx, cy); }, [&] { return certainly([&] { return rx == ry; }); });
-            compare(
-                "ne", [&] { return candidate::certainly_unequal(cx, cy); },
-                [&] { return certainly([&] { return rx != ry; }); });
-            compare("max", [&] { return candidate::max(cx, cy); }, [&] { return reference::max(rx, ry); });
-            compare("min", [&] { return candidate::min(cx, cy); }, [&] { return reference::min(rx, ry); });
-            compare("subset", [&] { return candidate::subset(cx, cy); }, [&] { return reference::subset(rx, ry); });
-            compare(
-                "proper_subset", [&] { return candidate::proper_subset(cx, cy); },
+                "proper_subset", [&] { return Gecode::Float::proper_subset(x, y); },
                 [&] { return reference::proper_subset(rx, ry); });
-            compare("overlap", [&] { return candidate::overlap(cx, cy); }, [&] { return reference::overlap(rx, ry); });
-            compare("equal", [&] { return candidate::equal(cx, cy); }, [&] { return reference::equal(rx, ry); });
             compare(
-                "intersect", [&] { return candidate::intersect(cx, cy); },
+                "overlap", [&] { return Gecode::Float::overlap(x, y); }, [&] { return reference::overlap(rx, ry); });
+            compare(
+                "intersect", [&] { return Gecode::Float::intersect(x, y); },
                 [&] { return reference::intersect(rx, ry); });
-            compare("hull", [&] { return candidate::hull(cx, cy); }, [&] { return reference::hull(rx, ry); });
-            compare("fmod", [&] { return candidate::fmod(cx, cy); }, [&] { return reference::fmod(rx, ry); });
+            compare("hull", [&] { return Gecode::Float::hull(x, y); }, [&] { return reference::hull(rx, ry); });
+#ifdef GECODE_HAS_MPFR
+            compare("fmod", [&] { return Gecode::fmod(x, y); }, [&] { return reference::fmod(rx, ry); });
+#else
+            // FloatVal has fmod only with MPFR.
+            const Interval ix = interval_of(a);
+            const Interval iy = interval_of(b);
+            compare("fmod", [&] { return Gecode::Float::fmod(ix, iy); }, [&] { return reference::fmod(rx, ry); });
+#endif
         }
         /// Compare the operations on the interval \a b and the number \a n
         void
         mixed(const Bounds& b, FloatNum n) {
             operands = hex(b) + ' ' + hex(n);
-            const Candidate cx = candidate_interval(b);
-            const Reference rx = reference_interval(b);
-            compare("add", [&] { return cx + n; }, [&] { return rx + n; });
-            compare("add_left", [&] { return n + cx; }, [&] { return n + rx; });
-            compare("sub", [&] { return cx - n; }, [&] { return rx - n; });
-            compare("sub_left", [&] { return n - cx; }, [&] { return n - rx; });
-            compare("mul", [&] { return cx * n; }, [&] { return rx * n; });
-            compare("mul_left", [&] { return n * cx; }, [&] { return n * rx; });
-            compare("div", [&] { return cx / n; }, [&] { return rx / n; });
-            compare("div_left", [&] { return n / cx; }, [&] { return n / rx; });
+            const FloatVal x = value_of(b);
+            const Reference rx = reference_of(b);
+            compare("add", [&] { return x + n; }, [&] { return rx + n; });
+            compare("add_left", [&] { return n + x; }, [&] { return n + rx; });
+            compare("sub", [&] { return x - n; }, [&] { return rx - n; });
+            compare("sub_left", [&] { return n - x; }, [&] { return n - rx; });
+            compare("mul", [&] { return x * n; }, [&] { return rx * n; });
+            compare("mul_left", [&] { return n * x; }, [&] { return n * rx; });
+            compare("div", [&] { return x / n; }, [&] { return rx / n; });
+            compare("div_left", [&] { return n / x; }, [&] { return n / rx; });
             compare(
                 "add_assign",
                 [&] {
-                    Candidate z = cx;
+                    FloatVal z = x;
                     return z += n;
                 },
                 [&] {
@@ -475,7 +512,7 @@ namespace Test { namespace Float { namespace {
             compare(
                 "sub_assign",
                 [&] {
-                    Candidate z = cx;
+                    FloatVal z = x;
                     return z -= n;
                 },
                 [&] {
@@ -485,7 +522,7 @@ namespace Test { namespace Float { namespace {
             compare(
                 "mul_assign",
                 [&] {
-                    Candidate z = cx;
+                    FloatVal z = x;
                     return z *= n;
                 },
                 [&] {
@@ -495,47 +532,55 @@ namespace Test { namespace Float { namespace {
             compare(
                 "div_assign",
                 [&] {
-                    Candidate z = cx;
+                    FloatVal z = x;
                     return z /= n;
                 },
                 [&] {
                     Reference z = rx;
                     return z /= n;
                 });
-            compare(
-                "lt", [&] { return candidate::certainly_less(cx, n); },
-                [&] { return certainly([&] { return rx < n; }); });
-            compare(
-                "le", [&] { return candidate::certainly_less_equal(cx, n); },
-                [&] { return certainly([&] { return rx <= n; }); });
-            compare(
-                "gt", [&] { return candidate::certainly_greater(cx, n); },
-                [&] { return certainly([&] { return rx > n; }); });
-            compare(
-                "ge", [&] { return candidate::certainly_greater_equal(cx, n); },
-                [&] { return certainly([&] { return rx >= n; }); });
-            compare(
-                "ne", [&] { return candidate::certainly_unequal(cx, n); },
-                [&] { return certainly([&] { return rx != n; }); });
-            compare("max", [&] { return candidate::max(cx, n); }, [&] { return reference::max(rx, n); });
-            compare("max_left", [&] { return candidate::max(n, cx); }, [&] { return reference::max(n, rx); });
-            compare("min", [&] { return candidate::min(cx, n); }, [&] { return reference::min(rx, n); });
-            compare("min_left", [&] { return candidate::min(n, cx); }, [&] { return reference::min(n, rx); });
-            compare("hull", [&] { return candidate::hull(cx, n); }, [&] { return reference::hull(rx, n); });
-            compare("hull_left", [&] { return candidate::hull(n, cx); }, [&] { return reference::hull(n, rx); });
-            compare("in", [&] { return candidate::in(n, cx); }, [&] { return reference::in(n, rx); });
-            compare("fmod", [&] { return candidate::fmod(cx, n); }, [&] { return reference::fmod(rx, n); });
-            compare("fmod_left", [&] { return candidate::fmod(n, cx); }, [&] { return reference::fmod(n, rx); });
+            compare("lt", [&] { return x < n; }, [&] { return certainly([&] { return rx < n; }); });
+            compare("le", [&] { return x <= n; }, [&] { return certainly([&] { return rx <= n; }); });
+            compare("gt", [&] { return x > n; }, [&] { return certainly([&] { return rx > n; }); });
+            compare("ge", [&] { return x >= n; }, [&] { return certainly([&] { return rx >= n; }); });
+            compare("ne", [&] { return x != n; }, [&] { return certainly([&] { return rx != n; }); });
+            // Boost has no comparisons with the number on the left; FloatVal mirrors them.
+            compare("lt_left", [&] { return n < x; }, [&] { return certainly([&] { return rx > n; }); });
+            compare("le_left", [&] { return n <= x; }, [&] { return certainly([&] { return rx >= n; }); });
+            compare("gt_left", [&] { return n > x; }, [&] { return certainly([&] { return rx < n; }); });
+            compare("ge_left", [&] { return n >= x; }, [&] { return certainly([&] { return rx <= n; }); });
+            compare("ne_left", [&] { return n != x; }, [&] { return certainly([&] { return rx != n; }); });
+            compare("max", [&] { return Gecode::max(x, n); }, [&] { return reference::max(rx, n); });
+            compare("max_left", [&] { return Gecode::max(n, x); }, [&] { return reference::max(n, rx); });
+            compare("min", [&] { return Gecode::min(x, n); }, [&] { return reference::min(rx, n); });
+            compare("min_left", [&] { return Gecode::min(n, x); }, [&] { return reference::min(n, rx); });
+            compare("hull", [&] { return Gecode::Float::hull(x, n); }, [&] { return reference::hull(rx, n); });
+            compare("hull_left", [&] { return Gecode::Float::hull(n, x); }, [&] { return reference::hull(n, rx); });
+            compare("in", [&] { return x.in(n); }, [&] { return reference::in(n, rx); });
+#ifdef GECODE_HAS_MPFR
+            compare("fmod", [&] { return Gecode::fmod(x, n); }, [&] { return reference::fmod(rx, n); });
+            compare("fmod_left", [&] { return Gecode::fmod(n, x); }, [&] { return reference::fmod(n, rx); });
+#else
+            // FloatVal has fmod only with MPFR.
+            const Interval ix = interval_of(b);
+            compare("fmod", [&] { return Gecode::Float::fmod(ix, n); }, [&] { return reference::fmod(rx, n); });
+            compare("fmod_left", [&] { return Gecode::Float::fmod(n, ix); }, [&] { return reference::fmod(n, rx); });
+#endif
         }
 
-        /// Return the candidate interval with bounds \a b
-        static Candidate
-        candidate_interval(const Bounds& b) {
-            return std::isnan(b.lower) ? Candidate(b.lower) : Candidate(b.lower, b.upper);
+        /// Return the value with bounds \a b
+        static FloatVal
+        value_of(const Bounds& b) {
+            return std::isnan(b.lower) ? FloatVal(b.lower) : FloatVal(b.lower, b.upper);
+        }
+        /// Return the interval with bounds \a b
+        static Interval
+        interval_of(const Bounds& b) {
+            return std::isnan(b.lower) ? Interval(b.lower) : Interval(b.lower, b.upper);
         }
         /// Return the reference interval with bounds \a b
         static Reference
-        reference_interval(const Bounds& b) {
+        reference_of(const Bounds& b) {
             return std::isnan(b.lower) ? Reference(b.lower) : Reference(b.lower, b.upper);
         }
 

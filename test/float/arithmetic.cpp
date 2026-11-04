@@ -43,6 +43,7 @@
 #include <ios>
 #include <iterator>
 #include <limits>
+#include <type_traits>
 #include <utility>
 
 namespace Test { namespace Float {
@@ -55,24 +56,24 @@ namespace Test { namespace Float {
          * \ingroup TaskTestFloat
          */
         //@{
-        /// Rounding scopes and Boost wrappers restore the enclosing mode
+        // A copied scope would restore the caller's mode a second time.
+        static_assert(!std::is_copy_constructible_v<Gecode::Float::Rounding> &&
+                      !std::is_copy_assignable_v<Gecode::Float::Rounding>);
+
+        /// Rounding scopes and interval operations restore the enclosing mode
         class RoundingScope : public Base {
         private:
-            template <class Policy>
+            /// Test interval operations that open their own rounding scope
             static bool
-            boost_operations(void) {
-                typedef gecode_boost::numeric::interval<
-                    Gecode::FloatNum,
-                    gecode_boost::numeric::interval_lib::policies<
-                        Policy, gecode_boost::numeric::interval_lib::checking_strict<Gecode::FloatNum>>>
-                    Interval;
+            interval_operations(void) {
+                using Gecode::Float::Interval;
                 const int mode = std::fegetround();
-                // Boost fmod uses its unprotected policy for nested arithmetic.
-                const Interval remainder = gecode_boost::numeric::fmod(Interval(5.0, 5.0), Interval(3.0, 3.0));
+                // fmod runs its nested arithmetic in its own scope.
+                const Interval remainder = Gecode::Float::fmod(Interval(5.0, 5.0), Interval(3.0, 3.0));
                 bool result = (remainder.lower() == 2.0) && (remainder.upper() == 2.0) && (std::fegetround() == mode);
 #ifdef GECODE_HAS_MPFR
-                // Unprotected policies must retain Gecode's MPFR operations.
-                const Interval sine = gecode_boost::numeric::sin(Interval(0.5));
+                // Nested operations must retain Gecode's MPFR operations.
+                const Interval sine = Gecode::Float::sin(Interval(0.5));
                 result &= (sine.lower() <= 0.479425538604203) && (sine.upper() >= 0.479425538604203) &&
                           (std::fegetround() == mode);
 #endif
@@ -102,9 +103,12 @@ namespace Test { namespace Float {
                             result &= inner.median(1.0, 3.0) == 2.0;
                         }
                         result &= std::fegetround() == enclosing;
-                        result &= boost_operations<Gecode::Float::Rounding>();
-                        result &= boost_operations<
-                            gecode_boost::numeric::interval_lib::save_state<Gecode::Float::Rounding>>();
+                        result &= interval_operations();
+                        {
+                            Gecode::Float::Rounding nested;
+                            result &= interval_operations();
+                        }
+                        result &= std::fegetround() == enclosing;
                     }
                     if (std::fegetround() != mode) {
                         olog << "Rounding scope changed caller mode " << mode << '\n';
