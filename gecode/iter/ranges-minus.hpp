@@ -48,9 +48,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Minus(void);
+        Minus(void) = default;
         /// Copy constructor
-        Minus(const Minus& m);
+        Minus(const Minus& m) = default;
         /// Initialize with ranges from \a i
         template <class I>
         Minus(Region& r, I& i);
@@ -61,13 +61,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         Minus& operator=(const Minus& m);
         //@}
     };
-
-    forceinline
-    Minus::Minus(void) {}
-
-    forceinline
-    Minus::Minus(const Minus& m)
-        : RangeListIter(m) {}
 
     template <class I>
     void

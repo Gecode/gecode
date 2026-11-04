@@ -37,9 +37,6 @@
 namespace Gecode { namespace Set {
 
     forceinline
-    SingletonView::SingletonView(void) {}
-
-    forceinline
     SingletonView::SingletonView(Gecode::Int::IntView& y)
         : DerivedView<Gecode::Int::IntView>(y) {}
 
@@ -351,6 +348,7 @@ namespace Gecode { namespace Set {
     };
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     LubRanges<SingletonView>::LubRanges(void) {}
 
     forceinline
@@ -402,6 +400,7 @@ namespace Gecode { namespace Set {
     };
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     GlbRanges<SingletonView>::GlbRanges(void) {}
 
     forceinline void

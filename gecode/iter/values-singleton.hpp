@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Singleton(void);
+        Singleton(void) = default;
         /// Initialize with value \a v
         Singleton(int v);
         /// Initialize with value \a v
@@ -70,9 +70,6 @@ namespace Gecode { namespace Iter { namespace Values {
         int val(void) const;
         //@}
     };
-
-    forceinline
-    Singleton::Singleton(void) {}
 
     forceinline
     Singleton::Singleton(int v0)

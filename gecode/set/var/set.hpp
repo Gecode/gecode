@@ -42,9 +42,6 @@ namespace Gecode {
      */
 
     forceinline
-    SetVar::SetVar(void) {}
-
-    forceinline
     SetVar::SetVar(const Set::SetView& y)
         : VarImpVar<Set::SetVarImp>(y.varimp()) {}
 
@@ -114,9 +111,6 @@ namespace Gecode {
      */
 
     forceinline
-    SetVarGlbRanges::SetVarGlbRanges(void) {}
-
-    forceinline
     SetVarGlbRanges::SetVarGlbRanges(const SetVar& s)
         : iter(s.varimp()) {}
 
@@ -146,9 +140,6 @@ namespace Gecode {
     }
 
     forceinline
-    SetVarLubRanges::SetVarLubRanges(void) {}
-
-    forceinline
     SetVarLubRanges::SetVarLubRanges(const SetVar& s)
         : iter(s.varimp()) {}
 
@@ -176,9 +167,6 @@ namespace Gecode {
     SetVarLubRanges::width(void) const {
         return iter.width();
     }
-
-    forceinline
-    SetVarUnknownRanges::SetVarUnknownRanges(void) {}
 
     forceinline
     SetVarUnknownRanges::SetVarUnknownRanges(const SetVar& s) {

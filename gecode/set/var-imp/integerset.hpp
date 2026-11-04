@@ -243,9 +243,6 @@ namespace Gecode { namespace Set {
      */
 
     forceinline
-    BndSetRanges::BndSetRanges(void) {}
-
-    forceinline
     BndSetRanges::BndSetRanges(const BndSet& s)
         : Iter::Ranges::RangeList(s.ranges()) {}
 
@@ -258,9 +255,6 @@ namespace Gecode { namespace Set {
      * GLBndSet
      *
      */
-
-    forceinline
-    GLBndSet::GLBndSet(void) {}
 
     forceinline
     GLBndSet::GLBndSet(Space&) {}
@@ -314,9 +308,6 @@ namespace Gecode { namespace Set {
      * LUBndSet
      *
      */
-
-    forceinline
-    LUBndSet::LUBndSet(void) {}
 
     forceinline
     LUBndSet::LUBndSet(Space& home)
@@ -423,8 +414,6 @@ namespace Gecode { namespace Set {
      * A complement iterator spezialized for the BndSet limits
      *
      */
-    template <class I>
-    RangesCompl<I>::RangesCompl(void) {}
 
     template <class I>
     RangesCompl<I>::RangesCompl(I& i) : Iter::Ranges::Compl<Limits::min, Limits::max, I>(i) {}

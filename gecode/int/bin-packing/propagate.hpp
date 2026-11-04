@@ -90,8 +90,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
      *
      */
     forceinline
-    SizeSet::SizeSet(void) {}
-    forceinline
     SizeSet::SizeSet(Region& region, int n_max)
         : n(0), t(0), s(region.alloc<int>(n_max)) {}
     forceinline void
@@ -113,6 +111,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     SizeSetMinusOne::SizeSetMinusOne(void) {}
     forceinline
     SizeSetMinusOne::SizeSetMinusOne(Region& region, int n_max)

@@ -44,15 +44,8 @@ namespace Gecode {
      */
 
     forceinline
-    SetVarArgs::SetVarArgs(void) {}
-
-    forceinline
     SetVarArgs::SetVarArgs(int n)
         : VarArgArray<SetVar>(n) {}
-
-    forceinline
-    SetVarArgs::SetVarArgs(const SetVarArgs& a)
-        : VarArgArray<SetVar>(a) {}
 
     forceinline
     SetVarArgs::SetVarArgs(const VarArray<SetVar>& a)
@@ -70,9 +63,6 @@ namespace Gecode {
     forceinline
     SetVarArgs::SetVarArgs(InputIterator first, InputIterator last)
         : VarArgArray<SetVar>(first, last) {}
-
-    forceinline
-    SetVarArray::SetVarArray(void) {}
 
     forceinline
     SetVarArray::SetVarArray(Space& home, const SetVarArgs& a)

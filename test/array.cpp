@@ -240,6 +240,7 @@ namespace Test {
         class TestSpace : public Gecode::Space {
         public:
             TestSpace(void) : Space() {}
+            // NOLINTNEXTLINE(modernize-use-equals-default)
             TestSpace(TestSpace& s) : Space(s) {}
             Space*
             copy(void) override {

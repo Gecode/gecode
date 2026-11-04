@@ -43,7 +43,7 @@ namespace Test { namespace Int {
     Assignment::size(void) const {
         return n;
     }
-    inline Assignment::~Assignment(void) {}
+    inline Assignment::~Assignment(void) = default;
 
     inline CpltAssignment::CpltAssignment(int n, const Gecode::IntSet& d)
         : Assignment(n, d), dsv(new Gecode::IntSetValues[static_cast<unsigned int>(n)]) {

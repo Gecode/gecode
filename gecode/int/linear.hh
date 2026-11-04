@@ -1163,7 +1163,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Default constructor
-        ScaleBoolArray(void);
+        ScaleBoolArray(void) = default;
         /// Create array with \a n elements
         ScaleBoolArray(Space& home, int n);
         /// Subscribe propagator \a p
@@ -1203,7 +1203,7 @@ namespace Gecode { namespace Int { namespace Linear {
     class EmptyScaleBoolArray {
     public:
         /// Default constructor
-        EmptyScaleBoolArray(void);
+        EmptyScaleBoolArray(void) = default;
         /// Create array with \a n elements
         EmptyScaleBoolArray(Space& home, int n);
         /// Subscribe propagator \a p

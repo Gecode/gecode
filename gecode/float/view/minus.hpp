@@ -39,8 +39,6 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline
-    MinusView::MinusView(void) {}
-    forceinline
     MinusView::MinusView(const FloatView& y)
         : DerivedView<FloatView>(y) {}
 

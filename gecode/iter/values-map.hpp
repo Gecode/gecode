@@ -52,7 +52,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Map(void);
+        Map(void) = default;
         /// Initialize with values from \a i
         Map(I& i);
         /// Initialize with values from \a i and map \a m
@@ -77,10 +77,6 @@ namespace Gecode { namespace Iter { namespace Values {
         int val(void) const;
         //@}
     };
-
-    template <class I, class M, bool strict>
-    forceinline
-    Map<I, M, strict>::Map(void) {}
 
     template <class I, class M, bool strict>
     forceinline

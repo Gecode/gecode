@@ -124,7 +124,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVar(void);
+        SetVar(void) = default;
         /// Initialize from set variable \a y
         SetVar(const SetVar& y) = default;
         /// Initialize from set view \a y
@@ -266,7 +266,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVarGlbRanges(void);
+        SetVarGlbRanges(void) = default;
         /// Initialize to iterate ranges of variable \a x
         SetVarGlbRanges(const SetVar& x);
         //@}
@@ -299,7 +299,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVarLubRanges(void);
+        SetVarLubRanges(void) = default;
         /// Initialize to iterate ranges of variable \a x
         SetVarLubRanges(const SetVar& x);
         //@}
@@ -332,7 +332,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVarUnknownRanges(void);
+        SetVarUnknownRanges(void) = default;
         /// Initialize to iterate ranges of variable \a x
         SetVarUnknownRanges(const SetVar& x);
         //@}
@@ -486,11 +486,11 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        SetVarArgs(void);
+        SetVarArgs(void) = default;
         /// Allocate array with \a n elements
         explicit SetVarArgs(int n);
         /// Initialize from variable argument array \a a (copy elements)
-        SetVarArgs(const SetVarArgs& a);
+        SetVarArgs(const SetVarArgs& a) = default;
         /// Initialize from variable array \a a (copy elements)
         SetVarArgs(const VarArray<SetVar>& a);
         /// Initialize from vector \a a
@@ -562,7 +562,7 @@ namespace Gecode {
         /// \name Creation and initialization
         //@{
         /// Default constructor (array of size 0)
-        SetVarArray(void);
+        SetVarArray(void) = default;
         /// Initialize from set variable array \a a (share elements)
         SetVarArray(const SetVarArray&) = default;
         /// Initialize from set variable argument array \a a (copy elements)
@@ -1044,7 +1044,7 @@ namespace Gecode {
          * yet initialized AFC storage is init or the assignment operator.
          *
          */
-        SetAFC(void);
+        SetAFC(void) = default;
         /**
          * \brief Initialize for set variables \a x and decay factor \a d
          *
@@ -1086,9 +1086,9 @@ namespace Gecode {
          * yet initialized action storage is init or the assignment operator.
          *
          */
-        SetAction(void);
+        SetAction(void) = default;
         /// Copy constructor
-        SetAction(const SetAction& a);
+        SetAction(const SetAction& a) = default;
         /// Assignment operator
         SetAction& operator=(const SetAction& a);
         /**
@@ -1141,9 +1141,9 @@ namespace Gecode {
          * yet initialized CHB storage is init or the assignment operator.
          *
          */
-        SetCHB(void);
+        SetCHB(void) = default;
         /// Copy constructor
-        SetCHB(const SetCHB& chb);
+        SetCHB(const SetCHB& chb) = default;
         /// Assignment operator
         SetCHB& operator=(const SetCHB& chb);
         /**

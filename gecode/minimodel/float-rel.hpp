@@ -38,8 +38,6 @@ namespace Gecode {
      * Operations for linear float relations
      *
      */
-    forceinline
-    LinFloatRel::LinFloatRel(void) {}
 
     forceinline
     LinFloatRel::LinFloatRel(const LinFloatExpr& l, FloatRelType frt0, const LinFloatExpr& r)

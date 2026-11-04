@@ -44,8 +44,6 @@ namespace Gecode {
     }
 
     forceinline
-    BoolVar::BoolVar(void) {}
-    forceinline
     BoolVar::BoolVar(const Int::BoolView& y)
         : VarImpVar<Int::BoolVarImp>(y.varimp()) {}
 

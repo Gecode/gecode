@@ -101,6 +101,35 @@ another copy-assigned the whole Space that the home refers to. A Home never
 changes its space; construct a new Home instead. To copy a Space, clone it.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Default special members that only construct, copy, or destroy members, and
+delete with = delete the members that must not be called. Across the
+library, default constructors, copy constructors, copy assignments, and
+destructors with empty or member-wise bodies are now defaulted on their first
+declaration; among them are those of the variables, most views, FloatVal,
+IntSet, TupleSet, DFA, Action, CHB, the argument arrays, and the range and
+value iterators. Behaviour is unchanged, but the ABI changes: several
+members that the libraries exported, such as the copy constructors of
+TupleSet, Action, and CHB, are now inline.
+[MORE]
+Copy members that were private and undefined, such as those of Search::Base,
+Support::BitSetBase, Set::GLBndSet, and FlatZinc::Printer, are now public
+and deleted, so copying one is reported as a call to a deleted function.
+
+A defaulted default constructor is no longer user-provided. A class with
+such a constructor and a field without an initializer can no longer be
+default-initialized as a const object: `const Gecode::IntSetRanges r;` no
+longer compiles. Initialize the object, or drop the const. This affects
+most range and value iterators: IntSetRanges, IntSetValues, IntVarValues,
+SetVarGlbRanges, SetVarLubRanges, SetVarUnknownRanges, the iterators in
+Iter::Ranges and Iter::Values, and the range and value iterators of views
+such as Int::ViewRanges and Set::UnknownRanges. It also affects SetRel,
+FreeList, Float::OffsetView, and Search::TraceRecorder::ID.
+
+[ENTRY]
 Module: support
 What:   removed
 Rank:   minor

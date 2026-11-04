@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         using ViewValGraph::Graph<View>::scc;
         using ViewValGraph::Graph<View>::match;
         /// Construct graph as not yet initialized
-        Graph(void);
+        Graph(void) = default;
         /// Initialize graph
         ExecStatus init(Space& home, ViewArray<View>& x);
         /// Mark edges in graph, return true if pruning is at all possible
@@ -249,7 +249,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     public:
         /// Initialize with non-initialized view-value graph
-        DomCtrl(void);
+        DomCtrl(void) = default;
         /// Check whether a view-value graph is available
         bool available(void);
         /// Initialize view-value graph for views \a x

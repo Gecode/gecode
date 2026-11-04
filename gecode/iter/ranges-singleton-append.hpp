@@ -52,7 +52,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SingletonAppend(void);
+        SingletonAppend(void) = default;
         /// Initialize with singleton (\a i0, \a i1) and iterator \a j
         SingletonAppend(int i0, int i1, J& j);
         /// Initialize with singleton (\a i0, \a i1) and iterator \a j
@@ -82,10 +82,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
             finish();
         }
     }
-
-    template <class J>
-    forceinline
-    SingletonAppend<J>::SingletonAppend(void) {}
 
     template <class J>
     forceinline

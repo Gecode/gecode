@@ -226,7 +226,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Initialize as empty set
-        IntSet(void);
+        IntSet(void) = default;
         /** \brief Initialize as range with minimum \a n and maximum \a m
          *
          * Note that the set is empty if \a n is larger than \a m
@@ -315,7 +315,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntSetRanges(void);
+        IntSetRanges(void) = default;
         /// Initialize with ranges for set \a s
         IntSetRanges(const IntSet& s);
         /// Initialize with ranges for set \a s
@@ -351,7 +351,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntSetValues(void);
+        IntSetValues(void) = default;
         /// Initialize with values for \a s
         IntSetValues(const IntSet& s);
         /// Initialize with values for \a s
@@ -408,7 +408,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntVar(void);
+        IntVar(void) = default;
         /// Initialize from integer variable \a y
         IntVar(const IntVar& y) = default;
         /// Initialize from integer view \a y
@@ -511,7 +511,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntVarValues(void);
+        IntVarValues(void) = default;
         /// Initialize with values for \a x
         IntVarValues(const IntVar& x);
         /// Initialize with values \a x
@@ -546,7 +546,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        BoolVar(void);
+        BoolVar(void) = default;
         /// Initialize from Boolean variable \a y
         BoolVar(const BoolVar& y) = default;
         /// Initialize from Boolean view \a y
@@ -680,11 +680,11 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        IntVarArgs(void);
+        IntVarArgs(void) = default;
         /// Allocate array with \a n elements
         explicit IntVarArgs(int n);
         /// Initialize from variable argument array \a a (copy elements)
-        IntVarArgs(const IntVarArgs& a);
+        IntVarArgs(const IntVarArgs& a) = default;
         /// Initialize from variable array \a a (copy elements)
         IntVarArgs(const VarArray<IntVar>& a);
         /// Initialize from \a a
@@ -738,11 +738,11 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        BoolVarArgs(void);
+        BoolVarArgs(void) = default;
         /// Allocate array with \a n elements
         explicit BoolVarArgs(int n);
         /// Initialize from variable argument array \a a (copy elements)
-        BoolVarArgs(const BoolVarArgs& a);
+        BoolVarArgs(const BoolVarArgs& a) = default;
         /// Initialize from variable array \a a (copy elements)
         BoolVarArgs(const VarArray<BoolVar>& a);
         /// Initialize from \a a
@@ -791,7 +791,7 @@ namespace Gecode {
         /// \name Creation and initialization
         //@{
         /// Default constructor (array of size 0)
-        IntVarArray(void);
+        IntVarArray(void) = default;
         /// Allocate array for \a n integer variables (variables are uninitialized)
         IntVarArray(Space& home, int n);
         /// Initialize from integer variable array \a a (share elements)
@@ -839,7 +839,7 @@ namespace Gecode {
         /// \name Creation and initialization
         //@{
         /// Default constructor (array of size 0)
-        BoolVarArray(void);
+        BoolVarArray(void) = default;
         /// Allocate array for \a n Boolean variables (variables are uninitialized)
         BoolVarArray(Space& home, int n);
         /// Initialize from Boolean variable array \a a (share elements)
@@ -959,7 +959,7 @@ namespace Gecode {
          */
         typedef std::function<void(Space& home, OpenVarList<Var> x, int i)> Transition;
         /// Construct an uninitialized list
-        OpenVarList(void);
+        OpenVarList(void) = default;
         /// Construct a list using \a create for each position
         OpenVarList(Space& home, Factory create, int max = Int::Limits::max);
         /// Construct a list using \a create and transition function \a t
@@ -1046,7 +1046,7 @@ namespace Gecode {
 
     public:
         /// Construct an uninitialized list
-        OpenViewList(void);
+        OpenViewList(void) = default;
         /// Share the source of the model list \a list
         explicit OpenViewList(const OpenVarList<Var>& list);
         /// Update during cloning
@@ -1082,7 +1082,7 @@ namespace Gecode {
         typedef std::function<IntSet(int i)> Domain;
         using OpenVarList<IntVar>::OpenVarList;
         /// Construct an uninitialized list
-        GECODE_INT_EXPORT OpenIntVarList(void);
+        GECODE_INT_EXPORT OpenIntVarList(void) = default;
         /// Share an integer list constructed through a variable factory
         OpenIntVarList(const OpenVarList<IntVar>& x);
         /// Construct a list with maximal length \a max and full domains
@@ -1114,7 +1114,7 @@ namespace Gecode {
     public:
         using OpenVarList<BoolVar>::OpenVarList;
         /// Construct an uninitialized list
-        GECODE_INT_EXPORT OpenBoolVarList(void);
+        GECODE_INT_EXPORT OpenBoolVarList(void) = default;
         /// Share a Boolean list constructed through a variable factory
         OpenBoolVarList(const OpenVarList<BoolVar>& x);
         /// Construct a list with maximal length \a max and domains 0..1
@@ -2496,7 +2496,7 @@ namespace Gecode {
     public:
         friend class Transitions;
         /// Initialize for DFA accepting the empty word
-        DFA(void);
+        DFA(void) = default;
         /**
          * \brief Initialize DFA
          *
@@ -2543,7 +2543,7 @@ namespace Gecode {
         GECODE_INT_EXPORT
         static DFA nfa(int s, std::initializer_list<Transition> t, std::initializer_list<int> f);
         /// Initialize by DFA \a d (DFA is shared)
-        DFA(const DFA& d);
+        DFA(const DFA& d) = default;
         /// Test whether DFA is equal to \a d
         GECODE_INT_EXPORT
         bool operator==(const DFA& d) const;
@@ -2781,7 +2781,7 @@ namespace Gecode {
         /// \name Initialization
         //@{
         /// Construct an uninitialized tuple set
-        TupleSet(void);
+        TupleSet(void) = default;
         /// Initialize for a tuple set with arity \a a
         GECODE_INT_EXPORT
         TupleSet(int a);
@@ -2790,7 +2790,7 @@ namespace Gecode {
         void init(int a);
         /// Initialize by TupleSet \a t (tuple set is shared)
         GECODE_INT_EXPORT
-        TupleSet(const TupleSet& t);
+        TupleSet(const TupleSet& t) = default;
         /// Assignment operator
         GECODE_INT_EXPORT
         TupleSet& operator=(const TupleSet& t);
@@ -4924,7 +4924,7 @@ namespace Gecode {
          * yet initialized AFC storage is init or the assignment operator.
          *
          */
-        IntAFC(void);
+        IntAFC(void) = default;
         /**
          * \brief Initialize for integer variables \a x and decay factor \a d
          *
@@ -4960,7 +4960,7 @@ namespace Gecode {
          * yet initialized AFC storage is init or the assignment operator.
          *
          */
-        BoolAFC(void);
+        BoolAFC(void) = default;
         /**
          * \brief Initialize for Boolean variables \a x and decay factor \a d
          *
@@ -5002,9 +5002,9 @@ namespace Gecode {
          * yet initialized action storage is init or the assignment operator.
          *
          */
-        IntAction(void);
+        IntAction(void) = default;
         /// Copy constructor
-        IntAction(const IntAction& a);
+        IntAction(const IntAction& a) = default;
         /// Assignment operator
         IntAction& operator=(const IntAction& a);
         /**
@@ -5050,9 +5050,9 @@ namespace Gecode {
          * yet initialized action storage is init or the assignment operator.
          *
          */
-        BoolAction(void);
+        BoolAction(void) = default;
         /// Copy constructor
-        BoolAction(const BoolAction& a);
+        BoolAction(const BoolAction& a) = default;
         /// Assignment operator
         BoolAction& operator=(const BoolAction& a);
         /**
@@ -5104,9 +5104,9 @@ namespace Gecode {
          * yet initialized CHB storage is init or the assignment operator.
          *
          */
-        IntCHB(void);
+        IntCHB(void) = default;
         /// Copy constructor
-        IntCHB(const IntCHB& chb);
+        IntCHB(const IntCHB& chb) = default;
         /// Assignment operator
         IntCHB& operator=(const IntCHB& chb);
         /**
@@ -5147,9 +5147,9 @@ namespace Gecode {
          * yet initialized action storage is init or the assignment operator.
          *
          */
-        BoolCHB(void);
+        BoolCHB(void) = default;
         /// Copy constructor
-        BoolCHB(const BoolCHB& chb);
+        BoolCHB(const BoolCHB& chb) = default;
         /// Assignment operator
         BoolCHB& operator=(const BoolCHB& chb);
         /**

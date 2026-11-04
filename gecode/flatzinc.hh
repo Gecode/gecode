@@ -202,9 +202,9 @@ namespace Gecode { namespace FlatZinc {
 #endif
         );
 
-    private:
-        Printer(const Printer&);
-        Printer& operator=(const Printer&);
+    public:
+        Printer(const Printer&) = delete;
+        Printer& operator=(const Printer&) = delete;
     };
 
     /**
@@ -463,7 +463,7 @@ namespace Gecode { namespace FlatZinc {
         /// Constructor
         BranchInformation(void);
         /// Copy constructor
-        BranchInformation(const BranchInformation& bi);
+        BranchInformation(const BranchInformation& bi) = default;
         /// Initialise for use
         void init(void);
         /// Add new brancher information
@@ -587,12 +587,12 @@ namespace Gecode { namespace FlatZinc {
 
         public:
             OnRestartHandle() : SharedHandle() {}
-            OnRestartHandle(const OnRestartHandle& handle) : SharedHandle(handle) {}
+            OnRestartHandle(const OnRestartHandle& handle) = default;
             OnRestartHandle&
             operator=(const OnRestartHandle& handle) {
                 return static_cast<OnRestartHandle&>(SharedHandle::operator=(handle));
             }
-            virtual ~OnRestartHandle() {};
+            virtual ~OnRestartHandle() = default;
 
             void
             init() {

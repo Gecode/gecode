@@ -32,13 +32,6 @@
 
 namespace Gecode {
 
-    forceinline
-    FloatCHB::FloatCHB(void) {}
-
-    forceinline
-    FloatCHB::FloatCHB(const FloatCHB& chb)
-        : CHB(chb) {}
-
     forceinline FloatCHB&
     FloatCHB::operator=(const FloatCHB& chb) {
         return static_cast<FloatCHB&>(CHB::operator=(chb));

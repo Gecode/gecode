@@ -334,17 +334,13 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges(void) = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const CachedView<View>& x);
         /// Initialize with ranges for view \a x
         void init(const CachedView<View>& x);
         //@}
     };
-
-    template <class View>
-    forceinline
-    ViewRanges<CachedView<View>>::ViewRanges(void) {}
 
     template <class View>
     forceinline
@@ -357,10 +353,6 @@ namespace Gecode { namespace Int {
     ViewRanges<CachedView<View>>::init(const CachedView<View>& x) {
         ViewRanges<View>::init(x.base());
     }
-
-    template <class View>
-    forceinline
-    ViewDiffRanges<View>::ViewDiffRanges(void) {}
 
     template <class View>
     forceinline

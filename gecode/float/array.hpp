@@ -70,15 +70,8 @@ namespace Gecode {
         : ArgArray<FloatVal>(a) {}
 
     forceinline
-    FloatVarArgs::FloatVarArgs(void) {}
-
-    forceinline
     FloatVarArgs::FloatVarArgs(int n)
         : VarArgArray<FloatVar>(n) {}
-
-    forceinline
-    FloatVarArgs::FloatVarArgs(const FloatVarArgs& a)
-        : VarArgArray<FloatVar>(a) {}
 
     forceinline
     FloatVarArgs::FloatVarArgs(const VarArray<FloatVar>& a)
@@ -96,9 +89,6 @@ namespace Gecode {
     forceinline
     FloatVarArgs::FloatVarArgs(InputIterator first, InputIterator last)
         : VarArgArray<FloatVar>(first, last) {}
-
-    forceinline
-    FloatVarArray::FloatVarArray(void) {}
 
     forceinline
     FloatVarArray::FloatVarArray(Space& home, int n)

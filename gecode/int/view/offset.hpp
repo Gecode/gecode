@@ -41,6 +41,7 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     OffsetView::OffsetView(void) {}
     forceinline
     OffsetView::OffsetView(const IntView& y, int d)
@@ -273,16 +274,13 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges(void) = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const OffsetView& x);
         /// Initialize with ranges for view \a x
         void init(const OffsetView& x);
         //@}
     };
-
-    forceinline
-    ViewRanges<OffsetView>::ViewRanges(void) {}
 
     forceinline
     ViewRanges<OffsetView>::ViewRanges(const OffsetView& x) {

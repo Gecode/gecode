@@ -275,9 +275,6 @@ namespace Gecode { namespace Int {
 namespace Gecode {
 
     template <class Var>
-    OpenVarList<Var>::OpenVarList(void) {}
-
-    template <class Var>
     OpenVarList<Var>::OpenVarList(Object* source) : LocalHandle(source) {}
 
     template <class Var>
@@ -406,9 +403,6 @@ namespace Gecode { namespace Int {
 }} // namespace Gecode::Int
 
 namespace Gecode {
-
-    template <class View>
-    OpenViewList<View>::OpenViewList(void) {}
 
     template <class View>
     OpenViewList<View>::OpenViewList(const OpenVarList<Var>& list) : LocalHandle(list) {}

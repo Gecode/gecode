@@ -690,7 +690,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        ArgArray(void);
+        ArgArray(void) = default;
         /// Allocate array with \a n elements
         explicit ArgArray(int n);
         /// Allocate array with \a n elements and initialize with elements from array \a e
@@ -778,7 +778,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        VarArgArray(void);
+        VarArgArray(void) = default;
         /// Allocate array with \a n elements
         explicit VarArgArray(int n);
         /// Initialize from variable argument array \a a (copy elements)
@@ -1694,10 +1694,6 @@ namespace Gecode {
 
     template <class T>
     forceinline
-    ArgArray<T>::ArgArray(void) {}
-
-    template <class T>
-    forceinline
     ArgArray<T>::ArgArray(int n)
         : ArgArrayBase<T>(n) {}
 
@@ -1770,10 +1766,6 @@ namespace Gecode {
      * Argument arrays for variables
      *
      */
-
-    template <class Var>
-    forceinline
-    VarArgArray<Var>::VarArgArray(void) {}
 
     template <class Var>
     forceinline
