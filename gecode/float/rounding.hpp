@@ -32,6 +32,107 @@
 
 namespace Gecode { namespace Float {
 
+    /*
+     * Rounding mode control
+     *
+     */
+
+#ifdef GECODE_FLOAT_MODE_CONTROL87
+
+    /**
+     * \brief Control word settings that RoundingBase writes with `_control87`
+     *
+     * Gecode writes the exception masks and the rounding control, and on x86
+     * also the precision and infinity control, which x64 does not support.
+     * Besides the rounding direction, it masks all exceptions and, on x86,
+     * selects 64-bit precision and affine infinity.
+     */
+    namespace Control87 {
+#ifdef _M_IX86
+        /// Fields that Gecode writes
+        constexpr unsigned int fields = _MCW_EM | _MCW_RC | _MCW_PC | _MCW_IC;
+        /// Settings of those fields besides the rounding direction
+        constexpr unsigned int base_settings = _MCW_EM | _PC_64 | _IC_AFFINE;
+#else
+        /// Fields that Gecode writes
+        constexpr unsigned int fields = _MCW_EM | _MCW_RC;
+        /// Settings of those fields besides the rounding direction
+        constexpr unsigned int base_settings = _MCW_EM;
+#endif
+    } // namespace Control87
+
+    forceinline RoundingBase::Mode
+    RoundingBase::current_mode(void) {
+        return _control87(0, 0);
+    }
+    forceinline void
+    RoundingBase::restore_mode(Mode m) {
+        _control87(m, Control87::fields);
+    }
+    forceinline void
+    RoundingBase::upward(void) {
+        _control87(Control87::base_settings | _RC_UP, Control87::fields);
+    }
+    forceinline void
+    RoundingBase::downward(void) {
+        _control87(Control87::base_settings | _RC_DOWN, Control87::fields);
+    }
+    forceinline void
+    RoundingBase::to_nearest(void) {
+        _control87(Control87::base_settings | _RC_NEAR, Control87::fields);
+    }
+
+#else
+
+    forceinline RoundingBase::Mode
+    RoundingBase::current_mode(void) {
+        return std::fegetround();
+    }
+    forceinline void
+    RoundingBase::restore_mode(Mode m) {
+        std::fesetround(m);
+    }
+    forceinline void
+    RoundingBase::upward(void) {
+        std::fesetround(FE_UPWARD);
+    }
+    forceinline void
+    RoundingBase::downward(void) {
+        std::fesetround(FE_DOWNWARD);
+    }
+    forceinline void
+    RoundingBase::to_nearest(void) {
+        std::fesetround(FE_TONEAREST);
+    }
+
+#endif
+
+    forceinline void
+    RoundingBase::init(void) {
+#ifndef GECODE_FLOAT_DIRECTED_PER_OPERATION
+        upward();
+#endif
+    }
+
+    forceinline
+    Rounding::Rounding(void)
+        : saved(current_mode()) {
+        init();
+    }
+    forceinline Rounding::~Rounding(void) {
+        restore_mode(saved);
+    }
+
+    forceinline FloatNum
+    RoundingBase::nearest_median(FloatNum x, FloatNum y) {
+        to_nearest();
+        const FloatNum m = barrier((barrier(x) + barrier(y)) / 2.0);
+#ifndef GECODE_FLOAT_DIRECTED_PER_OPERATION
+        upward();
+#endif
+        return m;
+    }
+
     forceinline FloatNum
     RoundingBase::median(FloatNum l, FloatNum u) {
         const FloatNum inf = std::numeric_limits<FloatNum>::infinity();
@@ -47,8 +148,8 @@ namespace Gecode { namespace Float {
 
         const FloatNum h = max / 2.0;
         if ((u > h) || (l < -h))
-            return std::ldexp(RoundingControl::median(l / 2.0, u / 2.0), 1);
-        return RoundingControl::median(l, u);
+            return std::ldexp(nearest_median(l / 2.0, u / 2.0), 1);
+        return nearest_median(l, u);
     }
 
     forceinline FloatNum
@@ -65,63 +166,63 @@ namespace Gecode { namespace Float {
         return x;
     }
 
-#if defined(_MSC_VER) && (defined(_M_X64) || (defined(_M_IX86_FP) && (_M_IX86_FP > 0)))
+#ifdef GECODE_FLOAT_DIRECTED_PER_OPERATION
 
-    // RoundingControl is rounded_arith_std: each operation sets its direction.
+    // Each operation sets its direction.
     forceinline FloatNum
     RoundingBase::add_down(FloatNum x, FloatNum y) {
-        RoundingControl::downward();
+        downward();
         return barrier(barrier(x) + barrier(y));
     }
     forceinline FloatNum
     RoundingBase::add_up(FloatNum x, FloatNum y) {
-        RoundingControl::upward();
+        upward();
         return barrier(barrier(x) + barrier(y));
     }
     forceinline FloatNum
     RoundingBase::sub_down(FloatNum x, FloatNum y) {
-        RoundingControl::downward();
+        downward();
         return barrier(barrier(x) - barrier(y));
     }
     forceinline FloatNum
     RoundingBase::sub_up(FloatNum x, FloatNum y) {
-        RoundingControl::upward();
+        upward();
         return barrier(barrier(x) - barrier(y));
     }
     forceinline FloatNum
     RoundingBase::mul_down(FloatNum x, FloatNum y) {
-        RoundingControl::downward();
+        downward();
         return barrier(barrier(x) * barrier(y));
     }
     forceinline FloatNum
     RoundingBase::mul_up(FloatNum x, FloatNum y) {
-        RoundingControl::upward();
+        upward();
         return barrier(barrier(x) * barrier(y));
     }
     forceinline FloatNum
     RoundingBase::div_down(FloatNum x, FloatNum y) {
-        RoundingControl::downward();
+        downward();
         return barrier(barrier(x) / barrier(y));
     }
     forceinline FloatNum
     RoundingBase::div_up(FloatNum x, FloatNum y) {
-        RoundingControl::upward();
+        upward();
         return barrier(barrier(x) / barrier(y));
     }
     forceinline FloatNum
     RoundingBase::sqrt_down(FloatNum x) {
-        RoundingControl::downward();
+        downward();
         return barrier(std::sqrt(barrier(x)));
     }
     forceinline FloatNum
     RoundingBase::sqrt_up(FloatNum x) {
-        RoundingControl::upward();
+        upward();
         return barrier(std::sqrt(barrier(x)));
     }
 
 #else
 
-    // RoundingControl is rounded_arith_opp: the mode stays upward.
+    // The mode stays upward.
     forceinline FloatNum
     RoundingBase::add_down(FloatNum x, FloatNum y) {
         return -barrier(barrier(-x) - barrier(y));
@@ -156,9 +257,9 @@ namespace Gecode { namespace Float {
     }
     forceinline FloatNum
     RoundingBase::sqrt_down(FloatNum x) {
-        RoundingControl::downward();
+        downward();
         const FloatNum r = barrier(std::sqrt(barrier(x)));
-        RoundingControl::upward();
+        upward();
         return r;
     }
     forceinline FloatNum
