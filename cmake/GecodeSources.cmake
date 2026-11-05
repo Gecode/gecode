@@ -317,6 +317,7 @@ set(GECODE_TEST_SOURCES
   test/flatzinc/blocksworld_instance_1.cpp
   test/flatzinc/blocksworld_instance_2.cpp
   test/flatzinc/bool_clause.cpp
+  test/flatzinc/branching.cpp
   test/flatzinc/bug232.cpp
   test/flatzinc/bug319.cpp
   test/flatzinc/bugfix_r6746.cpp

@@ -132,9 +132,22 @@ namespace Gecode { namespace FlatZinc {
               float_varsel(std::move(float_varsel0)), float_valsel(std::move(float_valsel0))
 #endif
         {
+            home.notice(*this, AP_DISPOSE);
         }
         /// Copy constructor
-        AuxVarBrancher(Space& home, AuxVarBrancher& b) : Brancher(home, b), done(b.done) {}
+        AuxVarBrancher(Space& home, AuxVarBrancher& b)
+            : Brancher(home, b), done(b.done), int_varsel(b.int_varsel), int_valsel(b.int_valsel),
+              bool_varsel(b.bool_varsel), bool_valsel(b.bool_valsel)
+#ifdef GECODE_HAS_SET_VARS
+              ,
+              set_varsel(b.set_varsel), set_valsel(b.set_valsel)
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+              ,
+              float_varsel(b.float_varsel), float_valsel(b.float_valsel)
+#endif
+        {
+        }
 
         /// %Choice that only signals failure or success
         class Choice : public Gecode::Choice {
@@ -268,7 +281,21 @@ namespace Gecode { namespace FlatZinc {
         }
         /// Delete brancher and return its size
         size_t
-        dispose(Space&) override {
+        dispose(Space& home) override {
+            home.ignore(*this, AP_DISPOSE);
+            int_varsel.~TieBreak();
+            int_valsel.~IntValBranch();
+            bool_varsel.~TieBreak();
+            bool_valsel.~BoolValBranch();
+#ifdef GECODE_HAS_SET_VARS
+            set_varsel.~SetVarBranch();
+            set_valsel.~SetValBranch();
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+            float_varsel.~TieBreak();
+            float_valsel.~FloatValBranch();
+#endif
+            (void)Brancher::dispose(home);
             return sizeof(*this);
         }
     };
@@ -667,7 +694,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     SetValBranch
-    annotation_to_set_val_branch(AST::Node* ann, std::string r0, std::string r1, const Rnd& rnd) {
+    annotation_to_set_val_branch(AST::Node* ann, std::string& r0, std::string& r1, const Rnd& rnd) {
         (void)rnd;
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "indomain_min") {
@@ -745,7 +772,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     FloatValBranch
-    annotation_to_float_val_branch(AST::Node* ann, std::string r0, std::string r1) {
+    annotation_to_float_val_branch(AST::Node* ann, std::string& r0, std::string& r1) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "indomain_split") {
                 r0 = "<=";
@@ -1062,17 +1089,17 @@ namespace Gecode { namespace FlatZinc {
         int seed = opt.seed();
         double decay = opt.decay();
         Rnd rnd(static_cast<unsigned int>(seed));
-        TieBreak<IntVarBranch> def_int_varsel = INT_VAR_AFC_SIZE_MAX(0.99);
-        IntBoolVarBranch def_intbool_varsel = int_bool_var_afc_size_max(0.99);
+        TieBreak<IntVarBranch> def_int_varsel = INT_VAR_AFC_SIZE_MAX(decay);
+        IntBoolVarBranch def_intbool_varsel = int_bool_var_afc_size_max(decay);
         IntValBranch def_int_valsel = INT_VAL_MIN();
         std::string def_int_rel_left = "=";
         std::string def_int_rel_right = "!=";
-        TieBreak<BoolVarBranch> def_bool_varsel = BOOL_VAR_AFC_MAX(0.99);
+        TieBreak<BoolVarBranch> def_bool_varsel = BOOL_VAR_AFC_MAX(decay);
         BoolValBranch def_bool_valsel = BOOL_VAL_MIN();
         std::string def_bool_rel_left = "=";
         std::string def_bool_rel_right = "!=";
 #ifdef GECODE_HAS_SET_VARS
-        SetVarBranch def_set_varsel = SET_VAR_AFC_SIZE_MAX(0.99);
+        SetVarBranch def_set_varsel = SET_VAR_AFC_SIZE_MAX(decay);
         SetValBranch def_set_valsel = SET_VAL_MIN_INC();
         std::string def_set_rel_left = "in";
         std::string def_set_rel_right = "not in";

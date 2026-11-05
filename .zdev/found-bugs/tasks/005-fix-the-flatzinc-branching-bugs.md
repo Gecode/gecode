@@ -3,7 +3,7 @@ schema_version = 1
 id = "found-bugs-005"
 key = "flatzinc"
 area = "found-bugs"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "high"
@@ -21,8 +21,17 @@ IntBoolVarBranch(Select, double d) : VarBranch<IntVar>(d) (gecode/flatzinc/branc
 
 ## Done when
 
-- [ ] Each is fixed or shown not to be a bug, with a Test::FlatZinc test where possible.
+- [x] Each is fixed or shown not to be a bug, with a Test::FlatZinc test where possible.
 
 ## Validation
 
 - -test FlatZinc in build/full.
+
+## Result
+
+IntBoolVarBranch keeps its decay and Rnd(unsigned) is explicit, default branchers follow -decay, set and float value annotations see relation names, and AuxVarBrancher keeps its selections across clones and disposes them.
+
+Validation:
+
+- gecode-test -threads 8: FlatZinc 155/155, -iter 2 -fixprob 1 -tag check 546/546; gecode-fault-test 21/21
+- All four new tests failed before the fixes; leaks reports 0 with the fix; tidy and format pass

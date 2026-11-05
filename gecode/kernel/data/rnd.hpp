@@ -84,7 +84,7 @@ namespace Gecode {
         ~Rnd(void) = default;
         /// Initialize with seed \a s
         GECODE_KERNEL_EXPORT
-        Rnd(unsigned int s);
+        explicit Rnd(unsigned int s);
         /// Set the current seed to \a s (initializes if needed)
         GECODE_KERNEL_EXPORT
         void seed(unsigned int s);
