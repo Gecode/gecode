@@ -67,11 +67,11 @@ namespace Test { namespace Set {
                     return Iter::Ranges::subset(i, j);
                 case SRT_SUP:
                     return Iter::Ranges::subset(j, i);
-                case SRT_DISJ: {
+                case SRT_DISJOINT: {
                     Gecode::Iter::Ranges::Inter<I, J> inter(i, j);
                     return !inter();
                 }
-                case SRT_CMPL: {
+                case SRT_COMPLEMENT: {
                     Gecode::Set::RangesCompl<J> jc(j);
                     return Iter::Ranges::equal(i, jc);
                 }
@@ -126,14 +126,14 @@ namespace Test { namespace Set {
                     Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0, xr1);
                     return sol(u, xr2);
                 } break;
-                case SOT_DUNION: {
+                case SOT_DISJOINT_UNION: {
                     Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> inter(xr0, xr1);
                     if (inter())
                         return false;
                     Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0, xr1);
                     return sol(u, xr2);
                 } break;
-                case SOT_INTER: {
+                case SOT_INTERSECTION: {
                     Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> u(xr0, xr1);
                     return sol(u, xr2);
                 } break;
@@ -252,7 +252,7 @@ namespace Test { namespace Set {
                 CountableSetRanges xnr(x.lub, x[result]);
 
                 switch (sot) {
-                case SOT_DUNION: {
+                case SOT_DISJOINT_UNION: {
                     if (shared == 1 && (isrs[0]() || isrs[1]())) {
                         delete[] isrs;
                         return false;
@@ -296,7 +296,7 @@ namespace Test { namespace Set {
                     delete[] isrs;
                     return eq;
                 }
-                case SOT_INTER: {
+                case SOT_INTERSECTION: {
                     if (with_const) {
                         bool eq;
                         {
@@ -380,13 +380,13 @@ namespace Test { namespace Set {
                 for (int wc = 0; wc <= 1; wc++) {
                     for (int i = 0; i <= 3; i++) {
                         (void)new RelN(Gecode::SOT_UNION, i, 0, wc);
-                        (void)new RelN(Gecode::SOT_DUNION, i, 0, wc);
-                        (void)new RelN(Gecode::SOT_INTER, i, 0, wc);
+                        (void)new RelN(Gecode::SOT_DISJOINT_UNION, i, 0, wc);
+                        (void)new RelN(Gecode::SOT_INTERSECTION, i, 0, wc);
 
                         if (i > 0) {
                             (void)new RelN(Gecode::SOT_UNION, 0, i, wc);
-                            (void)new RelN(Gecode::SOT_DUNION, 0, i, wc);
-                            (void)new RelN(Gecode::SOT_INTER, 0, i, wc);
+                            (void)new RelN(Gecode::SOT_DISJOINT_UNION, 0, i, wc);
+                            (void)new RelN(Gecode::SOT_INTERSECTION, 0, i, wc);
                         }
                     }
                 }
@@ -422,7 +422,7 @@ namespace Test { namespace Set {
                 CountableSetRanges xnr(x.lub, x[0]);
 
                 switch (sot) {
-                case SOT_DUNION: {
+                case SOT_DISJOINT_UNION: {
                     IntSetRanges issr(iss);
                     unsigned int card_sum = Iter::Ranges::size(issr);
                     if (card_sum != static_cast<unsigned int>(n)) {
@@ -453,7 +453,7 @@ namespace Test { namespace Set {
                         return Iter::Ranges::equal(issr, xnr);
                     }
                 }
-                case SOT_INTER: {
+                case SOT_INTERSECTION: {
                     bool all_equal = true;
                     for (int i = 1; i < n; i++) {
                         if (isrs[i] != isrs[0]) {
@@ -518,8 +518,8 @@ namespace Test { namespace Set {
                 for (int wc = 0; wc <= 1; wc++) {
                     for (int i = 0; i <= 3; i++) {
                         (void)new RelIntN(Gecode::SOT_UNION, i, wc);
-                        (void)new RelIntN(Gecode::SOT_DUNION, i, wc);
-                        (void)new RelIntN(Gecode::SOT_INTER, i, wc);
+                        (void)new RelIntN(Gecode::SOT_DISJOINT_UNION, i, wc);
+                        (void)new RelIntN(Gecode::SOT_INTERSECTION, i, wc);
                     }
                 }
             }

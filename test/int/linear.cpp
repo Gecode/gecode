@@ -314,7 +314,7 @@ namespace Test { namespace Int {
                 linear(bool_lq, a, bx, IRT_LQ, -1);
                 linear(reified, x, IRT_EQ, 1, Reify(reified.b));
                 linear(imp, a, bx, IRT_GQ, 1, Reify(imp.b, RM_IMP));
-                linear(pmi, bx, IRT_LQ, 0, Reify(pmi.b, RM_PMI));
+                linear(pmi, bx, IRT_LQ, 0, Reify(pmi.b, RM_RIMP));
                 return (eq.status() == SS_SOLVED) && (nq.status() == SS_FAILED) && (bool_lq.status() == SS_FAILED) &&
                        reified.is_solved_with_b(0) && imp.is_solved_with_b(0) && pmi.is_solved_with_b(1);
             }

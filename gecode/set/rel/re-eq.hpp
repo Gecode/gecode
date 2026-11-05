@@ -100,7 +100,7 @@ namespace Gecode { namespace Set { namespace Rel {
     ExecStatus
     ReEq<View0, View1, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (Eq<View0, View1>::post(home(*this), x0, x1)));
         }
@@ -126,7 +126,7 @@ namespace Gecode { namespace Set { namespace Rel {
                     GECODE_ME_CHECK(b.one_none(home));
                 return home.ES_SUBSUMED(*this);
             } else {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 return home.ES_SUBSUMED(*this);
             }
@@ -134,7 +134,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
         // check whether cardinalities still allow equality
         if (x0.card_min() > x1.card_max() || x1.card_min() > x0.card_max()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
         }
@@ -144,7 +144,7 @@ namespace Gecode { namespace Set { namespace Rel {
         LubRanges<View1> x1ub(x1);
         Iter::Ranges::Diff<GlbRanges<View0>, LubRanges<View1>> diff1(x0lb, x1ub);
         if (diff1()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
         }
@@ -154,7 +154,7 @@ namespace Gecode { namespace Set { namespace Rel {
         LubRanges<View0> x0ub(x0);
         Iter::Ranges::Diff<GlbRanges<View1>, LubRanges<View0>> diff2(x1lb, x0ub);
         if (diff2()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
         }

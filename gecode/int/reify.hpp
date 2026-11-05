@@ -74,7 +74,7 @@ namespace Gecode {
     }
     forceinline Reify
     pmi(BoolVar x) {
-        return Reify(x, RM_PMI);
+        return Reify(x, RM_RIMP);
     }
 
 } // namespace Gecode

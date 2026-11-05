@@ -1768,9 +1768,9 @@ namespace Gecode { namespace Int {
      *
      */
     enum class BoolTest {
-        BT_NONE, ///< No sharing
-        BT_SAME, ///< Same variable
-        BT_COMP  ///< Same variable but complement
+        BT_NONE,      ///< No sharing
+        BT_SAME,      ///< Same variable
+        BT_COMPLEMENT ///< Same variable but complement
     };
     using enum BoolTest;
 

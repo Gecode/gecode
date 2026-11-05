@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Bool {
         case BT_SAME:
             GECODE_ME_CHECK(b2.one(home));
             break;
-        case BT_COMP:
+        case BT_COMPLEMENT:
             GECODE_ME_CHECK(b2.zero(home));
             break;
         case BT_NONE:

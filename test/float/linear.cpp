@@ -70,7 +70,7 @@ namespace Test { namespace Float {
             FloatFloat(TestTags tags, const std::string& s, const Gecode::FloatVal& d, const Gecode::FloatValArgs& a0,
                        Gecode::FloatRelType frt0, Gecode::FloatNum c0, Gecode::FloatNum st)
                 : Test(tags, "Linear::Float::" + str(frt0) + "::" + s + "::" + str(c0) + "::" + str(a0.size()),
-                       a0.size(), d, st, CPLT_ASSIGNMENT, true),
+                       a0.size(), d, st, COMPLETE_ASSIGNMENT, true),
                   a(a0), frt(frt0), c(c0) {
                 using namespace Gecode;
                 test_fixpoint = false;
@@ -132,7 +132,7 @@ namespace Test { namespace Float {
             FloatVar(TestTags tags, const std::string& s, const Gecode::FloatVal& d, const Gecode::FloatValArgs& a0,
                      Gecode::FloatRelType frt0, Gecode::FloatNum st)
                 : Test(tags, "Linear::Var::" + str(frt0) + "::" + s + "::" + str(a0.size()), a0.size() + 1, d, st,
-                       CPLT_ASSIGNMENT, true),
+                       COMPLETE_ASSIGNMENT, true),
                   a(a0), frt(frt0) {
                 using namespace Gecode;
                 test_fixpoint = false;
@@ -232,7 +232,7 @@ namespace Test { namespace Float {
                 linear(eq, x, FRT_EQ, 0);
                 linear(lq, a, x, FRT_LQ, -1);
                 linear(reified, x, FRT_EQ, 1, Reify(reified.b));
-                linear(pmi, a, x, FRT_GQ, 0, Reify(pmi.b, RM_PMI));
+                linear(pmi, a, x, FRT_GQ, 0, Reify(pmi.b, RM_RIMP));
                 return (eq.status() == SS_SOLVED) && (lq.status() == SS_FAILED) && reified.is_solved_with_b(0) &&
                        pmi.is_solved_with_b(1);
             }

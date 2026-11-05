@@ -329,7 +329,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     inline ExecStatus
     ReGcd<rm>::post(Home home, IntView x0, IntView x1, IntView x2, BoolView b) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return ES_OK;
             return Gcd::post(home, x0, x1, x2);
         }
@@ -374,7 +374,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     inline ExecStatus
     ReGcd<rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, Gcd::post(home(*this), x0, x1, x2));
         }
@@ -391,7 +391,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
         switch (gcd_status(x0, x1, x2)) {
         case RT_FALSE:
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero(home));
             return home.ES_SUBSUMED(*this);
         case RT_TRUE:

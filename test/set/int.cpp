@@ -215,7 +215,7 @@ namespace Test { namespace Set {
             /// Post constraint on \a x
             void
             post(Space& home, SetVarArray& x, IntVarArray& y) override {
-                Gecode::rel(home, x[0], SRT_DISJ, y[0]);
+                Gecode::rel(home, x[0], SRT_DISJOINT, y[0]);
             }
         };
         NoElem _noelem("Int::NoElem");
@@ -260,11 +260,11 @@ namespace Test { namespace Set {
                     return Iter::Ranges::subset(xr, dr);
                 case SRT_SUP:
                     return Iter::Ranges::subset(dr, xr);
-                case SRT_DISJ: {
+                case SRT_DISJOINT: {
                     Gecode::Iter::Ranges::Inter<CountableSetRanges, IntSetRanges> inter(xr, dr);
                     return !inter();
                 }
-                case SRT_CMPL: {
+                case SRT_COMPLEMENT: {
                     Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
                     return Iter::Ranges::equal(xr, drc);
                 }
@@ -294,14 +294,14 @@ namespace Test { namespace Set {
         Rel _rel_nq(Gecode::SRT_NQ, false);
         Rel _rel_sub(Gecode::SRT_SUB, false);
         Rel _rel_sup(Gecode::SRT_SUP, false);
-        Rel _rel_disj(Gecode::SRT_DISJ, false);
-        Rel _rel_cmpl(Gecode::SRT_CMPL, false);
+        Rel _rel_disj(Gecode::SRT_DISJOINT, false);
+        Rel _rel_cmpl(Gecode::SRT_COMPLEMENT, false);
         Rel _rel_eqs(Gecode::SRT_EQ, true);
         Rel _rel_nqs(Gecode::SRT_NQ, true);
         Rel _rel_subs(Gecode::SRT_SUB, true);
         Rel _rel_sups(Gecode::SRT_SUP, true);
-        Rel _rel_disjs(Gecode::SRT_DISJ, true);
-        Rel _rel_cmpls(Gecode::SRT_CMPL, true);
+        Rel _rel_disjs(Gecode::SRT_DISJOINT, true);
+        Rel _rel_cmpls(Gecode::SRT_COMPLEMENT, true);
 
         /// %Test for integer relation constraint
         class IntRel : public SetTest {

@@ -474,7 +474,7 @@ namespace Test { namespace Int {
             bool
             run(void) override {
                 using namespace Gecode;
-                for (ReifyMode rm : {RM_EQV, RM_IMP, RM_PMI})
+                for (ReifyMode rm : {RM_EQV, RM_IMP, RM_RIMP})
                     for (int kind = 0; kind < 4; kind++) {
                         TestSpace home;
                         IntVar x(home, -7, 7);
@@ -1929,7 +1929,7 @@ namespace Test { namespace Int {
                 Gecode::dom(home, x[1], IntSet({-2, 0, 1, 4}));
                 Gecode::dom(home, x[2], IntSet({-4, 0, 3, 7}));
                 BoolVar b(home, mode, mode);
-                product_mod(home, IntVarArgs({x[0], x[0]}), x[1], x[2], Reify(b, mode == 0 ? RM_IMP : RM_PMI));
+                product_mod(home, IntVarArgs({x[0], x[0]}), x[1], x[2], Reify(b, mode == 0 ? RM_IMP : RM_RIMP));
             }
         };
 

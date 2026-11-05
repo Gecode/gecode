@@ -283,15 +283,15 @@ namespace Gecode { namespace Int { namespace GCC {
             /// No flags set
             EF_NONE = 0,
             /// Whether edge is used in LBC
-            EF_MRKLB = 1 << 0,
+            EF_MARKED_LBC = 1 << 0,
             /// Whether edge is used in UBC
-            EF_MRKUB = 1 << 1,
+            EF_MARKED_UBC = 1 << 1,
             /// Whether edge is matched in LBC
-            EF_LM = 1 << 2,
+            EF_MATCHED_LBC = 1 << 2,
             /// Whether edge is matched in UBC
-            EF_UM = 1 << 3,
+            EF_MATCHED_UBC = 1 << 3,
             /// Whether edge has been deleted
-            EF_DEL = 1 << 4
+            EF_DELETED = 1 << 4
         };
         /// Flags for edges
         unsigned char ef;
@@ -831,23 +831,23 @@ namespace Gecode { namespace Int { namespace GCC {
     forceinline void
     Edge::use(BC bc) {
         if (bc == UBC)
-            ef |= EF_MRKUB;
+            ef |= EF_MARKED_UBC;
         else
-            ef |= EF_MRKLB;
+            ef |= EF_MARKED_LBC;
     }
     forceinline void
     Edge::free(BC bc) {
         if (bc == UBC)
-            ef &= ~EF_MRKUB;
+            ef &= ~EF_MARKED_UBC;
         else
-            ef &= ~EF_MRKLB;
+            ef &= ~EF_MARKED_LBC;
     }
     forceinline bool
     Edge::used(BC bc) const {
         if (bc == UBC)
-            return (ef & EF_MRKUB) != 0;
+            return (ef & EF_MARKED_UBC) != 0;
         else
-            return (ef & EF_MRKLB) != 0;
+            return (ef & EF_MARKED_LBC) != 0;
     }
     forceinline Edge*
     Edge::next(void) const {
@@ -913,9 +913,9 @@ namespace Gecode { namespace Int { namespace GCC {
     forceinline void
     Edge::unmatch(BC bc) {
         if (bc == UBC)
-            ef &= ~EF_UM;
+            ef &= ~EF_MATCHED_UBC;
         else
-            ef &= ~EF_LM;
+            ef &= ~EF_MATCHED_LBC;
         x->unmatch(bc);
         v->unmatch(bc);
     }
@@ -923,9 +923,9 @@ namespace Gecode { namespace Int { namespace GCC {
     forceinline void
     Edge::unmatch(BC bc, bool node) {
         if (bc == UBC)
-            ef &= ~EF_UM;
+            ef &= ~EF_MATCHED_UBC;
         else
-            ef &= ~EF_LM;
+            ef &= ~EF_MATCHED_LBC;
         if (node)
             v->unmatch(bc);
         else
@@ -941,9 +941,9 @@ namespace Gecode { namespace Int { namespace GCC {
     forceinline void
     Edge::match(BC bc) {
         if (bc == UBC)
-            ef |= EF_UM;
+            ef |= EF_MATCHED_UBC;
         else
-            ef |= EF_LM;
+            ef |= EF_MATCHED_LBC;
         x->match(bc);
         x->set_match(bc, this);
         v->match(bc);
@@ -952,24 +952,24 @@ namespace Gecode { namespace Int { namespace GCC {
     forceinline bool
     Edge::matched(BC bc) const {
         if (bc == UBC)
-            return (ef & EF_UM) != 0;
+            return (ef & EF_MATCHED_UBC) != 0;
         else
-            return (ef & EF_LM) != 0;
+            return (ef & EF_MATCHED_LBC) != 0;
     }
 
     forceinline void
     Edge::del_edge(void) {
-        ef |= EF_DEL;
+        ef |= EF_DELETED;
     }
 
     forceinline void
     Edge::insert_edge(void) {
-        ef &= ~EF_DEL;
+        ef &= ~EF_DELETED;
     }
 
     forceinline bool
     Edge::deleted(void) const {
-        return (ef & EF_DEL) != 0;
+        return (ef & EF_DELETED) != 0;
     }
 
     forceinline void*

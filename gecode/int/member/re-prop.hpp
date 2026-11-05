@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Member {
     inline ExecStatus
     ReProp<View, rm>::post(Home home, ViewArray<View>& x, View y, BoolView b) {
         if (x.size() == 0) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero(home));
             return ES_OK;
         }
@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Member {
             return ES_OK;
         case Iter::Ranges::CS_DISJOINT:
             if (x.size() == 0) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return ES_OK;
             }
@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Member {
             add(home, vs, x);
 
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             ValSet vsc(vs);
             vs.flush();
@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace Member {
             return home.ES_SUBSUMED(*this);
         case Iter::Ranges::CS_DISJOINT:
             if (x.size() == 0) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return home.ES_SUBSUMED(*this);
             }
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Member {
             ViewRanges<View> yr(y);
 
             if (Iter::Ranges::disjoint(u, yr)) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return home.ES_SUBSUMED(*this);
             }

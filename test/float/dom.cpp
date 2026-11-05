@@ -55,7 +55,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             Val(int n, const Gecode::FloatVal& c0, Gecode::FloatNum st)
-                : Test("Dom::Val::" + str(n) + "::" + str(c0), n, -3, 3, st, CPLT_ASSIGNMENT, n == 1), c(c0) {
+                : Test("Dom::Val::" + str(n) + "::" + str(c0), n, -3, 3, st, COMPLETE_ASSIGNMENT, n == 1), c(c0) {
                 test_subsumption = false;
             }
             /// %Test whether \a x is solution
@@ -93,7 +93,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             Num(int n, Gecode::FloatNum min0, Gecode::FloatNum max0, Gecode::FloatNum st)
-                : Test("Dom::Num::" + str(n) + "::" + str(min0) + "::" + str(max0), n, -3, 3, st, CPLT_ASSIGNMENT,
+                : Test("Dom::Num::" + str(n) + "::" + str(min0) + "::" + str(max0), n, -3, 3, st, COMPLETE_ASSIGNMENT,
                        n == 1),
                   min(min0), max(max0) {
                 test_subsumption = false;

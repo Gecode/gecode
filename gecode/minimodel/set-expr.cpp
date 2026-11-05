@@ -173,14 +173,14 @@ namespace Gecode {
                 if (neg) {
                     switch (srt) {
                     case SRT_EQ:
-                        rel(home, u.a.x->x, SRT_CMPL, s);
+                        rel(home, u.a.x->x, SRT_COMPLEMENT, s);
                         break;
-                    case SRT_CMPL:
+                    case SRT_COMPLEMENT:
                         rel(home, u.a.x->x, SRT_EQ, s);
                         break;
                     default:
                         SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                        rel(home, s, SRT_CMPL, bc);
+                        rel(home, s, SRT_COMPLEMENT, bc);
                         rel(home, u.a.x->x, srt, bc);
                         break;
                     }
@@ -212,7 +212,7 @@ namespace Gecode {
                 IntVar iv = u.a.x->e.post(home, IntPropLevels::def);
                 if (neg) {
                     SetVar ic(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                    rel(home, iv, SRT_CMPL, ic);
+                    rel(home, iv, SRT_COMPLEMENT, ic);
                     rel(home, ic, srt, s);
                 } else {
                     rel(home, iv, srt, s);
@@ -223,13 +223,13 @@ namespace Gecode {
                 int i = 0;
                 post(home, SetExpr::NT_INTER, bs, i);
                 if (i == 2) {
-                    rel(home, bs[0], SOT_INTER, bs[1], srt, s);
+                    rel(home, bs[0], SOT_INTERSECTION, bs[1], srt, s);
                 } else {
                     if (srt == SRT_EQ)
-                        rel(home, SOT_INTER, bs, s);
+                        rel(home, SOT_INTERSECTION, bs, s);
                     else {
                         SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                        rel(home, SOT_INTER, bs, bc);
+                        rel(home, SOT_INTERSECTION, bs, bc);
                         rel(home, bc, srt, s);
                     }
                 }
@@ -257,37 +257,37 @@ namespace Gecode {
 
                 if (i == 2) {
                     if (neg) {
-                        if (srt == SRT_CMPL) {
-                            rel(home, bs[0], SOT_DUNION, bs[1], srt, s);
+                        if (srt == SRT_COMPLEMENT) {
+                            rel(home, bs[0], SOT_DISJOINT_UNION, bs[1], srt, s);
                         } else {
                             SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                            rel(home, s, SRT_CMPL, bc);
-                            rel(home, bs[0], SOT_DUNION, bs[1], srt, bc);
+                            rel(home, s, SRT_COMPLEMENT, bc);
+                            rel(home, bs[0], SOT_DISJOINT_UNION, bs[1], srt, bc);
                         }
                     } else {
-                        rel(home, bs[0], SOT_DUNION, bs[1], srt, s);
+                        rel(home, bs[0], SOT_DISJOINT_UNION, bs[1], srt, s);
                     }
                 } else {
                     if (neg) {
-                        if (srt == SRT_CMPL) {
-                            rel(home, SOT_DUNION, bs, s);
+                        if (srt == SRT_COMPLEMENT) {
+                            rel(home, SOT_DISJOINT_UNION, bs, s);
                         } else {
                             SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                            rel(home, SOT_DUNION, bs, br);
+                            rel(home, SOT_DISJOINT_UNION, bs, br);
                             if (srt == SRT_EQ)
-                                rel(home, br, SRT_CMPL, s);
+                                rel(home, br, SRT_COMPLEMENT, s);
                             else {
                                 SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                                 rel(home, br, srt, bc);
-                                rel(home, bc, SRT_CMPL, s);
+                                rel(home, bc, SRT_COMPLEMENT, s);
                             }
                         }
                     } else {
                         if (srt == SRT_EQ)
-                            rel(home, SOT_DUNION, bs, s);
+                            rel(home, SOT_DISJOINT_UNION, bs, s);
                         else {
                             SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                            rel(home, SOT_DUNION, bs, br);
+                            rel(home, SOT_DISJOINT_UNION, bs, br);
                             rel(home, br, srt, s);
                         }
                     }
@@ -305,14 +305,14 @@ namespace Gecode {
                 if (neg) {
                     switch (srt) {
                     case SRT_EQ:
-                        rel(home, u.a.x->x, SRT_CMPL, s, b);
+                        rel(home, u.a.x->x, SRT_COMPLEMENT, s, b);
                         break;
-                    case SRT_CMPL:
+                    case SRT_COMPLEMENT:
                         rel(home, u.a.x->x, SRT_EQ, s, b);
                         break;
                     default:
                         SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                        rel(home, s, SRT_CMPL, bc);
+                        rel(home, s, SRT_COMPLEMENT, bc);
                         rel(home, u.a.x->x, srt, bc, b);
                         break;
                     }
@@ -350,8 +350,8 @@ namespace Gecode {
                     break;
                 case SRT_EQ:
                 case SRT_NQ:
-                case SRT_DISJ:
-                case SRT_CMPL:
+                case SRT_DISJOINT:
+                case SRT_COMPLEMENT:
                     invsrt = srt;
                     break;
                 default:
@@ -364,7 +364,7 @@ namespace Gecode {
                 IntVar iv = u.a.x->e.post(home, IntPropLevels::def);
                 if (neg) {
                     SetVar ic(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                    rel(home, iv, SRT_CMPL, ic);
+                    rel(home, iv, SRT_COMPLEMENT, ic);
                     rel(home, ic, srt, s, b);
                 } else {
                     rel(home, iv, srt, s, b);
@@ -375,7 +375,7 @@ namespace Gecode {
                 int i = 0;
                 post(home, SetExpr::NT_INTER, bs, i);
                 SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                rel(home, SOT_INTER, bs, br);
+                rel(home, SOT_INTERSECTION, bs, br);
                 rel(home, br, srt, s, b);
             } break;
             case SetExpr::NT_UNION: {
@@ -393,19 +393,19 @@ namespace Gecode {
 
                 if (neg) {
                     SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                    rel(home, SOT_DUNION, bs, br);
-                    if (srt == SRT_CMPL)
+                    rel(home, SOT_DISJOINT_UNION, bs, br);
+                    if (srt == SRT_COMPLEMENT)
                         rel(home, br, SRT_EQ, s, b);
                     else if (srt == SRT_EQ)
-                        rel(home, br, SRT_CMPL, s, b);
+                        rel(home, br, SRT_COMPLEMENT, s, b);
                     else {
                         SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                         rel(home, br, srt, bc);
-                        rel(home, bc, SRT_CMPL, s, b);
+                        rel(home, bc, SRT_COMPLEMENT, s, b);
                     }
                 } else {
                     SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                    rel(home, SOT_DUNION, bs, br);
+                    rel(home, SOT_DISJOINT_UNION, bs, br);
                     rel(home, br, srt, s, b);
                 }
             } break;
@@ -421,7 +421,7 @@ namespace Gecode {
                 case SetExpr::NT_VAR:
                     if (neg) {
                         SetVar xc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
-                        rel(home, xc, SRT_CMPL, u.a.x->x);
+                        rel(home, xc, SRT_COMPLEMENT, u.a.x->x);
                         b[i++] = xc;
                     } else {
                         b[i++] = u.a.x->x;
