@@ -44,7 +44,8 @@ namespace Gecode { namespace Int { namespace GCC {
      * If BC = UBC, then we argue about the Upper Bounds Constraint
      * else we use the functions for the Lower Bounds Constraint
      */
-    enum BC { UBC = 1, LBC = 0 };
+    enum class BC { UBC = 1, LBC = 0 };
+    using enum BC;
 
     class Edge;
     /// Base class for nodes in the variable-value-graph

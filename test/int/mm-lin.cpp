@@ -237,7 +237,7 @@ namespace Test { namespace Int {
                 : Test("MiniModel::LinRel::Int::" + s + "::" + str(irt0), 3, -3, 3, true), l_lis(l_lis0), r_lis(r_lis0),
                   irt(irt0) {
                 test_fixpoint = false;
-                rms = (1 << Gecode::RM_EQV);
+                rms = (1 << std::to_underlying(Gecode::RM_EQV));
             }
             /// %Test whether \a x is solution
             bool
@@ -329,7 +329,7 @@ namespace Test { namespace Int {
                 : Test("MiniModel::LinRel::Bool::" + s + "::" + str(irt0), 3, 0, 1, true), l_lis(l_lis0), r_lis(r_lis0),
                   irt(irt0) {
                 test_fixpoint = false;
-                rms = (1 << Gecode::RM_EQV);
+                rms = (1 << std::to_underlying(Gecode::RM_EQV));
             }
             /// %Test whether \a x is solution
             bool
@@ -429,7 +429,7 @@ namespace Test { namespace Int {
                 : Test("MiniModel::LinRel::Mixed::" + s + "::" + str(irt0), 6, 0, 1, true), l_lis(l_lis0),
                   r_lis(r_lis0), irt(irt0) {
                 test_fixpoint = false;
-                rms = (1 << Gecode::RM_EQV);
+                rms = (1 << std::to_underlying(Gecode::RM_EQV));
             }
             /// %Test whether \a x is solution
             bool

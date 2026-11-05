@@ -109,6 +109,12 @@ namespace Test {
     static_assert(std::is_trivially_copyable_v<Gecode::Float::ScaleView>);
 #endif
 
+    // Scoped public enums do not convert to int.
+    static_assert(!std::is_convertible_v<Gecode::IntRelType, int>);
+
+    // IntPropLevels keeps levels in bit-fields, so the type must be unsigned.
+    static_assert(std::is_unsigned_v<std::underlying_type_t<Gecode::IntPropLevel>>);
+
     /*
      * A home never changes its space, and a space is copied only by
      * cloning, so neither is assignable.

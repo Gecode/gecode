@@ -138,21 +138,22 @@ namespace Test { namespace Float {
      */
     forceinline bool
     Test::eqv(void) const {
-        return reified && ((rms & (1 << Gecode::RM_EQV)) != 0);
+        return reified && ((rms & (1 << std::to_underlying(Gecode::RM_EQV))) != 0);
     }
     forceinline bool
     Test::imp(void) const {
-        return reified && ((rms & (1 << Gecode::RM_IMP)) != 0);
+        return reified && ((rms & (1 << std::to_underlying(Gecode::RM_IMP))) != 0);
     }
     forceinline bool
     Test::pmi(void) const {
-        return reified && ((rms & (1 << Gecode::RM_PMI)) != 0);
+        return reified && ((rms & (1 << std::to_underlying(Gecode::RM_PMI))) != 0);
     }
     inline Test::Test(TestTags tags, const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st,
                       AssignmentType at, bool r)
         : Base("Float::" + s, tags), arity(a), dom(d), step(st), assignment_type(at), reified(r),
-          rms((1 << Gecode::RM_EQV) | (1 << Gecode::RM_IMP) | (1 << Gecode::RM_PMI)), test_search(true),
-          test_fixpoint(true), test_subsumption(true) {}
+          rms((1 << std::to_underlying(Gecode::RM_EQV)) | (1 << std::to_underlying(Gecode::RM_IMP)) |
+              (1 << std::to_underlying(Gecode::RM_PMI))),
+          test_search(true), test_fixpoint(true), test_subsumption(true) {}
 
     inline Test::Test(const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st, AssignmentType at,
                       bool r)
@@ -161,8 +162,9 @@ namespace Test { namespace Float {
     inline Test::Test(TestTags tags, const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max,
                       Gecode::FloatNum st, AssignmentType at, bool r)
         : Base("Float::" + s, tags), arity(a), dom(min, max), step(st), assignment_type(at), reified(r),
-          rms((1 << Gecode::RM_EQV) | (1 << Gecode::RM_IMP) | (1 << Gecode::RM_PMI)), test_search(true),
-          test_fixpoint(true), test_subsumption(true) {}
+          rms((1 << std::to_underlying(Gecode::RM_EQV)) | (1 << std::to_underlying(Gecode::RM_IMP)) |
+              (1 << std::to_underlying(Gecode::RM_PMI))),
+          test_search(true), test_fixpoint(true), test_subsumption(true) {}
 
     inline Test::Test(const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max, Gecode::FloatNum st,
                       AssignmentType at, bool r)

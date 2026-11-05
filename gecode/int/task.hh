@@ -277,12 +277,13 @@ namespace Gecode { namespace Int {
 namespace Gecode { namespace Int {
 
     /// How to sort tasks
-    enum SortTaskOrder {
+    enum class SortTaskOrder {
         STO_EST, ///< Sort by earliest start times
         STO_ECT, ///< Sort by earliest completion times
         STO_LST, ///< Sort by latest start times
         STO_LCT  ///< Sort by latest completion times
     };
+    using enum SortTaskOrder;
 
     /// Sort task view array \a t according to \a sto and \a inc (increasing or decreasing)
     template <class TaskView, SortTaskOrder sto, bool inc>
@@ -494,7 +495,7 @@ namespace Gecode { namespace Int {
     class Event {
     public:
         /// Event type for task with order in which they are processed
-        enum Type {
+        enum class Type {
             LRT = 0, ///< Latest required time of task
             LCT = 1, ///< Latest completion time of task
             EST = 2, ///< Earliest start time of task
@@ -502,6 +503,7 @@ namespace Gecode { namespace Int {
             ERT = 4, ///< Earliest required time of task
             END = 5  ///< End marker
         };
+        using enum Type;
 
     protected:
         /// Combines type and number of task

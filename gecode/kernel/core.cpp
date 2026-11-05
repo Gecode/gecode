@@ -126,7 +126,7 @@ namespace Gecode {
         // Initialize space as stable but not failed
         pc.p.active = &pc.p.queue[0] - 1;
         // Initialize propagator queues
-        for (int i = 0; i <= PropCost::AC_MAX; i++)
+        for (int i = 0; i <= std::to_underlying(PropCost::AC_MAX); i++)
             pc.p.queue[i].init();
         pc.p.bid_sc = (reserved_bid + 1) << sc_bits;
         pc.p.n_sub = 0;
@@ -271,7 +271,7 @@ namespace Gecode {
         // Check whether space is failed
         if (failed())
             return SS_FAILED;
-        assert(pc.p.active <= &pc.p.queue[PropCost::AC_MAX + 1]);
+        assert(pc.p.active <= &pc.p.queue[std::to_underlying(PropCost::AC_MAX) + 1]);
         Propagator* p;
         // Check whether space is stable but not failed
         if (pc.p.active >= &pc.p.queue[0]) {
@@ -536,7 +536,7 @@ namespace Gecode {
         // Mark as failed
         fail();
         // Propagate top priority propagators
-        ActorLink* e = &pc.p.queue[PropCost::AC_RECORD];
+        ActorLink* e = &pc.p.queue[std::to_underlying(PropCost::AC_RECORD)];
         for (ActorLink* a = e->next(); a != e; a = a->next()) {
             Propagator* top = Propagator::cast(a);
             // Keep old modification event delta
@@ -877,7 +877,7 @@ namespace Gecode {
 
         // Initialize propagator queue
         c->pc.p.active = &c->pc.p.queue[0] - 1;
-        for (int i = 0; i <= PropCost::AC_MAX; i++)
+        for (int i = 0; i <= std::to_underlying(PropCost::AC_MAX); i++)
             c->pc.p.queue[i].init();
         // Copy propagation only data
         c->pc.p.n_sub = pc.p.n_sub;

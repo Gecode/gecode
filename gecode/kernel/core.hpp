@@ -479,7 +479,7 @@ namespace Gecode {
      *
      * \ingroup TaskActor
      */
-    enum ExecStatus {
+    enum class ExecStatus {
         ES_SUBSUMED_ = -2,  ///< Internal: propagator is subsumed, do not use
         ES_FAILED = -1,     ///< Execution has resulted in failure
         ES_NOFIX = 0,       ///< Propagation has not computed fixpoint
@@ -488,6 +488,7 @@ namespace Gecode {
         ES_NOFIX_FORCE = 2, ///< Advisor forces rescheduling of propagator
         ES_PARTIAL_ = 2     ///< Internal: propagator has computed partial fixpoint, do not use
     };
+    using enum ExecStatus;
 
     /**
      * \brief Propagation cost
@@ -498,7 +499,7 @@ namespace Gecode {
 
     public:
         /// The actual cost values that are used
-        enum ActualCost {
+        enum class ActualCost {
             AC_RECORD = 0,       ///< Reserved for recording information
             AC_CRAZY_LO = 1,     ///< Exponential complexity, cheap
             AC_CRAZY_HI = 1,     ///< Exponential complexity, expensive
@@ -516,15 +517,17 @@ namespace Gecode {
             AC_UNARY_HI = 6,     ///< Only single variable, expensive
             AC_MAX = 6           ///< Maximal cost value
         };
+        using enum ActualCost;
         /// Actual cost
         ActualCost ac;
 
     public:
         /// Propagation cost modifier
-        enum Mod {
+        enum class Mod {
             LO, ///< Cheap
             HI  ///< Expensive
         };
+        using enum Mod;
 
     private:
         /// Compute dynamic cost for cost \a lo, expensive cost \a hi, and size measure \a n
@@ -563,7 +566,7 @@ namespace Gecode {
      * \brief Actor properties
      * \ingroup TaskActor
      */
-    enum ActorProperty {
+    enum class ActorProperty {
         /**
          * \brief Actor must always be disposed
          *
@@ -590,6 +593,7 @@ namespace Gecode {
          */
         AP_TRACE = (1 << 3)
     };
+    using enum ActorProperty;
 
     /**
      * \brief Double-linked list for actors
@@ -927,7 +931,7 @@ namespace Gecode {
 
     public:
         /// What is currently executing
-        enum What {
+        enum class What {
             /// A propagator is currently executing
             PROPAGATOR = 0,
             /// A brancher is executing
@@ -937,6 +941,7 @@ namespace Gecode {
             /// Unknown
             OTHER = 3
         };
+        using enum What;
 
     protected:
         /// Encoding a tagged pointer or a tagged group id
@@ -992,12 +997,13 @@ namespace Gecode {
 
     public:
         /// Propagator status
-        enum Status {
+        enum class Status {
             FIX,     ///< Propagator computed fixpoint
             NOFIX,   ///< Propagator did not compute fixpoint
             FAILED,  ///< Propagator failed
             SUBSUMED ///< Propagator is subsumed
         };
+        using enum Status;
 
     protected:
         /// Propagator id
@@ -1060,11 +1066,12 @@ namespace Gecode {
 
     public:
         /// Post status
-        enum Status {
+        enum class Status {
             POSTED,  ///< Propagator was posted
             FAILED,  ///< Posting failed
             SUBSUMED ///< Propagator not posted as already subsumed
         };
+        using enum Status;
 
     protected:
         /// Propagator group
@@ -1389,11 +1396,12 @@ namespace Gecode {
 
     public:
         /// The status of a no-good literal
-        enum Status {
+        enum class Status {
             FAILED,   ///< The literal is failed
             SUBSUMED, ///< The literal is subsumed
             NONE      ///< The literal is neither failed nor subsumed
         };
+        using enum Status;
         /// Constructor for creation
         NGL(void);
         /// Constructor for creation
@@ -1669,14 +1677,15 @@ namespace Gecode {
     class GECODE_VTABLE_EXPORT MetaInfo {
     public:
         /// Which type of information is provided
-        enum Type {
+        enum class Type {
             /// Information is provided by a restart-based engine
             RESTART,
             /// Information is provided by a portfolio-based engine
             PORTFOLIO
         };
+        using enum Type;
         /// Reason for restarting
-        enum RestartReason {
+        enum class RestartReason {
             /// No reason - used for PORTFOLIO
             RR_NO,
             /// Restarting after initialisation
@@ -1688,6 +1697,7 @@ namespace Gecode {
             /// Restarting after reaching restart limit
             RR_LIM
         };
+        using enum RestartReason;
 
     protected:
         /// Type of information
@@ -1749,11 +1759,12 @@ namespace Gecode {
      * \brief %Space status
      * \ingroup TaskSearch
      */
-    enum SpaceStatus {
+    enum class SpaceStatus {
         SS_FAILED, ///< %Space is failed
         SS_SOLVED, ///< %Space is solved (no brancher left)
         SS_BRANCH  ///< %Space must be branched (at least one brancher left)
     };
+    using enum SpaceStatus;
 
     /**
      * \brief %Statistics for execution of status
@@ -1905,7 +1916,7 @@ namespace Gecode {
                  */
                 ActorLink* active;
                 /// Scheduled propagators according to cost
-                ActorLink queue[PropCost::AC_MAX + 1];
+                ActorLink queue[std::to_underlying(PropCost::AC_MAX) + 1];
                 /**
                  * \brief Id of next brancher to be created plus status control
                  *
@@ -3511,19 +3522,19 @@ namespace Gecode {
      */
     forceinline void
     ViewTraceInfo::propagator(Propagator& p) {
-        who = reinterpret_cast<Support::uptrint_t>(&p) | PROPAGATOR;
+        who = reinterpret_cast<Support::uptrint_t>(&p) | std::to_underlying(PROPAGATOR);
     }
     forceinline void
     ViewTraceInfo::brancher(Brancher& b) {
-        who = reinterpret_cast<Support::uptrint_t>(&b) | BRANCHER;
+        who = reinterpret_cast<Support::uptrint_t>(&b) | std::to_underlying(BRANCHER);
     }
     forceinline void
     ViewTraceInfo::post(PropagatorGroup g) {
-        who = (static_cast<Support::uptrint_t>(g.id()) << 2) | POST;
+        who = (static_cast<Support::uptrint_t>(g.id()) << 2) | std::to_underlying(POST);
     }
     forceinline void
     ViewTraceInfo::other(void) {
-        who = OTHER;
+        who = std::to_underlying(OTHER);
     }
     forceinline ViewTraceInfo::What
     ViewTraceInfo::what(void) const {
@@ -4250,7 +4261,7 @@ namespace Gecode {
     forceinline void
     Space::enqueue(Propagator* p) {
         ActorLink::cast(p)->unlink();
-        ActorLink* c = &pc.p.queue[p->cost(*this, p->u.med).ac];
+        ActorLink* c = &pc.p.queue[std::to_underlying(p->cost(*this, p->u.med).ac)];
         c->tail(ActorLink::cast(p));
         if (c > pc.p.active)
             pc.p.active = c;
@@ -4258,7 +4269,7 @@ namespace Gecode {
 
     forceinline void
     Space::fail(void) {
-        pc.p.active = &pc.p.queue[PropCost::AC_MAX + 1] + 1;
+        pc.p.active = &pc.p.queue[std::to_underlying(PropCost::AC_MAX) + 1] + 1;
         /*
          * Now active points beyond the last queue. This is essential as
          * enqueuing a propagator in a failed space keeps the space
@@ -4272,7 +4283,7 @@ namespace Gecode {
 
     forceinline bool
     Space::failed(void) const {
-        return pc.p.active > &pc.p.queue[PropCost::AC_MAX + 1];
+        return pc.p.active > &pc.p.queue[std::to_underlying(PropCost::AC_MAX) + 1];
     }
     forceinline bool
     Home::failed(void) const {
@@ -4281,22 +4292,23 @@ namespace Gecode {
 
     forceinline bool
     Space::stable(void) const {
-        return ((pc.p.active < &pc.p.queue[0]) || (pc.p.active > &pc.p.queue[PropCost::AC_MAX + 1]));
+        return ((pc.p.active < &pc.p.queue[0]) ||
+                (pc.p.active > &pc.p.queue[std::to_underlying(PropCost::AC_MAX) + 1]));
     }
 
     forceinline void
     Space::notice(Actor& a, ActorProperty p, bool d) {
-        if (p & AP_DISPOSE) {
+        if (p == AP_DISPOSE) {
             ap_notice_dispose(&a, d);
         }
-        if (p & AP_VIEW_TRACE) {
+        if (p == AP_VIEW_TRACE) {
             pc.p.bid_sc |= sc_trace;
         }
-        if (p & AP_TRACE) {
+        if (p == AP_TRACE) {
             pc.p.bid_sc |= sc_trace;
         }
         // Currently unused
-        if (p & AP_WEAKLY) {
+        if (p == AP_WEAKLY) {
             // Nothing to do
         }
     }
@@ -4305,16 +4317,16 @@ namespace Gecode {
     Space::ignore(Actor& a, ActorProperty p, bool d) {
         // Check whether array has already been discarded as space
         // deletion is already in progress
-        if ((p & AP_DISPOSE) && (d_fst != nullptr))
+        if ((p == AP_DISPOSE) && (d_fst != nullptr))
             ap_ignore_dispose(&a, d);
-        if (p & AP_VIEW_TRACE) {
+        if (p == AP_VIEW_TRACE) {
             // Nothing to do
         }
-        if (p & AP_TRACE) {
+        if (p == AP_TRACE) {
             // Nothing to do
         }
         // Currently unused
-        if (p & AP_WEAKLY) {
+        if (p == AP_WEAKLY) {
             // Nothing to do
         }
     }

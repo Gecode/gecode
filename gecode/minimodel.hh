@@ -58,8 +58,10 @@
 #include <atomic>
 #endif
 
+#include <bit>
 #include <iostream>
 #include <type_traits>
+#include <utility>
 
 /*
  * Support for DLLs under Windows
@@ -101,23 +103,27 @@ namespace Gecode {
 
     /// Class for specifying integer propagation levels used by minimodel
     class IntPropLevels {
+    private:
+        /// Bits needed to store any propagation level
+        static constexpr int level_bits = std::bit_width(std::to_underlying(IPL_DOM | IPL_FULL));
+
     protected:
-        IntPropLevel _linear2 : IPL_BITS_; ///< For binary linear
-        IntPropLevel _linear : IPL_BITS_;  ///< For n-ary linear
-        IntPropLevel _abs : IPL_BITS_;     ///< For absolute value
-        IntPropLevel _max2 : IPL_BITS_;    ///< For binary maximum
-        IntPropLevel _max : IPL_BITS_;     ///< For n-ary maximum
-        IntPropLevel _min2 : IPL_BITS_;    ///< For binary minimum
-        IntPropLevel _min : IPL_BITS_;     ///< For minimum
-        IntPropLevel _mult : IPL_BITS_;    ///< For multiplication
-        IntPropLevel _div : IPL_BITS_;     ///< For division
-        IntPropLevel _mod : IPL_BITS_;     ///< For modulo
-        IntPropLevel _sqr : IPL_BITS_;     ///< For square
-        IntPropLevel _sqrt : IPL_BITS_;    ///< For square root
-        IntPropLevel _pow : IPL_BITS_;     ///< For power
-        IntPropLevel _nroot : IPL_BITS_;   ///< For root
-        IntPropLevel _element : IPL_BITS_; ///< For element
-        IntPropLevel _ite : IPL_BITS_;     ///< For if-then-else
+        IntPropLevel _linear2 : level_bits; ///< For binary linear
+        IntPropLevel _linear : level_bits;  ///< For n-ary linear
+        IntPropLevel _abs : level_bits;     ///< For absolute value
+        IntPropLevel _max2 : level_bits;    ///< For binary maximum
+        IntPropLevel _max : level_bits;     ///< For n-ary maximum
+        IntPropLevel _min2 : level_bits;    ///< For binary minimum
+        IntPropLevel _min : level_bits;     ///< For minimum
+        IntPropLevel _mult : level_bits;    ///< For multiplication
+        IntPropLevel _div : level_bits;     ///< For division
+        IntPropLevel _mod : level_bits;     ///< For modulo
+        IntPropLevel _sqr : level_bits;     ///< For square
+        IntPropLevel _sqrt : level_bits;    ///< For square root
+        IntPropLevel _pow : level_bits;     ///< For power
+        IntPropLevel _nroot : level_bits;   ///< For root
+        IntPropLevel _element : level_bits; ///< For element
+        IntPropLevel _ite : level_bits;     ///< For if-then-else
     public:
         /// Initialize with default propagation level
         IntPropLevels(IntPropLevel ipl = IPL_DEF);
@@ -256,7 +262,7 @@ namespace Gecode {
 #endif
     public:
         /// Type of linear expression
-        enum NodeType {
+        enum class NodeType {
             NT_CONST,    ///< Integer constant
             NT_VAR_INT,  ///< Linear term with integer variable
             NT_VAR_BOOL, ///< Linear term with Boolean variable
@@ -267,6 +273,7 @@ namespace Gecode {
             NT_SUB,      ///< Subtraction of linear terms
             NT_MUL       ///< Multiplication by coefficient
         };
+        using enum NodeType;
 
     private:
         /// Tag for internal expression slots without a public zero node
@@ -705,7 +712,7 @@ namespace Gecode {
 
     public:
         /// Type of linear expression
-        enum NodeType {
+        enum class NodeType {
             NT_CONST,  ///< Float value constant
             NT_VAR,    ///< Linear term with variable
             NT_NONLIN, ///< Non-linear expression
@@ -714,6 +721,7 @@ namespace Gecode {
             NT_SUB,    ///< Subtraction of linear terms
             NT_MUL     ///< Multiplication by coefficient
         };
+        using enum NodeType;
 
     private:
         /// Nodes for linear expressions
@@ -978,7 +986,7 @@ namespace Gecode {
     class SetExpr {
     public:
         /// Type of set expression
-        enum NodeType {
+        enum class NodeType {
             NT_VAR,   ///< Variable
             NT_CONST, ///< Constant
             NT_LEXP,  ///< Linear expression
@@ -987,6 +995,7 @@ namespace Gecode {
             NT_UNION, ///< Union
             NT_DUNION ///< Disjoint union
         };
+        using enum NodeType;
         /// %Node for set expression
         class Node;
 
@@ -1126,7 +1135,7 @@ namespace Gecode {
     class BoolExpr {
     public:
         /// Type of Boolean expression
-        enum NodeType {
+        enum class NodeType {
             NT_VAR,       ///< Variable
             NT_NOT,       ///< Negation
             NT_AND,       ///< Conjunction
@@ -1138,6 +1147,7 @@ namespace Gecode {
             NT_MISC,      ///< Other Boolean expression
             NT_CONST      ///< Boolean constant
         };
+        using enum NodeType;
         /// Miscealloneous Boolean expressions
         class GECODE_VTABLE_EXPORT Misc : public HeapAllocated {
         public:

@@ -45,6 +45,7 @@
 #include <cfloat>
 
 #include <functional>
+#include <utility>
 
 #include <gecode/support.hh>
 

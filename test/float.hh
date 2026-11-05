@@ -60,17 +60,19 @@ namespace Test {
     namespace Float {
 
         /// Type for comparisons and solutions
-        enum MaybeType {
+        enum class MaybeType {
             MT_FALSE = 0, ///< Does not hold
             MT_TRUE,      ///< Does hold
             MT_MAYBE      ///< Might or might not hold
         };
+        using enum MaybeType;
 
         /// Three-valued conjunction of MaybeType
         MaybeType operator&(MaybeType a, MaybeType b);
 
         /// Assignment possible types
-        enum AssignmentType { CPLT_ASSIGNMENT = 0, RANDOM_ASSIGNMENT, EXTEND_ASSIGNMENT };
+        enum class AssignmentType { CPLT_ASSIGNMENT = 0, RANDOM_ASSIGNMENT, EXTEND_ASSIGNMENT };
+        using enum AssignmentType;
 
         class GECODE_TESTFLOAT_EXPORT Test;
 

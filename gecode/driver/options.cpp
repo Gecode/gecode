@@ -319,8 +319,8 @@ namespace Gecode {
         int
         IplOption::parse(int argc, char* argv[]) {
             if (char* a = argument(argc, argv)) {
-                int b = IPL_DEF;
-                int m = IPL_DEF;
+                IntPropLevel b = IPL_DEF;
+                IntPropLevel m = IPL_DEF;
                 do {
                     // Search for a comma
                     char* c = a;
@@ -354,7 +354,7 @@ namespace Gecode {
 
                 } while (*a != 0);
 
-                cur = static_cast<IntPropLevel>(b | m);
+                cur = b | m;
                 return 2;
             }
             return 0;
@@ -383,9 +383,9 @@ namespace Gecode {
             if ((cur & IPL_FULL) == IPL_FULL)
                 cerr << ",full";
             else {
-                if (cur & IPL_BASIC)
+                if ((cur & IPL_BASIC) != IPL_DEF)
                     cerr << ",basic";
-                if (cur & IPL_ADVANCED)
+                if ((cur & IPL_ADVANCED) != IPL_DEF)
                     cerr << ",advanced";
             }
             cerr << '\n' << "\t\t" << exp << '\n' << std::flush;
@@ -652,7 +652,7 @@ namespace Gecode {
           _time("time", "time (in ms) cutoff (0 = none, solution mode)"),
           _assets("assets", "#portfolio assets (#engines)", 0),
           _slice("slice", "portfolio slice (in #failures)", Search::Config::slice),
-          _restart("restart", "restart sequence type", RM_NONE),
+          _restart("restart", "restart sequence type", static_cast<int>(RM_NONE)),
           _r_base("restart-base", "base for geometric restart sequence", Search::Config::base),
           _r_scale("restart-scale", "scale factor for restart sequence", Search::Config::slice),
           _r_limit("restart-limit", "restart cutoff (0 = none, solution mode)"),
@@ -664,7 +664,8 @@ namespace Gecode {
 #ifdef GECODE_HAS_EXPERIMENTAL
           _guidance(nullptr),
 #endif
-          _mode("mode", "how to execute script", SM_SOLUTION), _samples("samples", "how many samples (time mode)", 1),
+          _mode("mode", "how to execute script", static_cast<int>(SM_SOLUTION)),
+          _samples("samples", "how many samples (time mode)", 1),
           _iterations("iterations", "iterations per sample (time mode)", 1),
           _print_last("print-last", "whether to only print the last solution (solution mode)", false),
           _out_file("file-sol",
@@ -683,16 +684,16 @@ namespace Gecode {
 #endif
     {
 
-        _mode.add(SM_SOLUTION, "solution");
-        _mode.add(SM_TIME, "time");
-        _mode.add(SM_STAT, "stat");
-        _mode.add(SM_GIST, "gist");
+        _mode.add(static_cast<int>(SM_SOLUTION), "solution");
+        _mode.add(static_cast<int>(SM_TIME), "time");
+        _mode.add(static_cast<int>(SM_STAT), "stat");
+        _mode.add(static_cast<int>(SM_GIST), "gist");
 
-        _restart.add(RM_NONE, "none");
-        _restart.add(RM_CONSTANT, "constant");
-        _restart.add(RM_LINEAR, "linear");
-        _restart.add(RM_LUBY, "luby");
-        _restart.add(RM_GEOMETRIC, "geometric");
+        _restart.add(static_cast<int>(RM_NONE), "none");
+        _restart.add(static_cast<int>(RM_CONSTANT), "constant");
+        _restart.add(static_cast<int>(RM_LINEAR), "linear");
+        _restart.add(static_cast<int>(RM_LUBY), "luby");
+        _restart.add(static_cast<int>(RM_GEOMETRIC), "geometric");
 
         add(_model);
         add(_symmetry);

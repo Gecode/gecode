@@ -108,11 +108,12 @@ namespace Gecode { namespace Support {
     };
 
     /// Status of a bitset
-    enum BitSetStatus {
+    enum class BitSetStatus {
         BSS_NONE, ///< No bits set
         BSS_ALL,  ///< All bits set
         BSS_SOME  ///< Some but not all bits set
     };
+    using enum BitSetStatus;
 
     /// Basic bitset support  (without stored size information)
     class RawBitSetBase {

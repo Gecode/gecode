@@ -70,6 +70,34 @@ The former `_LE` names have no compatibility aliases.
 Qt overrides and other external interfaces retain the spellings their APIs
 require. Parser tokens and protocol strings remain unchanged.
 
+## Enums
+
+New enums are `enum class`. Use a plain `enum` only where an existing API
+requires it, or where the values are bits or bit positions held in an `int`,
+as with `TraceEvent`.
+
+A public enum keeps its constants usable without qualification through
+`using enum`, on the line after the enum and at the same scope:
+
+```cpp
+enum class IntRelType { IRT_EQ, IRT_NQ, ... };
+using enum IntRelType;
+```
+
+`using enum` cannot name a dependent type, so an enum in a class template
+declares one `static constexpr` alias per constant instead, as
+`CompactStatus<Advisor>::StatusType` does.
+
+Give an enum operators only if its values form a real bit set. `IntPropLevel`
+is the one such enum, with `operator|`, `operator&`, and `operator|=`. Test a
+bit with `(ipl & IPL_BASIC) != IPL_DEF`. Its underlying type is unsigned
+because `IntPropLevels` stores levels in bit-fields, where a signed type would
+change their values.
+
+All other conversions are explicit: `std::to_underlying` or `static_cast` for
+an array index, a bit position, a packed field, or an `int`-valued option, and
+`static_cast` back to the enum.
+
 ## Checking changes
 
 Put LLVM 22 tools on `PATH`, or set `CLANG_FORMAT` and `CLANG_TIDY` to their

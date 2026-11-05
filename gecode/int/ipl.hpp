@@ -34,12 +34,12 @@ namespace Gecode {
 
     forceinline IntPropLevel
     vbd(IntPropLevel ipl) {
-        return static_cast<IntPropLevel>(ipl & (IPL_DEF | IPL_VAL | IPL_BND | IPL_DOM));
+        return ipl & (IPL_DEF | IPL_VAL | IPL_BND | IPL_DOM);
     }
 
     forceinline IntPropLevel
     ba(IntPropLevel ipl) {
-        return static_cast<IntPropLevel>(ipl & IPL_BASIC_ADVANCED);
+        return ipl & IPL_BASIC_ADVANCED;
     }
 
 } // namespace Gecode

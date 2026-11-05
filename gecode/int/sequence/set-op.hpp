@@ -33,11 +33,12 @@
 namespace Gecode { namespace Int { namespace Sequence {
 
     /// Status of whether a view takes a value from a set
-    enum TakesStatus {
+    enum class TakesStatus {
         TS_NO,   ///< Definitely not
         TS_YES,  ///< Definitely yes
         TS_MAYBE ///< Maybe or maybe not
     };
+    using enum TakesStatus;
 
     /// Return whether view \a x takes value \a s
     template <class View>

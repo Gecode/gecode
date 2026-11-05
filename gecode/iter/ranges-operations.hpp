@@ -56,11 +56,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
     bool disjoint(I& i, J& j);
 
     /// Compare two iterators with each other
-    enum CompareStatus {
+    enum class CompareStatus {
         CS_SUBSET,   ///< First is subset of second iterator
         CS_DISJOINT, ///< Intersection is empty
         CS_NONE      ///< Neither of the above
     };
+    using enum CompareStatus;
 
     /// Check whether range iterator \a i is a subset of \a j, or whether they are disjoint
     template <class I, class J>

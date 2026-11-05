@@ -1141,7 +1141,7 @@ namespace Gecode {
      * \brief Relation types for floats
      * \ingroup TaskModelFloat
      */
-    enum FloatRelType {
+    enum class FloatRelType {
         FRT_EQ, ///< Equality (\f$=\f$)
         FRT_NQ, ///< Disequality (\f$\neq\f$)
         FRT_LQ, ///< Less or equal (\f$\leq\f$)
@@ -1149,6 +1149,7 @@ namespace Gecode {
         FRT_GQ, ///< Greater or equal (\f$\geq\f$)
         FRT_GR  ///< Greater (\f$>\f$)
     };
+    using enum FloatRelType;
 
     /**
      * \defgroup TaskModelFloatDomain Domain constraints
@@ -1679,7 +1680,7 @@ namespace Gecode {
     class FloatVarBranch : public VarBranch<FloatVar> {
     public:
         /// Which variable selection
-        enum Select {
+        enum class Select {
             SEL_NONE = 0,        ///< First unassigned
             SEL_RND,             ///< Random (uniform, for tie breaking)
             SEL_MERIT_MIN,       ///< With least merit
@@ -1707,6 +1708,7 @@ namespace Gecode {
             SEL_CHB_SIZE_MIN,    ///< With smallest CHB Q-score divided by domain size
             SEL_CHB_SIZE_MAX     ///< With largest CHB Q-score divided by domain size
         };
+        using enum Select;
 
     protected:
         /// Which variable to select
@@ -1832,12 +1834,13 @@ namespace Gecode {
     class FloatValBranch : public ValBranch<FloatVar> {
     public:
         /// Which value selection
-        enum Select {
+        enum class Select {
             SEL_SPLIT_MIN, ///< Select values not greater than mean of smallest and largest value
             SEL_SPLIT_MAX, ///< Select values greater than mean of smallest and largest value
             SEL_SPLIT_RND, ///< Select values randomly which are not greater or not smaller than mean of largest and smallest value
             SEL_VAL_COMMIT ///< Select value according to user-defined functions
         };
+        using enum Select;
 
     protected:
         /// Which value to select
@@ -1888,12 +1891,13 @@ namespace Gecode {
     class FloatAssign : public ValBranch<FloatVar> {
     public:
         /// Which value selection
-        enum Select {
+        enum class Select {
             SEL_MIN,       ///< Select median value of the lower part
             SEL_MAX,       ///< Select median value of the upper part
             SEL_RND,       ///< Select median value of a randomly chosen part
             SEL_VAL_COMMIT ///< Select value according to user-defined functions
         };
+        using enum Select;
 
     protected:
         /// Which value to select

@@ -474,12 +474,20 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     public:
         /// Type of status
-        enum StatusType {
+        enum class StatusType {
             SINGLE = 0,     ///< A single view has been touched
             MULTIPLE = 1,   ///< Multiple views have been touched
             NONE = 2,       ///< No view has been touched
             PROPAGATING = 3 ///< The propagator is currently running
         };
+        /// A single view has been touched
+        static constexpr StatusType SINGLE = StatusType::SINGLE;
+        /// Multiple views have been touched
+        static constexpr StatusType MULTIPLE = StatusType::MULTIPLE;
+        /// No view has been touched
+        static constexpr StatusType NONE = StatusType::NONE;
+        /// The propagator is currently running
+        static constexpr StatusType PROPAGATING = StatusType::PROPAGATING;
         /// Initialize with status \a t
         CompactStatus(StatusType t);
         /// Copy constructor

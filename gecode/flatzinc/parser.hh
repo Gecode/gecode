@@ -80,7 +80,7 @@ namespace Gecode { namespace FlatZinc {
     };
 
     /// Types of symbols
-    enum SymbolType {
+    enum class SymbolType {
         ST_INTVAR,        //< Integer variable
         ST_BOOLVAR,       //< Boolean variable
         ST_FLOATVAR,      //< Float variable
@@ -98,6 +98,7 @@ namespace Gecode { namespace FlatZinc {
         ST_SET,           //< Set
         ST_FLOAT          //< Float
     };
+    using enum SymbolType;
 
     /// Entries in the symbol table
     class SymbolEntry {

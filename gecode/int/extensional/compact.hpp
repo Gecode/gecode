@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class Advisor>
     forceinline
     CompactStatus<Advisor>::CompactStatus(StatusType t)
-        : s(t) {}
+        : s(std::to_underlying(t)) {}
 
     template <class Advisor>
     forceinline typename CompactStatus<Advisor>::StatusType
@@ -157,22 +157,22 @@ namespace Gecode { namespace Int { namespace Extensional {
     CompactStatus<Advisor>::touched(Advisor& a) {
         if (type() == NONE) {
             s = reinterpret_cast<Support::uptrint_t>(&a);
-            assert((s & 0b11) == SINGLE);
+            assert((s & 0b11) == std::to_underlying(SINGLE));
         } else if ((type() == SINGLE) && !single(a)) {
-            s = MULTIPLE;
+            s = std::to_underlying(MULTIPLE);
         }
     }
 
     template <class Advisor>
     forceinline void
     CompactStatus<Advisor>::none(void) {
-        s = NONE;
+        s = std::to_underlying(NONE);
     }
 
     template <class Advisor>
     forceinline void
     CompactStatus<Advisor>::propagating(void) {
-        s = PROPAGATING;
+        s = std::to_underlying(PROPAGATING);
     }
 
     /*

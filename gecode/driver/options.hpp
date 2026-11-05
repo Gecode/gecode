@@ -406,7 +406,7 @@ namespace Gecode {
 
     inline void
     Options::restart(RestartMode rm) {
-        _restart.value(rm);
+        _restart.value(static_cast<int>(rm));
     }
     inline RestartMode
     Options::restart(void) const {
@@ -482,7 +482,7 @@ namespace Gecode {
      */
     inline void
     Options::mode(ScriptMode sm) {
-        _mode.value(sm);
+        _mode.value(static_cast<int>(sm));
     }
     inline ScriptMode
     Options::mode(void) const {

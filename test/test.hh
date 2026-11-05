@@ -86,11 +86,12 @@ namespace Test {
     };
 
     /// How to match
-    enum MatchType {
+    enum class MatchType {
         MT_ANY,  //< Positive match anywhere in string
         MT_NOT,  //< Negative match
         MT_FIRST //< Positive match at beginning
     };
+    using enum MatchType;
 
     /// Tags for test selection
     enum class TestTag : unsigned int {

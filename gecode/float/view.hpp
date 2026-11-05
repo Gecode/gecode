@@ -518,11 +518,12 @@ namespace Gecode { namespace Float {
 
     //@{
     /// Result of testing relation
-    enum RelTest {
+    enum class RelTest {
         RT_FALSE = 0, ///< Relation does not hold
         RT_MAYBE = 1, ///< Relation may hold or not
         RT_TRUE = 2   ///< Relation does hold
     };
+    using enum RelTest;
 
     /// Test whether views \a x and \a y are equal
     template <class View>

@@ -44,7 +44,7 @@
 namespace Gecode { namespace Int { namespace NValues {
 
     /// Event type for range-based overlap analysis
-    enum RangeEventType {
+    enum class RangeEventType {
         /// A range starts
         RET_FST = 0,
         /// A range ends
@@ -52,6 +52,7 @@ namespace Gecode { namespace Int { namespace NValues {
         /// No further events
         RET_END = 2
     };
+    using enum RangeEventType;
 
     /// Event for range-based overlap analysis
     class RangeEvent {

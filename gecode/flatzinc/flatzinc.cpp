@@ -2631,7 +2631,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
     IntPropLevel
     FlatZincSpace::annotation_to_int_prop_level(AST::Node* ann) {
-        int ipl = IPL_DEF;
+        IntPropLevel ipl = IPL_DEF;
         if (ann) {
             if (ann->has_atom("val") || ann->has_atom("value_propagation"))
                 ipl = IPL_VAL;
@@ -2649,7 +2649,7 @@ namespace Gecode { namespace FlatZinc {
                     ipl |= IPL_ADVANCED;
             }
         }
-        return static_cast<IntPropLevel>(ipl);
+        return ipl;
     }
 
     DFA

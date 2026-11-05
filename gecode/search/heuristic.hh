@@ -188,10 +188,11 @@ namespace Gecode { namespace Search {
     class Beam {
     public:
         /// Result of offering an entry
-        enum Offer {
+        enum class Offer {
             TAKEN, ///< The entry has been added or deleted
             FULL   ///< The entry needs a new slot but there is no room
         };
+        using enum Offer;
 
     private:
         /// Slot of an entry
