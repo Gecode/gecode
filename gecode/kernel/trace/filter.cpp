@@ -181,7 +181,8 @@ namespace Gecode {
     }
 
     TraceFilter::TFO::~TFO(void) {
-        heap.free<Filter>(f, n);
+        if (f != nullptr)
+            heap.free<Filter>(f, n);
     }
 
     TraceFilter::TraceFilter(void) : SharedHandle(new TFO) {}
