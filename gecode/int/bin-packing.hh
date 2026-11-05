@@ -208,9 +208,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
         static LambdaRange l_rad2(int c);
         static LambdaRange sanitize_lambda_range(LambdaRange lambda, int n_weights, int max_weight);
         /// Lower bound
-        template <int f(int, int, int)>
+        template <int (*f)(int, int, int)>
         static int calc_dff_lower_bound_single_lambda(const int* weights, int n_weights, int capacity, int lambda);
-        template <int f(int, int, int), LambdaRange l(int)>
+        template <int (*f)(int, int, int), LambdaRange (*l)(int)>
         static int calc_dff_lower_bound(const int* weights, int n_weights, int capacity, int n_not_zero_weights,
                                         int max_weight, bool sanitize = false);
     };

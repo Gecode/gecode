@@ -171,9 +171,17 @@ generated_files=(
   gecode/flatzinc/lexer.yy.cpp
 )
 
+# Flex builds number the #line directives that name the output file itself
+# differently: Debian's count one line further than Homebrew's. Those numbers
+# carry no meaning, so the comparison ignores them.
+without_output_line_numbers() {
+  sed -E 's|^#line [0-9]+ "gecode/flatzinc/lexer\.yy\.cpp"$|#line "gecode/flatzinc/lexer.yy.cpp"|' "$1"
+}
+
 stale=0
 for file in "${generated_files[@]}"; do
-  if cmp -s "$repo_root/$file" "$source_copy/$file"; then
+  if cmp -s <(without_output_line_numbers "$repo_root/$file") \
+      <(without_output_line_numbers "$source_copy/$file"); then
     continue
   fi
   if [ "$mode" = update ]; then
