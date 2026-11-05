@@ -195,12 +195,12 @@ namespace Gecode {
     public:
         /// Which type of engine
         enum class EngineType {
-            DFS = 0, ///< Engine is a DFS engine
-            BAB = 1, ///< Engine is a BAB engine
-            LDS = 2, ///< Engine is a LDS engine
-            RBS = 3, ///< Engine is a RBS engine
-            PBS = 4, ///< Engine is a PBS engine
-            AOE = 5  ///< Unspecified engine (any other engine)
+            DFS = 0,  ///< Engine is a DFS engine
+            BAB = 1,  ///< Engine is a BAB engine
+            LDS = 2,  ///< Engine is a LDS engine
+            RBS = 3,  ///< Engine is a RBS engine
+            PBS = 4,  ///< Engine is a PBS engine
+            OTHER = 5 ///< Unspecified engine (any other engine)
         };
         using enum EngineType;
         /// Information about an engine
@@ -380,7 +380,7 @@ namespace Gecode {
         /// Output stream to use
         std::ostream& os;
         /// Map engine type to string
-        static const char* t2s[std::to_underlying(EngineType::AOE) + 1];
+        static const char* t2s[std::to_underlying(EngineType::OTHER) + 1];
 
     public:
         /// Initialize  with output stream \a os

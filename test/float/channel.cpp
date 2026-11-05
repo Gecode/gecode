@@ -45,7 +45,7 @@ namespace Test { namespace Float {
         class Int : public Test {
         public:
             /// Construct and register test
-            Int(Gecode::FloatNum st) : Test("Channel::Int", 2, -1, 2, st, CPLT_ASSIGNMENT, false) {}
+            Int(Gecode::FloatNum st) : Test("Channel::Int", 2, -1, 2, st, COMPLETE_ASSIGNMENT, false) {}
             /// Check whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -67,7 +67,7 @@ namespace Test { namespace Float {
         class Bool : public Test {
         public:
             /// Construct and register test
-            Bool(Gecode::FloatNum st) : Test("Channel::Bool", 2, 0, 1, st, CPLT_ASSIGNMENT, false) {}
+            Bool(Gecode::FloatNum st) : Test("Channel::Bool", 2, 0, 1, st, COMPLETE_ASSIGNMENT, false) {}
             /// Check whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {

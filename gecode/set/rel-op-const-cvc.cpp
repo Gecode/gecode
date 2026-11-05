@@ -48,7 +48,7 @@ namespace Gecode {
         Set::Limits::check(z, "Set::rel");
         ConstSetView xv(home, x);
         ConstSetView zv(home, z);
-        if (r == SRT_CMPL) {
+        if (r == SRT_COMPLEMENT) {
             post_compl(home, xv, op, y, zv);
         } else {
             post_nocompl(home, xv, op, y, r, zv);

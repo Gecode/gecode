@@ -628,16 +628,16 @@ namespace Gecode {
      * \ingroup TaskModelSet
      */
     enum class SetRelType {
-        SRT_EQ,   ///< Equality (\f$=\f$)
-        SRT_NQ,   ///< Disequality (\f$\neq\f$)
-        SRT_SUB,  ///< Subset (\f$\subseteq\f$)
-        SRT_SUP,  ///< Superset (\f$\supseteq\f$)
-        SRT_DISJ, ///< Disjoint (\f$\parallel\f$)
-        SRT_CMPL, ///< Complement
-        SRT_LQ,   ///< Less or equal (\f$\leq\f$)
-        SRT_LT,   ///< Strictly less (\f$<\f$)
-        SRT_GQ,   ///< Greater or equal (\f$\geq\f$)
-        SRT_GR    ///< Greater (\f$>\f$)
+        SRT_EQ,         ///< Equality (\f$=\f$)
+        SRT_NQ,         ///< Disequality (\f$\neq\f$)
+        SRT_SUB,        ///< Subset (\f$\subseteq\f$)
+        SRT_SUP,        ///< Superset (\f$\supseteq\f$)
+        SRT_DISJOINT,   ///< Disjoint (\f$\parallel\f$)
+        SRT_COMPLEMENT, ///< Complement
+        SRT_LQ,         ///< Less or equal (\f$\leq\f$)
+        SRT_LT,         ///< Strictly less (\f$<\f$)
+        SRT_GQ,         ///< Greater or equal (\f$\geq\f$)
+        SRT_GR          ///< Greater (\f$>\f$)
     };
     using enum SetRelType;
 
@@ -646,10 +646,10 @@ namespace Gecode {
      * \ingroup TaskModelSet
      */
     enum class SetOpType {
-        SOT_UNION,  ///< Union
-        SOT_DUNION, ///< Disjoint union
-        SOT_INTER,  ///< %Intersection
-        SOT_MINUS   ///< Difference
+        SOT_UNION,          ///< Union
+        SOT_DISJOINT_UNION, ///< Disjoint union
+        SOT_INTERSECTION,   ///< %Intersection
+        SOT_MINUS           ///< Difference
     };
     using enum SetOpType;
 

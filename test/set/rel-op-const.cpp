@@ -71,11 +71,11 @@ namespace Test { namespace Set {
                     return Iter::Ranges::subset(i, j);
                 case SRT_SUP:
                     return Iter::Ranges::subset(j, i);
-                case SRT_DISJ: {
+                case SRT_DISJOINT: {
                     Gecode::Iter::Ranges::Inter<I, J> inter(i, j);
                     return !inter();
                 }
-                case SRT_CMPL: {
+                case SRT_COMPLEMENT: {
                     Gecode::Set::RangesCompl<J> jc(j);
                     return Iter::Ranges::equal(i, jc);
                 }
@@ -104,14 +104,14 @@ namespace Test { namespace Set {
                     Iter::Ranges::Union<IntSetRanges, CountableSetRanges> u(isr, xr0);
                     return sol(u, xr1);
                 } break;
-                case SOT_DUNION: {
+                case SOT_DISJOINT_UNION: {
                     Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> inter(isr, xr0);
                     if (inter())
                         return false;
                     Iter::Ranges::Union<IntSetRanges, CountableSetRanges> u(isr, xr0);
                     return sol(u, xr1);
                 } break;
-                case SOT_INTER: {
+                case SOT_INTERSECTION: {
                     Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> u(isr, xr0);
                     return sol(u, xr1);
                 } break;
@@ -159,11 +159,11 @@ namespace Test { namespace Set {
                     return Iter::Ranges::subset(i, j);
                 case SRT_SUP:
                     return Iter::Ranges::subset(j, i);
-                case SRT_DISJ: {
+                case SRT_DISJOINT: {
                     Gecode::Iter::Ranges::Inter<I, J> inter(i, j);
                     return !inter();
                 }
-                case SRT_CMPL: {
+                case SRT_COMPLEMENT: {
                     Gecode::Set::RangesCompl<J> jc(j);
                     return Iter::Ranges::equal(i, jc);
                 }
@@ -191,14 +191,14 @@ namespace Test { namespace Set {
                     Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0, xr1);
                     return sol(u, isr);
                 } break;
-                case SOT_DUNION: {
+                case SOT_DISJOINT_UNION: {
                     Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> inter(xr0, xr1);
                     if (inter())
                         return false;
                     Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0, xr1);
                     return sol(u, isr);
                 } break;
-                case SOT_INTER: {
+                case SOT_INTERSECTION: {
                     Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> u(xr0, xr1);
                     return sol(u, isr);
                 } break;
@@ -240,11 +240,11 @@ namespace Test { namespace Set {
                     return Iter::Ranges::subset(i, j);
                 case SRT_SUP:
                     return Iter::Ranges::subset(j, i);
-                case SRT_DISJ: {
+                case SRT_DISJOINT: {
                     Gecode::Iter::Ranges::Inter<I, J> inter(i, j);
                     return !inter();
                 }
-                case SRT_CMPL: {
+                case SRT_COMPLEMENT: {
                     Gecode::Set::RangesCompl<J> jc(j);
                     return Iter::Ranges::equal(i, jc);
                 }
@@ -258,7 +258,7 @@ namespace Test { namespace Set {
         public:
             /// Create and register test
             RelISI(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int int_set0, int int_set1, bool inverse0)
-                : SetTest((sot0 == Gecode::SOT_DUNION) && (srt0 == Gecode::SRT_CMPL) && (int_set0 == 0) &&
+                : SetTest((sot0 == Gecode::SOT_DISJOINT_UNION) && (srt0 == Gecode::SRT_COMPLEMENT) && (int_set0 == 0) &&
                                   (int_set1 == 0)
                               ? TestTags::standard()
                               : TestTags::sweep(),
@@ -277,14 +277,14 @@ namespace Test { namespace Set {
                     Iter::Ranges::Union<IntSetRanges, CountableSetRanges> u(isr0, xr0);
                     return sol(u, isr1);
                 } break;
-                case SOT_DUNION: {
+                case SOT_DISJOINT_UNION: {
                     Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> inter(isr0, xr0);
                     if (inter())
                         return false;
                     Iter::Ranges::Union<IntSetRanges, CountableSetRanges> u(isr0, xr0);
                     return sol(u, isr1);
                 } break;
-                case SOT_INTER: {
+                case SOT_INTERSECTION: {
                     Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> u(isr0, xr0);
                     return sol(u, isr1);
                 } break;
@@ -360,7 +360,7 @@ namespace Test { namespace Set {
             /// Perform test
             bool
             run(void) override {
-                for (SetOpType op : {SOT_UNION, SOT_DUNION, SOT_INTER}) {
+                for (SetOpType op : {SOT_UNION, SOT_DISJOINT_UNION, SOT_INTERSECTION}) {
                     if (!is_result_constant<SetVarArgs>(op) || !is_result_constant<IntVarArgs>(op))
                         return false;
                 }

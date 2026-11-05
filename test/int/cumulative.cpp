@@ -521,7 +521,7 @@ namespace Test { namespace Int {
                 Gecode::TaskTypeArgs types(4);
                 for (int i = 0; i < 4; i++) {
                     Gecode::dom(home, x[i], 0, ends[i] - 1);
-                    types[i] = Gecode::TT_FIXE;
+                    types[i] = Gecode::TT_FIXED_END;
                 }
                 Gecode::cumulative(home, 4, types, x, ends, Gecode::IntArgs({2, 2, 2, 2}), ipl);
             }

@@ -93,7 +93,7 @@ namespace Test { namespace Set {
             /// Create and register test
             DomRange(SetRelType srt0, int n)
                 : SetTest(TestTags::sweep(), "Dom::Range::" + str(srt0) + "::" + str(n), n, ds_33, (n == 1)), srt(srt0),
-                  is(srt == Gecode::SRT_CMPL ? ds_33c : ds_33) {}
+                  is(srt == Gecode::SRT_COMPLEMENT ? ds_33c : ds_33) {}
             /// %Test whether \a x is solution
             bool
             solution(const SetAssignment& x) const override {
@@ -133,12 +133,12 @@ namespace Test { namespace Set {
                         if (!Iter::Ranges::subset(dr, xr))
                             return false;
                         break;
-                    case SRT_DISJ: {
+                    case SRT_DISJOINT: {
                         Gecode::Iter::Ranges::Inter<CountableSetRanges, IntSetRanges> inter(xr, dr);
                         if (inter())
                             return false;
                     } break;
-                    case SRT_CMPL: {
+                    case SRT_COMPLEMENT: {
                         Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
                         if (!Iter::Ranges::equal(xr, drc))
                             return false;
@@ -171,7 +171,7 @@ namespace Test { namespace Set {
                     case Gecode::RM_IMP:
                         Gecode::rel(home, Gecode::dom(x[0], srt, is) << r.var());
                         break;
-                    case Gecode::RM_PMI:
+                    case Gecode::RM_RIMP:
                         Gecode::rel(home, Gecode::dom(x[0], srt, is) >> r.var());
                         break;
                     default:
@@ -231,12 +231,12 @@ namespace Test { namespace Set {
                         if (!(Iter::Ranges::subset(dr, xr)))
                             return false;
                         break;
-                    case SRT_DISJ: {
+                    case SRT_DISJOINT: {
                         Gecode::Iter::Ranges::Inter<CountableSetRanges, IntSetRanges> inter(xr, dr);
                         if (inter())
                             return false;
                     } break;
-                    case SRT_CMPL: {
+                    case SRT_COMPLEMENT: {
                         Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
                         if (!Iter::Ranges::equal(xr, drc))
                             return false;
@@ -269,7 +269,7 @@ namespace Test { namespace Set {
                     case Gecode::RM_IMP:
                         Gecode::rel(home, Gecode::dom(x[0], srt, -3, -1) << r.var());
                         break;
-                    case Gecode::RM_PMI:
+                    case Gecode::RM_RIMP:
                         Gecode::rel(home, Gecode::dom(x[0], srt, -3, -1) >> r.var());
                         break;
                     default:
@@ -328,14 +328,14 @@ namespace Test { namespace Set {
                         if (!(Iter::Ranges::subset(dr, xr)))
                             return false;
                         break;
-                    case SRT_DISJ: {
+                    case SRT_DISJOINT: {
                         Gecode::Iter::Ranges::Inter<CountableSetRanges, IntSetRanges> inter(xr, dr);
 
                         if (inter())
                             return false;
                         break;
                     }
-                    case SRT_CMPL: {
+                    case SRT_COMPLEMENT: {
                         Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
 
                         if (!Iter::Ranges::equal(xr, drc))
@@ -370,7 +370,7 @@ namespace Test { namespace Set {
                     case Gecode::RM_IMP:
                         Gecode::rel(home, Gecode::dom(x[0], srt, -3) << r.var());
                         break;
-                    case Gecode::RM_PMI:
+                    case Gecode::RM_RIMP:
                         Gecode::rel(home, Gecode::dom(x[0], srt, -3) >> r.var());
                         break;
                     default:
@@ -391,7 +391,7 @@ namespace Test { namespace Set {
             DomDom(Gecode::SetRelType srt0, int n)
                 : SetTest(srt0 == Gecode::SRT_GR ? TestTags::check() : TestTags(TestTags::sweep()),
                           "Dom::Dom::" + str(srt0) + "::" + str(n), n, d1, (n == 1)),
-                  srt(srt0), is(srt == Gecode::SRT_CMPL ? d1c : d1) {}
+                  srt(srt0), is(srt == Gecode::SRT_COMPLEMENT ? d1c : d1) {}
             /// %Test whether \a x is solution
             bool
             solution(const SetAssignment& x) const override {
@@ -431,12 +431,12 @@ namespace Test { namespace Set {
                         if (!Iter::Ranges::subset(dr, xr))
                             return false;
                         break;
-                    case SRT_DISJ: {
+                    case SRT_DISJOINT: {
                         Gecode::Iter::Ranges::Inter<CountableSetRanges, IntSetRanges> inter(xr, dr);
                         if (inter())
                             return false;
                     } break;
-                    case SRT_CMPL: {
+                    case SRT_COMPLEMENT: {
                         Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
                         if (!Iter::Ranges::equal(xr, drc))
                             return false;
@@ -497,8 +497,8 @@ namespace Test { namespace Set {
         DomRange _domrange_nq1(SRT_NQ, 1);
         DomRange _domrange_sub1(SRT_SUB, 1);
         DomRange _domrange_sup1(SRT_SUP, 1);
-        DomRange _domrange_disj1(SRT_DISJ, 1);
-        DomRange _domrange_cmpl1(SRT_CMPL, 1);
+        DomRange _domrange_disj1(SRT_DISJOINT, 1);
+        DomRange _domrange_cmpl1(SRT_COMPLEMENT, 1);
         DomRange _domrange_eq2(SRT_EQ, 2);
         DomRange _domrange_lq2(SRT_LQ, 2);
         DomRange _domrange_lt2(SRT_LT, 2);
@@ -507,8 +507,8 @@ namespace Test { namespace Set {
         DomRange _domrange_nq2(SRT_NQ, 2);
         DomRange _domrange_sub2(SRT_SUB, 2);
         DomRange _domrange_sup2(SRT_SUP, 2);
-        DomRange _domrange_disj2(SRT_DISJ, 2);
-        DomRange _domrange_cmpl2(SRT_CMPL, 2);
+        DomRange _domrange_disj2(SRT_DISJOINT, 2);
+        DomRange _domrange_cmpl2(SRT_COMPLEMENT, 2);
 
         DomIntRange _domintrange_eq1(SRT_EQ, 1);
         DomIntRange _domintrange_lq1(SRT_LQ, 1);
@@ -518,8 +518,8 @@ namespace Test { namespace Set {
         DomIntRange _domintrange_nq1(SRT_NQ, 1);
         DomIntRange _domintrange_sub1(SRT_SUB, 1);
         DomIntRange _domintrange_sup1(SRT_SUP, 1);
-        DomIntRange _domintrange_disj1(SRT_DISJ, 1);
-        DomIntRange _domintrange_cmpl1(SRT_CMPL, 1);
+        DomIntRange _domintrange_disj1(SRT_DISJOINT, 1);
+        DomIntRange _domintrange_cmpl1(SRT_COMPLEMENT, 1);
         DomIntRange _domintrange_eq2(SRT_EQ, 2);
         DomIntRange _domintrange_lq2(SRT_LQ, 2);
         DomIntRange _domintrange_lt2(SRT_LT, 2);
@@ -528,8 +528,8 @@ namespace Test { namespace Set {
         DomIntRange _domintrange_nq2(SRT_NQ, 2);
         DomIntRange _domintrange_sub2(SRT_SUB, 2);
         DomIntRange _domintrange_sup2(SRT_SUP, 2);
-        DomIntRange _domintrange_disj2(SRT_DISJ, 2);
-        DomIntRange _domintrange_cmpl2(SRT_CMPL, 2);
+        DomIntRange _domintrange_disj2(SRT_DISJOINT, 2);
+        DomIntRange _domintrange_cmpl2(SRT_COMPLEMENT, 2);
 
         DomInt _domint_eq1(SRT_EQ, 1);
         DomInt _domint_lq1(SRT_LQ, 1);
@@ -539,8 +539,8 @@ namespace Test { namespace Set {
         DomInt _domint_nq1(SRT_NQ, 1);
         DomInt _domint_sub1(SRT_SUB, 1);
         DomInt _domint_sup1(SRT_SUP, 1);
-        DomInt _domint_disj1(SRT_DISJ, 1);
-        DomInt _domint_cmpl1(SRT_CMPL, 1);
+        DomInt _domint_disj1(SRT_DISJOINT, 1);
+        DomInt _domint_cmpl1(SRT_COMPLEMENT, 1);
         DomInt _domint_eq2(SRT_EQ, 2);
         DomInt _domint_lq2(SRT_LQ, 2);
         DomInt _domint_lt2(SRT_LT, 2);
@@ -549,8 +549,8 @@ namespace Test { namespace Set {
         DomInt _domint_nq2(SRT_NQ, 2);
         DomInt _domint_sub2(SRT_SUB, 2);
         DomInt _domint_sup2(SRT_SUP, 2);
-        DomInt _domint_disj2(SRT_DISJ, 2);
-        DomInt _domint_cmpl2(SRT_CMPL, 2);
+        DomInt _domint_disj2(SRT_DISJOINT, 2);
+        DomInt _domint_cmpl2(SRT_COMPLEMENT, 2);
 
         DomDom _domdom_eq1(SRT_EQ, 1);
         DomDom _domdom_lq1(SRT_LQ, 1);
@@ -560,8 +560,8 @@ namespace Test { namespace Set {
         DomDom _domdom_nq1(SRT_NQ, 1);
         DomDom _domdom_sub1(SRT_SUB, 1);
         DomDom _domdom_sup1(SRT_SUP, 1);
-        DomDom _domdom_disj1(SRT_DISJ, 1);
-        DomDom _domdom_cmpl1(SRT_CMPL, 1);
+        DomDom _domdom_disj1(SRT_DISJOINT, 1);
+        DomDom _domdom_cmpl1(SRT_COMPLEMENT, 1);
         DomDom _domdom_eq2(SRT_EQ, 2);
         DomDom _domdom_lq2(SRT_LQ, 2);
         DomDom _domdom_lt2(SRT_LT, 2);
@@ -570,8 +570,8 @@ namespace Test { namespace Set {
         DomDom _domdom_nq2(SRT_NQ, 2);
         DomDom _domdom_sub2(SRT_SUB, 2);
         DomDom _domdom_sup2(SRT_SUP, 2);
-        DomDom _domdom_disj2(SRT_DISJ, 2);
-        DomDom _domdom_cmpl2(SRT_CMPL, 2);
+        DomDom _domdom_disj2(SRT_DISJOINT, 2);
+        DomDom _domdom_cmpl2(SRT_COMPLEMENT, 2);
 
         CardRange _cr1(1);
         CardRange _cr2(2);

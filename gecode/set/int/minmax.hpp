@@ -277,7 +277,7 @@ namespace Gecode { namespace Set { namespace Int {
     ReMinElement<View, rm>::propagate(Space& home, const ModEventDelta&) {
         // check if b is determined
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (MinElement<View>::post(home(*this), x0, x1)));
         }
@@ -292,7 +292,7 @@ namespace Gecode { namespace Set { namespace Int {
         // if min(x0.glb) < min(x1), then b=0 and entailed
         if ((x0.card_max() == 0) || ((x1.max() < x0.lub_min()) || (x1.min() > x0.lub_max())) ||
             ((x0.glb_size() > 0) && (x0.glb_min() < x1.min()))) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero(home));
             return home.ES_SUBSUMED(*this);
         }
@@ -304,14 +304,14 @@ namespace Gecode { namespace Set { namespace Int {
                     if (rm != RM_IMP)
                         GECODE_ME_CHECK(b.one(home));
                 } else {
-                    if (rm != RM_PMI)
+                    if (rm != RM_RIMP)
                         GECODE_ME_CHECK(b.zero(home));
                 }
                 return home.ES_SUBSUMED(*this);
             }
             // if min(x0) not in dom(x1): b=0, entailed
             else if ((x0.glb_min() < x1.min()) || (x0.glb_min() > x1.max()) || !x1.in(x0.glb_min())) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return home.ES_SUBSUMED(*this);
             }
@@ -547,7 +547,7 @@ namespace Gecode { namespace Set { namespace Int {
     ReMaxElement<View, rm>::propagate(Space& home, const ModEventDelta&) {
         // check if b is determined
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (MaxElement<View>::post(home(*this), x0, x1)));
         }
@@ -562,7 +562,7 @@ namespace Gecode { namespace Set { namespace Int {
         // if max(x0.glb) > max(x1), then b=0 and entailed
         if ((x0.card_max() == 0) || ((x1.max() < x0.lub_min()) || (x1.min() > x0.lub_max())) ||
             ((x0.glb_size() > 0) && (x0.glb_max() > x1.max()))) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero(home));
             return home.ES_SUBSUMED(*this);
         }
@@ -574,14 +574,14 @@ namespace Gecode { namespace Set { namespace Int {
                     if (rm != RM_IMP)
                         GECODE_ME_CHECK(b.one(home));
                 } else {
-                    if (rm != RM_PMI)
+                    if (rm != RM_RIMP)
                         GECODE_ME_CHECK(b.zero(home));
                 }
                 return home.ES_SUBSUMED(*this);
             }
             // if max(x0) not in dom(x1): b=0, entailed
             else if ((x0.glb_max() < x1.min()) || (x0.glb_max() > x1.max()) || !x1.in(x0.glb_max())) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return home.ES_SUBSUMED(*this);
             }
@@ -592,7 +592,7 @@ namespace Gecode { namespace Set { namespace Int {
             Gecode::Int::ViewRanges<Gecode::Int::IntView> d(x1);
             Gecode::Iter::Ranges::Inter<LubRanges<View>, Gecode::Int::ViewRanges<Gecode::Int::IntView>> ir(ub, d);
             if (!ir()) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return home.ES_SUBSUMED(*this);
             }
@@ -614,7 +614,7 @@ namespace Gecode { namespace Set { namespace Int {
             }
             // if x1.max < nth_smallest, then entailed
             if (x1.max() < nth_smallest) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return home.ES_SUBSUMED(*this);
             }

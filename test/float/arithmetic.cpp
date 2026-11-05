@@ -854,7 +854,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MultXYZ(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Mult::XYZ::" + s, 3, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Mult::XYZ::" + s, 3, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -904,7 +904,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MultXXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Mult::XXY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Mult::XXY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -951,7 +951,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MultXYX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Mult::XYX::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Mult::XYX::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -969,7 +969,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MultXYY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Mult::XYY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Mult::XYY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -987,7 +987,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MultXXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Mult::XXX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Mult::XXX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1005,7 +1005,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             Div(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Arithmetic::Div::" + s, 3, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Arithmetic::Div::" + s, 3, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1055,7 +1055,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             SqrXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Sqr::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Sqr::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1105,7 +1105,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             SqrXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Arithmetic::Sqr::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Arithmetic::Sqr::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1123,7 +1123,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             SqrtXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Sqrt::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Sqrt::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1187,7 +1187,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             SqrtXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Arithmetic::Sqrt::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Arithmetic::Sqrt::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1214,8 +1214,8 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             PowXY(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Pow::N::" + str(_n) + "::XY::" + s, 2, d, st, CPLT_ASSIGNMENT,
-                       false),
+                : Test(TestTags::sweep(), "Arithmetic::Pow::N::" + str(_n) + "::XY::" + s, 2, d, st,
+                       COMPLETE_ASSIGNMENT, false),
                   n(_n) {}
             /// %Test whether \a x is solution
             MaybeType
@@ -1272,8 +1272,8 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             PowXX(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Pow::N::" + str(_n) + "::XX::" + s, 1, d, st, CPLT_ASSIGNMENT,
-                       false),
+                : Test(TestTags::sweep(), "Arithmetic::Pow::N::" + str(_n) + "::XX::" + s, 1, d, st,
+                       COMPLETE_ASSIGNMENT, false),
                   n(_n) {}
             /// %Test whether \a x is solution
             MaybeType
@@ -1294,8 +1294,8 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             NRootXY(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::NRoot::N::" + str(_n) + "::XY::" + s, 2, d, st, CPLT_ASSIGNMENT,
-                       false),
+                : Test(TestTags::sweep(), "Arithmetic::NRoot::N::" + str(_n) + "::XY::" + s, 2, d, st,
+                       COMPLETE_ASSIGNMENT, false),
                   n(_n) {}
             /// %Test whether \a x is solution
             MaybeType
@@ -1359,8 +1359,8 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             NRootXX(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::NRoot::N::" + str(_n) + "::XX::" + s, 1, d, st, CPLT_ASSIGNMENT,
-                       false),
+                : Test(TestTags::sweep(), "Arithmetic::NRoot::N::" + str(_n) + "::XX::" + s, 1, d, st,
+                       COMPLETE_ASSIGNMENT, false),
                   n(_n) {}
             /// %Test whether \a x is solution
             MaybeType
@@ -1381,7 +1381,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             AbsXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Abs::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Abs::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1402,7 +1402,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             AbsXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Arithmetic::Abs::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Arithmetic::Abs::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1420,7 +1420,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MinXYZ(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Arithmetic::Min::Bin::XYZ::" + s, 3, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Arithmetic::Min::Bin::XYZ::" + s, 3, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1441,7 +1441,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MinXXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Min::Bin::XXY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Min::Bin::XXY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1459,7 +1459,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MinXYX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Min::Bin::XYX::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Min::Bin::XYX::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1477,7 +1477,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MinXYY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Min::Bin::XYY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Min::Bin::XYY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1495,7 +1495,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MinXXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Arithmetic::Min::Bin::XXX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Arithmetic::Min::Bin::XXX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1513,7 +1513,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MaxXYZ(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Arithmetic::Max::Bin::XYZ::" + s, 3, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Arithmetic::Max::Bin::XYZ::" + s, 3, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1534,7 +1534,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MaxXXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Max::Bin::XXY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Max::Bin::XXY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1552,7 +1552,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MaxXYX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Max::Bin::XYX::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Max::Bin::XYX::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1570,7 +1570,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MaxXYY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Arithmetic::Max::Bin::XYY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Max::Bin::XYY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1588,7 +1588,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MaxXXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Arithmetic::Max::Bin::XXX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Arithmetic::Max::Bin::XXX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1605,7 +1605,8 @@ namespace Test { namespace Float {
         class MinNary : public Test {
         public:
             /// Create and register test
-            MinNary(void) : Test(TestTags::sweep(), "Arithmetic::Min::Nary", 4, -4, 4, 0.5, CPLT_ASSIGNMENT, false) {}
+            MinNary(void)
+                : Test(TestTags::sweep(), "Arithmetic::Min::Nary", 4, -4, 4, 0.5, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1630,7 +1631,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MinNaryShared(void)
-                : Test(TestTags::sweep(), "Arithmetic::Min::Nary::Shared", 3, -4, 4, 0.5, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Min::Nary::Shared", 3, -4, 4, 0.5, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1651,7 +1652,8 @@ namespace Test { namespace Float {
         class MaxNary : public Test {
         public:
             /// Create and register test
-            MaxNary(void) : Test(TestTags::sweep(), "Arithmetic::Max::Nary", 4, -4, 4, 0.5, CPLT_ASSIGNMENT, false) {}
+            MaxNary(void)
+                : Test(TestTags::sweep(), "Arithmetic::Max::Nary", 4, -4, 4, 0.5, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1676,7 +1678,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             MaxNaryShared(void)
-                : Test(TestTags::sweep(), "Arithmetic::Max::Nary::Shared", 3, -4, 4, 0.5, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Arithmetic::Max::Nary::Shared", 3, -4, 4, 0.5, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {

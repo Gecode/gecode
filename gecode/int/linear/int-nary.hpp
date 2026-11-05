@@ -430,7 +430,7 @@ namespace Gecode { namespace Int { namespace Linear {
             GECODE_REWRITE(*this, (Nq<Val, P, N>::post(home(*this), x, y, c)));
         }
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (Eq<Val, P, N>::post(home(*this), x, y, c)));
         }
@@ -447,7 +447,7 @@ namespace Gecode { namespace Int { namespace Linear {
             return home.ES_SUBSUMED(*this);
         }
         if ((-sl > c) || (-su < c)) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
         }
@@ -813,7 +813,7 @@ namespace Gecode { namespace Int { namespace Linear {
             GECODE_REWRITE(*this, (Lq<Val, N, P>::post(home(*this), y, x, -c - 1)));
         }
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (Lq<Val, P, N>::post(home(*this), x, y, c)));
         }
@@ -826,7 +826,7 @@ namespace Gecode { namespace Int { namespace Linear {
         bounds_n<Val, N>(med, y, c, sl, su);
 
         if (-sl > c) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
         }

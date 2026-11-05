@@ -71,7 +71,7 @@ namespace Test {
         MaybeType operator&(MaybeType a, MaybeType b);
 
         /// Assignment possible types
-        enum class AssignmentType { CPLT_ASSIGNMENT = 0, RANDOM_ASSIGNMENT, EXTEND_ASSIGNMENT };
+        enum class AssignmentType { COMPLETE_ASSIGNMENT = 0, RANDOM_ASSIGNMENT, EXTEND_ASSIGNMENT };
         using enum AssignmentType;
 
         class GECODE_TESTFLOAT_EXPORT Test;

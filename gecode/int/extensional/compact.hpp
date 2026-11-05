@@ -235,7 +235,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (Gecode::Support::u_type(width)) {
         case Gecode::Support::IT_CHAR:
             return Factory::template copy<BitSet<unsigned char>>(home, source);
-        case Gecode::Support::IT_SHRT:
+        case Gecode::Support::IT_SHORT:
             return Factory::template copy<BitSet<unsigned short int>>(home, source);
         case Gecode::Support::IT_INT:
             if (std::is_same<Table, BitSet<unsigned int>>::value)
@@ -876,7 +876,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         static ExecStatus
         propagate(Actor& actor, Space& home) {
             if (actor.b.one()) {
-                if (Actor::mode == RM_PMI)
+                if (Actor::mode == RM_RIMP)
                     return home.ES_SUBSUMED(actor);
                 TupleSet keep(actor.ts);
                 GECODE_REWRITE(actor, Actor::post_pos(home(actor), actor.y, keep));
@@ -889,7 +889,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             }
 
             if (actor.table.empty()) {
-                if (Actor::mode != RM_PMI)
+                if (Actor::mode != RM_RIMP)
                     GECODE_ME_CHECK(actor.b.zero_none(home));
                 return home.ES_SUBSUMED(actor);
             }
@@ -1029,7 +1029,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             switch (Gecode::Support::u_type(ts.words())) {
             case Gecode::Support::IT_CHAR:
                 return PosCompact<View, BitSet<unsigned char>>::post(home, x, ts);
-            case Gecode::Support::IT_SHRT:
+            case Gecode::Support::IT_SHORT:
                 return PosCompact<View, BitSet<unsigned short int>>::post(home, x, ts);
             case Gecode::Support::IT_INT:
                 return PosCompact<View, BitSet<unsigned int>>::post(home, x, ts);
@@ -1131,7 +1131,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             switch (Gecode::Support::u_type(ts.words())) {
             case Gecode::Support::IT_CHAR:
                 return NegCompact<View, BitSet<unsigned char>>::post(home, x, ts);
-            case Gecode::Support::IT_SHRT:
+            case Gecode::Support::IT_SHORT:
                 return NegCompact<View, BitSet<unsigned short int>>::post(home, x, ts);
             case Gecode::Support::IT_INT:
                 return NegCompact<View, BitSet<unsigned int>>::post(home, x, ts);
@@ -1175,7 +1175,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     forceinline ExecStatus
     ReCompact<View, Table, CtrlView, rm>::post(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return ES_OK;
             return post_positive_compact(home, x, ts);
         }
@@ -1235,7 +1235,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         // Enforce invariant that there is at least one tuple...
         if (ts.tuples() == 0) {
             if (x.size() != 0) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
             } else {
                 if (rm != RM_IMP)
@@ -1248,7 +1248,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             TupleSet::Ranges rs(ts, i);
             ViewRanges<View> rx(x[i]);
             if (Iter::Ranges::disjoint(rs, rx)) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return ES_OK;
             }
@@ -1270,7 +1270,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             switch (Gecode::Support::u_type(ts.words())) {
             case Gecode::Support::IT_CHAR:
                 return ReCompact<View, BitSet<unsigned char>, CtrlView, rm>::post(home, x, ts, b);
-            case Gecode::Support::IT_SHRT:
+            case Gecode::Support::IT_SHORT:
                 return ReCompact<View, BitSet<unsigned short int>, CtrlView, rm>::post(home, x, ts, b);
             case Gecode::Support::IT_INT:
                 return ReCompact<View, BitSet<unsigned int>, CtrlView, rm>::post(home, x, ts, b);
@@ -1589,7 +1589,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             switch (Gecode::Support::u_type(ts.words())) {
             case Gecode::Support::IT_CHAR:
                 return PosCompactCompressed<View, BitSet<unsigned char>>::post(home, x, ts);
-            case Gecode::Support::IT_SHRT:
+            case Gecode::Support::IT_SHORT:
                 return PosCompactCompressed<View, BitSet<unsigned short int>>::post(home, x, ts);
             case Gecode::Support::IT_INT:
                 return PosCompactCompressed<View, BitSet<unsigned int>>::post(home, x, ts);
@@ -1691,7 +1691,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             switch (Gecode::Support::u_type(ts.words())) {
             case Gecode::Support::IT_CHAR:
                 return NegCompactCompressed<View, BitSet<unsigned char>>::post(home, x, ts);
-            case Gecode::Support::IT_SHRT:
+            case Gecode::Support::IT_SHORT:
                 return NegCompactCompressed<View, BitSet<unsigned short int>>::post(home, x, ts);
             case Gecode::Support::IT_INT:
                 return NegCompactCompressed<View, BitSet<unsigned int>>::post(home, x, ts);
@@ -1745,7 +1745,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         static ExecStatus
         post(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b) {
             if (b.one()) {
-                if (rm == RM_PMI)
+                if (rm == RM_RIMP)
                     return ES_OK;
                 return post_positive_compact_compressed(home, x, ts);
             }
@@ -1796,7 +1796,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     post_reified_compact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b) {
         if (ts.tuples() == 0) {
             if (x.size() != 0) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
             } else {
                 if (rm != RM_IMP)
@@ -1808,7 +1808,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             TupleSet::Ranges rs(ts, i);
             ViewRanges<View> rx(x[i]);
             if (Iter::Ranges::disjoint(rs, rx)) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return ES_OK;
             }
@@ -1830,7 +1830,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             switch (Gecode::Support::u_type(ts.words())) {
             case Gecode::Support::IT_CHAR:
                 return ReCompactCompressed<View, BitSet<unsigned char>, CtrlView, rm>::post(home, x, ts, b);
-            case Gecode::Support::IT_SHRT:
+            case Gecode::Support::IT_SHORT:
                 return ReCompactCompressed<View, BitSet<unsigned short int>, CtrlView, rm>::post(home, x, ts, b);
             case Gecode::Support::IT_INT:
                 return ReCompactCompressed<View, BitSet<unsigned int>, CtrlView, rm>::post(home, x, ts, b);

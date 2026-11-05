@@ -63,7 +63,7 @@ namespace Gecode { namespace Search { namespace Seq {
     template <class Tracer>
     Dead<Tracer>::Dead(const Options& o, const Statistics& stat0, EndReason r)
         : tracer(o.tracer), stat(stat0), reason(r), end(EndReason::NotEnded) {
-        tracer.engine(SearchTracer::EngineType::AOE, 1U);
+        tracer.engine(SearchTracer::EngineType::OTHER, 1U);
         tracer.worker();
     }
 
