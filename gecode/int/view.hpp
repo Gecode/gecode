@@ -1701,11 +1701,12 @@ namespace Gecode { namespace Int {
 
     //@{
     /// Result of testing relation
-    enum RelTest {
+    enum class RelTest {
         RT_FALSE = 0, ///< Relation does not hold
         RT_MAYBE = 1, ///< Relation may hold or not
         RT_TRUE = 2   ///< Relation does hold
     };
+    using enum RelTest;
 
     /// Test whether views \a x and \a y are equal (use bounds information)
     template <class VX, class VY>
@@ -1766,11 +1767,12 @@ namespace Gecode { namespace Int {
      * \brief Boolean tests
      *
      */
-    enum BoolTest {
+    enum class BoolTest {
         BT_NONE, ///< No sharing
         BT_SAME, ///< Same variable
         BT_COMP  ///< Same variable but complement
     };
+    using enum BoolTest;
 
     /**
      * \name Test sharing between Boolean and negated Boolean views

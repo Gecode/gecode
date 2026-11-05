@@ -70,17 +70,17 @@ namespace Gecode {
     }
 
     TFE::TFE(PropagatorGroup g) {
-        init(g, (1 << ViewTraceInfo::PROPAGATOR) | (1 << ViewTraceInfo::POST));
+        init(g, (1 << std::to_underlying(ViewTraceInfo::PROPAGATOR)) | (1 << std::to_underlying(ViewTraceInfo::POST)));
     }
 
     TFE::TFE(BrancherGroup g) {
-        init(g, (1 << ViewTraceInfo::BRANCHER));
+        init(g, (1 << std::to_underlying(ViewTraceInfo::BRANCHER)));
     }
 
     TFE
     TFE::other(void) {
         TFE e;
-        e.init(Group::all, (1 << ViewTraceInfo::OTHER));
+        e.init(Group::all, (1 << std::to_underlying(ViewTraceInfo::OTHER)));
         return e;
     }
 
@@ -129,14 +129,14 @@ namespace Gecode {
     TFE
     propagator(PropagatorGroup g) {
         TFE e;
-        e.init(g, (1 << ViewTraceInfo::PROPAGATOR));
+        e.init(g, (1 << std::to_underlying(ViewTraceInfo::PROPAGATOR)));
         return e;
     }
 
     TFE
     post(PropagatorGroup g) {
         TFE e;
-        e.init(g, (1 << ViewTraceInfo::POST));
+        e.init(g, (1 << std::to_underlying(ViewTraceInfo::POST)));
         return e;
     }
 

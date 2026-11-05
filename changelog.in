@@ -77,6 +77,61 @@ This release contains breaking changes. See the entries below for the
 changes downstream code needs.
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Make 68 enums enum class, with using enum at their scope or, in class templates,
+static constexpr aliases, so existing spellings such as IRT_EQ,
+Gecode::SS_FAILED, and IntVarBranch::SEL_RND still compile. Their values stop converting to int and stop mixing with other enums.
+Code that stores such a value in an int, does arithmetic or bitwise operations
+on it, streams it, uses it as an array index or a bit position such as
+1 << RM_EQV, or compares it with an integer no longer compiles. Convert
+explicitly with std::to_underlying or static_cast. Installed headers now use
+std::to_underlying, so code that does not build through the exported CMake
+targets needs C++23 as well.
+[MORE]
+The scoped enums are:
+Kernel: ExecStatus, SpaceStatus, ActorProperty, PropCost::ActualCost,
+PropCost::Mod, ViewTraceInfo::What, PropagateTraceInfo::Status,
+PostTraceInfo::Status, NGL::Status, MetaInfo::Type, MetaInfo::RestartReason,
+TFE::NodeType.
+Search: SearchTracer::EngineType, SearchTracer::NodeType,
+Search::HeuristicGuidance::Sense, Search::Beam::Offer,
+Search::Seq::ExpansionStep::State, Search::Par::Engine::Cmd,
+CPProfiler::NodeStatus, CPProfiler::MessageMarshalling::Field.
+Integer: ReifyMode, IntRelType, BoolOpType, IntPropLevel, TaskType,
+TupleSet::Data::State, IntVarBranch::Select, BoolVarBranch::Select,
+IntValBranch::Select, BoolValBranch::Select, IntAssign::Select,
+BoolAssign::Select, Int::Cumulatives::EventType (formerly the typedef ev_t),
+Int::Extensional::CompactStatus::StatusType, Int::GCC::BC,
+Int::NValues::RangeEventType, Int::Sequence::TakesStatus, Int::SortTaskOrder,
+Int::Event::Type, Int::RelTest, Int::BoolTest.
+Set: SetRelType, SetOpType, SetVarBranch::Select, SetValBranch::Select,
+SetAssign::Select.
+Float: FloatRelType, FloatVarBranch::Select, FloatValBranch::Select,
+FloatAssign::Select, Float::RelTest.
+MiniModel: LinIntExpr::NodeType, LinFloatExpr::NodeType, SetExpr::NodeType,
+BoolExpr::NodeType.
+Driver: ScriptMode, RestartMode.
+FlatZinc: FlatZinc::FlatZincSpace::Meth, FlatZinc::IntBoolVarBranch::Select,
+FlatZinc::SymbolType.
+Gist, support, and iterators: Gist::NodeStatus, Support::BitSetStatus,
+Support::IntType, Iter::Ranges::CompareStatus.
+Test component: Test::MatchType, Test::Int::ConTestLevel,
+Test::Float::MaybeType, Test::Float::AssignmentType.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+IntPropLevel is enum class with underlying type unsigned int and gains
+operator|, operator&, and operator|=, so levels combine without casts. Test a
+bit with (ipl & IPL_BASIC) != IPL_DEF, since the result no longer converts to
+bool. Remove IPL_BITS_, which was a bit-field width rather than a level.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

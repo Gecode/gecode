@@ -150,12 +150,13 @@ namespace Test {
         };
 
         /// Level of consistency to test for
-        enum ConTestLevel {
+        enum class ConTestLevel {
             CTL_NONE,     ///< No consistency-test
             CTL_DOMAIN,   ///< Test for domain-consistency
             CTL_BOUNDS_D, ///< Test for bounds(d)-consistency
             CTL_BOUNDS_Z, ///< Test for bounds(z)-consistency
         };
+        using enum ConTestLevel;
 
         class GECODE_TESTINT_EXPORT Test;
 

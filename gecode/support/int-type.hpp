@@ -55,11 +55,12 @@ namespace Gecode { namespace Support {
 #endif
 
     /// Description of integer types
-    enum IntType {
+    enum class IntType {
         IT_CHAR = 0, ///< char integer type
         IT_SHRT = 1, ///< short integer type
         IT_INT = 2   ///< integer type
     };
+    using enum IntType;
 
     /// Return type required to represent \a n
     IntType u_type(unsigned int n);
