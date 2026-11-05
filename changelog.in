@@ -77,6 +77,43 @@ This release contains breaking changes. See the entries below for the
 changes downstream code needs.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Multi-dimensional bin_packing throws Int::OutOfLimits for fewer than one
+dimension. It divided by zero for zero dimensions, and a negative number of
+dimensions now gives Int::OutOfLimits instead of Int::ArgumentSizeMismatch.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Two-dimensional element throws Int::TooFewArguments for an empty array, as
+one-dimensional element does, instead of Int::VariableEmptyDomain from an
+internal variable or Int::ArgumentSizeMismatch. It throws
+Int::ArgumentSizeMismatch for a width or height that is not positive and when
+the product overflows, where it could post a failing or wrong constraint.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Two-dimensional element throws Set::ArgumentSizeMismatch for a width or height
+that is not positive and when the product overflows, where it could post a
+failing or wrong constraint.
+
+[ENTRY]
+Module: set
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Document the exceptions that sequence and element with an integer index throw
+for an empty array and for sets outside the limits.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major
