@@ -199,6 +199,9 @@ namespace Gecode {
     }
 
     forceinline
+    SetVarGlbValues::SetVarGlbValues(void) {}
+
+    forceinline
     SetVarGlbValues::SetVarGlbValues(const SetVar& x) {
         SetVarGlbRanges ivr(x);
         iter.init(ivr);
@@ -220,6 +223,9 @@ namespace Gecode {
     }
 
     forceinline
+    SetVarLubValues::SetVarLubValues(void) {}
+
+    forceinline
     SetVarLubValues::SetVarLubValues(const SetVar& x) {
         SetVarLubRanges ivr(x);
         iter.init(ivr);
@@ -239,6 +245,9 @@ namespace Gecode {
     SetVarLubValues::val(void) const {
         return iter.val();
     }
+
+    forceinline
+    SetVarUnknownValues::SetVarUnknownValues(void) {}
 
     forceinline
     SetVarUnknownValues::SetVarUnknownValues(const SetVar& x) {

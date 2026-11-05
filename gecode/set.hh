@@ -1524,7 +1524,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetBranch
      */
-    GECODE_SET_EXPORT void assign(Home home, const SetVarArgs& x, const SetVarBranch& vars, const SetAssign& vals,
+    GECODE_SET_EXPORT void assign(Home home, const SetVarArgs& x, SetVarBranch vars, const SetAssign& vals,
                                   SetBranchFilter bf = nullptr, SetVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals

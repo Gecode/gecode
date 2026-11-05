@@ -899,6 +899,31 @@ namespace Test { namespace LDSB {
         }
     };
 
+    /// %Test for value sequence symmetry over the domain of a variable
+    class SimIntValSym4 {
+    public:
+        /// Number of variables
+        static const int n = 2;
+        /// Lower bound of values
+        static const int l = 0;
+        /// Upper bound of values
+        static const int u = 6;
+        /// Setup problem constraints and symmetries
+        static void
+        setup(Home home, IntVarArray& xs) {
+            Symmetries s;
+            // Values 0,1,2 are symmetric with 6,5,4.
+            s << values_reflect(xs[0]);
+            rel(home, xs[0] + xs[1] == 6);
+            branch(home, xs, INT_VAR_NONE(), INT_VAL_MED(), s);
+        }
+        /// Compute list of expected solutions
+        static std::vector<IntArgs>
+        expected_solutions(void) {
+            return SimIntValSym3::expected_solutions();
+        }
+    };
+
     /// %Test for value symmetry
     class ValSym1 {
     public:
@@ -1927,6 +1952,7 @@ namespace Test { namespace LDSB {
     LDSB<SimIntValSym1> simintvalsym1("SimIntValSym1");
     LDSB<SimIntValSym2> simintvalsym2("SimIntValSym2");
     LDSB<SimIntValSym3> simintvalsym3("SimIntValSym3");
+    LDSB<SimIntValSym4> simintvalsym4("SimIntValSym4");
     LDSB<ValSym1> valsym1("ValSym1");
     LDSB<ValSym1b> valsym1b("ValSym1b");
     LDSB<ValSym1c> valsym1c("ValSym1c");
