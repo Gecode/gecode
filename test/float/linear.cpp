@@ -195,14 +195,14 @@ namespace Test { namespace Float {
             /// Reification variable
             Gecode::BoolVar b;
             /// Create fixture
-            EmptyFixture(void) : b(*this, 0, 1) {}
+            EmptyFixture() : b(*this, 0, 1) {}
             /// Constructor for cloning \a fixture
             EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
                 b.update(*this, fixture.b);
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new EmptyFixture(*this);
             }
             /// Test whether the space is solved with \a b equal to \a val
@@ -221,10 +221,10 @@ namespace Test { namespace Float {
         class Empty : public Base {
         public:
             /// Create and register test
-            Empty(void) : Base("Float::Linear::Empty") {}
+            Empty() : Base("Float::Linear::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 FloatVarArgs x;
                 FloatValArgs a;
@@ -243,10 +243,10 @@ namespace Test { namespace Float {
         class InitializerList : public Base {
         public:
             /// Create and register test
-            InitializerList(void) : Base("Float::Linear::InitializerList") {}
+            InitializerList() : Base("Float::Linear::InitializerList") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 FloatValArgs a({2.0, -3.0});
                 return (a.size() == 2) && (a[0].min() == 2.0) && (a[1].max() == -3.0);
@@ -258,7 +258,7 @@ namespace Test { namespace Float {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 {
                     FloatNum step = 0.7;

@@ -62,15 +62,15 @@ namespace Gecode { namespace Int { namespace Element {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace Element {
         : x(x0), xv(x0), yv(y0), w(w0) {}
     template <class View>
     forceinline void
-    PairValues<View>::operator++(void) {
+    PairValues<View>::operator++() {
         ++xv;
         if (!xv()) {
             xv.init(x);
@@ -89,12 +89,12 @@ namespace Gecode { namespace Int { namespace Element {
     }
     template <class View>
     forceinline bool
-    PairValues<View>::operator()(void) const {
+    PairValues<View>::operator()() const {
         return yv();
     }
     template <class View>
     forceinline int
-    PairValues<View>::val(void) const {
+    PairValues<View>::val() const {
         return xv.val() + w * yv.val();
     }
 

@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Branch {
         }
     }
 
-    PosValuesChoice::~PosValuesChoice(void) {
+    PosValuesChoice::~PosValuesChoice() {
         heap.free<PosMin>(pm, n + 1);
     }
 

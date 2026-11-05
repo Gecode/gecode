@@ -75,11 +75,11 @@ namespace Gecode { namespace Int { namespace Linear {
         }
     }
     forceinline ScaleBool*
-    ScaleBoolArray::fst(void) const {
+    ScaleBoolArray::fst() const {
         return _fst;
     }
     forceinline ScaleBool*
-    ScaleBoolArray::lst(void) const {
+    ScaleBoolArray::lst() const {
         return _lst;
     }
     forceinline void
@@ -91,11 +91,11 @@ namespace Gecode { namespace Int { namespace Linear {
         _lst = l;
     }
     forceinline bool
-    ScaleBoolArray::empty(void) const {
+    ScaleBoolArray::empty() const {
         return _fst == _lst;
     }
     forceinline int
-    ScaleBoolArray::size(void) const {
+    ScaleBoolArray::size() const {
         return static_cast<int>(_lst - _fst);
     }
     forceinline bool
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
 
     inline void
-    ScaleBoolArray::sort(void) {
+    ScaleBoolArray::sort() {
         ScaleDec scale_dec;
         Support::quicksort<ScaleBool, ScaleDec>(fst(), size(), scale_dec);
     }
@@ -124,11 +124,11 @@ namespace Gecode { namespace Int { namespace Linear {
     forceinline void
     EmptyScaleBoolArray::update(Space&, EmptyScaleBoolArray&) {}
     forceinline ScaleBool*
-    EmptyScaleBoolArray::fst(void) const {
+    EmptyScaleBoolArray::fst() const {
         return nullptr;
     }
     forceinline ScaleBool*
-    EmptyScaleBoolArray::lst(void) const {
+    EmptyScaleBoolArray::lst() const {
         return nullptr;
     }
     forceinline void
@@ -136,15 +136,15 @@ namespace Gecode { namespace Int { namespace Linear {
     forceinline void
     EmptyScaleBoolArray::lst(ScaleBool*) {}
     forceinline bool
-    EmptyScaleBoolArray::empty(void) const {
+    EmptyScaleBoolArray::empty() const {
         return true;
     }
     forceinline int
-    EmptyScaleBoolArray::size(void) const {
+    EmptyScaleBoolArray::size() const {
         return 0;
     }
     forceinline void
-    EmptyScaleBoolArray::sort(void) {}
+    EmptyScaleBoolArray::sort() {}
 
     /*
      * Base-class for Boolean constraints with coefficients

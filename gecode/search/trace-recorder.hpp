@@ -60,32 +60,32 @@ namespace Gecode { namespace Search {
 
         public:
             /// Do not initialize
-            ID(void) = default;
+            ID() = default;
             /// Initialize
             ID(unsigned int id);
             /// Access
-            operator unsigned int(void) const;
+            operator unsigned int() const;
         };
         /// Initialize
         TraceRecorder(SearchTracer* t);
         /// Register engine
         void engine(SearchTracer::EngineType t, unsigned int n);
         /// Register worker
-        void worker(void);
+        void worker();
         /// Generate new node id
-        unsigned int nid(void);
+        unsigned int nid();
         /// Return worker id
-        unsigned int wid(void) const;
+        unsigned int wid() const;
         /// The workers goes to a next round (restart or next iteration in LDS)
-        void round(void);
+        void round();
         /// The engine skips an edge
         void skip(const SearchTracer::EdgeInfo& ei);
         /// The engine creates a new node with information \a ei and \a ni
         void node(const SearchTracer::EdgeInfo& ei, const SearchTracer::NodeInfo& ni);
         /// The worker is done
-        void done(void);
+        void done();
         /// Whether this is a real tracer
-        operator bool(void) const;
+        operator bool() const;
     };
 
     /// Recorder for a search tracer with edge information
@@ -98,9 +98,9 @@ namespace Gecode { namespace Search {
         /// Initialize
         EdgeTraceRecorder(SearchTracer* t);
         /// Invalidate edge information
-        void invalidate(void);
+        void invalidate();
         /// Provide access to edge information
-        SearchTracer::EdgeInfo* ei(void);
+        SearchTracer::EdgeInfo* ei();
     };
 
     /// Empty trace recorder
@@ -110,36 +110,36 @@ namespace Gecode { namespace Search {
         class ID {
         public:
             /// Do not initialize
-            ID(void) = default;
+            ID() = default;
             /// Initialize
             ID(unsigned int id);
             /// Access
-            operator unsigned int(void) const;
+            operator unsigned int() const;
         };
         /// Initialize
         NoTraceRecorder(SearchTracer* t);
         /// Register engine
         void engine(SearchTracer::EngineType t, unsigned int n);
         /// Register worker
-        void worker(void);
+        void worker();
         /// Return worker id
-        unsigned int wid(void) const;
+        unsigned int wid() const;
         /// Generate new node id
-        unsigned int nid(void);
+        unsigned int nid();
         /// Invalidate edge information
-        void invalidate(void);
+        void invalidate();
         /// Provide access to edge information
-        SearchTracer::EdgeInfo* ei(void);
+        SearchTracer::EdgeInfo* ei();
         /// The workers goes to a next round (restart or next iteration in LDS)
-        void round(void);
+        void round();
         /// The engine skips an edge
         void skip(const SearchTracer::EdgeInfo& ei);
         /// The engine creates a new node with information \a ei and \a ni
         void node(const SearchTracer::EdgeInfo& ei, const SearchTracer::NodeInfo& ni);
         /// The worker is done
-        void done(void);
+        void done();
         /// Whether this is a real tracer
-        operator bool(void) const;
+        operator bool() const;
     };
 
     /*
@@ -162,7 +162,7 @@ namespace Gecode { namespace Search {
         : _id(id) {}
 
     forceinline TraceRecorder::ID::
-    operator unsigned int(void) const {
+    operator unsigned int() const {
         return _id;
     }
 
@@ -176,22 +176,22 @@ namespace Gecode { namespace Search {
     }
 
     forceinline void
-    TraceRecorder::worker(void) {
+    TraceRecorder::worker() {
         tracer.worker(_wid, _eid);
     }
 
     forceinline unsigned int
-    TraceRecorder::nid(void) {
+    TraceRecorder::nid() {
         return _nid++;
     }
 
     forceinline unsigned int
-    TraceRecorder::wid(void) const {
+    TraceRecorder::wid() const {
         return _wid;
     }
 
     forceinline void
-    TraceRecorder::round(void) {
+    TraceRecorder::round() {
         tracer._round(_eid);
     }
 
@@ -206,12 +206,12 @@ namespace Gecode { namespace Search {
     }
 
     forceinline void
-    TraceRecorder::done(void) {
+    TraceRecorder::done() {
         tracer.worker();
     }
 
     forceinline TraceRecorder::
-    operator bool(void) const {
+    operator bool() const {
         return true;
     }
 
@@ -224,12 +224,12 @@ namespace Gecode { namespace Search {
         : TraceRecorder(t) {}
 
     forceinline void
-    EdgeTraceRecorder::invalidate(void) {
+    EdgeTraceRecorder::invalidate() {
         _ei.invalidate();
     }
 
     forceinline SearchTracer::EdgeInfo*
-    EdgeTraceRecorder::ei(void) {
+    EdgeTraceRecorder::ei() {
         return &_ei;
     }
 
@@ -242,7 +242,7 @@ namespace Gecode { namespace Search {
     NoTraceRecorder::ID::ID(unsigned int) {}
 
     forceinline NoTraceRecorder::ID::
-    operator unsigned int(void) const {
+    operator unsigned int() const {
         return 0U;
     }
 
@@ -253,28 +253,28 @@ namespace Gecode { namespace Search {
     NoTraceRecorder::engine(SearchTracer::EngineType, unsigned int) {}
 
     forceinline void
-    NoTraceRecorder::worker(void) {}
+    NoTraceRecorder::worker() {}
 
     forceinline unsigned int
-    NoTraceRecorder::wid(void) const {
+    NoTraceRecorder::wid() const {
         return 0U;
     }
 
     forceinline unsigned int
-    NoTraceRecorder::nid(void) {
+    NoTraceRecorder::nid() {
         return 0U;
     }
 
     forceinline void
-    NoTraceRecorder::invalidate(void) {}
+    NoTraceRecorder::invalidate() {}
 
     forceinline SearchTracer::EdgeInfo*
-    NoTraceRecorder::ei(void) {
+    NoTraceRecorder::ei() {
         return nullptr;
     }
 
     forceinline void
-    NoTraceRecorder::round(void) {}
+    NoTraceRecorder::round() {}
 
     forceinline void
     NoTraceRecorder::skip(const SearchTracer::EdgeInfo&) {}
@@ -283,10 +283,10 @@ namespace Gecode { namespace Search {
     NoTraceRecorder::node(const SearchTracer::EdgeInfo&, const SearchTracer::NodeInfo&) {}
 
     forceinline void
-    NoTraceRecorder::done(void) {}
+    NoTraceRecorder::done() {}
 
     forceinline NoTraceRecorder::
-    operator bool(void) const {
+    operator bool() const {
         return false;
     }
 

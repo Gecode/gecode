@@ -70,15 +70,15 @@ namespace Gecode { namespace Search { namespace Seq {
 
     public:
         /// Initialize without node
-        ChoiceExpansion(void) : alternative(0) {}
+        ChoiceExpansion() : alternative(0) {}
         /// Whether there is a node
         explicit
-        operator bool(void) const {
+        operator bool() const {
             return static_cast<bool>(parent);
         }
         /// Return the node
         Space&
-        space(void) const {
+        space() const {
             return *parent;
         }
         /// Take stable node \a s
@@ -90,13 +90,13 @@ namespace Gecode { namespace Search { namespace Seq {
         }
         /// Return the node before its choice has been computed
         std::unique_ptr<Space>
-        take(void) {
+        take() {
             assert(!choice);
             return std::move(parent);
         }
         /// Delete the node
         void
-        reset(void) {
+        reset() {
             choice.reset();
             parent.reset();
             alternative = 0;

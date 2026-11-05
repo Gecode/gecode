@@ -36,7 +36,7 @@ namespace Gecode { namespace Float {
     class FloatTraceView {
     public:
         /// Default constructor (initializes with no view)
-        FloatTraceView(void) = default;
+        FloatTraceView() = default;
         /// Duplicate view \a y
         FloatTraceView(Space& home, FloatView y);
         /// Update duplicated view from view \a y and delta \a d

@@ -42,7 +42,7 @@ public:
     /// Initialize with name \a s
     FileSizeOptions(const char* s);
     /// Return file name (nullptr if none given)
-    const char* file(void) const;
+    const char* file() const;
 };
 
 /// A simple dictionary class
@@ -63,7 +63,7 @@ protected:
 
 public:
     /// Initialize as empty dictionary
-    Dictionary(void);
+    Dictionary();
     /**
      * \brief Perform actual initialization
      *
@@ -72,9 +72,9 @@ public:
      */
     void init(const char* fn);
     /// Return maximal length of a word
-    int len(void) const;
+    int len() const;
     /// Return total number of words
-    int words(void) const;
+    int words() const;
     /// Return number of words with length \a l
     int words(int l) const;
     /// Return word number \a i with length \a l
@@ -83,7 +83,7 @@ public:
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& print(std::basic_ostream<Char, Traits>& os) const;
     /// Destructor
-    ~Dictionary(void);
+    ~Dictionary();
 };
 
 /// Print statistics summary
@@ -7744,11 +7744,11 @@ inline FileSizeOptions::FileSizeOptions(const char* s)
     add(_file);
 }
 inline const char*
-FileSizeOptions::file(void) const {
+FileSizeOptions::file() const {
     return _file.value();
 }
 
-inline Dictionary::Dictionary(void) : max_len(0), n_all_words(0), chunk(nullptr) {
+inline Dictionary::Dictionary() : max_len(0), n_all_words(0), chunk(nullptr) {
     for (int i = 0; i < max_len; i++) {
         n_words[i] = 0;
         s_words[i] = nullptr;
@@ -7872,11 +7872,11 @@ Dictionary::init(const char* fn) {
 }
 
 inline int
-Dictionary::len(void) const {
+Dictionary::len() const {
     return max_len;
 }
 inline int
-Dictionary::words(void) const {
+Dictionary::words() const {
     return n_all_words;
 }
 inline int
@@ -7901,7 +7901,7 @@ operator<<(std::basic_ostream<Char, Traits>& os, const Dictionary& d) {
     return d.print(os);
 }
 
-inline Dictionary::~Dictionary(void) {
+inline Dictionary::~Dictionary() {
     if (chunk != nullptr)
         Gecode::heap.rfree(chunk);
 }

@@ -116,7 +116,7 @@ namespace Test { namespace Int {
         /// %Test public default linear expression behavior
         class LinExprDefault : public Test {
         public:
-            LinExprDefault(void) : Test("MiniModel::LinExpr::Default", 1, -5, 5) {}
+            LinExprDefault() : Test("MiniModel::LinExpr::Default", 1, -5, 5) {}
             bool
             solution(const Assignment& x) const override {
                 return x[0] == 1;
@@ -2556,7 +2556,7 @@ namespace Test { namespace Int {
             /// Reification variable
             Gecode::BoolVar b;
             /// Create fixture
-            EmptyFixture(void) : y(*this, -2, 2), b(*this, 0, 1) {}
+            EmptyFixture() : y(*this, -2, 2), b(*this, 0, 1) {}
             /// Constructor for cloning \a fixture
             EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
                 y.update(*this, fixture.y);
@@ -2564,7 +2564,7 @@ namespace Test { namespace Int {
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new EmptyFixture(*this);
             }
         };
@@ -2573,10 +2573,10 @@ namespace Test { namespace Int {
         class LinRelEmpty : public Base {
         public:
             /// Create and register test
-            LinRelEmpty(void) : Base("Int::MiniModel::LinRel::Empty") {}
+            LinRelEmpty() : Base("Int::MiniModel::LinRel::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 IntVarArgs x;
                 BoolVarArgs bx;
@@ -2598,7 +2598,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 int n = sizeof(li) / sizeof(LinInstr*);
                 for (int i = 0; i < n; i++) {
                     std::string s = Test::str(i);

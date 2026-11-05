@@ -42,13 +42,13 @@ namespace Gecode { namespace Set {
 
     public:
         /// Default constructor (initializes with no view)
-        SetTraceView(void);
+        SetTraceView();
         /// Duplicate view \a x
         SetTraceView(Space& home, SetView x);
         /// Return range list for greatest lower bound
-        RangeList* glb(void) const;
+        RangeList* glb() const;
         /// Return range list for least upper bound
-        RangeList* lub(void) const;
+        RangeList* lub() const;
         /// Update duplicated view from view \a y and delta \a d
         void prune(Space& home, SetView y, const Delta& d);
         /// Update during cloning
@@ -59,7 +59,7 @@ namespace Gecode { namespace Set {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    SetTraceView::SetTraceView(void) {}
+    SetTraceView::SetTraceView() {}
     forceinline
     SetTraceView::SetTraceView(Space& home, SetView x) {
         GlbRanges<SetView> glbi(x);
@@ -68,11 +68,11 @@ namespace Gecode { namespace Set {
         RangeList::copy(home, _lub, lubi);
     }
     forceinline RangeList*
-    SetTraceView::glb(void) const {
+    SetTraceView::glb() const {
         return _glb;
     }
     forceinline RangeList*
-    SetTraceView::lub(void) const {
+    SetTraceView::lub() const {
         return _lub;
     }
     forceinline void

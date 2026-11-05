@@ -179,7 +179,7 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new SudokuInt(*this);
     }
 
@@ -343,7 +343,7 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new SudokuSet(*this);
     }
 
@@ -402,7 +402,7 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new SudokuMixed(*this);
     }
 

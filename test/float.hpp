@@ -42,10 +42,10 @@ namespace Test { namespace Float {
      */
     inline Assignment::Assignment(int n0, const Gecode::FloatVal& d0) : n(n0), d(d0) {}
     inline int
-    Assignment::size(void) const {
+    Assignment::size() const {
         return n;
     }
-    inline Assignment::~Assignment(void) = default;
+    inline Assignment::~Assignment() = default;
 
     inline CpltAssignment::CpltAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s)
         : Assignment(n, d), dsv(new Gecode::FloatVal[static_cast<unsigned int>(n)]), step(s) {
@@ -67,7 +67,7 @@ namespace Test { namespace Float {
         assert((i >= 0) && (i < n));
         dsv[i] = val;
     }
-    inline CpltAssignment::~CpltAssignment(void) {
+    inline CpltAssignment::~CpltAssignment() {
         delete[] dsv;
     }
 
@@ -93,7 +93,7 @@ namespace Test { namespace Float {
         assert((i >= 0) && (i < n));
         dsv[i] = val;
     }
-    inline ExtAssignment::~ExtAssignment(void) {
+    inline ExtAssignment::~ExtAssignment() {
         delete[] dsv;
     }
 
@@ -128,7 +128,7 @@ namespace Test { namespace Float {
         assert((i >= 0) && (i < n));
         vals[i] = val;
     }
-    inline RandomAssignment::~RandomAssignment(void) {
+    inline RandomAssignment::~RandomAssignment() {
         delete[] vals;
     }
 
@@ -137,15 +137,15 @@ namespace Test { namespace Float {
      *
      */
     forceinline bool
-    Test::eqv(void) const {
+    Test::eqv() const {
         return reified && ((rms & (1 << std::to_underlying(Gecode::RM_EQV))) != 0);
     }
     forceinline bool
-    Test::imp(void) const {
+    Test::imp() const {
         return reified && ((rms & (1 << std::to_underlying(Gecode::RM_IMP))) != 0);
     }
     forceinline bool
-    Test::pmi(void) const {
+    Test::pmi() const {
         return reified && ((rms & (1 << std::to_underlying(Gecode::RM_RIMP))) != 0);
     }
     inline Test::Test(TestTags tags, const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st,
@@ -265,7 +265,7 @@ namespace Test { namespace Float {
     }
 
     inline bool
-    Test::flip(void) {
+    Test::flip() {
         return _rand(2U) == 0U;
     }
 
@@ -281,21 +281,21 @@ namespace Test { namespace Float {
         return (b == MT_FALSE) ? MT_FALSE : MT_MAYBE;
     }
 
-    inline FloatRelTypes::FloatRelTypes(void) : i(sizeof(frts) / sizeof(Gecode::FloatRelType) - 1) {}
+    inline FloatRelTypes::FloatRelTypes() : i(sizeof(frts) / sizeof(Gecode::FloatRelType) - 1) {}
     inline void
-    FloatRelTypes::reset(void) {
+    FloatRelTypes::reset() {
         i = sizeof(frts) / sizeof(Gecode::FloatRelType) - 1;
     }
     inline bool
-    FloatRelTypes::operator()(void) const {
+    FloatRelTypes::operator()() const {
         return i >= 0;
     }
     inline void
-    FloatRelTypes::operator++(void) {
+    FloatRelTypes::operator++() {
         i--;
     }
     inline Gecode::FloatRelType
-    FloatRelTypes::frt(void) const {
+    FloatRelTypes::frt() const {
         return frts[i];
     }
 

@@ -65,7 +65,7 @@ namespace Test { namespace Float {
         private:
             /// Test interval operations that open their own rounding scope
             static bool
-            interval_operations(void) {
+            interval_operations() {
                 using Gecode::Float::Interval;
                 const int mode = std::fegetround();
                 // fmod runs its nested arithmetic in its own scope.
@@ -81,9 +81,9 @@ namespace Test { namespace Float {
             }
 
         public:
-            RoundingScope(void) : Base("Float::Arithmetic::RoundingScope", TestTags::check()) {}
+            RoundingScope() : Base("Float::Arithmetic::RoundingScope", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 const int previous = std::fegetround();
                 const int modes[] = {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO};
                 bool result = true;
@@ -140,16 +140,15 @@ namespace Test { namespace Float {
                 }
                 /// Copy space during cloning
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new RootSpace(*this);
                 }
             };
 
         public:
-            DirectedRoundingRegression(void)
-                : Base("Float::Arithmetic::DirectedRoundingRegression", TestTags::check()) {}
+            DirectedRoundingRegression() : Base("Float::Arithmetic::DirectedRoundingRegression", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 bool result = true;
                 {
                     // Each exact result lies strictly between two adjacent doubles.
@@ -201,7 +200,7 @@ namespace Test { namespace Float {
                 }
                 /// Copy space during cloning
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new DivSpace(*this);
                 }
             };
@@ -221,9 +220,9 @@ namespace Test { namespace Float {
             }
 
         public:
-            DivZeroQuotient(void) : Base("Float::Arithmetic::DivZeroQuotient", TestTags::standard()) {}
+            DivZeroQuotient() : Base("Float::Arithmetic::DivZeroQuotient", TestTags::standard()) {}
             bool
-            run(void) override {
+            run() override {
                 bool result = keeps_divisor(0.0, 1.0);
                 result &= keeps_divisor(-1.0, 0.0);
                 return result;
@@ -361,7 +360,7 @@ namespace Test { namespace Float {
             /// Observe case \a i with operands the compiler can fold
             template <std::size_t i>
             [[gnu::noinline]] static Observed
-            observe_literal(void) {
+            observe_literal() {
                 // Anything else in this function can stop Clang from folding.
                 constexpr Case c = cases[i];
                 return observe<c.op>(c.x, c.y);
@@ -369,7 +368,7 @@ namespace Test { namespace Float {
             /// Observe case \a i with runtime operands
             template <std::size_t i>
             [[gnu::noinline]] static Observed
-            observe_volatile(void) {
+            observe_volatile() {
                 const volatile Gecode::FloatNum x = cases[i].x;
                 const volatile Gecode::FloatNum y = cases[i].y;
                 return observe<cases[i].op>(x, y);
@@ -414,9 +413,9 @@ namespace Test { namespace Float {
             }
 
         public:
-            DirectedRounding(void) : Base("Float::Arithmetic::DirectedRounding", TestTags::check()) {}
+            DirectedRounding() : Base("Float::Arithmetic::DirectedRounding", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 const int previous = std::fegetround();
                 const int modes[] = {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO};
                 bool result = true;
@@ -434,9 +433,9 @@ namespace Test { namespace Float {
         /// Median queries preserve the caller's floating-point rounding mode
         class MedianRoundingMode : public Base {
         public:
-            MedianRoundingMode(void) : Base("Float::Arithmetic::MedianRoundingMode", TestTags::check()) {}
+            MedianRoundingMode() : Base("Float::Arithmetic::MedianRoundingMode", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 const int previous = std::fegetround();
                 const int modes[] = {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO};
                 const Gecode::FloatNum limit = std::numeric_limits<Gecode::FloatNum>::max();
@@ -504,7 +503,7 @@ namespace Test { namespace Float {
                 }
                 /// Copy space during cloning
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new RootSpace(*this);
                 }
             };
@@ -526,7 +525,7 @@ namespace Test { namespace Float {
                 }
                 /// Copy space during cloning
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new NRootBoundSpace(*this);
                 }
             };
@@ -557,10 +556,10 @@ namespace Test { namespace Float {
 
         public:
             /// Create and register test
-            PositiveNRootBounds(void) : Base("Float::Arithmetic::PositiveNRootBounds", TestTags::check()) {}
+            PositiveNRootBounds() : Base("Float::Arithmetic::PositiveNRootBounds", TestTags::check()) {}
             /// Run test under every supported IEEE-754 rounding mode
             bool
-            run(void) override {
+            run() override {
                 const int old_mode = std::fegetround();
                 const int modes[] = {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO};
                 struct Case {
@@ -610,7 +609,7 @@ namespace Test { namespace Float {
                 }
                 /// Copy space during cloning
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new ZeroSpace(*this);
                 }
             };
@@ -634,7 +633,7 @@ namespace Test { namespace Float {
                 }
                 /// Copy space during cloning
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new AdjacentZeroSpace(*this);
                 }
             };
@@ -645,7 +644,7 @@ namespace Test { namespace Float {
                 /// Base and result variables
                 Gecode::FloatVar x, y;
                 /// Post the fixpoint regression instance
-                FixpointSpace(void)
+                FixpointSpace()
                     : x(*this, -std::ldexp(static_cast<Gecode::FloatNum>(0x10000000000006ULL), -53),
                         -std::ldexp(static_cast<Gecode::FloatNum>(0x10000000000004ULL), -53)),
                       y(*this, std::ldexp(static_cast<Gecode::FloatNum>(0x1000000000000aULL), -54),
@@ -659,7 +658,7 @@ namespace Test { namespace Float {
                 }
                 /// Copy space during cloning
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new FixpointSpace(*this);
                 }
             };
@@ -681,7 +680,7 @@ namespace Test { namespace Float {
                 }
                 /// Copy space during cloning
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new ZeroResultSpace(*this);
                 }
             };
@@ -762,10 +761,10 @@ namespace Test { namespace Float {
 
         public:
             /// Create and register test
-            PowConsistency(void) : Base("Float::Arithmetic::PowConsistency", TestTags::check()) {}
+            PowConsistency() : Base("Float::Arithmetic::PowConsistency", TestTags::check()) {}
             /// Run zero and fixpoint regressions
             bool
-            run(void) override {
+            run() override {
                 bool result = true;
                 for (int n = 0; n <= 3; n++)
                     result = check_zero(n) && result;
@@ -815,7 +814,7 @@ namespace Test { namespace Float {
                 }
                 /// Copy space during cloning
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new MultSpace(*this);
                 }
             };
@@ -844,7 +843,7 @@ namespace Test { namespace Float {
             }
             /// Exercise supported points across endpoint-zero sign combinations
             bool
-            fuzz(void) const {
+            fuzz() const {
                 unsigned int state = 0x6d756c74U;
                 for (unsigned int i = 0; i < 5000; i++) {
                     state = state * 1664525U + 1013904223U;
@@ -872,10 +871,10 @@ namespace Test { namespace Float {
 
         public:
             /// Create and register test
-            MultZeroEndpoint(void) : Base("Float::Arithmetic::MultZeroEndpoint", TestTags::check()) {}
+            MultZeroEndpoint() : Base("Float::Arithmetic::MultZeroEndpoint", TestTags::check()) {}
             /// Run sign, symmetry, signed-zero, and zero-product cases
             bool
-            run(void) override {
+            run() override {
                 bool result = true;
                 result = check(-1.0, 1.0, 0.0, 1.0, 0.5, 1.0, 0.5, 1.0) && result;
                 result = check(-1.0, 1.0, -1.0, -0.0, 0.5, 1.0, -1.0, -0.5) && result;
@@ -1655,8 +1654,7 @@ namespace Test { namespace Float {
         class MinNary : public Test {
         public:
             /// Create and register test
-            MinNary(void)
-                : Test(TestTags::sweep(), "Arithmetic::Min::Nary", 4, -4, 4, 0.5, COMPLETE_ASSIGNMENT, false) {}
+            MinNary() : Test(TestTags::sweep(), "Arithmetic::Min::Nary", 4, -4, 4, 0.5, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1680,7 +1678,7 @@ namespace Test { namespace Float {
         class MinNaryShared : public Test {
         public:
             /// Create and register test
-            MinNaryShared(void)
+            MinNaryShared()
                 : Test(TestTags::sweep(), "Arithmetic::Min::Nary::Shared", 3, -4, 4, 0.5, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
@@ -1702,8 +1700,7 @@ namespace Test { namespace Float {
         class MaxNary : public Test {
         public:
             /// Create and register test
-            MaxNary(void)
-                : Test(TestTags::sweep(), "Arithmetic::Max::Nary", 4, -4, 4, 0.5, COMPLETE_ASSIGNMENT, false) {}
+            MaxNary() : Test(TestTags::sweep(), "Arithmetic::Max::Nary", 4, -4, 4, 0.5, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -1727,7 +1724,7 @@ namespace Test { namespace Float {
         class MaxNaryShared : public Test {
         public:
             /// Create and register test
-            MaxNaryShared(void)
+            MaxNaryShared()
                 : Test(TestTags::sweep(), "Arithmetic::Max::Nary::Shared", 3, -4, 4, 0.5, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
@@ -1943,13 +1940,13 @@ namespace Test { namespace Float {
         class EmptyFixture : public Gecode::Space {
         public:
             /// Create fixture
-            EmptyFixture(void) = default;
+            EmptyFixture() = default;
             /// Constructor for cloning \a fixture
             // NOLINTNEXTLINE(modernize-use-equals-default)
             EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {}
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new EmptyFixture(*this);
             }
         };
@@ -1958,7 +1955,7 @@ namespace Test { namespace Float {
         class MinMaxEmpty : public Base {
         public:
             /// Create and register test
-            MinMaxEmpty(void) : Base("Float::Arithmetic::MinMax::Empty") {}
+            MinMaxEmpty() : Base("Float::Arithmetic::MinMax::Empty") {}
             /// Test whether posting \a e throws TooFewArguments
             static bool
             throws_too_few(const Gecode::LinFloatExpr& e) {
@@ -1972,7 +1969,7 @@ namespace Test { namespace Float {
             }
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 Gecode::FloatVarArgs x;
                 return throws_too_few(Gecode::min(x)) && throws_too_few(Gecode::max(x));
             }

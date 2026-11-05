@@ -1852,7 +1852,7 @@ instances {
         }
         /// Whether an instance was found
         bool
-        valid(void) const {
+        valid() const {
             return nn > 0;
         }
     };

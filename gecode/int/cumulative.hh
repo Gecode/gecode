@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFixPTask(void);
+        ManFixPTask();
         /// Initialize task with start time \a s, processing time \a p, and required resource \a c
         ManFixPTask(IntVar s, int p, int c);
         /// Initialize task with start time \a s, processing time \a p, and required resource \a c
@@ -89,9 +89,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Value access
         //@{
         /// Return required capacity
-        int c(void) const;
+        int c() const;
         /// Return required energy
-        long long int e(void) const;
+        long long int e() const;
         //@}
 
         /// \name Cloning
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFixPSETask(void);
+        ManFixPSETask();
         /**
          * \brief Initialize task
          *
@@ -142,9 +142,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Value access
         //@{
         /// Return required capacity
-        int c(void) const;
+        int c() const;
         /// Return required energy
-        long long int e(void) const;
+        long long int e() const;
         //@}
 
         /// \name Cloning
@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFlexTask(void);
+        ManFlexTask();
         /// Initialize with start time \a s, processing time \a p, end time \a e
         ManFlexTask(IntVar s, IntVar p, IntVar e, int c);
         /// Initialize with start time \a s, processing time \a p, end time \a e
@@ -183,9 +183,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Value access
         //@{
         /// Return required capacity
-        int c(void) const;
+        int c() const;
         /// Return required energy
-        long long int e(void) const;
+        long long int e() const;
         //@}
 
         /// \name Cloning
@@ -211,14 +211,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFixPTask(void);
+        OptFixPTask();
         /// Initialize with start time \a s, processing time \a p, required capacity \a c, and mandatory flag \a m
         OptFixPTask(IntVar s, int p, int c, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, required capacity \a c, and mandatory flag \a m
         void init(IntVar s, int p, int c, BoolVar m);
         //@}
         /// Cast to corresponding unary task
-        operator Unary::OptFixPTask(void);
+        operator Unary::OptFixPTask();
     };
 
     /**
@@ -237,14 +237,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFixPSETask(void);
+        OptFixPSETask();
         /// Initialize with start time \a s, processing time \a p, required capacity \a c, and mandatory flag \a m
         OptFixPSETask(TaskType t, IntVar s, int p, int c, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, required capacity \a c, and mandatory flag \a m
         void init(TaskType t, IntVar s, int p, int c, BoolVar m);
         //@}
         /// Cast to corresponding unary task
-        operator Unary::OptFixPSETask(void);
+        operator Unary::OptFixPSETask();
     };
 
     /**
@@ -263,14 +263,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFlexTask(void);
+        OptFlexTask();
         /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
         OptFlexTask(IntVar s, IntVar p, IntVar e, int c, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
         void init(IntVar s, IntVar p, IntVar e, int c, BoolVar m);
         //@}
         /// Cast to corresponding unary task
-        operator Unary::OptFlexTask(void);
+        operator Unary::OptFlexTask();
     };
 
     /**
@@ -567,7 +567,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// Remove task with index \a i
         void remove(int i);
         /// Return energy envelope of all tasks
-        long long int env(void) const;
+        long long int env() const;
     };
 
     /// Node for an extended omega tree
@@ -652,13 +652,13 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// Remove task with index \a i from lambda
         void remove_lambda(int i);
         /// Whether has responsible task
-        bool lempty(void) const;
+        bool lempty() const;
         /// Return responsible task
-        int responsible(void) const;
+        int responsible() const;
         /// Return energy envelope of all tasks
-        long long int env(void) const;
+        long long int env() const;
         /// Return energy envelope of all tasks excluding lambda tasks
-        long long int lenv(void) const;
+        long long int lenv() const;
     };
 
 }}} // namespace Gecode::Int::Cumulative

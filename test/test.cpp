@@ -63,7 +63,7 @@ namespace Test {
         {"check", TestTag::Check}, {"standard", TestTag::Standard}, {"sweep", TestTag::Sweep}};
 
     TestTags
-    TestTags::all(void) {
+    TestTags::all() {
         TestTags tags;
         for (const TestTagDescription& description : test_tag_descriptions)
             tags.add(description.tag);
@@ -91,7 +91,7 @@ namespace Test {
 
     /// Convert the known tag names to a command-line choice list
     static std::string
-    tag_choices(void) {
+    tag_choices() {
         std::string choices;
         for (const TestTagDescription& description : test_tag_descriptions) {
             if (!choices.empty())
@@ -565,7 +565,7 @@ namespace Test {
         TestExecutor(TestExecutionControl& tec, uint64_t initial_seed) : tec(tec), initial_seed(initial_seed) {}
 
         void
-        run(void) override {
+        run() override {
             // Set up a local source of randomness seeds based on the initial seed supplied.
             Gecode::Support::RandomGenerator seed_sequence(initial_seed);
 

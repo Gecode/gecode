@@ -159,7 +159,7 @@ namespace Gecode { namespace FlatZinc {
             Choice(const Brancher& b, bool fail0) : Gecode::Choice(b, 1), fail(fail0) {}
             /// Report size occupied
             virtual size_t
-            size(void) const {
+            size() const {
                 return sizeof(Choice);
             }
             /// Archive into \a e
@@ -307,7 +307,7 @@ namespace Gecode { namespace FlatZinc {
             std::string r0;
             std::string r1;
             std::vector<std::string> n;
-            BI(void) : r0(""), r1(""), n(0) {}
+            BI() : r0(""), r1(""), n(0) {}
             BI(const std::string& r00, const std::string& r10, const std::vector<std::string>& n0)
                 : r0(r00), r1(r10), n(n0) {}
         };
@@ -315,10 +315,10 @@ namespace Gecode { namespace FlatZinc {
         BranchInformationO(std::vector<BI> v0) : v(std::move(v0)) {}
 
     public:
-        BranchInformationO(void) = default;
-        ~BranchInformationO(void) override = default;
+        BranchInformationO() = default;
+        ~BranchInformationO() override = default;
         virtual SharedHandle::Object*
-        copy(void) const {
+        copy() const {
             return new BranchInformationO(v);
         }
         /// Add new brancher information
@@ -342,10 +342,10 @@ namespace Gecode { namespace FlatZinc {
 #endif
     };
 
-    BranchInformation::BranchInformation(void) : SharedHandle(nullptr) {}
+    BranchInformation::BranchInformation() : SharedHandle(nullptr) {}
 
     void
-    BranchInformation::init(void) {
+    BranchInformation::init() {
         assert(object() == nullptr);
         object(new BranchInformationO());
     }
@@ -817,7 +817,7 @@ namespace Gecode { namespace FlatZinc {
         BlackBoxContextHandle black_box_context;
 
         /// Initialize
-        FlatZincSpaceInitData(void) = default;
+        FlatZincSpaceInitData() = default;
     };
 
     FlatZincSpace::FlatZincSpace(FlatZincSpace& f)
@@ -1617,7 +1617,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     AST::Array*
-    FlatZincSpace::solve_annotations(void) const {
+    FlatZincSpace::solve_annotations() const {
         return _solve_annotations;
     }
 
@@ -1643,7 +1643,7 @@ namespace Gecode { namespace FlatZinc {
         _solve_annotations = ann;
     }
 
-    FlatZincSpace::~FlatZincSpace(void) {
+    FlatZincSpace::~FlatZincSpace() {
         delete _init_data;
         delete _solve_annotations;
     }
@@ -1698,7 +1698,7 @@ namespace Gecode { namespace FlatZinc {
         /// Use the print method of the template class S to print a space
         void inspect(const Space& node) override;
         /// Finalize when Gist exits
-        void finalize(void) override;
+        void finalize() override;
     };
 
     template <class S>
@@ -1714,7 +1714,7 @@ namespace Gecode { namespace FlatZinc {
 
     template <class S>
     void
-    FZPrintingInspector<S>::finalize(void) {
+    FZPrintingInspector<S>::finalize() {
         Gecode::Gist::TextOutput::finalize();
     }
 
@@ -1772,7 +1772,7 @@ namespace Gecode { namespace FlatZinc {
             if (installed)
                 Driver::CombinedStop::install_ctrl_handler(true);
         }
-        ~InterruptHandlerGuard(void) {
+        ~InterruptHandlerGuard() {
             if (installed)
                 Driver::CombinedStop::install_ctrl_handler(false);
         }
@@ -1805,7 +1805,7 @@ namespace Gecode { namespace FlatZinc {
             }
             return ss.str();
         }
-        ~FlatZincGetInfo(void) override = default;
+        ~FlatZincGetInfo() override = default;
     };
 
     void
@@ -2322,22 +2322,22 @@ namespace Gecode { namespace FlatZinc {
     }
 
     Space*
-    FlatZincSpace::copy(void) {
+    FlatZincSpace::copy() {
         return new FlatZincSpace(*this);
     }
 
     FlatZincSpace::Meth
-    FlatZincSpace::method(void) const {
+    FlatZincSpace::method() const {
         return _method;
     }
 
     int
-    FlatZincSpace::opt_var(void) const {
+    FlatZincSpace::opt_var() const {
         return _opt_var;
     }
 
     bool
-    FlatZincSpace::opt_var_is_int(void) const {
+    FlatZincSpace::opt_var_is_int() const {
         return _opt_var_is_int;
     }
 
@@ -3198,7 +3198,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
     }
 
-    Printer::~Printer(void) {
+    Printer::~Printer() {
         delete _output;
     }
 

@@ -55,7 +55,7 @@ protected:
     int threshold;
 
 public:
-    CommonPatternOptions(void)
+    CommonPatternOptions()
         : Options("CommonPattern"), _sequences("sequences", "comma-separated sequences over A..Z", "ABCBC,BABC,ABDC"),
           _file("file", "sequence database; one sequence per line", ""),
           _support("support", "minimum supporting sequences, as a percentage", "100"),
@@ -85,7 +85,7 @@ public:
 
     /// Validate external input before constructing a space
     void
-    read(void) {
+    read() {
         if (_min_length.value() < 1 || _min_length.value() > Int::Limits::max)
             throw std::invalid_argument("Minimum length must be a positive Gecode integer");
         PatternMining::Sequences sequences;
@@ -123,31 +123,31 @@ public:
     }
 
     const PatternMining::Database&
-    database(void) const {
+    database() const {
         return *input;
     }
     const std::vector<int>&
-    required(void) const {
+    required() const {
         return required_items;
     }
     int
-    support(void) const {
+    support() const {
         return threshold;
     }
     int
-    min_length(void) const {
+    min_length() const {
         return static_cast<int>(_min_length.value());
     }
     PatternMining::Format
-    format(void) const {
+    format() const {
         return static_cast<PatternMining::Format>(_format.value());
     }
     bool
-    letters(void) const {
+    letters() const {
         return format() == PatternMining::Format::LETTERS;
     }
     PatternMining::Language
-    language(void) const {
+    language() const {
         const auto selected = static_cast<PatternMining::Language>(_language.value());
         if (selected == PatternMining::Language::DEFAULT)
             return _motif.value() ? PatternMining::Language::MOTIF : PatternMining::Language::NONE;
@@ -222,7 +222,7 @@ public:
     }
 
     IntVar
-    cost(void) const override {
+    cost() const override {
         return pattern.length();
     }
 
@@ -232,7 +232,7 @@ public:
     }
 
     Space*
-    copy(void) override {
+    copy() override {
         return new CommonPattern(*this);
     }
 

@@ -143,12 +143,12 @@ protected:
 
     /// Return width of board
     int
-    width(void) const {
+    width() const {
         return spec[0];
     }
     /// Return height of board
     int
-    height(void) const {
+    height() const {
         return spec[1];
     }
 
@@ -244,7 +244,7 @@ public:
 
     /// Copy space during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Nonogram(*this);
     }
 

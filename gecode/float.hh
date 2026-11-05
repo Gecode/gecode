@@ -122,17 +122,17 @@ namespace Gecode {
     }
 
     /// Return lower bound of \f$\pi/2\f$
-    FloatNum pi_half_lower(void);
+    FloatNum pi_half_lower();
     /// Return upper bound of \f$\pi/2\f$
-    FloatNum pi_half_upper(void);
+    FloatNum pi_half_upper();
     /// Return lower bound of \f$\pi\f$
-    FloatNum pi_lower(void);
+    FloatNum pi_lower();
     /// Return upper bound of \f$\pi\f$
-    FloatNum pi_upper(void);
+    FloatNum pi_upper();
     /// Return lower bound of \f$2\pi\f$
-    FloatNum pi_twice_lower(void);
+    FloatNum pi_twice_lower();
     /// Return upper bound of \f$2\pi\f$
-    FloatNum pi_twice_upper(void);
+    FloatNum pi_twice_upper();
 
     // Forward declaration
     class FloatVal;
@@ -202,17 +202,17 @@ namespace Gecode { namespace Float {
         typedef int Mode;
 #endif
         /// Return the current rounding mode
-        static Mode current_mode(void);
+        static Mode current_mode();
         /// Restore mode \a m, as returned by current_mode()
         static void restore_mode(Mode m);
         /// Round toward \f$+\infty\f$
-        static void upward(void);
+        static void upward();
         /// Round toward \f$-\infty\f$
-        static void downward(void);
+        static void downward();
         /// Round to nearest
-        static void to_nearest(void);
+        static void to_nearest();
         /// Set the mode that the arithmetic operations expect between calls
-        static void init(void);
+        static void init();
         //@}
 
     private:
@@ -352,9 +352,9 @@ namespace Gecode { namespace Float {
 
     public:
         /// Save the caller's mode and initialize the rounding operations
-        Rounding(void);
+        Rounding();
         /// Restore the caller's mode
-        ~Rounding(void);
+        ~Rounding();
         /// A scope cannot be copied
         Rounding(const Rounding&) = delete;
         /// A scope cannot be assigned
@@ -511,7 +511,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        FloatVal(void) = default;
+        FloatVal() = default;
         /// Initialize with float number \a n
         FloatVal(const FloatNum& n);
         /// Initialize with lower bound \a l and upper bound \a u
@@ -531,25 +531,25 @@ namespace Gecode {
         /// \name Value access
         //@{
         /// Return lower bound
-        FloatNum min(void) const;
+        FloatNum min() const;
         /// Return upper bound
-        FloatNum max(void) const;
+        FloatNum max() const;
         /// Return size of float value (distance between maximum and minimum)
-        FloatNum size(void) const;
+        FloatNum size() const;
         /// Return median of float value
-        FloatNum med(void) const;
+        FloatNum med() const;
         //@}
 
         /// \name Value tests
         //@{
         /// Test whether float is tight
-        bool tight(void) const;
+        bool tight() const;
         /// Test whether float is a singleton
-        bool singleton(void) const;
+        bool singleton() const;
         /// Test whether \a n is included
         bool in(FloatNum n) const;
         /// Test whether zero is included
-        bool zero_in(void) const;
+        bool zero_in() const;
         //@}
 
         /// \name Float value construction
@@ -557,11 +557,11 @@ namespace Gecode {
         /// Return hull of \a x and \a y
         static FloatVal hull(FloatNum x, FloatNum y);
         /// Return \f$\pi/2\f$
-        static FloatVal pi_half(void);
+        static FloatVal pi_half();
         /// Return lower bound of \f$\pi\f$
-        static FloatVal pi(void);
+        static FloatVal pi();
         /// Return \f$2\pi\f$
-        static FloatVal pi_twice(void);
+        static FloatVal pi_twice();
         //@}
 
         /// \name Update operators
@@ -966,7 +966,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        FloatVar(void) = default;
+        FloatVar() = default;
         /// Initialize from float variable \a y
         FloatVar(const FloatVar& y) = default;
         /// Initialize from float view \a y
@@ -988,15 +988,15 @@ namespace Gecode {
         /// \name Value access
         //@{
         /// Return domain
-        FloatVal domain(void) const;
+        FloatVal domain() const;
         /// Return minimum of domain
-        FloatNum min(void) const;
+        FloatNum min() const;
         /// Return maximum of domain
-        FloatNum max(void) const;
+        FloatNum max() const;
         /// Return median of domain
-        FloatNum med(void) const;
+        FloatNum med() const;
         /// Return size of domain (distance between maximum and minimum)
-        FloatNum size(void) const;
+        FloatNum size() const;
         /**
          * \brief Return assigned value
          *
@@ -1004,7 +1004,7 @@ namespace Gecode {
          * is not yet assigned.
          *
          */
-        FloatVal val(void) const;
+        FloatVal val() const;
 
         //@}
 
@@ -1037,7 +1037,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        FloatValArgs(void);
+        FloatValArgs();
         /// Allocate array with \a n elements
         explicit FloatValArgs(int n);
         /// Allocate array and copy elements from \a x
@@ -1066,7 +1066,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        FloatVarArgs(void) = default;
+        FloatVarArgs() = default;
         /// Allocate array with \a n elements
         explicit FloatVarArgs(int n);
         /// Initialize from variable argument array \a a (copy elements)
@@ -1119,7 +1119,7 @@ namespace Gecode {
         /// \name Creation and initialization
         //@{
         /// Default constructor (array of size 0)
-        FloatVarArray(void) = default;
+        FloatVarArray() = default;
         /// Allocate array for \a n float variables (variables are uninitialized)
         FloatVarArray(Space& home, int n);
         /// Initialize from float variable array \a a (share elements)
@@ -1544,7 +1544,7 @@ namespace Gecode {
          * yet initialized AFC storage is init or the assignment operator.
          *
          */
-        FloatAFC(void) = default;
+        FloatAFC() = default;
         /**
          * \brief Initialize for float variables \a x and decay factor \a d
          *
@@ -1586,7 +1586,7 @@ namespace Gecode {
          * yet initialized action storage is init or the assignment operator.
          *
          */
-        FloatAction(void) = default;
+        FloatAction() = default;
         /// Copy constructor
         FloatAction(const FloatAction& a) = default;
         /// Assignment operator
@@ -1641,7 +1641,7 @@ namespace Gecode {
          * yet initialized CHB storage is init or the assignment operator.
          *
          */
-        FloatCHB(void) = default;
+        FloatCHB() = default;
         /// Copy constructor
         FloatCHB(const FloatCHB& chb) = default;
         /// Assignment operator
@@ -1729,7 +1729,7 @@ namespace Gecode {
 
     public:
         /// Initialize with strategy SEL_NONE
-        FloatVarBranch(void);
+        FloatVarBranch();
         /// Initialize with random number generator \a r
         FloatVarBranch(const Rnd& r);
         /// Initialize with selection strategy \a s and tie-break limit function \a t
@@ -1745,7 +1745,7 @@ namespace Gecode {
         /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
         FloatVarBranch(Select s, FloatBranchMerit mf, BranchTbl t);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
         /// Expand AFC, action, and CHB
         void expand(Home home, const FloatVarArgs& x);
     };
@@ -1756,7 +1756,7 @@ namespace Gecode {
      */
     //@{
     /// Select first unassigned variable
-    FloatVarBranch FLOAT_VAR_NONE(void);
+    FloatVarBranch FLOAT_VAR_NONE();
     /// Select random variable (uniform distribution, for tie breaking)
     FloatVarBranch FLOAT_VAR_RND(const Rnd& r);
     /// Select variable with least merit according to branch merit function \a bm
@@ -1867,7 +1867,7 @@ namespace Gecode {
         /// Initialize with value function \a f and commit function \a c
         FloatValBranch(FloatBranchVal v, FloatBranchCommit c);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
     };
 
     /**
@@ -1876,9 +1876,9 @@ namespace Gecode {
      */
     //@{
     /// Select values not greater than mean of smallest and largest value
-    FloatValBranch FLOAT_VAL_SPLIT_MIN(void);
+    FloatValBranch FLOAT_VAL_SPLIT_MIN();
     /// Select values greater than mean of smallest and largest value
-    FloatValBranch FLOAT_VAL_SPLIT_MAX(void);
+    FloatValBranch FLOAT_VAL_SPLIT_MAX();
     /// Select values randomly which are not greater or not smaller than mean of largest and smallest value
     FloatValBranch FLOAT_VAL_SPLIT_RND(const Rnd& r);
     /**
@@ -1924,7 +1924,7 @@ namespace Gecode {
         /// Initialize with value function \a f and commit function \a c
         FloatAssign(FloatBranchVal v, FloatBranchCommit c);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
     };
 
     /**
@@ -1933,9 +1933,9 @@ namespace Gecode {
      */
     //@{
     /// Select median value of the lower part
-    FloatAssign FLOAT_ASSIGN_MIN(void);
+    FloatAssign FLOAT_ASSIGN_MIN();
     /// Select median value of the upper part
-    FloatAssign FLOAT_ASSIGN_MAX(void);
+    FloatAssign FLOAT_ASSIGN_MAX();
     /// Select median value of a randomly chosen part
     FloatAssign FLOAT_ASSIGN_RND(const Rnd& r);
     /**
@@ -2075,9 +2075,9 @@ namespace Gecode {
         /// \name Access
         //@{
         /// Return minimum
-        FloatNum min(void) const;
+        FloatNum min() const;
         /// Return maximum
-        FloatNum max(void) const;
+        FloatNum max() const;
         //@}
     };
 

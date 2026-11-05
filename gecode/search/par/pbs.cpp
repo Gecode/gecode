@@ -67,7 +67,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     void
-    PortfolioStop::wake(void) {
+    PortfolioStop::wake() {
         WorkerControlAccess::signal_all(worker_control);
     }
 

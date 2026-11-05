@@ -306,7 +306,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 for (IntRelTypes irts; irts(); ++irts)
                     if ((irts.irt() == Gecode::IRT_EQ) || (irts.irt() == Gecode::IRT_LQ) ||
                         (irts.irt() == Gecode::IRT_GQ)) {

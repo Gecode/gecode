@@ -38,7 +38,7 @@ namespace Gecode {
      */
 
     forceinline
-    IntArgs::IntArgs(void)
+    IntArgs::IntArgs()
         : ArgArray<int>(0) {}
 
     forceinline

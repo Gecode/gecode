@@ -60,7 +60,7 @@ namespace Gecode { namespace Support {
         /// Copy bit set \a bs
         BitSetOffset(A& a, const BitSetOffset& bs);
         /// Destructor
-        ~BitSetOffset(void);
+        ~BitSetOffset();
 
         // As for the ordinary bitset, most operations can be inherited
         // directly from BitSetBase.  We only modify the operations that
@@ -78,9 +78,9 @@ namespace Gecode { namespace Support {
         void resize(A& a, unsigned int n, int offset, bool set = false);
 
         /// Retrieve the minimum valid index (the offset).
-        int offset(void) const;
+        int offset() const;
         /// Retrieve the maximum valid index.
-        int max_bit(void) const;
+        int max_bit() const;
         /// Is the bit index valid for this bitset?
         bool valid(int i) const;
     };
@@ -96,7 +96,7 @@ namespace Gecode { namespace Support {
         : BitSetBase(a0, bs), a(a0), _offset(bs._offset) {}
 
     template <class A>
-    forceinline BitSetOffset<A>::~BitSetOffset(void) {
+    forceinline BitSetOffset<A>::~BitSetOffset() {
         dispose(a);
     }
 
@@ -133,13 +133,13 @@ namespace Gecode { namespace Support {
 
     template <class A>
     forceinline int
-    BitSetOffset<A>::offset(void) const {
+    BitSetOffset<A>::offset() const {
         return _offset;
     }
 
     template <class A>
     forceinline int
-    BitSetOffset<A>::max_bit(void) const {
+    BitSetOffset<A>::max_bit() const {
         return _offset + static_cast<int>(size()) - 1;
     }
 

@@ -140,32 +140,32 @@ namespace {
         const int* _d;     ///< Distances
     public:
         /// Initialize as invalid problem instance
-        Problem(void);
+        Problem();
         /// Initialize problem instance
         Problem(const int n, const int* d);
         /// Initialize problem instance with distances \a d read from a file
         Problem(const int n, const IntArgs& d);
         /// Whether the problem instance is valid
-        bool valid(void) const;
+        bool valid() const;
         /// Return size of instance
-        int size(void) const;
+        int size() const;
         /// Return distance between node \a i and \a j
         int d(int i, int j) const;
         /// Return distances
-        const int* d(void) const;
+        const int* d() const;
         /// Return estimate for maximal cost of a path
-        int max(void) const;
+        int max() const;
     };
 
-    inline Problem::Problem(void) : _n(0), _d(nullptr) {}
+    inline Problem::Problem() : _n(0), _d(nullptr) {}
     inline Problem::Problem(const int n, const int* d) : _n(n), _d(d) {}
     inline Problem::Problem(const int n, const IntArgs& d) : _n(n), _s(d), _d(&_s[0]) {}
     inline bool
-    Problem::valid(void) const {
+    Problem::valid() const {
         return _n > 0;
     }
     inline int
-    Problem::size(void) const {
+    Problem::size() const {
         return _n;
     }
     inline int
@@ -173,11 +173,11 @@ namespace {
         return _d[i * _n + j];
     }
     inline const int*
-    Problem::d(void) const {
+    Problem::d() const {
         return _d;
     }
     inline int
-    Problem::max(void) const {
+    Problem::max() const {
         int m = 0;
         for (int i = 0; i < _n * _n; i++)
             m = std::max(m, _d[i]);
@@ -382,7 +382,7 @@ public:
     }
     /// Return solution cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return total;
     }
     /// Constructor for cloning \a s
@@ -392,7 +392,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new TSP(*this);
     }
     /// Print solution

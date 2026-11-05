@@ -70,9 +70,9 @@ namespace Gecode { namespace Int { namespace Element {
             Idx idx;      ///< The index
             Val val;      ///< The value
             /// Mark that this pair should be removed
-            void mark(void);
+            void mark();
             /// Return whether this pair is marked for removal
-            bool marked(void) const;
+            bool marked() const;
         };
         /**
          * \brief Value iterator for indices in index-value map
@@ -88,11 +88,11 @@ namespace Gecode { namespace Int { namespace Element {
             /// Initialize with start
             IterIdxUnmark(IdxVal* iv);
             /// Test whether more pairs to be iterated
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move to next index value pair (next index)
-            void operator++(void);
+            void operator++();
             /// Return index of current index value pair
-            Idx val(void) const;
+            Idx val() const;
         };
         /**
          * \brief Value iterator for values in index-value map
@@ -108,11 +108,11 @@ namespace Gecode { namespace Int { namespace Element {
             /// Initialize with start
             IterVal(IdxVal* iv);
             /// Test whether more pairs to be iterated
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move to next index value pair (next value)
-            void operator++(void);
+            void operator++();
             /// Return value of current index value pair
-            Val val(void) const;
+            Val val() const;
         };
         /**
          * \brief Value iterator for values in index-value map
@@ -130,11 +130,11 @@ namespace Gecode { namespace Int { namespace Element {
             /// Initialize with start
             IterValUnmark(IdxVal* iv);
             /// Test whether more pairs to be iterated
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move to next index value pair (next value)
-            void operator++(void);
+            void operator++();
             /// Return value of current index value pair
-            Val val(void) const;
+            Val val() const;
         };
         /// Sorting pointers to (index,value) pairs in value order
         class ByVal {
@@ -164,9 +164,9 @@ namespace Gecode { namespace Int { namespace Element {
         /// The index-value data structure
         IdxVal* iv;
         /// Prune index according to \a x0
-        void prune_idx(void);
+        void prune_idx();
         /// Prune values according to \a x1
-        void prune_val(void);
+        void prune_val();
         /// Prune when \a x1 is assigned
         static ExecStatus assigned_val(Space& home, IntSharedArray& c, V0 x0, V1 x1);
         /// Constructor for cloning \a p

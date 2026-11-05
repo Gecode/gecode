@@ -98,7 +98,7 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Queens(*this);
     }
 
@@ -128,7 +128,7 @@ protected:
 
 public:
     /// Constructor
-    QueensInspector(void) : scene(nullptr), mw(nullptr) {}
+    QueensInspector() : scene(nullptr), mw(nullptr) {}
     /// Inspect space \a s
     void
     inspect(const Space& s) override {
@@ -159,7 +159,7 @@ public:
 
     /// Set up main window
     void
-    initialize(void) {
+    initialize() {
         mw = new QMainWindow();
         scene = new QGraphicsScene();
         QGraphicsView* view = new QGraphicsView(scene);
@@ -175,12 +175,12 @@ public:
 
     /// Name of the inspector
     std::string
-    name(void) override {
+    name() override {
         return "Board";
     }
     /// Finalize inspector
     void
-    finalize(void) override {
+    finalize() override {
         delete mw;
         mw = nullptr;
     }

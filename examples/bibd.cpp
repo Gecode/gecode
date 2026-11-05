@@ -48,7 +48,7 @@ public:
     int b, r;         ///< Derived parameters
     /// Derive additional parameters
     void
-    derive(void) {
+    derive() {
         b = (v * (v - 1) * lambda) / (k * (k - 1));
         r = (lambda * (v - 1)) / (k - 1);
     }
@@ -69,7 +69,7 @@ public:
     }
     /// Print help message
     void
-    help(void) override {
+    help() override {
         Options::help();
         std::cerr << "\t(unsigned int) default: " << v << '\n'
                   << "\t\tparameter v" << '\n'
@@ -161,7 +161,7 @@ public:
 
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new BIBD(*this);
     }
 };

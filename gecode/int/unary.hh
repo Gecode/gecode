@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFixPTask(void);
+        ManFixPTask();
         /// Initialize with start time \a s and processing time \a p
         ManFixPTask(IntVar s, int p);
         /// Initialize with start time \a s and processing time \a p
@@ -73,31 +73,31 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Value access
         //@{
         /// Return earliest start time
-        int est(void) const;
+        int est() const;
         /// Return earliest completion time
-        int ect(void) const;
+        int ect() const;
         /// Return latest start time
-        int lst(void) const;
+        int lst() const;
         /// Return latest completion time
-        int lct(void) const;
+        int lct() const;
         /// Return minimum processing time
-        int pmin(void) const;
+        int pmin() const;
         /// Return maximum processing time
-        int pmax(void) const;
+        int pmax() const;
         /// Return start time
-        IntVar st(void) const;
+        IntVar st() const;
         /// Whether task is mandatory
-        bool mandatory(void) const;
+        bool mandatory() const;
         /// Whether task is excluded
-        bool excluded(void) const;
+        bool excluded() const;
         /// Whether task can still be optional
-        bool optional(void) const;
+        bool optional() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether task is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         //@}
 
         /// \name Value update
@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFixPSETask(void);
+        ManFixPSETask();
         /**
          * \brief Initialize task
          *
@@ -174,17 +174,17 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Value access
         //@{
         /// Return earliest start time
-        int est(void) const;
+        int est() const;
         /// Return earliest completion time
-        int ect(void) const;
+        int ect() const;
         /// Return latest start time
-        int lst(void) const;
+        int lst() const;
         /// Return latest completion time
-        int lct(void) const;
+        int lct() const;
         /// Return minimum processing time
-        int pmin(void) const;
+        int pmin() const;
         /// Return maximum processing time
-        int pmax(void) const;
+        int pmax() const;
         //@}
 
         /// \name Value update
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFixPTask(void);
+        OptFixPTask();
         /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
         OptFixPTask(IntVar s, int p, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFixPSETask(void);
+        OptFixPSETask();
         /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
         OptFixPSETask(TaskType t, IntVar s, int p, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
@@ -277,7 +277,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFlexTask(void) = default;
+        ManFlexTask() = default;
         /// Initialize with start time \a s, processing time \a p, end time \a e
         ManFlexTask(IntVar s, IntVar p, IntVar e);
         /// Initialize with start time \a s, processing time \a p, end time \a e
@@ -289,35 +289,35 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Value access
         //@{
         /// Return earliest start time
-        int est(void) const;
+        int est() const;
         /// Return earliest completion time
-        int ect(void) const;
+        int ect() const;
         /// Return latest start time
-        int lst(void) const;
+        int lst() const;
         /// Return latest completion time
-        int lct(void) const;
+        int lct() const;
         /// Return minimum processing time
-        int pmin(void) const;
+        int pmin() const;
         /// Return maximum processing time
-        int pmax(void) const;
+        int pmax() const;
         /// Return start time
-        IntVar st(void) const;
+        IntVar st() const;
         /// Return processing time
-        IntVar p(void) const;
+        IntVar p() const;
         /// Return end time
-        IntVar e(void) const;
+        IntVar e() const;
         /// Whether task is mandatory
-        bool mandatory(void) const;
+        bool mandatory() const;
         /// Whether task is excluded
-        bool excluded(void) const;
+        bool excluded() const;
         /// Whether task can still be optional
-        bool optional(void) const;
+        bool optional() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether task is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         //@}
 
         /// \name Value update
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFlexTask(void) = default;
+        OptFlexTask() = default;
         /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
         OptFlexTask(IntVar s, IntVar p, IntVar e, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
@@ -675,7 +675,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// Remove task with index \a i
         void remove(int i);
         /// Return earliest completion time of all tasks
-        int ect(void) const;
+        int ect() const;
         /// Return earliest completion time of all tasks but \a i
         int ect(int i) const;
     };
@@ -721,13 +721,13 @@ namespace Gecode { namespace Int { namespace Unary {
         /// Remove task with index \a i from lambda
         void remove_lambda(int i);
         /// Whether has responsible task
-        bool lempty(void) const;
+        bool lempty() const;
         /// Return responsible task
-        int responsible(void) const;
+        int responsible() const;
         /// Return earliest completion time of all tasks
-        int ect(void) const;
+        int ect() const;
         /// Return earliest completion time of all tasks excluding lambda tasks
-        int lect(void) const;
+        int lect() const;
     };
 
 }}} // namespace Gecode::Int::Unary

@@ -41,7 +41,7 @@ namespace Gecode { namespace Search { namespace Seq {
         : l(0U), c(0U), m_stop(s), e_stopped(false), e_fail(0U) {}
 
     forceinline void
-    RestartStop::restart(void) {
+    RestartStop::restart() {
         Support::Lock lock(m);
         m_stat.restart++;
     }
@@ -92,13 +92,13 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     forceinline bool
-    RestartStop::enginestopped(void) const {
+    RestartStop::enginestopped() const {
         Support::Lock lock(m);
         return e_stopped;
     }
 
     forceinline Statistics
-    RestartStop::metastatistics(void) const {
+    RestartStop::metastatistics() const {
         Support::Lock lock(m);
         return m_stat;
     }

@@ -50,28 +50,28 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline FloatVal
-    FloatView::domain(void) const {
+    FloatView::domain() const {
         return x->domain();
     }
     forceinline FloatNum
-    FloatView::min(void) const {
+    FloatView::min() const {
         return x->min();
     }
     forceinline FloatNum
-    FloatView::max(void) const {
+    FloatView::max() const {
         return x->max();
     }
     forceinline FloatNum
-    FloatView::med(void) const {
+    FloatView::med() const {
         return x->med();
     }
     forceinline FloatVal
-    FloatView::val(void) const {
+    FloatView::val() const {
         return x->val();
     }
 
     forceinline FloatNum
-    FloatView::size(void) const {
+    FloatView::size() const {
         return x->size();
     }
 
@@ -80,7 +80,7 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline bool
-    FloatView::zero_in(void) const {
+    FloatView::zero_in() const {
         return x->zero_in();
     }
     forceinline bool

@@ -41,7 +41,7 @@
 namespace Gecode { namespace Support {
 
     unsigned int
-    hwrnd(void) {
+    hwrnd() {
         unsigned int r;
         if (rand_s(&r) != 0)
             throw std::runtime_error("Hardware random initialization failed");
@@ -60,7 +60,7 @@ namespace Gecode { namespace Support {
 namespace Gecode { namespace Support {
 
     unsigned int
-    hwrnd(void) {
+    hwrnd() {
         std::fstream devrandom;
         devrandom.open("/dev/random", std::fstream::in | std::fstream::binary);
         unsigned int rnd;

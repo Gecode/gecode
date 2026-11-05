@@ -640,7 +640,7 @@ namespace Test { namespace Random {
     public:
         Gecode::IntVarArray x;
         unsigned int asset = 0;
-        SpokePermutation(void) : x(*this, 6, 0, 5) {
+        SpokePermutation() : x(*this, 6, 0, 5) {
             using namespace Gecode;
             distinct(*this, x);
             // Pigeonhole failures that distinct finds late let the assets take turns

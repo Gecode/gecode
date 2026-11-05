@@ -85,48 +85,48 @@ public:
           _maxcapacity(csplib_maxcapacity), _loss(csplib_loss), _orders(&(csplib_orders[0])), _ncolors(csplib_ncolors),
           _norders(csplib_norders) {}
     /// Print help text
-    void help(void) override;
+    void help() override;
     /// Parse options from arguments \a argv (number is \a argc)
     bool parse(int& argc, char* argv[]);
 
     /// Return size
     unsigned int
-    size(void) const {
+    size() const {
         return _size;
     }
     /// Return capacities
     int*
-    capacities(void) const {
+    capacities() const {
         return _capacities;
     }
     /// Return number of capacities
     int
-    ncapacities(void) const {
+    ncapacities() const {
         return _ncapacities;
     }
     /// Return maximum of capacities
     int
-    max_capacity(void) const {
+    max_capacity() const {
         return _maxcapacity;
     }
     /// Return loss values
     int*
-    loss(void) const {
+    loss() const {
         return _loss;
     }
     /// Return orders
     order_t
-    orders(void) const {
+    orders() const {
         return _orders;
     }
     /// Return number of colors
     int
-    ncolors(void) const {
+    ncolors() const {
         return _ncolors;
     }
     /// Return number of orders
     int
-    norders(void) const {
+    norders() const {
         return _norders;
     }
 };
@@ -344,12 +344,12 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new SteelMill(*this);
     }
     /// Return solution cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return total_cost;
     }
 
@@ -491,7 +491,7 @@ main(int argc, char* argv[]) {
 }
 
 void
-SteelMillOptions::help(void) {
+SteelMillOptions::help() {
     Options::help();
     std::cerr << "\t(string), optional" << '\n'
               << "\t\tBenchmark to load." << '\n'

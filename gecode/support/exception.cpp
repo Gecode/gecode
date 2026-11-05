@@ -51,7 +51,7 @@ namespace Gecode {
         li[j] = 0;
     }
     const char*
-    Exception::what(void) const noexcept {
+    Exception::what() const noexcept {
         return &li[0];
     }
 
@@ -59,7 +59,7 @@ namespace Gecode {
      * Classes for exceptions
      *
      */
-    MemoryExhausted::MemoryExhausted(void) : Exception("Memory", "Heap memory exhausted") {}
+    MemoryExhausted::MemoryExhausted() : Exception("Memory", "Heap memory exhausted") {}
 
     DynamicCastFailed::DynamicCastFailed(const char* l) : Exception(l, "Attempt to perform dynamic_cast failed") {}
 

@@ -82,7 +82,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Node(void) = default;
+        Node() = default;
         /// Constructor for index \a i that sets type to \a t
         Node(NodeFlag nf, int i);
         //@}
@@ -90,19 +90,19 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Access
         //@{
         /// Return the type of the node (false for a variable node)
-        bool type(void) const;
+        bool type() const;
         /// Return reference to the incident edges
-        Edge** adj(void);
+        Edge** adj();
         /// Return pointer to the first incident edge
-        Edge* first(void) const;
+        Edge* first() const;
         /// Return pointer to the last incident edge
-        Edge* last(void) const;
+        Edge* last() const;
         /// Return pointer to the node's inedge
-        Edge* inedge(void) const;
+        Edge* inedge() const;
         /// Get index of either variable or value
-        int index(void) const;
+        int index() const;
         /// check whether a node has been removed from the graph
-        bool removed(void) const;
+        bool removed() const;
         //@}
 
         /// \name Update
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        VarNode(void) = default;
+        VarNode() = default;
         /// Creates a variable node with index \a i
         VarNode(int i);
         //@}
@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Constructors and destructors
         //@{
         /// Default constructor
-        ValNode(void) = default;
+        ValNode() = default;
         /**
          * \brief Constructor for value node
          *
@@ -205,31 +205,31 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Access
         //@{
         /// get max cap for LBC
-        int maxlow(void) const;
+        int maxlow() const;
         /// Mark the value node as conflicting in case of variable cardinalities
         void card_conflict(int c);
         /// Check whether the value node is conflicting
-        int card_conflict(void) const;
+        int card_conflict() const;
         /// Reduce the conflict counter
-        void red_conflict(void);
+        void red_conflict();
         /// increases the value counter
-        void inc(void);
+        void inc();
         /// returns the current number of occurrences of the value
-        int kcount(void) const;
+        int kcount() const;
         /// returns the number of incident matching edges on a value node
         int incid_match(BC bc) const;
         /// returns the index in cardinality array k
-        int kindex(void) const;
+        int kindex() const;
         /// returns \a true if the node is matched in BC, \a false otherwise
         bool matched(BC bc) const;
         /// tests whether the node is a sink
-        bool sink(void) const;
+        bool sink() const;
         /// tests whether the node is a source
-        bool source(void) const;
+        bool source() const;
         /// return the minimal node capacity as stored in \a k
-        int kmin(void) const;
+        int kmin() const;
         /// return the maximal node capacity as stored in \a k
-        int kmax(void) const;
+        int kmax() const;
         /// return minimal or maximal capacity
         int kbound(BC bc) const;
         //@}
@@ -255,7 +255,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// unmatch the node
         void unmatch(BC bc);
         /// node reset to original capacity values
-        void reset(void);
+        void reset();
         /// set the minimal k-capacity to min
         void kmin(int min);
         /// set the maximal k-capacity to max
@@ -300,7 +300,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Constructors
         //@{
         /// Default constructor
-        Edge(void) = default;
+        Edge() = default;
         /**
          * \brief Construct edge \f$e(x,v)\f$ from variable node \a x
          *  and value node \a y
@@ -315,7 +315,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// return whether the edge is matched
         bool matched(BC bc) const;
         /// return whether the edge has been deleted from the graph
-        bool deleted(void) const;
+        bool deleted() const;
         /**
          * \brief return a pointer to the next edge
          *  If \a t is false the function returns the next edge incident on \a x
@@ -323,17 +323,17 @@ namespace Gecode { namespace Int { namespace GCC {
          */
         Edge* next(bool t) const;
         /// return the pointer to the next edge incident on \a x
-        Edge* next(void) const;
+        Edge* next() const;
         /// return the pointer to the previous edge incident on \a x
-        Edge* prev(void) const;
+        Edge* prev() const;
         /// return the pointer to the next edge incident on \a v
-        Edge* vnext(void) const;
+        Edge* vnext() const;
         /// return the pointer to the previous edge incident on \a v
-        Edge* vprev(void) const;
+        Edge* vprev() const;
         /// return the pointer to the variable node \a x of this edge
-        VarNode* get_var(void) const;
+        VarNode* get_var() const;
         /// return the pointer to the value node \a v of this edge
-        ValNode* get_val(void) const;
+        ValNode* get_val() const;
         /**
          * \brief return pointer to \a x if \a t = true otherwise return \a v
          *
@@ -356,19 +356,19 @@ namespace Gecode { namespace Int { namespace GCC {
         /// Unmatch the edge and  ( \a x if t=false,  \a v otherwise )
         void unmatch(BC bc, bool t);
         /// Unlink the edge from the linked list of edges
-        void unlink(void);
+        void unlink();
         /// Mark the edge as deleted during synchronization
-        void del_edge(void);
+        void del_edge();
         /// Insert the edge again
-        void insert_edge(void);
+        void insert_edge();
         /// return the reference to the next edge incident on \a x
-        Edge** next_ref(void);
+        Edge** next_ref();
         /// return the reference to the previous edge incident on \a x
-        Edge** prev_ref(void);
+        Edge** prev_ref();
         /// return the reference to the next edge incident on \a v
-        Edge** vnext_ref(void);
+        Edge** vnext_ref();
         /// return the reference to the previous edge incident on \a v
-        Edge** vprev_ref(void);
+        Edge** vprev_ref();
         //@}
 
         /// \name Memory management
@@ -462,14 +462,14 @@ namespace Gecode { namespace Int { namespace GCC {
          *    k[i].min()\f$
          */
         template <BC>
-        ExecStatus maximum_matching(void);
+        ExecStatus maximum_matching();
 
         /// Compute possible free alternating paths in the graph
         template <BC>
-        void free_alternating_paths(void);
+        void free_alternating_paths();
         /// Compute possible strongly connected components of the graph
         template <BC>
-        void strongly_connected_components(void);
+        void strongly_connected_components();
         /**
          * \brief Test whether the current maximal matching on the graph
          * can be augmented by an alternating path starting and ending with
@@ -506,15 +506,15 @@ namespace Gecode { namespace Int { namespace GCC {
         : e(nullptr), fst(nullptr), lst(nullptr), ie(nullptr), idx(i), nf(static_cast<unsigned char>(nf0)), noe(0) {}
 
     forceinline Edge**
-    Node::adj(void) {
+    Node::adj() {
         return &e;
     }
     forceinline Edge*
-    Node::first(void) const {
+    Node::first() const {
         return fst;
     }
     forceinline Edge*
-    Node::last(void) const {
+    Node::last() const {
         return lst;
     }
     forceinline void
@@ -526,11 +526,11 @@ namespace Gecode { namespace Int { namespace GCC {
         lst = p;
     }
     forceinline bool
-    Node::type(void) const {
+    Node::type() const {
         return (nf & NF_VAL) != 0;
     }
     forceinline Edge*
-    Node::inedge(void) const {
+    Node::inedge() const {
         return ie;
     }
     forceinline void
@@ -538,7 +538,7 @@ namespace Gecode { namespace Int { namespace GCC {
         ie = p;
     }
     forceinline bool
-    Node::removed(void) const {
+    Node::removed() const {
         return noe == 0;
     }
     forceinline void
@@ -546,7 +546,7 @@ namespace Gecode { namespace Int { namespace GCC {
         idx = i;
     }
     forceinline int
-    Node::index(void) const {
+    Node::index() const {
         return idx;
     }
 
@@ -624,7 +624,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     forceinline int
-    ValNode::maxlow(void) const {
+    ValNode::maxlow() const {
         if (_klb == _kub) {
             assert(ublow == lb);
         }
@@ -637,13 +637,13 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     forceinline void
-    ValNode::red_conflict(void) {
+    ValNode::red_conflict() {
         noc--;
         assert(noc >= 0);
     }
 
     forceinline int
-    ValNode::card_conflict(void) const {
+    ValNode::card_conflict() const {
         return noc;
     }
 
@@ -660,7 +660,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     forceinline void
-    ValNode::reset(void) {
+    ValNode::reset() {
         lb = _klb;
         ublow = _kub;
         ub = _kub;
@@ -677,12 +677,12 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     forceinline int
-    ValNode::kmax(void) const {
+    ValNode::kmax() const {
         return _kub;
     }
 
     forceinline int
-    ValNode::kmin(void) const {
+    ValNode::kmin() const {
         return _klb;
     }
 
@@ -735,12 +735,12 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     forceinline void
-    ValNode::inc(void) {
+    ValNode::inc() {
         _kcount++;
     }
 
     forceinline int
-    ValNode::kcount(void) const {
+    ValNode::kcount() const {
         return _kcount;
     }
 
@@ -755,7 +755,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     forceinline int
-    ValNode::kindex(void) const {
+    ValNode::kindex() const {
         return _kidx;
     }
 
@@ -769,14 +769,14 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     forceinline bool
-    ValNode::sink(void) const {
+    ValNode::sink() const {
         // there are only incoming edges
         // in case of the UBC-matching
         return _kub - ub == noe;
     }
 
     forceinline bool
-    ValNode::source(void) const {
+    ValNode::source() const {
         // there are only incoming edges
         // in case of the UBC-matching
         return _klb - lb == noe;
@@ -787,7 +787,7 @@ namespace Gecode { namespace Int { namespace GCC {
      *
      */
     forceinline void
-    Edge::unlink(void) {
+    Edge::unlink() {
         // unlink from variable side
         Edge* p = prev_edge;
         Edge* n = next_edge;
@@ -850,7 +850,7 @@ namespace Gecode { namespace Int { namespace GCC {
             return (ef & EF_MARKED_LBC) != 0;
     }
     forceinline Edge*
-    Edge::next(void) const {
+    Edge::next() const {
         return next_edge;
     }
     forceinline Edge*
@@ -863,41 +863,41 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     forceinline Edge*
-    Edge::vnext(void) const {
+    Edge::vnext() const {
         return next_vedge;
     }
     forceinline Edge**
-    Edge::vnext_ref(void) {
+    Edge::vnext_ref() {
         return &next_vedge;
     }
     forceinline Edge*
-    Edge::prev(void) const {
+    Edge::prev() const {
         return prev_edge;
     }
     forceinline Edge**
-    Edge::prev_ref(void) {
+    Edge::prev_ref() {
         return &prev_edge;
     }
     forceinline Edge*
-    Edge::vprev(void) const {
+    Edge::vprev() const {
         return prev_vedge;
     }
     forceinline Edge**
-    Edge::vprev_ref(void) {
+    Edge::vprev_ref() {
         return &prev_vedge;
     }
     forceinline Edge**
-    Edge::next_ref(void) {
+    Edge::next_ref() {
         return &next_edge;
     }
     forceinline VarNode*
-    Edge::get_var(void) const {
+    Edge::get_var() const {
         assert(x != nullptr);
         return x;
     }
 
     forceinline ValNode*
-    Edge::get_val(void) const {
+    Edge::get_val() const {
         assert(v != nullptr);
         return v;
     }
@@ -958,17 +958,17 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     forceinline void
-    Edge::del_edge(void) {
+    Edge::del_edge() {
         ef |= EF_DELETED;
     }
 
     forceinline void
-    Edge::insert_edge(void) {
+    Edge::insert_edge() {
         ef &= ~EF_DELETED;
     }
 
     forceinline bool
-    Edge::deleted(void) const {
+    Edge::deleted() const {
         return (ef & EF_DELETED) != 0;
     }
 
@@ -1474,7 +1474,7 @@ namespace Gecode { namespace Int { namespace GCC {
     template <class Card>
     template <BC bc>
     inline ExecStatus
-    VarValGraph<Card>::maximum_matching(void) {
+    VarValGraph<Card>::maximum_matching() {
         int card_match = 0;
         // find an initial matching in O(n*d)
         // greedy algorithm
@@ -1540,7 +1540,7 @@ namespace Gecode { namespace Int { namespace GCC {
     template <class Card>
     template <BC bc>
     forceinline void
-    VarValGraph<Card>::free_alternating_paths(void) {
+    VarValGraph<Card>::free_alternating_paths() {
         Region r;
         NodeStack ns(r, n_node);
         BitSet visited(r, static_cast<unsigned int>(n_node));
@@ -1713,7 +1713,7 @@ namespace Gecode { namespace Int { namespace GCC {
     template <class Card>
     template <BC bc>
     forceinline void
-    VarValGraph<Card>::strongly_connected_components(void) {
+    VarValGraph<Card>::strongly_connected_components() {
         Region r;
         BitSet inscc(r, static_cast<unsigned int>(n_node));
         BitSet in_unfinished(r, static_cast<unsigned int>(n_node));

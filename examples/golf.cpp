@@ -48,7 +48,7 @@ protected:
     Driver::IntOption _s; //< Number of players per group
 public:
     /// Constructor
-    GolfOptions(void)
+    GolfOptions()
         : Options("Golf"), _w("w", "number of weeks", 9), _g("g", "number of groups", 8),
           _s("s", "number of players per group", 4) {
         add(_w);
@@ -57,17 +57,17 @@ public:
     }
     /// Return number of weeks
     int
-    w(void) const {
+    w() const {
         return _w.value();
     }
     /// Return number of groups
     int
-    g(void) const {
+    g() const {
         return _g.value();
     }
     /// Return number of players per group
     int
-    s(void) const {
+    s() const {
         return _s.value();
     }
 };
@@ -219,7 +219,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Golf(*this);
     }
 };

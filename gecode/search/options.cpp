@@ -39,7 +39,7 @@ namespace Gecode { namespace Search {
     const Options Options::def;
 
     Options
-    Options::expand(void) const {
+    Options::expand() const {
 #ifdef GECODE_HAS_THREADS
         double t = threads;
         if (t <= -1.0) {

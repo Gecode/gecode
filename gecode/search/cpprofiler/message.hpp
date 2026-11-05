@@ -69,20 +69,20 @@ namespace Gecode { namespace CPProfiler {
 
     public:
         /// Check whether value is present
-        bool valid(void) const;
+        bool valid() const;
         /// Set value to \a t
         void set(const T& t);
         /// Disregard value
-        void unset(void);
+        void unset();
         /// Access value
-        const T& value(void) const;
+        const T& value() const;
         /// Access value
-        T& value(void);
+        T& value();
     };
 
     template <class T>
     forceinline bool
-    Option<T>::valid(void) const {
+    Option<T>::valid() const {
         return present;
     }
     template <class T>
@@ -93,18 +93,18 @@ namespace Gecode { namespace CPProfiler {
     }
     template <class T>
     forceinline void
-    Option<T>::unset(void) {
+    Option<T>::unset() {
         present = false;
     }
     template <class T>
     forceinline const T&
-    Option<T>::value(void) const {
+    Option<T>::value() const {
         assert(present);
         return value_;
     }
     template <class T>
     forceinline T&
-    Option<T>::value(void) {
+    Option<T>::value() {
         assert(present);
         return value_;
     }
@@ -144,24 +144,24 @@ namespace Gecode { namespace CPProfiler {
 
     public:
         bool
-        is_node(void) const {
+        is_node() const {
             return _type == MsgType::NODE;
         }
         bool
-        is_done(void) const {
+        is_done() const {
             return _type == MsgType::DONE;
         }
         bool
-        is_start(void) const {
+        is_start() const {
             return _type == MsgType::START;
         }
         bool
-        is_restart(void) const {
+        is_restart() const {
             return _type == MsgType::RESTART;
         }
 
         NodeUID
-        node_uid(void) const {
+        node_uid() const {
             return _node;
         }
         void
@@ -170,7 +170,7 @@ namespace Gecode { namespace CPProfiler {
         }
 
         NodeUID
-        parent_uid(void) const {
+        parent_uid() const {
             return _parent;
         }
         void
@@ -179,7 +179,7 @@ namespace Gecode { namespace CPProfiler {
         }
 
         int32_t
-        alt(void) const {
+        alt() const {
             return _alt;
         }
         void
@@ -188,7 +188,7 @@ namespace Gecode { namespace CPProfiler {
         }
 
         int32_t
-        kids(void) const {
+        kids() const {
             return _kids;
         }
         void
@@ -197,7 +197,7 @@ namespace Gecode { namespace CPProfiler {
         }
 
         NodeStatus
-        status(void) const {
+        status() const {
             return _status;
         }
         void
@@ -230,16 +230,16 @@ namespace Gecode { namespace CPProfiler {
         }
 
         bool
-        has_version(void) const {
+        has_version() const {
             return _have_version;
         }
         int32_t
-        version(void) const {
+        version() const {
             return _version;
         }
 
         bool
-        has_label(void) const {
+        has_label() const {
             return _have_label;
         }
         const std::string&
@@ -248,21 +248,21 @@ namespace Gecode { namespace CPProfiler {
         }
 
         bool
-        has_nogood(void) const {
+        has_nogood() const {
             return _have_nogood;
         }
         const std::string&
-        nogood(void) const {
+        nogood() const {
             return _nogood;
         }
 
         // generic optional fields
         bool
-        has_info(void) const {
+        has_info() const {
             return _have_info;
         }
         const std::string&
-        info(void) const {
+        info() const {
             return _info;
         }
 
@@ -271,12 +271,12 @@ namespace Gecode { namespace CPProfiler {
             _type = type;
         }
         MsgType
-        type(void) const {
+        type() const {
             return _type;
         }
 
         void
-        reset(void) {
+        reset() {
             _have_label = false;
             _have_nogood = false;
             _have_info = false;
@@ -400,18 +400,18 @@ namespace Gecode { namespace CPProfiler {
         }
 
         void
-        make_done(void) {
+        make_done() {
             msg.reset();
             msg.set_type(MsgType::DONE);
         }
 
         const Message&
-        get_msg(void) {
+        get_msg() {
             return msg;
         }
 
         std::vector<char>
-        serialize(void) const {
+        serialize() const {
             std::vector<char> data;
             size_t data_size =
                 1 + (msg.is_node() ? 4 * 8 + 1 : 0) + (msg.has_label() ? 1 + 4 + msg.label().size() : 0) +

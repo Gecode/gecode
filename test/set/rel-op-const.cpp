@@ -350,7 +350,7 @@ namespace Test { namespace Set {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 for (SetRelTypes srts; srts(); ++srts) {
                     for (SetOpTypes sots; sots(); ++sots) {

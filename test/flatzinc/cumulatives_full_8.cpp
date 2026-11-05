@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("cumulatives_full::8",
                                    R"FZN(
 % The two overlapping tasks exceed machine 0's capacity.

@@ -61,18 +61,18 @@ namespace Gecode {
             void update(int i);
             /// Delete object
             GECODE_KERNEL_EXPORT
-            ~Storage(void) override;
+            ~Storage() override;
         };
         /// Return object of correct type
-        Storage& object(void) const;
+        Storage& object() const;
         /// Set object to \a o
         void object(Storage& o);
         /// Update action value at position \a i
         void update(int i);
         /// Acquire mutex
-        void acquire(void);
+        void acquire();
         /// Release mutex
-        void release(void);
+        void release();
 
     public:
         /// \name Constructors and initialization
@@ -84,7 +84,7 @@ namespace Gecode {
          * yet initialized action storage is init and the assignment operator.
          *
          */
-        Action(void) = default;
+        Action() = default;
         /// Copy constructor
         GECODE_KERNEL_EXPORT
         Action(const Action& a) = default;
@@ -115,14 +115,14 @@ namespace Gecode {
 
         /// Destructor
         GECODE_KERNEL_EXPORT
-        ~Action(void) = default;
+        ~Action() = default;
 
         /// \name Information access
         //@{
         /// Return action value at position \a i
         double operator[](int i) const;
         /// Return number of action values
-        int size(void) const;
+        int size() const;
         //@}
 
         /// \name Decay factor for aging
@@ -153,17 +153,17 @@ namespace Gecode {
             /// Constructor for cloning \a a
             Idx(Space& home, Idx& a);
             /// Mark index as propagated
-            void propagate(void);
+            void propagate();
             /// Mark index as failed
-            void fail(void);
+            void fail();
             /// Whether index has been propagated
-            bool propagated(void) const;
+            bool propagated() const;
             /// Whether index has been failed
-            bool failed(void) const;
+            bool failed() const;
             /// Clear any information
-            void clear(void);
+            void clear();
             /// Get index of view
-            int idx(void) const;
+            int idx() const;
         };
         /// Access to action information
         Action a;
@@ -214,32 +214,32 @@ namespace Gecode {
         : Advisor(home, a), _info(a._info) {}
     template <class View, bool p, bool f>
     forceinline void
-    Action::Recorder<View, p, f>::Idx::propagate(void) {
+    Action::Recorder<View, p, f>::Idx::propagate() {
         _info |= 1U;
     }
     template <class View, bool p, bool f>
     forceinline void
-    Action::Recorder<View, p, f>::Idx::fail(void) {
+    Action::Recorder<View, p, f>::Idx::fail() {
         _info |= 2U;
     }
     template <class View, bool p, bool f>
     forceinline bool
-    Action::Recorder<View, p, f>::Idx::propagated(void) const {
+    Action::Recorder<View, p, f>::Idx::propagated() const {
         return (_info & 1U) != 0;
     }
     template <class View, bool p, bool f>
     forceinline bool
-    Action::Recorder<View, p, f>::Idx::failed(void) const {
+    Action::Recorder<View, p, f>::Idx::failed() const {
         return (_info & 2U) != 0;
     }
     template <class View, bool p, bool f>
     forceinline void
-    Action::Recorder<View, p, f>::Idx::clear(void) {
+    Action::Recorder<View, p, f>::Idx::clear() {
         _info &= ~3U;
     }
     template <class View, bool p, bool f>
     forceinline int
-    Action::Recorder<View, p, f>::Idx::idx(void) const {
+    Action::Recorder<View, p, f>::Idx::idx() const {
         return static_cast<int>(_info >> 2);
     }
 
@@ -302,7 +302,7 @@ namespace Gecode {
      */
 
     forceinline Action::Storage&
-    Action::object(void) const {
+    Action::object() const {
         return static_cast<Action::Storage&>(*SharedHandle::object());
     }
 
@@ -321,15 +321,15 @@ namespace Gecode {
         return object().a[i];
     }
     forceinline int
-    Action::size(void) const {
+    Action::size() const {
         return object().n;
     }
     forceinline void
-    Action::acquire(void) {
+    Action::acquire() {
         object().m.acquire();
     }
     forceinline void
-    Action::release(void) {
+    Action::release() {
         object().m.release();
     }
 

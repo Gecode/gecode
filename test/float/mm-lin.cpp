@@ -2275,14 +2275,14 @@ namespace Test { namespace Float {
             /// Reification variable
             Gecode::BoolVar b;
             /// Create fixture
-            EmptyFixture(void) : b(*this, 0, 1) {}
+            EmptyFixture() : b(*this, 0, 1) {}
             /// Constructor for cloning \a fixture
             EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
                 b.update(*this, fixture.b);
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new EmptyFixture(*this);
             }
         };
@@ -2291,10 +2291,10 @@ namespace Test { namespace Float {
         class LinRelEmpty : public Base {
         public:
             /// Create and register test
-            LinRelEmpty(void) : Base("Float::MiniModel::LinRel::Empty") {}
+            LinRelEmpty() : Base("Float::MiniModel::LinRel::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 FloatVarArgs x;
                 FloatValArgs a;
@@ -2312,7 +2312,7 @@ namespace Test { namespace Float {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 int n = sizeof(li) / sizeof(LinInstr*);
                 for (int i = 0; i < n; i++) {
                     std::string s = Test::str(i);

@@ -503,7 +503,7 @@ namespace Test { namespace Set {
         class WeightsEmpty : public SetTest {
         public:
             /// Create and register test
-            WeightsEmpty(void) : SetTest("Int::Weights::Empty", 1, d2, false, 1) {}
+            WeightsEmpty() : SetTest("Int::Weights::Empty", 1, d2, false, 1) {}
             /// %Test whether \a x is solution
             bool
             solution(const SetAssignment& x) const override {
@@ -527,7 +527,7 @@ namespace Test { namespace Set {
             /// Weight of \a x
             IntVar y;
             /// Create fixture
-            WeightsFixture(void) : x(*this, IntSet::empty, ds_33), y(*this, -2, 2) {}
+            WeightsFixture() : x(*this, IntSet::empty, ds_33), y(*this, -2, 2) {}
             /// Constructor for cloning \a fixture
             WeightsFixture(WeightsFixture& fixture) : Gecode::Space(fixture) {
                 x.update(*this, fixture.x);
@@ -535,7 +535,7 @@ namespace Test { namespace Set {
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new WeightsFixture(*this);
             }
         };
@@ -544,10 +544,10 @@ namespace Test { namespace Set {
         class WeightsEmptyMismatch : public Base {
         public:
             /// Create and register test
-            WeightsEmptyMismatch(void) : Base("Set::Int::Weights::Empty::Mismatch") {}
+            WeightsEmptyMismatch() : Base("Set::Int::Weights::Empty::Mismatch") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 WeightsFixture home;
                 try {
                     weights(home, IntArgs(), IntArgs({1}), home.x, home.y);

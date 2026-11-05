@@ -72,7 +72,7 @@ namespace Gecode { namespace Int {
 
     public:
         /// Default constructor
-        IdxViewArray(void);
+        IdxViewArray();
         /// Copy constructor
         IdxViewArray(const IdxViewArray<View>&);
         /// Construct an IdxViewArray from \a x
@@ -81,7 +81,7 @@ namespace Gecode { namespace Int {
         IdxViewArray(Space& home, int n);
 
         /// Return the current size
-        int size(void) const;
+        int size() const;
         /// Set the size to \a n
         void size(int n);
 

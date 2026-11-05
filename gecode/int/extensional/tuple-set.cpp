@@ -112,7 +112,7 @@ namespace Gecode {
      *
      */
     void
-    TupleSet::Data::clear_support(void) {
+    TupleSet::Data::clear_support() {
         free_buffer(range);
         free_buffer(range_base);
         free_buffer(support);
@@ -187,7 +187,7 @@ namespace Gecode {
     }
 
     void
-    TupleSet::Data::finalize(void) {
+    TupleSet::Data::finalize() {
         finalize(EPK_DENSE);
     }
 
@@ -205,7 +205,7 @@ namespace Gecode {
 
         public:
             FinalizeGuard(Data& d0) : d(d0), committed(false) {}
-            ~FinalizeGuard(void) {
+            ~FinalizeGuard() {
                 if (!committed) {
                     d.clear_support();
                     d.n_words = 0U;
@@ -563,7 +563,7 @@ namespace Gecode {
     }
 
     void
-    TupleSet::Data::resize(void) {
+    TupleSet::Data::resize() {
         assert(n_free == 0);
         int n = static_cast<int>(1 + n_tuples * 1.5);
         if (arity > 0)
@@ -571,7 +571,7 @@ namespace Gecode {
         n_free = n - n_tuples;
     }
 
-    TupleSet::Data::~Data(void) {
+    TupleSet::Data::~Data() {
         clear_support();
         free_buffer(td);
         free_buffer(vd);

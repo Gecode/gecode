@@ -55,7 +55,7 @@ target_link_libraries(consumer_a PRIVATE Gecode::gecode)
 EOF
 cat > "$work/a/main.cpp" <<'EOF'
 #include <gecode/support/config.hpp>
-int main(void) { return 0; }
+int main() { return 0; }
 EOF
 
 cat > "$work/b/CMakeLists.txt" <<'EOF'
@@ -70,7 +70,7 @@ target_link_libraries(consumer_b PRIVATE Gecode::gecodedriver)
 EOF
 cat > "$work/b/main.cpp" <<'EOF'
 #include <gecode/driver.hh>
-int main(void) {
+int main() {
   Gecode::Options options("consumer_b");
   return options.model();
 }
@@ -116,7 +116,7 @@ cat > "$work/d/main.cpp" <<'EOF'
 #error "Expected installed Gecode package to enable MPFR"
 #endif
 #include <gecode/float.hh>
-int main(void) {
+int main() {
   Gecode::Float::Rounding rounding;
   return rounding.exp_down(1.0) > 0.0 ? 0 : 1;
 }
@@ -145,7 +145,7 @@ cat > "$work/e/main.cpp" <<'EOF'
 #error "Expected installed Gecode package to enable MPFR"
 #endif
 #include <gecode/float.hh>
-int main(void) {
+int main() {
   Gecode::Float::Rounding rounding;
   return rounding.log_down(2.0) >= 0.0 ? 0 : 1;
 }
@@ -172,7 +172,7 @@ target_link_libraries(consumer_f PRIVATE ${Gecode_LIBRARIES})
 EOF
 cat > "$work/f/main.cpp" <<'EOF'
 #include <gecode/support.hh>
-int main(void) { return Gecode::Support::Thread::npu() > 0 ? 0 : 1; }
+int main() { return Gecode::Support::Thread::npu() > 0 ? 0 : 1; }
 EOF
 
 cat > "$work/g/CMakeLists.txt" <<'EOF'
@@ -209,7 +209,7 @@ target_link_libraries(consumer_j PRIVATE ${Gecode_LIBRARIES})
 EOF
 cat > "$work/j/main.cpp" <<'EOF'
 #include <gecode/gist.hh>
-int main(void) { return 0; }
+int main() { return 0; }
 EOF
 
 cat > "$work/k/CMakeLists.txt" <<'EOF'
@@ -228,7 +228,7 @@ target_link_libraries(consumer_k PRIVATE ${Gecode_LIBRARIES})
 EOF
 cat > "$work/k/main.cpp" <<'EOF'
 #include <gecode/float.hh>
-int main(void) { Gecode::Float::Rounding rounding; return rounding.sqrt_down(4.0) == 2.0 ? 0 : 1; }
+int main() { Gecode::Float::Rounding rounding; return rounding.sqrt_down(4.0) == 2.0 ? 0 : 1; }
 EOF
 
 cat > "$work/l/CMakeLists.txt" <<'EOF'

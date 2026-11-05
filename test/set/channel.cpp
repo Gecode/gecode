@@ -99,7 +99,7 @@ namespace Test { namespace Set {
         class ChannelSortedEmpty : public SetTest {
         public:
             /// Create and register test
-            ChannelSortedEmpty(void) : SetTest("Channel::Sorted::Empty", 1, d_12) {}
+            ChannelSortedEmpty() : SetTest("Channel::Sorted::Empty", 1, d_12) {}
             /// %Test whether \a x is solution
             bool
             solution(const SetAssignment& x) const override {
@@ -204,7 +204,7 @@ namespace Test { namespace Set {
         class ChannelBoolEmpty : public SetTest {
         public:
             /// Create and register test
-            ChannelBoolEmpty(void) : SetTest("Channel::Bool::Empty", 1, d_12) {}
+            ChannelBoolEmpty() : SetTest("Channel::Bool::Empty", 1, d_12) {}
             /// %Test whether \a x is solution
             bool
             solution(const SetAssignment& x) const override {

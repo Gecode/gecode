@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     CompactAdvisorIndex<false>::CompactAdvisorIndex(int) {}
 
     forceinline int
-    CompactAdvisorIndex<false>::index(void) const {
+    CompactAdvisorIndex<false>::index() const {
         return 0;
     }
 
@@ -54,13 +54,13 @@ namespace Gecode { namespace Int { namespace Extensional {
         : _index(i) {}
 
     forceinline int
-    CompactAdvisorIndex<true>::index(void) const {
+    CompactAdvisorIndex<true>::index() const {
         return _index;
     }
 
     template <class View, bool pos, bool indexed>
     forceinline void
-    CompactAdvisor<View, pos, indexed>::adjust(void) {
+    CompactAdvisor<View, pos, indexed>::adjust() {
         if (pos) {
             {
                 int n = view().min();
@@ -109,19 +109,19 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class View, bool pos, bool indexed>
     forceinline int
-    CompactAdvisor<View, pos, indexed>::index(void) const {
+    CompactAdvisor<View, pos, indexed>::index() const {
         return CompactAdvisorIndex<indexed>::index();
     }
 
     template <class View, bool pos, bool indexed>
     forceinline const typename CompactAdvisor<View, pos, indexed>::Range*
-    CompactAdvisor<View, pos, indexed>::fst(void) const {
+    CompactAdvisor<View, pos, indexed>::fst() const {
         return _fst;
     }
 
     template <class View, bool pos, bool indexed>
     forceinline const typename CompactAdvisor<View, pos, indexed>::Range*
-    CompactAdvisor<View, pos, indexed>::lst(void) const {
+    CompactAdvisor<View, pos, indexed>::lst() const {
         return _lst;
     }
 
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class Advisor>
     forceinline typename CompactStatus<Advisor>::StatusType
-    CompactStatus<Advisor>::type(void) const {
+    CompactStatus<Advisor>::type() const {
         return static_cast<StatusType>(s & 0b11);
     }
 
@@ -165,13 +165,13 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class Advisor>
     forceinline void
-    CompactStatus<Advisor>::none(void) {
+    CompactStatus<Advisor>::none() {
         s = std::to_underlying(NONE);
     }
 
     template <class Advisor>
     forceinline void
-    CompactStatus<Advisor>::propagating(void) {
+    CompactStatus<Advisor>::propagating() {
         s = std::to_underlying(PROPAGATING);
     }
 
@@ -430,7 +430,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class View, bool pos>
     forceinline void
-    Compact<View, pos>::ValidSupports::find(void) {
+    Compact<View, pos>::ValidSupports::find() {
         assert(!pos);
         assert(value <= max_value);
         while (true) {
@@ -490,7 +490,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, bool pos>
     forceinline void
-    Compact<View, pos>::ValidSupports::operator++(void) {
+    Compact<View, pos>::ValidSupports::operator++() {
         value++;
         if (pos) {
             if (value <= view_ranges.max()) {
@@ -517,18 +517,18 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, bool pos>
     forceinline bool
-    Compact<View, pos>::ValidSupports::operator()(void) const {
+    Compact<View, pos>::ValidSupports::operator()() const {
         return value <= max_value;
     }
     template <class View, bool pos>
     forceinline const BitSetData*
-    Compact<View, pos>::ValidSupports::support(void) const {
+    Compact<View, pos>::ValidSupports::support() const {
         assert(support_words == support_range->supports(n_words, value));
         return support_words;
     }
     template <class View, bool pos>
     forceinline int
-    Compact<View, pos>::ValidSupports::val(void) const {
+    Compact<View, pos>::ValidSupports::val() const {
         return value;
     }
 
@@ -551,7 +551,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, bool pos>
     forceinline void
-    Compact<View, pos>::LostSupports::operator++(void) {
+    Compact<View, pos>::LostSupports::operator++() {
         value++;
         support_words += n_words;
         while ((value <= last_value) && (value > support_range->max)) {
@@ -562,12 +562,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, bool pos>
     forceinline bool
-    Compact<View, pos>::LostSupports::operator()(void) const {
+    Compact<View, pos>::LostSupports::operator()() const {
         return value <= last_value;
     }
     template <class View, bool pos>
     forceinline const TupleSet::BitSetData*
-    Compact<View, pos>::LostSupports::support(void) const {
+    Compact<View, pos>::LostSupports::support() const {
         assert((value >= support_range->min) && (value <= support_range->max));
         assert(support_words == support_range->supports(n_words, value));
         return support_words;
@@ -575,12 +575,12 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class View, bool pos>
     forceinline bool
-    Compact<View, pos>::all(void) const {
+    Compact<View, pos>::all() const {
         return compact_all(c);
     }
     template <class View, bool pos>
     forceinline bool
-    Compact<View, pos>::at_most_one(void) const {
+    Compact<View, pos>::at_most_one() const {
         return compact_atmostone(c);
     }
 
@@ -1305,7 +1305,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             const CSupportWord* support_end;
             bool valid;
             void
-            find(void) {
+            find() {
                 while (view_ranges() && (support_range <= last_support_range)) {
                     if (value < view_ranges.min())
                         value = view_ranges.min();
@@ -1358,20 +1358,20 @@ namespace Gecode { namespace Int { namespace Extensional {
                 }
             }
             void
-            operator++(void) {
+            operator++() {
                 value++;
                 find();
             }
             bool
-            operator()(void) const {
+            operator()() const {
                 return valid;
             }
             int
-            val(void) const {
+            val() const {
                 return value;
             }
             CompressedSupport
-            support(void) const {
+            support() const {
                 return CompressedSupport(support_begin, support_end);
             }
         };
@@ -1388,7 +1388,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             const CSupportWord* support_end;
             bool valid;
             void
-            find(void) {
+            find() {
                 while ((value <= last_value) && (support_range <= last_support_range)) {
                     if (value < support_range->min)
                         value = support_range->min;
@@ -1419,26 +1419,26 @@ namespace Gecode { namespace Int { namespace Extensional {
                 find();
             }
             void
-            operator++(void) {
+            operator++() {
                 value++;
                 find();
             }
             bool
-            operator()(void) const {
+            operator()() const {
                 return valid;
             }
             CompressedSupport
-            support(void) const {
+            support() const {
                 return CompressedSupport(support_begin, support_end);
             }
         };
 
         bool
-        all(void) const {
+        all() const {
             return compact_all(c);
         }
         bool
-        at_most_one(void) const {
+        at_most_one() const {
             return compact_atmostone(c);
         }
 

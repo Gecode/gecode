@@ -266,7 +266,7 @@ namespace Test { namespace Int {
         class MinNary : public Test {
         public:
             /// Create and register test
-            MinNary(void) : Test("MiniModel::Min::Nary", 4, -4, 4) {
+            MinNary() : Test("MiniModel::Min::Nary", 4, -4, 4) {
                 test_fixpoint = false;
             }
             /// %Test whether \a x is solution
@@ -290,7 +290,7 @@ namespace Test { namespace Int {
         class MaxNary : public Test {
         public:
             /// Create and register test
-            MaxNary(void) : Test("MiniModel::Max::Nary", 4, -4, 4) {
+            MaxNary() : Test("MiniModel::Max::Nary", 4, -4, 4) {
                 test_fixpoint = false;
             }
             /// %Test whether \a x is solution

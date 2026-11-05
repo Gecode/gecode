@@ -70,7 +70,7 @@ namespace Gecode {
         /// Boolean variable (potentially)
         BoolVar x_bool;
         /// Default constructor
-        Node(void);
+        Node();
         /// Generate linear terms from expression
         void fill(Home home, const IntPropLevels& ipls, Int::Linear::Term<Int::IntView>*& ti,
                   Int::Linear::Term<Int::BoolView>*& tb, long long int m, long long int& d) const;
@@ -78,9 +78,9 @@ namespace Gecode {
         int fill(Home home, const IntPropLevels& ipls, Int::Linear::Term<Int::IntView>* ti,
                  Int::Linear::Term<Int::BoolView>* tb) const;
         /// Decrement reference count and possibly free memory
-        bool decrement(void);
+        bool decrement();
         /// Destructor
-        ~Node(void);
+        ~Node();
         /// Memory management
         static void* operator new(size_t size);
         /// Memory management
@@ -96,24 +96,24 @@ namespace Gecode {
      *
      */
     forceinline
-    LinIntExpr::Node::Node(void)
+    LinIntExpr::Node::Node()
         : use(1) {}
 
 #ifdef GECODE_HAS_FAULT_INJECTION
     std::atomic<int> LinIntExpr::Node::fault_live_nodes{0};
 
     void
-    LinIntExpr::fault_reset_allocations(void) {
+    LinIntExpr::fault_reset_allocations() {
         Node::fault_live_nodes.store(0, std::memory_order_relaxed);
     }
 
     int
-    LinIntExpr::fault_live_allocations(void) {
+    LinIntExpr::fault_live_allocations() {
         return Node::fault_live_nodes.load(std::memory_order_relaxed);
     }
 #endif
 
-    forceinline LinIntExpr::Node::~Node(void) {
+    forceinline LinIntExpr::Node::~Node() {
         switch (t) {
         case NT_SUM_INT:
             if (n_int > 0)
@@ -150,7 +150,7 @@ namespace Gecode {
         heap.rfree(p);
     }
     bool
-    LinIntExpr::Node::decrement(void) {
+    LinIntExpr::Node::decrement() {
         if (--use == 0) {
             if ((l != nullptr) && l->decrement())
                 delete l;
@@ -377,13 +377,13 @@ namespace Gecode {
     }
 
     NonLinIntExpr*
-    LinIntExpr::nle(void) const {
+    LinIntExpr::nle() const {
         return ((n != nullptr) && (n->t == NT_NONLIN)) ? n->sum.ne : nullptr;
     }
 
     LinIntExpr::LinIntExpr(NoNode) : n(nullptr) {}
 
-    LinIntExpr::LinIntExpr(void) : n(new Node) {
+    LinIntExpr::LinIntExpr() : n(new Node) {
         n->n_int = n->n_bool = 0;
         n->t = NT_CONST;
         n->l = n->r = nullptr;
@@ -561,7 +561,7 @@ namespace Gecode {
         return *this;
     }
 
-    LinIntExpr::~LinIntExpr(void) {
+    LinIntExpr::~LinIntExpr() {
         if ((n != nullptr) && n->decrement())
             delete n;
     }

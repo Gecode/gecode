@@ -220,15 +220,15 @@ namespace Gecode { namespace Int { namespace Distinct {
         using ViewValGraph::Graph<View>::scc;
         using ViewValGraph::Graph<View>::match;
         /// Construct graph as not yet initialized
-        Graph(void) = default;
+        Graph() = default;
         /// Initialize graph
         ExecStatus init(Space& home, ViewArray<View>& x);
         /// Mark edges in graph, return true if pruning is at all possible
-        bool mark(void);
+        bool mark();
         /// Prune unmarked edges, \a assigned is true if a view got assigned
         ExecStatus prune(Space& home, bool& assigned);
         /// Synchronize graph with new view domains
-        bool sync(void);
+        bool sync();
     };
 
     /**
@@ -249,13 +249,13 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     public:
         /// Initialize with non-initialized view-value graph
-        DomCtrl(void) = default;
+        DomCtrl() = default;
         /// Check whether a view-value graph is available
-        bool available(void);
+        bool available();
         /// Initialize view-value graph for views \a x
         ExecStatus init(Space& home, ViewArray<View>& x);
         /// Synchronize available view-value graph
-        ExecStatus sync(void);
+        ExecStatus sync();
         /// Perform propagation, \a assigned is true if a view gets assigned
         ExecStatus propagate(Space& home, bool& assigned);
     };

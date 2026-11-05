@@ -50,7 +50,7 @@
 namespace {
 
     std::string
-    process_id(void) {
+    process_id() {
 #ifdef _WIN32
         return std::to_string(static_cast<int64_t>(GetCurrentProcessId()));
 #else

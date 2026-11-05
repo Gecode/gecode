@@ -68,7 +68,7 @@ namespace Gecode { namespace FlatZinc {
     /// Backend for a deterministic FlatZinc blackbox function.
     class BlackBoxBackend : public SharedHandle::Object {
     public:
-        ~BlackBoxBackend(void) override = default;
+        ~BlackBoxBackend() override = default;
         virtual void run(BlackBoxCall& call) = 0;
         void
         run(const std::vector<int64_t>& int_input, const std::vector<double>& float_input,
@@ -99,7 +99,7 @@ namespace Gecode { namespace FlatZinc {
         class Instance;
         Support::Mutex mutex;
         std::vector<Instance*> instances;
-        Instance* instance(void);
+        Instance* instance();
 #endif
     };
 
@@ -116,7 +116,7 @@ namespace Gecode { namespace FlatZinc {
         std::vector<std::string> args;
         Support::Mutex mutex;
         std::vector<BlackBoxProcessSession*> sessions;
-        BlackBoxProcessSession& session(void);
+        BlackBoxProcessSession& session();
     };
 
     /// Encode one request for the executable backend's line protocol.

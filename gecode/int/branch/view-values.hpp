@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Branch {
         int val(unsigned int a) const;
         /// Deallocate
         GECODE_INT_EXPORT
-        ~PosValuesChoice(void) override;
+        ~PosValuesChoice() override;
         /// Archive into \a e
         GECODE_INT_EXPORT
         void archive(Archive& e) const override;

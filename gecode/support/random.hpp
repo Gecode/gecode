@@ -69,9 +69,9 @@ namespace Gecode { namespace Support {
         /// Construct the generator instance with seed \a s
         LinearCongruentialGenerator(unsigned int s = 1);
         /// Return current seed
-        unsigned int seed(void) const;
+        unsigned int seed() const;
         /// Generate next number in series
-        unsigned int next(void);
+        unsigned int next();
         /// Returns a random integer from the interval \f$[0\ldots n)\f$
         template <class Type>
         Type operator()(Type n);
@@ -82,7 +82,7 @@ namespace Gecode { namespace Support {
         /// Returns a random integer from the interval \f$[0\ldots n)\f$
         long long int operator()(long long int n);
         /// Report size occupied
-        size_t size(void) const;
+        size_t size() const;
 
         // Interface for conforming to C++ UniformRandomBitGenerator
         /// Type of the produced values
@@ -106,7 +106,7 @@ namespace Gecode { namespace Support {
 
     template <unsigned int m, unsigned int a, unsigned int q, unsigned int r>
     forceinline unsigned int
-    LinearCongruentialGenerator<m, a, q, r>::next(void) {
+    LinearCongruentialGenerator<m, a, q, r>::next() {
         s = a * (s % q) - r * (s / q);
         unsigned int res = s;
         if (s == 0)
@@ -127,7 +127,7 @@ namespace Gecode { namespace Support {
     }
     template <unsigned int m, unsigned int a, unsigned int q, unsigned int r>
     forceinline unsigned int
-    LinearCongruentialGenerator<m, a, q, r>::seed(void) const {
+    LinearCongruentialGenerator<m, a, q, r>::seed() const {
         return s;
     }
 
@@ -179,7 +179,7 @@ namespace Gecode { namespace Support {
     }
     template <unsigned int m, unsigned int a, unsigned int q, unsigned int r>
     forceinline size_t
-    LinearCongruentialGenerator<m, a, q, r>::size(void) const {
+    LinearCongruentialGenerator<m, a, q, r>::size() const {
         return sizeof(LinearCongruentialGenerator<m, a, q, r>);
     }
 
@@ -268,15 +268,15 @@ namespace Gecode { namespace Support {
             seed(value);
         }
         static const char*
-        name(void) {
+        name() {
             return "splitmix-v1";
         }
         static constexpr uint64_t
-        min(void) {
+        min() {
             return 0;
         }
         static constexpr uint64_t
-        max(void) {
+        max() {
             return UINT64_MAX;
         }
         void
@@ -284,7 +284,7 @@ namespace Gecode { namespace Support {
             s = {{value, UINT64_C(0x9e3779b97f4a7c15)}};
         }
         State
-        state(void) const {
+        state() const {
             return s;
         }
         void
@@ -294,7 +294,7 @@ namespace Gecode { namespace Support {
             s = value;
         }
         uint64_t
-        next(void) {
+        next() {
             return mix(s[0] += s[1]);
         }
         SplitMix
@@ -342,15 +342,15 @@ namespace Gecode { namespace Support {
             seed(value);
         }
         static const char*
-        name(void) {
+        name() {
             return "xorshift64star-v1";
         }
         static constexpr uint64_t
-        min(void) {
+        min() {
             return 1;
         }
         static constexpr uint64_t
-        max(void) {
+        max() {
             return UINT64_MAX;
         }
         void
@@ -359,7 +359,7 @@ namespace Gecode { namespace Support {
             s = z ? z : random_mix(UINT64_C(0x9e3779b97f4a7c15));
         }
         State
-        state(void) const {
+        state() const {
             return {{s}};
         }
         void
@@ -369,7 +369,7 @@ namespace Gecode { namespace Support {
             s = value[0];
         }
         uint64_t
-        next(void) {
+        next() {
             s = transition(s);
             return s * UINT64_C(2685821657736338717);
         }
@@ -417,15 +417,15 @@ namespace Gecode { namespace Support {
         explicit Random(uint64_t seed = 1) : e(seed) {}
         explicit Random(const Engine& engine) : e(engine) {}
         static constexpr result_type
-        min(void) {
+        min() {
             return Engine::min();
         }
         static constexpr result_type
-        max(void) {
+        max() {
             return Engine::max();
         }
         static const char*
-        name(void) {
+        name() {
             return Engine::name();
         }
         void
@@ -433,7 +433,7 @@ namespace Gecode { namespace Support {
             e.seed(value);
         }
         State
-        state(void) const {
+        state() const {
             return e.state();
         }
         void
@@ -441,15 +441,15 @@ namespace Gecode { namespace Support {
             e.state(value);
         }
         result_type
-        next(void) {
+        next() {
             return e.next();
         }
         result_type
-        operator()(void) {
+        operator()() {
             return next();
         }
         size_t
-        size(void) const {
+        size() const {
             return sizeof(*this);
         }
         Random
@@ -485,7 +485,7 @@ namespace Gecode { namespace Support {
         }
         /// Canonical identifier followed by fixed-width hexadecimal state words.
         std::string
-        state_string(void) const {
+        state_string() const {
             std::string text(name());
             constexpr char digits[] = "0123456789abcdef";
             for (uint64_t word : state()) {

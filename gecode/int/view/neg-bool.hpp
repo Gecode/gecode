@@ -54,19 +54,19 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline BoolStatus
-    NegBoolView::status(void) const {
+    NegBoolView::status() const {
         return x.status();
     }
     forceinline bool
-    NegBoolView::zero(void) const {
+    NegBoolView::zero() const {
         return x.one();
     }
     forceinline bool
-    NegBoolView::one(void) const {
+    NegBoolView::one() const {
         return x.zero();
     }
     forceinline bool
-    NegBoolView::none(void) const {
+    NegBoolView::none() const {
         return x.none();
     }
 
@@ -150,15 +150,15 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline int
-    NegBoolView::min(void) const {
+    NegBoolView::min() const {
         return 1 - x.max();
     }
     forceinline int
-    NegBoolView::max(void) const {
+    NegBoolView::max() const {
         return 1 - x.min();
     }
     forceinline int
-    NegBoolView::val(void) const {
+    NegBoolView::val() const {
         return 1 - x.val();
     }
 #ifdef GECODE_HAS_CBS
@@ -216,7 +216,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void) = default;
+        ViewRanges() = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const NegBoolView& x);
         /// Initialize with ranges for view \a x

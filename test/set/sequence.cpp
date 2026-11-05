@@ -133,21 +133,21 @@ namespace Test { namespace Set {
             /// Space without variables
             class Fixture : public Space {
             public:
-                Fixture(void) = default;
+                Fixture() = default;
                 // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Space(fixture) {}
                 Space*
-                copy(void) override {
+                copy() override {
                     return new Fixture(*this);
                 }
             };
 
         public:
             /// Create and register test
-            SeqEmpty(void) : Base("Set::Sequence::Empty") {}
+            SeqEmpty() : Base("Set::Sequence::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 Fixture home;
                 try {
                     Gecode::sequence(home, SetVarArgs());

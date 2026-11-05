@@ -43,7 +43,7 @@ EOF
 cat > "$consumer_dir/main.cpp" <<'EOF'
 #include <gecode/search.hh>
 
-int main(void) {
+int main() {
   Gecode::Search::Statistics statistics;
   Gecode::Search::Options options;
 

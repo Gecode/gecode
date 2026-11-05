@@ -186,7 +186,7 @@ namespace Test { namespace Set {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 for (SetRelTypes srts; srts(); ++srts) {
                     for (SetOpTypes sots; sots(); ++sots) {
@@ -376,7 +376,7 @@ namespace Test { namespace Set {
         class CreateN {
         public:
             /// Perform creation and registration
-            CreateN(void) {
+            CreateN() {
                 for (int wc = 0; wc <= 1; wc++) {
                     for (int i = 0; i <= 3; i++) {
                         (void)new RelN(Gecode::SOT_UNION, i, 0, wc);
@@ -514,7 +514,7 @@ namespace Test { namespace Set {
         class CreateIntN {
         public:
             /// Perform creation and registration
-            CreateIntN(void) {
+            CreateIntN() {
                 for (int wc = 0; wc <= 1; wc++) {
                     for (int i = 0; i <= 3; i++) {
                         (void)new RelIntN(Gecode::SOT_UNION, i, wc);

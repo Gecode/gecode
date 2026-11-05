@@ -99,7 +99,7 @@ public:
 
     /// Return cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return m[m.size() - 1];
     }
 
@@ -115,7 +115,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new GolombRuler(*this);
     }
 };

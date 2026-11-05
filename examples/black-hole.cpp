@@ -285,7 +285,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new BlackHole(*this);
     }
 };

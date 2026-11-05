@@ -269,7 +269,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Crossword(*this);
     }
     /// Print solution

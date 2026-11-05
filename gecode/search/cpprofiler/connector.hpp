@@ -111,7 +111,7 @@ namespace Gecode { namespace CPProfiler {
 #endif
 
         static int send_all(int s, const char* buf, int* len);
-        void send_over_socket(void);
+        void send_over_socket();
         void send_raw_msg(const std::vector<char>& buf);
 
     public:
@@ -121,7 +121,7 @@ namespace Gecode { namespace CPProfiler {
 
         /// connect to a socket via port specified in the construction (6565 by
         /// default)
-        void connect(void);
+        void connect();
 
         // sends START_SENDING message to the Profiler with a model name
         void start(const std::string& file_path = "", int execution_id = -1, bool has_restarts = false);
@@ -129,7 +129,7 @@ namespace Gecode { namespace CPProfiler {
         void done();
 
         /// disconnect from a socket
-        void disconnect(void);
+        void disconnect();
 
         void send_node(const Node& node);
         Node create_node(NodeUID node, NodeUID parent, int alt, int kids, NodeStatus status);
@@ -288,7 +288,7 @@ namespace Gecode { namespace CPProfiler {
     }
 
     inline void
-    Connector::send_over_socket(void) {
+    Connector::send_over_socket() {
         if (!_connected)
             return;
 
@@ -298,7 +298,7 @@ namespace Gecode { namespace CPProfiler {
     }
 
     inline void
-    Connector::connect(void) {
+    Connector::connect() {
         struct addrinfo hints, *server_info, *p;
         int rv;
 

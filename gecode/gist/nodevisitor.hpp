@@ -45,13 +45,13 @@ namespace Gecode { namespace Gist {
 
     template <class Cursor>
     forceinline Cursor&
-    NodeVisitor<Cursor>::get_cursor(void) {
+    NodeVisitor<Cursor>::get_cursor() {
         return c;
     }
 
     template <class Cursor>
     forceinline void
-    PostorderNodeVisitor<Cursor>::move_to_leaf(void) {
+    PostorderNodeVisitor<Cursor>::move_to_leaf() {
         while (c.may_move_downwards()) {
             c.move_downwards();
         }
@@ -64,7 +64,7 @@ namespace Gecode { namespace Gist {
 
     template <class Cursor>
     forceinline bool
-    PostorderNodeVisitor<Cursor>::next(void) {
+    PostorderNodeVisitor<Cursor>::next() {
         c.process_current_node();
         if (c.may_move_sidewards()) {
             c.move_sidewards();
@@ -79,14 +79,14 @@ namespace Gecode { namespace Gist {
 
     template <class Cursor>
     forceinline void
-    PostorderNodeVisitor<Cursor>::run(void) {
+    PostorderNodeVisitor<Cursor>::run() {
         while (next()) {
         }
     }
 
     template <class Cursor>
     forceinline bool
-    PreorderNodeVisitor<Cursor>::backtrack(void) {
+    PreorderNodeVisitor<Cursor>::backtrack() {
         while (!c.may_move_sidewards() && c.may_move_upwards()) {
             c.move_upwards();
         }
@@ -103,7 +103,7 @@ namespace Gecode { namespace Gist {
 
     template <class Cursor>
     forceinline bool
-    PreorderNodeVisitor<Cursor>::next(void) {
+    PreorderNodeVisitor<Cursor>::next() {
         c.process_current_node();
         if (c.may_move_downwards()) {
             c.move_downwards();
@@ -117,7 +117,7 @@ namespace Gecode { namespace Gist {
 
     template <class Cursor>
     forceinline void
-    PreorderNodeVisitor<Cursor>::run(void) {
+    PreorderNodeVisitor<Cursor>::run() {
         while (next()) {
         }
     }

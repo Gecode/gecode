@@ -173,12 +173,12 @@ namespace PatternMining {
         }
 
         IntSet
-        domain(void) const {
+        domain() const {
             return IntSet(alphabet.begin(), alphabet.size());
         }
 
         int
-        max_length(void) const {
+        max_length() const {
             int bound = 0;
             int start = 0;
             for (int end : ends) {
@@ -261,7 +261,7 @@ namespace PatternMining {
         }
 
         int
-        support(void) const {
+        support() const {
             return size;
         }
 

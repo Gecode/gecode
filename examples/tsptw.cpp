@@ -158,7 +158,7 @@ check nodes[0].ready == 0 "the depot (node 0) must open at time 0"
         }
         /// Whether an instance was found
         bool
-        valid(void) const {
+        valid() const {
             return n > 0;
         }
     };
@@ -252,12 +252,12 @@ public:
     }
     /// Return cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return total;
     }
     /// Return the number of positions assigned from the start
     int
-    prefix(void) const {
+    prefix() const {
         int k = 0;
         while ((k < x.size()) && x[k].assigned())
             k++;
@@ -299,7 +299,7 @@ public:
     }
     /// Return a key for dominance
     std::size_t
-    key(void) const {
+    key() const {
         int k = prefix();
         Region r;
         unsigned int n = static_cast<unsigned int>(p.n);
@@ -322,7 +322,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new TSPTW(*this);
     }
     /// Print solution

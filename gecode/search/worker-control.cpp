@@ -49,12 +49,12 @@ namespace Gecode { namespace Search {
         State(unsigned int workers)
             : RefCount(1U), requested(workers), capacity(0U), generation(0U), fast_admit(false),
               lifecycle(Lifecycle::READY_TO_BIND), events(nullptr) {}
-        ~State(void) {
+        ~State() {
             delete[] events;
         }
     };
 
-    WorkerControl::WorkerControl(void) noexcept : state(nullptr) {}
+    WorkerControl::WorkerControl() noexcept : state(nullptr) {}
 
     WorkerControl::WorkerControl(unsigned int requested) : state(new State(requested)) {}
 
@@ -73,18 +73,18 @@ namespace Gecode { namespace Search {
         return *this;
     }
 
-    WorkerControl::~WorkerControl(void) {
+    WorkerControl::~WorkerControl() {
         if ((state != nullptr) && state->dec())
             delete state;
     }
 
     bool
-    WorkerControl::engaged(void) const noexcept {
+    WorkerControl::engaged() const noexcept {
         return state != nullptr;
     }
 
     unsigned int
-    WorkerControl::requested(void) const noexcept {
+    WorkerControl::requested() const noexcept {
         return (state == nullptr) ? 0U : state->requested.load(std::memory_order_acquire);
     }
 
@@ -115,7 +115,7 @@ namespace Gecode { namespace Search {
     }
 
     unsigned int
-    WorkerControl::capacity(void) const noexcept {
+    WorkerControl::capacity() const noexcept {
         return (state == nullptr) ? 0U : state->capacity.load(std::memory_order_acquire);
     }
 

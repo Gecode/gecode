@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("on_restart::complete",
                                    R"FZN(
 predicate int_le_imp(var int: a,var int: b,var bool: r);

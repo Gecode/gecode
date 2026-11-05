@@ -391,8 +391,7 @@ namespace Gecode { namespace Gist {
 
     } // namespace
 
-    Logos::Logos(void)
-        : logo(_logo), logo_size(sizeof(_logo)), gist_logo(_gist_logo), gist_logo_size(sizeof(_gist_logo)) {}
+    Logos::Logos() : logo(_logo), logo_size(sizeof(_logo)), gist_logo(_gist_logo), gist_logo_size(sizeof(_gist_logo)) {}
 
 }} // namespace Gecode::Gist
 

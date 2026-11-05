@@ -51,17 +51,17 @@ namespace Gecode {
      */
 
     forceinline unsigned int
-    SetVar::glb_size(void) const {
+    SetVar::glb_size() const {
         return x->glb_size();
     }
 
     forceinline unsigned int
-    SetVar::lub_size(void) const {
+    SetVar::lub_size() const {
         return x->lub_size();
     }
 
     forceinline unsigned int
-    SetVar::unknown_size(void) const {
+    SetVar::unknown_size() const {
         return x->lub_size() - x->glb_size();
     }
 
@@ -76,32 +76,32 @@ namespace Gecode {
     }
 
     forceinline unsigned int
-    SetVar::card_min(void) const {
+    SetVar::card_min() const {
         return x->card_min();
     }
 
     forceinline unsigned int
-    SetVar::card_max(void) const {
+    SetVar::card_max() const {
         return x->card_max();
     }
 
     forceinline int
-    SetVar::lub_min(void) const {
+    SetVar::lub_min() const {
         return x->lub_min();
     }
 
     forceinline int
-    SetVar::lub_max(void) const {
+    SetVar::lub_max() const {
         return x->lub_max();
     }
 
     forceinline int
-    SetVar::glb_min(void) const {
+    SetVar::glb_min() const {
         return x->glb_min();
     }
 
     forceinline int
-    SetVar::glb_max(void) const {
+    SetVar::glb_max() const {
         return x->glb_max();
     }
 
@@ -115,27 +115,27 @@ namespace Gecode {
         : iter(s.varimp()) {}
 
     forceinline bool
-    SetVarGlbRanges::operator()(void) const {
+    SetVarGlbRanges::operator()() const {
         return iter();
     }
 
     forceinline void
-    SetVarGlbRanges::operator++(void) {
+    SetVarGlbRanges::operator++() {
         ++iter;
     }
 
     forceinline int
-    SetVarGlbRanges::min(void) const {
+    SetVarGlbRanges::min() const {
         return iter.min();
     }
 
     forceinline int
-    SetVarGlbRanges::max(void) const {
+    SetVarGlbRanges::max() const {
         return iter.max();
     }
 
     forceinline unsigned int
-    SetVarGlbRanges::width(void) const {
+    SetVarGlbRanges::width() const {
         return iter.width();
     }
 
@@ -144,27 +144,27 @@ namespace Gecode {
         : iter(s.varimp()) {}
 
     forceinline bool
-    SetVarLubRanges::operator()(void) const {
+    SetVarLubRanges::operator()() const {
         return iter();
     }
 
     forceinline void
-    SetVarLubRanges::operator++(void) {
+    SetVarLubRanges::operator++() {
         ++iter;
     }
 
     forceinline int
-    SetVarLubRanges::min(void) const {
+    SetVarLubRanges::min() const {
         return iter.min();
     }
 
     forceinline int
-    SetVarLubRanges::max(void) const {
+    SetVarLubRanges::max() const {
         return iter.max();
     }
 
     forceinline unsigned int
-    SetVarLubRanges::width(void) const {
+    SetVarLubRanges::width() const {
         return iter.width();
     }
 
@@ -174,31 +174,31 @@ namespace Gecode {
     }
 
     forceinline bool
-    SetVarUnknownRanges::operator()(void) const {
+    SetVarUnknownRanges::operator()() const {
         return iter();
     }
 
     forceinline void
-    SetVarUnknownRanges::operator++(void) {
+    SetVarUnknownRanges::operator++() {
         ++iter;
     }
 
     forceinline int
-    SetVarUnknownRanges::min(void) const {
+    SetVarUnknownRanges::min() const {
         return iter.min();
     }
 
     forceinline int
-    SetVarUnknownRanges::max(void) const {
+    SetVarUnknownRanges::max() const {
         return iter.max();
     }
 
     forceinline unsigned int
-    SetVarUnknownRanges::width(void) const {
+    SetVarUnknownRanges::width() const {
         return iter.width();
     }
 
-    forceinline SetVarGlbValues::SetVarGlbValues(void) = default;
+    forceinline SetVarGlbValues::SetVarGlbValues() = default;
 
     forceinline
     SetVarGlbValues::SetVarGlbValues(const SetVar& x) {
@@ -207,21 +207,21 @@ namespace Gecode {
     }
 
     forceinline bool
-    SetVarGlbValues::operator()(void) const {
+    SetVarGlbValues::operator()() const {
         return iter();
     }
 
     forceinline void
-    SetVarGlbValues::operator++(void) {
+    SetVarGlbValues::operator++() {
         ++iter;
     }
 
     forceinline int
-    SetVarGlbValues::val(void) const {
+    SetVarGlbValues::val() const {
         return iter.val();
     }
 
-    forceinline SetVarLubValues::SetVarLubValues(void) = default;
+    forceinline SetVarLubValues::SetVarLubValues() = default;
 
     forceinline
     SetVarLubValues::SetVarLubValues(const SetVar& x) {
@@ -230,21 +230,21 @@ namespace Gecode {
     }
 
     forceinline bool
-    SetVarLubValues::operator()(void) const {
+    SetVarLubValues::operator()() const {
         return iter();
     }
 
     forceinline void
-    SetVarLubValues::operator++(void) {
+    SetVarLubValues::operator++() {
         ++iter;
     }
 
     forceinline int
-    SetVarLubValues::val(void) const {
+    SetVarLubValues::val() const {
         return iter.val();
     }
 
-    forceinline SetVarUnknownValues::SetVarUnknownValues(void) = default;
+    forceinline SetVarUnknownValues::SetVarUnknownValues() = default;
 
     forceinline
     SetVarUnknownValues::SetVarUnknownValues(const SetVar& x) {
@@ -253,17 +253,17 @@ namespace Gecode {
     }
 
     forceinline bool
-    SetVarUnknownValues::operator()(void) const {
+    SetVarUnknownValues::operator()() const {
         return iter();
     }
 
     forceinline void
-    SetVarUnknownValues::operator++(void) {
+    SetVarUnknownValues::operator++() {
         ++iter;
     }
 
     forceinline int
-    SetVarUnknownValues::val(void) const {
+    SetVarUnknownValues::val() const {
         return iter.val();
     }
 

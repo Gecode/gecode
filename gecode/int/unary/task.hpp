@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    ManFixPTask::ManFixPTask(void) {}
+    ManFixPTask::ManFixPTask() {}
     forceinline
     ManFixPTask::ManFixPTask(IntVar s, int p)
         : _s(s), _p(p) {}
@@ -69,49 +69,49 @@ namespace Gecode { namespace Int { namespace Unary {
     }
 
     forceinline int
-    ManFixPTask::est(void) const {
+    ManFixPTask::est() const {
         return _s.min();
     }
     forceinline int
-    ManFixPTask::ect(void) const {
+    ManFixPTask::ect() const {
         return _s.min() + _p;
     }
     forceinline int
-    ManFixPTask::lst(void) const {
+    ManFixPTask::lst() const {
         return _s.max();
     }
     forceinline int
-    ManFixPTask::lct(void) const {
+    ManFixPTask::lct() const {
         return _s.max() + _p;
     }
     forceinline int
-    ManFixPTask::pmin(void) const {
+    ManFixPTask::pmin() const {
         return _p;
     }
     forceinline int
-    ManFixPTask::pmax(void) const {
+    ManFixPTask::pmax() const {
         return _p;
     }
     forceinline IntVar
-    ManFixPTask::st(void) const {
+    ManFixPTask::st() const {
         return _s;
     }
 
     forceinline bool
-    ManFixPTask::mandatory(void) const {
+    ManFixPTask::mandatory() const {
         return true;
     }
     forceinline bool
-    ManFixPTask::excluded(void) const {
+    ManFixPTask::excluded() const {
         return false;
     }
     forceinline bool
-    ManFixPTask::optional(void) const {
+    ManFixPTask::optional() const {
         return false;
     }
 
     forceinline bool
-    ManFixPTask::assigned(void) const {
+    ManFixPTask::assigned() const {
         return _s.assigned();
     }
 
@@ -185,7 +185,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    ManFixPSETask::ManFixPSETask(void) {}
+    ManFixPSETask::ManFixPSETask() {}
     forceinline
     ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p)
         : ManFixPTask(s, p), _t(t) {}
@@ -201,11 +201,11 @@ namespace Gecode { namespace Int { namespace Unary {
     }
 
     forceinline int
-    ManFixPSETask::est(void) const {
+    ManFixPSETask::est() const {
         return (_t == TT_FIXED_START) ? _p : _s.min();
     }
     forceinline int
-    ManFixPSETask::ect(void) const {
+    ManFixPSETask::ect() const {
         switch (_t) {
         case TT_FIXED_PROCESSING:
             return _s.min() + _p;
@@ -219,11 +219,11 @@ namespace Gecode { namespace Int { namespace Unary {
         return 0;
     }
     forceinline int
-    ManFixPSETask::lst(void) const {
+    ManFixPSETask::lst() const {
         return (_t == TT_FIXED_START) ? _p : _s.max();
     }
     forceinline int
-    ManFixPSETask::lct(void) const {
+    ManFixPSETask::lct() const {
         switch (_t) {
         case TT_FIXED_PROCESSING:
             return _s.max() + _p;
@@ -237,7 +237,7 @@ namespace Gecode { namespace Int { namespace Unary {
         return 0;
     }
     forceinline int
-    ManFixPSETask::pmin(void) const {
+    ManFixPSETask::pmin() const {
         switch (_t) {
         case TT_FIXED_PROCESSING:
             return _p;
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace Unary {
         return 0;
     }
     forceinline int
-    ManFixPSETask::pmax(void) const {
+    ManFixPSETask::pmax() const {
         switch (_t) {
         case TT_FIXED_PROCESSING:
             return _p;
@@ -381,57 +381,57 @@ namespace Gecode { namespace Int { namespace Unary {
     }
 
     forceinline int
-    ManFlexTask::est(void) const {
+    ManFlexTask::est() const {
         return _s.min();
     }
     forceinline int
-    ManFlexTask::ect(void) const {
+    ManFlexTask::ect() const {
         return _e.min();
     }
     forceinline int
-    ManFlexTask::lst(void) const {
+    ManFlexTask::lst() const {
         return _s.max();
     }
     forceinline int
-    ManFlexTask::lct(void) const {
+    ManFlexTask::lct() const {
         return _e.max();
     }
     forceinline int
-    ManFlexTask::pmin(void) const {
+    ManFlexTask::pmin() const {
         return _p.min();
     }
     forceinline int
-    ManFlexTask::pmax(void) const {
+    ManFlexTask::pmax() const {
         return _p.max();
     }
     forceinline IntVar
-    ManFlexTask::st(void) const {
+    ManFlexTask::st() const {
         return _s;
     }
     forceinline IntVar
-    ManFlexTask::p(void) const {
+    ManFlexTask::p() const {
         return _p;
     }
     forceinline IntVar
-    ManFlexTask::e(void) const {
+    ManFlexTask::e() const {
         return _e;
     }
 
     forceinline bool
-    ManFlexTask::mandatory(void) const {
+    ManFlexTask::mandatory() const {
         return true;
     }
     forceinline bool
-    ManFlexTask::excluded(void) const {
+    ManFlexTask::excluded() const {
         return false;
     }
     forceinline bool
-    ManFlexTask::optional(void) const {
+    ManFlexTask::optional() const {
         return false;
     }
 
     forceinline bool
-    ManFlexTask::assigned(void) const {
+    ManFlexTask::assigned() const {
         return _s.assigned() && _p.assigned() && _e.assigned();
     }
 
@@ -516,7 +516,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    OptFixPTask::OptFixPTask(void) {}
+    OptFixPTask::OptFixPTask() {}
     forceinline
     OptFixPTask::OptFixPTask(IntVar s, int p, BoolVar m) {
         ManFixPTask::init(s, p);
@@ -544,7 +544,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    OptFixPSETask::OptFixPSETask(void) {}
+    OptFixPSETask::OptFixPSETask() {}
     forceinline
     OptFixPSETask::OptFixPSETask(TaskType t, IntVar s, int p, BoolVar m) {
         ManFixPSETask::init(t, s, p);

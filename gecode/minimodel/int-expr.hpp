@@ -32,7 +32,7 @@
 
 namespace Gecode {
 
-    forceinline NonLinIntExpr::~NonLinIntExpr(void) = default;
+    forceinline NonLinIntExpr::~NonLinIntExpr() = default;
 
     forceinline IntVar
     NonLinIntExpr::result(Home home, IntVar* x) {

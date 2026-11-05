@@ -44,10 +44,10 @@ namespace Test { namespace FlatZinc {
         /// Verify that FlatZinc table conversion uses automatic representation.
         class TupleSetAutoRepresentation : public Base {
         public:
-            TupleSetAutoRepresentation(void) : Base("FlatZinc::TupleSet::AutoRepresentation") {}
+            TupleSetAutoRepresentation() : Base("FlatZinc::TupleSet::AutoRepresentation") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
 
                 const int n = 4096;
@@ -93,10 +93,10 @@ namespace Test { namespace FlatZinc {
             }
 
         public:
-            FloatCutExcludesIncumbent(void) : Base("FlatZinc::Float::CutExcludesIncumbent") {}
+            FloatCutExcludesIncumbent() : Base("FlatZinc::Float::CutExcludesIncumbent") {}
 
             bool
-            run(void) override {
+            run() override {
                 Gecode::FloatNum min_bound, max_bound;
                 return cut_bound("var 0.0..1.0: x :: output_var;\nsolve minimize x;\n", min_bound) &&
                        cut_bound("var 0.0..1.0: x :: output_var;\nsolve maximize x;\n", max_bound) &&
@@ -123,10 +123,10 @@ namespace Test { namespace FlatZinc {
             }
 
         public:
-            IntegerObjectiveComparison(void) : Base("FlatZinc::IntegerObjectiveComparison") {}
+            IntegerObjectiveComparison() : Base("FlatZinc::IntegerObjectiveComparison") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> one = model("var 1..1: x; solve minimize x;\n");
                 std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> two = model("var 2..2: x; solve minimize x;\n");
@@ -195,10 +195,10 @@ namespace Test { namespace FlatZinc {
             }
 
         public:
-            FloatObjectiveComparison(void) : Base("FlatZinc::FloatObjectiveComparison") {}
+            FloatObjectiveComparison() : Base("FlatZinc::FloatObjectiveComparison") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 using Gecode::FlatZinc::FlatZincSpace;
                 const FloatNum next = std::nextafter(1.0, 2.0);
@@ -284,10 +284,10 @@ namespace Test { namespace FlatZinc {
             }
 
         public:
-            GistStatisticsMode(void) : Base("FlatZinc::Options::GistStatisticsMode", TestTags::check()) {}
+            GistStatisticsMode() : Base("FlatZinc::Options::GistStatisticsMode", TestTags::check()) {}
 
             bool
-            run(void) override {
+            run() override {
                 return (mode({"-s"}) == Gecode::SM_STATISTICS) && (mode({"-mode", "gist", "-s"}) == Gecode::SM_GIST) &&
                        (mode({"-s", "-mode", "gist"}) == Gecode::SM_GIST);
             }
@@ -327,7 +327,7 @@ namespace Test { namespace FlatZinc {
           _expected_message(std::move(expected_message)) {}
 
     bool
-    FlatZincTest::run(void) {
+    FlatZincTest::run() {
         using namespace Gecode;
         Support::Timer t_total;
         t_total.start();
@@ -380,7 +380,7 @@ namespace Test { namespace FlatZinc {
     }
 
     bool
-    FlatZincErrorTest::run(void) {
+    FlatZincErrorTest::run() {
         using namespace Gecode;
         Support::Timer t_total;
         t_total.start();

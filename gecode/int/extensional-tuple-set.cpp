@@ -79,12 +79,12 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
         bool
-        operator()(void) const {
+        operator()() const {
             return r != e;
         }
 
         void
-        operator++(void) {
+        operator++() {
             if (value != last) {
                 value++;
                 return;
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
         int
-        val(void) const {
+        val() const {
             assert(r != e);
             return value;
         }
@@ -115,7 +115,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         SparseAdvisor(Space& home, SparseAdvisor& advisor)
             : ViewAdvisor<View>(home, advisor), variable(advisor.variable) {}
         int
-        index(void) const {
+        index() const {
             return variable;
         }
         void
@@ -160,7 +160,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         const unsigned int* tv;
 
         forceinline Derived&
-        derived(void) {
+        derived() {
             return static_cast<Derived&>(*this);
         }
 
@@ -340,7 +340,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
         void
-        init_gid_maps(void) {
+        init_gid_maps() {
             for (unsigned int i = 0U; i < n_vals; i++)
                 gid_var[i] = -1;
             for (int a = 0; a < x.size(); a++) {
@@ -362,7 +362,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
         void
-        init_support_counts(void) {
+        init_support_counts() {
             assert(tv != nullptr);
             const unsigned int* offsets = TupleSetAccess::sparse_support_offsets(ts);
             if (offsets != nullptr) {
@@ -475,7 +475,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
 
         bool
-        at_most_one(void) const {
+        at_most_one() const {
             Advisors<SparseAdvisor> as(c);
             if (!as())
                 return true;

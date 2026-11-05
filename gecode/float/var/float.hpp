@@ -44,31 +44,31 @@ namespace Gecode {
         : VarImpVar<Float::FloatVarImp>(y.varimp()) {}
 
     forceinline FloatVal
-    FloatVar::val(void) const {
+    FloatVar::val() const {
         if (!x->assigned())
             throw Float::ValOfUnassignedVar("FloatVar::val");
         return x->val();
     }
     forceinline FloatNum
-    FloatVar::min(void) const {
+    FloatVar::min() const {
         return x->min();
     }
     forceinline FloatNum
-    FloatVar::med(void) const {
+    FloatVar::med() const {
         return x->med();
     }
     forceinline FloatNum
-    FloatVar::max(void) const {
+    FloatVar::max() const {
         return x->max();
     }
 
     forceinline FloatVal
-    FloatVar::domain(void) const {
+    FloatVar::domain() const {
         return x->domain();
     }
 
     forceinline FloatNum
-    FloatVar::size(void) const {
+    FloatVar::size() const {
         return x->size();
     }
 

@@ -79,11 +79,11 @@ namespace Gecode {
 
         public:
             /// Return initial slack value
-            SlackValue initial(void) const;
+            SlackValue initial() const;
             /// Return previous slack value
-            SlackValue previous(void) const;
+            SlackValue previous() const;
             /// Return current slack value
-            SlackValue current(void) const;
+            SlackValue current() const;
         };
 
     protected:
@@ -99,7 +99,7 @@ namespace Gecode {
             /// Constructor for cloning \a a
             Idx(Space& home, Idx& a);
             /// Get index of view
-            int idx(void) const;
+            int idx() const;
         };
         /// Duplicate views (old information)
         ViewArray<TraceView> o;
@@ -140,9 +140,9 @@ namespace Gecode {
         /// Return variable being traced at position \a i
         const typename View::VarType operator[](int i) const;
         /// Return number of variables being traced
-        int size(void) const;
+        int size() const;
         /// Provide access to slack information
-        const Slack& slack(void) const;
+        const Slack& slack() const;
         //@}
     };
 
@@ -183,11 +183,11 @@ namespace Gecode {
         /// \name Trace information
         //@{
         /// Return trace filter
-        const TraceFilter& filter(void) const;
+        const TraceFilter& filter() const;
         /// Which events to trace
-        int events(void) const;
+        int events() const;
         /// Return tracer
-        Tracer& tracer(void) const;
+        Tracer& tracer() const;
         //@}
     };
 
@@ -203,12 +203,12 @@ namespace Gecode {
     }
     template <class View>
     forceinline int
-    ViewTraceRecorder<View>::size(void) const {
+    ViewTraceRecorder<View>::size() const {
         return n.size();
     }
     template <class View>
     forceinline const typename ViewTraceRecorder<View>::Slack&
-    ViewTraceRecorder<View>::slack(void) const {
+    ViewTraceRecorder<View>::slack() const {
         return s;
     }
 
@@ -218,17 +218,17 @@ namespace Gecode {
      */
     template <class View>
     forceinline typename ViewTraceRecorder<View>::SlackValue
-    ViewTraceRecorder<View>::Slack::initial(void) const {
+    ViewTraceRecorder<View>::Slack::initial() const {
         return i;
     }
     template <class View>
     forceinline typename ViewTraceRecorder<View>::SlackValue
-    ViewTraceRecorder<View>::Slack::previous(void) const {
+    ViewTraceRecorder<View>::Slack::previous() const {
         return p;
     }
     template <class View>
     forceinline typename ViewTraceRecorder<View>::SlackValue
-    ViewTraceRecorder<View>::Slack::current(void) const {
+    ViewTraceRecorder<View>::Slack::current() const {
         return c;
     }
 
@@ -247,7 +247,7 @@ namespace Gecode {
         : Advisor(home, a), _idx(a._idx) {}
     template <class View>
     forceinline int
-    ViewTraceRecorder<View>::Idx::idx(void) const {
+    ViewTraceRecorder<View>::Idx::idx() const {
         return _idx;
     }
 
@@ -370,15 +370,15 @@ namespace Gecode {
      *
      */
     forceinline const TraceFilter&
-    TraceRecorder::filter(void) const {
+    TraceRecorder::filter() const {
         return tf;
     }
     forceinline int
-    TraceRecorder::events(void) const {
+    TraceRecorder::events() const {
         return te;
     }
     forceinline Tracer&
-    TraceRecorder::tracer(void) const {
+    TraceRecorder::tracer() const {
         return t;
     }
 

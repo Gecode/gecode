@@ -48,22 +48,22 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManToOptTask(void) = default;
+        ManToOptTask() = default;
         //@}
 
         /// \name Value access
         //@{
         /// Whether task is mandatory
-        bool mandatory(void) const;
+        bool mandatory() const;
         /// Whether task is excluded
-        bool excluded(void) const;
+        bool excluded() const;
         /// Whether task can still be optional
-        bool optional(void) const;
+        bool optional() const;
         //@}
 
         //@{
         /// Test whether task is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         //@}
 
         /// \name Value update
@@ -104,17 +104,17 @@ namespace Gecode { namespace Int {
         /// \name Value access
         //@{
         /// Return earliest start time
-        int est(void) const;
+        int est() const;
         /// Return earliest completion time
-        int ect(void) const;
+        int ect() const;
         /// Return latest start time
-        int lst(void) const;
+        int lst() const;
         /// Return latest completion time
-        int lct(void) const;
+        int lct() const;
         /// Return minimum processing time
-        int pmin(void) const;
+        int pmin() const;
         /// Return maximum processing time
-        int pmax(void) const;
+        int pmax() const;
         //@}
 
         /// \name Value update
@@ -173,7 +173,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor (array of size 0)
-        TaskArray(void);
+        TaskArray();
         /// Allocate memory for \a n tasks (no initialization)
         TaskArray(Space& home, int n);
         /// Initialize from task array \a a (share elements)
@@ -185,7 +185,7 @@ namespace Gecode { namespace Int {
         /// \name Array size
         //@{
         /// Return size of array (number of elements)
-        int size(void) const;
+        int size() const;
         /// Set size of array (number of elements) to \a n, must not be larger
         void size(int n);
         //@}
@@ -245,7 +245,7 @@ namespace Gecode { namespace Int {
         /// \name Array information
         //@{
         /// Return size of array (number of elements)
-        int size(void) const;
+        int size() const;
         /// Set size of array (number of elements) to \a n, must not be larger
         void size(int n);
         //@}
@@ -312,7 +312,7 @@ namespace Gecode { namespace Int {
         /// Current position
         int i;
         /// Default constructor (no initialization)
-        TaskViewIter(void) = default;
+        TaskViewIter() = default;
 
     public:
         /// Initialize iterator
@@ -320,17 +320,17 @@ namespace Gecode { namespace Int {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a task
-        bool operator()(void) const;
+        bool operator()() const;
         /// How many tasks are left to be iterated
-        int left(void) const;
+        int left() const;
         /// Move iterator to next task
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name %Task access
         //@{
         /// Return current task position
-        int task(void) const;
+        int task() const;
         //@}
     };
 
@@ -376,9 +376,9 @@ namespace Gecode { namespace Int {
         int* _leaf;
 
         /// Return number of inner nodes
-        int n_inner(void) const;
+        int n_inner() const;
         /// Return number of nodes for balanced binary tree
-        int n_nodes(void) const;
+        int n_nodes() const;
         /// Whether node \a i is index of root
         static bool n_root(int i);
         /// Whether node \a i is leaf
@@ -398,13 +398,13 @@ namespace Gecode { namespace Int {
         /// Return leaf for task \a i
         Node& leaf(int i);
         /// Return root node
-        const Node& root(void) const;
+        const Node& root() const;
         /// Update tree after leaf for task \a i has changed (\a l whether i refers to a leaf)
         void update(int i, bool l = true);
         /// Initialize tree after leaves have been initialized
-        void init(void);
+        void init();
         /// Update all inner nodes of tree after leaves have been initialized
-        void update(void);
+        void update();
         /// Initialize tree for tasks \a t
         TaskTree(Region& r, const TaskViewArray<TaskView>& t);
         /// Initialize tree using tree \a t
@@ -515,11 +515,11 @@ namespace Gecode { namespace Int {
         /// Initialize event
         void init(Type e, int t, int i);
         /// Return event type
-        Type type(void) const;
+        Type type() const;
         /// Return event time
-        int time(void) const;
+        int time() const;
         /// Return event index
-        int idx(void) const;
+        int idx() const;
         /// Order among events
         bool operator<(const Event& e) const;
         /// Allocate from \a r and initialize event array with tasks \a t

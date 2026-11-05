@@ -214,12 +214,12 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new BACP(*this);
     }
     /// Return solution cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return u;
     }
     /// Print solution

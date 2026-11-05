@@ -119,7 +119,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 for (int i = 0; i <= 4; i++) {
                     (void)new Int(i);
                     (void)new Bool(i);

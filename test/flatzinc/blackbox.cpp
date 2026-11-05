@@ -242,9 +242,9 @@ namespace Test { namespace FlatZinc {
     namespace Blackbox {
         class NativeProtocol : public Base {
         public:
-            NativeProtocol(void) : Base("FlatZinc::blackbox::native_protocol", TestTags::check()) {}
+            NativeProtocol() : Base("FlatZinc::blackbox::native_protocol", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 std::vector<int64_t> int_input{-2};
                 std::vector<double> float_input{1.25};
                 std::vector<int64_t> int_output(1);
@@ -281,7 +281,7 @@ namespace Test { namespace FlatZinc {
             };
             std::thread first;
             std::thread second;
-            auto join = [&first, &second](void) {
+            auto join = [&first, &second]() {
                 if (first.joinable()) {
                     first.join();
                 }
@@ -310,7 +310,7 @@ namespace Test { namespace FlatZinc {
             NativeExecParallelSessions(const std::string& executable0, const std::string& log0)
                 : Base("FlatZinc::blackbox::native_exec_parallel_sessions"), executable(executable0), log(log0) {}
             bool
-            run(void) override {
+            run() override {
                 reset_log(log);
                 bool ok = false;
                 try {
@@ -333,7 +333,7 @@ namespace Test { namespace FlatZinc {
             NativeDllParallelCalls(const std::string& library0, const std::string& log0)
                 : Base("FlatZinc::blackbox::native_dll_parallel_calls"), library(library0), log(log0) {}
             bool
-            run(void) override {
+            run() override {
                 reset_log(log);
                 bool ok = false;
                 try {
@@ -353,7 +353,7 @@ namespace Test { namespace FlatZinc {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 (void)new NativeProtocol;
                 (void)new FlatZincErrorTest(TestTags::check(), "blackbox::malformed_annotation",
                                             std::string(blackbox_decl) +
@@ -530,7 +530,7 @@ namespace Test { namespace FlatZinc {
                             [descendant_log](const std::string& output) {
                                 return descendant_gone(output, descendant_log);
                             },
-                            [descendant_log](void) { reset_log(descendant_log); });
+                            [descendant_log]() { reset_log(descendant_log); });
                     }
 #endif
                 }
@@ -576,7 +576,7 @@ namespace Test { namespace FlatZinc {
                                 reset_log(dll_model_log);
                                 return ok;
                             },
-                            [dll_model_log](void) { reset_log(dll_model_log); });
+                            [dll_model_log]() { reset_log(dll_model_log); });
                     }
 
 #ifdef GECODE_HAS_THREADS

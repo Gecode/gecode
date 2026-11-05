@@ -23,7 +23,7 @@ cat > "$work/main.cpp" <<'EOF'
 #include <gecode/int.hh>
 #include <gecode/support/config.hpp>
 
-int main(void) {
+int main() {
   Gecode::IntArgs values(1);
   values[0] = 0;
   return values[0];

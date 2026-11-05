@@ -60,21 +60,21 @@ namespace Gecode { namespace Set {
         int _lub_max; ///< Largest lub value just pruned
     public:
         /// Create set delta as providing no information (if \a any is true)
-        SetDelta(void);
+        SetDelta();
         /// Create set delta with \a min and \a max
         SetDelta(int glb_min, int glb_max, int lub_min, int lub_max);
         /// Return glb minimum
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return glb maximum
-        int glb_max(void) const;
+        int glb_max() const;
         /// Return lub minimum
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return lub maximum
-        int lub_max(void) const;
+        int lub_max() const;
         /// Test whether delta represents any domain change in glb
-        bool glb_any(void) const;
+        bool glb_any() const;
         /// Test whether delta represents any domain change in lub
-        bool lub_any(void) const;
+        bool lub_any() const;
     };
 
 }} // namespace Gecode::Set
@@ -102,9 +102,9 @@ namespace Gecode { namespace Set {
         void lst(RangeList* r);
 
         /// Return first range
-        RangeList* fst(void) const;
+        RangeList* fst() const;
         /// Return last range
-        RangeList* lst(void) const;
+        RangeList* lst() const;
 
     public:
         /// Returned by empty sets when asked for their maximum element
@@ -115,7 +115,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor. Creates an empty set.
-        BndSet(void);
+        BndSet();
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
         BndSet(Space& home, int i, int j);
         /// Initialize as the set represented by \a s
@@ -131,15 +131,15 @@ namespace Gecode { namespace Set {
         /// \name Value access
         //@{
         /// Return smallest element
-        int min(void) const;
+        int min() const;
         /// Return greatest element
-        int max(void) const;
+        int max() const;
         /// Return \a n -th smallest element
         int min_n(unsigned int n) const;
         /// Return size
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return cardinality
-        unsigned int card(void) const;
+        unsigned int card() const;
         /// Set cardinality
         void card(unsigned int c);
         //@}
@@ -147,7 +147,7 @@ namespace Gecode { namespace Set {
         /// \name Tests
         //@{
         /// Test whether this set is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Test whether \a i is an element of this set
         bool in(int i) const;
         //@}
@@ -161,7 +161,7 @@ namespace Gecode { namespace Set {
         /// \name Range list access for iteration
         //@{
         /// Return range list for iteration
-        RangeList* ranges(void) const;
+        RangeList* ranges() const;
         //@}
 
     protected:
@@ -177,7 +177,7 @@ namespace Gecode { namespace Set {
         //@}
 
         /// Check whether internal invariants hold
-        GECODE_SET_EXPORT bool is_consistent(void) const;
+        GECODE_SET_EXPORT bool is_consistent() const;
     };
 
     /**
@@ -189,7 +189,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        BndSetRanges(void) = default;
+        BndSetRanges() = default;
         /// Initialize with BndSet \a s
         BndSetRanges(const BndSet& s);
         /// Initialize with BndSet \a s
@@ -213,7 +213,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor. Creates an empty set.
-        GLBndSet(void) = default;
+        GLBndSet() = default;
         /// Default constructor. Creates an empty set.
         GLBndSet(Space&);
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
@@ -253,7 +253,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor. Creates an empty set.
-        LUBndSet(void) = default;
+        LUBndSet() = default;
         /// Initialize as the full set including everything between Limits::min and Limits::max
         LUBndSet(Space& home);
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
@@ -300,7 +300,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        RangesCompl(void) = default;
+        RangesCompl() = default;
         /// Initialize with iterator \a i
         RangesCompl(I& i);
         /// Initialize with iterator \a i
@@ -325,7 +325,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void);
+        LubRanges();
         /// Initialize with least upper bound ranges for set variable \a x
         LubRanges(const T& x);
         /// Initialize with least upper bound ranges for set variable \a x
@@ -335,19 +335,19 @@ namespace Gecode { namespace Set {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -368,7 +368,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void);
+        GlbRanges();
         /// Initialize with greatest lower bound ranges for set variable \a x
         GlbRanges(const T& x);
         /// Initialize with greatest lower bound ranges for set variable \a x
@@ -378,19 +378,19 @@ namespace Gecode { namespace Set {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -415,7 +415,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        UnknownRanges(void) = default;
+        UnknownRanges() = default;
         /// Initialize with unknown set ranges for set variable \a x
         UnknownRanges(const T& x);
         /// Initialize with unknown set ranges for set variable \a x
@@ -498,29 +498,29 @@ namespace Gecode { namespace Set {
         /// \name Value access
         //@{
         /// Return current cardinality minimum
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return current cardinality maximum
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return \a n -th smallest element in the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
         /// Return the size of the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the size of the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether variable is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         /// Test whether \a n is contained in greatest lower bound
         bool known_in(int n) const;
         /// Test whether \a n is not contained in least upper bound

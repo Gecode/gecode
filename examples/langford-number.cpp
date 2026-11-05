@@ -61,7 +61,7 @@ public:
     }
     /// Print help message
     void
-    help(void) override {
+    help() override {
         Options::help();
         std::cerr << "\t(unsigned int) default: " << n << '\n'
                   << "\t\tparameter n" << '\n'
@@ -168,7 +168,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new LangfordNumber(*this);
     }
 };

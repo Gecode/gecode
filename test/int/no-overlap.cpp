@@ -272,19 +272,19 @@ namespace Test { namespace Int {
             /// Space without variables
             class Fixture : public Gecode::Space {
             public:
-                Fixture(void) = default;
+                Fixture() = default;
                 // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new Fixture(*this);
                 }
             };
 
         public:
-            Empty(void) : Base("Int::NoOverlap::Empty") {}
+            Empty() : Base("Int::NoOverlap::Empty") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 IntVarArgs x;
                 IntArgs w;
@@ -305,7 +305,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
 
                 IntArgs s1({2, 1, 1});

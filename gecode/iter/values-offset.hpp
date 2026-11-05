@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Offset(void) = default;
+        Offset() = default;
         /// Initialize with values from \a i and offset \a c
         Offset(I& i, int c);
         /// Initialize with values from \a i and offset \a c
@@ -59,15 +59,15 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -85,18 +85,18 @@ namespace Gecode { namespace Iter { namespace Values {
 
     template <class I>
     forceinline void
-    Offset<I>::operator++(void) {
+    Offset<I>::operator++() {
         ++i;
     }
     template <class I>
     forceinline bool
-    Offset<I>::operator()(void) const {
+    Offset<I>::operator()() const {
         return i();
     }
 
     template <class I>
     forceinline int
-    Offset<I>::val(void) const {
+    Offset<I>::val() const {
         return i.val() + c;
     }
 

@@ -51,17 +51,17 @@ namespace Gecode { namespace Int {
 
     public:
         /// Initialize
-        ValSet(void);
+        ValSet();
         /// Add value \a v to value set
         void add(Space& home, int v);
         /// Return size (number of values)
-        int size(void) const;
+        int size() const;
         /// Test whether set is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Return smallest value (provided the set is not empty)
-        int min(void) const;
+        int min() const;
         /// Return largest value (provided the set is not empty)
-        int max(void) const;
+        int max() const;
         /// Compare view \a x with value set
         template <class View>
         Iter::Ranges::CompareStatus compare(View x) const;
@@ -71,7 +71,7 @@ namespace Gecode { namespace Int {
         /// Update value set during cloning
         void update(Space& home, ValSet& vs);
         /// Flush entries
-        void flush(void);
+        void flush();
         /// Dispose value set
         void dispose(Space& home);
         /// Iterator over ranges
@@ -89,19 +89,19 @@ namespace Gecode { namespace Int {
             /// \name Iteration control
             //@{
             /// Test whether iterator is still at a range or done
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move iterator to next range (if possible)
-            void operator++(void);
+            void operator++();
             //@}
 
             /// \name Range access
             //@{
             /// Return smallest value of range
-            int min(void) const;
+            int min() const;
             /// Return largest value of range
-            int max(void) const;
+            int max() const;
             /// Return width of range (distance between minimum and maximum)
-            unsigned int width(void) const;
+            unsigned int width() const;
             //@}
         };
     };

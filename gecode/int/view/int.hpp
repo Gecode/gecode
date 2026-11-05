@@ -52,19 +52,19 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline int
-    IntView::min(void) const {
+    IntView::min() const {
         return x->min();
     }
     forceinline int
-    IntView::max(void) const {
+    IntView::max() const {
         return x->max();
     }
     forceinline int
-    IntView::med(void) const {
+    IntView::med() const {
         return x->med();
     }
     forceinline int
-    IntView::val(void) const {
+    IntView::val() const {
         return x->val();
     }
 #ifdef GECODE_HAS_CBS
@@ -75,19 +75,19 @@ namespace Gecode { namespace Int {
 #endif
 
     forceinline unsigned int
-    IntView::size(void) const {
+    IntView::size() const {
         return x->size();
     }
     forceinline unsigned int
-    IntView::width(void) const {
+    IntView::width() const {
         return x->width();
     }
     forceinline unsigned int
-    IntView::regret_min(void) const {
+    IntView::regret_min() const {
         return x->regret_min();
     }
     forceinline unsigned int
-    IntView::regret_max(void) const {
+    IntView::regret_max() const {
         return x->regret_max();
     }
 
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline bool
-    IntView::range(void) const {
+    IntView::range() const {
         return x->range();
     }
     forceinline bool
@@ -237,7 +237,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges();
         /// Initialize with ranges for view \a x
         ViewRanges(const IntView& x);
         /// Initialize with ranges for view \a x
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    ViewRanges<IntView>::ViewRanges(void) {}
+    ViewRanges<IntView>::ViewRanges() {}
 
     forceinline
     ViewRanges<IntView>::ViewRanges(const IntView& x)

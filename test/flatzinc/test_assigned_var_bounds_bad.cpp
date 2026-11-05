@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("assign_var_bounds_bad", "var 1..10: x = 123;solve satisfy;",
                                    "=====UNSATISFIABLE=====\n");
         }

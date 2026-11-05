@@ -151,7 +151,7 @@ namespace Test { namespace Int {
         class ChannelLinkSingle : public Test {
         public:
             /// Construct and register test
-            ChannelLinkSingle(void) : Test(TestTags::sweep(), "Channel::Bool::Single", 2, -1, 2) {
+            ChannelLinkSingle() : Test(TestTags::sweep(), "Channel::Bool::Single", 2, -1, 2) {
                 consistency_test_level = CTL_NONE;
             }
             /// Check whether \a x is solution

@@ -52,7 +52,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SingletonAppend(void) = default;
+        SingletonAppend() = default;
         /// Initialize with singleton (\a i0, \a i1) and iterator \a j
         SingletonAppend(int i0, int i1, J& j);
         /// Initialize with singleton (\a i0, \a i1) and iterator \a j
@@ -62,7 +62,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
@@ -73,7 +73,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class J>
     inline void
-    SingletonAppend<J>::operator++(void) {
+    SingletonAppend<J>::operator++() {
         if (j()) {
             mi = j.min();
             ma = j.max();

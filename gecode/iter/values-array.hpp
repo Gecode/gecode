@@ -55,7 +55,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Array(void) = default;
+        Array() = default;
         /// Initialize with \a n values from \a v
         Array(int* v, unsigned int n);
         /// Initialize with \a n values from \a v
@@ -69,17 +69,17 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         /// Reset iterator to start from beginning
-        void reset(void);
+        void reset();
         //@}
 
         /// \name %Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -106,20 +106,20 @@ namespace Gecode { namespace Iter { namespace Values {
     }
 
     forceinline void
-    Array::operator++(void) {
+    Array::operator++() {
         c++;
     }
     forceinline bool
-    Array::operator()(void) const {
+    Array::operator()() const {
         return c < n;
     }
     forceinline void
-    Array::reset(void) {
+    Array::reset() {
         c = 0;
     }
 
     forceinline int
-    Array::val(void) const {
+    Array::val() const {
         return v[c];
     }
 

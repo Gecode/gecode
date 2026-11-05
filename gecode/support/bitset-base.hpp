@@ -76,19 +76,19 @@ namespace Gecode { namespace Support {
         /// Return next set bit with position greater or equal to \a i (there must be a bit)
         unsigned int next(unsigned int i = 0U) const;
         /// Whether all bits are set
-        bool all(void) const;
+        bool all() const;
         /// Whether all bits from bit 0 to bit \a i are set
         bool all(unsigned int i) const;
         /// Whether no bits are set
-        bool none(void) const;
+        bool none() const;
         /// Whether no bits from bit 0 to bit \a i are set
         bool none(unsigned int i) const;
         /// Return the number of bits set
-        unsigned int ones(void) const;
+        unsigned int ones() const;
         /// Return the number of bits not set
-        unsigned int zeroes(void) const;
+        unsigned int zeroes() const;
         /// Check whether exactly one bit is set
-        bool one(void) const;
+        bool one() const;
         /// Perform "and" with \a a
         void a(BitSetData a);
         /// Perform "and" with \a a for bits 0 to \a i
@@ -104,7 +104,7 @@ namespace Gecode { namespace Support {
         /// Whether both hold the same bits
         bool operator==(const BitSetData&) const = default;
         /// Invert all bits in \a b
-        BitSetData operator~(void) const;
+        BitSetData operator~() const;
     };
 
     /// Status of a bitset
@@ -129,7 +129,7 @@ namespace Gecode { namespace Support {
         /// Assignment operator (disabled)
         RawBitSetBase& operator=(const RawBitSetBase&) = delete;
         /// Default constructor (yields empty set)
-        RawBitSetBase(void);
+        RawBitSetBase();
         /// Initialize for \a sz bits and allocator \a a
         template <class A>
         RawBitSetBase(A& a, unsigned int sz, bool set_bits = false);
@@ -180,7 +180,7 @@ namespace Gecode { namespace Support {
         /// Assignment operator (disabled)
         BitSetBase& operator=(const BitSetBase&) = delete;
         /// Default constructor (yields empty set)
-        BitSetBase(void);
+        BitSetBase();
         /// Initialize for \a s bits and allocator \a a
         template <class A>
         BitSetBase(A& a, unsigned int s, bool set_bits = false);
@@ -195,7 +195,7 @@ namespace Gecode { namespace Support {
         /// Copy \a sz bits from \a bs
         void copy(const BitSetBase& bs);
         /// Return size of bitset (number of bits)
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Access value at bit \a i
         bool get(unsigned int i) const;
         /// Set bit \a i
@@ -205,11 +205,11 @@ namespace Gecode { namespace Support {
         /// Return position greater or equal \a i of next set bit (\a i is allowed to be equal to size)
         unsigned int next(unsigned int i) const;
         /// Return status of bitset
-        BitSetStatus status(void) const;
+        BitSetStatus status() const;
         /// Test whether all bits are set
-        bool all(void) const;
+        bool all() const;
         /// Test whether no bits are set
-        bool none(void) const;
+        bool none() const;
         /// Resize bitset to \a n elememts
         template <class A>
         void resize(A& a, unsigned int n, bool set_bits = false);
@@ -253,7 +253,7 @@ namespace Gecode { namespace Support {
         return static_cast<unsigned int>(std::countr_zero(bits >> i)) + i;
     }
     forceinline bool
-    BitSetData::all(void) const {
+    BitSetData::all() const {
         return bits == ~static_cast<Base>(0U);
     }
     forceinline bool
@@ -262,7 +262,7 @@ namespace Gecode { namespace Support {
         return (bits & mask) == mask;
     }
     forceinline bool
-    BitSetData::none(void) const {
+    BitSetData::none() const {
         return bits == static_cast<Base>(0U);
     }
     forceinline bool
@@ -272,15 +272,15 @@ namespace Gecode { namespace Support {
     }
 
     forceinline unsigned int
-    BitSetData::ones(void) const {
+    BitSetData::ones() const {
         return static_cast<unsigned int>(std::popcount(bits));
     }
     forceinline unsigned int
-    BitSetData::zeroes(void) const {
+    BitSetData::zeroes() const {
         return bpb - ones();
     }
     forceinline bool
-    BitSetData::one(void) const {
+    BitSetData::one() const {
         return (bits & (bits - static_cast<Base>(1U))) == static_cast<Base>(0U);
     }
 
@@ -317,7 +317,7 @@ namespace Gecode { namespace Support {
     }
 
     forceinline BitSetData
-    BitSetData::operator~(void) const {
+    BitSetData::operator~() const {
         BitSetData iv;
         iv.bits = ~bits;
         return iv;
@@ -365,7 +365,7 @@ namespace Gecode { namespace Support {
     }
 
     forceinline
-    RawBitSetBase::RawBitSetBase(void)
+    RawBitSetBase::RawBitSetBase()
         : data(nullptr) {}
 
     template <class A>
@@ -481,7 +481,7 @@ namespace Gecode { namespace Support {
     }
 
     forceinline
-    BitSetBase::BitSetBase(void)
+    BitSetBase::BitSetBase()
         : sz(0U) {}
 
     template <class A>
@@ -514,7 +514,7 @@ namespace Gecode { namespace Support {
     }
 
     forceinline unsigned int
-    BitSetBase::size(void) const {
+    BitSetBase::size() const {
         return sz;
     }
 
@@ -541,17 +541,17 @@ namespace Gecode { namespace Support {
     }
 
     forceinline BitSetStatus
-    BitSetBase::status(void) const {
+    BitSetBase::status() const {
         return RawBitSetBase::status(sz);
     }
 
     forceinline bool
-    BitSetBase::all(void) const {
+    BitSetBase::all() const {
         return RawBitSetBase::all(sz);
     }
 
     forceinline bool
-    BitSetBase::none(void) const {
+    BitSetBase::none() const {
         return RawBitSetBase::none(sz);
     }
 

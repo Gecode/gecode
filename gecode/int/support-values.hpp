@@ -34,7 +34,7 @@ namespace Gecode { namespace Int {
 
     template <class View, class A>
     forceinline void
-    SupportValues<View, A>::reset(void) {
+    SupportValues<View, A>::reset() {
         rp = rp_fst;
         v = rp->min;
         max = rp->min + static_cast<int>((rp + 1)->pos - rp->pos) - 1;
@@ -60,14 +60,14 @@ namespace Gecode { namespace Int {
     }
 
     template <class View, class A>
-    forceinline SupportValues<View, A>::~SupportValues(void) {
+    forceinline SupportValues<View, A>::~SupportValues() {
         bs.dispose(a);
         a.free(rp_fst, static_cast<unsigned long int>(rp_lst - rp_fst + 1));
     }
 
     template <class View, class A>
     forceinline void
-    SupportValues<View, A>::operator++(void) {
+    SupportValues<View, A>::operator++() {
         if (++v > max)
             if (++rp < rp_lst) {
                 v = rp->min;
@@ -77,19 +77,19 @@ namespace Gecode { namespace Int {
 
     template <class View, class A>
     forceinline bool
-    SupportValues<View, A>::operator()(void) const {
+    SupportValues<View, A>::operator()() const {
         return rp < rp_lst;
     }
 
     template <class View, class A>
     forceinline int
-    SupportValues<View, A>::val(void) const {
+    SupportValues<View, A>::val() const {
         return v;
     }
 
     template <class View, class A>
     forceinline void
-    SupportValues<View, A>::support(void) {
+    SupportValues<View, A>::support() {
         bs.clear(rp->pos + static_cast<unsigned int>(v - rp->min));
     }
 
@@ -136,7 +136,7 @@ namespace Gecode { namespace Int {
 
     template <class View, class A>
     forceinline void
-    SupportValues<View, A>::Unsupported::find(void) {
+    SupportValues<View, A>::Unsupported::find() {
         // Skip all supported positions
         while ((p < sv.x.size()) && !sv.bs.get(p))
             p = sv.bs.next(p);
@@ -154,20 +154,20 @@ namespace Gecode { namespace Int {
 
     template <class View, class A>
     forceinline void
-    SupportValues<View, A>::Unsupported::operator++(void) {
+    SupportValues<View, A>::Unsupported::operator++() {
         p++;
         find();
     }
 
     template <class View, class A>
     forceinline bool
-    SupportValues<View, A>::Unsupported::operator()(void) const {
+    SupportValues<View, A>::Unsupported::operator()() const {
         return rp < sv.rp_lst;
     }
 
     template <class View, class A>
     forceinline int
-    SupportValues<View, A>::Unsupported::val(void) const {
+    SupportValues<View, A>::Unsupported::val() const {
         return static_cast<int>(rp->min + (p - rp->pos));
     }
 

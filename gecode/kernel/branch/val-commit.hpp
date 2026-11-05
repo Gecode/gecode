@@ -55,7 +55,7 @@ namespace Gecode {
         /// Constructor for cloning
         ValCommit(Space& home, ValCommit<View, Val>& vs);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value commit
         void dispose(Space& home);
     };
@@ -87,7 +87,7 @@ namespace Gecode {
         /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
         void print(const Space& home, unsigned int a, View x, int i, const Val& n, std::ostream& o) const;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value commit
         void dispose(Space& home);
     };
@@ -102,7 +102,7 @@ namespace Gecode {
     ValCommit<View, Val>::ValCommit(Space&, ValCommit<View, Val>&) {}
     template <class View, class Val>
     forceinline bool
-    ValCommit<View, Val>::notice(void) const {
+    ValCommit<View, Val>::notice() const {
         return false;
     }
     template <class View, class Val>
@@ -141,7 +141,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    ValCommitFunction<View>::notice(void) const {
+    ValCommitFunction<View>::notice() const {
         return true;
     }
     template <class View>

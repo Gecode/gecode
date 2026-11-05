@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Map(void);
+        Map();
         /// Initialize with ranges from \a i
         Map(I& i);
         /// Initialize with ranges from \a i and map \a m
@@ -60,19 +60,19 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -85,13 +85,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// Map for ranges
         M m;
         /// Find next mapped range
-        void next(void);
+        void next();
 
     public:
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Map(void) = default;
+        Map() = default;
         /// Initialize with ranges from \a i
         Map(I& i);
         /// Initialize with ranges from \a i and map \a m
@@ -105,7 +105,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
@@ -122,7 +122,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Map(void) = default;
+        Map() = default;
         /// Initialize with ranges from \a i
         Map(I& i);
         /// Initialize with ranges from \a i and map \a m
@@ -136,25 +136,25 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
     template <class I, class M>
     forceinline void
-    Map<I, M, false>::next(void) {
+    Map<I, M, false>::next() {
         if (i()) {
             mi = m.min(i.min());
             ma = m.max(i.max());
@@ -197,7 +197,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I, class M>
     forceinline void
-    Map<I, M, false>::operator++(void) {
+    Map<I, M, false>::operator++() {
         next();
     }
 
@@ -224,28 +224,28 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I, class M>
     forceinline bool
-    Map<I, M, true>::operator()(void) const {
+    Map<I, M, true>::operator()() const {
         return i();
     }
     template <class I, class M>
     forceinline void
-    Map<I, M, true>::operator++(void) {
+    Map<I, M, true>::operator++() {
         ++i;
     }
 
     template <class I, class M>
     forceinline int
-    Map<I, M, true>::min(void) const {
+    Map<I, M, true>::min() const {
         return m.min(i.min());
     }
     template <class I, class M>
     forceinline int
-    Map<I, M, true>::max(void) const {
+    Map<I, M, true>::max() const {
         return m.max(i.max());
     }
     template <class I, class M>
     forceinline unsigned int
-    Map<I, M, true>::width(void) const {
+    Map<I, M, true>::width() const {
         return static_cast<unsigned int>(max() - min()) + 1;
     }
 

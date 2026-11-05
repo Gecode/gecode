@@ -51,7 +51,7 @@ namespace Gecode {
          * yet initialized AFC storage is init and the assignment operator.
          *
          */
-        AFC(void);
+        AFC();
         /** \brief Initialize for variables \a x and decay factor \a d
          *
          * If several AFC objects are created for a space or its clones,
@@ -69,7 +69,7 @@ namespace Gecode {
         template <class Var>
         void init(Home home, const VarArgArray<Var>& x, double d, bool share = true);
         /// Test whether already initialized
-        operator bool(void) const;
+        operator bool() const;
         /// Default (empty) AFC information
         GECODE_KERNEL_EXPORT static const AFC def;
         //@}
@@ -77,7 +77,7 @@ namespace Gecode {
         /// \name Information access
         //@{
         /// Return number of AFC values
-        int size(void) const;
+        int size() const;
         //@}
 
         /// \name Decay factor for aging
@@ -101,17 +101,17 @@ namespace Gecode {
      *
      */
     forceinline int
-    AFC::size(void) const {
+    AFC::size() const {
         assert(n >= 0);
         return n;
     }
 
     forceinline
-    AFC::AFC(void)
+    AFC::AFC()
         : n(-1) {}
 
     forceinline AFC::
-    operator bool(void) const {
+    operator bool() const {
         return n >= 0;
     }
 

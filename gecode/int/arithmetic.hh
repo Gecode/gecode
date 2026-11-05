@@ -307,9 +307,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     class SqrOps {
     public:
         /// Return whether exponent is even
-        bool even(void) const;
+        bool even() const;
         /// Return exponent
-        int exp(void) const;
+        int exp() const;
         /// Set exponent to \a m
         void exp(int m);
         /// Return \f$x^2\f$
@@ -344,9 +344,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Initialize with exponent \a n
         PowOps(int n);
         /// Return whether exponent is even
-        bool even(void) const;
+        bool even() const;
         /// Return exponent
-        int exp(void) const;
+        int exp() const;
         /// Set exponent to \a m
         void exp(int m);
         /// Return \f$x^n\f$ where \f$n>0\f$

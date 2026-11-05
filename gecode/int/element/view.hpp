@@ -157,12 +157,12 @@ namespace Gecode { namespace Int { namespace Element {
         const IdxView<View>*cur, *end;
 
     public:
-        IterIdxView(void) = default;
+        IterIdxView() = default;
         IterIdxView(const IdxView<View>*, const IdxView<View>*);
         void init(const IdxView<View>*, const IdxView<View>*);
-        bool operator()(void) const;
-        void operator++(void);
-        int val(void) const;
+        bool operator()() const;
+        void operator++();
+        int val() const;
     };
 
     template <class View>
@@ -177,17 +177,17 @@ namespace Gecode { namespace Int { namespace Element {
     }
     template <class View>
     forceinline bool
-    IterIdxView<View>::operator()(void) const {
+    IterIdxView<View>::operator()() const {
         return cur < end;
     }
     template <class View>
     forceinline void
-    IterIdxView<View>::operator++(void) {
+    IterIdxView<View>::operator++() {
         cur++;
     }
     template <class View>
     forceinline int
-    IterIdxView<View>::val(void) const {
+    IterIdxView<View>::val() const {
         return cur->idx;
     }
 

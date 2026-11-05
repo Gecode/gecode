@@ -41,7 +41,7 @@ namespace {
 
     class AbsSmokeTest : public Test::Int::Test {
     public:
-        AbsSmokeTest(void) : ::Test::Int::Test("Public::Smoke::Abs", 2, -2, 2) {}
+        AbsSmokeTest() : ::Test::Int::Test("Public::Smoke::Abs", 2, -2, 2) {}
 
         bool
         solution(const ::Test::Int::Assignment& x) const override {

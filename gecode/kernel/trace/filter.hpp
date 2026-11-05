@@ -68,21 +68,21 @@ namespace Gecode {
             /// Subexpressions
             Node *l, *r;
             /// Default constructor
-            Node(void);
+            Node();
             /// Decrement reference count and possibly free memory
             GECODE_KERNEL_EXPORT
-            bool decrement(void);
+            bool decrement();
         };
         /// Pointer to trace filter expression node
         Node* n;
         /// Initialize with no node
-        TFE(void);
+        TFE();
         /// Initialize with node \a n
         TFE(Node* n);
         /// Initialize with propagator group \a g and flags \a what
         void init(Group g, char what);
         /// Return negated the expression
-        TFE negate(void) const;
+        TFE negate() const;
 
     public:
         /// An expression for a propagator group \a g
@@ -93,7 +93,7 @@ namespace Gecode {
         TFE(BrancherGroup g);
         /// Expression for other than propagator, brancher, or post
         GECODE_KERNEL_EXPORT
-        static TFE other(void);
+        static TFE other();
         /// Copy constructor
         GECODE_KERNEL_EXPORT
         TFE(const TFE& e);
@@ -108,7 +108,7 @@ namespace Gecode {
         TFE& operator-=(const TFE& e);
         /// Destructor
         GECODE_KERNEL_EXPORT
-        ~TFE(void);
+        ~TFE();
     };
 
     /// Disjunctive combination of trace filter expressions \a l and \a r
@@ -152,7 +152,7 @@ namespace Gecode {
                 /// Whether it is negated
                 bool neg;
                 /// Default constructor
-                StackFrame(void);
+                StackFrame();
                 /// Initialize
                 StackFrame(TFE::Node* n, bool neg);
             };
@@ -164,7 +164,7 @@ namespace Gecode {
             GECODE_KERNEL_EXPORT
             void fill(TFE::Node* n);
             /// Initialize without any filter and with fixpoint and done tracing
-            TFO(void);
+            TFO();
             /// Initialize with trace filter expression \a e
             TFO(const TFE& e);
             /// Initialize with propagator group \a g
@@ -179,13 +179,13 @@ namespace Gecode {
             bool operator()(BrancherGroup bg) const;
             /// Destructor
             GECODE_KERNEL_EXPORT
-            ~TFO(void) override;
+            ~TFO() override;
         };
 
     public:
         /// Initialize without any filter
         GECODE_KERNEL_EXPORT
-        TraceFilter(void);
+        TraceFilter();
         /// Initialize with trace filter expression \a e
         GECODE_KERNEL_EXPORT
         TraceFilter(const TFE& e);
@@ -218,10 +218,10 @@ namespace Gecode {
      */
 
     forceinline
-    TFE::Node::Node(void)
+    TFE::Node::Node()
         : use(1), l(nullptr), r(nullptr) {}
     forceinline
-    TFE::TFE(void)
+    TFE::TFE()
         : n(nullptr) {}
     forceinline
     TFE::TFE(TFE::Node* n0)
@@ -247,7 +247,7 @@ namespace Gecode {
      *
      */
     forceinline
-    TraceFilter::TFO::TFO(void)
+    TraceFilter::TFO::TFO()
         : n(0), f(nullptr) {}
     forceinline
     TraceFilter::TFO::TFO(const TFE& e)

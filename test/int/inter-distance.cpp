@@ -150,7 +150,7 @@ namespace Test { namespace Int { namespace InterDistance {
             test_search = false;
         }
         Assignment*
-        assignment(void) const override {
+        assignment() const override {
             return new DistanceAssignment(arity, dom, p, variable, _rand);
         }
         bool
@@ -188,7 +188,7 @@ namespace Test { namespace Int { namespace InterDistance {
             }
         }
         bool
-        has_more(void) const override {
+        has_more() const override {
             return values[0]();
         }
         void
@@ -221,7 +221,7 @@ namespace Test { namespace Int { namespace InterDistance {
             test_search = false;
         }
         Assignment*
-        assignment(void) const override {
+        assignment() const override {
             return new ExampleAssignment(arity, domains);
         }
         bool
@@ -252,7 +252,7 @@ namespace Test { namespace Int { namespace InterDistance {
     /// Posting contracts, vacuous constraints, and shared variables
     class Posting : public Base {
         static bool
-        constant_contracts(void) {
+        constant_contracts() {
             using namespace Gecode;
             IntSet domain(-2, 2);
             TestSpace s(0, domain, nullptr);
@@ -296,7 +296,7 @@ namespace Test { namespace Int { namespace InterDistance {
         }
 
         static bool
-        variable_contracts(void) {
+        variable_contracts() {
             using namespace Gecode;
             IntSet domain(-3, 9);
             TestSpace empty(0, domain, nullptr);
@@ -337,9 +337,9 @@ namespace Test { namespace Int { namespace InterDistance {
         }
 
     public:
-        Posting(void) : Base("Int::InterDistance::Posting", TestTags::check()) {}
+        Posting() : Base("Int::InterDistance::Posting", TestTags::check()) {}
         bool
-        run(void) override {
+        run() override {
             if (!constant_contracts()) {
                 olog << "Constant posting contracts failed" << '\n';
                 return false;
@@ -354,7 +354,7 @@ namespace Test { namespace Int { namespace InterDistance {
 
     class Create {
     public:
-        Create(void) {
+        Create() {
             using namespace Gecode;
             for (IntPropLevel level : {IPL_BASIC, IPL_ADVANCED, IPL_BASIC_ADVANCED}) {
                 for (int n : {8, 24})

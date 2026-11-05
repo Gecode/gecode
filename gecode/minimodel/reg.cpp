@@ -79,14 +79,14 @@ namespace Gecode {
         /// Print expression to \a os
         void to_string(std::ostringstream& os) const;
         /// Print expression
-        std::string to_string(void) const;
+        std::string to_string() const;
 
         static void* operator new(size_t);
         static void operator delete(void*);
 
     private:
         /// Deallocate memory
-        void dispose(void);
+        void dispose();
     };
 
     /*
@@ -104,7 +104,7 @@ namespace Gecode {
     }
 
     void
-    REG::Exp::dispose(void) {
+    REG::Exp::dispose() {
         Region region;
         Support::DynamicStack<Exp*, Region> todo(region);
         todo.push(this);
@@ -199,7 +199,7 @@ namespace Gecode {
     }
 
     std::string
-    REG::Exp::to_string(void) const {
+    REG::Exp::to_string() const {
         std::ostringstream os;
         to_string(os);
         return os.str();
@@ -214,7 +214,7 @@ namespace Gecode {
     REG::REG(Exp* f)
         : e(f) {}
 
-    REG::REG(void) : e(nullptr) {}
+    REG::REG() : e(nullptr) {}
 
     REG::REG(const REG& r) : e(r.e) {
         REG::Exp::inc(e);
@@ -230,7 +230,7 @@ namespace Gecode {
         return *this;
     }
 
-    REG::~REG(void) {
+    REG::~REG() {
         REG::Exp::dec(e);
     }
 
@@ -354,7 +354,7 @@ namespace Gecode {
     }
 
     REG
-    REG::operator*(void) {
+    REG::operator*() {
         if ((e == nullptr) || (e->type == REG::Exp::ET_STAR))
             return *this;
         Exp* f = new Exp();
@@ -421,12 +421,12 @@ namespace Gecode {
     }
 
     REG
-    REG::operator+(void) {
+    REG::operator+() {
         return this->operator()(1);
     }
 
     std::string
-    REG::to_string(void) const {
+    REG::to_string() const {
         if (e == nullptr) {
             return "[]";
         }
@@ -456,7 +456,7 @@ namespace Gecode {
             int pos;
             PosSet* next;
 
-            PosSet(void) = default;
+            PosSet() = default;
             PosSet(int);
 
             bool in(int) const;
@@ -680,8 +680,8 @@ namespace Gecode {
 
             StatePool(PosSet*);
 
-            StateNode* pop(void);
-            bool empty(void) const;
+            StateNode* pop();
+            bool empty() const;
 
             int state(StatePoolAllocator&, PosSet*);
         };
@@ -699,7 +699,7 @@ namespace Gecode {
         }
 
         forceinline StateNode*
-        StatePool::pop(void) {
+        StatePool::pop() {
             StateNode* n = next;
             next = n->next;
             n->next = all;
@@ -708,7 +708,7 @@ namespace Gecode {
         }
 
         forceinline bool
-        StatePool::empty(void) const {
+        StatePool::empty() const {
             return next == nullptr;
         }
 
@@ -769,14 +769,14 @@ namespace Gecode {
             int n;
 
         public:
-            TransitionBag(void);
+            TransitionBag();
             void add(int, int, int);
-            void finish(void);
-            DFA::Transition* transitions(void);
+            void finish();
+            DFA::Transition* transitions();
         };
 
         forceinline
-        TransitionBag::TransitionBag(void)
+        TransitionBag::TransitionBag()
             : t(heap), n(0) {}
 
         forceinline void
@@ -788,12 +788,12 @@ namespace Gecode {
         }
 
         forceinline void
-        TransitionBag::finish(void) {
+        TransitionBag::finish() {
             t[n].i_state = -1;
         }
 
         forceinline DFA::Transition*
-        TransitionBag::transitions(void) {
+        TransitionBag::transitions() {
             return &t[0];
         }
 
@@ -807,14 +807,14 @@ namespace Gecode {
             int n;
 
         public:
-            FinalBag(void);
+            FinalBag();
             void add(int);
-            void finish(void);
-            int* finals(void);
+            void finish();
+            int* finals();
         };
 
         forceinline
-        FinalBag::FinalBag(void)
+        FinalBag::FinalBag()
             : f(heap), n(0) {}
 
         forceinline void
@@ -823,19 +823,19 @@ namespace Gecode {
         }
 
         forceinline void
-        FinalBag::finish(void) {
+        FinalBag::finish() {
             f[n] = -1;
         }
 
         forceinline int*
-        FinalBag::finals(void) {
+        FinalBag::finals() {
             return &f[0];
         }
 
     } // namespace MiniModel
 
     REG::
-    operator DFA(void) {
+    operator DFA() {
         using MiniModel::NodeInfo;
         using MiniModel::PosInfo;
         using MiniModel::PosSet;

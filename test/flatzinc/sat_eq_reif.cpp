@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("sat_eq_reif", "var bool: eq_a;\n\
 var bool: eq_b;\n\
 var bool: eq_c;\n\

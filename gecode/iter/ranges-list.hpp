@@ -64,7 +64,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// Set range lists
         void set(RangeList* l);
         /// Get head of current range list
-        RangeList* get(void) const;
+        RangeList* get() const;
         /// Create new range possibly from freelist \a f and init
         RangeList* range(int min, int max, RangeList*& f);
         /// Create new range possibly and init
@@ -83,7 +83,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        RangeListIter(void);
+        RangeListIter();
         /// Copy constructor
         RangeListIter(const RangeListIter& i);
         /// Initialize
@@ -97,25 +97,25 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         /// Reset iterator to start
-        void reset(void);
+        void reset();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
 
         /// Destructor
-        ~RangeListIter(void);
+        ~RangeListIter();
     };
 
     forceinline
@@ -123,7 +123,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         : Support::BlockAllocator<RangeList, Region>(r), use_cnt(1) {}
 
     forceinline
-    RangeListIter::RangeListIter(void)
+    RangeListIter::RangeListIter()
         : rlio(nullptr), h(nullptr), c(nullptr) {}
 
     forceinline
@@ -160,7 +160,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         return *this;
     }
 
-    forceinline RangeListIter::~RangeListIter(void) {
+    forceinline RangeListIter::~RangeListIter() {
         if ((rlio != nullptr) && (--rlio->use_cnt == 0)) {
             Region& r = rlio->allocator();
             rlio->~RLIO();
@@ -174,7 +174,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
 
     forceinline RangeListIter::RangeList*
-    RangeListIter::get(void) const {
+    RangeListIter::get() const {
         return h;
     }
 
@@ -228,30 +228,30 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
 
     forceinline bool
-    RangeListIter::operator()(void) const {
+    RangeListIter::operator()() const {
         return c != nullptr;
     }
 
     forceinline void
-    RangeListIter::operator++(void) {
+    RangeListIter::operator++() {
         c = c->next;
     }
 
     forceinline void
-    RangeListIter::reset(void) {
+    RangeListIter::reset() {
         c = h;
     }
 
     forceinline int
-    RangeListIter::min(void) const {
+    RangeListIter::min() const {
         return c->min;
     }
     forceinline int
-    RangeListIter::max(void) const {
+    RangeListIter::max() const {
         return c->max;
     }
     forceinline unsigned int
-    RangeListIter::width(void) const {
+    RangeListIter::width() const {
         return static_cast<unsigned int>(c->max - c->min) + 1;
     }
 

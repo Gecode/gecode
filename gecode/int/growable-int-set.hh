@@ -49,14 +49,14 @@ namespace Gecode { namespace Int {
             int min;
             int max;
             // NOLINTNEXTLINE(modernize-use-equals-default)
-            Range(void) {}
+            Range() {}
         };
         Range* _ranges;
         unsigned int _count;
         unsigned int _capacity;
 
         /// Largest capacity supported by both counts and allocation sizes
-        static unsigned int max_capacity(void);
+        static unsigned int max_capacity();
         /// Ensure capacity, copying only initialized ranges
         void reserve(Space& home, unsigned int required);
         /// First range whose maximum is at least value
@@ -68,7 +68,7 @@ namespace Gecode { namespace Int {
         GrowableIntSet(const GrowableIntSet&) = delete;
         GrowableIntSet& operator=(const GrowableIntSet&) = delete;
         /// Initialize an empty set
-        GrowableIntSet(void);
+        GrowableIntSet();
         /// Test membership
         bool in(int value) const;
         /** \brief Add the ranges from a copyable, independent canonical iterator
@@ -92,11 +92,11 @@ namespace Gecode { namespace Int {
 
     public:
         GrowableIntSetRanges(const GrowableIntSet& set);
-        bool operator()(void) const;
-        void operator++(void);
-        int min(void) const;
-        int max(void) const;
-        unsigned int width(void) const;
+        bool operator()() const;
+        void operator++();
+        int min() const;
+        int max() const;
+        unsigned int width() const;
     };
 
 }} // namespace Gecode::Int

@@ -37,26 +37,26 @@ namespace Gecode { namespace Int { namespace NoOverlap {
      *
      */
     forceinline
-    FixDim::FixDim(void)
+    FixDim::FixDim()
         : s(0) {}
     forceinline
     FixDim::FixDim(IntView c0, int s0)
         : c(c0), s(s0) {}
 
     forceinline int
-    FixDim::ssc(void) const {
+    FixDim::ssc() const {
         return c.min();
     }
     forceinline int
-    FixDim::lsc(void) const {
+    FixDim::lsc() const {
         return c.max();
     }
     forceinline int
-    FixDim::sec(void) const {
+    FixDim::sec() const {
         return c.min() + s;
     }
     forceinline int
-    FixDim::lec(void) const {
+    FixDim::lec() const {
         return c.max() + s;
     }
 
@@ -118,19 +118,19 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         : c0(c00), s(s0), c1(c10) {}
 
     forceinline int
-    FlexDim::ssc(void) const {
+    FlexDim::ssc() const {
         return c0.min();
     }
     forceinline int
-    FlexDim::lsc(void) const {
+    FlexDim::lsc() const {
         return c0.max();
     }
     forceinline int
-    FlexDim::sec(void) const {
+    FlexDim::sec() const {
         return c1.min();
     }
     forceinline int
-    FlexDim::lec(void) const {
+    FlexDim::lec() const {
         return c1.max();
     }
 

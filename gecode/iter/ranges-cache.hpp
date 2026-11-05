@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Cache(void) = default;
+        Cache() = default;
         /// Copy constructor
         Cache(const Cache& m) = default;
         /// Initialize with ranges from \a i

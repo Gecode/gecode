@@ -73,7 +73,7 @@ namespace Gecode { namespace Gist {
         int depth;
         bool a;
         TreeCanvas* t;
-        void update_canvas(void);
+        void update_canvas();
 
     public:
         void search(VisualNode* n, bool all, TreeCanvas* ti);
@@ -83,11 +83,11 @@ namespace Gecode { namespace Gist {
         void status_changed(bool);
         void scale_changed(int);
         void solution(const Space*);
-        void search_finished(void);
+        void search_finished();
         void move_to_node(VisualNode* n, bool);
 
     protected:
-        void run(void) override;
+        void run() override;
     };
 
     /// \brief A canvas that displays the search tree
@@ -101,7 +101,7 @@ namespace Gecode { namespace Gist {
         /// Constructor
         TreeCanvas(Space* root_space, bool bab, QWidget* parent, const Options& opt);
         /// Destructor
-        ~TreeCanvas(void) override;
+        ~TreeCanvas() override;
 
         /// Add inspector \a i
         void add_double_click_inspector(Inspector* i);
@@ -125,29 +125,29 @@ namespace Gecode { namespace Gist {
         void scale_tree(int scale0, int zoomx = -1, int zoomy = -1);
 
         /// Explore complete subtree of selected node
-        void search_all(void);
+        void search_all();
         /// Find next solution below selected node
-        void search_one(void);
+        void search_one();
         /// Toggle hidden state of selected node
-        void toggle_hidden(void);
+        void toggle_hidden();
         /// Hide failed subtrees of selected node
-        void hide_failed(void);
+        void hide_failed();
         /// Unhide all nodes below selected node
-        void unhide_all(void);
+        void unhide_all();
         /// Do not stop at selected stop node
-        void toggle_stop(void);
+        void toggle_stop();
         /// Do not stop at any stop node
-        void unstop_all(void);
+        void unstop_all();
         /// Export pdf of the current subtree
-        void export_pdf(void);
+        void export_pdf();
         /// Export pdf of the whole tree
-        void export_whole_tree_pdf(void);
+        void export_whole_tree_pdf();
         /// Print the tree
-        void print(void);
+        void print();
         /// Zoom the canvas so that the whole tree fits
-        void zoom_to_fit(void);
+        void zoom_to_fit();
         /// Center the view on the currently selected node
-        void center_current_node(void);
+        void center_current_node();
         /**
          * \brief Call the double click inspector for the currently selected node
          *
@@ -157,46 +157,46 @@ namespace Gecode { namespace Gist {
          */
         void inspect_current_node(bool fix = true, int inspector_no = -1);
         /// Calls inspect_current_node(false)
-        void inspect_before_fp(void);
+        void inspect_before_fp();
         /// Label all branches in subtree under current node
-        void label_branches(void);
+        void label_branches();
         /// Label all branches on path to root node
-        void label_path(void);
+        void label_path();
 
         /// Stop current search
-        void stop_search(void);
+        void stop_search();
 
         /// Reset
-        void reset(void);
+        void reset();
 
         /// Move selection to the parent of the selected node
-        void nav_up(void);
+        void nav_up();
         /// Move selection to the first child of the selected node
-        void nav_down(void);
+        void nav_down();
         /// Move selection to the left sibling of the selected node
-        void nav_left(void);
+        void nav_left();
         /// Move selection to the right sibling of the selected node
-        void nav_right(void);
+        void nav_right();
         /// Move selection to the root node
-        void nav_root(void);
+        void nav_root();
         /// Move selection to next solution (in DFS order)
         void nav_next_sol(bool back = false);
         /// Move selection to previous solution (in DFS order)
-        void nav_prev_sol(void);
+        void nav_prev_sol();
 
         /// Bookmark current node
-        void bookmark_node(void);
+        void bookmark_node();
         /// Set the current node to be the head of the path
-        void set_path(void);
+        void set_path();
         /// Call the double click inspector for all nodes on the path from root to head of the path
-        void inspect_path(void);
+        void inspect_path();
         /// Wait for click on node to compare with current node
-        void start_compare_nodes(void);
+        void start_compare_nodes();
         /// Wait for click on node to compare with current node before fixpoint
-        void start_compare_nodes_before_fp(void);
+        void start_compare_nodes_before_fp();
 
         /// Re-emit status change information for current node
-        void emit_status_changed(void);
+        void emit_status_changed();
 
         /// Set recomputation distances
         void set_recomp_distances(int c_d, int a_d);
@@ -205,30 +205,30 @@ namespace Gecode { namespace Gist {
         /// Set preference whether to automatically zoom to fit
         void set_auto_zoom(bool b);
         /// Return preference whether to automatically hide failed subtrees
-        bool get_auto_hide_failed(void);
+        bool get_auto_hide_failed();
         /// Return preference whether to automatically zoom to fit
-        bool get_auto_zoom(void);
+        bool get_auto_zoom();
         /// Set preference whether to show copies in the tree
         void set_show_copies(bool b);
         /// Return preference whether to show copies in the tree
-        bool get_show_copies(void);
+        bool get_show_copies();
         /// Set refresh rate
         void set_refresh(int i);
         /// Set refresh pause in msec
         void set_refresh_pause(int i);
         /// Return preference whether to use smooth scrolling and zooming
-        bool get_smooth_scroll_and_zoom(void);
+        bool get_smooth_scroll_and_zoom();
         /// Set preference whether to use smooth scrolling and zooming
         void set_smooth_scroll_and_zoom(bool b);
         /// Return preference whether to move cursor during search
-        bool get_move_during_search(void);
+        bool get_move_during_search();
         /// Set preference whether to move cursor during search
         void set_move_during_search(bool b);
         /// Resize to the outer widget size if auto zoom is enabled
-        void resize_to_outer(void);
+        void resize_to_outer();
 
         /// Stop search and wait for it to finish
-        bool finish(void);
+        bool finish();
 
     Q_SIGNALS:
         /// The scale factor has changed
@@ -242,7 +242,7 @@ namespace Gecode { namespace Gist {
         /// Signals that a solution has been found
         void solution(const Space*);
         /// Signals that %Gist is finished
-        void search_finished(void);
+        void search_finished();
         /// Signals that a bookmark has been added
         void added_bookmark(const QString& id);
         /// Signals that a bookmark has been removed
@@ -361,9 +361,9 @@ namespace Gecode { namespace Gist {
 
     public Q_SLOTS:
         /// Update display
-        void update(void);
+        void update();
         /// React to scroll events
-        void scroll(void);
+        void scroll();
         /// Layout done
         void layout_done(int w, int h, int scale0);
         /// Set the selected node to \a n

@@ -43,7 +43,7 @@ namespace Gecode { namespace Support {
         d = d0;
     }
     forceinline bool
-    Runnable::delete_after_run(void) const {
+    Runnable::delete_after_run() const {
         return d;
     }
     forceinline void
@@ -60,13 +60,13 @@ namespace Gecode { namespace Support {
      *
      */
     forceinline
-    Mutex::Mutex(void) {
+    Mutex::Mutex() {
 #if defined(GECODE_HAS_THREADS) && defined(GECODE_USE_OSX_UNFAIR_MUTEX)
         l = OS_UNFAIR_LOCK_INIT;
 #endif
     }
     forceinline void
-    Mutex::acquire(void) {
+    Mutex::acquire() {
 #ifdef GECODE_HAS_THREADS
 #ifndef GECODE_USE_OSX_UNFAIR_MUTEX
         m.lock();
@@ -77,7 +77,7 @@ namespace Gecode { namespace Support {
     }
 
     forceinline bool
-    Mutex::try_acquire(void) {
+    Mutex::try_acquire() {
 #ifdef GECODE_HAS_THREADS
 #ifndef GECODE_USE_OSX_UNFAIR_MUTEX
         return m.try_lock();
@@ -90,7 +90,7 @@ namespace Gecode { namespace Support {
     }
 
     forceinline void
-    Mutex::release(void) {
+    Mutex::release() {
 #ifdef GECODE_HAS_THREADS
 #ifndef GECODE_USE_OSX_UNFAIR_MUTEX
         m.unlock();
@@ -118,7 +118,7 @@ namespace Gecode { namespace Support {
         : m(m0) {
         m.acquire();
     }
-    forceinline Lock::~Lock(void) {
+    forceinline Lock::~Lock() {
         m.release();
     }
 
@@ -126,10 +126,10 @@ namespace Gecode { namespace Support {
      * Events
      */
     forceinline
-    Event::Event(void)
+    Event::Event()
         : s(false) {}
     forceinline void
-    Event::signal(void) {
+    Event::signal() {
 #ifdef GECODE_HAS_THREADS
         std::unique_lock<std::mutex> l(m);
         if (!s) {
@@ -139,7 +139,7 @@ namespace Gecode { namespace Support {
 #endif
     }
     forceinline void
-    Event::wait(void) {
+    Event::wait() {
 #ifdef GECODE_HAS_THREADS
         std::unique_lock<std::mutex> l(m);
         c.wait(l, [this] { return this->s; });
@@ -159,7 +159,7 @@ namespace Gecode { namespace Support {
 #endif
     }
     forceinline unsigned int
-    Thread::npu(void) {
+    Thread::npu() {
 #ifdef GECODE_HAS_THREADS
         return std::thread::hardware_concurrency();
 #else

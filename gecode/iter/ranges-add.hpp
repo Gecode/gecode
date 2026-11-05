@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        AddRange(void) = default;
+        AddRange() = default;
         /// Initialize with ranges \a i and range \a min to \a max
         AddRange(I& i, int min, int max);
         /// Initialize with ranges \a i and range \a min to \a max
@@ -61,7 +61,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
@@ -76,7 +76,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SubRange(void) = default;
+        SubRange() = default;
         /// Initialize with ranges \a i and range \a min to \a max
         SubRange(I& i, int min, int max);
         /// Initialize with ranges \a i and range \a min to \a max
@@ -86,7 +86,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I>
     forceinline void
-    AddRange<I>::operator++(void) {
+    AddRange<I>::operator++() {
         if (i()) {
             mi = r_min + i.min();
             ma = r_max + i.max();

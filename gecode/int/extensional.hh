@@ -58,15 +58,15 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     public:
         /// Initialize as empty support list
-        CompressedSupport(void);
+        CompressedSupport();
         /// Initialize from support word range
         CompressedSupport(const TupleSet::CSupportWord* b0, const TupleSet::CSupportWord* e0);
         /// Return first support word
-        const TupleSet::CSupportWord* begin(void) const;
+        const TupleSet::CSupportWord* begin() const;
         /// Return one past last support word
-        const TupleSet::CSupportWord* end(void) const;
+        const TupleSet::CSupportWord* end() const;
         /// Whether support list is empty
-        bool empty(void) const;
+        bool empty() const;
     };
 
     /**
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             Degree i_deg; ///< The in-degree (number of incoming edges)
             Degree o_deg; ///< The out-degree (number of outgoing edges)
             /// Initialize with zeroes
-            void init(void);
+            void init();
         };
         /// %Edge defined by in-state and out-state
         class Edge {
@@ -125,17 +125,17 @@ namespace Gecode { namespace Int { namespace Extensional {
             const Support* s2; ///< End of support
         public:
             /// Default constructor
-            LayerValues(void) = default;
+            LayerValues() = default;
             /// Initialize for support of layer \a l
             LayerValues(const Layer& l);
             /// Initialize for support of layer \a l
             void init(const Layer& l);
             /// Test whether more values supported
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move to next supported value
-            void operator++(void);
+            void operator++();
             /// Return supported value
-            int val(void) const;
+            int val() const;
         };
         /// %Advisors for views (by position in array)
         class Index : public Advisor {
@@ -154,9 +154,9 @@ namespace Gecode { namespace Int { namespace Extensional {
             int _lst; ///< Last index
         public:
             /// Initialize range as empty
-            IndexRange(void);
+            IndexRange();
             /// Reset range to be empty
-            void reset(void);
+            void reset();
             /// Add index \a i to range
             void add(int i);
             /// Add index range \a ir to range
@@ -164,11 +164,11 @@ namespace Gecode { namespace Int { namespace Extensional {
             /// Shift index range by \a n elements to the left
             void lshift(int n);
             /// Test whether range is empty
-            bool empty(void) const;
+            bool empty() const;
             /// Return first position
-            int fst(void) const;
+            int fst() const;
             /// Return last position
-            int lst(void) const;
+            int lst() const;
         };
         /// The advisor council
         Council<Index> c;
@@ -201,7 +201,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Decrement in degree for out state of edge \a e for layer \a i
         bool o_dec(int i, const Edge& e);
         /// Perform consistency check on data structures
-        void audit(void);
+        void audit();
         /// Initialize layered graph
         template <class Var>
         ExecStatus initialize(Space& home, const VarArgArray<Var>& x, const DFA& dfa);
@@ -285,13 +285,13 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Initialize during cloning (unused)
         BitSet(Space& home, const TinyBitSet<4U>& tbs);
         /// Get the number of active words
-        unsigned int limit(void) const;
+        unsigned int limit() const;
         /// Check whether the set is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Make the set empty
-        void flush(void);
+        void flush();
         /// Return the highest active index
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Clear all active words in \a mask
         void clear_mask(BitSetData* mask) const;
         /// Add \a support to \a mask
@@ -316,17 +316,17 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Perform "nand" with compressed support list
         void nand_with_mask(const CompressedSupport& support);
         /// Return the number of ones
-        unsigned long long int ones(void) const;
+        unsigned long long int ones() const;
         /// Return the number of ones after intersection with \a mask
         unsigned long long int ones(const BitSetData* mask) const;
         /// Return the number of ones after intersection with compressed support list
         unsigned long long int ones(const CompressedSupport& support) const;
         /// Return an upper bound on the number of bits
-        unsigned long long int bits(void) const;
+        unsigned long long int bits() const;
         /// Return the number of required bit set words
-        unsigned int words(void) const;
+        unsigned int words() const;
         /// Return the number of required bit set words
-        unsigned int size(void) const;
+        unsigned int size() const;
     };
 
 }}} // namespace Gecode::Int::Extensional
@@ -355,13 +355,13 @@ namespace Gecode { namespace Int { namespace Extensional {
         template <class IndexType>
         TinyBitSet(Space& home, const BitSet<IndexType>& bs);
         /// Get the limit
-        int limit(void) const;
+        int limit() const;
         /// Check whether the set is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Make the set empty
-        void flush(void);
+        void flush();
         /// Return the highest active index
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Clear the first \a limit words in \a mask
         void clear_mask(BitSetData* mask);
         /// Add \b to \a mask
@@ -388,17 +388,17 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Perform "nand" with and the "or" of \a a and \a b
         void nand_with_masks(const BitSetData* a, const BitSetData* b);
         /// Return the number of ones
-        unsigned long long int ones(void) const;
+        unsigned long long int ones() const;
         /// Return the number of ones after intersection with \a b
         unsigned long long int ones(const BitSetData* b) const;
         /// Return the number of ones after intersection with compressed support list
         unsigned long long int ones(const CompressedSupport& s) const;
         /// Return an upper bound on the number of bits
-        unsigned long long int bits(void) const;
+        unsigned long long int bits() const;
         /// Return the number of required bit set words
-        unsigned int words(void) const;
+        unsigned int words() const;
         /// Return the total number of words
-        unsigned int size(void) const;
+        unsigned int size() const;
     };
 
 }}} // namespace Gecode::Int::Extensional
@@ -421,7 +421,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Initialize without storing \a i
         CompactAdvisorIndex(int i);
         /// Return a dummy index
-        int index(void) const;
+        int index() const;
     };
 
     /// Compact-table advisor with a variable index
@@ -433,7 +433,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Initialize with index \a i
         CompactAdvisorIndex(int i);
         /// Return the variable index
-        int index(void) const;
+        int index() const;
     };
 
     /// Advisor shared by compact-table support representations
@@ -454,13 +454,13 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Clone advisor \a a
         CompactAdvisor(Space& home, CompactAdvisor& a);
         /// Adjust supports to the current view bounds
-        void adjust(void);
+        void adjust();
         /// Return the variable index
-        int index(void) const;
+        int index() const;
         /// Return first range of support data structure
-        const Range* fst(void) const;
+        const Range* fst() const;
         /// Return last range of support data structure
-        const Range* lst(void) const;
+        const Range* lst() const;
         /// Dispose advisor
         void dispose(Space& home, Council<CompactAdvisor>& c);
     };
@@ -493,15 +493,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Copy constructor
         CompactStatus(const CompactStatus& status) = default;
         /// Return status type
-        StatusType type(void) const;
+        StatusType type() const;
         /// Test whether only advisor \a a was touched
         bool single(Advisor& a) const;
         /// Record that advisor \a a was touched
         void touched(Advisor& a);
         /// Record that no advisor has been touched
-        void none(void);
+        void none();
         /// Record that propagation is in progress
-        void propagating(void);
+        void propagating();
     };
 
     /// Shared implementation of positive compact-table propagation
@@ -543,7 +543,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             /// The value's support
             const BitSetData* support_words;
             /// Find a new value (only for negative case)
-            void find(void);
+            void find();
 
         public:
             /// Initialize from initialized propagator
@@ -551,13 +551,13 @@ namespace Gecode { namespace Int { namespace Extensional {
             /// Initialize during initialization
             ValidSupports(const TupleSet& ts, int i, View x);
             /// Move to next supports
-            void operator++(void);
+            void operator++();
             /// Whether there are still supports left
-            bool operator()(void) const;
+            bool operator()() const;
             /// Return support representation
-            const BitSetData* support(void) const;
+            const BitSetData* support() const;
             /// Return supported value
-            int val(void) const;
+            int val() const;
         };
         /// Iterator over lost supports
         class LostSupports {
@@ -579,19 +579,19 @@ namespace Gecode { namespace Int { namespace Extensional {
             /// Initialize iterator for values between \a first_value and \a last_value
             LostSupports(const Compact<View, pos>& p, CTAdvisor& a, int first_value, int last_value);
             /// Move iterator to next value
-            void operator++(void);
+            void operator++();
             /// Whether iterator is done
-            bool operator()(void) const;
+            bool operator()() const;
             /// Return support representation
-            const BitSetData* support(void) const;
+            const BitSetData* support() const;
         };
         //@}
         /// \name Testing the number of unassigned variables
         //@{
         /// Whether all variables are assigned
-        bool all(void) const;
+        bool all() const;
         /// Whether at most one variable is unassigned
-        bool at_most_one(void) const;
+        bool at_most_one() const;
         //@}
     protected:
         /// Number of words in supports
@@ -662,7 +662,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Current table
         Table table;
         /// Check whether the table is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Constructor for cloning \a p
         template <class TableProp>
         PosCompact(Space& home, TableProp& p);

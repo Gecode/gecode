@@ -80,7 +80,7 @@ namespace Test { namespace Branch {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new IntTestSpace(*this);
         }
     };
@@ -98,7 +98,7 @@ namespace Test { namespace Branch {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new BoolTestSpace(*this);
         }
     };
@@ -117,7 +117,7 @@ namespace Test { namespace Branch {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new SetTestSpace(*this);
         }
     };
@@ -137,7 +137,7 @@ namespace Test { namespace Branch {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new FloatTestSpace(*this);
         }
     };
@@ -326,7 +326,7 @@ namespace Test { namespace Branch {
         : Base("Int::Branch::" + s), arity(a), dom(d) {}
 
     bool
-    IntTest::run(void) {
+    IntTest::run() {
         using std::map;
         using std::ostream;
         using std::string;
@@ -649,7 +649,7 @@ namespace Test { namespace Branch {
     BoolTest::BoolTest(const std::string& s, int a) : Base("Bool::Branch::" + s), arity(a) {}
 
     bool
-    BoolTest::run(void) {
+    BoolTest::run() {
         using std::map;
         using std::ostream;
         using std::string;
@@ -845,7 +845,7 @@ namespace Test { namespace Branch {
     SetTest::SetTest(const std::string& s, int a, const Gecode::IntSet& d) : SetTest(TestTags::standard(), s, a, d) {}
 
     bool
-    SetTest::run(void) {
+    SetTest::run() {
         using std::map;
         using std::ostream;
         using std::string;
@@ -1136,7 +1136,7 @@ namespace Test { namespace Branch {
         : Base("Float::Branch::" + s), arity(a), dom(d), nb_sols(nbs) {}
 
     bool
-    FloatTest::run(void) {
+    FloatTest::run() {
         using std::map;
         using std::ostream;
         using std::string;
@@ -1410,18 +1410,18 @@ namespace Test { namespace Branch {
     class EmptySpace : public Gecode::Space {
     public:
         /// Initialize space
-        EmptySpace(void) = default;
+        EmptySpace() = default;
         /// Constructor for cloning \a s
         // NOLINTNEXTLINE(modernize-use-equals-default)
         EmptySpace(EmptySpace& s) : Gecode::Space(s) {}
         /// Return the number of propagators
         unsigned int
-        propagators(void) {
+        propagators() {
             return Gecode::PropagatorGroup::all.size(*this);
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new EmptySpace(*this);
         }
     };
@@ -1538,7 +1538,7 @@ namespace Test { namespace Branch {
         }
         /// Test an empty action, including a decay change
         static bool
-        empty_action(void) {
+        empty_action() {
             EmptySpace home;
             Action constructed(home, VarArgs(), 0.9);
             Action initialized;
@@ -1550,7 +1550,7 @@ namespace Test { namespace Branch {
         }
         /// Test an empty CHB
         static bool
-        empty_chb(void) {
+        empty_chb() {
             EmptySpace home;
             CHB constructed(home, VarArgs());
             CHB initialized;
@@ -1603,7 +1603,7 @@ namespace Test { namespace Branch {
         EmptyStatistics(const std::string& prefix) : Base(prefix + "::Branch::EmptyStatistics") {}
         /// Run test
         bool
-        run(void) override {
+        run() override {
             return empty_action() && empty_chb() && empty_branching(&branch_fresh_action) &&
                    empty_branching(&branch_given_action) && empty_branching(&branch_fresh_chb) &&
                    empty_branching(&branch_given_chb);

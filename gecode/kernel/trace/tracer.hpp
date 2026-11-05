@@ -90,7 +90,7 @@ namespace Gecode {
 
     public:
         /// Constructor
-        ViewTracer(void) = default;
+        ViewTracer() = default;
         /**
          * \brief Init function
          *
@@ -132,7 +132,7 @@ namespace Gecode {
          */
         virtual void done(const Space& home, const ViewTraceRecorder<View>& t) = 0;
         /// Destructor
-        virtual ~ViewTracer(void);
+        virtual ~ViewTracer();
     };
 
     /**
@@ -168,7 +168,7 @@ namespace Gecode {
 
     public:
         /// Constructor
-        Tracer(void) = default;
+        Tracer() = default;
         /**
          * \brief Propagate function
          *
@@ -191,7 +191,7 @@ namespace Gecode {
          */
         virtual void post(const Space& home, const PostTraceInfo& pti) = 0;
         /// Destructor
-        virtual ~Tracer(void);
+        virtual ~Tracer();
     };
 
     /**
@@ -268,7 +268,7 @@ namespace Gecode {
     }
 
     template <class View>
-    forceinline ViewTracer<View>::~ViewTracer(void) = default;
+    forceinline ViewTracer<View>::~ViewTracer() = default;
 
     /*
      * Tracer
@@ -290,7 +290,7 @@ namespace Gecode {
         post(home, pti);
     }
 
-    forceinline Tracer::~Tracer(void) = default;
+    forceinline Tracer::~Tracer() = default;
 
 } // namespace Gecode
 

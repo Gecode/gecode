@@ -47,13 +47,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// End of current range
         int max;
         /// Initialize iterator
-        void start(void);
+        void start();
 
     public:
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ToValues(void) = default;
+        ToValues() = default;
         /// Initialize with values from range iterator \a i
         ToValues(I& i);
         /// Initialize with values from range iterator \a i
@@ -63,21 +63,21 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
     template <class I>
     forceinline void
-    ToValues<I>::start(void) {
+    ToValues<I>::start() {
         if (i()) {
             cur = i.min();
             max = i.max();
@@ -103,13 +103,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I>
     forceinline bool
-    ToValues<I>::operator()(void) const {
+    ToValues<I>::operator()() const {
         return (cur <= max);
     }
 
     template <class I>
     forceinline void
-    ToValues<I>::operator++(void) {
+    ToValues<I>::operator++() {
         ++cur;
         if (cur > max) {
             ++i;
@@ -122,7 +122,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I>
     forceinline int
-    ToValues<I>::val(void) const {
+    ToValues<I>::val() const {
         return cur;
     }
 
