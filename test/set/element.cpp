@@ -431,6 +431,85 @@ namespace Test { namespace Set {
         };
         ElementVarEmpty _element_var_empty;
 
+        /// Space with the variables for posting element with an integer index
+        class IndexFixture : public Gecode::Space {
+        public:
+            /// Index or column
+            IntVar x;
+            /// Row
+            IntVar y;
+            /// Result set
+            SetVar z;
+            /// Create fixture
+            IndexFixture(void) : x(*this, 0, 1), y(*this, 0, 1), z(*this, IntSet::empty, IntSet(0, 3)) {}
+            /// Constructor for cloning \a fixture
+            IndexFixture(IndexFixture& fixture) : Gecode::Space(fixture) {
+                x.update(*this, fixture.x);
+                y.update(*this, fixture.y);
+                z.update(*this, fixture.z);
+            }
+            /// Copy during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new IndexFixture(*this);
+            }
+        };
+
+        /// Test whether posting a matrix of \a n sets throws \a E for both array types
+        template <class E>
+        bool
+        is_matrix_rejected(int n, int w, int h) {
+            IndexFixture constant, variable;
+            bool constant_rejected = false;
+            bool variable_rejected = false;
+            try {
+                element(constant, IntSetArgs(n), constant.x, w, constant.y, h, constant.z);
+            } catch (const E&) {
+                constant_rejected = true;
+            }
+            try {
+                element(variable, SetVarArgs(variable, n, IntSet::empty, 0, 3), variable.x, w, variable.y, h,
+                        variable.z);
+            } catch (const E&) {
+                variable_rejected = true;
+            }
+            return constant_rejected && variable_rejected;
+        }
+
+        /// Test whether posting over no sets throws Set::TooFewArguments for array type \a Args
+        template <class Args>
+        bool
+        is_array_rejected(void) {
+            IndexFixture home;
+            try {
+                element(home, Args(), home.x, home.z);
+            } catch (const Gecode::Set::TooFewArguments&) {
+                return true;
+            }
+            return false;
+        }
+
+        /// %Test that element with an integer index rejects invalid arrays and matrices
+        class ElementIndexInvalid : public Base {
+        public:
+            /// Create and register test
+            ElementIndexInvalid(void) : Base("Set::Element::Index::Invalid") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using Gecode::Set::ArgumentSizeMismatch;
+                using Gecode::Set::TooFewArguments;
+                return is_array_rejected<IntSetArgs>() && is_array_rejected<SetVarArgs>() &&
+                       is_matrix_rejected<TooFewArguments>(0, 0, 0) && is_matrix_rejected<TooFewArguments>(0, 1, 1) &&
+                       is_matrix_rejected<ArgumentSizeMismatch>(3, 0, 5) &&
+                       is_matrix_rejected<ArgumentSizeMismatch>(1, -1, -1) &&
+                       is_matrix_rejected<ArgumentSizeMismatch>(6, -2, -3) &&
+                       // The product is 2 * 2^32 + 1
+                       is_matrix_rejected<ArgumentSizeMismatch>(1, 9, 954437177);
+            }
+        };
+        ElementIndexInvalid _element_index_invalid;
+
         /// %Test for matrix element with integer set array and set variable
         class MatrixIntSet : public SetTest {
         protected:
