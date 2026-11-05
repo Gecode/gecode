@@ -770,7 +770,10 @@ namespace Gecode {
      *
      */
     //@{
-    /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
+    /** \brief Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
+     *
+     * Throws an exception of type Set::TooFewArguments, if \a x is empty.
+     */
     GECODE_SET_EXPORT void sequence(Home home, const SetVarArgs& x);
     /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
     GECODE_SET_EXPORT void sequence(Home home, const SetVarArgs& y, SetVar x);
@@ -931,24 +934,38 @@ namespace Gecode {
      * \brief Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$
      *
      * The indices for \a y start at 0.
+     *
+     * Throws an exception of type Set::TooFewArguments, if \a x is empty.
      */
     GECODE_SET_EXPORT void element(Home home, const SetVarArgs& x, IntVar y, SetVar z);
     /**
      * \brief Post propagator for \f$ z=\langle s_0,\dots,s_{n-1}\rangle[y] \f$
      *
      * The indices for \a y start at 0.
+     *
+     * Throws an exception of type Set::TooFewArguments, if \a s is empty.
+     *
+     * Throws an exception of type Set::OutOfLimits, if a set in \a s
+     * exceeds the limits in Set::Limits.
      */
     GECODE_SET_EXPORT void element(Home home, const IntSetArgs& s, IntVar y, SetVar z);
     /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
      *
-     * Throws an exception of type Set::ArgumentSizeMismatch, if
-     * \f$ w\cdot h\neq|a|\f$.
+     * Throws an exception of type Set::TooFewArguments, if \a a is empty.
+     *
+     * Throws an exception of type Set::ArgumentSizeMismatch, if \a w or
+     * \a h is not positive or \f$ w\cdot h\neq|a|\f$.
+     *
+     * Throws an exception of type Set::OutOfLimits, if a set in \a a
+     * exceeds the limits in Set::Limits.
      */
     GECODE_SET_EXPORT void element(Home home, const IntSetArgs& a, IntVar x, int w, IntVar y, int h, SetVar z);
     /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
      *
-     * Throws an exception of type Set::ArgumentSizeMismatch, if
-     * \f$ w\cdot h\neq|a|\f$.
+     * Throws an exception of type Set::TooFewArguments, if \a a is empty.
+     *
+     * Throws an exception of type Set::ArgumentSizeMismatch, if \a w or
+     * \a h is not positive or \f$ w\cdot h\neq|a|\f$.
      */
     GECODE_SET_EXPORT void element(Home home, const SetVarArgs& a, IntVar x, int w, IntVar y, int h, SetVar z);
     //@}

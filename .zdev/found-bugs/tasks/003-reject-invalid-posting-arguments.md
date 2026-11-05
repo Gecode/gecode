@@ -3,7 +3,7 @@ schema_version = 1
 id = "found-bugs-003"
 key = "post-arguments"
 area = "found-bugs"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "high"
@@ -21,8 +21,17 @@ gecode/int/bin-packing.cpp:72 divides by zero when d==0 (SIGFPE on x86). Throw a
 
 ## Done when
 
-- [ ] Each case throws a documented exception, covered by a focused test.
+- [x] Each case throws a documented exception, covered by a focused test.
 
 ## Validation
 
 - Focused tests in build/full.
+
+## Result
+
+Reject invalid bin_packing d and malformed 2D element matrices with documented exceptions; IntSet empty list was already fixed by df72e330c6.
+
+Validation:
+
+- gecode-test -threads 8: Int::BinPacking::NoDimension 1/1, Int::Element::Matrix 9/9, Set::Element 11/11, Set::Sequence 5/5
+- check 565/565, fault 21/21, doc 0 warnings, tidy and format pass

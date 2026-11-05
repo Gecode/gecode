@@ -65,6 +65,7 @@ namespace Gecode {
 
         if (same(l, b))
             throw ArgumentSame("Int::binpacking");
+        Limits::positive(d, "Int::binpacking");
 
         // The number of items
         int n = b.size();

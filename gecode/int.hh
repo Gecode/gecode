@@ -1792,8 +1792,10 @@ namespace Gecode {
      * Throws an exception of type Int::OutOfLimits, if
      * the integers in \a n exceed the limits in Int::Limits.
      *
-     * Throws an exception of type Int::ArgumentSizeMismatch, if
-     * \f$ w\cdot h\neq|a|\f$.
+     * Throws an exception of type Int::TooFewArguments, if \a a is empty.
+     *
+     * Throws an exception of type Int::ArgumentSizeMismatch, if \a w or
+     * \a h is not positive or \f$ w\cdot h\neq|a|\f$.
      */
     GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, IntVar z,
                                    IntPropLevel ipl = IPL_DEF);
@@ -1807,8 +1809,10 @@ namespace Gecode {
      * Throws an exception of type Int::OutOfLimits, if
      * the integers in \a n exceed the limits in Int::Limits.
      *
-     * Throws an exception of type Int::ArgumentSizeMismatch, if
-     * \f$ w\cdot h\neq|a|\f$.
+     * Throws an exception of type Int::TooFewArguments, if \a a is empty.
+     *
+     * Throws an exception of type Int::ArgumentSizeMismatch, if \a w or
+     * \a h is not positive or \f$ w\cdot h\neq|a|\f$.
      */
     GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff,
                                    int h, IntVar z, IntPropLevel ipl = IPL_DEF);
@@ -1821,8 +1825,10 @@ namespace Gecode {
      * Throws an exception of type Int::OutOfLimits, if
      * the integers in \a n exceed the limits in Int::Limits.
      *
-     * Throws an exception of type Int::ArgumentSizeMismatch, if
-     * \f$ w\cdot h\neq|a|\f$.
+     * Throws an exception of type Int::TooFewArguments, if \a a is empty.
+     *
+     * Throws an exception of type Int::ArgumentSizeMismatch, if \a w or
+     * \a h is not positive or \f$ w\cdot h\neq|a|\f$.
      */
     GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, BoolVar z,
                                    IntPropLevel ipl = IPL_DEF);
@@ -1836,8 +1842,10 @@ namespace Gecode {
      * Throws an exception of type Int::OutOfLimits, if
      * the integers in \a n exceed the limits in Int::Limits.
      *
-     * Throws an exception of type Int::ArgumentSizeMismatch, if
-     * \f$ w\cdot h\neq|a|\f$.
+     * Throws an exception of type Int::TooFewArguments, if \a a is empty.
+     *
+     * Throws an exception of type Int::ArgumentSizeMismatch, if \a w or
+     * \a h is not positive or \f$ w\cdot h\neq|a|\f$.
      */
     GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff,
                                    int h, BoolVar z, IntPropLevel ipl = IPL_DEF);
@@ -1853,8 +1861,10 @@ namespace Gecode {
      * Throws an exception of type Int::OutOfLimits, if
      * the integers in \a n exceed the limits in Int::Limits.
      *
-     * Throws an exception of type Int::ArgumentSizeMismatch, if
-     * \f$ w\cdot h\neq|a|\f$.
+     * Throws an exception of type Int::TooFewArguments, if \a a is empty.
+     *
+     * Throws an exception of type Int::ArgumentSizeMismatch, if \a w or
+     * \a h is not positive or \f$ w\cdot h\neq|a|\f$.
      */
     GECODE_INT_EXPORT void element(Home home, const IntVarArgs& a, IntVar x, int w, IntVar y, int h, IntVar z,
                                    IntPropLevel ipl = IPL_DEF);
@@ -1871,8 +1881,10 @@ namespace Gecode {
      * Throws an exception of type Int::OutOfLimits, if
      * the integers in \a n exceed the limits in Int::Limits.
      *
-     * Throws an exception of type Int::ArgumentSizeMismatch, if
-     * \f$ w\cdot h\neq|a|\f$.
+     * Throws an exception of type Int::TooFewArguments, if \a a is empty.
+     *
+     * Throws an exception of type Int::ArgumentSizeMismatch, if \a w or
+     * \a h is not positive or \f$ w\cdot h\neq|a|\f$.
      */
     GECODE_INT_EXPORT void element(Home home, const IntVarArgs& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h,
                                    IntVar z, IntPropLevel ipl = IPL_DEF);
@@ -1885,8 +1897,10 @@ namespace Gecode {
      * Throws an exception of type Int::OutOfLimits, if
      * the integers in \a n exceed the limits in Int::Limits.
      *
-     * Throws an exception of type Int::ArgumentSizeMismatch, if
-     * \f$ w\cdot h\neq|a|\f$.
+     * Throws an exception of type Int::TooFewArguments, if \a a is empty.
+     *
+     * Throws an exception of type Int::ArgumentSizeMismatch, if \a w or
+     * \a h is not positive or \f$ w\cdot h\neq|a|\f$.
      */
     GECODE_INT_EXPORT void element(Home home, const BoolVarArgs& a, IntVar x, int w, IntVar y, int h, BoolVar z,
                                    IntPropLevel ipl = IPL_DEF);
@@ -1900,8 +1914,10 @@ namespace Gecode {
      * Throws an exception of type Int::OutOfLimits, if
      * the integers in \a n exceed the limits in Int::Limits.
      *
-     * Throws an exception of type Int::ArgumentSizeMismatch, if
-     * \f$ w\cdot h\neq|a|\f$.
+     * Throws an exception of type Int::TooFewArguments, if \a a is empty.
+     *
+     * Throws an exception of type Int::ArgumentSizeMismatch, if \a w or
+     * \a h is not positive or \f$ w\cdot h\neq|a|\f$.
      */
     GECODE_INT_EXPORT void element(Home home, const BoolVarArgs& a, IntVar x, int xoff, int w, IntVar y, int yoff,
                                    int h, BoolVar z, IntPropLevel ipl = IPL_DEF);
@@ -3728,7 +3744,7 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT void bin_packing(Home home, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s,
                                        IntPropLevel ipl = IPL_DEF);
-    /* \brief Post propagator for multi-dimensional bin packing
+    /** \brief Post propagator for multi-dimensional bin packing
      *
      * In the following \a n refers to the number of items and \a m
      * refers to the number of bins.
@@ -3770,7 +3786,8 @@ namespace Gecode {
      *    is violated: \f$|b|=n\f$, \f$|l|=m\cdot d\f$, \f$|s|=n\cdot d\f$,
      *    and \f$|c|=d\f$.
      *  - Of type Int::ArgumentSame if \a l and \a b share unassigned variables.
-     *  - Of type Int::OutOfLimits if \a s or \a c contains a negative number.
+     *  - Of type Int::OutOfLimits if \a d is less than one or exceeds
+     *    Int::Limits::max, or if \a s or \a c contains a negative number.
      *
      * \ingroup TaskModelIntBinPacking
      */

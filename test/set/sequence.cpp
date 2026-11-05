@@ -127,6 +127,38 @@ namespace Test { namespace Set {
         SeqU _sequ1(1);
         SeqU _sequ3(3);
 
+        /// %Test that sequence without a union rejects an empty array
+        class SeqEmpty : public Base {
+        private:
+            /// Space without variables
+            class Fixture : public Space {
+            public:
+                Fixture(void) = default;
+                // NOLINTNEXTLINE(modernize-use-equals-default)
+                Fixture(Fixture& fixture) : Space(fixture) {}
+                Space*
+                copy(void) override {
+                    return new Fixture(*this);
+                }
+            };
+
+        public:
+            /// Create and register test
+            SeqEmpty(void) : Base("Set::Sequence::Empty") {}
+            /// Perform test
+            bool
+            run(void) override {
+                Fixture home;
+                try {
+                    Gecode::sequence(home, SetVarArgs());
+                } catch (const Gecode::Set::TooFewArguments&) {
+                    return true;
+                }
+                return false;
+            }
+        };
+        SeqEmpty _seq_empty;
+
     } // namespace Sequence
 }} // namespace Test::Set
 

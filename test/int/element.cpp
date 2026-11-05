@@ -646,6 +646,90 @@ namespace Test { namespace Int {
         };
 
         Create c;
+
+        /// Space with the variables for posting two-dimensional element
+        class MatrixFixture : public Gecode::Space {
+        public:
+            /// Column
+            Gecode::IntVar x;
+            /// Row
+            Gecode::IntVar y;
+            /// Integer result
+            Gecode::IntVar z;
+            /// Boolean result
+            Gecode::BoolVar b;
+            /// Create fixture
+            MatrixFixture(void) : x(*this, 0, 1), y(*this, 0, 1), z(*this, 0, 1), b(*this, 0, 1) {}
+            /// Constructor for cloning \a fixture
+            MatrixFixture(MatrixFixture& fixture) : Gecode::Space(fixture) {
+                x.update(*this, fixture.x);
+                y.update(*this, fixture.y);
+                z.update(*this, fixture.z);
+                b.update(*this, fixture.b);
+            }
+            /// Copy during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new MatrixFixture(*this);
+            }
+        };
+
+        /// Test whether \a post throws an exception of type \a E on a new space
+        template <class E, class Post>
+        bool
+        is_rejected(Post post) {
+            MatrixFixture home;
+            try {
+                post(home);
+            } catch (const E&) {
+                return true;
+            }
+            return false;
+        }
+
+        /// Test whether every overload throws \a E for an array of size \a n, width \a w, and height \a h
+        template <class E>
+        bool
+        is_rejected_by_all(int n, int w, int h) {
+            using namespace Gecode;
+            IntSharedArray c(IntArgs::create(n, 0, 0));
+            return is_rejected<E>([&](MatrixFixture& s) { element(s, c, s.x, w, s.y, h, s.z); }) &&
+                   is_rejected<E>([&](MatrixFixture& s) { element(s, c, s.x, 0, w, s.y, 0, h, s.z); }) &&
+                   is_rejected<E>([&](MatrixFixture& s) { element(s, c, s.x, w, s.y, h, s.b); }) &&
+                   is_rejected<E>([&](MatrixFixture& s) { element(s, c, s.x, 0, w, s.y, 0, h, s.b); }) &&
+                   is_rejected<E>([&](MatrixFixture& s) { element(s, IntVarArgs(s, n, 0, 1), s.x, w, s.y, h, s.z); }) &&
+                   is_rejected<E>(
+                       [&](MatrixFixture& s) { element(s, IntVarArgs(s, n, 0, 1), s.x, 0, w, s.y, 0, h, s.z); }) &&
+                   is_rejected<E>(
+                       [&](MatrixFixture& s) { element(s, BoolVarArgs(s, n, 0, 1), s.x, w, s.y, h, s.b); }) &&
+                   is_rejected<E>(
+                       [&](MatrixFixture& s) { element(s, BoolVarArgs(s, n, 0, 1), s.x, 0, w, s.y, 0, h, s.b); });
+        }
+
+        /// %Test that two-dimensional element rejects invalid matrices
+        class MatrixInvalid : public Base {
+        public:
+            /// Create and register test
+            MatrixInvalid(void) : Base("Int::Element::Matrix::Invalid") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using Gecode::Int::ArgumentSizeMismatch;
+                using Gecode::Int::TooFewArguments;
+                return is_rejected_by_all<TooFewArguments>(0, 0, 0) && is_rejected_by_all<TooFewArguments>(0, 0, 5) &&
+                       is_rejected_by_all<TooFewArguments>(0, 5, 0) && is_rejected_by_all<TooFewArguments>(0, 1, 1) &&
+                       // The product is a multiple of 2^32
+                       is_rejected_by_all<TooFewArguments>(0, 65536, 65536) &&
+                       is_rejected_by_all<ArgumentSizeMismatch>(3, 0, 5) &&
+                       is_rejected_by_all<ArgumentSizeMismatch>(6, 2, -3) &&
+                       is_rejected_by_all<ArgumentSizeMismatch>(1, -1, -1) &&
+                       is_rejected_by_all<ArgumentSizeMismatch>(6, -2, -3) &&
+                       // The product is 2 * 2^32 + 1
+                       is_rejected_by_all<ArgumentSizeMismatch>(1, 9, 954437177);
+            }
+        };
+
+        MatrixInvalid matrix_invalid;
         //@}
 
     } // namespace Element

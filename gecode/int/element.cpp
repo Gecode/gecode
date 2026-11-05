@@ -254,6 +254,15 @@ namespace Gecode {
     }
 
     namespace {
+        /// Check that \a n elements form a non-empty matrix of width \a w and height \a h
+        void
+        check_matrix(int n, int w, int h) {
+            if (n == 0)
+                throw Int::TooFewArguments("Int::element");
+            if ((w < 1) || (h < 1) || (static_cast<long long int>(w) * h != n))
+                throw Int::ArgumentSizeMismatch("Int::element");
+        }
+
         IntVar
         pair(Home home, IntVar x, int w, IntVar y, int h) {
             IntVar xy(home, 0, w * h - 1);
@@ -281,8 +290,7 @@ namespace Gecode {
     void
     element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, IntVar z, IntPropLevel ipl) {
         using namespace Int;
-        if (a.size() != w * h)
-            throw Int::ArgumentSizeMismatch("Int::element");
+        check_matrix(a.size(), w, h);
         GECODE_POST;
         element(home, a, pair(home, x, w, y, h), z, ipl);
     }
@@ -291,8 +299,7 @@ namespace Gecode {
     element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, IntVar z,
             IntPropLevel ipl) {
         using namespace Int;
-        if (a.size() != w * h)
-            throw Int::ArgumentSizeMismatch("Int::element");
+        check_matrix(a.size(), w, h);
         GECODE_POST;
         element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
     }
@@ -300,8 +307,7 @@ namespace Gecode {
     void
     element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, BoolVar z, IntPropLevel ipl) {
         using namespace Int;
-        if (a.size() != w * h)
-            throw Int::ArgumentSizeMismatch("Int::element");
+        check_matrix(a.size(), w, h);
         GECODE_POST;
         element(home, a, pair(home, x, w, y, h), z, ipl);
     }
@@ -310,8 +316,7 @@ namespace Gecode {
     element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, BoolVar z,
             IntPropLevel ipl) {
         using namespace Int;
-        if (a.size() != w * h)
-            throw Int::ArgumentSizeMismatch("Int::element");
+        check_matrix(a.size(), w, h);
         GECODE_POST;
         element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
     }
@@ -319,8 +324,7 @@ namespace Gecode {
     void
     element(Home home, const IntVarArgs& a, IntVar x, int w, IntVar y, int h, IntVar z, IntPropLevel ipl) {
         using namespace Int;
-        if (a.size() != w * h)
-            throw Int::ArgumentSizeMismatch("Int::element");
+        check_matrix(a.size(), w, h);
         GECODE_POST;
         element(home, a, pair(home, x, w, y, h), z, ipl);
     }
@@ -329,8 +333,7 @@ namespace Gecode {
     element(Home home, const IntVarArgs& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, IntVar z,
             IntPropLevel ipl) {
         using namespace Int;
-        if (a.size() != w * h)
-            throw Int::ArgumentSizeMismatch("Int::element");
+        check_matrix(a.size(), w, h);
         GECODE_POST;
         element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
     }
@@ -338,8 +341,7 @@ namespace Gecode {
     void
     element(Home home, const BoolVarArgs& a, IntVar x, int w, IntVar y, int h, BoolVar z, IntPropLevel ipl) {
         using namespace Int;
-        if (a.size() != w * h)
-            throw Int::ArgumentSizeMismatch("Int::element");
+        check_matrix(a.size(), w, h);
         GECODE_POST;
         element(home, a, pair(home, x, w, y, h), z, ipl);
     }
@@ -348,8 +350,7 @@ namespace Gecode {
     element(Home home, const BoolVarArgs& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, BoolVar z,
             IntPropLevel ipl) {
         using namespace Int;
-        if (a.size() != w * h)
-            throw Int::ArgumentSizeMismatch("Int::element");
+        check_matrix(a.size(), w, h);
         GECODE_POST;
         element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
     }
