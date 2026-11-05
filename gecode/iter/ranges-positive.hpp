@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Positive(void) = default;
+        Positive() = default;
         /// Initialize with ranges from \a i
         Positive(I& i);
         /// Initialize with ranges from \a i
@@ -61,19 +61,19 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -98,18 +98,18 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I, bool strict>
     forceinline void
-    Positive<I, strict>::operator++(void) {
+    Positive<I, strict>::operator++() {
         ++i;
     }
     template <class I, bool strict>
     forceinline bool
-    Positive<I, strict>::operator()(void) const {
+    Positive<I, strict>::operator()() const {
         return i();
     }
 
     template <class I, bool strict>
     forceinline int
-    Positive<I, strict>::min(void) const {
+    Positive<I, strict>::min() const {
         if (strict) {
             return std::max(i.min(), 1);
         } else {
@@ -118,12 +118,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
     template <class I, bool strict>
     forceinline int
-    Positive<I, strict>::max(void) const {
+    Positive<I, strict>::max() const {
         return i.max();
     }
     template <class I, bool strict>
     forceinline unsigned int
-    Positive<I, strict>::width(void) const {
+    Positive<I, strict>::width() const {
         return static_cast<unsigned int>(max() - min() + 1);
     }
 

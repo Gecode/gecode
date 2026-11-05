@@ -134,7 +134,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
         ) const;
     public:
-        Printer(void) : _output(nullptr) {}
+        Printer() : _output(nullptr) {}
         void init(AST::Array* output);
 
         void print(std::ostream& out, const Gecode::IntVarArray& iv, const Gecode::BoolVarArray& bv
@@ -160,7 +160,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
         ) const;
 
-        ~Printer(void);
+        ~Printer();
 
         void add_int_var_name(const std::string& n);
         const std::string&
@@ -328,7 +328,7 @@ namespace Gecode { namespace FlatZinc {
         }
 
         void
-        help(void) override {
+        help() override {
             std::cerr << "Gecode FlatZinc interpreter" << '\n'
                       << " - FlatZinc text interface" << '\n'
                       << '\n'
@@ -337,65 +337,65 @@ namespace Gecode { namespace FlatZinc {
         }
 
         int
-        solutions(void) const {
+        solutions() const {
             return _solutions.value();
         }
         bool
-        all_solutions(void) const {
+        all_solutions() const {
             return _all_solutions.value();
         }
         double
-        threads(void) const {
+        threads() const {
             return _threads.value();
         }
         bool
-        free(void) const {
+        free() const {
             return _free.value();
         }
         unsigned int
-        c_d(void) const {
+        c_d() const {
             return _c_d.value();
         }
         unsigned int
-        a_d(void) const {
+        a_d() const {
             return _a_d.value();
         }
         unsigned long long int
-        node(void) const {
+        node() const {
             return _node.value();
         }
         unsigned long long int
-        fail(void) const {
+        fail() const {
             return _fail.value();
         }
         double
-        time(void) const {
+        time() const {
             return _time.value();
         }
         int
-        seed(void) const {
+        seed() const {
             return _seed.value();
         }
         double
-        step(void) const {
+        step() const {
             return _step.value();
         }
         const char*
-        output(void) const {
+        output() const {
             return _output.value();
         }
 
         Gecode::ScriptMode
-        mode(void) const {
+        mode() const {
             return static_cast<Gecode::ScriptMode>(_mode.value());
         }
 
         double
-        decay(void) const {
+        decay() const {
             return _decay.value();
         }
         RestartMode
-        restart(void) const {
+        restart() const {
             return static_cast<RestartMode>(_restart.value());
         }
         void
@@ -403,7 +403,7 @@ namespace Gecode { namespace FlatZinc {
             _restart.value(static_cast<int>(rm));
         }
         double
-        restart_base(void) const {
+        restart_base() const {
             return _r_base.value();
         }
         void
@@ -411,7 +411,7 @@ namespace Gecode { namespace FlatZinc {
             _r_base.value(d);
         }
         unsigned int
-        restart_scale(void) const {
+        restart_scale() const {
             return _r_scale.value();
         }
         void
@@ -419,34 +419,34 @@ namespace Gecode { namespace FlatZinc {
             _r_scale.value(i);
         }
         unsigned long long int
-        restart_limit(void) const {
+        restart_limit() const {
             return _r_limit.value();
         }
         bool
-        nogoods(void) const {
+        nogoods() const {
             return _nogoods.value();
         }
         unsigned int
-        nogoods_limit(void) const {
+        nogoods_limit() const {
             return _nogoods_limit.value();
         }
         bool
-        interrupt(void) const {
+        interrupt() const {
             return _interrupt.value();
         }
 
 #ifdef GECODE_HAS_CPPROFILER
 
         int
-        profiler_id(void) const {
+        profiler_id() const {
             return _profiler.execution_id();
         }
         unsigned int
-        profiler_port(void) const {
+        profiler_port() const {
             return _profiler.port();
         }
         bool
-        profiler_info(void) const {
+        profiler_info() const {
             return true;
         }
 
@@ -461,11 +461,11 @@ namespace Gecode { namespace FlatZinc {
     class BranchInformation : public SharedHandle {
     public:
         /// Constructor
-        BranchInformation(void);
+        BranchInformation();
         /// Copy constructor
         BranchInformation(const BranchInformation& bi) = default;
         /// Initialise for use
-        void init(void);
+        void init();
         /// Add new brancher information
         void add(BrancherGroup bg, const std::string& rel0, const std::string& rel1, const std::vector<std::string>& n);
         /// Output branch information
@@ -659,7 +659,7 @@ namespace Gecode { namespace FlatZinc {
         FlatZincSpace(Rnd& random = defrnd);
 
         /// Destructor
-        ~FlatZincSpace(void) override;
+        ~FlatZincSpace() override;
 
         /// Initialize space with given number of variables
         void init(int int_vars, int bool_vars, int set_vars, int float_vars);
@@ -714,12 +714,12 @@ namespace Gecode { namespace FlatZinc {
         void shrink_arrays(Printer& p);
 
         /// Return whether to solve a satisfaction or optimization problem
-        Meth method(void) const;
+        Meth method() const;
 
         /// Return index of variable used for optimization
-        int opt_var(void) const;
+        int opt_var() const;
         /// Return whether variable used for optimization is integer (or float)
-        bool opt_var_is_int(void) const;
+        bool opt_var_is_int() const;
 
         /**
          * \brief Create branchers corresponding to the solve item annotations
@@ -734,7 +734,7 @@ namespace Gecode { namespace FlatZinc {
                               std::ostream& err = std::cerr);
 
         /// Return the solve item annotations
-        AST::Array* solve_annotations(void) const;
+        AST::Array* solve_annotations() const;
 
         /// Information for printing branches
         BranchInformation branch_info;
@@ -742,7 +742,7 @@ namespace Gecode { namespace FlatZinc {
         /// Implement optimization
         void constrain(const Space& s) override;
         /// Copy function
-        Gecode::Space* copy(void) override;
+        Gecode::Space* copy() override;
         /// Slave function for restarts
         bool slave(const MetaInfo& mi) override;
 
@@ -804,7 +804,7 @@ namespace Gecode { namespace FlatZinc {
         Error(const std::string& where, const std::string& what, AST::Array* const ann)
             : msg(make_message(where, what, ann)) {}
         const std::string&
-        to_string(void) const {
+        to_string() const {
             return msg;
         }
 

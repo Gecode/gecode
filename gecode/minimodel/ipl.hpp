@@ -37,7 +37,7 @@ namespace Gecode {
           _mod(ipl), _sqr(ipl), _sqrt(ipl), _pow(ipl), _nroot(ipl), _element(ipl), _ite(ipl) {}
 
     inline IntPropLevel
-    IntPropLevels::linear2(void) const {
+    IntPropLevels::linear2() const {
         return _linear2;
     }
     inline IntPropLevels&
@@ -46,7 +46,7 @@ namespace Gecode {
         return *this;
     }
     inline IntPropLevel
-    IntPropLevels::linear(void) const {
+    IntPropLevels::linear() const {
         return _linear;
     }
     inline IntPropLevels&
@@ -56,7 +56,7 @@ namespace Gecode {
     }
 
     inline IntPropLevel
-    IntPropLevels::abs(void) const {
+    IntPropLevels::abs() const {
         return _abs;
     }
     inline IntPropLevels&
@@ -66,7 +66,7 @@ namespace Gecode {
     }
 
     inline IntPropLevel
-    IntPropLevels::max2(void) const {
+    IntPropLevels::max2() const {
         return _max2;
     }
     inline IntPropLevels&
@@ -75,7 +75,7 @@ namespace Gecode {
         return *this;
     }
     inline IntPropLevel
-    IntPropLevels::max(void) const {
+    IntPropLevels::max() const {
         return _max;
     }
     inline IntPropLevels&
@@ -84,7 +84,7 @@ namespace Gecode {
         return *this;
     }
     inline IntPropLevel
-    IntPropLevels::min2(void) const {
+    IntPropLevels::min2() const {
         return _min2;
     }
     inline IntPropLevels&
@@ -93,7 +93,7 @@ namespace Gecode {
         return *this;
     }
     inline IntPropLevel
-    IntPropLevels::min(void) const {
+    IntPropLevels::min() const {
         return _min;
     }
     inline IntPropLevels&
@@ -103,7 +103,7 @@ namespace Gecode {
     }
 
     inline IntPropLevel
-    IntPropLevels::mult(void) const {
+    IntPropLevels::mult() const {
         return _mult;
     }
     inline IntPropLevels&
@@ -112,7 +112,7 @@ namespace Gecode {
         return *this;
     }
     inline IntPropLevel
-    IntPropLevels::div(void) const {
+    IntPropLevels::div() const {
         return _div;
     }
     inline IntPropLevels&
@@ -121,7 +121,7 @@ namespace Gecode {
         return *this;
     }
     inline IntPropLevel
-    IntPropLevels::mod(void) const {
+    IntPropLevels::mod() const {
         return _mod;
     }
     inline IntPropLevels&
@@ -131,7 +131,7 @@ namespace Gecode {
     }
 
     inline IntPropLevel
-    IntPropLevels::sqr(void) const {
+    IntPropLevels::sqr() const {
         return _sqr;
     }
     inline IntPropLevels&
@@ -140,7 +140,7 @@ namespace Gecode {
         return *this;
     }
     inline IntPropLevel
-    IntPropLevels::sqrt(void) const {
+    IntPropLevels::sqrt() const {
         return _sqrt;
     }
     inline IntPropLevels&
@@ -149,7 +149,7 @@ namespace Gecode {
         return *this;
     }
     inline IntPropLevel
-    IntPropLevels::pow(void) const {
+    IntPropLevels::pow() const {
         return _pow;
     }
     inline IntPropLevels&
@@ -158,7 +158,7 @@ namespace Gecode {
         return *this;
     }
     inline IntPropLevel
-    IntPropLevels::nroot(void) const {
+    IntPropLevels::nroot() const {
         return _nroot;
     }
     inline IntPropLevels&
@@ -168,7 +168,7 @@ namespace Gecode {
     }
 
     inline IntPropLevel
-    IntPropLevels::element(void) const {
+    IntPropLevels::element() const {
         return _element;
     }
     inline IntPropLevels&
@@ -178,7 +178,7 @@ namespace Gecode {
     }
 
     inline IntPropLevel
-    IntPropLevels::ite(void) const {
+    IntPropLevels::ite() const {
         return _ite;
     }
     inline IntPropLevels&

@@ -49,7 +49,7 @@ namespace Gecode {
             /// Initialization by moving \a d0
             SDO(Data&& d0);
             /// Destructor
-            ~SDO(void) override;
+            ~SDO() override;
         };
 
     public:
@@ -64,15 +64,15 @@ namespace Gecode {
         SharedData(Data&& d)
             requires std::is_move_constructible_v<Data>;
         /// Create as uninitialized
-        SharedData(void) = default;
+        SharedData() = default;
         /// Copy constructor
         SharedData(const SharedData& sd);
         /// Assignment operator
         SharedData& operator=(const SharedData& sd);
         /// Provide access to data
-        const Data& operator()(void) const;
+        const Data& operator()() const;
         /// Destructors
-        ~SharedData(void) = default;
+        ~SharedData() = default;
     };
 
     template <class Data>
@@ -86,7 +86,7 @@ namespace Gecode {
         : d(std::move(d0)) {}
 
     template <class Data>
-    forceinline SharedData<Data>::SDO::~SDO(void) = default;
+    forceinline SharedData<Data>::SDO::~SDO() = default;
 
     template <class Data>
     forceinline
@@ -112,7 +112,7 @@ namespace Gecode {
 
     template <class Data>
     forceinline const Data&
-    SharedData<Data>::operator()(void) const {
+    SharedData<Data>::operator()() const {
         return static_cast<SDO*>(object())->d;
     }
 

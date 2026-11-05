@@ -347,7 +347,7 @@ namespace Gecode { namespace FlatZinc {
 
 #ifdef GECODE_HAS_THREADS
     BlackBoxLibrary::Instance*
-    BlackBoxLibrary::instance(void) {
+    BlackBoxLibrary::instance() {
         const std::thread::id owner = std::this_thread::get_id();
         Support::Lock lock(mutex);
         // Each live thread has exclusive access to its selected instance.
@@ -404,7 +404,7 @@ namespace Gecode { namespace FlatZinc {
     BlackBoxExec::BlackBoxExec(const std::string& program0, const std::vector<std::string>& args0)
         : program(program0), args(args0) {}
 
-    BlackBoxExec::~BlackBoxExec(void) {
+    BlackBoxExec::~BlackBoxExec() {
         Support::Lock lock(mutex);
         for (BlackBoxProcessSession* s : sessions) {
             delete s;
@@ -413,7 +413,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     BlackBoxProcessSession&
-    BlackBoxExec::session(void) {
+    BlackBoxExec::session() {
         Support::Lock lock(mutex);
         for (BlackBoxProcessSession* s : sessions) {
             if (s->owned_by_current_thread()) {

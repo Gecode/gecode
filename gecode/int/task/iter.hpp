@@ -43,23 +43,23 @@ namespace Gecode { namespace Int {
 
     template <class TaskView, SortTaskOrder sto, bool inc>
     forceinline bool
-    TaskViewIter<TaskView, sto, inc>::operator()(void) const {
+    TaskViewIter<TaskView, sto, inc>::operator()() const {
         return i >= 0;
     }
     template <class TaskView, SortTaskOrder sto, bool inc>
     forceinline int
-    TaskViewIter<TaskView, sto, inc>::left(void) const {
+    TaskViewIter<TaskView, sto, inc>::left() const {
         return i + 1;
     }
     template <class TaskView, SortTaskOrder sto, bool inc>
     forceinline void
-    TaskViewIter<TaskView, sto, inc>::operator++(void) {
+    TaskViewIter<TaskView, sto, inc>::operator++() {
         i--;
     }
 
     template <class TaskView, SortTaskOrder sto, bool inc>
     forceinline int
-    TaskViewIter<TaskView, sto, inc>::task(void) const {
+    TaskViewIter<TaskView, sto, inc>::task() const {
         return map[i];
     }
 

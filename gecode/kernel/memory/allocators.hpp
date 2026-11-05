@@ -60,7 +60,7 @@ namespace Gecode {
       typedef std::set<int, std::less<int>, Gecode::space_allocator<int> > S;
       S safe_set;
 
-      MySpace(void)
+      MySpace()
         : safe_set(S::key_compare(), S::allocator_type(*this))
       {}
 
@@ -103,7 +103,7 @@ namespace Gecode {
       typedef std::set<int, std::less<int>, Gecode::space_allocator<int> > S;
       S& fast_set;
 
-      MySpace(void)
+      MySpace()
         : fast_set(construct<S>(S::key_compare(), S::allocator_type(*this)))
       {}
 
@@ -238,7 +238,7 @@ namespace Gecode {
         }
         /// Returns the largest size for which a call to allocate might succeed.
         size_type
-        max_size(void) const noexcept {
+        max_size() const noexcept {
             return std::numeric_limits<size_type>::max() / sizeof(T);
         }
         /**
@@ -392,7 +392,7 @@ namespace Gecode {
         }
         /// Returns the largest size for which a call to allocate might succeed.
         size_type
-        max_size(void) const noexcept {
+        max_size() const noexcept {
             return std::numeric_limits<size_type>::max() / sizeof(T);
         }
 

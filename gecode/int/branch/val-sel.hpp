@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
     template <class View>
     forceinline bool
-    ValSelRnd<View>::notice(void) const {
+    ValSelRnd<View>::notice() const {
         return true;
     }
     template <class View>

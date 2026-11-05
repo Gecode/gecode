@@ -135,7 +135,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
     template <class View, int o>
     forceinline typename NaryLqLe<View, o>::Pos*
-    NaryLqLe<View, o>::Pos::next(void) const {
+    NaryLqLe<View, o>::Pos::next() const {
         return static_cast<Pos*>(FreeList::next());
     }
 
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
     template <class View, int o>
     forceinline bool
-    NaryLqLe<View, o>::empty(void) const {
+    NaryLqLe<View, o>::empty() const {
         return pos == nullptr;
     }
     template <class View, int o>

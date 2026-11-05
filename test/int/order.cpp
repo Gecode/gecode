@@ -71,7 +71,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 for (int i = 1; i <= 4; i++)
                     for (int j = 1; j <= 4; j++)
                         (void)new Int(i, j);

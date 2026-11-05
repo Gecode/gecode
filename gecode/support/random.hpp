@@ -61,9 +61,9 @@ namespace Gecode { namespace Support {
         /// Construct the generator instance with seed \a s
         LinearCongruentialGenerator(unsigned int s = 1);
         /// Return current seed
-        unsigned int seed(void) const;
+        unsigned int seed() const;
         /// Generate next number in series
-        unsigned int next(void);
+        unsigned int next();
         /// Returns a random integer from the interval \f$[0\ldots n)\f$
         template <class Type>
         Type operator()(Type n);
@@ -74,7 +74,7 @@ namespace Gecode { namespace Support {
         /// Returns a random integer from the interval \f$[0\ldots n)\f$
         long long int operator()(long long int n);
         /// Report size occupied
-        size_t size(void) const;
+        size_t size() const;
 
         // Interface for conforming to C++ UniformRandomBitGenerator
         /// Type of the produced values
@@ -98,7 +98,7 @@ namespace Gecode { namespace Support {
 
     template <unsigned int m, unsigned int a, unsigned int q, unsigned int r>
     forceinline unsigned int
-    LinearCongruentialGenerator<m, a, q, r>::next(void) {
+    LinearCongruentialGenerator<m, a, q, r>::next() {
         s = a * (s % q) - r * (s / q);
         unsigned int res = s;
         if (s == 0)
@@ -119,7 +119,7 @@ namespace Gecode { namespace Support {
     }
     template <unsigned int m, unsigned int a, unsigned int q, unsigned int r>
     forceinline unsigned int
-    LinearCongruentialGenerator<m, a, q, r>::seed(void) const {
+    LinearCongruentialGenerator<m, a, q, r>::seed() const {
         return s;
     }
 
@@ -171,7 +171,7 @@ namespace Gecode { namespace Support {
     }
     template <unsigned int m, unsigned int a, unsigned int q, unsigned int r>
     forceinline size_t
-    LinearCongruentialGenerator<m, a, q, r>::size(void) const {
+    LinearCongruentialGenerator<m, a, q, r>::size() const {
         return sizeof(LinearCongruentialGenerator<m, a, q, r>);
     }
 

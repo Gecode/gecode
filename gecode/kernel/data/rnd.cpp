@@ -42,7 +42,7 @@ namespace Gecode {
     Rnd::IMP::IMP(unsigned int s)
         : rg(s) {}
 
-    Rnd::IMP::~IMP(void) = default;
+    Rnd::IMP::~IMP() = default;
 
     forceinline void
     Rnd::_seed(unsigned int s) {
@@ -67,11 +67,11 @@ namespace Gecode {
         _seed(s);
     }
     void
-    Rnd::time(void) {
+    Rnd::time() {
         _seed(static_cast<unsigned int>(::time(nullptr)));
     }
     void
-    Rnd::hw(void) {
+    Rnd::hw() {
         _seed(Support::hwrnd());
     }
 } // namespace Gecode

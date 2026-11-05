@@ -180,7 +180,7 @@ namespace Test { namespace Int {
             }
             /// Create and register initial assignment
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 return new RandomAssignment(arity, dom, 100, _rand);
             }
             /// Check whether \a x is solution
@@ -210,13 +210,13 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 /// Constructor
-                TestSpace(void) = default;
+                TestSpace() = default;
                 /// Constructor for cloning \a s
                 // NOLINTNEXTLINE(modernize-use-equals-default)
                 TestSpace(TestSpace& s) : Gecode::Space(s) {}
                 /// Copy space during cloning
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new TestSpace(*this);
                 }
             };
@@ -228,7 +228,7 @@ namespace Test { namespace Int {
                   n(n0), ipl(ipl0) {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 {
                     TestSpace* s = new TestSpace;

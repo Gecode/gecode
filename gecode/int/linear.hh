@@ -807,7 +807,7 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Righthandside
         int c;
         /// Normalize by removing unused views
-        void normalize(void);
+        void normalize();
         /// Constructor for cloning \a p
         LinBoolInt(Space& home, LinBoolInt& p);
         /// Constructor for creation
@@ -939,7 +939,7 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Control variable
         VB b;
         /// Normalize by removing unused views
-        void normalize(void);
+        void normalize();
         /// Constructor for cloning \a p
         ReLinBoolInt(Space& home, ReLinBoolInt& p);
         /// Constructor for creation
@@ -1163,7 +1163,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Default constructor
-        ScaleBoolArray(void) = default;
+        ScaleBoolArray() = default;
         /// Create array with \a n elements
         ScaleBoolArray(Space& home, int n);
         /// Subscribe propagator \a p
@@ -1175,17 +1175,17 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Update \a sba during copying
         void update(Space& home, ScaleBoolArray& sba);
         /// Return pointer to first element
-        ScaleBool* fst(void) const;
+        ScaleBool* fst() const;
         /// Return pointer after last element
-        ScaleBool* lst(void) const;
+        ScaleBool* lst() const;
         /// Set pointer to first element
         void fst(ScaleBool* f);
         /// Set pointer after last element
         void lst(ScaleBool* l);
         /// Test whether array is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Return number of elements
-        int size(void) const;
+        int size() const;
 
     private:
         /// For sorting array in decreasing order of coefficients
@@ -1196,14 +1196,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Sort array in decreasing order of coefficients
-        void sort(void);
+        void sort();
     };
 
     /// Empty array of scale Boolean views
     class EmptyScaleBoolArray {
     public:
         /// Default constructor
-        EmptyScaleBoolArray(void) = default;
+        EmptyScaleBoolArray() = default;
         /// Create array with \a n elements
         EmptyScaleBoolArray(Space& home, int n);
         /// Subscribe propagator \a p
@@ -1215,19 +1215,19 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Update \a sba during copying
         void update(Space& home, EmptyScaleBoolArray& esba);
         /// Return pointer to first element
-        ScaleBool* fst(void) const;
+        ScaleBool* fst() const;
         /// Return pointer after last element
-        ScaleBool* lst(void) const;
+        ScaleBool* lst() const;
         /// Set pointer to first element
         void fst(ScaleBool* f);
         /// Set pointer after last element
         void lst(ScaleBool* l);
         /// Test whether array is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Return number of elements
-        int size(void) const;
+        int size() const;
         /// Sort array in decreasing order of coefficients
-        void sort(void);
+        void sort();
     };
 
     /**

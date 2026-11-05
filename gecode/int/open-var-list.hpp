@@ -140,7 +140,7 @@ namespace Gecode {
         }
 
         void
-        reserve(void) {
+        reserve() {
             if (n == capacity) {
                 int next = (capacity < 4) ? 4 : capacity + std::min(capacity / 2, Int::Limits::max - capacity);
                 x = heap.realloc<Var>(x, capacity, next);
@@ -305,7 +305,7 @@ namespace Gecode {
 
     template <class Var>
     int
-    OpenVarList<Var>::known_length(void) const {
+    OpenVarList<Var>::known_length() const {
         return static_cast<Object*>(object())->n;
     }
 
@@ -319,7 +319,7 @@ namespace Gecode {
 
     template <class Var>
     IntVar
-    OpenVarList<Var>::length(void) const {
+    OpenVarList<Var>::length() const {
         return static_cast<Object*>(object())->length;
     }
 
@@ -415,7 +415,7 @@ namespace Gecode {
 
     template <class View>
     int
-    OpenViewList<View>::known_length(void) const {
+    OpenViewList<View>::known_length() const {
         return static_cast<Object*>(object())->n;
     }
 
@@ -429,7 +429,7 @@ namespace Gecode {
 
     template <class View>
     Int::IntView
-    OpenViewList<View>::length(void) const {
+    OpenViewList<View>::length() const {
         return Int::IntView(static_cast<Object*>(object())->length);
     }
 

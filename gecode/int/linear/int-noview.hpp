@@ -43,50 +43,50 @@ namespace Gecode {
             /// \name Constructors and initialization
             //@{
             /// Default constructor
-            NoView(void) = default;
+            NoView() = default;
             //@}
 
             /// \name Value access
             //@{
             /// Return minimum of domain
             int
-            min(void) const {
+            min() const {
                 return 0;
             }
             /// Return maximum of domain
             int
-            max(void) const {
+            max() const {
                 return 0;
             }
             /// Return median of domain (greatest element not greater than the median)
             int
-            med(void) const {
+            med() const {
                 return 0;
             }
             /// Return assigned value (only if assigned)
             int
-            val(void) const {
+            val() const {
                 return 0;
             }
 
             /// Return size (cardinality) of domain
             unsigned int
-            size(void) const {
+            size() const {
                 return 1;
             }
             /// Return width of domain (distance between maximum and minimum)
             unsigned int
-            width(void) const {
+            width() const {
                 return 1;
             }
             /// Return regret of domain minimum (distance to next larger value)
             unsigned int
-            regret_min(void) const {
+            regret_min() const {
                 return 0;
             }
             /// Return regret of domain maximum (distance to next smaller value)
             unsigned int
-            regret_max(void) const {
+            regret_max() const {
                 return 0;
             }
             //@}
@@ -95,12 +95,12 @@ namespace Gecode {
             //@{
             /// Test whether domain is a range
             bool
-            range(void) const {
+            range() const {
                 return true;
             }
             /// Test whether view is assigned
             bool
-            assigned(void) const {
+            assigned() const {
                 return true;
             }
 
@@ -229,7 +229,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor (array of size 0)
-        ViewArray(void) = default;
+        ViewArray() = default;
         /// Allocate array with \a m variables
         ViewArray(Space& home, int m) {
             (void)home;
@@ -250,7 +250,7 @@ namespace Gecode {
         //@{
         /// Return size of array (number of elements)
         int
-        size(void) const {
+        size() const {
             return 0;
         }
         /// Decrease size of array (number of elements)

@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("test_array_just_right",
                                    "array [1..3] of var int: a :: output_array([1..3]) = [1, 2, 3];\n\
 solve satisfy;\n\

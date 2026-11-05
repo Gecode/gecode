@@ -52,7 +52,7 @@ namespace Gecode { namespace Support {
         /// Copy bit set \a bs
         BitSet(A& a, const BitSet& bs);
         /// Destructor
-        ~BitSet(void);
+        ~BitSet();
     };
 
     template <class A>
@@ -66,7 +66,7 @@ namespace Gecode { namespace Support {
         : BitSetBase(a0, bs), a(a0) {}
 
     template <class A>
-    forceinline BitSet<A>::~BitSet(void) {
+    forceinline BitSet<A>::~BitSet() {
         dispose(a);
     }
 

@@ -74,7 +74,7 @@ namespace Gecode {
 
     public:
         /// Initialize
-        VarBranch(void);
+        VarBranch();
         /// Initialize with tie-break limit function \a t
         VarBranch(BranchTbl t);
         /// Initialize with random number generator \a r
@@ -90,30 +90,30 @@ namespace Gecode {
         /// Initialize with merit function \a f and tie-break limit function \a t
         VarBranch(MeritFunction f, BranchTbl t);
         /// Return tie-break limit function
-        BranchTbl tbl(void) const;
+        BranchTbl tbl() const;
         /// Return random number generator
-        Rnd rnd(void) const;
+        Rnd rnd() const;
         /// Return decay factor
-        double decay(void) const;
+        double decay() const;
         /// Return AFC
-        AFC afc(void) const;
+        AFC afc() const;
         /// Set AFC to \a a
         void afc(const AFC& a);
         /// Return action
-        Action action(void) const;
+        Action action() const;
         /// Set action to \a a
         void action(const Action& a);
         /// Return CHB
-        CHB chb(void) const;
+        CHB chb() const;
         /// Set CHB to \a chb
         void chb(const CHB& chb);
         /// Return merit function
-        MeritFunction merit(void) const;
+        MeritFunction merit() const;
     };
 
     // Variable branching
     template <class Var>
-    inline VarBranch<Var>::VarBranch(void) : _tbl(nullptr), _decay(1.0) {}
+    inline VarBranch<Var>::VarBranch() : _tbl(nullptr), _decay(1.0) {}
 
     template <class Var>
     inline VarBranch<Var>::VarBranch(BranchTbl t) : _tbl(std::move(t)), _decay(1.0) {}
@@ -151,25 +151,25 @@ namespace Gecode {
 
     template <class Var>
     inline BranchTbl
-    VarBranch<Var>::tbl(void) const {
+    VarBranch<Var>::tbl() const {
         return _tbl;
     }
 
     template <class Var>
     inline Rnd
-    VarBranch<Var>::rnd(void) const {
+    VarBranch<Var>::rnd() const {
         return _rnd;
     }
 
     template <class Var>
     inline double
-    VarBranch<Var>::decay(void) const {
+    VarBranch<Var>::decay() const {
         return _decay;
     }
 
     template <class Var>
     inline AFC
-    VarBranch<Var>::afc(void) const {
+    VarBranch<Var>::afc() const {
         return _afc;
     }
 
@@ -181,7 +181,7 @@ namespace Gecode {
 
     template <class Var>
     inline Action
-    VarBranch<Var>::action(void) const {
+    VarBranch<Var>::action() const {
         return _act;
     }
 
@@ -193,7 +193,7 @@ namespace Gecode {
 
     template <class Var>
     inline CHB
-    VarBranch<Var>::chb(void) const {
+    VarBranch<Var>::chb() const {
         return _chb;
     }
 
@@ -205,7 +205,7 @@ namespace Gecode {
 
     template <class Var>
     inline typename VarBranch<Var>::MeritFunction
-    VarBranch<Var>::merit(void) const {
+    VarBranch<Var>::merit() const {
         return _mf;
     }
 

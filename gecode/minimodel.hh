@@ -129,74 +129,74 @@ namespace Gecode {
         IntPropLevels(IntPropLevel ipl = IPL_DEF);
 
         /// Return integer propagation level for binary linear constraints
-        IntPropLevel linear2(void) const;
+        IntPropLevel linear2() const;
         /// Set integer propagation level for binary linear constraints
         IntPropLevels& linear2(IntPropLevel ipl);
         /// Return integer propagation level for non-binary linear constraints
-        IntPropLevel linear(void) const;
+        IntPropLevel linear() const;
         /// Set integer propagation level for non-binary linear constraints
         IntPropLevels& linear(IntPropLevel ipl);
 
         /// Return integer propagation level for absolute value constraints
-        IntPropLevel abs(void) const;
+        IntPropLevel abs() const;
         /// Set integer propagation level for absolute value constraints
         IntPropLevels& abs(IntPropLevel ipl);
 
         /// Return integer propagation level for binary maximum constraints
-        IntPropLevel max2(void) const;
+        IntPropLevel max2() const;
         /// Set integer propagation level for binary maximum constraints
         IntPropLevels& max2(IntPropLevel ipl);
         /// Return integer propagation level for non-binary maximum constraints
-        IntPropLevel max(void) const;
+        IntPropLevel max() const;
         /// Set integer propagation level for non-binary maximum constraints
         IntPropLevels& max(IntPropLevel ipl);
         /// Return integer propagation level for binary minimum constraints
-        IntPropLevel min2(void) const;
+        IntPropLevel min2() const;
         /// Set integer propagation level for binary minimum constraints
         IntPropLevels& min2(IntPropLevel ipl);
         /// Return integer propagation level for non-binary minimum constraints
-        IntPropLevel min(void) const;
+        IntPropLevel min() const;
         /// Set integer propagation level for non-binary minimum constraints
         IntPropLevels& min(IntPropLevel ipl);
 
         /// Return integer propagation level for multiplication constraints
-        IntPropLevel mult(void) const;
+        IntPropLevel mult() const;
         /// Set integer propagation level for multiplication constraints
         IntPropLevels& mult(IntPropLevel ipl);
         /// Return integer propagation level for division constraints
-        IntPropLevel div(void) const;
+        IntPropLevel div() const;
         /// Set integer propagation level for division constraints
         IntPropLevels& div(IntPropLevel ipl);
         /// Return integer propagation level for modulo constraints
-        IntPropLevel mod(void) const;
+        IntPropLevel mod() const;
         /// Set integer propagation level for modulo constraints
         IntPropLevels& mod(IntPropLevel ipl);
 
         /// Return integer propagation level for square constraints
-        IntPropLevel sqr(void) const;
+        IntPropLevel sqr() const;
         /// Set integer propagation level for square constraints
         IntPropLevels& sqr(IntPropLevel ipl);
         /// Return integer propagation level for square root constraints
-        IntPropLevel sqrt(void) const;
+        IntPropLevel sqrt() const;
         /// Set integer propagation level for square root constraints
         IntPropLevels& sqrt(IntPropLevel ipl);
 
         /// Return integer propagation level for power constraints
-        IntPropLevel pow(void) const;
+        IntPropLevel pow() const;
         /// Set integer propagation level for power constraints
         IntPropLevels& pow(IntPropLevel ipl);
         /// Return integer propagation level for root constraints
-        IntPropLevel nroot(void) const;
+        IntPropLevel nroot() const;
         /// Set integer propagation level for root constraints
         IntPropLevels& nroot(IntPropLevel ipl);
 
         /// Return integer propagation level for element constraints
-        IntPropLevel element(void) const;
+        IntPropLevel element() const;
         /// Set integer propagation level for element constraints
         IntPropLevels& element(IntPropLevel ipl);
 
         /// Return integer propagation level for if-then-else constraints
-        IntPropLevel ite(void) const;
+        IntPropLevel ite() const;
         /// Set integer propagation level for if-then-else constraints
         IntPropLevels& ite(IntPropLevel ipl);
 
@@ -229,7 +229,7 @@ namespace Gecode {
         /// Post reified expression to be in relation \a irt with \a c
         virtual void post(Home home, IntRelType irt, int c, BoolVar b, const IntPropLevels& ipls) const = 0;
         /// Destructor
-        virtual ~NonLinIntExpr(void);
+        virtual ~NonLinIntExpr();
         /// Return fresh variable if \a x is null, \a x otherwise
         static IntVar result(Home home, IntVar* x);
         /// Constrain \a x to be equal to \a y if \a x is not null
@@ -288,12 +288,12 @@ namespace Gecode {
     public:
         /// Default constructor
         GECODE_MINIMODEL_EXPORT
-        LinIntExpr(void);
+        LinIntExpr();
 #ifdef GECODE_HAS_FAULT_INJECTION
         /// Reset live node accounting for fault-injection tests
-        GECODE_MINIMODEL_EXPORT static void fault_reset_allocations(void);
+        GECODE_MINIMODEL_EXPORT static void fault_reset_allocations();
         /// Return live node accounting for fault-injection tests
-        GECODE_MINIMODEL_EXPORT static int fault_live_allocations(void);
+        GECODE_MINIMODEL_EXPORT static int fault_live_allocations();
 #endif
         /// Create expression for constant \a c
         GECODE_MINIMODEL_EXPORT
@@ -345,10 +345,10 @@ namespace Gecode {
         IntVar post(Home home, const IntPropLevels& ipls) const;
         /// Return non-linear expression inside, or null if not non-linear
         GECODE_MINIMODEL_EXPORT
-        NonLinIntExpr* nle(void) const;
+        NonLinIntExpr* nle() const;
         /// Destructor
         GECODE_MINIMODEL_EXPORT
-        ~LinIntExpr(void);
+        ~LinIntExpr();
     };
 
     class BoolExpr;
@@ -365,7 +365,7 @@ namespace Gecode {
         /// Negate relation type
         static IntRelType neg(IntRelType irt);
         /// Default constructor
-        LinIntRel(void) = default;
+        LinIntRel() = default;
 
     public:
         /// Create linear relation for expressions \a l and \a r
@@ -690,7 +690,7 @@ namespace Gecode {
         /// Post reified expression to be in relation \a frt with \a c
         virtual void post(Home home, FloatRelType frt, FloatVal c, BoolVar b) const = 0;
         /// Destructor
-        virtual ~NonLinFloatExpr(void);
+        virtual ~NonLinFloatExpr();
         /// Return fresh variable if \a x is null, \a x otherwise
         static FloatVar result(Home home, FloatVar* x);
         /// Constrain \a x to be equal to \a y if \a x is not null
@@ -731,7 +731,7 @@ namespace Gecode {
     public:
         /// Default constructor
         GECODE_MINIMODEL_EXPORT
-        LinFloatExpr(void);
+        LinFloatExpr();
         /// Create expression for constant \a c
         GECODE_MINIMODEL_EXPORT
         LinFloatExpr(const FloatVal& c);
@@ -776,10 +776,10 @@ namespace Gecode {
         FloatVar post(Home home) const;
         /// Return non-linear expression inside, or null if not non-linear
         GECODE_MINIMODEL_EXPORT
-        NonLinFloatExpr* nlfe(void) const;
+        NonLinFloatExpr* nlfe() const;
         /// Destructor
         GECODE_MINIMODEL_EXPORT
-        ~LinFloatExpr(void);
+        ~LinFloatExpr();
     };
 
     class BoolExpr;
@@ -796,7 +796,7 @@ namespace Gecode {
         /// Negate relation type
         static FloatRelType neg(FloatRelType frt);
         /// Default constructor
-        LinFloatRel(void) = default;
+        LinFloatRel() = default;
 
     public:
         /// Create linear float relation for expressions \a l and \a r
@@ -1005,7 +1005,7 @@ namespace Gecode {
 
     public:
         /// Default constructor
-        SetExpr(void);
+        SetExpr();
         /// Copy constructor
         GECODE_MINIMODEL_EXPORT
         SetExpr(const SetExpr& e);
@@ -1038,7 +1038,7 @@ namespace Gecode {
         const SetExpr& operator=(const SetExpr& e);
         /// Destructor
         GECODE_MINIMODEL_EXPORT
-        ~SetExpr(void);
+        ~SetExpr();
     };
 
     /// Comparison relation (for two-sided comparisons)
@@ -1066,7 +1066,7 @@ namespace Gecode {
 
     public:
         /// Default constructor
-        SetRel(void) = default;
+        SetRel() = default;
         /// Constructor
         SetRel(const SetExpr& e0, SetRelType srt, const SetExpr& e1);
         /// Constructor
@@ -1152,14 +1152,14 @@ namespace Gecode {
         class GECODE_VTABLE_EXPORT Misc : public HeapAllocated {
         public:
             /// Default constructor
-            Misc(void) = default;
+            Misc() = default;
             /** Constrain \a b to be equivalent to the expression
              *  (negated if \a neg) with propagation level
              *  \a ipl.
              */
             virtual void post(Home home, BoolVar b, bool neg, const IntPropLevels& ipls) = 0;
             /// Destructor
-            virtual GECODE_MINIMODEL_EXPORT ~Misc(void);
+            virtual GECODE_MINIMODEL_EXPORT ~Misc();
         };
         /// %Node for Boolean expression
         class Node;
@@ -1183,7 +1183,7 @@ namespace Gecode {
          * invalid; materialization throws MiniModel::TooFewArguments.
          */
         GECODE_MINIMODEL_EXPORT
-        BoolExpr(void);
+        BoolExpr();
         /// Copy constructor
         GECODE_MINIMODEL_EXPORT
         BoolExpr(const BoolExpr& e);
@@ -1233,7 +1233,7 @@ namespace Gecode {
         const BoolExpr& operator=(const BoolExpr& e);
         /// Destructor
         GECODE_MINIMODEL_EXPORT
-        ~BoolExpr(void);
+        ~BoolExpr();
     };
 
     /**
@@ -1428,11 +1428,11 @@ namespace Gecode {
         /// Initialize with given expression tree \a
         REG(Exp* e);
         /// Return string representatinon of expression tree
-        std::string to_string(void) const;
+        std::string to_string() const;
 
     public:
         /// Initialize as empty sequence (epsilon)
-        REG(void);
+        REG();
         /// Initialize as single integer \a s
         REG(int s);
         /**
@@ -1457,9 +1457,9 @@ namespace Gecode {
         /// This expression or \a r
         REG& operator|=(const REG& r);
         /// Return expression for: this expression arbitrarily often (Kleene star)
-        REG operator*(void);
+        REG operator*();
         /// Return expression for: this expression at least once
-        REG operator+(void);
+        REG operator+();
         /// Return expression for: this expression at least \a n and at most \a m times
         REG operator()(unsigned int n, unsigned int m);
         /// Return expression for: this expression at least \a n times
@@ -1468,9 +1468,9 @@ namespace Gecode {
         template <class Char, class Traits>
         std::basic_ostream<Char, Traits>& print(std::basic_ostream<Char, Traits>& os) const;
         /// Return DFA for regular expression
-        operator DFA(void);
+        operator DFA();
         /// Destructor
-        ~REG(void);
+        ~REG();
     };
 
     /** \relates Gecode::REG
@@ -1820,16 +1820,16 @@ namespace Gecode {
         /** \brief Reverses the contents of the slice, and returns a
          *  reference to it.
          */
-        Slice& reverse(void);
+        Slice& reverse();
         /// Cast to array type
-        operator ArgsType(void);
+        operator ArgsType();
         /// Cast to matrix type
-        operator Matrix<ArgsType>(void);
+        operator Matrix<ArgsType>();
 
         /// Cast to array type
-        operator const ArgsType(void) const;
+        operator const ArgsType() const;
         /// Cast to matrix type
-        operator const Matrix<ArgsType>(void) const;
+        operator const Matrix<ArgsType>() const;
     };
 
     /// Concatenate \a x and \a y
@@ -1907,11 +1907,11 @@ namespace Gecode {
         Matrix(const A& a, int n);
 
         /// Return the width of the matrix
-        int width(void) const;
+        int width() const;
         /// Return the height of the matrix
-        int height(void) const;
+        int height() const;
         /// Return an Args-array of the contents of the matrix
-        ArgsType const get_array(void) const;
+        ArgsType const get_array() const;
 
         /** \brief Access element (\a c, \a r) of the matrix
          *
@@ -2066,14 +2066,14 @@ namespace Gecode {
     class GECODE_VTABLE_EXPORT IntMinimizeSpace : public Space {
     public:
         /// Default constructor
-        IntMinimizeSpace(void) = default;
+        IntMinimizeSpace() = default;
         /// Constructor for cloning
         IntMinimizeSpace(IntMinimizeSpace& s);
         /// Member function constraining according to decreasing cost
         GECODE_MINIMODEL_EXPORT
         void constrain(const Space& best) override;
         /// Return variable with current cost
-        virtual IntVar cost(void) const = 0;
+        virtual IntVar cost() const = 0;
     };
 
     /**
@@ -2083,14 +2083,14 @@ namespace Gecode {
     class GECODE_VTABLE_EXPORT IntMaximizeSpace : public Space {
     public:
         /// Default constructor
-        IntMaximizeSpace(void) = default;
+        IntMaximizeSpace() = default;
         /// Constructor for cloning
         IntMaximizeSpace(IntMaximizeSpace& s);
         /// Member function constraining according to increasing cost
         GECODE_MINIMODEL_EXPORT
         void constrain(const Space& best) override;
         /// Return variable with current cost
-        virtual IntVar cost(void) const = 0;
+        virtual IntVar cost() const = 0;
     };
 
     /**
@@ -2100,14 +2100,14 @@ namespace Gecode {
     class GECODE_VTABLE_EXPORT IntLexMinimizeSpace : public Space {
     public:
         /// Default constructor
-        IntLexMinimizeSpace(void) = default;
+        IntLexMinimizeSpace() = default;
         /// Constructor for cloning
         IntLexMinimizeSpace(IntLexMinimizeSpace& s);
         /// Member function constraining according to decreasing costs
         GECODE_MINIMODEL_EXPORT
         void constrain(const Space& best) override;
         /// Return variables with current costs
-        virtual IntVarArgs cost(void) const = 0;
+        virtual IntVarArgs cost() const = 0;
     };
 
     /**
@@ -2117,14 +2117,14 @@ namespace Gecode {
     class GECODE_VTABLE_EXPORT IntLexMaximizeSpace : public Space {
     public:
         /// Default constructor
-        IntLexMaximizeSpace(void) = default;
+        IntLexMaximizeSpace() = default;
         /// Constructor for cloning
         IntLexMaximizeSpace(IntLexMaximizeSpace& s);
         /// Member function constraining according to increasing costs
         GECODE_MINIMODEL_EXPORT
         void constrain(const Space& best) override;
         /// Return variables with current costs
-        virtual IntVarArgs cost(void) const = 0;
+        virtual IntVarArgs cost() const = 0;
     };
 
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -2152,7 +2152,7 @@ namespace Gecode {
         GECODE_MINIMODEL_EXPORT
         void constrain(const Space& best) override;
         /// Return variable with current cost
-        virtual FloatVar cost(void) const = 0;
+        virtual FloatVar cost() const = 0;
     };
 
     /**
@@ -2178,7 +2178,7 @@ namespace Gecode {
         GECODE_MINIMODEL_EXPORT
         void constrain(const Space& best) override;
         /// Return variable with current cost
-        virtual FloatVar cost(void) const = 0;
+        virtual FloatVar cost() const = 0;
     };
 
 #endif

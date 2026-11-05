@@ -95,7 +95,7 @@ namespace Test {
             /// Initialize assignments for \a n0 variables and values \a d0
             Assignment(int n0, const Gecode::FloatVal& d0);
             /// Test whether all assignments have been iterated
-            virtual bool has_more(void) const = 0;
+            virtual bool has_more() const = 0;
             /// Move to next assignment
             virtual void next(Gecode::Support::RandomGenerator& rand) = 0;
             /// Return value for variable \a i
@@ -103,9 +103,9 @@ namespace Test {
             /// Set assignment to value \a val for variable \a i
             virtual void set(int i, const Gecode::FloatVal& val) = 0;
             /// Return number of variables
-            int size(void) const;
+            int size() const;
             /// Destructor
-            virtual ~Assignment(void);
+            virtual ~Assignment();
         };
 
         /// Generate all assignments
@@ -117,7 +117,7 @@ namespace Test {
             /// Initialize assignments for \a n variables and values \a d with step \a s
             CpltAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s);
             /// Test whether all assignments have been iterated
-            bool has_more(void) const override;
+            bool has_more() const override;
             /// Move to next assignment
             void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
@@ -125,7 +125,7 @@ namespace Test {
             /// Set assignment to value \a val for variable \a i
             void set(int i, const Gecode::FloatVal& val) override;
             /// Destructor
-            ~CpltAssignment(void) override;
+            ~CpltAssignment() override;
         };
 
         /// Generate all assignments except the last variable and complete it to get a solution
@@ -139,7 +139,7 @@ namespace Test {
             ExtAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s, const Test* pb,
                           Gecode::Support::RandomGenerator& rand);
             /// Test whether all assignments have been iterated
-            bool has_more(void) const override;
+            bool has_more() const override;
             /// Move to next assignment
             void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
@@ -147,7 +147,7 @@ namespace Test {
             /// Set assignment to value \a val for variable \a i
             void set(int i, const Gecode::FloatVal& val) override;
             /// Destructor
-            ~ExtAssignment(void) override;
+            ~ExtAssignment() override;
         };
 
         /// Generate random selection of assignments
@@ -162,7 +162,7 @@ namespace Test {
             /// Initialize for \a a assignments for \a n variables and values \a d
             RandomAssignment(int n, const Gecode::FloatVal& d, int a0, Gecode::Support::RandomGenerator& rand);
             /// Test whether all assignments have been iterated
-            bool has_more(void) const override;
+            bool has_more() const override;
             /// Move to next assignment
             void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
@@ -170,7 +170,7 @@ namespace Test {
             /// Set assignment to value \a val for variable \a i
             void set(int i, const Gecode::FloatVal& val) override;
             /// Destructor
-            ~RandomAssignment(void) override;
+            ~RandomAssignment() override;
         };
 
         /// Space for executing tests
@@ -208,17 +208,17 @@ namespace Test {
             /// Constructor for cloning \a s
             TestSpace(TestSpace& s);
             /// Copy space during cloning
-            Gecode::Space* copy(void) override;
+            Gecode::Space* copy() override;
             /// Add constraints to skip solutions to the \a a assignment
             virtual void drop_until(const Assignment& a);
             /// Test whether all variables are assigned
-            bool assigned(void) const;
+            bool assigned() const;
             /// Test whether all variables match assignment \a a
             bool match_assignment(const Assignment& a) const;
             /// Post propagator
-            void post(void);
+            void post();
             /// Compute a fixpoint and check for failure
-            bool failed(void);
+            bool failed();
             /// Perform integer tell operation on \a x[i]
             void rel(int i, Gecode::FloatRelType frt, const Gecode::FloatVal& n);
             /// Perform Boolean tell on \a b
@@ -240,11 +240,11 @@ namespace Test {
             /// Prune values but not those in assignment \a a
             bool prune(const Assignment& a, bool test_fixpoint, Gecode::Support::RandomGenerator& rand);
             /// Disable propagators in space and compute fixpoint (make all idle)
-            void disable(void);
+            void disable();
             /// Enable propagators in space
-            void enable(void);
+            void enable();
             /// Return the number of propagators
-            unsigned int propagators(void);
+            unsigned int propagators();
         };
 
         /**
@@ -274,11 +274,11 @@ namespace Test {
             /// \name Test for reification modes
             //@{
             /// Test whether equivalence as reification mode is supported
-            bool eqv(void) const;
+            bool eqv() const;
             /// Test whether implication as reification mode is supported
-            bool imp(void) const;
+            bool imp() const;
             /// Test whether reverse implication as reification mode is supported
-            bool pmi(void) const;
+            bool pmi() const;
             //@}
         public:
             /**
@@ -306,7 +306,7 @@ namespace Test {
             Test(TestTags tags, const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max,
                  Gecode::FloatNum st, AssignmentType at, bool r);
             /// Create assignment
-            virtual Assignment* assignment(void) const;
+            virtual Assignment* assignment() const;
             /// Complete the current assignment to get a feasible one (which satisfies all constraint).
             /// If such an assignment is computed, it returns true, false otherwise
             virtual bool extend_assignment(Assignment& a) const;
@@ -322,7 +322,7 @@ namespace Test {
             /// Post reified constraint
             virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r);
             /// Perform test
-            bool run(void) override;
+            bool run() override;
             /// \name Mapping scalar values to strings
             //@{
             /// Map float relation to string
@@ -341,7 +341,7 @@ namespace Test {
             /// Whether \a x and \a y are equal
             static MaybeType eq(const Gecode::FloatVal& x, const Gecode::FloatVal& y);
             /// Flip a coin and return true or false randomly
-            bool flip(void);
+            bool flip();
             //@}
         };
         //@}
@@ -356,15 +356,15 @@ namespace Test {
 
         public:
             /// Initialize iterator
-            FloatRelTypes(void);
+            FloatRelTypes();
             /// Reset iterator
-            void reset(void);
+            void reset();
             /// Test whether iterator is done
-            bool operator()(void) const;
+            bool operator()() const;
             /// Increment to next relation type
-            void operator++(void);
+            void operator++();
             /// Return current relation type
-            Gecode::FloatRelType frt(void) const;
+            Gecode::FloatRelType frt() const;
         };
 
     } // namespace Float

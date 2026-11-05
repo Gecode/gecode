@@ -35,12 +35,12 @@ namespace Gecode { namespace Int { namespace Element {
     // Index value pairs
     template <class V0, class V1, class Idx, class Val>
     forceinline void
-    Int<V0, V1, Idx, Val>::IdxVal::mark(void) {
+    Int<V0, V1, Idx, Val>::IdxVal::mark() {
         idx = -1;
     }
     template <class V0, class V1, class Idx, class Val>
     forceinline bool
-    Int<V0, V1, Idx, Val>::IdxVal::marked(void) const {
+    Int<V0, V1, Idx, Val>::IdxVal::marked() const {
         return idx < 0;
     }
 
@@ -57,12 +57,12 @@ namespace Gecode { namespace Int { namespace Element {
     }
     template <class V0, class V1, class Idx, class Val>
     forceinline bool
-    Int<V0, V1, Idx, Val>::IterIdxUnmark::operator()(void) const {
+    Int<V0, V1, Idx, Val>::IterIdxUnmark::operator()() const {
         return i != 0;
     }
     template <class V0, class V1, class Idx, class Val>
     forceinline void
-    Int<V0, V1, Idx, Val>::IterIdxUnmark::operator++(void) {
+    Int<V0, V1, Idx, Val>::IterIdxUnmark::operator++() {
         int p = i;
         i = iv[p].idx_next;
         while ((i != 0) && iv[i].marked())
@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace Element {
     }
     template <class V0, class V1, class Idx, class Val>
     forceinline Idx
-    Int<V0, V1, Idx, Val>::IterIdxUnmark::val(void) const {
+    Int<V0, V1, Idx, Val>::IterIdxUnmark::val() const {
         assert(!iv[i].marked());
         return iv[i].idx;
     }
@@ -82,17 +82,17 @@ namespace Gecode { namespace Int { namespace Element {
         : iv(iv0), i(iv[0].val_next) {}
     template <class V0, class V1, class Idx, class Val>
     forceinline bool
-    Int<V0, V1, Idx, Val>::IterVal::operator()(void) const {
+    Int<V0, V1, Idx, Val>::IterVal::operator()() const {
         return i != 0;
     }
     template <class V0, class V1, class Idx, class Val>
     forceinline void
-    Int<V0, V1, Idx, Val>::IterVal::operator++(void) {
+    Int<V0, V1, Idx, Val>::IterVal::operator++() {
         i = iv[i].val_next;
     }
     template <class V0, class V1, class Idx, class Val>
     forceinline Val
-    Int<V0, V1, Idx, Val>::IterVal::val(void) const {
+    Int<V0, V1, Idx, Val>::IterVal::val() const {
         assert(!iv[i].marked());
         return iv[i].val;
     }
@@ -109,12 +109,12 @@ namespace Gecode { namespace Int { namespace Element {
     }
     template <class V0, class V1, class Idx, class Val>
     forceinline bool
-    Int<V0, V1, Idx, Val>::IterValUnmark::operator()(void) const {
+    Int<V0, V1, Idx, Val>::IterValUnmark::operator()() const {
         return i != 0;
     }
     template <class V0, class V1, class Idx, class Val>
     forceinline void
-    Int<V0, V1, Idx, Val>::IterValUnmark::operator++(void) {
+    Int<V0, V1, Idx, Val>::IterValUnmark::operator++() {
         int p = i;
         i = iv[p].val_next;
         while ((i != 0) && iv[i].marked())
@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Element {
     }
     template <class V0, class V1, class Idx, class Val>
     forceinline Val
-    Int<V0, V1, Idx, Val>::IterValUnmark::val(void) const {
+    Int<V0, V1, Idx, Val>::IterValUnmark::val() const {
         assert(!iv[i].marked());
         return iv[i].val;
     }
@@ -208,7 +208,7 @@ namespace Gecode { namespace Int { namespace Element {
 
     template <class V0, class V1, class Idx, class Val>
     void
-    Int<V0, V1, Idx, Val>::prune_idx(void) {
+    Int<V0, V1, Idx, Val>::prune_idx() {
         Idx p = 0;
         Idx i = iv[p].idx_next;
         ViewRanges<V0> v(x0);
@@ -234,7 +234,7 @@ namespace Gecode { namespace Int { namespace Element {
 
     template <class V0, class V1, class Idx, class Val>
     void
-    Int<V0, V1, Idx, Val>::prune_val(void) {
+    Int<V0, V1, Idx, Val>::prune_val() {
         Idx p = 0;
         Idx i = iv[p].val_next;
         ViewRanges<V1> v(x1);

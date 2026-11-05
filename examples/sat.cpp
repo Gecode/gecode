@@ -128,7 +128,7 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Sat(*this);
     }
 

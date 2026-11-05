@@ -35,7 +35,7 @@
 namespace Gecode { namespace Kernel {
 
     Support::Mutex&
-    SharedMemory::m(void) {
+    SharedMemory::m() {
         static Support::Mutex _m;
         return _m;
     }

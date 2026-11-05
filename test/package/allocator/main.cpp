@@ -13,7 +13,7 @@
 #endif
 
 int
-main(void) {
+main() {
     void* p = Gecode::heap.ralloc(256);
 #ifdef CHECK_HOST_MIMALLOC
     void* host = mi_malloc(256);

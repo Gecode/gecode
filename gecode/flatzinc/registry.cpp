@@ -48,7 +48,7 @@
 namespace Gecode { namespace FlatZinc {
 
     Registry&
-    registry(void) {
+    registry() {
         static Registry r;
         return r;
     }
@@ -2059,7 +2059,7 @@ namespace Gecode { namespace FlatZinc {
 
         class BuiltinPosters {
         public:
-            BuiltinPosters(void) {
+            BuiltinPosters() {
                 registry().add("all_different_int", &p_distinct);
                 registry().add("all_different_offset", &p_distinct_offset);
                 registry().add("gecode_all_different_offset_fzn", &p_distinct_offset);

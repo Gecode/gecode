@@ -55,7 +55,7 @@ namespace Gecode { namespace FlatZinc {
     };
 
     /// Return global registry object
-    GECODE_FLATZINC_EXPORT Registry& registry(void);
+    GECODE_FLATZINC_EXPORT Registry& registry();
 
 }} // namespace Gecode::FlatZinc
 

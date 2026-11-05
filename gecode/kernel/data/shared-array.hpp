@@ -63,7 +63,7 @@ namespace Gecode {
             /// Allocate for \a n elements
             SAO(int n);
             /// Delete object
-            ~SAO(void) override;
+            ~SAO() override;
 
             /// Access element at position \a i
             T& operator[](int i);
@@ -71,16 +71,16 @@ namespace Gecode {
             const T& operator[](int i) const;
 
             /// Return number of elements
-            int size(void) const;
+            int size() const;
 
             /// Return beginning of array (for iterators)
-            T* begin(void);
+            T* begin();
             /// Return beginning of array (for iterators)
-            const T* begin(void) const;
+            const T* begin() const;
             /// Return end of array (for iterators)
-            T* end(void);
+            T* end();
             /// Return end of array (for iterators)
-            const T* end(void) const;
+            const T* end() const;
         };
 
     public:
@@ -113,7 +113,7 @@ namespace Gecode {
          * yet initialized shared array is init and the assignment operator .
          *
          */
-        SharedArray(void) = default;
+        SharedArray() = default;
         /// Initialize as array with \a n elements
         SharedArray(int n);
         /**
@@ -135,7 +135,7 @@ namespace Gecode {
         const T& operator[](int i) const;
 
         /// Return number of elements
-        int size(void) const;
+        int size() const;
 
         /// Test equality with \a sa
         bool operator==(const SharedArray<T>& sa) const;
@@ -143,21 +143,21 @@ namespace Gecode {
         /// \name Array iteration
         //@{
         /// Return an iterator at the beginning of the array
-        iterator begin(void);
+        iterator begin();
         /// Return a read-only iterator at the beginning of the array
-        const_iterator begin(void) const;
+        const_iterator begin() const;
         /// Return an iterator past the end of the array
-        iterator end(void);
+        iterator end();
         /// Return a read-only iterator past the end of the array
-        const_iterator end(void) const;
+        const_iterator end() const;
         /// Return a reverse iterator at the end of the array
-        reverse_iterator rbegin(void);
+        reverse_iterator rbegin();
         /// Return a reverse and read-only iterator at the end of the array
-        const_reverse_iterator rbegin(void) const;
+        const_reverse_iterator rbegin() const;
         /// Return a reverse iterator past the beginning of the array
-        reverse_iterator rend(void);
+        reverse_iterator rend();
         /// Return a reverse and read-only iterator past the beginning of the array
-        const_reverse_iterator rend(void) const;
+        const_reverse_iterator rend() const;
         //@}
 
         /// Assignment operator
@@ -188,7 +188,7 @@ namespace Gecode {
     }
 
     template <class T>
-    SharedArray<T>::SAO::~SAO(void) {
+    SharedArray<T>::SAO::~SAO() {
         if (n > 0) {
             heap.free<T>(a, n);
         }
@@ -210,31 +210,31 @@ namespace Gecode {
 
     template <class T>
     forceinline int
-    SharedArray<T>::SAO::size(void) const {
+    SharedArray<T>::SAO::size() const {
         return n;
     }
 
     template <class T>
     forceinline T*
-    SharedArray<T>::SAO::begin(void) {
+    SharedArray<T>::SAO::begin() {
         return a;
     }
 
     template <class T>
     forceinline const T*
-    SharedArray<T>::SAO::begin(void) const {
+    SharedArray<T>::SAO::begin() const {
         return a;
     }
 
     template <class T>
     forceinline T*
-    SharedArray<T>::SAO::end(void) {
+    SharedArray<T>::SAO::end() {
         return a + n;
     }
 
     template <class T>
     forceinline const T*
-    SharedArray<T>::SAO::end(void) const {
+    SharedArray<T>::SAO::end() const {
         return a + n;
     }
 
@@ -293,63 +293,63 @@ namespace Gecode {
 
     template <class T>
     forceinline int
-    SharedArray<T>::size(void) const {
+    SharedArray<T>::size() const {
         assert(object() != nullptr);
         return static_cast<SAO*>(object())->size();
     }
 
     template <class T>
     forceinline typename SharedArray<T>::iterator
-    SharedArray<T>::begin(void) {
+    SharedArray<T>::begin() {
         assert(object() != nullptr);
         return static_cast<SAO*>(object())->begin();
     }
 
     template <class T>
     forceinline typename SharedArray<T>::const_iterator
-    SharedArray<T>::begin(void) const {
+    SharedArray<T>::begin() const {
         assert(object() != nullptr);
         return static_cast<SAO*>(object())->begin();
     }
 
     template <class T>
     forceinline typename SharedArray<T>::iterator
-    SharedArray<T>::end(void) {
+    SharedArray<T>::end() {
         assert(object() != nullptr);
         return static_cast<SAO*>(object())->end();
     }
 
     template <class T>
     forceinline typename SharedArray<T>::const_iterator
-    SharedArray<T>::end(void) const {
+    SharedArray<T>::end() const {
         assert(object() != nullptr);
         return static_cast<SAO*>(object())->end();
     }
 
     template <class T>
     forceinline typename SharedArray<T>::reverse_iterator
-    SharedArray<T>::rbegin(void) {
+    SharedArray<T>::rbegin() {
         assert(object() != nullptr);
         return reverse_iterator(static_cast<SAO*>(object())->end());
     }
 
     template <class T>
     forceinline typename SharedArray<T>::const_reverse_iterator
-    SharedArray<T>::rbegin(void) const {
+    SharedArray<T>::rbegin() const {
         assert(object() != nullptr);
         return const_reverse_iterator(static_cast<SAO*>(object())->end());
     }
 
     template <class T>
     forceinline typename SharedArray<T>::reverse_iterator
-    SharedArray<T>::rend(void) {
+    SharedArray<T>::rend() {
         assert(object() != nullptr);
         return reverse_iterator(static_cast<SAO*>(object())->begin());
     }
 
     template <class T>
     forceinline typename SharedArray<T>::const_reverse_iterator
-    SharedArray<T>::rend(void) const {
+    SharedArray<T>::rend() const {
         assert(object() != nullptr);
         return const_reverse_iterator(static_cast<SAO*>(object())->begin());
     }

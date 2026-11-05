@@ -367,7 +367,7 @@ namespace Test { namespace Set {
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new EmptyFixture(*this);
             }
             /// Test whether the space is solved with \a y empty and \a z equal to \a result
@@ -388,7 +388,7 @@ namespace Test { namespace Set {
          */
         template <class Args>
         bool
-        is_decided_empty(void) {
+        is_decided_empty() {
             Args x;
             IntSet universe(0, 3);
             EmptyFixture union_x, dunion_x, inter_x;
@@ -409,10 +409,10 @@ namespace Test { namespace Set {
         class ElementConstEmpty : public Base {
         public:
             /// Create and register test
-            ElementConstEmpty(void) : Base("Set::Element::Const::Empty") {}
+            ElementConstEmpty() : Base("Set::Element::Const::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 return is_decided_empty<IntSetArgs>() && is_decided_empty<IntArgs>();
             }
         };
@@ -422,10 +422,10 @@ namespace Test { namespace Set {
         class ElementVarEmpty : public Base {
         public:
             /// Create and register test
-            ElementVarEmpty(void) : Base("Set::Element::Var::Empty") {}
+            ElementVarEmpty() : Base("Set::Element::Var::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 return is_decided_empty<SetVarArgs>() && is_decided_empty<IntVarArgs>();
             }
         };
@@ -441,7 +441,7 @@ namespace Test { namespace Set {
             /// Result set
             SetVar z;
             /// Create fixture
-            IndexFixture(void) : x(*this, 0, 1), y(*this, 0, 1), z(*this, IntSet::empty, IntSet(0, 3)) {}
+            IndexFixture() : x(*this, 0, 1), y(*this, 0, 1), z(*this, IntSet::empty, IntSet(0, 3)) {}
             /// Constructor for cloning \a fixture
             IndexFixture(IndexFixture& fixture) : Gecode::Space(fixture) {
                 x.update(*this, fixture.x);
@@ -450,7 +450,7 @@ namespace Test { namespace Set {
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new IndexFixture(*this);
             }
         };
@@ -479,7 +479,7 @@ namespace Test { namespace Set {
         /// Test whether posting over no sets throws Set::TooFewArguments for array type \a Args
         template <class Args>
         bool
-        is_array_rejected(void) {
+        is_array_rejected() {
             IndexFixture home;
             try {
                 element(home, Args(), home.x, home.z);
@@ -493,10 +493,10 @@ namespace Test { namespace Set {
         class ElementIndexInvalid : public Base {
         public:
             /// Create and register test
-            ElementIndexInvalid(void) : Base("Set::Element::Index::Invalid") {}
+            ElementIndexInvalid() : Base("Set::Element::Index::Invalid") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using Gecode::Set::ArgumentSizeMismatch;
                 using Gecode::Set::TooFewArguments;
                 return is_array_rejected<IntSetArgs>() && is_array_rejected<SetVarArgs>() &&
@@ -518,8 +518,7 @@ namespace Test { namespace Set {
 
         public:
             /// Create and register test
-            MatrixIntSet(void)
-                : SetTest(TestTags::sweep(), "Element::Matrix::IntSet", 1, IntSet(0, 3), false, 2), tm(4) {
+            MatrixIntSet() : SetTest(TestTags::sweep(), "Element::Matrix::IntSet", 1, IntSet(0, 3), false, 2), tm(4) {
                 tm[0] = IntSet(0, 0);
                 tm[1] = IntSet(1, 1);
                 tm[2] = IntSet(2, 2);

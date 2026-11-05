@@ -48,7 +48,7 @@ namespace Gecode {
         /// Pointer to variable implementation
         VarImp* x;
         /// Default constructor
-        VarImpVar(void);
+        VarImpVar();
         /// Initialize with variable implementation \a y
         VarImpVar(VarImp* y);
 
@@ -58,17 +58,17 @@ namespace Gecode {
         /// \name Generic variable information
         //@{
         /// Return variable implementation of variable
-        VarImp* varimp(void) const;
+        VarImp* varimp() const;
         /// Return degree (number of subscribed propagators and advisors)
-        unsigned int degree(void) const;
+        unsigned int degree() const;
         /// Return accumulated failure count
-        double afc(void) const;
+        double afc() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether view is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         //@}
 
         /// \name Cloning
@@ -84,7 +84,7 @@ namespace Gecode {
      */
     template <class VarImp>
     forceinline
-    VarImpVar<VarImp>::VarImpVar(void)
+    VarImpVar<VarImp>::VarImpVar()
         : x(nullptr) {}
     template <class VarImp>
     forceinline
@@ -92,22 +92,22 @@ namespace Gecode {
         : x(y) {}
     template <class VarImp>
     forceinline VarImp*
-    VarImpVar<VarImp>::varimp(void) const {
+    VarImpVar<VarImp>::varimp() const {
         return x;
     }
     template <class VarImp>
     forceinline unsigned int
-    VarImpVar<VarImp>::degree(void) const {
+    VarImpVar<VarImp>::degree() const {
         return x->degree();
     }
     template <class VarImp>
     forceinline double
-    VarImpVar<VarImp>::afc(void) const {
+    VarImpVar<VarImp>::afc() const {
         return x->afc();
     }
     template <class VarImp>
     forceinline bool
-    VarImpVar<VarImp>::assigned(void) const {
+    VarImpVar<VarImp>::assigned() const {
         return x->assigned();
     }
     template <class VarImp>

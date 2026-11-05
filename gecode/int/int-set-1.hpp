@@ -171,7 +171,7 @@ namespace Gecode {
     }
 
     forceinline int
-    IntSet::ranges(void) const {
+    IntSet::ranges() const {
         IntSetObject* o = static_cast<IntSetObject*>(object());
         return (o == nullptr) ? 0 : o->n;
     }
@@ -186,25 +186,25 @@ namespace Gecode {
     }
 
     forceinline int
-    IntSet::min(void) const {
+    IntSet::min() const {
         IntSetObject* o = static_cast<IntSetObject*>(object());
         return (o == nullptr) ? Int::Limits::max : o->r[0].min;
     }
 
     forceinline int
-    IntSet::max(void) const {
+    IntSet::max() const {
         IntSetObject* o = static_cast<IntSetObject*>(object());
         return (o == nullptr) ? Int::Limits::min : o->r[o->n - 1].max;
     }
 
     forceinline unsigned int
-    IntSet::size(void) const {
+    IntSet::size() const {
         IntSetObject* o = static_cast<IntSetObject*>(object());
         return (o == nullptr) ? 0U : o->size;
     }
 
     forceinline unsigned int
-    IntSet::width(void) const {
+    IntSet::width() const {
         IntSetObject* o = static_cast<IntSetObject*>(object());
         return (o == nullptr) ? 0U : static_cast<unsigned int>(max()) - static_cast<unsigned int>(min()) + 1U;
     }
@@ -243,24 +243,24 @@ namespace Gecode {
     }
 
     forceinline void
-    IntSetRanges::operator++(void) {
+    IntSetRanges::operator++() {
         i++;
     }
     forceinline bool
-    IntSetRanges::operator()(void) const {
+    IntSetRanges::operator()() const {
         return i < e;
     }
 
     forceinline int
-    IntSetRanges::min(void) const {
+    IntSetRanges::min() const {
         return i->min;
     }
     forceinline int
-    IntSetRanges::max(void) const {
+    IntSetRanges::max() const {
         return i->max;
     }
     forceinline unsigned int
-    IntSetRanges::width(void) const {
+    IntSetRanges::width() const {
         return static_cast<unsigned int>(i->max) - static_cast<unsigned int>(i->min) + 1U;
     }
 

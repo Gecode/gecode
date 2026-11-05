@@ -291,9 +291,9 @@ namespace Gecode { namespace Int { namespace Count {
         /// Count how many views are equal now
         void count(Space& home);
         /// How many views are at least equal
-        int at_least(void) const;
+        int at_least() const;
         /// How many views are at most equal
-        int at_most(void) const;
+        int at_most() const;
         /// Test whether there is sharing of \a z with \a x or \a y
         static bool sharing(const ViewArray<VX>& x, const VY& y, const VZ& z);
     };

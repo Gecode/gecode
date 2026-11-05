@@ -41,19 +41,19 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::glb_size(void) const {
+    CachedView<View>::glb_size() const {
         return x.glb_size();
     }
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::lub_size(void) const {
+    CachedView<View>::lub_size() const {
         return x.lub_size();
     }
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::unknown_size(void) const {
+    CachedView<View>::unknown_size() const {
         return x.unknown_size();
     }
 
@@ -71,37 +71,37 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::card_min(void) const {
+    CachedView<View>::card_min() const {
         return x.card_min();
     }
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::card_max(void) const {
+    CachedView<View>::card_max() const {
         return x.card_max();
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::lub_min(void) const {
+    CachedView<View>::lub_min() const {
         return x.lub_min();
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::lub_max(void) const {
+    CachedView<View>::lub_max() const {
         return x.lub_max();
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::glb_min(void) const {
+    CachedView<View>::glb_min() const {
         return x.glb_min();
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::glb_max(void) const {
+    CachedView<View>::glb_max() const {
         return x.glb_max();
     }
 
@@ -301,13 +301,13 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline bool
-    CachedView<View>::glb_modified(void) const {
+    CachedView<View>::glb_modified() const {
         return glb_cache.size() != glb_size();
     }
 
     template <class View>
     forceinline bool
-    CachedView<View>::lub_modified(void) const {
+    CachedView<View>::lub_modified() const {
         return lub_cache.size() != lub_size();
     }
 
@@ -321,7 +321,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void) = default;
+        LubRanges() = default;
         /// Initialize with ranges for view \a x
         LubRanges(const CachedView<View>& x);
         /// Initialize with ranges for view \a x
@@ -350,7 +350,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void) = default;
+        GlbRanges() = default;
         /// Initialize with ranges for view \a x
         GlbRanges(const CachedView<View>& x);
         /// Initialize with ranges for view \a x

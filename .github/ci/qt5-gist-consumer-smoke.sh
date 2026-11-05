@@ -62,7 +62,7 @@ using FloatCompare = std::string (*)(const std::string&, Gecode::FloatVar, Gecod
 FloatCompare float_compare = &Gecode::Gist::Comparator::compare;
 #endif
 
-int main(void) {
+int main() {
 #ifdef GECODE_HAS_SET_VARS
   if (set_compare == nullptr)
     return 1;

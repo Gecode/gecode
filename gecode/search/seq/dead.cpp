@@ -47,13 +47,13 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize
         Dead(const Options& o, const Statistics& stat0);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Return statistics
-        Statistics statistics(void) const override;
+        Statistics statistics() const override;
         /// Check whether engine has been stopped
-        bool stopped(void) const override;
+        bool stopped() const override;
         /// Delete
-        ~Dead(void) override;
+        ~Dead() override;
     };
 
     template <class Tracer>
@@ -64,24 +64,24 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     Space*
-    Dead<Tracer>::next(void) {
+    Dead<Tracer>::next() {
         return nullptr;
     }
 
     template <class Tracer>
     bool
-    Dead<Tracer>::stopped(void) const {
+    Dead<Tracer>::stopped() const {
         return false;
     }
 
     template <class Tracer>
     Statistics
-    Dead<Tracer>::statistics(void) const {
+    Dead<Tracer>::statistics() const {
         return stat;
     }
 
     template <class Tracer>
-    Dead<Tracer>::~Dead(void) {
+    Dead<Tracer>::~Dead() {
         tracer.done();
     }
 

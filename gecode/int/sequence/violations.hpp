@@ -43,21 +43,21 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     public:
         /// Default constructor
-        Violations(void);
+        Violations();
         /// Initialize violation set for \a n violations
         void init(Space& home, unsigned int n);
         /// Update violation set during cloning
         void update(Space& home, Violations& v);
         /// Return whether set is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Add \a i to violation set
         void add(unsigned int i);
         /// Get first element from violation set and remove it
-        unsigned int get(void);
+        unsigned int get();
     };
 
     forceinline
-    Violations::Violations(void)
+    Violations::Violations()
         : fst(0) {}
 
     forceinline void
@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     }
 
     forceinline bool
-    Violations::empty(void) const {
+    Violations::empty() const {
         fst = next(fst);
         return fst >= size();
     }
@@ -86,7 +86,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     }
 
     forceinline unsigned int
-    Violations::get(void) {
+    Violations::get() {
         assert(!empty());
         fst = next(fst);
         assert(Support::BitSetBase::get(fst));

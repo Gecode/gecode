@@ -46,11 +46,11 @@ namespace Gecode { namespace Search { namespace Par {
         /// Open nodes
         Queue queue;
         bool
-        open(void) const override {
+        open() const override {
             return !queue.empty();
         }
         Entry
-        select(void) override {
+        select() override {
             return queue.pop();
         }
         void
@@ -65,11 +65,11 @@ namespace Gecode { namespace Search { namespace Par {
             queue.push(f);
         }
         bool
-        advance(void) override {
+        advance() override {
             return false;
         }
         void
-        clear(void) override {
+        clear() override {
             queue.clear();
         }
 
@@ -79,7 +79,7 @@ namespace Gecode { namespace Search { namespace Par {
             initialize(s, o.clone);
         }
         /// Destructor
-        ~AStar(void) override {
+        ~AStar() override {
             terminate();
         }
     };
@@ -153,7 +153,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     Space*
-    AStar::next(void) {
+    AStar::next() {
         start();
         while (true) {
             if (stop_seq(opt))
@@ -209,7 +209,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     Statistics
-    AStar::statistics(void) const {
+    AStar::statistics() const {
         return *this;
     }
 
@@ -237,7 +237,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     NoGoods&
-    AStar::nogoods(void) {
+    AStar::nogoods() {
         return NoGoods::eng;
     }
 

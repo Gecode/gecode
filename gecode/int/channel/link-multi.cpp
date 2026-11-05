@@ -48,11 +48,11 @@ namespace Gecode { namespace Int { namespace Channel {
         /// Initialize iterator
         BoolIter(const ViewArray<BoolView>& x0, int o0);
         /// Test whether further values available
-        bool operator()(void) const;
+        bool operator()() const;
         /// Return value
-        int val(void) const;
+        int val() const;
         /// Move to the next value
-        void operator++(void);
+        void operator++();
     };
 
     forceinline
@@ -62,16 +62,16 @@ namespace Gecode { namespace Int { namespace Channel {
             i++;
     }
     forceinline bool
-    BoolIter::operator()(void) const {
+    BoolIter::operator()() const {
         return i < x.size();
     }
     forceinline int
-    BoolIter::val(void) const {
+    BoolIter::val() const {
         assert(x[i].zero());
         return i + o;
     }
     forceinline void
-    BoolIter::operator++(void) {
+    BoolIter::operator++() {
         do {
             i++;
         } while ((i < x.size()) && !x[i].zero());

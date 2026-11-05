@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     template <class TaskView>
     forceinline int
-    OmegaTree<TaskView>::ect(void) const {
+    OmegaTree<TaskView>::ect() const {
         return root().ect;
     }
 
@@ -202,25 +202,25 @@ namespace Gecode { namespace Int { namespace Unary {
 
     template <class TaskView>
     forceinline bool
-    OmegaLambdaTree<TaskView>::lempty(void) const {
+    OmegaLambdaTree<TaskView>::lempty() const {
         return root().res_ect < 0;
     }
 
     template <class TaskView>
     forceinline int
-    OmegaLambdaTree<TaskView>::responsible(void) const {
+    OmegaLambdaTree<TaskView>::responsible() const {
         return root().res_ect;
     }
 
     template <class TaskView>
     forceinline int
-    OmegaLambdaTree<TaskView>::ect(void) const {
+    OmegaLambdaTree<TaskView>::ect() const {
         return root().ect;
     }
 
     template <class TaskView>
     forceinline int
-    OmegaLambdaTree<TaskView>::lect(void) const {
+    OmegaLambdaTree<TaskView>::lect() const {
         return root().lect;
     }
 

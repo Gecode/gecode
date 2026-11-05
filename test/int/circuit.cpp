@@ -342,7 +342,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 for (int i = 1; i <= 6; i++) {
                     (void)new Circuit(i, 0, i - 1, 0, Gecode::IPL_VAL);
                     (void)new Circuit(i, 0, i - 1, 0, Gecode::IPL_DOM);

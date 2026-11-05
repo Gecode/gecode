@@ -39,12 +39,12 @@ namespace Gecode {
     }
 
     forceinline FloatNum
-    FloatTraceDelta::min(void) const {
+    FloatTraceDelta::min() const {
         return n.min(d);
     }
 
     forceinline FloatNum
-    FloatTraceDelta::max(void) const {
+    FloatTraceDelta::max() const {
         return n.max(d);
     }
 

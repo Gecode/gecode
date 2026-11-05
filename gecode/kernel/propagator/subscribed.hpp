@@ -67,11 +67,11 @@ namespace Gecode {
         template <class View>
         void init(DerivedView<View>& x);
         /// Test whether there are propagators left
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next propagator
-        void operator++(void);
+        void operator++();
         /// Return propagator
-        Propagator& propagator(void) const;
+        Propagator& propagator() const;
     };
 
     template <class VIC>
@@ -118,15 +118,15 @@ namespace Gecode {
     }
 
     forceinline bool
-    SubscribedPropagators::operator()(void) const {
+    SubscribedPropagators::operator()() const {
         return c < ea;
     }
     forceinline void
-    SubscribedPropagators::operator++(void) {
+    SubscribedPropagators::operator++() {
         c++;
     }
     forceinline Propagator&
-    SubscribedPropagators::propagator(void) const {
+    SubscribedPropagators::propagator() const {
         return (c < ep) ? *Propagator::cast(*c) : Advisor::cast(*c)->propagator();
     }
 

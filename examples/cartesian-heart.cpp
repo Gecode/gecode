@@ -82,7 +82,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new CartesianHeart(*this);
     }
     /// Add constraints to current model to get next solution (not too close)

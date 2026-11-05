@@ -86,19 +86,19 @@ namespace Gecode { namespace Search { namespace Par {
             /// Initialize for space \a s with engine \a e
             Worker(Space* s, BAB& e, unsigned int index);
             /// Provide access to engine
-            BAB& engine(void) const;
+            BAB& engine() const;
             /// Start execution of worker
-            void run(void) override;
+            void run() override;
             /// Accept better solution \a b
             void better(Space* b);
             /// Try to find some work
-            bool find(void);
+            bool find();
             /// Reset engine to restart at space \a s
             void reset(Space* s, unsigned int ngdl);
             /// Whether this worker currently owns local search
-            bool owns_work(void) const;
+            bool owns_work() const;
             /// Destructor
-            ~Worker(void) override;
+            ~Worker() override;
         };
         /// Array of worker references
         Worker** _worker;
@@ -120,16 +120,16 @@ namespace Gecode { namespace Search { namespace Par {
         /// Initialize for space \a s with options \a o
         BAB(Space* s, const Options& o);
         /// Return statistics
-        Statistics statistics(void) const override;
+        Statistics statistics() const override;
         /// Reset engine to restart at space \a s
         void reset(Space* s) override;
         /// Constrain future solutions to be better than \a b
         void constrain(const Space& b) override;
         /// Constrain
         /// Return no-goods
-        NoGoods& nogoods(void) override;
+        NoGoods& nogoods() override;
         /// Destructor
-        ~BAB(void) override;
+        ~BAB() override;
         //@}
     };
 

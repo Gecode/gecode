@@ -68,13 +68,13 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline NoGoods&
-    DFS<Tracer>::nogoods(void) {
+    DFS<Tracer>::nogoods() {
         return path;
     }
 
     template <class Tracer>
     forceinline Space*
-    DFS<Tracer>::next(void) {
+    DFS<Tracer>::next() {
         /*
          * The engine maintains the following invariant:
          *  - If the current space (cur) is not nullptr, the path always points
@@ -155,7 +155,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline Statistics
-    DFS<Tracer>::statistics(void) const {
+    DFS<Tracer>::statistics() const {
         return *this;
     }
 
@@ -167,7 +167,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     template <class Tracer>
-    forceinline DFS<Tracer>::~DFS(void) {
+    forceinline DFS<Tracer>::~DFS() {
         delete cur;
         tracer.done();
         path.reset();

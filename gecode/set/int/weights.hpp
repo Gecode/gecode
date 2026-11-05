@@ -54,13 +54,13 @@ namespace Gecode { namespace Set { namespace Int {
         /// The current index into the elements and weights
         int index;
         /// Move to the next element
-        void next(void);
+        void next();
 
     public:
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OverweightValues(void) = default;
+        OverweightValues() = default;
         /// Initialize with elements/weights pairs, threshold \a t and iterator \a i
         OverweightValues(int t, SharedArray<int>& elements0, SharedArray<int>& weights0, I& i);
         /// Initialize with elements/weights pairs, threshold \a t and iterator \a i
@@ -70,20 +70,20 @@ namespace Gecode { namespace Set { namespace Int {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
     template <class I>
     forceinline void
-    OverweightValues<I>::next(void) {
+    OverweightValues<I>::next() {
         while (iter()) {
             while (elements[index] < iter.val())
                 index++;
@@ -115,20 +115,20 @@ namespace Gecode { namespace Set { namespace Int {
 
     template <class I>
     forceinline bool
-    OverweightValues<I>::operator()(void) const {
+    OverweightValues<I>::operator()() const {
         return iter();
     }
 
     template <class I>
     forceinline void
-    OverweightValues<I>::operator++(void) {
+    OverweightValues<I>::operator++() {
         ++iter;
         next();
     }
 
     template <class I>
     forceinline int
-    OverweightValues<I>::val(void) const {
+    OverweightValues<I>::val() const {
         return elements[index];
     }
 

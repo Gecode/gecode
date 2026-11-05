@@ -34,7 +34,7 @@ namespace Gecode { namespace Gist {
 
     template <class T>
     void
-    NodeAllocatorBase<T>::allocate(void) {
+    NodeAllocatorBase<T>::allocate() {
         cur_b++;
         cur_t = 0;
         if (cur_b == n) {
@@ -54,7 +54,7 @@ namespace Gecode { namespace Gist {
     }
 
     template <class T>
-    NodeAllocatorBase<T>::~NodeAllocatorBase(void) {
+    NodeAllocatorBase<T>::~NodeAllocatorBase() {
         for (int i = cur_b + 1; i--;)
             heap.rfree(b[i]);
         heap.free<Block*>(b, n);
@@ -109,13 +109,13 @@ namespace Gecode { namespace Gist {
 
     template <class T>
     forceinline bool
-    NodeAllocatorBase<T>::bab(void) const {
+    NodeAllocatorBase<T>::bab() const {
         return _bab;
     }
 
     template <class T>
     forceinline bool
-    NodeAllocatorBase<T>::show_labels(void) const {
+    NodeAllocatorBase<T>::show_labels() const {
         return !labels.isEmpty();
     }
 
@@ -144,7 +144,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline unsigned int
-    Node::get_tag(void) const {
+    Node::get_tag() const {
         return static_cast<unsigned int>(reinterpret_cast<Support::uptrint_t>(children_or_first_child) & 0b11);
     }
 
@@ -157,12 +157,12 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline void*
-    Node::get_ptr(void) const {
+    Node::get_ptr() const {
         return Support::clear_pointer_tag_bits<2>(children_or_first_child);
     }
 
     forceinline int
-    Node::get_first_child(void) const {
+    Node::get_first_child() const {
         return static_cast<int>(
             (reinterpret_cast<Support::uptrint_t>(children_or_first_child) & ~static_cast<Support::uptrint_t>(0b11)) >>
             2);
@@ -177,7 +177,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline int
-    Node::get_parent(void) const {
+    Node::get_parent() const {
         return parent;
     }
 
@@ -187,7 +187,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    Node::is_undetermined(void) const {
+    Node::is_undetermined() const {
         return get_tag() == UNDET;
     }
 
@@ -208,12 +208,12 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    Node::is_root(void) const {
+    Node::is_root() const {
         return parent == -1;
     }
 
     forceinline unsigned int
-    Node::get_number_of_children(void) const {
+    Node::get_number_of_children() const {
         switch (get_tag()) {
         case UNDET:
         case LEAF:

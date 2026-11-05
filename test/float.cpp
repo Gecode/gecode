@@ -156,17 +156,17 @@ namespace Test { namespace Float {
     }
 
     Gecode::Space*
-    TestSpace::copy(void) {
+    TestSpace::copy() {
         return new TestSpace(*this);
     }
 
     void
-    TestSpace::enable(void) {
+    TestSpace::enable() {
         Gecode::PropagatorGroup::all.enable(*this);
     }
 
     void
-    TestSpace::disable(void) {
+    TestSpace::disable() {
         Gecode::PropagatorGroup::all.disable(*this);
         (void)status();
     }
@@ -178,7 +178,7 @@ namespace Test { namespace Float {
     }
 
     bool
-    TestSpace::assigned(void) const {
+    TestSpace::assigned() const {
         for (int i = x.size(); i--;)
             if (!x[i].assigned())
                 return false;
@@ -194,7 +194,7 @@ namespace Test { namespace Float {
     }
 
     void
-    TestSpace::post(void) {
+    TestSpace::post() {
         if (reified) {
             test->post(*this, x, r);
             if (opt.log)
@@ -207,7 +207,7 @@ namespace Test { namespace Float {
     }
 
     bool
-    TestSpace::failed(void) {
+    TestSpace::failed() {
         if (opt.log) {
             olog << ind(3) << "Fixpoint: " << x;
             bool f = (status() == Gecode::SS_FAILED);
@@ -401,7 +401,7 @@ namespace Test { namespace Float {
     }
 
     unsigned int
-    TestSpace::propagators(void) {
+    TestSpace::propagators() {
         return Gecode::PropagatorGroup::all.size(*this);
     }
 
@@ -409,7 +409,7 @@ namespace Test { namespace Float {
                                                         Gecode::FRT_LT, Gecode::FRT_GQ, Gecode::FRT_GR};
 
     Assignment*
-    Test::assignment(void) const {
+    Test::assignment() const {
         switch (assignment_type) {
         case COMPLETE_ASSIGNMENT:
             return new CpltAssignment(arity, dom, step);
@@ -471,7 +471,7 @@ namespace Test { namespace Float {
     Test::post(Gecode::Space&, Gecode::FloatVarArray&, Gecode::Reify) {}
 
     bool
-    Test::run(void) {
+    Test::run() {
         using namespace Gecode;
         const char* test = "NONE";
         const char* problem = "NONE";

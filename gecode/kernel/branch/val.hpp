@@ -54,21 +54,21 @@ namespace Gecode {
 
     public:
         /// Initialize
-        ValBranch(void);
+        ValBranch();
         /// Initialize with random number generator \a r
         ValBranch(const Rnd& r);
         /// Initialize with value function \a v and commit function \a c
         ValBranch(BranchVal v, BranchCommit c);
         /// Return random number generator
-        Rnd rnd(void) const;
+        Rnd rnd() const;
         /// Return value function
-        BranchVal val(void) const;
+        BranchVal val() const;
         /// Return commit function
-        BranchCommit commit(void) const;
+        BranchCommit commit() const;
     };
 
     template <class Var>
-    inline ValBranch<Var>::ValBranch(void) : vf(nullptr), cf(nullptr) {}
+    inline ValBranch<Var>::ValBranch() : vf(nullptr), cf(nullptr) {}
 
     template <class Var>
     inline ValBranch<Var>::ValBranch(const Rnd& r0) : r(r0), vf(nullptr), cf(nullptr) {
@@ -81,19 +81,19 @@ namespace Gecode {
 
     template <class Var>
     inline Rnd
-    ValBranch<Var>::rnd(void) const {
+    ValBranch<Var>::rnd() const {
         return r;
     }
 
     template <class Var>
     inline typename ValBranch<Var>::BranchVal
-    ValBranch<Var>::val(void) const {
+    ValBranch<Var>::val() const {
         return vf;
     }
 
     template <class Var>
     inline typename ValBranch<Var>::BranchCommit
-    ValBranch<Var>::commit(void) const {
+    ValBranch<Var>::commit() const {
         return cf;
     }
 

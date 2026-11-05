@@ -41,7 +41,7 @@ namespace {
 
     class FloatSmokeTest : public Test::Float::Test {
     public:
-        FloatSmokeTest(void)
+        FloatSmokeTest()
             : ::Test::Float::Test("Public::Smoke", 1, 0.0, 1.0, 1.0, ::Test::Float::COMPLETE_ASSIGNMENT, false) {}
 
         ::Test::Float::MaybeType

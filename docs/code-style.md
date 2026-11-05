@@ -114,6 +114,17 @@ All other conversions are explicit: `std::to_underlying` or `static_cast` for
 an array index, a bit position, a packed field, or an `int`-valued option, and
 `static_cast` back to the enum.
 
+## Parameter lists and forceinline
+
+An empty parameter list is `()`, also in function pointer types and
+`std::function` signatures. `(void)` is a C spelling and stays only in C
+sources, where it means something different.
+`modernize-redundant-void-arg` enforces the rule. A cast to `void` that discards
+a value, such as `(void)new (p) T()`, is a different construct and stays.
+
+`forceinline` stays lowercase, although it is a macro, so that it reads like
+`inline`.
+
 ## Checking changes
 
 Put LLVM 22 tools on `PATH`, or set `CLANG_FORMAT` and `CLANG_TIDY` to their

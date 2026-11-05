@@ -98,15 +98,15 @@ namespace Gecode { namespace Gist {
         /// The status has changed (e.g., new solutions have been found)
         void status_changed(const Statistics& stats, bool finished);
         /// Open the about dialog
-        void about(void);
+        void about();
         /// Open the preferences dialog
         void preferences(bool setup = false);
         /// Populate the inspector menus from the actions found in Gist
-        void populate_inspector_selection(void);
+        void populate_inspector_selection();
         /// Populate the inspector menus from the actions found in Gist
-        void populate_inspectors(void);
+        void populate_inspectors();
         /// Populate the bookmarks menus from the actions found in Gist
-        void populate_bookmarks(void);
+        void populate_bookmarks();
 
     public:
         /// Constructor

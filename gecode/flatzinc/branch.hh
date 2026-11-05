@@ -79,19 +79,19 @@ namespace Gecode { namespace FlatZinc {
         /// Initialize with selection strategy \a s and CHB \a i and \a b
         IntBoolVarBranch(Select s, const IntCHB& i, const BoolCHB& b);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
         /// Return integer AFC
-        IntAFC int_afc(void) const;
+        IntAFC int_afc() const;
         /// Return Boolean AFC
-        BoolAFC bool_afc(void) const;
+        BoolAFC bool_afc() const;
         /// Return integer action
-        IntAction int_action(void) const;
+        IntAction int_action() const;
         /// Return Boolean action
-        BoolAction bool_action(void) const;
+        BoolAction bool_action() const;
         /// Return integer CHB
-        IntCHB int_chb(void) const;
+        IntCHB int_chb() const;
         /// Return Boolean AFC
-        BoolCHB bool_chb(void) const;
+        BoolCHB bool_chb() const;
         /// Expand AFC, action, and CHB
         void expand(Home home, const IntVarArgs& x, const BoolVarArgs& y);
     };
@@ -142,7 +142,7 @@ namespace Gecode { namespace FlatZinc {
         /// Return merit
         double operator()(Int::BoolView x, int i) const;
         /// Dispose
-        void dispose(void);
+        void dispose();
     };
 
     /// Select by maximal AFC over size
@@ -163,7 +163,7 @@ namespace Gecode { namespace FlatZinc {
         /// Return merit
         double operator()(Int::BoolView x, int i) const;
         /// Dispose
-        void dispose(void);
+        void dispose();
     };
 
     /// Select by maximal Action
@@ -184,7 +184,7 @@ namespace Gecode { namespace FlatZinc {
         /// Return merit
         double operator()(Int::BoolView x, int i) const;
         /// Dispose
-        void dispose(void);
+        void dispose();
     };
 
     /// Select by maximal Action over size
@@ -205,7 +205,7 @@ namespace Gecode { namespace FlatZinc {
         /// Return merit
         double operator()(Int::BoolView x, int i) const;
         /// Dispose
-        void dispose(void);
+        void dispose();
     };
 
     /// Select by maximal CHB
@@ -226,7 +226,7 @@ namespace Gecode { namespace FlatZinc {
         /// Return merit
         double operator()(Int::BoolView x, int i) const;
         /// Dispose
-        void dispose(void);
+        void dispose();
     };
 
     /// Select by maximal CHB over size
@@ -247,7 +247,7 @@ namespace Gecode { namespace FlatZinc {
         /// Return merit
         double operator()(Int::BoolView x, int i) const;
         /// Dispose
-        void dispose(void);
+        void dispose();
     };
 
     /// %Choice storing position and value
@@ -262,9 +262,9 @@ namespace Gecode { namespace FlatZinc {
         /// Initialize choice for brancher \a b, number of alternatives \a a, position \a p, and value \a n
         PosIntChoice(const Brancher& b, unsigned int a, int p, int n);
         /// Return position of view to assign
-        int pos(void) const;
+        int pos() const;
         /// Return value to assign to
-        int val(void) const;
+        int val() const;
         /// Archive into \a e
         void archive(Archive& e) const override;
     };

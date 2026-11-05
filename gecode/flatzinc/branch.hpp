@@ -49,34 +49,34 @@ namespace Gecode { namespace FlatZinc {
         : s(s0), int_chb_data(i), bool_chb_data(b) {}
 
     forceinline IntBoolVarBranch::Select
-    IntBoolVarBranch::select(void) const {
+    IntBoolVarBranch::select() const {
         return s;
     }
 
     forceinline IntAFC
-    IntBoolVarBranch::int_afc(void) const {
+    IntBoolVarBranch::int_afc() const {
         return int_afc_data;
     }
     forceinline BoolAFC
-    IntBoolVarBranch::bool_afc(void) const {
+    IntBoolVarBranch::bool_afc() const {
         return bool_afc_data;
     }
 
     forceinline IntAction
-    IntBoolVarBranch::int_action(void) const {
+    IntBoolVarBranch::int_action() const {
         return int_action_data;
     }
     forceinline BoolAction
-    IntBoolVarBranch::bool_action(void) const {
+    IntBoolVarBranch::bool_action() const {
         return bool_action_data;
     }
 
     forceinline IntCHB
-    IntBoolVarBranch::int_chb(void) const {
+    IntBoolVarBranch::int_chb() const {
         return int_chb_data;
     }
     forceinline BoolCHB
-    IntBoolVarBranch::bool_chb(void) const {
+    IntBoolVarBranch::bool_chb() const {
         return bool_chb_data;
     }
     forceinline void
@@ -171,7 +171,7 @@ namespace Gecode { namespace FlatZinc {
         return x.afc();
     }
     forceinline void
-    MeritMaxAFC::dispose(void) {
+    MeritMaxAFC::dispose() {
         int_afc_data.~IntAFC();
         bool_afc_data.~BoolAFC();
     }
@@ -191,7 +191,7 @@ namespace Gecode { namespace FlatZinc {
         return x.afc() / 2.0;
     }
     forceinline void
-    MeritMaxAFCSize::dispose(void) {
+    MeritMaxAFCSize::dispose() {
         int_afc_data.~IntAFC();
         bool_afc_data.~BoolAFC();
     }
@@ -211,7 +211,7 @@ namespace Gecode { namespace FlatZinc {
         return bool_action_data[i];
     }
     forceinline void
-    MeritMaxAction::dispose(void) {
+    MeritMaxAction::dispose() {
         int_action_data.~IntAction();
         bool_action_data.~BoolAction();
     }
@@ -231,7 +231,7 @@ namespace Gecode { namespace FlatZinc {
         return bool_action_data[i] / 2.0;
     }
     forceinline void
-    MeritMaxActionSize::dispose(void) {
+    MeritMaxActionSize::dispose() {
         int_action_data.~IntAction();
         bool_action_data.~BoolAction();
     }
@@ -251,7 +251,7 @@ namespace Gecode { namespace FlatZinc {
         return bool_chb_data[i];
     }
     forceinline void
-    MeritMaxCHB::dispose(void) {
+    MeritMaxCHB::dispose() {
         int_chb_data.~IntCHB();
         bool_chb_data.~BoolCHB();
     }
@@ -271,7 +271,7 @@ namespace Gecode { namespace FlatZinc {
         return bool_chb_data[i] / 2.0;
     }
     forceinline void
-    MeritMaxCHBSize::dispose(void) {
+    MeritMaxCHBSize::dispose() {
         int_chb_data.~IntCHB();
         bool_chb_data.~BoolCHB();
     }
@@ -280,11 +280,11 @@ namespace Gecode { namespace FlatZinc {
     PosIntChoice::PosIntChoice(const Brancher& b, unsigned int a, int p, int n)
         : Choice(b, a), _pos(p), _val(n) {}
     forceinline int
-    PosIntChoice::pos(void) const {
+    PosIntChoice::pos() const {
         return _pos;
     }
     forceinline int
-    PosIntChoice::val(void) const {
+    PosIntChoice::val() const {
         return _val;
     }
 

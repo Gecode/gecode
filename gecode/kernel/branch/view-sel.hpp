@@ -77,11 +77,11 @@ namespace Gecode {
         /// Create copy during cloning
         virtual ViewSel<View>* copy(Space& home) = 0;
         /// Whether dispose must always be called (that is, notice is needed)
-        virtual bool notice(void) const;
+        virtual bool notice() const;
         /// Dispose view selection
         virtual void dispose(Space& home);
         /// Unused destructor
-        virtual ~ViewSel(void);
+        virtual ~ViewSel();
         //@}
         /// \name Memory management
         //@{
@@ -166,7 +166,7 @@ namespace Gecode {
         /// Create copy during cloning
         ViewSel<View>* copy(Space& home) override;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const override;
+        bool notice() const override;
         /// Delete view selection
         void dispose(Space& home) override;
         //@}
@@ -227,7 +227,7 @@ namespace Gecode {
         /// \name Resource management and cloning
         //@{
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const override;
+        bool notice() const override;
         /// Delete view selection
         void dispose(Space& home) override;
         //@}
@@ -265,7 +265,7 @@ namespace Gecode {
         /// \name Resource management and cloning
         //@{
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const override;
+        bool notice() const override;
         /// Delete view selection
         void dispose(Space& home) override;
         //@}
@@ -375,14 +375,14 @@ namespace Gecode {
     }
     template <class View>
     bool
-    ViewSel<View>::notice(void) const {
+    ViewSel<View>::notice() const {
         return false;
     }
     template <class View>
     void
     ViewSel<View>::dispose(Space&) {}
     template <class View>
-    ViewSel<View>::~ViewSel(void) = default;
+    ViewSel<View>::~ViewSel() = default;
     template <class View>
     forceinline void
     ViewSel<View>::operator delete(void*) {}
@@ -515,7 +515,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    ViewSelRnd<View>::notice(void) const {
+    ViewSelRnd<View>::notice() const {
         return true;
     }
     template <class View>
@@ -673,7 +673,7 @@ namespace Gecode {
 
     template <class Choose, class Merit>
     bool
-    ViewSelChoose<Choose, Merit>::notice(void) const {
+    ViewSelChoose<Choose, Merit>::notice() const {
         return m.notice();
     }
 
@@ -810,7 +810,7 @@ namespace Gecode {
     }
     template <class Choose, class Merit>
     bool
-    ViewSelChooseTbl<Choose, Merit>::notice(void) const {
+    ViewSelChooseTbl<Choose, Merit>::notice() const {
         return true;
     }
     template <class Choose, class Merit>

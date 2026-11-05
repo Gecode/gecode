@@ -17,6 +17,7 @@ Checks: >-
   bugprone-use-after-move,
   bugprone-virtual-near-miss,
   modernize-deprecated-headers,
+  modernize-redundant-void-arg,
   modernize-use-equals-default,
   modernize-use-equals-delete,
   modernize-use-nullptr,

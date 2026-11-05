@@ -108,21 +108,21 @@ namespace Test {
 
     public:
         /// Initialize with no tags
-        TestTags(void);
+        TestTags();
         /// Initialize with tag \a t
         TestTags(TestTag t);
         /// Initialize with tags \a t0 and \a t1
         TestTags(TestTag t0, TestTag t1);
         /// Integrity tests, also part of the standard suite
-        static TestTags check(void);
+        static TestTags check();
         /// Standard suite without expensive sweeps
-        static TestTags standard(void);
+        static TestTags standard();
         /// Expensive parameter sweeps
-        static TestTags sweep(void);
+        static TestTags sweep();
         /// Return set with all known tags
-        static TestTags all(void);
+        static TestTags all();
         /// Whether no tags are set
-        bool empty(void) const;
+        bool empty() const;
         /// Whether this set contains any tag from \a t
         bool overlaps(TestTags t) const;
         /// Add tags \a t
@@ -164,7 +164,7 @@ namespace Test {
         bool list_with_tags;
 
         /// Initialize options with defaults
-        Options(void);
+        Options();
         /// Parse commandline arguments
         void parse(int argc, char* argv[]);
 
@@ -205,25 +205,25 @@ namespace Test {
          */
         Base(std::string s, TestTags t);
         /// Sort tests alphabetically
-        static void sort(void);
+        static void sort();
         /// Return name of test
-        const std::string& name(void) const;
+        const std::string& name() const;
         /// Return tags for test
-        TestTags tags(void) const;
+        TestTags tags() const;
         /// Return all tests
-        static Base* tests(void);
+        static Base* tests();
         /// Return next test
-        Base* next(void) const;
+        Base* next() const;
         /// Set next test
         void next(Base* n);
         /// Run test
-        virtual bool run(void) = 0;
+        virtual bool run() = 0;
         /// Throw a coin whether to compute a fixpoint
-        bool fixpoint(void);
+        bool fixpoint();
         /// Throw a coin whether to compute a fixpoint
         static bool fixpoint(Gecode::Support::RandomGenerator& rand);
         /// Destructor
-        virtual ~Base(void);
+        virtual ~Base();
 
         /// \name Mapping scalar values to strings
         //@{

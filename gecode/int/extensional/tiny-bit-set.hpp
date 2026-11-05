@@ -165,7 +165,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <unsigned int sz>
     forceinline void
-    TinyBitSet<sz>::flush(void) {
+    TinyBitSet<sz>::flush() {
         for (unsigned int i = 0U; i < sz; i++)
             _bits[i].init(false);
         assert(empty());
@@ -214,7 +214,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <unsigned int sz>
     forceinline unsigned long long int
-    TinyBitSet<sz>::ones(void) const {
+    TinyBitSet<sz>::ones() const {
         unsigned long long int o = 0U;
         for (unsigned int i = 0U; i < sz; i++)
             o += static_cast<unsigned long long int>(_bits[i].ones());
@@ -223,13 +223,13 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <unsigned int sz>
     forceinline unsigned long long int
-    TinyBitSet<sz>::bits(void) const {
+    TinyBitSet<sz>::bits() const {
         return (static_cast<unsigned long long int>(sz) * static_cast<unsigned long long int>(BitSetData::bpb));
     }
 
     template <unsigned int sz>
     forceinline bool
-    TinyBitSet<sz>::empty(void) const { // Linear complexity...
+    TinyBitSet<sz>::empty() const { // Linear complexity...
         for (unsigned int i = 0U; i < sz; i++)
             if (!_bits[i].none())
                 return false;
@@ -238,7 +238,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <unsigned int sz>
     forceinline unsigned int
-    TinyBitSet<sz>::width(void) const {
+    TinyBitSet<sz>::width() const {
         assert(!empty());
         /// Find the index of the last non-zero word
         for (unsigned int i = sz; i--;)
@@ -250,13 +250,13 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <unsigned int sz>
     forceinline unsigned int
-    TinyBitSet<sz>::words(void) const {
+    TinyBitSet<sz>::words() const {
         return width();
     }
 
     template <unsigned int sz>
     forceinline unsigned int
-    TinyBitSet<sz>::size(void) const {
+    TinyBitSet<sz>::size() const {
         return sz;
     }
 

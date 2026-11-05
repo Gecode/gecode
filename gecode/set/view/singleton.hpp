@@ -87,17 +87,17 @@ namespace Gecode { namespace Set {
     }
 
     forceinline unsigned int
-    SingletonView::glb_size(void) const {
+    SingletonView::glb_size() const {
         return x.assigned() ? 1U : 0U;
     }
 
     forceinline unsigned int
-    SingletonView::lub_size(void) const {
+    SingletonView::lub_size() const {
         return x.size();
     }
 
     forceinline unsigned int
-    SingletonView::unknown_size(void) const {
+    SingletonView::unknown_size() const {
         return lub_size() - glb_size();
     }
 
@@ -334,7 +334,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void);
+        LubRanges();
         /// Initialize with ranges for view \a x
         LubRanges(const SingletonView& x);
         /// Initialize with ranges for view \a x
@@ -344,7 +344,7 @@ namespace Gecode { namespace Set {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    LubRanges<SingletonView>::LubRanges(void) {}
+    LubRanges<SingletonView>::LubRanges() {}
 
     forceinline
     LubRanges<SingletonView>::LubRanges(const SingletonView& s)
@@ -369,7 +369,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void);
+        GlbRanges();
         /// Initialize with ranges for view \a x
         GlbRanges(const SingletonView& x);
         /// Initialize with ranges for view \a x
@@ -378,25 +378,25 @@ namespace Gecode { namespace Set {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of ranges (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    GlbRanges<SingletonView>::GlbRanges(void) {}
+    GlbRanges<SingletonView>::GlbRanges() {}
 
     forceinline void
     GlbRanges<SingletonView>::init(const SingletonView& s) {
@@ -415,25 +415,25 @@ namespace Gecode { namespace Set {
     }
 
     forceinline bool
-    GlbRanges<SingletonView>::operator()(void) const {
+    GlbRanges<SingletonView>::operator()() const {
         return flag;
     }
 
     forceinline void
-    GlbRanges<SingletonView>::operator++(void) {
+    GlbRanges<SingletonView>::operator++() {
         flag = false;
     }
 
     forceinline int
-    GlbRanges<SingletonView>::min(void) const {
+    GlbRanges<SingletonView>::min() const {
         return val;
     }
     forceinline int
-    GlbRanges<SingletonView>::max(void) const {
+    GlbRanges<SingletonView>::max() const {
         return val;
     }
     forceinline unsigned int
-    GlbRanges<SingletonView>::width(void) const {
+    GlbRanges<SingletonView>::width() const {
         return 1;
     }
 

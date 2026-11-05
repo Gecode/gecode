@@ -76,15 +76,15 @@ namespace Gecode { namespace Search { namespace Par {
             /// Hand over some work (nullptr if no work available)
             Space* steal(unsigned long int& d, Tracer& myt, Tracer& ot);
             /// Return statistics
-            Statistics statistics(void);
+            Statistics statistics();
             /// Provide access to engine
-            Engine& engine(void) const;
+            Engine& engine() const;
             /// Return no-goods
-            NoGoods& nogoods(void);
+            NoGoods& nogoods();
             /// Destructor
-            ~Worker(void) override;
+            ~Worker() override;
             /// Terminator (engine)
-            Support::Terminator* terminator(void) const override;
+            Support::Terminator* terminator() const override;
         };
         /// Search options
         Options _opt;
@@ -135,13 +135,13 @@ namespace Gecode { namespace Search { namespace Par {
         /// Select a no-lease worker by logical state (scheduler_mutex held)
         unsigned int scheduler_select(SchedulerLogical logical, unsigned int exclude) const;
         /// Grant leases up to the current request (scheduler_mutex held)
-        bool scheduler_grow(void);
+        bool scheduler_grow();
 
     public:
         /// Provide access to search options
-        const Options& opt(void) const;
+        const Options& opt() const;
         /// Return number of workers
-        unsigned int workers(void) const;
+        unsigned int workers() const;
         /// Enable adjustable parallel admission
         void scheduler_enable(bool root_owner);
         /// Reset adjustable parallel state while all workers are blocked
@@ -149,7 +149,7 @@ namespace Gecode { namespace Search { namespace Par {
         /// Admit worker \a worker for one exploration action
         bool scheduler_admit(unsigned int worker);
         /// Whether the external worker request currently pauses the engine
-        bool scheduler_paused(void) const;
+        bool scheduler_paused() const;
         /// Record that worker \a worker owns search
         void scheduler_owner(unsigned int worker);
         /// Record that worker \a worker is idle
@@ -183,13 +183,13 @@ namespace Gecode { namespace Search { namespace Par {
 
     public:
         /// Return current command
-        Cmd cmd(void) const;
+        Cmd cmd() const;
         /// Block all workers
-        void block(void);
+        void block();
         /// Release all workers
         void release(Cmd c);
         /// Ensure that worker waits
-        void wait(void);
+        void wait();
         //@}
 
         /// \name Termination control
@@ -210,13 +210,13 @@ namespace Gecode { namespace Search { namespace Par {
 
     public:
         /// For worker to acknowledge termination command
-        void ack_terminate(void);
+        void ack_terminate();
         /// For worker to register termination
-        void terminated(void) override;
+        void terminated() override;
         /// For worker to wait until termination is legal
-        void wait_terminate(void);
+        void wait_terminate();
         /// For engine to perform thread termination
-        void terminate(void);
+        void terminate();
         //@}
 
         /// \name Reset control
@@ -235,11 +235,11 @@ namespace Gecode { namespace Search { namespace Par {
 
     public:
         /// For worker to acknowledge start of reset cycle
-        void ack_reset_start(void);
+        void ack_reset_start();
         /// For worker to acknowledge stop of reset cycle
-        void ack_reset_stop(void);
+        void ack_reset_stop();
         /// For worker to wait for all workers to reset
-        void wait_reset(void);
+        void wait_reset();
         //@}
 
         /// \name Search control
@@ -258,19 +258,19 @@ namespace Gecode { namespace Search { namespace Par {
         /// Number of calls to next() that have started search
         std::atomic<unsigned long long int> n_runs;
         /// Whether search state changed such that signal is needed
-        bool signal(void) const;
+        bool signal() const;
 
     public:
         /// Report that worker is idle
-        void idle(void);
+        void idle();
         /// Report that worker is busy
-        void busy(void);
+        void busy();
         /// Return the current call of next()
-        unsigned long long int run(void) const;
+        unsigned long long int run() const;
         /// Report that a worker was stopped during call \a r of next()
         void stop(unsigned long long int r);
         /// Whether logical search work remains
-        bool work_remains(void);
+        bool work_remains();
         //@}
 
         /// \name Engine interface
@@ -278,13 +278,13 @@ namespace Gecode { namespace Search { namespace Par {
         /// Initialize with options \a o
         Engine(const Options& o);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Check whether engine has been stopped
-        bool stopped(void) const override;
+        bool stopped() const override;
         //@}
 
         /// Destructor
-        ~Engine(void) override;
+        ~Engine() override;
     };
 
 }}} // namespace Gecode::Search::Par

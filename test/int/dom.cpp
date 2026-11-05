@@ -138,7 +138,7 @@ namespace Test { namespace Int {
         class DomRangeEmpty : public Test {
         public:
             /// Create and register test
-            DomRangeEmpty(void) : Test("Dom::Range::Empty", 1, -4, 4, true) {}
+            DomRangeEmpty() : Test("Dom::Range::Empty", 1, -4, 4, true) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment&) const override {
@@ -162,7 +162,7 @@ namespace Test { namespace Int {
             bool ranges;
             /// Return the empty set built from an empty list
             Gecode::IntSet
-            empty_set(void) const {
+            empty_set() const {
                 if (ranges)
                     return Gecode::IntSet(std::initializer_list<std::pair<int, int>>{});
                 return Gecode::IntSet(std::initializer_list<int>{});

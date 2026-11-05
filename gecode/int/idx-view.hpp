@@ -69,7 +69,7 @@ namespace Gecode { namespace Int {
 
     template <class View>
     forceinline
-    IdxViewArray<View>::IdxViewArray(void)
+    IdxViewArray<View>::IdxViewArray()
         : xs(nullptr), n(0) {}
 
     template <class View>
@@ -105,7 +105,7 @@ namespace Gecode { namespace Int {
 
     template <class View>
     forceinline int
-    IdxViewArray<View>::size(void) const {
+    IdxViewArray<View>::size() const {
         return n;
     }
 

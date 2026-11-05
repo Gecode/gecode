@@ -73,7 +73,7 @@ namespace Test { namespace Int {
         class Bool : public Test {
         public:
             /// Create and register test
-            Bool(void) : Test("Unshare::Bool", 9, 0, 1, false) {}
+            Bool() : Test("Unshare::Bool", 9, 0, 1, false) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -98,7 +98,7 @@ namespace Test { namespace Int {
         class Failed : public Test {
         public:
             /// Create and register test
-            Failed(void) : Test("Unshare::Failed", 1, -1, 1) {}
+            Failed() : Test("Unshare::Failed", 1, -1, 1) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {

@@ -97,7 +97,7 @@ namespace Gecode { namespace Float {
         /// \name Construction and access
         //@{
         /// Initialize as \f$[0,0]\f$
-        Interval(void) = default;
+        Interval() = default;
         /// Initialize as \f$[v,v]\f$, accepting NaN
         explicit Interval(FloatNum v);
         /// Initialize as \f$[l,u]\f$, throwing unless \f$l\leq u\f$
@@ -107,19 +107,19 @@ namespace Gecode { namespace Float {
         /// Set to \f$[l,u]\f$, or throw and stay unchanged unless \f$l\leq u\f$
         void assign(FloatNum l, FloatNum u);
         /// Return lower bound
-        FloatNum lower(void) const;
+        FloatNum lower() const;
         /// Return upper bound
-        FloatNum upper(void) const;
+        FloatNum upper() const;
         //@}
 
         /// \name Constants
         //@{
         /// Return enclosure of \f$\pi/2\f$
-        static Interval pi_half(void);
+        static Interval pi_half();
         /// Return enclosure of \f$\pi\f$
-        static Interval pi(void);
+        static Interval pi();
         /// Return enclosure of \f$2\pi\f$
-        static Interval pi_twice(void);
+        static Interval pi_twice();
         //@}
 
         /// \name Update operators
@@ -148,13 +148,13 @@ namespace Gecode { namespace Float {
 
         /// Throw the exception for an empty result
         [[noreturn]] inline void
-        throw_empty(void) {
+        throw_empty() {
             throw std::runtime_error("Gecode::Float::Interval: empty interval");
         }
 
         /// Return \f$[-\infty,+\infty]\f$
         forceinline Interval
-        whole(void) {
+        whole() {
             const FloatNum inf = std::numeric_limits<FloatNum>::infinity();
             return Interval::unchecked(-inf, inf);
         }
@@ -194,24 +194,24 @@ namespace Gecode { namespace Float {
     }
 
     forceinline FloatNum
-    Interval::lower(void) const {
+    Interval::lower() const {
         return lb;
     }
     forceinline FloatNum
-    Interval::upper(void) const {
+    Interval::upper() const {
         return ub;
     }
 
     forceinline Interval
-    Interval::pi_half(void) {
+    Interval::pi_half() {
         return unchecked(pi_half_lower(), pi_half_upper());
     }
     forceinline Interval
-    Interval::pi(void) {
+    Interval::pi() {
         return unchecked(pi_lower(), pi_upper());
     }
     forceinline Interval
-    Interval::pi_twice(void) {
+    Interval::pi_twice() {
         return unchecked(pi_twice_lower(), pi_twice_upper());
     }
 

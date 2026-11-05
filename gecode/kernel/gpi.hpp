@@ -63,9 +63,9 @@ namespace Gecode { namespace Kernel {
             /// Number of free blocks
             int free;
             /// Initialize
-            Block(void);
+            Block();
             /// Rescale used afc values in entries
-            void rescale(void);
+            void rescale();
         };
         /// The current block
         Block* b;
@@ -82,11 +82,11 @@ namespace Gecode { namespace Kernel {
 
     public:
         /// Initialize
-        GPI(void);
+        GPI();
         /// Set decay factor to \a d
         void decay(double d);
         /// Return decay factor
-        double decay(void) const;
+        double decay() const;
         /// Increment failure count
         void fail(Info& c);
         /// Allocate info for existing propagator with pid \a p
@@ -94,13 +94,13 @@ namespace Gecode { namespace Kernel {
         /// Allocate new actor info
         Info* allocate(unsigned int gid);
         /// Allocate a new propagator id without allocating information
-        unsigned int next_pid(void);
+        unsigned int next_pid();
         /// Return next free propagator id
-        unsigned int pid(void) const;
+        unsigned int pid() const;
         /// Provide access to unshare info and set to true
-        bool unshare(void);
+        bool unshare();
         /// Delete
-        ~GPI(void);
+        ~GPI();
     };
 
     forceinline void
@@ -111,17 +111,17 @@ namespace Gecode { namespace Kernel {
     }
 
     forceinline
-    GPI::Block::Block(void)
+    GPI::Block::Block()
         : next(nullptr), free(n_info) {}
 
     forceinline void
-    GPI::Block::rescale(void) {
+    GPI::Block::rescale() {
         for (int i = free; i < n_info; i++)
             info[i].afc *= Kernel::Config::rescale;
     }
 
     forceinline
-    GPI::GPI(void)
+    GPI::GPI()
         : b(&fst), invd(1.0), npid(0U), us(false) {}
 
     forceinline void
@@ -135,7 +135,7 @@ namespace Gecode { namespace Kernel {
     }
 
     forceinline double
-    GPI::decay(void) const {
+    GPI::decay() const {
         double d;
         const_cast<GPI&>(*this).m.acquire();
         d = 1.0 / invd;
@@ -144,17 +144,17 @@ namespace Gecode { namespace Kernel {
     }
 
     forceinline unsigned int
-    GPI::next_pid(void) {
+    GPI::next_pid() {
         return npid.fetch_add(1, std::memory_order_seq_cst);
     }
 
     forceinline unsigned int
-    GPI::pid(void) const {
+    GPI::pid() const {
         return npid.load(std::memory_order_acquire);
     }
 
     forceinline bool
-    GPI::unshare(void) {
+    GPI::unshare() {
         bool u;
         m.acquire();
         u = us;
@@ -200,7 +200,7 @@ namespace Gecode { namespace Kernel {
         return c;
     }
 
-    forceinline GPI::~GPI(void) {
+    forceinline GPI::~GPI() {
         Block* n = b;
         while (n != &fst) {
             Block* d = n;

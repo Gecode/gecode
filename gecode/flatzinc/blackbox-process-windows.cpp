@@ -58,7 +58,7 @@ namespace Gecode { namespace FlatZinc {
 
         public:
             explicit WindowsHandle(HANDLE handle0 = nullptr) : handle(handle0) {}
-            ~WindowsHandle(void) {
+            ~WindowsHandle() {
                 reset();
             }
 
@@ -66,22 +66,22 @@ namespace Gecode { namespace FlatZinc {
             WindowsHandle& operator=(const WindowsHandle&) = delete;
 
             HANDLE
-            get(void) const {
+            get() const {
                 return handle;
             }
             HANDLE*
-            put(void) {
+            put() {
                 reset();
                 return &handle;
             }
             HANDLE
-            release(void) {
+            release() {
                 HANDLE handle0 = handle;
                 handle = nullptr;
                 return handle0;
             }
             bool
-            valid(void) const {
+            valid() const {
                 return (handle != nullptr) && (handle != INVALID_HANDLE_VALUE);
             }
             void
@@ -100,15 +100,15 @@ namespace Gecode { namespace FlatZinc {
             bool initialized;
 
         public:
-            WindowsAttributeList(void) : list(nullptr), initialized(false) {}
-            ~WindowsAttributeList(void) {
+            WindowsAttributeList() : list(nullptr), initialized(false) {}
+            ~WindowsAttributeList() {
                 if (initialized) {
                     DeleteProcThreadAttributeList(list);
                 }
             }
 
             void
-            init(void) {
+            init() {
                 SIZE_T size = 0;
                 InitializeProcThreadAttributeList(nullptr, 1, 0, &size);
                 if (size == 0) {
@@ -134,7 +134,7 @@ namespace Gecode { namespace FlatZinc {
             }
 
             LPPROC_THREAD_ATTRIBUTE_LIST
-            get(void) const {
+            get() const {
                 return list;
             }
         };
@@ -187,7 +187,7 @@ namespace Gecode { namespace FlatZinc {
             }
 
             void open_windows(const std::string& program, const std::vector<std::string>& args);
-            void close_windows(void);
+            void close_windows();
 
         public:
             WindowsProcessSession(const std::string& program, const std::vector<std::string>& args)
@@ -195,7 +195,7 @@ namespace Gecode { namespace FlatZinc {
                 open_windows(program, args);
             }
 
-            ~WindowsProcessSession(void) override {
+            ~WindowsProcessSession() override {
                 close();
             }
 
@@ -236,7 +236,7 @@ namespace Gecode { namespace FlatZinc {
             }
 
             void
-            close(void) {
+            close() {
                 close_windows();
             }
         };
@@ -391,7 +391,7 @@ namespace Gecode { namespace FlatZinc {
         }
 
         void
-        WindowsProcessSession::close_windows(void) {
+        WindowsProcessSession::close_windows() {
             close_handle(pipe_send);
             close_handle(pipe_receive);
             if (process != nullptr) {

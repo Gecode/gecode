@@ -57,7 +57,7 @@ namespace Gecode { namespace Instance {
         /// The indices
         Seq<int> path;
         /// Initialize without a repeat
-        RecordRef(void) : repeat(nullptr) {}
+        RecordRef() : repeat(nullptr) {}
     };
 
     /// A part of the explanation of a failed check, such as "record 3 of
@@ -91,7 +91,7 @@ namespace Gecode { namespace Instance {
             innermost = this;
         }
         /// Remove the binding
-        ~Binding(void) {
+        ~Binding() {
             innermost = outer;
         }
     };
@@ -187,7 +187,7 @@ namespace Gecode { namespace Instance {
         }
         /// Test whether only blanks precede the position on its line
         bool
-        line_start(void) const {
+        line_start() const {
             for (size_t k = start; k < pos; k++)
                 if (!is_blank(text[k]))
                     return false;
@@ -203,7 +203,7 @@ namespace Gecode { namespace Instance {
         }
         /// Move to the end of the current line
         void
-        to_eol(void) {
+        to_eol() {
             size_t p = text.find('\n', pos);
             advance(p == std::string::npos ? text.size() : p);
         }
@@ -224,7 +224,7 @@ namespace Gecode { namespace Instance {
         }
         /// Skip white space, comment lines, and everything after a stop line
         void
-        skip(void) {
+        skip() {
             for (;;) {
                 const char* s = text.data();
                 size_t n = text.size();
@@ -254,20 +254,20 @@ namespace Gecode { namespace Instance {
         }
         /// Skip to the next data (see skip), and return whether there is any
         bool
-        skip_to_data(void) {
+        skip_to_data() {
             skip();
             return pos < text.size();
         }
         /// Skip blanks and separators, and return whether data follows on the line
         bool
-        skip_to_line_data(void) {
+        skip_to_line_data() {
             while (in_line(pos) && is_separator(text[pos]))
                 pos++;
             return in_line(pos);
         }
         /// Return where the token at the position ends
         size_t
-        token_end(void) const {
+        token_end() const {
             size_t q = pos;
             if ((q < text.size()) && is_split(text[q]))
                 return q + 1;
@@ -277,7 +277,7 @@ namespace Gecode { namespace Instance {
         }
         /// Read the token at the position
         std::string
-        token(void) {
+        token() {
             size_t q = token_end();
             std::string t = text.substr(pos, q - pos);
             advance(q);
@@ -323,7 +323,7 @@ namespace Gecode { namespace Instance {
         }
         /// Return the next token without consuming it
         std::string
-        peek(void) {
+        peek() {
             size_t p0 = pos, s0 = start;
             int l0 = line;
             std::string t = skip_to_data() ? token() : std::string();
@@ -334,7 +334,7 @@ namespace Gecode { namespace Instance {
         }
         /// Return the rest of the current line without trailing blanks
         std::string
-        rest(void) const {
+        rest() const {
             size_t q = text.find('\n', pos);
             if (q == std::string::npos)
                 q = text.size();
@@ -354,7 +354,7 @@ namespace Gecode { namespace Instance {
         }
         /// Return the current place
         Place
-        here(void) const {
+        here() const {
             Place p;
             p.pos = pos;
             p.line = line;
@@ -379,7 +379,7 @@ namespace Gecode { namespace Instance {
         }
         /// Return where the next data starts (see skip), without moving there
         size_t
-        next_data(void) {
+        next_data() {
             size_t p0 = pos, s0 = start;
             int l0 = line;
             skip();

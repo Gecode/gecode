@@ -134,7 +134,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    PreferencesDialog::write_back(void) {
+    PreferencesDialog::write_back() {
         hide_failed = hide_check->isChecked();
         zoom = zoom_check->isChecked();
         refresh = refresh_box->value();
@@ -156,7 +156,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    PreferencesDialog::defaults(void) {
+    PreferencesDialog::defaults() {
         hide_failed = true;
         zoom = false;
         refresh = 500;

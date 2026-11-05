@@ -54,7 +54,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Union(void);
+        Union();
         /// Initialize with values from \a i and \a j
         Union(I& i, J& j);
         /// Initialize with values from \a i and \a j
@@ -64,26 +64,26 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
     template <class I, class J>
     forceinline
-    Union<I, J>::Union(void)
+    Union<I, J>::Union()
         : v(0) {}
 
     template <class I, class J>
     forceinline void
-    Union<I, J>::operator++(void) {
+    Union<I, J>::operator++() {
         if (i()) {
             if (j()) {
                 if (i.val() == j.val()) {
@@ -128,13 +128,13 @@ namespace Gecode { namespace Iter { namespace Values {
 
     template <class I, class J>
     forceinline bool
-    Union<I, J>::operator()(void) const {
+    Union<I, J>::operator()() const {
         return !done;
     }
 
     template <class I, class J>
     forceinline int
-    Union<I, J>::val(void) const {
+    Union<I, J>::val() const {
         return v;
     }
 

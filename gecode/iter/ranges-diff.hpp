@@ -50,7 +50,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Diff(void) = default;
+        Diff() = default;
         /// Initialize with iterator \a i and \a j
         Diff(I& i, J& j);
         /// Initialize with iterator \a i and \a j
@@ -60,13 +60,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
     template <class I, class J>
     forceinline void
-    Diff<I, J>::operator++(void) {
+    Diff<I, J>::operator++() {
         // Precondition: mi <= ma
         // Task: find next mi greater than ma
         while (true) {

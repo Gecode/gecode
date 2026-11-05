@@ -36,12 +36,12 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
     template <class View>
     forceinline
-    Graph<View>::Graph(void)
+    Graph<View>::Graph()
         : view(nullptr), val(nullptr), n_view(0), n_val(0), count(1U) {}
 
     template <class View>
     forceinline Graph<View>::
-    operator bool(void) const {
+    operator bool() const {
         return view != nullptr;
     }
 
@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
     template <class View>
     forceinline void
-    Graph<View>::purge(void) {
+    Graph<View>::purge() {
         if (count > (UINT_MAX >> 1)) {
             count = 1;
             for (int i = 0; i < n_view; i++)
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
     template <class View>
     forceinline void
-    Graph<View>::scc(void) {
+    Graph<View>::scc() {
         Region r;
 
         Support::StaticStack<Node<View>*, Region> scc(r, n_val + n_view);

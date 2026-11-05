@@ -65,7 +65,7 @@ namespace Test { namespace Branch {
 
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new FilteredRndTiesSpace(*this);
         }
     };
@@ -74,11 +74,11 @@ namespace Test { namespace Branch {
     class FilteredRndTies : public Base {
     public:
         /// Create and register test
-        FilteredRndTies(void) : Base("Int::Branch::FilteredRndTies") {}
+        FilteredRndTies() : Base("Int::Branch::FilteredRndTies") {}
 
         /// Run test
         bool
-        run(void) override {
+        run() override {
             bool selected[2] = {false, false};
 
             for (unsigned int seed = 1; seed <= 16; seed++) {
@@ -138,7 +138,7 @@ namespace Test { namespace Branch {
             Gecode::cbs_branch(*this, x);
         }
         void
-        post(void) {
+        post() {
             using namespace Gecode;
             distinct(*this, IntVarArgs() << x[0] << x[1] << x[2] << x[3], IPL_VAL);
             distinct(*this, IntVarArgs() << x[4] << x[5] << x[6] << x[7], IPL_VAL);
@@ -147,7 +147,7 @@ namespace Test { namespace Branch {
             x.update(*this, s.x);
         }
         Space*
-        copy(void) override {
+        copy() override {
             return new CBSSpace(*this);
         }
     };
@@ -155,9 +155,9 @@ namespace Test { namespace Branch {
     /// Cache removal must preserve choices from surviving propagators
     class CBS : public Base {
     public:
-        CBS(void) : Base("Int::Branch::CBS", TestTags::check()) {}
+        CBS() : Base("Int::Branch::CBS", TestTags::check()) {}
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             for (bool local : {false, true}) {
                 CBSSpace root(local);

@@ -41,10 +41,10 @@ namespace Test { namespace FlatZinc {
         /// Verify that FlatZinc table conversion uses automatic representation.
         class TupleSetAutoRepresentation : public Base {
         public:
-            TupleSetAutoRepresentation(void) : Base("FlatZinc::TupleSet::AutoRepresentation") {}
+            TupleSetAutoRepresentation() : Base("FlatZinc::TupleSet::AutoRepresentation") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
 
                 const int n = 4096;
@@ -79,10 +79,10 @@ namespace Test { namespace FlatZinc {
             }
 
         public:
-            GistStatisticsMode(void) : Base("FlatZinc::Options::GistStatisticsMode", TestTags::check()) {}
+            GistStatisticsMode() : Base("FlatZinc::Options::GistStatisticsMode", TestTags::check()) {}
 
             bool
-            run(void) override {
+            run() override {
                 return (mode({"-s"}) == Gecode::SM_STATISTICS) && (mode({"-mode", "gist", "-s"}) == Gecode::SM_GIST) &&
                        (mode({"-s", "-mode", "gist"}) == Gecode::SM_GIST);
             }
@@ -122,7 +122,7 @@ namespace Test { namespace FlatZinc {
           _expected_message(std::move(expected_message)) {}
 
     bool
-    FlatZincTest::run(void) {
+    FlatZincTest::run() {
         using namespace Gecode;
         Support::Timer t_total;
         t_total.start();
@@ -174,7 +174,7 @@ namespace Test { namespace FlatZinc {
     }
 
     bool
-    FlatZincErrorTest::run(void) {
+    FlatZincErrorTest::run() {
         using namespace Gecode;
         Support::Timer t_total;
         t_total.start();

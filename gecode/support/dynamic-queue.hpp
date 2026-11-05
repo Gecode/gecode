@@ -51,7 +51,7 @@ namespace Gecode { namespace Support {
         /// Elements in queue
         T* q;
         /// Resize queue (double size)
-        void resize(void);
+        void resize();
         /// Move index \a i to next element
         void move(int& i);
 
@@ -59,16 +59,16 @@ namespace Gecode { namespace Support {
         /// Initialize queue
         DynamicQueue(A& a);
         /// Release memory
-        ~DynamicQueue(void);
+        ~DynamicQueue();
 
         /// Test whether queue is empty
-        bool empty(void) const;
+        bool empty() const;
 
         /// Reset queue to be empty
-        void reset(void);
+        void reset();
 
         /// Pop element added first from queue and return it
-        T pop(void);
+        T pop();
         /// Push element \a x to queue
         void push(const T& x);
 
@@ -90,7 +90,7 @@ namespace Gecode { namespace Support {
 
     template <class T, class A>
     void
-    DynamicQueue<T, A>::resize(void) {
+    DynamicQueue<T, A>::resize() {
         assert(fst == lst);
         T* nq = a.template alloc<T>(limit << 1);
         int j = 0;
@@ -111,25 +111,25 @@ namespace Gecode { namespace Support {
         : a(a0), limit(8), fst(0), lst(0), q(a.template alloc<T>(limit)) {}
 
     template <class T, class A>
-    forceinline DynamicQueue<T, A>::~DynamicQueue(void) {
+    forceinline DynamicQueue<T, A>::~DynamicQueue() {
         a.free(q, limit);
     }
 
     template <class T, class A>
     forceinline bool
-    DynamicQueue<T, A>::empty(void) const {
+    DynamicQueue<T, A>::empty() const {
         return fst == lst;
     }
 
     template <class T, class A>
     forceinline void
-    DynamicQueue<T, A>::reset(void) {
+    DynamicQueue<T, A>::reset() {
         fst = lst = 0;
     }
 
     template <class T, class A>
     forceinline T
-    DynamicQueue<T, A>::pop(void) {
+    DynamicQueue<T, A>::pop() {
         assert(!empty());
         T t = q[fst];
         move(fst);

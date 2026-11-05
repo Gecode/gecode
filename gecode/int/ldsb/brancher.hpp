@@ -36,7 +36,7 @@
 namespace Gecode { namespace Int { namespace LDSB {
 
     forceinline
-    Literal::Literal(void)
+    Literal::Literal()
         : _variable(-1), _value(-1) {}
 
     forceinline
@@ -49,19 +49,19 @@ namespace Gecode { namespace Int { namespace LDSB {
         : PosValChoice<Val>(b, a, p, n), _literals(literals), _nliterals(nliterals) {}
 
     template <class Val>
-    LDSBChoice<Val>::~LDSBChoice(void) {
+    LDSBChoice<Val>::~LDSBChoice() {
         delete[] _literals;
     }
 
     template <class Val>
     forceinline const Literal*
-    LDSBChoice<Val>::literals(void) const {
+    LDSBChoice<Val>::literals() const {
         return _literals;
     }
 
     template <class Val>
     forceinline int
-    LDSBChoice<Val>::nliterals(void) const {
+    LDSBChoice<Val>::nliterals() const {
         return _nliterals;
     }
 

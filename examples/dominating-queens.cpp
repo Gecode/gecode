@@ -113,7 +113,7 @@ public:
 
     /// Return cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return q;
     }
 
@@ -125,7 +125,7 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new DominatingQueens(*this);
     }
 

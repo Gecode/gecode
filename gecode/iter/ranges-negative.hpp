@@ -52,7 +52,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Negative(void) = default;
+        Negative() = default;
         /// Initialize with ranges from \a i
         Negative(I& i);
         /// Initialize with ranges from \a i
@@ -62,19 +62,19 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -91,12 +91,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I, bool strict>
     forceinline void
-    Negative<I, strict>::operator++(void) {
+    Negative<I, strict>::operator++() {
         ++i;
     }
     template <class I, bool strict>
     forceinline bool
-    Negative<I, strict>::operator()(void) const {
+    Negative<I, strict>::operator()() const {
         if (strict) {
             return i() && (i.min() < 0);
         } else {
@@ -106,12 +106,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I, bool strict>
     forceinline int
-    Negative<I, strict>::min(void) const {
+    Negative<I, strict>::min() const {
         return i.min();
     }
     template <class I, bool strict>
     forceinline int
-    Negative<I, strict>::max(void) const {
+    Negative<I, strict>::max() const {
         if (strict) {
             return std::min(i.max(), -1);
         } else {
@@ -120,7 +120,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
     template <class I, bool strict>
     forceinline unsigned int
-    Negative<I, strict>::width(void) const {
+    Negative<I, strict>::width() const {
         return static_cast<unsigned int>(max() - min() + 1);
     }
 

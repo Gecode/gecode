@@ -201,7 +201,7 @@ namespace Gecode { namespace Gist {
         connect(c, SIGNAL(status_changed(const Statistics&, bool)), this,
                 SLOT(status_changed(const Statistics&, bool)));
 
-        connect(c, SIGNAL(search_finished(void)), this, SLOT(close(void)));
+        connect(c, SIGNAL(search_finished()), this, SLOT(close()));
 
         preferences(true);
         show();
@@ -259,7 +259,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    GistMainWindow::about(void) {
+    GistMainWindow::about() {
         about_gist.show();
     }
 
@@ -283,7 +283,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    GistMainWindow::populate_inspector_selection(void) {
+    GistMainWindow::populate_inspector_selection() {
         double_click_inspectors_menu->clear();
         double_click_inspectors_menu->addActions(c->double_click_inspector_group->actions());
         solution_inspectors_menu->clear();
@@ -295,7 +295,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    GistMainWindow::populate_bookmarks(void) {
+    GistMainWindow::populate_bookmarks() {
         bookmarks_menu->clear();
         bookmarks_menu->addAction(c->bookmark_node);
         bookmarks_menu->addSeparator();
@@ -303,7 +303,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    GistMainWindow::populate_inspectors(void) {
+    GistMainWindow::populate_inspectors() {
         inspect_node_menu->clear();
         inspect_node_menu->addAction(c->inspect);
         inspect_node_menu->addSeparator();

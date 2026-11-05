@@ -1960,14 +1960,14 @@ namespace Test { namespace Int {
             /// Index variable
             Gecode::IntVar y;
             /// Create fixture
-            EmptyFixture(void) : y(*this, 0, 1) {}
+            EmptyFixture() : y(*this, 0, 1) {}
             /// Constructor for cloning \a fixture
             EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
                 y.update(*this, fixture.y);
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new EmptyFixture(*this);
             }
         };
@@ -1976,10 +1976,10 @@ namespace Test { namespace Int {
         class BoolElementEmpty : public Base {
         public:
             /// Create and register test
-            BoolElementEmpty(void) : Base("Int::MiniModel::BoolElement::Empty") {}
+            BoolElementEmpty() : Base("Int::MiniModel::BoolElement::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 BoolVarArgs x;
                 EmptyFixture home;
@@ -1997,7 +1997,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 int n = sizeof(bi) / sizeof(BoolInstr*);
                 for (int i = 0; i < n; i++) {
                     std::string s = Test::str(i);

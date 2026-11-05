@@ -130,9 +130,9 @@ namespace Gecode {
             /// Parse option at first position and return number of parsed arguments
             virtual int parse(int argc, char* argv[]) = 0;
             /// Print help text
-            virtual void help(void) = 0;
+            virtual void help() = 0;
             /// Destructor
-            virtual ~BaseOption(void);
+            virtual ~BaseOption();
             /// Create heap-allocated copy of string \a s
             static char* strdup(const char* s);
             /// Create heap-allocated copy of string \a s with hyphen added
@@ -154,13 +154,13 @@ namespace Gecode {
             /// Set default value to \a v
             void value(const char* v);
             /// Return current option value
-            const char* value(void) const;
+            const char* value() const;
             /// Parse option at first position and return number of parsed arguments
             int parse(int argc, char* argv[]) override;
             /// Print help text
-            void help(void) override;
+            void help() override;
             /// Destructor
-            ~StringValueOption(void) override;
+            ~StringValueOption() override;
         };
 
         /**
@@ -199,15 +199,15 @@ namespace Gecode {
             /// Set default value to \a v
             void value(int v);
             /// Return current option value
-            int value(void) const;
+            int value() const;
             /// Add option value for value \a v, string \a o, and help text \a h
             void add(int v, const char* o, const char* h = nullptr);
             /// Parse option at first position and return number of parsed arguments
             int parse(int argc, char* argv[]) override;
             /// Print help text
-            void help(void) override;
+            void help() override;
             /// Destructor
-            ~StringOption(void) override;
+            ~StringOption() override;
         };
 
         /**
@@ -223,11 +223,11 @@ namespace Gecode {
             /// Set default value to \a v
             void value(int v);
             /// Return current option value
-            int value(void) const;
+            int value() const;
             /// Parse option at first position and return number of parsed arguments
             int parse(int argc, char* argv[]) override;
             /// Print help text
-            void help(void) override;
+            void help() override;
         };
 
         /**
@@ -243,11 +243,11 @@ namespace Gecode {
             /// Set default value to \a v
             void value(unsigned int v);
             /// Return current option value
-            unsigned int value(void) const;
+            unsigned int value() const;
             /// Parse option at first position and return number of parsed arguments
             int parse(int argc, char* argv[]) override;
             /// Print help text
-            void help(void) override;
+            void help() override;
         };
 
         /**
@@ -263,11 +263,11 @@ namespace Gecode {
             /// Set default value to \a v
             void value(unsigned long long int v);
             /// Return current option value
-            unsigned long long int value(void) const;
+            unsigned long long int value() const;
             /// Parse option at first position and return number of parsed arguments
             int parse(int argc, char* argv[]) override;
             /// Print help text
-            void help(void) override;
+            void help() override;
         };
 
         /**
@@ -283,11 +283,11 @@ namespace Gecode {
             /// Set default value to \a v
             void value(double v);
             /// Return current option value
-            double value(void) const;
+            double value() const;
             /// Parse option at first position and return number of parsed arguments
             int parse(int argc, char* argv[]) override;
             /// Print help text
-            void help(void) override;
+            void help() override;
         };
 
         /**
@@ -303,11 +303,11 @@ namespace Gecode {
             /// Set default value to \a v
             void value(bool v);
             /// Return current option value
-            bool value(void) const;
+            bool value() const;
             /// Parse option at first position and return number of parsed arguments
             int parse(int argc, char* argv[]) override;
             /// Print help text
-            void help(void) override;
+            void help() override;
         };
 
         /**
@@ -323,11 +323,11 @@ namespace Gecode {
             /// Set default level to \a l
             void value(IntPropLevel l);
             /// Return current option value
-            IntPropLevel value(void) const;
+            IntPropLevel value() const;
             /// Parse option at first position and return number of parsed arguments
             int parse(int argc, char* argv[]) override;
             /// Print help text
-            void help(void) override;
+            void help() override;
         };
 
         /**
@@ -343,11 +343,11 @@ namespace Gecode {
             /// Set default trace flags to \a f
             void value(int f);
             /// Return current option value
-            int value(void) const;
+            int value() const;
             /// Parse option at first position and return number of parsed arguments
             int parse(int argc, char* argv[]) override;
             /// Print help text
-            void help(void) override;
+            void help() override;
         };
 
         /**
@@ -364,15 +364,15 @@ namespace Gecode {
             /// Set default port to \a p
             void port(unsigned int p);
             /// Return current port
-            unsigned int port(void) const;
+            unsigned int port() const;
             /// Set default execution ID to \a i
             void execution_id(int i);
             /// Return current execution ID
-            int execution_id(void) const;
+            int execution_id() const;
             /// Parse option at first position and return number of parsed arguments
             int parse(int argc, char* argv[]) override;
             /// Print help text
-            void help(void) override;
+            void help() override;
         };
     } // namespace Driver
 
@@ -389,7 +389,7 @@ namespace Gecode {
         /// Initialize options for script with name \a s
         BaseOptions(const char* s);
         /// Print help text
-        virtual void help(void);
+        virtual void help();
 
         /// Add new option \a o
         void add(Driver::BaseOption& o);
@@ -403,12 +403,12 @@ namespace Gecode {
         void parse(int& argc, char* argv[]);
 
         /// Return name of script
-        const char* name(void) const;
+        const char* name() const;
         /// Set name of script
         void name(const char*);
 
         /// Destructor
-        virtual ~BaseOptions(void);
+        virtual ~BaseOptions();
     };
 
     /**
@@ -483,48 +483,48 @@ namespace Gecode {
         /// Add model option value for value \a v, string \a o, and help \a h
         void model(int v, const char* o, const char* h = nullptr);
         /// Return model value
-        int model(void) const;
+        int model() const;
 
         /// Set default symmetry value
         void symmetry(int v);
         /// Add symmetry option value for value \a v, string \a o, and help \a h
         void symmetry(int v, const char* o, const char* h = nullptr);
         /// Return symmetry value
-        int symmetry(void) const;
+        int symmetry() const;
 
         /// Set default propagation value
         void propagation(int v);
         /// Add propagation option value for value \a v, string \a o, and help \a h
         void propagation(int v, const char* o, const char* h = nullptr);
         /// Return propagation value
-        int propagation(void) const;
+        int propagation() const;
 
         /// Set default integer propagation level
         void ipl(IntPropLevel i);
         /// Return integer propagation level
-        IntPropLevel ipl(void) const;
+        IntPropLevel ipl() const;
 
         /// Set default branching value
         void branching(int v);
         /// Add branching option value for value \a v, string \a o, and help \a h
         void branching(int v, const char* o, const char* h = nullptr);
         /// Return branching value
-        int branching(void) const;
+        int branching() const;
 
         /// Set default decay factor
         void decay(double d);
         /// Return decay factor
-        double decay(void) const;
+        double decay() const;
 
         /// Set default seed value
         void seed(unsigned int s);
         /// Return seed value
-        unsigned int seed(void) const;
+        unsigned int seed() const;
 
         /// Set default step value
         void step(double s);
         /// Return step value
-        double step(void) const;
+        double step() const;
         //@}
 
         /// \name Search options
@@ -534,97 +534,97 @@ namespace Gecode {
         /// Add search option value for value \a v, string \a o, and help \a h
         void search(int v, const char* o, const char* h = nullptr);
         /// Return search value
-        int search(void) const;
+        int search() const;
 
         /// Set default number of solutions to search for
         void solutions(unsigned long long int n);
         /// Return number of solutions to search for
-        unsigned long long int solutions(void) const;
+        unsigned long long int solutions() const;
 
         /// Set number of parallel threads
         void threads(double n);
         /// Return number of parallel threads
-        double threads(void) const;
+        double threads() const;
 
         /// Set default copy recomputation distance
         void c_d(unsigned int d);
         /// Return copy recomputation distance
-        unsigned int c_d(void) const;
+        unsigned int c_d() const;
 
         /// Set default adaptive recomputation distance
         void a_d(unsigned int d);
         /// Return adaptive recomputation distance
-        unsigned int a_d(void) const;
+        unsigned int a_d() const;
 
         /// Set default discrepancy limit for LDS
         void d_l(unsigned int d);
         /// Return discrepancy limit for LDS
-        unsigned int d_l(void) const;
+        unsigned int d_l() const;
 
         /// Set default node cutoff
         void node(unsigned long long int n);
         /// Return node cutoff
-        unsigned long long int node(void) const;
+        unsigned long long int node() const;
 
         /// Set default failure cutoff
         void fail(unsigned long long int n);
         /// Return failure cutoff
-        unsigned long long int fail(void) const;
+        unsigned long long int fail() const;
 
         /// Set default time cutoff
         void time(double t);
         /// Return time cutoff
-        double time(void) const;
+        double time() const;
 
         /// Set default number of assets in a portfolio
         void assets(unsigned int n);
         /// Return slice size in a portfolio
-        unsigned int assets(void) const;
+        unsigned int assets() const;
 
         /// Set default slice size in a portfolio
         void slice(unsigned int n);
         /// Return slice size in a portfolio
-        unsigned int slice(void) const;
+        unsigned int slice() const;
 
         /// Set default restart mode
         void restart(RestartMode r);
         /// Return restart mode
-        RestartMode restart(void) const;
+        RestartMode restart() const;
 
         /// Set default restart base
         void restart_base(double base);
         /// Return restart base
-        double restart_base(void) const;
+        double restart_base() const;
 
         /// Set default restart scale factor
         void restart_scale(unsigned int scale);
         /// Return restart scale factor
-        unsigned int restart_scale(void) const;
+        unsigned int restart_scale() const;
 
         /// Set default restart cutoff
         void restart_limit(unsigned long long int n);
         /// Return restart cutoff
-        unsigned long long int restart_limit(void) const;
+        unsigned long long int restart_limit() const;
 
         /// Set default nogoods posting behavior
         void nogoods(bool b);
         /// Return whether nogoods are used
-        bool nogoods(void) const;
+        bool nogoods() const;
 
         /// Set default nogoods depth limit
         void nogoods_limit(unsigned int l);
         /// Return depth limit for nogoods
-        unsigned int nogoods_limit(void) const;
+        unsigned int nogoods_limit() const;
 
         /// Set default relax probability
         void relax(double d);
         /// Return default relax probability
-        double relax(void) const;
+        double relax() const;
 
         /// Set default interrupt behavior
         void interrupt(bool b);
         /// Return interrupt behavior
-        bool interrupt(void) const;
+        bool interrupt() const;
         //@}
 
         /// \name Execution options
@@ -632,47 +632,47 @@ namespace Gecode {
         /// Set default mode
         void mode(ScriptMode em);
         /// Return mode
-        ScriptMode mode(void) const;
+        ScriptMode mode() const;
 
         /// Set default number of samples
         void samples(unsigned int s);
         /// Return number of samples
-        unsigned int samples(void) const;
+        unsigned int samples() const;
 
         /// Set default number of iterations
         void iterations(unsigned int i);
         /// Return number of iterations
-        unsigned int iterations(void) const;
+        unsigned int iterations() const;
 
         /// Set whether to print only last solution found
         void print_last(bool p);
         /// Return whether to print only last solution found
-        bool print_last(void) const;
+        bool print_last() const;
 
         /// Set default output file name for solutions
         void out_file(const char* f);
         /// Get file name for solutions
-        const char* out_file(void) const;
+        const char* out_file() const;
 
         /// Set default output file name for Gecode stats
         void log_file(const char* f);
         /// Get file name for Gecode stats
-        const char* log_file(void) const;
+        const char* log_file() const;
 
         /// Set trace flags
         void trace(int f);
         /// Return trace flags
-        int trace(void) const;
+        int trace() const;
 
 #ifdef GECODE_HAS_CPPROFILER
         /// Set profiler execution identifier
         void profiler_id(int i);
         /// Return profiler execution id
-        int profiler_id(void) const;
+        int profiler_id() const;
         /// Set profiler port
         void profiler_port(unsigned int p);
         /// Return profiler execution id
-        unsigned int profiler_port(void) const;
+        unsigned int profiler_port() const;
 #endif
         //@}
 
@@ -682,7 +682,7 @@ namespace Gecode {
         /// Set guidance for heuristic search (not copied)
         void guidance(const Search::HeuristicGuidance* g);
         /// Return guidance for heuristic search
-        const Search::HeuristicGuidance* guidance(void) const;
+        const Search::HeuristicGuidance* guidance() const;
         //@}
 #endif
 
@@ -709,7 +709,7 @@ namespace Gecode {
 
         public:
             /// Constructor
-            I_(void);
+            I_();
             /// Add inspector that reacts on node double clicks
             void click(Gist::Inspector* i);
             /// Add inspector that reacts on each new solution that is found
@@ -746,14 +746,14 @@ namespace Gecode {
         /// Initialize options for script with name \a s
         SizeOptions(const char* s);
         /// Print help text
-        void help(void) override;
+        void help() override;
         /// Parse options from arguments \a argv (number is \a argc)
         void parse(int& argc, char* argv[]);
 
         /// Set default size
         void size(unsigned int s);
         /// Return size
-        unsigned int size(void) const;
+        unsigned int size() const;
     };
 
     /**
@@ -796,7 +796,7 @@ namespace Gecode {
         Driver::StringListOption _param;               ///< Parameters for the spec
         mutable std::unique_ptr<Instance::Data> _data; ///< Data read, or null
         /// Forget the data read
-        void forget(void) const;
+        void forget() const;
 
     public:
         /// Initialize options for script with name \a s
@@ -810,14 +810,14 @@ namespace Gecode {
          */
         InstanceOptions(const char* s, const char* spec);
         /// Print help text
-        void help(void) override;
+        void help() override;
         /// Parse options from arguments \a argv (number is \a argc)
         void parse(int& argc, char* argv[]);
 
         /// Set default instance name
         void instance(const char* s);
         /// Return instance name
-        const char* instance(void) const;
+        const char* instance() const;
         /**
          * \brief Test whether the instance is the number of a built-in instance
          *
@@ -832,17 +832,17 @@ namespace Gecode {
         /// Set the reader spec for instance files
         void spec(const char* s);
         /// Return the reader spec for instance files (may be null)
-        const char* spec(void) const;
+        const char* spec() const;
         /// Set the file with a reader spec that replaces spec()
         void spec_file(const char* f);
         /// Return the file with a reader spec (may be null)
-        const char* spec_file(void) const;
+        const char* spec_file() const;
         /// Set the spec parameters (\c name=value, separated by commas)
         void param(const char* p);
         /// Return the spec parameters (may be null)
-        const char* param(void) const;
+        const char* param() const;
         /// Test whether the instance names a readable file
-        bool is_file(void) const;
+        bool is_file() const;
         /**
          * \brief Read the instance file
          *
@@ -850,9 +850,9 @@ namespace Gecode {
          * Instance::Error if there is no spec, if the file cannot be read, or
          * if it does not match the spec.
          */
-        Instance::Data data(void) const;
+        Instance::Data data() const;
         /// Destructor
-        ~InstanceOptions(void) override;
+        ~InstanceOptions() override;
     };
 
 } // namespace Gecode

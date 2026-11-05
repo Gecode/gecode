@@ -40,7 +40,7 @@ namespace Gecode {
 
     IntDistance::Data::Data(int n0, std::function<int(int, int)> f) : n(n0), function(std::move(f)) {}
 
-    IntDistance::Data::~Data(void) = default;
+    IntDistance::Data::~Data() = default;
 
     IntDistance::IntDistance(int n, const IntArgs& matrix) {
         Int::Limits::positive(n, "IntDistance");

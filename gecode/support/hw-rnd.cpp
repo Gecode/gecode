@@ -40,7 +40,7 @@
 namespace Gecode { namespace Support {
 
     unsigned int
-    hwrnd(void) {
+    hwrnd() {
         unsigned int r;
         (void)rand_s(&r);
         return r;
@@ -57,7 +57,7 @@ namespace Gecode { namespace Support {
 namespace Gecode { namespace Support {
 
     unsigned int
-    hwrnd(void) {
+    hwrnd() {
         std::fstream devrandom;
         devrandom.open("/dev/random", std::fstream::in);
         unsigned int rnd;

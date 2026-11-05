@@ -116,7 +116,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new WordSquare(*this);
     }
     /// Print solution

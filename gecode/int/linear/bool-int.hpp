@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class VX>
     forceinline void
-    LinBoolInt<VX>::normalize(void) {
+    LinBoolInt<VX>::normalize() {
         if (n_as != n_hs) {
             // Remove views for which no more subscriptions exist
             int n_x = x.size();
@@ -508,7 +508,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class VX, class VB>
     forceinline void
-    ReLinBoolInt<VX, VB>::normalize(void) {
+    ReLinBoolInt<VX, VB>::normalize() {
         if (n_s != x.size()) {
             int n_x = x.size();
             for (int i = n_x; i--;)

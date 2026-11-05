@@ -3,7 +3,7 @@ schema_version = 1
 id = "source-cleanup-001"
 key = "void-args"
 area = "source-cleanup"
-status = "open"
+status = "done"
 complexity = "routine"
 afk = true
 priority = "low"
@@ -25,11 +25,20 @@ Use the ownership distinctions in misc/check.py: owned sources, third-party head
 
 ## Done when
 
-- [ ] No `(void)` parameter list remains in maintained C++ files or generator output, checked with a recorded grep that excludes casts to void; casts to void are unchanged.
-- [ ] .clang-tidy enables modernize-redundant-void-arg, and docs/code-style.md states the rule and that forceinline stays lowercase so it reads like inline.
-- [ ] The commit message gives the complete command sequence, and rerunning it on the parent commit reproduces the commit exactly.
+- [x] No `(void)` parameter list remains in maintained C++ files or generator output, checked with a recorded grep that excludes casts to void; casts to void are unchanged.
+- [x] .clang-tidy enables modernize-redundant-void-arg, and docs/code-style.md states the rule and that forceinline stays lowercase so it reads like inline.
+- [x] The commit message gives the complete command sequence, and rerunning it on the parent commit reproduces the commit exactly.
 
 ## Validation
 
 - Build target regenerate, then run .github/ci/generated-source-freshness.sh.
 - Run `uv run misc/check.py all --build-dir build/full --jobs N` and build the default Release configuration with ctest.
+
+## Result
+
+Maintained C++ has no (void) parameter lists, modernize-redundant-void-arg guards it, and the mass edit reproduces byte for byte from the parent with the recorded commands.
+
+Validation:
+
+- check.py all exit 0 with the new check over 489 sources; ctest 8/8 and 7/7; generated-source freshness passes; doxygen.log empty; gecode-test -list unchanged
+- Independent normalized comparison: 6,239 lists removed, 1,760 casts unchanged; rerun on git archive of the parent matches all 1,332 source files; -tag check 546/546, FlatZinc 155/155

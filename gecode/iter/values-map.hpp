@@ -52,7 +52,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Map(void) = default;
+        Map() = default;
         /// Initialize with values from \a i
         Map(I& i);
         /// Initialize with values from \a i and map \a m
@@ -66,15 +66,15 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -103,7 +103,7 @@ namespace Gecode { namespace Iter { namespace Values {
 
     template <class I, class M, bool strict>
     forceinline void
-    Map<I, M, strict>::operator++(void) {
+    Map<I, M, strict>::operator++() {
         if (strict) {
             ++i;
         } else {
@@ -115,13 +115,13 @@ namespace Gecode { namespace Iter { namespace Values {
     }
     template <class I, class M, bool strict>
     forceinline bool
-    Map<I, M, strict>::operator()(void) const {
+    Map<I, M, strict>::operator()() const {
         return i();
     }
 
     template <class I, class M, bool strict>
     forceinline int
-    Map<I, M, strict>::val(void) const {
+    Map<I, M, strict>::val() const {
         return m.val(i.val());
     }
 

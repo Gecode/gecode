@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ToRanges(void) = default;
+        ToRanges() = default;
         /// Initialize with value iterator \a i
         ToRanges(I& i);
         /// Initialize with value iterator \a i
@@ -61,13 +61,13 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
     template <class I>
     forceinline void
-    ToRanges<I>::operator++(void) {
+    ToRanges<I>::operator++() {
         if (!i()) {
             finish();
             return;

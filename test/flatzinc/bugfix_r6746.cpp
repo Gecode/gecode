@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("bugfix_r6746", "\
 array[1 .. 3] of var 0 .. 9: differences; \
 array[1 .. 3] of var 0 .. 9: mark :: output_array([1..3]); \

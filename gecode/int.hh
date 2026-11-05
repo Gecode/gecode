@@ -203,7 +203,7 @@ namespace Gecode {
             /// Perform equality test on ranges
             GECODE_INT_EXPORT bool equal(const IntSetObject& so) const;
             /// Delete object
-            GECODE_INT_EXPORT ~IntSetObject(void) override;
+            GECODE_INT_EXPORT ~IntSetObject() override;
         };
         /// Sort ranges according to increasing minimum
         class MinInc;
@@ -219,14 +219,14 @@ namespace Gecode {
     public:
 #ifdef GECODE_HAS_FAULT_INJECTION
         /// Reset live object accounting for fault-injection tests
-        GECODE_INT_EXPORT static void fault_reset_allocations(void);
+        GECODE_INT_EXPORT static void fault_reset_allocations();
         /// Return live object accounting for fault-injection tests
-        GECODE_INT_EXPORT static int fault_live_allocations(void);
+        GECODE_INT_EXPORT static int fault_live_allocations();
 #endif
         /// \name Constructors and initialization
         //@{
         /// Initialize as empty set
-        IntSet(void) = default;
+        IntSet() = default;
         /** \brief Initialize as range with minimum \a n and maximum \a m
          *
          * Note that the set is empty if \a n is larger than \a m
@@ -261,7 +261,7 @@ namespace Gecode {
         /// \name Range access
         //@{
         /// Return number of ranges of the specification
-        int ranges(void) const;
+        int ranges() const;
         /// Return minimum of range at position \a i
         int min(int i) const;
         /// Return maximum of range at position \a i
@@ -275,13 +275,13 @@ namespace Gecode {
         /// Return whether \a n is included in the set
         bool in(int n) const;
         /// Return size (cardinality) of set
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of set (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return minimum of entire set
-        int min(void) const;
+        int min() const;
         /// Return maximum of entire set
-        int max(void) const;
+        int max() const;
         //@}
 
         /// \name Equality tests
@@ -313,7 +313,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntSetRanges(void) = default;
+        IntSetRanges() = default;
         /// Initialize with ranges for set \a s
         IntSetRanges(const IntSet& s);
         /// Initialize with ranges for set \a s
@@ -323,19 +323,19 @@ namespace Gecode {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -349,7 +349,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntSetValues(void) = default;
+        IntSetValues() = default;
         /// Initialize with values for \a s
         IntSetValues(const IntSet& s);
         /// Initialize with values for \a s
@@ -406,7 +406,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntVar(void) = default;
+        IntVar() = default;
         /// Initialize from integer variable \a y
         IntVar(const IntVar& y) = default;
         /// Initialize from integer view \a y
@@ -440,11 +440,11 @@ namespace Gecode {
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return median of domain (greatest element not greater than the median)
-        int med(void) const;
+        int med() const;
         /**
          * \brief Return assigned value
          *
@@ -452,22 +452,22 @@ namespace Gecode {
          * is not yet assigned.
          *
          */
-        int val(void) const;
+        int val() const;
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
         /// Test whether \a n is contained in domain
         bool in(int n) const;
         //@}
@@ -492,7 +492,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntVarRanges(void);
+        IntVarRanges();
         /// Initialize with ranges for integer variable \a x
         IntVarRanges(const IntVar& x);
         /// Initialize with ranges for integer variable \a x
@@ -509,7 +509,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntVarValues(void) = default;
+        IntVarValues() = default;
         /// Initialize with values for \a x
         IntVarValues(const IntVar& x);
         /// Initialize with values \a x
@@ -544,7 +544,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        BoolVar(void) = default;
+        BoolVar() = default;
         /// Initialize from Boolean variable \a y
         BoolVar(const BoolVar& y) = default;
         /// Initialize from Boolean view \a y
@@ -566,11 +566,11 @@ namespace Gecode {
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return median of domain (greatest element not greater than the median)
-        int med(void) const;
+        int med() const;
         /**
          * \brief Return assigned value
          *
@@ -578,22 +578,22 @@ namespace Gecode {
          * is not yet assigned.
          *
          */
-        int val(void) const;
+        int val() const;
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
         /// Test whether \a n is contained in domain
         bool in(int n) const;
         //@}
@@ -601,11 +601,11 @@ namespace Gecode {
         /// \name Boolean domain tests
         //@{
         /// Test whether domain is zero
-        bool zero(void) const;
+        bool zero() const;
         /// Test whether domain is one
-        bool one(void) const;
+        bool one() const;
         /// Test whether domain is neither zero nor one
-        bool none(void) const;
+        bool none() const;
         //@}
 
         /// Assignment operator
@@ -650,7 +650,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        IntArgs(void);
+        IntArgs();
         /// Allocate array with \a n elements
         explicit IntArgs(int n);
         /// Allocate array and copy elements from \a x
@@ -678,7 +678,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        IntVarArgs(void) = default;
+        IntVarArgs() = default;
         /// Allocate array with \a n elements
         explicit IntVarArgs(int n);
         /// Initialize from variable argument array \a a (copy elements)
@@ -736,7 +736,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        BoolVarArgs(void) = default;
+        BoolVarArgs() = default;
         /// Allocate array with \a n elements
         explicit BoolVarArgs(int n);
         /// Initialize from variable argument array \a a (copy elements)
@@ -789,7 +789,7 @@ namespace Gecode {
         /// \name Creation and initialization
         //@{
         /// Default constructor (array of size 0)
-        IntVarArray(void) = default;
+        IntVarArray() = default;
         /// Allocate array for \a n integer variables (variables are uninitialized)
         IntVarArray(Space& home, int n);
         /// Initialize from integer variable array \a a (share elements)
@@ -837,7 +837,7 @@ namespace Gecode {
         /// \name Creation and initialization
         //@{
         /// Default constructor (array of size 0)
-        BoolVarArray(void) = default;
+        BoolVarArray() = default;
         /// Allocate array for \a n Boolean variables (variables are uninitialized)
         BoolVarArray(Space& home, int n);
         /// Initialize from Boolean variable array \a a (share elements)
@@ -894,7 +894,7 @@ namespace Gecode {
      * class Model : public Space {
      * public:
      *   OpenIntVarList x;
-     *   Model(void) : x(*this,IntSet(0,2),3) {
+     *   Model() : x(*this,IntSet(0,2),3) {
      *     rel(*this,x.length(),IRT_GQ,1);
      *     distinct(*this,x);
      *     branch(*this,x);
@@ -902,7 +902,7 @@ namespace Gecode {
      *   Model(Model& s) : Space(s) {
      *     x.update(*this,s.x);
      *   }
-     *   virtual Space* copy(void) {
+     *   virtual Space* copy() {
      *     return new Model(*this);
      *   }
      * };
@@ -957,7 +957,7 @@ namespace Gecode {
          */
         typedef std::function<void(Space& home, OpenVarList<Var> x, int i)> Transition;
         /// Construct an uninitialized list
-        OpenVarList(void) = default;
+        OpenVarList() = default;
         /// Construct a list using \a create for each position
         OpenVarList(Space& home, Factory create, int max = Int::Limits::max);
         /// Construct a list using \a create and transition function \a t
@@ -965,11 +965,11 @@ namespace Gecode {
         /// Update during cloning
         void update(Space& home, OpenVarList<Var>& s);
         /// Return the number of constructed positions (their values may be unassigned)
-        int known_length(void) const;
+        int known_length() const;
         /// Return variable at position \a i, where 0 <= \a i < known_length()
         Var operator[](int i) const;
         /// Return the eventual-length variable
-        IntVar length(void) const;
+        IntVar length() const;
         /**
          * \brief Append variable \a x
          *
@@ -1044,17 +1044,17 @@ namespace Gecode {
 
     public:
         /// Construct an uninitialized list
-        OpenViewList(void) = default;
+        OpenViewList() = default;
         /// Share the source of the model list \a list
         explicit OpenViewList(const OpenVarList<Var>& list);
         /// Update during cloning
         void update(Space& home, OpenViewList<View>& s);
         /// Return the number of constructed positions
-        int known_length(void) const;
+        int known_length() const;
         /// Return the view at constructed position \a i
         View operator[](int i) const;
         /// Return the eventual-length view
-        Int::IntView length(void) const;
+        Int::IntView length() const;
         /// Require and construct at least the first \a n positions
         void materialize(Space& home, int n);
         /// Subscribe \a p to construction of positions
@@ -1080,7 +1080,7 @@ namespace Gecode {
         typedef std::function<IntSet(int i)> Domain;
         using OpenVarList<IntVar>::OpenVarList;
         /// Construct an uninitialized list
-        GECODE_INT_EXPORT OpenIntVarList(void) = default;
+        GECODE_INT_EXPORT OpenIntVarList() = default;
         /// Share an integer list constructed through a variable factory
         OpenIntVarList(const OpenVarList<IntVar>& x);
         /// Construct a list with maximal length \a max and full domains
@@ -1112,7 +1112,7 @@ namespace Gecode {
     public:
         using OpenVarList<BoolVar>::OpenVarList;
         /// Construct an uninitialized list
-        GECODE_INT_EXPORT OpenBoolVarList(void) = default;
+        GECODE_INT_EXPORT OpenBoolVarList() = default;
         /// Share a Boolean list constructed through a variable factory
         OpenBoolVarList(const OpenVarList<BoolVar>& x);
         /// Construct a list with maximal length \a max and domains 0..1
@@ -1175,13 +1175,13 @@ namespace Gecode {
 
     public:
         /// Default constructor without proper initialization
-        Reify(void);
+        Reify();
         /// Construct reification specification
         Reify(BoolVar x, ReifyMode rm = RM_EQV);
         /// Return Boolean control variable
-        BoolVar var(void) const;
+        BoolVar var() const;
         /// Return reification mode
-        ReifyMode mode(void) const;
+        ReifyMode mode() const;
         /// Set Boolean control variable
         void var(BoolVar x);
         /// Set reification mode
@@ -2469,7 +2469,7 @@ namespace Gecode {
             int symbol;  ///< symbol
             int o_state; ///< output state
             /// Default constructor
-            Transition(void);
+            Transition();
             /// Initialize members
             Transition(int i_state0, int symbol0, int o_state0);
         };
@@ -2487,15 +2487,15 @@ namespace Gecode {
             /// Initialize to transitions of DFA \a d for symbol \a n
             Transitions(const DFA& d, int n);
             /// Test whether iterator still at a transition
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move iterator to next transition
-            void operator++(void);
+            void operator++();
             /// Return in-state of current transition
-            int i_state(void) const;
+            int i_state() const;
             /// Return symbol of current transition
-            int symbol(void) const;
+            int symbol() const;
             /// Return out-state of current transition
-            int o_state(void) const;
+            int o_state() const;
         };
         /// Iterator for %DFA symbols
         class Symbols {
@@ -2509,11 +2509,11 @@ namespace Gecode {
             /// Initialize to symbols of DFA \a d
             Symbols(const DFA& d);
             /// Test whether iterator still at a symbol
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move iterator to next symbol
-            void operator++(void);
+            void operator++();
             /// Return current symbol
-            int val(void) const;
+            int val() const;
         };
         /**
          * \brief Initialize DFA
@@ -2532,7 +2532,7 @@ namespace Gecode {
     public:
         friend class Transitions;
         /// Initialize for DFA accepting the empty word
-        DFA(void) = default;
+        DFA() = default;
         /**
          * \brief Initialize DFA
          *
@@ -2584,23 +2584,23 @@ namespace Gecode {
         GECODE_INT_EXPORT
         bool operator==(const DFA& d) const;
         /// Return the number of states
-        int n_states(void) const;
+        int n_states() const;
         /// Return the number of transitions
-        int n_transitions(void) const;
+        int n_transitions() const;
         /// Return the number of symbols
-        unsigned int n_symbols(void) const;
+        unsigned int n_symbols() const;
         /// Return maximal degree (in-degree and out-degree) of any state
-        unsigned int max_degree(void) const;
+        unsigned int max_degree() const;
         /// Return the number of the first final state
-        int final_fst(void) const;
+        int final_fst() const;
         /// Return the number of the last final state
-        int final_lst(void) const;
+        int final_lst() const;
         /// Return smallest symbol in DFA
-        int symbol_min(void) const;
+        int symbol_min() const;
         /// Return largest symbol in DFA
-        int symbol_max(void) const;
+        int symbol_max() const;
         /// Return hash key
-        std::size_t hash(void) const;
+        std::size_t hash() const;
     };
 
 } // namespace Gecode
@@ -2677,7 +2677,7 @@ namespace Gecode {
             /// Begin of supports
             BitSetData* s;
             /// Return the width
-            unsigned int width(void) const;
+            unsigned int width() const;
             /**
              * \brief Return the dense supports for value \a n
              *
@@ -2757,7 +2757,7 @@ namespace Gecode {
             unsigned int compressed_n_entries;
 
             /// Return newly added tuple
-            Tuple add(void);
+            Tuple add();
             /// Return tuple with number \a i
             Tuple get(int i) const;
             /// Set bit \a n in bitset data \a d
@@ -2772,15 +2772,15 @@ namespace Gecode {
             const Range* lst(int i) const;
             /// Finalize datastructure (disallows additions of more Tuples)
             GECODE_INT_EXPORT
-            void finalize(void);
+            void finalize();
             /// Finalize datastructure (disallows additions of more Tuples)
             GECODE_INT_EXPORT
             void finalize(ExtensionalPropKind epk);
             /// Resize tuple data
             GECODE_INT_EXPORT
-            void resize(void);
+            void resize();
             /// Release partially or fully constructed support data
-            void clear_support(void);
+            void clear_support();
             /// Select the state for an empty finalized tuple set
             State empty_state(ExtensionalPropKind epk) const;
             /// Select the finalized state for the computed table layout
@@ -2788,23 +2788,23 @@ namespace Gecode {
                                bool compressed_possible, bool support_bits_sparse,
                                unsigned long long dense_bytes) const;
             /// Is datastructure finalized
-            bool finalized(void) const;
+            bool finalized() const;
             /// Has finalization failed
-            bool failed(void) const;
+            bool failed() const;
             /// Is datastructure no longer mutable
-            bool terminal(void) const;
+            bool terminal() const;
 
             /// Initialize as empty tuple set with arity \a a
             Data(int a);
             /// Delete implementation
             GECODE_INT_EXPORT
-            ~Data(void) override;
+            ~Data() override;
         };
 
         /// Get data (must be initialized and finalized)
-        Data& data(void) const;
+        Data& data() const;
         /// Get raw data (must be initialized)
-        Data& raw(void) const;
+        Data& raw() const;
         /// Add tuple \a t to tuple set
         GECODE_INT_EXPORT
         void _add(const IntArgs& t);
@@ -2816,7 +2816,7 @@ namespace Gecode {
         /// \name Initialization
         //@{
         /// Construct an uninitialized tuple set
-        TupleSet(void) = default;
+        TupleSet() = default;
         /// Initialize for a tuple set with arity \a a
         GECODE_INT_EXPORT
         TupleSet(int a);
@@ -2836,7 +2836,7 @@ namespace Gecode {
         GECODE_INT_EXPORT
         TupleSet(int a, const DFA& dfa, ExtensionalPropKind epk);
         /// Test whether tuple set has been initialized
-        operator bool(void) const;
+        operator bool() const;
         /// Test whether tuple set is equal to \a t
         bool operator==(const TupleSet& t) const;
         /**
@@ -2855,16 +2855,16 @@ namespace Gecode {
         /// Add tuple \a t to tuple set
         TupleSet& add(const IntArgs& t);
         /// Is tuple set successfully finalized
-        bool finalized(void) const;
+        bool finalized() const;
         /**
          * \brief Has tuple-set finalization failed
          *
          * A failed tuple set is terminal: no tuples can be added and
          * finalization cannot be attempted again.
          */
-        bool failed(void) const;
+        bool failed() const;
         /// Finalize tuple set with dense support data
-        void finalize(void);
+        void finalize();
         /// Finalize tuple set with representation \a epk
         /**
          * Explicit representation selection materializes only the selected
@@ -2880,29 +2880,29 @@ namespace Gecode {
         /// \name Tuple access
         //@{
         /// Arity of tuple set
-        int arity(void) const;
+        int arity() const;
         /// Number of tuples
-        int tuples(void) const;
+        int tuples() const;
         /// Return number of required bit set words
-        unsigned int words(void) const;
+        unsigned int words() const;
         /// Get tuple \a i
         Tuple operator[](int i) const;
         /// Return minimal value in all tuples
-        int min(void) const;
+        int min() const;
         /// Return maximal value in all tuples
-        int max(void) const;
+        int max() const;
         /// Return hash key
-        std::size_t hash(void) const;
+        std::size_t hash() const;
         /// Return materialized tuple-set representation
-        ExtensionalPropKind representation(void) const;
+        ExtensionalPropKind representation() const;
 
     private:
         /// Return number of sparse support values
-        unsigned int sparse_values(void) const;
+        unsigned int sparse_values() const;
         /// Return tuple-value sparse ids (size tuples()*arity())
-        const unsigned int* sparse_tuple_value_ids(void) const;
+        const unsigned int* sparse_tuple_value_ids() const;
         /// Return sparse support offsets (size sparse_values()+1)
-        const unsigned int* sparse_support_offsets(void) const;
+        const unsigned int* sparse_support_offsets() const;
         /// Return support id for position/value, false if absent
         bool support_id(int p, int n, unsigned int& gid) const;
         /// Return sparse support tuple id range for position/value, false if absent
@@ -2937,19 +2937,19 @@ namespace Gecode {
             /// \name Iteration control
             //@{
             /// Test whether iterator is still at a range
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move iterator to next range (if possible)
-            void operator++(void);
+            void operator++();
             //@}
 
             /// \name %Range access
             //@{
             /// Return smallest value of range
-            int min(void) const;
+            int min() const;
             /// Return largest value of range
-            int max(void) const;
+            int max() const;
             /// Return width of range (distance between minimum and maximum)
-            unsigned int width(void) const;
+            unsigned int width() const;
             //@}
         };
         //@}
@@ -3172,7 +3172,7 @@ namespace Gecode {
             const std::function<int(int, int)> function; ///< Computed distance
             Data(int n, const IntArgs& matrix);
             Data(int n, std::function<int(int, int)> function);
-            ~Data(void) override;
+            ~Data() override;
         };
 
     public:
@@ -3196,7 +3196,7 @@ namespace Gecode {
          */
         GECODE_INT_EXPORT IntDistance(int n, std::function<int(int, int)> function);
         /// Number of sites
-        int size(void) const;
+        int size() const;
         /// Distance between valid indices \a a and \a b
         int operator()(int a, int b) const;
     };
@@ -4967,7 +4967,7 @@ namespace Gecode {
          * yet initialized AFC storage is init or the assignment operator.
          *
          */
-        IntAFC(void) = default;
+        IntAFC() = default;
         /**
          * \brief Initialize for integer variables \a x and decay factor \a d
          *
@@ -5003,7 +5003,7 @@ namespace Gecode {
          * yet initialized AFC storage is init or the assignment operator.
          *
          */
-        BoolAFC(void) = default;
+        BoolAFC() = default;
         /**
          * \brief Initialize for Boolean variables \a x and decay factor \a d
          *
@@ -5045,7 +5045,7 @@ namespace Gecode {
          * yet initialized action storage is init or the assignment operator.
          *
          */
-        IntAction(void) = default;
+        IntAction() = default;
         /// Copy constructor
         IntAction(const IntAction& a) = default;
         /// Assignment operator
@@ -5093,7 +5093,7 @@ namespace Gecode {
          * yet initialized action storage is init or the assignment operator.
          *
          */
-        BoolAction(void) = default;
+        BoolAction() = default;
         /// Copy constructor
         BoolAction(const BoolAction& a) = default;
         /// Assignment operator
@@ -5147,7 +5147,7 @@ namespace Gecode {
          * yet initialized CHB storage is init or the assignment operator.
          *
          */
-        IntCHB(void) = default;
+        IntCHB() = default;
         /// Copy constructor
         IntCHB(const IntCHB& chb) = default;
         /// Assignment operator
@@ -5190,7 +5190,7 @@ namespace Gecode {
          * yet initialized action storage is init or the assignment operator.
          *
          */
-        BoolCHB(void) = default;
+        BoolCHB() = default;
         /// Copy constructor
         BoolCHB(const BoolCHB& chb) = default;
         /// Assignment operator
@@ -5307,7 +5307,7 @@ namespace Gecode {
 
     public:
         /// Initialize with strategy SEL_NONE
-        IntVarBranch(void);
+        IntVarBranch();
         /// Initialize with random number generator \a r
         IntVarBranch(const Rnd& r);
         /// Initialize with selection strategy \a s and tie-break limit function \a t
@@ -5323,7 +5323,7 @@ namespace Gecode {
         /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
         IntVarBranch(Select s, IntBranchMerit mf, BranchTbl t);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
         /// Expand AFC, action, and CHB
         void expand(Home home, const IntVarArgs& x);
     };
@@ -5358,7 +5358,7 @@ namespace Gecode {
 
     public:
         /// Initialize with strategy SEL_NONE
-        BoolVarBranch(void);
+        BoolVarBranch();
         /// Initialize with random number generator \a r
         BoolVarBranch(const Rnd& r);
         /// Initialize with selection strategy \a s and tie-break limit function \a t
@@ -5374,7 +5374,7 @@ namespace Gecode {
         /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
         BoolVarBranch(Select s, BoolBranchMerit mf, BranchTbl t);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
         /// Expand decay factor into AFC or action
         void expand(Home home, const BoolVarArgs& x);
     };
@@ -5385,7 +5385,7 @@ namespace Gecode {
      */
     //@{
     /// Select first unassigned variable
-    IntVarBranch INT_VAR_NONE(void);
+    IntVarBranch INT_VAR_NONE();
     /// Select random variable (uniform distribution, for tie breaking)
     IntVarBranch INT_VAR_RND(const Rnd& r);
     /// Select variable with least merit according to branch merit function \a bm
@@ -5486,7 +5486,7 @@ namespace Gecode {
     IntVarBranch INT_VAR_REGRET_MAX_MAX(BranchTbl tbl = nullptr);
 
     /// Select first unassigned variable
-    BoolVarBranch BOOL_VAR_NONE(void);
+    BoolVarBranch BOOL_VAR_NONE();
     /// Select random variable (uniform distribution, for tie breaking)
     BoolVarBranch BOOL_VAR_RND(const Rnd& r);
     /// Select variable with least merit according to branch merit function \a bm
@@ -5564,7 +5564,7 @@ namespace Gecode {
         /// Initialize with value function \a f and commit function \a c
         IntValBranch(IntBranchVal v, IntBranchCommit c);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
     };
 
     /**
@@ -5595,7 +5595,7 @@ namespace Gecode {
         /// Initialize with value function \a f and commit function \a c
         BoolValBranch(BoolBranchVal v, BoolBranchCommit c);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
     };
 
     /**
@@ -5604,21 +5604,21 @@ namespace Gecode {
      */
     //@{
     /// Select smallest value
-    IntValBranch INT_VAL_MIN(void);
+    IntValBranch INT_VAL_MIN();
     /// Select greatest value not greater than the median
-    IntValBranch INT_VAL_MED(void);
+    IntValBranch INT_VAL_MED();
     /// Select largest value
-    IntValBranch INT_VAL_MAX(void);
+    IntValBranch INT_VAL_MAX();
     /// Select random value
     IntValBranch INT_VAL_RND(const Rnd& r);
     /// Select values not greater than mean of smallest and largest value
-    IntValBranch INT_VAL_SPLIT_MIN(void);
+    IntValBranch INT_VAL_SPLIT_MIN();
     /// Select values greater than mean of smallest and largest value
-    IntValBranch INT_VAL_SPLIT_MAX(void);
+    IntValBranch INT_VAL_SPLIT_MAX();
     /// Select the smallest range of the variable domain if it has several ranges, otherwise select values not greater than mean of smallest and largest value
-    IntValBranch INT_VAL_RANGE_MIN(void);
+    IntValBranch INT_VAL_RANGE_MIN();
     /// Select the largest range of the variable domain if it has several ranges, otherwise select values greater than mean of smallest and largest value
-    IntValBranch INT_VAL_RANGE_MAX(void);
+    IntValBranch INT_VAL_RANGE_MAX();
     /**
      * \brief Select value as defined by the value function \a v and commit function \a c
      * Uses a commit function as default that posts the constraints that
@@ -5627,14 +5627,14 @@ namespace Gecode {
      */
     IntValBranch INT_VAL(IntBranchVal v, IntBranchCommit c = nullptr);
     /// Try all values starting from smallest
-    IntValBranch INT_VALUES_MIN(void);
+    IntValBranch INT_VALUES_MIN();
     /// Try all values starting from largest
-    IntValBranch INT_VALUES_MAX(void);
+    IntValBranch INT_VALUES_MAX();
 
     /// Select smallest value
-    BoolValBranch BOOL_VAL_MIN(void);
+    BoolValBranch BOOL_VAL_MIN();
     /// Select largest value
-    BoolValBranch BOOL_VAL_MAX(void);
+    BoolValBranch BOOL_VAL_MAX();
     /// Select random value
     BoolValBranch BOOL_VAL_RND(const Rnd& r);
     /**
@@ -5681,7 +5681,7 @@ namespace Gecode {
         /// Initialize with value function \a f and commit function \a c
         IntAssign(IntBranchVal v, IntBranchCommit c);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
     };
 
     /**
@@ -5712,7 +5712,7 @@ namespace Gecode {
         /// Initialize with value function \a f and commit function \a c
         BoolAssign(BoolBranchVal v, BoolBranchCommit c);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
     };
 
     /**
@@ -5721,11 +5721,11 @@ namespace Gecode {
      */
     //@{
     /// Select smallest value
-    IntAssign INT_ASSIGN_MIN(void);
+    IntAssign INT_ASSIGN_MIN();
     /// Select greatest value not greater than the median
-    IntAssign INT_ASSIGN_MED(void);
+    IntAssign INT_ASSIGN_MED();
     /// Select largest value
-    IntAssign INT_ASSIGN_MAX(void);
+    IntAssign INT_ASSIGN_MAX();
     /// Select random value
     IntAssign INT_ASSIGN_RND(const Rnd& r);
     /**
@@ -5737,9 +5737,9 @@ namespace Gecode {
     IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c = nullptr);
 
     /// Select smallest value
-    BoolAssign BOOL_ASSIGN_MIN(void);
+    BoolAssign BOOL_ASSIGN_MIN();
     /// Select largest value
-    BoolAssign BOOL_ASSIGN_MAX(void);
+    BoolAssign BOOL_ASSIGN_MAX();
     /// Select random value
     BoolAssign BOOL_ASSIGN_RND(const Rnd& r);
     /**
@@ -5966,13 +5966,13 @@ namespace Gecode {
         /// Symmetry object that this handle refers to.
         Int::LDSB::SymmetryObject* ref;
         /// Increment counter
-        void increment(void);
+        void increment();
         /// Decrement counter
-        void decrement(void);
+        void decrement();
 
     public:
         /// Default constructor
-        SymmetryHandle(void);
+        SymmetryHandle();
         /// Initialies with a SymmetryObject
         SymmetryHandle(Int::LDSB::SymmetryObject* o);
         /// Copy constructor
@@ -5980,7 +5980,7 @@ namespace Gecode {
         /// Assignment operator
         const SymmetryHandle& operator=(const SymmetryHandle& h);
         /// Destructor
-        ~SymmetryHandle(void);
+        ~SymmetryHandle();
     };
     class Symmetries;
     /// Traits of %Symmetries
@@ -6244,19 +6244,19 @@ namespace Gecode {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 

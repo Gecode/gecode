@@ -38,17 +38,17 @@ namespace Gecode { namespace Search { namespace Par {
     Frontier::Runner::Runner(Frontier& e, unsigned int i) : Support::Runnable(false), engine(e), id(i) {}
 
     void
-    Frontier::Runner::run(void) {
+    Frontier::Runner::run() {
         engine.work(id);
     }
 
     Support::Terminator*
-    Frontier::Runner::terminator(void) const {
+    Frontier::Runner::terminator() const {
         return const_cast<Runner*>(this);
     }
 
     void
-    Frontier::Runner::terminated(void) {
+    Frontier::Runner::terminated() {
         done.signal();
     }
 
@@ -85,7 +85,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     void
-    Frontier::launch(void) {
+    Frontier::launch() {
         if (runners != nullptr)
             return;
         unsigned int n = static_cast<unsigned int>(opt.threads);
@@ -115,7 +115,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     void
-    Frontier::wake(void) {
+    Frontier::wake() {
         if (worker_control.engaged()) {
             WorkerControlAccess::signal_all(worker_control);
         } else if (runners != nullptr) {
@@ -130,7 +130,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     void
-    Frontier::terminate(void) {
+    Frontier::terminate() {
         if (runners == nullptr)
             return;
         {
@@ -148,7 +148,7 @@ namespace Gecode { namespace Search { namespace Par {
         runners = nullptr;
     }
 
-    Frontier::~Frontier(void) {
+    Frontier::~Frontier() {
         terminate();
         while (n_pending > 0) {
             delete pending.pop();
@@ -332,7 +332,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     Space*
-    Frontier::next(void) {
+    Frontier::next() {
         launch();
         {
             Support::Lock lock(mutex);
@@ -358,19 +358,19 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     Search::Statistics
-    Frontier::statistics(void) const {
+    Frontier::statistics() const {
         Support::Lock lock(mutex);
         return stat;
     }
 
     bool
-    Frontier::stopped(void) const {
+    Frontier::stopped() const {
         Support::Lock lock(mutex);
         return _stopped;
     }
 
     bool
-    Frontier::limited(void) const {
+    Frontier::limited() const {
         Support::Lock lock(mutex);
         return _limited;
     }

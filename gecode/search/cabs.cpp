@@ -52,11 +52,11 @@ namespace Gecode { namespace Search { namespace Par {
         /// Candidates for the next layer
         Beam candidates;
         bool
-        open(void) const override {
+        open() const override {
             return !layer.empty();
         }
         Entry
-        select(void) override {
+        select() override {
             return layer.pop();
         }
         void
@@ -79,7 +79,7 @@ namespace Gecode { namespace Search { namespace Par {
             }
         }
         bool
-        advance(void) override {
+        advance() override {
             if (!candidates.empty()) {
                 candidates.release(layer);
                 layer.sort(priority);
@@ -98,7 +98,7 @@ namespace Gecode { namespace Search { namespace Par {
             return true;
         }
         void
-        clear(void) override {
+        clear() override {
             layer.clear();
             candidates.clear();
             root.reset();
@@ -118,7 +118,7 @@ namespace Gecode { namespace Search { namespace Par {
             initialize(s, o.clone);
         }
         /// Destructor
-        ~CABS(void) override {
+        ~CABS() override {
             terminate();
         }
     };
@@ -135,7 +135,7 @@ namespace Gecode { namespace Search { namespace Seq {
         CABSEngine(Space* s, const Options& o) : WorkerToEngine<CABS>(s, o) {}
         /// Whether search stopped at the width or frontier limit
         bool
-        limited(void) const override {
+        limited() const override {
             return w.limited();
         }
     };
@@ -221,7 +221,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     bool
-    CABS::advance(void) {
+    CABS::advance() {
         if (!candidates.empty()) {
             candidates.release(layer);
             layer.sort(priority);
@@ -243,7 +243,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     Space*
-    CABS::next(void) {
+    CABS::next() {
         if (_limited) {
             _stopped = true;
             return nullptr;
@@ -306,12 +306,12 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     Statistics
-    CABS::statistics(void) const {
+    CABS::statistics() const {
         return *this;
     }
 
     bool
-    CABS::limited(void) const {
+    CABS::limited() const {
         return _limited;
     }
 
@@ -341,7 +341,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     NoGoods&
-    CABS::nogoods(void) {
+    CABS::nogoods() {
         return NoGoods::eng;
     }
 

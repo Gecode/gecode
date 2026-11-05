@@ -43,7 +43,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     forceinline
-    Slave::Slave(void)
+    Slave::Slave()
         : slave(nullptr), stop(nullptr) {}
     forceinline void
     Slave::init(Engine* e, Stop* s) {
@@ -51,19 +51,19 @@ namespace Gecode { namespace Search { namespace Seq {
         stop = s;
     }
     forceinline Space*
-    Slave::next(void) {
+    Slave::next() {
         return slave->next();
     }
     forceinline Statistics
-    Slave::statistics(void) const {
+    Slave::statistics() const {
         return slave->statistics();
     }
     forceinline bool
-    Slave::stopped(void) const {
+    Slave::stopped() const {
         return slave->stopped();
     }
     forceinline bool
-    Slave::limited(void) const {
+    Slave::limited() const {
 #ifdef GECODE_HAS_EXPERIMENTAL
         return slave->limited();
 #else
@@ -74,7 +74,7 @@ namespace Gecode { namespace Search { namespace Seq {
     Slave::constrain(const Space& b) {
         slave->constrain(b);
     }
-    forceinline Slave::~Slave(void) {
+    forceinline Slave::~Slave() {
         delete slave;
         delete stop;
     }
@@ -95,7 +95,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <bool best>
     Space*
-    PBS<best>::next(void) {
+    PBS<best>::next() {
         slave_stop = false;
         unsigned int n_exhausted = 0;
         while (n_slaves > 0) {
@@ -144,13 +144,13 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <bool best>
     bool
-    PBS<best>::stopped(void) const {
+    PBS<best>::stopped() const {
         return slave_stop;
     }
 
     template <bool best>
     Statistics
-    PBS<best>::statistics(void) const {
+    PBS<best>::statistics() const {
         Statistics s(stat);
         for (unsigned int i = 0U; i < n_slaves; i++)
             s += slaves[i].statistics();
@@ -167,7 +167,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     template <bool best>
-    PBS<best>::~PBS(void) {
+    PBS<best>::~PBS() {
         for (unsigned int i = 0U; i < n_slaves; i++)
             slaves[i].~Slave();
         // Note that n_slaves might be different now!

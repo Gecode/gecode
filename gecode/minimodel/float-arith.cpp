@@ -78,7 +78,7 @@ namespace Gecode { namespace MiniModel {
         ArithNonLinFloatExpr(ArithNonLinFloatExprType t0, int n0) : t(t0), a(allocate(n0)), n(n0), a_int(-1) {}
         ArithNonLinFloatExpr(ArithNonLinFloatExprType t0, int n0, int a0) : t(t0), a(allocate(n0)), n(n0), a_int(a0) {}
         /// Destructor
-        ~ArithNonLinFloatExpr(void) override {
+        ~ArithNonLinFloatExpr() override {
             if (a != nullptr)
                 heap.free<LinFloatExpr>(a, n);
         }

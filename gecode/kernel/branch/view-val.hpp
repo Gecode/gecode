@@ -50,7 +50,7 @@ namespace Gecode {
     public:
         /// Initialize choice for brancher \a b, number of alternatives \a a, position \a p, and value \a n
         PosValChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n);
-        const Val& val(void) const;
+        const Val& val() const;
         /// Archive into \a e
         void archive(Archive& e) const override;
     };
@@ -148,7 +148,7 @@ namespace Gecode {
 
     template <class Val>
     forceinline const Val&
-    PosValChoice<Val>::val(void) const {
+    PosValChoice<Val>::val() const {
         return _val;
     }
 

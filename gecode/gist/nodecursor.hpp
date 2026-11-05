@@ -39,13 +39,13 @@ namespace Gecode { namespace Gist {
 
     template <class Node>
     forceinline Node*
-    NodeCursor<Node>::node(void) {
+    NodeCursor<Node>::node() {
         return _node;
     }
 
     template <class Node>
     forceinline unsigned int
-    NodeCursor<Node>::alternative(void) {
+    NodeCursor<Node>::alternative() {
         return _alternative;
     }
 
@@ -57,7 +57,7 @@ namespace Gecode { namespace Gist {
 
     template <class Node>
     forceinline Node*
-    NodeCursor<Node>::start_node(void) {
+    NodeCursor<Node>::start_node() {
         return _start_node;
     }
 
@@ -69,13 +69,13 @@ namespace Gecode { namespace Gist {
 
     template <class Node>
     forceinline bool
-    NodeCursor<Node>::may_move_upwards(void) {
+    NodeCursor<Node>::may_move_upwards() {
         return _node != _start_node && !_node->is_root();
     }
 
     template <class Node>
     forceinline void
-    NodeCursor<Node>::move_upwards(void) {
+    NodeCursor<Node>::move_upwards() {
         _node = static_cast<Node*>(_node->get_parent(na));
         if (_node->is_root()) {
             _alternative = 0;
@@ -92,32 +92,32 @@ namespace Gecode { namespace Gist {
 
     template <class Node>
     forceinline bool
-    NodeCursor<Node>::may_move_downwards(void) {
+    NodeCursor<Node>::may_move_downwards() {
         return _node->get_number_of_children() > 0;
     }
 
     template <class Node>
     forceinline void
-    NodeCursor<Node>::move_downwards(void) {
+    NodeCursor<Node>::move_downwards() {
         _alternative = 0;
         _node = _node->get_child(na, 0);
     }
 
     template <class Node>
     forceinline bool
-    NodeCursor<Node>::may_move_sidewards(void) {
+    NodeCursor<Node>::may_move_sidewards() {
         return (!_node->is_root()) && (_node != _start_node) &&
                (_alternative < _node->get_parent(na)->get_number_of_children() - 1);
     }
 
     template <class Node>
     forceinline void
-    NodeCursor<Node>::move_sidewards(void) {
+    NodeCursor<Node>::move_sidewards() {
         _node = static_cast<Node*>(_node->get_parent(na)->get_child(na, ++_alternative));
     }
 
     forceinline bool
-    HideFailedCursor::may_move_downwards(void) {
+    HideFailedCursor::may_move_downwards() {
         VisualNode* n = node();
         return (!only_dirty || n->is_dirty()) && NodeCursor<VisualNode>::may_move_downwards() &&
                (n->has_solved_children() || n->get_no_of_open_children(na) > 0) && (!n->is_hidden());
@@ -128,7 +128,7 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(root, na), only_dirty(only_dirty_nodes) {}
 
     forceinline void
-    HideFailedCursor::process_current_node(void) {
+    HideFailedCursor::process_current_node() {
         VisualNode* n = node();
         if (n->get_status() == BRANCH && !n->has_solved_children() && n->get_no_of_open_children(na) == 0) {
             n->set_hidden(true);
@@ -142,7 +142,7 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(root, na) {}
 
     forceinline void
-    UnhideAllCursor::process_current_node(void) {
+    UnhideAllCursor::process_current_node() {
         VisualNode* n = node();
         if (n->is_hidden()) {
             n->set_hidden(false);
@@ -155,7 +155,7 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(root, na) {}
 
     forceinline void
-    UnstopAllCursor::process_current_node(void) {
+    UnstopAllCursor::process_current_node() {
         VisualNode* n = node();
         if (n->get_status() == STOP) {
             n->set_stop(false);
@@ -168,26 +168,26 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(the_node, na), back(backwards) {}
 
     forceinline void
-    NextSolCursor::process_current_node(void) {}
+    NextSolCursor::process_current_node() {}
 
     forceinline bool
-    NextSolCursor::not_on_sol(void) {
+    NextSolCursor::not_on_sol() {
         return node() == start_node() || node()->get_status() != SOLVED;
     }
 
     forceinline bool
-    NextSolCursor::may_move_upwards(void) {
+    NextSolCursor::may_move_upwards() {
         return not_on_sol() && !node()->is_root();
     }
 
     forceinline bool
-    NextSolCursor::may_move_downwards(void) {
+    NextSolCursor::may_move_downwards() {
         return not_on_sol() && !(back && node() == start_node()) && node()->has_solved_children() &&
                NodeCursor<VisualNode>::may_move_downwards();
     }
 
     forceinline void
-    NextSolCursor::move_downwards(void) {
+    NextSolCursor::move_downwards() {
         NodeCursor<VisualNode>::move_downwards();
         if (back) {
             while (NodeCursor<VisualNode>::may_move_sidewards())
@@ -196,7 +196,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    NextSolCursor::may_move_sidewards(void) {
+    NextSolCursor::may_move_sidewards() {
         if (back) {
             return not_on_sol() && !node()->is_root() && alternative() > 0;
         } else {
@@ -206,7 +206,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline void
-    NextSolCursor::move_sidewards(void) {
+    NextSolCursor::move_sidewards() {
         if (back) {
             alternative(alternative() - 1);
             node(node()->get_parent(na)->get_child(na, alternative()));
@@ -220,7 +220,7 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(root, na), cur_depth(0), depth(0), failed(0), solved(0), choice(0), open(0) {}
 
     forceinline void
-    StatCursor::process_current_node(void) {
+    StatCursor::process_current_node() {
         VisualNode* n = node();
         switch (n->get_status()) {
         case SOLVED:
@@ -241,14 +241,14 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline void
-    StatCursor::move_downwards(void) {
+    StatCursor::move_downwards() {
         cur_depth++;
         depth = std::max(depth, cur_depth);
         NodeCursor<VisualNode>::move_downwards();
     }
 
     forceinline void
-    StatCursor::move_upwards(void) {
+    StatCursor::move_upwards() {
         cur_depth--;
         NodeCursor<VisualNode>::move_upwards();
     }
@@ -259,7 +259,7 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(root, na), _na(na), _cur_best(cur_best), _c_d(c_d), _a_d(a_d), _clear(clear) {}
 
     forceinline void
-    BranchLabelCursor::process_current_node(void) {
+    BranchLabelCursor::process_current_node() {
         VisualNode* n = node();
         if (!_clear) {
             if (!na.has_label(n)) {
@@ -284,7 +284,7 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(root, na) {}
 
     forceinline void
-    DisposeCursor::process_current_node(void) {
+    DisposeCursor::process_current_node() {
         node()->dispose();
     }
 

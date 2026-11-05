@@ -46,7 +46,7 @@ namespace Gecode { namespace Gist {
     class ShapeAllocator {
     public:
         /// Constructor
-        ShapeAllocator(void) {
+        ShapeAllocator() {
             Shape::leaf = Shape::allocate(1);
             (*Shape::leaf)[0] = Extent(Layout::extent);
             Shape::leaf->compute_bounding_box();
@@ -56,7 +56,7 @@ namespace Gecode { namespace Gist {
             (*Shape::hidden)[1] = Extent(Layout::extent);
             Shape::hidden->compute_bounding_box();
         }
-        ~ShapeAllocator(void) {
+        ~ShapeAllocator() {
             Shape::deallocate(Shape::leaf);
             Shape::deallocate(Shape::hidden);
         }
@@ -86,7 +86,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    VisualNode::dispose(void) {
+    VisualNode::dispose() {
         Shape::deallocate(shape);
         SpaceNode::dispose();
     }

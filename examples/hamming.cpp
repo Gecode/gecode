@@ -63,17 +63,17 @@ public:
 
     /// Return number of bits
     unsigned int
-    bits(void) const {
+    bits() const {
         return _bits.value();
     }
     /// Return minimum distance
     unsigned int
-    distance(void) const {
+    distance() const {
         return _distance.value();
     }
     /// Return number of symbols
     unsigned int
-    size(void) const {
+    size() const {
         return _size.value();
     }
 };
@@ -127,7 +127,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Hamming(*this);
     }
 };

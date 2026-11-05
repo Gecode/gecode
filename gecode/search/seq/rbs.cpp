@@ -57,7 +57,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     Space*
-    RBS::next(void) {
+    RBS::next() {
         if (restart) {
             restart = false;
             sslr++;
@@ -120,7 +120,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     Search::Statistics
-    RBS::statistics(void) const {
+    RBS::statistics() const {
         return stop->metastatistics() + e->statistics();
     }
 
@@ -142,7 +142,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     bool
-    RBS::stopped(void) const {
+    RBS::stopped() const {
         /*
          * What might happen during parallel search is that the
          * engine has been stopped but the meta engine has not, so
@@ -153,7 +153,7 @@ namespace Gecode { namespace Search { namespace Seq {
         return e->stopped();
     }
 
-    RBS::~RBS(void) {
+    RBS::~RBS() {
         delete e;
         delete master;
         delete last;

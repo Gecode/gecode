@@ -66,7 +66,7 @@ namespace Test { namespace Groups {
         }
         /// Copy during cloning
         Space*
-        copy(void) override {
+        copy() override {
             return new GroupSpace(*this);
         }
     };
@@ -88,7 +88,7 @@ namespace Test { namespace Groups {
               all(all0) {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             GroupSpace* s = new GroupSpace(n);
             if (fix)
@@ -110,10 +110,10 @@ namespace Test { namespace Groups {
     class Compare : public Test::Base {
     public:
         /// Initialize test
-        Compare(void) : Test::Base("Group::Compare") {}
+        Compare() : Test::Base("Group::Compare") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             PropagatorGroup p, q;
             PropagatorGroup p_copy(p);
@@ -131,7 +131,7 @@ namespace Test { namespace Groups {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             for (int n = 0; n <= 2; n++) {
                 (void)new Kill(n, true, false);
                 (void)new Kill(n, false, false);

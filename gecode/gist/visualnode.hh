@@ -55,7 +55,7 @@ namespace Gecode { namespace Gist {
         /// Right coordinate
         int right;
         /// Default constructor
-        BoundingBox(void) = default;
+        BoundingBox() = default;
     };
 
     /// \brief %Extent representing shape of a tree at one depth level
@@ -66,7 +66,7 @@ namespace Gecode { namespace Gist {
         /// Right extent
         int r;
         /// Default constructor
-        Extent(void);
+        Extent();
         /// Construct with \a l0 and \a r0
         Extent(int l0, int r0);
         /// Construct with width \a width
@@ -94,7 +94,7 @@ namespace Gecode { namespace Gist {
         /// Assignment operator
         Shape& operator=(const Shape&) = delete;
         /// Constructor
-        Shape(void) = delete;
+        Shape() = delete;
         /// Construct shape of depth \a d
         static Shape* allocate(int d);
         // Destruct
@@ -106,11 +106,11 @@ namespace Gecode { namespace Gist {
         static Shape* hidden;
 
         /// Return depth of the shape
-        int depth(void) const;
+        int depth() const;
         /// Set depth of the shape to \a d (must be smaller than original depth)
         void set_depth(int d);
         /// Compute bounding box
-        void compute_bounding_box(void);
+        void compute_bounding_box();
         /// Return extent at depth \a i
         const Extent& operator[](int i) const;
         /// Return extent at depth \a i
@@ -118,7 +118,7 @@ namespace Gecode { namespace Gist {
         /// Return if extent exists at \a depth, if yes return it in \a extent
         bool get_extent_at_depth(int depth, Extent& extent);
         /// Return bounding box
-        const BoundingBox& get_bounding_box(void) const;
+        const BoundingBox& get_bounding_box() const;
     };
 
     /// \brief %Node class that supports visual layout
@@ -149,7 +149,7 @@ namespace Gecode { namespace Gist {
         VisualNode(Space* root);
 
         /// Return if node is hidden
-        bool is_hidden(void);
+        bool is_hidden();
         /// Set hidden state to \a h
         void set_hidden(bool h);
         /// Set stop state to \a h
@@ -159,23 +159,23 @@ namespace Gecode { namespace Gist {
         /// Compute layout for the subtree of this node
         void layout(const NodeAllocator& na);
         /// Return offset off this node from its parent
-        int get_offset(void);
+        int get_offset();
         /// Set offset of this node, relative to its parent
         void set_offset(int n);
         /// Return whether node is marked as dirty
-        bool is_dirty(void);
+        bool is_dirty();
         /// Mark node as dirty
         void set_dirty(bool d);
         /// Return whether the layout of the node's children has been completed
-        bool children_layout_is_done(void);
+        bool children_layout_is_done();
         /// Mark node whether the layout of the node's children has been completed
         void set_children_layout_done(bool d);
         /// Return whether node is marked
-        bool is_marked(void);
+        bool is_marked();
         /// Set mark of this node
         void set_marked(bool m);
         /// Return whether node is bookmarked
-        bool is_bookmarked(void);
+        bool is_bookmarked();
         /// Set bookmark of this node
         void set_bookmarked(bool m);
         /// Set all nodes from the node to the root to be on the path
@@ -183,7 +183,7 @@ namespace Gecode { namespace Gist {
         /// Set all nodes from the node to the root not to be on the path
         void un_path_up(const NodeAllocator& na);
         /// Return whether node is on the path
-        bool is_on_path(void);
+        bool is_on_path();
         /// Return the alternative of the child that is on the path (-1 if none)
         int get_path_alternative(const NodeAllocator& na);
         /// Set whether node is on the path
@@ -201,13 +201,13 @@ namespace Gecode { namespace Gist {
         void unstop_all(const NodeAllocator& na);
 
         /// Return the shape of this node
-        Shape* get_shape(void);
+        Shape* get_shape();
         /// Set the shape of this node
         void set_shape(Shape* s);
         /// Compute the shape according to the shapes of the children
         void compute_shape(const NodeAllocator& na);
         /// Return the bounding box
-        BoundingBox get_bounding_box(void);
+        BoundingBox get_bounding_box();
         /// Signal that the status has changed
         void changed_status(const NodeAllocator& na);
         /// Find a node in this subtree at coordinates \a x, \a y
@@ -225,7 +225,7 @@ namespace Gecode { namespace Gist {
         std::string tool_tip(NodeAllocator& na, BestNode* cur_best, int c_d, int a_d);
 
         /// Free allocated memory
-        void dispose(void);
+        void dispose();
     };
 
 }} // namespace Gecode::Gist

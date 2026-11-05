@@ -53,9 +53,9 @@ namespace Gecode {
 
     public:
         /// Construct empty representation
-        Archive(void);
+        Archive();
         /// Destructor
-        GECODE_KERNEL_EXPORT ~Archive(void);
+        GECODE_KERNEL_EXPORT ~Archive();
         /// Copy constructor
         GECODE_KERNEL_EXPORT Archive(const Archive& e);
         /// Assignment operator
@@ -63,11 +63,11 @@ namespace Gecode {
         /// Add \a i to the contents
         void put(unsigned int i);
         /// Return size
-        int size(void) const;
+        int size() const;
         /// Return array element \a i
         unsigned int operator[](int i) const;
         /// Return next element to read
-        unsigned int get(void);
+        unsigned int get();
     };
 
     /** Add \a i to the end of \a e
@@ -150,7 +150,7 @@ namespace Gecode {
      */
 
     forceinline
-    Archive::Archive(void)
+    Archive::Archive()
         : _size(0), _n(0), _a(nullptr), _pos(0) {}
 
     forceinline void
@@ -161,7 +161,7 @@ namespace Gecode {
     }
 
     forceinline int
-    Archive::size(void) const {
+    Archive::size() const {
         return _n;
     }
 
@@ -172,7 +172,7 @@ namespace Gecode {
     }
 
     forceinline unsigned int
-    Archive::get(void) {
+    Archive::get() {
         assert(_pos < _n);
         return _a[_pos++];
     }

@@ -52,15 +52,15 @@ namespace Gecode { namespace Int { namespace Channel {
         /// Update during cloning
         void update(Space& home, ValInfo<View>& vi);
         /// Check whether propagation for assignment is to be done
-        bool doval(void) const;
+        bool doval() const;
         /// Check whether propagation for domain is to be done
-        bool dodom(void) const;
+        bool dodom() const;
         /// Record that view got assigned
-        void assigned(void);
+        void assigned();
         /// Record that one value got removed
         void removed(int i);
         /// Update the cardinality and bounds information after pruning
-        void done(void);
+        void done();
     };
 
     template <class View>
@@ -79,19 +79,19 @@ namespace Gecode { namespace Int { namespace Channel {
 
     template <class View>
     forceinline bool
-    ValInfo<View>::doval(void) const {
+    ValInfo<View>::doval() const {
         return !a && view.assigned();
     }
 
     template <class View>
     forceinline bool
-    ValInfo<View>::dodom(void) const {
+    ValInfo<View>::dodom() const {
         return false;
     }
 
     template <class View>
     forceinline void
-    ValInfo<View>::assigned(void) {
+    ValInfo<View>::assigned() {
         a = true;
     }
 
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
     template <class View>
     forceinline void
-    ValInfo<View>::done(void) {}
+    ValInfo<View>::done() {}
 
     // Propagate assigned views for x
     template <class View, class Offset, class Info>

@@ -73,7 +73,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     public:
         /// Default constructor
-        Slave(void);
+        Slave();
         /// Copy constructor
         Slave(const Slave& s) = default;
         /// Assignment operator
@@ -81,19 +81,19 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize with slave \a s and its stop object \a so
         void init(Engine* s, Stop* so);
         /// Return next solution
-        Space* next(void);
+        Space* next();
         /// Return statistics of slave
-        Statistics statistics(void) const;
+        Statistics statistics() const;
         /// Check whether slave has been stopped
-        bool stopped(void) const;
+        bool stopped() const;
         /// Check whether slave stopped at a local limit
-        bool limited(void) const;
+        bool limited() const;
         /// Constrain with better solution \a b
         void constrain(const Space& b);
         /// Perform one run
-        void run(void);
+        void run();
         /// Delete slave
-        ~Slave(void);
+        ~Slave();
     };
 
     /// Sequential portfolio engine implementation
@@ -121,15 +121,15 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize
         PBS(Engine** slaves, Stop** stops, unsigned int n, const Statistics& stat, const Search::Options& opt);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Return statistics
-        Statistics statistics(void) const override;
+        Statistics statistics() const override;
         /// Check whether engine has been stopped
-        bool stopped(void) const override;
+        bool stopped() const override;
         /// Constrain future solutions to be better than \a b
         void constrain(const Space& b) override;
         /// Destructor
-        ~PBS(void) override;
+        ~PBS() override;
     };
 
 }}} // namespace Gecode::Search::Seq

@@ -45,22 +45,22 @@ namespace Gecode {
         : ValBranch<IntVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline IntAssign::Select
-    IntAssign::select(void) const {
+    IntAssign::select() const {
         return s;
     }
 
     inline IntAssign
-    INT_ASSIGN_MIN(void) {
+    INT_ASSIGN_MIN() {
         return IntAssign(IntAssign::SEL_MIN);
     }
 
     inline IntAssign
-    INT_ASSIGN_MED(void) {
+    INT_ASSIGN_MED() {
         return IntAssign(IntAssign::SEL_MED);
     }
 
     inline IntAssign
-    INT_ASSIGN_MAX(void) {
+    INT_ASSIGN_MAX() {
         return IntAssign(IntAssign::SEL_MAX);
     }
 
@@ -87,17 +87,17 @@ namespace Gecode {
         : ValBranch<BoolVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline BoolAssign::Select
-    BoolAssign::select(void) const {
+    BoolAssign::select() const {
         return s;
     }
 
     inline BoolAssign
-    BOOL_ASSIGN_MIN(void) {
+    BOOL_ASSIGN_MIN() {
         return BoolAssign(BoolAssign::SEL_MIN);
     }
 
     inline BoolAssign
-    BOOL_ASSIGN_MAX(void) {
+    BOOL_ASSIGN_MAX() {
         return BoolAssign(BoolAssign::SEL_MAX);
     }
 

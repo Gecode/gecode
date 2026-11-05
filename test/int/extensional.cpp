@@ -73,7 +73,7 @@ namespace Test { namespace Int {
         class RegSimpleA : public Test {
         public:
             /// Create and register test
-            RegSimpleA(void) : Test("Extensional::Reg::Simple::A", 4, 2, 2) {}
+            RegSimpleA() : Test("Extensional::Reg::Simple::A", 4, 2, 2) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -93,7 +93,7 @@ namespace Test { namespace Int {
         class RegSimpleB : public Test {
         public:
             /// Create and register test
-            RegSimpleB(void) : Test("Extensional::Reg::Simple::B", 4, 2, 2) {}
+            RegSimpleB() : Test("Extensional::Reg::Simple::B", 4, 2, 2) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -114,7 +114,7 @@ namespace Test { namespace Int {
         class RegSimpleC : public Test {
         public:
             /// Create and register test
-            RegSimpleC(void) : Test("Extensional::Reg::Simple::C", 6, 0, 1) {}
+            RegSimpleC() : Test("Extensional::Reg::Simple::C", 6, 0, 1) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -160,7 +160,7 @@ namespace Test { namespace Int {
         class RegDistinct : public Test {
         public:
             /// Create and register test
-            RegDistinct(void) : Test("Extensional::Reg::Distinct", 4, -1, 4) {}
+            RegDistinct() : Test("Extensional::Reg::Distinct", 4, -1, 4) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -218,7 +218,7 @@ namespace Test { namespace Int {
         class RegSharedA : public Test {
         public:
             /// Create and register test
-            RegSharedA(void) : Test("Extensional::Reg::Shared::A", 4, 2, 2) {}
+            RegSharedA() : Test("Extensional::Reg::Shared::A", 4, 2, 2) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -243,7 +243,7 @@ namespace Test { namespace Int {
         class RegSharedB : public Test {
         public:
             /// Create and register test
-            RegSharedB(void) : Test("Extensional::Reg::Shared::B", 4, 2, 2) {}
+            RegSharedB() : Test("Extensional::Reg::Shared::B", 4, 2, 2) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -268,7 +268,7 @@ namespace Test { namespace Int {
         class RegSharedC : public Test {
         public:
             /// Create and register test
-            RegSharedC(void) : Test("Extensional::Reg::Shared::C", 4, 0, 1) {}
+            RegSharedC() : Test("Extensional::Reg::Shared::C", 4, 0, 1) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -290,7 +290,7 @@ namespace Test { namespace Int {
         class RegSharedD : public Test {
         public:
             /// Create and register test
-            RegSharedD(void) : Test("Extensional::Reg::Shared::D", 4, 0, 1) {}
+            RegSharedD() : Test("Extensional::Reg::Shared::D", 4, 0, 1) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -312,7 +312,7 @@ namespace Test { namespace Int {
         class RegEmptyDFA : public Test {
         public:
             /// Create and register test
-            RegEmptyDFA(void) : Test("Extensional::Reg::Empty::DFA", 1, 0, 0) {
+            RegEmptyDFA() : Test("Extensional::Reg::Empty::DFA", 1, 0, 0) {
                 test_search = false;
             }
             /// %Test whether \a x is solution
@@ -333,7 +333,7 @@ namespace Test { namespace Int {
         class RegEmptyREG : public Test {
         public:
             /// Create and register test
-            RegEmptyREG(void) : Test("Extensional::Reg::Empty::REG", 1, 0, 0) {
+            RegEmptyREG() : Test("Extensional::Reg::Empty::REG", 1, 0, 0) {
                 test_search = false;
             }
             /// %Test whether \a x is solution
@@ -395,7 +395,7 @@ namespace Test { namespace Int {
         class RegAcyclicReconvergence : public Test {
         public:
             /// Create and register test
-            RegAcyclicReconvergence(void)
+            RegAcyclicReconvergence()
                 : Test("Extensional::Reg::Sparse::AcyclicReconvergence", 4, 0, 3, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
             bool
@@ -419,8 +419,7 @@ namespace Test { namespace Int {
         class RegCyclicFrontier : public Test {
         public:
             /// Create and register test
-            RegCyclicFrontier(void)
-                : Test("Extensional::Reg::Sparse::CyclicFrontier", 7, 0, 1, false, Gecode::IPL_DOM) {}
+            RegCyclicFrontier() : Test("Extensional::Reg::Sparse::CyclicFrontier", 7, 0, 1, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -442,7 +441,7 @@ namespace Test { namespace Int {
         class RegSparseStateNumbering : public Test {
         public:
             /// Create and register test
-            RegSparseStateNumbering(void)
+            RegSparseStateNumbering()
                 : Test("Extensional::Reg::Sparse::StateNumbering", 2, 0, 1, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
             bool
@@ -490,7 +489,7 @@ namespace Test { namespace Int {
         class RegBoolCyclicFrontier : public Test {
         public:
             /// Create and register test
-            RegBoolCyclicFrontier(void)
+            RegBoolCyclicFrontier()
                 : Test("Extensional::Reg::Sparse::BoolCyclicFrontier", 7, 0, 1, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
             bool
@@ -715,7 +714,7 @@ namespace Test { namespace Int {
         class RegPositionDomainPruning : public Test {
         public:
             /// Create and register test
-            RegPositionDomainPruning(void)
+            RegPositionDomainPruning()
                 : Test("Extensional::Reg::Sparse::PositionDomainPruning", 3, 0, 1, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
             bool
@@ -736,8 +735,7 @@ namespace Test { namespace Int {
         class RegNoAcceptingPath : public Test {
         public:
             /// Create and register test
-            RegNoAcceptingPath(void)
-                : Test("Extensional::Reg::Sparse::NoAcceptingPath", 3, 0, 0, false, Gecode::IPL_DOM) {
+            RegNoAcceptingPath() : Test("Extensional::Reg::Sparse::NoAcceptingPath", 3, 0, 0, false, Gecode::IPL_DOM) {
                 test_search = false;
             }
             /// %Test whether \a x is solution
@@ -761,8 +759,7 @@ namespace Test { namespace Int {
         class RegTerminalMerged : public Test {
         public:
             /// Create and register test
-            RegTerminalMerged(void)
-                : Test("Extensional::Reg::Sparse::TerminalMerged", 1, 0, 2, false, Gecode::IPL_DOM) {}
+            RegTerminalMerged() : Test("Extensional::Reg::Sparse::TerminalMerged", 1, 0, 2, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -782,7 +779,7 @@ namespace Test { namespace Int {
         class RegTerminalUnmerged : public Test {
         public:
             /// Create and register test
-            RegTerminalUnmerged(void)
+            RegTerminalUnmerged()
                 : Test("Extensional::Reg::Sparse::TerminalUnmerged", 8, 0, 1, false, Gecode::IPL_DOM) {}
             /// %Test whether \a x is solution
             bool
@@ -830,10 +827,10 @@ namespace Test { namespace Int {
         /// %Test for comparing DFAs
         class DFACompare : public ::Test::Base {
         public:
-            DFACompare(void) : ::Test::Base("Int::Extensional::DFA::Compare") {}
+            DFACompare() : ::Test::Base("Int::Extensional::DFA::Compare") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 DFA d(REG(0) + REG(1));
                 DFA same(REG(0) + REG(1));
@@ -862,7 +859,7 @@ namespace Test { namespace Int {
             }
 
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new OpenRegularSpace(*this);
             }
         };
@@ -870,10 +867,10 @@ namespace Test { namespace Int {
         /// Test appending and closing an open regular list
         class OpenRegularIncremental : public ::Test::Base {
         public:
-            OpenRegularIncremental(void) : ::Test::Base("Int::Extensional::OpenReg::Incremental", TestTags::check()) {}
+            OpenRegularIncremental() : ::Test::Base("Int::Extensional::OpenReg::Incremental", TestTags::check()) {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {1, 1, 2}}, {2}, false);
                 OpenRegularSpace s(d);
@@ -901,10 +898,10 @@ namespace Test { namespace Int {
         /// Materializing required positions wakes regular filtering
         class OpenRegularLengthWake : public ::Test::Base {
         public:
-            OpenRegularLengthWake(void) : ::Test::Base("Int::Extensional::OpenReg::LengthWake") {}
+            OpenRegularLengthWake() : ::Test::Base("Int::Extensional::OpenReg::LengthWake") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {1, 1, 2}}, {2}, false);
                 OpenRegularSpace s(d, 3);
@@ -919,10 +916,10 @@ namespace Test { namespace Int {
         /// Filter prefixes whose accepting continuations exceed the length bound
         class OpenRegularMaxLength : public ::Test::Base {
         public:
-            OpenRegularMaxLength(void) : ::Test::Base("Int::Extensional::OpenReg::MaxLength", TestTags::check()) {}
+            OpenRegularMaxLength() : ::Test::Base("Int::Extensional::OpenReg::MaxLength", TestTags::check()) {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 // Accept 00 or 1000: only the first word fits a maximum of three.
                 DFA d(0, {{0, 0, 1}, {1, 0, 5}, {0, 1, 2}, {2, 0, 3}, {3, 0, 4}, {4, 0, 5}}, {5}, false);
@@ -980,10 +977,10 @@ namespace Test { namespace Int {
         /// Test backward pruning after appending a restricted variable
         class OpenRegularBackward : public ::Test::Base {
         public:
-            OpenRegularBackward(void) : ::Test::Base("Int::Extensional::OpenReg::Backward") {}
+            OpenRegularBackward() : ::Test::Base("Int::Extensional::OpenReg::Backward") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {0, 1, 2}, {1, 0, 3}, {2, 1, 4}, {3, 2, 5}, {4, 2, 5}}, {5}, false);
                 OpenRegularSpace s(d);
@@ -999,10 +996,10 @@ namespace Test { namespace Int {
         /// Test domain notification on an appended variable
         class OpenRegularDomainWake : public ::Test::Base {
         public:
-            OpenRegularDomainWake(void) : ::Test::Base("Int::Extensional::OpenReg::DomainWake") {}
+            OpenRegularDomainWake() : ::Test::Base("Int::Extensional::OpenReg::DomainWake") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {0, 1, 2}, {1, 0, 3}, {2, 1, 4}, {3, 2, 5}, {4, 2, 5}}, {5}, false);
                 OpenRegularSpace s(d);
@@ -1018,10 +1015,10 @@ namespace Test { namespace Int {
         /// Test independent extension after cloning
         class OpenRegularClone : public ::Test::Base {
         public:
-            OpenRegularClone(void) : ::Test::Base("Int::Extensional::OpenReg::Clone", TestTags::check()) {}
+            OpenRegularClone() : ::Test::Base("Int::Extensional::OpenReg::Clone", TestTags::check()) {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 DFA d(0, {{0, 0, 1}, {1, 1, 2}}, {2}, false);
                 OpenRegularSpace source(d);
@@ -1075,7 +1072,7 @@ namespace Test { namespace Int {
         /// Check domain consistency of the regular constraint on a closed open list
         class OpenRegularClosed : public Test {
         public:
-            OpenRegularClosed(void) : Test("Extensional::OpenReg::Closed", 3, 0, 2, false, Gecode::IPL_DOM) {}
+            OpenRegularClosed() : Test("Extensional::OpenReg::Closed", 3, 0, 2, false, Gecode::IPL_DOM) {}
             bool
             solution(const Assignment& x) const override {
                 int parity = 0;
@@ -1259,7 +1256,7 @@ namespace Test { namespace Int {
             }
             /// Create and register initial assignment
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 using namespace Gecode;
                 return new RandomAssignment(arity, dom, 1000, _rand);
             }
@@ -1309,7 +1306,7 @@ namespace Test { namespace Int {
                 consistency_test_level = CTL_NONE;
             }
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 return new SparseAssignment(t, dom, _rand);
             }
             bool
@@ -1407,10 +1404,10 @@ namespace Test { namespace Int {
         /// Disabled sparse propagators must defer failure until re-enabled
         class SparseTupleSetDisabledFailure : public ::Test::Base {
         public:
-            SparseTupleSetDisabledFailure(void) : ::Test::Base("Int::Extensional::TupleSet::Sparse::DisabledFailure") {}
+            SparseTupleSetDisabledFailure() : ::Test::Base("Int::Extensional::TupleSet::Sparse::DisabledFailure") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
 
                 class DisabledSpace : public Space {
@@ -1423,7 +1420,7 @@ namespace Test { namespace Int {
                         x.update(*this, s.x);
                     }
                     Space*
-                    copy(void) override {
+                    copy() override {
                         return new DisabledSpace(*this);
                     }
                 };
@@ -1455,10 +1452,10 @@ namespace Test { namespace Int {
         /// Sparse delta processing must depend on supports, not numeric width
         class SparseTupleSetWideDelta : public ::Test::Base {
         public:
-            SparseTupleSetWideDelta(void) : ::Test::Base("Int::Extensional::TupleSet::Sparse::WideDelta") {}
+            SparseTupleSetWideDelta() : ::Test::Base("Int::Extensional::TupleSet::Sparse::WideDelta") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
 
                 const int gap = 1000000000;
@@ -1478,7 +1475,7 @@ namespace Test { namespace Int {
                         x.update(*this, s.x);
                     }
                     Space*
-                    copy(void) override {
+                    copy() override {
                         return new NegativeSpace(*this);
                     }
                 };
@@ -1503,7 +1500,7 @@ namespace Test { namespace Int {
                         b.update(*this, s.b);
                     }
                     Space*
-                    copy(void) override {
+                    copy() override {
                         return new ReifiedSpace(*this);
                     }
                 };
@@ -1519,11 +1516,11 @@ namespace Test { namespace Int {
         /// Sparse/compressed tuplesets should materialize only requested support
         class TupleSetSingleRepresentation : public ::Test::Base {
         public:
-            TupleSetSingleRepresentation(void)
+            TupleSetSingleRepresentation()
                 : ::Test::Base("Int::Extensional::TupleSet::Support::SingleRepresentation") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 TupleSet ts(2);
                 for (int i = 0; i < 100; i++)
@@ -1583,10 +1580,10 @@ namespace Test { namespace Int {
         /// Sparse offset arrays need a representable terminal entry
         class TupleSetSupportOffsetBoundary : public ::Test::Base {
         public:
-            TupleSetSupportOffsetBoundary(void) : ::Test::Base("Int::Extensional::TupleSet::Support::OffsetBoundary") {}
+            TupleSetSupportOffsetBoundary() : ::Test::Base("Int::Extensional::TupleSet::Support::OffsetBoundary") {}
 
             bool
-            run(void) override {
+            run() override {
                 using Gecode::Int::Extensional::support_offsets_size;
                 const unsigned long long max =
                     static_cast<unsigned long long>(std::numeric_limits<unsigned int>::max());
@@ -1603,11 +1600,11 @@ namespace Test { namespace Int {
         /// Failed finalization is terminal and cannot expose partial support data
         class TupleSetTerminalFinalizationFailure : public ::Test::Base {
         public:
-            TupleSetTerminalFinalizationFailure(void)
+            TupleSetTerminalFinalizationFailure()
                 : ::Test::Base("Int::Extensional::TupleSet::Support::TerminalFailure") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
 
                 const int n = 371000;
@@ -1652,7 +1649,7 @@ namespace Test { namespace Int {
                         x.update(*this, s.x);
                     }
                     Space*
-                    copy(void) override {
+                    copy() override {
                         return new PostingSpace(*this);
                     }
                 };
@@ -1670,10 +1667,10 @@ namespace Test { namespace Int {
         /// DFA-derived tuple sets preserve the requested support representation
         class TupleSetDFARepresentation : public ::Test::Base {
         public:
-            TupleSetDFARepresentation(void) : ::Test::Base("Int::Extensional::TupleSet::Support::DFARepresentation") {}
+            TupleSetDFARepresentation() : ::Test::Base("Int::Extensional::TupleSet::Support::DFARepresentation") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
 
                 DFA dfa((REG(0) + REG(1)) | (REG(2) + REG(3)));
@@ -1697,10 +1694,10 @@ namespace Test { namespace Int {
         /// %Test for comparing finalized tuple sets
         class TupleSetCompare : public ::Test::Base {
         public:
-            TupleSetCompare(void) : ::Test::Base("Int::Extensional::TupleSet::Compare") {}
+            TupleSetCompare() : ::Test::Base("Int::Extensional::TupleSet::Compare") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 TupleSet t(2), same(2), other(2);
                 t.add(IntArgs({0, 1})).add(IntArgs({1, 0})).finalize();
@@ -1718,10 +1715,10 @@ namespace Test { namespace Int {
         /// %Test for comparing the bit-set words that tuple-set supports use
         class BitSetDataCompare : public ::Test::Base {
         public:
-            BitSetDataCompare(void) : ::Test::Base("Int::Extensional::BitSetData::Compare") {}
+            BitSetDataCompare() : ::Test::Base("Int::Extensional::BitSetData::Compare") {}
 
             bool
-            run(void) override {
+            run() override {
                 using Gecode::Support::BitSetData;
                 BitSetData b, other;
                 b.init(false);
@@ -1737,10 +1734,10 @@ namespace Test { namespace Int {
         /// Disabled compact propagators preserve pending work when cloned
         class TupleSetDisabledClone : public ::Test::Base {
         public:
-            TupleSetDisabledClone(void) : ::Test::Base("Int::Extensional::TupleSet::Support::DisabledClone") {}
+            TupleSetDisabledClone() : ::Test::Base("Int::Extensional::TupleSet::Support::DisabledClone") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
 
                 enum Mode { MODE_POSITIVE, MODE_NEGATIVE, MODE_REIFIED };
@@ -1760,7 +1757,7 @@ namespace Test { namespace Int {
                         b.update(*this, s.b);
                     }
                     Space*
-                    copy(void) override {
+                    copy() override {
                         return new CloneSpace(*this);
                     }
                 };
@@ -1854,11 +1851,11 @@ namespace Test { namespace Int {
         /// AUTO finalization should work with default tuple-set posting overloads
         class TupleSetAutoDefaultDispatch : public ::Test::Base {
         public:
-            TupleSetAutoDefaultDispatch(void)
+            TupleSetAutoDefaultDispatch()
                 : ::Test::Base("Int::Extensional::TupleSet::Auto::DefaultDispatch", TestTags::check()) {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
 
                 TupleSet dense(2);
@@ -1880,7 +1877,7 @@ namespace Test { namespace Int {
                         x.update(*this, s.x);
                     }
                     Space*
-                    copy(void) override {
+                    copy() override {
                         return new PositiveSpace(*this);
                     }
                 };
@@ -1925,7 +1922,7 @@ namespace Test { namespace Int {
                         b.update(*this, s.b);
                     }
                     Space*
-                    copy(void) override {
+                    copy() override {
                         return new ReifiedSpace(*this);
                     }
                 };
@@ -1948,11 +1945,10 @@ namespace Test { namespace Int {
         /// Dense-compressed iterators should skip unsupported value gaps
         class DenseCompressedTupleSetWideGap : public ::Test::Base {
         public:
-            DenseCompressedTupleSetWideGap(void)
-                : ::Test::Base("Int::Extensional::TupleSet::DenseCompressed::WideGap") {}
+            DenseCompressedTupleSetWideGap() : ::Test::Base("Int::Extensional::TupleSet::DenseCompressed::WideGap") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
 
                 const int gap = 1000000000;
@@ -1970,7 +1966,7 @@ namespace Test { namespace Int {
                         x.update(*this, s.x);
                     }
                     Space*
-                    copy(void) override {
+                    copy() override {
                         return new NegativeSpace(*this);
                     }
                 };
@@ -2002,7 +1998,7 @@ namespace Test { namespace Int {
                         b.update(*this, s.b);
                     }
                     Space*
-                    copy(void) override {
+                    copy() override {
                         return new ReifiedSpace(*this);
                     }
                 };
@@ -2036,7 +2032,7 @@ namespace Test { namespace Int {
                         x.update(*this, s.x);
                     }
                     Space*
-                    copy(void) override {
+                    copy() override {
                         return new PositiveDeltaSpace(*this);
                     }
                 };
@@ -2237,7 +2233,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 // This code is executed on load, and thus a random number generator source from the supplied
                 // seed is not available.
                 // In order to get interesting data her, but still have deterministic and repeatable execution, a fixed seed
@@ -2464,7 +2460,7 @@ namespace Test { namespace Int {
         /// Exhaustive positive, negative, and reified sparse-table semantics.
         class CreateSparse {
         public:
-            CreateSparse(void) {
+            CreateSparse() {
                 using namespace Gecode;
                 TupleSet equal(2), zero(2), full(2), first_zero(2);
                 equal.add(IntArgs({0, 0})).add(IntArgs({1, 1})).finalize(EPK_SPARSE);

@@ -47,11 +47,11 @@ namespace Gecode {
     SetTraceDelta::SetTraceDelta(Set::SetTraceView o, Set::SetView n, const Delta&)
         : _glb(o.glb(), n), _lub(o.lub(), n) {}
     forceinline SetTraceDelta::Glb&
-    SetTraceDelta::glb(void) {
+    SetTraceDelta::glb() {
         return _glb;
     }
     forceinline SetTraceDelta::Lub&
-    SetTraceDelta::lub(void) {
+    SetTraceDelta::lub() {
         return _lub;
     }
 

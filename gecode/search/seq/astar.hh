@@ -74,15 +74,15 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize for space \a s with options \a o
         AStar(Space* s, const Options& o);
         /// Return next better solution (nullptr if none or stopped)
-        Space* next(void);
+        Space* next();
         /// Return statistics
-        Statistics statistics(void) const;
+        Statistics statistics() const;
         /// Constrain future solutions to be better than \a b
         void constrain(const Space& b);
         /// Reset engine to restart at space \a s
         void reset(Space* s);
         /// Return no-goods (none)
-        NoGoods& nogoods(void);
+        NoGoods& nogoods();
     };
 
 }}} // namespace Gecode::Search::Seq

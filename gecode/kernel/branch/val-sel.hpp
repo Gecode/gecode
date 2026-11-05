@@ -55,7 +55,7 @@ namespace Gecode {
         /// Constructor for cloning
         ValSel(Space& home, ValSel<View, Val>& vs);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value selection
         void dispose(Space& home);
     };
@@ -83,7 +83,7 @@ namespace Gecode {
         /// Return user-defined value of view \a x at position \a i
         Val val(const Space& home, View x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value selection
         void dispose(Space& home);
     };
@@ -98,7 +98,7 @@ namespace Gecode {
     ValSel<View, Val>::ValSel(Space&, ValSel<View, Val>&) {}
     template <class View, class Val>
     forceinline bool
-    ValSel<View, Val>::notice(void) const {
+    ValSel<View, Val>::notice() const {
         return false;
     }
     template <class View, class Val>
@@ -126,7 +126,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    ValSelFunction<View>::notice(void) const {
+    ValSelFunction<View>::notice() const {
         return true;
     }
     template <class View>

@@ -124,7 +124,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVar(void) = default;
+        SetVar() = default;
         /// Initialize from set variable \a y
         SetVar(const SetVar& y) = default;
         /// Initialize from set view \a y
@@ -220,23 +220,23 @@ namespace Gecode {
         /// \name Value access
         //@{
         /// Return number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return number of unknown elements (elements in lub but not in glb)
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         /// Return cardinality minimum
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return cardinality maximum
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum element of least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum element of least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return minimum element of greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
         //@}
 
         /// \name Domain tests
@@ -266,7 +266,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVarGlbRanges(void) = default;
+        SetVarGlbRanges() = default;
         /// Initialize to iterate ranges of variable \a x
         SetVarGlbRanges(const SetVar& x);
         //@}
@@ -274,19 +274,19 @@ namespace Gecode {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -299,7 +299,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVarLubRanges(void) = default;
+        SetVarLubRanges() = default;
         /// Initialize to iterate ranges of variable \a x
         SetVarLubRanges(const SetVar& x);
         //@}
@@ -307,19 +307,19 @@ namespace Gecode {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -332,7 +332,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVarUnknownRanges(void) = default;
+        SetVarUnknownRanges() = default;
         /// Initialize to iterate ranges of variable \a x
         SetVarUnknownRanges(const SetVar& x);
         //@}
@@ -340,19 +340,19 @@ namespace Gecode {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -365,7 +365,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVarGlbValues(void);
+        SetVarGlbValues();
         /// Initialize to iterate values of variable \a x
         SetVarGlbValues(const SetVar& x);
         //@}
@@ -373,15 +373,15 @@ namespace Gecode {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -394,7 +394,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVarLubValues(void);
+        SetVarLubValues();
         /// Initialize to iterate values of variable \a x
         SetVarLubValues(const SetVar& x);
         //@}
@@ -402,15 +402,15 @@ namespace Gecode {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -423,7 +423,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetVarUnknownValues(void);
+        SetVarUnknownValues();
         /// Initialize to iterate values of variable \a x
         SetVarUnknownValues(const SetVar& x);
         //@}
@@ -431,15 +431,15 @@ namespace Gecode {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -486,7 +486,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        SetVarArgs(void) = default;
+        SetVarArgs() = default;
         /// Allocate array with \a n elements
         explicit SetVarArgs(int n);
         /// Initialize from variable argument array \a a (copy elements)
@@ -562,7 +562,7 @@ namespace Gecode {
         /// \name Creation and initialization
         //@{
         /// Default constructor (array of size 0)
-        SetVarArray(void) = default;
+        SetVarArray() = default;
         /// Initialize from set variable array \a a (share elements)
         SetVarArray(const SetVarArray&) = default;
         /// Initialize from set variable argument array \a a (copy elements)
@@ -1063,7 +1063,7 @@ namespace Gecode {
          * yet initialized AFC storage is init or the assignment operator.
          *
          */
-        SetAFC(void) = default;
+        SetAFC() = default;
         /**
          * \brief Initialize for set variables \a x and decay factor \a d
          *
@@ -1105,7 +1105,7 @@ namespace Gecode {
          * yet initialized action storage is init or the assignment operator.
          *
          */
-        SetAction(void) = default;
+        SetAction() = default;
         /// Copy constructor
         SetAction(const SetAction& a) = default;
         /// Assignment operator
@@ -1160,7 +1160,7 @@ namespace Gecode {
          * yet initialized CHB storage is init or the assignment operator.
          *
          */
-        SetCHB(void) = default;
+        SetCHB() = default;
         /// Copy constructor
         SetCHB(const SetCHB& chb) = default;
         /// Assignment operator
@@ -1248,7 +1248,7 @@ namespace Gecode {
 
     public:
         /// Initialize with strategy SEL_NONE
-        SetVarBranch(void);
+        SetVarBranch();
         /// Initialize with random number generator \a r
         SetVarBranch(const Rnd& r);
         /// Initialize with selection strategy \a s and tie-break limit function \a t
@@ -1264,7 +1264,7 @@ namespace Gecode {
         /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
         SetVarBranch(Select s, SetBranchMerit mf, BranchTbl t);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
         /// Expand AFC, action, and CHB
         void expand(Home home, const SetVarArgs& x);
     };
@@ -1275,7 +1275,7 @@ namespace Gecode {
      */
     //@{
     /// Select first unassigned variable
-    SetVarBranch SET_VAR_NONE(void);
+    SetVarBranch SET_VAR_NONE();
     /// Select random variable (uniform distribution, for tie breaking)
     SetVarBranch SET_VAR_RND(const Rnd& r);
     /// Select variable with least merit according to branch merit function \a bm
@@ -1391,7 +1391,7 @@ namespace Gecode {
         /// Initialize with value function \a f and commit function \a c
         SetValBranch(SetBranchVal v, SetBranchCommit c);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
     };
 
     /**
@@ -1400,17 +1400,17 @@ namespace Gecode {
      */
     //@{
     /// Include smallest element
-    SetValBranch SET_VAL_MIN_INC(void);
+    SetValBranch SET_VAL_MIN_INC();
     /// Exclude smallest element
-    SetValBranch SET_VAL_MIN_EXC(void);
+    SetValBranch SET_VAL_MIN_EXC();
     /// Include median element (rounding downwards)
-    SetValBranch SET_VAL_MED_INC(void);
+    SetValBranch SET_VAL_MED_INC();
     /// Exclude median element (rounding downwards)
-    SetValBranch SET_VAL_MED_EXC(void);
+    SetValBranch SET_VAL_MED_EXC();
     /// Include largest element
-    SetValBranch SET_VAL_MAX_INC(void);
+    SetValBranch SET_VAL_MAX_INC();
     /// Exclude largest element
-    SetValBranch SET_VAL_MAX_EXC(void);
+    SetValBranch SET_VAL_MAX_EXC();
     /// Include random element
     SetValBranch SET_VAL_RND_INC(const Rnd& r);
     /// Exclude random element
@@ -1464,7 +1464,7 @@ namespace Gecode {
         /// Initialize with value function \a f and commit function \a c
         SetAssign(SetBranchVal v, SetBranchCommit c);
         /// Return selection strategy
-        Select select(void) const;
+        Select select() const;
     };
 
     /**
@@ -1473,17 +1473,17 @@ namespace Gecode {
      */
     //@{
     /// Include smallest element
-    SetAssign SET_ASSIGN_MIN_INC(void);
+    SetAssign SET_ASSIGN_MIN_INC();
     /// Exclude smallest element
-    SetAssign SET_ASSIGN_MIN_EXC(void);
+    SetAssign SET_ASSIGN_MIN_EXC();
     /// Include median element (rounding downwards)
-    SetAssign SET_ASSIGN_MED_INC(void);
+    SetAssign SET_ASSIGN_MED_INC();
     /// Exclude median element (rounding downwards)
-    SetAssign SET_ASSIGN_MED_EXC(void);
+    SetAssign SET_ASSIGN_MED_EXC();
     /// Include largest element
-    SetAssign SET_ASSIGN_MAX_INC(void);
+    SetAssign SET_ASSIGN_MAX_INC();
     /// Exclude largest element
-    SetAssign SET_ASSIGN_MAX_EXC(void);
+    SetAssign SET_ASSIGN_MAX_EXC();
     /// Include random element
     SetAssign SET_ASSIGN_RND_INC(const Rnd& r);
     /// Exclude random element
@@ -1682,9 +1682,9 @@ namespace Gecode {
         /// \name Access to delta iterators
         //@{
         /// Give access to iterator for delta in greatest lower bound (values that have been included)
-        Glb& glb(void);
+        Glb& glb();
         /// Give access iterator for delta in least bound (values that have been removed)
-        Lub& lub(void);
+        Lub& lub();
         //@}
     };
 

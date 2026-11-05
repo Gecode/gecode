@@ -83,9 +83,9 @@ namespace Test { namespace Float {
             }
 
         public:
-            OutwardRounding(void) : Base("Float::Interval::OutwardRounding", TestTags::check()) {}
+            OutwardRounding() : Base("Float::Interval::OutwardRounding", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 const int previous = std::fegetround();
                 bool result = true;
                 // Each expected bound is a floating-point neighbour of the
@@ -131,9 +131,9 @@ namespace Test { namespace Float {
             }
 
         public:
-            SingletonAndEmpty(void) : Base("Float::Interval::SingletonAndEmpty", TestTags::standard()) {}
+            SingletonAndEmpty() : Base("Float::Interval::SingletonAndEmpty", TestTags::standard()) {}
             bool
-            run(void) override {
+            run() override {
                 const FloatNum nan = std::numeric_limits<FloatNum>::quiet_NaN();
                 bool result = true;
 
@@ -228,9 +228,9 @@ namespace Test { namespace Float {
             }
 
         public:
-            Comparison(void) : Base("Float::Interval::Comparison", TestTags::standard()) {}
+            Comparison() : Base("Float::Interval::Comparison", TestTags::standard()) {}
             bool
-            run(void) override {
+            run() override {
                 const bool t = true;
                 const bool f = false;
                 const FloatNum one_up = std::nextafter(1.0, 2.0);

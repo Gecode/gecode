@@ -75,7 +75,7 @@ namespace Test { namespace Assign {
         /// Variables to be assigned
         Gecode::FloatVarArray x;
         /// Initialize test space
-        FloatOrderSpace(void) : x(*this, 5, 0.0, 1.0) {
+        FloatOrderSpace() : x(*this, 5, 0.0, 1.0) {
             Gecode::linear(*this, x, Gecode::FRT_LQ, 1.0);
         }
         /// Constructor for cloning \a s
@@ -84,7 +84,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new FloatOrderSpace(*this);
         }
     };
@@ -93,10 +93,10 @@ namespace Test { namespace Assign {
     class FloatVarSelection : public Base {
     public:
         /// Create and register test
-        FloatVarSelection(void) : Base("Float::Assign::VarSelection") {}
+        FloatVarSelection() : Base("Float::Assign::VarSelection") {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             FloatOrderSpace* s = new FloatOrderSpace;
             assign(*s, s->x, FLOAT_VAR_MERIT_MAX(&float_merit_last), FLOAT_ASSIGN_MAX());

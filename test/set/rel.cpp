@@ -143,7 +143,7 @@ namespace Test { namespace Set {
         class ITE : public SetTest {
         public:
             /// Construct and register test
-            ITE(void) : SetTest("ITE", 3, ds_03, false, 1) {}
+            ITE() : SetTest("ITE", 3, ds_03, false, 1) {}
             /// Check whether \a x is a solution
             bool
             solution(const SetAssignment& x) const override {

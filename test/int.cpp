@@ -123,12 +123,12 @@ namespace Test { namespace Int {
     }
 
     Gecode::Space*
-    TestSpace::copy(void) {
+    TestSpace::copy() {
         return new TestSpace(*this);
     }
 
     bool
-    TestSpace::assigned(void) const {
+    TestSpace::assigned() const {
         for (int i = x.size(); i--;)
             if (!x[i].assigned())
                 return false;
@@ -136,7 +136,7 @@ namespace Test { namespace Int {
     }
 
     void
-    TestSpace::post(void) {
+    TestSpace::post() {
         if (reified) {
             test->post(*this, x, r);
             if (opt.log)
@@ -149,7 +149,7 @@ namespace Test { namespace Int {
     }
 
     bool
-    TestSpace::failed(void) {
+    TestSpace::failed() {
         if (opt.log) {
             olog << ind(3) << "Fixpoint: " << x;
             bool f = (status() == Gecode::SS_FAILED);
@@ -368,12 +368,12 @@ namespace Test { namespace Int {
     }
 
     void
-    TestSpace::enable(void) {
+    TestSpace::enable() {
         Gecode::PropagatorGroup::all.enable(*this);
     }
 
     void
-    TestSpace::disable(void) {
+    TestSpace::disable() {
         Gecode::PropagatorGroup::all.disable(*this);
         (void)status();
     }
@@ -426,7 +426,7 @@ namespace Test { namespace Int {
     }
 
     unsigned int
-    TestSpace::propagators(void) {
+    TestSpace::propagators() {
         return Gecode::PropagatorGroup::all.size(*this);
     }
 
@@ -442,7 +442,7 @@ namespace Test { namespace Int {
                                                     Gecode::BOT_XOR};
 
     Assignment*
-    Test::assignment(void) const {
+    Test::assignment() const {
         return new CpltAssignment(arity, dom);
     }
 
@@ -477,7 +477,7 @@ namespace Test { namespace Int {
     Test::post(Gecode::Space&, Gecode::IntVarArray&, Gecode::Reify) {}
 
     bool
-    Test::run(void) {
+    Test::run() {
         using namespace Gecode;
         const char* test = "NONE";
         const char* problem = "NONE";
@@ -1192,12 +1192,12 @@ namespace Test { namespace Int {
         }
 
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new OpenTestSpace(*this);
         }
 
         void
-        post_open(void) {
+        post_open() {
             if (opt.log)
                 olog << ind(3) << "Posting with " << list.known_length() << " open-list items" << '\n';
             static_cast<OpenTest*>(test)->post(*this, list, x);
@@ -1216,7 +1216,7 @@ namespace Test { namespace Int {
     };
 
     bool
-    OpenTest::run(void) {
+    OpenTest::run() {
         using namespace Gecode;
         if (!Test::run())
             return false;

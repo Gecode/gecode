@@ -46,13 +46,13 @@ namespace Gecode { namespace Iter { namespace Values {
         /// Second iterator
         J j;
         /// Find next element from intersection
-        void next(void);
+        void next();
 
     public:
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Inter(void) = default;
+        Inter() = default;
         /// Initialize with values from \a i and \a j
         Inter(I& i, J& j);
         /// Initialize with values from \a i and \a j
@@ -62,21 +62,21 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
     template <class I, class J>
     forceinline void
-    Inter<I, J>::next(void) {
+    Inter<I, J>::next() {
         do {
             while (i() && j() && (i.val() < j.val()))
                 ++i;
@@ -102,7 +102,7 @@ namespace Gecode { namespace Iter { namespace Values {
 
     template <class I, class J>
     forceinline void
-    Inter<I, J>::operator++(void) {
+    Inter<I, J>::operator++() {
         ++i;
         ++j;
         next();
@@ -110,13 +110,13 @@ namespace Gecode { namespace Iter { namespace Values {
 
     template <class I, class J>
     forceinline bool
-    Inter<I, J>::operator()(void) const {
+    Inter<I, J>::operator()() const {
         return i() && j();
     }
 
     template <class I, class J>
     forceinline int
-    Inter<I, J>::val(void) const {
+    Inter<I, J>::val() const {
         assert(i.val() == j.val());
         return i.val();
     }

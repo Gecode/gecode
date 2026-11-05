@@ -39,9 +39,9 @@ namespace Test { namespace FlatZinc { namespace {
     // Annotations preserve both consistency and algorithm flags.
     class AlgorithmAnnotations : public Base {
     public:
-        AlgorithmAnnotations(void) : Base("FlatZinc::NativeRegistry::AlgorithmAnnotations") {}
+        AlgorithmAnnotations() : Base("FlatZinc::NativeRegistry::AlgorithmAnnotations") {}
         bool
-        run(void) override {
+        run() override {
             const char* names[] = {"gecode_basic_propagation", "gecode_advanced_propagation",
                                    "gecode_full_propagation"};
             const Gecode::IntPropLevel levels[] = {Gecode::IPL_BASIC, Gecode::IPL_ADVANCED, Gecode::IPL_FULL};
@@ -60,10 +60,10 @@ namespace Test { namespace FlatZinc { namespace {
     /// Advanced cumulative propagation detects an overload before search
     class CumulativeAlgorithmAnnotations : public Base {
     public:
-        CumulativeAlgorithmAnnotations(void)
+        CumulativeAlgorithmAnnotations()
             : Base("FlatZinc::NativeRegistry::CumulativeAlgorithmAnnotations", TestTags::check()) {}
         bool
-        run(void) override {
+        run() override {
             const char* levels[] = {"gecode_basic_propagation", "gecode_advanced_propagation",
                                     "gecode_full_propagation"};
             for (int i = 0; i < 3; i++) {
@@ -88,7 +88,7 @@ namespace Test { namespace FlatZinc { namespace {
 
     class Create {
     public:
-        Create(void) {
+        Create() {
             const std::string sat = "----------\n";
             const std::string unsat = "=====UNSATISFIABLE=====\n";
             // Explicit ends retain native scheduling semantics, including shared

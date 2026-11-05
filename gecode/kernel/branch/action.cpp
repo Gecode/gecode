@@ -36,7 +36,7 @@ namespace Gecode {
 
     Support::Mutex Action::Storage::m;
 
-    Action::Storage::~Storage(void) {
+    Action::Storage::~Storage() {
         if (n > 0)
             heap.free<double>(a, n);
     }

@@ -86,16 +86,16 @@ namespace Gecode { namespace FlatZinc {
 
         public:
             explicit FileDescriptor(int fd0 = -1) : fd(fd0) {}
-            ~FileDescriptor(void) {
+            ~FileDescriptor() {
                 reset();
             }
 
             int
-            get(void) const {
+            get() const {
                 return fd;
             }
             int
-            release(void) {
+            release() {
                 int fd0 = fd;
                 fd = -1;
                 return fd0;
@@ -127,21 +127,21 @@ namespace Gecode { namespace FlatZinc {
             bool initialized;
 
         public:
-            SpawnFileActions(void) : initialized(false) {}
-            ~SpawnFileActions(void) {
+            SpawnFileActions() : initialized(false) {}
+            ~SpawnFileActions() {
                 if (initialized) {
                     posix_spawn_file_actions_destroy(&actions);
                 }
             }
 
             int
-            init(void) {
+            init() {
                 int err = posix_spawn_file_actions_init(&actions);
                 initialized = err == 0;
                 return err;
             }
             posix_spawn_file_actions_t*
-            get(void) {
+            get() {
                 return &actions;
             }
         };
@@ -152,21 +152,21 @@ namespace Gecode { namespace FlatZinc {
             bool initialized;
 
         public:
-            SpawnAttributes(void) : initialized(false) {}
-            ~SpawnAttributes(void) {
+            SpawnAttributes() : initialized(false) {}
+            ~SpawnAttributes() {
                 if (initialized) {
                     posix_spawnattr_destroy(&attr);
                 }
             }
 
             int
-            init(void) {
+            init() {
                 int err = posix_spawnattr_init(&attr);
                 initialized = err == 0;
                 return err;
             }
             posix_spawnattr_t*
-            get(void) {
+            get() {
                 return &attr;
             }
         };
@@ -239,7 +239,7 @@ namespace Gecode { namespace FlatZinc {
             }
 
             static void
-            sleep_grace_period(void) {
+            sleep_grace_period() {
                 struct timespec remaining = {0, 10000000};
                 while ((nanosleep(&remaining, &remaining) == -1) && (errno == EINTR)) {
                 }
@@ -295,7 +295,7 @@ namespace Gecode { namespace FlatZinc {
             }
 
             static void
-            check_sigchld(void) {
+            check_sigchld() {
                 struct sigaction action;
                 if (sigaction(SIGCHLD, nullptr, &action) != 0) {
                     throw Error("BlackBoxExec", last_error("SIGCHLD query failed"));
@@ -311,7 +311,7 @@ namespace Gecode { namespace FlatZinc {
             }
 
             void open_posix(const std::string& program, const std::vector<std::string>& args);
-            void close_posix(void);
+            void close_posix();
 
         public:
             PosixProcessSession(const std::string& program, const std::vector<std::string>& args)
@@ -319,7 +319,7 @@ namespace Gecode { namespace FlatZinc {
                 open_posix(program, args);
             }
 
-            ~PosixProcessSession(void) override {
+            ~PosixProcessSession() override {
                 close();
             }
 
@@ -372,7 +372,7 @@ namespace Gecode { namespace FlatZinc {
             }
 
             void
-            close(void) {
+            close() {
                 close_posix();
             }
         };
@@ -486,7 +486,7 @@ namespace Gecode { namespace FlatZinc {
         }
 
         void
-        PosixProcessSession::close_posix(void) {
+        PosixProcessSession::close_posix() {
             if (pipe_send != -1) {
                 ::close(pipe_send);
                 pipe_send = -1;

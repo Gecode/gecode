@@ -36,7 +36,7 @@
 
 namespace Gecode { namespace Search {
 
-    forceinline Cutoff::~Cutoff(void) = default;
+    forceinline Cutoff::~Cutoff() = default;
 
     forceinline
     CutoffConstant::CutoffConstant(unsigned long long int c0)
@@ -87,7 +87,7 @@ namespace Gecode { namespace Search {
     forceinline
     CutoffAppend::CutoffAppend(Cutoff* d1, unsigned long long int n0, Cutoff* d2)
         : c1(d1), c2(d2), n(n0) {}
-    inline CutoffAppend::~CutoffAppend(void) {
+    inline CutoffAppend::~CutoffAppend() {
         delete c1;
         delete c2;
     }
@@ -95,7 +95,7 @@ namespace Gecode { namespace Search {
     forceinline
     CutoffMerge::CutoffMerge(Cutoff* d1, Cutoff* d2)
         : c1(d1), c2(d2) {}
-    inline CutoffMerge::~CutoffMerge(void) {
+    inline CutoffMerge::~CutoffMerge() {
         delete c1;
         delete c2;
     }
@@ -105,7 +105,7 @@ namespace Gecode { namespace Search {
         : c(c1), i(0), n(n0) {
         cutoff = (*c)();
     }
-    inline CutoffRepeat::~CutoffRepeat(void) {
+    inline CutoffRepeat::~CutoffRepeat() {
         delete c;
     }
 

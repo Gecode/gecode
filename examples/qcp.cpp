@@ -67,7 +67,7 @@ namespace {
         }
         /// Return tie-breaking factor
         double
-        tbf(void) const {
+        tbf() const {
             return _tbf.value();
         }
         /// Set tie-breaking factor
@@ -107,14 +107,14 @@ namespace {
     public:
         /// Whether a valid specification has been found
         bool
-        valid(void) const {
+        valid() const {
             return data != nullptr;
         }
         /// Initialize
         Spec(const char* s) : data(find(s)) {}
         /// Return problem size
         int
-        size(void) const {
+        size() const {
             return data[0];
         }
         /// Whether field is pre-assigned
@@ -241,7 +241,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new QCP(*this);
     }
     /// Print solution

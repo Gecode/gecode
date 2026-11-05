@@ -40,55 +40,55 @@ namespace Gecode {
      */
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    SearchTracer::EngineInfo::EngineInfo(void) {}
+    SearchTracer::EngineInfo::EngineInfo() {}
 
     forceinline
     SearchTracer::EngineInfo::EngineInfo(EngineType et, unsigned int fst, unsigned int lst)
         : _type(et), _fst(fst), _lst(lst) {}
 
     forceinline SearchTracer::EngineType
-    SearchTracer::EngineInfo::type(void) const {
+    SearchTracer::EngineInfo::type() const {
         return _type;
     }
 
     forceinline bool
-    SearchTracer::EngineInfo::meta(void) const {
+    SearchTracer::EngineInfo::meta() const {
         return (type() == EngineType::RBS) || (type() == EngineType::PBS);
     }
 
     forceinline unsigned int
-    SearchTracer::EngineInfo::wfst(void) const {
+    SearchTracer::EngineInfo::wfst() const {
         assert((type() == EngineType::DFS) || (type() == EngineType::BAB) || (type() == EngineType::LDS) ||
                (type() == EngineType::OTHER));
         return _fst;
     }
 
     forceinline unsigned int
-    SearchTracer::EngineInfo::wlst(void) const {
+    SearchTracer::EngineInfo::wlst() const {
         assert((type() == EngineType::DFS) || (type() == EngineType::BAB) || (type() == EngineType::LDS) ||
                (type() == EngineType::OTHER));
         return _lst;
     }
 
     forceinline unsigned int
-    SearchTracer::EngineInfo::workers(void) const {
+    SearchTracer::EngineInfo::workers() const {
         return wlst() - wfst();
     }
 
     forceinline unsigned int
-    SearchTracer::EngineInfo::efst(void) const {
+    SearchTracer::EngineInfo::efst() const {
         assert((type() == EngineType::RBS) || (type() == EngineType::PBS));
         return _fst;
     }
 
     forceinline unsigned int
-    SearchTracer::EngineInfo::elst(void) const {
+    SearchTracer::EngineInfo::elst() const {
         assert((type() == EngineType::RBS) || (type() == EngineType::PBS));
         return _lst;
     }
 
     forceinline unsigned int
-    SearchTracer::EngineInfo::engines(void) const {
+    SearchTracer::EngineInfo::engines() const {
         return elst() - efst();
     }
 
@@ -97,7 +97,7 @@ namespace Gecode {
      *
      */
     forceinline void
-    SearchTracer::EdgeInfo::invalidate(void) {
+    SearchTracer::EdgeInfo::invalidate() {
         _wid = UINT_MAX;
         _s.clear();
     }
@@ -125,34 +125,34 @@ namespace Gecode {
         : _wid(wid), _nid(nid), _a(a) {}
 
     forceinline
-    SearchTracer::EdgeInfo::EdgeInfo(void)
+    SearchTracer::EdgeInfo::EdgeInfo()
         : _wid(UINT_MAX) {}
 
     forceinline SearchTracer::EdgeInfo::
-    operator bool(void) const {
+    operator bool() const {
         return _wid != UINT_MAX;
     }
 
     forceinline unsigned int
-    SearchTracer::EdgeInfo::wid(void) const {
+    SearchTracer::EdgeInfo::wid() const {
         assert(*this);
         return _wid;
     }
 
     forceinline unsigned int
-    SearchTracer::EdgeInfo::nid(void) const {
+    SearchTracer::EdgeInfo::nid() const {
         assert(*this);
         return _nid;
     }
 
     forceinline unsigned int
-    SearchTracer::EdgeInfo::alternative(void) const {
+    SearchTracer::EdgeInfo::alternative() const {
         assert(*this);
         return _a;
     }
 
     forceinline std::string
-    SearchTracer::EdgeInfo::string(void) const {
+    SearchTracer::EdgeInfo::string() const {
         assert(*this);
         return _s;
     }
@@ -166,27 +166,27 @@ namespace Gecode {
         : _nt(nt), _wid(wid), _nid(nid), _s(s), _c(c) {}
 
     forceinline SearchTracer::NodeType
-    SearchTracer::NodeInfo::type(void) const {
+    SearchTracer::NodeInfo::type() const {
         return _nt;
     }
 
     forceinline unsigned int
-    SearchTracer::NodeInfo::wid(void) const {
+    SearchTracer::NodeInfo::wid() const {
         return _wid;
     }
 
     forceinline unsigned int
-    SearchTracer::NodeInfo::nid(void) const {
+    SearchTracer::NodeInfo::nid() const {
         return _nid;
     }
 
     forceinline const Space&
-    SearchTracer::NodeInfo::space(void) const {
+    SearchTracer::NodeInfo::space() const {
         return _s;
     }
 
     forceinline const Choice&
-    SearchTracer::NodeInfo::choice(void) const {
+    SearchTracer::NodeInfo::choice() const {
         assert(_nt == NodeType::BRANCH);
         return *_c;
     }
@@ -214,7 +214,7 @@ namespace Gecode {
     }
 
     forceinline
-    SearchTracer::SearchTracer(void)
+    SearchTracer::SearchTracer()
         : pending(1U), n_e(0U), n_w(0U), es(heap), w2e(heap) {}
 
     forceinline void
@@ -252,19 +252,19 @@ namespace Gecode {
     }
 
     forceinline void
-    SearchTracer::worker(void) {
+    SearchTracer::worker() {
         Support::Lock l(m);
         if (--n_active == 0U)
             done();
     }
 
     forceinline unsigned int
-    SearchTracer::workers(void) const {
+    SearchTracer::workers() const {
         return n_w;
     }
 
     forceinline unsigned int
-    SearchTracer::engines(void) const {
+    SearchTracer::engines() const {
         return n_e;
     }
 
@@ -280,7 +280,7 @@ namespace Gecode {
         return w2e[wid];
     }
 
-    forceinline SearchTracer::~SearchTracer(void) = default;
+    forceinline SearchTracer::~SearchTracer() = default;
 
 } // namespace Gecode
 

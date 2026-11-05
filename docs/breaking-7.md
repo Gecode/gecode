@@ -44,12 +44,13 @@ affect runtime behaviour. Platform-specific checks remain in CI.
 - Public enums are `enum class`, and `using enum` keeps their constants usable
   without qualification. Abbreviated constants have descriptive names, with no
   compatibility aliases; see `code-style.md`.
+- Empty parameter lists are `()`, and `forceinline` keeps its lowercase name;
+  see `code-style.md`.
 
 ## Other modernization ideas
 
 - Replace bespoke configuration-template processing with CMake's native
   `configure_file` / `#cmakedefine`, checking feature-macro compatibility.
-- Revisit the `forceinline` portability macro and obsolete `(void)` parameter lists.
 - Continue auditing callback, branch-configuration, and shared-handle copying
   with `performance-unnecessary-value-param`; distinguish owned data and
   atomic reference counts from shallow variable/view handles.

@@ -172,7 +172,7 @@ namespace Test { namespace Float {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 Gecode::FloatNum step = 0.7;
                 for (FloatRelTypes frts; frts(); ++frts) {

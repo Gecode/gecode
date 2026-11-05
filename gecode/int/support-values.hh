@@ -64,7 +64,7 @@ namespace Gecode { namespace Int {
             /// Access to other information
             SupportValues& sv;
             /// Find next unsupported value
-            void find(void);
+            void find();
 
         public:
             /// \name Constructors and initialization
@@ -76,15 +76,15 @@ namespace Gecode { namespace Int {
             /// \name Iteration control
             //@{
             /// Test whether iterator is still at a value or done
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move iterator to next value (if possible)
-            void operator++(void);
+            void operator++();
             //@}
 
             /// \name Value access
             //@{
             /// Return current value
-            int val(void) const;
+            int val() const;
             //@}
         };
 
@@ -110,28 +110,28 @@ namespace Gecode { namespace Int {
         /// Initialize for view \a x
         SupportValues(A& a, View x);
         /// Destructor
-        ~SupportValues(void);
+        ~SupportValues();
 
         /// \name Iteration control
         //@{
         /// Reset iterator
-        void reset(void);
+        void reset();
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
 
         /// \name Support control
         //@{
         /// Mark current (iterator) value as supported
-        void support(void);
+        void support();
         /// Mark \a n as supported if possible
         bool support(int n);
         /// Mark \a n as supported if possible

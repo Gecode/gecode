@@ -60,11 +60,11 @@ namespace Gecode { namespace Search { namespace Par {
         /// Return true if portfolio engine must be stopped
         bool stop(const Statistics& s, const Options& o) override;
         /// Wake workers so that a paused asset can observe the portfolio stop
-        void wake(void);
+        void wake();
         /// Signal whether search must be stopped
         void stop(bool s);
         /// Whether search must be stopped
-        bool stop(void) const;
+        bool stop() const;
     };
 
     // Forward declaration
@@ -83,11 +83,11 @@ namespace Gecode { namespace Search { namespace Par {
 
         public:
             /// Initialize as completed
-            Completion(void);
+            Completion();
             /// Signal completion
-            void terminated(void) override;
+            void terminated() override;
             /// Wait for completion and consume the signal
-            void wait(void);
+            void wait();
         } completion;
         /// The master engine
         PBS<Collect>* master;
@@ -100,23 +100,23 @@ namespace Gecode { namespace Search { namespace Par {
         /// Initialize with master \a m, slave \a s, and its stop object \a so
         Slave(PBS<Collect>* m, Engine* s, Stop* so);
         /// Return statistics of slave
-        Statistics statistics(void) const;
+        Statistics statistics() const;
         /// Check whether slave has been stopped
-        bool stopped(void) const;
+        bool stopped() const;
         /// Check whether slave stopped at a local limit
-        bool limited(void) const;
+        bool limited() const;
         /// Return the completion terminator
-        Support::Terminator* terminator(void) const override;
+        Support::Terminator* terminator() const override;
         /// Wait for the slave to complete its current run
-        void wait(void);
+        void wait();
         /// Wake a paused slave so that it can observe the portfolio stop
-        void wake(void);
+        void wake();
         /// Constrain with better solution \a b
         void constrain(const Space& b);
         /// Perform one run
-        void run(void) override;
+        void run() override;
         /// Delete slave
-        ~Slave(void) override;
+        ~Slave() override;
     };
 
     /// Collect all solutions
@@ -129,17 +129,17 @@ namespace Gecode { namespace Search { namespace Par {
         /// Whether it collects best solutions
         static const bool best = false;
         /// Initialize
-        CollectAll(void);
+        CollectAll();
         /// Add a solution \a a reported by \a r and always return true
         bool add(Space* s, Slave<CollectAll>* r);
         /// Dummy function
         bool constrain(const Space& b);
         /// Check whether there is any solution left
-        bool empty(void) const;
+        bool empty() const;
         /// Return solution reported by \a r
         Space* get(Slave<CollectAll>*& r);
         /// Destructor
-        ~CollectAll(void);
+        ~CollectAll();
     };
 
     /// Collect best solutions
@@ -154,17 +154,17 @@ namespace Gecode { namespace Search { namespace Par {
         /// Whether it collects best solutions
         static const bool best = true;
         /// Initialize
-        CollectBest(void);
+        CollectBest();
         /// Add a solution \a s by \a r and return whether is was better
         bool add(Space* s, Slave<CollectBest>* r);
         /// Check whether \a b better and update accordingly
         bool constrain(const Space& b);
         /// Check whether there is any solution left
-        bool empty(void) const;
+        bool empty() const;
         /// Return solution reported by \a r (only if a better one was found)
         Space* get(Slave<CollectBest>*& r);
         /// Destructor
-        ~CollectBest(void);
+        ~CollectBest();
     };
 
     /// Parallel portfolio engine implementation
@@ -209,15 +209,15 @@ namespace Gecode { namespace Search { namespace Par {
         /// Initialize
         PBS(Engine** s, Stop** so, unsigned int n, const Statistics& stat);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Return statistics
-        Statistics statistics(void) const override;
+        Statistics statistics() const override;
         /// Check whether engine has been stopped
-        bool stopped(void) const override;
+        bool stopped() const override;
         /// Constrain future solutions to be better than \a b
         void constrain(const Space& b) override;
         /// Destructor
-        ~PBS(void) override;
+        ~PBS() override;
     };
 
 }}} // namespace Gecode::Search::Par

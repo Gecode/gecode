@@ -36,24 +36,24 @@ namespace Test {
      * Test tags
      *
      */
-    inline TestTags::TestTags(void) : _mask(0) {}
+    inline TestTags::TestTags() : _mask(0) {}
     inline TestTags::TestTags(TestTag t) : _mask(static_cast<unsigned int>(t)) {}
     inline TestTags::TestTags(TestTag t0, TestTag t1)
         : _mask(static_cast<unsigned int>(t0) | static_cast<unsigned int>(t1)) {}
     inline TestTags
-    TestTags::check(void) {
+    TestTags::check() {
         return TestTags(TestTag::STANDARD, TestTag::CHECK);
     }
     inline TestTags
-    TestTags::standard(void) {
+    TestTags::standard() {
         return TestTags(TestTag::STANDARD);
     }
     inline TestTags
-    TestTags::sweep(void) {
+    TestTags::sweep() {
         return TestTags(TestTag::SWEEP);
     }
     inline bool
-    TestTags::empty(void) const {
+    TestTags::empty() const {
         return _mask == 0;
     }
     inline bool
@@ -69,7 +69,7 @@ namespace Test {
      * Commandline options
      *
      */
-    inline Options::Options(void)
+    inline Options::Options()
         : threads(1), seed(0), replay(false), iter(default_iterations),
           fixpoint_probability_denominator(default_fixpoint_probability_denominator), stop(true), log(false),
           test_patterns(), test_tags(), start_from(nullptr), list(false), list_tags(false), list_with_tags(false) {}
@@ -79,19 +79,19 @@ namespace Test {
      *
      */
     inline const std::string&
-    Base::name(void) const {
+    Base::name() const {
         return _name;
     }
     inline TestTags
-    Base::tags(void) const {
+    Base::tags() const {
         return _tags;
     }
     inline Base*
-    Base::tests(void) {
+    Base::tests() {
         return _tests;
     }
     inline Base*
-    Base::next(void) const {
+    Base::next() const {
         return _next;
     }
     inline void
@@ -99,7 +99,7 @@ namespace Test {
         _next = n;
     }
     inline bool
-    Base::fixpoint(void) {
+    Base::fixpoint() {
         return fixpoint(_rand);
     }
 

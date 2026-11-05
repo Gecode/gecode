@@ -53,21 +53,21 @@ namespace Gecode { namespace Support {
         /// Initialize for \a n elements
         StaticStack(A& a, int n);
         /// Release memory
-        ~StaticStack(void);
+        ~StaticStack();
 
         /// Reset stack (pop all elements)
-        void reset(void);
+        void reset();
         /// Test whether stack is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Return number of entries currently on stack
-        int entries(void) const;
+        int entries() const;
 
         /// Pop topmost element from stack and return it
-        T pop(void);
+        T pop();
         /// Return element on top of stack
-        T& top(void) const;
+        T& top() const;
         /// Return element that has just been popped
-        T& last(void) const;
+        T& last() const;
         /// Push element \a x on top of stack
         void push(const T& x);
 
@@ -87,45 +87,45 @@ namespace Gecode { namespace Support {
         : a(a0), n(n0), tos(0), stack(a.template alloc<T>(n)) {}
 
     template <class T, class A>
-    forceinline StaticStack<T, A>::~StaticStack(void) {
+    forceinline StaticStack<T, A>::~StaticStack() {
         a.free(stack, n);
     }
 
     template <class T, class A>
     forceinline bool
-    StaticStack<T, A>::empty(void) const {
+    StaticStack<T, A>::empty() const {
         return tos == 0;
     }
 
     template <class T, class A>
     forceinline int
-    StaticStack<T, A>::entries(void) const {
+    StaticStack<T, A>::entries() const {
         return tos;
     }
 
     template <class T, class A>
     forceinline void
-    StaticStack<T, A>::reset(void) {
+    StaticStack<T, A>::reset() {
         tos = 0;
     }
 
     template <class T, class A>
     forceinline T
-    StaticStack<T, A>::pop(void) {
+    StaticStack<T, A>::pop() {
         assert((tos > 0) && (tos <= static_cast<unsigned int>(n)));
         return stack[--tos];
     }
 
     template <class T, class A>
     forceinline T&
-    StaticStack<T, A>::top(void) const {
+    StaticStack<T, A>::top() const {
         assert((tos > 0) && (tos <= static_cast<unsigned int>(n)));
         return stack[tos - 1];
     }
 
     template <class T, class A>
     forceinline T&
-    StaticStack<T, A>::last(void) const {
+    StaticStack<T, A>::last() const {
         assert((tos >= 0) && (tos < static_cast<unsigned int>(n)));
         return stack[tos];
     }

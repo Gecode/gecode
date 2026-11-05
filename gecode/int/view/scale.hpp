@@ -45,7 +45,7 @@ namespace Gecode { namespace Int {
     template <class Val, class UnsVal>
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    ScaleView<Val, UnsVal>::ScaleView(void) {}
+    ScaleView<Val, UnsVal>::ScaleView() {}
 
     template <class Val, class UnsVal>
     forceinline
@@ -58,30 +58,30 @@ namespace Gecode { namespace Int {
      */
     template <class Val, class UnsVal>
     forceinline int
-    ScaleView<Val, UnsVal>::scale(void) const {
+    ScaleView<Val, UnsVal>::scale() const {
         return a;
     }
     template <class Val, class UnsVal>
     forceinline Val
-    ScaleView<Val, UnsVal>::min(void) const {
+    ScaleView<Val, UnsVal>::min() const {
         return static_cast<Val>(x.min()) * a;
     }
 
     template <class Val, class UnsVal>
     forceinline Val
-    ScaleView<Val, UnsVal>::max(void) const {
+    ScaleView<Val, UnsVal>::max() const {
         return static_cast<Val>(x.max()) * a;
     }
 
     template <class Val, class UnsVal>
     forceinline Val
-    ScaleView<Val, UnsVal>::med(void) const {
+    ScaleView<Val, UnsVal>::med() const {
         return static_cast<Val>(x.med()) * a;
     }
 
     template <class Val, class UnsVal>
     forceinline Val
-    ScaleView<Val, UnsVal>::val(void) const {
+    ScaleView<Val, UnsVal>::val() const {
         return static_cast<Val>(x.val()) * a;
     }
 #ifdef GECODE_HAS_CBS
@@ -94,25 +94,25 @@ namespace Gecode { namespace Int {
 
     template <class Val, class UnsVal>
     forceinline UnsVal
-    ScaleView<Val, UnsVal>::size(void) const {
+    ScaleView<Val, UnsVal>::size() const {
         return static_cast<UnsVal>(x.size());
     }
 
     template <class Val, class UnsVal>
     forceinline UnsVal
-    ScaleView<Val, UnsVal>::width(void) const {
+    ScaleView<Val, UnsVal>::width() const {
         return static_cast<UnsVal>(x.width()) * a;
     }
 
     template <class Val, class UnsVal>
     forceinline UnsVal
-    ScaleView<Val, UnsVal>::regret_min(void) const {
+    ScaleView<Val, UnsVal>::regret_min() const {
         return static_cast<UnsVal>(x.regret_min()) * a;
     }
 
     template <class Val, class UnsVal>
     forceinline UnsVal
-    ScaleView<Val, UnsVal>::regret_max(void) const {
+    ScaleView<Val, UnsVal>::regret_max() const {
         return static_cast<UnsVal>(x.regret_max()) * a;
     }
 
@@ -122,7 +122,7 @@ namespace Gecode { namespace Int {
      */
     template <class Val, class UnsVal>
     forceinline bool
-    ScaleView<Val, UnsVal>::range(void) const {
+    ScaleView<Val, UnsVal>::range() const {
         return x.range();
     }
     template <class Val, class UnsVal>
@@ -236,7 +236,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void) = default;
+        ViewRanges() = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const IntScaleView& x);
         /// Initialize with ranges for view \a x
@@ -266,7 +266,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void) = default;
+        ViewRanges() = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const LLongScaleView& x);
         /// Initialize with ranges for view \a x

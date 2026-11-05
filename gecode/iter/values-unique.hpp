@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Unique(void) = default;
+        Unique() = default;
         /// Initialize with value iterator \a i
         Unique(I& i);
         /// Initialize with value iterator \a i
@@ -61,15 +61,15 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next unique value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -86,7 +86,7 @@ namespace Gecode { namespace Iter { namespace Values {
 
     template <class I>
     forceinline void
-    Unique<I>::operator++(void) {
+    Unique<I>::operator++() {
         int n = i;
         do {
             ++i;
@@ -94,13 +94,13 @@ namespace Gecode { namespace Iter { namespace Values {
     }
     template <class I>
     forceinline bool
-    Unique<I>::operator()(void) const {
+    Unique<I>::operator()() const {
         return i();
     }
 
     template <class I>
     forceinline int
-    Unique<I>::val(void) const {
+    Unique<I>::val() const {
         return i.val();
     }
 

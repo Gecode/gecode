@@ -43,7 +43,7 @@ namespace Test { namespace Set {
         class Construct : public SetTest {
         public:
             /// Create and register test
-            Construct(void) : SetTest("Var::Construct", 1, IntSet(0, 0), false, 0) {}
+            Construct() : SetTest("Var::Construct", 1, IntSet(0, 0), false, 0) {}
             /// %Test whether \a x is solution
             bool
             solution(const SetAssignment&) const override {
@@ -212,21 +212,21 @@ namespace Test { namespace Set {
             /// Space for the variables behind the views
             class Fixture : public Gecode::Space {
             public:
-                Fixture(void) = default;
+                Fixture() = default;
                 // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new Fixture(*this);
                 }
             };
 
         public:
             /// Create and register test
-            ViewCompare(void) : ::Test::Base("Set::Var::View::Compare") {}
+            ViewCompare() : ::Test::Base("Set::Var::View::Compare") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode::Set;
                 Fixture home;
                 SetView x(SetVar(home, IntSet::empty, 0, 5));
@@ -255,21 +255,21 @@ namespace Test { namespace Set {
             /// Space for the variable behind the iterators
             class Fixture : public Gecode::Space {
             public:
-                Fixture(void) = default;
+                Fixture() = default;
                 // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new Fixture(*this);
                 }
             };
 
         public:
             /// Create and register test
-            DefaultValues(void) : ::Test::Base("Set::Var::DefaultValues") {}
+            DefaultValues() : ::Test::Base("Set::Var::DefaultValues") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 Fixture home;
                 SetVar x(home, IntSet(1, 1), IntSet(1, 2));

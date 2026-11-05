@@ -248,7 +248,7 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
@@ -257,7 +257,7 @@ namespace Test { namespace Int {
         public:
             NumberTheoryAlgebraic(int k) : ::Test::Base("Int::Arithmetic::NumberTheoryAlgebraic::" + str(k)), kind(k) {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 TestSpace home;
                 if (kind <= 2) {
@@ -350,15 +350,15 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
 
         public:
-            NumberTheorySparseBounds(void) : ::Test::Base("Int::Arithmetic::NumberTheorySparseBounds") {}
+            NumberTheorySparseBounds() : ::Test::Base("Int::Arithmetic::NumberTheorySparseBounds") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 for (int division = 0; division < 2; division++) {
                     TestSpace home;
@@ -422,15 +422,15 @@ namespace Test { namespace Int {
                     b.update(*this, s.b);
                 }
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new TestSpace(*this);
                 }
             };
 
         public:
-            NumberTheoryLifecycle(void) : ::Test::Base("Int::Arithmetic::NumberTheoryLifecycle") {}
+            NumberTheoryLifecycle() : ::Test::Base("Int::Arithmetic::NumberTheoryLifecycle") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 for (int kind = 0; kind < 5; kind++) {
                     TestSpace home(kind);
@@ -464,15 +464,15 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
 
         public:
-            NumberTheoryIdentities(void) : ::Test::Base("Int::Arithmetic::NumberTheoryIdentities") {}
+            NumberTheoryIdentities() : ::Test::Base("Int::Arithmetic::NumberTheoryIdentities") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 for (ReifyMode rm : {RM_EQV, RM_IMP, RM_RIMP})
                     for (int kind = 0; kind < 4; kind++) {
@@ -520,15 +520,15 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
 
         public:
-            NumberTheoryLimits(void) : ::Test::Base("Int::Arithmetic::NumberTheoryLimits") {}
+            NumberTheoryLimits() : ::Test::Base("Int::Arithmetic::NumberTheoryLimits") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 const int hi = Gecode::Int::Limits::max;
                 // hi-1 is -1 modulo hi. Its square is 1 and its cube is -1;
@@ -773,15 +773,15 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
 
         public:
-            ProductBoundsLarge(void) : ::Test::Base("Int::Arithmetic::Product::BoundsLarge") {}
+            ProductBoundsLarge() : ::Test::Base("Int::Arithmetic::Product::BoundsLarge") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -813,7 +813,7 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
@@ -822,7 +822,7 @@ namespace Test { namespace Int {
                 Gecode::IntVar x;
                 Gecode::IntVar q;
                 Gecode::IntVar y;
-                CloneSpace(void) : x(*this, -2, 2), q(*this, 2, 2), y(*this, -10, 10) {
+                CloneSpace() : x(*this, -2, 2), q(*this, 2, 2), y(*this, -10, 10) {
                     Gecode::product(*this, Gecode::IntVarArgs({x, q}), y);
                 }
                 CloneSpace(CloneSpace& s) : Gecode::Space(s) {
@@ -831,15 +831,15 @@ namespace Test { namespace Int {
                     y.update(*this, s.y);
                 }
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new CloneSpace(*this);
                 }
             };
 
         public:
-            ProductSimplifySign(void) : ::Test::Base("Int::Arithmetic::Product::SimplifySign") {}
+            ProductSimplifySign() : ::Test::Base("Int::Arithmetic::Product::SimplifySign") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -949,15 +949,15 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
 
         public:
-            ProductPowerAlias(void) : ::Test::Base("Int::Arithmetic::Product::PowerAlias") {}
+            ProductPowerAlias() : ::Test::Base("Int::Arithmetic::Product::PowerAlias") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -1059,7 +1059,7 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
@@ -1069,9 +1069,9 @@ namespace Test { namespace Int {
             }
 
         public:
-            ProductInverseBounds(void) : ::Test::Base("Int::Arithmetic::Product::InverseBounds") {}
+            ProductInverseBounds() : ::Test::Base("Int::Arithmetic::Product::InverseBounds") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 struct Case {
                     int qmin;
@@ -1143,15 +1143,15 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
 
         public:
-            ProductCompactionZero(void) : ::Test::Base("Int::Arithmetic::Product::CompactionZero") {}
+            ProductCompactionZero() : ::Test::Base("Int::Arithmetic::Product::CompactionZero") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 TestSpace home;
                 IntVarArgs x(home, 5, 0, 2);
@@ -1289,15 +1289,15 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
 
         public:
-            ProductModNonzero(void) : ::Test::Base("Int::Arithmetic::ProductMod::Nonzero") {}
+            ProductModNonzero() : ::Test::Base("Int::Arithmetic::ProductMod::Nonzero") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 for (int negative = 0; negative < 2; negative++)
                     for (int variable = 0; variable < 2; variable++) {
@@ -1416,15 +1416,15 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
 
         public:
-            ProductModAlgebraic(void) : ::Test::Base("Int::Arithmetic::ProductMod::Algebraic") {}
+            ProductModAlgebraic() : ::Test::Base("Int::Arithmetic::ProductMod::Algebraic") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -1680,15 +1680,15 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
 
         public:
-            ProductModVarBounds(void) : ::Test::Base("Int::Arithmetic::ProductModVar::Bounds") {}
+            ProductModVarBounds() : ::Test::Base("Int::Arithmetic::ProductModVar::Bounds") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -1742,7 +1742,7 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
@@ -1755,7 +1755,7 @@ namespace Test { namespace Int {
                                std::string(s ? "Assignment" : "Failure")),
                   supported(s) {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 TestSpace home;
                 IntVar p(home, 60, 60);
@@ -1783,7 +1783,7 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
@@ -1798,9 +1798,9 @@ namespace Test { namespace Int {
             }
 
         public:
-            ProductModVarAlgebraic(void) : ::Test::Base("Int::Arithmetic::ProductModVar::Algebraic") {}
+            ProductModVarAlgebraic() : ::Test::Base("Int::Arithmetic::ProductModVar::Algebraic") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -1939,15 +1939,15 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
 
         public:
-            ProductModInvalidModulus(void) : ::Test::Base("Int::Arithmetic::ProductMod::InvalidModulus") {}
+            ProductModInvalidModulus() : ::Test::Base("Int::Arithmetic::ProductMod::InvalidModulus") {}
             bool
-            run(void) override {
+            run() override {
                 TestSpace home;
                 Gecode::IntVar y(home, 0, 1);
                 for (int m = 0; m >= -1; m--) {
@@ -3071,7 +3071,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
 
                 const int va[7] = {Gecode::Int::Limits::min,     Gecode::Int::Limits::min + 1, -1, 0, 1,
                                    Gecode::Int::Limits::max - 1, Gecode::Int::Limits::max};

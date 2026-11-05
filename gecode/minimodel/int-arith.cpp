@@ -84,7 +84,7 @@ namespace Gecode { namespace MiniModel {
         ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, const BoolExpr& b0)
             : t(t0), b(b0), n(n0), a_int(0), a(allocate(n0)) {}
         /// Destructor
-        ~ArithNonLinIntExpr(void) override {
+        ~ArithNonLinIntExpr() override {
             if (a != nullptr)
                 heap.free<LinIntExpr>(a, n);
         }
@@ -290,11 +290,11 @@ namespace Gecode { namespace MiniModel {
 
     public:
         ArithNonLinIntExprGuard(ArithNonLinIntExpr* e0) : e(e0) {}
-        ~ArithNonLinIntExprGuard(void) {
+        ~ArithNonLinIntExprGuard() {
             delete e;
         }
         void
-        release(void) {
+        release() {
             e = nullptr;
         }
     };

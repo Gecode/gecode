@@ -70,7 +70,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    DrawingCursor::process_current_node(void) {
+    DrawingCursor::process_current_node() {
         Gist::VisualNode* n = node();
         double parent_x = x - static_cast<double>(n->get_offset());
         double parent_y = y - static_cast<double>(Layout::dist_y) + node_width;

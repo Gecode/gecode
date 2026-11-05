@@ -99,7 +99,7 @@ public:
     }
     /// Copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Partition(*this);
     }
     /// Print solution

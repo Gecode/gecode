@@ -293,7 +293,7 @@ namespace Gecode { namespace Set {
 #endif
 
     bool
-    BndSet::is_consistent(void) const {
+    BndSet::is_consistent() const {
 #ifndef NDEBUG
         if (fst() == nullptr) {
             if (lst() != nullptr || size() != 0) {

@@ -90,7 +90,7 @@ namespace Gecode { namespace Float { namespace Branch {
         return nl;
     }
     forceinline bool
-    ValSelRnd::notice(void) const {
+    ValSelRnd::notice() const {
         return true;
     }
     forceinline void

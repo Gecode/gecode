@@ -41,7 +41,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     forceinline BAB<Tracer>&
-    BAB<Tracer>::Worker::engine(void) const {
+    BAB<Tracer>::Worker::engine() const {
         return static_cast<BAB&>(_engine);
     }
     template <class Tracer>
@@ -72,7 +72,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline bool
-    BAB<Tracer>::Worker::owns_work(void) const {
+    BAB<Tracer>::Worker::owns_work() const {
         return (cur != nullptr) || !path.empty();
     }
 
@@ -150,7 +150,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     forceinline bool
-    BAB<Tracer>::Worker::find(void) {
+    BAB<Tracer>::Worker::find() {
         // Try to find new work (even if there is none)
         for (unsigned int i = 0U; i < engine().workers(); i++) {
             unsigned long int r_d = 0ul;
@@ -182,7 +182,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     Statistics
-    BAB<Tracer>::statistics(void) const {
+    BAB<Tracer>::statistics() const {
         Statistics s;
         for (unsigned int i = 0U; i < workers(); i++)
             s += worker(i)->statistics();
@@ -213,7 +213,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     void
-    BAB<Tracer>::Worker::run(void) {
+    BAB<Tracer>::Worker::run() {
         /*
          * The engine maintains the following invariant:
          *  - If the current space (cur) is not nullptr, the path always points
@@ -399,7 +399,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     NoGoods&
-    BAB<Tracer>::nogoods(void) {
+    BAB<Tracer>::nogoods() {
         NoGoods* ng;
         // Grab wait lock for reset
         m_wait_reset.acquire();
@@ -421,12 +421,12 @@ namespace Gecode { namespace Search { namespace Par {
      * Termination and deletion
      */
     template <class Tracer>
-    BAB<Tracer>::Worker::~Worker(void) {
+    BAB<Tracer>::Worker::~Worker() {
         delete best;
     }
 
     template <class Tracer>
-    BAB<Tracer>::~BAB(void) {
+    BAB<Tracer>::~BAB() {
         terminate();
         delete best;
         heap.rfree(_worker);

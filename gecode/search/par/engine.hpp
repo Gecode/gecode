@@ -41,22 +41,22 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     forceinline Engine<Tracer>&
-    Engine<Tracer>::Worker::engine(void) const {
+    Engine<Tracer>::Worker::engine() const {
         return _engine;
     }
     template <class Tracer>
     forceinline const Options&
-    Engine<Tracer>::opt(void) const {
+    Engine<Tracer>::opt() const {
         return _opt;
     }
     template <class Tracer>
     forceinline unsigned int
-    Engine<Tracer>::workers(void) const {
+    Engine<Tracer>::workers() const {
         return static_cast<unsigned int>(opt().threads);
     }
     template <class Tracer>
     forceinline bool
-    Engine<Tracer>::stopped(void) const {
+    Engine<Tracer>::stopped() const {
         return has_stopped.load(std::memory_order_acquire);
     }
 
@@ -65,12 +65,12 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     forceinline typename Engine<Tracer>::Cmd
-    Engine<Tracer>::cmd(void) const {
+    Engine<Tracer>::cmd() const {
         return _cmd.load(std::memory_order_acquire);
     }
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::block(void) {
+    Engine<Tracer>::block() {
         _cmd.store(C_WAIT, std::memory_order_release);
         Support::Thread::acquire_global_mutex(&_m_wait);
     }
@@ -84,7 +84,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::wait(void) {
+    Engine<Tracer>::wait() {
         _m_wait.acquire();
         _m_wait.release();
     }
@@ -142,7 +142,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     bool
-    Engine<Tracer>::scheduler_grow(void) {
+    Engine<Tracer>::scheduler_grow() {
         bool wake = false;
         while (scheduler_leases < scheduler_requested) {
             unsigned int i = scheduler_select(SchedulerLogical::OWNER, workers());
@@ -254,7 +254,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline bool
-    Engine<Tracer>::scheduler_paused(void) const {
+    Engine<Tracer>::scheduler_paused() const {
         return scheduler_enabled && (WorkerControlAccess::requested(worker_control) == 0U);
     }
 
@@ -313,7 +313,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     forceinline Statistics
-    Engine<Tracer>::Worker::statistics(void) {
+    Engine<Tracer>::Worker::statistics() {
         m.acquire();
         Statistics s = *this;
         m.release();
@@ -325,12 +325,12 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     forceinline bool
-    Engine<Tracer>::signal(void) const {
+    Engine<Tracer>::signal() const {
         return solutions.empty() && (n_busy > 0) && !has_stopped.load(std::memory_order_acquire);
     }
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::idle(void) {
+    Engine<Tracer>::idle() {
         m_search.acquire();
         bool bs = signal();
         n_busy--;
@@ -341,7 +341,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::busy(void) {
+    Engine<Tracer>::busy() {
         m_search.acquire();
         assert(n_busy > 0);
         n_busy++;
@@ -350,7 +350,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline unsigned long long int
-    Engine<Tracer>::run(void) const {
+    Engine<Tracer>::run() const {
         return n_runs.load(std::memory_order_acquire);
     }
 
@@ -373,7 +373,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline bool
-    Engine<Tracer>::work_remains(void) {
+    Engine<Tracer>::work_remains() {
         m_search.acquire();
         bool remains = n_busy > 0;
         m_search.release();
@@ -385,7 +385,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::terminated(void) {
+    Engine<Tracer>::terminated() {
         unsigned int n;
         _m_term.acquire();
         n = --_n_not_terminated;
@@ -398,7 +398,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::ack_terminate(void) {
+    Engine<Tracer>::ack_terminate() {
         _m_term.acquire();
         if (--_n_term_not_ack == 0)
             _e_term_ack.signal();
@@ -407,14 +407,14 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::wait_terminate(void) {
+    Engine<Tracer>::wait_terminate() {
         _m_wait_terminate.acquire();
         _m_wait_terminate.release();
     }
 
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::terminate(void) {
+    Engine<Tracer>::terminate() {
         // Grab the wait mutex for termination
         _m_wait_terminate.acquire();
         // Release all threads
@@ -433,7 +433,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::ack_reset_start(void) {
+    Engine<Tracer>::ack_reset_start() {
         _m_reset.acquire();
         if (--_n_reset_not_ack == 0)
             e_reset_ack_start.signal();
@@ -442,7 +442,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::ack_reset_stop(void) {
+    Engine<Tracer>::ack_reset_stop() {
         _m_reset.acquire();
         if (++_n_reset_not_ack == workers())
             e_reset_ack_stop.signal();
@@ -451,7 +451,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline void
-    Engine<Tracer>::wait_reset(void) {
+    Engine<Tracer>::wait_reset() {
         m_wait_reset.acquire();
         m_wait_reset.release();
     }
@@ -482,7 +482,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     forceinline NoGoods&
-    Engine<Tracer>::Worker::nogoods(void) {
+    Engine<Tracer>::Worker::nogoods() {
         return path;
     }
 
@@ -491,7 +491,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     Space*
-    Engine<Tracer>::next(void) {
+    Engine<Tracer>::next() {
         // Invariant: the worker holds the wait mutex
         m_search.acquire();
         if (!solutions.empty()) {
@@ -544,7 +544,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     Support::Terminator*
-    Engine<Tracer>::Worker::terminator(void) const {
+    Engine<Tracer>::Worker::terminator() const {
         return &_engine;
     }
 
@@ -552,7 +552,7 @@ namespace Gecode { namespace Search { namespace Par {
      * Termination and deletion
      */
     template <class Tracer>
-    Engine<Tracer>::Worker::~Worker(void) {
+    Engine<Tracer>::Worker::~Worker() {
         delete cur;
         path.reset(0);
         tracer.done();
@@ -562,7 +562,7 @@ namespace Gecode { namespace Search { namespace Par {
      * Destructor
      */
     template <class Tracer>
-    Engine<Tracer>::~Engine(void) {
+    Engine<Tracer>::~Engine() {
         while (!solutions.empty())
             delete solutions.pop();
         if (scheduler_worker != nullptr)

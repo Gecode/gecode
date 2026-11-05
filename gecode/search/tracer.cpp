@@ -40,7 +40,7 @@ namespace Gecode {
     StdSearchTracer::StdSearchTracer(std::ostream& os0) : os(os0) {}
 
     void
-    StdSearchTracer::init(void) {
+    StdSearchTracer::init() {
         os << "trace<Search>::init()" << '\n' << std::flush;
         for (unsigned int e = 0U; e < engines(); e++) {
             os << "\t" << e << ": " << t2s[std::to_underlying(engine(e).type())];
@@ -105,11 +105,11 @@ namespace Gecode {
     }
 
     void
-    StdSearchTracer::done(void) {
+    StdSearchTracer::done() {
         os << "trace<Search>::done()" << '\n' << std::flush;
     }
 
-    StdSearchTracer::~StdSearchTracer(void) = default;
+    StdSearchTracer::~StdSearchTracer() = default;
 
     StdSearchTracer StdSearchTracer::def;
 

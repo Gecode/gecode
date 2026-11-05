@@ -110,7 +110,7 @@ namespace Gecode { namespace Search {
         }
         /// Remove incumbent
         void
-        reset(void) {
+        reset() {
             space.reset();
             revision = 0;
         }
@@ -120,15 +120,15 @@ namespace Gecode { namespace Search {
     class Entries : public Support::DynamicStack<Entry, Heap> {
     public:
         /// Initialize
-        Entries(void) : Support::DynamicStack<Entry, Heap>(heap) {}
+        Entries() : Support::DynamicStack<Entry, Heap>(heap) {}
         /// Delete all entries
         void
-        clear(void) {
+        clear() {
             while (!empty())
                 delete pop().space;
         }
         /// Release memory
-        ~Entries(void) {
+        ~Entries() {
             clear();
         }
         /// Sort such that the preferred entry is on top
@@ -153,7 +153,7 @@ namespace Gecode { namespace Search {
         Queue(const Priority& p0) : p(p0) {}
         /// Whether the queue is empty
         bool
-        empty(void) const {
+        empty() const {
             return entries.empty();
         }
         /// Add entry \a e
@@ -165,14 +165,14 @@ namespace Gecode { namespace Search {
         }
         /// Remove and return the preferred entry
         Entry
-        pop(void) {
+        pop() {
             Entry* f = &entries[0];
             std::pop_heap(f, f + entries.entries(), [this](const Entry& a, const Entry& b) { return p(b, a); });
             return entries.pop();
         }
         /// Delete all entries
         void
-        clear(void) {
+        clear() {
             entries.clear();
         }
     };
@@ -346,17 +346,17 @@ namespace Gecode { namespace Search {
                 bucket[b] = -1;
         }
         /// Delete all entries
-        ~Beam(void) {
+        ~Beam() {
             clear();
         }
         /// Return the number of entries
         int
-        size(void) const {
+        size() const {
             return n;
         }
         /// Whether there are no entries
         bool
-        empty(void) const {
+        empty() const {
             return n == 0;
         }
         /// Whether discarded entries could improve an incumbent \a i
@@ -435,7 +435,7 @@ namespace Gecode { namespace Search {
         }
         /// Delete all entries and reset width
         void
-        clear(void) {
+        clear() {
             for (int i = 0; i < n; i++)
                 delete slot[pq[i]].e.space;
             n = 0;

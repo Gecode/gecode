@@ -51,17 +51,17 @@ namespace Gecode { namespace Search {
         /// Initialization
         WorkerToEngine(Space* s, const Options& o);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Return statistics
-        Search::Statistics statistics(void) const override;
+        Search::Statistics statistics() const override;
         /// Check whether engine has been stopped
-        bool stopped(void) const override;
+        bool stopped() const override;
         /// Constrain future solutions to be better than \a b
         void constrain(const Space& b) override;
         /// Reset engine to restart at space \a s
         void reset(Space* s) override;
         /// Return no-goods
-        NoGoods& nogoods(void) override;
+        NoGoods& nogoods() override;
     };
 
     forceinline Space*
@@ -73,17 +73,17 @@ namespace Gecode { namespace Search {
     WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o) : Engine(o, 1U), w(s, o) {}
     template <class Worker>
     Space*
-    WorkerToEngine<Worker>::next(void) {
+    WorkerToEngine<Worker>::next() {
         return w.next();
     }
     template <class Worker>
     Search::Statistics
-    WorkerToEngine<Worker>::statistics(void) const {
+    WorkerToEngine<Worker>::statistics() const {
         return w.statistics();
     }
     template <class Worker>
     bool
-    WorkerToEngine<Worker>::stopped(void) const {
+    WorkerToEngine<Worker>::stopped() const {
         return w.stopped();
     }
     template <class Worker>
@@ -98,7 +98,7 @@ namespace Gecode { namespace Search {
     }
     template <class Worker>
     NoGoods&
-    WorkerToEngine<Worker>::nogoods(void) {
+    WorkerToEngine<Worker>::nogoods() {
         return w.nogoods();
     }
 

@@ -33,7 +33,7 @@
 namespace Gecode {
 
     forceinline
-    SEBs::SEBs(void)
+    SEBs::SEBs()
         : ArgArray<SEB>(0) {}
 
     forceinline

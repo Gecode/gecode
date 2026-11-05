@@ -39,18 +39,18 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
     template <class View>
     forceinline
-    Node<View>::Node(void)
+    Node<View>::Node()
         : min(0) {
         // Must be initialized such that the node is considered unvisited initially
     }
     template <class View>
     forceinline Edge<View>*
-    Node<View>::edge_fst(void) const {
+    Node<View>::edge_fst() const {
         return static_cast<Edge<View>*>(BiLink::next());
     }
     template <class View>
     forceinline Edge<View>*
-    Node<View>::edge_lst(void) const {
+    Node<View>::edge_lst() const {
         return static_cast<Edge<View>*>(static_cast<BiLink*>(const_cast<Node<View>*>(this)));
     }
     template <class View>
@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         : _val(v), _matching(nullptr), _next_val(n) {}
     template <class View>
     forceinline int
-    ValNode<View>::val(void) const {
+    ValNode<View>::val() const {
         return _val;
     }
     template <class View>
@@ -90,17 +90,17 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     }
     template <class View>
     forceinline Edge<View>*
-    ValNode<View>::matching(void) const {
+    ValNode<View>::matching() const {
         return _matching;
     }
     template <class View>
     forceinline ValNode<View>**
-    ValNode<View>::next_val_ref(void) {
+    ValNode<View>::next_val_ref() {
         return &_next_val;
     }
     template <class View>
     forceinline ValNode<View>*
-    ValNode<View>::next_val(void) const {
+    ValNode<View>::next_val() const {
         return _next_val;
     }
     template <class View>
@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
     template <class View>
     forceinline
-    ViewNode<View>::ViewNode(void)
+    ViewNode<View>::ViewNode()
         : _view(View(nullptr)) {}
     template <class View>
     forceinline
@@ -124,37 +124,37 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         : _size(x.size()), _view(x) {}
     template <class View>
     forceinline Edge<View>*
-    ViewNode<View>::val_edges(void) const {
+    ViewNode<View>::val_edges() const {
         return _val_edges;
     }
     template <class View>
     forceinline Edge<View>**
-    ViewNode<View>::val_edges_ref(void) {
+    ViewNode<View>::val_edges_ref() {
         return &_val_edges;
     }
     template <class View>
     forceinline bool
-    ViewNode<View>::fake(void) const {
+    ViewNode<View>::fake() const {
         return _view.varimp() == nullptr;
     }
     template <class View>
     forceinline View
-    ViewNode<View>::view(void) const {
+    ViewNode<View>::view() const {
         return _view;
     }
     template <class View>
     forceinline bool
-    ViewNode<View>::changed(void) const {
+    ViewNode<View>::changed() const {
         return _size != _view.size();
     }
     template <class View>
     forceinline void
-    ViewNode<View>::update(void) {
+    ViewNode<View>::update() {
         _size = _view.size();
     }
     template <class View>
     forceinline bool
-    ViewNode<View>::matched(void) const {
+    ViewNode<View>::matched() const {
         return Node<View>::edge_fst() != Node<View>::edge_lst();
     }
 

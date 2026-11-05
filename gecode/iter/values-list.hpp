@@ -68,7 +68,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ValueListIter(void);
+        ValueListIter();
         /// Copy constructor
         ValueListIter(const ValueListIter& i);
         /// Initialize
@@ -82,21 +82,21 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         /// Reset iterator to start
-        void reset(void);
+        void reset();
         //@}
 
         /// \name Value access
         //@{
         /// Return value
-        int val(void) const;
+        int val() const;
         //@}
 
         /// Destructor
-        ~ValueListIter(void);
+        ~ValueListIter();
     };
 
     forceinline
@@ -104,7 +104,7 @@ namespace Gecode { namespace Iter { namespace Values {
         : Support::BlockAllocator<ValueList, Region>(r), use_cnt(1) {}
 
     forceinline
-    ValueListIter::ValueListIter(void)
+    ValueListIter::ValueListIter()
         : vlio(nullptr) {}
 
     forceinline
@@ -139,7 +139,7 @@ namespace Gecode { namespace Iter { namespace Values {
         return *this;
     }
 
-    forceinline ValueListIter::~ValueListIter(void) {
+    forceinline ValueListIter::~ValueListIter() {
         if (--vlio->use_cnt == 0) {
             Region& r = vlio->allocator();
             vlio->~VLIO();
@@ -153,22 +153,22 @@ namespace Gecode { namespace Iter { namespace Values {
     }
 
     forceinline bool
-    ValueListIter::operator()(void) const {
+    ValueListIter::operator()() const {
         return c != nullptr;
     }
 
     forceinline void
-    ValueListIter::operator++(void) {
+    ValueListIter::operator++() {
         c = c->next;
     }
 
     forceinline void
-    ValueListIter::reset(void) {
+    ValueListIter::reset() {
         c = h;
     }
 
     forceinline int
-    ValueListIter::val(void) const {
+    ValueListIter::val() const {
         return c->val;
     }
 

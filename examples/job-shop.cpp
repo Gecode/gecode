@@ -135,17 +135,17 @@ instances {
     public:
         /// Whether a valid specification has been found
         bool
-        valid(void) const {
+        valid() const {
             return data != nullptr;
         }
         /// Return number of jobs
         int
-        jobs(void) const {
+        jobs() const {
             return data[0];
         }
         /// Return number of machines
         int
-        machines(void) const {
+        machines() const {
             return data[1];
         }
         /// Return machine of step \a j in job \a i
@@ -172,7 +172,7 @@ instances {
         }
         /// Compute lower bound
         int
-        clower(void) const {
+        clower() const {
             int l = 0;
             Region r;
             int* mach = r.alloc<int>(machines());
@@ -192,7 +192,7 @@ instances {
         }
         /// Compute naive upper bound
         int
-        cupper(void) const {
+        cupper() const {
             int u = 0;
             for (int i = 0; i < jobs(); i++)
                 for (int j = 0; j < machines(); j++)
@@ -234,17 +234,17 @@ instances {
         }
         /// Return lower bound
         int
-        lower(void) const {
+        lower() const {
             return l;
         }
         /// Return upper bound
         int
-        upper(void) const {
+        upper() const {
             return u;
         }
         /// Return name
         const char*
-        name(void) const {
+        name() const {
             return n;
         }
     };
@@ -292,42 +292,42 @@ public:
     }
     /// Return whether to print schedule
     bool
-    verbose(void) const {
+    verbose() const {
         return _verbose.value();
     }
     /// Return number of probes
     unsigned int
-    probes(void) const {
+    probes() const {
         return _probes.value();
     }
     /// Return number of failures per probe
     unsigned int
-    fail_probe(void) const {
+    fail_probe() const {
         return _fail_probe.value();
     }
     /// Return time-out for probe
     unsigned int
-    time_probe(void) const {
+    time_probe() const {
         return _time_probe.value();
     }
     /// Return time-out for adjust
     unsigned int
-    time_adjust(void) const {
+    time_adjust() const {
         return _time_adjust.value();
     }
     /// Return time-out for solve
     unsigned int
-    time_solve(void) const {
+    time_solve() const {
         return _time_solve.value();
     }
     /// Return tie-breaking factor
     double
-    tbf(void) const {
+    tbf() const {
         return _tbf.value();
     }
     /// Print help text for list of instances
     void
-    help(void) override {
+    help() override {
         InstanceOptions::help();
         std::cerr << "\tAvailable instances:" << '\n' << "\t\t";
         for (int i = 1; ::name[i] != nullptr; i++) {
@@ -383,7 +383,7 @@ public:
     }
     /// Do not overload machines
     void
-    post_no_overload(void) {
+    post_no_overload() {
         // Number of jobs and machines/steps
         int n = spec.jobs(), m = spec.machines();
 
@@ -408,7 +408,7 @@ public:
     }
     /// Return cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return makespan;
     }
     /// Constructor for cloning \a s
@@ -487,7 +487,7 @@ public:
     JobShopProbe(JobShopProbe& s) : JobShopBase(s) {}
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new JobShopProbe(*this);
     }
 };
@@ -648,7 +648,7 @@ public:
           baction(s.baction), ichb(s.ichb), bchb(s.bchb), rnd(s.rnd) {}
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new JobShopSolve(*this);
     }
 };
@@ -678,7 +678,7 @@ public:
         return ts->stop(s, o);
     }
     /// Destructor
-    ~FailTimeStop(void) override {
+    ~FailTimeStop() override {
         delete fs;
         delete ts;
     }

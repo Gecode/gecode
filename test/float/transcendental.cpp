@@ -66,7 +66,7 @@ namespace Test { namespace Float {
             }
             /// Check one exact example through the standard posting/assignment tests
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 Assignment* a = new RandomAssignment(arity, dom, 1, _rand);
                 a->set(0, input);
                 if (!shared)
@@ -93,7 +93,7 @@ namespace Test { namespace Float {
         /// Register the exact powers and their logarithmic forms
         class PowBaseExamples {
         public:
-            PowBaseExamples(void) {
+            PowBaseExamples() {
                 for (int logarithm = 0; logarithm < 2; logarithm++) {
                     (void)new PowBaseConsistency(2.0, 3.0, 8.0, logarithm, false, true);
                     (void)new PowBaseConsistency(2.0, 3.0, 7.0, logarithm, false, false);

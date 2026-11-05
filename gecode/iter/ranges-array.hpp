@@ -63,7 +63,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Array(void) = default;
+        Array() = default;
         /// Initialize with \a n ranges from \a r
         Array(Range* r, unsigned int n);
         /// Initialize with \a n ranges from \a r
@@ -77,21 +77,21 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         /// Reset iterator to start from beginning
-        void reset(void);
+        void reset();
         //@}
 
         /// \name %Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -118,29 +118,29 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
 
     forceinline void
-    Array::operator++(void) {
+    Array::operator++() {
         c++;
     }
     forceinline bool
-    Array::operator()(void) const {
+    Array::operator()() const {
         return c < n;
     }
 
     forceinline void
-    Array::reset(void) {
+    Array::reset() {
         c = 0U;
     }
 
     forceinline int
-    Array::min(void) const {
+    Array::min() const {
         return r[c].min;
     }
     forceinline int
-    Array::max(void) const {
+    Array::max() const {
         return r[c].max;
     }
     forceinline unsigned int
-    Array::width(void) const {
+    Array::width() const {
         return static_cast<unsigned int>(r[c].max - r[c].min) + 1;
     }
 

@@ -70,7 +70,7 @@ namespace Gecode { namespace Gist {
         int max_depth;
 
         /// Constructor
-        Statistics(void) : solutions(0), failures(0), choices(0), undetermined(1), max_depth(0) {}
+        Statistics() : solutions(0), failures(0), choices(0), undetermined(1), max_depth(0) {}
     };
 
     class SpaceNode;
@@ -109,7 +109,7 @@ namespace Gecode { namespace Gist {
         void set_distance(unsigned int d);
 
         /// Return distance from copy
-        unsigned int get_distance(void) const;
+        unsigned int get_distance() const;
 
         /// Set status flag
         void set_flag(int flag, bool value);
@@ -152,13 +152,13 @@ namespace Gecode { namespace Gist {
         Space* get_space(NodeAllocator& na, BestNode* cur_best, int c_d, int a_d);
 
         /// Return working space (if present).
-        const Space* get_working_space(void) const;
+        const Space* get_working_space() const;
 
         /// Clear working space and copy (if present and this is not the root).
         void purge(const NodeAllocator& na);
 
         /// Free allocated memory
-        void dispose(void);
+        void dispose();
 
         /// Return whether this node is the currently best solution
         bool is_current_best(BestNode* cur_best);
@@ -176,29 +176,29 @@ namespace Gecode { namespace Gist {
         int get_number_of_child_nodes(NodeAllocator& na, BestNode* cur_best, Statistics& stats, int c_d, int a_d);
 
         /// Return current status of the node
-        NodeStatus get_status(void) const;
+        NodeStatus get_status() const;
 
         /// Return whether this node still has open children
-        bool is_open(void);
+        bool is_open();
         /// Return whether the subtree of this node has any failed children
-        bool has_failed_children(void);
+        bool has_failed_children();
         /// Return whether the subtree of this node has any solved children
-        bool has_solved_children(void);
+        bool has_solved_children();
         /// Return whether the subtree of this node has any open children
-        bool has_open_children(void);
+        bool has_open_children();
         /// Return number of open children
         int get_no_of_open_children(const NodeAllocator& na);
         /// Set number of open children to \a n
         void set_no_of_open_children(int n);
         /// Return whether the node has a copy
-        bool has_copy(void);
+        bool has_copy();
         /// Return whether the node has a working space
-        bool has_working_space(void);
+        bool has_working_space();
 
         /// Return alternative number of this node
         int get_alternative(const NodeAllocator& na) const;
         /// Return choice of this node
-        const Choice* get_choice(void);
+        const Choice* get_choice();
     };
 
 }} // namespace Gecode::Gist

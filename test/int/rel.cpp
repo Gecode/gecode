@@ -606,7 +606,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 for (IntRelTypes irts; irts(); ++irts) {
                     for (IntPropLevels ipls; ipls(); ++ipls) {

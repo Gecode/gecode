@@ -46,7 +46,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("Issue168",
                                    "predicate fzn_sort(array [int] of var int: x, array [int] of var int: y);\n\
 var 2..4: D :: output_var;\n\

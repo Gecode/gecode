@@ -40,7 +40,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Collect>
     forceinline
-    Slave<Collect>::Completion::Completion(void) {
+    Slave<Collect>::Completion::Completion() {
         // A slave has not been submitted yet.  This initial signal lets the
         // first submission use the same consume-before-reuse handshake as all
         // subsequent submissions.
@@ -49,18 +49,18 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Collect>
     forceinline void
-    Slave<Collect>::Completion::terminated(void) {
+    Slave<Collect>::Completion::terminated() {
         done.signal();
     }
 
     template <class Collect>
     forceinline void
-    Slave<Collect>::Completion::wait(void) {
+    Slave<Collect>::Completion::wait() {
         done.wait();
     }
 
     forceinline
-    CollectAll::CollectAll(void)
+    CollectAll::CollectAll()
         : solutions(heap) {}
     forceinline bool
     CollectAll::add(Space* s, Slave<CollectAll>*) {
@@ -73,20 +73,20 @@ namespace Gecode { namespace Search { namespace Par {
         return false;
     }
     forceinline bool
-    CollectAll::empty(void) const {
+    CollectAll::empty() const {
         return solutions.empty();
     }
     forceinline Space*
     CollectAll::get(Slave<CollectAll>*&) {
         return solutions.pop();
     }
-    forceinline CollectAll::~CollectAll(void) {
+    forceinline CollectAll::~CollectAll() {
         while (!solutions.empty())
             delete solutions.pop();
     }
 
     forceinline
-    CollectBest::CollectBest(void)
+    CollectBest::CollectBest()
         : b(nullptr), reporter(nullptr) {}
     forceinline bool
     CollectBest::add(Space* s, Slave<CollectBest>* r) {
@@ -118,7 +118,7 @@ namespace Gecode { namespace Search { namespace Par {
         return true;
     }
     forceinline bool
-    CollectBest::empty(void) const {
+    CollectBest::empty() const {
         return reporter == nullptr;
     }
     forceinline Space*
@@ -128,7 +128,7 @@ namespace Gecode { namespace Search { namespace Par {
         reporter = nullptr;
         return b->clone();
     }
-    forceinline CollectBest::~CollectBest(void) {
+    forceinline CollectBest::~CollectBest() {
         delete b;
     }
 
@@ -147,17 +147,17 @@ namespace Gecode { namespace Search { namespace Par {
         : Support::Runnable(false), master(m), slave(s), stop(so) {}
     template <class Collect>
     forceinline Statistics
-    Slave<Collect>::statistics(void) const {
+    Slave<Collect>::statistics() const {
         return slave->statistics();
     }
     template <class Collect>
     forceinline bool
-    Slave<Collect>::stopped(void) const {
+    Slave<Collect>::stopped() const {
         return slave->stopped();
     }
     template <class Collect>
     forceinline bool
-    Slave<Collect>::limited(void) const {
+    Slave<Collect>::limited() const {
 #ifdef GECODE_HAS_EXPERIMENTAL
         return slave->limited();
 #else
@@ -166,17 +166,17 @@ namespace Gecode { namespace Search { namespace Par {
     }
     template <class Collect>
     forceinline Support::Terminator*
-    Slave<Collect>::terminator(void) const {
+    Slave<Collect>::terminator() const {
         return const_cast<Completion*>(&completion);
     }
     template <class Collect>
     forceinline void
-    Slave<Collect>::wait(void) {
+    Slave<Collect>::wait() {
         completion.wait();
     }
     template <class Collect>
     forceinline void
-    Slave<Collect>::wake(void) {
+    Slave<Collect>::wake() {
         static_cast<PortfolioStop*>(stop)->wake();
     }
     template <class Collect>
@@ -185,7 +185,7 @@ namespace Gecode { namespace Search { namespace Par {
         slave->constrain(b);
     }
     template <class Collect>
-    Slave<Collect>::~Slave(void) {
+    Slave<Collect>::~Slave() {
         delete slave;
         delete stop;
     }
@@ -248,7 +248,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Collect>
     void
-    Slave<Collect>::run(void) {
+    Slave<Collect>::run() {
         Space* s;
         do {
             s = slave->next();
@@ -257,7 +257,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Collect>
     Space*
-    PBS<Collect>::next(void) {
+    PBS<Collect>::next() {
         m.acquire();
         if (solutions.empty())
             slave_stop.store(false, std::memory_order_release);
@@ -309,13 +309,13 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Collect>
     bool
-    PBS<Collect>::stopped(void) const {
+    PBS<Collect>::stopped() const {
         return slave_stop.load(std::memory_order_acquire);
     }
 
     template <class Collect>
     Statistics
-    PBS<Collect>::statistics(void) const {
+    PBS<Collect>::statistics() const {
         assert(n_busy == 0);
         Statistics s(stat);
         for (unsigned int i = 0U; i < n_slaves; i++)
@@ -337,7 +337,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     template <class Collect>
-    PBS<Collect>::~PBS(void) {
+    PBS<Collect>::~PBS() {
         // A report can make n_busy zero before Slave::run and Thread::Run::exec
         // have returned.  Wait for the completion handshake before deleting the
         // PBS-owned slaves.

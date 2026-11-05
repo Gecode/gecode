@@ -33,17 +33,17 @@
 namespace Gecode { namespace Int { namespace ViewValGraph {
 
     forceinline
-    BiLink::BiLink(void) {
+    BiLink::BiLink() {
         _prev = this;
         _next = this;
     }
 
     forceinline BiLink*
-    BiLink::prev(void) const {
+    BiLink::prev() const {
         return _prev;
     }
     forceinline BiLink*
-    BiLink::next(void) const {
+    BiLink::next() const {
         return _next;
     }
     forceinline void
@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         _next = l;
     }
     forceinline void
-    BiLink::unlink(void) {
+    BiLink::unlink() {
         BiLink* p = _prev;
         BiLink* n = _next;
         p->_next = n;
@@ -71,15 +71,15 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     }
 
     forceinline void
-    BiLink::mark(void) {
+    BiLink::mark() {
         _next = nullptr;
     }
     forceinline bool
-    BiLink::marked(void) const {
+    BiLink::marked() const {
         return _next == nullptr;
     }
     forceinline bool
-    BiLink::empty(void) const {
+    BiLink::empty() const {
         return _prev == this;
     }
 

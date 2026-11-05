@@ -53,8 +53,8 @@ namespace Gecode { namespace Gist {
         canvas->setPalette(my_palette);
         canvas->setObjectName("canvas");
 
-        connect(scroll_area->horizontalScrollBar(), SIGNAL(valueChanged(int)), canvas, SLOT(scroll(void)));
-        connect(scroll_area->verticalScrollBar(), SIGNAL(valueChanged(int)), canvas, SLOT(scroll(void)));
+        connect(scroll_area->horizontalScrollBar(), SIGNAL(valueChanged(int)), canvas, SLOT(scroll()));
+        connect(scroll_area->verticalScrollBar(), SIGNAL(valueChanged(int)), canvas, SLOT(scroll()));
 
         QVBoxLayout* sa_layout = new QVBoxLayout();
         sa_layout->setContentsMargins(0, 0, 0, 0);
@@ -63,7 +63,7 @@ namespace Gecode { namespace Gist {
 
         connect(canvas, SIGNAL(solution(const Space*)), this, SIGNAL(solution(const Space*)));
 
-        connect(canvas, SIGNAL(search_finished(void)), this, SIGNAL(search_finished(void)));
+        connect(canvas, SIGNAL(search_finished()), this, SIGNAL(search_finished()));
 
         QPixmap my_pic;
         my_pic.loadFromData(zoom_to_fit_icon, sizeof(zoom_to_fit_icon));
@@ -80,7 +80,7 @@ namespace Gecode { namespace Gist {
 
         inspect_before_fp = new QAction("Inspect before fixpoint", this);
         inspect_before_fp->setShortcut(QKeySequence("Ctrl+Return"));
-        connect(inspect_before_fp, SIGNAL(triggered()), canvas, SLOT(inspect_before_fp(void)));
+        connect(inspect_before_fp, SIGNAL(triggered()), canvas, SLOT(inspect_before_fp()));
 
         stop = new QAction("Stop search", this);
         stop->setShortcut(QKeySequence("Esc"));
@@ -499,7 +499,7 @@ namespace Gecode { namespace Gist {
         select_comparator(ncs);
     }
 
-    Gist::~Gist(void) {
+    Gist::~Gist() {
         delete canvas;
     }
 
@@ -648,7 +648,7 @@ namespace Gecode { namespace Gist {
     }
 
     bool
-    Gist::finish(void) {
+    Gist::finish() {
         return canvas->finish();
     }
 
@@ -696,7 +696,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    Gist::populate_bookmarks_menu(void) {
+    Gist::populate_bookmarks_menu() {
         bookmarks_menu->clear();
         bookmarks_menu->addAction(bookmark_node);
         bookmarks_menu->addSeparator();
@@ -704,7 +704,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    Gist::populate_inspectors(void) {
+    Gist::populate_inspectors() {
         inspect_node_menu->clear();
         inspect_node_menu->addAction(inspect);
         inspect_node_menu->addSeparator();
@@ -724,11 +724,11 @@ namespace Gecode { namespace Gist {
         canvas->set_auto_zoom(b);
     }
     bool
-    Gist::get_auto_hide_failed(void) {
+    Gist::get_auto_hide_failed() {
         return canvas->get_auto_hide_failed();
     }
     bool
-    Gist::get_auto_zoom(void) {
+    Gist::get_auto_zoom() {
         return canvas->get_auto_zoom();
     }
     void
@@ -740,7 +740,7 @@ namespace Gecode { namespace Gist {
         canvas->set_refresh_pause(i);
     }
     bool
-    Gist::get_smooth_scroll_and_zoom(void) {
+    Gist::get_smooth_scroll_and_zoom() {
         return canvas->get_smooth_scroll_and_zoom();
     }
     void
@@ -748,7 +748,7 @@ namespace Gecode { namespace Gist {
         canvas->set_smooth_scroll_and_zoom(b);
     }
     bool
-    Gist::get_move_during_search(void) {
+    Gist::get_move_during_search() {
         return canvas->get_move_during_search();
     }
     void
@@ -761,11 +761,11 @@ namespace Gecode { namespace Gist {
     }
 
     int
-    Gist::get_cd(void) {
+    Gist::get_cd() {
         return canvas->c_d;
     }
     int
-    Gist::get_ad(void) {
+    Gist::get_ad() {
         return canvas->a_d;
     }
 
@@ -774,12 +774,12 @@ namespace Gecode { namespace Gist {
         canvas->set_show_copies(b);
     }
     bool
-    Gist::get_show_copies(void) {
+    Gist::get_show_copies() {
         return canvas->get_show_copies();
     }
 
     void
-    Gist::show_stats(void) {
+    Gist::show_stats() {
         node_stat_inspector->show_stats();
         canvas->emit_status_changed();
     }

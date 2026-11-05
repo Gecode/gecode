@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("SharedArrayElement",
                                    "predicate count(array [int] of var int: x,var int: y,var int: c);\n\
 array [1..6] of int: X_INTRODUCED_25_ = [0,0,1,1,0,1];\n\

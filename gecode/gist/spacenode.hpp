@@ -67,7 +67,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline NodeStatus
-    SpaceNode::get_status(void) const {
+    SpaceNode::get_status() const {
         return static_cast<NodeStatus>((status_bits & status_mask) >> 20);
     }
 
@@ -80,7 +80,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline unsigned int
-    SpaceNode::get_distance(void) const {
+    SpaceNode::get_distance() const {
         return status_bits & distance_mask;
     }
 
@@ -107,7 +107,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline const Space*
-    SpaceNode::get_working_space(void) const {
+    SpaceNode::get_working_space() const {
         assert(copy != nullptr);
         if (Support::marked(copy))
             return static_cast<Space*>(Support::unmark(copy));
@@ -132,32 +132,32 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    SpaceNode::is_open(void) {
+    SpaceNode::is_open() {
         return ((get_status() == UNDETERMINED) || get_flag(HAS_OPEN_CHILDREN));
     }
 
     forceinline bool
-    SpaceNode::has_failed_children(void) {
+    SpaceNode::has_failed_children() {
         return get_flag(HAS_FAILED_CHILDREN);
     }
 
     forceinline bool
-    SpaceNode::has_solved_children(void) {
+    SpaceNode::has_solved_children() {
         return get_flag(HAS_SOLVED_CHILDREN);
     }
 
     forceinline bool
-    SpaceNode::has_open_children(void) {
+    SpaceNode::has_open_children() {
         return get_flag(HAS_OPEN_CHILDREN);
     }
 
     forceinline bool
-    SpaceNode::has_copy(void) {
+    SpaceNode::has_copy() {
         return copy != nullptr;
     }
 
     forceinline bool
-    SpaceNode::has_working_space(void) {
+    SpaceNode::has_working_space() {
         return copy != nullptr && Support::marked(copy);
     }
 
@@ -174,7 +174,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline const Choice*
-    SpaceNode::get_choice(void) {
+    SpaceNode::get_choice() {
         return choice;
     }
 

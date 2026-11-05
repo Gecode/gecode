@@ -46,10 +46,10 @@ namespace {
 
     class PassingSmokeTest : public Test::Base {
     public:
-        PassingSmokeTest(void) : Test::Base("Smoke::A-Pass") {}
+        PassingSmokeTest() : Test::Base("Smoke::A-Pass") {}
 
         bool
-        run(void) override {
+        run() override {
             passing_runs++;
             return true;
         }
@@ -57,10 +57,10 @@ namespace {
 
     class FailingSmokeTest : public Test::Base {
     public:
-        FailingSmokeTest(void) : Test::Base("Smoke::B-Fail", Test::TestTags::sweep()) {}
+        FailingSmokeTest() : Test::Base("Smoke::B-Fail", Test::TestTags::sweep()) {}
 
         bool
-        run(void) override {
+        run() override {
             failing_runs++;
             return false;
         }
@@ -70,9 +70,9 @@ namespace {
     int replay_runs = 0;
     class ReplaySmokeTest : public Test::Base {
     public:
-        ReplaySmokeTest(void) : Test::Base("Smoke::Replay", Test::TestTags()) {}
+        ReplaySmokeTest() : Test::Base("Smoke::Replay", Test::TestTags()) {}
         bool
-        run(void) override {
+        run() override {
             if (++replay_runs == 1) {
                 // Leave a state above the seed setter's modulus for the next iteration.
                 _rand.seed(44488);
@@ -113,7 +113,7 @@ namespace {
 } // namespace
 
 int
-main(void) {
+main() {
     std::string list_output;
     if (!require(run_and_capture({"public-runner-smoke", "-list"}, list_output) == EXIT_SUCCESS,
                  "-list should succeed")) {

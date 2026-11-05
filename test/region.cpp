@@ -49,10 +49,10 @@ namespace Test {
 
     public:
         /// Initialize test
-        Region(void) : Test::Base("Region") {}
+        Region() : Test::Base("Region") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             for (int i = n_repeat; i--;) {
                 Gecode::Region r;
                 for (int j = n_blocks; j--;)
@@ -68,13 +68,13 @@ namespace Test {
     class EmptySpace : public Gecode::Space {
     public:
         /// Initialize space
-        EmptySpace(void) = default;
+        EmptySpace() = default;
         /// Constructor for cloning \a s
         // NOLINTNEXTLINE(modernize-use-equals-default)
         EmptySpace(EmptySpace& s) : Gecode::Space(s) {}
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new EmptySpace(*this);
         }
     };
@@ -83,10 +83,10 @@ namespace Test {
     class SpaceReallocEmpty : public Test::Base {
     public:
         /// Initialize test
-        SpaceReallocEmpty(void) : Test::Base("Space::Realloc::Empty") {}
+        SpaceReallocEmpty() : Test::Base("Space::Realloc::Empty") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             EmptySpace home;
             int* p = home.realloc<int>(static_cast<int*>(nullptr), 0, 4);
             for (int i = 0; i < 4; i++)
@@ -103,10 +103,10 @@ namespace Test {
     class SpaceReallocPointers : public Test::Base {
     public:
         /// Initialize test
-        SpaceReallocPointers(void) : Test::Base("Space::Realloc::Pointers") {}
+        SpaceReallocPointers() : Test::Base("Space::Realloc::Pointers") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             EmptySpace home;
             int values[2] = {0, 1};
             int** p = home.alloc<int*>(2);
@@ -129,7 +129,7 @@ namespace Test {
         /// Where to count destructions
         int* destroyed = nullptr;
         /// Count destruction
-        ~CountedObject(void) {
+        ~CountedObject() {
             if (destroyed != nullptr)
                 (*destroyed)++;
         }
@@ -153,10 +153,10 @@ namespace Test {
     class SpaceReallocShrink : public Test::Base {
     public:
         /// Initialize test
-        SpaceReallocShrink(void) : Test::Base("Space::Realloc::Shrink") {}
+        SpaceReallocShrink() : Test::Base("Space::Realloc::Shrink") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             EmptySpace home;
             int* p = home.alloc<int>(8);
             int* tail = p + 4;
@@ -171,10 +171,10 @@ namespace Test {
     class RegionReallocShrink : public Test::Base {
     public:
         /// Initialize test
-        RegionReallocShrink(void) : Test::Base("Region::Realloc::Shrink") {}
+        RegionReallocShrink() : Test::Base("Region::Realloc::Shrink") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             Gecode::Region r;
             return shrink_destroys_tail(r);
         }
@@ -186,10 +186,10 @@ namespace Test {
     class AllocatorCompare : public Test::Base {
     public:
         /// Initialize test
-        AllocatorCompare(void) : Test::Base("Allocator::Compare") {}
+        AllocatorCompare() : Test::Base("Allocator::Compare") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             EmptySpace home, other_home;
             const space_allocator<int> space_alloc(home);
@@ -210,10 +210,10 @@ namespace Test {
     class ArchiveEmpty : public Test::Base {
     public:
         /// Initialize test
-        ArchiveEmpty(void) : Test::Base("Archive::Empty") {}
+        ArchiveEmpty() : Test::Base("Archive::Empty") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             Gecode::Archive empty;
             Gecode::Archive copy(empty);
             if (copy.size() != 0)

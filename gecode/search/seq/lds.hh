@@ -59,19 +59,19 @@ namespace Gecode { namespace Search { namespace Seq {
 
         public:
             /// Default constructor
-            Node(void);
+            Node();
             /// Initialize with node \a s, choice \a c, and alternative \a a
             Node(Space* s, const Choice* c, unsigned int a, unsigned int nid);
             /// Return space
-            Space* space(void) const;
+            Space* space() const;
             /// Return choice
-            const Choice* choice(void) const;
+            const Choice* choice() const;
             /// Return next alternative
-            unsigned int alt(void) const;
+            unsigned int alt() const;
             /// Return node identifier
-            unsigned int nid(void) const;
+            unsigned int nid() const;
             /// %Set next alternative
-            void next(void);
+            void next();
         };
         /// Search tracer
         Tracer tracer;
@@ -92,13 +92,13 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Reset with space \a s and discrepancy \a d
         void reset(Space* s, unsigned int d);
         /// Return statistics
-        Statistics statistics(void) const;
+        Statistics statistics() const;
         /// Destructor
-        ~Probe(void);
+        ~Probe();
         /// %Search for next solution
         Space* next(const Options& o);
         /// Test whether probing is done
-        bool done(void) const;
+        bool done() const;
     };
 
     /// Limited discrepancy search engine implementation
@@ -120,17 +120,17 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize for space \a s with options \a o
         LDS(Space* s, const Options& o);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Return statistics
-        Statistics statistics(void) const override;
+        Statistics statistics() const override;
         /// Constrain future solutions to be better than \a b (should never be called)
         void constrain(const Space& b) override;
         /// Reset engine to restart at space \a s
         void reset(Space* s) override;
         /// Check whether engine has been stopped
-        bool stopped(void) const override;
+        bool stopped() const override;
         /// Destructor
-        ~LDS(void) override;
+        ~LDS() override;
     };
 
 }}} // namespace Gecode::Search::Seq

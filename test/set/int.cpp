@@ -515,7 +515,7 @@ namespace Test { namespace Set {
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new WeightsFixture(*this);
             }
         };
@@ -524,10 +524,10 @@ namespace Test { namespace Set {
         class WeightsEmpty : public Base {
         public:
             /// Create and register test
-            WeightsEmpty(void) : Base("Set::Int::Weights::Empty") {}
+            WeightsEmpty() : Base("Set::Int::Weights::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 IntArgs none;
                 WeightsFixture empty(IntSet::empty, -2);
                 weights(empty, none, none, empty.x, empty.y);

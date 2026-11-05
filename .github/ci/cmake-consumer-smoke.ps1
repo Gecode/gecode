@@ -34,7 +34,7 @@ target_link_libraries(consumer_a PRIVATE Gecode::gecode)
 '@ | Set-Content -Encoding utf8 (Join-Path $work "a\CMakeLists.txt")
 @'
 #include <gecode/support/config.hpp>
-int main(void) { return 0; }
+int main() { return 0; }
 '@ | Set-Content -Encoding utf8 (Join-Path $work "a\main.cpp")
 
 @'
@@ -46,7 +46,7 @@ target_link_libraries(consumer_b PRIVATE Gecode::gecodedriver)
 '@ | Set-Content -Encoding utf8 (Join-Path $work "b\CMakeLists.txt")
 @'
 #include <gecode/driver.hh>
-int main(void) {
+int main() {
   Gecode::Options options("consumer_b");
   return options.model();
 }
@@ -130,7 +130,7 @@ target_link_libraries(manual_consumer PRIVATE "${GECODE_SUPPORT_LIBRARY}")
 '@ | Set-Content -Encoding utf8 (Join-Path $work "manual\CMakeLists.txt")
 @'
 #include <gecode/support.hh>
-int main(void) {
+int main() {
   (void) Gecode::Support::hwrnd();
   return 0;
 }

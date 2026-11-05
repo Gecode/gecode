@@ -107,7 +107,7 @@ namespace Gecode { namespace Set { namespace Branch {
         return 0;
     }
     forceinline bool
-    ValSelRnd::notice(void) const {
+    ValSelRnd::notice() const {
         return true;
     }
     forceinline void

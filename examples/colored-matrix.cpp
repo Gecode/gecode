@@ -73,7 +73,7 @@ public:
 
     /// Return height
     int
-    height(void) const {
+    height() const {
         if (_size.value() == 0U)
             return static_cast<int>(_height.value());
         else
@@ -81,7 +81,7 @@ public:
     }
     /// Return width
     int
-    width(void) const {
+    width() const {
         if (_size.value() == 0U)
             return static_cast<int>(_width.value());
         else
@@ -89,27 +89,27 @@ public:
     }
     /// Return number of colors
     int
-    colors(void) const {
+    colors() const {
         return static_cast<int>(_colors.value());
     }
     /// Return how to implement not all equals
     int
-    not_all_equal(void) const {
+    not_all_equal() const {
         return _not_all_equal.value();
     }
     /// Return how to implement same or 0
     int
-    same_or_0(void) const {
+    same_or_0() const {
         return _same_or_0.value();
     }
     /// Return how to implement distinct except 0
     int
-    distinct_except_0(void) const {
+    distinct_except_0() const {
         return _distinct_except_0.value();
     }
     /// Return how to implement distinct except 0
     int
-    no_monochrome_rectangle(void) const {
+    no_monochrome_rectangle() const {
         return _no_monochrome_rectangle.value();
     }
 };
@@ -432,7 +432,7 @@ public:
 
     /// Return cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return max_color;
     }
 
@@ -460,7 +460,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new ColoredMatrix(*this);
     }
 };

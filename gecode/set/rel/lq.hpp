@@ -68,15 +68,15 @@ namespace Gecode { namespace Set { namespace Rel {
             /// Offset for each element (0=lower bound, 1=upper bound)
             unsigned int yoff;
             /// Move iterator to next element
-            void operator++(void);
+            void operator++();
             /// Default constructor
-            CSIter(void) = default;
+            CSIter() = default;
             /// Constructor
             CSIter(CharacteristicSets& cs0, unsigned int xoff0, unsigned int yoff0);
             /// Test if iterator is finished
-            bool operator()(void) const;
+            bool operator()() const;
             /// Value of current iterator position
-            int val(void) const;
+            int val() const;
         };
 
     public:
@@ -112,7 +112,7 @@ namespace Gecode { namespace Set { namespace Rel {
         ModEvent ygq(unsigned int i, bool j);
 
         /// Return size of combined upper bounds
-        unsigned int size(void) const;
+        unsigned int size() const;
 
         /// Prune \a x and \a y using computed bounds
         template <class View0, class View1>
@@ -131,7 +131,7 @@ namespace Gecode { namespace Set { namespace Rel {
             b.clear(i);
     }
     forceinline unsigned int
-    CharacteristicSets::size(void) const {
+    CharacteristicSets::size() const {
         return xsize;
     }
 
@@ -142,17 +142,17 @@ namespace Gecode { namespace Set { namespace Rel {
             i++;
     }
     forceinline void
-    CharacteristicSets::CSIter::operator++(void) {
+    CharacteristicSets::CSIter::operator++() {
         i++;
         while ((i < cs->xsize) && !cs->get(xoff + 2 * i + yoff))
             i++;
     }
     forceinline bool
-    CharacteristicSets::CSIter::operator()(void) const {
+    CharacteristicSets::CSIter::operator()() const {
         return i < cs->xsize;
     }
     forceinline int
-    CharacteristicSets::CSIter::val(void) const {
+    CharacteristicSets::CSIter::val() const {
         return cs->ub[i];
     }
 

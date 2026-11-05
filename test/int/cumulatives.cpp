@@ -81,7 +81,7 @@ namespace Test { namespace Int {
             }
             /// Create copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new Ass(*this);
             }
         };
@@ -107,7 +107,7 @@ namespace Test { namespace Int {
             }
             /// %Test whether all assignments have been iterated
             bool
-            has_more(void) const override {
+            has_more() const override {
                 return nxt != nullptr;
             }
             /// Move to next assignment
@@ -125,7 +125,7 @@ namespace Test { namespace Int {
                 return cur->x[i].val();
             }
             /// Destructor
-            ~CumulativeAssignment(void) override {
+            ~CumulativeAssignment() override {
                 delete cur;
                 delete nxt;
                 delete e;
@@ -207,7 +207,7 @@ namespace Test { namespace Int {
             }
             /// Create first assignment
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 assert(arity == 4 * ntasks);
                 return new CumulativeAssignment(arity, dom);
             }
@@ -275,15 +275,15 @@ namespace Test { namespace Int {
                     producer.update(*this, fixture.producer);
                 }
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new Fixture(*this);
                 }
             };
 
         public:
-            ProfileContribution(void) : Test::Base("Cumulatives::ProfileContribution", TestTags::check()) {}
+            ProfileContribution() : Test::Base("Cumulatives::ProfileContribution", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 Fixture upper(true), lower(false);
                 return (upper.status() != Gecode::SS_FAILED) && (lower.status() != Gecode::SS_FAILED) &&
                        (upper.producer.min() == -10) && (upper.producer.max() == -8) && (lower.producer.min() == 8) &&
@@ -294,7 +294,7 @@ namespace Test { namespace Int {
         /// An empty producer must cancel before it can affect another task
         class EmptyProfile : public Test {
         public:
-            EmptyProfile(void) : Test(TestTags::check(), "Cumulatives::EmptyProfile", 1, -2, -1) {}
+            EmptyProfile() : Test(TestTags::check(), "Cumulatives::EmptyProfile", 1, -2, -1) {}
             bool
             solution(const Assignment&) const override {
                 return true;

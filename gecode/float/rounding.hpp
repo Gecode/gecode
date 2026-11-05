@@ -62,7 +62,7 @@ namespace Gecode { namespace Float {
     } // namespace Control87
 
     forceinline RoundingBase::Mode
-    RoundingBase::current_mode(void) {
+    RoundingBase::current_mode() {
         return _control87(0, 0);
     }
     forceinline void
@@ -70,22 +70,22 @@ namespace Gecode { namespace Float {
         _control87(m, Control87::fields);
     }
     forceinline void
-    RoundingBase::upward(void) {
+    RoundingBase::upward() {
         _control87(Control87::base_settings | _RC_UP, Control87::fields);
     }
     forceinline void
-    RoundingBase::downward(void) {
+    RoundingBase::downward() {
         _control87(Control87::base_settings | _RC_DOWN, Control87::fields);
     }
     forceinline void
-    RoundingBase::to_nearest(void) {
+    RoundingBase::to_nearest() {
         _control87(Control87::base_settings | _RC_NEAR, Control87::fields);
     }
 
 #else
 
     forceinline RoundingBase::Mode
-    RoundingBase::current_mode(void) {
+    RoundingBase::current_mode() {
         return std::fegetround();
     }
     forceinline void
@@ -93,33 +93,33 @@ namespace Gecode { namespace Float {
         std::fesetround(m);
     }
     forceinline void
-    RoundingBase::upward(void) {
+    RoundingBase::upward() {
         std::fesetround(FE_UPWARD);
     }
     forceinline void
-    RoundingBase::downward(void) {
+    RoundingBase::downward() {
         std::fesetround(FE_DOWNWARD);
     }
     forceinline void
-    RoundingBase::to_nearest(void) {
+    RoundingBase::to_nearest() {
         std::fesetround(FE_TONEAREST);
     }
 
 #endif
 
     forceinline void
-    RoundingBase::init(void) {
+    RoundingBase::init() {
 #ifndef GECODE_FLOAT_DIRECTED_PER_OPERATION
         upward();
 #endif
     }
 
     forceinline
-    Rounding::Rounding(void)
+    Rounding::Rounding()
         : saved(current_mode()) {
         init();
     }
-    forceinline Rounding::~Rounding(void) {
+    forceinline Rounding::~Rounding() {
         restore_mode(saved);
     }
 

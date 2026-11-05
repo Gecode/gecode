@@ -61,16 +61,16 @@ namespace Gecode {
         /// Float variable (potentially)
         FloatVar x_float;
         /// Default constructor
-        Node(void);
+        Node();
         /// Generate linear terms from expression
         GECODE_MINIMODEL_EXPORT
         void fill(Home home, Float::Linear::Term*& tf, const FloatVal& m, FloatVal& d) const;
         /// Generate linear terms for expressions
         FloatVal fill(Home home, Float::Linear::Term* tf) const;
         /// Decrement reference count and possibly free memory
-        bool decrement(void);
+        bool decrement();
         /// Destructor
-        ~Node(void);
+        ~Node();
         /// Memory management
         static void* operator new(size_t size);
         /// Memory management
@@ -82,10 +82,10 @@ namespace Gecode {
      *
      */
     forceinline
-    LinFloatExpr::Node::Node(void)
+    LinFloatExpr::Node::Node()
         : use(1) {}
 
-    forceinline LinFloatExpr::Node::~Node(void) {
+    forceinline LinFloatExpr::Node::~Node() {
         switch (t) {
         case NT_SUM:
             if (n_float > 0)
@@ -109,7 +109,7 @@ namespace Gecode {
     }
 
     bool
-    LinFloatExpr::Node::decrement(void) {
+    LinFloatExpr::Node::decrement() {
         if (--use == 0) {
             if ((l != nullptr) && l->decrement())
                 delete l;
@@ -130,7 +130,7 @@ namespace Gecode {
     }
 
     NonLinFloatExpr*
-    LinFloatExpr::nlfe(void) const {
+    LinFloatExpr::nlfe() const {
         return n->t == NT_NONLIN ? n->sum.ne : nullptr;
     }
 
@@ -230,7 +230,7 @@ namespace Gecode {
         return x;
     }
 
-    LinFloatExpr::LinFloatExpr(void) : n(new Node) {
+    LinFloatExpr::LinFloatExpr() : n(new Node) {
         n->n_float = 0;
         n->t = NT_VAR;
         n->l = n->r = nullptr;
@@ -336,7 +336,7 @@ namespace Gecode {
         return *this;
     }
 
-    LinFloatExpr::~LinFloatExpr(void) {
+    LinFloatExpr::~LinFloatExpr() {
         if (n->decrement())
             delete n;
     }

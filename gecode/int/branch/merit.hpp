@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
     template <class View>
     forceinline bool
-    MeritAFCSize<View>::notice(void) const {
+    MeritAFCSize<View>::notice() const {
         return false;
     }
     template <class View>
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
     template <class View>
     forceinline bool
-    MeritActionSize<View>::notice(void) const {
+    MeritActionSize<View>::notice() const {
         return true;
     }
     template <class View>
@@ -159,7 +159,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
     template <class View>
     forceinline bool
-    MeritCHBSize<View>::notice(void) const {
+    MeritCHBSize<View>::notice() const {
         return true;
     }
     template <class View>

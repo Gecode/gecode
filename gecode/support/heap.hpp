@@ -64,7 +64,7 @@ namespace Gecode {
     class Heap {
     public:
         /// Default constructor (ensuring that only a single instance is created)
-        Heap(void) = default;
+        Heap() = default;
         /// \name Typed allocation routines
         //@{
         /**
@@ -375,7 +375,7 @@ namespace Gecode {
         size_t _cur = 0;
 
     public:
-        size_t peak(void);
+        size_t peak();
 #endif
         /// Allocate memory from heap (disabled)
         static void* operator new(size_t s) = delete;
@@ -713,7 +713,7 @@ namespace Gecode {
 
 #ifdef GECODE_PEAKHEAP
     forceinline size_t
-    Heap::peak(void) {
+    Heap::peak() {
         _m.acquire();
         size_t ret = _peak;
         _m.release();

@@ -182,13 +182,13 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Radiotherapy(*this);
     }
 
     /// Cost to be minimized
     IntVar
-    cost(void) const override {
+    cost() const override {
         return _cost;
     }
 

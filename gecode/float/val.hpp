@@ -62,29 +62,29 @@ namespace Gecode {
     }
 
     forceinline FloatNum
-    FloatVal::min(void) const {
+    FloatVal::min() const {
         return x.lower();
     }
     forceinline FloatNum
-    FloatVal::max(void) const {
+    FloatVal::max() const {
         return x.upper();
     }
     forceinline FloatNum
-    FloatVal::size(void) const {
+    FloatVal::size() const {
         return Float::width(x);
     }
     forceinline FloatNum
-    FloatVal::med(void) const {
+    FloatVal::med() const {
         Float::Rounding r;
         return r.median(x.lower(), x.upper());
     }
 
     forceinline bool
-    FloatVal::tight(void) const {
+    FloatVal::tight() const {
         return (Float::singleton(x) || (nextafter(x.lower(), x.upper()) == x.upper()));
     }
     forceinline bool
-    FloatVal::singleton(void) const {
+    FloatVal::singleton() const {
         return Float::singleton(x);
     }
     forceinline bool
@@ -92,7 +92,7 @@ namespace Gecode {
         return Float::in(n, x);
     }
     forceinline bool
-    FloatVal::zero_in(void) const {
+    FloatVal::zero_in() const {
         return Float::zero_in(x);
     }
 
@@ -102,17 +102,17 @@ namespace Gecode {
         return h;
     }
     forceinline FloatVal
-    FloatVal::pi_half(void) {
+    FloatVal::pi_half() {
         FloatVal p(FloatValImpType::pi_half());
         return p;
     }
     forceinline FloatVal
-    FloatVal::pi(void) {
+    FloatVal::pi() {
         FloatVal p(FloatValImpType::pi());
         return p;
     }
     forceinline FloatVal
-    FloatVal::pi_twice(void) {
+    FloatVal::pi_twice() {
         FloatVal p(FloatValImpType::pi_twice());
         return p;
     }

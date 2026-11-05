@@ -128,7 +128,7 @@ namespace Test { namespace Float {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 FloatNum step = 0.7;
                 for (int c = -4; c <= 4; c++) {

@@ -96,7 +96,7 @@ namespace Gecode { namespace Float { namespace Branch {
         return x.afc() / static_cast<double>(x.size());
     }
     forceinline bool
-    MeritAFCSize::notice(void) const {
+    MeritAFCSize::notice() const {
         return false;
     }
     forceinline void
@@ -117,7 +117,7 @@ namespace Gecode { namespace Float { namespace Branch {
         return action[i] / static_cast<double>(x.size());
     }
     forceinline bool
-    MeritActionSize::notice(void) const {
+    MeritActionSize::notice() const {
         return true;
     }
     forceinline void
@@ -137,7 +137,7 @@ namespace Gecode { namespace Float { namespace Branch {
         return chb[i] / static_cast<double>(x.size());
     }
     forceinline bool
-    MeritCHBSize::notice(void) const {
+    MeritCHBSize::notice() const {
         return true;
     }
     forceinline void

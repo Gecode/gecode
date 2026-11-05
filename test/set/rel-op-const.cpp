@@ -326,7 +326,7 @@ namespace Test { namespace Set {
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new EmptyFixture(*this);
             }
             /// Test whether the space is solved with \a y equal to \a result
@@ -356,10 +356,10 @@ namespace Test { namespace Set {
         class Empty : public Base {
         public:
             /// Create and register test
-            Empty(void) : Base("Set::RelOpConst::Empty") {}
+            Empty() : Base("Set::RelOpConst::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 for (SetOpType op : {SOT_UNION, SOT_DISJOINT_UNION, SOT_INTERSECTION}) {
                     if (!is_result_constant<SetVarArgs>(op) || !is_result_constant<IntVarArgs>(op))
                         return false;
@@ -373,7 +373,7 @@ namespace Test { namespace Set {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 for (SetRelTypes srts; srts(); ++srts) {
                     for (SetOpTypes sots; sots(); ++sots) {

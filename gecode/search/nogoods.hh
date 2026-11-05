@@ -41,7 +41,7 @@ namespace Gecode { namespace Search {
     class GECODE_VTABLE_EXPORT NoNGL : public NGL {
     public:
         /// Constructor for creation
-        NoNGL(void) = default;
+        NoNGL() = default;
         /// Constructor for creation
         NoNGL(Space& home);
         /// Constructor for cloning \a ngl

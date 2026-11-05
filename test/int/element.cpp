@@ -233,7 +233,7 @@ namespace Test { namespace Int {
         class VarBoolVar : public Test {
         public:
             /// Create and register test
-            VarBoolVar(void) : Test("Element::Var::Bool::Var", 6, -1, 3, false) {}
+            VarBoolVar() : Test("Element::Var::Bool::Var", 6, -1, 3, false) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -306,8 +306,7 @@ namespace Test { namespace Int {
 
         public:
             /// Create and register test
-            MatrixIntIntVarXY(void)
-                : Test("Element::Matrix::Int::IntVar::XY", 3, 0, 5, false), tm({0, 1, 2, 3, 4, 5}) {}
+            MatrixIntIntVarXY() : Test("Element::Matrix::Int::IntVar::XY", 3, 0, 5, false), tm({0, 1, 2, 3, 4, 5}) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -336,7 +335,7 @@ namespace Test { namespace Int {
 
         public:
             /// Create and register test
-            MatrixIntIntVarXX(void) : Test("Element::Matrix::Int::IntVar::XX", 2, 0, 3, false), tm({0, 1, 2, 3}) {}
+            MatrixIntIntVarXX() : Test("Element::Matrix::Int::IntVar::XX", 2, 0, 3, false), tm({0, 1, 2, 3}) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -365,7 +364,7 @@ namespace Test { namespace Int {
 
         public:
             /// Create and register test
-            MatrixIntBoolVarXY(void) : Test("Element::Matrix::Int::BoolVar::XY", 3, 0, 3, false), tm({0, 1, 1, 0}) {}
+            MatrixIntBoolVarXY() : Test("Element::Matrix::Int::BoolVar::XY", 3, 0, 3, false), tm({0, 1, 1, 0}) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -394,7 +393,7 @@ namespace Test { namespace Int {
 
         public:
             /// Create and register test
-            MatrixIntBoolVarXX(void) : Test("Element::Matrix::Int::BoolVar::XX", 2, 0, 3, false), tm({0, 1, 1, 0}) {}
+            MatrixIntBoolVarXX() : Test("Element::Matrix::Int::BoolVar::XX", 2, 0, 3, false), tm({0, 1, 1, 0}) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -419,7 +418,7 @@ namespace Test { namespace Int {
         class MatrixIntVarIntVarXY : public Test {
         public:
             /// Create and register test
-            MatrixIntVarIntVarXY(void) : Test("Element::Matrix::IntVar::IntVar::XY", 3 + 4, 0, 3, false) {}
+            MatrixIntVarIntVarXY() : Test("Element::Matrix::IntVar::IntVar::XY", 3 + 4, 0, 3, false) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -455,7 +454,7 @@ namespace Test { namespace Int {
         class MatrixIntVarIntVarXX : public Test {
         public:
             /// Create and register test
-            MatrixIntVarIntVarXX(void) : Test("Element::Matrix::IntVar::IntVar::XX", 2 + 4, 0, 3, false) {}
+            MatrixIntVarIntVarXX() : Test("Element::Matrix::IntVar::IntVar::XX", 2 + 4, 0, 3, false) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -491,7 +490,7 @@ namespace Test { namespace Int {
         class MatrixBoolVarBoolVarXY : public Test {
         public:
             /// Create and register test
-            MatrixBoolVarBoolVarXY(void) : Test("Element::Matrix::BoolVar::BoolVar::XY", 3 + 4, 0, 1, false) {}
+            MatrixBoolVarBoolVarXY() : Test("Element::Matrix::BoolVar::BoolVar::XY", 3 + 4, 0, 1, false) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -525,7 +524,7 @@ namespace Test { namespace Int {
         class MatrixBoolVarBoolVarXX : public Test {
         public:
             /// Create and register test
-            MatrixBoolVarBoolVarXX(void) : Test("Element::Matrix::BoolVar::BoolVar::XX", 2 + 4, 0, 1, false) {}
+            MatrixBoolVarBoolVarXX() : Test("Element::Matrix::BoolVar::BoolVar::XX", 2 + 4, 0, 1, false) {}
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -569,7 +568,7 @@ namespace Test { namespace Int {
                     (void)new IntIntVar(Test::str(idx) + "::" + Test::str(val) + "::idx", c, idx - 8, idx - 1);
             }
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 IntArgs ic1({-1, 1, -3, 3, -4});
                 IntArgs ic2({-1, 1, -1, 1, -1, 1, 0, 0});
@@ -659,7 +658,7 @@ namespace Test { namespace Int {
             /// Boolean result
             Gecode::BoolVar b;
             /// Create fixture
-            MatrixFixture(void) : x(*this, 0, 1), y(*this, 0, 1), z(*this, 0, 1), b(*this, 0, 1) {}
+            MatrixFixture() : x(*this, 0, 1), y(*this, 0, 1), z(*this, 0, 1), b(*this, 0, 1) {}
             /// Constructor for cloning \a fixture
             MatrixFixture(MatrixFixture& fixture) : Gecode::Space(fixture) {
                 x.update(*this, fixture.x);
@@ -669,7 +668,7 @@ namespace Test { namespace Int {
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new MatrixFixture(*this);
             }
         };
@@ -710,10 +709,10 @@ namespace Test { namespace Int {
         class MatrixInvalid : public Base {
         public:
             /// Create and register test
-            MatrixInvalid(void) : Base("Int::Element::Matrix::Invalid") {}
+            MatrixInvalid() : Base("Int::Element::Matrix::Invalid") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using Gecode::Int::ArgumentSizeMismatch;
                 using Gecode::Int::TooFewArguments;
                 return is_rejected_by_all<TooFewArguments>(0, 0, 0) && is_rejected_by_all<TooFewArguments>(0, 0, 5) &&

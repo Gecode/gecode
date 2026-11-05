@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
     forceinline bool
-    DomCtrl<View>::available(void) {
+    DomCtrl<View>::available() {
         return g;
     }
 
@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
     ExecStatus
-    DomCtrl<View>::sync(void) {
+    DomCtrl<View>::sync() {
         g.purge();
         return g.sync() ? ES_OK : ES_FAILED;
     }

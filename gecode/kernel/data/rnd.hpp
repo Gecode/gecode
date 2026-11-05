@@ -52,7 +52,7 @@ namespace Gecode {
             /// Initialize generator with seed \a s
             IMP(unsigned int s);
             /// Return seed
-            unsigned int seed(void) const;
+            unsigned int seed() const;
             /// Set seed to \a s
             void seed(unsigned int s);
             /// Returns a random integer from the interval \f$[0\ldots n)\f$
@@ -64,7 +64,7 @@ namespace Gecode {
             /// Returns a random integer from the interval \f$[0\ldots n)\f$
             long long int operator()(long long int n);
             /// Delete implemenentation
-            ~IMP(void) override;
+            ~IMP() override;
         };
         /// Set the current seed to \a s (initializes if needed)
         void _seed(unsigned int s);
@@ -72,7 +72,7 @@ namespace Gecode {
     public:
         /// Default constructor that does not initialize the generator
         GECODE_KERNEL_EXPORT
-        Rnd(void) = default;
+        Rnd() = default;
         /// Initialize from generator \a r
         GECODE_KERNEL_EXPORT
         Rnd(const Rnd& r) = default;
@@ -81,7 +81,7 @@ namespace Gecode {
         Rnd& operator=(const Rnd& r);
         /// Destructor
         GECODE_KERNEL_EXPORT
-        ~Rnd(void) = default;
+        ~Rnd() = default;
         /// Initialize with seed \a s
         GECODE_KERNEL_EXPORT
         explicit Rnd(unsigned int s);
@@ -90,12 +90,12 @@ namespace Gecode {
         void seed(unsigned int s);
         /// Set current seed based on time (initializes if needed)
         GECODE_KERNEL_EXPORT
-        void time(void);
+        void time();
         /// Set current seed to hardware-based random number (initializes if needed)
         GECODE_KERNEL_EXPORT
-        void hw(void);
+        void hw();
         /// Return current seed
-        unsigned int seed(void) const;
+        unsigned int seed() const;
         /// Returns a random integer from the interval \f$[0\ldots n)\f$
         unsigned int operator()(unsigned int n);
         /// Returns a random integer from the interval \f$[0\ldots n)\f$
@@ -107,7 +107,7 @@ namespace Gecode {
     };
 
     forceinline unsigned int
-    Rnd::IMP::seed(void) const {
+    Rnd::IMP::seed() const {
         unsigned int s;
         const_cast<Rnd::IMP&>(*this).m.acquire();
         s = rg.seed();
@@ -154,7 +154,7 @@ namespace Gecode {
     }
 
     forceinline unsigned int
-    Rnd::seed(void) const {
+    Rnd::seed() const {
         const IMP* i = static_cast<const IMP*>(object());
         return i->seed();
     }

@@ -499,7 +499,7 @@ namespace Test { namespace Int {
         class ITEBool : public Test {
         public:
             /// Construct and register test
-            ITEBool(void) : Test("ITE::Bool", 4, 0, 1, false) {}
+            ITEBool() : Test("ITE::Bool", 4, 0, 1, false) {}
             /// Check whether \a x is solution
             bool
             solution(const Assignment& x) const override {
@@ -520,7 +520,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 for (BoolOpTypes bots; bots(); ++bots) {
                     (void)new BinXYZ(bots.bot());

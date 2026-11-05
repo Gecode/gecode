@@ -51,7 +51,7 @@ namespace Gecode {
         /// Constructor for cloning \a a
         ViewAdvisor(Space& home, ViewAdvisor<View>& a);
         /// Access view
-        View view(void) const;
+        View view() const;
         /// Replace view (also replaces subscription to view)
         void view(Space& home, View y);
         /// Delete advisor
@@ -74,7 +74,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline View
-    ViewAdvisor<View>::view(void) const {
+    ViewAdvisor<View>::view() const {
         return x;
     }
     template <class View>

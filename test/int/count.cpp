@@ -412,7 +412,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 for (IntRelTypes irts; irts(); ++irts) {
                     (void)new IntInt(irts.irt());
                     (void)new SetInt(irts.irt());

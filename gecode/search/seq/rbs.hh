@@ -67,9 +67,9 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Return true if meta engine must be stopped
         bool stop(const Statistics& s, const Options& o) override;
         /// Return current restart count
-        unsigned long int restarts(void) const;
+        unsigned long int restarts() const;
         /// Increment current restart count
-        void restart(void);
+        void restart();
         /// Add no-goods to meta statistics
         void nogood(unsigned long int n);
         /// Test master status with meta statistics
@@ -79,9 +79,9 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Update statistics
         void update(const Search::Statistics& s);
         /// Return whether the engine has been stopped
-        bool enginestopped(void) const;
+        bool enginestopped() const;
         /// Return statistics for the meta engine
-        Statistics metastatistics(void) const;
+        Statistics metastatistics() const;
     };
 
     /// Engine for restart-based search
@@ -110,15 +110,15 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Constructor
         RBS(Space* s, RestartStop* stop0, Engine* e0, const Search::Statistics& stat, const Options& o, bool best);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Return statistics
-        Statistics statistics(void) const override;
+        Statistics statistics() const override;
         /// Check whether engine has been stopped
-        bool stopped(void) const override;
+        bool stopped() const override;
         /// Constrain future solutions to be better than \a b
         void constrain(const Space& b) override;
         /// Destructor
-        ~RBS(void) override;
+        ~RBS() override;
     };
 
 }}} // namespace Gecode::Search::Seq

@@ -53,7 +53,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new IntTestSpace(*this);
         }
     };
@@ -71,7 +71,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new BoolTestSpace(*this);
         }
     };
@@ -91,7 +91,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new SetTestSpace(*this);
         }
     };
@@ -113,7 +113,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new FloatTestSpace(*this);
         }
     };
@@ -157,7 +157,7 @@ namespace Test { namespace Assign {
         : Base("Int::Assign::" + s), arity(a), dom(d) {}
 
     bool
-    IntTest::run(void) {
+    IntTest::run() {
         using namespace Gecode;
         IntTestSpace* root = new IntTestSpace(arity, dom);
         post(*root, root->x);
@@ -217,7 +217,7 @@ namespace Test { namespace Assign {
     BoolTest::BoolTest(const std::string& s, int a) : Base("Bool::Assign::" + s), arity(a) {}
 
     bool
-    BoolTest::run(void) {
+    BoolTest::run() {
         using namespace Gecode;
         BoolTestSpace* root = new BoolTestSpace(arity);
         post(*root, root->x);
@@ -295,7 +295,7 @@ namespace Test { namespace Assign {
         : Base("Set::Assign::" + s), arity(a), dom(d) {}
 
     bool
-    SetTest::run(void) {
+    SetTest::run() {
         using namespace Gecode;
         SetTestSpace* root = new SetTestSpace(arity, dom);
         post(*root, root->x);
@@ -392,7 +392,7 @@ namespace Test { namespace Assign {
         : Base("Float::Assign::" + s), arity(a), dom(d) {}
 
     bool
-    FloatTest::run(void) {
+    FloatTest::run() {
         using namespace Gecode;
         FloatTestSpace* root = new FloatTestSpace(arity, dom);
         post(*root, root->x);

@@ -272,7 +272,7 @@ namespace Test { namespace Int {
             /// Reification variable
             Gecode::BoolVar b;
             /// Create fixture
-            EmptyFixture(void) : y(*this, -2, 2), b(*this, 0, 1) {}
+            EmptyFixture() : y(*this, -2, 2), b(*this, 0, 1) {}
             /// Constructor for cloning \a fixture
             EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
                 y.update(*this, fixture.y);
@@ -280,7 +280,7 @@ namespace Test { namespace Int {
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new EmptyFixture(*this);
             }
             /// Test whether the space is solved with \a b equal to \a val
@@ -294,10 +294,10 @@ namespace Test { namespace Int {
         class Empty : public Base {
         public:
             /// Create and register test
-            Empty(void) : Base("Int::Linear::Empty") {}
+            Empty() : Base("Int::Linear::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 IntVarArgs x;
                 BoolVarArgs bx;
@@ -321,7 +321,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 {
                     IntSet d1(-2, 2);

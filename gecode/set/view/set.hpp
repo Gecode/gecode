@@ -56,15 +56,15 @@ namespace Gecode { namespace Set {
      */
 
     forceinline unsigned int
-    SetView::glb_size(void) const {
+    SetView::glb_size() const {
         return x->glb_size();
     }
     forceinline unsigned int
-    SetView::lub_size(void) const {
+    SetView::lub_size() const {
         return x->lub_size();
     }
     forceinline unsigned int
-    SetView::unknown_size(void) const {
+    SetView::unknown_size() const {
         return x->lub_size() - x->glb_size();
     }
     forceinline bool
@@ -76,19 +76,19 @@ namespace Gecode { namespace Set {
         return x->known_out(i);
     }
     forceinline unsigned int
-    SetView::card_min(void) const {
+    SetView::card_min() const {
         return x->card_min();
     }
     forceinline unsigned int
-    SetView::card_max(void) const {
+    SetView::card_max() const {
         return x->card_max();
     }
     forceinline int
-    SetView::lub_min(void) const {
+    SetView::lub_min() const {
         return x->lub_min();
     }
     forceinline int
-    SetView::lub_max(void) const {
+    SetView::lub_max() const {
         return x->lub_max();
     }
     forceinline int
@@ -96,11 +96,11 @@ namespace Gecode { namespace Set {
         return x->lub_min_n(n);
     }
     forceinline int
-    SetView::glb_min(void) const {
+    SetView::glb_min() const {
         return x->glb_min();
     }
     forceinline int
-    SetView::glb_max(void) const {
+    SetView::glb_max() const {
         return x->glb_max();
     }
 
@@ -211,7 +211,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void);
+        LubRanges();
         /// Initialize with ranges for view \a x
         LubRanges(const SetView& x);
         /// Initialize with ranges for view \a x
@@ -221,7 +221,7 @@ namespace Gecode { namespace Set {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    LubRanges<SetView>::LubRanges(void) {}
+    LubRanges<SetView>::LubRanges() {}
 
     forceinline
     LubRanges<SetView>::LubRanges(const SetView& x)
@@ -242,7 +242,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void);
+        GlbRanges();
         /// Initialize with ranges for view \a x
         GlbRanges(const SetView& x);
         /// Initialize with ranges for view \a x
@@ -251,7 +251,7 @@ namespace Gecode { namespace Set {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    GlbRanges<SetView>::GlbRanges(void) {}
+    GlbRanges<SetView>::GlbRanges() {}
 
     forceinline
     GlbRanges<SetView>::GlbRanges(const SetView& x)

@@ -35,7 +35,7 @@
 namespace Gecode {
 
     forceinline
-    FloatVarBranch::FloatVarBranch(void)
+    FloatVarBranch::FloatVarBranch()
         : s(SEL_NONE) {}
 
     forceinline
@@ -67,7 +67,7 @@ namespace Gecode {
         : VarBranch<FloatVar>(std::move(mf), std::move(t)), s(s0) {}
 
     forceinline FloatVarBranch::Select
-    FloatVarBranch::select(void) const {
+    FloatVarBranch::select() const {
         return s;
     }
 
@@ -100,7 +100,7 @@ namespace Gecode {
     }
 
     inline FloatVarBranch
-    FLOAT_VAR_NONE(void) {
+    FLOAT_VAR_NONE() {
         return FloatVarBranch(FloatVarBranch::SEL_NONE, nullptr);
     }
 

@@ -43,10 +43,10 @@ namespace Test { namespace FlatZinc { namespace {
     class UniformIntInvalidRange : public Base {
     public:
         /// Create and register test
-        UniformIntInvalidRange(void) : Base("FlatZinc::on_restart::uniform_int_invalid_range") {}
+        UniformIntInvalidRange() : Base("FlatZinc::on_restart::uniform_int_invalid_range") {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             std::stringstream source(R"FZN(
 predicate gecode_on_restart_uniform_int(int: low,int: high,var int: out);
 var 0..1: y;
@@ -86,7 +86,7 @@ solve satisfy;
         }
         /// Return whether all scripted chunks were consumed
         bool
-        done(void) const {
+        done() const {
             return next == size;
         }
     };
@@ -95,10 +95,10 @@ solve satisfy;
     class WideUniformInt : public Base {
     public:
         /// Create and register test
-        WideUniformInt(void) : Base("FlatZinc::on_restart::uniform_int_wide_endpoints") {}
+        WideUniformInt() : Base("FlatZinc::on_restart::uniform_int_wide_endpoints") {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             {
                 const unsigned int chunks[] = {(1U << 31) - 1U, (1U << 31) - 1U, 1U, 0U};
                 ScriptedRandom random(chunks, 4);
@@ -126,7 +126,7 @@ solve satisfy;
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("on_restart::last_val_int",
                                    R"FZN(
 predicate gecode_on_restart_status(var int: s);

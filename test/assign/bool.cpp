@@ -87,7 +87,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new BoolOrderSpace(*this);
         }
     };
@@ -116,7 +116,7 @@ namespace Test { namespace Assign {
         BoolTieBreak(int n0) : Base("Bool::Assign::TieBreak::" + std::to_string(n0)), n(n0) {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             TieBreak<BoolVarBranch> vars(BOOL_VAR_MERIT_MAX(&bool_merit_at<4>));
             if (n > 1)
@@ -142,10 +142,10 @@ namespace Test { namespace Assign {
     class BoolVarSelection : public Base {
     public:
         /// Create and register test
-        BoolVarSelection(void) : Base("Bool::Assign::VarSelection") {}
+        BoolVarSelection() : Base("Bool::Assign::VarSelection") {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             BoolOrderSpace* s = new BoolOrderSpace(1);
             assign(*s, s->x, BOOL_VAR_MERIT_MAX(&bool_merit_at<4>), BOOL_ASSIGN_MAX());

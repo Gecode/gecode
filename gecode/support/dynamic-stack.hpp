@@ -49,25 +49,25 @@ namespace Gecode { namespace Support {
         /// Elements on stack
         T* stack;
         /// Resize stack (increase size)
-        void resize(void);
+        void resize();
 
     public:
         /// Initialize stack with \a n elements
         DynamicStack(A& a, int n = 64);
         /// Release memory
-        ~DynamicStack(void);
+        ~DynamicStack();
 
         /// Test whether stack is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Return number of entries currently on stack
-        int entries(void) const;
+        int entries() const;
 
         /// Pop topmost element from stack and return it
-        T pop(void);
+        T pop();
         /// Return element on top of stack
-        T& top(void) const;
+        T& top() const;
         /// Return element that has just been popped
-        T& last(void) const;
+        T& last() const;
         /// Push element \a x on top of stack
         void push(const T& x);
 
@@ -98,7 +98,7 @@ namespace Gecode { namespace Support {
 
     template <class T, class A>
     void
-    DynamicStack<T, A>::resize(void) {
+    DynamicStack<T, A>::resize() {
         int nl = (limit * 3) / 2;
         stack = a.template realloc<T>(stack, limit, nl);
         limit = nl;
@@ -110,25 +110,25 @@ namespace Gecode { namespace Support {
         : a(a0), limit(n), tos(0), stack(a.template alloc<T>(n)) {}
 
     template <class T, class A>
-    forceinline DynamicStack<T, A>::~DynamicStack(void) {
+    forceinline DynamicStack<T, A>::~DynamicStack() {
         a.free(stack, limit);
     }
 
     template <class T, class A>
     forceinline T
-    DynamicStack<T, A>::pop(void) {
+    DynamicStack<T, A>::pop() {
         return stack[--tos];
     }
 
     template <class T, class A>
     forceinline T&
-    DynamicStack<T, A>::top(void) const {
+    DynamicStack<T, A>::top() const {
         return stack[tos - 1];
     }
 
     template <class T, class A>
     forceinline T&
-    DynamicStack<T, A>::last(void) const {
+    DynamicStack<T, A>::last() const {
         return stack[tos];
     }
 
@@ -142,13 +142,13 @@ namespace Gecode { namespace Support {
 
     template <class T, class A>
     forceinline bool
-    DynamicStack<T, A>::empty(void) const {
+    DynamicStack<T, A>::empty() const {
         return tos == 0;
     }
 
     template <class T, class A>
     forceinline int
-    DynamicStack<T, A>::entries(void) const {
+    DynamicStack<T, A>::entries() const {
         return tos;
     }
 

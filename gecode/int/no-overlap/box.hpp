@@ -50,23 +50,23 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     }
     template <class Dim, int n>
     forceinline int
-    ManBox<Dim, n>::dim(void) {
+    ManBox<Dim, n>::dim() {
         return n;
     }
 
     template <class Dim, int n>
     forceinline bool
-    ManBox<Dim, n>::mandatory(void) const {
+    ManBox<Dim, n>::mandatory() const {
         return true;
     }
     template <class Dim, int n>
     forceinline bool
-    ManBox<Dim, n>::excluded(void) const {
+    ManBox<Dim, n>::excluded() const {
         return false;
     }
     template <class Dim, int n>
     forceinline bool
-    ManBox<Dim, n>::optional(void) const {
+    ManBox<Dim, n>::optional() const {
         return false;
     }
 
@@ -149,17 +149,17 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     }
     template <class Dim, int n>
     forceinline bool
-    OptBox<Dim, n>::mandatory(void) const {
+    OptBox<Dim, n>::mandatory() const {
         return o.one();
     }
     template <class Dim, int n>
     forceinline bool
-    OptBox<Dim, n>::excluded(void) const {
+    OptBox<Dim, n>::excluded() const {
         return o.zero();
     }
     template <class Dim, int n>
     forceinline bool
-    OptBox<Dim, n>::optional(void) const {
+    OptBox<Dim, n>::optional() const {
         return o.none();
     }
 

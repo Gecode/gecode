@@ -68,13 +68,13 @@ namespace Gecode { namespace Kernel {
             HeapChunk* hc;
         } heap;
         /// A mutex for access
-        GECODE_KERNEL_EXPORT static Support::Mutex& m(void);
+        GECODE_KERNEL_EXPORT static Support::Mutex& m();
 
     public:
         /// Initialize
-        SharedMemory(void);
+        SharedMemory();
         /// Destructor
-        ~SharedMemory(void);
+        ~SharedMemory();
         /// \name Heap management
         //@
         /// Return heap chunk, preferable of size \a s, but at least of size \a l
@@ -103,13 +103,13 @@ namespace Gecode {
 
     public:
         /// Use uninitialized
-        FreeList(void) = default;
+        FreeList() = default;
         /// Initialize with next freelist object \a n
         FreeList(FreeList* n);
         /// Return next freelist object
-        FreeList* next(void) const;
+        FreeList* next() const;
         /// Return pointer to next link in freelist object
-        FreeList** next_ref(void);
+        FreeList** next_ref();
         /// Set next freelist object to \a n
         void next(FreeList* n);
     };
@@ -150,7 +150,7 @@ namespace Gecode { namespace Kernel {
          */
         void* alloc(SharedMemory& sm, size_t s);
         /// Get the memory area for subscriptions
-        void* subscriptions(void) const;
+        void* subscriptions() const;
 
     private:
         /// Start of free lists
@@ -190,11 +190,11 @@ namespace Gecode { namespace Kernel {
      */
 
     forceinline
-    SharedMemory::SharedMemory(void) {
+    SharedMemory::SharedMemory() {
         heap.n_hc = 0;
         heap.hc = nullptr;
     }
-    forceinline SharedMemory::~SharedMemory(void) {
+    forceinline SharedMemory::~SharedMemory() {
         while (heap.hc != nullptr) {
             HeapChunk* hc = heap.hc;
             heap.hc = static_cast<HeapChunk*>(hc->next);
@@ -250,12 +250,12 @@ namespace Gecode {
         : _next(n) {}
 
     forceinline FreeList*
-    FreeList::next(void) const {
+    FreeList::next() const {
         return _next;
     }
 
     forceinline FreeList**
-    FreeList::next_ref(void) {
+    FreeList::next_ref() {
         return &_next;
     }
 
@@ -298,7 +298,7 @@ namespace Gecode { namespace Kernel {
     }
 
     forceinline void*
-    MemoryManager::subscriptions(void) const {
+    MemoryManager::subscriptions() const {
         return &cur_hc->area[0];
     }
 

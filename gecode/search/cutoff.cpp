@@ -40,20 +40,20 @@
 namespace Gecode { namespace Search {
 
     unsigned long long int
-    CutoffConstant::operator()(void) const {
+    CutoffConstant::operator()() const {
         return c;
     }
     unsigned long long int
-    CutoffConstant::operator++(void) {
+    CutoffConstant::operator++() {
         return c;
     }
 
     unsigned long long int
-    CutoffLinear::operator()(void) const {
+    CutoffLinear::operator()() const {
         return n;
     }
     unsigned long long int
-    CutoffLinear::operator++(void) {
+    CutoffLinear::operator++() {
         n += scale;
         return n;
     }
@@ -62,36 +62,36 @@ namespace Gecode { namespace Search {
         1, 1, 2, 1, 1, 2, 4, 1, 1, 2, 1, 1, 2, 4, 8, 1, 1, 2, 1, 1, 2, 4, 1, 1, 2, 1, 1, 2, 4, 8,  16, 1,
         1, 2, 1, 1, 2, 4, 1, 1, 2, 1, 1, 2, 4, 8, 1, 1, 2, 1, 1, 2, 4, 1, 1, 2, 1, 1, 2, 4, 8, 16, 32};
     unsigned long long int
-    CutoffLuby::operator()(void) const {
+    CutoffLuby::operator()() const {
         return scale * luby(i);
     }
     unsigned long long int
-    CutoffLuby::operator++(void) {
+    CutoffLuby::operator++() {
         return scale * luby(i++);
     }
 
     unsigned long long int
-    CutoffGeometric::operator()(void) const {
+    CutoffGeometric::operator()() const {
         return static_cast<unsigned long long int>(scale * n);
     }
     unsigned long long int
-    CutoffGeometric::operator++(void) {
+    CutoffGeometric::operator++() {
         n *= base;
         return static_cast<unsigned long long int>(scale * n);
     }
 
     unsigned long long int
-    CutoffRandom::operator++(void) {
+    CutoffRandom::operator++() {
         cur = min + step * rnd(n);
         return cur;
     }
     unsigned long long int
-    CutoffRandom::operator()(void) const {
+    CutoffRandom::operator()() const {
         return cur;
     }
 
     unsigned long long int
-    CutoffAppend::operator()(void) const {
+    CutoffAppend::operator()() const {
         if (n > 0) {
             return (*c1)();
         } else {
@@ -99,7 +99,7 @@ namespace Gecode { namespace Search {
         }
     }
     unsigned long long int
-    CutoffAppend::operator++(void) {
+    CutoffAppend::operator++() {
         if (n > 0) {
             n--;
             return ++(*c1);
@@ -109,22 +109,22 @@ namespace Gecode { namespace Search {
     }
 
     unsigned long long int
-    CutoffMerge::operator()(void) const {
+    CutoffMerge::operator()() const {
         return (*c1)();
     }
     unsigned long long int
-    CutoffMerge::operator++(void) {
+    CutoffMerge::operator++() {
         (void)++(*c1);
         std::swap(c1, c2);
         return (*c1)();
     }
 
     unsigned long long int
-    CutoffRepeat::operator()(void) const {
+    CutoffRepeat::operator()() const {
         return cutoff;
     }
     unsigned long long int
-    CutoffRepeat::operator++(void) {
+    CutoffRepeat::operator++() {
         i++;
         if (i == n) {
             cutoff = (*c)();

@@ -60,7 +60,7 @@ namespace Gecode {
 
     template <class A>
     Slice<A>&
-    Slice<A>::reverse(void) {
+    Slice<A>::reverse() {
         for (int i = 0; i < _r.size() / 2; i++)
             std::swap(_r[i], _r[_r.size() - i - 1]);
         return *this;
@@ -68,22 +68,22 @@ namespace Gecode {
 
     template <class A>
     inline Slice<A>::
-    operator ArgsType(void) {
+    operator ArgsType() {
         return _r;
     }
     template <class A>
     inline Slice<A>::
-    operator Matrix<ArgsType>(void) {
+    operator Matrix<ArgsType>() {
         return Matrix<typename Slice<A>::ArgsType>(_r, _tc - _fc, _tr - _fr);
     }
     template <class A>
     inline Slice<A>::
-    operator const ArgsType(void) const {
+    operator const ArgsType() const {
         return _r;
     }
     template <class A>
     inline Slice<A>::
-    operator const Matrix<ArgsType>(void) const {
+    operator const Matrix<ArgsType>() const {
         return Matrix<typename Slice<A>::ArgsType>(_r, _tc - _fc, _tr - _fr);
     }
 
@@ -141,17 +141,17 @@ namespace Gecode {
 
     template <class A>
     forceinline int
-    Matrix<A>::width(void) const {
+    Matrix<A>::width() const {
         return _w;
     }
     template <class A>
     forceinline int
-    Matrix<A>::height(void) const {
+    Matrix<A>::height() const {
         return _h;
     }
     template <class A>
     inline typename Matrix<A>::ArgsType const
-    Matrix<A>::get_array(void) const {
+    Matrix<A>::get_array() const {
         return ArgsType(_a);
     }
 

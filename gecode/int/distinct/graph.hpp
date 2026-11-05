@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
     forceinline bool
-    Graph<View>::sync(void) {
+    Graph<View>::sync() {
         using namespace ViewValGraph;
         Region r;
         // Stack for view nodes to be rematched
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
     forceinline bool
-    Graph<View>::mark(void) {
+    Graph<View>::mark() {
         using namespace ViewValGraph;
 
         Region r;

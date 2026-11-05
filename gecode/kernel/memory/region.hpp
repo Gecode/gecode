@@ -67,7 +67,7 @@ namespace Gecode {
             /// Return memory if available
             bool alloc(size_t s, void*& p);
             /// Free allocated memory (reset chunk)
-            void reset(void);
+            void reset();
         };
         /// The heap chunk in use
         Chunk* chunk;
@@ -83,13 +83,13 @@ namespace Gecode {
 
         public:
             /// Initialize pool
-            Pool(void);
+            Pool();
             /// Get a new chunk
-            Chunk* chunk(void);
+            Chunk* chunk();
             /// Return chunk and possible free unused chunk \a u
             void chunk(Chunk* u);
             /// Delete pool
-            ~Pool(void);
+            ~Pool();
         };
         /// Just use a single static pool for heap chunks
         GECODE_KERNEL_EXPORT static Pool& pool();
@@ -114,18 +114,18 @@ namespace Gecode {
         /// Allocate memory from heap
         GECODE_KERNEL_EXPORT void* heap_alloc(size_t s);
         /// Free memory previously allocated from heap
-        GECODE_KERNEL_EXPORT void heap_free(void);
+        GECODE_KERNEL_EXPORT void heap_free();
 
     public:
         /// Initialize region
-        Region(void);
+        Region();
         /**
          * \brief Free allocate memory
          *
          * Note that in fact not all memory is freed, memory that has been
          * allocated for large allocation requests will not be freed.
          */
-        void free(void);
+        void free();
         /// \name Typed allocation routines
         //@{
         /**
@@ -275,7 +275,7 @@ namespace Gecode {
          * \brief Constructs a single object of type \a T from region using the default constructor.
          */
         template <class T>
-        T& construct(void);
+        T& construct();
         /**
          * \brief Constructs a single object of type \a T from region using a unary constructor.
          *
@@ -313,7 +313,7 @@ namespace Gecode {
         T& construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5);
         //@}
         /// Return memory
-        ~Region(void);
+        ~Region();
 
         /// Allocate memory from heap (disabled)
         static void* operator new(size_t s) = delete;
@@ -343,16 +343,16 @@ namespace Gecode {
     }
 
     forceinline void
-    Region::Chunk::reset(void) {
+    Region::Chunk::reset() {
         free = Kernel::MemoryConfig::region_area_size;
     }
 
     forceinline
-    Region::Region(void)
+    Region::Region()
         : chunk(pool().chunk()), hi(nullptr) {}
 
     forceinline void
-    Region::free(void) {
+    Region::free() {
         chunk->reset();
     }
 
@@ -368,7 +368,7 @@ namespace Gecode {
     forceinline void
     Region::rfree(void*, size_t) {}
 
-    forceinline Region::~Region(void) {
+    forceinline Region::~Region() {
         pool().chunk(chunk);
         if (hi != nullptr)
             heap_free();
@@ -469,7 +469,7 @@ namespace Gecode {
      */
     template <class T>
     forceinline T&
-    Region::construct(void) {
+    Region::construct() {
         return alloc<T>(1);
     }
     template <class T, typename A1>

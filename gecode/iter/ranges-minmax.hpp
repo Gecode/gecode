@@ -50,13 +50,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// Maximum of current range
         int ma;
         /// %Set range such that iteration stops
-        void finish(void);
+        void finish();
 
     public:
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        MinMax(void) = default;
+        MinMax() = default;
         /// Initialize with range \a min to \a max
         MinMax(int min, int max);
         //@}
@@ -64,22 +64,22 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
     forceinline void
-    MinMax::finish(void) {
+    MinMax::finish() {
         mi = 1;
         ma = 0;
     }
@@ -89,20 +89,20 @@ namespace Gecode { namespace Iter { namespace Ranges {
         : mi(min), ma(max) {}
 
     forceinline bool
-    MinMax::operator()(void) const {
+    MinMax::operator()() const {
         return mi <= ma;
     }
 
     forceinline int
-    MinMax::min(void) const {
+    MinMax::min() const {
         return mi;
     }
     forceinline int
-    MinMax::max(void) const {
+    MinMax::max() const {
         return ma;
     }
     forceinline unsigned int
-    MinMax::width(void) const {
+    MinMax::width() const {
         return static_cast<unsigned int>(ma - mi) + 1;
     }
 

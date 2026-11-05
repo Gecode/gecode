@@ -53,7 +53,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Size(void);
+        Size();
         /// Initialize with ranges from \a i
         Size(I& i);
         /// Initialize with ranges from \a i
@@ -63,31 +63,31 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void);
+        bool operator()();
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name %Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
 
         /// \name %Size access
         //@{
         /// Return accumulated size
-        unsigned int size(void) const;
+        unsigned int size() const;
         //@}
     };
 
     template <class I>
     forceinline
-    Size<I>::Size(void)
+    Size<I>::Size()
         : _size(0) {}
 
     template <class I>
@@ -102,35 +102,35 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I>
     forceinline void
-    Size<I>::operator++(void) {
+    Size<I>::operator++() {
         _size += i.width();
         ++i;
     }
     template <class I>
     forceinline bool
-    Size<I>::operator()(void) {
+    Size<I>::operator()() {
         return i();
     }
 
     template <class I>
     forceinline int
-    Size<I>::min(void) const {
+    Size<I>::min() const {
         return i.min();
     }
     template <class I>
     forceinline int
-    Size<I>::max(void) const {
+    Size<I>::max() const {
         return i.max();
     }
     template <class I>
     forceinline unsigned int
-    Size<I>::width(void) const {
+    Size<I>::width() const {
         return i.width();
     }
 
     template <class I>
     forceinline unsigned int
-    Size<I>::size(void) const {
+    Size<I>::size() const {
         return _size;
     }
 

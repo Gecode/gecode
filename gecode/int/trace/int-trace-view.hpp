@@ -40,11 +40,11 @@ namespace Gecode { namespace Int {
 
     public:
         /// Default constructor (initializes with no view)
-        IntTraceView(void);
+        IntTraceView();
         /// Duplicate view \a y
         IntTraceView(Space& home, IntView y);
         /// Give access to ranges
-        RangeList* ranges(void) const;
+        RangeList* ranges() const;
         /// Update duplicated view from view \a y and modification delta \a d
         void prune(Space& home, IntView y, const Delta& d);
         /// Update during cloning
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    IntTraceView::IntTraceView(void) {}
+    IntTraceView::IntTraceView() {}
 
     forceinline
     IntTraceView::IntTraceView(Space& home, IntView y) {
@@ -64,7 +64,7 @@ namespace Gecode { namespace Int {
     }
 
     forceinline RangeList*
-    IntTraceView::ranges(void) const {
+    IntTraceView::ranges() const {
         return dom;
     }
 

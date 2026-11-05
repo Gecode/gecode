@@ -82,38 +82,38 @@ namespace Gecode { namespace Search { namespace Par {
 
         public:
             /// Default constructor
-            Edge(void);
+            Edge();
             /// Edge for space \a s with clone \a c (possibly nullptr)
             Edge(Space* s, Space* c, unsigned int nid);
 
             /// Return space for edge
-            Space* space(void) const;
+            Space* space() const;
             /// Set space to \a s
             void space(Space* s);
 
             /// Return choice
-            const Choice* choice(void) const;
+            const Choice* choice() const;
 
             /// Return number for alternatives
-            unsigned int alt(void) const;
+            unsigned int alt() const;
             /// Return true number for alternatives (excluding lao optimization)
-            unsigned int true_alternative(void) const;
+            unsigned int true_alternative() const;
             /// Test whether current alternative is rightmost
-            bool rightmost(void) const;
+            bool rightmost() const;
             /// Test whether current alternative was LAO
-            bool lao(void) const;
+            bool lao() const;
             /// Test whether there is an alternative that can be stolen
-            bool work(void) const;
+            bool work() const;
             /// Move to next alternative
-            void next(void);
+            void next();
             /// Steal rightmost alternative and return its number
-            unsigned int steal(void);
+            unsigned int steal();
 
             /// Return node identifier
-            unsigned int nid(void) const;
+            unsigned int nid() const;
 
             /// Free memory for edge
-            void dispose(void);
+            void dispose();
         };
 
     protected:
@@ -128,19 +128,19 @@ namespace Gecode { namespace Search { namespace Par {
         /// Initialize with no-good depth limit \a l
         Path(unsigned int l);
         /// Return no-good depth limit
-        unsigned int ngdl(void) const;
+        unsigned int ngdl() const;
         /// Set no-good depth limit to \a l
         void ngdl(unsigned int l);
         /// Push space \a c (a clone of \a s or nullptr)
         const Choice* push(Worker& stat, Space* s, Space* c, unsigned int nid);
         /// Generate path for next node
-        void next(void);
+        void next();
         /// Provide access to topmost edge
-        Edge& top(void) const;
+        Edge& top() const;
         /// Test whether path is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Return position on stack of last copy
-        int lc(void) const;
+        int lc() const;
         /// Unwind the stack up to position \a l (after failure)
         void unwind(int l, Tracer& t);
         /// Commit space \a s as described by stack entry at position \a i
@@ -150,11 +150,11 @@ namespace Gecode { namespace Search { namespace Par {
         /// Recompute space according to path
         Space* recompute(unsigned int& d, unsigned int a_d, Worker& s, const Space* best, int& mark, Tracer& t);
         /// Return number of entries on stack
-        int entries(void) const;
+        int entries() const;
         /// Reset stack and set no-good depth limit to \a l
         void reset(unsigned int l);
         /// Make a quick check whether stealing might be feasible
-        bool steal(void) const;
+        bool steal() const;
         /// Steal work at depth \a d
         Space* steal(Worker& stat, unsigned long int& d, Tracer& myt, Tracer& ot);
         /// Post no-goods

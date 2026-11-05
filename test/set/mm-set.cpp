@@ -1901,7 +1901,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 int n = sizeof(si) / sizeof(SetInstr*);
                 for (int i = 0; i < n; i++) {
                     std::string s = Test::str(i);

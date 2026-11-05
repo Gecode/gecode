@@ -60,7 +60,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetView(void) = default;
+        SetView() = default;
         /// Initialize from set variable \a y
         SetView(const SetVar& y);
         /// Initialize from set variable implementation \a y
@@ -71,26 +71,26 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -195,7 +195,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ConstSetView(void);
+        ConstSetView();
         /// Construct with \a s as the domain
         ConstSetView(Space& home, const IntSet& s);
         //@}
@@ -203,26 +203,26 @@ namespace Gecode { namespace Set {
         /// \name Value access
         //@{
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -332,32 +332,32 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        EmptyView(void) = default;
+        EmptyView() = default;
         //@}
 
         /// \name Value access
         //@{
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -455,33 +455,33 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        UniverseView(void) = default;
+        UniverseView() = default;
         //@}
 
         /// \name Value access
         //@{
 
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -589,7 +589,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SingletonView(void) = default;
+        SingletonView() = default;
         /// Initialize with integer view \a y
         SingletonView(Gecode::Int::IntView& y);
         /// Initialize with integer variable \a y
@@ -600,26 +600,26 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -759,7 +759,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ComplementView(void) = default;
+        ComplementView() = default;
         /// Initialize with set view \a y
         explicit ComplementView(View& y);
         //@}
@@ -768,26 +768,26 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return \a n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -936,7 +936,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        CachedView(void) = default;
+        CachedView() = default;
         /// Initialize with set view \a y
         explicit CachedView(const View& y);
         //@}
@@ -945,26 +945,26 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return \a n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -1073,9 +1073,9 @@ namespace Gecode { namespace Set {
         /// Update least upper bound cache to current domain
         void cache_lub(Space& home);
         /// Check whether greatest lower bound cache differs from current domain
-        bool glb_modified(void) const;
+        bool glb_modified() const;
         /// Check whether least upper bound cache differs from current domain
-        bool lub_modified(void) const;
+        bool lub_modified() const;
         //@}
 
         /// \name Cloning

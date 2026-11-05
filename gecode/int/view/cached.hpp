@@ -42,7 +42,7 @@ namespace Gecode { namespace Int {
      */
     template <class View>
     forceinline
-    CachedView<View>::CachedView(void)
+    CachedView<View>::CachedView()
         : _size(0) {}
     template <class View>
     forceinline
@@ -55,22 +55,22 @@ namespace Gecode { namespace Int {
      */
     template <class View>
     forceinline int
-    CachedView<View>::min(void) const {
+    CachedView<View>::min() const {
         return x.min();
     }
     template <class View>
     forceinline int
-    CachedView<View>::max(void) const {
+    CachedView<View>::max() const {
         return x.max();
     }
     template <class View>
     forceinline int
-    CachedView<View>::med(void) const {
+    CachedView<View>::med() const {
         return x.med();
     }
     template <class View>
     forceinline int
-    CachedView<View>::val(void) const {
+    CachedView<View>::val() const {
         return x.val();
     }
 #ifdef GECODE_HAS_CBS
@@ -83,22 +83,22 @@ namespace Gecode { namespace Int {
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::width(void) const {
+    CachedView<View>::width() const {
         return x.width();
     }
     template <class View>
     forceinline unsigned int
-    CachedView<View>::size(void) const {
+    CachedView<View>::size() const {
         return x.size();
     }
     template <class View>
     forceinline unsigned int
-    CachedView<View>::regret_min(void) const {
+    CachedView<View>::regret_min() const {
         return x.regret_min();
     }
     template <class View>
     forceinline unsigned int
-    CachedView<View>::regret_max(void) const {
+    CachedView<View>::regret_max() const {
         return x.regret_max();
     }
 
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int {
      */
     template <class View>
     forceinline bool
-    CachedView<View>::range(void) const {
+    CachedView<View>::range() const {
         return x.range();
     }
     template <class View>
@@ -320,7 +320,7 @@ namespace Gecode { namespace Int {
 
     template <class View>
     forceinline bool
-    CachedView<View>::modified(void) const {
+    CachedView<View>::modified() const {
         return x.size() != _size;
     }
 
@@ -334,7 +334,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void) = default;
+        ViewRanges() = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const CachedView<View>& x);
         /// Initialize with ranges for view \a x

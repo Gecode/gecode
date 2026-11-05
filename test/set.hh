@@ -77,7 +77,7 @@ namespace Test {
 
         public:
             /// Default constructor
-            CountableSetValues(void) = default;
+            CountableSetValues() = default;
             /// Initialize with set \a d0 and bit-pattern \a cur0
             CountableSetValues(const Gecode::IntSet& d0, int cur0) : dv(d0), cur(cur0), i(1) {
                 if (!(i & cur))
@@ -94,12 +94,12 @@ namespace Test {
             }
             /// Test if finished
             bool
-            operator()(void) const {
+            operator()() const {
                 return i <= cur;
             }
             /// Move to next value
             void
-            operator++(void) {
+            operator++() {
                 do {
                     ++dv;
                     i = i << 1;
@@ -107,7 +107,7 @@ namespace Test {
             }
             /// Return current value
             int
-            val(void) const {
+            val() const {
                 return dv.val();
             }
         };
@@ -120,7 +120,7 @@ namespace Test {
 
         public:
             /// Default constructor
-            CountableSetRanges(void) = default;
+            CountableSetRanges() = default;
             /// Initialize with set \a d0 and bit-pattern \a cur0
             CountableSetRanges(const Gecode::IntSet& d, int cur) : v(d, cur) {
                 Gecode::Iter::Values::ToRanges<CountableSetValues>::init(v);
@@ -147,18 +147,18 @@ namespace Test {
             /// Initialize with set \a s
             CountableSet(const Gecode::IntSet& s);
             /// Default constructor
-            CountableSet(void) = default;
+            CountableSet() = default;
             /// Initialize with set \a s
             void init(const Gecode::IntSet& s);
             /// Check if still subsets left
             bool
-            operator()(void) const {
+            operator()() const {
                 return cur < lubmax;
             }
             /// Move to next subset
-            void operator++(void);
+            void operator++();
             /// Return current subset
-            int val(void) const;
+            int val() const;
         };
 
         /// Generate all set assignments
@@ -182,7 +182,7 @@ namespace Test {
             SetAssignment(int n, const Gecode::IntSet& d, int i = 0);
             /// Test whether all assignments have been iterated
             bool
-            operator()(void) const {
+            operator()() const {
                 return !done;
             }
             /// Move to next assignment
@@ -195,21 +195,21 @@ namespace Test {
             }
             /// Return value for first integer variable
             int
-            int_value(void) const {
+            int_value() const {
                 return ir[0];
             }
             /// Return assignment for integer variables
             const Test::Int::Assignment&
-            ints(void) const {
+            ints() const {
                 return ir;
             }
             /// Return arity
             int
-            size(void) const {
+            size() const {
                 return n;
             }
             /// Destructor
-            ~SetAssignment(void) {
+            ~SetAssignment() {
                 delete[] dsv;
             }
         };
@@ -257,11 +257,11 @@ namespace Test {
             /// Constructor for cloning \a s
             SetTestSpace(SetTestSpace& s);
             /// Copy space during cloning
-            Gecode::Space* copy(void) override;
+            Gecode::Space* copy() override;
             /// Post propagator
-            void post(void);
+            void post();
             /// Compute a fixpoint and check for failure
-            bool failed(void);
+            bool failed();
             /// Check for subsumption if \a b is true
             bool subsumed(bool b);
             /// Perform set tell operation on \a x[i]
@@ -275,7 +275,7 @@ namespace Test {
             /// Assign all variables to values in \a a
             void assign(const SetAssignment& a, Gecode::Support::RandomGenerator& rand);
             /// Test whether all variables are assigned
-            bool assigned(void) const;
+            bool assigned() const;
             /// Remove value \a v from the upper bound of \a x[i]
             void remove_from_lub(int v, int i, const SetAssignment& a);
             /// Remove value \a v from the upper bound of \a x[i]
@@ -285,15 +285,15 @@ namespace Test {
             /// Remove value \a v from the lower bound of \a x[i]
             void add_to_glb(int v, int i, const SetAssignment& a, SetTestSpace& c);
             /// Check fixpoint stability after reposting in a clone
-            bool check_fixpoint(void);
+            bool check_fixpoint();
             /// Perform random pruning
             bool prune(const SetAssignment& a, Gecode::Support::RandomGenerator& rand);
             /// Return the number of propagators
-            unsigned int propagators(void);
+            unsigned int propagators();
             /// Disable propagators in space and compute fixpoint (make all idle)
-            void disable(void);
+            void disable();
             /// Enable propagators in space
-            void enable(void);
+            void enable();
             /// Prune values also in a space \a c with disabled propagators, but not those in assignment \a a
             bool disabled(const SetAssignment& a, SetTestSpace& c, Gecode::Support::RandomGenerator& rand);
             /// Check whether propagation is the same as in \a c
@@ -344,7 +344,7 @@ namespace Test {
             virtual void
             post(Gecode::Space&, Gecode::SetVarArray&, Gecode::IntVarArray&, Gecode::Reify) {}
             /// Perform test
-            bool run(void) override;
+            bool run() override;
 
             /// \name Mapping scalar values to strings
             //@{
@@ -370,13 +370,13 @@ namespace Test {
 
         public:
             /// Initialize iterator
-            SetRelTypes(void);
+            SetRelTypes();
             /// Test whether iterator is done
-            bool operator()(void) const;
+            bool operator()() const;
             /// Increment to next relation type
-            void operator++(void);
+            void operator++();
             /// Return current relation type
-            Gecode::SetRelType srt(void) const;
+            Gecode::SetRelType srt() const;
         };
 
         /// Iterator for Boolean operation types
@@ -389,13 +389,13 @@ namespace Test {
 
         public:
             /// Initialize iterator
-            SetOpTypes(void);
+            SetOpTypes();
             /// Test whether iterator is done
-            bool operator()(void) const;
+            bool operator()() const;
             /// Increment to next operation type
-            void operator++(void);
+            void operator++();
             /// Return current operation type
-            Gecode::SetOpType sot(void) const;
+            Gecode::SetOpType sot() const;
         };
 
     } // namespace Set

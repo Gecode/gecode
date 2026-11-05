@@ -62,7 +62,7 @@ namespace Gecode {
         /// Initialize choice for brancher \a b, number of alternatives \a a, and position \a p
         PosChoice(const Brancher& b, unsigned int a, const Pos& p);
         /// Return position in array
-        const Pos& pos(void) const;
+        const Pos& pos() const;
         /// Archive into \a e
         void archive(Archive& e) const override;
     };
@@ -120,7 +120,7 @@ namespace Gecode {
     PosChoice::PosChoice(const Brancher& b, unsigned int a, const Pos& p)
         : Choice(b, a), _pos(p) {}
     forceinline const Pos&
-    PosChoice::pos(void) const {
+    PosChoice::pos() const {
         return _pos;
     }
     forceinline void

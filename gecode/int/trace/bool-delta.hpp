@@ -36,23 +36,23 @@ namespace Gecode {
     BoolTraceDelta::BoolTraceDelta(Int::BoolTraceView, Int::BoolView n, const Delta&)
         : delta(1 - n.val()) {}
     forceinline bool
-    BoolTraceDelta::operator()(void) const {
+    BoolTraceDelta::operator()() const {
         return delta >= 0;
     }
     forceinline void
-    BoolTraceDelta::operator++(void) {
+    BoolTraceDelta::operator++() {
         delta = -1;
     }
     forceinline int
-    BoolTraceDelta::min(void) const {
+    BoolTraceDelta::min() const {
         return delta;
     }
     forceinline int
-    BoolTraceDelta::max(void) const {
+    BoolTraceDelta::max() const {
         return delta;
     }
     forceinline unsigned int
-    BoolTraceDelta::width(void) const {
+    BoolTraceDelta::width() const {
         return 1U;
     }
 

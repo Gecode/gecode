@@ -41,7 +41,7 @@ namespace Gecode { namespace Search { namespace Seq {
     template <class Tracer>
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    Probe<Tracer>::Node::Node(void) {}
+    Probe<Tracer>::Node::Node() {}
 
     template <class Tracer>
     forceinline
@@ -50,31 +50,31 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline Space*
-    Probe<Tracer>::Node::space(void) const {
+    Probe<Tracer>::Node::space() const {
         return _space;
     }
 
     template <class Tracer>
     forceinline const Choice*
-    Probe<Tracer>::Node::choice(void) const {
+    Probe<Tracer>::Node::choice() const {
         return _choice;
     }
 
     template <class Tracer>
     forceinline unsigned int
-    Probe<Tracer>::Node::alt(void) const {
+    Probe<Tracer>::Node::alt() const {
         return _alt;
     }
 
     template <class Tracer>
     forceinline unsigned int
-    Probe<Tracer>::Node::nid(void) const {
+    Probe<Tracer>::Node::nid() const {
         return _nid;
     }
 
     template <class Tracer>
     forceinline void
-    Probe<Tracer>::Node::next(void) {
+    Probe<Tracer>::Node::next() {
         _alt--;
     }
 
@@ -123,18 +123,18 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline Statistics
-    Probe<Tracer>::statistics(void) const {
+    Probe<Tracer>::statistics() const {
         return *this;
     }
 
     template <class Tracer>
     forceinline bool
-    Probe<Tracer>::done(void) const {
+    Probe<Tracer>::done() const {
         return exhausted;
     }
 
     template <class Tracer>
-    forceinline Probe<Tracer>::~Probe(void) {
+    forceinline Probe<Tracer>::~Probe() {
         tracer.done();
         delete cur;
         while (!ds.empty()) {
@@ -288,7 +288,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     Space*
-    LDS<Tracer>::next(void) {
+    LDS<Tracer>::next() {
         while (true) {
             Space* s = e.next(opt);
             if (s != nullptr)
@@ -308,13 +308,13 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     bool
-    LDS<Tracer>::stopped(void) const {
+    LDS<Tracer>::stopped() const {
         return e.stopped();
     }
 
     template <class Tracer>
     Statistics
-    LDS<Tracer>::statistics(void) const {
+    LDS<Tracer>::statistics() const {
         return e.statistics();
     }
 
@@ -345,7 +345,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     template <class Tracer>
-    LDS<Tracer>::~LDS(void) {
+    LDS<Tracer>::~LDS() {
         delete root;
     }
 

@@ -48,7 +48,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Minus(void) = default;
+        Minus() = default;
         /// Copy constructor
         Minus(const Minus& m) = default;
         /// Initialize with values from \a i

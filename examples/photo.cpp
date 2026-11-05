@@ -51,12 +51,12 @@ public:
     PhotoSpec(int i) : data(pi[i]) {}
     /// Return number of people
     int
-    people(void) const {
+    people() const {
         return data[0];
     }
     /// Return number of preferences
     int
-    preferences(void) const {
+    preferences() const {
         return data[1];
     }
     /// Access preference \a p with position \a i
@@ -145,7 +145,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Photo(*this);
     }
     /// Print solution
@@ -155,7 +155,7 @@ public:
     }
     /// Return solution cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return violations;
     }
 };

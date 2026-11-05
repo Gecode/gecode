@@ -72,7 +72,7 @@ namespace Test { namespace Int { namespace Unary {
         }
         /// Create and register initial assignment
         Assignment*
-        assignment(void) const override {
+        assignment() const override {
             return new RandomAssignment(arity, dom, 500, _rand);
         }
         /// %Test whether \a x is solution
@@ -118,7 +118,7 @@ namespace Test { namespace Int { namespace Unary {
         }
         /// Create and register initial assignment
         Assignment*
-        assignment(void) const override {
+        assignment() const override {
             return new RandomAssignment(arity, dom, 500, _rand);
         }
         /// %Test whether \a x is solution
@@ -171,7 +171,7 @@ namespace Test { namespace Int { namespace Unary {
         }
         /// Create and register initial assignment
         Assignment*
-        assignment(void) const override {
+        assignment() const override {
             return new RandomMixAssignment(arity / 2, dom, arity / 2, Gecode::IntSet(_min_p, _max_p), 500, _rand);
         }
         /// %Test whether \a x is solution
@@ -234,7 +234,7 @@ namespace Test { namespace Int { namespace Unary {
         }
         /// Create and register initial assignment
         Assignment*
-        assignment(void) const override {
+        assignment() const override {
             return new RandomMixAssignment(2 * (arity / 3), dom, arity / 3, Gecode::IntSet(_min_p, _max_p), 500, _rand);
         }
         /// %Test whether \a x is solution
@@ -275,7 +275,7 @@ namespace Test { namespace Int { namespace Unary {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             using namespace Gecode;
             IntArgs p1({2, 2, 2, 2});
             IntArgs p10({2, 2, 0, 2, 2});

@@ -46,7 +46,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest(
                 "Issue166::Original",
                 "predicate gecode_global_cardinality(array [int] of var int: x, array [int] of int: cover, array [int] of var int: counts);\n\

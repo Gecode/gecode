@@ -43,55 +43,55 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Empty(void) = default;
+        Empty() = default;
         /// Initialize
-        void init(void);
+        void init();
         //@}
 
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
     forceinline void
-    Empty::init(void) {}
+    Empty::init() {}
 
     forceinline void
-    Empty::operator++(void) {
+    Empty::operator++() {
         GECODE_NEVER;
     }
 
     forceinline bool
-    Empty::operator()(void) const {
+    Empty::operator()() const {
         return false;
     }
 
     forceinline int
-    Empty::min(void) const {
+    Empty::min() const {
         GECODE_NEVER;
         return 0;
     }
     forceinline int
-    Empty::max(void) const {
+    Empty::max() const {
         GECODE_NEVER;
         return 0;
     }
     forceinline unsigned int
-    Empty::width(void) const {
+    Empty::width() const {
         GECODE_NEVER;
         return 0;
     }

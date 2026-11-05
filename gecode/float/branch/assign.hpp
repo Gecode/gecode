@@ -45,17 +45,17 @@ namespace Gecode {
         : ValBranch<FloatVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline FloatAssign::Select
-    FloatAssign::select(void) const {
+    FloatAssign::select() const {
         return s;
     }
 
     inline FloatAssign
-    FLOAT_ASSIGN_MIN(void) {
+    FLOAT_ASSIGN_MIN() {
         return FloatAssign(FloatAssign::SEL_MIN);
     }
 
     inline FloatAssign
-    FLOAT_ASSIGN_MAX(void) {
+    FLOAT_ASSIGN_MAX() {
         return FloatAssign(FloatAssign::SEL_MAX);
     }
 

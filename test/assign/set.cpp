@@ -73,7 +73,7 @@ namespace Test { namespace Assign {
         /// Variables to be assigned
         Gecode::SetVarArray x;
         /// Initialize test space
-        SetOrderSpace(void) : x(*this, 5, Gecode::IntSet::empty, Gecode::IntSet(0, 0)) {
+        SetOrderSpace() : x(*this, 5, Gecode::IntSet::empty, Gecode::IntSet(0, 0)) {
             Gecode::SetVar zero(*this, Gecode::IntSet(0, 0), Gecode::IntSet(0, 0));
             Gecode::rel(*this, Gecode::SOT_DISJOINT_UNION, x, zero);
         }
@@ -83,7 +83,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new SetOrderSpace(*this);
         }
     };
@@ -92,10 +92,10 @@ namespace Test { namespace Assign {
     class SetVarSelection : public Base {
     public:
         /// Create and register test
-        SetVarSelection(void) : Base("Set::Assign::VarSelection") {}
+        SetVarSelection() : Base("Set::Assign::VarSelection") {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             SetOrderSpace* s = new SetOrderSpace;
             assign(*s, s->x, SET_VAR_MERIT_MAX(&set_merit_last), SET_ASSIGN_MIN_INC());

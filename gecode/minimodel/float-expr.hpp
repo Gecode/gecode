@@ -32,7 +32,7 @@
 
 namespace Gecode {
 
-    forceinline NonLinFloatExpr::~NonLinFloatExpr(void) = default;
+    forceinline NonLinFloatExpr::~NonLinFloatExpr() = default;
 
     forceinline FloatVar
     NonLinFloatExpr::result(Home home, FloatVar* x) {

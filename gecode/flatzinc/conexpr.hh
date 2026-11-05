@@ -52,9 +52,9 @@ namespace Gecode { namespace FlatZinc {
         /// Return argument \a i
         AST::Node* operator[](int i) const;
         /// Return number of arguments
-        int size(void) const;
+        int size() const;
         /// Destructor
-        ~ConExpr(void);
+        ~ConExpr();
     };
 
     forceinline
@@ -67,11 +67,11 @@ namespace Gecode { namespace FlatZinc {
     }
 
     forceinline int
-    ConExpr::size(void) const {
+    ConExpr::size() const {
         return args->a.size();
     }
 
-    forceinline ConExpr::~ConExpr(void) {
+    forceinline ConExpr::~ConExpr() {
         delete args;
         delete ann;
     }

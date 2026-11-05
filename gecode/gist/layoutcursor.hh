@@ -47,9 +47,9 @@ namespace Gecode { namespace Gist {
         /// \name Cursor interface
         //@{
         /// Test if the cursor may move to the first child node
-        bool may_move_downwards(void);
+        bool may_move_downwards();
         /// Compute layout for current node
-        void process_current_node(void);
+        void process_current_node();
         //@}
     };
 

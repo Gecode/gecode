@@ -34,12 +34,12 @@
 
 namespace Gecode {
 
-    Region::Pool::Pool(void) : c(new Chunk), n_c(2U) {
+    Region::Pool::Pool() : c(new Chunk), n_c(2U) {
         c->next = new Chunk;
         c->next->next = nullptr;
     }
     Region::Chunk*
-    Region::Pool::chunk(void) {
+    Region::Pool::chunk() {
         Chunk* n;
         {
             Support::Lock l(m);
@@ -66,7 +66,7 @@ namespace Gecode {
             n_c++;
         }
     }
-    Region::Pool::~Pool(void) {
+    Region::Pool::~Pool() {
         Support::Lock l(m);
         // If that were the case there would be a memory leak!
         assert(c != nullptr);
@@ -78,7 +78,7 @@ namespace Gecode {
     }
 
     Region::Pool&
-    Region::pool(void) {
+    Region::pool() {
         thread_local static Region::Pool _p;
         return _p;
     }
@@ -113,7 +113,7 @@ namespace Gecode {
     }
 
     void
-    Region::heap_free(void) {
+    Region::heap_free() {
         assert(hi != nullptr);
         if (Support::marked(hi)) {
             HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));

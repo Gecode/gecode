@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("bug232", "var 0..1: INT___1;\
 var bool: BOOL___6;\
 constraint int_lin_le_reif([0], [INT___1], 4, BOOL___6);\

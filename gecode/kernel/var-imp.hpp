@@ -59,7 +59,7 @@ namespace Gecode { namespace Int {
 
     public:
         /// Constructor for creating static instance of variable
-        IntVarImpBase(void) = default;
+        IntVarImpBase() = default;
         /// Constructor for creating variable
         IntVarImpBase(Gecode::Space& home);
         /// \name Dependencies
@@ -106,7 +106,7 @@ namespace Gecode { namespace Int {
 
     public:
         /// Constructor for creating static instance of variable
-        BoolVarImpBase(void) = default;
+        BoolVarImpBase() = default;
         /// Constructor for creating variable
         BoolVarImpBase(Gecode::Space& home);
         /// \name Dependencies
@@ -153,7 +153,7 @@ namespace Gecode { namespace Set {
 
     public:
         /// Constructor for creating static instance of variable
-        SetVarImpBase(void) = default;
+        SetVarImpBase() = default;
         /// Constructor for creating variable
         SetVarImpBase(Gecode::Space& home);
         /// \name Dependencies
@@ -200,7 +200,7 @@ namespace Gecode { namespace Float {
 
     public:
         /// Constructor for creating static instance of variable
-        FloatVarImpBase(void) = default;
+        FloatVarImpBase() = default;
         /// Constructor for creating variable
         FloatVarImpBase(Gecode::Space& home);
         /// \name Dependencies
@@ -486,7 +486,7 @@ namespace Gecode { namespace Float {
 namespace Gecode {
 
     forceinline void
-    Space::recover_noidx(void) {
+    Space::recover_noidx() {
         VarImp<NoIdxVarImpConf>* x = static_cast<VarImp<NoIdxVarImpConf>*>(pc.c.vars_noidx);
         while (x != nullptr) {
             VarImp<NoIdxVarImpConf>* n = x->next();

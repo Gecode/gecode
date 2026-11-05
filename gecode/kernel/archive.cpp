@@ -63,7 +63,7 @@ namespace Gecode {
         return *this;
     }
 
-    Archive::~Archive(void) {
+    Archive::~Archive() {
         if (_a != nullptr)
             heap.free<unsigned int>(_a, _size);
     }

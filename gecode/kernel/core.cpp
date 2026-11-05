@@ -51,7 +51,7 @@ namespace Gecode {
     void
     VarImpDisposerBase::dispose(Space&, VarImpBase*) {}
 
-    VarImpDisposerBase::~VarImpDisposerBase(void) = default;
+    VarImpDisposerBase::~VarImpDisposerBase() = default;
 
     /*
      * Actor
@@ -59,7 +59,7 @@ namespace Gecode {
      */
     Actor* Actor::sentinel;
 
-    Actor::~Actor(void) = default;
+    Actor::~Actor() = default;
 
     /*
      * Propagator
@@ -109,7 +109,7 @@ namespace Gecode {
     VarImpDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
-    Space::Space(void) : mm(ssd.data().sm), no_gpi(false) {
+    Space::Space() : mm(ssd.data().sm), no_gpi(false) {
 #ifdef GECODE_HAS_CBS
         var_id_counter = 0;
 #endif
@@ -197,7 +197,7 @@ namespace Gecode {
         *f = *(--d_cur);
     }
 
-    Space::~Space(void) {
+    Space::~Space() {
         if (is_partial_clone()) {
             if (pc.c.source != nullptr) {
                 recover(*pc.c.source);
@@ -236,7 +236,7 @@ namespace Gecode {
      */
 
     TraceRecorder*
-    Space::find_trace_recorder(void) {
+    Space::find_trace_recorder() {
         for (Actor** a = d_fst; a < d_cur; a++) {
             if (TraceRecorder* tr = dynamic_cast<TraceRecorder*>(*a))
                 if (!tr->disabled()) {
@@ -556,7 +556,7 @@ namespace Gecode {
     }
 
     const Choice*
-    Space::choice(void) {
+    Space::choice() {
         if (!stable())
             throw SpaceNotStable("Space::choice");
         if (failed() || (b_status == &bl)) {
@@ -785,7 +785,7 @@ namespace Gecode {
     }
 
     Space*
-    Space::_clone(void) {
+    Space::_clone() {
         if (failed())
             throw SpaceFailed("Space::clone");
         if (!stable())
@@ -927,7 +927,7 @@ namespace Gecode {
     }
 
     void
-    Space::afc_unshare(void) {
+    Space::afc_unshare() {
         if (ssd.data().gpi.unshare()) {
             for (Propagators ps(*this); ps(); ++ps) {
                 Propagator& p = ps.propagator();
@@ -955,11 +955,11 @@ namespace Gecode {
     }
 
     bool
-    NGL::notice(void) const {
+    NGL::notice() const {
         return false;
     }
 
-    NGL::~NGL(void) = default;
+    NGL::~NGL() = default;
 
     /*
      * Groups
@@ -977,7 +977,7 @@ namespace Gecode {
     unsigned int Group::next = GROUPID_DEF + 1;
     Support::Mutex Group::m;
 
-    Group::Group(void) {
+    Group::Group() {
         {
             Support::Lock l(m);
             gid = next++;

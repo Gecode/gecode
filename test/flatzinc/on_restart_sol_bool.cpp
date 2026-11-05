@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("on_restart::sol_bool",
                                    R"FZN(
 predicate gecode_on_restart_sol_bool(var bool: input,var bool: out);

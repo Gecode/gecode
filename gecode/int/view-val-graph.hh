@@ -63,11 +63,11 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         /// Return the other pointer when \a p is given
         T* ptr(T* p) const;
         /// Check whether flag is set
-        int is_set(void) const;
+        int is_set() const;
         /// Set flag
-        void set(void);
+        void set();
         /// Clear flag
-        void unset(void);
+        void unset();
     };
 
     /// Bidirectional links for edges and anchors in nodes of view-value graph
@@ -80,11 +80,11 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
     public:
         /// Initialize as empty (self referenced)
-        BiLink(void);
+        BiLink();
         /// Return previous element
-        BiLink* prev(void) const;
+        BiLink* prev() const;
         /// Return next element
-        BiLink* next(void) const;
+        BiLink* next() const;
         /// Set previous element to \a l
         void prev(BiLink* l);
         /// Set next element to \a l
@@ -92,13 +92,13 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         /// Add \a l after this element
         void add(BiLink* l);
         /// Unlink this element
-        void unlink(void);
+        void unlink();
         /// Mark element (invalidates next element pointer)
-        void mark(void);
+        void mark();
         /// Whether element is marked
-        bool marked(void) const;
+        bool marked() const;
         /// Whether element has no previous and next element
-        bool empty(void) const;
+        bool empty() const;
     };
 
     template <class View>
@@ -121,11 +121,11 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         /// Values for computing strongly connected components
         unsigned int low, min, comp;
         /// Initialize
-        Node(void);
+        Node();
         /// Return first edge (organized by bi-links)
-        Edge<View>* edge_fst(void) const;
+        Edge<View>* edge_fst() const;
         /// Return last edge (organized by bi-links)
-        Edge<View>* edge_lst(void) const;
+        Edge<View>* edge_lst() const;
 
         /// Allocate memory from space
         static void* operator new(size_t, Space&);
@@ -155,15 +155,15 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         /// Initialize with value \a v and successor \a n
         ValNode(int v, ValNode<View>* n);
         /// Return value of node
-        int val(void) const;
+        int val() const;
         /// Set matching edge to \a m
         void matching(Edge<View>* m);
         /// Return matching edge (nullptr if unmatched)
-        Edge<View>* matching(void) const;
+        Edge<View>* matching() const;
         /// Return pointer to next value node fields
-        ValNode<View>** next_val_ref(void);
+        ValNode<View>** next_val_ref();
         /// Return next value node
-        ValNode<View>* next_val(void) const;
+        ValNode<View>* next_val() const;
         /// Set next value node to \a v
         void next_val(ValNode<View>* v);
     };
@@ -184,23 +184,23 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
     public:
         /// Initialize node for a non-view
-        ViewNode(void);
+        ViewNode();
         /// Initialize new node for view \a x
         ViewNode(View x);
         /// Return first edge of all value edges
-        Edge<View>* val_edges(void) const;
+        Edge<View>* val_edges() const;
         /// Return pointer to first edge fields of all value edges
-        Edge<View>** val_edges_ref(void);
+        Edge<View>** val_edges_ref();
         /// Test whether node has a fake view
-        bool fake(void) const;
+        bool fake() const;
         /// Return view
-        View view(void) const;
+        View view() const;
         /// Update size of view after change
-        void update(void);
+        void update();
         /// Return whether view has changed its size
-        bool changed(void) const;
+        bool changed() const;
         /// Whether the node is matched
-        bool matched(void) const;
+        bool matched() const;
     };
 
     /**
@@ -231,19 +231,19 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         /// Whether edge is used (marked or between nodes from the same scc)
         bool used(Node<View>* v) const;
         /// Mark node as used
-        void use(void);
+        void use();
         /// Unmark node as used
-        void free(void);
+        void free();
 
         /// Revert edge to node \a d for matching
         void revert(Node<View>* d);
 
         /// Return next edge in list of value edges
-        Edge<View>* next_edge(void) const;
+        Edge<View>* next_edge() const;
         /// Return reference to next edge in list of value edges
-        Edge<View>** next_edge_ref(void);
+        Edge<View>** next_edge_ref();
         /// Return next edge in list of edges per node
-        Edge<View>* next(void) const;
+        Edge<View>* next() const;
 
         /// Allocate memory from space
         static void* operator new(size_t, Space&);
@@ -272,15 +272,15 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -315,15 +315,15 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         /// Find a matching for node \a x
         bool match(ViewNodeStack& m, ViewNode<View>* x);
         /// Compute the strongly connected components
-        void scc(void);
+        void scc();
 
     public:
         /// Construct graph as not yet initialized
-        Graph(void);
+        Graph();
         /// Test whether graph has been initialized
-        operator bool(void) const;
+        operator bool() const;
         /// Purge graph if necessary (reset information to avoid overflow)
-        void purge(void);
+        void purge();
     };
 
 }}} // namespace Gecode::Int::ViewValGraph

@@ -49,7 +49,7 @@ namespace Gecode { namespace Gist {
         const unsigned int gist_logo_size;
 
         /// Constructor
-        Logos(void);
+        Logos();
     };
 
 }} // namespace Gecode::Gist

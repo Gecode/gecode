@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("sat_array_bool_and", "\n\
 array[1..10] of var bool: x :: output_array([1..10]);\n\
 array[1..10] of var bool: y :: output_array([1..10]);\n\

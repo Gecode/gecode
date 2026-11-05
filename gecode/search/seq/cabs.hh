@@ -76,7 +76,7 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Make \a s the incumbent and return a copy, if it improves
         Space* publish(std::unique_ptr<Space> s);
         /// Move to the next layer or pass, false if done
-        bool advance(void);
+        bool advance();
         /// Start search from root \a s
         void initialize(Space* s, bool clone);
 
@@ -84,17 +84,17 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize for space \a s with options \a o
         CABS(Space* s, const Options& o);
         /// Return next better solution (nullptr if none or stopped)
-        Space* next(void);
+        Space* next();
         /// Return statistics
-        Statistics statistics(void) const;
+        Statistics statistics() const;
         /// Whether search stopped at the width or frontier limit
-        bool limited(void) const;
+        bool limited() const;
         /// Constrain future solutions to be better than \a b
         void constrain(const Space& b);
         /// Reset engine to restart at space \a s
         void reset(Space* s);
         /// Return no-goods (none)
-        NoGoods& nogoods(void);
+        NoGoods& nogoods();
     };
 
 }}} // namespace Gecode::Search::Seq

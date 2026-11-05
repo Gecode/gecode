@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     class Literal {
     public:
         /// Constructor for an empty literal
-        Literal(void);
+        Literal();
         /// Constructor
         Literal(int _var, int _val);
 
@@ -107,9 +107,9 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Number of references that point to this symmetry object.
         int nrefs;
         /// Default constructor
-        SymmetryObject(void);
+        SymmetryObject();
         /// Destructor
-        virtual ~SymmetryObject(void);
+        virtual ~SymmetryObject();
     };
     /// Implementation of a variable symmetry at the modelling level
     class GECODE_INT_EXPORT VariableSymmetryObject : public SymmetryObject {
@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Constructor for creation
         VariableSymmetryObject(ArgArray<VarImpBase*> vars);
         /// Destructor
-        ~VariableSymmetryObject(void) override;
+        ~VariableSymmetryObject() override;
     };
     /// Implementation of a value symmetry at the modelling level
     class GECODE_INT_EXPORT ValueSymmetryObject : public SymmetryObject {
@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Disposal
         virtual size_t dispose(Space& home) = 0;
         /// Unused destructor
-        virtual ~SymmetryImp(void);
+        virtual ~SymmetryImp();
         /// Placement new operator
         static void* operator new(size_t s, Space& home);
         /// Return memory to space
@@ -318,11 +318,11 @@ namespace Gecode { namespace Int { namespace LDSB {
         LDSBChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n, const Literal* literals,
                    int nliterals);
         /// Destructor
-        ~LDSBChoice(void) override;
+        ~LDSBChoice() override;
         /// Return literals
-        const Literal* literals(void) const;
+        const Literal* literals() const;
         /// Return number of literals
-        int nliterals(void) const;
+        int nliterals() const;
         /// Archive into \a e
         void archive(Archive& e) const override;
     };

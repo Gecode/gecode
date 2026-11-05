@@ -42,36 +42,36 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline int
-    ZeroIntView::min(void) const {
+    ZeroIntView::min() const {
         return 0;
     }
     forceinline int
-    ZeroIntView::max(void) const {
+    ZeroIntView::max() const {
         return 0;
     }
     forceinline int
-    ZeroIntView::med(void) const {
+    ZeroIntView::med() const {
         return 0;
     }
     forceinline int
-    ZeroIntView::val(void) const {
+    ZeroIntView::val() const {
         return 0;
     }
 
     forceinline unsigned int
-    ZeroIntView::size(void) const {
+    ZeroIntView::size() const {
         return 1;
     }
     forceinline unsigned int
-    ZeroIntView::width(void) const {
+    ZeroIntView::width() const {
         return 1;
     }
     forceinline unsigned int
-    ZeroIntView::regret_min(void) const {
+    ZeroIntView::regret_min() const {
         return 0;
     }
     forceinline unsigned int
-    ZeroIntView::regret_max(void) const {
+    ZeroIntView::regret_max() const {
         return 0;
     }
 
@@ -80,7 +80,7 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline bool
-    ZeroIntView::range(void) const {
+    ZeroIntView::range() const {
         return true;
     }
     forceinline bool
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void) = default;
+        ViewRanges() = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const ZeroIntView& x);
         /// Initialize with ranges for view \a x
@@ -238,19 +238,19 @@ namespace Gecode { namespace Int {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of ranges (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -259,24 +259,24 @@ namespace Gecode { namespace Int {
         : done(false) {}
 
     forceinline bool
-    ViewRanges<ZeroIntView>::operator()(void) const {
+    ViewRanges<ZeroIntView>::operator()() const {
         return !done;
     }
     forceinline void
-    ViewRanges<ZeroIntView>::operator++(void) {
+    ViewRanges<ZeroIntView>::operator++() {
         done = true;
     }
 
     forceinline int
-    ViewRanges<ZeroIntView>::min(void) const {
+    ViewRanges<ZeroIntView>::min() const {
         return 0;
     }
     forceinline int
-    ViewRanges<ZeroIntView>::max(void) const {
+    ViewRanges<ZeroIntView>::max() const {
         return 0;
     }
     forceinline unsigned int
-    ViewRanges<ZeroIntView>::width(void) const {
+    ViewRanges<ZeroIntView>::width() const {
         return 1;
     }
 

@@ -42,7 +42,7 @@ namespace Gecode {
          *
          */
         inline const char*
-        StringValueOption::value(void) const {
+        StringValueOption::value() const {
             return cur;
         }
 
@@ -57,7 +57,7 @@ namespace Gecode {
             cur = v;
         }
         inline int
-        StringOption::value(void) const {
+        StringOption::value() const {
             return cur;
         }
 
@@ -71,7 +71,7 @@ namespace Gecode {
             cur = v;
         }
         inline int
-        IntOption::value(void) const {
+        IntOption::value() const {
             return cur;
         }
 
@@ -86,7 +86,7 @@ namespace Gecode {
             cur = v;
         }
         inline unsigned int
-        UnsignedIntOption::value(void) const {
+        UnsignedIntOption::value() const {
             return cur;
         }
 
@@ -102,7 +102,7 @@ namespace Gecode {
             cur = v;
         }
         inline unsigned long long int
-        UnsignedLongLongIntOption::value(void) const {
+        UnsignedLongLongIntOption::value() const {
             return cur;
         }
 
@@ -116,7 +116,7 @@ namespace Gecode {
             cur = v;
         }
         inline double
-        DoubleOption::value(void) const {
+        DoubleOption::value() const {
             return cur;
         }
 
@@ -130,7 +130,7 @@ namespace Gecode {
             cur = v;
         }
         inline bool
-        BoolOption::value(void) const {
+        BoolOption::value() const {
             return cur;
         }
 
@@ -143,7 +143,7 @@ namespace Gecode {
             cur = ipl;
         }
         inline IntPropLevel
-        IplOption::value(void) const {
+        IplOption::value() const {
             return cur;
         }
 
@@ -156,7 +156,7 @@ namespace Gecode {
             cur = f;
         }
         inline int
-        TraceOption::value(void) const {
+        TraceOption::value() const {
             return cur;
         }
 
@@ -171,7 +171,7 @@ namespace Gecode {
             cur_port = p;
         }
         inline unsigned int
-        ProfilerOption::port(void) const {
+        ProfilerOption::port() const {
             return cur_port;
         }
         inline void
@@ -179,7 +179,7 @@ namespace Gecode {
             cur_execution_id = i;
         }
         inline int
-        ProfilerOption::execution_id(void) const {
+        ProfilerOption::execution_id() const {
             return cur_execution_id;
         }
 
@@ -190,7 +190,7 @@ namespace Gecode {
      *
      */
     inline const char*
-    BaseOptions::name(void) const {
+    BaseOptions::name() const {
         return _name;
     }
 
@@ -207,7 +207,7 @@ namespace Gecode {
         _model.add(v, o, h);
     }
     inline int
-    Options::model(void) const {
+    Options::model() const {
         return _model.value();
     }
 
@@ -220,7 +220,7 @@ namespace Gecode {
         _symmetry.add(v, o, h);
     }
     inline int
-    Options::symmetry(void) const {
+    Options::symmetry() const {
         return _symmetry.value();
     }
 
@@ -233,7 +233,7 @@ namespace Gecode {
         _propagation.add(v, o, h);
     }
     inline int
-    Options::propagation(void) const {
+    Options::propagation() const {
         return _propagation.value();
     }
 
@@ -242,7 +242,7 @@ namespace Gecode {
         _ipl.value(i);
     }
     inline IntPropLevel
-    Options::ipl(void) const {
+    Options::ipl() const {
         return _ipl.value();
     }
 
@@ -255,7 +255,7 @@ namespace Gecode {
         _branching.add(v, o, h);
     }
     inline int
-    Options::branching(void) const {
+    Options::branching() const {
         return _branching.value();
     }
 
@@ -264,7 +264,7 @@ namespace Gecode {
         _decay.value(d);
     }
     inline double
-    Options::decay(void) const {
+    Options::decay() const {
         return _decay.value();
     }
 
@@ -273,7 +273,7 @@ namespace Gecode {
         _seed.value(s);
     }
     inline unsigned int
-    Options::seed(void) const {
+    Options::seed() const {
         return _seed.value();
     }
 
@@ -282,7 +282,7 @@ namespace Gecode {
         _step.value(s);
     }
     inline double
-    Options::step(void) const {
+    Options::step() const {
         return _step.value();
     }
 
@@ -299,7 +299,7 @@ namespace Gecode {
         _search.add(v, o, h);
     }
     inline int
-    Options::search(void) const {
+    Options::search() const {
         return _search.value();
     }
 
@@ -308,7 +308,7 @@ namespace Gecode {
         _solutions.value(n);
     }
     inline unsigned long long int
-    Options::solutions(void) const {
+    Options::solutions() const {
         return _solutions.value();
     }
 
@@ -317,7 +317,7 @@ namespace Gecode {
         _threads.value(n);
     }
     inline double
-    Options::threads(void) const {
+    Options::threads() const {
         return _threads.value();
     }
 
@@ -327,7 +327,7 @@ namespace Gecode {
         _guidance = g;
     }
     inline const Search::HeuristicGuidance*
-    Options::guidance(void) const {
+    Options::guidance() const {
         return _guidance;
     }
 #endif
@@ -337,7 +337,7 @@ namespace Gecode {
         _c_d.value(d);
     }
     inline unsigned int
-    Options::c_d(void) const {
+    Options::c_d() const {
         return _c_d.value();
     }
 
@@ -346,7 +346,7 @@ namespace Gecode {
         _a_d.value(d);
     }
     inline unsigned int
-    Options::a_d(void) const {
+    Options::a_d() const {
         return _a_d.value();
     }
 
@@ -355,7 +355,7 @@ namespace Gecode {
         _d_l.value(d);
     }
     inline unsigned int
-    Options::d_l(void) const {
+    Options::d_l() const {
         return _d_l.value();
     }
 
@@ -364,7 +364,7 @@ namespace Gecode {
         _node.value(n);
     }
     inline unsigned long long int
-    Options::node(void) const {
+    Options::node() const {
         return _node.value();
     }
 
@@ -373,7 +373,7 @@ namespace Gecode {
         _fail.value(n);
     }
     inline unsigned long long int
-    Options::fail(void) const {
+    Options::fail() const {
         return _fail.value();
     }
 
@@ -382,7 +382,7 @@ namespace Gecode {
         _time.value(t);
     }
     inline double
-    Options::time(void) const {
+    Options::time() const {
         return _time.value();
     }
 
@@ -391,7 +391,7 @@ namespace Gecode {
         _assets.value(n);
     }
     inline unsigned int
-    Options::assets(void) const {
+    Options::assets() const {
         return _assets.value();
     }
 
@@ -400,7 +400,7 @@ namespace Gecode {
         _slice.value(n);
     }
     inline unsigned int
-    Options::slice(void) const {
+    Options::slice() const {
         return _slice.value();
     }
 
@@ -409,7 +409,7 @@ namespace Gecode {
         _restart.value(static_cast<int>(rm));
     }
     inline RestartMode
-    Options::restart(void) const {
+    Options::restart() const {
         return static_cast<RestartMode>(_restart.value());
     }
 
@@ -418,7 +418,7 @@ namespace Gecode {
         _r_base.value(n);
     }
     inline double
-    Options::restart_base(void) const {
+    Options::restart_base() const {
         return _r_base.value();
     }
 
@@ -427,7 +427,7 @@ namespace Gecode {
         _r_scale.value(n);
     }
     inline unsigned int
-    Options::restart_scale(void) const {
+    Options::restart_scale() const {
         return _r_scale.value();
     }
 
@@ -436,7 +436,7 @@ namespace Gecode {
         _r_limit.value(n);
     }
     inline unsigned long long int
-    Options::restart_limit(void) const {
+    Options::restart_limit() const {
         return _r_limit.value();
     }
 
@@ -445,7 +445,7 @@ namespace Gecode {
         _nogoods.value(b);
     }
     inline bool
-    Options::nogoods(void) const {
+    Options::nogoods() const {
         return _nogoods.value();
     }
 
@@ -454,7 +454,7 @@ namespace Gecode {
         _nogoods_limit.value(l);
     }
     inline unsigned int
-    Options::nogoods_limit(void) const {
+    Options::nogoods_limit() const {
         return _nogoods_limit.value();
     }
 
@@ -463,7 +463,7 @@ namespace Gecode {
         _relax.value(d);
     }
     inline double
-    Options::relax(void) const {
+    Options::relax() const {
         return _relax.value();
     }
 
@@ -472,7 +472,7 @@ namespace Gecode {
         _interrupt.value(b);
     }
     inline bool
-    Options::interrupt(void) const {
+    Options::interrupt() const {
         return _interrupt.value();
     }
 
@@ -485,7 +485,7 @@ namespace Gecode {
         _mode.value(static_cast<int>(sm));
     }
     inline ScriptMode
-    Options::mode(void) const {
+    Options::mode() const {
         return static_cast<ScriptMode>(_mode.value());
     }
 
@@ -494,7 +494,7 @@ namespace Gecode {
         _samples.value(s);
     }
     inline unsigned int
-    Options::samples(void) const {
+    Options::samples() const {
         return _samples.value();
     }
 
@@ -503,7 +503,7 @@ namespace Gecode {
         _iterations.value(i);
     }
     inline unsigned int
-    Options::iterations(void) const {
+    Options::iterations() const {
         return _iterations.value();
     }
 
@@ -512,7 +512,7 @@ namespace Gecode {
         _print_last.value(p);
     }
     inline bool
-    Options::print_last(void) const {
+    Options::print_last() const {
         return _print_last.value();
     }
 
@@ -522,7 +522,7 @@ namespace Gecode {
     }
 
     inline const char*
-    Options::out_file(void) const {
+    Options::out_file() const {
         return _out_file.value();
     }
 
@@ -532,7 +532,7 @@ namespace Gecode {
     }
 
     inline const char*
-    Options::log_file(void) const {
+    Options::log_file() const {
         return _log_file.value();
     }
 
@@ -542,7 +542,7 @@ namespace Gecode {
     }
 
     inline int
-    Options::trace(void) const {
+    Options::trace() const {
         return _trace.value();
     }
 
@@ -557,7 +557,7 @@ namespace Gecode {
         _profiler.execution_id(i);
     }
     inline int
-    Options::profiler_id(void) const {
+    Options::profiler_id() const {
         return _profiler.execution_id();
     }
     inline void
@@ -565,14 +565,14 @@ namespace Gecode {
         _profiler.port(p);
     }
     inline unsigned int
-    Options::profiler_port(void) const {
+    Options::profiler_port() const {
         return _profiler.port();
     }
 #endif
 
 #ifdef GECODE_HAS_GIST
     forceinline
-    Options::I_::I_(void)
+    Options::I_::I_()
         : _click(heap, 1), n_click(0), _solution(heap, 1), n_solution(0), _move(heap, 1), n_move(0), _compare(heap, 1),
           n_compare(0) {}
 
@@ -619,7 +619,7 @@ namespace Gecode {
         _size = s;
     }
     inline unsigned int
-    SizeOptions::size(void) const {
+    SizeOptions::size() const {
         return _size;
     }
 
@@ -628,22 +628,22 @@ namespace Gecode {
      *
      */
     inline const char*
-    InstanceOptions::instance(void) const {
+    InstanceOptions::instance() const {
         return _inst;
     }
 
     inline const char*
-    InstanceOptions::spec(void) const {
+    InstanceOptions::spec() const {
         return _spec;
     }
 
     inline const char*
-    InstanceOptions::spec_file(void) const {
+    InstanceOptions::spec_file() const {
         return _spec_file.value();
     }
 
     inline const char*
-    InstanceOptions::param(void) const {
+    InstanceOptions::param() const {
         return _param.value();
     }
 } // namespace Gecode

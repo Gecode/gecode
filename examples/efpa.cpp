@@ -77,33 +77,33 @@ public:
     }
     /// Get v, number of sequences
     int
-    v(void) const {
+    v() const {
         return _v.value();
     }
     /// Get q, number of symbols
     int
-    q(void) const {
+    q() const {
         return _q.value();
     }
     /// Get lambda, sets of symbols per sequence
     int
-    l(void) const {
+    l() const {
         return _l.value();
     }
     /// Get d, Hamming distance between sequences
     int
-    d(void) const {
+    d() const {
         return _d.value();
     }
 
     /// Whether to use permutation constraints. Only active if d=4
     bool
-    permutation(void) const {
+    permutation() const {
         return d() == 4 && _permutation.value();
     }
     /// Whether to use symmetry breaking.
     bool
-    symmetry(void) const {
+    symmetry() const {
         return _symmetry.value();
     }
 };
@@ -297,7 +297,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new EFPA(*this);
     }
 };

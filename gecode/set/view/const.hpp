@@ -46,7 +46,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ArrayRanges(void) : _ranges(nullptr), _size(0), _pos(0) {}
+        ArrayRanges() : _ranges(nullptr), _size(0), _pos(0) {}
         /// Initialize with ranges for array \a ranges which is of size \a size
         ArrayRanges(int* ranges, int size) : _ranges(ranges), _size(size), _pos(0) {}
         /// Initialize with ranges for array \a ranges which is of size \a size
@@ -62,12 +62,12 @@ namespace Gecode { namespace Set {
         //@{
         /// Test whether iterator is still at a range or done
         bool
-        operator()(void) const {
+        operator()() const {
             return _pos < _size;
         }
         /// Move iterator to next range (if possible)
         void
-        operator++(void) {
+        operator++() {
             _pos++;
         }
         //@}
@@ -76,24 +76,24 @@ namespace Gecode { namespace Set {
         //@{
         /// Return smallest value of range
         int
-        min(void) const {
+        min() const {
             return _ranges[_pos * 2];
         }
         /// Return largest value of range
         int
-        max(void) const {
+        max() const {
             return _ranges[_pos * 2 + 1];
         }
         /// Return width of range (distance between minimum and maximum)
         unsigned int
-        width(void) const {
+        width() const {
             return static_cast<unsigned int>(_ranges[_pos * 2 + 1] - _ranges[_pos * 2] + 1);
         }
         //@}
     };
 
     forceinline
-    ConstSetView::ConstSetView(void)
+    ConstSetView::ConstSetView()
         : ranges(nullptr), size(0), dom_size(0) {}
 
     forceinline
@@ -116,17 +116,17 @@ namespace Gecode { namespace Set {
     }
 
     forceinline unsigned int
-    ConstSetView::glb_size(void) const {
+    ConstSetView::glb_size() const {
         return dom_size;
     }
 
     forceinline unsigned int
-    ConstSetView::lub_size(void) const {
+    ConstSetView::lub_size() const {
         return dom_size;
     }
 
     forceinline unsigned int
-    ConstSetView::unknown_size(void) const {
+    ConstSetView::unknown_size() const {
         return 0;
     }
 
@@ -147,32 +147,32 @@ namespace Gecode { namespace Set {
     }
 
     forceinline unsigned int
-    ConstSetView::card_min(void) const {
+    ConstSetView::card_min() const {
         return dom_size;
     }
 
     forceinline unsigned int
-    ConstSetView::card_max(void) const {
+    ConstSetView::card_max() const {
         return dom_size;
     }
 
     forceinline int
-    ConstSetView::lub_min(void) const {
+    ConstSetView::lub_min() const {
         return size == 0 ? BndSet::MIN_OF_EMPTY : ranges[0];
     }
 
     forceinline int
-    ConstSetView::lub_max(void) const {
+    ConstSetView::lub_max() const {
         return size == 0 ? BndSet::MAX_OF_EMPTY : ranges[size * 2 - 1];
     }
 
     forceinline int
-    ConstSetView::glb_min(void) const {
+    ConstSetView::glb_min() const {
         return lub_min();
     }
 
     forceinline int
-    ConstSetView::glb_max(void) const {
+    ConstSetView::glb_max() const {
         return lub_max();
     }
 
@@ -298,17 +298,17 @@ namespace Gecode { namespace Set {
     }
 
     forceinline unsigned int
-    EmptyView::glb_size(void) const {
+    EmptyView::glb_size() const {
         return 0;
     }
 
     forceinline unsigned int
-    EmptyView::lub_size(void) const {
+    EmptyView::lub_size() const {
         return 0;
     }
 
     forceinline unsigned int
-    EmptyView::unknown_size(void) const {
+    EmptyView::unknown_size() const {
         return 0;
     }
 
@@ -323,32 +323,32 @@ namespace Gecode { namespace Set {
     }
 
     forceinline unsigned int
-    EmptyView::card_min(void) const {
+    EmptyView::card_min() const {
         return 0;
     }
 
     forceinline unsigned int
-    EmptyView::card_max(void) const {
+    EmptyView::card_max() const {
         return 0;
     }
 
     forceinline int
-    EmptyView::lub_min(void) const {
+    EmptyView::lub_min() const {
         return 0;
     }
 
     forceinline int
-    EmptyView::lub_max(void) const {
+    EmptyView::lub_max() const {
         return 0;
     }
 
     forceinline int
-    EmptyView::glb_min(void) const {
+    EmptyView::glb_min() const {
         return 0;
     }
 
     forceinline int
-    EmptyView::glb_max(void) const {
+    EmptyView::glb_max() const {
         return 0;
     }
 
@@ -453,17 +453,17 @@ namespace Gecode { namespace Set {
     // Constant universe variable
 
     forceinline unsigned int
-    UniverseView::glb_size(void) const {
+    UniverseView::glb_size() const {
         return Set::Limits::card;
     }
 
     forceinline unsigned int
-    UniverseView::lub_size(void) const {
+    UniverseView::lub_size() const {
         return Set::Limits::card;
     }
 
     forceinline unsigned int
-    UniverseView::unknown_size(void) const {
+    UniverseView::unknown_size() const {
         return 0;
     }
 
@@ -478,32 +478,32 @@ namespace Gecode { namespace Set {
     }
 
     forceinline unsigned int
-    UniverseView::card_min(void) const {
+    UniverseView::card_min() const {
         return Set::Limits::card;
     }
 
     forceinline unsigned int
-    UniverseView::card_max(void) const {
+    UniverseView::card_max() const {
         return Limits::card;
     }
 
     forceinline int
-    UniverseView::lub_min(void) const {
+    UniverseView::lub_min() const {
         return Limits::card;
     }
 
     forceinline int
-    UniverseView::lub_max(void) const {
+    UniverseView::lub_max() const {
         return Limits::card;
     }
 
     forceinline int
-    UniverseView::glb_min(void) const {
+    UniverseView::glb_min() const {
         return Limits::card;
     }
 
     forceinline int
-    UniverseView::glb_max(void) const {
+    UniverseView::glb_max() const {
         return Limits::card;
     }
 
@@ -620,7 +620,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void) = default;
+        LubRanges() = default;
         /// Initialize with ranges for view \a x
         LubRanges(const EmptyView& x) {
             (void)x;
@@ -643,7 +643,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void) = default;
+        GlbRanges() = default;
         /// Initialize with ranges for view \a x
         GlbRanges(const EmptyView& x) {
             (void)x;
@@ -666,7 +666,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void) : Iter::Ranges::Singleton(Limits::min, Limits::max) {}
+        LubRanges() : Iter::Ranges::Singleton(Limits::min, Limits::max) {}
         /// Initialize with ranges for view \a x
         LubRanges(const UniverseView& x) : Iter::Ranges::Singleton(Limits::min, Limits::max) {
             (void)x;
@@ -689,7 +689,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void) : Iter::Ranges::Singleton(Limits::min, Limits::max) {}
+        GlbRanges() : Iter::Ranges::Singleton(Limits::min, Limits::max) {}
         /// Initialize with ranges for view \a x
         GlbRanges(const UniverseView& x) : Iter::Ranges::Singleton(Limits::min, Limits::max) {
             (void)x;
@@ -716,7 +716,7 @@ namespace Gecode { namespace Set {
         //@{
         /// Default constructor
         // NOLINTNEXTLINE(modernize-use-equals-default)
-        LubRanges(void) {}
+        LubRanges() {}
         /// Initialize with ranges for view \a x
         LubRanges(const ConstSetView& x) : ar(x.ranges, x.size) {}
         /// Initialize with ranges for view \a x
@@ -730,12 +730,12 @@ namespace Gecode { namespace Set {
         //@{
         /// Test whether iterator is still at a value or done
         bool
-        operator()(void) const {
+        operator()() const {
             return ar();
         }
         /// Move iterator to next value (if possible)
         void
-        operator++(void) {
+        operator++() {
             ++ar;
         }
         //@}
@@ -744,17 +744,17 @@ namespace Gecode { namespace Set {
         //@{
         /// Return smallest value of range
         int
-        min(void) const {
+        min() const {
             return ar.min();
         }
         /// Return largest value of range
         int
-        max(void) const {
+        max() const {
             return ar.max();
         }
         /// Return width of range (distance between minimum and maximum)
         unsigned int
-        width(void) const {
+        width() const {
             return ar.width();
         }
         //@}
@@ -771,7 +771,7 @@ namespace Gecode { namespace Set {
         //@{
         /// Default constructor
         // NOLINTNEXTLINE(modernize-use-equals-default)
-        GlbRanges(void) {}
+        GlbRanges() {}
         /// Initialize with ranges for view \a x
         GlbRanges(const ConstSetView& x) : LubRanges<ConstSetView>(x) {}
         /// Initialize with ranges for view \a x

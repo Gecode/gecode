@@ -42,21 +42,21 @@ namespace Gecode { namespace Search {
         : e(e0) {}
     template <class T>
     forceinline T*
-    Base<T>::next(void) {
+    Base<T>::next() {
         return dynamic_cast<T*>(e->next());
     }
     template <class T>
     forceinline Statistics
-    Base<T>::statistics(void) const {
+    Base<T>::statistics() const {
         return e->statistics();
     }
     template <class T>
     forceinline bool
-    Base<T>::stopped(void) const {
+    Base<T>::stopped() const {
         return e->stopped();
     }
     template <class T>
-    forceinline Base<T>::~Base(void) {
+    forceinline Base<T>::~Base() {
         delete e;
     }
 

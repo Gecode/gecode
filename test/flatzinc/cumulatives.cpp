@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("cumulatives", "constraint cumulatives([0, 0], [1, 1], [0,1], 1); solve satisfy;",
                                    "----------\n");
         }

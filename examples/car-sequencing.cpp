@@ -70,7 +70,7 @@ namespace {
         }
         /// Get max stalls
         int
-        max_stalls(void) const {
+        max_stalls() const {
             return _max_stalls.value();
         }
     };
@@ -396,7 +396,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new CarSequencing(*this);
     }
 };

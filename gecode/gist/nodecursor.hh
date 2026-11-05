@@ -54,32 +54,32 @@ namespace Gecode { namespace Gist {
         /// Set current node to \a n
         void node(Node* n);
         /// Return start node
-        Node* start_node(void);
+        Node* start_node();
 
     public:
         /// Construct cursor, initially set to \a current_node
         NodeCursor(Node* current_node, const typename Node::NodeAllocator& na);
         /// Return current node
-        Node* node(void);
+        Node* node();
         /// Return current alternative
-        unsigned int alternative(void);
+        unsigned int alternative();
         /// Set current alternative
         void alternative(unsigned int a);
 
         /// \name Cursor interface
         //@{
         /// Test if the cursor may move to the parent node
-        bool may_move_upwards(void);
+        bool may_move_upwards();
         /// Move cursor to the parent node
-        void move_upwards(void);
+        void move_upwards();
         /// Test if cursor may move to the first child node
-        bool may_move_downwards(void);
+        bool may_move_downwards();
         /// Move cursor to the first child node
-        void move_downwards(void);
+        void move_downwards();
         /// Test if cursor may move to the first sibling
-        bool may_move_sidewards(void);
+        bool may_move_sidewards();
         /// Move cursor to the first sibling
-        void move_sidewards(void);
+        void move_sidewards();
         //@}
     };
 
@@ -94,9 +94,9 @@ namespace Gecode { namespace Gist {
         /// \name Cursor interface
         //@{
         /// Test if the cursor may move to the first child node
-        bool may_move_downwards(void);
+        bool may_move_downwards();
         /// Process node
-        void process_current_node(void);
+        void process_current_node();
         //@}
     };
 
@@ -108,7 +108,7 @@ namespace Gecode { namespace Gist {
         /// \name Cursor interface
         //@{
         /// Process node
-        void process_current_node(void);
+        void process_current_node();
         //@}
     };
 
@@ -120,7 +120,7 @@ namespace Gecode { namespace Gist {
         /// \name Cursor interface
         //@{
         /// Process node
-        void process_current_node(void);
+        void process_current_node();
         //@}
     };
 
@@ -130,7 +130,7 @@ namespace Gecode { namespace Gist {
         /// Whether to search backwards
         bool back;
         /// Whether the current node is not a solution
-        bool not_on_sol(void);
+        bool not_on_sol();
 
     public:
         /// Constructor
@@ -138,17 +138,17 @@ namespace Gecode { namespace Gist {
         /// \name Cursor interface
         //@{
         /// Do nothing
-        void process_current_node(void);
+        void process_current_node();
         /// Test if the cursor may move to the parent node
-        bool may_move_upwards(void);
+        bool may_move_upwards();
         /// Test if cursor may move to the first child node
-        bool may_move_downwards(void);
+        bool may_move_downwards();
         /// Move cursor to the first child node
-        void move_downwards(void);
+        void move_downwards();
         /// Test if cursor may move to the first sibling
-        bool may_move_sidewards(void);
+        bool may_move_sidewards();
         /// Move cursor to the first sibling
-        void move_sidewards(void);
+        void move_sidewards();
         //@}
     };
 
@@ -176,11 +176,11 @@ namespace Gecode { namespace Gist {
         /// \name Cursor interface
         //@{
         /// Collect statistics
-        void process_current_node(void);
+        void process_current_node();
         /// Move cursor to the first child node
-        void move_downwards(void);
+        void move_downwards();
         /// Move cursor to the parent node
-        void move_upwards(void);
+        void move_upwards();
         //@}
     };
 
@@ -204,7 +204,7 @@ namespace Gecode { namespace Gist {
                           VisualNode::NodeAllocator& na);
         /// \name Cursor interface
         //@{
-        void process_current_node(void);
+        void process_current_node();
         //@}
     };
 
@@ -217,7 +217,7 @@ namespace Gecode { namespace Gist {
         /// \name Cursor interface
         //@{
         /// Dispose node
-        void process_current_node(void);
+        void process_current_node();
         //@}
     };
 

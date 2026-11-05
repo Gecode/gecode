@@ -87,10 +87,10 @@ namespace Test { namespace Float {
 
         public:
             /// Create and register test
-            Median(void) : Base("Float::Basic::Median") {}
+            Median() : Base("Float::Basic::Median") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 const FloatNum m = Gecode::Float::Limits::max;
                 const FloatNum i = std::numeric_limits<FloatNum>::infinity();
@@ -118,21 +118,21 @@ namespace Test { namespace Float {
             /// Space for the variables behind the views
             class Fixture : public Gecode::Space {
             public:
-                Fixture(void) = default;
+                Fixture() = default;
                 // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new Fixture(*this);
                 }
             };
 
         public:
             /// Create and register test
-            ViewCompare(void) : Base("Float::Basic::View::Compare") {}
+            ViewCompare() : Base("Float::Basic::View::Compare") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 using namespace Gecode::Float;
                 Fixture home;

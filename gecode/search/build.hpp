@@ -36,15 +36,15 @@ namespace Gecode { namespace Search {
     Builder::Builder(const Options& opt0, bool b0)
         : opt(opt0.expand()), b(b0) {}
     forceinline Options&
-    Builder::options(void) {
+    Builder::options() {
         return opt;
     }
     forceinline const Options&
-    Builder::options(void) const {
+    Builder::options() const {
         return opt;
     }
     forceinline bool
-    Builder::best(void) const {
+    Builder::best() const {
         return b;
     }
 

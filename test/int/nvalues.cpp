@@ -62,7 +62,7 @@ namespace Test { namespace Int {
             }
             /// Create and register initial assignment
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 if (arity > 5)
                     return new RandomAssignment(arity, dom, 500, _rand);
                 else
@@ -218,7 +218,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 for (IntRelTypes irts; irts(); ++irts) {
                     for (int i = 1; i <= 7; i += 3) {
                         for (int m = 0; m <= 3; m++)

@@ -59,7 +59,7 @@ namespace Gecode { namespace FlatZinc {
                 return static_cast<BlackBoxHandle&>(SharedHandle::operator=(handle));
             }
             BlackBoxBackend*
-            operator()(void) const {
+            operator()() const {
                 return static_cast<BlackBoxBackend*>(object());
             }
         };
@@ -82,16 +82,16 @@ namespace Gecode { namespace FlatZinc {
         std::atomic<bool> error_recorded;
 
     public:
-        BlackBoxContext(void) : error_recorded(false) {}
+        BlackBoxContext() : error_recorded(false) {}
         BlackBoxHandle backend_for_constraint(const std::string& mode, const std::string& target,
                                               const std::vector<std::string>& args);
         void fail(std::exception_ptr e);
-        bool failed(void) const;
-        void rethrow(void) const;
+        bool failed() const;
+        void rethrow() const;
     };
 
     void
-    BlackBoxContextHandle::init(void) {
+    BlackBoxContextHandle::init() {
         if (!*this) {
             object(new BlackBoxContext);
         }
@@ -109,12 +109,12 @@ namespace Gecode { namespace FlatZinc {
     }
 
     bool
-    BlackBoxContextHandle::failed(void) const {
+    BlackBoxContextHandle::failed() const {
         return static_cast<bool>(*this) && static_cast<BlackBoxContext*>(object())->failed();
     }
 
     void
-    BlackBoxContextHandle::rethrow(void) const {
+    BlackBoxContextHandle::rethrow() const {
         if (*this) {
             static_cast<BlackBoxContext*>(object())->rethrow();
         }
@@ -150,12 +150,12 @@ namespace Gecode { namespace FlatZinc {
     }
 
     bool
-    BlackBoxContext::failed(void) const {
+    BlackBoxContext::failed() const {
         return error_recorded.load(std::memory_order_acquire);
     }
 
     void
-    BlackBoxContext::rethrow(void) const {
+    BlackBoxContext::rethrow() const {
         if (!error_recorded.load(std::memory_order_acquire)) {
             return;
         }

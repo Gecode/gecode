@@ -49,15 +49,15 @@ namespace Gecode { namespace Search {
 
     public:
         /// Initialize
-        Worker(void);
+        Worker();
         /// Reset stop information
-        void start(void);
+        void start();
         /// Check whether engine must be stopped
         bool stop(const Options& o);
         /// Check stop and wait for admission of a sequential worker
         bool stop_seq(Options& o);
         /// Check whether engine has been stopped
-        bool stopped(void) const;
+        bool stopped() const;
         /// Reset statistics with root depth \a d
         void reset(unsigned long int d = 0);
         /// Record stack depth \a d
@@ -67,11 +67,11 @@ namespace Gecode { namespace Search {
     };
 
     forceinline
-    Worker::Worker(void)
+    Worker::Worker()
         : _stopped(false), root_depth(0) {}
 
     forceinline void
-    Worker::start(void) {
+    Worker::start() {
         _stopped = false;
     }
 
@@ -95,7 +95,7 @@ namespace Gecode { namespace Search {
     }
 
     forceinline bool
-    Worker::stopped(void) const {
+    Worker::stopped() const {
         return _stopped;
     }
 

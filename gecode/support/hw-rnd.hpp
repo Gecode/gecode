@@ -33,7 +33,7 @@
 namespace Gecode { namespace Support {
 
     /// Return hardware generated random number
-    GECODE_SUPPORT_EXPORT unsigned int hwrnd(void);
+    GECODE_SUPPORT_EXPORT unsigned int hwrnd();
 
 }} // namespace Gecode::Support
 

@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace Branch {
         /// Return AFC over size as merit for view \a x at position \a i
         double operator()(const Space& home, View x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace Branch {
         /// Return action over size as merit for view \a x at position \a i
         double operator()(const Space& home, View x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -206,7 +206,7 @@ namespace Gecode { namespace Int { namespace Branch {
         /// Return size over action as merit for view \a x at position \a i
         double operator()(const Space& home, View x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -370,7 +370,7 @@ namespace Gecode { namespace Int { namespace Branch {
         /// Return value of view \a x at position \a i
         int val(const Space& home, View x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value selection
         void dispose(Space& home);
     };
@@ -703,16 +703,16 @@ namespace Gecode { namespace Int { namespace Branch {
 
             public:
                 /// Default constructor
-                VarIdToPosO(void) = default;
+                VarIdToPosO() = default;
                 /// Delete implementation
-                ~VarIdToPosO(void) override = default;
+                ~VarIdToPosO() override = default;
             };
 
         public:
             /// Default constructor
-            VarIdToPos(void) = default;
+            VarIdToPos() = default;
             /// Allocation of the shared handle
-            void init(void);
+            void init();
             /// Tests if a variable id is in the map
             bool is_in(unsigned int var_id) const;
             /// Returns the position of the variable id in \a x

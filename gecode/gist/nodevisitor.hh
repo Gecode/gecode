@@ -48,7 +48,7 @@ namespace Gecode { namespace Gist {
         /// Reset the cursor object to \a c0
         void set_cursor(const Cursor& c0);
         /// Return the cursor
-        Cursor& get_cursor(void);
+        Cursor& get_cursor();
     };
 
     /// \brief Run a cursor over a tree, processing nodes in post-order
@@ -57,15 +57,15 @@ namespace Gecode { namespace Gist {
     protected:
         using NodeVisitor<Cursor>::c;
         /// Move the cursor to the left-most leaf
-        void move_to_leaf(void);
+        void move_to_leaf();
 
     public:
         /// Constructor
         PostorderNodeVisitor(const Cursor& c);
         /// Move cursor to next node, return true if succeeded
-        bool next(void);
+        bool next();
         /// Execute visitor
-        void run(void);
+        void run();
     };
 
     /// \brief Run a cursor over a tree, processing nodes in pre-order
@@ -74,15 +74,15 @@ namespace Gecode { namespace Gist {
     protected:
         using NodeVisitor<Cursor>::c;
         /// Move cursor to next node from a leaf
-        bool backtrack(void);
+        bool backtrack();
 
     public:
         /// Constructor
         PreorderNodeVisitor(const Cursor& c);
         /// Move cursor to the next node, return true if succeeded
-        bool next(void);
+        bool next();
         /// Execute visitor
-        void run(void);
+        void run();
     };
 
 }} // namespace Gecode::Gist

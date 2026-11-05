@@ -160,9 +160,9 @@ namespace Gecode { namespace Search {
         /// Number of no-goods posted
         unsigned long int nogood;
         /// Initialize
-        Statistics(void);
+        Statistics();
         /// Reset
-        void reset(void);
+        void reset();
         /// Return sum with \a s
         Statistics operator+(const Statistics& s);
         /// Increment by statistics \a s
@@ -215,33 +215,33 @@ namespace Gecode {
 
         public:
             /// Do not initialize
-            EngineInfo(void);
+            EngineInfo();
             /// Initialize
             EngineInfo(EngineType et, unsigned int fst, unsigned int lst);
             /// \name Engine type information
             //@{
             /// Return engine type
-            EngineType type(void) const;
+            EngineType type() const;
             /// Return whether engine is a meta engine
-            bool meta(void) const;
+            bool meta() const;
             //@}
             /// \name Information for basic (non-meta) engines
             //@{
             /// Return id of first worker
-            unsigned int wfst(void) const;
+            unsigned int wfst() const;
             /// Return id of last worker plus one
-            unsigned int wlst(void) const;
+            unsigned int wlst() const;
             /// Return number of workers
-            unsigned int workers(void) const;
+            unsigned int workers() const;
             //@}
             /// \name Information for meta engines
             //@{
             /// Return id of first engine
-            unsigned int efst(void) const;
+            unsigned int efst() const;
             /// Return id of last engine
-            unsigned int elst(void) const;
+            unsigned int elst() const;
             /// Return number of engines
-            unsigned int engines(void) const;
+            unsigned int engines() const;
             //@}
         };
         /// Edge information
@@ -262,21 +262,21 @@ namespace Gecode {
             /// Initialize
             void init(unsigned int wid, unsigned int nid, unsigned int a, const Space& s, const Choice& c);
             /// Invalidate edge information (for stealing)
-            void invalidate(void);
+            void invalidate();
             /// Initialize as non existing
-            EdgeInfo(void);
+            EdgeInfo();
             /// Initialize
             EdgeInfo(unsigned int wid, unsigned int nid, unsigned int a);
             /// Test whether edge actually exists
-            operator bool(void) const;
+            operator bool() const;
             /// Return parent worker id
-            unsigned int wid(void) const;
+            unsigned int wid() const;
             /// Return parent node id
-            unsigned int nid(void) const;
+            unsigned int nid() const;
             /// Return number of alternative
-            unsigned int alternative(void) const;
+            unsigned int alternative() const;
             /// Return string for alternative
-            std::string string(void) const;
+            std::string string() const;
         };
         /// Node type
         enum class NodeType {
@@ -303,15 +303,15 @@ namespace Gecode {
             /// Initialize node info
             NodeInfo(NodeType nt, unsigned int wid, unsigned int nid, const Space& s, const Choice* c = nullptr);
             /// Return node type
-            NodeType type(void) const;
+            NodeType type() const;
             /// Return worker id
-            unsigned int wid(void) const;
+            unsigned int wid() const;
             /// Return node id
-            unsigned int nid(void) const;
+            unsigned int nid() const;
             /// Return corresponding space
-            const Space& space(void) const;
+            const Space& space() const;
             /// Return corresponding choice
-            const Choice& choice(void) const;
+            const Choice& choice() const;
         };
 
     private:
@@ -334,7 +334,7 @@ namespace Gecode {
         /// Register new worker
         void worker(unsigned int& wid, unsigned int& eid);
         /// Deregister a worker
-        void worker(void);
+        void worker();
         /// \name Unsynchronized internal calls
         //{@
         /// The engine with id \a eid goes to a next round (restart or next iteration in LDS)
@@ -346,13 +346,13 @@ namespace Gecode {
         //@}
     public:
         /// Initialize
-        SearchTracer(void);
+        SearchTracer();
         /// \name Engine information
         //@{
         /// Return number of workers
-        unsigned int workers(void) const;
+        unsigned int workers() const;
         /// Return number of engines
-        unsigned int engines(void) const;
+        unsigned int engines() const;
         /// Provide access to engine with id \a eid
         const EngineInfo& engine(unsigned int eid) const;
         /// Return the engine id of a worker with id \a wid
@@ -361,7 +361,7 @@ namespace Gecode {
         /// \name Trace event functions
         //@{
         /// The search engine initializes
-        virtual void init(void) = 0;
+        virtual void init() = 0;
         /// The engine with id \a eid goes to a next round (restart or next iteration in LDS)
         virtual void round(unsigned int eid) = 0;
         /// The engine skips an edge
@@ -369,10 +369,10 @@ namespace Gecode {
         /// The engine creates a new node with information \a ei and \a ni
         virtual void node(const EdgeInfo& ei, const NodeInfo& ni) = 0;
         /// All workers are done
-        virtual void done(void) = 0;
+        virtual void done() = 0;
         //@}
         /// Delete
-        virtual ~SearchTracer(void);
+        virtual ~SearchTracer();
     };
 
     class GECODE_SEARCH_EXPORT StdSearchTracer : public SearchTracer {
@@ -386,7 +386,7 @@ namespace Gecode {
         /// Initialize  with output stream \a os
         StdSearchTracer(std::ostream& os = std::cerr);
         /// The search engine initializes
-        void init(void) override;
+        void init() override;
         /// The engine with id \a eid goes to a next round (restart or next iteration in LDS)
         void round(unsigned int eid) override;
         /// The engine skips an edge
@@ -394,9 +394,9 @@ namespace Gecode {
         /// The engine creates a new node with information \a ei and \a ni
         void node(const EdgeInfo& ei, const NodeInfo& ni) override;
         /// All workers are done
-        void done(void) override;
+        void done() override;
         /// Delete
-        ~StdSearchTracer(void) override;
+        ~StdSearchTracer() override;
         /// Default tracer (printing to std::cerr)
         static StdSearchTracer def;
     };
@@ -432,11 +432,11 @@ namespace Gecode {
         class GECODE_SEARCH_EXPORT GetInfo : public HeapAllocated {
         public:
             /// Initialize
-            GetInfo(void) = default;
+            GetInfo() = default;
             /// Return info for a space
             virtual std::string get_info(const Space& home) const = 0;
             /// Delete
-            virtual ~GetInfo(void);
+            virtual ~GetInfo();
         };
 
     private:
@@ -456,7 +456,7 @@ namespace Gecode {
         CPProfilerSearchTracer(int eid, std::string name, unsigned int port = Search::Config::cpprofiler_port,
                                const GetInfo* pgi = nullptr);
         /// The search engine initializes
-        void init(void) override;
+        void init() override;
         /// The engine with id \a eid goes to a next round (restart or next iteration in LDS)
         void round(unsigned int eid) override;
         /// The engine skips an edge
@@ -464,9 +464,9 @@ namespace Gecode {
         /// The engine creates a new node with information \a ei and \a ni
         void node(const EdgeInfo& ei, const NodeInfo& ni) override;
         /// All workers are done
-        void done(void) override;
+        void done() override;
         /// Delete
-        ~CPProfilerSearchTracer(void) override;
+        ~CPProfilerSearchTracer() override;
     };
 
 } // namespace Gecode
@@ -484,13 +484,13 @@ namespace Gecode { namespace Search {
         /// \name Constructors and member functions
         //@{
         /// Default constructor
-        Cutoff(void) = default;
+        Cutoff() = default;
         /// Return the current cutoff value
-        virtual unsigned long long int operator()(void) const = 0;
+        virtual unsigned long long int operator()() const = 0;
         /// Increment and return the next cutoff value
-        virtual unsigned long long int operator++(void) = 0;
+        virtual unsigned long long int operator++() = 0;
         /// Destructor
-        virtual ~Cutoff(void);
+        virtual ~Cutoff();
         //@}
         /// \name Predefined cutoff generators
         //@{
@@ -532,9 +532,9 @@ namespace Gecode { namespace Search {
         /// Constructor
         CutoffConstant(unsigned long long int c);
         /// Return the current cutoff value
-        unsigned long long int operator()(void) const override;
+        unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
-        unsigned long long int operator++(void) override;
+        unsigned long long int operator++() override;
     };
 
     /**
@@ -552,9 +552,9 @@ namespace Gecode { namespace Search {
         /// Constructor
         CutoffLinear(unsigned long long int scale);
         /// Return the current cutoff value
-        unsigned long long int operator()(void) const override;
+        unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
-        unsigned long long int operator++(void) override;
+        unsigned long long int operator++() override;
     };
 
     /**
@@ -580,9 +580,9 @@ namespace Gecode { namespace Search {
         /// Constructor
         CutoffLuby(unsigned long long int scale);
         /// Return the current cutoff value
-        unsigned long long int operator()(void) const override;
+        unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
-        unsigned long long int operator++(void) override;
+        unsigned long long int operator++() override;
     };
 
     /**
@@ -602,9 +602,9 @@ namespace Gecode { namespace Search {
         /// Constructor
         CutoffGeometric(unsigned long long int scale, double base);
         /// Return the current cutoff value
-        unsigned long long int operator()(void) const override;
+        unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
-        unsigned long long int operator++(void) override;
+        unsigned long long int operator++() override;
     };
 
     /**
@@ -629,9 +629,9 @@ namespace Gecode { namespace Search {
         CutoffRandom(unsigned int seed, unsigned long long int min, unsigned long long int max,
                      unsigned long long int n);
         /// Return the current cutoff value
-        unsigned long long int operator()(void) const override;
+        unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
-        unsigned long long int operator++(void) override;
+        unsigned long long int operator++() override;
     };
 
     /**
@@ -651,11 +651,11 @@ namespace Gecode { namespace Search {
         /// Constructor
         CutoffAppend(Cutoff* c1, unsigned long long int n, Cutoff* c2);
         /// Return the current cutoff value
-        unsigned long long int operator()(void) const override;
+        unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
-        unsigned long long int operator++(void) override;
+        unsigned long long int operator++() override;
         /// Destructor
-        ~CutoffAppend(void) override;
+        ~CutoffAppend() override;
     };
 
     /**
@@ -673,11 +673,11 @@ namespace Gecode { namespace Search {
         /// Constructor
         CutoffMerge(Cutoff* c1, Cutoff* c2);
         /// Return the current cutoff value
-        unsigned long long int operator()(void) const override;
+        unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
-        unsigned long long int operator++(void) override;
+        unsigned long long int operator++() override;
         /// Destructor
-        ~CutoffMerge(void) override;
+        ~CutoffMerge() override;
     };
 
     /**
@@ -699,11 +699,11 @@ namespace Gecode { namespace Search {
         /// Constructor
         CutoffRepeat(Cutoff* c, unsigned long long int n);
         /// Return the current cutoff value
-        unsigned long long int operator()(void) const override;
+        unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
-        unsigned long long int operator++(void) override;
+        unsigned long long int operator++() override;
         /// Destructor
-        ~CutoffRepeat(void) override;
+        ~CutoffRepeat() override;
     };
 
 }} // namespace Gecode::Search
@@ -777,7 +777,7 @@ namespace Gecode { namespace Search {
 
     public:
         /// Construct an empty handle
-        WorkerControl(void) noexcept;
+        WorkerControl() noexcept;
         /// Construct an engaged handle with initial request \a requested (zero pauses)
         explicit WorkerControl(unsigned int requested);
         /// Copy constructor
@@ -785,11 +785,11 @@ namespace Gecode { namespace Search {
         /// Assignment operator
         WorkerControl& operator=(const WorkerControl& control);
         /// Destructor
-        ~WorkerControl(void);
+        ~WorkerControl();
         /// Whether this handle is engaged
-        bool engaged(void) const noexcept;
+        bool engaged() const noexcept;
         /// Return the requested number of workers (zero also denotes an empty handle)
-        unsigned int requested(void) const noexcept;
+        unsigned int requested() const noexcept;
         /**
          * \brief Request \a workers workers (zero pauses the engine)
          *
@@ -800,7 +800,7 @@ namespace Gecode { namespace Search {
          */
         void request(unsigned int workers);
         /// Return the fixed worker capacity, or zero before attachment
-        unsigned int capacity(void) const noexcept;
+        unsigned int capacity() const noexcept;
     };
 
     class Stop;
@@ -888,9 +888,9 @@ namespace Gecode { namespace Search {
         /// Default options
         GECODE_SEARCH_EXPORT static const Options def;
         /// Initialize with default values
-        Options(void);
+        Options();
         /// Expand with real number of threads
-        GECODE_SEARCH_EXPORT Options expand(void) const;
+        GECODE_SEARCH_EXPORT Options expand() const;
     };
 
 }} // namespace Gecode::Search
@@ -920,11 +920,11 @@ namespace Gecode { namespace Search {
         /// \name Constructors and member functions
         //@{
         /// Default constructor
-        Stop(void) = default;
+        Stop() = default;
         /// Stop search, if returns true
         virtual bool stop(const Statistics& s, const Options& o) = 0;
         /// Destructor
-        virtual ~Stop(void);
+        virtual ~Stop();
         //@}
         /// \name Predefined stop objects
         //@{
@@ -960,7 +960,7 @@ namespace Gecode { namespace Search {
         /// Assignment operator
         NodeStop& operator=(const NodeStop& s);
         /// Return current limit
-        unsigned long long int limit(void) const;
+        unsigned long long int limit() const;
         /// Set current limit to \a l nodes
         void limit(unsigned long long int l);
         /// Return true if node limit is exceeded
@@ -988,7 +988,7 @@ namespace Gecode { namespace Search {
         /// Assignment operator
         FailStop& operator=(const FailStop& s);
         /// Return current limit
-        unsigned long long int limit(void) const;
+        unsigned long long int limit() const;
         /// Set current limit to \a l failures
         void limit(unsigned long long int l);
         /// Return true if failure limit is exceeded
@@ -1021,11 +1021,11 @@ namespace Gecode { namespace Search {
         /// Assignment operator
         TimeStop& operator=(const TimeStop& s);
         /// Return current limit in milliseconds
-        double limit(void) const;
+        double limit() const;
         /// Set current limit to \a l milliseconds
         void limit(double l);
         /// Reset time to zero
-        void reset(void);
+        void reset();
         /// Return true if time limit is exceeded
         bool stop(const Statistics& s, const Options& o) override;
     };
@@ -1047,7 +1047,7 @@ namespace Gecode { namespace Search {
         /// Assignment operator
         RestartStop& operator=(const RestartStop& s);
         /// Return current limit
-        unsigned long long int limit(void) const;
+        unsigned long long int limit() const;
         /// Set current limit to \a l restarts
         void limit(unsigned long long int l);
         /// Return true if failure limit is exceeded
@@ -1068,29 +1068,29 @@ namespace Gecode { namespace Search {
         /// Control retained for the lifetime of a leaf engine
         WorkerControl worker_control;
         /// Construct a meta engine without worker control
-        Engine(void);
+        Engine();
         /// Construct a leaf engine and bind worker control to \a capacity
         Engine(const Options& o, unsigned int capacity);
 
     public:
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual Space* next(void) = 0;
+        virtual Space* next() = 0;
         /// Return statistics
-        virtual Statistics statistics(void) const = 0;
+        virtual Statistics statistics() const = 0;
         /// Check whether engine has been stopped
-        virtual bool stopped(void) const = 0;
+        virtual bool stopped() const = 0;
 #ifdef GECODE_HAS_EXPERIMENTAL
         /// Whether the engine stopped at a local limit (such as a CABS width limit) and cannot continue
-        virtual bool limited(void) const;
+        virtual bool limited() const;
 #endif
         /// Constrain future solutions to be better than \a b (raises exception)
         virtual void constrain(const Space& b);
         /// Reset engine to restart at space \a s (does nothing)
         virtual void reset(Space* s);
         /// Return no-goods (the no-goods are empty)
-        virtual NoGoods& nogoods(void);
+        virtual NoGoods& nogoods();
         /// Destructor
-        virtual ~Engine(void);
+        virtual ~Engine();
     };
 
 }} // namespace Gecode::Search
@@ -1115,13 +1115,13 @@ namespace Gecode { namespace Search {
 
     public:
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual T* next(void);
+        virtual T* next();
         /// Return statistics
-        virtual Statistics statistics(void) const;
+        virtual Statistics statistics() const;
         /// Check whether engine has been stopped
-        virtual bool stopped(void) const;
+        virtual bool stopped() const;
         /// Destructor
-        virtual ~Base(void);
+        virtual ~Base();
 
     public:
         /// Disallow copy constructor
@@ -1155,15 +1155,15 @@ namespace Gecode { namespace Search {
         /// Initialize with options \a opt and \a best solution search support
         Builder(const Options& opt, bool best);
         /// Provide access to options
-        Options& options(void);
+        Options& options();
         /// Provide access to options
-        const Options& options(void) const;
+        const Options& options() const;
         /// Whether engine is a best solution search engine
-        bool best(void) const;
+        bool best() const;
         /// Build an engine according to stored options for \a s
         virtual Engine* operator()(Space* s) const = 0;
         /// Destructor
-        virtual ~Builder(void);
+        virtual ~Builder();
     };
 
 }} // namespace Gecode::Search
@@ -1187,7 +1187,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        SEBs(void);
+        SEBs();
         /// Allocate array with \a n elements
         explicit SEBs(int n);
         /// Allocate array and copy elements from \a x
