@@ -261,7 +261,7 @@ namespace Gecode { namespace FlatZinc {
               _fail("fail", "failure cutoff (0 = none, solution mode)"),
               _time("time", "time (in ms) cutoff (0 = none, solution mode)"),
               _time_limit("t", "time (in ms) cutoff (0 = none, solution mode)"), _seed("r", "random seed", 0),
-              _restart("restart", "restart sequence type", RM_NONE),
+              _restart("restart", "restart sequence type", static_cast<int>(RM_NONE)),
               _r_base("restart-base", "base for geometric restart sequence", 1.5),
               _r_scale("restart-scale", "scale factor for restart sequence", 250),
               _r_limit("restart-limit", "restart cutoff (0 = none, solution mode)"),
@@ -269,22 +269,22 @@ namespace Gecode { namespace FlatZinc {
               _nogoods_limit("nogoods-limit", "depth limit for no-good extraction", Search::Config::nogoods_limit),
               _interrupt("interrupt", "whether to catch Ctrl-C (true) or not (false)", true),
               _step("step", "step distance for float optimization", 0.0),
-              _mode("mode", "how to execute script", Gecode::SM_SOLUTION), _stat("s", "emit statistics"),
-              _output("o", "file to send output to")
+              _mode("mode", "how to execute script", static_cast<int>(Gecode::SM_SOLUTION)),
+              _stat("s", "emit statistics"), _output("o", "file to send output to")
 
 #ifdef GECODE_HAS_CPPROFILER
               ,
               _profiler("cp-profiler", "use this execution id and port (comma separated) with CP-profiler")
 #endif
         {
-            _mode.add(Gecode::SM_SOLUTION, "solution");
-            _mode.add(Gecode::SM_STAT, "stat");
-            _mode.add(Gecode::SM_GIST, "gist");
-            _restart.add(RM_NONE, "none");
-            _restart.add(RM_CONSTANT, "constant");
-            _restart.add(RM_LINEAR, "linear");
-            _restart.add(RM_LUBY, "luby");
-            _restart.add(RM_GEOMETRIC, "geometric");
+            _mode.add(static_cast<int>(Gecode::SM_SOLUTION), "solution");
+            _mode.add(static_cast<int>(Gecode::SM_STAT), "stat");
+            _mode.add(static_cast<int>(Gecode::SM_GIST), "gist");
+            _restart.add(static_cast<int>(RM_NONE), "none");
+            _restart.add(static_cast<int>(RM_CONSTANT), "constant");
+            _restart.add(static_cast<int>(RM_LINEAR), "linear");
+            _restart.add(static_cast<int>(RM_LUBY), "luby");
+            _restart.add(static_cast<int>(RM_GEOMETRIC), "geometric");
 
             add(_solutions);
             add(_threads);
@@ -323,8 +323,8 @@ namespace Gecode { namespace FlatZinc {
             if (_time_limit.value()) {
                 _time.value(_time_limit.value());
             }
-            if (_stat.value() && (_mode.value() == Gecode::SM_SOLUTION))
-                _mode.value(Gecode::SM_STAT);
+            if (_stat.value() && (mode() == Gecode::SM_SOLUTION))
+                _mode.value(static_cast<int>(Gecode::SM_STAT));
         }
 
         void
@@ -400,7 +400,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         restart(RestartMode rm) {
-            _restart.value(rm);
+            _restart.value(static_cast<int>(rm));
         }
         double
         restart_base(void) const {
@@ -491,11 +491,12 @@ namespace Gecode { namespace FlatZinc {
      */
     class GECODE_FLATZINC_EXPORT FlatZincSpace : public Space {
     public:
-        enum Meth {
+        enum class Meth {
             SAT, //< Solve as satisfaction problem
             MIN, //< Solve as minimization problem
             MAX  //< Solve as maximization problem
         };
+        using enum Meth;
 
     protected:
         /// Initialisation data (only used for posting constraints)

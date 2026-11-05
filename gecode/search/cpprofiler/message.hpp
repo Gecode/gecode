@@ -47,12 +47,13 @@ namespace Gecode { namespace CPProfiler {
     static const int32_t PROFILER_PROTOCOL_VERSION = 3;
 
     /// Types of nodes for CP Profiler
-    enum NodeStatus {
+    enum class NodeStatus {
         SOLVED = 0, ///< Node representing a solution
         FAILED = 1, ///< Node representing failure
         BRANCH = 2, ///< Node representing a branch
         SKIPPED = 3 ///< Node skipped by backjumping
     };
+    using enum NodeStatus;
 
     /// Types of messages for CP Profiler
     enum class MsgType { NODE = 0, DONE = 1, START = 2, RESTART = 3 };
@@ -286,7 +287,8 @@ namespace Gecode { namespace CPProfiler {
     class MessageMarshalling {
     private:
         /// Only optional fields are listed here, if node (no need for field id)
-        enum Field { LABEL = 0, NOGOOD = 1, INFO = 2, VERSION = 3 };
+        enum class Field { LABEL = 0, NOGOOD = 1, INFO = 2, VERSION = 3 };
+        using enum Field;
 
         Message msg;
 

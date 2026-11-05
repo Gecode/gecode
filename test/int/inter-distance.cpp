@@ -390,7 +390,7 @@ namespace Test { namespace Int { namespace InterDistance {
             (void)new Variable(1, Gecode::IPL_DEF);
             for (Gecode::IntPropLevel ipl : {Gecode::IPL_BASIC, Gecode::IPL_ADVANCED, Gecode::IPL_BASIC_ADVANCED})
                 (void)new Distance(3, 2, -3, 3, ipl);
-            (void)new Distance(3, 2, -3, 3, static_cast<Gecode::IntPropLevel>(Gecode::IPL_BND | Gecode::IPL_BASIC));
+            (void)new Distance(3, 2, -3, 3, Gecode::IPL_BND | Gecode::IPL_BASIC);
         }
     } create;
     Posting posting;

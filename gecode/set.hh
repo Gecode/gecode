@@ -627,7 +627,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelSet
      */
-    enum SetRelType {
+    enum class SetRelType {
         SRT_EQ,   ///< Equality (\f$=\f$)
         SRT_NQ,   ///< Disequality (\f$\neq\f$)
         SRT_SUB,  ///< Subset (\f$\subseteq\f$)
@@ -639,17 +639,19 @@ namespace Gecode {
         SRT_GQ,   ///< Greater or equal (\f$\geq\f$)
         SRT_GR    ///< Greater (\f$>\f$)
     };
+    using enum SetRelType;
 
     /**
      * \brief Common operations for sets
      * \ingroup TaskModelSet
      */
-    enum SetOpType {
+    enum class SetOpType {
         SOT_UNION,  ///< Union
         SOT_DUNION, ///< Disjoint union
         SOT_INTER,  ///< %Intersection
         SOT_MINUS   ///< Difference
     };
+    using enum SetOpType;
 
     /**
      * \defgroup TaskModelSetDom Domain constraints
@@ -1210,7 +1212,7 @@ namespace Gecode {
     class SetVarBranch : public VarBranch<SetVar> {
     public:
         /// Which variable selection
-        enum Select {
+        enum class Select {
             SEL_NONE = 0,        ///< First unassigned
             SEL_RND,             ///< Random (uniform, for tie breaking)
             SEL_MERIT_MIN,       ///< With least merit
@@ -1238,6 +1240,7 @@ namespace Gecode {
             SEL_CHB_SIZE_MIN,    ///< With smallest CHB Q-score divided by domain size
             SEL_CHB_SIZE_MAX     ///< With largest CHB Q-score divided by domain size
         };
+        using enum Select;
 
     protected:
         /// Which variable to select
@@ -1363,7 +1366,7 @@ namespace Gecode {
     class SetValBranch : public ValBranch<SetVar> {
     public:
         /// Which value selection
-        enum Select {
+        enum class Select {
             SEL_MIN_INC,   ///< Include smallest element
             SEL_MIN_EXC,   ///< Exclude smallest element
             SEL_MED_INC,   ///< Include median element (rounding downwards)
@@ -1374,6 +1377,7 @@ namespace Gecode {
             SEL_RND_EXC,   ///< Exclude random element
             SEL_VAL_COMMIT ///< Select value according to user-defined functions
         };
+        using enum Select;
 
     protected:
         /// Which value to select
@@ -1435,7 +1439,7 @@ namespace Gecode {
     class SetAssign : public ValBranch<SetVar> {
     public:
         /// Which value selection
-        enum Select {
+        enum class Select {
             SEL_MIN_INC,   ///< Include smallest element
             SEL_MIN_EXC,   ///< Exclude smallest element
             SEL_MED_INC,   ///< Include median element (rounding downwards)
@@ -1446,6 +1450,7 @@ namespace Gecode {
             SEL_RND_EXC,   ///< Exclude random element
             SEL_VAL_COMMIT ///< Select value according to user-defined functions
         };
+        using enum Select;
 
     protected:
         /// Which value to select

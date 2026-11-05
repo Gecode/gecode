@@ -43,7 +43,7 @@ namespace Gecode { namespace FlatZinc {
     class IntBoolVarBranch : public VarBranch<IntVar> {
     public:
         /// Which variable selection
-        enum Select {
+        enum class Select {
             SEL_AFC_MAX,         ///< With largest accumulated failure count
             SEL_ACTION_MAX,      ///< With highest action
             SEL_CHB_MAX,         ///< With highest CHB Q-score
@@ -51,6 +51,7 @@ namespace Gecode { namespace FlatZinc {
             SEL_ACTION_SIZE_MAX, ///< With largest action divided by domain size
             SEL_CHB_SIZE_MAX     ///< With largest CHB Q-score divided by domain size
         };
+        using enum Select;
 
     protected:
         /// Which variable to select

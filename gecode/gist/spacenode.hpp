@@ -63,7 +63,7 @@ namespace Gecode { namespace Gist {
     forceinline void
     SpaceNode::set_status(NodeStatus s) {
         status_bits &= ~(status_mask);
-        status_bits |= s << 20;
+        status_bits |= std::to_underlying(s) << 20;
     }
 
     forceinline NodeStatus

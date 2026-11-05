@@ -34,7 +34,8 @@
 
 namespace Gecode {
 
-    const char* StdSearchTracer::t2s[SearchTracer::EngineType::AOE + 1] = {"DFS", "BAB", "LDS", "RBS", "PBS", "AOE"};
+    const char* StdSearchTracer::t2s[std::to_underlying(SearchTracer::EngineType::AOE) + 1] = {"DFS", "BAB", "LDS",
+                                                                                               "RBS", "PBS", "AOE"};
 
     StdSearchTracer::StdSearchTracer(std::ostream& os0) : os(os0) {}
 
@@ -42,7 +43,7 @@ namespace Gecode {
     StdSearchTracer::init(void) {
         os << "trace<Search>::init()" << '\n' << std::flush;
         for (unsigned int e = 0U; e < engines(); e++) {
-            os << "\t" << e << ": " << t2s[engine(e).type()];
+            os << "\t" << e << ": " << t2s[std::to_underlying(engine(e).type())];
             if (engine(e).meta()) {
                 os << ", engines: {";
                 for (unsigned int i = engine(e).efst(); i < engine(e).elst(); i++) {

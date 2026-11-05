@@ -115,12 +115,13 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     }
 
     /// Types of events for the sweep-line
-    typedef enum { EVENT_CHCK, EVENT_PROF, EVENT_PRUN } ev_t;
+    enum class EventType { EVENT_CHCK, EVENT_PROF, EVENT_PRUN };
+    using enum EventType;
     /// An event collects the information for one event for the sweep-line
     class Event {
     public:
         /// The type of the event
-        ev_t e;
+        EventType e;
         /// The task this event refers to
         int task;
         /// The date of this event
@@ -128,7 +129,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         /// The quantity changed by this event (if any)
         int inc;
         /// Simple constructor
-        Event(ev_t _e, int _task, int _date, int _inc = 0) : e(_e), task(_task), date(_date), inc(_inc) {}
+        Event(EventType _e, int _task, int _date, int _inc = 0) : e(_e), task(_task), date(_date), inc(_inc) {}
 
         // Default constructor for region-allocated memory
         // NOLINTNEXTLINE(modernize-use-equals-default)
