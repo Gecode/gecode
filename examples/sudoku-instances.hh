@@ -1799,8 +1799,6 @@ namespace {
      * 1 to 36. A file may contain several puzzles, one after the other;
      * select one with \c -param \c instance=K. See Instance::Spec for the
      * spec language.
-     *
-     * \relates Sudoku
      */
     const char* instance_spec = R"(format sudoku
 

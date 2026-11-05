@@ -329,7 +329,7 @@ GECODE_VERSION_NUMBER instead, or Gecode_VERSION from the CMake package.
 [MORE]
 CMake now generates config.hpp with configure_file. Feature macros that were
 defined as empty, such as GECODE_HAS_FLOAT_VARS, are now defined as 1; tests
-with #ifdef behave as before.
+of whether they are defined behave as before.
 
 [ENTRY]
 Module: support

@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
     template <class View, class Offset, bool shared>
     forceinline
-    Dom<View, Offset, shared>::Dom(Space& home, Dom<View, Offset, shared>& p)
+    Dom<View, Offset, shared>::Dom(Space& home, Dom& p)
         : Base<DomInfo<View, Offset>, Offset, PC_INT_DOM>(home, p) {}
 
     template <class View, class Offset, bool shared>

@@ -33,10 +33,11 @@
 namespace Gecode { namespace Set { namespace LDSB {
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
-    LDSBSetBrancher<View, n, Val, a, Filter, Print>::LDSBSetBrancher(
-        Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc, SymmetryImp<View>** syms,
-        int nsyms, BranchFilter<typename LDSBSetBrancher<View, n, Val, a, Filter, Print>::Var> bf,
-        VarValPrint<typename LDSBSetBrancher<View, n, Val, a, Filter, Print>::Var, Val> vvp)
+    LDSBSetBrancher<View, n, Val, a, Filter, Print>::LDSBSetBrancher(Home home, ViewArray<View>& x,
+                                                                     ViewSel<View>* vs[n],
+                                                                     ValSelCommitBase<View, Val>* vsc,
+                                                                     SymmetryImp<View>** syms, int nsyms,
+                                                                     BranchFilter<Var> bf, VarValPrint<Var, Val> vvp)
         : LDSBBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, syms, nsyms, std::move(bf), std::move(vvp)),
           _prev_pos(-1), _copied_syms(nullptr), _n_copied_syms(0), _stable(false) {
         // Put all the value symmetries at the end of the list.
@@ -56,8 +57,7 @@ namespace Gecode { namespace Set { namespace LDSB {
     }
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
-    LDSBSetBrancher<View, n, Val, a, Filter, Print>::LDSBSetBrancher(Space& home,
-                                                                     LDSBSetBrancher<View, n, Val, a, Filter, Print>& b)
+    LDSBSetBrancher<View, n, Val, a, Filter, Print>::LDSBSetBrancher(Space& home, LDSBSetBrancher& b)
         : LDSBBrancher<View, n, Val, a, Filter, Print>(home, b), _prev_pos(b._prev_pos),
           _n_non_value_symmetries(b._n_non_value_symmetries), _n_value_symmetries(b._n_value_symmetries),
           _n_copied_syms(b._n_copied_syms), _left_branch_values(b._left_branch_values), _stable(b._stable) {

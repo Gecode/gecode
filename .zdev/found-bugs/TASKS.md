@@ -3,9 +3,9 @@
 # Tasks: found-bugs
 
 - Total: 6
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 5
+- Done: 6
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -14,4 +14,4 @@
 | [found-bugs-003](tasks/003-reject-invalid-posting-arguments.md) | Reject invalid posting arguments | done | found-bugs-002 |
 | [found-bugs-004](tasks/004-define-the-declared-but-missing-functions.md) | Define the declared but missing functions | done | found-bugs-003 |
 | [found-bugs-005](tasks/005-fix-the-flatzinc-branching-bugs.md) | Fix the FlatZinc branching bugs | done | found-bugs-004 |
-| [found-bugs-006](tasks/006-resolve-the-openlist-sanitizer-overflow-and-doxygen-warnings.md) | Resolve the OpenList sanitizer overflow and Doxygen warnings | ready | found-bugs-005 |
+| [found-bugs-006](tasks/006-resolve-the-openlist-sanitizer-overflow-and-doxygen-warnings.md) | Resolve the OpenList sanitizer overflow and Doxygen warnings | done | found-bugs-005 |

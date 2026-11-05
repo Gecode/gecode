@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     template <class View>
     forceinline
-    MaxBnd<View>::MaxBnd(Space& home, MaxBnd<View>& p)
+    MaxBnd<View>::MaxBnd(Space& home, MaxBnd& p)
         : TernaryPropagator<View, PC_INT_BND>(home, p) {}
 
     template <class View>
@@ -159,7 +159,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     template <class View>
     forceinline
-    NaryMaxBnd<View>::NaryMaxBnd(Space& home, NaryMaxBnd<View>& p)
+    NaryMaxBnd<View>::NaryMaxBnd(Space& home, NaryMaxBnd& p)
         : NaryOnePropagator<View, PC_INT_BND>(home, p) {}
 
     template <class View>
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     template <class View>
     forceinline
-    MaxDom<View>::MaxDom(Space& home, MaxDom<View>& p)
+    MaxDom<View>::MaxDom(Space& home, MaxDom& p)
         : TernaryPropagator<View, PC_INT_DOM>(home, p) {}
 
     template <class View>
@@ -339,7 +339,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     template <class View>
     forceinline
-    NaryMaxDom<View>::NaryMaxDom(Space& home, NaryMaxDom<View>& p)
+    NaryMaxDom<View>::NaryMaxDom(Space& home, NaryMaxDom& p)
         : NaryOnePropagator<View, PC_INT_DOM>(home, p) {}
 
     template <class View>

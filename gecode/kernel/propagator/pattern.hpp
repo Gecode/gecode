@@ -309,7 +309,7 @@ namespace Gecode {
 
     template <class View, PropCond pc>
     forceinline
-    UnaryPropagator<View, pc>::UnaryPropagator(Space& home, UnaryPropagator<View, pc>& p)
+    UnaryPropagator<View, pc>::UnaryPropagator(Space& home, UnaryPropagator& p)
         : Propagator(home, p) {
         x0.update(home, p.x0);
     }
@@ -358,7 +358,7 @@ namespace Gecode {
 
     template <class View, PropCond pc>
     forceinline
-    BinaryPropagator<View, pc>::BinaryPropagator(Space& home, BinaryPropagator<View, pc>& p)
+    BinaryPropagator<View, pc>::BinaryPropagator(Space& home, BinaryPropagator& p)
         : Propagator(home, p) {
         x0.update(home, p.x0);
         x1.update(home, p.x1);
@@ -415,7 +415,7 @@ namespace Gecode {
 
     template <class View, PropCond pc>
     forceinline
-    TernaryPropagator<View, pc>::TernaryPropagator(Space& home, TernaryPropagator<View, pc>& p)
+    TernaryPropagator<View, pc>::TernaryPropagator(Space& home, TernaryPropagator& p)
         : Propagator(home, p) {
         x0.update(home, p.x0);
         x1.update(home, p.x1);
@@ -472,7 +472,7 @@ namespace Gecode {
 
     template <class View, PropCond pc>
     forceinline
-    NaryPropagator<View, pc>::NaryPropagator(Space& home, NaryPropagator<View, pc>& p)
+    NaryPropagator<View, pc>::NaryPropagator(Space& home, NaryPropagator& p)
         : Propagator(home, p) {
         x.update(home, p.x);
     }
@@ -522,7 +522,7 @@ namespace Gecode {
 
     template <class View, PropCond pc>
     forceinline
-    NaryOnePropagator<View, pc>::NaryOnePropagator(Space& home, NaryOnePropagator<View, pc>& p)
+    NaryOnePropagator<View, pc>::NaryOnePropagator(Space& home, NaryOnePropagator& p)
         : Propagator(home, p) {
         x.update(home, p.x);
         y.update(home, p.y);

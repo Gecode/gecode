@@ -85,8 +85,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline typename LayeredGraph<View, Val, Degree, StateIdx>::State&
-    LayeredGraph<View, Val, Degree, StateIdx>::i_state(
-        int i, const typename LayeredGraph<View, Val, Degree, StateIdx>::Edge& e) {
+    LayeredGraph<View, Val, Degree, StateIdx>::i_state(int i, const Edge& e) {
         return i_state(i, e.i_state);
     }
     template <class View, class Val, class Degree, class StateIdx>
@@ -102,8 +101,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline typename LayeredGraph<View, Val, Degree, StateIdx>::State&
-    LayeredGraph<View, Val, Degree, StateIdx>::o_state(
-        int i, const typename LayeredGraph<View, Val, Degree, StateIdx>::Edge& e) {
+    LayeredGraph<View, Val, Degree, StateIdx>::o_state(int i, const Edge& e) {
         return o_state(i, e.o_state);
     }
     template <class View, class Val, class Degree, class StateIdx>
@@ -178,8 +176,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline void
-    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::add(
-        const typename LayeredGraph<View, Val, Degree, StateIdx>::IndexRange& ir) {
+    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::add(const IndexRange& ir) {
         _fst = std::min(_fst, ir._fst);
         _lst = std::max(_lst, ir._lst);
     }

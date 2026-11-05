@@ -329,7 +329,7 @@ namespace Gecode { namespace FlatZinc {
 
     template <class Merit>
     forceinline
-    IntBoolBrancher<Merit>::IntBoolBrancher(Space& home, IntBoolBrancher<Merit>& b)
+    IntBoolBrancher<Merit>::IntBoolBrancher(Space& home, IntBoolBrancher& b)
         : IntBoolBrancherBase(home, b), merit(home, b.merit) {}
 
     template <class Merit>

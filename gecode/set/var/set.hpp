@@ -198,8 +198,7 @@ namespace Gecode {
         return iter.width();
     }
 
-    forceinline
-    SetVarGlbValues::SetVarGlbValues(void) {}
+    forceinline SetVarGlbValues::SetVarGlbValues(void) = default;
 
     forceinline
     SetVarGlbValues::SetVarGlbValues(const SetVar& x) {
@@ -222,8 +221,7 @@ namespace Gecode {
         return iter.val();
     }
 
-    forceinline
-    SetVarLubValues::SetVarLubValues(void) {}
+    forceinline SetVarLubValues::SetVarLubValues(void) = default;
 
     forceinline
     SetVarLubValues::SetVarLubValues(const SetVar& x) {
@@ -246,8 +244,7 @@ namespace Gecode {
         return iter.val();
     }
 
-    forceinline
-    SetVarUnknownValues::SetVarUnknownValues(void) {}
+    forceinline SetVarUnknownValues::SetVarUnknownValues(void) = default;
 
     forceinline
     SetVarUnknownValues::SetVarUnknownValues(const SetVar& x) {

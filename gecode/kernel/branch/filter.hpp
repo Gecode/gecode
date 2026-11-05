@@ -97,7 +97,7 @@ namespace Gecode {
 
     template <class View>
     forceinline
-    BrancherFilter<View>::BrancherFilter(BrancherFilter<View>& bf)
+    BrancherFilter<View>::BrancherFilter(BrancherFilter& bf)
         : f(bf.f) {}
 
     template <class View>
@@ -143,7 +143,7 @@ namespace Gecode {
     template <class View>
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    BrancherNoFilter<View>::BrancherNoFilter(BrancherNoFilter<View>&) {}
+    BrancherNoFilter<View>::BrancherNoFilter(BrancherNoFilter&) {}
 
     template <class View>
     forceinline BrancherNoFilter<View>::

@@ -46,7 +46,7 @@ namespace Gecode { namespace Set { namespace Element {
 
     template <class View, class View0, class View1>
     forceinline
-    ElementUnion<View, View0, View1>::ElementUnion(Space& home, ElementUnion<View, View0, View1>& p)
+    ElementUnion<View, View0, View1>::ElementUnion(Space& home, ElementUnion& p)
         : Propagator(home, p) {
         x0.update(home, p.x0);
         x1.update(home, p.x1);

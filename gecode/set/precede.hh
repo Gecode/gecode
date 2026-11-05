@@ -85,7 +85,7 @@ namespace Gecode { namespace Set { namespace Precede {
         /// Constructor for posting
         Single(Home home, ViewArray<View>& x, int s, int t, int beta, int gamma);
         /// Constructor for cloning \a p
-        Single(Space& home, Single<View>& p);
+        Single(Space& home, Single& p);
 
     public:
         /// Copy propagator during cloning

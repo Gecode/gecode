@@ -226,8 +226,7 @@ namespace Gecode {
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
     forceinline
-    ViewValBrancher<View, n, Val, a, Filter, Print>::ViewValBrancher(Space& home,
-                                                                     ViewValBrancher<View, n, Val, a, Filter, Print>& b)
+    ViewValBrancher<View, n, Val, a, Filter, Print>::ViewValBrancher(Space& home, ViewValBrancher& b)
         : ViewBrancher<View, Filter, n>(home, b), vsc(b.vsc->copy(home)), p(b.p) {}
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>

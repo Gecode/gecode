@@ -245,6 +245,13 @@ cmake -S . -B build/asan-ubsan \
 cmake --build build/asan-ubsan --target check
 ```
 
+On macOS, `std::thread` stacks are 512 KiB, while the main thread has 8 MiB, and
+the check targets run `gecode-test` on worker threads. In a Debug build with
+AddressSanitizer, forced inlining gives some propagators a frame of about
+400 KiB, so a test can overflow its worker stack. This is a limit of that build,
+not unbounded recursion. Use an optimized sanitizer build, or run
+`gecode-test -threads 1` on the main thread.
+
 ## Using Gecode From Other CMake Projects
 
 ### Recommended aggregate target
