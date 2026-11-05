@@ -1596,7 +1596,7 @@ namespace Gecode {
     T* pbs(T* s, const Search::Options& o = Search::Options::def);
 
     /// Return a portfolio search engine builder
-    template <class T>
+    template <class T, template <class> class E>
     SEB pbs(const Search::Options& o = Search::Options::def);
 
 } // namespace Gecode

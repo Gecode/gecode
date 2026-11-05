@@ -81,6 +81,72 @@ Module: int
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+The assign overloads for integer and Boolean variables with tie-breaking
+variable selection link. The Boolean overload now takes BoolBranchFilter and
+BoolVarValPrint arguments, as the overload without tie-breaking does.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Assigning integer and Boolean variables follows the variable selection, which
+was ignored unless a tie-breaking selection was also in effect. Models that
+pass a selection to assign, such as the job-shop example, now assign variables
+in that order and can find different solutions first.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Assigning set variables follows the variable selection, which was ignored
+unless a tie-breaking selection was also in effect.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Assigning float variables follows the variable selection, which was ignored
+unless a tie-breaking selection was also in effect.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+values_reflect for the domain of an integer variable links.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The default constructors of SetVarGlbValues, SetVarLubValues, and
+SetVarUnknownValues link.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Constructing FloatValArgs from an initializer list links.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The declaration of the pbs engine builder takes the engine as a template
+argument, as its definition does. Calling it with only the space type failed
+to link and is now a compile error.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Multi-dimensional bin_packing throws Int::OutOfLimits for fewer than one
 dimension. It divided by zero for zero dimensions, and a negative number of
 dimensions now gives Int::OutOfLimits instead of Int::ArgumentSizeMismatch.

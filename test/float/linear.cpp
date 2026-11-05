@@ -238,6 +238,21 @@ namespace Test { namespace Float {
         };
         Empty empty;
 
+        /// %Test coefficients given by an initializer list
+        class InitializerList : public Base {
+        public:
+            /// Create and register test
+            InitializerList(void) : Base("Float::Linear::InitializerList") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using namespace Gecode;
+                FloatValArgs a({2.0, -3.0});
+                return (a.size() == 2) && (a[0].min() == 2.0) && (a[1].max() == -3.0);
+            }
+        };
+        InitializerList initializer_list;
+
         /// Help class to create and register tests
         class Create {
         public:

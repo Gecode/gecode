@@ -249,6 +249,42 @@ namespace Test { namespace Set {
 
         ViewCompare view_compare;
 
+        /// %Test default construction of value iterators
+        class DefaultValues : public ::Test::Base {
+        private:
+            /// Space for the variable behind the iterators
+            class Fixture : public Gecode::Space {
+            public:
+                Fixture(void) = default;
+                // NOLINTNEXTLINE(modernize-use-equals-default)
+                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+                Gecode::Space*
+                copy(void) override {
+                    return new Fixture(*this);
+                }
+            };
+
+        public:
+            /// Create and register test
+            DefaultValues(void) : ::Test::Base("Set::Var::DefaultValues") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using namespace Gecode;
+                Fixture home;
+                SetVar x(home, IntSet(1, 1), IntSet(1, 2));
+                SetVarGlbValues glb;
+                SetVarLubValues lub;
+                SetVarUnknownValues unknown;
+                glb = SetVarGlbValues(x);
+                lub = SetVarLubValues(x);
+                unknown = SetVarUnknownValues(x);
+                return glb() && (glb.val() == 1) && lub() && (lub.val() == 1) && unknown() && (unknown.val() == 2);
+            }
+        };
+
+        DefaultValues default_values;
+
     } // namespace Var
 }} // namespace Test::Set
 

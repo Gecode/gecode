@@ -36,6 +36,8 @@
 
 #ifdef GECODE_HAS_FLOAT_VARS
 
+#include <gecode/search.hh>
+
 namespace Test { namespace Assign {
 
     /// %Test assignment with distinct propagator
@@ -59,6 +61,58 @@ namespace Test { namespace Assign {
         Float d_5("Dense::5", d_dense, 5);
         Float l_2("Large::2", d_large, 2);
         Float l_3("Large::3", d_large, 3);
+    } // namespace
+
+    /// Merit that prefers the last of five variables
+    double
+    float_merit_last(const Gecode::Space&, Gecode::FloatVar, int i) {
+        return (i == 4) ? 1.0 : 0.0;
+    }
+
+    /// Space with five variables in [0,1] whose sum is at most one
+    class FloatOrderSpace : public Gecode::Space {
+    public:
+        /// Variables to be assigned
+        Gecode::FloatVarArray x;
+        /// Initialize test space
+        FloatOrderSpace(void) : x(*this, 5, 0.0, 1.0) {
+            Gecode::linear(*this, x, Gecode::FRT_LQ, 1.0);
+        }
+        /// Constructor for cloning \a s
+        FloatOrderSpace(FloatOrderSpace& s) : Gecode::Space(s) {
+            x.update(*this, s.x);
+        }
+        /// Copy space during cloning
+        Gecode::Space*
+        copy(void) override {
+            return new FloatOrderSpace(*this);
+        }
+    };
+
+    /// %Test that assignment follows a single variable selection
+    class FloatVarSelection : public Base {
+    public:
+        /// Create and register test
+        FloatVarSelection(void) : Base("Float::Assign::VarSelection") {}
+        /// Perform test
+        bool
+        run(void) override {
+            using namespace Gecode;
+            FloatOrderSpace* s = new FloatOrderSpace;
+            assign(*s, s->x, FLOAT_VAR_MERIT_MAX(&float_merit_last), FLOAT_ASSIGN_MAX());
+            DFS<FloatOrderSpace> e(s);
+            delete s;
+            FloatOrderSpace* solution = e.next();
+            bool ok = solution != nullptr;
+            for (int i = 0; ok && (i < solution->x.size()); i++)
+                ok = (i == 4) ? (solution->x[i].min() > 0.5) : (solution->x[i].max() < 0.5);
+            delete solution;
+            return ok;
+        }
+    };
+
+    namespace {
+        FloatVarSelection var_selection;
     } // namespace
 
 }} // namespace Test::Assign

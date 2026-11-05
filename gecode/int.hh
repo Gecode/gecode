@@ -5830,7 +5830,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void assign(Home home, const IntVarArgs& x, const IntVarBranch& vars, const IntAssign& vals,
+    GECODE_INT_EXPORT void assign(Home home, const IntVarArgs& x, IntVarBranch vars, const IntAssign& vals,
                                   IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
@@ -5850,7 +5850,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void assign(Home home, const BoolVarArgs& x, const BoolVarBranch& vars, const BoolAssign& vals,
+    GECODE_INT_EXPORT void assign(Home home, const BoolVarArgs& x, BoolVarBranch vars, const BoolAssign& vals,
                                   BoolBranchFilter bf = nullptr, BoolVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
@@ -5858,7 +5858,7 @@ namespace Gecode {
      * \ingroup TaskModelIntBranch
      */
     GECODE_INT_EXPORT void assign(Home home, const BoolVarArgs& x, TieBreak<BoolVarBranch> vars, const BoolAssign& vals,
-                                  IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
+                                  BoolBranchFilter bf = nullptr, BoolVarValPrint vvp = nullptr);
     /**
      * \brief Assign \a x with value selection \a vals
      *

@@ -1962,9 +1962,8 @@ namespace Gecode {
      *
      * \ingroup TaskModelFloatBranch
      */
-    GECODE_FLOAT_EXPORT void assign(Home home, const FloatVarArgs& x, const FloatVarBranch& vars,
-                                    const FloatAssign& vals, FloatBranchFilter bf = nullptr,
-                                    FloatVarValPrint vvp = nullptr);
+    GECODE_FLOAT_EXPORT void assign(Home home, const FloatVarArgs& x, FloatVarBranch vars, const FloatAssign& vals,
+                                    FloatBranchFilter bf = nullptr, FloatVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
      *
