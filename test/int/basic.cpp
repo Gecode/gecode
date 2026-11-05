@@ -74,10 +74,10 @@ namespace Test { namespace Int {
         class IntSetCompare : public Base {
         public:
             /// Create and register test
-            IntSetCompare(void) : Base("Int::Basic::IntSet::Compare") {}
+            IntSetCompare() : Base("Int::Basic::IntSet::Compare") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 IntSet s({1, 3, 5});
                 IntSet same({1, 3, 5});
@@ -96,21 +96,21 @@ namespace Test { namespace Int {
             /// Space for the variables behind the views
             class Fixture : public Gecode::Space {
             public:
-                Fixture(void) = default;
+                Fixture() = default;
                 // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new Fixture(*this);
                 }
             };
 
         public:
             /// Create and register test
-            ViewCompare(void) : Base("Int::Basic::View::Compare") {}
+            ViewCompare() : Base("Int::Basic::View::Compare") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 using namespace Gecode::Int;
                 Fixture home;

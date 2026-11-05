@@ -58,33 +58,33 @@ namespace Gecode { namespace Float {
      */
 
     forceinline FloatVal
-    FloatVarImp::domain(void) const {
+    FloatVarImp::domain() const {
         return dom;
     }
     forceinline FloatNum
-    FloatVarImp::min(void) const {
+    FloatVarImp::min() const {
         return dom.min();
     }
     forceinline FloatNum
-    FloatVarImp::max(void) const {
+    FloatVarImp::max() const {
         return dom.max();
     }
     forceinline FloatVal
-    FloatVarImp::val(void) const {
+    FloatVarImp::val() const {
         return dom;
     }
     forceinline FloatNum
-    FloatVarImp::med(void) const {
+    FloatVarImp::med() const {
         return dom.med();
     }
 
     forceinline bool
-    FloatVarImp::assigned(void) const {
+    FloatVarImp::assigned() const {
         return dom.tight();
     }
 
     forceinline FloatNum
-    FloatVarImp::size(void) const {
+    FloatVarImp::size() const {
         return dom.size();
     }
 
@@ -94,7 +94,7 @@ namespace Gecode { namespace Float {
      */
 
     forceinline bool
-    FloatVarImp::zero_in(void) const {
+    FloatVarImp::zero_in() const {
         return dom.zero_in();
     }
     forceinline bool

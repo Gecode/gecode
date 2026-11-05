@@ -120,7 +120,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    NodeStatInspector::show_stats(void) {
+    NodeStatInspector::show_stats() {
         show();
         activateWindow();
     }

@@ -144,7 +144,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor (array of size 0)
-        VarArray(void);
+        VarArray();
         /// Allocate array with \a m variables
         VarArray(Space& home, int m);
         /// Initialize from variable argument array \a a (copy elements)
@@ -158,7 +158,7 @@ namespace Gecode {
         /// \name Array size
         //@{
         /// Return size of array (number of elements)
-        int size(void) const;
+        int size() const;
         //@}
 
         /// \name Array elements
@@ -178,25 +178,25 @@ namespace Gecode {
         /// \name Array iteration
         //@{
         /// Return an iterator at the beginning of the array
-        iterator begin(void);
+        iterator begin();
         /// Return a read-only iterator at the beginning of the array
-        const_iterator begin(void) const;
+        const_iterator begin() const;
         /// Return an iterator past the end of the array
-        iterator end(void);
+        iterator end();
         /// Return a read-only iterator past the end of the array
-        const_iterator end(void) const;
+        const_iterator end() const;
         /// Return a reverse iterator at the end of the array
-        reverse_iterator rbegin(void);
+        reverse_iterator rbegin();
         /// Return a reverse and read-only iterator at the end of the array
-        const_reverse_iterator rbegin(void) const;
+        const_reverse_iterator rbegin() const;
         /// Return a reverse iterator past the beginning of the array
-        reverse_iterator rend(void);
+        reverse_iterator rend();
         /// Return a reverse and read-only iterator past the beginning of the array
-        const_reverse_iterator rend(void) const;
+        const_reverse_iterator rend() const;
         //@}
 
         /// Test if all variables are assigned
-        bool assigned(void) const;
+        bool assigned() const;
 
         /// \name Cloning
         //@{
@@ -281,7 +281,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Default constructor (array of size 0)
-        ViewArray(void);
+        ViewArray();
         /// Allocate array with \a m views
         ViewArray(Space& home, int m);
         /// Allocate array with \a m views
@@ -333,7 +333,7 @@ namespace Gecode {
         /// \name Array size
         //@{
         /// Return size of array (number of elements)
-        int size(void) const;
+        int size() const;
         /// Decrease size of array (number of elements)
         void size(int n);
         //@}
@@ -349,21 +349,21 @@ namespace Gecode {
         /// \name Array iteration
         //@{
         /// Return an iterator at the beginning of the array
-        iterator begin(void);
+        iterator begin();
         /// Return a read-only iterator at the beginning of the array
-        const_iterator begin(void) const;
+        const_iterator begin() const;
         /// Return an iterator past the end of the array
-        iterator end(void);
+        iterator end();
         /// Return a read-only iterator past the end of the array
-        const_iterator end(void) const;
+        const_iterator end() const;
         /// Return a reverse iterator at the end of the array
-        reverse_iterator rbegin(void);
+        reverse_iterator rbegin();
         /// Return a reverse and read-only iterator at the end of the array
-        const_reverse_iterator rbegin(void) const;
+        const_reverse_iterator rbegin() const;
         /// Return a reverse iterator past the beginning of the array
-        reverse_iterator rend(void);
+        reverse_iterator rend();
         /// Return a reverse and read-only iterator past the beginning of the array
-        const_reverse_iterator rend(void) const;
+        const_reverse_iterator rend() const;
         //@}
 
         /// \name Dependencies
@@ -458,7 +458,7 @@ namespace Gecode {
         //@}
 
         /// Test if all variables are assigned
-        bool assigned(void) const;
+        bool assigned() const;
 
         /// \name View equality
         //@{
@@ -467,7 +467,7 @@ namespace Gecode {
          *
          * Note that assigned views are ignored.
          */
-        bool same(void) const;
+        bool same() const;
         /**
          * \brief Test whether array contains a view being the same as \a y
          *
@@ -475,7 +475,7 @@ namespace Gecode {
          */
         bool same(const View& y) const;
         /// Remove all duplicate views from array (changes element order)
-        void unique(void);
+        void unique();
         //@}
 
         /// Allocate memory from heap (disabled)
@@ -591,7 +591,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        ArgArrayBase(void);
+        ArgArrayBase();
         /// Allocate array with \a n elements
         explicit ArgArrayBase(int n);
         /// Initialize from argument array \a a (copy elements)
@@ -610,7 +610,7 @@ namespace Gecode {
         /// \name Array size
         //@{
         /// Return size of array (number of elements)
-        int size(void) const;
+        int size() const;
         //@}
 
         /// \name Array elements
@@ -624,27 +624,27 @@ namespace Gecode {
         /// \name Array iteration
         //@{
         /// Return an iterator at the beginning of the array
-        iterator begin(void);
+        iterator begin();
         /// Return a read-only iterator at the beginning of the array
-        const_iterator begin(void) const;
+        const_iterator begin() const;
         /// Return an iterator past the end of the array
-        iterator end(void);
+        iterator end();
         /// Return a read-only iterator past the end of the array
-        const_iterator end(void) const;
+        const_iterator end() const;
         /// Return a reverse iterator at the end of the array
-        reverse_iterator rbegin(void);
+        reverse_iterator rbegin();
         /// Return a reverse and read-only iterator at the end of the array
-        const_reverse_iterator rbegin(void) const;
+        const_reverse_iterator rbegin() const;
         /// Return a reverse iterator past the beginning of the array
-        reverse_iterator rend(void);
+        reverse_iterator rend();
         /// Return a reverse and read-only iterator past the beginning of the array
-        const_reverse_iterator rend(void) const;
+        const_reverse_iterator rend() const;
         //@}
 
         /// \name Destructor
         //@{
         /// Destructor
-        ~ArgArrayBase(void);
+        ~ArgArrayBase();
         //@}
     };
 
@@ -690,7 +690,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        ArgArray(void) = default;
+        ArgArray() = default;
         /// Allocate array with \a n elements
         explicit ArgArray(int n);
         /// Allocate array with \a n elements and initialize with elements from array \a e
@@ -778,7 +778,7 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        VarArgArray(void) = default;
+        VarArgArray() = default;
         /// Allocate array with \a n elements
         explicit VarArgArray(int n);
         /// Initialize from variable argument array \a a (copy elements)
@@ -807,7 +807,7 @@ namespace Gecode {
         //@}
 
         /// Test if all variables are assigned
-        bool assigned(void) const;
+        bool assigned() const;
 
         friend typename ArrayTraits<VarArgArray<Var>>::ArgsType operator+
             <>(const VarArgArray<Var>& x, const VarArgArray<Var>& y);
@@ -886,7 +886,7 @@ namespace Gecode {
 
     template <class Var>
     forceinline
-    VarArray<Var>::VarArray(void)
+    VarArray<Var>::VarArray()
         : n(0), x(nullptr) {}
 
     template <class Var>
@@ -899,7 +899,7 @@ namespace Gecode {
 
     template <class Var>
     forceinline int
-    VarArray<Var>::size(void) const {
+    VarArray<Var>::size() const {
         return n;
     }
 
@@ -938,49 +938,49 @@ namespace Gecode {
 
     template <class Var>
     forceinline typename VarArray<Var>::iterator
-    VarArray<Var>::begin(void) {
+    VarArray<Var>::begin() {
         return x;
     }
 
     template <class Var>
     forceinline typename VarArray<Var>::const_iterator
-    VarArray<Var>::begin(void) const {
+    VarArray<Var>::begin() const {
         return x;
     }
 
     template <class Var>
     forceinline typename VarArray<Var>::iterator
-    VarArray<Var>::end(void) {
+    VarArray<Var>::end() {
         return x + n;
     }
 
     template <class Var>
     forceinline typename VarArray<Var>::const_iterator
-    VarArray<Var>::end(void) const {
+    VarArray<Var>::end() const {
         return x + n;
     }
 
     template <class Var>
     forceinline typename VarArray<Var>::reverse_iterator
-    VarArray<Var>::rbegin(void) {
+    VarArray<Var>::rbegin() {
         return reverse_iterator(x + n);
     }
 
     template <class Var>
     forceinline typename VarArray<Var>::const_reverse_iterator
-    VarArray<Var>::rbegin(void) const {
+    VarArray<Var>::rbegin() const {
         return const_reverse_iterator(x + n);
     }
 
     template <class Var>
     forceinline typename VarArray<Var>::reverse_iterator
-    VarArray<Var>::rend(void) {
+    VarArray<Var>::rend() {
         return reverse_iterator(x);
     }
 
     template <class Var>
     forceinline typename VarArray<Var>::const_reverse_iterator
-    VarArray<Var>::rend(void) const {
+    VarArray<Var>::rend() const {
         return const_reverse_iterator(x);
     }
 
@@ -999,7 +999,7 @@ namespace Gecode {
 
     template <class Var>
     forceinline bool
-    VarArray<Var>::assigned(void) const {
+    VarArray<Var>::assigned() const {
         for (int i = 0; i < n; i++)
             if (!x[i].assigned())
                 return false;
@@ -1066,7 +1066,7 @@ namespace Gecode {
 
     template <class View>
     forceinline
-    ViewArray<View>::ViewArray(void)
+    ViewArray<View>::ViewArray()
         : n(0), x(nullptr) {}
 
     template <class View>
@@ -1105,7 +1105,7 @@ namespace Gecode {
 
     template <class View>
     forceinline int
-    ViewArray<View>::size(void) const {
+    ViewArray<View>::size() const {
         return n;
     }
 
@@ -1131,49 +1131,49 @@ namespace Gecode {
 
     template <class View>
     forceinline typename ViewArray<View>::iterator
-    ViewArray<View>::begin(void) {
+    ViewArray<View>::begin() {
         return x;
     }
 
     template <class View>
     forceinline typename ViewArray<View>::const_iterator
-    ViewArray<View>::begin(void) const {
+    ViewArray<View>::begin() const {
         return x;
     }
 
     template <class View>
     forceinline typename ViewArray<View>::iterator
-    ViewArray<View>::end(void) {
+    ViewArray<View>::end() {
         return x + n;
     }
 
     template <class View>
     forceinline typename ViewArray<View>::const_iterator
-    ViewArray<View>::end(void) const {
+    ViewArray<View>::end() const {
         return x + n;
     }
 
     template <class View>
     forceinline typename ViewArray<View>::reverse_iterator
-    ViewArray<View>::rbegin(void) {
+    ViewArray<View>::rbegin() {
         return reverse_iterator(x + n);
     }
 
     template <class View>
     forceinline typename ViewArray<View>::const_reverse_iterator
-    ViewArray<View>::rbegin(void) const {
+    ViewArray<View>::rbegin() const {
         return const_reverse_iterator(x + n);
     }
 
     template <class View>
     forceinline typename ViewArray<View>::reverse_iterator
-    ViewArray<View>::rend(void) {
+    ViewArray<View>::rend() {
         return reverse_iterator(x);
     }
 
     template <class View>
     forceinline typename ViewArray<View>::const_reverse_iterator
-    ViewArray<View>::rend(void) const {
+    ViewArray<View>::rend() const {
         return const_reverse_iterator(x);
     }
 
@@ -1337,7 +1337,7 @@ namespace Gecode {
 
     template <class View>
     forceinline bool
-    ViewArray<View>::assigned(void) const {
+    ViewArray<View>::assigned() const {
         for (int i = 0; i < n; i++)
             if (!x[i].assigned())
                 return false;
@@ -1346,7 +1346,7 @@ namespace Gecode {
 
     template <class View>
     bool
-    ViewArray<View>::same(void) const {
+    ViewArray<View>::same() const {
         if (n < 2)
             return false;
         Region r;
@@ -1377,7 +1377,7 @@ namespace Gecode {
 
     template <class View>
     void
-    ViewArray<View>::unique(void) {
+    ViewArray<View>::unique() {
         if (n < 2)
             return;
         Region r;
@@ -1498,7 +1498,7 @@ namespace Gecode {
 
     template <class T>
     forceinline
-    ArgArrayBase<T>::ArgArrayBase(void)
+    ArgArrayBase<T>::ArgArrayBase()
         : n(0), capacity(onstack_size), a(allocate(0)) {}
 
     template <class T>
@@ -1528,7 +1528,7 @@ namespace Gecode {
     }
 
     template <class T>
-    forceinline ArgArrayBase<T>::~ArgArrayBase(void) {
+    forceinline ArgArrayBase<T>::~ArgArrayBase() {
         if (capacity > onstack_size)
             heap.free(a, capacity);
     }
@@ -1549,7 +1549,7 @@ namespace Gecode {
 
     template <class T>
     forceinline int
-    ArgArrayBase<T>::size(void) const {
+    ArgArrayBase<T>::size() const {
         return n;
     }
 
@@ -1569,49 +1569,49 @@ namespace Gecode {
 
     template <class T>
     forceinline typename ArgArrayBase<T>::iterator
-    ArgArrayBase<T>::begin(void) {
+    ArgArrayBase<T>::begin() {
         return a;
     }
 
     template <class T>
     forceinline typename ArgArrayBase<T>::const_iterator
-    ArgArrayBase<T>::begin(void) const {
+    ArgArrayBase<T>::begin() const {
         return a;
     }
 
     template <class T>
     forceinline typename ArgArrayBase<T>::iterator
-    ArgArrayBase<T>::end(void) {
+    ArgArrayBase<T>::end() {
         return a + n;
     }
 
     template <class T>
     forceinline typename ArgArrayBase<T>::const_iterator
-    ArgArrayBase<T>::end(void) const {
+    ArgArrayBase<T>::end() const {
         return a + n;
     }
 
     template <class T>
     forceinline typename ArgArrayBase<T>::reverse_iterator
-    ArgArrayBase<T>::rbegin(void) {
+    ArgArrayBase<T>::rbegin() {
         return reverse_iterator(a + n);
     }
 
     template <class T>
     forceinline typename ArgArrayBase<T>::const_reverse_iterator
-    ArgArrayBase<T>::rbegin(void) const {
+    ArgArrayBase<T>::rbegin() const {
         return const_reverse_iterator(a + n);
     }
 
     template <class T>
     forceinline typename ArgArrayBase<T>::reverse_iterator
-    ArgArrayBase<T>::rend(void) {
+    ArgArrayBase<T>::rend() {
         return reverse_iterator(a);
     }
 
     template <class T>
     forceinline typename ArgArrayBase<T>::const_reverse_iterator
-    ArgArrayBase<T>::rend(void) const {
+    ArgArrayBase<T>::rend() const {
         return const_reverse_iterator(a);
     }
 
@@ -1839,7 +1839,7 @@ namespace Gecode {
 
     template <class Var>
     forceinline bool
-    VarArgArray<Var>::assigned(void) const {
+    VarArgArray<Var>::assigned() const {
         for (int i = 0; i < n; i++)
             if (!a[i].assigned())
                 return false;

@@ -119,12 +119,12 @@ public:
     }
     /// Return copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new QueenArmies(*this);
     }
     /// Return solution cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return q;
     }
     /// Print solution

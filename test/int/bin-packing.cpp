@@ -74,7 +74,7 @@ namespace Test { namespace Int {
             }
             /// Test whether all assignments have been iterated
             bool
-            has_more(void) const override {
+            has_more() const override {
                 return dsv[0]();
             }
             /// Move to next assignment
@@ -117,7 +117,7 @@ namespace Test { namespace Int {
                 return dsv[i].val();
             }
             /// Destructor
-            ~LoadBinAssignment(void) override {
+            ~LoadBinAssignment() override {
                 delete[] dsv;
             }
         };
@@ -153,7 +153,7 @@ namespace Test { namespace Int {
             }
             /// Create assignment
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 // Compute plausible bin sizes
                 int a = t / m;
                 return new LoadBinAssignment(m, Gecode::IntSet(a - 1, a + 2), s.size(), Gecode::IntSet(0, m - 1),
@@ -258,10 +258,10 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 // Constructor
-                TestSpace(void) = default;
+                TestSpace() = default;
                 // Copy function
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
@@ -271,7 +271,7 @@ namespace Test { namespace Int {
             CliqueMBPT(const Gecode::IntArgs& c) : Base("Int::MultiBinPacking::Clique::" + Test::str(c)), clique(c) {}
             /// Run the actual test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 TestSpace* home = new TestSpace;
                 /*
@@ -323,9 +323,9 @@ namespace Test { namespace Int {
             /// Simple test space class
             class TestSpace : public Gecode::Space {
             public:
-                TestSpace(void) = default;
+                TestSpace() = default;
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return nullptr;
                 }
             };
@@ -349,10 +349,10 @@ namespace Test { namespace Int {
 
         public:
             /// Constructor
-            PropagationLevels(void) : Base("Int::BinPacking::PropagationLevels") {}
+            PropagationLevels() : Base("Int::BinPacking::PropagationLevels") {}
             /// Run the actual test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 bool const advanced_failed[] = {false, true, true, true};
                 bool const full_failed[] = {false, false, false, true};
@@ -364,11 +364,11 @@ namespace Test { namespace Int {
         /// Space without variables
         class Fixture : public Gecode::Space {
         public:
-            Fixture(void) = default;
+            Fixture() = default;
             // NOLINTNEXTLINE(modernize-use-equals-default)
             Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new Fixture(*this);
             }
         };
@@ -376,9 +376,9 @@ namespace Test { namespace Int {
         /// %Test that both bin-packing overloads post nothing for zero items
         class Empty : public Base {
         public:
-            Empty(void) : Base("Int::BinPacking::Empty") {}
+            Empty() : Base("Int::BinPacking::Empty") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 IntVarArgs e;
                 IntArgs s;
@@ -422,7 +422,7 @@ namespace Test { namespace Int {
             }
             /// Test whether shared variables are reported before the dimension
             static bool
-            reports_same_first(void) {
+            reports_same_first() {
                 using namespace Gecode;
                 Fixture home;
                 IntVarArgs x(home, 1, 0, 1);
@@ -436,9 +436,9 @@ namespace Test { namespace Int {
             }
 
         public:
-            NoDimension(void) : Base("Int::BinPacking::NoDimension") {}
+            NoDimension() : Base("Int::BinPacking::NoDimension") {}
             bool
-            run(void) override {
+            run() override {
                 return is_rejected(0) && is_rejected(-1) && reports_same_first();
             }
         };
@@ -451,19 +451,19 @@ namespace Test { namespace Int {
             /// Space for the bin variables
             class Fixture : public Gecode::Space {
             public:
-                Fixture(void) = default;
+                Fixture() = default;
                 // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new Fixture(*this);
                 }
             };
 
         public:
-            ItemCompare(void) : Base("Int::BinPacking::Item::Compare") {}
+            ItemCompare() : Base("Int::BinPacking::Item::Compare") {}
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 using Gecode::Int::BinPacking::Item;
                 Fixture home;
@@ -507,7 +507,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
 
                 {

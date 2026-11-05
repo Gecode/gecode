@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
             /// First active key, or the end rank
             int
-            first_active(void) const {
+            first_active() const {
                 return next_active(0);
             }
             /// First active key greater than key, or the end rank
@@ -499,7 +499,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
         private:
             /// Sort task pointers and record release ranks
             void
-            sort_tasks(void) {
+            sort_tasks() {
                 for (int i = 0; i < n; i++)
                     min_sorted[i] = max_sorted[i] = tasks + i;
                 std::sort(min_sorted, min_sorted + n, [](const Task* a, const Task* b) {
@@ -569,7 +569,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
             /// Tabulate earliest completions outside the forbidden start regions
             void
-            compute_earliest_completions(void) {
+            compute_earliest_completions() {
                 for (int i = 0; i < n; i++) {
                     ect_table[i] = min_sorted[i]->min;
                     int er = 0;
@@ -603,7 +603,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
             /// Initialize the adjustment list and the groups of variable bounds
             void
-            initialize_adjustments(void) {
+            initialize_adjustments() {
                 const Time infinity = std::numeric_limits<Time>::max();
                 regions[0] = {-infinity, -infinity, -1, 1};
                 regions[1] = {infinity, infinity, 0, -1};
@@ -650,7 +650,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
             /// Build and apply internal adjustments in deadline order
             void
-            apply_internal_adjustments(void) {
+            apply_internal_adjustments() {
                 const Time infinity = std::numeric_limits<Time>::max();
                 RegionIndex last_region = 0;
                 int min_p = n;
@@ -737,7 +737,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
             /// Apply external adjustments after reading each task's tightened bound
             void
-            apply_external_adjustments(void) {
+            apply_external_adjustments() {
                 // A variable is filtered before adding external intervals for its
                 // deadline, so it is never excluded by an interval it helped create.
                 for (int it = 0; it < n; it++) {

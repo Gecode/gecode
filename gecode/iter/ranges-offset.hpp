@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Offset(void) = default;
+        Offset() = default;
         /// Initialize with ranges from \a i and offset \a c
         Offset(I& i, int c);
         /// Initialize with ranges from \a i and offset \a c
@@ -59,19 +59,19 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -87,28 +87,28 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I>
     forceinline void
-    Offset<I>::operator++(void) {
+    Offset<I>::operator++() {
         ++i;
     }
     template <class I>
     forceinline bool
-    Offset<I>::operator()(void) const {
+    Offset<I>::operator()() const {
         return i();
     }
 
     template <class I>
     forceinline int
-    Offset<I>::min(void) const {
+    Offset<I>::min() const {
         return i.min() + c;
     }
     template <class I>
     forceinline int
-    Offset<I>::max(void) const {
+    Offset<I>::max() const {
         return i.max() + c;
     }
     template <class I>
     forceinline unsigned int
-    Offset<I>::width(void) const {
+    Offset<I>::width() const {
         return i.width();
     }
 

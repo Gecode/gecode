@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        RangeList(void) = default;
+        RangeList() = default;
         /// Initialize with range list \a s
         RangeList(const Gecode::RangeList* s);
         /// Initialize with range list \a s
@@ -59,19 +59,19 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -85,25 +85,25 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
 
     forceinline bool
-    RangeList::operator()(void) const {
+    RangeList::operator()() const {
         return c != nullptr;
     }
 
     forceinline void
-    RangeList::operator++(void) {
+    RangeList::operator++() {
         c = c->next();
     }
 
     forceinline int
-    RangeList::min(void) const {
+    RangeList::min() const {
         return c->min();
     }
     forceinline int
-    RangeList::max(void) const {
+    RangeList::max() const {
         return c->max();
     }
     forceinline unsigned int
-    RangeList::width(void) const {
+    RangeList::width() const {
         return c->width();
     }
 

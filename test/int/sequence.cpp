@@ -117,7 +117,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
 
                 IntSet a(0, 0);

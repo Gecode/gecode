@@ -40,7 +40,7 @@ namespace Gecode {
      */
 
     forceinline
-    SetExpr::SetExpr(void)
+    SetExpr::SetExpr()
         : n(nullptr) {}
 
 } // namespace Gecode

@@ -50,7 +50,7 @@ namespace Gecode { namespace Gist {
 
         public:
             void
-            flush(void) {
+            flush() {
                 QTextBlockFormat bf = editor->textCursor().blockFormat();
                 bf.setBottomMargin(0);
                 editor->textCursor().setBlockFormat(bf);
@@ -76,7 +76,7 @@ namespace Gecode { namespace Gist {
             clear();
         }
         void
-        flush(void) {
+        flush() {
             _buf.flush();
         }
     };
@@ -130,17 +130,17 @@ namespace Gecode { namespace Gist {
         resize(600, 300);
     }
 
-    TextOutputI::~TextOutputI(void) {
+    TextOutputI::~TextOutputI() {
         delete os;
     }
 
     std::ostream&
-    TextOutputI::get_stream(void) {
+    TextOutputI::get_stream() {
         return *os;
     }
 
     void
-    TextOutputI::flush(void) {
+    TextOutputI::flush() {
         static_cast<GistOutputStream*>(os)->flush();
     }
 
@@ -154,7 +154,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TextOutputI::change_stay_on_top(void) {
+    TextOutputI::change_stay_on_top() {
         QPoint p = pos();
         if (stay_on_top->isChecked()) {
             setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);

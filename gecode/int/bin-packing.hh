@@ -59,16 +59,16 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
     public:
         /// Default constructor
-        Item(void);
+        Item();
         /// Constructor
         Item(IntView b, int s);
 
         /// Return bin of item
-        IntView bin(void) const;
+        IntView bin() const;
         /// Set bin of item to \a b
         void bin(IntView b);
         /// Return size of item
-        int size(void) const;
+        int size() const;
         /// Set size of item to \a s
         void size(int s);
 
@@ -94,15 +94,15 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
     public:
         /// Default constructor
-        SizeSet(void) = default;
+        SizeSet() = default;
         /// Initialize for at most \a n_max items
         SizeSet(Region& region, int n_max);
         /// Add new size \a s
         void add(int s);
         /// Return cardinality of set (number of entries)
-        int card(void) const;
+        int card() const;
         /// Return total size
-        int total(void) const;
+        int total() const;
         /// Return size of item \a i
         int operator[](int i) const;
     };
@@ -115,15 +115,15 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
     public:
         /// Default constructor
-        SizeSetMinusOne(void);
+        SizeSetMinusOne();
         /// Initialize for at most \n n_max entries
         SizeSetMinusOne(Region& region, int n);
         /// Discard size \a s
         void minus(int s);
         /// Return cardinality of set (number of entries)
-        int card(void) const;
+        int card() const;
         /// Return total size
-        int total(void) const;
+        int total() const;
         /// Return size of item \a i
         int operator[](int i) const;
     };
@@ -225,13 +225,13 @@ namespace Gecode { namespace Int { namespace BinPacking {
         /// Number of bins
         unsigned int bins;
         /// Return number of nodes
-        int nodes(void) const;
+        int nodes() const;
 
         /// Sets of graph nodes
         class NodeSet : public Support::RawBitSetBase {
         public:
             /// Keep uninitialized
-            NodeSet(void) = default;
+            NodeSet() = default;
             /// Initialize node set for \a n nodes
             NodeSet(Region& r, int n);
             /// Initialize node set as copy of \a ns with \a n nodes
@@ -269,7 +269,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
             /// Weight (initialized with degree before graph is reduced)
             unsigned int w;
             /// Default constructor
-            Node(void);
+            Node();
         };
         /// The nodes in the graph
         Node* node;
@@ -288,13 +288,13 @@ namespace Gecode { namespace Int { namespace BinPacking {
             /// \name Iteration control
             //@{
             /// Move iterator to next node (if possible)
-            void operator++(void);
+            void operator++();
             //@}
 
             /// \name %Node access
             //@{
             /// Return current node
-            int operator()(void) const;
+            int operator()() const;
             //@}
         };
 
@@ -331,7 +331,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         /// Largest clique so far
         Clique max;
         /// Report the current clique
-        ExecStatus clique(void);
+        ExecStatus clique();
         /// Found a clique of node \a i
         ExecStatus clique(int i);
         /// Found a clique of nodes \a i and \a j
@@ -347,11 +347,11 @@ namespace Gecode { namespace Int { namespace BinPacking {
         /// Test whether nodes \a i and \a j are adjacent
         bool adjacent(int i, int j) const;
         /// Post additional constraints
-        ExecStatus post(void);
+        ExecStatus post();
         /// Return maximal clique found
-        IntSet maximum_clique(void) const;
+        IntSet maximum_clique() const;
         /// Destructor
-        ~ConflictGraph(void) = default;
+        ~ConflictGraph() = default;
     };
 
 }}} // namespace Gecode::Int::BinPacking

@@ -108,12 +108,12 @@ namespace Test { namespace Set {
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new EmptyFixture(*this);
             }
             /// Test whether the space is solved with \a y empty
             bool
-            is_solved_empty(void) {
+            is_solved_empty() {
                 return (status() == SS_SOLVED) && (y.lub_size() == 0);
             }
         };
@@ -122,10 +122,10 @@ namespace Test { namespace Set {
         class ChannelSortedEmpty : public Base {
         public:
             /// Create and register test
-            ChannelSortedEmpty(void) : Base("Set::Channel::Sorted::Empty") {}
+            ChannelSortedEmpty() : Base("Set::Channel::Sorted::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 IntVarArgs x;
                 EmptyFixture empty(IntSet::empty);
                 channel_sorted(empty, x, empty.y);
@@ -226,10 +226,10 @@ namespace Test { namespace Set {
         class ChannelBoolEmpty : public Base {
         public:
             /// Create and register test
-            ChannelBoolEmpty(void) : Base("Set::Channel::Bool::Empty") {}
+            ChannelBoolEmpty() : Base("Set::Channel::Bool::Empty") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 BoolVarArgs x;
                 EmptyFixture empty(IntSet::empty);
                 channel(empty, x, empty.y);

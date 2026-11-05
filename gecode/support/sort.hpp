@@ -59,9 +59,9 @@ namespace Gecode { namespace Support {
 
     public:
         /// Initialize stack as empty
-        QuickSortStack(void);
+        QuickSortStack();
         /// Test whether stack is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Push two positions \a l and \a r
         void push(Type* l, Type* r);
         /// Pop two positions \a l and \a r
@@ -70,14 +70,14 @@ namespace Gecode { namespace Support {
 
     template <class Type>
     forceinline
-    QuickSortStack<Type>::QuickSortStack(void)
+    QuickSortStack<Type>::QuickSortStack()
         : tos(&stack[0]) {
         *(tos++) = nullptr;
     }
 
     template <class Type>
     forceinline bool
-    QuickSortStack<Type>::empty(void) const {
+    QuickSortStack<Type>::empty() const {
         return *(tos - 1) == nullptr;
     }
 

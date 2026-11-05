@@ -50,13 +50,13 @@ namespace Gecode { namespace Gist {
 
     template <class S>
     std::string
-    VarComparator<S>::name(void) {
+    VarComparator<S>::name() {
         return TextOutput::name();
     }
 
     template <class S>
     void
-    VarComparator<S>::finalize(void) {
+    VarComparator<S>::finalize() {
         TextOutput::finalize();
     }
 
@@ -142,18 +142,18 @@ namespace Gecode { namespace Gist {
 
     template <class S>
     std::string
-    Print<S>::name(void) {
+    Print<S>::name() {
         return TextOutput::name();
     }
 
     template <class S>
     void
-    Print<S>::finalize(void) {
+    Print<S>::finalize() {
         TextOutput::finalize();
     }
 
     forceinline
-    Options::I_::I_(void)
+    Options::I_::I_()
         : _click(heap, 1), n_click(0), _solution(heap, 1), n_solution(0), _move(heap, 1), n_move(0), _compare(heap, 1),
           n_compare(0) {}
 

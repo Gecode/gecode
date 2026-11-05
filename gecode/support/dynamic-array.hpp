@@ -59,7 +59,7 @@ namespace Gecode { namespace Support {
         /// Copy elements from array \a da
         DynamicArray(const DynamicArray<T, A>& da);
         /// Release memory
-        ~DynamicArray(void);
+        ~DynamicArray();
 
         /// Assign array (copy elements from \a a)
         const DynamicArray<T, A>& operator=(const DynamicArray<T, A>& da);
@@ -74,7 +74,7 @@ namespace Gecode { namespace Support {
         const T& operator[](unsigned int i) const;
 
         /// Cast in to pointer of type \a T
-        operator T*(void);
+        operator T*();
     };
 
     template <class T, class A>
@@ -95,7 +95,7 @@ namespace Gecode { namespace Support {
     }
 
     template <class T, class A>
-    forceinline DynamicArray<T, A>::~DynamicArray(void) {
+    forceinline DynamicArray<T, A>::~DynamicArray() {
         a.free(x, n);
     }
 
@@ -151,7 +151,7 @@ namespace Gecode { namespace Support {
 
     template <class T, class A>
     forceinline DynamicArray<T, A>::
-    operator T*(void) {
+    operator T*() {
         return x;
     }
 

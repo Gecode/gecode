@@ -81,7 +81,7 @@ namespace Gecode { namespace Int {
             /// \name Initialization
             //@{
             /// Default constructor
-            CardConst(void);
+            CardConst();
             /// Initialize with \a min, \a max, and cardinality \a c
             void init(Space& home, int min, int max, int c);
             //@}
@@ -89,19 +89,19 @@ namespace Gecode { namespace Int {
             /// \name Value access
             //@{
             /// Return minimum of domain
-            int min(void) const;
+            int min() const;
             /// Return maximum of domain
-            int max(void) const;
+            int max() const;
             /// Return cardinality
-            int card(void) const;
+            int card() const;
             /// Return the number of times the value occurs
-            int counter(void) const;
+            int counter() const;
             //@}
 
             /// \name Domain tests
             ///@{
             /// Test whether view is assigned
-            bool assigned(void) const;
+            bool assigned() const;
             //@}
 
             /// \name Domain update by value
@@ -109,7 +109,7 @@ namespace Gecode { namespace Int {
             /// Set counter to \a n
             void counter(int n);
             /// Increment counter
-            ModEvent inc(void);
+            ModEvent inc();
             /// Restrict domain values to be less or equal than \a n
             ModEvent lq(Space& home, int n);
             /// Restrict domain values to be greater or equal than \a n
@@ -135,7 +135,7 @@ namespace Gecode { namespace Int {
             ///@}
 
             /// Return used IntView (cannot be used)
-            IntView base(void) const;
+            IntView base() const;
         };
 
         /// Cardinality integer view
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int {
             /// \name Initialization
             //@{
             /// Default constructor
-            CardView(void);
+            CardView();
             /// Initialize with integer view \a y and value \a c
             void init(const IntView& y, int c);
             /// Initialize for set \a s and cardinality \a c
@@ -163,15 +163,15 @@ namespace Gecode { namespace Int {
             /// \name Value access
             //@{
             /// Return minimum of domain
-            int min(void) const;
+            int min() const;
             /// Return maximum of domain
-            int max(void) const;
+            int max() const;
             /// Return size (cardinality) of domain
-            unsigned int size(void) const;
+            unsigned int size() const;
             /// Return the number of times the value occurs
-            int counter(void) const;
+            int counter() const;
             /// Return cardinality
-            int card(void) const;
+            int card() const;
             ///@}
 
             /// \name Domain update by value
@@ -179,7 +179,7 @@ namespace Gecode { namespace Int {
             /// Set the counter to the number of times value \a n occurs
             void counter(int n);
             /// Increment counter
-            ModEvent inc(void);
+            ModEvent inc();
             /// Restrict domain values to be less or equal than \a n
             ModEvent lq(Space& home, int n);
             /// Restrict domain values to be greater or equal than \a n
@@ -214,7 +214,7 @@ namespace Gecode { namespace Int {
          */
         forceinline
         // NOLINTNEXTLINE(modernize-use-equals-default)
-        CardConst::CardConst(void) {}
+        CardConst::CardConst() {}
         forceinline void
         CardConst::init(Space&, int min, int max, int c) {
             _min = min;
@@ -224,23 +224,23 @@ namespace Gecode { namespace Int {
         }
 
         forceinline int
-        CardConst::min(void) const {
+        CardConst::min() const {
             return _min;
         }
         forceinline int
-        CardConst::max(void) const {
+        CardConst::max() const {
             return _max;
         }
         forceinline int
-        CardConst::card(void) const {
+        CardConst::card() const {
             return _card;
         }
         forceinline int
-        CardConst::counter(void) const {
+        CardConst::counter() const {
             return _counter;
         }
         forceinline bool
-        CardConst::assigned(void) const {
+        CardConst::assigned() const {
             return _min == _max;
         }
 
@@ -249,7 +249,7 @@ namespace Gecode { namespace Int {
             _counter = n;
         }
         forceinline ModEvent
-        CardConst::inc(void) {
+        CardConst::inc() {
             if (++_counter > _max)
                 return ME_INT_FAILED;
             return ME_INT_NONE;
@@ -289,7 +289,7 @@ namespace Gecode { namespace Int {
         }
 
         forceinline IntView
-        CardConst::base(void) const {
+        CardConst::base() const {
             GECODE_NEVER;
             return IntView();
         }
@@ -300,7 +300,7 @@ namespace Gecode { namespace Int {
          */
         forceinline
         // NOLINTNEXTLINE(modernize-use-equals-default)
-        CardView::CardView(void) {}
+        CardView::CardView() {}
         forceinline void
         CardView::init(const IntView& y, int c) {
             x = y;
@@ -315,23 +315,23 @@ namespace Gecode { namespace Int {
         }
 
         forceinline int
-        CardView::counter(void) const {
+        CardView::counter() const {
             return _counter;
         }
         forceinline int
-        CardView::card(void) const {
+        CardView::card() const {
             return _card;
         }
         forceinline int
-        CardView::min(void) const {
+        CardView::min() const {
             return x.min();
         }
         forceinline int
-        CardView::max(void) const {
+        CardView::max() const {
             return x.max();
         }
         forceinline unsigned int
-        CardView::size(void) const {
+        CardView::size() const {
             return x.size();
         }
 
@@ -340,7 +340,7 @@ namespace Gecode { namespace Int {
             _counter = n;
         }
         forceinline ModEvent
-        CardView::inc(void) {
+        CardView::inc() {
             if (++_counter > this->max())
                 return ME_INT_FAILED;
             return ME_GEN_NONE;
@@ -392,7 +392,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         ///@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges();
         /// Initialize with ranges for view \a x
         ViewRanges(const GCC::CardView& x);
         /// Initialize with ranges for view \a x
@@ -401,7 +401,7 @@ namespace Gecode { namespace Int {
     };
 
     forceinline
-    ViewRanges<GCC::CardView>::ViewRanges(void)
+    ViewRanges<GCC::CardView>::ViewRanges()
         : Gecode::Int::ViewRanges<IntView>() {}
 
     forceinline

@@ -87,13 +87,13 @@ namespace Gecode { namespace Support {
 #endif
     public:
         /// Initialize mutex
-        Mutex(void);
+        Mutex();
         /// Acquire the mutex and possibly block
-        void acquire(void);
+        void acquire();
         /// Try to acquire the mutex, return true if successful
-        bool try_acquire(void);
+        bool try_acquire();
         /// Release the mutex
-        void release(void);
+        void release();
         /// Allocate memory from heap
         static void* operator new(size_t s);
         /// Free memory allocated from heap
@@ -119,7 +119,7 @@ namespace Gecode { namespace Support {
         /// Enter lock
         Lock(Mutex& m0);
         /// Leave lock
-        ~Lock(void);
+        ~Lock();
 
         /// A lock cannot be copied
         Lock(const Lock&) = delete;
@@ -148,11 +148,11 @@ namespace Gecode { namespace Support {
 
     public:
         /// Initialize event
-        Event(void);
+        Event();
         /// Signal the event
-        void signal(void);
+        void signal();
         /// Wait until the event becomes signalled
-        void wait(void);
+        void wait();
 
         /// An event cannot be copied
         Event(const Event&) = delete;
@@ -171,7 +171,7 @@ namespace Gecode { namespace Support {
         /// Destructor
         virtual ~Terminator() = default;
         /// The function that is called when the thread has terminated
-        virtual void terminated(void) = 0;
+        virtual void terminated() = 0;
     };
 
     /**
@@ -190,16 +190,16 @@ namespace Gecode { namespace Support {
         /// Set whether to delete upon termination
         void delete_after_run(bool d);
         /// Return whether to be deleted upon termination
-        bool delete_after_run(void) const;
+        bool delete_after_run() const;
         /// Return terminator object
         virtual Terminator*
-        terminator(void) const {
+        terminator() const {
             return nullptr;
         }
         /// The function that is executed when the thread starts
-        virtual void run(void) = 0;
+        virtual void run() = 0;
         /// Destructor
-        virtual ~Runnable(void) = default;
+        virtual ~Runnable() = default;
         /// Allocate memory from heap
         static void* operator new(size_t s);
         /// Free memory allocated from heap
@@ -229,7 +229,7 @@ namespace Gecode { namespace Support {
             /// Create a new thread
             GECODE_SUPPORT_EXPORT Run(Runnable* r);
             /// Infinite loop for execution
-            GECODE_SUPPORT_EXPORT void exec(void);
+            GECODE_SUPPORT_EXPORT void exec();
             /// Run a runnable object
             void run(Runnable* r);
             /// Allocate memory from heap
@@ -238,7 +238,7 @@ namespace Gecode { namespace Support {
             static void operator delete(void* p);
         };
         /// Mutex for synchronization
-        GECODE_SUPPORT_EXPORT static Mutex* m(void);
+        GECODE_SUPPORT_EXPORT static Mutex* m();
         /// Idle runners
         GECODE_SUPPORT_EXPORT static Run* idle;
 
@@ -256,7 +256,7 @@ namespace Gecode { namespace Support {
         /// Put current thread to sleep for \a ms milliseconds
         static void sleep(unsigned int ms);
         /// Return number of processing units (1 if information not available)
-        static unsigned int npu(void);
+        static unsigned int npu();
         /// acquire mutex \a m globally and possibly lock
         GECODE_SUPPORT_EXPORT static void acquire_global_mutex(Mutex* m);
         /// release globally acquired mutex \a m

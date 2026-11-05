@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Singleton(void) = default;
+        Singleton() = default;
         /// Initialize with value \a v
         Singleton(int v);
         /// Initialize with value \a v
@@ -59,15 +59,15 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name %Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -82,16 +82,16 @@ namespace Gecode { namespace Iter { namespace Values {
     }
 
     forceinline void
-    Singleton::operator++(void) {
+    Singleton::operator++() {
         done = true;
     }
     forceinline bool
-    Singleton::operator()(void) const {
+    Singleton::operator()() const {
         return !done;
     }
 
     forceinline int
-    Singleton::val(void) const {
+    Singleton::val() const {
         return v;
     }
 

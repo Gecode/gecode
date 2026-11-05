@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest(
                 "factory_planning",
                 std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\

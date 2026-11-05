@@ -55,7 +55,7 @@ public:
     enum { MODEL_OPEN, MODEL_FIXED };
     enum { BRANCH_MIN, BRANCH_MANHATTAN };
     enum { SEARCH_BAB, SEARCH_ASTAR, SEARCH_CABS };
-    PuzzleOptions(void)
+    PuzzleOptions()
         : Options("FifteenPuzzle"), _scramble("scramble", "number of random slides from the goal", 12),
           _limit("limit", "maximum number of solution moves", 12) {
         add(_scramble);
@@ -76,18 +76,18 @@ public:
         seed(1);
     }
     unsigned int
-    scramble(void) const {
+    scramble() const {
         return _scramble.value();
     }
     int
-    limit(void) const {
+    limit() const {
         Int::Limits::check(16 * (static_cast<long long int>(_limit.value()) + 1), "FifteenPuzzle::limit");
         return static_cast<int>(_limit.value());
     }
 };
 
 static Board
-goal(void) {
+goal() {
     return {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
 }
 
@@ -276,7 +276,7 @@ public:
         path.update(*this, s.path);
     }
     Space*
-    copy(void) override {
+    copy() override {
         return new OpenPuzzle(*this);
     }
     IntVarArgs
@@ -287,14 +287,14 @@ public:
         return result;
     }
     int
-    depth(void) const {
+    depth() const {
         int i = 0;
         while (i + 1 < path.known_length() && path[i + 1].assigned())
             i++;
         return i;
     }
     int
-    bound(void) const {
+    bound() const {
         const int g = depth();
         const int h = manhattan(values(state(g)));
         return std::max(g + h, path.length().min() - 1);
@@ -358,7 +358,7 @@ public:
         length.update(*this, s.length);
     }
     Space*
-    copy(void) override {
+    copy() override {
         return new FixedPuzzle(*this);
     }
     IntVarArgs
@@ -369,14 +369,14 @@ public:
         return result;
     }
     int
-    depth(void) const {
+    depth() const {
         int i = 0;
         while (i + 1 < path.size() && path[i + 1].assigned())
             i++;
         return i;
     }
     int
-    bound(void) const {
+    bound() const {
         const int g = depth();
         const int h = manhattan(values(state(g)));
         return std::max(g + h, length.min() - 1);

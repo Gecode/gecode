@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("int_ranges_as_values", "var 1 .. 10: a :: output_var;\n\
 var bool: b :: output_var;\n\
 constraint set_in_reif(a, 1..2, b);\n\

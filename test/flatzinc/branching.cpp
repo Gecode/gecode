@@ -84,10 +84,10 @@ namespace Test { namespace FlatZinc { namespace {
         }
 
     public:
-        DefaultSearchDecay(void) : Base("FlatZinc::Branching::DefaultSearchDecay") {}
+        DefaultSearchDecay() : Base("FlatZinc::Branching::DefaultSearchDecay") {}
 
         bool
-        run(void) override {
+        run() override {
             return uses_option("var 0..1: x :: output_var;\n"
                                "var bool: b :: output_var;\n"
                                "solve satisfy;\n") &&
@@ -111,10 +111,10 @@ namespace Test { namespace FlatZinc { namespace {
         }
 
     public:
-        IntBoolDecay(void) : Base("FlatZinc::Branching::IntBoolDecay") {}
+        IntBoolDecay() : Base("FlatZinc::Branching::IntBoolDecay") {}
 
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode::FlatZinc;
             return keeps_decay(int_bool_var_afc_max(0.5)) && keeps_decay(int_bool_var_afc_size_max(0.5)) &&
                    keeps_decay(int_bool_var_action_max(0.5)) && keeps_decay(int_bool_var_action_size_max(0.5));
@@ -134,10 +134,10 @@ namespace Test { namespace FlatZinc { namespace {
         }
 
     public:
-        SetRelationNames(void) : Base("FlatZinc::Branching::SetRelationNames") {}
+        SetRelationNames() : Base("FlatZinc::Branching::SetRelationNames") {}
 
         bool
-        run(void) override {
+        run() override {
             return prints("set_search([s], input_order, indomain_min, complete)", "s in 1", "s not in 1") &&
                    prints("set_search([s], input_order, outdomain_min, complete)", "s not in 1", "s in 1") &&
                    prints("set_default_search(input_order, outdomain_min)", "s not in 1", "s in 1");
@@ -171,10 +171,10 @@ namespace Test { namespace FlatZinc { namespace {
     /// Verify that a cloned auxiliary brancher keeps the default search.
     class AuxVarClone : public Base {
     public:
-        AuxVarClone(void) : Base("FlatZinc::Branching::AuxVarClone") {}
+        AuxVarClone() : Base("FlatZinc::Branching::AuxVarClone") {}
 
         bool
-        run(void) override {
+        run() override {
             FlatZincSpacePtr fg = post_branchers("var 0..3: a :: var_is_introduced;\n"
                                                  "solve :: int_default_search(input_order, indomain_max) satisfy;\n");
             if (!fg)

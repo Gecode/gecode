@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
         // Default constructor for region-allocated memory
         // NOLINTNEXTLINE(modernize-use-equals-default)
-        Event(void) {}
+        Event() {}
 
         /// Order events based on date.
         bool

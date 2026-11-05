@@ -89,31 +89,31 @@ namespace Test { namespace Set {
         return "[" + s + str(x[x.size() - 1]) + "]";
     }
 
-    inline SetRelTypes::SetRelTypes(void) : i(sizeof(srts) / sizeof(Gecode::SetRelType) - 1) {}
+    inline SetRelTypes::SetRelTypes() : i(sizeof(srts) / sizeof(Gecode::SetRelType) - 1) {}
     inline bool
-    SetRelTypes::operator()(void) const {
+    SetRelTypes::operator()() const {
         return i >= 0;
     }
     inline void
-    SetRelTypes::operator++(void) {
+    SetRelTypes::operator++() {
         i--;
     }
     inline Gecode::SetRelType
-    SetRelTypes::srt(void) const {
+    SetRelTypes::srt() const {
         return srts[i];
     }
 
-    inline SetOpTypes::SetOpTypes(void) : i(sizeof(sots) / sizeof(Gecode::SetOpType) - 1) {}
+    inline SetOpTypes::SetOpTypes() : i(sizeof(sots) / sizeof(Gecode::SetOpType) - 1) {}
     inline bool
-    SetOpTypes::operator()(void) const {
+    SetOpTypes::operator()() const {
         return i >= 0;
     }
     inline void
-    SetOpTypes::operator++(void) {
+    SetOpTypes::operator++() {
         i--;
     }
     inline Gecode::SetOpType
-    SetOpTypes::sot(void) const {
+    SetOpTypes::sot() const {
         return sots[i];
     }
 

@@ -664,7 +664,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
     {d['class']}(Gecode::Space& home, {d['class']}& x);
   public:
     /// Constructor for creating static instance of variable
-    {d['class']}(void) = default;
+    {d['class']}() = default;
     /// Constructor for creating variable
     {d['class']}(Gecode::Space& home);
     /// \\name Dependencies
@@ -704,7 +704,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
         if d["dispose"]:
             out.append(
                 f"""    /// Return link to next variable to be disposed
-    {d['class']}* next_d(void) const;
+    {d['class']}* next_d() const;
 """
             )
 
@@ -732,7 +732,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
   }}
 
   forceinline {d['class']}*
-  {d['class']}::next_d(void) const {{
+  {d['class']}::next_d() const {{
     return _next_d;
   }}
 
@@ -862,7 +862,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
         """namespace Gecode {
 
   forceinline void
-  Space::recover_noidx(void) {
+  Space::recover_noidx() {
     VarImp<NoIdxVarImpConf>* x =
       static_cast<VarImp<NoIdxVarImpConf>*>(pc.c.vars_noidx);
     while (x != nullptr) {

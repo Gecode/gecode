@@ -48,7 +48,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Positive(void) = default;
+        Positive() = default;
         /// Initialize with values from \a i
         Positive(I& i);
         /// Initialize with values from \a i
@@ -58,15 +58,15 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -98,18 +98,18 @@ namespace Gecode { namespace Iter { namespace Values {
 
     template <class I, bool strict>
     forceinline void
-    Positive<I, strict>::operator++(void) {
+    Positive<I, strict>::operator++() {
         ++i;
     }
     template <class I, bool strict>
     forceinline bool
-    Positive<I, strict>::operator()(void) const {
+    Positive<I, strict>::operator()() const {
         return i();
     }
 
     template <class I, bool strict>
     forceinline int
-    Positive<I, strict>::val(void) const {
+    Positive<I, strict>::val() const {
         return i.val();
     }
 

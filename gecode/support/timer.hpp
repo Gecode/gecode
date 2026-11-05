@@ -48,18 +48,18 @@ namespace Gecode { namespace Support {
 
     public:
         /// Start timer
-        void start(void);
+        void start();
         /// Get time since start of timer
-        double stop(void);
+        double stop();
     };
 
     inline void
-    Timer::start(void) {
+    Timer::start() {
         t0 = std::chrono::steady_clock::now();
     }
 
     inline double
-    Timer::stop(void) {
+    Timer::stop() {
         std::chrono::duration<double, std::milli> duration = std::chrono::steady_clock::now() - t0;
         return duration.count();
     }

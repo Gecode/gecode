@@ -335,7 +335,7 @@ namespace Gecode { namespace Instance {
         /// Initialize with message \a m
         explicit Error(const std::string& m);
         /// Return the full message
-        const char* what(void) const noexcept override;
+        const char* what() const noexcept override;
     };
 
     /// Type of the values in a data entry
@@ -361,7 +361,7 @@ namespace Gecode { namespace Instance {
 
     public:
         /// No parameters
-        Params(void);
+        Params();
         /// Set parameter \a name to \a value
         void set(const std::string& name, const std::string& value);
         /**
@@ -375,7 +375,7 @@ namespace Gecode { namespace Instance {
         /// Return whether \a name is set, and if so store its value in \a value
         bool get(const std::string& name, std::string& value) const;
         /// Return number of parameters
-        int size(void) const;
+        int size() const;
         /// Return the name of parameter \a i
         std::string name(int i) const;
     };
@@ -406,12 +406,12 @@ namespace Gecode { namespace Instance {
 
     public:
         /// Empty data
-        Data(void);
+        Data();
 
         /// \name Entries
         //@{
         /// Return number of entries
-        int entries(void) const;
+        int entries() const;
         /// Return name of entry \a i, in the order they were defined
         std::string name(int i) const;
         /// Test whether there is an entry \a n
@@ -470,7 +470,7 @@ namespace Gecode { namespace Instance {
 
     public:
         /// The empty spec (reads only empty input)
-        Spec(void);
+        Spec();
 
         /// \name Creating specs
         //@{
@@ -483,7 +483,7 @@ namespace Gecode { namespace Instance {
         /// \name Information
         //@{
         /// Return the format name declared by the spec (may be empty)
-        std::string name(void) const;
+        std::string name() const;
         //@}
 
         /// \name Reading

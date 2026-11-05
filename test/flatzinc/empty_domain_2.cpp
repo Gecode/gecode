@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("empty_domain_2", "array [1 .. 3] of var 11..10: x; solve satisfy;",
                                    "=====UNSATISFIABLE=====\n");
         }

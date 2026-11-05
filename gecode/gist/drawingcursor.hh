@@ -54,7 +54,7 @@ namespace Gecode { namespace Gist {
         bool copies;
 
         /// Test if current node is clipped
-        bool is_clipped(void);
+        bool is_clipped();
 
     public:
         /// The color for failed nodes
@@ -82,15 +82,15 @@ namespace Gecode { namespace Gist {
         ///\name Cursor interface
         //@{
         /// Move cursor to parent
-        void move_upwards(void);
+        void move_upwards();
         /// Test if cursor may move to child
-        bool may_move_downwards(void);
+        bool may_move_downwards();
         /// Move cursor to child
-        void move_downwards(void);
+        void move_downwards();
         /// Move cursor to sibling
-        void move_sidewards(void);
+        void move_sidewards();
         /// Draw the node
-        void process_current_node(void);
+        void process_current_node();
         //@}
     };
 

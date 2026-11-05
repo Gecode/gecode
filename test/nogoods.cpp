@@ -88,7 +88,7 @@ namespace Test {
             }
             /// Perform copying during cloning
             Space*
-            copy(void) override {
+            copy() override {
                 return new Queens(*this);
             }
             /// Check whether two solutions are the same
@@ -101,12 +101,12 @@ namespace Test {
             }
             /// Return increment for node stop
             static unsigned int
-            node_increment(void) {
+            node_increment() {
                 return 500;
             }
             /// Return name
             static std::string
-            name(void) {
+            name() {
                 return "Queens";
             }
             /// Return name for branching
@@ -182,7 +182,7 @@ namespace Test {
             }
             /// Copy during cloning
             Space*
-            copy(void) override {
+            copy() override {
                 return new Hamming(*this);
             }
             /// Check whether two solutions are the same
@@ -197,12 +197,12 @@ namespace Test {
             }
             /// Return increment for node stop
             static unsigned int
-            node_increment(void) {
+            node_increment() {
                 return 35;
             }
             /// Return name
             static std::string
-            name(void) {
+            name() {
                 return "Hamming";
             }
             /// Return name for branching
@@ -254,7 +254,7 @@ namespace Test {
                   vb(std::move(vb0)), t(t0), a(a0), n(n0) {}
             /// Run test
             bool
-            run(void) override {
+            run() override {
                 Model* m = new Model(vb, a, n);
                 // Solution without no-goods
                 Model* s_plain = dfs(m);
@@ -294,7 +294,7 @@ namespace Test {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 bool a = false;
                 do {
                     bool n = false;

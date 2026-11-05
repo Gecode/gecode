@@ -54,7 +54,7 @@ namespace Test {
         class FlatZincTest : public Base {
         protected:
             typedef std::function<bool(const std::string&)> OutputCheck;
-            typedef std::function<void(void)> BeforeRun;
+            typedef std::function<void()> BeforeRun;
             std::string _name;
             std::string _source;
             std::string _expected;
@@ -73,7 +73,7 @@ namespace Test {
                          bool all_solutions = false, std::vector<std::string> cmdline_opt = {},
                          OutputCheck check = OutputCheck(), BeforeRun before = BeforeRun());
             /// Perform test
-            bool run(void) override;
+            bool run() override;
         };
 
         class FlatZincErrorTest : public FlatZincTest {
@@ -88,7 +88,7 @@ namespace Test {
             FlatZincErrorTest(TestTags tags, const std::string& name, const std::string& source,
                               std::vector<std::string> cmdline_opt = {}, std::string expected_message = "");
             /// Perform test
-            bool run(void) override;
+            bool run() override;
         };
 
     } // namespace FlatZinc

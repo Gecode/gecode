@@ -33,11 +33,11 @@
 namespace Gecode { namespace Int {
 
     forceinline
-    GrowableIntSet::GrowableIntSet(void)
+    GrowableIntSet::GrowableIntSet()
         : _ranges(nullptr), _count(0), _capacity(0) {}
 
     forceinline unsigned int
-    GrowableIntSet::max_capacity(void) {
+    GrowableIntSet::max_capacity() {
         return static_cast<unsigned int>(
             std::min(static_cast<size_t>(std::numeric_limits<unsigned int>::max()),
                      static_cast<size_t>(std::numeric_limits<ptrdiff_t>::max()) / sizeof(Range)));
@@ -180,27 +180,27 @@ namespace Gecode { namespace Int {
         : current(set._ranges), end((set._count == 0) ? set._ranges : set._ranges + set._count) {}
 
     forceinline bool
-    GrowableIntSetRanges::operator()(void) const {
+    GrowableIntSetRanges::operator()() const {
         return current != end;
     }
 
     forceinline void
-    GrowableIntSetRanges::operator++(void) {
+    GrowableIntSetRanges::operator++() {
         ++current;
     }
 
     forceinline int
-    GrowableIntSetRanges::min(void) const {
+    GrowableIntSetRanges::min() const {
         return current->min;
     }
 
     forceinline int
-    GrowableIntSetRanges::max(void) const {
+    GrowableIntSetRanges::max() const {
         return current->max;
     }
 
     forceinline unsigned int
-    GrowableIntSetRanges::width(void) const {
+    GrowableIntSetRanges::width() const {
         return static_cast<unsigned int>(current->max) - static_cast<unsigned int>(current->min) + 1U;
     }
 

@@ -90,10 +90,10 @@ namespace Test { namespace Float {
 
         public:
             /// Create and register test
-            Median(void) : Base("Float::Basic::Median") {}
+            Median() : Base("Float::Basic::Median") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 const FloatNum m = Gecode::Float::Limits::max;
                 const FloatNum i = std::numeric_limits<FloatNum>::infinity();
@@ -122,19 +122,19 @@ namespace Test { namespace Float {
             /// The cost variable
             Gecode::FloatVar x;
             /// Create space with cost variable in [0,1]
-            OptimizeSpace(void) : x(*this, 0.0, 1.0) {}
+            OptimizeSpace() : x(*this, 0.0, 1.0) {}
             /// Constructor for cloning \a s
             OptimizeSpace(OptimizeSpace& s) : Optimize(s) {
                 x.update(*this, s.x);
             }
             /// Copy during cloning
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new OptimizeSpace(*this);
             }
             /// Return cost
             Gecode::FloatVar
-            cost(void) const override {
+            cost() const override {
                 return x;
             }
         };
@@ -163,10 +163,10 @@ namespace Test { namespace Float {
 
         public:
             /// Create and register test
-            OptimizeCut(void) : Base("Float::Basic::OptimizeCut") {}
+            OptimizeCut() : Base("Float::Basic::OptimizeCut") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 FloatVal min, max;
                 return cut<FloatMinimizeSpace>(min) && cut<FloatMaximizeSpace>(max) && (min.max() < 0.5) &&
@@ -180,21 +180,21 @@ namespace Test { namespace Float {
             /// Space for the variables behind the views
             class Fixture : public Gecode::Space {
             public:
-                Fixture(void) = default;
+                Fixture() = default;
                 // NOLINTNEXTLINE(modernize-use-equals-default)
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new Fixture(*this);
                 }
             };
 
         public:
             /// Create and register test
-            ViewCompare(void) : Base("Float::Basic::View::Compare") {}
+            ViewCompare() : Base("Float::Basic::View::Compare") {}
             /// Perform test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 using namespace Gecode::Float;
                 Fixture home;

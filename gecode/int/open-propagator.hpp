@@ -57,7 +57,7 @@ namespace Gecode { namespace Int {
         }
 
         bool
-        closed(void) const {
+        closed() const {
             return length.max() == list.known_length();
         }
 

@@ -287,7 +287,7 @@ public:
     KnightsReified(KnightsReified& s) : Knights(s) {}
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new KnightsReified(*this);
     }
 };
@@ -318,7 +318,7 @@ public:
     KnightsCircuit(KnightsCircuit& s) : Knights(s) {}
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new KnightsCircuit(*this);
     }
 };
@@ -342,7 +342,7 @@ protected:
 
 public:
     /// Constructor
-    KnightsInspector(void) : scene(nullptr), mw(nullptr) {}
+    KnightsInspector() : scene(nullptr), mw(nullptr) {}
     /// Inspect space \a s
     void
     inspect(const Space& s) override {
@@ -380,7 +380,7 @@ public:
 
     /// Set up main window
     void
-    initialize(void) {
+    initialize() {
         mw = new QMainWindow();
         scene = new QGraphicsScene();
         QGraphicsView* view = new QGraphicsView(scene);
@@ -396,12 +396,12 @@ public:
 
     /// Name of the inspector
     std::string
-    name(void) override {
+    name() override {
         return "Board";
     }
     /// Finalize inspector
     void
-    finalize(void) override {
+    finalize() override {
         delete mw;
         mw = nullptr;
     }

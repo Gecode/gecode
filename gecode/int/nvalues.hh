@@ -101,19 +101,19 @@ namespace Gecode { namespace Int { namespace NValues {
 
     public:
         /// Construct graph as not yet initialized
-        Graph(void);
+        Graph();
         /// Return size of maximal matching (excluding assigned views)
-        int size(void) const;
+        int size() const;
         /// Initialize graph including values in \a vs
         void init(Space& home, const ValSet& vs, const ViewArray<IntView>& x);
         /// Synchronize graph with new view domains
-        void sync(void);
+        void sync();
         /*
          * \brief Mark all edges used that can appear in some maximal matching
          *
          * Return true, if any edge can be in fact pruned.
          */
-        bool mark(void);
+        bool mark();
         /// Prune all values corresponding to unused edges
         ExecStatus prune(Space& home);
     };

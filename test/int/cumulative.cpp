@@ -82,7 +82,7 @@ namespace Test { namespace Int {
             }
             /// Create and register initial assignment
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 return new RandomAssignment(arity, dom, 500, _rand);
             }
             /// Test whether \a x is solution
@@ -188,7 +188,7 @@ namespace Test { namespace Int {
             }
             /// Create and register initial assignment
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 return new RandomAssignment(arity, dom, 500, _rand);
             }
             /// Test whether \a x is solution
@@ -298,7 +298,7 @@ namespace Test { namespace Int {
             }
             /// Create and register initial assignment
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 return new RandomMixAssignment((c >= 0) ? arity / 2 : arity / 2 + 1, dom, arity / 2,
                                                Gecode::IntSet(_min_p, _max_p), 500, _rand);
             }
@@ -414,7 +414,7 @@ namespace Test { namespace Int {
             }
             /// Create and register initial assignment
             Assignment*
-            assignment(void) const override {
+            assignment() const override {
                 return new RandomMixAssignment((c >= 0) ? 2 * (arity / 3) : 2 * (arity / 3) + 1, dom, arity / 3,
                                                Gecode::IntSet(_min_p, _max_p), 500, _rand);
             }
@@ -495,7 +495,7 @@ namespace Test { namespace Int {
         /// Fixed-end tasks must accept exactly the capacity-feasible schedules
         class ManFixECumulative : public Test {
         public:
-            ManFixECumulative(void)
+            ManFixECumulative()
                 : Test("Cumulative::Man::FixE", 4, Gecode::IntSet({0, 9, 19, 29, 39}), false, Gecode::IPL_ADVANCED) {
                 test_fixpoint = false;
                 consistency_test_level = CTL_NONE;
@@ -548,7 +548,7 @@ namespace Test { namespace Int {
                     starts.update(*this, fixture.starts);
                 }
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new Fixture(*this);
                 }
             };
@@ -557,7 +557,7 @@ namespace Test { namespace Int {
             public:
                 Gecode::IntVarArray starts;
                 Gecode::IntVar capacity;
-                VariableCapacityFixture(void) : starts(*this, 5, 0, 6), capacity(*this, 3, 4) {
+                VariableCapacityFixture() : starts(*this, 5, 0, 6), capacity(*this, 3, 4) {
                     starts[0] = Gecode::IntVar(*this, 1, 4);
                     starts[1] = Gecode::IntVar(*this, 0, 6);
                     starts[2] = Gecode::IntVar(*this, 2, 6);
@@ -571,13 +571,13 @@ namespace Test { namespace Int {
                     capacity.update(*this, fixture.capacity);
                 }
                 Gecode::Space*
-                copy(void) override {
+                copy() override {
                     return new VariableCapacityFixture(*this);
                 }
             };
 
             static bool
-            variable_capacity_rechecks(void) {
+            variable_capacity_rechecks() {
                 VariableCapacityFixture root;
                 if (root.status() == Gecode::SS_FAILED)
                     return false;
@@ -587,7 +587,7 @@ namespace Test { namespace Int {
             }
 
             static bool
-            optional_subset(void) {
+            optional_subset() {
                 class OptionalSubsetFixture : public Gecode::Space {
                 public:
                     OptionalSubsetFixture(Gecode::IntPropLevel level) {
@@ -616,7 +616,7 @@ namespace Test { namespace Int {
                     // NOLINTNEXTLINE(modernize-use-equals-default)
                     OptionalSubsetFixture(OptionalSubsetFixture& fixture) : Gecode::Space(fixture) {}
                     Gecode::Space*
-                    copy(void) override {
+                    copy() override {
                         return new OptionalSubsetFixture(*this);
                     }
                 };
@@ -627,10 +627,10 @@ namespace Test { namespace Int {
             }
 
         public:
-            KnapsackAugmentedOverload(void) : Test::Base("Cumulative::KnapsackAugmentedOverload") {}
+            KnapsackAugmentedOverload() : Test::Base("Cumulative::KnapsackAugmentedOverload") {}
 
             bool
-            run(void) override {
+            run() override {
                 Fixture basic(Gecode::IPL_BASIC);
                 Fixture advanced(Gecode::IPL_ADVANCED);
                 return (basic.status() != Gecode::SS_FAILED) && (advanced.status() == Gecode::SS_FAILED) &&
@@ -644,7 +644,7 @@ namespace Test { namespace Int {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 using namespace Gecode;
                 IntArgs p1({1, 1, 1, 1});
                 IntArgs p2({2, 2, 2, 2});

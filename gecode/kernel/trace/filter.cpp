@@ -39,7 +39,7 @@ namespace Gecode {
      *
      */
     bool
-    TFE::Node::decrement(void) {
+    TFE::Node::decrement() {
         if (--use == 0) {
             if ((l != nullptr) && l->decrement())
                 delete l;
@@ -60,7 +60,7 @@ namespace Gecode {
     }
 
     inline TFE
-    TFE::negate(void) const {
+    TFE::negate() const {
         Node* m = new Node;
         m->t = NT_NEGATE;
         m->n = n->n;
@@ -78,7 +78,7 @@ namespace Gecode {
     }
 
     TFE
-    TFE::other(void) {
+    TFE::other() {
         TFE e;
         e.init(Group::all, (1 << std::to_underlying(ViewTraceInfo::OTHER)));
         return e;
@@ -116,7 +116,7 @@ namespace Gecode {
         return operator+=(e.negate());
     }
 
-    TFE::~TFE(void) {
+    TFE::~TFE() {
         if (n->decrement())
             delete n;
     }
@@ -147,7 +147,7 @@ namespace Gecode {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    TraceFilter::TFO::StackFrame::StackFrame(void) {}
+    TraceFilter::TFO::StackFrame::StackFrame() {}
     forceinline
     TraceFilter::TFO::StackFrame::StackFrame(TFE::Node* n0, bool neg0)
         : n(n0), neg(neg0) {}
@@ -180,12 +180,12 @@ namespace Gecode {
         } while (!next.empty());
     }
 
-    TraceFilter::TFO::~TFO(void) {
+    TraceFilter::TFO::~TFO() {
         if (f != nullptr)
             heap.free<Filter>(f, n);
     }
 
-    TraceFilter::TraceFilter(void) : SharedHandle(new TFO) {}
+    TraceFilter::TraceFilter() : SharedHandle(new TFO) {}
 
     TraceFilter::TraceFilter(const TFE& e) : SharedHandle(new TFO(e)) {}
 

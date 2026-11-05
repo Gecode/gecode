@@ -127,7 +127,7 @@ namespace Gecode { namespace Driver {
             }
         }
         /// Destructor
-        ~CombinedStop(void) override {
+        ~CombinedStop() override {
             delete ns;
             delete fs;
             delete ts;
@@ -225,7 +225,7 @@ namespace Gecode { namespace Driver {
     class ScriptGetInfo : public CPProfilerSearchTracer::GetInfo {
     public:
         /// Initialize
-        ScriptGetInfo(void) = default;
+        ScriptGetInfo() = default;
         /// Return info for a space (which must be a script)
         std::string get_info(const Space& home) const override;
     };

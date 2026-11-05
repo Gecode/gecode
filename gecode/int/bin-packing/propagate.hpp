@@ -41,14 +41,14 @@ namespace Gecode { namespace Int { namespace BinPacking {
      *
      */
     forceinline
-    Item::Item(void)
+    Item::Item()
         : s(0) {}
     forceinline
     Item::Item(IntView b, int s0)
         : DerivedView<IntView>(b), s(s0) {}
 
     forceinline IntView
-    Item::bin(void) const {
+    Item::bin() const {
         return x;
     }
     forceinline void
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         x = b;
     }
     forceinline int
-    Item::size(void) const {
+    Item::size() const {
         return s;
     }
     forceinline void
@@ -94,11 +94,11 @@ namespace Gecode { namespace Int { namespace BinPacking {
         s[n++] = s0;
     }
     forceinline int
-    SizeSet::card(void) const {
+    SizeSet::card() const {
         return n;
     }
     forceinline int
-    SizeSet::total(void) const {
+    SizeSet::total() const {
         return t;
     }
     forceinline int
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    SizeSetMinusOne::SizeSetMinusOne(void) {}
+    SizeSetMinusOne::SizeSetMinusOne() {}
     forceinline
     SizeSetMinusOne::SizeSetMinusOne(Region& region, int n_max)
         : SizeSet(region, n_max), p(-1) {}
@@ -121,12 +121,12 @@ namespace Gecode { namespace Int { namespace BinPacking {
         assert(p < n);
     }
     forceinline int
-    SizeSetMinusOne::card(void) const {
+    SizeSetMinusOne::card() const {
         assert(p >= 0);
         return n - 1;
     }
     forceinline int
-    SizeSetMinusOne::total(void) const {
+    SizeSetMinusOne::total() const {
         assert(p >= 0);
         return t - s[p];
     }

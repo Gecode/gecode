@@ -62,7 +62,7 @@ namespace Gecode { namespace Support {
     class Allocator {
     public:
         /// Default constructor
-        Allocator(void) = default;
+        Allocator() = default;
         /// Allocate memory block of size \a n
 #ifdef GECODE_MIMALLOC
         GECODE_SUPPORT_EXPORT

@@ -442,7 +442,7 @@ public:
 
     /// Copy space during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Pentominoes(*this);
     }
 

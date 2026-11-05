@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
     template <class View, class Random>
     forceinline bool
-    ValSelRnd<View, Random>::notice(void) const {
+    ValSelRnd<View, Random>::notice() const {
         return !std::is_trivially_destructible<Random>::value;
     }
     template <class View, class Random>

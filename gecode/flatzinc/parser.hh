@@ -107,7 +107,7 @@ namespace Gecode { namespace FlatZinc {
         int i;        //< Value of entry or array start index
         /// Default constructor
         // NOLINTNEXTLINE(modernize-use-equals-default)
-        SymbolEntry(void) {}
+        SymbolEntry() {}
         /// Constructor
         SymbolEntry(SymbolType t0, int i0) : t(t0), i(i0) {}
     };
@@ -205,7 +205,7 @@ namespace Gecode { namespace FlatZinc {
         ParserState(char* buf0, int length0, std::ostream& err0, Gecode::FlatZinc::FlatZincSpace* fg0)
             : yyscanner(nullptr), buf(buf0), pos(0), length(length0), fg(fg0), had_error(false), err(err0) {}
 
-        ~ParserState(void);
+        ~ParserState();
 
         void* yyscanner;
         const char* buf;
@@ -262,7 +262,7 @@ namespace Gecode { namespace FlatZinc {
         }
 
         AST::Array*
-        get_output(void) {
+        get_output() {
             OutputOrder oo;
             std::sort(output_items.begin(), output_items.end(), oo);
             AST::Array* a = new AST::Array();

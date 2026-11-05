@@ -267,7 +267,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    SpaceNode::dispose(void) {
+    SpaceNode::dispose() {
         delete choice;
         delete static_cast<Space*>(Support::clear_pointer_tag_bits(copy));
     }

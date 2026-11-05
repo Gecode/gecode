@@ -72,24 +72,24 @@ namespace Gecode {
             Storage(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm);
             /// Delete object
             GECODE_KERNEL_EXPORT
-            ~Storage(void) override;
+            ~Storage() override;
             /// Bump failure count and alpha
-            void bump(void);
+            void bump();
             /// Update chb information at position \a i
             void update(int i, bool failed);
         };
         /// Return object of correct type
-        Storage& object(void) const;
+        Storage& object() const;
         /// Set object to \a o
         void object(Storage& o);
         /// Update chb value at position \a i
         void update(int i);
         /// Acquire mutex
-        void acquire(void);
+        void acquire();
         /// Release mutex
-        void release(void);
+        void release();
         /// Bump failure count and alpha
-        void bump(void);
+        void bump();
         /// Update chb information at position \a i
         void update(int i, bool failed);
 
@@ -103,7 +103,7 @@ namespace Gecode {
          * yet initialized chb storage is init and the assignment operator.
          *
          */
-        CHB(void) = default;
+        CHB() = default;
         /// Copy constructor
         GECODE_KERNEL_EXPORT
         CHB(const CHB& a) = default;
@@ -130,14 +130,14 @@ namespace Gecode {
 
         /// Destructor
         GECODE_KERNEL_EXPORT
-        ~CHB(void) = default;
+        ~CHB() = default;
 
         /// \name Information access
         //@{
         /// Return chb value at position \a i
         double operator[](int i) const;
         /// Return number of chb values
-        int size(void) const;
+        int size() const;
         //@}
     };
 
@@ -158,13 +158,13 @@ namespace Gecode {
             /// Constructor for cloning \a a
             Idx(Space& home, Idx& a);
             /// Mark advisor as modified
-            void mark(void);
+            void mark();
             /// Mark advisor as unmodified
-            void unmark(void);
+            void unmark();
             /// Whether advisor's view has been marked
-            bool marked(void) const;
+            bool marked() const;
             /// Get index of view
-            int idx(void) const;
+            int idx() const;
         };
         /// Access to chb information
         CHB chb;
@@ -215,23 +215,23 @@ namespace Gecode {
         : Advisor(home, a), _info(a._info) {}
     template <class View>
     forceinline void
-    CHB::Recorder<View>::Idx::mark(void) {
+    CHB::Recorder<View>::Idx::mark() {
         _info |= 1;
     }
     template <class View>
     forceinline bool
-    CHB::Recorder<View>::Idx::marked(void) const {
+    CHB::Recorder<View>::Idx::marked() const {
         return (_info & 1) != 0;
     }
     template <class View>
     forceinline void
-    CHB::Recorder<View>::Idx::unmark(void) {
+    CHB::Recorder<View>::Idx::unmark() {
         assert(marked());
         _info -= 1;
     }
     template <class View>
     forceinline int
-    CHB::Recorder<View>::Idx::idx(void) const {
+    CHB::Recorder<View>::Idx::idx() const {
         return _info >> 1;
     }
 
@@ -278,7 +278,7 @@ namespace Gecode {
         }
     }
     forceinline void
-    CHB::Storage::bump(void) {
+    CHB::Storage::bump() {
         nf++;
         if (alpha > Kernel::Config::chb_alpha_limit) {
             alpha -= Kernel::Config::chb_alpha_decrement;
@@ -302,7 +302,7 @@ namespace Gecode {
      */
 
     forceinline CHB::Storage&
-    CHB::object(void) const {
+    CHB::object() const {
         return static_cast<CHB::Storage&>(*SharedHandle::object());
     }
 
@@ -317,19 +317,19 @@ namespace Gecode {
         return object().chb[i].qs;
     }
     forceinline int
-    CHB::size(void) const {
+    CHB::size() const {
         return object().n;
     }
     forceinline void
-    CHB::acquire(void) {
+    CHB::acquire() {
         object().m.acquire();
     }
     forceinline void
-    CHB::release(void) {
+    CHB::release() {
         object().m.release();
     }
     forceinline void
-    CHB::bump(void) {
+    CHB::bump() {
         object().bump();
     }
     forceinline void

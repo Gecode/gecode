@@ -35,7 +35,7 @@
 namespace Gecode {
 
     forceinline
-    IntVarBranch::IntVarBranch(void)
+    IntVarBranch::IntVarBranch()
         : s(SEL_NONE) {}
 
     forceinline
@@ -67,7 +67,7 @@ namespace Gecode {
         : VarBranch<IntVar>(std::move(mf), std::move(t)), s(s0) {}
 
     forceinline IntVarBranch::Select
-    IntVarBranch::select(void) const {
+    IntVarBranch::select() const {
         return s;
     }
 
@@ -100,7 +100,7 @@ namespace Gecode {
     }
 
     inline IntVarBranch
-    INT_VAR_NONE(void) {
+    INT_VAR_NONE() {
         return IntVarBranch(IntVarBranch::SEL_NONE, nullptr);
     }
 
@@ -310,7 +310,7 @@ namespace Gecode {
     }
 
     forceinline
-    BoolVarBranch::BoolVarBranch(void)
+    BoolVarBranch::BoolVarBranch()
         : s(SEL_NONE) {}
 
     forceinline
@@ -342,7 +342,7 @@ namespace Gecode {
         : VarBranch<BoolVar>(std::move(mf), std::move(t)), s(s0) {}
 
     forceinline BoolVarBranch::Select
-    BoolVarBranch::select(void) const {
+    BoolVarBranch::select() const {
         return s;
     }
 
@@ -369,7 +369,7 @@ namespace Gecode {
     }
 
     inline BoolVarBranch
-    BOOL_VAR_NONE(void) {
+    BOOL_VAR_NONE() {
         return BoolVarBranch(BoolVarBranch::SEL_NONE, nullptr);
     }
 

@@ -27,7 +27,7 @@ namespace Gecode { namespace FlatZinc {
         std::thread::id owner;
 #endif
         // NOLINTNEXTLINE(modernize-use-equals-default)
-        BlackBoxProcessSession(void)
+        BlackBoxProcessSession()
 #ifdef GECODE_HAS_THREADS
             : owner(std::this_thread::get_id())
 #endif
@@ -35,9 +35,9 @@ namespace Gecode { namespace FlatZinc {
         }
 
     public:
-        virtual ~BlackBoxProcessSession(void) = default;
+        virtual ~BlackBoxProcessSession() = default;
         bool
-        owned_by_current_thread(void) const {
+        owned_by_current_thread() const {
 #ifdef GECODE_HAS_THREADS
             return owner == std::this_thread::get_id();
 #else

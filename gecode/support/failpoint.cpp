@@ -43,7 +43,7 @@ namespace Gecode { namespace Support { namespace FailPoint {
     } // namespace
 
     void
-    reset(void) {
+    reset() {
         active_phase.store(static_cast<int>(Phase::DISABLED), std::memory_order_release);
         fail_after_count.store(0, std::memory_order_release);
         seen_count.store(0, std::memory_order_release);
@@ -66,7 +66,7 @@ namespace Gecode { namespace Support { namespace FailPoint {
     }
 
     unsigned long long
-    count(void) {
+    count() {
         return seen_count.load(std::memory_order_acquire);
     }
 

@@ -65,10 +65,10 @@ namespace Gecode {
         LinIntExpr e;
 
         /// Default constructor
-        Node(void);
+        Node();
         /// Decrement reference count and possibly free memory
         GECODE_MINIMODEL_EXPORT
-        bool decrement(void);
+        bool decrement();
         /// Memory management
         static void* operator new(size_t size);
         /// Memory management
@@ -79,7 +79,7 @@ namespace Gecode {
      * Operations for nodes
      *
      */
-    SetExpr::Node::Node(void) : use(1) {}
+    SetExpr::Node::Node() : use(1) {}
 
     void*
     SetExpr::Node::operator new(size_t size) {
@@ -91,7 +91,7 @@ namespace Gecode {
     }
 
     bool
-    SetExpr::Node::decrement(void) {
+    SetExpr::Node::decrement() {
         if (--use == 0) {
             if ((l != nullptr) && l->decrement())
                 delete l;
@@ -626,7 +626,7 @@ namespace Gecode {
         return *this;
     }
 
-    SetExpr::~SetExpr(void) {
+    SetExpr::~SetExpr() {
         if (n != nullptr && n->decrement())
             delete n;
     }

@@ -53,53 +53,53 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline BoolStatus
-    BoolVarImp::status(void) const {
+    BoolVarImp::status() const {
         return bits() & 3;
     }
     forceinline int
-    BoolVarImp::min(void) const {
+    BoolVarImp::min() const {
         return static_cast<int>(bits() & 1);
     }
     forceinline int
-    BoolVarImp::max(void) const {
+    BoolVarImp::max() const {
         return static_cast<int>((bits() & 2) >> 1);
     }
     forceinline int
-    BoolVarImp::med(void) const {
+    BoolVarImp::med() const {
         return min();
     }
 
     forceinline int
-    BoolVarImp::val(void) const {
+    BoolVarImp::val() const {
         assert(status() != unassigned_status);
         return min();
     }
 
     forceinline bool
-    BoolVarImp::range(void) const {
+    BoolVarImp::range() const {
         return true;
     }
     forceinline bool
-    BoolVarImp::assigned(void) const {
+    BoolVarImp::assigned() const {
         return status() != unassigned_status;
     }
 
     forceinline unsigned int
-    BoolVarImp::width(void) const {
+    BoolVarImp::width() const {
         return assigned() ? 1U : 2U;
     }
 
     forceinline unsigned int
-    BoolVarImp::size(void) const {
+    BoolVarImp::size() const {
         return assigned() ? 1U : 2U;
     }
 
     forceinline unsigned int
-    BoolVarImp::regret_min(void) const {
+    BoolVarImp::regret_min() const {
         return assigned() ? 1U : 0U;
     }
     forceinline unsigned int
-    BoolVarImp::regret_max(void) const {
+    BoolVarImp::regret_max() const {
         return assigned() ? 1U : 0U;
     }
 
@@ -122,15 +122,15 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline bool
-    BoolVarImp::zero(void) const {
+    BoolVarImp::zero() const {
         return status() < unassigned_status;
     }
     forceinline bool
-    BoolVarImp::one(void) const {
+    BoolVarImp::one() const {
         return status() > unassigned_status;
     }
     forceinline bool
-    BoolVarImp::none(void) const {
+    BoolVarImp::none() const {
         return status() == unassigned_status;
     }
 

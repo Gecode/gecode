@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         int n;
 
     public:
-        OfflineMin(void);
+        OfflineMin();
         OfflineMin(OfflineMinItem[], int[], int);
         /**
          *  Find the set x belongs to
@@ -164,13 +164,13 @@ namespace Gecode { namespace Int { namespace Sorted {
         /// Unite two sets \a a and \a b and label the union with \a c
         void unite(int a, int b, int c);
         /// Initialization of the datastructure
-        void initialize_sets(void);
+        void initialize_sets();
         /// Return the size of the Offline-Min item
-        int size(void);
+        int size();
         OfflineMinItem& operator[](int);
     };
 
-    OfflineMin::OfflineMin(void) {
+    OfflineMin::OfflineMin() {
         n = 0;
         sequence = nullptr;
         vertices = nullptr;
@@ -226,7 +226,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     }
 
     forceinline void
-    OfflineMin::initialize_sets(void) {
+    OfflineMin::initialize_sets() {
         for (int i = n; i--;) {
             OfflineMinItem& cur = sequence[i];
             cur.rank = 0;   // initially each set is empty
@@ -241,7 +241,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     }
 
     forceinline int
-    OfflineMin::size(void) {
+    OfflineMin::size() {
         return n;
     }
 

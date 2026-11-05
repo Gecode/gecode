@@ -38,7 +38,7 @@ namespace Gecode { namespace Int {
 
     template <class Task>
     forceinline
-    TaskArray<Task>::TaskArray(void)
+    TaskArray<Task>::TaskArray()
         : n(0), t(nullptr) {}
     template <class Task>
     forceinline
@@ -60,7 +60,7 @@ namespace Gecode { namespace Int {
 
     template <class Task>
     forceinline int
-    TaskArray<Task>::size(void) const {
+    TaskArray<Task>::size() const {
         return n;
     }
     template <class Task>
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int {
 
     template <class TaskView>
     forceinline int
-    TaskViewArray<TaskView>::size(void) const {
+    TaskViewArray<TaskView>::size() const {
         return t.size();
     }
 

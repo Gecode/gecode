@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     template <class TaskView>
     forceinline long long int
-    OmegaTree<TaskView>::env(void) const {
+    OmegaTree<TaskView>::env() const {
         return root().env;
     }
 
@@ -245,25 +245,25 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     template <class TaskView>
     forceinline bool
-    OmegaLambdaTree<TaskView>::lempty(void) const {
+    OmegaLambdaTree<TaskView>::lempty() const {
         return root().res_lenv < 0;
     }
 
     template <class TaskView>
     forceinline int
-    OmegaLambdaTree<TaskView>::responsible(void) const {
+    OmegaLambdaTree<TaskView>::responsible() const {
         return root().res_lenv;
     }
 
     template <class TaskView>
     forceinline long long int
-    OmegaLambdaTree<TaskView>::env(void) const {
+    OmegaLambdaTree<TaskView>::env() const {
         return root().env;
     }
 
     template <class TaskView>
     forceinline long long int
-    OmegaLambdaTree<TaskView>::lenv(void) const {
+    OmegaLambdaTree<TaskView>::lenv() const {
         return root().lenv;
     }
 

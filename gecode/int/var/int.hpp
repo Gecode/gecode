@@ -47,43 +47,43 @@ namespace Gecode {
         : VarImpVar<Int::IntVarImp>(y.varimp()) {}
 
     forceinline int
-    IntVar::val(void) const {
+    IntVar::val() const {
         if (!x->assigned())
             throw Int::ValOfUnassignedVar("IntVar::val");
         return x->val();
     }
     forceinline int
-    IntVar::min(void) const {
+    IntVar::min() const {
         return x->min();
     }
     forceinline int
-    IntVar::med(void) const {
+    IntVar::med() const {
         return x->med();
     }
     forceinline int
-    IntVar::max(void) const {
+    IntVar::max() const {
         return x->max();
     }
 
     forceinline unsigned int
-    IntVar::width(void) const {
+    IntVar::width() const {
         return x->width();
     }
     forceinline unsigned int
-    IntVar::size(void) const {
+    IntVar::size() const {
         return x->size();
     }
     forceinline unsigned int
-    IntVar::regret_min(void) const {
+    IntVar::regret_min() const {
         return x->regret_min();
     }
     forceinline unsigned int
-    IntVar::regret_max(void) const {
+    IntVar::regret_max() const {
         return x->regret_max();
     }
 
     forceinline bool
-    IntVar::range(void) const {
+    IntVar::range() const {
         return x->range();
     }
     forceinline bool
@@ -97,7 +97,7 @@ namespace Gecode {
      */
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    IntVarRanges::IntVarRanges(void) {}
+    IntVarRanges::IntVarRanges() {}
 
     forceinline
     IntVarRanges::IntVarRanges(const IntVar& x)

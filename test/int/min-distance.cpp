@@ -38,7 +38,7 @@ namespace Test { namespace Int { namespace MinDistance {
 
     /// Distances with both a zero off-diagonal pair and threshold boundaries
     Gecode::IntArgs
-    matrix(void) {
+    matrix() {
         return Gecode::IntArgs({0, 0, 3, 4, 0, 0, 2, 1, 3, 2, 0, 4, 4, 1, 4, 0});
     }
 
@@ -120,7 +120,7 @@ namespace Test { namespace Int { namespace MinDistance {
             z.update(*this, s.z);
         }
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new Model(*this);
         }
     };
@@ -129,9 +129,9 @@ namespace Test { namespace Int { namespace MinDistance {
     // Check domain bounds before assignment and ownership across Space clones.
     class Propagation : public Base {
     public:
-        Propagation(void) : Base("Int::MinDistance::Propagation", TestTags::check()) {}
+        Propagation() : Base("Int::MinDistance::Propagation", TestTags::check()) {}
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             const MinDistancePropKind kinds[] = {MDP_DECOMPOSED, MDP_SINGLE};
             const IntPropLevel levels[] = {IPL_BASIC, IPL_ADVANCED};
@@ -187,9 +187,9 @@ namespace Test { namespace Int { namespace MinDistance {
     /// Matrix and callback validation
     class Arguments : public Base {
     public:
-        Arguments(void) : Base("Int::MinDistance::Arguments", TestTags::check()) {}
+        Arguments() : Base("Int::MinDistance::Arguments", TestTags::check()) {}
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             try {
                 IntDistance invalid(2, IntArgs({0, 1, 2, 0}));
@@ -227,7 +227,7 @@ namespace Test { namespace Int { namespace MinDistance {
     /// Register the compact semantic matrix
     class Create {
     public:
-        Create(void) {
+        Create() {
             const Gecode::MinDistancePropKind kinds[] = {Gecode::MDP_DECOMPOSED, Gecode::MDP_SINGLE};
             const Gecode::IntPropLevel levels[] = {Gecode::IPL_BASIC, Gecode::IPL_ADVANCED};
             for (int n : {2, 3})

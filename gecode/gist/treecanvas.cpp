@@ -91,7 +91,7 @@ namespace Gecode { namespace Gist {
         connect(&searcher, SIGNAL(move_to_node(VisualNode*, bool)), this, SLOT(set_current_node(VisualNode*, bool)),
                 Qt::BlockingQueuedConnection);
 
-        connect(&searcher, SIGNAL(search_finished(void)), this, SIGNAL(search_finished(void)));
+        connect(&searcher, SIGNAL(search_finished()), this, SIGNAL(search_finished()));
 
         connect(&scroll_time_line, SIGNAL(frameChanged(int)), this, SLOT(scroll(int)));
 #if QT_VERSION >= 0x060000
@@ -120,7 +120,7 @@ namespace Gecode { namespace Gist {
         update();
     }
 
-    TreeCanvas::~TreeCanvas(void) {
+    TreeCanvas::~TreeCanvas() {
         if (root) {
             DisposeCursor dc(root, *na);
             PreorderNodeVisitor<DisposeCursor>(dc).run();
@@ -212,7 +212,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::update(void) {
+    TreeCanvas::update() {
         QMutexLocker locker(&mutex);
         layout_mutex.lock();
         if (root != nullptr) {
@@ -239,7 +239,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::scroll(void) {
+    TreeCanvas::scroll() {
         QWidget::update();
     }
 
@@ -281,7 +281,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    SearcherThread::update_canvas(void) {
+    SearcherThread::update_canvas() {
         t->layout_mutex.lock();
         if (t->root == nullptr)
             return;
@@ -343,7 +343,7 @@ namespace Gecode { namespace Gist {
     };
 
     void
-    SearcherThread::run(void) {
+    SearcherThread::run() {
         {
             if (!node->is_open())
                 return;
@@ -423,19 +423,19 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::search_all(void) {
+    TreeCanvas::search_all() {
         QMutexLocker locker(&mutex);
         searcher.search(current_node, true, this);
     }
 
     void
-    TreeCanvas::search_one(void) {
+    TreeCanvas::search_one() {
         QMutexLocker locker(&mutex);
         searcher.search(current_node, false, this);
     }
 
     void
-    TreeCanvas::toggle_hidden(void) {
+    TreeCanvas::toggle_hidden() {
         QMutexLocker locker(&mutex);
         current_node->toggle_hidden(*na);
         update();
@@ -444,7 +444,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::hide_failed(void) {
+    TreeCanvas::hide_failed() {
         QMutexLocker locker(&mutex);
         current_node->hide_failed(*na);
         update();
@@ -453,7 +453,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::unhide_all(void) {
+    TreeCanvas::unhide_all() {
         QMutexLocker locker(&mutex);
         QMutexLocker layout_locker(&layout_mutex);
         current_node->unhide_all(*na);
@@ -463,7 +463,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::toggle_stop(void) {
+    TreeCanvas::toggle_stop() {
         QMutexLocker locker(&mutex);
         current_node->toggle_stop(*na);
         update();
@@ -472,7 +472,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::unstop_all(void) {
+    TreeCanvas::unstop_all() {
         QMutexLocker locker(&mutex);
         QMutexLocker layout_locker(&layout_mutex);
         current_node->unstop_all(*na);
@@ -502,7 +502,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::zoom_to_fit(void) {
+    TreeCanvas::zoom_to_fit() {
         QMutexLocker locker(&layout_mutex);
         if (root != nullptr) {
             BoundingBox bb;
@@ -534,7 +534,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::center_current_node(void) {
+    TreeCanvas::center_current_node() {
         QMutexLocker locker(&mutex);
         int x = 0;
         int y = 0;
@@ -707,12 +707,12 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::inspect_before_fp(void) {
+    TreeCanvas::inspect_before_fp() {
         inspect_current_node(false);
     }
 
     void
-    TreeCanvas::label_branches(void) {
+    TreeCanvas::label_branches() {
         QMutexLocker locker(&mutex);
         current_node->label_branches(*na, cur_best, c_d, a_d);
         update();
@@ -720,7 +720,7 @@ namespace Gecode { namespace Gist {
         emit status_changed(current_node, stats, true);
     }
     void
-    TreeCanvas::label_path(void) {
+    TreeCanvas::label_path() {
         QMutexLocker locker(&mutex);
         current_node->label_path(*na, cur_best, c_d, a_d);
         update();
@@ -761,13 +761,13 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::stop_search(void) {
+    TreeCanvas::stop_search() {
         stop_search_flag = true;
         layout_done_timer_id = startTimer(15);
     }
 
     void
-    TreeCanvas::reset(void) {
+    TreeCanvas::reset() {
         QMutexLocker locker(&mutex);
         Space* root_space = root->get_status() == FAILED ? nullptr : root->get_space(*na, cur_best, c_d, a_d);
         if (cur_best != nullptr) {
@@ -799,7 +799,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::bookmark_node(void) {
+    TreeCanvas::bookmark_node() {
         QMutexLocker locker(&mutex);
         if (!current_node->is_bookmarked()) {
             bool ok;
@@ -822,7 +822,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::set_path(void) {
+    TreeCanvas::set_path() {
         QMutexLocker locker(&mutex);
         if (current_node == path_head)
             return;
@@ -836,7 +836,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::inspect_path(void) {
+    TreeCanvas::inspect_path() {
         QMutexLocker locker(&mutex);
         set_current_node(root);
         if (current_node->is_on_path()) {
@@ -852,7 +852,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::start_compare_nodes(void) {
+    TreeCanvas::start_compare_nodes() {
         QMutexLocker locker(&mutex);
         compare_nodes = true;
         compare_nodes_before_fp = false;
@@ -860,7 +860,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::start_compare_nodes_before_fp(void) {
+    TreeCanvas::start_compare_nodes_before_fp() {
         QMutexLocker locker(&mutex);
         compare_nodes = true;
         compare_nodes_before_fp = true;
@@ -868,12 +868,12 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::emit_status_changed(void) {
+    TreeCanvas::emit_status_changed() {
         emit status_changed(current_node, stats, true);
     }
 
     void
-    TreeCanvas::nav_up(void) {
+    TreeCanvas::nav_up() {
         QMutexLocker locker(&mutex);
 
         VisualNode* p = current_node->get_parent(*na);
@@ -886,7 +886,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::nav_down(void) {
+    TreeCanvas::nav_down() {
         QMutexLocker locker(&mutex);
         if (!current_node->is_hidden()) {
             switch (current_node->get_status()) {
@@ -908,7 +908,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::nav_left(void) {
+    TreeCanvas::nav_left() {
         QMutexLocker locker(&mutex);
         VisualNode* p = current_node->get_parent(*na);
         if (p != nullptr) {
@@ -922,7 +922,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::nav_right(void) {
+    TreeCanvas::nav_right() {
         QMutexLocker locker(&mutex);
         VisualNode* p = current_node->get_parent(*na);
         if (p != nullptr) {
@@ -936,7 +936,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::nav_root(void) {
+    TreeCanvas::nav_root() {
         QMutexLocker locker(&mutex);
         set_current_node(root);
         center_current_node();
@@ -956,7 +956,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::nav_prev_sol(void) {
+    TreeCanvas::nav_prev_sol() {
         nav_next_sol(true);
     }
 
@@ -1010,21 +1010,21 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::export_whole_tree_pdf(void) {
+    TreeCanvas::export_whole_tree_pdf() {
 #if QT_VERSION >= 0x040400
         export_node_pdf(root);
 #endif
     }
 
     void
-    TreeCanvas::export_pdf(void) {
+    TreeCanvas::export_pdf() {
 #if QT_VERSION >= 0x040400
         export_node_pdf(current_node);
 #endif
     }
 
     void
-    TreeCanvas::print(void) {
+    TreeCanvas::print() {
         QPrinter printer;
         if (QPrintDialog(&printer, this).exec() == QDialog::Accepted) {
             QMutexLocker locker(&mutex);
@@ -1122,7 +1122,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TreeCanvas::resize_to_outer(void) {
+    TreeCanvas::resize_to_outer() {
         if (auto_zoom)
             zoom_to_fit();
     }
@@ -1226,7 +1226,7 @@ namespace Gecode { namespace Gist {
     }
 
     bool
-    TreeCanvas::finish(void) {
+    TreeCanvas::finish() {
         if (finished_flag)
             return true;
         stop_search_flag = true;
@@ -1357,17 +1357,17 @@ namespace Gecode { namespace Gist {
         show_copies = b;
     }
     bool
-    TreeCanvas::get_show_copies(void) {
+    TreeCanvas::get_show_copies() {
         return show_copies;
     }
 
     bool
-    TreeCanvas::get_auto_hide_failed(void) {
+    TreeCanvas::get_auto_hide_failed() {
         return auto_hide_failed;
     }
 
     bool
-    TreeCanvas::get_auto_zoom(void) {
+    TreeCanvas::get_auto_zoom() {
         return auto_zoom;
     }
 
@@ -1384,7 +1384,7 @@ namespace Gecode { namespace Gist {
     }
 
     bool
-    TreeCanvas::get_smooth_scroll_and_zoom(void) {
+    TreeCanvas::get_smooth_scroll_and_zoom() {
         return smooth_scroll_and_zoom;
     }
 
@@ -1394,7 +1394,7 @@ namespace Gecode { namespace Gist {
     }
 
     bool
-    TreeCanvas::get_move_during_search(void) {
+    TreeCanvas::get_move_during_search() {
         return move_during_search;
     }
 

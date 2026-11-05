@@ -59,13 +59,13 @@ namespace Gecode { namespace Support { namespace FailPoint {
     };
 
     /// Reset all failpoint state
-    GECODE_SUPPORT_EXPORT void reset(void);
+    GECODE_SUPPORT_EXPORT void reset();
     /// Fail after \a n successful checks for phase \a p
     GECODE_SUPPORT_EXPORT void fail_after(Phase p, unsigned long long n);
     /// Check failpoint for phase \a p
     GECODE_SUPPORT_EXPORT void check(Phase p);
     /// Number of checks observed for the configured phase
-    GECODE_SUPPORT_EXPORT unsigned long long count(void);
+    GECODE_SUPPORT_EXPORT unsigned long long count();
 
 }}} // namespace Gecode::Support::FailPoint
 

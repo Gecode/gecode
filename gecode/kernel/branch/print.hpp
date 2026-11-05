@@ -55,12 +55,12 @@ namespace Gecode {
         /// Initialize during cloning
         BrancherPrint(BrancherPrint& bp);
         /// Whether printing is enabled
-        operator bool(void) const;
+        operator bool() const;
         /// Invoke print function
         void operator()(const Space& home, const Brancher& b, unsigned int a, View x, int i, const Val& m,
                         std::ostream& o) const;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete
         void dispose(Space& home);
     };
@@ -80,12 +80,12 @@ namespace Gecode {
         /// Initialize during cloning
         BrancherNoPrint(BrancherNoPrint& bp);
         /// Whether printing is enabled
-        operator bool(void) const;
+        operator bool() const;
         /// Invoke print function
         void operator()(const Space& home, const Brancher& b, unsigned int a, View x, int i, const Val& m,
                         std::ostream& o) const;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete
         void dispose(Space& home);
     };
@@ -105,7 +105,7 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline BrancherPrint<View, Val>::
-    operator bool(void) const {
+    operator bool() const {
         return true;
     }
 
@@ -120,7 +120,7 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline bool
-    BrancherPrint<View, Val>::notice(void) const {
+    BrancherPrint<View, Val>::notice() const {
         return true;
     }
 
@@ -151,7 +151,7 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline BrancherNoPrint<View, Val>::
-    operator bool(void) const {
+    operator bool() const {
         return false;
     }
 
@@ -161,7 +161,7 @@ namespace Gecode {
                                            std::ostream&) const {}
     template <class View, class Val>
     forceinline bool
-    BrancherNoPrint<View, Val>::notice(void) const {
+    BrancherNoPrint<View, Val>::notice() const {
         return false;
     }
 

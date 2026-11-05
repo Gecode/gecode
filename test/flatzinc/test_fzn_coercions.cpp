@@ -37,7 +37,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("fzn_coercions", "var float: f1 :: output_var;\n\
 var int: i1 :: output_var;\n\
 \n\

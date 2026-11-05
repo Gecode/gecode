@@ -83,17 +83,17 @@ namespace Gecode { namespace Set {
     }
 
     forceinline bool
-    SetVarImp::assigned(void) const {
+    SetVarImp::assigned() const {
         return glb.size() == lub.size();
     }
 
     forceinline unsigned int
-    SetVarImp::card_min(void) const {
+    SetVarImp::card_min() const {
         return glb.card();
     }
 
     forceinline unsigned int
-    SetVarImp::card_max(void) const {
+    SetVarImp::card_max() const {
         return lub.card();
     }
 
@@ -108,12 +108,12 @@ namespace Gecode { namespace Set {
     }
 
     forceinline int
-    SetVarImp::lub_min(void) const {
+    SetVarImp::lub_min() const {
         return lub.min();
     }
 
     forceinline int
-    SetVarImp::lub_max(void) const {
+    SetVarImp::lub_max() const {
         return lub.max();
     }
 
@@ -123,12 +123,12 @@ namespace Gecode { namespace Set {
     }
 
     forceinline int
-    SetVarImp::glb_min(void) const {
+    SetVarImp::glb_min() const {
         return glb.min();
     }
 
     forceinline int
-    SetVarImp::glb_max(void) const {
+    SetVarImp::glb_max() const {
         return glb.max();
     }
 
@@ -458,7 +458,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void) = default;
+        LubRanges() = default;
         /// Initialize with ranges for variable implementation \a x
         LubRanges(const SetVarImp*);
         /// Initialize with ranges for variable implementation \a x
@@ -489,7 +489,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void) = default;
+        GlbRanges() = default;
         /// Initialize with ranges for variable implementation \a x
         GlbRanges(const SetVarImp* x);
         /// Initialize with ranges for variable implementation \a x

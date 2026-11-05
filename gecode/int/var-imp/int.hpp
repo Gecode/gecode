@@ -53,7 +53,7 @@ namespace Gecode { namespace Int {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    IntVarImp::RangeList::RangeList(void) {}
+    IntVarImp::RangeList::RangeList() {}
 
     forceinline
     IntVarImp::RangeList::RangeList(int min, int max)
@@ -100,15 +100,15 @@ namespace Gecode { namespace Int {
     }
 
     forceinline int
-    IntVarImp::RangeList::min(void) const {
+    IntVarImp::RangeList::min() const {
         return _min;
     }
     forceinline int
-    IntVarImp::RangeList::max(void) const {
+    IntVarImp::RangeList::max() const {
         return _max;
     }
     forceinline unsigned int
-    IntVarImp::RangeList::width(void) const {
+    IntVarImp::RangeList::width() const {
         return range_width(_min, _max);
     }
 
@@ -165,7 +165,7 @@ namespace Gecode { namespace Int {
      */
 
     forceinline IntVarImp::RangeList*
-    IntVarImp::fst(void) const {
+    IntVarImp::fst() const {
         return dom.next(nullptr);
     }
 
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int {
     }
 
     forceinline IntVarImp::RangeList*
-    IntVarImp::lst(void) const {
+    IntVarImp::lst() const {
         return _lst;
     }
 
@@ -230,40 +230,40 @@ namespace Gecode { namespace Int {
      */
 
     forceinline int
-    IntVarImp::min(void) const {
+    IntVarImp::min() const {
         return dom.min();
     }
     forceinline int
-    IntVarImp::max(void) const {
+    IntVarImp::max() const {
         return dom.max();
     }
     forceinline int
-    IntVarImp::val(void) const {
+    IntVarImp::val() const {
         assert(dom.min() == dom.max());
         return dom.min();
     }
 
     forceinline bool
-    IntVarImp::range(void) const {
+    IntVarImp::range() const {
         return fst() == nullptr;
     }
     forceinline bool
-    IntVarImp::assigned(void) const {
+    IntVarImp::assigned() const {
         return dom.min() == dom.max();
     }
 
     forceinline unsigned int
-    IntVarImp::width(void) const {
+    IntVarImp::width() const {
         return dom.width();
     }
 
     forceinline unsigned int
-    IntVarImp::size(void) const {
+    IntVarImp::size() const {
         return dom.width() - holes;
     }
 
     forceinline unsigned int
-    IntVarImp::regret_min(void) const {
+    IntVarImp::regret_min() const {
         if (fst() == nullptr) {
             return (dom.min() == dom.max()) ? 0U : 1U;
         } else if (dom.min() == fst()->max()) {
@@ -273,7 +273,7 @@ namespace Gecode { namespace Int {
         }
     }
     forceinline unsigned int
-    IntVarImp::regret_max(void) const {
+    IntVarImp::regret_max() const {
         if (fst() == nullptr) {
             return (dom.min() == dom.max()) ? 0U : 1U;
         } else if (dom.max() == lst()->min()) {
@@ -307,12 +307,12 @@ namespace Gecode { namespace Int {
      */
 
     forceinline const IntVarImp::RangeList*
-    IntVarImp::ranges_fwd(void) const {
+    IntVarImp::ranges_fwd() const {
         return (fst() == nullptr) ? &dom : fst();
     }
 
     forceinline const IntVarImp::RangeList*
-    IntVarImp::ranges_bwd(void) const {
+    IntVarImp::ranges_bwd() const {
         return (fst() == nullptr) ? &dom : lst();
     }
 
@@ -434,26 +434,26 @@ namespace Gecode { namespace Int {
     }
 
     forceinline bool
-    IntVarImpFwd::operator()(void) const {
+    IntVarImpFwd::operator()() const {
         return c != nullptr;
     }
     forceinline void
-    IntVarImpFwd::operator++(void) {
+    IntVarImpFwd::operator++() {
         const IntVarImp::RangeList* n = c->next(p);
         p = c;
         c = n;
     }
 
     forceinline int
-    IntVarImpFwd::min(void) const {
+    IntVarImpFwd::min() const {
         return c->min();
     }
     forceinline int
-    IntVarImpFwd::max(void) const {
+    IntVarImpFwd::max() const {
         return c->max();
     }
     forceinline unsigned int
-    IntVarImpFwd::width(void) const {
+    IntVarImpFwd::width() const {
         return c->width();
     }
 
@@ -472,26 +472,26 @@ namespace Gecode { namespace Int {
     }
 
     forceinline bool
-    IntVarImpBwd::operator()(void) const {
+    IntVarImpBwd::operator()() const {
         return c != nullptr;
     }
     forceinline void
-    IntVarImpBwd::operator++(void) {
+    IntVarImpBwd::operator++() {
         const IntVarImp::RangeList* p = c->prev(n);
         n = c;
         c = p;
     }
 
     forceinline int
-    IntVarImpBwd::min(void) const {
+    IntVarImpBwd::min() const {
         return c->min();
     }
     forceinline int
-    IntVarImpBwd::max(void) const {
+    IntVarImpBwd::max() const {
         return c->max();
     }
     forceinline unsigned int
-    IntVarImpBwd::width(void) const {
+    IntVarImpBwd::width() const {
         return c->width();
     }
 

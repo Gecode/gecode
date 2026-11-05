@@ -37,7 +37,7 @@
 namespace Gecode { namespace Int { namespace Extensional {
 
     forceinline
-    CompressedSupport::CompressedSupport(void)
+    CompressedSupport::CompressedSupport()
         : b(nullptr), e(nullptr) {}
 
     forceinline
@@ -45,17 +45,17 @@ namespace Gecode { namespace Int { namespace Extensional {
         : b(b0), e(e0) {}
 
     forceinline const TupleSet::CSupportWord*
-    CompressedSupport::begin(void) const {
+    CompressedSupport::begin() const {
         return b;
     }
 
     forceinline const TupleSet::CSupportWord*
-    CompressedSupport::end(void) const {
+    CompressedSupport::end() const {
         return e;
     }
 
     forceinline bool
-    CompressedSupport::empty(void) const {
+    CompressedSupport::empty() const {
         return (b == nullptr) || (b >= e);
     }
 
@@ -78,31 +78,31 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class IndexType>
     forceinline unsigned int
-    BitSet<IndexType>::limit(void) const {
+    BitSet<IndexType>::limit() const {
         return static_cast<unsigned int>(_active_words);
     }
 
     template <class IndexType>
     forceinline bool
-    BitSet<IndexType>::empty(void) const {
+    BitSet<IndexType>::empty() const {
         return _active_words == 0U;
     }
 
     template <class IndexType>
     forceinline unsigned int
-    BitSet<IndexType>::words(void) const {
+    BitSet<IndexType>::words() const {
         return static_cast<unsigned int>(_active_words);
     }
 
     template <class IndexType>
     forceinline unsigned int
-    BitSet<IndexType>::size(void) const {
+    BitSet<IndexType>::size() const {
         return words();
     }
 
     template <class IndexType>
     forceinline unsigned int
-    BitSet<IndexType>::width(void) const {
+    BitSet<IndexType>::width() const {
         assert(!empty());
         IndexType width = _word_index[0];
         for (IndexType i = 1; i < _active_words; i++)
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class IndexType>
     forceinline void
-    BitSet<IndexType>::flush(void) {
+    BitSet<IndexType>::flush() {
         _active_words = 0U;
         assert(empty());
     }
@@ -435,7 +435,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class IndexType>
     forceinline unsigned long long int
-    BitSet<IndexType>::ones(void) const {
+    BitSet<IndexType>::ones() const {
         unsigned long long int count = 0U;
         for (IndexType i = 0; i < _active_words; i++)
             count += static_cast<unsigned long long int>(_word_bits[i].ones());
@@ -444,7 +444,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class IndexType>
     forceinline unsigned long long int
-    BitSet<IndexType>::bits(void) const {
+    BitSet<IndexType>::bits() const {
         return (static_cast<unsigned long long int>(_active_words) *
                 static_cast<unsigned long long int>(BitSetData::bpb));
     }

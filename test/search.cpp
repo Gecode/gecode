@@ -150,13 +150,13 @@ namespace Test {
             TreeSpace(TreeSpace& s)
                 : Space(s), graph(s.graph), maximize(s.maximize), vertex(s.vertex), ceiling(s.ceiling) {}
             Space*
-            copy(void) override {
+            copy() override {
                 return new TreeSpace(*this);
             }
             void
             hub(HubContext&) override {}
             const Node&
-            node(void) const {
+            node() const {
                 return (*graph)[vertex];
             }
             void
@@ -273,7 +273,7 @@ namespace Test {
         public:
             Heuristic(const std::string& name) : Base("Search::" + name, TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 for (bool max : {false, true})
                     for (bool ranked : {false, true})
                         for (bool dominance : {false, true})
@@ -320,9 +320,9 @@ namespace Test {
             };
 
         public:
-            HeuristicPortfolio(void) : Base("Search::Heuristic::Portfolio", TestTags::check()) {}
+            HeuristicPortfolio() : Base("Search::Heuristic::Portfolio", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 TreeSpace root(TreeSpace::random(_rand), false);
                 Gecode::Search::HeuristicGuidance g = TreeSpace::guidance(false, true, false, false);
                 Gecode::Search::Options a;
@@ -402,14 +402,14 @@ namespace Test {
         class TestSpace : public Space {
         public:
             /// Constructor for space creation
-            TestSpace(void) = default;
+            TestSpace() = default;
             /// Constructor for cloning \a s
             // NOLINTNEXTLINE(modernize-use-equals-default)
             TestSpace(TestSpace& s) : Space(s) {}
             /// Return number of solutions
-            virtual int solutions(void) const = 0;
+            virtual int solutions() const = 0;
             /// Verify that this is best solution
-            virtual bool best(void) const = 0;
+            virtual bool best() const = 0;
             /// Hub hook that does not restart after a solution and keeps the branchers of a portfolio
             void
             hub(HubContext& hc) override {
@@ -437,7 +437,7 @@ namespace Test {
             }
             /// Copy during cloning
             Space*
-            copy(void) override {
+            copy() override {
                 return new FailImmediate(*this);
             }
             /// Add constraint for next better solution
@@ -445,17 +445,17 @@ namespace Test {
             constrain(const Space&) override {}
             /// Return number of solutions
             int
-            solutions(void) const override {
+            solutions() const override {
                 return 0;
             }
             /// Verify that this is best solution
             bool
-            best(void) const override {
+            best() const override {
                 return false;
             }
             /// Return name
             static std::string
-            name(void) {
+            name() {
                 return "Fail";
             }
         };
@@ -473,7 +473,7 @@ namespace Test {
             }
             /// Copy during cloning
             Space*
-            copy(void) override {
+            copy() override {
                 return new SolveImmediate(*this);
             }
             /// Add constraint for next better solution
@@ -488,17 +488,17 @@ namespace Test {
             }
             /// Return number of solutions
             int
-            solutions(void) const override {
+            solutions() const override {
                 return 1;
             }
             /// Verify that this is best solution
             bool
-            best(void) const override {
+            best() const override {
                 return true;
             }
             /// Return name
             static std::string
-            name(void) {
+            name() {
                 return "Solve";
             }
         };
@@ -556,7 +556,7 @@ namespace Test {
             }
             /// Copy during cloning
             Space*
-            copy(void) override {
+            copy() override {
                 return new HasSolutions(*this);
             }
             /// Add constraint for next better solution
@@ -624,7 +624,7 @@ namespace Test {
             }
             /// Return number of solutions
             int
-            solutions(void) const override {
+            solutions() const override {
                 if (htb1 == HTB_NONE) {
                     assert((htb2 == HTB_NONE) && (htb3 == HTB_NONE));
                     return 1;
@@ -637,7 +637,7 @@ namespace Test {
             }
             /// Verify that this is best solution
             bool
-            best(void) const override {
+            best() const override {
                 if ((htb1 == HTB_NONE) || (htb2 == HTB_NONE) || (htb3 == HTB_NONE) || (htb1 == HTB_UNARY) ||
                     (htb2 == HTB_UNARY) || (htb3 == HTB_UNARY))
                     return true;
@@ -663,7 +663,7 @@ namespace Test {
             }
             /// Return name
             static std::string
-            name(void) {
+            name() {
                 return "Sol";
             }
             /// Rule out that solution is found more than once during restarts
@@ -810,7 +810,7 @@ namespace Test {
                 y.update(*this, s.y);
             }
             /// Record destruction for clone-ownership checks
-            ~MetaDispatchSpace(void) override {
+            ~MetaDispatchSpace() override {
                 state->live_spaces.fetch_sub(1, std::memory_order_relaxed);
             }
             /// Require a larger value than solution \a s
@@ -838,12 +838,12 @@ namespace Test {
             }
             /// Return the solution value
             int
-            value(void) const {
+            value() const {
                 return x.val();
             }
             /// Return whether the solution variable is assigned
             bool
-            assigned(void) const {
+            assigned() const {
                 return x.assigned();
             }
         };
@@ -858,7 +858,7 @@ namespace Test {
             HubDispatchSpace(HubDispatchSpace& s) : MetaDispatchSpace(s) {}
             /// Copy during cloning
             Space*
-            copy(void) override {
+            copy() override {
                 return new HubDispatchSpace(*this);
             }
             /// Observe Hub dispatch
@@ -878,7 +878,7 @@ namespace Test {
             SpokeDispatchSpace(SpokeDispatchSpace& s) : MetaDispatchSpace(s) {}
             /// Copy during cloning
             Space*
-            copy(void) override {
+            copy() override {
                 return new SpokeDispatchSpace(*this);
             }
             /// Observe Spoke dispatch
@@ -898,7 +898,7 @@ namespace Test {
             HubSpokeDispatchSpace(HubSpokeDispatchSpace& s) : MetaDispatchSpace(s) {}
             /// Copy during cloning
             Space*
-            copy(void) override {
+            copy() override {
                 return new HubSpokeDispatchSpace(*this);
             }
             /// Observe Hub dispatch
@@ -1058,7 +1058,7 @@ namespace Test {
             }
             /// Check RBS dispatch when the first spoke reaches the cutoff
             static bool
-            rbs_limit(void) {
+            rbs_limit() {
                 MetaDispatchState state;
                 state.limit_first_spoke = true;
                 HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(state);
@@ -1080,7 +1080,7 @@ namespace Test {
             }
             /// Exercise RBS no-good posting, reset, and clone ownership
             static bool
-            rbs_nogoods_reset_ownership(void) {
+            rbs_nogoods_reset_ownership() {
                 MetaDispatchState state;
                 state.nogood_model = true;
                 bool ok = true;
@@ -1107,7 +1107,7 @@ namespace Test {
             }
             /// Stop RBS and PBS, then verify orderly clone destruction
             static bool
-            meta_stop_ownership(void) {
+            meta_stop_ownership() {
                 MetaDispatchState rbs_state;
                 // Continue after a solution, so that the spoke engine prunes with it
                 rbs_state.solution_decision = MetaDecision::Continue;
@@ -1149,7 +1149,7 @@ namespace Test {
             }
             /// Exercise incumbent propagation through RBS and PBS wrappers
             static bool
-            bab_incumbent(void) {
+            bab_incumbent() {
                 MetaDispatchState rbs_state;
                 // Continue after a solution, so that the spoke engine prunes with it
                 rbs_state.solution_decision = MetaDecision::Continue;
@@ -1230,7 +1230,7 @@ namespace Test {
             MetaDispatch(const std::string& n, Scenario s) : Base("Search::MetaDispatch::" + n), scenario(s) {}
             /// Run test
             bool
-            run(void) override {
+            run() override {
                 switch (scenario) {
                 case Scenario::RbsHubOnly:
                     return rbs_dispatch<HubDispatchSpace>(2, 0);
@@ -1371,10 +1371,10 @@ namespace Test {
                 ++live;
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new PortfolioSeed(*this);
             }
-            ~PortfolioSeed(void) override {
+            ~PortfolioSeed() override {
                 --live;
             }
         };
@@ -1422,9 +1422,9 @@ namespace Test {
             }
 
         public:
-            PBSConstructionFailure(void) : Base("Search::PBS::ConstructionFailure", TestTags::check()) {}
+            PBSConstructionFailure() : Base("Search::PBS::ConstructionFailure", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 for (unsigned int threads : {1U, 4U})
                     for (bool clone : {false, true})
                         for (int failing : {-1, 0, 1}) {
@@ -1547,9 +1547,9 @@ namespace Test {
 #endif
 
         public:
-            WorkerControlSequentialPause(void) : Base("Search::WorkerControl::SequentialPause", TestTags::check()) {}
+            WorkerControlSequentialPause() : Base("Search::WorkerControl::SequentialPause", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
 #ifdef GECODE_HAS_THREADS
 #ifdef GECODE_HAS_EXPERIMENTAL
                 for (unsigned int node : {0U, 1U})
@@ -1605,9 +1605,9 @@ namespace Test {
             }
 
         public:
-            WorkerControlConcurrentResize(void) : Base("Search::WorkerControl::ConcurrentResize", TestTags::check()) {}
+            WorkerControlConcurrentResize() : Base("Search::WorkerControl::ConcurrentResize", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
 #ifdef GECODE_HAS_THREADS
                 using Gecode::Search::WorkerControl;
                 const unsigned int threads = 4U;
@@ -1684,9 +1684,9 @@ namespace Test {
             }
 
         public:
-            WorkerControlAPI(void) : Base("Search::WorkerControl::API", TestTags::check()) {}
+            WorkerControlAPI() : Base("Search::WorkerControl::API", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 using Gecode::Search::WorkerControl;
                 WorkerControl empty;
                 bool ok = !empty.engaged() && (empty.requested() == 0U) && (empty.capacity() == 0U) &&
@@ -1749,9 +1749,9 @@ namespace Test {
         /// A paused PBS asset must not hold the portfolio round open
         class WorkerControlPBSPause : public Base {
         public:
-            WorkerControlPBSPause(void) : Base("Search::WorkerControl::PBS::Pause", TestTags::check()) {}
+            WorkerControlPBSPause() : Base("Search::WorkerControl::PBS::Pause", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 bool ok = true;
                 // A sequential portfolio must reject assets that could block its round.
                 for (unsigned int requested : {0U, 1U}) {
@@ -1819,11 +1819,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new MinObjective(*this);
             }
             IntVar
-            cost(void) const override {
+            cost() const override {
                 return x;
             }
         };
@@ -1837,11 +1837,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new MaxObjective(*this);
             }
             IntVar
-            cost(void) const override {
+            cost() const override {
                 return x;
             }
         };
@@ -1860,11 +1860,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new ExternalObjective(*this);
             }
             IntVar
-            cost(void) const override {
+            cost() const override {
                 return x;
             }
             void
@@ -1885,7 +1885,7 @@ namespace Test {
         class ParallelObjective : public IntMinimizeSpace {
         public:
             IntVar x;
-            ParallelObjective(void) : x(*this, 0, 10) {
+            ParallelObjective() : x(*this, 0, 10) {
                 Gecode::branch(*this, x, INT_VAL_MAX());
             }
             ParallelObjective(int v) : x(*this, v, v) {}
@@ -1893,11 +1893,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new ParallelObjective(*this);
             }
             IntVar
-            cost(void) const override {
+            cost() const override {
                 return x;
             }
             void
@@ -1911,7 +1911,7 @@ namespace Test {
         /// Comparison error raised by a model
         class ComparisonError : public Exception {
         public:
-            ComparisonError(void) : Exception("ParallelObjective::compare", "model comparison failed") {}
+            ComparisonError() : Exception("ParallelObjective::compare", "model comparison failed") {}
         };
 
         /// Objective used to exercise asynchronous comparison failures
@@ -1930,11 +1930,11 @@ namespace Test {
                 live++;
                 x.update(*this, s.x);
             }
-            ~FailingParallelObjective(void) override {
+            ~FailingParallelObjective() override {
                 live--;
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new FailingParallelObjective(*this);
             }
             SpaceComparison
@@ -1960,7 +1960,7 @@ namespace Test {
             // NOLINTNEXTLINE(modernize-use-equals-default)
             IncomparableObjective(IncomparableObjective& s) : ExternalObjective(s) {}
             Space*
-            copy(void) override {
+            copy() override {
                 return new IncomparableObjective(*this);
             }
             SpaceComparison
@@ -1972,11 +1972,11 @@ namespace Test {
         /// Search model without objective comparison support
         class UnsupportedObjective : public Space {
         public:
-            UnsupportedObjective(void) = default;
+            UnsupportedObjective() = default;
             // NOLINTNEXTLINE(modernize-use-equals-default)
             UnsupportedObjective(UnsupportedObjective& s) : Space(s) {}
             Space*
-            copy(void) override {
+            copy() override {
                 return new UnsupportedObjective(*this);
             }
         };
@@ -2013,9 +2013,9 @@ namespace Test {
             }
 
         public:
-            ExternalIncumbent(void) : Base("Search::ExternalIncumbent") {}
+            ExternalIncumbent() : Base("Search::ExternalIncumbent") {}
             bool
-            run(void) override {
+            run() override {
                 Gecode::Search::Options o;
                 std::atomic<int> constraints(0);
                 ExternalObjective* bm = new ExternalObjective(&constraints);
@@ -2078,7 +2078,7 @@ namespace Test {
         class ParallelBABComparison : public Base {
         private:
             static Gecode::Search::Options
-            options(void) {
+            options() {
                 Gecode::Search::Options o;
                 o.threads = 2;
                 return o;
@@ -2123,7 +2123,7 @@ namespace Test {
                 return exhausted;
             }
             static bool
-            pending_failure(void) {
+            pending_failure() {
                 std::atomic<int> live(0);
                 bool reported = false;
                 bool preserved = false;
@@ -2153,7 +2153,7 @@ namespace Test {
                 return reported && preserved && (live == 0);
             }
             static bool
-            missing_failure(void) {
+            missing_failure() {
                 std::atomic<int> live(0);
                 Gecode::Search::TimeStop stop(5000);
                 Gecode::Search::Options o = options();
@@ -2181,7 +2181,7 @@ namespace Test {
                 return recovered && (live == 0);
             }
             static bool
-            thrown_failure(void) {
+            thrown_failure() {
                 std::atomic<int> live(0);
                 Gecode::Search::TimeStop stop(5000);
                 Gecode::Search::Options o = options();
@@ -2201,7 +2201,7 @@ namespace Test {
                 return false;
             }
             static bool
-            incomparable_failure(void) {
+            incomparable_failure() {
                 std::atomic<int> live(0);
                 Gecode::Search::TimeStop stop(5000);
                 Gecode::Search::Options o = options();
@@ -2223,9 +2223,9 @@ namespace Test {
             }
 
         public:
-            ParallelBABComparison(void) : Base("Search::ParallelBABComparison") {}
+            ParallelBABComparison() : Base("Search::ParallelBABComparison") {}
             bool
-            run(void) override {
+            run() override {
                 bool pending = true;
                 for (int bound = 11; bound >= 7; bound--)
                     if (!pending_bound(bound))
@@ -2279,7 +2279,7 @@ namespace Test {
         class PortfolioComparison : public Base {
         private:
             static Gecode::Search::Options
-            options(void) {
+            options() {
                 Gecode::Search::Options o;
                 o.assets = 2;
                 o.threads = 2;
@@ -2312,9 +2312,9 @@ namespace Test {
             }
 
         public:
-            PortfolioComparison(void) : Base("Search::PortfolioComparison") {}
+            PortfolioComparison() : Base("Search::PortfolioComparison") {}
             bool
-            run(void) override {
+            run() override {
                 Gecode::Search::Options o = options();
                 ParallelObjective* m = new ParallelObjective;
                 Gecode::PBS<ParallelObjective, Gecode::BAB> pbs(m, o);
@@ -2384,7 +2384,7 @@ namespace Test {
         class ParallelFloatObjective : public FloatMinimizeSpace {
         public:
             FloatVar x;
-            ParallelFloatObjective(void) : FloatMinimizeSpace(1.0), x(*this, 8.0, 10.0) {
+            ParallelFloatObjective() : FloatMinimizeSpace(1.0), x(*this, 8.0, 10.0) {
                 Gecode::branch(*this, x, FLOAT_VAL_SPLIT_MAX());
             }
             ParallelFloatObjective(FloatNum v) : FloatMinimizeSpace(1.0), x(*this, v, v) {}
@@ -2392,11 +2392,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new ParallelFloatObjective(*this);
             }
             FloatVar
-            cost(void) const override {
+            cost() const override {
                 return x;
             }
         };
@@ -2411,11 +2411,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new FloatMinObjective(*this);
             }
             FloatVar
-            cost(void) const override {
+            cost() const override {
                 return x;
             }
         };
@@ -2430,11 +2430,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new FloatMaxObjective(*this);
             }
             FloatVar
-            cost(void) const override {
+            cost() const override {
                 return x;
             }
         };
@@ -2452,11 +2452,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new LexObjective(*this);
             }
             IntVarArgs
-            cost(void) const override {
+            cost() const override {
                 return x;
             }
         };
@@ -2474,9 +2474,9 @@ namespace Test {
             }
 
         public:
-            FloatObjectiveComparison(void) : Base("Search::FloatObjectiveComparison") {}
+            FloatObjectiveComparison() : Base("Search::FloatObjectiveComparison") {}
             bool
-            run(void) override {
+            run() override {
                 const FloatNum next = std::nextafter(1.0, 2.0);
                 FloatMinObjective m9(9.5, 1.0), m10(10.0, 1.0), m10b(10.0, 1.0), mzero(10.0), madj(FloatVal(1.0, next));
                 FloatMaxObjective x11(10.5, 1.0), x10(10.0, 1.0), x10b(10.0, 1.0), xadj(FloatVal(1.0, next));
@@ -2568,11 +2568,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new LexMaxObjective(*this);
             }
             IntVarArgs
-            cost(void) const override {
+            cost() const override {
                 return x;
             }
         };
@@ -2580,11 +2580,11 @@ namespace Test {
         /// Space without objective comparison support
         class PlainSpace : public Space {
         public:
-            PlainSpace(void) = default;
+            PlainSpace() = default;
             // NOLINTNEXTLINE(modernize-use-equals-default)
             PlainSpace(PlainSpace& s) : Space(s) {}
             Space*
-            copy(void) override {
+            copy() override {
                 return new PlainSpace(*this);
             }
         };
@@ -2592,9 +2592,9 @@ namespace Test {
         /// Test objective comparison independently of search arbitration
         class Comparison : public Base {
         public:
-            Comparison(void) : Base("Search::Comparison") {}
+            Comparison() : Base("Search::Comparison") {}
             bool
-            run(void) override {
+            run() override {
                 MinObjective one(1, 1), two(2, 2), one_again(1, 1), open(0, 2);
                 if ((one.compare(two) != SpaceComparison::Better) || (two.compare(one) != SpaceComparison::Worse) ||
                     (one.compare(one_again) != SpaceComparison::Equivalent))
@@ -2661,11 +2661,11 @@ namespace Test {
         /// Space for relaxing
         class RelaxSpace : public Gecode::Space {
         public:
-            RelaxSpace(void) = default;
+            RelaxSpace() = default;
             // NOLINTNEXTLINE(modernize-use-equals-default)
             RelaxSpace(RelaxSpace& space) : Gecode::Space(space) {}
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new RelaxSpace(*this);
             }
         };
@@ -2676,7 +2676,7 @@ namespace Test {
             /// Test whether relaxing empty \a VarArgs leaves a space with exactly one solution
             template <class VarArgs>
             static bool
-            relaxes_empty(void) {
+            relaxes_empty() {
                 RelaxSpace* s = new RelaxSpace;
                 Gecode::relax(*s, VarArgs(), VarArgs(), Gecode::Rnd(1U), 0.5);
                 bool solved = s->status() == Gecode::SS_SOLVED;
@@ -2691,7 +2691,7 @@ namespace Test {
             }
             /// Test whether relaxing empty arrays still checks the arguments
             static bool
-            checks_arguments(void) {
+            checks_arguments() {
                 RelaxSpace s;
                 bool mismatch = false;
                 try {
@@ -2709,9 +2709,9 @@ namespace Test {
             }
 
         public:
-            RelaxEmpty(void) : Base("Search::Relax::Empty") {}
+            RelaxEmpty() : Base("Search::Relax::Empty") {}
             bool
-            run(void) override {
+            run() override {
                 bool ok = relaxes_empty<Gecode::IntVarArgs>() && relaxes_empty<Gecode::BoolVarArgs>();
 #ifdef GECODE_HAS_SET_VARS
                 ok = ok && relaxes_empty<Gecode::SetVarArgs>();
@@ -2728,9 +2728,9 @@ namespace Test {
         /// Relaxing fails the space when a value cannot be kept
         class RelaxFailed : public Base {
         public:
-            RelaxFailed(void) : Base("Search::Relax::Failed") {}
+            RelaxFailed() : Base("Search::Relax::Failed") {}
             bool
-            run(void) override {
+            run() override {
                 RelaxSpace s;
                 Gecode::IntVarArgs x(s, 2, 0, 0);
                 Gecode::IntVarArgs sx(s, 2, 1, 1);
@@ -2763,7 +2763,7 @@ namespace Test {
                   c_d(c_d0), a_d(a_d0), t(t0) {}
             /// Run test
             bool
-            run(void) override {
+            run() override {
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -2804,7 +2804,7 @@ namespace Test {
                   t(t0) {}
             /// Run test
             bool
-            run(void) override {
+            run() override {
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -2850,7 +2850,7 @@ namespace Test {
                   c_d(c_d0), a_d(a_d0), t(t0) {}
             /// Run test
             bool
-            run(void) override {
+            run() override {
                 Model* m = new Model(htb1, htb2, htb3, htc);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -2891,7 +2891,7 @@ namespace Test {
                   t(t0) {}
             /// Run test
             bool
-            run(void) override {
+            run() override {
                 Model* m = new Model(htb1, htb2, htb3, htc);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -2950,7 +2950,7 @@ namespace Test {
                 y.update(*this, s.y);
             }
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new SatPreservingSpoke(*this);
             }
             void
@@ -2985,9 +2985,9 @@ namespace Test {
             }
 
         public:
-            RBSSpokeCoverage(void) : Base("Search::RBS::SpokeCoverage") {}
+            RBSSpokeCoverage() : Base("Search::RBS::SpokeCoverage") {}
             bool
-            run(void) override {
+            run() override {
                 EndReason r;
                 // Declared Reduced: no-goods stay in their spoke, x = 0 remains.
                 // These spokes are not Full, declaring them so is undefined.
@@ -3005,7 +3005,7 @@ namespace Test {
         public:
             /// Distinct variables, the cost is x0
             Gecode::IntVarArray x;
-            RestrictedFirstSpoke(void) : x(*this, 4, 0, 3) {
+            RestrictedFirstSpoke() : x(*this, 4, 0, 3) {
                 Gecode::distinct(*this, x);
                 Gecode::branch(*this, x, Gecode::INT_VAR_NONE(), Gecode::INT_VAL_MIN());
             }
@@ -3013,11 +3013,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new RestrictedFirstSpoke(*this);
             }
             Gecode::IntVar
-            cost(void) const override {
+            cost() const override {
                 return x[0];
             }
             void
@@ -3033,9 +3033,9 @@ namespace Test {
         /// No-goods from a partial spoke search are not posted in the hub
         class RBSPartialNoGoods : public Base {
         public:
-            RBSPartialNoGoods(void) : Base("Search::RBS::PartialNoGoods") {}
+            RBSPartialNoGoods() : Base("Search::RBS::PartialNoGoods") {}
             bool
-            run(void) override {
+            run() override {
                 RestrictedFirstSpoke* m = new RestrictedFirstSpoke;
                 Gecode::Search::Options o;
                 o.nogoods_limit = 128U;
@@ -3063,7 +3063,7 @@ namespace Test {
             Gecode::IntVarArray z;
             /// Whether the hub branches on z
             bool z_branching;
-            LateHubBrancher(void) : y(*this, 5, 0, 2), z(*this, 2, 0, 1), z_branching(false) {
+            LateHubBrancher() : y(*this, 5, 0, 2), z(*this, 2, 0, 1), z_branching(false) {
                 // For y0 = 0 the other y must be distinct, which is impossible
                 Gecode::BoolVar b = Gecode::expr(*this, y[0] == 0);
                 for (int i = 1; i < y.size(); i++)
@@ -3075,7 +3075,7 @@ namespace Test {
                 z.update(*this, s.z);
             }
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new LateHubBrancher(*this);
             }
             void
@@ -3098,9 +3098,9 @@ namespace Test {
         /// A brancher posted by hub() does not take the identity of a spoke brancher
         class RBSLateHubBrancher : public Base {
         public:
-            RBSLateHubBrancher(void) : Base("Search::RBS::LateHubBrancher") {}
+            RBSLateHubBrancher() : Base("Search::RBS::LateHubBrancher") {}
             bool
-            run(void) override {
+            run() override {
                 LateHubBrancher* m = new LateHubBrancher;
                 Gecode::Search::Options o;
                 o.threads = 1;
@@ -3123,7 +3123,7 @@ namespace Test {
         public:
             /// Four variables that must be distinct with three values
             Gecode::IntVarArray x;
-            NoSolution(void) : x(*this, 4, 0, 2) {
+            NoSolution() : x(*this, 4, 0, 2) {
                 for (int i = 0; i < x.size(); i++)
                     for (int j = i + 1; j < x.size(); j++)
                         Gecode::rel(*this, x[i], Gecode::IRT_NQ, x[j]);
@@ -3133,11 +3133,11 @@ namespace Test {
                 x.update(*this, s.x);
             }
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new NoSolution(*this);
             }
             Gecode::IntVar
-            cost(void) const override {
+            cost() const override {
                 return x[0];
             }
             void
@@ -3151,11 +3151,11 @@ namespace Test {
         /// Space without solutions whose hub fails at a restart after a limit
         class FailingHub : public NoSolution {
         public:
-            FailingHub(void) = default;
+            FailingHub() = default;
             // NOLINTNEXTLINE(modernize-use-equals-default)
             FailingHub(FailingHub& s) : NoSolution(s) {}
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new FailingHub(*this);
             }
             void
@@ -3168,9 +3168,9 @@ namespace Test {
         /// A hub failing at a restart after a limit proves exhaustion
         class RBSFailedHub : public Base {
         public:
-            RBSFailedHub(void) : Base("Search::RBS::FailedHub") {}
+            RBSFailedHub() : Base("Search::RBS::FailedHub") {}
             bool
-            run(void) override {
+            run() override {
                 for (unsigned int t : {1U, 2U}) {
                     FailingHub* m = new FailingHub;
                     Gecode::Search::Options o;
@@ -3200,11 +3200,11 @@ namespace Test {
         /// Space without solutions whose restricted spokes fail at the root
         class FailingSpoke : public NoSolution {
         public:
-            FailingSpoke(void) = default;
+            FailingSpoke() = default;
             // NOLINTNEXTLINE(modernize-use-equals-default)
             FailingSpoke(FailingSpoke& s) : NoSolution(s) {}
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new FailingSpoke(*this);
             }
             void
@@ -3248,9 +3248,9 @@ namespace Test {
             }
 
         public:
-            RBSRootFailure(void) : Base("Search::RBS::RootFailure") {}
+            RBSRootFailure() : Base("Search::RBS::RootFailure") {}
             bool
-            run(void) override {
+            run() override {
                 return test<Gecode::DFS>(1U) && test<Gecode::DFS>(2U) && test<Gecode::BAB>(1U) &&
                        test<Gecode::BAB>(2U) && test<Gecode::LDS>(1U);
             }
@@ -3261,11 +3261,11 @@ namespace Test {
         /// Space with solutions whose first, incomplete spoke fails at the root
         class FailingFirstSpoke : public RestrictedFirstSpoke {
         public:
-            FailingFirstSpoke(void) = default;
+            FailingFirstSpoke() = default;
             // NOLINTNEXTLINE(modernize-use-equals-default)
             FailingFirstSpoke(FailingFirstSpoke& s) : RestrictedFirstSpoke(s) {}
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new FailingFirstSpoke(*this);
             }
             void
@@ -3296,9 +3296,9 @@ namespace Test {
             }
 
         public:
-            RBSFailedFirstSpoke(void) : Base("Search::RBS::FailedFirstSpoke") {}
+            RBSFailedFirstSpoke() : Base("Search::RBS::FailedFirstSpoke") {}
             bool
-            run(void) override {
+            run() override {
                 return test<Gecode::DFS>(1U) && test<Gecode::DFS>(2U) && test<Gecode::BAB>(1U) &&
                        test<Gecode::BAB>(2U) && test<Gecode::LDS>(1U);
             }
@@ -3317,11 +3317,11 @@ namespace Test {
             ThrowingSpoke(ThrowingSpoke& s) : NoSolution(s), live(s.live) {
                 (*live)++;
             }
-            ~ThrowingSpoke(void) override {
+            ~ThrowingSpoke() override {
                 (*live)--;
             }
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new ThrowingSpoke(*this);
             }
             void
@@ -3334,9 +3334,9 @@ namespace Test {
         /// RBS deletes the spoke when spoke() throws at a restart
         class RBSSpokeException : public Base {
         public:
-            RBSSpokeException(void) : Base("Search::RBS::SpokeException") {}
+            RBSSpokeException() : Base("Search::RBS::SpokeException") {}
             bool
-            run(void) override {
+            run() override {
                 for (unsigned int t : {1U, 2U}) {
                     std::atomic<int> live{0};
                     bool thrown = false;
@@ -3380,7 +3380,7 @@ namespace Test {
         class ExhaustedAtLimit : public Base {
             template <template <class> class Engine>
             static bool
-            test(void) {
+            test() {
                 NoSolution root;
                 unsigned long long int f;
                 {
@@ -3417,9 +3417,9 @@ namespace Test {
             }
 
         public:
-            ExhaustedAtLimit(void) : Base("Search::ExhaustedAtLimit") {}
+            ExhaustedAtLimit() : Base("Search::ExhaustedAtLimit") {}
             bool
-            run(void) override {
+            run() override {
                 return test<Gecode::DFS>() && test<Gecode::BAB>();
             }
         };
@@ -3442,9 +3442,9 @@ namespace Test {
             }
 
         public:
-            LDSIncomplete(void) : Base("Search::LDS::Incomplete") {}
+            LDSIncomplete() : Base("Search::LDS::Incomplete") {}
             bool
-            run(void) override {
+            run() override {
                 return (end_reason(0) == EndReason::Incomplete) && (end_reason(1) == EndReason::Incomplete) &&
                        (end_reason(100) == EndReason::Exhausted);
             }
@@ -3464,7 +3464,7 @@ namespace Test {
             // NOLINTNEXTLINE(modernize-use-equals-default)
             IncompleteEpisodes(IncompleteEpisodes& s) : NoSolution(s), coverage(s.coverage), defaults(s.defaults) {}
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new IncompleteEpisodes(*this);
             }
             void
@@ -3505,9 +3505,9 @@ namespace Test {
             }
 
         public:
-            RBSIncompleteDefault(void) : Base("Search::RBS::IncompleteDefault") {}
+            RBSIncompleteDefault() : Base("Search::RBS::IncompleteDefault") {}
             bool
-            run(void) override {
+            run() override {
                 using Gecode::MetaDecision;
                 using Gecode::SpokeCoverage;
                 using Decisions = std::vector<MetaDecision>;
@@ -3538,7 +3538,7 @@ namespace Test {
                   best(b), a(a0), t(t0) {}
             /// Run test
             bool
-            run(void) override {
+            run() override {
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -3601,7 +3601,7 @@ namespace Test {
                   best(b), portfolio_threads(portfolio_threads0), asset_threads(asset_threads0) {}
             /// Run test
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
@@ -3682,9 +3682,9 @@ namespace Test {
             }
 
         public:
-            PBSBuilderStop(void) : Base("Search::PBS::SEB::Stop") {}
+            PBSBuilderStop() : Base("Search::PBS::SEB::Stop") {}
             bool
-            run(void) override {
+            run() override {
                 for (unsigned int t : {1U, 2U})
                     if (!test<Gecode::DFS>(t, &Gecode::dfs<NoSolution>) ||
                         !test<Gecode::BAB>(t, &Gecode::bab<NoSolution>))
@@ -3725,9 +3725,9 @@ namespace Test {
             }
 
         public:
-            PBSExhaustedAsset(void) : Base("Search::PBS::ExhaustedAsset") {}
+            PBSExhaustedAsset() : Base("Search::PBS::ExhaustedAsset") {}
             bool
-            run(void) override {
+            run() override {
                 return test(1U) && test(2U);
             }
         };
@@ -3772,9 +3772,9 @@ namespace Test {
             }
 
         public:
-            PBSPortfolioStop(void) : Base("Search::PBS::PortfolioStop") {}
+            PBSPortfolioStop() : Base("Search::PBS::PortfolioStop") {}
             bool
-            run(void) override {
+            run() override {
                 for (unsigned int t : {1U, 2U})
                     for (bool builders : {false, true})
                         if (!test(t, builders))
@@ -3835,9 +3835,9 @@ namespace Test {
             }
 
         public:
-            PBSParkedAsset(void) : Base("Search::PBS::ParkedAsset") {}
+            PBSParkedAsset() : Base("Search::PBS::ParkedAsset") {}
             bool
-            run(void) override {
+            run() override {
                 for (unsigned int t : {1U, 2U})
                     if (!others_continue(t) || !resume(t))
                         return false;
@@ -3850,11 +3850,11 @@ namespace Test {
         /// Space without solutions whose hub continues after a partial spoke is exhausted, which is illegal
         class IllegalContinue : public NoSolution {
         public:
-            IllegalContinue(void) = default;
+            IllegalContinue() = default;
             // NOLINTNEXTLINE(modernize-use-equals-default)
             IllegalContinue(IllegalContinue& s) : NoSolution(s) {}
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new IllegalContinue(*this);
             }
             void
@@ -3873,9 +3873,9 @@ namespace Test {
         /// An exception thrown in an asset of a portfolio is rethrown by next()
         class PBSAssetException : public Base {
         public:
-            PBSAssetException(void) : Base("Search::PBS::AssetException") {}
+            PBSAssetException() : Base("Search::PBS::AssetException") {}
             bool
-            run(void) override {
+            run() override {
                 for (unsigned int t : {1U, 2U, 4U}) {
                     IllegalContinue root;
                     Gecode::Search::Options o;
@@ -3917,9 +3917,9 @@ namespace Test {
             }
 
         public:
-            CutoffCopy(void) : Base("Search::Cutoff::Copy") {}
+            CutoffCopy() : Base("Search::Cutoff::Copy") {}
             bool
-            run(void) override {
+            run() override {
                 using Gecode::Search::Cutoff;
                 return same(Cutoff::constant(3)) && same(Cutoff::linear(2)) && same(Cutoff::geometric(2, 1.5)) &&
                        same(Cutoff::luby(2)) && same(Cutoff::append(Cutoff::linear(1), 8, Cutoff::luby(3))) &&
@@ -3957,9 +3957,9 @@ namespace Test {
             }
 
         public:
-            CutoffRandomCopy(void) : Base("Search::Cutoff::RandomCopy") {}
+            CutoffRandomCopy() : Base("Search::Cutoff::RandomCopy") {}
             bool
-            run(void) override {
+            run() override {
                 std::vector<std::vector<unsigned long long int>> v = copies(7);
                 return !v[0].empty() && !v[1].empty() && !v[2].empty() && (v[0] != v[1]) && (v[0] != v[2]) &&
                        (v[1] != v[2]) && (copies(7) == v);
@@ -3971,9 +3971,9 @@ namespace Test {
         /// A repeating cutoff generator advances the generator it repeats
         class CutoffRepeat : public Base {
         public:
-            CutoffRepeat(void) : Base("Search::Cutoff::Repeat") {}
+            CutoffRepeat() : Base("Search::Cutoff::Repeat") {}
             bool
-            run(void) override {
+            run() override {
                 std::unique_ptr<Gecode::Search::Cutoff> c(
                     Gecode::Search::Cutoff::repeat(Gecode::Search::Cutoff::linear(4), 3));
                 std::vector<unsigned long long int> v{(*c)()};
@@ -4000,9 +4000,9 @@ namespace Test {
             }
 
         public:
-            PBSRestartCutoff(void) : Base("Search::PBS::RBS::Cutoff") {}
+            PBSRestartCutoff() : Base("Search::PBS::RBS::Cutoff") {}
             bool
-            run(void) override {
+            run() override {
                 for (unsigned int t : {1U, 2U, 4U})
                     if (!test<Gecode::RBS>(t) || !test<RestartPortfolio>(t))
                         return false;
@@ -4069,15 +4069,15 @@ namespace Test {
                 y.update(*this, s.y);
             }
             /// Record destruction
-            ~ProtocolSpace(void) override {
+            ~ProtocolSpace() override {
                 log->live--;
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new ProtocolSpace(*this);
             }
             IntVar
-            cost(void) const override {
+            cost() const override {
                 return c;
             }
             void
@@ -4188,7 +4188,7 @@ namespace Test {
             }
             /// Check the legality of each decision for each event
             static bool
-            decision_legality(void) {
+            decision_legality() {
                 const Gecode::Search::Statistics stat;
                 for (MetaEvent e : {MetaEvent::Start, MetaEvent::Solution, MetaEvent::Exhausted, MetaEvent::Incomplete,
                                     MetaEvent::Limit})
@@ -4222,7 +4222,7 @@ namespace Test {
             }
             /// Check that an illegal decision throws from the engine
             static bool
-            illegal_decision_in_engine(void) {
+            illegal_decision_in_engine() {
                 ProtocolLog log;
                 ProtocolSpace* m = new ProtocolSpace(Protocol::ContinueAtStart, log);
                 Gecode::Search::Options o = rbs_options(10);
@@ -4274,7 +4274,7 @@ namespace Test {
             }
             /// Check that Finish at Limit ends RBS without a proof
             static bool
-            finish_at_limit(void) {
+            finish_at_limit() {
                 ProtocolLog log;
                 {
                     ProtocolSpace* m = new ProtocolSpace(Protocol::FinishAtLimit, log);
@@ -4289,7 +4289,7 @@ namespace Test {
             }
             /// Check that a hub failing after a solution proves exhaustion
             static bool
-            fail_at_solution(void) {
+            fail_at_solution() {
                 ProtocolLog log;
                 {
                     ProtocolSpace* m = new ProtocolSpace(Protocol::FailAtSolution, log);
@@ -4306,7 +4306,7 @@ namespace Test {
             }
             /// Check that Continue at Limit resumes the same spoke
             static bool
-            continue_at_limit(void) {
+            continue_at_limit() {
                 ProtocolLog log;
                 {
                     ProtocolSpace* m = new ProtocolSpace(Protocol::ContinueAtLimit, log);
@@ -4329,7 +4329,7 @@ namespace Test {
             }
             /// Check that RBS<BAB> constrains the hub when hub() does nothing
             static bool
-            engine_constrains_hub(void) {
+            engine_constrains_hub() {
                 ProtocolLog log;
                 std::vector<int> costs;
                 {
@@ -4350,7 +4350,7 @@ namespace Test {
             }
             /// Check that a constraint posted by hub() under PBS takes effect
             static bool
-            portfolio_hub_constraint(void) {
+            portfolio_hub_constraint() {
                 ProtocolLog log;
                 for (unsigned int t : {1U, 2U}) {
                     ProtocolSpace* m = new ProtocolSpace(Protocol::BoundInHub, log);
@@ -4384,7 +4384,7 @@ namespace Test {
             }
             /// Check episode numbering across solution and limit restarts
             static bool
-            episodes(void) {
+            episodes() {
                 ProtocolLog log;
                 {
                     ProtocolSpace* m = new ProtocolSpace(Protocol::Alternate, log);
@@ -4417,7 +4417,7 @@ namespace Test {
             /// Initialize scenario \a s with name \a n
             MetaProtocol(const std::string& n, Scenario s) : Base("Search::Meta::" + n), scenario(s) {}
             bool
-            run(void) override {
+            run() override {
                 switch (scenario) {
                 case Scenario::DecisionLegality:
                     return decision_legality();
@@ -4471,7 +4471,7 @@ namespace Test {
             /// Number of deletions, owned by the test
             std::atomic<unsigned int>& deleted;
             CountingCutoff(std::atomic<unsigned int>& d) : Gecode::Search::CutoffConstant(1000), deleted(d) {}
-            ~CountingCutoff(void) override {
+            ~CountingCutoff() override {
                 deleted++;
             }
         };
@@ -4479,11 +4479,11 @@ namespace Test {
         /// Space without solutions whose first portfolio asset fails
         class FailingAsset : public NoSolution {
         public:
-            FailingAsset(void) = default;
+            FailingAsset() = default;
             // NOLINTNEXTLINE(modernize-use-equals-default)
             FailingAsset(FailingAsset& s) : NoSolution(s) {}
             Gecode::Space*
-            copy(void) override {
+            copy() override {
                 return new FailingAsset(*this);
             }
             void
@@ -4516,9 +4516,9 @@ namespace Test {
             }
 
         public:
-            PBSRestartCutoffDeleted(void) : Base("Search::PBS::RBS::CutoffDeleted") {}
+            PBSRestartCutoffDeleted() : Base("Search::PBS::RBS::CutoffDeleted") {}
             bool
-            run(void) override {
+            run() override {
                 // A failed root, also for a portfolio of portfolios
                 NoSolution failed;
                 Gecode::rel(failed, failed.x[0], Gecode::IRT_LT, 0);
@@ -4545,20 +4545,20 @@ namespace Test {
 
         public:
             /// Initialize iterator
-            BranchTypes(void) : i(0) {}
+            BranchTypes() : i(0) {}
             /// Test whether iterator is done
             bool
-            operator()(void) const {
+            operator()() const {
                 return i < 3;
             }
             /// Increment to next branching type
             void
-            operator++(void) {
+            operator++() {
                 i++;
             }
             /// Return current branching type
             HowToBranch
-            htb(void) const {
+            htb() const {
                 return htbs[i];
             }
         };
@@ -4575,20 +4575,20 @@ namespace Test {
 
         public:
             /// Initialize iterator
-            ConstrainTypes(void) : i(0) {}
+            ConstrainTypes() : i(0) {}
             /// Test whether iterator is done
             bool
-            operator()(void) const {
+            operator()() const {
                 return i < 4;
             }
             /// Increment to next constrain type
             void
-            operator++(void) {
+            operator++() {
                 i++;
             }
             /// Return current constrain type
             HowToConstrain
-            htc(void) const {
+            htc() const {
                 return htcs[i];
             }
         };
@@ -4599,7 +4599,7 @@ namespace Test {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 (void)new Comparison;
                 // Depth-first search
                 for (unsigned int t = 1; t <= 4; t++)

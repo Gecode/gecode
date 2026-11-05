@@ -55,7 +55,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges();
         /// Initialize with ranges for view \a x
         ViewRanges(const View& x);
         /// Initialize with ranges for view \a x
@@ -65,19 +65,19 @@ namespace Gecode { namespace Int {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -95,7 +95,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewValues(void) = default;
+        ViewValues() = default;
         /// Initialize with values for \a x
         ViewValues(const View& x);
         /// Initialize with values \a x
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntView(void) = default;
+        IntView() = default;
         /// Initialize from integer variable \a y
         IntView(const IntVar& y);
         /// Initialize from integer variable \a y
@@ -143,32 +143,32 @@ namespace Gecode { namespace Int {
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return median of domain (greatest element not greater than the median)
-        int med(void) const;
+        int med() const;
         /// Return assigned value (only if assigned)
-        int val(void) const;
+        int val() const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
         int base_value(int val) const;
 #endif
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
 
         /// Test whether \a n is contained in domain
         bool in(int n) const;
@@ -285,7 +285,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        MinusView(void) = default;
+        MinusView() = default;
         /// Initialize with integer view \a y
         explicit MinusView(const IntView& y);
         //@}
@@ -293,32 +293,32 @@ namespace Gecode { namespace Int {
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return median of domain
-        int med(void) const;
+        int med() const;
         /// Return assigned value (only if assigned)
-        int val(void) const;
+        int val() const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
         int base_value(int val) const;
 #endif
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
 
         /// Test whether \a n is contained in domain
         bool in(int n) const;
@@ -445,7 +445,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OffsetView(void);
+        OffsetView();
         /// Initialize with integer view \a y and offset \a c
         OffsetView(const IntView& y, int c);
         //@}
@@ -453,36 +453,36 @@ namespace Gecode { namespace Int {
         /// \name Value access
         //@{
         /// Return offset
-        int offset(void) const;
+        int offset() const;
         /// Change offset to \a n
         void offset(int n);
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return median of domain (greatest element not greater than the median)
-        int med(void) const;
+        int med() const;
         /// Return assigned value (only if assigned)
-        int val(void) const;
+        int val() const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
         int base_value(int val) const;
 #endif
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
 
         /// Test whether \a n is contained in domain
         bool in(int n) const;
@@ -616,7 +616,7 @@ namespace Gecode { namespace Int {
         /// Update during cloning
         void update(const NoOffset&);
         /// Access offset
-        int offset(void) const;
+        int offset() const;
     };
 
     template <class View>
@@ -631,7 +631,7 @@ namespace Gecode { namespace Int {
 
     template <class View>
     forceinline int
-    NoOffset<View>::offset(void) const {
+    NoOffset<View>::offset() const {
         return 0;
     }
 
@@ -651,7 +651,7 @@ namespace Gecode { namespace Int {
         /// Update during cloning
         void update(const Offset& o);
         /// Access offset
-        int offset(void) const;
+        int offset() const;
     };
 
     forceinline
@@ -664,7 +664,7 @@ namespace Gecode { namespace Int {
     }
 
     forceinline int
-    Offset::offset(void) const {
+    Offset::offset() const {
         return c;
     }
 
@@ -707,7 +707,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ScaleView(void);
+        ScaleView();
         /// Initialize as \f$b\cdot y\f$
         ScaleView(int b, const IntView& y);
         //@}
@@ -715,34 +715,34 @@ namespace Gecode { namespace Int {
         /// \name Value access
         //@{
         /// Return scale factor of scale view
-        int scale(void) const;
+        int scale() const;
         /// Return minimum of domain
-        Val min(void) const;
+        Val min() const;
         /// Return maximum of domain
-        Val max(void) const;
+        Val max() const;
         /// Return median of domain (greatest element not greater than the median)
-        Val med(void) const;
+        Val med() const;
         /// Return assigned value (only if assigned)
-        Val val(void) const;
+        Val val() const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
         Val base_value(Val val) const;
 #endif
 
         /// Return size (cardinality) of domain
-        UnsVal size(void) const;
+        UnsVal size() const;
         /// Return width of domain (distance between maximum and minimum)
-        UnsVal width(void) const;
+        UnsVal width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        UnsVal regret_min(void) const;
+        UnsVal regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        UnsVal regret_max(void) const;
+        UnsVal regret_max() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
         /// Test whether \a n is contained in domain
         bool in(Val n) const;
         //@}
@@ -843,7 +843,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ConstIntView(void);
+        ConstIntView();
         /// Initialize with integer value \a n
         ConstIntView(int n);
         //@}
@@ -851,28 +851,28 @@ namespace Gecode { namespace Int {
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return median of domain (greatest element not greater than the median)
-        int med(void) const;
+        int med() const;
         /// Return assigned value (only if assigned)
-        int val(void) const;
+        int val() const;
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
         /// Test whether \a n is contained in domain
         bool in(int n) const;
         /// Test whether \a n is contained in domain
@@ -998,34 +998,34 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ZeroIntView(void) = default;
+        ZeroIntView() = default;
         //@}
 
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return median of domain (greatest element not greater than the median)
-        int med(void) const;
+        int med() const;
         /// Return assigned value (only if assigned)
-        int val(void) const;
+        int val() const;
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
         /// Test whether \a n is contained in domain
         bool in(int n) const;
         /// Test whether \a n is contained in domain
@@ -1157,7 +1157,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        CachedView(void);
+        CachedView();
         /// Initialize with integer view \a y
         explicit CachedView(const View& y);
         //@}
@@ -1165,32 +1165,32 @@ namespace Gecode { namespace Int {
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return median of domain (greatest element not greater than the median)
-        int med(void) const;
+        int med() const;
         /// Return assigned value (only if assigned)
-        int val(void) const;
+        int val() const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
         int base_value(int val) const;
 #endif
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
 
         /// Test whether \a n is contained in domain
         bool in(int n) const;
@@ -1291,7 +1291,7 @@ namespace Gecode { namespace Int {
         /// Update cache to current domain
         void cache(Space& home);
         /// Check whether cache differs from current domain
-        bool modified(void) const;
+        bool modified() const;
         //@}
 
         /// \name Cloning
@@ -1338,7 +1338,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewDiffRanges(void) = default;
+        ViewDiffRanges() = default;
         /// Initialize with ranges for view \a x
         ViewDiffRanges(const CachedView<View>& x);
         /// Initialize with ranges for view \a x
@@ -1360,7 +1360,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        BoolView(void) = default;
+        BoolView() = default;
         /// Initialize from Boolean variable \a y
         BoolView(const BoolVar& y);
         /// Initialize from Boolean variable implementation \a y
@@ -1378,38 +1378,38 @@ namespace Gecode { namespace Int {
         /// Status of domain not yet assigned
         static const BoolStatus unassigned_status = BoolVarImp::unassigned_status;
         /// Return current domain status
-        BoolStatus status(void) const;
+        BoolStatus status() const;
         //@}
 
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return median of domain (greatest element not greater than the median)
-        int med(void) const;
+        int med() const;
         /// Return assigned value (only if assigned)
-        int val(void) const;
+        int val() const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
         int base_value(int val) const;
 #endif
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
         /// Test whether \a n is contained in domain
         bool in(int n) const;
         /// Test whether \a n is contained in domain
@@ -1419,11 +1419,11 @@ namespace Gecode { namespace Int {
         /// \name Boolean domain tests
         //@{
         /// Test whether view is assigned to be zero
-        bool zero(void) const;
+        bool zero() const;
         /// Test whether view is assigned to be one
-        bool one(void) const;
+        bool one() const;
         /// Test whether view is not yet assigned
-        bool none(void) const;
+        bool none() const;
         //@}
 
         /// \name Boolean assignment operations
@@ -1552,7 +1552,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        NegBoolView(void) = default;
+        NegBoolView() = default;
         /// Initialize with Boolean view \a y
         explicit NegBoolView(const BoolView& y);
         //@}
@@ -1568,17 +1568,17 @@ namespace Gecode { namespace Int {
         /// Status of domain not yet assigned
         static const BoolStatus unassigned_status = BoolView::unassigned_status;
         /// Return current domain status
-        BoolStatus status(void) const;
+        BoolStatus status() const;
         //@}
 
         /// \name Boolean domain tests
         //@{
         /// Test whether view is assigned to be zero
-        bool zero(void) const;
+        bool zero() const;
         /// Test whether view is assigned to be one
-        bool one(void) const;
+        bool one() const;
         /// Test whether view is not yet assigned
-        bool none(void) const;
+        bool none() const;
         //@}
 
         /// \name Boolean assignment operations
@@ -1629,11 +1629,11 @@ namespace Gecode { namespace Int {
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return assigned value (only if assigned)
-        int val(void) const;
+        int val() const;
 #ifdef GECODE_HAS_CBS
         /// Return reverse transformation of value according to view
         int base_value(int val) const;

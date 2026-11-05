@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     public:
         /// Default constructor
-        ViewValSupportArray(void);
+        ViewValSupportArray();
         /// Copy constructor
         ViewValSupportArray(const ViewValSupportArray<View, Val, iss>&);
         /// Construct an ViewValSupportArray from \a x
@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Sequence {
         /// Construct an ViewValSupportArray of size \a n
         ViewValSupportArray(Space& home, int n);
         /// Return the current size
-        int size(void) const;
+        int size() const;
         /// Access element \a n
         ViewValSupport<View, Val, iss>& operator[](int n);
         /// Access element \a n

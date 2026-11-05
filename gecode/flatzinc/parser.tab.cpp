@@ -572,7 +572,7 @@ AST::Node* array_output(AST::Call* ann) {
 
 namespace Gecode { namespace FlatZinc {
 
-  ParserState::~ParserState(void) {
+  ParserState::~ParserState() {
     if (yyscanner)
       yylex_destroy(yyscanner);
     for (auto& var : int_vars)

@@ -50,23 +50,23 @@ namespace Gecode {
         /// \name Generic view information
         //@{
         /// Return degree (number of subscribed propagators and advisors)
-        unsigned int degree(void) const;
+        unsigned int degree() const;
         /// Return accumulated failure count
-        double afc(void) const;
+        double afc() const;
         /// Return whether this view is derived from a VarImpView
-        static bool is_variable_derived(void);
+        static bool is_variable_derived();
         /// Return dummy variable implementation of view
-        VarImpType* varimp(void) const;
+        VarImpType* varimp() const;
 #ifdef GECODE_HAS_CBS
         /// Return dummy id
-        unsigned int id(void) const;
+        unsigned int id() const;
 #endif
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether view is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         //@}
 
         /// \name View-dependent propagator support
@@ -138,7 +138,7 @@ namespace Gecode {
         /// Pointer to variable implementation
         VarImpType* x;
         /// Default constructor
-        VarImpView(void);
+        VarImpView();
         /// Initialize with variable implementation \a y
         VarImpView(VarImpType* y);
         /// Set variable implementation to \a y
@@ -148,23 +148,23 @@ namespace Gecode {
         /// \name Generic view information
         //@{
         /// Return whether this view is derived from a VarImpView
-        static bool is_variable_derived(void);
+        static bool is_variable_derived();
         /// Return variable implementation of view
-        VarImpType* varimp(void) const;
+        VarImpType* varimp() const;
         /// Return degree (number of subscribed propagators and advisors)
-        unsigned int degree(void) const;
+        unsigned int degree() const;
         /// Return accumulated failure count
-        double afc(void) const;
+        double afc() const;
 #ifdef GECODE_HAS_CBS
         /// Return id of implementation of view
-        unsigned int id(void) const;
+        unsigned int id() const;
 #endif
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether view is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         //@}
 
         /// \name View-dependent propagator support
@@ -236,7 +236,7 @@ namespace Gecode {
         /// View from which this view is derived
         View x;
         /// Default constructor
-        DerivedView(void) = default;
+        DerivedView() = default;
 
     public:
         /// Initialize with view \a y
@@ -244,25 +244,25 @@ namespace Gecode {
         /// \name Generic view information
         //@{
         /// Return whether this view is derived from a VarImpView
-        static bool is_variable_derived(void);
+        static bool is_variable_derived();
         /// Return variable implementation of view
-        VarImpType* varimp(void) const;
+        VarImpType* varimp() const;
         /// Return view from which this view is derived
-        View base(void) const;
+        View base() const;
         /// Return degree (number of subscribed propagators)
-        unsigned int degree(void) const;
+        unsigned int degree() const;
         /// Return accumulated failure count
-        double afc(void) const;
+        double afc() const;
 #ifdef GECODE_HAS_CBS
         /// Return id of implementation of view
-        unsigned int id(void) const;
+        unsigned int id() const;
 #endif
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether view is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         //@}
 
         /// \name View-dependent propagator support
@@ -379,34 +379,34 @@ namespace Gecode {
      */
     template <class View>
     forceinline unsigned int
-    ConstView<View>::degree(void) const {
+    ConstView<View>::degree() const {
         return 0;
     }
     template <class View>
     forceinline double
-    ConstView<View>::afc(void) const {
+    ConstView<View>::afc() const {
         return 0.0;
     }
     template <class View>
     forceinline bool
-    ConstView<View>::is_variable_derived(void) {
+    ConstView<View>::is_variable_derived() {
         return false;
     }
     template <class View>
     forceinline typename View::VarImpType*
-    ConstView<View>::varimp(void) const {
+    ConstView<View>::varimp() const {
         return nullptr;
     }
 #ifdef GECODE_HAS_CBS
     template <class View>
     forceinline unsigned int
-    ConstView<View>::id(void) const {
+    ConstView<View>::id() const {
         return 0;
     }
 #endif
     template <class View>
     forceinline bool
-    ConstView<View>::assigned(void) const {
+    ConstView<View>::assigned() const {
         return true;
     }
     template <class View>
@@ -465,7 +465,7 @@ namespace Gecode {
      */
     template <class Var>
     forceinline
-    VarImpView<Var>::VarImpView(void)
+    VarImpView<Var>::VarImpView()
         : x(nullptr) {}
     template <class Var>
     forceinline
@@ -478,34 +478,34 @@ namespace Gecode {
     }
     template <class Var>
     forceinline bool
-    VarImpView<Var>::is_variable_derived(void) {
+    VarImpView<Var>::is_variable_derived() {
         return true;
     }
     template <class Var>
     forceinline typename Var::VarImpType*
-    VarImpView<Var>::varimp(void) const {
+    VarImpView<Var>::varimp() const {
         return x;
     }
     template <class Var>
     forceinline unsigned int
-    VarImpView<Var>::degree(void) const {
+    VarImpView<Var>::degree() const {
         return x->degree();
     }
     template <class Var>
     forceinline double
-    VarImpView<Var>::afc(void) const {
+    VarImpView<Var>::afc() const {
         return x->afc();
     }
 #ifdef GECODE_HAS_CBS
     template <class Var>
     forceinline unsigned int
-    VarImpView<Var>::id(void) const {
+    VarImpView<Var>::id() const {
         return x->id();
     }
 #endif
     template <class Var>
     forceinline bool
-    VarImpView<Var>::assigned(void) const {
+    VarImpView<Var>::assigned() const {
         return x->assigned();
     }
     template <class Var>
@@ -576,42 +576,42 @@ namespace Gecode {
 
     template <class View>
     forceinline bool
-    DerivedView<View>::is_variable_derived(void) {
+    DerivedView<View>::is_variable_derived() {
         return View::is_variable_derived();
     }
 
     template <class View>
     forceinline typename View::VarImpType*
-    DerivedView<View>::varimp(void) const {
+    DerivedView<View>::varimp() const {
         return x.varimp();
     }
 
     template <class View>
     forceinline View
-    DerivedView<View>::base(void) const {
+    DerivedView<View>::base() const {
         return x;
     }
 
     template <class View>
     forceinline unsigned int
-    DerivedView<View>::degree(void) const {
+    DerivedView<View>::degree() const {
         return x.degree();
     }
     template <class View>
     forceinline double
-    DerivedView<View>::afc(void) const {
+    DerivedView<View>::afc() const {
         return x.afc();
     }
 #ifdef GECODE_HAS_CBS
     template <class View>
     forceinline unsigned int
-    DerivedView<View>::id(void) const {
+    DerivedView<View>::id() const {
         return x.id();
     }
 #endif
     template <class View>
     forceinline bool
-    DerivedView<View>::assigned(void) const {
+    DerivedView<View>::assigned() const {
         return x.assigned();
     }
 

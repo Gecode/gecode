@@ -35,7 +35,7 @@
 namespace Gecode {
 
     forceinline
-    SetVarBranch::SetVarBranch(void)
+    SetVarBranch::SetVarBranch()
         : s(SEL_NONE) {}
 
     forceinline
@@ -67,7 +67,7 @@ namespace Gecode {
         : VarBranch<SetVar>(std::move(mf), std::move(t)), s(s0) {}
 
     forceinline SetVarBranch::Select
-    SetVarBranch::select(void) const {
+    SetVarBranch::select() const {
         return s;
     }
 
@@ -100,7 +100,7 @@ namespace Gecode {
     }
 
     inline SetVarBranch
-    SET_VAR_NONE(void) {
+    SET_VAR_NONE() {
         return SetVarBranch(SetVarBranch::SEL_NONE, nullptr);
     }
 

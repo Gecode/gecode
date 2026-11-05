@@ -52,23 +52,23 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline BoolStatus
-    BoolView::status(void) const {
+    BoolView::status() const {
         return x->status();
     }
     forceinline int
-    BoolView::min(void) const {
+    BoolView::min() const {
         return x->min();
     }
     forceinline int
-    BoolView::max(void) const {
+    BoolView::max() const {
         return x->max();
     }
     forceinline int
-    BoolView::med(void) const {
+    BoolView::med() const {
         return x->med();
     }
     forceinline int
-    BoolView::val(void) const {
+    BoolView::val() const {
         return x->val();
     }
 #ifdef GECODE_HAS_CBS
@@ -79,19 +79,19 @@ namespace Gecode { namespace Int {
 #endif
 
     forceinline unsigned int
-    BoolView::size(void) const {
+    BoolView::size() const {
         return x->size();
     }
     forceinline unsigned int
-    BoolView::width(void) const {
+    BoolView::width() const {
         return x->width();
     }
     forceinline unsigned int
-    BoolView::regret_min(void) const {
+    BoolView::regret_min() const {
         return x->regret_min();
     }
     forceinline unsigned int
-    BoolView::regret_max(void) const {
+    BoolView::regret_max() const {
         return x->regret_max();
     }
 
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline bool
-    BoolView::range(void) const {
+    BoolView::range() const {
         return x->range();
     }
     forceinline bool
@@ -210,15 +210,15 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline bool
-    BoolView::zero(void) const {
+    BoolView::zero() const {
         return x->zero();
     }
     forceinline bool
-    BoolView::one(void) const {
+    BoolView::one() const {
         return x->one();
     }
     forceinline bool
-    BoolView::none(void) const {
+    BoolView::none() const {
         return x->none();
     }
 
@@ -288,7 +288,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void) = default;
+        ViewRanges() = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const BoolView& x);
         /// Initialize with ranges for view \a x

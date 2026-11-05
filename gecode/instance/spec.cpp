@@ -102,7 +102,7 @@ namespace Gecode { namespace Instance {
             /// Whether no white space precedes the token
             bool glued;
             /// Initialize
-            Token(void) : kind(Kind::END), i(0), f(0.0), line(0), glued(false) {}
+            Token() : kind(Kind::END), i(0), f(0.0), line(0), glued(false) {}
         };
 
         /**
@@ -449,11 +449,11 @@ namespace Gecode { namespace Instance {
             static const int max_nesting = 256;
 
             const Token&
-            peek(void) const {
+            peek() const {
                 return toks[p];
             }
             const Token&
-            next(void) {
+            next() {
                 const Token& t = toks[p];
                 if (p + 1 < toks.size())
                     p++;
@@ -482,7 +482,7 @@ namespace Gecode { namespace Instance {
             /// Test whether a '-' or '.' joining the words of a format name such as
             /// dimacs-cnf comes next
             bool
-            at_name_joiner(void) const {
+            at_name_joiner() const {
                 if (!(punct("-") || punct(".")) || !peek().glued || (p + 1 >= toks.size()))
                     return false;
                 const Token& t = toks[p + 1];
@@ -522,7 +522,7 @@ namespace Gecode { namespace Instance {
                 return next().text;
             }
             Pattern
-            pattern(void) {
+            pattern() {
                 int line = peek().line;
                 std::string s = string("a line pattern");
                 Pattern pat;
@@ -566,7 +566,7 @@ namespace Gecode { namespace Instance {
                     fail(std::string(what) + " are nested too deeply");
             }
             Block
-            block(void) {
+            block() {
                 expect_punct("{");
                 enter(depth, "blocks");
                 // The types defined in the block are only visible inside it
@@ -675,7 +675,7 @@ namespace Gecode { namespace Instance {
             }
 
             std::unique_ptr<Stmt>
-            statement(void) {
+            statement() {
                 const Token& t = peek();
                 each_ok = repeat_start;
                 repeat_start = false;
@@ -748,7 +748,7 @@ namespace Gecode { namespace Instance {
             }
             /// Test whether the upper bound of a range comes next
             bool
-            at_upper_bound(void) const {
+            at_upper_bound() const {
                 const Token& t = peek();
                 switch (t.kind) {
                 case Token::Kind::IDENT:
@@ -783,7 +783,7 @@ namespace Gecode { namespace Instance {
              * bound of lo..<hi).
              */
             Type
-            type(void) {
+            type() {
                 Type t;
                 if (peek().kind == Token::Kind::IDENT) {
                     const std::string& n = peek().text;
@@ -1036,7 +1036,7 @@ namespace Gecode { namespace Instance {
              * Expressions, by precedence climbing
              */
             std::unique_ptr<Expr>
-            expr(void) {
+            expr() {
                 return binary(0);
             }
             /// Store the binary operator \a t in \a op, and return its precedence
@@ -1084,7 +1084,7 @@ namespace Gecode { namespace Instance {
                 return lhs;
             }
             std::unique_ptr<Expr>
-            unary(void) {
+            unary() {
                 enter(nesting, "expressions");
                 std::unique_ptr<Expr> e;
                 if (punct("-") || punct("!")) {
@@ -1101,7 +1101,7 @@ namespace Gecode { namespace Instance {
             /// a ^ b, which binds tighter than unary operators and groups to the
             /// right; b is a unary expression, so 2^-1 is 2^(-1)
             std::unique_ptr<Expr>
-            power(void) {
+            power() {
                 std::unique_ptr<Expr> e = postfix();
                 if (!punct("^"))
                     return e;
@@ -1114,7 +1114,7 @@ namespace Gecode { namespace Instance {
             }
             /// Indices and fields a[i][j].f...
             std::unique_ptr<Expr>
-            postfix(void) {
+            postfix() {
                 std::unique_ptr<Expr> e = primary();
                 // Each index or field adds a level above e
                 int levels = 0;
@@ -1209,7 +1209,7 @@ namespace Gecode { namespace Instance {
                 return e;
             }
             std::unique_ptr<Expr>
-            primary(void) {
+            primary() {
                 const Token& t = peek();
                 if (t.kind == Token::Kind::INT)
                     return integer(next().i);
@@ -1359,7 +1359,7 @@ namespace Gecode { namespace Instance {
      *
      */
 
-    Spec::Spec(void) : impl(std::make_shared<SpecImpl>("", "<empty>")) {}
+    Spec::Spec() : impl(std::make_shared<SpecImpl>("", "<empty>")) {}
 
     Spec
     Spec::parse(const std::string& text, const std::string& origin) {
@@ -1374,7 +1374,7 @@ namespace Gecode { namespace Instance {
     }
 
     std::string
-    Spec::name(void) const {
+    Spec::name() const {
         return impl->name;
     }
 

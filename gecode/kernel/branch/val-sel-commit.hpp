@@ -49,7 +49,7 @@ namespace Gecode {
         }
         /// \copydoc Gecode::ViewSel::random
         virtual bool
-        random(void) const {
+        random() const {
             return false;
         }
         /// View type
@@ -75,11 +75,11 @@ namespace Gecode {
         /// Perform cloning
         virtual ValSelCommitBase<View, Val>* copy(Space& home) = 0;
         /// Whether dispose must always be called (that is, notice is needed)
-        virtual bool notice(void) const = 0;
+        virtual bool notice() const = 0;
         /// Delete value selection
         virtual void dispose(Space& home) = 0;
         /// Unused destructor
-        virtual ~ValSelCommitBase(void);
+        virtual ~ValSelCommitBase();
         /// \name Memory management
         //@{
         /// Allocate memory from space
@@ -109,7 +109,7 @@ namespace Gecode {
             s.random_split(a);
         }
         bool
-        random(void) const override {
+        random() const override {
             return s.random();
         }
         /// Constructor for initialization
@@ -131,7 +131,7 @@ namespace Gecode {
         /// Perform cloning
         ValSelCommit<ValSel, ValCommit>* copy(Space& home) override;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const override;
+        bool notice() const override;
         /// Delete value selection
         void dispose(Space& home) override;
     };
@@ -144,7 +144,7 @@ namespace Gecode {
     forceinline
     ValSelCommitBase<View, Val>::ValSelCommitBase(Space&, ValSelCommitBase<View, Val>&) {}
     template <class View, class Val>
-    ValSelCommitBase<View, Val>::~ValSelCommitBase(void) = default;
+    ValSelCommitBase<View, Val>::~ValSelCommitBase() = default;
 
     template <class View, class Val>
     forceinline void
@@ -201,7 +201,7 @@ namespace Gecode {
 
     template <class ValSel, class ValCommit>
     bool
-    ValSelCommit<ValSel, ValCommit>::notice(void) const {
+    ValSelCommit<ValSel, ValCommit>::notice() const {
         return s.notice() || c.notice();
     }
 

@@ -92,7 +92,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new AllInterval(*this);
     }
     /// Print solution

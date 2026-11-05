@@ -65,7 +65,7 @@ namespace Test { namespace Int {
 
         public:
             /// Create and register test
-            NoVar(void) : Test("Sorted::NoVar", 2 * n, 0, 3) {}
+            NoVar() : Test("Sorted::NoVar", 2 * n, 0, 3) {}
             /// %Test whether \a xy is solution
             bool
             solution(const Assignment& xy) const override {
@@ -107,7 +107,7 @@ namespace Test { namespace Int {
 
         public:
             /// Create and register test
-            PermVar(void) : Test("Sorted::PermVar", 3 * n, 0, 2) {}
+            PermVar() : Test("Sorted::PermVar", 3 * n, 0, 2) {}
             /// %Test whether \a xyz is solution
             bool
             solution(const Assignment& xyz) const override {

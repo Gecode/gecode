@@ -56,11 +56,11 @@ namespace Gecode { namespace Int { namespace Channel {
         /// Update during cloning
         void update(Space& home, DomInfo<View, Offset>& vcb);
         /// Check whether propagation for assignment is to be done
-        bool doval(void) const;
+        bool doval() const;
         /// Check whether propagation for domain is to be done
-        bool dodom(void) const;
+        bool dodom() const;
         /// Record that view got assigned
-        void assigned(void);
+        void assigned();
         /// Record that one value got removed
         void removed(int i);
         /// Update the size and bounds information after pruning
@@ -87,19 +87,19 @@ namespace Gecode { namespace Int { namespace Channel {
 
     template <class View, class Offset>
     forceinline bool
-    DomInfo<View, Offset>::doval(void) const {
+    DomInfo<View, Offset>::doval() const {
         return (size != 1) && view.assigned();
     }
 
     template <class View, class Offset>
     forceinline bool
-    DomInfo<View, Offset>::dodom(void) const {
+    DomInfo<View, Offset>::dodom() const {
         return size != view.size();
     }
 
     template <class View, class Offset>
     forceinline void
-    DomInfo<View, Offset>::assigned(void) {
+    DomInfo<View, Offset>::assigned() {
         size = 1;
     }
 

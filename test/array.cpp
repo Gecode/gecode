@@ -251,11 +251,11 @@ namespace Test {
         /// Test space
         class TestSpace : public Gecode::Space {
         public:
-            TestSpace(void) : Space() {}
+            TestSpace() : Space() {}
             // NOLINTNEXTLINE(modernize-use-equals-default)
             TestSpace(TestSpace& s) : Space(s) {}
             Space*
-            copy(void) override {
+            copy() override {
                 return new TestSpace(*this);
             }
         };
@@ -267,10 +267,10 @@ namespace Test {
         class EmptyVector : public Test::Base {
         public:
             /// Initialize test
-            EmptyVector(void) : Test::Base(vector_prefix + "Empty") {}
+            EmptyVector() : Test::Base(vector_prefix + "Empty") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 std::vector<int> ints;
                 Gecode::IntArgs ia(ints);
                 if (ia.size() != 0)
@@ -297,10 +297,10 @@ namespace Test {
 
         public:
             /// Initialize test
-            VarArrayIterator(void) : Iterator("VarArray") {}
+            VarArrayIterator() : Iterator("VarArray") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 // Space for the test
                 TestSpace s;
                 // VarArray for the test
@@ -320,10 +320,10 @@ namespace Test {
 
         public:
             /// Initialize test
-            VarArgsIterator(void) : Iterator("VarArgs") {}
+            VarArgsIterator() : Iterator("VarArgs") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 // Space for the test
                 TestSpace s;
                 // VarArray for the test
@@ -343,10 +343,10 @@ namespace Test {
 
         public:
             /// Initialize test
-            ViewArrayIterator(void) : Iterator("ViewArray") {}
+            ViewArrayIterator() : Iterator("ViewArray") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 // Space for the test
                 TestSpace s;
                 // VarArray for the test
@@ -366,10 +366,10 @@ namespace Test {
 
         public:
             /// Initialize test
-            SharedArrayIterator(void) : Iterator("SharedArray") {}
+            SharedArrayIterator() : Iterator("SharedArray") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 // SharedArray for the test
                 Array a(_rand(n));
                 // Run the iterator test
@@ -394,10 +394,10 @@ namespace Test {
         class SharedDataCopyOnly : public Test::Base {
         public:
             /// Initialize test
-            SharedDataCopyOnly(void) : Test::Base("Array::SharedData::CopyOnly") {}
+            SharedDataCopyOnly() : Test::Base("Array::SharedData::CopyOnly") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 // A temporary must bind to the copying constructor
                 Gecode::SharedData<CopyOnlyData> d(CopyOnlyData(3));
                 return d().value == 3;

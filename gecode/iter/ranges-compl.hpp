@@ -50,13 +50,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// Iterator to compute complement for
         I i;
         /// Initialize
-        void start(void);
+        void start();
 
     public:
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Compl(void) = default;
+        Compl() = default;
         /// Initialize with iterator \a i
         Compl(I& i);
         /// Initialize with iterator \a i
@@ -66,7 +66,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
@@ -88,13 +88,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// Iterator to compute complement for
         I i;
         /// Initialize
-        void start(void);
+        void start();
 
     public:
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ComplVal(void) = default;
+        ComplVal() = default;
         /// Initialize with iterator \a i
         ComplVal(int umin, int umax, I& i);
         /// Initialize with iterator \a i
@@ -104,13 +104,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
     template <int UMIN, int UMAX, class I>
     forceinline void
-    Compl<UMIN, UMAX, I>::start(void) {
+    Compl<UMIN, UMAX, I>::start() {
         if (i()) {
             assert((i.min() >= UMIN) && (i.max() <= UMAX));
             if (i.min() > UMIN) {
@@ -145,7 +145,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <int UMIN, int UMAX, class I>
     forceinline void
-    Compl<UMIN, UMAX, I>::operator++(void) {
+    Compl<UMIN, UMAX, I>::operator++() {
         assert(!i() || (i.max() <= UMAX));
         if (i() && (i.max() < UMAX)) {
             mi = i.max() + 1;
@@ -158,7 +158,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I>
     forceinline void
-    ComplVal<I>::start(void) {
+    ComplVal<I>::start() {
         if (i()) {
             assert((i.min() >= universe_min) && (i.max() <= universe_max));
             if (i.min() > universe_min) {
@@ -195,7 +195,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I>
     forceinline void
-    ComplVal<I>::operator++(void) {
+    ComplVal<I>::operator++() {
         assert(!i() || (i.max() <= universe_max));
         if (i() && (i.max() < universe_max)) {
             mi = i.max() + 1;

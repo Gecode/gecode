@@ -53,7 +53,7 @@ namespace Gecode { namespace Set { namespace Channel {
 
     template <class View>
     forceinline int
-    ChannelBool<View>::IndexAdvisor::index(void) const {
+    ChannelBool<View>::IndexAdvisor::index() const {
         return idx;
     }
 

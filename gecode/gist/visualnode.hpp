@@ -33,7 +33,7 @@
 namespace Gecode { namespace Gist {
 
     forceinline
-    Extent::Extent(void)
+    Extent::Extent()
         : l(-1), r(-1) {}
 
     forceinline
@@ -59,7 +59,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline int
-    Shape::depth(void) const {
+    Shape::depth() const {
         return _depth;
     }
 
@@ -110,7 +110,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline void
-    Shape::compute_bounding_box(void) {
+    Shape::compute_bounding_box() {
         int last_left = 0;
         int last_right = 0;
         bb.left = 0;
@@ -124,12 +124,12 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline const BoundingBox&
-    Shape::get_bounding_box(void) const {
+    Shape::get_bounding_box() const {
         return bb;
     }
 
     forceinline bool
-    VisualNode::is_hidden(void) {
+    VisualNode::is_hidden() {
         return get_flag(HIDDEN);
     }
 
@@ -147,7 +147,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline int
-    VisualNode::get_offset(void) {
+    VisualNode::get_offset() {
         return offset;
     }
 
@@ -157,7 +157,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    VisualNode::is_dirty(void) {
+    VisualNode::is_dirty() {
         return get_flag(DIRTY);
     }
 
@@ -167,7 +167,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    VisualNode::children_layout_is_done(void) {
+    VisualNode::children_layout_is_done() {
         return get_flag(CHILDREN_LAYOUT_DONE);
     }
 
@@ -177,7 +177,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    VisualNode::is_marked(void) {
+    VisualNode::is_marked() {
         return get_flag(MARKED);
     }
 
@@ -187,7 +187,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    VisualNode::is_bookmarked(void) {
+    VisualNode::is_bookmarked() {
         return get_flag(BOOKMARKED);
     }
 
@@ -197,7 +197,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    VisualNode::is_on_path(void) {
+    VisualNode::is_on_path() {
         return get_flag(ONPATH);
     }
 
@@ -207,12 +207,12 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline Shape*
-    VisualNode::get_shape(void) {
+    VisualNode::get_shape() {
         return is_hidden() ? Shape::hidden : shape;
     }
 
     forceinline BoundingBox
-    VisualNode::get_bounding_box(void) {
+    VisualNode::get_bounding_box() {
         return get_shape()->get_bounding_box();
     }
 

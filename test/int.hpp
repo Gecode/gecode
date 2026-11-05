@@ -40,10 +40,10 @@ namespace Test { namespace Int {
      */
     inline Assignment::Assignment(int n0, const Gecode::IntSet& d0) : n(n0), d(d0) {}
     inline int
-    Assignment::size(void) const {
+    Assignment::size() const {
         return n;
     }
-    inline Assignment::~Assignment(void) = default;
+    inline Assignment::~Assignment() = default;
 
     inline CpltAssignment::CpltAssignment(int n, const Gecode::IntSet& d)
         : Assignment(n, d), dsv(new Gecode::IntSetValues[static_cast<unsigned int>(n)]) {
@@ -51,7 +51,7 @@ namespace Test { namespace Int {
             dsv[i].init(d);
     }
     inline bool
-    CpltAssignment::has_more(void) const {
+    CpltAssignment::has_more() const {
         return dsv[0]();
     }
     inline int
@@ -59,7 +59,7 @@ namespace Test { namespace Int {
         assert((i >= 0) && (i < n));
         return dsv[i].val();
     }
-    inline CpltAssignment::~CpltAssignment(void) {
+    inline CpltAssignment::~CpltAssignment() {
         delete[] dsv;
     }
 
@@ -84,7 +84,7 @@ namespace Test { namespace Int {
     }
 
     inline bool
-    RandomAssignment::has_more(void) const {
+    RandomAssignment::has_more() const {
         return a > 0;
     }
     inline int
@@ -92,7 +92,7 @@ namespace Test { namespace Int {
         assert((i >= 0) && (i < n));
         return vals[i];
     }
-    inline RandomAssignment::~RandomAssignment(void) {
+    inline RandomAssignment::~RandomAssignment() {
         delete[] vals;
     }
 
@@ -119,7 +119,7 @@ namespace Test { namespace Int {
     }
 
     inline bool
-    RandomMixAssignment::has_more(void) const {
+    RandomMixAssignment::has_more() const {
         return a > 0;
     }
 
@@ -129,7 +129,7 @@ namespace Test { namespace Int {
         return vals[i];
     }
 
-    inline RandomMixAssignment::~RandomMixAssignment(void) {
+    inline RandomMixAssignment::~RandomMixAssignment() {
         delete[] vals;
     }
 
@@ -138,15 +138,15 @@ namespace Test { namespace Int {
      *
      */
     forceinline bool
-    Test::eqv(void) const {
+    Test::eqv() const {
         return reified && ((rms & (1 << std::to_underlying(Gecode::RM_EQV))) != 0);
     }
     forceinline bool
-    Test::imp(void) const {
+    Test::imp() const {
         return reified && ((rms & (1 << std::to_underlying(Gecode::RM_IMP))) != 0);
     }
     forceinline bool
-    Test::pmi(void) const {
+    Test::pmi() const {
         return reified && ((rms & (1 << std::to_underlying(Gecode::RM_RIMP))) != 0);
     }
     inline Test::Test(TestTags tags, const std::string& p, const std::string& s, int a, const Gecode::IntSet& d, bool r,
@@ -299,63 +299,63 @@ namespace Test { namespace Int {
         return false;
     }
 
-    inline IntPropLevels::IntPropLevels(void) : i(sizeof(ipls) / sizeof(Gecode::IntPropLevel) - 1) {}
+    inline IntPropLevels::IntPropLevels() : i(sizeof(ipls) / sizeof(Gecode::IntPropLevel) - 1) {}
     inline bool
-    IntPropLevels::operator()(void) const {
+    IntPropLevels::operator()() const {
         return i >= 0;
     }
     inline void
-    IntPropLevels::operator++(void) {
+    IntPropLevels::operator++() {
         i--;
     }
     inline Gecode::IntPropLevel
-    IntPropLevels::ipl(void) const {
+    IntPropLevels::ipl() const {
         return ipls[i];
     }
 
-    inline IntPropBasicAdvanced::IntPropBasicAdvanced(void) : i(sizeof(ipls) / sizeof(Gecode::IntPropLevel) - 1) {}
+    inline IntPropBasicAdvanced::IntPropBasicAdvanced() : i(sizeof(ipls) / sizeof(Gecode::IntPropLevel) - 1) {}
     inline bool
-    IntPropBasicAdvanced::operator()(void) const {
+    IntPropBasicAdvanced::operator()() const {
         return i >= 0;
     }
     inline void
-    IntPropBasicAdvanced::operator++(void) {
+    IntPropBasicAdvanced::operator++() {
         i--;
     }
     inline Gecode::IntPropLevel
-    IntPropBasicAdvanced::ipl(void) const {
+    IntPropBasicAdvanced::ipl() const {
         return ipls[i];
     }
 
-    inline IntRelTypes::IntRelTypes(void) : i(sizeof(irts) / sizeof(Gecode::IntRelType) - 1) {}
+    inline IntRelTypes::IntRelTypes() : i(sizeof(irts) / sizeof(Gecode::IntRelType) - 1) {}
     inline void
-    IntRelTypes::reset(void) {
+    IntRelTypes::reset() {
         i = sizeof(irts) / sizeof(Gecode::IntRelType) - 1;
     }
     inline bool
-    IntRelTypes::operator()(void) const {
+    IntRelTypes::operator()() const {
         return i >= 0;
     }
     inline void
-    IntRelTypes::operator++(void) {
+    IntRelTypes::operator++() {
         i--;
     }
     inline Gecode::IntRelType
-    IntRelTypes::irt(void) const {
+    IntRelTypes::irt() const {
         return irts[i];
     }
 
-    inline BoolOpTypes::BoolOpTypes(void) : i(sizeof(bots) / sizeof(Gecode::BoolOpType) - 1) {}
+    inline BoolOpTypes::BoolOpTypes() : i(sizeof(bots) / sizeof(Gecode::BoolOpType) - 1) {}
     inline bool
-    BoolOpTypes::operator()(void) const {
+    BoolOpTypes::operator()() const {
         return i >= 0;
     }
     inline void
-    BoolOpTypes::operator++(void) {
+    BoolOpTypes::operator++() {
         i--;
     }
     inline Gecode::BoolOpType
-    BoolOpTypes::bot(void) const {
+    BoolOpTypes::bot() const {
         return bots[i];
     }
 

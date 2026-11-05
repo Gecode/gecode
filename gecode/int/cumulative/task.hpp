@@ -40,7 +40,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    ManFixPTask::ManFixPTask(void) {}
+    ManFixPTask::ManFixPTask() {}
     forceinline
     ManFixPTask::ManFixPTask(IntVar s, int p, int c)
         : Unary::ManFixPTask(s, p), _c(c) {}
@@ -56,11 +56,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
     }
 
     forceinline int
-    ManFixPTask::c(void) const {
+    ManFixPTask::c() const {
         return _c;
     }
     forceinline long long int
-    ManFixPTask::e(void) const {
+    ManFixPTask::e() const {
         return static_cast<long long int>(pmin()) * c();
     }
 
@@ -86,7 +86,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    ManFixPSETask::ManFixPSETask(void) {}
+    ManFixPSETask::ManFixPSETask() {}
     forceinline
     ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p, int c)
         : Unary::ManFixPSETask(t, s, p), _c(c) {}
@@ -102,11 +102,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
     }
 
     forceinline int
-    ManFixPSETask::c(void) const {
+    ManFixPSETask::c() const {
         return _c;
     }
     forceinline long long int
-    ManFixPSETask::e(void) const {
+    ManFixPSETask::e() const {
         return static_cast<long long int>(pmin()) * c();
     }
 
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    ManFlexTask::ManFlexTask(void) {}
+    ManFlexTask::ManFlexTask() {}
     forceinline
     ManFlexTask::ManFlexTask(IntVar s, IntVar p, IntVar e, int c)
         : Unary::ManFlexTask(s, p, e), _c(c) {}
@@ -148,11 +148,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
     }
 
     forceinline int
-    ManFlexTask::c(void) const {
+    ManFlexTask::c() const {
         return _c;
     }
     forceinline long long int
-    ManFlexTask::e(void) const {
+    ManFlexTask::e() const {
         return static_cast<long long int>(pmin()) * c();
     }
 
@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    OptFixPTask::OptFixPTask(void) {}
+    OptFixPTask::OptFixPTask() {}
     forceinline
     OptFixPTask::OptFixPTask(IntVar s, int p, int c, BoolVar m) {
         ManFixPTask::init(s, p, c);
@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         _m = m;
     }
     forceinline OptFixPTask::
-    operator Unary::OptFixPTask(void) {
+    operator Unary::OptFixPTask() {
         return Unary::OptFixPTask(_s, _p, _m);
     }
 
@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    OptFixPSETask::OptFixPSETask(void) {}
+    OptFixPSETask::OptFixPSETask() {}
     forceinline
     OptFixPSETask::OptFixPSETask(TaskType t, IntVar s, int p, int c, BoolVar m) {
         ManFixPSETask::init(t, s, p, c);
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         _m = m;
     }
     forceinline OptFixPSETask::
-    operator Unary::OptFixPSETask(void) {
+    operator Unary::OptFixPSETask() {
         return Unary::OptFixPSETask(_t, _s, _p, _m);
     }
 
@@ -245,7 +245,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    OptFlexTask::OptFlexTask(void) {}
+    OptFlexTask::OptFlexTask() {}
     forceinline
     OptFlexTask::OptFlexTask(IntVar s, IntVar p, IntVar e, int c, BoolVar m) {
         ManFlexTask::init(s, p, e, c);
@@ -257,7 +257,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         _m = m;
     }
     forceinline OptFlexTask::
-    operator Unary::OptFlexTask(void) {
+    operator Unary::OptFlexTask() {
         return Unary::OptFlexTask(_s, _p, _e, _m);
     }
 

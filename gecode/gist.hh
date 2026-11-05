@@ -95,11 +95,11 @@ namespace Gecode {
             /// Call-back function
             virtual void inspect(const Space& s) = 0;
             /// Name of the inspector
-            virtual std::string name(void);
+            virtual std::string name();
             /// Clean up when Gist exits
-            virtual void finalize(void);
+            virtual void finalize();
             /// Destructor
-            virtual ~Inspector(void);
+            virtual ~Inspector();
         };
 
         /** \brief Abstract base class for comparators
@@ -118,11 +118,11 @@ namespace Gecode {
             /// Call-back function
             virtual void compare(const Space& s0, const Space& s1) = 0;
             /// Name of the comparator
-            virtual std::string name(void);
+            virtual std::string name();
             /// Clean up when Gist exits
-            virtual void finalize(void);
+            virtual void finalize();
             /// Destructor
-            virtual ~Comparator(void);
+            virtual ~Comparator();
 
             //@}
 
@@ -159,11 +159,11 @@ namespace Gecode {
 
         protected:
             /// Initialize the implementation object
-            void init(void);
+            void init();
             /// Get the stream that is used to output text
-            std::ostream& get_stream(void);
+            std::ostream& get_stream();
             /// Flush stream
-            void flush(void);
+            void flush();
             /// Add html text \a s to the output
             void add_html(const char* s);
 
@@ -171,11 +171,11 @@ namespace Gecode {
             /// Constructor
             TextOutput(const std::string& name);
             /// Clean up when Gist exits
-            void finalize(void);
+            void finalize();
             /// Destructor
-            virtual ~TextOutput(void);
+            virtual ~TextOutput();
             /// Name of the inspector
-            virtual std::string name(void);
+            virtual std::string name();
         };
 
         /// An inspector for printing simple text output
@@ -187,9 +187,9 @@ namespace Gecode {
             /// Use the print method of the template class S to print a space
             void inspect(const Space& node) override;
             /// Return name
-            std::string name(void) override;
+            std::string name() override;
             /// Clean up when Gist exits
-            void finalize(void) override;
+            void finalize() override;
         };
 
         /**
@@ -210,9 +210,9 @@ namespace Gecode {
             /// Compare \a s0 to \a s1
             void compare(const Space& s0, const Space& s1) override;
             /// Return name
-            std::string name(void) override;
+            std::string name() override;
             /// Finalize when Gist exits
-            void finalize(void) override;
+            void finalize() override;
         };
 
         /// A branching that stops exploration
@@ -242,7 +242,7 @@ namespace Gecode {
 
             public:
                 /// Constructor
-                I_(void);
+                I_();
                 /// Add inspector that reacts on node double clicks
                 void click(Inspector* i);
                 /// Add inspector that reacts on each new solution that is found
@@ -264,7 +264,7 @@ namespace Gecode {
             /// Default options
             GECODE_GIST_EXPORT static const Options def;
             /// Initialize with default values
-            Options(void) = default;
+            Options() = default;
         };
 
         /// Create a new stand-alone Gist for \a root using \a bab

@@ -43,7 +43,7 @@ namespace Gecode { namespace Search { namespace Seq {
     template <class Tracer>
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    Path<Tracer>::Edge::Edge(void) {}
+    Path<Tracer>::Edge::Edge() {}
 
     template <class Tracer>
     forceinline
@@ -52,7 +52,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline Space*
-    Path<Tracer>::Edge::space(void) const {
+    Path<Tracer>::Edge::space() const {
         return _space;
     }
     template <class Tracer>
@@ -63,50 +63,50 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline unsigned int
-    Path<Tracer>::Edge::alt(void) const {
+    Path<Tracer>::Edge::alt() const {
         return _alt;
     }
     template <class Tracer>
     forceinline unsigned int
-    Path<Tracer>::Edge::true_alternative(void) const {
+    Path<Tracer>::Edge::true_alternative() const {
         return std::min(_alt, _choice->alternatives() - 1);
     }
     template <class Tracer>
     forceinline bool
-    Path<Tracer>::Edge::leftmost(void) const {
+    Path<Tracer>::Edge::leftmost() const {
         return _alt == 0;
     }
     template <class Tracer>
     forceinline bool
-    Path<Tracer>::Edge::rightmost(void) const {
+    Path<Tracer>::Edge::rightmost() const {
         return _alt + 1 >= _choice->alternatives();
     }
     template <class Tracer>
     forceinline bool
-    Path<Tracer>::Edge::lao(void) const {
+    Path<Tracer>::Edge::lao() const {
         return _alt >= _choice->alternatives();
     }
     template <class Tracer>
     forceinline void
-    Path<Tracer>::Edge::next(void) {
+    Path<Tracer>::Edge::next() {
         _alt++;
     }
 
     template <class Tracer>
     forceinline const Choice*
-    Path<Tracer>::Edge::choice(void) const {
+    Path<Tracer>::Edge::choice() const {
         return _choice;
     }
 
     template <class Tracer>
     forceinline unsigned int
-    Path<Tracer>::Edge::nid(void) const {
+    Path<Tracer>::Edge::nid() const {
         return _nid;
     }
 
     template <class Tracer>
     forceinline void
-    Path<Tracer>::Edge::dispose(void) {
+    Path<Tracer>::Edge::dispose() {
         delete _space;
         delete _choice;
     }
@@ -123,7 +123,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline unsigned int
-    Path<Tracer>::ngdl(void) const {
+    Path<Tracer>::ngdl() const {
         return _ngdl;
     }
 
@@ -148,7 +148,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline void
-    Path<Tracer>::next(void) {
+    Path<Tracer>::next() {
         while (!ds.empty())
             if (ds.top().rightmost()) {
                 ds.pop().dispose();
@@ -160,14 +160,14 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline typename Path<Tracer>::Edge&
-    Path<Tracer>::top(void) const {
+    Path<Tracer>::top() const {
         assert(!ds.empty());
         return ds.top();
     }
 
     template <class Tracer>
     forceinline bool
-    Path<Tracer>::empty(void) const {
+    Path<Tracer>::empty() const {
         return ds.empty();
     }
 
@@ -180,7 +180,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline int
-    Path<Tracer>::lc(void) const {
+    Path<Tracer>::lc() const {
         int l = ds.entries() - 1;
         while (ds[l].space() == nullptr)
             l--;
@@ -189,7 +189,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     forceinline int
-    Path<Tracer>::entries(void) const {
+    Path<Tracer>::entries() const {
         return ds.entries();
     }
 
@@ -217,7 +217,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     inline void
-    Path<Tracer>::reset(void) {
+    Path<Tracer>::reset() {
         while (!ds.empty())
             ds.pop().dispose();
     }

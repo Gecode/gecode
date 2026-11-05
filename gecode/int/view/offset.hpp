@@ -42,7 +42,7 @@ namespace Gecode { namespace Int {
      */
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    OffsetView::OffsetView(void) {}
+    OffsetView::OffsetView() {}
     forceinline
     OffsetView::OffsetView(const IntView& y, int d)
         : DerivedView<IntView>(y), c(d) {}
@@ -52,7 +52,7 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline int
-    OffsetView::offset(void) const {
+    OffsetView::offset() const {
         return c;
     }
     forceinline void
@@ -60,19 +60,19 @@ namespace Gecode { namespace Int {
         c = n;
     }
     forceinline int
-    OffsetView::min(void) const {
+    OffsetView::min() const {
         return x.min() + c;
     }
     forceinline int
-    OffsetView::max(void) const {
+    OffsetView::max() const {
         return x.max() + c;
     }
     forceinline int
-    OffsetView::med(void) const {
+    OffsetView::med() const {
         return x.med() + c;
     }
     forceinline int
-    OffsetView::val(void) const {
+    OffsetView::val() const {
         return x.val() + c;
     }
 #ifdef GECODE_HAS_CBS
@@ -83,19 +83,19 @@ namespace Gecode { namespace Int {
 #endif
 
     forceinline unsigned int
-    OffsetView::width(void) const {
+    OffsetView::width() const {
         return x.width();
     }
     forceinline unsigned int
-    OffsetView::size(void) const {
+    OffsetView::size() const {
         return x.size();
     }
     forceinline unsigned int
-    OffsetView::regret_min(void) const {
+    OffsetView::regret_min() const {
         return x.regret_min();
     }
     forceinline unsigned int
-    OffsetView::regret_max(void) const {
+    OffsetView::regret_max() const {
         return x.regret_max();
     }
 
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline bool
-    OffsetView::range(void) const {
+    OffsetView::range() const {
         return x.range();
     }
     forceinline bool
@@ -274,7 +274,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void) = default;
+        ViewRanges() = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const OffsetView& x);
         /// Initialize with ranges for view \a x

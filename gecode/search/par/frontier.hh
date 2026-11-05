@@ -62,7 +62,7 @@ namespace Gecode { namespace Search { namespace Par {
             /// Whether the node has been counted
             bool counted;
             /// Initialize
-            Task(void) : depth(0), revision(0), counted(false) {}
+            Task() : depth(0), revision(0), counted(false) {}
         };
         /// Thread running a worker
         class Runner : public Support::Runnable, public Support::Terminator {
@@ -77,11 +77,11 @@ namespace Gecode { namespace Search { namespace Par {
             /// Initialize
             Runner(Frontier& e, unsigned int i);
             /// Run worker
-            void run(void) override;
+            void run() override;
             /// Return terminator
-            Support::Terminator* terminator(void) const override;
+            Support::Terminator* terminator() const override;
             /// Signal termination
-            void terminated(void) override;
+            void terminated() override;
         };
         /// Search options
         Options opt;
@@ -117,15 +117,15 @@ namespace Gecode { namespace Search { namespace Par {
         /// \name Open nodes (called with the mutex held)
         //@{
         /// Whether there are open nodes
-        virtual bool open(void) const = 0;
+        virtual bool open() const = 0;
         /// Remove and return the next open node
-        virtual Entry select(void) = 0;
+        virtual Entry select() = 0;
         /// Add child \a e, or delete it; \a leased tells whether its parent is still leased
         virtual void submit(const Entry& e, bool leased) = 0;
         /// Called when all work is done, return whether there is new work
-        virtual bool advance(void) = 0;
+        virtual bool advance() = 0;
         /// Delete all open nodes
-        virtual void clear(void) = 0;
+        virtual void clear() = 0;
         /// Called with the root \a r when search starts
         virtual void started(const Space& r);
         //@}
@@ -143,13 +143,13 @@ namespace Gecode { namespace Search { namespace Par {
         /// Add pending task \a t
         void push(Task* t);
         /// Stop all workers (must be called by subclass destructors)
-        void terminate(void);
+        void terminate();
         /// Make \a s with bound \a b the incumbent, if it compares better
         void publish(Space* s, std::int64_t b);
         /// Start the threads
-        void launch(void);
+        void launch();
         /// Wake up all workers
-        void wake(void);
+        void wake();
         /// Whether worker \a id is currently enabled
         bool enabled(unsigned int id);
         /// Run worker \a id
@@ -157,13 +157,13 @@ namespace Gecode { namespace Search { namespace Par {
 
     public:
         /// Destructor
-        ~Frontier(void) override;
+        ~Frontier() override;
         /// Return next better solution (nullptr if none or stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Return statistics
-        Search::Statistics statistics(void) const override;
+        Search::Statistics statistics() const override;
         /// Return why the last call to next() returned no solution
-        EndReason end_reason(void) const override;
+        EndReason end_reason() const override;
         /// Constrain future solutions to be better than \a s
         void constrain(const Space& s) override;
         /// Reset engine to restart at space \a s

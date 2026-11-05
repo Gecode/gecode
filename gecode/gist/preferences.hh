@@ -59,9 +59,9 @@ namespace Gecode { namespace Gist {
         QSpinBox* ad_box;
     protected Q_SLOTS:
         /// Write settings
-        void write_back(void);
+        void write_back();
         /// Reset to defaults
-        void defaults(void);
+        void defaults();
         /// Toggle slow down setting
         void toggle_slow(int state);
 

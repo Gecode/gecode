@@ -85,7 +85,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new IntOrderSpace(*this);
         }
     };
@@ -114,7 +114,7 @@ namespace Test { namespace Assign {
         IntTieBreak(int n0) : Base("Int::Assign::TieBreak::" + std::to_string(n0)), n(n0) {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             TieBreak<IntVarBranch> vars(INT_VAR_MERIT_MAX(&int_merit_at<4>));
             if (n > 1)
@@ -140,10 +140,10 @@ namespace Test { namespace Assign {
     class IntVarSelection : public Base {
     public:
         /// Create and register test
-        IntVarSelection(void) : Base("Int::Assign::VarSelection") {}
+        IntVarSelection() : Base("Int::Assign::VarSelection") {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             IntOrderSpace* s = new IntOrderSpace(1);
             assign(*s, s->x, INT_VAR_MERIT_MAX(&int_merit_at<4>), INT_ASSIGN_MAX());

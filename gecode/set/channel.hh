@@ -163,7 +163,7 @@ namespace Gecode { namespace Set { namespace Channel {
             /// Constructor for cloning \a a
             IndexAdvisor(Space& home, IndexAdvisor& a);
             /// Access index
-            int index(void) const;
+            int index() const;
             /// Delete advisor
             template <class A>
             void dispose(Space& home, Council<A>& c);

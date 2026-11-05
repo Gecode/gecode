@@ -51,7 +51,7 @@ namespace Gecode { namespace FlatZinc {
     class VarSpec {
     public:
         /// Destructor
-        virtual ~VarSpec(void) = default;
+        virtual ~VarSpec() = default;
         /// Variable index
         int i;
         /// Whether the variable aliases another variable
@@ -85,7 +85,7 @@ namespace Gecode { namespace FlatZinc {
             alias = true;
             i = eq.v;
         }
-        ~IntVarSpec(void) override {
+        ~IntVarSpec() override {
             if (!alias && !assigned && domain())
                 delete domain.some();
         }
@@ -110,7 +110,7 @@ namespace Gecode { namespace FlatZinc {
             alias = true;
             i = eq.v;
         }
-        ~BoolVarSpec(void) override {
+        ~BoolVarSpec() override {
             if (!alias && !assigned && domain())
                 delete domain.some();
         }
@@ -159,7 +159,7 @@ namespace Gecode { namespace FlatZinc {
             alias = true;
             i = eq.v;
         }
-        ~SetVarSpec(void) override {
+        ~SetVarSpec() override {
             if (!alias && upper_bound())
                 delete upper_bound.some();
         }

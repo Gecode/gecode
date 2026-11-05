@@ -43,7 +43,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     forceinline
-    Asset::Asset(void)
+    Asset::Asset()
         : engine(nullptr), stop(nullptr), _coverage(SpokeCoverage::Full), _parked(false) {}
     forceinline void
     Asset::init(Engine* e, Stop* so, SpokeCoverage c) {
@@ -52,19 +52,19 @@ namespace Gecode { namespace Search { namespace Seq {
         _coverage = c;
     }
     forceinline SpokeCoverage
-    Asset::coverage(void) const {
+    Asset::coverage() const {
         return _coverage;
     }
     forceinline Space*
-    Asset::next(void) {
+    Asset::next() {
         return engine->next();
     }
     forceinline Statistics
-    Asset::statistics(void) const {
+    Asset::statistics() const {
         return engine->statistics();
     }
     forceinline EndReason
-    Asset::end_reason(void) const {
+    Asset::end_reason() const {
         return engine->end_reason();
     }
     forceinline void
@@ -72,18 +72,18 @@ namespace Gecode { namespace Search { namespace Seq {
         engine->constrain(b);
     }
     forceinline void
-    Asset::park(void) {
+    Asset::park() {
         _parked = true;
     }
     forceinline void
-    Asset::resume(void) {
+    Asset::resume() {
         _parked = false;
     }
     forceinline bool
-    Asset::parked(void) const {
+    Asset::parked() const {
         return _parked;
     }
-    forceinline Asset::~Asset(void) {
+    forceinline Asset::~Asset() {
         delete engine;
         delete stop;
     }
@@ -104,7 +104,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <bool best>
     Space*
-    PBS<best>::next(void) {
+    PBS<best>::next() {
         // An asset has proven that no further solution exists
         if (end == EndReason::Exhausted)
             return nullptr;
@@ -186,13 +186,13 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <bool best>
     EndReason
-    PBS<best>::end_reason(void) const {
+    PBS<best>::end_reason() const {
         return end;
     }
 
     template <bool best>
     Statistics
-    PBS<best>::statistics(void) const {
+    PBS<best>::statistics() const {
         Statistics s(stat);
         for (unsigned int i = 0U; i < n_assets; i++)
             s += assets[i].statistics();
@@ -209,7 +209,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     template <bool best>
-    PBS<best>::~PBS(void) {
+    PBS<best>::~PBS() {
         for (unsigned int i = 0U; i < n_assets; i++)
             assets[i].~Asset();
         // Note that n_assets might be different now!

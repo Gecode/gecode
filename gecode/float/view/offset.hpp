@@ -47,7 +47,7 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline FloatNum
-    OffsetView::offset(void) const {
+    OffsetView::offset() const {
         return c;
     }
     forceinline void
@@ -55,28 +55,28 @@ namespace Gecode { namespace Float {
         c = n;
     }
     forceinline FloatVal
-    OffsetView::domain(void) const {
+    OffsetView::domain() const {
         return x.domain() + c;
     }
     forceinline FloatNum
-    OffsetView::min(void) const {
+    OffsetView::min() const {
         return x.min() + c;
     }
     forceinline FloatNum
-    OffsetView::max(void) const {
+    OffsetView::max() const {
         return x.max() + c;
     }
     forceinline FloatNum
-    OffsetView::med(void) const {
+    OffsetView::med() const {
         return x.med() + c;
     }
     forceinline FloatVal
-    OffsetView::val(void) const {
+    OffsetView::val() const {
         return x.val() + c;
     }
 
     forceinline FloatNum
-    OffsetView::size(void) const {
+    OffsetView::size() const {
         return x.size();
     }
 
@@ -85,7 +85,7 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline bool
-    OffsetView::zero_in(void) const {
+    OffsetView::zero_in() const {
         return x.in(-c);
     }
     forceinline bool

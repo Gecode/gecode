@@ -33,11 +33,11 @@
 namespace Gecode { namespace Int { namespace NValues {
 
     forceinline
-    Graph::Graph(void)
+    Graph::Graph()
         : n_matched(0) {}
 
     forceinline int
-    Graph::size(void) const {
+    Graph::size() const {
         return n_matched;
     }
 
@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace NValues {
     }
 
     forceinline void
-    Graph::sync(void) {
+    Graph::sync() {
         using namespace ViewValGraph;
         Region r;
 
@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace NValues {
     }
 
     forceinline bool
-    Graph::mark(void) {
+    Graph::mark() {
         using namespace ViewValGraph;
         Region r;
 

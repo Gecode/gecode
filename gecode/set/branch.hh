@@ -143,7 +143,7 @@ namespace Gecode { namespace Set { namespace Branch {
         /// Return AFC over size as merit for view \a x at position \a i
         double operator()(const Space& home, SetView x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -167,7 +167,7 @@ namespace Gecode { namespace Set { namespace Branch {
         /// Return action over size as merit for view \a x at position \a i
         double operator()(const Space& home, SetView x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -191,7 +191,7 @@ namespace Gecode { namespace Set { namespace Branch {
         /// Return CHB Q-score over size as merit for view \a x at position \a i
         double operator()(const Space& home, SetView x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -287,7 +287,7 @@ namespace Gecode { namespace Set { namespace Branch {
             r = r.split(a);
         }
         bool
-        random(void) const {
+        random() const {
             return true;
         }
         /// Constructor for initialization
@@ -297,7 +297,7 @@ namespace Gecode { namespace Set { namespace Branch {
         /// Return value of view \a x at position \a i
         int val(const Space& home, SetView x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value selection
         void dispose(Space& home);
     };

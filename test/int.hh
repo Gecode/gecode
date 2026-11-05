@@ -76,15 +76,15 @@ namespace Test {
             /// Initialize assignments for \a n0 variables and values \a d0
             Assignment(int n0, const Gecode::IntSet& d0);
             /// Test whether all assignments have been iterated
-            virtual bool has_more(void) const = 0;
+            virtual bool has_more() const = 0;
             /// Move to next assignment
             virtual void next(Gecode::Support::RandomGenerator& rand) = 0;
             /// Return value for variable \a i
             virtual int operator[](int i) const = 0;
             /// Return number of variables
-            int size(void) const;
+            int size() const;
             /// Destructor
-            virtual ~Assignment(void);
+            virtual ~Assignment();
         };
 
         /// Generate all assignments
@@ -95,13 +95,13 @@ namespace Test {
             /// Initialize assignments for \a n0 variables and values \a d0
             CpltAssignment(int n, const Gecode::IntSet& d);
             /// Test whether all assignments have been iterated
-            bool has_more(void) const override;
+            bool has_more() const override;
             /// Move to next assignment
             void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
             int operator[](int i) const override;
             /// Destructor
-            ~CpltAssignment(void) override;
+            ~CpltAssignment() override;
         };
 
         /// Generate random selection of assignments
@@ -116,13 +116,13 @@ namespace Test {
             /// Initialize for \a a assignments for \a n0 variables and values \a d0
             RandomAssignment(int n, const Gecode::IntSet& d, int a0, Gecode::Support::RandomGenerator& rand);
             /// Test whether all assignments have been iterated
-            bool has_more(void) const override;
+            bool has_more() const override;
             /// Move to next assignment
             void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
             int operator[](int i) const override;
             /// Destructor
-            ~RandomAssignment(void) override;
+            ~RandomAssignment() override;
         };
 
         /// Generate random selection of assignments
@@ -140,13 +140,13 @@ namespace Test {
             RandomMixAssignment(int n0, const Gecode::IntSet& d0, int n1, const Gecode::IntSet& d1, int a0,
                                 Gecode::Support::RandomGenerator& rand);
             /// Test whether all assignments have been iterated
-            bool has_more(void) const override;
+            bool has_more() const override;
             /// Move to next assignment
             void next(Gecode::Support::RandomGenerator& rand) override;
             /// Return value for variable \a i
             int operator[](int i) const override;
             /// Destructor
-            ~RandomMixAssignment(void) override;
+            ~RandomMixAssignment() override;
         };
 
         /// Level of consistency to test for
@@ -192,13 +192,13 @@ namespace Test {
             /// Constructor for cloning \a s
             TestSpace(TestSpace& s);
             /// Copy space during cloning
-            Gecode::Space* copy(void) override;
+            Gecode::Space* copy() override;
             /// Test whether all variables are assigned
-            bool assigned(void) const;
+            bool assigned() const;
             /// Post propagator
-            void post(void);
+            void post();
             /// Compute a fixpoint and check for failure
-            bool failed(void);
+            bool failed();
             /// Randomly select an unassigned variable
             int rndvar(Gecode::Support::RandomGenerator& rand);
             /// Randomly select a pruning rel for variable \a i
@@ -223,14 +223,14 @@ namespace Test {
             /// Prune values but not those in assignment \a a
             bool prune(const Assignment& a, bool test_fixpoint, Gecode::Support::RandomGenerator& rand);
             /// Disable propagators in space and compute fixpoint (make all idle)
-            void disable(void);
+            void disable();
             /// Enable propagators in space
-            void enable(void);
+            void enable();
             /// Prune values also in a space \a c with disabled propagators, but not those in assignment \a a
             bool disabled(const Assignment& a, TestSpace& c, bool test_fixpoint,
                           Gecode::Support::RandomGenerator& rand);
             /// Return the number of propagators
-            unsigned int propagators(void);
+            unsigned int propagators();
         };
 
         /**
@@ -291,11 +291,11 @@ namespace Test {
             /// \name Test for reification modes
             //@{
             /// Test whether equivalence as reification mode is supported
-            bool eqv(void) const;
+            bool eqv() const;
             /// Test whether implication as reification mode is supported
-            bool imp(void) const;
+            bool imp() const;
             /// Test whether reverse implication as reification mode is supported
-            bool pmi(void) const;
+            bool pmi() const;
             //@}
         public:
             /**
@@ -355,7 +355,7 @@ namespace Test {
              * An override changes the assignments checked, not the variable
              * domains in the test space.
              */
-            virtual Assignment* assignment(void) const;
+            virtual Assignment* assignment() const;
             /// Check for solution
             virtual bool solution(const Assignment&) const = 0;
             /// Whether to ignore assignment for reification
@@ -365,7 +365,7 @@ namespace Test {
             /// Post reified constraint
             virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r);
             /// Perform test
-            bool run(void) override;
+            bool run() override;
             /// \name Mapping scalar values to strings
             //@{
             /// Map bool to string
@@ -416,7 +416,7 @@ namespace Test {
             /// Adapt the relation to the ordinary closed-list tests
             void post(Gecode::Space& home, Gecode::IntVarArray& x) override;
             /// Run closed-list tests and incremental histories
-            bool run(void) override;
+            bool run() override;
         };
         //@}
 
@@ -430,13 +430,13 @@ namespace Test {
 
         public:
             /// Initialize iterator
-            IntPropLevels(void);
+            IntPropLevels();
             /// Test whether iterator is done
-            bool operator()(void) const;
+            bool operator()() const;
             /// Increment to next level
-            void operator++(void);
+            void operator++();
             /// Return current level
-            Gecode::IntPropLevel ipl(void) const;
+            Gecode::IntPropLevel ipl() const;
         };
 
         /// Iterator for basic and advanced integer propagation levels
@@ -449,13 +449,13 @@ namespace Test {
 
         public:
             /// Initialize iterator
-            IntPropBasicAdvanced(void);
+            IntPropBasicAdvanced();
             /// Test whether iterator is done
-            bool operator()(void) const;
+            bool operator()() const;
             /// Increment to next level
-            void operator++(void);
+            void operator++();
             /// Return current level
-            Gecode::IntPropLevel ipl(void) const;
+            Gecode::IntPropLevel ipl() const;
         };
 
         /// Iterator for integer relation types
@@ -468,15 +468,15 @@ namespace Test {
 
         public:
             /// Initialize iterator
-            IntRelTypes(void);
+            IntRelTypes();
             /// Reset iterator
-            void reset(void);
+            void reset();
             /// Test whether iterator is done
-            bool operator()(void) const;
+            bool operator()() const;
             /// Increment to next relation type
-            void operator++(void);
+            void operator++();
             /// Return current relation type
-            Gecode::IntRelType irt(void) const;
+            Gecode::IntRelType irt() const;
         };
 
         /// Iterator for Boolean operation types
@@ -489,13 +489,13 @@ namespace Test {
 
         public:
             /// Initialize iterator
-            BoolOpTypes(void);
+            BoolOpTypes();
             /// Test whether iterator is done
-            bool operator()(void) const;
+            bool operator()() const;
             /// Increment to next operation type
-            void operator++(void);
+            void operator++();
             /// Return current operation type
-            Gecode::BoolOpType bot(void) const;
+            Gecode::BoolOpType bot() const;
         };
 
     } // namespace Int

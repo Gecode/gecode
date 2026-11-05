@@ -33,7 +33,7 @@
 namespace Gecode { namespace Gist {
 
     forceinline bool
-    LayoutCursor::may_move_downwards(void) {
+    LayoutCursor::may_move_downwards() {
         return NodeCursor<VisualNode>::may_move_downwards() && node()->is_dirty();
     }
 
@@ -41,7 +41,7 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(the_node, na) {}
 
     forceinline void
-    LayoutCursor::process_current_node(void) {
+    LayoutCursor::process_current_node() {
         VisualNode* current_node = node();
         if (current_node->is_dirty()) {
             if (current_node->is_hidden()) {

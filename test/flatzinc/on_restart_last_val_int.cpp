@@ -41,10 +41,10 @@ namespace Test { namespace FlatZinc { namespace {
     class UniformIntInvalidRange : public Base {
     public:
         /// Create and register test
-        UniformIntInvalidRange(void) : Base("FlatZinc::on_restart::uniform_int_invalid_range") {}
+        UniformIntInvalidRange() : Base("FlatZinc::on_restart::uniform_int_invalid_range") {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             std::stringstream source(R"FZN(
 predicate gecode_on_restart_uniform_int(int: low,int: high,var int: out);
 var 0..1: y;
@@ -64,7 +64,7 @@ solve satisfy;
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("on_restart::last_val_int",
                                    R"FZN(
 predicate gecode_on_restart_status(var int: s);
