@@ -3,7 +3,7 @@ schema_version = 1
 id = "found-bugs-002"
 key = "kernel"
 area = "found-bugs"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "high"
@@ -21,8 +21,18 @@ gecode/kernel/branch/val-commit.hpp:130 returns ES_FAILED/ES_OK from a ModEvent 
 
 ## Done when
 
-- [ ] Each of the four is fixed, with a test where the framework can express it.
+- [x] Each of the four is fixed, with a test where the framework can express it.
 
 ## Validation
 
 - Focused kernel and search tests, then check-standard in build/full.
+
+## Result
+
+val-commit returns ModEvent values, a type cleanup with no behaviour change. Space::realloc(T**) measures the old size with sizeof(T*). Shrinking through Space::rrealloc, Space::realloc and Region::realloc computed the tail as m - n, which underflowed, and now uses n - m. TFO guards its free, which has no effect in default builds. Search::relax fails the space when a post fails.
+
+Validation:
+
+- New tests Space::Realloc::Pointers, Space::Realloc::Shrink, Region::Realloc::Shrink and Search::Relax::Failed fail or crash on unfixed code and pass now.
+- check 565/565; standard suite 6838/6838, run directly with -threads 10 because check-standard is single-threaded; -test Search 25818/25818.
+- Fresh verifier (gpt-6.1-sol high) PASS with no findings.

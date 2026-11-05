@@ -1162,31 +1162,32 @@ namespace Test {
 
         WorkerControlPBSPause worker_control_pbs_pause;
 
+        /// Space for relaxing
+        class RelaxSpace : public Gecode::Space {
+        public:
+            RelaxSpace(void) = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
+            RelaxSpace(RelaxSpace& space) : Gecode::Space(space) {}
+            Gecode::Space*
+            copy(void) override {
+                return new RelaxSpace(*this);
+            }
+        };
+
         /// Relaxing empty variable arrays posts nothing
         class RelaxEmpty : public Base {
         private:
-            /// Space without variables
-            class Fixture : public Gecode::Space {
-            public:
-                Fixture(void) = default;
-                // NOLINTNEXTLINE(modernize-use-equals-default)
-                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
-                Gecode::Space*
-                copy(void) override {
-                    return new Fixture(*this);
-                }
-            };
             /// Test whether relaxing empty \a VarArgs leaves a space with exactly one solution
             template <class VarArgs>
             static bool
             relaxes_empty(void) {
-                Fixture* s = new Fixture;
+                RelaxSpace* s = new RelaxSpace;
                 Gecode::relax(*s, VarArgs(), VarArgs(), Gecode::Rnd(1U), 0.5);
                 bool solved = s->status() == Gecode::SS_SOLVED;
-                Gecode::DFS<Fixture> e(s);
+                Gecode::DFS<RelaxSpace> e(s);
                 delete s;
                 int n = 0;
-                while (Fixture* t = e.next()) {
+                while (RelaxSpace* t = e.next()) {
                     n++;
                     delete t;
                 }
@@ -1195,7 +1196,7 @@ namespace Test {
             /// Test whether relaxing empty arrays still checks the arguments
             static bool
             checks_arguments(void) {
-                Fixture s;
+                RelaxSpace s;
                 bool mismatch = false;
                 try {
                     Gecode::relax(s, Gecode::IntVarArgs(), Gecode::IntVarArgs(s, 1, 0, 0), Gecode::Rnd(1U), 0.5);
@@ -1227,6 +1228,22 @@ namespace Test {
         };
 
         RelaxEmpty relax_empty;
+
+        /// Relaxing fails the space when a value cannot be kept
+        class RelaxFailed : public Base {
+        public:
+            RelaxFailed(void) : Base("Search::Relax::Failed") {}
+            bool
+            run(void) override {
+                RelaxSpace s;
+                Gecode::IntVarArgs x(s, 2, 0, 0);
+                Gecode::IntVarArgs sx(s, 2, 1, 1);
+                Gecode::relax(s, x, sx, Gecode::Rnd(1U), 0.0);
+                return s.failed();
+            }
+        };
+
+        RelaxFailed relax_failed;
 
         /// %Test for depth-first search
         template <class Model>

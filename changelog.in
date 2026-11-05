@@ -151,6 +151,24 @@ Support::BitSetData::operator== is now defaulted and takes its argument by
 const reference. Int::LDSB::Literal now also has ==, !=, <=, >, and >=.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix shrinking with Space::realloc and Region::realloc. The size of the removed
+tail was computed with the wrong sign, so shrinking destroyed objects past the
+block and handed memory outside it to the space. Space::realloc for pointers
+also used the size of the pointed-to type, which lost pointers on growing.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fail the space in relax when a variable cannot take its value from the
+solution. The space stayed unfailed, so search continued from it.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

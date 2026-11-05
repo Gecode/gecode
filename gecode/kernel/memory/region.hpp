@@ -441,7 +441,7 @@ namespace Gecode {
             free<T>(b, n);
             return p;
         } else {
-            free<T>(b + m, m - n);
+            free<T>(b + m, n - m);
             return b;
         }
     }

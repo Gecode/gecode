@@ -2991,7 +2991,7 @@ namespace Gecode {
             }
             return p;
         } else {
-            rfree(b + m, m - n);
+            rfree(b + m, n - m);
             return b;
         }
     }
@@ -3074,7 +3074,7 @@ namespace Gecode {
             free<T>(b, n);
             return p;
         } else {
-            free<T>(b + m, m - n);
+            free<T>(b + m, n - m);
             return b;
         }
     }
@@ -3133,7 +3133,7 @@ namespace Gecode {
     template <class T>
     forceinline T**
     Space::realloc(T** b, long unsigned int n, long unsigned int m) {
-        return static_cast<T**>(rrealloc(b, n * sizeof(T), m * sizeof(T*)));
+        return static_cast<T**>(rrealloc(b, n * sizeof(T*), m * sizeof(T*)));
     }
     template <class T>
     forceinline T**
