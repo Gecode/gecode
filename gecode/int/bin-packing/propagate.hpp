@@ -355,7 +355,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         }
     }
 
-    template <int f(int, int, int)>
+    template <int (*f)(int, int, int)>
     forceinline int
     Pack::calc_dff_lower_bound_single_lambda(const int* weights, int n_weights, int capacity, int lambda) {
         // Transform and sum the weights
@@ -370,7 +370,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         return static_cast<int>(ceil_div_pp(sum_transformed_weights, static_cast<long long int>(transformed_capacity)));
     }
 
-    template <int f(int, int, int), LambdaRange l(int)>
+    template <int (*f)(int, int, int), LambdaRange (*l)(int)>
     forceinline int
     Pack::calc_dff_lower_bound(const int* weights, int n_weights, int capacity, int n_not_zero_weights, int max_weight,
                                bool sanitize) {

@@ -4811,8 +4811,10 @@ namespace Gecode {
 
     // Clang incorrectly reports an error on the access to u.idx[1] for BoolVarImp,
     // even though the access is guarded by pc_max > 0 which implies that the size is sufficient.
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warray-bounds"
+#endif
 
     template <class VIC>
     forceinline void
@@ -4895,7 +4897,9 @@ namespace Gecode {
             t[0] = static_cast<ActorLink*>(Support::join_pointer(p0, m0));
         }
     }
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif
 
     template <class VIC>
     forceinline void
