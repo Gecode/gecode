@@ -77,10 +77,10 @@ namespace Gecode { namespace Int { namespace LDSB {
     }
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
-    LDSBBrancher<View, n, Val, a, Filter, Print>::LDSBBrancher(
-        Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc, SymmetryImp<View>** syms,
-        int nsyms, BranchFilter<typename LDSBBrancher<View, n, Val, a, Filter, Print>::Var> bf,
-        VarValPrint<typename LDSBBrancher<View, n, Val, a, Filter, Print>::Var, Val> vvp)
+    LDSBBrancher<View, n, Val, a, Filter, Print>::LDSBBrancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n],
+                                                               ValSelCommitBase<View, Val>* vsc,
+                                                               SymmetryImp<View>** syms, int nsyms,
+                                                               BranchFilter<Var> bf, VarValPrint<Var, Val> vvp)
         : ViewValBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, std::move(bf), std::move(vvp)), _syms(syms),
           _nsyms(nsyms), _prev_pos(-1) {
         home.notice(*this, AP_DISPOSE, true);
@@ -98,8 +98,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
     forceinline
-    LDSBBrancher<View, n, Val, a, Filter, Print>::LDSBBrancher(Space& home,
-                                                               LDSBBrancher<View, n, Val, a, Filter, Print>& b)
+    LDSBBrancher<View, n, Val, a, Filter, Print>::LDSBBrancher(Space& home, LDSBBrancher& b)
         : ViewValBrancher<View, n, Val, a, Filter, Print>(home, b), _nsyms(b._nsyms), _prev_pos(b._prev_pos) {
         if (_nsyms > 0) {
             _syms = home.alloc<SymmetryImp<View>*>(_nsyms);

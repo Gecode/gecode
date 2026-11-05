@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B, class C, PropCond pc>
     forceinline
-    LinTer<Val, A, B, C, pc>::LinTer(Space& home, LinTer<Val, A, B, C, pc>& p)
+    LinTer<Val, A, B, C, pc>::LinTer(Space& home, LinTer& p)
         : Propagator(home, p), c(p.c) {
         x0.update(home, p.x0);
         x1.update(home, p.x1);
@@ -106,7 +106,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B, class C>
     forceinline
-    EqTer<Val, A, B, C>::EqTer(Space& home, EqTer<Val, A, B, C>& p)
+    EqTer<Val, A, B, C>::EqTer(Space& home, EqTer& p)
         : LinTer<Val, A, B, C, PC_INT_BND>(home, p) {}
 
     template <class Val, class A, class B, class C>
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B, class C>
     forceinline
-    NqTer<Val, A, B, C>::NqTer(Space& home, NqTer<Val, A, B, C>& p)
+    NqTer<Val, A, B, C>::NqTer(Space& home, NqTer& p)
         : LinTer<Val, A, B, C, PC_INT_VAL>(home, p) {}
 
     template <class Val, class A, class B, class C>
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B, class C>
     forceinline
-    LqTer<Val, A, B, C>::LqTer(Space& home, LqTer<Val, A, B, C>& p)
+    LqTer<Val, A, B, C>::LqTer(Space& home, LqTer& p)
         : LinTer<Val, A, B, C, PC_INT_BND>(home, p) {}
 
     template <class Val, class A, class B, class C>

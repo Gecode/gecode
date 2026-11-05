@@ -180,7 +180,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
     template <class View>
     forceinline
-    NaryMax<View>::NaryMax(Space& home, NaryMax<View>& p)
+    NaryMax<View>::NaryMax(Space& home, NaryMax& p)
         : NaryOnePropagator<View, PC_FLOAT_BND>(home, p) {}
 
     template <class View>

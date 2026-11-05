@@ -46,7 +46,7 @@ namespace Gecode { namespace Float { namespace Bool {
 
     template <class View>
     forceinline
-    Ite<View>::Ite(Space& home, Ite<View>& p)
+    Ite<View>::Ite(Space& home, Ite& p)
         : Propagator(home, p) {
         b.update(home, p.b);
         x0.update(home, p.x0);

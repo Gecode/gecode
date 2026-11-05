@@ -119,7 +119,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline
-    ValCommitFunction<View>::ValCommitFunction(Space& home, ValCommitFunction<View>& vc)
+    ValCommitFunction<View>::ValCommitFunction(Space& home, ValCommitFunction& vc)
         : ValCommit<View, Val>(home, vc), c(vc.c) {}
     template <class View>
     forceinline ModEvent

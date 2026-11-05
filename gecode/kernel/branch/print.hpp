@@ -100,7 +100,7 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline
-    BrancherPrint<View, Val>::BrancherPrint(BrancherPrint<View, Val>& bp)
+    BrancherPrint<View, Val>::BrancherPrint(BrancherPrint& bp)
         : p(bp.p) {}
 
     template <class View, class Val>
@@ -147,7 +147,7 @@ namespace Gecode {
     template <class View, class Val>
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    BrancherNoPrint<View, Val>::BrancherNoPrint(BrancherNoPrint<View, Val>&) {}
+    BrancherNoPrint<View, Val>::BrancherNoPrint(BrancherNoPrint&) {}
 
     template <class View, class Val>
     forceinline BrancherNoPrint<View, Val>::
