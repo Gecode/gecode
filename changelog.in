@@ -77,6 +77,43 @@ This release contains breaking changes. See the entries below for the
 changes downstream code needs.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The Rnd constructor taking a seed is explicit. Code that passes a number where
+a Rnd is expected, such as INT_VAR_RND(1U), must now write Rnd(1U). The implicit
+conversion also accepted floating-point values, which hid the bug in
+IntBoolVarBranch fixed in this release.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+IntBoolVarBranch keeps its decay factor, which was discarded so that AFC and
+action used a decay of 1. The default branchers follow the -decay option, which
+only search annotations honoured before.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Choices from set_search and set_default_search print the relations of their
+value selection. Before, set_search printed none, and set_default_search printed
+"in" and "not in" the wrong way round for outdomain_min and outdomain_max.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Searching for an extension to introduced variables follows the default search
+annotations after the space has been cloned, and no longer leaks the random
+number generator of a random selection.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
