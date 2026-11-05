@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B, PropCond pc>
     forceinline
-    LinBin<Val, A, B, pc>::LinBin(Space& home, LinBin<Val, A, B, pc>& p)
+    LinBin<Val, A, B, pc>::LinBin(Space& home, LinBin& p)
         : Propagator(home, p), c(p.c) {
         x0.update(home, p.x0);
         x1.update(home, p.x1);
@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B, PropCond pc, class Ctrl>
     forceinline
-    ReLinBin<Val, A, B, pc, Ctrl>::ReLinBin(Space& home, ReLinBin<Val, A, B, pc, Ctrl>& p)
+    ReLinBin<Val, A, B, pc, Ctrl>::ReLinBin(Space& home, ReLinBin& p)
         : Propagator(home, p), c(p.c) {
         x0.update(home, p.x0);
         x1.update(home, p.x1);
@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B>
     forceinline
-    EqBin<Val, A, B>::EqBin(Space& home, EqBin<Val, A, B>& p)
+    EqBin<Val, A, B>::EqBin(Space& home, EqBin& p)
         : LinBin<Val, A, B, PC_INT_BND>(home, p) {}
 
     template <class Val, class A, class B>
@@ -214,7 +214,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B, class Ctrl, ReifyMode rm>
     forceinline
-    ReEqBin<Val, A, B, Ctrl, rm>::ReEqBin(Space& home, ReEqBin<Val, A, B, Ctrl, rm>& p)
+    ReEqBin<Val, A, B, Ctrl, rm>::ReEqBin(Space& home, ReEqBin& p)
         : ReLinBin<Val, A, B, PC_INT_BND, Ctrl>(home, p) {}
 
     template <class Val, class A, class B, class Ctrl, ReifyMode rm>
@@ -268,7 +268,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B>
     forceinline
-    NqBin<Val, A, B>::NqBin(Space& home, NqBin<Val, A, B>& p)
+    NqBin<Val, A, B>::NqBin(Space& home, NqBin& p)
         : LinBin<Val, A, B, PC_INT_VAL>(home, p) {}
 
     template <class Val, class A, class B>
@@ -319,7 +319,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B>
     forceinline
-    LqBin<Val, A, B>::LqBin(Space& home, LqBin<Val, A, B>& p)
+    LqBin<Val, A, B>::LqBin(Space& home, LqBin& p)
         : LinBin<Val, A, B, PC_INT_BND>(home, p) {}
 
     template <class Val, class A, class B>
@@ -360,7 +360,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B>
     forceinline
-    GqBin<Val, A, B>::GqBin(Space& home, GqBin<Val, A, B>& p)
+    GqBin<Val, A, B>::GqBin(Space& home, GqBin& p)
         : LinBin<Val, A, B, PC_INT_BND>(home, p) {}
 
     template <class Val, class A, class B>
@@ -401,7 +401,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class A, class B, ReifyMode rm>
     forceinline
-    ReLqBin<Val, A, B, rm>::ReLqBin(Space& home, ReLqBin<Val, A, B, rm>& p)
+    ReLqBin<Val, A, B, rm>::ReLqBin(Space& home, ReLqBin& p)
         : ReLinBin<Val, A, B, PC_INT_BND, BoolView>(home, p) {}
 
     template <class Val, class A, class B, ReifyMode rm>

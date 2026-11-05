@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Circuit {
 
     template <class View, class Offset>
     forceinline
-    Base<View, Offset>::Base(Space& home, Base<View, Offset>& p)
+    Base<View, Offset>::Base(Space& home, Base& p)
         : NaryPropagator<View, Int::PC_INT_DOM>(home, p), start(p.start) {
         o.update(p.o);
         y.update(home, p.y);

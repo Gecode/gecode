@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     template <class View>
     forceinline
-    AbsBnd<View>::AbsBnd(Space& home, AbsBnd<View>& p)
+    AbsBnd<View>::AbsBnd(Space& home, AbsBnd& p)
         : BinaryPropagator<View, PC_INT_BND>(home, p) {}
 
     template <class View>
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     template <class View>
     forceinline
-    AbsDom<View>::AbsDom(Space& home, AbsDom<View>& p)
+    AbsDom<View>::AbsDom(Space& home, AbsDom& p)
         : BinaryPropagator<View, PC_INT_DOM>(home, p) {}
 
     template <class View>

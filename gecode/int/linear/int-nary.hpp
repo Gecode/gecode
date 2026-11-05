@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class P, class N, PropCond pc, class Ctrl>
     forceinline
-    ReLin<Val, P, N, pc, Ctrl>::ReLin(Space& home, ReLin<Val, P, N, pc, Ctrl>& p)
+    ReLin<Val, P, N, pc, Ctrl>::ReLin(Space& home, ReLin& p)
         : Lin<Val, P, N, pc>(home, p) {
         b.update(home, p.b);
     }
@@ -300,7 +300,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class P, class N>
     forceinline
-    Eq<Val, P, N>::Eq(Space& home, Eq<Val, P, N>& p)
+    Eq<Val, P, N>::Eq(Space& home, Eq& p)
         : Lin<Val, P, N, PC_INT_BND>(home, p) {}
 
     /**
@@ -412,7 +412,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class P, class N, class Ctrl, ReifyMode rm>
     forceinline
-    ReEq<Val, P, N, Ctrl, rm>::ReEq(Space& home, ReEq<Val, P, N, Ctrl, rm>& p)
+    ReEq<Val, P, N, Ctrl, rm>::ReEq(Space& home, ReEq& p)
         : ReLin<Val, P, N, PC_INT_BND, Ctrl>(home, p) {}
 
     template <class Val, class P, class N, class Ctrl, ReifyMode rm>
@@ -480,7 +480,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class P, class N>
     forceinline
-    Nq<Val, P, N>::Nq(Space& home, Nq<Val, P, N>& p)
+    Nq<Val, P, N>::Nq(Space& home, Nq& p)
         : Lin<Val, P, N, PC_INT_VAL>(home, p) {}
 
     /**
@@ -613,7 +613,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class P, class N>
     forceinline
-    Lq<Val, P, N>::Lq(Space& home, Lq<Val, P, N>& p)
+    Lq<Val, P, N>::Lq(Space& home, Lq& p)
         : Lin<Val, P, N, PC_INT_BND>(home, p) {}
 
     /**
@@ -795,7 +795,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class P, class N, ReifyMode rm>
     forceinline
-    ReLq<Val, P, N, rm>::ReLq(Space& home, ReLq<Val, P, N, rm>& p)
+    ReLq<Val, P, N, rm>::ReLq(Space& home, ReLq& p)
         : ReLin<Val, P, N, PC_INT_BND, BoolView>(home, p) {}
 
     template <class Val, class P, class N, ReifyMode rm>

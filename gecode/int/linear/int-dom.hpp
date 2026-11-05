@@ -370,7 +370,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class Val, class View>
     forceinline
-    DomEq<Val, View>::DomEq(Space& home, DomEq<Val, View>& p)
+    DomEq<Val, View>::DomEq(Space& home, DomEq& p)
         : Lin<Val, View, View, PC_INT_DOM>(home, p) {}
 
     template <class Val, class View>
