@@ -34,6 +34,8 @@
 
 #ifdef GECODE_HAS_SET_VARS
 
+#include <gecode/search.hh>
+
 namespace Test { namespace Assign {
 
     /// %Test assignment with disjoint union propagator
@@ -57,6 +59,59 @@ namespace Test { namespace Assign {
         Set d_4("Dense::4", Gecode::IntSet(-2, 2), 4);
         Set s_3("Sparse::3", Gecode::IntSet(s), 3);
         Set s_4("Sparse::4", Gecode::IntSet(s), 4);
+    } // namespace
+
+    /// Merit that prefers the last of five variables
+    double
+    set_merit_last(const Gecode::Space&, Gecode::SetVar, int i) {
+        return (i == 4) ? 1.0 : 0.0;
+    }
+
+    /// Space with five sets of which exactly one contains zero
+    class SetOrderSpace : public Gecode::Space {
+    public:
+        /// Variables to be assigned
+        Gecode::SetVarArray x;
+        /// Initialize test space
+        SetOrderSpace(void) : x(*this, 5, Gecode::IntSet::empty, Gecode::IntSet(0, 0)) {
+            Gecode::SetVar zero(*this, Gecode::IntSet(0, 0), Gecode::IntSet(0, 0));
+            Gecode::rel(*this, Gecode::SOT_DUNION, x, zero);
+        }
+        /// Constructor for cloning \a s
+        SetOrderSpace(SetOrderSpace& s) : Gecode::Space(s) {
+            x.update(*this, s.x);
+        }
+        /// Copy space during cloning
+        Gecode::Space*
+        copy(void) override {
+            return new SetOrderSpace(*this);
+        }
+    };
+
+    /// %Test that assignment follows a single variable selection
+    class SetVarSelection : public Base {
+    public:
+        /// Create and register test
+        SetVarSelection(void) : Base("Set::Assign::VarSelection") {}
+        /// Perform test
+        bool
+        run(void) override {
+            using namespace Gecode;
+            SetOrderSpace* s = new SetOrderSpace;
+            assign(*s, s->x, SET_VAR_MERIT_MAX(&set_merit_last), SET_ASSIGN_MIN_INC());
+            DFS<SetOrderSpace> e(s);
+            delete s;
+            SetOrderSpace* solution = e.next();
+            bool ok = solution != nullptr;
+            for (int i = 0; ok && (i < solution->x.size()); i++)
+                ok = solution->x[i].glb_size() == ((i == 4) ? 1U : 0U);
+            delete solution;
+            return ok;
+        }
+    };
+
+    namespace {
+        SetVarSelection var_selection;
     } // namespace
 
 }} // namespace Test::Assign

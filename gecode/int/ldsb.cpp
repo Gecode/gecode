@@ -140,7 +140,7 @@ namespace Gecode {
         return value_sequence_symmetry(a, n);
     }
     SymmetryHandle
-    values_reflect(const IntVar& x) {
+    values_reflect(IntVar x) {
         return values_reflect(x.min(), x.max());
     }
 } // namespace Gecode
