@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     template <ReifyMode rm>
     inline ExecStatus
     ReDivides<rm>::post(Home home, IntView x0, IntView x1, BoolView b) {
-        if (b.one() && (rm == RM_PMI))
+        if (b.one() && (rm == RM_RIMP))
             return ES_OK;
         if (b.zero() && (rm == RM_IMP))
             return ES_OK;
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             return ES_OK;
         }
         if (rt == RT_FALSE) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero(home));
             return ES_OK;
         }
@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     inline ExecStatus
     ReDivides<rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             const unsigned int s0 = x0.size();
             const unsigned int s1 = x1.size();
@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                 GECODE_ME_CHECK(b.one_none(home));
             break;
         case RT_FALSE:
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             break;
         case RT_MAYBE:

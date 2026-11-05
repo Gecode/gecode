@@ -705,7 +705,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     inline ExecStatus
     ReProductModVar<rm>::post(Home home, ViewArray<IntView>& x, IntView m, IntView y, BoolView b) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return ES_OK;
             return ProductModVar::post(home, x, m, y);
         }
@@ -750,7 +750,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     inline ExecStatus
     ReProductModVar<rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, ProductModVar::post(home(*this), x, m, y));
         }
@@ -772,7 +772,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                 GECODE_ME_CHECK(b.one_none(home));
             return home.ES_SUBSUMED(*this);
         case RT_FALSE:
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
         case RT_MAYBE:
@@ -807,7 +807,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     template <ReifyMode rm>
     inline ExecStatus
     ReProductMod<rm>::post(Home home, ViewArray<IntView>& x, int m, IntView y, BoolView b) {
-        if (b.one() && (rm == RM_PMI))
+        if (b.one() && (rm == RM_RIMP))
             return ES_OK;
         if (b.zero() && (rm == RM_IMP))
             return ES_OK;
@@ -819,7 +819,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                 GECODE_ME_CHECK(b.one(home));
             return ES_OK;
         case RT_FALSE:
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero(home));
             return ES_OK;
         case RT_MAYBE:
@@ -864,7 +864,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     inline ExecStatus
     ReProductMod<rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, ProductMod::post(home(*this), x, m, y));
         }
@@ -888,7 +888,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                 GECODE_ME_CHECK(b.one_none(home));
             return home.ES_SUBSUMED(*this);
         case RT_FALSE:
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
         case RT_MAYBE:

@@ -261,7 +261,7 @@ namespace Gecode { namespace FlatZinc {
               _fail("fail", "failure cutoff (0 = none, solution mode)"),
               _time("time", "time (in ms) cutoff (0 = none, solution mode)"),
               _time_limit("t", "time (in ms) cutoff (0 = none, solution mode)"), _seed("r", "random seed", 0),
-              _restart("restart", "restart sequence type", static_cast<int>(RM_NONE)),
+              _restart("restart", "restart sequence type", static_cast<int>(RESTART_NONE)),
               _r_base("restart-base", "base for geometric restart sequence", 1.5),
               _r_scale("restart-scale", "scale factor for restart sequence", 250),
               _r_limit("restart-limit", "restart cutoff (0 = none, solution mode)"),
@@ -278,13 +278,13 @@ namespace Gecode { namespace FlatZinc {
 #endif
         {
             _mode.add(static_cast<int>(Gecode::SM_SOLUTION), "solution");
-            _mode.add(static_cast<int>(Gecode::SM_STAT), "stat");
+            _mode.add(static_cast<int>(Gecode::SM_STATISTICS), "stat");
             _mode.add(static_cast<int>(Gecode::SM_GIST), "gist");
-            _restart.add(static_cast<int>(RM_NONE), "none");
-            _restart.add(static_cast<int>(RM_CONSTANT), "constant");
-            _restart.add(static_cast<int>(RM_LINEAR), "linear");
-            _restart.add(static_cast<int>(RM_LUBY), "luby");
-            _restart.add(static_cast<int>(RM_GEOMETRIC), "geometric");
+            _restart.add(static_cast<int>(RESTART_NONE), "none");
+            _restart.add(static_cast<int>(RESTART_CONSTANT), "constant");
+            _restart.add(static_cast<int>(RESTART_LINEAR), "linear");
+            _restart.add(static_cast<int>(RESTART_LUBY), "luby");
+            _restart.add(static_cast<int>(RESTART_GEOMETRIC), "geometric");
 
             add(_solutions);
             add(_threads);
@@ -324,7 +324,7 @@ namespace Gecode { namespace FlatZinc {
                 _time.value(_time_limit.value());
             }
             if (_stat.value() && (mode() == Gecode::SM_SOLUTION))
-                _mode.value(static_cast<int>(Gecode::SM_STAT));
+                _mode.value(static_cast<int>(Gecode::SM_STATISTICS));
         }
 
         void

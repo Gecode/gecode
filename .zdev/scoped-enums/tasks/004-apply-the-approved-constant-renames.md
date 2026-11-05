@@ -3,7 +3,7 @@ schema_version = 1
 id = "scoped-enums-004"
 key = "rename-constants"
 area = "scoped-enums"
-status = "open"
+status = "done"
 afk = true
 blocked_by = ["scoped-enums-003"]
 +++
@@ -19,9 +19,18 @@ Follow the earlier IRT_LE to IRT_LT rename (commit b835077bb2) as the model for 
 
 ## Done when
 
-- [ ] No old spelling of an approved rename remains as a declaration, a compatibility alias, or a live use in maintained code or generator output. Historical descriptions and explicit migration tables may keep the old spelling.
-- [ ] docs/code-style.md's table of renamed spellings and changelog.in list each rename.
+- [x] No old spelling of an approved rename remains as a declaration, a compatibility alias, or a live use in maintained code or generator output. Historical descriptions and explicit migration tables may keep the old spelling.
+- [x] docs/code-style.md's table of renamed spellings and changelog.in list each rename.
 
 ## Validation
 
 - Last task in the area: run `uv run misc/check.py all --build-dir build/full --jobs N`. Fix failures that this area caused. Report failures that already exist at the area base.
+
+## Result
+
+All 34 approved constant renames are applied with no compatibility aliases, listed in docs/code-style.md and changelog.in; printed strings and option values are unchanged, including the AOE that StdSearchTracer prints.
+
+Validation:
+
+- check.py all exit 0; ctest 8/8 and 7/7; doxygen.log empty; gecode-test -list unchanged in both builds
+- gecode-test -threads 8 -iter 2 -fixprob 1: -tag check 546/546, Set::Rel 855/855, FlatZinc 155/155, Int::Cumulatives 25/25; whole-word grep finds no live old spelling

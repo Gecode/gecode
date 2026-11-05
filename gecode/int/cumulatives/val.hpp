@@ -115,7 +115,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     }
 
     /// Types of events for the sweep-line
-    enum class EventType { EVENT_CHCK, EVENT_PROF, EVENT_PRUN };
+    enum class EventType { EVENT_CHECK, EVENT_PROF, EVENT_PRUNE };
     using enum EventType;
     /// An event collects the information for one event for the sweep-line
     class Event {
@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
             if (date == ev.date) {
                 if (e == EVENT_PROF && ev.e != EVENT_PROF)
                     return true;
-                if (e == EVENT_CHCK && ev.e == EVENT_PRUN)
+                if (e == EVENT_CHECK && ev.e == EVENT_PRUNE)
                     return true;
                 return false;
             }
@@ -259,8 +259,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
             for (int t = s.size(); t--;) {
                 if (m[t].assigned() && m[t].val() == r && s[t].max() < e[t].min()) {
                     if (at_most ? u[t].min() > std::min(0, c[r]) : u[t].max() < std::max(0, c[r])) {
-                        GECODE_PUSH_EVENTS(Event(EVENT_CHCK, t, s[t].max(), 1));
-                        GECODE_PUSH_EVENTS(Event(EVENT_CHCK, t, e[t].min(), -1));
+                        GECODE_PUSH_EVENTS(Event(EVENT_CHECK, t, s[t].max(), 1));
+                        GECODE_PUSH_EVENTS(Event(EVENT_CHECK, t, e[t].min(), -1));
                     }
                     if (at_most ? u[t].min() > 0 : u[t].max() < 0) {
                         GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, s[t].max(), at_most ? u[t].min() : u[t].max()));
@@ -274,7 +274,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                         GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, e[t].max(), at_most ? -u[t].min() : -u[t].max()));
                     }
                     if (!(m[t].assigned() && u[t].assigned() && s[t].assigned() && e[t].assigned())) {
-                        GECODE_PUSH_EVENTS(Event(EVENT_PRUN, t, s[t].min()));
+                        GECODE_PUSH_EVENTS(Event(EVENT_PRUNE, t, s[t].min()));
                     }
                 }
             }
@@ -301,19 +301,19 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
             d = events[ei].date;
             while (ei < events_size) {
-                if (events[ei].e != EVENT_PRUN) {
+                if (events[ei].e != EVENT_PRUNE) {
                     if (d != events[ei].date) {
                         GECODE_ES_CHECK(prune(home, d, events[ei].date - 1, r, ntask, su, contribution, prune_tasks,
                                               prune_tasks_size));
                         d = events[ei].date;
                     }
-                    if (events[ei].e == EVENT_CHCK) {
+                    if (events[ei].e == EVENT_CHECK) {
                         ntask += events[ei].inc;
                     } else /* if (events[ei].e == EVENT_PROF) */ {
                         su += events[ei].inc;
                         contribution[events[ei].task] += events[ei].inc;
                     }
-                } else /* if (events[ei].e == EVENT_PRUN) */ {
+                } else /* if (events[ei].e == EVENT_PRUNE) */ {
                     assert(prune_tasks_size < s.size());
                     prune_tasks[prune_tasks_size++] = events[ei].task;
                 }

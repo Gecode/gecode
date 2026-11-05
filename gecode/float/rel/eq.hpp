@@ -204,7 +204,7 @@ namespace Gecode { namespace Float { namespace Rel {
     ExecStatus
     ReEq<View, CtrlView, rm>::post(Home home, View x0, View x1, CtrlView b) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return ES_OK;
             return Eq<View, View>::post(home, x0, x1);
         }
@@ -236,7 +236,7 @@ namespace Gecode { namespace Float { namespace Rel {
     ExecStatus
     ReEq<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (Eq<View, View>::post(home(*this), x0, x1)));
         }
@@ -251,7 +251,7 @@ namespace Gecode { namespace Float { namespace Rel {
                 GECODE_ME_CHECK(b.one_none(home));
             break;
         case RT_FALSE:
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             break;
         case RT_MAYBE:
@@ -276,14 +276,14 @@ namespace Gecode { namespace Float { namespace Rel {
     ExecStatus
     ReEqFloat<View, CtrlView, rm>::post(Home home, View x, const FloatVal& c, CtrlView b) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x.eq(home, c));
         } else if (x.assigned()) {
             if (overlap(x.val(), c)) {
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one(home));
             } else {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
             }
         } else {
@@ -307,7 +307,7 @@ namespace Gecode { namespace Float { namespace Rel {
     ExecStatus
     ReEqFloat<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x0.eq(home, c));
         } else {
             switch (rtest_eq(x0, c)) {
@@ -316,7 +316,7 @@ namespace Gecode { namespace Float { namespace Rel {
                     GECODE_ME_CHECK(b.one(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 break;
             case RT_MAYBE:

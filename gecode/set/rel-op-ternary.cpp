@@ -43,7 +43,7 @@ namespace Gecode {
     void
     rel(Home home, SetVar x, SetOpType op, SetVar y, SetRelType r, SetVar z) {
         GECODE_POST;
-        if (r == SRT_CMPL) {
+        if (r == SRT_COMPLEMENT) {
             post_compl(home, x, op, y, z);
         } else {
             post_nocompl(home, x, op, y, r, z);

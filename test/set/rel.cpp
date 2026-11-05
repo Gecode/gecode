@@ -59,7 +59,7 @@ namespace Test { namespace Set {
         public:
             /// Create and register test
             RelBin(Gecode::SetRelType srt0, bool shared0)
-                : SetTest((srt0 == Gecode::SRT_CMPL) && !shared0 ? TestTags::standard() : TestTags::sweep(),
+                : SetTest((srt0 == Gecode::SRT_COMPLEMENT) && !shared0 ? TestTags::standard() : TestTags::sweep(),
                           "Rel::Bin::" + str(srt0) + "::S" + (shared0 ? "1" : "0"), shared0 ? 1 : 2, ds_33, true),
                   srt(srt0), shared(shared0) {}
             int
@@ -107,11 +107,11 @@ namespace Test { namespace Set {
                     return Iter::Ranges::subset(xr0, xr1);
                 case SRT_SUP:
                     return Iter::Ranges::subset(xr1, xr0);
-                case SRT_DISJ: {
+                case SRT_DISJOINT: {
                     Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> inter(xr0, xr1);
                     return !inter();
                 }
-                case SRT_CMPL: {
+                case SRT_COMPLEMENT: {
                     Gecode::Set::RangesCompl<CountableSetRanges> rc(xr0);
                     return Iter::Ranges::equal(rc, xr1);
                 }
@@ -174,8 +174,8 @@ namespace Test { namespace Set {
         RelBin _relbin_nq(Gecode::SRT_NQ, false);
         RelBin _relbin_sub(Gecode::SRT_SUB, false);
         RelBin _relbin_sup(Gecode::SRT_SUP, false);
-        RelBin _relbin_disj(Gecode::SRT_DISJ, false);
-        RelBin _relbin_cmpl(Gecode::SRT_CMPL, false);
+        RelBin _relbin_disj(Gecode::SRT_DISJOINT, false);
+        RelBin _relbin_cmpl(Gecode::SRT_COMPLEMENT, false);
         RelBin _relbin_shared_eq(Gecode::SRT_EQ, true);
         RelBin _relbin_shared_lq(Gecode::SRT_LQ, true);
         RelBin _relbin_shared_lt(Gecode::SRT_LT, true);
@@ -184,8 +184,8 @@ namespace Test { namespace Set {
         RelBin _relbin_shared_nq(Gecode::SRT_NQ, true);
         RelBin _relbin_shared_sub(Gecode::SRT_SUB, true);
         RelBin _relbin_shared_sup(Gecode::SRT_SUP, true);
-        RelBin _relbin_shared_disj(Gecode::SRT_DISJ, true);
-        RelBin _relbin_shared_cmpl(Gecode::SRT_CMPL, true);
+        RelBin _relbin_shared_disj(Gecode::SRT_DISJOINT, true);
+        RelBin _relbin_shared_cmpl(Gecode::SRT_COMPLEMENT, true);
 
         ITE _ite;
         //@}

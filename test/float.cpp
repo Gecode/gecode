@@ -411,7 +411,7 @@ namespace Test { namespace Float {
     Assignment*
     Test::assignment(void) const {
         switch (assignment_type) {
-        case CPLT_ASSIGNMENT:
+        case COMPLETE_ASSIGNMENT:
             return new CpltAssignment(arity, dom, step);
         case RANDOM_ASSIGNMENT:
             return new RandomAssignment(arity, dom, step, _rand);
@@ -656,7 +656,7 @@ namespace Test { namespace Float {
                 }
                 if (pmi()) {
                     START_TEST("Assignment reified (rewrite after post, <=)");
-                    TestSpace* s = new TestSpace(arity, dom, step, this, RM_PMI);
+                    TestSpace* s = new TestSpace(arity, dom, step, this, RM_RIMP);
                     s->post();
                     s->rel(sol == MT_TRUE);
                     s->assign(a, sol, false, _rand);
@@ -686,7 +686,7 @@ namespace Test { namespace Float {
                 }
                 if (pmi()) {
                     START_TEST("Assignment reified (immediate rewrite, <=)");
-                    TestSpace* s = new TestSpace(arity, dom, step, this, RM_PMI);
+                    TestSpace* s = new TestSpace(arity, dom, step, this, RM_RIMP);
                     s->rel(sol == MT_TRUE);
                     s->post();
                     s->assign(a, sol, false, _rand);
@@ -726,7 +726,7 @@ namespace Test { namespace Float {
                 }
                 if (pmi()) {
                     START_TEST("Assignment reified (before posting, <=)");
-                    TestSpace* s = new TestSpace(arity, dom, step, this, RM_PMI);
+                    TestSpace* s = new TestSpace(arity, dom, step, this, RM_RIMP);
                     s->assign(a, sol, false, _rand);
                     s->post();
                     CHECK_TEST(!s->failed(), "Failed");
@@ -772,7 +772,7 @@ namespace Test { namespace Float {
                 }
                 if (pmi()) {
                     START_TEST("Assignment reified (after posting, <=)");
-                    TestSpace* s = new TestSpace(arity, dom, step, this, RM_PMI);
+                    TestSpace* s = new TestSpace(arity, dom, step, this, RM_RIMP);
                     s->post();
                     s->assign(a, sol, false, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
@@ -829,7 +829,7 @@ namespace Test { namespace Float {
                 }
                 if (pmi()) {
                     START_TEST("Prune reified, <=");
-                    TestSpace* s = new TestSpace(arity, dom, step, this, RM_PMI);
+                    TestSpace* s = new TestSpace(arity, dom, step, this, RM_RIMP);
                     s->post();
                     while (!s->failed() && !s->match_assignment(a) &&
                            (!s->assigned() || ((sol == MT_TRUE) && !s->r.var().assigned())))

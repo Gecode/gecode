@@ -83,7 +83,7 @@ namespace Test { namespace FlatZinc {
 
             bool
             run(void) override {
-                return (mode({"-s"}) == Gecode::SM_STAT) && (mode({"-mode", "gist", "-s"}) == Gecode::SM_GIST) &&
+                return (mode({"-s"}) == Gecode::SM_STATISTICS) && (mode({"-mode", "gist", "-s"}) == Gecode::SM_GIST) &&
                        (mode({"-s", "-mode", "gist"}) == Gecode::SM_GIST);
             }
         };

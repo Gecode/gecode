@@ -1687,15 +1687,15 @@ namespace Gecode {
         /// Reason for restarting
         enum class RestartReason {
             /// No reason - used for PORTFOLIO
-            RR_NO,
+            RR_NONE,
             /// Restarting after initialisation
             RR_INIT,
             /// Restarting after a solution is found
-            RR_SOL,
+            RR_SOLUTION,
             /// Restarting after exhausting search space
-            RR_CMPL,
+            RR_COMPLETE,
             /// Restarting after reaching restart limit
-            RR_LIM
+            RR_LIMIT
         };
         using enum RestartReason;
 
@@ -3259,7 +3259,7 @@ namespace Gecode {
 
     forceinline
     MetaInfo::MetaInfo(unsigned int a0)
-        : t(PORTFOLIO), r(0), rr(RR_NO), s(0), f(0), l(nullptr), ng(NoGoods::eng), a(a0) {}
+        : t(PORTFOLIO), r(0), rr(RR_NONE), s(0), f(0), l(nullptr), ng(NoGoods::eng), a(a0) {}
 
     forceinline MetaInfo::Type
     MetaInfo::type(void) const {

@@ -156,15 +156,15 @@ namespace Gecode { namespace Driver {
     inline Search::Cutoff*
     create_cutoff(const Options& o) {
         switch (o.restart()) {
-        case RM_NONE:
+        case RESTART_NONE:
             return nullptr;
-        case RM_CONSTANT:
+        case RESTART_CONSTANT:
             return Search::Cutoff::constant(o.restart_scale());
-        case RM_LINEAR:
+        case RESTART_LINEAR:
             return Search::Cutoff::linear(o.restart_scale());
-        case RM_LUBY:
+        case RESTART_LUBY:
             return Search::Cutoff::luby(o.restart_scale());
-        case RM_GEOMETRIC:
+        case RESTART_GEOMETRIC:
             return Search::Cutoff::geometric(o.restart_scale(), o.restart_base());
         default:
             GECODE_NEVER;
@@ -291,11 +291,11 @@ namespace Gecode { namespace Driver {
     template <class Script, template <class> class Engine, class Options>
     void
     ScriptBase<BaseSpace>::run(const Options& o, Script* s) {
-        if ((o.restart() != RM_NONE) && (o.assets() > 0)) {
+        if ((o.restart() != RESTART_NONE) && (o.assets() > 0)) {
             std::cerr << "Cannot use restarts and portfolio..." << '\n' << std::flush;
             exit(EXIT_FAILURE);
         }
-        if (o.restart() != RM_NONE) {
+        if (o.restart() != RESTART_NONE) {
             run_meta<Script, Engine, Options, RBS>(o, s);
         } else if (o.assets() > 0) {
             run_meta<Script, Engine, Options, PBS>(o, s);
@@ -458,7 +458,7 @@ namespace Gecode { namespace Driver {
                 delete so.stop;
                 delete so.tracer;
             } break;
-            case SM_STAT: {
+            case SM_STATISTICS: {
                 l_out << o.name() << '\n' << std::flush;
                 Support::Timer t;
                 unsigned long long int s_l = (o.solutions() == 0) ? ULLONG_MAX : o.solutions();

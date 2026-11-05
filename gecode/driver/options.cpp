@@ -652,7 +652,7 @@ namespace Gecode {
           _time("time", "time (in ms) cutoff (0 = none, solution mode)"),
           _assets("assets", "#portfolio assets (#engines)", 0),
           _slice("slice", "portfolio slice (in #failures)", Search::Config::slice),
-          _restart("restart", "restart sequence type", static_cast<int>(RM_NONE)),
+          _restart("restart", "restart sequence type", static_cast<int>(RESTART_NONE)),
           _r_base("restart-base", "base for geometric restart sequence", Search::Config::base),
           _r_scale("restart-scale", "scale factor for restart sequence", Search::Config::slice),
           _r_limit("restart-limit", "restart cutoff (0 = none, solution mode)"),
@@ -686,14 +686,14 @@ namespace Gecode {
 
         _mode.add(static_cast<int>(SM_SOLUTION), "solution");
         _mode.add(static_cast<int>(SM_TIME), "time");
-        _mode.add(static_cast<int>(SM_STAT), "stat");
+        _mode.add(static_cast<int>(SM_STATISTICS), "stat");
         _mode.add(static_cast<int>(SM_GIST), "gist");
 
-        _restart.add(static_cast<int>(RM_NONE), "none");
-        _restart.add(static_cast<int>(RM_CONSTANT), "constant");
-        _restart.add(static_cast<int>(RM_LINEAR), "linear");
-        _restart.add(static_cast<int>(RM_LUBY), "luby");
-        _restart.add(static_cast<int>(RM_GEOMETRIC), "geometric");
+        _restart.add(static_cast<int>(RESTART_NONE), "none");
+        _restart.add(static_cast<int>(RESTART_CONSTANT), "constant");
+        _restart.add(static_cast<int>(RESTART_LINEAR), "linear");
+        _restart.add(static_cast<int>(RESTART_LUBY), "luby");
+        _restart.add(static_cast<int>(RESTART_GEOMETRIC), "geometric");
 
         add(_model);
         add(_symmetry);

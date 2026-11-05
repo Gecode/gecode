@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /**
          * \brief Initialize task
          *
-         * Depending on \a t, \a s is either the end time (if \a t is TT_FIXS)
+         * Depending on \a t, \a s is either the end time (if \a t is TT_FIXED_START)
          * or the start time of the task, and \a p is the fixed parameter.
          */
         ManFixPSETask(TaskType t, IntVar s, int p);

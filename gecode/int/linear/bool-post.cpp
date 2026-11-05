@@ -151,8 +151,8 @@ namespace Gecode { namespace Int { namespace Linear {
             case RM_IMP:
                 GECODE_ES_FAIL((ReEqBoolInt<BoolView, BoolView, RM_IMP>::post(home, x, c, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((ReEqBoolInt<BoolView, BoolView, RM_PMI>::post(home, x, c, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((ReEqBoolInt<BoolView, BoolView, RM_RIMP>::post(home, x, c, r.var())));
                 break;
             default:
                 GECODE_NEVER;
@@ -168,9 +168,9 @@ namespace Gecode { namespace Int { namespace Linear {
                 GECODE_ES_FAIL((ReEqBoolInt<BoolView, NegBoolView, RM_EQV>::post(home, x, c, nb)));
                 break;
             case RM_IMP:
-                GECODE_ES_FAIL((ReEqBoolInt<BoolView, NegBoolView, RM_PMI>::post(home, x, c, nb)));
+                GECODE_ES_FAIL((ReEqBoolInt<BoolView, NegBoolView, RM_RIMP>::post(home, x, c, nb)));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 GECODE_ES_FAIL((ReEqBoolInt<BoolView, NegBoolView, RM_IMP>::post(home, x, c, nb)));
                 break;
             default:
@@ -188,8 +188,8 @@ namespace Gecode { namespace Int { namespace Linear {
             case RM_IMP:
                 GECODE_ES_FAIL((ReGqBoolInt<BoolView, BoolView, RM_IMP>::post(home, x, c, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((ReGqBoolInt<BoolView, BoolView, RM_PMI>::post(home, x, c, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((ReGqBoolInt<BoolView, BoolView, RM_RIMP>::post(home, x, c, r.var())));
                 break;
             default:
                 GECODE_NEVER;
@@ -206,8 +206,8 @@ namespace Gecode { namespace Int { namespace Linear {
             case RM_IMP:
                 GECODE_ES_FAIL((ReGqBoolInt<NegBoolView, BoolView, RM_IMP>::post(home, x, n_p - c, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((ReGqBoolInt<NegBoolView, BoolView, RM_PMI>::post(home, x, n_p - c, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((ReGqBoolInt<NegBoolView, BoolView, RM_RIMP>::post(home, x, n_p - c, r.var())));
                 break;
             default:
                 GECODE_NEVER;
@@ -299,8 +299,8 @@ namespace Gecode { namespace Int { namespace Linear {
             case RM_IMP:
                 GECODE_ES_FAIL((ReEqBoolInt<BoolView, BoolView, RM_IMP>::post(home, x, -c, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((ReEqBoolInt<BoolView, BoolView, RM_PMI>::post(home, x, -c, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((ReEqBoolInt<BoolView, BoolView, RM_RIMP>::post(home, x, -c, r.var())));
                 break;
             default:
                 GECODE_NEVER;
@@ -316,9 +316,9 @@ namespace Gecode { namespace Int { namespace Linear {
                 GECODE_ES_FAIL((ReEqBoolInt<BoolView, NegBoolView, RM_EQV>::post(home, x, -c, nb)));
                 break;
             case RM_IMP:
-                GECODE_ES_FAIL((ReEqBoolInt<BoolView, NegBoolView, RM_PMI>::post(home, x, -c, nb)));
+                GECODE_ES_FAIL((ReEqBoolInt<BoolView, NegBoolView, RM_RIMP>::post(home, x, -c, nb)));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 GECODE_ES_FAIL((ReEqBoolInt<BoolView, NegBoolView, RM_IMP>::post(home, x, -c, nb)));
                 break;
             default:
@@ -336,8 +336,8 @@ namespace Gecode { namespace Int { namespace Linear {
             case RM_IMP:
                 GECODE_ES_FAIL((ReGqBoolInt<NegBoolView, BoolView, RM_IMP>::post(home, x, n_n + c, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((ReGqBoolInt<NegBoolView, BoolView, RM_PMI>::post(home, x, n_n + c, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((ReGqBoolInt<NegBoolView, BoolView, RM_RIMP>::post(home, x, n_n + c, r.var())));
                 break;
             default:
                 GECODE_NEVER;
@@ -354,8 +354,8 @@ namespace Gecode { namespace Int { namespace Linear {
             case RM_IMP:
                 GECODE_ES_FAIL((ReGqBoolInt<BoolView, BoolView, RM_IMP>::post(home, x, -c, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((ReGqBoolInt<BoolView, BoolView, RM_PMI>::post(home, x, -c, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((ReGqBoolInt<BoolView, BoolView, RM_RIMP>::post(home, x, -c, r.var())));
                 break;
             default:
                 GECODE_NEVER;
@@ -528,7 +528,7 @@ namespace Gecode { namespace Int { namespace Linear {
     post(Home home, Term<BoolView>* t, int n, IntRelType irt, int c, Reify r, IntPropLevel ipl) {
 
         if (r.var().one()) {
-            if (r.mode() != RM_PMI)
+            if (r.mode() != RM_RIMP)
                 post(home, t, n, irt, c, ipl);
             return;
         }
@@ -555,7 +555,7 @@ namespace Gecode { namespace Int { namespace Linear {
             switch (irt) {
             case IRT_EQ:
                 if ((d % gcd) != 0) {
-                    if (r.mode() != RM_PMI)
+                    if (r.mode() != RM_RIMP)
                         GECODE_ME_FAIL(BoolView(r.var()).zero(home));
                     return;
                 }
@@ -601,7 +601,7 @@ namespace Gecode { namespace Int { namespace Linear {
                 GECODE_NEVER;
             }
             if (fail) {
-                if (r.mode() != RM_PMI)
+                if (r.mode() != RM_RIMP)
                     GECODE_ME_FAIL(BoolView(r.var()).zero(home));
             } else {
                 if (r.mode() != RM_IMP)

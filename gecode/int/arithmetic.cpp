@@ -326,8 +326,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Arithmetic::ReGcd<RM_IMP>::post(home, x0, x1, x2, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Arithmetic::ReGcd<RM_PMI>::post(home, x0, x1, x2, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Arithmetic::ReGcd<RM_RIMP>::post(home, x0, x1, x2, r.var())));
             break;
         default:
             GECODE_NEVER;
@@ -345,8 +345,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Arithmetic::ReDivides<RM_IMP>::post(home, divisor, dividend, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Arithmetic::ReDivides<RM_PMI>::post(home, divisor, dividend, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Arithmetic::ReDivides<RM_RIMP>::post(home, divisor, dividend, r.var())));
             break;
         default:
             GECODE_NEVER;
@@ -373,8 +373,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Arithmetic::ReProduct<RM_IMP>::post(home, xv, y, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Arithmetic::ReProduct<RM_PMI>::post(home, xv, y, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Arithmetic::ReProduct<RM_RIMP>::post(home, xv, y, r.var())));
             break;
         default:
             GECODE_NEVER;
@@ -405,8 +405,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Arithmetic::ReProductMod<RM_IMP>::post(home, xv, m, yv, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Arithmetic::ReProductMod<RM_PMI>::post(home, xv, m, yv, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Arithmetic::ReProductMod<RM_RIMP>::post(home, xv, m, yv, r.var())));
             break;
         default:
             GECODE_NEVER;
@@ -433,8 +433,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Arithmetic::ReProductModVar<RM_IMP>::post(home, xv, m, y, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Arithmetic::ReProductModVar<RM_PMI>::post(home, xv, m, y, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Arithmetic::ReProductModVar<RM_RIMP>::post(home, xv, m, y, r.var())));
             break;
         default:
             GECODE_NEVER;

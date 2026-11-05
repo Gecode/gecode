@@ -3,13 +3,13 @@
 # Tasks: scoped-enums
 
 - Total: 4
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 3
+- Done: 4
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [scoped-enums-001](tasks/001-inventory-public-enums-and-unclear-constants.md) | Inventory public enums and unclear constants | done | config-header-003 (config-header: done), empty-arrays-002 (empty-arrays: done), value-params-003 (value-params: done), boost-005 (boost: done), empty-arrays-011 (empty-arrays: done) |
 | [scoped-enums-002](tasks/002-approve-the-enum-inventory-and-constant-renames.md) | Approve the enum inventory and constant renames | done | scoped-enums-001 |
 | [scoped-enums-003](tasks/003-scope-the-approved-enums.md) | Scope the approved enums | done | scoped-enums-002 |
-| [scoped-enums-004](tasks/004-apply-the-approved-constant-renames.md) | Apply the approved constant renames | ready | scoped-enums-003 |
+| [scoped-enums-004](tasks/004-apply-the-approved-constant-renames.md) | Apply the approved constant renames | done | scoped-enums-003 |

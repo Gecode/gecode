@@ -1158,7 +1158,7 @@ namespace Gecode {
          * For a constraint \f$c\f$ and a Boolean control variable \f$b\f$
          * defines that \f$c\Rightarrow b=1\f$ is propagated.
          */
-        RM_PMI
+        RM_RIMP
     };
     using enum ReifyMode;
 
@@ -1317,9 +1317,9 @@ namespace Gecode {
      * \ingroup TaskModelInt
      */
     enum class TaskType {
-        TT_FIXP, //< Task with fixed processing time
-        TT_FIXS, //< Task with fixed start time
-        TT_FIXE  //< Task with fixed end time
+        TT_FIXED_PROCESSING, //< Task with fixed processing time
+        TT_FIXED_START,      //< Task with fixed start time
+        TT_FIXED_END         //< Task with fixed end time
     };
     using enum TaskType;
 
@@ -4070,13 +4070,13 @@ namespace Gecode {
      * Schedule tasks with flexible times \a flex and fixed times \a fix
      * on a unary resource. For each
      * task, it depends on \a t how the flexible and fix times are interpreted:
-     *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_PROCESSING</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    processing time.
-     *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_START</code>, then
      *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
      *    start time.
-     *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_END</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    end time.
      *
@@ -4098,8 +4098,8 @@ namespace Gecode {
      *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s
      *    and \a p are of different size.
      *  - Throws an exception of type Int::OutOfLimits, if \a p contains
-     *    an integer that is negative for a task with type <code>TT_FIXP</code>
-     *    or that could generate an overflow.
+     *    an integer that is negative for a task with type
+     *    <code>TT_FIXED_PROCESSING</code> or that could generate an overflow.
      */
     GECODE_INT_EXPORT void unary(Home home, const TaskTypeArgs& t, const IntVarArgs& flex, const IntArgs& fix,
                                  IntPropLevel ipl = IPL_DEF);
@@ -4110,13 +4110,13 @@ namespace Gecode {
      * and whether a task is mandatory \a m (a task is mandatory if the
      * Boolean variable is 1) on a unary resource. For each
      * task, it depends on \a t how the flexible and fix times are interpreted:
-     *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_PROCESSING</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    processing time.
-     *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_START</code>, then
      *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
      *    start time.
-     *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_END</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    end time.
      *
@@ -4139,8 +4139,8 @@ namespace Gecode {
      *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
      *    \a p, or \a m are of different size.
      *  - Throws an exception of type Int::OutOfLimits, if \a p contains
-     *    an integer that is negative for a task with type <code>TT_FIXP</code>
-     *    or that could generate an overflow.
+     *    an integer that is negative for a task with type
+     *    <code>TT_FIXED_PROCESSING</code> or that could generate an overflow.
      */
     GECODE_INT_EXPORT void unary(Home home, const TaskTypeArgs& t, const IntVarArgs& flex, const IntArgs& fix,
                                  const BoolVarArgs& m, IntPropLevel ipl = IPL_DEF);
@@ -4210,13 +4210,13 @@ namespace Gecode {
      * Schedule tasks with flexible times \a flex, fixed times \a fix, and
      * use capacity \a u on a cumulative resource with capacity \a c. For each
      * task, it depends on \a t how the flexible and fix times are interpreted:
-     *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_PROCESSING</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    processing time.
-     *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_START</code>, then
      *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
      *    start time.
-     *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_END</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    end time.
      *
@@ -4276,13 +4276,13 @@ namespace Gecode {
      * mandatory if the Boolean variable is 1) on a cumulative resource with
      * capacity \a c. For each
      * task, it depends on \a t how the flexible and fix times are interpreted:
-     *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_PROCESSING</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    processing time.
-     *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_START</code>, then
      *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
      *    start time.
-     *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_END</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    end time.
      *

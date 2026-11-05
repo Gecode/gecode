@@ -52,13 +52,13 @@ namespace Gecode { namespace Int { namespace Dom {
     ExecStatus
     ReIntSet<View, rm>::post(Home home, View x, const IntSet& s, BoolView b) {
         if (s.ranges() == 0) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return ES_OK;
             GECODE_ME_CHECK(b.zero(home));
         } else if (s.ranges() == 1) {
             return ReRange<View, rm>::post(home, x, s.min(), s.max(), b);
         } else if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return ES_OK;
             IntSetRanges i_is(s);
             GECODE_ME_CHECK(x.inter_r(home, i_is, false));
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Dom {
     ReIntSet<View, rm>::propagate(Space& home, const ModEventDelta&) {
         IntSetRanges i_is(is);
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x0.inter_r(home, i_is, false));
             return home.ES_SUBSUMED(*this);
         }
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Dom {
                     GECODE_ME_CHECK(b.one_none(home));
                 return home.ES_SUBSUMED(*this);
             case Iter::Ranges::CS_DISJOINT:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 return home.ES_SUBSUMED(*this);
             case Iter::Ranges::CS_NONE:

@@ -147,13 +147,13 @@ namespace Test { namespace Int {
     }
     forceinline bool
     Test::pmi(void) const {
-        return reified && ((rms & (1 << std::to_underlying(Gecode::RM_PMI))) != 0);
+        return reified && ((rms & (1 << std::to_underlying(Gecode::RM_RIMP))) != 0);
     }
     inline Test::Test(TestTags tags, const std::string& p, const std::string& s, int a, const Gecode::IntSet& d, bool r,
                       Gecode::IntPropLevel i)
         : Base(p + s, tags), arity(a), dom(d), reified(r),
           rms((1 << std::to_underlying(Gecode::RM_EQV)) | (1 << std::to_underlying(Gecode::RM_IMP)) |
-              (1 << std::to_underlying(Gecode::RM_PMI))),
+              (1 << std::to_underlying(Gecode::RM_RIMP))),
           ipl(i), consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
           test_fixpoint(true) {}
 
@@ -165,7 +165,7 @@ namespace Test { namespace Int {
                       Gecode::IntPropLevel i)
         : Base("Int::" + s, tags), arity(a), dom(d), reified(r),
           rms((1 << std::to_underlying(Gecode::RM_EQV)) | (1 << std::to_underlying(Gecode::RM_IMP)) |
-              (1 << std::to_underlying(Gecode::RM_PMI))),
+              (1 << std::to_underlying(Gecode::RM_RIMP))),
           ipl(i), consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
           test_fixpoint(true) {}
 
@@ -176,7 +176,7 @@ namespace Test { namespace Int {
                       Gecode::IntPropLevel i)
         : Base(p + s, tags), arity(a), dom(min, max), reified(r),
           rms((1 << std::to_underlying(Gecode::RM_EQV)) | (1 << std::to_underlying(Gecode::RM_IMP)) |
-              (1 << std::to_underlying(Gecode::RM_PMI))),
+              (1 << std::to_underlying(Gecode::RM_RIMP))),
           ipl(i), consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
           test_fixpoint(true) {}
 
@@ -187,7 +187,7 @@ namespace Test { namespace Int {
     inline Test::Test(TestTags tags, const std::string& s, int a, int min, int max, bool r, Gecode::IntPropLevel i)
         : Base("Int::" + s, tags), arity(a), dom(min, max), reified(r),
           rms((1 << std::to_underlying(Gecode::RM_EQV)) | (1 << std::to_underlying(Gecode::RM_IMP)) |
-              (1 << std::to_underlying(Gecode::RM_PMI))),
+              (1 << std::to_underlying(Gecode::RM_RIMP))),
           ipl(i), consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
           test_fixpoint(true) {}
 

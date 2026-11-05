@@ -205,8 +205,8 @@ private:
     void
     same(Space& home, int nn, const IntVarArgs& a, const IntVarArgs& b) {
         SetVar u(home, IntSet::empty, 1, nn);
-        rel(home, SOT_DUNION, a, u);
-        rel(home, SOT_DUNION, b, u);
+        rel(home, SOT_DISJOINT_UNION, a, u);
+        rel(home, SOT_DISJOINT_UNION, b, u);
     }
 
     /// The fields of column \a c outside box row \a j
@@ -303,18 +303,18 @@ public:
 
         IntSet full(1, nn * nn);
         // All x must be pairwise disjoint and partition the field indices
-        rel(*this, SOT_DUNION, y, SetVar(*this, full, full));
+        rel(*this, SOT_DISJOINT_UNION, y, SetVar(*this, full, full));
 
         // The x must intersect in exactly one element with each
         // row, column, and block
         for (int i = 0; i < nn; i++)
             for (int j = 0; j < nn; j++) {
                 SetVar inter_row(*this, IntSet::empty, full, 1U, 1U);
-                rel(*this, y[i], SOT_INTER, row[j], SRT_EQ, inter_row);
+                rel(*this, y[i], SOT_INTERSECTION, row[j], SRT_EQ, inter_row);
                 SetVar inter_col(*this, IntSet::empty, full, 1U, 1U);
-                rel(*this, y[i], SOT_INTER, col[j], SRT_EQ, inter_col);
+                rel(*this, y[i], SOT_INTERSECTION, col[j], SRT_EQ, inter_col);
                 SetVar inter_block(*this, IntSet::empty, full, 1U, 1U);
-                rel(*this, y[i], SOT_INTER, block[j], SRT_EQ, inter_block);
+                rel(*this, y[i], SOT_INTERSECTION, block[j], SRT_EQ, inter_block);
             }
 
         // Fill-in predefined fields

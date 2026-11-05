@@ -169,9 +169,9 @@ namespace Test { namespace Int {
                     return ret <= c;
                 case Gecode::SRT_SUP:
                     return ret >= c;
-                case Gecode::SRT_DISJ:
+                case Gecode::SRT_DISJOINT:
                     return ret + c != 2;
-                case Gecode::SRT_CMPL:
+                case Gecode::SRT_COMPLEMENT:
                     return ret != c;
                 default:
                     GECODE_NEVER;
@@ -203,10 +203,10 @@ namespace Test { namespace Int {
                 case Gecode::SRT_SUP:
                     Gecode::rel(home, e >= res);
                     break;
-                case Gecode::SRT_DISJ:
+                case Gecode::SRT_DISJOINT:
                     Gecode::rel(home, e || res);
                     break;
-                case Gecode::SRT_CMPL:
+                case Gecode::SRT_COMPLEMENT:
                     Gecode::rel(home, e == -res);
                     break;
                 default:
@@ -239,10 +239,10 @@ namespace Test { namespace Int {
                 case Gecode::SRT_SUP:
                     irel = (e >= res);
                     break;
-                case Gecode::SRT_DISJ:
+                case Gecode::SRT_DISJOINT:
                     irel = (e || res);
                     break;
-                case Gecode::SRT_CMPL:
+                case Gecode::SRT_COMPLEMENT:
                     irel = (e == -res);
                     break;
                 default:
@@ -255,7 +255,7 @@ namespace Test { namespace Int {
                 case Gecode::RM_IMP:
                     Gecode::rel(home, r.var() >> irel);
                     break;
-                case Gecode::RM_PMI:
+                case Gecode::RM_RIMP:
                     Gecode::rel(home, r.var() << irel);
                     break;
                 }
@@ -304,9 +304,9 @@ namespace Test { namespace Int {
                     return ret0 <= ret1;
                 case Gecode::SRT_SUP:
                     return ret0 >= ret1;
-                case Gecode::SRT_DISJ:
+                case Gecode::SRT_DISJOINT:
                     return ret0 + ret1 != 2;
-                case Gecode::SRT_CMPL:
+                case Gecode::SRT_COMPLEMENT:
                     return ret0 != ret1;
                 default:
                     GECODE_NEVER;
@@ -348,10 +348,10 @@ namespace Test { namespace Int {
                 case Gecode::SRT_SUP:
                     Gecode::rel(home, e0 >= e1);
                     break;
-                case Gecode::SRT_DISJ:
+                case Gecode::SRT_DISJOINT:
                     Gecode::rel(home, e0 || e1);
                     break;
-                case Gecode::SRT_CMPL:
+                case Gecode::SRT_COMPLEMENT:
                     Gecode::rel(home, e0 == -e1);
                     break;
                 default:
@@ -393,10 +393,10 @@ namespace Test { namespace Int {
                 case Gecode::SRT_SUP:
                     srel = (e0 >= e1);
                     break;
-                case Gecode::SRT_DISJ:
+                case Gecode::SRT_DISJOINT:
                     srel = (e0 || e1);
                     break;
-                case Gecode::SRT_CMPL:
+                case Gecode::SRT_COMPLEMENT:
                     srel = (e0 == -e1);
                     break;
                 default:
@@ -409,7 +409,7 @@ namespace Test { namespace Int {
                 case Gecode::RM_IMP:
                     Gecode::rel(home, r.var() >> srel);
                     break;
-                case Gecode::RM_PMI:
+                case Gecode::RM_RIMP:
                     Gecode::rel(home, r.var() << srel);
                     break;
                 }
@@ -1919,8 +1919,8 @@ namespace Test { namespace Int {
                     (void)new SetExprConst(TestTags::sweep(), si[i], s, Gecode::SRT_SUB, 1);
                     (void)new SetExprConst(TestTags::sweep(), si[i], s, Gecode::SRT_SUP, 0);
                     (void)new SetExprConst(TestTags::sweep(), si[i], s, Gecode::SRT_SUP, 1);
-                    (void)new SetExprConst(TestTags::sweep(), si[i], s, Gecode::SRT_DISJ, 0);
-                    (void)new SetExprConst(TestTags::sweep(), si[i], s, Gecode::SRT_DISJ, 1);
+                    (void)new SetExprConst(TestTags::sweep(), si[i], s, Gecode::SRT_DISJOINT, 0);
+                    (void)new SetExprConst(TestTags::sweep(), si[i], s, Gecode::SRT_DISJOINT, 1);
 
                     if ((i % 31) == 0) {
 
@@ -1940,7 +1940,7 @@ namespace Test { namespace Int {
                                 (void)new SetExprExpr(TestTags::sweep(), si[i], si[j], ss, Gecode::SRT_NQ);
                                 (void)new SetExprExpr(TestTags::sweep(), si[i], si[j], ss, Gecode::SRT_SUB);
                                 (void)new SetExprExpr(TestTags::sweep(), si[i], si[j], ss, Gecode::SRT_SUP);
-                                (void)new SetExprExpr(TestTags::sweep(), si[i], si[j], ss, Gecode::SRT_DISJ);
+                                (void)new SetExprExpr(TestTags::sweep(), si[i], si[j], ss, Gecode::SRT_DISJOINT);
                             }
                         }
                     }

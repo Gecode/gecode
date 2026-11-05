@@ -248,11 +248,11 @@ namespace Test {
                 if (++i == argc)
                     goto missing;
                 if (argv[i][0] == '^')
-                    test_patterns.emplace_back(MT_FIRST, argv[i] + 1);
+                    test_patterns.emplace_back(MATCH_FIRST, argv[i] + 1);
                 else if (argv[i][0] == '-')
-                    test_patterns.emplace_back(MT_NOT, argv[i] + 1);
+                    test_patterns.emplace_back(MATCH_NOT, argv[i] + 1);
                 else
-                    test_patterns.emplace_back(MT_ANY, argv[i]);
+                    test_patterns.emplace_back(MATCH_ANY, argv[i]);
             } else if (!strcmp(argv[i], "-tag")) {
                 if (++i == argc)
                     goto missing;
@@ -289,7 +289,7 @@ namespace Test {
         }
 
         if (replay) {
-            if (test_patterns.size() != 1 || test_patterns[0].first != MT_ANY || start_from != nullptr) {
+            if (test_patterns.size() != 1 || test_patterns[0].first != MATCH_ANY || start_from != nullptr) {
                 std::cerr << "-replay requires one exact -test name." << '\n' << std::flush;
                 exit(EXIT_FAILURE);
             }
@@ -320,7 +320,7 @@ namespace Test {
             for (const auto& type_pattern : test_patterns) {
                 const auto& type = type_pattern.first;
                 const auto& pattern = type_pattern.second;
-                if (type == MT_NOT) { // Negative pattern
+                if (type == MATCH_NOT) { // Negative pattern
                     if (test_name.find(pattern) != std::string::npos) {
                         // Test matches a negative pattern, should not run
                         return false;
@@ -330,8 +330,8 @@ namespace Test {
                     positive_patterns = true;
                     if (!match_found) {
                         // No match found yet, test with current pattern
-                        if (((type == MT_ANY) && (test_name.find(pattern) != std::string::npos)) ||
-                            ((type == MT_FIRST) && (test_name.find(pattern) == 0)))
+                        if (((type == MATCH_ANY) && (test_name.find(pattern) != std::string::npos)) ||
+                            ((type == MATCH_FIRST) && (test_name.find(pattern) == 0)))
                             match_found = true;
                     }
                 }

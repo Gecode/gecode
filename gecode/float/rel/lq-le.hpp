@@ -135,7 +135,7 @@ namespace Gecode { namespace Float { namespace Rel {
     ExecStatus
     ReLq<View, CtrlView, rm>::post(Home home, View x0, View x1, CtrlView b) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return ES_OK;
             return Lq<View>::post(home, x0, x1);
         }
@@ -151,7 +151,7 @@ namespace Gecode { namespace Float { namespace Rel {
                     GECODE_ME_CHECK(b.one_none(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 break;
             case RT_MAYBE:
@@ -186,7 +186,7 @@ namespace Gecode { namespace Float { namespace Rel {
     ExecStatus
     ReLq<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_REWRITE(*this, Lq<View>::post(home(*this), x0, x1));
         } else if (b.zero()) {
             if (rm != RM_IMP)
@@ -198,7 +198,7 @@ namespace Gecode { namespace Float { namespace Rel {
                     GECODE_ME_CHECK(b.one_none(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 break;
             case RT_MAYBE:
@@ -230,7 +230,7 @@ namespace Gecode { namespace Float { namespace Rel {
     ExecStatus
     ReLqFloat<View, CtrlView, rm>::post(Home home, View x, const FloatVal& c, CtrlView b) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x.lq(home, c.max()));
         }
         if (b.zero()) {
@@ -247,7 +247,7 @@ namespace Gecode { namespace Float { namespace Rel {
                     GECODE_ME_CHECK(b.one(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 break;
             case RT_MAYBE:
@@ -275,7 +275,7 @@ namespace Gecode { namespace Float { namespace Rel {
     ExecStatus
     ReLqFloat<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x0.lq(home, c.max()));
         } else if (b.zero()) {
             if (rm != RM_IMP) {
@@ -291,7 +291,7 @@ namespace Gecode { namespace Float { namespace Rel {
                     GECODE_ME_CHECK(b.one(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 break;
             case RT_MAYBE:
@@ -317,7 +317,7 @@ namespace Gecode { namespace Float { namespace Rel {
     ExecStatus
     ReLeFloat<View, CtrlView, rm>::post(Home home, View x, const FloatVal& c, CtrlView b) {
         if (b.one()) {
-            if (rm != RM_PMI) {
+            if (rm != RM_RIMP) {
                 GECODE_ME_CHECK(x.lq(home, c.max()));
                 if (x.assigned() && (x.max() >= c.min()))
                     return ES_FAILED;
@@ -333,7 +333,7 @@ namespace Gecode { namespace Float { namespace Rel {
                     GECODE_ME_CHECK(b.one(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 break;
             case RT_MAYBE:
@@ -361,7 +361,7 @@ namespace Gecode { namespace Float { namespace Rel {
     ExecStatus
     ReLeFloat<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm != RM_PMI) {
+            if (rm != RM_RIMP) {
                 GECODE_ME_CHECK(x0.lq(home, c.max()));
                 if (x0.assigned()) {
                     return (x0.max() >= c.min()) ? ES_FAILED : home.ES_SUBSUMED(*this);
@@ -377,7 +377,7 @@ namespace Gecode { namespace Float { namespace Rel {
                     GECODE_ME_CHECK(b.one(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 break;
             case RT_MAYBE:

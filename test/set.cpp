@@ -219,10 +219,10 @@ namespace Test { namespace Set {
             case Gecode::SRT_SUP:
                 olog << "sup";
                 break;
-            case Gecode::SRT_DISJ:
+            case Gecode::SRT_DISJOINT:
                 olog << "||";
                 break;
-            case Gecode::SRT_CMPL:
+            case Gecode::SRT_COMPLEMENT:
                 olog << "^-1 = ";
                 break;
             }
@@ -314,7 +314,7 @@ namespace Test { namespace Set {
             diff_v(diff);
         for (int j = 0; j < v; j++, ++diff_v) {
         }
-        rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diff_v.val(), diff_v.val()));
+        rel(i, Gecode::SRT_DISJOINT, Gecode::IntSet(diff_v.val(), diff_v.val()));
     }
 
     void
@@ -327,8 +327,8 @@ namespace Test { namespace Set {
             diff_v(diff);
         for (int j = 0; j < v; j++, ++diff_v) {
         }
-        rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diff_v.val(), diff_v.val()));
-        c.rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diff_v.val(), diff_v.val()));
+        rel(i, Gecode::SRT_DISJOINT, Gecode::IntSet(diff_v.val(), diff_v.val()));
+        c.rel(i, Gecode::SRT_DISJOINT, Gecode::IntSet(diff_v.val(), diff_v.val()));
     }
 
     void
@@ -870,7 +870,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (rewrite after post, <=)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_RIMP);
                     s->post();
                     s->rel(is_sol);
                     s->assign(a, _rand);
@@ -903,7 +903,7 @@ namespace Test { namespace Set {
                 }
                 {
                     START_TEST("Assignment reified (rewrite failure, <=)");
-                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_RIMP);
                     s->post();
                     s->rel(!is_sol);
                     s->assign(a, _rand);
@@ -937,7 +937,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (immediate rewrite, <=)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_RIMP);
                     s->rel(is_sol);
                     s->post();
                     s->assign(a, _rand);
@@ -970,7 +970,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (immediate failure, <=)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_RIMP);
                     s->rel(!is_sol);
                     s->post();
                     s->assign(a, _rand);
@@ -1014,7 +1014,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (before posting, <=)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_RIMP);
                     s->assign(a, _rand);
                     s->post();
                     CHECK_TEST(!s->failed(), "Failed");
@@ -1059,7 +1059,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (after posting, <=)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_RIMP);
                     s->post();
                     s->assign(a, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
@@ -1108,7 +1108,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (after posting, <=, disable)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_RIMP);
                     s->post();
                     s->disable();
                     s->assign(a, _rand);
@@ -1166,7 +1166,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Prune reified, <=");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_RIMP);
                     s->post();
                     while (!s->failed() && (!s->assigned() || (is_sol && !s->r.var().assigned())))
                         if (!s->prune(a, _rand)) {
@@ -1201,11 +1201,11 @@ namespace Test { namespace Set {
         return false;
     }
 
-    const Gecode::SetRelType SetRelTypes::srts[] = {Gecode::SRT_EQ,  Gecode::SRT_NQ,   Gecode::SRT_SUB,
-                                                    Gecode::SRT_SUP, Gecode::SRT_DISJ, Gecode::SRT_CMPL};
+    const Gecode::SetRelType SetRelTypes::srts[] = {Gecode::SRT_EQ,  Gecode::SRT_NQ,       Gecode::SRT_SUB,
+                                                    Gecode::SRT_SUP, Gecode::SRT_DISJOINT, Gecode::SRT_COMPLEMENT};
 
-    const Gecode::SetOpType SetOpTypes::sots[] = {Gecode::SOT_UNION, Gecode::SOT_DUNION, Gecode::SOT_INTER,
-                                                  Gecode::SOT_MINUS};
+    const Gecode::SetOpType SetOpTypes::sots[] = {Gecode::SOT_UNION, Gecode::SOT_DISJOINT_UNION,
+                                                  Gecode::SOT_INTERSECTION, Gecode::SOT_MINUS};
 
 }} // namespace Test::Set
 

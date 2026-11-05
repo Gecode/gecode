@@ -87,9 +87,9 @@ namespace Test {
 
     /// How to match
     enum class MatchType {
-        MT_ANY,  //< Positive match anywhere in string
-        MT_NOT,  //< Negative match
-        MT_FIRST //< Positive match at beginning
+        MATCH_ANY,  //< Positive match anywhere in string
+        MATCH_NOT,  //< Negative match
+        MATCH_FIRST //< Positive match at beginning
     };
     using enum MatchType;
 

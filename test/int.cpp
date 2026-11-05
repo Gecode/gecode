@@ -930,7 +930,7 @@ namespace Test { namespace Int {
                 if (pmi()) {
                     {
                         START_TEST("Assignment reified (rewrite after post, <=)");
-                        TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
+                        TestSpace* s = new TestSpace(arity, dom, this, RM_RIMP);
                         s->post();
                         s->rel(sol);
                         s->assign(a, false, _rand);
@@ -940,7 +940,7 @@ namespace Test { namespace Int {
                     }
                     {
                         START_TEST("Assignment reified (rewrite failure, <=)");
-                        TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
+                        TestSpace* s = new TestSpace(arity, dom, this, RM_RIMP);
                         s->post();
                         s->rel(!sol);
                         s->assign(a, false, _rand);
@@ -954,7 +954,7 @@ namespace Test { namespace Int {
                     }
                     {
                         START_TEST("Assignment reified (immediate rewrite, <=)");
-                        TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
+                        TestSpace* s = new TestSpace(arity, dom, this, RM_RIMP);
                         s->rel(sol);
                         s->post();
                         s->assign(a, false, _rand);
@@ -964,7 +964,7 @@ namespace Test { namespace Int {
                     }
                     {
                         START_TEST("Assignment reified (immediate failure, <=)");
-                        TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
+                        TestSpace* s = new TestSpace(arity, dom, this, RM_RIMP);
                         s->rel(!sol);
                         s->post();
                         s->assign(a, false, _rand);
@@ -978,7 +978,7 @@ namespace Test { namespace Int {
                     }
                     {
                         START_TEST("Assignment reified (before posting, <=)");
-                        TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
+                        TestSpace* s = new TestSpace(arity, dom, this, RM_RIMP);
                         s->assign(a, false, _rand);
                         s->post();
                         CHECK_TEST(!s->failed(), "Failed");
@@ -993,7 +993,7 @@ namespace Test { namespace Int {
                     }
                     {
                         START_TEST("Assignment reified (after posting, <=)");
-                        TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
+                        TestSpace* s = new TestSpace(arity, dom, this, RM_RIMP);
                         s->post();
                         s->assign(a, false, _rand);
                         CHECK_TEST(!s->failed(), "Failed");
@@ -1008,7 +1008,7 @@ namespace Test { namespace Int {
                     }
                     {
                         START_TEST("Assignment reified (after posting, <=, disable)");
-                        TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
+                        TestSpace* s = new TestSpace(arity, dom, this, RM_RIMP);
                         s->post();
                         s->disable();
                         s->assign(a, false, _rand);
@@ -1025,7 +1025,7 @@ namespace Test { namespace Int {
                     }
                     {
                         START_TEST("Prune reified, <=");
-                        TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
+                        TestSpace* s = new TestSpace(arity, dom, this, RM_RIMP);
                         s->post();
                         while (!s->failed() && (!s->assigned() || (sol && !s->r.var().assigned())))
                             if (!s->prune(a, test_fixpoint, _rand)) {
@@ -1045,7 +1045,7 @@ namespace Test { namespace Int {
                     }
                     {
                         START_TEST("Prune reified, <=, disable");
-                        TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
+                        TestSpace* s = new TestSpace(arity, dom, this, RM_RIMP);
                         TestSpace* c = static_cast<TestSpace*>(s->clone());
                         s->post();
                         c->post();

@@ -51,9 +51,9 @@ namespace Test { namespace Float {
         class Basic : public Test {
         public:
             /// Initialize test
-            Basic(Gecode::FloatNum n, Gecode::FloatNum s) : Test("Basic", 3, -n, n, s, CPLT_ASSIGNMENT, false) {}
+            Basic(Gecode::FloatNum n, Gecode::FloatNum s) : Test("Basic", 3, -n, n, s, COMPLETE_ASSIGNMENT, false) {}
             /// Initialize test
-            Basic(const Gecode::FloatVal& v, Gecode::FloatNum s) : Test("Basic", 3, v, s, CPLT_ASSIGNMENT, false) {}
+            Basic(const Gecode::FloatVal& v, Gecode::FloatNum s) : Test("Basic", 3, v, s, COMPLETE_ASSIGNMENT, false) {}
             /// Check whether \a x is a solution
             MaybeType
             solution(const Assignment&) const override {

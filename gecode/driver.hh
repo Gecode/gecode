@@ -86,10 +86,10 @@ namespace Gecode {
      * \ingroup TaskDriverCmd
      */
     enum class ScriptMode {
-        SM_SOLUTION, ///< Print solution and some statistics
-        SM_TIME,     ///< Measure average runtime
-        SM_STAT,     ///< Print statistics for script
-        SM_GIST,     ///< Run script in Gist
+        SM_SOLUTION,   ///< Print solution and some statistics
+        SM_TIME,       ///< Measure average runtime
+        SM_STATISTICS, ///< Print statistics for script
+        SM_GIST,       ///< Run script in Gist
     };
     using enum ScriptMode;
 
@@ -98,11 +98,11 @@ namespace Gecode {
      * \ingroup TaskDriverCmd
      */
     enum class RestartMode {
-        RM_NONE,     ///< No restarts
-        RM_CONSTANT, ///< Restart with constant sequence
-        RM_LINEAR,   ///< Restart with linear sequence
-        RM_LUBY,     ///< Restart with Luby sequence
-        RM_GEOMETRIC ///< Restart with geometric sequence
+        RESTART_NONE,     ///< No restarts
+        RESTART_CONSTANT, ///< Restart with constant sequence
+        RESTART_LINEAR,   ///< Restart with linear sequence
+        RESTART_LUBY,     ///< Restart with Luby sequence
+        RESTART_GEOMETRIC ///< Restart with geometric sequence
     };
     using enum RestartMode;
 

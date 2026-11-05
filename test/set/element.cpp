@@ -190,7 +190,7 @@ namespace Test { namespace Set {
                 SetVarArgs xs(x.size() - 2);
                 for (int i = x.size() - 2; i--;)
                     xs[i] = x[i];
-                Gecode::element(home, SOT_INTER, xs, x[x.size() - 2], x[x.size() - 1]);
+                Gecode::element(home, SOT_INTERSECTION, xs, x[x.size() - 2], x[x.size() - 1]);
             }
         };
         ElementInter _elementinter("Element::Inter");
@@ -235,7 +235,7 @@ namespace Test { namespace Set {
                 SetVarArgs xs(x.size() - 2);
                 for (int i = x.size() - 2; i--;)
                     xs[i] = x[i];
-                Gecode::element(home, SOT_INTER, xs, x[x.size() - 2], x[x.size() - 1], ds_12);
+                Gecode::element(home, SOT_INTERSECTION, xs, x[x.size() - 2], x[x.size() - 1], ds_12);
             }
         };
         ElementInterIn _elementinterin("Element::InterIn");
@@ -287,7 +287,7 @@ namespace Test { namespace Set {
                 SetVarArgs xs(x.size() - 2);
                 for (int i = x.size() - 2; i--;)
                     xs[i] = x[i];
-                Gecode::element(home, SOT_DUNION, xs, x[x.size() - 2], x[x.size() - 1]);
+                Gecode::element(home, SOT_DISJOINT_UNION, xs, x[x.size() - 2], x[x.size() - 1]);
             }
         };
         ElementDisjoint _elementdisjoint("Element::Disjoint");
@@ -393,15 +393,15 @@ namespace Test { namespace Set {
             IntSet universe(0, 3);
             EmptyFixture union_x, dunion_x, inter_x;
             element(union_x, SOT_UNION, x, union_x.y, union_x.z);
-            element(dunion_x, SOT_DUNION, x, dunion_x.y, dunion_x.z);
-            element(inter_x, SOT_INTER, x, inter_x.y, inter_x.z, universe);
+            element(dunion_x, SOT_DISJOINT_UNION, x, dunion_x.y, dunion_x.z);
+            element(inter_x, SOT_INTERSECTION, x, inter_x.y, inter_x.z, universe);
             bool decided =
                 union_x.is_solved(IntSet::empty) && dunion_x.is_solved(IntSet::empty) && inter_x.is_solved(universe);
 
             // No index can be selected, and the default universe does not fit into z
             EmptyFixture selected(IntSet(0, 0)), inter_default;
             element(selected, SOT_UNION, x, selected.y, selected.z);
-            element(inter_default, SOT_INTER, x, inter_default.y, inter_default.z);
+            element(inter_default, SOT_INTERSECTION, x, inter_default.y, inter_default.z);
             return decided && (selected.status() == SS_FAILED) && (inter_default.status() == SS_FAILED);
         }
 

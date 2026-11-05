@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace Bool {
         case BT_SAME:
             GECODE_ME_CHECK(b0.one(home));
             break;
-        case BT_COMP:
+        case BT_COMPLEMENT:
             break;
         case BT_NONE:
             if (b0.zero()) {
@@ -507,7 +507,7 @@ namespace Gecode { namespace Int { namespace Bool {
             switch (bool_test(b0, b1)) {
             case BT_SAME:
                 return Eq<BVA, BVC>::post(home, b0, b2);
-            case BT_COMP:
+            case BT_COMPLEMENT:
                 GECODE_ME_CHECK(b2.one(home));
                 break;
             case BT_NONE:
@@ -547,7 +547,7 @@ namespace Gecode { namespace Int { namespace Bool {
             switch (bool_test(x0, x2)) {
             case BT_SAME:
                 return home.ES_SUBSUMED(*this);
-            case BT_COMP:
+            case BT_COMPLEMENT:
                 return ES_FAILED;
             case BT_NONE:
                 return ES_FIX;
@@ -572,7 +572,7 @@ namespace Gecode { namespace Int { namespace Bool {
             switch (bool_test(x1, x2)) {
             case BT_SAME:
                 return home.ES_SUBSUMED(*this);
-            case BT_COMP:
+            case BT_COMPLEMENT:
                 return ES_FAILED;
             case BT_NONE:
                 return ES_FIX;

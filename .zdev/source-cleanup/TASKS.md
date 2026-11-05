@@ -3,10 +3,10 @@
 # Tasks: source-cleanup
 
 - Total: 1
-- Ready: 0
-- Blocked: 1
+- Ready: 1
+- Blocked: 0
 - Done: 0
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
-| [source-cleanup-001](tasks/001-remove-void-parameter-lists-by-tool-run.md) | Remove (void) parameter lists by tool run | blocked | scoped-enums-004 (scoped-enums: open), modern-classes-003 (modern-classes: done), modern-classes-004 (modern-classes: done), modern-classes-005 (modern-classes: done) |
+| [source-cleanup-001](tasks/001-remove-void-parameter-lists-by-tool-run.md) | Remove (void) parameter lists by tool run | ready | scoped-enums-004 (scoped-enums: done), modern-classes-003 (modern-classes: done), modern-classes-004 (modern-classes: done), modern-classes-005 (modern-classes: done) |

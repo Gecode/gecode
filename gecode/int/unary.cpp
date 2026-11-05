@@ -88,7 +88,7 @@ namespace Gecode {
         if ((n_tasks != fix.size()) || (n_tasks != t.size()))
             throw Int::ArgumentSizeMismatch("Int::unary");
         for (int i = 0; i < fix.size(); i++) {
-            if (t[i] == TT_FIXP)
+            if (t[i] == TT_FIXED_PROCESSING)
                 Int::Limits::nonnegative(fix[i], "Int::unary");
             else
                 Int::Limits::check(fix[i], "Int::unary");
@@ -97,7 +97,7 @@ namespace Gecode {
         GECODE_POST;
         bool fixp = true;
         for (int i = 0; i < t.size(); i++)
-            if (t[i] != TT_FIXP) {
+            if (t[i] != TT_FIXED_PROCESSING) {
                 fixp = false;
                 break;
             }
@@ -152,7 +152,7 @@ namespace Gecode {
             throw Int::ArgumentSizeMismatch("Int::unary");
         bool fixp = true;
         for (int i = 0; i < fix.size(); i++) {
-            if (t[i] == TT_FIXP) {
+            if (t[i] == TT_FIXED_PROCESSING) {
                 Int::Limits::nonnegative(fix[i], "Int::unary");
             } else {
                 fixp = false;

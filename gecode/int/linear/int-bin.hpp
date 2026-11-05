@@ -232,12 +232,12 @@ namespace Gecode { namespace Int { namespace Linear {
             GECODE_REWRITE(*this, (NqBin<Val, A, B>::post(home(*this), x0, x1, c)));
         }
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (EqBin<Val, A, B>::post(home(*this), x0, x1, c)));
         }
         if ((x0.min() + x1.min() > c) || (x0.max() + x1.max() < c)) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
         }
@@ -414,7 +414,7 @@ namespace Gecode { namespace Int { namespace Linear {
     ExecStatus
     ReLqBin<Val, A, B, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (LqBin<Val, A, B>::post(home(*this), x0, x1, c)));
         }
@@ -429,7 +429,7 @@ namespace Gecode { namespace Int { namespace Linear {
             return home.ES_SUBSUMED(*this);
         }
         if (x0.min() + x1.min() > c) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
         }

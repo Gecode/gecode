@@ -90,8 +90,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::BoolView, RM_IMP>::post(home, x, n, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::BoolView, RM_PMI>::post(home, x, n, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::BoolView, RM_RIMP>::post(home, x, n, r.var())));
             break;
         default:
             throw Int::UnknownReifyMode("Float::dom");
@@ -108,7 +108,7 @@ namespace Gecode {
             case RM_IMP:
                 GECODE_ME_FAIL(b.zero(home));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 break;
             default:
                 throw Int::UnknownReifyMode("Float::dom");

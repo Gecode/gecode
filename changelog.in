@@ -81,6 +81,41 @@ Module: other
 What:   change
 Rank:   major
 [DESCRIPTION]
+Give abbreviated constants descriptive names, and remove the old spellings
+without compatibility aliases. Values and semantics are unchanged, as are the
+command-line option values and the "AOE" that StdSearchTracer prints.
+[MORE]
+The public renames are:
+RestartMode: RM_NONE, RM_CONSTANT, RM_LINEAR, RM_LUBY, and RM_GEOMETRIC to
+RESTART_NONE, RESTART_CONSTANT, RESTART_LINEAR, RESTART_LUBY, and
+RESTART_GEOMETRIC, because ReifyMode also uses the prefix RM_.
+ReifyMode: RM_PMI to RM_RIMP.
+TaskType: TT_FIXP, TT_FIXS, and TT_FIXE to TT_FIXED_PROCESSING, TT_FIXED_START,
+and TT_FIXED_END.
+SetRelType: SRT_DISJ and SRT_CMPL to SRT_DISJOINT and SRT_COMPLEMENT.
+SetOpType: SOT_DUNION and SOT_INTER to SOT_DISJOINT_UNION and SOT_INTERSECTION.
+ScriptMode: SM_STAT to SM_STATISTICS.
+MetaInfo::RestartReason: RR_NO, RR_SOL, RR_CMPL, and RR_LIM to RR_NONE,
+RR_SOLUTION, RR_COMPLETE, and RR_LIMIT.
+SearchTracer::EngineType: AOE to OTHER.
+The test component renames are:
+Test::Float::AssignmentType: CPLT_ASSIGNMENT to COMPLETE_ASSIGNMENT.
+Test::MatchType: MT_ANY, MT_NOT, and MT_FIRST to MATCH_ANY, MATCH_NOT, and
+MATCH_FIRST.
+The internal renames are:
+Int::GCC::Edge::EdgeFlag: EF_MRKLB, EF_MRKUB, EF_LM, EF_UM, and EF_DEL to
+EF_MARKED_LBC, EF_MARKED_UBC, EF_MATCHED_LBC, EF_MATCHED_UBC, and EF_DELETED.
+Int::NValues::RangeEventType: RET_FST and RET_LST to RET_START and RET_FINISH.
+Support::IntType: IT_SHRT to IT_SHORT.
+Int::BoolTest: BT_COMP to BT_COMPLEMENT.
+Int::Cumulatives::EventType: EVENT_CHCK and EVENT_PRUN to EVENT_CHECK and
+EVENT_PRUNE.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
 Make 68 enums enum class, with using enum at their scope or, in class templates,
 static constexpr aliases, so existing spellings such as IRT_EQ,
 Gecode::SS_FAILED, and IntVarBranch::SEL_RND still compile. Their values stop converting to int and stop mixing with other enums.

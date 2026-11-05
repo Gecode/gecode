@@ -66,8 +66,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Member::ReProp<IntView, RM_IMP>::post(home, xv, y, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Member::ReProp<IntView, RM_PMI>::post(home, xv, y, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Member::ReProp<IntView, RM_RIMP>::post(home, xv, y, r.var())));
             break;
         default:
             throw UnknownReifyMode("Int::member");
@@ -88,8 +88,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Member::ReProp<BoolView, RM_IMP>::post(home, xv, y, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Member::ReProp<BoolView, RM_PMI>::post(home, xv, y, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Member::ReProp<BoolView, RM_RIMP>::post(home, xv, y, r.var())));
             break;
         default:
             throw UnknownReifyMode("Int::member");

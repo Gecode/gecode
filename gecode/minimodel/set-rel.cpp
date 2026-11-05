@@ -68,7 +68,7 @@ namespace Gecode {
     }
     SetRel
     operator||(const SetExpr& e0, const SetExpr& e1) {
-        return SetRel(e0, SRT_DISJ, e1);
+        return SetRel(e0, SRT_DISJOINT, e1);
     }
 
     namespace {

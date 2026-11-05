@@ -81,7 +81,7 @@ namespace Gecode { namespace Set { namespace Rel {
             (void)new (home) ReLq<View0, View1, rm, strict>(home, x0, x1, b);
         } else {
             if (strict) {
-                if (rm != RM_PMI) {
+                if (rm != RM_RIMP) {
                     GECODE_ME_CHECK(b.zero(home));
                 }
             } else {
@@ -103,7 +103,7 @@ namespace Gecode { namespace Set { namespace Rel {
     ExecStatus
     ReLq<View0, View1, rm, strict>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (Lq<View0, View1, strict>::post(home(*this), x0, x1)));
         }
@@ -119,7 +119,7 @@ namespace Gecode { namespace Set { namespace Rel {
                 return home.ES_SUBSUMED(*this);
             }
             if (strict && x1.card_max() == 0) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 return home.ES_SUBSUMED(*this);
             }
@@ -139,7 +139,7 @@ namespace Gecode { namespace Set { namespace Rel {
                             GECODE_ME_CHECK(b.one_none(home));
                     } else {
                         // subset
-                        if (rm != RM_PMI)
+                        if (rm != RM_RIMP)
                             GECODE_ME_CHECK(b.zero_none(home));
                     }
                     return home.ES_SUBSUMED(*this);
@@ -154,7 +154,7 @@ namespace Gecode { namespace Set { namespace Rel {
                 if (!d()) {
                     if (strict && x0.card_max() == x1.card_max()) {
                         // equal
-                        if (rm != RM_PMI)
+                        if (rm != RM_RIMP)
                             GECODE_ME_CHECK(b.zero_none(home));
                     } else {
                         // subset
@@ -171,7 +171,7 @@ namespace Gecode { namespace Set { namespace Rel {
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one_none(home));
             } else {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
             }
             return home.ES_SUBSUMED(*this);
@@ -184,7 +184,7 @@ namespace Gecode { namespace Set { namespace Rel {
             int x1umin = x1u.min();
             Iter::Ranges::Diff<GlbRanges<View0>, LubRanges<View1>> d(x0l, x1u);
             if (d() && d.min() < x1umin) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 return home.ES_SUBSUMED(*this);
             }

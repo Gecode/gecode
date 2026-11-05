@@ -416,16 +416,16 @@ namespace Gecode { namespace Int { namespace Element {
             switch (val_type) {
             case Support::IT_CHAR:
                 return Int<V0, V1, signed char, signed char>::post(home, c, x0, x1);
-            case Support::IT_SHRT:
+            case Support::IT_SHORT:
                 return Int<V0, V1, signed char, signed short int>::post(home, c, x0, x1);
             default:
                 break;
             }
             break;
-        case Support::IT_SHRT:
+        case Support::IT_SHORT:
             switch (val_type) {
             case Support::IT_CHAR:
-            case Support::IT_SHRT:
+            case Support::IT_SHORT:
                 return Int<V0, V1, signed short int, signed short int>::post(home, c, x0, x1);
             default:
                 break;

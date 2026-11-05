@@ -75,7 +75,7 @@ namespace Test { namespace Assign {
         /// Initialize test space
         SetOrderSpace(void) : x(*this, 5, Gecode::IntSet::empty, Gecode::IntSet(0, 0)) {
             Gecode::SetVar zero(*this, Gecode::IntSet(0, 0), Gecode::IntSet(0, 0));
-            Gecode::rel(*this, Gecode::SOT_DUNION, x, zero);
+            Gecode::rel(*this, Gecode::SOT_DISJOINT_UNION, x, zero);
         }
         /// Constructor for cloning \a s
         SetOrderSpace(SetOrderSpace& s) : Gecode::Space(s) {

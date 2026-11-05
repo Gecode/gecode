@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Bool {
         switch (bool_test(b0, b1)) {
         case BT_SAME:
             return ES_OK;
-        case BT_COMP:
+        case BT_COMPLEMENT:
             return ES_FAILED;
         case BT_NONE:
             if (b0.zero()) {

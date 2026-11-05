@@ -477,7 +477,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReEqDom<View, CtrlView, rm>::post(Home home, View x0, View x1, CtrlView b) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return ES_OK;
             return EqDom<View, View>::post(home, x0, x1);
         }
@@ -509,7 +509,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReEqDom<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (EqDom<View, View>::post(home(*this), x0, x1)));
         }
@@ -524,7 +524,7 @@ namespace Gecode { namespace Int { namespace Rel {
                 GECODE_ME_CHECK(b.one_none(home));
             break;
         case RT_FALSE:
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             break;
         case RT_MAYBE:
@@ -549,7 +549,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReEqBnd<View, CtrlView, rm>::post(Home home, View x0, View x1, CtrlView b) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return ES_OK;
             return EqBnd<View, View>::post(home, x0, x1);
         }
@@ -581,7 +581,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReEqBnd<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (EqBnd<View, View>::post(home(*this), x0, x1)));
         }
@@ -596,7 +596,7 @@ namespace Gecode { namespace Int { namespace Rel {
                 GECODE_ME_CHECK(b.one_none(home));
             break;
         case RT_FALSE:
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             break;
         case RT_MAYBE:
@@ -621,7 +621,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReEqDomInt<View, CtrlView, rm>::post(Home home, View x, int c, CtrlView b) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x.eq(home, c));
         } else if (b.zero()) {
             if (rm != RM_IMP)
@@ -632,7 +632,7 @@ namespace Gecode { namespace Int { namespace Rel {
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one_none(home));
             } else {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
             }
         } else {
@@ -656,7 +656,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReEqDomInt<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x0.eq(home, c));
         } else if (b.zero()) {
             if (rm != RM_IMP)
@@ -668,7 +668,7 @@ namespace Gecode { namespace Int { namespace Rel {
                     GECODE_ME_CHECK(b.one_none(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 break;
             case RT_MAYBE:
@@ -694,7 +694,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReEqBndInt<View, CtrlView, rm>::post(Home home, View x, int c, CtrlView b) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x.eq(home, c));
         } else if (b.zero()) {
             if (rm != RM_IMP)
@@ -705,7 +705,7 @@ namespace Gecode { namespace Int { namespace Rel {
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one_none(home));
             } else {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
             }
         } else {
@@ -729,7 +729,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReEqBndInt<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x0.eq(home, c));
         } else if (b.zero()) {
             if (rm != RM_IMP)
@@ -741,7 +741,7 @@ namespace Gecode { namespace Int { namespace Rel {
                     GECODE_ME_CHECK(b.one_none(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 break;
             case RT_MAYBE:

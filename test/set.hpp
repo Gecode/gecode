@@ -58,9 +58,9 @@ namespace Test { namespace Set {
             return "Sub";
         case Gecode::SRT_SUP:
             return "Sup";
-        case Gecode::SRT_DISJ:
+        case Gecode::SRT_DISJOINT:
             return "Disj";
-        case Gecode::SRT_CMPL:
+        case Gecode::SRT_COMPLEMENT:
             return "Cmpl";
         }
         return "";
@@ -71,9 +71,9 @@ namespace Test { namespace Set {
         switch (sot) {
         case Gecode::SOT_UNION:
             return "Union";
-        case Gecode::SOT_DUNION:
+        case Gecode::SOT_DISJOINT_UNION:
             return "DUnion";
-        case Gecode::SOT_INTER:
+        case Gecode::SOT_INTERSECTION:
             return "Inter";
         case Gecode::SOT_MINUS:
             return "Minus";

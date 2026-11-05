@@ -94,7 +94,7 @@ namespace Gecode { namespace Set { namespace Int {
         // Whether set is not empty
         BoolVar ne(home, 0, 1);
         rel(home, c, IRT_GR, 0, ne);
-        if (r.mode() != RM_PMI)
+        if (r.mode() != RM_RIMP)
             rel(home, r.var(), BOT_IMP, ne, 1);
         min(home, s, m, ne);
     }
@@ -107,7 +107,7 @@ namespace Gecode { namespace Set { namespace Int {
         // Whether set is not empty
         BoolVar ne(home, 0, 1);
         rel(home, c, IRT_GR, 0, ne);
-        if (r.mode() != RM_PMI)
+        if (r.mode() != RM_RIMP)
             rel(home, r.var(), BOT_IMP, ne, 1);
         max(home, s, m, ne);
     }
@@ -132,8 +132,8 @@ namespace Gecode {
                 GECODE_ES_FAIL((Set::Rel::ReEq<Set::SetView, Set::SingletonView, Gecode::Int::BoolView, RM_IMP>::post(
                     home, s, xs, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((Set::Rel::ReEq<Set::SetView, Set::SingletonView, Gecode::Int::BoolView, RM_PMI>::post(
+            case RM_RIMP:
+                GECODE_ES_FAIL((Set::Rel::ReEq<Set::SetView, Set::SingletonView, Gecode::Int::BoolView, RM_RIMP>::post(
                     home, s, xs, r.var())));
                 break;
             default:
@@ -158,7 +158,7 @@ namespace Gecode {
                 b = BoolVar(home, 0, 1);
                 rel(home, r.var(), BOT_IMP, b, 1);
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 b = BoolVar(home, 0, 1);
                 rel(home, b, BOT_IMP, r.var(), 1);
                 break;
@@ -218,8 +218,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Set::Int::ReMinElement<Set::SetView, RM_IMP>::post(home, s, x, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Set::Int::ReMinElement<Set::SetView, RM_PMI>::post(home, s, x, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Set::Int::ReMinElement<Set::SetView, RM_RIMP>::post(home, s, x, r.var())));
             break;
         default:
             throw Gecode::Int::UnknownReifyMode("Set::min");
@@ -248,8 +248,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Set::Int::ReMaxElement<Set::SetView, RM_IMP>::post(home, s, x, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Set::Int::ReMaxElement<Set::SetView, RM_PMI>::post(home, s, x, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Set::Int::ReMaxElement<Set::SetView, RM_RIMP>::post(home, s, x, r.var())));
             break;
         default:
             throw Gecode::Int::UnknownReifyMode("Set::max");

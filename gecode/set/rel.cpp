@@ -58,11 +58,11 @@ namespace Gecode { namespace Set {
         case SRT_SUP:
             GECODE_ES_FAIL((Subset<View1, View0>::post(home, x1, x0)));
             break;
-        case SRT_DISJ: {
+        case SRT_DISJOINT: {
             EmptyView emptyset;
             GECODE_ES_FAIL((SuperOfInter<View0, View1, EmptyView>::post(home, x0, x1, emptyset)));
         } break;
-        case SRT_CMPL: {
+        case SRT_COMPLEMENT: {
             ComplementView<View0> cx0(x0);
             GECODE_ES_FAIL((Eq<ComplementView<View0>, View1>::post(home, cx0, x1)));
         } break;
@@ -100,9 +100,9 @@ namespace Gecode { namespace Set {
                 GECODE_ES_FAIL((ReEq<View0, View1, Gecode::Int::NegBoolView, RM_EQV>::post(home, x, y, notb)));
                 break;
             case RM_IMP:
-                GECODE_ES_FAIL((ReEq<View0, View1, Gecode::Int::NegBoolView, RM_PMI>::post(home, x, y, notb)));
+                GECODE_ES_FAIL((ReEq<View0, View1, Gecode::Int::NegBoolView, RM_RIMP>::post(home, x, y, notb)));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 GECODE_ES_FAIL((ReEq<View0, View1, Gecode::Int::NegBoolView, RM_IMP>::post(home, x, y, notb)));
                 break;
             default:
@@ -115,14 +115,14 @@ namespace Gecode { namespace Set {
         case SRT_SUP:
             GECODE_ES_FAIL((ReSubset<View1, View0, Gecode::Int::BoolView, rm>::post(home, y, x, b)));
             break;
-        case SRT_DISJ: {
+        case SRT_DISJOINT: {
             // x||y <=> b is equivalent to
             // ( y <= complement(x) ) <=> b
 
             ComplementView<View0> xc(x);
             GECODE_ES_FAIL((ReSubset<View1, ComplementView<View0>, Gecode::Int::BoolView, rm>::post(home, y, xc, b)));
         } break;
-        case SRT_CMPL: {
+        case SRT_COMPLEMENT: {
             ComplementView<View0> xc(x);
             GECODE_ES_FAIL((ReEq<ComplementView<View0>, View1, Gecode::Int::BoolView, rm>::post(home, xc, y, b)));
         } break;
@@ -186,8 +186,8 @@ namespace Gecode {
         case RM_IMP:
             rel_re<SetView, SetView, RM_IMP>(home, x, rt, y, r.var());
             break;
-        case RM_PMI:
-            rel_re<SetView, SetView, RM_PMI>(home, x, rt, y, r.var());
+        case RM_RIMP:
+            rel_re<SetView, SetView, RM_RIMP>(home, x, rt, y, r.var());
             break;
         default:
             throw Gecode::Int::UnknownReifyMode("Set::rel");
@@ -206,8 +206,8 @@ namespace Gecode {
         case RM_IMP:
             rel_re<SetView, SingletonView, RM_IMP>(home, s, rt, x_singleton, r.var());
             break;
-        case RM_PMI:
-            rel_re<SetView, SingletonView, RM_PMI>(home, s, rt, x_singleton, r.var());
+        case RM_RIMP:
+            rel_re<SetView, SingletonView, RM_RIMP>(home, s, rt, x_singleton, r.var());
             break;
         default:
             throw Gecode::Int::UnknownReifyMode("Set::rel");

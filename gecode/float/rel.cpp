@@ -109,8 +109,8 @@ namespace Gecode {
             case RM_IMP:
                 GECODE_ES_FAIL((Rel::ReEq<FloatView, Int::BoolView, RM_IMP>::post(home, x0, x1, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((Rel::ReEq<FloatView, Int::BoolView, RM_PMI>::post(home, x0, x1, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((Rel::ReEq<FloatView, Int::BoolView, RM_RIMP>::post(home, x0, x1, r.var())));
                 break;
             default:
                 throw Int::UnknownReifyMode("Float::rel");
@@ -123,9 +123,9 @@ namespace Gecode {
                 GECODE_ES_FAIL((Rel::ReEq<FloatView, Int::NegBoolView, RM_EQV>::post(home, x0, x1, n)));
                 break;
             case RM_IMP:
-                GECODE_ES_FAIL((Rel::ReEq<FloatView, Int::NegBoolView, RM_PMI>::post(home, x0, x1, n)));
+                GECODE_ES_FAIL((Rel::ReEq<FloatView, Int::NegBoolView, RM_RIMP>::post(home, x0, x1, n)));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 GECODE_ES_FAIL((Rel::ReEq<FloatView, Int::NegBoolView, RM_IMP>::post(home, x0, x1, n)));
                 break;
             default:
@@ -143,8 +143,8 @@ namespace Gecode {
             case RM_IMP:
                 GECODE_ES_FAIL((Rel::ReLq<FloatView, Int::BoolView, RM_IMP>::post(home, x0, x1, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((Rel::ReLq<FloatView, Int::BoolView, RM_PMI>::post(home, x0, x1, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((Rel::ReLq<FloatView, Int::BoolView, RM_RIMP>::post(home, x0, x1, r.var())));
                 break;
             default:
                 throw Int::UnknownReifyMode("Float::rel");
@@ -159,9 +159,9 @@ namespace Gecode {
                 GECODE_ES_FAIL((Rel::ReLq<FloatView, Int::NegBoolView, RM_EQV>::post(home, x0, x1, n)));
                 break;
             case RM_IMP:
-                GECODE_ES_FAIL((Rel::ReLq<FloatView, Int::NegBoolView, RM_PMI>::post(home, x0, x1, n)));
+                GECODE_ES_FAIL((Rel::ReLq<FloatView, Int::NegBoolView, RM_RIMP>::post(home, x0, x1, n)));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 GECODE_ES_FAIL((Rel::ReLq<FloatView, Int::NegBoolView, RM_IMP>::post(home, x0, x1, n)));
                 break;
             default:
@@ -188,8 +188,8 @@ namespace Gecode {
             case RM_IMP:
                 GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::BoolView, RM_IMP>::post(home, x, n, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::BoolView, RM_PMI>::post(home, x, n, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::BoolView, RM_RIMP>::post(home, x, n, r.var())));
                 break;
             default:
                 throw Int::UnknownReifyMode("Float::rel");
@@ -202,9 +202,9 @@ namespace Gecode {
                 GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::NegBoolView, RM_EQV>::post(home, x, n, nb)));
                 break;
             case RM_IMP:
-                GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::NegBoolView, RM_PMI>::post(home, x, n, nb)));
+                GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::NegBoolView, RM_RIMP>::post(home, x, n, nb)));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::NegBoolView, RM_IMP>::post(home, x, n, nb)));
                 break;
             default:
@@ -220,8 +220,8 @@ namespace Gecode {
             case RM_IMP:
                 GECODE_ES_FAIL((Rel::ReLqFloat<FloatView, Int::BoolView, RM_IMP>::post(home, x, n, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((Rel::ReLqFloat<FloatView, Int::BoolView, RM_PMI>::post(home, x, n, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((Rel::ReLqFloat<FloatView, Int::BoolView, RM_RIMP>::post(home, x, n, r.var())));
                 break;
             default:
                 throw Int::UnknownReifyMode("Float::rel");
@@ -235,8 +235,8 @@ namespace Gecode {
             case RM_IMP:
                 GECODE_ES_FAIL((Rel::ReLeFloat<FloatView, Int::BoolView, RM_IMP>::post(home, x, n, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((Rel::ReLeFloat<FloatView, Int::BoolView, RM_PMI>::post(home, x, n, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((Rel::ReLeFloat<FloatView, Int::BoolView, RM_RIMP>::post(home, x, n, r.var())));
                 break;
             default:
                 throw Int::UnknownReifyMode("Float::rel");
@@ -249,9 +249,9 @@ namespace Gecode {
                 GECODE_ES_FAIL((Rel::ReLeFloat<FloatView, Int::NegBoolView, RM_EQV>::post(home, x, n, nb)));
                 break;
             case RM_IMP:
-                GECODE_ES_FAIL((Rel::ReLeFloat<FloatView, Int::NegBoolView, RM_PMI>::post(home, x, n, nb)));
+                GECODE_ES_FAIL((Rel::ReLeFloat<FloatView, Int::NegBoolView, RM_RIMP>::post(home, x, n, nb)));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 GECODE_ES_FAIL((Rel::ReLeFloat<FloatView, Int::NegBoolView, RM_IMP>::post(home, x, n, nb)));
                 break;
             default:
@@ -266,9 +266,9 @@ namespace Gecode {
                 GECODE_ES_FAIL((Rel::ReLqFloat<FloatView, Int::NegBoolView, RM_EQV>::post(home, x, n, nb)));
                 break;
             case RM_IMP:
-                GECODE_ES_FAIL((Rel::ReLqFloat<FloatView, Int::NegBoolView, RM_PMI>::post(home, x, n, nb)));
+                GECODE_ES_FAIL((Rel::ReLqFloat<FloatView, Int::NegBoolView, RM_RIMP>::post(home, x, n, nb)));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 GECODE_ES_FAIL((Rel::ReLqFloat<FloatView, Int::NegBoolView, RM_IMP>::post(home, x, n, nb)));
                 break;
             default:

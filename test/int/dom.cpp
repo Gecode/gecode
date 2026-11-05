@@ -79,7 +79,7 @@ namespace Test { namespace Int {
                     case Gecode::RM_IMP:
                         Gecode::rel(home, Gecode::dom(x[0], -2) << r.var());
                         break;
-                    case Gecode::RM_PMI:
+                    case Gecode::RM_RIMP:
                         Gecode::rel(home, Gecode::dom(x[0], -2) >> r.var());
                         break;
                     default:
@@ -124,7 +124,7 @@ namespace Test { namespace Int {
                     case Gecode::RM_IMP:
                         Gecode::rel(home, Gecode::dom(x[0], -2, 2) << r.var());
                         break;
-                    case Gecode::RM_PMI:
+                    case Gecode::RM_RIMP:
                         Gecode::rel(home, Gecode::dom(x[0], -2, 2) >> r.var());
                         break;
                     default:
@@ -228,7 +228,7 @@ namespace Test { namespace Int {
                     case Gecode::RM_IMP:
                         Gecode::rel(home, Gecode::dom(x[0], d) << r.var());
                         break;
-                    case Gecode::RM_PMI:
+                    case Gecode::RM_RIMP:
                         Gecode::rel(home, Gecode::dom(x[0], d) >> r.var());
                         break;
                     default:

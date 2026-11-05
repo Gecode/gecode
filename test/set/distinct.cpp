@@ -90,11 +90,11 @@ namespace Test { namespace Set {
             void
             post(Space& home, SetVarArray& x, IntVarArray&) override {
                 SetVar s1(home, IntSet::empty, -2, 2, 0U, 1U);
-                Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_EQ, s1);
+                Gecode::rel(home, x[0], SOT_INTERSECTION, x[1], SRT_EQ, s1);
                 SetVar s2(home, IntSet::empty, -2, 2, 0U, 1U);
-                Gecode::rel(home, x[0], SOT_INTER, x[2], SRT_EQ, s2);
+                Gecode::rel(home, x[0], SOT_INTERSECTION, x[2], SRT_EQ, s2);
                 SetVar s3(home, IntSet::empty, -2, 2, 0U, 1U);
-                Gecode::rel(home, x[1], SOT_INTER, x[2], SRT_EQ, s3);
+                Gecode::rel(home, x[1], SOT_INTERSECTION, x[2], SRT_EQ, s3);
                 Gecode::atmost_one(home, x, 3);
             }
         };

@@ -41,12 +41,14 @@ affect runtime behaviour. Platform-specific checks remain in CI.
   selectors such as `INT_VAR_SIZE_MIN()`. They form one vocabulary with enum
   constants such as `ES_FIX` and `IRT_EQ`; lowercasing them made propagator
   code mix both spellings and changed every model without a readability gain.
+- Public enums are `enum class`, and `using enum` keeps their constants usable
+  without qualification. Abbreviated constants have descriptive names, with no
+  compatibility aliases; see `code-style.md`.
 
 ## Other modernization ideas
 
 - Replace bespoke configuration-template processing with CMake's native
   `configure_file` / `#cmakedefine`, checking feature-macro compatibility.
-- Consider scoped enums and descriptive constants after naming stabilizes.
 - Revisit the `forceinline` portability macro and obsolete `(void)` parameter lists.
 - Continue auditing callback, branch-configuration, and shared-handle copying
   with `performance-unnecessary-value-param`; distinguish owned data and

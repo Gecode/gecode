@@ -762,7 +762,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         static ExecStatus
         post(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b) {
             if (b.one()) {
-                if (rm == RM_PMI)
+                if (rm == RM_RIMP)
                     return ES_OK;
                 return SparseInc<View, true>::post(home, x, ts);
             }
@@ -804,7 +804,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         ExecStatus
         propagate(Space& home, const ModEventDelta&) override {
             if (b.one()) {
-                if (rm == RM_PMI)
+                if (rm == RM_RIMP)
                     return home.ES_SUBSUMED(*this);
                 TupleSet keep(ts);
                 GECODE_REWRITE(*this, post_pos(home(*this), x, keep));
@@ -817,7 +817,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             }
 
             if (active_limit == 0U) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 return home.ES_SUBSUMED(*this);
             }
@@ -876,8 +876,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         case RM_EQV:
             return RM_EQV;
         case RM_IMP:
-            return RM_PMI;
-        case RM_PMI:
+            return RM_RIMP;
+        case RM_RIMP:
             return RM_IMP;
         default:
             GECODE_NEVER;
@@ -893,8 +893,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             return SparseReifInc<View, CtrlView, RM_EQV>::post(home, x, t, b);
         case RM_IMP:
             return SparseReifInc<View, CtrlView, RM_IMP>::post(home, x, t, b);
-        case RM_PMI:
-            return SparseReifInc<View, CtrlView, RM_PMI>::post(home, x, t, b);
+        case RM_RIMP:
+            return SparseReifInc<View, CtrlView, RM_RIMP>::post(home, x, t, b);
         default:
             throw UnknownReifyMode("Int::extensional");
         }
@@ -908,8 +908,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             return post_reified_compact<View, CtrlView, RM_EQV>(home, x, t, b);
         case RM_IMP:
             return post_reified_compact<View, CtrlView, RM_IMP>(home, x, t, b);
-        case RM_PMI:
-            return post_reified_compact<View, CtrlView, RM_PMI>(home, x, t, b);
+        case RM_RIMP:
+            return post_reified_compact<View, CtrlView, RM_RIMP>(home, x, t, b);
         default:
             throw UnknownReifyMode("Int::extensional");
         }
@@ -923,8 +923,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             return post_reified_compact_compressed<View, CtrlView, RM_EQV>(home, x, t, b);
         case RM_IMP:
             return post_reified_compact_compressed<View, CtrlView, RM_IMP>(home, x, t, b);
-        case RM_PMI:
-            return post_reified_compact_compressed<View, CtrlView, RM_PMI>(home, x, t, b);
+        case RM_RIMP:
+            return post_reified_compact_compressed<View, CtrlView, RM_RIMP>(home, x, t, b);
         default:
             throw UnknownReifyMode("Int::extensional");
         }
@@ -960,7 +960,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             if (!value)
                 GECODE_ME_CHECK(b.zero(home));
             break;
-        case RM_PMI:
+        case RM_RIMP:
             if (value)
                 GECODE_ME_CHECK(b.one(home));
             break;
