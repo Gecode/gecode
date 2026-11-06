@@ -303,7 +303,8 @@ namespace Gecode { namespace Int { namespace Extensional {
                         j++;
                     }
                 }
-                if ((layers[i].size = j) == 0)
+                layers[i].size = j;
+                if (j == 0)
                     return ES_FAILED;
                 std::swap(i_reachable, o_reachable);
                 std::swap(i_reached, o_reached);
@@ -389,7 +390,8 @@ namespace Gecode { namespace Int { namespace Extensional {
                     total_edges += n_support_edges;
                 }
             }
-            if ((layers[i].size = n_supports) == 0)
+            layers[i].size = n_supports;
+            if (n_supports == 0)
                 return ES_FAILED;
             layers[i].n_states = static_cast<StateIdx>(n_i_mapped);
             total_states += n_i_mapped;
