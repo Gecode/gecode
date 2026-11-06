@@ -611,7 +611,10 @@ def generate_typehpp(files: List[Dict], out: List[str]) -> None:
                         out.append(f"        static const Gecode::ModEventDelta me_c[{d['me_max']}] = {{\n")
                         for j, n2 in enumerate(d["val2me"]):
                             n3 = d["mec"][n1][n2]
-                            out.append(f"          ({d['me_a'][n2]} ^ {d['me_a'][n3]}) << med_fst")
+                            if d["me_a"][n2] == d["me_a"][n3]:
+                                out.append("          0")
+                            else:
+                                out.append(f"          ({d['me_a'][n2]} ^ {d['me_a'][n3]}) << med_fst")
                             if j + 1 != d["me_max_n"]:
                                 out.append(",\n")
                         out.append("\n        };\n")
