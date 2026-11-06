@@ -5,7 +5,6 @@ Checks: >-
   clang-analyzer-core.*,
   bugprone-*,
   -bugprone-assignment-in-if-condition,
-  -bugprone-bitwise-pointer-cast,
   -bugprone-branch-clone,
   -bugprone-crtp-constructor-accessibility,
   -bugprone-derived-method-shadowing-base-method,
