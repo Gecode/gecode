@@ -455,7 +455,7 @@ namespace Gecode { namespace FlatZinc {
 
     void
     decode_blackbox_response(const std::string& response, BlackBoxCall& call) {
-        if (response.find('\0') != std::string::npos) {
+        if (response.contains('\0')) {
             throw Error("BlackBoxExec", "Blackbox process response contains NUL data.");
         }
         // Parse the response in a single left-to-right pass: comma-separated

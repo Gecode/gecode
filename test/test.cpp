@@ -342,7 +342,7 @@ namespace Test {
                 const auto& type = type_pattern.first;
                 const auto& pattern = type_pattern.second;
                 if (type == MATCH_NOT) { // Negative pattern
-                    if (test_name.find(pattern) != std::string::npos) {
+                    if (test_name.contains(pattern)) {
                         // Test matches a negative pattern, should not run
                         return false;
                     }
@@ -351,7 +351,7 @@ namespace Test {
                     positive_patterns = true;
                     if (!match_found) {
                         // No match found yet, test with current pattern
-                        if (((type == MATCH_ANY) && (test_name.find(pattern) != std::string::npos)) ||
+                        if (((type == MATCH_ANY) && (test_name.contains(pattern))) ||
                             ((type == MATCH_FIRST) && (test_name.find(pattern) == 0)))
                             match_found = true;
                     }
@@ -622,7 +622,7 @@ namespace Test {
         bool started = options.start_from == nullptr;
         for (Base* t = Base::tests(); t != nullptr; t = t->next()) {
             if (!started) {
-                if (t->name().find(options.start_from) != std::string::npos) {
+                if (t->name().contains(options.start_from)) {
                     started = true;
                 } else {
                     continue;

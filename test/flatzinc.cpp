@@ -88,7 +88,7 @@ namespace Test { namespace FlatZinc {
                 s->constrain(*best);
                 if ((s->status() == Gecode::SS_FAILED) || s->fv[0].assigned())
                     return false;
-                bound = (source.find("minimize") != std::string::npos) ? s->fv[0].max() : s->fv[0].min();
+                bound = source.contains("minimize") ? s->fv[0].max() : s->fv[0].min();
                 return true;
             }
 
@@ -414,14 +414,14 @@ namespace Test { namespace FlatZinc {
             const std::string& message = e.to_string();
             if (opt.log)
                 olog << ind(2) << "Expected FlatZinc error : " << message << '\n';
-            return (os.str().find("----------") == std::string::npos) &&
-                   (_expected_message.empty() || (message.find(_expected_message) != std::string::npos));
+            return (!os.str().contains("----------")) &&
+                   (_expected_message.empty() || (message.contains(_expected_message)));
         } catch (Gecode::Exception& e) {
             const std::string message = e.what();
             if (opt.log)
                 olog << ind(2) << "Expected Gecode exception : " << message << '\n';
-            return (os.str().find("----------") == std::string::npos) &&
-                   (_expected_message.empty() || (message.find(_expected_message) != std::string::npos));
+            return (!os.str().contains("----------")) &&
+                   (_expected_message.empty() || (message.contains(_expected_message)));
         }
         return false;
     }

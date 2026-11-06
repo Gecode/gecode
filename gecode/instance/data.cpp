@@ -500,7 +500,7 @@ namespace Gecode { namespace Instance {
                 "superset", "symdiff",    "test",   "then",    "true",  "tuple",     "type",       "union",
                 "var",      "where",      "xor"};
             // MiniZinc identifiers start with a letter
-            bool plain = !n.empty() && is_letter(n[0]) && (keywords.count(n) == 0);
+            bool plain = !n.empty() && is_letter(n[0]) && (!keywords.contains(n));
             if (plain)
                 os << n;
             else

@@ -68,7 +68,6 @@ Checks: >-
   -readability-avoid-return-with-void-value,
   -readability-braces-around-statements,
   -readability-const-return-type,
-  -readability-container-contains,
   -readability-container-data-pointer,
   -readability-convert-member-functions-to-static,
   -readability-else-after-return,
