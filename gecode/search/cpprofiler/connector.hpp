@@ -372,7 +372,7 @@ namespace Gecode { namespace CPProfiler {
         std::string base_name(file_path);
         {
             size_t pos = base_name.find_last_of('/');
-            if (pos != static_cast<size_t>(-1)) {
+            if (pos != std::string::npos) {
                 base_name = base_name.substr(pos + 1, base_name.length() - pos - 1);
             }
         }

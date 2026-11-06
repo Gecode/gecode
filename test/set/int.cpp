@@ -33,6 +33,7 @@
 #include "test/set.hh"
 #include "test/int.hh"
 #include <gecode/minimodel.hh>
+#include <utility>
 
 using namespace Gecode;
 
@@ -70,7 +71,7 @@ namespace Test { namespace Set {
                     s += xr.width();
                 if (x.int_value() < 0)
                     return false;
-                return s == (unsigned int)x.int_value();
+                return std::cmp_equal(s, x.int_value());
             }
             /// Post constraint on \a x
             void

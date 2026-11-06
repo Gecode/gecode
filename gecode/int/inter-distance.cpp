@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <limits>
 #include <tuple>
+#include <utility>
 
 namespace Gecode { namespace Int { namespace InterDistance {
 
@@ -85,8 +86,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
             /// Change the active-key count at rank i
             void
             update(int i, int delta) {
-                for (unsigned int j = static_cast<unsigned int>(i) + 1; j <= static_cast<unsigned int>(key_count);
-                     j += j & -j)
+                for (unsigned int j = static_cast<unsigned int>(i) + 1; std::cmp_less_equal(j, key_count); j += j & -j)
                     counts[j] += delta;
                 active_count += delta;
             }
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
                 int pending = dc - 1;
                 for (int i = n; i--;) {
                     int rank = release[i]->max_rank;
-                    for (size_t j = static_cast<size_t>(rank) + 1; j <= static_cast<size_t>(dc); j += j & -j)
+                    for (size_t j = static_cast<size_t>(rank) + 1; std::cmp_less_equal(j, dc); j += j & -j)
                         loads[j]++;
                     int d = find(rank);
                     active = std::min(active, d);
