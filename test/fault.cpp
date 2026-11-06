@@ -973,6 +973,7 @@ namespace Test { namespace Fault {
             delete pbs.next();
             return false;
         } catch (const MemoryExhausted&) {
+            // Expected
         }
         Support::FailPoint::reset();
         // The portfolio reports the failure again, its destructor then waits
@@ -981,6 +982,7 @@ namespace Test { namespace Fault {
             delete pbs.next();
             return false;
         } catch (const MemoryExhausted&) {
+            // Expected
         }
         return true;
     }
@@ -1302,6 +1304,7 @@ namespace Test { namespace Fault {
                         std::unique_ptr<Space> copy(root.clone());
                         succeeded = true;
                     } catch (const MemoryExhausted&) {
+                        // Expected
                     }
                     Support::FailPoint::reset();
                     if (LiveRandom::live != live || root.r.state() != state)
@@ -1315,6 +1318,7 @@ namespace Test { namespace Fault {
                     std::unique_ptr<Space> copy(root.clone());
                     return false;
                 } catch (const MemoryExhausted&) {
+                    // Expected
                 }
                 Support::FailPoint::reset();
                 if (LiveRandom::live != live || root.r.state() != state)
@@ -1326,6 +1330,7 @@ namespace Test { namespace Fault {
                         std::unique_ptr<Space> copy(root.clone());
                         return false;
                     } catch (const MemoryExhausted&) {
+                        // Expected
                     }
                     LiveRandom::copies_before_failure = -1;
                     if (LiveRandom::live != live || root.r.state() != state)

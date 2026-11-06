@@ -1812,6 +1812,7 @@ namespace Test {
                 } catch (const Exception&) {
                     return true;
                 } catch (...) {
+                    // Ignored: the check after this block reports the failure
                 }
                 return false;
             }
@@ -2198,6 +2199,7 @@ namespace Test {
                     delete missing;
                     return false;
                 } catch (const SpaceNoComparison&) {
+                    // Expected
                 }
                 delete missing;
                 return true;
@@ -2345,6 +2347,7 @@ namespace Test {
                     } catch (const ComparisonError&) {
                         preserved = true;
                     } catch (const SpaceNoComparison&) {
+                        // Expected
                     }
                 }
                 if (!reported || !preserved)
@@ -2398,6 +2401,7 @@ namespace Test {
                             delete s;
                         return false;
                     } catch (const ComparisonError&) {
+                        // Expected
                     }
                     recovered = reset_search(e.get());
                 }
@@ -2421,6 +2425,7 @@ namespace Test {
                             delete s;
                         return false;
                     } catch (const Gecode::Search::Incomparable&) {
+                        // Expected
                     }
                     recovered = reset_search(e.get());
                 }
@@ -2546,6 +2551,7 @@ namespace Test {
                     } catch (const ComparisonError&) {
                         preserved = true;
                     } catch (const SpaceNoComparison&) {
+                        // Expected
                     }
                 }
                 if (!reported || !preserved)
@@ -2779,11 +2785,13 @@ namespace Test {
                     (void)mzero.compare(m10);
                     return false;
                 } catch (const SpaceIncompatibleObjectives&) {
+                    // Expected
                 }
                 try {
                     (void)m10.compare(x10);
                     return false;
                 } catch (const DynamicCastFailed&) {
+                    // Expected
                 }
 
 #ifdef GECODE_HAS_THREADS
@@ -2885,17 +2893,20 @@ namespace Test {
                     (void)open.compare(one);
                     return false;
                 } catch (const Int::ValOfUnassignedVar&) {
+                    // Expected
                 }
                 try {
                     (void)one.compare(high);
                     return false;
                 } catch (const DynamicCastFailed&) {
+                    // Expected
                 }
                 LexObjective short_cost(1, 0, 2, 1);
                 try {
                     (void)lp.compare(short_cost);
                     return false;
                 } catch (const SpaceIncompatibleObjectives&) {
+                    // Expected
                 }
                 {
                     IntVarArgs a;
@@ -2912,6 +2923,7 @@ namespace Test {
                     (void)plain.compare(plain);
                     return false;
                 } catch (const SpaceNoComparison&) {
+                    // Expected
                 }
                 return true;
             }
@@ -4371,6 +4383,7 @@ namespace Test {
                         delete pbs.next();
                         return false;
                     } catch (const StatisticsFailure&) {
+                        // Expected
                     }
                 }
                 return true;

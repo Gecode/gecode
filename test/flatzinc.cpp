@@ -141,6 +141,7 @@ namespace Test { namespace FlatZinc {
                     (void)one->compare(*high);
                     return false;
                 } catch (const SpaceIncompatibleObjectives&) {
+                    // Expected
                 }
                 // The objectives sit at different indices: constrain must read the
                 // incumbent's own objective, as compare does.
@@ -161,6 +162,7 @@ namespace Test { namespace FlatZinc {
                     (void)sat->compare(*sat);
                     return false;
                 } catch (const SpaceNoComparison&) {
+                    // Expected
                 }
                 return true;
             }
@@ -254,11 +256,13 @@ namespace Test { namespace FlatZinc {
                     (void)m10->compare(*different_step);
                     return false;
                 } catch (const SpaceIncompatibleObjectives&) {
+                    // Expected
                 }
                 try {
                     (void)m10->compare(*x10);
                     return false;
                 } catch (const SpaceIncompatibleObjectives&) {
+                    // Expected
                 }
                 return true;
             }
