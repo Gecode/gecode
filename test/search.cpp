@@ -2253,8 +2253,7 @@ namespace Test {
                 m = new ParallelObjective;
                 Gecode::Search::Engine* bounded = Gecode::Search::make_bab_engine(m, o);
                 delete m;
-                if (Space* first = bounded->next())
-                    delete first;
+                delete bounded->next();
                 // This is stronger than every solution in the model, so it also
                 // supersedes any results queued while the first result was returned.
                 ParallelObjective bound(-1);
@@ -3347,8 +3346,7 @@ namespace Test {
                         o.cutoff = Gecode::Search::Cutoff::constant(1);
                         Gecode::RBS<ThrowingSpoke, Gecode::DFS> rbs(&root, o);
                         try {
-                            if (ThrowingSpoke* s = rbs.next())
-                                delete s;
+                            delete rbs.next();
                         } catch (const std::runtime_error&) {
                             thrown = true;
                         }
@@ -3885,8 +3883,7 @@ namespace Test {
                     Gecode::PBS<IllegalContinue, Gecode::RBS> pbs(&root, o);
                     bool thrown = false;
                     try {
-                        if (IllegalContinue* s = pbs.next())
-                            delete s;
+                        delete pbs.next();
                     } catch (const Gecode::IllegalMetaDecision&) {
                         thrown = true;
                     }

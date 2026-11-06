@@ -1035,10 +1035,10 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 78 "./gecode/flatzinc/lexer.lxx"
-{ if (parse_int(yytext,yylval->int_value))
+{
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
@@ -1048,10 +1048,10 @@ YY_RULE_SETUP
 case 7:
 YY_RULE_SETUP
 #line 87 "./gecode/flatzinc/lexer.lxx"
-{  if (parse_int(yytext,yylval->int_value))
+{
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
@@ -1061,10 +1061,10 @@ YY_RULE_SETUP
 case 8:
 YY_RULE_SETUP
 #line 96 "./gecode/flatzinc/lexer.lxx"
-{ if (parse_int(yytext,yylval->int_value))
+{
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
