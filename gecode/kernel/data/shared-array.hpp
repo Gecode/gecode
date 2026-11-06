@@ -299,56 +299,56 @@ namespace Gecode {
     }
 
     template <class T>
-    forceinline typename SharedArray<T>::iterator
+    forceinline SharedArray<T>::iterator
     SharedArray<T>::begin() {
         assert(object() != nullptr);
         return static_cast<SAO*>(object())->begin();
     }
 
     template <class T>
-    forceinline typename SharedArray<T>::const_iterator
+    forceinline SharedArray<T>::const_iterator
     SharedArray<T>::begin() const {
         assert(object() != nullptr);
         return static_cast<SAO*>(object())->begin();
     }
 
     template <class T>
-    forceinline typename SharedArray<T>::iterator
+    forceinline SharedArray<T>::iterator
     SharedArray<T>::end() {
         assert(object() != nullptr);
         return static_cast<SAO*>(object())->end();
     }
 
     template <class T>
-    forceinline typename SharedArray<T>::const_iterator
+    forceinline SharedArray<T>::const_iterator
     SharedArray<T>::end() const {
         assert(object() != nullptr);
         return static_cast<SAO*>(object())->end();
     }
 
     template <class T>
-    forceinline typename SharedArray<T>::reverse_iterator
+    forceinline SharedArray<T>::reverse_iterator
     SharedArray<T>::rbegin() {
         assert(object() != nullptr);
         return reverse_iterator(static_cast<SAO*>(object())->end());
     }
 
     template <class T>
-    forceinline typename SharedArray<T>::const_reverse_iterator
+    forceinline SharedArray<T>::const_reverse_iterator
     SharedArray<T>::rbegin() const {
         assert(object() != nullptr);
         return const_reverse_iterator(static_cast<SAO*>(object())->end());
     }
 
     template <class T>
-    forceinline typename SharedArray<T>::reverse_iterator
+    forceinline SharedArray<T>::reverse_iterator
     SharedArray<T>::rend() {
         assert(object() != nullptr);
         return reverse_iterator(static_cast<SAO*>(object())->begin());
     }
 
     template <class T>
-    forceinline typename SharedArray<T>::const_reverse_iterator
+    forceinline SharedArray<T>::const_reverse_iterator
     SharedArray<T>::rend() const {
         assert(object() != nullptr);
         return const_reverse_iterator(static_cast<SAO*>(object())->begin());

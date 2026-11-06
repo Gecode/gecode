@@ -64,7 +64,7 @@ namespace Gecode { namespace Search { namespace Par {
      * Engine: command and wait handling
      */
     template <class Tracer>
-    forceinline typename Engine<Tracer>::Cmd
+    forceinline Engine<Tracer>::Cmd
     Engine<Tracer>::cmd() const {
         return _cmd.load(std::memory_order_acquire);
     }

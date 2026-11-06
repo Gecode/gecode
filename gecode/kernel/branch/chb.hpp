@@ -69,7 +69,7 @@ namespace Gecode {
             Info* chb;
             /// Initialize CHB info
             template <class View>
-            Storage(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm);
+            Storage(Home home, ViewArray<View>& x, const BranchTraits<typename View::VarType>::Merit& bm);
             /// Delete object
             GECODE_KERNEL_EXPORT
             ~Storage() override;
@@ -116,14 +116,14 @@ namespace Gecode {
          * For empty \a x, store no values and post no recorder.
          */
         template <class View>
-        CHB(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm);
+        CHB(Home home, ViewArray<View>& x, const BranchTraits<typename View::VarType>::Merit& bm);
         /**
          * \brief Initialize for views \a x and Q-score as defined by \a bm
          *
          * For empty \a x, store no values and post no recorder.
          */
         template <class View>
-        void init(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm);
+        void init(Home home, ViewArray<View>& x, const BranchTraits<typename View::VarType>::Merit& bm);
         /// Default (empty) chb information
         GECODE_KERNEL_EXPORT static const CHB def;
         //@}
@@ -262,7 +262,7 @@ namespace Gecode {
      */
     template <class View>
     forceinline
-    CHB::Storage::Storage(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm)
+    CHB::Storage::Storage(Home home, ViewArray<View>& x, const BranchTraits<typename View::VarType>::Merit& bm)
         : n(x.size()), nf(0U), alpha(Kernel::Config::chb_alpha_init), chb((n > 0) ? heap.alloc<Info>(n) : nullptr) {
         if (bm) {
             for (int i = 0; i < n; i++) {
@@ -339,7 +339,7 @@ namespace Gecode {
 
     template <class View>
     forceinline
-    CHB::CHB(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm) {
+    CHB::CHB(Home home, ViewArray<View>& x, const BranchTraits<typename View::VarType>::Merit& bm) {
         assert(!*this);
         object(*new Storage(home, x, bm));
         if (x.size() > 0)
@@ -347,7 +347,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline void
-    CHB::init(Home home, ViewArray<View>& x, const typename BranchTraits<typename View::VarType>::Merit& bm) {
+    CHB::init(Home home, ViewArray<View>& x, const BranchTraits<typename View::VarType>::Merit& bm) {
         assert(!*this);
         object(*new Storage(home, x, bm));
         if (x.size() > 0)

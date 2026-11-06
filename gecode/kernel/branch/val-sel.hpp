@@ -45,7 +45,7 @@ namespace Gecode {
         /// View type
         using View = View_;
         /// Corresponding variable type
-        using Var = typename View::VarType;
+        using Var = View::VarType;
         /// Value type
         using Val = Val_;
 
@@ -64,11 +64,11 @@ namespace Gecode {
     class ValSelFunction : public ValSel<View, typename BranchTraits<typename View::VarType>::ValType> {
     public:
         /// The corresponding variable type
-        using Var = typename ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Var;
+        using Var = ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Var;
         /// The corresponding value type
-        using Val = typename ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Val;
+        using Val = ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Val;
         /// The corresponding value function
-        using ValFunction = typename BranchTraits<Var>::Val;
+        using ValFunction = BranchTraits<Var>::Val;
 
     protected:
         /// The user-defined value function
@@ -117,7 +117,7 @@ namespace Gecode {
     ValSelFunction<View>::ValSelFunction(Space& home, ValSelFunction<View>& vs)
         : ValSel<View, Val>(home, vs), v(vs.v) {}
     template <class View>
-    forceinline typename ValSelFunction<View>::Val
+    forceinline ValSelFunction<View>::Val
     ValSelFunction<View>::val(const Space& home, View x, int i) {
         typename View::VarType y(x.varimp());
         GECODE_VALID_FUNCTION(v());

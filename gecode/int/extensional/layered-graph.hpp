@@ -79,35 +79,33 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
     template <class View, class Val, class Degree, class StateIdx>
-    forceinline typename LayeredGraph<View, Val, Degree, StateIdx>::State&
+    forceinline LayeredGraph<View, Val, Degree, StateIdx>::State&
     LayeredGraph<View, Val, Degree, StateIdx>::i_state(int i, StateIdx is) {
         return layers[i].states[is];
     }
     template <class View, class Val, class Degree, class StateIdx>
-    forceinline typename LayeredGraph<View, Val, Degree, StateIdx>::State&
+    forceinline LayeredGraph<View, Val, Degree, StateIdx>::State&
     LayeredGraph<View, Val, Degree, StateIdx>::i_state(int i, const Edge& e) {
         return i_state(i, e.i_state);
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline bool
-    LayeredGraph<View, Val, Degree, StateIdx>::i_dec(
-        int i, const typename LayeredGraph<View, Val, Degree, StateIdx>::Edge& e) {
+    LayeredGraph<View, Val, Degree, StateIdx>::i_dec(int i, const LayeredGraph<View, Val, Degree, StateIdx>::Edge& e) {
         return --i_state(i, e).o_deg == 0;
     }
     template <class View, class Val, class Degree, class StateIdx>
-    forceinline typename LayeredGraph<View, Val, Degree, StateIdx>::State&
+    forceinline LayeredGraph<View, Val, Degree, StateIdx>::State&
     LayeredGraph<View, Val, Degree, StateIdx>::o_state(int i, StateIdx os) {
         return layers[i + 1].states[os];
     }
     template <class View, class Val, class Degree, class StateIdx>
-    forceinline typename LayeredGraph<View, Val, Degree, StateIdx>::State&
+    forceinline LayeredGraph<View, Val, Degree, StateIdx>::State&
     LayeredGraph<View, Val, Degree, StateIdx>::o_state(int i, const Edge& e) {
         return o_state(i, e.o_state);
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline bool
-    LayeredGraph<View, Val, Degree, StateIdx>::o_dec(
-        int i, const typename LayeredGraph<View, Val, Degree, StateIdx>::Edge& e) {
+    LayeredGraph<View, Val, Degree, StateIdx>::o_dec(int i, const LayeredGraph<View, Val, Degree, StateIdx>::Edge& e) {
         return --o_state(i, e).i_deg == 0;
     }
 

@@ -230,7 +230,7 @@ namespace Gecode { namespace Int {
     class TaskViewArray {
     protected:
         /// The underlying task type
-        using Task = typename TaskViewTraits<TaskView>::Task;
+        using Task = TaskViewTraits<TaskView>::Task;
         /// Access to task array
         TaskArray<Task>& t;
 

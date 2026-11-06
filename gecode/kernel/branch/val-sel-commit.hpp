@@ -45,7 +45,7 @@ namespace Gecode {
         /// View type
         using View = View_;
         /// Corresponding variable type
-        using Var = typename View::VarType;
+        using Var = View::VarType;
         /// Value type
         using Val = Val_;
 
@@ -84,9 +84,9 @@ namespace Gecode {
     template <class ValSel, class ValCommit>
     class ValSelCommit : public ValSelCommitBase<typename ValSel::View, typename ValSel::Val> {
     protected:
-        using Var = typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Var;
-        using Val = typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Val;
-        using View = typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::View;
+        using Var = ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Var;
+        using Val = ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Val;
+        using View = ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::View;
         /// The value selection object used
         ValSel s;
         /// The commit object used
@@ -146,7 +146,7 @@ namespace Gecode {
         : ValSelCommitBase<View, Val>(home, vsc), s(home, vsc.s), c(home, vsc.c) {}
 
     template <class ValSel, class ValCommit>
-    typename ValSelCommit<ValSel, ValCommit>::Val
+    ValSelCommit<ValSel, ValCommit>::Val
     ValSelCommit<ValSel, ValCommit>::val(const Space& home, View x, int i) {
         return s.val(home, x, i);
     }

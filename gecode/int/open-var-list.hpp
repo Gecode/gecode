@@ -216,7 +216,7 @@ namespace Gecode { namespace Int {
     template <class Var>
     class OpenMaterialize : public Propagator, private LocalHandle {
     protected:
-        using Object = typename OpenVarList<Var>::Object;
+        using Object = OpenVarList<Var>::Object;
         IntView length;
 
         OpenMaterialize(Home home, Object* source) : Propagator(home), LocalHandle(source), length(source->length) {

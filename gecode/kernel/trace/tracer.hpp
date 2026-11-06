@@ -67,7 +67,7 @@ namespace Gecode {
          *
          */
         void _prune(const Space& home, const ViewTraceRecorder<View>& t, const ViewTraceInfo& vti, int i,
-                    typename TraceTraits<View>::TraceDelta& d);
+                    TraceTraits<View>::TraceDelta& d);
         /**
          * \brief Fail function synchronization
          *
@@ -108,7 +108,7 @@ namespace Gecode {
          * information \a ei.
          */
         virtual void prune(const Space& home, const ViewTraceRecorder<View>& t, const ViewTraceInfo& vti, int i,
-                           typename TraceTraits<View>::TraceDelta& d) = 0;
+                           TraceTraits<View>::TraceDelta& d) = 0;
         /**
          * \brief Fail function
          *
@@ -244,7 +244,7 @@ namespace Gecode {
     template <class View>
     forceinline void
     ViewTracer<View>::_prune(const Space& home, const ViewTraceRecorder<View>& t, const ViewTraceInfo& vti, int i,
-                             typename TraceTraits<View>::TraceDelta& d) {
+                             TraceTraits<View>::TraceDelta& d) {
         Support::Lock l(m);
         prune(home, t, vti, i, d);
     }

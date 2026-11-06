@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Rel {
         : FreeList(n), p(p0) {}
 
     template <class View, int o>
-    forceinline typename NaryLqLe<View, o>::Pos*
+    forceinline NaryLqLe<View, o>::Pos*
     NaryLqLe<View, o>::Pos::next() const {
         return static_cast<Pos*>(FreeList::next());
     }

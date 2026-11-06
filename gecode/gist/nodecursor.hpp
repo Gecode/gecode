@@ -34,7 +34,7 @@ namespace Gecode { namespace Gist {
 
     template <class Node>
     forceinline
-    NodeCursor<Node>::NodeCursor(Node* current_node, const typename Node::NodeAllocator& na0)
+    NodeCursor<Node>::NodeCursor(Node* current_node, const Node::NodeAllocator& na0)
         : _start_node(current_node), _node(current_node), _alternative(current_node->get_alternative(na0)), na(na0) {}
 
     template <class Node>

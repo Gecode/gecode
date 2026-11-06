@@ -54,7 +54,7 @@ namespace Gecode {
     class VarBranch {
     public:
         /// Corresponding merit function
-        using MeritFunction = typename BranchTraits<Var>::Merit;
+        using MeritFunction = BranchTraits<Var>::Merit;
 
     protected:
         /// Tie-breaking limit function
@@ -204,7 +204,7 @@ namespace Gecode {
     }
 
     template <class Var>
-    inline typename VarBranch<Var>::MeritFunction
+    inline VarBranch<Var>::MeritFunction
     VarBranch<Var>::merit() const {
         return _mf;
     }

@@ -159,7 +159,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     template <class Tracer>
-    forceinline typename Path<Tracer>::Edge&
+    forceinline Path<Tracer>::Edge&
     Path<Tracer>::top() const {
         assert(!ds.empty());
         return ds.top();

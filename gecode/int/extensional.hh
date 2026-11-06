@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             Edge* edges;    ///< Supporting edges in layered graph
         };
         /// Type for support size
-        using ValSize = typename Gecode::Support::IntTypeTraits<Val>::utype;
+        using ValSize = Gecode::Support::IntTypeTraits<Val>::utype;
         /// %Layer for a view in the layered graph
         class Layer {
         public:
@@ -641,10 +641,10 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     public:
         using ViewType = View;
-        using ValidSupports = typename Compact<View, true>::ValidSupports;
-        using Range = typename Compact<View, true>::Range;
-        using CTAdvisor = typename Compact<View, true>::CTAdvisor;
-        using LostSupports = typename Compact<View, true>::LostSupports;
+        using ValidSupports = Compact<View, true>::ValidSupports;
+        using Range = Compact<View, true>::Range;
+        using CTAdvisor = Compact<View, true>::CTAdvisor;
+        using LostSupports = Compact<View, true>::LostSupports;
 
         using Compact<View, true>::setup;
         using Compact<View, true>::supports;
@@ -656,7 +656,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Status management
         using Status = CompactStatus<CTAdvisor>;
         /// Status type
-        using StatusType = typename Status::StatusType;
+        using StatusType = Status::StatusType;
         /// Propagator status
         Status status;
         /// Current table
@@ -712,9 +712,9 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     public:
         using ViewType = View;
-        using ValidSupports = typename Compact<View, false>::ValidSupports;
-        using Range = typename Compact<View, false>::Range;
-        using CTAdvisor = typename Compact<View, false>::CTAdvisor;
+        using ValidSupports = Compact<View, false>::ValidSupports;
+        using Range = Compact<View, false>::Range;
+        using CTAdvisor = Compact<View, false>::CTAdvisor;
 
         using Compact<View, false>::setup;
         using Compact<View, false>::full;
@@ -761,9 +761,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     public:
         using ViewType = View;
         static constexpr ReifyMode mode = rm;
-        using ValidSupports = typename Compact<View, false>::ValidSupports;
-        using Range = typename Compact<View, false>::Range;
-        using CTAdvisor = typename Compact<View, false>::CTAdvisor;
+        using ValidSupports = Compact<View, false>::ValidSupports;
+        using Range = Compact<View, false>::Range;
+        using CTAdvisor = Compact<View, false>::CTAdvisor;
 
         using Compact<View, false>::setup;
         using Compact<View, false>::full;

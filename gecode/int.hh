@@ -1039,8 +1039,8 @@ namespace Gecode {
     template <class View>
     class OpenViewList : public LocalHandle {
     private:
-        using Var = typename View::VarType;
-        using Object = typename OpenVarList<Var>::Object;
+        using Var = View::VarType;
+        using Object = OpenVarList<Var>::Object;
 
     public:
         /// Construct an uninitialized list

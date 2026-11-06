@@ -1523,9 +1523,9 @@ namespace Test { namespace Branch {
     template <class Traits>
     class EmptyStatistics : public Base {
     private:
-        using VarArgs = typename Traits::VarArgs;
-        using Action = typename Traits::Action;
-        using CHB = typename Traits::CHB;
+        using VarArgs = Traits::VarArgs;
+        using Action = Traits::Action;
+        using CHB = Traits::CHB;
         /// Test whether \a s is initialized and empty, also when copied
         template <class Statistics>
         static bool

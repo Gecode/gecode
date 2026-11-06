@@ -40,9 +40,9 @@ namespace Gecode {
     class ValBranch {
     public:
         /// The corresponding branching value function
-        using BranchVal = typename BranchTraits<Var>::Val;
+        using BranchVal = BranchTraits<Var>::Val;
         /// The corresponding branching commit function
-        using BranchCommit = typename BranchTraits<Var>::Commit;
+        using BranchCommit = BranchTraits<Var>::Commit;
 
     protected:
         /// Random number generator
@@ -86,13 +86,13 @@ namespace Gecode {
     }
 
     template <class Var>
-    inline typename ValBranch<Var>::BranchVal
+    inline ValBranch<Var>::BranchVal
     ValBranch<Var>::val() const {
         return vf;
     }
 
     template <class Var>
-    inline typename ValBranch<Var>::BranchCommit
+    inline ValBranch<Var>::BranchCommit
     ValBranch<Var>::commit() const {
         return cf;
     }

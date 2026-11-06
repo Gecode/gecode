@@ -71,7 +71,7 @@ namespace Gecode {
         template <class A>
         void
         remove_duplicates(Home home, A& c, IntArgs& v) {
-            using S = typename A::value_type;
+            using S = A::value_type;
             using P = std::pair<S, int>;
             Region re;
             P* a = re.alloc<P>(c.size());

@@ -45,7 +45,7 @@ namespace Gecode {
         /// Define the view type
         using View = View_;
         /// The corresponding variable type
-        using Var = typename View::VarType;
+        using Var = View::VarType;
         /// \name Initialization
         //@{
         /// Constructor for creation
@@ -98,7 +98,7 @@ namespace Gecode {
     template <class View>
     class ViewSelNone : public ViewSel<View> {
     protected:
-        using Var = typename ViewSel<View>::Var;
+        using Var = ViewSel<View>::Var;
 
     public:
         /// \name Initialization
@@ -134,7 +134,7 @@ namespace Gecode {
     template <class View>
     class ViewSelRnd : public ViewSel<View> {
     protected:
-        using Var = typename ViewSel<View>::Var;
+        using Var = ViewSel<View>::Var;
         /// The random number generator used
         Rnd r;
 
@@ -192,10 +192,10 @@ namespace Gecode {
     template <class Choose, class Merit>
     class ViewSelChoose : public ViewSel<typename Merit::View> {
     protected:
-        using Var = typename ViewSel<typename Merit::View>::Var;
-        using View = typename ViewSel<typename Merit::View>::View;
+        using Var = ViewSel<typename Merit::View>::Var;
+        using View = ViewSel<typename Merit::View>::View;
         /// Type of merit
-        using Val = typename Merit::Val;
+        using Val = Merit::Val;
         /// How to choose
         Choose c;
         /// The merit object used
@@ -237,9 +237,9 @@ namespace Gecode {
     template <class Choose, class Merit>
     class ViewSelChooseTbl : public ViewSelChoose<Choose, Merit> {
     protected:
-        using Val = typename ViewSelChoose<Choose, Merit>::Val;
-        using View = typename ViewSelChoose<Choose, Merit>::View;
-        using Var = typename ViewSelChoose<Choose, Merit>::Var;
+        using Val = ViewSelChoose<Choose, Merit>::Val;
+        using View = ViewSelChoose<Choose, Merit>::View;
+        using Var = ViewSelChoose<Choose, Merit>::Var;
         using ViewSelChoose<Choose, Merit>::c;
         using ViewSelChoose<Choose, Merit>::m;
         /// Tie-break limit function
@@ -274,8 +274,8 @@ namespace Gecode {
     /// Select view with least merit
     template <class Merit>
     class ViewSelMin : public ViewSelChoose<ChooseMin, Merit> {
-        using View = typename ViewSelChoose<ChooseMin, Merit>::View;
-        using Var = typename ViewSelChoose<ChooseMin, Merit>::Var;
+        using View = ViewSelChoose<ChooseMin, Merit>::View;
+        using Var = ViewSelChoose<ChooseMin, Merit>::Var;
 
     public:
         /// \name Initialization
@@ -295,8 +295,8 @@ namespace Gecode {
     /// Select view with least merit taking tie-break limit into account
     template <class Merit>
     class ViewSelMinTbl : public ViewSelChooseTbl<ChooseMin, Merit> {
-        using View = typename ViewSelChooseTbl<ChooseMin, Merit>::View;
-        using Var = typename ViewSelChooseTbl<ChooseMin, Merit>::Var;
+        using View = ViewSelChooseTbl<ChooseMin, Merit>::View;
+        using Var = ViewSelChooseTbl<ChooseMin, Merit>::Var;
 
     public:
         /// \name Initialization
@@ -316,8 +316,8 @@ namespace Gecode {
     /// Select view with largest merit
     template <class Merit>
     class ViewSelMax : public ViewSelChoose<ChooseMax, Merit> {
-        using View = typename ViewSelChoose<ChooseMax, Merit>::View;
-        using Var = typename ViewSelChoose<ChooseMax, Merit>::Var;
+        using View = ViewSelChoose<ChooseMax, Merit>::View;
+        using Var = ViewSelChoose<ChooseMax, Merit>::Var;
 
     public:
         /// \name Initialization
@@ -337,8 +337,8 @@ namespace Gecode {
     /// Select view with largest merit taking tie-break limit into account
     template <class Merit>
     class ViewSelMaxTbl : public ViewSelChooseTbl<ChooseMax, Merit> {
-        using View = typename ViewSelChooseTbl<ChooseMax, Merit>::View;
-        using Var = typename ViewSelChooseTbl<ChooseMax, Merit>::Var;
+        using View = ViewSelChooseTbl<ChooseMax, Merit>::View;
+        using Var = ViewSelChooseTbl<ChooseMax, Merit>::Var;
 
     public:
         /// \name Initialization
