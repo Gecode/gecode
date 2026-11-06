@@ -36,7 +36,7 @@
 #include <gecode/int.hh>
 #include <gecode/int/rel.hh>
 
-namespace Gecode { namespace Int { namespace Sequence {
+namespace Gecode::Int::Sequence {
 
     /**
      * \namespace Gecode::Int::Sequence
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace Sequence {
         bool tofail;
     };
 
-}}} // namespace Gecode::Int::Sequence
+} // namespace Gecode::Int::Sequence
 
 #include <gecode/int/sequence/set-op.hpp>
 #include <gecode/int/sequence/violations.hpp>

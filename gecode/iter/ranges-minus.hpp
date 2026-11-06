@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief Range iterator for pointwise minus of a range iterator
@@ -85,6 +85,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     forceinline Minus& Minus::operator=(const Minus& m) = default;
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

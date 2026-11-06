@@ -81,7 +81,7 @@
 #include <thread>
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     namespace {
 
@@ -564,6 +564,6 @@ namespace Gecode { namespace FlatZinc {
         decode_blackbox_response(response, call);
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-other

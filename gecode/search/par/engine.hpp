@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /*
      * Basic access routines
@@ -575,6 +575,6 @@ namespace Gecode { namespace Search { namespace Par {
             heap.rfree(scheduler_worker);
     }
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     template <class ManTaskView>
     forceinline ExecStatus
@@ -108,6 +108,6 @@ namespace Gecode { namespace Int { namespace Unary {
         return detectable<typename TaskTraits<OptTask>::TaskViewBwd, PL>(home, p, b);
     }
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-prop

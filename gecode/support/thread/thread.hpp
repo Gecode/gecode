@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /*
      * Runnable objects
@@ -193,6 +193,6 @@ namespace Gecode { namespace Support {
         return heap.ralloc(s);
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

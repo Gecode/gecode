@@ -40,7 +40,7 @@
  * \brief %No-overlap propagators
  */
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
     /**
      * \brief Dimension combining coordinate and integer size information
@@ -134,11 +134,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         void reschedule(Space& home, Propagator& p);
     };
 
-}}} // namespace Gecode::Int::NoOverlap
+} // namespace Gecode::Int::NoOverlap
 
 #include <gecode/int/no-overlap/dim.hpp>
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
     /**
      * \brief Mandatory box class
@@ -220,11 +220,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         void reschedule(Space& home, Propagator& p);
     };
 
-}}} // namespace Gecode::Int::NoOverlap
+} // namespace Gecode::Int::NoOverlap
 
 #include <gecode/int/no-overlap/box.hpp>
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
     /**
      * \brief Base class for no-overlap propagator
@@ -318,7 +318,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::NoOverlap
+} // namespace Gecode::Int::NoOverlap
 
 #include <gecode/int/no-overlap/base.hpp>
 #include <gecode/int/no-overlap/man.hpp>

@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     /**
      * \brief Clamp a time point for the no-run ranges to the integer limits
@@ -589,6 +589,6 @@ namespace Gecode { namespace Int { namespace Unary {
         return os << s.str();
     }
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-var

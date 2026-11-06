@@ -38,7 +38,7 @@
 #include <gecode/set.hh>
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Set { namespace Int {
+namespace Gecode::Set::Int {
 
     template <class View>
     forceinline
@@ -622,6 +622,6 @@ namespace Gecode { namespace Set { namespace Int {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Set::Int
+} // namespace Gecode::Set::Int
 
 // STATISTICS: set-prop

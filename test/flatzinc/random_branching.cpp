@@ -40,7 +40,7 @@
 #include <string>
 #include <vector>
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Integer and Boolean variables share one randomized value brancher.
     class IntBoolSpace : public Gecode::Space {
     public:
@@ -125,6 +125,6 @@ namespace Test { namespace FlatZinc { namespace {
             return random_options<Gecode::Options>("-seed") && random_options<Gecode::FlatZinc::FlatZincOptions>("-r");
         }
     } random_options_test;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

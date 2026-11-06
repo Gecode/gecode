@@ -36,7 +36,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// Shared stop information
     class SharedStopInfo {
@@ -150,7 +150,7 @@ namespace Gecode { namespace Search { namespace Seq {
         ~PBS() override;
     };
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/pbs.hpp>
 

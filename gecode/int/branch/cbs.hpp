@@ -32,7 +32,7 @@
 
 #ifdef GECODE_HAS_CBS
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     template <class View>
     forceinline void
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Branch {
             o << "x[" << pos << "] != " << val;
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 #endif
 

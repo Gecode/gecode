@@ -32,7 +32,7 @@
 
 namespace Gecode {
 
-    namespace Int { namespace Linear {
+    namespace Int::Linear {
 
         /**
          * \brief No view serves as filler for empty view arrays
@@ -217,7 +217,7 @@ namespace Gecode {
             return os;
         }
 
-    }} // namespace Int::Linear
+    } // namespace Int::Linear
 
     /**
      * \brief View array for no view (empty)

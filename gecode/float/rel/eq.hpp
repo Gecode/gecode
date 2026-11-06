@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Rel {
+namespace Gecode::Float::Rel {
 
     /*
      * Binary bounds consistent equality
@@ -328,6 +328,6 @@ namespace Gecode { namespace Float { namespace Rel {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Float::Rel
+} // namespace Gecode::Float::Rel
 
 // STATISTICS: float-prop

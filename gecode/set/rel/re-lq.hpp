@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
     template <class View0, class View1, ReifyMode rm, bool strict>
     forceinline
@@ -205,6 +205,6 @@ namespace Gecode { namespace Set { namespace Rel {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Set::Rel
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

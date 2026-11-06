@@ -36,7 +36,7 @@
 
 #include "test/test.hh"
 
-namespace Test { namespace Fault {
+namespace Test::Fault {
 
     using namespace Gecode;
     using Gecode::Support::FailPoint::Phase;
@@ -1305,6 +1305,6 @@ namespace Test { namespace Fault {
     CloneLocalObjectCopy clone_local_object_copy;
     MiniModelLinearSumHeapFailures minimodel_linear_sum_heap_failures;
 
-}} // namespace Test::Fault
+} // namespace Test::Fault
 
 // STATISTICS: test-fault

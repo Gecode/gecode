@@ -42,7 +42,7 @@
 #include <string>
 #include <type_traits>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /** \brief Template for linear congruential generators
      *
@@ -506,6 +506,6 @@ namespace Gecode { namespace Support {
     /// Default generator, also used by command-line clients and tests
     using RandomGenerator = Random<SplitMix>;
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

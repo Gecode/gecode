@@ -38,7 +38,7 @@
 
 #include <gecode/search/seq/lds.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     Engine*
     make_lds_engine(Space* s, const Options& o) {
@@ -47,6 +47,6 @@ namespace Gecode { namespace Search {
         return new Seq::LDS<NoTraceRecorder>(s, o);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

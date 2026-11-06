@@ -41,7 +41,7 @@
  * \namespace Gecode::Int::ViewValGraph
  * \brief Support classes for propagators using a view-value graph
  */
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
     /**
      * \brief Class for combining two pointers with a flag
@@ -284,7 +284,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         //@}
     };
 
-}}} // namespace Gecode::Int::ViewValGraph
+} // namespace Gecode::Int::ViewValGraph
 
 #include <gecode/int/view-val-graph/comb-ptr-flag.hpp>
 #include <gecode/int/view-val-graph/bi-link.hpp>
@@ -292,7 +292,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 #include <gecode/int/view-val-graph/node.hpp>
 #include <gecode/int/view-val-graph/iter-prune-val.hpp>
 
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
     /// View-value graph base class
     template <class View>
@@ -326,7 +326,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         void purge();
     };
 
-}}} // namespace Gecode::Int::ViewValGraph
+} // namespace Gecode::Int::ViewValGraph
 
 #include <gecode/int/view-val-graph/graph.hpp>
 

@@ -39,7 +39,7 @@
 #endif
 #include <gecode/gist.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /**
      * \brief Preferences dialog for %Gist
@@ -90,7 +90,7 @@ namespace Gecode { namespace Gist {
         int a_d;
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

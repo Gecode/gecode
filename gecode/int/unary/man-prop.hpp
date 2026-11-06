@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     template <class ManTask, class PL>
     forceinline
@@ -76,6 +76,6 @@ namespace Gecode { namespace Int { namespace Unary {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-prop

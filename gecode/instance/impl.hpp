@@ -44,7 +44,7 @@
 #include <new>
 #include <utility>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     /*
      * Character classes and number syntax, ASCII only and independent of the
@@ -821,7 +821,7 @@ namespace Gecode { namespace Instance {
     /// Read file \a path into a string
     std::string read_file(const std::string& path);
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 #endif
 

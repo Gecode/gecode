@@ -33,7 +33,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/worker-control.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     Engine::Engine() = default;
 
@@ -65,6 +65,6 @@ namespace Gecode { namespace Search {
      */
     Builder::~Builder() = default;
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

@@ -38,7 +38,7 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Gecode { namespace MiniModel {
+namespace Gecode::MiniModel {
 
     /// Non-linear arithmetic expressions over integer variables
     class GECODE_MINIMODEL_EXPORT ArithNonLinIntExpr : public NonLinIntExpr {
@@ -299,7 +299,7 @@ namespace Gecode { namespace MiniModel {
         }
     };
 
-}} // namespace Gecode::MiniModel
+} // namespace Gecode::MiniModel
 
 namespace Gecode {
 

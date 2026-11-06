@@ -36,7 +36,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     forceinline bool
     IntVarImp::closer_min(int n) const {
@@ -426,6 +426,6 @@ namespace Gecode { namespace Int {
         IntVarImpBase::subscribe(home, a, dom.min() == dom.max(), fail);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

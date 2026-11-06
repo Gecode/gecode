@@ -37,7 +37,7 @@
 #include <gecode/set/rel-op.hh>
 #include <gecode/set/int.hh>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     template <class View0, class View1>
     forceinline void
@@ -143,7 +143,7 @@ namespace Gecode { namespace Set {
         }
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 namespace Gecode {
 

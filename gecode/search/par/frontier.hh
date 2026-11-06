@@ -39,7 +39,7 @@
 #include <exception>
 
 #if defined(GECODE_HAS_EXPERIMENTAL) && defined(GECODE_HAS_THREADS)
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /**
      * \brief Parallel engine for heuristic search
@@ -170,7 +170,7 @@ namespace Gecode { namespace Search { namespace Par {
         void reset(Space* s) override;
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 #endif
 #endif
 

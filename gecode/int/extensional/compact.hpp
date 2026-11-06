@@ -35,7 +35,7 @@
 #include <algorithm>
 #include <type_traits>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /*
      * Shared compact-table advisor
@@ -1838,6 +1838,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 // STATISTICS: int-prop

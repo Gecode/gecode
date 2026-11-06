@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Sequence {
+namespace Gecode::Set::Sequence {
 
     /*
      * "Sequenced union" propagator
@@ -69,6 +69,6 @@ namespace Gecode { namespace Set { namespace Sequence {
         }
     }
 
-}}} // namespace Gecode::Set::Sequence
+} // namespace Gecode::Set::Sequence
 
 // STATISTICS: set-prop

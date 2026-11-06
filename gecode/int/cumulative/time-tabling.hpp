@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Sort order for tasks by decreasing capacity
     template <class Task>
@@ -125,6 +125,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

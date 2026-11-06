@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Count {
+namespace Gecode::Int::Count {
 
     template <class VX, class VY>
     forceinline
@@ -77,6 +77,6 @@ namespace Gecode { namespace Int { namespace Count {
         Gecode::Int::Count::reschedule(home, *this, y);
     }
 
-}}} // namespace Gecode::Int::Count
+} // namespace Gecode::Int::Count
 
 // STATISTICS: int-prop

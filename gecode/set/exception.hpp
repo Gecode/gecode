@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /**
      * \defgroup FuncThrowSet Set exceptions
@@ -98,6 +98,6 @@ namespace Gecode { namespace Set {
 
     //@}
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-other

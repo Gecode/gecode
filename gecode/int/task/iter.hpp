@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     template <class TaskView, SortTaskOrder sto, bool inc>
     forceinline
@@ -75,6 +75,6 @@ namespace Gecode { namespace Int {
         i--;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

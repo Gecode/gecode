@@ -32,7 +32,7 @@
 #include <algorithm>
 #include <utility>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /// Multiply intervals exactly; saturation would make modular deductions unsound.
     inline bool
@@ -909,6 +909,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

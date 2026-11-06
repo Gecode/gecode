@@ -38,7 +38,7 @@
 #include <gecode/float/linear.hh>
 #include <gecode/float/rel.hh>
 
-namespace Gecode { namespace Float { namespace Linear {
+namespace Gecode::Float::Linear {
 
     void
     estimate(Term* t, int n, const FloatVal& c, FloatNum& l, FloatNum& u) {
@@ -274,6 +274,6 @@ namespace Gecode { namespace Float { namespace Linear {
         post_linear(home, t, n, FRT_EQ, 0.0);
     }
 
-}}} // namespace Gecode::Float::Linear
+} // namespace Gecode::Float::Linear
 
 // STATISTICS: float-post

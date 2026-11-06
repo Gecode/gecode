@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Task mapper: map forward task to view to backward task View
@@ -92,6 +92,6 @@ namespace Gecode { namespace Int {
         return TaskView::norun(home, -l, -e);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

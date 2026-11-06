@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     template <class View, class A>
     forceinline void
@@ -178,6 +178,6 @@ namespace Gecode { namespace Int {
         return x.minus_v(home, u, false);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

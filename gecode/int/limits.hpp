@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     inline bool
     Limits::valid(int n) {
@@ -144,6 +144,6 @@ namespace Gecode { namespace Int {
         return unm_hi > static_cast<unsigned long long int>(LLONG_MAX) - unm_lo;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

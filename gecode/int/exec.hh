@@ -40,7 +40,7 @@
  * \brief Synchronized execution
  */
 
-namespace Gecode { namespace Int { namespace Exec {
+namespace Gecode::Int::Exec {
 
     /**
      * \brief Conditional propagator
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Exec {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Exec
+} // namespace Gecode::Int::Exec
 
 #include <gecode/int/exec/when.hpp>
 

@@ -34,7 +34,7 @@
 
 #include <sstream>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /// Print bound of a set view or variable
     template <class Char, class Traits, class I>
@@ -134,6 +134,6 @@ namespace Gecode { namespace Set {
         return os << s.str();
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

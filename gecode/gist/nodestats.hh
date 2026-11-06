@@ -40,7 +40,7 @@
 #include <QtWidgets>
 #endif
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /**
      * \brief Display information about nodes
@@ -72,7 +72,7 @@ namespace Gecode { namespace Gist {
         void show_stats();
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Element {
+namespace Gecode::Set::Element {
 
     template <class SView, class RView>
     forceinline
@@ -278,6 +278,6 @@ namespace Gecode { namespace Set { namespace Element {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Set::Element
+} // namespace Gecode::Set::Element
 
 // STATISTICS: set-prop

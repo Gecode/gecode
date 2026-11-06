@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Ternary linear propagators
@@ -251,6 +251,6 @@ namespace Gecode { namespace Int { namespace Linear {
         return (x0.max() + x1.max() + x2.max() <= c) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 // STATISTICS: int-prop

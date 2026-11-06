@@ -36,7 +36,7 @@
 #include <gecode/kernel.hh>
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Relax variables in \a x from solution \a sx with probability \a p
     template <class VarArgs, class Post>
@@ -64,7 +64,7 @@ namespace Gecode { namespace Search {
             }
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #endif
 

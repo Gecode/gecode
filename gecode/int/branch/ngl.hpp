@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     template <class View>
     forceinline
@@ -140,6 +140,6 @@ namespace Gecode { namespace Int { namespace Branch {
         return me_failed(x.le(home, n)) ? ES_FAILED : ES_OK;
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

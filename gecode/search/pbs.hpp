@@ -35,7 +35,7 @@
 #include <memory>
 #include <gecode/search/worker-control.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Dispose partially constructed portfolio assets
     forceinline void
@@ -210,11 +210,11 @@ namespace Gecode { namespace Search {
         return build<T, PBS<T, E>>(s, opt);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/seq/dead.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// Create stop object
     GECODE_SEARCH_EXPORT Stop* pbs_stop(Stop* so);
@@ -227,9 +227,9 @@ namespace Gecode { namespace Search { namespace Seq {
                                                  unsigned int n_assets, const Statistics& stat,
                                                  const Search::Options& opt, bool best);
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /// Create stop object
     GECODE_SEARCH_EXPORT Stop* pbs_stop(Stop* so, const WorkerControl& control);
@@ -241,9 +241,9 @@ namespace Gecode { namespace Search { namespace Par {
     GECODE_SEARCH_EXPORT Engine* make_pbs_engine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
                                                  unsigned int n_assets, const Statistics& stat, bool best);
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     template <class T, template <class> class E>
     Engine*
@@ -430,7 +430,7 @@ namespace Gecode { namespace Search {
 
 #endif
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 namespace Gecode {
 

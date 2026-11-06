@@ -570,7 +570,7 @@ AST::Node* array_output(AST::Call* ann) {
  *
  */
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
   ParserState::~ParserState() {
     if (yyscanner)
@@ -672,7 +672,7 @@ namespace Gecode { namespace FlatZinc {
     return pp.fg;
   }
 
-}}
+} // namespace Gecode::FlatZinc
 
 
 #line 679 "gecode/flatzinc/parser.tab.cpp"

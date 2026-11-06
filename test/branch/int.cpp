@@ -37,7 +37,7 @@
 
 #include <memory>
 
-namespace Test { namespace Branch {
+namespace Test::Branch {
 
     /// Space for testing filtered random tie selection
     class FilteredRndTiesSpace : public Gecode::Space {
@@ -207,6 +207,6 @@ namespace Test { namespace Branch {
     Int l_2("Large::2", d_large, 2);
     Int l_3("Large::3", d_large, 3);
 
-}} // namespace Test::Branch
+} // namespace Test::Branch
 
 // STATISTICS: test-branch

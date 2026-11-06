@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Rel {
+namespace Gecode::Float::Rel {
 
     /*
      * Disequality
@@ -118,6 +118,6 @@ namespace Gecode { namespace Float { namespace Rel {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Float::Rel
+} // namespace Gecode::Float::Rel
 
 // STATISTICS: float-prop

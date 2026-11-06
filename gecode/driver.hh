@@ -922,7 +922,7 @@ namespace Gecode {
 
 #include <gecode/driver/options.hpp>
 
-namespace Gecode { namespace Driver {
+namespace Gecode::Driver {
 
     /**
      * \brief Parametric base-class for scripts
@@ -987,7 +987,7 @@ namespace Gecode { namespace Driver {
         IgnoreStepOption(BaseSpace& e) : BaseSpace(e) {}
     };
 
-}} // namespace Gecode::Driver
+} // namespace Gecode::Driver
 
 #include <gecode/driver/script.hpp>
 

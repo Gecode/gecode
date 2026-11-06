@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Array with arbitrary number of elements
@@ -155,6 +155,6 @@ namespace Gecode { namespace Support {
         return x;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

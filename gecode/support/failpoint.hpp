@@ -42,7 +42,7 @@
  * dedicated isolated single-threaded fault-test executable; it is not a
  * supported application API and must not be used for concurrent execution.
  */
-namespace Gecode { namespace Support { namespace FailPoint {
+namespace Gecode::Support::FailPoint {
 
     /// Named phase for deterministic test failure injection
     enum class Phase {
@@ -67,7 +67,7 @@ namespace Gecode { namespace Support { namespace FailPoint {
     /// Number of checks observed for the configured phase
     GECODE_SUPPORT_EXPORT unsigned long long count();
 
-}}} // namespace Gecode::Support::FailPoint
+} // namespace Gecode::Support::FailPoint
 
 #endif
 

@@ -46,7 +46,7 @@
 #include <gecode/float.hh>
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     class BlackBoxContext;
 
@@ -89,7 +89,7 @@ namespace Gecode { namespace FlatZinc {
                          const std::string& mode, const std::string& target, const std::vector<std::string>& args,
                          const std::vector<int>& reason);
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif // GECODE_FLATZINC_BLACKBOX_HH
 

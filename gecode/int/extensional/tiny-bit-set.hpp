@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /*
      * Tiny bit-set
@@ -260,6 +260,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         return sz;
     }
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 // STATISTICS: int-prop

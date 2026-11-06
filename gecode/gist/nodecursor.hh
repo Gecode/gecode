@@ -35,7 +35,7 @@
 
 #include <gecode/gist/visualnode.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief A cursor that can be run over a tree
     template <class Node>
@@ -221,7 +221,7 @@ namespace Gecode { namespace Gist {
         //@}
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #include <gecode/gist/nodecursor.hpp>
 

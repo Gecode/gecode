@@ -35,7 +35,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /*
      * Omega tree
@@ -267,6 +267,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return root().lenv;
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

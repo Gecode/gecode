@@ -41,7 +41,7 @@
 #include <cassert>
 #include <cstdint>
 
-namespace Gecode { namespace CPProfiler {
+namespace Gecode::CPProfiler {
 
     /// Version of CPProfiler protocol
     static const int32_t PROFILER_PROTOCOL_VERSION = 3;
@@ -501,6 +501,6 @@ namespace Gecode { namespace CPProfiler {
         }
     };
 
-}} // namespace Gecode::CPProfiler
+} // namespace Gecode::CPProfiler
 
 // STATISTICS: search-trace

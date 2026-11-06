@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
     template <class Box>
     forceinline
@@ -111,6 +111,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Int::NoOverlap
+} // namespace Gecode::Int::NoOverlap
 
 // STATISTICS: int-prop

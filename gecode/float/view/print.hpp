@@ -34,7 +34,7 @@
 
 #include <sstream>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
     namespace Linear {
         class NoView;
     }
@@ -83,6 +83,6 @@ namespace Gecode { namespace Float {
         return os << "NoView";
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

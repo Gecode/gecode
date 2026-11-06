@@ -32,7 +32,7 @@
 
 #include <gecode/int/channel.hh>
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
     forceinline
     LinkSingle::LinkSingle(Space& home, LinkSingle& p)
@@ -66,6 +66,6 @@ namespace Gecode { namespace Int { namespace Channel {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Int::Channel
+} // namespace Gecode::Int::Channel
 
 // STATISTICS: int-prop

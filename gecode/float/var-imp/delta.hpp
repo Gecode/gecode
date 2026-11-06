@@ -37,7 +37,7 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     forceinline
     FloatDelta::FloatDelta()
@@ -54,6 +54,6 @@ namespace Gecode { namespace Float {
         return _max;
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

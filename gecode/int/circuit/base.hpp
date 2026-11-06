@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Circuit {
+namespace Gecode::Int::Circuit {
 
     template <class View, class Offset>
     forceinline
@@ -292,6 +292,6 @@ namespace Gecode { namespace Int { namespace Circuit {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::Circuit
+} // namespace Gecode::Int::Circuit
 
 // STATISTICS: int-prop

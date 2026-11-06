@@ -32,7 +32,7 @@
 
 #include <chrono>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /** \brief %Timer
      *
@@ -64,6 +64,6 @@ namespace Gecode { namespace Support {
         return duration.count();
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

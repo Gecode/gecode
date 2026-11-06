@@ -36,159 +36,154 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Test { namespace Float {
+/// %Tests for relation constraints
+namespace Test::Float::Rel {
 
-    /// %Tests for relation constraints
-    namespace Rel {
+    /**
+     * \defgroup TaskTestFloatRel Relation constraints
+     * \ingroup TaskTestFloat
+     */
+    //@{
+    /// %Test for simple relation involving float variables
+    class FloatVarXY : public Test {
+    protected:
+        /// Float relation type to propagate
+        Gecode::FloatRelType frt;
 
-        /**
-         * \defgroup TaskTestFloatRel Relation constraints
-         * \ingroup TaskTestFloat
-         */
-        //@{
-        /// %Test for simple relation involving float variables
-        class FloatVarXY : public Test {
-        protected:
-            /// Float relation type to propagate
-            Gecode::FloatRelType frt;
+    public:
+        /// Create and register test
+        FloatVarXY(Gecode::FloatRelType frt0, int n, Gecode::FloatNum st)
+            : Test("Rel::Float::Var::XY::" + str(frt0) + "::" + str(n), n + 1, -3, 3, st, COMPLETE_ASSIGNMENT, n == 1),
+              frt(frt0) {
+            test_subsumption = false;
+        }
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if (x.size() == 2) {
+                return cmp(x[0], frt, x[1]);
+            }
+            MaybeType r1 = cmp(x[0], frt, x[2]);
+            MaybeType r2 = cmp(x[1], frt, x[2]);
+            if ((r1 == MT_TRUE) && (r2 == MT_TRUE))
+                return MT_TRUE;
+            if ((r1 == MT_FALSE) || (r2 == MT_FALSE))
+                return MT_FALSE;
+            return MT_MAYBE;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            using namespace Gecode;
+            if (x.size() == 2) {
+                rel(home, x[0], frt, x[1]);
+            } else {
+                FloatVarArgs y(2);
+                y[0] = x[0];
+                y[1] = x[1];
+                rel(home, y, frt, x[2]);
+            }
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
+            assert(x.size() == 2);
+            Gecode::rel(home, x[0], frt, x[1], r);
+        }
+    };
 
-        public:
-            /// Create and register test
-            FloatVarXY(Gecode::FloatRelType frt0, int n, Gecode::FloatNum st)
-                : Test("Rel::Float::Var::XY::" + str(frt0) + "::" + str(n), n + 1, -3, 3, st, COMPLETE_ASSIGNMENT,
-                       n == 1),
-                  frt(frt0) {
-                test_subsumption = false;
-            }
-            /// %Test whether \a x is solution
-            MaybeType
-            solution(const Assignment& x) const override {
-                if (x.size() == 2) {
-                    return cmp(x[0], frt, x[1]);
-                }
-                MaybeType r1 = cmp(x[0], frt, x[2]);
-                MaybeType r2 = cmp(x[1], frt, x[2]);
-                if ((r1 == MT_TRUE) && (r2 == MT_TRUE))
-                    return MT_TRUE;
-                if ((r1 == MT_FALSE) || (r2 == MT_FALSE))
-                    return MT_FALSE;
-                return MT_MAYBE;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
-                using namespace Gecode;
-                if (x.size() == 2) {
-                    rel(home, x[0], frt, x[1]);
-                } else {
-                    FloatVarArgs y(2);
-                    y[0] = x[0];
-                    y[1] = x[1];
-                    rel(home, y, frt, x[2]);
-                }
-            }
-            /// Post reified constraint on \a x for \a r
-            void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
-                assert(x.size() == 2);
-                Gecode::rel(home, x[0], frt, x[1], r);
-            }
-        };
+    /// %Test for simple relation involving shared float variables
+    class FloatVarXX : public Test {
+    protected:
+        /// Float relation type to propagate
+        Gecode::FloatRelType frt;
 
-        /// %Test for simple relation involving shared float variables
-        class FloatVarXX : public Test {
-        protected:
-            /// Float relation type to propagate
-            Gecode::FloatRelType frt;
+    public:
+        /// Create and register test
+        FloatVarXX(Gecode::FloatRelType frt0, Gecode::FloatNum st)
+            : Test("Rel::Float::Var::XX::" + str(frt0), 1, -3, 3, st, COMPLETE_ASSIGNMENT, true), frt(frt0) {
+            test_subsumption = false;
+        }
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            return cmp(x[0], frt, x[0]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::rel(home, x[0], frt, x[0]);
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
+            Gecode::rel(home, x[0], frt, x[0], r);
+        }
+    };
 
-        public:
-            /// Create and register test
-            FloatVarXX(Gecode::FloatRelType frt0, Gecode::FloatNum st)
-                : Test("Rel::Float::Var::XX::" + str(frt0), 1, -3, 3, st, COMPLETE_ASSIGNMENT, true), frt(frt0) {
-                test_subsumption = false;
-            }
-            /// %Test whether \a x is solution
-            MaybeType
-            solution(const Assignment& x) const override {
-                return cmp(x[0], frt, x[0]);
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
-                Gecode::rel(home, x[0], frt, x[0]);
-            }
-            /// Post reified constraint on \a x for \a r
-            void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
-                Gecode::rel(home, x[0], frt, x[0], r);
-            }
-        };
+    /// %Test for simple relation involving float variable and float constant
+    class FloatFloat : public Test {
+    protected:
+        /// Float relation type to propagate
+        Gecode::FloatRelType frt;
+        /// Float constant
+        Gecode::FloatVal c;
 
-        /// %Test for simple relation involving float variable and float constant
-        class FloatFloat : public Test {
-        protected:
-            /// Float relation type to propagate
-            Gecode::FloatRelType frt;
-            /// Float constant
-            Gecode::FloatVal c;
+    public:
+        /// Create and register test
+        FloatFloat(Gecode::FloatRelType frt0, int n, Gecode::FloatNum c0, Gecode::FloatNum st)
+            : Test("Rel::Float::Float::" + str(frt0) + "::" + str(n) + "::" + str(c0), n, -3, 3, st,
+                   COMPLETE_ASSIGNMENT, n == 1),
+              frt(frt0), c(c0) {
+            test_subsumption = false;
+        }
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if (x.size() == 1) {
+                return cmp(x[0], frt, c);
+            }
+            return cmp(x[0], frt, c) & cmp(x[1], frt, c);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            using namespace Gecode;
+            if (x.size() == 1)
+                rel(home, x[0], frt, c);
+            else
+                rel(home, x, frt, c);
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
+            assert(x.size() == 1);
+            Gecode::rel(home, x[0], frt, c, r);
+        }
+    };
 
-        public:
-            /// Create and register test
-            FloatFloat(Gecode::FloatRelType frt0, int n, Gecode::FloatNum c0, Gecode::FloatNum st)
-                : Test("Rel::Float::Float::" + str(frt0) + "::" + str(n) + "::" + str(c0), n, -3, 3, st,
-                       COMPLETE_ASSIGNMENT, n == 1),
-                  frt(frt0), c(c0) {
-                test_subsumption = false;
-            }
-            /// %Test whether \a x is solution
-            MaybeType
-            solution(const Assignment& x) const override {
-                if (x.size() == 1) {
-                    return cmp(x[0], frt, c);
-                }
-                return cmp(x[0], frt, c) & cmp(x[1], frt, c);
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
-                using namespace Gecode;
-                if (x.size() == 1)
-                    rel(home, x[0], frt, c);
-                else
-                    rel(home, x, frt, c);
-            }
-            /// Post reified constraint on \a x for \a r
-            void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
-                assert(x.size() == 1);
-                Gecode::rel(home, x[0], frt, c, r);
-            }
-        };
-
-        /// Help class to create and register tests
-        class Create {
-        public:
-            /// Perform creation and registration
-            Create() {
-                using namespace Gecode;
-                Gecode::FloatNum step = 0.7;
-                for (FloatRelTypes frts; frts(); ++frts) {
-                    (void)new FloatVarXY(frts.frt(), 1, step);
-                    (void)new FloatVarXY(frts.frt(), 2, step);
-                    (void)new FloatVarXX(frts.frt(), step);
-                    for (int c = -4; c <= 4; c++) {
-                        (void)new FloatFloat(frts.frt(), 1, c, step);
-                        (void)new FloatFloat(frts.frt(), 2, c, step);
-                    }
+    /// Help class to create and register tests
+    class Create {
+    public:
+        /// Perform creation and registration
+        Create() {
+            using namespace Gecode;
+            Gecode::FloatNum step = 0.7;
+            for (FloatRelTypes frts; frts(); ++frts) {
+                (void)new FloatVarXY(frts.frt(), 1, step);
+                (void)new FloatVarXY(frts.frt(), 2, step);
+                (void)new FloatVarXX(frts.frt(), step);
+                for (int c = -4; c <= 4; c++) {
+                    (void)new FloatFloat(frts.frt(), 1, c, step);
+                    (void)new FloatFloat(frts.frt(), 2, c, step);
                 }
             }
-        };
+        }
+    };
 
-        Create c;
-        //@}
+    Create c;
+    //@}
 
-    } // namespace Rel
-
-}} // namespace Test::Float
+} // namespace Test::Float::Rel
 
 // STATISTICS: test-float

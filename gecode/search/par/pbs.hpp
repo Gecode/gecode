@@ -36,7 +36,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     template <class Collect>
     forceinline
@@ -458,6 +458,6 @@ namespace Gecode { namespace Search { namespace Par {
         heap.free<Asset<Collect>*>(assets, n_assets);
     }
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

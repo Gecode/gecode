@@ -35,7 +35,7 @@
 #include <algorithm>
 #include <limits>
 
-namespace Test { namespace Int { namespace InterDistance {
+namespace Test::Int::InterDistance {
 
     /// Exercise assignment, cloning, search, and bounds(Z) consistency
     class Distance : public Test {
@@ -391,6 +391,6 @@ namespace Test { namespace Int { namespace InterDistance {
     } create;
     Posting posting;
 
-}}} // namespace Test::Int::InterDistance
+} // namespace Test::Int::InterDistance
 
 // STATISTICS: test-int

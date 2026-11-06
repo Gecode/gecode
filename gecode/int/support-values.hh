@@ -35,7 +35,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \brief %Support value iterator and recorder
@@ -141,7 +141,7 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/support-values.hpp>
 

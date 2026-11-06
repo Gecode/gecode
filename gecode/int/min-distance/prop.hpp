@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace MinDistance {
+namespace Gecode::Int::MinDistance {
 
     /// Inclusive requirement, with an empty matrix denoting all zeroes
     forceinline int
@@ -500,6 +500,6 @@ namespace Gecode { namespace Int { namespace MinDistance {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::MinDistance
+} // namespace Gecode::Int::MinDistance
 
 // STATISTICS: int-prop

@@ -37,7 +37,7 @@
 
 #include <gecode/gist/gecodelogo.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     AboutGist::AboutGist(QWidget* parent) : QDialog(parent) {
 
@@ -314,6 +314,6 @@ namespace Gecode { namespace Gist {
         inspect_node_before_fp_menu->addActions(c->inspect_before_fp_group->actions());
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

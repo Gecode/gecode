@@ -41,7 +41,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
     /**
      * \namespace Gecode::Set::Rel
@@ -313,7 +313,7 @@ namespace Gecode { namespace Set { namespace Rel {
         static ExecStatus post(Home home, View0 x, ConstSetView y);
     };
 
-}}} // namespace Gecode::Set::Rel
+} // namespace Gecode::Set::Rel
 
 #include <gecode/set/rel/common.hpp>
 #include <gecode/set/rel/subset.hpp>

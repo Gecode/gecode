@@ -35,7 +35,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Class to define an optional from a mandatory task
     template <class ManTask>
@@ -91,11 +91,11 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/man-to-opt.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Task mapper: turns a task view into its dual
     template <class TaskView>
@@ -132,11 +132,11 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/fwd-to-bwd.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \brief Traits class for mapping task views to tasks
@@ -156,9 +156,9 @@ namespace Gecode { namespace Int {
     template <class Task>
     class TaskTraits {};
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Task array
     template <class Task>
@@ -269,11 +269,11 @@ namespace Gecode { namespace Int {
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os,
                                                  const TaskViewArray<TaskView>& t);
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/array.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// How to sort tasks
     enum class SortTaskOrder {
@@ -296,11 +296,11 @@ namespace Gecode { namespace Int {
     template <class TaskView, SortTaskOrder sto, bool inc>
     void sort(int* map, int n, const TaskViewArray<TaskView>& t);
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/sort.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Allows to iterate over task views according to a specified order
     template <class TaskView, SortTaskOrder sto, bool inc>
@@ -345,11 +345,11 @@ namespace Gecode { namespace Int {
         ManTaskViewIter(Region& r, const TaskViewArray<OptTaskView>& t);
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/iter.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Safe addition in case \a x is -Int::Limits::infinity
     int plus(int x, int y);
@@ -410,11 +410,11 @@ namespace Gecode { namespace Int {
         TaskTree(Region& r, const TaskTree<TaskView, Node2>& t);
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/tree.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \brief %Propagator for tasks
@@ -482,12 +482,12 @@ namespace Gecode { namespace Int {
         static const PropCond pc = PC_INT_DOM;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/prop.hpp>
 #include <gecode/int/task/purge.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Time-tabling event for task
     class Event {
@@ -532,7 +532,7 @@ namespace Gecode { namespace Int {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const Event& e);
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/event.hpp>
 

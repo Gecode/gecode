@@ -34,7 +34,7 @@
 
 #ifdef GECODE_HAS_SET_VARS
 
-namespace Test { namespace Branch {
+namespace Test::Branch {
 
     /// %Test brancher
     class Set : public SetTest {
@@ -60,7 +60,7 @@ namespace Test { namespace Branch {
         Set s_3(TestTags::sweep(), "Sparse::3", d_sparse, 3);
     } // namespace
 
-}} // namespace Test::Branch
+} // namespace Test::Branch
 
 #endif
 

@@ -36,13 +36,13 @@
 #include <gecode/set.hh>
 #include <gecode/set/rel-op.hh>
 
-namespace Gecode { namespace Set { namespace RelOp {
+namespace Gecode::Set::RelOp {
 
     void
     post_nocompl(Home home, ConstSetView x, SetOpType op, SetView y, SetRelType r, SetView z) {
         rel_op_post_nocompl<ConstSetView, SetView, SetView>(home, x, op, y, r, z);
     }
 
-}}} // namespace Gecode::Set::RelOp
+} // namespace Gecode::Set::RelOp
 
 // STATISTICS: set-prop

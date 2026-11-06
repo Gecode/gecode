@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <memory>
 
-namespace Test { namespace Int {
+namespace Test::Int {
 
     /*
      * Complete assignments
@@ -74,7 +74,7 @@ namespace Test { namespace Int {
         a--;
     }
 
-}} // namespace Test::Int
+} // namespace Test::Int
 
 std::ostream&
 operator<<(std::ostream& os, const Test::Int::Assignment& a) {
@@ -85,7 +85,7 @@ operator<<(std::ostream& os, const Test::Int::Assignment& a) {
     return os;
 }
 
-namespace Test { namespace Int {
+namespace Test::Int {
 
     TestSpace::TestSpace(int n, Gecode::IntSet& d0, Test* t)
         : d(d0), x(*this, n, Gecode::Int::Limits::min, Gecode::Int::Limits::max), test(t), reified(false) {
@@ -1325,7 +1325,7 @@ namespace Test { namespace Int {
         return true;
     }
 
-}} // namespace Test::Int
+} // namespace Test::Int
 
 #undef START_TEST
 #undef CHECK_TEST

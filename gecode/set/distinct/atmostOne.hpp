@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Distinct {
+namespace Gecode::Set::Distinct {
 
     /*
      * "AtMostOneIntersection" propagator
@@ -56,6 +56,6 @@ namespace Gecode { namespace Set { namespace Distinct {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Set::Distinct
+} // namespace Gecode::Set::Distinct
 
 // STATISTICS: set-prop

@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Linear {
+namespace Gecode::Float::Linear {
 
     /*
      * Linear propagators
@@ -346,6 +346,6 @@ namespace Gecode { namespace Float { namespace Linear {
         return assigned ? home.ES_SUBSUMED(*this) : es;
     }
 
-}}} // namespace Gecode::Float::Linear
+} // namespace Gecode::Float::Linear
 
 // STATISTICS: float-prop

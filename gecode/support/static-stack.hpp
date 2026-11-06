@@ -32,7 +32,7 @@
 
 #include <utility>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Stack with fixed number of elements
@@ -139,6 +139,6 @@ namespace Gecode { namespace Support {
         stack[tos++] = x;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

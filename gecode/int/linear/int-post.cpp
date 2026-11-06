@@ -36,7 +36,7 @@
 #include <gecode/int/linear.hh>
 #include <gecode/int/div.hh>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /// Eliminate assigned views
     forceinline void
@@ -870,6 +870,6 @@ namespace Gecode { namespace Int { namespace Linear {
         }
     }
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 // STATISTICS: int-post

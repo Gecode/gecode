@@ -38,7 +38,7 @@
 #include <gecode/search/worker.hh>
 #include <gecode/search/seq/path.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// Depth-first search engine implementation
     template <class Tracer>
@@ -72,7 +72,7 @@ namespace Gecode { namespace Search { namespace Seq {
         ~DFS();
     };
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/dfs.hpp>
 

@@ -32,7 +32,7 @@
 
 #include <climits>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     /*
      * The propagation controller
@@ -67,6 +67,6 @@ namespace Gecode { namespace Int { namespace Distinct {
         return g.prune(home, assigned);
     }
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop

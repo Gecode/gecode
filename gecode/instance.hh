@@ -79,7 +79,7 @@
  * \ingroup TaskInstance
  */
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     /**
      * \defgroup TaskInstance Reading instance files
@@ -515,7 +515,7 @@ namespace Gecode { namespace Instance {
         //@}
     };
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 #endif
 

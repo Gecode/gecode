@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     forceinline
     Builder::Builder(const Options& opt0, bool b0)
@@ -68,6 +68,6 @@ namespace Gecode { namespace Search {
         return e;
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

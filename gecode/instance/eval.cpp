@@ -36,7 +36,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     std::string
     quote(const std::string& s) {
@@ -872,6 +872,6 @@ namespace Gecode { namespace Instance {
         return located(m, place(q));
     }
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 // STATISTICS: instance-any

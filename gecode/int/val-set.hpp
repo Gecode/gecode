@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Value sets
@@ -178,6 +178,6 @@ namespace Gecode { namespace Int {
         return Iter::Ranges::subset(xr, vsr);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-other

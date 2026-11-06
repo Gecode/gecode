@@ -36,7 +36,7 @@
 #include <gecode/gist.hh>
 #include <gecode/gist/qtgist.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief Small node drawings for the status bar
     class NodeWidget : public QWidget {
@@ -48,7 +48,7 @@ namespace Gecode { namespace Gist {
         void paintEvent(QPaintEvent*) override;
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

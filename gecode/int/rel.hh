@@ -46,7 +46,7 @@
  * \brief Simple relation propagators
  */
 
-namespace Gecode { namespace Int { namespace Rel {
+namespace Gecode::Int::Rel {
 
     /*
      * Equality propagators
@@ -693,7 +693,7 @@ namespace Gecode { namespace Int { namespace Rel {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Rel
+} // namespace Gecode::Int::Rel
 
 #include <gecode/int/rel/eq.hpp>
 #include <gecode/int/rel/nq.hpp>

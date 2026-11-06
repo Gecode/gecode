@@ -67,7 +67,7 @@ namespace Gecode {
     }
 } // namespace Gecode
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     SymmetryObject::SymmetryObject() : nrefs(1) {}
     SymmetryObject::~SymmetryObject() = default;
@@ -96,6 +96,6 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     ValueSequenceSymmetryObject::ValueSequenceSymmetryObject(const IntArgs& vs, int ss) : values(vs), seq_size(ss) {}
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: int-branch

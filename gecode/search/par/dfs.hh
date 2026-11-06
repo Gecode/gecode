@@ -35,7 +35,7 @@
 
 #include <gecode/search/par/engine.hh>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /// %Parallel depth-first search engine
     template <class Tracer>
@@ -118,7 +118,7 @@ namespace Gecode { namespace Search { namespace Par {
         //@}
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/dfs.hpp>
 

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     forceinline void
     Event::init(Event::Type e0, int t0, int i0) {
@@ -163,6 +163,6 @@ namespace Gecode { namespace Int {
         return e;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

@@ -35,7 +35,7 @@
 
 #include <map>
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     std::pair<int, int>
     find_var(const int* indices, unsigned int n_values, unsigned int seq_size, int index) {
@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         return false;
     }
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 namespace Gecode {
     using namespace Int::LDSB;
@@ -145,7 +145,7 @@ namespace Gecode {
     }
 } // namespace Gecode
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     /// Map from variable implementation to index
     class VariableMap : public std::map<VarImpBase*, int> {};
@@ -279,7 +279,7 @@ namespace Gecode { namespace Int { namespace LDSB {
                 array[created++] = create_sym(home, sym, variable_map);
         return array;
     }
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 namespace Gecode {
 

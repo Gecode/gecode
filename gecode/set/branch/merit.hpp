@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     // Minimum merit
     forceinline
@@ -151,6 +151,6 @@ namespace Gecode { namespace Set { namespace Branch {
         chb.~CHB();
     }
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

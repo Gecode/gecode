@@ -39,7 +39,7 @@
 #include <bit>
 #include <climits>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     class RawBitSetBase;
 
@@ -555,6 +555,6 @@ namespace Gecode { namespace Support {
         return RawBitSetBase::none(sz);
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

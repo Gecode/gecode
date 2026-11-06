@@ -53,7 +53,7 @@
  * \brief %Scheduling for cumulative resources
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Throw exception if multiplication of \a x and \a y overflows
     void mul_check(long long int x, long long int y);
@@ -61,11 +61,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Throw exception if multiplication of \a x, \a y, and \a z overflows
     void mul_check(long long int x, long long int y, long long int z);
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 #include <gecode/int/cumulative/limits.hpp>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Cumulative (mandatory) task with fixed processing time
     class ManFixPTask : public Unary::ManFixPTask {
@@ -280,11 +280,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFlexTask& t);
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 #include <gecode/int/cumulative/task.hpp>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Forward mandatory fixed task view
     using ManFixPTaskFwd = ManFixPTask;
@@ -350,11 +350,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFixPSETaskBwd& t);
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 #include <gecode/int/cumulative/task-view.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Task view traits for forward task views
     template <>
@@ -530,9 +530,9 @@ namespace Gecode { namespace Int {
         using UnaryTask = Unary::OptFlexTask;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Node for an omega tree
     class OmegaNode {
@@ -661,11 +661,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
         long long int lenv() const;
     };
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 #include <gecode/int/cumulative/tree.hpp>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Check for subsumption (all tasks must be assigned)
     template <class Task>
@@ -782,7 +782,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     template <class OptTask, class Cap>
     ExecStatus post_optional(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl);
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 #include <gecode/int/cumulative/time-tabling.hpp>
 #include <gecode/int/cumulative/subsumption.hpp>

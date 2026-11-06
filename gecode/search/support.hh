@@ -35,7 +35,7 @@
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Whether incoming solution \a s should replace incumbent \a b
     forceinline bool
@@ -148,7 +148,7 @@ namespace Gecode { namespace Search {
         return w.nogoods();
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #endif
 

@@ -34,7 +34,7 @@
 
 #include <cmath>
 
-namespace Gecode { namespace Float { namespace Arithmetic {
+namespace Gecode::Float::Arithmetic {
 
     /*
      * Bounds consistent min propagator
@@ -244,6 +244,6 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         return prop_nary_max(home, *this, x, y, PC_FLOAT_BND);
     }
 
-}}} // namespace Gecode::Float::Arithmetic
+} // namespace Gecode::Float::Arithmetic
 
 // STATISTICS: float-prop

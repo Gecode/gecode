@@ -37,7 +37,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set { namespace Int {
+namespace Gecode::Set::Int {
 
     /**
      * \namespace Gecode::Set::Int
@@ -269,7 +269,7 @@ namespace Gecode { namespace Set { namespace Int {
                                Gecode::Int::IntView y);
     };
 
-}}} // namespace Gecode::Set::Int
+} // namespace Gecode::Set::Int
 
 #include <gecode/set/int/minmax.hpp>
 #include <gecode/set/int/card.hpp>

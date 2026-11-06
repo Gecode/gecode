@@ -32,7 +32,7 @@
 
 #include <atomic>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /// A class for thread-safe reference counting
     class RefCount {
@@ -68,6 +68,6 @@ namespace Gecode { namespace Support {
         return n.load(std::memory_order_acquire) > 0U;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

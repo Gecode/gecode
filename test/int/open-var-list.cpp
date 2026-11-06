@@ -46,7 +46,7 @@
 #include <memory>
 #include <set>
 
-namespace Test { namespace Int { namespace OpenList {
+namespace Test::Int::OpenList {
 
     /// Space used by open list materialization tests
     class OpenListSpace : public Gecode::Space {
@@ -1827,6 +1827,6 @@ namespace Test { namespace Int { namespace OpenList {
     EmptyMinimum empty_minimum;
     IncrementalConstraints incremental_constraints;
 
-}}} // namespace Test::Int::OpenList
+} // namespace Test::Int::OpenList
 
 // STATISTICS: test-int

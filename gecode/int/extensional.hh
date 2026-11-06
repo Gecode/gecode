@@ -46,7 +46,7 @@
  * \brief %Extensional propagators
  */
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /// Compressed tuple-word support list
     class CompressedSupport {
@@ -233,11 +233,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class Var>
     ExecStatus post_lgp(Home home, const VarArgArray<Var>& x, const DFA& dfa);
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 #include <gecode/int/extensional/layered-graph.hpp>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /// Import type
     using BitSetData = Gecode::Support::BitSetData;
@@ -329,11 +329,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         unsigned int size() const;
     };
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 #include <gecode/int/extensional/bit-set.hpp>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /// Tiny bit-set
     template <unsigned int _size>
@@ -401,11 +401,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         unsigned int size() const;
     };
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 #include <gecode/int/extensional/tiny-bit-set.hpp>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /// Tuple type
     using Tuple = TupleSet::Tuple;
@@ -806,7 +806,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, class CtrlView, ReifyMode rm>
     ExecStatus post_reified_compact_compressed(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b);
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 #include <gecode/int/extensional/compact.hpp>
 

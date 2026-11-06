@@ -32,7 +32,7 @@
 
 #include <gecode/search/seq/rbs.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     Stop*
     rbs_stop(Stop* stop) {
@@ -51,6 +51,6 @@ namespace Gecode { namespace Search { namespace Seq {
         return new RBS(hub, static_cast<RestartStop*>(stop), engine, stat, opt, best, coverage);
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

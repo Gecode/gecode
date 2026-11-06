@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     forceinline
     ValCommitLqGq::ValCommitLqGq(Space& home, const ValBranch<Var>& vb)
@@ -63,6 +63,6 @@ namespace Gecode { namespace Float { namespace Branch {
         o << "var[" << i << "] " << (((a == 0) == nl.l) ? "<=" : ">=") << "(" << nl.n << ")";
     }
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 // STATISTICS: float-branch

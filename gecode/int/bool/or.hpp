@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Bool {
+namespace Gecode::Int::Bool {
 
     /// Binary Boolean disjunction propagator (subsumed)
     template <class BV>
@@ -874,6 +874,6 @@ namespace Gecode { namespace Int { namespace Bool {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Int::Bool
+} // namespace Gecode::Int::Bool
 
 // STATISTICS: int-prop

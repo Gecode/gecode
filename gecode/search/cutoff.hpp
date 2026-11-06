@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     forceinline Cutoff::~Cutoff() = default;
 
@@ -108,6 +108,6 @@ namespace Gecode { namespace Search {
         delete c;
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

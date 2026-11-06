@@ -33,7 +33,7 @@
 #include <algorithm>
 #include <climits>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     template <class View>
     inline void
@@ -223,6 +223,6 @@ namespace Gecode { namespace Int { namespace Linear {
         return true;
     }
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 // STATISTICS: int-post

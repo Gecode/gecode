@@ -35,321 +35,317 @@
 #include "test/int.hh"
 #include <gecode/minimodel.hh>
 
-namespace Test { namespace Int {
+/// %Tests for distinct constraints
+namespace Test::Int::Distinct {
 
-    /// %Tests for distinct constraints
-    namespace Distinct {
-
-        /**
-         * \defgroup TaskTestIntDistinct Distinct constraints
-         * \ingroup TaskTestInt
-         */
-        //@{
-        /// Simple test for distinct constraint
-        template <bool useCount>
-        class Distinct : public Test {
-        public:
-            /// Create and register test
-            Distinct(const Gecode::IntSet& d0, Gecode::IntPropLevel ipl, int n = 6)
-                : Test((useCount || (ipl != Gecode::IPL_VAL)) ? TestTags::sweep() : TestTags::standard(),
-                       std::string(useCount ? "Count::Distinct::" : "Distinct::") + str(ipl) + "::Sparse::" + str(n), n,
-                       d0, false, ipl) {}
-            /// Create and register test
-            Distinct(int min, int max, Gecode::IntPropLevel ipl)
-                : Test((!useCount || (ipl == Gecode::IPL_BND)) ? TestTags::standard() : TestTags::sweep(),
-                       std::string(useCount ? "Count::Distinct::" : "Distinct::") + str(ipl) + "::Dense", 6, min, max,
-                       false, ipl) {}
-            /// Check whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                for (int i = 0; i < x.size(); i++)
-                    for (int j = i + 1; j < x.size(); j++)
-                        if (x[i] == x[j])
-                            return false;
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                if (!useCount) {
-                    Gecode::distinct(home, x, ipl);
-                } else {
-                    Gecode::IntSetRanges dr(dom);
-                    int i = 0;
-                    Gecode::IntArgs ia(Gecode::Iter::Ranges::size(dr));
-                    for (Gecode::IntSetValues dr2(dom); dr2(); ++dr2)
-                        ia[i++] = dr2.val();
-                    Gecode::count(home, x, Gecode::IntSet(0, 1), ia, ipl);
-                }
-            }
-        };
-
-        /// Simple test for distinct constraint with offsets
-        class Offset : public Test {
-        public:
-            /// Create and register test
-            Offset(const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
-                : Test(TestTags::sweep(), "Distinct::Offset::Sparse::" + str(ipl), 6, d, false, ipl) {}
-            /// Create and register test
-            Offset(int min, int max, Gecode::IntPropLevel ipl)
-                : Test(ipl == Gecode::IPL_BND ? TestTags::standard() : TestTags::sweep(),
-                       "Distinct::Offset::Dense::" + str(ipl), 6, min, max, false, ipl) {}
-            /// Check whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                for (int i = 0; i < x.size(); i++)
-                    for (int j = i + 1; j < x.size(); j++)
-                        if (x[i] + i == x[j] + j)
-                            return false;
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                Gecode::IntArgs c(x.size());
-                for (int i = 0; i < x.size(); i++)
-                    c[i] = i;
-                Gecode::distinct(home, c, x, ipl);
-            }
-        };
-
-        /// Simple test for optional distinct constraint
-        class Optional : public Test {
-        public:
-            /// Create and register test
-            Optional(const Gecode::IntArgs& d, Gecode::IntPropLevel ipl)
-                : Test("Distinct::Optional::" + str(ipl) + "::" + str(d), 6, Gecode::IntSet(d), false, ipl) {}
-            /// Check whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                int n = x.size() / 2;
-                for (int i = 0; i < n; i++)
-                    if ((x[i] < 0) || (x[i] > 1))
+    /**
+     * \defgroup TaskTestIntDistinct Distinct constraints
+     * \ingroup TaskTestInt
+     */
+    //@{
+    /// Simple test for distinct constraint
+    template <bool useCount>
+    class Distinct : public Test {
+    public:
+        /// Create and register test
+        Distinct(const Gecode::IntSet& d0, Gecode::IntPropLevel ipl, int n = 6)
+            : Test((useCount || (ipl != Gecode::IPL_VAL)) ? TestTags::sweep() : TestTags::standard(),
+                   std::string(useCount ? "Count::Distinct::" : "Distinct::") + str(ipl) + "::Sparse::" + str(n), n, d0,
+                   false, ipl) {}
+        /// Create and register test
+        Distinct(int min, int max, Gecode::IntPropLevel ipl)
+            : Test((!useCount || (ipl == Gecode::IPL_BND)) ? TestTags::standard() : TestTags::sweep(),
+                   std::string(useCount ? "Count::Distinct::" : "Distinct::") + str(ipl) + "::Dense", 6, min, max,
+                   false, ipl) {}
+        /// Check whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            for (int i = 0; i < x.size(); i++)
+                for (int j = i + 1; j < x.size(); j++)
+                    if (x[i] == x[j])
                         return false;
-                for (int i = 0; i < n; i++)
-                    for (int j = i + 1; j < n; j++)
-                        if ((x[i] == 1) && (x[j] == 1) && (x[n + i] == x[n + j]))
-                            return false;
-                return true;
-            }
-            /// Post constraint on \a bx
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& bx) override {
-                int n = bx.size() / 2;
-                Gecode::BoolVarArgs b(n);
-                Gecode::IntVarArgs x(n);
-                for (int i = 0; i < n; i++) {
-                    b[i] = Gecode::channel(home, bx[i]);
-                    x[i] = bx[n + i];
-                }
-                Gecode::distinct(home, b, x, ipl);
-            }
-        };
-
-        /// Simple test for distinct except constant constraint
-        class Except : public Test {
-        public:
-            /// Create and register test
-            Except(const Gecode::IntArgs& d, Gecode::IntPropLevel ipl)
-                : Test("Distinct::Except::" + str(ipl) + "::" + str(d), 3, Gecode::IntSet(d), false, ipl) {
-                consistency_test_level = CTL_NONE;
-            }
-            /// Check whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                for (int i = 0; i < x.size(); i++)
-                    for (int j = i + 1; j < x.size(); j++)
-                        if ((x[i] != 0) && (x[j] != 0) && (x[i] == x[j]))
-                            return false;
-                return true;
-            }
-            /// Post constraint on \a bx
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                Gecode::distinct(home, x, 0, ipl);
-            }
-        };
-
-        /// Randomized test for distinct constraint
-        class Random : public Test {
-        public:
-            /// Create and register test
-            Random(int n, int min, int max, Gecode::IntPropLevel ipl)
-                : Test(TestTags::check(), "Distinct::Random::" + str(ipl), n, min, max, false, ipl) {
-                test_search = false;
-            }
-            /// Create and register initial assignment
-            Assignment*
-            assignment() const override {
-                return new RandomAssignment(arity, dom, 100, _rand);
-            }
-            /// Check whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                for (int i = 0; i < x.size(); i++)
-                    for (int j = i + 1; j < x.size(); j++)
-                        if (x[i] == x[j])
-                            return false;
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            if (!useCount) {
                 Gecode::distinct(home, x, ipl);
+            } else {
+                Gecode::IntSetRanges dr(dom);
+                int i = 0;
+                Gecode::IntArgs ia(Gecode::Iter::Ranges::size(dr));
+                for (Gecode::IntSetValues dr2(dom); dr2(); ++dr2)
+                    ia[i++] = dr2.val();
+                Gecode::count(home, x, Gecode::IntSet(0, 1), ia, ipl);
             }
-        };
+        }
+    };
 
-        /// %Testing pathological cases
-        class Pathological : public Base {
-        protected:
-            /// Number of variables
-            int n;
-            /// Consistency level
-            Gecode::IntPropLevel ipl;
-            /// %Test space
-            class TestSpace : public Gecode::Space {
-            public:
-                /// Constructor
-                TestSpace() = default;
-                /// Constructor for cloning \a s
-                // NOLINTNEXTLINE(modernize-use-equals-default)
-                TestSpace(TestSpace& s) : Gecode::Space(s) {}
-                /// Copy space during cloning
-                Gecode::Space*
-                copy() override {
-                    return new TestSpace(*this);
-                }
-            };
+    /// Simple test for distinct constraint with offsets
+    class Offset : public Test {
+    public:
+        /// Create and register test
+        Offset(const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
+            : Test(TestTags::sweep(), "Distinct::Offset::Sparse::" + str(ipl), 6, d, false, ipl) {}
+        /// Create and register test
+        Offset(int min, int max, Gecode::IntPropLevel ipl)
+            : Test(ipl == Gecode::IPL_BND ? TestTags::standard() : TestTags::sweep(),
+                   "Distinct::Offset::Dense::" + str(ipl), 6, min, max, false, ipl) {}
+        /// Check whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            for (int i = 0; i < x.size(); i++)
+                for (int j = i + 1; j < x.size(); j++)
+                    if (x[i] + i == x[j] + j)
+                        return false;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::IntArgs c(x.size());
+            for (int i = 0; i < x.size(); i++)
+                c[i] = i;
+            Gecode::distinct(home, c, x, ipl);
+        }
+    };
 
+    /// Simple test for optional distinct constraint
+    class Optional : public Test {
+    public:
+        /// Create and register test
+        Optional(const Gecode::IntArgs& d, Gecode::IntPropLevel ipl)
+            : Test("Distinct::Optional::" + str(ipl) + "::" + str(d), 6, Gecode::IntSet(d), false, ipl) {}
+        /// Check whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int n = x.size() / 2;
+            for (int i = 0; i < n; i++)
+                if ((x[i] < 0) || (x[i] > 1))
+                    return false;
+            for (int i = 0; i < n; i++)
+                for (int j = i + 1; j < n; j++)
+                    if ((x[i] == 1) && (x[j] == 1) && (x[n + i] == x[n + j]))
+                        return false;
+            return true;
+        }
+        /// Post constraint on \a bx
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& bx) override {
+            int n = bx.size() / 2;
+            Gecode::BoolVarArgs b(n);
+            Gecode::IntVarArgs x(n);
+            for (int i = 0; i < n; i++) {
+                b[i] = Gecode::channel(home, bx[i]);
+                x[i] = bx[n + i];
+            }
+            Gecode::distinct(home, b, x, ipl);
+        }
+    };
+
+    /// Simple test for distinct except constant constraint
+    class Except : public Test {
+    public:
+        /// Create and register test
+        Except(const Gecode::IntArgs& d, Gecode::IntPropLevel ipl)
+            : Test("Distinct::Except::" + str(ipl) + "::" + str(d), 3, Gecode::IntSet(d), false, ipl) {
+            consistency_test_level = CTL_NONE;
+        }
+        /// Check whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            for (int i = 0; i < x.size(); i++)
+                for (int j = i + 1; j < x.size(); j++)
+                    if ((x[i] != 0) && (x[j] != 0) && (x[i] == x[j]))
+                        return false;
+            return true;
+        }
+        /// Post constraint on \a bx
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::distinct(home, x, 0, ipl);
+        }
+    };
+
+    /// Randomized test for distinct constraint
+    class Random : public Test {
+    public:
+        /// Create and register test
+        Random(int n, int min, int max, Gecode::IntPropLevel ipl)
+            : Test(TestTags::check(), "Distinct::Random::" + str(ipl), n, min, max, false, ipl) {
+            test_search = false;
+        }
+        /// Create and register initial assignment
+        Assignment*
+        assignment() const override {
+            return new RandomAssignment(arity, dom, 100, _rand);
+        }
+        /// Check whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            for (int i = 0; i < x.size(); i++)
+                for (int j = i + 1; j < x.size(); j++)
+                    if (x[i] == x[j])
+                        return false;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::distinct(home, x, ipl);
+        }
+    };
+
+    /// %Testing pathological cases
+    class Pathological : public Base {
+    protected:
+        /// Number of variables
+        int n;
+        /// Consistency level
+        Gecode::IntPropLevel ipl;
+        /// %Test space
+        class TestSpace : public Gecode::Space {
         public:
-            /// Create and register test
-            Pathological(int n0, Gecode::IntPropLevel ipl0)
-                : Base("Int::Distinct::Pathological::" + Test::str(n0) + "::" + Test::str(ipl0), TestTags::sweep()),
-                  n(n0), ipl(ipl0) {}
-            /// Perform test
-            bool
-            run() override {
-                using namespace Gecode;
-                {
-                    TestSpace* s = new TestSpace;
-                    IntVarArgs x(n);
-                    for (int i = 0; i < n; i++)
-                        x[i] = IntVar(*s, 0, i);
-                    distinct(*s, x, ipl);
-                    if (s->status() == SS_FAILED) {
-                        delete s;
-                        return false;
-                    }
-                    for (int i = 0; i < n; i++)
-                        if (!x[i].assigned() || (x[i].val() != i)) {
-                            delete s;
-                            return false;
-                        }
-                    delete s;
-                }
-                {
-                    TestSpace* s = new TestSpace;
-                    IntVarArgs x(2 * n);
-                    for (int i = 0; i < n; i++) {
-                        int v[] = {0, i};
-                        IntSet d(v, 2);
-                        x[i] = IntVar(*s, d);
-                    }
-                    for (int i = n; i < 2 * n; i++)
-                        x[i] = IntVar(*s, n - 1, i);
-                    distinct(*s, x, ipl);
-                    if (s->status() == SS_FAILED) {
-                        delete s;
-                        return false;
-                    }
-                    for (int i = 0; i < n; i++)
-                        if (!x[i].assigned() || (x[i].val() != i)) {
-                            delete s;
-                            return false;
-                        }
-                    delete s;
-                }
-                return true;
+            /// Constructor
+            TestSpace() = default;
+            /// Constructor for cloning \a s
+            // NOLINTNEXTLINE(modernize-use-equals-default)
+            TestSpace(TestSpace& s) : Gecode::Space(s) {}
+            /// Copy space during cloning
+            Gecode::Space*
+            copy() override {
+                return new TestSpace(*this);
             }
         };
 
-        const int v[7] = {-1001, -1000, -10, 0, 10, 1000, 1001};
-        Gecode::IntSet d(v, 7);
-        const int vl[6] = {Gecode::Int::Limits::min + 0, Gecode::Int::Limits::min + 1, Gecode::Int::Limits::min + 2,
-                           Gecode::Int::Limits::max - 2, Gecode::Int::Limits::max - 1, Gecode::Int::Limits::max - 0};
-        Gecode::IntSet dl(vl, 6);
+    public:
+        /// Create and register test
+        Pathological(int n0, Gecode::IntPropLevel ipl0)
+            : Base("Int::Distinct::Pathological::" + Test::str(n0) + "::" + Test::str(ipl0), TestTags::sweep()), n(n0),
+              ipl(ipl0) {}
+        /// Perform test
+        bool
+        run() override {
+            using namespace Gecode;
+            {
+                TestSpace* s = new TestSpace;
+                IntVarArgs x(n);
+                for (int i = 0; i < n; i++)
+                    x[i] = IntVar(*s, 0, i);
+                distinct(*s, x, ipl);
+                if (s->status() == SS_FAILED) {
+                    delete s;
+                    return false;
+                }
+                for (int i = 0; i < n; i++)
+                    if (!x[i].assigned() || (x[i].val() != i)) {
+                        delete s;
+                        return false;
+                    }
+                delete s;
+            }
+            {
+                TestSpace* s = new TestSpace;
+                IntVarArgs x(2 * n);
+                for (int i = 0; i < n; i++) {
+                    int v[] = {0, i};
+                    IntSet d(v, 2);
+                    x[i] = IntVar(*s, d);
+                }
+                for (int i = n; i < 2 * n; i++)
+                    x[i] = IntVar(*s, n - 1, i);
+                distinct(*s, x, ipl);
+                if (s->status() == SS_FAILED) {
+                    delete s;
+                    return false;
+                }
+                for (int i = 0; i < n; i++)
+                    if (!x[i].assigned() || (x[i].val() != i)) {
+                        delete s;
+                        return false;
+                    }
+                delete s;
+            }
+            return true;
+        }
+    };
 
-        Distinct<false> dom_d(-3, 3, Gecode::IPL_DOM);
-        Distinct<false> bnd_d(-3, 3, Gecode::IPL_BND);
-        Distinct<false> val_d(-3, 3, Gecode::IPL_VAL);
-        Distinct<false> dom_s(d, Gecode::IPL_DOM);
-        Distinct<false> bnd_s(d, Gecode::IPL_BND);
-        Distinct<false> val_s(d, Gecode::IPL_VAL);
+    const int v[7] = {-1001, -1000, -10, 0, 10, 1000, 1001};
+    Gecode::IntSet d(v, 7);
+    const int vl[6] = {Gecode::Int::Limits::min + 0, Gecode::Int::Limits::min + 1, Gecode::Int::Limits::min + 2,
+                       Gecode::Int::Limits::max - 2, Gecode::Int::Limits::max - 1, Gecode::Int::Limits::max - 0};
+    Gecode::IntSet dl(vl, 6);
 
-        Distinct<false> dom_l(dl, Gecode::IPL_DOM, 5);
-        Distinct<false> bnd_l(dl, Gecode::IPL_BND, 5);
-        Distinct<false> val_l(dl, Gecode::IPL_VAL, 5);
+    Distinct<false> dom_d(-3, 3, Gecode::IPL_DOM);
+    Distinct<false> bnd_d(-3, 3, Gecode::IPL_BND);
+    Distinct<false> val_d(-3, 3, Gecode::IPL_VAL);
+    Distinct<false> dom_s(d, Gecode::IPL_DOM);
+    Distinct<false> bnd_s(d, Gecode::IPL_BND);
+    Distinct<false> val_s(d, Gecode::IPL_VAL);
 
-        Distinct<true> count_dom_d(-3, 3, Gecode::IPL_DOM);
-        Distinct<true> count_bnd_d(-3, 3, Gecode::IPL_BND);
-        Distinct<true> count_val_d(-3, 3, Gecode::IPL_VAL);
-        Distinct<true> count_dom_s(d, Gecode::IPL_DOM);
-        Distinct<true> count_bnd_s(d, Gecode::IPL_BND);
-        Distinct<true> count_val_s(d, Gecode::IPL_VAL);
+    Distinct<false> dom_l(dl, Gecode::IPL_DOM, 5);
+    Distinct<false> bnd_l(dl, Gecode::IPL_BND, 5);
+    Distinct<false> val_l(dl, Gecode::IPL_VAL, 5);
 
-        Offset dom_od(-3, 3, Gecode::IPL_DOM);
-        Offset bnd_od(-3, 3, Gecode::IPL_BND);
-        Offset val_od(-3, 3, Gecode::IPL_VAL);
-        Offset dom_os(d, Gecode::IPL_DOM);
-        Offset bnd_os(d, Gecode::IPL_BND);
-        Offset val_os(d, Gecode::IPL_VAL);
+    Distinct<true> count_dom_d(-3, 3, Gecode::IPL_DOM);
+    Distinct<true> count_bnd_d(-3, 3, Gecode::IPL_BND);
+    Distinct<true> count_val_d(-3, 3, Gecode::IPL_VAL);
+    Distinct<true> count_dom_s(d, Gecode::IPL_DOM);
+    Distinct<true> count_bnd_s(d, Gecode::IPL_BND);
+    Distinct<true> count_val_s(d, Gecode::IPL_VAL);
 
-        Gecode::IntArgs v1({Gecode::Int::Limits::min + 4, 0, 1, Gecode::Int::Limits::max});
-        Gecode::IntArgs v2({Gecode::Int::Limits::min, 0, 1, Gecode::Int::Limits::max - 4});
-        Gecode::IntArgs v3({0, 1, 2, 3});
-        Gecode::IntArgs v4({0, 1, 2});
-        Gecode::IntArgs v5({0, 1});
+    Offset dom_od(-3, 3, Gecode::IPL_DOM);
+    Offset bnd_od(-3, 3, Gecode::IPL_BND);
+    Offset val_od(-3, 3, Gecode::IPL_VAL);
+    Offset dom_os(d, Gecode::IPL_DOM);
+    Offset bnd_os(d, Gecode::IPL_BND);
+    Offset val_os(d, Gecode::IPL_VAL);
 
-        Optional od1(v1, Gecode::IPL_DOM);
-        Optional ob1(v1, Gecode::IPL_BND);
-        Optional ov1(v1, Gecode::IPL_VAL);
-        Optional od2(v2, Gecode::IPL_DOM);
-        Optional ob2(v2, Gecode::IPL_BND);
-        Optional ov2(v2, Gecode::IPL_VAL);
-        Optional od3(v3, Gecode::IPL_DOM);
-        Optional ob3(v3, Gecode::IPL_BND);
-        Optional ov3(v3, Gecode::IPL_VAL);
-        Optional od4(v4, Gecode::IPL_DOM);
-        Optional ob4(v4, Gecode::IPL_BND);
-        Optional ov4(v4, Gecode::IPL_VAL);
-        Optional od5(v5, Gecode::IPL_DOM);
-        Optional ob5(v5, Gecode::IPL_BND);
-        Optional ov5(v5, Gecode::IPL_VAL);
+    Gecode::IntArgs v1({Gecode::Int::Limits::min + 4, 0, 1, Gecode::Int::Limits::max});
+    Gecode::IntArgs v2({Gecode::Int::Limits::min, 0, 1, Gecode::Int::Limits::max - 4});
+    Gecode::IntArgs v3({0, 1, 2, 3});
+    Gecode::IntArgs v4({0, 1, 2});
+    Gecode::IntArgs v5({0, 1});
 
-        Except ed1(v1, Gecode::IPL_DOM);
-        Except eb1(v1, Gecode::IPL_BND);
-        Except ev1(v1, Gecode::IPL_VAL);
-        Except ed2(v2, Gecode::IPL_DOM);
-        Except eb2(v2, Gecode::IPL_BND);
-        Except ev2(v2, Gecode::IPL_VAL);
-        Except ed5(v5, Gecode::IPL_DOM);
-        Except eb5(v5, Gecode::IPL_BND);
-        Except ev5(v5, Gecode::IPL_VAL);
+    Optional od1(v1, Gecode::IPL_DOM);
+    Optional ob1(v1, Gecode::IPL_BND);
+    Optional ov1(v1, Gecode::IPL_VAL);
+    Optional od2(v2, Gecode::IPL_DOM);
+    Optional ob2(v2, Gecode::IPL_BND);
+    Optional ov2(v2, Gecode::IPL_VAL);
+    Optional od3(v3, Gecode::IPL_DOM);
+    Optional ob3(v3, Gecode::IPL_BND);
+    Optional ov3(v3, Gecode::IPL_VAL);
+    Optional od4(v4, Gecode::IPL_DOM);
+    Optional ob4(v4, Gecode::IPL_BND);
+    Optional ov4(v4, Gecode::IPL_VAL);
+    Optional od5(v5, Gecode::IPL_DOM);
+    Optional ob5(v5, Gecode::IPL_BND);
+    Optional ov5(v5, Gecode::IPL_VAL);
 
-        Random dom_r(20, -50, 50, Gecode::IPL_DOM);
-        Random bnd_r(50, -500, 500, Gecode::IPL_BND);
-        Random val_r(50, -500, 500, Gecode::IPL_VAL);
+    Except ed1(v1, Gecode::IPL_DOM);
+    Except eb1(v1, Gecode::IPL_BND);
+    Except ev1(v1, Gecode::IPL_VAL);
+    Except ed2(v2, Gecode::IPL_DOM);
+    Except eb2(v2, Gecode::IPL_BND);
+    Except ev2(v2, Gecode::IPL_VAL);
+    Except ed5(v5, Gecode::IPL_DOM);
+    Except eb5(v5, Gecode::IPL_BND);
+    Except ev5(v5, Gecode::IPL_VAL);
 
-        Pathological p_16_v(16, Gecode::IPL_VAL);
-        Pathological p_16_b(16, Gecode::IPL_BND);
-        Pathological p_16_d(16, Gecode::IPL_DOM);
+    Random dom_r(20, -50, 50, Gecode::IPL_DOM);
+    Random bnd_r(50, -500, 500, Gecode::IPL_BND);
+    Random val_r(50, -500, 500, Gecode::IPL_VAL);
 
-        Pathological p_32_v(32, Gecode::IPL_VAL);
-        Pathological p_32_b(32, Gecode::IPL_BND);
-        Pathological p_32_d(32, Gecode::IPL_DOM);
-        //@}
+    Pathological p_16_v(16, Gecode::IPL_VAL);
+    Pathological p_16_b(16, Gecode::IPL_BND);
+    Pathological p_16_d(16, Gecode::IPL_DOM);
 
-    } // namespace Distinct
-}} // namespace Test::Int
+    Pathological p_32_v(32, Gecode::IPL_VAL);
+    Pathological p_32_b(32, Gecode::IPL_BND);
+    Pathological p_32_d(32, Gecode::IPL_DOM);
+    //@}
 
+} // namespace Test::Int::Distinct
 // STATISTICS: test-int

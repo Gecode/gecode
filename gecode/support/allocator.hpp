@@ -47,7 +47,7 @@
 
 #ifdef GECODE_ALLOCATOR
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Default memory allocator
@@ -101,11 +101,11 @@ namespace Gecode { namespace Support {
         return ::memcpy(d, s, n);
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 #endif
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief The single global default memory allocator
@@ -113,6 +113,6 @@ namespace Gecode { namespace Support {
      */
     extern GECODE_SUPPORT_EXPORT Allocator allocator;
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     template <class ManTask>
     forceinline bool
@@ -92,6 +92,6 @@ namespace Gecode { namespace Int {
         ManTask::reschedule(home, p, pc);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

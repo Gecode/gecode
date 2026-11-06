@@ -36,7 +36,7 @@
 #include <gecode/gist/nodevisitor.hh>
 #include <gecode/gist/nodecursor.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     Gist::Gist(Space* root, bool bab, QWidget* parent, const Options& opt) : QWidget(parent) {
         QGridLayout* layout = new QGridLayout(this);
@@ -784,6 +784,6 @@ namespace Gecode { namespace Gist {
         canvas->emit_status_changed();
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

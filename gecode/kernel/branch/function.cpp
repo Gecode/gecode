@@ -34,7 +34,7 @@
 
 #include <gecode/kernel.hh>
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /// %Brancher for calling a function
     class FunctionBranch : public Brancher {
@@ -135,7 +135,7 @@ namespace Gecode { namespace Kernel {
         return sizeof(*this);
     }
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 namespace Gecode {
 

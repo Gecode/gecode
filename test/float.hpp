@@ -34,7 +34,7 @@
  *
  */
 
-namespace Test { namespace Float {
+namespace Test::Float {
 
     /*
      * Assignments
@@ -299,6 +299,6 @@ namespace Test { namespace Float {
         return frts[i];
     }
 
-}} // namespace Test::Float
+} // namespace Test::Float
 
 // STATISTICS: test-float

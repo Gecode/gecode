@@ -63,7 +63,7 @@
  * \ingroup FuncSupport
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief A mutex for mutual exclausion among several threads
@@ -267,6 +267,6 @@ namespace Gecode { namespace Support {
         Thread& operator=(const Thread&) = delete;
     };
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

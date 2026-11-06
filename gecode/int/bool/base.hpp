@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Bool {
+namespace Gecode::Int::Bool {
 
     /*
      * Binary Boolean propagators
@@ -137,6 +137,6 @@ namespace Gecode { namespace Int { namespace Bool {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::Bool
+} // namespace Gecode::Int::Bool
 
 // STATISTICS: int-prop
