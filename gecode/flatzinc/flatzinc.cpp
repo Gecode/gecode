@@ -44,6 +44,7 @@
 
 #include <gecode/search.hh>
 
+#include <memory>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -1897,7 +1898,7 @@ namespace Gecode { namespace FlatZinc {
         std::unique_ptr<Search::Stop> stop(
             Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(), opt.restart_limit(), true));
         if (black_box_context) {
-            stop.reset(new FlatZincStop(stop.release(), black_box_context));
+            stop = std::make_unique<FlatZincStop>(stop.release(), black_box_context);
         }
         o.stop = stop.get();
         std::unique_ptr<SearchTracer> tracer;
@@ -1909,7 +1910,8 @@ namespace Gecode { namespace FlatZinc {
             FlatZincGetInfo* get_info = nullptr;
             if (opt.profiler_info())
                 get_info = new FlatZincGetInfo(p);
-            tracer.reset(new CPProfilerSearchTracer(opt.profiler_id(), opt.name(), opt.profiler_port(), get_info));
+            tracer =
+                std::make_unique<CPProfilerSearchTracer>(opt.profiler_id(), opt.name(), opt.profiler_port(), get_info);
             o.tracer = tracer.get();
         }
 

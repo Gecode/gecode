@@ -38,7 +38,6 @@ Checks: >-
   -modernize-concat-nested-namespaces,
   -modernize-loop-convert,
   -modernize-make-shared,
-  -modernize-make-unique,
   -modernize-min-max-use-initializer-list,
   -modernize-pass-by-value,
   -modernize-raw-string-literal,

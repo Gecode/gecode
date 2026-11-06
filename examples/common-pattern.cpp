@@ -104,7 +104,7 @@ public:
             std::ifstream stream(filename);
             sequences = PatternMining::read_database(stream, format());
         }
-        input.reset(new PatternMining::Database(sequences));
+        input = std::make_unique<PatternMining::Database>(sequences);
         threshold = PatternMining::minimum_support(_support.value(), input->ends.size());
         const std::string items(_required.value());
         if (!items.empty()) {

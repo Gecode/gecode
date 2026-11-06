@@ -245,7 +245,7 @@ namespace Test {
         bool
         lifetime() {
             using namespace Gecode;
-            std::unique_ptr<TestSpace> s(new TestSpace);
+            std::unique_ptr<TestSpace> s = std::make_unique<TestSpace>();
             PropagatorGroup a, b;
             unsigned int id;
             {

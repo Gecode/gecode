@@ -743,10 +743,10 @@ namespace Test {
                 if (in_use) {
                     Gecode::Search::Options bound;
                     bound.worker_control = control;
-                    binding.reset(new Gecode::DFS<SolveImmediate>(&binding_root, bound));
+                    binding = std::make_unique<Gecode::DFS<SolveImmediate>>(&binding_root, bound);
                 }
                 int live = 0;
-                std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
+                std::unique_ptr<PortfolioSeed> root = std::make_unique<PortfolioSeed>(live);
                 PortfolioSeed* seed = clone ? root.get() : root.release();
                 Gecode::Search::Options o;
                 o.assets = 1;
@@ -780,7 +780,7 @@ namespace Test {
                     for (bool clone : {false, true})
                         for (int failing : {-1, 0, 1}) {
                             int live = 0;
-                            std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
+                            std::unique_ptr<PortfolioSeed> root = std::make_unique<PortfolioSeed>(live);
                             PortfolioSeed* seed = clone ? root.get() : root.release();
                             Gecode::Search::Options o;
                             o.assets = 2;
