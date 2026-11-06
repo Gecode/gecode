@@ -142,9 +142,9 @@ namespace {
         /// Initialize as invalid problem instance
         Problem();
         /// Initialize problem instance
-        Problem(const int n, const int* d);
+        Problem(int n, const int* d);
         /// Initialize problem instance with distances \a d read from a file
-        Problem(const int n, const IntArgs& d);
+        Problem(int n, const IntArgs& d);
         /// Whether the problem instance is valid
         bool valid() const;
         /// Return size of instance
