@@ -68,7 +68,7 @@ private:
         return b[h * size + w];
     }
     /// Access position (\a h,\a w) in the matrix.
-    const BoolVar
+    BoolVar
     pos(int h, int w) const {
         return b[h * size + w];
     }

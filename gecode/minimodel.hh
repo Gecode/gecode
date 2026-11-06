@@ -1822,14 +1822,9 @@ namespace Gecode {
          */
         Slice& reverse();
         /// Cast to array type
-        operator ArgsType();
+        operator ArgsType() const;
         /// Cast to matrix type
-        operator Matrix<ArgsType>();
-
-        /// Cast to array type
-        operator const ArgsType() const;
-        /// Cast to matrix type
-        operator const Matrix<ArgsType>() const;
+        operator Matrix<ArgsType>() const;
     };
 
     /// Concatenate \a x and \a y
@@ -1911,7 +1906,7 @@ namespace Gecode {
         /// Return the height of the matrix
         int height() const;
         /// Return an Args-array of the contents of the matrix
-        ArgsType const get_array() const;
+        ArgsType get_array() const;
 
         /** \brief Access element (\a c, \a r) of the matrix
          *
