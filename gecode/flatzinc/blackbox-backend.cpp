@@ -33,7 +33,7 @@
  *
  */
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0600)
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600
@@ -42,7 +42,7 @@
 #undef WINVER
 #define WINVER 0x0600
 #endif
-#elif !defined(_GNU_SOURCE)
+#elifndef _GNU_SOURCE
 #define _GNU_SOURCE 1
 #endif
 

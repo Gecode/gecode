@@ -41,7 +41,7 @@
 #include <vector>
 #include <cstring>
 
-#if defined(_WIN32)
+#ifdef _WIN32
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -106,7 +106,7 @@ namespace Gecode { namespace CPProfiler {
 
         int socket_fd;
         bool _connected;
-#if defined(_WIN32)
+#ifdef _WIN32
         bool _winsock_started;
 #endif
 
@@ -233,7 +233,7 @@ namespace Gecode { namespace CPProfiler {
      */
     inline Connector::Connector(unsigned int port)
         : port(port), socket_fd(-1), _connected(false)
-#if defined(_WIN32)
+#ifdef _WIN32
           ,
           _winsock_started(false)
 #endif
@@ -302,7 +302,7 @@ namespace Gecode { namespace CPProfiler {
         struct addrinfo hints, *server_info, *p;
         int rv;
 
-#if defined(_WIN32)
+#ifdef _WIN32
         // Initialise Winsock.
         WSADATA winsock_data;
         int startup_result = WSAStartup(MAKEWORD(2, 2), &winsock_data);
@@ -332,7 +332,7 @@ namespace Gecode { namespace CPProfiler {
             }
 
             if (::connect(socket_fd, p->ai_addr, p->ai_addrlen) == -1) {
-#if defined(_WIN32)
+#ifdef _WIN32
                 closesocket(socket_fd);
 #else
                 close(socket_fd);
@@ -358,7 +358,7 @@ namespace Gecode { namespace CPProfiler {
         return;
     give_up:
         _connected = false;
-#if defined(_WIN32)
+#ifdef _WIN32
         if (_winsock_started) {
             WSACleanup();
             _winsock_started = false;
@@ -420,7 +420,7 @@ namespace Gecode { namespace CPProfiler {
     inline void
     Connector::disconnect() {
         if (socket_fd != -1) {
-#if defined(_WIN32)
+#ifdef _WIN32
             closesocket(socket_fd);
 #else
             close(socket_fd);
@@ -428,7 +428,7 @@ namespace Gecode { namespace CPProfiler {
             socket_fd = -1;
         }
         _connected = false;
-#if defined(_WIN32)
+#ifdef _WIN32
         if (_winsock_started) {
             WSACleanup();
             _winsock_started = false;
