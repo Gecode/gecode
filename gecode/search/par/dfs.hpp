@@ -121,7 +121,7 @@ namespace Gecode { namespace Search { namespace Par {
     DFS<Tracer>::Worker::find() {
         // Try to find new work (even if there is none)
         for (unsigned int i = 0U; i < engine().workers(); i++) {
-            unsigned long int r_d = 0ul;
+            unsigned long int r_d = 0UL;
             typename Engine<Tracer>::Worker* wi = engine().worker(i);
             if (Space* s = wi->steal(r_d, wi->tracer, tracer)) {
                 // Reset this guy
