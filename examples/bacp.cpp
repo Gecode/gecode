@@ -232,8 +232,8 @@ public:
         os << "Solution with load " << u.val() << ":" << '\n';
         for (int i = 0; i < curr.p; i++) {
             os << "\tPeriod " << i + 1 << ": ";
-            for (std::list<int>::iterator v = period[i].begin(); v != period[i].end(); ++v) {
-                os << curr.courses[*v].name << " ";
+            for (int& v : period[i]) {
+                os << curr.courses[v].name << " ";
             }
             os << '\n';
         }

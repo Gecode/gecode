@@ -1226,14 +1226,14 @@ namespace Gecode { namespace Gist {
             return true;
         stop_search_flag = true;
         finished_flag = true;
-        for (int i = 0; i < double_click_inspectors.size(); i++)
-            double_click_inspectors[i].first->finalize();
-        for (int i = 0; i < solution_inspectors.size(); i++)
-            solution_inspectors[i].first->finalize();
-        for (int i = 0; i < move_inspectors.size(); i++)
-            move_inspectors[i].first->finalize();
-        for (int i = 0; i < comparators.size(); i++)
-            comparators[i].first->finalize();
+        for (auto& double_click_inspector : double_click_inspectors)
+            double_click_inspector.first->finalize();
+        for (auto& solution_inspector : solution_inspectors)
+            solution_inspector.first->finalize();
+        for (auto& move_inspector : move_inspectors)
+            move_inspector.first->finalize();
+        for (auto& comparator : comparators)
+            comparator.first->finalize();
         return !searcher.isRunning();
     }
 

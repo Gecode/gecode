@@ -233,8 +233,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     product_status(const ViewArray<IntView>& x, const IntView& y) {
         if ((x.size() == 1) && (x[0] == y))
             return RT_TRUE;
-        for (int i = 0; i < x.size(); i++)
-            if (x[i].assigned() && (x[i].val() == 0)) {
+        for (auto xi : x)
+            if (xi.assigned() && (xi.val() == 0)) {
                 if (!y.in(0))
                     return RT_FALSE;
                 return y.assigned() ? RT_TRUE : RT_MAYBE;
@@ -322,18 +322,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         // Preserve adjacent equal views while removing assigned units in place.
         int n = 0;
         bool zero = false;
-        for (int i = 0; i < x.size(); i++) {
-            if (x[i].assigned()) {
-                if (x[i].val() == 0) {
+        for (auto& xi : x) {
+            if (xi.assigned()) {
+                if (xi.val() == 0) {
                     zero = true;
                     continue;
                 }
-                if ((x[i].val() == 1) || (x[i].val() == -1)) {
-                    neg ^= x[i].val() == -1;
+                if ((xi.val() == 1) || (xi.val() == -1)) {
+                    neg ^= xi.val() == -1;
                     continue;
                 }
             }
-            x[n++] = x[i];
+            x[n++] = xi;
         }
         if (n < x.size()) {
             x.size(n);
@@ -376,11 +376,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
         // A nonzero result excludes a bounds-visible zero endpoint.
         if (!y.in(0))
-            for (int i = 0; i < x.size(); i++) {
-                if ((x[i].min() == 0) && (x[i].max() > 0))
-                    GECODE_ME_CHECK(x[i].gq(home, 1));
-                else if ((x[i].max() == 0) && (x[i].min() < 0))
-                    GECODE_ME_CHECK(x[i].lq(home, -1));
+            for (auto& xi : x) {
+                if ((xi.min() == 0) && (xi.max() > 0))
+                    GECODE_ME_CHECK(xi.gq(home, 1));
+                else if ((xi.max() == 0) && (xi.min() < 0))
+                    GECODE_ME_CHECK(xi.lq(home, -1));
             }
 
         // Zero can only arise from a zero factor.
@@ -406,12 +406,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         bool stable = true;
         bool strict = true;
         bool negative = neg;
-        for (int i = 0; i < x.size(); i++) {
-            if (x[i].max() <= 0) {
+        for (auto xi : x) {
+            if (xi.max() <= 0) {
                 negative = !negative;
-                strict &= x[i].max() < 0;
-            } else if (x[i].min() >= 0) {
-                strict &= x[i].min() > 0;
+                strict &= xi.max() < 0;
+            } else if (xi.min() >= 0) {
+                strict &= xi.min() > 0;
             } else {
                 stable = false;
                 strict = false;
@@ -498,12 +498,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         // Result propagation above can have excluded zero during this call.
         bool endpoint_modified = false;
         if (!y.in(0))
-            for (int i = 0; i < x.size(); i++) {
+            for (auto& xi : x) {
                 ModEvent me = ME_INT_NONE;
-                if ((x[i].min() == 0) && (x[i].max() > 0))
-                    me = x[i].gq(home, 1);
-                else if ((x[i].max() == 0) && (x[i].min() < 0))
-                    me = x[i].lq(home, -1);
+                if ((xi.min() == 0) && (xi.max() > 0))
+                    me = xi.gq(home, 1);
+                else if ((xi.max() == 0) && (xi.min() < 0))
+                    me = xi.lq(home, -1);
                 if (me_failed(me))
                     return ES_FAILED;
                 endpoint_modified |= me_modified(me);

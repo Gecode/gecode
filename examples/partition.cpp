@@ -108,17 +108,17 @@ public:
         os << "\t";
         int a, b;
         a = b = 0;
-        for (int i = 0; i < x.size(); i++) {
-            a += x[i].val();
-            b += x[i].val() * x[i].val();
-            os << x[i] << ", ";
+        for (auto xi : x) {
+            a += xi.val();
+            b += xi.val() * xi.val();
+            os << xi << ", ";
         }
         os << " = " << a << ", " << b << '\n' << "\t";
         a = b = 0;
-        for (int i = 0; i < y.size(); i++) {
-            a += y[i].val();
-            b += y[i].val() * y[i].val();
-            os << y[i] << ", ";
+        for (auto yi : y) {
+            a += yi.val();
+            b += yi.val() * yi.val();
+            os << yi << ", ";
         }
         os << " = " << a << ", " << b << '\n';
     }

@@ -369,10 +369,10 @@ namespace Gecode { namespace Int { namespace BinPacking {
         // Total size of items
         int s = 0;
         // Constrain bins
-        for (int i = 0; i < bs.size(); i++) {
-            s += bs[i].size();
-            GECODE_ME_CHECK(bs[i].bin().gq(home, 0));
-            GECODE_ME_CHECK(bs[i].bin().le(home, l.size()));
+        for (auto b : bs) {
+            s += b.size();
+            GECODE_ME_CHECK(b.bin().gq(home, 0));
+            GECODE_ME_CHECK(b.bin().le(home, l.size()));
         }
         // Eliminate zero sized items (which are at the end as the size are sorted)
         {
@@ -383,17 +383,17 @@ namespace Gecode { namespace Int { namespace BinPacking {
         }
         if (bs.size() == 0) {
             // No items to be packed
-            for (int i = 0; i < l.size(); i++)
-                GECODE_ME_CHECK(l[i].eq(home, 0));
+            for (auto& li : l)
+                GECODE_ME_CHECK(li.eq(home, 0));
             return ES_OK;
         } else if (l.size() == 0) {
             // No bins available
             return ES_FAILED;
         } else {
             // Constrain load
-            for (int j = 0; j < l.size(); j++) {
-                GECODE_ME_CHECK(l[j].gq(home, 0));
-                GECODE_ME_CHECK(l[j].lq(home, s));
+            for (auto& j : l) {
+                GECODE_ME_CHECK(j.gq(home, 0));
+                GECODE_ME_CHECK(j.lq(home, s));
             }
             (void)new (home) Pack(home, l, bs, ipl);
             return ES_OK;

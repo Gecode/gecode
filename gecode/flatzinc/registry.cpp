@@ -1661,8 +1661,8 @@ namespace Gecode { namespace FlatZinc {
                                                       "of strings.");
                 }
                 AST::Array* al = arr->a[1]->get_array();
-                for (unsigned int i = 0; i < al->a.size(); i++) {
-                    args.push_back(string_arg(al->a[i], "argument"));
+                for (auto& arg : al->a) {
+                    args.push_back(string_arg(arg, "argument"));
                 }
             } else {
                 target = string_arg(c->args, "target");
@@ -1805,10 +1805,10 @@ namespace Gecode { namespace FlatZinc {
                 return;
             }
             int lo = Int::Limits::max, hi = Int::Limits::min, n = 0;
-            for (int i = 0; i < x.size(); i++)
-                if (!(x[i].assigned() && (x[i].val() == c))) {
-                    lo = std::min(lo, x[i].min());
-                    hi = std::max(hi, x[i].max());
+            for (auto& xi : x)
+                if (!(xi.assigned() && (xi.val() == c))) {
+                    lo = std::min(lo, xi.min());
+                    hi = std::max(hi, xi.max());
                     n++;
                 }
             if (n < 2)
@@ -1838,8 +1838,8 @@ namespace Gecode { namespace FlatZinc {
             if ((x.size() != y.size()) || (x.size() != z.size()))
                 throw FlatZinc::Error("Registry", "sort arrays must have equal lengths");
             int offset = ce[3]->get_int();
-            for (int i = 0; i < z.size(); i++)
-                z[i] = expr(s, z[i] - offset);
+            for (auto& zi : z)
+                zi = expr(s, zi - offset);
             IntVarArgs xyz;
             xyz << x << y << z;
             unshare(s, xyz);

@@ -956,8 +956,8 @@ namespace Gecode {
     LinIntExpr
     sum(const IntArgs& args) {
         int sum = 0;
-        for (int i = 0; i < args.size(); i++)
-            sum += args[i];
+        for (int arg : args)
+            sum += arg;
         return LinIntExpr(sum);
     }
 

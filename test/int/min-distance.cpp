@@ -95,8 +95,8 @@ namespace Test { namespace Int { namespace MinDistance {
             const IntVar& z = a[alias == 2 ? 0 : positions];
             if (requirements) {
                 IntArgs r(positions * positions);
-                for (int i = 0; i < r.size(); i++)
-                    r[i] = 0;
+                for (int& ri : r)
+                    ri = 0;
                 r[positions - 1] = r[(positions - 1) * positions] = 3;
                 minimum_distance(home, x, z, d, r, ipl, kind);
             } else {

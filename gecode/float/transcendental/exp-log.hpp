@@ -69,10 +69,10 @@ namespace Gecode { namespace Float { namespace Transcendental {
         mpfr_init2(q, std::numeric_limits<FloatNum>::digits);
         // log(base) does not contain zero. Divide all four endpoint pairs with
         // outward rounding, including when 0 < base < 1.
-        for (int i = 0; i < 2; i++) {
-            mpfr_set_d(x, n[i], GMP_RNDN);
-            for (int j = 0; j < 2; j++) {
-                mpfr_set_d(y, d[j], GMP_RNDN);
+        for (double ni : n) {
+            mpfr_set_d(x, ni, GMP_RNDN);
+            for (double j : d) {
+                mpfr_set_d(y, j, GMP_RNDN);
                 mpfr_div(q, x, y, GMP_RNDD);
                 lower = std::min(lower, mpfr_get_d(q, GMP_RNDD));
                 mpfr_div(q, x, y, GMP_RNDU);

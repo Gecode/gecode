@@ -208,17 +208,17 @@ namespace Test { namespace FlatZinc {
                     return false;
 
                 const FloatVal probes[] = {FloatVal(8.4), FloatVal(8.5), FloatVal(8.9), FloatVal(9.0)};
-                for (unsigned int i = 0; i < sizeof(probes) / sizeof(probes[0]); i++) {
-                    if (admitted(probes[i], *m10, true, 1.0) != admitted(probes[i], *m10b, true, 1.0))
+                for (const FloatVal& probe : probes) {
+                    if (admitted(probe, *m10, true, 1.0) != admitted(probe, *m10b, true, 1.0))
                         return false;
-                    if (admitted(probes[i], *m9, true, 1.0) && !admitted(probes[i], *m10, true, 1.0))
+                    if (admitted(probe, *m9, true, 1.0) && !admitted(probe, *m10, true, 1.0))
                         return false;
                 }
                 const FloatVal max_probes[] = {FloatVal(11.0), FloatVal(11.1), FloatVal(11.5), FloatVal(11.6)};
-                for (unsigned int i = 0; i < sizeof(max_probes) / sizeof(max_probes[0]); i++) {
-                    if (admitted(max_probes[i], *x10, false, 1.0) != admitted(max_probes[i], *x10b, false, 1.0))
+                for (const FloatVal& max_probe : max_probes) {
+                    if (admitted(max_probe, *x10, false, 1.0) != admitted(max_probe, *x10b, false, 1.0))
                         return false;
-                    if (admitted(max_probes[i], *x11, false, 1.0) && !admitted(max_probes[i], *x10, false, 1.0))
+                    if (admitted(max_probe, *x11, false, 1.0) && !admitted(max_probe, *x10, false, 1.0))
                         return false;
                 }
                 std::unique_ptr<FlatZincSpace> zero = model(10.0, true);

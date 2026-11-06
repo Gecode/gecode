@@ -38,8 +38,8 @@ namespace Gecode {
 
         bool
         optional(const BoolVarArgs& m) {
-            for (int i = 0; i < m.size(); i++)
-                if (m[i].none())
+            for (auto mi : m)
+                if (mi.none())
                     return true;
             return false;
         }

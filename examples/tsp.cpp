@@ -399,8 +399,8 @@ public:
     void
     print(std::ostream& os) const override {
         bool assigned = true;
-        for (int i = 0; i < succ.size(); i++) {
-            if (!succ[i].assigned()) {
+        for (auto s : succ) {
+            if (!s.assigned()) {
                 assigned = false;
                 break;
             }

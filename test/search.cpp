@@ -2491,12 +2491,10 @@ namespace Test {
 
                 // Equal keys give identical cuts; better keys only tighten them.
                 const FloatVal probes[] = {FloatVal(8.4), FloatVal(8.5), FloatVal(8.9), FloatVal(9.0)};
-                for (unsigned int i = 0; i < sizeof(probes) / sizeof(probes[0]); i++) {
-                    if (admitted<FloatMinObjective>(probes[i], 1.0, m10) !=
-                        admitted<FloatMinObjective>(probes[i], 1.0, m10b))
+                for (const FloatVal& probe : probes) {
+                    if (admitted<FloatMinObjective>(probe, 1.0, m10) != admitted<FloatMinObjective>(probe, 1.0, m10b))
                         return false;
-                    if (admitted<FloatMinObjective>(probes[i], 1.0, m9) &&
-                        !admitted<FloatMinObjective>(probes[i], 1.0, m10))
+                    if (admitted<FloatMinObjective>(probe, 1.0, m9) && !admitted<FloatMinObjective>(probe, 1.0, m10))
                         return false;
                 }
                 if (admitted<FloatMinObjective>(FloatVal(10.0), 0.0, mzero) ||

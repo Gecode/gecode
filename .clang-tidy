@@ -36,7 +36,6 @@ Checks: >-
   -modernize-avoid-c-style-cast,
   -modernize-avoid-variadic-functions,
   -modernize-concat-nested-namespaces,
-  -modernize-loop-convert,
   -modernize-min-max-use-initializer-list,
   -modernize-pass-by-value,
   -modernize-return-braced-init-list,
