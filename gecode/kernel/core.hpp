@@ -64,7 +64,7 @@ namespace Gecode {
      */
     //@{
     /// Type for modification events
-    typedef int ModEvent;
+    using ModEvent = int;
 
     /// Generic modification event: failed variable
     const ModEvent ME_GEN_FAILED = -1;
@@ -74,7 +74,7 @@ namespace Gecode {
     const ModEvent ME_GEN_ASSIGNED = 1;
 
     /// Type for propagation conditions
-    typedef int PropCond;
+    using PropCond = int;
     /// Propagation condition to be ignored (convenience)
     const PropCond PC_GEN_NONE = -1;
     /// Propagation condition for an assigned variable
@@ -91,7 +91,7 @@ namespace Gecode {
      * a variable or view.
      * \ingroup TaskActor
      */
-    typedef int ModEventDelta;
+    using ModEventDelta = int;
 
 } // namespace Gecode
 
@@ -1246,7 +1246,7 @@ namespace Gecode {
          * propagator. A callback is used to transmit each result.
          */
         /// Signature for function transmitting marginal distributions
-        typedef std::function<void(unsigned int prop_id, unsigned int var_id, int val, double dens)> SendMarginal;
+        using SendMarginal = std::function<void(unsigned int prop_id, unsigned int var_id, int val, double dens)>;
         virtual void solution_distribution(Space& home, const SendMarginal& send) const;
         /**
          * \brief Sum of variable cardinalities
@@ -1256,7 +1256,7 @@ namespace Gecode {
          *               in branching decisions
          */
         /// Signature for function testing if variables are candidates to branching decisions
-        typedef std::function<bool(unsigned int var_id)> InDecision;
+        using InDecision = std::function<bool(unsigned int var_id)>;
         virtual void domain_size_sum(const InDecision& in, unsigned int& size, unsigned int& size_b) const;
         //@}
 #endif

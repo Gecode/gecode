@@ -54,7 +54,7 @@ namespace Gecode { namespace Int {
     template <>
     class ViewToVarArg<Gecode::Float::FloatView> {
     public:
-        typedef Gecode::FloatVarArgs argtype;
+        using argtype = Gecode::FloatVarArgs;
     };
 
 }} // namespace Gecode::Int
@@ -142,7 +142,7 @@ namespace Gecode { namespace FlatZinc {
             home.restart_data().last_val_int[idx] = var.val();
         }
     };
-    typedef LastVal<IntView, SetIntLastVal> LastValInt;
+    using LastValInt = LastVal<IntView, SetIntLastVal>;
 
     class SetBoolLastVal {
     public:
@@ -155,7 +155,7 @@ namespace Gecode { namespace FlatZinc {
             home.restart_data().last_val_bool[idx] = var.val();
         }
     };
-    typedef LastVal<BoolView, SetBoolLastVal> LastValBool;
+    using LastValBool = LastVal<BoolView, SetBoolLastVal>;
 
 #ifdef GECODE_HAS_FLOAT_VARS
     class SetFloatLastVal {
@@ -169,7 +169,7 @@ namespace Gecode { namespace FlatZinc {
             home.restart_data().last_val_float[idx] = var.val();
         }
     };
-    typedef LastVal<Float::FloatView, SetFloatLastVal> LastValFloat;
+    using LastValFloat = LastVal<Float::FloatView, SetFloatLastVal>;
 #endif
 
 #ifdef GECODE_HAS_SET_VARS
@@ -186,7 +186,7 @@ namespace Gecode { namespace FlatZinc {
             home.restart_data().last_val_set[idx] = IntSet(lb);
         }
     };
-    typedef LastVal<Set::SetView, SetIntSetLastVal> LastValSet;
+    using LastValSet = LastVal<Set::SetView, SetIntSetLastVal>;
 #endif
 
 }} // namespace Gecode::FlatZinc

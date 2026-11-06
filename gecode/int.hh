@@ -636,7 +636,7 @@ namespace Gecode {
 
     //@{
     /// Passing set arguments
-    typedef ArgArray<IntSet> IntSetArgs;
+    using IntSetArgs = ArgArray<IntSet>;
 
 } // namespace Gecode
 
@@ -945,7 +945,7 @@ namespace Gecode {
          * materialization enters its own NoGPI scope. Scopes restore the previous
          * setting on exit, including exceptions.
          */
-        typedef std::function<Var(Space& home, int i)> Factory;
+        using Factory = std::function<Var(Space& home, int i)>;
         /**
          * \brief Function called after materializing position \a i
          *
@@ -955,7 +955,7 @@ namespace Gecode {
          * materialize() and direct append() call the transition after the new
          * position is available through indexed access.
          */
-        typedef std::function<void(Space& home, OpenVarList<Var> x, int i)> Transition;
+        using Transition = std::function<void(Space& home, OpenVarList<Var> x, int i)>;
         /// Construct an uninitialized list
         OpenVarList() = default;
         /// Construct a list using \a create for each position
@@ -1039,8 +1039,8 @@ namespace Gecode {
     template <class View>
     class OpenViewList : public LocalHandle {
     private:
-        typedef typename View::VarType Var;
-        typedef typename OpenVarList<Var>::Object Object;
+        using Var = typename View::VarType;
+        using Object = typename OpenVarList<Var>::Object;
 
     public:
         /// Construct an uninitialized list
@@ -1077,7 +1077,7 @@ namespace Gecode {
          * Must be deterministic and safe for concurrent calls. Sharing and
          * captured data follow the Factory contract.
          */
-        typedef std::function<IntSet(int i)> Domain;
+        using Domain = std::function<IntSet(int i)>;
         using OpenVarList<IntVar>::OpenVarList;
         /// Construct an uninitialized list
         GECODE_INT_EXPORT OpenIntVarList() = default;
@@ -1328,15 +1328,15 @@ namespace Gecode {
      *
      * \ingroup TaskModelInt
      */
-    typedef ArgArray<TaskType> TaskTypeArgs;
+    using TaskTypeArgs = ArgArray<TaskType>;
 
     /// Traits of %TaskTypeArgs
     template <>
     class ArrayTraits<ArgArray<TaskType>> {
     public:
-        typedef TaskTypeArgs StorageType;
-        typedef TaskType ValueType;
-        typedef TaskTypeArgs ArgsType;
+        using StorageType = TaskTypeArgs;
+        using ValueType = TaskType;
+        using ArgsType = TaskTypeArgs;
     };
 
     /**
@@ -1728,7 +1728,7 @@ namespace Gecode {
 
     //@{
     /// Arrays of integers that can be shared among several element constraints
-    typedef SharedArray<int> IntSharedArray;
+    using IntSharedArray = SharedArray<int>;
     /** \brief Post domain consistent propagator for \f$ n_{x_0}=x_1\f$
      *
      *  Throws an exception of type Int::OutOfLimits, if
@@ -2657,9 +2657,9 @@ namespace Gecode {
          *
          * The arity of the tuple is left implicit.
          */
-        typedef int* Tuple;
+        using Tuple = int*;
         /// Import bit set data type
-        typedef Gecode::Support::BitSetData BitSetData;
+        using BitSetData = Gecode::Support::BitSetData;
         /// Compressed support data for one tuple-word block
         class CSupportWord {
         public:
@@ -4865,7 +4865,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    typedef std::function<bool(const Space& home, IntVar x, int i)> IntBranchFilter;
+    using IntBranchFilter = std::function<bool(const Space& home, IntVar x, int i)>;
     /**
      * \brief Branch filter function type for Boolean variables
      *
@@ -4874,7 +4874,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    typedef std::function<bool(const Space& home, BoolVar x, int i)> BoolBranchFilter;
+    using BoolBranchFilter = std::function<bool(const Space& home, BoolVar x, int i)>;
 
     /**
      * \brief Branch merit function type for integer variables
@@ -4885,7 +4885,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    typedef std::function<double(const Space& home, IntVar x, int i)> IntBranchMerit;
+    using IntBranchMerit = std::function<double(const Space& home, IntVar x, int i)>;
     /**
      * \brief Branch merit function type for Boolean variables
      *
@@ -4895,7 +4895,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    typedef std::function<double(const Space& home, BoolVar x, int i)> BoolBranchMerit;
+    using BoolBranchMerit = std::function<double(const Space& home, BoolVar x, int i)>;
 
     /**
      * \brief Branch value function type for integer variables
@@ -4907,7 +4907,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    typedef std::function<int(const Space& home, IntVar x, int i)> IntBranchVal;
+    using IntBranchVal = std::function<int(const Space& home, IntVar x, int i)>;
     /**
      * \brief Branch value function type for Boolean variables
      *
@@ -4918,7 +4918,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    typedef std::function<int(const Space& home, BoolVar x, int i)> BoolBranchVal;
+    using BoolBranchVal = std::function<int(const Space& home, BoolVar x, int i)>;
 
     /**
      * \brief Branch commit function type for integer variables
@@ -4931,7 +4931,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    typedef std::function<void(Space& home, unsigned int a, IntVar x, int i, int n)> IntBranchCommit;
+    using IntBranchCommit = std::function<void(Space& home, unsigned int a, IntVar x, int i, int n)>;
     /**
      * \brief Branch commit function type for Boolean variables
      *
@@ -4943,7 +4943,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    typedef std::function<void(Space& home, unsigned int a, BoolVar x, int i, int n)> BoolBranchCommit;
+    using BoolBranchCommit = std::function<void(Space& home, unsigned int a, BoolVar x, int i, int n)>;
 
 } // namespace Gecode
 
@@ -5224,14 +5224,12 @@ namespace Gecode {
 namespace Gecode {
 
     /// Function type for printing branching alternatives for integer variables
-    typedef std::function<void(const Space& home, const Brancher& b, unsigned int a, IntVar x, int i, const int& n,
-                               std::ostream& o)>
-        IntVarValPrint;
+    using IntVarValPrint = std::function<void(const Space& home, const Brancher& b, unsigned int a, IntVar x, int i,
+                                              const int& n, std::ostream& o)>;
 
     /// Function type for printing branching alternatives for Boolean variables
-    typedef std::function<void(const Space& home, const Brancher& b, unsigned int a, BoolVar x, int i, const int& n,
-                               std::ostream& o)>
-        BoolVarValPrint;
+    using BoolVarValPrint = std::function<void(const Space& home, const Brancher& b, unsigned int a, BoolVar x, int i,
+                                               const int& n, std::ostream& o)>;
 
 } // namespace Gecode
 
@@ -5984,9 +5982,9 @@ namespace Gecode {
     template <>
     class ArrayTraits<ArgArray<SymmetryHandle>> {
     public:
-        typedef Symmetries StorageType;
-        typedef SymmetryHandle ValueType;
-        typedef Symmetries ArgsType;
+        using StorageType = Symmetries;
+        using ValueType = SymmetryHandle;
+        using ArgsType = Symmetries;
     };
 
     /**
@@ -6270,12 +6268,12 @@ namespace Gecode {
      * \brief Tracer for integer variables
      * \ingroup TaskIntTrace
      */
-    typedef ViewTracer<Int::IntView> IntTracer;
+    using IntTracer = ViewTracer<Int::IntView>;
     /**
      * \brief Trace recorder for integer variables
      * \ingroup TaskIntTrace
      */
-    typedef ViewTraceRecorder<Int::IntView> IntTraceRecorder;
+    using IntTraceRecorder = ViewTraceRecorder<Int::IntView>;
 
     /**
      * \brief Standard integer variable tracer
@@ -6308,12 +6306,12 @@ namespace Gecode {
      * \brief Tracer for Boolean variables
      * \ingroup TaskIntTrace
      */
-    typedef ViewTracer<Int::BoolView> BoolTracer;
+    using BoolTracer = ViewTracer<Int::BoolView>;
     /**
      * \brief Trace recorder for Boolean variables
      * \ingroup TaskIntTrace
      */
-    typedef ViewTraceRecorder<Int::BoolView> BoolTraceRecorder;
+    using BoolTraceRecorder = ViewTraceRecorder<Int::BoolView>;
 
     /**
      * \brief Standard Boolean variable tracer

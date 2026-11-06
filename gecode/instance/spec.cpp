@@ -288,7 +288,7 @@ namespace Gecode { namespace Instance {
         /// Test whether pattern item \a it ends with a word character
         bool
         ends_word(const Pattern::Item& it) {
-            typedef Pattern::Item::Kind Kind;
+            using Kind = Pattern::Item::Kind;
             return (it.kind == Kind::CAP) || (it.kind == Kind::VAR) ||
                    ((it.kind == Kind::LIT) && is_alnum(it.text[it.text.size() - 1]));
         }
@@ -296,7 +296,7 @@ namespace Gecode { namespace Instance {
         /// Test whether pattern item \a it starts with a word character
         bool
         starts_word(const Pattern::Item& it) {
-            typedef Pattern::Item::Kind Kind;
+            using Kind = Pattern::Item::Kind;
             return (it.kind == Kind::CAP) || (it.kind == Kind::VAR) || ((it.kind == Kind::LIT) && is_alnum(it.text[0]));
         }
 
@@ -304,7 +304,7 @@ namespace Gecode { namespace Instance {
         /// capture to \a types
         Pattern
         compile(const std::string& src, Seq<std::string>& types) {
-            typedef Pattern::Item Item;
+            using Item = Pattern::Item;
             Pattern pat;
             pat.source = src;
             size_t p = 0;
@@ -605,7 +605,7 @@ namespace Gecode { namespace Instance {
              */
 
             /// A function completing statement \a s, which starts with \a kw
-            typedef void (Parser::*Parse)(Stmt& s, const std::string& kw);
+            using Parse = void (Parser::*)(Stmt& s, const std::string& kw);
 
             /// A statement that starts with a keyword
             class Keyword {

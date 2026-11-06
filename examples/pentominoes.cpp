@@ -91,9 +91,9 @@ namespace {
      */
     int pos(int h, int w, int h1, int w1);
     /// Type for tile symmetry functions
-    typedef void (*tsymmfunc)(const char*, int, int, char*, int&, int&);
+    using tsymmfunc = void (*)(const char*, int, int, char*, int&, int&);
     /// Type for board symmetry functions
-    typedef void (*bsymmfunc)(const IntVarArgs, int, int, IntVarArgs&, int&, int&);
+    using bsymmfunc = void (*)(const IntVarArgs, int, int, IntVarArgs&, int&, int&);
     /// Identity symmetry
     template <class CArray, class Array>
     void id(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);

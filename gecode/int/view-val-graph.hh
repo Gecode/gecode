@@ -309,7 +309,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         /// Marking counter
         unsigned int count;
         /// Stack used during matching
-        typedef Support::StaticStack<ViewNode<View>*, Region> ViewNodeStack;
+        using ViewNodeStack = Support::StaticStack<ViewNode<View>*, Region>;
         /// Initialize the edges for the view node \a x
         void init(Space& home, ViewNode<View>* x);
         /// Find a matching for node \a x

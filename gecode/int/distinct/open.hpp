@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace Distinct {
             GrowableIntSetRanges history(assigned);
             GECODE_ES_CHECK(exclude_values(home, history, first_new, current, count));
 
-            typedef Iter::Values::ToRanges<Iter::Values::Array> BatchRanges;
+            using BatchRanges = Iter::Values::ToRanges<Iter::Values::Array>;
             while (count > 0) {
                 Support::quicksort(current, count);
                 for (int i = 1; i < count; i++)

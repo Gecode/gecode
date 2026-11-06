@@ -393,40 +393,40 @@ namespace Gecode { namespace Int { namespace Unary {
 namespace Gecode { namespace Int { namespace Unary {
 
     /// Forward mandatory fixed task view
-    typedef ManFixPTask ManFixPTaskFwd;
+    using ManFixPTaskFwd = ManFixPTask;
 
     /// Backward (dual) mandatory fixed task view
-    typedef FwdToBwd<ManFixPTaskFwd> ManFixPTaskBwd;
+    using ManFixPTaskBwd = FwdToBwd<ManFixPTaskFwd>;
 
     /// Forward mandatory fixed task view
-    typedef ManFixPSETask ManFixPSETaskFwd;
+    using ManFixPSETaskFwd = ManFixPSETask;
 
     /// Backward (dual) mandatory fixed task view
-    typedef FwdToBwd<ManFixPSETaskFwd> ManFixPSETaskBwd;
+    using ManFixPSETaskBwd = FwdToBwd<ManFixPSETaskFwd>;
 
     /// Forward optional fixed task view
-    typedef OptFixPTask OptFixPTaskFwd;
+    using OptFixPTaskFwd = OptFixPTask;
 
     /// Backward (dual) optional fixed task view
-    typedef FwdToBwd<OptFixPTaskFwd> OptFixPTaskBwd;
+    using OptFixPTaskBwd = FwdToBwd<OptFixPTaskFwd>;
 
     /// Forward optional fixed task view
-    typedef OptFixPSETask OptFixPSETaskFwd;
+    using OptFixPSETaskFwd = OptFixPSETask;
 
     /// Backward (dual) optional fixed task view
-    typedef FwdToBwd<OptFixPSETaskFwd> OptFixPSETaskBwd;
+    using OptFixPSETaskBwd = FwdToBwd<OptFixPSETaskFwd>;
 
     /// Forward mandatory flexible task view
-    typedef ManFlexTask ManFlexTaskFwd;
+    using ManFlexTaskFwd = ManFlexTask;
 
     /// Backward (dual) mandatory flexible task view
-    typedef FwdToBwd<ManFlexTaskFwd> ManFlexTaskBwd;
+    using ManFlexTaskBwd = FwdToBwd<ManFlexTaskFwd>;
 
     /// Forward optional flexible task view
-    typedef OptFlexTask OptFlexTaskFwd;
+    using OptFlexTaskFwd = OptFlexTask;
 
     /// Backward (dual) optional flexible task view
-    typedef FwdToBwd<OptFlexTaskFwd> OptFlexTaskBwd;
+    using OptFlexTaskBwd = FwdToBwd<OptFlexTaskFwd>;
 
     /**
      * \brief Print backward task view in format est:p:lct
@@ -483,7 +483,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFixPTaskFwd> {
     public:
         /// The task type
-        typedef Unary::ManFixPTask Task;
+        using Task = Unary::ManFixPTask;
     };
 
     /// Task view traits for backward task views
@@ -491,7 +491,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFixPTaskBwd> {
     public:
         /// The task type
-        typedef Unary::ManFixPTask Task;
+        using Task = Unary::ManFixPTask;
     };
 
     /// Task view traits for forward task views
@@ -499,7 +499,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFixPSETaskFwd> {
     public:
         /// The task type
-        typedef Unary::ManFixPSETask Task;
+        using Task = Unary::ManFixPSETask;
     };
 
     /// Task view traits for backward task views
@@ -507,7 +507,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFixPSETaskBwd> {
     public:
         /// The task type
-        typedef Unary::ManFixPSETask Task;
+        using Task = Unary::ManFixPSETask;
     };
 
     /// Task view traits for forward optional task views
@@ -515,7 +515,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFixPTaskFwd> {
     public:
         /// The task type
-        typedef Unary::OptFixPTask Task;
+        using Task = Unary::OptFixPTask;
     };
 
     /// Task view traits for backward task views
@@ -523,7 +523,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFixPTaskBwd> {
     public:
         /// The task type
-        typedef Unary::OptFixPTask Task;
+        using Task = Unary::OptFixPTask;
     };
 
     /// Task view traits for forward optional task views
@@ -531,7 +531,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFixPSETaskFwd> {
     public:
         /// The task type
-        typedef Unary::OptFixPSETask Task;
+        using Task = Unary::OptFixPSETask;
     };
 
     /// Task view traits for backward task views
@@ -539,7 +539,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFixPSETaskBwd> {
     public:
         /// The task type
-        typedef Unary::OptFixPSETask Task;
+        using Task = Unary::OptFixPSETask;
     };
 
     /// Task view traits for forward task views
@@ -547,7 +547,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFlexTaskFwd> {
     public:
         /// The task type
-        typedef Unary::ManFlexTask Task;
+        using Task = Unary::ManFlexTask;
     };
 
     /// Task view traits for backward task views
@@ -555,7 +555,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFlexTaskBwd> {
     public:
         /// The task type
-        typedef Unary::ManFlexTask Task;
+        using Task = Unary::ManFlexTask;
     };
 
     /// Task view traits for forward optional task views
@@ -563,7 +563,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFlexTaskFwd> {
     public:
         /// The task type
-        typedef Unary::OptFlexTask Task;
+        using Task = Unary::OptFlexTask;
     };
 
     /// Task view traits for backward task views
@@ -571,7 +571,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFlexTaskBwd> {
     public:
         /// The task type
-        typedef Unary::OptFlexTask Task;
+        using Task = Unary::OptFlexTask;
     };
 
     /// Task traits for mandatory fixed tasks
@@ -579,9 +579,9 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::ManFixPTask> {
     public:
         /// The forward task view type
-        typedef Unary::ManFixPTaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::ManFixPTaskFwd;
         /// The backward task view type
-        typedef Unary::ManFixPTaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::ManFixPTaskBwd;
     };
 
     /// Task traits for mandatory fixed tasks
@@ -589,9 +589,9 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::ManFixPSETask> {
     public:
         /// The forward task view type
-        typedef Unary::ManFixPSETaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::ManFixPSETaskFwd;
         /// The backward task view type
-        typedef Unary::ManFixPSETaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::ManFixPSETaskBwd;
     };
 
     /// Task traits for optional fixed tasks
@@ -599,11 +599,11 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::OptFixPTask> {
     public:
         /// The forward task view type
-        typedef Unary::OptFixPTaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::OptFixPTaskFwd;
         /// The backward task view type
-        typedef Unary::OptFixPTaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::OptFixPTaskBwd;
         /// The corresponding mandatory task
-        typedef Unary::ManFixPTask ManTask;
+        using ManTask = Unary::ManFixPTask;
     };
 
     /// Task traits for optional fixed tasks
@@ -611,11 +611,11 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::OptFixPSETask> {
     public:
         /// The forward task view type
-        typedef Unary::OptFixPSETaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::OptFixPSETaskFwd;
         /// The backward task view type
-        typedef Unary::OptFixPSETaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::OptFixPSETaskBwd;
         /// The corresponding mandatory task
-        typedef Unary::ManFixPTask ManTask;
+        using ManTask = Unary::ManFixPTask;
     };
 
     /// Task traits for mandatory flexible tasks
@@ -623,9 +623,9 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::ManFlexTask> {
     public:
         /// The forward task view type
-        typedef Unary::ManFlexTaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::ManFlexTaskFwd;
         /// The backward task view type
-        typedef Unary::ManFlexTaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::ManFlexTaskBwd;
     };
 
     /// Task traits for optional flexible tasks
@@ -633,11 +633,11 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::OptFlexTask> {
     public:
         /// The forward task view type
-        typedef Unary::OptFlexTaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::OptFlexTaskFwd;
         /// The backward task view type
-        typedef Unary::OptFlexTaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::OptFlexTaskBwd;
         /// The corresponding mandatory task
-        typedef Unary::ManFlexTask ManTask;
+        using ManTask = Unary::ManFlexTask;
     };
 
 }} // namespace Gecode::Int

@@ -39,7 +39,7 @@
 #include <sstream>
 
 namespace Test { namespace FlatZinc { namespace {
-    typedef std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> FlatZincSpacePtr;
+    using FlatZincSpacePtr = std::unique_ptr<Gecode::FlatZinc::FlatZincSpace>;
 
     /// Parse \a source and post its branchers with options \a args
     FlatZincSpacePtr

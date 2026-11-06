@@ -36,18 +36,18 @@ namespace Gecode {
     template <>
     class TraceTraits<Int::IntView> {
     public:
-        typedef Int::IntTraceView TraceView;
-        typedef IntTraceDelta TraceDelta;
-        typedef unsigned long long int SlackValue;
+        using TraceView = Int::IntTraceView;
+        using TraceDelta = IntTraceDelta;
+        using SlackValue = unsigned long long int;
     };
 
     /// Trace traits for Boolean views
     template <>
     class TraceTraits<Int::BoolView> {
     public:
-        typedef Int::BoolTraceView TraceView;
-        typedef BoolTraceDelta TraceDelta;
-        typedef unsigned int SlackValue;
+        using TraceView = Int::BoolTraceView;
+        using TraceDelta = BoolTraceDelta;
+        using SlackValue = unsigned int;
     };
 
 } // namespace Gecode

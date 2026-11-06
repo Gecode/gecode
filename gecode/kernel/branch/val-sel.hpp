@@ -43,11 +43,11 @@ namespace Gecode {
     class ValSel {
     public:
         /// View type
-        typedef View_ View;
+        using View = View_;
         /// Corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = typename View::VarType;
         /// Value type
-        typedef Val_ Val;
+        using Val = Val_;
 
         /// Constructor for initialization
         ValSel(Space& home, const ValBranch<Var>& vb);
@@ -64,11 +64,11 @@ namespace Gecode {
     class ValSelFunction : public ValSel<View, typename BranchTraits<typename View::VarType>::ValType> {
     public:
         /// The corresponding variable type
-        typedef typename ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Var Var;
+        using Var = typename ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Var;
         /// The corresponding value type
-        typedef typename ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Val Val;
+        using Val = typename ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Val;
         /// The corresponding value function
-        typedef typename BranchTraits<Var>::Val ValFunction;
+        using ValFunction = typename BranchTraits<Var>::Val;
 
     protected:
         /// The user-defined value function

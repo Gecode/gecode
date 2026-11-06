@@ -292,7 +292,7 @@ namespace Gecode { namespace CPProfiler {
 
         Message msg;
 
-        typedef char* iter;
+        using iter = char*;
 
         static void
         serialize_type(std::vector<char>& data, MsgType f) {

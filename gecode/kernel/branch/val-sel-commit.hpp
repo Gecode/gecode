@@ -43,11 +43,11 @@ namespace Gecode {
     class ValSelCommitBase {
     public:
         /// View type
-        typedef View_ View;
+        using View = View_;
         /// Corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = typename View::VarType;
         /// Value type
-        typedef Val_ Val;
+        using Val = Val_;
 
         /// Constructor for initialization
         ValSelCommitBase(Space& home, const ValBranch<Var>& vb);
@@ -84,9 +84,9 @@ namespace Gecode {
     template <class ValSel, class ValCommit>
     class ValSelCommit : public ValSelCommitBase<typename ValSel::View, typename ValSel::Val> {
     protected:
-        typedef typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Var Var;
-        typedef typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Val Val;
-        typedef typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::View View;
+        using Var = typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Var;
+        using Val = typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Val;
+        using View = typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::View;
         /// The value selection object used
         ValSel s;
         /// The commit object used

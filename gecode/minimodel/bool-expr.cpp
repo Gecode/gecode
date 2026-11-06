@@ -251,8 +251,8 @@ namespace Gecode {
         /// %Node for negation normalform (%NNF)
         class NNF {
         public:
-            typedef BoolExpr::NodeType NodeType;
-            typedef BoolExpr::Node Node;
+            using NodeType = BoolExpr::NodeType;
+            using Node = BoolExpr::Node;
             /// Type of node
             NodeType t;
             /// Number of positive literals for node type

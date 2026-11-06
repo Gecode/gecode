@@ -150,13 +150,13 @@ namespace Gecode { namespace Int { namespace Element {
         /// View for index
         V0 x0;
         /// Type for index size
-        typedef typename Gecode::Support::IntTypeTraits<Idx>::utype IdxSize;
+        using IdxSize = typename Gecode::Support::IntTypeTraits<Idx>::utype;
         /// Size of \a x0 at last execution
         IdxSize s0;
         /// View for result
         V1 x1;
         /// Type for value size
-        typedef typename Gecode::Support::IntTypeTraits<Val>::utype ValSize;
+        using ValSize = typename Gecode::Support::IntTypeTraits<Val>::utype;
         /// Size of \a x1 at last execution
         ValSize s1;
         /// Shared array of integer values

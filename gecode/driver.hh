@@ -938,29 +938,29 @@ namespace Gecode {
      * \brief Base-class for scripts
      * \ingroup TaskDriverScript
      */
-    typedef Driver::ScriptBase<Driver::IgnoreStepOption<Space>> Script;
+    using Script = Driver::ScriptBase<Driver::IgnoreStepOption<Space>>;
 
     /**
      * \brief Base-class for scripts for finding solution of lowest integer cost
      * \ingroup TaskDriverScript
      */
-    typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMinimizeSpace>> IntMinimizeScript;
+    using IntMinimizeScript = Driver::ScriptBase<Driver::IgnoreStepOption<IntMinimizeSpace>>;
     /**
      * \brief Base-class for scripts for finding solution of highest integer cost
      * \ingroup TaskDriverScript
      */
-    typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMaximizeSpace>> IntMaximizeScript;
+    using IntMaximizeScript = Driver::ScriptBase<Driver::IgnoreStepOption<IntMaximizeSpace>>;
 
     /**
      * \brief Base-class for scripts for finding solution of lexically lowest integer costs
      * \ingroup TaskDriverScript
      */
-    typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntLexMinimizeSpace>> IntLexMinimizeScript;
+    using IntLexMinimizeScript = Driver::ScriptBase<Driver::IgnoreStepOption<IntLexMinimizeSpace>>;
     /**
      * \brief Base-class for scripts for finding solution of lexically highest integer costs
      * \ingroup TaskDriverScript
      */
-    typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntLexMaximizeSpace>> IntLexMaximizeScript;
+    using IntLexMaximizeScript = Driver::ScriptBase<Driver::IgnoreStepOption<IntLexMaximizeSpace>>;
 
 #ifdef GECODE_HAS_FLOAT_VARS
 
@@ -968,12 +968,12 @@ namespace Gecode {
      * \brief Base-class for scripts for finding solution of lowest float cost
      * \ingroup TaskDriverScript
      */
-    typedef Driver::ScriptBase<Driver::ExtractStepOption<FloatMinimizeSpace>> FloatMinimizeScript;
+    using FloatMinimizeScript = Driver::ScriptBase<Driver::ExtractStepOption<FloatMinimizeSpace>>;
     /**
      * \brief Base-class for scripts for finding solution of highest float cost
      * \ingroup TaskDriverScript
      */
-    typedef Driver::ScriptBase<Driver::ExtractStepOption<FloatMaximizeSpace>> FloatMaximizeScript;
+    using FloatMaximizeScript = Driver::ScriptBase<Driver::ExtractStepOption<FloatMaximizeSpace>>;
 
 #endif
 

@@ -1172,7 +1172,7 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
     /// Type for a search engine builder
-    typedef Search::Builder* SEB;
+    using SEB = Search::Builder*;
 
 } // namespace Gecode
 
@@ -1269,7 +1269,7 @@ namespace Gecode { namespace Search {
         enum class Sense { MINIMIZE, MAXIMIZE };
         using enum Sense;
         /// Function evaluating a stable space
-        typedef std::function<std::int64_t(const Space&)> Evaluate;
+        using Evaluate = std::function<std::int64_t(const Space&)>;
         /// Objective direction
         Sense sense;
         /// Optimistic objective bound (required)

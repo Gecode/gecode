@@ -43,7 +43,7 @@ namespace Gecode {
     class BrancherFilter {
     public:
         /// The corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = typename View::VarType;
 
     protected:
         SharedData<BranchFilter<Var>> f;
@@ -68,7 +68,7 @@ namespace Gecode {
     class BrancherNoFilter {
     public:
         /// The corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = typename View::VarType;
 
         /// Initialize from the empty filter \a bf
         BrancherNoFilter(const BranchFilter<Var>& bf);

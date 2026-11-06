@@ -141,7 +141,7 @@ namespace Gecode { namespace Gist {
         int get_child(int n) const;
 
     public:
-        typedef NodeAllocatorBase<VisualNode> NodeAllocator;
+        using NodeAllocator = NodeAllocatorBase<VisualNode>;
 
         /// Construct node with parent \a p
         Node(int p, bool failed = false);

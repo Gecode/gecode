@@ -50,10 +50,10 @@ namespace Gecode { namespace Support {
     protected:
 #if defined(_MSC_VER) && defined(_M_IX86)
         /// Basetype for bits
-        typedef unsigned long int Base;
+        using Base = unsigned long int;
 #else
         /// Basetype for bits
-        typedef unsigned long long int Base;
+        using Base = unsigned long long int;
 #endif
         /// The bits
         Base bits;

@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             Edge* edges;    ///< Supporting edges in layered graph
         };
         /// Type for support size
-        typedef typename Gecode::Support::IntTypeTraits<Val>::utype ValSize;
+        using ValSize = typename Gecode::Support::IntTypeTraits<Val>::utype;
         /// %Layer for a view in the layered graph
         class Layer {
         public:
@@ -240,7 +240,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 namespace Gecode { namespace Int { namespace Extensional {
 
     /// Import type
-    typedef Gecode::Support::BitSetData BitSetData;
+    using BitSetData = Gecode::Support::BitSetData;
 
     /*
      * Forward declarations
@@ -408,7 +408,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 namespace Gecode { namespace Int { namespace Extensional {
 
     /// Tuple type
-    typedef TupleSet::Tuple Tuple;
+    using Tuple = TupleSet::Tuple;
 
     /// Optional variable index stored by a compact-table advisor
     template <bool indexed>
@@ -441,7 +441,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     class CompactAdvisor : public ViewAdvisor<View>, private CompactAdvisorIndex<indexed> {
     protected:
         /// Range type for supports
-        typedef TupleSet::Range Range;
+        using Range = TupleSet::Range;
         /// First range of support data structure
         const Range* _fst;
         /// Last range of support data structure
@@ -519,9 +519,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     class Compact : public Propagator {
     protected:
         /// Range type for supports
-        typedef TupleSet::Range Range;
+        using Range = TupleSet::Range;
         /// Advisor for updating current table
-        typedef CompactAdvisor<View, pos, false> CTAdvisor;
+        using CTAdvisor = CompactAdvisor<View, pos, false>;
         //@}
         /// \name Support iterators
         //@{
@@ -640,11 +640,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         friend class PosCompactAlgorithm;
 
     public:
-        typedef View ViewType;
-        typedef typename Compact<View, true>::ValidSupports ValidSupports;
-        typedef typename Compact<View, true>::Range Range;
-        typedef typename Compact<View, true>::CTAdvisor CTAdvisor;
-        typedef typename Compact<View, true>::LostSupports LostSupports;
+        using ViewType = View;
+        using ValidSupports = typename Compact<View, true>::ValidSupports;
+        using Range = typename Compact<View, true>::Range;
+        using CTAdvisor = typename Compact<View, true>::CTAdvisor;
+        using LostSupports = typename Compact<View, true>::LostSupports;
 
         using Compact<View, true>::setup;
         using Compact<View, true>::supports;
@@ -654,9 +654,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         using Compact<View, true>::ts;
 
         /// Status management
-        typedef CompactStatus<CTAdvisor> Status;
+        using Status = CompactStatus<CTAdvisor>;
         /// Status type
-        typedef typename Status::StatusType StatusType;
+        using StatusType = typename Status::StatusType;
         /// Propagator status
         Status status;
         /// Current table
@@ -711,10 +711,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         friend class NegCompactAlgorithm;
 
     public:
-        typedef View ViewType;
-        typedef typename Compact<View, false>::ValidSupports ValidSupports;
-        typedef typename Compact<View, false>::Range Range;
-        typedef typename Compact<View, false>::CTAdvisor CTAdvisor;
+        using ViewType = View;
+        using ValidSupports = typename Compact<View, false>::ValidSupports;
+        using Range = typename Compact<View, false>::Range;
+        using CTAdvisor = typename Compact<View, false>::CTAdvisor;
 
         using Compact<View, false>::setup;
         using Compact<View, false>::full;
@@ -759,11 +759,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         friend class ReCompactAlgorithm;
 
     public:
-        typedef View ViewType;
+        using ViewType = View;
         static constexpr ReifyMode mode = rm;
-        typedef typename Compact<View, false>::ValidSupports ValidSupports;
-        typedef typename Compact<View, false>::Range Range;
-        typedef typename Compact<View, false>::CTAdvisor CTAdvisor;
+        using ValidSupports = typename Compact<View, false>::ValidSupports;
+        using Range = typename Compact<View, false>::Range;
+        using CTAdvisor = typename Compact<View, false>::CTAdvisor;
 
         using Compact<View, false>::setup;
         using Compact<View, false>::full;

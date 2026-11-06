@@ -44,7 +44,7 @@ namespace Gecode { namespace Search { namespace Seq {
     class Probe : public Worker {
     protected:
         /// Node identity type
-        typedef typename Tracer::ID ID;
+        using ID = typename Tracer::ID;
         /// %Node in the search tree for %LDS
         class Node {
         private:

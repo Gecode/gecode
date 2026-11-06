@@ -44,9 +44,9 @@ namespace Gecode {
     class ConstView {
     public:
         /// The variable implementation type corresponding to the constant view
-        typedef typename View::VarImpType VarImpType;
+        using VarImpType = typename View::VarImpType;
         /// The variable type corresponding to the constant view
-        typedef typename View::VarType VarType;
+        using VarType = typename View::VarType;
         /// \name Generic view information
         //@{
         /// Return degree (number of subscribed propagators and advisors)
@@ -130,9 +130,9 @@ namespace Gecode {
     class VarImpView {
     public:
         /// The variable type corresponding to the view
-        typedef Var VarType;
+        using VarType = Var;
         /// The variable implementation type corresponding to the view
-        typedef typename Var::VarImpType VarImpType;
+        using VarImpType = typename Var::VarImpType;
 
     protected:
         /// Pointer to variable implementation
@@ -228,9 +228,9 @@ namespace Gecode {
     class DerivedView {
     public:
         /// The variable implementation type belonging to the \a View
-        typedef typename View::VarImpType VarImpType;
+        using VarImpType = typename View::VarImpType;
         /// The variable type belonging to the \a View
-        typedef typename View::VarType VarType;
+        using VarType = typename View::VarType;
 
     protected:
         /// View from which this view is derived

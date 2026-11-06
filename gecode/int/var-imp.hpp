@@ -485,7 +485,7 @@ namespace Gecode {
 namespace Gecode { namespace Int {
 
     /// Type for status of a Boolean variable
-    typedef unsigned int BoolStatus;
+    using BoolStatus = unsigned int;
 
     /**
      * \brief Boolean variable implementation

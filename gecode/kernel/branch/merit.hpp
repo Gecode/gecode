@@ -45,11 +45,11 @@ namespace Gecode {
     class MeritBase {
     public:
         /// View type
-        typedef View_ View;
+        using View = View_;
         /// Corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = typename View::VarType;
         /// Type of merit
-        typedef Val_ Val;
+        using Val = Val_;
         /// Constructor for initialization
         MeritBase(Space& home, const VarBranch<Var>& vb);
         /// Constructor for cloning
@@ -69,7 +69,7 @@ namespace Gecode {
 
     public:
         /// Corresponding merit function type
-        typedef typename BranchTraits<Var>::Merit Function;
+        using Function = typename BranchTraits<Var>::Merit;
 
     protected:
         /// The user-defined merit function

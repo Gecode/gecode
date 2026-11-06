@@ -41,7 +41,7 @@ namespace Gecode {
         /// VarArg type for constant %Set views
         class ViewToVarArg<Gecode::Set::ConstSetView> {
         public:
-            typedef IntSetArgs argtype;
+            using argtype = IntSetArgs;
         };
     } // namespace Int
 

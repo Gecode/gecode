@@ -44,7 +44,7 @@
 namespace Gecode { namespace Float {
 
     /// Type signature of mpfr function
-    typedef int mpfr_func(mpfr_t, const __mpfr_struct*, mp_rnd_t);
+    using mpfr_func = int(mpfr_t, const __mpfr_struct*, mp_rnd_t);
 
     /// Routine to call mpfr function with proper rounding
     forceinline double

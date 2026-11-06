@@ -141,7 +141,7 @@ namespace Gecode { namespace Set { namespace Channel {
     class ChannelBool
         : public MixNaryOnePropagator<Gecode::Int::BoolView, Gecode::Int::PC_BOOL_VAL, View, PC_GEN_NONE> {
     protected:
-        typedef MixNaryOnePropagator<Gecode::Int::BoolView, Gecode::Int::PC_BOOL_VAL, View, PC_GEN_NONE> Super;
+        using Super = MixNaryOnePropagator<Gecode::Int::BoolView, Gecode::Int::PC_BOOL_VAL, View, PC_GEN_NONE>;
         using Super::x;
         using Super::y;
 

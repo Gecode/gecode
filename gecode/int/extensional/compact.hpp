@@ -952,7 +952,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, class Table>
     Actor*
     PosCompact<View, Table>::copy(Space& home) {
-        typedef CompactActorFactory<PosCompact, View> Factory;
+        using Factory = CompactActorFactory<PosCompact, View>;
         return compact_copy<Factory, Table>(home, *this);
     }
 
@@ -1054,7 +1054,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, class Table>
     Actor*
     NegCompact<View, Table>::copy(Space& home) {
-        typedef CompactActorFactory<NegCompact, View> Factory;
+        using Factory = CompactActorFactory<NegCompact, View>;
         return compact_copy<Factory, Table>(home, *this);
     }
 
@@ -1159,7 +1159,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, class Table, class CtrlView, ReifyMode rm>
     Actor*
     ReCompact<View, Table, CtrlView, rm>::copy(Space& home) {
-        typedef ReCompactActorFactory<ReCompact, View, CtrlView, rm> Factory;
+        using Factory = ReCompactActorFactory<ReCompact, View, CtrlView, rm>;
         return compact_copy<Factory, Table>(home, *this);
     }
 
@@ -1289,9 +1289,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, bool pos>
     class CompactCompressed : public Propagator {
     protected:
-        typedef TupleSet::Range Range;
-        typedef TupleSet::CSupportWord CSupportWord;
-        typedef CompactAdvisor<View, pos, true> CTAdvisor;
+        using Range = TupleSet::Range;
+        using CSupportWord = TupleSet::CSupportWord;
+        using CTAdvisor = CompactAdvisor<View, pos, true>;
 
         class ValidSupports {
         protected:
@@ -1495,11 +1495,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         friend class PosCompactAlgorithm;
 
     public:
-        typedef View ViewType;
-        typedef CompactCompressed<View, true> Base;
-        typedef typename Base::ValidSupports ValidSupports;
-        typedef typename Base::CTAdvisor CTAdvisor;
-        typedef typename Base::LostSupports LostSupports;
+        using ViewType = View;
+        using Base = CompactCompressed<View, true>;
+        using ValidSupports = typename Base::ValidSupports;
+        using CTAdvisor = typename Base::CTAdvisor;
+        using LostSupports = typename Base::LostSupports;
 
         using Base::all;
         using Base::at_most_one;
@@ -1508,8 +1508,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         using Base::supports;
         using Base::ts;
 
-        typedef CompactStatus<CTAdvisor> Status;
-        typedef typename Status::StatusType StatusType;
+        using Status = CompactStatus<CTAdvisor>;
+        using StatusType = typename Status::StatusType;
 
         Status status;
         Table table;
@@ -1525,7 +1525,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         Actor*
         copy(Space& home) override {
-            typedef CompactActorFactory<PosCompactCompressed, View> Factory;
+            using Factory = CompactActorFactory<PosCompactCompressed, View>;
             return compact_copy<Factory, Table>(home, *this);
         }
 
@@ -1605,10 +1605,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         friend class NegCompactAlgorithm;
 
     public:
-        typedef View ViewType;
-        typedef CompactCompressed<View, false> Base;
-        typedef typename Base::ValidSupports ValidSupports;
-        typedef typename Base::CTAdvisor CTAdvisor;
+        using ViewType = View;
+        using Base = CompactCompressed<View, false>;
+        using ValidSupports = typename Base::ValidSupports;
+        using CTAdvisor = typename Base::CTAdvisor;
 
         using Base::at_most_one;
         using Base::c;
@@ -1628,7 +1628,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         Actor*
         copy(Space& home) override {
-            typedef CompactActorFactory<NegCompactCompressed, View> Factory;
+            using Factory = CompactActorFactory<NegCompactCompressed, View>;
             return compact_copy<Factory, Table>(home, *this);
         }
 
@@ -1707,11 +1707,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         friend class ReCompactAlgorithm;
 
     public:
-        typedef View ViewType;
+        using ViewType = View;
         static constexpr ReifyMode mode = rm;
-        typedef CompactCompressed<View, false> Base;
-        typedef typename Base::ValidSupports ValidSupports;
-        typedef typename Base::CTAdvisor CTAdvisor;
+        using Base = CompactCompressed<View, false>;
+        using ValidSupports = typename Base::ValidSupports;
+        using CTAdvisor = typename Base::CTAdvisor;
 
         using Base::c;
         using Base::full;
@@ -1736,7 +1736,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         Actor*
         copy(Space& home) override {
-            typedef ReCompactActorFactory<ReCompactCompressed, View, CtrlView, rm> Factory;
+            using Factory = ReCompactActorFactory<ReCompactCompressed, View, CtrlView, rm>;
             return compact_copy<Factory, Table>(home, *this);
         }
 

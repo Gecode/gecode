@@ -42,99 +42,99 @@ namespace Gecode {
     template <>
     class ArrayTraits<VarArgArray<IntVar>> {
     public:
-        typedef IntVarArgs StorageType;
-        typedef IntVar ValueType;
-        typedef IntVarArgs ArgsType;
+        using StorageType = IntVarArgs;
+        using ValueType = IntVar;
+        using ArgsType = IntVarArgs;
     };
 
     /// Traits of %IntVarArray
     template <>
     class ArrayTraits<VarArray<IntVar>> {
     public:
-        typedef IntVarArray StorageType;
-        typedef IntVar ValueType;
-        typedef IntVarArgs ArgsType;
+        using StorageType = IntVarArray;
+        using ValueType = IntVar;
+        using ArgsType = IntVarArgs;
     };
 
     /// Traits of %BoolVarArgs
     template <>
     class ArrayTraits<VarArgArray<BoolVar>> {
     public:
-        typedef BoolVarArgs StorageType;
-        typedef BoolVar ValueType;
-        typedef BoolVarArgs ArgsType;
+        using StorageType = BoolVarArgs;
+        using ValueType = BoolVar;
+        using ArgsType = BoolVarArgs;
     };
 
     /// Traits of %BoolVarArray
     template <>
     class ArrayTraits<VarArray<BoolVar>> {
     public:
-        typedef BoolVarArray StorageType;
-        typedef BoolVar ValueType;
-        typedef BoolVarArgs ArgsType;
+        using StorageType = BoolVarArray;
+        using ValueType = BoolVar;
+        using ArgsType = BoolVarArgs;
     };
 
     /// Traits of %IntArgs
     template <>
     class ArrayTraits<ArgArray<int>> {
     public:
-        typedef IntArgs StorageType;
-        typedef int ValueType;
-        typedef IntArgs ArgsType;
+        using StorageType = IntArgs;
+        using ValueType = int;
+        using ArgsType = IntArgs;
     };
 
     /// Traits of %IntSetArgs
     template <>
     class ArrayTraits<ArgArray<IntSet>> {
     public:
-        typedef IntSetArgs StorageType;
-        typedef IntSet ValueType;
-        typedef IntSetArgs ArgsType;
+        using StorageType = IntSetArgs;
+        using ValueType = IntSet;
+        using ArgsType = IntSetArgs;
     };
 
     /// Traits of %IntVarArray
     template <>
     class ArrayTraits<IntVarArray> {
     public:
-        typedef IntVarArray StorageType;
-        typedef IntVar ValueType;
-        typedef IntVarArgs ArgsType;
+        using StorageType = IntVarArray;
+        using ValueType = IntVar;
+        using ArgsType = IntVarArgs;
     };
 
     /// Traits of %IntVarArgs
     template <>
     class ArrayTraits<IntVarArgs> {
     public:
-        typedef IntVarArgs StorageType;
-        typedef IntVar ValueType;
-        typedef IntVarArgs ArgsType;
+        using StorageType = IntVarArgs;
+        using ValueType = IntVar;
+        using ArgsType = IntVarArgs;
     };
 
     /// Traits of %IntArgs
     template <>
     class ArrayTraits<IntArgs> {
     public:
-        typedef IntArgs StorageType;
-        typedef int ValueType;
-        typedef IntArgs ArgsType;
+        using StorageType = IntArgs;
+        using ValueType = int;
+        using ArgsType = IntArgs;
     };
 
     /// Traits of %BoolVarArray
     template <>
     class ArrayTraits<BoolVarArray> {
     public:
-        typedef BoolVarArray StorageType;
-        typedef BoolVar ValueType;
-        typedef BoolVarArgs ArgsType;
+        using StorageType = BoolVarArray;
+        using ValueType = BoolVar;
+        using ArgsType = BoolVarArgs;
     };
 
     /// Traits of %BoolVarArgs
     template <>
     class ArrayTraits<BoolVarArgs> {
     public:
-        typedef BoolVarArgs StorageType;
-        typedef BoolVar ValueType;
-        typedef BoolVarArgs ArgsType;
+        using StorageType = BoolVarArgs;
+        using ValueType = BoolVar;
+        using ArgsType = BoolVarArgs;
     };
 
 } // namespace Gecode

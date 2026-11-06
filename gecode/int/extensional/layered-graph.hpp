@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     class VarTraits<IntVar> {
     public:
         /// The variable type of an IntView
-        typedef Int::IntView View;
+        using View = Int::IntView;
     };
 
     /**
@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     class VarTraits<BoolVar> {
     public:
         /// The variable type of an IntView
-        typedef Int::BoolView View;
+        using View = Int::BoolView;
     };
 
     /*

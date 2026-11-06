@@ -54,7 +54,7 @@ namespace Gecode {
 
     public:
         /// The variable implementation type corresponding to the variable
-        typedef VarImp VarImpType;
+        using VarImpType = VarImp;
         /// \name Generic variable information
         //@{
         /// Return variable implementation of variable

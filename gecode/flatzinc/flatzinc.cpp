@@ -799,17 +799,17 @@ namespace Gecode { namespace FlatZinc {
     class FlatZincSpaceInitData {
     public:
         /// Hash table of tuple sets
-        typedef std::unordered_set<TupleSet> TupleSetSet;
+        using TupleSetSet = std::unordered_set<TupleSet>;
         /// Hash table of tuple sets
         TupleSetSet tuple_set_set;
 
         /// Hash table of shared integer arrays
-        typedef std::unordered_set<SharedArray<int>> IntSharedArraySet;
+        using IntSharedArraySet = std::unordered_set<SharedArray<int>>;
         /// Hash table of shared integer arrays
         IntSharedArraySet int_shared_array_set;
 
         /// Hash table of DFAs
-        typedef std::unordered_set<DFA> DFASet;
+        using DFASet = std::unordered_set<DFA>;
         /// Hash table of DFAs
         DFASet dfa_set;
 

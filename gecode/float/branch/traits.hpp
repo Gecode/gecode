@@ -37,15 +37,15 @@ namespace Gecode {
     class BranchTraits<FloatVar> {
     public:
         /// Type for the branching filter function
-        typedef FloatBranchFilter Filter;
+        using Filter = FloatBranchFilter;
         /// Type for the branching merit function
-        typedef FloatBranchMerit Merit;
+        using Merit = FloatBranchMerit;
         /// Type for the branching value function
-        typedef FloatBranchVal Val;
+        using Val = FloatBranchVal;
         /// Return type of the branching value function
-        typedef FloatNumBranch ValType;
+        using ValType = FloatNumBranch;
         /// Type for the branching commit function
-        typedef FloatBranchCommit Commit;
+        using Commit = FloatBranchCommit;
     };
 
 } // namespace Gecode

@@ -40,7 +40,7 @@ using namespace Gecode;
 
 namespace {
     /// The airline employees
-    typedef enum {
+    using Employee = enum {
         TOM,
         DAVID,
         JEREMY,
@@ -61,7 +61,7 @@ namespace {
         JEAN,
         HEATHER,
         JULIET
-    } Employee;
+    };
     const int no_of_employees = JULIET + 1;
 
     /// A flight to schedule

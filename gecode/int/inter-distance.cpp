@@ -43,8 +43,8 @@
 namespace Gecode { namespace Int { namespace InterDistance {
 
     namespace {
-        typedef long long int Time;
-        typedef std::ptrdiff_t RegionIndex;
+        using Time = long long int;
+        using RegionIndex = std::ptrdiff_t;
 
         /// Task bounds and ranks in their sorted orders
         struct Task {

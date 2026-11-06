@@ -80,7 +80,7 @@ namespace Test {
                 int cost, bound, rank, best;
                 std::vector<int> children;
             };
-            typedef std::vector<Node> Graph;
+            using Graph = std::vector<Node>;
             std::shared_ptr<const Graph> graph;
             bool maximize;
             int vertex, ceiling;

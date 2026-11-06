@@ -43,7 +43,7 @@ namespace Gecode { namespace FlatZinc {
     class GECODE_FLATZINC_EXPORT Registry {
     public:
         /// Type of constraint posting function
-        typedef void (*poster)(FlatZincSpace&, const ConExpr&, AST::Node*);
+        using poster = void (*)(FlatZincSpace&, const ConExpr&, AST::Node*);
         /// Add posting function \a p with identifier \a id
         void add(const std::string& id, poster p);
         /// Post constraint specified by \a ce

@@ -37,15 +37,15 @@ namespace Gecode {
     class BranchTraits<IntVar> {
     public:
         /// Type for the branching filter function
-        typedef IntBranchFilter Filter;
+        using Filter = IntBranchFilter;
         /// Type for the branching merit function
-        typedef IntBranchMerit Merit;
+        using Merit = IntBranchMerit;
         /// Type for the branching value function
-        typedef IntBranchVal Val;
+        using Val = IntBranchVal;
         /// Return type of the branching value function
-        typedef int ValType;
+        using ValType = int;
         /// Type for the branching commit function
-        typedef IntBranchCommit Commit;
+        using Commit = IntBranchCommit;
     };
 
     /// Traits of %BoolVar for branching
@@ -53,15 +53,15 @@ namespace Gecode {
     class BranchTraits<BoolVar> {
     public:
         /// Type for the branching filter function
-        typedef BoolBranchFilter Filter;
+        using Filter = BoolBranchFilter;
         /// Type for the branching merit function
-        typedef BoolBranchMerit Merit;
+        using Merit = BoolBranchMerit;
         /// Type for the branching value function
-        typedef BoolBranchVal Val;
+        using Val = BoolBranchVal;
         /// Return type of the branching value function
-        typedef int ValType;
+        using ValType = int;
         /// Type for the branching commit function
-        typedef BoolBranchCommit Commit;
+        using Commit = BoolBranchCommit;
     };
 
 } // namespace Gecode

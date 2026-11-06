@@ -40,25 +40,25 @@ namespace Gecode { namespace Int {
     template <>
     class ViewToVarArg<IntView> {
     public:
-        typedef IntVarArgs argtype;
+        using argtype = IntVarArgs;
     };
     /// VarArg type for minus views
     template <>
     class ViewToVarArg<MinusView> {
     public:
-        typedef IntVarArgs argtype;
+        using argtype = IntVarArgs;
     };
     /// VarArg type for Boolean views
     template <>
     class ViewToVarArg<BoolView> {
     public:
-        typedef BoolVarArgs argtype;
+        using argtype = BoolVarArgs;
     };
     /// VarArg type for Boolean views
     template <>
     class ViewToVarArg<NegBoolView> {
     public:
-        typedef BoolVarArgs argtype;
+        using argtype = BoolVarArgs;
     };
 
     template <class View>

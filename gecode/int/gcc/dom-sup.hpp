@@ -392,9 +392,9 @@ namespace Gecode { namespace Int { namespace GCC {
     class VarValGraph {
     private:
         /// Temporary stack for nodes
-        typedef Support::StaticStack<Node*, Region> NodeStack;
+        using NodeStack = Support::StaticStack<Node*, Region>;
         /// Bitset
-        typedef Support::BitSet<Region> BitSet;
+        using BitSet = Support::BitSet<Region>;
         /// Variable partition representing the problem variables
         VarNode** vars;
         /**

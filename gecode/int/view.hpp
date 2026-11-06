@@ -610,7 +610,7 @@ namespace Gecode { namespace Int {
     class NoOffset {
     public:
         /// The view type
-        typedef View ViewType;
+        using ViewType = View;
         /// Pass through \a x
         View& operator()(View& x);
         /// Update during cloning
@@ -641,7 +641,7 @@ namespace Gecode { namespace Int {
     class Offset {
     public:
         /// The view type
-        typedef OffsetView ViewType;
+        using ViewType = OffsetView;
         /// The offset
         int c;
         /// Constructor with offset \a off
@@ -798,13 +798,13 @@ namespace Gecode { namespace Int {
      * \brief Integer-precision integer scale view
      * \ingroup TaskActorIntView
      */
-    typedef ScaleView<int, unsigned int> IntScaleView;
+    using IntScaleView = ScaleView<int, unsigned int>;
 
     /**
      * \brief Long long-precision integer scale view
      * \ingroup TaskActorIntView
      */
-    typedef ScaleView<long long int, unsigned long long int> LLongScaleView;
+    using LLongScaleView = ScaleView<long long int, unsigned long long int>;
 
     /**
      * \brief Print integer-precision integer scale view
@@ -1326,7 +1326,7 @@ namespace Gecode { namespace Int {
      */
     template <class View>
     class ViewDiffRanges : public Iter::Ranges::Diff<Iter::Ranges::RangeList, ViewRanges<View>> {
-        typedef Iter::Ranges::Diff<Iter::Ranges::RangeList, ViewRanges<View>> Super;
+        using Super = Iter::Ranges::Diff<Iter::Ranges::RangeList, ViewRanges<View>>;
 
     protected:
         /// Cached domain iterator

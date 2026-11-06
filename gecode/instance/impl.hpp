@@ -676,7 +676,7 @@ namespace Gecode { namespace Instance {
     };
 
     /// Sequence of statements
-    typedef Seq<std::unique_ptr<Stmt>> Block;
+    using Block = Seq<std::unique_ptr<Stmt>>;
 
     /// Arm of a sections statement
     class Arm {

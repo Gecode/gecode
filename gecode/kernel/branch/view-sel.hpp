@@ -43,9 +43,9 @@ namespace Gecode {
     class ViewSel {
     public:
         /// Define the view type
-        typedef View_ View;
+        using View = View_;
         /// The corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = typename View::VarType;
         /// \name Initialization
         //@{
         /// Constructor for creation
@@ -98,7 +98,7 @@ namespace Gecode {
     template <class View>
     class ViewSelNone : public ViewSel<View> {
     protected:
-        typedef typename ViewSel<View>::Var Var;
+        using Var = typename ViewSel<View>::Var;
 
     public:
         /// \name Initialization
@@ -134,7 +134,7 @@ namespace Gecode {
     template <class View>
     class ViewSelRnd : public ViewSel<View> {
     protected:
-        typedef typename ViewSel<View>::Var Var;
+        using Var = typename ViewSel<View>::Var;
         /// The random number generator used
         Rnd r;
 
@@ -192,10 +192,10 @@ namespace Gecode {
     template <class Choose, class Merit>
     class ViewSelChoose : public ViewSel<typename Merit::View> {
     protected:
-        typedef typename ViewSel<typename Merit::View>::Var Var;
-        typedef typename ViewSel<typename Merit::View>::View View;
+        using Var = typename ViewSel<typename Merit::View>::Var;
+        using View = typename ViewSel<typename Merit::View>::View;
         /// Type of merit
-        typedef typename Merit::Val Val;
+        using Val = typename Merit::Val;
         /// How to choose
         Choose c;
         /// The merit object used
@@ -237,9 +237,9 @@ namespace Gecode {
     template <class Choose, class Merit>
     class ViewSelChooseTbl : public ViewSelChoose<Choose, Merit> {
     protected:
-        typedef typename ViewSelChoose<Choose, Merit>::Val Val;
-        typedef typename ViewSelChoose<Choose, Merit>::View View;
-        typedef typename ViewSelChoose<Choose, Merit>::Var Var;
+        using Val = typename ViewSelChoose<Choose, Merit>::Val;
+        using View = typename ViewSelChoose<Choose, Merit>::View;
+        using Var = typename ViewSelChoose<Choose, Merit>::Var;
         using ViewSelChoose<Choose, Merit>::c;
         using ViewSelChoose<Choose, Merit>::m;
         /// Tie-break limit function
@@ -274,8 +274,8 @@ namespace Gecode {
     /// Select view with least merit
     template <class Merit>
     class ViewSelMin : public ViewSelChoose<ChooseMin, Merit> {
-        typedef typename ViewSelChoose<ChooseMin, Merit>::View View;
-        typedef typename ViewSelChoose<ChooseMin, Merit>::Var Var;
+        using View = typename ViewSelChoose<ChooseMin, Merit>::View;
+        using Var = typename ViewSelChoose<ChooseMin, Merit>::Var;
 
     public:
         /// \name Initialization
@@ -295,8 +295,8 @@ namespace Gecode {
     /// Select view with least merit taking tie-break limit into account
     template <class Merit>
     class ViewSelMinTbl : public ViewSelChooseTbl<ChooseMin, Merit> {
-        typedef typename ViewSelChooseTbl<ChooseMin, Merit>::View View;
-        typedef typename ViewSelChooseTbl<ChooseMin, Merit>::Var Var;
+        using View = typename ViewSelChooseTbl<ChooseMin, Merit>::View;
+        using Var = typename ViewSelChooseTbl<ChooseMin, Merit>::Var;
 
     public:
         /// \name Initialization
@@ -316,8 +316,8 @@ namespace Gecode {
     /// Select view with largest merit
     template <class Merit>
     class ViewSelMax : public ViewSelChoose<ChooseMax, Merit> {
-        typedef typename ViewSelChoose<ChooseMax, Merit>::View View;
-        typedef typename ViewSelChoose<ChooseMax, Merit>::Var Var;
+        using View = typename ViewSelChoose<ChooseMax, Merit>::View;
+        using Var = typename ViewSelChoose<ChooseMax, Merit>::Var;
 
     public:
         /// \name Initialization
@@ -337,8 +337,8 @@ namespace Gecode {
     /// Select view with largest merit taking tie-break limit into account
     template <class Merit>
     class ViewSelMaxTbl : public ViewSelChooseTbl<ChooseMax, Merit> {
-        typedef typename ViewSelChooseTbl<ChooseMax, Merit>::View View;
-        typedef typename ViewSelChooseTbl<ChooseMax, Merit>::Var Var;
+        using View = typename ViewSelChooseTbl<ChooseMax, Merit>::View;
+        using Var = typename ViewSelChooseTbl<ChooseMax, Merit>::Var;
 
     public:
         /// \name Initialization
