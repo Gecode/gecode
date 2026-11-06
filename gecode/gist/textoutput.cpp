@@ -57,6 +57,9 @@ namespace Gecode { namespace Gist {
                 editor->append(buffer);
                 buffer.clear();
             }
+            Buf(QTextEdit* e) : editor(e) {}
+
+        protected:
             int
             overflow(int v = std::char_traits<char>::eof()) override {
                 if (v == '\n') {
@@ -66,7 +69,6 @@ namespace Gecode { namespace Gist {
                 }
                 return v;
             }
-            Buf(QTextEdit* e) : editor(e) {}
         };
 
         Buf _buf;
