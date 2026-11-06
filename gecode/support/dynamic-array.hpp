@@ -62,7 +62,7 @@ namespace Gecode { namespace Support {
         ~DynamicArray();
 
         /// Assign array (copy elements from \a a)
-        const DynamicArray<T, A>& operator=(const DynamicArray<T, A>& da);
+        DynamicArray<T, A>& operator=(const DynamicArray<T, A>& da);
 
         /// Return element at position \a i (possibly resize)
         T& operator[](int i);
@@ -100,7 +100,7 @@ namespace Gecode { namespace Support {
     }
 
     template <class T, class A>
-    forceinline const DynamicArray<T, A>&
+    forceinline DynamicArray<T, A>&
     DynamicArray<T, A>::operator=(const DynamicArray<T, A>& da) {
         if (this != &da) {
             if (n < da.n) {

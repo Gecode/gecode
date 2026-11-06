@@ -549,7 +549,7 @@ namespace Gecode {
         n->sum.ne = e;
     }
 
-    const LinIntExpr&
+    LinIntExpr&
     LinIntExpr::operator=(const LinIntExpr& e) {
         if (this != &e) {
             if ((n != nullptr) && n->decrement())

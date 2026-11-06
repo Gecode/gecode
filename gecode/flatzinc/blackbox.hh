@@ -57,7 +57,8 @@ namespace Gecode { namespace FlatZinc {
         BlackBoxContextHandle(const BlackBoxContextHandle& handle) = default;
         BlackBoxContextHandle&
         operator=(const BlackBoxContextHandle& handle) {
-            return static_cast<BlackBoxContextHandle&>(SharedHandle::operator=(handle));
+            SharedHandle::operator=(handle);
+            return *this;
         }
 
         /// Initialize this context if it is empty.

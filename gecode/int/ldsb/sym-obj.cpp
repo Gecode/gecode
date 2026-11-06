@@ -39,7 +39,7 @@ namespace Gecode {
         if (ref != nullptr)
             increment();
     }
-    const SymmetryHandle&
+    SymmetryHandle&
     SymmetryHandle::operator=(const SymmetryHandle& h) {
         if (h.ref == ref)
             return *this;

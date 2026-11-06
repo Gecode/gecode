@@ -333,7 +333,7 @@ namespace Gecode {
         explicit LinIntExpr(NonLinIntExpr* e);
         /// Assignment operator
         GECODE_MINIMODEL_EXPORT
-        const LinIntExpr& operator=(const LinIntExpr& e);
+        LinIntExpr& operator=(const LinIntExpr& e);
         /// Post propagator
         GECODE_MINIMODEL_EXPORT
         void post(Home home, IntRelType irt, const IntPropLevels& ipls) const;
@@ -764,7 +764,7 @@ namespace Gecode {
         explicit LinFloatExpr(NonLinFloatExpr* e);
         /// Assignment operator
         GECODE_MINIMODEL_EXPORT
-        const LinFloatExpr& operator=(const LinFloatExpr& e);
+        LinFloatExpr& operator=(const LinFloatExpr& e);
         /// Post propagator
         GECODE_MINIMODEL_EXPORT
         void post(Home home, FloatRelType frt) const;
@@ -1035,7 +1035,7 @@ namespace Gecode {
         void post(Home home, BoolVar b, bool t, SetRelType srt, const SetExpr& e) const;
         /// Assignment operator
         GECODE_MINIMODEL_EXPORT
-        const SetExpr& operator=(const SetExpr& e);
+        SetExpr& operator=(const SetExpr& e);
         /// Destructor
         GECODE_MINIMODEL_EXPORT
         ~SetExpr();
@@ -1230,7 +1230,7 @@ namespace Gecode {
         void rel(Home home, const IntPropLevels& ipls) const;
         /// Assignment operator
         GECODE_MINIMODEL_EXPORT
-        const BoolExpr& operator=(const BoolExpr& e);
+        BoolExpr& operator=(const BoolExpr& e);
         /// Destructor
         GECODE_MINIMODEL_EXPORT
         ~BoolExpr();
@@ -1446,7 +1446,7 @@ namespace Gecode {
         /// Initialize from regular expression \a r
         REG(const REG& r);
         /// Assign to regular expression \a r
-        const REG& operator=(const REG& r);
+        REG& operator=(const REG& r);
 
         /// Return expression for: this expression followed by \a r
         REG operator+(const REG& r);

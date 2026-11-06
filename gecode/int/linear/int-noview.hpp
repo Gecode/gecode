@@ -240,10 +240,7 @@ namespace Gecode {
         /// Initialize
         ViewArray(Space&, const ViewArray<Int::Linear::NoView>&) {}
         /// Initialize
-        const ViewArray<Int::Linear::NoView>&
-        operator=(const ViewArray<Int::Linear::NoView>&) {
-            return *this;
-        }
+        ViewArray<Int::Linear::NoView>& operator=(const ViewArray<Int::Linear::NoView>&) = default;
         //@}
 
         /// \name Array size
