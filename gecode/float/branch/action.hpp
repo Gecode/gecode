@@ -32,11 +32,7 @@
 
 namespace Gecode {
 
-    forceinline FloatAction&
-    FloatAction::operator=(const FloatAction& a) {
-        Action::operator=(a);
-        return *this;
-    }
+    forceinline FloatAction& FloatAction::operator=(const FloatAction& a) = default;
 
 } // namespace Gecode
 

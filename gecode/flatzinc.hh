@@ -586,13 +586,9 @@ namespace Gecode { namespace FlatZinc {
             };
 
         public:
-            OnRestartHandle() {}
+            OnRestartHandle() = default;
             OnRestartHandle(const OnRestartHandle& handle) = default;
-            OnRestartHandle&
-            operator=(const OnRestartHandle& handle) {
-                SharedHandle::operator=(handle);
-                return *this;
-            }
+            OnRestartHandle& operator=(const OnRestartHandle& handle) = default;
             virtual ~OnRestartHandle() = default;
 
             void

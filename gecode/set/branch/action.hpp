@@ -32,11 +32,7 @@
 
 namespace Gecode {
 
-    forceinline SetAction&
-    SetAction::operator=(const SetAction& a) {
-        Action::operator=(a);
-        return *this;
-    }
+    forceinline SetAction& SetAction::operator=(const SetAction& a) = default;
 
 } // namespace Gecode
 

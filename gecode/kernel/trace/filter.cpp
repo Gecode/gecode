@@ -193,11 +193,7 @@ namespace Gecode {
 
     TraceFilter::TraceFilter(BrancherGroup g) : SharedHandle(new TFO(g)) {}
 
-    TraceFilter&
-    TraceFilter::operator=(const TraceFilter& tf) {
-        SharedHandle::operator=(tf);
-        return *this;
-    }
+    TraceFilter& TraceFilter::operator=(const TraceFilter& tf) = default;
 
     TraceFilter TraceFilter::all;
 

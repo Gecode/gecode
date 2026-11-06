@@ -32,11 +32,7 @@
 
 namespace Gecode {
 
-    forceinline FloatCHB&
-    FloatCHB::operator=(const FloatCHB& chb) {
-        CHB::operator=(chb);
-        return *this;
-    }
+    forceinline FloatCHB& FloatCHB::operator=(const FloatCHB& chb) = default;
 
 } // namespace Gecode
 
