@@ -492,7 +492,7 @@ namespace Gecode::FlatZinc {
                 pipe_send = -1;
             }
             if (file_receive != nullptr) {
-                fclose(file_receive);
+                (void)fclose(file_receive);
                 file_receive = nullptr;
             }
             if (child > 0) {

@@ -106,7 +106,7 @@ namespace Test::FlatZinc {
 
         void
         reset_log(const std::string& log) {
-            std::remove(log.c_str());
+            (void)std::remove(log.c_str());
         }
 
         std::vector<std::pair<std::string, std::string>>
