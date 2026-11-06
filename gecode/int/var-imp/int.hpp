@@ -266,21 +266,21 @@ namespace Gecode { namespace Int {
     IntVarImp::regret_min() const {
         if (fst() == nullptr) {
             return (dom.min() == dom.max()) ? 0U : 1U;
-        } else if (dom.min() == fst()->max()) {
-            return static_cast<unsigned int>(fst()->next(nullptr)->min()) - static_cast<unsigned int>(dom.min());
-        } else {
-            return 1U;
         }
+        if (dom.min() == fst()->max()) {
+            return static_cast<unsigned int>(fst()->next(nullptr)->min()) - static_cast<unsigned int>(dom.min());
+        }
+        return 1U;
     }
     forceinline unsigned int
     IntVarImp::regret_max() const {
         if (fst() == nullptr) {
             return (dom.min() == dom.max()) ? 0U : 1U;
-        } else if (dom.max() == lst()->min()) {
-            return static_cast<unsigned int>(dom.max()) - static_cast<unsigned int>(lst()->prev(nullptr)->max());
-        } else {
-            return 1U;
         }
+        if (dom.max() == lst()->min()) {
+            return static_cast<unsigned int>(dom.max()) - static_cast<unsigned int>(lst()->prev(nullptr)->max());
+        }
+        return 1U;
     }
 
     /*
@@ -1014,8 +1014,7 @@ namespace Gecode { namespace Int {
             holes = 0;
             if (assigned())
                 return notify(home, ME_INT_VAL, d);
-            else
-                return notify(home, ME_INT_BND, d);
+            return notify(home, ME_INT_BND, d);
         }
 
         // The number of removed values

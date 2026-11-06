@@ -387,12 +387,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         if (pos) {
             assert((f->min <= n) && (n <= f->max));
             return f;
-        } else {
-            if ((f <= l) && (f->min <= n) && (n <= f->max))
-                return f;
-            else
-                return nullptr;
         }
+        if ((f <= l) && (f->min <= n) && (n <= f->max))
+            return f;
+        return nullptr;
     }
 
     template <class View, bool pos>

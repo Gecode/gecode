@@ -120,16 +120,14 @@ namespace Gecode { namespace Float { namespace Bool {
             GECODE_ME_CHECK(b.zero_none(home));
             if (eq21 == RT_TRUE)
                 return home.ES_SUBSUMED(*this);
-            else
-                GECODE_REWRITE(*this, (Rel::Eq<View, View>::post(home(*this), x2, x1)));
+            GECODE_REWRITE(*this, (Rel::Eq<View, View>::post(home(*this), x2, x1)));
         }
 
         if (eq21 == RT_FALSE) {
             GECODE_ME_CHECK(b.one_none(home));
             if (eq20 == RT_TRUE)
                 return home.ES_SUBSUMED(*this);
-            else
-                GECODE_REWRITE(*this, (Rel::Eq<View, View>::post(home(*this), x2, x0)));
+            GECODE_REWRITE(*this, (Rel::Eq<View, View>::post(home(*this), x2, x0)));
         }
 
         if ((eq20 == RT_TRUE) && (eq21 == RT_TRUE))

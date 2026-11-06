@@ -671,9 +671,8 @@ namespace Gecode {
         if (Brancher* b = brancher(c.bid)) {
             // There is a matching brancher
             return b->ngl(*this, c, a);
-        } else {
-            return nullptr;
         }
+        return nullptr;
     }
 
     void

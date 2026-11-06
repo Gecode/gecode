@@ -132,16 +132,14 @@ namespace Gecode { namespace Int { namespace Bool {
             GECODE_ME_CHECK(b.zero_none(home));
             if (eq21 == RT_TRUE)
                 return home.ES_SUBSUMED(*this);
-            else
-                GECODE_REWRITE(*this, (Rel::EqBnd<V2, V1>::post(home(*this), x2, x1)));
+            GECODE_REWRITE(*this, (Rel::EqBnd<V2, V1>::post(home(*this), x2, x1)));
         }
 
         if (eq21 == RT_FALSE) {
             GECODE_ME_CHECK(b.one_none(home));
             if (eq20 == RT_TRUE)
                 return home.ES_SUBSUMED(*this);
-            else
-                GECODE_REWRITE(*this, (Rel::EqBnd<V2, V0>::post(home(*this), x2, x0)));
+            GECODE_REWRITE(*this, (Rel::EqBnd<V2, V0>::post(home(*this), x2, x0)));
         }
 
         if ((eq20 == RT_TRUE) && (eq21 == RT_TRUE))
@@ -184,8 +182,7 @@ namespace Gecode { namespace Int { namespace Bool {
     IteDom<V0, V1, V2>::cost(const Space&, const ModEventDelta& med) const {
         if (V0::me(med) == ME_INT_DOM)
             return PropCost::ternary(PropCost::HI);
-        else
-            return PropCost::ternary(PropCost::LO);
+        return PropCost::ternary(PropCost::LO);
     }
 
     template <class V0, class V1, class V2>
@@ -210,16 +207,14 @@ namespace Gecode { namespace Int { namespace Bool {
                 GECODE_ME_CHECK(b.zero_none(home));
                 if (eq21 == RT_TRUE)
                     return home.ES_SUBSUMED(*this);
-                else
-                    GECODE_REWRITE(*this, (Rel::EqDom<V2, V1>::post(home(*this), x2, x1)));
+                GECODE_REWRITE(*this, (Rel::EqDom<V2, V1>::post(home(*this), x2, x1)));
             }
 
             if (eq21 == RT_FALSE) {
                 GECODE_ME_CHECK(b.one_none(home));
                 if (eq20 == RT_TRUE)
                     return home.ES_SUBSUMED(*this);
-                else
-                    GECODE_REWRITE(*this, (Rel::EqDom<V2, V0>::post(home(*this), x2, x0)));
+                GECODE_REWRITE(*this, (Rel::EqDom<V2, V0>::post(home(*this), x2, x0)));
             }
 
             if ((eq20 == RT_TRUE) && (eq21 == RT_TRUE))
@@ -238,16 +233,14 @@ namespace Gecode { namespace Int { namespace Bool {
             GECODE_ME_CHECK(b.zero_none(home));
             if (eq21 == RT_TRUE)
                 return home.ES_SUBSUMED(*this);
-            else
-                GECODE_REWRITE(*this, (Rel::EqDom<V2, V1>::post(home(*this), x2, x1)));
+            GECODE_REWRITE(*this, (Rel::EqDom<V2, V1>::post(home(*this), x2, x1)));
         }
 
         if (eq21 == RT_FALSE) {
             GECODE_ME_CHECK(b.one_none(home));
             if (eq20 == RT_TRUE)
                 return home.ES_SUBSUMED(*this);
-            else
-                GECODE_REWRITE(*this, (Rel::EqDom<V2, V0>::post(home(*this), x2, x0)));
+            GECODE_REWRITE(*this, (Rel::EqDom<V2, V0>::post(home(*this), x2, x0)));
         }
 
         assert((eq20 != RT_TRUE) || (eq21 != RT_TRUE));

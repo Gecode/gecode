@@ -93,9 +93,8 @@ namespace Gecode { namespace Int { namespace Unary {
             int ect = o.root().ect;
             o.insert(i);
             return ect;
-        } else {
-            return root().ect;
         }
+        return root().ect;
     }
 
     /*

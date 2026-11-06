@@ -231,9 +231,8 @@ namespace Gecode { namespace FlatZinc {
             if (sol) {
                 delete sol;
                 return new Choice(*this, false);
-            } else {
-                return new Choice(*this, true);
             }
+            return new Choice(*this, true);
         }
         /// Return choice
         Choice*
@@ -391,9 +390,8 @@ namespace Gecode { namespace FlatZinc {
             AST::SetLit* sl = vs->domain.some();
             if (sl->interval) {
                 return IntSet(sl->min, sl->max);
-            } else {
-                return IntSet(sl->s.data(), static_cast<int>(sl->s.size()));
             }
+            return IntSet(sl->s.data(), static_cast<int>(sl->s.size()));
         }
         return IntSet(Int::Limits::min, Int::Limits::max);
     }
@@ -951,9 +949,8 @@ namespace Gecode { namespace FlatZinc {
             if (dom.size() == 0) {
                 fail();
                 return;
-            } else {
-                iv[int_var_count++] = IntVar(*this, dom);
             }
+            iv[int_var_count++] = IntVar(*this, dom);
         }
         iv_introduced[2 * (int_var_count - 1)] = vs->introduced;
         iv_introduced[2 * (int_var_count - 1) + 1] = vs->func_dep;

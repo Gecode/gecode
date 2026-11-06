@@ -358,8 +358,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     NaryMaxDom<View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_DOM)
             return PropCost::linear(PropCost::HI, y.size());
-        else
-            return PropCost::linear(PropCost::LO, x.size());
+        return PropCost::linear(PropCost::LO, x.size());
     }
 
     template <class View>

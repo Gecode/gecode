@@ -269,10 +269,10 @@ namespace Gecode { namespace Int { namespace Element {
         if (x0.assigned()) {
             (void)new (home) Rel::EqBnd<VA, VC>(home, iv[x0.val()].view, x1);
             return ES_OK;
-        } else {
-            assert(iv.size() > 1);
-            (void)new (home) ViewBnd<VA, VB, VC>(home, iv, x0, x1);
         }
+        assert(iv.size() > 1);
+        (void)new (home) ViewBnd<VA, VB, VC>(home, iv, x0, x1);
+
         return ES_OK;
     }
 
@@ -342,10 +342,10 @@ namespace Gecode { namespace Int { namespace Element {
         if (x0.assigned()) {
             (void)new (home) Rel::EqDom<VA, VC>(home, iv[x0.val()].view, x1);
             return ES_OK;
-        } else {
-            assert(iv.size() > 1);
-            (void)new (home) ViewDom<VA, VB, VC>(home, iv, x0, x1);
         }
+        assert(iv.size() > 1);
+        (void)new (home) ViewDom<VA, VB, VC>(home, iv, x0, x1);
+
         return ES_OK;
     }
 
@@ -404,17 +404,16 @@ namespace Gecode { namespace Int { namespace Element {
                 if (iv[i].view.in(x1.val()))
                     return shared(x0, x1) ? ES_NOFIX : ES_FIX;
             return ES_FAILED;
-        } else {
-            Region r;
-            ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA>>(iv.size());
-            for (int i = 0; i < iv.size(); i++)
-                i_view[i].init(iv[i].view);
-            Iter::Ranges::NaryUnion i_val(r, i_view, iv.size());
-            ModEvent me = x1.inter_r(home, i_val);
-            r.free<ViewRanges<VA>>(i_view, iv.size());
-            GECODE_ME_CHECK(me);
-            return (shared(x0, x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
         }
+        Region r;
+        ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA>>(iv.size());
+        for (int i = 0; i < iv.size(); i++)
+            i_view[i].init(iv[i].view);
+        Iter::Ranges::NaryUnion i_val(r, i_view, iv.size());
+        ModEvent me = x1.inter_r(home, i_val);
+        r.free<ViewRanges<VA>>(i_view, iv.size());
+        GECODE_ME_CHECK(me);
+        return (shared(x0, x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
     }
 
 }}} // namespace Gecode::Int::Element

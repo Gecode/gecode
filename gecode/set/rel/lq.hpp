@@ -372,10 +372,9 @@ namespace Gecode { namespace Set { namespace Rel {
         if (i == n) { // case: $
             if (strict) {
                 return ES_FAILED;
-            } else {
-                GECODE_ES_CHECK(cs.prune(home, x0, x1));
-                return home.ES_SUBSUMED(*this);
             }
+            GECODE_ES_CHECK(cs.prune(home, x0, x1));
+            return home.ES_SUBSUMED(*this);
         }
 
         // Possible cases left: <, <=, > (yields failure), ?
@@ -430,9 +429,8 @@ namespace Gecode { namespace Set { namespace Rel {
                 if (strict) {
                     GECODE_ES_CHECK(cs.prune(home, x0, x1));
                     return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
-                } else {
-                    goto rewrite_lq;
                 }
+                goto rewrite_lq;
             }
 
             if (cs.xmax(i) < cs.ymin(i)) // case: <

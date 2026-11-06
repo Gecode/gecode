@@ -47,14 +47,12 @@ namespace Gecode { namespace Search {
         if (to.threads == 1.0) {
             if (to.tracer)
                 return new WorkerToEngine<Seq::DFS<TraceRecorder>>(s, to);
-            else
-                return new WorkerToEngine<Seq::DFS<NoTraceRecorder>>(s, to);
-        } else {
-            if (to.tracer)
-                return new Par::DFS<EdgeTraceRecorder>(s, to);
-            else
-                return new Par::DFS<NoTraceRecorder>(s, to);
+            return new WorkerToEngine<Seq::DFS<NoTraceRecorder>>(s, to);
         }
+        if (to.tracer)
+            return new Par::DFS<EdgeTraceRecorder>(s, to);
+        return new Par::DFS<NoTraceRecorder>(s, to);
+
 #else
         if (to.tracer)
             return new WorkerToEngine<Seq::DFS<TraceRecorder>>(s, to);

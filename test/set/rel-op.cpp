@@ -310,22 +310,20 @@ namespace Test { namespace Set {
                             delete[] isrs;
                         }
                         return eq;
-                    } else {
-                        if (real_n == 0) {
-                            bool ret = Iter::Ranges::size(xnr) == Gecode::Set::Limits::card;
-                            delete[] isrs;
-                            return ret;
-                        } else {
-                            bool eq;
-                            {
-                                Region r;
-                                Iter::Ranges::NaryInter u(r, isrs, real_n);
-                                eq = Iter::Ranges::equal(u, xnr);
-                            }
-                            delete[] isrs;
-                            return eq;
-                        }
                     }
+                    if (real_n == 0) {
+                        bool ret = Iter::Ranges::size(xnr) == Gecode::Set::Limits::card;
+                        delete[] isrs;
+                        return ret;
+                    }
+                    bool eq;
+                    {
+                        Region r;
+                        Iter::Ranges::NaryInter u(r, isrs, real_n);
+                        eq = Iter::Ranges::equal(u, xnr);
+                    }
+                    delete[] isrs;
+                    return eq;
                 }
                 default:
                     GECODE_NEVER;
@@ -449,11 +447,10 @@ namespace Test { namespace Set {
                         Iter::Ranges::Union<IntSetRanges, IntSetRanges> uu(isr, issr);
                         delete[] isrs;
                         return Iter::Ranges::equal(uu, xnr);
-                    } else {
-                        IntSetRanges issr(iss);
-                        delete[] isrs;
-                        return Iter::Ranges::equal(issr, xnr);
                     }
+                    IntSetRanges issr(iss);
+                    delete[] isrs;
+                    return Iter::Ranges::equal(issr, xnr);
                 }
                 case SOT_INTERSECTION: {
                     bool all_equal = true;
@@ -469,32 +466,27 @@ namespace Test { namespace Set {
                                 IntSetRanges isr(is);
                                 delete[] isrs;
                                 return Iter::Ranges::equal(isr, xnr);
-                            } else {
-                                Iter::Ranges::Singleton s(isrs[0], isrs[0]);
-                                IntSetRanges isr(is);
-                                Iter::Ranges::Inter<IntSetRanges, Iter::Ranges::Singleton> uu(isr, s);
-                                delete[] isrs;
-                                return Iter::Ranges::equal(uu, xnr);
                             }
-                        } else {
+                            Iter::Ranges::Singleton s(isrs[0], isrs[0]);
+                            IntSetRanges isr(is);
+                            Iter::Ranges::Inter<IntSetRanges, Iter::Ranges::Singleton> uu(isr, s);
                             delete[] isrs;
-                            return Iter::Ranges::size(xnr) == 0;
+                            return Iter::Ranges::equal(uu, xnr);
                         }
-                    } else {
-                        if (all_equal) {
-                            if (n == 0) {
-                                delete[] isrs;
-                                return Iter::Ranges::size(xnr) == Gecode::Set::Limits::card;
-                            } else {
-                                Iter::Ranges::Singleton s(isrs[0], isrs[0]);
-                                delete[] isrs;
-                                return Iter::Ranges::equal(s, xnr);
-                            }
-                        } else {
-                            delete[] isrs;
-                            return Iter::Ranges::size(xnr) == 0;
-                        }
+                        delete[] isrs;
+                        return Iter::Ranges::size(xnr) == 0;
                     }
+                    if (all_equal) {
+                        if (n == 0) {
+                            delete[] isrs;
+                            return Iter::Ranges::size(xnr) == Gecode::Set::Limits::card;
+                        }
+                        Iter::Ranges::Singleton s(isrs[0], isrs[0]);
+                        delete[] isrs;
+                        return Iter::Ranges::equal(s, xnr);
+                    }
+                    delete[] isrs;
+                    return Iter::Ranges::size(xnr) == 0;
                 }
                 default:
                     GECODE_NEVER;

@@ -100,9 +100,9 @@ namespace Gecode { namespace Float { namespace Transcendental {
     Exp<A, B>::post(Home home, A x0, B x1) {
         if (x0 == x1) {
             return ES_FAILED;
-        } else {
-            GECODE_ME_CHECK(x1.gq(home, 0.0));
         }
+        GECODE_ME_CHECK(x1.gq(home, 0.0));
+
         GECODE_ME_CHECK(x1.eq(home, exp(x0.domain())));
         if (x1.max() == 0.0)
             return ES_FAILED;

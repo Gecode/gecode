@@ -178,9 +178,8 @@ namespace Test { namespace Set {
             bool f = (status() == Gecode::SS_FAILED);
             olog << ind(3) << "     -->  x[]=" << x << " y[]=" << y << '\n';
             return f;
-        } else {
-            return status() == Gecode::SS_FAILED;
         }
+        return status() == Gecode::SS_FAILED;
     }
 
     bool

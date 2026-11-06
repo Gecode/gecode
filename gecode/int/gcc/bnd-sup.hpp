@@ -374,13 +374,12 @@ namespace Gecode { namespace Int { namespace GCC {
     PartialSum<Card>::sumup(int from, int to) const {
         if (from <= to) {
             return sum[to - first_value] - sum[from - first_value - 1];
-        } else {
-            assert(to - first_value - 1 >= 0);
-            assert(to - first_value - 1 < size);
-            assert(from - first_value >= 0);
-            assert(from - first_value < size);
-            return sum[to - first_value - 1] - sum[from - first_value];
         }
+        assert(to - first_value - 1 >= 0);
+        assert(to - first_value - 1 < size);
+        assert(from - first_value >= 0);
+        assert(from - first_value < size);
+        return sum[to - first_value - 1] - sum[from - first_value];
     }
 
     template <class Card>

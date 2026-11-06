@@ -44,7 +44,8 @@ namespace Gecode { namespace Int { namespace Dom {
     ReRange<View, rm>::post(Home home, View x, int min, int max, BoolView b) {
         if (min == max) {
             return Rel::ReEqDomInt<View, BoolView, rm>::post(home, x, min, b);
-        } else if ((min > max) || (max < x.min()) || (min > x.max())) {
+        }
+        if ((min > max) || (max < x.min()) || (min > x.max())) {
             if (rm == RM_RIMP)
                 return ES_OK;
             GECODE_ME_CHECK(b.zero(home));
@@ -88,21 +89,25 @@ namespace Gecode { namespace Int { namespace Dom {
                 GECODE_ME_CHECK(x0.lq(home, max));
             }
             return home.ES_SUBSUMED(*this);
-        } else if (b.zero()) {
+        }
+        if (b.zero()) {
             if (rm != RM_IMP) {
                 Iter::Ranges::Singleton r(min, max);
                 GECODE_ME_CHECK(x0.minus_r(home, r, false));
             }
             return home.ES_SUBSUMED(*this);
-        } else if ((x0.max() <= max) && (x0.min() >= min)) {
+        }
+        if ((x0.max() <= max) && (x0.min() >= min)) {
             if (rm != RM_IMP)
                 GECODE_ME_CHECK(b.one_none(home));
             return home.ES_SUBSUMED(*this);
-        } else if ((x0.max() < min) || (x0.min() > max)) {
+        }
+        if ((x0.max() < min) || (x0.min() > max)) {
             if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
-        } else if (!x0.range()) {
+        }
+        if (!x0.range()) {
             ViewRanges<View> i_x(x0);
             Iter::Ranges::Singleton i_mm(min, max);
 

@@ -155,7 +155,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         if (ops.exp() == 0) {
             GECODE_ME_CHECK(x1.eq(home, 1));
             return ES_OK;
-        } else if (ops.exp() == 1) {
+        }
+        if (ops.exp() == 1) {
             return Rel::EqBnd<IntView, IntView>::post(home, x0, x1);
         }
 
@@ -291,8 +292,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         val(int x) const {
             if (x < 0)
                 return -ops.floor_nth_root(-x);
-            else
-                return ops.floor_nth_root(x);
+            return ops.floor_nth_root(x);
         }
     };
 
@@ -334,10 +334,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     PowPlusDom<VA, VB, Ops>::cost(const Space&, const ModEventDelta& med) const {
         if (VA::me(med) == ME_INT_VAL)
             return PropCost::unary(PropCost::LO);
-        else if (VA::me(med) == ME_INT_DOM)
+        if (VA::me(med) == ME_INT_DOM)
             return PropCost::binary(PropCost::HI);
-        else
-            return PropCost::binary(PropCost::LO);
+        return PropCost::binary(PropCost::LO);
     }
 
     template <class VA, class VB, class Ops>
@@ -389,7 +388,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         if (ops.exp() == 0) {
             GECODE_ME_CHECK(x1.eq(home, 1));
             return ES_OK;
-        } else if (ops.exp() == 1) {
+        }
+        if (ops.exp() == 1) {
             return Rel::EqDom<IntView, IntView>::post(home, x0, x1);
         }
 
@@ -449,10 +449,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     PowDom<Ops>::cost(const Space&, const ModEventDelta& med) const {
         if (IntView::me(med) == ME_INT_VAL)
             return PropCost::unary(PropCost::LO);
-        else if (IntView::me(med) == ME_INT_DOM)
+        if (IntView::me(med) == ME_INT_DOM)
             return PropCost::binary(PropCost::HI);
-        else
-            return PropCost::binary(PropCost::LO);
+        return PropCost::binary(PropCost::LO);
     }
 
     template <class Ops>

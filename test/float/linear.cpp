@@ -90,8 +90,7 @@ namespace Test { namespace Float {
                         e_error -= a[i] * x[i];
                     if (cmp(e + e_error, frt, Gecode::FloatVal(c)) == MT_FALSE)
                         return MT_FALSE;
-                    else
-                        return MT_MAYBE;
+                    return MT_MAYBE;
                 }
                 case MT_TRUE:
                     return MT_TRUE;
@@ -152,8 +151,7 @@ namespace Test { namespace Float {
                         e_error -= a[i] * x[i];
                     if (cmp(e + e_error, frt, x[a.size()]) == MT_FALSE)
                         return MT_FALSE;
-                    else
-                        return MT_MAYBE;
+                    return MT_MAYBE;
                 }
                 case MT_TRUE:
                     return MT_TRUE;

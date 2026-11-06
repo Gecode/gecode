@@ -244,8 +244,7 @@ namespace Gecode { namespace Set {
         ++iterator;
         if (iterator())
             return intersect_i_full(home, mi, ma, iterator);
-        else
-            return intersect(home, mi, ma);
+        return intersect(home, mi, ma);
     }
 
     template <class I>
@@ -318,8 +317,7 @@ namespace Gecode { namespace Set {
         ++iterator;
         if (iterator())
             return include_i_full(home, mi, ma, iterator);
-        else
-            return include(home, mi, ma);
+        return include(home, mi, ma);
     }
 
     template <class I>
@@ -391,8 +389,7 @@ namespace Gecode { namespace Set {
         ++iterator;
         if (iterator())
             return exclude_i_full(home, mi, ma, iterator);
-        else
-            return exclude(home, mi, ma);
+        return exclude(home, mi, ma);
     }
 
     template <class I>

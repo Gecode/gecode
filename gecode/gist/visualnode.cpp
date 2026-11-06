@@ -232,9 +232,8 @@ namespace Gecode { namespace Gist {
         Extent the_extent;
         if (get_shape()->get_extent_at_depth(depth, the_extent)) {
             return (the_extent.l <= x && x <= the_extent.r);
-        } else {
-            return false;
         }
+        return false;
     }
 
     VisualNode*
@@ -404,9 +403,8 @@ namespace Gecode { namespace Gist {
             if (number_of_shapes == 0) {
                 set_shape(Shape::leaf);
                 return;
-            } else {
-                extent = Extent(Layout::extent);
             }
+            extent = Extent(Layout::extent);
         }
 
         int max_depth = 0;

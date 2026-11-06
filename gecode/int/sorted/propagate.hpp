@@ -111,7 +111,8 @@ namespace Gecode { namespace Int { namespace Sorted {
                     if (y[j].min() > max) {
                         allbnd[i].max = j - 1;
                         break;
-                    } else if (y[j].min() <= max && min <= y[j].max()) {
+                    }
+                    if (y[j].min() <= max && min <= y[j].max()) {
                         allbnd[i].max = j;
                         break;
                     }

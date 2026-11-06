@@ -181,8 +181,7 @@ namespace Gecode {
         IntSetObject* o = static_cast<IntSetObject*>(object());
         if ((o == nullptr) || (n < o->r[0].min) || (n > o->r[o->n - 1].max))
             return false;
-        else
-            return o->in(n);
+        return o->in(n);
     }
 
     forceinline int

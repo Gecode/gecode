@@ -166,15 +166,20 @@ namespace {
         static const std::string malformed("x;");
         if (mode == "value7") {
             return &value7;
-        } else if (mode == "bounds2") {
+        }
+        if (mode == "bounds2") {
             return &bounds2;
-        } else if (mode == "bounds4") {
+        }
+        if (mode == "bounds4") {
             return &bounds4;
-        } else if (mode == "mixed") {
+        }
+        if (mode == "mixed") {
             return &mixed;
-        } else if (mode == "nan") {
+        }
+        if (mode == "nan") {
             return &nan;
-        } else if (mode == "malformed") {
+        }
+        if (mode == "malformed") {
             return &malformed;
         }
         return nullptr;

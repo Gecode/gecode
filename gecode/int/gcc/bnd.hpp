@@ -78,8 +78,7 @@ namespace Gecode { namespace Int { namespace GCC {
         int n_k = Card::propagate ? k.size() : 0;
         if (IntView::me(med) == ME_INT_VAL)
             return PropCost::linear(PropCost::LO, y.size() + n_k);
-        else
-            return PropCost::quadratic(PropCost::LO, x.size() + n_k);
+        return PropCost::quadratic(PropCost::LO, x.size() + n_k);
     }
 
     template <class Card>

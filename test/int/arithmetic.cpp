@@ -2322,9 +2322,8 @@ namespace Test { namespace Int {
                     return true;
                 if (n % 2 == 0) {
                     return (x[0] >= 0) && (x[0] <= 1);
-                } else {
-                    return (x[0] >= -2) && (x[0] <= 1);
                 }
+                return (x[0] >= -2) && (x[0] <= 1);
             }
             /// Post constraint on \a x
             void

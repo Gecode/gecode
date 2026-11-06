@@ -213,9 +213,8 @@ namespace Test { namespace Float {
             bool f = (status() == Gecode::SS_FAILED);
             olog << '\n' << ind(3) << "     -->  " << x << '\n';
             return f;
-        } else {
-            return status() == Gecode::SS_FAILED;
         }
+        return status() == Gecode::SS_FAILED;
     }
 
     void

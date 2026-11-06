@@ -1635,7 +1635,8 @@ namespace Gecode { namespace FlatZinc {
             bool has_exec = (ann != nullptr) && ann->has_call("blackbox_exec");
             if (has_dll && has_exec) {
                 throw FlatZinc::Error("Registry", "Blackbox constraint has multiple execution method annotations.");
-            } else if (has_dll) {
+            }
+            if (has_dll) {
                 c = ann->get_call("blackbox_dll");
                 mode = "dll";
             } else if (has_exec) {

@@ -50,8 +50,7 @@ namespace Gecode { namespace Int { namespace Branch {
     EqNGL<View>::status(const Space&) const {
         if (x.assigned())
             return (x.val() == n) ? NGL::SUBSUMED : NGL::FAILED;
-        else
-            return x.in(n) ? NGL::NONE : NGL::FAILED;
+        return x.in(n) ? NGL::NONE : NGL::FAILED;
     }
     template <class View>
     ExecStatus
@@ -77,8 +76,7 @@ namespace Gecode { namespace Int { namespace Branch {
     NqNGL<View>::status(const Space&) const {
         if (x.assigned())
             return (x.val() == n) ? NGL::FAILED : NGL::SUBSUMED;
-        else
-            return x.in(n) ? NGL::NONE : NGL::SUBSUMED;
+        return x.in(n) ? NGL::NONE : NGL::SUBSUMED;
     }
     template <class View>
     ExecStatus
@@ -104,10 +102,9 @@ namespace Gecode { namespace Int { namespace Branch {
     LqNGL<View>::status(const Space&) const {
         if (x.max() <= n)
             return NGL::SUBSUMED;
-        else if (x.min() > n)
+        if (x.min() > n)
             return NGL::FAILED;
-        else
-            return NGL::NONE;
+        return NGL::NONE;
     }
     template <class View>
     ExecStatus
@@ -133,10 +130,9 @@ namespace Gecode { namespace Int { namespace Branch {
     GqNGL<View>::status(const Space&) const {
         if (x.min() >= n)
             return NGL::SUBSUMED;
-        else if (x.max() < n)
+        if (x.max() < n)
             return NGL::FAILED;
-        else
-            return NGL::NONE;
+        return NGL::NONE;
     }
     template <class View>
     ExecStatus

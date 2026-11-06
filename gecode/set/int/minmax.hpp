@@ -310,7 +310,7 @@ namespace Gecode { namespace Set { namespace Int {
                 return home.ES_SUBSUMED(*this);
             }
             // if min(x0) not in dom(x1): b=0, entailed
-            else if ((x0.glb_min() < x1.min()) || (x0.glb_min() > x1.max()) || !x1.in(x0.glb_min())) {
+            if ((x0.glb_min() < x1.min()) || (x0.glb_min() > x1.max()) || !x1.in(x0.glb_min())) {
                 if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return home.ES_SUBSUMED(*this);
@@ -580,7 +580,7 @@ namespace Gecode { namespace Set { namespace Int {
                 return home.ES_SUBSUMED(*this);
             }
             // if max(x0) not in dom(x1): b=0, entailed
-            else if ((x0.glb_max() < x1.min()) || (x0.glb_max() > x1.max()) || !x1.in(x0.glb_max())) {
+            if ((x0.glb_max() < x1.min()) || (x0.glb_max() > x1.max()) || !x1.in(x0.glb_max())) {
                 if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero(home));
                 return home.ES_SUBSUMED(*this);
