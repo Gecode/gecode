@@ -232,7 +232,7 @@ namespace Test {
             /// Cut the bigger variable to an half sized interval. It returns
             /// the new size of the cut interval. \a cutDirections gives the direction
             /// to follow (upper part or lower part of the interval).
-            Gecode::FloatNum cut(int* cut_directions);
+            Gecode::FloatNum cut(const int* cut_directions);
             /// Prune some random values from variable \a i
             void prune(int i, Gecode::Support::RandomGenerator& rand);
             /// Prune some random values for some random variable

@@ -68,7 +68,7 @@ namespace Gecode { namespace Driver {
     }
 
     double
-    am(double t[], unsigned int n) {
+    am(const double t[], unsigned int n) {
         if (n < 1)
             return 0.0;
         double s = 0;

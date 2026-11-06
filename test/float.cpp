@@ -289,7 +289,7 @@ namespace Test { namespace Float {
     }
 
     Gecode::FloatNum
-    TestSpace::cut(int* cut_directions) {
+    TestSpace::cut(const int* cut_directions) {
         using namespace Gecode;
         using namespace Gecode::Float;
         // Select variable to be cut

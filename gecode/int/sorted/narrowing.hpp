@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     template <class View>
     inline void
-    compute_sccs(ViewArray<View>& x, ViewArray<View>& y, int phi[], SccComponent sinfo[], int scclist[]) {
+    compute_sccs(ViewArray<View>& x, ViewArray<View>& y, const int phi[], SccComponent sinfo[], int scclist[]) {
 
         // number of sccs is bounded by xs (number of x-nodes)
         int xs = x.size();
@@ -124,8 +124,8 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     template <class View, bool Perm>
     inline bool
-    narrow_domx(Space& home, ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z, int tau[], int[],
-                int scclist[], SccComponent sinfo[], bool& nofix) {
+    narrow_domx(Space& home, ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z, const int tau[], int[],
+                const int scclist[], SccComponent sinfo[], bool& nofix) {
 
         int xs = x.size();
 
@@ -213,7 +213,8 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     template <class View>
     inline bool
-    narrow_domy(Space& home, ViewArray<View>& x, ViewArray<View>& y, int phi[], int phiprime[], bool& nofix) {
+    narrow_domy(Space& home, ViewArray<View>& x, ViewArray<View>& y, const int phi[], const int phiprime[],
+                bool& nofix) {
         for (int i = x.size(); i--;) {
             ModEvent me_lb = y[i].gq(home, x[phiprime[i]].min());
             if (me_failed(me_lb)) {

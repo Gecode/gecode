@@ -159,7 +159,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     }
 
     template <class View>
-    VariableSequenceSymmetryImp<View>::VariableSequenceSymmetryImp(Space& home, int* _indices, unsigned int n,
+    VariableSequenceSymmetryImp<View>::VariableSequenceSymmetryImp(Space& home, const int* _indices, unsigned int n,
                                                                    unsigned int seqsize)
         : n_indices(n), seq_size(seqsize), n_seqs(n / seqsize) {
         indices = home.alloc<unsigned int>(n_indices);
@@ -259,7 +259,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     }
 
     template <class View>
-    ValueSequenceSymmetryImp<View>::ValueSequenceSymmetryImp(Space& home, int* _values, unsigned int n,
+    ValueSequenceSymmetryImp<View>::ValueSequenceSymmetryImp(Space& home, const int* _values, unsigned int n,
                                                              unsigned int seqsize)
         : n_values(n), seq_size(seqsize), n_seqs(n / seqsize), dead_sequences(home, n_seqs) {
         values = home.alloc<int>(n_values);
