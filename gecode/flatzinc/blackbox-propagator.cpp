@@ -132,7 +132,7 @@ namespace Gecode { namespace FlatZinc {
                 }
             }
             BlackBoxHandle handle(new BlackBoxExec(target, args));
-            exec.push_back(ExecEntry(target, args, handle));
+            exec.emplace_back(target, args, handle);
             return handle;
         }
         if (mode == "dll") {
