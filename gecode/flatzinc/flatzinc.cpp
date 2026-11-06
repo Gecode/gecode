@@ -45,6 +45,7 @@
 #include <gecode/search.hh>
 
 #include <memory>
+#include <utility>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -2507,7 +2508,7 @@ namespace Gecode { namespace FlatZinc {
         BoolVarArgs ia(a->a.size() + offset - (siv == -1 ? 0 : 1));
         for (int i = offset; i--;)
             ia[i] = BoolVar(*this, 0, 0);
-        for (int i = 0; i < static_cast<int>(a->a.size()); i++) {
+        for (int i = 0; std::cmp_less(i, a->a.size()); i++) {
             if (i == siv)
                 continue;
             if (a->a[i]->is_bool()) {

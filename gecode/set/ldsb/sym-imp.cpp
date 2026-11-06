@@ -31,6 +31,7 @@
  */
 
 #include <gecode/set/ldsb.hh>
+#include <utility>
 
 namespace Gecode { namespace Set { namespace LDSB {
     // XXX: implementation of equalValues could be improved?
@@ -94,7 +95,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     VariableSequenceSymmetryImp<Set::SetView>::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
         Region region;
         Support::DynamicStack<Literal, Region> s(region);
-        if (l._variable < (int)lookup_size) {
+        if (std::cmp_less(l._variable, lookup_size)) {
             int pos_it = lookup[l._variable];
             if (pos_it == -1) {
                 return dynamic_stack_to_arg_array(s);

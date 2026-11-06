@@ -31,6 +31,7 @@
  */
 
 #include <sstream>
+#include <utility>
 
 namespace Gecode {
 
@@ -94,7 +95,7 @@ namespace Gecode {
         cmb_hash(key, final_lst);
         // Compute smallest logarithm larger than n_symbols
         n_log = 1;
-        while (n_symbols >= static_cast<unsigned int>(1 << n_log))
+        while (std::cmp_greater_equal(n_symbols, 1 << n_log))
             n_log++;
         // Allocate memory
         table = heap.alloc<HashEntry>(1 << n_log);

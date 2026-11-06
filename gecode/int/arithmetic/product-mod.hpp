@@ -30,6 +30,7 @@
  */
 
 #include <algorithm>
+#include <utility>
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
@@ -405,8 +406,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             if ((q0 == 0) || ((ad % q0) != 0))
                 return false;
             const unsigned long long int candidate = ad / q0;
-            if ((candidate < static_cast<unsigned long long int>(least)) ||
-                (candidate > static_cast<unsigned long long int>(greatest)) ||
+            if (std::cmp_less(candidate, least) || std::cmp_greater(candidate, greatest) ||
                 (candidate > static_cast<unsigned long long int>(Limits::max)))
                 return false;
             least = greatest = static_cast<int>(candidate);

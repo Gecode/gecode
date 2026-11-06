@@ -1,3 +1,5 @@
+#include <utility>
+
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -1264,7 +1266,7 @@ namespace Gecode { namespace Int { namespace GCC {
         for (int i = n_var; i--;) {
 
             VarNode* vrn = vars[i];
-            if (static_cast<int>(x[i].size()) != vrn->noe) {
+            if (std::cmp_not_equal(x[i].size(), vrn->noe)) {
                 // if the variable is already assigned
                 if (x[i].assigned()) {
                     int v = x[i].val();

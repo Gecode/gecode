@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         int i = 0;
         for (Nodes c(cur.n); c() < nodes(); ++c)
             bv[i++] = b[c()];
-        assert(i == static_cast<int>(cur.c));
+        assert(std::cmp_equal(i, cur.c));
         return Distinct::Dom<IntView>::post(home, bv);
     }
 
@@ -350,7 +350,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         int j = 0;
         for (Nodes i(max.n); i() < nodes(); ++i)
             n[j++] = i();
-        assert(j == static_cast<int>(max.c));
+        assert(std::cmp_equal(j, max.c));
         IntSet s(n, static_cast<int>(max.c));
         return s;
     }
