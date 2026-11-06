@@ -688,7 +688,6 @@ namespace Gecode {
         argc = c;
         for (int i = 1; i < argc; i++)
             argv[i] = v[i];
-        return;
     }
 
     namespace {
