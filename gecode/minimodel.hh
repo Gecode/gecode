@@ -60,7 +60,7 @@
 
 #include <bit>
 #include <iostream>
-#include <type_traits>
+#include <concepts>
 #include <utility>
 
 /*
@@ -1195,7 +1195,7 @@ namespace Gecode {
          * Only bool arguments are accepted, so integer expressions do not
          * become ambiguous through an implicit conversion to bool.
          */
-        template <class Bool, std::enable_if_t<std::is_same_v<Bool, bool>, int> = 0>
+        template <std::same_as<bool> Bool>
         BoolExpr(Bool value);
         /// Construct expression for variable
         GECODE_MINIMODEL_EXPORT
@@ -1392,7 +1392,7 @@ namespace Gecode {
     /// Post Boolean expression and return its value
     GECODE_MINIMODEL_EXPORT BoolVar expr(Home home, const BoolExpr& e, const IntPropLevels& ipls = IntPropLevels::def);
     /// Preserve integer-expression posting for C++ Boolean values
-    template <class Bool, std::enable_if_t<std::is_same_v<Bool, bool>, int> = 0>
+    template <std::same_as<bool> Bool>
     IntVar expr(Home home, Bool value, const IntPropLevels& ipls = IntPropLevels::def);
     /// Post Boolean relation
     GECODE_MINIMODEL_EXPORT void rel(Home home, const BoolExpr& e, const IntPropLevels& ipls = IntPropLevels::def);

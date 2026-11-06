@@ -37,12 +37,12 @@ namespace Gecode {
      *
      */
 
-    template <class Bool, std::enable_if_t<std::is_same_v<Bool, bool>, int>>
+    template <std::same_as<bool> Bool>
     forceinline
     BoolExpr::BoolExpr(Bool value)
         : n(constant(value)) {}
 
-    template <class Bool, std::enable_if_t<std::is_same_v<Bool, bool>, int>>
+    template <std::same_as<bool> Bool>
     forceinline IntVar
     expr(Home home, Bool value, const IntPropLevels& ipls) {
         return expr(home, LinIntExpr(static_cast<int>(value)), ipls);
