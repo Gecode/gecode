@@ -306,7 +306,7 @@ namespace Gecode { namespace FlatZinc {
             std::string r0;
             std::string r1;
             std::vector<std::string> n;
-            BI() : r0(""), r1(""), n(0) {}
+            BI() : n(0) {}
             BI(const std::string& r00, const std::string& r10, const std::vector<std::string>& n0)
                 : r0(r00), r1(r10), n(n0) {}
         };
