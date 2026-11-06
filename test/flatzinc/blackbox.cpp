@@ -49,7 +49,7 @@
 #include <thread>
 #endif
 
-#if defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
+#ifdef GECODE_HAS_POSIX_BLACKBOX_EXEC
 #include <csignal>
 #include <unistd.h>
 #endif
@@ -210,7 +210,7 @@ namespace Test { namespace FlatZinc {
             return true;
         }
 
-#if defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
+#ifdef GECODE_HAS_POSIX_BLACKBOX_EXEC
         bool
         descendant_gone(const std::string& output, const std::string& log) {
             const std::vector<std::pair<std::string, std::string>> entries = read_log(log);
@@ -516,7 +516,7 @@ namespace Test { namespace FlatZinc {
                     }
 #endif
 
-#if defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
+#ifdef GECODE_HAS_POSIX_BLACKBOX_EXEC
                     const std::string descendant_log = fixture_log("exec_descendant");
                     if (!descendant_log.empty()) {
                         (void)new FlatZincTest(

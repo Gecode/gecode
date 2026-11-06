@@ -445,7 +445,7 @@ namespace Gecode { namespace FlatZinc {
             if (err == 0) {
                 err = posix_spawn_file_actions_addinherit_np(actions.get(), STDERR_FILENO);
             }
-#elif defined(GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP)
+#elifdef GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP
             if (err == 0) {
                 err = posix_spawn_file_actions_addclosefrom_np(actions.get(), STDERR_FILENO + 1);
             }
