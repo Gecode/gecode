@@ -72,7 +72,6 @@ namespace Gecode {
         /// The corresponding variable type
         typedef typename View::VarType Var;
 
-    public:
         /// Initialize from the empty print function \a vvp
         BrancherNoPrint(const VarValPrint<Var, Val>& vvp);
         /// Initialize from the empty print function \a vvp, moved in as for BrancherPrint

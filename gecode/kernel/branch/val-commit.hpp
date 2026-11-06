@@ -49,7 +49,6 @@ namespace Gecode {
         /// Value type
         typedef Val_ Val;
 
-    public:
         /// Constructor for initialization
         ValCommit(Space& home, const ValBranch<Var>& vb);
         /// Constructor for cloning

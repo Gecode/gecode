@@ -214,7 +214,6 @@ namespace Gecode { namespace Int {
         void update(Space&, TaskArray& a);
         //@}
 
-    public:
         static void* operator new(size_t) = delete;
         static void operator delete(void*, size_t) = delete;
     };
@@ -257,7 +256,7 @@ namespace Gecode { namespace Int {
         /// Return task view at position \a i
         const TaskView& operator[](int i) const;
         //@}
-    public:
+
         static void* operator new(size_t) = delete;
         static void operator delete(void*, size_t) = delete;
     };
@@ -394,7 +393,6 @@ namespace Gecode { namespace Int {
         /// Return index of parent of node \a i
         static int n_parent(int i);
 
-    protected:
         /// Return leaf for task \a i
         Node& leaf(int i);
         /// Return root node

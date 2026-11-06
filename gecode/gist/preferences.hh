@@ -57,7 +57,7 @@ namespace Gecode { namespace Gist {
         QCheckBox* move_during_search_box;
         QSpinBox* cd_box;
         QSpinBox* ad_box;
-    protected Q_SLOTS:
+
         /// Write settings
         void write_back();
         /// Reset to defaults

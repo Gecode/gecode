@@ -94,7 +94,6 @@ namespace Gecode { namespace Gist {
          */
         Space* copy;
 
-    protected:
         const Choice* choice;
 
         /** \brief Status of the node

@@ -120,7 +120,6 @@ namespace Gecode { namespace Gist {
         /// Set active comparator
         void activate_comparator(int i, bool active);
 
-    public Q_SLOTS:
         /// Set scale factor to \a scale0
         void scale_tree(int scale0, int zoomx = -1, int zoomy = -1);
 
