@@ -45,7 +45,7 @@ namespace Gecode { namespace Search { namespace Par {
         return static_cast<BAB&>(_engine);
     }
     template <class Tracer>
-    forceinline typename BAB<Tracer>::Worker*
+    forceinline BAB<Tracer>::Worker*
     BAB<Tracer>::worker(unsigned int i) const {
         return _worker[i];
     }

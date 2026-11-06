@@ -70,7 +70,6 @@ Checks: >-
   -readability-named-parameter,
   -readability-non-const-parameter,
   -readability-redundant-declaration,
-  -readability-redundant-typename,
   -readability-simplify-boolean-expr,
   -readability-suspicious-call-argument,
   -readability-use-anyofallof

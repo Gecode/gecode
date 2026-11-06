@@ -41,7 +41,7 @@ namespace Gecode { namespace Search { namespace Par {
         return static_cast<DFS<Tracer>&>(_engine);
     }
     template <class Tracer>
-    forceinline typename DFS<Tracer>::Worker*
+    forceinline DFS<Tracer>::Worker*
     DFS<Tracer>::worker(unsigned int i) const {
         return _worker[i];
     }

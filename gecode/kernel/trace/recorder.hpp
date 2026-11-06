@@ -59,11 +59,11 @@ namespace Gecode {
     class ViewTraceRecorder : public Propagator {
     public:
         /// The corresponding duplicate view type
-        using TraceView = typename TraceTraits<View>::TraceView;
+        using TraceView = TraceTraits<View>::TraceView;
         /// The corresponding trace delta type
-        using TraceDelta = typename TraceTraits<View>::TraceDelta;
+        using TraceDelta = TraceTraits<View>::TraceDelta;
         /// The corresponding slack value type
-        using SlackValue = typename TraceTraits<View>::SlackValue;
+        using SlackValue = TraceTraits<View>::SlackValue;
         /// Collection of slack values
         class Slack {
             template <class ViewForTraceRecorder>
@@ -138,7 +138,7 @@ namespace Gecode {
         /// \name Trace information
         //@{
         /// Return variable being traced at position \a i
-        typename View::VarType operator[](int i) const;
+        View::VarType operator[](int i) const;
         /// Return number of variables being traced
         int size() const;
         /// Provide access to slack information
@@ -195,7 +195,7 @@ namespace Gecode {
      *
      */
     template <class View>
-    forceinline typename View::VarType
+    forceinline View::VarType
     ViewTraceRecorder<View>::operator[](int i) const {
         const typename View::VarType x(n[i].varimp());
         return x;
@@ -206,7 +206,7 @@ namespace Gecode {
         return n.size();
     }
     template <class View>
-    forceinline const typename ViewTraceRecorder<View>::Slack&
+    forceinline const ViewTraceRecorder<View>::Slack&
     ViewTraceRecorder<View>::slack() const {
         return s;
     }
@@ -216,17 +216,17 @@ namespace Gecode {
      *
      */
     template <class View>
-    forceinline typename ViewTraceRecorder<View>::SlackValue
+    forceinline ViewTraceRecorder<View>::SlackValue
     ViewTraceRecorder<View>::Slack::initial() const {
         return i;
     }
     template <class View>
-    forceinline typename ViewTraceRecorder<View>::SlackValue
+    forceinline ViewTraceRecorder<View>::SlackValue
     ViewTraceRecorder<View>::Slack::previous() const {
         return p;
     }
     template <class View>
-    forceinline typename ViewTraceRecorder<View>::SlackValue
+    forceinline ViewTraceRecorder<View>::SlackValue
     ViewTraceRecorder<View>::Slack::current() const {
         return c;
     }

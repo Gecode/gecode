@@ -45,7 +45,7 @@ namespace Gecode {
         /// View type
         using View = View_;
         /// Corresponding variable type
-        using Var = typename View::VarType;
+        using Var = View::VarType;
         /// Value type
         using Val = Val_;
 
@@ -62,13 +62,13 @@ namespace Gecode {
     /// Class for user-defined value commit
     template <class View>
     class ValCommitFunction : public ValCommit<View, typename BranchTraits<typename View::VarType>::ValType> {
-        using Val = typename ValCommit<View, typename BranchTraits<typename View::VarType>::ValType>::Val;
+        using Val = ValCommit<View, typename BranchTraits<typename View::VarType>::ValType>::Val;
 
     public:
         /// The corresponding variable type
-        using Var = typename View::VarType;
+        using Var = View::VarType;
         /// The corresponding commit function
-        using CommitFunction = typename BranchTraits<Var>::Commit;
+        using CommitFunction = BranchTraits<Var>::Commit;
 
     protected:
         /// The user-defined commit function

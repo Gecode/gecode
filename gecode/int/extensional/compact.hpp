@@ -114,13 +114,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
     template <class View, bool pos, bool indexed>
-    forceinline const typename CompactAdvisor<View, pos, indexed>::Range*
+    forceinline const CompactAdvisor<View, pos, indexed>::Range*
     CompactAdvisor<View, pos, indexed>::fst() const {
         return _fst;
     }
 
     template <class View, bool pos, bool indexed>
-    forceinline const typename CompactAdvisor<View, pos, indexed>::Range*
+    forceinline const CompactAdvisor<View, pos, indexed>::Range*
     CompactAdvisor<View, pos, indexed>::lst() const {
         return _lst;
     }
@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         : s(std::to_underlying(t)) {}
 
     template <class Advisor>
-    forceinline typename CompactStatus<Advisor>::StatusType
+    forceinline CompactStatus<Advisor>::StatusType
     CompactStatus<Advisor>::type() const {
         return static_cast<StatusType>(s & 0b11);
     }
@@ -363,7 +363,7 @@ namespace Gecode { namespace Int { namespace Extensional {
      *
      */
     template <class View, bool pos>
-    const typename Compact<View, pos>::Range*
+    const Compact<View, pos>::Range*
     Compact<View, pos>::range(CTAdvisor& a, int n) {
         assert((n > a.fst()->max) && (n < a.lst()->min));
 
@@ -693,7 +693,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         static ExecStatus
         advise(Actor& actor, Space& home, Advisor& advisor0, const Delta& delta) {
-            typename Actor::CTAdvisor& advisor = static_cast<typename Actor::CTAdvisor&>(advisor0);
+            typename Actor::CTAdvisor& advisor = static_cast<Actor::CTAdvisor&>(advisor0);
             if (actor.table.empty())
                 return actor.disabled() ? home.ES_NOFIX_DISPOSE(actor.c, advisor) : ES_FAILED;
 
@@ -830,7 +830,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         static ExecStatus
         advise(Actor& actor, Space& home, Advisor& advisor0) {
-            typename Actor::CTAdvisor& advisor = static_cast<typename Actor::CTAdvisor&>(advisor0);
+            typename Actor::CTAdvisor& advisor = static_cast<Actor::CTAdvisor&>(advisor0);
             if (actor.table.empty())
                 return home.ES_NOFIX_DISPOSE(actor.c, advisor);
 
@@ -903,7 +903,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         static ExecStatus
         advise(Actor& actor, Space& home, Advisor& advisor0) {
-            typename Actor::CTAdvisor& advisor = static_cast<typename Actor::CTAdvisor&>(advisor0);
+            typename Actor::CTAdvisor& advisor = static_cast<Actor::CTAdvisor&>(advisor0);
             if (actor.table.empty() || actor.b.assigned())
                 return home.ES_NOFIX_DISPOSE(actor.c, advisor);
 
@@ -1497,9 +1497,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     public:
         using ViewType = View;
         using Base = CompactCompressed<View, true>;
-        using ValidSupports = typename Base::ValidSupports;
-        using CTAdvisor = typename Base::CTAdvisor;
-        using LostSupports = typename Base::LostSupports;
+        using ValidSupports = Base::ValidSupports;
+        using CTAdvisor = Base::CTAdvisor;
+        using LostSupports = Base::LostSupports;
 
         using Base::all;
         using Base::at_most_one;
@@ -1509,7 +1509,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         using Base::ts;
 
         using Status = CompactStatus<CTAdvisor>;
-        using StatusType = typename Status::StatusType;
+        using StatusType = Status::StatusType;
 
         Status status;
         Table table;
@@ -1607,8 +1607,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     public:
         using ViewType = View;
         using Base = CompactCompressed<View, false>;
-        using ValidSupports = typename Base::ValidSupports;
-        using CTAdvisor = typename Base::CTAdvisor;
+        using ValidSupports = Base::ValidSupports;
+        using CTAdvisor = Base::CTAdvisor;
 
         using Base::at_most_one;
         using Base::c;
@@ -1710,8 +1710,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         using ViewType = View;
         static constexpr ReifyMode mode = rm;
         using Base = CompactCompressed<View, false>;
-        using ValidSupports = typename Base::ValidSupports;
-        using CTAdvisor = typename Base::CTAdvisor;
+        using ValidSupports = Base::ValidSupports;
+        using CTAdvisor = Base::CTAdvisor;
 
         using Base::c;
         using Base::full;

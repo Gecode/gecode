@@ -65,7 +65,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     public:
         /// Identity type
-        using ID = typename Tracer::ID;
+        using ID = Tracer::ID;
         /// %Search tree edge for recomputation
         class Edge {
         protected:

@@ -50,7 +50,7 @@ namespace Gecode { namespace Gist {
 
     protected:
         /// The node allocator
-        const typename Node::NodeAllocator& na;
+        const Node::NodeAllocator& na;
         /// Set current node to \a n
         void node(Node* n);
         /// Return start node
@@ -58,7 +58,7 @@ namespace Gecode { namespace Gist {
 
     public:
         /// Construct cursor, initially set to \a current_node
-        NodeCursor(Node* current_node, const typename Node::NodeAllocator& na);
+        NodeCursor(Node* current_node, const Node::NodeAllocator& na);
         /// Return current node
         Node* node();
         /// Return current alternative

@@ -56,7 +56,7 @@ namespace { namespace cxx14 {
     using index_sequence = detail::sequence<I...>;
 
     template <typename... Ts>
-    using index_sequence_for = typename detail::make_sequence<sizeof...(Ts)>::type;
+    using index_sequence_for = detail::make_sequence<sizeof...(Ts)>::type;
 }} // namespace ::cxx14
 
 namespace Gecode {

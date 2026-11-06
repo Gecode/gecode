@@ -147,9 +147,9 @@ namespace Test {
 
                 START_TEST("Iteration");
                 {
-                    using reference = typename Array::reference;
-                    using pointer = typename Array::pointer;
-                    using iterator = typename Array::iterator;
+                    using reference = Array::reference;
+                    using pointer = Array::pointer;
+                    using iterator = Array::iterator;
                     const iterator begin = a.begin(), end = a.end();
                     CHECK_TEST(end - begin == a.size(), "Distance != size");
                     int index = 0;
@@ -169,9 +169,9 @@ namespace Test {
                 }
                 START_TEST("Read-only iteration");
                 {
-                    using reference = typename Array::const_reference;
-                    using pointer = typename Array::const_pointer;
-                    using iterator = typename Array::const_iterator;
+                    using reference = Array::const_reference;
+                    using pointer = Array::const_pointer;
+                    using iterator = Array::const_iterator;
                     const iterator begin = const_a.begin(), end = const_a.end();
                     CHECK_TEST(end - begin == const_a.size(), "Distance != size");
                     int index = 0;
@@ -194,9 +194,9 @@ namespace Test {
 
                 START_TEST("Reverse iteration");
                 {
-                    using reference = typename Array::reference;
-                    using pointer = typename Array::pointer;
-                    using iterator = typename Array::reverse_iterator;
+                    using reference = Array::reference;
+                    using pointer = Array::pointer;
+                    using iterator = Array::reverse_iterator;
                     const iterator begin = a.rbegin(), end = a.rend();
                     CHECK_TEST(end - begin == a.size(), "Distance != size");
                     int index = a.size();
@@ -217,9 +217,9 @@ namespace Test {
 
                 START_TEST("Reverse read-only iteration");
                 {
-                    using reference = typename Array::const_reference;
-                    using pointer = typename Array::const_pointer;
-                    using iterator = typename Array::const_reverse_iterator;
+                    using reference = Array::const_reference;
+                    using pointer = Array::const_pointer;
+                    using iterator = Array::const_reverse_iterator;
                     const iterator begin = const_a.rbegin(), end = const_a.rend();
                     CHECK_TEST(end - begin == const_a.size(), "Distance != size");
                     int index = a.size();
