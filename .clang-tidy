@@ -3,6 +3,7 @@
 Checks: >-
   -*,
   clang-analyzer-core.*,
+  google-default-arguments,
   cppcoreguidelines-no-malloc,
   cppcoreguidelines-misleading-capture-default-by-value,
   cppcoreguidelines-missing-std-forward,

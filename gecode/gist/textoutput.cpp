@@ -61,7 +61,7 @@ namespace Gecode::Gist {
 
         protected:
             int
-            overflow(int v = std::char_traits<char>::eof()) override {
+            overflow(int v) override {
                 if (v == '\n') {
                     flush();
                 } else {
