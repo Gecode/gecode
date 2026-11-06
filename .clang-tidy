@@ -87,7 +87,6 @@ Checks: >-
   -readability-redundant-access-specifiers,
   -readability-redundant-control-flow,
   -readability-redundant-declaration,
-  -readability-redundant-member-init,
   -readability-redundant-parentheses,
   -readability-redundant-smartptr-get,
   -readability-redundant-string-init,

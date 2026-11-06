@@ -53,7 +53,7 @@ namespace Gecode { namespace FlatZinc {
     /// Model-local context shared by blackbox propagators and search support.
     class BlackBoxContextHandle : public SharedHandle {
     public:
-        BlackBoxContextHandle() : SharedHandle() {}
+        BlackBoxContextHandle() {}
         BlackBoxContextHandle(const BlackBoxContextHandle& handle) = default;
         BlackBoxContextHandle&
         operator=(const BlackBoxContextHandle& handle) {

@@ -251,7 +251,7 @@ namespace Test {
         /// Test space
         class TestSpace : public Gecode::Space {
         public:
-            TestSpace() : Space() {}
+            TestSpace() {}
             // NOLINTNEXTLINE(modernize-use-equals-default)
             TestSpace(TestSpace& s) : Space(s) {}
             Space*
