@@ -245,7 +245,8 @@ public:
         for (IntVarValues vals(x); vals(); ++vals)
             if (layer[vals.val()] < w) {
                 v = vals.val();
-                if ((w = layer[vals.val()]) == 0)
+                w = layer[vals.val()];
+                if (w == 0)
                     break;
             }
         assert(v >= 1 && v < 52);

@@ -317,14 +317,16 @@ namespace Gecode { namespace CPProfiler {
         hints.ai_family = AF_UNSPEC;
         hints.ai_socktype = SOCK_STREAM;
 
-        if ((rv = getaddrinfo("localhost", std::to_string(port).c_str(), &hints, &server_info)) != 0) {
+        rv = getaddrinfo("localhost", std::to_string(port).c_str(), &hints, &server_info);
+        if (rv != 0) {
             std::cerr << "getaddrinfo: " << gai_strerror(rv) << "\n";
             goto give_up;
         }
 
         // loop through all the results and connect to the first we can
         for (p = server_info; p != nullptr; p = p->ai_next) {
-            if ((socket_fd = static_cast<int>(socket(p->ai_family, p->ai_socktype, p->ai_protocol))) == -1) {
+            socket_fd = static_cast<int>(socket(p->ai_family, p->ai_socktype, p->ai_protocol));
+            if (socket_fd == -1) {
                 // errno is set here, but we don't examine it.
                 continue;
             }
