@@ -18,7 +18,6 @@ Checks: >-
   -bugprone-narrowing-conversions,
   -bugprone-parent-virtual-call,
   -bugprone-signed-char-misuse,
-  -bugprone-suspicious-string-compare,
   -bugprone-switch-missing-default-case,
   -bugprone-throwing-static-initialization,
   -bugprone-unchecked-string-to-number-conversion,
