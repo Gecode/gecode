@@ -146,8 +146,8 @@ namespace Gecode {
         //@{
         /// Default constructor (array of size 0)
         VarArray();
-        /// Allocate array with \a m variables
-        VarArray(Space& home, int m);
+        /// Allocate array with \a n0 variables
+        VarArray(Space& home, int n0);
         /// Initialize from variable argument array \a a (copy elements)
         VarArray(Space& home, const VarArgArray<Var>&);
         /// Initialize from variable array \a a (share elements)
@@ -283,10 +283,10 @@ namespace Gecode {
         //@{
         /// Default constructor (array of size 0)
         ViewArray();
-        /// Allocate array with \a m views
-        ViewArray(Space& home, int m);
-        /// Allocate array with \a m views
-        ViewArray(Region& r, int m);
+        /// Allocate array with \a n0 views
+        ViewArray(Space& home, int n0);
+        /// Allocate array with \a n0 views
+        ViewArray(Region& r, int n0);
         /// Initialize from view array \a a (share elements)
         ViewArray(const ViewArray<View>& a) = default;
         /// Initialize from view array \a a (copy elements)
@@ -389,8 +389,8 @@ namespace Gecode {
 
         /// \name Cloning
         //@{
-        /// Update array to be a clone of array \a a
-        void update(Space& home, ViewArray<View>& a);
+        /// Update array to be a clone of array \a y
+        void update(Space& home, ViewArray<View>& y);
         //@}
 
         /// \name Moving elements
@@ -694,8 +694,8 @@ namespace Gecode {
         ArgArray() = default;
         /// Allocate array with \a n elements
         explicit ArgArray(int n);
-        /// Allocate array with \a n elements and initialize with elements from array \a e
-        ArgArray(int n, const T* e);
+        /// Allocate array with \a n elements and initialize with elements from array \a a0
+        ArgArray(int n, const T* a0);
         /// Initialize from argument array \a a (copy elements)
         ArgArray(const ArgArray<T>& a);
         /// Initialize from vector \a a
@@ -784,8 +784,8 @@ namespace Gecode {
         explicit VarArgArray(int n);
         /// Initialize from variable argument array \a a (copy elements)
         VarArgArray(const VarArgArray<Var>& a);
-        /// Initialize from variable array \a a (copy elements)
-        VarArgArray(const VarArray<Var>& a);
+        /// Initialize from variable array \a x (copy elements)
+        VarArgArray(const VarArray<Var>& x);
         /// Initialize from vector \a a
         VarArgArray(const std::vector<Var>& a);
         /// Initialize from initializer list \a a

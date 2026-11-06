@@ -232,7 +232,7 @@ namespace Test {
         /// Map integer to string
         static std::string str(int i);
         /// Map integer array to string
-        static std::string str(const Gecode::IntArgs& i);
+        static std::string str(const Gecode::IntArgs& x);
         //@}
 
         /// \name Checking comparison operators

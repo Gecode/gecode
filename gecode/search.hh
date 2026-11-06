@@ -679,7 +679,7 @@ namespace Gecode { namespace Search {
 
     public:
         /// Constructor
-        CutoffAppend(Cutoff* c1, unsigned long long int n, Cutoff* c2);
+        CutoffAppend(Cutoff* d1, unsigned long long int n, Cutoff* d2);
         /// Return the current cutoff value
         unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
@@ -703,7 +703,7 @@ namespace Gecode { namespace Search {
 
     public:
         /// Constructor
-        CutoffMerge(Cutoff* c1, Cutoff* c2);
+        CutoffMerge(Cutoff* d1, Cutoff* d2);
         /// Return the current cutoff value
         unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
@@ -1215,8 +1215,8 @@ namespace Gecode { namespace Search {
         const bool b;
 
     public:
-        /// Initialize with options \a opt and \a best solution search support
-        Builder(const Options& opt, bool best);
+        /// Initialize with options \a opt and \a b0 solution search support
+        Builder(const Options& opt, bool b0);
         /// Provide access to options
         Options& options();
         /// Provide access to options

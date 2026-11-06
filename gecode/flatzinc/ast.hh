@@ -81,7 +81,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
         /// Test if node is int, if yes set \a i to the value
         bool is_int(int& i);
         /// Test if node is float, if yes set \a d to the value
-        bool is_float(double& i);
+        bool is_float(double& d);
         /// Test if node is function call with \a id
         bool is_call(const std::string& id);
         /// Return function call

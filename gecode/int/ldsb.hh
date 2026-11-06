@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Constructor for an empty literal
         Literal();
         /// Constructor
-        Literal(int _var, int _val);
+        Literal(int idx, int _val);
 
         /// Variable index.  The ViewArray that the index is meant
         /// for is assumed to be known by context.
@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     public:
         /// Constructor for creation
-        VariableSymmetryImp(Space& home, int* vs, unsigned int n);
+        VariableSymmetryImp(Space& home, int* _indices, unsigned int n);
         /// Copy constructor
         VariableSymmetryImp(Space& home, const VariableSymmetryImp& other);
         /// Disposal

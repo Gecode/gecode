@@ -52,7 +52,7 @@ namespace Gecode { namespace Kernel {
         /// Initialize from \a ssd
         SharedSpaceData(const SharedSpaceData& ssd) = default;
         /// Assignment operator
-        SharedSpaceData& operator=(const SharedSpaceData& r);
+        SharedSpaceData& operator=(const SharedSpaceData& ssd);
         /// Delete
         ~SharedSpaceData() = default;
         /// Provide access

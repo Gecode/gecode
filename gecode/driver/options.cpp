@@ -863,8 +863,8 @@ namespace Gecode {
         size(static_cast<unsigned int>(atoi(argv[1])));
     }
 
-    InstanceOptions::InstanceOptions(const char* e)
-        : Options(e), _inst(nullptr), _spec(nullptr),
+    InstanceOptions::InstanceOptions(const char* s)
+        : Options(s), _inst(nullptr), _spec(nullptr),
           _spec_file("spec", "file with a reader spec for instance files (default: the script's own spec)"),
           _param("param", "parameter for the reader spec (name=value; repeat or separate by commas for several)") {}
 

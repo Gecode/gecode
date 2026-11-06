@@ -72,9 +72,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for cloning \a p
         LinBin(Space& home, LinBin& p);
         /// Constructor for rewriting \a p during cloning
-        LinBin(Space& home, Propagator& p, A x0, B x1, Val c);
+        LinBin(Space& home, Propagator& p, A y0, B y1, Val c);
         /// Constructor for creation
-        LinBin(Home home, A x0, B x1, Val c);
+        LinBin(Home home, A y0, B y1, Val c);
 
     public:
         /// Cost function (defined as low binary)
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for cloning \a p
         ReLinBin(Space& home, ReLinBin& p);
         /// Constructor for creation
-        ReLinBin(Home home, A x0, B x1, Val c, Ctrl b);
+        ReLinBin(Home home, A y0, B y1, Val c, Ctrl b);
 
     public:
         /// Cost function (defined as low binary)
@@ -363,9 +363,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for cloning \a p
         LinTer(Space& home, LinTer& p);
         /// Constructor for creation
-        LinTer(Home home, A x0, B x1, C x2, Val c);
+        LinTer(Home home, A y0, B y1, C y2, Val c);
         /// Constructor for rewriting \a p during cloning
-        LinTer(Space& home, Propagator& p, A x0, B x1, C x2, Val c);
+        LinTer(Space& home, Propagator& p, A y0, B y1, C y2, Val c);
 
     public:
         /// Cost function (defined as low ternary)
@@ -916,7 +916,7 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
-        static ExecStatus post(Home home, ViewArray<VX>& b, int c);
+        static ExecStatus post(Home home, ViewArray<VX>& x, int c);
         /// Delete propagator and return its size
         size_t dispose(Space& home) override;
     };

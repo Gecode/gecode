@@ -206,7 +206,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         static LambdaRange l_vb2(int c);
         static LambdaRange l_fs1(int c);
         static LambdaRange l_rad2(int c);
-        static LambdaRange sanitize_lambda_range(LambdaRange lambda, int n_weights, int max_weight);
+        static LambdaRange sanitize_lambda_range(LambdaRange lambda, int n_not_zero_weights, int max_weight);
         /// Lower bound
         template <int (*f)(int, int, int)>
         static int calc_dff_lower_bound_single_lambda(const int* weights, int n_weights, int capacity, int lambda);
@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
              * is the maximal number of nodes. Return whether both \a ac
              * and \a bc are empty.
              */
-            static bool iwn(NodeSet& iwa, const NodeSet& a, NodeSet& iwb, const NodeSet& b, const NodeSet& c, int n);
+            static bool iwn(NodeSet& cwa, const NodeSet& a, NodeSet& cwb, const NodeSet& b, const NodeSet& c, int n);
         };
 
         /// Class for node in graph

@@ -246,7 +246,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// Constructor
         PartialSum();
         /// Initialization
-        void init(Space& home, ViewArray<Card>& k, bool up);
+        void init(Space& home, ViewArray<Card>& elements, bool up);
         /// Mark datstructure as requiring reinitialization
         void reinit();
         /// Test whether already initialized

@@ -351,11 +351,11 @@ namespace Test {
             /// Map set relation to string
             static std::string str(Gecode::SetRelType srt);
             /// Map set operation to string
-            static std::string str(Gecode::SetOpType srt);
+            static std::string str(Gecode::SetOpType sot);
             /// Map integer to string
             static std::string str(int i);
             /// Map integer array to string
-            static std::string str(const Gecode::IntArgs& i);
+            static std::string str(const Gecode::IntArgs& x);
             //@}
         };
         //@}

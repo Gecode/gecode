@@ -218,8 +218,8 @@ namespace Gecode { namespace Search { namespace Par {
         CollectBest();
         /// Add a solution \a s by \a r and return whether is was better
         bool add(Space* s, Asset<CollectBest>* r);
-        /// Check whether \a b better and update accordingly
-        bool constrain(const Space& b);
+        /// Check whether \a s better and update accordingly
+        bool constrain(const Space& s);
         /// Check whether there is any solution left
         bool empty() const;
         /// Return solution reported by \a r (only if a better one was found)
@@ -286,7 +286,7 @@ namespace Gecode { namespace Search { namespace Par {
          */
     public:
         /// Initialize with \a n assets, their stop objects, and the coverage of their spokes
-        PBS(Engine** s, Stop** so, const SpokeCoverage* c, unsigned int n, const Statistics& stat);
+        PBS(Engine** engines, Stop** stops, const SpokeCoverage* c, unsigned int n, const Statistics& stat0);
         /// Return next solution (nullptr, if none exists or search has been stopped)
         Space* next() override;
         /// Return statistics

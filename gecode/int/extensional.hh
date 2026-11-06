@@ -272,7 +272,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     public:
         /// Initialize bit set for a number of words \a n
-        BitSet(Space& home, unsigned int n, bool indexed = false);
+        BitSet(Space& home, unsigned int n, bool track_positions = false);
         /// Initialize during cloning
         template <class OldIndexType>
         BitSet(Space& home, const BitSet<OldIndexType>& bs);
@@ -350,7 +350,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         TinyBitSet(Space& home, unsigned int n, bool indexed = false);
         /// Initialize during cloning
         template <unsigned int largersize>
-        TinyBitSet(Space& home, const TinyBitSet<largersize>& tbs);
+        TinyBitSet(Space& home, const TinyBitSet<largersize>& sbs);
         /// Initialize during cloning
         template <class IndexType>
         TinyBitSet(Space& home, const BitSet<IndexType>& bs);

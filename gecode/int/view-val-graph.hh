@@ -164,8 +164,8 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         ValNode<View>** next_val_ref();
         /// Return next value node
         ValNode<View>* next_val() const;
-        /// Set next value node to \a v
-        void next_val(ValNode<View>* v);
+        /// Set next value node to \a n
+        void next_val(ValNode<View>* n);
     };
 
     /**
@@ -216,15 +216,15 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         CombPtrFlag<Node<View>> sd;
 
     public:
-        /// Construct new edge between \a x and \a v
-        Edge(ValNode<View>* v, ViewNode<View>* x);
-        /// Construct new edge between \a x and \a v with next edge \a n
-        Edge(ValNode<View>* v, ViewNode<View>* x, Edge<View>* n);
+        /// Construct new edge between \a d and \a s
+        Edge(ValNode<View>* s, ViewNode<View>* d);
+        /// Construct new edge between \a d and \a s with next edge \a n
+        Edge(ValNode<View>* s, ViewNode<View>* d, Edge<View>* n);
         /// Return destination of edge when source \a s is given
         Node<View>* dst(Node<View>* s) const;
 
-        /// Return view node when value node \a v is given
-        ViewNode<View>* view(ValNode<View>* v) const;
+        /// Return view node when value node \a n is given
+        ViewNode<View>* view(ValNode<View>* n) const;
         /// Return value node when view node \a x is given
         ValNode<View>* val(ViewNode<View>* x) const;
 
@@ -265,8 +265,8 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     public:
         /// \name Constructors and initialization
         //@{
-        /// Initialize with edges for view node \a x
-        IterPruneVal(ViewNode<View>* x);
+        /// Initialize with edges for view node \a y
+        IterPruneVal(ViewNode<View>* y);
         //@}
 
         /// \name Iteration control

@@ -84,25 +84,25 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
     template <class T, template <class> class E>
-    inline RBS<T, E>::RBS(T* s, const Search::Options& m_opt) {
-        if (m_opt.cutoff == nullptr)
+    inline RBS<T, E>::RBS(T* s, const Search::Options& o) {
+        if (o.cutoff == nullptr)
             throw Search::UninitializedCutoff("RBS::RBS");
-        Search::Options e_opt(m_opt.expand());
+        Search::Options e_opt(o.expand());
         Search::Statistics stat;
-        std::unique_ptr<Search::Stop> stop(Search::Seq::rbs_stop(m_opt.stop));
+        std::unique_ptr<Search::Stop> stop(Search::Seq::rbs_stop(o.stop));
         e_opt.stop = stop.get();
         // Retain the seed while a potentially nested builder owns its clone.
         e_opt.clone = true;
         Search::WrapTraceRecorder::engine(e_opt.tracer, SearchTracer::EngineType::RBS, 1U);
         if (s->status(stat) == SS_FAILED) {
             stat.fail++;
-            if (!m_opt.clone)
+            if (!o.clone)
                 delete s;
             e = Search::Seq::dead(e_opt, stat, Search::EndReason::Exhausted);
             // The engine owns the cutoff, but a dead engine does not take it
-            delete m_opt.cutoff;
+            delete o.cutoff;
         } else {
-            std::unique_ptr<Space> hub(m_opt.clone ? s->clone() : s);
+            std::unique_ptr<Space> hub(o.clone ? s->clone() : s);
             Search::Statistics start;
             HubContext hc = Search::MetaContextAccess::hub(MetaEngine::Restart, MetaEvent::Start, MetaDecision::Restart,
                                                            0UL, 0U, 1U, nullptr, start, NoGoods::eng);
@@ -113,7 +113,7 @@ namespace Gecode {
                 if (r == Search::EndReason::Exhausted)
                     stat.fail++;
                 e = Search::Seq::dead(e_opt, stat, r);
-                delete m_opt.cutoff;
+                delete o.cutoff;
                 return;
             }
             std::unique_ptr<Space> spoke(hub->clone());
@@ -123,7 +123,7 @@ namespace Gecode {
             spoke->random_split(sc);
             hub->reserve_brancher_ids(*spoke);
             std::unique_ptr<Search::Engine> leaf(Search::build<T, E>(spoke.get(), e_opt));
-            e = Search::Seq::make_rbs_engine(hub.get(), stop.get(), leaf.get(), stat, m_opt, E<T>::best, sc.coverage());
+            e = Search::Seq::make_rbs_engine(hub.get(), stop.get(), leaf.get(), stat, o, E<T>::best, sc.coverage());
             (void)hub.release();
             (void)stop.release();
             (void)leaf.release();
