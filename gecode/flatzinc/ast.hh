@@ -44,7 +44,7 @@
  * \brief Abstract syntax trees for the %FlatZinc interpreter
  */
 
-namespace Gecode { namespace FlatZinc { namespace AST {
+namespace Gecode::FlatZinc::AST {
 
     class Call;
     class Array;
@@ -549,7 +549,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
         return n;
     }
 
-}}} // namespace Gecode::FlatZinc::AST
+} // namespace Gecode::FlatZinc::AST
 
 #endif
 

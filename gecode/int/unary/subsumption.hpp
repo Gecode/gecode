@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     template <class Task>
     ExecStatus
@@ -45,6 +45,6 @@ namespace Gecode { namespace Int { namespace Unary {
         return home.ES_SUBSUMED(p);
     }
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-prop

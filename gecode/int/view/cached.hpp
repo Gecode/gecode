@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Constructors and initialization
@@ -379,6 +379,6 @@ namespace Gecode { namespace Int {
         return x.base() == y.base();
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

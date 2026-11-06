@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Create lds engine
     GECODE_SEARCH_EXPORT Engine* make_lds_engine(Space* s, const Options& o);
@@ -56,7 +56,7 @@ namespace Gecode { namespace Search {
         return build<T, LDS>(s, opt);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 namespace Gecode {
 

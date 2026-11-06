@@ -40,7 +40,7 @@
 #include <gecode/search.hh>
 #include <atomic>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /// Stop object used for controlling slaves in a portfolio
     class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
@@ -220,7 +220,7 @@ namespace Gecode { namespace Search { namespace Par {
         ~PBS() override;
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/pbs.hpp>
 

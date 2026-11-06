@@ -36,7 +36,7 @@
 #include <gecode/int/rel.hh>
 #include <gecode/int/open-propagator.hpp>
 
-namespace Gecode { namespace Int { namespace Rel {
+namespace Gecode::Int::Rel {
 
     /// Propagate a relation over an open chain in one actor
     template <class View, IntRelType irt>
@@ -252,7 +252,7 @@ namespace Gecode { namespace Int { namespace Rel {
         }
     };
 
-}}} // namespace Gecode::Int::Rel
+} // namespace Gecode::Int::Rel
 
 #endif
 

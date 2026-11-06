@@ -36,7 +36,7 @@
 
 #include <gecode/int/bool.hh>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Baseclass for integer Boolean sum using dependencies
@@ -781,6 +781,6 @@ namespace Gecode { namespace Int { namespace Linear {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 // STATISTICS: int-prop

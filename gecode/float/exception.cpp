@@ -34,7 +34,7 @@
 
 #include <gecode/float.hh>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     OutOfLimits::OutOfLimits(const char* l) : Exception(l, "Number out of limits") {}
 
@@ -60,6 +60,6 @@ namespace Gecode { namespace Float {
     ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
         : Exception(l, "Attempt to access value of unassigned variable") {}
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-other

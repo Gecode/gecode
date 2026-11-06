@@ -36,7 +36,7 @@
 #include <gecode/int/precede.hh>
 #include <gecode/int/open-propagator.hpp>
 
-namespace Gecode { namespace Int { namespace Precede {
+namespace Gecode::Int::Precede {
 
     template <class View>
     class Open : public OpenListPropagator<View> {
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Precede {
         }
     };
 
-}}} // namespace Gecode::Int::Precede
+} // namespace Gecode::Int::Precede
 
 #endif
 

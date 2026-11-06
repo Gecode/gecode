@@ -34,7 +34,7 @@
 #include <climits>
 #include <cmath>
 
-namespace Gecode { namespace Int { namespace Sequence {
+namespace Gecode::Int::Sequence {
 
     /// Simple bitsets for recording violations
     class Violations : public Support::BitSetBase {
@@ -95,6 +95,6 @@ namespace Gecode { namespace Int { namespace Sequence {
         return fst - 1;
     }
 
-}}} // namespace Gecode::Int::Sequence
+} // namespace Gecode::Int::Sequence
 
 // STATISTICS: int-prop

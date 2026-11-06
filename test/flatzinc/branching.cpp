@@ -38,7 +38,7 @@
 #include <optional>
 #include <sstream>
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     using FlatZincSpacePtr = std::unique_ptr<Gecode::FlatZinc::FlatZincSpace>;
 
     /// Parse \a source and post its branchers with options \a args
@@ -192,6 +192,6 @@ namespace Test { namespace FlatZinc { namespace {
     };
 
     AuxVarClone aux_var_clone;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

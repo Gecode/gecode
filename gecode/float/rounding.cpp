@@ -41,7 +41,7 @@
 #include <gmp.h>
 #include <mpfr.h>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /// Type signature of mpfr function
     using mpfr_func = int(mpfr_t, const __mpfr_struct*, mp_rnd_t);
@@ -82,7 +82,7 @@ namespace Gecode { namespace Float {
 
 #undef GECODE_GENR_FUNC
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 #endif
 

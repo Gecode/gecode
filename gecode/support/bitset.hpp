@@ -37,7 +37,7 @@
 #include <climits>
 #include <cmath>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /// Simple bitsets
     template <class A>
@@ -70,6 +70,6 @@ namespace Gecode { namespace Support {
         dispose(a);
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

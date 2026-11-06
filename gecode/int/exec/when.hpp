@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Exec {
+namespace Gecode::Int::Exec {
 
     forceinline
     When::When(Home home, BoolView x, std::function<void(Space& home)> t0, std::function<void(Space& home)> e0)
@@ -60,6 +60,6 @@ namespace Gecode { namespace Int { namespace Exec {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Exec
+} // namespace Gecode::Int::Exec
 
 // STATISTICS: int-prop

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Task array
@@ -163,6 +163,6 @@ namespace Gecode { namespace Int {
         return os << s.str();
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-other

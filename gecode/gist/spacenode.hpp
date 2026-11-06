@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     forceinline void
     SpaceNode::set_flag(int flag, bool value) {
@@ -179,6 +179,6 @@ namespace Gecode { namespace Gist {
         return choice;
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

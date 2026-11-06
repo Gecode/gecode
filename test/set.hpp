@@ -30,7 +30,7 @@
  *
  */
 
-namespace Test { namespace Set {
+namespace Test::Set {
 
     inline std::string
     SetTest::str(int i) {
@@ -117,6 +117,6 @@ namespace Test { namespace Set {
         return sots[i];
     }
 
-}} // namespace Test::Set
+} // namespace Test::Set
 
 // STATISTICS: test-set

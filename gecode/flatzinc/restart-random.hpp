@@ -33,7 +33,7 @@
 #ifndef GECODE_FLATZINC_RESTART_RANDOM_HPP
 #define GECODE_FLATZINC_RESTART_RANDOM_HPP
 
-namespace Gecode { namespace FlatZinc { namespace Internal {
+namespace Gecode::FlatZinc::Internal {
 
     /// Sample an offset for an inclusive integer restart range
     template <class Random>
@@ -56,7 +56,7 @@ namespace Gecode { namespace FlatZinc { namespace Internal {
         return sample % width;
     }
 
-}}} // namespace Gecode::FlatZinc::Internal
+} // namespace Gecode::FlatZinc::Internal
 
 #endif
 

@@ -32,7 +32,7 @@
 
 #include <gecode/int/exec.hh>
 
-namespace Gecode { namespace Int { namespace Exec {
+namespace Gecode::Int::Exec {
 
     Actor*
     When::copy(Space& home) {
@@ -63,6 +63,6 @@ namespace Gecode { namespace Int { namespace Exec {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::Exec
+} // namespace Gecode::Int::Exec
 
 // STATISTICS: int-prop

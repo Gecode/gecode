@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
     /*
      * Dimension with integer size
@@ -192,6 +192,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         c1.reschedule(home, p, PC_INT_DOM);
     }
 
-}}} // namespace Gecode::Int::NoOverlap
+} // namespace Gecode::Int::NoOverlap
 
 // STATISTICS: int-prop

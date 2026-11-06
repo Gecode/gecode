@@ -47,7 +47,7 @@
  *
  * \brief Minimum-distance propagators over indexed sites
  */
-namespace Gecode { namespace Int { namespace MinDistance {
+namespace Gecode::Int::MinDistance {
 
     /// Pair maximum and its witness
     struct PairCache {
@@ -206,7 +206,7 @@ namespace Gecode { namespace Int { namespace MinDistance {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::MinDistance
+} // namespace Gecode::Int::MinDistance
 
 #include <gecode/int/min-distance/prop.hpp>
 

@@ -32,7 +32,7 @@
 
 #include <gecode/gist/stopbrancher.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     StopChoice::StopChoice(const Brancher& b) : Choice(b, 1) {}
     void
@@ -79,6 +79,6 @@ namespace Gecode { namespace Gist {
         return sizeof(*this);
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

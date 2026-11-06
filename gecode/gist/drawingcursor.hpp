@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     inline void
     DrawingCursor::move_upwards() {
@@ -70,5 +70,5 @@ namespace Gecode { namespace Gist {
         x += node()->get_offset();
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 // STATISTICS: gist-any

@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /*
      * Edge for recomputation
@@ -448,6 +448,6 @@ namespace Gecode { namespace Search { namespace Par {
         GECODE_ES_FAIL(NoGoodsProp::post(home, *this));
     }
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

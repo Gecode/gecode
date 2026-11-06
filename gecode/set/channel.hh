@@ -39,7 +39,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set { namespace Channel {
+namespace Gecode::Set::Channel {
 
     /**
      * \namespace Gecode::Set::Channel
@@ -238,7 +238,7 @@ namespace Gecode { namespace Set { namespace Channel {
         static ExecStatus post(Home home, ViewArray<CachedView<View>>& x, ViewArray<CachedView<View>>& y);
     };
 
-}}} // namespace Gecode::Set::Channel
+} // namespace Gecode::Set::Channel
 
 #include <gecode/set/channel/sorted.hpp>
 #include <gecode/set/channel/int.hpp>

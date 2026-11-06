@@ -45,7 +45,7 @@
  * \brief %Linear propagators
  */
 
-namespace Gecode { namespace Float { namespace Linear {
+namespace Gecode::Float::Linear {
 
     /**
      * \brief Base-class for n-ary linear propagators
@@ -150,11 +150,11 @@ namespace Gecode { namespace Float { namespace Linear {
         static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, const FloatVal& c);
     };
 
-}}} // namespace Gecode::Float::Linear
+} // namespace Gecode::Float::Linear
 
 #include <gecode/float/linear/nary.hpp>
 
-namespace Gecode { namespace Float { namespace Linear {
+namespace Gecode::Float::Linear {
 
     /**
      * \brief Class for describing linear term \f$a\cdot x\f$
@@ -221,7 +221,7 @@ namespace Gecode { namespace Float { namespace Linear {
      */
     GECODE_FLOAT_EXPORT void post(Home home, Term* t, int n, FloatRelType frt, const FloatVal& c, Reify r);
 
-}}} // namespace Gecode::Float::Linear
+} // namespace Gecode::Float::Linear
 
 #endif
 

@@ -36,7 +36,7 @@
 
 #include <gecode/int/bin-packing.hh>
 
-namespace Gecode { namespace Int { namespace BinPacking {
+namespace Gecode::Int::BinPacking {
 
     /*
      * Packing propagator
@@ -436,6 +436,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
         delta_reductions[2] = capacity_base_reduction - smallest_virtual_weight - smallest_virtual_weight + 1;
     }
 
-}}} // namespace Gecode::Int::BinPacking
+} // namespace Gecode::Int::BinPacking
 
 // STATISTICS: int-prop

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /// Duplicate of a set view
     class SetTraceView {
@@ -95,6 +95,6 @@ namespace Gecode { namespace Set {
         return x.unknown_size();
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-trace

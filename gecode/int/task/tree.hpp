@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     forceinline int
     plus(int x, int y) {
@@ -168,6 +168,6 @@ namespace Gecode { namespace Int {
             _leaf[i] = t._leaf[i];
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

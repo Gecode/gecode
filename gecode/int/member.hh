@@ -41,7 +41,7 @@
  * \brief Membership propagators
  */
 
-namespace Gecode { namespace Int { namespace Member {
+namespace Gecode::Int::Member {
 
     /**
      * \brief Membership propagator
@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Member {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Member
+} // namespace Gecode::Int::Member
 
 #include <gecode/int/member/prop.hpp>
 #include <gecode/int/member/re-prop.hpp>

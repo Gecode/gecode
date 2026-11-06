@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
     template <class Info, class Offset, PropCond pc>
     forceinline
@@ -72,6 +72,6 @@ namespace Gecode { namespace Int { namespace Channel {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::Channel
+} // namespace Gecode::Int::Channel
 
 // STATISTICS: int-prop

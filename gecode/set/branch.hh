@@ -46,7 +46,7 @@
  * \brief %Set branchings
  */
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     /**
      * \defgroup FuncSetViewSel Merit-based set view selection for branchers
@@ -196,19 +196,19 @@ namespace Gecode { namespace Set { namespace Branch {
         void dispose(Space& home);
     };
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 #include <gecode/set/branch/merit.hpp>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     /// Return view selectors for set views
     GECODE_SET_EXPORT
     ViewSel<SetView>* view_selection(Space& home, const SetVarBranch& svb);
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     /**
      * \defgroup FuncSetValSel Set value selection for brancher
@@ -294,11 +294,11 @@ namespace Gecode { namespace Set { namespace Branch {
         void dispose(Space& home);
     };
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 #include <gecode/set/branch/val-sel.hpp>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     /// No-good literal for inclusion
     class IncNGL : public ViewValNGL<SetView, int, PC_SET_ANY> {
@@ -336,11 +336,11 @@ namespace Gecode { namespace Set { namespace Branch {
         NGL* copy(Space& home) override;
     };
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 #include <gecode/set/branch/ngl.hpp>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     /**
      * \defgroup FuncSetValCommit Set value commit classes
@@ -394,11 +394,11 @@ namespace Gecode { namespace Set { namespace Branch {
         void print(const Space& home, unsigned int a, SetView x, int i, int n, std::ostream& o) const;
     };
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 #include <gecode/set/branch/val-commit.hpp>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     /// Return value and commit for set views
     GECODE_SET_EXPORT
@@ -408,7 +408,7 @@ namespace Gecode { namespace Set { namespace Branch {
     GECODE_SET_EXPORT
     ValSelCommitBase<SetView, int>* value_selection_commit(Space& home, const SetAssign& ia);
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 #endif
 

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief Iterator over range lists
@@ -255,6 +255,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         return static_cast<unsigned int>(c->max - c->min) + 1;
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

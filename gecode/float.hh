@@ -133,7 +133,7 @@ namespace Gecode {
 
 #include <gecode/float/num.hpp>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /**
      * \brief Floating point rounding operations without state saving
@@ -348,12 +348,12 @@ namespace Gecode { namespace Float {
         Rounding& operator=(const Rounding&) = delete;
     };
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 #include <gecode/float/rounding.hpp>
 #include <gecode/float/interval.hpp>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /**
      * \brief Test whether \a x is a subset of \a y
@@ -397,7 +397,7 @@ namespace Gecode { namespace Float {
      */
     FloatVal hull(const FloatNum& x, const FloatNum& y);
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 namespace Gecode {
 
@@ -900,25 +900,21 @@ namespace Gecode {
 
 #include <gecode/float/val.hpp>
 
-namespace Gecode { namespace Float {
-
-    /**
-     * \brief Numerical limits for floating point variables
-     *
-     * \ingroup TaskModelFloatVars
-     */
-    namespace Limits {
-        /// Largest allowed float value
-        const FloatNum max = std::numeric_limits<FloatNum>::max();
-        /// Smallest allowed float value
-        const FloatNum min = -max;
-        /// Return whether float \a n is a valid number
-        bool valid(const FloatVal& n);
-        /// Check whether float \a n is a valid number, otherwise throw out of limits exception with information \a l
-        void check(const FloatVal& n, const char* l);
-    } // namespace Limits
-
-}} // namespace Gecode::Float
+/**
+ * \brief Numerical limits for floating point variables
+ *
+ * \ingroup TaskModelFloatVars
+ */
+namespace Gecode::Float::Limits {
+    /// Largest allowed float value
+    const FloatNum max = std::numeric_limits<FloatNum>::max();
+    /// Smallest allowed float value
+    const FloatNum min = -max;
+    /// Return whether float \a n is a valid number
+    bool valid(const FloatVal& n);
+    /// Check whether float \a n is a valid number, otherwise throw out of limits exception with information \a l
+    void check(const FloatVal& n, const char* l);
+} // namespace Gecode::Float::Limits
 
 #include <gecode/float/limits.hpp>
 

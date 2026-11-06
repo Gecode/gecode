@@ -36,7 +36,7 @@
 
 #ifdef GECODE_HAS_FLOAT_VARS
 
-namespace Test { namespace Branch {
+namespace Test::Branch {
 
     /// %Test brancher with distinct propagator
     class Float : public FloatTest {
@@ -61,7 +61,7 @@ namespace Test { namespace Branch {
         Float l_3("Large::3", d_large, 3, 10);
     } // namespace
 
-}} // namespace Test::Branch
+} // namespace Test::Branch
 
 #endif
 

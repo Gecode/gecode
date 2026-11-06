@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     template <class T>
     forceinline
@@ -60,6 +60,6 @@ namespace Gecode { namespace Search {
         delete e;
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

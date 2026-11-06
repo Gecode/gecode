@@ -38,7 +38,7 @@
 
 #include "gecode/flatzinc/restart-random.hpp"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Check that reversed uniform integer ranges fail during parsing
     class UniformIntInvalidRange : public Base {
     public:
@@ -185,6 +185,6 @@ solve satisfy;
     Create c;
     UniformIntInvalidRange invalid_range;
     WideUniformInt w;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

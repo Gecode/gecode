@@ -32,7 +32,7 @@
 
 #include <gecode/int/rel.hh>
 
-namespace Gecode { namespace Int { namespace Member {
+namespace Gecode::Int::Member {
 
     template <class View, ReifyMode rm>
     forceinline
@@ -178,6 +178,6 @@ namespace Gecode { namespace Int { namespace Member {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Member
+} // namespace Gecode::Int::Member
 
 // STATISTICS: int-prop

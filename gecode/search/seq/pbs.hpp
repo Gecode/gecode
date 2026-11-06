@@ -32,7 +32,7 @@
 
 #include <climits>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     forceinline
     PortfolioStop::PortfolioStop(Stop* so0)
@@ -174,6 +174,6 @@ namespace Gecode { namespace Search { namespace Seq {
         heap.rfree(slaves);
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

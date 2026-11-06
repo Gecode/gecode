@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     forceinline
     ValCommitInc::ValCommitInc(Space& home, const ValBranch<Var>& vb)
@@ -80,6 +80,6 @@ namespace Gecode { namespace Set { namespace Branch {
         o << "var[" << i << "]." << ((a == 0) ? "exclude" : "include") << "(" << n << ")";
     }
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

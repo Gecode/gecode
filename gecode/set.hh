@@ -80,25 +80,21 @@
 
 #include <gecode/set/exception.hpp>
 
-namespace Gecode { namespace Set {
-
-    /// Numerical limits for set variables
-    namespace Limits {
-        /// Largest allowed integer in integer set
-        const int max = (Gecode::Int::Limits::max / 2) - 1;
-        /// Smallest allowed integer in integer set
-        const int min = -max;
-        /// Maximum cardinality of an integer set
-        const unsigned int card = max - min + 1;
-        /// Check whether integer \a n is in range, otherwise throw overflow exception with information \a l
-        void check(int n, const char* l);
-        /// Check whether unsigned int \a n is in range for cardinality, otherwise throw overflow exception with information \a l
-        void check(unsigned int n, const char* l);
-        /// Check whether minimum and maximum of IntSet \a s is in range, otherwise throw overflow exception with information \a l
-        void check(const IntSet& s, const char* l);
-    } // namespace Limits
-
-}} // namespace Gecode::Set
+/// Numerical limits for set variables
+namespace Gecode::Set::Limits {
+    /// Largest allowed integer in integer set
+    const int max = (Gecode::Int::Limits::max / 2) - 1;
+    /// Smallest allowed integer in integer set
+    const int min = -max;
+    /// Maximum cardinality of an integer set
+    const unsigned int card = max - min + 1;
+    /// Check whether integer \a n is in range, otherwise throw overflow exception with information \a l
+    void check(int n, const char* l);
+    /// Check whether unsigned int \a n is in range for cardinality, otherwise throw overflow exception with information \a l
+    void check(unsigned int n, const char* l);
+    /// Check whether minimum and maximum of IntSet \a s is in range, otherwise throw overflow exception with information \a l
+    void check(const IntSet& s, const char* l);
+} // namespace Gecode::Set::Limits
 
 #include <gecode/set/limits.hpp>
 

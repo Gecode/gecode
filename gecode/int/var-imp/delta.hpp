@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     forceinline
     IntDelta::IntDelta()
@@ -62,6 +62,6 @@ namespace Gecode { namespace Int {
         return _min > _max;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

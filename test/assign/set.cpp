@@ -36,7 +36,7 @@
 
 #include <gecode/search.hh>
 
-namespace Test { namespace Assign {
+namespace Test::Assign {
 
     /// %Test assignment with disjoint union propagator
     class Set : public SetTest {
@@ -114,7 +114,7 @@ namespace Test { namespace Assign {
         SetVarSelection var_selection;
     } // namespace
 
-}} // namespace Test::Assign
+} // namespace Test::Assign
 
 #endif
 

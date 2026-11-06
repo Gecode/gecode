@@ -36,7 +36,7 @@
 
 #include <string>
 
-namespace Test { namespace Assign {
+namespace Test::Assign {
 
     /// %Test assignment with distinct propagator
     class Int : public IntTest {
@@ -155,6 +155,6 @@ namespace Test { namespace Assign {
         IntVarSelection var_selection;
     } // namespace
 
-}} // namespace Test::Assign
+} // namespace Test::Assign
 
 // STATISTICS: test-branch

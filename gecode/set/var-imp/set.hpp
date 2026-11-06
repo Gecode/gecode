@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /*
      * Creation of new variable implementations
@@ -503,6 +503,6 @@ namespace Gecode { namespace Set {
         BndSetRanges::init(x->glb);
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

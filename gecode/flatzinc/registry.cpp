@@ -45,7 +45,7 @@
 #include <gecode/flatzinc.hh>
 #include <gecode/flatzinc/blackbox.hh>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     Registry&
     registry() {
@@ -2304,6 +2304,6 @@ namespace Gecode { namespace FlatZinc {
         BuiltinPosters builtin_posters;
 
     } // namespace
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-any

@@ -48,7 +48,7 @@
  * \namespace Gecode::Float::Rel
  * \brief Simple relation propagators
  */
-namespace Gecode { namespace Float { namespace Rel {
+namespace Gecode::Float::Rel {
 
     /*
      * Equality propagators
@@ -375,7 +375,7 @@ namespace Gecode { namespace Float { namespace Rel {
         static ExecStatus post(Home home, View x0, View x1, CtrlView b);
     };
 
-}}} // namespace Gecode::Float::Rel
+} // namespace Gecode::Float::Rel
 
 #include <gecode/float/rel/eq.hpp>
 #include <gecode/float/rel/nq.hpp>

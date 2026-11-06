@@ -32,7 +32,7 @@
 
 #include <gecode/flatzinc/branch.hh>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     void
     PosIntChoice::archive(Archive& e) const {
@@ -145,6 +145,6 @@ namespace Gecode { namespace FlatZinc {
         }
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-branch

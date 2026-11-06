@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     unsigned long long int
     CutoffConstant::operator()() const {
@@ -164,6 +164,6 @@ namespace Gecode { namespace Search {
         return new CutoffRepeat(c, n);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

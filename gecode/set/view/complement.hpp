@@ -36,7 +36,7 @@
 
 #include <sstream>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     template <class View>
     forceinline
@@ -575,6 +575,6 @@ namespace Gecode { namespace Set {
         return x.base() == y.base();
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

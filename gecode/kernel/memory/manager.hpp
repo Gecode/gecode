@@ -39,7 +39,7 @@
 
 #include <memory>
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /// Memory chunk with size information
     class MemoryChunk {
@@ -84,7 +84,7 @@ namespace Gecode { namespace Kernel {
         //@}
     };
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 namespace Gecode {
 
@@ -116,7 +116,7 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /// Manage memory for space
     class MemoryManager {
@@ -180,9 +180,9 @@ namespace Gecode { namespace Kernel {
         void reuse(void* p, size_t s);
     };
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /*
      * Shared memory area
@@ -236,7 +236,7 @@ namespace Gecode { namespace Kernel {
         }
     }
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 namespace Gecode {
 
@@ -266,7 +266,7 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /*
      * The active memory manager
@@ -470,6 +470,6 @@ namespace Gecode { namespace Kernel {
         }
     }
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 // STATISTICS: kernel-memory

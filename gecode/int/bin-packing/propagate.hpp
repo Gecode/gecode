@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace BinPacking {
+namespace Gecode::Int::BinPacking {
 
     /*
      * Item
@@ -390,6 +390,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
         return lower_bound;
     }
 
-}}} // namespace Gecode::Int::BinPacking
+} // namespace Gecode::Int::BinPacking
 
 // STATISTICS: int-prop

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     template <class ManTask, class Cap>
     forceinline ExecStatus
@@ -64,6 +64,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-post

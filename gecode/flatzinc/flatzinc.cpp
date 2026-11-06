@@ -90,7 +90,7 @@ namespace std {
 
 } // namespace std
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     // Default random number generator
     Rnd defrnd(0);
@@ -3147,6 +3147,6 @@ namespace Gecode { namespace FlatZinc {
         delete _output;
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-any

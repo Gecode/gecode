@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Circuit {
+namespace Gecode::Int::Circuit {
 
     /*
      * The actual propagator
@@ -94,6 +94,6 @@ namespace Gecode { namespace Int { namespace Circuit {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Circuit
+} // namespace Gecode::Int::Circuit
 
 // STATISTICS: int-prop

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
     /**
      * \brief Value iterator for selecting only positive values
@@ -113,6 +113,6 @@ namespace Gecode { namespace Iter { namespace Values {
         return i.val();
     }
 
-}}} // namespace Gecode::Iter::Values
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

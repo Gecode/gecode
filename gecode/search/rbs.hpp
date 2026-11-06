@@ -36,7 +36,7 @@
 #include <gecode/search/seq/dead.hh>
 #include <memory>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// Create stop object
     GECODE_SEARCH_EXPORT Stop* rbs_stop(Stop* so);
@@ -45,9 +45,9 @@ namespace Gecode { namespace Search { namespace Seq {
     GECODE_SEARCH_EXPORT Engine* make_rbs_engine(Space* master, Stop* stop, Engine* slave,
                                                  const Search::Statistics& stat, const Options& opt, bool best);
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// A RBS engine builder
     template <class T, template <class> class E>
@@ -70,7 +70,7 @@ namespace Gecode { namespace Search {
         return build<T, RBS<T, E>>(s, opt);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 namespace Gecode {
 

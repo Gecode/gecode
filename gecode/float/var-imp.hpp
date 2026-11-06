@@ -39,7 +39,7 @@
 
 #include <cmath>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     class FloatVarImp;
 
@@ -63,11 +63,11 @@ namespace Gecode { namespace Float {
         FloatNum max() const;
     };
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 #include <gecode/float/var-imp/delta.hpp>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /**
      * \brief Float variable implementation
@@ -181,7 +181,7 @@ namespace Gecode { namespace Float {
         //@}
     };
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 #include <gecode/float/var-imp/float.hpp>
 

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Sorted {
+namespace Gecode::Int::Sorted {
 
     /**
      * \brief Glover's maximum matching in a bipartite graph
@@ -161,6 +161,6 @@ namespace Gecode { namespace Int { namespace Sorted {
         return true;
     }
 
-}}} // namespace Gecode::Int::Sorted
+} // namespace Gecode::Int::Sorted
 
 // STATISTICS: int-prop

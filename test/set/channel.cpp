@@ -36,255 +36,251 @@
 
 using namespace Gecode;
 
-namespace Test { namespace Set {
+/// %Tests for set channeling constraints
+namespace Test::Set::Channel {
 
-    /// %Tests for set channeling constraints
-    namespace Channel {
+    /**
+     * \defgroup TaskTestSetChannel %Set channeling constraints
+     * \ingroup TaskTestSet
+     */
+    //@{
 
-        /**
-         * \defgroup TaskTestSetChannel %Set channeling constraints
-         * \ingroup TaskTestSet
-         */
-        //@{
+    static IntSet d1(0, 2);
+    static IntSet d_12(-1, 2);
 
-        static IntSet d1(0, 2);
-        static IntSet d_12(-1, 2);
+    static IntSet d2(-1, 3);
+    static IntSet d3(0, 3);
 
-        static IntSet d2(-1, 3);
-        static IntSet d3(0, 3);
+    static IntSet d4(0, 4);
 
-        static IntSet d4(0, 4);
+    static IntSet ds_33(-3, 3);
 
-        static IntSet ds_33(-3, 3);
+    /// %Test for sorted channeling constraint
+    class ChannelSorted : public SetTest {
+    public:
+        /// Create and register test
+        ChannelSorted(const char* t) : SetTest(TestTags::sweep(), t, 1, ds_33, false, 3) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            if (x.ints()[0] >= x.ints()[1] || x.ints()[1] >= x.ints()[2])
+                return false;
+            CountableSetValues xr(x.lub, x[0]);
+            if (!xr())
+                return false;
+            if (xr.val() != x.ints()[0])
+                return false;
+            ++xr;
+            if (!xr())
+                return false;
+            if (xr.val() != x.ints()[1])
+                return false;
+            ++xr;
+            if (!xr())
+                return false;
+            if (xr.val() != x.ints()[2])
+                return false;
+            ++xr;
+            return !xr();
+        }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray& y) override {
+            Gecode::channel_sorted(home, y, x[0]);
+        }
+    };
+    ChannelSorted _channel_sorted("Channel::Sorted");
 
-        /// %Test for sorted channeling constraint
-        class ChannelSorted : public SetTest {
-        public:
-            /// Create and register test
-            ChannelSorted(const char* t) : SetTest(TestTags::sweep(), t, 1, ds_33, false, 3) {}
-            /// %Test whether \a x is solution
-            bool
-            solution(const SetAssignment& x) const override {
-                if (x.ints()[0] >= x.ints()[1] || x.ints()[1] >= x.ints()[2])
+    /// Space with one set variable for tests without integer variables
+    class EmptyFixture : public Gecode::Space {
+    public:
+        /// Set variable to channel to
+        SetVar y;
+        /// Create fixture, where \a glb is the greatest lower bound of \a y
+        EmptyFixture(const IntSet& glb) : y(*this, glb, IntSet(0, 3)) {}
+        /// Constructor for cloning \a fixture
+        EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
+            y.update(*this, fixture.y);
+        }
+        /// Copy during cloning
+        Gecode::Space*
+        copy() override {
+            return new EmptyFixture(*this);
+        }
+        /// Test whether the space is solved with \a y empty
+        bool
+        is_solved_empty() {
+            return (status() == SS_SOLVED) && (y.lub_size() == 0);
+        }
+    };
+
+    /// %Test sorted channeling without integer variables
+    class ChannelSortedEmpty : public Base {
+    public:
+        /// Create and register test
+        ChannelSortedEmpty() : Base("Set::Channel::Sorted::Empty") {}
+        /// Perform test
+        bool
+        run() override {
+            IntVarArgs x;
+            EmptyFixture empty(IntSet::empty);
+            channel_sorted(empty, x, empty.y);
+            EmptyFixture nonempty(IntSet(1, 1));
+            channel_sorted(nonempty, x, nonempty.y);
+            return empty.is_solved_empty() && (nonempty.status() == SS_FAILED);
+        }
+    };
+    ChannelSortedEmpty _channel_sorted_empty;
+
+    /// %Test for integer channel constraint
+    class ChannelInt : public SetTest {
+    private:
+        int ssize, isize;
+
+    public:
+        /// Create and register test
+        ChannelInt(const char* t, const IntSet& d, int _ssize, int _isize)
+            : SetTest(TestTags::sweep(), t, _ssize, d, false, _isize), ssize(_ssize), isize(_isize) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            for (int i = 0; i < isize; i++) {
+                if (x.ints()[i] < 0 || x.ints()[i] >= ssize)
                     return false;
-                CountableSetValues xr(x.lub, x[0]);
-                if (!xr())
+                Iter::Ranges::Singleton single(i, i);
+                CountableSetRanges csr(x.lub, x[x.ints()[i]]);
+                if (!Iter::Ranges::subset(single, csr))
                     return false;
-                if (xr.val() != x.ints()[0])
-                    return false;
-                ++xr;
-                if (!xr())
-                    return false;
-                if (xr.val() != x.ints()[1])
-                    return false;
-                ++xr;
-                if (!xr())
-                    return false;
-                if (xr.val() != x.ints()[2])
-                    return false;
-                ++xr;
-                return !xr();
             }
-            /// Post constraint on \a x
-            void
-            post(Space& home, SetVarArray& x, IntVarArray& y) override {
-                Gecode::channel_sorted(home, y, x[0]);
-            }
-        };
-        ChannelSorted _channel_sorted("Channel::Sorted");
-
-        /// Space with one set variable for tests without integer variables
-        class EmptyFixture : public Gecode::Space {
-        public:
-            /// Set variable to channel to
-            SetVar y;
-            /// Create fixture, where \a glb is the greatest lower bound of \a y
-            EmptyFixture(const IntSet& glb) : y(*this, glb, IntSet(0, 3)) {}
-            /// Constructor for cloning \a fixture
-            EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
-                y.update(*this, fixture.y);
-            }
-            /// Copy during cloning
-            Gecode::Space*
-            copy() override {
-                return new EmptyFixture(*this);
-            }
-            /// Test whether the space is solved with \a y empty
-            bool
-            is_solved_empty() {
-                return (status() == SS_SOLVED) && (y.lub_size() == 0);
-            }
-        };
-
-        /// %Test sorted channeling without integer variables
-        class ChannelSortedEmpty : public Base {
-        public:
-            /// Create and register test
-            ChannelSortedEmpty() : Base("Set::Channel::Sorted::Empty") {}
-            /// Perform test
-            bool
-            run() override {
-                IntVarArgs x;
-                EmptyFixture empty(IntSet::empty);
-                channel_sorted(empty, x, empty.y);
-                EmptyFixture nonempty(IntSet(1, 1));
-                channel_sorted(nonempty, x, nonempty.y);
-                return empty.is_solved_empty() && (nonempty.status() == SS_FAILED);
-            }
-        };
-        ChannelSortedEmpty _channel_sorted_empty;
-
-        /// %Test for integer channel constraint
-        class ChannelInt : public SetTest {
-        private:
-            int ssize, isize;
-
-        public:
-            /// Create and register test
-            ChannelInt(const char* t, const IntSet& d, int _ssize, int _isize)
-                : SetTest(TestTags::sweep(), t, _ssize, d, false, _isize), ssize(_ssize), isize(_isize) {}
-            /// %Test whether \a x is solution
-            bool
-            solution(const SetAssignment& x) const override {
-                for (int i = 0; i < isize; i++) {
-                    if (x.ints()[i] < 0 || x.ints()[i] >= ssize)
-                        return false;
-                    Iter::Ranges::Singleton single(i, i);
-                    CountableSetRanges csr(x.lub, x[x.ints()[i]]);
-                    if (!Iter::Ranges::subset(single, csr))
-                        return false;
-                }
-                for (int i = 0; i < ssize; i++) {
-                    for (CountableSetValues csv(x.lub, x[i]); csv(); ++csv) {
-                        if (csv.val() < 0 || csv.val() >= isize)
-                            return false;
-                        if (x.ints()[csv.val()] != i)
-                            return false;
-                    }
-                }
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Space& home, SetVarArray& x, IntVarArray& y) override {
-                Gecode::channel(home, y, x);
-            }
-        };
-
-        ChannelInt _channelint1("Channel::Int::1", d2, 2, 3);
-        ChannelInt _channelint2("Channel::Int::2", d3, 3, 3);
-
-        /// %Test for Boolean channel constraint
-        class ChannelBool : public SetTest {
-        private:
-            int isize;
-
-        public:
-            /// Create and register test
-            ChannelBool(TestTags tags, const char* t, const IntSet& d, int _isize)
-                : SetTest(tags, t, 1, d, false, _isize), isize(_isize) {}
-            /// %Test whether \a x is solution
-            bool
-            solution(const SetAssignment& x) const override {
-                for (int i = 0; i < isize; i++) {
-                    if (x.ints()[i] < 0 || x.ints()[i] > 1)
-                        return false;
-                }
-                int cur = 0;
-                for (CountableSetValues csv(x.lub, x[0]); csv(); ++csv) {
+            for (int i = 0; i < ssize; i++) {
+                for (CountableSetValues csv(x.lub, x[i]); csv(); ++csv) {
                     if (csv.val() < 0 || csv.val() >= isize)
                         return false;
-                    if (x.ints()[csv.val()] != 1)
+                    if (x.ints()[csv.val()] != i)
                         return false;
-                    for (; cur < csv.val(); cur++)
-                        if (x.ints()[cur] != 0)
-                            return false;
-                    cur = csv.val() + 1;
                 }
-                for (; cur < isize; cur++)
+            }
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray& y) override {
+            Gecode::channel(home, y, x);
+        }
+    };
+
+    ChannelInt _channelint1("Channel::Int::1", d2, 2, 3);
+    ChannelInt _channelint2("Channel::Int::2", d3, 3, 3);
+
+    /// %Test for Boolean channel constraint
+    class ChannelBool : public SetTest {
+    private:
+        int isize;
+
+    public:
+        /// Create and register test
+        ChannelBool(TestTags tags, const char* t, const IntSet& d, int _isize)
+            : SetTest(tags, t, 1, d, false, _isize), isize(_isize) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            for (int i = 0; i < isize; i++) {
+                if (x.ints()[i] < 0 || x.ints()[i] > 1)
+                    return false;
+            }
+            int cur = 0;
+            for (CountableSetValues csv(x.lub, x[0]); csv(); ++csv) {
+                if (csv.val() < 0 || csv.val() >= isize)
+                    return false;
+                if (x.ints()[csv.val()] != 1)
+                    return false;
+                for (; cur < csv.val(); cur++)
                     if (x.ints()[cur] != 0)
                         return false;
-                return true;
+                cur = csv.val() + 1;
             }
-            /// Post constraint on \a x
-            void
-            post(Space& home, SetVarArray& x, IntVarArray& y) override {
-                BoolVarArgs b(y.size());
-                for (int i = y.size(); i--;)
-                    b[i] = channel(home, y[i]);
-                Gecode::channel(home, b, x[0]);
-            }
-        };
+            for (; cur < isize; cur++)
+                if (x.ints()[cur] != 0)
+                    return false;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray& y) override {
+            BoolVarArgs b(y.size());
+            for (int i = y.size(); i--;)
+                b[i] = channel(home, y[i]);
+            Gecode::channel(home, b, x[0]);
+        }
+    };
 
-        ChannelBool _channelbool1(TestTags::standard(), "Channel::Bool::1", d2, 3);
-        ChannelBool _channelbool2(TestTags::sweep(), "Channel::Bool::2", d3, 3);
-        ChannelBool _channelbool3(TestTags::sweep(), "Channel::Bool::3", d4, 5);
+    ChannelBool _channelbool1(TestTags::standard(), "Channel::Bool::1", d2, 3);
+    ChannelBool _channelbool2(TestTags::sweep(), "Channel::Bool::2", d3, 3);
+    ChannelBool _channelbool3(TestTags::sweep(), "Channel::Bool::3", d4, 5);
 
-        /// %Test Boolean channeling without Boolean variables
-        class ChannelBoolEmpty : public Base {
-        public:
-            /// Create and register test
-            ChannelBoolEmpty() : Base("Set::Channel::Bool::Empty") {}
-            /// Perform test
-            bool
-            run() override {
-                BoolVarArgs x;
-                EmptyFixture empty(IntSet::empty);
-                channel(empty, x, empty.y);
-                EmptyFixture nonempty(IntSet(1, 1));
-                channel(nonempty, x, nonempty.y);
-                return empty.is_solved_empty() && (nonempty.status() == SS_FAILED);
-            }
-        };
-        ChannelBoolEmpty _channel_bool_empty;
+    /// %Test Boolean channeling without Boolean variables
+    class ChannelBoolEmpty : public Base {
+    public:
+        /// Create and register test
+        ChannelBoolEmpty() : Base("Set::Channel::Bool::Empty") {}
+        /// Perform test
+        bool
+        run() override {
+            BoolVarArgs x;
+            EmptyFixture empty(IntSet::empty);
+            channel(empty, x, empty.y);
+            EmptyFixture nonempty(IntSet(1, 1));
+            channel(nonempty, x, nonempty.y);
+            return empty.is_solved_empty() && (nonempty.status() == SS_FAILED);
+        }
+    };
+    ChannelBoolEmpty _channel_bool_empty;
 
-        /// %Test for set channel constraint
-        class ChannelSet : public SetTest {
-        private:
-            int _x0size, _x1size;
+    /// %Test for set channel constraint
+    class ChannelSet : public SetTest {
+    private:
+        int _x0size, _x1size;
 
-        public:
-            /// Create and register test
-            ChannelSet(const char* t, const IntSet& d, int x0size, int x1size)
-                : SetTest(TestTags::sweep(), t, x0size + x1size, d, false), _x0size(x0size), _x1size(x1size) {}
-            /// %Test whether \a x is solution
-            bool
-            solution(const SetAssignment& x) const override {
-                for (int i = 0; i < _x0size; i++) {
-                    CountableSetRanges x0ir(x.lub, x[i]);
-                    IntSet x0is(x0ir);
-                    if (x0is.min() < 0 || x0is.max() >= _x1size)
+    public:
+        /// Create and register test
+        ChannelSet(const char* t, const IntSet& d, int x0size, int x1size)
+            : SetTest(TestTags::sweep(), t, x0size + x1size, d, false), _x0size(x0size), _x1size(x1size) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            for (int i = 0; i < _x0size; i++) {
+                CountableSetRanges x0ir(x.lub, x[i]);
+                IntSet x0is(x0ir);
+                if (x0is.min() < 0 || x0is.max() >= _x1size)
+                    return false;
+                for (int j = 0; j < _x1size; j++) {
+                    CountableSetRanges x1ir(x.lub, x[_x0size + j]);
+                    IntSet x1is(x1ir);
+                    if (x1is.min() < 0 || x1is.max() >= _x0size)
                         return false;
-                    for (int j = 0; j < _x1size; j++) {
-                        CountableSetRanges x1ir(x.lub, x[_x0size + j]);
-                        IntSet x1is(x1ir);
-                        if (x1is.min() < 0 || x1is.max() >= _x0size)
-                            return false;
-                        bool j_in_i = x0is.in(j);
-                        bool i_in_j = x1is.in(i);
-                        if (j_in_i != i_in_j)
-                            return false;
-                    }
+                    bool j_in_i = x0is.in(j);
+                    bool i_in_j = x1is.in(i);
+                    if (j_in_i != i_in_j)
+                        return false;
                 }
-                return true;
             }
-            /// Post constraint on \a x
-            void
-            post(Space& home, SetVarArray& x, IntVarArray&) override {
-                SetVarArgs x0(x.slice(0, 1, _x0size));
-                SetVarArgs x1(x.slice(_x0size));
-                Gecode::channel(home, x0, x1);
-            }
-        };
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray&) override {
+            SetVarArgs x0(x.slice(0, 1, _x0size));
+            SetVarArgs x1(x.slice(_x0size));
+            Gecode::channel(home, x0, x1);
+        }
+    };
 
-        ChannelSet _channel_set12("Channel::Set::1::2", d1, 2, 2);
-        ChannelSet _channel_set13("Channel::Set::1::3", d1, 2, 3);
-        ChannelSet _channel_set22("Channel::Set::2::2", d3, 2, 2);
-        ChannelSet _channel_set23("Channel::Set::2::3", d3, 2, 3);
-        ChannelSet _channel_set32("Channel::Set::3::2", d_12, 2, 2);
-        ChannelSet _channel_set33("Channel::Set::3::3", d_12, 2, 3);
+    ChannelSet _channel_set12("Channel::Set::1::2", d1, 2, 2);
+    ChannelSet _channel_set13("Channel::Set::1::3", d1, 2, 3);
+    ChannelSet _channel_set22("Channel::Set::2::2", d3, 2, 2);
+    ChannelSet _channel_set23("Channel::Set::2::3", d3, 2, 3);
+    ChannelSet _channel_set32("Channel::Set::3::2", d_12, 2, 2);
+    ChannelSet _channel_set33("Channel::Set::3::3", d_12, 2, 3);
 
-    } // namespace Channel
-}} // namespace Test::Set
-
+} // namespace Test::Set::Channel
 // STATISTICS: test-set

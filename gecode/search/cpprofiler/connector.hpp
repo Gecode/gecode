@@ -62,7 +62,7 @@ using ssize_t = SSIZE_T;
 
 #endif
 
-namespace Gecode { namespace CPProfiler {
+namespace Gecode::CPProfiler {
 
     class Node {
         NodeUID node_;
@@ -457,6 +457,6 @@ namespace Gecode { namespace CPProfiler {
         return Node(node, parent, alt, kids, status);
     }
 
-}} // namespace Gecode::CPProfiler
+} // namespace Gecode::CPProfiler
 
 // STATISTICS: search-trace

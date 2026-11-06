@@ -32,7 +32,7 @@
 
 #include <cmath>
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief Range iterator for pointwise product with a positive integer
@@ -216,6 +216,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         operator++();
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

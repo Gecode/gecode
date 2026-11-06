@@ -36,7 +36,7 @@
 #include <limits>
 #include <type_traits>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Unsigned integer for pointer encodings
@@ -180,6 +180,6 @@ namespace Gecode { namespace Support {
         return IT_INT;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

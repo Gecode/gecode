@@ -34,7 +34,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     PropCost
     EqIte::cost(const Space&, const ModEventDelta&) const {
@@ -96,6 +96,6 @@ namespace Gecode { namespace Int { namespace Distinct {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop

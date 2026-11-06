@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Arithmetic {
+namespace Gecode::Float::Arithmetic {
 
     /// Test whether \a x is positive
     template <class View>
@@ -259,6 +259,6 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Float::Arithmetic
+} // namespace Gecode::Float::Arithmetic
 
 // STATISTICS: float-prop

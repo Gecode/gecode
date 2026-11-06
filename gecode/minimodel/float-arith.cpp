@@ -36,7 +36,7 @@
 
 #ifdef GECODE_HAS_FLOAT_VARS
 
-namespace Gecode { namespace MiniModel {
+namespace Gecode::MiniModel {
 
     /// Non-linear float arithmetic expressions
     class GECODE_MINIMODEL_EXPORT ArithNonLinFloatExpr : public NonLinFloatExpr {
@@ -293,7 +293,7 @@ namespace Gecode { namespace MiniModel {
                dynamic_cast<ArithNonLinFloatExpr*>(e.nlfe())->t == t;
     }
 
-}} // namespace Gecode::MiniModel
+} // namespace Gecode::MiniModel
 
 namespace Gecode {
 

@@ -32,7 +32,7 @@
 #ifndef GECODE_SEARCH_WORKER_CONTROL_HH
 #define GECODE_SEARCH_WORKER_CONTROL_HH
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Internal access to worker-control state
     class GECODE_SEARCH_EXPORT WorkerControlAccess {
@@ -71,7 +71,7 @@ namespace Gecode { namespace Search {
         static void signal_all(WorkerControl& control);
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #endif
 

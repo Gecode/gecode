@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Range lists
@@ -1060,6 +1060,6 @@ namespace Gecode { namespace Int {
         return IntVarImpBase::med(me);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

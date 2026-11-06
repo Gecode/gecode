@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
     /**
      * \brief Value iterator for pointwise offset (by some constant)
@@ -100,6 +100,6 @@ namespace Gecode { namespace Iter { namespace Values {
         return i.val() + c;
     }
 
-}}} // namespace Gecode::Iter::Values
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

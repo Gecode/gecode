@@ -41,7 +41,7 @@
 #include <sstream>
 #include <unordered_set>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     /*
      * Errors and parameters
@@ -611,6 +611,6 @@ namespace Gecode { namespace Instance {
         }
     }
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 // STATISTICS: instance-any

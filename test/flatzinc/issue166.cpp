@@ -31,7 +31,7 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Check that recomputation does not lose solutions
     bool
     check(const std::string& output, int expected, const std::string& representative) {
@@ -83,6 +83,6 @@ solve :: int_search([D,A,E,B],input_order,indomain_random,complete) satisfy;\n",
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

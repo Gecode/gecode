@@ -36,7 +36,7 @@
 #include <gecode/int.hh>
 #include <limits>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     class GrowableIntSetRanges;
 
@@ -99,7 +99,7 @@ namespace Gecode { namespace Int {
         unsigned int width() const;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/growable-int-set.hpp>
 

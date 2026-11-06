@@ -35,7 +35,7 @@
 #include <limits>
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     /**
      * \brief Minc and Brégman factors
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         }
     }
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 #endif
 

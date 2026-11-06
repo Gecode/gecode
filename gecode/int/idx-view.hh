@@ -37,7 +37,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \brief Class for pair of index and view
@@ -114,7 +114,7 @@ namespace Gecode { namespace Int {
     template <class Char, class Traits, class View>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const IdxViewArray<View>& x);
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/idx-view.hpp>
 

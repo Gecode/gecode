@@ -35,7 +35,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Compute \f$\lceil x/y\rceil\f$ where \a x is non-negative and \a y is positive
     template <class IntType>
@@ -62,7 +62,7 @@ namespace Gecode { namespace Int {
     template <class IntType>
     IntType floor_div_xx(IntType x, IntType y);
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/div.hpp>
 

@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     forceinline
     EqIte::EqIte(Home home, IntView x0, IntView x1, int d0, int d1)
@@ -51,6 +51,6 @@ namespace Gecode { namespace Int { namespace Distinct {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop

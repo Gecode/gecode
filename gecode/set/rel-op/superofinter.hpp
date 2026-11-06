@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace RelOp {
+namespace Gecode::Set::RelOp {
 
     template <class View0, class View1, class View2>
     forceinline
@@ -135,6 +135,6 @@ namespace Gecode { namespace Set { namespace RelOp {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Set::RelOp
+} // namespace Gecode::Set::RelOp
 
 // STATISTICS: set-prop

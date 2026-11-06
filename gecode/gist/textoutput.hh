@@ -36,7 +36,7 @@
 #include <QMainWindow>
 #include <QTextEdit>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
     /// \brief Window with associated ostream, used for inspecting %Gist nodes
     class TextOutputI : public QMainWindow {
         Q_OBJECT
@@ -63,7 +63,7 @@ namespace Gecode { namespace Gist {
         void change_stay_on_top();
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

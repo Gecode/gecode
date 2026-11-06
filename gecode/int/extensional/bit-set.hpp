@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     forceinline
     CompressedSupport::CompressedSupport()
@@ -449,6 +449,6 @@ namespace Gecode { namespace Int { namespace Extensional {
                 static_cast<unsigned long long int>(BitSetData::bpb));
     }
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 // STATISTICS: int-prop

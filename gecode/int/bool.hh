@@ -42,7 +42,7 @@
  * \brief Boolean propagators
  */
 
-namespace Gecode { namespace Int { namespace Bool {
+namespace Gecode::Int::Bool {
 
     /*
      * Base Classes
@@ -649,7 +649,7 @@ namespace Gecode { namespace Int { namespace Bool {
         static ExecStatus post(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
     };
 
-}}} // namespace Gecode::Int::Bool
+} // namespace Gecode::Int::Bool
 
 #include <gecode/int/bool/base.hpp>
 #include <gecode/int/bool/eq.hpp>

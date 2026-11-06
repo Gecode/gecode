@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /*
      * Base class
@@ -162,6 +162,6 @@ namespace Gecode { namespace Search {
         l.store(l0, std::memory_order_release);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

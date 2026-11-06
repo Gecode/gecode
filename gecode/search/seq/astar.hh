@@ -38,7 +38,7 @@
 #include <gecode/search/seq/choice-expansion.hh>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// Sequential A* search
     class AStar : public Worker {
@@ -85,7 +85,7 @@ namespace Gecode { namespace Search { namespace Seq {
         NoGoods& nogoods();
     };
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #endif
 

@@ -41,7 +41,7 @@
  * \brief %Sorted propagators
  */
 
-namespace Gecode { namespace Int { namespace Sorted {
+namespace Gecode::Int::Sorted {
 
     /**
      * \brief Bounds consistent sortedness propagator
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         static ExecStatus post(Home home, ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
     };
 
-}}} // namespace Gecode::Int::Sorted
+} // namespace Gecode::Int::Sorted
 
 #include <gecode/int/sorted/sortsup.hpp>
 #include <gecode/int/sorted/order.hpp>

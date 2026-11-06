@@ -90,7 +90,7 @@
  *
  */
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /**
      * \brief Output support class for %FlatZinc interpreter
@@ -869,7 +869,7 @@ namespace Gecode { namespace FlatZinc {
     FlatZincSpace* parse(std::istream& is, Printer& p, std::ostream& err = std::cerr, FlatZincSpace* fzs = nullptr,
                          Rnd& rnd = defrnd);
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif
 

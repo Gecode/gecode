@@ -36,7 +36,7 @@
 #include <string>
 #include <gecode/flatzinc/ast.hh>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /// Abstract representation of a constraint
     class ConExpr {
@@ -76,7 +76,7 @@ namespace Gecode { namespace FlatZinc {
         delete ann;
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif
 

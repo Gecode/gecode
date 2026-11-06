@@ -34,7 +34,7 @@
 
 namespace Gecode {
 
-    namespace Int { namespace NoOverlap {
+    namespace Int::NoOverlap {
 
         bool
         optional(const BoolVarArgs& m) {
@@ -44,7 +44,7 @@ namespace Gecode {
             return false;
         }
 
-    }} // namespace Int::NoOverlap
+    } // namespace Int::NoOverlap
 
     void
     no_overlap(Home home, const IntVarArgs& x, const IntArgs& w, const IntVarArgs& y, const IntArgs& h, IntPropLevel) {

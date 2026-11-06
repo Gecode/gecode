@@ -36,7 +36,7 @@
 
 #include <gecode/support.hh>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /*
      * Threads
@@ -164,6 +164,6 @@ namespace Gecode { namespace Support {
         global_mutex_runnable().release(m);
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

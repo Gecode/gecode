@@ -39,7 +39,7 @@
 #include <gecode/int/linear.hh>
 #include <gecode/int/distinct.hh>
 
-namespace Gecode { namespace Int { namespace GCC {
+namespace Gecode::Int::GCC {
 
     template <class Card>
     /// %Sort by increasing cardinality
@@ -158,6 +158,6 @@ namespace Gecode { namespace Int { namespace GCC {
         return true;
     }
 
-}}} // namespace Gecode::Int::GCC
+} // namespace Gecode::Int::GCC
 
 // STATISTICS: int-prop

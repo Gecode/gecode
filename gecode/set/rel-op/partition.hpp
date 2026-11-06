@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace RelOp {
+namespace Gecode::Set::RelOp {
 
     /*
      * "Nary partition" propagator
@@ -161,6 +161,6 @@ namespace Gecode { namespace Set { namespace RelOp {
         return shared ? ES_NOFIX : ES_FIX;
     }
 
-}}} // namespace Gecode::Set::RelOp
+} // namespace Gecode::Set::RelOp
 
 // STATISTICS: set-prop

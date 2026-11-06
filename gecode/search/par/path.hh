@@ -44,7 +44,7 @@
 #include <gecode/search/worker.hh>
 #include <gecode/search/nogoods.hh>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /**
      * \brief Depth-first path (stack of edges) supporting recomputation
@@ -161,7 +161,7 @@ namespace Gecode { namespace Search { namespace Par {
         void post(Space& home) const override;
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/path.hpp>
 

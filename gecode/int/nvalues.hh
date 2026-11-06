@@ -41,7 +41,7 @@
  * \brief Number of values propagators
  */
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode::Int::NValues {
 
     /// Event type for range-based overlap analysis
     enum class RangeEventType {
@@ -84,14 +84,14 @@ namespace Gecode { namespace Int { namespace NValues {
         void set(int x, int y);
     };
 
-}}} // namespace Gecode::Int::NValues
+} // namespace Gecode::Int::NValues
 
 #include <gecode/int/nvalues/range-event.hpp>
 #include <gecode/int/nvalues/sym-bit-matrix.hpp>
 
 #include <gecode/int/view-val-graph.hh>
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode::Int::NValues {
 
     /// View-value graph for propagation of upper bound
     class Graph : public ViewValGraph::Graph<IntView> {
@@ -118,11 +118,11 @@ namespace Gecode { namespace Int { namespace NValues {
         ExecStatus prune(Space& home);
     };
 
-}}} // namespace Gecode::Int::NValues
+} // namespace Gecode::Int::NValues
 
 #include <gecode/int/nvalues/graph.hpp>
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode::Int::NValues {
 
     /**
      * \brief Number of values propagator for integer views base class
@@ -279,14 +279,14 @@ namespace Gecode { namespace Int { namespace NValues {
         static ExecStatus post(Home home, ViewArray<IntView>& x, VY y);
     };
 
-}}} // namespace Gecode::Int::NValues
+} // namespace Gecode::Int::NValues
 
 #include <gecode/int/nvalues/int-base.hpp>
 #include <gecode/int/nvalues/int-eq.hpp>
 #include <gecode/int/nvalues/int-lq.hpp>
 #include <gecode/int/nvalues/int-gq.hpp>
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode::Int::NValues {
 
     /**
      * \brief Number of values propagator for Boolean views base class
@@ -422,7 +422,7 @@ namespace Gecode { namespace Int { namespace NValues {
         static ExecStatus post(Home home, ViewArray<BoolView>& x, VY y);
     };
 
-}}} // namespace Gecode::Int::NValues
+} // namespace Gecode::Int::NValues
 
 #include <gecode/int/nvalues/bool-base.hpp>
 #include <gecode/int/nvalues/bool-eq.hpp>

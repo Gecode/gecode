@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
     forceinline
     BiLink::BiLink() {
@@ -83,6 +83,6 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         return _prev == this;
     }
 
-}}} // namespace Gecode::Int::ViewValGraph
+} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop

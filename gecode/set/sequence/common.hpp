@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Sequence {
+namespace Gecode::Set::Sequence {
 
     inline ExecStatus
     propagate_seq(Space& home, bool& modified, bool& assigned, ViewArray<SetView>& x) {
@@ -84,6 +84,6 @@ namespace Gecode { namespace Set { namespace Sequence {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Set::Sequence
+} // namespace Gecode::Set::Sequence
 
 // STATISTICS: set-prop

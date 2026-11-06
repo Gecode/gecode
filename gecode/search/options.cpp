@@ -35,7 +35,7 @@
 
 #include <cmath>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     const Options Options::def;
 
@@ -62,6 +62,6 @@ namespace Gecode { namespace Search {
 #endif
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

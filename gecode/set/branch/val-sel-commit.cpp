@@ -32,7 +32,7 @@
 
 #include <gecode/set/branch.hh>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     ValSelCommitBase<SetView, int>*
     value_selection_commit(Space& home, const SetValBranch& svb) {
@@ -94,6 +94,6 @@ namespace Gecode { namespace Set { namespace Branch {
         }
     }
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

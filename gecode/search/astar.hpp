@@ -31,7 +31,7 @@
  */
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Create A* engine
     GECODE_SEARCH_EXPORT Engine* make_astar_engine(Space* s, const Options& o);
@@ -57,7 +57,7 @@ namespace Gecode { namespace Search {
         return build<T, AStar>(s, opt);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 namespace Gecode {
 

@@ -30,11 +30,11 @@
  *
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /// Return hardware generated random number
     GECODE_SUPPORT_EXPORT unsigned int hwrnd();
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

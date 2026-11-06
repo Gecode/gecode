@@ -53,7 +53,7 @@
 #define GECODE_BLACKBOX_CALL
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     class BlackBoxProcessSession;
 
@@ -126,7 +126,7 @@ namespace Gecode { namespace FlatZinc {
     GECODE_FLATZINC_EXPORT
     void decode_blackbox_response(const std::string& response, BlackBoxCall& call);
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif // GECODE_FLATZINC_BLACKBOX_BACKEND_HH
 

@@ -40,7 +40,7 @@
  * \namespace Gecode::Set::LDSB
  * \brief Symmetry breaking for set variables
  */
-namespace Gecode { namespace Set { namespace LDSB {
+namespace Gecode::Set::LDSB {
 
     using namespace Int::LDSB;
 
@@ -114,15 +114,15 @@ namespace Gecode { namespace Set { namespace LDSB {
         void update_part1(Space& home, int choice_pos);
     };
 
-}}} // namespace Gecode::Set::LDSB
+} // namespace Gecode::Set::LDSB
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     template <>
     ArgArray<Literal> VariableSequenceSymmetryImp<Set::SetView>::symmetric(Literal l,
                                                                            const ViewArray<Set::SetView>& x) const;
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 #include <gecode/set/ldsb/brancher.hpp>
 

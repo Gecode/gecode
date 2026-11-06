@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
     template <class T>
     forceinline
@@ -68,6 +68,6 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         cpf = reinterpret_cast<Support::uptrint_t>(p1) ^ reinterpret_cast<Support::uptrint_t>(p2);
     }
 
-}}} // namespace Gecode::Int::ViewValGraph
+} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop

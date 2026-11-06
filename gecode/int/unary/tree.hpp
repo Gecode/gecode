@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     /*
      * Omega tree
@@ -223,6 +223,6 @@ namespace Gecode { namespace Int { namespace Unary {
         return root().lect;
     }
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-prop

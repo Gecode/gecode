@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     /// Convert a \a DynamicStack<T,A> into an \a ArgArray<T>
     template <class T, class A>
@@ -309,6 +309,6 @@ namespace Gecode { namespace Int { namespace LDSB {
         return new (home) ValueSequenceSymmetryImp<View>(home, *this);
     }
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: int-branch

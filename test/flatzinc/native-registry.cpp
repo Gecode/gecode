@@ -35,7 +35,7 @@
 
 #include <memory>
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     // Annotations preserve both consistency and algorithm flags.
     class AlgorithmAnnotations : public Base {
     public:
@@ -201,6 +201,6 @@ namespace Test { namespace FlatZinc { namespace {
         }
     };
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

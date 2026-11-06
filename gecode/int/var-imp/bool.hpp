@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Creation of new variable implementations
@@ -410,6 +410,6 @@ namespace Gecode { namespace Int {
         return BoolVarImpBase::med(me);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

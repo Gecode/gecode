@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     forceinline
     ValSelMin::ValSelMin(Space& home, const ValBranch<Var>& vb)
@@ -115,6 +115,6 @@ namespace Gecode { namespace Set { namespace Branch {
         r.~Rnd();
     }
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

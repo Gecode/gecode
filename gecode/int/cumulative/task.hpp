@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /*
      * Mandatory fixed task
@@ -272,6 +272,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return os << s.str();
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-var

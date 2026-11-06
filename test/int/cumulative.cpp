@@ -36,713 +36,705 @@
 
 #include <memory>
 
-namespace Test { namespace Int {
+/// Tests for cumulative scheduling constraints
+namespace Test::Int::Cumulative {
 
-    /// Tests for cumulative scheduling constraints
-    namespace Cumulative {
+    /**
+     * \defgroup TaskTestIntCumulative Cumulative scheduling constraints
+     * \ingroup TaskTestInt
+     */
+    //@{
+    /// Test for cumulative constraint with mandatory tasks
+    class ManFixPCumulative : public Test {
+    protected:
+        /// Capacity of resource
+        int c;
+        /// The processing times
+        Gecode::IntArgs p;
+        /// The resource usage
+        Gecode::IntArgs u;
+        /// Get a reasonable maximal start time
+        static int
+        st(int c, const Gecode::IntArgs& p, const Gecode::IntArgs& u) {
+            double e = 0;
+            for (int i = p.size(); i--;)
+                e += static_cast<double>(p[i]) * u[i];
+            return e / std::max(1, std::abs(c));
+        }
+        /// Offset
+        int o;
 
-        /**
-         * \defgroup TaskTestIntCumulative Cumulative scheduling constraints
-         * \ingroup TaskTestInt
-         */
-        //@{
-        /// Test for cumulative constraint with mandatory tasks
-        class ManFixPCumulative : public Test {
-        protected:
-            /// Capacity of resource
-            int c;
-            /// The processing times
-            Gecode::IntArgs p;
-            /// The resource usage
-            Gecode::IntArgs u;
-            /// Get a reasonable maximal start time
-            static int
-            st(int c, const Gecode::IntArgs& p, const Gecode::IntArgs& u) {
-                double e = 0;
-                for (int i = p.size(); i--;)
-                    e += static_cast<double>(p[i]) * u[i];
-                return e / std::max(1, std::abs(c));
-            }
-            /// Offset
-            int o;
+    public:
+        /// Create and register test
+        ManFixPCumulative(int c0, const Gecode::IntArgs& p0, const Gecode::IntArgs& u0, int o0,
+                          Gecode::IntPropLevel ipl0)
+            : Test(((u0.size() == 1) && (u0[0] == 0)) || ((o0 == 0) && (c0 == 4)) ? TestTags::check()
+                                                                                  : TestTags(TestTags::sweep()),
+                   "Cumulative::Man::Fix::" + str(o0) + "::" + str(c0) + "::" + str(p0) + "::" + str(u0) +
+                       "::" + str(ipl0),
+                   (c0 >= 0) ? p0.size() : p0.size() + 1, 0, st(c0, p0, u0), false, ipl0),
+              c(c0), p(p0), u(u0), o(o0) {
+            test_search = false;
+            test_fixpoint = false;
+            consistency_test_level = CTL_NONE;
+        }
+        /// Create and register initial assignment
+        Assignment*
+        assignment() const override {
+            return new RandomAssignment(arity, dom, 500, _rand);
+        }
+        /// Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int cmax = (c >= 0) ? c : x[x.size() - 1];
+            int n = (c >= 0) ? x.size() : x.size() - 1;
 
-        public:
-            /// Create and register test
-            ManFixPCumulative(int c0, const Gecode::IntArgs& p0, const Gecode::IntArgs& u0, int o0,
-                              Gecode::IntPropLevel ipl0)
-                : Test(((u0.size() == 1) && (u0[0] == 0)) || ((o0 == 0) && (c0 == 4)) ? TestTags::check()
-                                                                                      : TestTags(TestTags::sweep()),
-                       "Cumulative::Man::Fix::" + str(o0) + "::" + str(c0) + "::" + str(p0) + "::" + str(u0) +
-                           "::" + str(ipl0),
-                       (c0 >= 0) ? p0.size() : p0.size() + 1, 0, st(c0, p0, u0), false, ipl0),
-                  c(c0), p(p0), u(u0), o(o0) {
-                test_search = false;
-                test_fixpoint = false;
-                consistency_test_level = CTL_NONE;
-            }
-            /// Create and register initial assignment
-            Assignment*
-            assignment() const override {
-                return new RandomAssignment(arity, dom, 500, _rand);
-            }
-            /// Test whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                int cmax = (c >= 0) ? c : x[x.size() - 1];
-                int n = (c >= 0) ? x.size() : x.size() - 1;
+            if (c < 0 && x[n] > -c)
+                return false;
 
-                if (c < 0 && x[n] > -c)
+            // Compute maximal time
+            int t = 0;
+            for (int i = 0; i < n; i++)
+                t = std::max(t, x[i] + std::max(1, p[i]));
+            // Compute resource usage (including at start times)
+            int* used = new int[t];
+            for (int i = 0; i < t; i++)
+                used[i] = 0;
+            for (int i = 0; i < n; i++)
+                for (int t = 0; t < p[i]; t++)
+                    used[x[i] + t] += u[i];
+            // Check resource usage
+            for (int i = 0; i < t; i++)
+                if (used[i] > cmax) {
+                    delete[] used;
                     return false;
+                }
+            // Compute resource usage (only internal)
+            for (int i = 0; i < t; i++)
+                used[i] = 0;
+            for (int i = 0; i < n; i++) {
+                for (int t = 1; t < p[i]; t++) {
+                    used[x[i] + t] += u[i];
+                }
+            }
+            // Check resource usage at start times
+            for (int i = 0; i < n; i++)
+                if (used[x[i]] + u[i] > cmax) {
+                    delete[] used;
+                    return false;
+                }
+            delete[] used;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            int n = (c >= 0) ? x.size() : x.size() - 1;
+            Gecode::IntVarArgs xx;
+            if (o == 0) {
+                xx = x.slice(0, 1, n);
+            } else {
+                xx = Gecode::IntVarArgs(n);
+                for (int i = n; i--;)
+                    xx[i] = Gecode::expr(home, x[i] + o, Gecode::IPL_DOM);
+            }
+            if (c >= 0) {
+                Gecode::cumulative(home, c, xx, p, u, ipl);
+            } else {
+                Gecode::rel(home, x[n] <= -c);
+                Gecode::cumulative(home, x[n], xx, p, u, ipl);
+            }
+        }
+    };
 
-                // Compute maximal time
-                int t = 0;
-                for (int i = 0; i < n; i++)
-                    t = std::max(t, x[i] + std::max(1, p[i]));
-                // Compute resource usage (including at start times)
-                int* used = new int[t];
-                for (int i = 0; i < t; i++)
-                    used[i] = 0;
-                for (int i = 0; i < n; i++)
+    /// Test for cumulative constraint with optional tasks
+    class OptFixPCumulative : public Test {
+    protected:
+        /// Capacity of resource
+        int c;
+        /// The processing times
+        Gecode::IntArgs p;
+        /// The resource usage
+        Gecode::IntArgs u;
+        /// Limit for optional tasks
+        int l;
+        /// Offset
+        int o;
+        /// Get a reasonable maximal start time
+        static int
+        st(int c, const Gecode::IntArgs& p, const Gecode::IntArgs& u) {
+            double e = 0;
+            for (int i = p.size(); i--;)
+                e += static_cast<double>(p[i]) * u[i];
+            return e / std::max(1, std::abs(c));
+        }
+
+    public:
+        /// Create and register test
+        OptFixPCumulative(int c0, const Gecode::IntArgs& p0, const Gecode::IntArgs& u0, int o0,
+                          Gecode::IntPropLevel ipl0)
+            : Test((u0.size() == 1) && (u0[0] == 0)                 ? TestTags::check()
+                   : (o0 == Gecode::Int::Limits::min) && (c0 == -1) ? TestTags(TestTags::standard())
+                                                                    : TestTags(TestTags::sweep()),
+                   "Cumulative::Opt::Fix::" + str(o0) + "::" + str(c0) + "::" + str(p0) + "::" + str(u0) +
+                       "::" + str(ipl0),
+                   (c0 >= 0) ? 2 * p0.size() : 2 * p0.size() + 1, 0, st(c0, p0, u0), false, ipl0),
+              c(c0), p(p0), u(u0), l(st(c, p, u) / 2), o(o0) {
+            test_search = false;
+            test_fixpoint = false;
+            consistency_test_level = CTL_NONE;
+        }
+        /// Create and register initial assignment
+        Assignment*
+        assignment() const override {
+            return new RandomAssignment(arity, dom, 500, _rand);
+        }
+        /// Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int nn = (c >= 0) ? x.size() : x.size() - 1;
+            int cmax = (c >= 0) ? c : x[nn];
+
+            if (c < 0 && x[nn] > -c)
+                return false;
+
+            int n = nn / 2;
+            // Compute maximal time
+            int t = 0;
+            for (int i = 0; i < n; i++)
+                t = std::max(t, x[i] + std::max(1, p[i]));
+            // Compute resource usage (including at start times)
+            int* used = new int[t];
+            for (int i = 0; i < t; i++)
+                used[i] = 0;
+            for (int i = 0; i < n; i++)
+                if (x[n + i] > l)
                     for (int t = 0; t < p[i]; t++)
                         used[x[i] + t] += u[i];
-                // Check resource usage
-                for (int i = 0; i < t; i++)
-                    if (used[i] > cmax) {
-                        delete[] used;
-                        return false;
-                    }
-                // Compute resource usage (only internal)
-                for (int i = 0; i < t; i++)
-                    used[i] = 0;
-                for (int i = 0; i < n; i++) {
-                    for (int t = 1; t < p[i]; t++) {
-                        used[x[i] + t] += u[i];
-                    }
+            // Check resource usage
+            for (int i = 0; i < t; i++) {
+                if (used[i] > cmax) {
+                    delete[] used;
+                    return false;
                 }
-                // Check resource usage at start times
-                for (int i = 0; i < n; i++)
+            }
+            // Compute resource usage (only internal)
+            for (int i = 0; i < t; i++)
+                used[i] = 0;
+            for (int i = 0; i < n; i++)
+                if (x[n + i] > l) {
+                    for (int t = 1; t < p[i]; t++)
+                        used[x[i] + t] += u[i];
+                }
+            // Check resource usage at start times
+            for (int i = 0; i < n; i++)
+                if (x[n + i] > l)
                     if (used[x[i]] + u[i] > cmax) {
                         delete[] used;
                         return false;
                     }
-                delete[] used;
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                int n = (c >= 0) ? x.size() : x.size() - 1;
-                Gecode::IntVarArgs xx;
-                if (o == 0) {
-                    xx = x.slice(0, 1, n);
-                } else {
-                    xx = Gecode::IntVarArgs(n);
-                    for (int i = n; i--;)
-                        xx[i] = Gecode::expr(home, x[i] + o, Gecode::IPL_DOM);
-                }
-                if (c >= 0) {
-                    Gecode::cumulative(home, c, xx, p, u, ipl);
-                } else {
-                    Gecode::rel(home, x[n] <= -c);
-                    Gecode::cumulative(home, x[n], xx, p, u, ipl);
-                }
-            }
-        };
+            delete[] used;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            int nn = (c >= 0) ? x.size() : x.size() - 1;
+            int n = nn / 2;
+            Gecode::IntVarArgs s(n);
+            Gecode::BoolVarArgs m(n);
 
-        /// Test for cumulative constraint with optional tasks
-        class OptFixPCumulative : public Test {
-        protected:
-            /// Capacity of resource
-            int c;
-            /// The processing times
-            Gecode::IntArgs p;
-            /// The resource usage
-            Gecode::IntArgs u;
-            /// Limit for optional tasks
-            int l;
-            /// Offset
-            int o;
-            /// Get a reasonable maximal start time
-            static int
-            st(int c, const Gecode::IntArgs& p, const Gecode::IntArgs& u) {
-                double e = 0;
-                for (int i = p.size(); i--;)
-                    e += static_cast<double>(p[i]) * u[i];
-                return e / std::max(1, std::abs(c));
+            for (int i = 0; i < n; i++) {
+                s[i] = (c >= 0) ? x[i] : Gecode::expr(home, x[i] + o, Gecode::IPL_DOM);
+                m[i] = Gecode::expr(home, x[n + i] > l);
             }
 
-        public:
-            /// Create and register test
-            OptFixPCumulative(int c0, const Gecode::IntArgs& p0, const Gecode::IntArgs& u0, int o0,
-                              Gecode::IntPropLevel ipl0)
-                : Test((u0.size() == 1) && (u0[0] == 0)                 ? TestTags::check()
-                       : (o0 == Gecode::Int::Limits::min) && (c0 == -1) ? TestTags(TestTags::standard())
-                                                                        : TestTags(TestTags::sweep()),
-                       "Cumulative::Opt::Fix::" + str(o0) + "::" + str(c0) + "::" + str(p0) + "::" + str(u0) +
-                           "::" + str(ipl0),
-                       (c0 >= 0) ? 2 * p0.size() : 2 * p0.size() + 1, 0, st(c0, p0, u0), false, ipl0),
-                  c(c0), p(p0), u(u0), l(st(c, p, u) / 2), o(o0) {
-                test_search = false;
-                test_fixpoint = false;
-                consistency_test_level = CTL_NONE;
+            if (c >= 0) {
+                Gecode::cumulative(home, c, s, p, u, m, ipl);
+            } else {
+                Gecode::rel(home, x[nn] <= -c);
+                Gecode::cumulative(home, x[nn], s, p, u, m, ipl);
             }
-            /// Create and register initial assignment
-            Assignment*
-            assignment() const override {
-                return new RandomAssignment(arity, dom, 500, _rand);
-            }
-            /// Test whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                int nn = (c >= 0) ? x.size() : x.size() - 1;
-                int cmax = (c >= 0) ? c : x[nn];
+        }
+    };
 
-                if (c < 0 && x[nn] > -c)
+    /// Test for cumulative constraint with flexible mandatory tasks
+    class ManFlexCumulative : public Test {
+    protected:
+        /// Capacity of resource
+        int c;
+        /// Minimum processing time
+        int _min_p;
+        /// Maximum processing time
+        int _max_p;
+        /// The resource usage
+        Gecode::IntArgs u;
+        /// Get a reasonable maximal start time
+        static int
+        st(int c, int max_p, const Gecode::IntArgs& u) {
+            double e = 0;
+            for (int i = u.size(); i--;)
+                e += static_cast<double>(max_p) * u[i];
+            return e / std::max(1, std::abs(c));
+        }
+        /// Offset
+        int o;
+
+    public:
+        /// Create and register test
+        ManFlexCumulative(int c0, int min_p, int max_p, const Gecode::IntArgs& u0, int o0, Gecode::IntPropLevel ipl0)
+            : Test((u0.size() == 1) && (u0[0] == 0) ? TestTags::check() : TestTags::sweep(),
+                   "Cumulative::Man::Flex::" + str(o0) + "::" + str(c0) + "::" + str(min_p) + "::" + str(max_p) +
+                       "::" + str(u0) + "::" + str(ipl0),
+                   (c0 >= 0) ? 2 * u0.size() : 2 * u0.size() + 1, 0, std::max(max_p, st(c0, max_p, u0)), false, ipl0),
+              c(c0), _min_p(min_p), _max_p(max_p), u(u0), o(o0) {
+            test_search = false;
+            test_fixpoint = false;
+            consistency_test_level = CTL_NONE;
+        }
+        /// Create and register initial assignment
+        Assignment*
+        assignment() const override {
+            return new RandomMixAssignment((c >= 0) ? arity / 2 : arity / 2 + 1, dom, arity / 2,
+                                           Gecode::IntSet(_min_p, _max_p), 500, _rand);
+        }
+        /// Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int nn = (c >= 0) ? x.size() : x.size() - 1;
+            int n = nn / 2;
+            int cmax = (c >= 0) ? c : x[n];
+            int pstart = (c >= 0) ? n : n + 1;
+
+            if (c < 0 && cmax > -c)
+                return false;
+
+            // Compute maximal time
+            int t = 0;
+            for (int i = 0; i < n; i++) {
+                t = std::max(t, x[i] + std::max(1, x[pstart + i]));
+            }
+            // Compute resource usage (including at start times)
+            int* used = new int[t];
+            for (int i = 0; i < t; i++)
+                used[i] = 0;
+            for (int i = 0; i < n; i++)
+                for (int t = 0; t < x[pstart + i]; t++)
+                    used[x[i] + t] += u[i];
+            // Check resource usage
+            for (int i = 0; i < t; i++)
+                if (used[i] > cmax) {
+                    delete[] used;
                     return false;
-
-                int n = nn / 2;
-                // Compute maximal time
-                int t = 0;
-                for (int i = 0; i < n; i++)
-                    t = std::max(t, x[i] + std::max(1, p[i]));
-                // Compute resource usage (including at start times)
-                int* used = new int[t];
-                for (int i = 0; i < t; i++)
-                    used[i] = 0;
-                for (int i = 0; i < n; i++)
-                    if (x[n + i] > l)
-                        for (int t = 0; t < p[i]; t++)
-                            used[x[i] + t] += u[i];
-                // Check resource usage
-                for (int i = 0; i < t; i++) {
-                    if (used[i] > cmax) {
-                        delete[] used;
-                        return false;
-                    }
                 }
-                // Compute resource usage (only internal)
-                for (int i = 0; i < t; i++)
-                    used[i] = 0;
-                for (int i = 0; i < n; i++)
-                    if (x[n + i] > l) {
-                        for (int t = 1; t < p[i]; t++)
-                            used[x[i] + t] += u[i];
-                    }
-                // Check resource usage at start times
-                for (int i = 0; i < n; i++)
-                    if (x[n + i] > l)
-                        if (used[x[i]] + u[i] > cmax) {
-                            delete[] used;
-                            return false;
-                        }
-                delete[] used;
-                return true;
+            // Compute resource usage (only internal)
+            for (int i = 0; i < t; i++)
+                used[i] = 0;
+            for (int i = 0; i < n; i++) {
+                for (int t = 1; t < x[pstart + i]; t++)
+                    used[x[i] + t] += u[i];
             }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                int nn = (c >= 0) ? x.size() : x.size() - 1;
-                int n = nn / 2;
-                Gecode::IntVarArgs s(n);
-                Gecode::BoolVarArgs m(n);
-
-                for (int i = 0; i < n; i++) {
-                    s[i] = (c >= 0) ? x[i] : Gecode::expr(home, x[i] + o, Gecode::IPL_DOM);
-                    m[i] = Gecode::expr(home, x[n + i] > l);
-                }
-
-                if (c >= 0) {
-                    Gecode::cumulative(home, c, s, p, u, m, ipl);
-                } else {
-                    Gecode::rel(home, x[nn] <= -c);
-                    Gecode::cumulative(home, x[nn], s, p, u, m, ipl);
-                }
-            }
-        };
-
-        /// Test for cumulative constraint with flexible mandatory tasks
-        class ManFlexCumulative : public Test {
-        protected:
-            /// Capacity of resource
-            int c;
-            /// Minimum processing time
-            int _min_p;
-            /// Maximum processing time
-            int _max_p;
-            /// The resource usage
-            Gecode::IntArgs u;
-            /// Get a reasonable maximal start time
-            static int
-            st(int c, int max_p, const Gecode::IntArgs& u) {
-                double e = 0;
-                for (int i = u.size(); i--;)
-                    e += static_cast<double>(max_p) * u[i];
-                return e / std::max(1, std::abs(c));
-            }
-            /// Offset
-            int o;
-
-        public:
-            /// Create and register test
-            ManFlexCumulative(int c0, int min_p, int max_p, const Gecode::IntArgs& u0, int o0,
-                              Gecode::IntPropLevel ipl0)
-                : Test((u0.size() == 1) && (u0[0] == 0) ? TestTags::check() : TestTags::sweep(),
-                       "Cumulative::Man::Flex::" + str(o0) + "::" + str(c0) + "::" + str(min_p) + "::" + str(max_p) +
-                           "::" + str(u0) + "::" + str(ipl0),
-                       (c0 >= 0) ? 2 * u0.size() : 2 * u0.size() + 1, 0, std::max(max_p, st(c0, max_p, u0)), false,
-                       ipl0),
-                  c(c0), _min_p(min_p), _max_p(max_p), u(u0), o(o0) {
-                test_search = false;
-                test_fixpoint = false;
-                consistency_test_level = CTL_NONE;
-            }
-            /// Create and register initial assignment
-            Assignment*
-            assignment() const override {
-                return new RandomMixAssignment((c >= 0) ? arity / 2 : arity / 2 + 1, dom, arity / 2,
-                                               Gecode::IntSet(_min_p, _max_p), 500, _rand);
-            }
-            /// Test whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                int nn = (c >= 0) ? x.size() : x.size() - 1;
-                int n = nn / 2;
-                int cmax = (c >= 0) ? c : x[n];
-                int pstart = (c >= 0) ? n : n + 1;
-
-                if (c < 0 && cmax > -c)
+            // Check resource usage at start times
+            for (int i = 0; i < n; i++)
+                if (used[x[i]] + u[i] > cmax) {
+                    delete[] used;
                     return false;
-
-                // Compute maximal time
-                int t = 0;
-                for (int i = 0; i < n; i++) {
-                    t = std::max(t, x[i] + std::max(1, x[pstart + i]));
                 }
-                // Compute resource usage (including at start times)
-                int* used = new int[t];
-                for (int i = 0; i < t; i++)
-                    used[i] = 0;
-                for (int i = 0; i < n; i++)
+            delete[] used;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            int nn = (c >= 0) ? x.size() : x.size() - 1;
+            int n = nn / 2;
+            int pstart = (c >= 0) ? n : n + 1;
+            Gecode::IntVarArgs s(n);
+            Gecode::IntVarArgs px(x.slice(pstart, 1, n));
+            Gecode::IntVarArgs e(home, n, Gecode::Int::Limits::min, Gecode::Int::Limits::max);
+            for (int i = s.size(); i--;) {
+                s[i] = expr(home, o + x[i], Gecode::IPL_DOM);
+                rel(home, s[i] + px[i] == e[i]);
+                rel(home, _min_p <= px[i]);
+                rel(home, _max_p >= px[i]);
+            }
+            if (c >= 0) {
+                Gecode::cumulative(home, c, s, px, e, u, ipl);
+            } else {
+                rel(home, x[n] <= -c);
+                Gecode::cumulative(home, x[n], s, px, e, u, ipl);
+            }
+        }
+    };
+
+    /// Test for cumulative constraint with optional flexible tasks
+    class OptFlexCumulative : public Test {
+    protected:
+        /// Capacity of resource
+        int c;
+        /// Minimum processing time
+        int _min_p;
+        /// Maximum processing time
+        int _max_p;
+        /// The resource usage
+        Gecode::IntArgs u;
+        /// Limit for optional tasks
+        int l;
+        /// Offset
+        int o;
+        /// Get a reasonable maximal start time
+        static int
+        st(int c, int max_p, const Gecode::IntArgs& u) {
+            double e = 0;
+            for (int i = u.size(); i--;)
+                e += static_cast<double>(max_p) * u[i];
+            return e / std::max(1, std::abs(c));
+        }
+
+    public:
+        /// Create and register test
+        OptFlexCumulative(int c0, int min_p, int max_p, const Gecode::IntArgs& u0, int o0, Gecode::IntPropLevel ipl0)
+            : Test((u0.size() == 1) && (u0[0] == 0) ? TestTags::check()
+                   : (o0 == Gecode::Int::Limits::min) && (c0 == 4) && (min_p == 0) && (max_p == 2)
+                       ? TestTags(TestTags::standard())
+                       : TestTags(TestTags::sweep()),
+                   "Cumulative::Opt::Flex::" + str(o0) + "::" + str(c0) + "::" + str(min_p) + "::" + str(max_p) +
+                       "::" + str(u0) + "::" + str(ipl0),
+                   (c0 >= 0) ? 3 * u0.size() : 3 * u0.size() + 1, 0, std::max(max_p, st(c0, max_p, u0)), false, ipl0),
+              c(c0), _min_p(min_p), _max_p(max_p), u(u0), l(std::max(max_p, st(c0, max_p, u0)) / 2), o(o0) {
+            test_search = false;
+            test_fixpoint = false;
+            consistency_test_level = CTL_NONE;
+        }
+        /// Create and register initial assignment
+        Assignment*
+        assignment() const override {
+            return new RandomMixAssignment((c >= 0) ? 2 * (arity / 3) : 2 * (arity / 3) + 1, dom, arity / 3,
+                                           Gecode::IntSet(_min_p, _max_p), 500, _rand);
+        }
+        /// Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int nn = (c >= 0) ? x.size() : x.size() - 1;
+            int n = nn / 3;
+            int cmax = (c >= 0) ? c : x[2 * n];
+            int pstart = (c >= 0) ? 2 * n : 2 * n + 1;
+
+            if (c < 0 && cmax > -c)
+                return false;
+
+            // Compute maximal time
+            int t = 0;
+            for (int i = 0; i < n; i++)
+                t = std::max(t, x[i] + std::max(1, x[pstart + i]));
+            // Compute resource usage (including at start times)
+            int* used = new int[t];
+            for (int i = 0; i < t; i++)
+                used[i] = 0;
+            for (int i = 0; i < n; i++)
+                if (x[n + i] > l)
                     for (int t = 0; t < x[pstart + i]; t++)
                         used[x[i] + t] += u[i];
-                // Check resource usage
-                for (int i = 0; i < t; i++)
-                    if (used[i] > cmax) {
-                        delete[] used;
-                        return false;
-                    }
-                // Compute resource usage (only internal)
-                for (int i = 0; i < t; i++)
-                    used[i] = 0;
-                for (int i = 0; i < n; i++) {
+            // Check resource usage
+            for (int i = 0; i < t; i++)
+                if (used[i] > cmax) {
+                    delete[] used;
+                    return false;
+                }
+            // Compute resource usage (only internal)
+            for (int i = 0; i < t; i++)
+                used[i] = 0;
+            for (int i = 0; i < n; i++)
+                if (x[n + i] > l)
                     for (int t = 1; t < x[pstart + i]; t++)
                         used[x[i] + t] += u[i];
-                }
-                // Check resource usage at start times
-                for (int i = 0; i < n; i++)
-                    if (used[x[i]] + u[i] > cmax) {
-                        delete[] used;
-                        return false;
-                    }
-                delete[] used;
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                int nn = (c >= 0) ? x.size() : x.size() - 1;
-                int n = nn / 2;
-                int pstart = (c >= 0) ? n : n + 1;
-                Gecode::IntVarArgs s(n);
-                Gecode::IntVarArgs px(x.slice(pstart, 1, n));
-                Gecode::IntVarArgs e(home, n, Gecode::Int::Limits::min, Gecode::Int::Limits::max);
-                for (int i = s.size(); i--;) {
-                    s[i] = expr(home, o + x[i], Gecode::IPL_DOM);
-                    rel(home, s[i] + px[i] == e[i]);
-                    rel(home, _min_p <= px[i]);
-                    rel(home, _max_p >= px[i]);
-                }
-                if (c >= 0) {
-                    Gecode::cumulative(home, c, s, px, e, u, ipl);
-                } else {
-                    rel(home, x[n] <= -c);
-                    Gecode::cumulative(home, x[n], s, px, e, u, ipl);
-                }
-            }
-        };
-
-        /// Test for cumulative constraint with optional flexible tasks
-        class OptFlexCumulative : public Test {
-        protected:
-            /// Capacity of resource
-            int c;
-            /// Minimum processing time
-            int _min_p;
-            /// Maximum processing time
-            int _max_p;
-            /// The resource usage
-            Gecode::IntArgs u;
-            /// Limit for optional tasks
-            int l;
-            /// Offset
-            int o;
-            /// Get a reasonable maximal start time
-            static int
-            st(int c, int max_p, const Gecode::IntArgs& u) {
-                double e = 0;
-                for (int i = u.size(); i--;)
-                    e += static_cast<double>(max_p) * u[i];
-                return e / std::max(1, std::abs(c));
-            }
-
-        public:
-            /// Create and register test
-            OptFlexCumulative(int c0, int min_p, int max_p, const Gecode::IntArgs& u0, int o0,
-                              Gecode::IntPropLevel ipl0)
-                : Test((u0.size() == 1) && (u0[0] == 0) ? TestTags::check()
-                       : (o0 == Gecode::Int::Limits::min) && (c0 == 4) && (min_p == 0) && (max_p == 2)
-                           ? TestTags(TestTags::standard())
-                           : TestTags(TestTags::sweep()),
-                       "Cumulative::Opt::Flex::" + str(o0) + "::" + str(c0) + "::" + str(min_p) + "::" + str(max_p) +
-                           "::" + str(u0) + "::" + str(ipl0),
-                       (c0 >= 0) ? 3 * u0.size() : 3 * u0.size() + 1, 0, std::max(max_p, st(c0, max_p, u0)), false,
-                       ipl0),
-                  c(c0), _min_p(min_p), _max_p(max_p), u(u0), l(std::max(max_p, st(c0, max_p, u0)) / 2), o(o0) {
-                test_search = false;
-                test_fixpoint = false;
-                consistency_test_level = CTL_NONE;
-            }
-            /// Create and register initial assignment
-            Assignment*
-            assignment() const override {
-                return new RandomMixAssignment((c >= 0) ? 2 * (arity / 3) : 2 * (arity / 3) + 1, dom, arity / 3,
-                                               Gecode::IntSet(_min_p, _max_p), 500, _rand);
-            }
-            /// Test whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                int nn = (c >= 0) ? x.size() : x.size() - 1;
-                int n = nn / 3;
-                int cmax = (c >= 0) ? c : x[2 * n];
-                int pstart = (c >= 0) ? 2 * n : 2 * n + 1;
-
-                if (c < 0 && cmax > -c)
+            // Check resource usage at start times
+            for (int i = 0; i < n; i++)
+                if (x[n + i] > l && used[x[i]] + u[i] > cmax) {
+                    delete[] used;
                     return false;
-
-                // Compute maximal time
-                int t = 0;
-                for (int i = 0; i < n; i++)
-                    t = std::max(t, x[i] + std::max(1, x[pstart + i]));
-                // Compute resource usage (including at start times)
-                int* used = new int[t];
-                for (int i = 0; i < t; i++)
-                    used[i] = 0;
-                for (int i = 0; i < n; i++)
-                    if (x[n + i] > l)
-                        for (int t = 0; t < x[pstart + i]; t++)
-                            used[x[i] + t] += u[i];
-                // Check resource usage
-                for (int i = 0; i < t; i++)
-                    if (used[i] > cmax) {
-                        delete[] used;
-                        return false;
-                    }
-                // Compute resource usage (only internal)
-                for (int i = 0; i < t; i++)
-                    used[i] = 0;
-                for (int i = 0; i < n; i++)
-                    if (x[n + i] > l)
-                        for (int t = 1; t < x[pstart + i]; t++)
-                            used[x[i] + t] += u[i];
-                // Check resource usage at start times
-                for (int i = 0; i < n; i++)
-                    if (x[n + i] > l && used[x[i]] + u[i] > cmax) {
-                        delete[] used;
-                        return false;
-                    }
-                delete[] used;
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                int nn = (c >= 0) ? x.size() : x.size() - 1;
-                int n = nn / 3;
-                int pstart = (c >= 0) ? 2 * n : 2 * n + 1;
-
-                Gecode::IntVarArgs s(n);
-                Gecode::IntVarArgs px(n);
-                Gecode::IntVarArgs e(home, n, Gecode::Int::Limits::min, Gecode::Int::Limits::max);
-                for (int i = n; i--;) {
-                    s[i] = expr(home, o + x[i]);
-                    px[i] = x[pstart + i];
-                    rel(home, s[i] + px[i] == e[i]);
-                    rel(home, _min_p <= px[i]);
-                    rel(home, _max_p >= px[i]);
                 }
-                Gecode::BoolVarArgs m(n);
-                for (int i = 0; i < n; i++)
-                    m[i] = Gecode::expr(home, (x[n + i] > l));
-                if (c >= 0) {
-                    Gecode::cumulative(home, c, s, px, e, u, m, ipl);
-                } else {
-                    Gecode::rel(home, x[2 * n] <= -c);
-                    Gecode::cumulative(home, x[2 * n], s, px, e, u, m, ipl);
-                }
-            }
-        };
+            delete[] used;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            int nn = (c >= 0) ? x.size() : x.size() - 1;
+            int n = nn / 3;
+            int pstart = (c >= 0) ? 2 * n : 2 * n + 1;
 
-        /// Fixed-end tasks must accept exactly the capacity-feasible schedules
-        class ManFixECumulative : public Test {
-        public:
-            ManFixECumulative()
-                : Test("Cumulative::Man::FixE", 4, Gecode::IntSet({0, 9, 19, 29, 39}), false, Gecode::IPL_ADVANCED) {
-                test_fixpoint = false;
-                consistency_test_level = CTL_NONE;
+            Gecode::IntVarArgs s(n);
+            Gecode::IntVarArgs px(n);
+            Gecode::IntVarArgs e(home, n, Gecode::Int::Limits::min, Gecode::Int::Limits::max);
+            for (int i = n; i--;) {
+                s[i] = expr(home, o + x[i]);
+                px[i] = x[pstart + i];
+                rel(home, s[i] + px[i] == e[i]);
+                rel(home, _min_p <= px[i]);
+                rel(home, _max_p >= px[i]);
             }
-            bool
-            solution(const Assignment& x) const override {
+            Gecode::BoolVarArgs m(n);
+            for (int i = 0; i < n; i++)
+                m[i] = Gecode::expr(home, (x[n + i] > l));
+            if (c >= 0) {
+                Gecode::cumulative(home, c, s, px, e, u, m, ipl);
+            } else {
+                Gecode::rel(home, x[2 * n] <= -c);
+                Gecode::cumulative(home, x[2 * n], s, px, e, u, m, ipl);
+            }
+        }
+    };
+
+    /// Fixed-end tasks must accept exactly the capacity-feasible schedules
+    class ManFixECumulative : public Test {
+    public:
+        ManFixECumulative()
+            : Test("Cumulative::Man::FixE", 4, Gecode::IntSet({0, 9, 19, 29, 39}), false, Gecode::IPL_ADVANCED) {
+            test_fixpoint = false;
+            consistency_test_level = CTL_NONE;
+        }
+        bool
+        solution(const Assignment& x) const override {
+            for (int i = 0; i < 4; i++)
+                if (x[i] >= 10 * (i + 1))
+                    return false;
+            for (int t = 0; t < 40; t++) {
+                int used = 0;
                 for (int i = 0; i < 4; i++)
-                    if (x[i] >= 10 * (i + 1))
-                        return false;
-                for (int t = 0; t < 40; t++) {
-                    int used = 0;
-                    for (int i = 0; i < 4; i++)
-                        if ((x[i] <= t) && (t < 10 * (i + 1)))
-                            used += 2;
-                    if (used > 4)
-                        return false;
-                }
-                return true;
-            }
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                Gecode::IntArgs ends({10, 20, 30, 40});
-                Gecode::TaskTypeArgs types(4);
-                for (int i = 0; i < 4; i++) {
-                    Gecode::dom(home, x[i], 0, ends[i] - 1);
-                    types[i] = Gecode::TT_FIXED_END;
-                }
-                Gecode::cumulative(home, 4, types, x, ends, Gecode::IntArgs({2, 2, 2, 2}), ipl);
-            }
-        };
-        ManFixECumulative man_fix_e_cumulative;
-
-        /// Check overload detection before search, including capacity wakeups
-        // Complete assignments cannot distinguish basic from advanced propagation.
-        class KnapsackAugmentedOverload : public Test::Base {
-        private:
-            class Fixture : public Gecode::Space {
-            public:
-                Gecode::IntVarArray starts;
-                Fixture(Gecode::IntPropLevel level) : starts(*this, 5, 0, 6) {
-                    starts[0] = Gecode::IntVar(*this, 1, 4);
-                    starts[1] = Gecode::IntVar(*this, 0, 6);
-                    starts[2] = Gecode::IntVar(*this, 2, 6);
-                    starts[3] = Gecode::IntVar(*this, 0, 0);
-                    starts[4] = Gecode::IntVar(*this, 0, 1);
-                    Gecode::cumulative(*this, 3, starts, Gecode::IntArgs({3, 1, 1, 2, 4}),
-                                       Gecode::IntArgs({3, 3, 1, 2, 1}), level);
-                }
-                Fixture(Fixture& fixture) : Gecode::Space(fixture) {
-                    starts.update(*this, fixture.starts);
-                }
-                Gecode::Space*
-                copy() override {
-                    return new Fixture(*this);
-                }
-            };
-
-            class VariableCapacityFixture : public Gecode::Space {
-            public:
-                Gecode::IntVarArray starts;
-                Gecode::IntVar capacity;
-                VariableCapacityFixture() : starts(*this, 5, 0, 6), capacity(*this, 3, 4) {
-                    starts[0] = Gecode::IntVar(*this, 1, 4);
-                    starts[1] = Gecode::IntVar(*this, 0, 6);
-                    starts[2] = Gecode::IntVar(*this, 2, 6);
-                    starts[3] = Gecode::IntVar(*this, 0, 0);
-                    starts[4] = Gecode::IntVar(*this, 0, 1);
-                    Gecode::cumulative(*this, capacity, starts, Gecode::IntArgs({3, 1, 1, 2, 4}),
-                                       Gecode::IntArgs({3, 3, 1, 2, 1}), Gecode::IPL_ADVANCED);
-                }
-                VariableCapacityFixture(VariableCapacityFixture& fixture) : Gecode::Space(fixture) {
-                    starts.update(*this, fixture.starts);
-                    capacity.update(*this, fixture.capacity);
-                }
-                Gecode::Space*
-                copy() override {
-                    return new VariableCapacityFixture(*this);
-                }
-            };
-
-            static bool
-            variable_capacity_rechecks() {
-                VariableCapacityFixture root;
-                if (root.status() == Gecode::SS_FAILED)
+                    if ((x[i] <= t) && (t < 10 * (i + 1)))
+                        used += 2;
+                if (used > 4)
                     return false;
-                std::unique_ptr<VariableCapacityFixture> clone(static_cast<VariableCapacityFixture*>(root.clone()));
-                Gecode::rel(*clone, clone->capacity, Gecode::IRT_EQ, 3);
-                return clone->status() == Gecode::SS_FAILED;
             }
-
-            static bool
-            optional_subset() {
-                class OptionalSubsetFixture : public Gecode::Space {
-                public:
-                    OptionalSubsetFixture(Gecode::IntPropLevel level) {
-                        const int n = 69;
-                        Gecode::IntVarArgs starts(n);
-                        Gecode::BoolVarArgs mandatory(n);
-                        Gecode::IntArgs processing(n);
-                        Gecode::IntArgs demand(n);
-                        for (int i = 0; i < n; i++) {
-                            starts[i] = Gecode::IntVar(*this, 2 * i, 2 * i);
-                            mandatory[i] = Gecode::BoolVar(*this, i < 5 ? 1 : 0, 1);
-                            processing[i] = 1;
-                            demand[i] = 2 + (i & 1);
-                        }
-                        const int earliest[] = {1, 0, 2, 0, 0};
-                        const int latest[] = {4, 6, 6, 0, 1};
-                        const int durations[] = {3, 1, 1, 2, 4};
-                        const int demands[] = {3, 3, 1, 2, 1};
-                        for (int i = 0; i < 5; i++) {
-                            starts[i] = Gecode::IntVar(*this, earliest[i], latest[i]);
-                            processing[i] = durations[i];
-                            demand[i] = demands[i];
-                        }
-                        Gecode::cumulative(*this, 3, starts, processing, demand, mandatory, level);
-                    }
-                    // NOLINTNEXTLINE(modernize-use-equals-default)
-                    OptionalSubsetFixture(OptionalSubsetFixture& fixture) : Gecode::Space(fixture) {}
-                    Gecode::Space*
-                    copy() override {
-                        return new OptionalSubsetFixture(*this);
-                    }
-                };
-
-                OptionalSubsetFixture basic(Gecode::IPL_BASIC);
-                OptionalSubsetFixture advanced(Gecode::IPL_ADVANCED);
-                return (basic.status() != Gecode::SS_FAILED) && (advanced.status() == Gecode::SS_FAILED);
+            return true;
+        }
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::IntArgs ends({10, 20, 30, 40});
+            Gecode::TaskTypeArgs types(4);
+            for (int i = 0; i < 4; i++) {
+                Gecode::dom(home, x[i], 0, ends[i] - 1);
+                types[i] = Gecode::TT_FIXED_END;
             }
+            Gecode::cumulative(home, 4, types, x, ends, Gecode::IntArgs({2, 2, 2, 2}), ipl);
+        }
+    };
+    ManFixECumulative man_fix_e_cumulative;
 
+    /// Check overload detection before search, including capacity wakeups
+    // Complete assignments cannot distinguish basic from advanced propagation.
+    class KnapsackAugmentedOverload : public Test::Base {
+    private:
+        class Fixture : public Gecode::Space {
         public:
-            KnapsackAugmentedOverload() : Test::Base("Cumulative::KnapsackAugmentedOverload") {}
-
-            bool
-            run() override {
-                Fixture basic(Gecode::IPL_BASIC);
-                Fixture advanced(Gecode::IPL_ADVANCED);
-                return (basic.status() != Gecode::SS_FAILED) && (advanced.status() == Gecode::SS_FAILED) &&
-                       variable_capacity_rechecks() && optional_subset();
+            Gecode::IntVarArray starts;
+            Fixture(Gecode::IntPropLevel level) : starts(*this, 5, 0, 6) {
+                starts[0] = Gecode::IntVar(*this, 1, 4);
+                starts[1] = Gecode::IntVar(*this, 0, 6);
+                starts[2] = Gecode::IntVar(*this, 2, 6);
+                starts[3] = Gecode::IntVar(*this, 0, 0);
+                starts[4] = Gecode::IntVar(*this, 0, 1);
+                Gecode::cumulative(*this, 3, starts, Gecode::IntArgs({3, 1, 1, 2, 4}), Gecode::IntArgs({3, 3, 1, 2, 1}),
+                                   level);
+            }
+            Fixture(Fixture& fixture) : Gecode::Space(fixture) {
+                starts.update(*this, fixture.starts);
+            }
+            Gecode::Space*
+            copy() override {
+                return new Fixture(*this);
             }
         };
 
-        KnapsackAugmentedOverload knapsack_augmented_overload;
-
-        /// Help class to create and register tests
-        class Create {
+        class VariableCapacityFixture : public Gecode::Space {
         public:
-            /// Perform creation and registration
-            Create() {
-                using namespace Gecode;
-                IntArgs p1({1, 1, 1, 1});
-                IntArgs p2({2, 2, 2, 2});
-                IntArgs p3({4, 3, 3, 5});
-                IntArgs p4({4, 0, 3, 5});
-                IntArgs p5({1, 1, 1});
+            Gecode::IntVarArray starts;
+            Gecode::IntVar capacity;
+            VariableCapacityFixture() : starts(*this, 5, 0, 6), capacity(*this, 3, 4) {
+                starts[0] = Gecode::IntVar(*this, 1, 4);
+                starts[1] = Gecode::IntVar(*this, 0, 6);
+                starts[2] = Gecode::IntVar(*this, 2, 6);
+                starts[3] = Gecode::IntVar(*this, 0, 0);
+                starts[4] = Gecode::IntVar(*this, 0, 1);
+                Gecode::cumulative(*this, capacity, starts, Gecode::IntArgs({3, 1, 1, 2, 4}),
+                                   Gecode::IntArgs({3, 3, 1, 2, 1}), Gecode::IPL_ADVANCED);
+            }
+            VariableCapacityFixture(VariableCapacityFixture& fixture) : Gecode::Space(fixture) {
+                starts.update(*this, fixture.starts);
+                capacity.update(*this, fixture.capacity);
+            }
+            Gecode::Space*
+            copy() override {
+                return new VariableCapacityFixture(*this);
+            }
+        };
 
-                IntArgs u1({1, 1, 1, 1});
-                IntArgs u2({2, 2, 2, 2});
-                IntArgs u3({2, 3, 4, 5});
-                IntArgs u4({2, 3, 0, 5});
-                IntArgs u5({1, 3, 2});
+        static bool
+        variable_capacity_rechecks() {
+            VariableCapacityFixture root;
+            if (root.status() == Gecode::SS_FAILED)
+                return false;
+            std::unique_ptr<VariableCapacityFixture> clone(static_cast<VariableCapacityFixture*>(root.clone()));
+            Gecode::rel(*clone, clone->capacity, Gecode::IRT_EQ, 3);
+            return clone->status() == Gecode::SS_FAILED;
+        }
 
-                for (IntPropBasicAdvanced ipba; ipba(); ++ipba) {
-                    // Tasks with no resource usage leave an empty task array.
-                    for (int c : {4, -1}) {
-                        (void)new ManFixPCumulative(c, IntArgs{1}, IntArgs{0}, 0, ipba.ipl());
-                        (void)new OptFixPCumulative(c, IntArgs{1}, IntArgs{0}, 0, ipba.ipl());
-                        (void)new ManFlexCumulative(c, 0, 2, IntArgs{0}, 0, ipba.ipl());
-                        (void)new OptFlexCumulative(c, 0, 2, IntArgs{0}, 0, ipba.ipl());
+        static bool
+        optional_subset() {
+            class OptionalSubsetFixture : public Gecode::Space {
+            public:
+                OptionalSubsetFixture(Gecode::IntPropLevel level) {
+                    const int n = 69;
+                    Gecode::IntVarArgs starts(n);
+                    Gecode::BoolVarArgs mandatory(n);
+                    Gecode::IntArgs processing(n);
+                    Gecode::IntArgs demand(n);
+                    for (int i = 0; i < n; i++) {
+                        starts[i] = Gecode::IntVar(*this, 2 * i, 2 * i);
+                        mandatory[i] = Gecode::BoolVar(*this, i < 5 ? 1 : 0, 1);
+                        processing[i] = 1;
+                        demand[i] = 2 + (i & 1);
                     }
-                    // Regression test: check correct detection of disjunctive case
-                    (void)new ManFixPCumulative(3, p5, u5, 0, ipba.ipl());
+                    const int earliest[] = {1, 0, 2, 0, 0};
+                    const int latest[] = {4, 6, 6, 0, 1};
+                    const int durations[] = {3, 1, 1, 2, 4};
+                    const int demands[] = {3, 3, 1, 2, 1};
+                    for (int i = 0; i < 5; i++) {
+                        starts[i] = Gecode::IntVar(*this, earliest[i], latest[i]);
+                        processing[i] = durations[i];
+                        demand[i] = demands[i];
+                    }
+                    Gecode::cumulative(*this, 3, starts, processing, demand, mandatory, level);
+                }
+                // NOLINTNEXTLINE(modernize-use-equals-default)
+                OptionalSubsetFixture(OptionalSubsetFixture& fixture) : Gecode::Space(fixture) {}
+                Gecode::Space*
+                copy() override {
+                    return new OptionalSubsetFixture(*this);
+                }
+            };
 
-                    for (int c = -7; c < 8; c++) {
-                        int off = 0;
-                        for (int coff = 0; coff < 2; coff++) {
-                            (void)new ManFixPCumulative(c, p1, u1, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p1, u2, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p1, u3, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p1, u4, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p2, u1, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p2, u2, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p2, u3, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p2, u4, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p3, u1, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p3, u2, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p3, u3, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p3, u4, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p4, u1, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p4, u2, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p4, u3, off, ipba.ipl());
-                            (void)new ManFixPCumulative(c, p4, u4, off, ipba.ipl());
+            OptionalSubsetFixture basic(Gecode::IPL_BASIC);
+            OptionalSubsetFixture advanced(Gecode::IPL_ADVANCED);
+            return (basic.status() != Gecode::SS_FAILED) && (advanced.status() == Gecode::SS_FAILED);
+        }
 
-                            (void)new ManFlexCumulative(c, 0, 1, u1, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 0, 1, u2, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 0, 1, u3, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 0, 1, u4, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 0, 2, u1, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 0, 2, u2, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 0, 2, u3, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 0, 2, u4, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 3, 5, u1, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 3, 5, u2, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 3, 5, u3, off, ipba.ipl());
-                            (void)new ManFlexCumulative(c, 3, 5, u4, off, ipba.ipl());
+    public:
+        KnapsackAugmentedOverload() : Test::Base("Cumulative::KnapsackAugmentedOverload") {}
 
-                            (void)new OptFixPCumulative(c, p1, u1, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p1, u2, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p1, u3, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p1, u4, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p2, u1, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p2, u2, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p2, u3, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p2, u4, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p3, u1, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p3, u2, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p3, u3, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p3, u4, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p4, u1, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p4, u2, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p4, u3, off, ipba.ipl());
-                            (void)new OptFixPCumulative(c, p4, u4, off, ipba.ipl());
+        bool
+        run() override {
+            Fixture basic(Gecode::IPL_BASIC);
+            Fixture advanced(Gecode::IPL_ADVANCED);
+            return (basic.status() != Gecode::SS_FAILED) && (advanced.status() == Gecode::SS_FAILED) &&
+                   variable_capacity_rechecks() && optional_subset();
+        }
+    };
 
-                            (void)new OptFlexCumulative(c, 0, 1, u1, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 0, 1, u2, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 0, 1, u3, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 0, 1, u4, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 0, 2, u1, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 0, 2, u2, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 0, 2, u3, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 0, 2, u4, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 3, 5, u1, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 3, 5, u2, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 3, 5, u3, off, ipba.ipl());
-                            (void)new OptFlexCumulative(c, 3, 5, u4, off, ipba.ipl());
+    KnapsackAugmentedOverload knapsack_augmented_overload;
 
-                            off = Gecode::Int::Limits::min;
-                        }
+    /// Help class to create and register tests
+    class Create {
+    public:
+        /// Perform creation and registration
+        Create() {
+            using namespace Gecode;
+            IntArgs p1({1, 1, 1, 1});
+            IntArgs p2({2, 2, 2, 2});
+            IntArgs p3({4, 3, 3, 5});
+            IntArgs p4({4, 0, 3, 5});
+            IntArgs p5({1, 1, 1});
+
+            IntArgs u1({1, 1, 1, 1});
+            IntArgs u2({2, 2, 2, 2});
+            IntArgs u3({2, 3, 4, 5});
+            IntArgs u4({2, 3, 0, 5});
+            IntArgs u5({1, 3, 2});
+
+            for (IntPropBasicAdvanced ipba; ipba(); ++ipba) {
+                // Tasks with no resource usage leave an empty task array.
+                for (int c : {4, -1}) {
+                    (void)new ManFixPCumulative(c, IntArgs{1}, IntArgs{0}, 0, ipba.ipl());
+                    (void)new OptFixPCumulative(c, IntArgs{1}, IntArgs{0}, 0, ipba.ipl());
+                    (void)new ManFlexCumulative(c, 0, 2, IntArgs{0}, 0, ipba.ipl());
+                    (void)new OptFlexCumulative(c, 0, 2, IntArgs{0}, 0, ipba.ipl());
+                }
+                // Regression test: check correct detection of disjunctive case
+                (void)new ManFixPCumulative(3, p5, u5, 0, ipba.ipl());
+
+                for (int c = -7; c < 8; c++) {
+                    int off = 0;
+                    for (int coff = 0; coff < 2; coff++) {
+                        (void)new ManFixPCumulative(c, p1, u1, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p1, u2, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p1, u3, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p1, u4, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p2, u1, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p2, u2, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p2, u3, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p2, u4, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p3, u1, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p3, u2, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p3, u3, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p3, u4, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p4, u1, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p4, u2, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p4, u3, off, ipba.ipl());
+                        (void)new ManFixPCumulative(c, p4, u4, off, ipba.ipl());
+
+                        (void)new ManFlexCumulative(c, 0, 1, u1, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 0, 1, u2, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 0, 1, u3, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 0, 1, u4, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 0, 2, u1, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 0, 2, u2, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 0, 2, u3, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 0, 2, u4, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 3, 5, u1, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 3, 5, u2, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 3, 5, u3, off, ipba.ipl());
+                        (void)new ManFlexCumulative(c, 3, 5, u4, off, ipba.ipl());
+
+                        (void)new OptFixPCumulative(c, p1, u1, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p1, u2, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p1, u3, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p1, u4, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p2, u1, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p2, u2, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p2, u3, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p2, u4, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p3, u1, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p3, u2, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p3, u3, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p3, u4, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p4, u1, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p4, u2, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p4, u3, off, ipba.ipl());
+                        (void)new OptFixPCumulative(c, p4, u4, off, ipba.ipl());
+
+                        (void)new OptFlexCumulative(c, 0, 1, u1, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 0, 1, u2, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 0, 1, u3, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 0, 1, u4, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 0, 2, u1, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 0, 2, u2, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 0, 2, u3, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 0, 2, u4, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 3, 5, u1, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 3, 5, u2, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 3, 5, u3, off, ipba.ipl());
+                        (void)new OptFlexCumulative(c, 3, 5, u4, off, ipba.ipl());
+
+                        off = Gecode::Int::Limits::min;
                     }
                 }
             }
-        };
+        }
+    };
 
-        Create c;
-        //@}
+    Create c;
+    //@}
 
-    } // namespace Cumulative
-}} // namespace Test::Int
-
+} // namespace Test::Int::Cumulative
 // STATISTICS: test-int

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief %Range iterator cache
@@ -85,6 +85,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     forceinline Cache& Cache::operator=(const Cache& m) = default;
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Channel {
+namespace Gecode::Float::Channel {
 
     template <class A, class B>
     forceinline
@@ -70,6 +70,6 @@ namespace Gecode { namespace Float { namespace Channel {
         return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
-}}} // namespace Gecode::Float::Channel
+} // namespace Gecode::Float::Channel
 
 // STATISTICS: float-prop

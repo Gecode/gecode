@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Sequence {
+namespace Gecode::Int::Sequence {
 
     /// Status of whether a view takes a value from a set
     enum class TakesStatus {
@@ -148,6 +148,6 @@ namespace Gecode { namespace Int { namespace Sequence {
         return x.minus_r(home, is, false);
     }
 
-}}} // namespace Gecode::Int::Sequence
+} // namespace Gecode::Int::Sequence
 
 // STATISTICS: int-prop

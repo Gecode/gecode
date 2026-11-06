@@ -32,7 +32,7 @@
 
 #include <climits>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     template <class View>
     forceinline ExecStatus
@@ -252,6 +252,6 @@ namespace Gecode { namespace Int { namespace Distinct {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop

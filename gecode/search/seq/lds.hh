@@ -37,7 +37,7 @@
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// %Probe engine for %LDS
     template <class Tracer>
@@ -133,7 +133,7 @@ namespace Gecode { namespace Search { namespace Seq {
         ~LDS() override;
     };
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/lds.hpp>
 

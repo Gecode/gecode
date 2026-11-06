@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Create branch and bound engine
     GECODE_SEARCH_EXPORT Engine* make_bab_engine(Space* s, const Options& o);
@@ -60,7 +60,7 @@ namespace Gecode { namespace Search {
         return build<T, BAB>(s, opt);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 namespace Gecode {
 

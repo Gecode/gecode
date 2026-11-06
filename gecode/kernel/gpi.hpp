@@ -32,7 +32,7 @@
 
 #include <cmath>
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /// Global propagator information
     class GPI {
@@ -209,6 +209,6 @@ namespace Gecode { namespace Kernel {
         }
     }
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 // STATISTICS: kernel-prop

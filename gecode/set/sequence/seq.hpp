@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Sequence {
+namespace Gecode::Set::Sequence {
 
     /*
      * "Sequence" propagator
@@ -59,6 +59,6 @@ namespace Gecode { namespace Set { namespace Sequence {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Set::Sequence
+} // namespace Gecode::Set::Sequence
 
 // STATISTICS: set-prop

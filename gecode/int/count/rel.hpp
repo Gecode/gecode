@@ -32,7 +32,7 @@
 
 #include <gecode/int/rel.hh>
 
-namespace Gecode { namespace Int { namespace Count {
+namespace Gecode::Int::Count {
 
     /*
      * Counting domain consistent equality
@@ -297,6 +297,6 @@ namespace Gecode { namespace Int { namespace Count {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Count
+} // namespace Gecode::Int::Count
 
 // STATISTICS: int-prop

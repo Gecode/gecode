@@ -37,7 +37,7 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /*
      * Creation of new variable implementations
@@ -228,6 +228,6 @@ namespace Gecode { namespace Float {
         return FloatVarImpBase::med(me);
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

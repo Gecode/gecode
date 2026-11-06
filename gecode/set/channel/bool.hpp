@@ -32,7 +32,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Set { namespace Channel {
+namespace Gecode::Set::Channel {
 
     template <class View>
     template <class A>
@@ -266,6 +266,6 @@ namespace Gecode { namespace Set { namespace Channel {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Set::Channel
+} // namespace Gecode::Set::Channel
 
 // STATISTICS: set-prop

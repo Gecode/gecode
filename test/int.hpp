@@ -32,7 +32,7 @@
  *
  */
 
-namespace Test { namespace Int {
+namespace Test::Int {
 
     /*
      * Assignments
@@ -359,6 +359,6 @@ namespace Test { namespace Int {
         return bots[i];
     }
 
-}} // namespace Test::Int
+} // namespace Test::Int
 
 // STATISTICS: test-int

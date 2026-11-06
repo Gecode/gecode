@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     // Overload checking for mandatory tasks
     template <class ManTask>
@@ -53,6 +53,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

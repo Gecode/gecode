@@ -32,7 +32,7 @@
 
 #include <gecode/float/branch.hh>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     ViewSel<FloatView>*
     view_selection(Space& home, const FloatVarBranch& fvb) {
@@ -155,6 +155,6 @@ namespace Gecode { namespace Float { namespace Branch {
         return nullptr;
     }
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 // STATISTICS: float-branch

@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Precede {
+namespace Gecode::Int::Precede {
 
     /// Whether \a x is assigned to value \a v
     template <class View>
@@ -221,6 +221,6 @@ namespace Gecode { namespace Int { namespace Precede {
         return (c.empty()) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Precede
+} // namespace Gecode::Int::Precede
 
 // STATISTICS: int-prop

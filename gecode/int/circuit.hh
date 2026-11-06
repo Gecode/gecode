@@ -41,7 +41,7 @@
  * \brief %Circuit propagators
  */
 
-namespace Gecode { namespace Int { namespace Circuit {
+namespace Gecode::Int::Circuit {
 
     /**
      * \brief Base-class for circuit propagator
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Circuit {
         static ExecStatus post(Home home, ViewArray<View>& x, Offset& o);
     };
 
-}}} // namespace Gecode::Int::Circuit
+} // namespace Gecode::Int::Circuit
 
 #include <gecode/int/circuit/base.hpp>
 #include <gecode/int/circuit/val.hpp>

@@ -33,7 +33,7 @@
 #include <gecode/set.hh>
 #include <gecode/search/relax.hh>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /// Class for posting equalities for non-relaxed variables
     class Relax {
@@ -53,7 +53,7 @@ namespace Gecode { namespace Set {
         return ES_OK;
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 namespace Gecode {
 

@@ -35,7 +35,7 @@
 #include <climits>
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /*
      * Positive bounds consistent power
@@ -514,6 +514,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

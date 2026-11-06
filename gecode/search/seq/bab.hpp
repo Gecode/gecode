@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     template <class Tracer>
     forceinline
@@ -200,6 +200,6 @@ namespace Gecode { namespace Search { namespace Seq {
         delete cur;
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

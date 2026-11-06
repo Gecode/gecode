@@ -36,7 +36,7 @@
 
 #include <gecode/search/seq/rbs.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     bool
     RestartStop::stop(const Statistics& s, const Options& o) {
@@ -163,6 +163,6 @@ namespace Gecode { namespace Search { namespace Seq {
         delete stop;
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

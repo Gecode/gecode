@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     forceinline bool
     divides_value(int divisor, int dividend) {
@@ -202,6 +202,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

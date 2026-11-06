@@ -38,7 +38,7 @@
 #include <utility>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// Result of expanding one alternative
     class ExpansionStep {
@@ -144,7 +144,7 @@ namespace Gecode { namespace Search { namespace Seq {
         }
     };
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #endif
 

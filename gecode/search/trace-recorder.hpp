@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Recorder for engine events (for access control)
     class WrapTraceRecorder {
@@ -290,6 +290,6 @@ namespace Gecode { namespace Search {
         return false;
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-trace

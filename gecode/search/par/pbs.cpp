@@ -37,7 +37,7 @@
 #include <gecode/search/par/pbs.hh>
 #include <gecode/search/worker-control.hh>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     bool
     PortfolioStop::stop(const Statistics& s, const Options& o) {
@@ -49,6 +49,6 @@ namespace Gecode { namespace Search { namespace Par {
         WorkerControlAccess::signal_all(worker_control);
     }
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

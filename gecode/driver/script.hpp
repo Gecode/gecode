@@ -40,7 +40,7 @@
 #include <csignal>
 #endif
 
-namespace Gecode { namespace Driver {
+namespace Gecode::Driver {
 
     /**
      * \brief Stop object based on nodes, failures, and time
@@ -584,6 +584,6 @@ namespace Gecode { namespace Driver {
             log_file.close();
     }
 
-}} // namespace Gecode::Driver
+} // namespace Gecode::Driver
 
 // STATISTICS: driver-any

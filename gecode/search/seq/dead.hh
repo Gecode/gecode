@@ -35,12 +35,12 @@
 #ifndef GECODE_SEARCH_SEQ_DEAD_HH
 #define GECODE_SEARCH_SEQ_DEAD_HH
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     GECODE_SEARCH_EXPORT
     Engine* dead(const Options& o, const Statistics& stat);
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #endif
 

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Bool {
+namespace Gecode::Int::Bool {
 
     template <class BVA, class BVB, class BVC>
     forceinline
@@ -211,6 +211,6 @@ namespace Gecode { namespace Int { namespace Bool {
         }
     }
 
-}}} // namespace Gecode::Int::Bool
+} // namespace Gecode::Int::Bool
 
 // STATISTICS: int-prop

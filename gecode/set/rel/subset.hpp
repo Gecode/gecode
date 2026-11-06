@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
     template <class View0, class View1>
     forceinline
@@ -86,6 +86,6 @@ namespace Gecode { namespace Set { namespace Rel {
         return (x0.assigned() || x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
-}}} // namespace Gecode::Set::Rel
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

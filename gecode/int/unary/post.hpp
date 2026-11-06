@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     template <class ManTask>
     forceinline ExecStatus
@@ -64,6 +64,6 @@ namespace Gecode { namespace Int { namespace Unary {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-post

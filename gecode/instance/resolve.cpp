@@ -32,7 +32,7 @@
 
 #include <gecode/instance/impl.hpp>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     namespace {
 
@@ -667,6 +667,6 @@ namespace Gecode { namespace Instance {
         Resolver(origin).run(b);
     }
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 // STATISTICS: instance-any

@@ -38,7 +38,7 @@
 #include <QHash>
 #include <QString>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     class VisualNode;
 
@@ -166,7 +166,7 @@ namespace Gecode { namespace Gist {
         unsigned int get_number_of_children() const;
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

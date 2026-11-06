@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /**
      * \brief %Set for support information
@@ -484,6 +484,6 @@ namespace Gecode { namespace Int { namespace Linear {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 // STATISTICS: int-prop

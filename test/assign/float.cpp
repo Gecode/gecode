@@ -38,7 +38,7 @@
 
 #include <gecode/search.hh>
 
-namespace Test { namespace Assign {
+namespace Test::Assign {
 
     /// %Test assignment with distinct propagator
     class Float : public FloatTest {
@@ -115,7 +115,7 @@ namespace Test { namespace Assign {
         FloatVarSelection var_selection;
     } // namespace
 
-}} // namespace Test::Assign
+} // namespace Test::Assign
 
 #endif
 

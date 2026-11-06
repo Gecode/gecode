@@ -46,7 +46,7 @@
  * \brief %Bin-packing propagators
  */
 
-namespace Gecode { namespace Int { namespace BinPacking {
+namespace Gecode::Int::BinPacking {
 
     /**
      * \brief Item combining bin and size information
@@ -354,7 +354,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         ~ConflictGraph() = default;
     };
 
-}}} // namespace Gecode::Int::BinPacking
+} // namespace Gecode::Int::BinPacking
 
 #include <gecode/int/bin-packing/propagate.hpp>
 #include <gecode/int/bin-packing/conflict-graph.hpp>

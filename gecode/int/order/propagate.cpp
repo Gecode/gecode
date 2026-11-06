@@ -32,7 +32,7 @@
 
 #include <gecode/int/order.hh>
 
-namespace Gecode { namespace Int { namespace Order {
+namespace Gecode::Int::Order {
 
     Actor*
     OrderProp::copy(Space& home) {
@@ -80,6 +80,6 @@ namespace Gecode { namespace Int { namespace Order {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::Order
+} // namespace Gecode::Int::Order
 
 // STATISTICS: int-prop

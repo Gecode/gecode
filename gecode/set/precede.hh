@@ -46,7 +46,7 @@
  * \brief Value precedence propagators
  */
 
-namespace Gecode { namespace Set { namespace Precede {
+namespace Gecode::Set::Precede {
 
     /**
      * \brief Single value precedence propagator
@@ -104,7 +104,7 @@ namespace Gecode { namespace Set { namespace Precede {
         static ExecStatus post(Home home, ViewArray<View>& x, int s, int t);
     };
 
-}}} // namespace Gecode::Set::Precede
+} // namespace Gecode::Set::Precede
 
 #include <gecode/set/precede/single.hpp>
 

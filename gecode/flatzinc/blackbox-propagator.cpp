@@ -43,7 +43,7 @@
 #include <utility>
 #include <vector>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     namespace {
 
@@ -693,6 +693,6 @@ namespace Gecode { namespace FlatZinc {
         GECODE_ES_FAIL(es);
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-prop

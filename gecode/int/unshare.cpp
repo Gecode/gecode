@@ -38,7 +38,7 @@
  * \brief Unsharing shared variables
  */
 
-namespace Gecode { namespace Int { namespace Unshare {
+namespace Gecode::Int::Unshare {
 
     /// Sort order for variables
     template <class Var>
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Unshare {
         }
     }
 
-}}} // namespace Gecode::Int::Unshare
+} // namespace Gecode::Int::Unshare
 
 namespace Gecode {
 

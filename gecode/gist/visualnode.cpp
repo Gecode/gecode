@@ -37,7 +37,7 @@
 
 #include <utility>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     Shape* Shape::leaf;
     Shape* Shape::hidden;
@@ -507,6 +507,6 @@ namespace Gecode { namespace Gist {
         }
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

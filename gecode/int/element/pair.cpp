@@ -32,7 +32,7 @@
 
 #include <gecode/int/element.hh>
 
-namespace Gecode { namespace Int { namespace Element {
+namespace Gecode::Int::Element {
 
     Actor*
     Pair::copy(Space& home) {
@@ -197,6 +197,6 @@ namespace Gecode { namespace Int { namespace Element {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Int::Element
+} // namespace Gecode::Int::Element
 
 // STATISTICS: int-prop

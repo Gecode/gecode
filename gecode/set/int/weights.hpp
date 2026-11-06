@@ -37,7 +37,7 @@
 #include <gecode/set.hh>
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Set { namespace Int {
+namespace Gecode::Set::Int {
 
     /// Value Iterator for values above a certain weight
     template <class I>
@@ -341,6 +341,6 @@ namespace Gecode { namespace Set { namespace Int {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Set::Int
+} // namespace Gecode::Set::Int
 
 // STATISTICS: set-prop

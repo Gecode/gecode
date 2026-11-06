@@ -37,7 +37,7 @@
 #include <gecode/set/rel.hh>
 #include <gecode/set/rel-op.hh>
 
-namespace Gecode { namespace Set { namespace RelOp {
+namespace Gecode::Set::RelOp {
 
     template <class View0, class View1, class Res>
     forceinline void
@@ -190,6 +190,6 @@ namespace Gecode { namespace Set { namespace RelOp {
 
     GECODE_SET_EXPORT void post_compl(Home home, ConstSetView x, SetOpType op, SetView y, ConstSetView z);
 
-}}} // namespace Gecode::Set::RelOp
+} // namespace Gecode::Set::RelOp
 
 // STATISTICS: set-prop

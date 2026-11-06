@@ -44,7 +44,7 @@
  * \brief %Linear propagators
  */
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Binary propagators
@@ -329,11 +329,11 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, A x0, B x1, Val c, BoolView b);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/int-bin.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Ternary propagators
@@ -484,11 +484,11 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, A x0, B x1, C x2, Val c);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/int-ter.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * n-ary propagators
@@ -777,12 +777,12 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/int-nary.hpp>
 #include <gecode/int/linear/int-dom.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Boolean linear propagators
@@ -1024,11 +1024,11 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, ViewArray<VX>& x, int c, VB b);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/bool-int.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /**
      * \brief Base-class for Boolean linear propagators
@@ -1138,11 +1138,11 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/bool-view.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /// Coefficient and Boolean view
     class ScaleBool {
@@ -1340,11 +1340,11 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, SBAP& p, SBAN& n, VX x, int c);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/bool-scale.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /**
      * \brief Class for describing linear term \f$a\cdot x\f$
@@ -1567,7 +1567,7 @@ namespace Gecode { namespace Int { namespace Linear {
     GECODE_INT_EXPORT void post(Home home, Term<BoolView>* t, int n, IntRelType irt, IntView y, Reify r,
                                 IntPropLevel ipl = IPL_DEF);
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/post.hpp>
 

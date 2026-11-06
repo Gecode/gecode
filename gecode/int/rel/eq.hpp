@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Rel {
+namespace Gecode::Int::Rel {
 
     /*
      * Binary value propagation equality
@@ -752,6 +752,6 @@ namespace Gecode { namespace Int { namespace Rel {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Int::Rel
+} // namespace Gecode::Int::Rel
 
 // STATISTICS: int-prop

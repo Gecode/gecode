@@ -34,7 +34,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /** \brief Template for linear congruential generators
      *
@@ -187,6 +187,6 @@ namespace Gecode { namespace Support {
      */
     using RandomGenerator = LinearCongruentialGenerator<2147483647, 48271, 44488, 3399>;
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

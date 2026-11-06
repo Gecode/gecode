@@ -38,7 +38,7 @@
 
 #include <gecode/set/convex.hh>
 
-namespace Gecode { namespace Set { namespace Convex {
+namespace Gecode::Set::Convex {
 
     Actor*
     ConvexHull::copy(Space& home) {
@@ -102,6 +102,6 @@ namespace Gecode { namespace Set { namespace Convex {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Set::Convex
+} // namespace Gecode::Set::Convex
 
 // STATISTICS: set-prop

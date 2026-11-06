@@ -36,7 +36,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /**
      * \brief Sort transition array by input state
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         SI_FINAL = 4       ///< State is final
     };
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 namespace Gecode {
 

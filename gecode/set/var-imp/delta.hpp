@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     forceinline
     SetDelta::SetDelta()
@@ -67,6 +67,6 @@ namespace Gecode { namespace Set {
         return _lub_min > _lub_max;
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

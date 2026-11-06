@@ -32,7 +32,7 @@
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 #ifdef GECODE_HAS_EXPERIMENTAL
     UninitializedGuidance::UninitializedGuidance(const char* l) : Exception(l, "Heuristic guidance is missing") {}
 
@@ -57,6 +57,6 @@ namespace Gecode { namespace Search {
     WorkerControlInUse::WorkerControlInUse(const char* l)
         : Exception(l, "Worker control is already bound or has unsupported engine placement") {}
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

@@ -44,7 +44,7 @@
  * \brief Integer branchers
  */
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /**
      * \defgroup FuncIntViewSel Merit-based integer view selection for branchers
@@ -247,11 +247,11 @@ namespace Gecode { namespace Int { namespace Branch {
         unsigned int operator()(const Space& home, View x, int i);
     };
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 #include <gecode/int/branch/merit.hpp>
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /// Return view selectors for integer views
     GECODE_INT_EXPORT
@@ -260,9 +260,9 @@ namespace Gecode { namespace Int { namespace Branch {
     GECODE_INT_EXPORT
     ViewSel<BoolView>* view_selection(Space& home, const BoolVarBranch& bvb);
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /**
      * \defgroup FuncIntValSel Integer value selection for brancher
@@ -407,11 +407,11 @@ namespace Gecode { namespace Int { namespace Branch {
         int val(const Space& home, IntView x, int i);
     };
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 #include <gecode/int/branch/val-sel.hpp>
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /// No-good literal for equality
     template <class View>
@@ -489,11 +489,11 @@ namespace Gecode { namespace Int { namespace Branch {
         NGL* copy(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 #include <gecode/int/branch/ngl.hpp>
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /**
      * \defgroup FuncIntValCommit Integer value commit classes
@@ -595,11 +595,11 @@ namespace Gecode { namespace Int { namespace Branch {
         void print(const Space& home, unsigned int a, View x, int i, int n, std::ostream& o) const;
     };
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 #include <gecode/int/branch/val-commit.hpp>
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /// Return value and commit for integer views
     GECODE_INT_EXPORT
@@ -617,9 +617,9 @@ namespace Gecode { namespace Int { namespace Branch {
     GECODE_INT_EXPORT
     ValSelCommitBase<BoolView, int>* value_selection_commit(Space& home, const BoolAssign& ba);
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /**
      * \brief %Brancher by view and values selection
@@ -669,13 +669,13 @@ namespace Gecode { namespace Int { namespace Branch {
     void post_view_values_brancher(Home home, ViewArray<IntView>& x, ViewSel<IntView>* vs[n], IntBranchFilter bf,
                                    IntVarValPrint vvp);
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 #include <gecode/int/branch/view-values.hpp>
 
 #ifdef GECODE_HAS_CBS
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /**
      * \brief %Brancher using counting-based search
@@ -782,7 +782,7 @@ namespace Gecode { namespace Int { namespace Branch {
         bool in_brancher(unsigned int var_id) const;
     };
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 #include <gecode/int/branch/cbs.hpp>
 

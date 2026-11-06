@@ -39,7 +39,7 @@
 #include <limits>
 #include <utility>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /// Import tuple type
     using Tuple = ::Gecode::TupleSet::Tuple;
@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         return a[p] < b[p];
     }
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 namespace Gecode {
 

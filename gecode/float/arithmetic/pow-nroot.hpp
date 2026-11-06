@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Arithmetic {
+namespace Gecode::Float::Arithmetic {
 
     /// Propagator maintaining that a float view does not contain zero
     template <class View>
@@ -265,6 +265,6 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_NOFIX;
     }
 
-}}} // namespace Gecode::Float::Arithmetic
+} // namespace Gecode::Float::Arithmetic
 
 // STATISTICS: float-prop

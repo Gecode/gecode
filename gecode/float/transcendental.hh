@@ -40,7 +40,7 @@
  * \brief %Transcendental propagators
  */
 
-namespace Gecode { namespace Float { namespace Transcendental {
+namespace Gecode::Float::Transcendental {
 
     /**
      * \brief %Propagator for bounds consistent exp operator
@@ -99,7 +99,7 @@ namespace Gecode { namespace Float { namespace Transcendental {
         static ExecStatus post(Home home, FloatNum base, A x0, B x1);
     };
 
-}}} // namespace Gecode::Float::Transcendental
+} // namespace Gecode::Float::Transcendental
 
 #include <gecode/float/transcendental/exp-log.hpp>
 

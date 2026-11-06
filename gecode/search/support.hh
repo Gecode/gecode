@@ -35,7 +35,7 @@
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Clone space \a s depending on options \a o
     forceinline Space* snapshot(Space* s, const Options& o);
@@ -102,7 +102,7 @@ namespace Gecode { namespace Search {
         return w.nogoods();
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #endif
 

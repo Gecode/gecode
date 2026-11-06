@@ -304,14 +304,8 @@ def parse_vis_file(path: str) -> Dict:
     data["conf"] = f"{data['name']}VarImpConf"
     data["base"] = f"Gecode::VarImp<{data['namespace']}::{data['conf']}>"
 
-    hdr = ""
-    ftr = ""
-    for ns in data["namespace"].split("::"):
-        hdr = f"{hdr}namespace {ns} {{ "
-        ftr = f"{ftr}}}"
-    hdr = re.sub(r" $", "", hdr)
-    data["hdr"] = hdr + "\n"
-    data["ftr"] = ftr + "\n"
+    data["hdr"] = f"namespace {data['namespace']} {{\n"
+    data["ftr"] = "}\n"
 
     me_n = len(data["men"])
     if me_n == 3:

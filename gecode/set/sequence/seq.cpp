@@ -38,7 +38,7 @@
 
 #include <gecode/set/sequence.hh>
 
-namespace Gecode { namespace Set { namespace Sequence {
+namespace Gecode::Set::Sequence {
 
     /*
      * "Sequence" propagator
@@ -67,6 +67,6 @@ namespace Gecode { namespace Set { namespace Sequence {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Set::Sequence
+} // namespace Gecode::Set::Sequence
 
 // STATISTICS: set-prop

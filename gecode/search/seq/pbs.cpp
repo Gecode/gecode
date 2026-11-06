@@ -32,7 +32,7 @@
 
 #include <gecode/search/seq/pbs.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     bool
     PortfolioStop::stop(const Statistics& s, const Options& o) {
@@ -47,6 +47,6 @@ namespace Gecode { namespace Search { namespace Seq {
         return false;
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

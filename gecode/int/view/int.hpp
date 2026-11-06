@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Constructors and initialization
@@ -258,6 +258,6 @@ namespace Gecode { namespace Int {
         IntVarImpFwd::init(x.varimp());
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

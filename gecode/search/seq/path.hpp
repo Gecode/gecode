@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /*
      * Edge for recomputation
@@ -385,6 +385,6 @@ namespace Gecode { namespace Search { namespace Seq {
         GECODE_ES_FAIL(NoGoodsProp::post(home, *this));
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

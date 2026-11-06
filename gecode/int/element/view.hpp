@@ -36,7 +36,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Element {
+namespace Gecode::Int::Element {
 
     /**
      * \brief Class for bounds-equality test
@@ -416,6 +416,6 @@ namespace Gecode { namespace Int { namespace Element {
         return (shared(x0, x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Element
+} // namespace Gecode::Int::Element
 
 // STATISTICS: int-prop

@@ -38,7 +38,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace GCC {
+namespace Gecode::Int::GCC {
 
     /**
      * \brief Bounds constraint (BC) type
@@ -1726,6 +1726,6 @@ namespace Gecode { namespace Int { namespace GCC {
         return home.ralloc(t);
     }
 
-}}} // namespace Gecode::Int::GCC
+} // namespace Gecode::Int::GCC
 
 // STATISTICS: int-prop

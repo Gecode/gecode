@@ -69,7 +69,7 @@ namespace Gecode {
     }
     /// \endcond
 
-    namespace Set { namespace RelOp {
+    namespace Set::RelOp {
 
         /*
          * Detect sharing between 3 variables
@@ -557,7 +557,7 @@ namespace Gecode {
             return ES_FIX;
         }
 
-    }} // namespace Set::RelOp
+    } // namespace Set::RelOp
 } // namespace Gecode
 
 #endif

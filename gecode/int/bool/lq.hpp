@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Bool {
+namespace Gecode::Int::Bool {
 
     /*
      * Less or equal propagator
@@ -230,6 +230,6 @@ namespace Gecode { namespace Int { namespace Bool {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Bool
+} // namespace Gecode::Int::Bool
 
 // STATISTICS: int-prop

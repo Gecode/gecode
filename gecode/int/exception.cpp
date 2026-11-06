@@ -32,7 +32,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     OutOfLimits::OutOfLimits(const char* l) : Exception(l, "Number out of limits") {}
 
@@ -73,6 +73,6 @@ namespace Gecode { namespace Int {
     LDSBBadValueSelection::LDSBBadValueSelection(const char* l)
         : Exception(l, "Value selection incompatible with LDSB") {}
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-other

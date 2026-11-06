@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     forceinline
     RestartStop::RestartStop(Stop* s)
@@ -97,6 +97,6 @@ namespace Gecode { namespace Search { namespace Seq {
         stop->limit(stat, (*co)());
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

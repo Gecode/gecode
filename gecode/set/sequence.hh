@@ -41,7 +41,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set { namespace Sequence {
+namespace Gecode::Set::Sequence {
 
     /**
      * \namespace Gecode::Set::Sequence
@@ -96,7 +96,7 @@ namespace Gecode { namespace Set { namespace Sequence {
         static ExecStatus post(Home home, ViewArray<SetView>, SetView);
     };
 
-}}} // namespace Gecode::Set::Sequence
+} // namespace Gecode::Set::Sequence
 
 #include <gecode/set/rel.hh>
 #include <gecode/set/rel-op/common.hpp>

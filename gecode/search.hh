@@ -75,7 +75,7 @@
 
 #endif
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// %Sequential search engine implementations
     namespace Sequential {
@@ -137,11 +137,11 @@ namespace Gecode { namespace Search {
         const unsigned int cpprofiler_port = 6565U;
     } // namespace Config
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/exception.hpp>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /**
      * \brief %Search engine statistics
@@ -169,17 +169,17 @@ namespace Gecode { namespace Search {
         Statistics& operator+=(const Statistics& s);
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/statistics.hpp>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     class WrapTraceRecorder;
     class TraceRecorder;
     class EdgeTraceRecorder;
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <string>
 #include <sstream>
@@ -408,20 +408,14 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_CPPROFILER
 
-namespace Gecode {
+/// Code that is specific to the CPProfiler
 
-    /// Code that is specific to the CPProfiler
-    namespace CPProfiler {
-    }
-
-} // namespace Gecode
-
-namespace Gecode { namespace CPProfiler {
+namespace Gecode::CPProfiler {
 
     /// The actual connector to the CPProfiler
     class Connector;
 
-}} // namespace Gecode::CPProfiler
+} // namespace Gecode::CPProfiler
 
 namespace Gecode {
 
@@ -473,7 +467,7 @@ namespace Gecode {
 
 #endif
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /**
      * \brief Base class for cutoff generators for restart-based meta engine
@@ -706,11 +700,11 @@ namespace Gecode { namespace Search {
         ~CutoffRepeat() override;
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/cutoff.hpp>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     class WorkerControlAccess;
 
@@ -893,13 +887,13 @@ namespace Gecode { namespace Search {
         GECODE_SEARCH_EXPORT Options expand() const;
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/worker-control.hh>
 
 #include <gecode/search/options.hpp>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /**
      * \defgroup TaskModelSearchStop Stop-objects for stopping search
@@ -1054,11 +1048,11 @@ namespace Gecode { namespace Search {
         bool stop(const Statistics& s, const Options& o) override;
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/stop.hpp>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /**
      * \brief %Search engine implementation interface
@@ -1093,11 +1087,11 @@ namespace Gecode { namespace Search {
         virtual ~Engine();
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/engine.hpp>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Base-class for search engines
     template <class T>
@@ -1129,11 +1123,11 @@ namespace Gecode { namespace Search {
         Base& operator=(const Base&) = delete;
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/base.hpp>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Build an engine of type \a E for a script \a T
     template <class T, class E>
@@ -1165,7 +1159,7 @@ namespace Gecode { namespace Search {
         virtual ~Builder();
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/build.hpp>
 
@@ -1236,7 +1230,7 @@ namespace Gecode {
 #include <gecode/search/dfs.hpp>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /**
      * \brief Guidance for heuristic search engines (experimental)
@@ -1285,7 +1279,7 @@ namespace Gecode { namespace Search {
             : sense(s), bound(std::move(b)), rank(std::move(r)) {}
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 namespace Gecode {
 
@@ -1499,7 +1493,7 @@ namespace Gecode {
 
 #include <gecode/search/rbs.hpp>
 
-namespace Gecode { namespace Search { namespace Meta {
+namespace Gecode::Search::Meta {
 
     /// Build a sequential engine
     template <class T, template <class> class E>
@@ -1521,7 +1515,7 @@ namespace Gecode { namespace Search { namespace Meta {
 
 #endif
 
-}}} // namespace Gecode::Search::Meta
+} // namespace Gecode::Search::Meta
 
 namespace Gecode {
 

@@ -32,7 +32,7 @@
 
 #include <gecode/int/rel.hh>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     template <class VA, class VB, bool tie_break>
     forceinline
@@ -256,6 +256,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

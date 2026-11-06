@@ -34,7 +34,7 @@
 #include <algorithm>
 #include <limits>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /**
      * \brief Traits class for variables
@@ -968,6 +968,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 // STATISTICS: int-prop

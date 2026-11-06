@@ -34,105 +34,101 @@
 
 using namespace Gecode;
 
-namespace Test { namespace Set {
+/// %Tests for convexity constraints
+namespace Test::Set::Convex {
 
-    /// %Tests for convexity constraints
-    namespace Convex {
+    /**
+     * \defgroup TaskTestSetConvex Convexity constraints
+     * \ingroup TaskTestSet
+     */
+    //@{
 
-        /**
-         * \defgroup TaskTestSetConvex Convexity constraints
-         * \ingroup TaskTestSet
-         */
-        //@{
+    static IntSet ds_33(-4, 4);
 
-        static IntSet ds_33(-4, 4);
+    /// %Test for convexity propagator
+    class Convex : public SetTest {
+    public:
+        /// Create and register test
+        Convex(const char* t) : SetTest(t, 1, ds_33, false) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            CountableSetRanges xr0(x.lub, x[0]);
+            if (!xr0())
+                return true;
+            ++xr0;
+            return !xr0();
+        }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray&) override {
+            Gecode::convex(home, x[0]);
+        }
+    };
+    Convex _convex("Convex::Convex");
 
-        /// %Test for convexity propagator
-        class Convex : public SetTest {
-        public:
-            /// Create and register test
-            Convex(const char* t) : SetTest(t, 1, ds_33, false) {}
-            /// %Test whether \a x is solution
-            bool
-            solution(const SetAssignment& x) const override {
-                CountableSetRanges xr0(x.lub, x[0]);
-                if (!xr0())
-                    return true;
-                ++xr0;
-                return !xr0();
-            }
-            /// Post constraint on \a x
-            void
-            post(Space& home, SetVarArray& x, IntVarArray&) override {
-                Gecode::convex(home, x[0]);
-            }
-        };
-        Convex _convex("Convex::Convex");
+    /// %Test for convex hull propagator
+    class ConvexHull : public SetTest {
+    public:
+        /// Create and register test
+        ConvexHull(const char* t) : SetTest(t, 2, ds_33, false) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            CountableSetRanges xr0(x.lub, x[0]);
+            CountableSetRanges xr1(x.lub, x[1]);
 
-        /// %Test for convex hull propagator
-        class ConvexHull : public SetTest {
-        public:
-            /// Create and register test
-            ConvexHull(const char* t) : SetTest(t, 2, ds_33, false) {}
-            /// %Test whether \a x is solution
-            bool
-            solution(const SetAssignment& x) const override {
-                CountableSetRanges xr0(x.lub, x[0]);
-                CountableSetRanges xr1(x.lub, x[1]);
+            if (!xr0())
+                return !xr1();
 
-                if (!xr0())
-                    return !xr1();
-
-                int x0min = xr0.min();
-                int x0max = xr0.max();
-                ++xr0;
-                if (!xr0()) {
-                    if (!xr1())
-                        return false;
-                    if (x0min != xr1.min())
-                        return false;
-                    int x1max = Gecode::Set::Limits::min;
-                    while (xr1()) {
-                        x1max = xr1.max();
-                        ++xr1;
-                    }
-                    return x0max == x1max;
+            int x0min = xr0.min();
+            int x0max = xr0.max();
+            ++xr0;
+            if (!xr0()) {
+                if (!xr1())
+                    return false;
+                if (x0min != xr1.min())
+                    return false;
+                int x1max = Gecode::Set::Limits::min;
+                while (xr1()) {
+                    x1max = xr1.max();
+                    ++xr1;
                 }
-                return false;
+                return x0max == x1max;
             }
-            /// Post constraint on \a x
-            void
-            post(Space& home, SetVarArray& x, IntVarArray&) override {
-                Gecode::convex(home, x[1], x[0]);
-            }
-        };
-        ConvexHull _convexhull("Convex::ConvexHull");
+            return false;
+        }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray&) override {
+            Gecode::convex(home, x[1], x[0]);
+        }
+    };
+    ConvexHull _convexhull("Convex::ConvexHull");
 
-        /// Sharing test for convex hull propagator
-        class ConvexHullS : public SetTest {
-        public:
-            /// Create and register test
-            ConvexHullS(const char* t) : SetTest(t, 1, ds_33, false) {}
-            /// %Test whether \a x is solution
-            bool
-            solution(const SetAssignment& x) const override {
-                CountableSetRanges xr0(x.lub, x[0]);
-                if (!xr0())
-                    return true;
-                ++xr0;
-                return !xr0();
-            }
-            /// Post constraint on \a x
-            void
-            post(Space& home, SetVarArray& x, IntVarArray&) override {
-                Gecode::convex(home, x[0], x[0]);
-            }
-        };
-        ConvexHullS _convexhulls("Convex::Sharing::ConvexHullS");
+    /// Sharing test for convex hull propagator
+    class ConvexHullS : public SetTest {
+    public:
+        /// Create and register test
+        ConvexHullS(const char* t) : SetTest(t, 1, ds_33, false) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            CountableSetRanges xr0(x.lub, x[0]);
+            if (!xr0())
+                return true;
+            ++xr0;
+            return !xr0();
+        }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray&) override {
+            Gecode::convex(home, x[0], x[0]);
+        }
+    };
+    ConvexHullS _convexhulls("Convex::Sharing::ConvexHullS");
 
-        //@}
+    //@}
 
-    } // namespace Convex
-}} // namespace Test::Set
-
+} // namespace Test::Set::Convex
 // STATISTICS: test-set

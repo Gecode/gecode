@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Manage memory organized into block lists (allocator)
@@ -158,6 +158,6 @@ namespace Gecode { namespace Support {
         return ba();
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

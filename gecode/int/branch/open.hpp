@@ -35,7 +35,7 @@
 
 #include <gecode/int/branch.hh>
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /// Standard view/value selectors over the materialized prefix
     template <class View, class Filter, int n>
@@ -350,7 +350,7 @@ namespace Gecode { namespace Int { namespace Branch {
         }
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 #endif
 

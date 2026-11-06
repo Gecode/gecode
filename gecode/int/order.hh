@@ -41,7 +41,7 @@
  * \brief %Int for ordering two tasks
  */
 
-namespace Gecode { namespace Int { namespace Order {
+namespace Gecode::Int::Order {
 
     /**
      * \brief %Scheduling propagator for ordering two tasks
@@ -82,7 +82,7 @@ namespace Gecode { namespace Int { namespace Order {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Order
+} // namespace Gecode::Int::Order
 
 #include <gecode/int/order/propagate.hpp>
 

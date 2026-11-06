@@ -43,7 +43,7 @@
 #include <memory>
 #include <sstream>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     std::string
     read_file(const std::string& path) {
@@ -1398,6 +1398,6 @@ namespace Gecode { namespace Instance {
         return impl->read(text, origin, p, true);
     }
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 // STATISTICS: instance-any

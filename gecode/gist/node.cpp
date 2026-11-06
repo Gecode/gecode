@@ -35,7 +35,7 @@
 #include <gecode/gist/visualnode.hh>
 #include <cassert>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     void
     Node::set_number_of_children(unsigned int n, NodeAllocator& na) {
@@ -68,6 +68,6 @@ namespace Gecode { namespace Gist {
         }
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

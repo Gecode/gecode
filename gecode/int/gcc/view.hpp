@@ -36,7 +36,7 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     namespace GCC {
 
         /// Return index of \a v in array \a a
@@ -413,6 +413,6 @@ namespace Gecode { namespace Int {
         Gecode::Int::ViewRanges<IntView> xi(x.base());
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

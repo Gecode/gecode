@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     template <class TaskView>
     forceinline ExecStatus
@@ -68,6 +68,6 @@ namespace Gecode { namespace Int { namespace Unary {
         return edge_finding(home, b);
     }
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-prop

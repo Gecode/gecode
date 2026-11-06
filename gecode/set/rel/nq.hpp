@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
     template <class View0, class View1>
     forceinline
@@ -160,6 +160,6 @@ namespace Gecode { namespace Set { namespace Rel {
         y.update(home, p.y);
     }
 
-}}} // namespace Gecode::Set::Rel
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

@@ -44,7 +44,7 @@
  * \brief %Element propagators
  */
 
-namespace Gecode { namespace Int { namespace Element {
+namespace Gecode::Int::Element {
 
     /**
      * \brief %Element propagator for array of integers
@@ -342,7 +342,7 @@ namespace Gecode { namespace Int { namespace Element {
         GECODE_INT_EXPORT ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
-}}} // namespace Gecode::Int::Element
+} // namespace Gecode::Int::Element
 
 #include <gecode/int/element/int.hpp>
 #include <gecode/int/element/view.hpp>

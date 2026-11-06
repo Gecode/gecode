@@ -42,7 +42,7 @@
  * \brief Counting propagators
  */
 
-namespace Gecode { namespace Int { namespace Count {
+namespace Gecode::Int::Count {
 
     /**
      * Relations for domain consistent counting
@@ -122,11 +122,11 @@ namespace Gecode { namespace Int { namespace Count {
     ExecStatus prune(Home home, ViewArray<VX>& x, const IntSet& y);
     //@}
 
-}}} // namespace Gecode::Int::Count
+} // namespace Gecode::Int::Count
 
 #include <gecode/int/count/rel.hpp>
 
-namespace Gecode { namespace Int { namespace Count {
+namespace Gecode::Int::Count {
 
     /**
      * \brief Baseclass for count propagators (integer)
@@ -250,14 +250,14 @@ namespace Gecode { namespace Int { namespace Count {
         static ExecStatus post(Home home, ViewArray<VX>& x, const VY& y, int c);
     };
 
-}}} // namespace Gecode::Int::Count
+} // namespace Gecode::Int::Count
 
 #include <gecode/int/count/int-base.hpp>
 #include <gecode/int/count/int-eq.hpp>
 #include <gecode/int/count/int-gq.hpp>
 #include <gecode/int/count/int-lq.hpp>
 
-namespace Gecode { namespace Int { namespace Count {
+namespace Gecode::Int::Count {
 
     /**
      * \brief Base-class for count propagators (view)
@@ -406,7 +406,7 @@ namespace Gecode { namespace Int { namespace Count {
         static ExecStatus post(Home home, ViewArray<VX>& x, const VY& y, VZ z, int c);
     };
 
-}}} // namespace Gecode::Int::Count
+} // namespace Gecode::Int::Count
 
 #include <gecode/int/count/view-base.hpp>
 #include <gecode/int/count/view-eq.hpp>

@@ -32,7 +32,7 @@
 
 #include <sstream>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     template <class View>
     forceinline
@@ -395,6 +395,6 @@ namespace Gecode { namespace Set {
         Iter::Ranges::Diff<BndSetRanges, LubRanges<View>>::init(cr, lr);
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

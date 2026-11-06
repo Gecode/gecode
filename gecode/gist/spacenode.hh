@@ -36,7 +36,7 @@
 #include <gecode/gist/node.hh>
 #include <gecode/kernel.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /** \brief Status of nodes in the search tree
      */
@@ -200,7 +200,7 @@ namespace Gecode { namespace Gist {
         const Choice* get_choice();
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

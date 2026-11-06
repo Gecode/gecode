@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
     template <class View>
     forceinline
@@ -113,6 +113,6 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         return home.ralloc(s);
     }
 
-}}} // namespace Gecode::Int::ViewValGraph
+} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop

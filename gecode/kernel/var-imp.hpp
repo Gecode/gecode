@@ -50,7 +50,7 @@
  */
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     /// Base-class for Int-variable implementations
     class IntVarImpBase : public Gecode::VarImp<Gecode::Int::IntVarImpConf> {
     protected:
@@ -94,10 +94,10 @@ namespace Gecode { namespace Int {
         void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
         //@}
     };
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     /// Base-class for Bool-variable implementations
     class BoolVarImpBase : public Gecode::VarImp<Gecode::Int::BoolVarImpConf> {
     protected:
@@ -141,10 +141,10 @@ namespace Gecode { namespace Int {
         void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
         //@}
     };
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
     /// Base-class for Set-variable implementations
     class SetVarImpBase : public Gecode::VarImp<Gecode::Set::SetVarImpConf> {
     protected:
@@ -188,10 +188,10 @@ namespace Gecode { namespace Set {
         void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
         //@}
     };
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
     /// Base-class for Float-variable implementations
     class FloatVarImpBase : public Gecode::VarImp<Gecode::Float::FloatVarImpConf> {
     protected:
@@ -235,10 +235,10 @@ namespace Gecode { namespace Float {
         void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
         //@}
     };
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     forceinline
     IntVarImpBase::IntVarImpBase(Gecode::Space& home)
@@ -295,10 +295,10 @@ namespace Gecode { namespace Int {
         return me;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     forceinline
     BoolVarImpBase::BoolVarImpBase(Gecode::Space& home)
@@ -336,10 +336,10 @@ namespace Gecode { namespace Int {
         return ME_BOOL_VAL;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     forceinline
     SetVarImpBase::SetVarImpBase(Gecode::Space& home)
@@ -427,10 +427,10 @@ namespace Gecode { namespace Set {
         return me;
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     forceinline
     FloatVarImpBase::FloatVarImpBase(Gecode::Space& home)
@@ -481,7 +481,7 @@ namespace Gecode { namespace Float {
         return me;
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 #endif
 namespace Gecode {
 

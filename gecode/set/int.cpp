@@ -84,7 +84,7 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Set { namespace Int {
+namespace Gecode::Set::Int {
 
     /// Reify \a m to be the minimum of \a s
     void
@@ -112,7 +112,7 @@ namespace Gecode { namespace Set { namespace Int {
         max(home, s, m, ne);
     }
 
-}}} // namespace Gecode::Set::Int
+} // namespace Gecode::Set::Int
 
 namespace Gecode {
 

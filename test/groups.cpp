@@ -35,7 +35,7 @@
 
 #include "test/test.hh"
 
-namespace Test { namespace Groups {
+namespace Test::Groups {
 
     /// Test space
     class GroupSpace : public Gecode::Space {
@@ -143,6 +143,6 @@ namespace Test { namespace Groups {
 
     Create c;
 
-}} // namespace Test::Groups
+} // namespace Test::Groups
 
 // STATISTICS: test-core

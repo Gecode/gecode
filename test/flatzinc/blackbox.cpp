@@ -54,7 +54,7 @@
 #include <unistd.h>
 #endif
 
-namespace Test { namespace FlatZinc {
+namespace Test::FlatZinc {
 
     namespace {
         const char* blackbox_decl = "predicate gecode_blackbox("
@@ -604,6 +604,6 @@ namespace Test { namespace FlatZinc {
         Create c;
     } // namespace Blackbox
 
-}} // namespace Test::FlatZinc
+} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

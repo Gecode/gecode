@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     forceinline void
     Statistics::reset() {
@@ -65,6 +65,6 @@ namespace Gecode { namespace Search {
         return t += *this;
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

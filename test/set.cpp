@@ -38,7 +38,7 @@
 
 #include <algorithm>
 
-namespace Test { namespace Set {
+namespace Test::Set {
 
     CountableSet::CountableSet(const Gecode::IntSet& d0) : d(d0), cur(0) {
         Gecode::IntSetRanges isr(d);
@@ -96,7 +96,7 @@ namespace Test { namespace Set {
         }
     }
 
-}} // namespace Test::Set
+} // namespace Test::Set
 
 std::ostream&
 operator<<(std::ostream& os, const Test::Set::SetAssignment& a) {
@@ -112,7 +112,7 @@ operator<<(std::ostream& os, const Test::Set::SetAssignment& a) {
     return os;
 }
 
-namespace Test { namespace Set {
+namespace Test::Set {
 
     SetTestSpace::SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t, bool log)
         : d(d0), y(*this, i, d), with_int(i), r(Gecode::BoolVar(*this, 0, 1), Gecode::RM_EQV), reified(false), test(t) {
@@ -1204,7 +1204,7 @@ namespace Test { namespace Set {
     const Gecode::SetOpType SetOpTypes::sots[] = {Gecode::SOT_UNION, Gecode::SOT_DISJOINT_UNION,
                                                   Gecode::SOT_INTERSECTION, Gecode::SOT_MINUS};
 
-}} // namespace Test::Set
+} // namespace Test::Set
 
 #undef START_TEST
 #undef CHECK_TEST

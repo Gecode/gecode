@@ -38,7 +38,7 @@
 #include <gecode/int/growable-int-set.hh>
 #include <limits>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     template <class View>
     class Open : public OpenListPropagator<View> {
@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         }
     };
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 #endif
 

@@ -35,7 +35,7 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace Gecode { namespace Int { namespace GCC {
+namespace Gecode::Int::GCC {
 
     template <class Card>
     forceinline
@@ -291,6 +291,6 @@ namespace Gecode { namespace Int { namespace GCC {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::GCC
+} // namespace Gecode::Int::GCC
 
 // STATISTICS: int-prop

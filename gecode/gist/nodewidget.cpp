@@ -33,7 +33,7 @@
 #include <gecode/gist/nodewidget.hh>
 #include <gecode/gist/drawingcursor.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     NodeWidget::NodeWidget(NodeStatus s) : status(s) {
         setMinimumSize(22, 22);
@@ -71,6 +71,6 @@ namespace Gecode { namespace Gist {
         }
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

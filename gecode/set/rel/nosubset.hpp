@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
     /*
      * "No Subset" propagator
@@ -98,6 +98,6 @@ namespace Gecode { namespace Set { namespace Rel {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Set::Rel
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

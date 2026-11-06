@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     inline void
     mul_check(long long int x, long long int y) {
@@ -44,6 +44,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
             throw OutOfLimits("cumulative");
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

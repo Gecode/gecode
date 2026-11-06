@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
     /**
      * \brief Value iterator for values in a bitset
@@ -101,6 +101,6 @@ namespace Gecode { namespace Iter { namespace Values {
         return static_cast<int>(cur);
     }
 
-}}} // namespace Gecode::Iter::Values
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

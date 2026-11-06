@@ -36,7 +36,7 @@
 #include <algorithm>
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /**
      * \brief %Search worker statistics
@@ -117,7 +117,7 @@ namespace Gecode { namespace Search {
         return root_depth + d;
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #endif
 

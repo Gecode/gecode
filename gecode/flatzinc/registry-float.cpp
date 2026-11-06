@@ -40,7 +40,7 @@
 #include <gecode/float.hh>
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
 #ifdef GECODE_HAS_FLOAT_VARS
     namespace {
@@ -343,6 +343,6 @@ namespace Gecode { namespace FlatZinc {
     } // namespace RegistryDetail
 #endif
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-any

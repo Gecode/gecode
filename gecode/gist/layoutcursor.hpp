@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     forceinline bool
     LayoutCursor::may_move_downwards() {
@@ -55,6 +55,6 @@ namespace Gecode { namespace Gist {
             current_node->set_children_layout_done(true);
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

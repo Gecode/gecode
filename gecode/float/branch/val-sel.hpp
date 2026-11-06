@@ -46,7 +46,7 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     forceinline
     ValSelLq::ValSelLq(Space& home, const ValBranch<Var>& vb)
@@ -98,6 +98,6 @@ namespace Gecode { namespace Float { namespace Branch {
         r.~Rnd();
     }
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 // STATISTICS: float-branch

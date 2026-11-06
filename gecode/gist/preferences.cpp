@@ -32,7 +32,7 @@
 
 #include <gecode/gist/preferences.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     PreferencesDialog::PreferencesDialog(const Options& opt, QWidget* parent) : QDialog(parent) {
         QSettings settings("gecode.dev", "Gist");
@@ -180,6 +180,6 @@ namespace Gecode { namespace Gist {
         refresh_box->setEnabled(state != Qt::Checked);
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

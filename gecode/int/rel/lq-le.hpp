@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Rel {
+namespace Gecode::Int::Rel {
 
     /*
      * Less or equal propagator
@@ -552,6 +552,6 @@ namespace Gecode { namespace Int { namespace Rel {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Int::Rel
+} // namespace Gecode::Int::Rel
 
 // STATISTICS: int-prop

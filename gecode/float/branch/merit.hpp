@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     // Minimum merit
     forceinline
@@ -145,6 +145,6 @@ namespace Gecode { namespace Float { namespace Branch {
         chb.~CHB();
     }
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 // STATISTICS: float-branch

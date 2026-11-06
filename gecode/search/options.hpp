@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     forceinline
     Options::Options()
@@ -43,6 +43,6 @@ namespace Gecode { namespace Search {
     {
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

@@ -33,104 +33,100 @@
 #include <gecode/minimodel.hh>
 #include "test/int.hh"
 
-namespace Test { namespace Int {
+/// %Tests for membership constraints
+namespace Test::Int::Member {
 
-    /// %Tests for membership constraints
-    namespace Member {
+    /**
+     * \defgroup TaskTestIntMember Membership constraints
+     * \ingroup TaskTestInt
+     */
+    //@{
+    /// %Test membership for integer variables
+    class Int : public Test {
+    public:
+        /// Create and register test
+        Int(int n) : Test("Member::Int::" + str(n), n + 1, 0, n, true) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int n = x.size() - 1;
+            for (int i = n; i--;)
+                if (x[i] == x[n])
+                    return true;
+            return false;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            int n = x.size() - 1;
+            IntVarArgs y(n);
+            for (int i = n; i--;)
+                y[i] = x[i];
+            member(home, y, x[n]);
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
+            using namespace Gecode;
+            int n = x.size() - 1;
+            IntVarArgs y(n);
+            for (int i = n; i--;)
+                y[i] = x[i];
+            member(home, y, x[n], r);
+        }
+    };
 
-        /**
-         * \defgroup TaskTestIntMember Membership constraints
-         * \ingroup TaskTestInt
-         */
-        //@{
-        /// %Test membership for integer variables
-        class Int : public Test {
-        public:
-            /// Create and register test
-            Int(int n) : Test("Member::Int::" + str(n), n + 1, 0, n, true) {}
-            /// %Test whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                int n = x.size() - 1;
-                for (int i = n; i--;)
-                    if (x[i] == x[n])
-                        return true;
-                return false;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                using namespace Gecode;
-                int n = x.size() - 1;
-                IntVarArgs y(n);
-                for (int i = n; i--;)
-                    y[i] = x[i];
-                member(home, y, x[n]);
-            }
-            /// Post reified constraint on \a x for \a r
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
-                using namespace Gecode;
-                int n = x.size() - 1;
-                IntVarArgs y(n);
-                for (int i = n; i--;)
-                    y[i] = x[i];
-                member(home, y, x[n], r);
-            }
-        };
+    /// %Test membership for Boolean variables
+    class Bool : public Test {
+    public:
+        /// Create and register test
+        Bool(int n) : Test("Member::Bool::" + str(n), n + 1, 0, 1, true) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int n = x.size() - 1;
+            for (int i = n; i--;)
+                if (x[i] == x[n])
+                    return true;
+            return false;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            int n = x.size() - 1;
+            BoolVarArgs y(n);
+            for (int i = n; i--;)
+                y[i] = channel(home, x[i]);
+            member(home, y, channel(home, x[n]));
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
+            using namespace Gecode;
+            int n = x.size() - 1;
+            BoolVarArgs y(n);
+            for (int i = n; i--;)
+                y[i] = channel(home, x[i]);
+            member(home, y, channel(home, x[n]), r);
+        }
+    };
 
-        /// %Test membership for Boolean variables
-        class Bool : public Test {
-        public:
-            /// Create and register test
-            Bool(int n) : Test("Member::Bool::" + str(n), n + 1, 0, 1, true) {}
-            /// %Test whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                int n = x.size() - 1;
-                for (int i = n; i--;)
-                    if (x[i] == x[n])
-                        return true;
-                return false;
+    /// Help class to create and register tests
+    class Create {
+    public:
+        /// Perform creation and registration
+        Create() {
+            for (int i = 0; i <= 4; i++) {
+                (void)new Int(i);
+                (void)new Bool(i);
             }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                using namespace Gecode;
-                int n = x.size() - 1;
-                BoolVarArgs y(n);
-                for (int i = n; i--;)
-                    y[i] = channel(home, x[i]);
-                member(home, y, channel(home, x[n]));
-            }
-            /// Post reified constraint on \a x for \a r
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
-                using namespace Gecode;
-                int n = x.size() - 1;
-                BoolVarArgs y(n);
-                for (int i = n; i--;)
-                    y[i] = channel(home, x[i]);
-                member(home, y, channel(home, x[n]), r);
-            }
-        };
+        }
+    };
 
-        /// Help class to create and register tests
-        class Create {
-        public:
-            /// Perform creation and registration
-            Create() {
-                for (int i = 0; i <= 4; i++) {
-                    (void)new Int(i);
-                    (void)new Bool(i);
-                }
-            }
-        };
+    Create c;
+    //@}
 
-        Create c;
-        //@}
-
-    } // namespace Member
-}} // namespace Test::Int
-
+} // namespace Test::Int::Member
 // STATISTICS: test-int

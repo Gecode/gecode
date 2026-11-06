@@ -32,7 +32,7 @@
 
 #include <climits>
 
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
     template <class View>
     forceinline
@@ -204,6 +204,6 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         count = cnt0 + 1;
     }
 
-}}} // namespace Gecode::Int::ViewValGraph
+} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop

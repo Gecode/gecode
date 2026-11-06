@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>&
@@ -76,6 +76,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return os << s.str();
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-var

@@ -32,10 +32,10 @@
 
 #include <gecode/kernel.hh>
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     Support::Mutex GPI::m;
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 // STATISTICS: kernel-prop

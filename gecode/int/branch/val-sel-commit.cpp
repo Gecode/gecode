@@ -32,7 +32,7 @@
 
 #include <gecode/int/branch.hh>
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     ValSelCommitBase<IntView, int>*
     value_selection_commit(Space& home, const IntValBranch& ivb) {
@@ -127,6 +127,6 @@ namespace Gecode { namespace Int { namespace Branch {
         }
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

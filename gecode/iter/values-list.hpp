@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
     /**
      * \brief Iterator over value lists
@@ -172,6 +172,6 @@ namespace Gecode { namespace Iter { namespace Values {
         return c->val;
     }
 
-}}} // namespace Gecode::Iter::Values
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

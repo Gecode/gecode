@@ -33,7 +33,7 @@
 #include <gecode/kernel.hh>
 #include <gecode/gist.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// %Choice for %StopBrancher
     class GECODE_GIST_EXPORT StopChoice : public Choice {
@@ -73,6 +73,6 @@ namespace Gecode { namespace Gist {
         size_t dispose(Space&) override;
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Array of scale Boolean views
@@ -671,6 +671,6 @@ namespace Gecode { namespace Int { namespace Linear {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 // STATISTICS: int-prop

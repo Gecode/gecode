@@ -39,7 +39,7 @@
  * \namespace Gecode::Float::Trigonometric
  * \brief %Trigonometric propagators
  */
-namespace Gecode { namespace Float { namespace Trigonometric {
+namespace Gecode::Float::Trigonometric {
 
     /**
      * \brief %Propagator for bounds consistent sinus operator
@@ -211,7 +211,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
         /// Post propagator for \f$atan(x_0) = x_1\f$
         static ExecStatus post(Home home, A x0, B x1);
     };
-}}} // namespace Gecode::Float::Trigonometric
+} // namespace Gecode::Float::Trigonometric
 
 #include <gecode/float/trigonometric/sincos.hpp>
 #include <gecode/float/trigonometric/asinacos.hpp>

@@ -34,203 +34,199 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Test { namespace Int {
+/// %Tests for channel constraints
+namespace Test::Int::Channel {
 
-    /// %Tests for channel constraints
-    namespace Channel {
-
-        /**
-         * \defgroup TaskTestIntChannel Channel constraints
-         * \ingroup TaskTestInt
-         */
-        //@{
-        /// Simple test for channel (testing all variables)
-        class ChannelFull : public Test {
-        private:
-            int xoff; //< Offset for the x variables
-            int yoff; //< Offset for the y variables
-        public:
-            /// Construct and register test
-            ChannelFull(int xoff0, int yoff0, Gecode::IntPropLevel ipl)
-                : Test(TestTags::sweep(), "Channel::Full::" + str(xoff0) + "::" + str(yoff0) + "::" + str(ipl), 8, 0, 3,
-                       false, ipl),
-                  xoff(xoff0), yoff(yoff0) {
-                consistency_test_level = CTL_NONE;
-            }
-            /// Check whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                for (int i = 0; i < 4; i++)
-                    if (x[4 + x[i]] != i)
-                        return false;
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                using namespace Gecode;
-                IntVarArgs xa(4);
-                IntVarArgs ya(4);
-                for (int i = 4; i--;) {
-                    if (xoff != 0) {
-                        IntVar xo(home, xoff, 3 + xoff);
-                        Gecode::rel(home, x[i] == xo - xoff);
-                        xa[i] = xo;
-                    } else {
-                        xa[i] = x[i];
-                    }
-                    if (yoff != 0) {
-                        IntVar yo(home, yoff, 3 + yoff);
-                        Gecode::rel(home, x[4 + i] == yo - yoff);
-                        ya[i] = yo;
-                    } else {
-                        ya[i] = x[4 + i];
-                    }
-                }
-                channel(home, xa, xoff, ya, yoff, ipl);
-            }
-        };
-
-        /// Simple test for channel (testing single set of variables)
-        class ChannelHalf : public Test {
-        public:
-            /// Construct and register test
-            ChannelHalf(Gecode::IntPropLevel ipl)
-                : Test(TestTags::sweep(), "Channel::Half::" + str(ipl), 6, 0, 5, false, ipl) {
-                consistency_test_level = CTL_NONE;
-            }
-            /// Check whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                for (int i = 0; i < 6; i++)
-                    for (int j = i + 1; j < 6; j++)
-                        if (x[i] == x[j])
-                            return false;
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                using namespace Gecode;
-                Gecode::IntVarArgs y(home, 6, dom);
-                for (int i = 0; i < 6; i++)
-                    for (int j = 0; j < 6; j++) {
-                        Gecode::BoolVar b(home, 0, 1);
-                        rel(home, x[i], Gecode::IRT_EQ, j, b);
-                        rel(home, y[j], Gecode::IRT_EQ, i, b);
-                    }
-                channel(home, x, y, ipl);
-            }
-        };
-
-        /// %Test channel with shared variables
-        class ChannelShared : public Test {
-        public:
-            /// Construct and register test
-            ChannelShared(Gecode::IntPropLevel ipl)
-                : Test(TestTags::sweep(), "Channel::Shared::" + str(ipl), 6, 0, 5, false, ipl) {
-                consistency_test_level = CTL_NONE;
-            }
-            /// Check whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                for (int i = 0; i < 6; i++)
-                    if (x[x[i]] != i)
-                        return false;
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                using namespace Gecode;
-                channel(home, x, x, ipl);
-            }
-        };
-
-        /// %Test channel between integer and Boolean variable
-        class ChannelLinkSingle : public Test {
-        public:
-            /// Construct and register test
-            ChannelLinkSingle() : Test(TestTags::sweep(), "Channel::Bool::Single", 2, -1, 2) {
-                consistency_test_level = CTL_NONE;
-            }
-            /// Check whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                return ((x[0] == 0) || (x[0] == 1)) && (x[0] == x[1]);
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                using namespace Gecode;
-                Gecode::BoolVar b(home, 0, 1);
-                channel(home, x[0], b);
-                channel(home, x[1], b);
-            }
-        };
-
-        /// %Test channel between integer variable and array of Boolean variables
-        class ChannelLinkMulti : public Test {
-        private:
-            int o;
-
-        public:
-            /// Construct and register test
-            ChannelLinkMulti(TestTags tags, const std::string& s, int min, int max, int o0)
-                : Test(tags, "Channel::Bool::Multi::" + s, 7, min, max), o(o0) {}
-            /// Check whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                int n = x.size() - 1;
-                for (int i = n; i--;)
-                    if ((x[i] != 0) && (x[i] != 1))
-                        return false;
-                int k = x[n] - o;
-                if ((k < 0) || (k >= n))
+    /**
+     * \defgroup TaskTestIntChannel Channel constraints
+     * \ingroup TaskTestInt
+     */
+    //@{
+    /// Simple test for channel (testing all variables)
+    class ChannelFull : public Test {
+    private:
+        int xoff; //< Offset for the x variables
+        int yoff; //< Offset for the y variables
+    public:
+        /// Construct and register test
+        ChannelFull(int xoff0, int yoff0, Gecode::IntPropLevel ipl)
+            : Test(TestTags::sweep(), "Channel::Full::" + str(xoff0) + "::" + str(yoff0) + "::" + str(ipl), 8, 0, 3,
+                   false, ipl),
+              xoff(xoff0), yoff(yoff0) {
+            consistency_test_level = CTL_NONE;
+        }
+        /// Check whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            for (int i = 0; i < 4; i++)
+                if (x[4 + x[i]] != i)
                     return false;
-                for (int i = 0; i < k; i++)
-                    if (x[i] != 0)
-                        return false;
-                for (int i = k + 1; i < n; i++)
-                    if (x[i] != 0)
-                        return false;
-                return x[k] == 1;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            IntVarArgs xa(4);
+            IntVarArgs ya(4);
+            for (int i = 4; i--;) {
+                if (xoff != 0) {
+                    IntVar xo(home, xoff, 3 + xoff);
+                    Gecode::rel(home, x[i] == xo - xoff);
+                    xa[i] = xo;
+                } else {
+                    xa[i] = x[i];
+                }
+                if (yoff != 0) {
+                    IntVar yo(home, yoff, 3 + yoff);
+                    Gecode::rel(home, x[4 + i] == yo - yoff);
+                    ya[i] = yo;
+                } else {
+                    ya[i] = x[4 + i];
+                }
             }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                using namespace Gecode;
-                int n = x.size() - 1;
-                Gecode::BoolVarArgs b(n);
-                for (int i = n; i--;)
-                    b[i] = channel(home, x[i]);
-                channel(home, b, x[n], o);
-            }
-        };
+            channel(home, xa, xoff, ya, yoff, ipl);
+        }
+    };
 
-        ChannelFull cfd(0, 0, Gecode::IPL_DOM);
-        ChannelFull cfv(0, 0, Gecode::IPL_VAL);
+    /// Simple test for channel (testing single set of variables)
+    class ChannelHalf : public Test {
+    public:
+        /// Construct and register test
+        ChannelHalf(Gecode::IntPropLevel ipl)
+            : Test(TestTags::sweep(), "Channel::Half::" + str(ipl), 6, 0, 5, false, ipl) {
+            consistency_test_level = CTL_NONE;
+        }
+        /// Check whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            for (int i = 0; i < 6; i++)
+                for (int j = i + 1; j < 6; j++)
+                    if (x[i] == x[j])
+                        return false;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            Gecode::IntVarArgs y(home, 6, dom);
+            for (int i = 0; i < 6; i++)
+                for (int j = 0; j < 6; j++) {
+                    Gecode::BoolVar b(home, 0, 1);
+                    rel(home, x[i], Gecode::IRT_EQ, j, b);
+                    rel(home, y[j], Gecode::IRT_EQ, i, b);
+                }
+            channel(home, x, y, ipl);
+        }
+    };
 
-        ChannelFull cfd11(1, 1, Gecode::IPL_DOM);
-        ChannelFull cfv11(1, 1, Gecode::IPL_VAL);
+    /// %Test channel with shared variables
+    class ChannelShared : public Test {
+    public:
+        /// Construct and register test
+        ChannelShared(Gecode::IntPropLevel ipl)
+            : Test(TestTags::sweep(), "Channel::Shared::" + str(ipl), 6, 0, 5, false, ipl) {
+            consistency_test_level = CTL_NONE;
+        }
+        /// Check whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            for (int i = 0; i < 6; i++)
+                if (x[x[i]] != i)
+                    return false;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            channel(home, x, x, ipl);
+        }
+    };
 
-        ChannelFull cfd35(3, 5, Gecode::IPL_DOM);
-        ChannelFull cfv35(3, 5, Gecode::IPL_VAL);
+    /// %Test channel between integer and Boolean variable
+    class ChannelLinkSingle : public Test {
+    public:
+        /// Construct and register test
+        ChannelLinkSingle() : Test(TestTags::sweep(), "Channel::Bool::Single", 2, -1, 2) {
+            consistency_test_level = CTL_NONE;
+        }
+        /// Check whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return ((x[0] == 0) || (x[0] == 1)) && (x[0] == x[1]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            Gecode::BoolVar b(home, 0, 1);
+            channel(home, x[0], b);
+            channel(home, x[1], b);
+        }
+    };
 
-        ChannelHalf chd(Gecode::IPL_DOM);
-        ChannelHalf chv(Gecode::IPL_VAL);
+    /// %Test channel between integer variable and array of Boolean variables
+    class ChannelLinkMulti : public Test {
+    private:
+        int o;
 
-        ChannelShared csd(Gecode::IPL_DOM);
-        ChannelShared csv(Gecode::IPL_VAL);
+    public:
+        /// Construct and register test
+        ChannelLinkMulti(TestTags tags, const std::string& s, int min, int max, int o0)
+            : Test(tags, "Channel::Bool::Multi::" + s, 7, min, max), o(o0) {}
+        /// Check whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int n = x.size() - 1;
+            for (int i = n; i--;)
+                if ((x[i] != 0) && (x[i] != 1))
+                    return false;
+            int k = x[n] - o;
+            if ((k < 0) || (k >= n))
+                return false;
+            for (int i = 0; i < k; i++)
+                if (x[i] != 0)
+                    return false;
+            for (int i = k + 1; i < n; i++)
+                if (x[i] != 0)
+                    return false;
+            return x[k] == 1;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            int n = x.size() - 1;
+            Gecode::BoolVarArgs b(n);
+            for (int i = n; i--;)
+                b[i] = channel(home, x[i]);
+            channel(home, b, x[n], o);
+        }
+    };
 
-        ChannelLinkSingle cls;
+    ChannelFull cfd(0, 0, Gecode::IPL_DOM);
+    ChannelFull cfv(0, 0, Gecode::IPL_VAL);
 
-        ChannelLinkMulti clma(TestTags::standard(), "A", 0, 5, 0);
-        ChannelLinkMulti clmb(TestTags::sweep(), "B", 1, 6, 1);
-        ChannelLinkMulti clmc(TestTags::sweep(), "C", -1, 4, -1);
-        //@}
+    ChannelFull cfd11(1, 1, Gecode::IPL_DOM);
+    ChannelFull cfv11(1, 1, Gecode::IPL_VAL);
 
-    } // namespace Channel
-}} // namespace Test::Int
+    ChannelFull cfd35(3, 5, Gecode::IPL_DOM);
+    ChannelFull cfv35(3, 5, Gecode::IPL_VAL);
 
+    ChannelHalf chd(Gecode::IPL_DOM);
+    ChannelHalf chv(Gecode::IPL_VAL);
+
+    ChannelShared csd(Gecode::IPL_DOM);
+    ChannelShared csv(Gecode::IPL_VAL);
+
+    ChannelLinkSingle cls;
+
+    ChannelLinkMulti clma(TestTags::standard(), "A", 0, 5, 0);
+    ChannelLinkMulti clmb(TestTags::sweep(), "B", 1, 6, 1);
+    ChannelLinkMulti clmc(TestTags::sweep(), "C", -1, 4, -1);
+    //@}
+
+} // namespace Test::Int::Channel
 // STATISTICS: test-int

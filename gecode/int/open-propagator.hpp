@@ -35,7 +35,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Follow list growth and remember which positions have been incorporated
     template <class View>
@@ -82,7 +82,7 @@ namespace Gecode { namespace Int {
         }
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #endif
 

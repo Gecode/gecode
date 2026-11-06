@@ -32,7 +32,7 @@
 
 #include <gecode/float/rel.hh>
 
-namespace Gecode { namespace Float { namespace Bool {
+namespace Gecode::Float::Bool {
 
     template <class View>
     forceinline
@@ -136,6 +136,6 @@ namespace Gecode { namespace Float { namespace Bool {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Float::Bool
+} // namespace Gecode::Float::Bool
 
 // STATISTICS: float-prop

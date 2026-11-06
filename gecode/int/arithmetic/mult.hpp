@@ -36,7 +36,7 @@
 #include <gecode/int/div.hh>
 #include <gecode/int/support-values.hh>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /*
      * Arithmetic help functions
@@ -349,6 +349,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     MultDom::MultDom(Space& home, MultDom& p)
         : TernaryPropagator<IntView, PC_INT_DOM>(home, p) {}
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

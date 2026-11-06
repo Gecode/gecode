@@ -37,7 +37,7 @@
 
 #include <functional>
 
-namespace Gecode { namespace Int { namespace Cumulatives {
+namespace Gecode::Int::Cumulatives {
 
     /** \namespace Gecode::Int::Cumulatives
      *  \brief %Cumulatives propagators
@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Cumulatives
+} // namespace Gecode::Int::Cumulatives
 
 #include <gecode/int/cumulatives/val.hpp>
 

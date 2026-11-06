@@ -42,7 +42,7 @@
 #include <gecode/set.hh>
 #include <gecode/set/rel.hh>
 
-namespace Gecode { namespace Set { namespace RelOp {
+namespace Gecode::Set::RelOp {
 
     /**
      * \namespace Gecode::Set::RelOp
@@ -259,7 +259,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         static ExecStatus post(Home home, ViewArray<View0>& x, const IntSet& z, View1 y);
     };
 
-}}} // namespace Gecode::Set::RelOp
+} // namespace Gecode::Set::RelOp
 
 #include <gecode/set/rel-op/common.hpp>
 #include <gecode/set/rel-op/superofinter.hpp>

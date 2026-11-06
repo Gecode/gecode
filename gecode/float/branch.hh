@@ -42,7 +42,7 @@
  * \brief Float branchers
  */
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     /**
      * \defgroup FuncFloatViewSel Merit-based float view selection for branchers
@@ -192,19 +192,19 @@ namespace Gecode { namespace Float { namespace Branch {
         void dispose(Space& home);
     };
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 #include <gecode/float/branch/merit.hpp>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     /// Return view selectors for float views
     GECODE_FLOAT_EXPORT
     ViewSel<FloatView>* view_selection(Space& home, const FloatVarBranch& fvb);
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     /**
      * \defgroup FuncFloatValSel Float value selection for brancher
@@ -274,11 +274,11 @@ namespace Gecode { namespace Float { namespace Branch {
         void dispose(Space& home);
     };
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 #include <gecode/float/branch/val-sel.hpp>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     /**
      * \defgroup FuncFloatValCommit Float value commit classes
@@ -312,11 +312,11 @@ namespace Gecode { namespace Float { namespace Branch {
         void print(const Space& home, unsigned int a, FloatView x, int i, FloatNumBranch n, std::ostream& o) const;
     };
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 #include <gecode/float/branch/val-commit.hpp>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     /// Return value and commit for float views
     GECODE_FLOAT_EXPORT
@@ -326,7 +326,7 @@ namespace Gecode { namespace Float { namespace Branch {
     GECODE_FLOAT_EXPORT
     ValSelCommitBase<FloatView, FloatNumBranch>* value_selection_commit(Space& home, const FloatAssign& ia);
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 #endif
 

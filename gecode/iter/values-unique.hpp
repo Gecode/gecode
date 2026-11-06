@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
     /**
      * \brief Remove duplicate values from from value iterator
@@ -104,6 +104,6 @@ namespace Gecode { namespace Iter { namespace Values {
         return i.val();
     }
 
-}}} // namespace Gecode::Iter::Values
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

@@ -32,7 +32,7 @@
 
 #include <gecode/int/arithmetic.hh>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /*
      * Bounds consistent multiplication
@@ -376,6 +376,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return MultPlusDom<MinusView, IntView, MinusView>::post(home, MinusView(x0), x1, MinusView(x2));
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

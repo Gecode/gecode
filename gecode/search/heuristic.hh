@@ -41,7 +41,7 @@
 #include <utility>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Whether bound \a a is better than bound \a b for objective direction \a s
     forceinline bool
@@ -450,7 +450,7 @@ namespace Gecode { namespace Search {
         }
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 #endif
 
 #endif

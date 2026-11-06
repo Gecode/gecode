@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     forceinline
     PowOps::PowOps(int n0)
@@ -251,6 +251,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return static_cast<int>(u);
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-other

@@ -32,7 +32,7 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
@@ -423,6 +423,6 @@ z = array2d(1..6, 1..3, [6, 1, 1, 4, 1, 1, 3, 1, 1, 2, 1, 1, 5, 1, 1, 1, 1, 1]);
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

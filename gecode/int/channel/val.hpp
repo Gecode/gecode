@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
     /**
      * \brief Combine view with information for value propagation
@@ -243,6 +243,6 @@ namespace Gecode { namespace Int { namespace Channel {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Channel
+} // namespace Gecode::Int::Channel
 
 // STATISTICS: int-prop

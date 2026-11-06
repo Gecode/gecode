@@ -446,7 +446,7 @@ namespace Gecode {
 #endif
 } // namespace Gecode
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     forceinline bool
     subset(const FloatVal& x, const FloatVal& y) {
@@ -482,6 +482,6 @@ namespace Gecode { namespace Float {
         return FloatVal(x, y);
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

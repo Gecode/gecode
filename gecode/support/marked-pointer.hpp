@@ -33,7 +33,7 @@
 #include <cstddef>
 #include <limits>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /// Check whether \a p is marked
     bool marked(void* p);
@@ -87,6 +87,6 @@ namespace Gecode { namespace Support {
         return reinterpret_cast<void*>(reinterpret_cast<uptrint_t>(p) | static_cast<uptrint_t>(m));
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

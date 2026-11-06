@@ -33,7 +33,7 @@
 #ifndef GECODE_GIST_NODEVISITOR_HH
 #define GECODE_GIST_NODEVISITOR_HH
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief Base class for a visitor that runs a cursor over a tree
     template <class Cursor>
@@ -85,7 +85,7 @@ namespace Gecode { namespace Gist {
         void run();
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #include <gecode/gist/nodevisitor.hpp>
 

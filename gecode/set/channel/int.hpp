@@ -36,7 +36,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Set { namespace Channel {
+namespace Gecode::Set::Channel {
 
     template <class View>
     forceinline
@@ -150,6 +150,6 @@ namespace Gecode { namespace Set { namespace Channel {
         return (assigned == xs.size()) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
     }
 
-}}} // namespace Gecode::Set::Channel
+} // namespace Gecode::Set::Channel
 
 // STATISTICS: set-prop

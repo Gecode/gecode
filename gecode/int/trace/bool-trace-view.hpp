@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Duplicate of a Boolean view
     class BoolTraceView {
@@ -58,6 +58,6 @@ namespace Gecode { namespace Int {
         return x.width() - 1;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-trace

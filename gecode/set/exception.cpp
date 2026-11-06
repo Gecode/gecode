@@ -34,7 +34,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     OutOfLimits::OutOfLimits(const char* l) : Exception(l, "Number out of limits") {}
 
@@ -53,6 +53,6 @@ namespace Gecode { namespace Set {
 
     UnknownOperation::UnknownOperation(const char* l) : Exception(l, "Unknown operation type") {}
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-other

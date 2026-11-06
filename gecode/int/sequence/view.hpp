@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Sequence {
+namespace Gecode::Int::Sequence {
 
     /**
      * \brief Class for advising the propagator
@@ -475,6 +475,6 @@ namespace Gecode { namespace Int { namespace Sequence {
         }
         return status;
     }
-}}} // namespace Gecode::Int::Sequence
+} // namespace Gecode::Int::Sequence
 
 // STATISTICS: int-prop

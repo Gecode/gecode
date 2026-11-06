@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     forceinline
     IntBoolVarBranch::IntBoolVarBranch(Select s0, double d)
@@ -413,6 +413,6 @@ namespace Gecode { namespace FlatZinc {
         return BOOL_VAL_MIN();
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-branch

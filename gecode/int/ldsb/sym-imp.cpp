@@ -33,7 +33,7 @@
 #include <gecode/int/ldsb.hh>
 #include <gecode/int/branch.hh>
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
     /// Compute symmetric literals
     template <>
     ArgArray<Literal>
@@ -151,6 +151,6 @@ namespace Gecode { namespace Int { namespace LDSB {
         return dynamic_stack_to_arg_array(s);
     }
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: int-branch

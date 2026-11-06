@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     template <class OptTask, class PL>
     ExecStatus
@@ -66,6 +66,6 @@ namespace Gecode { namespace Int {
         return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

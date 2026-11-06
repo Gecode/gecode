@@ -39,7 +39,7 @@
  *   Constraint with Negative Heights. CP 2002, pages 63-79, Springer-Verlag.
  */
 
-namespace Gecode { namespace Int { namespace Cumulatives {
+namespace Gecode::Int::Cumulatives {
 
     template <class ViewM, class ViewP, class ViewU, class View>
     forceinline
@@ -314,6 +314,6 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         return subsumed ? home.ES_SUBSUMED(*this) : ES_NOFIX;
     }
 
-}}} // namespace Gecode::Int::Cumulatives
+} // namespace Gecode::Int::Cumulatives
 
 // STATISTICS: int-prop

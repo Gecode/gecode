@@ -32,7 +32,7 @@
 
 #include <mpfr.h>
 
-namespace Gecode { namespace Float { namespace Transcendental {
+namespace Gecode::Float::Transcendental {
 
     // Round endpoints explicitly; compiler optimizations can ignore changes to
     // the hardware rounding mode.
@@ -181,6 +181,6 @@ namespace Gecode { namespace Float { namespace Transcendental {
         return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_NOFIX;
     }
 
-}}} // namespace Gecode::Float::Transcendental
+} // namespace Gecode::Float::Transcendental
 
 // STATISTICS: float-prop

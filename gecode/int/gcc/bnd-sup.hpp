@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace GCC {
+namespace Gecode::Int::GCC {
 
     /**
      * \defgroup GCCBndSup Support for GCC bounds propagation
@@ -591,6 +591,6 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     //@}
 
-}}} // namespace Gecode::Int::GCC
+} // namespace Gecode::Int::GCC
 
 // STATISTICS: int-prop

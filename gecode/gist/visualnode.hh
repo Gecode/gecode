@@ -37,7 +37,7 @@
 #include <gecode/kernel.hh>
 #include <string>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief %Layout parameters
     class Layout {
@@ -228,7 +228,7 @@ namespace Gecode { namespace Gist {
         void dispose();
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #include <gecode/gist/node.hpp>
 #include <gecode/gist/spacenode.hpp>

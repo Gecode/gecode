@@ -34,7 +34,7 @@
 
 #ifdef GECODE_HAS_FAULT_INJECTION
 
-namespace Gecode { namespace Support { namespace FailPoint {
+namespace Gecode::Support::FailPoint {
 
     namespace {
         std::atomic<unsigned long long> fail_after_count;
@@ -70,7 +70,7 @@ namespace Gecode { namespace Support { namespace FailPoint {
         return seen_count.load(std::memory_order_acquire);
     }
 
-}}} // namespace Gecode::Support::FailPoint
+} // namespace Gecode::Support::FailPoint
 
 #endif
 

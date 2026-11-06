@@ -51,7 +51,7 @@
  *
  * \brief Inter-distance propagator
  */
-namespace Gecode { namespace Int { namespace InterDistance {
+namespace Gecode::Int::InterDistance {
 
     /**
      * \brief Bounds-consistent inter-distance propagator
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
         static ExecStatus post(Home home, ViewArray<IntView>& x, PView p, bool advanced);
     };
 
-}}} // namespace Gecode::Int::InterDistance
+} // namespace Gecode::Int::InterDistance
 
 #endif
 

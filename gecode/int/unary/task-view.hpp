@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>&
@@ -95,6 +95,6 @@ namespace Gecode { namespace Int { namespace Unary {
         return os << s.str();
     }
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-var

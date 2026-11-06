@@ -210,7 +210,7 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Materialize positions required by the minimum eventual length
     template <class Var>
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int {
         }
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 namespace Gecode {
 
@@ -385,7 +385,7 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Construct an element view without changing the shared source list
     template <class View>
@@ -400,7 +400,7 @@ namespace Gecode { namespace Int {
         return MinusView(IntView(x));
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 namespace Gecode {
 

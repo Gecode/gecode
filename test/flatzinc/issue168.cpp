@@ -31,7 +31,7 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Check that propagation terminates after finding all solutions
     bool
     check(const std::string& output) {
@@ -63,6 +63,6 @@ solve :: int_search([1,D,F,K,F,E,G,H,J],input_order,indomain,complete) satisfy;\
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

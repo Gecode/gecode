@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
     /*
      * Nodes
@@ -158,6 +158,6 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         return Node<View>::edge_fst() != Node<View>::edge_lst();
     }
 
-}}} // namespace Gecode::Int::ViewValGraph
+} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop

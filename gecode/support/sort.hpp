@@ -33,7 +33,7 @@
 #include <algorithm>
 #include <climits>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /// Exchange elements according to order
     template <class Type, class Less>
@@ -275,6 +275,6 @@ namespace Gecode { namespace Support {
         insertion(x, x + n - 1, l);
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

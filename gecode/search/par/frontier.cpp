@@ -34,7 +34,7 @@
 #include <memory>
 
 #if defined(GECODE_HAS_EXPERIMENTAL) && defined(GECODE_HAS_THREADS)
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     Frontier::Runner::Runner(Frontier& e, unsigned int i) : Support::Runnable(false), engine(e), id(i) {}
 
@@ -406,7 +406,7 @@ namespace Gecode { namespace Search { namespace Par {
         (void)replacement.release();
     }
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 #endif
 
 // STATISTICS: search-par

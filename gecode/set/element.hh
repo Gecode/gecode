@@ -42,7 +42,7 @@
 #include <gecode/set/rel.hh>
 #include <gecode/set/rel-op.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// VarArg type for %Set views
     template <>
@@ -58,9 +58,9 @@ namespace Gecode { namespace Int {
         using argtype = Gecode::IntVarArgs;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
-namespace Gecode { namespace Set { namespace Element {
+namespace Gecode::Set::Element {
 
     /**
      * \namespace Gecode::Set::Element
@@ -221,7 +221,7 @@ namespace Gecode { namespace Set { namespace Element {
         static ExecStatus post(Home home, IdxViewArray& x, RView x1);
     };
 
-}}} // namespace Gecode::Set::Element
+} // namespace Gecode::Set::Element
 
 #include <gecode/set/element/inter.hpp>
 #include <gecode/set/element/union.hpp>

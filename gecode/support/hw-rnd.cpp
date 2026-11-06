@@ -54,7 +54,7 @@ namespace Gecode { namespace Support {
 
 #include <fstream>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     unsigned int
     hwrnd() {
@@ -66,7 +66,7 @@ namespace Gecode { namespace Support {
         return rnd;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 #endif
 

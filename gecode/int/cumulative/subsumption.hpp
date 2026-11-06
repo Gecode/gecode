@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     template <class Task>
     forceinline ExecStatus
@@ -63,6 +63,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return home.ES_SUBSUMED(p);
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

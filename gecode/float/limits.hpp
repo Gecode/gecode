@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     inline bool
     Limits::valid(const FloatVal&) {
@@ -45,6 +45,6 @@ namespace Gecode { namespace Float {
             throw OutOfLimits(l);
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

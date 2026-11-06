@@ -43,7 +43,7 @@
 #include <sstream>
 #include <initializer_list>
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /// Occurrence information for a view
     template <class View>
@@ -71,7 +71,7 @@ namespace Gecode { namespace Kernel {
     GECODE_KERNEL_EXPORT
     bool duplicates(void** p, int n, void** q, int m);
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 namespace Gecode {
 

@@ -34,7 +34,7 @@
 
 #include <iostream>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /**
      * \defgroup TaskActorFloatView Float views
@@ -500,7 +500,7 @@ namespace Gecode { namespace Float {
     bool operator==(const ScaleView& x, const ScaleView& y);
     //@}
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 #include <gecode/float/var/float.hpp>
 #include <gecode/float/view/float.hpp>
@@ -510,7 +510,7 @@ namespace Gecode { namespace Float {
 #include <gecode/float/view/print.hpp>
 #include <gecode/float/var/print.hpp>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
     /**
      * \defgroup TaskActorFloatTest Testing relations between float views
      * \ingroup TaskActorFloat
@@ -548,7 +548,7 @@ namespace Gecode { namespace Float {
 
     //@}
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 #include <gecode/float/view/rel-test.hpp>
 

@@ -44,7 +44,7 @@
 #include <gecode/search/par/path.hh>
 #include <atomic>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /// %Parallel depth-first search engine
     template <class Tracer>
@@ -287,7 +287,7 @@ namespace Gecode { namespace Search { namespace Par {
         ~Engine() override;
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/engine.hpp>
 

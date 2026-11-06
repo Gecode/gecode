@@ -32,7 +32,7 @@
 
 #include <sstream>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     template <class Char, class Traits, class View>
     std::basic_ostream<Char, Traits>&
@@ -152,6 +152,6 @@ namespace Gecode { namespace Int {
         return os << "[0..1]";
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

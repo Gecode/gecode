@@ -36,7 +36,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     template <class Cap>
     void
@@ -348,7 +348,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         }
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 namespace Gecode {
 

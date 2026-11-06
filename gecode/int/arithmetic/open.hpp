@@ -36,7 +36,7 @@
 #include <gecode/int/arithmetic.hh>
 #include <gecode/int/open-propagator.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /// Track maxima; negated views implement min(x) = -max(-x)
     template <class View>
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         }
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #endif
 

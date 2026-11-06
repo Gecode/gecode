@@ -35,7 +35,7 @@
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Class for a sentinel no-good literal
     class GECODE_VTABLE_EXPORT NoNGL : public NGL {
@@ -88,7 +88,7 @@ namespace Gecode { namespace Search {
         size_t dispose(Space& home) override;
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/nogoods.hpp>
 

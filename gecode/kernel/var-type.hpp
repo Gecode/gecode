@@ -50,7 +50,7 @@
  */
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     /**
      * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
      * \ingroup TaskActorInt
@@ -107,10 +107,10 @@ namespace Gecode { namespace Int {
      */
     const Gecode::PropCond PC_INT_DOM = Gecode::PC_GEN_ASSIGNED + 2;
     //@}
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     /**
      * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
      * \ingroup TaskActorInt
@@ -133,10 +133,10 @@ namespace Gecode { namespace Int {
      */
     const Gecode::PropCond PC_BOOL_VAL = Gecode::PC_GEN_ASSIGNED;
     //@}
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
     /**
      * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
      * \ingroup TaskActorSet
@@ -255,10 +255,10 @@ namespace Gecode { namespace Set {
      */
     const Gecode::PropCond PC_SET_ANY = Gecode::PC_GEN_ASSIGNED + 4;
     //@}
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
     /**
      * \defgroup TaskActorFloatMEPC Float modification events and propagation conditions
      * \ingroup TaskActorFloat
@@ -299,10 +299,10 @@ namespace Gecode { namespace Float {
      */
     const Gecode::PropCond PC_FLOAT_BND = Gecode::PC_GEN_ASSIGNED + 1;
     //@}
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     /// Configuration for Int-variable implementations
     class IntVarImpConf {
     public:
@@ -325,9 +325,9 @@ namespace Gecode { namespace Int {
         /// Update modification even delta \a med by \a me, return true on change
         static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
     };
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #else
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     /// Dummy configuration for Int-variable implementations
     class IntVarImpConf {
     public:
@@ -338,10 +338,10 @@ namespace Gecode { namespace Int {
         /// End of bits for modification event delta
         static const int med_lst = 0;
     };
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     /// Configuration for Bool-variable implementations
     class BoolVarImpConf {
     public:
@@ -364,9 +364,9 @@ namespace Gecode { namespace Int {
         /// Update modification even delta \a med by \a me, return true on change
         static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
     };
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #else
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     /// Dummy configuration for Bool-variable implementations
     class BoolVarImpConf {
     public:
@@ -377,10 +377,10 @@ namespace Gecode { namespace Int {
         /// End of bits for modification event delta
         static const int med_lst = Gecode::Int::IntVarImpConf::med_lst;
     };
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
     /// Configuration for Set-variable implementations
     class SetVarImpConf {
     public:
@@ -403,9 +403,9 @@ namespace Gecode { namespace Set {
         /// Update modification even delta \a med by \a me, return true on change
         static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
     };
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 #else
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
     /// Dummy configuration for Set-variable implementations
     class SetVarImpConf {
     public:
@@ -416,10 +416,10 @@ namespace Gecode { namespace Set {
         /// End of bits for modification event delta
         static const int med_lst = Gecode::Int::BoolVarImpConf::med_lst;
     };
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
     /// Configuration for Float-variable implementations
     class FloatVarImpConf {
     public:
@@ -442,9 +442,9 @@ namespace Gecode { namespace Float {
         /// Update modification even delta \a med by \a me, return true on change
         static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
     };
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 #else
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
     /// Dummy configuration for Float-variable implementations
     class FloatVarImpConf {
     public:
@@ -455,7 +455,7 @@ namespace Gecode { namespace Float {
         /// End of bits for modification event delta
         static const int med_lst = Gecode::Set::SetVarImpConf::med_lst;
     };
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 #endif
 
 namespace Gecode {
@@ -474,7 +474,7 @@ namespace Gecode {
 } // namespace Gecode
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     forceinline Gecode::ModEvent
     IntVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
         static const Gecode::ModEvent me_c = (((ME_INT_NONE << 0) | // [ME_INT_NONE][ME_INT_NONE]
@@ -535,10 +535,10 @@ namespace Gecode { namespace Int {
         return true;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
     forceinline Gecode::ModEvent
     BoolVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
         return me1 | me2;
@@ -559,10 +559,10 @@ namespace Gecode { namespace Int {
         return true;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
     forceinline Gecode::ModEvent
     SetVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
         static const Gecode::ModEvent me_c[ME_SET_CBB + 1][ME_SET_CBB + 1] = {
@@ -800,10 +800,10 @@ namespace Gecode { namespace Set {
         return true;
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
     forceinline Gecode::ModEvent
     FloatVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
         static const Gecode::ModEvent me_c = (((ME_FLOAT_NONE << 0) | // [ME_FLOAT_NONE][ME_FLOAT_NONE]
@@ -846,7 +846,7 @@ namespace Gecode { namespace Float {
         return true;
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 #endif
 namespace Gecode {
     forceinline ModEventDelta

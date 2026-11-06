@@ -32,7 +32,7 @@
 
 #include <utility>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     // Knapsack-augmented overload checking
     namespace Kaoc {
@@ -234,6 +234,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return supported_knapsack_overload(t, c);
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

@@ -40,7 +40,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Sequence {
+namespace Gecode::Int::Sequence {
 
     /// Identify the windows affected by a position's domain change
     class OpenWindowAdvisor : public Advisor {
@@ -487,7 +487,7 @@ namespace Gecode { namespace Int { namespace Sequence {
         }
     };
 
-}}} // namespace Gecode::Int::Sequence
+} // namespace Gecode::Int::Sequence
 
 #endif
 

@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Convex {
+namespace Gecode::Set::Convex {
 
     /*
      * "Convex" propagator
@@ -57,6 +57,6 @@ namespace Gecode { namespace Set { namespace Convex {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Set::Convex
+} // namespace Gecode::Set::Convex
 
 // STATISTICS: set-prop

@@ -35,7 +35,7 @@
 #include <limits>
 #include <stdexcept>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /**
      * \brief Closed interval of floating-point numbers with directed rounding
@@ -1364,6 +1364,6 @@ namespace Gecode { namespace Float {
 
 #endif
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

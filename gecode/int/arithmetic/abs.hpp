@@ -34,7 +34,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     template <class View, template <class View0, class View1> class Eq>
     ExecStatus
@@ -231,6 +231,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

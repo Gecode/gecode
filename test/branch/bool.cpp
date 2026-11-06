@@ -32,7 +32,7 @@
 
 #include "test/branch.hh"
 
-namespace Test { namespace Branch {
+namespace Test::Branch {
 
     /// %Test brancher with distinct propagator
     class Bool : public BoolTest {
@@ -50,6 +50,6 @@ namespace Test { namespace Branch {
     Bool b_5("5", 5);
     Bool b_7("7", 7);
 
-}} // namespace Test::Branch
+} // namespace Test::Branch
 
 // STATISTICS: test-branch

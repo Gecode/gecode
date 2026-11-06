@@ -34,7 +34,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Bool {
+namespace Gecode::Int::Bool {
 
     template <class V0, class V1, class V2, PropCond pc>
     forceinline
@@ -257,6 +257,6 @@ namespace Gecode { namespace Int { namespace Bool {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Bool
+} // namespace Gecode::Int::Bool
 
 // STATISTICS: int-prop

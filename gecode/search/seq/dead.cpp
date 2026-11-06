@@ -32,7 +32,7 @@
 
 #include <gecode/search/seq/dead.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// A dead engine (failed root)
     template <class Tracer>
@@ -92,6 +92,6 @@ namespace Gecode { namespace Search { namespace Seq {
         return new Dead<NoTraceRecorder>(o, stat);
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq
