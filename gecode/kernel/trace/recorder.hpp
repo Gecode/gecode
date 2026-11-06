@@ -165,7 +165,6 @@ namespace Gecode {
         /// Constructor for cloning \a p
         TraceRecorder(Space& home, TraceRecorder& p);
 
-    public:
         /// Constructor for creation
         TraceRecorder(Home home, const TraceFilter& tf, int te, Tracer& t);
         /// Copy propagator during cloning

@@ -232,7 +232,7 @@ namespace Gecode { namespace Set {
         template <class I>
         bool include_i(Space& home, I& i);
         //@}
-    public:
+
         GLBndSet(const GLBndSet&) = delete;
         const GLBndSet& operator=(const GLBndSet&) = delete;
     };
@@ -279,7 +279,7 @@ namespace Gecode { namespace Set {
         /// Exclude all elements from this set
         void exclude_all(Space& home);
         //@}
-    public:
+
         LUBndSet(const LUBndSet&) = delete;
         const LUBndSet& operator=(const LUBndSet&) = delete;
     };
@@ -586,7 +586,6 @@ namespace Gecode { namespace Set {
         ModEvent intersect_i(Space& home, I& i);
         //@}
 
-    public:
         /// \name Dependencies
         //@{
         /**

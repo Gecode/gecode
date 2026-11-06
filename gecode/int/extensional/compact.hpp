@@ -1441,7 +1441,6 @@ namespace Gecode { namespace Int { namespace Extensional {
             return compact_atmostone(c);
         }
 
-    protected:
         const unsigned int n_words;
         TupleSet ts;
         Council<CTAdvisor> c;

@@ -187,7 +187,6 @@ namespace Gecode { namespace Gist {
         /// Group of all actions for direct inspector selection
         QActionGroup* inspect_before_fp_group;
 
-    public:
         /// Constructor
         Gist(Space* root, bool bab, QWidget* parent, const Options& opt);
         /// Destructor
