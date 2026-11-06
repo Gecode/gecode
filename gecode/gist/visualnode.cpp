@@ -179,7 +179,7 @@ namespace Gecode { namespace Gist {
             std::vector<std::pair<VisualNode*, int>> path;
             VisualNode* p = this;
             while (p) {
-                path.push_back(std::pair<VisualNode*, int>(p, p->get_alternative(na)));
+                path.emplace_back(p, p->get_alternative(na));
                 p = p->get_parent(na);
             }
             while (!path.empty()) {

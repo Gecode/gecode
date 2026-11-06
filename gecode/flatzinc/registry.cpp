@@ -1319,9 +1319,9 @@ namespace Gecode { namespace FlatZinc {
                     if ((targets.size() != 0) && ((targets.min() < 1) || (targets.max() > q)))
                         throw FlatZinc::Error("Registry", "invalid NFA transition");
                     for (IntSetValues target(targets); target(); ++target)
-                        transitions.push_back(DFA::Transition(state + 1, first_symbol + symbol, target.val()));
+                        transitions.emplace_back(state + 1, first_symbol + symbol, target.val());
                 }
-            transitions.push_back(DFA::Transition(-1, 0, 0));
+            transitions.emplace_back(-1, 0, 0);
             std::vector<int> accepting;
             for (IntSetValues final(finals); final(); ++final)
                 accepting.push_back(final.val());
