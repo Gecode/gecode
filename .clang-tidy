@@ -22,7 +22,6 @@ Checks: >-
   concurrency-*,
   -concurrency-mt-unsafe,
   misc-*,
-  -misc-anonymous-namespace-in-header,
   -misc-confusable-identifiers,
   -misc-const-correctness,
   -misc-header-include-cycle,

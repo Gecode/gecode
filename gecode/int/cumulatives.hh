@@ -35,6 +35,8 @@
 
 #include <gecode/int.hh>
 
+#include <functional>
+
 namespace Gecode { namespace Int { namespace Cumulatives {
 
     /** \namespace Gecode::Int::Cumulatives
