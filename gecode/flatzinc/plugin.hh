@@ -64,6 +64,8 @@ namespace Gecode::FlatZinc {
      */
     class GECODE_VTABLE_EXPORT BranchPlugin {
     public:
+        /// Destructor
+        virtual ~BranchPlugin() = default;
         /// The custom branch method that this plugin provides
         virtual void branch(Gecode::FlatZinc::FlatZincSpace& s, Gecode::FlatZinc::AST::Call* c) = 0;
     };
