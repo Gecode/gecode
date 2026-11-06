@@ -46,7 +46,6 @@ Checks: >-
   -modernize-use-nodiscard,
   -modernize-use-std-numbers,
   -modernize-use-trailing-return-type,
-  -modernize-use-transparent-functors,
   performance-*,
   -performance-enum-size,
   -performance-no-int-to-ptr,

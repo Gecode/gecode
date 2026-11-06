@@ -751,7 +751,7 @@ namespace Gecode { namespace Int { namespace Branch {
          *
          * will have an entry in this map.
          */
-        std::unordered_map<unsigned int, PropInfo, std::hash<unsigned int>, std::equal_to<unsigned int>,
+        std::unordered_map<unsigned int, PropInfo, std::hash<unsigned int>, std::equal_to<>,
                            space_allocator<std::pair<const unsigned int, PropInfo>>>
             log_prop;
 

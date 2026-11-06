@@ -300,7 +300,7 @@ namespace PatternMining {
             int* sizes = region.alloc<int>(size);
             for (int i = 0; i < size; i++)
                 sizes[i] = data.ends[suffixes[i].sequence] - suffixes[i].begin;
-            std::nth_element(sizes, sizes + threshold - 1, sizes + size, std::greater<int>());
+            std::nth_element(sizes, sizes + threshold - 1, sizes + size, std::greater<>());
             return sizes[threshold - 1];
         }
     };
