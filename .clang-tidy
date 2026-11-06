@@ -28,7 +28,6 @@ Checks: >-
   -misc-definitions-in-headers,
   -misc-header-include-cycle,
   -misc-include-cleaner,
-  -misc-misplaced-const,
   -misc-multiple-inheritance,
   -misc-new-delete-overloads,
   -misc-no-recursion,
