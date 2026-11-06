@@ -41,7 +41,7 @@ namespace Gecode {
     }
     SymmetryHandle&
     SymmetryHandle::operator=(const SymmetryHandle& h) {
-        if (h.ref == ref)
+        if ((this == &h) || (h.ref == ref))
             return *this;
         if (ref != nullptr)
             decrement();

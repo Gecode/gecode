@@ -47,18 +47,6 @@ namespace Gecode { namespace Int {
         assert(n >= 0);
     }
     template <class Task>
-    forceinline
-    TaskArray<Task>::TaskArray(const TaskArray<Task>& a)
-        : n(a.n), t(a.t) {}
-    template <class Task>
-    forceinline TaskArray<Task>&
-    TaskArray<Task>::operator=(const TaskArray<Task>& a) {
-        n = a.n;
-        t = a.t;
-        return *this;
-    }
-
-    template <class Task>
     forceinline int
     TaskArray<Task>::size() const {
         return n;

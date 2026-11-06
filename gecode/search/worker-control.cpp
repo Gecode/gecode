@@ -65,6 +65,8 @@ namespace Gecode { namespace Search {
 
     WorkerControl&
     WorkerControl::operator=(const WorkerControl& control) {
+        if (this == &control)
+            return *this;
         if (control.state != nullptr)
             control.state->inc();
         if ((state != nullptr) && state->dec())

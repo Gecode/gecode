@@ -309,8 +309,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     forceinline NaryInter&
     NaryInter::operator=(const NaryInter& m) {
-        f = nullptr;
-        RangeListIter::operator=(m);
+        if (this != &m) {
+            f = nullptr;
+            RangeListIter::operator=(m);
+        }
         return *this;
     }
 

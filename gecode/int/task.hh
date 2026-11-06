@@ -177,9 +177,9 @@ namespace Gecode { namespace Int {
         /// Allocate memory for \a n tasks (no initialization)
         TaskArray(Space& home, int n);
         /// Initialize from task array \a a (share elements)
-        TaskArray(const TaskArray<Task>& a);
+        TaskArray(const TaskArray<Task>& a) = default;
         /// Initialize from task array \a a (share elements)
-        TaskArray<Task>& operator=(const TaskArray<Task>& a);
+        TaskArray<Task>& operator=(const TaskArray<Task>& a) = default;
         //@}
 
         /// \name Array size
