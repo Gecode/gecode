@@ -72,7 +72,7 @@ namespace Test {
     inline Options::Options()
         : threads(1), seed(0), replay(false), iter(default_iterations),
           fixpoint_probability_denominator(default_fixpoint_probability_denominator), stop(true), log(false),
-          test_patterns(), test_tags(), start_from(nullptr), list(false), list_tags(false), list_with_tags(false) {}
+          start_from(nullptr), list(false), list_tags(false), list_with_tags(false) {}
 
     /*
      * Base class for tests

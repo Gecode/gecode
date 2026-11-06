@@ -49,7 +49,7 @@ namespace Gecode { namespace FlatZinc {
 
         class BlackBoxHandle : public SharedHandle {
         public:
-            explicit BlackBoxHandle(BlackBoxBackend* backend) : SharedHandle() {
+            explicit BlackBoxHandle(BlackBoxBackend* backend) {
                 object(backend);
             }
             explicit BlackBoxHandle(const SharedHandle& handle) : SharedHandle(handle) {}

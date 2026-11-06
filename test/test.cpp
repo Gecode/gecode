@@ -121,8 +121,7 @@ namespace Test {
      */
     Base::Base(std::string s) : Base(std::move(s), TestTags::standard()) {}
 
-    Base::Base(std::string s, TestTags t)
-        : _name(std::move(s)), _tags(t), _next(_tests), _rand(Gecode::Support::RandomGenerator()) {
+    Base::Base(std::string s, TestTags t) : _name(std::move(s)), _tags(t), _next(_tests) {
         _tests = this;
         _n_tests++;
     }
@@ -458,8 +457,8 @@ namespace Test {
 
     public:
         TestExecutionControl(const std::vector<Base*>& tests0, const Options& options0, int thread_count)
-            : tests(tests0), options(options0), output_mutex(), next_tests(0), passed(0), failed(0),
-              running_threads(thread_count), execution_done_wait_started(false), execution_done_event() {}
+            : tests(tests0), options(options0), next_tests(0), passed(0), failed(0), running_threads(thread_count),
+              execution_done_wait_started(false) {}
 
         /// Report the results after all threads have finished and return the exit status.
         int
