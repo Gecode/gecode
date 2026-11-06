@@ -339,17 +339,15 @@ namespace Test {
             if (positive_patterns && match_found) {
                 // Some positive pattern matched the test name
                 return true;
-            } else if (positive_patterns && !match_found) {
+            }
+            if (positive_patterns && !match_found) {
                 // No positive pattern matched the test name
                 return false;
-            } else {
-                // No positive patterns, but no negative pattern ruled the test name out
-                return true;
-            }
-        } else {
-            // With no test-patterns, all tests should run.
+            } // No positive patterns, but no negative pattern ruled the test name out
             return true;
-        }
+
+        } // With no test-patterns, all tests should run.
+        return true;
     }
 
     bool

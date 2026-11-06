@@ -58,7 +58,8 @@ namespace Gecode { namespace Int { namespace Bool {
     Lq<BV>::post(Home home, BV b0, BV b1) {
         if (b0.zero()) {
             return ES_OK;
-        } else if (b0.one()) {
+        }
+        if (b0.one()) {
             GECODE_ME_CHECK(b1.one(home));
         } else if (b1.zero()) {
             GECODE_ME_CHECK(b0.zero(home));

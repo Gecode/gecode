@@ -225,10 +225,9 @@ namespace Gecode { namespace Int { namespace LDSB {
                     if ((!xv.assigned() && !yv.assigned()) ||
                         (xv.assigned() && yv.assigned() && xv.val() == yv.val())) {
                         continue;
-                    } else {
-                        active = false;
-                        break;
                     }
+                    active = false;
+                    break;
                 }
 
                 if (active) {

@@ -53,7 +53,7 @@ namespace Gecode { namespace Kernel {
         do {
             if (p[i] == q[j])
                 return true;
-            else if (p[i] < q[j])
+            if (p[i] < q[j])
                 i++;
             else
                 j++;

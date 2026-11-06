@@ -3001,10 +3001,9 @@ namespace Gecode {
                 rfree(b, n);
             }
             return p;
-        } else {
-            rfree(b + m, n - m);
-            return b;
         }
+        rfree(b + m, n - m);
+        return b;
     }
 
     template <size_t s>
@@ -3084,10 +3083,9 @@ namespace Gecode {
                 (void)new (p + i) T();
             free<T>(b, n);
             return p;
-        } else {
-            free<T>(b + m, n - m);
-            return b;
         }
+        free<T>(b + m, n - m);
+        return b;
     }
     template <class T>
     forceinline T*
@@ -5033,12 +5031,11 @@ namespace Gecode {
     PropCost::cost(PropCost::Mod m, PropCost::ActualCost lo, PropCost::ActualCost hi, unsigned int n) {
         if (n < 2)
             return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
-        else if (n == 2)
+        if (n == 2)
             return (m == LO) ? AC_BINARY_LO : AC_BINARY_HI;
-        else if (n == 3)
+        if (n == 3)
             return (m == LO) ? AC_TERNARY_LO : AC_TERNARY_HI;
-        else
-            return (m == LO) ? lo : hi;
+        return (m == LO) ? lo : hi;
     }
 
     forceinline PropCost

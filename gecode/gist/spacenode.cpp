@@ -104,9 +104,8 @@ namespace Gecode { namespace Gist {
                     if (cur_space->status() == SS_FAILED) {
                         copy = static_cast<Space*>(Support::mark(cur_space));
                         return rdist;
-                    } else {
-                        middle_node->copy = cur_space->clone();
                     }
+                    middle_node->copy = cur_space->clone();
                 }
                 Branch b = stck.top();
                 stck.pop();

@@ -433,9 +433,8 @@ namespace Gecode {
         if (p) {
             a.propagate();
             return ES_NOFIX;
-        } else {
-            return x[a.idx()].assigned() ? home.ES_FIX_DISPOSE(c, a) : ES_FIX;
         }
+        return x[a.idx()].assigned() ? home.ES_FIX_DISPOSE(c, a) : ES_FIX;
     }
 
     template <class View, bool p, bool f>

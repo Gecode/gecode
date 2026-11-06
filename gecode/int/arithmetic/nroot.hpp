@@ -182,7 +182,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         if (ops.exp() == 0) {
             GECODE_ME_CHECK(x1.eq(home, 1));
             return ES_OK;
-        } else if (ops.exp() == 1) {
+        }
+        if (ops.exp() == 1) {
             return Rel::EqBnd<IntView, IntView>::post(home, x0, x1);
         }
 
@@ -329,10 +330,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     NrootPlusDom<Ops, minus>::cost(const Space&, const ModEventDelta& med) const {
         if (IntView::me(med) == ME_INT_VAL)
             return PropCost::unary(PropCost::LO);
-        else if (IntView::me(med) == ME_INT_DOM)
+        if (IntView::me(med) == ME_INT_DOM)
             return PropCost::binary(PropCost::HI);
-        else
-            return PropCost::binary(PropCost::LO);
+        return PropCost::binary(PropCost::LO);
     }
 
     template <class Ops, bool minus>
@@ -379,7 +379,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         if (ops.exp() == 0) {
             GECODE_ME_CHECK(x1.eq(home, 1));
             return ES_OK;
-        } else if (ops.exp() == 1) {
+        }
+        if (ops.exp() == 1) {
             return Rel::EqDom<IntView, IntView>::post(home, x0, x1);
         }
 
@@ -428,10 +429,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     NrootDom<Ops>::cost(const Space&, const ModEventDelta& med) const {
         if (IntView::me(med) == ME_INT_VAL)
             return PropCost::unary(PropCost::LO);
-        else if (IntView::me(med) == ME_INT_DOM)
+        if (IntView::me(med) == ME_INT_DOM)
             return PropCost::binary(PropCost::HI);
-        else
-            return PropCost::binary(PropCost::LO);
+        return PropCost::binary(PropCost::LO);
     }
 
     template <class Ops>

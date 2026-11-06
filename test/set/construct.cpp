@@ -71,9 +71,8 @@ namespace Test { namespace Set {
                         if (!fail) {
                             home.fail();
                             return;
-                        } else {
-                            return;
                         }
+                        return;
                     }
                     if (fail) {
                         home.fail();
@@ -101,9 +100,8 @@ namespace Test { namespace Set {
                         if (!fail) {
                             home.fail();
                             return;
-                        } else {
-                            return;
                         }
+                        return;
                     }
                     if (fail) {
                         home.fail();
@@ -131,9 +129,8 @@ namespace Test { namespace Set {
                         if (!fail) {
                             home.fail();
                             return;
-                        } else {
-                            return;
                         }
+                        return;
                     }
                     if (fail) {
                         home.fail();
@@ -161,9 +158,8 @@ namespace Test { namespace Set {
                         if (!fail) {
                             home.fail();
                             return;
-                        } else {
-                            return;
                         }
+                        return;
                     }
                     if (fail) {
                         home.fail();

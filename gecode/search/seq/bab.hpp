@@ -159,8 +159,7 @@ namespace Gecode { namespace Search { namespace Seq {
             best->constrain(b);
             if (best->status(*this) != SS_FAILED)
                 return;
-            else
-                delete best;
+            delete best;
         }
         best = b.clone();
         if (cur != nullptr)

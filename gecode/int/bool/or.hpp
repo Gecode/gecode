@@ -204,10 +204,9 @@ namespace Gecode { namespace Int { namespace Bool {
         assert(x0.none() && x1.none());
         if (x2.one())
             return new (home) OrTrueSubsumed<BV>(home, *this, x0, x1);
-        else if (x2.zero())
+        if (x2.zero())
             return new (home) BinOrTrue<BV, BV>(home, *this, x0, x1);
-        else
-            return new (home) TerOrTrue<BV>(home, *this);
+        return new (home) TerOrTrue<BV>(home, *this);
     }
 
     template <class BV>
@@ -313,14 +312,13 @@ namespace Gecode { namespace Int { namespace Bool {
         assert(x0.none() && x1.none());
         if (x2.one() || x3.one())
             return new (home) OrTrueSubsumed<BV>(home, *this, x0, x1);
-        else if (x2.zero() && x3.zero())
+        if (x2.zero() && x3.zero())
             return new (home) BinOrTrue<BV, BV>(home, *this, x0, x1);
-        else if (x2.zero())
+        if (x2.zero())
             return new (home) TerOrTrue<BV>(home, *this, x0, x1, x3);
-        else if (x3.zero())
+        if (x3.zero())
             return new (home) TerOrTrue<BV>(home, *this, x0, x1, x2);
-        else
-            return new (home) QuadOrTrue<BV>(home, *this);
+        return new (home) QuadOrTrue<BV>(home, *this);
     }
 
     template <class BV>
@@ -484,15 +482,16 @@ namespace Gecode { namespace Int { namespace Bool {
         if (x2.one()) {
             assert(x0.none() && x1.none());
             return new (home) BinOrTrue<BVA, BVB>(home, *this, x0, x1);
-        } else if (x0.zero()) {
+        }
+        if (x0.zero()) {
             assert(x1.none() && x2.none());
             return new (home) Eq<BVB, BVC>(home, *this, x1, x2);
-        } else if (x1.zero()) {
+        }
+        if (x1.zero()) {
             assert(x0.none() && x2.none());
             return new (home) Eq<BVA, BVC>(home, *this, x0, x2);
-        } else {
-            return new (home) Or<BVA, BVB, BVC>(home, *this);
         }
+        return new (home) Or<BVA, BVB, BVC>(home, *this);
     }
 
     template <class BVA, class BVB, class BVC>
@@ -830,8 +829,7 @@ namespace Gecode { namespace Int { namespace Bool {
         // Decides whether the propagator must be run
         if (VX::zero(d) && (++n_zero < x.size()))
             return ES_FIX;
-        else
-            return ES_NOFIX;
+        return ES_NOFIX;
     }
 
     template <class VX, class VY>

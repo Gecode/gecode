@@ -403,9 +403,8 @@ namespace Test {
                     if (mi.last() != nullptr)
                         constrain(*mi.last());
                     return false;
-                } else {
-                    return false;
                 }
+                return false;
             }
         };
 
@@ -1463,21 +1462,20 @@ namespace Test {
                     bool ok = (b == nullptr) || b->best();
                     delete b;
                     return ok;
-                } else {
-                    int n = ((t > 1) ? std::min(a, t) : a) * m->solutions();
-                    delete m;
-                    while (true) {
-                        Model* s = pbs.next();
-                        if (s != nullptr) {
-                            n--;
-                            delete s;
-                        }
-                        if ((s == nullptr) && !pbs.stopped())
-                            break;
-                        f.limit(f.limit() + 2);
-                    }
-                    return n >= 0;
                 }
+                int n = ((t > 1) ? std::min(a, t) : a) * m->solutions();
+                delete m;
+                while (true) {
+                    Model* s = pbs.next();
+                    if (s != nullptr) {
+                        n--;
+                        delete s;
+                    }
+                    if ((s == nullptr) && !pbs.stopped())
+                        break;
+                    f.limit(f.limit() + 2);
+                }
+                return n >= 0;
             }
         };
 
@@ -1536,28 +1534,27 @@ namespace Test {
                     bool ok = (b == nullptr) || b->best();
                     delete b;
                     return ok;
-                } else {
-                    SEBs sebs(3);
-                    sebs[0] = dfs<Model>(so);
-                    sebs[1] = lds<Model>(so);
-                    sebs[2] = rbs<Model, Gecode::DFS>(so);
-                    Gecode::PBS<Model, Gecode::DFS> pbs(m, sebs, mo);
-
-                    int n = 3 * m->solutions();
-                    delete m;
-
-                    while (true) {
-                        Model* s = pbs.next();
-                        if (s != nullptr) {
-                            n--;
-                            delete s;
-                        }
-                        if ((s == nullptr) && !pbs.stopped())
-                            break;
-                        f.limit(f.limit() + 2);
-                    }
-                    return n >= 0;
                 }
+                SEBs sebs(3);
+                sebs[0] = dfs<Model>(so);
+                sebs[1] = lds<Model>(so);
+                sebs[2] = rbs<Model, Gecode::DFS>(so);
+                Gecode::PBS<Model, Gecode::DFS> pbs(m, sebs, mo);
+
+                int n = 3 * m->solutions();
+                delete m;
+
+                while (true) {
+                    Model* s = pbs.next();
+                    if (s != nullptr) {
+                        n--;
+                        delete s;
+                    }
+                    if ((s == nullptr) && !pbs.stopped())
+                        break;
+                    f.limit(f.limit() + 2);
+                }
+                return n >= 0;
             }
         };
 

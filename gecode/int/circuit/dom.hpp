@@ -57,8 +57,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     Dom<View, Offset>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == Int::ME_INT_VAL)
             return PropCost::linear(PropCost::LO, x.size());
-        else
-            return PropCost::quadratic(PropCost::HI, x.size());
+        return PropCost::quadratic(PropCost::HI, x.size());
     }
 
     template <class View, class Offset>

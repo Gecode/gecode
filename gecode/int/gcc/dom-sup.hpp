@@ -570,8 +570,7 @@ namespace Gecode { namespace Int { namespace GCC {
     VarNode::matched(BC bc) const {
         if (bc == UBC)
             return (nf & NF_M_UBC) != 0;
-        else
-            return (nf & NF_M_LBC) != 0;
+        return (nf & NF_M_LBC) != 0;
     }
 
     forceinline void
@@ -605,8 +604,7 @@ namespace Gecode { namespace Int { namespace GCC {
     VarNode::get_match(BC bc) const {
         if (bc == UBC)
             return ubm;
-        else
-            return lbm;
+        return lbm;
     }
 
     /*
@@ -653,8 +651,7 @@ namespace Gecode { namespace Int { namespace GCC {
     ValNode::cap(BC bc) const {
         if (bc == UBC)
             return ub;
-        else
-            return lb;
+        return lb;
     }
     forceinline bool
     ValNode::matched(BC bc) const {
@@ -673,9 +670,8 @@ namespace Gecode { namespace Int { namespace GCC {
     ValNode::kbound(BC bc) const {
         if (bc == UBC) {
             return _kub;
-        } else {
-            return _klb;
         }
+        return _klb;
     }
 
     forceinline int
@@ -766,8 +762,7 @@ namespace Gecode { namespace Int { namespace GCC {
     ValNode::incid_match(BC bc) const {
         if (bc == LBC)
             return _kub - ublow + _kcount;
-        else
-            return _kub - ub + _kcount;
+        return _kub - ub + _kcount;
     }
 
     forceinline bool
@@ -848,8 +843,7 @@ namespace Gecode { namespace Int { namespace GCC {
     Edge::used(BC bc) const {
         if (bc == UBC)
             return (ef & EF_MARKED_UBC) != 0;
-        else
-            return (ef & EF_MARKED_LBC) != 0;
+        return (ef & EF_MARKED_LBC) != 0;
     }
     forceinline Edge*
     Edge::next() const {
@@ -859,9 +853,8 @@ namespace Gecode { namespace Int { namespace GCC {
     Edge::next(bool t) const {
         if (t) {
             return next_vedge;
-        } else {
-            return next_edge;
         }
+        return next_edge;
     }
 
     forceinline Edge*
@@ -908,8 +901,7 @@ namespace Gecode { namespace Int { namespace GCC {
     Edge::get_mate(bool type) const {
         if (type)
             return x;
-        else
-            return v;
+        return v;
     }
 
     forceinline void
@@ -955,8 +947,7 @@ namespace Gecode { namespace Int { namespace GCC {
     Edge::matched(BC bc) const {
         if (bc == UBC)
             return (ef & EF_MATCHED_UBC) != 0;
-        else
-            return (ef & EF_MATCHED_LBC) != 0;
+        return (ef & EF_MATCHED_LBC) != 0;
     }
 
     forceinline void
@@ -1160,18 +1151,15 @@ namespace Gecode { namespace Int { namespace GCC {
                             // augmenting path of length l > 1
                             e->match(bc);
                             break;
-                        } else {
-                            // augmenting path of length l = 1
-                            e->match(bc);
-                            ns.pop();
-                            return true;
-                        }
-                    } else {
-                        w->inedge(e);
-                        visited.set(static_cast<unsigned int>(w->index()));
-                        // find matching edge m incident with w
-                        ns.push(w);
+                        } // augmenting path of length l = 1
+                        e->match(bc);
+                        ns.pop();
+                        return true;
                     }
+                    w->inedge(e);
+                    visited.set(static_cast<unsigned int>(w->index()));
+                    // find matching edge m incident with w
+                    ns.push(w);
                 }
             } else {
                 // tried all outgoing edges without finding an augmenting path

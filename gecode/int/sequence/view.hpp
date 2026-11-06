@@ -214,8 +214,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     ViewValSupport<View, Val, iss>::shaved(const View& x, const Val& s, int) const {
         if (iss)
             return excludes(x, s);
-        else
-            return includes(x, s);
+        return includes(x, s);
     }
 
     template <class View, class Val, bool iss>

@@ -215,8 +215,7 @@ namespace Gecode { namespace Int { namespace Branch {
         int val = pvc.val();
         if (a == 0)
             return me_failed(x[pos].eq(home, val)) ? ES_FAILED : ES_OK;
-        else
-            return me_failed(x[pos].nq(home, val)) ? ES_FAILED : ES_OK;
+        return me_failed(x[pos].nq(home, val)) ? ES_FAILED : ES_OK;
     }
 
     template <class View>

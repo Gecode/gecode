@@ -128,10 +128,10 @@ namespace Gecode { namespace Search { namespace Par {
                 delete s;
                 m_search.release();
                 return;
-            } else {
-                delete best;
-                best = s->clone();
             }
+            delete best;
+            best = s->clone();
+
         } else {
             best = s->clone();
         }

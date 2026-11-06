@@ -116,7 +116,8 @@ namespace Gecode { namespace Float { namespace Rel {
         x.unique(home);
         if (x.size() == 2) {
             return Eq<View, View>::post(home, x[0], x[1]);
-        } else if (x.size() > 2) {
+        }
+        if (x.size() > 2) {
             FloatNum l = x[0].min();
             FloatNum u = x[0].max();
             for (int i = x.size(); i-- > 1;) {
@@ -148,8 +149,7 @@ namespace Gecode { namespace Float { namespace Rel {
     NaryEq<View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_FLOAT_VAL)
             return PropCost::unary(PropCost::LO);
-        else
-            return PropCost::linear(PropCost::LO, x.size());
+        return PropCost::linear(PropCost::LO, x.size());
     }
 
     template <class View>

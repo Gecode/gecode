@@ -229,9 +229,8 @@ namespace Test { namespace Int {
                 }
                 if (at_most) {
                     return valid(e, Below(limit));
-                } else {
-                    return valid(e, Above(limit));
                 }
+                return valid(e, Above(limit));
             }
             /// Post constraint on \a x
             void

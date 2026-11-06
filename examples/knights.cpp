@@ -128,8 +128,7 @@ public:
         const Choice& c = static_cast<const Choice&>(_c);
         if (a == 0)
             return me_failed(x[c.pos].eq(home, c.val)) ? ES_FAILED : ES_OK;
-        else
-            return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
+        return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
     }
     /// Print explanation
     void

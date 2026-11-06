@@ -75,8 +75,7 @@ namespace Gecode { namespace Int { namespace Distinct {
             GECODE_ME_CHECK(x0.nq(home, c0));
             if (eq_else == RT_TRUE)
                 return home.ES_SUBSUMED(*this);
-            else
-                GECODE_REWRITE(*this, (Rel::EqDom<IntView, IntView>::post(home(*this), x0, x1)));
+            GECODE_REWRITE(*this, (Rel::EqDom<IntView, IntView>::post(home(*this), x0, x1)));
         }
 
         if (eq_else == RT_FALSE) {

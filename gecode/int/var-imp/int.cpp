@@ -75,16 +75,15 @@ namespace Gecode { namespace Int {
                 c = n;
             }
             return (m >= c->min());
-        } else {
-            const RangeList* n = nullptr;
-            const RangeList* c = lst();
-            while (m < c->min()) {
-                const RangeList* p = c->prev(n);
-                n = c;
-                c = p;
-            }
-            return (m <= c->max());
         }
+        const RangeList* n = nullptr;
+        const RangeList* c = lst();
+        while (m < c->min()) {
+            const RangeList* p = c->prev(n);
+            n = c;
+            c = p;
+        }
+        return (m <= c->max());
     }
 
     /*

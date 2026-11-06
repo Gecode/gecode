@@ -80,8 +80,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     Bnd<View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_VAL)
             return PropCost::linear(PropCost::LO, y.size());
-        else
-            return PropCost::quadratic(PropCost::LO, x.size());
+        return PropCost::quadratic(PropCost::LO, x.size());
     }
 
     template <class View>
@@ -363,8 +362,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         // The Hall bounds reach max_x+3, which overflows int near the limit
         if ((d > (static_cast<unsigned int>(Int::Limits::max) / 2U)) || (max_x > Int::Limits::max - 2))
             return prop_bnd<View, long long int>(home, x, minsorted, maxsorted);
-        else
-            return prop_bnd<View, int>(home, x, minsorted, maxsorted);
+        return prop_bnd<View, int>(home, x, minsorted, maxsorted);
     }
 
     template <class View>

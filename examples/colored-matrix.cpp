@@ -76,16 +76,14 @@ public:
     height() const {
         if (_size.value() == 0U)
             return static_cast<int>(_height.value());
-        else
-            return static_cast<int>(_size.value());
+        return static_cast<int>(_size.value());
     }
     /// Return width
     int
     width() const {
         if (_size.value() == 0U)
             return static_cast<int>(_width.value());
-        else
-            return static_cast<int>(_size.value());
+        return static_cast<int>(_size.value());
     }
     /// Return number of colors
     int

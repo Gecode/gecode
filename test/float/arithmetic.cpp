@@ -829,9 +829,8 @@ namespace Test { namespace Float {
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(2, d);
                     return true;
-                } else {
-                    return false;
                 }
+                return false;
             }
             /// Post constraint on \a x
             void
@@ -876,9 +875,8 @@ namespace Test { namespace Float {
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
                     return true;
-                } else {
-                    return false;
                 }
+                return false;
             }
             /// Post constraint on \a x
             void
@@ -980,9 +978,8 @@ namespace Test { namespace Float {
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(2, d);
                     return true;
-                } else {
-                    return false;
                 }
+                return false;
             }
             /// Post constraint on \a x
             void
@@ -1030,9 +1027,8 @@ namespace Test { namespace Float {
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
                     return true;
-                } else {
-                    return false;
                 }
+                return false;
             }
             /// Post constraint on \a x
             void
@@ -1112,9 +1108,8 @@ namespace Test { namespace Float {
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
                     return true;
-                } else {
-                    return false;
                 }
+                return false;
             }
             /// Post constraint on \a x
             void
@@ -1195,9 +1190,8 @@ namespace Test { namespace Float {
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
                     return true;
-                } else {
-                    return false;
                 }
+                return false;
             }
             /// Post constraint on \a x
             void
@@ -1282,9 +1276,8 @@ namespace Test { namespace Float {
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
                     return true;
-                } else {
-                    return false;
                 }
+                return false;
             }
             /// Post constraint on \a x
             void

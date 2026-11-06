@@ -65,16 +65,14 @@ namespace Test { namespace Float {
             solution(const Assignment& x) const override {
                 if (x.size() == 2) {
                     return cmp(x[0], frt, x[1]);
-                } else {
-                    MaybeType r1 = cmp(x[0], frt, x[2]);
-                    MaybeType r2 = cmp(x[1], frt, x[2]);
-                    if ((r1 == MT_TRUE) && (r2 == MT_TRUE))
-                        return MT_TRUE;
-                    else if ((r1 == MT_FALSE) || (r2 == MT_FALSE))
-                        return MT_FALSE;
-                    else
-                        return MT_MAYBE;
                 }
+                MaybeType r1 = cmp(x[0], frt, x[2]);
+                MaybeType r2 = cmp(x[1], frt, x[2]);
+                if ((r1 == MT_TRUE) && (r2 == MT_TRUE))
+                    return MT_TRUE;
+                if ((r1 == MT_FALSE) || (r2 == MT_FALSE))
+                    return MT_FALSE;
+                return MT_MAYBE;
             }
             /// Post constraint on \a x
             void
@@ -147,9 +145,8 @@ namespace Test { namespace Float {
             solution(const Assignment& x) const override {
                 if (x.size() == 1) {
                     return cmp(x[0], frt, c);
-                } else {
-                    return cmp(x[0], frt, c) & cmp(x[1], frt, c);
                 }
+                return cmp(x[0], frt, c) & cmp(x[1], frt, c);
             }
             /// Post constraint on \a x
             void

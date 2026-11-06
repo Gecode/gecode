@@ -446,8 +446,7 @@ public:
             const Choice& c = static_cast<const Choice&>(_c);
             if (a)
                 return me_failed(Int::IntView(sm.slab[c.pos]).nq(home, c.val)) ? ES_FAILED : ES_OK;
-            else
-                return me_failed(Int::IntView(sm.slab[c.pos]).eq(home, c.val)) ? ES_FAILED : ES_OK;
+            return me_failed(Int::IntView(sm.slab[c.pos]).eq(home, c.val)) ? ES_FAILED : ES_OK;
         }
         /// Print explanation
         void

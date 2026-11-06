@@ -475,9 +475,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             if (View::modification_event(d) == ME_INT_VAL) {
                 a.dispose(home, c);
                 return c.empty() ? ES_NOFIX : ES_FIX;
-            } else {
-                return ES_FIX;
             }
+            return ES_FIX;
         }
 
         bool i_mod = false;
@@ -586,9 +585,8 @@ namespace Gecode { namespace Int { namespace Extensional {
                 return c.empty() ? ES_NOFIX : ES_FIX;
             }
             return ES_FIX;
-        } else {
-            return (View::modification_event(d) == ME_INT_VAL) ? home.ES_NOFIX_DISPOSE(c, a) : ES_NOFIX;
         }
+        return (View::modification_event(d) == ME_INT_VAL) ? home.ES_NOFIX_DISPOSE(c, a) : ES_NOFIX;
     }
 
     template <class View, class Val, class Degree, class StateIdx>
@@ -685,8 +683,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         // Check subsumption
         if (c.empty())
             return home.ES_SUBSUMED(*this);
-        else
-            return ES_FIX;
+        return ES_FIX;
     }
 
     template <class View, class Val, class Degree, class StateIdx>

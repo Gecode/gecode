@@ -94,18 +94,16 @@ namespace Gecode { namespace Search {
     CutoffAppend::operator()() const {
         if (n > 0) {
             return (*c1)();
-        } else {
-            return (*c2)();
         }
+        return (*c2)();
     }
     unsigned long long int
     CutoffAppend::operator++() {
         if (n > 0) {
             n--;
             return ++(*c1);
-        } else {
-            return ++(*c2);
         }
+        return ++(*c2);
     }
 
     unsigned long long int

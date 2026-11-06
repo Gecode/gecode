@@ -166,20 +166,18 @@ namespace Gecode { namespace Support {
     u_type(unsigned int n) {
         if (n < UCHAR_MAX)
             return IT_CHAR;
-        else if (n < USHRT_MAX)
+        if (n < USHRT_MAX)
             return IT_SHORT;
-        else
-            return IT_INT;
+        return IT_INT;
     }
 
     forceinline IntType
     s_type(int n) {
         if ((n > SCHAR_MIN) && (n < SCHAR_MAX))
             return IT_CHAR;
-        else if ((n > SHRT_MIN) && (n < SHRT_MAX))
+        if ((n > SHRT_MIN) && (n < SHRT_MAX))
             return IT_SHORT;
-        else
-            return IT_INT;
+        return IT_INT;
     }
 
 }} // namespace Gecode::Support

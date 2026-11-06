@@ -112,9 +112,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
     Positive<I, strict>::min() const {
         if (strict) {
             return std::max(i.min(), 1);
-        } else {
-            return std::max(i.min(), 0);
         }
+        return std::max(i.min(), 0);
     }
     template <class I, bool strict>
     forceinline int

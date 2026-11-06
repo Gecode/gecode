@@ -73,7 +73,8 @@ namespace Gecode { namespace Search { namespace Seq {
                 master = nullptr;
                 e->reset(nullptr);
                 return nullptr;
-            } else if (r) {
+            }
+            if (r) {
                 stop->update(e->statistics());
                 Space* slave = master;
                 master = master->clone();
@@ -91,7 +92,8 @@ namespace Gecode { namespace Search { namespace Seq {
                 delete last;
                 last = n->clone();
                 return n;
-            } else if ((!complete && !e->stopped()) || (e->stopped() && stop->enginestopped())) {
+            }
+            if ((!complete && !e->stopped()) || (e->stopped() && stop->enginestopped())) {
                 // The engine must perform a true restart
                 // The number of the restart has been incremented in the stop object
                 if (!complete && !e->stopped())

@@ -48,18 +48,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             if (x0.min() >= 0) {
                 GECODE_ME_CHECK(x0.eq(home, x1.val()));
                 return home.ES_SUBSUMED(p);
-            } else if (x0.max() <= 0) {
+            }
+            if (x0.max() <= 0) {
                 GECODE_ME_CHECK(x0.eq(home, -x1.val()));
                 return home.ES_SUBSUMED(p);
-            } else if (x1.val() == 0) {
+            }
+            if (x1.val() == 0) {
                 GECODE_ME_CHECK(x0.eq(home, 0));
                 return home.ES_SUBSUMED(p);
-            } else {
-                int mp[2] = {-x1.val(), x1.val()};
-                Iter::Values::Array i(mp, 2);
-                GECODE_ME_CHECK(x0.inter_v(home, i, false));
-                return home.ES_SUBSUMED(p);
             }
+            int mp[2] = {-x1.val(), x1.val()};
+            Iter::Values::Array i(mp, 2);
+            GECODE_ME_CHECK(x0.inter_v(home, i, false));
+            return home.ES_SUBSUMED(p);
         }
 
         if (x0.min() >= 0)
@@ -91,20 +92,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     AbsBnd<View>::post(Home home, View x0, View x1) {
         if (x0.min() >= 0) {
             return Rel::EqBnd<View, View>::post(home, x0, x1);
-        } else if (x0.max() <= 0) {
-            return Rel::EqBnd<MinusView, View>::post(home, MinusView(x0), x1);
-        } else {
-            assert(!x0.assigned());
-            GECODE_ME_CHECK(x1.gq(home, 0));
-            if (x1.assigned()) {
-                int mp[2] = {-x1.val(), x1.val()};
-                Iter::Values::Array i(mp, 2);
-                GECODE_ME_CHECK(x0.inter_v(home, i, false));
-            } else if (x0 != x1) {
-                GECODE_ME_CHECK(x1.lq(home, std::max(-x0.min(), x0.max())));
-                (void)new (home) AbsBnd<View>(home, x0, x1);
-            }
         }
+        if (x0.max() <= 0) {
+            return Rel::EqBnd<MinusView, View>::post(home, MinusView(x0), x1);
+        }
+        assert(!x0.assigned());
+        GECODE_ME_CHECK(x1.gq(home, 0));
+        if (x1.assigned()) {
+            int mp[2] = {-x1.val(), x1.val()};
+            Iter::Values::Array i(mp, 2);
+            GECODE_ME_CHECK(x0.inter_v(home, i, false));
+        } else if (x0 != x1) {
+            GECODE_ME_CHECK(x1.lq(home, std::max(-x0.min(), x0.max())));
+            (void)new (home) AbsBnd<View>(home, x0, x1);
+        }
+
         return ES_OK;
     }
 
@@ -124,8 +126,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     AbsBnd<View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_VAL)
             return PropCost::unary(PropCost::LO);
-        else
-            return PropCost::binary(PropCost::LO);
+        return PropCost::binary(PropCost::LO);
     }
 
     template <class View>
@@ -144,20 +145,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     AbsDom<View>::post(Home home, View x0, View x1) {
         if (x0.min() >= 0) {
             return Rel::EqDom<View, View>::post(home, x0, x1);
-        } else if (x0.max() <= 0) {
-            return Rel::EqDom<MinusView, View>::post(home, MinusView(x0), x1);
-        } else {
-            assert(!x0.assigned());
-            GECODE_ME_CHECK(x1.gq(home, 0));
-            if (x1.assigned()) {
-                int mp[2] = {-x1.val(), x1.val()};
-                Iter::Values::Array i(mp, 2);
-                GECODE_ME_CHECK(x0.inter_v(home, i, false));
-            } else if (x0 != x1) {
-                GECODE_ME_CHECK(x1.lq(home, std::max(-x0.min(), x0.max())));
-                (void)new (home) AbsDom<View>(home, x0, x1);
-            }
         }
+        if (x0.max() <= 0) {
+            return Rel::EqDom<MinusView, View>::post(home, MinusView(x0), x1);
+        }
+        assert(!x0.assigned());
+        GECODE_ME_CHECK(x1.gq(home, 0));
+        if (x1.assigned()) {
+            int mp[2] = {-x1.val(), x1.val()};
+            Iter::Values::Array i(mp, 2);
+            GECODE_ME_CHECK(x0.inter_v(home, i, false));
+        } else if (x0 != x1) {
+            GECODE_ME_CHECK(x1.lq(home, std::max(-x0.min(), x0.max())));
+            (void)new (home) AbsDom<View>(home, x0, x1);
+        }
+
         return ES_OK;
     }
 
@@ -177,8 +179,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     AbsDom<View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_VAL)
             return PropCost::unary(PropCost::LO);
-        else
-            return PropCost::binary((View::me(med) == ME_INT_DOM) ? PropCost::HI : PropCost::LO);
+        return PropCost::binary((View::me(med) == ME_INT_DOM) ? PropCost::HI : PropCost::LO);
     }
 
     template <class View>

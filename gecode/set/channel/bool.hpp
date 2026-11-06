@@ -263,8 +263,7 @@ namespace Gecode { namespace Set { namespace Channel {
         }
         if (y.assigned())
             return home.ES_NOFIX_DISPOSE(co, a);
-        else
-            return ES_NOFIX;
+        return ES_NOFIX;
     }
 
 }}} // namespace Gecode::Set::Channel

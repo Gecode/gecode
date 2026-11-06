@@ -264,12 +264,11 @@ namespace Gecode { namespace Int {
     BoolVarImp::copy(Space& home) {
         if (copied())
             return static_cast<BoolVarImp*>(forward());
-        else if (zero())
+        if (zero())
             return &s_zero;
-        else if (one())
+        if (one())
             return &s_one;
-        else
-            return new (home) BoolVarImp(home, *this);
+        return new (home) BoolVarImp(home, *this);
     }
 
     /*
@@ -346,10 +345,9 @@ namespace Gecode { namespace Int {
             if (!i())
                 return zero_none(home);
             return ME_INT_NONE;
-        } else {
-            assert(i.val() == 1);
-            return one_none(home);
         }
+        assert(i.val() == 1);
+        return one_none(home);
     }
     template <class I>
     forceinline ModEvent
@@ -365,10 +363,9 @@ namespace Gecode { namespace Int {
             if (!i() || (i.val() > 1))
                 return zero(home);
             return ME_INT_NONE;
-        } else {
-            assert(i.val() == 1);
-            return one(home);
         }
+        assert(i.val() == 1);
+        return one(home);
     }
     template <class I>
     forceinline ModEvent
@@ -384,10 +381,9 @@ namespace Gecode { namespace Int {
             if (!i() || (i.val() > 1))
                 return one(home);
             return fail(home);
-        } else {
-            assert(i.val() == 1);
-            return zero(home);
         }
+        assert(i.val() == 1);
+        return zero(home);
     }
 
     /*

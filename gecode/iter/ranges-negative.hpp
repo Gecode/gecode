@@ -99,9 +99,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
     Negative<I, strict>::operator()() const {
         if (strict) {
             return i() && (i.min() < 0);
-        } else {
-            return i() && (i.min() <= 0);
         }
+        return i() && (i.min() <= 0);
     }
 
     template <class I, bool strict>
@@ -114,9 +113,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
     Negative<I, strict>::max() const {
         if (strict) {
             return std::min(i.max(), -1);
-        } else {
-            return std::min(i.max(), 0);
         }
+        return std::min(i.max(), 0);
     }
     template <class I, bool strict>
     forceinline unsigned int

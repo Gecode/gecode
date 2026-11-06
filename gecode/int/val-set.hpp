@@ -50,15 +50,16 @@ namespace Gecode { namespace Int {
                     c->min(v);
                     n++;
                     return;
-                } else {
-                    *p = new (home) RangeList(v, v, c);
-                    n++;
-                    return;
                 }
-            } else if (v <= c->max()) {
+                *p = new (home) RangeList(v, v, c);
+                n++;
+                return;
+            }
+            if (v <= c->max()) {
                 // Value already included
                 return;
-            } else if (v == c->max() + 1) {
+            }
+            if (v == c->max() + 1) {
                 if ((c->next() != nullptr) && (v + 1 == c->next()->min())) {
                     c->next()->min(c->min());
                     *p = c->next();
@@ -68,10 +69,9 @@ namespace Gecode { namespace Int {
                 }
                 n++;
                 return;
-            } else {
-                p = c->next_ref();
-                c = *p;
             }
+            p = c->next_ref();
+            c = *p;
         }
         *p = new (home) RangeList(v, v, nullptr);
         n++;

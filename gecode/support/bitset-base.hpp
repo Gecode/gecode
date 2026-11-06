@@ -441,14 +441,14 @@ namespace Gecode { namespace Support {
                     if (!data[i].all())
                         return BSS_SOME;
                 return data[pos].all(bits) ? BSS_ALL : BSS_SOME;
-            } else if (data[0].none()) {
+            }
+            if (data[0].none()) {
                 for (unsigned int i = 1; i < pos; i++)
                     if (!data[i].none())
                         return BSS_SOME;
                 return data[pos].none(bits) ? BSS_NONE : BSS_SOME;
-            } else {
-                return BSS_SOME;
             }
+            return BSS_SOME;
         }
         if (data[0].all(bits))
             return BSS_ALL;

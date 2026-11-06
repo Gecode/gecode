@@ -157,15 +157,13 @@ namespace Gecode { namespace Set { namespace RelOp {
 
         if (shared(x0, x1, x2)) {
             return (x0ass && x1ass && x2ass) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
-        } else {
-            if (x0ass && x1ass && x2ass)
-                return home.ES_SUBSUMED(*this);
-            if (x0ass != x0.assigned() || x1ass != x1.assigned() || x2ass != x2.assigned()) {
-                return ES_NOFIX;
-            } else {
-                return ES_FIX;
-            }
         }
+        if (x0ass && x1ass && x2ass)
+            return home.ES_SUBSUMED(*this);
+        if (x0ass != x0.assigned() || x1ass != x1.assigned() || x2ass != x2.assigned()) {
+            return ES_NOFIX;
+        }
+        return ES_FIX;
     }
 
     template <class View0, class View1, class View2>

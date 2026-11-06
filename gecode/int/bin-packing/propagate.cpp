@@ -99,7 +99,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
     TellCache::tell(Space& home, IntView x) {
         if (_eq == -2) {
             return ES_FAILED;
-        } else if (_eq >= 0) {
+        }
+        if (_eq >= 0) {
             GECODE_ME_CHECK(x.eq(home, _eq));
         }
         Iter::Values::Array nqi(_nq, _n_nq);
@@ -386,18 +387,17 @@ namespace Gecode { namespace Int { namespace BinPacking {
             for (auto& li : l)
                 GECODE_ME_CHECK(li.eq(home, 0));
             return ES_OK;
-        } else if (l.size() == 0) {
+        }
+        if (l.size() == 0) {
             // No bins available
             return ES_FAILED;
-        } else {
-            // Constrain load
-            for (auto& j : l) {
-                GECODE_ME_CHECK(j.gq(home, 0));
-                GECODE_ME_CHECK(j.lq(home, s));
-            }
-            (void)new (home) Pack(home, l, bs, ipl);
-            return ES_OK;
+        } // Constrain load
+        for (auto& j : l) {
+            GECODE_ME_CHECK(j.gq(home, 0));
+            GECODE_ME_CHECK(j.lq(home, s));
         }
+        (void)new (home) Pack(home, l, bs, ipl);
+        return ES_OK;
     }
 
     void

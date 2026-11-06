@@ -71,7 +71,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
                 if (t[0].mandatory()) {
                     GECODE_ME_CHECK(c.gq(home, t[0].c()));
                     return ES_OK;
-                } else if (c.min() >= t[0].c()) {
+                }
+                if (c.min() >= t[0].c()) {
                     return ES_OK;
                 }
             } else {

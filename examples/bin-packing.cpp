@@ -348,8 +348,7 @@ public:
          */
         if ((slack == 0) || (n_same == n_possible) || (slack == INT_MAX))
             return new Choice(*this, 1, item, same, 1);
-        else
-            return new Choice(*this, 2, item, same, n_same);
+        return new Choice(*this, 2, item, same, n_same);
     }
     /// Return choice
     const Gecode::Choice*

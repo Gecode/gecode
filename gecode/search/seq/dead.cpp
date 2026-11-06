@@ -89,8 +89,7 @@ namespace Gecode { namespace Search { namespace Seq {
     dead(const Options& o, const Statistics& stat) {
         if (o.tracer)
             return new Dead<TraceRecorder>(o, stat);
-        else
-            return new Dead<NoTraceRecorder>(o, stat);
+        return new Dead<NoTraceRecorder>(o, stat);
     }
 
 }}} // namespace Gecode::Search::Seq

@@ -199,10 +199,9 @@ namespace Gecode { namespace Gist {
     NextSolCursor::may_move_sidewards() {
         if (back) {
             return not_on_sol() && !node()->is_root() && alternative() > 0;
-        } else {
-            return not_on_sol() && !node()->is_root() &&
-                   (alternative() < node()->get_parent(na)->get_number_of_children() - 1);
         }
+        return not_on_sol() && !node()->is_root() &&
+               (alternative() < node()->get_parent(na)->get_number_of_children() - 1);
     }
 
     forceinline void

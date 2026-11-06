@@ -287,17 +287,18 @@ namespace Gecode {
                 // Option without argument
                 cur = true;
                 return 1;
-            } else if (!strcmp(argv[2], "true") || !strcmp(argv[2], "1")) {
+            }
+            if (!strcmp(argv[2], "true") || !strcmp(argv[2], "1")) {
                 cur = true;
                 return 2;
-            } else if (!strcmp(argv[2], "false") || !strcmp(argv[2], "0")) {
+            }
+            if (!strcmp(argv[2], "false") || !strcmp(argv[2], "0")) {
                 cur = false;
                 return 2;
-            } else {
-                // Option without argument
-                cur = true;
-                return 1;
-            }
+            } // Option without argument
+            cur = true;
+            return 1;
+
             return 0;
         }
 

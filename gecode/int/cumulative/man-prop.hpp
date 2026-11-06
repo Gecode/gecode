@@ -65,9 +65,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
                 for (int i = 0; i < t.size(); i++)
                     mt[i] = t[i];
                 return Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask, PL>::post(home, mt);
-            } else {
-                (void)new (home) ManProp<ManTask, Cap, PL>(home, c, t);
             }
+            (void)new (home) ManProp<ManTask, Cap, PL>(home, c, t);
         }
         return ES_OK;
     }

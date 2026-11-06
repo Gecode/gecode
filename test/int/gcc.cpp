@@ -282,8 +282,7 @@ namespace Test { namespace Int {
             assignment() const override {
                 if (arity > random_arity)
                     return new RandomAssignment(arity, dom, 4000, _rand);
-                else
-                    return new CpltAssignment(arity, dom);
+                return new CpltAssignment(arity, dom);
             }
             /// Post constraint on \a xy
             void

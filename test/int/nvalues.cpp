@@ -65,8 +65,7 @@ namespace Test { namespace Int {
             assignment() const override {
                 if (arity > 5)
                     return new RandomAssignment(arity, dom, 500, _rand);
-                else
-                    return new CpltAssignment(arity, dom);
+                return new CpltAssignment(arity, dom);
             }
             /// %Test whether \a x is solution
             bool

@@ -66,9 +66,8 @@ namespace Gecode { namespace Int { namespace LDSB {
                 lits[j++] = Literal(i.val(), l._value);
             }
             return lits;
-        } else {
-            return ArgArray<Literal>(0);
         }
+        return ArgArray<Literal>(0);
     }
 
     template <>
@@ -85,9 +84,8 @@ namespace Gecode { namespace Int { namespace LDSB {
                 lits[j++] = Literal(l._variable, i.val());
             }
             return lits;
-        } else {
-            return ArgArray<Literal>(0);
         }
+        return ArgArray<Literal>(0);
     }
 
     template <>
@@ -118,10 +116,9 @@ namespace Gecode { namespace Int { namespace LDSB {
                     if ((!xv.assigned() && !yv.assigned()) ||
                         (xv.assigned() && yv.assigned() && Set::LDSB::equal_lub(xv, yv))) {
                         continue;
-                    } else {
-                        active = false;
-                        break;
                     }
+                    active = false;
+                    break;
                 }
 
                 if (active) {

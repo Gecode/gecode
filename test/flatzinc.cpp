@@ -160,11 +160,11 @@ namespace Test { namespace FlatZinc {
                 if (opt.log)
                     olog << "FlatZinc produced the following output:\n" << output << "\n";
                 return false;
-            } else {
-                if (opt.log)
-                    olog << "Could not parse input\n";
-                return false;
             }
+            if (opt.log)
+                olog << "Could not parse input\n";
+            return false;
+
         } catch (Gecode::FlatZinc::Error& e) {
             if (opt.log)
                 olog << ind(2) << "FlatZinc error : " << e.to_string() << '\n';

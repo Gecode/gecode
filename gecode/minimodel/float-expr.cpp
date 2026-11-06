@@ -402,8 +402,7 @@ namespace Gecode {
     operator+(const FloatVal& c, const FloatVar& x) {
         if (x.assigned() && Float::Limits::valid(c + x.val()))
             return LinFloatExpr(c + x.val());
-        else
-            return LinFloatExpr(x, LinFloatExpr::NT_ADD, c);
+        return LinFloatExpr(x, LinFloatExpr::NT_ADD, c);
     }
     LinFloatExpr
     operator+(const FloatVal& c, const LinFloatExpr& e) {
@@ -413,8 +412,7 @@ namespace Gecode {
     operator+(const FloatVar& x, const FloatVal& c) {
         if (x.assigned() && Float::Limits::valid(c + x.val()))
             return LinFloatExpr(c + x.val());
-        else
-            return LinFloatExpr(x, LinFloatExpr::NT_ADD, c);
+        return LinFloatExpr(x, LinFloatExpr::NT_ADD, c);
     }
     LinFloatExpr
     operator+(const LinFloatExpr& e, const FloatVal& c) {
@@ -424,24 +422,21 @@ namespace Gecode {
     operator+(const FloatVar& x, const FloatVar& y) {
         if (x.assigned())
             return x.val() + y;
-        else if (y.assigned())
+        if (y.assigned())
             return x + y.val();
-        else
-            return LinFloatExpr(x, LinFloatExpr::NT_ADD, (const LinFloatExpr&)y);
+        return LinFloatExpr(x, LinFloatExpr::NT_ADD, (const LinFloatExpr&)y);
     }
     LinFloatExpr
     operator+(const FloatVar& x, const LinFloatExpr& e) {
         if (x.assigned())
             return x.val() + e;
-        else
-            return LinFloatExpr(x, LinFloatExpr::NT_ADD, e);
+        return LinFloatExpr(x, LinFloatExpr::NT_ADD, e);
     }
     LinFloatExpr
     operator+(const LinFloatExpr& e, const FloatVar& x) {
         if (x.assigned())
             return e + x.val();
-        else
-            return LinFloatExpr(e, LinFloatExpr::NT_ADD, (const LinFloatExpr&)x);
+        return LinFloatExpr(e, LinFloatExpr::NT_ADD, (const LinFloatExpr&)x);
     }
     LinFloatExpr
     operator+(const LinFloatExpr& e1, const LinFloatExpr& e2) {
@@ -452,8 +447,7 @@ namespace Gecode {
     operator-(const FloatVal& c, const FloatVar& x) {
         if (x.assigned() && Float::Limits::valid(c - x.val()))
             return LinFloatExpr(c - x.val());
-        else
-            return LinFloatExpr(x, LinFloatExpr::NT_SUB, c);
+        return LinFloatExpr(x, LinFloatExpr::NT_SUB, c);
     }
     LinFloatExpr
     operator-(const FloatVal& c, const LinFloatExpr& e) {
@@ -463,8 +457,7 @@ namespace Gecode {
     operator-(const FloatVar& x, const FloatVal& c) {
         if (x.assigned() && Float::Limits::valid(x.val() - c))
             return LinFloatExpr(x.val() - c);
-        else
-            return LinFloatExpr(x, LinFloatExpr::NT_ADD, -c);
+        return LinFloatExpr(x, LinFloatExpr::NT_ADD, -c);
     }
     LinFloatExpr
     operator-(const LinFloatExpr& e, const FloatVal& c) {
@@ -474,24 +467,21 @@ namespace Gecode {
     operator-(const FloatVar& x, const FloatVar& y) {
         if (x.assigned())
             return x.val() - y;
-        else if (y.assigned())
+        if (y.assigned())
             return x - y.val();
-        else
-            return LinFloatExpr(x, LinFloatExpr::NT_SUB, (const LinFloatExpr&)y);
+        return LinFloatExpr(x, LinFloatExpr::NT_SUB, (const LinFloatExpr&)y);
     }
     LinFloatExpr
     operator-(const FloatVar& x, const LinFloatExpr& e) {
         if (x.assigned())
             return x.val() - e;
-        else
-            return LinFloatExpr(x, LinFloatExpr::NT_SUB, e);
+        return LinFloatExpr(x, LinFloatExpr::NT_SUB, e);
     }
     LinFloatExpr
     operator-(const LinFloatExpr& e, const FloatVar& x) {
         if (x.assigned())
             return e - x.val();
-        else
-            return LinFloatExpr(e, LinFloatExpr::NT_SUB, (const LinFloatExpr&)x);
+        return LinFloatExpr(e, LinFloatExpr::NT_SUB, (const LinFloatExpr&)x);
     }
     LinFloatExpr
     operator-(const LinFloatExpr& e1, const LinFloatExpr& e2) {
@@ -502,8 +492,7 @@ namespace Gecode {
     operator-(const FloatVar& x) {
         if (x.assigned())
             return LinFloatExpr(-x.val());
-        else
-            return LinFloatExpr(x, LinFloatExpr::NT_SUB, 0);
+        return LinFloatExpr(x, LinFloatExpr::NT_SUB, 0);
     }
     LinFloatExpr
     operator-(const LinFloatExpr& e) {
@@ -514,33 +503,29 @@ namespace Gecode {
     operator*(const FloatVal& a, const FloatVar& x) {
         if (a == 0)
             return LinFloatExpr(0.0);
-        else if (x.assigned() && Float::Limits::valid(a * x.val()))
+        if (x.assigned() && Float::Limits::valid(a * x.val()))
             return LinFloatExpr(a * x.val());
-        else
-            return LinFloatExpr(x, a);
+        return LinFloatExpr(x, a);
     }
     LinFloatExpr
     operator*(const FloatVar& x, const FloatVal& a) {
         if (a == 0)
             return LinFloatExpr(0.0);
-        else if (x.assigned() && Float::Limits::valid(a * x.val()))
+        if (x.assigned() && Float::Limits::valid(a * x.val()))
             return LinFloatExpr(a * x.val());
-        else
-            return LinFloatExpr(x, a);
+        return LinFloatExpr(x, a);
     }
     LinFloatExpr
     operator*(const LinFloatExpr& e, const FloatVal& a) {
         if (a == 0)
             return LinFloatExpr(0.0);
-        else
-            return LinFloatExpr(a, e);
+        return LinFloatExpr(a, e);
     }
     LinFloatExpr
     operator*(const FloatVal& a, const LinFloatExpr& e) {
         if (a == 0)
             return LinFloatExpr(0.0);
-        else
-            return LinFloatExpr(a, e);
+        return LinFloatExpr(a, e);
     }
 
     LinFloatExpr

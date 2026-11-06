@@ -104,16 +104,14 @@ namespace Gecode { namespace Set {
     BndSet::min() const {
         if (fst() == nullptr)
             return MIN_OF_EMPTY;
-        else
-            return fst()->min();
+        return fst()->min();
     }
 
     forceinline int
     BndSet::max() const {
         if (lst() == nullptr)
             return MAX_OF_EMPTY;
-        else
-            return lst()->max();
+        return lst()->max();
     }
 
     // nth smallest element

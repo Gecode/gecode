@@ -217,21 +217,19 @@ namespace Gecode { namespace Int { namespace Linear {
                 ZeroIntView z;
                 return new (home)
                     EqBoolScale<EmptyScaleBoolArray, SBAN, ZeroIntView>(home, *this, ep, n, z, c + x.val());
-            } else {
-                return new (home) EqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
             }
-        } else if (n.empty()) {
+            return new (home) EqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
+        }
+        if (n.empty()) {
             EmptyScaleBoolArray en;
             if (x.assigned()) {
                 ZeroIntView z;
                 return new (home)
                     EqBoolScale<SBAP, EmptyScaleBoolArray, ZeroIntView>(home, *this, p, en, z, c + x.val());
-            } else {
-                return new (home) EqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
             }
-        } else {
-            return new (home) EqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
+            return new (home) EqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
         }
+        return new (home) EqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
     }
 
     template <class SBAP, class SBAN, class VX>
@@ -434,21 +432,19 @@ namespace Gecode { namespace Int { namespace Linear {
                 ZeroIntView z;
                 return new (home)
                     LqBoolScale<EmptyScaleBoolArray, SBAN, ZeroIntView>(home, *this, ep, n, z, c + x.val());
-            } else {
-                return new (home) LqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
             }
-        } else if (n.empty()) {
+            return new (home) LqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
+        }
+        if (n.empty()) {
             EmptyScaleBoolArray en;
             if (x.assigned()) {
                 ZeroIntView z;
                 return new (home)
                     LqBoolScale<SBAP, EmptyScaleBoolArray, ZeroIntView>(home, *this, p, en, z, c + x.val());
-            } else {
-                return new (home) LqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
             }
-        } else {
-            return new (home) LqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
+            return new (home) LqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
         }
+        return new (home) LqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
     }
 
     template <class SBAP, class SBAN, class VX>
@@ -580,21 +576,19 @@ namespace Gecode { namespace Int { namespace Linear {
                 ZeroIntView z;
                 return new (home)
                     NqBoolScale<EmptyScaleBoolArray, SBAN, ZeroIntView>(home, *this, ep, n, z, c + x.val());
-            } else {
-                return new (home) NqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
             }
-        } else if (n.empty()) {
+            return new (home) NqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
+        }
+        if (n.empty()) {
             EmptyScaleBoolArray en;
             if (x.assigned()) {
                 ZeroIntView z;
                 return new (home)
                     NqBoolScale<SBAP, EmptyScaleBoolArray, ZeroIntView>(home, *this, p, en, z, c + x.val());
-            } else {
-                return new (home) NqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
             }
-        } else {
-            return new (home) NqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
+            return new (home) NqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
         }
+        return new (home) NqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
     }
 
     template <class SBAP, class SBAN, class VX>

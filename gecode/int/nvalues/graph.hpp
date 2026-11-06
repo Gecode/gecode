@@ -246,9 +246,8 @@ namespace Gecode { namespace Int { namespace NValues {
         if (n_view_visited < n_view) {
             scc();
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     forceinline ExecStatus

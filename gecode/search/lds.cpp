@@ -44,8 +44,7 @@ namespace Gecode { namespace Search {
     make_lds_engine(Space* s, const Options& o) {
         if (o.tracer)
             return new Seq::LDS<EdgeTraceRecorder>(s, o);
-        else
-            return new Seq::LDS<NoTraceRecorder>(s, o);
+        return new Seq::LDS<NoTraceRecorder>(s, o);
     }
 
 }} // namespace Gecode::Search

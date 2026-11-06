@@ -92,9 +92,11 @@ namespace Gecode {
             int m = l + (r - l) / 2;
             if ((this->r[m].min <= n) && (n <= this->r[m].max)) {
                 return true;
-            } else if (l == r) {
+            }
+            if (l == r) {
                 return false;
-            } else if (n < this->r[m].min) {
+            }
+            if (n < this->r[m].min) {
                 r = m - 1;
             } else {
                 l = m + 1;

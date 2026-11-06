@@ -44,8 +44,7 @@ namespace Gecode { namespace Search { namespace Seq {
                     const Search::Options& opt, bool best) {
         if (best)
             return new PBS<true>(slaves, stops, n_slaves, stat, opt);
-        else
-            return new PBS<false>(slaves, stops, n_slaves, stat, opt);
+        return new PBS<false>(slaves, stops, n_slaves, stat, opt);
     }
 
 }}} // namespace Gecode::Search::Seq
@@ -65,8 +64,7 @@ namespace Gecode { namespace Search { namespace Par {
     make_pbs_engine(Engine** slaves, Stop** stops, unsigned int n_slaves, const Statistics& stat, bool best) {
         if (best)
             return new PBS<CollectBest>(slaves, stops, n_slaves, stat);
-        else
-            return new PBS<CollectAll>(slaves, stops, n_slaves, stat);
+        return new PBS<CollectAll>(slaves, stops, n_slaves, stat);
     }
 
 }}} // namespace Gecode::Search::Par

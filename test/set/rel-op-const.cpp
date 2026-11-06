@@ -119,10 +119,10 @@ namespace Test { namespace Set {
                     if (!inverse) {
                         Iter::Ranges::Diff<IntSetRanges, CountableSetRanges> u(isr, xr0);
                         return sol(u, xr1);
-                    } else {
-                        Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> u(xr0, isr);
-                        return sol(u, xr1);
                     }
+                    Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> u(xr0, isr);
+                    return sol(u, xr1);
+
                 } break;
                 default:
                     GECODE_NEVER;
@@ -292,10 +292,10 @@ namespace Test { namespace Set {
                     if (!inverse) {
                         Iter::Ranges::Diff<IntSetRanges, CountableSetRanges> u(isr0, xr0);
                         return sol(u, isr1);
-                    } else {
-                        Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> u(xr0, isr0);
-                        return sol(u, isr1);
                     }
+                    Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> u(xr0, isr0);
+                    return sol(u, isr1);
+
                 } break;
                 default:
                     GECODE_NEVER;

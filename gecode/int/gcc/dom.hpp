@@ -160,7 +160,8 @@ namespace Gecode { namespace Int { namespace GCC {
                 if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
                     return ES_FAILED;
             return home.ES_SUBSUMED(*this);
-        } else if ((x.size() == 1) && (x[0].assigned())) {
+        }
+        if ((x.size() == 1) && (x[0].assigned())) {
             int idx;
             if (!lookup_value(k, x[0].val(), idx))
                 return ES_FAILED;
@@ -223,7 +224,8 @@ namespace Gecode { namespace Int { namespace GCC {
                         if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
                             return ES_FAILED;
                     return home.ES_SUBSUMED(*this);
-                } else if ((x.size() == 1) && x[0].assigned()) {
+                }
+                if ((x.size() == 1) && x[0].assigned()) {
                     int idx;
                     if (!lookup_value(k, x[0].val(), idx))
                         return ES_FAILED;

@@ -125,11 +125,10 @@ namespace Gecode { namespace Set { namespace Rel {
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one_none(home));
                 return home.ES_SUBSUMED(*this);
-            } else {
-                if (rm != RM_RIMP)
-                    GECODE_ME_CHECK(b.zero_none(home));
-                return home.ES_SUBSUMED(*this);
             }
+            if (rm != RM_RIMP)
+                GECODE_ME_CHECK(b.zero_none(home));
+            return home.ES_SUBSUMED(*this);
         }
 
         // check whether cardinalities still allow equality

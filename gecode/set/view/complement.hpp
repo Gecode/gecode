@@ -122,9 +122,8 @@ namespace Gecode { namespace Set {
         RangesCompl<GlbRanges<View>> lbc(lb);
         if (lbc()) {
             return lbc.min();
-        } else {
-            return BndSet::MIN_OF_EMPTY;
         }
+        return BndSet::MIN_OF_EMPTY;
     }
 
     template <class View>
@@ -136,9 +135,8 @@ namespace Gecode { namespace Set {
             while (lbc())
                 ++lbc;
             return lbc.max();
-        } else {
-            return BndSet::MAX_OF_EMPTY;
         }
+        return BndSet::MAX_OF_EMPTY;
     }
 
     template <class View>
@@ -148,9 +146,8 @@ namespace Gecode { namespace Set {
         RangesCompl<LubRanges<View>> ubc(ub);
         if (ubc()) {
             return ubc.min();
-        } else {
-            return BndSet::MIN_OF_EMPTY;
         }
+        return BndSet::MIN_OF_EMPTY;
     }
 
     template <class View>
@@ -162,9 +159,8 @@ namespace Gecode { namespace Set {
             while (ubc())
                 ++ubc;
             return ubc.max();
-        } else {
-            return BndSet::MAX_OF_EMPTY;
         }
+        return BndSet::MAX_OF_EMPTY;
     }
 
     template <class View>

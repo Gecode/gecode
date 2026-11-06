@@ -350,9 +350,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
         if (n != 0) {
             int l_max = std::min(static_cast<int>(std::numeric_limits<int>::max() / n), lambda_range.max);
             return {lambda_range.min, l_max};
-        } else {
-            return {0, -1};
         }
+        return {0, -1};
     }
 
     template <int (*f)(int, int, int)>

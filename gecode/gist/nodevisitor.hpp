@@ -92,9 +92,9 @@ namespace Gecode { namespace Gist {
         }
         if (!c.may_move_upwards()) {
             return false;
-        } else {
-            c.move_sidewards();
         }
+        c.move_sidewards();
+
         return true;
     }
 

@@ -134,9 +134,8 @@ public:
             const Photo& l = static_cast<const Photo&>(*mi.last());
             relax(*this, pos, l.pos, rnd, p);
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
     /// Constructor for cloning \a s
     Photo(Photo& s) : IntMinimizeScript(s), spec(s.spec), rnd(s.rnd), p(s.p) {

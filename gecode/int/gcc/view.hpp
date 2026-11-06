@@ -51,9 +51,11 @@ namespace Gecode { namespace Int {
                 if (v == a[m].card()) {
                     i = m;
                     return true;
-                } else if (l == r) {
+                }
+                if (l == r) {
                     return false;
-                } else if (v < a[m].card()) {
+                }
+                if (v < a[m].card()) {
                     r = m - 1;
                 } else {
                     l = m + 1;

@@ -136,9 +136,8 @@ namespace Gecode { namespace Int { namespace Unary {
         if (e <= l) {
             Iter::Ranges::Singleton r(norun_bound(static_cast<long long>(e) - _p + 1), l);
             return _s.minus_r(home, r, false);
-        } else {
-            return ME_INT_NONE;
         }
+        return ME_INT_NONE;
     }
 
     forceinline ModEvent
@@ -339,9 +338,8 @@ namespace Gecode { namespace Int { namespace Unary {
                 GECODE_NEVER;
             }
             return ME_INT_NONE;
-        } else {
-            return ME_INT_NONE;
         }
+        return ME_INT_NONE;
     }
 
     forceinline void
@@ -460,9 +458,8 @@ namespace Gecode { namespace Int { namespace Unary {
             Iter::Ranges::Singleton er(norun_bound(static_cast<long long>(e) + 1),
                                        norun_bound(static_cast<long long>(_p.min()) + l));
             return _e.minus_r(home, er, false);
-        } else {
-            return ME_INT_NONE;
         }
+        return ME_INT_NONE;
     }
 
     forceinline ModEvent
