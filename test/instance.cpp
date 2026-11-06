@@ -645,7 +645,7 @@ namespace Test { namespace Instance {
             Gecode::InstanceOptions o("Test", with_params);
             char a0[] = "test", a1[] = "-param", a2[] = "k=2", a3[] = "", a4[] = "m=2";
             std::string inst(file);
-            char* argv[] = {a0, a1, a2, a1, a4, &inst[0], a3};
+            char* argv[] = {a0, a1, a2, a1, a4, inst.data(), a3};
             int argc = 6;
             o.parse(argc, argv);
             ok = ok && o.is_file();
@@ -653,7 +653,7 @@ namespace Test { namespace Instance {
             // The same parameters separated by commas
             Gecode::InstanceOptions c("Test", with_params);
             char c2[] = "k=2,m=2";
-            char* argu[] = {a0, a1, c2, &inst[0], a3};
+            char* argu[] = {a0, a1, c2, inst.data(), a3};
             int argcu = 4;
             c.parse(argcu, argu);
             ok = ok && equal(c.data().ints("x"), {3, 4});
@@ -661,7 +661,7 @@ namespace Test { namespace Instance {
             Gecode::InstanceOptions s("Test", "n: int");
             char b1[] = "-spec";
             std::string spec(other);
-            char* argw[] = {a0, b1, &spec[0], &inst[0], a3};
+            char* argw[] = {a0, b1, spec.data(), inst.data(), a3};
             int argcw = 4;
             s.parse(argcw, argw);
             ok = ok && (s.data().integer("c") == 4);
