@@ -299,7 +299,7 @@ namespace Gecode::Support {
         }
         SplitMix
         split(uint32_t alternative) const {
-            uint64_t first = s[0] + (2 * uint64_t(alternative) + 1) * s[1];
+            uint64_t first = s[0] + (2 * static_cast<uint64_t>(alternative) + 1) * s[1];
             SplitMix child;
             child.s = {{mix(first), gamma(first + s[1])}};
             return child;
@@ -375,7 +375,7 @@ namespace Gecode::Support {
         }
         Xorshift64Star
         split(uint32_t alternative) const {
-            const uint64_t c = (2 * uint64_t(alternative) + 1) * UINT64_C(0x9e3779b97f4a7c15);
+            const uint64_t c = (2 * static_cast<uint64_t>(alternative) + 1) * UINT64_C(0x9e3779b97f4a7c15);
             uint64_t z = s + c;
             Xorshift64Star child;
             child.s = random_mix(z ? z : c);
@@ -474,7 +474,7 @@ namespace Gecode::Support {
             // Bucket size: 2^64 raw values, or 2^64-1 for nonzero engines, over n.
             uint64_t bucket;
             if (Engine::min() == 0)
-                bucket = (uint64_t(0) - n) / n + 1;
+                bucket = (UINT64_C(0) - n) / n + 1;
             else
                 bucket = UINT64_MAX / n;
             uint64_t value;

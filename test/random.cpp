@@ -180,9 +180,9 @@ namespace Test::Random {
             // which no other parent reaches.
             const uint64_t g = UINT64_C(0x9e3779b97f4a7c15);
             Xorshift64Star zero_input;
-            zero_input.state({{uint64_t(0) - g}});
+            zero_input.state({{UINT64_C(0) - g}});
             Xorshift64Star other;
-            other.state({{(uint64_t(1) << 34) * g - 2 * g}});
+            other.state({{(UINT64_C(1) << 34) * g - 2 * g}});
             if ((zero_input.split(0).state()[0] == 0) || (zero_input.split(0).state() == zero_input.split(1).state()) ||
                 (zero_input.split(0).state() == other.split(0).state()))
                 return false;

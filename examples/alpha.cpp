@@ -115,7 +115,7 @@ public:
     print(std::ostream& os) const override {
         os << "\t";
         for (int i = 0; i < n; i++) {
-            os << ((char)(i + 'a')) << '=' << le[i] << ((i < n - 1) ? ", " : "\n");
+            os << static_cast<char>(i + 'a') << '=' << le[i] << ((i < n - 1) ? ", " : "\n");
             if ((i + 1) % 8 == 0)
                 os << '\n' << "\t";
         }

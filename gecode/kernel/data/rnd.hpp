@@ -112,7 +112,7 @@ namespace Gecode {
         }
         void
         hw() {
-            seed((uint64_t(Support::hwrnd()) << 32) | Support::hwrnd());
+            seed((static_cast<uint64_t>(Support::hwrnd()) << 32) | Support::hwrnd());
         }
         std::string
         state() const {
