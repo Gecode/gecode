@@ -1052,6 +1052,8 @@ namespace Gecode { namespace FlatZinc {
     void
     FlatZincSpace::post_constraints(std::vector<ConExpr*>& ces) {
         ConExprOrder ceo;
+        // The order compares argument counts, not the pointers.
+        // NOLINTNEXTLINE(bugprone-nondeterministic-pointer-iteration-order)
         std::sort(ces.begin(), ces.end(), ceo);
 
         for (unsigned int i = 0; i < ces.size(); i++) {
