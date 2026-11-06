@@ -101,7 +101,7 @@ namespace Test {
                 int cost, bound, rank, best;
                 std::vector<int> children;
             };
-            typedef std::vector<Node> Graph;
+            using Graph = std::vector<Node>;
             std::shared_ptr<const Graph> graph;
             bool maximize;
             int vertex, ceiling;
@@ -3965,7 +3965,7 @@ namespace Test {
         /// The stop object of a portfolio built from builders stops the builders
         class PBSBuilderStop : public Base {
             /// Function returning an engine builder
-            typedef Gecode::SEB (*Builder)(const Gecode::Search::Options&);
+            using Builder = Gecode::SEB (*)(const Gecode::Search::Options&);
             template <template <class> class Engine>
             static bool
             test(unsigned int threads, Builder builder) {

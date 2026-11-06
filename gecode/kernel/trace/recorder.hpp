@@ -59,11 +59,11 @@ namespace Gecode {
     class ViewTraceRecorder : public Propagator {
     public:
         /// The corresponding duplicate view type
-        typedef typename TraceTraits<View>::TraceView TraceView;
+        using TraceView = typename TraceTraits<View>::TraceView;
         /// The corresponding trace delta type
-        typedef typename TraceTraits<View>::TraceDelta TraceDelta;
+        using TraceDelta = typename TraceTraits<View>::TraceDelta;
         /// The corresponding slack value type
-        typedef typename TraceTraits<View>::SlackValue SlackValue;
+        using SlackValue = typename TraceTraits<View>::SlackValue;
         /// Collection of slack values
         class Slack {
             template <class ViewForTraceRecorder>

@@ -53,7 +53,7 @@ namespace Gecode {
         Var* x;
         int n;
         int capacity;
-        typedef std::unordered_set<const void*> VarImpSet;
+        using VarImpSet = std::unordered_set<const void*>;
         VarImpSet identities;
         // Only committed positions are indexed. Assigned variables need no alias
         // check, so their entries need not be removed.
@@ -216,7 +216,7 @@ namespace Gecode { namespace Int {
     template <class Var>
     class OpenMaterialize : public Propagator, private LocalHandle {
     protected:
-        typedef typename OpenVarList<Var>::Object Object;
+        using Object = typename OpenVarList<Var>::Object;
         IntView length;
 
         OpenMaterialize(Home home, Object* source) : Propagator(home), LocalHandle(source), length(source->length) {

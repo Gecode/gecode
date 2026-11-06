@@ -65,7 +65,7 @@ namespace Test { namespace Set {
             int
             min_sym_diff(const SetAssignment& x) const {
                 int x1 = shared ? x[0] : x[1];
-                typedef Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges> Diff;
+                using Diff = Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges>;
                 CountableSetRanges xr00(x.lub, x[0]);
                 CountableSetRanges xr10(x.lub, x1);
                 Diff a(xr00, xr10);

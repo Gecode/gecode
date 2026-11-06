@@ -62,11 +62,11 @@ namespace Test { namespace Set {
         namespace {
             int
             min_sym_diff(const SetAssignment& x, int i, const IntSet& is) {
-                typedef Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> DiffA;
+                using DiffA = Iter::Ranges::Diff<CountableSetRanges, IntSetRanges>;
                 CountableSetRanges xr00(x.lub, x[i]);
                 IntSetRanges xr10(is);
                 DiffA a(xr00, xr10);
-                typedef Iter::Ranges::Diff<IntSetRanges, CountableSetRanges> DiffB;
+                using DiffB = Iter::Ranges::Diff<IntSetRanges, CountableSetRanges>;
                 CountableSetRanges xr01(x.lub, x[i]);
                 IntSetRanges xr11(is);
                 DiffB b(xr11, xr01);

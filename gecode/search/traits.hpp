@@ -39,18 +39,18 @@ namespace Gecode {
     template <>
     class ArrayTraits<ArgArray<SEB>> {
     public:
-        typedef SEBs StorageType;
-        typedef SEB ValueType;
-        typedef SEBs ArgsType;
+        using StorageType = SEBs;
+        using ValueType = SEB;
+        using ArgsType = SEBs;
     };
 
     /// Traits of %SEBs
     template <>
     class ArrayTraits<SEBs> {
     public:
-        typedef SEBs StorageType;
-        typedef SEB ValueType;
-        typedef SEBs ArgsType;
+        using StorageType = SEBs;
+        using ValueType = SEB;
+        using ArgsType = SEBs;
     };
 
 } // namespace Gecode

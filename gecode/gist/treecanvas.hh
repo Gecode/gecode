@@ -44,9 +44,9 @@
 #include <gecode/gist/visualnode.hh>
 
 #if QT_VERSION >= 0x060000
-typedef QRecursiveMutex GecodeQMutex;
+using GecodeQMutex = QRecursiveMutex;
 #else
-typedef QMutex GecodeQMutex;
+using GecodeQMutex = QMutex;
 #endif
 
 namespace Gecode { namespace Gist {

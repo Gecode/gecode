@@ -86,7 +86,7 @@ namespace Gecode { namespace Support {
 
         // Interface for conforming to C++ UniformRandomBitGenerator
         /// Type of the produced values
-        typedef unsigned int result_type;
+        using result_type = unsigned int;
         /// Minimum value that may be produced when no bound is specified
         static constexpr result_type
         min() {
@@ -193,7 +193,7 @@ namespace Gecode { namespace Support {
      *
      * \ingroup FuncSupport
      */
-    typedef LinearCongruentialGenerator<2147483647, 48271, 44488, 3399> LegacyRandomGenerator;
+    using LegacyRandomGenerator = LinearCongruentialGenerator<2147483647, 48271, 44488, 3399>;
 
     /**
      * \brief Parse a decimal or hexadecimal 64-bit seed without truncation

@@ -67,7 +67,7 @@ extern "C" int isatty(int);
 namespace Gecode { namespace FlatZinc {
 
     class VarSpec;
-    typedef std::pair<std::string, VarSpec*> NamedVarSpec;
+    using NamedVarSpec = std::pair<std::string, VarSpec*>;
 
     /// Strict weak ordering for output items
     class OutputOrder {

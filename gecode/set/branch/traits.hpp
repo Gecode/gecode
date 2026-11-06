@@ -37,15 +37,15 @@ namespace Gecode {
     class BranchTraits<SetVar> {
     public:
         /// Type for the branching filter function
-        typedef SetBranchFilter Filter;
+        using Filter = SetBranchFilter;
         /// Type for the branching merit function
-        typedef SetBranchMerit Merit;
+        using Merit = SetBranchMerit;
         /// Type for the branching value function
-        typedef SetBranchVal Val;
+        using Val = SetBranchVal;
         /// Return type of the branching value function
-        typedef int ValType;
+        using ValType = int;
         /// Type for the branching commit function
-        typedef SetBranchCommit Commit;
+        using Commit = SetBranchCommit;
     };
 
 } // namespace Gecode

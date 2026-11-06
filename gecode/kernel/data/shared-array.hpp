@@ -87,23 +87,23 @@ namespace Gecode {
         /// \name Associated types
         //@{
         /// Type of the view stored in this array
-        typedef T value_type;
+        using value_type = T;
         /// Type of a reference to the value type
-        typedef T& reference;
+        using reference = T&;
         /// Type of a constant reference to the value type
-        typedef const T& const_reference;
+        using const_reference = const T&;
         /// Type of a pointer to the value type
-        typedef T* pointer;
+        using pointer = T*;
         /// Type of a read-only pointer to the value type
-        typedef const T* const_pointer;
+        using const_pointer = const T*;
         /// Type of the iterator used to iterate through this array's elements
-        typedef T* iterator;
+        using iterator = T*;
         /// Type of the iterator used to iterate read-only through this array's elements
-        typedef const T* const_iterator;
+        using const_iterator = const T*;
         /// Type of the iterator used to iterate backwards through this array's elements
-        typedef std::reverse_iterator<T*> reverse_iterator;
+        using reverse_iterator = std::reverse_iterator<T*>;
         /// Type of the iterator used to iterate backwards and read-only through this array's elements
-        typedef std::reverse_iterator<const T*> const_reverse_iterator;
+        using const_reverse_iterator = std::reverse_iterator<const T*>;
         //@}
 
         /**

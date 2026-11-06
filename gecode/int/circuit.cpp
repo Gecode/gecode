@@ -47,7 +47,7 @@ namespace Gecode {
         ViewArray<Int::IntView> xv(home, x);
 
         if (offset == 0) {
-            typedef Int::NoOffset<Int::IntView> NOV;
+            using NOV = Int::NoOffset<Int::IntView>;
             NOV no;
             if (vbd(ipl) == IPL_DOM) {
                 GECODE_ES_FAIL((Int::Circuit::Dom<Int::IntView, NOV>::post(home, xv, no)));
@@ -55,7 +55,7 @@ namespace Gecode {
                 GECODE_ES_FAIL((Int::Circuit::Val<Int::IntView, NOV>::post(home, xv, no)));
             }
         } else {
-            typedef Int::Offset OV;
+            using OV = Int::Offset;
             OV off(-offset);
             if (vbd(ipl) == IPL_DOM) {
                 GECODE_ES_FAIL((Int::Circuit::Dom<Int::IntView, OV>::post(home, xv, off)));
@@ -124,7 +124,7 @@ namespace Gecode {
 
         if (offset == 0) {
             element(home, x, e, n);
-            typedef Int::NoOffset<Int::IntView> NOV;
+            using NOV = Int::NoOffset<Int::IntView>;
             NOV no;
             if (vbd(ipl) == IPL_DOM) {
                 GECODE_ES_FAIL((Int::Circuit::Dom<Int::IntView, NOV>::post(home, xv, no)));
@@ -139,7 +139,7 @@ namespace Gecode {
             for (int i = 0; i < n; i++)
                 ox[offset + i] = x[i];
             element(home, ox, e, offset + n);
-            typedef Int::Offset OV;
+            using OV = Int::Offset;
             OV off(-offset);
             if (vbd(ipl) == IPL_DOM) {
                 GECODE_ES_FAIL((Int::Circuit::Dom<Int::IntView, OV>::post(home, xv, off)));

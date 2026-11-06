@@ -309,8 +309,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, bool pos>
     class SparseInc : public Propagator, protected SparseTupleState<SparseInc<View, pos>, View> {
     protected:
-        typedef Extensional::SparseAdvisor<View> SparseAdvisor;
-        typedef SparseTupleState<SparseInc<View, pos>, View> State;
+        using SparseAdvisor = Extensional::SparseAdvisor<View>;
+        using State = SparseTupleState<SparseInc<View, pos>, View>;
         friend class SparseTupleState<SparseInc<View, pos>, View>;
         using State::active_limit;
         using State::arity;
@@ -706,8 +706,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, class CtrlView, ReifyMode rm>
     class SparseReifInc : public Propagator, protected SparseTupleState<SparseReifInc<View, CtrlView, rm>, View> {
     protected:
-        typedef Extensional::SparseAdvisor<View> SparseAdvisor;
-        typedef SparseTupleState<SparseReifInc<View, CtrlView, rm>, View> State;
+        using SparseAdvisor = Extensional::SparseAdvisor<View>;
+        using State = SparseTupleState<SparseReifInc<View, CtrlView, rm>, View>;
         friend class SparseTupleState<SparseReifInc<View, CtrlView, rm>, View>;
         using State::active_limit;
         using State::arity;

@@ -57,7 +57,7 @@ namespace Gecode {
 
     \code
     struct MySpace : public Space {
-      typedef std::set<int, std::less<int>, Gecode::space_allocator<int> > S;
+      using S = std::set<int, std::less<int>, Gecode::space_allocator<int> >;
       S safe_set;
 
       MySpace()
@@ -100,7 +100,7 @@ namespace Gecode {
 
     \code
     struct MySpace : public Space {
-      typedef std::set<int, std::less<int>, Gecode::space_allocator<int> > S;
+      using S = std::set<int, std::less<int>, Gecode::space_allocator<int> >;
       S& fast_set;
 
       MySpace()
@@ -127,7 +127,7 @@ namespace Gecode {
 
     \code
     Space& home = ...;
-    typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
+    using SR = std::set<int, std::less<int>, Gecode::region_allocator<int> >;
     // Create a set with the region allocator. Note that the set destructor is still quite costly...
     {
       Region r;
@@ -154,13 +154,13 @@ namespace Gecode {
      */
     template <>
     struct space_allocator<void> {
-        typedef void* pointer;
-        typedef const void* const_pointer;
-        typedef void value_type;
+        using pointer = void*;
+        using const_pointer = const void*;
+        using value_type = void;
         /// Rebinding helper (returns the type of a similar allocator for type \a U)
         template <class U>
         struct rebind {
-            typedef space_allocator<U> other;
+            using other = space_allocator<U>;
         };
     };
 
@@ -176,24 +176,24 @@ namespace Gecode {
     template <class T>
     struct space_allocator {
         /// Type of objects the allocator creates. This is identical to \a T.
-        typedef T value_type;
+        using value_type = T;
         /// Type that can represent the size of the largest object.
-        typedef size_t size_type;
+        using size_type = size_t;
         /// Type that can represent the difference between any two pointers.
-        typedef ptrdiff_t difference_type;
+        using difference_type = ptrdiff_t;
         /// Type of pointers returned by the allocator.
-        typedef T* pointer;
+        using pointer = T*;
         /// Const version of pointer.
-        typedef T const* const_pointer;
+        using const_pointer = T const*;
         /// Non-const reference to \a T.
-        typedef T& reference;
+        using reference = T&;
         /// Const reference to \a T.
-        typedef T const& const_reference;
+        using const_reference = T const&;
         /// Rebinding helper (returns the type of a similar allocator for type \a U).
         template <class U>
         struct rebind {
             /// The allocator type for \a U
-            typedef space_allocator<U> other;
+            using other = space_allocator<U>;
         };
 
         /// The space that we allocate objects from
@@ -318,13 +318,13 @@ namespace Gecode {
      */
     template <>
     struct region_allocator<void> {
-        typedef void* pointer;
-        typedef const void* const_pointer;
-        typedef void value_type;
+        using pointer = void*;
+        using const_pointer = const void*;
+        using value_type = void;
         /// Rebinding helper (returns the type of a similar allocator for type \a U)
         template <class U>
         struct rebind {
-            typedef region_allocator<U> other;
+            using other = region_allocator<U>;
         };
     };
 
@@ -339,25 +339,25 @@ namespace Gecode {
     template <class T>
     struct region_allocator {
         /// Type of objects the allocator creates. This is identical to \a T.
-        typedef T value_type;
+        using value_type = T;
         /// Type that can represent the size of the largest object.
-        typedef size_t size_type;
+        using size_type = size_t;
         /// Type that can represent the difference between any two pointers.
-        typedef ptrdiff_t difference_type;
+        using difference_type = ptrdiff_t;
         /// Type of pointers returned by the allocator.
-        typedef T* pointer;
+        using pointer = T*;
         /// Const version of pointer.
-        typedef T const* const_pointer;
+        using const_pointer = T const*;
         /// Non-const reference to \a T.
-        typedef T& reference;
+        using reference = T&;
         /// Const reference to \a T.
-        typedef T const& const_reference;
+        using const_reference = T const&;
 
         /// Rebinding helper (returns the type of a similar allocator for type \a U).
         template <class U>
         struct rebind {
             /// The allocator type for \a U
-            typedef region_allocator<U> other;
+            using other = region_allocator<U>;
         };
 
         /// The region that we allocate objects from
