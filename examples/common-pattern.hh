@@ -7,6 +7,7 @@
 #ifndef GECODE_EXAMPLES_COMMON_PATTERN_HH
 #define GECODE_EXAMPLES_COMMON_PATTERN_HH
 
+#include <algorithm>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
@@ -143,10 +144,10 @@ namespace PatternMining {
                 }
             }
             items.init(static_cast<int>(symbols.size()));
-            std::sort(symbols.begin(), symbols.end());
-            symbols.erase(std::unique(symbols.begin(), symbols.end()), symbols.end());
+            std::ranges::sort(symbols);
+            symbols.erase(std::ranges::unique(symbols).begin(), symbols.end());
             alphabet.init(static_cast<int>(symbols.size()));
-            std::copy(symbols.begin(), symbols.end(), alphabet.begin());
+            std::ranges::copy(symbols, alphabet.begin());
             ends.init(static_cast<int>(input.size()));
             last_ends.init(static_cast<int>(input.size()));
             Region region;
@@ -158,8 +159,7 @@ namespace PatternMining {
             for (const std::vector<int>& sequence : input) {
                 const int start = position;
                 for (int item : sequence)
-                    items[position++] =
-                        static_cast<int>(std::lower_bound(symbols.begin(), symbols.end(), item) - symbols.begin());
+                    items[position++] = static_cast<int>(std::ranges::lower_bound(symbols, item) - symbols.begin());
                 ends[record] = position;
                 for (int j = position; j-- > start;)
                     if (seen[items[j]] != record) {
@@ -169,7 +169,7 @@ namespace PatternMining {
                 last_ends[record++] = static_cast<int>(last.size());
             }
             last_positions.init(static_cast<int>(last.size()));
-            std::copy(last.begin(), last.end(), last_positions.begin());
+            std::ranges::copy(last, last_positions.begin());
         }
 
         IntSet
@@ -242,8 +242,7 @@ namespace PatternMining {
         /// Extend the prefix by one item and report whether enough records support it
         bool
         advance(int item) {
-            const int rank = static_cast<int>(std::lower_bound(data.alphabet.begin(), data.alphabet.end(), item) -
-                                              data.alphabet.begin());
+            const int rank = static_cast<int>(std::ranges::lower_bound(data.alphabet, item) - data.alphabet.begin());
             if ((rank == data.alphabet.size()) || (data.alphabet[rank] != item))
                 return false;
             int n = 0;

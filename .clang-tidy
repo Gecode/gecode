@@ -44,7 +44,6 @@ Checks: >-
   -modernize-use-default-member-init,
   -modernize-use-designated-initializers,
   -modernize-use-nodiscard,
-  -modernize-use-ranges,
   -modernize-use-std-numbers,
   -modernize-use-trailing-return-type,
   -modernize-use-transparent-functors,

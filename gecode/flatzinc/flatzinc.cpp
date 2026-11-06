@@ -36,6 +36,7 @@
  *
  */
 
+#include <algorithm>
 #include <gecode/flatzinc.hh>
 #include <gecode/flatzinc/blackbox.hh>
 #include <gecode/flatzinc/registry.hh>
@@ -1055,7 +1056,7 @@ namespace Gecode { namespace FlatZinc {
         ConExprOrder ceo;
         // The order compares argument counts, not the pointers.
         // NOLINTNEXTLINE(bugprone-nondeterministic-pointer-iteration-order)
-        std::sort(ces.begin(), ces.end(), ceo);
+        std::ranges::sort(ces, ceo);
 
         for (auto& con : ces) {
             const ConExpr& ce = *con;
