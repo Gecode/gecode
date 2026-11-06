@@ -242,7 +242,7 @@ if edge_weight_type == "EXPLICIT" {
     /// Nearest integer as in the TSPLIB documentation
     long long int
     nint(double x) {
-        return static_cast<long long int>(x + 0.5);
+        return std::llround(x);
     }
 
     /// Latitude or longitude in radians of TSPLIB GEO coordinate \a x
