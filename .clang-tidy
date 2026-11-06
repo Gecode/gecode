@@ -18,7 +18,6 @@ Checks: >-
   -bugprone-switch-missing-default-case,
   -bugprone-throwing-static-initialization,
   -bugprone-unchecked-string-to-number-conversion,
-  -bugprone-unhandled-self-assignment,
   -bugprone-unused-return-value,
   concurrency-*,
   -concurrency-mt-unsafe,
