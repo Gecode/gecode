@@ -137,7 +137,7 @@ namespace Test {
 
     /// Test whether shrinking in \a a destroys exactly the removed objects
     template <class Allocator>
-    bool
+    static bool
     shrink_destroys_tail(Allocator& a) {
         int destroyed = 0;
         CountedObject* b = a.template alloc<CountedObject>(4);

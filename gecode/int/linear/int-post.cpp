@@ -39,7 +39,7 @@
 namespace Gecode::Int::Linear {
 
     /// Eliminate assigned views
-    forceinline void
+    static forceinline void
     eliminate(Term<IntView>* t, int& n, long long int& d) {
         for (int i = n; i--;)
             if (t[i].x.assigned()) {
@@ -52,7 +52,7 @@ namespace Gecode::Int::Linear {
     }
 
     /// Rewrite all inequations in terms of IRT_LQ
-    forceinline void
+    static forceinline void
     rewrite(IntRelType& irt, long long int& d, Term<IntView>*& t_p, int& n_p, Term<IntView>*& t_n, int& n_n) {
         switch (irt) {
         case IRT_EQ:
@@ -78,7 +78,7 @@ namespace Gecode::Int::Linear {
     }
 
     /// Decide the required precision and check for overflow
-    forceinline bool
+    static forceinline bool
     precision(Term<IntView>* t_p, int n_p, Term<IntView>* t_n, int n_n, long long int d) {
         long long int sl = 0;
         long long int su = 0;
@@ -147,7 +147,7 @@ namespace Gecode::Int::Linear {
      *
      */
     template <class Val, class View>
-    forceinline void
+    static forceinline void
     post_nary(Home home, ViewArray<View>& x, ViewArray<View>& y, IntRelType irt, Val c) {
         switch (irt) {
         case IRT_EQ:
@@ -430,7 +430,7 @@ namespace Gecode::Int::Linear {
      *
      */
     template <class Val, class View>
-    forceinline void
+    static forceinline void
     post_nary(Home home, ViewArray<View>& x, ViewArray<View>& y, IntRelType irt, Val c, Reify r) {
         switch (irt) {
         case IRT_EQ:
@@ -485,7 +485,7 @@ namespace Gecode::Int::Linear {
     }
 
     template <class CtrlView>
-    forceinline void
+    static forceinline void
     post_reified_int_equality(Home home, IntView& x, int c, CtrlView b, ReifyMode rm, IntPropLevel ipl) {
         if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
             switch (rm) {

@@ -37,7 +37,7 @@
 /// %Tests for Boolean constraints
 namespace Test::Int::Bool {
 
-    inline int
+    static inline int
     check(int x0, Gecode::BoolOpType op, int x1) {
         switch (op) {
         case Gecode::BOT_AND:

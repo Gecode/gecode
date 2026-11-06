@@ -683,7 +683,7 @@ public:
 };
 
 /// Print statistics
-void
+static void
 print(const Search::Statistics& stat, bool restart) {
     using namespace std;
     cout << "\t\t\tnodes:      " << stat.node << '\n' << "\t\t\tfailures:   " << stat.fail << '\n';
@@ -693,7 +693,7 @@ print(const Search::Statistics& stat, bool restart) {
 }
 
 /// Solver
-void
+static void
 solve(const JobShopOptions& opt) {
     Rnd rnd = opt.rnd();
 

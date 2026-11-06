@@ -40,7 +40,7 @@
 namespace Test::Float::Linear {
 
     /// Check whether \a has only one coefficients
-    bool
+    static bool
     one(const Gecode::FloatValArgs& a) {
         for (int i = a.size(); i--;)
             if (a[i] != 1)

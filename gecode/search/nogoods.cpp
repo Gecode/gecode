@@ -35,7 +35,7 @@
 namespace Gecode::Search {
 
     /// Help function to cancel and dispose a no-good literal
-    forceinline NGL*
+    static forceinline NGL*
     dispose_and_next(NGL* ngl, Space& home, Propagator& p, bool c) {
         NGL* n = ngl->next();
         if (c)

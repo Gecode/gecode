@@ -57,7 +57,7 @@ namespace Test::LDSB {
 
     /// Returns true iff a and b are equal (they have the same size and
     /// the same elements in the same positions).
-    bool
+    static bool
     equal(const IntArgs& a, const IntArgs& b) {
         if (a.size() != b.size())
             return false;
@@ -70,7 +70,7 @@ namespace Test::LDSB {
 #ifdef GECODE_HAS_SET_VARS
     /// Returns true iff a and b are equal (they have the same size and
     /// the same elements in the same positions).
-    bool
+    static bool
     equal(const IntSetArgs& a, const IntSetArgs& b) {
         if (a.size() != b.size())
             return false;
@@ -102,7 +102,7 @@ namespace Test::LDSB {
      * prints an explanation to standard error and returns false.
      */
     template <class T, class VarArgsType>
-    bool
+    static bool
     check(DFS<T>& e, std::vector<VarArgsType> expected) {
         int expected_count = expected.size();
         for (int i = 0; i < expected_count; ++i) {
@@ -1365,7 +1365,7 @@ namespace Test::LDSB {
         }
     };
 
-    double
+    static double
     position(const Space& home, IntVar x, int i) {
         (void)home;
         (void)x;
@@ -1412,7 +1412,7 @@ namespace Test::LDSB {
 #ifdef GECODE_HAS_SET_VARS
     /// Convenient way to make IntSetArgs
     template <class... Values>
-    IntSetArgs
+    static IntSetArgs
     isa(int n, Values... values) {
         IntSetArgs sets;
         int i = 0;
@@ -1765,7 +1765,7 @@ namespace Test::LDSB {
 
     /// Return the symmetries described by \a spec for the variables \a x
     template <class VarArgs>
-    Symmetries
+    static Symmetries
     symmetries(SymmetrySpec spec, const VarArgs& x) {
         Symmetries s;
         if (spec == SymmetrySpec::NONE)
@@ -1787,7 +1787,7 @@ namespace Test::LDSB {
 
     /// Return the number of solutions of \a s and delete \a s
     template <class T>
-    int
+    static int
     count_solutions(T* s) {
         DFS<T> e(s);
         delete s;

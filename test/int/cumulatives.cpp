@@ -167,7 +167,7 @@ namespace Test::Int::Cumulatives {
 
     /// Check whether event \a e is valid
     template <class C>
-    bool
+    static bool
     valid(std::vector<Event> e, C comp) {
         std::ranges::sort(e, {}, &Event::p);
         unsigned int i = 0;

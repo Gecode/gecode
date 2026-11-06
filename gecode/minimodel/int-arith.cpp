@@ -278,7 +278,7 @@ namespace Gecode::MiniModel {
         }
     };
     /// Check if \a e is of type \a t
-    bool
+    static bool
     has_type(const LinIntExpr& e, ArithNonLinIntExpr::ArithNonLinIntExprType t) {
         return e.nle() && dynamic_cast<ArithNonLinIntExpr*>(e.nle()) != nullptr &&
                dynamic_cast<ArithNonLinIntExpr*>(e.nle())->t == t;

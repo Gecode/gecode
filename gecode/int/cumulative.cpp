@@ -39,7 +39,7 @@
 namespace Gecode::Int::Cumulative {
 
     template <class Cap>
-    void
+    static void
     cumulative(Home home, Cap c, const TaskTypeArgs& t, const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
                IntPropLevel ipl) {
         if ((s.size() != p.size()) || (s.size() != u.size()) || (s.size() != t.size()))
@@ -103,7 +103,7 @@ namespace Gecode::Int::Cumulative {
     }
 
     template <class Cap>
-    void
+    static void
     cumulative(Home home, Cap c, const TaskTypeArgs& t, const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
                const BoolVarArgs& m, IntPropLevel ipl) {
         using namespace Gecode::Int;
@@ -162,7 +162,7 @@ namespace Gecode::Int::Cumulative {
     }
 
     template <class Cap>
-    void
+    static void
     cumulative(Home home, Cap c, const IntVarArgs& s, const IntArgs& p, const IntArgs& u, IntPropLevel ipl) {
         using namespace Gecode::Int;
         using namespace Gecode::Int::Cumulative;
@@ -211,7 +211,7 @@ namespace Gecode::Int::Cumulative {
     }
 
     template <class Cap>
-    void
+    static void
     cumulative(Home home, Cap c, const IntVarArgs& s, const IntArgs& p, const IntArgs& u, const BoolVarArgs& m,
                IntPropLevel ipl) {
         using namespace Gecode::Int;
@@ -255,7 +255,7 @@ namespace Gecode::Int::Cumulative {
     }
 
     template <class Cap>
-    void
+    static void
     cumulative(Home home, Cap c, const IntVarArgs& s, const IntVarArgs& p, const IntVarArgs& e, const IntArgs& u,
                IntPropLevel ipl) {
         using namespace Gecode::Int;
@@ -303,7 +303,7 @@ namespace Gecode::Int::Cumulative {
     }
 
     template <class Cap>
-    void
+    static void
     cumulative(Home home, Cap c, const IntVarArgs& s, const IntVarArgs& p, const IntVarArgs& e, const IntArgs& u,
                const BoolVarArgs& m, IntPropLevel ipl) {
         using namespace Gecode::Int;

@@ -57,7 +57,7 @@
 namespace Test::Branch {
 
     /// Test function for tie-break limit function
-    double
+    static double
     tbl(const Gecode::Space&, double w, double b) {
         return (w + (b - w) / 2.0);
     }
@@ -168,12 +168,12 @@ namespace Test::Branch {
     /// Number of integer variable selections
     const int n_bool_var_branch = sizeof(bool_var_branch_name) / sizeof(const char*);
     /// Test function for branch merit function
-    double
+    static double
     int_merit(const Gecode::Space&, Gecode::IntVar x, int) {
         return x.min();
     }
     /// Test function for branch merit function
-    double
+    static double
     bool_merit(const Gecode::Space&, Gecode::BoolVar x, int) {
         return x.min();
     }
@@ -189,12 +189,12 @@ namespace Test::Branch {
     /// Number of Boolean value selections
     const int n_bool_val_branch = sizeof(bool_val_branch_name) / sizeof(const char*);
     /// Test function for branch value function
-    int
+    static int
     int_val(const Gecode::Space&, Gecode::IntVar x, int) {
         return x.min();
     }
     /// Test function for branch value function
-    int
+    static int
     bool_val(const Gecode::Space&, Gecode::BoolVar x, int) {
         return x.min();
     }
@@ -218,7 +218,7 @@ namespace Test::Branch {
     /// Number of set variable selections
     const int n_set_var_branch = sizeof(set_var_branch_name) / sizeof(const char*);
     /// Test function for branch merit function
-    double
+    static double
     set_merit(const Gecode::Space&, Gecode::SetVar, int) {
         return 2.0;
     }
@@ -229,7 +229,7 @@ namespace Test::Branch {
     /// Number of set value selections
     const int n_set_val_branch = sizeof(set_val_branch_name) / sizeof(const char*);
     /// Test function for branch value function
-    int
+    static int
     set_val(const Gecode::Space&, Gecode::SetVar x, int) {
         Gecode::SetVarUnknownRanges r(x);
         return r.min();
@@ -255,7 +255,7 @@ namespace Test::Branch {
     /// Number of float variable selections
     const int n_float_var_branch = sizeof(float_var_branch_name) / sizeof(const char*);
     /// Test function for branch merit function
-    double
+    static double
     float_merit(const Gecode::Space&, Gecode::FloatVar x, int) {
         return static_cast<double>(x.degree());
     }
@@ -265,7 +265,7 @@ namespace Test::Branch {
     /// Number of float value selections
     const int n_float_val_branch = sizeof(float_val_branch_name) / sizeof(const char*);
     /// Test function for branch value function
-    Gecode::FloatNumBranch
+    static Gecode::FloatNumBranch
     float_val(const Gecode::Space&, Gecode::FloatVar x, int) {
         Gecode::FloatNumBranch nl;
         nl.n = x.med();
@@ -291,7 +291,7 @@ namespace Test::Branch {
 
 } // namespace Test::Branch
 
-std::ostream&
+static std::ostream&
 operator<<(std::ostream& os, const Test::Branch::RunInfo& ri) {
     ri.print(os);
     return os;
@@ -301,7 +301,7 @@ namespace Test::Branch {
 
     /// Find number of solutions
     template <class TestSpace>
-    int
+    static int
     solutions(TestSpace* c, Gecode::Search::Options& o, Gecode::Support::RandomGenerator& rand, int max_nb_sol = -1) {
         o.a_d = rand(10);
         o.c_d = rand(10);

@@ -47,7 +47,7 @@ namespace Test::Int::Arithmetic {
      */
     //@{
     /// Compute the mathematical greatest common divisor for testing.
-    int
+    static int
     gcd_value(int a, int b) {
         a = (a < 0) ? -a : a;
         b = (b < 0) ? -b : b;
@@ -233,7 +233,7 @@ namespace Test::Int::Arithmetic {
     };
 
     /// Report a targeted arithmetic failure through the standard test log.
-    bool
+    static bool
     arithmetic_failed(const std::string& what, const Gecode::VarArgArray<Gecode::IntVar>& x) {
         if (opt.log)
             olog << what << ": " << x << '\n';
@@ -605,7 +605,7 @@ namespace Test::Int::Arithmetic {
     };
 
     /// Evaluate an exact product for testing without overflowing.
-    bool
+    static bool
     product_value(const Assignment& x, int n, int& product) {
         for (int i = 0; i < n; i++)
             if (x[i] == 0) {
@@ -1158,7 +1158,7 @@ namespace Test::Int::Arithmetic {
     };
 
     /// Compute a canonical modular product for testing.
-    int
+    static int
     product_mod_value(const Assignment& x, int n, int m) {
         long long int p = 1 % m;
         for (int i = 0; i < n; i++) {
@@ -2188,7 +2188,7 @@ namespace Test::Int::Arithmetic {
         }
     };
 
-    bool
+    static bool
     powgr(int n, long long int r, int x) {
         assert(r >= 0);
         long long int y = r;
@@ -2202,7 +2202,7 @@ namespace Test::Int::Arithmetic {
         return false;
     }
 
-    int
+    static int
     floor_nth_root(int n, int x) {
         if (x < 2)
             return x;
@@ -2221,7 +2221,7 @@ namespace Test::Int::Arithmetic {
         return static_cast<int>(l);
     }
 
-    bool
+    static bool
     powle(int n, long long int r, int x) {
         assert(r >= 0);
         long long int y = r;
@@ -2236,7 +2236,7 @@ namespace Test::Int::Arithmetic {
         return true;
     }
 
-    int
+    static int
     ceil_nth_root(int n, int x) {
         if (x < 2)
             return x;

@@ -163,7 +163,7 @@ namespace Test {
     const int Options::default_iterations;
     const unsigned int Options::default_fixpoint_probability_denominator;
 
-    void
+    static void
     report_error(const std::string& name, const std::string& state, const Options& options, std::ostream& ostream) {
         ostream << "Options: -replay " << state;
         if (options.fixpoint_probability_denominator != Test::Options::default_fixpoint_probability_denominator)
@@ -377,7 +377,7 @@ namespace Test {
     }
 
     /// Run a single test, returning true iff the test succeeded
-    bool
+    static bool
     run_test(Base* test, uint64_t test_seed, const Options& options, std::ostream& ostream) {
         test->_rand.seed(test_seed);
         if (!options.replay.empty())
@@ -411,7 +411,7 @@ namespace Test {
     }
 
     /// Report test cases; iterations of a test count as one case.
-    void
+    static void
     print_test_summary(size_t selected, size_t passed, size_t failed) {
         const size_t ran = passed + failed;
         std::cout << "\nTest summary: " << selected << " selected, " << ran << " ran, " << passed << " passed, "
@@ -420,7 +420,7 @@ namespace Test {
     }
 
     /// Run all the tests with the supplied options.
-    int
+    static int
     run_tests(const std::vector<Base*>& tests, const Options& options) {
         Gecode::Support::RandomGenerator seed_sequence(options.seed);
         size_t passed = 0;
@@ -598,7 +598,7 @@ namespace Test {
     };
 
     /// Run all the tests with the supplied options in parallel.
-    int
+    static int
     run_tests_parallel(const std::vector<Base*>& tests, const Options& options) {
         using namespace Gecode::Support;
         RandomGenerator seed_sequence(options.seed);
@@ -613,7 +613,7 @@ namespace Test {
         return tec.report_result();
     }
 
-    std::vector<Base*>
+    static std::vector<Base*>
     select_tests(const Options& options) {
         std::vector<Base*> tests;
         bool started = options.start_from == nullptr;

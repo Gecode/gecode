@@ -37,7 +37,7 @@ namespace Gecode::Set::LDSB {
     // XXX: implementation of equalValues could be improved?
 
     /// Do two set variables have equal least-upper-bounds?
-    bool
+    static bool
     equal_lub(const Set::SetView& x, const Set::SetView& y) {
         unsigned int n = x.lub_size();
         if (n != y.lub_size())

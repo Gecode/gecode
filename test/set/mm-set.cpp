@@ -56,7 +56,7 @@ namespace Test::Int::MiniModelSet {
     };
 
     /// Executes set instruction for evaluation (checking)
-    int
+    static int
     eval(const SetInstr* pc, int reg[], bool& failed) {
         failed = false;
         while (true) {
@@ -89,7 +89,7 @@ namespace Test::Int::MiniModelSet {
     }
 
     /// Executes set instruction for constructing set expressions
-    Gecode::SetExpr
+    static Gecode::SetExpr
     eval(const SetInstr* pc, Gecode::SetExpr reg[]) {
         using namespace Gecode;
         while (true) {
@@ -119,7 +119,7 @@ namespace Test::Int::MiniModelSet {
         GECODE_NEVER;
     }
 
-    bool
+    static bool
     simple_reified_semantics(const SetInstr* pc) {
         while (pc->o != SO_HLT) {
             if (pc->o == SO_DUNION)

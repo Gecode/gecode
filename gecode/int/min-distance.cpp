@@ -67,7 +67,7 @@ namespace Gecode {
 namespace Gecode::Int::MinDistance {
 
     /// Validate the organization and number of positions
-    void
+    static void
     check(const IntVarArgs& x, MinDistancePropKind kind) {
         if (x.size() < 2)
             throw TooFewArguments("Int::minimum_distance");
@@ -77,7 +77,7 @@ namespace Gecode::Int::MinDistance {
     }
 
     /// Shared posting for the two public overloads
-    ExecStatus
+    static ExecStatus
     post(Home home, const IntVarArgs& x, IntView z, const IntDistance& d, const IntSharedArray& r,
          MinDistancePropKind kind, IntPropLevel ipl) {
         ViewArray<IntView> views(home, x);

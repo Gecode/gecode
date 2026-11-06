@@ -125,7 +125,7 @@ namespace Test::Random {
     };
 
     template <class Engine>
-    bool
+    static bool
     replay() {
         Gecode::Support::Random<Engine> original(UINT64_MAX);
         Gecode::Support::Random<Engine> restored;
@@ -291,7 +291,7 @@ namespace Test::Random {
         }
     };
 
-    bool
+    static bool
     same_archive(const Gecode::Choice& a, const Gecode::Choice& b) {
         Gecode::Archive x;
         Gecode::Archive y;
@@ -307,19 +307,19 @@ namespace Test::Random {
 
     /// Spaces without a model-owned generator have no owner state to compare.
     template <class Model>
-    bool
+    static bool
     owners_agree(const Model&, const Model&) {
         return true;
     }
     template <class Random>
-    bool
+    static bool
     owners_agree(const ReplaySpace<Random>& a, const ReplaySpace<Random>& b) {
         return a.own.state() == b.own.state();
     }
 
     /// Whether the variables of \a a and \a b have the same domains
     template <class Model>
-    bool
+    static bool
     same_domains(const Model& a, const Model& b) {
         std::ostringstream x;
         std::ostringstream y;
@@ -330,7 +330,7 @@ namespace Test::Random {
 
     /// Committing an archived choice must match committing it directly.
     template <class Model>
-    bool
+    static bool
     archive_replay(Model& root) {
         using namespace Gecode;
         while (root.status() == SS_BRANCH) {
@@ -366,7 +366,7 @@ namespace Test::Random {
     }
 
     template <class Random>
-    std::vector<std::string>
+    static std::vector<std::string>
     solutions(const Random& source, unsigned int distance, bool different, bool multi, bool callback,
               unsigned int threads = 1) {
         using namespace Gecode;
@@ -387,7 +387,7 @@ namespace Test::Random {
     }
 
     template <class Random>
-    bool
+    static bool
     branch_replay(const Random& source) {
         for (bool different : {false, true})
             for (bool multi : {false, true})
@@ -440,7 +440,7 @@ namespace Test::Random {
     } branch_replay_test;
 
     template <class Random>
-    bool
+    static bool
     consumer_states(const Random& source, bool multi) {
         using namespace Gecode;
         ReplaySpace<Random> root(source, false, multi);
@@ -561,7 +561,7 @@ namespace Test::Random {
     };
 
     template <class Model>
-    std::vector<std::string>
+    static std::vector<std::string>
     first_solutions(Model& root, unsigned int distance) {
         using namespace Gecode;
         Search::Options options;
@@ -578,7 +578,7 @@ namespace Test::Random {
         return result;
     }
 
-    bool
+    static bool
     restarts_differ() {
         using namespace Gecode;
         Permutation root(Rnd(3));
@@ -598,7 +598,7 @@ namespace Test::Random {
     }
 
     /// Return the context that a meta engine passes to the spoke of \a episode or \a asset
-    Gecode::SpokeContext
+    static Gecode::SpokeContext
     spoke_context(Gecode::MetaEngine engine, unsigned long int episode, unsigned int asset) {
         using namespace Gecode;
         static const Search::Statistics none;
@@ -607,7 +607,7 @@ namespace Test::Random {
     }
 
     /// Asset 1 must not repeat episode 1 of a restart engine
-    bool
+    static bool
     meta_streams_differ() {
         using namespace Gecode;
         Permutation root(Rnd(3));
@@ -621,7 +621,7 @@ namespace Test::Random {
     }
 
     /// Nested portfolio spokes (0,1) and (1,0) must not share a stream
-    bool
+    static bool
     nested_streams_differ() {
         using namespace Gecode;
         Permutation root(Rnd(3));
@@ -666,7 +666,7 @@ namespace Test::Random {
     };
 
     /// Branchers posted in spoke() of two PBS assets must draw distinct streams
-    bool
+    static bool
     pbs_assets_differ() {
         using namespace Gecode;
         SpokePermutation root;
@@ -690,7 +690,7 @@ namespace Test::Random {
     }
 
     /// A model-owned generator split for a spoke differs per episode and engine
-    bool
+    static bool
     owned_streams_differ() {
         using namespace Gecode;
         const Rnd r(3);
