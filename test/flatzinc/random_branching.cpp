@@ -111,7 +111,7 @@ namespace Test { namespace FlatZinc { namespace {
     random_options(const std::string& seed) {
         const std::string state = parsed_state<Opt>({seed, "18446744073709551615"});
         const std::string arbitrary = "splitmix-v1:fedcba9876543210:0123456789abcdef";
-        return (state.rfind("splitmix-v1:ffffffffffffffff:", 0) == 0) &&
+        return state.starts_with("splitmix-v1:ffffffffffffffff:") &&
                (parsed_state<Opt>({seed, "0xffffffffffffffff"}) == state) &&
                (parsed_state<Opt>({"-state", state}) == state) &&
                (parsed_state<Opt>({"-state", arbitrary}) == arbitrary);

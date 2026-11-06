@@ -500,7 +500,7 @@ namespace Gecode { namespace Support {
         state(const std::string& text) {
             const std::string prefix = std::string(name()) + ':';
             State words{};
-            if ((text.compare(0, prefix.size(), prefix) != 0) || (text.size() != prefix.size() + 17 * words.size() - 1))
+            if (!text.starts_with(prefix) || (text.size() != prefix.size() + 17 * words.size() - 1))
                 throw std::invalid_argument("Invalid or incompatible random state");
             size_t pos = prefix.size();
             for (size_t i = 0; i < words.size(); ++i) {
