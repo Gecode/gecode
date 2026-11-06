@@ -170,12 +170,14 @@ namespace Gecode { namespace Int { namespace Sorted {
         OfflineMinItem& operator[](int);
     };
 
+    forceinline
     OfflineMin::OfflineMin() {
         n = 0;
         sequence = nullptr;
         vertices = nullptr;
     }
 
+    forceinline
     OfflineMin::OfflineMin(OfflineMinItem s[], int v[], int size) {
         n = size;
         sequence = &s[0];
