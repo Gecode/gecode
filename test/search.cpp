@@ -3605,8 +3605,7 @@ namespace Test {
                         o.cutoff = Gecode::Search::Cutoff::constant(1);
                         Gecode::RBS<ThrowingSpoke, Gecode::DFS> rbs(&root, o);
                         try {
-                            if (ThrowingSpoke* s = rbs.next())
-                                delete s;
+                            delete rbs.next();
                         } catch (const std::runtime_error&) {
                             thrown = true;
                         }
@@ -4301,8 +4300,7 @@ namespace Test {
                     Gecode::PBS<IllegalContinue, Gecode::RBS> pbs(&root, o);
                     bool thrown = false;
                     try {
-                        if (IllegalContinue* s = pbs.next())
-                            delete s;
+                        delete pbs.next();
                     } catch (const Gecode::IllegalMetaDecision&) {
                         thrown = true;
                     }

@@ -1018,10 +1018,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-{ if (parse_int(yytext,yylval->int_value))
+{
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
@@ -1030,10 +1030,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-{  if (parse_int(yytext,yylval->int_value))
+{
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
@@ -1042,10 +1042,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-{ if (parse_int(yytext,yylval->int_value))
+{
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)

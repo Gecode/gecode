@@ -221,9 +221,7 @@ namespace Gecode { namespace Search { namespace Par {
             delete solutions.pop();
         if ((best != nullptr) && !Search::better(b, *best, "BAB::constrain"))
             return;
-        if (best != nullptr) {
-            delete best;
-        }
+        delete best;
         best = b.clone();
         // Announce better solutions
         for (unsigned int i = 0U; i < workers(); i++)
