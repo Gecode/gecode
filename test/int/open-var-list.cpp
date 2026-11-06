@@ -45,6 +45,7 @@
 
 #include <memory>
 #include <set>
+#include <stdexcept>
 
 namespace Test::Int::OpenList {
 
@@ -1438,7 +1439,7 @@ namespace Test::Int::OpenList {
                 [transition, selected](Space& home, OpenVarList<IntVar> list, int i) {
                     post(home, transition);
                     if (i == 3)
-                        throw 1;
+                        throw std::logic_error("Expected");
                     {
                         Space::UseGPI use_gpi(home);
                         post(home, selected);
@@ -1467,7 +1468,7 @@ namespace Test::Int::OpenList {
             bool threw = false;
             try {
                 list.append(home, IntVar(home, 0, 10));
-            } catch (int) {
+            } catch (const std::logic_error&) {
                 threw = true;
             }
             post(home, ordinary);

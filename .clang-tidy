@@ -11,6 +11,7 @@ Checks: >-
   cppcoreguidelines-missing-std-forward,
   google-build-explicit-make-pair,
   google-global-names-in-headers,
+  hicpp-exception-baseclass,
   bugprone-*,
   -bugprone-branch-clone,
   -bugprone-derived-method-shadowing-base-method,

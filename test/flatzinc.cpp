@@ -32,9 +32,16 @@
 
 #include "test/flatzinc.hh"
 
+#include <exception>
 #include <memory>
+#include <type_traits>
 
 namespace Test::FlatZinc {
+
+    static_assert(std::is_base_of_v<std::exception, Gecode::FlatZinc::Error>,
+                  "FlatZinc errors must be catchable as standard exceptions");
+    static_assert(std::is_base_of_v<std::exception, Gecode::FlatZinc::AST::TypeError>,
+                  "FlatZinc type errors must be catchable as standard exceptions");
 
     namespace {
 

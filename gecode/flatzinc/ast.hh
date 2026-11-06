@@ -37,6 +37,7 @@
 #include <string>
 #include <iostream>
 #include <cstdlib>
+#include <exception>
 #include <utility>
 
 /**
@@ -52,16 +53,16 @@ namespace Gecode::FlatZinc::AST {
     class SetLit;
 
     /// %Exception signaling type error
-    class GECODE_VTABLE_EXPORT TypeError {
+    class GECODE_VTABLE_EXPORT TypeError : public std::exception {
     private:
         std::string _what;
 
     public:
         TypeError() = default;
         TypeError(std::string what) : _what(std::move(what)) {}
-        std::string
-        what() const {
-            return _what;
+        const char*
+        what() const noexcept override {
+            return _what.c_str();
         }
     };
 

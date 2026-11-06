@@ -77,6 +77,23 @@ This release contains breaking changes. See the entries below for the
 changes downstream code needs.
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Derive FlatZinc::Error and FlatZinc::AST::TypeError from std::exception, so that
+a handler for std::exception also catches them. AST::TypeError::what now returns
+const char* instead of std::string.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Give FlatZinc::BranchPlugin a virtual destructor, so that a plugin deleted
+through its interface is destroyed correctly.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   major
