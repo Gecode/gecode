@@ -143,9 +143,7 @@ namespace Test { namespace Random {
                 return false;
         }
         auto before = restored.state();
-        if (restored(0) || restored(1) || restored(-1) || restored.state() != before)
-            return false;
-        return true;
+        return !(restored(0) || restored(1) || restored(-1) || (restored.state() != before));
     }
 
     class Contract : public Base {
