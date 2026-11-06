@@ -50,7 +50,7 @@ namespace Gecode { namespace Instance {
      * The indices \a path select them in the record starts of the repeat
      * (see record_starts), and in each name defined in the repeat.
      */
-    class RecordRef {
+    class RecordRef { // NOLINT(bugprone-exception-escape): the check sees the copy of a Seq argument
     public:
         /// The repeat
         const Stmt* repeat;
