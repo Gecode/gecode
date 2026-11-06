@@ -36,6 +36,7 @@
 #include "test/test.hh"
 
 #include <memory>
+#include <stdexcept>
 
 namespace Test {
 
@@ -197,8 +198,8 @@ namespace Test {
                     Space::NoGPI inner(s);
                     if (s.post().afc() != 0.0)
                         return false;
-                    throw 1;
-                } catch (int) {
+                    throw std::logic_error("Expected");
+                } catch (const std::logic_error&) {
                     // Expected
                 }
                 if (s.post().afc() != 0.0)
@@ -221,8 +222,8 @@ namespace Test {
                     Space::UseGPI use(s);
                     if (s.post().afc() != 1.0)
                         return false;
-                    throw 1;
-                } catch (int) {
+                    throw std::logic_error("Expected");
+                } catch (const std::logic_error&) {
                     // Expected
                 }
                 if (s.post().afc() != 0.0)
@@ -234,8 +235,8 @@ namespace Test {
             }
             try {
                 Space::NoGPI context(s);
-                throw 1;
-            } catch (int) {
+                throw std::logic_error("Expected");
+            } catch (const std::logic_error&) {
                 // Expected
             }
             return s.post().afc() == 1.0;

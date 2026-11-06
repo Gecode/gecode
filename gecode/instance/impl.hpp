@@ -41,6 +41,7 @@
 #include <gecode/instance.hh>
 
 #include <climits>
+#include <exception>
 #include <new>
 #include <utility>
 
@@ -276,12 +277,17 @@ namespace Gecode::Instance {
     };
 
     /// Error about the shape or type of a value, located by the caller
-    class ShapeError {
+    class ShapeError : public std::exception {
     public:
         /// Message
         std::string msg;
         /// Initialize with message \a m
         explicit ShapeError(const std::string& m) : msg(m) {}
+        /// Return the message
+        const char*
+        what() const noexcept override {
+            return msg.c_str();
+        }
     };
 
     /**
