@@ -378,7 +378,7 @@ namespace Gecode { namespace CPProfiler {
             }
         }
 
-        std::string info{""};
+        std::string info;
         {
             std::stringstream ss;
             ss << "{";
@@ -398,7 +398,7 @@ namespace Gecode { namespace CPProfiler {
     inline void
     Connector::restart(int restart_id) {
 
-        std::string info{""};
+        std::string info;
         {
             std::stringstream ss;
             ss << "{";

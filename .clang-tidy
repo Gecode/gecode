@@ -88,7 +88,6 @@ Checks: >-
   -readability-redundant-control-flow,
   -readability-redundant-declaration,
   -readability-redundant-smartptr-get,
-  -readability-redundant-string-init,
   -readability-redundant-typename,
   -readability-simplify-boolean-expr,
   -readability-suspicious-call-argument,

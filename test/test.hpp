@@ -127,7 +127,7 @@ namespace Test {
 
     inline std::string
     Base::str(const Gecode::IntArgs& x) {
-        std::string s = "";
+        std::string s;
         for (int i = 0; i < x.size() - 1; i++)
             s += str(x[i]) + ",";
         return "[" + s + str(x[x.size() - 1]) + "]";

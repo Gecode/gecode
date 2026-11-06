@@ -57,7 +57,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
         std::string _what;
 
     public:
-        TypeError() : _what("") {}
+        TypeError() {}
         TypeError(std::string what) : _what(std::move(what)) {}
         std::string
         what() const {

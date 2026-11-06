@@ -208,7 +208,7 @@ namespace Test { namespace Float {
 
     inline std::string
     Test::str(const Gecode::FloatValArgs& x) {
-        std::string s = "";
+        std::string s;
         for (int i = 0; i < x.size() - 1; i++)
             s += str(x[i]) + ",";
         return "[" + s + str(x[x.size() - 1]) + "]";

@@ -83,7 +83,7 @@ namespace Test { namespace Set {
 
     inline std::string
     SetTest::str(const Gecode::IntArgs& x) {
-        std::string s = "";
+        std::string s;
         for (int i = 0; i < x.size() - 1; i++)
             s += str(x[i]) + ",";
         return "[" + s + str(x[x.size() - 1]) + "]";
