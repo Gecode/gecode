@@ -40,7 +40,7 @@ namespace Gecode {
 
     namespace {
         /// Check if types agree
-        static bool
+        bool
         same(SetExpr::NodeType t0, SetExpr::NodeType t1) {
             return (t0 == t1) || (t1 == SetExpr::NT_VAR) || (t1 == SetExpr::NT_CONST) || (t1 == SetExpr::NT_LEXP);
         }
