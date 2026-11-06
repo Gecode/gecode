@@ -1390,8 +1390,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             void
             find() {
                 while ((value <= last_value) && (support_range <= last_support_range)) {
-                    if (value < support_range->min)
-                        value = support_range->min;
+                    value = std::max(value, support_range->min);
                     if (value > last_value)
                         break;
                     while ((support_range <= last_support_range) && (value > support_range->max))

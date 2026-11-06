@@ -27,6 +27,7 @@
  *
  */
 
+#include <algorithm>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -7812,8 +7813,7 @@ Dictionary::init(const char* fn) {
                     n_all_words++;
                     n_words[n]++;
                     sz += n + 1;
-                    if (max_len < n)
-                        max_len = n;
+                    max_len = std::max(max_len, n);
                 }
             skip1:;
             }

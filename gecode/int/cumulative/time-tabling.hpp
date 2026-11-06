@@ -1,3 +1,5 @@
+#include <algorithm>
+
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -87,8 +89,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
                 // Process events for zero-length task
                 for (; (e->type() == Event::ZRO) && (e->time() == time); e++) {
                     ccur -= t[e->idx()].c();
-                    if (ccur < cmin)
-                        cmin = ccur;
+                    cmin = std::min(ccur, cmin);
                     if (ccur < 0)
                         return ES_FAILED;
                     ccur += t[e->idx()].c();
@@ -101,8 +102,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
                     if (t[e->idx()].mandatory()) {
                         tasks.clear(static_cast<unsigned int>(e->idx()));
                         ccur -= t[e->idx()].c();
-                        if (ccur < cmin)
-                            cmin = ccur;
+                        cmin = std::min(ccur, cmin);
                         nrstime = time + 1;
                         if (ccur < 0)
                             return ES_FAILED;

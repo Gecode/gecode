@@ -85,8 +85,7 @@ Checks: >-
   -readability-redundant-typename,
   -readability-simplify-boolean-expr,
   -readability-suspicious-call-argument,
-  -readability-use-anyofallof,
-  -readability-use-std-min-max
+  -readability-use-anyofallof
 WarningsAsErrors: '*'
 HeaderFilterRegex: '(gecode|test|examples|tools)/'
 ExcludeHeaderFilterRegex: 'gecode/flatzinc/(parser\.tab\.(cpp|hpp)|lexer\.yy\.cpp)$'

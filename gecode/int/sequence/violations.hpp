@@ -30,6 +30,7 @@
  *
  */
 
+#include <algorithm>
 #include <climits>
 #include <cmath>
 
@@ -81,8 +82,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     forceinline void
     Violations::add(unsigned int i) {
         set(i);
-        if (i < fst)
-            fst = i;
+        fst = std::min(i, fst);
     }
 
     forceinline unsigned int
