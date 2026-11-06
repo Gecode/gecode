@@ -85,14 +85,17 @@ namespace Gecode::Support {
 #ifndef GECODE_MIMALLOC
     forceinline void*
     Allocator::alloc(size_t n) {
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc): this is the heap allocator
         return ::malloc(n);
     }
     forceinline void*
     Allocator::realloc(void* p, size_t n) {
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc): this is the heap allocator
         return ::realloc(p, n);
     }
     forceinline void
     Allocator::free(void* p) {
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc): this is the heap allocator
         ::free(p);
     }
 #endif

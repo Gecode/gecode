@@ -3,6 +3,7 @@
 Checks: >-
   -*,
   clang-analyzer-core.*,
+  cppcoreguidelines-no-malloc,
   cppcoreguidelines-misleading-capture-default-by-value,
   cppcoreguidelines-missing-std-forward,
   google-build-explicit-make-pair,
