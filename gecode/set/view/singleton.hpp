@@ -335,10 +335,10 @@ namespace Gecode { namespace Set {
         //@{
         /// Default constructor
         LubRanges();
-        /// Initialize with ranges for view \a x
-        LubRanges(const SingletonView& x);
-        /// Initialize with ranges for view \a x
-        void init(const SingletonView& x);
+        /// Initialize with ranges for view \a s
+        LubRanges(const SingletonView& s);
+        /// Initialize with ranges for view \a s
+        void init(const SingletonView& s);
         //@}
     };
 
@@ -370,10 +370,10 @@ namespace Gecode { namespace Set {
         //@{
         /// Default constructor
         GlbRanges();
-        /// Initialize with ranges for view \a x
-        GlbRanges(const SingletonView& x);
-        /// Initialize with ranges for view \a x
-        void init(const SingletonView& x);
+        /// Initialize with ranges for view \a s
+        GlbRanges(const SingletonView& s);
+        /// Initialize with ranges for view \a s
+        void init(const SingletonView& s);
 
         /// \name Iteration control
         //@{

@@ -91,10 +91,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
         //@{
         /// Default constructor
         NaryAppend() = default;
-        /// Initialize with \a n iterators in \a i
-        NaryAppend(I* i, int n);
-        /// Initialize with \a n iterators in \a i
-        void init(I* i, int n);
+        /// Initialize with \a n iterators in \a r0
+        NaryAppend(I* r0, int n);
+        /// Initialize with \a n iterators in \a r0
+        void init(I* r0, int n);
         //@}
 
         /// \name Iteration control

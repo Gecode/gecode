@@ -373,11 +373,11 @@ namespace Test {
             /// Map integer to string
             static std::string str(int i);
             /// Map integer array to string
-            static std::string str(const Gecode::IntArgs& i);
+            static std::string str(const Gecode::IntArgs& x);
             /// Map integer propagation level to string
             static std::string str(Gecode::IntPropLevel ipl);
             /// Map integer relation to string
-            static std::string str(Gecode::IntRelType irl);
+            static std::string str(Gecode::IntRelType irt);
             /// Map Boolean operation to string
             static std::string str(Gecode::BoolOpType bot);
             //@}

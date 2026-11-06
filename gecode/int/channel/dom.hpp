@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Channel {
         /// Initialize
         void init(View x, int n);
         /// Update during cloning
-        void update(Space& home, DomInfo<View, Offset>& vcb);
+        void update(Space& home, DomInfo<View, Offset>& di);
         /// Check whether propagation for assignment is to be done
         bool doval() const;
         /// Check whether propagation for domain is to be done

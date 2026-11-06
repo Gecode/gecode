@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Element {
         /// Constructor for cloning \a p
         Int(Space& home, Int& p);
         /// Constructor for creation
-        Int(Home home, IntSharedArray& i, V0 x0, V1 x1);
+        Int(Home home, IntSharedArray& c0, V0 y0, V1 y1);
 
     public:
         /// Perform copying during cloning
@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Element {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$i_{x_0}=x_1\f$
-        static ExecStatus post(Home home, IntSharedArray& i, V0 x0, V1 x1);
+        static ExecStatus post(Home home, IntSharedArray& c, V0 x0, V1 x1);
         /// Delete propagator and return its size
         size_t dispose(Space& home) override;
     };
@@ -209,7 +209,7 @@ namespace Gecode { namespace Int { namespace Element {
         /// Constructor for cloning \a p
         View(Space& home, View& p);
         /// Constructor for creation
-        View(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
+        View(Home home, IdxViewArray<VA>& iv, VB y0, VC y1);
 
     public:
         // Cost function (defined as low linear)

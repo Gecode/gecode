@@ -192,12 +192,12 @@ namespace Gecode { namespace Gist {
         /// Destructor
         ~Gist() override;
 
-        /// Add double click inspector \a i0
-        void add_double_click_inspector(Inspector* i0);
-        /// Add solution inspector \a i0
-        void add_solution_inspector(Inspector* i0);
-        /// Add move inspector \a i0
-        void add_move_inspector(Inspector* i0);
+        /// Add double click inspector \a ins
+        void add_double_click_inspector(Inspector* ins);
+        /// Add solution inspector \a ins
+        void add_solution_inspector(Inspector* ins);
+        /// Add move inspector \a ins
+        void add_move_inspector(Inspector* ins);
         /// Add comparator \a c0
         void add_comparator(Comparator* c0);
 

@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         ExecStatus no_overlap(Space& home, ManBox<Dim, n>& b);
 
         /// Update box during cloning
-        void update(Space& home, ManBox<Dim, n>& r);
+        void update(Space& home, ManBox<Dim, n>& b);
 
         /// Subscribe propagator \a p to box
         void subscribe(Space& home, Propagator& p);
@@ -210,7 +210,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         ExecStatus exclude(Space& home);
 
         /// Update box during cloning
-        void update(Space& home, OptBox<Dim, n>& r);
+        void update(Space& home, OptBox<Dim, n>& b);
 
         /// Subscribe propagator \a p to box
         void subscribe(Space& home, Propagator& p);

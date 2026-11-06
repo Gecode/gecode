@@ -344,10 +344,10 @@ namespace Gecode { namespace Set {
         //@{
         /// Default constructor
         LubRanges() = default;
-        /// Initialize with ranges for view \a x
-        LubRanges(const ComplementView<View>& x);
-        /// Initialize with ranges for view \a x
-        void init(const ComplementView<View>& x);
+        /// Initialize with ranges for view \a s
+        LubRanges(const ComplementView<View>& s);
+        /// Initialize with ranges for view \a s
+        void init(const ComplementView<View>& s);
         //@}
 
         /// \name Iteration control
@@ -459,10 +459,10 @@ namespace Gecode { namespace Set {
         //@{
         /// Default constructor
         GlbRanges() = default;
-        /// Initialize with ranges for view \a x
-        GlbRanges(const ComplementView<View>& x);
-        /// Initialize with ranges for view \a x
-        void init(const ComplementView<View>& x);
+        /// Initialize with ranges for view \a s
+        GlbRanges(const ComplementView<View>& s);
+        /// Initialize with ranges for view \a s
+        void init(const ComplementView<View>& s);
         //@}
 
         /// \name Iteration control

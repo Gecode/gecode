@@ -50,7 +50,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
     /// Test whether two views are in fact the same
     template <class VX, class VY>
-    bool same(VX c, VY y);
+    bool same(VX x, VY y);
 
     /**
      * \brief %Propagator for the subset constraint
@@ -67,7 +67,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Constructor for cloning \a p
         Subset(Space& home, Subset& p);
         /// Constructor for posting
-        Subset(Home home, View0 x0, View1 x1);
+        Subset(Home home, View0 y0, View1 y1);
 
     public:
         /// Copy propagator during cloning
@@ -93,7 +93,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Constructor for cloning \a p
         NoSubset(Space& home, NoSubset& p);
         /// Constructor for posting
-        NoSubset(Home home, View0 x0, View1 x1);
+        NoSubset(Home home, View0 y0, View1 y1);
 
     public:
         /// Copy propagator during cloning
@@ -122,7 +122,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Constructor for cloning \a p
         ReSubset(Space& home, ReSubset& p);
         /// Constructor for posting
-        ReSubset(Home home, View0 x0, View1 x1, CtrlView b);
+        ReSubset(Home home, View0 y0, View1 y1, CtrlView b);
 
     public:
         /// Copy propagator during cloning
@@ -136,7 +136,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$
-        static ExecStatus post(Home home, View0 x, View1 y, CtrlView b);
+        static ExecStatus post(Home home, View0 x, View1 x1, CtrlView b);
     };
 
     /**
@@ -153,7 +153,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Constructor for cloning \a p
         Eq(Space& home, Eq& p);
         /// Constructor for posting
-        Eq(Home home, View0 x0, View1 x1);
+        Eq(Home home, View0 x0, View1 y);
 
     public:
         /// Copy propagator during cloning
@@ -179,7 +179,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Constructor for cloning \a p
         ReEq(Space& home, ReEq&);
         /// Constructor for posting
-        ReEq(Home home, View0 x0, View1 x1, CtrlView b);
+        ReEq(Home home, View0 y0, View1 y1, CtrlView y2);
 
     public:
         /// Copy propagator during cloning
@@ -193,7 +193,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$
-        static ExecStatus post(Home home, View0 x, View1 y, CtrlView b);
+        static ExecStatus post(Home home, View0 x, View1 x1, CtrlView b);
     };
 
     /**
@@ -212,7 +212,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Constructor for cloning \a p
         Lq(Space& home, Lq& p);
         /// Constructor for posting
-        Lq(Home home, View0 x0, View1 x1);
+        Lq(Home home, View0 x0, View1 y);
 
     public:
         /// Copy propagator during cloning
@@ -240,7 +240,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Constructor for cloning \a p
         ReLq(Space& home, ReLq& p);
         /// Constructor for posting
-        ReLq(Home home, View0 x0, View1 x1, Gecode::Int::BoolView b);
+        ReLq(Home home, View0 y0, View1 y1, Gecode::Int::BoolView y2);
 
     public:
         /// Copy propagator during cloning
@@ -254,7 +254,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ (x\leq y) \Leftrightarrow b\f$
-        static ExecStatus post(Home home, View0 x, View1 y, Gecode::Int::BoolView b);
+        static ExecStatus post(Home home, View0 x, View1 x1, Gecode::Int::BoolView b);
     };
 
     /**
@@ -272,7 +272,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Constructor for cloning \a p
         Distinct(Space& home, Distinct& p);
         /// Constructor for posting
-        Distinct(Home home, View0 x0, View1 x1);
+        Distinct(Home home, View0 x0, View1 y);
 
     public:
         /// Copy propagator during cloning
@@ -302,7 +302,7 @@ namespace Gecode { namespace Set { namespace Rel {
         /// Constructor for cloning \a p
         DistinctDoit(Space& home, DistinctDoit&);
         /// Constructor for posting
-        DistinctDoit(Home home, View0 x0, ConstSetView y);
+        DistinctDoit(Home home, View0 _x, ConstSetView y);
 
     public:
         /// Copy propagator during cloning

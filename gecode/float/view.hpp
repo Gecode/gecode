@@ -270,7 +270,7 @@ namespace Gecode { namespace Float {
         /// Default constructor
         OffsetView() = default;
         /// Initialize with float view \a y and an offset c
-        explicit OffsetView(const FloatView& y, FloatNum c);
+        explicit OffsetView(const FloatView& y, FloatNum d);
         //@}
 
         /// \name Value access
@@ -396,7 +396,7 @@ namespace Gecode { namespace Float {
         /// Default constructor
         ScaleView() = default;
         /// Initialize as \f$b\cdot y\f$
-        ScaleView(const FloatVal& b, const FloatView& y);
+        ScaleView(const FloatVal& d, const FloatView& y);
         //@}
 
         /// \name Value access

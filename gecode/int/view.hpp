@@ -446,8 +446,8 @@ namespace Gecode { namespace Int {
         //@{
         /// Default constructor
         OffsetView();
-        /// Initialize with integer view \a y and offset \a c
-        OffsetView(const IntView& y, int c);
+        /// Initialize with integer view \a y and offset \a d
+        OffsetView(const IntView& y, int d);
         //@}
 
         /// \name Value access

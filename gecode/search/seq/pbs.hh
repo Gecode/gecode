@@ -136,7 +136,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     public:
         /// Initialize with \a n assets, their stop objects, and the coverage of their spokes
-        PBS(Engine** assets, Stop** stops, const SpokeCoverage* coverage, unsigned int n, const Statistics& stat,
+        PBS(Engine** e, Stop** s, const SpokeCoverage* c, unsigned int n, const Statistics& stat0,
             const Search::Options& opt);
         /// Return next solution (nullptr, if none exists or search has been stopped)
         Space* next() override;

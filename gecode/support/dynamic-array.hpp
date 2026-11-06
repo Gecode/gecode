@@ -48,8 +48,8 @@ namespace Gecode { namespace Support {
         int n;
         /// Array elements
         T* x;
-        /// Resize to at least \a n + 1 elements
-        void resize(int n);
+        /// Resize to at least \a i + 1 elements
+        void resize(int i);
 
     public:
         /// Initialize with size \a n

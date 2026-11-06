@@ -58,7 +58,7 @@ namespace Gecode { namespace Float { namespace Bool {
         /// Constructor for cloning \a p
         Ite(Space& home, Ite& p);
         /// Constructor for creation
-        Ite(Home home, Int::BoolView b, View x0, View x1, View x2);
+        Ite(Home home, Int::BoolView b, View y0, View y1, View y2);
 
     public:
         /// Cost function (defined as low ternary)

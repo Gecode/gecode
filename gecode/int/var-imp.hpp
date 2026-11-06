@@ -288,13 +288,13 @@ namespace Gecode { namespace Int {
 
         /// Restrict domain values to be different from \a n
         ModEvent nq(Space& home, int n);
-        /// Restrict domain values to be different from \a n
-        ModEvent nq(Space& home, long long int n);
+        /// Restrict domain values to be different from \a d
+        ModEvent nq(Space& home, long long int d);
 
         /// Restrict domain values to be equal to \a n
         ModEvent eq(Space& home, int n);
-        /// Restrict domain values to be equal to \a n
-        ModEvent eq(Space& home, long long int n);
+        /// Restrict domain values to be equal to \a m
+        ModEvent eq(Space& home, long long int m);
         //@}
 
         /**

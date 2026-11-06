@@ -352,7 +352,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         /// Constructor for cloning \a p
         EqIte(Space& home, EqIte& p);
         /// Constructor for creation
-        EqIte(Home home, IntView x0, IntView x1, int c0, int c1);
+        EqIte(Home home, IntView x0, IntView x1, int d0, int d1);
 
     public:
         /// Copy propagator during cloning
