@@ -57,7 +57,7 @@ namespace Test::Float::IntervalCore {
     const int caller_modes[] = {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO};
 
     /// Test whether \a x has the bounds \a l and \a u, and log a mismatch
-    bool
+    static bool
     has_bounds(const char* name, const Interval& x, FloatNum l, FloatNum u) {
         if ((x.lower() == l) && (x.upper() == u))
             return true;

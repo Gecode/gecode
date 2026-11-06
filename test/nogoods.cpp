@@ -45,7 +45,7 @@ namespace Test::NoGoods {
     using namespace Gecode;
 
     /// A dummy function for branching
-    void
+    static void
     dummy(Space&) {}
 
     /// Example for testing integer no-goods

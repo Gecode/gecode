@@ -57,13 +57,13 @@ namespace Test::Instance {
      */
 
     /// Read \a text with the spec \a spec
-    Data
+    static Data
     read(const char* spec, const char* text, const Params& p = Params()) {
         return Spec::parse(spec, "test.reader").read_text(text, "test.txt", p);
     }
 
     /// Check that \a f throws an Error whose message contains \a what
-    bool
+    static bool
     fails(const std::function<void()>& f, const char* what) {
         try {
             f();
@@ -78,19 +78,19 @@ namespace Test::Instance {
     }
 
     /// Check that reading \a text with \a spec fails with \a what
-    bool
+    static bool
     fails(const char* spec, const char* text, const char* what) {
         return fails([&]() { (void)read(spec, text); }, what);
     }
 
     /// Check that parsing \a spec fails with \a what
-    bool
+    static bool
     rejects(const char* spec, const char* what) {
         return fails([&]() { (void)Spec::parse(spec, "s"); }, what);
     }
 
     /// Compare integer array \a a with the values \a v
-    bool
+    static bool
     equal(const IntArgs& a, std::initializer_list<int> v) {
         if (a.size() != static_cast<int>(v.size()))
             return false;

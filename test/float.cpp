@@ -105,7 +105,7 @@ operator<<(std::ostream& os, const Test::Float::Assignment& a) {
 
 namespace Test::Float {
 
-    Gecode::FloatNum
+    static Gecode::FloatNum
     rand_f_val_down(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         using namespace Gecode::Float;
@@ -115,7 +115,7 @@ namespace Test::Float {
                                         r.sub_down(u, l)));
     }
 
-    Gecode::FloatNum
+    static Gecode::FloatNum
     rand_f_val_up(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         using namespace Gecode::Float;

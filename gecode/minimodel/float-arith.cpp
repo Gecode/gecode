@@ -287,7 +287,7 @@ namespace Gecode::MiniModel {
         }
     };
     /// Check if \a e is of type \a t
-    bool
+    static bool
     has_type(const LinFloatExpr& e, ArithNonLinFloatExpr::ArithNonLinFloatExprType t) {
         return e.nlfe() && dynamic_cast<ArithNonLinFloatExpr*>(e.nlfe()) != nullptr &&
                dynamic_cast<ArithNonLinFloatExpr*>(e.nlfe())->t == t;

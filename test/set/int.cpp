@@ -443,7 +443,7 @@ namespace Test::Set::Int {
     IntRel _intrel_lqs(Gecode::IRT_LQ, true);
 
     template <class I>
-    int
+    static int
     weight_i(const IntArgs& elements, const IntArgs& weights, I& iter) {
         int sum = 0;
         int i = 0;

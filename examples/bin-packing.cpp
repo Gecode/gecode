@@ -399,7 +399,7 @@ public:
 };
 
 /// Post branching (assumes that \a s is sorted)
-void
+static void
 cdbf(Home home, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s) {
     if (b.size() != s.size())
         throw Int::ArgumentSizeMismatch("cdbf");

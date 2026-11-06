@@ -157,7 +157,7 @@ namespace Gecode::Int::LDSB {
      */
 
     /// Create an integer symmetry implementation from a symmetry handle
-    SymmetryImp<IntView>*
+    static SymmetryImp<IntView>*
     create_int_sym(Space& home, const SymmetryHandle& s, VariableMap variable_map) {
         VariableSymmetryObject* varref = dynamic_cast<VariableSymmetryObject*>(s.ref);
         ValueSymmetryObject* valref = dynamic_cast<ValueSymmetryObject*>(s.ref);
@@ -207,7 +207,7 @@ namespace Gecode::Int::LDSB {
     }
 
     /// Create a boolean symmetry implementation from a symmetry handle
-    SymmetryImp<BoolView>*
+    static SymmetryImp<BoolView>*
     create_bool_sym(Space& home, const SymmetryHandle& s, VariableMap variable_map) {
         VariableSymmetryObject* varref = dynamic_cast<VariableSymmetryObject*>(s.ref);
         ValueSymmetryObject* valref = dynamic_cast<ValueSymmetryObject*>(s.ref);
@@ -263,7 +263,7 @@ namespace Gecode::Int::LDSB {
      * in \a nsyms and returns nullptr if there are none.
      */
     template <class View>
-    SymmetryImp<View>**
+    static SymmetryImp<View>**
     create_syms(Space& home, const Symmetries& syms, const VariableMap& variable_map,
                 SymmetryImp<View>* (*create_sym)(Space&, const SymmetryHandle&, VariableMap), int& nsyms) {
         nsyms = 0;

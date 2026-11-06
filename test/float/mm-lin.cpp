@@ -62,7 +62,7 @@ namespace Test::Float::MiniModelLin {
 
     /// Evaluate linear instructions
     template <class Expr>
-    Expr
+    static Expr
     eval(const LinInstr* pc, Expr reg[]) {
         while (true) {
             switch (pc->o) {

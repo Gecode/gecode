@@ -60,7 +60,7 @@ namespace Test::Int::MiniModelBoolean {
     };
 
     /// Executes Boolean instruction for evaluation (checking)
-    int
+    static int
     eval(const BoolInstr* pc, int reg[]) {
         while (true) {
             switch (pc->o) {
@@ -93,7 +93,7 @@ namespace Test::Int::MiniModelBoolean {
     }
 
     /// Executes Boolean instruction for constructing Boolean expressions
-    Gecode::BoolExpr
+    static Gecode::BoolExpr
     eval(const BoolInstr* pc, Gecode::BoolExpr reg[]) {
         using namespace Gecode;
         while (true) {

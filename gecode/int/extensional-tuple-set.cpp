@@ -126,7 +126,7 @@ namespace Gecode::Int::Extensional {
 
     /// Return the domain-size product, saturated just above \a limit
     template <class View>
-    unsigned long long
+    static unsigned long long
     domain_product(const ViewArray<View>& x, unsigned long long limit, int excluded = -1) {
         unsigned long long product = 1ULL;
         for (int i = 0; i < x.size(); i++) {
@@ -856,7 +856,7 @@ namespace Gecode::Int::Extensional {
     };
 
     template <class View>
-    ExecStatus
+    static ExecStatus
     post_tuple_set(Home home, ViewArray<View>& x, const TupleSet& t, bool pos) {
         switch (t.representation()) {
         case EPK_DENSE:
@@ -873,7 +873,7 @@ namespace Gecode::Int::Extensional {
         }
     }
 
-    forceinline ReifyMode
+    static forceinline ReifyMode
     negated_reify_mode(ReifyMode mode) {
         switch (mode) {
         case RM_EQV:
@@ -889,7 +889,7 @@ namespace Gecode::Int::Extensional {
     }
 
     template <class View, class CtrlView>
-    ExecStatus
+    static ExecStatus
     post_sparse_reified(Home home, ViewArray<View>& x, const TupleSet& t, CtrlView b, ReifyMode mode) {
         switch (mode) {
         case RM_EQV:
@@ -904,7 +904,7 @@ namespace Gecode::Int::Extensional {
     }
 
     template <class View, class CtrlView>
-    ExecStatus
+    static ExecStatus
     post_dense_reified(Home home, ViewArray<View>& x, const TupleSet& t, CtrlView b, ReifyMode mode) {
         switch (mode) {
         case RM_EQV:
@@ -919,7 +919,7 @@ namespace Gecode::Int::Extensional {
     }
 
     template <class View, class CtrlView>
-    ExecStatus
+    static ExecStatus
     post_compressed_reified(Home home, ViewArray<View>& x, const TupleSet& t, CtrlView b, ReifyMode mode) {
         switch (mode) {
         case RM_EQV:
@@ -934,7 +934,7 @@ namespace Gecode::Int::Extensional {
     }
 
     template <class View, class CtrlView>
-    ExecStatus
+    static ExecStatus
     post_reified_tuple_set(Home home, ViewArray<View>& x, const TupleSet& t, CtrlView b, ReifyMode mode) {
         switch (t.representation()) {
         case EPK_DENSE:
@@ -950,7 +950,7 @@ namespace Gecode::Int::Extensional {
         }
     }
 
-    forceinline ExecStatus
+    static forceinline ExecStatus
     post_reified_constant(Home home, BoolView b, ReifyMode mode, bool value) {
         switch (mode) {
         case RM_EQV:

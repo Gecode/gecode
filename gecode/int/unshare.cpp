@@ -51,7 +51,7 @@ namespace Gecode::Int::Unshare {
     };
 
     /// Replace by fresh yet equal integer variables
-    forceinline void
+    static forceinline void
     link(Home home, IntVar** x, int n, IntPropLevel ipl) {
         if (home.failed()) {
             for (int i = 1; i < n; i++)
@@ -85,7 +85,7 @@ namespace Gecode::Int::Unshare {
     }
 
     /// Replace by fresh yet equal Boolean variables
-    forceinline void
+    static forceinline void
     link(Home home, BoolVar** x, int n, IntPropLevel) {
         if (home.failed()) {
             for (int i = 1; i < n; i++)
@@ -108,7 +108,7 @@ namespace Gecode::Int::Unshare {
 
     /// Replace unassigned shared variables by fresh, yet equal variables
     template <class Var>
-    forceinline void
+    static forceinline void
     unshare(Home home, VarArgArray<Var>& x, IntPropLevel ipl) {
         int n = x.size();
         if (n < 2)

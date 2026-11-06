@@ -37,7 +37,7 @@
 namespace Test::Int::MinDistance {
 
     /// Distances with both a zero off-diagonal pair and threshold boundaries
-    Gecode::IntArgs
+    static Gecode::IntArgs
     matrix() {
         return Gecode::IntArgs({0, 0, 3, 4, 0, 0, 2, 1, 3, 2, 0, 4, 4, 1, 4, 0});
     }

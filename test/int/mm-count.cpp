@@ -38,7 +38,7 @@
 namespace Test::Int::MiniModelCount {
 
     /// Expand relation to abbreviation
-    std::string
+    static std::string
     expand(Gecode::IntRelType irt) {
         switch (irt) {
         case Gecode::IRT_EQ:

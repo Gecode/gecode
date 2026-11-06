@@ -418,7 +418,7 @@ namespace Test::Fault {
         }
     };
 
-    bool
+    static bool
     clone_after_failed_copy(Phase p, unsigned long long n) {
         FaultScope scope;
         CloneCopySpace s;
@@ -448,7 +448,7 @@ namespace Test::Fault {
         return ok && (s.status() != SS_FAILED);
     }
 
-    bool
+    static bool
     expect_memory_exhausted(Phase p, unsigned long long n) {
         FaultScope scope;
         DerivedCopySpace s;
@@ -478,7 +478,7 @@ namespace Test::Fault {
         return false;
     }
 
-    bool
+    static bool
     clone_after_failed_local_object_copy() {
         FaultScope scope;
         LocalCopySpace s;
@@ -503,7 +503,7 @@ namespace Test::Fault {
         return false;
     }
 
-    bool
+    static bool
     clone_after_failed_advisor_copy() {
         FaultScope scope;
         AdvisorCopySpace s;
@@ -530,7 +530,7 @@ namespace Test::Fault {
         }
     }
 
-    bool
+    static bool
     clone_after_failed_disposal_array() {
         FaultScope scope;
         DisposeSpace s;
@@ -558,7 +558,7 @@ namespace Test::Fault {
         return ok;
     }
 
-    bool
+    static bool
     derived_update_space_is_usable(DerivedUpdateSpace& s) {
         Space* c = s.clone();
         delete c;
@@ -569,7 +569,7 @@ namespace Test::Fault {
         return ok;
     }
 
-    bool
+    static bool
     clone_after_failed_derived_update() {
         FaultScope scope;
         DerivedUpdateSpace s;
@@ -591,7 +591,7 @@ namespace Test::Fault {
         return derived_update_space_is_usable(s);
     }
 
-    bool
+    static bool
     heap_allocation_failpoint_throws() {
         FaultScope scope;
         Support::FailPoint::reset();
@@ -610,7 +610,7 @@ namespace Test::Fault {
         }
     }
 
-    bool
+    static bool
     heap_reallocation_failpoint_throws() {
         FaultScope scope;
         int* x = heap.alloc<int>(1);
@@ -632,7 +632,7 @@ namespace Test::Fault {
         }
     }
 
-    bool
+    static bool
     clone_heap_failures_recover_source() {
         FaultScope scope;
         DerivedUpdateSpace s;
@@ -661,7 +661,7 @@ namespace Test::Fault {
         return false;
     }
 
-    bool
+    static bool
     branch_post_heap_failures_are_recoverable(bool chb) {
         FaultScope scope;
         bool saw_failure = false;
@@ -701,7 +701,7 @@ namespace Test::Fault {
         return false;
     }
 
-    bool
+    static bool
     int_set_heap_failures_release_object() {
         FaultScope scope;
         int ranges[3][2] = {{0, 0}, {2, 2}, {4, 4}};
@@ -731,7 +731,7 @@ namespace Test::Fault {
         return false;
     }
 
-    bool
+    static bool
     minimodel_heap_failures_release_nodes() {
         FaultScope scope;
         bool saw_failure = false;
@@ -762,7 +762,7 @@ namespace Test::Fault {
         return false;
     }
 
-    bool
+    static bool
     linear_sum_constructor_heap_failures_release_nodes(int kind) {
         FaultScope scope;
         bool saw_failure = false;
@@ -811,7 +811,7 @@ namespace Test::Fault {
         return false;
     }
 
-    bool
+    static bool
     minimodel_linear_sum_heap_failures_release_nodes() {
         for (int kind = 0; kind < 4; kind++)
             if (!linear_sum_constructor_heap_failures_release_nodes(kind))
@@ -820,7 +820,7 @@ namespace Test::Fault {
     }
 
 #ifdef GECODE_HAS_FLOAT_VARS
-    bool
+    static bool
     minimodel_float_heap_failures_are_recoverable() {
         FaultScope scope;
         bool saw_failure = false;
@@ -850,7 +850,7 @@ namespace Test::Fault {
 #endif
 
 #ifdef GECODE_HAS_SET_VARS
-    bool
+    static bool
     minimodel_set_heap_failures_are_recoverable() {
         FaultScope scope;
         bool saw_failure = false;
@@ -879,7 +879,7 @@ namespace Test::Fault {
     }
 #endif
 
-    bool
+    static bool
     dispose_notice_initial_failure_does_not_dispose_actor() {
         FaultScope scope;
         NoticeDisposeActor::disposed = 0;
@@ -898,7 +898,7 @@ namespace Test::Fault {
         }
     }
 
-    bool
+    static bool
     dispose_notice_resize_failure_does_not_dispose_unregistered_actor() {
         FaultScope scope;
         NoticeDisposeActor::disposed = 0;
@@ -916,7 +916,7 @@ namespace Test::Fault {
         }
     }
 
-    bool
+    static bool
     minimodel_failure_releases_default_nodes() {
         FaultScope scope;
         LinIntExpr::fault_reset_allocations();
@@ -952,7 +952,7 @@ namespace Test::Fault {
 
     int FaultBoolMisc::disposed = 0;
 
-    bool
+    static bool
     minimodel_heap_failure_releases_bool_misc() {
         FaultScope scope;
         FaultBoolMisc::disposed = 0;

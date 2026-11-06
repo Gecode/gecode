@@ -62,7 +62,7 @@ namespace Test::Assign {
     } // namespace
 
     /// Merit that prefers the last of five variables
-    double
+    static double
     set_merit_last(const Gecode::Space&, Gecode::SetVar, int i) {
         return (i == 4) ? 1.0 : 0.0;
     }

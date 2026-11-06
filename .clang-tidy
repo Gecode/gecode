@@ -39,7 +39,6 @@ Checks: >-
   -misc-non-private-member-variables-in-classes,
   -misc-static-assert,
   -misc-use-anonymous-namespace,
-  -misc-use-internal-linkage,
   modernize-*,
   -modernize-avoid-c-arrays,
   -modernize-pass-by-value,
@@ -86,6 +85,10 @@ CheckOptions:
   bugprone-exception-escape.CheckMoveMemberFunctions: false
   # glibc needs this feature macro defined before any system header.
   bugprone-reserved-identifier.AllowedIdentifiers: '_GNU_SOURCE'
+  # Checking functions finds the real cases; classes and test registration
+  # objects in .cpp files would only need wrapping in anonymous namespaces.
+  misc-use-internal-linkage.AnalyzeTypes: false
+  misc-use-internal-linkage.AnalyzeVariables: false
   # De Morgan rewrites do not make these conditions easier to read.
   readability-simplify-boolean-expr.SimplifyDeMorgan: false
   # Sites without a fix-it declare variables in the condition.

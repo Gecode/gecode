@@ -367,20 +367,20 @@ namespace Gecode::FlatZinc {
     }
 #endif
     template <class Var>
-    void
+    static void
     var_val_print(const Space& home, const Brancher& b, unsigned int a, Var, int i, const int& n, std::ostream& o) {
         static_cast<const FlatZincSpace&>(home).branch_info.print(b, a, i, n, o);
     }
 
 #ifdef GECODE_HAS_FLOAT_VARS
-    void
+    static void
     var_val_print_f(const Space& home, const Brancher& b, unsigned int a, FloatVar, int i, const FloatNumBranch& nl,
                     std::ostream& o) {
         static_cast<const FlatZincSpace&>(home).branch_info.print(b, a, i, nl, o);
     }
 #endif
 
-    IntSet
+    static IntSet
     vs2is(IntVarSpec* vs) {
         if (vs->assigned) {
             return IntSet(vs->i, vs->i);
@@ -395,7 +395,7 @@ namespace Gecode::FlatZinc {
         return IntSet(Int::Limits::min, Int::Limits::max);
     }
 
-    int
+    static int
     vs2bsl(BoolVarSpec* bs) {
         if (bs->assigned) {
             return bs->i;
@@ -408,7 +408,7 @@ namespace Gecode::FlatZinc {
         return 0;
     }
 
-    int
+    static int
     vs2bsh(BoolVarSpec* bs) {
         if (bs->assigned) {
             return bs->i;
@@ -421,7 +421,7 @@ namespace Gecode::FlatZinc {
         return 1;
     }
 
-    TieBreak<IntVarBranch>
+    static TieBreak<IntVarBranch>
     annotation_to_int_var_branch(AST::Node* ann, const Rnd& rnd, double decay) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "input_order")
@@ -470,7 +470,7 @@ namespace Gecode::FlatZinc {
         return TieBreak<IntVarBranch>(INT_VAR_NONE());
     }
 
-    IntValBranch
+    static IntValBranch
     annotation_to_int_val_branch(AST::Node* ann, std::string& r0, std::string& r1, const Rnd& rnd) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "indomain_min") {
@@ -531,7 +531,7 @@ namespace Gecode::FlatZinc {
         return INT_VAL_MIN();
     }
 
-    IntAssign
+    static IntAssign
     annotation_to_int_assign(AST::Node* ann, const Rnd& rnd) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "indomain_min")
@@ -550,7 +550,7 @@ namespace Gecode::FlatZinc {
         return INT_ASSIGN_MIN();
     }
 
-    TieBreak<BoolVarBranch>
+    static TieBreak<BoolVarBranch>
     annotation_to_bool_var_branch(AST::Node* ann, const Rnd& rnd, double decay) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if ((s->id == "input_order") || (s->id == "first_fail") || (s->id == "anti_first_fail") ||
@@ -575,7 +575,7 @@ namespace Gecode::FlatZinc {
         return TieBreak<BoolVarBranch>(BOOL_VAR_NONE());
     }
 
-    BoolValBranch
+    static BoolValBranch
     annotation_to_bool_val_branch(AST::Node* ann, std::string& r0, std::string& r1, const Rnd& rnd) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "indomain_min") {
@@ -636,7 +636,7 @@ namespace Gecode::FlatZinc {
         return BOOL_VAL_MIN();
     }
 
-    BoolAssign
+    static BoolAssign
     annotation_to_bool_assign(AST::Node* ann, const Rnd& rnd) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if ((s->id == "indomain_min") || (s->id == "indomain_median"))
@@ -654,7 +654,7 @@ namespace Gecode::FlatZinc {
     }
 
 #ifdef GECODE_HAS_SET_VARS
-    SetVarBranch
+    static SetVarBranch
     annotation_to_set_var_branch(AST::Node* ann, const Rnd& rnd, double decay) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "input_order")
@@ -693,7 +693,7 @@ namespace Gecode::FlatZinc {
         return SET_VAR_NONE();
     }
 
-    SetValBranch
+    static SetValBranch
     annotation_to_set_val_branch(AST::Node* ann, std::string& r0, std::string& r1, const Rnd& rnd) {
         (void)rnd;
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
@@ -728,7 +728,7 @@ namespace Gecode::FlatZinc {
 #endif
 
 #ifdef GECODE_HAS_FLOAT_VARS
-    TieBreak<FloatVarBranch>
+    static TieBreak<FloatVarBranch>
     annotation_to_float_var_branch(AST::Node* ann, const Rnd& rnd, double decay) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "input_order")
@@ -771,7 +771,7 @@ namespace Gecode::FlatZinc {
         return TieBreak<FloatVarBranch>(FLOAT_VAR_NONE());
     }
 
-    FloatValBranch
+    static FloatValBranch
     annotation_to_float_val_branch(AST::Node* ann, std::string& r0, std::string& r1) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "indomain_split") {
@@ -1069,7 +1069,7 @@ namespace Gecode::FlatZinc {
         }
     }
 
-    void
+    static void
     flatten_annotations(AST::Array* ann, std::vector<AST::Node*>& out) {
         for (auto& arg : ann->a) {
             if (arg->is_call("seq_search")) {
@@ -1805,7 +1805,7 @@ namespace Gecode::FlatZinc {
         ~FlatZincGetInfo() override = default;
     };
 
-    void
+    static void
     print_int_var(std::ostream& os, const std::string& name, const Int::IntView& x) {
         os << "var ";
         if (x.assigned()) {
@@ -1826,7 +1826,7 @@ namespace Gecode::FlatZinc {
         }
         os << "\n";
     }
-    void
+    static void
     print_bool_var(std::ostream& os, const std::string& name, const BoolVar& b) {
         os << "var bool: " << name;
         if (b.assigned())
@@ -1834,7 +1834,7 @@ namespace Gecode::FlatZinc {
         os << ";\n";
     }
 #ifdef GECODE_HAS_FLOAT_VARS
-    void
+    static void
     print_float_var(std::ostream& os, const std::string& name, const Float::FloatView& f) {
         os << "var ";
         if (f.assigned())

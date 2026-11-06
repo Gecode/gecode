@@ -56,19 +56,19 @@ namespace Test::Assign {
 
     /// Merit that prefers the variable at position \a p
     template <int p>
-    double
+    static double
     bool_merit_at(const Gecode::Space&, Gecode::BoolVar, int i) {
         return (i == p) ? 1.0 : 0.0;
     }
 
     /// Filter that accepts every variable
-    bool
+    static bool
     bool_accept(const Gecode::Space&, Gecode::BoolVar, int) {
         return true;
     }
 
     /// Print function that prints nothing
-    void
+    static void
     bool_print_nothing(const Gecode::Space&, const Gecode::Brancher&, unsigned int, Gecode::BoolVar, int, const int&,
                        std::ostream&) {}
 
@@ -93,7 +93,7 @@ namespace Test::Assign {
     };
 
     /// Whether assigning one first in \a s sets exactly the last \a n variables
-    bool
+    static bool
     assigned_last_first(BoolOrderSpace* s, int n) {
         Gecode::DFS<BoolOrderSpace> e(s);
         delete s;

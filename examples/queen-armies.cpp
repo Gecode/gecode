@@ -260,7 +260,7 @@ public:
 };
 
 /** \brief Position of a piece in a square board. */
-int
+static int
 pos(int i, int j, int n) {
     return i * n + j;
 }
