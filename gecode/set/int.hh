@@ -65,8 +65,8 @@ namespace Gecode { namespace Set { namespace Int {
         Actor* copy(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
-        /// Post propagator for \a x is the minimal element of \a s
-        static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
+        /// Post propagator for \a x is the minimal element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x);
     };
 
     /**
@@ -90,8 +90,8 @@ namespace Gecode { namespace Set { namespace Int {
         Actor* copy(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
-        /// Post propagator for \a x is not the minimal element of \a s
-        static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
+        /// Post propagator for \a x is not the minimal element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x);
     };
 
     /**
@@ -120,8 +120,8 @@ namespace Gecode { namespace Set { namespace Int {
         Actor* copy(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
-        /// Post reified propagator for \a b iff \a x is the minimal element of \a s
-        static ExecStatus post(Home home, View s, Gecode::Int::IntView x, Gecode::Int::BoolView b);
+        /// Post reified propagator for \a b iff \a x is the minimal element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x, Gecode::Int::BoolView b);
     };
 
     /**
@@ -145,8 +145,8 @@ namespace Gecode { namespace Set { namespace Int {
         Actor* copy(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
-        /// Post propagator for \a x is the largest element of \a s
-        static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
+        /// Post propagator for \a x is the largest element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x);
     };
 
     /**
@@ -170,8 +170,8 @@ namespace Gecode { namespace Set { namespace Int {
         Actor* copy(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
-        /// Post propagator for \a x is not the largest element of \a s
-        static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
+        /// Post propagator for \a x is not the largest element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x);
     };
 
     /**
@@ -200,8 +200,8 @@ namespace Gecode { namespace Set { namespace Int {
         Actor* copy(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
-        /// Post reified propagator for \a b iff \a x is the largest element of \a s
-        static ExecStatus post(Home home, View s, Gecode::Int::IntView x, Gecode::Int::BoolView b);
+        /// Post reified propagator for \a b iff \a x is the largest element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x, Gecode::Int::BoolView b);
     };
 
     /**
@@ -226,7 +226,7 @@ namespace Gecode { namespace Set { namespace Int {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ |s|=x \f$
-        static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x);
     };
 
     /**

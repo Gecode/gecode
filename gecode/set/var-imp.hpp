@@ -96,10 +96,10 @@ namespace Gecode { namespace Set {
         unsigned int _size;
         /// The cardinality this set represents
         unsigned int _card;
-        /// Set first range to \a r
-        void fst(RangeList* r);
-        /// Set last range to \a r
-        void lst(RangeList* r);
+        /// Set first range to \a f
+        void fst(RangeList* f);
+        /// Set last range to \a l
+        void lst(RangeList* l);
 
         /// Return first range
         RangeList* fst() const;
@@ -117,7 +117,7 @@ namespace Gecode { namespace Set {
         /// Default constructor. Creates an empty set.
         BndSet();
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
-        BndSet(Space& home, int i, int j);
+        BndSet(Space& home, int mn, int mx);
         /// Initialize as the set represented by \a s
         GECODE_SET_EXPORT BndSet(Space& home, const IntSet& s);
         //@}
@@ -154,8 +154,8 @@ namespace Gecode { namespace Set {
 
         /// \name Update operations
         //@{
-        /// Make this set equal to \a s
-        void become(Space& home, const BndSet& s);
+        /// Make this set equal to \a that
+        void become(Space& home, const BndSet& that);
         //@}
 
         /// \name Range list access for iteration
@@ -172,8 +172,8 @@ namespace Gecode { namespace Set {
     public:
         /// \name Cloning
         //@{
-        /// Update this set to be a clone of set \a x
-        void update(Space& home, BndSet& x);
+        /// Update this set to be a clone of set \a d
+        void update(Space& home, BndSet& d);
         //@}
 
         /// Check whether internal invariants hold
@@ -217,7 +217,7 @@ namespace Gecode { namespace Set {
         /// Default constructor. Creates an empty set.
         GLBndSet(Space&);
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
-        GLBndSet(Space& home, int i, int j);
+        GLBndSet(Space& home, int i, int ma);
         /// Initialize as the set represented by \a s
         GLBndSet(Space& home, const IntSet& s);
         /// Initialize as the empty set
@@ -227,7 +227,7 @@ namespace Gecode { namespace Set {
         /// \name Update operations
         //@{
         /// Include the set \f$\{i,\dots,j\}\f$ in this set
-        bool include(Space& home, int i, int j, SetDelta& d);
+        bool include(Space& home, int i, int ma, SetDelta& d);
         /// Include the set represented by \a i in this set
         template <class I>
         bool include_i(Space& home, I& i);
@@ -257,7 +257,7 @@ namespace Gecode { namespace Set {
         /// Initialize as the full set including everything between Limits::min and Limits::max
         LUBndSet(Space& home);
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
-        LUBndSet(Space& home, int i, int j);
+        LUBndSet(Space& home, int i, int ma);
         /// Initialize as the set represented by \a s
         LUBndSet(Space& home, const IntSet& s);
         /// Initialize as the full set including everything between Limits::min and Limits::max
@@ -267,9 +267,9 @@ namespace Gecode { namespace Set {
         /// \name Update operations
         //@{
         /// Exclude the set \f$\{i,\dots,j\}\f$ from this set
-        bool exclude(Space& home, int i, int j, SetDelta& d);
+        bool exclude(Space& home, int i, int ma, SetDelta& d);
         /// Intersect this set with the set \f$\{i,\dots,j\}\f$
-        bool intersect(Space& home, int i, int j);
+        bool intersect(Space& home, int i, int ma);
         /// Exclude all elements not in the set represented by \a i from this set
         template <class I>
         bool intersect_i(Space& home, I& i);
@@ -416,10 +416,10 @@ namespace Gecode { namespace Set {
         //@{
         /// Default constructor
         UnknownRanges() = default;
-        /// Initialize with unknown set ranges for set variable \a x
-        UnknownRanges(const T& x);
-        /// Initialize with unknown set ranges for set variable \a x
-        void init(const T& x);
+        /// Initialize with unknown set ranges for set variable \a v
+        UnknownRanges(const T& v);
+        /// Initialize with unknown set ranges for set variable \a v
+        void init(const T& v);
         //@}
     };
 
@@ -472,7 +472,7 @@ namespace Gecode { namespace Set {
          * \f$\mathit{lub}(s)=\{\mathit{lub_min},\dots,\mathit{lub_max}\}\f$, and
          * \f$\mathit{card_min}\leq |s|\leq\mathit{card_max}\f$
          */
-        SetVarImp(Space& home, const IntSet& glb_d, int lub_min, int lub_max, unsigned int card_min,
+        SetVarImp(Space& home, const IntSet& the_glb, int lub_min, int lub_max, unsigned int card_min,
                   unsigned int card_max);
         /**
          * \brief Initialize with given bounds and cardinality
@@ -482,7 +482,7 @@ namespace Gecode { namespace Set {
          * \f$\mathit{lub}(s)=\mathit{lubD}\f$, and
          * \f$\mathit{card_min}\leq |s|\leq\mathit{card_max}\f$
          */
-        SetVarImp(Space& home, int glb_min, int glb_max, const IntSet& lub_d, unsigned int card_min,
+        SetVarImp(Space& home, int glb_min, int glb_max, const IntSet& the_lub, unsigned int card_min,
                   unsigned int card_max);
         /**
          * \brief Initialize with given bounds and cardinality
@@ -492,7 +492,8 @@ namespace Gecode { namespace Set {
          * \f$\mathit{lub}(s)=\mathit{lubD}\f$, and
          * \f$\mathit{card_min}\leq |s|\leq\mathit{card_max}\f$
          */
-        SetVarImp(Space& home, const IntSet& glb_d, const IntSet& lub_d, unsigned int card_min, unsigned int card_max);
+        SetVarImp(Space& home, const IntSet& the_glb, const IntSet& the_lub, unsigned int card_min,
+                  unsigned int card_max);
         //@}
 
         /// \name Value access
@@ -521,8 +522,8 @@ namespace Gecode { namespace Set {
         //@{
         /// Test whether variable is assigned
         bool assigned() const;
-        /// Test whether \a n is contained in greatest lower bound
-        bool known_in(int n) const;
+        /// Test whether \a i is contained in greatest lower bound
+        bool known_in(int i) const;
         /// Test whether \a n is not contained in least upper bound
         bool known_out(int) const;
         //@}
@@ -555,16 +556,16 @@ namespace Gecode { namespace Set {
     public:
         /// \name Domain update by value
         //@{
-        /// Include \a n in the greatest lower bound
-        ModEvent include(Space& home, int n);
+        /// Include \a i in the greatest lower bound
+        ModEvent include(Space& home, int i);
         /// Include the range \f$\{i,\dots,j\}\f$ in the greatest lower bound
         ModEvent include(Space& home, int i, int j);
-        /// Exclude \a n from the least upper bound
-        ModEvent exclude(Space& home, int n);
+        /// Exclude \a i from the least upper bound
+        ModEvent exclude(Space& home, int i);
         /// Exclude the range \f$\{i,\dots,j\}\f$ from the least upper bound
         ModEvent exclude(Space& home, int i, int j);
-        /// Exclude everything but \a n from the least upper bound
-        ModEvent intersect(Space& home, int n);
+        /// Exclude everything but \a i from the least upper bound
+        ModEvent intersect(Space& home, int i);
         /// Exclude everything but the range \f$\{i,\dots,j\}\f$ from the least upper bound
         ModEvent intersect(Space& home, int i, int j);
         /// Restrict cardinality to be at least n

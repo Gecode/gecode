@@ -102,10 +102,10 @@ namespace Gecode { namespace Set { namespace Element {
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
          *
-         * If \a y is empty, \a z will be constrained to be the given universe
+         * If \a x0 is empty, \a x1 will be constrained to be the given universe
          * \a u (as an empty intersection is the universe).
          */
-        static ExecStatus post(Home home, IdxViewArray& x, View0 y, View1 z, const IntSet& u);
+        static ExecStatus post(Home home, IdxViewArray& x, View0 x0, View1 x1, const IntSet& u);
     };
 
     /**
@@ -142,10 +142,10 @@ namespace Gecode { namespace Set { namespace Element {
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /** Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
          *
-         * If \a y is empty, \a z will be constrained to be empty
+         * If \a x0 is empty, \a x1 will be constrained to be empty
          * (as an empty union is the empty set).
          */
-        static ExecStatus post(Home home, IdxViewArray& x, View0 y, View1 z);
+        static ExecStatus post(Home home, IdxViewArray& x, View0 x0, View1 x1);
     };
 
     /**
@@ -180,10 +180,10 @@ namespace Gecode { namespace Set { namespace Element {
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /** Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y] \f$
          *
-         * If \a y is empty, \a z will be constrained to be empty
+         * If \a x1 is empty, \a x0 will be constrained to be empty
          * (as an empty union is the empty set).
          */
-        static ExecStatus post(Home home, SView z, const IntSetArgs& x, RView y);
+        static ExecStatus post(Home home, SView x0, const IntSetArgs& x, RView x1);
     };
 
     /**
@@ -218,7 +218,7 @@ namespace Gecode { namespace Set { namespace Element {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$
-        static ExecStatus post(Home home, IdxViewArray& x, RView y);
+        static ExecStatus post(Home home, IdxViewArray& x, RView x1);
     };
 
 }}} // namespace Gecode::Set::Element

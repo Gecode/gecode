@@ -78,8 +78,8 @@ namespace Gecode { namespace Search { namespace Seq {
         Slave(const Slave& s) = default;
         /// Assignment operator
         Slave& operator=(const Slave& s) = default;
-        /// Initialize with slave \a s and its stop object \a so
-        void init(Engine* s, Stop* so);
+        /// Initialize with slave \a e and its stop object \a so
+        void init(Engine* e, Stop* so);
         /// Return next solution
         Space* next();
         /// Return statistics of slave
@@ -119,7 +119,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     public:
         /// Initialize
-        PBS(Engine** slaves, Stop** stops, unsigned int n, const Statistics& stat, const Search::Options& opt);
+        PBS(Engine** e, Stop** stops, unsigned int n, const Statistics& stat, const Search::Options& opt);
         /// Return next solution (nullptr, if none exists or search has been stopped)
         Space* next() override;
         /// Return statistics

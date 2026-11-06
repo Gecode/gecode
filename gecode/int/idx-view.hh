@@ -85,8 +85,8 @@ namespace Gecode { namespace Int {
         /// Set the size to \a n
         void size(int n);
 
-        /// Access element \a n
-        IdxView<View>& operator[](int n);
+        /// Access element \a i
+        IdxView<View>& operator[](int i);
         /// Access element \a n
         const IdxView<View>& operator[](int) const;
 
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int {
         void reschedule(Space& home, Propagator& p, PropCond pc);
 
         /// Cloning
-        void update(Space& home, IdxViewArray<View>& x);
+        void update(Space& home, IdxViewArray<View>& a);
     };
 
     /**

@@ -267,8 +267,8 @@ namespace Gecode {
         //@{
         /// Default constructor
         SetVarGlbRanges() = default;
-        /// Initialize to iterate ranges of variable \a x
-        SetVarGlbRanges(const SetVar& x);
+        /// Initialize to iterate ranges of variable \a s
+        SetVarGlbRanges(const SetVar& s);
         //@}
 
         /// \name Iteration control
@@ -300,8 +300,8 @@ namespace Gecode {
         //@{
         /// Default constructor
         SetVarLubRanges() = default;
-        /// Initialize to iterate ranges of variable \a x
-        SetVarLubRanges(const SetVar& x);
+        /// Initialize to iterate ranges of variable \a s
+        SetVarLubRanges(const SetVar& s);
         //@}
 
         /// \name Iteration control
@@ -333,8 +333,8 @@ namespace Gecode {
         //@{
         /// Default constructor
         SetVarUnknownRanges() = default;
-        /// Initialize to iterate ranges of variable \a x
-        SetVarUnknownRanges(const SetVar& x);
+        /// Initialize to iterate ranges of variable \a s
+        SetVarUnknownRanges(const SetVar& s);
         //@}
 
         /// \name Iteration control

@@ -90,7 +90,7 @@ namespace Gecode { namespace Gist {
 
     public:
         /// Constructor
-        HideFailedCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na, bool only_dirty_nodes);
+        HideFailedCursor(VisualNode* root, const VisualNode::NodeAllocator& na, bool only_dirty_nodes);
         /// \name Cursor interface
         //@{
         /// Test if the cursor may move to the first child node
@@ -104,7 +104,7 @@ namespace Gecode { namespace Gist {
     class UnhideAllCursor : public NodeCursor<VisualNode> {
     public:
         /// Constructor
-        UnhideAllCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na);
+        UnhideAllCursor(VisualNode* root, const VisualNode::NodeAllocator& na);
         /// \name Cursor interface
         //@{
         /// Process node
@@ -116,7 +116,7 @@ namespace Gecode { namespace Gist {
     class UnstopAllCursor : public NodeCursor<VisualNode> {
     public:
         /// Constructor
-        UnstopAllCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na);
+        UnstopAllCursor(VisualNode* root, const VisualNode::NodeAllocator& na);
         /// \name Cursor interface
         //@{
         /// Process node
@@ -171,7 +171,7 @@ namespace Gecode { namespace Gist {
         int open;
 
         /// Constructor
-        StatCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na);
+        StatCursor(VisualNode* root, const VisualNode::NodeAllocator& na);
 
         /// \name Cursor interface
         //@{
@@ -200,7 +200,7 @@ namespace Gecode { namespace Gist {
 
     public:
         /// Constructor
-        BranchLabelCursor(VisualNode* the_node, BestNode* cur_best, int c_d, int a_d, bool clear,
+        BranchLabelCursor(VisualNode* root, BestNode* cur_best, int c_d, int a_d, bool clear,
                           VisualNode::NodeAllocator& na);
         /// \name Cursor interface
         //@{
@@ -212,7 +212,7 @@ namespace Gecode { namespace Gist {
     class DisposeCursor : public NodeCursor<VisualNode> {
     public:
         /// Constructor
-        DisposeCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na);
+        DisposeCursor(VisualNode* root, const VisualNode::NodeAllocator& na);
 
         /// \name Cursor interface
         //@{

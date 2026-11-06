@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ z \supseteq x \cap y\f$
-        static ExecStatus post(Home home, View0 x, View1 y, View2 z);
+        static ExecStatus post(Home home, View0 x, View1 x1, View2 x2);
     };
 
     /**
@@ -99,7 +99,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ z \subseteq x \cap y\f$
-        static ExecStatus post(Home home, View0 x, View1 y, View2 z);
+        static ExecStatus post(Home home, View0 x, View1 x1, View2 x2);
     };
 
     /**
@@ -125,7 +125,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ z=x\cap y\f$
-        static ExecStatus post(Home home, View0 x, View1 y, View2 z);
+        static ExecStatus post(Home home, View0 x, View1 x1, View2 x2);
     };
 
     /**
@@ -151,7 +151,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ z=x\cup y\f$
-        static ExecStatus post(Home home, View0 x, View1 y, View2 z);
+        static ExecStatus post(Home home, View0 x, View1 x1, View2 x2);
     };
 
     /**
@@ -184,9 +184,9 @@ namespace Gecode { namespace Set { namespace RelOp {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ x = \bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
-        static ExecStatus post(Home home, ViewArray<View0>& y, View1 x);
+        static ExecStatus post(Home home, ViewArray<View0>& x, View1 y);
         /// Post propagator \f$ x = z\cap\bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
-        static ExecStatus post(Home home, ViewArray<View0>& y, const IntSet& z, View1 x);
+        static ExecStatus post(Home home, ViewArray<View0>& x, const IntSet& z, View1 y);
     };
 
     /**
@@ -219,9 +219,9 @@ namespace Gecode { namespace Set { namespace RelOp {
         /// Cost function
         PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Post propagator \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
-        static ExecStatus post(Home home, ViewArray<View0>& y, View1 x);
+        static ExecStatus post(Home home, ViewArray<View0>& x, View1 y);
         /// Post propagator \f$ x = z\cup\bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
-        static ExecStatus post(Home home, ViewArray<View0>& y, const IntSet& z, View1 x);
+        static ExecStatus post(Home home, ViewArray<View0>& x, const IntSet& z, View1 y);
     };
 
     /**
@@ -254,9 +254,9 @@ namespace Gecode { namespace Set { namespace RelOp {
         /// Cost function
         PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Post propagator \f$ x = \biguplus_{i\in\{0,\dots,n-1\}} y_i \f$
-        static ExecStatus post(Home home, ViewArray<View0>& y, View1 x);
+        static ExecStatus post(Home home, ViewArray<View0>& x, View1 y);
         /// Post propagator \f$ x = z\uplus\biguplus_{i\in\{0,\dots,n-1\}} y_i \f$
-        static ExecStatus post(Home home, ViewArray<View0>& y, const IntSet& z, View1 x);
+        static ExecStatus post(Home home, ViewArray<View0>& x, const IntSet& z, View1 y);
     };
 
 }}} // namespace Gecode::Set::RelOp

@@ -332,7 +332,7 @@ namespace Test {
             /// Map floatVal to string
             static std::string str(const Gecode::FloatVal& f);
             /// Map float array to string
-            static std::string str(const Gecode::FloatValArgs& f);
+            static std::string str(const Gecode::FloatValArgs& x);
             //@}
             /// \name General support
             //@{

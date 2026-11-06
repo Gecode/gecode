@@ -205,8 +205,8 @@ namespace Gecode { namespace Int {
 
             /// \name Cloning
             ///@{
-            /// Update this view to be a clone of view \a x
-            void update(Space& home, CardView& x);
+            /// Update this view to be a clone of view \a y
+            void update(Space& home, CardView& y);
             ///@}
         };
 

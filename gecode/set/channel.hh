@@ -76,8 +76,8 @@ namespace Gecode { namespace Set { namespace Channel {
         size_t dispose(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
-        /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order
-        static ExecStatus post(Home home, View s, ViewArray<Gecode::Int::IntView>& x);
+        /// Post propagator that propagates that \a x0 contains the \f$x_i\f$, which are sorted in non-descending order
+        static ExecStatus post(Home home, View x0, ViewArray<Gecode::Int::IntView>& x);
     };
 
     /**

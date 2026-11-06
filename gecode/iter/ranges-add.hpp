@@ -52,10 +52,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
         //@{
         /// Default constructor
         AddRange() = default;
-        /// Initialize with ranges \a i and range \a min to \a max
-        AddRange(I& i, int min, int max);
-        /// Initialize with ranges \a i and range \a min to \a max
-        void init(I& i, int min, int max);
+        /// Initialize with ranges \a i and range \a r_min0 to \a r_max0
+        AddRange(I& i, int r_min0, int r_max0);
+        /// Initialize with ranges \a i and range \a r_min0 to \a r_max0
+        void init(I& i, int r_min0, int r_max0);
         //@}
 
         /// \name Iteration control

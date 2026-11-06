@@ -715,7 +715,7 @@ namespace Gecode { namespace Int { namespace Branch {
             /// Tests if a variable id is in the map
             bool is_in(unsigned int var_id) const;
             /// Returns the position of the variable id in \a x
-            int operator[](unsigned int var_id) const;
+            int operator[](unsigned int i) const;
             /// Inserts a new position for a variable id
             void insert(unsigned int var_id, unsigned int pos);
         } var_id_to_pos;

@@ -971,14 +971,14 @@ namespace Gecode {
         /// Return the eventual-length variable
         IntVar length() const;
         /**
-         * \brief Append variable \a x
+         * \brief Append variable \a y
          *
-         * Raises the minimum length to include \a x, then calls the transition
+         * Raises the minimum length to include \a y, then calls the transition
          * if supplied (see Transition). Exceeding the maximum length fails the
-         * space. Throws Int::ArgumentSame if \a x is an unassigned variable
+         * space. Throws Int::ArgumentSame if \a y is an unassigned variable
          * already in the list.
          */
-        void append(Space& home, Var x);
+        void append(Space& home, Var y);
         /**
          * \brief Materialize the first \a n variables
          *
@@ -2696,8 +2696,8 @@ namespace Gecode {
             Range* r;
             /// Base support id for each range (sparse and compressed only)
             unsigned int* base;
-            /// Find start range for value \a n
-            unsigned int start(int n) const;
+            /// Find start range for value \a k
+            unsigned int start(int k) const;
         };
         /**
          * \brief Data stored for a Table
@@ -2758,10 +2758,10 @@ namespace Gecode {
             Tuple add();
             /// Return tuple with number \a i
             Tuple get(int i) const;
-            /// Set bit \a n in bitset data \a d
-            static void set(BitSetData* d, unsigned int n);
-            /// Get bit \a n in bitset data \a d
-            static bool get(const BitSetData* d, unsigned int n);
+            /// Set bit \a i in bitset data \a d
+            static void set(BitSetData* d, unsigned int i);
+            /// Get bit \a i in bitset data \a d
+            static bool get(const BitSetData* d, unsigned int i);
             /// Map tuple address to index
             unsigned int tuple_to_index(Tuple t) const;
             /// Return first range for position \a i

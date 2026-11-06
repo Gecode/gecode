@@ -39,7 +39,7 @@ namespace Gecode {
      * \ingroup TaskTrace
      */
     class TFE {
-        friend GECODE_KERNEL_EXPORT TFE operator-(const TFE& r);
+        friend GECODE_KERNEL_EXPORT TFE operator-(const TFE& e);
         friend GECODE_KERNEL_EXPORT TFE propagator(PropagatorGroup g);
         friend GECODE_KERNEL_EXPORT TFE post(PropagatorGroup g);
         friend class TraceFilter;

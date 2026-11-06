@@ -199,7 +199,7 @@ namespace Gecode {
      * \relates CHB
      */
     template <class Char, class Traits>
-    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const CHB& a);
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const CHB& chb);
 
     /*
      * Advisor for chb recorder

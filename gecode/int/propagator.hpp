@@ -59,9 +59,9 @@ namespace Gecode { namespace Int {
         /// Constructor for cloning \a p
         ReUnaryPropagator(Space& home, ReUnaryPropagator& p);
         /// Constructor for rewriting \a p during cloning
-        ReUnaryPropagator(Space& home, Propagator& p, View x0, CtrlView b);
+        ReUnaryPropagator(Space& home, Propagator& p, View y0, CtrlView b);
         /// Constructor for creation
-        ReUnaryPropagator(Home home, View x0, CtrlView b);
+        ReUnaryPropagator(Home home, View y0, CtrlView b);
 
     public:
         /// Cost function (defined as low unary)
@@ -92,9 +92,9 @@ namespace Gecode { namespace Int {
         /// Constructor for cloning \a p
         ReBinaryPropagator(Space& home, ReBinaryPropagator& p);
         /// Constructor for rewriting \a p during cloning
-        ReBinaryPropagator(Space& home, Propagator& p, View x0, View x1, CtrlView b);
+        ReBinaryPropagator(Space& home, Propagator& p, View y0, View y1, CtrlView b);
         /// Constructor for creation
-        ReBinaryPropagator(Home home, View x0, View x1, CtrlView b);
+        ReBinaryPropagator(Home home, View y0, View y1, CtrlView b);
 
     public:
         /// Cost function (defined as low binary)
@@ -129,9 +129,9 @@ namespace Gecode { namespace Int {
         /// Constructor for cloning \a p
         ReMixBinaryPropagator(Space& home, ReMixBinaryPropagator& p);
         /// Constructor for creation
-        ReMixBinaryPropagator(Home home, View0 x0, View1 x1, CtrlView b);
+        ReMixBinaryPropagator(Home home, View0 y0, View1 y1, CtrlView b);
         /// Constructor for rewriting \a p during cloning
-        ReMixBinaryPropagator(Space& home, Propagator& p, View0 x0, View1 x1, CtrlView b);
+        ReMixBinaryPropagator(Space& home, Propagator& p, View0 y0, View1 y1, CtrlView b);
 
     public:
         /// Cost function (defined as low binary)

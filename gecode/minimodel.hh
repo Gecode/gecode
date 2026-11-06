@@ -1426,7 +1426,7 @@ namespace Gecode {
         /// The expression tree
         Exp* e;
         /// Initialize with given expression tree \a
-        REG(Exp* e);
+        REG(Exp* f);
         /// Return string representatinon of expression tree
         std::string to_string() const;
 

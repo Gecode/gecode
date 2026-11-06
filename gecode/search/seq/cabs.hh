@@ -89,8 +89,8 @@ namespace Gecode { namespace Search { namespace Seq {
         Statistics statistics() const;
         /// Whether search stopped at the width or frontier limit
         bool limited() const;
-        /// Constrain future solutions to be better than \a b
-        void constrain(const Space& b);
+        /// Constrain future solutions to be better than \a s
+        void constrain(const Space& s);
         /// Reset engine to restart at space \a s
         void reset(Space* s);
         /// Return no-goods (none)

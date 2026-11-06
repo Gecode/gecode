@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     class ViewValSupport {
     public:
         /// Initialize
-        void init(Space& home, ViewArray<View>& x, const Val& s, int i, int q);
+        void init(Space& home, ViewArray<View>& a, const Val& s, int i, int q);
         /// Update
         void update(Space& home, ViewValSupport<View, Val, iss>& vvs, int n0);
         /// Advise
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Sequence {
         /// Returns next potential violation and removes it
         int next_potential_violation();
         /// Adds potential violation i
-        void potential_violation(int i);
+        void potential_violation(int k);
         // Sets element idx of cumulative array to v
         void set(int idx, int v, int q, int n);
         /// Adds potential violations for location idx in cumulative array

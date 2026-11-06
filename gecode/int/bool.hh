@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Bool {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ x_0 = x_1\f$
-        static ExecStatus post(Home home, BVA x0, BVB x1);
+        static ExecStatus post(Home home, BVA b0, BVB b1);
     };
 
     /**
@@ -395,7 +395,7 @@ namespace Gecode { namespace Int { namespace Bool {
         /// Update subscription
         ExecStatus resubscribe(Space& home, BV& x0, BV x1);
         /// Constructor for posting
-        NaryOrTrue(Home home, ViewArray<BV>& x);
+        NaryOrTrue(Home home, ViewArray<BV>& b);
         /// Constructor for cloning \a p
         NaryOrTrue(Space& home, NaryOrTrue<BV>& p);
 
@@ -582,7 +582,7 @@ namespace Gecode { namespace Int { namespace Bool {
         /// Constructor for cloning \a p
         IteBase(Space& home, IteBase& p);
         /// Constructor for creation
-        IteBase(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
+        IteBase(Home home, BoolView b, V0 y0, V1 y1, V2 y2);
 
     public:
         /// Cost function (defined as low ternary)

@@ -49,8 +49,8 @@ namespace Gecode { namespace Set {
         RangeList* glb() const;
         /// Return range list for least upper bound
         RangeList* lub() const;
-        /// Update duplicated view from view \a y and delta \a d
-        void prune(Space& home, SetView y, const Delta& d);
+        /// Update duplicated view from view \a x and delta \a d
+        void prune(Space& home, SetView x, const Delta& d);
         /// Update during cloning
         void update(Space& home, SetTraceView x);
         /// Return slack for \a x

@@ -235,8 +235,8 @@ namespace Gecode { namespace Float {
 
         /// \name Miscellaneous operations
         //@{
-        /// Return an overflow-safe median of \a x and \a y, where \a x <= \a y
-        FloatNum median(FloatNum x, FloatNum y);
+        /// Return an overflow-safe median of \a l and \a u, where \a l <= \a u
+        FloatNum median(FloatNum l, FloatNum u);
         /// Return next downward-rounded integer of \a x (domain: \f$ [-\infty;+\infty]\f$)
         FloatNum int_down(FloatNum x);
         /// Return next upward-rounded integer of \a x (domain: \f$ [-\infty;+\infty] \f$)
@@ -642,7 +642,7 @@ namespace Gecode {
      * \brief Arithmetic operator
      * \relates Gecode::FloatVal
      */
-    FloatVal operator/(const FloatNum& r, const FloatVal& x);
+    FloatVal operator/(const FloatNum& x, const FloatVal& y);
 
     /**
      * \brief Comparison operator
@@ -1772,11 +1772,11 @@ namespace Gecode {
     /// Select variable with lowest CHB Q-score
     FloatVarBranch FLOAT_VAR_CHB_MIN(BranchTbl tbl = nullptr);
     /// Select variable with lowest CHB Q-score
-    FloatVarBranch FLOAT_VAR_CHB_MIN(const FloatCHB& a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_CHB_MIN(const FloatCHB& c, BranchTbl tbl = nullptr);
     /// Select variable with highest CHB Q-score
     FloatVarBranch FLOAT_VAR_CHB_MAX(BranchTbl tbl = nullptr);
     /// Select variable with highest CHB Q-score
-    FloatVarBranch FLOAT_VAR_CHB_MAX(const FloatCHB& a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_CHB_MAX(const FloatCHB& c, BranchTbl tbl = nullptr);
     /// Select variable with smallest min
     FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl = nullptr);
     /// Select variable with largest min
@@ -1816,7 +1816,7 @@ namespace Gecode {
     /// Select variable with largest CHB Q-score divided by domain size
     FloatVarBranch FLOAT_VAR_CHB_SIZE_MAX(BranchTbl tbl = nullptr);
     /// Select variable with largest CHB Q-score divided by domain size
-    FloatVarBranch FLOAT_VAR_CHB_SIZE_MAX(const FloatCHB& a, BranchTbl tbl = nullptr);
+    FloatVarBranch FLOAT_VAR_CHB_SIZE_MAX(const FloatCHB& c, BranchTbl tbl = nullptr);
     //@}
 
 } // namespace Gecode

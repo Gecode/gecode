@@ -649,7 +649,7 @@ namespace Gecode { namespace Search {
 
     public:
         /// Constructor
-        CutoffAppend(Cutoff* c1, unsigned long long int n, Cutoff* c2);
+        CutoffAppend(Cutoff* d1, unsigned long long int n, Cutoff* d2);
         /// Return the current cutoff value
         unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
@@ -671,7 +671,7 @@ namespace Gecode { namespace Search {
 
     public:
         /// Constructor
-        CutoffMerge(Cutoff* c1, Cutoff* c2);
+        CutoffMerge(Cutoff* d1, Cutoff* d2);
         /// Return the current cutoff value
         unsigned long long int operator()() const override;
         /// Increment and return the next cutoff value
@@ -1151,8 +1151,8 @@ namespace Gecode { namespace Search {
         const bool b;
 
     public:
-        /// Initialize with options \a opt and \a best solution search support
-        Builder(const Options& opt, bool best);
+        /// Initialize with options \a opt and \a b0 solution search support
+        Builder(const Options& opt, bool b0);
         /// Provide access to options
         Options& options();
         /// Provide access to options
@@ -1464,8 +1464,8 @@ namespace Gecode {
         using Search::Base<T>::e;
 
     public:
-        /// Initialize engine for space \a s and options \a o
-        RBS(T* s, const Search::Options& o);
+        /// Initialize engine for space \a s and options \a m_opt
+        RBS(T* s, const Search::Options& m_opt);
         /// Whether engine does best solution search
         static const bool best = E<T>::best;
     };

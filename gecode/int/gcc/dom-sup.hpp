@@ -143,8 +143,8 @@ namespace Gecode { namespace Int { namespace GCC {
         //@{
         /// Default constructor
         VarNode() = default;
-        /// Creates a variable node with index \a i
-        VarNode(int i);
+        /// Creates a variable node with index \a x
+        VarNode(int x);
         //@}
 
         /// \name Access
@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Update
         //@{
         /// Set the pointer of the matching edge to m
-        void set_match(BC bc, Edge* m);
+        void set_match(BC bc, Edge* p);
         /// Set node to matched
         void match(BC bc);
         /// Unmatch the node
@@ -259,9 +259,9 @@ namespace Gecode { namespace Int { namespace GCC {
         /// node reset to original capacity values
         void reset();
         /// set the minimal k-capacity to min
-        void kmin(int min);
+        void kmin(int klb);
         /// set the maximal k-capacity to max
-        void kmax(int max);
+        void kmax(int kub);
         //@}
     };
 
@@ -304,10 +304,10 @@ namespace Gecode { namespace Int { namespace GCC {
         /// Default constructor
         Edge() = default;
         /**
-         * \brief Construct edge \f$e(x,v)\f$ from variable node \a x
+         * \brief Construct edge \f$e(x,v)\f$ from variable node \a var
          *  and value node \a y
          */
-        Edge(VarNode* x, ValNode* v);
+        Edge(VarNode* var, ValNode* v);
         //@}
 
         /// \name Access
@@ -356,7 +356,7 @@ namespace Gecode { namespace Int { namespace GCC {
         /// Unmatch the edge and the incident nodes
         void unmatch(BC bc);
         /// Unmatch the edge and  ( \a x if t=false,  \a v otherwise )
-        void unmatch(BC bc, bool t);
+        void unmatch(BC bc, bool node);
         /// Unlink the edge from the linked list of edges
         void unlink();
         /// Mark the edge as deleted during synchronization

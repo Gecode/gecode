@@ -187,7 +187,7 @@ namespace Gecode { namespace Gist {
         /// Return the alternative of the child that is on the path (-1 if none)
         int get_path_alternative(const NodeAllocator& na);
         /// Set whether node is on the path
-        void set_on_path(bool on_path0);
+        void set_on_path(bool b);
 
         /// Toggle whether this node is hidden
         void toggle_hidden(const NodeAllocator& na);

@@ -113,6 +113,7 @@ namespace Gecode {
 
     /// Initialize with integers from vector \a r
     template <>
+    // NOLINTNEXTLINE(readability-inconsistent-declaration-parameter-name): the primary template takes an iterator
     inline IntSet::IntSet(const std::vector<int>& r) {
         int n = static_cast<int>(r.size());
         if (n > 0) {
@@ -130,6 +131,7 @@ namespace Gecode {
      * second element.
      */
     template <>
+    // NOLINTNEXTLINE(readability-inconsistent-declaration-parameter-name): the primary template takes an iterator
     inline IntSet::IntSet(const std::vector<std::pair<int, int>>& r) {
         int n = static_cast<int>(r.size());
         if (n > 0) {

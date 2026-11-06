@@ -359,8 +359,8 @@ namespace Gecode {
             unsigned int cur_port; ///< Current port
             int cur_execution_id;  ///< Current execution ID
         public:
-            /// Initialize for option \a o and explanation \a e and default value \a v
-            ProfilerOption(const char* o, const char* e, unsigned int p = 0, int v = -1);
+            /// Initialize for option \a o and explanation \a e and default value \a i
+            ProfilerOption(const char* o, const char* e, unsigned int p = 0, int i = -1);
             /// Set default port to \a p
             void port(unsigned int p);
             /// Return current port
@@ -592,12 +592,12 @@ namespace Gecode {
         RestartMode restart() const;
 
         /// Set default restart base
-        void restart_base(double base);
+        void restart_base(double n);
         /// Return restart base
         double restart_base() const;
 
         /// Set default restart scale factor
-        void restart_scale(unsigned int scale);
+        void restart_scale(unsigned int n);
         /// Return restart scale factor
         unsigned int restart_scale() const;
 
@@ -630,7 +630,7 @@ namespace Gecode {
         /// \name Execution options
         //@{
         /// Set default mode
-        void mode(ScriptMode em);
+        void mode(ScriptMode sm);
         /// Return mode
         ScriptMode mode() const;
 

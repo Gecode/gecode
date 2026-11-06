@@ -48,7 +48,7 @@ namespace Gecode { namespace Int {
         /// Update duplicated view from view \a y and modification delta \a d
         void prune(Space& home, IntView y, const Delta& d);
         /// Update during cloning
-        void update(Space& home, IntTraceView x);
+        void update(Space& home, IntTraceView y);
         /// Return slack measure
         static unsigned long long int slack(IntView x);
     };

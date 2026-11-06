@@ -837,8 +837,8 @@ namespace Gecode {
         /// Move branchers from group \a g to this group
         GECODE_KERNEL_EXPORT
         BrancherGroup& move(Space& home, BrancherGroup g);
-        /// Move brancher \a b to this group
-        BrancherGroup& move(Space& home, Brancher& b);
+        /// Move brancher \a p to this group
+        BrancherGroup& move(Space& home, Brancher& p);
         /**
          * \brief Move brancher with id \a id to this group
          *
