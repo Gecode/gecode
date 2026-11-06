@@ -30,6 +30,7 @@
  *
  */
 
+// NOLINTNEXTLINE(misc-anonymous-namespace-in-header): included by one example
 namespace {
 
     /*
