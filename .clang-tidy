@@ -3,6 +3,7 @@
 Checks: >-
   -*,
   clang-analyzer-core.*,
+  cert-err33-c,
   google-default-arguments,
   cppcoreguidelines-no-malloc,
   cppcoreguidelines-misleading-capture-default-by-value,
@@ -75,6 +76,7 @@ FormatStyle: file
 CheckOptions:
   # Explicit discards document intentional ownership handoffs.
   bugprone-unused-return-value.AllowCastToVoid: true
+  cert-err33-c.AllowCastToVoid: true
   bugprone-empty-catch.IgnoreCatchWithKeywords: 'Expected;Ignored'
   # main reports nothing useful by catching, and the move members this
   # reports are implicit ones of value types and lambdas.
