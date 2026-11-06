@@ -634,10 +634,10 @@ namespace Test { namespace Branch {
         return true;
     failed:
         std::cout << "FAILURE" << '\n';
-        for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << '\n';
-            for (unsigned int i = 0; i < it->second.size(); ++i)
-                std::cout << it->second[i] << " ";
+        for (auto& result : results) {
+            std::cout << "Number of solutions: " << result.first << '\n';
+            for (const auto& entry : result.second)
+                std::cout << entry << " ";
             std::cout << '\n';
         }
         std::cout.flush();
@@ -826,10 +826,10 @@ namespace Test { namespace Branch {
         return true;
     failed:
         std::cout << "FAILURE" << '\n';
-        for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << '\n';
-            for (unsigned int i = 0; i < it->second.size(); ++i)
-                std::cout << it->second[i] << " ";
+        for (auto& result : results) {
+            std::cout << "Number of solutions: " << result.first << '\n';
+            for (const auto& entry : result.second)
+                std::cout << entry << " ";
             std::cout << '\n';
         }
         std::cout.flush();
@@ -1118,10 +1118,10 @@ namespace Test { namespace Branch {
         return true;
     failed:
         std::cout << "FAILURE" << '\n';
-        for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << '\n';
-            for (unsigned int i = 0; i < it->second.size(); ++i)
-                std::cout << it->second[i] << " ";
+        for (auto& result : results) {
+            std::cout << "Number of solutions: " << result.first << '\n';
+            for (const auto& entry : result.second)
+                std::cout << entry << " ";
             std::cout << '\n';
         }
         std::cout.flush();
@@ -1393,10 +1393,10 @@ namespace Test { namespace Branch {
         return true;
     failed:
         std::cout << "FAILURE" << '\n';
-        for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << '\n';
-            for (unsigned int i = 0; i < it->second.size(); ++i)
-                std::cout << it->second[i] << " ";
+        for (auto& result : results) {
+            std::cout << "Number of solutions: " << result.first << '\n';
+            for (const auto& entry : result.second)
+                std::cout << entry << " ";
             std::cout << '\n';
         }
         std::cout.flush();

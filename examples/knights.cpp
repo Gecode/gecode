@@ -193,8 +193,8 @@ public:
         static const int moves[8][2] = {{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}};
         int nbs[8];
         int n_nbs = 0;
-        for (int m = 0; m < 8; m++) {
-            int nx = x(i) + moves[m][0], ny = y(i) + moves[m][1];
+        for (const auto* move : moves) {
+            int nx = x(i) + move[0], ny = y(i) + move[1];
             if ((nx >= 0) && (nx < n) && (ny >= 0) && (ny < n))
                 nbs[n_nbs++] = f(nx, ny);
         }

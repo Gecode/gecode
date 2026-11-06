@@ -167,8 +167,8 @@ namespace Test { namespace Branch {
                 DFS<CBSSpace> engine(&root, o);
                 int n = 0;
                 while (std::unique_ptr<CBSSpace> s{engine.next()}) {
-                    for (int i = 0; i < s->x.size(); i++)
-                        if (!s->x[i].assigned())
+                    for (auto& var : s->x)
+                        if (!var.assigned())
                             return false;
                     n++;
                 }

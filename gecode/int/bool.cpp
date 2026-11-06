@@ -337,34 +337,34 @@ namespace Gecode {
         GECODE_POST;
         switch (irt) {
         case IRT_EQ:
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL((Bool::Eq<BoolView, BoolView>::post(home, x[i], y)));
+            for (auto xi : x) {
+                GECODE_ES_FAIL((Bool::Eq<BoolView, BoolView>::post(home, xi, y)));
             }
             break;
         case IRT_NQ: {
             NegBoolView n(y);
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL((Bool::Eq<BoolView, NegBoolView>::post(home, x[i], n)));
+            for (auto xi : x) {
+                GECODE_ES_FAIL((Bool::Eq<BoolView, NegBoolView>::post(home, xi, n)));
             }
         } break;
         case IRT_GQ:
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home, y, x[i]));
+            for (auto xi : x) {
+                GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home, y, xi));
             }
             break;
         case IRT_LQ:
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home, x[i], y));
+            for (auto xi : x) {
+                GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home, xi, y));
             }
             break;
         case IRT_GR:
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL(Bool::Le<BoolView>::post(home, y, x[i]));
+            for (auto xi : x) {
+                GECODE_ES_FAIL(Bool::Le<BoolView>::post(home, y, xi));
             }
             break;
         case IRT_LT:
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL(Bool::Le<BoolView>::post(home, x[i], y));
+            for (auto xi : x) {
+                GECODE_ES_FAIL(Bool::Le<BoolView>::post(home, xi, y));
             }
             break;
         default:
@@ -380,15 +380,13 @@ namespace Gecode {
             switch (irt) {
             case IRT_LQ:
             case IRT_EQ:
-                for (int i = 0; i < x.size(); i++) {
-                    BoolView xi(x[i]);
+                for (BoolView xi : x) {
                     GECODE_ME_FAIL(xi.zero(home));
                 }
                 break;
             case IRT_NQ:
             case IRT_GR:
-                for (int i = 0; i < x.size(); i++) {
-                    BoolView xi(x[i]);
+                for (BoolView xi : x) {
                     GECODE_ME_FAIL(xi.one(home));
                 }
                 break;
@@ -404,15 +402,13 @@ namespace Gecode {
             switch (irt) {
             case IRT_GQ:
             case IRT_EQ:
-                for (int i = 0; i < x.size(); i++) {
-                    BoolView xi(x[i]);
+                for (BoolView xi : x) {
                     GECODE_ME_FAIL(xi.one(home));
                 }
                 break;
             case IRT_NQ:
             case IRT_LT:
-                for (int i = 0; i < x.size(); i++) {
-                    BoolView xi(x[i]);
+                for (BoolView xi : x) {
                     GECODE_ME_FAIL(xi.zero(home));
                 }
                 break;
@@ -806,24 +802,24 @@ namespace Gecode {
                 yv.unique();
                 GECODE_ES_FAIL((Bool::ClauseTrue<NegBoolView, BoolView>::post(home, xv, yv)));
             } else {
-                for (int i = 0; i < x.size(); i++) {
-                    BoolView b(x[i]);
+                for (auto xi : x) {
+                    BoolView b(xi);
                     GECODE_ME_FAIL(b.one(home));
                 }
-                for (int i = 0; i < y.size(); i++) {
-                    BoolView b(y[i]);
+                for (auto yi : y) {
+                    BoolView b(yi);
                     GECODE_ME_FAIL(b.zero(home));
                 }
             }
             break;
         case BOT_OR:
             if (n == 0) {
-                for (int i = 0; i < x.size(); i++) {
-                    BoolView b(x[i]);
+                for (auto xi : x) {
+                    BoolView b(xi);
                     GECODE_ME_FAIL(b.zero(home));
                 }
-                for (int i = 0; i < y.size(); i++) {
-                    BoolView b(y[i]);
+                for (auto yi : y) {
+                    BoolView b(yi);
                     GECODE_ME_FAIL(b.one(home));
                 }
             } else {

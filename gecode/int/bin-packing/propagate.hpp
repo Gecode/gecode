@@ -146,8 +146,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
         : Propagator(home), l(l0), bs(bs0), ipl(ba(ipl0) == IPL_DEF ? IPL_ADVANCED : ipl0), t(0) {
         l.subscribe(home, *this, PC_INT_BND);
         bs.subscribe(home, *this, PC_INT_DOM);
-        for (int i = 0; i < bs.size(); i++)
-            t += bs[i].size();
+        for (auto b : bs)
+            t += b.size();
     }
 
     forceinline

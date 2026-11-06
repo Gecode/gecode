@@ -721,8 +721,8 @@ namespace Gecode {
             _vars_d[i] = nullptr;
 #endif
         try {
-            for (int i = 0; i < AllVarConf::idx_c; i++)
-                pc.c.vars_u[i] = nullptr;
+            for (auto& head : pc.c.vars_u)
+                head = nullptr;
             pc.c.vars_noidx = nullptr;
             pc.c.local = nullptr;
             pc.c.source = &s;

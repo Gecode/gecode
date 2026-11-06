@@ -49,7 +49,6 @@
 #include <string>
 #include <sstream>
 #include <limits>
-#include <memory>
 #include <unordered_set>
 
 namespace std {
@@ -190,20 +189,20 @@ namespace Gecode { namespace FlatZinc {
             if (done)
                 return false;
             const FlatZincSpace& home = static_cast<const FlatZincSpace&>(_home);
-            for (int i = 0; i < home.iv_aux.size(); i++)
-                if (!home.iv_aux[i].assigned())
+            for (auto var : home.iv_aux)
+                if (!var.assigned())
                     return true;
-            for (int i = 0; i < home.bv_aux.size(); i++)
-                if (!home.bv_aux[i].assigned())
+            for (auto var : home.bv_aux)
+                if (!var.assigned())
                     return true;
 #ifdef GECODE_HAS_SET_VARS
-            for (int i = 0; i < home.sv_aux.size(); i++)
-                if (!home.sv_aux[i].assigned())
+            for (auto var : home.sv_aux)
+                if (!var.assigned())
                     return true;
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-            for (int i = 0; i < home.fv_aux.size(); i++)
-                if (!home.fv_aux[i].assigned())
+            for (auto var : home.fv_aux)
+                if (!var.assigned())
                     return true;
 #endif
             // No non-assigned variables left
@@ -847,10 +846,10 @@ namespace Gecode { namespace FlatZinc {
 #endif
         if (need_aux_vars) {
             IntVarArgs iva;
-            for (int i = 0; i < f.iv_aux.size(); i++) {
-                if (!f.iv_aux[i].assigned()) {
+            for (auto& var : f.iv_aux) {
+                if (!var.assigned()) {
                     iva << IntVar();
-                    iva[iva.size() - 1].update(*this, f.iv_aux[i]);
+                    iva[iva.size() - 1].update(*this, var);
                 }
             }
             iv_aux = IntVarArray(*this, iva);
@@ -860,10 +859,10 @@ namespace Gecode { namespace FlatZinc {
         bool_var_count = f.bool_var_count;
         if (need_aux_vars) {
             BoolVarArgs bva;
-            for (int i = 0; i < f.bv_aux.size(); i++) {
-                if (!f.bv_aux[i].assigned()) {
+            for (auto& var : f.bv_aux) {
+                if (!var.assigned()) {
                     bva << BoolVar();
-                    bva[bva.size() - 1].update(*this, f.bv_aux[i]);
+                    bva[bva.size() - 1].update(*this, var);
                 }
             }
             bv_aux = BoolVarArray(*this, bva);
@@ -874,10 +873,10 @@ namespace Gecode { namespace FlatZinc {
         set_var_count = f.set_var_count;
         if (need_aux_vars) {
             SetVarArgs sva;
-            for (int i = 0; i < f.sv_aux.size(); i++) {
-                if (!f.sv_aux[i].assigned()) {
+            for (auto& var : f.sv_aux) {
+                if (!var.assigned()) {
                     sva << SetVar();
-                    sva[sva.size() - 1].update(*this, f.sv_aux[i]);
+                    sva[sva.size() - 1].update(*this, var);
                 }
             }
             sv_aux = SetVarArray(*this, sva);
@@ -888,10 +887,10 @@ namespace Gecode { namespace FlatZinc {
         float_var_count = f.float_var_count;
         if (need_aux_vars) {
             FloatVarArgs fva;
-            for (int i = 0; i < f.fv_aux.size(); i++) {
-                if (!f.fv_aux[i].assigned()) {
+            for (auto& var : f.fv_aux) {
+                if (!var.assigned()) {
                     fva << FloatVar();
-                    fva[fva.size() - 1].update(*this, f.fv_aux[i]);
+                    fva[fva.size() - 1].update(*this, var);
                 }
             }
             fv_aux = FloatVarArray(*this, fva);
@@ -1057,8 +1056,8 @@ namespace Gecode { namespace FlatZinc {
         // NOLINTNEXTLINE(bugprone-nondeterministic-pointer-iteration-order)
         std::sort(ces.begin(), ces.end(), ceo);
 
-        for (unsigned int i = 0; i < ces.size(); i++) {
-            const ConExpr& ce = *ces[i];
+        for (auto& con : ces) {
+            const ConExpr& ce = *con;
             try {
                 registry().post(*this, ce);
             } catch (Gecode::Exception& e) {
@@ -1066,22 +1065,22 @@ namespace Gecode { namespace FlatZinc {
             } catch (AST::TypeError& e) {
                 throw FlatZinc::Error("Type error", e.what(), ce.ann);
             }
-            delete ces[i];
-            ces[i] = nullptr;
+            delete con;
+            con = nullptr;
         }
     }
 
     void
     flatten_annotations(AST::Array* ann, std::vector<AST::Node*>& out) {
-        for (unsigned int i = 0; i < ann->a.size(); i++) {
-            if (ann->a[i]->is_call("seq_search")) {
-                AST::Call* c = ann->a[i]->get_call();
+        for (auto& arg : ann->a) {
+            if (arg->is_call("seq_search")) {
+                AST::Call* c = arg->get_call();
                 if (c->args->is_array())
                     flatten_annotations(c->args->get_array(), out);
                 else
                     out.push_back(c->args);
             } else {
-                out.push_back(ann->a[i]);
+                out.push_back(arg);
             }
         }
     }
@@ -1140,31 +1139,31 @@ namespace Gecode { namespace FlatZinc {
                 flat_ann.push_back(ann);
             }
 
-            for (unsigned int i = 0; i < flat_ann.size(); i++) {
-                if (flat_ann[i]->is_call("restart_geometric")) {
-                    AST::Call* call = flat_ann[i]->get_call("restart_geometric");
+            for (auto& flat : flat_ann) {
+                if (flat->is_call("restart_geometric")) {
+                    AST::Call* call = flat->get_call("restart_geometric");
                     opt.restart(RESTART_GEOMETRIC);
                     AST::Array* args = call->get_args(2);
                     opt.restart_base(args->a[0]->get_float());
                     opt.restart_scale(args->a[1]->get_int());
-                } else if (flat_ann[i]->is_call("restart_luby")) {
-                    AST::Call* call = flat_ann[i]->get_call("restart_luby");
+                } else if (flat->is_call("restart_luby")) {
+                    AST::Call* call = flat->get_call("restart_luby");
                     opt.restart(RESTART_LUBY);
                     opt.restart_scale(call->args->get_int());
-                } else if (flat_ann[i]->is_call("restart_linear")) {
-                    AST::Call* call = flat_ann[i]->get_call("restart_linear");
+                } else if (flat->is_call("restart_linear")) {
+                    AST::Call* call = flat->get_call("restart_linear");
                     opt.restart(RESTART_LINEAR);
                     opt.restart_scale(call->args->get_int());
-                } else if (flat_ann[i]->is_call("restart_constant")) {
-                    AST::Call* call = flat_ann[i]->get_call("restart_constant");
+                } else if (flat->is_call("restart_constant")) {
+                    AST::Call* call = flat->get_call("restart_constant");
                     opt.restart(RESTART_CONSTANT);
                     opt.restart_scale(call->args->get_int());
-                } else if (flat_ann[i]->is_call("restart_none")) {
+                } else if (flat->is_call("restart_none")) {
                     opt.restart(RESTART_NONE);
-                } else if (flat_ann[i]->is_call("relax_and_reconstruct")) {
+                } else if (flat->is_call("relax_and_reconstruct")) {
                     if (_lns != 0)
                         throw FlatZinc::Error("FlatZinc", "Only one relax_and_reconstruct annotation allowed");
-                    AST::Call* call = flat_ann[i]->get_call("relax_and_reconstruct");
+                    AST::Call* call = flat->get_call("relax_and_reconstruct");
                     AST::Array* args;
                     if (call->args->get_array()->a.size() == 2) {
                         args = call->get_args(2);
@@ -1174,42 +1173,42 @@ namespace Gecode { namespace FlatZinc {
                     _lns = args->a[1]->get_int();
                     AST::Array* vars = args->a[0]->get_array();
                     int k = vars->a.size();
-                    for (int i = vars->a.size(); i--;)
-                        if (vars->a[i]->is_int())
+                    for (int flat = vars->a.size(); flat--;)
+                        if (vars->a[flat]->is_int())
                             k--;
                     iv_lns = IntVarArray(*this, k);
                     k = 0;
-                    for (unsigned int i = 0; i < vars->a.size(); i++) {
-                        if (vars->a[i]->is_int())
+                    for (auto& var : vars->a) {
+                        if (var->is_int())
                             continue;
-                        iv_lns[k++] = iv[vars->a[i]->get_int_var()];
+                        iv_lns[k++] = iv[var->get_int_var()];
                     }
                     if (args->a.size() == 3) {
                         AST::Array* initial = args->a[2]->get_array();
                         _lns_initial_solution = IntSharedArray(initial->a.size());
-                        for (unsigned int i = initial->a.size(); i--;)
-                            _lns_initial_solution[i] = initial->a[i]->get_int();
+                        for (unsigned int flat = initial->a.size(); flat--;)
+                            _lns_initial_solution[flat] = initial->a[flat]->get_int();
                     }
-                } else if (flat_ann[i]->is_call("gecode_search")) {
-                    AST::Call* c = flat_ann[i]->get_call();
+                } else if (flat->is_call("gecode_search")) {
+                    AST::Call* c = flat->get_call();
                     branch_with_plugin(c->args);
-                } else if (flat_ann[i]->is_call("int_search")) {
-                    AST::Call* call = flat_ann[i]->get_call("int_search");
+                } else if (flat->is_call("int_search")) {
+                    AST::Call* call = flat->get_call("int_search");
                     AST::Array* args = call->get_args(4);
                     AST::Array* vars = args->a[0]->get_array();
                     int k = vars->a.size();
-                    for (int i = vars->a.size(); i--;)
-                        if (vars->a[i]->is_int())
+                    for (int flat = vars->a.size(); flat--;)
+                        if (vars->a[flat]->is_int())
                             k--;
                     IntVarArgs va(k);
                     std::vector<std::string> names;
                     k = 0;
-                    for (unsigned int i = 0; i < vars->a.size(); i++) {
-                        if (vars->a[i]->is_int())
+                    for (auto& var : vars->a) {
+                        if (var->is_int())
                             continue;
-                        va[k++] = iv[vars->a[i]->get_int_var()];
-                        iv_searched[vars->a[i]->get_int_var()] = true;
-                        names.push_back(vars->a[i]->get_var_name());
+                        va[k++] = iv[var->get_int_var()];
+                        iv_searched[var->get_int_var()] = true;
+                        names.push_back(var->get_var_name());
                     }
                     std::string r0, r1;
                     {
@@ -1218,40 +1217,40 @@ namespace Gecode { namespace FlatZinc {
                                annotation_to_int_val_branch(args->a[2], r0, r1, rnd), nullptr, &var_val_print<IntVar>);
                         branch_info.add(bg, r0, r1, names);
                     }
-                } else if (flat_ann[i]->is_call("int_assign")) {
-                    AST::Call* call = flat_ann[i]->get_call("int_assign");
+                } else if (flat->is_call("int_assign")) {
+                    AST::Call* call = flat->get_call("int_assign");
                     AST::Array* args = call->get_args(2);
                     AST::Array* vars = args->a[0]->get_array();
                     int k = vars->a.size();
-                    for (int i = vars->a.size(); i--;)
-                        if (vars->a[i]->is_int())
+                    for (int flat = vars->a.size(); flat--;)
+                        if (vars->a[flat]->is_int())
                             k--;
                     IntVarArgs va(k);
                     k = 0;
-                    for (unsigned int i = 0; i < vars->a.size(); i++) {
-                        if (vars->a[i]->is_int())
+                    for (auto& var : vars->a) {
+                        if (var->is_int())
                             continue;
-                        va[k++] = iv[vars->a[i]->get_int_var()];
-                        iv_searched[vars->a[i]->get_int_var()] = true;
+                        va[k++] = iv[var->get_int_var()];
+                        iv_searched[var->get_int_var()] = true;
                     }
                     assign(*this, va, annotation_to_int_assign(args->a[1], rnd), nullptr, &var_val_print<IntVar>);
-                } else if (flat_ann[i]->is_call("bool_search")) {
-                    AST::Call* call = flat_ann[i]->get_call("bool_search");
+                } else if (flat->is_call("bool_search")) {
+                    AST::Call* call = flat->get_call("bool_search");
                     AST::Array* args = call->get_args(4);
                     AST::Array* vars = args->a[0]->get_array();
                     int k = vars->a.size();
-                    for (int i = vars->a.size(); i--;)
-                        if (vars->a[i]->is_bool())
+                    for (int flat = vars->a.size(); flat--;)
+                        if (vars->a[flat]->is_bool())
                             k--;
                     BoolVarArgs va(k);
                     k = 0;
                     std::vector<std::string> names;
-                    for (unsigned int i = 0; i < vars->a.size(); i++) {
-                        if (vars->a[i]->is_bool())
+                    for (auto& var : vars->a) {
+                        if (var->is_bool())
                             continue;
-                        va[k++] = bv[vars->a[i]->get_bool_var()];
-                        bv_searched[vars->a[i]->get_bool_var()] = true;
-                        names.push_back(vars->a[i]->get_var_name());
+                        va[k++] = bv[var->get_bool_var()];
+                        bv_searched[var->get_bool_var()] = true;
+                        names.push_back(var->get_var_name());
                     }
 
                     std::string r0, r1;
@@ -1262,20 +1261,20 @@ namespace Gecode { namespace FlatZinc {
                                &var_val_print<BoolVar>);
                         branch_info.add(bg, r0, r1, names);
                     }
-                } else if (flat_ann[i]->is_call("int_default_search")) {
-                    AST::Call* call = flat_ann[i]->get_call("int_default_search");
+                } else if (flat->is_call("int_default_search")) {
+                    AST::Call* call = flat->get_call("int_default_search");
                     AST::Array* args = call->get_args(2);
                     def_int_varsel = annotation_to_int_var_branch(args->a[0], rnd, decay);
                     def_int_valsel = annotation_to_int_val_branch(args->a[1], def_int_rel_left, def_int_rel_right, rnd);
-                } else if (flat_ann[i]->is_call("bool_default_search")) {
-                    AST::Call* call = flat_ann[i]->get_call("bool_default_search");
+                } else if (flat->is_call("bool_default_search")) {
+                    AST::Call* call = flat->get_call("bool_default_search");
                     AST::Array* args = call->get_args(2);
                     def_bool_varsel = annotation_to_bool_var_branch(args->a[0], rnd, decay);
                     def_bool_valsel =
                         annotation_to_bool_val_branch(args->a[1], def_bool_rel_left, def_bool_rel_right, rnd);
-                } else if (flat_ann[i]->is_call("set_search")) {
+                } else if (flat->is_call("set_search")) {
 #ifdef GECODE_HAS_SET_VARS
-                    AST::Call* call = flat_ann[i]->get_call("set_search");
+                    AST::Call* call = flat->get_call("set_search");
                     AST::Array* args = call->get_args(4);
                     AST::Array* vars = args->a[0]->get_array();
                     int k = vars->a.size();
@@ -1285,12 +1284,12 @@ namespace Gecode { namespace FlatZinc {
                     SetVarArgs va(k);
                     k = 0;
                     std::vector<std::string> names;
-                    for (unsigned int i = 0; i < vars->a.size(); i++) {
-                        if (vars->a[i]->is_set())
+                    for (auto& var : vars->a) {
+                        if (var->is_set())
                             continue;
-                        va[k++] = sv[vars->a[i]->get_set_var()];
-                        sv_searched[vars->a[i]->get_set_var()] = true;
-                        names.push_back(vars->a[i]->get_var_name());
+                        va[k++] = sv[var->get_set_var()];
+                        sv_searched[var->get_set_var()] = true;
+                        names.push_back(var->get_var_name());
                     }
                     std::string r0, r1;
                     {
@@ -1306,9 +1305,9 @@ namespace Gecode { namespace FlatZinc {
                         err << '\n' << std::flush;
                     }
 #endif
-                } else if (flat_ann[i]->is_call("set_default_search")) {
+                } else if (flat->is_call("set_default_search")) {
 #ifdef GECODE_HAS_SET_VARS
-                    AST::Call* call = flat_ann[i]->get_call("set_default_search");
+                    AST::Call* call = flat->get_call("set_default_search");
                     AST::Array* args = call->get_args(2);
                     def_set_varsel = annotation_to_set_var_branch(args->a[0], rnd, decay);
                     def_set_valsel = annotation_to_set_val_branch(args->a[1], def_set_rel_left, def_set_rel_right, rnd);
@@ -1319,9 +1318,9 @@ namespace Gecode { namespace FlatZinc {
                         err << '\n' << std::flush;
                     }
 #endif
-                } else if (flat_ann[i]->is_call("float_default_search")) {
+                } else if (flat->is_call("float_default_search")) {
 #ifdef GECODE_HAS_FLOAT_VARS
-                    AST::Call* call = flat_ann[i]->get_call("float_default_search");
+                    AST::Call* call = flat->get_call("float_default_search");
                     AST::Array* args = call->get_args(2);
                     def_float_varsel = annotation_to_float_var_branch(args->a[0], rnd, decay);
                     def_float_valsel =
@@ -1333,9 +1332,9 @@ namespace Gecode { namespace FlatZinc {
                         err << '\n' << std::flush;
                     }
 #endif
-                } else if (flat_ann[i]->is_call("float_search")) {
+                } else if (flat->is_call("float_search")) {
 #ifdef GECODE_HAS_FLOAT_VARS
-                    AST::Call* call = flat_ann[i]->get_call("float_search");
+                    AST::Call* call = flat->get_call("float_search");
                     AST::Array* args = call->get_args(5);
                     AST::Array* vars = args->a[0]->get_array();
                     int k = vars->a.size();
@@ -1345,12 +1344,12 @@ namespace Gecode { namespace FlatZinc {
                     FloatVarArgs va(k);
                     k = 0;
                     std::vector<std::string> names;
-                    for (unsigned int i = 0; i < vars->a.size(); i++) {
-                        if (vars->a[i]->is_float())
+                    for (auto& var : vars->a) {
+                        if (var->is_float())
                             continue;
-                        va[k++] = fv[vars->a[i]->get_float_var()];
-                        fv_searched[vars->a[i]->get_float_var()] = true;
-                        names.push_back(vars->a[i]->get_var_name());
+                        va[k++] = fv[var->get_float_var()];
+                        fv_searched[var->get_float_var()] = true;
+                        names.push_back(var->get_var_name());
                     }
                     std::string r0, r1;
                     {
@@ -1369,7 +1368,7 @@ namespace Gecode { namespace FlatZinc {
                 } else {
                     if (!ignore_unknown) {
                         err << "Warning, ignored search annotation: ";
-                        flat_ann[i]->print(err);
+                        flat->print(err);
                         err << '\n' << std::flush;
                     }
                 }
@@ -2903,8 +2902,7 @@ namespace Gecode { namespace FlatZinc {
     ) const {
         if (_output == nullptr)
             return;
-        for (unsigned int i = 0; i < _output->a.size(); i++) {
-            AST::Node* ai = _output->a[i];
+        for (auto* ai : _output->a) {
             if (ai->is_array()) {
                 AST::Array* aia = ai->get_array();
                 int size = aia->a.size();
@@ -2953,8 +2951,7 @@ namespace Gecode { namespace FlatZinc {
     ) const {
         if (_output == nullptr)
             return;
-        for (unsigned int i = 0; i < _output->a.size(); i++) {
-            AST::Node* ai = _output->a[i];
+        for (auto* ai : _output->a) {
             if (ai->is_array()) {
                 AST::Array* aia = ai->get_array();
                 int size = aia->a.size();
@@ -3094,12 +3091,11 @@ namespace Gecode { namespace FlatZinc {
             opt_var = 0;
         }
 
-        for (unsigned int i = 0; i < _output->a.size(); i++) {
-            AST::Node* ai = _output->a[i];
+        for (auto* ai : _output->a) {
             if (ai->is_array()) {
                 AST::Array* aia = ai->get_array();
-                for (unsigned int j = 0; j < aia->a.size(); j++) {
-                    shrink_element(aia->a[j], iv_new, bv_new, sv_new, fv_new);
+                for (auto& j : aia->a) {
+                    shrink_element(j, iv_new, bv_new, sv_new, fv_new);
                 }
             } else {
                 shrink_element(ai, iv_new, bv_new, sv_new, fv_new);
@@ -3108,18 +3104,18 @@ namespace Gecode { namespace FlatZinc {
 
         IntVarArgs iva(iv_new.size());
         std::vector<std::string> iv_names_new(iv_new.size());
-        for (std::map<int, int>::iterator i = iv_new.begin(); i != iv_new.end(); ++i) {
-            iva[(*i).second] = iv[(*i).first];
-            iv_names_new[(*i).second] = iv_names[(*i).first];
+        for (auto& entry : iv_new) {
+            iva[entry.second] = iv[entry.first];
+            iv_names_new[entry.second] = iv_names[entry.first];
         }
         iv = IntVarArray(home, iva);
         iv_names = iv_names_new;
 
         BoolVarArgs bva(bv_new.size());
         std::vector<std::string> bv_names_new(bv_new.size());
-        for (std::map<int, int>::iterator i = bv_new.begin(); i != bv_new.end(); ++i) {
-            bva[(*i).second] = bv[(*i).first];
-            bv_names_new[(*i).second] = bv_names[(*i).first];
+        for (auto& entry : bv_new) {
+            bva[entry.second] = bv[entry.first];
+            bv_names_new[entry.second] = bv_names[entry.first];
         }
         bv = BoolVarArray(home, bva);
         bv_names = bv_names_new;
@@ -3127,9 +3123,9 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_SET_VARS
         SetVarArgs sva(sv_new.size());
         std::vector<std::string> sv_names_new(sv_new.size());
-        for (std::map<int, int>::iterator i = sv_new.begin(); i != sv_new.end(); ++i) {
-            sva[(*i).second] = sv[(*i).first];
-            sv_names_new[(*i).second] = sv_names[(*i).first];
+        for (auto& entry : sv_new) {
+            sva[entry.second] = sv[entry.first];
+            sv_names_new[entry.second] = sv_names[entry.first];
         }
         sv = SetVarArray(home, sva);
         sv_names = sv_names_new;
@@ -3138,9 +3134,9 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_FLOAT_VARS
         FloatVarArgs fva(fv_new.size());
         std::vector<std::string> fv_names_new(fv_new.size());
-        for (std::map<int, int>::iterator i = fv_new.begin(); i != fv_new.end(); ++i) {
-            fva[(*i).second] = fv[(*i).first];
-            fv_names_new[(*i).second] = fv_names[(*i).first];
+        for (auto& entry : fv_new) {
+            fva[entry.second] = fv[entry.first];
+            fv_names_new[entry.second] = fv_names[entry.first];
         }
         fv = FloatVarArray(home, fva);
         fv_names = fv_names_new;

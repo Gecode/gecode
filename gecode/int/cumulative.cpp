@@ -32,7 +32,6 @@
  *
  */
 
-#include <algorithm>
 #include <gecode/int/cumulative.hh>
 
 #include <algorithm>
@@ -59,14 +58,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
         int min_u = INT_MAX;
         int min_u2 = INT_MAX;
         int max_u = INT_MIN;
-        for (int i = 0; i < u.size(); i++) {
-            if (u[i] < min_u) {
+        for (int ui : u) {
+            if (ui < min_u) {
                 min_u2 = min_u;
-                min_u = u[i];
-            } else if (u[i] < min_u2) {
-                min_u2 = u[i];
+                min_u = ui;
+            } else if (ui < min_u2) {
+                min_u2 = ui;
             }
-            max_u = std::max(u[i], max_u);
+            max_u = std::max(ui, max_u);
         }
         bool disjunctive = (min_u > c.max() / 2) || (min_u2 > c.max() / 2 && min_u + min_u2 > c.max());
         if (disjunctive) {
@@ -74,14 +73,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
             unary(home, t, s, p, ipl);
         } else {
             bool fixp = true;
-            for (int i = 0; i < t.size(); i++)
-                if (t[i] != TT_FIXED_PROCESSING) {
+            for (auto ti : t)
+                if (ti != TT_FIXED_PROCESSING) {
                     fixp = false;
                     break;
                 }
             int non_optionals = 0;
-            for (int i = 0; i < u.size(); i++)
-                if (u[i] > 0)
+            for (int ui : u)
+                if (ui > 0)
                     non_optionals++;
             if (fixp) {
                 TaskArray<ManFixPTask> tasks(home, non_optionals);
@@ -123,8 +122,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
         GECODE_POST;
 
         bool all_mandatory = true;
-        for (int i = 0; i < m.size(); i++) {
-            if (!m[i].one()) {
+        for (auto mi : m) {
+            if (!mi.one()) {
                 all_mandatory = false;
                 break;
             }
@@ -133,14 +132,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
             cumulative(home, c, t, s, p, u, ipl);
         } else {
             bool fixp = true;
-            for (int i = 0; i < t.size(); i++)
-                if (t[i] != TT_FIXED_PROCESSING) {
+            for (auto ti : t)
+                if (ti != TT_FIXED_PROCESSING) {
                     fixp = false;
                     break;
                 }
             int non_optionals = 0;
-            for (int i = 0; i < u.size(); i++)
-                if (u[i] > 0)
+            for (int ui : u)
+                if (ui > 0)
                     non_optionals++;
             if (fixp) {
                 TaskArray<OptFixPTask> tasks(home, non_optionals);
@@ -183,14 +182,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
         int min_u = INT_MAX;
         int min_u2 = INT_MAX;
         int max_u = INT_MIN;
-        for (int i = 0; i < u.size(); i++) {
-            if (u[i] < min_u) {
+        for (int ui : u) {
+            if (ui < min_u) {
                 min_u2 = min_u;
-                min_u = u[i];
-            } else if (u[i] < min_u2) {
-                min_u2 = u[i];
+                min_u = ui;
+            } else if (ui < min_u2) {
+                min_u2 = ui;
             }
-            max_u = std::max(u[i], max_u);
+            max_u = std::max(ui, max_u);
         }
         bool disjunctive = (min_u > c.max() / 2) || (min_u2 > c.max() / 2 && min_u + min_u2 > c.max());
         if (disjunctive) {
@@ -198,8 +197,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
             unary(home, s, p, ipl);
         } else {
             int non_optionals = 0;
-            for (int i = 0; i < u.size(); i++)
-                if (u[i] > 0)
+            for (int ui : u)
+                if (ui > 0)
                     non_optionals++;
             TaskArray<ManFixPTask> t(home, non_optionals);
             int cur = 0;
@@ -273,12 +272,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
         mul_check(c.max(), w, s.size());
 
         GECODE_POST;
-        for (int i = 0; i < p.size(); i++)
-            GECODE_ME_FAIL(IntView(p[i]).gq(home, 0));
+        for (auto pi : p)
+            GECODE_ME_FAIL(IntView(pi).gq(home, 0));
 
         bool fix_p = true;
-        for (int i = 0; i < p.size(); i++) {
-            if (!p[i].assigned()) {
+        for (auto pi : p) {
+            if (!pi.assigned()) {
                 fix_p = false;
                 break;
             }
@@ -290,8 +289,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
             cumulative(home, c, s, pp, u, ipl);
         } else {
             int non_optionals = 0;
-            for (int i = 0; i < u.size(); i++)
-                if (u[i] > 0)
+            for (int ui : u)
+                if (ui > 0)
                     non_optionals++;
             TaskArray<ManFlexTask> t(home, non_optionals);
             int cur = 0;
@@ -322,12 +321,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
         mul_check(c.max(), w, s.size());
 
         GECODE_POST;
-        for (int i = 0; i < p.size(); i++)
-            GECODE_ME_FAIL(IntView(p[i]).gq(home, 0));
+        for (auto pi : p)
+            GECODE_ME_FAIL(IntView(pi).gq(home, 0));
 
         bool all_mandatory = true;
-        for (int i = 0; i < m.size(); i++) {
-            if (!m[i].one()) {
+        for (auto mi : m) {
+            if (!mi.one()) {
                 all_mandatory = false;
                 break;
             }
@@ -336,8 +335,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
             cumulative(home, c, s, p, e, u, ipl);
         } else {
             int non_optionals = 0;
-            for (int i = 0; i < u.size(); i++)
-                if (u[i] > 0)
+            for (int ui : u)
+                if (ui > 0)
                     non_optionals++;
             TaskArray<OptFlexTask> t(home, non_optionals);
             int cur = 0;

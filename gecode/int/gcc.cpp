@@ -112,8 +112,8 @@ namespace Gecode {
 
         if (x.size() == 0) {
             // Without variables, every value occurs zero times
-            for (int i = 0; i < c.size(); i++)
-                GECODE_ME_FAIL(IntView(c[i]).eq(home, 0));
+            for (auto ci : c)
+                GECODE_ME_FAIL(IntView(ci).eq(home, 0));
             return;
         }
         if (v.size() == 0) {
@@ -170,8 +170,8 @@ namespace Gecode {
 
         if (x.size() == 0) {
             // Without variables, every value occurs zero times
-            for (int i = 0; i < c.size(); i++)
-                if (!c[i].in(0)) {
+            for (const auto& ci : c)
+                if (!ci.in(0)) {
                     home.fail();
                     return;
                 }

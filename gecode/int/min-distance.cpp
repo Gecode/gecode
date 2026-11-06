@@ -81,9 +81,9 @@ namespace Gecode { namespace Int { namespace MinDistance {
     post(Home home, const IntVarArgs& x, IntView z, const IntDistance& d, const IntSharedArray& r,
          MinDistancePropKind kind, IntPropLevel ipl) {
         ViewArray<IntView> views(home, x);
-        for (int i = 0; i < views.size(); i++) {
-            GECODE_ME_CHECK(views[i].gq(home, 0));
-            GECODE_ME_CHECK(views[i].le(home, d.size()));
+        for (auto& view : views) {
+            GECODE_ME_CHECK(view.gq(home, 0));
+            GECODE_ME_CHECK(view.le(home, d.size()));
         }
         GECODE_ME_CHECK(z.gq(home, 0));
         if (views.assigned())

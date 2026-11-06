@@ -532,15 +532,14 @@ namespace Test { namespace Int {
                        n_symbols - 1, false, Gecode::IPL_DOM),
                   finals(0) {
                 unsigned int random = seed;
-                for (int state = 0; state < n_dfa_states; state++)
-                    for (int symbol = 0; symbol < n_symbols; symbol++) {
+                for (auto& state : next)
+                    for (int& symbol : state) {
                         random = 1664525U * random + 1013904223U;
-                        next[state][symbol] =
-                            ((random & 7U) == 0U) ? -1 : static_cast<int>((random >> 8) % n_dfa_states);
+                        symbol = ((random & 7U) == 0U) ? -1 : static_cast<int>((random >> 8) % n_dfa_states);
                     }
-                for (int i = 0; i < 5; i++) {
+                for (unsigned int& word : allowed) {
                     random = 1664525U * random + 1013904223U;
-                    allowed[i] = 1U + ((random >> 12) % 7U);
+                    word = 1U + ((random >> 12) % 7U);
                 }
                 random = 1664525U * random + 1013904223U;
                 finals = 1U + ((random >> 16) % 15U);
@@ -602,11 +601,11 @@ namespace Test { namespace Int {
                        "Extensional::Reg::Sparse::RandomNFADifferential::" + Test::str(static_cast<int>(seed)), 5, 0,
                        n_symbols - 1, false, Gecode::IPL_DOM) {
                 unsigned int random = seed;
-                for (int state = 0; state < n_fa_states; state++)
-                    for (int symbol = 0; symbol < n_symbols; symbol++)
-                        for (int output = 0; output < n_fa_states; output++) {
+                for (auto& state : next)
+                    for (auto& symbol : state)
+                        for (bool& output : symbol) {
                             random = 1664525U * random + 1013904223U;
-                            next[state][symbol][output] = ((random >> 29) == 0U);
+                            output = ((random >> 29) == 0U);
                         }
                 // Keep a nondeterministic fork and both of its branches relevant.
                 next[0][0][1] = true;
@@ -615,9 +614,9 @@ namespace Test { namespace Int {
                 next[2][2][3] = true;
                 for (int symbol = 0; symbol < n_symbols; symbol++)
                     next[3][symbol][3] = true;
-                for (int i = 0; i < 5; i++) {
+                for (unsigned int& word : allowed) {
                     random = 1664525U * random + 1013904223U;
-                    allowed[i] = 1U + ((random >> 12) % 7U);
+                    word = 1U + ((random >> 12) % 7U);
                 }
                 // Ensure both branches of the fixed fork can occur.
                 allowed[0] |= 1U;
@@ -1087,8 +1086,8 @@ namespace Test { namespace Int {
             post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 OpenIntVarList list(home, x.size());
-                for (int i = 0; i < x.size(); i++)
-                    list.append(home, x[i]);
+                for (auto xi : x)
+                    list.append(home, xi);
                 list.close(home);
                 DFA d(0, {{0, 0, 0}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0}}, {0}, false);
                 extensional(home, list, d);

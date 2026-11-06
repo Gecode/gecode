@@ -50,8 +50,8 @@ namespace Gecode { namespace Search {
     /// Dispose builders consumed by an explicit portfolio
     forceinline void
     pbs_cleanup(SEBs& sebs) {
-        for (int i = 0; i < sebs.size(); i++)
-            delete sebs[i];
+        for (auto& seb : sebs)
+            delete seb;
     }
 
     /// Validate worker-control placement for a homogeneous portfolio
@@ -366,8 +366,8 @@ namespace Gecode {
         bool best;
         {
             int b = 0;
-            for (int i = 0; i < sebs.size(); i++)
-                b += sebs[i]->best() ? 1 : 0;
+            for (auto& seb : sebs)
+                b += seb->best() ? 1 : 0;
             if ((b > 0) && (b < sebs.size()))
                 throw Search::MixedBest("PBS::PBS");
             best = (b == sebs.size());

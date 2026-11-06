@@ -1086,17 +1086,17 @@ namespace Test { namespace Int {
                     {-4, 0, -24, -5},  // Nonpositive
                     {-4, 3, -24, 24}   // Mixed across zero
                 };
-                for (unsigned int i = 0; i < sizeof(cases) / sizeof(Case); i++) {
+                for (auto c : cases) {
                     TestSpace home;
                     IntVar x(home, -100, 100);
-                    IntVar q(home, cases[i].qmin, cases[i].qmax);
+                    IntVar q(home, c.qmin, c.qmax);
                     IntVar y(home, 20, 24);
                     product(home, IntVarArgs({x, q}), y);
-                    if ((home.status() == SS_FAILED) || !bounds(x, cases[i].xmin, cases[i].xmax)) {
+                    if ((home.status() == SS_FAILED) || !bounds(x, c.xmin, c.xmax)) {
                         if (opt.log)
-                            olog << "Inverse bounds, cofactor [" << cases[i].qmin << "," << cases[i].qmax
-                                 << "]: x=" << x << ", q=" << q << ", y=" << y << "; expected x=[" << cases[i].xmin
-                                 << "," << cases[i].xmax << "]" << '\n';
+                            olog << "Inverse bounds, cofactor [" << c.qmin << "," << c.qmax << "]: x=" << x
+                                 << ", q=" << q << ", y=" << y << "; expected x=[" << c.xmin << "," << c.xmax << "]"
+                                 << '\n';
                         return false;
                     }
                 }
@@ -1268,8 +1268,8 @@ namespace Test { namespace Int {
             solution(const Assignment& x) const override {
                 long long int p = 1;
                 const int v[] = {c, x[0], c, x[0], x[1], c};
-                for (int i = 0; i < 6; i++)
-                    p = (p * ((v[i] % m + m) % m)) % m;
+                for (int vi : v)
+                    p = (p * ((vi % m + m) % m)) % m;
                 return p == x[2];
             }
             void

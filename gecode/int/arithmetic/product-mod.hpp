@@ -52,8 +52,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     product_mod_interval(const ViewArray<IntView>& x, ProductInterval& p, int a = 1) {
         p.min = a;
         p.max = a;
-        for (int i = 0; i < x.size(); i++) {
-            ProductInterval q = {x[i].min(), x[i].max()};
+        for (auto xi : x) {
+            ProductInterval q = {xi.min(), xi.max()};
             if (!product_mod_interval_mul(p, q, p))
                 return false;
         }
@@ -83,11 +83,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     product_mod_coefficient(const ViewArray<IntView>& x, int m, int& free_count) {
         long long int p = 1 % m;
         free_count = 0;
-        for (int i = 0; i < x.size(); i++) {
-            if (!x[i].assigned()) {
+        for (auto xi : x) {
+            if (!xi.assigned()) {
                 free_count++;
             } else {
-                long long int q = static_cast<long long int>(x[i].val()) % m;
+                long long int q = static_cast<long long int>(xi.val()) % m;
                 if (q < 0)
                     q += m;
                 p = (p * q) % m;
@@ -123,12 +123,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// A nonzero residue excludes bounds-visible zero factors.
     inline ExecStatus
     product_mod_nonzero(Space& home, ViewArray<IntView>& x, bool& modified) {
-        for (int i = 0; i < x.size(); i++) {
+        for (auto& xi : x) {
             ModEvent me = ME_INT_NONE;
-            if (x[i].min() == 0)
-                me = x[i].gq(home, 1);
-            else if (x[i].max() == 0)
-                me = x[i].lq(home, -1);
+            if (xi.min() == 0)
+                me = xi.gq(home, 1);
+            else if (xi.max() == 0)
+                me = xi.lq(home, -1);
             if (me_failed(me))
                 return ES_FAILED;
             modified |= me_modified(me);
@@ -358,8 +358,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Whether the modulus occurs among the factors.
     inline bool
     product_mod_var_mod_factor(const ViewArray<IntView>& x, const IntView& m) {
-        for (int i = 0; i < x.size(); i++)
-            if (x[i] == m)
+        for (auto xi : x)
+            if (xi == m)
                 return true;
         return false;
     }
@@ -368,10 +368,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     inline bool
     product_mod_var_exact(const ViewArray<IntView>& x, long long int& p) {
         long long int q = 1;
-        for (int i = 0; i < x.size(); i++) {
-            if (!x[i].assigned())
+        for (auto xi : x) {
+            if (!xi.assigned())
                 return false;
-            const long long int v = x[i].val();
+            const long long int v = xi.val();
             if (Limits::overflow_mul(q, v))
                 return false;
             q *= v;
@@ -425,8 +425,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             modified = false;
             if (y.min() > 0)
                 GECODE_ES_CHECK(product_mod_nonzero(home, x, modified));
-            for (int i = 0; i < x.size(); i++)
-                if (x[i].min() < 0)
+            for (auto xi : x)
+                if (xi.min() < 0)
                     return ES_OK;
             ProductInterval p;
             if (!product_mod_interval(x, p))
@@ -625,8 +625,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             GECODE_ME_CHECK(y.eq(home, 0));
             return home.ES_SUBSUMED(*this);
         }
-        for (int i = 0; i < x.size(); i++)
-            if (x[i].assigned() && (x[i].val() == 0)) {
+        for (auto& xi : x)
+            if (xi.assigned() && (xi.val() == 0)) {
                 GECODE_ME_CHECK(y.eq(home, 0));
                 return home.ES_SUBSUMED(*this);
             }

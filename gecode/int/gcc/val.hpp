@@ -111,10 +111,10 @@ namespace Gecode { namespace Int { namespace GCC {
         // number of unassigned views
         int non = x.size();
 
-        for (int i = 0; i < x.size(); i++)
-            if (x[i].assigned()) {
+        for (auto& xi : x)
+            if (xi.assigned()) {
                 int idx;
-                if (!lookup_value(k, x[i].val(), idx)) {
+                if (!lookup_value(k, xi.val(), idx)) {
                     return ES_FAILED;
                 }
                 count[idx]++;

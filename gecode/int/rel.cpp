@@ -74,38 +74,32 @@ namespace Gecode {
         GECODE_POST;
         switch (irt) {
         case IRT_EQ:
-            for (int i = 0; i < x.size(); i++) {
-                IntView xi(x[i]);
+            for (IntView xi : x) {
                 GECODE_ME_FAIL(xi.eq(home, n));
             }
             break;
         case IRT_NQ:
-            for (int i = 0; i < x.size(); i++) {
-                IntView xi(x[i]);
+            for (IntView xi : x) {
                 GECODE_ME_FAIL(xi.nq(home, n));
             }
             break;
         case IRT_LQ:
-            for (int i = 0; i < x.size(); i++) {
-                IntView xi(x[i]);
+            for (IntView xi : x) {
                 GECODE_ME_FAIL(xi.lq(home, n));
             }
             break;
         case IRT_LT:
-            for (int i = 0; i < x.size(); i++) {
-                IntView xi(x[i]);
+            for (IntView xi : x) {
                 GECODE_ME_FAIL(xi.le(home, n));
             }
             break;
         case IRT_GQ:
-            for (int i = 0; i < x.size(); i++) {
-                IntView xi(x[i]);
+            for (IntView xi : x) {
                 GECODE_ME_FAIL(xi.gq(home, n));
             }
             break;
         case IRT_GR:
-            for (int i = 0; i < x.size(); i++) {
-                IntView xi(x[i]);
+            for (IntView xi : x) {
                 GECODE_ME_FAIL(xi.gr(home, n));
             }
             break;
@@ -161,28 +155,28 @@ namespace Gecode {
             }
         } break;
         case IRT_NQ:
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL((Rel::Nq<IntView, IntView>::post(home, x[i], y)));
+            for (auto xi : x) {
+                GECODE_ES_FAIL((Rel::Nq<IntView, IntView>::post(home, xi, y)));
             }
             break;
         case IRT_GQ:
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL((Rel::Lq<IntView, IntView>::post(home, y, x[i])));
+            for (auto xi : x) {
+                GECODE_ES_FAIL((Rel::Lq<IntView, IntView>::post(home, y, xi)));
             }
             break;
         case IRT_LQ:
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL((Rel::Lq<IntView, IntView>::post(home, x[i], y)));
+            for (auto xi : x) {
+                GECODE_ES_FAIL((Rel::Lq<IntView, IntView>::post(home, xi, y)));
             }
             break;
         case IRT_GR:
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL((Rel::Le<IntView, IntView>::post(home, y, x[i])));
+            for (auto xi : x) {
+                GECODE_ES_FAIL((Rel::Le<IntView, IntView>::post(home, y, xi)));
             }
             break;
         case IRT_LT:
-            for (int i = 0; i < x.size(); i++) {
-                GECODE_ES_FAIL((Rel::Le<IntView, IntView>::post(home, x[i], y)));
+            for (auto xi : x) {
+                GECODE_ES_FAIL((Rel::Le<IntView, IntView>::post(home, xi, y)));
             }
             break;
         default:

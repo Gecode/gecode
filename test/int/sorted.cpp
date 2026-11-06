@@ -129,8 +129,8 @@ namespace Test { namespace Int {
                         return false;
 
                 // check whether permutation is in range
-                for (int i = 0; i < n; i++)
-                    if ((z[i] < 0) || (z[i] >= n))
+                for (int zi : z)
+                    if ((zi < 0) || (zi >= n))
                         return false;
 
                 // check whether permutation info is correct

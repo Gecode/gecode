@@ -62,14 +62,14 @@ namespace Gecode { namespace Set { namespace Sequence {
         GECODE_ME_CHECK_MODIFIED(modified, y.include_i(home, u));
 
         GLBndSet before(home);
-        for (int i = 0; i < x.size(); i++) {
-            LubRanges<SetView> xiub(x[i]);
+        for (auto& xi : x) {
+            LubRanges<SetView> xiub(xi);
             before.include_i(home, xiub);
             BndSetRanges before_r(before);
             GlbRanges<SetView> ylb(y);
             Iter::Ranges::Diff<GlbRanges<SetView>, BndSetRanges> diff(ylb, before_r);
             if (diff()) {
-                GECODE_ME_CHECK_MODIFIED(modified, x[i].exclude(home, diff.min(), Limits::max));
+                GECODE_ME_CHECK_MODIFIED(modified, xi.exclude(home, diff.min(), Limits::max));
             }
         }
         before.dispose(home);

@@ -469,12 +469,12 @@ namespace Test { namespace Float {
                     std::ldexp(static_cast<Gecode::FloatNum>(0x1751def03d6f38ULL), 458);
                 const Gecode::FloatNum rejected_upper =
                     std::ldexp(static_cast<Gecode::FloatNum>(0x1350f4c43079ceULL), 203);
-                for (unsigned int m = 0; m < sizeof(modes) / sizeof(modes[0]); m++) {
-                    for (unsigned int c = 0; c < sizeof(cases) / sizeof(cases[0]); c++) {
-                        result = check(cases[c].hi, cases[c].witness, cases[c].n, modes[m], false) && result;
-                        result = check(cases[c].hi, cases[c].witness, cases[c].n, modes[m], true) && result;
+                for (int mode : modes) {
+                    for (auto& c : cases) {
+                        result = check(c.hi, c.witness, c.n, mode, false) && result;
+                        result = check(c.hi, c.witness, c.n, mode, true) && result;
                     }
-                    result = check_bound(rounding_hi, rejected_upper, 2, modes[m]) && result;
+                    result = check_bound(rounding_hi, rejected_upper, 2, mode) && result;
                 }
                 if (old_mode != -1)
                     std::fesetround(old_mode);

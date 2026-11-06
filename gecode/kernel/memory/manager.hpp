@@ -338,8 +338,8 @@ namespace Gecode { namespace Kernel {
     MemoryManager::MemoryManager(SharedMemory& sm)
         : cur_hcsz(MemoryConfig::hcsz_min), requested(0), slack(nullptr) {
         alloc_fill(sm, cur_hcsz, true);
-        for (size_t i = 0; i < MemoryConfig::fl_size_max - MemoryConfig::fl_size_min + 1; i++)
-            fl[i] = nullptr;
+        for (auto& list : fl)
+            list = nullptr;
     }
 
     forceinline
@@ -353,8 +353,8 @@ namespace Gecode { namespace Kernel {
         // Skip the memory area at the beginning for subscriptions
         lsz -= s_sub;
         start += s_sub;
-        for (size_t i = 0; i < MemoryConfig::fl_size_max - MemoryConfig::fl_size_min + 1; i++)
-            fl[i] = nullptr;
+        for (auto& list : fl)
+            list = nullptr;
     }
 
     forceinline void
