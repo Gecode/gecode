@@ -25,7 +25,6 @@ Checks: >-
   -misc-anonymous-namespace-in-header,
   -misc-confusable-identifiers,
   -misc-const-correctness,
-  -misc-definitions-in-headers,
   -misc-header-include-cycle,
   -misc-include-cleaner,
   -misc-multiple-inheritance,

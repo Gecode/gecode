@@ -91,8 +91,9 @@ template <class Char, class Traits>
 std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const Dictionary& d);
 
 /// The dictionary to be used
-Dictionary dict;
+inline Dictionary dict;
 
+// NOLINTNEXTLINE(misc-anonymous-namespace-in-header): included by one example each
 namespace {
 
     /*
