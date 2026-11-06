@@ -195,7 +195,6 @@ namespace Gecode {
             GECODE_NEVER;
         }
         GECODE_NEVER;
-        return;
     }
 
     std::string

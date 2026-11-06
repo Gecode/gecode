@@ -364,7 +364,6 @@ namespace Gecode { namespace CPProfiler {
             _winsock_started = false;
         }
 #endif
-        return;
     }
 
     inline void
