@@ -3,6 +3,10 @@
 Checks: >-
   -*,
   clang-analyzer-core.*,
+  cppcoreguidelines-misleading-capture-default-by-value,
+  cppcoreguidelines-missing-std-forward,
+  google-build-explicit-make-pair,
+  google-global-names-in-headers,
   bugprone-*,
   -bugprone-branch-clone,
   -bugprone-derived-method-shadowing-base-method,
