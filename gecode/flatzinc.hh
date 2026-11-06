@@ -202,7 +202,6 @@ namespace Gecode { namespace FlatZinc {
 #endif
         );
 
-    public:
         Printer(const Printer&) = delete;
         Printer& operator=(const Printer&) = delete;
     };

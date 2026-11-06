@@ -70,7 +70,6 @@ namespace Gecode {
         /// The corresponding variable type
         typedef typename View::VarType Var;
 
-    public:
         /// Initialize from the empty filter \a bf
         BrancherNoFilter(const BranchFilter<Var>& bf);
         /// Initialize from the empty filter \a bf, moved in as for BrancherFilter

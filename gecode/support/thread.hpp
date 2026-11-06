@@ -242,7 +242,6 @@ namespace Gecode { namespace Support {
         /// Idle runners
         GECODE_SUPPORT_EXPORT static Run* idle;
 
-    public:
         /**
          * \brief Construct a new thread and run \a r
          *

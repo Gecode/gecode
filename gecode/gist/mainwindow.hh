@@ -94,7 +94,6 @@ namespace Gecode { namespace Gist {
         /// About dialog
         AboutGist about_gist;
 
-    protected Q_SLOTS:
         /// The status has changed (e.g., new solutions have been found)
         void status_changed(const Statistics& stats, bool finished);
         /// Open the about dialog

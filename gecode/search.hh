@@ -1123,7 +1123,6 @@ namespace Gecode { namespace Search {
         /// Destructor
         virtual ~Base();
 
-    public:
         /// Disallow copy constructor
         Base(const Base&) = delete;
         /// Disallow assignment operator

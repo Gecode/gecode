@@ -67,7 +67,7 @@ namespace Gecode { namespace Gist {
         NodeStatInspector(QWidget* parent);
         /// Update display to reflect information about \a n
         void node(const VisualNode::NodeAllocator&, VisualNode* n, const Statistics& stat, bool finished);
-    public Q_SLOTS:
+
         /// Show this window and bring it to the front
         void show_stats();
     };

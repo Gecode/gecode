@@ -522,7 +522,6 @@ namespace Gecode {
         /// Actual cost
         ActualCost ac;
 
-    public:
         /// Propagation cost modifier
         enum class Mod {
             LO, ///< Cheap
@@ -683,7 +682,7 @@ namespace Gecode {
         /// No-op for exceptions
         static void operator delete(void* p, Space& home);
         //@}
-    public:
+
         /// To avoid warnings
         GECODE_KERNEL_EXPORT virtual ~Actor();
         /// Not used
@@ -1448,7 +1447,7 @@ namespace Gecode {
         /// Needed for exceptions
         static void operator delete(void* p);
         //@}
-    public:
+
         /// To avoid warnings
         GECODE_KERNEL_EXPORT virtual ~NGL();
         /// Not used

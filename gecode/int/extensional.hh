@@ -593,7 +593,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Whether at most one variable is unassigned
         bool at_most_one() const;
         //@}
-    protected:
+
         /// Number of words in supports
         const unsigned int n_words;
         /// The tuple set
@@ -669,7 +669,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Constructor for posting
         PosCompact(Home home, ViewArray<View>& x, const TupleSet& ts);
 
-    public:
         /// Schedule function
         void reschedule(Space& home) override;
         /// Perform propagation
@@ -732,7 +731,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         /// Constructor for posting
         NegCompact(Home home, ViewArray<View>& x, const TupleSet& ts);
 
-    public:
         /// Schedule function
         void reschedule(Space& home) override;
         /// Perform propagation
@@ -787,7 +785,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         static ExecStatus post_pos(Home home, ViewArray<View>& x, const TupleSet& ts);
         static ExecStatus post_neg(Home home, ViewArray<View>& x, const TupleSet& ts);
 
-    public:
         /// Schedule function
         void reschedule(Space& home) override;
         /// Perform propagation

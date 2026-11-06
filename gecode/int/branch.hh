@@ -701,7 +701,6 @@ namespace Gecode { namespace Int { namespace Branch {
                 /// The map we want to share
                 std::unordered_map<unsigned int, unsigned int> _var_id_to_pos;
 
-            public:
                 /// Default constructor
                 VarIdToPosO() = default;
                 /// Delete implementation

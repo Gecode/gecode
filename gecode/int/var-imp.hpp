@@ -202,7 +202,6 @@ namespace Gecode { namespace Int {
         /// Size of holes in the domain
         unsigned int holes;
 
-    protected:
         /// Constructor for cloning \a x
         IntVarImp(Space& home, IntVarImp& x);
 
@@ -649,7 +648,6 @@ namespace Gecode { namespace Int {
         GECODE_INT_EXPORT ModEvent one_none(Space& home);
         //@}
 
-    public:
         /// \name Dependencies
         //@{
         /**

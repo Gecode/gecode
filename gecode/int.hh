@@ -2529,7 +2529,6 @@ namespace Gecode {
         GECODE_INT_EXPORT
         void init(int s, Transition t[], int f[], bool minimize = true);
 
-    public:
         friend class Transitions;
         /// Initialize for DFA accepting the empty word
         DFA() = default;
@@ -2714,7 +2713,6 @@ namespace Gecode {
             enum class State { TS_BUILDING, TS_FAILED, TS_DENSE, TS_SPARSE, TS_DENSE_COMPRESSED };
             using enum State;
 
-        public:
             /// Arity
             int arity;
             /// Number of words for support
@@ -5970,7 +5968,6 @@ namespace Gecode {
         /// Decrement counter
         void decrement();
 
-    public:
         /// Default constructor
         SymmetryHandle();
         /// Initialies with a SymmetryObject
