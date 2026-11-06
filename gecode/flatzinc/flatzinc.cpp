@@ -1757,7 +1757,7 @@ namespace Gecode { namespace FlatZinc {
             : stop_object(stop_object0), black_box_context(black_box_context0) {}
         bool
         stop(const Search::Statistics& s, const Search::Options& o) override {
-            return black_box_context.failed() || ((stop_object.get() != nullptr) && stop_object->stop(s, o));
+            return black_box_context.failed() || ((stop_object != nullptr) && stop_object->stop(s, o));
         }
     };
 
