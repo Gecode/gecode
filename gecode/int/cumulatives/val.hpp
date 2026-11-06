@@ -221,17 +221,6 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         return ES_OK;
     }
 
-    namespace {
-        template <class C>
-        class Less {
-        public:
-            bool
-            operator()(const C& lhs, const C& rhs) {
-                return lhs < rhs;
-            }
-        };
-    } // namespace
-
     template <class ViewM, class ViewP, class ViewU, class View>
     ExecStatus
     Val<ViewM, ViewP, ViewU, View>::propagate(Space& home, const ModEventDelta&) {
@@ -286,7 +275,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
             }
 
             // Sort the events according to date
-            Less<Event> less;
+            std::less<Event> less;
             Support::insertion(&events[0], events_size, less);
 
             // Sweep line along d, starting at 0
