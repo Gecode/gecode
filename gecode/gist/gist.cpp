@@ -124,7 +124,7 @@ namespace Gecode { namespace Gist {
         QApplication app(argc, &argv1);
 
         GistMainWindow mw(root, bab, opt);
-        return app.exec();
+        return QApplication::exec();
     }
 
     void

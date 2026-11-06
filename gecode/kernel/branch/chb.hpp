@@ -322,11 +322,11 @@ namespace Gecode {
     }
     forceinline void
     CHB::acquire() {
-        object().m.acquire();
+        Gecode::CHB::Storage::m.acquire();
     }
     forceinline void
     CHB::release() {
-        object().m.release();
+        Gecode::CHB::Storage::m.release();
     }
     forceinline void
     CHB::bump() {

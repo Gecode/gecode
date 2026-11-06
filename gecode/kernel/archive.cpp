@@ -44,7 +44,7 @@ namespace Gecode {
     Archive::Archive(const Archive& e) : _size(e._n), _n(e._n), _a(nullptr), _pos(e._pos) {
         if (_n > 0) {
             _a = heap.alloc<unsigned int>(_n);
-            heap.copy<unsigned int>(_a, e._a, _n);
+            Gecode::Heap::copy<unsigned int>(_a, e._a, _n);
         }
     }
 
@@ -53,7 +53,7 @@ namespace Gecode {
         if (this != &e) {
             if (e._n > 0) {
                 _a = heap.realloc<unsigned int>(_a, _size, e._n);
-                heap.copy<unsigned int>(_a, e._a, e._n);
+                Gecode::Heap::copy<unsigned int>(_a, e._a, e._n);
             } else if (_a != nullptr) {
                 heap.free<unsigned int>(_a, _size);
                 _a = nullptr;
