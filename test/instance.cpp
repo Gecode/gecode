@@ -672,8 +672,8 @@ namespace Test::Instance {
             olog << e.what() << "\n";
             ok = false;
         }
-        std::remove(file);
-        std::remove(other);
+        (void)std::remove(file);
+        (void)std::remove(other);
         return ok;
     });
 
