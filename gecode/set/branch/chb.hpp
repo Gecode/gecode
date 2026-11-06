@@ -34,7 +34,8 @@ namespace Gecode {
 
     forceinline SetCHB&
     SetCHB::operator=(const SetCHB& chb) {
-        return static_cast<SetCHB&>(CHB::operator=(chb));
+        CHB::operator=(chb);
+        return *this;
     }
 
 } // namespace Gecode

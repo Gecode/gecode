@@ -195,7 +195,8 @@ namespace Gecode {
 
     TraceFilter&
     TraceFilter::operator=(const TraceFilter& tf) {
-        return static_cast<TraceFilter&>(SharedHandle::operator=(tf));
+        SharedHandle::operator=(tf);
+        return *this;
     }
 
     TraceFilter TraceFilter::all;

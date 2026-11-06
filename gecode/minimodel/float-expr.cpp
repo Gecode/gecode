@@ -325,7 +325,7 @@ namespace Gecode {
         n->sum.ne = e;
     }
 
-    const LinFloatExpr&
+    LinFloatExpr&
     LinFloatExpr::operator=(const LinFloatExpr& e) {
         if (this != &e) {
             if (n->decrement())

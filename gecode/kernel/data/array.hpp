@@ -597,7 +597,7 @@ namespace Gecode {
         /// Initialize from argument array \a a (copy elements)
         ArgArrayBase(const ArgArrayBase<T>& a);
         /// Initialize from view array \a a (copy elements)
-        const ArgArrayBase<T>& operator=(const ArgArrayBase<T>& a);
+        ArgArrayBase<T>& operator=(const ArgArrayBase<T>& a);
         /// Initialize from vector \a a
         ArgArrayBase(const std::vector<T>& a);
         /// Initialize from initializer list \a a
@@ -1534,7 +1534,7 @@ namespace Gecode {
     }
 
     template <class T>
-    forceinline const ArgArrayBase<T>&
+    forceinline ArgArrayBase<T>&
     ArgArrayBase<T>::operator=(const ArgArrayBase<T>& aa) {
         if (&aa != this) {
             if (capacity > onstack_size)

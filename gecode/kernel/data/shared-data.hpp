@@ -107,7 +107,8 @@ namespace Gecode {
     template <class Data>
     forceinline SharedData<Data>&
     SharedData<Data>::operator=(const SharedData<Data>& sd) {
-        return static_cast<SharedData&>(SharedHandle::operator=(sd));
+        SharedHandle::operator=(sd);
+        return *this;
     }
 
     template <class Data>

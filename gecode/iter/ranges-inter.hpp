@@ -310,7 +310,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
     forceinline NaryInter&
     NaryInter::operator=(const NaryInter& m) {
         f = nullptr;
-        return static_cast<NaryInter&>(RangeListIter::operator=(m));
+        RangeListIter::operator=(m);
+        return *this;
     }
 
 }}} // namespace Gecode::Iter::Ranges
