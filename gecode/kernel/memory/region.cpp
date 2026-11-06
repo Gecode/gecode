@@ -32,6 +32,8 @@
 
 #include <gecode/kernel.hh>
 
+#include <algorithm>
+
 namespace Gecode {
 
     Region::Pool::Pool() : c(new Chunk), n_c(2U) {
@@ -102,7 +104,7 @@ namespace Gecode {
                 HeapInfo* n = static_cast<HeapInfo*>(heap.ralloc(sizeof(HeapInfo) + (2 * h->n - 1) * sizeof(void*)));
                 n->size = 2 * h->n;
                 n->n = h->n;
-                memcpy(&n->blocks[0], &h->blocks[0], h->n * sizeof(void*));
+                std::copy_n(&h->blocks[0], h->n, &n->blocks[0]);
                 hi = Support::mark(n);
                 heap.rfree(h);
                 h = n;
