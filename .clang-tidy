@@ -19,7 +19,6 @@ Checks: >-
   -bugprone-narrowing-conversions,
   -bugprone-nondeterministic-pointer-iteration-order,
   -bugprone-parent-virtual-call,
-  -bugprone-reserved-identifier,
   -bugprone-signed-char-misuse,
   -bugprone-suspicious-string-compare,
   -bugprone-switch-missing-default-case,
@@ -127,6 +126,8 @@ FormatStyle: file
 CheckOptions:
   # Explicit discards document intentional ownership handoffs.
   bugprone-unused-return-value.AllowCastToVoid: true
+  # glibc needs this feature macro defined before any system header.
+  bugprone-reserved-identifier.AllowedIdentifiers: '_GNU_SOURCE'
   readability-identifier-naming.FunctionCase: lower_case
   readability-identifier-naming.MethodCase: lower_case
   readability-identifier-naming.VariableCase: lower_case
