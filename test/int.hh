@@ -46,7 +46,7 @@
 #else
 #define GECODE_TESTINT_EXPORT __declspec(dllimport)
 #endif
-#elif defined(GECODE_GCC_HAS_CLASS_VISIBILITY)
+#elifdef GECODE_GCC_HAS_CLASS_VISIBILITY
 #define GECODE_TESTINT_EXPORT __attribute__((visibility("default")))
 #else
 #define GECODE_TESTINT_EXPORT
