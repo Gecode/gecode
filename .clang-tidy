@@ -33,7 +33,6 @@ Checks: >-
   -misc-use-internal-linkage,
   modernize-*,
   -modernize-avoid-c-arrays,
-  -modernize-avoid-variadic-functions,
   -modernize-pass-by-value,
   -modernize-return-braced-init-list,
   -modernize-use-auto,
