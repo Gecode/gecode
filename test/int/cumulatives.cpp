@@ -228,8 +228,8 @@ namespace Test { namespace Int {
                 for (int i = 0; i < ntasks; ++i) {
                     int p = i * 4;
                     // Up at start, down at end.
-                    e.push_back(Event(x[p + 0], +x[p + 3], true));
-                    e.push_back(Event(x[p + 2], -x[p + 3], false));
+                    e.emplace_back(x[p + 0], +x[p + 3], true);
+                    e.emplace_back(x[p + 2], -x[p + 3], false);
                 }
                 if (at_most) {
                     return valid(e, Below(limit));

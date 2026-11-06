@@ -623,8 +623,8 @@ namespace Test { namespace Branch {
                         }
                     }
                     Gecode::Search::Options o;
-                    results[solutions(c, o, _rand)].push_back(
-                        RunInfo(int_var_branch_name[vara], int_var_branch_name[varb], int_val_branch_name[val], o));
+                    results[solutions(c, o, _rand)].emplace_back(int_var_branch_name[vara], int_var_branch_name[varb],
+                                                                 int_val_branch_name[val], o);
                 }
             }
         }
@@ -815,8 +815,8 @@ namespace Test { namespace Branch {
                         }
                     }
                     Gecode::Search::Options o;
-                    results[solutions(c, o, _rand)].push_back(
-                        RunInfo(int_var_branch_name[vara], int_var_branch_name[varb], int_val_branch_name[val], o));
+                    results[solutions(c, o, _rand)].emplace_back(int_var_branch_name[vara], int_var_branch_name[varb],
+                                                                 int_val_branch_name[val], o);
                 }
             }
         }
@@ -1107,8 +1107,8 @@ namespace Test { namespace Branch {
                         }
                     }
                     Gecode::Search::Options o;
-                    results[solutions(c, o, _rand)].push_back(
-                        RunInfo(set_var_branch_name[vara], set_var_branch_name[varb], set_val_branch_name[val], o));
+                    results[solutions(c, o, _rand)].emplace_back(set_var_branch_name[vara], set_var_branch_name[varb],
+                                                                 set_val_branch_name[val], o);
                 }
             }
         }
@@ -1382,8 +1382,8 @@ namespace Test { namespace Branch {
                         }
                     }
                     Gecode::Search::Options o;
-                    results[solutions(c, o, _rand, nb_sols)].push_back(RunInfo(
-                        float_var_branch_name[vara], float_var_branch_name[varb], float_val_branch_name[val], o));
+                    results[solutions(c, o, _rand, nb_sols)].emplace_back(
+                        float_var_branch_name[vara], float_var_branch_name[varb], float_val_branch_name[val], o);
                 }
             }
         }

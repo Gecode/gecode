@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         std::set<Literal> seen;
 
         seen.insert(Literal(choice_pos, choice_val));
-        queue.push_back(Literal(choice_pos, choice_val));
+        queue.emplace_back(choice_pos, choice_val);
 
         do {
             Literal l = queue[0];

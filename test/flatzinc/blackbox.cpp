@@ -116,7 +116,7 @@ namespace Test { namespace FlatZinc {
             std::string event;
             std::string id;
             while (in >> event >> id) {
-                entries.push_back(std::make_pair(event, id));
+                entries.emplace_back(event, id);
             }
             return entries;
         }

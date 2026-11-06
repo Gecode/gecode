@@ -358,7 +358,7 @@ namespace Gecode { namespace Gist {
             }
 
             std::stack<SearchItem> stck;
-            stck.push(SearchItem(node, kids));
+            stck.emplace(node, kids);
             t->stats.max_depth = std::max(static_cast<long unsigned int>(t->stats.max_depth),
                                           static_cast<long unsigned int>(depth + stck.size()));
 
@@ -397,7 +397,7 @@ namespace Gecode { namespace Gist {
                             }
                         } else {
                             if (n->get_status() != STOP)
-                                stck.push(SearchItem(n, kids));
+                                stck.emplace(n, kids);
                             else if (!a)
                                 break;
                             t->stats.max_depth = std::max(static_cast<long unsigned int>(t->stats.max_depth),
