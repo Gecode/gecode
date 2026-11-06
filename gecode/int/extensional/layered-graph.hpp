@@ -407,8 +407,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             std::swap(n_i_mapped, n_o_mapped);
         }
 
-        if ((total_states > static_cast<unsigned long long int>((std::numeric_limits<unsigned int>::max)())) ||
-            (total_edges > static_cast<unsigned long long int>((std::numeric_limits<unsigned int>::max)())))
+        if ((total_states > static_cast<unsigned long long int>(std::numeric_limits<unsigned int>::max())) ||
+            (total_edges > static_cast<unsigned long long int>(std::numeric_limits<unsigned int>::max())))
             throw OutOfLimits("Int::regular");
         n_states = static_cast<unsigned int>(total_states);
         n_edges = static_cast<unsigned int>(total_edges);

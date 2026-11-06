@@ -62,7 +62,7 @@ namespace Gecode { namespace Gist {
 
     forceinline void
     SpaceNode::set_status(NodeStatus s) {
-        status_bits &= ~(status_mask);
+        status_bits &= ~status_mask;
         status_bits |= std::to_underlying(s) << 20;
     }
 
@@ -75,7 +75,7 @@ namespace Gecode { namespace Gist {
     SpaceNode::set_distance(unsigned int d) {
         if (d > max_distance)
             d = max_distance;
-        status_bits &= ~(distance_mask);
+        status_bits &= ~distance_mask;
         status_bits |= d;
     }
 

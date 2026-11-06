@@ -300,7 +300,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
             // repair y on the left
             while (idx > 0 &&
-                   ((y[idx] - y[idx - 1] > 1) || ((y[idx] - y[idx - 1] == 1 && s_not_possible(a, s, i, idx))))) {
+                   ((y[idx] - y[idx - 1] > 1) || (y[idx] - y[idx - 1] == 1 && s_not_possible(a, s, i, idx)))) {
                 if (s_not_possible(a, s, i, idx)) {
                     set(idx - 1, y[idx], q, n);
                 } else {

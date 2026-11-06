@@ -1232,9 +1232,9 @@ namespace Gecode { namespace Int { namespace GCC {
                             // set to full capacity for later rescheduling
                             if (v->cap(UBC))
                                 v->cap(UBC, k[i].max());
-                            v->maxlow(k[i].max() - (inc_lbc));
+                            v->maxlow(k[i].max() - inc_lbc);
                             if (v->kmin() == v->kmax())
-                                v->cap(LBC, k[i].max() - (inc_lbc));
+                                v->cap(LBC, k[i].max() - inc_lbc);
                             int matched = inc_ubc - v->kcount();
                             v->card_conflict(std::min(rm, matched));
                         }
