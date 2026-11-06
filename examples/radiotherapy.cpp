@@ -340,7 +340,7 @@ public:
                     index[i].weight *= 0.9;
             }
             (void)Brancher::dispose(home);
-            (void)index.~SharedArray<Idx>();
+            index.~SharedArray<Idx>();
             return sizeof(*this);
         }
     };

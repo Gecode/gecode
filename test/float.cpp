@@ -259,7 +259,7 @@ namespace Test { namespace Float {
     void
     TestSpace::assign(const Assignment& a, MaybeType& sol, bool skip, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
-        int i = skip ? static_cast<int>(rand(a.size())) : -1;
+        int i = skip ? rand(a.size()) : -1;
 
         for (int j = a.size(); j--;)
             if (i != j) {

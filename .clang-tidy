@@ -85,7 +85,6 @@ Checks: >-
   -readability-non-const-parameter,
   -readability-qualified-auto,
   -readability-redundant-access-specifiers,
-  -readability-redundant-casting,
   -readability-redundant-control-flow,
   -readability-redundant-declaration,
   -readability-redundant-member-init,
