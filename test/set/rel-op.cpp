@@ -30,6 +30,8 @@
  *
  */
 
+#include <utility>
+
 #include "test/set.hh"
 
 using namespace Gecode;
@@ -425,7 +427,7 @@ namespace Test { namespace Set {
                 case SOT_DISJOINT_UNION: {
                     IntSetRanges issr(iss);
                     unsigned int card_sum = Iter::Ranges::size(issr);
-                    if (card_sum != static_cast<unsigned int>(n)) {
+                    if (std::cmp_not_equal(card_sum, n)) {
                         delete[] isrs;
                         return false;
                     }

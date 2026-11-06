@@ -1,3 +1,5 @@
+#include <utility>
+
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -314,7 +316,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
         unsigned int d = static_cast<unsigned int>(max_x) - static_cast<unsigned int>(min_x) + 1;
 
-        if (d < static_cast<unsigned int>(n))
+        if (std::cmp_less(d, n))
             return ES_FAILED;
 
         if (d > 2 * static_cast<unsigned int>(n)) {

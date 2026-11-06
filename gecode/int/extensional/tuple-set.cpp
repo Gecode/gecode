@@ -37,6 +37,7 @@
 #include <gecode/int.hh>
 #include <algorithm>
 #include <limits>
+#include <utility>
 
 namespace Gecode { namespace Int { namespace Extensional {
 
@@ -455,7 +456,7 @@ namespace Gecode {
                 }
                 for (unsigned int i = 0U; i < n_offsets; i++)
                     support_offsets[i] = 0U;
-                for (unsigned int tid = 0U; tid < static_cast<unsigned int>(n_tuples); tid++) {
+                for (unsigned int tid = 0U; std::cmp_less(tid, n_tuples); tid++) {
                     const int* t = td + tid * arity;
                     for (int a = 0; a < arity; a++) {
                         const unsigned int range_index = vd[a].start(t[a]);
@@ -475,7 +476,7 @@ namespace Gecode {
                     unsigned int* next_support = (n_vals > 0U) ? region.alloc<unsigned int>(n_vals) : nullptr;
                     for (unsigned int i = 0U; i < n_vals; i++)
                         next_support[i] = sparse_offsets[i];
-                    for (unsigned int tid = 0U; tid < static_cast<unsigned int>(n_tuples); tid++) {
+                    for (unsigned int tid = 0U; std::cmp_less(tid, n_tuples); tid++) {
                         for (int a = 0; a < arity; a++) {
                             const unsigned int support_id = sparse_tv[tid * arity + a];
                             sparse_tuples[next_support[support_id]++] = tid;
@@ -488,7 +489,7 @@ namespace Gecode {
                         next_support[i] = support_offsets[i];
                     // Tuple ids are visited in increasing order, so each support list
                     // is already sorted by tuple id (and hence by word index).
-                    for (unsigned int tid = 0U; tid < static_cast<unsigned int>(n_tuples); tid++) {
+                    for (unsigned int tid = 0U; std::cmp_less(tid, n_tuples); tid++) {
                         const int* t = td + tid * arity;
                         for (int a = 0; a < arity; a++) {
                             const unsigned int range_index = vd[a].start(t[a]);

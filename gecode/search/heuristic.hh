@@ -39,6 +39,7 @@
 #include <climits>
 #include <memory>
 #include <optional>
+#include <utility>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search {
@@ -415,7 +416,7 @@ namespace Gecode { namespace Search {
                     return TAKEN;
                 }
             }
-            if (static_cast<unsigned long int>(n) == _width) {
+            if (std::cmp_equal(n, _width)) {
                 const Entry& worst = slot[pq[0]].e;
                 bool replace = p(e, worst);
                 std::int64_t b = replace ? worst.bound : e.bound;

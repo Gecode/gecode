@@ -30,6 +30,8 @@
  *
  */
 
+#include <utility>
+
 namespace Gecode { namespace Support {
 
     /**
@@ -112,28 +114,28 @@ namespace Gecode { namespace Support {
     template <class T, class A>
     forceinline T
     StaticStack<T, A>::pop() {
-        assert((tos > 0) && (tos <= static_cast<unsigned int>(n)));
+        assert((tos > 0) && std::cmp_less_equal(tos, n));
         return stack[--tos];
     }
 
     template <class T, class A>
     forceinline T&
     StaticStack<T, A>::top() const {
-        assert((tos > 0) && (tos <= static_cast<unsigned int>(n)));
+        assert((tos > 0) && std::cmp_less_equal(tos, n));
         return stack[tos - 1];
     }
 
     template <class T, class A>
     forceinline T&
     StaticStack<T, A>::last() const {
-        assert((tos >= 0) && (tos < static_cast<unsigned int>(n)));
+        assert((tos >= 0) && std::cmp_less(tos, n));
         return stack[tos];
     }
 
     template <class T, class A>
     forceinline void
     StaticStack<T, A>::push(const T& x) {
-        assert(tos < static_cast<unsigned int>(n));
+        assert(std::cmp_less(tos, n));
         stack[tos++] = x;
     }
 
