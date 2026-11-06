@@ -57,8 +57,8 @@ solve satisfy;
             std::ostringstream err;
             Gecode::FlatZinc::FlatZincSpace* fg = Gecode::FlatZinc::parse(source, p, err);
             const std::string message = err.str();
-            return fg == nullptr && message.find("gecode_on_restart_uniform_int") != std::string::npos &&
-                   message.find("low (1) <= high (0)") != std::string::npos;
+            return fg == nullptr && message.contains("gecode_on_restart_uniform_int") &&
+                   message.contains("low (1) <= high (0)");
         }
     };
 

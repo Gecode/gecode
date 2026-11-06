@@ -141,12 +141,10 @@ main() {
                  "-list-with-tags should succeed")) {
         return EXIT_FAILURE;
     }
-    if (!require(tagged_list_output.find(pass_name + " [standard]") != std::string::npos,
-                 "default test should have the standard tag")) {
+    if (!require(tagged_list_output.contains(pass_name + " [standard]"), "default test should have the standard tag")) {
         return EXIT_FAILURE;
     }
-    if (!require(tagged_list_output.find("Smoke::B-Fail [sweep]") != std::string::npos,
-                 "explicit test tag should be listed")) {
+    if (!require(tagged_list_output.contains("Smoke::B-Fail [sweep]"), "explicit test tag should be listed")) {
         return EXIT_FAILURE;
     }
 
@@ -156,8 +154,7 @@ main() {
                  "standard tag selection should succeed")) {
         return EXIT_FAILURE;
     }
-    if (!require(normal_output.find(pass_name) != std::string::npos &&
-                     normal_output.find(fail_name) == std::string::npos,
+    if (!require(normal_output.contains(pass_name) && !normal_output.contains(fail_name),
                  "standard tag selection chose the wrong tests")) {
         return EXIT_FAILURE;
     }
@@ -171,12 +168,10 @@ main() {
                  "filtered passing run should succeed")) {
         return EXIT_FAILURE;
     }
-    if (!require(pass_output.find(pass_name) != std::string::npos,
-                 "filtered passing run did not print the selected test")) {
+    if (!require(pass_output.contains(pass_name), "filtered passing run did not print the selected test")) {
         return EXIT_FAILURE;
     }
-    if (!require(pass_output.find(fail_name) == std::string::npos,
-                 "filtered passing run executed an unselected test")) {
+    if (!require(!pass_output.contains(fail_name), "filtered passing run executed an unselected test")) {
         return EXIT_FAILURE;
     }
     if (!require(passing_runs == 2 && failing_runs == 0, "filtered passing run counts are wrong")) {
@@ -189,15 +184,13 @@ main() {
                  "filtered failing run should fail")) {
         return EXIT_FAILURE;
     }
-    if (!require(fail_output.find(fail_name) != std::string::npos,
-                 "filtered failing run did not print the selected test")) {
+    if (!require(fail_output.contains(fail_name), "filtered failing run did not print the selected test")) {
         return EXIT_FAILURE;
     }
-    if (!require(fail_output.find("Options: -replay ") != std::string::npos,
-                 "filtered failing run did not preserve seed diagnostics")) {
+    if (!require(fail_output.contains("Options: -replay "), "filtered failing run did not preserve seed diagnostics")) {
         return EXIT_FAILURE;
     }
-    if (!require(fail_output.find("-test Smoke::B-Fail") != std::string::npos,
+    if (!require(fail_output.contains("-test Smoke::B-Fail"),
                  "filtered failing run did not preserve test diagnostics")) {
         return EXIT_FAILURE;
     }
@@ -212,7 +205,7 @@ main() {
                  "seed-sensitive test should fail on its second iteration"))
         return EXIT_FAILURE;
     const std::string seed = std::to_string(observed_seed);
-    if (!require(replay_output.find("Options: -replay " + seed) != std::string::npos,
+    if (!require(replay_output.contains("Options: -replay " + seed),
                  "failure should report the iteration's initial random state"))
         return EXIT_FAILURE;
     if (!require(run_and_capture({"public-runner-smoke", "-test", "Smoke::Replay", "-replay", seed.c_str()},
@@ -228,8 +221,7 @@ main() {
             "multiple tags should select their union")) {
         return EXIT_FAILURE;
     }
-    if (!require(combined_output.find(pass_name) != std::string::npos &&
-                     combined_output.find(fail_name) != std::string::npos,
+    if (!require(combined_output.contains(pass_name) && combined_output.contains(fail_name),
                  "multiple tag selection did not run both tags")) {
         return EXIT_FAILURE;
     }

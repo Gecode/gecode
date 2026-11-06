@@ -204,14 +204,14 @@ namespace Test { namespace FlatZinc {
             const std::string& message = e.to_string();
             if (opt.log)
                 olog << ind(2) << "Expected FlatZinc error : " << message << '\n';
-            return (os.str().find("----------") == std::string::npos) &&
-                   (_expected_message.empty() || (message.find(_expected_message) != std::string::npos));
+            return (!os.str().contains("----------")) &&
+                   (_expected_message.empty() || (message.contains(_expected_message)));
         } catch (Gecode::Exception& e) {
             const std::string message = e.what();
             if (opt.log)
                 olog << ind(2) << "Expected Gecode exception : " << message << '\n';
-            return (os.str().find("----------") == std::string::npos) &&
-                   (_expected_message.empty() || (message.find(_expected_message) != std::string::npos));
+            return (!os.str().contains("----------")) &&
+                   (_expected_message.empty() || (message.contains(_expected_message)));
         }
         return false;
     }

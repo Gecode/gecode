@@ -1328,12 +1328,12 @@ namespace Gecode { namespace Instance {
                                 fail("expected a symbol for row " + std::to_string(i + 1) + ", column " +
                                      std::to_string(j + 1) + ", found end of input");
                             ch = in.text[in.pos];
-                            if (t.strip.find(ch) == std::string::npos)
+                            if (!t.strip.contains(ch))
                                 break;
                             in.advance(in.pos + 1);
                         }
                         size_t k = t.alphabet.find(ch);
-                        if (t.blank.find(ch) != std::string::npos) {
+                        if (t.blank.contains(ch)) {
                             g.ints.push(0);
                         } else if (k != std::string::npos) {
                             long long int v;

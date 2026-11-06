@@ -39,7 +39,7 @@ namespace Test { namespace FlatZinc { namespace {
         int solutions = 0;
         for (std::string::size_type p = 0; (p = output.find(separator, p)) != std::string::npos; p += separator.size())
             solutions++;
-        return (solutions == expected) && (output.find(representative) != std::string::npos);
+        return (solutions == expected) && (output.contains(representative));
     }
 
     /// Helper class to create and register test

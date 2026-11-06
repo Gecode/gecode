@@ -2736,7 +2736,7 @@ namespace Gecode { namespace FlatZinc {
                 // oss << std::scientific;
                 oss << std::setprecision(std::numeric_limits<double>::digits10);
                 oss << v;
-                if (oss.str().find('.') == std::string::npos)
+                if (!oss.str().contains('.'))
                     oss << ".0";
                 out << oss.str();
             } else {
@@ -3013,28 +3013,28 @@ namespace Gecode { namespace FlatZinc {
                             std::map<int, int>& fv) {
         if (node->is_int_var()) {
             AST::IntVar* x = static_cast<AST::IntVar*>(node);
-            if (iv.find(x->i) == iv.end()) {
+            if (!iv.contains(x->i)) {
                 int newi = iv.size();
                 iv[x->i] = newi;
             }
             x->i = iv[x->i];
         } else if (node->is_bool_var()) {
             AST::BoolVar* x = static_cast<AST::BoolVar*>(node);
-            if (bv.find(x->i) == bv.end()) {
+            if (!bv.contains(x->i)) {
                 int newi = bv.size();
                 bv[x->i] = newi;
             }
             x->i = bv[x->i];
         } else if (node->is_set_var()) {
             AST::SetVar* x = static_cast<AST::SetVar*>(node);
-            if (sv.find(x->i) == sv.end()) {
+            if (!sv.contains(x->i)) {
                 int newi = sv.size();
                 sv[x->i] = newi;
             }
             x->i = sv[x->i];
         } else if (node->is_float_var()) {
             AST::FloatVar* x = static_cast<AST::FloatVar*>(node);
-            if (fv.find(x->i) == fv.end()) {
+            if (!fv.contains(x->i)) {
                 int newi = fv.size();
                 fv[x->i] = newi;
             }

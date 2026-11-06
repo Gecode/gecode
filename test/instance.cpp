@@ -68,7 +68,7 @@ namespace Test { namespace Instance {
         try {
             f();
         } catch (const Error& e) {
-            if (std::string(e.what()).find(what) != std::string::npos)
+            if (std::string(e.what()).contains(what))
                 return true;
             olog << "unexpected error message:\n" << e.what() << "\n";
             return false;
@@ -707,26 +707,26 @@ namespace Test { namespace Instance {
             read("n: int  f: float  w: word  m[2][2]: int  repeat n { k: int  x[k]: int }", "2 20 a 1 2 3 4 1 5 2 6 7");
         std::ostringstream z;
         d.dzn(z);
-        CHECK(z.str().find("f = 20.0;") != std::string::npos);
-        CHECK(z.str().find("m = [| 1, 2\n  | 3, 4 |];") != std::string::npos);
-        CHECK(z.str().find("% x: array[int] of tuple(array[int] of int)\n"
-                           "x = [([5],), ([6, 7],)];") != std::string::npos);
-        CHECK(z.str().find("w = \"a\";") != std::string::npos);
+        CHECK(z.str().contains("f = 20.0;"));
+        CHECK(z.str().contains("m = [| 1, 2\n  | 3, 4 |];"));
+        CHECK(z.str().contains("% x: array[int] of tuple(array[int] of int)\n"
+                               "x = [([5],), ([6, 7],)];"));
+        CHECK(z.str().contains("w = \"a\";"));
         // MiniZinc keywords are quoted, control characters escaped
         std::ostringstream zq;
         read("var: int  w: word", "3 a\033b").dzn(zq);
-        CHECK(zq.str().find("'var' = 3;") != std::string::npos);
-        CHECK(zq.str().find("w = \"a\\x1bb\";") != std::string::npos);
+        CHECK(zq.str().contains("'var' = 3;"));
+        CHECK(zq.str().contains("w = \"a\\x1bb\";"));
         // Empty dimensions and deeply ragged arrays
         Data e = read("e[2][0]: int  repeat 2 { k: int  repeat k { list y: int until 0 } }", "1 7 0 2 8 9 0 0");
         std::ostringstream ze;
         e.dzn(ze);
-        CHECK(ze.str().find("e = array2d(1..2, 1..0, []);") != std::string::npos);
-        CHECK(ze.str().find("y = [([([7],)],), ([([8, 9],), ([],)],)];") != std::string::npos);
+        CHECK(ze.str().contains("e = array2d(1..2, 1..0, []);"));
+        CHECK(ze.str().contains("y = [([([7],)],), ([([8, 9],), ([],)],)];"));
         // MiniZinc has no constructor beyond array6d
         std::ostringstream z7;
         read("a[1][1][1][1][1][1][1]: int", "5").dzn(z7);
-        CHECK(z7.str().find("a = [([([([([([([5],)],)],)],)],)],)];") != std::string::npos);
+        CHECK(z7.str().contains("a = [([([([([([([5],)],)],)],)],)],)];"));
         return true;
     });
 
