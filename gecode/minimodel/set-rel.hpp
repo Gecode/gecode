@@ -52,13 +52,13 @@ namespace Gecode {
 
     forceinline void
     SetRel::post(Home home, bool t) const {
-        if (t)
+        if (t) {
             _e0.post(home, _srt, _e1);
-        else if (_srt == SRT_EQ)
+        } else if (_srt == SRT_EQ) {
             _e0.post(home, SRT_NQ, _e1);
-        else if (_srt == SRT_NQ)
+        } else if (_srt == SRT_NQ) {
             _e0.post(home, SRT_EQ, _e1);
-        else {
+        } else {
             BoolVar b(home, 0, 0);
             _e0.post(home, b, true, _srt, _e1);
         }

@@ -184,8 +184,9 @@ namespace Gecode {
                         rel(home, u.a.x->x, srt, bc);
                         break;
                     }
-                } else
+                } else {
                     rel(home, u.a.x->x, srt, s);
+                }
                 break;
             case SetExpr::NT_CONST: {
                 IntSet ss;
@@ -225,9 +226,9 @@ namespace Gecode {
                 if (i == 2) {
                     rel(home, bs[0], SOT_INTERSECTION, bs[1], srt, s);
                 } else {
-                    if (srt == SRT_EQ)
+                    if (srt == SRT_EQ) {
                         rel(home, SOT_INTERSECTION, bs, s);
-                    else {
+                    } else {
                         SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                         rel(home, SOT_INTERSECTION, bs, bc);
                         rel(home, bc, srt, s);
@@ -241,9 +242,9 @@ namespace Gecode {
                 if (i == 2) {
                     rel(home, bs[0], SOT_UNION, bs[1], srt, s);
                 } else {
-                    if (srt == SRT_EQ)
+                    if (srt == SRT_EQ) {
                         rel(home, SOT_UNION, bs, s);
-                    else {
+                    } else {
                         SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                         rel(home, SOT_UNION, bs, bc);
                         rel(home, bc, srt, s);
@@ -274,18 +275,18 @@ namespace Gecode {
                         } else {
                             SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                             rel(home, SOT_DISJOINT_UNION, bs, br);
-                            if (srt == SRT_EQ)
+                            if (srt == SRT_EQ) {
                                 rel(home, br, SRT_COMPLEMENT, s);
-                            else {
+                            } else {
                                 SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                                 rel(home, br, srt, bc);
                                 rel(home, bc, SRT_COMPLEMENT, s);
                             }
                         }
                     } else {
-                        if (srt == SRT_EQ)
+                        if (srt == SRT_EQ) {
                             rel(home, SOT_DISJOINT_UNION, bs, s);
-                        else {
+                        } else {
                             SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                             rel(home, SOT_DISJOINT_UNION, bs, br);
                             rel(home, br, srt, s);
@@ -316,8 +317,9 @@ namespace Gecode {
                         rel(home, u.a.x->x, srt, bc, b);
                         break;
                     }
-                } else
+                } else {
                     rel(home, u.a.x->x, srt, s, b);
+                }
                 break;
             case SetExpr::NT_CONST: {
                 IntSet ss;
@@ -394,11 +396,11 @@ namespace Gecode {
                 if (neg) {
                     SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                     rel(home, SOT_DISJOINT_UNION, bs, br);
-                    if (srt == SRT_COMPLEMENT)
+                    if (srt == SRT_COMPLEMENT) {
                         rel(home, br, SRT_EQ, s, b);
-                    else if (srt == SRT_EQ)
+                    } else if (srt == SRT_EQ) {
                         rel(home, br, SRT_COMPLEMENT, s, b);
-                    else {
+                    } else {
                         SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                         rel(home, br, srt, bc);
                         rel(home, bc, SRT_COMPLEMENT, s, b);

@@ -39,9 +39,9 @@ namespace Gecode { namespace Set { namespace Channel {
     forceinline
     ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home, ChannelBool<View>& p, Council<A>& c, int index)
         : Advisor(home, p, c), idx(index) {
-        if (idx == -1)
+        if (idx == -1) {
             p.y.subscribe(home, *this);
-        else {
+        } else {
             p.x[idx].subscribe(home, *this);
         }
     }
@@ -62,9 +62,9 @@ namespace Gecode { namespace Set { namespace Channel {
     forceinline void
     ChannelBool<View>::IndexAdvisor::dispose(Space& home, Council<A>& c) {
         ChannelBool<View>& p = static_cast<ChannelBool<View>&>(propagator());
-        if (idx == -1)
+        if (idx == -1) {
             p.y.cancel(home, *this);
-        else {
+        } else {
             p.x[idx].cancel(home, *this);
         }
         Advisor::dispose(home, c);

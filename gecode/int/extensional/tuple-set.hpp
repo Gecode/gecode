@@ -307,11 +307,11 @@ namespace Gecode {
         unsigned int l = 0U, h = v.n;
         while (l < h) {
             const unsigned int m = l + ((h - l) >> 1);
-            if (n < v.r[m].min)
+            if (n < v.r[m].min) {
                 h = m;
-            else if (n > v.r[m].max)
+            } else if (n > v.r[m].max) {
                 l = m + 1U;
-            else {
+            } else {
                 gid = v.base[m] + static_cast<unsigned int>(n - v.r[m].min);
                 return true;
             }
