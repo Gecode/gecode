@@ -424,7 +424,7 @@ namespace Gecode {
             return x.val() + y;
         if (y.assigned())
             return x + y.val();
-        return LinFloatExpr(x, LinFloatExpr::NT_ADD, (const LinFloatExpr&)y);
+        return LinFloatExpr(x, LinFloatExpr::NT_ADD, static_cast<const LinFloatExpr&>(y));
     }
     LinFloatExpr
     operator+(const FloatVar& x, const LinFloatExpr& e) {
@@ -436,7 +436,7 @@ namespace Gecode {
     operator+(const LinFloatExpr& e, const FloatVar& x) {
         if (x.assigned())
             return e + x.val();
-        return LinFloatExpr(e, LinFloatExpr::NT_ADD, (const LinFloatExpr&)x);
+        return LinFloatExpr(e, LinFloatExpr::NT_ADD, static_cast<const LinFloatExpr&>(x));
     }
     LinFloatExpr
     operator+(const LinFloatExpr& e1, const LinFloatExpr& e2) {
@@ -469,7 +469,7 @@ namespace Gecode {
             return x.val() - y;
         if (y.assigned())
             return x - y.val();
-        return LinFloatExpr(x, LinFloatExpr::NT_SUB, (const LinFloatExpr&)y);
+        return LinFloatExpr(x, LinFloatExpr::NT_SUB, static_cast<const LinFloatExpr&>(y));
     }
     LinFloatExpr
     operator-(const FloatVar& x, const LinFloatExpr& e) {
@@ -481,7 +481,7 @@ namespace Gecode {
     operator-(const LinFloatExpr& e, const FloatVar& x) {
         if (x.assigned())
             return e - x.val();
-        return LinFloatExpr(e, LinFloatExpr::NT_SUB, (const LinFloatExpr&)x);
+        return LinFloatExpr(e, LinFloatExpr::NT_SUB, static_cast<const LinFloatExpr&>(x));
     }
     LinFloatExpr
     operator-(const LinFloatExpr& e1, const LinFloatExpr& e2) {

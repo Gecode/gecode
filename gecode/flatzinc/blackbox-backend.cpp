@@ -180,7 +180,7 @@ namespace Gecode::FlatZinc {
 #else
             (void)stdcall_bytes;
             T symbol = nullptr;
-            *(void**)(&symbol) = dlsym(library, name);
+            *reinterpret_cast<void**>(&symbol) = dlsym(library, name);
             return symbol;
 #endif
         }
