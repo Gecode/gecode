@@ -5978,7 +5978,7 @@ namespace Gecode {
         /// Copy constructor
         SymmetryHandle(const SymmetryHandle& h);
         /// Assignment operator
-        const SymmetryHandle& operator=(const SymmetryHandle& h);
+        SymmetryHandle& operator=(const SymmetryHandle& h);
         /// Destructor
         ~SymmetryHandle();
     };

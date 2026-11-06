@@ -371,7 +371,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
     forceinline NaryUnion&
     NaryUnion::operator=(const NaryUnion& m) {
         f = nullptr;
-        return static_cast<NaryUnion&>(RangeListIter::operator=(m));
+        RangeListIter::operator=(m);
+        return *this;
     }
 
 }}} // namespace Gecode::Iter::Ranges

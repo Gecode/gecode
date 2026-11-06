@@ -229,7 +229,7 @@ namespace Gecode {
         n->m = m;
     }
 
-    const BoolExpr&
+    BoolExpr&
     BoolExpr::operator=(const BoolExpr& e) {
         if (this != &e) {
             if (n->decrement())

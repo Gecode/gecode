@@ -51,7 +51,7 @@ namespace Gecode { namespace Int {
     TaskArray<Task>::TaskArray(const TaskArray<Task>& a)
         : n(a.n), t(a.t) {}
     template <class Task>
-    forceinline const TaskArray<Task>&
+    forceinline TaskArray<Task>&
     TaskArray<Task>::operator=(const TaskArray<Task>& a) {
         n = a.n;
         t = a.t;

@@ -34,7 +34,8 @@ namespace Gecode {
 
     forceinline SetAction&
     SetAction::operator=(const SetAction& a) {
-        return static_cast<SetAction&>(Action::operator=(a));
+        Action::operator=(a);
+        return *this;
     }
 
 } // namespace Gecode

@@ -220,7 +220,7 @@ namespace Gecode {
         REG::Exp::inc(e);
     }
 
-    const REG&
+    REG&
     REG::operator=(const REG& r) {
         if (&r != this) {
             REG::Exp::inc(r.e);

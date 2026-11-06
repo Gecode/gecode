@@ -85,7 +85,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     forceinline Cache&
     Cache::operator=(const Cache& m) {
-        return static_cast<Cache&>(RangeListIter::operator=(m));
+        RangeListIter::operator=(m);
+        return *this;
     }
 
 }}} // namespace Gecode::Iter::Ranges

@@ -34,12 +34,14 @@ namespace Gecode {
 
     forceinline IntCHB&
     IntCHB::operator=(const IntCHB& chb) {
-        return static_cast<IntCHB&>(CHB::operator=(chb));
+        CHB::operator=(chb);
+        return *this;
     }
 
     forceinline BoolCHB&
     BoolCHB::operator=(const BoolCHB& chb) {
-        return static_cast<BoolCHB&>(CHB::operator=(chb));
+        CHB::operator=(chb);
+        return *this;
     }
 
 } // namespace Gecode

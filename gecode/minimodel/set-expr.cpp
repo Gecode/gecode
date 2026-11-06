@@ -615,7 +615,7 @@ namespace Gecode {
         }
     }
 
-    const SetExpr&
+    SetExpr&
     SetExpr::operator=(const SetExpr& e) {
         if (this != &e) {
             if (n != nullptr && n->decrement())

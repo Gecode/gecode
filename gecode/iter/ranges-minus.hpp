@@ -85,7 +85,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     forceinline Minus&
     Minus::operator=(const Minus& m) {
-        return static_cast<Minus&>(RangeListIter::operator=(m));
+        RangeListIter::operator=(m);
+        return *this;
     }
 
 }}} // namespace Gecode::Iter::Ranges

@@ -179,7 +179,7 @@ namespace Gecode { namespace Int {
         /// Initialize from task array \a a (share elements)
         TaskArray(const TaskArray<Task>& a);
         /// Initialize from task array \a a (share elements)
-        const TaskArray<Task>& operator=(const TaskArray<Task>& a);
+        TaskArray<Task>& operator=(const TaskArray<Task>& a);
         //@}
 
         /// \name Array size

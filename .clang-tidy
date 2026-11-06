@@ -37,7 +37,6 @@ Checks: >-
   -misc-override-with-different-visibility,
   -misc-redundant-expression,
   -misc-static-assert,
-  -misc-unconventional-assign-operator,
   -misc-use-anonymous-namespace,
   -misc-use-internal-linkage,
   modernize-*,
