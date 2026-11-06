@@ -129,7 +129,7 @@ namespace {
         errno = 0;
         const long long parsed = std::strtoll(integer.c_str(), &last, 10);
         if ((last == integer.c_str()) || (*last != '\0') || (errno == ERANGE) ||
-            (parsed < (std::numeric_limits<int64_t>::min)()) || (parsed > (std::numeric_limits<int64_t>::max)())) {
+            (parsed < std::numeric_limits<int64_t>::min()) || (parsed > std::numeric_limits<int64_t>::max())) {
             return false;
         }
         value = static_cast<int64_t>(parsed);
@@ -189,7 +189,7 @@ namespace {
         } else if (kind == 3) {
             write_response(std::string(";\0x", 3));
         } else if (kind == 5) {
-            write_response(std::to_string((std::numeric_limits<int64_t>::max)()) + ";");
+            write_response(std::to_string(std::numeric_limits<int64_t>::max()) + ";");
         } else {
             write_response(std::string(1024U * 1024U + 1U, 'x'));
         }
