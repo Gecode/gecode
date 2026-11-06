@@ -75,6 +75,7 @@ namespace Gecode {
         /// Initialize from the empty print function \a vvp
         BrancherNoPrint(const VarValPrint<Var, Val>& vvp);
         /// Initialize from the empty print function \a vvp, moved in as for BrancherPrint
+        // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty print function holds nothing to move
         BrancherNoPrint(VarValPrint<Var, Val>&& vvp);
         /// Initialize during cloning
         BrancherNoPrint(BrancherNoPrint& bp);
@@ -138,6 +139,7 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline
+    // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty print function holds nothing to move
     BrancherNoPrint<View, Val>::BrancherNoPrint(VarValPrint<Var, Val>&& vvp) {
         assert(!vvp);
         (void)vvp;
