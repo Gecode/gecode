@@ -584,7 +584,7 @@ namespace Gecode {
     void
     BoolExpr::rel(Home home, const IntPropLevels& ipls) const {
         Region r;
-        return NNF::nnf(r, n, false)->rel(home, ipls);
+        NNF::nnf(r, n, false)->rel(home, ipls);
     }
 
     BoolExpr

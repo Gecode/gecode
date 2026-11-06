@@ -407,7 +407,7 @@ cdbf(Home home, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s) {
     ViewArray<Int::IntView> load(home, l);
     ViewArray<Int::IntView> bin(home, b);
     IntSharedArray size(s);
-    return CDBF::post(home, load, bin, size);
+    CDBF::post(home, load, bin, size);
 }
 
 /**

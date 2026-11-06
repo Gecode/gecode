@@ -260,7 +260,7 @@ namespace Gecode { namespace Set {
 
     forceinline void
     SingletonView::schedule(Space& home, Propagator& p, ModEvent me) {
-        return Gecode::Int::IntView::schedule(home, p, me_settoint(me));
+        Gecode::Int::IntView::schedule(home, p, me_settoint(me));
     }
     forceinline ModEvent
     SingletonView::me(const ModEventDelta& med) {
