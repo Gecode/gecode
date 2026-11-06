@@ -395,11 +395,7 @@ namespace Gecode { namespace Int { namespace Sorted {
                     return false;
                 }
             }
-            if (Perm) {
-                subsumed = false;
-            } else {
-                subsumed = true;
-            }
+            subsumed = !Perm;
         }
 
         if (y_complete) {
@@ -414,11 +410,7 @@ namespace Gecode { namespace Int { namespace Sorted {
                         return false;
                     }
                 }
-                if (Perm) {
-                    subsumed = false;
-                } else {
-                    subsumed = true;
-                }
+                subsumed = !Perm;
                 noperm_bc = true;
             }
         }

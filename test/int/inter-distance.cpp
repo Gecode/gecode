@@ -290,9 +290,7 @@ namespace Test { namespace Int { namespace InterDistance {
             IntVar assigned(t, 3, 3);
             duplicate[0] = duplicate[1] = assigned;
             inter_distance(t, duplicate, 2);
-            if (t.status() != SS_FAILED)
-                return false;
-            return true;
+            return t.status() == SS_FAILED;
         }
 
         static bool
@@ -331,9 +329,7 @@ namespace Test { namespace Int { namespace InterDistance {
             } catch (const Gecode::Int::ArgumentSame&) {
                 repeated = true;
             }
-            if (!alias || !repeated)
-                return false;
-            return true;
+            return alias && repeated;
         }
 
     public:
