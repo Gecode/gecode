@@ -1349,8 +1349,8 @@ namespace Test { namespace Int { namespace OpenList {
         bool
         run() override {
             using namespace Gecode;
-            std::shared_ptr<int> domain(new int(0));
-            std::shared_ptr<int> transition(new int(0));
+            std::shared_ptr<int> domain = std::make_shared<int>(0);
+            std::shared_ptr<int> transition = std::make_shared<int>(0);
             CallbackSpace* source =
                 new CallbackSpace([domain](int) { return IntSet(0, 1); }, [transition](Space&, OpenIntVarList, int) {});
             source->list.materialize(*source, 2);
