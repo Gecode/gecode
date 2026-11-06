@@ -564,7 +564,7 @@ namespace Gecode { namespace Gist {
             scroll_time_line.stop();
             scroll_time_line.setFrameRange(0, 100);
             scroll_time_line.setDuration(
-                std::max(200, std::min(1000, std::min(std::abs(source_x - target_x), std::abs(source_y - target_y)))));
+                std::max(200, std::min({1000, std::abs(source_x - target_x), std::abs(source_y - target_y)})));
             scroll_time_line.start();
         }
     }

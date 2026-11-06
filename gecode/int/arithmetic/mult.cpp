@@ -184,8 +184,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             long long int b = mll(x0.min(), x1.max());
             long long int c = mll(x0.max(), x1.min());
             long long int d = mll(x0.max(), x1.max());
-            GECODE_ME_CHECK(x2.gq(home, std::min(std::min(a, b), std::min(c, d))));
-            GECODE_ME_CHECK(x2.lq(home, std::max(std::max(a, b), std::max(c, d))));
+            GECODE_ME_CHECK(x2.gq(home, std::min({a, b, c, d})));
+            GECODE_ME_CHECK(x2.lq(home, std::max({a, b, c, d})));
             (void)new (home) MultBnd(home, x0, x1, x2);
         }
         return ES_OK;
@@ -361,8 +361,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             long long int b = mll(x0.min(), x1.max());
             long long int c = mll(x0.max(), x1.min());
             long long int d = mll(x0.max(), x1.max());
-            GECODE_ME_CHECK(x2.gq(home, std::min(std::min(a, b), std::min(c, d))));
-            GECODE_ME_CHECK(x2.lq(home, std::max(std::max(a, b), std::max(c, d))));
+            GECODE_ME_CHECK(x2.gq(home, std::min({a, b, c, d})));
+            GECODE_ME_CHECK(x2.lq(home, std::max({a, b, c, d})));
             (void)new (home) MultDom(home, x0, x1, x2);
         }
         return ES_OK;

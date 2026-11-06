@@ -2639,7 +2639,7 @@ namespace Test { namespace Int {
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
-                return std::min(std::min(x[0], x[1]), x[2]) == x[3];
+                return std::min({x[0], x[1], x[2]}) == x[3];
             }
             /// Post constraint on \a x
             void
@@ -2661,7 +2661,7 @@ namespace Test { namespace Int {
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
-                return std::min(std::min(x[0], x[1]), x[2]) == x[1];
+                return std::min({x[0], x[1], x[2]}) == x[1];
             }
             /// Post constraint on \a x
             void
@@ -2683,7 +2683,7 @@ namespace Test { namespace Int {
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
-                return std::max(std::max(x[0], x[1]), x[2]) == x[3];
+                return std::max({x[0], x[1], x[2]}) == x[3];
             }
             /// Post constraint on \a x
             void
@@ -2705,7 +2705,7 @@ namespace Test { namespace Int {
             /// %Test whether \a x is solution
             bool
             solution(const Assignment& x) const override {
-                return std::max(std::max(x[0], x[1]), x[2]) == x[1];
+                return std::max({x[0], x[1], x[2]}) == x[1];
             }
             /// Post constraint on \a x
             void
