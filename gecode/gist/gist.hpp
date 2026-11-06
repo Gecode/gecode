@@ -40,7 +40,7 @@ namespace Gecode { namespace Gist {
     VarComparator<S>::compare(const Space& s0, const Space& s1) {
         std::ostringstream result;
         dynamic_cast<const S&>(s0).compare(s1, result);
-        if (result.str() != "") {
+        if (!result.str().empty()) {
             init();
             add_html("<pre>\n");
             get_stream() << result.str() << '\n';
@@ -115,7 +115,7 @@ namespace Gecode { namespace Gist {
             std::ostringstream xni;
             xni << x_n << "[" << i << "]";
             std::string cmp = compare(xni.str(), x[i], y[i]);
-            if (cmp != "") {
+            if (!cmp.empty()) {
                 if (!first) {
                     ret << ", ";
                 } else {

@@ -188,7 +188,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
         explicit SetLit(SetLit* s0) : interval(s0->interval), min(s0->min), max(s0->max), s(s0->s) {}
         bool
         empty() const {
-            return ((interval && min > max) || (!interval && s.size() == 0));
+            return ((interval && min > max) || (!interval && s.empty()));
         }
         void
         print(std::ostream& os) override {

@@ -296,7 +296,7 @@ namespace Gecode { namespace Set {
     BndSet::is_consistent() const {
 #ifndef NDEBUG
         if (fst() == nullptr) {
-            if (lst() != nullptr || size() != 0) {
+            if (lst() != nullptr || !empty()) {
                 std::cerr << "Strange empty set.\n";
                 return false;
             } else
