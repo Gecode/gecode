@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace LDSB {
      * that sequence (both zero-based).
      */
     GECODE_INT_EXPORT
-    std::pair<int, int> find_var(int* indices, unsigned int n_values, unsigned int seq_size, int index);
+    std::pair<int, int> find_var(const int* indices, unsigned int n_values, unsigned int seq_size, int index);
 }}} // namespace Gecode::Int::LDSB
 
 namespace Gecode {
@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     public:
         /// Constructor for creation
-        VariableSequenceSymmetryImp(Space& home, int* _indices, unsigned int n, unsigned int seqsize);
+        VariableSequenceSymmetryImp(Space& home, const int* _indices, unsigned int n, unsigned int seqsize);
         /// Copy constructor
         VariableSequenceSymmetryImp(Space& home, const VariableSequenceSymmetryImp& s);
         /// Disposal
@@ -289,7 +289,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     public:
         ValueSequenceSymmetryImp(const ValueSequenceSymmetryImp<View>&) = delete;
         /// Constructor for creation
-        ValueSequenceSymmetryImp(Space& home, int* _values, unsigned int n, unsigned int seqsize);
+        ValueSequenceSymmetryImp(Space& home, const int* _values, unsigned int n, unsigned int seqsize);
         /// Copy constructor
         ValueSequenceSymmetryImp(Space& home, const ValueSequenceSymmetryImp<View>& vss);
         /// Disposal

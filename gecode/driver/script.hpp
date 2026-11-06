@@ -144,7 +144,7 @@ namespace Gecode { namespace Driver {
     /**
      * \brief Compute arithmetic mean of \a n elements in \a t
      */
-    GECODE_DRIVER_EXPORT double am(double t[], unsigned int n);
+    GECODE_DRIVER_EXPORT double am(const double t[], unsigned int n);
 
     /**
      * \brief Compute deviation of \a n elements in \a t

@@ -64,7 +64,6 @@ Checks: >-
   -readability-make-member-function-const,
   -readability-math-missing-parentheses,
   -readability-named-parameter,
-  -readability-non-const-parameter,
   -readability-redundant-declaration,
   -readability-simplify-boolean-expr,
   -readability-suspicious-call-argument,
