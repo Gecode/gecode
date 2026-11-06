@@ -38,7 +38,6 @@
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
 #include <gecode/set/branch.hh>
-#include <cstdarg>
 #endif
 
 #include <gecode/minimodel.hh>
@@ -1412,15 +1411,15 @@ namespace Test::LDSB {
 
 #ifdef GECODE_HAS_SET_VARS
     /// Convenient way to make IntSetArgs
+    template <class... Values>
     IntSetArgs
-    isa(int n, ...) {
+    isa(int n, Values... values) {
         IntSetArgs sets;
-        va_list args;
-        va_start(args, n);
         int i = 0;
         IntArgs a;
-        while (i < n) {
-            int x = va_arg(args, int);
+        for (int x : {values...}) {
+            if (i == n)
+                break;
             if (x == -1) {
                 i++;
                 sets << IntSet(a);
@@ -1429,7 +1428,6 @@ namespace Test::LDSB {
                 a << x;
             }
         }
-        va_end(args);
         return sets;
     }
 
