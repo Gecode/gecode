@@ -40,9 +40,9 @@ namespace Gecode {
     class ValBranch {
     public:
         /// The corresponding branching value function
-        typedef typename BranchTraits<Var>::Val BranchVal;
+        using BranchVal = typename BranchTraits<Var>::Val;
         /// The corresponding branching commit function
-        typedef typename BranchTraits<Var>::Commit BranchCommit;
+        using BranchCommit = typename BranchTraits<Var>::Commit;
 
     protected:
         /// Random number generator

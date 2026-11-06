@@ -44,7 +44,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelBranch
      */
-    typedef std::function<double(const Space& home, double w, double b)> BranchTbl;
+    using BranchTbl = std::function<double(const Space& home, double w, double b)>;
 
     /**
      * \brief Variable branching information
@@ -54,7 +54,7 @@ namespace Gecode {
     class VarBranch {
     public:
         /// Corresponding merit function
-        typedef typename BranchTraits<Var>::Merit MeritFunction;
+        using MeritFunction = typename BranchTraits<Var>::Merit;
 
     protected:
         /// Tie-breaking limit function

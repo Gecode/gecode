@@ -40,7 +40,7 @@ namespace Gecode {
         /**
          * \brief Allocator for position sets
          */
-        typedef Support::BlockAllocator<PosSet, Region> PosSetAllocator;
+        using PosSetAllocator = Support::BlockAllocator<PosSet, Region>;
 
         class NodeInfo;
         class PosInfo;
@@ -653,7 +653,7 @@ namespace Gecode {
         /**
          * \brief Allocator for state nodes
          */
-        typedef Support::BlockAllocator<StateNode, Heap> StatePoolAllocator;
+        using StatePoolAllocator = Support::BlockAllocator<StateNode, Heap>;
 
         /**
          * \brief %Node together with state information

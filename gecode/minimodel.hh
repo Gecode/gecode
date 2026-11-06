@@ -1806,7 +1806,7 @@ namespace Gecode {
     class Slice {
     public:
         /// The type of the Args-array type for ValueType values
-        typedef typename ArrayTraits<A>::ArgsType ArgsType;
+        using ArgsType = typename ArrayTraits<A>::ArgsType;
 
     private:
         ArgsType _r; ///< The elements of the slice
@@ -1861,13 +1861,13 @@ namespace Gecode {
     class Matrix {
     public:
         /// The type of elements of this array
-        typedef typename ArrayTraits<A>::ValueType ValueType;
+        using ValueType = typename ArrayTraits<A>::ValueType;
         /// The type of the Args-array type for ValueType values
-        typedef typename ArrayTraits<A>::ArgsType ArgsType;
+        using ArgsType = typename ArrayTraits<A>::ArgsType;
 
     private:
         /// The type of storage for this array
-        typedef typename ArrayTraits<A>::StorageType StorageType;
+        using StorageType = typename ArrayTraits<A>::StorageType;
         StorageType _a; ///< The array wrapped
         int _w;         ///< The width of the matrix
         int _h;         ///< The height of the matrix

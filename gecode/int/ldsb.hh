@@ -83,20 +83,20 @@ namespace Gecode {
     template <>
     class ArrayTraits<ArgArray<VarImpBase*>> {
     public:
-        typedef ArgArray<VarImpBase*> StorageType;
-        typedef VarImpBase* ValueType;
-        typedef ArgArray<VarImpBase*> ArgsType;
+        using StorageType = ArgArray<VarImpBase*>;
+        using ValueType = VarImpBase*;
+        using ArgsType = ArgArray<VarImpBase*>;
     };
 
     /// An array of literals
-    typedef ArgArray<Int::LDSB::Literal> LiteralArgs;
+    using LiteralArgs = ArgArray<Int::LDSB::Literal>;
     /// Traits of %LiteralArgs
     template <>
     class ArrayTraits<LiteralArgs> {
     public:
-        typedef LiteralArgs StorageType;
-        typedef Int::LDSB::Literal ValueType;
-        typedef LiteralArgs ArgsType;
+        using StorageType = LiteralArgs;
+        using ValueType = Int::LDSB::Literal;
+        using ArgsType = LiteralArgs;
     };
 } // namespace Gecode
 

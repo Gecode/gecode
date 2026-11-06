@@ -603,7 +603,7 @@ namespace Gecode { namespace Instance {
             /// Match item \a k of \a p at position \a c of line \a l
             bool
             match_item(const Pattern& p, int k, const std::string& l, size_t& c, Seq<Capture>& caps) {
-                typedef Pattern::Item Item;
+                using Item = Pattern::Item;
                 const Item& it = p.items[k];
                 switch (it.kind) {
                 case Item::Kind::SPACE: {

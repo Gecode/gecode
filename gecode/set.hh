@@ -1005,7 +1005,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetBranch
      */
-    typedef std::function<bool(const Space& home, SetVar x, int i)> SetBranchFilter;
+    using SetBranchFilter = std::function<bool(const Space& home, SetVar x, int i)>;
     /**
      * \brief Branch merit function type for set variables
      *
@@ -1016,7 +1016,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetBranch
      */
-    typedef std::function<double(const Space& home, SetVar x, int i)> SetBranchMerit;
+    using SetBranchMerit = std::function<double(const Space& home, SetVar x, int i)>;
 
     /**
      * \brief Branch value function type for set variables
@@ -1028,7 +1028,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetBranch
      */
-    typedef std::function<int(const Space& home, SetVar x, int i)> SetBranchVal;
+    using SetBranchVal = std::function<int(const Space& home, SetVar x, int i)>;
 
     /**
      * \brief Branch commit function type for set variables
@@ -1041,7 +1041,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelSetBranch
      */
-    typedef std::function<void(Space& home, unsigned int a, SetVar x, int i, int n)> SetBranchCommit;
+    using SetBranchCommit = std::function<void(Space& home, unsigned int a, SetVar x, int i, int n)>;
 
 } // namespace Gecode
 
@@ -1196,9 +1196,8 @@ namespace Gecode {
 namespace Gecode {
 
     /// Function type for printing branching alternatives for set variables
-    typedef std::function<void(const Space& home, const Brancher& b, unsigned int a, SetVar x, int i, const int& n,
-                               std::ostream& o)>
-        SetVarValPrint;
+    using SetVarValPrint = std::function<void(const Space& home, const Brancher& b, unsigned int a, SetVar x, int i,
+                                              const int& n, std::ostream& o)>;
 
 } // namespace Gecode
 
@@ -1700,12 +1699,12 @@ namespace Gecode {
      * \brief Tracer for set variables
      * \ingroup TaskSetTrace
      */
-    typedef ViewTracer<Set::SetView> SetTracer;
+    using SetTracer = ViewTracer<Set::SetView>;
     /**
      * \brief Trace recorder for set variables
      * \ingroup TaskSetTrace
      */
-    typedef ViewTraceRecorder<Set::SetView> SetTraceRecorder;
+    using SetTraceRecorder = ViewTraceRecorder<Set::SetView>;
 
     /**
      * \brief Standard set variable tracer

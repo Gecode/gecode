@@ -77,7 +77,7 @@ namespace Gecode {
     class ViewBrancher : public Brancher {
     protected:
         /// The corresponding variable
-        typedef typename View::VarType Var;
+        using Var = typename View::VarType;
         /// Views to branch on
         ViewArray<View> x;
         /// Unassigned views start at x[start]

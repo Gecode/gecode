@@ -42,7 +42,7 @@
 namespace Gecode { namespace Int { namespace Extensional {
 
     /// Import tuple type
-    typedef ::Gecode::TupleSet::Tuple Tuple;
+    using Tuple = ::Gecode::TupleSet::Tuple;
 
     /// Tuple comparison
     class TupleCompare {

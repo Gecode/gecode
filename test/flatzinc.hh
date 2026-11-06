@@ -53,8 +53,8 @@ namespace Test {
          */
         class FlatZincTest : public Base {
         protected:
-            typedef std::function<bool(const std::string&)> OutputCheck;
-            typedef std::function<void()> BeforeRun;
+            using OutputCheck = std::function<bool(const std::string&)>;
+            using BeforeRun = std::function<void()>;
             std::string _name;
             std::string _source;
             std::string _expected;

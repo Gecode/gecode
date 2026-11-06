@@ -147,9 +147,9 @@ namespace Test {
 
                 START_TEST("Iteration");
                 {
-                    typedef typename Array::reference reference;
-                    typedef typename Array::pointer pointer;
-                    typedef typename Array::iterator iterator;
+                    using reference = typename Array::reference;
+                    using pointer = typename Array::pointer;
+                    using iterator = typename Array::iterator;
                     const iterator begin = a.begin(), end = a.end();
                     CHECK_TEST(end - begin == a.size(), "Distance != size");
                     int index = 0;
@@ -169,9 +169,9 @@ namespace Test {
                 }
                 START_TEST("Read-only iteration");
                 {
-                    typedef typename Array::const_reference reference;
-                    typedef typename Array::const_pointer pointer;
-                    typedef typename Array::const_iterator iterator;
+                    using reference = typename Array::const_reference;
+                    using pointer = typename Array::const_pointer;
+                    using iterator = typename Array::const_iterator;
                     const iterator begin = const_a.begin(), end = const_a.end();
                     CHECK_TEST(end - begin == const_a.size(), "Distance != size");
                     int index = 0;
@@ -194,9 +194,9 @@ namespace Test {
 
                 START_TEST("Reverse iteration");
                 {
-                    typedef typename Array::reference reference;
-                    typedef typename Array::pointer pointer;
-                    typedef typename Array::reverse_iterator iterator;
+                    using reference = typename Array::reference;
+                    using pointer = typename Array::pointer;
+                    using iterator = typename Array::reverse_iterator;
                     const iterator begin = a.rbegin(), end = a.rend();
                     CHECK_TEST(end - begin == a.size(), "Distance != size");
                     int index = a.size();
@@ -217,9 +217,9 @@ namespace Test {
 
                 START_TEST("Reverse read-only iteration");
                 {
-                    typedef typename Array::const_reference reference;
-                    typedef typename Array::const_pointer pointer;
-                    typedef typename Array::const_reverse_iterator iterator;
+                    using reference = typename Array::const_reference;
+                    using pointer = typename Array::const_pointer;
+                    using iterator = typename Array::const_reverse_iterator;
                     const iterator begin = const_a.rbegin(), end = const_a.rend();
                     CHECK_TEST(end - begin == const_a.size(), "Distance != size");
                     int index = a.size();
@@ -293,7 +293,7 @@ namespace Test {
             /// Maximum array size
             static const int n = 16;
             /// Array type being tested
-            typedef Gecode::VarArray<Gecode::IntVar> Array;
+            using Array = Gecode::VarArray<Gecode::IntVar>;
 
         public:
             /// Initialize test
@@ -316,7 +316,7 @@ namespace Test {
             /// Maximum array size
             static const int n = 16;
             /// Array type being tested
-            typedef Gecode::ArgArrayBase<int> Array;
+            using Array = Gecode::ArgArrayBase<int>;
 
         public:
             /// Initialize test
@@ -339,7 +339,7 @@ namespace Test {
             /// Maximum array size
             static const int n = 16;
             /// Array type being tested
-            typedef Gecode::ViewArray<Gecode::IntVar> Array;
+            using Array = Gecode::ViewArray<Gecode::IntVar>;
 
         public:
             /// Initialize test
@@ -362,7 +362,7 @@ namespace Test {
             /// Maximum array size
             static const int n = 16;
             /// Array type being tested
-            typedef Gecode::SharedArray<int> Array;
+            using Array = Gecode::SharedArray<int>;
 
         public:
             /// Initialize test

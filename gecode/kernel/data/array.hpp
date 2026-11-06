@@ -122,23 +122,23 @@ namespace Gecode {
         /// \name Associated types
         //@{
         /// Type of the variable stored in this array
-        typedef Var value_type;
+        using value_type = Var;
         /// Type of a reference to the value type
-        typedef Var& reference;
+        using reference = Var&;
         /// Type of a constant reference to the value type
-        typedef const Var& const_reference;
+        using const_reference = const Var&;
         /// Type of a pointer to the value type
-        typedef Var* pointer;
+        using pointer = Var*;
         /// Type of a read-only pointer to the value type
-        typedef const Var* const_pointer;
+        using const_pointer = const Var*;
         /// Type of the iterator used to iterate through this array's elements
-        typedef Var* iterator;
+        using iterator = Var*;
         /// Type of the iterator used to iterate read-only through this array's elements
-        typedef const Var* const_iterator;
+        using const_iterator = const Var*;
         /// Type of the iterator used to iterate backwards through this array's elements
-        typedef std::reverse_iterator<Var*> reverse_iterator;
+        using reverse_iterator = std::reverse_iterator<Var*>;
         /// Type of the iterator used to iterate backwards and read-only through this array's elements
-        typedef std::reverse_iterator<const Var*> const_reverse_iterator;
+        using const_reverse_iterator = std::reverse_iterator<const Var*>;
         //@}
 
         //@{
@@ -260,23 +260,23 @@ namespace Gecode {
         /// \name Associated types
         //@{
         /// Type of the view stored in this array
-        typedef View value_type;
+        using value_type = View;
         /// Type of a reference to the value type
-        typedef View& reference;
+        using reference = View&;
         /// Type of a constant reference to the value type
-        typedef const View& const_reference;
+        using const_reference = const View&;
         /// Type of a pointer to the value type
-        typedef View* pointer;
+        using pointer = View*;
         /// Type of a read-only pointer to the value type
-        typedef const View* const_pointer;
+        using const_pointer = const View*;
         /// Type of the iterator used to iterate through this array's elements
-        typedef View* iterator;
+        using iterator = View*;
         /// Type of the iterator used to iterate read-only through this array's elements
-        typedef const View* const_iterator;
+        using const_iterator = const View*;
         /// Type of the iterator used to iterate backwards through this array's elements
-        typedef std::reverse_iterator<View*> reverse_iterator;
+        using reverse_iterator = std::reverse_iterator<View*>;
         /// Type of the iterator used to iterate backwards and read-only through this array's elements
-        typedef std::reverse_iterator<const View*> const_reverse_iterator;
+        using const_reverse_iterator = std::reverse_iterator<const View*>;
         //@}
 
         /// \name Constructors and initialization
@@ -570,23 +570,23 @@ namespace Gecode {
         /// \name Associated types
         //@{
         /// Type of the view stored in this array
-        typedef T value_type;
+        using value_type = T;
         /// Type of a reference to the value type
-        typedef T& reference;
+        using reference = T&;
         /// Type of a constant reference to the value type
-        typedef const T& const_reference;
+        using const_reference = const T&;
         /// Type of a pointer to the value type
-        typedef T* pointer;
+        using pointer = T*;
         /// Type of a read-only pointer to the value type
-        typedef const T* const_pointer;
+        using const_pointer = const T*;
         /// Type of the iterator used to iterate through this array's elements
-        typedef T* iterator;
+        using iterator = T*;
         /// Type of the iterator used to iterate read-only through this array's elements
-        typedef const T* const_iterator;
+        using const_iterator = const T*;
         /// Type of the iterator used to iterate backwards through this array's elements
-        typedef std::reverse_iterator<T*> reverse_iterator;
+        using reverse_iterator = std::reverse_iterator<T*>;
         /// Type of the iterator used to iterate backwards and read-only through this array's elements
-        typedef std::reverse_iterator<const T*> const_reverse_iterator;
+        using const_reverse_iterator = std::reverse_iterator<const T*>;
         //@}
 
         /// \name Constructors and initialization
@@ -731,9 +731,9 @@ namespace Gecode {
     template <>
     class ArrayTraits<ArgArray<double>> {
     public:
-        typedef ArgArray<double> StorageType;
-        typedef double ValueType;
-        typedef ArgArray<double> ArgsType;
+        using StorageType = ArgArray<double>;
+        using ValueType = double;
+        using ArgsType = ArgArray<double>;
     };
 
     template <class>

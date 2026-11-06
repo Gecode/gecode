@@ -36,9 +36,9 @@ namespace Gecode {
     template <>
     class TraceTraits<Set::SetView> {
     public:
-        typedef Set::SetTraceView TraceView;
-        typedef SetTraceDelta TraceDelta;
-        typedef unsigned long long int SlackValue;
+        using TraceView = Set::SetTraceView;
+        using TraceDelta = SetTraceDelta;
+        using SlackValue = unsigned long long int;
     };
 
 } // namespace Gecode

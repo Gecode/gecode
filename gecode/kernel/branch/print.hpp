@@ -44,7 +44,7 @@ namespace Gecode {
     class BrancherPrint {
     public:
         /// The corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = typename View::VarType;
 
     protected:
         SharedData<VarValPrint<Var, Val>> p;
@@ -70,7 +70,7 @@ namespace Gecode {
     class BrancherNoPrint {
     public:
         /// The corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = typename View::VarType;
 
         /// Initialize from the empty print function \a vvp
         BrancherNoPrint(const VarValPrint<Var, Val>& vvp);

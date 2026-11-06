@@ -111,7 +111,7 @@ namespace Gecode {
      * point values.
      * \ingroup TaskModelFloatVars
      */
-    typedef double FloatNum;
+    using FloatNum = double;
 
     /// Compare objective value \a x with \a y for direction \a s
     forceinline SpaceComparison
@@ -191,10 +191,10 @@ namespace Gecode { namespace Float {
         //@{
 #ifdef GECODE_FLOAT_MODE_CONTROL87
         /// Floating-point control word, as returned by `_control87`
-        typedef unsigned int Mode;
+        using Mode = unsigned int;
 #else
         /// Rounding mode, one of the `FE_*` values of `<cfenv>`
-        typedef int Mode;
+        using Mode = int;
 #endif
         /// Return the current rounding mode
         static Mode current_mode();
@@ -496,7 +496,7 @@ namespace Gecode {
 
     protected:
         /// Implementation type for float value
-        typedef Float::Interval FloatValImpType;
+        using FloatValImpType = Float::Interval;
         /// Implementation of float value
         FloatValImpType x;
         /// Initialize from implementation \a i
@@ -1467,7 +1467,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelFloatBranch
      */
-    typedef std::function<bool(const Space& home, FloatVar x, int i)> FloatBranchFilter;
+    using FloatBranchFilter = std::function<bool(const Space& home, FloatVar x, int i)>;
 
     /**
      * \brief Branch merit function type for float variables
@@ -1479,7 +1479,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelFloatBranch
      */
-    typedef std::function<double(const Space& home, FloatVar x, int i)> FloatBranchMerit;
+    using FloatBranchMerit = std::function<double(const Space& home, FloatVar x, int i)>;
 
     /**
      * \brief Value description class for branching
@@ -1504,7 +1504,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelFloatBranch
      */
-    typedef std::function<FloatNumBranch(const Space& home, FloatVar x, int i)> FloatBranchVal;
+    using FloatBranchVal = std::function<FloatNumBranch(const Space& home, FloatVar x, int i)>;
 
     /**
      * \brief Branch commit function type for float variables
@@ -1517,7 +1517,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelFloatBranch
      */
-    typedef std::function<void(Space& home, unsigned int a, FloatVar x, int i, FloatNumBranch nl)> FloatBranchCommit;
+    using FloatBranchCommit = std::function<void(Space& home, unsigned int a, FloatVar x, int i, FloatNumBranch nl)>;
 
 } // namespace Gecode
 
@@ -1672,9 +1672,8 @@ namespace Gecode {
 namespace Gecode {
 
     /// Function type for explaining branching alternatives for float variables
-    typedef std::function<void(const Space& home, const Brancher& b, unsigned int a, FloatVar x, int i,
-                               const FloatNumBranch& n, std::ostream& o)>
-        FloatVarValPrint;
+    using FloatVarValPrint = std::function<void(const Space& home, const Brancher& b, unsigned int a, FloatVar x, int i,
+                                                const FloatNumBranch& n, std::ostream& o)>;
 
 } // namespace Gecode
 
@@ -2088,12 +2087,12 @@ namespace Gecode {
      * \brief Tracer for float variables
      * \ingroup TaskFloatTrace
      */
-    typedef ViewTracer<Float::FloatView> FloatTracer;
+    using FloatTracer = ViewTracer<Float::FloatView>;
     /**
      * \brief Trace recorder for float variables
      * \ingroup TaskFloatTrace
      */
-    typedef ViewTraceRecorder<Float::FloatView> FloatTraceRecorder;
+    using FloatTraceRecorder = ViewTraceRecorder<Float::FloatView>;
 
     /**
      * \brief Standard float variable tracer

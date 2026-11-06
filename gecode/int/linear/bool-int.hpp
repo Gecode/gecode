@@ -551,7 +551,7 @@ namespace Gecode { namespace Int { namespace Linear {
     class BoolNegTraits<BoolView> {
     public:
         /// The negated view
-        typedef NegBoolView NegView;
+        using NegView = NegBoolView;
         /// Return negated View
         static NegBoolView
         neg(BoolView x) {
@@ -565,7 +565,7 @@ namespace Gecode { namespace Int { namespace Linear {
     class BoolNegTraits<NegBoolView> {
     public:
         /// The negated view
-        typedef BoolView NegView;
+        using NegView = BoolView;
         /// Return negated View
         static BoolView
         neg(NegBoolView x) {

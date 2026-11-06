@@ -44,7 +44,7 @@ using namespace Gecode;
  *
  */
 //@{
-typedef int (*order_t)[2];     ///< Type of the order-specification
+using order_t = int (*)[2];    ///< Type of the order-specification
 extern const int order_weight; ///< Weight-position in order-array elements
 extern const int order_color;  ///< Color-position in order-array elements
 //@}

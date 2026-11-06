@@ -48,14 +48,14 @@ namespace Gecode { namespace Int {
     template <>
     class ViewToVarArg<Gecode::Set::SetView> {
     public:
-        typedef Gecode::SetVarArgs argtype;
+        using argtype = Gecode::SetVarArgs;
     };
 
     /// VarArg type for singleton views
     template <>
     class ViewToVarArg<Gecode::Set::SingletonView> {
     public:
-        typedef Gecode::IntVarArgs argtype;
+        using argtype = Gecode::IntVarArgs;
     };
 
 }} // namespace Gecode::Int
@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace Element {
     template <class View, class View0, class View1>
     class ElementIntersection : public Propagator {
     public:
-        typedef Gecode::Int::IdxViewArray<View> IdxViewArray;
+        using IdxViewArray = Gecode::Int::IdxViewArray<View>;
 
     protected:
         IntSet universe;
@@ -117,7 +117,7 @@ namespace Gecode { namespace Set { namespace Element {
     template <class View, class View0, class View1>
     class ElementUnion : public Propagator {
     public:
-        typedef Gecode::Int::IdxViewArray<View> IdxViewArray;
+        using IdxViewArray = Gecode::Int::IdxViewArray<View>;
 
     protected:
         IdxViewArray iv;
@@ -195,7 +195,7 @@ namespace Gecode { namespace Set { namespace Element {
     template <class SView, class RView>
     class ElementDisjoint : public Propagator {
     public:
-        typedef Gecode::Int::IdxViewArray<SView> IdxViewArray;
+        using IdxViewArray = Gecode::Int::IdxViewArray<SView>;
 
     protected:
         IdxViewArray iv;

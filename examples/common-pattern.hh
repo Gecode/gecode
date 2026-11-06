@@ -22,7 +22,7 @@
 namespace PatternMining {
 
     using namespace Gecode;
-    typedef std::vector<std::vector<int>> Sequences;
+    using Sequences = std::vector<std::vector<int>>;
 
     enum class Format { LETTERS, INTEGERS, SPMF };
     enum class Language { DEFAULT, NONE, MOTIF, RE10, RE14, RE2 };
