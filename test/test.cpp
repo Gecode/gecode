@@ -330,7 +330,7 @@ namespace Test {
                     if (!match_found) {
                         // No match found yet, test with current pattern
                         if (((type == MATCH_ANY) && (test_name.contains(pattern))) ||
-                            ((type == MATCH_FIRST) && (test_name.find(pattern) == 0)))
+                            ((type == MATCH_FIRST) && (test_name.starts_with(pattern))))
                             match_found = true;
                     }
                 }

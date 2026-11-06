@@ -151,7 +151,7 @@ namespace Gecode { namespace Instance {
         /// Test whether \a n is the name of a Gecode constant
         bool
         is_gecode_name(const std::string& n) {
-            return n.compare(0, gecode_prefix.size(), gecode_prefix) == 0;
+            return n.starts_with(gecode_prefix);
         }
 
         /// Split spec \a src, which starts on line \a line, into tokens
