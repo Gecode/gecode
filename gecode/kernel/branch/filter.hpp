@@ -73,6 +73,7 @@ namespace Gecode {
         /// Initialize from the empty filter \a bf
         BrancherNoFilter(const BranchFilter<Var>& bf);
         /// Initialize from the empty filter \a bf, moved in as for BrancherFilter
+        // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty filter holds nothing to move
         BrancherNoFilter(BranchFilter<Var>&& bf);
         /// Initialize during cloning
         BrancherNoFilter(BrancherNoFilter& bf);
@@ -134,6 +135,7 @@ namespace Gecode {
 
     template <class View>
     forceinline
+    // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty filter holds nothing to move
     BrancherNoFilter<View>::BrancherNoFilter(BranchFilter<Var>&& bf) {
         assert(!bf);
         (void)bf;

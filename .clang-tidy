@@ -6,6 +6,7 @@ Checks: >-
   cert-err33-c,
   google-default-arguments,
   cppcoreguidelines-no-malloc,
+  cppcoreguidelines-rvalue-reference-param-not-moved,
   cppcoreguidelines-misleading-capture-default-by-value,
   cppcoreguidelines-missing-std-forward,
   google-build-explicit-make-pair,
