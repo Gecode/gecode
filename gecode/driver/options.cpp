@@ -91,7 +91,7 @@ namespace Gecode {
             } else {
                 return nullptr;
             }
-            if (strcmp(s, eopt))
+            if (strcmp(s, eopt) != 0)
                 return nullptr;
             if (argc == 2) {
                 std::cerr << "Missing argument for option \"" << iopt << "\"" << '\n' << std::flush;
@@ -281,7 +281,7 @@ namespace Gecode {
             } else {
                 return 0;
             }
-            if (strcmp(s, eopt))
+            if (strcmp(s, eopt) != 0)
                 return 0;
             if (argc == 2) {
                 // Option without argument
