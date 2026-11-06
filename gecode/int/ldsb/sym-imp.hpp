@@ -202,7 +202,7 @@ namespace Gecode::Int::LDSB {
     VariableSequenceSymmetryImp<View>::symmetric(Literal l, const ViewArray<View>& x) const {
         Region region;
         Support::DynamicStack<Literal, Region> s(region);
-        if (l._variable < (int)lookup_size) {
+        if (l._variable < static_cast<int>(lookup_size)) {
             int pos_it = lookup[l._variable];
             if (pos_it == -1) {
                 return dynamic_stack_to_arg_array(s);

@@ -65,7 +65,7 @@ namespace Gecode::Gist {
                 if (v == '\n') {
                     flush();
                 } else {
-                    buffer += (char)v;
+                    buffer += static_cast<char>(v);
                 }
                 return v;
             }
