@@ -80,7 +80,6 @@ Checks: >-
   -readability-math-missing-parentheses,
   -readability-named-parameter,
   -readability-non-const-parameter,
-  -readability-qualified-auto,
   -readability-redundant-access-specifiers,
   -readability-redundant-declaration,
   -readability-redundant-smartptr-get,
