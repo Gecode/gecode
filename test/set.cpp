@@ -42,8 +42,7 @@ namespace Test { namespace Set {
 
     CountableSet::CountableSet(const Gecode::IntSet& d0) : d(d0), cur(0) {
         Gecode::IntSetRanges isr(d);
-        lubmax =
-            static_cast<unsigned int>(pow(static_cast<double>(2.0), static_cast<int>(Gecode::Iter::Ranges::size(isr))));
+        lubmax = static_cast<unsigned int>(pow(2.0, static_cast<int>(Gecode::Iter::Ranges::size(isr))));
     }
 
     void
@@ -56,8 +55,7 @@ namespace Test { namespace Set {
         d = d0;
         cur = 0;
         Gecode::IntSetRanges isr(d);
-        lubmax =
-            static_cast<unsigned int>(pow(static_cast<double>(2.0), static_cast<int>(Gecode::Iter::Ranges::size(isr))));
+        lubmax = static_cast<unsigned int>(pow(2.0, static_cast<int>(Gecode::Iter::Ranges::size(isr))));
     }
 
     int

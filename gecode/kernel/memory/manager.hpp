@@ -313,7 +313,7 @@ namespace Gecode { namespace Kernel {
         size_t overhead = sizeof(HeapChunk) - sizeof(double);
         sz += overhead;
         // Round size to next multiple of current heap chunk size
-        size_t allocate = ((sz > cur_hcsz) ? (static_cast<size_t>(sz / cur_hcsz) + 1) * cur_hcsz : cur_hcsz);
+        size_t allocate = ((sz > cur_hcsz) ? ((sz / cur_hcsz) + 1) * cur_hcsz : cur_hcsz);
         // Request a chunk of preferably size allocate, but at least size sz
         HeapChunk* hc = sm.alloc(allocate, sz);
         start = ptr_cast<char*>(&hc->area[0]);
@@ -386,7 +386,7 @@ namespace Gecode { namespace Kernel {
 #endif
 
         size_t aligned_s = s;
-        void* aligned_p = std::align(std::min(static_cast<size_t>(GECODE_MEMORY_ALIGNMENT), s),
+        void* aligned_p = std::align(std::min(GECODE_MEMORY_ALIGNMENT, s),
                                      MemoryConfig::fl_size_min << MemoryConfig::fl_unit_size, p, aligned_s);
 
         if (aligned_p == nullptr || aligned_s < (MemoryConfig::fl_size_min << MemoryConfig::fl_unit_size))

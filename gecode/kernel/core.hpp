@@ -3374,7 +3374,7 @@ namespace Gecode {
         // Turning al into a reference is for gcc, assume is for MSVC
         GECODE_NOT_NULL(a);
         ActorLink& t = *a;
-        return static_cast<ActorLink*>(&t);
+        return (&t);
     }
 
     template <class T>
@@ -3383,7 +3383,7 @@ namespace Gecode {
         // Turning al into a reference is for gcc, assume is for MSVC
         GECODE_NOT_NULL(a);
         const ActorLink& t = *a;
-        return static_cast<const ActorLink*>(&t);
+        return (&t);
     }
 
     /*
@@ -3840,9 +3840,9 @@ namespace Gecode {
         if ((home.pc.p.bid_sc >> Space::sc_bits) == 0U)
             throw TooManyBranchers("Brancher::Brancher");
         // If no brancher available, make it the first one
-        if (home.b_status == &static_cast<Space&>(home).bl) {
+        if (home.b_status == &home.bl) {
             home.b_status = this;
-            if (home.b_commit == &static_cast<Space&>(home).bl)
+            if (home.b_commit == &home.bl)
                 home.b_commit = this;
         }
         home.bl.tail(this);

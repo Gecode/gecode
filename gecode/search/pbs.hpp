@@ -255,7 +255,7 @@ namespace Gecode { namespace Search {
                 std::unique_ptr<Space> slave((i == n_slaves - 1) ? master : master->clone());
                 if (slave.get() == master)
                     unowned_master = nullptr;
-                (void)slave->slave(static_cast<unsigned int>(i));
+                (void)slave->slave(i);
                 slaves[i] = build<T, E>(slave.get(), opt);
             }
             return Par::make_pbs_engine(slaves, stops, n_slaves, stat, E<T>::best);

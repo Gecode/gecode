@@ -273,7 +273,7 @@ namespace Gecode { namespace CPProfiler {
             bytes_left -= static_cast<int>(n);
         }
 
-        *len = static_cast<int>(total); // return number actually sent here
+        *len = total; // return number actually sent here
 
         return (n == -1) ? -1 : 0; // return -1 on failure, 0 on success
     }
@@ -325,7 +325,7 @@ namespace Gecode { namespace CPProfiler {
 
         // loop through all the results and connect to the first we can
         for (p = server_info; p != nullptr; p = p->ai_next) {
-            socket_fd = static_cast<int>(socket(p->ai_family, p->ai_socktype, p->ai_protocol));
+            socket_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
             if (socket_fd == -1) {
                 // errno is set here, but we don't examine it.
                 continue;

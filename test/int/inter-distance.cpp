@@ -114,11 +114,11 @@ namespace Test { namespace Int { namespace InterDistance {
             RandomAssignment::next(rand);
             if (a % 2 == 0) {
                 int m = n - static_cast<int>(variable);
-                int distance = variable ? static_cast<int>(rand(p + 1)) : p;
+                int distance = variable ? rand(p + 1) : p;
                 int slack = d.max() - d.min() - (m - 1) * distance;
                 int value = d.min();
                 for (int i = 0; i < m; i++) {
-                    int extra = static_cast<int>(rand(slack + 1));
+                    int extra = rand(slack + 1);
                     slack -= extra;
                     value += extra;
                     vals[i] = value;
@@ -126,7 +126,7 @@ namespace Test { namespace Int { namespace InterDistance {
                         value += distance;
                 }
                 for (int i = m - 1; i > 0; i--) {
-                    int j = static_cast<int>(rand(i + 1));
+                    int j = rand(i + 1);
                     std::swap(vals[i], vals[j]);
                 }
                 if (variable)
