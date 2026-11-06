@@ -1955,6 +1955,7 @@ namespace Test { namespace Int {
                         Gecode::product_mod(home, Gecode::IntVarArgs(), m, y);
                         return arithmetic_failed("accepted invalid modulus: y", Gecode::IntVarArgs() << y);
                     } catch (const Gecode::Int::OutOfLimits&) {
+                        // Expected
                     }
                 }
                 return true;

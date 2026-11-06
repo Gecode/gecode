@@ -1031,6 +1031,7 @@ namespace Test {
                 } catch (const Exception&) {
                     return true;
                 } catch (...) {
+                    // Ignored: the check after this block reports the failure
                 }
                 return false;
             }

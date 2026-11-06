@@ -315,6 +315,7 @@ namespace Gecode { namespace FlatZinc {
                 try {
                     library_fzn_free(root_instance);
                 } catch (...) {
+                    // Ignored: cleanup has no way to report a failure
                 }
             }
             close_library(loaded);
@@ -329,12 +330,14 @@ namespace Gecode { namespace FlatZinc {
                 try {
                     library_fzn_free(instance->value);
                 } catch (...) {
+                    // Ignored: cleanup has no way to report a failure
                 }
             }
 #endif
             try {
                 library_fzn_free(root_instance);
             } catch (...) {
+                // Ignored: cleanup has no way to report a failure
             }
         }
 #ifdef GECODE_HAS_THREADS
@@ -368,6 +371,7 @@ namespace Gecode { namespace FlatZinc {
                 try {
                     library_fzn_free(value);
                 } catch (...) {
+                    // Ignored: cleanup has no way to report a failure
                 }
             }
             throw;

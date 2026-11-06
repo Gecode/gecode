@@ -7,7 +7,6 @@ Checks: >-
   -bugprone-branch-clone,
   -bugprone-derived-method-shadowing-base-method,
   -bugprone-easily-swappable-parameters,
-  -bugprone-empty-catch,
   -bugprone-exception-escape,
   -bugprone-implicit-widening-of-multiplication-result,
   -bugprone-inc-dec-in-conditions,
@@ -113,6 +112,11 @@ FormatStyle: file
 CheckOptions:
   # Explicit discards document intentional ownership handoffs.
   bugprone-unused-return-value.AllowCastToVoid: true
+  bugprone-empty-catch.IgnoreCatchWithKeywords: 'Expected;Ignored'
+  # main reports nothing useful by catching, and the move members this
+  # reports are implicit ones of value types and lambdas.
+  bugprone-exception-escape.CheckMain: false
+  bugprone-exception-escape.CheckMoveMemberFunctions: false
   # glibc needs this feature macro defined before any system header.
   bugprone-reserved-identifier.AllowedIdentifiers: '_GNU_SOURCE'
   readability-identifier-naming.FunctionCase: lower_case

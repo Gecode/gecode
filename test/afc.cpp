@@ -199,6 +199,7 @@ namespace Test {
                         return false;
                     throw 1;
                 } catch (int) {
+                    // Expected
                 }
                 if (s.post().afc() != 0.0)
                     return false;
@@ -222,6 +223,7 @@ namespace Test {
                         return false;
                     throw 1;
                 } catch (int) {
+                    // Expected
                 }
                 if (s.post().afc() != 0.0)
                     return false;
@@ -234,6 +236,7 @@ namespace Test {
                 Space::NoGPI context(s);
                 throw 1;
             } catch (int) {
+                // Expected
             }
             return s.post().afc() == 1.0;
         }
