@@ -156,6 +156,7 @@ namespace Gecode { namespace Set { namespace LDSB {
     const Choice*
     LDSBSetBrancher<View, n, Val, a, Filter, Print>::choice(Space& home) {
         // Making the PVC here is not so nice, I think.
+        // NOLINTNEXTLINE(bugprone-parent-virtual-call): LDSBBrancher::choice needs the updated symmetries
         const Choice* c = ViewValBrancher<View, n, Val, a, Filter, Print>::choice(home);
         const PosValChoice<Val>* pvc = static_cast<const PosValChoice<Val>*>(c);
 
@@ -189,12 +190,14 @@ namespace Gecode { namespace Set { namespace LDSB {
             _left_branch_values = IntSet(ia);
 
             // Post the branching constraint.
+            // NOLINTNEXTLINE(bugprone-parent-virtual-call): the prunings below are the ones LDSB adds
             ExecStatus from_base = ViewValBrancher<View, n, Val, a, Filter, Print>::commit(home, c, b);
             GECODE_ES_CHECK(from_base);
             for (int i = 0; i < this->_nsyms; i++)
                 this->_syms[i]->update(Literal(choice_pos, choice_val));
         } else if (b == 1) {
             // Post the branching constraint.
+            // NOLINTNEXTLINE(bugprone-parent-virtual-call): the prunings below are the ones LDSB adds
             ExecStatus from_base = ViewValBrancher<View, n, Val, a, Filter, Print>::commit(home, c, b);
             GECODE_ES_CHECK(from_base);
 
