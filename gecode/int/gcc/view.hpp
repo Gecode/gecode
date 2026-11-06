@@ -400,8 +400,7 @@ namespace Gecode { namespace Int {
         ///@}
     };
 
-    forceinline
-    ViewRanges<GCC::CardView>::ViewRanges() {}
+    forceinline ViewRanges<GCC::CardView>::ViewRanges() = default;
 
     forceinline
     ViewRanges<GCC::CardView>::ViewRanges(const GCC::CardView& x)
