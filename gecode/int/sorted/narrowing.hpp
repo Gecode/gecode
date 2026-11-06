@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Sorted {
+namespace Gecode::Int::Sorted {
 
     /**
      *   \brief Compute the sccs of the oriented intersection-graph
@@ -231,6 +231,6 @@ namespace Gecode { namespace Int { namespace Sorted {
         return true;
     }
 
-}}} // namespace Gecode::Int::Sorted
+} // namespace Gecode::Int::Sorted
 
 // STATISTICS: int-prop

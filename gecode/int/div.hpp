@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     template <class IntType>
     forceinline IntType
@@ -87,6 +87,6 @@ namespace Gecode { namespace Int {
         return (x >= 0) ? floor_div_px(x, y) : -ceil_div_px(-x, y);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

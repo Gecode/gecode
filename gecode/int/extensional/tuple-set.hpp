@@ -345,7 +345,7 @@ namespace Gecode {
         return true;
     }
 
-    namespace Int { namespace Extensional {
+    namespace Int::Extensional {
 
         forceinline bool
         support_offsets_size(unsigned long long n_vals, unsigned int& n_offsets) {
@@ -387,7 +387,7 @@ namespace Gecode {
             return ts.dense_compressed_support(p, n, b, e);
         }
 
-    }} // namespace Int::Extensional
+    } // namespace Int::Extensional
 
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>&

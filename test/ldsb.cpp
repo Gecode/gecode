@@ -52,7 +52,7 @@
  * \namespace Test::LDSB
  * \brief Testing for LDSB
  */
-namespace Test { namespace LDSB {
+namespace Test::LDSB {
 
     using namespace Gecode;
 
@@ -1981,6 +1981,6 @@ namespace Test { namespace LDSB {
     LDSBSet<SetVarSeqSym2> setvarseqsym2("SetVarSeqSym2");
     EmptySet empty_set;
 #endif
-}} // namespace Test::LDSB
+} // namespace Test::LDSB
 
 // STATISTICS: test-core

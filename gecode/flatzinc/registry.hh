@@ -37,7 +37,7 @@
 #include <string>
 #include <map>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /// Map from constraint identifier to constraint posting functions
     class GECODE_FLATZINC_EXPORT Registry {
@@ -57,7 +57,7 @@ namespace Gecode { namespace FlatZinc {
     /// Return global registry object
     GECODE_FLATZINC_EXPORT Registry& registry();
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif
 

@@ -32,7 +32,7 @@
 
 #include <gecode/set/branch.hh>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     NGL*
     IncNGL::copy(Space& home) {
@@ -68,6 +68,6 @@ namespace Gecode { namespace Set { namespace Branch {
         return me_failed(x.include(home, n)) ? ES_FAILED : ES_OK;
     }
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

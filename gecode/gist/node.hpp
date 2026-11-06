@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     template <class T>
     void
@@ -237,6 +237,6 @@ namespace Gecode { namespace Gist {
         return -1;
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

@@ -34,13 +34,10 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Test { namespace Int {
-    /// %Tests for unary scheduling constraints
-    namespace Unary {
-    }
-}} // namespace Test::Int
+/// %Tests for unary scheduling constraints
 
-namespace Test { namespace Int { namespace Unary {
+
+namespace Test::Int::Unary {
 
     /**
      * \defgroup TaskTestIntUnary Unary scheduling constraints
@@ -348,6 +345,6 @@ namespace Test { namespace Int { namespace Unary {
     Create c;
     //@}
 
-}}} // namespace Test::Int::Unary
+} // namespace Test::Int::Unary
 
 // STATISTICS: test-int

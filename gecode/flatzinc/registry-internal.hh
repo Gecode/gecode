@@ -39,7 +39,7 @@
 
 #include <gecode/flatzinc/registry.hh>
 
-namespace Gecode { namespace FlatZinc { namespace RegistryDetail {
+namespace Gecode::FlatZinc::RegistryDetail {
 
     void post_cumulatives(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann);
 
@@ -53,7 +53,7 @@ namespace Gecode { namespace FlatZinc { namespace RegistryDetail {
     void register_float(Registry& r);
 #endif
 
-}}} // namespace Gecode::FlatZinc::RegistryDetail
+} // namespace Gecode::FlatZinc::RegistryDetail
 
 #endif
 

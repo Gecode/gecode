@@ -38,7 +38,7 @@
 #include <gecode/search/par/dfs.hh>
 #endif
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     Engine*
     make_dfs_engine(Space* s, const Options& o) {
@@ -61,6 +61,6 @@ namespace Gecode { namespace Search {
 #endif
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

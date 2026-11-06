@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief Range iterator for pointwise offset (by some constant)
@@ -112,6 +112,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         return i.width();
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

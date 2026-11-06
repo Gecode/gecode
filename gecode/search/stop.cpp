@@ -36,7 +36,7 @@
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /*
      * Creation functions for stop objects
@@ -97,6 +97,6 @@ namespace Gecode { namespace Search {
         return s.restart > l.load(std::memory_order_acquire);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

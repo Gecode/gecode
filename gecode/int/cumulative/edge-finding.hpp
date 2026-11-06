@@ -38,7 +38,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Sort by capacity
     template <class TaskView, bool inc>
@@ -180,6 +180,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

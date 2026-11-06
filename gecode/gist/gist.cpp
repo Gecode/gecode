@@ -38,7 +38,7 @@
 #include <gecode/gist/mainwindow.hh>
 #include <gecode/gist/stopbrancher.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     std::string
     Inspector::name() {
@@ -132,6 +132,6 @@ namespace Gecode { namespace Gist {
         StopBrancher::post(home);
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

@@ -32,7 +32,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/worker-control.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     class WorkerControl::State : public Support::RefCount {
     public:
@@ -265,6 +265,6 @@ namespace Gecode { namespace Search {
                 events[i].signal();
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

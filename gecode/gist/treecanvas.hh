@@ -49,7 +49,7 @@ using GecodeQMutex = QRecursiveMutex;
 using GecodeQMutex = QMutex;
 #endif
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief Parameters for the tree layout
     namespace LayoutConfig {
@@ -378,7 +378,7 @@ namespace Gecode { namespace Gist {
         void scroll(int i);
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /**
      * \brief %Range iterator for a two-dimensional array
@@ -829,6 +829,6 @@ namespace Gecode { namespace Set {
         return true;
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

@@ -40,7 +40,7 @@
 #include <tuple>
 #include <utility>
 
-namespace Gecode { namespace Int { namespace InterDistance {
+namespace Gecode::Int::InterDistance {
 
     namespace {
         using Time = long long int;
@@ -939,7 +939,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
     template class Bnd<IntView>;
     template class Bnd<ConstIntView>;
 
-}}} // namespace Gecode::Int::InterDistance
+} // namespace Gecode::Int::InterDistance
 
 namespace Gecode {
 

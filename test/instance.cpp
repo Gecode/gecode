@@ -45,7 +45,7 @@
 #include <sstream>
 #include <string>
 
-namespace Test { namespace Instance {
+namespace Test::Instance {
 
     using Gecode::IntArgs;
     using Gecode::Instance::Data;
@@ -1325,6 +1325,6 @@ namespace Test { namespace Instance {
 
 #undef CHECK
 
-}} // namespace Test::Instance
+} // namespace Test::Instance
 
 // STATISTICS: test-any

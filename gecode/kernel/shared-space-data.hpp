@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /// Class to store data shared among several spaces
     class SharedSpaceData : public SharedHandle {
@@ -76,6 +76,6 @@ namespace Gecode { namespace Kernel {
         return static_cast<Data&>(*object());
     }
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 // STATISTICS: kernel-memory

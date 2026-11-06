@@ -32,7 +32,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     BndSet::BndSet(Space& home, const IntSet& is) {
         if (is.ranges() == 0) {
@@ -344,6 +344,6 @@ namespace Gecode { namespace Set {
         return true;
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

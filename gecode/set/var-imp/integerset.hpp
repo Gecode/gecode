@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /*
      * BndSet
@@ -422,6 +422,6 @@ namespace Gecode { namespace Set {
         Iter::Ranges::Compl<Limits::min, Limits::max, I>::init(i);
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

@@ -32,7 +32,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     BoolVarImp BoolVarImp::s_one(1);
     BoolVarImp BoolVarImp::s_zero(0);
@@ -72,6 +72,6 @@ namespace Gecode { namespace Int {
         BoolVarImpBase::subscribe(home, a, assigned(), fail);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

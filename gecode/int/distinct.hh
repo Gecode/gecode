@@ -49,7 +49,7 @@
  * \brief %Distinct propagators
  */
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     /**
      * \brief Naive value distinct propagator
@@ -368,7 +368,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         static ExecStatus post(Home home, IntView x0, IntView x1, int c0, int c1);
     };
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 #include <gecode/int/distinct/cbs.hpp>
 #include <gecode/int/distinct/val.hpp>

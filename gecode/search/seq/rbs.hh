@@ -41,7 +41,7 @@
 
 #include <climits>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     class RBS;
 
@@ -151,7 +151,7 @@ namespace Gecode { namespace Search { namespace Seq {
         ~RBS() override;
     };
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/rbs.hpp>
 

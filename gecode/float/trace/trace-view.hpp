@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /// Float trace view
     class FloatTraceView {
@@ -58,6 +58,6 @@ namespace Gecode { namespace Float {
         return x.size();
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-trace

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \defgroup FuncIterRangesOp Operations on range iterators
@@ -154,6 +154,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         return disjoint ? CS_DISJOINT : CS_NONE;
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

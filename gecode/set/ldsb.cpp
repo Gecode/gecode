@@ -56,15 +56,15 @@ namespace Gecode {
     }
 } // namespace Gecode
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
     template <>
     ModEvent
     prune<Set::SetView>(Space& home, Set::SetView x, int v) {
         return x.exclude(home, v);
     }
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
-namespace Gecode { namespace Set { namespace LDSB {
+namespace Gecode::Set::LDSB {
 
     /// Map from variable implementation to index
     class VariableMap : public std::map<VarImpBase*, int> {};
@@ -142,7 +142,7 @@ namespace Gecode { namespace Set { namespace LDSB {
                 array[created++] = create_set_sym(home, sym, variable_map);
         return array;
     }
-}}} // namespace Gecode::Set::LDSB
+} // namespace Gecode::Set::LDSB
 
 namespace Gecode {
 

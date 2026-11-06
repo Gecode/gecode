@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Count {
+namespace Gecode::Int::Count {
 
     template <class VX, class VY, class VZ, bool shr>
     forceinline
@@ -83,6 +83,6 @@ namespace Gecode { namespace Int { namespace Count {
         return shr ? ES_NOFIX : ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Count
+} // namespace Gecode::Int::Count
 
 // STATISTICS: int-prop

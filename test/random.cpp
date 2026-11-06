@@ -35,7 +35,7 @@
 #include <gecode/search.hh>
 #include <set>
 
-namespace Test { namespace Random {
+namespace Test::Random {
     using namespace Gecode::Support;
 
     // A user engine with extra state exercises the public engine contract.
@@ -723,6 +723,6 @@ namespace Test { namespace Random {
                    meta_streams_differ() && nested_streams_differ() && pbs_assets_differ() && owned_streams_differ();
         }
     } streams;
-}} // namespace Test::Random
+} // namespace Test::Random
 
 // STATISTICS: test-core

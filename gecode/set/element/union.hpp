@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Element {
+namespace Gecode::Set::Element {
 
     template <class View, class View0, class View1>
     forceinline
@@ -324,6 +324,6 @@ namespace Gecode { namespace Set { namespace Element {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Set::Element
+} // namespace Gecode::Set::Element
 
 // STATISTICS: set-prop

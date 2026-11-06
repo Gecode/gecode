@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Element {
+namespace Gecode::Int::Element {
 
     // Index value pairs
     template <class V0, class V1, class Idx, class Val>
@@ -435,6 +435,6 @@ namespace Gecode { namespace Int { namespace Element {
         return Int<V0, V1, signed int, signed int>::post(home, c, x0, x1);
     }
 
-}}} // namespace Gecode::Int::Element
+} // namespace Gecode::Int::Element
 
 // STATISTICS: int-prop

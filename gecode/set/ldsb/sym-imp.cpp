@@ -33,7 +33,7 @@
 #include <gecode/set/ldsb.hh>
 #include <utility>
 
-namespace Gecode { namespace Set { namespace LDSB {
+namespace Gecode::Set::LDSB {
     // XXX: implementation of equalValues could be improved?
 
     /// Do two set variables have equal least-upper-bounds?
@@ -47,11 +47,11 @@ namespace Gecode { namespace Set { namespace LDSB {
                 return false;
         return true;
     }
-}}} // namespace Gecode::Set::LDSB
+} // namespace Gecode::Set::LDSB
 
 // Note carefully that this is in the Gecode::Int::LDSB namespace, not
 // Gecode::Set::LDSB.
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
     template <>
     ArgArray<Literal>
     VariableSymmetryImp<Set::SetView>::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
@@ -149,6 +149,6 @@ namespace Gecode { namespace Int { namespace LDSB {
         }
         return dynamic_stack_to_arg_array(s);
     }
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: set-branch

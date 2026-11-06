@@ -89,13 +89,7 @@
 #endif
 #endif
 
-namespace Gecode {
-
-    /// Minimalistic modeling support
-    namespace MiniModel {
-    }
-
-} // namespace Gecode
+/// Minimalistic modeling support
 
 #include <gecode/minimodel/exception.hpp>
 

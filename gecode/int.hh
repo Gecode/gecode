@@ -99,59 +99,55 @@
 
 #include <gecode/int/exception.hpp>
 
-namespace Gecode { namespace Int {
-
-    /**
-     * \brief Numerical limits for integer variables
-     *
-     * The integer limits are chosen such changing the sign is always possible
-     * without overflow.
-     * \ingroup TaskModelIntVars
-     */
-    namespace Limits {
-        /// Largest allowed integer value
-        const int max = INT_MAX - 1;
-        /// Smallest allowed integer value
-        const int min = -max;
-        /// Infinity for integers
-        const int infinity = max + 1;
-        /// Largest allowed long long integer value
-        const long long int llmax = LLONG_MAX - 1;
-        /// Smallest allowed long long integer value
-        const long long int llmin = -llmax;
-        /// Infinity for long long integers
-        const long long int llinfinity = llmax + 1;
-        /// Return whether \a n is in range
-        bool valid(int n);
-        /// Return whether \a n is in range
-        bool valid(long long int n);
-        /// Check whether \a n is in range, otherwise throw out of limits with information \a l
-        void check(int n, const char* l);
-        /// Check whether \a n is in range, otherwise throw out of limits with information \a l
-        void check(long long int n, const char* l);
-        /// Check whether \a n is in range and strictly positive, otherwise throw out of limits with information \a l
-        void positive(int n, const char* l);
-        /// Check whether \a n is in range and strictly positive, otherwise throw out of limits with information \a l
-        void positive(long long int n, const char* l);
-        /// Check whether \a n is in range and nonnegative, otherwise throw out of limits with information \a l
-        void nonnegative(int n, const char* l);
-        /// Check whether \a n is in integer range and nonnegative, otherwise throw out of limits exception with information \a l
-        void nonnegative(long long int n, const char* l);
-        /// Check whether adding \a n and \a m would overflow
-        bool overflow_add(int n, int m);
-        /// Check whether adding \a n and \a m would overflow
-        bool overflow_add(long long int n, long long int m);
-        /// Check whether subtracting \a m from \a n would overflow
-        bool overflow_sub(int n, int m);
-        /// Check whether subtracting \a m from \a n would overflow
-        bool overflow_sub(long long int n, long long int m);
-        /// Check whether multiplying \a n and \a m would overflow
-        bool overflow_mul(int n, int m);
-        /// Check whether multiplying \a n and \a m would overflow
-        bool overflow_mul(long long int n, long long int m);
-    } // namespace Limits
-
-}} // namespace Gecode::Int
+/**
+ * \brief Numerical limits for integer variables
+ *
+ * The integer limits are chosen such changing the sign is always possible
+ * without overflow.
+ * \ingroup TaskModelIntVars
+ */
+namespace Gecode::Int::Limits {
+    /// Largest allowed integer value
+    const int max = INT_MAX - 1;
+    /// Smallest allowed integer value
+    const int min = -max;
+    /// Infinity for integers
+    const int infinity = max + 1;
+    /// Largest allowed long long integer value
+    const long long int llmax = LLONG_MAX - 1;
+    /// Smallest allowed long long integer value
+    const long long int llmin = -llmax;
+    /// Infinity for long long integers
+    const long long int llinfinity = llmax + 1;
+    /// Return whether \a n is in range
+    bool valid(int n);
+    /// Return whether \a n is in range
+    bool valid(long long int n);
+    /// Check whether \a n is in range, otherwise throw out of limits with information \a l
+    void check(int n, const char* l);
+    /// Check whether \a n is in range, otherwise throw out of limits with information \a l
+    void check(long long int n, const char* l);
+    /// Check whether \a n is in range and strictly positive, otherwise throw out of limits with information \a l
+    void positive(int n, const char* l);
+    /// Check whether \a n is in range and strictly positive, otherwise throw out of limits with information \a l
+    void positive(long long int n, const char* l);
+    /// Check whether \a n is in range and nonnegative, otherwise throw out of limits with information \a l
+    void nonnegative(int n, const char* l);
+    /// Check whether \a n is in integer range and nonnegative, otherwise throw out of limits exception with information \a l
+    void nonnegative(long long int n, const char* l);
+    /// Check whether adding \a n and \a m would overflow
+    bool overflow_add(int n, int m);
+    /// Check whether adding \a n and \a m would overflow
+    bool overflow_add(long long int n, long long int m);
+    /// Check whether subtracting \a m from \a n would overflow
+    bool overflow_sub(int n, int m);
+    /// Check whether subtracting \a m from \a n would overflow
+    bool overflow_sub(long long int n, long long int m);
+    /// Check whether multiplying \a n and \a m would overflow
+    bool overflow_mul(int n, int m);
+    /// Check whether multiplying \a n and \a m would overflow
+    bool overflow_mul(long long int n, long long int m);
+} // namespace Gecode::Int::Limits
 
 #include <gecode/int/limits.hpp>
 
@@ -2606,11 +2602,11 @@ namespace Gecode {
 
 #include <gecode/int/extensional/dfa.hpp>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     class TupleSetAccess;
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 namespace Gecode {
 
@@ -2953,7 +2949,7 @@ namespace Gecode {
         //@}
     };
 
-    namespace Int { namespace Extensional {
+    namespace Int::Extensional {
 
         /// Internal access to finalized tuple-set support representations
         class TupleSetAccess {
@@ -2974,7 +2970,7 @@ namespace Gecode {
                                                  const TupleSet::CSupportWord*& e);
         };
 
-    }} // namespace Int::Extensional
+    } // namespace Int::Extensional
 
 } // namespace Gecode
 
@@ -5948,9 +5944,9 @@ namespace Gecode {
 // LDSB-related declarations.
 namespace Gecode {
 
-    namespace Int { namespace LDSB {
+    namespace Int::LDSB {
         class SymmetryObject;
-    }} // namespace Int::LDSB
+    } // namespace Int::LDSB
 
     /**
      * \brief A reference-counted pointer to a SymmetryObject

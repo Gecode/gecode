@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief %Range iterator for appending a singleton with a range iterator
@@ -99,6 +99,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         j = j0;
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

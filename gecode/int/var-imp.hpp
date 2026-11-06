@@ -36,7 +36,7 @@
 
 #include <cmath>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     class IntVarImp;
     class BoolVarImp;
@@ -73,11 +73,11 @@ namespace Gecode { namespace Int {
         bool any() const;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/var-imp/delta.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     class IntVarImpFwd;
     class IntVarImpBwd;
@@ -472,7 +472,7 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/var-imp/int.hpp>
 
@@ -482,7 +482,7 @@ namespace Gecode {
     class BoolVar;
 } // namespace Gecode
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Type for status of a Boolean variable
     using BoolStatus = unsigned int;
@@ -722,7 +722,7 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/var-imp/bool.hpp>
 

@@ -38,7 +38,7 @@
 
 #include <gecode/search.hh>
 
-namespace Test { namespace Assign {
+namespace Test::Assign {
 
     /// Space for executing integer tests
     class IntTestSpace : public Gecode::Space {
@@ -449,6 +449,6 @@ namespace Test { namespace Assign {
 
 #endif
 
-}} // namespace Test::Assign
+} // namespace Test::Assign
 
 // STATISTICS: test-branch

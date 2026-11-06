@@ -46,7 +46,7 @@
  * \brief Numerical (arithmetic) propagators
  */
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds consistent absolute value propagator
@@ -115,11 +115,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, View x0, View x1);
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/abs.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds consistent ternary maximum propagator
@@ -245,11 +245,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, ViewArray<View>& x, View y);
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/max.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Argument maximum propagator
@@ -292,11 +292,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, IdxViewArray<VA>& x, VB y);
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/argmax.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Operations for square and square-root propagators
@@ -360,11 +360,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         int ceil_nth_root(int x) const;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/pow-ops.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds consistent positive power propagator
@@ -488,11 +488,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/pow.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Positive bounds consistent n-th root propagator
@@ -618,11 +618,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/nroot.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds or domain consistent propagator for \f$x_0\times x_1=x_0\f$
@@ -775,11 +775,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/mult.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds propagator for \f$\gcd(x_0,x_1)=x_2\f$
@@ -842,11 +842,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/gcd.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Reified bounds propagator for divisibility
@@ -879,11 +879,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/divides.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /** \brief Bounds propagator for an exact n-ary product
      *
@@ -948,11 +948,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/product.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /** \brief Bounds propagator for a fixed-modulus n-ary product
      *
@@ -1092,11 +1092,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/product-mod.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds consistent positive division propagator
@@ -1182,7 +1182,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/divmod.hpp>
 

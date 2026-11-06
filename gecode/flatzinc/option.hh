@@ -33,7 +33,7 @@
 #ifndef FLATZINC_OPTION_HH
 #define FLATZINC_OPTION_HH
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /// Optional value
     template <class Val>
@@ -71,7 +71,7 @@ namespace Gecode { namespace FlatZinc {
         }
     };
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif
 

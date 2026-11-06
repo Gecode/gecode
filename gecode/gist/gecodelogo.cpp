@@ -32,7 +32,7 @@
 
 #include <gecode/gist/gecodelogo.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     namespace {
         const unsigned char _logo[] = {
@@ -393,6 +393,6 @@ namespace Gecode { namespace Gist {
 
     Logos::Logos() : logo(_logo), logo_size(sizeof(_logo)), gist_logo(_gist_logo), gist_logo_size(sizeof(_gist_logo)) {}
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

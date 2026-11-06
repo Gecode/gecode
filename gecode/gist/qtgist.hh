@@ -60,7 +60,7 @@
 
 #endif
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /**
      * \brief %Gecode Interactive %Search Tool
@@ -286,7 +286,7 @@ namespace Gecode { namespace Gist {
         void add_inspector(Inspector* i, QAction*& nas, QAction*& nad, QAction*& nam);
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

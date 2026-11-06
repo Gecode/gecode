@@ -36,7 +36,7 @@
 
 #include <iostream>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /**
      * \defgroup TaskActorSetView Set views
@@ -1134,7 +1134,7 @@ namespace Gecode { namespace Set {
         LubDiffRanges(const CachedView<View>& x);
     };
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 #include <gecode/set/var/set.hpp>
 

@@ -36,7 +36,7 @@
 #include <gecode/gist.hh>
 #include <gecode/gist/qtgist.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// Display information about %Gist
     class AboutGist : public QDialog {
@@ -116,7 +116,7 @@ namespace Gecode { namespace Gist {
         void closeEvent(QCloseEvent* event) override;
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

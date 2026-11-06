@@ -41,7 +41,7 @@
  * \namespace Gecode::Int::LDSB
  * \brief Symmetry breaking for integer variables
  */
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     /// A Literal is a pair of variable index and value.
     class Literal {
@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace LDSB {
      */
     GECODE_INT_EXPORT
     std::pair<int, int> find_var(const int* indices, unsigned int n_values, unsigned int seq_size, int index);
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 namespace Gecode {
     /// Traits of %ArgArray<VarImpBase*>
@@ -100,7 +100,7 @@ namespace Gecode {
     };
 } // namespace Gecode
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
     /// Implementation of a symmetry at the modelling level
     class GECODE_INT_EXPORT SymmetryObject {
     public:
@@ -379,7 +379,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     template <class View>
     ModEvent prune(Space& home, View x, int v);
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 #include <gecode/int/ldsb/brancher.hpp>
 #include <gecode/int/ldsb/sym-imp.hpp>

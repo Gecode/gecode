@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /*
      * Constructors and access
@@ -262,6 +262,6 @@ namespace Gecode { namespace Set {
         GlbRanges<SetVarImp*>::init(x.varimp());
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

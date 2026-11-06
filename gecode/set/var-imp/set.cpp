@@ -34,7 +34,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /*
      * "Standard" tell operations
@@ -146,6 +146,6 @@ namespace Gecode { namespace Set {
         SetVarImpBase::reschedule(home, p, pc, assigned());
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

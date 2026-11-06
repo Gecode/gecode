@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     inline void
     Limits::check(int n, const char* l) {
@@ -50,6 +50,6 @@ namespace Gecode { namespace Set {
             throw OutOfLimits(l);
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

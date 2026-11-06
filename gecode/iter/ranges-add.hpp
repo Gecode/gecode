@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief Range iterator for adding a single range to a range iterator
@@ -127,6 +127,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         AddRange<I>::init(i, -r_max, -r_min);
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

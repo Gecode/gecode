@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
     /**
      * \brief Representation of the characteristic functions of two sets
@@ -483,6 +483,6 @@ namespace Gecode { namespace Set { namespace Rel {
         return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
     }
 
-}}} // namespace Gecode::Set::Rel
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

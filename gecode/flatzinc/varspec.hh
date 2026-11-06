@@ -38,7 +38,7 @@
 #include <vector>
 #include <iostream>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /// %Alias for a variable specification
     class Alias {
@@ -165,7 +165,7 @@ namespace Gecode { namespace FlatZinc {
         }
     };
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif
 

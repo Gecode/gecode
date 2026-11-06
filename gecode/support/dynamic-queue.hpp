@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Queue with arbitrary number of elements
@@ -154,6 +154,6 @@ namespace Gecode { namespace Support {
             resize();
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

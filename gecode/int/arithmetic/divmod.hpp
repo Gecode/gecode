@@ -32,7 +32,7 @@
 
 #include <gecode/int/linear.hh>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /*
      * Positive bounds consistent division
@@ -339,6 +339,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

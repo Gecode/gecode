@@ -47,7 +47,7 @@
  * \brief %Int for unary resources
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     /// %Unary (mandatory) task with fixed processing time
     class ManFixPTask {
@@ -386,11 +386,11 @@ namespace Gecode { namespace Int { namespace Unary {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFlexTask& t);
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/task.hpp>
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     /// Forward mandatory fixed task view
     using ManFixPTaskFwd = ManFixPTask;
@@ -472,11 +472,11 @@ namespace Gecode { namespace Int { namespace Unary {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFlexTaskBwd& t);
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/task-view.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Task view traits for forward task views
     template <>
@@ -640,9 +640,9 @@ namespace Gecode { namespace Int {
         using ManTask = Unary::ManFlexTask;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     /// Node for an omega tree
     class OmegaNode {
@@ -730,11 +730,11 @@ namespace Gecode { namespace Int { namespace Unary {
         int lect() const;
     };
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/tree.hpp>
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     /// Check mandatory tasks \a t for overload
     template <class ManTask>
@@ -825,7 +825,7 @@ namespace Gecode { namespace Int { namespace Unary {
     template <class OptTask>
     ExecStatus post_optional(Home home, TaskArray<OptTask>& t, IntPropLevel ipl);
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/overload.hpp>
 #include <gecode/int/unary/time-tabling.hpp>

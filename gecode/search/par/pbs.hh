@@ -42,7 +42,7 @@
 #include <atomic>
 #include <exception>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /**
      * \brief Statistics of the assets of a parallel portfolio
@@ -299,7 +299,7 @@ namespace Gecode { namespace Search { namespace Par {
         ~PBS() override;
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/pbs.hpp>
 

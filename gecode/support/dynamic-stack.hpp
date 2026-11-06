@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Stack with arbitrary number of elements
@@ -164,6 +164,6 @@ namespace Gecode { namespace Support {
         return stack[i];
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

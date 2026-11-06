@@ -7,8 +7,8 @@ defaults.
 ## Formatting
 
 C++ uses four-space indentation and a 120-column limit. Braces stay on the
-opening line, compact nested namespaces remain indented, and pointer and
-reference markers bind to the type. Function definitions retain a separate
+opening line, namespace bodies remain indented, and pointer and reference
+markers bind to the type. Function definitions retain a separate
 return-type line. Include order and comment wrapping are preserved. Comment
 indentation follows the surrounding code, including copyright notices and
 Doxygen text.

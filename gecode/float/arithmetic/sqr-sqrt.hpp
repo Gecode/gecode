@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Arithmetic {
+namespace Gecode::Float::Arithmetic {
 
     /*
      * Positive bounds consistent squaring
@@ -211,6 +211,6 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Float::Arithmetic
+} // namespace Gecode::Float::Arithmetic
 
 // STATISTICS: float-prop

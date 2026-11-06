@@ -54,7 +54,7 @@
 
 #include <gecode/search.hh>
 
-namespace Test { namespace Branch {
+namespace Test::Branch {
 
     /// Test function for tie-break limit function
     double
@@ -289,7 +289,7 @@ namespace Test { namespace Branch {
         }
     };
 
-}} // namespace Test::Branch
+} // namespace Test::Branch
 
 std::ostream&
 operator<<(std::ostream& os, const Test::Branch::RunInfo& ri) {
@@ -297,7 +297,7 @@ operator<<(std::ostream& os, const Test::Branch::RunInfo& ri) {
     return os;
 }
 
-namespace Test { namespace Branch {
+namespace Test::Branch {
 
     /// Find number of solutions
     template <class TestSpace>
@@ -1619,6 +1619,6 @@ namespace Test { namespace Branch {
     EmptyStatistics<FloatEmptyTraits> float_empty_statistics("Float");
 #endif
 
-}} // namespace Test::Branch
+} // namespace Test::Branch
 
 // STATISTICS: test-branch

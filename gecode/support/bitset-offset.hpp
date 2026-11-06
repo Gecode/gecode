@@ -40,7 +40,7 @@
 #include <cmath>
 #include <iostream>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /// Bitsets with index offset.
     ///
@@ -158,6 +158,6 @@ namespace Gecode { namespace Support {
         return os;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

@@ -36,7 +36,7 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Check that reversed uniform integer ranges fail during parsing
     class UniformIntInvalidRange : public Base {
     public:
@@ -122,6 +122,6 @@ solve satisfy;
 
     Create c;
     UniformIntInvalidRange invalid_range;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     template <class Cursor>
     forceinline
@@ -121,6 +121,6 @@ namespace Gecode { namespace Gist {
         while (next()) {
         }
     }
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

@@ -37,7 +37,7 @@
 #include <iomanip>
 #include <limits>
 
-namespace Test { namespace FlatZinc {
+namespace Test::FlatZinc {
 
     namespace {
 
@@ -426,6 +426,6 @@ namespace Test { namespace FlatZinc {
         return false;
     }
 
-}} // namespace Test::FlatZinc
+} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

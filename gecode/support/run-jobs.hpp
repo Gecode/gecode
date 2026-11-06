@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /// Baseclass for jobs with return type \a RetType
     template <class RetType>
@@ -354,6 +354,6 @@ namespace Gecode { namespace Support {
             Thread::run(new Deleter(master));
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

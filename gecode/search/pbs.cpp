@@ -32,7 +32,7 @@
 
 #include <gecode/search/seq/pbs.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     Stop*
     pbs_stop(Stop* so) {
@@ -52,13 +52,13 @@ namespace Gecode { namespace Search { namespace Seq {
         return new PBS<false>(assets, stops, coverage, n_assets, stat, opt);
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #ifdef GECODE_HAS_THREADS
 
 #include <gecode/search/par/pbs.hh>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     Stop*
     pbs_stop(Stop* so, const WorkerControl& control) {
@@ -78,7 +78,7 @@ namespace Gecode { namespace Search { namespace Par {
         return new PBS<CollectAll>(assets, stops, coverage, n_assets, stat);
     }
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 #endif
 

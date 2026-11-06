@@ -32,7 +32,7 @@
 
 #include <gecode/int/branch.hh>
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     ViewSel<IntView>*
     view_selection(Space& home, const IntVarBranch& ivb) {
@@ -236,6 +236,6 @@ namespace Gecode { namespace Int { namespace Branch {
         return nullptr;
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

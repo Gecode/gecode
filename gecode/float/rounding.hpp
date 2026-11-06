@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /*
      * Rounding mode control
@@ -279,6 +279,6 @@ namespace Gecode { namespace Float {
         return std::ceil(x);
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

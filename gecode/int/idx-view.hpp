@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// VarArg type for integer views
     template <>
@@ -179,6 +179,6 @@ namespace Gecode { namespace Int {
         return os << s.str();
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

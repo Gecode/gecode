@@ -39,7 +39,7 @@
 #ifdef GECODE_HAS_EXPERIMENTAL
 
 #ifdef GECODE_HAS_THREADS
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /// Parallel complete anytime beam search
     class CABS : public Frontier {
@@ -128,14 +128,10 @@ namespace Gecode { namespace Search { namespace Par {
         }
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 #endif
 
-namespace Gecode { namespace Search { namespace Seq {
-
-}}} // namespace Gecode::Search::Seq
-
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     Engine*
     make_cabs_engine(Space* s, const Options& o) {
@@ -151,9 +147,9 @@ namespace Gecode { namespace Search {
         return new WorkerToEngine<Seq::CABS>(s, e);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     CABS::CABS(Space* s, const Options& o)
         : opt(o), guidance(*o.guidance), priority{guidance.sense, static_cast<bool>(guidance.rank)},
@@ -351,7 +347,7 @@ namespace Gecode { namespace Search { namespace Seq {
         return NoGoods::eng;
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #endif
 

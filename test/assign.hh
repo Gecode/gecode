@@ -48,100 +48,96 @@
 
 #include "test/test.hh"
 
-namespace Test {
+/// Tests for assignments
+namespace Test::Assign {
 
-    /// Tests for assignments
-    namespace Assign {
+    /**
+     * \brief %Base class for tests for assigning integer variables
+     *
+     */
+    class IntTest : public Base {
+    protected:
+        /// Number of variables
+        int arity;
+        /// Domain of variables
+        Gecode::IntSet dom;
 
-        /**
-         * \brief %Base class for tests for assigning integer variables
-         *
-         */
-        class IntTest : public Base {
-        protected:
-            /// Number of variables
-            int arity;
-            /// Domain of variables
-            Gecode::IntSet dom;
+    public:
+        /// Construct and register test
+        IntTest(const std::string& s, int a, const Gecode::IntSet& d);
+        /// Perform test
+        bool run() override;
+        /// Post assignment on variables \a x
+        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
+    };
 
-        public:
-            /// Construct and register test
-            IntTest(const std::string& s, int a, const Gecode::IntSet& d);
-            /// Perform test
-            bool run() override;
-            /// Post assignment on variables \a x
-            virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
-        };
+    /**
+     * \brief %Base class for tests for branching on Boolean variables
+     *
+     */
+    class BoolTest : public Base {
+    protected:
+        /// Number of variables
+        int arity;
 
-        /**
-         * \brief %Base class for tests for branching on Boolean variables
-         *
-         */
-        class BoolTest : public Base {
-        protected:
-            /// Number of variables
-            int arity;
-
-        public:
-            /// Construct and register test
-            BoolTest(const std::string& s, int a);
-            /// Perform test
-            bool run() override;
-            /// Post assignment on variables \a x
-            virtual void post(Gecode::Space& home, Gecode::BoolVarArray& x) = 0;
-        };
+    public:
+        /// Construct and register test
+        BoolTest(const std::string& s, int a);
+        /// Perform test
+        bool run() override;
+        /// Post assignment on variables \a x
+        virtual void post(Gecode::Space& home, Gecode::BoolVarArray& x) = 0;
+    };
 
 #ifdef GECODE_HAS_SET_VARS
 
-        /**
-         * \brief %Base class for tests for branching on set variables
-         *
-         */
-        class SetTest : public Base {
-        protected:
-            /// Number of variables
-            int arity;
-            /// Upper bound of variable domains
-            Gecode::IntSet dom;
+    /**
+     * \brief %Base class for tests for branching on set variables
+     *
+     */
+    class SetTest : public Base {
+    protected:
+        /// Number of variables
+        int arity;
+        /// Upper bound of variable domains
+        Gecode::IntSet dom;
 
-        public:
-            /// Construct and register test
-            SetTest(const std::string& s, int a, const Gecode::IntSet& d);
-            /// Perform test
-            bool run() override;
-            /// Post assignment on variables \a x
-            virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) = 0;
-        };
+    public:
+        /// Construct and register test
+        SetTest(const std::string& s, int a, const Gecode::IntSet& d);
+        /// Perform test
+        bool run() override;
+        /// Post assignment on variables \a x
+        virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) = 0;
+    };
 
 #endif
 
 #ifdef GECODE_HAS_FLOAT_VARS
 
-        /**
-         * \brief %Base class for tests for branching on float variables
-         *
-         */
-        class FloatTest : public Base {
-        protected:
-            /// Number of variables
-            int arity;
-            /// Domain of variables
-            Gecode::FloatVal dom;
+    /**
+     * \brief %Base class for tests for branching on float variables
+     *
+     */
+    class FloatTest : public Base {
+    protected:
+        /// Number of variables
+        int arity;
+        /// Domain of variables
+        Gecode::FloatVal dom;
 
-        public:
-            /// Construct and register test
-            FloatTest(const std::string& s, int a, const Gecode::FloatVal& d);
-            /// Perform test
-            bool run() override;
-            /// Post assignment on variables \a x
-            virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) = 0;
-        };
+    public:
+        /// Construct and register test
+        FloatTest(const std::string& s, int a, const Gecode::FloatVal& d);
+        /// Perform test
+        bool run() override;
+        /// Post assignment on variables \a x
+        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) = 0;
+    };
 
 #endif
 
-    } // namespace Assign
-
-} // namespace Test
+} // namespace Test::Assign
 
 #endif
 

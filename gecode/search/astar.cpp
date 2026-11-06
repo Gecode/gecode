@@ -38,7 +38,7 @@
 #ifdef GECODE_HAS_EXPERIMENTAL
 
 #ifdef GECODE_HAS_THREADS
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /// Parallel A* search
     class AStar : public Frontier {
@@ -88,10 +88,10 @@ namespace Gecode { namespace Search { namespace Par {
         }
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 #endif
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     Engine*
     make_astar_engine(Space* s, const Options& o) {
@@ -107,9 +107,9 @@ namespace Gecode { namespace Search {
         return new WorkerToEngine<Seq::AStar>(s, e);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     AStar::AStar(Space* s, const Options& o)
         : opt(o), guidance(*o.guidance), queue(Priority{guidance.sense, false}), order(0), status(SS_FAILED), depth(0),
@@ -249,7 +249,7 @@ namespace Gecode { namespace Search { namespace Seq {
         return NoGoods::eng;
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #endif
 

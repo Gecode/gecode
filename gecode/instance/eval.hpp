@@ -35,7 +35,7 @@
 
 #include <gecode/instance/impl.hpp>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     /// Return \a s in single quotes, with newlines and tabs escaped
     std::string quote(const std::string& s);
@@ -570,7 +570,7 @@ namespace Gecode { namespace Instance {
         std::string failure(const Stmt& s, int deepest, const Seq<int>& at);
     };
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 #endif
 

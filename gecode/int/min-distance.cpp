@@ -64,7 +64,7 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Int { namespace MinDistance {
+namespace Gecode::Int::MinDistance {
 
     /// Validate the organization and number of positions
     void
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace MinDistance {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::MinDistance
+} // namespace Gecode::Int::MinDistance
 
 namespace Gecode {
 

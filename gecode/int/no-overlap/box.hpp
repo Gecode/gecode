@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
     /*
      * Mandatory boxes
@@ -196,6 +196,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         o.reschedule(home, p, PC_BOOL_VAL);
     }
 
-}}} // namespace Gecode::Int::NoOverlap
+} // namespace Gecode::Int::NoOverlap
 
 // STATISTICS: int-prop

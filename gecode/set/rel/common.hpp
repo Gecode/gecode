@@ -54,7 +54,7 @@
         GECODE_ME_CHECK(me);                                                                                           \
     }
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
     template <class VX, class VY>
     forceinline bool
@@ -133,6 +133,6 @@ namespace Gecode { namespace Set { namespace Rel {
         return subsumes_me(me0, ME_SET_CARD);
     }
 
-}}} // namespace Gecode::Set::Rel
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

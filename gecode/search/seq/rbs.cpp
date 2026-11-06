@@ -39,7 +39,7 @@
 #include <algorithm>
 #include <memory>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     namespace {
 
@@ -243,6 +243,6 @@ namespace Gecode { namespace Search { namespace Seq {
         delete stop;
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

@@ -47,7 +47,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     TreeCanvas::TreeCanvas(Space* root_space, bool bab, QWidget* parent, const Options& opt)
         : QWidget(parent)
@@ -1398,6 +1398,6 @@ namespace Gecode { namespace Gist {
         move_during_search = b;
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

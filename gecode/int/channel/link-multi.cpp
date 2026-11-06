@@ -32,7 +32,7 @@
 
 #include <gecode/int/channel.hh>
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
     /// Iterates the values to be removed as defined by an array of Boolean views
     class BoolIter {
@@ -236,6 +236,6 @@ namespace Gecode { namespace Int { namespace Channel {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Channel
+} // namespace Gecode::Int::Channel
 
 // STATISTICS: int-prop

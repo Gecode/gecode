@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     forceinline
     SingletonView::SingletonView(Gecode::Int::IntView& y)
@@ -437,6 +437,6 @@ namespace Gecode { namespace Set {
         return 1;
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

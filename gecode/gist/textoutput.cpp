@@ -39,7 +39,7 @@
 #include <gecode/gist/textoutput.hh>
 #include <gecode/gist/gecodelogo.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief An outputstream that prints on a QTextEdit
     class GistOutputStream : public std::basic_ostream<char, std::char_traits<char>> {
@@ -167,6 +167,6 @@ namespace Gecode { namespace Gist {
         show();
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

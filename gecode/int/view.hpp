@@ -36,7 +36,7 @@
 
 #include <iostream>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \brief Range iterator for integer views
@@ -103,11 +103,11 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/view/iter.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \defgroup TaskActorIntView Integer views
@@ -1671,7 +1671,7 @@ namespace Gecode { namespace Int {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const NegBoolView& x);
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/var/int.hpp>
 #include <gecode/int/var/bool.hpp>
@@ -1692,7 +1692,7 @@ namespace Gecode { namespace Int {
 #include <gecode/int/view/print.hpp>
 #include <gecode/int/var/print.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \defgroup TaskActorIntTest Testing relations between integer views
@@ -1789,7 +1789,7 @@ namespace Gecode { namespace Int {
     BoolTest bool_test(const NegBoolView& b0, const NegBoolView& b1);
     //@}
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/view/rel-test.hpp>
 #include <gecode/int/view/bool-test.hpp>

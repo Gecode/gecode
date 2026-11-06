@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode::Int::NValues {
 
     forceinline
     Graph::Graph()
@@ -273,6 +273,6 @@ namespace Gecode { namespace Int { namespace NValues {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::NValues
+} // namespace Gecode::Int::NValues
 
 // STATISTICS: int-prop

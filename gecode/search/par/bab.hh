@@ -36,7 +36,7 @@
 #include <gecode/search/par/engine.hh>
 #include <exception>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /// %Parallel branch-and-bound engine
     template <class Tracer>
@@ -139,7 +139,7 @@ namespace Gecode { namespace Search { namespace Par {
         //@}
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/bab.hpp>
 

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
     forceinline
     LinkSingle::LinkSingle(Home home, BoolView x0, IntView x1)
@@ -61,6 +61,6 @@ namespace Gecode { namespace Int { namespace Channel {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Channel
+} // namespace Gecode::Int::Channel
 
 // STATISTICS: int-prop

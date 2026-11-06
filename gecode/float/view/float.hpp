@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /*
      * Constructors and initialization
@@ -153,6 +153,6 @@ namespace Gecode { namespace Float {
         return VarImpView<FloatVar>::med(me);
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

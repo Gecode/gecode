@@ -31,7 +31,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /// A representable, conservative interval for an exact product.
     struct ProductInterval {
@@ -632,6 +632,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

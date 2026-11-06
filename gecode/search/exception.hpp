@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /**
      * \defgroup FuncThrowSearch %Search exceptions
@@ -107,6 +107,6 @@ namespace Gecode { namespace Search {
 #endif
 
     //@}
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

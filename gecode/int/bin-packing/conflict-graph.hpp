@@ -35,7 +35,7 @@
 #include <gecode/int/rel.hh>
 #include <gecode/int/distinct.hh>
 
-namespace Gecode { namespace Int { namespace BinPacking {
+namespace Gecode::Int::BinPacking {
 
     forceinline int
     ConflictGraph::nodes() const {
@@ -355,6 +355,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
         return s;
     }
 
-}}} // namespace Gecode::Int::BinPacking
+} // namespace Gecode::Int::BinPacking
 
 // STATISTICS: int-prop

@@ -38,7 +38,7 @@
 
 #include <iostream>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     class SetVarImp;
     class LUBndSet;
@@ -77,11 +77,11 @@ namespace Gecode { namespace Set {
         bool lub_any() const;
     };
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 #include <gecode/set/var-imp/delta.hpp>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /**
      * \brief Sets of integers
@@ -423,12 +423,12 @@ namespace Gecode { namespace Set {
         //@}
     };
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 #include <gecode/set/var-imp/integerset.hpp>
 #include <gecode/set/var-imp/iter.hpp>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /**
      * \brief Finite integer set variable implementation
@@ -640,7 +640,7 @@ namespace Gecode { namespace Set {
 
     class SetView;
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 #include <gecode/set/var-imp/set.hpp>
 

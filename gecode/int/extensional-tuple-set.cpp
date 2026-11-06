@@ -36,7 +36,7 @@
 
 #include <gecode/int/extensional.hh>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /**
      * \brief Iterate table values in a delta interval
@@ -974,7 +974,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 namespace Gecode {
 

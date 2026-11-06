@@ -39,7 +39,7 @@
 #include <algorithm>
 #include <iomanip>
 
-namespace Test { namespace Float {
+namespace Test::Float {
 
     /*
      * Complete assignments
@@ -92,7 +92,7 @@ namespace Test { namespace Float {
         a--;
     }
 
-}} // namespace Test::Float
+} // namespace Test::Float
 
 std::ostream&
 operator<<(std::ostream& os, const Test::Float::Assignment& a) {
@@ -103,7 +103,7 @@ operator<<(std::ostream& os, const Test::Float::Assignment& a) {
     return os;
 }
 
-namespace Test { namespace Float {
+namespace Test::Float {
 
     Gecode::FloatNum
     rand_f_val_down(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
@@ -906,7 +906,7 @@ namespace Test { namespace Float {
         return false;
     }
 
-}} // namespace Test::Float
+} // namespace Test::Float
 
 #undef START_TEST
 #undef CHECK_TEST

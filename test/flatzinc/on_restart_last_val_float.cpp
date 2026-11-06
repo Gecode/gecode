@@ -35,7 +35,7 @@
 #include <cmath>
 #include <sstream>
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Check the restart sequence without depending on final decimal digits.
     bool
     check(const std::string& output) {
@@ -90,6 +90,6 @@ solve :: int_search(X_INTRODUCED_2_,input_order,indomain_min,complete) maximize 
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

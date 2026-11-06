@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Bool {
+namespace Gecode::Int::Bool {
 
     /*
      * Boolean clause propagator (disjunctive, true)
@@ -362,6 +362,6 @@ namespace Gecode { namespace Int { namespace Bool {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Int::Bool
+} // namespace Gecode::Int::Bool
 
 // STATISTICS: int-prop

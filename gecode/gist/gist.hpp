@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     template <class S>
     VarComparator<S>::VarComparator(const std::string& name) : TextOutput(name) {}
@@ -200,6 +200,6 @@ namespace Gecode { namespace Gist {
         return Gist::explore(root, true, opt);
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

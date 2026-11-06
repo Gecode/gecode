@@ -35,7 +35,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \brief Class for storing values of already assigned views
@@ -106,7 +106,7 @@ namespace Gecode { namespace Int {
         };
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/val-set.hpp>
 

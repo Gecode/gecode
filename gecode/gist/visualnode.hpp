@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     forceinline
     Extent::Extent()
@@ -216,6 +216,6 @@ namespace Gecode { namespace Gist {
         return get_shape()->get_bounding_box();
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace LDSB {
+namespace Gecode::Set::LDSB {
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
     LDSBSetBrancher<View, n, Val, a, Filter, Print>::LDSBSetBrancher(Home home, ViewArray<View>& x,
@@ -262,6 +262,6 @@ namespace Gecode { namespace Set { namespace LDSB {
         }
     }
 
-}}} // namespace Gecode::Set::LDSB
+} // namespace Gecode::Set::LDSB
 
 // STATISTICS: set-branch

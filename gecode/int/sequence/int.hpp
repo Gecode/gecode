@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Sequence {
+namespace Gecode::Int::Sequence {
 
     template <class View, class Val>
     forceinline
@@ -173,6 +173,6 @@ namespace Gecode { namespace Int { namespace Sequence {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Int::Sequence
+} // namespace Gecode::Int::Sequence
 
 // STATISTICS: int-prop

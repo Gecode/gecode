@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     template <class Node>
     forceinline
@@ -287,6 +287,6 @@ namespace Gecode { namespace Gist {
         node()->dispose();
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

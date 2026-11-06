@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Sorted {
+namespace Gecode::Int::Sorted {
 
     /**
      *  \brief Build \f$\sigma\f$
@@ -194,6 +194,6 @@ namespace Gecode { namespace Int { namespace Sorted {
         return true;
     }
 
-}}} // namespace Gecode::Int::Sorted
+} // namespace Gecode::Int::Sorted
 
 // STATISTICS: int-prop

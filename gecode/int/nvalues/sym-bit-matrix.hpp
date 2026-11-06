@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode::Int::NValues {
 
     forceinline int
     SymBitMatrix::pos(int x, int y) const {
@@ -60,6 +60,6 @@ namespace Gecode { namespace Int { namespace NValues {
         Support::BitSet<Region>::set(static_cast<unsigned int>(pos(x, y)));
     }
 
-}}} // namespace Gecode::Int::NValues
+} // namespace Gecode::Int::NValues
 
 // STATISTICS: int-prop

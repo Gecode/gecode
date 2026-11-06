@@ -28,7 +28,7 @@
 
 extern char** environ;
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
     namespace {
 
         const size_t max_exec_response_size = 1024 * 1024;
@@ -508,7 +508,7 @@ namespace Gecode { namespace FlatZinc {
         return new PosixProcessSession(program, args);
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 #endif
 
 // STATISTICS: flatzinc-other

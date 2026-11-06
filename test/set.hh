@@ -52,354 +52,351 @@
 #define GECODE_TESTSET_EXPORT
 #endif
 
-namespace Test {
+/// Testing finite sets
+namespace Test::Set {
 
-    /// Testing finite sets
-    namespace Set {
+    /**
+     * \defgroup TaskTestSet Testing finite sets
+     * \ingroup TaskTest
+     */
 
-        /**
-         * \defgroup TaskTestSet Testing finite sets
-         * \ingroup TaskTest
-         */
+    /**
+     * \defgroup TaskTestSetSupport General set test support
+     * \ingroup TaskTestSet
+     */
+    //@{
 
-        /**
-         * \defgroup TaskTestSetSupport General set test support
-         * \ingroup TaskTestSet
-         */
-        //@{
+    /// Value iterator producing subsets of an IntSet
+    class GECODE_TESTSET_EXPORT CountableSetValues {
+    private:
+        Gecode::IntSetValues dv;
+        int cur;
+        int i;
 
-        /// Value iterator producing subsets of an IntSet
-        class GECODE_TESTSET_EXPORT CountableSetValues {
-        private:
-            Gecode::IntSetValues dv;
-            int cur;
-            int i;
+    public:
+        /// Default constructor
+        CountableSetValues() = default;
+        /// Initialize with set \a d0 and bit-pattern \a cur0
+        CountableSetValues(const Gecode::IntSet& d0, int cur0) : dv(d0), cur(cur0), i(1) {
+            if (!(i & cur))
+                operator++();
+        }
+        /// Initialize with set \a d0 and bit-pattern \a cur0
+        void
+        init(const Gecode::IntSet& d0, int cur0) {
+            dv = d0;
+            cur = cur0;
+            i = 1;
+            if (!(i & cur))
+                operator++();
+        }
+        /// Test if finished
+        bool
+        operator()() const {
+            return i <= cur;
+        }
+        /// Move to next value
+        void
+        operator++() {
+            do {
+                ++dv;
+                i = i << 1;
+            } while (!(i & cur) && i < cur);
+        }
+        /// Return current value
+        int
+        val() const {
+            return dv.val();
+        }
+    };
 
-        public:
-            /// Default constructor
-            CountableSetValues() = default;
-            /// Initialize with set \a d0 and bit-pattern \a cur0
-            CountableSetValues(const Gecode::IntSet& d0, int cur0) : dv(d0), cur(cur0), i(1) {
-                if (!(i & cur))
-                    operator++();
-            }
-            /// Initialize with set \a d0 and bit-pattern \a cur0
-            void
-            init(const Gecode::IntSet& d0, int cur0) {
-                dv = d0;
-                cur = cur0;
-                i = 1;
-                if (!(i & cur))
-                    operator++();
-            }
-            /// Test if finished
-            bool
-            operator()() const {
-                return i <= cur;
-            }
-            /// Move to next value
-            void
-            operator++() {
-                do {
-                    ++dv;
-                    i = i << 1;
-                } while (!(i & cur) && i < cur);
-            }
-            /// Return current value
-            int
-            val() const {
-                return dv.val();
-            }
-        };
+    /// Range iterator producing subsets of an IntSet
+    class GECODE_TESTSET_EXPORT CountableSetRanges : public Gecode::Iter::Values::ToRanges<CountableSetValues> {
+    private:
+        /// The corresponding value iterator
+        CountableSetValues v;
 
-        /// Range iterator producing subsets of an IntSet
-        class GECODE_TESTSET_EXPORT CountableSetRanges : public Gecode::Iter::Values::ToRanges<CountableSetValues> {
-        private:
-            /// The corresponding value iterator
-            CountableSetValues v;
+    public:
+        /// Default constructor
+        CountableSetRanges() = default;
+        /// Initialize with set \a d0 and bit-pattern \a cur0
+        CountableSetRanges(const Gecode::IntSet& d, int cur) : v(d, cur) {
+            Gecode::Iter::Values::ToRanges<CountableSetValues>::init(v);
+        }
+        /// Initialize with set \a d0 and bit-pattern \a cur0
+        void
+        init(const Gecode::IntSet& d, int cur) {
+            v.init(d, cur);
+            Gecode::Iter::Values::ToRanges<CountableSetValues>::init(v);
+        }
+    };
 
-        public:
-            /// Default constructor
-            CountableSetRanges() = default;
-            /// Initialize with set \a d0 and bit-pattern \a cur0
-            CountableSetRanges(const Gecode::IntSet& d, int cur) : v(d, cur) {
-                Gecode::Iter::Values::ToRanges<CountableSetValues>::init(v);
-            }
-            /// Initialize with set \a d0 and bit-pattern \a cur0
-            void
-            init(const Gecode::IntSet& d, int cur) {
-                v.init(d, cur);
-                Gecode::Iter::Values::ToRanges<CountableSetValues>::init(v);
-            }
-        };
+    /// Iterate all subsets of a given set
+    class GECODE_TESTSET_EXPORT CountableSet {
+    private:
+        /// The superset
+        Gecode::IntSet d;
+        /// Integer representing the current subset to iterate
+        unsigned int cur;
+        /// Endpoint of iteration
+        unsigned int lubmax;
 
-        /// Iterate all subsets of a given set
-        class GECODE_TESTSET_EXPORT CountableSet {
-        private:
-            /// The superset
-            Gecode::IntSet d;
-            /// Integer representing the current subset to iterate
-            unsigned int cur;
-            /// Endpoint of iteration
-            unsigned int lubmax;
+    public:
+        /// Initialize with set \a s
+        CountableSet(const Gecode::IntSet& s);
+        /// Default constructor
+        CountableSet() = default;
+        /// Initialize with set \a s
+        void init(const Gecode::IntSet& s);
+        /// Check if still subsets left
+        bool
+        operator()() const {
+            return cur < lubmax;
+        }
+        /// Move to next subset
+        void operator++();
+        /// Return current subset
+        int val() const;
+    };
 
-        public:
-            /// Initialize with set \a s
-            CountableSet(const Gecode::IntSet& s);
-            /// Default constructor
-            CountableSet() = default;
-            /// Initialize with set \a s
-            void init(const Gecode::IntSet& s);
-            /// Check if still subsets left
-            bool
-            operator()() const {
-                return cur < lubmax;
-            }
-            /// Move to next subset
-            void operator++();
-            /// Return current subset
-            int val() const;
-        };
+    /// Generate all set assignments
+    class GECODE_TESTSET_EXPORT SetAssignment {
+    private:
+        /// Arity
+        int n;
+        /// Iterator for each set variable
+        CountableSet* dsv;
+        /// Iterator for int variable
+        Test::Int::CpltAssignment ir;
+        /// Flag whether all assignments have been generated
+        bool done;
 
-        /// Generate all set assignments
-        class GECODE_TESTSET_EXPORT SetAssignment {
-        private:
-            /// Arity
-            int n;
-            /// Iterator for each set variable
-            CountableSet* dsv;
-            /// Iterator for int variable
-            Test::Int::CpltAssignment ir;
-            /// Flag whether all assignments have been generated
-            bool done;
+    public:
+        /// The common superset for all domains
+        Gecode::IntSet lub;
+        /// How many integer variables to iterate
+        int with_int;
+        /// Initialize with \a n set variables, initial bound \a d and \a i int variables
+        SetAssignment(int n, const Gecode::IntSet& d, int i = 0);
+        /// Test whether all assignments have been iterated
+        bool
+        operator()() const {
+            return !done;
+        }
+        /// Move to next assignment
+        void next(Gecode::Support::RandomGenerator& rand);
+        /// Return the set at \a i as a bit pattern over lub; see CountableSetRanges
+        int
+        operator[](int i) const {
+            assert((i >= 0) && (i < n));
+            return dsv[i].val();
+        }
+        /// Return value for first integer variable
+        int
+        int_value() const {
+            return ir[0];
+        }
+        /// Return assignment for integer variables
+        const Test::Int::Assignment&
+        ints() const {
+            return ir;
+        }
+        /// Return arity
+        int
+        size() const {
+            return n;
+        }
+        /// Destructor
+        ~SetAssignment() {
+            delete[] dsv;
+        }
+    };
 
-        public:
-            /// The common superset for all domains
-            Gecode::IntSet lub;
-            /// How many integer variables to iterate
-            int with_int;
-            /// Initialize with \a n set variables, initial bound \a d and \a i int variables
-            SetAssignment(int n, const Gecode::IntSet& d, int i = 0);
-            /// Test whether all assignments have been iterated
-            bool
-            operator()() const {
-                return !done;
-            }
-            /// Move to next assignment
-            void next(Gecode::Support::RandomGenerator& rand);
-            /// Return the set at \a i as a bit pattern over lub; see CountableSetRanges
-            int
-            operator[](int i) const {
-                assert((i >= 0) && (i < n));
-                return dsv[i].val();
-            }
-            /// Return value for first integer variable
-            int
-            int_value() const {
-                return ir[0];
-            }
-            /// Return assignment for integer variables
-            const Test::Int::Assignment&
-            ints() const {
-                return ir;
-            }
-            /// Return arity
-            int
-            size() const {
-                return n;
-            }
-            /// Destructor
-            ~SetAssignment() {
-                delete[] dsv;
-            }
-        };
+    class GECODE_TESTSET_EXPORT SetTest;
 
-        class GECODE_TESTSET_EXPORT SetTest;
-
-        /// Space for executing set tests
-        class GECODE_TESTSET_EXPORT SetTestSpace : public Gecode::Space {
-        public:
-            /// Initial domain
-            Gecode::IntSet d;
-            /// Set variables to be tested
-            Gecode::SetVarArray x;
-            /// Int variables to be tested
-            Gecode::IntVarArray y;
-            /// How many integer variables are used by the test
-            int with_int;
-            /// Reification information
-            Gecode::Reify r;
-            /// Whether the test is for a reified propagator
-            bool reified;
-            /// The test currently run
-            SetTest* test;
-
-            /**
-             * \brief Create test space without reification
-             *
-             * Creates \a n set variables with domain \a d0,
-             * \a i integer variables with domain \a d0, and stores whether
-             * the test is for a reified propagator (\a r), and the test itself
-             * (\a t).
-             *
-             */
-            SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t, bool log = true);
-            /**
-             * \brief Create test space with reification
-             *
-             * Creates \a n set variables with domain \a d0,
-             * \a i integer variables with domain \a d0, and stores whether
-             * the test is for a reified propagator (\a r), and the test itself
-             * (\a t).
-             *
-             */
-            SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t, Gecode::ReifyMode rm, bool log = true);
-            /// Constructor for cloning \a s
-            SetTestSpace(SetTestSpace& s);
-            /// Copy space during cloning
-            Gecode::Space* copy() override;
-            /// Post propagator
-            void post();
-            /// Compute a fixpoint and check for failure
-            bool failed();
-            /// Check for subsumption if \a b is true
-            bool subsumed(bool b);
-            /// Perform set tell operation on \a x[i]
-            void rel(int i, Gecode::SetRelType srt, const Gecode::IntSet& is);
-            /// Perform cardinality tell operation on \a x[i]
-            void cardinality(int i, int min_cardinality, int max_cardinality);
-            /// Perform integer tell operation on \a y[i]
-            void rel(int i, Gecode::IntRelType irt, int n);
-            /// Perform Boolean tell on \a b
-            void rel(bool sol);
-            /// Assign all variables to values in \a a
-            void assign(const SetAssignment& a, Gecode::Support::RandomGenerator& rand);
-            /// Test whether all variables are assigned
-            bool assigned() const;
-            /// Remove value \a v from the upper bound of \a x[i]
-            void remove_from_lub(int v, int i, const SetAssignment& a);
-            /// Remove value \a v from the upper bound of \a x[i]
-            void remove_from_lub(int v, int i, const SetAssignment& a, SetTestSpace& c);
-            /// Remove value \a v from the lower bound of \a x[i]
-            void add_to_glb(int v, int i, const SetAssignment& a);
-            /// Remove value \a v from the lower bound of \a x[i]
-            void add_to_glb(int v, int i, const SetAssignment& a, SetTestSpace& c);
-            /// Check fixpoint stability after reposting in a clone
-            bool check_fixpoint();
-            /// Perform random pruning
-            bool prune(const SetAssignment& a, Gecode::Support::RandomGenerator& rand);
-            /// Return the number of propagators
-            unsigned int propagators();
-            /// Disable propagators in space and compute fixpoint (make all idle)
-            void disable();
-            /// Enable propagators in space
-            void enable();
-            /// Prune values also in a space \a c with disabled propagators, but not those in assignment \a a
-            bool disabled(const SetAssignment& a, SetTestSpace& c, Gecode::Support::RandomGenerator& rand);
-            /// Check whether propagation is the same as in \a c
-            bool same(SetTestSpace& c);
-        };
+    /// Space for executing set tests
+    class GECODE_TESTSET_EXPORT SetTestSpace : public Gecode::Space {
+    public:
+        /// Initial domain
+        Gecode::IntSet d;
+        /// Set variables to be tested
+        Gecode::SetVarArray x;
+        /// Int variables to be tested
+        Gecode::IntVarArray y;
+        /// How many integer variables are used by the test
+        int with_int;
+        /// Reification information
+        Gecode::Reify r;
+        /// Whether the test is for a reified propagator
+        bool reified;
+        /// The test currently run
+        SetTest* test;
 
         /**
-         * \brief %Base class for tests with set constraints
+         * \brief Create test space without reification
+         *
+         * Creates \a n set variables with domain \a d0,
+         * \a i integer variables with domain \a d0, and stores whether
+         * the test is for a reified propagator (\a r), and the test itself
+         * (\a t).
          *
          */
-        class GECODE_TESTSET_EXPORT SetTest : public Base {
-        private:
-            /// Number of variables
-            int arity;
-            /// Domain of variables (least upper bound)
-            Gecode::IntSet lub;
-            /// Does the constraint also exist as reified constraint
-            bool reified;
-            /// Number of additional integer variables
-            int with_int;
+        SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t, bool log = true);
+        /**
+         * \brief Create test space with reification
+         *
+         * Creates \a n set variables with domain \a d0,
+         * \a i integer variables with domain \a d0, and stores whether
+         * the test is for a reified propagator (\a r), and the test itself
+         * (\a t).
+         *
+         */
+        SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t, Gecode::ReifyMode rm, bool log = true);
+        /// Constructor for cloning \a s
+        SetTestSpace(SetTestSpace& s);
+        /// Copy space during cloning
+        Gecode::Space* copy() override;
+        /// Post propagator
+        void post();
+        /// Compute a fixpoint and check for failure
+        bool failed();
+        /// Check for subsumption if \a b is true
+        bool subsumed(bool b);
+        /// Perform set tell operation on \a x[i]
+        void rel(int i, Gecode::SetRelType srt, const Gecode::IntSet& is);
+        /// Perform cardinality tell operation on \a x[i]
+        void cardinality(int i, int min_cardinality, int max_cardinality);
+        /// Perform integer tell operation on \a y[i]
+        void rel(int i, Gecode::IntRelType irt, int n);
+        /// Perform Boolean tell on \a b
+        void rel(bool sol);
+        /// Assign all variables to values in \a a
+        void assign(const SetAssignment& a, Gecode::Support::RandomGenerator& rand);
+        /// Test whether all variables are assigned
+        bool assigned() const;
+        /// Remove value \a v from the upper bound of \a x[i]
+        void remove_from_lub(int v, int i, const SetAssignment& a);
+        /// Remove value \a v from the upper bound of \a x[i]
+        void remove_from_lub(int v, int i, const SetAssignment& a, SetTestSpace& c);
+        /// Remove value \a v from the lower bound of \a x[i]
+        void add_to_glb(int v, int i, const SetAssignment& a);
+        /// Remove value \a v from the lower bound of \a x[i]
+        void add_to_glb(int v, int i, const SetAssignment& a, SetTestSpace& c);
+        /// Check fixpoint stability after reposting in a clone
+        bool check_fixpoint();
+        /// Perform random pruning
+        bool prune(const SetAssignment& a, Gecode::Support::RandomGenerator& rand);
+        /// Return the number of propagators
+        unsigned int propagators();
+        /// Disable propagators in space and compute fixpoint (make all idle)
+        void disable();
+        /// Enable propagators in space
+        void enable();
+        /// Prune values also in a space \a c with disabled propagators, but not those in assignment \a a
+        bool disabled(const SetAssignment& a, SetTestSpace& c, Gecode::Support::RandomGenerator& rand);
+        /// Check whether propagation is the same as in \a c
+        bool same(SetTestSpace& c);
+    };
 
-        protected:
-            /// Whether to perform full tests for disabled propagators
-            bool disabled;
-            /// Whether to check for subsumption
-            bool test_subsumption;
+    /**
+     * \brief %Base class for tests with set constraints
+     *
+     */
+    class GECODE_TESTSET_EXPORT SetTest : public Base {
+    private:
+        /// Number of variables
+        int arity;
+        /// Domain of variables (least upper bound)
+        Gecode::IntSet lub;
+        /// Does the constraint also exist as reified constraint
+        bool reified;
+        /// Number of additional integer variables
+        int with_int;
 
-        public:
-            /**
-             * \brief Constructor
-             *
-             * Constructs a test with name \a s and arity \a a and variable
-             * domain \a d. Also tests for a reified constraint,
-             * if \a r is true, checking all three reification modes.
-             * In addition, \a w integer variables are provided.
-             */
-            SetTest(const std::string& s, int a, const Gecode::IntSet& d, bool r = false, int w = 0)
-                : SetTest(TestTags::standard(), s, a, d, r, w) {}
-            /// Construct and register a test with explicitly assigned tags
-            SetTest(TestTags tags, const std::string& s, int a, const Gecode::IntSet& d, bool r = false, int w = 0)
-                : Base("Set::" + s, tags), arity(a), lub(d), reified(r), with_int(w), disabled(true),
-                  test_subsumption(true) {}
-            /// Check for solution
-            virtual bool solution(const SetAssignment&) const = 0;
-            /// Post propagator
-            virtual void post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray& y) = 0;
-            /// Post reified propagator
-            virtual void
-            post(Gecode::Space&, Gecode::SetVarArray&, Gecode::IntVarArray&, Gecode::Reify) {}
-            /// Perform test
-            bool run() override;
+    protected:
+        /// Whether to perform full tests for disabled propagators
+        bool disabled;
+        /// Whether to check for subsumption
+        bool test_subsumption;
 
-            /// \name Mapping scalar values to strings
-            //@{
-            /// Map set relation to string
-            static std::string str(Gecode::SetRelType srt);
-            /// Map set operation to string
-            static std::string str(Gecode::SetOpType sot);
-            /// Map integer to string
-            static std::string str(int i);
-            /// Map integer array to string
-            static std::string str(const Gecode::IntArgs& x);
-            //@}
-        };
+    public:
+        /**
+         * \brief Constructor
+         *
+         * Constructs a test with name \a s and arity \a a and variable
+         * domain \a d. Also tests for a reified constraint,
+         * if \a r is true, checking all three reification modes.
+         * In addition, \a w integer variables are provided.
+         */
+        SetTest(const std::string& s, int a, const Gecode::IntSet& d, bool r = false, int w = 0)
+            : SetTest(TestTags::standard(), s, a, d, r, w) {}
+        /// Construct and register a test with explicitly assigned tags
+        SetTest(TestTags tags, const std::string& s, int a, const Gecode::IntSet& d, bool r = false, int w = 0)
+            : Base("Set::" + s, tags), arity(a), lub(d), reified(r), with_int(w), disabled(true),
+              test_subsumption(true) {}
+        /// Check for solution
+        virtual bool solution(const SetAssignment&) const = 0;
+        /// Post propagator
+        virtual void post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray& y) = 0;
+        /// Post reified propagator
+        virtual void
+        post(Gecode::Space&, Gecode::SetVarArray&, Gecode::IntVarArray&, Gecode::Reify) {}
+        /// Perform test
+        bool run() override;
+
+        /// \name Mapping scalar values to strings
+        //@{
+        /// Map set relation to string
+        static std::string str(Gecode::SetRelType srt);
+        /// Map set operation to string
+        static std::string str(Gecode::SetOpType sot);
+        /// Map integer to string
+        static std::string str(int i);
+        /// Map integer array to string
+        static std::string str(const Gecode::IntArgs& x);
         //@}
+    };
+    //@}
 
-        /// Iterator for set relation types
-        class GECODE_TESTSET_EXPORT SetRelTypes {
-        private:
-            /// Array of relation types
-            static const Gecode::SetRelType srts[6];
-            /// Current position in relation type array
-            int i;
+    /// Iterator for set relation types
+    class GECODE_TESTSET_EXPORT SetRelTypes {
+    private:
+        /// Array of relation types
+        static const Gecode::SetRelType srts[6];
+        /// Current position in relation type array
+        int i;
 
-        public:
-            /// Initialize iterator
-            SetRelTypes();
-            /// Test whether iterator is done
-            bool operator()() const;
-            /// Increment to next relation type
-            void operator++();
-            /// Return current relation type
-            Gecode::SetRelType srt() const;
-        };
+    public:
+        /// Initialize iterator
+        SetRelTypes();
+        /// Test whether iterator is done
+        bool operator()() const;
+        /// Increment to next relation type
+        void operator++();
+        /// Return current relation type
+        Gecode::SetRelType srt() const;
+    };
 
-        /// Iterator for Boolean operation types
-        class GECODE_TESTSET_EXPORT SetOpTypes {
-        private:
-            /// Array of operation types
-            static const Gecode::SetOpType sots[4];
-            /// Current position in operation type array
-            int i;
+    /// Iterator for Boolean operation types
+    class GECODE_TESTSET_EXPORT SetOpTypes {
+    private:
+        /// Array of operation types
+        static const Gecode::SetOpType sots[4];
+        /// Current position in operation type array
+        int i;
 
-        public:
-            /// Initialize iterator
-            SetOpTypes();
-            /// Test whether iterator is done
-            bool operator()() const;
-            /// Increment to next operation type
-            void operator++();
-            /// Return current operation type
-            Gecode::SetOpType sot() const;
-        };
+    public:
+        /// Initialize iterator
+        SetOpTypes();
+        /// Test whether iterator is done
+        bool operator()() const;
+        /// Increment to next operation type
+        void operator++();
+        /// Return current operation type
+        Gecode::SetOpType sot() const;
+    };
 
-    } // namespace Set
-} // namespace Test
+} // namespace Test::Set
 
 /**
  * \brief Print assignment \a

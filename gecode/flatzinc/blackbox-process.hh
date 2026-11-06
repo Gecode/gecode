@@ -18,7 +18,7 @@
 #include <thread>
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /// Platform process session used by the executable blackbox backend.
     class BlackBoxProcessSession {
@@ -50,7 +50,7 @@ namespace Gecode { namespace FlatZinc {
     /// Create the process implementation selected for the target platform.
     BlackBoxProcessSession* create_blackbox_process(const std::string& program, const std::vector<std::string>& args);
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif
 

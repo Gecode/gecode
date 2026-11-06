@@ -37,7 +37,7 @@
 #include <gecode/gist/layoutcursor.hh>
 #include <QtGui>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief A cursor that draws a tree on a QWidget
     class DrawingCursor : public NodeCursor<VisualNode> {
@@ -94,7 +94,7 @@ namespace Gecode { namespace Gist {
         //@}
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #include <gecode/gist/drawingcursor.hpp>
 

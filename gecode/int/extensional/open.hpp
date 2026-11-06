@@ -37,7 +37,7 @@
 #include <limits>
 #include <utility>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /// Shortest accepting suffix length from each state, or -1 if none exists
     inline SharedArray<int>
@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
     };
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 #endif
 

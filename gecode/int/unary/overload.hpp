@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     // Overload checking for mandatory tasks
     template <class ManTask>
@@ -83,6 +83,6 @@ namespace Gecode { namespace Int { namespace Unary {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-prop

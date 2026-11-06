@@ -34,7 +34,7 @@
 
 #include <memory>
 
-namespace Test { namespace Int { namespace MinDistance {
+namespace Test::Int::MinDistance {
 
     /// Distances with both a zero off-diagonal pair and threshold boundaries
     Gecode::IntArgs
@@ -251,6 +251,6 @@ namespace Test { namespace Int { namespace MinDistance {
     };
     Create create;
 
-}}} // namespace Test::Int::MinDistance
+} // namespace Test::Int::MinDistance
 
 // STATISTICS: test-int

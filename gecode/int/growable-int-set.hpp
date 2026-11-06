@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     forceinline
     GrowableIntSet::GrowableIntSet()
@@ -204,6 +204,6 @@ namespace Gecode { namespace Int {
         return static_cast<unsigned int>(current->max) - static_cast<unsigned int>(current->min) + 1U;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-other

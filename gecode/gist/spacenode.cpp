@@ -39,7 +39,7 @@
 #include <QString>
 #include <QVector>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief Representation of a branch in the search tree
     class Branch {
@@ -344,6 +344,6 @@ namespace Gecode { namespace Gist {
         return no_of_open_children;
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

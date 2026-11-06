@@ -50,7 +50,7 @@
 #include <gecode/int/gcc/bnd-sup.hpp>
 #include <gecode/int/gcc/dom-sup.hpp>
 
-namespace Gecode { namespace Int { namespace GCC {
+namespace Gecode::Int::GCC {
 
     /**
      * \brief Value consistent global cardinality propagator
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace GCC {
         static ExecStatus post(Home home, ViewArray<IntView>& x, ViewArray<Card>& k);
     };
 
-}}} // namespace Gecode::Int::GCC
+} // namespace Gecode::Int::GCC
 
 #include <gecode/int/gcc/post.hpp>
 #include <gecode/int/gcc/val.hpp>

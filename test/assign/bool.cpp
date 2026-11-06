@@ -36,7 +36,7 @@
 
 #include <string>
 
-namespace Test { namespace Assign {
+namespace Test::Assign {
 
     /// %Test branching with distinct propagator
     class Bool : public BoolTest {
@@ -157,6 +157,6 @@ namespace Test { namespace Assign {
         BoolVarSelection var_selection;
     } // namespace
 
-}} // namespace Test::Assign
+} // namespace Test::Assign
 
 // STATISTICS: test-branch

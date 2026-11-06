@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     // Minimum merit
     template <class View>
@@ -198,6 +198,6 @@ namespace Gecode { namespace Int { namespace Branch {
         return x.regret_max();
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

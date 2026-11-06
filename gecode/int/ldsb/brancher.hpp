@@ -33,7 +33,7 @@
 #include <deque>
 #include <set>
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     forceinline
     Literal::Literal()
@@ -258,6 +258,6 @@ namespace Gecode { namespace Int { namespace LDSB {
         }
     }
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: int-branch

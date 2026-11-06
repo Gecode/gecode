@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Rel {
+namespace Gecode::Int::Rel {
 
     /*
      * Lexical order propagator
@@ -435,6 +435,6 @@ namespace Gecode { namespace Int { namespace Rel {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Rel
+} // namespace Gecode::Int::Rel
 
 // STATISTICS: int-prop

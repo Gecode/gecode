@@ -37,7 +37,7 @@
 #include <gecode/int/branch.hh>
 #include <gecode/flatzinc.hh>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /// Which integer or Boolean variable to select for branching
     class IntBoolVarBranch : public VarBranch<IntVar> {
@@ -338,7 +338,7 @@ namespace Gecode { namespace FlatZinc {
     GECODE_FLATZINC_EXPORT void branch(Home home, const IntVarArgs& x, const BoolVarArgs& y, IntBoolVarBranch vars,
                                        const IntValBranch& vals);
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #include <gecode/flatzinc/branch.hpp>
 
