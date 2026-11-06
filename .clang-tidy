@@ -14,7 +14,6 @@ Checks: >-
   -bugprone-exception-escape,
   -bugprone-implicit-widening-of-multiplication-result,
   -bugprone-inc-dec-in-conditions,
-  -bugprone-incorrect-roundings,
   -bugprone-macro-parentheses,
   -bugprone-multi-level-implicit-pointer-conversion,
   -bugprone-narrowing-conversions,
