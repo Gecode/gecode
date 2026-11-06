@@ -134,8 +134,8 @@ namespace Test { namespace Int {
             c(Gecode::Space& _home) {
                 TestSpace& home = static_cast<TestSpace&>(_home);
                 int t = 0;
-                for (int i = 0; i < home.x.size(); i++)
-                    t += home.x[i].val();
+                for (auto var : home.x)
+                    t += var.val();
                 if (t != 2)
                     home.fail();
             }

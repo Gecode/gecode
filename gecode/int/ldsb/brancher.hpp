@@ -145,10 +145,10 @@ namespace Gecode { namespace Int { namespace LDSB {
 
             for (int i = 0; i < _nsyms; i++) {
                 ArgArray<Literal> to_exclude = _syms[i]->symmetric(l, this->x);
-                for (int j = 0; j < to_exclude.size(); ++j) {
-                    if (!seen.contains(to_exclude[j]))
-                        queue.push_back(to_exclude[j]);
-                    seen.insert(to_exclude[j]);
+                for (auto j : to_exclude) {
+                    if (!seen.contains(j))
+                        queue.push_back(j);
+                    seen.insert(j);
                 }
             }
         } while (!queue.empty());

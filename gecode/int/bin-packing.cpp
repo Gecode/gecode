@@ -43,8 +43,8 @@ namespace Gecode {
             throw ArgumentSame("Int::binpacking");
         if (b.size() != s.size())
             throw ArgumentSizeMismatch("Int::binpacking");
-        for (int i = 0; i < s.size(); i++)
-            Limits::nonnegative(s[i], "Int::binpacking");
+        for (int si : s)
+            Limits::nonnegative(si, "Int::binpacking");
         GECODE_POST;
 
         ViewArray<OffsetView> lv(home, l.size());
@@ -75,10 +75,10 @@ namespace Gecode {
         // Check input sizes
         if ((n * d != s.size()) || (m * d != l.size()) || (d != c.size()))
             throw ArgumentSizeMismatch("Int::binpacking");
-        for (int i = 0; i < s.size(); i++)
-            Limits::nonnegative(s[i], "Int::binpacking");
-        for (int i = 0; i < c.size(); i++)
-            Limits::nonnegative(c[i], "Int::binpacking");
+        for (int si : s)
+            Limits::nonnegative(si, "Int::binpacking");
+        for (int ci : c)
+            Limits::nonnegative(ci, "Int::binpacking");
 
         if (home.failed())
             return IntSet::empty;

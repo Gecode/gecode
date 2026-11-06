@@ -329,8 +329,8 @@ public:
     void
     print(std::ostream& os) const override {
         os << "\tTour: 0";
-        for (int i = 0; i < x.size(); i++)
-            os << " -> " << x[i];
+        for (auto xi : x)
+            os << " -> " << xi;
         os << " -> 0" << '\n' << "\tTravel time: " << total << '\n';
     }
 };
