@@ -456,7 +456,7 @@ namespace Gecode {
                 for (unsigned int i = 0U; i < n_offsets; i++)
                     support_offsets[i] = 0U;
                 for (unsigned int tid = 0U; tid < static_cast<unsigned int>(n_tuples); tid++) {
-                    const Tuple t = td + tid * arity;
+                    const int* t = td + tid * arity;
                     for (int a = 0; a < arity; a++) {
                         const unsigned int range_index = vd[a].start(t[a]);
                         const unsigned int support_id =
@@ -489,7 +489,7 @@ namespace Gecode {
                     // Tuple ids are visited in increasing order, so each support list
                     // is already sorted by tuple id (and hence by word index).
                     for (unsigned int tid = 0U; tid < static_cast<unsigned int>(n_tuples); tid++) {
-                        const Tuple t = td + tid * arity;
+                        const int* t = td + tid * arity;
                         for (int a = 0; a < arity; a++) {
                             const unsigned int range_index = vd[a].start(t[a]);
                             const unsigned int support_id =
