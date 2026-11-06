@@ -1475,7 +1475,7 @@ namespace Gecode {
 
     protected:
         /// Initialize for particular brancher \a b and alternatives \a a
-        Choice(const Brancher& b, const unsigned int a);
+        Choice(const Brancher& b, unsigned int a);
 
     public:
         /// Return number of alternatives
