@@ -1806,7 +1806,7 @@ namespace Gecode {
     class Slice {
     public:
         /// The type of the Args-array type for ValueType values
-        using ArgsType = typename ArrayTraits<A>::ArgsType;
+        using ArgsType = ArrayTraits<A>::ArgsType;
 
     private:
         ArgsType _r; ///< The elements of the slice
@@ -1829,23 +1829,23 @@ namespace Gecode {
 
     /// Concatenate \a x and \a y
     template <class A>
-    typename Slice<A>::ArgsType operator+(const Slice<A>& x, const Slice<A>& y);
+    Slice<A>::ArgsType operator+(const Slice<A>& x, const Slice<A>& y);
 
     /// Concatenate \a x and \a y
     template <class A>
-    typename Slice<A>::ArgsType operator+(const Slice<A>& x, const typename ArrayTraits<A>::ArgsType& y);
+    Slice<A>::ArgsType operator+(const Slice<A>& x, const typename ArrayTraits<A>::ArgsType& y);
 
     /// Concatenate \a x and \a y
     template <class A>
-    typename Slice<A>::ArgsType operator+(const typename ArrayTraits<A>::ArgsType& x, const Slice<A>& y);
+    Slice<A>::ArgsType operator+(const typename ArrayTraits<A>::ArgsType& x, const Slice<A>& y);
 
     /// Concatenate \a x and \a y
     template <class A>
-    typename Slice<A>::ArgsType operator+(const Slice<A>& x, const typename ArrayTraits<A>::ValueType& y);
+    Slice<A>::ArgsType operator+(const Slice<A>& x, const typename ArrayTraits<A>::ValueType& y);
 
     /// Concatenate \a x and \a y
     template <class A>
-    typename Slice<A>::ArgsType operator+(const typename ArrayTraits<A>::ValueType& x, const Slice<A>& y);
+    Slice<A>::ArgsType operator+(const typename ArrayTraits<A>::ValueType& x, const Slice<A>& y);
 
     /** \brief Matrix-interface for arrays
      *
@@ -1861,13 +1861,13 @@ namespace Gecode {
     class Matrix {
     public:
         /// The type of elements of this array
-        using ValueType = typename ArrayTraits<A>::ValueType;
+        using ValueType = ArrayTraits<A>::ValueType;
         /// The type of the Args-array type for ValueType values
-        using ArgsType = typename ArrayTraits<A>::ArgsType;
+        using ArgsType = ArrayTraits<A>::ArgsType;
 
     private:
         /// The type of storage for this array
-        using StorageType = typename ArrayTraits<A>::StorageType;
+        using StorageType = ArrayTraits<A>::StorageType;
         StorageType _a; ///< The array wrapped
         int _w;         ///< The width of the matrix
         int _h;         ///< The height of the matrix

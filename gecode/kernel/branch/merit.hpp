@@ -47,7 +47,7 @@ namespace Gecode {
         /// View type
         using View = View_;
         /// Corresponding variable type
-        using Var = typename View::VarType;
+        using Var = View::VarType;
         /// Type of merit
         using Val = Val_;
         /// Constructor for initialization
@@ -69,7 +69,7 @@ namespace Gecode {
 
     public:
         /// Corresponding merit function type
-        using Function = typename BranchTraits<Var>::Merit;
+        using Function = BranchTraits<Var>::Merit;
 
     protected:
         /// The user-defined merit function

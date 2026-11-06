@@ -81,7 +81,7 @@ namespace Gecode { namespace Int {
 
     template <class View>
     forceinline
-    IdxViewArray<View>::IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& xa)
+    IdxViewArray<View>::IdxViewArray(Space& home, const ViewToVarArg<View>::argtype& xa)
         : xs(nullptr) {
         n = xa.size();
         if (n > 0) {

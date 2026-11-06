@@ -93,7 +93,7 @@ namespace Gecode {
         using ViewBrancher<View, Filter, n>::x;
         using ViewBrancher<View, Filter, n>::f;
         /// The corresponding variable
-        using Var = typename View::VarType;
+        using Var = View::VarType;
         /// Value selection and commit object
         ValSelCommitBase<View, Val>* vsc;
         /// Print function

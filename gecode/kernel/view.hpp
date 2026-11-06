@@ -44,9 +44,9 @@ namespace Gecode {
     class ConstView {
     public:
         /// The variable implementation type corresponding to the constant view
-        using VarImpType = typename View::VarImpType;
+        using VarImpType = View::VarImpType;
         /// The variable type corresponding to the constant view
-        using VarType = typename View::VarType;
+        using VarType = View::VarType;
         /// \name Generic view information
         //@{
         /// Return degree (number of subscribed propagators and advisors)
@@ -132,7 +132,7 @@ namespace Gecode {
         /// The variable type corresponding to the view
         using VarType = Var;
         /// The variable implementation type corresponding to the view
-        using VarImpType = typename Var::VarImpType;
+        using VarImpType = Var::VarImpType;
 
     protected:
         /// Pointer to variable implementation
@@ -228,9 +228,9 @@ namespace Gecode {
     class DerivedView {
     public:
         /// The variable implementation type belonging to the \a View
-        using VarImpType = typename View::VarImpType;
+        using VarImpType = View::VarImpType;
         /// The variable type belonging to the \a View
-        using VarType = typename View::VarType;
+        using VarType = View::VarType;
 
     protected:
         /// View from which this view is derived
@@ -393,7 +393,7 @@ namespace Gecode {
         return false;
     }
     template <class View>
-    forceinline typename View::VarImpType*
+    forceinline View::VarImpType*
     ConstView<View>::varimp() const {
         return nullptr;
     }
@@ -482,7 +482,7 @@ namespace Gecode {
         return true;
     }
     template <class Var>
-    forceinline typename Var::VarImpType*
+    forceinline Var::VarImpType*
     VarImpView<Var>::varimp() const {
         return x;
     }
@@ -581,7 +581,7 @@ namespace Gecode {
     }
 
     template <class View>
-    forceinline typename View::VarImpType*
+    forceinline View::VarImpType*
     DerivedView<View>::varimp() const {
         return x.varimp();
     }

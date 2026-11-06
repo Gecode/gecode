@@ -398,7 +398,7 @@ namespace Gecode { namespace Support {
 
     public:
         using EngineType = Engine;
-        using State = typename Engine::State;
+        using State = Engine::State;
         using result_type = uint64_t;
         static_assert(Engine::max() == UINT64_MAX && Engine::min() <= 1,
                       "Random engine must generate full or nonzero 64-bit words");

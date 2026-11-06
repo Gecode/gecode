@@ -76,7 +76,7 @@ namespace Gecode { namespace Int {
         /// Copy constructor
         IdxViewArray(const IdxViewArray<View>&);
         /// Construct an IdxViewArray from \a x
-        IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& x);
+        IdxViewArray(Space& home, const ViewToVarArg<View>::argtype& x);
         /// Construct an IdxViewArray of size \a n
         IdxViewArray(Space& home, int n);
 
