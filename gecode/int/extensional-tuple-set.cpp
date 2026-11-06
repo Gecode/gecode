@@ -261,6 +261,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             }
         }
 
+    private:
         SparseTupleState(Home home, ViewArray<View>& x, const TupleSet& ts0)
             : ts(ts0), arity(x.size()), n_tuples(static_cast<unsigned int>(ts0.tuples())),
               n_vals(TupleSetAccess::sparse_values(ts0)),
