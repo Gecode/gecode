@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View, class IntType>
     forceinline ExecStatus
-    prop_bnd(Space& home, ViewArray<View>& x, int* minsorted, int* maxsorted) {
+    prop_bnd(Space& home, ViewArray<View>& x, const int* minsorted, const int* maxsorted) {
         const int n = x.size();
 
         Region r;

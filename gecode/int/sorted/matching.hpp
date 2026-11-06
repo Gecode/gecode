@@ -51,7 +51,8 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     template <class View>
     inline bool
-    glover(ViewArray<View>& x, ViewArray<View>& y, int tau[], int phi[], OfflineMinItem sequence[], int vertices[]) {
+    glover(ViewArray<View>& x, ViewArray<View>& y, const int tau[], int phi[], OfflineMinItem sequence[],
+           int vertices[]) {
 
         int xs = x.size();
         OfflineMin seq(sequence, vertices, xs);

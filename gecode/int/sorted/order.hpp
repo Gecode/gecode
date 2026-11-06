@@ -71,6 +71,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     template <class View, bool Perm>
     inline void
+    // NOLINTNEXTLINE(readability-non-const-parameter): quicksort sorts tau in place
     sort_tau(ViewArray<View>& x, ViewArray<View>& z, int tau[]) {
         if (Perm) {
             TupleMaxIncExt<View> ltmax(x, z);
@@ -134,8 +135,8 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     template <class View>
     inline bool
-    perm_bc(Space& home, int tau[], SccComponent sinfo[], int scclist[], ViewArray<View>& x, ViewArray<View>& z,
-            bool& crossingedge, bool& nofix) {
+    perm_bc(Space& home, const int tau[], SccComponent sinfo[], const int scclist[], ViewArray<View>& x,
+            ViewArray<View>& z, bool& crossingedge, bool& nofix) {
 
         int ps = x.size();
 

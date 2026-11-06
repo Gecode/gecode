@@ -130,6 +130,7 @@ namespace Gecode {
     }
 
     forceinline unsigned int
+    // NOLINTNEXTLINE(readability-non-const-parameter): Tuple is already a pointer to const
     TupleSet::Data::tuple_to_index(Tuple t) const {
         return static_cast<unsigned int>((t - td) / static_cast<unsigned int>(arity));
     }

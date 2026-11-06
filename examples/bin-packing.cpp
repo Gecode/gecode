@@ -238,7 +238,7 @@ protected:
         /** Initialize choice for brancher \a b, alternatives \a a,
          *  item \a i and same bins \a s.
          */
-        Choice(const Brancher& b, unsigned int a, int i, int* s, int n_s)
+        Choice(const Brancher& b, unsigned int a, int i, const int* s, int n_s)
             : Gecode::Choice(b, a), item(i), same(heap.alloc<int>(n_s)), n_same(n_s) {
             for (int k = n_same; k--;)
                 same[k] = s[k];
