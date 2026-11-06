@@ -39,7 +39,6 @@ Checks: >-
   -modernize-loop-convert,
   -modernize-min-max-use-initializer-list,
   -modernize-pass-by-value,
-  -modernize-raw-string-literal,
   -modernize-return-braced-init-list,
   -modernize-use-auto,
   -modernize-use-constraints,

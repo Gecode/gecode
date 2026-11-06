@@ -291,22 +291,22 @@ namespace Test { namespace Instance {
                     "test.txt:4:1: a second line matching \"N : {n:int}\" (the first is on line 1)"));
         CHECK(fails(spec, "NAME : a\nN : 1\nDATA\n4\nNAME : b\n", "a second line matching \"NAME : {name:word}\""));
         // A last arm ends the statement, and may be optional
-        const char* last = "sections { \"a {a:int}\"  \"end\" last }  y: int";
+        const char* last = R"(sections { "a {a:int}"  "end" last }  y: int)";
         CHECK(read(last, "a 1\nend\n5").integer("y") == 5);
         CHECK(fails(last, "a 1\n5", "expected one of"));
         CHECK(fails(last, "a 1", "expected a line matching \"end\" before the end of the input"));
         CHECK(fails(last, "end\n5",
                     "test.txt:1:1: expected a line matching \"a {a:int}\" before the line matching \"end\""));
-        const char* optional_last = "sections { \"a {a:int}\"  \"end\" optional last }";
+        const char* optional_last = R"(sections { "a {a:int}"  "end" optional last })";
         CHECK(read(optional_last, "a 1").integer("a") == 1);
         CHECK(read(optional_last, "a 1\nend").integer("a") == 1);
         return true;
     });
 
     Case alphabets("Read::Alphabets", []() {
-        Data d = read("g[2][3]: alphabet \"123ABC\" blank \".\"", "1.A\nC 2 .");
+        Data d = read(R"(g[2][3]: alphabet "123ABC" blank ".")", "1.A\nC 2 .");
         CHECK(equal(d.ints("g"), {1, 0, 4, 6, 2, 0}));
-        Data e = read("g[2][2]: alphabet \"ab\" base 0 strip \"|-\"", "a|b\n---\nb|a");
+        Data e = read(R"(g[2][2]: alphabet "ab" base 0 strip "|-")", "a|b\n---\nb|a");
         CHECK(equal(e.ints("g"), {0, 1, 1, 0}));
         // Alphabet options do not take the statements that follow
         CHECK(read("g[1][2]: alphabet \"ab\"  ignore trailing", "ab x").size("g") == 1);
@@ -415,7 +415,7 @@ namespace Test { namespace Instance {
 
     Case robustness("Read::Robustness", []() {
         // Separators, and a string terminator for a list of numbers
-        Data d = read("separators \",\"  list a: int until eol  list b: int until \"EOF\"", "1,2, 3\n4 5 EOF");
+        Data d = read(R"(separators ","  list a: int until eol  list b: int until "EOF")", "1,2, 3\n4 5 EOF");
         CHECK(equal(d.ints("a"), {1, 2, 3}));
         CHECK(equal(d.ints("b"), {4, 5}));
         // Names with dashes only for formats; '-' is otherwise subtraction
@@ -565,7 +565,7 @@ namespace Test { namespace Instance {
         Params r;
         r.set("s", "3");
         r.set("i", "4");
-        Data d = read("param s = \"x\"  param i = 1  check s == \"3\" && i == 4", "", r);
+        Data d = read(R"(param s = "x"  param i = 1  check s == "3" && i == 4)", "", r);
         CHECK(d.text("s") == "3");
         Params t;
         t.set("i", "4.5");
@@ -596,7 +596,7 @@ namespace Test { namespace Instance {
 
     Case strings("Spec::Strings", []() {
         // The escapes \n, \t, \\, and \"
-        Data d = read("let s = \"a\\nb\\tc\\\\d\\\"e\"", "");
+        Data d = read(R"(let s = "a\nb\tc\\d\"e")", "");
         CHECK(d.text("s") == "a\nb\tc\\d\"e");
         // Other escapes and a backslash before a newline are errors on their line
         CHECK(fails([]() { (void)Spec::parse("a: int\nlet s = \"a\\db\"", "s"); }, "s:2: unknown escape '\\d'"));
@@ -921,7 +921,7 @@ namespace Test { namespace Instance {
         CHECK(fails([&]() { (void)read(spec, repeated, a); },
                     "test.txt:2:1: a second line matching \"instance {name:word}\""));
         CHECK(s.catalog_text(repeated).text("failed", {0}) == "a second line matching \"instance {name:word}\"");
-        const char* stop = "instances { sections { \"n {n:int}\"  \"m {m:int}\"  \"end\" last } }";
+        const char* stop = R"(instances { sections { "n {n:int}"  "m {m:int}"  "end" last } })";
         Params two;
         two.set("instance", "2");
         CHECK(read(stop, "n 1\nend\nn 2\nm 3\nend\n", two).integer("m") == 3);
@@ -1119,7 +1119,7 @@ namespace Test { namespace Instance {
                     "'jobs': exists"));
         CHECK(fails(jobs, "2 2\n0 5 1 6\n1 2 1 3\n", "test.txt:3:1: check failed for record 2 of 'jobs': twice"));
         // The terminating token of a repeat is kept with store
-        Data t = read("repeat until \"end\" \"stop\" store t as xs { a: int }  let k = size(xs)", "1 2 stop");
+        Data t = read(R"(repeat until "end" "stop" store t as xs { a: int }  let k = size(xs))", "1 2 stop");
         CHECK((t.text("t") == "stop") && (t.integer("k") == 2));
         return true;
     });

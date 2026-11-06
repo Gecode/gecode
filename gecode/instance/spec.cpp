@@ -125,8 +125,7 @@ namespace Gecode { namespace Instance {
             case '\n':
                 fail_at(origin, line, "unterminated string");
             default:
-                fail_at(origin, line,
-                        std::string("unknown escape '\\") + e + "' in string (use \\n, \\t, \\\\, or \\\")");
+                fail_at(origin, line, std::string("unknown escape '\\") + e + R"(' in string (use \n, \t, \\, or \"))");
             }
         }
 
