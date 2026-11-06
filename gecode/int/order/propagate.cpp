@@ -56,10 +56,12 @@ namespace Gecode { namespace Int { namespace Order {
         if (s0.max() + p0 <= s1.min()) {
             GECODE_ME_CHECK(b.zero(home));
             return home.ES_SUBSUMED(*this);
-        } else if (s1.max() + p1 <= s0.min()) {
+        }
+        if (s1.max() + p1 <= s0.min()) {
             GECODE_ME_CHECK(b.one(home));
             return home.ES_SUBSUMED(*this);
-        } else if ((s1.min() + p1 > s0.max()) || b.zero()) {
+        }
+        if ((s1.min() + p1 > s0.max()) || b.zero()) {
             GECODE_ME_CHECK(b.zero(home));
             GECODE_REWRITE(*this, (Rel::Lq<OffsetView, IntView>::post(home(*this), OffsetView(s0, p0), s1)));
         } else if ((s0.min() + p0 > s1.max()) || b.one()) {

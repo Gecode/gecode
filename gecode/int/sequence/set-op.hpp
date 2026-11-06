@@ -46,8 +46,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     takes(const View& x, int s) {
         if (x.in(s))
             return x.assigned() ? TS_YES : TS_MAYBE;
-        else
-            return TS_NO;
+        return TS_NO;
     }
     /// Return whether view \a x takes value from \a s
     template <class View>

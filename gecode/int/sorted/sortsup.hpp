@@ -85,10 +85,9 @@ namespace Gecode { namespace Int { namespace Sorted {
                 if (subsumed) {
                     if (x[i].val() != y[z[i].val()].val()) {
                         return false;
-                    } else {
-                        if (z[i].val() == i) {
-                            dropfst++;
-                        }
+                    }
+                    if (z[i].val() == i) {
+                        dropfst++;
                     }
                 }
             } else {
@@ -96,9 +95,8 @@ namespace Gecode { namespace Int { namespace Sorted {
                 if (subsumed) {
                     if (x[i].val() != y[i].val()) {
                         return false;
-                    } else {
-                        dropfst++;
                     }
+                    dropfst++;
                 }
             }
         }
@@ -272,9 +270,8 @@ namespace Gecode { namespace Int { namespace Sorted {
         operator()(const int i, const int j) {
             if (x[i].max() == x[j].max()) {
                 return x[i].min() < x[j].min();
-            } else {
-                return x[i].max() < x[j].max();
             }
+            return x[i].max() < x[j].max();
         }
     };
 
@@ -301,15 +298,12 @@ namespace Gecode { namespace Int { namespace Sorted {
                 if (x[i].min() == x[j].min()) {
                     if (z[i].max() == z[j].max()) {
                         return z[i].min() < z[j].min();
-                    } else {
-                        return z[i].max() < z[j].max();
                     }
-                } else {
-                    return x[i].min() < x[j].min();
+                    return z[i].max() < z[j].max();
                 }
-            } else {
-                return x[i].max() < x[j].max();
+                return x[i].min() < x[j].min();
             }
+            return x[i].max() < x[j].max();
         }
     };
 
@@ -329,9 +323,8 @@ namespace Gecode { namespace Int { namespace Sorted {
         operator()(const View& x, const View& y) {
             if (x.min() == y.min()) {
                 return x.max() < y.max();
-            } else {
-                return x.min() < y.min();
             }
+            return x.min() < y.min();
         }
     };
 
@@ -362,15 +355,12 @@ namespace Gecode { namespace Int { namespace Sorted {
                 if (x.x.max() == y.x.max()) {
                     if (x.z.min() == y.z.min()) {
                         return x.z.max() < y.z.max();
-                    } else {
-                        return x.z.min() < y.z.min();
                     }
-                } else {
-                    return x.x.max() < y.x.max();
+                    return x.z.min() < y.z.min();
                 }
-            } else {
-                return x.x.min() < y.x.min();
+                return x.x.max() < y.x.max();
             }
+            return x.x.min() < y.x.min();
         }
     };
 

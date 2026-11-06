@@ -3863,21 +3863,20 @@ namespace Test {
                     bool ok = (b == nullptr) || b->best();
                     delete b;
                     return ok;
-                } else {
-                    int n = a * m->solutions();
-                    delete m;
-                    while (true) {
-                        Model* s = pbs.next();
-                        if (s != nullptr) {
-                            n--;
-                            delete s;
-                        }
-                        if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
-                            break;
-                        f.limit(f.limit() + 2);
-                    }
-                    return n >= 0;
                 }
+                int n = a * m->solutions();
+                delete m;
+                while (true) {
+                    Model* s = pbs.next();
+                    if (s != nullptr) {
+                        n--;
+                        delete s;
+                    }
+                    if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
+                        break;
+                    f.limit(f.limit() + 2);
+                }
+                return n >= 0;
             }
         };
 
@@ -3937,28 +3936,27 @@ namespace Test {
                     bool ok = (b == nullptr) || b->best();
                     delete b;
                     return ok;
-                } else {
-                    SEBs sebs(3);
-                    sebs[0] = dfs<Model>(asset_options);
-                    sebs[1] = lds<Model>(asset_options);
-                    sebs[2] = rbs<Model, Gecode::DFS>(asset_options);
-                    Gecode::PBS<Model, Gecode::DFS> pbs(m, sebs, portfolio_options);
-
-                    int n = 3 * m->solutions();
-                    delete m;
-
-                    while (true) {
-                        Model* s = pbs.next();
-                        if (s != nullptr) {
-                            n--;
-                            delete s;
-                        }
-                        if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
-                            break;
-                        f.limit(f.limit() + 2);
-                    }
-                    return n >= 0;
                 }
+                SEBs sebs(3);
+                sebs[0] = dfs<Model>(asset_options);
+                sebs[1] = lds<Model>(asset_options);
+                sebs[2] = rbs<Model, Gecode::DFS>(asset_options);
+                Gecode::PBS<Model, Gecode::DFS> pbs(m, sebs, portfolio_options);
+
+                int n = 3 * m->solutions();
+                delete m;
+
+                while (true) {
+                    Model* s = pbs.next();
+                    if (s != nullptr) {
+                        n--;
+                        delete s;
+                    }
+                    if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
+                        break;
+                    f.limit(f.limit() + 2);
+                }
+                return n >= 0;
             }
         };
 

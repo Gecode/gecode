@@ -53,7 +53,6 @@ Checks: >-
   -readability-avoid-nested-conditional-operator,
   -readability-braces-around-statements,
   -readability-convert-member-functions-to-static,
-  -readability-else-after-return,
   -readability-function-cognitive-complexity,
   -readability-function-size,
   -readability-identifier-length,
@@ -83,6 +82,8 @@ CheckOptions:
   bugprone-exception-escape.CheckMoveMemberFunctions: false
   # glibc needs this feature macro defined before any system header.
   bugprone-reserved-identifier.AllowedIdentifiers: '_GNU_SOURCE'
+  # Sites without a fix-it declare variables in the condition.
+  readability-else-after-return.WarnOnUnfixable: false
   readability-identifier-naming.FunctionCase: lower_case
   readability-identifier-naming.MethodCase: lower_case
   readability-identifier-naming.VariableCase: lower_case

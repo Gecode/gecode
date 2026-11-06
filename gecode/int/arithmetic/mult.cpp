@@ -213,8 +213,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     MultDom::cost(const Space&, const ModEventDelta& med) const {
         if (IntView::me(med) == ME_INT_DOM)
             return PropCost::ternary(PropCost::HI);
-        else
-            return PropCost::ternary(PropCost::LO);
+        return PropCost::ternary(PropCost::LO);
     }
 
     ExecStatus

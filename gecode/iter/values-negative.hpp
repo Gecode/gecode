@@ -91,9 +91,8 @@ namespace Gecode { namespace Iter { namespace Values {
     Negative<I, strict>::operator()() const {
         if (strict) {
             return i() && (i.val() < 0);
-        } else {
-            return i() && (i.val() <= 0);
         }
+        return i() && (i.val() <= 0);
     }
 
     template <class I, bool strict>

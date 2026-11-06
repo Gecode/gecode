@@ -361,8 +361,7 @@ namespace Gecode {
         void* p;
         if (chunk->alloc(s, p))
             return p;
-        else
-            return heap_alloc(s);
+        return heap_alloc(s);
     }
 
     forceinline void
@@ -440,10 +439,9 @@ namespace Gecode {
                 (void)new (p + i) T();
             free<T>(b, n);
             return p;
-        } else {
-            free<T>(b + m, n - m);
-            return b;
         }
+        free<T>(b + m, n - m);
+        return b;
     }
     template <class T>
     forceinline T*

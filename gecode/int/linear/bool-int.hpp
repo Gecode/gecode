@@ -164,8 +164,7 @@ namespace Gecode { namespace Int { namespace Linear {
             return ES_FAILED;
         if ((c <= 0) || (c == n))
             return ES_NOFIX;
-        else
-            return ES_FIX;
+        return ES_FIX;
     }
 
     template <class VX>
@@ -279,8 +278,7 @@ namespace Gecode { namespace Int { namespace Linear {
             return ES_FAILED;
         if ((c == 0) || (c == n))
             return ES_NOFIX;
-        else
-            return ES_FIX;
+        return ES_FIX;
     }
 
     template <class VX>
@@ -601,8 +599,7 @@ namespace Gecode { namespace Int { namespace Linear {
         n_s--;
         if ((n_s < c) || (c <= 0))
             return ES_NOFIX;
-        else
-            return ES_FIX;
+        return ES_FIX;
     }
 
     template <class VX, class VB, ReifyMode rm>
@@ -710,8 +707,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
         if ((c < 0) || (c > n_s) || (n_s == 0))
             return ES_NOFIX;
-        else
-            return ES_FIX;
+        return ES_FIX;
     }
 
     template <class VX, class VB, ReifyMode rm>

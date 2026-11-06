@@ -203,10 +203,9 @@ namespace Gecode { namespace Int { namespace Rel {
     EqDom<View0, View1>::cost(const Space&, const ModEventDelta& med) const {
         if ((View0::me(med) == ME_INT_VAL) || (View1::me(med) == ME_INT_VAL))
             return PropCost::unary(PropCost::LO);
-        else if ((View0::me(med) == ME_INT_DOM) || (View1::me(med) == ME_INT_DOM))
+        if ((View0::me(med) == ME_INT_DOM) || (View1::me(med) == ME_INT_DOM))
             return PropCost::binary(PropCost::LO);
-        else
-            return PropCost::binary(PropCost::HI);
+        return PropCost::binary(PropCost::HI);
     }
 
     template <class View0, class View1>
@@ -260,7 +259,8 @@ namespace Gecode { namespace Int { namespace Rel {
         x.unique();
         if (x.size() == 2) {
             return EqDom<View, View>::post(home, x[0], x[1]);
-        } else if (x.size() > 2) {
+        }
+        if (x.size() > 2) {
             int l = x[0].min();
             int u = x[0].max();
             for (int i = 1; i < x.size(); i++) {
@@ -292,8 +292,7 @@ namespace Gecode { namespace Int { namespace Rel {
     NaryEqDom<View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_VAL)
             return PropCost::unary(PropCost::LO);
-        else
-            return PropCost::linear((View::me(med) == ME_INT_DOM) ? PropCost::LO : PropCost::HI, x.size());
+        return PropCost::linear((View::me(med) == ME_INT_DOM) ? PropCost::LO : PropCost::HI, x.size());
     }
 
     template <class View>
@@ -389,7 +388,8 @@ namespace Gecode { namespace Int { namespace Rel {
         x.unique();
         if (x.size() == 2) {
             return EqBnd<View, View>::post(home, x[0], x[1]);
-        } else if (x.size() > 2) {
+        }
+        if (x.size() > 2) {
             int l = x[0].min();
             int u = x[0].max();
             for (int i = 1; i < x.size(); i++) {
@@ -421,8 +421,7 @@ namespace Gecode { namespace Int { namespace Rel {
     NaryEqBnd<View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_VAL)
             return PropCost::unary(PropCost::LO);
-        else
-            return PropCost::linear(PropCost::LO, x.size());
+        return PropCost::linear(PropCost::LO, x.size());
     }
 
     template <class View>

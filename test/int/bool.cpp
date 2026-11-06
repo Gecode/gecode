@@ -481,8 +481,7 @@ namespace Test { namespace Int {
                     return false;
                 if (x[0] == 1)
                     return x[1] == x[3];
-                else
-                    return x[2] == x[3];
+                return x[2] == x[3];
             }
             /// Post constraint
             void
@@ -505,8 +504,7 @@ namespace Test { namespace Int {
             solution(const Assignment& x) const override {
                 if (x[0] == 1)
                     return x[1] == x[3];
-                else
-                    return x[2] == x[3];
+                return x[2] == x[3];
             }
             /// Post constraint
             void

@@ -61,9 +61,8 @@ namespace Test { namespace Int {
             solution(const Assignment& x) const override {
                 if (x.size() == 2) {
                     return cmp(x[0], irt, x[1]);
-                } else {
-                    return cmp(x[0], irt, x[2]) && cmp(x[1], irt, x[2]);
                 }
+                return cmp(x[0], irt, x[2]) && cmp(x[1], irt, x[2]);
             }
             /// Post constraint on \a x
             void
@@ -133,9 +132,8 @@ namespace Test { namespace Int {
             solution(const Assignment& x) const override {
                 if (x.size() == 2) {
                     return cmp(x[0], irt, x[1]);
-                } else {
-                    return cmp(x[0], irt, x[2]) && cmp(x[1], irt, x[2]);
                 }
+                return cmp(x[0], irt, x[2]) && cmp(x[1], irt, x[2]);
             }
             /// Post constraint on \a x
             void
@@ -204,8 +202,7 @@ namespace Test { namespace Int {
             solution(const Assignment& x) const override {
                 if (x.size() == 1)
                     return cmp(x[0], irt, c);
-                else
-                    return cmp(x[0], irt, c) && cmp(x[1], irt, c);
+                return cmp(x[0], irt, c) && cmp(x[1], irt, c);
             }
             /// Post constraint on \a x
             void
@@ -242,8 +239,7 @@ namespace Test { namespace Int {
             solution(const Assignment& x) const override {
                 if (x.size() == 1)
                     return cmp(x[0], irt, c);
-                else
-                    return cmp(x[0], irt, c) && cmp(x[1], irt, c);
+                return cmp(x[0], irt, c) && cmp(x[1], irt, c);
             }
             /// Post constraint on \a x
             void
@@ -289,12 +285,11 @@ namespace Test { namespace Int {
                         if (x[i] != x[i + 1])
                             return true;
                     return false;
-                } else {
-                    for (int i = 0; i < x.size() - 1; i++)
-                        if (!cmp(x[i], irt, x[i + 1]))
-                            return false;
-                    return true;
                 }
+                for (int i = 0; i < x.size() - 1; i++)
+                    if (!cmp(x[i], irt, x[i + 1]))
+                        return false;
+                return true;
             }
             /// Post constraint on \a x
             void
@@ -325,13 +320,12 @@ namespace Test { namespace Int {
                         if (x[i] != x[i + 1])
                             return true;
                     return false;
-                } else {
-                    int n = x.size();
-                    for (int i = 0; i < 2 * n - 1; i++)
-                        if (!cmp(x[i % n], irt, x[(i + 1) % n]))
-                            return false;
-                    return true;
                 }
+                int n = x.size();
+                for (int i = 0; i < 2 * n - 1; i++)
+                    if (!cmp(x[i % n], irt, x[(i + 1) % n]))
+                        return false;
+                return true;
             }
             /// Post constraint on \a x
             void
@@ -365,12 +359,11 @@ namespace Test { namespace Int {
                         if (x[i] != x[i + 1])
                             return true;
                     return false;
-                } else {
-                    for (int i = 0; i < x.size() - 1; i++)
-                        if (!cmp(x[i], irt, x[i + 1]))
-                            return false;
-                    return true;
                 }
+                for (int i = 0; i < x.size() - 1; i++)
+                    if (!cmp(x[i], irt, x[i + 1]))
+                        return false;
+                return true;
             }
             /// Post constraint on \a x
             void
@@ -403,13 +396,12 @@ namespace Test { namespace Int {
                         if (x[i] != x[i + 1])
                             return true;
                     return false;
-                } else {
-                    int n = x.size();
-                    for (int i = 0; i < 2 * n - 1; i++)
-                        if (!cmp(x[i % n], irt, x[(i + 1) % n]))
-                            return false;
-                    return true;
                 }
+                int n = x.size();
+                for (int i = 0; i < 2 * n - 1; i++)
+                    if (!cmp(x[i % n], irt, x[(i + 1) % n]))
+                        return false;
+                return true;
             }
             /// Post constraint on \a x
             void

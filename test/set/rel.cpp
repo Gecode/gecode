@@ -153,11 +153,10 @@ namespace Test { namespace Set {
                     CountableSetRanges xr0(x.lub, x[0]);
                     CountableSetRanges xr2(x.lub, x[2]);
                     return Iter::Ranges::equal(xr0, xr2);
-                } else {
-                    CountableSetRanges xr1(x.lub, x[1]);
-                    CountableSetRanges xr2(x.lub, x[2]);
-                    return Iter::Ranges::equal(xr1, xr2);
                 }
+                CountableSetRanges xr1(x.lub, x[1]);
+                CountableSetRanges xr2(x.lub, x[2]);
+                return Iter::Ranges::equal(xr1, xr2);
             }
             /// Post constraint on \a x and \a y
             void

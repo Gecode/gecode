@@ -77,9 +77,8 @@ namespace Gecode { namespace Int { namespace Sequence {
 
             if (ES_NOFIX == status) {
                 return home.ES_NOFIX_DISPOSE(ac, a);
-            } else {
-                return home.ES_FIX_DISPOSE(ac, a);
             }
+            return home.ES_FIX_DISPOSE(ac, a);
         }
 
         if ((status == ES_FAILED) && disabled()) {

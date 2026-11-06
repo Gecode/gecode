@@ -181,8 +181,7 @@ namespace Gecode { namespace Int { namespace Channel {
     Dom<View, Offset, shared>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_VAL)
             return PropCost::quadratic(PropCost::LO, 2 * n);
-        else
-            return PropCost::quadratic(PropCost::HI, 2 * n);
+        return PropCost::quadratic(PropCost::HI, 2 * n);
     }
 
     template <class View, class Offset, bool shared>
@@ -217,18 +216,15 @@ namespace Gecode { namespace Int { namespace Channel {
                     assert(ya.empty());
                 } while (!xa.empty() || !ya.empty());
                 return home.ES_NOFIX_PARTIAL(*this, View::med(ME_INT_DOM));
-            } else {
-                do {
-                    // Propagate assigned views for x
-                    GECODE_ES_CHECK(
-                        (prop_val<View, Offset, DomInfo<View, Offset>>(home, n, x, ox, y, oy, n_na, xa, ya)));
-                    // Propagate assigned views for y
-                    GECODE_ES_CHECK(
-                        (prop_val<View, Offset, DomInfo<View, Offset>>(home, n, y, oy, x, ox, n_na, ya, xa)));
-                    assert(ya.empty());
-                } while (!xa.empty());
-                return home.ES_FIX_PARTIAL(*this, View::med(ME_INT_DOM));
             }
+            do {
+                // Propagate assigned views for x
+                GECODE_ES_CHECK((prop_val<View, Offset, DomInfo<View, Offset>>(home, n, x, ox, y, oy, n_na, xa, ya)));
+                // Propagate assigned views for y
+                GECODE_ES_CHECK((prop_val<View, Offset, DomInfo<View, Offset>>(home, n, y, oy, x, ox, n_na, ya, xa)));
+                assert(ya.empty());
+            } while (!xa.empty());
+            return home.ES_FIX_PARTIAL(*this, View::med(ME_INT_DOM));
         }
 
         // Process changed views for y
@@ -291,9 +287,8 @@ namespace Gecode { namespace Int { namespace Channel {
                 if (!xy[i].view.assigned())
                     return ES_NOFIX;
             return home.ES_SUBSUMED(*this);
-        } else {
-            return (n_na == 0) ? home.ES_SUBSUMED(*this) : ES_FIX;
         }
+        return (n_na == 0) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
     template <class View, class Offset, bool shared>

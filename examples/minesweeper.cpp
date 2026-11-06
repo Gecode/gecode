@@ -295,8 +295,7 @@ namespace {
         int res = (c - 'A') + 10;
         if (res > n)
             return 0;
-        else
-            return res;
+        return res;
     }
     //@}
 } // namespace

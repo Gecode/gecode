@@ -113,9 +113,8 @@ namespace Gecode { namespace Set { namespace Rel {
             GlbRanges<ConstSetView> yi(y);
             if (Iter::Ranges::equal(xi, yi)) {
                 return ES_FAILED;
-            } else {
-                return home.ES_SUBSUMED(*this);
             }
+            return home.ES_SUBSUMED(*this);
         }
         assert(x0.lub_size() - x0.glb_size() > 0);
         if (x0.card_min() > y.card_max()) {

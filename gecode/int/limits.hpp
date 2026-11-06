@@ -83,8 +83,7 @@ namespace Gecode { namespace Int {
     Limits::overflow_add(long long int n, long long int m) {
         if (m < 0)
             return n < LLONG_MIN + 1 - m;
-        else
-            return n > LLONG_MAX - m;
+        return n > LLONG_MAX - m;
     }
 
     forceinline bool
@@ -96,8 +95,7 @@ namespace Gecode { namespace Int {
     Limits::overflow_sub(long long int n, long long int m) {
         if (m < 0)
             return n > LLONG_MAX + m;
-        else
-            return n < LLONG_MIN + 1 + m;
+        return n < LLONG_MIN + 1 + m;
     }
 
     inline bool
