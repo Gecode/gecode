@@ -1301,7 +1301,7 @@ namespace Test { namespace Int {
                     }
 
                     if ((n < items) && (s.list.known_length() <= n)) {
-                        const int end = std::min(items, n + 1 + static_cast<int>(_rand(2)));
+                        const int end = std::min(items, n + 1 + _rand(2));
                         if (_rand(2) == 0) {
                             if (opt.log)
                                 olog << ind(3) << "Appending through item " << end - 1 << '\n';

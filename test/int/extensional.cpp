@@ -2420,12 +2420,12 @@ namespace Test { namespace Int {
 
         RegOpt ro0(CHAR_MAX - 1);
         RegOpt ro1(CHAR_MAX);
-        RegOpt ro2(static_cast<int>(UCHAR_MAX - 1));
-        RegOpt ro3(static_cast<int>(UCHAR_MAX));
+        RegOpt ro2((UCHAR_MAX - 1));
+        RegOpt ro3((UCHAR_MAX));
         RegOpt ro4(SHRT_MAX - 1);
         RegOpt ro5(SHRT_MAX);
-        RegOpt ro6(static_cast<int>(USHRT_MAX - 1));
-        RegOpt ro7(static_cast<int>(USHRT_MAX));
+        RegOpt ro6((USHRT_MAX - 1));
+        RegOpt ro7((USHRT_MAX));
 
         RegAcyclicReconvergence reg_sparse_acyclic_reconvergence;
         RegCyclicFrontier reg_sparse_cyclic_frontier;
