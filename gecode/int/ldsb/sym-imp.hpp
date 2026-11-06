@@ -1,3 +1,5 @@
+#include <algorithm>
+
 /*
  *  Main authors:
  *     Christopher Mears <chris.mears@monash.edu>
@@ -68,10 +70,8 @@ namespace Gecode { namespace Int { namespace LDSB {
         int maximum = _indices[0];
         int minimum = _indices[0];
         for (unsigned int i = 1; i < n; i++) {
-            if (_indices[i] > maximum)
-                maximum = _indices[i];
-            if (_indices[i] < minimum)
-                minimum = _indices[i];
+            maximum = std::max(_indices[i], maximum);
+            minimum = std::min(_indices[i], minimum);
         }
         indices.resize(home, maximum - minimum + 1, minimum);
 
@@ -117,10 +117,8 @@ namespace Gecode { namespace Int { namespace LDSB {
         int maximum = vs[0];
         int minimum = vs[0];
         for (unsigned int i = 1; i < n; i++) {
-            if (vs[i] > maximum)
-                maximum = vs[i];
-            if (vs[i] < minimum)
-                minimum = vs[i];
+            maximum = std::max(vs[i], maximum);
+            minimum = std::min(vs[i], minimum);
         }
         values.resize(home, maximum - minimum + 1, minimum);
 
@@ -168,8 +166,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         unsigned int max_index = _indices[0];
         for (unsigned int i = 0; i < n_indices; i++) {
             indices[i] = _indices[i];
-            if (indices[i] > max_index)
-                max_index = indices[i];
+            max_index = std::max(indices[i], max_index);
         }
 
         lookup_size = max_index + 1;

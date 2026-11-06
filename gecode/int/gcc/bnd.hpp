@@ -1,3 +1,5 @@
+#include <algorithm>
+
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -261,12 +263,11 @@ namespace Gecode { namespace Int { namespace GCC {
                  */
                 // CLEARLY THIS WAS NOT STABLE == UNSTABLE
                 if (hall[z].d == lps.sumup(hall[y].bounds, hall[z].bounds - 1)) {
-                    if (hall[y].h > y)
-                        /*
-                         * y is not the end of the potentially stable set
-                         * thus ensure that the potentially stable superset is marked
-                         */
-                        y = hall[y].h;
+                    y = std::max(hall[y].h, y); /*
+                                                 * y is not the end of the potentially stable set
+                                                 * thus ensure that the potentially stable superset is marked
+                                                 */
+
                     // Equivalent to pathmax since the path is fully compressed
                     pathset_h(hall, hall[y].h, j - 1, y);
                     // mark the new unstable set [j,y]
@@ -365,9 +366,7 @@ namespace Gecode { namespace Int { namespace GCC {
                 }
                 // UNSTABLE SET
                 if (hall[z].d == lps.sumup(hall[z].bounds, hall[y].bounds - 1)) {
-                    if (hall[y].h < y) {
-                        y = hall[y].h;
-                    }
+                    y = std::min(hall[y].h, y);
                     int succj = j + 1;
                     // mark new unstable set [y,j]
                     pathset_h(hall, hall[y].h, succj, y);

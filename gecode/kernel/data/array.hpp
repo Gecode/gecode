@@ -36,6 +36,7 @@
  *
  */
 
+#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <vector>
@@ -1485,8 +1486,7 @@ namespace Gecode {
         if (n + i >= capacity) {
             assert(n + i >= onstack_size);
             int new_capacity = (3 * capacity) / 2;
-            if (new_capacity <= n + i)
-                new_capacity = n + i;
+            new_capacity = std::max(new_capacity, n + i);
             T* new_a = allocate(new_capacity);
             heap.copy<T>(new_a, a, n);
             if (capacity > onstack_size)

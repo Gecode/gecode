@@ -1,3 +1,5 @@
+#include <algorithm>
+
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -73,8 +75,7 @@ namespace Gecode { namespace Gist {
 
     forceinline void
     SpaceNode::set_distance(unsigned int d) {
-        if (d > max_distance)
-            d = max_distance;
+        d = std::min(d, max_distance);
         status_bits &= ~distance_mask;
         status_bits |= d;
     }

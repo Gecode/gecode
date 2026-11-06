@@ -34,6 +34,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 
+#include <algorithm>
 #include <stack>
 #include <fstream>
 
@@ -314,10 +315,8 @@ namespace Gecode { namespace Gist {
                                      (t->root->get_shape()->depth() * Layout::dist_y + 2 * Layout::extent);
 
                 scale0 = static_cast<int>(std::min(new_x_scale, new_y_scale) * 100);
-                if (scale0 < LayoutConfig::min_scale)
-                    scale0 = LayoutConfig::min_scale;
-                if (scale0 > LayoutConfig::max_auto_zoom_scale)
-                    scale0 = LayoutConfig::max_auto_zoom_scale;
+                scale0 = std::max(scale0, LayoutConfig::min_scale);
+                scale0 = std::min(scale0, LayoutConfig::max_auto_zoom_scale);
                 double scale = (static_cast<double>(scale0)) / 100.0;
 
                 w = static_cast<int>((bb.right - bb.left + Layout::extent) * scale);
@@ -513,10 +512,8 @@ namespace Gecode { namespace Gist {
                 double new_y_scale = static_cast<double>(p->height()) /
                                      (root->get_shape()->depth() * Layout::dist_y + 2 * Layout::extent);
                 int scale0 = static_cast<int>(std::min(new_x_scale, new_y_scale) * 100);
-                if (scale0 < LayoutConfig::min_scale)
-                    scale0 = LayoutConfig::min_scale;
-                if (scale0 > LayoutConfig::max_auto_zoom_scale)
-                    scale0 = LayoutConfig::max_auto_zoom_scale;
+                scale0 = std::max(scale0, LayoutConfig::min_scale);
+                scale0 = std::min(scale0, LayoutConfig::max_auto_zoom_scale);
 
                 if (!smooth_scroll_and_zoom) {
                     scale_tree(scale0);
@@ -1039,10 +1036,8 @@ namespace Gecode { namespace Gist {
             double new_y_scale = static_cast<double>(page_rect.height()) /
                                  (root->get_shape()->depth() * Layout::dist_y + 2 * Layout::extent);
             double print_scale = std::min(new_x_scale, new_y_scale) * 100;
-            if (print_scale < 1.0)
-                print_scale = 1.0;
-            if (print_scale > 400.0)
-                print_scale = 400.0;
+            print_scale = std::max(print_scale, 1.0);
+            print_scale = std::min(print_scale, 400.0);
             print_scale = print_scale / 100.0;
 
             QPainter painter(&printer);
