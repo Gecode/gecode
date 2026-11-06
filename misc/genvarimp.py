@@ -593,13 +593,14 @@ def generate_typehpp(files: List[Dict], out: List[str]) -> None:
                     out.append("      {\n")
                     if d["me_max_n"] <= 8:
                         out.append("        static const Gecode::ModEvent me_c = (\n")
+                        terms = []
                         for j, n2 in enumerate(d["val2me"]):
                             n3 = d["mec"][n1][n2]
-                            shift = j << 2
-                            shift_s = f" {shift}" if shift < 10 else f"{shift}"
-                            out.append(f"          (({d['me_a'][n2]} ^ {d['me_a'][n3]}) << {shift_s})")
-                            if j + 1 != d["me_max_n"]:
-                                out.append(" |\n")
+                            if d["me_a"][n2] != d["me_a"][n3]:
+                                shift = j << 2
+                                shift_s = f" {shift}" if shift < 10 else f"{shift}"
+                                terms.append(f"          (({d['me_a'][n2]} ^ {d['me_a'][n3]}) << {shift_s})")
+                        out.append(" |\n".join(terms) if terms else "          0")
                         out.append("\n        );\n")
                         out.append("        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;\n")
                         out.append("        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);\n")
@@ -893,8 +894,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
   forceinline void
   Space::recover(Space& source) {
     ActorLink* clone_lists[2] = {&pl, &bl};
-    for (int i=0; i<2; i++) {
-      ActorLink* l = clone_lists[i];
+    for (auto* l : clone_lists) {
       ActorLink* c = l->next();
       while (c != l) {
         ActorLink* n = c->next();
