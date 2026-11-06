@@ -75,28 +75,28 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 
 "true"            { yylval->int_value = 1; return FZ_BOOL_LIT; }
 "false"           { yylval->int_value = 0; return FZ_BOOL_LIT; }
--?[0-9]+          { if (parse_int(yytext,yylval->int_value))
+-?[0-9]+          {
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
                       + ")").c_str());
                   }
--?0x[0-9A-Fa-f]+  {  if (parse_int(yytext,yylval->int_value))
+-?0x[0-9A-Fa-f]+  {
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
                       + ")").c_str());
                   }
--?0o[0-7]+        { if (parse_int(yytext,yylval->int_value))
+-?0o[0-7]+        {
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
