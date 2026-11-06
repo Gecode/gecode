@@ -346,6 +346,7 @@ namespace Gecode { namespace Support {
     }
 
     template <class Jobs, class RetType>
+    // NOLINTNEXTLINE(bugprone-exception-escape): the check sees the fail point of Thread::run
     inline RunJobs<Jobs, RetType>::~RunJobs() {
         if (!master->needs_cleanup_thread())
             delete master;

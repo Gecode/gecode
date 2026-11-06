@@ -293,7 +293,7 @@ namespace Gecode { namespace Instance {
      * list), level \a k has one entry per list at depth \a k. The lengths at
      * the last level sum to the number of leaves.
      */
-    class Value {
+    class Value { // NOLINT(bugprone-exception-escape): the check sees the copy of a Seq argument
     public:
         /// Type of the leaves
         ValueType type;
