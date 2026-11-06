@@ -178,9 +178,8 @@ namespace Test { namespace FlatZinc {
             instances.insert(prototype);
             return (entries.size() == 10) && (entries[0].first == "init") && (inits == 1) && (clone_count == 2) &&
                    (start_count == 2) && (ready_count == 2) && (free_count == 3) && (clones.size() == 2) &&
-                   (clones.find(prototype) == clones.end()) && (starts == clones) && (ready == clones) &&
-                   (freed == instances) && frees_after_calls &&
-                   (calls == std::vector<std::string>{"start", "start", "ready", "ready"});
+                   (!clones.contains(prototype)) && (starts == clones) && (ready == clones) && (freed == instances) &&
+                   frees_after_calls && (calls == std::vector<std::string>{"start", "start", "ready", "ready"});
         }
 
         bool
@@ -216,7 +215,7 @@ namespace Test { namespace FlatZinc {
         descendant_gone(const std::string& output, const std::string& log) {
             const std::vector<std::pair<std::string, std::string>> entries = read_log(log);
             reset_log(log);
-            if (output.find("y = 1;") == std::string::npos) {
+            if (!output.contains("y = 1;")) {
                 return false;
             }
             for (const auto& entry : entries) {
