@@ -87,7 +87,6 @@ Checks: >-
   -readability-redundant-typename,
   -readability-simplify-boolean-expr,
   -readability-suspicious-call-argument,
-  -readability-uppercase-literal-suffix,
   -readability-use-anyofallof,
   -readability-use-std-min-max
 WarningsAsErrors: '*'
