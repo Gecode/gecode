@@ -60,7 +60,7 @@ namespace Test { namespace Set {
         static IntSet ds_33c(d2r, 2);
 
         namespace {
-            static int
+            int
             min_sym_diff(const SetAssignment& x, int i, const IntSet& is) {
                 typedef Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> DiffA;
                 CountableSetRanges xr00(x.lub, x[i]);
@@ -74,7 +74,7 @@ namespace Test { namespace Set {
                 return u() ? u.min() : Gecode::Set::Limits::max + 1;
             }
             template <class I>
-            static bool
+            bool
             in(int i, I& c, bool eq = false) {
                 if (eq && i == Gecode::Set::Limits::max + 1)
                     return true;
