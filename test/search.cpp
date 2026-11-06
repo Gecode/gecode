@@ -4301,7 +4301,7 @@ namespace Test::Search {
     PBSAssetException pbs_asset_exception;
 
     /// Exception thrown by the statistics of NoStatistics
-    class StatisticsFailure {};
+    class StatisticsFailure : public std::exception {};
 
     /// Engine without solutions that cannot report its statistics
     class NoStatistics : public Gecode::Search::Engine {

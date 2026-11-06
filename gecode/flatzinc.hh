@@ -37,6 +37,7 @@
 #ifndef GECODE_FLATZINC_HH
 #define GECODE_FLATZINC_HH
 
+#include <exception>
 #include <iostream>
 
 #include <gecode/kernel.hh>
@@ -800,7 +801,7 @@ namespace Gecode::FlatZinc {
     };
 
     /// %Exception class for %FlatZinc errors
-    class GECODE_VTABLE_EXPORT Error {
+    class GECODE_VTABLE_EXPORT Error : public std::exception {
     private:
         const std::string msg;
 
@@ -811,6 +812,11 @@ namespace Gecode::FlatZinc {
         const std::string&
         to_string() const {
             return msg;
+        }
+        /// Return the message
+        const char*
+        what() const noexcept override {
+            return msg.c_str();
         }
 
     private:

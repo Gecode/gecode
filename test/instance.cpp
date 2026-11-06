@@ -40,6 +40,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
 #include <fstream>
 #include <functional>
 #include <sstream>
@@ -625,7 +626,7 @@ namespace Test::Instance {
     });
 
     /// Signals that help was shown
-    struct HelpShown {};
+    struct HelpShown : std::exception {};
 
     /// Observe help requests of options \a Opt without terminating the test runner
     template <class Opt>
