@@ -135,7 +135,7 @@ namespace Gecode { namespace Instance {
         grow(int m) {
             // Doubling, computed without overflow
             long long int d = std::min(2LL * cap, static_cast<long long int>(INT_MAX));
-            int c = std::max(std::max(m, static_cast<int>(d)), 2);
+            int c = std::max({m, static_cast<int>(d), 2});
             T* y = static_cast<T*>(heap.ralloc(sizeof(T) * static_cast<size_t>(c)));
             for (int i = 0; i < n; i++) {
                 new (&y[i]) T(std::move(x[i]));

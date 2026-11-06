@@ -321,7 +321,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             }
 
             // abs(x2) is less than abs(x1)
-            int x1max = std::max(x1.max(), std::max(-x1.max(), std::max(x1.min(), -x1.min())));
+            int x1max = std::max({x1.max(), -x1.max(), x1.min(), -x1.min()});
             GECODE_ME_CHECK(x2.le(home, x1max));
             GECODE_ME_CHECK(x2.gr(home, -x1max));
 
@@ -331,7 +331,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         } while (!sign_is_same && (x0.min() > 0 || x0.max() < 0 || x2.min() > 0 || x2.max() < 0));
 
         if (sign_is_same) {
-            int x2max = std::max(x2.max(), std::max(-x2.max(), std::max(x2.min(), -x2.min())));
+            int x2max = std::max({x2.max(), -x2.max(), x2.min(), -x2.min()});
             int x1absmin = any(x1) ? 0 : (pos(x1) ? x1.min() : -x1.max());
             if (x2max < x1absmin)
                 return home.ES_SUBSUMED(*this);
