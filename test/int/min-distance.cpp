@@ -195,22 +195,26 @@ namespace Test { namespace Int { namespace MinDistance {
                 IntDistance invalid(2, IntArgs({0, 1, 2, 0}));
                 return false;
             } catch (const Gecode::Int::IllegalOperation&) {
+                // Expected
             }
             try {
                 IntDistance invalid(2, IntArgs({0, -1, -1, 0}));
                 return false;
             } catch (const Gecode::Int::OutOfLimits&) {
+                // Expected
             }
             try {
                 IntDistance invalid(2, std::function<int(int, int)>());
                 return false;
             } catch (const InvalidFunction&) {
+                // Expected
             }
             try {
                 IntDistance invalid(2, [](int, int) { return -1; });
                 (void)invalid(0, 1);
                 return false;
             } catch (const Gecode::Int::OutOfLimits&) {
+                // Expected
             }
             try {
                 Model space(2, 4, 0, 4, MDP_DECOMPOSED, IPL_BASIC, [](int a, int b) { return std::abs(a - b); });
@@ -219,6 +223,7 @@ namespace Test { namespace Int { namespace MinDistance {
                 minimum_distance(space, x, z, IntDistance(4, matrix()));
                 return false;
             } catch (const Gecode::Int::TooFewArguments&) {
+                // Expected
             }
             return true;
         }

@@ -207,6 +207,7 @@ namespace Test { namespace Random {
                     (void)random_seed(invalid);
                     return false;
                 } catch (const std::invalid_argument&) {
+                    // Expected
                 }
             }
             const auto saved = r.state();
@@ -218,6 +219,7 @@ namespace Test { namespace Random {
                     r.state(std::string(invalid));
                     return false;
                 } catch (const std::invalid_argument&) {
+                    // Expected
                 }
                 if (r.state() != saved)
                     return false;
@@ -227,6 +229,7 @@ namespace Test { namespace Random {
                 x.state(Xorshift64Star::State{{0}});
                 return false;
             } catch (const std::invalid_argument&) {
+                // Expected
             }
             for (uint64_t bound : {UINT64_C(2), UINT64_C(3), UINT64_C(0x8000000000000001), UINT64_MAX})
                 for (unsigned int i = 0; i < 100; ++i)

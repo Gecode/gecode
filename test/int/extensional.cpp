@@ -1625,18 +1625,21 @@ namespace Test { namespace Int {
                     (void)ts.representation();
                     return false;
                 } catch (const Gecode::Int::NotYetFinalized&) {
+                    // Expected
                 }
 
                 try {
                     ts.finalize(EPK_SPARSE);
                     return false;
                 } catch (const Gecode::Int::AlreadyFinalized&) {
+                    // Expected
                 }
 
                 try {
                     ts.add(IntArgs({0, 0}));
                     return false;
                 } catch (const Gecode::Int::AlreadyFinalized&) {
+                    // Expected
                 }
 
                 class PostingSpace : public Space {
@@ -1659,6 +1662,7 @@ namespace Test { namespace Int {
                     delete s;
                     return false;
                 } catch (const Gecode::Int::NotYetFinalized&) {
+                    // Expected
                 }
                 return true;
             }

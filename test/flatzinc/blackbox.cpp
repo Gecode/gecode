@@ -317,6 +317,7 @@ namespace Test { namespace FlatZinc {
                     Gecode::FlatZinc::BlackBoxExec black_box(executable, {"normal", log});
                     ok = parallel_runs(black_box) && concurrent_log(log);
                 } catch (...) {
+                    // Ignored: the check after this block reports the failure
                 }
                 reset_log(log);
                 return ok;
@@ -343,6 +344,7 @@ namespace Test { namespace FlatZinc {
                     }
                     ok = ok && dll_parallel_lifecycle(log);
                 } catch (...) {
+                    // Ignored: the check after this block reports the failure
                 }
                 reset_log(log);
                 return ok;
