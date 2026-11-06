@@ -148,6 +148,8 @@ namespace Gecode { namespace Int { namespace Extensional {
      */
     template <class Derived, class View>
     class SparseTupleState {
+        friend Derived;
+
     protected:
         TupleSet ts;
         int arity;

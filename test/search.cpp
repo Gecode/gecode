@@ -771,6 +771,7 @@ namespace Test {
                     return;
                 // With an objective, restart from a bound improving on the last solution
                 if (htc != HTC_NONE) {
+                    // NOLINTNEXTLINE(bugprone-parent-virtual-call): the default hook restarts, TestSpace::hub continues
                     Space::hub(hc);
                     return;
                 }
