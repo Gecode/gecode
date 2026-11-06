@@ -196,8 +196,9 @@ namespace Test { namespace Int {
         static_assert(!std::is_convertible<void*, Gecode::BoolExpr>::value,
                       "Pointers must not convert to Boolean expressions");
 
-        static_assert(std::is_same<decltype(Gecode::expr(std::declval<Gecode::Home>(), true)), Gecode::IntVar>::value &&
-                          std::is_same<decltype(Gecode::expr(std::declval<Gecode::Home>(), 0)), Gecode::IntVar>::value,
+        static_assert(std::is_same<decltype(Gecode::expr(std::declval<Gecode::Home>(), true)), Gecode::IntVar>::value,
+                      "Numeric posting overloads must keep their return type");
+        static_assert(std::is_same<decltype(Gecode::expr(std::declval<Gecode::Home>(), 0)), Gecode::IntVar>::value,
                       "Numeric posting overloads must keep their return type");
 
         /// %Test Boolean constants and their composition with variables
