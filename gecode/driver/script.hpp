@@ -420,9 +420,9 @@ namespace Gecode { namespace Driver {
                     if (e.stopped()) {
                         l_out << "Search engine stopped..." << '\n' << "\treason: ";
                         int r = static_cast<CombinedStop*>(so.stop)->reason(stat, so);
-                        if (r & CombinedStop::SR_INT)
+                        if (r & CombinedStop::SR_INT) {
                             l_out << "user interrupt " << '\n';
-                        else {
+                        } else {
                             if (r & CombinedStop::SR_NODE)
                                 l_out << "node ";
                             if (r & CombinedStop::SR_FAIL)

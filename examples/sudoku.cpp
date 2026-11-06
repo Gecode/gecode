@@ -114,8 +114,9 @@ public:
             if (x[i].assigned()) {
                 print_value(os, x[i].val());
                 os << " ";
-            } else
+            } else {
                 os << ". ";
+            }
             if ((i + 1) % nn == 0)
                 os << '\n' << "  ";
         }

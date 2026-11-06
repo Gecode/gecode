@@ -2642,9 +2642,9 @@ namespace Gecode { namespace FlatZinc {
             else if (ann->has_atom("bounds") || ann->has_atom("bounds_propagation") || ann->has_atom("boundsR") ||
                      ann->has_atom("boundsD") || ann->has_atom("boundsZ"))
                 ipl = IPL_BND;
-            if (ann->has_atom("gecode_full_propagation"))
+            if (ann->has_atom("gecode_full_propagation")) {
                 ipl |= IPL_FULL;
-            else {
+            } else {
                 if (ann->has_atom("gecode_basic_propagation"))
                     ipl |= IPL_BASIC;
                 if (ann->has_atom("gecode_advanced_propagation"))

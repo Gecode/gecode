@@ -92,8 +92,9 @@ namespace Gecode { namespace Float { namespace Rel {
         if (x0.assigned() && x1.assigned()) {
             if (x0.max() >= x1.min())
                 return ES_FAILED;
-        } else if (x0 == x1)
+        } else if (x0 == x1) {
             return ES_FAILED;
+        }
         if (x0.max() >= x1.min())
             (void)new (home) Le<View>(home, x0, x1);
         return ES_OK;
@@ -155,9 +156,9 @@ namespace Gecode { namespace Float { namespace Rel {
                     GECODE_ME_CHECK(b.zero_none(home));
                 break;
             case RT_MAYBE:
-                if (!x0.assigned() || !x1.assigned())
+                if (!x0.assigned() || !x1.assigned()) {
                     (void)new (home) ReLq<View, CtrlView, rm>(home, x0, x1, b);
-                else {
+                } else {
                     if (rm != RM_IMP)
                         GECODE_ME_CHECK(b.one_none(home));
                 }
@@ -202,9 +203,9 @@ namespace Gecode { namespace Float { namespace Rel {
                     GECODE_ME_CHECK(b.zero_none(home));
                 break;
             case RT_MAYBE:
-                if (!x0.assigned() || !x1.assigned())
+                if (!x0.assigned() || !x1.assigned()) {
                     return ES_FIX;
-                else {
+                } else {
                     if (rm != RM_IMP)
                         GECODE_ME_CHECK(b.one_none(home));
                     break;

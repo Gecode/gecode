@@ -55,8 +55,9 @@ namespace Gecode { namespace Int {
                 ++rx;
             } else if (ry.max() < rx.min()) {
                 ++ry;
-            } else
+            } else {
                 return RT_MAYBE;
+            }
         }
         return RT_FALSE;
     }
@@ -119,8 +120,9 @@ namespace Gecode { namespace Int {
                 ++rx;
             } else if (ry.max() < rx.min()) {
                 ++ry;
-            } else
+            } else {
                 return RT_MAYBE;
+            }
         }
         return RT_TRUE;
     }

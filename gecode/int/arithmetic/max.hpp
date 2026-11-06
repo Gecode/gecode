@@ -204,8 +204,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             if (x[i].max() < maxmin) {
                 x.move_lst(i, home, p, pc);
                 status |= MPS_REMOVED;
-            } else if (!x[i].assigned())
+            } else if (!x[i].assigned()) {
                 status &= ~MPS_ASSIGNED;
+            }
         }
         if (x.size() == 0)
             return ES_FAILED;

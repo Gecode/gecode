@@ -380,9 +380,9 @@ namespace Gecode {
             default:
                 GECODE_NEVER;
             }
-            if ((cur & IPL_FULL) == IPL_FULL)
+            if ((cur & IPL_FULL) == IPL_FULL) {
                 cerr << ",full";
-            else {
+            } else {
                 if ((cur & IPL_BASIC) != IPL_DEF)
                     cerr << ",basic";
                 if ((cur & IPL_ADVANCED) != IPL_DEF)

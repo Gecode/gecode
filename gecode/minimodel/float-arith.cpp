@@ -89,9 +89,9 @@ namespace Gecode { namespace MiniModel {
             switch (t) {
             case ANLFE_ABS: {
                 FloatVar x = a[0].post(home);
-                if (x.min() >= 0)
+                if (x.min() >= 0) {
                     y = result(home, ret, x);
-                else {
+                } else {
                     y = result(home, ret);
                     abs(home, x, y);
                 }
@@ -102,11 +102,11 @@ namespace Gecode { namespace MiniModel {
                 } else if (n == 2) {
                     FloatVar x0 = a[0].post(home);
                     FloatVar x1 = a[1].post(home);
-                    if (x0.max() <= x1.min())
+                    if (x0.max() <= x1.min()) {
                         y = result(home, ret, x0);
-                    else if (x1.max() <= x0.min())
+                    } else if (x1.max() <= x0.min()) {
                         y = result(home, ret, x1);
-                    else {
+                    } else {
                         y = result(home, ret);
                         min(home, x0, x1, y);
                     }
@@ -124,11 +124,11 @@ namespace Gecode { namespace MiniModel {
                 } else if (n == 2) {
                     FloatVar x0 = a[0].post(home);
                     FloatVar x1 = a[1].post(home);
-                    if (x0.max() <= x1.min())
+                    if (x0.max() <= x1.min()) {
                         y = result(home, ret, x1);
-                    else if (x1.max() <= x0.min())
+                    } else if (x1.max() <= x0.min()) {
                         y = result(home, ret, x0);
-                    else {
+                    } else {
                         y = result(home, ret);
                         max(home, x0, x1, y);
                     }
@@ -144,15 +144,15 @@ namespace Gecode { namespace MiniModel {
                 assert(n == 2);
                 FloatVar x0 = a[0].post(home);
                 FloatVar x1 = a[1].post(home);
-                if (x0.assigned() && (x0.val() == 0.0))
+                if (x0.assigned() && (x0.val() == 0.0)) {
                     y = result(home, ret, x0);
-                else if (x0.assigned() && (x0.val() == 1.0))
+                } else if (x0.assigned() && (x0.val() == 1.0)) {
                     y = result(home, ret, x1);
-                else if (x1.assigned() && (x1.val() == 0.0))
+                } else if (x1.assigned() && (x1.val() == 0.0)) {
                     y = result(home, ret, x1);
-                else if (x1.assigned() && (x1.val() == 1.0))
+                } else if (x1.assigned() && (x1.val() == 1.0)) {
                     y = result(home, ret, x0);
-                else {
+                } else {
                     y = result(home, ret);
                     mult(home, x0, x1, y);
                 }
@@ -161,11 +161,11 @@ namespace Gecode { namespace MiniModel {
                 assert(n == 2);
                 FloatVar x0 = a[0].post(home);
                 FloatVar x1 = a[1].post(home);
-                if (x1.assigned() && (x1.val() == 1.0))
+                if (x1.assigned() && (x1.val() == 1.0)) {
                     y = result(home, ret, x0);
-                else if (x0.assigned() && (x0.val() == 0.0))
+                } else if (x0.assigned() && (x0.val() == 0.0)) {
                     y = result(home, ret, x0);
-                else {
+                } else {
                     y = result(home, ret);
                     div(home, x0, x1, y);
                 }
@@ -173,9 +173,9 @@ namespace Gecode { namespace MiniModel {
             case ANLFE_SQR: {
                 assert(n == 1);
                 FloatVar x = a[0].post(home);
-                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)))
+                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0))) {
                     y = x;
-                else {
+                } else {
                     y = result(home, ret);
                     sqr(home, x, y);
                 }
@@ -183,9 +183,9 @@ namespace Gecode { namespace MiniModel {
             case ANLFE_SQRT: {
                 assert(n == 1);
                 FloatVar x = a[0].post(home);
-                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)))
+                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0))) {
                     y = result(home, ret, x);
-                else {
+                } else {
                     y = result(home, ret);
                     sqrt(home, x, y);
                 }
@@ -193,9 +193,9 @@ namespace Gecode { namespace MiniModel {
             case ANLFE_POW: {
                 assert(n == 1);
                 FloatVar x = a[0].post(home);
-                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)) && (a_int >= 0))
+                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)) && (a_int >= 0)) {
                     y = result(home, ret, x);
-                else {
+                } else {
                     y = result(home, ret);
                     pow(home, x, a_int, y);
                 }
@@ -203,9 +203,9 @@ namespace Gecode { namespace MiniModel {
             case ANLFE_NROOT: {
                 assert(n == 1);
                 FloatVar x = a[0].post(home);
-                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)) && (a_int >= 0))
+                if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)) && (a_int >= 0)) {
                     y = result(home, ret, x);
-                else {
+                } else {
                     y = result(home, ret);
                     nroot(home, x, a_int, y);
                 }
