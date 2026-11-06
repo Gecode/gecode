@@ -109,9 +109,9 @@ namespace Gecode {
     forceinline unsigned int
     Rnd::IMP::seed() const {
         unsigned int s;
-        const_cast<Rnd::IMP&>(*this).m.acquire();
+        Gecode::Rnd::IMP::m.acquire();
         s = rg.seed();
-        const_cast<Rnd::IMP&>(*this).m.release();
+        Gecode::Rnd::IMP::m.release();
         return s;
     }
     forceinline void

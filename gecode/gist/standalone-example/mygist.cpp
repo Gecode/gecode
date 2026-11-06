@@ -75,5 +75,5 @@ main(int argc, char** argv) {
     widget_window.resize(500, 300);
     widget_window.show();
 
-    return app.exec();
+    return QApplication::exec();
 }

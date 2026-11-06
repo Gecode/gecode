@@ -326,11 +326,11 @@ namespace Gecode {
     }
     forceinline void
     Action::acquire() {
-        object().m.acquire();
+        Gecode::Action::Storage::m.acquire();
     }
     forceinline void
     Action::release() {
-        object().m.release();
+        Gecode::Action::Storage::m.release();
     }
 
     template <class View>

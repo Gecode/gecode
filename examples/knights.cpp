@@ -390,7 +390,7 @@ public:
         mw->setAttribute(Qt::WA_DeleteOnClose, false);
         QAction* close_window = new QAction("Close window", mw);
         close_window->setShortcut(QKeySequence("Ctrl+W"));
-        mw->connect(close_window, SIGNAL(triggered()), mw, SLOT(close()));
+        QMainWindow::connect(close_window, SIGNAL(triggered()), mw, SLOT(close()));
         mw->addAction(close_window);
     }
 

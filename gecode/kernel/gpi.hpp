@@ -137,9 +137,9 @@ namespace Gecode { namespace Kernel {
     forceinline double
     GPI::decay() const {
         double d;
-        const_cast<GPI&>(*this).m.acquire();
+        Gecode::Kernel::GPI::m.acquire();
         d = 1.0 / invd;
-        const_cast<GPI&>(*this).m.release();
+        Gecode::Kernel::GPI::m.release();
         return d;
     }
 
