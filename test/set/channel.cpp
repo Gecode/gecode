@@ -83,9 +83,7 @@ namespace Test { namespace Set {
                 if (xr.val() != x.ints()[2])
                     return false;
                 ++xr;
-                if (xr())
-                    return false;
-                return true;
+                return !xr();
             }
             /// Post constraint on \a x
             void

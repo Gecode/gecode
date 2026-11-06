@@ -59,9 +59,7 @@ namespace Test { namespace Set {
                 if (!xr0())
                     return true;
                 ++xr0;
-                if (!xr0())
-                    return true;
-                return false;
+                return !xr0();
             }
             /// Post constraint on \a x
             void
@@ -98,9 +96,7 @@ namespace Test { namespace Set {
                         x1max = xr1.max();
                         ++xr1;
                     }
-                    if (x0max != x1max)
-                        return false;
-                    return true;
+                    return x0max == x1max;
                 }
                 return false;
             }
@@ -124,9 +120,7 @@ namespace Test { namespace Set {
                 if (!xr0())
                     return true;
                 ++xr0;
-                if (!xr0())
-                    return true;
-                return false;
+                return !xr0();
             }
             /// Post constraint on \a x
             void

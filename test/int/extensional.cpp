@@ -1711,6 +1711,7 @@ namespace Test { namespace Int {
                     return false;
                 // A bool on the left compares with the tuple set's bool
                 // conversion; TupleSet::operator!= keeps these unambiguous.
+                // NOLINTNEXTLINE(readability-simplify-boolean-expr)
                 return (true == t) && !(true != t);
             }
         };

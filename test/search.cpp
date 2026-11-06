@@ -2546,11 +2546,10 @@ namespace Test {
                     substep = substep && (static_cast<ParallelFloatObjective*>(s)->x.val().max() < 8.5);
                     delete s;
                 }
-                substep = substep && (found == 1) && (bab->end_reason() == EndReason::Exhausted);
-                if (!substep)
-                    return false;
-#endif
+                return substep && (found == 1) && (bab->end_reason() == EndReason::Exhausted);
+#else
                 return true;
+#endif
             }
         };
 

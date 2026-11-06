@@ -64,7 +64,6 @@ Checks: >-
   -readability-math-missing-parentheses,
   -readability-named-parameter,
   -readability-redundant-declaration,
-  -readability-simplify-boolean-expr,
   -readability-suspicious-call-argument,
   -readability-use-anyofallof
 WarningsAsErrors: '*'
@@ -82,6 +81,8 @@ CheckOptions:
   bugprone-exception-escape.CheckMoveMemberFunctions: false
   # glibc needs this feature macro defined before any system header.
   bugprone-reserved-identifier.AllowedIdentifiers: '_GNU_SOURCE'
+  # De Morgan rewrites do not make these conditions easier to read.
+  readability-simplify-boolean-expr.SimplifyDeMorgan: false
   # Sites without a fix-it declare variables in the condition.
   readability-else-after-return.WarnOnUnfixable: false
   readability-identifier-naming.FunctionCase: lower_case

@@ -178,9 +178,7 @@ namespace Test { namespace Int { namespace MinDistance {
             if (lifetime.expired() || (clone->status() == SS_FAILED))
                 return false;
             clone.reset();
-            if (!lifetime.expired())
-                return false;
-            return true;
+            return lifetime.expired();
         }
     };
 

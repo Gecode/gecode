@@ -133,9 +133,7 @@ namespace Test { namespace Int {
                     n[i] = 0;
                 for (int i = x.size(); i--;)
                     n[x[i] - 1]++;
-                if (n[0] != 2 || n[1] != 2)
-                    return false;
-                return true;
+                return (n[0] == 2) && (n[1] == 2);
             }
             /// Post constraint on \a x
             void
@@ -161,9 +159,7 @@ namespace Test { namespace Int {
                     n[i] = 0;
                 for (int i = x.size(); i--;)
                     n[x[i] - 1]++;
-                if ((n[0] < 2) || (n[1] < 2) || (n[2] > 0) || (n[3] > 0))
-                    return false;
-                return true;
+                return (n[0] >= 2) && (n[1] >= 2) && (n[2] <= 0) && (n[3] <= 0);
             }
             /// Post constraint on \a x
             void
