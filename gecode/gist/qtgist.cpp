@@ -690,7 +690,7 @@ namespace Gecode { namespace Gist {
     Gist::remove_bookmark(int idx) {
         QAction* a = bookmarks_group->actions()[idx];
         bookmarks_group->removeAction(a);
-        if (bookmarks_group->actions().size() == 0) {
+        if (bookmarks_group->actions().empty()) {
             bookmarks_group->addAction(null_bookmark);
         }
     }

@@ -151,12 +151,12 @@ namespace Gecode { namespace Set { namespace Channel {
     ExecStatus
     ChannelBool<View>::propagate(Space& home, const ModEventDelta&) {
         running = true;
-        if (zeros.size() > 0) {
+        if (!zeros.empty()) {
             BndSetRanges zi(zeros);
             GECODE_ME_CHECK(y.exclude_i(home, zi));
             zeros.init(home);
         }
-        if (ones.size() > 0) {
+        if (!ones.empty()) {
             BndSetRanges oi(ones);
             GECODE_ME_CHECK(y.include_i(home, oi));
             ones.init(home);

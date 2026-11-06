@@ -895,7 +895,7 @@ namespace Test { namespace Instance {
         Spec s = Spec::parse(spec, "s");
         Data c = s.catalog_text(text);
         CHECK(c.integer("instances") == 2);
-        CHECK((c.text("failed", {0}) == "n is at most 3") && (c.text("failed", {1}) == ""));
+        CHECK((c.text("failed", {0}) == "n is at most 3") && (c.text("failed", {1}).empty()));
         CHECK(!s.catalog_text("instance a\n1\n7\n").has("failed"));
         CHECK(Spec::parse("instances { n: int  check n > 5 }", "s").catalog_text("7 1").text("failed", {1}) ==
               "check on line 1 of the spec");
@@ -1079,7 +1079,7 @@ namespace Test { namespace Instance {
         CHECK(equal(read(spec, text, b).ints("x"), {5}));
         CHECK(fails([&]() { (void)read(spec, text, a); }, "test.txt:1:5: check failed for record 2 of 'x': positive"));
         Data c = Spec::parse(spec, "s").catalog_text(text);
-        CHECK((c.text("failed", {0}) == "positive") && (c.text("failed", {1}) == ""));
+        CHECK((c.text("failed", {0}) == "positive") && (c.text("failed", {1}).empty()));
         return true;
     });
 

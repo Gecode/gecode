@@ -2312,14 +2312,14 @@ namespace Gecode { namespace FlatZinc {
             std::stringstream ss;
             ss << "iv[" << i << "]";
             std::string result(Gecode::Gist::Comparator::compare(ss.str(), iv[i], fs.iv[i]));
-            if (result.length() > 0)
+            if (!result.empty())
                 out << result << '\n';
         }
         for (int i = 0; i < bv.size(); ++i) {
             std::stringstream ss;
             ss << "bv[" << i << "]";
             std::string result(Gecode::Gist::Comparator::compare(ss.str(), bv[i], fs.bv[i]));
-            if (result.length() > 0)
+            if (!result.empty())
                 out << result << '\n';
         }
 #ifdef GECODE_HAS_SET_VARS
@@ -2327,7 +2327,7 @@ namespace Gecode { namespace FlatZinc {
             std::stringstream ss;
             ss << "sv[" << i << "]";
             std::string result(Gecode::Gist::Comparator::compare(ss.str(), sv[i], fs.sv[i]));
-            if (result.length() > 0)
+            if (!result.empty())
                 out << result << '\n';
         }
 #endif
@@ -2336,7 +2336,7 @@ namespace Gecode { namespace FlatZinc {
             std::stringstream ss;
             ss << "fv[" << i << "]";
             std::string result(Gecode::Gist::Comparator::compare(ss.str(), fv[i], fs.fv[i]));
-            if (result.length() > 0)
+            if (!result.empty())
                 out << result << '\n';
         }
 #endif
@@ -2463,7 +2463,7 @@ namespace Gecode { namespace FlatZinc {
     IntSetArgs
     FlatZincSpace::arg_to_int_set_args(AST::Node* arg, int offset) {
         AST::Array* a = arg->get_array();
-        if (a->a.size() == 0) {
+        if (a->a.empty()) {
             IntSetArgs empty_ia(0);
             return empty_ia;
         }
@@ -2478,7 +2478,7 @@ namespace Gecode { namespace FlatZinc {
     IntVarArgs
     FlatZincSpace::arg_to_int_var_args(AST::Node* arg, int offset) {
         AST::Array* a = arg->get_array();
-        if (a->a.size() == 0) {
+        if (a->a.empty()) {
             IntVarArgs empty_ia(0);
             return empty_ia;
         }
@@ -2499,7 +2499,7 @@ namespace Gecode { namespace FlatZinc {
     BoolVarArgs
     FlatZincSpace::arg_to_bool_var_args(AST::Node* arg, int offset, int siv) {
         AST::Array* a = arg->get_array();
-        if (a->a.size() == 0) {
+        if (a->a.empty()) {
             BoolVarArgs empty_ia(0);
             return empty_ia;
         }
@@ -2545,7 +2545,7 @@ namespace Gecode { namespace FlatZinc {
     FlatZincSpace::is_bool_array(AST::Node* b, int& single_int) {
         AST::Array* a = b->get_array();
         single_int = -1;
-        if (a->a.size() == 0)
+        if (a->a.empty())
             return true;
         for (int i = a->a.size(); i--;) {
             if (a->a[i]->is_bool_var() || a->a[i]->is_bool()) {
@@ -2602,7 +2602,7 @@ namespace Gecode { namespace FlatZinc {
     FloatVarArgs
     FlatZincSpace::arg_to_float_var_args(AST::Node* arg, int offset) {
         AST::Array* a = arg->get_array();
-        if (a->a.size() == 0) {
+        if (a->a.empty()) {
             FloatVarArgs empty_fa(0);
             return empty_fa;
         }
@@ -2800,7 +2800,7 @@ namespace Gecode { namespace FlatZinc {
             out << k;
         } else if (ai->is_int_var()) {
             std::string res(Comparator::compare("", iv1[ai->get_int_var()], iv2[ai->get_int_var()]));
-            if (res.length() > 0) {
+            if (!res.empty()) {
                 res.erase(0, 1); // Remove '='
                 out << res;
             } else {
@@ -2808,7 +2808,7 @@ namespace Gecode { namespace FlatZinc {
             }
         } else if (ai->is_bool_var()) {
             std::string res(Comparator::compare("", bv1[ai->get_bool_var()], bv2[ai->get_bool_var()]));
-            if (res.length() > 0) {
+            if (!res.empty()) {
                 res.erase(0, 1); // Remove '='
                 out << res;
             } else {
@@ -2817,7 +2817,7 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_SET_VARS
         } else if (ai->is_set_var()) {
             std::string res(Comparator::compare("", sv1[ai->get_set_var()], sv2[ai->get_set_var()]));
-            if (res.length() > 0) {
+            if (!res.empty()) {
                 res.erase(0, 1); // Remove '='
                 out << res;
             } else {
@@ -2827,7 +2827,7 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_FLOAT_VARS
         } else if (ai->is_float_var()) {
             std::string res(Comparator::compare("", fv1[ai->get_float_var()], fv2[ai->get_float_var()]));
-            if (res.length() > 0) {
+            if (!res.empty()) {
                 res.erase(0, 1); // Remove '='
                 out << res;
             } else {

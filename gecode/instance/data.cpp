@@ -577,12 +577,12 @@ namespace Gecode { namespace Instance {
                 // Arrays with an empty dimension need explicit index sets
                 bool empty = false;
                 for (int k = 0; k < v.depth; k++)
-                    empty = empty || (v.lengths[k].size() == 0) || (v.lengths[k][0] == 0);
+                    empty = empty || (v.lengths[k].empty()) || (v.lengths[k][0] == 0);
                 bool nd = (v.depth > 2) || ((v.depth == 2) && empty);
                 if (nd) {
                     os << "array" << v.depth << "d(";
                     for (int k = 0; k < v.depth; k++)
-                        os << "1.." << (v.lengths[k].size() > 0 ? v.lengths[k][0] : 0) << ", ";
+                        os << "1.." << (!v.lengths[k].empty() ? v.lengths[k][0] : 0) << ", ";
                 }
                 os << "[";
                 for (int i = 0; i < nl; i++) {
