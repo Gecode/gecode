@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             }
         }
 
-        if (std::is_same<Table, BitSet<unsigned char>>::value)
+        if (std::is_same_v<Table, BitSet<unsigned char>>)
             return Factory::template copy<BitSet<unsigned char>>(home, source);
 
         switch (Gecode::Support::u_type(width)) {
@@ -238,7 +238,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         case Gecode::Support::IT_SHORT:
             return Factory::template copy<BitSet<unsigned short int>>(home, source);
         case Gecode::Support::IT_INT:
-            if (std::is_same<Table, BitSet<unsigned int>>::value)
+            if (std::is_same_v<Table, BitSet<unsigned int>>)
                 return Factory::template copy<BitSet<unsigned int>>(home, source);
             GECODE_NEVER;
         default:

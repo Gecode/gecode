@@ -454,7 +454,7 @@ namespace Gecode { namespace Support {
         template <class Type>
         Type
         operator()(Type bound) {
-            static_assert(std::is_integral<Type>::value && sizeof(Type) <= 8,
+            static_assert(std::is_integral_v<Type> && sizeof(Type) <= 8,
                           "Random bound must be an integer of at most 64 bits");
             if (bound <= 1)
                 return 0;

@@ -546,7 +546,7 @@ namespace Gecode {
     template <class View, class Random>
     forceinline bool
     ViewSelRnd<View, Random>::notice() const {
-        return !std::is_trivially_destructible<Random>::value;
+        return !std::is_trivially_destructible_v<Random>;
     }
     template <class View, class Random>
     forceinline void
