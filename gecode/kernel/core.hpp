@@ -2990,7 +2990,7 @@ namespace Gecode {
     }
     forceinline void
     Space::rfree(void* p, size_t s) {
-        return mm.reuse(p, s);
+        mm.reuse(p, s);
     }
     forceinline void*
     Space::rrealloc(void* _b, size_t n, size_t m) {

@@ -646,12 +646,12 @@ namespace Gecode {
     void
     SetExpr::post(Home home, SetRelType srt, const SetExpr& e) const {
         Region r;
-        return NNF::nnf(r, n, false)->post(home, srt, NNF::nnf(r, e.n, false));
+        NNF::nnf(r, n, false)->post(home, srt, NNF::nnf(r, e.n, false));
     }
     void
     SetExpr::post(Home home, BoolVar b, bool t, SetRelType srt, const SetExpr& e) const {
         Region r;
-        return NNF::nnf(r, n, false)->post(home, b, t, srt, NNF::nnf(r, e.n, false));
+        NNF::nnf(r, n, false)->post(home, b, t, srt, NNF::nnf(r, e.n, false));
     }
 
     SetExpr

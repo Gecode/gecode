@@ -64,7 +64,6 @@ Checks: >-
   -portability-template-virtual-member-function,
   readability-*,
   -readability-avoid-nested-conditional-operator,
-  -readability-avoid-return-with-void-value,
   -readability-braces-around-statements,
   -readability-convert-member-functions-to-static,
   -readability-else-after-return,
