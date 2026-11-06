@@ -357,6 +357,7 @@ namespace Gecode { namespace Search {
                 bucket[b] = -1;
         }
         /// Delete all entries
+        // NOLINTNEXTLINE(bugprone-exception-escape): clear only reads cells that exist
         ~Beam() {
             clear();
         }
