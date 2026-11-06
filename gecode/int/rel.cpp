@@ -476,14 +476,15 @@ namespace Gecode {
         case IRT_EQ:
             if (x.size() != y.size()) {
                 home.fail();
-            } else if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF))
+            } else if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
                 for (int i = 0; i < x.size(); i++) {
                     GECODE_ES_FAIL((Rel::EqDom<IntView, IntView>::post(home, x[i], y[i])));
                 }
-            else
+            } else {
                 for (int i = 0; i < x.size(); i++) {
                     GECODE_ES_FAIL((Rel::EqBnd<IntView, IntView>::post(home, x[i], y[i])));
                 }
+            }
             break;
         case IRT_NQ: {
             ViewArray<IntView> xv(home, x), yv(home, y);

@@ -299,8 +299,9 @@ namespace Gecode { namespace Set {
             if (lst() != nullptr || !empty()) {
                 std::cerr << "Strange empty set.\n";
                 return false;
-            } else
+            } else {
                 return true;
+            }
         }
 
         if (fst() != nullptr && lst() == nullptr) {

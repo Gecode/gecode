@@ -72,7 +72,6 @@ Checks: >-
   -readability-identifier-length,
   -readability-implicit-bool-conversion,
   -readability-inconsistent-declaration-parameter-name,
-  -readability-inconsistent-ifelse-braces,
   -readability-isolate-declaration,
   -readability-magic-numbers,
   -readability-make-member-function-const,

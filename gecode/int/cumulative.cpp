@@ -63,8 +63,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
             if (u[i] < min_u) {
                 min_u2 = min_u;
                 min_u = u[i];
-            } else if (u[i] < min_u2)
+            } else if (u[i] < min_u2) {
                 min_u2 = u[i];
+            }
             max_u = std::max(u[i], max_u);
         }
         bool disjunctive = (min_u > c.max() / 2) || (min_u2 > c.max() / 2 && min_u + min_u2 > c.max());
@@ -186,8 +187,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
             if (u[i] < min_u) {
                 min_u2 = min_u;
                 min_u = u[i];
-            } else if (u[i] < min_u2)
+            } else if (u[i] < min_u2) {
                 min_u2 = u[i];
+            }
             max_u = std::max(u[i], max_u);
         }
         bool disjunctive = (min_u > c.max() / 2) || (min_u2 > c.max() / 2 && min_u + min_u2 > c.max());
