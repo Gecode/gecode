@@ -189,16 +189,16 @@ namespace Test { namespace Int {
             }
         };
 
-        static_assert(std::is_convertible<bool, Gecode::BoolExpr>::value,
+        static_assert(std::is_convertible_v<bool, Gecode::BoolExpr>,
                       "Boolean constants must convert to Boolean expressions");
-        static_assert(!std::is_convertible<int, Gecode::BoolExpr>::value,
+        static_assert(!std::is_convertible_v<int, Gecode::BoolExpr>,
                       "Integer constants must remain integer expressions");
-        static_assert(!std::is_convertible<void*, Gecode::BoolExpr>::value,
+        static_assert(!std::is_convertible_v<void*, Gecode::BoolExpr>,
                       "Pointers must not convert to Boolean expressions");
 
-        static_assert(std::is_same<decltype(Gecode::expr(std::declval<Gecode::Home>(), true)), Gecode::IntVar>::value,
+        static_assert(std::is_same_v<decltype(Gecode::expr(std::declval<Gecode::Home>(), true)), Gecode::IntVar>,
                       "Numeric posting overloads must keep their return type");
-        static_assert(std::is_same<decltype(Gecode::expr(std::declval<Gecode::Home>(), 0)), Gecode::IntVar>::value,
+        static_assert(std::is_same_v<decltype(Gecode::expr(std::declval<Gecode::Home>(), 0)), Gecode::IntVar>,
                       "Numeric posting overloads must keep their return type");
 
         /// %Test Boolean constants and their composition with variables
