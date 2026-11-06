@@ -32,17 +32,9 @@
 
 namespace Gecode {
 
-    forceinline IntAction&
-    IntAction::operator=(const IntAction& a) {
-        Action::operator=(a);
-        return *this;
-    }
+    forceinline IntAction& IntAction::operator=(const IntAction& a) = default;
 
-    forceinline BoolAction&
-    BoolAction::operator=(const BoolAction& a) {
-        Action::operator=(a);
-        return *this;
-    }
+    forceinline BoolAction& BoolAction::operator=(const BoolAction& a) = default;
 
 } // namespace Gecode
 

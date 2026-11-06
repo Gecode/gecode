@@ -54,11 +54,7 @@ namespace Gecode { namespace FlatZinc {
             }
             explicit BlackBoxHandle(const SharedHandle& handle) : SharedHandle(handle) {}
             BlackBoxHandle(const BlackBoxHandle& handle) = default;
-            BlackBoxHandle&
-            operator=(const BlackBoxHandle& handle) {
-                SharedHandle::operator=(handle);
-                return *this;
-            }
+            BlackBoxHandle& operator=(const BlackBoxHandle& handle) = default;
             BlackBoxBackend*
             operator()() const {
                 return static_cast<BlackBoxBackend*>(object());
