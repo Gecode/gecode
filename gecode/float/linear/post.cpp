@@ -47,15 +47,11 @@ namespace Gecode { namespace Float { namespace Linear {
             est += t[i].a * t[i].x.domain();
         FloatNum min = est.min();
         FloatNum max = est.max();
-        if (min < Limits::min)
-            min = Limits::min;
-        if (min > Limits::max)
-            min = Limits::max;
+        min = std::max(min, Limits::min);
+        min = std::min(min, Limits::max);
         l = min;
-        if (max < Limits::min)
-            max = Limits::min;
-        if (max > Limits::max)
-            max = Limits::max;
+        max = std::max(max, Limits::min);
+        max = std::min(max, Limits::max);
         u = max;
     }
 

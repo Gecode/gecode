@@ -33,6 +33,7 @@
 #ifndef GECODE_SEARCH_WORKER_HH
 #define GECODE_SEARCH_WORKER_HH
 
+#include <algorithm>
 #include <gecode/search.hh>
 
 namespace Gecode { namespace Search {
@@ -103,14 +104,12 @@ namespace Gecode { namespace Search {
     Worker::reset(unsigned long int d) {
         Statistics::reset();
         root_depth = d;
-        if (depth < d)
-            depth = d;
+        depth = std::max(depth, d);
     }
 
     forceinline void
     Worker::stack_depth(unsigned long int d) {
-        if (depth < root_depth + d)
-            depth = root_depth + d;
+        depth = std::max(depth, root_depth + d);
     }
 
     forceinline unsigned long int

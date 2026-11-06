@@ -32,6 +32,7 @@
  *
  */
 
+#include <algorithm>
 #include <gecode/int/cumulative.hh>
 
 #include <algorithm>
@@ -64,8 +65,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
                 min_u = u[i];
             } else if (u[i] < min_u2)
                 min_u2 = u[i];
-            if (u[i] > max_u)
-                max_u = u[i];
+            max_u = std::max(u[i], max_u);
         }
         bool disjunctive = (min_u > c.max() / 2) || (min_u2 > c.max() / 2 && min_u + min_u2 > c.max());
         if (disjunctive) {
@@ -188,8 +188,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
                 min_u = u[i];
             } else if (u[i] < min_u2)
                 min_u2 = u[i];
-            if (u[i] > max_u)
-                max_u = u[i];
+            max_u = std::max(u[i], max_u);
         }
         bool disjunctive = (min_u > c.max() / 2) || (min_u2 > c.max() / 2 && min_u + min_u2 > c.max());
         if (disjunctive) {

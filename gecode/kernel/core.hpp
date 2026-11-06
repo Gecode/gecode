@@ -47,6 +47,7 @@
  *
  */
 
+#include <algorithm>
 #include <atomic>
 #include <iostream>
 
@@ -4263,8 +4264,7 @@ namespace Gecode {
         ActorLink::cast(p)->unlink();
         ActorLink* c = &pc.p.queue[std::to_underlying(p->cost(*this, p->u.med).ac)];
         c->tail(ActorLink::cast(p));
-        if (c > pc.p.active)
-            pc.p.active = c;
+        pc.p.active = std::max(c, pc.p.active);
     }
 
     forceinline void

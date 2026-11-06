@@ -30,6 +30,7 @@
  *
  */
 
+#include <algorithm>
 #include <gecode/search.hh>
 
 #include <cmath>
@@ -52,8 +53,7 @@ namespace Gecode { namespace Search {
             t = t * Support::Thread::npu();
         }
         t = floor(t + 0.5);
-        if (t < 1.0)
-            t = 1.0;
+        t = std::max(t, 1.0);
         Options o(*this);
         o.threads = t;
         return o;

@@ -50,15 +50,11 @@ namespace Gecode { namespace Int { namespace Linear {
                 min += a * t[i].x.max();
             }
         }
-        if (min < Limits::min)
-            min = Limits::min;
-        if (min > Limits::max)
-            min = Limits::max;
+        min = std::max<long long>(min, Limits::min);
+        min = std::min<long long>(min, Limits::max);
         l = static_cast<int>(min);
-        if (max < Limits::min)
-            max = Limits::min;
-        if (max > Limits::max)
-            max = Limits::max;
+        max = std::max<long long>(max, Limits::min);
+        max = std::min<long long>(max, Limits::max);
         u = static_cast<int>(max);
     }
 
