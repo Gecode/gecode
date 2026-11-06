@@ -361,7 +361,7 @@ public:
      *
      * \relates SteelMill
      */
-    class SteelMillBranch : Brancher {
+    class SteelMillBranch : public Brancher {
     protected:
         /// Cache of first unassigned value
         mutable int start;

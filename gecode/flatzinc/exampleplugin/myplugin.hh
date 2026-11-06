@@ -38,5 +38,6 @@ public:
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.gecode.FlatZinc.BranchPlugin/1.0")
     Q_INTERFACES(Gecode::FlatZinc::BranchPlugin)
+public:
     void branch(Gecode::FlatZinc::FlatZincSpace& space, Gecode::FlatZinc::AST::Call* call) override;
 };

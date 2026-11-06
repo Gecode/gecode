@@ -238,6 +238,7 @@ namespace Gecode { namespace Gist {
         /// Stop search and wait until finished
         bool finish();
 
+    protected:
         /// Handle resize event
         void resizeEvent(QResizeEvent*) override;
 
