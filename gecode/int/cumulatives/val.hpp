@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                             if (me_failed(s[t].minus_r(home, a, false)) || me_failed(e[t].minus_r(home, b, false)))
                                 return ES_FAILED;
                         }
-                        if (me_failed(p[t].lq(home, std::max(std::max(low - s[t].min(), e[t].max() - up - 1), 0)))) {
+                        if (me_failed(p[t].lq(home, std::max({low - s[t].min(), e[t].max() - up - 1, 0})))) {
                             return ES_FAILED;
                         }
                     }
