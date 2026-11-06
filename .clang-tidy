@@ -17,7 +17,6 @@ Checks: >-
   -bugprone-macro-parentheses,
   -bugprone-multi-level-implicit-pointer-conversion,
   -bugprone-narrowing-conversions,
-  -bugprone-nondeterministic-pointer-iteration-order,
   -bugprone-parent-virtual-call,
   -bugprone-signed-char-misuse,
   -bugprone-suspicious-string-compare,
