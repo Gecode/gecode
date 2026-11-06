@@ -82,7 +82,6 @@ Checks: >-
   -readability-non-const-parameter,
   -readability-redundant-access-specifiers,
   -readability-redundant-declaration,
-  -readability-redundant-smartptr-get,
   -readability-redundant-typename,
   -readability-simplify-boolean-expr,
   -readability-suspicious-call-argument,
