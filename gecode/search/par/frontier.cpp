@@ -31,6 +31,7 @@
  */
 
 #include <gecode/search/par/frontier.hh>
+#include <memory>
 
 #if defined(GECODE_HAS_EXPERIMENTAL) && defined(GECODE_HAS_THREADS)
 namespace Gecode { namespace Search { namespace Par {
@@ -79,7 +80,7 @@ namespace Gecode { namespace Search { namespace Par {
             return;
         }
         started(*s);
-        std::unique_ptr<Task> t(new Task);
+        std::unique_ptr<Task> t = std::make_unique<Task>();
         t->expansion.select(std::unique_ptr<Space>(clone ? s->clone() : s));
         push(t.release());
     }

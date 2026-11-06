@@ -34,6 +34,7 @@
 #include <gecode/search/support.hh>
 #include <gecode/search/seq/cabs.hh>
 #include <gecode/search/par/frontier.hh>
+#include <memory>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
 
@@ -92,7 +93,7 @@ namespace Gecode { namespace Search { namespace Par {
                 return false;
             }
             stat.restart++;
-            std::unique_ptr<Task> t(new Task);
+            std::unique_ptr<Task> t = std::make_unique<Task>();
             t->expansion.select(std::unique_ptr<Space>(root->clone()));
             push(t.release());
             return true;
