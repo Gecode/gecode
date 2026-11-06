@@ -427,7 +427,7 @@ namespace Test {
         Gecode::Support::RandomGenerator seed_sequence(options.seed);
         size_t passed = 0;
         size_t failed = 0;
-        for (auto test : tests) {
+        for (auto* test : tests) {
             uint64_t test_seed = seed_sequence.next();
             if (run_test(test, test_seed, options, std::cout)) {
                 ++passed;
@@ -583,7 +583,7 @@ namespace Test {
                     if (!tec.continue_testing()) {
                         break;
                     }
-                    auto test = tec.tests[i];
+                    auto* test = tec.tests[i];
                     uint64_t test_seed = seed_sequence.next();
                     std::ostringstream test_output;
                     tec.record_result(run_test(test, test_seed, tec.options, test_output));
