@@ -513,8 +513,8 @@ namespace Gecode { namespace Int {
             break;
         }
         case ME_INT_BND: {
-            static const Gecode::ModEvent me_c = (((ME_INT_NONE ^ ME_INT_BND) << 0) | ((ME_INT_VAL ^ ME_INT_VAL) << 4) |
-                                                  ((ME_INT_BND ^ ME_INT_BND) << 8) | ((ME_INT_DOM ^ ME_INT_BND) << 12));
+            static const Gecode::ModEvent me_c =
+                (((ME_INT_NONE ^ ME_INT_BND) << 0) | ((ME_INT_DOM ^ ME_INT_BND) << 12));
             Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
             Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);
             if (me_n == 0)

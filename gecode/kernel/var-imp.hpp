@@ -517,7 +517,7 @@ namespace Gecode {
     forceinline void
     Space::recover(Space& source) {
         ActorLink* clone_lists[2] = {&pl, &bl};
-        for (auto l : clone_lists) {
+        for (auto* l : clone_lists) {
             ActorLink* c = l->next();
             while (c != l) {
                 ActorLink* n = c->next();
