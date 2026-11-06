@@ -237,7 +237,7 @@ namespace Gecode { namespace Set { namespace Element {
             // In the second iteration, this time backwards, compute
             // sofarAfter as the intersection of all glb(x_j) with j>i
             for (int i = n; i--;) {
-                if (sofar_after.size() == 0)
+                if (sofar_after.empty())
                     break;
 
                 // extra = inter(before[i], sofarAfter) - lub(x1)

@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace LDSB {
                     seen.insert(to_exclude[j]);
                 }
             }
-        } while (queue.size() > 0);
+        } while (!queue.empty());
 
         // Convert "seen" vector into array.
         int nliterals = static_cast<int>(seen.size());

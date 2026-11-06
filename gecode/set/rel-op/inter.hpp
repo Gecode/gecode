@@ -329,7 +329,7 @@ namespace Gecode { namespace Set { namespace RelOp {
                         repeat = true;
                     }
                     x.move_lst(i);
-                    if (int_of_dets.size() == 0) {
+                    if (int_of_dets.empty()) {
                         GECODE_ME_CHECK(y.card_max(home, 0));
                         int_of_dets.dispose(home);
                         return home.ES_SUBSUMED(*this);
