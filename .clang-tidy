@@ -37,7 +37,6 @@ Checks: >-
   -modernize-avoid-variadic-functions,
   -modernize-concat-nested-namespaces,
   -modernize-loop-convert,
-  -modernize-make-shared,
   -modernize-min-max-use-initializer-list,
   -modernize-pass-by-value,
   -modernize-raw-string-literal,
