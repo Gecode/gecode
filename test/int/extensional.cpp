@@ -50,7 +50,7 @@ namespace Test::Int::Extensional {
      * \ingroup TaskTestInt
      */
     //@{
-    std::string
+    static std::string
     extensional_kind_name(Gecode::ExtensionalPropKind epk) {
         switch (epk) {
         case Gecode::EPK_DENSE:
@@ -1086,7 +1086,7 @@ namespace Test::Int::Extensional {
     };
 
     ///% Transform a TupleSet into a DFA
-    Gecode::DFA
+    static Gecode::DFA
     tuple_set_to_dfa(const Gecode::TupleSet& ts) {
         using namespace Gecode;
         REG expression;
@@ -2194,7 +2194,7 @@ namespace Test::Int::Extensional {
         }
     };
 
-    Gecode::TupleSet
+    static Gecode::TupleSet
     random_tuple_set(int n, int min, int max, double prob, Gecode::ExtensionalPropKind epk,
                      Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;

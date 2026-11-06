@@ -65,7 +65,7 @@ namespace Test::Assign {
 
     /// Merit that prefers the variable at position \a p
     template <int p>
-    double
+    static double
     int_merit_at(const Gecode::Space&, Gecode::IntVar, int i) {
         return (i == p) ? 1.0 : 0.0;
     }
@@ -91,7 +91,7 @@ namespace Test::Assign {
     };
 
     /// Whether assigning one first in \a s sets exactly the last \a n variables
-    bool
+    static bool
     assigned_last_first(IntOrderSpace* s, int n) {
         Gecode::DFS<IntOrderSpace> e(s);
         delete s;

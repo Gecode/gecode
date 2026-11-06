@@ -73,7 +73,7 @@ namespace Gecode::Set::LDSB {
      * The create_set_sym function is an almost exact copy of
      * create_int_sym/create_bool_sym.
      */
-    SymmetryImp<SetView>*
+    static SymmetryImp<SetView>*
     create_set_sym(Space& home, const SymmetryHandle& s, VariableMap variable_map) {
         VariableSymmetryObject* varref = dynamic_cast<VariableSymmetryObject*>(s.ref);
         ValueSymmetryObject* valref = dynamic_cast<ValueSymmetryObject*>(s.ref);
@@ -127,7 +127,7 @@ namespace Gecode::Set::LDSB {
      *
      * Stores their number in \a nsyms and returns nullptr if there are none.
      */
-    SymmetryImp<SetView>**
+    static SymmetryImp<SetView>**
     create_set_syms(Space& home, const Symmetries& syms, const VariableMap& variable_map, int& nsyms) {
         nsyms = 0;
         for (const auto& sym : syms)

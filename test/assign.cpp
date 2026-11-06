@@ -131,7 +131,7 @@ namespace Test::Assign {
     /// Number of integer value selections
     const int n_int_assign = sizeof(int_assign_name) / sizeof(const char*);
     /// Test function for branch value function
-    int
+    static int
     int_val(const Gecode::Space&, Gecode::IntVar x, int) {
         return x.min();
     }
@@ -147,7 +147,7 @@ namespace Test::Assign {
     /// Number of integer value selections
     const int n_bool_assign = sizeof(bool_assign_name) / sizeof(const char*);
     /// Test function for branch value function
-    int
+    static int
     bool_val(const Gecode::Space&, Gecode::BoolVar x, int) {
         return x.min();
     }
@@ -284,7 +284,7 @@ namespace Test::Assign {
     /// Number of set value selections
     const int n_set_assign = sizeof(set_assign_name) / sizeof(const char*);
     /// Test function for branch value function
-    int
+    static int
     set_val(const Gecode::Space&, Gecode::SetVar x, int) {
         Gecode::SetVarUnknownRanges r(x);
         return r.min();
@@ -379,7 +379,7 @@ namespace Test::Assign {
     /// Number of float value selections
     const int n_float_assign = sizeof(float_assign_name) / sizeof(const char*);
     /// Test function for branch value function
-    Gecode::FloatNumBranch
+    static Gecode::FloatNumBranch
     float_val(const Gecode::Space&, Gecode::FloatVar x, int) {
         Gecode::FloatNumBranch nl;
         nl.n = x.med();

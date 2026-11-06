@@ -55,7 +55,7 @@ namespace Gecode::Float::Linear {
         u = max;
     }
 
-    forceinline bool
+    static forceinline bool
     overflow(Term* t, int n, const FloatVal& c) {
         FloatVal est = c;
         for (int i = n; i--;)
@@ -75,7 +75,7 @@ namespace Gecode::Float::Linear {
     };
 
     /// Extend terms by adding view for result
-    FloatView
+    static FloatView
     extend(Home home, Region& r, Term*& t, int& n) {
         FloatNum min, max;
         estimate(t, n, 0.0, min, max);
@@ -95,7 +95,7 @@ namespace Gecode::Float::Linear {
      *
      */
     template <class View>
-    forceinline void
+    static forceinline void
     post_nary(Home home, ViewArray<View>& x, ViewArray<View>& y, FloatRelType frt, const FloatVal& c) {
         switch (frt) {
         case FRT_EQ:
@@ -109,7 +109,7 @@ namespace Gecode::Float::Linear {
         }
     }
 
-    void
+    static void
     post_linear(Home home, Term* t, int n, FloatRelType frt, FloatVal c) {
         Limits::check(c, "Float::linear");
 

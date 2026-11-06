@@ -38,7 +38,7 @@
 namespace Gecode::Int::Linear {
 
     /// Eliminate assigned views
-    forceinline void
+    static forceinline void
     eliminate(Term<BoolView>* t, int& n, long long int& d) {
         for (int i = n; i--;)
             if (t[i].x.one()) {
@@ -51,7 +51,7 @@ namespace Gecode::Int::Linear {
     }
 
     /// Rewrite non-strict relations
-    forceinline void
+    static forceinline void
     rewrite(IntRelType& r, long long int& d) {
         switch (r) {
         case IRT_EQ:
@@ -72,7 +72,7 @@ namespace Gecode::Int::Linear {
         }
     }
 
-    forceinline void
+    static forceinline void
     post_pos_unit(Home home, Term<BoolView>* t_p, int n_p, IntRelType irt, IntView y, int c) {
         switch (irt) {
         case IRT_EQ: {
@@ -105,7 +105,7 @@ namespace Gecode::Int::Linear {
         }
     }
 
-    forceinline void
+    static forceinline void
     post_pos_unit(Home home, Term<BoolView>* t_p, int n_p, IntRelType irt, ZeroIntView, int c) {
         switch (irt) {
         case IRT_EQ: {
@@ -137,7 +137,7 @@ namespace Gecode::Int::Linear {
         }
     }
 
-    forceinline void
+    static forceinline void
     post_pos_unit(Home home, Term<BoolView>* t_p, int n_p, IntRelType irt, int c, Reify r, IntPropLevel) {
         switch (irt) {
         case IRT_EQ: {
@@ -218,7 +218,7 @@ namespace Gecode::Int::Linear {
         }
     }
 
-    forceinline void
+    static forceinline void
     post_neg_unit(Home home, Term<BoolView>* t_n, int n_n, IntRelType irt, IntView y, int c) {
         switch (irt) {
         case IRT_EQ: {
@@ -253,7 +253,7 @@ namespace Gecode::Int::Linear {
         }
     }
 
-    forceinline void
+    static forceinline void
     post_neg_unit(Home home, Term<BoolView>* t_n, int n_n, IntRelType irt, ZeroIntView, int c) {
         switch (irt) {
         case IRT_EQ: {
@@ -285,7 +285,7 @@ namespace Gecode::Int::Linear {
         }
     }
 
-    forceinline void
+    static forceinline void
     post_neg_unit(Home home, Term<BoolView>* t_n, int n_n, IntRelType irt, int c, Reify r, IntPropLevel) {
         switch (irt) {
         case IRT_EQ: {
@@ -366,7 +366,7 @@ namespace Gecode::Int::Linear {
         }
     }
 
-    forceinline void
+    static forceinline void
     post_mixed(Home home, Term<BoolView>* t_p, int n_p, Term<BoolView>* t_n, int n_n, IntRelType irt, IntView y,
                int c) {
         ScaleBoolArray b_p(home, n_p);
@@ -404,7 +404,7 @@ namespace Gecode::Int::Linear {
         }
     }
 
-    forceinline void
+    static forceinline void
     post_mixed(Home home, Term<BoolView>* t_p, int n_p, Term<BoolView>* t_n, int n_n, IntRelType irt, ZeroIntView y,
                int c) {
         ScaleBoolArray b_p(home, n_p);
@@ -442,7 +442,7 @@ namespace Gecode::Int::Linear {
     }
 
     template <class View>
-    forceinline void
+    static forceinline void
     post_all(Home home, Term<BoolView>* t, int n, IntRelType irt, View x, int c) {
 
         Limits::check(c, "Int::linear");

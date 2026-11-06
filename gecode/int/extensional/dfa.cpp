@@ -137,7 +137,7 @@ namespace Gecode::Int::Extensional {
     };
 
     /// Return the compact index for an external state identifier
-    forceinline int
+    static forceinline int
     state_index(const std::vector<int>& states, int state) {
         return static_cast<int>(std::ranges::lower_bound(states, state) - states.begin());
     }

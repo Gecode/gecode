@@ -672,7 +672,7 @@ namespace Test::Int::Element {
 
     /// Test whether \a post throws an exception of type \a E on a new space
     template <class E, class Post>
-    bool
+    static bool
     is_rejected(Post post) {
         MatrixFixture home;
         try {
@@ -685,7 +685,7 @@ namespace Test::Int::Element {
 
     /// Test whether every overload throws \a E for an array of size \a n, width \a w, and height \a h
     template <class E>
-    bool
+    static bool
     is_rejected_by_all(int n, int w, int h) {
         using namespace Gecode;
         IntSharedArray c(IntArgs::create(n, 0, 0));

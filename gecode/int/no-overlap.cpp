@@ -36,7 +36,7 @@ namespace Gecode {
 
     namespace Int::NoOverlap {
 
-        bool
+        static bool
         optional(const BoolVarArgs& m) {
             for (auto mi : m)
                 if (mi.none())

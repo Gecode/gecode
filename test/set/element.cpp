@@ -385,7 +385,7 @@ namespace Test::Set::Element {
      * An empty union is empty and an empty intersection is the universe.
      */
     template <class Args>
-    bool
+    static bool
     is_decided_empty() {
         Args x;
         IntSet universe(0, 3);
@@ -455,7 +455,7 @@ namespace Test::Set::Element {
 
     /// Test whether posting a matrix of \a n sets throws \a E for both array types
     template <class E>
-    bool
+    static bool
     is_matrix_rejected(int n, int w, int h) {
         IndexFixture constant, variable;
         bool constant_rejected = false;
@@ -475,7 +475,7 @@ namespace Test::Set::Element {
 
     /// Test whether posting over no sets throws Set::TooFewArguments for array type \a Args
     template <class Args>
-    bool
+    static bool
     is_array_rejected() {
         IndexFixture home;
         try {

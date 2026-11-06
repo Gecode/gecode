@@ -339,7 +339,7 @@ namespace Test::Set::RelOpConst {
 
     /// Test whether the operation \a op on empty \a Args and a constant \a z gives \a z
     template <class Args>
-    bool
+    static bool
     is_result_constant(SetOpType op) {
         Args x;
         IntSet z(-1, 1);

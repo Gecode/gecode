@@ -263,7 +263,7 @@ namespace Test::FlatZinc {
 
 #ifdef GECODE_HAS_THREADS
         template <class T>
-        bool
+        static bool
         parallel_runs(T& black_box) {
             bool echoed[2] = {false, false};
             std::exception_ptr exception[2];
