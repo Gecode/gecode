@@ -82,6 +82,10 @@ namespace Gecode { namespace Support {
      */
     template <class T, class A, int blocksize = 512>
     class BlockClient {
+        friend T;
+        /// Default constructor, for the derived class \a T only
+        BlockClient() = default;
+
     public:
         /// Allocate memory from block allocator \a ba
         static void* operator new(size_t s, BlockAllocator<T, A, blocksize>& ba);
