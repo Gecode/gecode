@@ -16,7 +16,6 @@ Checks: >-
   -bugprone-macro-parentheses,
   -bugprone-multi-level-implicit-pointer-conversion,
   -bugprone-narrowing-conversions,
-  -bugprone-parent-virtual-call,
   -bugprone-signed-char-misuse,
   -bugprone-switch-missing-default-case,
   -bugprone-throwing-static-initialization,
