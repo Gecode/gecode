@@ -138,7 +138,7 @@ namespace Gecode {
         /// \name Trace information
         //@{
         /// Return variable being traced at position \a i
-        const typename View::VarType operator[](int i) const;
+        typename View::VarType operator[](int i) const;
         /// Return number of variables being traced
         int size() const;
         /// Provide access to slack information
@@ -196,7 +196,7 @@ namespace Gecode {
      *
      */
     template <class View>
-    forceinline const typename View::VarType
+    forceinline typename View::VarType
     ViewTraceRecorder<View>::operator[](int i) const {
         const typename View::VarType x(n[i].varimp());
         return x;

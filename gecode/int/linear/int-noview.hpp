@@ -267,7 +267,7 @@ namespace Gecode {
             return n;
         }
         /// Return view at position \a i
-        const Int::Linear::NoView
+        Int::Linear::NoView
         operator[](int i) const {
             (void)i;
             Int::Linear::NoView n;
