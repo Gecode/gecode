@@ -75,6 +75,7 @@ namespace Gecode { namespace Set { namespace Rel {
     }
     forceinline bool
     subsumes_me(ModEvent me0, ModEvent me1, ModEvent me) {
+        // NOLINTNEXTLINE(readability-suspicious-call-argument): combining is symmetric
         ModEvent cme = SetVarImp::me_combine(me0, me1);
         return SetVarImp::me_combine(cme, me) == cme;
     }
