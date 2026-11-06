@@ -30,6 +30,7 @@
  *
  */
 
+#include <algorithm>
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
@@ -175,7 +176,7 @@ static void
 post_start(Home home, const IntVarArgs& tiles, IntVar blank, const Board& initial) {
     for (int i = 0; i < 16; i++)
         rel(home, tiles[i] == initial[i]);
-    const int zero = static_cast<int>(std::find(initial.begin(), initial.end(), 0) - initial.begin());
+    const int zero = static_cast<int>(std::ranges::find(initial, 0) - initial.begin());
     rel(home, blank == zero);
 }
 

@@ -32,6 +32,7 @@
 
 #include "test/int.hh"
 
+#include <algorithm>
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
 
@@ -139,11 +140,6 @@ namespace Test { namespace Int {
             bool start; ///< Whether event has just started
             /// Initialize event
             Event(int pos, int height, bool s) : p(pos), h(height), start(s) {}
-            /// %Test whether this event is before event \a e
-            bool
-            operator<(const Event& e) const {
-                return p < e.p;
-            }
         };
 
         /// Describe that event is below a certain limit
@@ -175,7 +171,7 @@ namespace Test { namespace Int {
         template <class C>
         bool
         valid(std::vector<Event> e, C comp) {
-            std::sort(e.begin(), e.end());
+            std::ranges::sort(e, {}, &Event::p);
             unsigned int i = 0;
             int p = 0;
             int h = 0;
