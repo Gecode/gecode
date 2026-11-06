@@ -49,21 +49,19 @@
 #include <type_traits>
 #include <vector>
 
-static_assert(std::is_copy_constructible<Gecode::NoGoods>::value, "NoGoods must remain copy constructible");
-static_assert(std::is_copy_assignable<Gecode::NoGoods>::value, "NoGoods must remain copy assignable");
-static_assert(std::is_copy_constructible<Gecode::Search::NodeStop>::value, "NodeStop must remain copy constructible");
-static_assert(std::is_copy_assignable<Gecode::Search::NodeStop>::value, "NodeStop must remain copy assignable");
-static_assert(std::is_copy_constructible<Gecode::Search::FailStop>::value, "FailStop must remain copy constructible");
-static_assert(std::is_copy_assignable<Gecode::Search::FailStop>::value, "FailStop must remain copy assignable");
-static_assert(std::is_copy_constructible<Gecode::Search::TimeStop>::value, "TimeStop must remain copy constructible");
-static_assert(std::is_copy_assignable<Gecode::Search::TimeStop>::value, "TimeStop must remain copy assignable");
-static_assert(std::is_copy_constructible<Gecode::Search::RestartStop>::value,
-              "RestartStop must remain copy constructible");
-static_assert(std::is_copy_assignable<Gecode::Search::RestartStop>::value, "RestartStop must remain copy assignable");
-static_assert(std::is_copy_constructible<Gecode::Search::WorkerControl>::value,
+static_assert(std::is_copy_constructible_v<Gecode::NoGoods>, "NoGoods must remain copy constructible");
+static_assert(std::is_copy_assignable_v<Gecode::NoGoods>, "NoGoods must remain copy assignable");
+static_assert(std::is_copy_constructible_v<Gecode::Search::NodeStop>, "NodeStop must remain copy constructible");
+static_assert(std::is_copy_assignable_v<Gecode::Search::NodeStop>, "NodeStop must remain copy assignable");
+static_assert(std::is_copy_constructible_v<Gecode::Search::FailStop>, "FailStop must remain copy constructible");
+static_assert(std::is_copy_assignable_v<Gecode::Search::FailStop>, "FailStop must remain copy assignable");
+static_assert(std::is_copy_constructible_v<Gecode::Search::TimeStop>, "TimeStop must remain copy constructible");
+static_assert(std::is_copy_assignable_v<Gecode::Search::TimeStop>, "TimeStop must remain copy assignable");
+static_assert(std::is_copy_constructible_v<Gecode::Search::RestartStop>, "RestartStop must remain copy constructible");
+static_assert(std::is_copy_assignable_v<Gecode::Search::RestartStop>, "RestartStop must remain copy assignable");
+static_assert(std::is_copy_constructible_v<Gecode::Search::WorkerControl>,
               "WorkerControl must remain copy constructible");
-static_assert(std::is_copy_assignable<Gecode::Search::WorkerControl>::value,
-              "WorkerControl must remain copy assignable");
+static_assert(std::is_copy_assignable_v<Gecode::Search::WorkerControl>, "WorkerControl must remain copy assignable");
 
 namespace Test {
 
