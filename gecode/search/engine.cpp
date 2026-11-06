@@ -35,7 +35,7 @@
 
 namespace Gecode { namespace Search {
 
-    Engine::Engine() : worker_control() {}
+    Engine::Engine() {}
 
     Engine::Engine(const Options& o, unsigned int capacity) : worker_control(o.worker_control) {
         WorkerControlAccess::attach(worker_control, capacity);
