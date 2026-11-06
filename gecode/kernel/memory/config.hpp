@@ -102,7 +102,7 @@ namespace Gecode { namespace Kernel {
          * Currently, for 32 bit machines, the minimal size is 8 bytes.
          * For 64 bit machines, it is 16 bytes.
          */
-        const int fl_size_min = ((sizeof(void*) == 4) ? 2 : 2);
+        const int fl_size_min = 2;
         /**
          * \brief Maximal size for free list element
          *

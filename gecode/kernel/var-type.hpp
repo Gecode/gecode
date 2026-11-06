@@ -681,12 +681,15 @@ namespace Gecode { namespace Set {
             break;
         }
         case ME_SET_CARD: {
-            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {
-                (ME_SET_NONE ^ ME_SET_CARD) << med_fst, (ME_SET_VAL ^ ME_SET_VAL) << med_fst,
-                (ME_SET_CARD ^ ME_SET_CARD) << med_fst, (ME_SET_LUB ^ ME_SET_CLUB) << med_fst,
-                (ME_SET_GLB ^ ME_SET_CGLB) << med_fst,  (ME_SET_BB ^ ME_SET_CBB) << med_fst,
-                (ME_SET_CLUB ^ ME_SET_CLUB) << med_fst, (ME_SET_CGLB ^ ME_SET_CGLB) << med_fst,
-                (ME_SET_CBB ^ ME_SET_CBB) << med_fst};
+            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {(ME_SET_NONE ^ ME_SET_CARD) << med_fst,
+                                                                       0,
+                                                                       0,
+                                                                       (ME_SET_LUB ^ ME_SET_CLUB) << med_fst,
+                                                                       (ME_SET_GLB ^ ME_SET_CGLB) << med_fst,
+                                                                       (ME_SET_BB ^ ME_SET_CBB) << med_fst,
+                                                                       0,
+                                                                       0,
+                                                                       0};
             Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
             Gecode::ModEventDelta med_n = me_c[me_o];
             if (med_n == 0)
@@ -695,12 +698,15 @@ namespace Gecode { namespace Set {
             break;
         }
         case ME_SET_LUB: {
-            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {
-                (ME_SET_NONE ^ ME_SET_LUB) << med_fst,  (ME_SET_VAL ^ ME_SET_VAL) << med_fst,
-                (ME_SET_CARD ^ ME_SET_CLUB) << med_fst, (ME_SET_LUB ^ ME_SET_LUB) << med_fst,
-                (ME_SET_GLB ^ ME_SET_BB) << med_fst,    (ME_SET_BB ^ ME_SET_BB) << med_fst,
-                (ME_SET_CLUB ^ ME_SET_CLUB) << med_fst, (ME_SET_CGLB ^ ME_SET_CBB) << med_fst,
-                (ME_SET_CBB ^ ME_SET_CBB) << med_fst};
+            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {(ME_SET_NONE ^ ME_SET_LUB) << med_fst,
+                                                                       0,
+                                                                       (ME_SET_CARD ^ ME_SET_CLUB) << med_fst,
+                                                                       0,
+                                                                       (ME_SET_GLB ^ ME_SET_BB) << med_fst,
+                                                                       0,
+                                                                       0,
+                                                                       (ME_SET_CGLB ^ ME_SET_CBB) << med_fst,
+                                                                       0};
             Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
             Gecode::ModEventDelta med_n = me_c[me_o];
             if (med_n == 0)
@@ -710,11 +716,9 @@ namespace Gecode { namespace Set {
         }
         case ME_SET_GLB: {
             static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {
-                (ME_SET_NONE ^ ME_SET_GLB) << med_fst,  (ME_SET_VAL ^ ME_SET_VAL) << med_fst,
-                (ME_SET_CARD ^ ME_SET_CGLB) << med_fst, (ME_SET_LUB ^ ME_SET_BB) << med_fst,
-                (ME_SET_GLB ^ ME_SET_GLB) << med_fst,   (ME_SET_BB ^ ME_SET_BB) << med_fst,
-                (ME_SET_CLUB ^ ME_SET_CBB) << med_fst,  (ME_SET_CGLB ^ ME_SET_CGLB) << med_fst,
-                (ME_SET_CBB ^ ME_SET_CBB) << med_fst};
+                (ME_SET_NONE ^ ME_SET_GLB) << med_fst, 0, (ME_SET_CARD ^ ME_SET_CGLB) << med_fst,
+                (ME_SET_LUB ^ ME_SET_BB) << med_fst,   0, 0,
+                (ME_SET_CLUB ^ ME_SET_CBB) << med_fst, 0, 0};
             Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
             Gecode::ModEventDelta med_n = me_c[me_o];
             if (med_n == 0)
@@ -723,12 +727,15 @@ namespace Gecode { namespace Set {
             break;
         }
         case ME_SET_BB: {
-            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {
-                (ME_SET_NONE ^ ME_SET_BB) << med_fst,  (ME_SET_VAL ^ ME_SET_VAL) << med_fst,
-                (ME_SET_CARD ^ ME_SET_CBB) << med_fst, (ME_SET_LUB ^ ME_SET_BB) << med_fst,
-                (ME_SET_GLB ^ ME_SET_BB) << med_fst,   (ME_SET_BB ^ ME_SET_BB) << med_fst,
-                (ME_SET_CLUB ^ ME_SET_CBB) << med_fst, (ME_SET_CGLB ^ ME_SET_CBB) << med_fst,
-                (ME_SET_CBB ^ ME_SET_CBB) << med_fst};
+            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {(ME_SET_NONE ^ ME_SET_BB) << med_fst,
+                                                                       0,
+                                                                       (ME_SET_CARD ^ ME_SET_CBB) << med_fst,
+                                                                       (ME_SET_LUB ^ ME_SET_BB) << med_fst,
+                                                                       (ME_SET_GLB ^ ME_SET_BB) << med_fst,
+                                                                       0,
+                                                                       (ME_SET_CLUB ^ ME_SET_CBB) << med_fst,
+                                                                       (ME_SET_CGLB ^ ME_SET_CBB) << med_fst,
+                                                                       0};
             Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
             Gecode::ModEventDelta med_n = me_c[me_o];
             if (med_n == 0)
@@ -737,12 +744,15 @@ namespace Gecode { namespace Set {
             break;
         }
         case ME_SET_CLUB: {
-            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {
-                (ME_SET_NONE ^ ME_SET_CLUB) << med_fst, (ME_SET_VAL ^ ME_SET_VAL) << med_fst,
-                (ME_SET_CARD ^ ME_SET_CLUB) << med_fst, (ME_SET_LUB ^ ME_SET_CLUB) << med_fst,
-                (ME_SET_GLB ^ ME_SET_CBB) << med_fst,   (ME_SET_BB ^ ME_SET_CBB) << med_fst,
-                (ME_SET_CLUB ^ ME_SET_CLUB) << med_fst, (ME_SET_CGLB ^ ME_SET_CBB) << med_fst,
-                (ME_SET_CBB ^ ME_SET_CBB) << med_fst};
+            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {(ME_SET_NONE ^ ME_SET_CLUB) << med_fst,
+                                                                       0,
+                                                                       (ME_SET_CARD ^ ME_SET_CLUB) << med_fst,
+                                                                       (ME_SET_LUB ^ ME_SET_CLUB) << med_fst,
+                                                                       (ME_SET_GLB ^ ME_SET_CBB) << med_fst,
+                                                                       (ME_SET_BB ^ ME_SET_CBB) << med_fst,
+                                                                       0,
+                                                                       (ME_SET_CGLB ^ ME_SET_CBB) << med_fst,
+                                                                       0};
             Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
             Gecode::ModEventDelta med_n = me_c[me_o];
             if (med_n == 0)
@@ -751,12 +761,15 @@ namespace Gecode { namespace Set {
             break;
         }
         case ME_SET_CGLB: {
-            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {
-                (ME_SET_NONE ^ ME_SET_CGLB) << med_fst, (ME_SET_VAL ^ ME_SET_VAL) << med_fst,
-                (ME_SET_CARD ^ ME_SET_CGLB) << med_fst, (ME_SET_LUB ^ ME_SET_CBB) << med_fst,
-                (ME_SET_GLB ^ ME_SET_CGLB) << med_fst,  (ME_SET_BB ^ ME_SET_CBB) << med_fst,
-                (ME_SET_CLUB ^ ME_SET_CBB) << med_fst,  (ME_SET_CGLB ^ ME_SET_CGLB) << med_fst,
-                (ME_SET_CBB ^ ME_SET_CBB) << med_fst};
+            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {(ME_SET_NONE ^ ME_SET_CGLB) << med_fst,
+                                                                       0,
+                                                                       (ME_SET_CARD ^ ME_SET_CGLB) << med_fst,
+                                                                       (ME_SET_LUB ^ ME_SET_CBB) << med_fst,
+                                                                       (ME_SET_GLB ^ ME_SET_CGLB) << med_fst,
+                                                                       (ME_SET_BB ^ ME_SET_CBB) << med_fst,
+                                                                       (ME_SET_CLUB ^ ME_SET_CBB) << med_fst,
+                                                                       0,
+                                                                       0};
             Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
             Gecode::ModEventDelta med_n = me_c[me_o];
             if (med_n == 0)
@@ -765,12 +778,15 @@ namespace Gecode { namespace Set {
             break;
         }
         case ME_SET_CBB: {
-            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {
-                (ME_SET_NONE ^ ME_SET_CBB) << med_fst, (ME_SET_VAL ^ ME_SET_VAL) << med_fst,
-                (ME_SET_CARD ^ ME_SET_CBB) << med_fst, (ME_SET_LUB ^ ME_SET_CBB) << med_fst,
-                (ME_SET_GLB ^ ME_SET_CBB) << med_fst,  (ME_SET_BB ^ ME_SET_CBB) << med_fst,
-                (ME_SET_CLUB ^ ME_SET_CBB) << med_fst, (ME_SET_CGLB ^ ME_SET_CBB) << med_fst,
-                (ME_SET_CBB ^ ME_SET_CBB) << med_fst};
+            static const Gecode::ModEventDelta me_c[ME_SET_CBB + 1] = {(ME_SET_NONE ^ ME_SET_CBB) << med_fst,
+                                                                       0,
+                                                                       (ME_SET_CARD ^ ME_SET_CBB) << med_fst,
+                                                                       (ME_SET_LUB ^ ME_SET_CBB) << med_fst,
+                                                                       (ME_SET_GLB ^ ME_SET_CBB) << med_fst,
+                                                                       (ME_SET_BB ^ ME_SET_CBB) << med_fst,
+                                                                       (ME_SET_CLUB ^ ME_SET_CBB) << med_fst,
+                                                                       (ME_SET_CGLB ^ ME_SET_CBB) << med_fst,
+                                                                       0};
             Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
             Gecode::ModEventDelta med_n = me_c[me_o];
             if (med_n == 0)

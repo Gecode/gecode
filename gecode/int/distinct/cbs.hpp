@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         UB ub{1, 1};
         for (int i = 0; i < x.size(); i++) {
             unsigned int s = x[i].size();
-            if ((s >= MAX_MINC_FACTORS) || (s >= WIDTH_LIANG_BAI_FACTORS))
+            if (s >= std::min(MAX_MINC_FACTORS, WIDTH_LIANG_BAI_FACTORS))
                 throw Gecode::Exception("Int::Distinct::cbsdistinct",
                                         "Variable cardinality too big for using counting-based"
                                         "search with distinct constraints");
