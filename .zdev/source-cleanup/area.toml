@@ -1,7 +1,0 @@
-schema_version = 1
-tag = "source-cleanup"
-title = "(void) parameter-list cleanup"
-objective = "C++ code drops C-style (void) parameter lists through a reproducible tool run guarded by modernize-redundant-void-arg."
-branch = "feature/breaking-7"
-lifecycle = "open"
-base_commit = "0c81e65ae53173d616dbf2712baa00a29c8d33ba"
