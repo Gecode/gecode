@@ -36,7 +36,6 @@
 
 /// %Tests for unary scheduling constraints
 
-
 namespace Test::Int::Unary {
 
     /**
