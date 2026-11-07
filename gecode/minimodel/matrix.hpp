@@ -71,6 +71,7 @@ namespace Gecode {
     operator ArgsType() const {
         return _r;
     }
+    // MSVC needs the qualified name in this conversion function
     template <class A>
     inline Slice<A>::
     operator Matrix<typename Slice<A>::ArgsType>() const {
