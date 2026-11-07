@@ -109,6 +109,7 @@ namespace Gecode {
         }
         bool
         random() const override {
+            // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.rand): a member random(), not the C library function
             return s.random();
         }
         /// Constructor for initialization

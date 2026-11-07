@@ -160,7 +160,7 @@ namespace Test {
             EmptySpace home;
             int* p = home.alloc<int>(8);
             int* tail = p + 4;
-            p = home.realloc<int>(p, 8, 4);
+            (void)home.realloc<int>(p, 8, 4);
             return (home.fl_alloc<4 * sizeof(int)>() == tail) && shrink_destroys_tail(home);
         }
     };

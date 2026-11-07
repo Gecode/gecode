@@ -215,6 +215,7 @@ namespace Gecode {
         : ViewBrancher<View, Filter, n>(home, x, vs, std::move(bf)), vsc(vsc0), p(std::move(vvp)) {
         vsc->random_split(this->id());
         vsc->random_split(0U);
+        // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.rand): a member random(), not the C library function
         this->random_state = this->random_state || vsc->random();
         if (vsc->notice() || f.notice() || p.notice())
             home.notice(*this, AP_DISPOSE, true);

@@ -143,6 +143,7 @@ namespace Gecode {
             // Key each selector by brancher and role; value selectors use role 0.
             vs[i]->random_split(id());
             vs[i]->random_split(1U + static_cast<unsigned int>(i));
+            // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.rand): a member random(), not the C library function
             random_state = random_state || vs[i]->random();
         }
         for (int i = 0; i < n; i++)
