@@ -1,5 +1,7 @@
-# Use clang-tidy 22. The groups below are enabled as a whole; each exclusion
-# is a check that has not been adopted. See docs/code-style.md.
+# Use clang-tidy 22. Each group below is enabled as a whole, and a line that
+# starts with a minus excludes a check that was tried and does not fit. The
+# reasons are in docs/code-style.md. Checks from other groups are named one by
+# one, because most of those groups are aliases of checks enabled here.
 Checks: >-
   -*,
   clang-analyzer-core.*,
@@ -38,7 +40,6 @@ Checks: >-
   -bugprone-switch-missing-default-case,
   -bugprone-throwing-static-initialization,
   -bugprone-unchecked-string-to-number-conversion,
-  -bugprone-unused-return-value,
   concurrency-*,
   -concurrency-mt-unsafe,
   misc-*,
@@ -90,7 +91,6 @@ FormatStyle: file
 CheckOptions:
   # Explicit discards document intentional ownership handoffs.
   bugprone-unused-return-value.AllowCastToVoid: true
-  cert-err33-c.AllowCastToVoid: true
   bugprone-empty-catch.IgnoreCatchWithKeywords: 'Expected;Ignored'
   # main reports nothing useful by catching, and the move members this
   # reports are implicit ones of value types and lambdas.
@@ -98,6 +98,7 @@ CheckOptions:
   bugprone-exception-escape.CheckMoveMemberFunctions: false
   # glibc needs this feature macro defined before any system header.
   bugprone-reserved-identifier.AllowedIdentifiers: '_GNU_SOURCE'
+  cert-err33-c.AllowCastToVoid: true
   # Checking functions finds the real cases; classes and test registration
   # objects in .cpp files would only need wrapping in anonymous namespaces.
   misc-use-internal-linkage.AnalyzeTypes: false
