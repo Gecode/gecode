@@ -49,10 +49,9 @@ namespace Gecode {
 
     CPProfilerSearchTracer::GetInfo::~GetInfo() = default;
 
-    CPProfilerSearchTracer::CPProfilerSearchTracer(int eid, std::string name0, unsigned int port,
-                                                   const GetInfo* pgetinfo)
-        : connector(new CPProfiler::Connector(port)), execution_id(eid), name(std::move(name0)), restart(0),
-          pgi(pgetinfo) {}
+    CPProfilerSearchTracer::CPProfilerSearchTracer(int eid, std::string name0, unsigned int port, const GetInfo* pgi0)
+        : connector(new CPProfiler::Connector(port)), execution_id(eid), name(std::move(name0)), restart(0), pgi(pgi0) {
+    }
 
     void
     CPProfilerSearchTracer::init() {

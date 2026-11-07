@@ -7,7 +7,6 @@
 #ifndef GECODE_EXAMPLES_COMMON_PATTERN_HH
 #define GECODE_EXAMPLES_COMMON_PATTERN_HH
 
-#include <algorithm>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 

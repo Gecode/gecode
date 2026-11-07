@@ -30,7 +30,6 @@
  *
  */
 
-#include <algorithm>
 #include <gecode/int.hh>
 
 #include <algorithm>

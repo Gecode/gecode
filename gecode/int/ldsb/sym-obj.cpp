@@ -84,11 +84,11 @@ namespace Gecode::Int::LDSB {
 
     ValueSymmetryObject::ValueSymmetryObject(IntSet vs) : values(vs) {}
 
-    VariableSequenceSymmetryObject::VariableSequenceSymmetryObject(ArgArray<VarImpBase*> x, int ss) : seq_size(ss) {
-        nxs = x.size();
+    VariableSequenceSymmetryObject::VariableSequenceSymmetryObject(ArgArray<VarImpBase*> vars, int ss) : seq_size(ss) {
+        nxs = vars.size();
         xs = new VarImpBase*[nxs];
         for (int i = 0; i < nxs; i++)
-            xs[i] = x[i];
+            xs[i] = vars[i];
     }
     VariableSequenceSymmetryObject::~VariableSequenceSymmetryObject() {
         delete[] xs;

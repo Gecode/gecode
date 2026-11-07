@@ -32,7 +32,6 @@
 
 #include "test/int.hh"
 
-#include <algorithm>
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
 
