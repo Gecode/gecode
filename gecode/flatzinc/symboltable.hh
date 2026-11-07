@@ -36,7 +36,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /// Symbol table mapping identifiers (strings) to values
     template <class Val>
@@ -70,7 +70,7 @@ namespace Gecode { namespace FlatZinc {
         return true;
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 #endif
 
 // STATISTICS: flatzinc-any

@@ -9,7 +9,7 @@
 #include <gecode/flatzinc.hh>
 
 #if !defined(_WIN32) && !defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     BlackBoxProcessSession*
     create_blackbox_process(const std::string&, const std::vector<std::string>&) {
@@ -17,7 +17,7 @@ namespace Gecode { namespace FlatZinc {
                                     "platform");
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 #endif
 
 // STATISTICS: flatzinc-other

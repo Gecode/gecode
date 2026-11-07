@@ -37,7 +37,7 @@
 
 // This is a workaround for a bug in flex that only shows up
 // with the Microsoft C++ compiler
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 #define YY_NO_UNISTD_H
 #ifdef __cplusplus
 extern "C" int isatty(int);
@@ -46,7 +46,7 @@ extern "C" int isatty(int);
 
 // The Microsoft C++ compiler marks certain functions as deprecated,
 // so let's take the alternative definitions
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 #define strdup _strdup
 #define fileno _fileno
 #endif
@@ -64,7 +64,7 @@ extern "C" int isatty(int);
 #include <gecode/flatzinc/parser.tab.hpp>
 #include <gecode/flatzinc/symboltable.hh>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     class VarSpec;
     using NamedVarSpec = std::pair<std::string, VarSpec*>;
@@ -202,7 +202,7 @@ namespace Gecode { namespace FlatZinc {
         ParserState(const std::string& b, std::ostream& err0, Gecode::FlatZinc::FlatZincSpace* fg0)
             : yyscanner(nullptr), buf(b.c_str()), pos(0), length(b.size()), fg(fg0), had_error(false), err(err0) {}
 
-        ParserState(char* buf0, int length0, std::ostream& err0, Gecode::FlatZinc::FlatZincSpace* fg0)
+        ParserState(const char* buf0, int length0, std::ostream& err0, Gecode::FlatZinc::FlatZincSpace* fg0)
             : yyscanner(nullptr), buf(buf0), pos(0), length(length0), fg(fg0), had_error(false), err(err0) {}
 
         ~ParserState();
@@ -264,28 +264,31 @@ namespace Gecode { namespace FlatZinc {
         AST::Array*
         get_output() {
             OutputOrder oo;
-            std::sort(output_items.begin(), output_items.end(), oo);
+            std::ranges::sort(output_items, oo);
             AST::Array* a = new AST::Array();
-            for (unsigned int i = 0; i < output_items.size(); i++) {
-                a->a.push_back(new AST::String(output_items[i].first + " = "));
-                if (output_items[i].second->is_array()) {
-                    AST::Array* oa = output_items[i].second->get_array();
-                    for (unsigned int j = 0; j < oa->a.size(); j++) {
-                        a->a.push_back(oa->a[j]);
-                        oa->a[j] = nullptr;
+            for (std::pair<std::string, AST::Node*>& item : output_items) {
+                a->a.push_back(new AST::String(item.first + " = "));
+                if (item.second->is_array()) {
+                    AST::Array* oa = item.second->get_array();
+                    for (AST::Node*& element : oa->a) {
+                        a->a.push_back(element);
+                        element = nullptr;
                     }
-                    delete output_items[i].second;
+                    delete item.second;
                 } else {
-                    a->a.push_back(output_items[i].second);
+                    a->a.push_back(item.second);
                 }
-                output_items[i].second = nullptr;
+                item.second = nullptr;
                 a->a.push_back(new AST::String(";\n"));
             }
             return a;
         }
     };
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
+
+/// Report error \a str for the parser state \a parm, called by the lexer too
+void yyerror(void* parm, const char* str);
 
 #endif
 
