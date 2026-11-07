@@ -1158,8 +1158,8 @@ namespace Test::Int {
     }
 
     OpenTest::OpenTest(const std::string& name, int items0, int extra, const Gecode::IntSet& domain,
-                       Gecode::IntPropLevel level)
-        : Test(name, items0 + extra, domain, false, level), items(items0) {}
+                       Gecode::IntPropLevel ipl)
+        : Test(name, items0 + extra, domain, false, ipl), items(items0) {}
 
     void
     OpenTest::post(Gecode::Space& home, Gecode::IntVarArray& x) {

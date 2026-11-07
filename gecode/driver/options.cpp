@@ -548,7 +548,7 @@ namespace Gecode {
         }
         lst = &o;
     }
-    BaseOptions::BaseOptions(const char* n) : fst(nullptr), lst(nullptr), _name(Driver::BaseOption::strdup(n)) {}
+    BaseOptions::BaseOptions(const char* s) : fst(nullptr), lst(nullptr), _name(Driver::BaseOption::strdup(s)) {}
 
     void
     BaseOptions::name(const char* n) {
@@ -634,8 +634,8 @@ namespace Gecode {
         Driver::BaseOption::strdel(_name);
     }
 
-    Options::Options(const char* n)
-        : BaseOptions(n),
+    Options::Options(const char* s)
+        : BaseOptions(s),
 
           _model("model", "model variants"), _symmetry("symmetry", "symmetry variants"),
           _propagation("propagation", "propagation variants"), _branching("branching", "branching variants"),
@@ -734,7 +734,7 @@ namespace Gecode {
 #endif
     }
 
-    SizeOptions::SizeOptions(const char* e) : Options(e), _size(0) {}
+    SizeOptions::SizeOptions(const char* s) : Options(s), _size(0) {}
 
     void
     SizeOptions::help() {
@@ -752,15 +752,15 @@ namespace Gecode {
         size(static_cast<unsigned int>(atoi(argv[1])));
     }
 
-    InstanceOptions::InstanceOptions(const char* e)
-        : Options(e), _inst(nullptr), _spec(nullptr),
+    InstanceOptions::InstanceOptions(const char* s)
+        : Options(s), _inst(nullptr), _spec(nullptr),
           _spec_file("spec", "file with a reader spec for instance files (default: the script's own spec)"),
           _param("param", "parameter for the reader spec (name=value; repeat or separate by commas for several)") {}
 
-    InstanceOptions::InstanceOptions(const char* e, const char* s) : InstanceOptions(e) {
+    InstanceOptions::InstanceOptions(const char* s, const char* spec0) : InstanceOptions(s) {
         add(_spec_file);
         add(_param);
-        spec(s);
+        spec(spec0);
     }
 
     void

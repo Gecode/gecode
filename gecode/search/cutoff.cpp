@@ -144,8 +144,8 @@ namespace Gecode::Search {
         return new CutoffLuby(scale);
     }
     Cutoff*
-    Cutoff::geometric(unsigned long long int base, double scale) {
-        return new CutoffGeometric(base, scale);
+    Cutoff::geometric(unsigned long long int scale, double base) {
+        return new CutoffGeometric(scale, base);
     }
     Cutoff*
     Cutoff::rnd(unsigned int seed, unsigned long long int min, unsigned long long int max, unsigned long long int n) {
