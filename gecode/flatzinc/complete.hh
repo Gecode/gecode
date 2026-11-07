@@ -38,7 +38,7 @@
 
 using namespace Gecode::Int;
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     class Complete : public UnaryPropagator<BoolView, PC_BOOL_VAL> {
     protected:
@@ -81,7 +81,7 @@ namespace Gecode { namespace FlatZinc {
         }
     };
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif // FLATZINC_COMPLETE_HH
 

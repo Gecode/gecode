@@ -44,7 +44,7 @@
 #include <fstream>
 #include <memory>
 
-#if defined __GNUC__
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
@@ -80,7 +80,7 @@ void yyerror(void* parm, const char *str) {
   pp->had_error = true;
 }
 
-void yyassert(ParserState* pp, bool cond, const char* str)
+static void yyassert(ParserState* pp, bool cond, const char* str)
 {
   if (!cond) {
     pp->err << "Error: " << str
@@ -90,12 +90,17 @@ void yyassert(ParserState* pp, bool cond, const char* str)
   }
 }
 
+/// Free a string token, which the lexer allocates with strdup
+static void free_token(char* s) {
+  free(s); // NOLINT(cppcoreguidelines-no-malloc): strdup memory needs free
+}
+
 /*
  * The symbol tables
  *
  */
 
-AST::Node* get_array_element(ParserState* pp, const string& id, int offset,
+static AST::Node* get_array_element(ParserState* pp, const string& id, int offset,
                            bool annotation) {
   if (offset > 0) {
     SymbolEntry e;
@@ -173,7 +178,7 @@ error:
   pp->had_error = true;
   return new AST::IntVar(0); // keep things consistent
 }
-AST::Node* get_var_ref_arg(ParserState* pp, const string& id, bool annotation = false) {
+static AST::Node* get_var_ref_arg(ParserState* pp, const string& id, bool annotation = false) {
   SymbolEntry e;
   string n;
   if (annotation)
@@ -197,7 +202,7 @@ AST::Node* get_var_ref_arg(ParserState* pp, const string& id, bool annotation = 
   return new AST::IntVar(0); // keep things consistent
 }
 
-void add_domain_constraint(ParserState* pp, const std::string& id, AST::Node* var,
+static void add_domain_constraint(ParserState* pp, const std::string& id, AST::Node* var,
                          Option<AST::SetLit* >& dom) {
   if (!dom())
     return;
@@ -207,7 +212,7 @@ void add_domain_constraint(ParserState* pp, const std::string& id, AST::Node* va
   pp->domain_constraints.push_back(new ConExpr(id, args, nullptr));
 }
 
-void add_domain_constraint(ParserState* pp, AST::Node* var,
+static void add_domain_constraint(ParserState* pp, AST::Node* var,
                          Option<std::pair<double,double>* > dom) {
   if (!dom())
     return;
@@ -227,7 +232,7 @@ void add_domain_constraint(ParserState* pp, AST::Node* var,
   delete dom.some();
 }
 
-int get_base_int_var(ParserState* pp, int i) {
+static int get_base_int_var(ParserState* pp, int i) {
   int base = i;
   IntVarSpec* ivs = static_cast<IntVarSpec*>(pp->int_vars[base].second);
   while (ivs->alias) {
@@ -236,7 +241,7 @@ int get_base_int_var(ParserState* pp, int i) {
   }
   return base;
 }
-int get_base_bool_var(ParserState* pp, int i) {
+static int get_base_bool_var(ParserState* pp, int i) {
   int base = i;
   BoolVarSpec* ivs = static_cast<BoolVarSpec*>(pp->bool_vars[base].second);
   while (ivs->alias) {
@@ -245,7 +250,7 @@ int get_base_bool_var(ParserState* pp, int i) {
   }
   return base;
 }
-int get_base_float_var(ParserState* pp, int i) {
+static int get_base_float_var(ParserState* pp, int i) {
   int base = i;
   FloatVarSpec* ivs = static_cast<FloatVarSpec*>(pp->float_vars[base].second);
   while (ivs->alias) {
@@ -254,7 +259,7 @@ int get_base_float_var(ParserState* pp, int i) {
   }
   return base;
 }
-int get_base_set_var(ParserState* pp, int i) {
+static int get_base_set_var(ParserState* pp, int i) {
   int base = i;
   SetVarSpec* ivs = static_cast<SetVarSpec*>(pp->set_vars[base].second);
   while (ivs->alias) {
@@ -269,7 +274,7 @@ int get_base_set_var(ParserState* pp, int i) {
  *
  */
 
-void initialize_space(ParserState* pp) {
+static void initialize_space(ParserState* pp) {
   if (!pp->had_error)
     pp->fg->init(pp->int_vars.size(),
                  pp->bool_vars.size(),
@@ -466,7 +471,7 @@ void initialize_space(ParserState* pp) {
   }
 }
 
-void fill_printer(ParserState& pp, Gecode::FlatZinc::Printer& p) {
+static void fill_printer(ParserState& pp, Gecode::FlatZinc::Printer& p) {
   p.init(pp.get_output());
   for (unsigned int i=0; i<pp.int_vars.size(); i++) {
     if (!pp.had_error) {
@@ -494,7 +499,7 @@ void fill_printer(ParserState& pp, Gecode::FlatZinc::Printer& p) {
 #endif
 }
 
-AST::Node* array_output(AST::Call* ann) {
+static AST::Node* array_output(AST::Call* ann) {
   AST::Array* a = nullptr;
 
   if (ann->args->is_array()) {
@@ -506,13 +511,13 @@ AST::Node* array_output(AST::Call* ann) {
   std::ostringstream oss;
 
   oss << "array" << a->a.size() << "d(";
-  for (unsigned int i=0; i<a->a.size(); i++) {
-    AST::SetLit* s = a->a[i]->get_set();
-    if (s->empty())
+  for (AST::Node* element : a->a) {
+    AST::SetLit* s = element->get_set();
+    if (s->empty()) {
       oss << "{}, ";
-    else if (s->interval)
+    } else if (s->interval) {
       oss << s->min << ".." << s->max << ", ";
-    else {
+    } else {
       oss << "{";
       for (unsigned int j=0; j<s->s.size(); j++) {
         oss << s->s[j];
@@ -583,7 +588,7 @@ namespace Gecode::FlatZinc {
     std::unique_ptr<char,decltype(unmap)> mapping(data,unmap);
 
     if (fzs == nullptr) {
-      owned.reset(new FlatZincSpace(rnd));
+      owned = std::make_unique<FlatZincSpace>(rnd);
       fzs = owned.get();
     }
     ParserState pp(mapping.get(), sbuf.st_size, err, fzs);
@@ -597,7 +602,7 @@ namespace Gecode::FlatZinc {
     std::string s = string(istreambuf_iterator<char>(file),
                            istreambuf_iterator<char>());
     if (fzs == nullptr) {
-      owned.reset(new FlatZincSpace(rnd));
+      owned = std::make_unique<FlatZincSpace>(rnd);
       fzs = owned.get();
     }
     ParserState pp(s, err, fzs);
@@ -621,7 +626,7 @@ namespace Gecode::FlatZinc {
     std::unique_ptr<FlatZincSpace> owned;
 
     if (fzs == nullptr) {
-      owned.reset(new FlatZincSpace(rnd));
+      owned = std::make_unique<FlatZincSpace>(rnd);
       fzs = owned.get();
     }
     ParserState pp(s, err, fzs);
@@ -775,7 +780,7 @@ constraint_items_head:
 
 preddecl_item:
       FZ_PREDICATE FZ_ID '(' pred_arg_list ')'
-      { free($2); }
+      { free_token($2); }
 
 pred_arg_list:
       /* empty */
@@ -787,7 +792,7 @@ pred_arg_list_head:
 
 pred_arg:
       pred_arg_type ':' FZ_ID
-      { free($3); }
+      { free_token($3); }
 
 pred_arg_type:
       FZ_ARRAY '[' pred_array_init ']' FZ_OF pred_arg_simple_type
@@ -848,7 +853,7 @@ vardecl_item:
           pp->int_vars.push_back(NamedVarSpec($4,
             new IntVarSpec($2,!print,func_dep)));
         }
-        delete $5; free($4);
+        delete $5; free_token($4);
       }
     | FZ_VAR bool_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
@@ -880,7 +885,7 @@ vardecl_item:
           pp->bool_vars.push_back(NamedVarSpec($4,
             new BoolVarSpec($2,!print,func_dep)));
         }
-        delete $5; free($4);
+        delete $5; free_token($4);
       }
     | FZ_VAR float_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
@@ -919,7 +924,7 @@ vardecl_item:
           pp->float_vars.push_back(NamedVarSpec($4,
             new FloatVarSpec(dom,!print,func_dep)));
         }
-        delete $5; free($4);
+        delete $5; free_token($4);
       }
     | FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
@@ -952,7 +957,7 @@ vardecl_item:
           pp->set_vars.push_back(NamedVarSpec($6,
             new SetVarSpec($4,!print,func_dep)));
         }
-        delete $7; free($6);
+        delete $7; free_token($6);
       }
     | FZ_INT ':' var_par_id annotations '=' non_array_expr
       {
@@ -961,7 +966,7 @@ vardecl_item:
         yyassert(pp,
           pp->symbols.put($3, se_i($6->get_int())),
           "Duplicate symbol");
-        delete $6; delete $4; free($3);
+        delete $6; delete $4; free_token($3);
       }
     | FZ_FLOAT ':' var_par_id annotations '=' non_array_expr
       {
@@ -971,7 +976,7 @@ vardecl_item:
         yyassert(pp,
           pp->symbols.put($3, se_f(pp->float_values.size()-1)),
           "Duplicate symbol");
-        delete $6; delete $4; free($3);
+        delete $6; delete $4; free_token($3);
       }
     | FZ_BOOL ':' var_par_id annotations '=' non_array_expr
       {
@@ -980,7 +985,7 @@ vardecl_item:
         yyassert(pp,
           pp->symbols.put($3, se_b($6->get_bool())),
           "Duplicate symbol");
-        delete $6; delete $4; free($3);
+        delete $6; delete $4; free_token($3);
       }
     | FZ_SET FZ_OF FZ_INT ':' var_par_id annotations '=' non_array_expr
       {
@@ -992,7 +997,7 @@ vardecl_item:
           pp->symbols.put($5, se_s(pp->set_values.size()-1)),
           "Duplicate symbol");
         delete set;
-        delete $6; free($5);
+        delete $6; free_token($5);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR int_ti_expr_tail ':'
         var_par_id annotations vardecl_int_var_array_init
@@ -1019,7 +1024,7 @@ vardecl_item:
                     if (print)
                       ivsv->introduced = false;
                     vars[i] = pp->int_vars.size();
-                    pp->int_vars.push_back(NamedVarSpec($11, ivsv));
+                    pp->int_vars.emplace_back($11, ivsv);
                   }
                   if (!pp->had_error && $9()) {
                     Option<AST::SetLit*> opt =
@@ -1039,7 +1044,7 @@ vardecl_item:
                          : Option<AST::SetLit*>::none();
                   IntVarSpec* ispec = new IntVarSpec(dom,!print,false);
                   vars[i] = pp->int_vars.size();
-                  pp->int_vars.push_back(NamedVarSpec($11, ispec));
+                  pp->int_vars.emplace_back($11, ispec);
                 }
               }
             }
@@ -1056,14 +1061,14 @@ vardecl_item:
           }
           int iva = pp->arrays.size();
           pp->arrays.push_back(vars.size());
-          for (unsigned int i=0; i<vars.size(); i++)
-            pp->arrays.push_back(vars[i]);
+          for (int v : vars)
+            pp->arrays.push_back(v);
           yyassert(pp,
             pp->symbols.put($11, se_iva(iva)),
             "Duplicate symbol");
         }
         if ($9()) delete $9.some();
-        delete $12; free($11);
+        delete $12; free_token($11);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR bool_ti_expr_tail ':'
         var_par_id annotations vardecl_bool_var_array_init
@@ -1089,7 +1094,7 @@ vardecl_item:
                   if (print)
                     bvsv->introduced = false;
                   vars[i] = pp->bool_vars.size();
-                  pp->bool_vars.push_back(NamedVarSpec($11, (*vsv)[i]));
+                  pp->bool_vars.emplace_back($11, (*vsv)[i]);
                 }
                 if (!pp->had_error && $9()) {
                   Option<AST::SetLit*> opt =
@@ -1123,14 +1128,14 @@ vardecl_item:
           }
           int bva = pp->arrays.size();
           pp->arrays.push_back(vars.size());
-          for (unsigned int i=0; i<vars.size(); i++)
-            pp->arrays.push_back(vars[i]);
+          for (int v : vars)
+            pp->arrays.push_back(v);
           yyassert(pp,
             pp->symbols.put($11, se_bva(bva)),
             "Duplicate symbol");
         }
         if ($9()) delete $9.some();
-        delete $12; free($11);
+        delete $12; free_token($11);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR
         float_ti_expr_tail ':' var_par_id annotations
@@ -1158,7 +1163,7 @@ vardecl_item:
                     if (print)
                       ivsv->introduced = false;
                     vars[i] = pp->float_vars.size();
-                    pp->float_vars.push_back(NamedVarSpec($11, ivsv));
+                    pp->float_vars.emplace_back($11, ivsv);
                   }
                   if (!pp->had_error && $9()) {
                     Option<std::pair<double,double>*> opt =
@@ -1178,7 +1183,7 @@ vardecl_item:
                 for (int i=0; i<$5; i++) {
                   FloatVarSpec* ispec = new FloatVarSpec(dom,!print,false);
                   vars[i] = pp->float_vars.size();
-                  pp->float_vars.push_back(NamedVarSpec($11, ispec));
+                  pp->float_vars.emplace_back($11, ispec);
                 }
               }
             }
@@ -1195,14 +1200,14 @@ vardecl_item:
           }
           int fva = pp->arrays.size();
           pp->arrays.push_back(vars.size());
-          for (unsigned int i=0; i<vars.size(); i++)
-            pp->arrays.push_back(vars[i]);
+          for (int v : vars)
+            pp->arrays.push_back(v);
           yyassert(pp,
             pp->symbols.put($11, se_fva(fva)),
             "Duplicate symbol");
         }
         if ($9()) delete $9.some();
-        delete $12; free($11);
+        delete $12; free_token($11);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':'
         var_par_id annotations vardecl_set_var_array_init
@@ -1228,7 +1233,7 @@ vardecl_item:
                   if (print)
                     svsv->introduced = false;
                   vars[i] = pp->set_vars.size();
-                  pp->set_vars.push_back(NamedVarSpec($13, (*vsv)[i]));
+                  pp->set_vars.emplace_back($13, (*vsv)[i]);
                 }
                 if (!pp->had_error && $11()) {
                   Option<AST::SetLit*> opt =
@@ -1248,7 +1253,7 @@ vardecl_item:
                         : Option<AST::SetLit*>::none();
                 SetVarSpec* ispec = new SetVarSpec(dom,!print,false);
                 vars[i] = pp->set_vars.size();
-                pp->set_vars.push_back(NamedVarSpec($13, ispec));
+                pp->set_vars.emplace_back($13, ispec);
               }
             }
           }
@@ -1264,14 +1269,14 @@ vardecl_item:
           }
           int sva = pp->arrays.size();
           pp->arrays.push_back(vars.size());
-          for (unsigned int i=0; i<vars.size(); i++)
-            pp->arrays.push_back(vars[i]);
+          for (int v : vars)
+            pp->arrays.push_back(v);
           yyassert(pp,
             pp->symbols.put($13, se_sva(sva)),
             "Duplicate symbol");
         }
         if ($11()) delete $11.some();
-        delete $14; free($13);
+        delete $14; free_token($13);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_INT ':'
         var_par_id annotations '=' '[' int_list ']'
@@ -1284,14 +1289,14 @@ vardecl_item:
         if (!pp->had_error) {
           int ia = pp->arrays.size();
           pp->arrays.push_back($14->size());
-          for (unsigned int i=0; i<$14->size(); i++)
-            pp->arrays.push_back((*$14)[i]);
+          for (int v : *$14)
+            pp->arrays.push_back(v);
           yyassert(pp,
             pp->symbols.put($10, se_ia(ia)),
             "Duplicate symbol");
         }
         delete $14;
-        free($10);
+        free_token($10);
         delete $11;
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_BOOL ':'
@@ -1304,14 +1309,14 @@ vardecl_item:
         if (!pp->had_error) {
           int ia = pp->arrays.size();
           pp->arrays.push_back($14->size());
-          for (unsigned int i=0; i<$14->size(); i++)
-            pp->arrays.push_back((*$14)[i]);
+          for (int v : *$14)
+            pp->arrays.push_back(v);
           yyassert(pp,
             pp->symbols.put($10, se_ba(ia)),
             "Duplicate symbol");
         }
         delete $14;
-        free($10);
+        free_token($10);
         delete $11;
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_FLOAT ':'
@@ -1325,14 +1330,14 @@ vardecl_item:
           int fa = pp->arrays.size();
           pp->arrays.push_back($14->size());
           pp->arrays.push_back(pp->float_values.size());
-          for (unsigned int i=0; i<$14->size(); i++)
-            pp->float_values.push_back((*$14)[i]);
+          for (double v : *$14)
+            pp->float_values.push_back(v);
           yyassert(pp,
             pp->symbols.put($10, se_fa(fa)),
             "Duplicate symbol");
         }
         delete $14;
-        delete $11; free($10);
+        delete $11; free_token($10);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_SET FZ_OF FZ_INT ':'
         var_par_id annotations '=' '[' set_literal_list ']'
@@ -1345,15 +1350,15 @@ vardecl_item:
           int sa = pp->arrays.size();
           pp->arrays.push_back($16->size());
           pp->arrays.push_back(pp->set_values.size());
-          for (unsigned int i=0; i<$16->size(); i++)
-            pp->set_values.push_back((*$16)[i]);
+          for (const AST::SetLit& v : *$16)
+            pp->set_values.push_back(v);
           yyassert(pp,
             pp->symbols.put($12, se_sa(sa)),
             "Duplicate symbol");
         }
 
         delete $16;
-        delete $13; free($12);
+        delete $13; free_token($12);
       }
 
 int_init :
@@ -1365,16 +1370,16 @@ int_init :
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get($1, e) && (e.t == ST_INTVAR || e.t == ST_INT))
+        if (pp->symbols.get($1, e) && (e.t == ST_INTVAR || e.t == ST_INT)) {
           $$ = new IntVarSpec(Alias(e.i),false,false);
-        else {
+        } else {
           pp->err << "Error: undefined identifier for type int " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           $$ = new IntVarSpec(0,false,false); // keep things consistent
         }
-        free($1);
+        free_token($1);
       }
     | var_par_id '[' FZ_INT_LIT ']'
       {
@@ -1395,7 +1400,7 @@ int_init :
           pp->had_error = true;
           $$ = new IntVarSpec(0,false,false); // keep things consistent
         }
-        free($1);
+        free_token($1);
       }
 
 int_init_list :
@@ -1422,16 +1427,16 @@ float_init :
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get($1, e) && (e.t == ST_FLOATVAR || e.t == ST_FLOAT))
+        if (pp->symbols.get($1, e) && (e.t == ST_FLOATVAR || e.t == ST_FLOAT)) {
           $$ = new FloatVarSpec(Alias(e.i),false,false);
-        else {
+        } else {
           pp->err << "Error: undefined identifier for type float " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           $$ = new FloatVarSpec(0.0,false,false);
         }
-        free($1);
+        free_token($1);
       }
     | var_par_id '[' FZ_INT_LIT ']'
       {
@@ -1451,7 +1456,7 @@ float_init :
           pp->had_error = true;
           $$ = new FloatVarSpec(0.0,false,false);
         }
-        free($1);
+        free_token($1);
       }
 
 float_init_list :
@@ -1477,16 +1482,16 @@ bool_init :
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get($1, e) && (e.t == ST_BOOLVAR || e.t == ST_BOOL))
+        if (pp->symbols.get($1, e) && (e.t == ST_BOOLVAR || e.t == ST_BOOL)) {
           $$ = new BoolVarSpec(Alias(e.i),false,false);
-        else {
+        } else {
           pp->err << "Error: undefined identifier for type bool " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           $$ = new BoolVarSpec(false,false,false);
         }
-        free($1);
+        free_token($1);
       }
     | var_par_id '[' FZ_INT_LIT ']'
       {
@@ -1506,7 +1511,7 @@ bool_init :
           pp->had_error = true;
           $$ = new BoolVarSpec(false,false,false);
         }
-        free($1);
+        free_token($1);
       }
 
 bool_init_list :
@@ -1530,16 +1535,16 @@ set_init :
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        if (pp->symbols.get($1, e) && (e.t == ST_SETVAR || e.t == ST_SET))
+        if (pp->symbols.get($1, e) && (e.t == ST_SETVAR || e.t == ST_SET)) {
           $$ = new SetVarSpec(Alias(e.i),false,false);
-        else {
+        } else {
           pp->err << "Error: undefined identifier for type set " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
           $$ = new SetVarSpec(Alias(0),false,false);
         }
-        free($1);
+        free_token($1);
       }
     | var_par_id '[' FZ_INT_LIT ']'
       {
@@ -1559,7 +1564,7 @@ set_init :
           pp->had_error = true;
           $$ = new SetVarSpec(Alias(0),false,false);
         }
-        free($1);
+        free_token($1);
       }
 
 set_init_list :
@@ -1606,7 +1611,7 @@ constraint_item :
       {
         ParserState *pp = static_cast<ParserState*>(parm);
         std::unique_ptr<ConExpr> ce(new ConExpr($2, $4, $6));
-        free($2);
+        free_token($2);
         if (!pp->had_error) {
           const std::string& cid = ce->id;
           if (cid=="gecode_on_restart_status" && $4->a[0]->is_int_var()) {
@@ -2032,7 +2037,7 @@ non_array_expr :
           pp->had_error = true;
           $$ = nullptr;
         }
-        free($1);
+        free_token($1);
       }
     | var_par_id '[' non_array_expr ']' /* array access */
       {
@@ -2044,7 +2049,7 @@ non_array_expr :
         else
           $$ = new AST::IntLit(0); // keep things consistent
         delete $3;
-        free($1);
+        free_token($1);
       }
 
 non_array_expr_list :
@@ -2096,7 +2101,7 @@ solve_expr:
                   << yyget_lineno(pp->yyscanner) << '\n' << std::flush;
           pp->had_error = true;
         }
-        free($1);
+        free_token($1);
       }
     | FZ_INT_LIT
       {
@@ -2134,7 +2139,7 @@ solve_expr:
           else
             $$ = -pp->arrays[e.i+$3]-1;
         }
-        free($1);
+        free_token($1);
       }
 
 minmax:
@@ -2160,7 +2165,7 @@ annotations_head :
 annotation :
       FZ_ID '(' annotation_list ')'
       {
-        $$ = new AST::Call($1, AST::extract_singleton($3)); free($1);
+        $$ = new AST::Call($1, AST::extract_singleton($3)); free_token($1);
       }
     | annotation_expr
       { $$ = $1; }
@@ -2294,7 +2299,7 @@ ann_non_array_expr :
         }
         if (!got_symbol)
           $$ = get_var_ref_arg(pp,$1,true);
-        free($1);
+        free_token($1);
       }
     | var_par_id '[' ann_non_array_expr ']' /* array access */
       {
@@ -2306,10 +2311,10 @@ ann_non_array_expr :
         else
           $$ = new AST::IntLit(0); // keep things consistent
         delete $3;
-        free($1);
+        free_token($1);
       }
     | FZ_STRING_LIT
       {
         $$ = new AST::String($1);
-        free($1);
+        free_token($1);
       }
