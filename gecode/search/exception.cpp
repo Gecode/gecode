@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,37 +32,31 @@
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 #ifdef GECODE_HAS_EXPERIMENTAL
-  UninitializedGuidance::UninitializedGuidance(const char* l)
-    : Exception(l,"Heuristic guidance is missing") {}
+    UninitializedGuidance::UninitializedGuidance(const char* l) : Exception(l, "Heuristic guidance is missing") {}
 
-  UnsupportedTracer::UnsupportedTracer(const char* l)
-    : Exception(l,"Search engine does not support tracing") {}
+    UnsupportedTracer::UnsupportedTracer(const char* l) : Exception(l, "Search engine does not support tracing") {}
 #endif
 
-  UninitializedCutoff::UninitializedCutoff(const char* l)
-    : Exception(l,"Cutoff for restart-based search is missing") {}
+    UninitializedCutoff::UninitializedCutoff(const char* l)
+        : Exception(l, "Cutoff for restart-based search is missing") {}
 
-  NoAssets::NoAssets(const char* l)
-    : Exception(l,"No assets requested in portfolio") {}
+    NoAssets::NoAssets(const char* l) : Exception(l, "No assets requested in portfolio") {}
 
-  MixedBest::MixedBest(const char* l)
-    : Exception(l,"Illegal combination of best and non-best solution search")
-  {}
+    MixedBest::MixedBest(const char* l) : Exception(l, "Illegal combination of best and non-best solution search") {}
 
-  NoBest::NoBest(const char* l)
-    : Exception(l,"Best solution search is not supported") {}
+    NoBest::NoBest(const char* l) : Exception(l, "Best solution search is not supported") {}
 
-  InvalidWorkerRequest::InvalidWorkerRequest(const char* l)
-    : Exception(l,"Invalid number of requested search workers") {}
+    InvalidWorkerRequest::InvalidWorkerRequest(const char* l)
+        : Exception(l, "Invalid number of requested search workers") {}
 
-  UninitializedWorkerControl::UninitializedWorkerControl(const char* l)
-    : Exception(l,"Worker control is not initialized") {}
+    UninitializedWorkerControl::UninitializedWorkerControl(const char* l)
+        : Exception(l, "Worker control is not initialized") {}
 
-  WorkerControlInUse::WorkerControlInUse(const char* l)
-    : Exception(l,"Worker control is already bound or has unsupported engine placement") {}
+    WorkerControlInUse::WorkerControlInUse(const char* l)
+        : Exception(l, "Worker control is already bound or has unsupported engine placement") {}
 
-}}
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

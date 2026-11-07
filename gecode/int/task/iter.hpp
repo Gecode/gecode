@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,56 +32,49 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  forceinline
-  TaskViewIter<TaskView,sto,inc>::TaskViewIter(void) {}
+    template <class TaskView, SortTaskOrder sto, bool inc>
+    forceinline
+    TaskViewIter<TaskView, sto, inc>::TaskViewIter(Region& r, const TaskViewArray<TaskView>& t)
+        : map(r.alloc<int>(t.size())), i(t.size() - 1) {
+        sort<TaskView, sto, !inc>(map, t);
+    }
 
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  forceinline
-  TaskViewIter<TaskView,sto,inc>
-  ::TaskViewIter(Region& r, const TaskViewArray<TaskView>& t)
-    : map(r.alloc<int>(t.size())), i(t.size()-1) {
-    sort<TaskView,sto,!inc>(map,t);
-  }
+    template <class TaskView, SortTaskOrder sto, bool inc>
+    forceinline bool
+    TaskViewIter<TaskView, sto, inc>::operator()() const {
+        return i >= 0;
+    }
+    template <class TaskView, SortTaskOrder sto, bool inc>
+    forceinline int
+    TaskViewIter<TaskView, sto, inc>::left() const {
+        return i + 1;
+    }
+    template <class TaskView, SortTaskOrder sto, bool inc>
+    forceinline void
+    TaskViewIter<TaskView, sto, inc>::operator++() {
+        i--;
+    }
 
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  forceinline bool
-  TaskViewIter<TaskView,sto,inc>::operator ()(void) const {
-    return i>=0;
-  }
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  forceinline int
-  TaskViewIter<TaskView,sto,inc>::left(void) const {
-    return i+1;
-  }
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  forceinline void
-  TaskViewIter<TaskView,sto,inc>::operator ++(void) {
-    i--;
-  }
+    template <class TaskView, SortTaskOrder sto, bool inc>
+    forceinline int
+    TaskViewIter<TaskView, sto, inc>::task() const {
+        return map[i];
+    }
 
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  forceinline int
-  TaskViewIter<TaskView,sto,inc>::task(void) const {
-    return map[i];
-  }
+    template <class OptTaskView, SortTaskOrder sto, bool inc>
+    forceinline
+    ManTaskViewIter<OptTaskView, sto, inc>::ManTaskViewIter(Region& r, const TaskViewArray<OptTaskView>& t) {
+        map = r.alloc<int>(t.size());
+        i = 0;
+        for (int j = 0; j < t.size(); j++)
+            if (t[j].mandatory())
+                map[i++] = j;
+        sort<OptTaskView, sto, !inc>(map, i, t);
+        i--;
+    }
 
-
-  template<class OptTaskView, SortTaskOrder sto, bool inc>
-  forceinline
-  ManTaskViewIter<OptTaskView,sto,inc>
-  ::ManTaskViewIter(Region& r, const TaskViewArray<OptTaskView>& t) {
-    map = r.alloc<int>(t.size()); i=0;
-    for (int j=0; j<t.size(); j++)
-      if (t[j].mandatory())
-        map[i++]=j;
-    sort<OptTaskView,sto,!inc>(map,i,t);
-    i--;
-  }
-
-
-}}
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

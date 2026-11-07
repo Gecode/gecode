@@ -50,533 +50,533 @@
  */
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
-  /// Base-class for Int-variable implementations
-  class IntVarImpBase : public Gecode::VarImp<Gecode::Int::IntVarImpConf> {
-  protected:
-    /// Constructor for cloning \a x
-    IntVarImpBase(Gecode::Space& home, IntVarImpBase& x);
-  public:
-    /// Constructor for creating static instance of variable
-    IntVarImpBase(void);
-    /// Constructor for creating variable
-    IntVarImpBase(Gecode::Space& home);
-    /// \name Dependencies
-    //@{
-    /** \brief Subscribe propagator \a p with propagation condition \a pc
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
-     * In case the variable is assigned (that is, \a assigned is
-     * true), the subscribing propagator is scheduled for execution.
-     * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_INT_VAL.
-     */
-    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
-    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
-    /// \brief Schedule propagator \a p
-    static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
-    /** \brief Re-schedule propagator \a p
-     *
-     * In case the variable is assigned (that is, \a assigned is
-     * true), the propagator is scheduled for execution.
-     * Otherwise, the propagator is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_INT_VAL.
-     */
-    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
-    //@}
-  };
-}}
+namespace Gecode::Int {
+    /// Base-class for Int-variable implementations
+    class IntVarImpBase : public Gecode::VarImp<Gecode::Int::IntVarImpConf> {
+    protected:
+        /// Constructor for cloning \a x
+        IntVarImpBase(Gecode::Space& home, IntVarImpBase& x);
+
+    public:
+        /// Constructor for creating static instance of variable
+        IntVarImpBase() = default;
+        /// Constructor for creating variable
+        IntVarImpBase(Gecode::Space& home);
+        /// \name Dependencies
+        //@{
+        /** \brief Subscribe propagator \a p with propagation condition \a pc
+         *
+         * In case \a schedule is false, the propagator is just subscribed but
+         * not scheduled for execution (this must be used when creating
+         * subscriptions during propagation).
+         *
+         * In case the variable is assigned (that is, \a assigned is
+         * true), the subscribing propagator is scheduled for execution.
+         * Otherwise, the propagator subscribes and is scheduled for execution
+         * with modification event \a me provided that \a pc is different
+         * from \a PC_INT_VAL.
+         */
+        void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
+        /// Subscribe advisor \a a if \a assigned is false.
+        void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
+        /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+        Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
+        /// \brief Schedule propagator \a p
+        static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
+        /** \brief Re-schedule propagator \a p
+         *
+         * In case the variable is assigned (that is, \a assigned is
+         * true), the propagator is scheduled for execution.
+         * Otherwise, the propagator is scheduled for execution
+         * with modification event \a me provided that \a pc is different
+         * from \a PC_INT_VAL.
+         */
+        void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
+        //@}
+    };
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
-  /// Base-class for Bool-variable implementations
-  class BoolVarImpBase : public Gecode::VarImp<Gecode::Int::BoolVarImpConf> {
-  protected:
-    /// Constructor for cloning \a x
-    BoolVarImpBase(Gecode::Space& home, BoolVarImpBase& x);
-  public:
-    /// Constructor for creating static instance of variable
-    BoolVarImpBase(void);
-    /// Constructor for creating variable
-    BoolVarImpBase(Gecode::Space& home);
-    /// \name Dependencies
-    //@{
-    /** \brief Subscribe propagator \a p with propagation condition \a pc
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
-     * In case the variable is assigned (that is, \a assigned is
-     * true), the subscribing propagator is scheduled for execution.
-     * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_BOOL_VAL.
-     */
-    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
-    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
-    /// \brief Schedule propagator \a p
-    static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
-    /** \brief Re-schedule propagator \a p
-     *
-     * In case the variable is assigned (that is, \a assigned is
-     * true), the propagator is scheduled for execution.
-     * Otherwise, the propagator is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_BOOL_VAL.
-     */
-    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
-    //@}
-  };
-}}
+namespace Gecode::Int {
+    /// Base-class for Bool-variable implementations
+    class BoolVarImpBase : public Gecode::VarImp<Gecode::Int::BoolVarImpConf> {
+    protected:
+        /// Constructor for cloning \a x
+        BoolVarImpBase(Gecode::Space& home, BoolVarImpBase& x);
+
+    public:
+        /// Constructor for creating static instance of variable
+        BoolVarImpBase() = default;
+        /// Constructor for creating variable
+        BoolVarImpBase(Gecode::Space& home);
+        /// \name Dependencies
+        //@{
+        /** \brief Subscribe propagator \a p with propagation condition \a pc
+         *
+         * In case \a schedule is false, the propagator is just subscribed but
+         * not scheduled for execution (this must be used when creating
+         * subscriptions during propagation).
+         *
+         * In case the variable is assigned (that is, \a assigned is
+         * true), the subscribing propagator is scheduled for execution.
+         * Otherwise, the propagator subscribes and is scheduled for execution
+         * with modification event \a me provided that \a pc is different
+         * from \a PC_BOOL_VAL.
+         */
+        void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
+        /// Subscribe advisor \a a if \a assigned is false.
+        void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
+        /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+        Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
+        /// \brief Schedule propagator \a p
+        static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
+        /** \brief Re-schedule propagator \a p
+         *
+         * In case the variable is assigned (that is, \a assigned is
+         * true), the propagator is scheduled for execution.
+         * Otherwise, the propagator is scheduled for execution
+         * with modification event \a me provided that \a pc is different
+         * from \a PC_BOOL_VAL.
+         */
+        void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
+        //@}
+    };
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set {
-  /// Base-class for Set-variable implementations
-  class SetVarImpBase : public Gecode::VarImp<Gecode::Set::SetVarImpConf> {
-  protected:
-    /// Constructor for cloning \a x
-    SetVarImpBase(Gecode::Space& home, SetVarImpBase& x);
-  public:
-    /// Constructor for creating static instance of variable
-    SetVarImpBase(void);
-    /// Constructor for creating variable
-    SetVarImpBase(Gecode::Space& home);
-    /// \name Dependencies
-    //@{
-    /** \brief Subscribe propagator \a p with propagation condition \a pc
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
-     * In case the variable is assigned (that is, \a assigned is
-     * true), the subscribing propagator is scheduled for execution.
-     * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_SET_VAL.
-     */
-    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
-    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
-    /// \brief Schedule propagator \a p
-    static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
-    /** \brief Re-schedule propagator \a p
-     *
-     * In case the variable is assigned (that is, \a assigned is
-     * true), the propagator is scheduled for execution.
-     * Otherwise, the propagator is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_SET_VAL.
-     */
-    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
-    //@}
-  };
-}}
+namespace Gecode::Set {
+    /// Base-class for Set-variable implementations
+    class SetVarImpBase : public Gecode::VarImp<Gecode::Set::SetVarImpConf> {
+    protected:
+        /// Constructor for cloning \a x
+        SetVarImpBase(Gecode::Space& home, SetVarImpBase& x);
+
+    public:
+        /// Constructor for creating static instance of variable
+        SetVarImpBase() = default;
+        /// Constructor for creating variable
+        SetVarImpBase(Gecode::Space& home);
+        /// \name Dependencies
+        //@{
+        /** \brief Subscribe propagator \a p with propagation condition \a pc
+         *
+         * In case \a schedule is false, the propagator is just subscribed but
+         * not scheduled for execution (this must be used when creating
+         * subscriptions during propagation).
+         *
+         * In case the variable is assigned (that is, \a assigned is
+         * true), the subscribing propagator is scheduled for execution.
+         * Otherwise, the propagator subscribes and is scheduled for execution
+         * with modification event \a me provided that \a pc is different
+         * from \a PC_SET_VAL.
+         */
+        void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
+        /// Subscribe advisor \a a if \a assigned is false.
+        void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
+        /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+        Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
+        /// \brief Schedule propagator \a p
+        static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
+        /** \brief Re-schedule propagator \a p
+         *
+         * In case the variable is assigned (that is, \a assigned is
+         * true), the propagator is scheduled for execution.
+         * Otherwise, the propagator is scheduled for execution
+         * with modification event \a me provided that \a pc is different
+         * from \a PC_SET_VAL.
+         */
+        void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
+        //@}
+    };
+} // namespace Gecode::Set
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float {
-  /// Base-class for Float-variable implementations
-  class FloatVarImpBase : public Gecode::VarImp<Gecode::Float::FloatVarImpConf> {
-  protected:
-    /// Constructor for cloning \a x
-    FloatVarImpBase(Gecode::Space& home, FloatVarImpBase& x);
-  public:
-    /// Constructor for creating static instance of variable
-    FloatVarImpBase(void);
-    /// Constructor for creating variable
-    FloatVarImpBase(Gecode::Space& home);
-    /// \name Dependencies
-    //@{
-    /** \brief Subscribe propagator \a p with propagation condition \a pc
-     *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
-     * In case the variable is assigned (that is, \a assigned is
-     * true), the subscribing propagator is scheduled for execution.
-     * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_FLOAT_VAL.
-     */
-    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
-    /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
-    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
-    /// \brief Schedule propagator \a p
-    static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
-    /** \brief Re-schedule propagator \a p
-     *
-     * In case the variable is assigned (that is, \a assigned is
-     * true), the propagator is scheduled for execution.
-     * Otherwise, the propagator is scheduled for execution
-     * with modification event \a me provided that \a pc is different
-     * from \a PC_FLOAT_VAL.
-     */
-    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
-    //@}
-  };
-}}
+namespace Gecode::Float {
+    /// Base-class for Float-variable implementations
+    class FloatVarImpBase : public Gecode::VarImp<Gecode::Float::FloatVarImpConf> {
+    protected:
+        /// Constructor for cloning \a x
+        FloatVarImpBase(Gecode::Space& home, FloatVarImpBase& x);
+
+    public:
+        /// Constructor for creating static instance of variable
+        FloatVarImpBase() = default;
+        /// Constructor for creating variable
+        FloatVarImpBase(Gecode::Space& home);
+        /// \name Dependencies
+        //@{
+        /** \brief Subscribe propagator \a p with propagation condition \a pc
+         *
+         * In case \a schedule is false, the propagator is just subscribed but
+         * not scheduled for execution (this must be used when creating
+         * subscriptions during propagation).
+         *
+         * In case the variable is assigned (that is, \a assigned is
+         * true), the subscribing propagator is scheduled for execution.
+         * Otherwise, the propagator subscribes and is scheduled for execution
+         * with modification event \a me provided that \a pc is different
+         * from \a PC_FLOAT_VAL.
+         */
+        void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
+        /// Subscribe advisor \a a if \a assigned is false.
+        void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
+        /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+        Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
+        /// \brief Schedule propagator \a p
+        static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
+        /** \brief Re-schedule propagator \a p
+         *
+         * In case the variable is assigned (that is, \a assigned is
+         * true), the propagator is scheduled for execution.
+         * Otherwise, the propagator is scheduled for execution
+         * with modification event \a me provided that \a pc is different
+         * from \a PC_FLOAT_VAL.
+         */
+        void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
+        //@}
+    };
+} // namespace Gecode::Float
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
-  forceinline
-  IntVarImpBase::IntVarImpBase(void) {}
+    forceinline
+    IntVarImpBase::IntVarImpBase(Gecode::Space& home)
+        : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home) {}
 
-  forceinline
-  IntVarImpBase::IntVarImpBase(Gecode::Space& home)
-    : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home) {}
+    forceinline
+    IntVarImpBase::IntVarImpBase(Gecode::Space& home, IntVarImpBase& x)
+        : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home, x) {}
 
-  forceinline
-  IntVarImpBase::IntVarImpBase(Gecode::Space& home, IntVarImpBase& x)
-    : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home,x) {}
-
-  forceinline void
-  IntVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
-    Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,p,pc,assigned,ME_INT_BND,schedule);
-  }
-  forceinline void
-  IntVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
-    Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,a,assigned,failed);
-  }
-
-  forceinline void
-  IntVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me) {
-    Gecode::VarImp<Gecode::Int::IntVarImpConf>::schedule(home,p,me);
-  }
-  forceinline void
-  IntVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
-    Gecode::VarImp<Gecode::Int::IntVarImpConf>::reschedule(home,p,pc,assigned,ME_INT_BND);
-  }
-
-  forceinline Gecode::ModEvent
-  IntVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
-    switch (me) {
-    case ME_INT_VAL:
-      // Conditions: VAL, BND, DOM
-      Gecode::VarImp<Gecode::Int::IntVarImpConf>::schedule(home,PC_INT_VAL,PC_INT_DOM,ME_INT_VAL);
-      if (!Gecode::VarImp<Gecode::Int::IntVarImpConf>::advise(home,ME_INT_VAL,d))
-        return ME_INT_FAILED;
-      cancel(home);
-      break;
-    case ME_INT_BND:
-      // Conditions: BND, DOM
-      Gecode::VarImp<Gecode::Int::IntVarImpConf>::schedule(home,PC_INT_BND,PC_INT_DOM,ME_INT_BND);
-      if (!Gecode::VarImp<Gecode::Int::IntVarImpConf>::advise(home,ME_INT_BND,d))
-        return ME_INT_FAILED;
-      break;
-    case ME_INT_DOM:
-      // Conditions: DOM
-      Gecode::VarImp<Gecode::Int::IntVarImpConf>::schedule(home,PC_INT_DOM,PC_INT_DOM,ME_INT_DOM);
-      if (!Gecode::VarImp<Gecode::Int::IntVarImpConf>::advise(home,ME_INT_DOM,d))
-        return ME_INT_FAILED;
-      break;
-    default: GECODE_NEVER;
+    forceinline void
+    IntVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned,
+                             bool schedule) {
+        Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home, p, pc, assigned, ME_INT_BND, schedule);
     }
-    return me;
-  }
+    forceinline void
+    IntVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
+        Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home, a, assigned, failed);
+    }
 
-}}
+    forceinline void
+    IntVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me) {
+        Gecode::VarImp<Gecode::Int::IntVarImpConf>::schedule(home, p, me);
+    }
+    forceinline void
+    IntVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+        Gecode::VarImp<Gecode::Int::IntVarImpConf>::reschedule(home, p, pc, assigned, ME_INT_BND);
+    }
+
+    forceinline Gecode::ModEvent
+    IntVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
+        switch (me) {
+        case ME_INT_VAL:
+            // Conditions: VAL, BND, DOM
+            Gecode::VarImp<Gecode::Int::IntVarImpConf>::schedule(home, PC_INT_VAL, PC_INT_DOM, ME_INT_VAL);
+            if (!Gecode::VarImp<Gecode::Int::IntVarImpConf>::advise(home, ME_INT_VAL, d))
+                return ME_INT_FAILED;
+            cancel(home);
+            break;
+        case ME_INT_BND:
+            // Conditions: BND, DOM
+            Gecode::VarImp<Gecode::Int::IntVarImpConf>::schedule(home, PC_INT_BND, PC_INT_DOM, ME_INT_BND);
+            if (!Gecode::VarImp<Gecode::Int::IntVarImpConf>::advise(home, ME_INT_BND, d))
+                return ME_INT_FAILED;
+            break;
+        case ME_INT_DOM:
+            // Conditions: DOM
+            Gecode::VarImp<Gecode::Int::IntVarImpConf>::schedule(home, PC_INT_DOM, PC_INT_DOM, ME_INT_DOM);
+            if (!Gecode::VarImp<Gecode::Int::IntVarImpConf>::advise(home, ME_INT_DOM, d))
+                return ME_INT_FAILED;
+            break;
+        default:
+            GECODE_NEVER;
+        }
+        return me;
+    }
+
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
-  forceinline
-  BoolVarImpBase::BoolVarImpBase(void) {}
+    forceinline
+    BoolVarImpBase::BoolVarImpBase(Gecode::Space& home)
+        : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home) {}
 
-  forceinline
-  BoolVarImpBase::BoolVarImpBase(Gecode::Space& home)
-    : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home) {}
+    forceinline
+    BoolVarImpBase::BoolVarImpBase(Gecode::Space& home, BoolVarImpBase& x)
+        : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home, x) {}
 
-  forceinline
-  BoolVarImpBase::BoolVarImpBase(Gecode::Space& home, BoolVarImpBase& x)
-    : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home,x) {}
+    forceinline void
+    BoolVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned,
+                              bool schedule) {
+        Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home, p, pc, assigned, ME_BOOL_VAL, schedule);
+    }
+    forceinline void
+    BoolVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
+        Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home, a, assigned, failed);
+    }
 
-  forceinline void
-  BoolVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,p,pc,assigned,ME_BOOL_VAL,schedule);
-  }
-  forceinline void
-  BoolVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,a,assigned,failed);
-  }
+    forceinline void
+    BoolVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me) {
+        Gecode::VarImp<Gecode::Int::BoolVarImpConf>::schedule(home, p, me);
+    }
+    forceinline void
+    BoolVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+        Gecode::VarImp<Gecode::Int::BoolVarImpConf>::reschedule(home, p, pc, assigned, ME_BOOL_VAL);
+    }
 
-  forceinline void
-  BoolVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me) {
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::schedule(home,p,me);
-  }
-  forceinline void
-  BoolVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::reschedule(home,p,pc,assigned,ME_BOOL_VAL);
-  }
+    forceinline Gecode::ModEvent
+    BoolVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent, Gecode::Delta& d) {
+        Gecode::VarImp<Gecode::Int::BoolVarImpConf>::schedule(home, PC_BOOL_VAL, PC_BOOL_VAL, ME_BOOL_VAL);
+        if (!Gecode::VarImp<Gecode::Int::BoolVarImpConf>::advise(home, ME_BOOL_VAL, d))
+            return ME_BOOL_FAILED;
+        cancel(home);
+        return ME_BOOL_VAL;
+    }
 
-  forceinline Gecode::ModEvent
-  BoolVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent, Gecode::Delta& d) {
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::schedule(home,PC_BOOL_VAL,PC_BOOL_VAL,ME_BOOL_VAL);
-    if (!Gecode::VarImp<Gecode::Int::BoolVarImpConf>::advise(home,ME_BOOL_VAL,d))
-      return ME_BOOL_FAILED;
-    cancel(home);
-    return ME_BOOL_VAL;
-  }
-
-}}
+} // namespace Gecode::Int
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
-  forceinline
-  SetVarImpBase::SetVarImpBase(void) {}
+    forceinline
+    SetVarImpBase::SetVarImpBase(Gecode::Space& home)
+        : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home) {}
 
-  forceinline
-  SetVarImpBase::SetVarImpBase(Gecode::Space& home)
-    : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home) {}
+    forceinline
+    SetVarImpBase::SetVarImpBase(Gecode::Space& home, SetVarImpBase& x)
+        : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home, x) {}
 
-  forceinline
-  SetVarImpBase::SetVarImpBase(Gecode::Space& home, SetVarImpBase& x)
-    : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home,x) {}
-
-  forceinline void
-  SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,p,pc,assigned,ME_SET_CBB,schedule);
-  }
-  forceinline void
-  SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,a,assigned,failed);
-  }
-
-  forceinline void
-  SetVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me) {
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,p,me);
-  }
-  forceinline void
-  SetVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::reschedule(home,p,pc,assigned,ME_SET_CBB);
-  }
-
-  forceinline Gecode::ModEvent
-  SetVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
-    switch (me) {
-    case ME_SET_VAL:
-      // Conditions: VAL, CARD, CLUB, CGLB, ANY
-      Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,PC_SET_VAL,PC_SET_ANY,ME_SET_VAL);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_VAL,d))
-        return ME_SET_FAILED;
-      cancel(home);
-      break;
-    case ME_SET_CARD:
-      // Conditions: CARD, CLUB, CGLB, ANY
-      Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CARD);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CARD,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_LUB:
-      // Conditions: CLUB, ANY
-      Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,PC_SET_CLUB,PC_SET_CLUB,ME_SET_LUB);
-      Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,PC_SET_ANY,PC_SET_ANY,ME_SET_LUB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_LUB,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_GLB:
-      // Conditions: CGLB, ANY
-      Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,PC_SET_CGLB,PC_SET_ANY,ME_SET_GLB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_GLB,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_BB:
-      // Conditions: CLUB, CGLB, ANY
-      Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,PC_SET_CLUB,PC_SET_ANY,ME_SET_BB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_BB,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_CLUB:
-      // Conditions: CARD, CLUB, CGLB, ANY
-      Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CLUB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CLUB,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_CGLB:
-      // Conditions: CARD, CLUB, CGLB, ANY
-      Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CGLB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CGLB,d))
-        return ME_SET_FAILED;
-      break;
-    case ME_SET_CBB:
-      // Conditions: CARD, CLUB, CGLB, ANY
-      Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CBB);
-      if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home,ME_SET_CBB,d))
-        return ME_SET_FAILED;
-      break;
-    default: GECODE_NEVER;
+    forceinline void
+    SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned,
+                             bool schedule) {
+        Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home, p, pc, assigned, ME_SET_CBB, schedule);
     }
-    return me;
-  }
+    forceinline void
+    SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
+        Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home, a, assigned, failed);
+    }
 
-}}
+    forceinline void
+    SetVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me) {
+        Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home, p, me);
+    }
+    forceinline void
+    SetVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+        Gecode::VarImp<Gecode::Set::SetVarImpConf>::reschedule(home, p, pc, assigned, ME_SET_CBB);
+    }
+
+    forceinline Gecode::ModEvent
+    SetVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
+        switch (me) {
+        case ME_SET_VAL:
+            // Conditions: VAL, CARD, CLUB, CGLB, ANY
+            Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home, PC_SET_VAL, PC_SET_ANY, ME_SET_VAL);
+            if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home, ME_SET_VAL, d))
+                return ME_SET_FAILED;
+            cancel(home);
+            break;
+        case ME_SET_CARD:
+            // Conditions: CARD, CLUB, CGLB, ANY
+            Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home, PC_SET_CARD, PC_SET_ANY, ME_SET_CARD);
+            if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home, ME_SET_CARD, d))
+                return ME_SET_FAILED;
+            break;
+        case ME_SET_LUB:
+            // Conditions: CLUB, ANY
+            Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home, PC_SET_CLUB, PC_SET_CLUB, ME_SET_LUB);
+            Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home, PC_SET_ANY, PC_SET_ANY, ME_SET_LUB);
+            if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home, ME_SET_LUB, d))
+                return ME_SET_FAILED;
+            break;
+        case ME_SET_GLB:
+            // Conditions: CGLB, ANY
+            Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home, PC_SET_CGLB, PC_SET_ANY, ME_SET_GLB);
+            if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home, ME_SET_GLB, d))
+                return ME_SET_FAILED;
+            break;
+        case ME_SET_BB:
+            // Conditions: CLUB, CGLB, ANY
+            Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home, PC_SET_CLUB, PC_SET_ANY, ME_SET_BB);
+            if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home, ME_SET_BB, d))
+                return ME_SET_FAILED;
+            break;
+        case ME_SET_CLUB:
+            // Conditions: CARD, CLUB, CGLB, ANY
+            Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home, PC_SET_CARD, PC_SET_ANY, ME_SET_CLUB);
+            if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home, ME_SET_CLUB, d))
+                return ME_SET_FAILED;
+            break;
+        case ME_SET_CGLB:
+            // Conditions: CARD, CLUB, CGLB, ANY
+            Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home, PC_SET_CARD, PC_SET_ANY, ME_SET_CGLB);
+            if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home, ME_SET_CGLB, d))
+                return ME_SET_FAILED;
+            break;
+        case ME_SET_CBB:
+            // Conditions: CARD, CLUB, CGLB, ANY
+            Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home, PC_SET_CARD, PC_SET_ANY, ME_SET_CBB);
+            if (!Gecode::VarImp<Gecode::Set::SetVarImpConf>::advise(home, ME_SET_CBB, d))
+                return ME_SET_FAILED;
+            break;
+        default:
+            GECODE_NEVER;
+        }
+        return me;
+    }
+
+} // namespace Gecode::Set
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
-  forceinline
-  FloatVarImpBase::FloatVarImpBase(void) {}
+    forceinline
+    FloatVarImpBase::FloatVarImpBase(Gecode::Space& home)
+        : Gecode::VarImp<Gecode::Float::FloatVarImpConf>(home) {}
 
-  forceinline
-  FloatVarImpBase::FloatVarImpBase(Gecode::Space& home)
-    : Gecode::VarImp<Gecode::Float::FloatVarImpConf>(home) {}
+    forceinline
+    FloatVarImpBase::FloatVarImpBase(Gecode::Space& home, FloatVarImpBase& x)
+        : Gecode::VarImp<Gecode::Float::FloatVarImpConf>(home, x) {}
 
-  forceinline
-  FloatVarImpBase::FloatVarImpBase(Gecode::Space& home, FloatVarImpBase& x)
-    : Gecode::VarImp<Gecode::Float::FloatVarImpConf>(home,x) {}
-
-  forceinline void
-  FloatVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
-    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::subscribe(home,p,pc,assigned,ME_FLOAT_BND,schedule);
-  }
-  forceinline void
-  FloatVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
-    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::subscribe(home,a,assigned,failed);
-  }
-
-  forceinline void
-  FloatVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me) {
-    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::schedule(home,p,me);
-  }
-  forceinline void
-  FloatVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
-    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::reschedule(home,p,pc,assigned,ME_FLOAT_BND);
-  }
-
-  forceinline Gecode::ModEvent
-  FloatVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
-    switch (me) {
-    case ME_FLOAT_VAL:
-      // Conditions: VAL, BND
-      Gecode::VarImp<Gecode::Float::FloatVarImpConf>::schedule(home,PC_FLOAT_VAL,PC_FLOAT_BND,ME_FLOAT_VAL);
-      if (!Gecode::VarImp<Gecode::Float::FloatVarImpConf>::advise(home,ME_FLOAT_VAL,d))
-        return ME_FLOAT_FAILED;
-      cancel(home);
-      break;
-    case ME_FLOAT_BND:
-      // Conditions: BND
-      Gecode::VarImp<Gecode::Float::FloatVarImpConf>::schedule(home,PC_FLOAT_BND,PC_FLOAT_BND,ME_FLOAT_BND);
-      if (!Gecode::VarImp<Gecode::Float::FloatVarImpConf>::advise(home,ME_FLOAT_BND,d))
-        return ME_FLOAT_FAILED;
-      break;
-    default: GECODE_NEVER;
+    forceinline void
+    FloatVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned,
+                               bool schedule) {
+        Gecode::VarImp<Gecode::Float::FloatVarImpConf>::subscribe(home, p, pc, assigned, ME_FLOAT_BND, schedule);
     }
-    return me;
-  }
+    forceinline void
+    FloatVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
+        Gecode::VarImp<Gecode::Float::FloatVarImpConf>::subscribe(home, a, assigned, failed);
+    }
 
-}}
+    forceinline void
+    FloatVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me) {
+        Gecode::VarImp<Gecode::Float::FloatVarImpConf>::schedule(home, p, me);
+    }
+    forceinline void
+    FloatVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+        Gecode::VarImp<Gecode::Float::FloatVarImpConf>::reschedule(home, p, pc, assigned, ME_FLOAT_BND);
+    }
+
+    forceinline Gecode::ModEvent
+    FloatVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
+        switch (me) {
+        case ME_FLOAT_VAL:
+            // Conditions: VAL, BND
+            Gecode::VarImp<Gecode::Float::FloatVarImpConf>::schedule(home, PC_FLOAT_VAL, PC_FLOAT_BND, ME_FLOAT_VAL);
+            if (!Gecode::VarImp<Gecode::Float::FloatVarImpConf>::advise(home, ME_FLOAT_VAL, d))
+                return ME_FLOAT_FAILED;
+            cancel(home);
+            break;
+        case ME_FLOAT_BND:
+            // Conditions: BND
+            Gecode::VarImp<Gecode::Float::FloatVarImpConf>::schedule(home, PC_FLOAT_BND, PC_FLOAT_BND, ME_FLOAT_BND);
+            if (!Gecode::VarImp<Gecode::Float::FloatVarImpConf>::advise(home, ME_FLOAT_BND, d))
+                return ME_FLOAT_FAILED;
+            break;
+        default:
+            GECODE_NEVER;
+        }
+        return me;
+    }
+
+} // namespace Gecode::Float
 #endif
 namespace Gecode {
 
-  forceinline void
-  Space::recover_noidx(void) {
-    VarImp<NoIdxVarImpConf>* x =
-      static_cast<VarImp<NoIdxVarImpConf>*>(pc.c.vars_noidx);
-    while (x != nullptr) {
-      VarImp<NoIdxVarImpConf>* n = x->next();
-      x->b.base = nullptr; x->u.idx[0] = 0;
-      if (sizeof(ActorLink**) > sizeof(unsigned int))
-        *(1+&x->u.idx[0]) = 0;
-      x = n;
+    forceinline void
+    Space::recover_noidx() {
+        VarImp<NoIdxVarImpConf>* x = static_cast<VarImp<NoIdxVarImpConf>*>(pc.c.vars_noidx);
+        while (x != nullptr) {
+            VarImp<NoIdxVarImpConf>* n = x->next();
+            x->b.base = nullptr;
+            x->u.idx[0] = 0;
+            if (sizeof(ActorLink**) > sizeof(unsigned int))
+                *(1 + &x->u.idx[0]) = 0;
+            x = n;
+        }
     }
-  }
 
-  forceinline void
-  Space::update(ActorLink** sub) {
+    forceinline void
+    Space::update(ActorLink** sub) {
 #ifdef GECODE_HAS_INT_VARS
-    Gecode::VarImp<Gecode::Int::IntVarImpConf>::update(*this,sub);
+        Gecode::VarImp<Gecode::Int::IntVarImpConf>::update(*this, sub);
 #endif
 #ifdef GECODE_HAS_INT_VARS
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::update(*this,sub);
+        Gecode::VarImp<Gecode::Int::BoolVarImpConf>::update(*this, sub);
 #endif
 #ifdef GECODE_HAS_SET_VARS
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::update(*this,sub);
+        Gecode::VarImp<Gecode::Set::SetVarImpConf>::update(*this, sub);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::update(*this,sub);
+        Gecode::VarImp<Gecode::Float::FloatVarImpConf>::update(*this, sub);
 #endif
-  }
-
-  forceinline void
-  Space::recover(Space& source) {
-    ActorLink* clone_lists[2] = {&pl, &bl};
-    for (int i=0; i<2; i++) {
-      ActorLink* l = clone_lists[i];
-      ActorLink* c = l->next();
-      while (c != l) {
-        ActorLink* n = c->next();
-        (void) Actor::cast(c)->dispose(*this);
-        c = n;
-      }
-      l->init();
-    }
-    while (pc.c.local != nullptr) {
-      LocalObject* l = pc.c.local;
-      ActorLink* n = l->next();
-      pc.c.local = (n == nullptr) ? nullptr : LocalObject::cast(n);
-      ActorLink* fwd = l->prev();
-      if (fwd != nullptr) {
-        (void) Actor::cast(fwd)->dispose(*this);
-        l->prev(nullptr);
-      }
     }
 
-    ActorLink* lists[2] = {&source.pl, &source.bl};
-    for (int i=0; i<2; i++) {
-      ActorLink* l = lists[i];
-      ActorLink* p_a = l;
-      ActorLink* c_a = p_a->next();
-      while (c_a != l) {
-        if (i == 0) {
-          Propagator* p = Propagator::cast(c_a);
-          if (p->u.advisors != nullptr) {
-            ActorLink* a = p->u.advisors;
-            p->u.advisors = nullptr;
-            do {
-              a->prev(p); a = a->next();
-            } while (a != nullptr);
-          }
+    forceinline void
+    Space::recover(Space& source) {
+        ActorLink* clone_lists[2] = {&pl, &bl};
+        for (auto* l : clone_lists) {
+            ActorLink* c = l->next();
+            while (c != l) {
+                ActorLink* n = c->next();
+                (void)Actor::cast(c)->dispose(*this);
+                c = n;
+            }
+            l->init();
         }
-        ActorLink* fwd = c_a->prev();
-        if (fwd != p_a) {
-          c_a->prev(p_a);
+        while (pc.c.local != nullptr) {
+            LocalObject* l = pc.c.local;
+            ActorLink* n = l->next();
+            pc.c.local = (n == nullptr) ? nullptr : LocalObject::cast(n);
+            ActorLink* fwd = l->prev();
+            if (fwd != nullptr) {
+                (void)Actor::cast(fwd)->dispose(*this);
+                l->prev(nullptr);
+            }
         }
-        p_a = c_a; c_a = c_a->next();
-      }
-    }
 
-    ActorLink** sub = static_cast<ActorLink**>(mm.subscriptions());
-    recover_noidx();
+        ActorLink* lists[2] = {&source.pl, &source.bl};
+        for (int i = 0; i < 2; i++) {
+            ActorLink* l = lists[i];
+            ActorLink* p_a = l;
+            ActorLink* c_a = p_a->next();
+            while (c_a != l) {
+                if (i == 0) {
+                    Propagator* p = Propagator::cast(c_a);
+                    if (p->u.advisors != nullptr) {
+                        ActorLink* a = p->u.advisors;
+                        p->u.advisors = nullptr;
+                        do {
+                            a->prev(p);
+                            a = a->next();
+                        } while (a != nullptr);
+                    }
+                }
+                ActorLink* fwd = c_a->prev();
+                if (fwd != p_a) {
+                    c_a->prev(p_a);
+                }
+                p_a = c_a;
+                c_a = c_a->next();
+            }
+        }
+
+        ActorLink** sub = static_cast<ActorLink**>(mm.subscriptions());
+        recover_noidx();
 #ifdef GECODE_HAS_INT_VARS
-    Gecode::VarImp<Gecode::Int::IntVarImpConf>::recover(*this,sub);
+        Gecode::VarImp<Gecode::Int::IntVarImpConf>::recover(*this, sub);
 #endif
 #ifdef GECODE_HAS_INT_VARS
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::recover(*this,sub);
+        Gecode::VarImp<Gecode::Int::BoolVarImpConf>::recover(*this, sub);
 #endif
 #ifdef GECODE_HAS_SET_VARS
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::recover(*this,sub);
+        Gecode::VarImp<Gecode::Set::SetVarImpConf>::recover(*this, sub);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::recover(*this,sub);
+        Gecode::VarImp<Gecode::Float::FloatVarImpConf>::recover(*this, sub);
 #endif
-  }
-}
+    }
+} // namespace Gecode
 // STATISTICS: kernel-var

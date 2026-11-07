@@ -7,11 +7,12 @@ For modelling and search, use MPG and the API reference linked from the
 ## Requirements
 
 - CMake 3.21 or newer
-- A C++17-capable compiler
+- A compiler with C++23 mode. Use features supported across the GCC, Clang,
+  AppleClang, and MSVC builds; enabling the language mode does not imply that
+  every C++23 library feature is available.
 - `uv` on `PATH` for generated-script paths: documentation generation,
   `GECODE_REGENERATE_VARIMP=ON`, and manual helper execution. Ordinary CMake
-  builds can use the checked-in generated headers without `uv`. Autoconf
-  builds require `uv` on `PATH`.
+  builds can use the checked-in generated headers without `uv`.
 - Python 3.11 or newer for helper scripts run through `uv`.
 - Optional dependencies based on enabled modules:
   - MPFR for float support with MPFR
@@ -39,6 +40,19 @@ cmake --build build --config Release
 cmake --build build --config Release --target check
 cmake --install build --config Release --prefix /path/to/install
 ```
+
+## Regenerating checked-in sources
+
+Ordinary builds use checked-in variable headers and FlatZinc parser sources.
+After editing their inputs, run:
+
+```bash
+cmake --build build --target regenerate
+bash .github/ci/generated-source-freshness.sh --check
+```
+
+Regeneration requires Bash, GNU Bison 3.8.2, Flex 2.6.4, and `uv`. The same
+helper accepts `--update` when no CMake build directory is configured.
 
 ## Visual Studio + vcpkg (MPFR)
 
@@ -110,56 +124,47 @@ to inspect test assignments.
   top-level builds and `OFF` for subprojects.
 - `CMAKE_BUILD_TYPE` / multi-config `--config`: standard build mode control
 
-### Autoconf and CMake options
+### Feature and toolchain options
 
-CMake exposes options aligned with the Autoconf switches:
-
-| Autoconf switch | CMake option / mechanism | Status | Notes |
-|---|---|---|---|
-| `--enable-shared` | `GECODE_BUILD_SHARED` | Supported directly | Default `ON` |
-| `--enable-static` | `GECODE_BUILD_STATIC` | Supported directly | Default `OFF` |
-| `--enable-thread` | `GECODE_ENABLE_THREAD` | Supported directly | Default `ON` |
-| `--enable-osx-unfair-mutex` | `GECODE_ENABLE_OSX_UNFAIR_MUTEX` | Supported directly | Default `ON` |
-| `--enable-qt` | `GECODE_ENABLE_QT` | Supported directly | `AUTO` by default; Qt 6 preferred; Qt 5.15+ supported |
-| `--enable-gist` | `GECODE_ENABLE_GIST` | Supported directly | `AUTO` by default except macOS; disabled automatically if Qt GUI support is unavailable |
-| `--enable-cpprofiler` | `GECODE_ENABLE_CPPROFILER` | Supported directly | Default `ON` |
-| `--enable-cbs` | `GECODE_ENABLE_CBS` | Supported directly | Default `OFF` |
-| `--enable-examples` | `GECODE_ENABLE_EXAMPLES` | Supported directly | Default `ON` for top-level builds, `OFF` for subprojects |
-| `--enable-experimental` | `GECODE_ENABLE_EXPERIMENTAL` | Supported directly | Default `OFF`; enables preview APIs |
-| `--enable-search` | `GECODE_ENABLE_SEARCH` | Supported directly | Default `ON` |
-| `--enable-int-vars` | `GECODE_ENABLE_INT_VARS` | Supported directly | Default `ON` |
-| `--enable-set-vars` | `GECODE_ENABLE_SET_VARS` | Supported directly | Default `ON` |
-| `--enable-float-vars` | `GECODE_ENABLE_FLOAT_VARS` | Supported directly | Default `ON` |
-| `--enable-minimodel` | `GECODE_ENABLE_MINIMODEL` | Supported directly | Default `ON` |
-| `--enable-instance` | `GECODE_ENABLE_INSTANCE` | Supported directly | Default `ON`; enabled with the driver |
-| `--enable-driver` | `GECODE_ENABLE_DRIVER` | Supported directly | Default `ON` |
-| `--enable-flatzinc` | `GECODE_ENABLE_FLATZINC` | Supported directly | Default `ON` |
-| `--enable-mpfr` | `GECODE_ENABLE_MPFR` | Supported directly | Default `ON`; uses `find_package(MPFR)` |
-| `--enable-allocator` | `GECODE_ENABLE_ALLOCATOR` | Supported directly | Default `ON` |
-| `--enable-audit` | `GECODE_ENABLE_AUDIT` | Supported directly | Default `OFF` |
-| None | `GECODE_ENABLE_FAULT_INJECTION` | CMake-only | Test-only, process-global failpoints in an isolated single-threaded `check-fault` suite; default `OFF` |
-| None | `GECODE_SANITIZER` | CMake-only | `address`, `undefined`, `address-undefined`, or `thread`; currently requires GCC/Clang-style flags |
-| `--enable-gcc-visibility` | `GECODE_ENABLE_GCC_VISIBILITY` | Supported directly | Default `ON` |
-| `--with-freelist32-size-max` | `GECODE_FREELIST32_SIZE_MAX` | Supported directly | Cache string |
-| `--with-freelist64-size-max` | `GECODE_FREELIST64_SIZE_MAX` | Supported directly | Cache string |
-| `--with-vis` | `GECODE_WITH_VIS` | Supported directly | Comma-separated list |
-| `--with-lib-prefix` | `GECODE_LIB_PREFIX` | Supported directly | Prefixes generated library basenames |
-| `--with-lib-suffix` | `GECODE_LIB_SUFFIX` | Supported directly | Suffixes generated library basenames |
-| `--enable-debug` | `CMAKE_BUILD_TYPE=Debug` (or multi-config `Debug`) | Mapped to native CMake mechanism | Use standard CMake build-type workflows |
-| `--enable-small-codesize` | `CMAKE_BUILD_TYPE=MinSizeRel` or compiler size flags | Mapped to native CMake mechanism | Use standard size-optimized build settings |
-| `--enable-leak-debug` | None | Not supported in CMake | No CMake option enables the `GECODE_HAS_MTRACE` test hook |
-| `--enable-profile` | Toolchain/CMake compile+link flags | Mapped to native CMake mechanism | Configure profiling via standard compiler flags |
-| `--enable-gcov` | Toolchain/CMake coverage flags | Mapped to native CMake mechanism | Configure coverage instrumentation via compiler/linker flags |
-| `--with-mpfr-include`, `--with-mpfr-lib` | `CMAKE_PREFIX_PATH`, `MPFR_ROOT`, toolchain include/link paths | Mapped to native CMake mechanism | Use CMake package and toolchain discovery |
-| `--with-gmp-include`, `--with-gmp-lib` | Toolchain include/link paths | Mapped to native CMake mechanism | GMP is resolved through MPFR/toolchain linkage |
-| `--with-host-os` | None | Not supported in CMake | Generator/toolchain already determine host/target platform |
-| `--with-compiler-vendor` | None | Not supported in CMake | Compiler is selected through toolchain and generator |
-| `--with-sdk`, `--with-macosx-version-min`, `--with-architectures` | None | Not supported in CMake | Use native CMake/macOS toolchain settings |
-| `--enable-framework` | None | Not supported in CMake | No framework-bundle generator path is implemented |
-| `--enable-resource` | None | Not supported in CMake | No autoconf-style resource toggle in CMake |
-| `--enable-peakheap` | None | Not supported in CMake | No CMake option defines the peak-heap tracking macros |
-| `--enable-doc-dot`, `--enable-doc-search`, `--enable-doc-tagfile` | `GECODE_DOC_DOT`, `GECODE_DOC_SEARCH`, `GECODE_DOC_TAGFILE` | Supported by `doc` target | Requires Doxygen 1.18.0 or newer; helper pages require `uv` |
-| None | `GECODE_ENABLE_MIMALLOC` | CMake-only | Default `OFF`; private allocator backend |
+| Option / mechanism | Notes |
+|---|---|
+| `GECODE_BUILD_SHARED` | Default `ON` |
+| `GECODE_BUILD_STATIC` | Default `OFF` |
+| `GECODE_ENABLE_THREAD` | Default `ON` |
+| `GECODE_ENABLE_OSX_UNFAIR_MUTEX` | Default `ON` |
+| `GECODE_ENABLE_QT` | `AUTO` by default; Qt 6 preferred; Qt 5.15+ supported |
+| `GECODE_ENABLE_GIST` | `AUTO` by default except macOS; disabled automatically if Qt GUI support is unavailable |
+| `GECODE_ENABLE_CPPROFILER` | Default `ON` |
+| `GECODE_ENABLE_CBS` | Default `OFF` |
+| `GECODE_ENABLE_EXAMPLES` | Default `ON` for top-level builds, `OFF` for subprojects |
+| `GECODE_ENABLE_EXPERIMENTAL` | Default `OFF`; enables preview APIs |
+| `GECODE_ENABLE_SEARCH` | Default `ON` |
+| `GECODE_ENABLE_INT_VARS` | Default `ON` |
+| `GECODE_ENABLE_SET_VARS` | Default `ON` |
+| `GECODE_ENABLE_FLOAT_VARS` | Default `ON` |
+| `GECODE_ENABLE_MINIMODEL` | Default `ON` |
+| `GECODE_ENABLE_INSTANCE` | Default `ON`; enabled with the driver |
+| `GECODE_ENABLE_DRIVER` | Default `ON` |
+| `GECODE_ENABLE_FLATZINC` | Default `ON` |
+| `GECODE_ENABLE_MPFR` | Default `ON`; uses `find_package(MPFR)` |
+| `GECODE_ENABLE_ALLOCATOR` | Default `ON` |
+| `GECODE_ENABLE_AUDIT` | Default `OFF` |
+| `GECODE_ENABLE_FAULT_INJECTION` | Test-only, process-global failpoints in an isolated single-threaded `check-fault` suite; default `OFF` |
+| `GECODE_SANITIZER` | `address`, `undefined`, `address-undefined`, or `thread`; currently requires GCC/Clang-style flags |
+| `GECODE_ENABLE_GCC_VISIBILITY` | Default `ON` |
+| `GECODE_FREELIST32_SIZE_MAX` | Cache string |
+| `GECODE_FREELIST64_SIZE_MAX` | Cache string |
+| `GECODE_WITH_VIS` | Comma-separated list |
+| `GECODE_LIB_PREFIX` | Prefixes generated library basenames |
+| `GECODE_LIB_SUFFIX` | Suffixes generated library basenames |
+| `CMAKE_BUILD_TYPE=Debug` (or multi-config `Debug`) | Use standard CMake build-type workflows |
+| `CMAKE_BUILD_TYPE=MinSizeRel` or compiler size flags | Use standard size-optimized build settings |
+| Toolchain/CMake compile+link flags | Configure profiling via standard compiler flags |
+| Toolchain/CMake coverage flags | Configure coverage instrumentation via compiler/linker flags |
+| `CMAKE_PREFIX_PATH`, `MPFR_ROOT`, toolchain include/link paths | Use CMake package and toolchain discovery |
+| Toolchain include/link paths | GMP is resolved through MPFR/toolchain linkage |
+| `GECODE_DOC_DOT`, `GECODE_DOC_SEARCH`, `GECODE_DOC_TAGFILE` | Requires Doxygen 1.18.0 or newer; helper pages require `uv` |
+| `GECODE_ENABLE_MIMALLOC` | Default `OFF`; private allocator backend |
 
 Higher-level modules enable the lower-level modules they require. Examples
 and FlatZinc require the core modelling modules; minimodel requires int and
@@ -240,6 +245,13 @@ cmake -S . -B build/asan-ubsan \
 cmake --build build/asan-ubsan --target check
 ```
 
+On macOS, `std::thread` stacks are 512 KiB, while the main thread has 8 MiB, and
+the check targets run `gecode-test` on worker threads. In a Debug build with
+AddressSanitizer, forced inlining gives some propagators a frame of about
+400 KiB, so a test can overflow its worker stack. This is a limit of that build,
+not unbounded recursion. Use an optimized sanitizer build, or run
+`gecode-test -threads 1` on the main thread.
+
 ## Using Gecode From Other CMake Projects
 
 ### Recommended aggregate target
@@ -297,19 +309,6 @@ See the test API in [`test/int.hh`](../test/int.hh) and
 [`test/test.hh`](../test/test.hh) for an example, consistency controls, and
 `Test::run_registered_tests`. The runner's `-help` lists execution and replay
 options.
-
-Autoconf also installs the configured test helpers when search and integer
-variables are enabled. For direct linking, list the used helpers before their
-Gecode dependencies, for example:
-
-```bash
-c++ -std=c++17 -I<prefix>/include custom-propagator-test.cpp \
-  -L<prefix>/lib -lgecodetestint -lgecodetest -lgecodesearch \
-  -lgecodeint -lgecodekernel -lgecodesupport
-```
-
-Use the installation's configured library directory. Set and float helpers
-also require their corresponding Gecode libraries.
 
 Legacy component spellings are also accepted in `COMPONENTS`:
 

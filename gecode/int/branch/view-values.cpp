@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,48 +32,46 @@
 
 #include <gecode/int/branch.hh>
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
-  PosValuesChoice::PosValuesChoice(const Brancher& b, const Pos& p, IntView x)
-    : PosChoice(b,x.size(),p), n(0) {
-    for (ViewRanges<IntView> r(x); r(); ++r)
-      n++;
-    pm = heap.alloc<PosMin>(n+1);
-    unsigned int w=0;
-    int i=0;
-    for (ViewRanges<IntView> r(x); r(); ++r) {
-      pm[i].min = r.min();
-      pm[i].pos = w;
-      w += r.width(); i++;
+    PosValuesChoice::PosValuesChoice(const Brancher& b, const Pos& p, IntView x) : PosChoice(b, x.size(), p), n(0) {
+        for (ViewRanges<IntView> r(x); r(); ++r)
+            n++;
+        pm = heap.alloc<PosMin>(n + 1);
+        unsigned int w = 0;
+        int i = 0;
+        for (ViewRanges<IntView> r(x); r(); ++r) {
+            pm[i].min = r.min();
+            pm[i].pos = w;
+            w += r.width();
+            i++;
+        }
+        pm[i].pos = w;
     }
-    pm[i].pos = w;
-  }
 
-  PosValuesChoice::PosValuesChoice(const Brancher& b, unsigned int a, Pos p,
-                                   Archive& e)
-    : PosChoice(b,a,p) {
-    e >> n;
-    pm = heap.alloc<PosMin>(n+1);
-    for (unsigned int i=0; i<n+1; i++) {
-      e >> pm[i].pos;
-      e >> pm[i].min;
+    PosValuesChoice::PosValuesChoice(const Brancher& b, unsigned int a, Pos p, Archive& e) : PosChoice(b, a, p) {
+        e >> n;
+        pm = heap.alloc<PosMin>(n + 1);
+        for (unsigned int i = 0; i < n + 1; i++) {
+            e >> pm[i].pos;
+            e >> pm[i].min;
+        }
     }
-  }
 
-  PosValuesChoice::~PosValuesChoice(void) {
-    heap.free<PosMin>(pm,n+1);
-  }
-
-  forceinline void
-  PosValuesChoice::archive(Archive& e) const {
-    PosChoice::archive(e);
-    e << this->alternatives() << n;
-    for (unsigned int i=0; i<n+1; i++) {
-      e << pm[i].pos;
-      e << pm[i].min;
+    PosValuesChoice::~PosValuesChoice() {
+        heap.free<PosMin>(pm, n + 1);
     }
-  }
 
-}}}
+    forceinline void
+    PosValuesChoice::archive(Archive& e) const {
+        PosChoice::archive(e);
+        e << this->alternatives() << n;
+        for (unsigned int i = 0; i < n + 1; i++) {
+            e << pm[i].pos;
+            e << pm[i].min;
+        }
+    }
+
+} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,36 +30,35 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
-  template<class View>
-  forceinline
-  IterPruneVal<View>::IterPruneVal(ViewNode<View>* y)
-    : x(y), e(y->val_edges()) {
-    while ((e != nullptr) && e->used(x))
-      e = e->next_edge();
-  }
-  template<class View>
-  forceinline bool
-  IterPruneVal<View>::operator ()(void) const {
-    return e != nullptr;
-  }
-  template<class View>
-  forceinline void
-  IterPruneVal<View>::operator ++(void) {
-    assert(!e->used(x));
-    do {
-      e = e->next_edge();
-    } while ((e != nullptr) && e->used(x));
-  }
-  template<class View>
-  forceinline int
-  IterPruneVal<View>::val(void) const {
-    assert(!e->used(x));
-    return e->val(x)->val();
-  }
+    template <class View>
+    forceinline
+    IterPruneVal<View>::IterPruneVal(ViewNode<View>* y)
+        : x(y), e(y->val_edges()) {
+        while ((e != nullptr) && e->used(x))
+            e = e->next_edge();
+    }
+    template <class View>
+    forceinline bool
+    IterPruneVal<View>::operator()() const {
+        return e != nullptr;
+    }
+    template <class View>
+    forceinline void
+    IterPruneVal<View>::operator++() {
+        assert(!e->used(x));
+        do {
+            e = e->next_edge();
+        } while ((e != nullptr) && e->used(x));
+    }
+    template <class View>
+    forceinline int
+    IterPruneVal<View>::val() const {
+        assert(!e->used(x));
+        return e->val(x)->val();
+    }
 
-}}}
+} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop
-

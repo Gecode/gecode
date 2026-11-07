@@ -28,13 +28,9 @@ if [ ! -d "$repo_root/.git" ] && [ ! -f "$repo_root/.git" ]; then
 fi
 
 cleanup_root=
-autoconf_build_root=
 workspace=
 pending_signal=
 cleanup() {
-  if [ -n "$autoconf_build_root" ]; then
-    rm -rf -- "$autoconf_build_root"
-  fi
   if [ -n "$cleanup_root" ]; then
     rm -rf -- "$cleanup_root"
   fi
@@ -71,10 +67,6 @@ workspace=$(mktemp -d "$cleanup_root/work.XXXXXX")
 source_copy="$workspace/source"
 mkdir "$source_copy"
 
-autoconf_version=2.72
-autoconf_expected="autoconf (GNU Autoconf) $autoconf_version"
-autoconf_sha256=afb181a76e1ee72832f6581c0eddf8df032b83e2e0239ef79ebedc4467d92d6e
-
 prepend_brew_bin() {
   formula=$1
   if ! command -v brew >/dev/null 2>&1; then
@@ -86,82 +78,13 @@ prepend_brew_bin() {
   fi
 }
 
-# Homebrew keeps bison, flex, and m4 keg-only on macOS. Make the same helper
+# Homebrew keeps these tools keg-only on macOS. Make the same helper
 # work from a developer shell without requiring them to edit PATH manually.
-prepend_brew_bin m4
 prepend_brew_bin bison
 prepend_brew_bin flex
+prepend_brew_bin llvm
+prepend_brew_bin llvm@22
 export PATH
-
-autoconf_is_expected() {
-  command -v autoconf >/dev/null 2>&1 &&
-    [ "$(autoconf --version | sed -n '1p')" = "$autoconf_expected" ]
-}
-
-ensure_autoconf() {
-  if autoconf_is_expected; then
-    return
-  fi
-
-  if [ -n "${GECODE_GENERATED_TOOLS_DIR:-}" ]; then
-    tools_root=$GECODE_GENERATED_TOOLS_DIR
-  elif [ -n "${RUNNER_TEMP:-}" ]; then
-    tools_root="$RUNNER_TEMP/gecode-generated-tools"
-  else
-    tools_root="${XDG_CACHE_HOME:-$HOME/.cache}/gecode/generated-tools"
-  fi
-  install_root="$tools_root/autoconf-$autoconf_version"
-
-  if [ -x "$install_root/bin/autoconf" ]; then
-    PATH="$install_root/bin:$PATH"
-    export PATH
-    if autoconf_is_expected; then
-      return
-    fi
-  fi
-
-  for tool in curl make tar; do
-    if ! command -v "$tool" >/dev/null 2>&1; then
-      echo "Cannot bootstrap Autoconf $autoconf_version: missing $tool." >&2
-      exit 1
-    fi
-  done
-  if ! command -v shasum >/dev/null 2>&1 &&
-     ! command -v sha256sum >/dev/null 2>&1; then
-    echo "Cannot bootstrap Autoconf $autoconf_version: no SHA-256 checker is available." >&2
-    exit 1
-  fi
-  if ! command -v m4 >/dev/null 2>&1; then
-    echo "Cannot bootstrap Autoconf $autoconf_version: GNU m4 is unavailable." >&2
-    exit 1
-  fi
-
-  mkdir -p "$tools_root"
-  autoconf_build_root=$(mktemp -d "$temp_root/gecode-autoconf-build.XXXXXX")
-  archive="$autoconf_build_root/autoconf-$autoconf_version.tar.gz"
-  if ! curl --fail --silent --show-error --location --retry 3 \
-      --connect-timeout 15 --max-time 120 --output "$archive" \
-      "https://mirrors.kernel.org/gnu/autoconf/autoconf-$autoconf_version.tar.gz"; then
-    curl --fail --silent --show-error --location --retry 3 \
-      --connect-timeout 15 --max-time 120 --output "$archive" \
-      "https://ftp.gnu.org/gnu/autoconf/autoconf-$autoconf_version.tar.gz"
-  fi
-  if command -v shasum >/dev/null 2>&1; then
-    printf '%s  %s\n' "$autoconf_sha256" "$archive" | shasum -a 256 -c -
-  else
-    printf '%s  %s\n' "$autoconf_sha256" "$archive" | sha256sum -c -
-  fi
-  tar -xzf "$archive" -C "$autoconf_build_root"
-  rm -rf -- "$install_root"
-  (
-    cd "$autoconf_build_root/autoconf-$autoconf_version"
-    ./configure --prefix="$install_root" >/dev/null
-    make -j2 >/dev/null
-    make install >/dev/null
-  )
-  PATH="$install_root/bin:$PATH"
-  export PATH
-}
 
 require_version() {
   tool=$1
@@ -175,13 +98,11 @@ require_version() {
     echo "Unsupported $tool version." >&2
     echo "  required: $expected" >&2
     echo "  found:    $actual" >&2
-    echo "Install the required generator, then run 'make regenerate'." >&2
+    echo "Install the required generator, then run 'bash .github/ci/generated-source-freshness.sh --update'." >&2
     exit 1
   fi
 }
 
-ensure_autoconf
-require_version autoconf "$autoconf_expected"
 require_version bison "bison (GNU Bison) 3.8.2"
 require_version flex "flex 2.6.4"
 if ! command -v uv >/dev/null 2>&1; then
@@ -189,22 +110,21 @@ if ! command -v uv >/dev/null 2>&1; then
   exit 1
 fi
 
-# Copy the current tracked worktree content, including local tracked changes,
-# without copying build products or allowing generators to touch the source.
-# The copy goes through an archive file: in a pipe, bsdtar may stop reading
-# at the end-of-archive marker before the writer has written its final
-# padding, which fails the writer with a write error.
-git -C "$repo_root" ls-files -z |
-  tar -C "$repo_root" --null -T - -cf "$workspace/source.tar"
-tar -C "$source_copy" -xf "$workspace/source.tar"
-rm -f -- "$workspace/source.tar"
-
 vis_files=(
   ./gecode/int/var-imp/int.vis
   ./gecode/int/var-imp/bool.vis
   ./gecode/set/var-imp/set.vis
   ./gecode/float/var-imp/float.vis
 )
+
+# Copy generator inputs with their source-relative paths. Generated outputs stay
+# isolated until --update explicitly copies them back to the source tree.
+for input in .clang-format misc/genvarimp.py "${vis_files[@]}" \
+    gecode/flatzinc/parser.yxx gecode/flatzinc/lexer.lxx; do
+  mkdir -p "$source_copy/$(dirname "$input")"
+  cp "$repo_root/$input" "$source_copy/$input"
+done
+mkdir -p "$source_copy/gecode/kernel"
 
 normalize_generated_whitespace() {
   output=$1
@@ -226,11 +146,6 @@ normalize_generated_whitespace() {
 
 (
   cd "$source_copy"
-  # Ignore any autom4te cache so output matches a clean source release.
-  autoconf --force
-  # Autoconf 2.72 appends blank lines after the generated script body; source
-  # releases retain exactly one final newline.
-  normalize_generated_whitespace configure
   uv run --script ./misc/genvarimp.py -typehpp "${vis_files[@]}" \
     > gecode/kernel/var-type.hpp
   uv run --script ./misc/genvarimp.py -header "${vis_files[@]}" \
@@ -249,7 +164,6 @@ normalize_generated_whitespace() {
 )
 
 generated_files=(
-  configure
   gecode/kernel/var-type.hpp
   gecode/kernel/var-imp.hpp
   gecode/flatzinc/parser.tab.cpp
@@ -257,9 +171,17 @@ generated_files=(
   gecode/flatzinc/lexer.yy.cpp
 )
 
+# Flex builds number the #line directives that name the output file itself
+# differently: Debian's count one line further than Homebrew's. Those numbers
+# carry no meaning, so the comparison ignores them.
+without_output_line_numbers() {
+  sed -E 's|^#line [0-9]+ "gecode/flatzinc/lexer\.yy\.cpp"$|#line "gecode/flatzinc/lexer.yy.cpp"|' "$1"
+}
+
 stale=0
 for file in "${generated_files[@]}"; do
-  if cmp -s "$repo_root/$file" "$source_copy/$file"; then
+  if cmp -s <(without_output_line_numbers "$repo_root/$file") \
+      <(without_output_line_numbers "$source_copy/$file"); then
     continue
   fi
   if [ "$mode" = update ]; then
@@ -281,8 +203,8 @@ if [ "$mode" = update ]; then
 fi
 
 if [ "$stale" -ne 0 ]; then
-  echo "Regenerate with Autoconf 2.72, GNU Bison 3.8.2, GNU Flex 2.6.4, and uv, then commit the reviewed outputs." >&2
-  echo "Run 'make regenerate' to use the canonical generator workflow." >&2
+  echo "Regenerate with GNU Bison 3.8.2, GNU Flex 2.6.4, clang-format 22, and uv, then commit the reviewed outputs." >&2
+  echo "Run 'bash .github/ci/generated-source-freshness.sh --update' to use the canonical generator workflow." >&2
   exit 1
 fi
 

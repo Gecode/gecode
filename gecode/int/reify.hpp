@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,52 +32,51 @@
 
 namespace Gecode {
 
-  /*
-   * The reification class
-   *
-   */
+    /*
+     * The reification class
+     *
+     */
 
-  forceinline
-  Reify::Reify(void)
-    : rm(RM_EQV) {}
-  forceinline
-  Reify::Reify(BoolVar x0, ReifyMode rm0)
-    : x(x0), rm(rm0) {}
-  forceinline BoolVar
-  Reify::var(void) const {
-    return x;
-  }
-  forceinline void
-  Reify::var(BoolVar x0) {
-    x = x0;
-  }
-  forceinline ReifyMode
-  Reify::mode(void) const {
-    return rm;
-  }
-  forceinline void
-  Reify::mode(ReifyMode rm0) {
-    rm = rm0;
-  }
+    forceinline
+    Reify::Reify()
+        : rm(RM_EQV) {}
+    forceinline
+    Reify::Reify(BoolVar x0, ReifyMode rm0)
+        : x(x0), rm(rm0) {}
+    forceinline BoolVar
+    Reify::var() const {
+        return x;
+    }
+    forceinline void
+    Reify::var(BoolVar x0) {
+        x = x0;
+    }
+    forceinline ReifyMode
+    Reify::mode() const {
+        return rm;
+    }
+    forceinline void
+    Reify::mode(ReifyMode rm0) {
+        rm = rm0;
+    }
 
-  /*
-   * Reification convenience functions
-   *
-   */
-  forceinline Reify
-  eqv(BoolVar x) {
-    return Reify(x,RM_EQV);
-  }
-  forceinline Reify
-  imp(BoolVar x) {
-    return Reify(x,RM_IMP);
-  }
-  forceinline Reify
-  pmi(BoolVar x) {
-    return Reify(x,RM_PMI);
-  }
+    /*
+     * Reification convenience functions
+     *
+     */
+    forceinline Reify
+    eqv(BoolVar x) {
+        return Reify(x, RM_EQV);
+    }
+    forceinline Reify
+    imp(BoolVar x) {
+        return Reify(x, RM_IMP);
+    }
+    forceinline Reify
+    pmi(BoolVar x) {
+        return Reify(x, RM_RIMP);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-post
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,14 +34,14 @@
 
 namespace Gecode {
 
-  void
-  trace(Home home, TraceFilter tf, int te, Tracer& t) {
-    if (static_cast<Space&>(home).findtracerecorder())
-      throw MoreThanOneTracer("trace()");
-    GECODE_POST;
-    GECODE_ES_FAIL(TraceRecorder::post(home,tf,te,t));
-  }
+    void
+    trace(Home home, const TraceFilter& tf, int te, Tracer& t) {
+        if (static_cast<Space&>(home).find_trace_recorder())
+            throw MoreThanOneTracer("trace()");
+        GECODE_POST;
+        GECODE_ES_FAIL(TraceRecorder::post(home, tf, te, t));
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-trace

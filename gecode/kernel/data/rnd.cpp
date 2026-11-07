@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,48 +36,44 @@
 
 namespace Gecode {
 
-  Support::Mutex Rnd::IMP::m;
+    Support::Mutex Rnd::IMP::m;
 
-  forceinline
-  Rnd::IMP::IMP(unsigned int s)
-    : rg(s) {}
+    forceinline
+    Rnd::IMP::IMP(unsigned int s)
+        : rg(s) {}
 
-  Rnd::IMP::~IMP(void) {}
+    Rnd::IMP::~IMP() = default;
 
-  forceinline void
-  Rnd::_seed(unsigned int s) {
-    if (object() == nullptr) {
-      object(new IMP(s));
-    } else {
-      static_cast<IMP*>(object())->seed(s);
+    forceinline void
+    Rnd::_seed(unsigned int s) {
+        if (object() == nullptr) {
+            object(new IMP(s));
+        } else {
+            static_cast<IMP*>(object())->seed(s);
+        }
     }
-  }
 
-  Rnd::Rnd(void) {}
-  Rnd::Rnd(unsigned int s) {
-    object(new IMP(s));
-  }
-  Rnd::Rnd(const Rnd& r)
-    : SharedHandle(r) {}
-  Rnd&
-  Rnd::operator =(const Rnd& r) {
-    (void) SharedHandle::operator =(r);
-    return *this;
-  }
-  Rnd::~Rnd(void) {}
+    Rnd::Rnd(unsigned int s) {
+        object(new IMP(s));
+    }
+    Rnd&
+    Rnd::operator=(const Rnd& r) {
+        (void)SharedHandle::operator=(r);
+        return *this;
+    }
 
-  void
-  Rnd::seed(unsigned int s) {
-    _seed(s);
-  }
-  void
-  Rnd::time(void) {
-    _seed(static_cast<unsigned int>(::time(nullptr)));
-  }
-  void
-  Rnd::hw(void) {
-    _seed(Support::hwrnd());
-  }
-}
+    void
+    Rnd::seed(unsigned int s) {
+        _seed(s);
+    }
+    void
+    Rnd::time() {
+        _seed(static_cast<unsigned int>(::time(nullptr)));
+    }
+    void
+    Rnd::hw() {
+        _seed(Support::hwrnd());
+    }
+} // namespace Gecode
 
 // STATISTICS: kernel-other

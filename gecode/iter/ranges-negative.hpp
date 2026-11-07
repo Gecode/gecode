@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,101 +32,96 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
-  /**
-   * \brief Range iterator for negative part of a range iterator
-   *
-   * If \a strict is true, zero is excluded.
-   *
-   * \ingroup FuncIterRanges
-   */
+    /**
+     * \brief Range iterator for negative part of a range iterator
+     *
+     * If \a strict is true, zero is excluded.
+     *
+     * \ingroup FuncIterRanges
+     */
 
-  template<class I, bool strict=false>
-  class Negative {
-  protected:
-    /// Input iterator
-    I i;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Negative(void);
-    /// Initialize with ranges from \a i
-    Negative(I& i);
-    /// Initialize with ranges from \a i
-    void init(I& i);
-    //@}
+    template <class I, bool strict = false>
+    class Negative {
+    protected:
+        /// Input iterator
+        I i;
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a range or done
-    bool operator ()(void) const;
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Negative() = default;
+        /// Initialize with ranges from \a i
+        Negative(I& i);
+        /// Initialize with ranges from \a i
+        void init(I& i);
+        //@}
 
-    /// \name Range access
-    //@{
-    /// Return smallest value of range
-    int min(void) const;
-    /// Return largest value of range
-    int max(void) const;
-    /// Return width of range (distance between minimum and maximum)
-    unsigned int width(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a range or done
+        bool operator()() const;
+        /// Move iterator to next range (if possible)
+        void operator++();
+        //@}
 
+        /// \name Range access
+        //@{
+        /// Return smallest value of range
+        int min() const;
+        /// Return largest value of range
+        int max() const;
+        /// Return width of range (distance between minimum and maximum)
+        unsigned int width() const;
+        //@}
+    };
 
-  template<class I, bool strict>
-  forceinline
-  Negative<I,strict>::Negative(void) {}
-
-  template<class I, bool strict>
-  forceinline void
-  Negative<I,strict>::init(I& i0) {
-    i=i0;
-  }
-
-  template<class I, bool strict>
-  forceinline
-  Negative<I,strict>::Negative(I& i0) : i(i0) {}
-
-  template<class I, bool strict>
-  forceinline void
-  Negative<I,strict>::operator ++(void) {
-    ++i;
-  }
-  template<class I, bool strict>
-  forceinline bool
-  Negative<I,strict>::operator ()(void) const {
-    if (strict) {
-      return i() && (i.min() < 0);
-    } else {
-      return i() && (i.min() <= 0);
+    template <class I, bool strict>
+    forceinline void
+    Negative<I, strict>::init(I& i0) {
+        i = i0;
     }
-  }
 
-  template<class I, bool strict>
-  forceinline int
-  Negative<I,strict>::min(void) const {
-    return i.min();
-  }
-  template<class I, bool strict>
-  forceinline int
-  Negative<I,strict>::max(void) const {
-    if (strict) {
-      return std::min(i.max(),-1);
-    } else {
-      return std::min(i.max(),0);
+    template <class I, bool strict>
+    forceinline
+    Negative<I, strict>::Negative(I& i0)
+        : i(i0) {}
+
+    template <class I, bool strict>
+    forceinline void
+    Negative<I, strict>::operator++() {
+        ++i;
     }
-  }
-  template<class I, bool strict>
-  forceinline unsigned int
-  Negative<I,strict>::width(void) const {
-    return static_cast<unsigned int>(max()-min()+1);
-  }
+    template <class I, bool strict>
+    forceinline bool
+    Negative<I, strict>::operator()() const {
+        if (strict) {
+            return i() && (i.min() < 0);
+        }
+        return i() && (i.min() <= 0);
+    }
 
-}}}
+    template <class I, bool strict>
+    forceinline int
+    Negative<I, strict>::min() const {
+        return i.min();
+    }
+    template <class I, bool strict>
+    forceinline int
+    Negative<I, strict>::max() const {
+        if (strict) {
+            return std::min(i.max(), -1);
+        }
+        return std::min(i.max(), 0);
+    }
+    template <class I, bool strict>
+    forceinline unsigned int
+    Negative<I, strict>::width() const {
+        return static_cast<unsigned int>(max() - min() + 1);
+    }
+
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

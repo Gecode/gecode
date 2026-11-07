@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -32,61 +31,58 @@
  */
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  /// Create A* engine
-  GECODE_SEARCH_EXPORT Engine*
-  astarengine(Space* s, const Options& o);
+    /// Create A* engine
+    GECODE_SEARCH_EXPORT Engine* make_astar_engine(Space* s, const Options& o);
 
-  /// An A* engine builder
-  template<class T>
-  class AStarBuilder : public Builder {
-    using Builder::opt;
-  public:
-    /// The constructor
-    AStarBuilder(const Options& opt);
-    /// The actual build function
-    virtual Engine* operator() (Space* s) const;
-  };
+    /// An A* engine builder
+    template <class T>
+    class AStarBuilder : public Builder {
+        using Builder::opt;
 
-  template<class T>
-  inline
-  AStarBuilder<T>::AStarBuilder(const Options& opt)
-    : Builder(opt,AStar<T>::best) {}
+    public:
+        /// The constructor
+        AStarBuilder(const Options& opt);
+        /// The actual build function
+        Engine* operator()(Space* s) const override;
+    };
 
-  template<class T>
-  Engine*
-  AStarBuilder<T>::operator() (Space* s) const {
-    return build<T,AStar>(s,opt);
-  }
+    template <class T>
+    inline AStarBuilder<T>::AStarBuilder(const Options& opt) : Builder(opt, AStar<T>::best) {}
 
-}}
+    template <class T>
+    Engine*
+    AStarBuilder<T>::operator()(Space* s) const {
+        return build<T, AStar>(s, opt);
+    }
+
+} // namespace Gecode::Search
 
 namespace Gecode {
 
-  template<class T>
-  inline
-  AStar<T>::AStar(T* s, const Search::Options& o)
-    : Search::Base<T>(Search::astarengine(s,o)) {}
+    template <class T>
+    inline AStar<T>::AStar(T* s, const Search::Options& o) : Search::Base<T>(Search::make_astar_engine(s, o)) {}
 
-  template<class T>
-  inline T*
-  astar(T* s, const Search::Options& o) {
-    AStar<T> a(s,o);
-    T* l = nullptr;
-    while (T* n = a.next()) {
-      delete l; l = n;
+    template <class T>
+    inline T*
+    astar(T* s, const Search::Options& o) {
+        AStar<T> a(s, o);
+        T* l = nullptr;
+        while (T* n = a.next()) {
+            delete l;
+            l = n;
+        }
+        return l;
     }
-    return l;
-  }
 
-  template<class T>
-  SEB
-  astar(const Search::Options& o) {
-    return new Search::AStarBuilder<T>(o);
-  }
+    template <class T>
+    SEB
+    astar(const Search::Options& o) {
+        return new Search::AStarBuilder<T>(o);
+    }
 
-}
+} // namespace Gecode
 
 #endif
 

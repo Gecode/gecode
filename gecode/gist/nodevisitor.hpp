@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -31,92 +30,97 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  template<class Cursor>
-  forceinline
-  NodeVisitor<Cursor>::NodeVisitor(const Cursor& c0) : c(c0) {}
+    template <class Cursor>
+    forceinline
+    NodeVisitor<Cursor>::NodeVisitor(const Cursor& c0)
+        : c(c0) {}
 
-  template<class Cursor>
-  forceinline void
-  NodeVisitor<Cursor>::setCursor(const Cursor& c0) { c = c0; }
-
-  template<class Cursor>
-  forceinline Cursor&
-  NodeVisitor<Cursor>::getCursor(void) { return c; }
-
-  template<class Cursor>
-  forceinline void
-  PostorderNodeVisitor<Cursor>::moveToLeaf(void) {
-    while (c.mayMoveDownwards()) {
-        c.moveDownwards();
+    template <class Cursor>
+    forceinline void
+    NodeVisitor<Cursor>::set_cursor(const Cursor& c0) {
+        c = c0;
     }
-  }
 
-  template<class Cursor>
-  PostorderNodeVisitor<Cursor>::PostorderNodeVisitor(const Cursor& c0)
-    : NodeVisitor<Cursor>(c0) {
-    moveToLeaf();
-  }
-
-  template<class Cursor>
-  forceinline bool
-  PostorderNodeVisitor<Cursor>::next(void) {
-    c.processCurrentNode();
-    if (c.mayMoveSidewards()) {
-        c.moveSidewards();
-        moveToLeaf();
-    } else if (c.mayMoveUpwards()) {
-        c.moveUpwards();
-    } else {
-        return false;
+    template <class Cursor>
+    forceinline Cursor&
+    NodeVisitor<Cursor>::get_cursor() {
+        return c;
     }
-    return true;
-  }
 
-  template<class Cursor>
-  forceinline void
-  PostorderNodeVisitor<Cursor>::run(void) {
-    while (next()) {}
-  }
-
-  template<class Cursor>
-  forceinline bool
-  PreorderNodeVisitor<Cursor>::backtrack(void) {
-    while (! c.mayMoveSidewards() && c.mayMoveUpwards()) {
-      c.moveUpwards();
+    template <class Cursor>
+    forceinline void
+    PostorderNodeVisitor<Cursor>::move_to_leaf() {
+        while (c.may_move_downwards()) {
+            c.move_downwards();
+        }
     }
-    if (! c.mayMoveUpwards()) {
-      return false;
-    } else {
-      c.moveSidewards();
+
+    template <class Cursor>
+    PostorderNodeVisitor<Cursor>::PostorderNodeVisitor(const Cursor& c0) : NodeVisitor<Cursor>(c0) {
+        move_to_leaf();
     }
-    return true;
-  }
 
-  template<class Cursor>
-  PreorderNodeVisitor<Cursor>::PreorderNodeVisitor(const Cursor& c0)
-    : NodeVisitor<Cursor>(c0) {}
-
-  template<class Cursor>
-  forceinline bool
-  PreorderNodeVisitor<Cursor>::next(void) {
-    c.processCurrentNode();
-    if (c.mayMoveDownwards()) {
-      c.moveDownwards();
-    } else if (c.mayMoveSidewards()) {
-      c.moveSidewards();
-    } else {
-      return backtrack();
+    template <class Cursor>
+    forceinline bool
+    PostorderNodeVisitor<Cursor>::next() {
+        c.process_current_node();
+        if (c.may_move_sidewards()) {
+            c.move_sidewards();
+            move_to_leaf();
+        } else if (c.may_move_upwards()) {
+            c.move_upwards();
+        } else {
+            return false;
+        }
+        return true;
     }
-    return true;
-  }
 
-  template<class Cursor>
-  forceinline void
-  PreorderNodeVisitor<Cursor>::run(void) {
-    while (next()) {}
-  }
-}}
+    template <class Cursor>
+    forceinline void
+    PostorderNodeVisitor<Cursor>::run() {
+        while (next()) {
+        }
+    }
+
+    template <class Cursor>
+    forceinline bool
+    PreorderNodeVisitor<Cursor>::backtrack() {
+        while (!c.may_move_sidewards() && c.may_move_upwards()) {
+            c.move_upwards();
+        }
+        if (!c.may_move_upwards()) {
+            return false;
+        }
+        c.move_sidewards();
+
+        return true;
+    }
+
+    template <class Cursor>
+    PreorderNodeVisitor<Cursor>::PreorderNodeVisitor(const Cursor& c0) : NodeVisitor<Cursor>(c0) {}
+
+    template <class Cursor>
+    forceinline bool
+    PreorderNodeVisitor<Cursor>::next() {
+        c.process_current_node();
+        if (c.may_move_downwards()) {
+            c.move_downwards();
+        } else if (c.may_move_sidewards()) {
+            c.move_sidewards();
+        } else {
+            return backtrack();
+        }
+        return true;
+    }
+
+    template <class Cursor>
+    forceinline void
+    PreorderNodeVisitor<Cursor>::run() {
+        while (next()) {
+        }
+    }
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

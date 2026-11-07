@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,308 +34,316 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Test { namespace Int {
-   /// %Tests for unary scheduling constraints
-   namespace Unary {}
-}}
+/// %Tests for unary scheduling constraints
 
-namespace Test { namespace Int { namespace Unary {
+namespace Test::Int::Unary {
 
-  /**
-   * \defgroup TaskTestIntUnary Unary scheduling constraints
-   * \ingroup TaskTestInt
-   */
-  //@{
-  /// %Test for unary constraint
-  class ManFixPUnary : public Test {
-  protected:
-    /// The processing times
-    Gecode::IntArgs p;
-    /// Get a reasonable maximal start time
-    static int st(const Gecode::IntArgs& p) {
-      int t = 0;
-      for (int i=p.size(); i--; )
-        t += p[i];
-      return t;
-    }
-  public:
-    /// Create and register test
-    ManFixPUnary(TestTags tags, const Gecode::IntArgs& p0,
-                 int o, Gecode::IntPropLevel ipl0)
-      : Test(tags,"Unary::Man::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
-             p0.size(),o,o+st(p0),false,ipl0),
-        p(p0) {
-      testsearch = false;
-      contest = CTL_NONE;
-    }
-    /// Create and register initial assignment
-    virtual Assignment* assignment(void) const {
-      return new RandomAssignment(arity, dom, 500, _rand);
-    }
-    /// %Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      for (int i=0; i<x.size(); i++)
-        for (int j=i+1; j<x.size(); j++)
-          if ((x[i]+p[i] > x[j]) && (x[j]+p[j] > x[i]))
-            return false;
-      return true;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-      Gecode::unary(home, x, p, ipl);
-    }
-  };
+    /**
+     * \defgroup TaskTestIntUnary Unary scheduling constraints
+     * \ingroup TaskTestInt
+     */
+    //@{
+    /// %Test for unary constraint
+    class ManFixPUnary : public Test {
+    protected:
+        /// The processing times
+        Gecode::IntArgs p;
+        /// Get a reasonable maximal start time
+        static int
+        st(const Gecode::IntArgs& p) {
+            int t = 0;
+            for (int i = p.size(); i--;)
+                t += p[i];
+            return t;
+        }
 
-  /// %Test for unary constraint with optional tasks
-  class OptFixPUnary : public Test {
-  protected:
-    /// The processing times
-    Gecode::IntArgs p;
-    /// Threshold for taking a task as optional
-    int l;
-    /// Get a reasonable maximal start time
-    static int st(const Gecode::IntArgs& p) {
-      int t = 0;
-      for (int i=p.size(); i--; )
-        t += p[i];
-      return t;
-    }
-  public:
-    /// Create and register test
-    OptFixPUnary(TestTags tags, const Gecode::IntArgs& p0,
-                 int o, Gecode::IntPropLevel ipl0)
-      : Test(tags,"Unary::Opt::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
-             2*p0.size(),o,o+st(p0),false,ipl0), p(p0), l(o+st(p)/2) {
-      testsearch = false;
-      contest = CTL_NONE;
-    }
-    /// Create and register initial assignment
-    virtual Assignment* assignment(void) const {
-      return new RandomAssignment(arity, dom, 500, _rand);
-    }
-    /// %Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      int n = x.size() / 2;
-      for (int i=0; i<n; i++)
-        if (x[n+i] > l)
-          for (int j=i+1; j<n; j++)
-            if(x[n+j] > l)
-              if ((x[i]+p[i] > x[j]) && (x[j]+p[j] > x[i]))
-                return false;
-      return true;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-      int n=x.size() / 2;
-      Gecode::IntVarArgs s(n);
-      Gecode::BoolVarArgs m(n);
-      for (int i=0; i<n; i++) {
-        s[i]=x[i];
-        m[i]=Gecode::expr(home, (x[n+i] > l));
-      }
-      Gecode::unary(home, s, p, m, ipl);
-    }
-  };
+    public:
+        /// Create and register test
+        ManFixPUnary(TestTags tags, const Gecode::IntArgs& p0, int o, Gecode::IntPropLevel ipl0)
+            : Test(tags, "Unary::Man::Fix::" + str(o) + "::" + str(p0) + "::" + str(ipl0), p0.size(), o, o + st(p0),
+                   false, ipl0),
+              p(p0) {
+            test_search = false;
+            consistency_test_level = CTL_NONE;
+        }
+        /// Create and register initial assignment
+        Assignment*
+        assignment() const override {
+            return new RandomAssignment(arity, dom, 500, _rand);
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            for (int i = 0; i < x.size(); i++)
+                for (int j = i + 1; j < x.size(); j++)
+                    if ((x[i] + p[i] > x[j]) && (x[j] + p[j] > x[i]))
+                        return false;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::unary(home, x, p, ipl);
+        }
+    };
 
-  /// %Test for unary constraint
-  class ManFlexUnary : public Test {
-  protected:
-    /// Minimum processing time
-    int _minP;
-    /// Maximum processing time
-    int _maxP;
-    /// Offset for start times
-    int off;
-  public:
-    /// Create and register test
-    ManFlexUnary(TestTags tags, int n, int minP, int maxP,
-                 int o, Gecode::IntPropLevel ipl0)
-      : Test(tags,"Unary::Man::Flex::"+str(o)+"::"+str(n)+"::"
-             +str(minP)+"::"+str(maxP)+"::"+str(ipl0),
-             2*n,0,n*maxP,false,ipl0), _minP(minP), _maxP(maxP), off(o) {
-      testsearch = false;
-      testfix = false;
-      contest = CTL_NONE;
-    }
-    /// Create and register initial assignment
-    virtual Assignment* assignment(void) const {
-      return new RandomMixAssignment(arity / 2, dom, arity / 2,
-                                     Gecode::IntSet(_minP, _maxP), 500, _rand);
-    }
-    /// %Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      int n = x.size()/2;
-      for (int i=0; i<n; i++)
-        for (int j=i+1; j<n; j++)
-          if ((x[i]+x[n+i] > x[j]) && (x[j]+x[n+j] > x[i]))
-            return false;
-      return true;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-      Gecode::IntVarArgs s(x.size()/2);
-      Gecode::IntVarArgs px(x.slice(x.size()/2));
-      Gecode::IntVarArgs e(home,x.size()/2,
-                           Gecode::Int::Limits::min,
-                           Gecode::Int::Limits::max);
-      for (int i=s.size(); i--;) {
-        s[i] = expr(home, off+x[i]);
-        rel(home, s[i]+px[i] == e[i]);
-        rel(home, _minP <= px[i]);
-        rel(home, _maxP >= px[i]);
-      }
-      Gecode::unary(home, s, px, e, ipl);
-    }
-  };
+    /// %Test for unary constraint with optional tasks
+    class OptFixPUnary : public Test {
+    protected:
+        /// The processing times
+        Gecode::IntArgs p;
+        /// Threshold for taking a task as optional
+        int l;
+        /// Get a reasonable maximal start time
+        static int
+        st(const Gecode::IntArgs& p) {
+            int t = 0;
+            for (int i = p.size(); i--;)
+                t += p[i];
+            return t;
+        }
 
-  /// %Test for unary constraint with optional tasks
-  class OptFlexUnary : public Test {
-  protected:
-    /// Minimum processing time
-    int _minP;
-    /// Maximum processing time
-    int _maxP;
-    /// Offset for start times
-    int off;
-    /// Threshold for taking a task as optional
-    int l;
-    /// Get a reasonable maximal start time
-    static int st(const Gecode::IntArgs& p) {
-      int t = 0;
-      for (int i=p.size(); i--; )
-        t += p[i];
-      return t;
-    }
-  public:
-    /// Create and register test
-    OptFlexUnary(TestTags tags, int n, int minP, int maxP,
-                 int o, Gecode::IntPropLevel ipl0)
-      : Test(tags,"Unary::Opt::Flex::"+str(o)+"::"+str(n)+"::"
-             +str(minP)+"::"+str(maxP)+"::"+str(ipl0),
-             3*n,0,n*maxP,false,ipl0), _minP(minP), _maxP(maxP), off(o),
-        l(n*maxP/2) {
-      testsearch = false;
-      testfix = false;
-      contest = CTL_NONE;
-    }
-    /// Create and register initial assignment
-    virtual Assignment* assignment(void) const {
-      return new RandomMixAssignment(2 * (arity / 3), dom, arity / 3,
-                                     Gecode::IntSet(_minP, _maxP), 500, _rand);
-    }
-    /// %Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      int n = x.size() / 3;
-      for (int i=0; i<n; i++)
-        if (x[n+i] > l)
-          for (int j=i+1; j<n; j++)
-            if(x[n+j] > l)
-              if ((x[i]+x[2*n+i] > x[j]) && (x[j]+x[2*n+j] > x[i]))
-                return false;
-      return true;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-      int n=x.size() / 3;
+    public:
+        /// Create and register test
+        OptFixPUnary(TestTags tags, const Gecode::IntArgs& p0, int o, Gecode::IntPropLevel ipl0)
+            : Test(tags, "Unary::Opt::Fix::" + str(o) + "::" + str(p0) + "::" + str(ipl0), 2 * p0.size(), o, o + st(p0),
+                   false, ipl0),
+              p(p0), l(o + st(p) / 2) {
+            test_search = false;
+            consistency_test_level = CTL_NONE;
+        }
+        /// Create and register initial assignment
+        Assignment*
+        assignment() const override {
+            return new RandomAssignment(arity, dom, 500, _rand);
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int n = x.size() / 2;
+            for (int i = 0; i < n; i++)
+                if (x[n + i] > l)
+                    for (int j = i + 1; j < n; j++)
+                        if (x[n + j] > l)
+                            if ((x[i] + p[i] > x[j]) && (x[j] + p[j] > x[i]))
+                                return false;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            int n = x.size() / 2;
+            Gecode::IntVarArgs s(n);
+            Gecode::BoolVarArgs m(n);
+            for (int i = 0; i < n; i++) {
+                s[i] = x[i];
+                m[i] = Gecode::expr(home, (x[n + i] > l));
+            }
+            Gecode::unary(home, s, p, m, ipl);
+        }
+    };
 
-      Gecode::IntVarArgs s(n);
-      Gecode::IntVarArgs px(n);
-      Gecode::IntVarArgs e(home,n,
-                           Gecode::Int::Limits::min,
-                           Gecode::Int::Limits::max);
-      for (int i=n; i--;) {
-        s[i] = expr(home, off+x[i]);
-        px[i] = x[2*n+i];
-        rel(home, s[i]+px[i] == e[i]);
-        rel(home, _minP <= px[i]);
-        rel(home, _maxP >= px[i]);
-      }
-      Gecode::BoolVarArgs m(n);
-      for (int i=0; i<n; i++)
-        m[i]=Gecode::expr(home, (x[n+i] > l));
-      Gecode::unary(home, s, px, e, m, ipl);
-    }
-  };
+    /// %Test for unary constraint
+    class ManFlexUnary : public Test {
+    protected:
+        /// Minimum processing time
+        int _min_p;
+        /// Maximum processing time
+        int _max_p;
+        /// Offset for start times
+        int off;
 
-  /// Help class to create and register tests
-  class Create {
-  public:
-    /// Perform creation and registration
-    Create(void) {
-      using namespace Gecode;
-      IntArgs p1({2,2,2,2});
-      IntArgs p10({2,2,0,2,2});
-      IntArgs p2({4,3,3,5});
-      IntArgs p20({4,0,3,3,0,5});
-      IntArgs p3({4,2,9,3,7,5});
-      IntArgs p30({4,0,2,9,3,7,5,0});
+    public:
+        /// Create and register test
+        ManFlexUnary(TestTags tags, int n, int min_p, int max_p, int o, Gecode::IntPropLevel ipl0)
+            : Test(tags,
+                   "Unary::Man::Flex::" + str(o) + "::" + str(n) + "::" + str(min_p) + "::" + str(max_p) +
+                       "::" + str(ipl0),
+                   2 * n, 0, n * max_p, false, ipl0),
+              _min_p(min_p), _max_p(max_p), off(o) {
+            test_search = false;
+            test_fixpoint = false;
+            consistency_test_level = CTL_NONE;
+        }
+        /// Create and register initial assignment
+        Assignment*
+        assignment() const override {
+            return new RandomMixAssignment(arity / 2, dom, arity / 2, Gecode::IntSet(_min_p, _max_p), 500, _rand);
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int n = x.size() / 2;
+            for (int i = 0; i < n; i++)
+                for (int j = i + 1; j < n; j++)
+                    if ((x[i] + x[n + i] > x[j]) && (x[j] + x[n + j] > x[i]))
+                        return false;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::IntVarArgs s(x.size() / 2);
+            Gecode::IntVarArgs px(x.slice(x.size() / 2));
+            Gecode::IntVarArgs e(home, x.size() / 2, Gecode::Int::Limits::min, Gecode::Int::Limits::max);
+            for (int i = s.size(); i--;) {
+                s[i] = expr(home, off + x[i]);
+                rel(home, s[i] + px[i] == e[i]);
+                rel(home, _min_p <= px[i]);
+                rel(home, _max_p >= px[i]);
+            }
+            Gecode::unary(home, s, px, e, ipl);
+        }
+    };
 
-      for (IntPropBasicAdvanced ipba; ipba(); ++ipba) {
-        TestTags representative = ipba.ipl() == Gecode::IPL_ADVANCED
-          ? TestTags::standard() : TestTags::sweep();
-        (void) new ManFixPUnary(TestTags::sweep(),p1,0,ipba.ipl());
-        (void) new ManFixPUnary(TestTags::sweep(),p1,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p1,0,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p1,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),4,0,2,0,ipba.ipl());
-        (void) new ManFlexUnary(representative,4,0,2,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),4,1,3,0,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),4,1,3,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),4,0,2,0,ipba.ipl());
-        (void) new OptFlexUnary(representative,4,0,2,Gecode::Int::Limits::min,ipba.ipl());
+    /// %Test for unary constraint with optional tasks
+    class OptFlexUnary : public Test {
+    protected:
+        /// Minimum processing time
+        int _min_p;
+        /// Maximum processing time
+        int _max_p;
+        /// Offset for start times
+        int off;
+        /// Threshold for taking a task as optional
+        int l;
+        /// Get a reasonable maximal start time
+        static int
+        st(const Gecode::IntArgs& p) {
+            int t = 0;
+            for (int i = p.size(); i--;)
+                t += p[i];
+            return t;
+        }
 
-        (void) new ManFixPUnary(TestTags::sweep(),p10,0,ipba.ipl());
-        (void) new ManFixPUnary(representative,p10,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p10,0,ipba.ipl());
-        (void) new OptFixPUnary(representative,p10,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),5,0,2,0,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),5,0,2,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),5,0,2,0,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),5,0,2,Gecode::Int::Limits::min,ipba.ipl());
+    public:
+        /// Create and register test
+        OptFlexUnary(TestTags tags, int n, int min_p, int max_p, int o, Gecode::IntPropLevel ipl0)
+            : Test(tags,
+                   "Unary::Opt::Flex::" + str(o) + "::" + str(n) + "::" + str(min_p) + "::" + str(max_p) +
+                       "::" + str(ipl0),
+                   3 * n, 0, n * max_p, false, ipl0),
+              _min_p(min_p), _max_p(max_p), off(o), l(n * max_p / 2) {
+            test_search = false;
+            test_fixpoint = false;
+            consistency_test_level = CTL_NONE;
+        }
+        /// Create and register initial assignment
+        Assignment*
+        assignment() const override {
+            return new RandomMixAssignment(2 * (arity / 3), dom, arity / 3, Gecode::IntSet(_min_p, _max_p), 500, _rand);
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int n = x.size() / 3;
+            for (int i = 0; i < n; i++)
+                if (x[n + i] > l)
+                    for (int j = i + 1; j < n; j++)
+                        if (x[n + j] > l)
+                            if ((x[i] + x[2 * n + i] > x[j]) && (x[j] + x[2 * n + j] > x[i]))
+                                return false;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            int n = x.size() / 3;
 
-        (void) new ManFixPUnary(TestTags::sweep(),p2,0,ipba.ipl());
-        (void) new ManFixPUnary(TestTags::sweep(),p2,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p2,0,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p2,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),4,3,5,0,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),4,3,5,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),4,3,5,0,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),4,3,5,Gecode::Int::Limits::min,ipba.ipl());
+            Gecode::IntVarArgs s(n);
+            Gecode::IntVarArgs px(n);
+            Gecode::IntVarArgs e(home, n, Gecode::Int::Limits::min, Gecode::Int::Limits::max);
+            for (int i = n; i--;) {
+                s[i] = expr(home, off + x[i]);
+                px[i] = x[2 * n + i];
+                rel(home, s[i] + px[i] == e[i]);
+                rel(home, _min_p <= px[i]);
+                rel(home, _max_p >= px[i]);
+            }
+            Gecode::BoolVarArgs m(n);
+            for (int i = 0; i < n; i++)
+                m[i] = Gecode::expr(home, (x[n + i] > l));
+            Gecode::unary(home, s, px, e, m, ipl);
+        }
+    };
 
-        (void) new ManFixPUnary(TestTags::sweep(),p20,0,ipba.ipl());
-        (void) new ManFixPUnary(TestTags::sweep(),p20,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p20,0,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p20,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),6,0,5,0,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),6,0,5,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),6,0,5,0,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),6,0,5,Gecode::Int::Limits::min,ipba.ipl());
+    /// Help class to create and register tests
+    class Create {
+    public:
+        /// Perform creation and registration
+        Create() {
+            using namespace Gecode;
+            IntArgs p1({2, 2, 2, 2});
+            IntArgs p10({2, 2, 0, 2, 2});
+            IntArgs p2({4, 3, 3, 5});
+            IntArgs p20({4, 0, 3, 3, 0, 5});
+            IntArgs p3({4, 2, 9, 3, 7, 5});
+            IntArgs p30({4, 0, 2, 9, 3, 7, 5, 0});
 
-        (void) new ManFixPUnary(TestTags::sweep(),p3,0,ipba.ipl());
-        (void) new ManFixPUnary(TestTags::sweep(),p3,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p3,0,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p3,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),6,2,7,0,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),6,2,7,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),6,2,7,0,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),6,2,7,Gecode::Int::Limits::min,ipba.ipl());
+            for (IntPropBasicAdvanced ipba; ipba(); ++ipba) {
+                TestTags representative = ipba.ipl() == Gecode::IPL_ADVANCED ? TestTags::standard() : TestTags::sweep();
+                (void)new ManFixPUnary(TestTags::sweep(), p1, 0, ipba.ipl());
+                (void)new ManFixPUnary(TestTags::sweep(), p1, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p1, 0, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p1, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 4, 0, 2, 0, ipba.ipl());
+                (void)new ManFlexUnary(representative, 4, 0, 2, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 4, 1, 3, 0, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 4, 1, 3, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 4, 0, 2, 0, ipba.ipl());
+                (void)new OptFlexUnary(representative, 4, 0, 2, Gecode::Int::Limits::min, ipba.ipl());
 
-        (void) new ManFixPUnary(TestTags::sweep(),p30,0,ipba.ipl());
-        (void) new ManFixPUnary(TestTags::sweep(),p30,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p30,0,ipba.ipl());
-        (void) new OptFixPUnary(TestTags::sweep(),p30,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),8,0,9,0,ipba.ipl());
-        (void) new ManFlexUnary(TestTags::sweep(),8,0,9,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),8,0,9,0,ipba.ipl());
-        (void) new OptFlexUnary(TestTags::sweep(),8,0,9,Gecode::Int::Limits::min,ipba.ipl());
-      }
-    }
-  };
+                (void)new ManFixPUnary(TestTags::sweep(), p10, 0, ipba.ipl());
+                (void)new ManFixPUnary(representative, p10, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p10, 0, ipba.ipl());
+                (void)new OptFixPUnary(representative, p10, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 5, 0, 2, 0, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 5, 0, 2, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 5, 0, 2, 0, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 5, 0, 2, Gecode::Int::Limits::min, ipba.ipl());
 
-  Create c;
-  //@}
+                (void)new ManFixPUnary(TestTags::sweep(), p2, 0, ipba.ipl());
+                (void)new ManFixPUnary(TestTags::sweep(), p2, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p2, 0, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p2, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 4, 3, 5, 0, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 4, 3, 5, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 4, 3, 5, 0, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 4, 3, 5, Gecode::Int::Limits::min, ipba.ipl());
 
+                (void)new ManFixPUnary(TestTags::sweep(), p20, 0, ipba.ipl());
+                (void)new ManFixPUnary(TestTags::sweep(), p20, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p20, 0, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p20, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 6, 0, 5, 0, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 6, 0, 5, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 6, 0, 5, 0, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 6, 0, 5, Gecode::Int::Limits::min, ipba.ipl());
 
-}}}
+                (void)new ManFixPUnary(TestTags::sweep(), p3, 0, ipba.ipl());
+                (void)new ManFixPUnary(TestTags::sweep(), p3, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p3, 0, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p3, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 6, 2, 7, 0, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 6, 2, 7, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 6, 2, 7, 0, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 6, 2, 7, Gecode::Int::Limits::min, ipba.ipl());
+
+                (void)new ManFixPUnary(TestTags::sweep(), p30, 0, ipba.ipl());
+                (void)new ManFixPUnary(TestTags::sweep(), p30, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p30, 0, ipba.ipl());
+                (void)new OptFixPUnary(TestTags::sweep(), p30, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 8, 0, 9, 0, ipba.ipl());
+                (void)new ManFlexUnary(TestTags::sweep(), 8, 0, 9, Gecode::Int::Limits::min, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 8, 0, 9, 0, ipba.ipl());
+                (void)new OptFlexUnary(TestTags::sweep(), 8, 0, 9, Gecode::Int::Limits::min, ipba.ipl());
+            }
+        }
+    };
+
+    Create c;
+    //@}
+
+} // namespace Test::Int::Unary
 
 // STATISTICS: test-int

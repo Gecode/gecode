@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,90 +30,89 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
-  template<class View>
-  forceinline
-  Edge<View>::Edge(ValNode<View>* s, ViewNode<View>* d)
-    : sd(s,d) {
-    s->add(this);
-  }
-  template<class View>
-  forceinline
-  Edge<View>::Edge(ValNode<View>* s, ViewNode<View>* d, Edge<View>* n)
-    : _next_edge(n), sd(s,d) {
-    s->add(this);
-  }
+    template <class View>
+    forceinline
+    Edge<View>::Edge(ValNode<View>* s, ViewNode<View>* d)
+        : sd(s, d) {
+        s->add(this);
+    }
+    template <class View>
+    forceinline
+    Edge<View>::Edge(ValNode<View>* s, ViewNode<View>* d, Edge<View>* n)
+        : _next_edge(n), sd(s, d) {
+        s->add(this);
+    }
 
-  template<class View>
-  forceinline Node<View>*
-  Edge<View>::dst(Node<View>* s) const {
-    return sd.ptr(s);
-  }
+    template <class View>
+    forceinline Node<View>*
+    Edge<View>::dst(Node<View>* s) const {
+        return sd.ptr(s);
+    }
 
-  template<class View>
-  forceinline void
-  Edge<View>::revert(Node<View>* d) {
-    unlink();
-    d->add(this);
-  }
+    template <class View>
+    forceinline void
+    Edge<View>::revert(Node<View>* d) {
+        unlink();
+        d->add(this);
+    }
 
-  template<class View>
-  forceinline ViewNode<View>*
-  Edge<View>::view(ValNode<View>* n) const {
-    return static_cast<ViewNode<View>*>(sd.ptr(n));
-  }
-  template<class View>
-  forceinline ValNode<View>*
-  Edge<View>::val(ViewNode<View>* x) const {
-    return static_cast<ValNode<View>*>(sd.ptr(x));
-  }
+    template <class View>
+    forceinline ViewNode<View>*
+    Edge<View>::view(ValNode<View>* n) const {
+        return static_cast<ViewNode<View>*>(sd.ptr(n));
+    }
+    template <class View>
+    forceinline ValNode<View>*
+    Edge<View>::val(ViewNode<View>* x) const {
+        return static_cast<ValNode<View>*>(sd.ptr(x));
+    }
 
-  template<class View>
-  forceinline bool
-  Edge<View>::used(Node<View>* v) const {
-    return sd.is_set() || (v->comp == sd.ptr(v)->comp);
-  }
-  template<class View>
-  forceinline void
-  Edge<View>::use(void) {
-    sd.set();
-  }
-  template<class View>
-  forceinline void
-  Edge<View>::free(void) {
-    sd.unset();
-  }
+    template <class View>
+    forceinline bool
+    Edge<View>::used(Node<View>* v) const {
+        return sd.is_set() || (v->comp == sd.ptr(v)->comp);
+    }
+    template <class View>
+    forceinline void
+    Edge<View>::use() {
+        sd.set();
+    }
+    template <class View>
+    forceinline void
+    Edge<View>::free() {
+        sd.unset();
+    }
 
-  template<class View>
-  forceinline Edge<View>*
-  Edge<View>::next_edge(void) const {
-    return _next_edge;
-  }
-  template<class View>
-  forceinline Edge<View>**
-  Edge<View>::next_edge_ref(void) {
-    return &_next_edge;
-  }
-  template<class View>
-  forceinline Edge<View>*
-  Edge<View>::next(void) const {
-    return static_cast<Edge<View>*>(BiLink::next());
-  }
+    template <class View>
+    forceinline Edge<View>*
+    Edge<View>::next_edge() const {
+        return _next_edge;
+    }
+    template <class View>
+    forceinline Edge<View>**
+    Edge<View>::next_edge_ref() {
+        return &_next_edge;
+    }
+    template <class View>
+    forceinline Edge<View>*
+    Edge<View>::next() const {
+        return static_cast<Edge<View>*>(BiLink::next());
+    }
 
-  template<class View>
-  forceinline void
-  Edge<View>::operator delete(void*, size_t) {}
-  template<class View>
-  forceinline void
-  Edge<View>::operator delete(void*,Space&) {}
-  template<class View>
-  forceinline void*
-  Edge<View>::operator new(size_t s, Space& home) {
-    return home.ralloc(s);
-  }
+    template <class View>
+    forceinline void
+    Edge<View>::operator delete(void*, size_t) {}
+    template <class View>
+    forceinline void
+    Edge<View>::operator delete(void*, Space&) {}
+    template <class View>
+    forceinline void*
+    Edge<View>::operator new(size_t s, Space& home) {
+        return home.ralloc(s);
+    }
 
-}}}
+} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop
-

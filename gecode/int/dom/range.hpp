@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,102 +32,104 @@
 
 #include <gecode/int/rel.hh>
 
-namespace Gecode { namespace Int { namespace Dom {
+namespace Gecode::Int::Dom {
 
-  template<class View, ReifyMode rm>
-  forceinline
-  ReRange<View,rm>::ReRange(Home home, View x, int min0, int max0, BoolView b)
-    : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,x,b),
-      min(min0), max(max0) {}
+    template <class View, ReifyMode rm>
+    forceinline
+    ReRange<View, rm>::ReRange(Home home, View x, int min0, int max0, BoolView b)
+        : ReUnaryPropagator<View, PC_INT_DOM, BoolView>(home, x, b), min(min0), max(max0) {}
 
-  template<class View, ReifyMode rm>
-  ExecStatus
-  ReRange<View,rm>::post(Home home, View x, int min, int max, BoolView b) {
-    if (min == max) {
-      return Rel::ReEqDomInt<View,BoolView,rm>::post(home,x,min,b);
-    } else if ((min > max) || (max < x.min()) || (min > x.max())) {
-      if (rm == RM_PMI)
+    template <class View, ReifyMode rm>
+    ExecStatus
+    ReRange<View, rm>::post(Home home, View x, int min, int max, BoolView b) {
+        if (min == max) {
+            return Rel::ReEqDomInt<View, BoolView, rm>::post(home, x, min, b);
+        }
+        if ((min > max) || (max < x.min()) || (min > x.max())) {
+            if (rm == RM_RIMP)
+                return ES_OK;
+            GECODE_ME_CHECK(b.zero(home));
+        } else if ((min <= x.min()) && (x.max() <= max)) {
+            if (rm == RM_IMP)
+                return ES_OK;
+            GECODE_ME_CHECK(b.one(home));
+        } else if (b.one()) {
+            if (rm == RM_RIMP)
+                return ES_OK;
+            GECODE_ME_CHECK(x.gq(home, min));
+            GECODE_ME_CHECK(x.lq(home, max));
+        } else if (b.zero()) {
+            if (rm == RM_IMP)
+                return ES_OK;
+            Iter::Ranges::Singleton r(min, max);
+            GECODE_ME_CHECK(x.minus_r(home, r, false));
+        } else {
+            (void)new (home) ReRange<View, rm>(home, x, min, max, b);
+        }
         return ES_OK;
-      GECODE_ME_CHECK(b.zero(home));
-    } else if ((min <= x.min()) && (x.max() <= max)) {
-      if (rm == RM_IMP)
-        return ES_OK;
-      GECODE_ME_CHECK(b.one(home));
-    } else if (b.one()) {
-      if (rm == RM_PMI)
-        return ES_OK;
-      GECODE_ME_CHECK(x.gq(home,min));
-      GECODE_ME_CHECK(x.lq(home,max));
-    } else if (b.zero()) {
-      if (rm == RM_IMP)
-        return ES_OK;
-      Iter::Ranges::Singleton r(min,max);
-      GECODE_ME_CHECK(x.minus_r(home,r,false));
-    } else {
-      (void) new (home) ReRange<View,rm>(home,x,min,max,b);
     }
-    return ES_OK;
-  }
 
+    template <class View, ReifyMode rm>
+    forceinline
+    ReRange<View, rm>::ReRange(Space& home, ReRange& p)
+        : ReUnaryPropagator<View, PC_INT_DOM, BoolView>(home, p), min(p.min), max(p.max) {}
 
-  template<class View, ReifyMode rm>
-  forceinline
-  ReRange<View,rm>::ReRange(Space& home, ReRange& p)
-    : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,p),
-      min(p.min), max(p.max) {}
-
-  template<class View, ReifyMode rm>
-  Actor*
-  ReRange<View,rm>::copy(Space& home) {
-    return new (home) ReRange<View,rm>(home,*this);
-  }
-
-  template<class View, ReifyMode rm>
-  ExecStatus
-  ReRange<View,rm>::propagate(Space& home, const ModEventDelta&) {
-    if (b.one()) {
-      if (rm != RM_PMI) {
-        GECODE_ME_CHECK(x0.gq(home,min));
-        GECODE_ME_CHECK(x0.lq(home,max));
-      }
-      return home.ES_SUBSUMED(*this);
-    } else if (b.zero()) {
-      if (rm != RM_IMP) {
-        Iter::Ranges::Singleton r(min,max);
-        GECODE_ME_CHECK(x0.minus_r(home,r,false));
-      }
-      return home.ES_SUBSUMED(*this);
-    } else if ((x0.max() <= max) && (x0.min() >= min)) {
-      if (rm != RM_IMP)
-        GECODE_ME_CHECK(b.one_none(home));
-      return home.ES_SUBSUMED(*this);
-    } else if ((x0.max() < min) || (x0.min() > max)) {
-      if (rm != RM_PMI)
-        GECODE_ME_CHECK(b.zero_none(home));
-      return home.ES_SUBSUMED(*this);
-    } else if (!x0.range()) {
-      ViewRanges<View> i_x(x0);
-      Iter::Ranges::Singleton i_mm(min,max);
-
-      switch (Iter::Ranges::compare(i_x,i_mm)) {
-      case Iter::Ranges::CS_SUBSET:
-        if (rm != RM_IMP)
-          GECODE_ME_CHECK(b.one_none(home));
-        return home.ES_SUBSUMED(*this);
-      case Iter::Ranges::CS_DISJOINT:
-        if (rm != RM_PMI)
-          GECODE_ME_CHECK(b.zero_none(home));
-        return home.ES_SUBSUMED(*this);
-      case Iter::Ranges::CS_NONE:
-        break;
-      default: GECODE_NEVER;
-      }
-      return ES_FIX;
+    template <class View, ReifyMode rm>
+    Actor*
+    ReRange<View, rm>::copy(Space& home) {
+        return new (home) ReRange<View, rm>(home, *this);
     }
-    return ES_FIX;
-  }
 
-}}}
+    template <class View, ReifyMode rm>
+    ExecStatus
+    ReRange<View, rm>::propagate(Space& home, const ModEventDelta&) {
+        if (b.one()) {
+            if (rm != RM_RIMP) {
+                GECODE_ME_CHECK(x0.gq(home, min));
+                GECODE_ME_CHECK(x0.lq(home, max));
+            }
+            return home.ES_SUBSUMED(*this);
+        }
+        if (b.zero()) {
+            if (rm != RM_IMP) {
+                Iter::Ranges::Singleton r(min, max);
+                GECODE_ME_CHECK(x0.minus_r(home, r, false));
+            }
+            return home.ES_SUBSUMED(*this);
+        }
+        if ((x0.max() <= max) && (x0.min() >= min)) {
+            if (rm != RM_IMP)
+                GECODE_ME_CHECK(b.one_none(home));
+            return home.ES_SUBSUMED(*this);
+        }
+        if ((x0.max() < min) || (x0.min() > max)) {
+            if (rm != RM_RIMP)
+                GECODE_ME_CHECK(b.zero_none(home));
+            return home.ES_SUBSUMED(*this);
+        }
+        if (!x0.range()) {
+            ViewRanges<View> i_x(x0);
+            Iter::Ranges::Singleton i_mm(min, max);
+
+            switch (Iter::Ranges::compare(i_x, i_mm)) {
+            case Iter::Ranges::CS_SUBSET:
+                if (rm != RM_IMP)
+                    GECODE_ME_CHECK(b.one_none(home));
+                return home.ES_SUBSUMED(*this);
+            case Iter::Ranges::CS_DISJOINT:
+                if (rm != RM_RIMP)
+                    GECODE_ME_CHECK(b.zero_none(home));
+                return home.ES_SUBSUMED(*this);
+            case Iter::Ranges::CS_NONE:
+                break;
+            default:
+                GECODE_NEVER;
+            }
+            return ES_FIX;
+        }
+        return ES_FIX;
+    }
+
+} // namespace Gecode::Int::Dom
 
 // STATISTICS: int-prop
-

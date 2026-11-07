@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,65 +36,55 @@
 #include <gecode/set/rel-op.hh>
 
 namespace Gecode {
-  using namespace Gecode::Set;
-  using namespace Gecode::Set::Rel;
-  using namespace Gecode::Set::RelOp;
+    using namespace Gecode::Set;
+    using namespace Gecode::Set::Rel;
+    using namespace Gecode::Set::RelOp;
 
-  void
-  rel(Home home, SetOpType op, const SetVarArgs& x, SetVar y) {
-    GECODE_POST;
-    ViewArray<SetView> xa(home,x);
-    switch (op) {
-    case SOT_UNION:
-      GECODE_ES_FAIL((RelOp::UnionN<SetView,SetView>::post(home, xa, y)));
-      break;
-    case SOT_DUNION:
-      GECODE_ES_FAIL(
-                     (RelOp::PartitionN<SetView,SetView>::post(home, xa, y)));
-      break;
-    case SOT_INTER:
-      {
-        GECODE_ES_FAIL(
-                       (RelOp::IntersectionN<SetView,SetView>
-                        ::post(home, xa, y)));
-      }
-      break;
-    case SOT_MINUS:
-      throw IllegalOperation("Set::rel");
-      break;
-    default:
-      throw UnknownOperation("Set::rel");
+    void
+    rel(Home home, SetOpType op, const SetVarArgs& x, SetVar y) {
+        GECODE_POST;
+        ViewArray<SetView> xa(home, x);
+        switch (op) {
+        case SOT_UNION:
+            GECODE_ES_FAIL((RelOp::UnionN<SetView, SetView>::post(home, xa, y)));
+            break;
+        case SOT_DISJOINT_UNION:
+            GECODE_ES_FAIL((RelOp::PartitionN<SetView, SetView>::post(home, xa, y)));
+            break;
+        case SOT_INTERSECTION: {
+            GECODE_ES_FAIL((RelOp::IntersectionN<SetView, SetView>::post(home, xa, y)));
+        } break;
+        case SOT_MINUS:
+            throw IllegalOperation("Set::rel");
+            break;
+        default:
+            throw UnknownOperation("Set::rel");
+        }
     }
-  }
 
-  void
-  rel(Home home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
-    GECODE_POST;
-    Set::Limits::check(z, "Set::rel");
-    ViewArray<SetView> xa(home,x);
-    switch (op) {
-    case SOT_UNION:
-      GECODE_ES_FAIL((RelOp::UnionN<SetView,SetView>::post(home, xa, z, y)));
-      break;
-    case SOT_DUNION:
-      GECODE_ES_FAIL(
-                     (RelOp::PartitionN<SetView,SetView>::post(home, xa, z, y)));
-      break;
-    case SOT_INTER:
-      {
-        GECODE_ES_FAIL(
-                       (RelOp::IntersectionN<SetView,SetView>
-                        ::post(home, xa, z, y)));
-      }
-      break;
-    case SOT_MINUS:
-      throw IllegalOperation("Set::rel");
-      break;
-    default:
-      throw UnknownOperation("Set::rel");
+    void
+    rel(Home home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
+        GECODE_POST;
+        Set::Limits::check(z, "Set::rel");
+        ViewArray<SetView> xa(home, x);
+        switch (op) {
+        case SOT_UNION:
+            GECODE_ES_FAIL((RelOp::UnionN<SetView, SetView>::post(home, xa, z, y)));
+            break;
+        case SOT_DISJOINT_UNION:
+            GECODE_ES_FAIL((RelOp::PartitionN<SetView, SetView>::post(home, xa, z, y)));
+            break;
+        case SOT_INTERSECTION: {
+            GECODE_ES_FAIL((RelOp::IntersectionN<SetView, SetView>::post(home, xa, z, y)));
+        } break;
+        case SOT_MINUS:
+            throw IllegalOperation("Set::rel");
+            break;
+        default:
+            throw UnknownOperation("Set::rel");
+        }
     }
-  }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-post

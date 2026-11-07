@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,42 +32,42 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
-  template<class TaskView>
-  forceinline ExecStatus
-  edgefinding(Space& home, TaskViewArray<TaskView>& t) {
-    Region r;
+    template <class TaskView>
+    forceinline ExecStatus
+    edge_finding(Space& home, TaskViewArray<TaskView>& t) {
+        Region r;
 
-    OmegaLambdaTree<TaskView> ol(r,t);
-    TaskViewIter<TaskView,STO_LCT,false> q(r,t);
+        OmegaLambdaTree<TaskView> ol(r, t);
+        TaskViewIter<TaskView, STO_LCT, false> q(r, t);
 
-    int j = q.task();
-    while (q.left() > 1) {
-      if (ol.ect() > t[j].lct())
-        return ES_FAILED;
-      ol.shift(j);
-      ++q;
-      j = q.task();
-      while (!ol.lempty() && (ol.lect() > t[j].lct())) {
-        int i = ol.responsible();
-        GECODE_ME_CHECK(t[i].est(home,ol.ect()));
-        ol.lremove(i);
-      }
+        int j = q.task();
+        while (q.left() > 1) {
+            if (ol.ect() > t[j].lct())
+                return ES_FAILED;
+            ol.shift(j);
+            ++q;
+            j = q.task();
+            while (!ol.lempty() && (ol.lect() > t[j].lct())) {
+                int i = ol.responsible();
+                GECODE_ME_CHECK(t[i].est(home, ol.ect()));
+                ol.remove_lambda(i);
+            }
+        }
+
+        return ES_OK;
     }
 
-    return ES_OK;
-  }
+    template <class Task>
+    ExecStatus
+    edge_finding(Space& home, TaskArray<Task>& t) {
+        TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
+        GECODE_ES_CHECK(edge_finding(home, f));
+        TaskViewArray<typename TaskTraits<Task>::TaskViewBwd> b(t);
+        return edge_finding(home, b);
+    }
 
-  template<class Task>
-  ExecStatus
-  edgefinding(Space& home, TaskArray<Task>& t) {
-    TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
-    GECODE_ES_CHECK(edgefinding(home,f));
-    TaskViewArray<typename TaskTraits<Task>::TaskViewBwd> b(t);
-    return edgefinding(home,b);
-  }
-
-}}}
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-prop

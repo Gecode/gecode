@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,374 +34,327 @@
 
 namespace Gecode {
 
-  void
-  element(Home home, IntSharedArray c, IntVar x0, IntVar x1,
-          IntPropLevel) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    GECODE_POST;
-    for (int i=0; i<c.size(); i++)
-      Limits::check(c[i],"Int::element");
-    GECODE_ES_FAIL((Element::post_int<IntView,IntView>(home,c,x0,x1)));
-  }
-
-  void
-  element(Home home, IntSharedArray c, IntVar x0, int offset, IntVar x1,
-          IntPropLevel) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    GECODE_POST;
-    for (int i=0; i<c.size(); i++)
-      Limits::check(c[i],"Int::element");
-    if (offset==0) {
-      GECODE_ES_FAIL((Element::post_int<IntView,IntView>(home,c,x0,x1)));
-    } else {
-      OffsetView ov(x0,offset);
-      GECODE_ES_FAIL((Element::post_int<OffsetView,IntView>(home,c,ov,x1)));
-    }
-  }
-
-  void
-  element(Home home, IntSharedArray c, IntVar x0, BoolVar x1,
-          IntPropLevel) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    GECODE_POST;
-    for (int i=0; i<c.size(); i++)
-      Limits::check(c[i],"Int::element");
-    GECODE_ES_FAIL((Element::post_int<IntView,BoolView>(home,c,x0,x1)));
-  }
-
-  void
-  element(Home home, IntSharedArray c, IntVar x0, int offset, BoolVar x1,
-          IntPropLevel) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    GECODE_POST;
-    for (int i=0; i<c.size(); i++)
-      Limits::check(c[i],"Int::element");
-    if (offset==0) {
-      GECODE_ES_FAIL((Element::post_int<IntView,BoolView>(home,c,x0,x1)));
-    } else {
-      OffsetView ov(x0,offset);
-      GECODE_ES_FAIL((Element::post_int<OffsetView,BoolView>(home,c,ov,x1)));
-    }
-  }
-
-  void
-  element(Home home, IntSharedArray c, IntVar x0, int x1,
-          IntPropLevel) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    Limits::check(x1,"Int::element");
-    GECODE_POST;
-    for (int i=0; i<c.size(); i++)
-      Limits::check(c[i],"Int::element");
-    ConstIntView cx1(x1);
-    GECODE_ES_FAIL((Element::post_int<IntView,ConstIntView>(home,c,x0,cx1)));
-  }
-
-  void
-  element(Home home, IntSharedArray c, IntVar x0, int offset, int x1,
-          IntPropLevel) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    Limits::check(x1,"Int::element");
-    GECODE_POST;
-    for (int i=0; i<c.size(); i++)
-      Limits::check(c[i],"Int::element");
-    ConstIntView cx1(x1);
-    if (offset==0) {
-      GECODE_ES_FAIL((Element::post_int<IntView,ConstIntView>(home,c,x0,cx1)));
-    } else {
-      OffsetView ov(x0,offset);
-      GECODE_ES_FAIL((Element::post_int<OffsetView,ConstIntView>(home,c,ov,cx1)));
-    }
-  }
-
-  void
-  element(Home home, const IntVarArgs& c, IntVar x0, IntVar x1,
-          IntPropLevel ipl) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    GECODE_POST;
-    IdxViewArray<IntView> iv(home,c);
-    if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
-      GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,IntView>
-                           ::post(home,iv,x0,x1)));
-    } else {
-      GECODE_ES_FAIL((Element::ViewBnd<IntView,IntView,IntView>
-                           ::post(home,iv,x0,x1)));
-    }
-  }
-
-  void
-  element(Home home, const IntVarArgs& c, IntVar x0, int offset, IntVar x1,
-          IntPropLevel ipl) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    GECODE_POST;
-    IdxViewArray<IntView> iv(home,c);
-    if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
-      if (offset==0) {
-        GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,IntView>
-                             ::post(home,iv,x0,x1)));
-      } else {
-        OffsetView ov(x0,offset);
-        GECODE_ES_FAIL((Element::ViewDom<IntView,OffsetView,IntView>
-                             ::post(home,iv,ov,x1)));
-      }
-    } else {
-      if (offset==0) {
-        GECODE_ES_FAIL((Element::ViewBnd<IntView,IntView,IntView>
-                             ::post(home,iv,x0,x1)));
-      } else {
-        OffsetView ov(x0,offset);
-        GECODE_ES_FAIL((Element::ViewBnd<IntView,OffsetView,IntView>
-                             ::post(home,iv,ov,x1)));
-      }
-    }
-  }
-
-  void
-  element(Home home, const IntVarArgs& c, IntVar x0, int x1,
-          IntPropLevel ipl) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    Limits::check(x1,"Int::element");
-    GECODE_POST;
-    IdxViewArray<IntView> iv(home,c);
-    ConstIntView v1(x1);
-    if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
-      GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,ConstIntView>
-                           ::post(home,iv,x0,v1)));
-    } else {
-      GECODE_ES_FAIL((Element::ViewBnd<IntView,IntView,ConstIntView>
-                           ::post(home,iv,x0,v1)));
-    }
-  }
-
-  void
-  element(Home home, const IntVarArgs& c, IntVar x0, int offset, int x1,
-          IntPropLevel ipl) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    Limits::check(x1,"Int::element");
-    GECODE_POST;
-    IdxViewArray<IntView> iv(home,c);
-    ConstIntView v1(x1);
-    if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
-      if (offset==0) {
-        GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,ConstIntView>
-                             ::post(home,iv,x0,v1)));
-      } else {
-        OffsetView ov(x0,offset);
-        GECODE_ES_FAIL((Element::ViewDom<IntView,OffsetView,ConstIntView>
-                             ::post(home,iv,ov,v1)));
-      }
-    } else {
-      if (offset==0) {
-        GECODE_ES_FAIL((Element::ViewBnd<IntView,IntView,ConstIntView>
-                             ::post(home,iv,x0,v1)));
-      } else {
-        OffsetView ov(x0,offset);
-        GECODE_ES_FAIL((Element::ViewBnd<IntView,OffsetView,ConstIntView>
-                             ::post(home,iv,ov,v1)));
-      }
-    }
-  }
-
-  void
-  element(Home home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
-          IntPropLevel) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    GECODE_POST;
-    IdxViewArray<BoolView> iv(home,c);
-    GECODE_ES_FAIL((Element::ViewBnd<BoolView,IntView,BoolView>
-                         ::post(home,iv,x0,x1)));
-  }
-
-  void
-  element(Home home, const BoolVarArgs& c, IntVar x0, int offset, BoolVar x1,
-          IntPropLevel) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    GECODE_POST;
-    IdxViewArray<BoolView> iv(home,c);
-    if (offset==0) {
-      GECODE_ES_FAIL((Element::ViewBnd<BoolView,IntView,BoolView>
-                           ::post(home,iv,x0,x1)));
-    } else {
-      OffsetView ov(x0,offset);
-      GECODE_ES_FAIL((Element::ViewBnd<BoolView,OffsetView,BoolView>
-                           ::post(home,iv,ov,x1)));
-    }
-  }
-
-  void
-  element(Home home, const BoolVarArgs& c, IntVar x0, int x1,
-          IntPropLevel) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    Limits::check(x1,"Int::element");
-    GECODE_POST;
-    IdxViewArray<BoolView> iv(home,c);
-    ConstIntView v1(x1);
-    GECODE_ES_FAIL((Element::ViewBnd<BoolView,IntView,ConstIntView>
-                         ::post(home,iv,x0,v1)));
-  }
-
-  void
-  element(Home home, const BoolVarArgs& c, IntVar x0, int offset, int x1,
-          IntPropLevel) {
-    using namespace Int;
-    if (c.size() == 0)
-      throw TooFewArguments("Int::element");
-    Limits::check(x1,"Int::element");
-    GECODE_POST;
-    IdxViewArray<BoolView> iv(home,c);
-    ConstIntView v1(x1);
-    if (offset==0) {
-      GECODE_ES_FAIL((Element::ViewBnd<BoolView,IntView,ConstIntView>
-                           ::post(home,iv,x0,v1)));
-    } else {
-      OffsetView ov(x0,offset);
-      GECODE_ES_FAIL((Element::ViewBnd<BoolView,OffsetView,ConstIntView>
-                           ::post(home,iv,ov,v1)));
-
-    }
-  }
-
-  namespace {
-    IntVar
-    pair(Home home, IntVar x, int w, IntVar y, int h) {
-      IntVar xy(home,0,w*h-1);
-      if (Int::Element::Pair::post(home,x,y,xy,w,h) != ES_OK)
-        home.fail();
-      return xy;
+    void
+    element(Home home, IntSharedArray c, IntVar x0, IntVar x1, IntPropLevel) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        GECODE_POST;
+        for (int ci : c)
+            Limits::check(ci, "Int::element");
+        GECODE_ES_FAIL((Element::post_int<IntView, IntView>(home, c, x0, x1)));
     }
 
-    IntVar
-    pairWithOffsets(Home home, IntVar x, int xoff, int w, IntVar y, int yoff, int h) {
-      IntVar xy(home,0,w*h-1);
-      if (xoff==0 && yoff==0) {
-        if (Int::Element::Pair::post(home,x,y,xy,w,h) != ES_OK)
-          home.fail();
-      } else {
-        Int::OffsetView xo(x,xoff);
-        Int::OffsetView yo(y,yoff);
-        if (Int::Element::PairWithOffsets::post(home,xo,yo,xy,w,h) != ES_OK)
-          home.fail();
-      }
-      return xy;
+    void
+    element(Home home, IntSharedArray c, IntVar x0, int offset, IntVar x1, IntPropLevel) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        GECODE_POST;
+        for (int ci : c)
+            Limits::check(ci, "Int::element");
+        if (offset == 0) {
+            GECODE_ES_FAIL((Element::post_int<IntView, IntView>(home, c, x0, x1)));
+        } else {
+            OffsetView ov(x0, offset);
+            GECODE_ES_FAIL((Element::post_int<OffsetView, IntView>(home, c, ov, x1)));
+        }
     }
-  }
 
-  void
-  element(Home home, IntSharedArray a,
-          IntVar x, int w, IntVar y, int h, IntVar z,
-          IntPropLevel ipl) {
-    using namespace Int;
-    if (a.size() != w*h)
-      throw Int::ArgumentSizeMismatch("Int::element");
-    GECODE_POST;
-    element(home, a, pair(home,x,w,y,h), z, ipl);
-  }
+    void
+    element(Home home, IntSharedArray c, IntVar x0, BoolVar x1, IntPropLevel) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        GECODE_POST;
+        for (int ci : c)
+            Limits::check(ci, "Int::element");
+        GECODE_ES_FAIL((Element::post_int<IntView, BoolView>(home, c, x0, x1)));
+    }
 
-  void
-  element(Home home, IntSharedArray a,
-          IntVar x, int xoff, int w,
-          IntVar y, int yoff, int h,
-          IntVar z, IntPropLevel ipl) {
-    using namespace Int;
-    if (a.size() != w*h)
-      throw Int::ArgumentSizeMismatch("Int::element");
-    GECODE_POST;
-    element(home, a, pairWithOffsets(home,x,xoff,w,y,yoff,h), z, ipl);
-  }
+    void
+    element(Home home, IntSharedArray c, IntVar x0, int offset, BoolVar x1, IntPropLevel) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        GECODE_POST;
+        for (int ci : c)
+            Limits::check(ci, "Int::element");
+        if (offset == 0) {
+            GECODE_ES_FAIL((Element::post_int<IntView, BoolView>(home, c, x0, x1)));
+        } else {
+            OffsetView ov(x0, offset);
+            GECODE_ES_FAIL((Element::post_int<OffsetView, BoolView>(home, c, ov, x1)));
+        }
+    }
 
-  void
-  element(Home home, IntSharedArray a,
-          IntVar x, int w, IntVar y, int h, BoolVar z,
-          IntPropLevel ipl) {
-    using namespace Int;
-    if (a.size() != w*h)
-      throw Int::ArgumentSizeMismatch("Int::element");
-    GECODE_POST;
-    element(home, a, pair(home,x,w,y,h), z, ipl);
-  }
+    void
+    element(Home home, IntSharedArray c, IntVar x0, int x1, IntPropLevel) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        Limits::check(x1, "Int::element");
+        GECODE_POST;
+        for (int ci : c)
+            Limits::check(ci, "Int::element");
+        ConstIntView cx1(x1);
+        GECODE_ES_FAIL((Element::post_int<IntView, ConstIntView>(home, c, x0, cx1)));
+    }
 
-  void
-  element(Home home, IntSharedArray a,
-          IntVar x, int xoff, int w, IntVar y, int yoff, int h,
-          BoolVar z, IntPropLevel ipl) {
-    using namespace Int;
-    if (a.size() != w*h)
-      throw Int::ArgumentSizeMismatch("Int::element");
-    GECODE_POST;
-    element(home, a, pairWithOffsets(home,x,xoff,w,y,yoff,h), z, ipl);
-  }
+    void
+    element(Home home, IntSharedArray c, IntVar x0, int offset, int x1, IntPropLevel) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        Limits::check(x1, "Int::element");
+        GECODE_POST;
+        for (int ci : c)
+            Limits::check(ci, "Int::element");
+        ConstIntView cx1(x1);
+        if (offset == 0) {
+            GECODE_ES_FAIL((Element::post_int<IntView, ConstIntView>(home, c, x0, cx1)));
+        } else {
+            OffsetView ov(x0, offset);
+            GECODE_ES_FAIL((Element::post_int<OffsetView, ConstIntView>(home, c, ov, cx1)));
+        }
+    }
 
-  void
-  element(Home home, const IntVarArgs& a,
-          IntVar x, int w, IntVar y, int h, IntVar z,
-          IntPropLevel ipl) {
-    using namespace Int;
-    if (a.size() != w*h)
-      throw Int::ArgumentSizeMismatch("Int::element");
-    GECODE_POST;
-    element(home, a, pair(home,x,w,y,h), z, ipl);
-  }
+    void
+    element(Home home, const IntVarArgs& c, IntVar x0, IntVar x1, IntPropLevel ipl) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        GECODE_POST;
+        IdxViewArray<IntView> iv(home, c);
+        if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
+            GECODE_ES_FAIL((Element::ViewDom<IntView, IntView, IntView>::post(home, iv, x0, x1)));
+        } else {
+            GECODE_ES_FAIL((Element::ViewBnd<IntView, IntView, IntView>::post(home, iv, x0, x1)));
+        }
+    }
 
-  void
-  element(Home home, const IntVarArgs& a,
-          IntVar x, int xoff, int w,
-          IntVar y, int yoff, int h,
-          IntVar z, IntPropLevel ipl) {
-    using namespace Int;
-    if (a.size() != w*h)
-      throw Int::ArgumentSizeMismatch("Int::element");
-    GECODE_POST;
-    element(home, a, pairWithOffsets(home,x,xoff,w,y,yoff,h), z, ipl);
-  }
+    void
+    element(Home home, const IntVarArgs& c, IntVar x0, int offset, IntVar x1, IntPropLevel ipl) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        GECODE_POST;
+        IdxViewArray<IntView> iv(home, c);
+        if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
+            if (offset == 0) {
+                GECODE_ES_FAIL((Element::ViewDom<IntView, IntView, IntView>::post(home, iv, x0, x1)));
+            } else {
+                OffsetView ov(x0, offset);
+                GECODE_ES_FAIL((Element::ViewDom<IntView, OffsetView, IntView>::post(home, iv, ov, x1)));
+            }
+        } else {
+            if (offset == 0) {
+                GECODE_ES_FAIL((Element::ViewBnd<IntView, IntView, IntView>::post(home, iv, x0, x1)));
+            } else {
+                OffsetView ov(x0, offset);
+                GECODE_ES_FAIL((Element::ViewBnd<IntView, OffsetView, IntView>::post(home, iv, ov, x1)));
+            }
+        }
+    }
 
-  void
-  element(Home home, const BoolVarArgs& a,
-          IntVar x, int w, IntVar y, int h, BoolVar z,
-          IntPropLevel ipl) {
-    using namespace Int;
-    if (a.size() != w*h)
-      throw Int::ArgumentSizeMismatch("Int::element");
-    GECODE_POST;
-    element(home, a, pair(home,x,w,y,h), z, ipl);
-  }
+    void
+    element(Home home, const IntVarArgs& c, IntVar x0, int x1, IntPropLevel ipl) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        Limits::check(x1, "Int::element");
+        GECODE_POST;
+        IdxViewArray<IntView> iv(home, c);
+        ConstIntView v1(x1);
+        if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
+            GECODE_ES_FAIL((Element::ViewDom<IntView, IntView, ConstIntView>::post(home, iv, x0, v1)));
+        } else {
+            GECODE_ES_FAIL((Element::ViewBnd<IntView, IntView, ConstIntView>::post(home, iv, x0, v1)));
+        }
+    }
 
-  void
-  element(Home home, const BoolVarArgs& a,
-          IntVar x, int xoff, int w,
-          IntVar y, int yoff, int h,
-          BoolVar z, IntPropLevel ipl) {
-    using namespace Int;
-    if (a.size() != w*h)
-      throw Int::ArgumentSizeMismatch("Int::element");
-    GECODE_POST;
-    element(home, a, pairWithOffsets(home,x,xoff,w,y,yoff,h), z, ipl);
-  }
+    void
+    element(Home home, const IntVarArgs& c, IntVar x0, int offset, int x1, IntPropLevel ipl) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        Limits::check(x1, "Int::element");
+        GECODE_POST;
+        IdxViewArray<IntView> iv(home, c);
+        ConstIntView v1(x1);
+        if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
+            if (offset == 0) {
+                GECODE_ES_FAIL((Element::ViewDom<IntView, IntView, ConstIntView>::post(home, iv, x0, v1)));
+            } else {
+                OffsetView ov(x0, offset);
+                GECODE_ES_FAIL((Element::ViewDom<IntView, OffsetView, ConstIntView>::post(home, iv, ov, v1)));
+            }
+        } else {
+            if (offset == 0) {
+                GECODE_ES_FAIL((Element::ViewBnd<IntView, IntView, ConstIntView>::post(home, iv, x0, v1)));
+            } else {
+                OffsetView ov(x0, offset);
+                GECODE_ES_FAIL((Element::ViewBnd<IntView, OffsetView, ConstIntView>::post(home, iv, ov, v1)));
+            }
+        }
+    }
 
-}
+    void
+    element(Home home, const BoolVarArgs& c, IntVar x0, BoolVar x1, IntPropLevel) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        GECODE_POST;
+        IdxViewArray<BoolView> iv(home, c);
+        GECODE_ES_FAIL((Element::ViewBnd<BoolView, IntView, BoolView>::post(home, iv, x0, x1)));
+    }
+
+    void
+    element(Home home, const BoolVarArgs& c, IntVar x0, int offset, BoolVar x1, IntPropLevel) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        GECODE_POST;
+        IdxViewArray<BoolView> iv(home, c);
+        if (offset == 0) {
+            GECODE_ES_FAIL((Element::ViewBnd<BoolView, IntView, BoolView>::post(home, iv, x0, x1)));
+        } else {
+            OffsetView ov(x0, offset);
+            GECODE_ES_FAIL((Element::ViewBnd<BoolView, OffsetView, BoolView>::post(home, iv, ov, x1)));
+        }
+    }
+
+    void
+    element(Home home, const BoolVarArgs& c, IntVar x0, int x1, IntPropLevel) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        Limits::check(x1, "Int::element");
+        GECODE_POST;
+        IdxViewArray<BoolView> iv(home, c);
+        ConstIntView v1(x1);
+        GECODE_ES_FAIL((Element::ViewBnd<BoolView, IntView, ConstIntView>::post(home, iv, x0, v1)));
+    }
+
+    void
+    element(Home home, const BoolVarArgs& c, IntVar x0, int offset, int x1, IntPropLevel) {
+        using namespace Int;
+        if (c.size() == 0)
+            throw TooFewArguments("Int::element");
+        Limits::check(x1, "Int::element");
+        GECODE_POST;
+        IdxViewArray<BoolView> iv(home, c);
+        ConstIntView v1(x1);
+        if (offset == 0) {
+            GECODE_ES_FAIL((Element::ViewBnd<BoolView, IntView, ConstIntView>::post(home, iv, x0, v1)));
+        } else {
+            OffsetView ov(x0, offset);
+            GECODE_ES_FAIL((Element::ViewBnd<BoolView, OffsetView, ConstIntView>::post(home, iv, ov, v1)));
+        }
+    }
+
+    namespace {
+        /// Check that \a n elements form a non-empty matrix of width \a w and height \a h
+        void
+        check_matrix(int n, int w, int h) {
+            if (n == 0)
+                throw Int::TooFewArguments("Int::element");
+            if ((w < 1) || (h < 1) || (static_cast<long long int>(w) * h != n))
+                throw Int::ArgumentSizeMismatch("Int::element");
+        }
+
+        IntVar
+        pair(Home home, IntVar x, int w, IntVar y, int h) {
+            IntVar xy(home, 0, w * h - 1);
+            if (Int::Element::Pair::post(home, x, y, xy, w, h) != ES_OK)
+                home.fail();
+            return xy;
+        }
+
+        IntVar
+        pair_with_offsets(Home home, IntVar x, int xoff, int w, IntVar y, int yoff, int h) {
+            IntVar xy(home, 0, w * h - 1);
+            if (xoff == 0 && yoff == 0) {
+                if (Int::Element::Pair::post(home, x, y, xy, w, h) != ES_OK)
+                    home.fail();
+            } else {
+                Int::OffsetView xo(x, xoff);
+                Int::OffsetView yo(y, yoff);
+                if (Int::Element::PairWithOffsets::post(home, xo, yo, xy, w, h) != ES_OK)
+                    home.fail();
+            }
+            return xy;
+        }
+    } // namespace
+
+    void
+    element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, IntVar z, IntPropLevel ipl) {
+        using namespace Int;
+        check_matrix(a.size(), w, h);
+        GECODE_POST;
+        element(home, a, pair(home, x, w, y, h), z, ipl);
+    }
+
+    void
+    element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, IntVar z,
+            IntPropLevel ipl) {
+        using namespace Int;
+        check_matrix(a.size(), w, h);
+        GECODE_POST;
+        element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
+    }
+
+    void
+    element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, BoolVar z, IntPropLevel ipl) {
+        using namespace Int;
+        check_matrix(a.size(), w, h);
+        GECODE_POST;
+        element(home, a, pair(home, x, w, y, h), z, ipl);
+    }
+
+    void
+    element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, BoolVar z,
+            IntPropLevel ipl) {
+        using namespace Int;
+        check_matrix(a.size(), w, h);
+        GECODE_POST;
+        element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
+    }
+
+    void
+    element(Home home, const IntVarArgs& a, IntVar x, int w, IntVar y, int h, IntVar z, IntPropLevel ipl) {
+        using namespace Int;
+        check_matrix(a.size(), w, h);
+        GECODE_POST;
+        element(home, a, pair(home, x, w, y, h), z, ipl);
+    }
+
+    void
+    element(Home home, const IntVarArgs& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, IntVar z,
+            IntPropLevel ipl) {
+        using namespace Int;
+        check_matrix(a.size(), w, h);
+        GECODE_POST;
+        element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
+    }
+
+    void
+    element(Home home, const BoolVarArgs& a, IntVar x, int w, IntVar y, int h, BoolVar z, IntPropLevel ipl) {
+        using namespace Int;
+        check_matrix(a.size(), w, h);
+        GECODE_POST;
+        element(home, a, pair(home, x, w, y, h), z, ipl);
+    }
+
+    void
+    element(Home home, const BoolVarArgs& a, IntVar x, int xoff, int w, IntVar y, int yoff, int h, BoolVar z,
+            IntPropLevel ipl) {
+        using namespace Int;
+        check_matrix(a.size(), w, h);
+        GECODE_POST;
+        element(home, a, pair_with_offsets(home, x, xoff, w, y, yoff, h), z, ipl);
+    }
+
+} // namespace Gecode
 
 // STATISTICS: int-post

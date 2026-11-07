@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,13 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("alpha",
-"predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("alpha", "predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -140,7 +135,8 @@ constraint int_lin_eq([1, 1, 2, 1, 1, 1], [a, n, o, p, r, s], 82);\n\
 constraint int_lin_eq([2, 1, 1, 1, 1, 1], [c, e, n, o, r, t], 74);\n\
 constraint int_lin_eq([1, 1, 1, 1, 2, 1, 1, 1], [a, e, h, n, o, p, s, x], 134);\n\
 solve satisfy;\n\
-", "a = 5;\n\
+",
+                                   "a = 5;\n\
 b = 13;\n\
 c = 9;\n\
 d = 16;\n\
@@ -168,12 +164,10 @@ y = 14;\n\
 z = 18;\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

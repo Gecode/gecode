@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,22 +38,22 @@ using namespace Gecode::Set;
 
 namespace Gecode {
 
-  void
-  sequence(Home home, const SetVarArgs& xa) {
-    if (xa.size()==0)
-      throw TooFewArguments("Set::seq");
-    GECODE_POST;
-    ViewArray<SetView> x(home,xa);
-    GECODE_ES_FAIL(Sequence::Seq::post(home, x));
-  }
+    void
+    sequence(Home home, const SetVarArgs& xa) {
+        if (xa.size() == 0)
+            throw TooFewArguments("Set::seq");
+        GECODE_POST;
+        ViewArray<SetView> x(home, xa);
+        GECODE_ES_FAIL(Sequence::Seq::post(home, x));
+    }
 
-  void
-  sequence(Home home, const SetVarArgs& xa, SetVar y) {
-    GECODE_POST;
-    ViewArray<SetView> x(home,xa);
-    GECODE_ES_FAIL(Sequence::SeqU::post(home, x,y));
-  }
+    void
+    sequence(Home home, const SetVarArgs& xa, SetVar y) {
+        GECODE_POST;
+        ViewArray<SetView> x(home, xa);
+        GECODE_ES_FAIL(Sequence::SeqU::post(home, x, y));
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-post

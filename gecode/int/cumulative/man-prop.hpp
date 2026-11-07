@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,108 +32,102 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
-  template<class ManTask, class Cap, class PL>
-  forceinline
-  ManProp<ManTask,Cap,PL>::ManProp(Home home, Cap c0, TaskArray<ManTask>& t)
-    : TaskProp<ManTask,PL>(home,t), c(c0) {
-    c.subscribe(home,*this,PC_INT_BND);
-  }
-
-  template<class ManTask, class Cap, class PL>
-  forceinline
-  ManProp<ManTask,Cap,PL>::ManProp(Space& home, ManProp<ManTask,Cap,PL>& p)
-    : TaskProp<ManTask,PL>(home,p) {
-    c.update(home,p.c);
-  }
-
-  template<class ManTask, class Cap, class PL>
-  ExecStatus
-  ManProp<ManTask,Cap,PL>::post(Home home, Cap c, TaskArray<ManTask>& t) {
-    // Capacity must be nonnegative
-    GECODE_ME_CHECK(c.gq(home, 0));
-    // Check that tasks do not overload resource
-    for (int i=0; i<t.size(); i++)
-      if (t[i].c() > c.max())
-        return ES_FAILED;
-    if (t.size() == 1)
-      GECODE_ME_CHECK(c.gq(home, t[0].c()));
-    if (t.size() > 1) {
-      if (c.assigned() && c.val()==1) {
-        TaskArray<typename TaskTraits<ManTask>::UnaryTask> mt(home,t.size());
-        for (int i=0; i<t.size(); i++)
-          mt[i]=t[i];
-        return Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask,PL>
-          ::post(home,mt);
-      } else {
-        (void) new (home) ManProp<ManTask,Cap,PL>(home,c,t);
-      }
-    }
-    return ES_OK;
-  }
-
-  template<class ManTask, class Cap, class PL>
-  PropCost
-  ManProp<ManTask,Cap,PL>::cost(const Space& home,
-                               const ModEventDelta& med) const {
-    if (PL::advanced && SupportsKnapsackOverload<ManTask>::value &&
-        (t.size() >= 4) && (t.size() <= 64) &&
-        (c.max() >= 2) && (c.max() <= 127))
-      return PropCost::quadratic(PropCost::HI,t.size());
-    return TaskProp<ManTask,PL>::cost(home,med);
-  }
-
-  template<class ManTask, class Cap, class PL>
-  Actor*
-  ManProp<ManTask,Cap,PL>::copy(Space& home) {
-    return new (home) ManProp<ManTask,Cap,PL>(home,*this);
-  }
-
-  template<class ManTask, class Cap, class PL>
-  forceinline size_t
-  ManProp<ManTask,Cap,PL>::dispose(Space& home) {
-    (void) TaskProp<ManTask,PL>::dispose(home);
-    c.cancel(home,*this,PC_INT_BND);
-    return sizeof(*this);
-  }
-
-  template<class ManTask, class Cap, class PL>
-  ExecStatus
-  ManProp<ManTask,Cap,PL>::propagate(Space& home, const ModEventDelta& med) {
-    // Only bounds changes?
-    if (IntView::me(med) != ME_INT_DOM) {
-      GECODE_ES_CHECK(overload(home,c.max(),t));
-      if (PL::advanced)
-        GECODE_ES_CHECK(knapsack_overload(home,c.max(),t));
+    template <class ManTask, class Cap, class PL>
+    forceinline
+    ManProp<ManTask, Cap, PL>::ManProp(Home home, Cap c0, TaskArray<ManTask>& t)
+        : TaskProp<ManTask, PL>(home, t), c(c0) {
+        c.subscribe(home, *this, PC_INT_BND);
     }
 
-    if (PL::advanced)
-      GECODE_ES_CHECK(edgefinding(home,c.max(),t));
-
-    if (PL::basic)
-      GECODE_ES_CHECK(timetabling(home,*this,c,t));
-
-    if (Cap::varderived() && c.assigned() && (c.val() == 1)) {
-      // Check that tasks do not overload resource
-      for (int i=0; i<t.size(); i++)
-        if (t[i].c() > 1)
-          return ES_FAILED;
-      // Rewrite to unary resource constraint
-      TaskArray<typename TaskTraits<ManTask>::UnaryTask> ut(home,t.size());
-      for (int i=0; i<t.size(); i++)
-        ut[i]=t[i];
-      GECODE_REWRITE(*this,
-        (Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask,PL>
-          ::post(home(*this),ut)));
+    template <class ManTask, class Cap, class PL>
+    forceinline
+    ManProp<ManTask, Cap, PL>::ManProp(Space& home, ManProp<ManTask, Cap, PL>& p)
+        : TaskProp<ManTask, PL>(home, p) {
+        c.update(home, p.c);
     }
 
-    if (!PL::basic && c.assigned())
-      GECODE_ES_CHECK(subsumed(home,*this,c.val(),t));
+    template <class ManTask, class Cap, class PL>
+    ExecStatus
+    ManProp<ManTask, Cap, PL>::post(Home home, Cap c, TaskArray<ManTask>& t) {
+        // Capacity must be nonnegative
+        GECODE_ME_CHECK(c.gq(home, 0));
+        // Check that tasks do not overload resource
+        for (int i = 0; i < t.size(); i++)
+            if (t[i].c() > c.max())
+                return ES_FAILED;
+        if (t.size() == 1)
+            GECODE_ME_CHECK(c.gq(home, t[0].c()));
+        if (t.size() > 1) {
+            if (c.assigned() && c.val() == 1) {
+                TaskArray<typename TaskTraits<ManTask>::UnaryTask> mt(home, t.size());
+                for (int i = 0; i < t.size(); i++)
+                    mt[i] = t[i];
+                return Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask, PL>::post(home, mt);
+            }
+            (void)new (home) ManProp<ManTask, Cap, PL>(home, c, t);
+        }
+        return ES_OK;
+    }
 
-    return ES_NOFIX;
-  }
+    template <class ManTask, class Cap, class PL>
+    PropCost
+    ManProp<ManTask, Cap, PL>::cost(const Space& home, const ModEventDelta& med) const {
+        if (PL::advanced && SupportsKnapsackOverload<ManTask>::value && (t.size() >= 4) && (t.size() <= 64) &&
+            (c.max() >= 2) && (c.max() <= 127))
+            return PropCost::quadratic(PropCost::HI, t.size());
+        return TaskProp<ManTask, PL>::cost(home, med);
+    }
 
-}}}
+    template <class ManTask, class Cap, class PL>
+    Actor*
+    ManProp<ManTask, Cap, PL>::copy(Space& home) {
+        return new (home) ManProp<ManTask, Cap, PL>(home, *this);
+    }
+
+    template <class ManTask, class Cap, class PL>
+    forceinline size_t
+    ManProp<ManTask, Cap, PL>::dispose(Space& home) {
+        (void)TaskProp<ManTask, PL>::dispose(home);
+        c.cancel(home, *this, PC_INT_BND);
+        return sizeof(*this);
+    }
+
+    template <class ManTask, class Cap, class PL>
+    ExecStatus
+    ManProp<ManTask, Cap, PL>::propagate(Space& home, const ModEventDelta& med) {
+        // Only bounds changes?
+        if (IntView::me(med) != ME_INT_DOM) {
+            GECODE_ES_CHECK(overload(home, c.max(), t));
+            if (PL::advanced)
+                GECODE_ES_CHECK(knapsack_overload(home, c.max(), t));
+        }
+
+        if (PL::advanced)
+            GECODE_ES_CHECK(edge_finding(home, c.max(), t));
+
+        if (PL::basic)
+            GECODE_ES_CHECK(timetabling(home, *this, c, t));
+
+        if (Cap::is_variable_derived() && c.assigned() && (c.val() == 1)) {
+            // Check that tasks do not overload resource
+            for (int i = 0; i < t.size(); i++)
+                if (t[i].c() > 1)
+                    return ES_FAILED;
+            // Rewrite to unary resource constraint
+            TaskArray<typename TaskTraits<ManTask>::UnaryTask> ut(home, t.size());
+            for (int i = 0; i < t.size(); i++)
+                ut[i] = t[i];
+            GECODE_REWRITE(*this, (Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask, PL>::post(home(*this), ut)));
+        }
+
+        if (!PL::basic && c.assigned())
+            GECODE_ES_CHECK(subsumed(home, *this, c.val(), t));
+
+        return ES_NOFIX;
+    }
+
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

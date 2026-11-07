@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,21 +32,19 @@
 
 #include <gecode/search/seq/rbs.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
-  Stop*
-  rbsstop(Stop* stop) {
-    return new RestartStop(stop);
-  }
+    Stop*
+    rbs_stop(Stop* stop) {
+        return new RestartStop(stop);
+    }
 
-  Engine*
-  rbsengine(Space* master, Stop* stop, Engine* slave,
-            const Search::Statistics& stat, const Options& opt, bool best) {
-    return new RBS(master,static_cast<RestartStop*>(stop), slave,
-                   stat,opt,best);
-  }
+    Engine*
+    make_rbs_engine(Space* master, Stop* stop, Engine* slave, const Search::Statistics& stat, const Options& opt,
+                    bool best) {
+        return new RBS(master, static_cast<RestartStop*>(stop), slave, stat, opt, best);
+    }
 
-
-}}}
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

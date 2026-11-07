@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Filip Konvicka <filip.konvicka@logis.cz>
@@ -40,148 +39,150 @@
 
 #include <cmath>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
-  class FloatVarImp;
+    class FloatVarImp;
 
-  /// Float delta information for advisors
-  class FloatDelta : public Delta {
-    friend class FloatVarImp;
-  private:
-    FloatNum _min; ///< Minimum value just pruned
-    FloatNum _max; ///< Largest value just pruned
-  public:
-    /// Create float delta as providing no information
-    FloatDelta(void);
-    /// Create float delta with \a min and \a max
-    FloatDelta(FloatNum min, FloatNum max);
-  private:
-    /// Return minimum
-    FloatNum min(void) const;
-    /// Return maximum
-    FloatNum max(void) const;
-  };
+    /// Float delta information for advisors
+    class FloatDelta : public Delta {
+        friend class FloatVarImp;
 
-}}
+    private:
+        FloatNum _min; ///< Minimum value just pruned
+        FloatNum _max; ///< Largest value just pruned
+    public:
+        /// Create float delta as providing no information
+        FloatDelta();
+        /// Create float delta with \a min and \a max
+        FloatDelta(FloatNum min, FloatNum max);
+
+    private:
+        /// Return minimum
+        FloatNum min() const;
+        /// Return maximum
+        FloatNum max() const;
+    };
+
+} // namespace Gecode::Float
 
 #include <gecode/float/var-imp/delta.hpp>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
-  /**
-   * \brief Float variable implementation
-   *
-   * \ingroup Other
-   */
-  class FloatVarImp : public FloatVarImpBase {
-  protected:
-    /// Domain information
-    FloatVal dom;
-    /// Constructor for cloning \a x
-    FloatVarImp(Space& home, FloatVarImp& x);
-  public:
-    /// Initialize with interval \a d
-    FloatVarImp(Space& home, const FloatVal& d);
-
-    /// \name Value access
-    //@{
-    /// Return domain
-    FloatVal domain(void) const;
-    /// Return minimum of domain
-    FloatNum min(void) const;
-    /// Return maximum of domain
-    FloatNum max(void) const;
-    /// Return value of domain (only if assigned)
-    FloatVal val(void) const;
-    /// Return median of domain (closest representation)
-    FloatNum med(void) const;
-
-    /// Return width of domain (distance between maximum and minimum)
-    FloatNum size(void) const;
-    //@}
-
-    /// \name Domain tests
-    //@{
-    /// Test whether variable is assigned
-    bool assigned(void) const;
-
-    /// Test whether 0 is contained in domain
-    bool zero_in(void) const;
-    /// Test whether \a n is contained in domain
-    bool in(FloatNum n) const;
-    /// Test whether \a n is contained in domain
-    bool in(const FloatVal& n) const;
-    //@}
-
-    /// \name Domain update by value
-    //@{
-    /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space& home, FloatNum n);
-    /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space& home, const FloatVal& n);
-    /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space& home, FloatNum n);
-    /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space& home, const FloatVal& n);
-    /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space& home, FloatNum n);
-    /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space& home, const FloatVal& n);
-    //@}
-
-    /// \name Dependencies
-    //@{
     /**
-     * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     * \brief Float variable implementation
      *
-     * In case \a schedule is false, the propagator is just subscribed but
-     * not scheduled for execution (this must be used when creating
-     * subscriptions during propagation).
-     *
+     * \ingroup Other
      */
-    GECODE_FLOAT_EXPORT void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-    /// Re-schedule propagator \a p with propagation condition \a pc
-    GECODE_FLOAT_EXPORT void reschedule(Space& home, Propagator& p, PropCond pc);
-    /** \brief Subscribe advisor \a a to variable
-     *
-     * The advisor \a a is only subscribed if \a assigned is false.
-     *
-     * If \a fail is true, the advisor \a a is also run when a variable
-     * operation triggers failure. This feature is undocumented.
-     *
-     */
-    GECODE_FLOAT_EXPORT void subscribe(Space& home, Advisor& a, bool fail);
-    //@}
+    class FloatVarImp : public FloatVarImpBase {
+    protected:
+        /// Domain information
+        FloatVal dom;
+        /// Constructor for cloning \a x
+        FloatVarImp(Space& home, FloatVarImp& x);
 
-    /// \name Variable implementation-dependent propagator support
-    //@{
-    /// Translate modification event \a me to modification event delta for view
-    static ModEventDelta med(ModEvent me);
-    //@}
+    public:
+        /// Initialize with interval \a d
+        FloatVarImp(Space& home, const FloatVal& d);
 
+        /// \name Value access
+        //@{
+        /// Return domain
+        FloatVal domain() const;
+        /// Return minimum of domain
+        FloatNum min() const;
+        /// Return maximum of domain
+        FloatNum max() const;
+        /// Return value of domain (only if assigned)
+        FloatVal val() const;
+        /// Return median of domain (closest representation)
+        FloatNum med() const;
 
-  private:
-    /// Return copy of not-yet copied variable
-    GECODE_FLOAT_EXPORT FloatVarImp* perform_copy(Space& home);
-  public:
-    /// \name Cloning
-    //@{
-    /// Return copy of this variable
-    FloatVarImp* copy(Space& home);
-    //@}
+        /// Return width of domain (distance between maximum and minimum)
+        FloatNum size() const;
+        //@}
 
-    /// \name Delta information for advisors
-    //@{
-    /// Return minimum value just pruned
-    static FloatNum min(const Delta& d);
-    /// Return maximum value just pruned
-    static FloatNum max(const Delta& d);
-    //@}
-  };
+        /// \name Domain tests
+        //@{
+        /// Test whether variable is assigned
+        bool assigned() const;
 
-}}
+        /// Test whether 0 is contained in domain
+        bool zero_in() const;
+        /// Test whether \a n is contained in domain
+        bool in(FloatNum n) const;
+        /// Test whether \a n is contained in domain
+        bool in(const FloatVal& n) const;
+        //@}
+
+        /// \name Domain update by value
+        //@{
+        /// Restrict domain values to be equal to \a n
+        ModEvent eq(Space& home, FloatNum n);
+        /// Restrict domain values to be equal to \a n
+        ModEvent eq(Space& home, const FloatVal& n);
+        /// Restrict domain values to be less or equal than \a n
+        ModEvent lq(Space& home, FloatNum n);
+        /// Restrict domain values to be less or equal than \a n
+        ModEvent lq(Space& home, const FloatVal& n);
+        /// Restrict domain values to be greater or equal than \a n
+        ModEvent gq(Space& home, FloatNum n);
+        /// Restrict domain values to be greater or equal than \a n
+        ModEvent gq(Space& home, const FloatVal& n);
+        //@}
+
+        /// \name Dependencies
+        //@{
+        /**
+         * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+         *
+         * In case \a schedule is false, the propagator is just subscribed but
+         * not scheduled for execution (this must be used when creating
+         * subscriptions during propagation).
+         *
+         */
+        GECODE_FLOAT_EXPORT void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule = true);
+        /// Re-schedule propagator \a p with propagation condition \a pc
+        GECODE_FLOAT_EXPORT void reschedule(Space& home, Propagator& p, PropCond pc);
+        /** \brief Subscribe advisor \a a to variable
+         *
+         * The advisor \a a is only subscribed if \a assigned is false.
+         *
+         * If \a fail is true, the advisor \a a is also run when a variable
+         * operation triggers failure. This feature is undocumented.
+         *
+         */
+        GECODE_FLOAT_EXPORT void subscribe(Space& home, Advisor& a, bool fail);
+        //@}
+
+        /// \name Variable implementation-dependent propagator support
+        //@{
+        /// Translate modification event \a me to modification event delta for view
+        static ModEventDelta med(ModEvent me);
+        //@}
+
+    private:
+        /// Return copy of not-yet copied variable
+        GECODE_FLOAT_EXPORT FloatVarImp* perform_copy(Space& home);
+
+    public:
+        /// \name Cloning
+        //@{
+        /// Return copy of this variable
+        FloatVarImp* copy(Space& home);
+        //@}
+
+        /// \name Delta information for advisors
+        //@{
+        /// Return minimum value just pruned
+        static FloatNum min(const Delta& d);
+        /// Return maximum value just pruned
+        static FloatNum max(const Delta& d);
+        //@}
+    };
+
+} // namespace Gecode::Float
 
 #include <gecode/float/var-imp/float.hpp>
 
 // STATISTICS: float-var
-

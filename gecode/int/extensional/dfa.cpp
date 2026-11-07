@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,545 +35,542 @@
 #include <algorithm>
 #include <vector>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
-  /**
-   * \brief Sort transition array by input state
-   */
-  class TransByI_State {
-  public:
-    forceinline bool
-    operator ()(const DFA::Transition& x, const DFA::Transition& y) {
-      return x.i_state < y.i_state;
+    /**
+     * \brief Sort transition array by input state
+     */
+    class TransByI_State {
+    public:
+        forceinline bool
+        operator()(const DFA::Transition& x, const DFA::Transition& y) {
+            return x.i_state < y.i_state;
+        }
+        forceinline static void
+        sort(DFA::Transition t[], int n) {
+            TransByI_State tbis;
+            Support::quicksort<DFA::Transition, TransByI_State>(t, n, tbis);
+        }
+    };
+
+    /**
+     * \brief Sort transition array by symbol (value)
+     */
+    class TransBySymbol {
+    public:
+        forceinline bool
+        operator()(const DFA::Transition& x, const DFA::Transition& y) {
+            return x.symbol < y.symbol;
+        }
+        forceinline static void
+        sort(DFA::Transition t[], int n) {
+            TransBySymbol tbs;
+            Support::quicksort<DFA::Transition, TransBySymbol>(t, n, tbs);
+        }
+    };
+
+    /**
+     * \brief Sort transition array by symbol and then input states
+     */
+    class TransBySymbolI_State {
+    public:
+        forceinline bool
+        operator()(const DFA::Transition& x, const DFA::Transition& y) {
+            return ((x.symbol < y.symbol) || ((x.symbol == y.symbol) && (x.i_state < y.i_state)));
+        }
+        forceinline static void
+        sort(DFA::Transition t[], int n) {
+            TransBySymbolI_State tbsi;
+            Support::quicksort<DFA::Transition, TransBySymbolI_State>(t, n, tbsi);
+        }
+    };
+
+    /**
+     * \brief Sort transition array by output state
+     */
+    class TransByO_State {
+    public:
+        forceinline bool
+        operator()(const DFA::Transition& x, const DFA::Transition& y) {
+            return x.o_state < y.o_state;
+        }
+        forceinline static void
+        sort(DFA::Transition t[], int n) {
+            TransByO_State tbos;
+            Support::quicksort<DFA::Transition, TransByO_State>(t, n, tbos);
+        }
+    };
+
+    /**
+     * \brief Stategroup is used to compute a partition of states
+     */
+    class StateGroup {
+    public:
+        int state;
+        int group;
+    };
+
+    /**
+     * \brief Sort groups stated by group and then state
+     */
+    class StateGroupByGroup {
+    public:
+        forceinline bool
+        operator()(const StateGroup& x, const StateGroup& y) {
+            return ((x.group < y.group) || ((x.group == y.group) && (x.state < y.state)));
+        }
+        static void
+        sort(StateGroup sg[], int n) {
+            StateGroupByGroup o;
+            Support::quicksort<StateGroup, StateGroupByGroup>(sg, n, o);
+        }
+    };
+
+    /**
+     * \brief %GroupStates is used to index %StateGroup by group
+     */
+    class GroupStates {
+    public:
+        StateGroup* fst;
+        StateGroup* lst;
+    };
+
+    /// Return the compact index for an external state identifier
+    static forceinline int
+    state_index(const std::vector<int>& states, int state) {
+        return static_cast<int>(std::ranges::lower_bound(states, state) - states.begin());
     }
-    forceinline static void
-    sort(DFA::Transition t[], int n) {
-      TransByI_State tbis;
-      Support::quicksort<DFA::Transition,TransByI_State>(t,n,tbis);
-    }
-  };
 
-  /**
-   * \brief Sort transition array by symbol (value)
-   */
-  class TransBySymbol {
-  public:
-    forceinline bool
-    operator ()(const DFA::Transition& x, const DFA::Transition& y) {
-      return x.symbol < y.symbol;
-    }
-    forceinline static void
-    sort(DFA::Transition t[], int n) {
-      TransBySymbol tbs;
-      Support::quicksort<DFA::Transition,TransBySymbol>(t,n,tbs);
-    }
-  };
+    /// Information about states
+    enum StateInfo {
+        SI_NONE = 0,       ///< State is not reachable
+        SI_FROM_START = 1, ///< State is reachable from start state
+        SI_TO_FINAL = 2,   ///< Final state is reachable from state
+        SI_FINAL = 4       ///< State is final
+    };
 
-  /**
-   * \brief Sort transition array by symbol and then input states
-   */
-  class TransBySymbolI_State {
-  public:
-    forceinline bool
-    operator ()(const DFA::Transition& x, const DFA::Transition& y) {
-      return ((x.symbol < y.symbol) ||
-              ((x.symbol == y.symbol) && (x.i_state < y.i_state)));
-    }
-    forceinline static void
-    sort(DFA::Transition t[], int n) {
-      TransBySymbolI_State tbsi;
-      Support::quicksort<DFA::Transition,TransBySymbolI_State>(t,n,tbsi);
-    }
-  };
-
-  /**
-   * \brief Sort transition array by output state
-   */
-  class TransByO_State {
-  public:
-    forceinline bool
-    operator ()(const DFA::Transition& x, const DFA::Transition& y) {
-      return x.o_state < y.o_state;
-    }
-    forceinline static void
-    sort(DFA::Transition t[], int n) {
-      TransByO_State tbos;
-      Support::quicksort<DFA::Transition,TransByO_State>(t,n,tbos);
-    }
-  };
-
-
-  /**
-   * \brief Stategroup is used to compute a partition of states
-   */
-  class StateGroup {
-  public:
-    int state;
-    int group;
-  };
-
-  /**
-   * \brief Sort groups stated by group and then state
-   */
-  class StateGroupByGroup {
-  public:
-    forceinline bool
-    operator ()(const StateGroup& x, const StateGroup& y) {
-      return ((x.group < y.group) ||
-              ((x.group == y.group) && (x.state < y.state)));
-    }
-    static void
-    sort(StateGroup sg[], int n) {
-      StateGroupByGroup o;
-      Support::quicksort<StateGroup,StateGroupByGroup>(sg,n,o);
-    }
-  };
-
-  /**
-   * \brief %GroupStates is used to index %StateGroup by group
-   */
-  class GroupStates {
-  public:
-    StateGroup* fst;
-    StateGroup* lst;
-  };
-
-  /// Return the compact index for an external state identifier
-  forceinline int
-  state_index(const std::vector<int>& states, int state) {
-    return static_cast<int>(
-      std::lower_bound(states.begin(),states.end(),state)-states.begin());
-  }
-
-  /// Information about states
-  enum StateInfo {
-    SI_NONE       = 0, ///< State is not reachable
-    SI_FROM_START = 1, ///< State is reachable from start state
-    SI_TO_FINAL   = 2, ///< Final state is reachable from state
-    SI_FINAL      = 4  ///< State is final
-  };
-
-}}}
+} // namespace Gecode::Int::Extensional
 
 namespace Gecode {
 
-  void
-  DFA::init(int start, Transition t_spec[], int f_spec[], bool minimize) {
-    using namespace Int;
-    using namespace Extensional;
-    Region region;
+    void
+    DFA::init(int start, Transition t_spec[], int f_spec[], bool minimize) {
+        using namespace Int;
+        using namespace Extensional;
+        Region region;
 
-    int n_trans = 0;
-    int max_state = start;
-    for (Transition* t = &t_spec[0]; t->i_state >= 0; t++) {
-      max_state = std::max(max_state,t->i_state);
-      max_state = std::max(max_state,t->o_state);
-      n_trans++;
-    }
-    std::size_t n_final_spec = 0;
-    for (int* f = &f_spec[0]; *f >= 0; f++) {
-      max_state = std::max(max_state,*f);
-      n_final_spec++;
-    }
-    // Use identifiers directly when the state range is bounded by the input
-    // size: transitions, final entries, and the start state.
-    const bool compact = static_cast<std::size_t>(max_state) >=
-      static_cast<std::size_t>(n_trans)+n_final_spec+1;
-    std::vector<int> states;
-    int n_states;
-    if (compact) {
-      states.reserve(2*static_cast<std::size_t>(n_trans)+n_final_spec+1);
-      states.push_back(start);
-      for (Transition* t = &t_spec[0]; t->i_state >= 0; t++) {
-        states.push_back(t->i_state);
-        states.push_back(t->o_state);
-      }
-      for (int* f = &f_spec[0]; *f >= 0; f++)
-        states.push_back(*f);
-      std::sort(states.begin(),states.end());
-      states.erase(std::unique(states.begin(),states.end()),states.end());
-      n_states = static_cast<int>(states.size());
-      start = state_index(states,start);
-    } else {
-      n_states = max_state+1;
-    }
-
-    // Temporary structure for transitions
-    Transition* trans = region.alloc<Transition>(n_trans);
-    if (compact) {
-      for (int i=0; i<n_trans; i++) {
-        trans[i] = t_spec[i];
-        trans[i].i_state = state_index(states,trans[i].i_state);
-        trans[i].o_state = state_index(states,trans[i].o_state);
-      }
-    } else {
-      for (int i=0; i<n_trans; i++)
-        trans[i] = t_spec[i];
-    }
-    // Temporary structures for finals
-    int* final = region.alloc<int>(n_states+1);
-    bool* is_final = region.alloc<bool>(n_states+1);
-    int n_finals = 0;
-    for (int i=0; i<n_states+1; i++)
-      is_final[i] = false;
-    for (int* f = &f_spec[0]; *f != -1; f++) {
-      const int state = compact ? state_index(states,*f) : *f;
-      if (!is_final[state]) {
-        is_final[state] = true;
-        final[n_finals++] = state;
-      }
-    }
-
-    if (minimize) {
-      // Sort transitions by symbol and i_state
-      TransBySymbolI_State::sort(trans, n_trans);
-      Transition** idx = region.alloc<Transition*>(n_trans+1);
-      //  idx[i]...idx[i+1]-1 gives where transitions for symbol i start
-      int n_symbols = 0;
-      {
-        int j = 0;
-        while (j < n_trans) {
-          idx[n_symbols++] = &trans[j];
-          int s = trans[j].symbol;
-          while ((j < n_trans) && (s == trans[j].symbol))
-            j++;
+        int n_trans = 0;
+        int max_state = start;
+        for (Transition* t = &t_spec[0]; t->i_state >= 0; t++) {
+            max_state = std::max(max_state, t->i_state);
+            max_state = std::max(max_state, t->o_state);
+            n_trans++;
         }
-        idx[n_symbols] = &trans[j];
-        assert(j == n_trans);
-      }
-      // Map states to groups
-      int* s2g = region.alloc<int>(n_states+1);
-      StateGroup* part = region.alloc<StateGroup>(n_states+1);
-      GroupStates* g2s = region.alloc<GroupStates>(n_states+1);
-      // Initialize: final states is group one, all other group zero
-      for (int i=0; i<n_states+1; i++) {
-        part[i].state = i;
-        part[i].group = is_final[i] ? 1 : 0;
-        s2g[i]        = part[i].group;
-      }
-      // Important: the state n_state is the dead state, conceptually
-      // if there is no transition for a symbol and input state, it is
-      // assumed that there is an implicit transition to n_state
+        std::size_t n_final_spec = 0;
+        for (int* f = &f_spec[0]; *f >= 0; f++) {
+            max_state = std::max(max_state, *f);
+            n_final_spec++;
+        }
+        // Use identifiers directly when the state range is bounded by the input
+        // size: transitions, final entries, and the start state.
+        const bool compact =
+            static_cast<std::size_t>(max_state) >= static_cast<std::size_t>(n_trans) + n_final_spec + 1;
+        std::vector<int> states;
+        int n_states;
+        if (compact) {
+            states.reserve(2 * static_cast<std::size_t>(n_trans) + n_final_spec + 1);
+            states.push_back(start);
+            for (Transition* t = &t_spec[0]; t->i_state >= 0; t++) {
+                states.push_back(t->i_state);
+                states.push_back(t->o_state);
+            }
+            for (int* f = &f_spec[0]; *f >= 0; f++)
+                states.push_back(*f);
+            std::ranges::sort(states);
+            states.erase(std::ranges::unique(states).begin(), states.end());
+            n_states = static_cast<int>(states.size());
+            start = state_index(states, start);
+        } else {
+            n_states = max_state + 1;
+        }
 
-      // Set up the indexing data structure, sort by group
-      StateGroupByGroup::sort(part,n_states+1);
-      int n_groups;
-      if (part[0].group == part[n_states].group) {
-        // No final states, just one group
-        g2s[0].fst = &part[0]; g2s[0].lst = &part[n_states+1];
-        n_groups = 1;
-      } else  {
-        int i = 0;
-        assert(part[0].group == 0);
-        do i++; while (part[i].group == 0);
-        g2s[0].fst = &part[0]; g2s[0].lst = &part[i];
-        g2s[1].fst = &part[i]; g2s[1].lst = &part[n_states+1];
-        n_groups = 2;
-      }
+        // Temporary structure for transitions
+        Transition* trans = (n_trans > 0) ? region.alloc<Transition>(n_trans) : nullptr;
+        if (compact) {
+            for (int i = 0; i < n_trans; i++) {
+                trans[i] = t_spec[i];
+                trans[i].i_state = state_index(states, trans[i].i_state);
+                trans[i].o_state = state_index(states, trans[i].o_state);
+            }
+        } else {
+            for (int i = 0; i < n_trans; i++)
+                trans[i] = t_spec[i];
+        }
+        // Temporary structures for finals
+        int* final = region.alloc<int>(n_states + 1);
+        bool* is_final = region.alloc<bool>(n_states + 1);
+        int n_finals = 0;
+        for (int i = 0; i < n_states + 1; i++)
+            is_final[i] = false;
+        for (int* f = &f_spec[0]; *f != -1; f++) {
+            const int state = compact ? state_index(states, *f) : *f;
+            if (!is_final[state]) {
+                is_final[state] = true;
+                final[n_finals++] = state;
+            }
+        }
 
-      // Do the refinement
-      {
-        int m_groups;
-        do {
-          m_groups = n_groups;
-          // Iterate over symbols
-          for (int sidx = n_symbols; sidx--; ) {
-            // Iterate over groups
-            for (int g = n_groups; g--; ) {
-              // Ignore singleton groups
-              if (g2s[g].lst-g2s[g].fst > 1) {
-                // Apply transitions to group states
-                // This exploits that both transitions as well as
-                // stategroups are sorted by (input) state
-                Transition* t     = idx[sidx];
-                Transition* t_lst = idx[sidx+1];
-                for (StateGroup* sg = g2s[g].fst; sg<g2s[g].lst; sg++) {
-                  while ((t < t_lst) && (t->i_state < sg->state))
-                    t++;
-                  // Compute group resulting from transition
-                  if ((t < t_lst) && (t->i_state == sg->state))
-                    sg->group = s2g[t->o_state];
-                  else
-                    sg->group = s2g[n_states]; // Go to dead state
+        if (minimize) {
+            // Sort transitions by symbol and i_state
+            TransBySymbolI_State::sort(trans, n_trans);
+            Transition** idx = region.alloc<Transition*>(n_trans + 1);
+            //  idx[i]...idx[i+1]-1 gives where transitions for symbol i start
+            int n_symbols = 0;
+            {
+                int j = 0;
+                while (j < n_trans) {
+                    idx[n_symbols++] = &trans[j];
+                    int s = trans[j].symbol;
+                    while ((j < n_trans) && (s == trans[j].symbol))
+                        j++;
                 }
-                // Sort group by groups from transitions
-                StateGroupByGroup::sort(g2s[g].fst,
-                                        static_cast<int>(g2s[g].lst-g2s[g].fst));
-                // Group must be split?
-                if (g2s[g].fst->group != (g2s[g].lst-1)->group) {
-                  // Skip first group
-                  StateGroup* sg = g2s[g].fst+1;
-                  while ((sg-1)->group == sg->group)
-                    sg++;
-                  // Start splitting
-                  StateGroup* lst = g2s[g].lst;
-                  g2s[g].lst = sg;
-                  while (sg < lst) {
-                    s2g[sg->state] = n_groups;
-                    g2s[n_groups].fst  = sg++;
-                    while ((sg < lst) && ((sg-1)->group == sg->group)) {
-                      s2g[sg->state] = n_groups; sg++;
+                idx[n_symbols] = &trans[j];
+                assert(j == n_trans);
+            }
+            // Map states to groups
+            int* s2g = region.alloc<int>(n_states + 1);
+            StateGroup* part = region.alloc<StateGroup>(n_states + 1);
+            GroupStates* g2s = region.alloc<GroupStates>(n_states + 1);
+            // Initialize: final states is group one, all other group zero
+            for (int i = 0; i < n_states + 1; i++) {
+                part[i].state = i;
+                part[i].group = is_final[i] ? 1 : 0;
+                s2g[i] = part[i].group;
+            }
+            // Important: the state n_state is the dead state, conceptually
+            // if there is no transition for a symbol and input state, it is
+            // assumed that there is an implicit transition to n_state
+
+            // Set up the indexing data structure, sort by group
+            StateGroupByGroup::sort(part, n_states + 1);
+            int n_groups;
+            if (part[0].group == part[n_states].group) {
+                // No final states, just one group
+                g2s[0].fst = &part[0];
+                g2s[0].lst = &part[n_states + 1];
+                n_groups = 1;
+            } else {
+                int i = 0;
+                assert(part[0].group == 0);
+                do
+                    i++;
+                while (part[i].group == 0);
+                g2s[0].fst = &part[0];
+                g2s[0].lst = &part[i];
+                g2s[1].fst = &part[i];
+                g2s[1].lst = &part[n_states + 1];
+                n_groups = 2;
+            }
+
+            // Do the refinement
+            {
+                int m_groups;
+                do {
+                    m_groups = n_groups;
+                    // Iterate over symbols
+                    for (int sidx = n_symbols; sidx--;) {
+                        // Iterate over groups
+                        for (int g = n_groups; g--;) {
+                            // Ignore singleton groups
+                            if (g2s[g].lst - g2s[g].fst > 1) {
+                                // Apply transitions to group states
+                                // This exploits that both transitions as well as
+                                // stategroups are sorted by (input) state
+                                Transition* t = idx[sidx];
+                                Transition* t_lst = idx[sidx + 1];
+                                for (StateGroup* sg = g2s[g].fst; sg < g2s[g].lst; sg++) {
+                                    while ((t < t_lst) && (t->i_state < sg->state))
+                                        t++;
+                                    // Compute group resulting from transition
+                                    if ((t < t_lst) && (t->i_state == sg->state))
+                                        sg->group = s2g[t->o_state];
+                                    else
+                                        sg->group = s2g[n_states]; // Go to dead state
+                                }
+                                // Sort group by groups from transitions
+                                StateGroupByGroup::sort(g2s[g].fst, static_cast<int>(g2s[g].lst - g2s[g].fst));
+                                // Group must be split?
+                                if (g2s[g].fst->group != (g2s[g].lst - 1)->group) {
+                                    // Skip first group
+                                    StateGroup* sg = g2s[g].fst + 1;
+                                    while ((sg - 1)->group == sg->group)
+                                        sg++;
+                                    // Start splitting
+                                    StateGroup* lst = g2s[g].lst;
+                                    g2s[g].lst = sg;
+                                    while (sg < lst) {
+                                        s2g[sg->state] = n_groups;
+                                        g2s[n_groups].fst = sg++;
+                                        while ((sg < lst) && ((sg - 1)->group == sg->group)) {
+                                            s2g[sg->state] = n_groups;
+                                            sg++;
+                                        }
+                                        g2s[n_groups++].lst = sg;
+                                    }
+                                }
+                            }
+                        }
                     }
-                    g2s[n_groups++].lst = sg;
-                  }
+                } while (n_groups != m_groups);
+                // New start state
+                start = s2g[start];
+                // Compute new final states
+                n_finals = 0;
+                for (int g = n_groups; g--;)
+                    for (StateGroup* sg = g2s[g].fst; sg < g2s[g].lst; sg++)
+                        if (is_final[sg->state]) {
+                            final[n_finals++] = g;
+                            break;
+                        }
+                // Compute representatives
+                int* s2r = region.alloc<int>(n_states + 1);
+                for (int i = 0; i < n_states + 1; i++)
+                    s2r[i] = -1;
+                for (int g = 0; g < n_groups; g++)
+                    s2r[g2s[g].fst->state] = g;
+                // Clean transitions
+                int j = 0;
+                for (int i = 0; i < n_trans; i++)
+                    if (s2r[trans[i].i_state] != -1) {
+                        trans[j].i_state = s2g[trans[i].i_state];
+                        trans[j].symbol = trans[i].symbol;
+                        trans[j].o_state = s2g[trans[i].o_state];
+                        j++;
+                    }
+                n_trans = j;
+                n_states = n_groups;
+            }
+        }
+
+        // Do a reachability analysis for all states starting from start state
+        Gecode::Support::StaticStack<int, Region> visit(region, n_states);
+        int* state = region.alloc<int>(n_states);
+        for (int i = 0; i < n_states; i++)
+            state[i] = SI_NONE;
+
+        Transition** idx = region.alloc<Transition*>(n_states + 1);
+        {
+            // Sort all transitions according to i_state and create index structure
+            //  idx[i]...idx[i+1]-1 gives where transitions for state i start
+            TransByI_State::sort(trans, n_trans);
+            {
+                int j = 0;
+                for (int i = 0; i < n_states; i++) {
+                    idx[i] = &trans[j];
+                    while ((j < n_trans) && (i == trans[j].i_state))
+                        j++;
                 }
-              }
+                idx[n_states] = &trans[j];
+                assert(j == n_trans);
             }
-          }
-        } while (n_groups != m_groups);
-        // New start state
-        start = s2g[start];
-        // Compute new final states
-        n_finals = 0;
-        for (int g = n_groups; g--; )
-          for (StateGroup* sg = g2s[g].fst; sg < g2s[g].lst; sg++)
-            if (is_final[sg->state]) {
-              final[n_finals++] = g;
-              break;
+
+            state[start] = SI_FROM_START;
+            visit.push(start);
+            while (!visit.empty()) {
+                int s = visit.pop();
+                for (Transition* t = idx[s]; t < idx[s + 1]; t++)
+                    if (!(state[t->o_state] & SI_FROM_START)) {
+                        state[t->o_state] |= SI_FROM_START;
+                        visit.push(t->o_state);
+                    }
             }
-        // Compute representatives
-        int* s2r = region.alloc<int>(n_states+1);
-        for (int i=0; i<n_states+1; i++)
-          s2r[i] = -1;
-        for (int g=0; g<n_groups; g++)
-          s2r[g2s[g].fst->state] = g;
-        // Clean transitions
-        int j = 0;
-        for (int i = 0; i<n_trans; i++)
-          if (s2r[trans[i].i_state] != -1) {
-            trans[j].i_state = s2g[trans[i].i_state];
-            trans[j].symbol  = trans[i].symbol;
-            trans[j].o_state = s2g[trans[i].o_state];
-            j++;
-          }
-        n_trans  = j;
-        n_states = n_groups;
-      }
-    }
-
-    // Do a reachability analysis for all states starting from start state
-    Gecode::Support::StaticStack<int,Region> visit(region,n_states);
-    int* state = region.alloc<int>(n_states);
-    for (int i=0; i<n_states; i++)
-      state[i] = SI_NONE;
-
-    Transition** idx = region.alloc<Transition*>(n_states+1);
-    {
-      // Sort all transitions according to i_state and create index structure
-      //  idx[i]...idx[i+1]-1 gives where transitions for state i start
-      TransByI_State::sort(trans, n_trans);
-      {
-        int j = 0;
-        for (int i=0; i<n_states; i++) {
-          idx[i] = &trans[j];
-          while ((j < n_trans) && (i == trans[j].i_state))
-            j++;
         }
-        idx[n_states] = &trans[j];
-        assert(j == n_trans);
-      }
 
-      state[start] = SI_FROM_START;
-      visit.push(start);
-      while (!visit.empty()) {
-        int s = visit.pop();
-        for (Transition* t = idx[s]; t < idx[s+1]; t++)
-          if (!(state[t->o_state] & SI_FROM_START)) {
-            state[t->o_state] |= SI_FROM_START;
-            visit.push(t->o_state);
-          }
-      }
-    }
+        // Do a reachability analysis for all states to a final state
+        {
+            // Sort all transitions according to o_state and create index structure
+            //  idx[i]...idx[i+1]-1 gives where transitions for state i start
+            TransByO_State::sort(trans, n_trans);
+            {
+                int j = 0;
+                for (int i = 0; i < n_states; i++) {
+                    idx[i] = &trans[j];
+                    while ((j < n_trans) && (i == trans[j].o_state))
+                        j++;
+                }
+                idx[n_states] = &trans[j];
+                assert(j == n_trans);
+            }
 
-    // Do a reachability analysis for all states to a final state
-    {
-      // Sort all transitions according to o_state and create index structure
-      //  idx[i]...idx[i+1]-1 gives where transitions for state i start
-      TransByO_State::sort(trans, n_trans);
-      {
-        int j = 0;
-        for (int i=0; i<n_states; i++) {
-          idx[i] = &trans[j];
-          while ((j < n_trans) && (i == trans[j].o_state))
-            j++;
+            for (int i = 0; i < n_finals; i++) {
+                state[final[i]] |= (SI_TO_FINAL | SI_FINAL);
+                visit.push(final[i]);
+            }
+            while (!visit.empty()) {
+                int s = visit.pop();
+                for (Transition* t = idx[s]; t < idx[s + 1]; t++)
+                    if (!(state[t->i_state] & SI_TO_FINAL)) {
+                        state[t->i_state] |= SI_TO_FINAL;
+                        visit.push(t->i_state);
+                    }
+            }
         }
-        idx[n_states] = &trans[j];
-        assert(j == n_trans);
-      }
 
-      for (int i=0; i<n_finals; i++) {
-        state[final[i]] |= (SI_TO_FINAL | SI_FINAL);
-        visit.push(final[i]);
-      }
-      while (!visit.empty()) {
-        int s = visit.pop();
-        for (Transition* t = idx[s]; t < idx[s+1]; t++)
-          if (!(state[t->i_state] & SI_TO_FINAL)) {
-            state[t->i_state] |= SI_TO_FINAL;
-            visit.push(t->i_state);
-          }
-      }
-    }
+        // Now all reachable states are known (also the final ones)
+        int* re = region.alloc<int>(n_states);
+        for (int i = 0; i < n_states; i++)
+            re[i] = -1;
 
-    // Now all reachable states are known (also the final ones)
-    int* re = region.alloc<int>(n_states);
-    for (int i=0; i<n_states; i++)
-      re[i] = -1;
+        // Renumber states
+        int m_states = 0;
+        // Start state gets zero
+        re[start] = m_states++;
 
-    // Renumber states
-    int m_states = 0;
-    // Start state gets zero
-    re[start] = m_states++;
+        // Renumber final states
+        for (int i = n_states; i--;)
+            if ((state[i] == (SI_FINAL | SI_FROM_START | SI_TO_FINAL)) && (re[i] < 0))
+                re[i] = m_states++;
+        // If start state is final, final states start from zero, otherwise from one
+        int final_fst = (state[start] & SI_FINAL) ? 0 : 1;
+        int final_lst = m_states;
+        // final_fst...final_lst-1 are the final states
 
-    // Renumber final states
-    for (int i=n_states; i--; )
-      if ((state[i] == (SI_FINAL | SI_FROM_START | SI_TO_FINAL)) && (re[i] < 0))
-        re[i] = m_states++;
-    // If start state is final, final states start from zero, otherwise from one
-    int final_fst = (state[start] & SI_FINAL) ? 0 : 1;
-    int final_lst = m_states;
-    // final_fst...final_lst-1 are the final states
+        // Renumber remaining states
+        for (int i = n_states; i--;)
+            if ((state[i] == (SI_FROM_START | SI_TO_FINAL)) && (re[i] < 0))
+                re[i] = m_states++;
 
-    // Renumber remaining states
-    for (int i=n_states; i--; )
-      if ((state[i] == (SI_FROM_START | SI_TO_FINAL)) && (re[i] < 0))
-        re[i] = m_states++;
+        // Count number of remaining transitions
+        int m_trans = 0;
+        for (int i = n_trans; i--;)
+            if ((re[trans[i].i_state] >= 0) && (re[trans[i].o_state] >= 0))
+                m_trans++;
 
-    // Count number of remaining transitions
-    int m_trans = 0;
-    for (int i=n_trans; i--; )
-      if ((re[trans[i].i_state] >= 0) && (re[trans[i].o_state] >= 0))
-        m_trans++;
-
-    // All done... Construct the automaton
-    DFAI* d = new DFAI(m_trans);
-    d->n_states  = m_states;
-    d->n_trans   = m_trans;
-    d->final_fst = final_fst;
-    d->final_lst = final_lst;
-    {
-      int j = 0;
-      Transition* r = &d->trans[0];
-      for (int i = 0; i<n_trans; i++)
-        if ((re[trans[i].i_state] >= 0) && (re[trans[i].o_state] >= 0)) {
-          r[j].symbol  = trans[i].symbol;
-          r[j].i_state = re[trans[i].i_state];
-          r[j].o_state = re[trans[i].o_state];
-          j++;
+        // All done... Construct the automaton
+        DFAI* d = new DFAI(m_trans);
+        d->n_states = m_states;
+        d->n_trans = m_trans;
+        d->final_fst = final_fst;
+        d->final_lst = final_lst;
+        {
+            int j = 0;
+            Transition* r = &d->trans[0];
+            for (int i = 0; i < n_trans; i++)
+                if ((re[trans[i].i_state] >= 0) && (re[trans[i].o_state] >= 0)) {
+                    r[j].symbol = trans[i].symbol;
+                    r[j].i_state = re[trans[i].i_state];
+                    r[j].o_state = re[trans[i].o_state];
+                    j++;
+                }
+            TransBySymbol::sort(r, m_trans);
         }
-      TransBySymbol::sort(r,m_trans);
-    }
-    {
-      // Count number of symbols
-      unsigned int n_symbols = 0;
-      for (int i = 0; i<m_trans; ) {
-        int s = d->trans[i++].symbol;
-        n_symbols++;
-        while ((i<m_trans) && (d->trans[i].symbol == s))
-          i++;
-      }
-      d->n_symbols = n_symbols;
-    }
-    {
-      // Compute maximal degree
-      unsigned int max_degree = 0;
-      unsigned int* deg = region.alloc<unsigned int>(m_states);
-
-      // Compute in-degree per state
-      for (int i=0; i<m_states; i++)
-        deg[i] = 0;
-      for (int i=0; i<m_trans; i++)
-        deg[d->trans[i].o_state]++;
-      for (int i=0; i<m_states; i++)
-        max_degree = std::max(max_degree,deg[i]);
-
-      // Compute out-degree per state
-      for (int i=0; i<m_states; i++)
-        deg[i] = 0;
-      for (int i=0; i<m_trans; i++)
-        deg[d->trans[i].i_state]++;
-      for (int i=0; i<m_states; i++)
-        max_degree = std::max(max_degree,deg[i]);
-
-      // Compute transitions per symbol
-      {
-        int i=0;
-        while (i < m_trans) {
-          int j=i++;
-          while ((i < m_trans) &&
-                 (d->trans[j].symbol == d->trans[i].symbol))
-            i++;
-          max_degree = std::max(max_degree,static_cast<unsigned int>(i-j));
+        {
+            // Count number of symbols
+            unsigned int n_symbols = 0;
+            for (int i = 0; i < m_trans;) {
+                int s = d->trans[i++].symbol;
+                n_symbols++;
+                while ((i < m_trans) && (d->trans[i].symbol == s))
+                    i++;
+            }
+            d->n_symbols = n_symbols;
         }
-      }
+        {
+            // Compute maximal degree
+            unsigned int max_degree = 0;
+            unsigned int* deg = region.alloc<unsigned int>(m_states);
 
-      d->max_degree = max_degree;
+            // Compute in-degree per state
+            for (int i = 0; i < m_states; i++)
+                deg[i] = 0;
+            for (int i = 0; i < m_trans; i++)
+                deg[d->trans[i].o_state]++;
+            for (int i = 0; i < m_states; i++)
+                max_degree = std::max(max_degree, deg[i]);
+
+            // Compute out-degree per state
+            for (int i = 0; i < m_states; i++)
+                deg[i] = 0;
+            for (int i = 0; i < m_trans; i++)
+                deg[d->trans[i].i_state]++;
+            for (int i = 0; i < m_states; i++)
+                max_degree = std::max(max_degree, deg[i]);
+
+            // Compute transitions per symbol
+            {
+                int i = 0;
+                while (i < m_trans) {
+                    int j = i++;
+                    while ((i < m_trans) && (d->trans[j].symbol == d->trans[i].symbol))
+                        i++;
+                    max_degree = std::max(max_degree, static_cast<unsigned int>(i - j));
+                }
+            }
+
+            d->max_degree = max_degree;
+        }
+
+        d->fill();
+        object(d);
     }
 
-    d->fill();
-    object(d);
-  }
-
-  DFA::DFA(int start, Transition t_spec[], int f_spec[], bool minimize) {
-    init(start,t_spec,f_spec,minimize);
-  }
-
-  DFA::DFA(int start, std::initializer_list<Transition> tl,
-           std::initializer_list<int> fl, bool minimize) {
-    Region reg;
-    int nt = static_cast<int>(tl.size());
-    int nf = static_cast<int>(fl.size());
-    Transition* ts = reg.alloc<Transition>(nt + 1);
-    {
-      int i=0;
-      for (const Transition& t : tl)
-        ts[i++] = t;
-      ts[nt].i_state = -1;
+    DFA::DFA(int start, Transition t_spec[], int f_spec[], bool minimize) {
+        init(start, t_spec, f_spec, minimize);
     }
-    int* fs = reg.alloc<int>(nf + 1);
-    {
-      int i=0;
-      for (const int& f : fl)
-        fs[i++] = f;
-      fs[nf] = -1;
+
+    DFA::DFA(int start, std::initializer_list<Transition> tl, std::initializer_list<int> fl, bool minimize) {
+        Region reg;
+        int nt = static_cast<int>(tl.size());
+        int nf = static_cast<int>(fl.size());
+        Transition* ts = reg.alloc<Transition>(nt + 1);
+        {
+            int i = 0;
+            for (const Transition& t : tl)
+                ts[i++] = t;
+            ts[nt].i_state = -1;
+        }
+        int* fs = reg.alloc<int>(nf + 1);
+        {
+            int i = 0;
+            for (const int& f : fl)
+                fs[i++] = f;
+            fs[nf] = -1;
+        }
+        init(start, ts, fs, minimize);
     }
-    init(start,ts,fs,minimize);
-  }
 
-  DFA
-  DFA::nfa(int start, Transition t[], int f[]) {
-    return DFA(start,t,f,false);
-  }
-
-  DFA
-  DFA::nfa(int start, std::initializer_list<Transition> t,
-           std::initializer_list<int> f) {
-    return DFA(start,t,f,false);
-  }
-
-  bool
-  DFA::equal(const DFA& d) const {
-    assert(n_states() == d.n_states());
-    assert(n_transitions() == d.n_transitions());
-    assert(n_symbols() == d.n_symbols());
-    assert(final_fst() == d.final_fst());
-    assert(final_lst() == d.final_lst());
-    DFA::Transitions me(*this);
-    DFA::Transitions they(d);
-    while (me()) {
-      if (me.i_state() != they.i_state())
-        return false;
-      if (me.symbol() != they.symbol())
-        return false;
-      if (me.o_state() != they.o_state())
-        return false;
-      ++me;
-      ++they;
+    DFA
+    DFA::nfa(int start, Transition t[], int f[]) {
+        return DFA(start, t, f, false);
     }
-    return true;
-  }
 
-}
+    DFA
+    DFA::nfa(int start, std::initializer_list<Transition> t, std::initializer_list<int> f) {
+        return DFA(start, t, f, false);
+    }
+
+    bool
+    DFA::equal(const DFA& d) const {
+        assert(n_states() == d.n_states());
+        assert(n_transitions() == d.n_transitions());
+        assert(n_symbols() == d.n_symbols());
+        assert(final_fst() == d.final_fst());
+        assert(final_lst() == d.final_lst());
+        DFA::Transitions me(*this);
+        DFA::Transitions they(d);
+        while (me()) {
+            if (me.i_state() != they.i_state())
+                return false;
+            if (me.symbol() != they.symbol())
+                return false;
+            if (me.o_state() != they.o_state())
+                return false;
+            ++me;
+            ++they;
+        }
+        return true;
+    }
+
+} // namespace Gecode
 
 // STATISTICS: int-prop
-

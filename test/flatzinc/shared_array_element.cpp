@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("SharedArrayElement",
-"predicate count(array [int] of var int: x,var int: y,var int: c);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("SharedArrayElement",
+                                   "predicate count(array [int] of var int: x,var int: y,var int: c);\n\
 array [1..6] of int: X_INTRODUCED_25_ = [0,0,1,1,0,1];\n\
 array [1..6] of int: X_INTRODUCED_27_ = [1,0,0,0,1,0];\n\
 array [1..6] of int: X_INTRODUCED_29_ = [1,1,0,1,0,0];\n\
@@ -102,17 +98,14 @@ constraint int_lin_eq(X_INTRODUCED_49_,[X_INTRODUCED_40_,X_INTRODUCED_38_,X_INTR
 constraint count(X,2,1);\n\
 solve  satisfy;\n\
 ",
-"X = array1d(1..10, [2, 3, 1, 3, 3, 1, 3, 1, 1, 1]);\n\
+                                   "X = array1d(1..10, [2, 3, 1, 3, 3, 1, 3, 1, 1, 1]);\n\
 Y = array1d(1..15, [0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0]);\n\
 ----------\n\
-"
-);
-      }
+");
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

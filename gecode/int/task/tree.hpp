@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,147 +32,142 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
-  forceinline int
-  plus(int x, int y) {
-    assert(y != -Limits::infinity);
-    return (x == -Limits::infinity) ? x : x+y;
-  }
+    forceinline int
+    plus(int x, int y) {
+        assert(y != -Limits::infinity);
+        return (x == -Limits::infinity) ? x : x + y;
+    }
 
-  forceinline long long int
-  plus(long long int x, long long int y) {
-    assert(y != -Limits::llinfinity);
-    return (x == -Limits::llinfinity) ? x : x+y;
-  }
+    forceinline long long int
+    plus(long long int x, long long int y) {
+        assert(y != -Limits::llinfinity);
+        return (x == -Limits::llinfinity) ? x : x + y;
+    }
 
-  template<class TaskView, class Node>
-  forceinline int
-  TaskTree<TaskView,Node>::n_inner(void) const {
-    return tasks.size()-1;
-  }
-  template<class TaskView, class Node>
-  forceinline int
-  TaskTree<TaskView,Node>::n_nodes(void) const {
-    return 2*tasks.size() - 1;
-  }
+    template <class TaskView, class Node>
+    forceinline int
+    TaskTree<TaskView, Node>::n_inner() const {
+        return tasks.size() - 1;
+    }
+    template <class TaskView, class Node>
+    forceinline int
+    TaskTree<TaskView, Node>::n_nodes() const {
+        return 2 * tasks.size() - 1;
+    }
 
-  template<class TaskView, class Node>
-  forceinline bool
-  TaskTree<TaskView,Node>::n_root(int i) {
-    return i == 0;
-  }
-  template<class TaskView, class Node>
-  forceinline bool
-  TaskTree<TaskView,Node>::n_leaf(int i) const {
-    return i >= n_inner();
-  }
-  template<class TaskView, class Node>
-  forceinline int
-  TaskTree<TaskView,Node>::n_left(int i) {
-    return 2*(i+1) - 1;
-  }
-  template<class TaskView, class Node>
-  forceinline bool
-  TaskTree<TaskView,Node>::left(int i) {
-    assert(!n_root(i));
-    // A left node has an odd number
-    return (i & 1) != 0;
-  }
-  template<class TaskView, class Node>
-  forceinline int
-  TaskTree<TaskView,Node>::n_right(int i) {
-    return 2*(i+1);
-  }
-  template<class TaskView, class Node>
-  forceinline bool
-  TaskTree<TaskView,Node>::right(int i) {
-    assert(!n_root(i));
-    // A left node has an even number
-    return (i & 1) == 0;
-  }
-  template<class TaskView, class Node>
-  forceinline int
-  TaskTree<TaskView,Node>::n_parent(int i) {
-    return (i+1)/2 - 1;
-  }
+    template <class TaskView, class Node>
+    forceinline bool
+    TaskTree<TaskView, Node>::n_root(int i) {
+        return i == 0;
+    }
+    template <class TaskView, class Node>
+    forceinline bool
+    TaskTree<TaskView, Node>::n_leaf(int i) const {
+        return i >= n_inner();
+    }
+    template <class TaskView, class Node>
+    forceinline int
+    TaskTree<TaskView, Node>::n_left(int i) {
+        return 2 * (i + 1) - 1;
+    }
+    template <class TaskView, class Node>
+    forceinline bool
+    TaskTree<TaskView, Node>::left(int i) {
+        assert(!n_root(i));
+        // A left node has an odd number
+        return (i & 1) != 0;
+    }
+    template <class TaskView, class Node>
+    forceinline int
+    TaskTree<TaskView, Node>::n_right(int i) {
+        return 2 * (i + 1);
+    }
+    template <class TaskView, class Node>
+    forceinline bool
+    TaskTree<TaskView, Node>::right(int i) {
+        assert(!n_root(i));
+        // A left node has an even number
+        return (i & 1) == 0;
+    }
+    template <class TaskView, class Node>
+    forceinline int
+    TaskTree<TaskView, Node>::n_parent(int i) {
+        return (i + 1) / 2 - 1;
+    }
 
-  template<class TaskView, class Node>
-  forceinline Node&
-  TaskTree<TaskView,Node>::leaf(int i) {
-    return node[_leaf[i]];
-  }
+    template <class TaskView, class Node>
+    forceinline Node&
+    TaskTree<TaskView, Node>::leaf(int i) {
+        return node[_leaf[i]];
+    }
 
-  template<class TaskView, class Node>
-  forceinline const Node&
-  TaskTree<TaskView,Node>::root(void) const {
-    return node[0];
-  }
+    template <class TaskView, class Node>
+    forceinline const Node&
+    TaskTree<TaskView, Node>::root() const {
+        return node[0];
+    }
 
-  template<class TaskView, class Node>
-  forceinline void
-  TaskTree<TaskView,Node>::init(void) {
-    for (int i=n_inner(); i--; )
-      node[i].init(node[n_left(i)],node[n_right(i)]);
-  }
+    template <class TaskView, class Node>
+    forceinline void
+    TaskTree<TaskView, Node>::init() {
+        for (int i = n_inner(); i--;)
+            node[i].init(node[n_left(i)], node[n_right(i)]);
+    }
 
-  template<class TaskView, class Node>
-  forceinline void
-  TaskTree<TaskView,Node>::update(void) {
-    for (int i=n_inner(); i--; )
-      node[i].update(node[n_left(i)],node[n_right(i)]);
-  }
+    template <class TaskView, class Node>
+    forceinline void
+    TaskTree<TaskView, Node>::update() {
+        for (int i = n_inner(); i--;)
+            node[i].update(node[n_left(i)], node[n_right(i)]);
+    }
 
-  template<class TaskView, class Node>
-  forceinline void
-  TaskTree<TaskView,Node>::update(int i, bool l) {
-    if (l)
-      i = _leaf[i];
-    assert(!n_root(i));
-    do {
-      i = n_parent(i);
-      node[i].update(node[n_left(i)],node[n_right(i)]);
-    } while (!n_root(i));
-  }
+    template <class TaskView, class Node>
+    forceinline void
+    TaskTree<TaskView, Node>::update(int i, bool l) {
+        if (l)
+            i = _leaf[i];
+        assert(!n_root(i));
+        do {
+            i = n_parent(i);
+            node[i].update(node[n_left(i)], node[n_right(i)]);
+        } while (!n_root(i));
+    }
 
-  template<class TaskView, class Node>
-  forceinline
-  TaskTree<TaskView,Node>::TaskTree(Region& r,
-                                    const TaskViewArray<TaskView>& t)
-    : tasks(t),
-      node(r.alloc<Node>(n_nodes())),
-      _leaf(r.alloc<int>(tasks.size())) {
-    // Compute a sorting map to order by non decreasing est
-    int* map = r.alloc<int>(tasks.size());
-    sort<TaskView,STO_EST,true>(map, tasks);
-    // Compute inverse of sorting map
-    for (int i=0; i<tasks.size(); i++)
-      _leaf[map[i]] = i;
-    r.free<int>(map,tasks.size());
-    // Compute index of first leaf in tree: the next larger power of two
-    int fst = 1;
-    while (fst < tasks.size())
-      fst <<= 1;
-    fst--;
-    // Remap task indices to leaf indices
-    for (int i=0; i<tasks.size(); i++)
-      if (_leaf[i] + fst >= n_nodes())
-        _leaf[i] += fst - tasks.size();
-      else
-        _leaf[i] += fst;
-  }
+    template <class TaskView, class Node>
+    forceinline
+    TaskTree<TaskView, Node>::TaskTree(Region& r, const TaskViewArray<TaskView>& t)
+        : tasks(t), node(r.alloc<Node>(n_nodes())), _leaf(r.alloc<int>(tasks.size())) {
+        // Compute a sorting map to order by non decreasing est
+        int* map = r.alloc<int>(tasks.size());
+        sort<TaskView, STO_EST, true>(map, tasks);
+        // Compute inverse of sorting map
+        for (int i = 0; i < tasks.size(); i++)
+            _leaf[map[i]] = i;
+        r.free<int>(map, tasks.size());
+        // Compute index of first leaf in tree: the next larger power of two
+        int fst = 1;
+        while (fst < tasks.size())
+            fst <<= 1;
+        fst--;
+        // Remap task indices to leaf indices
+        for (int i = 0; i < tasks.size(); i++)
+            if (_leaf[i] + fst >= n_nodes())
+                _leaf[i] += fst - tasks.size();
+            else
+                _leaf[i] += fst;
+    }
 
-  template<class TaskView, class Node> template<class Node2>
-  forceinline
-  TaskTree<TaskView,Node>::TaskTree(Region& r,
-                                    const TaskTree<TaskView,Node2>& t)
-    : tasks(t.tasks),
-      node(r.alloc<Node>(n_nodes())),
-      _leaf(r.alloc<int>(tasks.size())) {
-    for (int i=0; i<tasks.size(); i++)
-      _leaf[i] = t._leaf[i];
-  }
+    template <class TaskView, class Node>
+    template <class Node2>
+    forceinline
+    TaskTree<TaskView, Node>::TaskTree(Region& r, const TaskTree<TaskView, Node2>& t)
+        : tasks(t.tasks), node(r.alloc<Node>(n_nodes())), _leaf(r.alloc<int>(tasks.size())) {
+        for (int i = 0; i < tasks.size(); i++)
+            _leaf[i] = t._leaf[i];
+    }
 
-}}
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

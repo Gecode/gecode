@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,45 +34,42 @@
 
 namespace Gecode {
 
-  /*
-   * Operations for set relations
-   *
-   */
-  forceinline
-  SetCmpRel::SetCmpRel(const SetExpr& l0, SetRelType srt0, const SetExpr& r0)
-    : l(l0), r(r0), srt(srt0) {}
+    /*
+     * Operations for set relations
+     *
+     */
+    forceinline
+    SetCmpRel::SetCmpRel(const SetExpr& l0, SetRelType srt0, const SetExpr& r0)
+        : l(l0), r(r0), srt(srt0) {}
 
-  forceinline
-  SetRel::SetRel(void) {}
+    forceinline
+    SetRel::SetRel(const SetExpr& e0, SetRelType srt, const SetExpr& e1)
+        : _e0(e0), _srt(srt), _e1(e1) {}
 
-  forceinline
-  SetRel::SetRel(const SetExpr& e0, SetRelType srt, const SetExpr& e1)
-    : _e0(e0), _srt(srt), _e1(e1) {}
+    forceinline
+    SetRel::SetRel(const SetCmpRel& r)
+        : _e0(r.l), _srt(r.srt), _e1(r.r) {}
 
-  forceinline
-  SetRel::SetRel(const SetCmpRel& r)
-    : _e0(r.l), _srt(r.srt), _e1(r.r) {}
-
-  forceinline void
-  SetRel::post(Home home, bool t) const {
-    if (t)
-      _e0.post(home,_srt,_e1);
-    else if (_srt == SRT_EQ)
-      _e0.post(home,SRT_NQ,_e1);
-    else if (_srt == SRT_NQ)
-      _e0.post(home,SRT_EQ,_e1);
-    else {
-      BoolVar b(home,0,0);
-      _e0.post(home,b,true,_srt,_e1);
+    forceinline void
+    SetRel::post(Home home, bool t) const {
+        if (t) {
+            _e0.post(home, _srt, _e1);
+        } else if (_srt == SRT_EQ) {
+            _e0.post(home, SRT_NQ, _e1);
+        } else if (_srt == SRT_NQ) {
+            _e0.post(home, SRT_EQ, _e1);
+        } else {
+            BoolVar b(home, 0, 0);
+            _e0.post(home, b, true, _srt, _e1);
+        }
     }
-  }
 
-  forceinline void
-  SetRel::post(Home home, BoolVar b, bool t) const {
-    _e0.post(home,b,t,_srt,_e1);
-  }
+    forceinline void
+    SetRel::post(Home home, BoolVar b, bool t) const {
+        _e0.post(home, b, t, _srt, _e1);
+    }
 
-}
+} // namespace Gecode
 
 #endif
 

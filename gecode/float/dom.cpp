@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,124 +30,121 @@
  *
  */
 
-
 #include <gecode/float/rel.hh>
 
 namespace Gecode {
 
-  void
-  dom(Home home, FloatVar x, FloatVal n) {
-    using namespace Float;
-    Limits::check(n,"Float::dom");
-    GECODE_POST;
-    FloatView xv(x);
-    GECODE_ME_FAIL(xv.eq(home,n));
-  }
-
-  void
-  dom(Home home, const FloatVarArgs& x, FloatVal n) {
-    using namespace Float;
-    Limits::check(n,"Float::dom");
-    GECODE_POST;
-    for (int i=x.size(); i--; ) {
-      FloatView xv(x[i]);
-      GECODE_ME_FAIL(xv.eq(home,n));
+    void
+    dom(Home home, FloatVar x, const FloatVal& n) {
+        using namespace Float;
+        Limits::check(n, "Float::dom");
+        GECODE_POST;
+        FloatView xv(x);
+        GECODE_ME_FAIL(xv.eq(home, n));
     }
-  }
 
-  void
-  dom(Home home, FloatVar x, FloatNum min, FloatNum max) {
-    using namespace Float;
-    Limits::check(min,"Float::dom");
-    Limits::check(max,"Float::dom");
-    GECODE_POST;
-    FloatView xv(x);
-    GECODE_ME_FAIL(xv.gq(home,min));
-    GECODE_ME_FAIL(xv.lq(home,max));
-  }
-
-  void
-  dom(Home home, const FloatVarArgs& x, FloatNum min, FloatNum max) {
-    using namespace Float;
-    Limits::check(min,"Float::dom");
-    Limits::check(max,"Float::dom");
-    GECODE_POST;
-    for (int i=x.size(); i--; ) {
-      FloatView xv(x[i]);
-      GECODE_ME_FAIL(xv.gq(home,min));
-      GECODE_ME_FAIL(xv.lq(home,max));
+    void
+    dom(Home home, const FloatVarArgs& x, const FloatVal& n) {
+        using namespace Float;
+        Limits::check(n, "Float::dom");
+        GECODE_POST;
+        for (int i = x.size(); i--;) {
+            FloatView xv(x[i]);
+            GECODE_ME_FAIL(xv.eq(home, n));
+        }
     }
-  }
 
-  void
-  dom(Home home, FloatVar x, FloatVal n, Reify r) {
-    using namespace Float;
-    Limits::check(n,"Float::dom");
-    GECODE_POST;
-    switch (r.mode()) {
-    case RM_EQV:
-      GECODE_ES_FAIL((Rel::ReEqFloat<FloatView,Int::BoolView,RM_EQV>
-                      ::post(home,x,n,r.var())));
-      break;
-    case RM_IMP:
-      GECODE_ES_FAIL((Rel::ReEqFloat<FloatView,Int::BoolView,RM_IMP>
-                      ::post(home,x,n,r.var())));
-      break;
-    case RM_PMI:
-      GECODE_ES_FAIL((Rel::ReEqFloat<FloatView,Int::BoolView,RM_PMI>
-                      ::post(home,x,n,r.var())));
-      break;
-    default: throw Int::UnknownReifyMode("Float::dom");
+    void
+    dom(Home home, FloatVar x, FloatNum min, FloatNum max) {
+        using namespace Float;
+        Limits::check(min, "Float::dom");
+        Limits::check(max, "Float::dom");
+        GECODE_POST;
+        FloatView xv(x);
+        GECODE_ME_FAIL(xv.gq(home, min));
+        GECODE_ME_FAIL(xv.lq(home, max));
     }
-  }
 
-  void
-  dom(Home home, FloatVar x, FloatNum min, FloatNum max, Reify r) {
-    using namespace Float;
-    if (min > max) {
-      Int::BoolView b(r.var());
-      switch (r.mode()) {
-      case RM_EQV:
-      case RM_IMP:
-        GECODE_ME_FAIL(b.zero(home));
-        break;
-      case RM_PMI:
-        break;
-      default: throw Int::UnknownReifyMode("Float::dom");
-      }
-    } else {
-      FloatVal n(min,max);
-      dom(home,x,n,r);
+    void
+    dom(Home home, const FloatVarArgs& x, FloatNum min, FloatNum max) {
+        using namespace Float;
+        Limits::check(min, "Float::dom");
+        Limits::check(max, "Float::dom");
+        GECODE_POST;
+        for (int i = x.size(); i--;) {
+            FloatView xv(x[i]);
+            GECODE_ME_FAIL(xv.gq(home, min));
+            GECODE_ME_FAIL(xv.lq(home, max));
+        }
     }
-  }
 
-  void
-  dom(Home home, FloatVar x, FloatVar d) {
-    using namespace Float;
-    GECODE_POST;
-    FloatView xv(x), dv(d);
-    if (xv != dv) {
-      GECODE_ME_FAIL(xv.lq(home,dv.max()));
-      GECODE_ME_FAIL(xv.gq(home,dv.min()));
+    void
+    dom(Home home, FloatVar x, const FloatVal& n, Reify r) {
+        using namespace Float;
+        Limits::check(n, "Float::dom");
+        GECODE_POST;
+        switch (r.mode()) {
+        case RM_EQV:
+            GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::BoolView, RM_EQV>::post(home, x, n, r.var())));
+            break;
+        case RM_IMP:
+            GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::BoolView, RM_IMP>::post(home, x, n, r.var())));
+            break;
+        case RM_RIMP:
+            GECODE_ES_FAIL((Rel::ReEqFloat<FloatView, Int::BoolView, RM_RIMP>::post(home, x, n, r.var())));
+            break;
+        default:
+            throw Int::UnknownReifyMode("Float::dom");
+        }
     }
-  }
 
-  void
-  dom(Home home, const FloatVarArgs& x, const FloatVarArgs& d) {
-    using namespace Float;
-    if (x.size() != d.size())
-      throw ArgumentSizeMismatch("Float::dom");
-    for (int i=x.size(); i--; ) {
-      GECODE_POST;
-      FloatView xv(x[i]), dv(d[i]);
-      if (xv != dv) {
-        GECODE_ME_FAIL(xv.lq(home,dv.max()));
-        GECODE_ME_FAIL(xv.gq(home,dv.min()));
-      }
+    void
+    dom(Home home, FloatVar x, FloatNum min, FloatNum max, Reify r) {
+        using namespace Float;
+        if (min > max) {
+            Int::BoolView b(r.var());
+            switch (r.mode()) {
+            case RM_EQV:
+            case RM_IMP:
+                GECODE_ME_FAIL(b.zero(home));
+                break;
+            case RM_RIMP:
+                break;
+            default:
+                throw Int::UnknownReifyMode("Float::dom");
+            }
+        } else {
+            FloatVal n(min, max);
+            dom(home, x, n, r);
+        }
     }
-  }
 
-}
+    void
+    dom(Home home, FloatVar x, FloatVar d) {
+        using namespace Float;
+        GECODE_POST;
+        FloatView xv(x), dv(d);
+        if (xv != dv) {
+            GECODE_ME_FAIL(xv.lq(home, dv.max()));
+            GECODE_ME_FAIL(xv.gq(home, dv.min()));
+        }
+    }
+
+    void
+    dom(Home home, const FloatVarArgs& x, const FloatVarArgs& d) {
+        using namespace Float;
+        if (x.size() != d.size())
+            throw ArgumentSizeMismatch("Float::dom");
+        for (int i = x.size(); i--;) {
+            GECODE_POST;
+            FloatView xv(x[i]), dv(d[i]);
+            if (xv != dv) {
+                GECODE_ME_FAIL(xv.lq(home, dv.max()));
+                GECODE_ME_FAIL(xv.gq(home, dv.min()));
+            }
+        }
+    }
+
+} // namespace Gecode
 
 // STATISTICS: float-post
-

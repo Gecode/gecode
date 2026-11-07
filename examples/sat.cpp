@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Raphael Reischuk <reischuk@cs.uni-sb.de>
@@ -46,14 +45,14 @@ using namespace Gecode;
 
 namespace {
 
-  /**
-   * \brief Reader spec for DIMACS CNF files
-   *
-   * See Instance::Spec for the spec language.
-   *
-   * \relates Sat
-   */
-  const char* instance_spec = R"(format dimacs-cnf
+    /**
+     * \brief Reader spec for DIMACS CNF files
+     *
+     * See Instance::Spec for the spec language.
+     *
+     * \relates Sat
+     */
+    const char* instance_spec = R"(format dimacs-cnf
 
 comment "c"
 stop "%"                    # SATLIB files end with "%" and "0"
@@ -63,7 +62,7 @@ repeat clauses {
 }
 )";
 
-}
+} // namespace
 
 /**
  * \brief %Example: CNF SAT solver
@@ -101,76 +100,76 @@ repeat clauses {
  */
 class Sat : public Script {
 private:
-  /// The Boolean variables
-  BoolVarArray x;
+    /// The Boolean variables
+    BoolVarArray x;
+
 public:
-  /// The actual problem
-  Sat(const InstanceOptions& opt)
-    : Script(opt) {
-    Instance::Data d = opt.data();
-    x = BoolVarArray(*this, static_cast<int>(d.integer("vars")), 0, 1);
-    for (int c=0; c<d.size("clause"); c++) {
-      IntArgs literals = d.ints("clause", {c});
-      BoolVarArgs positives, negatives;
-      for (int l : literals)
-        if (l > 0)
-          positives << x[l-1];
-        else
-          negatives << x[-l-1];
-      clause(*this, BOT_OR, positives, negatives, 1);
+    /// The actual problem
+    Sat(const InstanceOptions& opt) : Script(opt) {
+        Instance::Data d = opt.data();
+        x = BoolVarArray(*this, static_cast<int>(d.integer("vars")), 0, 1);
+        for (int c = 0; c < d.size("clause"); c++) {
+            IntArgs literals = d.ints("clause", {c});
+            BoolVarArgs positives, negatives;
+            for (int l : literals)
+                if (l > 0)
+                    positives << x[l - 1];
+                else
+                    negatives << x[-l - 1];
+            clause(*this, BOT_OR, positives, negatives, 1);
+        }
+        branch(*this, x, BOOL_VAR_AFC_MAX(), BOOL_VAL_MIN());
     }
-    branch(*this, x, BOOL_VAR_AFC_MAX(), BOOL_VAL_MIN());
-  }
 
-  /// Constructor for cloning
-  Sat(Sat& s) : Script(s) {
-    x.update(*this, s.x);
-  }
+    /// Constructor for cloning
+    Sat(Sat& s) : Script(s) {
+        x.update(*this, s.x);
+    }
 
-  /// Perform copying during cloning
-  virtual Space*
-  copy(void) {
-    return new Sat(*this);
-  }
+    /// Perform copying during cloning
+    Space*
+    copy() override {
+        return new Sat(*this);
+    }
 
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    os << "solution:\n" << x << std::endl;
-  }
+    /// Print solution
+    void
+    print(std::ostream& os) const override {
+        os << "solution:\n" << x << '\n';
+    }
 };
-
 
 /** \brief Main-function
  *  \relates SAT
  */
-int main(int argc, char* argv[]) {
+int
+main(int argc, char* argv[]) {
 
-  InstanceOptions opt("SAT", instance_spec);
-  opt.parse(argc,argv);
-  if (argc > 2) {
-    std::cerr << "Error: unexpected arguments after the DIMACS file" << std::endl;
-    return 1;
-  }
+    InstanceOptions opt("SAT", instance_spec);
+    opt.parse(argc, argv);
+    if (argc > 2) {
+        std::cerr << "Error: unexpected arguments after the DIMACS file" << '\n';
+        return 1;
+    }
 
-  if (!opt.is_file()) {
-    if (opt.instance() == nullptr)
-      std::cerr << "Error: no DIMACS file given" << std::endl;
-    else
-      std::cerr << "Error: cannot read file '" << opt.instance() << "'" << std::endl;
-    return 1;
-  }
-  try {
-    // Read here to report errors before solving starts
-    (void) opt.data();
-  } catch (const Instance::Error& e) {
-    std::cerr << e.what() << std::endl;
-    return 1;
-  }
+    if (!opt.is_file()) {
+        if (opt.instance() == nullptr)
+            std::cerr << "Error: no DIMACS file given" << '\n';
+        else
+            std::cerr << "Error: cannot read file '" << opt.instance() << "'" << '\n';
+        return 1;
+    }
+    try {
+        // Read here to report errors before solving starts
+        (void)opt.data();
+    } catch (const Instance::Error& e) {
+        std::cerr << e.what() << '\n';
+        return 1;
+    }
 
-  // Run SAT solver
-  Script::run<Sat,DFS,InstanceOptions>(opt);
-  return 0;
+    // Run SAT solver
+    Script::run<Sat, DFS, InstanceOptions>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any

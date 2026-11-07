@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,89 +30,89 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
-  /**
-   * \brief Value iterator for selecting only positive values
-   *
-   * If \a strict is true, zero is included.
-   * \ingroup FuncIterValues
-   */
-  template<class I, bool strict=false>
-  class Positive {
-  protected:
-    /// Input iterator
-    I i;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Positive(void);
-    /// Initialize with values from \a i
-    Positive(I& i);
-    /// Initialize with values from \a i
-    void init(I& i);
-    //@}
+    /**
+     * \brief Value iterator for selecting only positive values
+     *
+     * If \a strict is true, zero is included.
+     * \ingroup FuncIterValues
+     */
+    template <class I, bool strict = false>
+    class Positive {
+    protected:
+        /// Input iterator
+        I i;
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator ++(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Positive() = default;
+        /// Initialize with values from \a i
+        Positive(I& i);
+        /// Initialize with values from \a i
+        void init(I& i);
+        //@}
 
-    /// \name Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a value or done
+        bool operator()() const;
+        /// Move iterator to next value (if possible)
+        void operator++();
+        //@}
 
+        /// \name Value access
+        //@{
+        /// Return current value
+        int val() const;
+        //@}
+    };
 
-  template<class I, bool strict>
-  forceinline
-  Positive<I,strict>::Positive(void) {}
-
-  template<class I, bool strict>
-  forceinline void
-  Positive<I,strict>::init(I& i0) {
-    i=i0;
-    if (strict) {
-      while (i() && (i.val() <= 0)) ++i;
-    } else {
-      while (i() && (i.val() < 0)) ++i;
+    template <class I, bool strict>
+    forceinline void
+    Positive<I, strict>::init(I& i0) {
+        i = i0;
+        if (strict) {
+            while (i() && (i.val() <= 0))
+                ++i;
+        } else {
+            while (i() && (i.val() < 0))
+                ++i;
+        }
     }
-  }
 
-  template<class I, bool strict>
-  forceinline
-  Positive<I,strict>::Positive(I& i0) : i(i0) {
-    if (strict) {
-      while (i() && (i.val() <= 0)) ++i;
-    } else {
-      while (i() && (i.val() < 0)) ++i;
+    template <class I, bool strict>
+    forceinline
+    Positive<I, strict>::Positive(I& i0)
+        : i(i0) {
+        if (strict) {
+            while (i() && (i.val() <= 0))
+                ++i;
+        } else {
+            while (i() && (i.val() < 0))
+                ++i;
+        }
     }
-  }
 
-  template<class I, bool strict>
-  forceinline void
-  Positive<I,strict>::operator ++(void) {
-    ++i;
-  }
-  template<class I, bool strict>
-  forceinline bool
-  Positive<I,strict>::operator ()(void) const {
-    return i();
-  }
+    template <class I, bool strict>
+    forceinline void
+    Positive<I, strict>::operator++() {
+        ++i;
+    }
+    template <class I, bool strict>
+    forceinline bool
+    Positive<I, strict>::operator()() const {
+        return i();
+    }
 
-  template<class I, bool strict>
-  forceinline int
-  Positive<I,strict>::val(void) const {
-    return i.val();
-  }
+    template <class I, bool strict>
+    forceinline int
+    Positive<I, strict>::val() const {
+        return i.val();
+    }
 
-}}}
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any
-

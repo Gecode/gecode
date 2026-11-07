@@ -24,7 +24,7 @@ dump_macros() {
   shift 2
   "$cxx" -E -dM -x c++ \
     -I"$work/stubs" -I"$repo_root" \
-    "$platform" -DGECODE_NO_AUTOLINK "$@" \
+    "$platform" "$@" \
     -include "$header" /dev/null
 }
 

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,78 +30,93 @@
  *
  */
 
+#include <type_traits>
+#include <utility>
+
 namespace Gecode {
 
-  /// Class for sharing data between spaces
-  template<class Data>
-  class SharedData : public SharedHandle {
-  protected:
-    /// The object storing the actual data
-    class SDO : public SharedHandle::Object {
+    /// Class for sharing data between spaces
+    template <class Data>
+    class SharedData : public SharedHandle {
+    protected:
+        /// The object storing the actual data
+        class SDO : public SharedHandle::Object {
+        public:
+            /// Data to be shared
+            const Data d;
+            /// Initialization
+            SDO(const Data& d0);
+            /// Initialization by moving \a d0
+            SDO(Data&& d0);
+            /// Destructor
+            ~SDO() override;
+        };
+
     public:
-      /// Data to be shared
-      const Data d;
-      /// Initialization
-      SDO(const Data& d0);
-      /// Destructor
-      virtual ~SDO(void);
+        /// Initialize with data \a d
+        SharedData(const Data& d);
+        /**
+         * \brief Initialize by moving data \a d
+         *
+         * Only for movable data, so that copyable data without a move
+         * constructor still binds to the copying constructor.
+         */
+        SharedData(Data&& d)
+            requires std::is_move_constructible_v<Data>;
+        /// Create as uninitialized
+        SharedData() = default;
+        /// Copy constructor
+        SharedData(const SharedData& sd);
+        /// Assignment operator
+        SharedData& operator=(const SharedData& sd);
+        /// Provide access to data
+        const Data& operator()() const;
+        /// Destructors
+        ~SharedData() = default;
     };
-  public:
-    /// Initialize with data \a d
-    SharedData(const Data& d);
-    /// Create as uninitialized
-    SharedData(void);
-    /// Copy constructor
-    SharedData(const SharedData& sd);
-    /// Assignment operator
-    SharedData& operator =(const SharedData& sd);
-    /// Provide access to data
-    const Data& operator ()(void) const;
-    /// Destructors
-    ~SharedData(void);
-  };
 
+    template <class Data>
+    forceinline
+    SharedData<Data>::SDO::SDO(const Data& d0)
+        : d(d0) {}
 
-  template<class Data>
-  forceinline
-  SharedData<Data>::SDO::SDO(const Data& d0)
-    : d(d0) {}
+    template <class Data>
+    forceinline
+    SharedData<Data>::SDO::SDO(Data&& d0)
+        : d(std::move(d0)) {}
 
-  template<class Data>
-  forceinline
-  SharedData<Data>::SDO::~SDO(void) {}
+    template <class Data>
+    forceinline SharedData<Data>::SDO::~SDO() = default;
 
+    template <class Data>
+    forceinline
+    SharedData<Data>::SharedData(const Data& d)
+        : SharedHandle(new SDO(d)) {}
 
-  template<class Data>
-  forceinline
-  SharedData<Data>::SharedData(const Data& d) 
-    : SharedHandle(new SDO(d)) {}
+    template <class Data>
+    forceinline
+    SharedData<Data>::SharedData(Data&& d)
+        requires std::is_move_constructible_v<Data>
+        : SharedHandle(new SDO(std::move(d))) {}
 
-  template<class Data>
-  forceinline
-  SharedData<Data>::SharedData(void) {}
+    template <class Data>
+    forceinline
+    SharedData<Data>::SharedData(const SharedData<Data>& sd)
+        : SharedHandle(sd) {}
 
-  template<class Data>
-  forceinline
-  SharedData<Data>::SharedData(const SharedData<Data>& sd)
-    : SharedHandle(sd) {}
+    template <class Data>
+    forceinline SharedData<Data>&
+    SharedData<Data>::operator=(const SharedData<Data>& sd) {
+        SharedHandle::operator=(sd);
+        return *this;
+    }
 
-  template<class Data>
-  forceinline SharedData<Data>&
-  SharedData<Data>::operator =(const SharedData<Data>& sd) {
-    return static_cast<SharedData&>(SharedHandle::operator =(sd));
-  }
+    template <class Data>
+    forceinline const Data&
+    SharedData<Data>::operator()() const {
+        return static_cast<SDO*>(object())->d;
+    }
 
-  template<class Data>
-  forceinline const Data&
-  SharedData<Data>::operator ()(void) const {
-    return static_cast<SDO*>(object())->d;
-  }
-
-  template<class Data>
-  forceinline
-  SharedData<Data>::~SharedData(void) {}
-
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-other

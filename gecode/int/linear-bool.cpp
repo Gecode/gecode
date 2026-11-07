@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,158 +34,155 @@
 
 namespace Gecode {
 
-  using namespace Int;
+    using namespace Int;
 
-  void
-  linear(Home home, const BoolVarArgs& x, IntRelType irt, int c,
-         IntPropLevel ipl) {
-    GECODE_POST;
+    void
+    linear(Home home, const BoolVarArgs& x, IntRelType irt, int c, IntPropLevel ipl) {
+        GECODE_POST;
 
-    int n=x.size();
-    Region re;
-    Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
-    for (int i=0; i<n; i++) {
-      t[i].a=1; t[i].x=x[i];
+        int n = x.size();
+        Region re;
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
+            t[i].a = 1;
+            t[i].x = x[i];
+        }
+
+        Linear::post(home, t, n, irt, c, ipl);
     }
 
-    Linear::post(home,t,n,irt,c,ipl);
-  }
+    void
+    linear(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y, IntPropLevel ipl) {
+        GECODE_POST;
 
-  void
-  linear(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y,
-         IntPropLevel ipl) {
-    GECODE_POST;
+        int n = x.size();
+        Region re;
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
+            t[i].a = 1;
+            t[i].x = x[i];
+        }
 
-    int n=x.size();
-    Region re;
-    Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
-    for (int i=0; i<n; i++) {
-      t[i].a=1; t[i].x=x[i];
+        Linear::post(home, t, n, irt, y, 0, ipl);
     }
 
-    Linear::post(home,t,n,irt,y,0,ipl);
-  }
+    void
+    linear(Home home, const IntArgs& a, const BoolVarArgs& x, IntRelType irt, int c, IntPropLevel ipl) {
+        if (a.size() != x.size())
+            throw ArgumentSizeMismatch("Int::linear");
 
-  void
-  linear(Home home,
-         const IntArgs& a, const BoolVarArgs& x, IntRelType irt, int c,
-         IntPropLevel ipl) {
-    if (a.size() != x.size())
-      throw ArgumentSizeMismatch("Int::linear");
+        GECODE_POST;
 
-    GECODE_POST;
+        int n = x.size();
+        Region re;
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
+            t[i].a = a[i];
+            t[i].x = x[i];
+        }
 
-    int n=x.size();
-    Region re;
-    Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
-    for (int i=0; i<n; i++) {
-      t[i].a=a[i]; t[i].x=x[i];
+        Linear::post(home, t, n, irt, c, ipl);
     }
 
-    Linear::post(home,t,n,irt,c,ipl);
-  }
+    void
+    linear(Home home, const IntArgs& a, const BoolVarArgs& x, IntRelType irt, IntVar y, IntPropLevel ipl) {
+        if (a.size() != x.size())
+            throw ArgumentSizeMismatch("Int::linear");
 
-  void
-  linear(Home home,
-         const IntArgs& a, const BoolVarArgs& x, IntRelType irt, IntVar y,
-         IntPropLevel ipl) {
-    if (a.size() != x.size())
-      throw ArgumentSizeMismatch("Int::linear");
+        GECODE_POST;
 
-    GECODE_POST;
-
-    int n=x.size();
-    Region re;
-    Linear::Term<BoolView>* t =
-      re.alloc<Linear::Term<BoolView>>(n);
-    for (int i=0; i<n; i++) {
-      t[i].a=a[i]; t[i].x=x[i];
-    }
-    int min, max;
-    estimate(t,n,0,min,max);
-    IntView v(y);
-    switch (irt) {
-    case IRT_EQ:
-      GECODE_ME_FAIL(v.gq(home,min)); GECODE_ME_FAIL(v.lq(home,max));
-      break;
-    case IRT_GQ:
-      GECODE_ME_FAIL(v.lq(home,max));
-      break;
-    case IRT_LQ:
-      GECODE_ME_FAIL(v.gq(home,min));
-      break;
-    default: ;
-    }
-    if (home.failed()) return;
-    Linear::post(home,t,n,irt,y,0,ipl);
-  }
-
-  void
-  linear(Home home, const BoolVarArgs& x, IntRelType irt, int c,
-         Reify r, IntPropLevel ipl) {
-    GECODE_POST;
-
-    int n=x.size();
-    Region re;
-    Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
-    for (int i=0; i<n; i++) {
-      t[i].a=1; t[i].x=x[i];
+        int n = x.size();
+        Region re;
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
+            t[i].a = a[i];
+            t[i].x = x[i];
+        }
+        int min, max;
+        estimate(t, n, 0, min, max);
+        IntView v(y);
+        switch (irt) {
+        case IRT_EQ:
+            GECODE_ME_FAIL(v.gq(home, min));
+            GECODE_ME_FAIL(v.lq(home, max));
+            break;
+        case IRT_GQ:
+            GECODE_ME_FAIL(v.lq(home, max));
+            break;
+        case IRT_LQ:
+            GECODE_ME_FAIL(v.gq(home, min));
+            break;
+        default:;
+        }
+        if (home.failed())
+            return;
+        Linear::post(home, t, n, irt, y, 0, ipl);
     }
 
-    Linear::post(home,t,n,irt,c,r,ipl);
-  }
+    void
+    linear(Home home, const BoolVarArgs& x, IntRelType irt, int c, Reify r, IntPropLevel ipl) {
+        GECODE_POST;
 
-  void
-  linear(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y,
-         Reify r, IntPropLevel ipl) {
-    GECODE_POST;
+        int n = x.size();
+        Region re;
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
+            t[i].a = 1;
+            t[i].x = x[i];
+        }
 
-    int n=x.size();
-    Region re;
-    Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
-    for (int i=0; i<n; i++) {
-      t[i].a=1; t[i].x=x[i];
+        Linear::post(home, t, n, irt, c, r, ipl);
     }
 
-    Linear::post(home,t,n,irt,y,r,ipl);
-  }
+    void
+    linear(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y, Reify r, IntPropLevel ipl) {
+        GECODE_POST;
 
-  void
-  linear(Home home,
-         const IntArgs& a, const BoolVarArgs& x, IntRelType irt, int c,
-         Reify r, IntPropLevel ipl) {
-    if (a.size() != x.size())
-      throw ArgumentSizeMismatch("Int::linear");
-    GECODE_POST;
+        int n = x.size();
+        Region re;
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
+            t[i].a = 1;
+            t[i].x = x[i];
+        }
 
-    int n=x.size();
-    Region re;
-    Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
-    for (int i=0; i<n; i++) {
-      t[i].a=a[i]; t[i].x=x[i];
+        Linear::post(home, t, n, irt, y, r, ipl);
     }
 
-    Linear::post(home,t,n,irt,c,r,ipl);
-  }
+    void
+    linear(Home home, const IntArgs& a, const BoolVarArgs& x, IntRelType irt, int c, Reify r, IntPropLevel ipl) {
+        if (a.size() != x.size())
+            throw ArgumentSizeMismatch("Int::linear");
+        GECODE_POST;
 
-  void
-  linear(Home home,
-         const IntArgs& a, const BoolVarArgs& x, IntRelType irt, IntVar y,
-         Reify r, IntPropLevel ipl) {
-    if (a.size() != x.size())
-      throw ArgumentSizeMismatch("Int::linear");
-    GECODE_POST;
+        int n = x.size();
+        Region re;
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
+            t[i].a = a[i];
+            t[i].x = x[i];
+        }
 
-    int n=x.size();
-    Region re;
-    Linear::Term<BoolView>* t = re.alloc<Linear::Term<BoolView>>(n);
-    for (int i=0; i<n; i++) {
-      t[i].a=a[i]; t[i].x=x[i];
+        Linear::post(home, t, n, irt, c, r, ipl);
     }
 
-    Linear::post(home,t,n,irt,y,r,ipl);
-  }
+    void
+    linear(Home home, const IntArgs& a, const BoolVarArgs& x, IntRelType irt, IntVar y, Reify r, IntPropLevel ipl) {
+        if (a.size() != x.size())
+            throw ArgumentSizeMismatch("Int::linear");
+        GECODE_POST;
 
-}
+        int n = x.size();
+        Region re;
+        Linear::Term<BoolView>* t = (n > 0) ? re.alloc<Linear::Term<BoolView>>(n) : nullptr;
+        for (int i = 0; i < n; i++) {
+            t[i].a = a[i];
+            t[i].x = x[i];
+        }
+
+        Linear::post(home, t, n, irt, y, r, ipl);
+    }
+
+} // namespace Gecode
 
 // STATISTICS: int-post

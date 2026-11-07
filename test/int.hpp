@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,352 +32,333 @@
  *
  */
 
-namespace Test { namespace Int {
+namespace Test::Int {
 
-  /*
-   * Assignments
-   *
-   */
-  inline
-  Assignment::Assignment(int n0, const Gecode::IntSet& d0)
-    : n(n0), d(d0) {}
-  inline int
-  Assignment::size(void) const {
-    return n;
-  }
-  inline
-  Assignment::~Assignment(void) {}
-
-
-  inline
-  CpltAssignment::CpltAssignment(int n, const Gecode::IntSet& d)
-    : Assignment(n,d),
-      dsv(new Gecode::IntSetValues[static_cast<unsigned int>(n)]) {
-    for (int i=n; i--; )
-      dsv[i].init(d);
-  }
-  inline bool
-  CpltAssignment::has_more(void) const {
-    return dsv[0]();
-  }
-  inline int
-  CpltAssignment::operator[](int i) const {
-    assert((i>=0) && (i<n));
-    return dsv[i].val();
-  }
-  inline
-  CpltAssignment::~CpltAssignment(void) {
-    delete [] dsv;
-  }
-
-
-  forceinline int
-  RandomAssignment::randval(Gecode::Support::RandomGenerator& rand) {
-    unsigned int skip = rand(d.size());
-    for (Gecode::IntSetRanges it(d); true; ++it) {
-      if (it.width() > skip)
-        return it.min() + static_cast<int>(skip);
-      skip -= it.width();
+    /*
+     * Assignments
+     *
+     */
+    inline Assignment::Assignment(int n0, const Gecode::IntSet& d0) : n(n0), d(d0) {}
+    inline int
+    Assignment::size() const {
+        return n;
     }
-    GECODE_NEVER;
-    return 0;
-  }
+    inline Assignment::~Assignment() = default;
 
-  inline
-  RandomAssignment::RandomAssignment(int n, const Gecode::IntSet& d, int a0, Gecode::Support::RandomGenerator& rand)
-    : Assignment(n,d), vals(new int[static_cast<size_t>(n)]), a(a0) {
-    for (int i=n; i--; )
-      vals[i] = randval(rand);
-  }
-
-  inline bool
-  RandomAssignment::has_more(void) const {
-    return a>0;
-  }
-  inline int
-  RandomAssignment::operator[](int i) const {
-    assert((i>=0) && (i<n));
-    return vals[i];
-  }
-  inline
-  RandomAssignment::~RandomAssignment(void) {
-    delete [] vals;
-  }
-
-  forceinline int
-  RandomMixAssignment::randval(const Gecode::IntSet& d, Gecode::Support::RandomGenerator& rand) {
-    unsigned int skip = rand(d.size());
-    for (Gecode::IntSetRanges it(d); true; ++it) {
-      if (it.width() > skip)
-        return it.min() + static_cast<int>(skip);
-      skip -= it.width();
+    inline CpltAssignment::CpltAssignment(int n, const Gecode::IntSet& d)
+        : Assignment(n, d), dsv(new Gecode::IntSetValues[static_cast<unsigned int>(n)]) {
+        for (int i = n; i--;)
+            dsv[i].init(d);
     }
-    GECODE_NEVER;
-    return 0;
-  }
-
-  inline
-  RandomMixAssignment::RandomMixAssignment(int n0, const Gecode::IntSet& d0, int n1, const Gecode::IntSet& d1, int a0,
-                                           Gecode::Support::RandomGenerator& rand)
-    : Assignment(n0+n1,d0),vals(new int[static_cast<size_t>(n0+n1)]),
-      a(a0),_n1(n1),_d1(d1) {
-    for (int i=n0; i--; )
-      vals[i] = randval(d, rand);
-    for (int i=n1; i--; )
-      vals[n0+i] = randval(_d1, rand);
-  }
-
-  inline bool
-  RandomMixAssignment::has_more(void) const {
-    return a>0;
-  }
-
-  inline int
-  RandomMixAssignment::operator[](int i) const {
-    assert((i>=0) && (i<n));
-    return vals[i];
-  }
-
-  inline
-  RandomMixAssignment::~RandomMixAssignment(void) {
-    delete [] vals;
-  }
-
-  /*
-   * Tests with integer constraints
-   *
-   */
-  forceinline bool
-  Test::eqv(void) const {
-    return reified && ((rms & (1 << Gecode::RM_EQV)) != 0);
-  }
-  forceinline bool
-  Test::imp(void) const {
-    return reified && ((rms & (1 << Gecode::RM_IMP)) != 0);
-  }
-  forceinline bool
-  Test::pmi(void) const {
-    return reified && ((rms & (1 << Gecode::RM_PMI)) != 0);
-  }
-  inline
-  Test::Test(TestTags tags, const std::string& p, const std::string& s,
-             int a, const Gecode::IntSet& d, bool r,
-             Gecode::IntPropLevel i)
-    : Base(p+s, tags), arity(a), dom(d),
-      reified(r), rms((1 << Gecode::RM_EQV) |
-                      (1 << Gecode::RM_IMP) |
-                      (1 << Gecode::RM_PMI)),
-      ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
-      testsearch(true), testfix(true) {}
-
-  inline
-  Test::Test(const std::string& p, const std::string& s,
-             int a, const Gecode::IntSet& d, bool r,
-             Gecode::IntPropLevel i)
-    : Test(TestTags::standard(),p,s,a,d,r,i) {}
-
-  inline
-  Test::Test(TestTags tags, const std::string& s,
-             int a, const Gecode::IntSet& d, bool r,
-             Gecode::IntPropLevel i)
-    : Base("Int::"+s, tags), arity(a), dom(d),
-      reified(r), rms((1 << Gecode::RM_EQV) |
-                      (1 << Gecode::RM_IMP) |
-                      (1 << Gecode::RM_PMI)),
-      ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
-      testsearch(true), testfix(true) {}
-
-  inline
-  Test::Test(const std::string& s,
-             int a, const Gecode::IntSet& d, bool r,
-             Gecode::IntPropLevel i)
-    : Test(TestTags::standard(),s,a,d,r,i) {}
-
-  inline
-  Test::Test(TestTags tags, const std::string& p, const std::string& s,
-             int a, int min, int max, bool r,
-             Gecode::IntPropLevel i)
-    : Base(p+s, tags), arity(a), dom(min,max),
-      reified(r), rms((1 << Gecode::RM_EQV) |
-                      (1 << Gecode::RM_IMP) |
-                      (1 << Gecode::RM_PMI)),
-      ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
-      testsearch(true), testfix(true) {}
-
-  inline
-  Test::Test(const std::string& p, const std::string& s,
-             int a, int min, int max, bool r,
-             Gecode::IntPropLevel i)
-    : Test(TestTags::standard(),p,s,a,min,max,r,i) {}
-
-  inline
-  Test::Test(TestTags tags, const std::string& s,
-             int a, int min, int max, bool r, Gecode::IntPropLevel i)
-    : Base("Int::"+s, tags), arity(a), dom(min,max),
-      reified(r), rms((1 << Gecode::RM_EQV) |
-                      (1 << Gecode::RM_IMP) |
-                      (1 << Gecode::RM_PMI)),
-      ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
-      testsearch(true), testfix(true) {}
-
-  inline
-  Test::Test(const std::string& s,
-             int a, int min, int max, bool r, Gecode::IntPropLevel i)
-    : Test(TestTags::standard(),s,a,min,max,r,i) {}
-
-  inline
-  std::string
-  Test::str(Gecode::IntPropLevel ipl) {
-    using namespace Gecode;
-    std::stringstream s;
-    switch (vbd(ipl)) {
-    case IPL_VAL: s << "Val"; break;
-    case IPL_BND: s << "Bnd"; break;
-    case IPL_DOM: s << "Dom"; break;
-    default: s << "Def"; break;
+    inline bool
+    CpltAssignment::has_more() const {
+        return dsv[0]();
     }
-    if (ipl & IPL_BASIC) s << "+B";
-    if (ipl & IPL_ADVANCED) s << "+A";
-    return s.str();
-  }
-
-  inline
-  std::string
-  Test::str(Gecode::IntRelType irt) {
-    using namespace Gecode;
-    switch (irt) {
-    case IRT_LQ: return "Lq";
-    case IRT_LE: return "Le";
-    case IRT_GQ: return "Gq";
-    case IRT_GR: return "Gr";
-    case IRT_EQ: return "Eq";
-    case IRT_NQ: return "Nq";
-    default: ;
+    inline int
+    CpltAssignment::operator[](int i) const {
+        assert((i >= 0) && (i < n));
+        return dsv[i].val();
     }
-    GECODE_NEVER;
-    return "NONE";
-  }
-
-  inline std::string
-  Test::str(Gecode::BoolOpType bot) {
-    using namespace Gecode;
-    switch (bot) {
-    case BOT_AND: return "And";
-    case BOT_OR:  return "Or";
-    case BOT_IMP: return "Imp";
-    case BOT_EQV: return "Eqv";
-    case BOT_XOR: return "Xor";
-    default: GECODE_NEVER;
+    inline CpltAssignment::~CpltAssignment() {
+        delete[] dsv;
     }
-    GECODE_NEVER;
-    return "NONE";
-  }
 
-  inline std::string
-  Test::str(bool b) {
-    return Base::str(b);
-  }
-
-  inline std::string
-  Test::str(int i) {
-    return Base::str(i);
-  }
-
-  inline std::string
-  Test::str(const Gecode::IntArgs& x) {
-    return Base::str(x);
-  }
-
-
-
-  template<class T>
-  inline bool
-  Test::cmp(T x, Gecode::IntRelType r, T y) {
-    using namespace Gecode;
-    switch (r) {
-    case IRT_EQ: return x == y;
-    case IRT_NQ: return x != y;
-    case IRT_LQ: return x <= y;
-    case IRT_LE: return x < y;
-    case IRT_GR: return x > y;
-    case IRT_GQ: return x >= y;
-    default: ;
+    forceinline int
+    RandomAssignment::random_value(Gecode::Support::RandomGenerator& rand) {
+        assert(d.size() > 0);
+        unsigned int skip = rand(d.size());
+        for (Gecode::IntSetRanges it(d); it(); ++it) {
+            if (it.width() > skip)
+                return it.min() + static_cast<int>(skip);
+            skip -= it.width();
+        }
+        GECODE_NEVER;
+        return 0;
     }
-    return false;
-  }
 
+    inline RandomAssignment::RandomAssignment(int n, const Gecode::IntSet& d, int a0,
+                                              Gecode::Support::RandomGenerator& rand)
+        : Assignment(n, d), vals(new int[static_cast<size_t>(n)]), a(a0) {
+        for (int i = n; i--;)
+            vals[i] = random_value(rand);
+    }
 
+    inline bool
+    RandomAssignment::has_more() const {
+        return a > 0;
+    }
+    inline int
+    RandomAssignment::operator[](int i) const {
+        assert((i >= 0) && (i < n));
+        return vals[i];
+    }
+    inline RandomAssignment::~RandomAssignment() {
+        delete[] vals;
+    }
 
-  inline
-  IntPropLevels::IntPropLevels(void)
-    : i(sizeof(ipls)/sizeof(Gecode::IntPropLevel)-1) {}
-  inline bool
-  IntPropLevels::operator()(void) const {
-    return i>=0;
-  }
-  inline void
-  IntPropLevels::operator++(void) {
-    i--;
-  }
-  inline Gecode::IntPropLevel
-  IntPropLevels::ipl(void) const {
-    return ipls[i];
-  }
+    forceinline int
+    RandomMixAssignment::random_value(const Gecode::IntSet& d, Gecode::Support::RandomGenerator& rand) {
+        assert(d.size() > 0);
+        unsigned int skip = rand(d.size());
+        for (Gecode::IntSetRanges it(d); it(); ++it) {
+            if (it.width() > skip)
+                return it.min() + static_cast<int>(skip);
+            skip -= it.width();
+        }
+        GECODE_NEVER;
+        return 0;
+    }
 
+    inline RandomMixAssignment::RandomMixAssignment(int n0, const Gecode::IntSet& d0, int n1, const Gecode::IntSet& d1,
+                                                    int a0, Gecode::Support::RandomGenerator& rand)
+        : Assignment(n0 + n1, d0), vals(new int[static_cast<size_t>(n0 + n1)]), a(a0), _n1(n1), _d1(d1) {
+        for (int i = n0; i--;)
+            vals[i] = random_value(d, rand);
+        for (int i = n1; i--;)
+            vals[n0 + i] = random_value(_d1, rand);
+    }
 
-  inline
-  IntPropBasicAdvanced::IntPropBasicAdvanced(void)
-    : i(sizeof(ipls)/sizeof(Gecode::IntPropLevel)-1) {}
-  inline bool
-  IntPropBasicAdvanced::operator()(void) const {
-    return i>=0;
-  }
-  inline void
-  IntPropBasicAdvanced::operator++(void) {
-    i--;
-  }
-  inline Gecode::IntPropLevel
-  IntPropBasicAdvanced::ipl(void) const {
-    return ipls[i];
-  }
+    inline bool
+    RandomMixAssignment::has_more() const {
+        return a > 0;
+    }
 
+    inline int
+    RandomMixAssignment::operator[](int i) const {
+        assert((i >= 0) && (i < n));
+        return vals[i];
+    }
 
-  inline
-  IntRelTypes::IntRelTypes(void)
-    : i(sizeof(irts)/sizeof(Gecode::IntRelType)-1) {}
-  inline void
-  IntRelTypes::reset(void) {
-    i = sizeof(irts)/sizeof(Gecode::IntRelType)-1;
-  }
-  inline bool
-  IntRelTypes::operator()(void) const {
-    return i>=0;
-  }
-  inline void
-  IntRelTypes::operator++(void) {
-    i--;
-  }
-  inline Gecode::IntRelType
-  IntRelTypes::irt(void) const {
-    return irts[i];
-  }
+    inline RandomMixAssignment::~RandomMixAssignment() {
+        delete[] vals;
+    }
 
-  inline
-  BoolOpTypes::BoolOpTypes(void)
-    : i(sizeof(bots)/sizeof(Gecode::BoolOpType)-1) {}
-  inline bool
-  BoolOpTypes::operator()(void) const {
-    return i>=0;
-  }
-  inline void
-  BoolOpTypes::operator++(void) {
-    i--;
-  }
-  inline Gecode::BoolOpType
-  BoolOpTypes::bot(void) const {
-    return bots[i];
-  }
+    /*
+     * Tests with integer constraints
+     *
+     */
+    forceinline bool
+    Test::eqv() const {
+        return reified && ((rms & (1 << std::to_underlying(Gecode::RM_EQV))) != 0);
+    }
+    forceinline bool
+    Test::imp() const {
+        return reified && ((rms & (1 << std::to_underlying(Gecode::RM_IMP))) != 0);
+    }
+    forceinline bool
+    Test::pmi() const {
+        return reified && ((rms & (1 << std::to_underlying(Gecode::RM_RIMP))) != 0);
+    }
+    inline Test::Test(TestTags tags, const std::string& p, const std::string& s, int a, const Gecode::IntSet& d, bool r,
+                      Gecode::IntPropLevel i)
+        : Base(p + s, tags), arity(a), dom(d), reified(r),
+          rms((1 << std::to_underlying(Gecode::RM_EQV)) | (1 << std::to_underlying(Gecode::RM_IMP)) |
+              (1 << std::to_underlying(Gecode::RM_RIMP))),
+          ipl(i), consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
+          test_fixpoint(true) {}
 
-}}
+    inline Test::Test(const std::string& p, const std::string& s, int a, const Gecode::IntSet& d, bool r,
+                      Gecode::IntPropLevel i)
+        : Test(TestTags::standard(), p, s, a, d, r, i) {}
+
+    inline Test::Test(TestTags tags, const std::string& s, int a, const Gecode::IntSet& d, bool r,
+                      Gecode::IntPropLevel i)
+        : Base("Int::" + s, tags), arity(a), dom(d), reified(r),
+          rms((1 << std::to_underlying(Gecode::RM_EQV)) | (1 << std::to_underlying(Gecode::RM_IMP)) |
+              (1 << std::to_underlying(Gecode::RM_RIMP))),
+          ipl(i), consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
+          test_fixpoint(true) {}
+
+    inline Test::Test(const std::string& s, int a, const Gecode::IntSet& d, bool r, Gecode::IntPropLevel i)
+        : Test(TestTags::standard(), s, a, d, r, i) {}
+
+    inline Test::Test(TestTags tags, const std::string& p, const std::string& s, int a, int min, int max, bool r,
+                      Gecode::IntPropLevel i)
+        : Base(p + s, tags), arity(a), dom(min, max), reified(r),
+          rms((1 << std::to_underlying(Gecode::RM_EQV)) | (1 << std::to_underlying(Gecode::RM_IMP)) |
+              (1 << std::to_underlying(Gecode::RM_RIMP))),
+          ipl(i), consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
+          test_fixpoint(true) {}
+
+    inline Test::Test(const std::string& p, const std::string& s, int a, int min, int max, bool r,
+                      Gecode::IntPropLevel i)
+        : Test(TestTags::standard(), p, s, a, min, max, r, i) {}
+
+    inline Test::Test(TestTags tags, const std::string& s, int a, int min, int max, bool r, Gecode::IntPropLevel i)
+        : Base("Int::" + s, tags), arity(a), dom(min, max), reified(r),
+          rms((1 << std::to_underlying(Gecode::RM_EQV)) | (1 << std::to_underlying(Gecode::RM_IMP)) |
+              (1 << std::to_underlying(Gecode::RM_RIMP))),
+          ipl(i), consistency_test_level(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE), test_search(true),
+          test_fixpoint(true) {}
+
+    inline Test::Test(const std::string& s, int a, int min, int max, bool r, Gecode::IntPropLevel i)
+        : Test(TestTags::standard(), s, a, min, max, r, i) {}
+
+    inline std::string
+    Test::str(Gecode::IntPropLevel ipl) {
+        using namespace Gecode;
+        std::stringstream s;
+        switch (vbd(ipl)) {
+        case IPL_VAL:
+            s << "Val";
+            break;
+        case IPL_BND:
+            s << "Bnd";
+            break;
+        case IPL_DOM:
+            s << "Dom";
+            break;
+        default:
+            s << "Def";
+            break;
+        }
+        if ((ipl & IPL_BASIC) != IPL_DEF)
+            s << "+B";
+        if ((ipl & IPL_ADVANCED) != IPL_DEF)
+            s << "+A";
+        return s.str();
+    }
+
+    inline std::string
+    Test::str(Gecode::IntRelType irt) {
+        using namespace Gecode;
+        switch (irt) {
+        case IRT_LQ:
+            return "Lq";
+        case IRT_LT:
+            return "Lt";
+        case IRT_GQ:
+            return "Gq";
+        case IRT_GR:
+            return "Gr";
+        case IRT_EQ:
+            return "Eq";
+        case IRT_NQ:
+            return "Nq";
+        default:;
+        }
+        GECODE_NEVER;
+        return "NONE";
+    }
+
+    inline std::string
+    Test::str(Gecode::BoolOpType bot) {
+        using namespace Gecode;
+        switch (bot) {
+        case BOT_AND:
+            return "And";
+        case BOT_OR:
+            return "Or";
+        case BOT_IMP:
+            return "Imp";
+        case BOT_EQV:
+            return "Eqv";
+        case BOT_XOR:
+            return "Xor";
+        default:
+            GECODE_NEVER;
+        }
+        GECODE_NEVER;
+        return "NONE";
+    }
+
+    inline std::string
+    Test::str(bool b) {
+        return Base::str(b);
+    }
+
+    inline std::string
+    Test::str(int i) {
+        return Base::str(i);
+    }
+
+    inline std::string
+    Test::str(const Gecode::IntArgs& x) {
+        return Base::str(x);
+    }
+
+    template <class T>
+    inline bool
+    Test::cmp(T x, Gecode::IntRelType r, T y) {
+        using namespace Gecode;
+        switch (r) {
+        case IRT_EQ:
+            return x == y;
+        case IRT_NQ:
+            return x != y;
+        case IRT_LQ:
+            return x <= y;
+        case IRT_LT:
+            return x < y;
+        case IRT_GR:
+            return x > y;
+        case IRT_GQ:
+            return x >= y;
+        default:;
+        }
+        return false;
+    }
+
+    inline IntPropLevels::IntPropLevels() : i(sizeof(ipls) / sizeof(Gecode::IntPropLevel) - 1) {}
+    inline bool
+    IntPropLevels::operator()() const {
+        return i >= 0;
+    }
+    inline void
+    IntPropLevels::operator++() {
+        i--;
+    }
+    inline Gecode::IntPropLevel
+    IntPropLevels::ipl() const {
+        return ipls[i];
+    }
+
+    inline IntPropBasicAdvanced::IntPropBasicAdvanced() : i(sizeof(ipls) / sizeof(Gecode::IntPropLevel) - 1) {}
+    inline bool
+    IntPropBasicAdvanced::operator()() const {
+        return i >= 0;
+    }
+    inline void
+    IntPropBasicAdvanced::operator++() {
+        i--;
+    }
+    inline Gecode::IntPropLevel
+    IntPropBasicAdvanced::ipl() const {
+        return ipls[i];
+    }
+
+    inline IntRelTypes::IntRelTypes() : i(sizeof(irts) / sizeof(Gecode::IntRelType) - 1) {}
+    inline void
+    IntRelTypes::reset() {
+        i = sizeof(irts) / sizeof(Gecode::IntRelType) - 1;
+    }
+    inline bool
+    IntRelTypes::operator()() const {
+        return i >= 0;
+    }
+    inline void
+    IntRelTypes::operator++() {
+        i--;
+    }
+    inline Gecode::IntRelType
+    IntRelTypes::irt() const {
+        return irts[i];
+    }
+
+    inline BoolOpTypes::BoolOpTypes() : i(sizeof(bots) / sizeof(Gecode::BoolOpType) - 1) {}
+    inline bool
+    BoolOpTypes::operator()() const {
+        return i >= 0;
+    }
+    inline void
+    BoolOpTypes::operator++() {
+        i--;
+    }
+    inline Gecode::BoolOpType
+    BoolOpTypes::bot() const {
+        return bots[i];
+    }
+
+} // namespace Test::Int
 
 // STATISTICS: test-int

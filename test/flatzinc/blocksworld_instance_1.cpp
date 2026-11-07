@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("blocksworld::1",
-std::string("predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("blocksworld::1",
+                                   std::string("predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -93,8 +89,8 @@ predicate sort(array [int] of var int: x, array [int] of var int: y);\n\
 predicate table_bool(array [int] of var bool: x, array [int, int] of bool: t);\n\
 predicate table_int(array [int] of var int: x, array [int, int] of int: t);\n\
 array [1..3] of int: final_loc = [2, 3, 0];\n\
-array [1..3] of int: initial_loc = [2, 0, 1];\n")+
-"var bool: BOOL____00001 :: is_defined_var :: var_is_introduced;\n\
+array [1..3] of int: initial_loc = [2, 0, 1];\n") +
+                                       "var bool: BOOL____00001 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00002 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00003 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00004 :: is_defined_var :: var_is_introduced;\n\
@@ -183,8 +179,8 @@ var bool: BOOL____00086 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00087 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00088 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00089 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00090 :: is_defined_var :: var_is_introduced;\n"+
-"array [1..12] of var -3..3: on :: output_array([1..4, 1..3]);\n\
+var bool: BOOL____00090 :: is_defined_var :: var_is_introduced;\n" +
+                                       "array [1..12] of var -3..3: on :: output_array([1..4, 1..3]);\n\
 constraint all_different_int([on[1], on[2], on[3]]);\n\
 constraint all_different_int([on[4], on[5], on[6]]);\n\
 constraint all_different_int([on[7], on[8], on[9]]);\n\
@@ -230,8 +226,7 @@ constraint int_eq(on[2], -2);\n\
 constraint int_eq(on[3], 1);\n\
 constraint int_eq(on[10], 2);\n\
 constraint int_eq(on[11], 3);\n\
-constraint int_eq(on[12], -3);\n"+
-"constraint int_lt_reif(on[4], 0, BOOL____00005) :: defines_var(BOOL____00005);\n\
+constraint int_eq(on[12], -3);\n" + "constraint int_lt_reif(on[4], 0, BOOL____00005) :: defines_var(BOOL____00005);\n\
 constraint int_lt_reif(on[5], 0, BOOL____00015) :: defines_var(BOOL____00015);\n\
 constraint int_lt_reif(on[6], 0, BOOL____00025) :: defines_var(BOOL____00025);\n\
 constraint int_lt_reif(on[7], 0, BOOL____00035) :: defines_var(BOOL____00035);\n\
@@ -307,15 +302,14 @@ constraint set_in(on[10], {-1, 2, 3});\n\
 constraint set_in(on[11], {-2, 1, 3});\n\
 constraint set_in(on[12], {-3, 1, 2});\n\
 solve  :: int_search([on[1], on[2], on[3], on[4], on[5], on[6], on[7], on[8], on[9], on[10], on[11], on[12]], first_fail, indomain_split, complete) satisfy;\n\
-", "on = array2d(1..4, 1..3, [2, -2, 1, 2, -2, -3, -1, -2, -3, 2, 3, -3]);\n\
+",
+                                   "on = array2d(1..4, 1..3, [2, -2, 1, 2, -2, -3, -1, -2, -3, 2, 3, -3]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

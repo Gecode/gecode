@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("product::fd",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest(
+                "product::fd", "predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -62,17 +58,16 @@ constraint int_lin_le([-1, -1], [inside[3], outside[3]], -300);\n\
 constraint int_lin_le([2, 4, 6], [inside[1], inside[2], inside[3]], 400);\n\
 constraint int_lin_le([5, 4, 3], [inside[1], inside[2], inside[3]], 200);\n\
 solve minimize INT____00001;\n\
-", "inside = array1d(1..3, [40, 0, 0]);\n\
+",
+                "inside = array1d(1..3, [40, 0, 0]);\n\
 outside = array1d(1..3, [60, 200, 300]);\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

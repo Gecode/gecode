@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,13 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("golomb",
-"predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("golomb", "predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -113,16 +108,15 @@ constraint int_lt(mark[1], mark[2]);\n\
 constraint int_lt(mark[2], mark[3]);\n\
 constraint int_lt(mark[3], mark[4]);\n\
 solve  :: int_search(mark, input_order, indomain, complete) minimize mark[4];\n\
-", "mark = array1d(1..4, [0, 1, 4, 6]);\n\
+",
+                                   "mark = array1d(1..4, [0, 1, 4, 6]);\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,13 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("output_test",
-        "var int: x :: output_var;\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("output_test", "var int: x :: output_var;\n\
 array [1..3] of var 1..9: a :: output_array([1..3]);\n\
 \n\
 constraint int_lt(a[2], a[1]);\n\
@@ -51,17 +46,16 @@ constraint int_lt(a[3], a[2]);\n\
 constraint int_lin_eq([1, 2, 3, -1], [a[1], a[2], a[3], x], 0);\n\
 \n\
 solve minimize x;\n\
-", "a = array1d(1..3, [3, 2, 1]);\n\
+",
+                                   "a = array1d(1..3, [3, 2, 1]);\n\
 x = 10;\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

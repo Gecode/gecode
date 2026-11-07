@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,119 +32,115 @@
 
 namespace Gecode {
 
-  forceinline
-  IntValBranch::IntValBranch(Select s0)
-    : s(s0) {}
+    forceinline
+    IntValBranch::IntValBranch(Select s0)
+        : s(s0) {}
 
-  forceinline
-  IntValBranch::IntValBranch(Rnd r)
-    : ValBranch<IntVar>(r), s(SEL_RND) {}
+    forceinline
+    IntValBranch::IntValBranch(const Rnd& r)
+        : ValBranch<IntVar>(r), s(SEL_RND) {}
 
-  forceinline
-  IntValBranch::IntValBranch(IntBranchVal v, IntBranchCommit c)
-    : ValBranch<IntVar>(v,c), s(SEL_VAL_COMMIT) {}
+    forceinline
+    IntValBranch::IntValBranch(IntBranchVal v, IntBranchCommit c)
+        : ValBranch<IntVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
-  forceinline IntValBranch::Select
-  IntValBranch::select(void) const {
-    return s;
-  }
+    forceinline IntValBranch::Select
+    IntValBranch::select() const {
+        return s;
+    }
 
+    inline IntValBranch
+    INT_VAL_MIN() {
+        return IntValBranch(IntValBranch::SEL_MIN);
+    }
 
-  inline IntValBranch
-  INT_VAL_MIN(void) {
-    return IntValBranch(IntValBranch::SEL_MIN);
-  }
+    inline IntValBranch
+    INT_VAL_MED() {
+        return IntValBranch(IntValBranch::SEL_MED);
+    }
 
-  inline IntValBranch
-  INT_VAL_MED(void) {
-    return IntValBranch(IntValBranch::SEL_MED);
-  }
+    inline IntValBranch
+    INT_VAL_MAX() {
+        return IntValBranch(IntValBranch::SEL_MAX);
+    }
 
-  inline IntValBranch
-  INT_VAL_MAX(void) {
-    return IntValBranch(IntValBranch::SEL_MAX);
-  }
+    inline IntValBranch
+    INT_VAL_RND(const Rnd& r) {
+        return IntValBranch(r);
+    }
 
-  inline IntValBranch
-  INT_VAL_RND(Rnd r) {
-    return IntValBranch(r);
-  }
+    inline IntValBranch
+    INT_VAL_SPLIT_MIN() {
+        return IntValBranch(IntValBranch::SEL_SPLIT_MIN);
+    }
 
-  inline IntValBranch
-  INT_VAL_SPLIT_MIN(void) {
-    return IntValBranch(IntValBranch::SEL_SPLIT_MIN);
-  }
+    inline IntValBranch
+    INT_VAL_SPLIT_MAX() {
+        return IntValBranch(IntValBranch::SEL_SPLIT_MAX);
+    }
 
-  inline IntValBranch
-  INT_VAL_SPLIT_MAX(void) {
-    return IntValBranch(IntValBranch::SEL_SPLIT_MAX);
-  }
+    inline IntValBranch
+    INT_VAL_RANGE_MIN() {
+        return IntValBranch(IntValBranch::SEL_RANGE_MIN);
+    }
 
-  inline IntValBranch
-  INT_VAL_RANGE_MIN(void) {
-    return IntValBranch(IntValBranch::SEL_RANGE_MIN);
-  }
+    inline IntValBranch
+    INT_VAL_RANGE_MAX() {
+        return IntValBranch(IntValBranch::SEL_RANGE_MAX);
+    }
 
-  inline IntValBranch
-  INT_VAL_RANGE_MAX(void) {
-    return IntValBranch(IntValBranch::SEL_RANGE_MAX);
-  }
+    inline IntValBranch
+    INT_VAL(IntBranchVal v, IntBranchCommit c) {
+        return IntValBranch(std::move(v), std::move(c));
+    }
 
-  inline IntValBranch
-  INT_VAL(IntBranchVal v, IntBranchCommit c) {
-    return IntValBranch(v,c);
-  }
+    inline IntValBranch
+    INT_VALUES_MIN() {
+        return IntValBranch(IntValBranch::SEL_VALUES_MIN);
+    }
 
-  inline IntValBranch
-  INT_VALUES_MIN(void) {
-    return IntValBranch(IntValBranch::SEL_VALUES_MIN);
-  }
+    inline IntValBranch
+    INT_VALUES_MAX() {
+        return IntValBranch(IntValBranch::SEL_VALUES_MAX);
+    }
 
-  inline IntValBranch
-  INT_VALUES_MAX(void) {
-    return IntValBranch(IntValBranch::SEL_VALUES_MAX);
-  }
+    forceinline
+    BoolValBranch::BoolValBranch(Select s0)
+        : s(s0) {}
 
+    forceinline
+    BoolValBranch::BoolValBranch(const Rnd& r)
+        : ValBranch<BoolVar>(r), s(SEL_RND) {}
 
+    forceinline
+    BoolValBranch::BoolValBranch(BoolBranchVal v, BoolBranchCommit c)
+        : ValBranch<BoolVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
-  forceinline
-  BoolValBranch::BoolValBranch(Select s0)
-    : s(s0) {}
+    forceinline BoolValBranch::Select
+    BoolValBranch::select() const {
+        return s;
+    }
 
-  forceinline
-  BoolValBranch::BoolValBranch(Rnd r)
-    : ValBranch<BoolVar>(r), s(SEL_RND) {}
+    inline BoolValBranch
+    BOOL_VAL_MIN() {
+        return BoolValBranch(BoolValBranch::SEL_MIN);
+    }
 
-  forceinline
-  BoolValBranch::BoolValBranch(BoolBranchVal v, BoolBranchCommit c)
-    : ValBranch<BoolVar>(v,c), s(SEL_VAL_COMMIT) {}
+    inline BoolValBranch
+    BOOL_VAL_MAX() {
+        return BoolValBranch(BoolValBranch::SEL_MAX);
+    }
 
-  forceinline BoolValBranch::Select
-  BoolValBranch::select(void) const {
-    return s;
-  }
+    inline BoolValBranch
+    BOOL_VAL_RND(const Rnd& r) {
+        return BoolValBranch(r);
+    }
 
+    inline BoolValBranch
+    BOOL_VAL(BoolBranchVal v, BoolBranchCommit c) {
+        return BoolValBranch(std::move(v), std::move(c));
+    }
 
-  inline BoolValBranch
-  BOOL_VAL_MIN(void) {
-    return BoolValBranch(BoolValBranch::SEL_MIN);
-  }
-
-  inline BoolValBranch
-  BOOL_VAL_MAX(void) {
-    return BoolValBranch(BoolValBranch::SEL_MAX);
-  }
-
-  inline BoolValBranch
-  BOOL_VAL_RND(Rnd r) {
-    return BoolValBranch(r);
-  }
-
-  inline BoolValBranch
-  BOOL_VAL(BoolBranchVal v, BoolBranchCommit c) {
-    return BoolValBranch(v,c);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-branch

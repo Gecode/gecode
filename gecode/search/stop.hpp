@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,137 +34,134 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  /*
-   * Base class
-   *
-   */
-  forceinline
-  Stop::Stop(void) {}
-  forceinline
-  Stop::~Stop(void) {}
+    /*
+     * Base class
+     *
+     */
+    forceinline Stop::~Stop() = default;
 
+    /*
+     * Stopping for node limit
+     *
+     */
 
-  /*
-   * Stopping for node limit
-   *
-   */
+    forceinline
+    NodeStop::NodeStop(unsigned long long int l0)
+        : l(l0) {}
+    forceinline
+    NodeStop::NodeStop(const NodeStop& s)
+        : Stop(s), l(s.limit()) {}
+    forceinline NodeStop&
+    NodeStop::operator=(const NodeStop& s) {
+        Stop::operator=(s);
+        limit(s.limit());
+        return *this;
+    }
 
-  forceinline
-  NodeStop::NodeStop(unsigned long long int l0) : l(l0) {}
-  forceinline
-  NodeStop::NodeStop(const NodeStop& s) : Stop(s), l(s.limit()) {}
-  forceinline NodeStop&
-  NodeStop::operator =(const NodeStop& s) {
-    Stop::operator =(s);
-    limit(s.limit());
-    return *this;
-  }
+    forceinline unsigned long long int
+    NodeStop::limit() const {
+        return l.load(std::memory_order_acquire);
+    }
 
-  forceinline unsigned long long int
-  NodeStop::limit(void) const {
-    return l.load(std::memory_order_acquire);
-  }
+    forceinline void
+    NodeStop::limit(unsigned long long int l0) {
+        l.store(l0, std::memory_order_release);
+    }
 
-  forceinline void
-  NodeStop::limit(unsigned long long int l0) {
-    l.store(l0, std::memory_order_release);
-  }
+    /*
+     * Stopping for failure limit
+     *
+     */
 
+    forceinline
+    FailStop::FailStop(unsigned long long int l0)
+        : l(l0) {}
+    forceinline
+    FailStop::FailStop(const FailStop& s)
+        : Stop(s), l(s.limit()) {}
+    forceinline FailStop&
+    FailStop::operator=(const FailStop& s) {
+        Stop::operator=(s);
+        limit(s.limit());
+        return *this;
+    }
 
-  /*
-   * Stopping for failure limit
-   *
-   */
+    forceinline unsigned long long int
+    FailStop::limit() const {
+        return l.load(std::memory_order_acquire);
+    }
 
-  forceinline
-  FailStop::FailStop(unsigned long long int l0) : l(l0) {}
-  forceinline
-  FailStop::FailStop(const FailStop& s) : Stop(s), l(s.limit()) {}
-  forceinline FailStop&
-  FailStop::operator =(const FailStop& s) {
-    Stop::operator =(s);
-    limit(s.limit());
-    return *this;
-  }
+    forceinline void
+    FailStop::limit(unsigned long long int l0) {
+        l.store(l0, std::memory_order_release);
+    }
 
-  forceinline unsigned long long int
-  FailStop::limit(void) const {
-    return l.load(std::memory_order_acquire);
-  }
+    /*
+     * Stopping for time limit
+     *
+     */
 
-  forceinline void
-  FailStop::limit(unsigned long long int l0) {
-    l.store(l0, std::memory_order_release);
-  }
+    forceinline
+    TimeStop::TimeStop(double l0)
+        : t0(clock::now().time_since_epoch().count()), l(l0) {}
+    forceinline
+    TimeStop::TimeStop(const TimeStop& s)
+        : Stop(s), t0(s.t0.load(std::memory_order_acquire)), l(s.l.load(std::memory_order_acquire)) {}
+    forceinline TimeStop&
+    TimeStop::operator=(const TimeStop& s) {
+        const clock_rep t00 = s.t0.load(std::memory_order_acquire);
+        const double l0 = s.l.load(std::memory_order_acquire);
+        Stop::operator=(s);
+        t0.store(t00, std::memory_order_release);
+        l.store(l0, std::memory_order_release);
+        return *this;
+    }
 
+    forceinline double
+    TimeStop::limit() const {
+        return l.load(std::memory_order_acquire);
+    }
 
-  /*
-   * Stopping for time limit
-   *
-   */
+    forceinline void
+    TimeStop::limit(double l0) {
+        l.store(l0, std::memory_order_release);
+    }
 
-  forceinline
-  TimeStop::TimeStop(double l0)
-    : t0(clock::now().time_since_epoch().count()), l(l0) {}
-  forceinline
-  TimeStop::TimeStop(const TimeStop& s)
-    : Stop(s),
-      t0(s.t0.load(std::memory_order_acquire)),
-      l(s.l.load(std::memory_order_acquire)) {}
-  forceinline TimeStop&
-  TimeStop::operator =(const TimeStop& s) {
-    const clock_rep t00 = s.t0.load(std::memory_order_acquire);
-    const double l0 = s.l.load(std::memory_order_acquire);
-    Stop::operator =(s);
-    t0.store(t00, std::memory_order_release);
-    l.store(l0, std::memory_order_release);
-    return *this;
-  }
+    forceinline void
+    TimeStop::reset() {
+        t0.store(clock::now().time_since_epoch().count(), std::memory_order_release);
+    }
 
-  forceinline double
-  TimeStop::limit(void) const {
-    return l.load(std::memory_order_acquire);
-  }
+    /*
+     * Stopping for restart limit
+     *
+     */
 
-  forceinline void
-  TimeStop::limit(double l0) {
-    l.store(l0, std::memory_order_release);
-  }
+    forceinline
+    RestartStop::RestartStop(unsigned long long int l0)
+        : l(l0) {}
+    forceinline
+    RestartStop::RestartStop(const RestartStop& s)
+        : Stop(s), l(s.limit()) {}
+    forceinline RestartStop&
+    RestartStop::operator=(const RestartStop& s) {
+        Stop::operator=(s);
+        limit(s.limit());
+        return *this;
+    }
 
-  forceinline void
-  TimeStop::reset(void) {
-    t0.store(clock::now().time_since_epoch().count(),
-             std::memory_order_release);
-  }
+    forceinline unsigned long long int
+    RestartStop::limit() const {
+        return l.load(std::memory_order_acquire);
+    }
 
-  /*
-   * Stopping for restart limit
-   *
-   */
+    forceinline void
+    RestartStop::limit(unsigned long long int l0) {
+        l.store(l0, std::memory_order_release);
+    }
 
-  forceinline
-  RestartStop::RestartStop(unsigned long long int l0) : l(l0) {}
-  forceinline
-  RestartStop::RestartStop(const RestartStop& s) : Stop(s), l(s.limit()) {}
-  forceinline RestartStop&
-  RestartStop::operator =(const RestartStop& s) {
-    Stop::operator =(s);
-    limit(s.limit());
-    return *this;
-  }
-
-  forceinline unsigned long long int
-  RestartStop::limit(void) const {
-    return l.load(std::memory_order_acquire);
-  }
-
-  forceinline void
-  RestartStop::limit(unsigned long long int l0) {
-    l.store(l0, std::memory_order_release);
-  }
-
-}}
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

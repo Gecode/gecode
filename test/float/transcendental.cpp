@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -41,449 +40,482 @@
 #include <cmath>
 #include <algorithm>
 
-namespace Test { namespace Float {
+/// %Tests for transcendental constraints
+namespace Test::Float::Transcendental {
 
-   /// %Tests for transcendental constraints
-   namespace Transcendental {
+    /// Exact fixed-base powers, inverse logarithms, and shared variables
+    class PowBaseConsistency : public Test {
+    protected:
+        Gecode::FloatNum base;
+        Gecode::FloatNum input;
+        Gecode::FloatNum output;
+        bool logarithm;
+        bool shared;
+        bool expected;
 
-     /// Exact fixed-base powers, inverse logarithms, and shared variables
-     class PowBaseConsistency : public Test {
-     protected:
-       Gecode::FloatNum base;
-       Gecode::FloatNum input;
-       Gecode::FloatNum output;
-       bool logarithm;
-       bool shared;
-       bool expected;
-     public:
-       PowBaseConsistency(Gecode::FloatNum b, Gecode::FloatNum x,
-                          Gecode::FloatNum y, bool log, bool share, bool valid)
-         : Test("Transcendental::PowBaseConsistency::"+str(b)+"::"+
-                str(x)+"::"+str(y)+(log ? "::Log" : "::Pow")+
-                (share ? "::Shared" : "::Separate"),
-                share ? 1 : 2,-4.0,8.0,1.0,CPLT_ASSIGNMENT,false),
-           base(b), input(x), output(y), logarithm(log), shared(share),
-           expected(valid) {
-         testsearch = false;
-       }
-       /// Check one exact example through the standard posting/assignment tests
-       virtual Assignment* assignment(void) const {
-         Assignment* a = new RandomAssignment(arity,dom,1,_rand);
-         a->set(0,input);
-         if (!shared)
-           a->set(1,output);
-         return a;
-       }
-       /// Use exact expected results instead of computing them with exp/log
-       virtual MaybeType solution(const Assignment&) const {
-         return expected ? MT_TRUE : MT_FALSE;
-       }
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::FloatVar y = shared ? x[0] : x[1];
-         if (!shared)
-           Gecode::rel(home,y,Gecode::FRT_GQ,0.0);
-         if (logarithm)
-           Gecode::log(home,base,y,x[0]);
-         else
-           Gecode::pow(home,base,x[0],y);
-       }
-     };
+    public:
+        PowBaseConsistency(Gecode::FloatNum b, Gecode::FloatNum x, Gecode::FloatNum y, bool log, bool share, bool valid)
+            : Test("Transcendental::PowBaseConsistency::" + str(b) + "::" + str(x) + "::" + str(y) +
+                       (log ? "::Log" : "::Pow") + (share ? "::Shared" : "::Separate"),
+                   share ? 1 : 2, -4.0, 8.0, 1.0, COMPLETE_ASSIGNMENT, false),
+              base(b), input(x), output(y), logarithm(log), shared(share), expected(valid) {
+            test_search = false;
+        }
+        /// Check one exact example through the standard posting/assignment tests
+        Assignment*
+        assignment() const override {
+            Assignment* a = new RandomAssignment(arity, dom, 1, _rand);
+            a->set(0, input);
+            if (!shared)
+                a->set(1, output);
+            return a;
+        }
+        /// Use exact expected results instead of computing them with exp/log
+        MaybeType
+        solution(const Assignment&) const override {
+            return expected ? MT_TRUE : MT_FALSE;
+        }
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::FloatVar y = shared ? x[0] : x[1];
+            if (!shared)
+                Gecode::rel(home, y, Gecode::FRT_GQ, 0.0);
+            if (logarithm)
+                Gecode::log(home, base, y, x[0]);
+            else
+                Gecode::pow(home, base, x[0], y);
+        }
+    };
 
-     /// Register the exact powers and their logarithmic forms
-     class PowBaseExamples {
-     public:
-       PowBaseExamples(void) {
-         for (int logarithm=0; logarithm<2; logarithm++) {
-           (void) new PowBaseConsistency(2.0,3.0,8.0,logarithm,false,true);
-           (void) new PowBaseConsistency(2.0,3.0,7.0,logarithm,false,false);
-           (void) new PowBaseConsistency(0.5,3.0,0.125,logarithm,false,true);
-           (void) new PowBaseConsistency(1.0,3.0,1.0,logarithm,false,true);
-           (void) new PowBaseConsistency(2.0,0.0,0.0,logarithm,true,false);
-           (void) new PowBaseConsistency(0.25,0.5,0.5,logarithm,true,true);
-         }
-       }
-     } pow_base_examples;
+    /// Register the exact powers and their logarithmic forms
+    class PowBaseExamples {
+    public:
+        PowBaseExamples() {
+            for (int logarithm = 0; logarithm < 2; logarithm++) {
+                (void)new PowBaseConsistency(2.0, 3.0, 8.0, logarithm, false, true);
+                (void)new PowBaseConsistency(2.0, 3.0, 7.0, logarithm, false, false);
+                (void)new PowBaseConsistency(0.5, 3.0, 0.125, logarithm, false, true);
+                (void)new PowBaseConsistency(1.0, 3.0, 1.0, logarithm, false, true);
+                (void)new PowBaseConsistency(2.0, 0.0, 0.0, logarithm, true, false);
+                (void)new PowBaseConsistency(0.25, 0.5, 0.5, logarithm, true, true);
+            }
+        }
+    } pow_base_examples;
 
-     /// %Test for exponent constraint
-     class ExpXY : public Test {
-     public:
-       /// Create and register test
-       ExpXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test(TestTags::sweep(),"Transcendental::Exp::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         return eq(exp(x[0]), x[1]);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         if (flip())
-           Gecode::exp(home, x[0], x[1]);
-         else
-           Gecode::rel(home, exp(x[0]) == x[1]);
-       }
-     };
+    /// %Test for exponent constraint
+    class ExpXY : public Test {
+    public:
+        /// Create and register test
+        ExpXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+            : Test(TestTags::sweep(), "Transcendental::Exp::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            return eq(exp(x[0]), x[1]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            if (flip())
+                Gecode::exp(home, x[0], x[1]);
+            else
+                Gecode::rel(home, exp(x[0]) == x[1]);
+        }
+    };
 
-     /// %Test for exponent constraint where solution is ensured
-     class ExpXYSol : public Test {
-     public:
-       /// Create and register test
-       ExpXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test(TestTags::sweep(),"Transcendental::Exp::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         return eq(exp(x[0]), x[1]);
-       }
-       /// Extend assignment \a x
-       virtual bool extendAssignment(Assignment& x) const {
-         Gecode::FloatVal d = exp(x[0]);
-         if (Gecode::Float::subset(d, dom)) {
-           x.set(1, d);
-           return true;
-         } else {
-           return false;
-         }
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::exp(home, x[0], x[1]);
-       }
-     };
+    /// %Test for exponent constraint where solution is ensured
+    class ExpXYSol : public Test {
+    public:
+        /// Create and register test
+        ExpXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+            : Test(TestTags::sweep(), "Transcendental::Exp::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            return eq(exp(x[0]), x[1]);
+        }
+        /// Extend assignment \a x
+        bool
+        extend_assignment(Assignment& x) const override {
+            Gecode::FloatVal d = exp(x[0]);
+            if (Gecode::Float::subset(d, dom)) {
+                x.set(1, d);
+                return true;
+            }
+            return false;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::exp(home, x[0], x[1]);
+        }
+    };
 
-     /// %Test for exponent constraint with shared variables
-     class ExpXX : public Test {
-     public:
-       /// Create and register test
-       ExpXX(TestTags tags, const std::string& s,
-             const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test(tags,"Transcendental::Exp::XX::"+s,
-                1,d,st,CPLT_ASSIGNMENT,false) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         return eq(exp(x[0]), x[0]);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::exp(home, x[0], x[0]);
-       }
-     };
+    /// %Test for exponent constraint with shared variables
+    class ExpXX : public Test {
+    public:
+        /// Create and register test
+        ExpXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+            : Test(tags, "Transcendental::Exp::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            return eq(exp(x[0]), x[0]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::exp(home, x[0], x[0]);
+        }
+    };
 
-     /// %Test for logarithm constraint
-     class LogXY : public Test {
-     public:
-       /// Create and register test
-       LogXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test(TestTags::sweep(),"Transcendental::Log::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() < 0.0)
-           return MT_FALSE;
-         return eq(log(x[0]), x[1]);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         if (flip())
-           Gecode::log(home, x[0], x[1]);
-         else
-           Gecode::rel(home, log(x[0]) == x[1]);
-       }
-     };
+    /// %Test for logarithm constraint
+    class LogXY : public Test {
+    public:
+        /// Create and register test
+        LogXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+            : Test(TestTags::sweep(), "Transcendental::Log::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if (x[0].max() < 0.0)
+                return MT_FALSE;
+            return eq(log(x[0]), x[1]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            if (flip())
+                Gecode::log(home, x[0], x[1]);
+            else
+                Gecode::rel(home, log(x[0]) == x[1]);
+        }
+    };
 
-     /// %Test for logarithm constraint where solution is ensured
-     class LogXYSol : public Test {
-     public:
-       /// Create and register test
-       LogXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test(TestTags::sweep(),"Transcendental::Log::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() < 0.0)
-           return MT_FALSE;
-         return eq(log(x[0]), x[1]);
-       }
-       /// Extend assignment \a x
-       virtual bool extendAssignment(Assignment& x) const {
-         if (x[0].max() < 0.0) return false;
-         Gecode::FloatVal d = log(x[0]);
-         if (Gecode::Float::subset(d, dom)) {
-           x.set(1, d);
-           return true;
-         } else {
-           return false;
-         }
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::log(home, x[0], x[1]);
-       }
-     };
+    /// %Test for logarithm constraint where solution is ensured
+    class LogXYSol : public Test {
+    public:
+        /// Create and register test
+        LogXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+            : Test(TestTags::sweep(), "Transcendental::Log::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if (x[0].max() < 0.0)
+                return MT_FALSE;
+            return eq(log(x[0]), x[1]);
+        }
+        /// Extend assignment \a x
+        bool
+        extend_assignment(Assignment& x) const override {
+            if (x[0].max() < 0.0)
+                return false;
+            Gecode::FloatVal d = log(x[0]);
+            if (Gecode::Float::subset(d, dom)) {
+                x.set(1, d);
+                return true;
+            }
+            return false;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::log(home, x[0], x[1]);
+        }
+    };
 
-     /// %Test for logarithm constraint with shared variables
-     class LogXX : public Test {
-     public:
-       /// Create and register test
-       LogXX(TestTags tags, const std::string& s,
-             const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test(tags,"Transcendental::Log::XX::"+s,
-              1,d,st,CPLT_ASSIGNMENT,false) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() < 0.0)
-           return MT_FALSE;
-         return eq(log(x[0]), x[0]);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::log(home, x[0], x[0]);
-       }
-     };
+    /// %Test for logarithm constraint with shared variables
+    class LogXX : public Test {
+    public:
+        /// Create and register test
+        LogXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+            : Test(tags, "Transcendental::Log::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if (x[0].max() < 0.0)
+                return MT_FALSE;
+            return eq(log(x[0]), x[0]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::log(home, x[0], x[0]);
+        }
+    };
 
-     /// %Test for logarithm base n constraint
-     class LogNXY : public Test {
-       Gecode::FloatNum base;
-     public:
-       /// Create and register test
-       LogNXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
-       : Test(TestTags::sweep(),"Transcendental::Log::N::"+str(_base)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         if ((x[0].max() <= 0.0) || (base <= 0.0))
-           return MT_FALSE;
-         return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[1]);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::log(home, base, x[0], x[1]);
-       }
-     };
+    /// %Test for logarithm base n constraint
+    class LogNXY : public Test {
+        Gecode::FloatNum base;
 
-     /// %Test for logarithm base n constraint where solution is ensured
-     class LogNXYSol : public Test {
-       Gecode::FloatNum base;
-     public:
-       /// Create and register test
-       LogNXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
-       : Test(TestTags::sweep(),"Transcendental::Log::N::"+str(_base)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), base(_base) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         if ((x[0].max() <= 0.0) || (base <= 0.0))
-           return MT_FALSE;
-         return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[1]);
-       }
-       /// Extend assignment \a x
-       virtual bool extendAssignment(Assignment& x) const {
-         if ((x[0].max() <= 0.0) || (base <= 0.0))
-           return false;
-         Gecode::FloatVal d = log(x[0])/log(Gecode::FloatVal(base));
-         if (Gecode::Float::subset(d, dom)) {
-           x.set(1, d);
-           return true;
-         } else {
-           return false;
-         }
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::log(home, base, x[0], x[1]);
-       }
-     };
+    public:
+        /// Create and register test
+        LogNXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
+            : Test(TestTags::sweep(), "Transcendental::Log::N::" + str(_base) + "::XY::" + s, 2, d, st,
+                   COMPLETE_ASSIGNMENT, false),
+              base(_base) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if ((x[0].max() <= 0.0) || (base <= 0.0))
+                return MT_FALSE;
+            return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[1]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::log(home, base, x[0], x[1]);
+        }
+    };
 
-     /// %Test for logarithm base n constraint with shared variables
-     class LogNXX : public Test {
-       Gecode::FloatNum base;
-     public:
-       /// Create and register test
-       LogNXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
-         : Test(TestTags::sweep(),"Transcendental::Log::N::"+str(_base)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         if ((x[0].max() <= 0.0) || (base <= 0.0))
-           return MT_FALSE;
-         return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[0]);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::log(home, base, x[0], x[0]);
-       }
-     };
+    /// %Test for logarithm base n constraint where solution is ensured
+    class LogNXYSol : public Test {
+        Gecode::FloatNum base;
 
-     /// %Test for pow exponent n constraint
-     class PowXY : public Test {
-       Gecode::FloatNum base;
-     public:
-       /// Create and register test
-       PowXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
-       : Test(TestTags::sweep(),"Transcendental::Pow::N::"+str(_base)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         if (base <= 0.0)
-           return MT_FALSE;
-         return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[1]);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::pow(home, base, x[0], x[1]);
-       }
-     };
+    public:
+        /// Create and register test
+        LogNXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
+            : Test(TestTags::sweep(), "Transcendental::Log::N::" + str(_base) + "::XY::Sol::" + s, 2, d, st,
+                   EXTEND_ASSIGNMENT, false),
+              base(_base) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if ((x[0].max() <= 0.0) || (base <= 0.0))
+                return MT_FALSE;
+            return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[1]);
+        }
+        /// Extend assignment \a x
+        bool
+        extend_assignment(Assignment& x) const override {
+            if ((x[0].max() <= 0.0) || (base <= 0.0))
+                return false;
+            Gecode::FloatVal d = log(x[0]) / log(Gecode::FloatVal(base));
+            if (Gecode::Float::subset(d, dom)) {
+                x.set(1, d);
+                return true;
+            }
+            return false;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::log(home, base, x[0], x[1]);
+        }
+    };
 
-     /// %Test for pow exponent n constraint where solution is ensured
-     class PowXYSol : public Test {
-       Gecode::FloatNum base;
-     public:
-       /// Create and register test
-       PowXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
-       : Test(TestTags::sweep(),"Transcendental::Pow::N::"+str(_base)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), base(_base) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         if (base <= 0.0)
-           return MT_FALSE;
-         return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[1]);
-       }
-       /// Extend assignment \a x
-       virtual bool extendAssignment(Assignment& x) const {
-         if (base <= 0.0) return false;
-         Gecode::FloatVal d = exp(x[0]*log(Gecode::FloatVal(base)));
-         if (Gecode::Float::subset(d, dom)) {
-           x.set(1, d);
-           return true;
-         } else {
-           return false;
-         }
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::pow(home, base, x[0], x[1]);
-       }
-     };
+    /// %Test for logarithm base n constraint with shared variables
+    class LogNXX : public Test {
+        Gecode::FloatNum base;
 
-     /// %Test for pow exponent n constraint with shared variables
-     class PowXX : public Test {
-       Gecode::FloatNum base;
-     public:
-       /// Create and register test
-       PowXX(TestTags tags, const std::string& s,
-             const Gecode::FloatVal& d, Gecode::FloatNum _base,
-             Gecode::FloatNum st)
-       : Test(tags,
-              "Transcendental::Pow::N::"+str(_base)+"::XX::"+s,
-              1,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         if ((x[0].max() <= 0.0) || (base <= 0.0))
-           return MT_FALSE;
-         return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[0]);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::pow(home, base, x[0], x[0]);
-       }
-     };
+    public:
+        /// Create and register test
+        LogNXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
+            : Test(TestTags::sweep(), "Transcendental::Log::N::" + str(_base) + "::XX::" + s, 1, d, st,
+                   COMPLETE_ASSIGNMENT, false),
+              base(_base) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if ((x[0].max() <= 0.0) || (base <= 0.0))
+                return MT_FALSE;
+            return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[0]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::log(home, base, x[0], x[0]);
+        }
+    };
 
-     const Gecode::FloatNum step = 0.15;
+    /// %Test for pow exponent n constraint
+    class PowXY : public Test {
+        Gecode::FloatNum base;
 
-     Gecode::FloatVal a(-8,5);
-     Gecode::FloatVal b(9,12);
-     Gecode::FloatVal c(-8,8);
+    public:
+        /// Create and register test
+        PowXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
+            : Test(TestTags::sweep(), "Transcendental::Pow::N::" + str(_base) + "::XY::" + s, 2, d, st,
+                   COMPLETE_ASSIGNMENT, false),
+              base(_base) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if (base <= 0.0)
+                return MT_FALSE;
+            return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[1]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::pow(home, base, x[0], x[1]);
+        }
+    };
 
-     ExpXY exp_xy_a("A",a,step);
-     ExpXY exp_xy_b("B",b,step);
-     ExpXY exp_xy_c("C",c,step);
+    /// %Test for pow exponent n constraint where solution is ensured
+    class PowXYSol : public Test {
+        Gecode::FloatNum base;
 
-     ExpXYSol exp_xy_sol_a("A",a,step);
-     ExpXYSol exp_xy_sol_b("B",b,step);
-     ExpXYSol exp_xy_sol_c("C",c,step);
+    public:
+        /// Create and register test
+        PowXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
+            : Test(TestTags::sweep(), "Transcendental::Pow::N::" + str(_base) + "::XY::Sol::" + s, 2, d, st,
+                   EXTEND_ASSIGNMENT, false),
+              base(_base) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if (base <= 0.0)
+                return MT_FALSE;
+            return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[1]);
+        }
+        /// Extend assignment \a x
+        bool
+        extend_assignment(Assignment& x) const override {
+            if (base <= 0.0)
+                return false;
+            Gecode::FloatVal d = exp(x[0] * log(Gecode::FloatVal(base)));
+            if (Gecode::Float::subset(d, dom)) {
+                x.set(1, d);
+                return true;
+            }
+            return false;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::pow(home, base, x[0], x[1]);
+        }
+    };
 
-     ExpXX exp_xx_a(TestTags::standard(),"A",a,step);
-     ExpXX exp_xx_b(TestTags::sweep(),"B",b,step);
-     ExpXX exp_xx_c(TestTags::sweep(),"C",c,step);
+    /// %Test for pow exponent n constraint with shared variables
+    class PowXX : public Test {
+        Gecode::FloatNum base;
 
-     LogXY log_xy_a("A",a,step);
-     LogXY log_xy_b("B",b,step);
-     LogXY log_xy_c("C",c,step);
+    public:
+        /// Create and register test
+        PowXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base,
+              Gecode::FloatNum st)
+            : Test(tags, "Transcendental::Pow::N::" + str(_base) + "::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false),
+              base(_base) {}
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if ((x[0].max() <= 0.0) || (base <= 0.0))
+                return MT_FALSE;
+            return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[0]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            Gecode::pow(home, base, x[0], x[0]);
+        }
+    };
 
-     LogXYSol log_xy_sol_a("A",a,step);
-     LogXYSol log_xy_sol_b("B",b,step);
-     LogXYSol log_xy_sol_c("C",c,step);
+    const Gecode::FloatNum step = 0.15;
 
-     LogXX log_xx_a(TestTags::standard(),"A",a,step);
-     LogXX log_xx_b(TestTags::sweep(),"B",b,step);
-     LogXX log_xx_c(TestTags::sweep(),"C",c,step);
+    Gecode::FloatVal a(-8, 5);
+    Gecode::FloatVal b(9, 12);
+    Gecode::FloatVal c(-8, 8);
 
-     LogNXY logn_xy_a_1("A",a,-1.5,step);
-     LogNXY logn_xy_b_1("B",b,-1.5,step);
-     LogNXY logn_xy_c_1("C",c,-1.5,step);
+    ExpXY exp_xy_a("A", a, step);
+    ExpXY exp_xy_b("B", b, step);
+    ExpXY exp_xy_c("C", c, step);
 
-     LogNXYSol logn_xy_sol_a_1("A",a,-1.5,step);
-     LogNXYSol logn_xy_sol_b_1("B",b,-1.5,step);
-     LogNXYSol logn_xy_sol_c_1("C",c,-1.5,step);
+    ExpXYSol exp_xy_sol_a("A", a, step);
+    ExpXYSol exp_xy_sol_b("B", b, step);
+    ExpXYSol exp_xy_sol_c("C", c, step);
 
-     LogNXX logn_xx_a_1("A",a,-1.5,step);
-     LogNXX logn_xx_b_1("B",b,-1.5,step);
-     LogNXX logn_xx_c_1("C",c,-1.5,step);
+    ExpXX exp_xx_a(TestTags::standard(), "A", a, step);
+    ExpXX exp_xx_b(TestTags::sweep(), "B", b, step);
+    ExpXX exp_xx_c(TestTags::sweep(), "C", c, step);
 
-     LogNXY logn_xy_a_2("A",a,1.5,step);
-     LogNXY logn_xy_b_2("B",b,1.5,step);
-     LogNXY logn_xy_c_2("C",c,1.5,step);
+    LogXY log_xy_a("A", a, step);
+    LogXY log_xy_b("B", b, step);
+    LogXY log_xy_c("C", c, step);
 
-     LogNXYSol logn_xy_sol_a_2("A",a,1.5,step);
-     LogNXYSol logn_xy_sol_b_2("B",b,1.5,step);
-     LogNXYSol logn_xy_sol_c_2("C",c,1.5,step);
+    LogXYSol log_xy_sol_a("A", a, step);
+    LogXYSol log_xy_sol_b("B", b, step);
+    LogXYSol log_xy_sol_c("C", c, step);
 
-     LogNXX logn_xx_a_2("A",a,1.5,step);
-     LogNXX logn_xx_b_2("B",b,1.5,step);
-     LogNXX logn_xx_c_2("C",c,1.5,step);
+    LogXX log_xx_a(TestTags::standard(), "A", a, step);
+    LogXX log_xx_b(TestTags::sweep(), "B", b, step);
+    LogXX log_xx_c(TestTags::sweep(), "C", c, step);
 
-     LogNXY logn_xy_a_3("A",a,0,step);
-     LogNXY logn_xy_b_3("B",b,0,step);
-     LogNXY logn_xy_c_3("C",c,0,step);
+    LogNXY logn_xy_a_1("A", a, -1.5, step);
+    LogNXY logn_xy_b_1("B", b, -1.5, step);
+    LogNXY logn_xy_c_1("C", c, -1.5, step);
 
-     LogNXYSol logn_xy_sol_a_3("A",a,0,step);
-     LogNXYSol logn_xy_sol_b_3("B",b,0,step);
-     LogNXYSol logn_xy_sol_c_3("C",c,0,step);
+    LogNXYSol logn_xy_sol_a_1("A", a, -1.5, step);
+    LogNXYSol logn_xy_sol_b_1("B", b, -1.5, step);
+    LogNXYSol logn_xy_sol_c_1("C", c, -1.5, step);
 
-     LogNXX logn_xx_a_3("A",a,0,step);
-     LogNXX logn_xx_b_3("B",b,0,step);
-     LogNXX logn_xx_c_3("C",c,0,step);
+    LogNXX logn_xx_a_1("A", a, -1.5, step);
+    LogNXX logn_xx_b_1("B", b, -1.5, step);
+    LogNXX logn_xx_c_1("C", c, -1.5, step);
 
-     PowXY pow_xy_a_1("A",a,-1.5,step);
-     PowXY pow_xy_b_1("B",b,-1.5,step);
-     PowXY pow_xy_c_1("C",c,-1.5,step);
+    LogNXY logn_xy_a_2("A", a, 1.5, step);
+    LogNXY logn_xy_b_2("B", b, 1.5, step);
+    LogNXY logn_xy_c_2("C", c, 1.5, step);
 
-     PowXYSol pow_xy_sol_a_1("A",a,-1.5,step);
-     PowXYSol pow_xy_sol_b_1("B",b,-1.5,step);
-     PowXYSol pow_xy_sol_c_1("C",c,-1.5,step);
+    LogNXYSol logn_xy_sol_a_2("A", a, 1.5, step);
+    LogNXYSol logn_xy_sol_b_2("B", b, 1.5, step);
+    LogNXYSol logn_xy_sol_c_2("C", c, 1.5, step);
 
-     PowXX pow_xx_a_1(TestTags::sweep(),"A",a,-1.5,step);
-     PowXX pow_xx_b_1(TestTags::sweep(),"B",b,-1.5,step);
-     PowXX pow_xx_c_1(TestTags::sweep(),"C",c,-1.5,step);
+    LogNXX logn_xx_a_2("A", a, 1.5, step);
+    LogNXX logn_xx_b_2("B", b, 1.5, step);
+    LogNXX logn_xx_c_2("C", c, 1.5, step);
 
-     PowXY pow_xy_a_2("A",a,1.5,step);
-     PowXY pow_xy_b_2("B",b,1.5,step);
-     PowXY pow_xy_c_2("C",c,1.5,step);
+    LogNXY logn_xy_a_3("A", a, 0, step);
+    LogNXY logn_xy_b_3("B", b, 0, step);
+    LogNXY logn_xy_c_3("C", c, 0, step);
 
-     PowXYSol pow_xy_sol_a_2("A",a,1.5,step);
-     PowXYSol pow_xy_sol_b_2("B",b,1.5,step);
-     PowXYSol pow_xy_sol_c_2("C",c,1.5,step);
+    LogNXYSol logn_xy_sol_a_3("A", a, 0, step);
+    LogNXYSol logn_xy_sol_b_3("B", b, 0, step);
+    LogNXYSol logn_xy_sol_c_3("C", c, 0, step);
 
-     PowXX pow_xx_a_2(TestTags::standard(),"A",a,1.5,step);
-     PowXX pow_xx_b_2(TestTags::sweep(),"B",b,1.5,step);
-     PowXX pow_xx_c_2(TestTags::sweep(),"C",c,1.5,step);
+    LogNXX logn_xx_a_3("A", a, 0, step);
+    LogNXX logn_xx_b_3("B", b, 0, step);
+    LogNXX logn_xx_c_3("C", c, 0, step);
 
-     PowXY pow_xy_a_3("A",a,0,step);
-     PowXY pow_xy_b_3("B",b,0,step);
-     PowXY pow_xy_c_3("C",c,0,step);
+    PowXY pow_xy_a_1("A", a, -1.5, step);
+    PowXY pow_xy_b_1("B", b, -1.5, step);
+    PowXY pow_xy_c_1("C", c, -1.5, step);
 
-     PowXYSol pow_xy_sol_a_3("A",a,0,step);
-     PowXYSol pow_xy_sol_b_3("B",b,0,step);
-     PowXYSol pow_xy_sol_c_3("C",c,0,step);
+    PowXYSol pow_xy_sol_a_1("A", a, -1.5, step);
+    PowXYSol pow_xy_sol_b_1("B", b, -1.5, step);
+    PowXYSol pow_xy_sol_c_1("C", c, -1.5, step);
 
-     PowXX pow_xx_a_3(TestTags::sweep(),"A",a,0,step);
-     PowXX pow_xx_b_3(TestTags::sweep(),"B",b,0,step);
-     PowXX pow_xx_c_3(TestTags::sweep(),"C",c,0,step);
+    PowXX pow_xx_a_1(TestTags::sweep(), "A", a, -1.5, step);
+    PowXX pow_xx_b_1(TestTags::sweep(), "B", b, -1.5, step);
+    PowXX pow_xx_c_1(TestTags::sweep(), "C", c, -1.5, step);
 
-     //@}
+    PowXY pow_xy_a_2("A", a, 1.5, step);
+    PowXY pow_xy_b_2("B", b, 1.5, step);
+    PowXY pow_xy_c_2("C", c, 1.5, step);
 
-   }
-}}
+    PowXYSol pow_xy_sol_a_2("A", a, 1.5, step);
+    PowXYSol pow_xy_sol_b_2("B", b, 1.5, step);
+    PowXYSol pow_xy_sol_c_2("C", c, 1.5, step);
 
+    PowXX pow_xx_a_2(TestTags::standard(), "A", a, 1.5, step);
+    PowXX pow_xx_b_2(TestTags::sweep(), "B", b, 1.5, step);
+    PowXX pow_xx_c_2(TestTags::sweep(), "C", c, 1.5, step);
+
+    PowXY pow_xy_a_3("A", a, 0, step);
+    PowXY pow_xy_b_3("B", b, 0, step);
+    PowXY pow_xy_c_3("C", c, 0, step);
+
+    PowXYSol pow_xy_sol_a_3("A", a, 0, step);
+    PowXYSol pow_xy_sol_b_3("B", b, 0, step);
+    PowXYSol pow_xy_sol_c_3("C", c, 0, step);
+
+    PowXX pow_xx_a_3(TestTags::sweep(), "A", a, 0, step);
+    PowXX pow_xx_b_3(TestTags::sweep(), "B", b, 0, step);
+    PowXX pow_xx_c_3(TestTags::sweep(), "C", c, 0, step);
+
+    //@}
+
+} // namespace Test::Float::Transcendental
 #endif
 // STATISTICS: test-float

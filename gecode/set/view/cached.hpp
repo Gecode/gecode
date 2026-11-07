@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,375 +32,369 @@
 
 #include <sstream>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
-  template<class View>
-  forceinline
-  CachedView<View>::CachedView(void) {}
+    template <class View>
+    forceinline
+    CachedView<View>::CachedView(const View& y)
+        : DerivedView<View>(y) {}
 
-  template<class View>
-  forceinline
-  CachedView<View>::CachedView(const View& y)
-    : DerivedView<View>(y) {}
+    template <class View>
+    forceinline unsigned int
+    CachedView<View>::glb_size() const {
+        return x.glb_size();
+    }
 
-  template<class View>
-  forceinline unsigned int
-  CachedView<View>::glbSize(void) const {
-    return x.glbSize();
-  }
+    template <class View>
+    forceinline unsigned int
+    CachedView<View>::lub_size() const {
+        return x.lub_size();
+    }
 
-  template<class View>
-  forceinline unsigned int
-  CachedView<View>::lubSize(void) const {
-    return x.lubSize();
-  }
+    template <class View>
+    forceinline unsigned int
+    CachedView<View>::unknown_size() const {
+        return x.unknown_size();
+    }
 
-  template<class View>
-  forceinline unsigned int
-  CachedView<View>::unknownSize(void) const {
-    return x.unknownSize();
-  }
+    template <class View>
+    forceinline bool
+    CachedView<View>::contains(int n) const {
+        return x.contains(n);
+    }
 
-  template<class View>
-  forceinline bool
-  CachedView<View>::contains(int n) const { return x.contains(n); }
+    template <class View>
+    forceinline bool
+    CachedView<View>::not_contains(int n) const {
+        return x.not_contains(n);
+    }
 
-  template<class View>
-  forceinline bool
-  CachedView<View>::notContains(int n) const { return x.notContains(n); }
+    template <class View>
+    forceinline unsigned int
+    CachedView<View>::card_min() const {
+        return x.card_min();
+    }
 
-  template<class View>
-  forceinline unsigned int
-  CachedView<View>::cardMin(void) const {
-    return x.cardMin();
-  }
+    template <class View>
+    forceinline unsigned int
+    CachedView<View>::card_max() const {
+        return x.card_max();
+    }
 
-  template<class View>
-  forceinline unsigned int
-  CachedView<View>::cardMax(void) const {
-    return x.cardMax();
-  }
+    template <class View>
+    forceinline int
+    CachedView<View>::lub_min() const {
+        return x.lub_min();
+    }
 
-  template<class View>
-  forceinline int
-  CachedView<View>::lubMin(void) const {
-    return x.lubMin();
-  }
+    template <class View>
+    forceinline int
+    CachedView<View>::lub_max() const {
+        return x.lub_max();
+    }
 
-  template<class View>
-  forceinline int
-  CachedView<View>::lubMax(void) const {
-    return x.lubMax();
-  }
+    template <class View>
+    forceinline int
+    CachedView<View>::glb_min() const {
+        return x.glb_min();
+    }
 
-  template<class View>
-  forceinline int
-  CachedView<View>::glbMin(void) const {
-    return x.glbMin();
-  }
+    template <class View>
+    forceinline int
+    CachedView<View>::glb_max() const {
+        return x.glb_max();
+    }
 
-  template<class View>
-  forceinline int
-  CachedView<View>::glbMax(void) const {
-    return x.glbMax();
-  }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::card_min(Space& home, unsigned int m) {
+        return x.card_min(home, m);
+    }
 
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::cardMin(Space& home, unsigned int m) {
-    return x.cardMin(home,m);
-  }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::card_max(Space& home, unsigned int m) {
+        return x.card_max(home, m);
+    }
 
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::cardMax(Space& home, unsigned int m) {
-    return x.cardMax(home,m);
-  }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::include(Space& home, int i) {
+        return x.include(home, i);
+    }
 
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::include(Space& home, int i) {
-    return x.include(home,i);
-  }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::exclude(Space& home, int i) {
+        return x.exclude(home, i);
+    }
 
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::exclude(Space& home, int i) {
-    return x.exclude(home,i);
-  }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::intersect(Space& home, int i) {
+        return x.intersect(home, i);
+    }
 
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::intersect(Space& home, int i) {
-    return x.intersect(home,i);
-  }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::intersect(Space& home, int i, int j) {
+        return x.intersect(home, i, j);
+    }
 
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::intersect(Space& home, int i, int j) {
-    return x.intersect(home,i,j);
-  }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::include(Space& home, int i, int j) {
+        return x.include(home, i, j);
+    }
 
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::include(Space& home, int i, int j) {
-    return x.include(home,i,j);
-  }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::exclude(Space& home, int i, int j) {
+        return x.exclude(home, i, j);
+    }
 
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::exclude(Space& home, int i, int j) {
-    return x.exclude(home,i,j);
-  }
+    template <class View>
+    template <class I>
+    ModEvent
+    CachedView<View>::exclude_i(Space& home, I& iter) {
+        return x.exclude_i(home, iter);
+    }
 
-  template<class View>
-  template<class I> ModEvent
-  CachedView<View>::excludeI(Space& home,I& iter) {
-    return x.excludeI(home,iter);
-  }
+    template <class View>
+    template <class I>
+    ModEvent
+    CachedView<View>::include_i(Space& home, I& iter) {
+        return x.include_i(home, iter);
+    }
 
-  template<class View>
-  template<class I> ModEvent
-  CachedView<View>::includeI(Space& home,I& iter) {
-    return x.includeI(home,iter);
-  }
+    template <class View>
+    template <class I>
+    ModEvent
+    CachedView<View>::intersect_i(Space& home, I& iter) {
+        return x.intersect_i(home, iter);
+    }
 
-  template<class View>
-  template<class I> ModEvent
-  CachedView<View>::intersectI(Space& home,I& iter) {
-    return x.intersectI(home,iter);
-  }
+    template <class View>
+    forceinline void
+    CachedView<View>::subscribe(Space& home, Propagator& p, PropCond pc, bool schedule) {
+        x.subscribe(home, p, pc, schedule);
+    }
 
-  template<class View>
-  forceinline void
-  CachedView<View>::subscribe(Space& home, Propagator& p, PropCond pc,
-                                  bool schedule) {
-    x.subscribe(home,p,pc,schedule);
-  }
+    template <class View>
+    forceinline void
+    CachedView<View>::cancel(Space& home, Propagator& p, PropCond pc) {
+        x.cancel(home, p, pc);
+    }
 
-  template<class View>
-  forceinline void
-  CachedView<View>::cancel(Space& home, Propagator& p, PropCond pc) {
-    x.cancel(home,p,pc);
-  }
+    template <class View>
+    forceinline void
+    CachedView<View>::subscribe(Space& home, Advisor& a) {
+        x.subscribe(home, a);
+    }
 
-  template<class View>
-  forceinline void
-  CachedView<View>::subscribe(Space& home, Advisor& a) {
-    x.subscribe(home,a);
-  }
+    template <class View>
+    forceinline void
+    CachedView<View>::cancel(Space& home, Advisor& a) {
+        x.cancel(home, a);
+    }
 
-  template<class View>
-  forceinline void
-  CachedView<View>::cancel(Space& home, Advisor& a) {
-    x.cancel(home,a);
-  }
+    template <class View>
+    forceinline void
+    CachedView<View>::schedule(Space& home, Propagator& p, ModEvent me) {
+        return View::schedule(home, p, me);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::me(const ModEventDelta& med) {
+        return View::me(med);
+    }
 
-  template<class View>
-  forceinline void
-  CachedView<View>::schedule(Space& home, Propagator& p, ModEvent me) {
-    return View::schedule(home,p,me);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::me(const ModEventDelta& med) {
-    return View::me(med);
-  }
+    template <class View>
+    forceinline ModEventDelta
+    CachedView<View>::med(ModEvent me) {
+        return View::med(me);
+    }
 
-  template<class View>
-  forceinline ModEventDelta
-  CachedView<View>::med(ModEvent me) {
-    return View::med(me);
-  }
+    /*
+     * Delta information for advisors
+     *
+     */
 
-  /*
-   * Delta information for advisors
-   *
-   */
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::modification_event(const Delta& d) {
+        return View::modification_event(d);
+    }
 
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::modevent(const Delta& d) {
-    return View::modevent(d);
-  }
+    template <class View>
+    forceinline int
+    CachedView<View>::glb_min(const Delta& d) const {
+        return x.glb_min(d);
+    }
 
-  template<class View>
-  forceinline int
-  CachedView<View>::glbMin(const Delta& d) const {
-    return x.glbMin(d);
-  }
+    template <class View>
+    forceinline int
+    CachedView<View>::glb_max(const Delta& d) const {
+        return x.glb_max(d);
+    }
 
-  template<class View>
-  forceinline int
-  CachedView<View>::glbMax(const Delta& d) const {
-    return x.glbMax(d);
-  }
+    template <class View>
+    forceinline bool
+    CachedView<View>::glb_any(const Delta& d) const {
+        return x.glb_any(d);
+    }
 
-  template<class View>
-  forceinline bool
-  CachedView<View>::glbAny(const Delta& d) const {
-    return x.glbAny(d);
-  }
+    template <class View>
+    forceinline int
+    CachedView<View>::lub_min(const Delta& d) const {
+        return x.lub_min(d);
+    }
 
-  template<class View>
-  forceinline int
-  CachedView<View>::lubMin(const Delta& d) const {
-    return x.lubMin(d);
-  }
+    template <class View>
+    forceinline int
+    CachedView<View>::lub_max(const Delta& d) const {
+        return x.lub_max(d);
+    }
 
-  template<class View>
-  forceinline int
-  CachedView<View>::lubMax(const Delta& d) const {
-    return x.lubMax(d);
-  }
+    template <class View>
+    forceinline bool
+    CachedView<View>::lub_any(const Delta& d) const {
+        return x.lub_any(d);
+    }
 
-  template<class View>
-  forceinline bool
-  CachedView<View>::lubAny(const Delta& d) const {
-    return x.lubAny(d);
-  }
+    template <class View>
+    forceinline void
+    CachedView<View>::update(Space& home, CachedView<View>& y) {
+        lub_cache.update(home, y.lub_cache);
+        glb_cache.update(home, y.glb_cache);
+        DerivedView<View>::update(home, y);
+    }
 
-  template<class View>
-  forceinline void
-  CachedView<View>::update(Space& home, CachedView<View>& y) {
-    lubCache.update(home,y.lubCache);
-    glbCache.update(home,y.glbCache);
-    DerivedView<View>::update(home,y);
-  }
+    /*
+     * Cache operations
+     *
+     */
+    template <class View>
+    void
+    CachedView<View>::init_cache(Space& home, const IntSet& glb, const IntSet& lub) {
+        glb_cache.init(home);
+        IntSetRanges gr(glb);
+        glb_cache.include_i(home, gr);
+        lub_cache.init(home);
+        IntSetRanges lr(lub);
+        lub_cache.intersect_i(home, lr);
+    }
 
-  /*
-   * Cache operations
-   *
-   */
-  template<class View>
-  void
-  CachedView<View>::initCache(Space& home,
-                              const IntSet& glb, const IntSet& lub) {
-     glbCache.init(home);
-     IntSetRanges gr(glb);
-     glbCache.includeI(home,gr);
-     lubCache.init(home);
-     IntSetRanges lr(lub);
-     lubCache.intersectI(home,lr);
-   }
+    template <class View>
+    forceinline void
+    CachedView<View>::cache_glb(Space& home) {
+        GlbRanges<View> gr(DerivedView<View>::base());
+        glb_cache.include_i(home, gr);
+    }
 
-  template<class View>
-  forceinline void
-  CachedView<View>::cacheGlb(Space& home) {
-    GlbRanges<View> gr(DerivedView<View>::base());
-    glbCache.includeI(home,gr);
-  }
+    template <class View>
+    forceinline void
+    CachedView<View>::cache_lub(Space& home) {
+        LubRanges<View> lr(DerivedView<View>::base());
+        lub_cache.intersect_i(home, lr);
+    }
 
-  template<class View>
-  forceinline void
-  CachedView<View>::cacheLub(Space& home) {
-    LubRanges<View> lr(DerivedView<View>::base());
-    lubCache.intersectI(home,lr);
-  }
+    template <class View>
+    forceinline bool
+    CachedView<View>::glb_modified() const {
+        return glb_cache.size() != glb_size();
+    }
 
-  template<class View>
-  forceinline bool
-  CachedView<View>::glbModified(void) const {
-    return glbCache.size() != glbSize();
-  }
+    template <class View>
+    forceinline bool
+    CachedView<View>::lub_modified() const {
+        return lub_cache.size() != lub_size();
+    }
 
-  template<class View>
-  forceinline bool
-  CachedView<View>::lubModified(void) const {
-    return lubCache.size() != lubSize();
-  }
+    /**
+     * \brief %Range iterator for least upper bound of cached set views
+     * \ingroup TaskActorSetView
+     */
+    template <class View>
+    class LubRanges<CachedView<View>> : public LubRanges<View> {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        LubRanges() = default;
+        /// Initialize with ranges for view \a s
+        LubRanges(const CachedView<View>& s);
+        /// Initialize with ranges for view \a s
+        void init(const CachedView<View>& s);
+        //@}
+    };
 
-  /**
-   * \brief %Range iterator for least upper bound of cached set views
-   * \ingroup TaskActorSetView
-   */
-  template<class View>
-  class LubRanges<CachedView<View> > : public LubRanges<View> {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    LubRanges(void) {}
-    /// Initialize with ranges for view \a x
-    LubRanges(const CachedView<View>& x);
-    /// Initialize with ranges for view \a x
-    void init(const CachedView<View>& x);
-    //@}
-  };
+    template <class View>
+    forceinline
+    LubRanges<CachedView<View>>::LubRanges(const CachedView<View>& s)
+        : LubRanges<View>(s.base()) {}
 
-  template<class View>
-  forceinline
-  LubRanges<CachedView<View> >::LubRanges(const CachedView<View>& s)
-    : LubRanges<View>(s.base()) {}
+    template <class View>
+    forceinline void
+    LubRanges<CachedView<View>>::init(const CachedView<View>& s) {
+        LubRanges<View>::init(s.base());
+    }
 
-  template<class View>
-  forceinline void
-  LubRanges<CachedView<View> >::init(const CachedView<View>& s) {
-    LubRanges<View>::init(s.base());
-  }
+    /**
+     * \brief %Range iterator for greatest lower bound of cached set views
+     * \ingroup TaskActorSetView
+     */
+    template <class View>
+    class GlbRanges<CachedView<View>> : public GlbRanges<View> {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        GlbRanges() = default;
+        /// Initialize with ranges for view \a s
+        GlbRanges(const CachedView<View>& s);
+        /// Initialize with ranges for view \a s
+        void init(const CachedView<View>& s);
+        //@}
+    };
 
-  /**
-   * \brief %Range iterator for greatest lower bound of cached set views
-   * \ingroup TaskActorSetView
-   */
-  template<class View>
-  class GlbRanges<CachedView<View> > : public GlbRanges<View> {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    GlbRanges(void) {}
-    /// Initialize with ranges for view \a x
-    GlbRanges(const CachedView<View> & x);
-    /// Initialize with ranges for view \a x
-    void init(const CachedView<View> & x);
-    //@}
-  };
+    template <class View>
+    forceinline
+    GlbRanges<CachedView<View>>::GlbRanges(const CachedView<View>& s)
+        : GlbRanges<View>(s.base()) {}
 
-  template<class View>
-  forceinline
-  GlbRanges<CachedView<View> >::GlbRanges(const CachedView<View> & s)
-    : GlbRanges<View>(s.base()) {}
+    template <class View>
+    forceinline void
+    GlbRanges<CachedView<View>>::init(const CachedView<View>& s) {
+        GlbRanges<View>::init(s.base());
+    }
 
-  template<class View>
-  forceinline void
-  GlbRanges<CachedView<View> >::init(const CachedView<View> & s) {
-    GlbRanges<View>::init(s.base());
-  }
+    template <class Char, class Traits, class View>
+    std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const CachedView<View>& x) {
+        return os << x.base();
+    }
 
-  template<class Char, class Traits, class View>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os,
-              const CachedView<View>& x) {
-    return os << x.base();
-  }
+    template <class View>
+    forceinline bool
+    operator==(const CachedView<View>& x, const CachedView<View>& y) {
+        return x.base() == y.base();
+    }
 
-  template<class View>
-  forceinline bool
-  operator ==(const CachedView<View>& x, const CachedView<View>& y) {
-    return x.base() == y.base();
-  }
+    template <class View>
+    forceinline
+    GlbDiffRanges<View>::GlbDiffRanges(const CachedView<View>& x)
+        : gr(x.base()), cr(x.glb_cache) {
+        Iter::Ranges::Diff<GlbRanges<View>, BndSetRanges>::init(gr, cr);
+    }
 
-  template<class View>
-  forceinline bool
-  operator !=(const CachedView<View>& x, const CachedView<View>& y) {
-    return x.base() != y.base();
-  }
+    template <class View>
+    forceinline
+    LubDiffRanges<View>::LubDiffRanges(const CachedView<View>& x)
+        : cr(x.lub_cache), lr(x.base()) {
+        Iter::Ranges::Diff<BndSetRanges, LubRanges<View>>::init(cr, lr);
+    }
 
-  template<class View>
-  forceinline
-  GlbDiffRanges<View>::GlbDiffRanges(const CachedView<View>& x)
-    : gr(x.base()), cr(x.glbCache) {
-    Iter::Ranges::Diff<GlbRanges<View>,BndSetRanges>::init(gr,cr);
-  }
-
-  template<class View>
-  forceinline
-  LubDiffRanges<View>::LubDiffRanges(const CachedView<View>& x)
-    : cr(x.lubCache), lr(x.base()) {
-    Iter::Ranges::Diff<BndSetRanges,LubRanges<View> >::init(cr,lr);
-  }
-
-}}
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,95 +34,128 @@
 
 using namespace Gecode;
 
-namespace Test { namespace Set {
-
-  /// %Tests for sequence constraints
-  namespace Sequence {
+/// %Tests for sequence constraints
+namespace Test::Set::Sequence {
 
     /**
-      * \defgroup TaskTestSetSequence Sequence constraints
-      * \ingroup TaskTestSet
-      */
+     * \defgroup TaskTestSetSequence Sequence constraints
+     * \ingroup TaskTestSet
+     */
     //@{
 
-    static IntSet ds_33(-1,2);
+    static IntSet ds_33(-1, 2);
 
     /// %Test for sequence constraint
     class Sequence : public SetTest {
     public:
-      /// Create and register test
-      Sequence(const char* t)
-        : SetTest(t,4,ds_33,false) {}
-      /// %Test whether \a x is solution
-      virtual bool solution(const SetAssignment& x) const {
-        int max = Gecode::Set::Limits::min - 1;
-        for (int i=0; i<4; i++) {
-          CountableSetRanges xir(x.lub, x[i]);
-          IntSet xi(xir);
-          if (xi.ranges() > 0) {
-            int oldMax = max;
-            max = xi.max();
-            if (xi.min() <= oldMax)
-              return false;
-          }
+        /// Create and register test
+        Sequence(const char* t) : SetTest(t, 4, ds_33, false) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            int max = Gecode::Set::Limits::min - 1;
+            for (int i = 0; i < 4; i++) {
+                CountableSetRanges xir(x.lub, x[i]);
+                IntSet xi(xir);
+                if (xi.ranges() > 0) {
+                    int old_max = max;
+                    max = xi.max();
+                    if (xi.min() <= old_max)
+                        return false;
+                }
+            }
+            return true;
         }
-        return true;
-      }
-      /// Post constraint on \a x
-      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
-        Gecode::sequence(home, x);
-      }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray&) override {
+            Gecode::sequence(home, x);
+        }
     };
     Sequence _sequence("Sequence::Sequence");
 
     /// %Test for sequential-union constraint
     class SeqU : public SetTest {
     private:
-      int n;
+        int n;
+
     public:
-      /// Create and register test
-      SeqU(int n0)
-        : SetTest(n0 == 1 ? TestTags::check()
-                          : TestTags(TestTags::standard()),
-                  "Sequence::SeqU"+str(n0),n0+1,ds_33,false), n(n0) {}
-      /// %Test whether \a x is solution
-      virtual bool solution(const SetAssignment& x) const {
-        int max = Gecode::Set::Limits::min - 1;
-        for (int i=0; i<n; i++) {
-          CountableSetRanges xir(x.lub, x[i]);
-          IntSet xi(xir);
-          if (xi.ranges() > 0) {
-            int oldMax = max;
-            max = xi.max();
-            if (xi.min() <= oldMax)
-              return false;
-          }
+        /// Create and register test
+        SeqU(int n0)
+            : SetTest(n0 == 1 ? TestTags::check() : TestTags(TestTags::standard()), "Sequence::SeqU" + str(n0), n0 + 1,
+                      ds_33, false),
+              n(n0) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            int max = Gecode::Set::Limits::min - 1;
+            for (int i = 0; i < n; i++) {
+                CountableSetRanges xir(x.lub, x[i]);
+                IntSet xi(xir);
+                if (xi.ranges() > 0) {
+                    int old_max = max;
+                    max = xi.max();
+                    if (xi.min() <= old_max)
+                        return false;
+                }
+            }
+            CountableSetRanges* isrs = new CountableSetRanges[n];
+            for (int i = n; i--;)
+                isrs[i].init(x.lub, x[i]);
+            bool ret;
+            {
+                Region r;
+                Iter::Ranges::NaryUnion u(r, isrs, n);
+                CountableSetRanges xnr(x.lub, x[n]);
+                ret = Iter::Ranges::equal(u, xnr);
+            }
+            delete[] isrs;
+            return ret;
         }
-        CountableSetRanges* isrs = new CountableSetRanges[n];
-        for (int i=n; i--; )
-          isrs[i].init(x.lub, x[i]);
-        bool ret;
-        {
-          Region r;
-          Iter::Ranges::NaryUnion u(r, isrs, n);
-          CountableSetRanges xnr(x.lub, x[n]);
-          ret = Iter::Ranges::equal(u, xnr);
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray&) override {
+            SetVarArgs xs(x.size() - 1);
+            for (int i = x.size() - 1; i--;)
+                xs[i] = x[i];
+            Gecode::sequence(home, xs, x[x.size() - 1]);
         }
-        delete[] isrs;
-        return ret;
-      }
-      /// Post constraint on \a x
-      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
-        SetVarArgs xs(x.size()-1);
-        for (int i=x.size()-1; i--;)
-          xs[i]=x[i];
-        Gecode::sequence(home, xs, x[x.size()-1]);
-      }
     };
     SeqU _sequ0(0);
     SeqU _sequ1(1);
     SeqU _sequ3(3);
 
-}}}
+    /// %Test that sequence without a union rejects an empty array
+    class SeqEmpty : public Base {
+    private:
+        /// Space without variables
+        class Fixture : public Space {
+        public:
+            Fixture() = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
+            Fixture(Fixture& fixture) : Space(fixture) {}
+            Space*
+            copy() override {
+                return new Fixture(*this);
+            }
+        };
 
+    public:
+        /// Create and register test
+        SeqEmpty() : Base("Set::Sequence::Empty") {}
+        /// Perform test
+        bool
+        run() override {
+            Fixture home;
+            try {
+                Gecode::sequence(home, SetVarArgs());
+            } catch (const Gecode::Set::TooFewArguments&) {
+                return true;
+            }
+            return false;
+        }
+    };
+    SeqEmpty _seq_empty;
+
+} // namespace Test::Set::Sequence
 // STATISTICS: test-set

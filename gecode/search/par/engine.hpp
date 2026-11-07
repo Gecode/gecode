@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,569 +34,541 @@
  *
  */
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
-
-  /*
-   * Basic access routines
-   */
-  template<class Tracer>
-  forceinline Engine<Tracer>&
-  Engine<Tracer>::Worker::engine(void) const {
-    return _engine;
-  }
-  template<class Tracer>
-  forceinline const Options&
-  Engine<Tracer>::opt(void) const {
-    return _opt;
-  }
-  template<class Tracer>
-  forceinline unsigned int
-  Engine<Tracer>::workers(void) const {
-    return static_cast<unsigned int>(opt().threads);
-  }
-  template<class Tracer>
-  forceinline bool
-  Engine<Tracer>::stopped(void) const {
-    return has_stopped.load(std::memory_order_acquire);
-  }
-
-
-
-  /*
-   * Engine: command and wait handling
-   */
-  template<class Tracer>
-  forceinline typename Engine<Tracer>::Cmd
-  Engine<Tracer>::cmd(void) const {
-    return _cmd.load(std::memory_order_acquire);
-  }
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::block(void) {
-    _cmd.store(C_WAIT, std::memory_order_release);
-    Support::Thread::acquireGlobalMutex(&_m_wait);
-  }
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::release(Cmd c) {
-    _cmd.store(c, std::memory_order_release);
-    if (scheduler_enabled && ((c == C_WORK) || (c == C_RESET) ||
-                              (c == C_TERMINATE)))
-      WorkerControlAccess::signal_all(worker_control);
-    Support::Thread::releaseGlobalMutex(&_m_wait);
-  }
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::wait(void) {
-    _m_wait.acquire(); _m_wait.release();
-  }
-
-
-  /*
-   * Engine: initialization
-   */
-  template<class Tracer>
-  forceinline
-  Engine<Tracer>::Worker::Worker(Space* s, Engine& e)
-    : tracer(e.opt().tracer), _engine(e),
-      path(s == nullptr ? 0 : e.opt().nogoods_limit), d(0),
-      idle(false) {
-    tracer.worker();
-    if (s != nullptr) {
-      if (s->status(*this) == SS_FAILED) {
-        fail++;
-        cur = nullptr;
-        if (!engine().opt().clone)
-          delete s;
-      } else {
-        cur = snapshot(s,engine().opt());
-      }
-    } else {
-      cur = nullptr;
+    /*
+     * Basic access routines
+     */
+    template <class Tracer>
+    forceinline Engine<Tracer>&
+    Engine<Tracer>::Worker::engine() const {
+        return _engine;
     }
-  }
-
-  template<class Tracer>
-  forceinline
-  Engine<Tracer>::Engine(const Options& o)
-    : Search::Engine(o,static_cast<unsigned int>(o.threads)),
-      _opt(o), scheduler_enabled(false),
-      scheduler_fast_admit(nullptr),
-      scheduler_worker(nullptr), scheduler_requested(workers()),
-      scheduler_leases(0U), scheduler_cursor(0U), scheduler_generation(0U),
-      _cmd(C_WAIT), solutions(heap) {
-    // Initialize termination information
-    _n_term_not_ack = workers();
-    _n_not_terminated = workers();
-    // Initialize search information
-    n_busy = workers();
-    has_stopped.store(false, std::memory_order_release);
-    n_runs.store(0ULL, std::memory_order_release);
-    // Initialize reset information
-    _n_reset_not_ack = workers();
-  }
-
-  template<class Tracer>
-  unsigned int
-  Engine<Tracer>::scheduler_select(SchedulerLogical logical,
-                                    unsigned int exclude) const {
-    for (unsigned int offset=0U; offset<workers(); offset++) {
-      unsigned int i = (scheduler_cursor + offset) % workers();
-      if ((i != exclude) && !scheduler_worker[i].lease &&
-          scheduler_worker[i].parked &&
-          (scheduler_worker[i].logical == logical))
-        return i;
+    template <class Tracer>
+    forceinline const Options&
+    Engine<Tracer>::opt() const {
+        return _opt;
     }
-    return workers();
-  }
-
-  template<class Tracer>
-  bool
-  Engine<Tracer>::scheduler_grow(void) {
-    bool wake = false;
-    while (scheduler_leases < scheduler_requested) {
-      unsigned int i = scheduler_select(SchedulerLogical::OWNER,workers());
-      if (i == workers())
-        i = scheduler_select(SchedulerLogical::PENDING,workers());
-      if (i == workers())
-        i = scheduler_select(SchedulerLogical::IDLE,workers());
-      if (i == workers()) {
-        for (i=0U; i<workers(); i++)
-          if (!scheduler_worker[i].lease)
-            break;
-      }
-      if (i == workers())
-        break;
-      scheduler_worker[i].lease = true;
-      scheduler_worker[i].parked = false;
-      scheduler_leases++;
-      scheduler_cursor = (i+1U) % workers();
-      wake = true;
+    template <class Tracer>
+    forceinline unsigned int
+    Engine<Tracer>::workers() const {
+        return static_cast<unsigned int>(opt().threads);
     }
-    return wake;
-  }
-
-  template<class Tracer>
-  void
-  Engine<Tracer>::scheduler_enable(bool root_owner) {
-    if (!worker_control.engaged())
-      return;
-    scheduler_fast_admit =
-      WorkerControlAccess::fast_admission(worker_control);
-    scheduler_worker = static_cast<SchedulerWorker*>
-      (heap.ralloc(workers() * sizeof(SchedulerWorker)));
-    unsigned long long int generation;
-    WorkerControlAccess::snapshot(
-      worker_control,scheduler_requested,generation);
-    scheduler_leases = scheduler_requested;
-    for (unsigned int i=0U; i<workers(); i++) {
-      scheduler_worker[i].lease = i < scheduler_requested;
-      scheduler_worker[i].parked = false;
-      scheduler_worker[i].logical =
-        ((i == 0U) && root_owner) ?
-        SchedulerLogical::OWNER : SchedulerLogical::PENDING;
+    template <class Tracer>
+    forceinline bool
+    Engine<Tracer>::stopped() const {
+        return has_stopped.load(std::memory_order_acquire);
     }
-    scheduler_generation.store(generation,std::memory_order_release);
-    scheduler_enabled = true;
-  }
 
-  template<class Tracer>
-  void
-  Engine<Tracer>::scheduler_reset(bool root_owner) {
-    if (!scheduler_enabled)
-      return;
-    unsigned int requested;
-    unsigned long long int generation;
-    WorkerControlAccess::snapshot(worker_control,requested,generation);
-    scheduler_mutex.acquire();
-    scheduler_requested = requested;
-    scheduler_leases = scheduler_requested;
-    scheduler_cursor = 0U;
-    for (unsigned int i=0U; i<workers(); i++) {
-      scheduler_worker[i].lease = i < scheduler_requested;
-      scheduler_worker[i].parked = false;
-      scheduler_worker[i].logical =
-        ((i == 0U) && root_owner) ?
-        SchedulerLogical::OWNER : SchedulerLogical::PENDING;
+    /*
+     * Engine: command and wait handling
+     */
+    template <class Tracer>
+    forceinline Engine<Tracer>::Cmd
+    Engine<Tracer>::cmd() const {
+        return _cmd.load(std::memory_order_acquire);
     }
-    scheduler_generation.store(generation,std::memory_order_release);
-    scheduler_mutex.release();
-  }
-
-  template<class Tracer>
-  bool
-  Engine<Tracer>::scheduler_admit(unsigned int worker) {
-    if (!scheduler_enabled)
-      return true;
-    if (scheduler_fast_admit->load(std::memory_order_acquire))
-      return true;
-    if (cmd() == C_WORK) {
-      unsigned long long int generation =
-        WorkerControlAccess::generation(worker_control);
-      if ((generation ==
-           scheduler_generation.load(std::memory_order_acquire)) &&
-          (WorkerControlAccess::requested(worker_control) == workers()))
-        return true;
-
-      bool wake;
-      bool admitted;
-      unsigned int requested;
-      WorkerControlAccess::snapshot(worker_control,requested,generation);
-      scheduler_mutex.acquire();
-      if (generation >
-          scheduler_generation.load(std::memory_order_relaxed)) {
-        scheduler_requested = requested;
-        scheduler_generation.store(generation,std::memory_order_release);
-      }
-      wake = scheduler_grow();
-      if (scheduler_worker[worker].lease &&
-          (scheduler_leases > scheduler_requested)) {
-        scheduler_worker[worker].lease = false;
-        scheduler_leases--;
-      }
-      admitted = scheduler_worker[worker].lease;
-      scheduler_worker[worker].parked = !admitted;
-      scheduler_mutex.release();
-
-      if (requested == workers())
-        WorkerControlAccess::fast_admission(worker_control,generation);
-      if (wake)
-        WorkerControlAccess::signal_all(worker_control);
-      if (admitted)
-        return true;
-      WorkerControlAccess::wait(worker_control,worker);
-      // Re-enter the worker loop to observe a stop or command change.
-      return false;
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::block() {
+        _cmd.store(C_WAIT, std::memory_order_release);
+        Support::Thread::acquire_global_mutex(&_m_wait);
     }
-    return false;
-  }
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::release(Cmd c) {
+        _cmd.store(c, std::memory_order_release);
+        if (scheduler_enabled && ((c == C_WORK) || (c == C_RESET) || (c == C_TERMINATE)))
+            WorkerControlAccess::signal_all(worker_control);
+        Support::Thread::release_global_mutex(&_m_wait);
+    }
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::wait() {
+        _m_wait.acquire();
+        _m_wait.release();
+    }
 
-  template<class Tracer>
-  forceinline bool
-  Engine<Tracer>::scheduler_paused(void) const {
-    return scheduler_enabled &&
-      (WorkerControlAccess::requested(worker_control) == 0U);
-  }
-
-  template<class Tracer>
-  void
-  Engine<Tracer>::scheduler_owner(unsigned int worker) {
-    if (!scheduler_enabled)
-      return;
-    scheduler_mutex.acquire();
-    scheduler_worker[worker].logical = SchedulerLogical::OWNER;
-    scheduler_mutex.release();
-  }
-
-  template<class Tracer>
-  void
-  Engine<Tracer>::scheduler_idle(unsigned int worker) {
-    if (!scheduler_enabled)
-      return;
-    scheduler_mutex.acquire();
-    scheduler_worker[worker].logical = SchedulerLogical::IDLE;
-    scheduler_mutex.release();
-  }
-
-  template<class Tracer>
-  void
-  Engine<Tracer>::scheduler_handoff(unsigned int worker,
-                                    bool work_remains) {
-    if (!scheduler_enabled)
-      return;
-    unsigned int target = workers();
-    scheduler_mutex.acquire();
-    if (scheduler_worker[worker].lease) {
-      if (scheduler_leases > scheduler_requested) {
-        scheduler_worker[worker].lease = false;
-        scheduler_worker[worker].parked = true;
-        scheduler_leases--;
-      } else if (work_remains) {
-        target = scheduler_select(SchedulerLogical::OWNER,worker);
-        if (target == workers())
-          target = scheduler_select(SchedulerLogical::PENDING,worker);
-        if (target != workers()) {
-          scheduler_worker[worker].lease = false;
-          scheduler_worker[worker].parked = true;
-          scheduler_worker[target].lease = true;
-          scheduler_worker[target].parked = false;
-          scheduler_cursor = (target+1U) % workers();
+    /*
+     * Engine: initialization
+     */
+    template <class Tracer>
+    forceinline
+    Engine<Tracer>::Worker::Worker(Space* s, Engine& e)
+        : tracer(e.opt().tracer), _engine(e), path(s == nullptr ? 0 : e.opt().nogoods_limit), d(0), idle(false) {
+        tracer.worker();
+        if (s != nullptr) {
+            if (s->status(*this) == SS_FAILED) {
+                fail++;
+                cur = nullptr;
+                if (!engine().opt().clone)
+                    delete s;
+            } else {
+                cur = snapshot(s, engine().opt());
+            }
+        } else {
+            cur = nullptr;
         }
-      }
     }
-    scheduler_mutex.release();
-    if (target != workers())
-      WorkerControlAccess::signal(worker_control,target);
-  }
 
-  /*
-   * Statistics
-   */
-  template<class Tracer>
-  forceinline Statistics
-  Engine<Tracer>::Worker::statistics(void) {
-    m.acquire();
-    Statistics s = *this;
-    m.release();
-    return s;
-  }
-
-
-  /*
-   * Engine: search control
-   */
-  template<class Tracer>
-  forceinline bool
-  Engine<Tracer>::signal(void) const {
-    return solutions.empty() && (n_busy > 0) &&
-      !has_stopped.load(std::memory_order_acquire);
-  }
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::idle(void) {
-    m_search.acquire();
-    bool bs = signal();
-    n_busy--;
-    if (bs && (n_busy == 0))
-      e_search.signal();
-    m_search.release();
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::busy(void) {
-    m_search.acquire();
-    assert(n_busy > 0);
-    n_busy++;
-    m_search.release();
-  }
-
-  template<class Tracer>
-  forceinline unsigned long long int
-  Engine<Tracer>::run(void) const {
-    return n_runs.load(std::memory_order_acquire);
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::stop(unsigned long long int r) {
-    m_search.acquire();
-    // A worker can decide to stop during one call of next() and report it
-    // during a later one, for example after a portfolio cleared its stop.
-    if (r != n_runs.load(std::memory_order_relaxed)) {
-      m_search.release();
-      return;
+    template <class Tracer>
+    forceinline
+    Engine<Tracer>::Engine(const Options& o)
+        : Search::Engine(o, static_cast<unsigned int>(o.threads)), _opt(o), scheduler_enabled(false),
+          scheduler_fast_admit(nullptr), scheduler_worker(nullptr), scheduler_requested(workers()),
+          scheduler_leases(0U), scheduler_cursor(0U), scheduler_generation(0U), _cmd(C_WAIT), solutions(heap) {
+        // Initialize termination information
+        _n_term_not_ack = workers();
+        _n_not_terminated = workers();
+        // Initialize search information
+        n_busy = workers();
+        has_stopped.store(false, std::memory_order_release);
+        n_runs.store(0ULL, std::memory_order_release);
+        // Initialize reset information
+        _n_reset_not_ack = workers();
     }
-    bool bs = signal();
-    has_stopped.store(true, std::memory_order_release);
-    if (bs)
-      e_search.signal();
-    m_search.release();
-  }
 
-  template<class Tracer>
-  forceinline bool
-  Engine<Tracer>::work_remains(void) {
-    m_search.acquire();
-    bool remains = n_busy > 0;
-    m_search.release();
-    return remains;
-  }
-
-
-  /*
-   * Engine: termination control
-   */
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::terminated(void) {
-    unsigned int n;
-    _m_term.acquire();
-    n = --_n_not_terminated;
-    _m_term.release();
-    // The signal must be outside of the look, otherwise a thread might be
-    // terminated that still holds a mutex.
-    if (n == 0)
-      _e_terminate.signal();
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::ack_terminate(void) {
-    _m_term.acquire();
-    if (--_n_term_not_ack == 0)
-      _e_term_ack.signal();
-    _m_term.release();
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::wait_terminate(void) {
-    _m_wait_terminate.acquire();
-    _m_wait_terminate.release();
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::terminate(void) {
-    // Grab the wait mutex for termination
-    _m_wait_terminate.acquire();
-    // Release all threads
-    release(C_TERMINATE);
-    // Wait until all threads have acknowledged termination request
-    _e_term_ack.wait();
-    // Release waiting threads
-    _m_wait_terminate.release();
-    // Wait until all threads have in fact terminated
-    _e_terminate.wait();
-    // Now all threads are terminated!
-  }
-
-  /*
-   * Engine: reset control
-   */
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::ack_reset_start(void) {
-    _m_reset.acquire();
-    if (--_n_reset_not_ack == 0)
-      e_reset_ack_start.signal();
-    _m_reset.release();
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::ack_reset_stop(void) {
-    _m_reset.acquire();
-    if (++_n_reset_not_ack == workers())
-      e_reset_ack_stop.signal();
-    _m_reset.release();
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::wait_reset(void) {
-    m_wait_reset.acquire();
-    m_wait_reset.release();
-  }
-
-
-
-  /*
-   * Worker: finding and stealing working
-   */
-  template<class Tracer>
-  forceinline Space*
-  Engine<Tracer>::Worker::steal(unsigned long int& d, 
-                                Tracer& myt, Tracer& ot) {
-    /*
-     * Make a quick check whether the worker might have work
-     *
-     * If that is not true any longer, the worker will be asked
-     * again eventually.
-     */
-    m.acquire();
-    Space* s = path.steal() ? path.steal(*this,d,myt,ot) : nullptr;
-    m.release();
-    // Tell that there will be one more busy worker
-    if (s != nullptr)
-      engine().busy();
-    return s;
-  }
-
-  /*
-   * Return No-Goods
-   */
-  template<class Tracer>
-  forceinline NoGoods&
-  Engine<Tracer>::Worker::nogoods(void) {
-    return path;
-  }
-
-  /*
-   * Engine: search control
-   */
-  template<class Tracer>
-  Space*
-  Engine<Tracer>::next(void) {
-    // Invariant: the worker holds the wait mutex
-    m_search.acquire();
-    if (!solutions.empty()) {
-      // No search needs to be done, take leftover solution
-      Space* s = solutions.pop();
-      m_search.release();
-      return s;
+    template <class Tracer>
+    unsigned int
+    Engine<Tracer>::scheduler_select(SchedulerLogical logical, unsigned int exclude) const {
+        for (unsigned int offset = 0U; offset < workers(); offset++) {
+            unsigned int i = (scheduler_cursor + offset) % workers();
+            if ((i != exclude) && !scheduler_worker[i].lease && scheduler_worker[i].parked &&
+                (scheduler_worker[i].logical == logical))
+                return i;
+        }
+        return workers();
     }
-    // We ignore stopped (it will be reported again if needed)
-    has_stopped.store(false, std::memory_order_release);
-    // No more solutions?
-    if (n_busy == 0) {
-      m_search.release();
-      return nullptr;
+
+    template <class Tracer>
+    bool
+    Engine<Tracer>::scheduler_grow() {
+        bool wake = false;
+        while (scheduler_leases < scheduler_requested) {
+            unsigned int i = scheduler_select(SchedulerLogical::OWNER, workers());
+            if (i == workers())
+                i = scheduler_select(SchedulerLogical::PENDING, workers());
+            if (i == workers())
+                i = scheduler_select(SchedulerLogical::IDLE, workers());
+            if (i == workers()) {
+                for (i = 0U; i < workers(); i++)
+                    if (!scheduler_worker[i].lease)
+                        break;
+            }
+            if (i == workers())
+                break;
+            scheduler_worker[i].lease = true;
+            scheduler_worker[i].parked = false;
+            scheduler_leases++;
+            scheduler_cursor = (i + 1U) % workers();
+            wake = true;
+        }
+        return wake;
     }
-    n_runs.fetch_add(1ULL, std::memory_order_acq_rel);
-    m_search.release();
-    // Okay, now search has to continue, make the guys work
-    release(C_WORK);
+
+    template <class Tracer>
+    void
+    Engine<Tracer>::scheduler_enable(bool root_owner) {
+        if (!worker_control.engaged())
+            return;
+        scheduler_fast_admit = WorkerControlAccess::fast_admission(worker_control);
+        scheduler_worker = static_cast<SchedulerWorker*>(heap.ralloc(workers() * sizeof(SchedulerWorker)));
+        unsigned long long int generation;
+        WorkerControlAccess::snapshot(worker_control, scheduler_requested, generation);
+        scheduler_leases = scheduler_requested;
+        for (unsigned int i = 0U; i < workers(); i++) {
+            scheduler_worker[i].lease = i < scheduler_requested;
+            scheduler_worker[i].parked = false;
+            scheduler_worker[i].logical =
+                ((i == 0U) && root_owner) ? SchedulerLogical::OWNER : SchedulerLogical::PENDING;
+        }
+        scheduler_generation.store(generation, std::memory_order_release);
+        scheduler_enabled = true;
+    }
+
+    template <class Tracer>
+    void
+    Engine<Tracer>::scheduler_reset(bool root_owner) {
+        if (!scheduler_enabled)
+            return;
+        unsigned int requested;
+        unsigned long long int generation;
+        WorkerControlAccess::snapshot(worker_control, requested, generation);
+        scheduler_mutex.acquire();
+        scheduler_requested = requested;
+        scheduler_leases = scheduler_requested;
+        scheduler_cursor = 0U;
+        for (unsigned int i = 0U; i < workers(); i++) {
+            scheduler_worker[i].lease = i < scheduler_requested;
+            scheduler_worker[i].parked = false;
+            scheduler_worker[i].logical =
+                ((i == 0U) && root_owner) ? SchedulerLogical::OWNER : SchedulerLogical::PENDING;
+        }
+        scheduler_generation.store(generation, std::memory_order_release);
+        scheduler_mutex.release();
+    }
+
+    template <class Tracer>
+    bool
+    Engine<Tracer>::scheduler_admit(unsigned int worker) {
+        if (!scheduler_enabled)
+            return true;
+        if (scheduler_fast_admit->load(std::memory_order_acquire))
+            return true;
+        if (cmd() == C_WORK) {
+            unsigned long long int generation = WorkerControlAccess::generation(worker_control);
+            if ((generation == scheduler_generation.load(std::memory_order_acquire)) &&
+                (WorkerControlAccess::requested(worker_control) == workers()))
+                return true;
+
+            bool wake;
+            bool admitted;
+            unsigned int requested;
+            WorkerControlAccess::snapshot(worker_control, requested, generation);
+            scheduler_mutex.acquire();
+            if (generation > scheduler_generation.load(std::memory_order_relaxed)) {
+                scheduler_requested = requested;
+                scheduler_generation.store(generation, std::memory_order_release);
+            }
+            wake = scheduler_grow();
+            if (scheduler_worker[worker].lease && (scheduler_leases > scheduler_requested)) {
+                scheduler_worker[worker].lease = false;
+                scheduler_leases--;
+            }
+            admitted = scheduler_worker[worker].lease;
+            scheduler_worker[worker].parked = !admitted;
+            scheduler_mutex.release();
+
+            if (requested == workers())
+                WorkerControlAccess::fast_admission(worker_control, generation);
+            if (wake)
+                WorkerControlAccess::signal_all(worker_control);
+            if (admitted)
+                return true;
+            WorkerControlAccess::wait(worker_control, worker);
+            // Re-enter the worker loop to observe a stop or command change.
+            return false;
+        }
+        return false;
+    }
+
+    template <class Tracer>
+    forceinline bool
+    Engine<Tracer>::scheduler_paused() const {
+        return scheduler_enabled && (WorkerControlAccess::requested(worker_control) == 0U);
+    }
+
+    template <class Tracer>
+    void
+    Engine<Tracer>::scheduler_owner(unsigned int worker) {
+        if (!scheduler_enabled)
+            return;
+        scheduler_mutex.acquire();
+        scheduler_worker[worker].logical = SchedulerLogical::OWNER;
+        scheduler_mutex.release();
+    }
+
+    template <class Tracer>
+    void
+    Engine<Tracer>::scheduler_idle(unsigned int worker) {
+        if (!scheduler_enabled)
+            return;
+        scheduler_mutex.acquire();
+        scheduler_worker[worker].logical = SchedulerLogical::IDLE;
+        scheduler_mutex.release();
+    }
+
+    template <class Tracer>
+    void
+    Engine<Tracer>::scheduler_handoff(unsigned int worker, bool work_remains) {
+        if (!scheduler_enabled)
+            return;
+        unsigned int target = workers();
+        scheduler_mutex.acquire();
+        if (scheduler_worker[worker].lease) {
+            if (scheduler_leases > scheduler_requested) {
+                scheduler_worker[worker].lease = false;
+                scheduler_worker[worker].parked = true;
+                scheduler_leases--;
+            } else if (work_remains) {
+                target = scheduler_select(SchedulerLogical::OWNER, worker);
+                if (target == workers())
+                    target = scheduler_select(SchedulerLogical::PENDING, worker);
+                if (target != workers()) {
+                    scheduler_worker[worker].lease = false;
+                    scheduler_worker[worker].parked = true;
+                    scheduler_worker[target].lease = true;
+                    scheduler_worker[target].parked = false;
+                    scheduler_cursor = (target + 1U) % workers();
+                }
+            }
+        }
+        scheduler_mutex.release();
+        if (target != workers())
+            WorkerControlAccess::signal(worker_control, target);
+    }
 
     /*
-     * Wait until a search related event has happened. It might be that
-     * the event has already been signalled in the last run, but the
-     * solution has been removed. So we have to try until there has
-     * something new happened.
+     * Statistics
      */
-    while (true) {
-      e_search.wait();
-      m_search.acquire();
-      if (!solutions.empty()) {
-        // Report solution
-        Space* s = solutions.pop();
-        m_search.release();
-        // Make workers wait again
-        block();
+    template <class Tracer>
+    forceinline Statistics
+    Engine<Tracer>::Worker::statistics() {
+        m.acquire();
+        Statistics s = *this;
+        m.release();
         return s;
-      }
-      // No more solutions or stopped?
-      if ((n_busy == 0) || has_stopped.load(std::memory_order_acquire)) {
-        m_search.release();
-        // Make workers wait again
-        block();
-        return nullptr;
-      }
-      m_search.release();
     }
-    GECODE_NEVER;
-    return nullptr;
-  }
 
-  template<class Tracer>
-  Support::Terminator* 
-  Engine<Tracer>::Worker::terminator(void) const {
-    return &_engine;
-  }
+    /*
+     * Engine: search control
+     */
+    template <class Tracer>
+    forceinline bool
+    Engine<Tracer>::signal() const {
+        return solutions.empty() && (n_busy > 0) && !has_stopped.load(std::memory_order_acquire);
+    }
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::idle() {
+        m_search.acquire();
+        bool bs = signal();
+        n_busy--;
+        if (bs && (n_busy == 0))
+            e_search.signal();
+        m_search.release();
+    }
 
-  /*
-   * Termination and deletion
-   */
-  template<class Tracer>
-  Engine<Tracer>::Worker::~Worker(void) {
-    delete cur;
-    path.reset(0);
-    tracer.done();
-  }
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::busy() {
+        m_search.acquire();
+        assert(n_busy > 0);
+        n_busy++;
+        m_search.release();
+    }
 
-  /*
-   * Destructor
-   */
-  template<class Tracer>
-  Engine<Tracer>::~Engine(void) {
-    while (!solutions.empty())
-      delete solutions.pop();
-    if (scheduler_worker != nullptr)
-      heap.rfree(scheduler_worker);
-  }
+    template <class Tracer>
+    forceinline unsigned long long int
+    Engine<Tracer>::run() const {
+        return n_runs.load(std::memory_order_acquire);
+    }
 
-}}}
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::stop(unsigned long long int r) {
+        m_search.acquire();
+        // A worker can decide to stop during one call of next() and report it
+        // during a later one, for example after a portfolio cleared its stop.
+        if (r != n_runs.load(std::memory_order_relaxed)) {
+            m_search.release();
+            return;
+        }
+        bool bs = signal();
+        has_stopped.store(true, std::memory_order_release);
+        if (bs)
+            e_search.signal();
+        m_search.release();
+    }
+
+    template <class Tracer>
+    forceinline bool
+    Engine<Tracer>::work_remains() {
+        m_search.acquire();
+        bool remains = n_busy > 0;
+        m_search.release();
+        return remains;
+    }
+
+    /*
+     * Engine: termination control
+     */
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::terminated() {
+        unsigned int n;
+        _m_term.acquire();
+        n = --_n_not_terminated;
+        _m_term.release();
+        // The signal must be outside of the look, otherwise a thread might be
+        // terminated that still holds a mutex.
+        if (n == 0)
+            _e_terminate.signal();
+    }
+
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::ack_terminate() {
+        _m_term.acquire();
+        if (--_n_term_not_ack == 0)
+            _e_term_ack.signal();
+        _m_term.release();
+    }
+
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::wait_terminate() {
+        _m_wait_terminate.acquire();
+        _m_wait_terminate.release();
+    }
+
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::terminate() {
+        // Grab the wait mutex for termination
+        _m_wait_terminate.acquire();
+        // Release all threads
+        release(C_TERMINATE);
+        // Wait until all threads have acknowledged termination request
+        _e_term_ack.wait();
+        // Release waiting threads
+        _m_wait_terminate.release();
+        // Wait until all threads have in fact terminated
+        _e_terminate.wait();
+        // Now all threads are terminated!
+    }
+
+    /*
+     * Engine: reset control
+     */
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::ack_reset_start() {
+        _m_reset.acquire();
+        if (--_n_reset_not_ack == 0)
+            e_reset_ack_start.signal();
+        _m_reset.release();
+    }
+
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::ack_reset_stop() {
+        _m_reset.acquire();
+        if (++_n_reset_not_ack == workers())
+            e_reset_ack_stop.signal();
+        _m_reset.release();
+    }
+
+    template <class Tracer>
+    forceinline void
+    Engine<Tracer>::wait_reset() {
+        m_wait_reset.acquire();
+        m_wait_reset.release();
+    }
+
+    /*
+     * Worker: finding and stealing working
+     */
+    template <class Tracer>
+    forceinline Space*
+    Engine<Tracer>::Worker::steal(unsigned long int& d, Tracer& myt, Tracer& ot) {
+        /*
+         * Make a quick check whether the worker might have work
+         *
+         * If that is not true any longer, the worker will be asked
+         * again eventually.
+         */
+        m.acquire();
+        Space* s = path.steal() ? path.steal(*this, d, myt, ot) : nullptr;
+        m.release();
+        // Tell that there will be one more busy worker
+        if (s != nullptr)
+            engine().busy();
+        return s;
+    }
+
+    /*
+     * Return No-Goods
+     */
+    template <class Tracer>
+    forceinline NoGoods&
+    Engine<Tracer>::Worker::nogoods() {
+        return path;
+    }
+
+    /*
+     * Engine: search control
+     */
+    template <class Tracer>
+    Space*
+    Engine<Tracer>::next() {
+        // Invariant: the worker holds the wait mutex
+        m_search.acquire();
+        if (!solutions.empty()) {
+            // No search needs to be done, take leftover solution
+            Space* s = solutions.pop();
+            m_search.release();
+            return s;
+        }
+        // We ignore stopped (it will be reported again if needed)
+        has_stopped.store(false, std::memory_order_release);
+        // No more solutions?
+        if (n_busy == 0) {
+            m_search.release();
+            return nullptr;
+        }
+        n_runs.fetch_add(1ULL, std::memory_order_acq_rel);
+        m_search.release();
+        // Okay, now search has to continue, make the guys work
+        release(C_WORK);
+
+        /*
+         * Wait until a search related event has happened. It might be that
+         * the event has already been signalled in the last run, but the
+         * solution has been removed. So we have to try until there has
+         * something new happened.
+         */
+        while (true) {
+            e_search.wait();
+            m_search.acquire();
+            if (!solutions.empty()) {
+                // Report solution
+                Space* s = solutions.pop();
+                m_search.release();
+                // Make workers wait again
+                block();
+                return s;
+            }
+            // No more solutions or stopped?
+            if ((n_busy == 0) || has_stopped.load(std::memory_order_acquire)) {
+                m_search.release();
+                // Make workers wait again
+                block();
+                return nullptr;
+            }
+            m_search.release();
+        }
+        GECODE_NEVER;
+        return nullptr;
+    }
+
+    template <class Tracer>
+    Support::Terminator*
+    Engine<Tracer>::Worker::terminator() const {
+        return &_engine;
+    }
+
+    /*
+     * Termination and deletion
+     */
+    template <class Tracer>
+    Engine<Tracer>::Worker::~Worker() {
+        delete cur;
+        path.reset(0);
+        tracer.done();
+    }
+
+    /*
+     * Destructor
+     */
+    template <class Tracer>
+    Engine<Tracer>::~Engine() {
+        while (!solutions.empty())
+            delete solutions.pop();
+        if (scheduler_worker != nullptr)
+            heap.rfree(scheduler_worker);
+    }
+
+} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

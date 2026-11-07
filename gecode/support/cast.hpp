@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,16 +32,16 @@
 
 namespace Gecode {
 
-  /// Cast \a p into pointer of type \a T
-  template<class T>
-  T ptr_cast(void* p);
+    /// Cast \a p into pointer of type \a T
+    template <class T>
+    T ptr_cast(void* p);
 
-  template<class T>
-  forceinline T
-  ptr_cast(void* p) {
-    return static_cast<T>(p);
-  }
+    template <class T>
+    forceinline T
+    ptr_cast(void* p) {
+        return static_cast<T>(p);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: support-any

@@ -317,6 +317,7 @@ set(GECODE_TEST_SOURCES
   test/flatzinc/blocksworld_instance_1.cpp
   test/flatzinc/blocksworld_instance_2.cpp
   test/flatzinc/bool_clause.cpp
+  test/flatzinc/branching.cpp
   test/flatzinc/bug232.cpp
   test/flatzinc/bug319.cpp
   test/flatzinc/bugfix_r6746.cpp
@@ -333,6 +334,7 @@ set(GECODE_TEST_SOURCES
   test/flatzinc/cutstock.cpp
   test/flatzinc/empty_domain_1.cpp
   test/flatzinc/empty_domain_2.cpp
+  test/flatzinc/empty_set_literal.cpp
   test/flatzinc/eq20.cpp
   test/flatzinc/factory_planning_instance.cpp
   test/flatzinc/golomb.cpp
@@ -416,6 +418,7 @@ set(GECODE_TEST_SOURCES
   test/float/basic.cpp
   test/float/channel.cpp
   test/float/dom.cpp
+  test/float/interval.cpp
   test/float/linear.cpp
   test/float/mm-lin.cpp
   test/float/rel.cpp

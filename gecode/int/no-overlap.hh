@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -41,278 +40,285 @@
  * \brief %No-overlap propagators
  */
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
-  /**
-   * \brief Dimension combining coordinate and integer size information
-   */
-  class FixDim {
-  protected:
-    /// Coordinate
-    IntView c;
-    /// Size
-    int s;
-    /// Modify smallest start coordinate
-    ExecStatus ssc(Space& home, int n);
-    /// Modify largest end coordinate
-    ExecStatus lec(Space& home, int n);
-    /// Dimension must not overlap with coordinates \a n to \a m
-    ExecStatus nooverlap(Space& home, int n, int m);
-  public:
-    /// Default constructor
-    FixDim(void);
-    /// Constructor
-    FixDim(IntView c, int s);
+    /**
+     * \brief Dimension combining coordinate and integer size information
+     */
+    class FixDim {
+    protected:
+        /// Coordinate
+        IntView c;
+        /// Size
+        int s;
+        /// Modify smallest start coordinate
+        ExecStatus ssc(Space& home, int n);
+        /// Modify largest end coordinate
+        ExecStatus lec(Space& home, int n);
+        /// Dimension must not overlap with coordinates \a n to \a m
+        ExecStatus no_overlap(Space& home, int n, int m);
 
-    /// Return smallest start coordinate
-    int ssc(void) const;
-    /// Return largest start coordinate
-    int lsc(void) const;
-    /// Return smallest end coordinate
-    int sec(void) const;
-    /// Return largest end coordinate
-    int lec(void) const;
+    public:
+        /// Default constructor
+        FixDim();
+        /// Constructor
+        FixDim(IntView c, int s);
 
-    /// Dimension must not overlap with \a d
-    ExecStatus nooverlap(Space& home, FixDim& d);
+        /// Return smallest start coordinate
+        int ssc() const;
+        /// Return largest start coordinate
+        int lsc() const;
+        /// Return smallest end coordinate
+        int sec() const;
+        /// Return largest end coordinate
+        int lec() const;
 
-    /// Update dimension during cloning
-    void update(Space& home, FixDim& d);
+        /// Dimension must not overlap with \a d
+        ExecStatus no_overlap(Space& home, FixDim& d);
 
-    /// Subscribe propagator \a p to dimension
-    void subscribe(Space& home, Propagator& p);
-    /// Cancel propagator \a p from dimension
-    void cancel(Space& home, Propagator& p);
-    /// Schedule propagator \a p
-    void reschedule(Space& home, Propagator& p);
-  };
+        /// Update dimension during cloning
+        void update(Space& home, FixDim& d);
 
-  /**
-   * \brief Dimension combining coordinate and integer view size information
-   */
-  class FlexDim {
-  protected:
-    /// Start coordinate
-    IntView c0;
-    /// Size
-    IntView s;
-    /// End coordinate
-    IntView c1;
-    /// Modify smallest start coordinate
-    ExecStatus ssc(Space& home, int n);
-    /// Modify largest end coordinate
-    ExecStatus lec(Space& home, int n);
-    /// Dimension must not overlap with coordinates \a n to \a m
-    ExecStatus nooverlap(Space& home, int n, int m);
-  public:
-    /// Default constructor
-    FlexDim(void);
-    /// Constructor
-    FlexDim(IntView c0, IntView s, IntView c1);
+        /// Subscribe propagator \a p to dimension
+        void subscribe(Space& home, Propagator& p);
+        /// Cancel propagator \a p from dimension
+        void cancel(Space& home, Propagator& p);
+        /// Schedule propagator \a p
+        void reschedule(Space& home, Propagator& p);
+    };
 
-    /// Return smallest start coordinate
-    int ssc(void) const;
-    /// Return largest start coordinate
-    int lsc(void) const;
-    /// Return smallest end coordinate
-    int sec(void) const;
-    /// Return largest end coordinate
-    int lec(void) const;
+    /**
+     * \brief Dimension combining coordinate and integer view size information
+     */
+    class FlexDim {
+    protected:
+        /// Start coordinate
+        IntView c0;
+        /// Size
+        IntView s;
+        /// End coordinate
+        IntView c1;
+        /// Modify smallest start coordinate
+        ExecStatus ssc(Space& home, int n);
+        /// Modify largest end coordinate
+        ExecStatus lec(Space& home, int n);
+        /// Dimension must not overlap with coordinates \a n to \a m
+        ExecStatus no_overlap(Space& home, int n, int m);
 
-    /// Dimension must not overlap with \a d
-    ExecStatus nooverlap(Space& home, FlexDim& d);
+    public:
+        /// Default constructor
+        FlexDim() = default;
+        /// Constructor
+        FlexDim(IntView c0, IntView s, IntView c1);
 
-    /// Update dimension during cloning
-    void update(Space& home, FlexDim& d);
+        /// Return smallest start coordinate
+        int ssc() const;
+        /// Return largest start coordinate
+        int lsc() const;
+        /// Return smallest end coordinate
+        int sec() const;
+        /// Return largest end coordinate
+        int lec() const;
 
-    /// Subscribe propagator \a p to dimension
-    void subscribe(Space& home, Propagator& p);
-    /// Cancel propagator \a p from dimension
-    void cancel(Space& home, Propagator& p);
-    /// Schedule propagator \a p
-    void reschedule(Space& home, Propagator& p);
-  };
+        /// Dimension must not overlap with \a d
+        ExecStatus no_overlap(Space& home, FlexDim& d);
 
-}}}
+        /// Update dimension during cloning
+        void update(Space& home, FlexDim& d);
+
+        /// Subscribe propagator \a p to dimension
+        void subscribe(Space& home, Propagator& p);
+        /// Cancel propagator \a p from dimension
+        void cancel(Space& home, Propagator& p);
+        /// Schedule propagator \a p
+        void reschedule(Space& home, Propagator& p);
+    };
+
+} // namespace Gecode::Int::NoOverlap
 
 #include <gecode/int/no-overlap/dim.hpp>
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
-  /**
-   * \brief Mandatory box class
-   */
-  template<class Dim, int n>
-  class ManBox {
-  protected:
-    /// Dimensions
-    Dim d[n];
-  public:
-    /// Access to dimension \a i
-    const Dim& operator [](int i) const;
-    /// Access to dimension \a i
-    Dim& operator [](int i);
-    /// Return number of dimensions
-    static int dim(void);
+    /**
+     * \brief Mandatory box class
+     */
+    template <class Dim, int n>
+    class ManBox {
+    protected:
+        /// Dimensions
+        Dim d[n];
 
-    /// Whether box is mandatory
-    bool mandatory(void) const;
-    /// Whether box is optional
-    bool optional(void) const;
-    /// Whether box is excluded
-    bool excluded(void) const;
+    public:
+        /// Access to dimension \a i
+        const Dim& operator[](int i) const;
+        /// Access to dimension \a i
+        Dim& operator[](int i);
+        /// Return number of dimensions
+        static int dim();
 
-    /// Exclude box
-    ExecStatus exclude(Space& home);
+        /// Whether box is mandatory
+        bool mandatory() const;
+        /// Whether box is optional
+        bool optional() const;
+        /// Whether box is excluded
+        bool excluded() const;
 
-    /// Check whether this box does not any longer overlap with \a b
-    bool nooverlap(const ManBox<Dim,n>& b) const;
-    /// Check whether this box overlaps with \a b
-    bool overlap(const ManBox<Dim,n>& b) const;
+        /// Exclude box
+        ExecStatus exclude(Space& home);
 
-    /// Propagate that this box does not overlap with \a b
-    ExecStatus nooverlap(Space& home, ManBox<Dim,n>& b);
+        /// Check whether this box does not any longer overlap with \a b
+        bool no_overlap(const ManBox<Dim, n>& b) const;
+        /// Check whether this box overlaps with \a b
+        bool overlap(const ManBox<Dim, n>& b) const;
 
-    /// Update box during cloning
-    void update(Space& home, ManBox<Dim,n>& r);
+        /// Propagate that this box does not overlap with \a b
+        ExecStatus no_overlap(Space& home, ManBox<Dim, n>& b);
 
-    /// Subscribe propagator \a p to box
-    void subscribe(Space& home, Propagator& p);
-    /// Cancel propagator \a p from box
-    void cancel(Space& home, Propagator& p);
-    /// Schedule propagator \a p
-    void reschedule(Space& home, Propagator& p);
-  };
+        /// Update box during cloning
+        void update(Space& home, ManBox<Dim, n>& b);
 
-  /**
-   * \brief Optional box class
-   */
-  template<class Dim, int n>
-  class OptBox : public ManBox<Dim,n> {
-  protected:
-    using ManBox<Dim,n>::d;
-    /// Whether box is optional or not
-    BoolView o;
-  public:
-    /// Set Boolean view to \a o
-    void optional(BoolView o);
-    /// Whether box is mandatory
-    bool mandatory(void) const;
-    /// Whether box is optional
-    bool optional(void) const;
-    /// Whether box is excluded
-    bool excluded(void) const;
+        /// Subscribe propagator \a p to box
+        void subscribe(Space& home, Propagator& p);
+        /// Cancel propagator \a p from box
+        void cancel(Space& home, Propagator& p);
+        /// Schedule propagator \a p
+        void reschedule(Space& home, Propagator& p);
+    };
 
-    /// Exclude box
-    ExecStatus exclude(Space& home);
+    /**
+     * \brief Optional box class
+     */
+    template <class Dim, int n>
+    class OptBox : public ManBox<Dim, n> {
+    protected:
+        using ManBox<Dim, n>::d;
+        /// Whether box is optional or not
+        BoolView o;
 
-    /// Update box during cloning
-    void update(Space& home, OptBox<Dim,n>& r);
+    public:
+        /// Set Boolean view to \a o
+        void optional(BoolView o);
+        /// Whether box is mandatory
+        bool mandatory() const;
+        /// Whether box is optional
+        bool optional() const;
+        /// Whether box is excluded
+        bool excluded() const;
 
-    /// Subscribe propagator \a p to box
-    void subscribe(Space& home, Propagator& p);
-    /// Cancel propagator \a p from box
-    void cancel(Space& home, Propagator& p);
-    /// Schedule propagator \a p
-    void reschedule(Space& home, Propagator& p);
-  };
+        /// Exclude box
+        ExecStatus exclude(Space& home);
 
-}}}
+        /// Update box during cloning
+        void update(Space& home, OptBox<Dim, n>& b);
+
+        /// Subscribe propagator \a p to box
+        void subscribe(Space& home, Propagator& p);
+        /// Cancel propagator \a p from box
+        void cancel(Space& home, Propagator& p);
+        /// Schedule propagator \a p
+        void reschedule(Space& home, Propagator& p);
+    };
+
+} // namespace Gecode::Int::NoOverlap
 
 #include <gecode/int/no-overlap/box.hpp>
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
-  /**
-   * \brief Base class for no-overlap propagator
-   *
-   * Requires \code #include <gecode/int/no-overlap.hh> \endcode
-   *
-   * \ingroup FuncIntProp
-   */
-  template<class Box>
-  class Base : public Propagator {
-  protected:
-    /// Boxes
-    Box* b;
-    /// Number of mandatory boxes: b[0] ... b[n-1]
-    int n;
-    /// Constructor for posting with \a n mandatory boxes
-    Base(Home home, Box* b, int n);
-    /// Constructor for cloning \a p with \a m boxes
-    Base(Space& home, Base<Box>& p, int m);
     /**
-     * \brief Partition \a n boxes \a b starting at position \a i
+     * \brief Base class for no-overlap propagator
      *
-     * Returns the number of mandatory boxes at the front of \a b.
+     * Requires \code #include <gecode/int/no-overlap.hh> \endcode
+     *
+     * \ingroup FuncIntProp
      */
-    static int partition(Box* b, int i, int n);
-  public:
-    /// Cost function
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Destructor
-    virtual size_t dispose(Space& home);
-  };
+    template <class Box>
+    class Base : public Propagator {
+    protected:
+        /// Boxes
+        Box* b;
+        /// Number of mandatory boxes: b[0] ... b[n-1]
+        int n;
+        /// Constructor for posting with \a n mandatory boxes
+        Base(Home home, Box* b, int n);
+        /// Constructor for cloning \a p with \a m boxes
+        Base(Space& home, Base<Box>& p, int m);
+        /**
+         * \brief Partition \a n boxes \a b starting at position \a i
+         *
+         * Returns the number of mandatory boxes at the front of \a b.
+         */
+        static int partition(Box* b, int i, int n);
 
-  /**
-   * \brief No-overlap propagator for mandatory boxes
-   *
-   * Requires \code #include <gecode/int/no-overlap.hh> \endcode
-   *
-   * \ingroup FuncIntProp
-   */
-  template<class Box>
-  class ManProp : public Base<Box> {
-  protected:
-    using Base<Box>::b;
-    using Base<Box>::n;
-    /// Constructor for posting
-    ManProp(Home home, Box* b, int n);
-    /// Constructor for cloning \a p
-    ManProp(Space& home, ManProp<Box>& p);
-  public:
-    /// Post propagator for boxes \a b
-    static ExecStatus post(Home home, Box* b, int n);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Destructor
-    virtual size_t dispose(Space& home);
-  };
+    public:
+        /// Cost function
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
+        /// Schedule function
+        void reschedule(Space& home) override;
+        /// Destructor
+        size_t dispose(Space& home) override;
+    };
 
-  /**
-   * \brief No-overlap propagator for optional boxes
-   *
-   * Requires \code #include <gecode/int/no-overlap.hh> \endcode
-   *
-   * \ingroup FuncIntProp
-   */
-  template<class Box>
-  class OptProp : public Base<Box> {
-  protected:
-    using Base<Box>::b;
-    using Base<Box>::n;
-    /// Number of optional boxes: b[n] ... b[n+m-1]
-    int m;
-    /// Constructor for posting
-    OptProp(Home home, Box* b, int n, int m);
-    /// Constructor for cloning \a p
-    OptProp(Space& home, OptProp<Box>& p);
-  public:
-    /// Post propagator for boxes \a b
-    static ExecStatus post(Home home, Box* b, int n);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Destructor
-    virtual size_t dispose(Space& home);
-  };
+    /**
+     * \brief No-overlap propagator for mandatory boxes
+     *
+     * Requires \code #include <gecode/int/no-overlap.hh> \endcode
+     *
+     * \ingroup FuncIntProp
+     */
+    template <class Box>
+    class ManProp : public Base<Box> {
+    protected:
+        using Base<Box>::b;
+        using Base<Box>::n;
+        /// Constructor for posting
+        ManProp(Home home, Box* b, int n);
+        /// Constructor for cloning \a p
+        ManProp(Space& home, ManProp<Box>& p);
 
-}}}
+    public:
+        /// Post propagator for boxes \a b
+        static ExecStatus post(Home home, Box* b, int n);
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Destructor
+        size_t dispose(Space& home) override;
+    };
+
+    /**
+     * \brief No-overlap propagator for optional boxes
+     *
+     * Requires \code #include <gecode/int/no-overlap.hh> \endcode
+     *
+     * \ingroup FuncIntProp
+     */
+    template <class Box>
+    class OptProp : public Base<Box> {
+    protected:
+        using Base<Box>::b;
+        using Base<Box>::n;
+        /// Number of optional boxes: b[n] ... b[n+m-1]
+        int m;
+        /// Constructor for posting
+        OptProp(Home home, Box* b, int n, int m);
+        /// Constructor for cloning \a p
+        OptProp(Space& home, OptProp<Box>& p);
+
+    public:
+        /// Post propagator for boxes \a b
+        static ExecStatus post(Home home, Box* b, int n);
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Destructor
+        size_t dispose(Space& home) override;
+    };
+
+} // namespace Gecode::Int::NoOverlap
 
 #include <gecode/int/no-overlap/base.hpp>
 #include <gecode/int/no-overlap/man.hpp>
@@ -321,4 +327,3 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 #endif
 
 // STATISTICS: int-prop
-

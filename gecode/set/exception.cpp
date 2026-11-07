@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,33 +34,25 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
-  OutOfLimits::OutOfLimits(const char* l)
-    : Exception(l,"Number out of limits") {}
+    OutOfLimits::OutOfLimits(const char* l) : Exception(l, "Number out of limits") {}
 
-  VariableEmptyDomain::VariableEmptyDomain(const char* l)
-    : Exception(l,"Attempt to create variable with empty domain") {}
+    VariableEmptyDomain::VariableEmptyDomain(const char* l)
+        : Exception(l, "Attempt to create variable with empty domain") {}
 
-  TooFewArguments::TooFewArguments(const char* l)
-    : Exception(l,"Passed argument array has too few elements") {}
+    TooFewArguments::TooFewArguments(const char* l) : Exception(l, "Passed argument array has too few elements") {}
 
-  ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
-    : Exception(l,"Sizes of argument arrays mismatch") {}
+    ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l) : Exception(l, "Sizes of argument arrays mismatch") {}
 
-  IllegalOperation::IllegalOperation(const char* l)
-    : Exception(l,"Illegal operation type") {}
+    IllegalOperation::IllegalOperation(const char* l) : Exception(l, "Illegal operation type") {}
 
-  UnknownBranching::UnknownBranching(const char* l)
-    : Exception(l,"Unknown branching type") {}
+    UnknownBranching::UnknownBranching(const char* l) : Exception(l, "Unknown branching type") {}
 
-  UnknownRelation::UnknownRelation(const char* l)
-    : Exception(l,"Unknown relation type") {}
+    UnknownRelation::UnknownRelation(const char* l) : Exception(l, "Unknown relation type") {}
 
-  UnknownOperation::UnknownOperation(const char* l)
-    : Exception(l,"Unknown operation type") {}
+    UnknownOperation::UnknownOperation(const char* l) : Exception(l, "Unknown operation type") {}
 
-}}
+} // namespace Gecode::Set
 
 // STATISTICS: set-other
-

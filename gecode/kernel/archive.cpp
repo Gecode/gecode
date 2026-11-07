@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,32 +34,40 @@
 
 namespace Gecode {
 
-  void
-  Archive::resize(int n) {
-    int m = std::max(n+1, (3*_size)/2);
-    _a = heap.realloc<unsigned int>(_a,_n,m);
-    _size = m;
-  }
-
-  Archive::Archive(const Archive& e) : _size(e._n), _n(e._n), _pos(e._pos) {
-    _a = heap.alloc<unsigned int>(_n);
-    heap.copy<unsigned int>(_a,e._a,_n);
-  }
-
-  Archive&
-  Archive::operator =(const Archive& e) {
-    if (this!=&e) {
-      _a = heap.realloc<unsigned int>(_a, _size, e._n);
-      heap.copy<unsigned int>(_a,e._a,e._n);
-      _size = _n = e._n;
+    void
+    Archive::resize(int n) {
+        int m = std::max(n + 1, (3 * _size) / 2);
+        _a = heap.realloc<unsigned int>(_a, _n, m);
+        _size = m;
     }
-    return *this;
-  }
 
-  Archive::~Archive(void) {
-    heap.free<unsigned int>(_a,_size);
-  }
+    Archive::Archive(const Archive& e) : _size(e._n), _n(e._n), _a(nullptr), _pos(e._pos) {
+        if (_n > 0) {
+            _a = heap.alloc<unsigned int>(_n);
+            Gecode::Heap::copy<unsigned int>(_a, e._a, _n);
+        }
+    }
 
-}
+    Archive&
+    Archive::operator=(const Archive& e) {
+        if (this != &e) {
+            if (e._n > 0) {
+                _a = heap.realloc<unsigned int>(_a, _size, e._n);
+                Gecode::Heap::copy<unsigned int>(_a, e._a, e._n);
+            } else if (_a != nullptr) {
+                heap.free<unsigned int>(_a, _size);
+                _a = nullptr;
+            }
+            _size = _n = e._n;
+        }
+        return *this;
+    }
+
+    Archive::~Archive() {
+        if (_a != nullptr)
+            heap.free<unsigned int>(_a, _size);
+    }
+
+} // namespace Gecode
 
 // STATISTICS: kernel-branch

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,151 +30,148 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
-  /**
-   * \brief Iterator over value lists
-   *
-   * \ingroup FuncIterValues
-   */
-  class ValueListIter {
-  protected:
-    /// Value list class
-    class ValueList : public Support::BlockClient<ValueList,Region> {
+    /**
+     * \brief Iterator over value lists
+     *
+     * \ingroup FuncIterValues
+     */
+    class ValueListIter {
+    protected:
+        /// Value list class
+        class ValueList : public Support::BlockClient<ValueList, Region> {
+        public:
+            /// Value
+            int val;
+            /// Next element
+            ValueList* next;
+        };
+        /// Shared object for allocation
+        class VLIO : public Support::BlockAllocator<ValueList, Region> {
+        public:
+            /// Counter used for reference counting
+            unsigned int use_cnt;
+            /// Initialize
+            VLIO(Region& r);
+        };
+        /// Reference to shared object
+        VLIO* vlio;
+        /// Head of value list
+        ValueList* h;
+        /// Current list element
+        ValueList* c;
+        /// Set value lists
+        void set(ValueList* l);
+
     public:
-      /// Value
-      int val;
-      /// Next element
-      ValueList* next;
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        ValueListIter();
+        /// Copy constructor
+        ValueListIter(const ValueListIter& i);
+        /// Initialize
+        ValueListIter(Region& r);
+        /// Initialize
+        void init(Region& r);
+        /// Assignment operator (both iterators must be allocated from the same region)
+        ValueListIter& operator=(const ValueListIter& i);
+        //@}
+
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a value or done
+        bool operator()() const;
+        /// Move iterator to next value (if possible)
+        void operator++();
+        /// Reset iterator to start
+        void reset();
+        //@}
+
+        /// \name Value access
+        //@{
+        /// Return value
+        int val() const;
+        //@}
+
+        /// Destructor
+        ~ValueListIter();
     };
-    /// Shared object for allocation
-    class VLIO : public Support::BlockAllocator<ValueList,Region> {
-    public:
-      /// Counter used for reference counting
-      unsigned int use_cnt;
-      /// Initialize
-      VLIO(Region& r);
-    };
-    /// Reference to shared object
-    VLIO* vlio;
-    /// Head of value list
-    ValueList* h;
-    /// Current list element
-    ValueList* c;
-    /// Set value lists
-    void set(ValueList* l);
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    ValueListIter(void);
-    /// Copy constructor
-    ValueListIter(const ValueListIter& i);
-    /// Initialize
-    ValueListIter(Region& r);
-    /// Initialize
-    void init(Region& r);
-    /// Assignment operator (both iterators must be allocated from the same region)
-    ValueListIter& operator =(const ValueListIter& i);
-    //@}
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator ++(void);
-    /// Reset iterator to start
-    void reset(void);
-    //@}
+    forceinline
+    ValueListIter::VLIO::VLIO(Region& r)
+        : Support::BlockAllocator<ValueList, Region>(r), use_cnt(1) {}
 
-    /// \name Value access
-    //@{
-    /// Return value
-    int val(void) const;
-    //@}
+    forceinline
+    ValueListIter::ValueListIter()
+        : vlio(nullptr) {}
 
-    /// Destructor
-    ~ValueListIter(void);
-  };
+    forceinline
+    ValueListIter::ValueListIter(Region& r)
+        : vlio(new (r.ralloc(sizeof(VLIO))) VLIO(r)), h(nullptr), c(nullptr) {}
 
-
-  forceinline
-  ValueListIter::VLIO::VLIO(Region& r)
-    : Support::BlockAllocator<ValueList,Region>(r), use_cnt(1) {}
-
-
-  forceinline
-  ValueListIter::ValueListIter(void)
-    : vlio(nullptr) {}
-
-  forceinline
-  ValueListIter::ValueListIter(Region& r)
-    : vlio(new (r.ralloc(sizeof(VLIO))) VLIO(r)),
-      h(nullptr), c(nullptr) {}
-
-  forceinline void
-  ValueListIter::init(Region& r) {
-    vlio = new (r.ralloc(sizeof(VLIO))) VLIO(r);
-    h = c = nullptr;
-  }
-
-  forceinline
-  ValueListIter::ValueListIter(const ValueListIter& i)
-    : vlio(i.vlio), h(i.h), c(i.c)  {
-    vlio->use_cnt++;
-  }
-
-  forceinline ValueListIter&
-  ValueListIter::operator =(const ValueListIter& i) {
-    if (&i != this) {
-      if (--vlio->use_cnt == 0) {
-        Region& r = vlio->allocator();
-        vlio->~VLIO();
-        r.rfree(vlio,sizeof(VLIO));
-      }
-      vlio = i.vlio;
-      vlio->use_cnt++;
-      c=i.c; h=i.h;
+    forceinline void
+    ValueListIter::init(Region& r) {
+        vlio = new (r.ralloc(sizeof(VLIO))) VLIO(r);
+        h = c = nullptr;
     }
-    return *this;
-  }
 
-  forceinline
-  ValueListIter::~ValueListIter(void) {
-    if (--vlio->use_cnt == 0) {
-      Region& r = vlio->allocator();
-      vlio->~VLIO();
-      r.rfree(vlio,sizeof(VLIO));
+    forceinline
+    ValueListIter::ValueListIter(const ValueListIter& i)
+        : vlio(i.vlio), h(i.h), c(i.c) {
+        vlio->use_cnt++;
     }
-  }
 
+    forceinline ValueListIter&
+    ValueListIter::operator=(const ValueListIter& i) {
+        if (&i != this) {
+            if (--vlio->use_cnt == 0) {
+                Region& r = vlio->allocator();
+                vlio->~VLIO();
+                r.rfree(vlio, sizeof(VLIO));
+            }
+            vlio = i.vlio;
+            vlio->use_cnt++;
+            c = i.c;
+            h = i.h;
+        }
+        return *this;
+    }
 
-  forceinline void
-  ValueListIter::set(ValueList* l) {
-    h = c = l;
-  }
+    forceinline ValueListIter::~ValueListIter() {
+        if (--vlio->use_cnt == 0) {
+            Region& r = vlio->allocator();
+            vlio->~VLIO();
+            r.rfree(vlio, sizeof(VLIO));
+        }
+    }
 
-  forceinline bool
-  ValueListIter::operator ()(void) const {
-    return c != nullptr;
-  }
+    forceinline void
+    ValueListIter::set(ValueList* l) {
+        h = c = l;
+    }
 
-  forceinline void
-  ValueListIter::operator ++(void) {
-    c = c->next;
-  }
+    forceinline bool
+    ValueListIter::operator()() const {
+        return c != nullptr;
+    }
 
-  forceinline void
-  ValueListIter::reset(void) {
-    c = h;
-  }
+    forceinline void
+    ValueListIter::operator++() {
+        c = c->next;
+    }
 
-  forceinline int
-  ValueListIter::val(void) const {
-    return c->val;
-  }
+    forceinline void
+    ValueListIter::reset() {
+        c = h;
+    }
 
-}}}
+    forceinline int
+    ValueListIter::val() const {
+        return c->val;
+    }
+
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

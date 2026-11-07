@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,27 +36,27 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Convex {
+namespace Gecode::Set::Convex {
 
-  /*
-   * "Convex" propagator
-   *
-   */
+    /*
+     * "Convex" propagator
+     *
+     */
 
-  forceinline
-  Convex::Convex(Home home, SetView x)
-    : UnaryPropagator<SetView, PC_SET_ANY>(home,x) {}
+    forceinline
+    Convex::Convex(Home home, SetView x)
+        : UnaryPropagator<SetView, PC_SET_ANY>(home, x) {}
 
-  forceinline
-  Convex::Convex(Space& home, Convex& p)
-    : UnaryPropagator<SetView, PC_SET_ANY>(home,p) {}
+    forceinline
+    Convex::Convex(Space& home, Convex& p)
+        : UnaryPropagator<SetView, PC_SET_ANY>(home, p) {}
 
-  forceinline ExecStatus
-  Convex::post(Home home, SetView x) {
-    (void) new (home) Convex(home,x);
-    return ES_OK;
-  }
+    forceinline ExecStatus
+    Convex::post(Home home, SetView x) {
+        (void)new (home) Convex(home, x);
+        return ES_OK;
+    }
 
-}}}
+} // namespace Gecode::Set::Convex
 
 // STATISTICS: set-prop

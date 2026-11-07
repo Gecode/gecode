@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -38,258 +37,239 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set { namespace Int {
+namespace Gecode::Set::Int {
 
-  /**
-   * \namespace Gecode::Set::Int
-   * \brief Propagators connecting set and int variables
-   */
+    /**
+     * \namespace Gecode::Set::Int
+     * \brief Propagators connecting set and int variables
+     */
 
-  /**
-   * \brief %Propagator for minimum element
-   *
-   * Requires \code #include <gecode/set/int.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View>
-  class MinElement :
-    public MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_BND> {
-  protected:
-    using MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x0;
-    using MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x1;
-    /// Constructor for cloning \a p
-    MinElement(Space& home, MinElement& p);
-    /// Constructor for posting
-    MinElement(Home home, View, Gecode::Int::IntView);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \a x is the minimal element of \a s
-    static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
-  };
+    /**
+     * \brief %Propagator for minimum element
+     *
+     * Requires \code #include <gecode/set/int.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View>
+    class MinElement : public MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_BND> {
+    protected:
+        using MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_BND>::x0;
+        using MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_BND>::x1;
+        /// Constructor for cloning \a p
+        MinElement(Space& home, MinElement& p);
+        /// Constructor for posting
+        MinElement(Home home, View, Gecode::Int::IntView);
 
-  /**
-   * \brief %Propagator for not minimum element
-   *
-   * Requires \code #include <gecode/set/int.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View>
-  class NotMinElement :
-    public MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM> {
-  protected:
-    using MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM>::x0;
-    using MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM>::x1;
-    /// Constructor for cloning \a p
-    NotMinElement(Space& home, NotMinElement& p);
-    /// Constructor for posting
-    NotMinElement(Home home, View, Gecode::Int::IntView);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \a x is not the minimal element of \a s
-    static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
-  };
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \a x is the minimal element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x);
+    };
 
-  /**
-   * \brief %Propagator for reified minimum element
-   *
-   * Requires \code #include <gecode/set/int.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View, ReifyMode rm>
-  class ReMinElement :
-    public Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView> {
-  protected:
-    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::x0;
-    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::x1;
-    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::b;
-    /// Constructor for cloning \a p
-    ReMinElement(Space& home, ReMinElement& p);
-    /// Constructor for posting
-    ReMinElement(Home home, View, Gecode::Int::IntView,
-                 Gecode::Int::BoolView);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post reified propagator for \a b iff \a x is the minimal element of \a s
-    static ExecStatus post(Home home, View s, Gecode::Int::IntView x,
-                           Gecode::Int::BoolView b);
-  };
+    /**
+     * \brief %Propagator for not minimum element
+     *
+     * Requires \code #include <gecode/set/int.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View>
+    class NotMinElement : public MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM> {
+    protected:
+        using MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM>::x0;
+        using MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM>::x1;
+        /// Constructor for cloning \a p
+        NotMinElement(Space& home, NotMinElement& p);
+        /// Constructor for posting
+        NotMinElement(Home home, View, Gecode::Int::IntView);
 
-  /**
-   * \brief %Propagator for maximum element
-   *
-   * Requires \code #include <gecode/set/int.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View>
-  class MaxElement :
-    public MixBinaryPropagator<View,PC_SET_ANY,Gecode::Int::IntView,Gecode::Int::PC_INT_BND> {
-  protected:
-    using MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x0;
-    using MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x1;
-    /// Constructor for cloning \a p
-    MaxElement(Space& home, MaxElement& p);
-    /// Constructor for posting
-    MaxElement(Home home, View, Gecode::Int::IntView);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \a x is the largest element of \a s
-    static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
-  };
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \a x is not the minimal element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x);
+    };
 
-  /**
-   * \brief %Propagator for not maximum element
-   *
-   * Requires \code #include <gecode/set/int.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View>
-  class NotMaxElement :
-    public MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM> {
-  protected:
-    using MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM>::x0;
-    using MixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM>::x1;
-    /// Constructor for cloning \a p
-    NotMaxElement(Space& home, NotMaxElement& p);
-    /// Constructor for posting
-    NotMaxElement(Home home, View, Gecode::Int::IntView);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \a x is not the largest element of \a s
-    static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
-  };
+    /**
+     * \brief %Propagator for reified minimum element
+     *
+     * Requires \code #include <gecode/set/int.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View, ReifyMode rm>
+    class ReMinElement : public Gecode::Int::ReMixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView,
+                                                                   Gecode::Int::PC_INT_DOM, Gecode::Int::BoolView> {
+    protected:
+        using Gecode::Int::ReMixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM,
+                                                 Gecode::Int::BoolView>::x0;
+        using Gecode::Int::ReMixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM,
+                                                 Gecode::Int::BoolView>::x1;
+        using Gecode::Int::ReMixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM,
+                                                 Gecode::Int::BoolView>::b;
+        /// Constructor for cloning \a p
+        ReMinElement(Space& home, ReMinElement& p);
+        /// Constructor for posting
+        ReMinElement(Home home, View, Gecode::Int::IntView, Gecode::Int::BoolView);
 
-  /**
-   * \brief %Reified propagator for maximum element
-   *
-   * Requires \code #include <gecode/set/int.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View, ReifyMode rm>
-  class ReMaxElement :
-    public Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView> {
-  protected:
-    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::x0;
-    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::x1;
-    using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::b;
-    /// Constructor for cloning \a p
-    ReMaxElement(Space& home, ReMaxElement& p);
-    /// Constructor for posting
-    ReMaxElement(Home home, View, Gecode::Int::IntView, Gecode::Int::BoolView);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post reified propagator for \a b iff \a x is the largest element of \a s
-    static ExecStatus post(Home home, View s, Gecode::Int::IntView x,
-                           Gecode::Int::BoolView b);
-  };
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post reified propagator for \a b iff \a x is the minimal element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x, Gecode::Int::BoolView b);
+    };
 
-  /**
-   * \brief %Propagator for cardinality
-   *
-   * Requires \code #include <gecode/set/int.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View>
-  class Card :
-    public MixBinaryPropagator<View,PC_SET_CARD,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_BND> {
-  protected:
-    using MixBinaryPropagator<View,PC_SET_CARD,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x0;
-    using MixBinaryPropagator<View,PC_SET_CARD,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x1;
-    /// Constructor for cloning \a p
-    Card(Space& home, Card& p);
-    /// Constructor for posting
-    Card(Home home, View, Gecode::Int::IntView);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ |s|=x \f$
-    static ExecStatus post(Home home, View s, Gecode::Int::IntView x);
-  };
+    /**
+     * \brief %Propagator for maximum element
+     *
+     * Requires \code #include <gecode/set/int.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View>
+    class MaxElement : public MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_BND> {
+    protected:
+        using MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_BND>::x0;
+        using MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_BND>::x1;
+        /// Constructor for cloning \a p
+        MaxElement(Space& home, MaxElement& p);
+        /// Constructor for posting
+        MaxElement(Home home, View, Gecode::Int::IntView);
 
-  /**
-   * \brief %Propagator for weight of a set
-   *
-   * Requires \code #include <gecode/set/int.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View>
-  class Weights : public Propagator {
-  protected:
-    /// List of elements in the upper bound
-    SharedArray<int> elements;
-    /// Weights for the elements in the upper bound
-    SharedArray<int> weights;
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \a x is the largest element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x);
+    };
 
-    /// The set view
-    View x;
-    /// The integer view
-    Gecode::Int::IntView y;
+    /**
+     * \brief %Propagator for not maximum element
+     *
+     * Requires \code #include <gecode/set/int.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View>
+    class NotMaxElement : public MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM> {
+    protected:
+        using MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM>::x0;
+        using MixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM>::x1;
+        /// Constructor for cloning \a p
+        NotMaxElement(Space& home, NotMaxElement& p);
+        /// Constructor for posting
+        NotMaxElement(Home home, View, Gecode::Int::IntView);
 
-    /// Constructor for cloning \a p
-    Weights(Space& home, Weights& p);
-    /// Constructor for posting
-    Weights(Home home, const SharedArray<int>&, const SharedArray<int>&,
-            View, Gecode::Int::IntView);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function (defined as PC_LINEAR_LO)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$
-    static ExecStatus post(Home home,
-                           const SharedArray<int>& elements,
-                           const SharedArray<int>& weights,
-                           View x, Gecode::Int::IntView y);
-  };
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \a x is not the largest element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x);
+    };
 
-}}}
+    /**
+     * \brief %Reified propagator for maximum element
+     *
+     * Requires \code #include <gecode/set/int.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View, ReifyMode rm>
+    class ReMaxElement : public Gecode::Int::ReMixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView,
+                                                                   Gecode::Int::PC_INT_DOM, Gecode::Int::BoolView> {
+    protected:
+        using Gecode::Int::ReMixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM,
+                                                 Gecode::Int::BoolView>::x0;
+        using Gecode::Int::ReMixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM,
+                                                 Gecode::Int::BoolView>::x1;
+        using Gecode::Int::ReMixBinaryPropagator<View, PC_SET_ANY, Gecode::Int::IntView, Gecode::Int::PC_INT_DOM,
+                                                 Gecode::Int::BoolView>::b;
+        /// Constructor for cloning \a p
+        ReMaxElement(Space& home, ReMaxElement& p);
+        /// Constructor for posting
+        ReMaxElement(Home home, View, Gecode::Int::IntView, Gecode::Int::BoolView);
+
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post reified propagator for \a b iff \a x is the largest element of \a x0
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x, Gecode::Int::BoolView b);
+    };
+
+    /**
+     * \brief %Propagator for cardinality
+     *
+     * Requires \code #include <gecode/set/int.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View>
+    class Card : public MixBinaryPropagator<View, PC_SET_CARD, Gecode::Int::IntView, Gecode::Int::PC_INT_BND> {
+    protected:
+        using MixBinaryPropagator<View, PC_SET_CARD, Gecode::Int::IntView, Gecode::Int::PC_INT_BND>::x0;
+        using MixBinaryPropagator<View, PC_SET_CARD, Gecode::Int::IntView, Gecode::Int::PC_INT_BND>::x1;
+        /// Constructor for cloning \a p
+        Card(Space& home, Card& p);
+        /// Constructor for posting
+        Card(Home home, View, Gecode::Int::IntView);
+
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$ |s|=x \f$
+        static ExecStatus post(Home home, View x0, Gecode::Int::IntView x);
+    };
+
+    /**
+     * \brief %Propagator for weight of a set
+     *
+     * Requires \code #include <gecode/set/int.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View>
+    class Weights : public Propagator {
+    protected:
+        /// List of elements in the upper bound
+        SharedArray<int> elements;
+        /// Weights for the elements in the upper bound
+        SharedArray<int> weights;
+
+        /// The set view
+        View x;
+        /// The integer view
+        Gecode::Int::IntView y;
+
+        /// Constructor for cloning \a p
+        Weights(Space& home, Weights& p);
+        /// Constructor for posting
+        Weights(Home home, const SharedArray<int>&, const SharedArray<int>&, View, Gecode::Int::IntView);
+
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Cost function (defined as PC_LINEAR_LO)
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
+        /// Schedule function
+        void reschedule(Space& home) override;
+        /// Delete propagator and return its size
+        size_t dispose(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$
+        static ExecStatus post(Home home, const SharedArray<int>& elements, const SharedArray<int>& weights, View x,
+                               Gecode::Int::IntView y);
+    };
+
+} // namespace Gecode::Set::Int
 
 #include <gecode/set/int/minmax.hpp>
 #include <gecode/set/int/card.hpp>

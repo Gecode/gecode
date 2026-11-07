@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,68 +32,66 @@
 
 #include <gecode/search/seq/dead.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
-  /// A dead engine (failed root)
-  template<class Tracer>
-  class GECODE_SEARCH_EXPORT Dead : public Engine {
-  protected:
-    /// Search tracer
-    Tracer tracer;
-    /// Statistics
-    Statistics stat;
-  public:
-    /// Initialize
-    Dead(const Options& o, const Statistics& stat0);
-    /// Return next solution (nullptr, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
-    /// Delete
-    virtual ~Dead(void);
-  };
+    /// A dead engine (failed root)
+    template <class Tracer>
+    class GECODE_SEARCH_EXPORT Dead : public Engine {
+    protected:
+        /// Search tracer
+        Tracer tracer;
+        /// Statistics
+        Statistics stat;
 
-  template<class Tracer>
-  Dead<Tracer>::Dead(const Options& o, const Statistics& stat0)
-    : tracer(o.tracer), stat(stat0) {
-    tracer.engine(SearchTracer::EngineType::AOE, 1U);
-    tracer.worker();
-  }
+    public:
+        /// Initialize
+        Dead(const Options& o, const Statistics& stat0);
+        /// Return next solution (nullptr, if none exists or search has been stopped)
+        Space* next() override;
+        /// Return statistics
+        Statistics statistics() const override;
+        /// Check whether engine has been stopped
+        bool stopped() const override;
+        /// Delete
+        ~Dead() override;
+    };
 
-  template<class Tracer>
-  Space*
-  Dead<Tracer>::next(void) {
-    return nullptr;
-  }
+    template <class Tracer>
+    Dead<Tracer>::Dead(const Options& o, const Statistics& stat0) : tracer(o.tracer), stat(stat0) {
+        tracer.engine(SearchTracer::EngineType::OTHER, 1U);
+        tracer.worker();
+    }
 
-  template<class Tracer>
-  bool
-  Dead<Tracer>::stopped(void) const {
-    return false;
-  }
+    template <class Tracer>
+    Space*
+    Dead<Tracer>::next() {
+        return nullptr;
+    }
 
-  template<class Tracer>
-  Statistics
-  Dead<Tracer>::statistics(void) const {
-    return stat;
-  }
+    template <class Tracer>
+    bool
+    Dead<Tracer>::stopped() const {
+        return false;
+    }
 
-  template<class Tracer>
-  Dead<Tracer>::~Dead(void) {
-    tracer.done();
-  }
+    template <class Tracer>
+    Statistics
+    Dead<Tracer>::statistics() const {
+        return stat;
+    }
 
-  Engine*
-  dead(const Options& o, const Statistics& stat) {
-    if (o.tracer)
-      return new Dead<TraceRecorder>(o,stat);
-    else
-      return new Dead<NoTraceRecorder>(o,stat);
-  }
+    template <class Tracer>
+    Dead<Tracer>::~Dead() {
+        tracer.done();
+    }
 
+    Engine*
+    dead(const Options& o, const Statistics& stat) {
+        if (o.tracer)
+            return new Dead<TraceRecorder>(o, stat);
+        return new Dead<NoTraceRecorder>(o, stat);
+    }
 
-}}}
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

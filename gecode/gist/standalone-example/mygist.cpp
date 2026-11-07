@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -31,7 +30,8 @@
  *
  */
 
-#include <QtGui>
+#include <QApplication>
+#include <QMainWindow>
 
 #include <gecode/int.hh>
 #include <gecode/gist/qtgist.hh>
@@ -42,35 +42,38 @@ using namespace Gecode;
 /// Space for testing
 class TestSpace : public Space {
 public:
-  IntVarArray x;
-  TestSpace(void) : x(*this,2,0,2) {
-    branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-  }
-  TestSpace(TestSpace& t) : Space(t) {
-    x.update(*this, t.x);
-  }
-  virtual Space* copy() {
-    return new TestSpace(*this);
-  }
-  virtual void print(std::ostream& os) const {
-    os << x << std::endl;
-  }
+    IntVarArray variables;
+    TestSpace() : variables(*this, 2, 0, 2) {
+        branch(*this, variables, INT_VAR_NONE(), INT_VAL_MIN());
+    }
+    TestSpace(TestSpace& other) : Space(other) {
+        variables.update(*this, other.variables);
+    }
+    Space*
+    copy() override {
+        return new TestSpace(*this);
+    }
+    void
+    print(std::ostream& os) const {
+        os << variables << '\n';
+    }
 };
 
-int main(int argc, char** argv) {
-  QApplication app(argc,argv);
-  Gist::Print<TestSpace> p("My Gist");
-  Gist::Options o;
-  o.inspect.click(&p);
+int
+main(int argc, char** argv) {
+    QApplication app(argc, argv);
+    Gist::Print<TestSpace> printer("My Gist");
+    Gist::Options options;
+    options.inspect.click(&printer);
 
-  Gist::GistMainWindow gist_mw(new TestSpace(), false, o);
-  gist_mw.show();
+    Gist::GistMainWindow gist_window(new TestSpace(), false, options);
+    gist_window.show();
 
-  QMainWindow mw;
-  Gist::Gist gist_widget(new TestSpace(), false, &mw, o);
-  mw.setCentralWidget(&gist_widget);
-  mw.resize(500,300);
-  mw.show();
+    QMainWindow widget_window;
+    Gist::Gist gist_widget(new TestSpace(), false, &widget_window, options);
+    widget_window.setCentralWidget(&gist_widget);
+    widget_window.resize(500, 300);
+    widget_window.show();
 
-  return app.exec();
+    return QApplication::exec();
 }

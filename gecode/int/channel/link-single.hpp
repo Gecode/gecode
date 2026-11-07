@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,37 +30,37 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
-  forceinline
-  LinkSingle::LinkSingle(Home home, BoolView x0, IntView x1)
-    : MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>
-  (home,x0,x1) {}
+    forceinline
+    LinkSingle::LinkSingle(Home home, BoolView x0, IntView x1)
+        : MixBinaryPropagator<BoolView, PC_BOOL_VAL, IntView, PC_INT_VAL>(home, x0, x1) {}
 
-  forceinline ExecStatus
-  LinkSingle::post(Home home, BoolView x0, IntView x1) {
-    if (x1.assigned()) {
-      switch (x1.val()) {
-      case 0:
-        GECODE_ME_CHECK(x0.zero(home)); break;
-      case 1:
-        GECODE_ME_CHECK(x0.one(home)); break;
-      default:
-        return ES_FAILED;
-      }
-    } else if (x0.zero()) {
-      GECODE_ME_CHECK(x1.eq(home,0));
-    } else if (x0.one()) {
-      GECODE_ME_CHECK(x1.eq(home,1));
-    } else {
-      GECODE_ME_CHECK(x1.gq(home,0));
-      GECODE_ME_CHECK(x1.lq(home,1));
-      (void) new (home) LinkSingle(home,x0,x1);
+    forceinline ExecStatus
+    LinkSingle::post(Home home, BoolView x0, IntView x1) {
+        if (x1.assigned()) {
+            switch (x1.val()) {
+            case 0:
+                GECODE_ME_CHECK(x0.zero(home));
+                break;
+            case 1:
+                GECODE_ME_CHECK(x0.one(home));
+                break;
+            default:
+                return ES_FAILED;
+            }
+        } else if (x0.zero()) {
+            GECODE_ME_CHECK(x1.eq(home, 0));
+        } else if (x0.one()) {
+            GECODE_ME_CHECK(x1.eq(home, 1));
+        } else {
+            GECODE_ME_CHECK(x1.gq(home, 0));
+            GECODE_ME_CHECK(x1.lq(home, 1));
+            (void)new (home) LinkSingle(home, x0, x1);
+        }
+        return ES_OK;
     }
-    return ES_OK;
-  }
 
-}}}
+} // namespace Gecode::Int::Channel
 
 // STATISTICS: int-prop
-

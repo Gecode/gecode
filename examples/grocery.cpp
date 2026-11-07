@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -55,46 +54,46 @@ using namespace Gecode;
  */
 class Grocery : public Script {
 protected:
-  /// The price of each item
-  IntVarArray abcd;
-  /// Sum and product of prices
-  static const int s = 711;
-  /// Decimal product of prices
-  static const int p = 711 * 100 * 100 * 100;
+    /// The price of each item
+    IntVarArray abcd;
+    /// Sum and product of prices
+    static const int s = 711;
+    /// Decimal product of prices
+    static const int p = 711 * 100 * 100 * 100;
+
 public:
-  /// The actual model
-  Grocery(const Options& opt)
-    : Script(opt), abcd(*this,4,0,s) {
-    IntVar a(abcd[0]), b(abcd[1]), c(abcd[2]), d(abcd[3]);
+    /// The actual model
+    Grocery(const Options& opt) : Script(opt), abcd(*this, 4, 0, s) {
+        IntVar a(abcd[0]), b(abcd[1]), c(abcd[2]), d(abcd[3]);
 
-    // The sum of all variables is s
-    rel(*this, a+b+c+d == s, opt.ipl());
+        // The sum of all variables is s
+        rel(*this, a + b + c + d == s, opt.ipl());
 
-    // The product of all variables is s (corrected by scale factor)
-    rel(*this, (a*b)*(c*d) == p, opt.ipl());
+        // The product of all variables is s (corrected by scale factor)
+        rel(*this, (a * b) * (c * d) == p, opt.ipl());
 
-    // Break symmetries: order the variables
-    rel(*this, abcd, IRT_LQ);
+        // Break symmetries: order the variables
+        rel(*this, abcd, IRT_LQ);
 
-    branch(*this, abcd, INT_VAR_NONE(), INT_VAL_SPLIT_MAX());
-  }
+        branch(*this, abcd, INT_VAR_NONE(), INT_VAL_SPLIT_MAX());
+    }
 
-  /// Constructor for cloning \a s
-  Grocery(Grocery& s) : Script(s) {
-    abcd.update(*this, s.abcd);
-  }
+    /// Constructor for cloning \a s
+    Grocery(Grocery& s) : Script(s) {
+        abcd.update(*this, s.abcd);
+    }
 
-  /// Copy during cloning
-  virtual Space*
-  copy(void) {
-    return new Grocery(*this);
-  }
+    /// Copy during cloning
+    Space*
+    copy() override {
+        return new Grocery(*this);
+    }
 
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    os << "\t" << abcd << std::endl;
-  }
+    /// Print solution
+    void
+    print(std::ostream& os) const override {
+        os << "\t" << abcd << '\n';
+    }
 };
 
 /** \brief Main-function
@@ -102,12 +101,11 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("Grocery");
-  opt.iterations(20);
-  opt.parse(argc,argv);
-  Script::run<Grocery,DFS,Options>(opt);
-  return 0;
+    Options opt("Grocery");
+    opt.iterations(20);
+    opt.parse(argc, argv);
+    Script::run<Grocery, DFS, Options>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any
-

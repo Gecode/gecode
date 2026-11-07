@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,59 +30,59 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
-  // Overload checking for mandatory tasks
-  template<class ManTask>
-  ExecStatus
-  overload(TaskArray<ManTask>& t) {
-    TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
-    sort<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true>(f);
+    // Overload checking for mandatory tasks
+    template <class ManTask>
+    ExecStatus
+    overload(TaskArray<ManTask>& t) {
+        TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
+        sort<typename TaskTraits<ManTask>::TaskViewFwd, STO_LCT, true>(f);
 
-    Region r;
-    OmegaTree<typename TaskTraits<ManTask>::TaskViewFwd> o(r,f);
+        Region r;
+        OmegaTree<typename TaskTraits<ManTask>::TaskViewFwd> o(r, f);
 
-    for (int i=0; i<f.size(); i++) {
-      o.insert(i);
-      if (o.ect() > f[i].lct())
-        return ES_FAILED;
-    }
-    return ES_OK;
-  }
-
-  // Overload checking for optional tasks
-  template<class OptTask, class PL>
-  ExecStatus
-  overload(Space& home, Propagator& p, TaskArray<OptTask>& t) {
-    TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
-    sort<typename TaskTraits<OptTask>::TaskViewFwd,STO_LCT,true>(f);
-
-    Region r;
-    OmegaLambdaTree<typename TaskTraits<OptTask>::TaskViewFwd> ol(r,f,false);
-
-    bool to_purge = false;
-
-    for (int i=0; i<f.size(); i++) {
-      if (f[i].optional()) {
-        ol.linsert(i);
-      } else if (f[i].mandatory()) {
-        ol.oinsert(i);
-        if (ol.ect() > f[i].lct())
-          return ES_FAILED;
-      }
-      while (!ol.lempty() && (ol.lect() > f[i].lct())) {
-        int j = ol.responsible();
-        GECODE_ME_CHECK(f[j].excluded(home));
-        ol.lremove(j);
-        to_purge = true;
-      }
+        for (int i = 0; i < f.size(); i++) {
+            o.insert(i);
+            if (o.ect() > f[i].lct())
+                return ES_FAILED;
+        }
+        return ES_OK;
     }
 
-    if (to_purge)
-      GECODE_ES_CHECK((purge<OptTask,PL>(home,p,t)));
-    return ES_OK;
-  }
+    // Overload checking for optional tasks
+    template <class OptTask, class PL>
+    ExecStatus
+    overload(Space& home, Propagator& p, TaskArray<OptTask>& t) {
+        TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
+        sort<typename TaskTraits<OptTask>::TaskViewFwd, STO_LCT, true>(f);
 
-}}}
+        Region r;
+        OmegaLambdaTree<typename TaskTraits<OptTask>::TaskViewFwd> ol(r, f, false);
+
+        bool to_purge = false;
+
+        for (int i = 0; i < f.size(); i++) {
+            if (f[i].optional()) {
+                ol.insert_lambda(i);
+            } else if (f[i].mandatory()) {
+                ol.insert_omega(i);
+                if (ol.ect() > f[i].lct())
+                    return ES_FAILED;
+            }
+            while (!ol.lempty() && (ol.lect() > f[i].lct())) {
+                int j = ol.responsible();
+                GECODE_ME_CHECK(f[j].excluded(home));
+                ol.remove_lambda(j);
+                to_purge = true;
+            }
+        }
+
+        if (to_purge)
+            GECODE_ES_CHECK((purge<OptTask, PL>(home, p, t)));
+        return ES_OK;
+    }
+
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-prop

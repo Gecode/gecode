@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -43,44 +42,45 @@
 #include <gecode/search/worker.hh>
 #include <gecode/search/seq/path.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
-  /// Implementation of depth-first branch-and-bound search engine
-  template<class Tracer>
-  class BAB : public Worker {
-  private:
-    /// Search tracer
-    Tracer tracer;
-    /// Search options
-    Options opt;
-    /// Current path in search tree
-    Path<Tracer> path;
-    /// Current space being explored
-    Space* cur;
-    /// Distance until next clone
-    unsigned int d;
-    /// Number of entries not yet constrained to be better
-    int mark;
-    /// Best solution found so far
-    Space* best;
-  public:
-    /// Initialize with space \a s and search options \a o
-    BAB(Space* s, const Options& o);
-    /// %Search for next better solution
-    Space* next(void);
-    /// Return statistics
-    Statistics statistics(void) const;
-    /// Constrain future solutions to be better than \a b
-    void constrain(const Space& b);
-    /// Reset engine to restart at space \a s
-    void reset(Space* s);
-    /// Return no-goods
-    NoGoods& nogoods(void);
-    /// Destructor
-    ~BAB(void);
-  };
+    /// Implementation of depth-first branch-and-bound search engine
+    template <class Tracer>
+    class BAB : public Worker {
+    private:
+        /// Search tracer
+        Tracer tracer;
+        /// Search options
+        Options opt;
+        /// Current path in search tree
+        Path<Tracer> path;
+        /// Current space being explored
+        Space* cur;
+        /// Distance until next clone
+        unsigned int d;
+        /// Number of entries not yet constrained to be better
+        int mark;
+        /// Best solution found so far
+        Space* best;
 
-}}}
+    public:
+        /// Initialize with space \a s and search options \a o
+        BAB(Space* s, const Options& o);
+        /// %Search for next better solution
+        Space* next();
+        /// Return statistics
+        Statistics statistics() const;
+        /// Constrain future solutions to be better than \a b
+        void constrain(const Space& b);
+        /// Reset engine to restart at space \a s
+        void reset(Space* s);
+        /// Return no-goods
+        NoGoods& nogoods();
+        /// Destructor
+        ~BAB();
+    };
+
+} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/bab.hpp>
 

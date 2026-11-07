@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,55 +34,49 @@
 
 namespace Gecode {
 
-  forceinline void
-  FloatVar::_init(Space& home, FloatNum min, FloatNum max) {
-    x = new (home) Float::FloatVarImp(home,FloatVal(min,max));
-  }
+    forceinline void
+    FloatVar::_init(Space& home, FloatNum min, FloatNum max) {
+        x = new (home) Float::FloatVarImp(home, FloatVal(min, max));
+    }
 
-  forceinline
-  FloatVar::FloatVar(void) {}
-  forceinline
-  FloatVar::FloatVar(const FloatVar& y)
-    : VarImpVar<Float::FloatVarImp>(y.varimp()) {}
-  forceinline
-  FloatVar::FloatVar(const Float::FloatView& y)
-    : VarImpVar<Float::FloatVarImp>(y.varimp()) {}
+    forceinline
+    FloatVar::FloatVar(const Float::FloatView& y)
+        : VarImpVar<Float::FloatVarImp>(y.varimp()) {}
 
-  forceinline FloatVal
-  FloatVar::val(void) const {
-    if (!x->assigned())
-      throw Float::ValOfUnassignedVar("FloatVar::val");
-    return x->val();
-  }
-  forceinline FloatNum
-  FloatVar::min(void) const {
-    return x->min();
-  }
-  forceinline FloatNum
-  FloatVar::med(void) const {
-    return x->med();
-  }
-  forceinline FloatNum
-  FloatVar::max(void) const {
-    return x->max();
-  }
+    forceinline FloatVal
+    FloatVar::val() const {
+        if (!x->assigned())
+            throw Float::ValOfUnassignedVar("FloatVar::val");
+        return x->val();
+    }
+    forceinline FloatNum
+    FloatVar::min() const {
+        return x->min();
+    }
+    forceinline FloatNum
+    FloatVar::med() const {
+        return x->med();
+    }
+    forceinline FloatNum
+    FloatVar::max() const {
+        return x->max();
+    }
 
-  forceinline FloatVal
-  FloatVar::domain(void) const {
-    return x->domain();
-  }
+    forceinline FloatVal
+    FloatVar::domain() const {
+        return x->domain();
+    }
 
-  forceinline FloatNum
-  FloatVar::size(void) const {
-    return x->size();
-  }
+    forceinline FloatNum
+    FloatVar::size() const {
+        return x->size();
+    }
 
-  forceinline bool
-  FloatVar::in(const FloatVal& n) const {
-    return x->in(n);
-  }
+    forceinline bool
+    FloatVar::in(const FloatVal& n) const {
+        return x->in(n);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-var
-

@@ -1,8 +1,7 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
-*
+ *
  *  Copyright:
  *     Christian Schulte, 2012
  *
@@ -33,22 +32,22 @@
 
 namespace Gecode {
 
-  /// Traits of %FloatVar for branching
-  template<>
-  class BranchTraits<FloatVar> {
-  public:
-    /// Type for the branching filter function
-    typedef FloatBranchFilter Filter;
-    /// Type for the branching merit function
-    typedef FloatBranchMerit Merit;
-    /// Type for the branching value function
-    typedef FloatBranchVal Val;
-    /// Return type of the branching value function
-    typedef FloatNumBranch ValType;
-    /// Type for the branching commit function
-    typedef FloatBranchCommit Commit;
-  };
+    /// Traits of %FloatVar for branching
+    template <>
+    class BranchTraits<FloatVar> {
+    public:
+        /// Type for the branching filter function
+        using Filter = FloatBranchFilter;
+        /// Type for the branching merit function
+        using Merit = FloatBranchMerit;
+        /// Type for the branching value function
+        using Val = FloatBranchVal;
+        /// Return type of the branching value function
+        using ValType = FloatNumBranch;
+        /// Type for the branching commit function
+        using Commit = FloatBranchCommit;
+    };
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-branch

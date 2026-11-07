@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     David Rijsman <David.Rijsman@quintiq.com>
@@ -41,196 +40,191 @@
 
 namespace Gecode {
 
-  using namespace Int;
+    using namespace Int;
 
-  void
-  sequence(Home home, const IntVarArgs& x, const IntSet &s,
-           int q, int l, int u, IntPropLevel) {
-    Limits::check(s.min(),"Int::sequence");
-    Limits::check(s.max(),"Int::sequence");
+    void
+    sequence(Home home, const IntVarArgs& x, const IntSet& s, int q, int l, int u, IntPropLevel) {
+        Limits::check(s.min(), "Int::sequence");
+        Limits::check(s.max(), "Int::sequence");
 
-    if (x.size() == 0)
-      throw TooFewArguments("Int::sequence");
+        if (x.size() == 0)
+            throw TooFewArguments("Int::sequence");
 
-    Limits::check(q,"Int::sequence");
-    Limits::check(l,"Int::sequence");
-    Limits::check(u,"Int::sequence");
+        Limits::check(q, "Int::sequence");
+        Limits::check(l, "Int::sequence");
+        Limits::check(u, "Int::sequence");
 
-    if (same(x))
-      throw ArgumentSame("Int::sequence");
+        if (same(x))
+            throw ArgumentSame("Int::sequence");
 
-    if ((q < 1) || (q > x.size()))
-      throw OutOfLimits("Int::sequence");
+        if ((q < 1) || (q > x.size()))
+            throw OutOfLimits("Int::sequence");
 
-    GECODE_POST;
+        GECODE_POST;
 
-    // Normalize l and u
-    l=std::max(0,l); u=std::min(q,u);
+        // Normalize l and u
+        l = std::max(0, l);
+        u = std::min(q, u);
 
-    // Lower bound of values taken can never exceed upper bound
-    if (u < l) {
-      home.fail(); return;
-    }
-
-    // Already subsumed as any number of values taken is okay
-    if ((0 == l) && (q == u))
-      return;
-
-    // All variables must take a value in s
-    if (l == q) {
-      for (int i=0; i<x.size(); i++) {
-        IntView xv(x[i]);
-        IntSetRanges ris(s);
-        GECODE_ME_FAIL(xv.inter_r(home,ris,false));
-      }
-      return;
-    }
-
-    // No variable can take a value in s
-    if (0 == u) {
-      for (int i=0; i<x.size(); i++) {
-        IntView xv(x[i]);
-        IntSetRanges ris(s);
-        GECODE_ME_FAIL(xv.minus_r(home,ris,false));
-      }
-      return;
-    }
-
-    ViewArray<IntView> xv(home,x);
-    if (s.size() == 1) {
-      GECODE_ES_FAIL(
-                     (Sequence::Sequence<IntView,int>::post
-                      (home,xv,s.min(),q,l,u)));
-    } else {
-      GECODE_ES_FAIL(
-                     (Sequence::Sequence<IntView,IntSet>::post
-                      (home,xv,s,q,l,u)));
-    }
-  }
-
-  void
-  sequence(Home home, const BoolVarArgs& x, const IntSet& s,
-           int q, int l, int u, IntPropLevel) {
-    if ((s.min() < 0) || (s.max() > 1))
-      throw NotZeroOne("Int::sequence");
-
-    if (x.size() == 0)
-      throw TooFewArguments("Int::sequence");
-
-    Limits::check(q,"Int::sequence");
-    Limits::check(l,"Int::sequence");
-    Limits::check(u,"Int::sequence");
-
-    if (same(x))
-      throw ArgumentSame("Int::sequence");
-
-    if ((q < 1) || (q > x.size()))
-      throw OutOfLimits("Int::sequence");
-
-    GECODE_POST;
-
-    // Normalize l and u
-    l=std::max(0,l); u=std::min(q,u);
-
-    // Lower bound of values taken can never exceed upper bound
-    if (u < l) {
-      home.fail(); return;
-    }
-
-    // Already subsumed as any number of values taken is okay
-    if ((0 == l) && (q == u))
-      return;
-
-    // Check whether the set is {0,1}, then the number of values taken is q
-    if ((s.min() == 0) && (s.max() == 1)) {
-      if ((l > 0) || (u < q))
-        home.fail();
-      return;
-    }
-    assert(s.min() == s.max());
-
-    // All variables must take a value in s
-    if (l == q) {
-      if (s.min() == 0) {
-        for (int i=0; i<x.size(); i++) {
-          BoolView xv(x[i]); GECODE_ME_FAIL(xv.zero(home));
+        // Lower bound of values taken can never exceed upper bound
+        if (u < l) {
+            home.fail();
+            return;
         }
-      } else {
-        assert(s.min() == 1);
-        for (int i=0; i<x.size(); i++) {
-          BoolView xv(x[i]); GECODE_ME_FAIL(xv.one(home));
+
+        // Already subsumed as any number of values taken is okay
+        if ((0 == l) && (q == u))
+            return;
+
+        // All variables must take a value in s
+        if (l == q) {
+            for (auto xi : x) {
+                IntView xv(xi);
+                IntSetRanges ris(s);
+                GECODE_ME_FAIL(xv.inter_r(home, ris, false));
+            }
+            return;
         }
-      }
-      return;
-    }
 
-    // No variable can take a value in s
-    if (0 == u) {
-      if (s.min() == 0) {
-        for (int i=0; i<x.size(); i++) {
-          BoolView xv(x[i]); GECODE_ME_FAIL(xv.one(home));
+        // No variable can take a value in s
+        if (0 == u) {
+            for (auto xi : x) {
+                IntView xv(xi);
+                IntSetRanges ris(s);
+                GECODE_ME_FAIL(xv.minus_r(home, ris, false));
+            }
+            return;
         }
-      } else {
-        assert(s.min() == 1);
-        for (int i=0; i<x.size(); i++) {
-          BoolView xv(x[i]); GECODE_ME_FAIL(xv.zero(home));
+
+        ViewArray<IntView> xv(home, x);
+        if (s.size() == 1) {
+            GECODE_ES_FAIL((Sequence::Sequence<IntView, int>::post(home, xv, s.min(), q, l, u)));
+        } else {
+            GECODE_ES_FAIL((Sequence::Sequence<IntView, IntSet>::post(home, xv, s, q, l, u)));
         }
-      }
-      return;
     }
 
-    ViewArray<BoolView> xv(home,x);
+    void
+    sequence(Home home, const BoolVarArgs& x, const IntSet& s, int q, int l, int u, IntPropLevel) {
+        if ((s.min() < 0) || (s.max() > 1))
+            throw NotZeroOne("Int::sequence");
 
-    GECODE_ES_FAIL(
-                   (Sequence::Sequence<BoolView,int>::post
-                    (home,xv,s.min(),q,l,u)));
-  }
+        if (x.size() == 0)
+            throw TooFewArguments("Int::sequence");
 
-  void
-  sequence(Home home, OpenIntVarList x, const IntSet& values,
-           int width, int lower, int upper, IntPropLevel ipl) {
-    Int::Limits::check(values.min(),"Int::sequence");
-    Int::Limits::check(values.max(),"Int::sequence");
-    Int::Limits::check(width,"Int::sequence");
-    Int::Limits::check(lower,"Int::sequence");
-    Int::Limits::check(upper,"Int::sequence");
-    if (width < 1)
-      throw Int::OutOfLimits("Int::sequence");
-    GECODE_POST;
-    lower = std::max(0,lower);
-    upper = std::min(width,upper);
-    if (upper < lower) {
-      rel(home,x.length(),IRT_LE,width);
-      return;
+        Limits::check(q, "Int::sequence");
+        Limits::check(l, "Int::sequence");
+        Limits::check(u, "Int::sequence");
+
+        if (same(x))
+            throw ArgumentSame("Int::sequence");
+
+        if ((q < 1) || (q > x.size()))
+            throw OutOfLimits("Int::sequence");
+
+        GECODE_POST;
+
+        // Normalize l and u
+        l = std::max(0, l);
+        u = std::min(q, u);
+
+        // Lower bound of values taken can never exceed upper bound
+        if (u < l) {
+            home.fail();
+            return;
+        }
+
+        // Already subsumed as any number of values taken is okay
+        if ((0 == l) && (q == u))
+            return;
+
+        // Check whether the set is {0,1}, then the number of values taken is q
+        if ((s.min() == 0) && (s.max() == 1)) {
+            if ((l > 0) || (u < q))
+                home.fail();
+            return;
+        }
+        assert(s.min() == s.max());
+
+        // All variables must take a value in s
+        if (l == q) {
+            if (s.min() == 0) {
+                for (auto xi : x) {
+                    BoolView xv(xi);
+                    GECODE_ME_FAIL(xv.zero(home));
+                }
+            } else {
+                assert(s.min() == 1);
+                for (auto xi : x) {
+                    BoolView xv(xi);
+                    GECODE_ME_FAIL(xv.one(home));
+                }
+            }
+            return;
+        }
+
+        // No variable can take a value in s
+        if (0 == u) {
+            if (s.min() == 0) {
+                for (auto xi : x) {
+                    BoolView xv(xi);
+                    GECODE_ME_FAIL(xv.one(home));
+                }
+            } else {
+                assert(s.min() == 1);
+                for (auto xi : x) {
+                    BoolView xv(xi);
+                    GECODE_ME_FAIL(xv.zero(home));
+                }
+            }
+            return;
+        }
+
+        ViewArray<BoolView> xv(home, x);
+
+        GECODE_ES_FAIL((Sequence::Sequence<BoolView, int>::post(home, xv, s.min(), q, l, u)));
     }
-    if ((lower == 0) && (upper == width))
-      return;
-    Int::Sequence::Open<Int::IntView>::post
-      (home,OpenViewList<Int::IntView>(x),values,width,lower,upper,ipl);
-  }
 
-  void
-  sliding_sum(Home home, OpenIntVarList list,
-              int width, int lower, int upper, IntPropLevel ipl) {
-    Int::Limits::check(width,"Int::sliding_sum");
-    Int::Limits::check(lower,"Int::sliding_sum");
-    Int::Limits::check(upper,"Int::sliding_sum");
-    if (width < 1)
-      throw Int::OutOfLimits("Int::sliding_sum");
-    GECODE_POST;
-    OpenViewList<Int::IntView> views(list);
-    if (upper < lower) {
-      GECODE_ME_FAIL(views.length().lq(home,width-1));
-      return;
+    void
+    sequence(Home home, OpenIntVarList x, const IntSet& values, int width, int lower, int upper, IntPropLevel ipl) {
+        Int::Limits::check(values.min(), "Int::sequence");
+        Int::Limits::check(values.max(), "Int::sequence");
+        Int::Limits::check(width, "Int::sequence");
+        Int::Limits::check(lower, "Int::sequence");
+        Int::Limits::check(upper, "Int::sequence");
+        if (width < 1)
+            throw Int::OutOfLimits("Int::sequence");
+        GECODE_POST;
+        lower = std::max(0, lower);
+        upper = std::min(width, upper);
+        if (upper < lower) {
+            rel(home, x.length(), IRT_LT, width);
+            return;
+        }
+        if ((lower == 0) && (upper == width))
+            return;
+        Int::Sequence::Open<Int::IntView>::post(home, OpenViewList<Int::IntView>(x), values, width, lower, upper, ipl);
     }
-    if (lower == upper)
-      Int::Sequence::OpenSlidingSumEq<Int::IntView>::post
-        (home,views,width,lower,ipl);
-    else
-      Int::Sequence::OpenSlidingSumBnd<Int::IntView>::post
-        (home,views,width,lower,upper);
-  }
 
-}
+    void
+    sliding_sum(Home home, OpenIntVarList list, int width, int lower, int upper, IntPropLevel ipl) {
+        Int::Limits::check(width, "Int::sliding_sum");
+        Int::Limits::check(lower, "Int::sliding_sum");
+        Int::Limits::check(upper, "Int::sliding_sum");
+        if (width < 1)
+            throw Int::OutOfLimits("Int::sliding_sum");
+        GECODE_POST;
+        OpenViewList<Int::IntView> views(list);
+        if (upper < lower) {
+            GECODE_ME_FAIL(views.length().lq(home, width - 1));
+            return;
+        }
+        if (lower == upper)
+            Int::Sequence::OpenSlidingSumEq<Int::IntView>::post(home, views, width, lower, ipl);
+        else
+            Int::Sequence::OpenSlidingSumBnd<Int::IntView>::post(home, views, width, lower, upper);
+    }
+
+} // namespace Gecode
 
 // STATISTICS: int-post

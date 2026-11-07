@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,97 +35,90 @@
 
 namespace Gecode {
 
-  StdSetTracer::StdSetTracer(std::ostream& os0)
-    : os(os0) {}
+    StdSetTracer::StdSetTracer(std::ostream& os0) : os(os0) {}
 
-  void
-  StdSetTracer::init(const Space&, const SetTraceRecorder& t) {
-    os << "trace<Set>::init(id:" << t.id();
-    if (t.group().in())
-      os << ",g:" << t.group().id();
-    os << ") slack: 100.00% (" << t.slack().initial() << " values)"
-       << std::endl;
-  }
-
-  void
-  StdSetTracer::prune(const Space&, const SetTraceRecorder& t,
-                      const ViewTraceInfo& vti, int i, SetTraceDelta& d) {
-    os << "trace<Set>::prune(id:" << t.id();
-    if (t.group().in())
-      os << ",g:" << t.group().id();
-    os << "): [" << i << "] = " << t[i] << " + {";
-    {
-      SetTraceDelta::Glb glb(d.glb());
-      if (glb()) {
-        os << glb.min() << ".." << glb.max();
-        ++glb;
-        while (glb()) {
-          os << "," << glb.min() << ".." << glb.max();
-          ++glb;
-        }
-      }
+    void
+    StdSetTracer::init(const Space&, const SetTraceRecorder& t) {
+        os << "trace<Set>::init(id:" << t.id();
+        if (t.group().in())
+            os << ",g:" << t.group().id();
+        os << ") slack: 100.00% (" << t.slack().initial() << " values)" << '\n' << std::flush;
     }
-    os << "} - {";
-    {
-      SetTraceDelta::Lub lub(d.lub());
-      if (lub()) {
-        os << lub.min() << ".." << lub.max();
-        ++lub;
-        while (lub()) {
-          os << "," << lub.min() << ".." << lub.max();
-          ++lub;
+
+    void
+    StdSetTracer::prune(const Space&, const SetTraceRecorder& t, const ViewTraceInfo& vti, int i, SetTraceDelta& d) {
+        os << "trace<Set>::prune(id:" << t.id();
+        if (t.group().in())
+            os << ",g:" << t.group().id();
+        os << "): [" << i << "] = " << t[i] << " + {";
+        {
+            SetTraceDelta::Glb glb(d.glb());
+            if (glb()) {
+                os << glb.min() << ".." << glb.max();
+                ++glb;
+                while (glb()) {
+                    os << "," << glb.min() << ".." << glb.max();
+                    ++glb;
+                }
+            }
         }
-      }
+        os << "} - {";
+        {
+            SetTraceDelta::Lub lub(d.lub());
+            if (lub()) {
+                os << lub.min() << ".." << lub.max();
+                ++lub;
+                while (lub()) {
+                    os << "," << lub.min() << ".." << lub.max();
+                    ++lub;
+                }
+            }
+        }
+        os << "} by " << vti << '\n' << std::flush;
     }
-    os << "} by " << vti << std::endl;
-  }
 
-  void
-  StdSetTracer::fix(const Space&, const SetTraceRecorder& t) {
-    os << "trace<Set>::fix(id:" << t.id();
-    if (t.group().in())
-      os << ",g:" << t.group().id();
-    os << ") slack: ";
-    double sl_i = static_cast<double>(t.slack().initial());
-    double sl_p = static_cast<double>(t.slack().previous());
-    double sl_c = static_cast<double>(t.slack().current());
-    double p_c = 100.0 * (sl_c / sl_i);
-    double p_d = 100.0 * (sl_p / sl_i) - p_c;
-    os << std::showpoint << std::setprecision(4)
-       << p_c << "% - "
-       << std::showpoint << std::setprecision(4)
-       << p_d << '%'
-       << std::endl;
-  }
+    void
+    StdSetTracer::fix(const Space&, const SetTraceRecorder& t) {
+        os << "trace<Set>::fix(id:" << t.id();
+        if (t.group().in())
+            os << ",g:" << t.group().id();
+        os << ") slack: ";
+        double sl_i = static_cast<double>(t.slack().initial());
+        double sl_p = static_cast<double>(t.slack().previous());
+        double sl_c = static_cast<double>(t.slack().current());
+        double p_c = 100.0 * (sl_c / sl_i);
+        double p_d = 100.0 * (sl_p / sl_i) - p_c;
+        os << std::showpoint << std::setprecision(4) << p_c << "% - " << std::showpoint << std::setprecision(4) << p_d
+           << '%' << '\n'
+           << std::flush;
+    }
 
-  void
-  StdSetTracer::fail(const Space&, const SetTraceRecorder& t) {
-    os << "trace<Set>::fail(id:" << t.id();
-    if (t.group().in())
-      os << ",g:" << t.group().id();
-    os << ") slack: ";
-    double sl_i = static_cast<double>(t.slack().initial());
-    double sl_p = static_cast<double>(t.slack().previous());
-    double sl_c = static_cast<double>(t.slack().current());
-    double p_c = 100.0 * (sl_c / sl_i);
-    double p_d = 100.0 * (sl_p / sl_i) - p_c;
-    os << std::showpoint << std::setprecision(4)
-       << p_c << "% - "
-       << std::showpoint << std::setprecision(4)
-       << p_d << '%'
-       << std::endl;
-  }
+    void
+    StdSetTracer::fail(const Space&, const SetTraceRecorder& t) {
+        os << "trace<Set>::fail(id:" << t.id();
+        if (t.group().in())
+            os << ",g:" << t.group().id();
+        os << ") slack: ";
+        double sl_i = static_cast<double>(t.slack().initial());
+        double sl_p = static_cast<double>(t.slack().previous());
+        double sl_c = static_cast<double>(t.slack().current());
+        double p_c = 100.0 * (sl_c / sl_i);
+        double p_d = 100.0 * (sl_p / sl_i) - p_c;
+        os << std::showpoint << std::setprecision(4) << p_c << "% - " << std::showpoint << std::setprecision(4) << p_d
+           << '%' << '\n'
+           << std::flush;
+    }
 
-  void
-  StdSetTracer::done(const Space&, const SetTraceRecorder& t) {
-    os << "trace<Set>::done(id:" << t.id();
-    if (t.group().in())
-      os << ",g:" << t.group().id();
-    os << ") slack: 0%" << std::endl;
-  }
+    void
+    StdSetTracer::done(const Space&, const SetTraceRecorder& t) {
+        os << "trace<Set>::done(id:" << t.id();
+        if (t.group().in())
+            os << ",g:" << t.group().id();
+        os << ") slack: 0%" << '\n' << std::flush;
+    }
 
-  StdSetTracer StdSetTracer::def;
+    StdSetTracer StdSetTracer::def;
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-trace

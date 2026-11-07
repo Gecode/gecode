@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,18 +32,8 @@
 
 namespace Gecode {
 
-  forceinline
-  SetCHB::SetCHB(void) {}
+    forceinline SetCHB& SetCHB::operator=(const SetCHB& chb) = default;
 
-  forceinline
-  SetCHB::SetCHB(const SetCHB& chb)
-    : CHB(chb) {}
-
-  forceinline SetCHB&
-  SetCHB::operator =(const SetCHB& chb) {
-    return static_cast<SetCHB&>(CHB::operator =(chb));
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: set-branch

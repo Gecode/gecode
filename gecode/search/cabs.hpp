@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -32,61 +31,58 @@
  */
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  /// Create CABS engine
-  GECODE_SEARCH_EXPORT Engine*
-  cabsengine(Space* s, const Options& o);
+    /// Create CABS engine
+    GECODE_SEARCH_EXPORT Engine* make_cabs_engine(Space* s, const Options& o);
 
-  /// A CABS engine builder
-  template<class T>
-  class CABSBuilder : public Builder {
-    using Builder::opt;
-  public:
-    /// The constructor
-    CABSBuilder(const Options& opt);
-    /// The actual build function
-    virtual Engine* operator() (Space* s) const;
-  };
+    /// A CABS engine builder
+    template <class T>
+    class CABSBuilder : public Builder {
+        using Builder::opt;
 
-  template<class T>
-  inline
-  CABSBuilder<T>::CABSBuilder(const Options& opt)
-    : Builder(opt,CABS<T>::best) {}
+    public:
+        /// The constructor
+        CABSBuilder(const Options& opt);
+        /// The actual build function
+        Engine* operator()(Space* s) const override;
+    };
 
-  template<class T>
-  Engine*
-  CABSBuilder<T>::operator() (Space* s) const {
-    return build<T,CABS>(s,opt);
-  }
+    template <class T>
+    inline CABSBuilder<T>::CABSBuilder(const Options& opt) : Builder(opt, CABS<T>::best) {}
 
-}}
+    template <class T>
+    Engine*
+    CABSBuilder<T>::operator()(Space* s) const {
+        return build<T, CABS>(s, opt);
+    }
+
+} // namespace Gecode::Search
 
 namespace Gecode {
 
-  template<class T>
-  inline
-  CABS<T>::CABS(T* s, const Search::Options& o)
-    : Search::Base<T>(Search::cabsengine(s,o)) {}
+    template <class T>
+    inline CABS<T>::CABS(T* s, const Search::Options& o) : Search::Base<T>(Search::make_cabs_engine(s, o)) {}
 
-  template<class T>
-  inline T*
-  cabs(T* s, const Search::Options& o) {
-    CABS<T> c(s,o);
-    T* l = nullptr;
-    while (T* n = c.next()) {
-      delete l; l = n;
+    template <class T>
+    inline T*
+    cabs(T* s, const Search::Options& o) {
+        CABS<T> c(s, o);
+        T* l = nullptr;
+        while (T* n = c.next()) {
+            delete l;
+            l = n;
+        }
+        return l;
     }
-    return l;
-  }
 
-  template<class T>
-  SEB
-  cabs(const Search::Options& o) {
-    return new Search::CABSBuilder<T>(o);
-  }
+    template <class T>
+    SEB
+    cabs(const Search::Options& o) {
+        return new Search::CABSBuilder<T>(o);
+    }
 
-}
+} // namespace Gecode
 
 #endif
 

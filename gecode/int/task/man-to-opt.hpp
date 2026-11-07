@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,72 +30,68 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
-  template<class ManTask>
-  forceinline
-  ManToOptTask<ManTask>::ManToOptTask(void) {}
+    template <class ManTask>
+    forceinline bool
+    ManToOptTask<ManTask>::mandatory() const {
+        return _m.one();
+    }
+    template <class ManTask>
+    forceinline bool
+    ManToOptTask<ManTask>::excluded() const {
+        return _m.zero();
+    }
+    template <class ManTask>
+    forceinline bool
+    ManToOptTask<ManTask>::optional() const {
+        return _m.none();
+    }
 
-  template<class ManTask>
-  forceinline bool
-  ManToOptTask<ManTask>::mandatory(void) const {
-    return _m.one();
-  }
-  template<class ManTask>
-  forceinline bool
-  ManToOptTask<ManTask>::excluded(void) const {
-    return _m.zero();
-  }
-  template<class ManTask>
-  forceinline bool
-  ManToOptTask<ManTask>::optional(void) const {
-    return _m.none();
-  }
+    template <class ManTask>
+    forceinline bool
+    ManToOptTask<ManTask>::assigned() const {
+        return ManTask::assigned() && _m.assigned();
+    }
 
-  template<class ManTask>
-  forceinline bool
-  ManToOptTask<ManTask>::assigned(void) const {
-    return ManTask::assigned() && _m.assigned();
-  }
+    template <class ManTask>
+    forceinline ModEvent
+    ManToOptTask<ManTask>::mandatory(Space& home) {
+        return _m.one(home);
+    }
+    template <class ManTask>
+    forceinline ModEvent
+    ManToOptTask<ManTask>::excluded(Space& home) {
+        return _m.zero(home);
+    }
 
-  template<class ManTask>
-  forceinline ModEvent
-  ManToOptTask<ManTask>::mandatory(Space& home) {
-    return _m.one(home);
-  }
-  template<class ManTask>
-  forceinline ModEvent
-  ManToOptTask<ManTask>::excluded(Space& home) {
-    return _m.zero(home);
-  }
+    template <class ManTask>
+    forceinline void
+    ManToOptTask<ManTask>::update(Space& home, ManToOptTask<ManTask>& t) {
+        ManTask::update(home, t);
+        _m.update(home, t._m);
+    }
 
-  template<class ManTask>
-  forceinline void
-  ManToOptTask<ManTask>::update(Space& home, ManToOptTask<ManTask>& t) {
-    ManTask::update(home, t);
-    _m.update(home,t._m);
-  }
+    template <class ManTask>
+    forceinline void
+    ManToOptTask<ManTask>::subscribe(Space& home, Propagator& p, PropCond pc) {
+        ManTask::subscribe(home, p, pc);
+        _m.subscribe(home, p, PC_BOOL_VAL);
+    }
+    template <class ManTask>
+    forceinline void
+    ManToOptTask<ManTask>::cancel(Space& home, Propagator& p, PropCond pc) {
+        _m.cancel(home, p, PC_BOOL_VAL);
+        ManTask::cancel(home, p, pc);
+    }
 
-  template<class ManTask>
-  forceinline void
-  ManToOptTask<ManTask>::subscribe(Space& home, Propagator& p, PropCond pc) {
-    ManTask::subscribe(home, p, pc);
-    _m.subscribe(home, p, PC_BOOL_VAL);
-  }
-  template<class ManTask>
-  forceinline void
-  ManToOptTask<ManTask>::cancel(Space& home, Propagator& p, PropCond pc) {
-    _m.cancel(home, p, PC_BOOL_VAL);
-    ManTask::cancel(home, p, pc);
-  }
+    template <class ManTask>
+    forceinline void
+    ManToOptTask<ManTask>::reschedule(Space& home, Propagator& p, PropCond pc) {
+        _m.reschedule(home, p, PC_BOOL_VAL);
+        ManTask::reschedule(home, p, pc);
+    }
 
-  template<class ManTask>
-  forceinline void
-  ManToOptTask<ManTask>::reschedule(Space& home, Propagator& p, PropCond pc) {
-    _m.reschedule(home, p, PC_BOOL_VAL);
-    ManTask::reschedule(home, p, pc);
-  }
-
-}}
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

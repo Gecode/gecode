@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,54 +30,53 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Count {
+namespace Gecode::Int::Count {
 
-  template<class VX, class VY>
-  forceinline
-  IntBase<VX,VY>::IntBase(Home home,
-                          ViewArray<VX>& x0, int n_s0, VY y0, int c0)
-    : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
-    if (isintset(y))
-      home.notice(*this,AP_DISPOSE);
-    for (int i=0; i<n_s; i++)
-      x[i].subscribe(home,*this,PC_INT_DOM);
-    subscribe(home,*this,y);
-  }
+    template <class VX, class VY>
+    forceinline
+    IntBase<VX, VY>::IntBase(Home home, ViewArray<VX>& x0, int n_s0, const VY& y0, int c0)
+        : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
+        if (is_int_set(y))
+            home.notice(*this, AP_DISPOSE);
+        for (int i = 0; i < n_s; i++)
+            x[i].subscribe(home, *this, PC_INT_DOM);
+        subscribe(home, *this, y);
+    }
 
-  template<class VX, class VY>
-  forceinline size_t
-  IntBase<VX,VY>::dispose(Space& home) {
-    if (isintset(y))
-      home.ignore(*this,AP_DISPOSE);
-    for (int i=0; i<n_s; i++)
-      x[i].cancel(home,*this,PC_INT_DOM);
-    cancel(home,*this,y);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
+    template <class VX, class VY>
+    forceinline size_t
+    IntBase<VX, VY>::dispose(Space& home) {
+        if (is_int_set(y))
+            home.ignore(*this, AP_DISPOSE);
+        for (int i = 0; i < n_s; i++)
+            x[i].cancel(home, *this, PC_INT_DOM);
+        cancel(home, *this, y);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
 
-  template<class VX, class VY>
-  forceinline
-  IntBase<VX,VY>::IntBase(Space& home, IntBase<VX,VY>& p)
-    : Propagator(home,p), n_s(p.n_s), c(p.c) {
-    x.update(home,p.x);
-    update(y,home,p.y);
-  }
+    template <class VX, class VY>
+    forceinline
+    IntBase<VX, VY>::IntBase(Space& home, IntBase<VX, VY>& p)
+        : Propagator(home, p), n_s(p.n_s), c(p.c) {
+        x.update(home, p.x);
+        update(y, home, p.y);
+    }
 
-  template<class VX, class VY>
-  PropCost
-  IntBase<VX,VY>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LO,x.size());
-  }
+    template <class VX, class VY>
+    PropCost
+    IntBase<VX, VY>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::linear(PropCost::LO, x.size());
+    }
 
-  template<class VX, class VY>
-  void
-  IntBase<VX,VY>::reschedule(Space& home) {
-    for (int i=0; i<n_s; i++)
-      x[i].reschedule(home,*this,PC_INT_DOM);
-    Gecode::Int::Count::reschedule(home,*this,y);
-  }
+    template <class VX, class VY>
+    void
+    IntBase<VX, VY>::reschedule(Space& home) {
+        for (int i = 0; i < n_s; i++)
+            x[i].reschedule(home, *this, PC_INT_DOM);
+        Gecode::Int::Count::reschedule(home, *this, y);
+    }
 
-}}}
+} // namespace Gecode::Int::Count
 
 // STATISTICS: int-prop

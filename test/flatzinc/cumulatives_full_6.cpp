@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jason Nguyen <jason.nguyen@monash.edu>
@@ -33,32 +32,27 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("cumulatives_full::6",
-R"FZN(
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("cumulatives_full::6",
+                                   R"FZN(
 var 1..2: d1 :: output_var;
 var 1..2: d2;
 % Both tasks use machine 0, so the first must end when the second starts.
 constraint gecode_cumulatives([0, 1], [d1, d2], [2, 2], [0, 0], [3, 1], true);
 solve satisfy;
 )FZN",
-R"OUT(d1 = 1;
+                                   R"OUT(d1 = 1;
 ----------
 )OUT");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

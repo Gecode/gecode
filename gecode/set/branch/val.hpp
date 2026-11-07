@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,69 +32,68 @@
 
 namespace Gecode {
 
-  forceinline
-  SetValBranch::SetValBranch(Select s0)
-    : s(s0) {}
+    forceinline
+    SetValBranch::SetValBranch(Select s0)
+        : s(s0) {}
 
-  forceinline
-  SetValBranch::SetValBranch(Select s0, Rnd r)
-    : ValBranch<SetVar>(r), s(s0) {}
+    forceinline
+    SetValBranch::SetValBranch(Select s0, const Rnd& r)
+        : ValBranch<SetVar>(r), s(s0) {}
 
-  forceinline
-  SetValBranch::SetValBranch(SetBranchVal v, SetBranchCommit c)
-    : ValBranch<SetVar>(v,c), s(SEL_VAL_COMMIT) {}
+    forceinline
+    SetValBranch::SetValBranch(SetBranchVal v, SetBranchCommit c)
+        : ValBranch<SetVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
-  forceinline SetValBranch::Select
-  SetValBranch::select(void) const {
-    return s;
-  }
+    forceinline SetValBranch::Select
+    SetValBranch::select() const {
+        return s;
+    }
 
+    inline SetValBranch
+    SET_VAL_MIN_INC() {
+        return SetValBranch(SetValBranch::SEL_MIN_INC);
+    }
 
-  inline SetValBranch
-  SET_VAL_MIN_INC(void) {
-    return SetValBranch(SetValBranch::SEL_MIN_INC);
-  }
+    inline SetValBranch
+    SET_VAL_MIN_EXC() {
+        return SetValBranch(SetValBranch::SEL_MIN_EXC);
+    }
 
-  inline SetValBranch
-  SET_VAL_MIN_EXC(void) {
-    return SetValBranch(SetValBranch::SEL_MIN_EXC);
-  }
+    inline SetValBranch
+    SET_VAL_MED_INC() {
+        return SetValBranch(SetValBranch::SEL_MED_INC);
+    }
 
-  inline SetValBranch
-  SET_VAL_MED_INC(void) {
-    return SetValBranch(SetValBranch::SEL_MED_INC);
-  }
+    inline SetValBranch
+    SET_VAL_MED_EXC() {
+        return SetValBranch(SetValBranch::SEL_MED_EXC);
+    }
 
-  inline SetValBranch
-  SET_VAL_MED_EXC(void) {
-    return SetValBranch(SetValBranch::SEL_MED_EXC);
-  }
+    inline SetValBranch
+    SET_VAL_MAX_INC() {
+        return SetValBranch(SetValBranch::SEL_MAX_INC);
+    }
 
-  inline SetValBranch
-  SET_VAL_MAX_INC(void) {
-    return SetValBranch(SetValBranch::SEL_MAX_INC);
-  }
+    inline SetValBranch
+    SET_VAL_MAX_EXC() {
+        return SetValBranch(SetValBranch::SEL_MAX_EXC);
+    }
 
-  inline SetValBranch
-  SET_VAL_MAX_EXC(void) {
-    return SetValBranch(SetValBranch::SEL_MAX_EXC);
-  }
+    inline SetValBranch
+    SET_VAL_RND_INC(const Rnd& r) {
+        return SetValBranch(SetValBranch::SEL_RND_INC, r);
+    }
 
-  inline SetValBranch
-  SET_VAL_RND_INC(Rnd r) {
-    return SetValBranch(SetValBranch::SEL_RND_INC,r);
-  }
+    inline SetValBranch
+    SET_VAL_RND_EXC(const Rnd& r) {
+        return SetValBranch(SetValBranch::SEL_RND_EXC, r);
+    }
 
-  inline SetValBranch
-  SET_VAL_RND_EXC(Rnd r) {
-    return SetValBranch(SetValBranch::SEL_RND_EXC,r);
-  }
+    inline SetValBranch
+    SET_VAL(SetBranchVal v, SetBranchCommit c) {
+        return SetValBranch(std::move(v), std::move(c));
+    }
 
-  inline SetValBranch
-  SET_VAL(SetBranchVal v, SetBranchCommit c) {
-    return SetValBranch(v,c);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: set-branch

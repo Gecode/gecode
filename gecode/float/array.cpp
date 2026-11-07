@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,34 +36,32 @@
 
 namespace Gecode {
 
-  FloatValArgs
-  FloatValArgs::create(int n, FloatVal start, int inc) {
-    FloatValArgs r(n);
-    for (int i=0; i<n; i++, start+=inc)
-      r[i] = start;
-    return r;
-  }
+    FloatValArgs
+    FloatValArgs::create(int n, FloatVal start, int inc) {
+        FloatValArgs r(n);
+        for (int i = 0; i < n; i++, start += inc)
+            r[i] = start;
+        return r;
+    }
 
-  FloatVarArray::FloatVarArray(Space& home, int n, FloatNum min, FloatNum max)
-    : VarArray<FloatVar>(home,n) {
-    Float::Limits::check(min,"FloatVarArray::FloatVarArray");
-    Float::Limits::check(max,"FloatVarArray::FloatVarArray");
-    if (min > max)
-      throw Float::VariableEmptyDomain("FloatVarArray::FloatVarArray");
-    for (int i = size(); i--; )
-      x[i]._init(home,min,max);
-  }
+    FloatVarArray::FloatVarArray(Space& home, int n, FloatNum min, FloatNum max) : VarArray<FloatVar>(home, n) {
+        Float::Limits::check(min, "FloatVarArray::FloatVarArray");
+        Float::Limits::check(max, "FloatVarArray::FloatVarArray");
+        if (min > max)
+            throw Float::VariableEmptyDomain("FloatVarArray::FloatVarArray");
+        for (int i = size(); i--;)
+            x[i]._init(home, min, max);
+    }
 
-  FloatVarArgs::FloatVarArgs(Space& home, int n, FloatNum min, FloatNum max)
-    : VarArgArray<FloatVar>(n) {
-    Float::Limits::check(min,"FloatVarArgs::FloatVarArgs");
-    Float::Limits::check(max,"FloatVarArgs::FloatVarArgs");
-    if (min > max)
-      throw Float::VariableEmptyDomain("FloatVarArgs::FloatVarArgs");
-    for (int i = size(); i--; )
-      a[i]._init(home,min,max);
-  }
+    FloatVarArgs::FloatVarArgs(Space& home, int n, FloatNum min, FloatNum max) : VarArgArray<FloatVar>(n) {
+        Float::Limits::check(min, "FloatVarArgs::FloatVarArgs");
+        Float::Limits::check(max, "FloatVarArgs::FloatVarArgs");
+        if (min > max)
+            throw Float::VariableEmptyDomain("FloatVarArgs::FloatVarArgs");
+        for (int i = size(); i--;)
+            a[i]._init(home, min, max);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-post

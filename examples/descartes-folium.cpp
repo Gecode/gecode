@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
@@ -67,60 +66,61 @@ using namespace Gecode;
  */
 class DescartesFolium : public FloatMaximizeScript {
 protected:
-  /// The numbers
-  FloatVarArray f;
-  /// Minimum distance between two solutions
-  double step;
+    /// The numbers
+    FloatVarArray f;
+    /// Minimum distance between two solutions
+    double step;
+
 public:
-  /// Actual model
-  DescartesFolium(const Options& opt)
-    : FloatMaximizeScript(opt), f(*this,3,-20,20) {
+    /// Actual model
+    DescartesFolium(const Options& opt) : FloatMaximizeScript(opt), f(*this, 3, -20, 20) {
 
-    if (opt.trace() != 0)
-      trace(*this, f, opt.trace());
+        if (opt.trace() != 0)
+            trace(*this, f, opt.trace());
 
-    // Post equation
-    FloatVar p = f[0];
-    FloatVar x = f[1];
-    FloatVar y = f[2];
-    rel(*this, 3*p/(1+pow(p,3)) == x);
-    rel(*this, 3*sqr(p)/(1+pow(p,3)) == y);
-    rel(*this, pow(x,3) + pow(y,3)  == 3 * x * y);
-    rel(*this, x == FloatVal(-1,2));
+        // Post equation
+        FloatVar p = f[0];
+        FloatVar x = f[1];
+        FloatVar y = f[2];
+        rel(*this, 3 * p / (1 + pow(p, 3)) == x);
+        rel(*this, 3 * sqr(p) / (1 + pow(p, 3)) == y);
+        rel(*this, pow(x, 3) + pow(y, 3) == 3 * x * y);
+        rel(*this, x == FloatVal(-1, 2));
 
-    branch(*this,p,FLOAT_VAL_SPLIT_MIN());
-  }
-  /// Constructor for cloning \a p
-  DescartesFolium(DescartesFolium& p)
-    : FloatMaximizeScript(p) {
-    f.update(*this, p.f);
-  }
-  /// Copy during cloning
-  virtual Space* copy(void) {
-    return new DescartesFolium(*this);
-  }
-  /// Cost function
-  virtual FloatVar cost(void) const {
-    return f[0];
-  }
-  /// Print solution coordinates
-  virtual void print(std::ostream& os) const {
-    os << "XY " << f[1].med() << " " << f[2].med()
-       << std::endl;
-  }
-
+        branch(*this, p, FLOAT_VAL_SPLIT_MIN());
+    }
+    /// Constructor for cloning \a p
+    DescartesFolium(DescartesFolium& p) : FloatMaximizeScript(p) {
+        f.update(*this, p.f);
+    }
+    /// Copy during cloning
+    Space*
+    copy() override {
+        return new DescartesFolium(*this);
+    }
+    /// Cost function
+    FloatVar
+    cost() const override {
+        return f[0];
+    }
+    /// Print solution coordinates
+    void
+    print(std::ostream& os) const override {
+        os << "XY " << f[1].med() << " " << f[2].med() << '\n';
+    }
 };
 
 /** \brief Main-function
  *  \relates DescartesFolium
  */
-int main(int argc, char* argv[]) {
-  Options opt("DescartesFolium");
-  opt.solutions(0);
-  opt.step(0.1);
-  opt.parse(argc,argv);
-  FloatMaximizeScript::run<DescartesFolium,BAB,Options>(opt);
-  return 0;
+int
+main(int argc, char* argv[]) {
+    Options opt("DescartesFolium");
+    opt.solutions(0);
+    opt.step(0.1);
+    opt.parse(argc, argv);
+    FloatMaximizeScript::run<DescartesFolium, BAB, Options>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any

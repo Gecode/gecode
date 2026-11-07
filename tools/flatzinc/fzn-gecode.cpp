@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -38,58 +37,57 @@
 using namespace std;
 using namespace Gecode;
 
-int main(int argc, char** argv) {
+int
+main(int argc, char** argv) {
 
-  Support::Timer t_total;
-  t_total.start();
-  FlatZinc::FlatZincOptions opt("Gecode/FlatZinc");
-  opt.parse(argc, argv);
+    Support::Timer t_total;
+    t_total.start();
+    FlatZinc::FlatZincOptions opt("Gecode/FlatZinc");
+    opt.parse(argc, argv);
 
-  if (argc!=2) {
-    cerr << "Usage: " << argv[0] << " [options] <file>" << endl;
-    cerr << "       " << argv[0] << " -help for more information" << endl;
-    exit(EXIT_FAILURE);
-  }
-
-  const char* filename = argv[1];
-  opt.name(filename);
-
-  FlatZinc::Printer p;
-  FlatZinc::FlatZincSpace* fg = nullptr;
-  Rnd rnd(opt.seed());
-  try {
-    if (!strcmp(filename, "-")) {
-      fg = FlatZinc::parse(cin, p, std::cerr, nullptr, rnd);
-    } else {
-      fg = FlatZinc::parse(filename, p, std::cerr, nullptr, rnd);
+    if (argc != 2) {
+        cerr << "Usage: " << argv[0] << " [options] <file>" << '\n' << std::flush;
+        cerr << "       " << argv[0] << " -help for more information" << '\n' << std::flush;
+        exit(EXIT_FAILURE);
     }
 
-    if (fg) {
-      fg->createBranchers(p, fg->solveAnnotations(), opt,
-                          false, std::cerr);
-      fg->shrinkArrays(p);
-      if (opt.output()) {
-        std::ofstream os(opt.output());
-        if (!os.good()) {
-          std::cerr << "Could not open file " << opt.output() << " for output."
-                    << std::endl;
-          exit(EXIT_FAILURE);
+    const char* filename = argv[1];
+    opt.name(filename);
+
+    FlatZinc::Printer p;
+    FlatZinc::FlatZincSpace* fg = nullptr;
+    Rnd rnd(opt.seed());
+    try {
+        if (!strcmp(filename, "-")) {
+            fg = FlatZinc::parse(cin, p, std::cerr, nullptr, rnd);
+        } else {
+            fg = FlatZinc::parse(filename, p, std::cerr, nullptr, rnd);
         }
-        fg->run(os, p, opt, t_total);
-        os.close();
-      } else {
-        fg->run(std::cout, p, opt, t_total);
-      }
-    } else {
-      exit(EXIT_FAILURE);
-    }
-    delete fg;
-  } catch (FlatZinc::Error& e) {
-    std::cerr << "Error: " << e.toString() << std::endl;
-    return 1;
-  }
 
-  return 0;
+        if (fg) {
+            fg->create_branchers(p, fg->solve_annotations(), opt, false, std::cerr);
+            fg->shrink_arrays(p);
+            if (opt.output()) {
+                std::ofstream os(opt.output());
+                if (!os.good()) {
+                    std::cerr << "Could not open file " << opt.output() << " for output." << '\n' << std::flush;
+                    exit(EXIT_FAILURE);
+                }
+                fg->run(os, p, opt, t_total);
+                os.close();
+            } else {
+                fg->run(std::cout, p, opt, t_total);
+            }
+        } else {
+            exit(EXIT_FAILURE);
+        }
+        delete fg;
+    } catch (FlatZinc::Error& e) {
+        std::cerr << "Error: " << e.to_string() << '\n' << std::flush;
+        return 1;
+    }
+
+    return 0;
 }
 
 // STATISTICS: flatzinc-any

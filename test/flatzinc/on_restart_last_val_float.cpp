@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
@@ -36,41 +35,34 @@
 #include <cmath>
 #include <sstream>
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Check the restart sequence without depending on final decimal digits.
-    bool check(const std::string& output) {
-      std::istringstream is(output);
-      const int expected[] = {-1, 2, 3, 4};
-      for (int i=0; i<4; i++) {
-        char name, eq, semi;
-        int x;
-        double y;
-        std::string separator;
-        if (!(is >> name >> eq >> x >> semi) ||
-            (name != 'x') || (eq != '=') || (semi != ';') ||
-            (x != expected[i]))
-          return false;
-        if (!(is >> name >> eq >> y >> semi >> separator) ||
-            (name != 'y') || (eq != '=') || (semi != ';') ||
-            !(std::abs(y-(0.1+0.25*i)) <= 1e-12) ||
-            (separator != "----------"))
-          return false;
-      }
-      std::string end;
-      return (is >> end) && (end == "==========") &&
-        (is >> std::ws).eof();
+    bool
+    check(const std::string& output) {
+        std::istringstream is(output);
+        const int expected[] = {-1, 2, 3, 4};
+        for (int i = 0; i < 4; i++) {
+            char name, eq, semi;
+            int x;
+            double y;
+            std::string separator;
+            if (!(is >> name >> eq >> x >> semi) || (name != 'x') || (eq != '=') || (semi != ';') || (x != expected[i]))
+                return false;
+            if (!(is >> name >> eq >> y >> semi >> separator) || (name != 'y') || (eq != '=') || (semi != ';') ||
+                !(std::abs(y - (0.1 + 0.25 * i)) <= 1e-12) || (separator != "----------"))
+                return false;
+        }
+        std::string end;
+        return (is >> end) && (end == "==========") && (is >> std::ws).eof();
     }
 
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("on_restart::last_val_float",
-R"FZN(
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("on_restart::last_val_float",
+                                   R"FZN(
 predicate gecode_on_restart_status(var int: s);
 predicate gecode_on_restart_last_val_float(var float: input,var float: out);
 array [1..2] of float: X_INTRODUCED_15_ = [1.0,-1.0];
@@ -93,13 +85,11 @@ constraint float_eq_reif(y,0.1,X_INTRODUCED_14_):: defines_var(X_INTRODUCED_14_)
 constraint float_lin_eq_reif(X_INTRODUCED_15_,[y,X_INTRODUCED_5_],0.25,X_INTRODUCED_16_):: defines_var(X_INTRODUCED_16_);
 solve :: int_search(X_INTRODUCED_2_,input_order,indomain_min,complete) maximize X_INTRODUCED_1_;
 )FZN",
-"", true, {"--restart", "constant", "--restart-base", "100"}, check);
-      }
+                                   "", true, {"--restart", "constant", "--restart-base", "100"}, check);
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

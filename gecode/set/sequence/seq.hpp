@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,29 +36,29 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Sequence {
+namespace Gecode::Set::Sequence {
 
-  /*
-   * "Sequence" propagator
-   *
-   */
+    /*
+     * "Sequence" propagator
+     *
+     */
 
-  forceinline
-  Seq::Seq(Home home, ViewArray<SetView>& x)
-    : NaryPropagator<SetView, PC_SET_ANY>(home,x) {}
+    forceinline
+    Seq::Seq(Home home, ViewArray<SetView>& x)
+        : NaryPropagator<SetView, PC_SET_ANY>(home, x) {}
 
-  forceinline
-  Seq::Seq(Space& home, Seq& p)
-    : NaryPropagator<SetView, PC_SET_ANY>(home,p) {}
+    forceinline
+    Seq::Seq(Space& home, Seq& p)
+        : NaryPropagator<SetView, PC_SET_ANY>(home, p) {}
 
-  forceinline ExecStatus
-  Seq::post(Home home, ViewArray<SetView> x) {
-    if (shared(x))
-      return ES_FAILED;
-    (void) new (home) Seq(home,x);
-    return ES_OK;
-  }
+    forceinline ExecStatus
+    Seq::post(Home home, ViewArray<SetView> x) {
+        if (shared(x))
+            return ES_FAILED;
+        (void)new (home) Seq(home, x);
+        return ES_OK;
+    }
 
-}}}
+} // namespace Gecode::Set::Sequence
 
 // STATISTICS: set-prop

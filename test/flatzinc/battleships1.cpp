@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,15 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("battleships::1",
-std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest(
+                "battleships::1",
+                std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -296,8 +293,8 @@ var bool: BOOL____00316 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00317 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00318 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00319 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00320 :: is_defined_var :: var_is_introduced;\n")+
-"var bool: BOOL____00321 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____00320 :: is_defined_var :: var_is_introduced;\n") +
+                    "var bool: BOOL____00321 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00322 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00323 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00324 :: is_defined_var :: var_is_introduced;\n\
@@ -551,8 +548,8 @@ var bool: BOOL____00571 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00572 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00573 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00574 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00575 :: is_defined_var :: var_is_introduced;\n"+
-"var bool: BOOL____00576 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____00575 :: is_defined_var :: var_is_introduced;\n" +
+                    "var bool: BOOL____00576 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00577 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00578 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00579 :: is_defined_var :: var_is_introduced;\n\
@@ -775,8 +772,8 @@ constraint array_bool_and([BOOL____00212, BOOL____00216], BOOL____00217) :: defi
 constraint array_bool_and([BOOL____00214, BOOL____00219], BOOL____00220) :: defines_var(BOOL____00220);\n\
 constraint array_bool_and([BOOL____00216, BOOL____00222], BOOL____00223) :: defines_var(BOOL____00223);\n\
 constraint array_bool_and([BOOL____00219, BOOL____00225], BOOL____00226) :: defines_var(BOOL____00226);\n\
-constraint array_bool_and([BOOL____00222, BOOL____00228], BOOL____00229) :: defines_var(BOOL____00229);\n"+
-"constraint array_bool_and([BOOL____00232, BOOL____00238], BOOL____00239) :: defines_var(BOOL____00239);\n\
+constraint array_bool_and([BOOL____00222, BOOL____00228], BOOL____00229) :: defines_var(BOOL____00229);\n" +
+                    "constraint array_bool_and([BOOL____00232, BOOL____00238], BOOL____00239) :: defines_var(BOOL____00239);\n\
 constraint array_bool_and([BOOL____00234, BOOL____00235], BOOL____00236) :: defines_var(BOOL____00236);\n\
 constraint array_bool_and([BOOL____00235, BOOL____00241], BOOL____00242) :: defines_var(BOOL____00242);\n\
 constraint array_bool_and([BOOL____00238, BOOL____00244], BOOL____00245) :: defines_var(BOOL____00245);\n\
@@ -919,8 +916,8 @@ constraint array_bool_and([BOOL____00241, BOOL____00621, BOOL____00235], BOOL___
 constraint array_bool_and([BOOL____00244, BOOL____00591, BOOL____00196], BOOL____00592) :: defines_var(BOOL____00592);\n\
 constraint array_bool_and([BOOL____00244, BOOL____00625, BOOL____00238], BOOL____00626) :: defines_var(BOOL____00626);\n\
 constraint array_bool_and([BOOL____00247, BOOL____00595, BOOL____00199], BOOL____00596) :: defines_var(BOOL____00596);\n\
-constraint array_bool_and([BOOL____00247, BOOL____00629, BOOL____00241], BOOL____00630) :: defines_var(BOOL____00630);\n"+
-"constraint array_bool_and([BOOL____00250, BOOL____00599, BOOL____00202], BOOL____00600) :: defines_var(BOOL____00600);\n\
+constraint array_bool_and([BOOL____00247, BOOL____00629, BOOL____00241], BOOL____00630) :: defines_var(BOOL____00630);\n" +
+                    "constraint array_bool_and([BOOL____00250, BOOL____00599, BOOL____00202], BOOL____00600) :: defines_var(BOOL____00600);\n\
 constraint array_bool_and([BOOL____00250, BOOL____00633, BOOL____00244], BOOL____00634) :: defines_var(BOOL____00634);\n\
 constraint array_bool_and([BOOL____00253, BOOL____00603, BOOL____00205], BOOL____00604) :: defines_var(BOOL____00604);\n\
 constraint array_bool_and([BOOL____00253, BOOL____00637, BOOL____00247], BOOL____00638) :: defines_var(BOOL____00638);\n\
@@ -1143,8 +1140,8 @@ constraint count([X____00065, X____00066, X____00067, X____00068, X____00069, X_
 constraint count(a_flat, 1, 10);\n\
 constraint count(a_flat, 2, 6);\n\
 constraint count(a_flat, 3, 3);\n\
-constraint count(a_flat, 4, 1);\n"+
-"constraint int_eq_reif(X____00001, 0, BOOL____00074) :: defines_var(BOOL____00074);\n\
+constraint count(a_flat, 4, 1);\n" +
+                    "constraint int_eq_reif(X____00001, 0, BOOL____00074) :: defines_var(BOOL____00074);\n\
 constraint int_eq_reif(X____00001, 1, BOOL____00361) :: defines_var(BOOL____00361);\n\
 constraint int_eq_reif(X____00002, 0, BOOL____00075) :: defines_var(BOOL____00075);\n\
 constraint int_eq_reif(X____00002, 1, BOOL____00365) :: defines_var(BOOL____00365);\n\
@@ -1162,8 +1159,8 @@ constraint int_eq_reif(X____00008, 0, BOOL____00082) :: defines_var(BOOL____0008
 constraint int_eq_reif(X____00008, 1, BOOL____00386) :: defines_var(BOOL____00386);\n\
 constraint int_eq_reif(X____00009, 0, BOOL____00083) :: defines_var(BOOL____00083);\n\
 constraint int_eq_reif(X____00009, 1, BOOL____00388) :: defines_var(BOOL____00388);\n\
-constraint int_eq_reif(X____00010, 0, BOOL____00086) :: defines_var(BOOL____00086);\n"+
-"constraint int_eq_reif(X____00011, 0, BOOL____00088) :: defines_var(BOOL____00088);\n\
+constraint int_eq_reif(X____00010, 0, BOOL____00086) :: defines_var(BOOL____00086);\n" +
+                    "constraint int_eq_reif(X____00011, 0, BOOL____00088) :: defines_var(BOOL____00088);\n\
 constraint int_eq_reif(X____00012, 0, BOOL____00091) :: defines_var(BOOL____00091);\n\
 constraint int_eq_reif(X____00012, 1, BOOL____00402) :: defines_var(BOOL____00402);\n\
 constraint int_eq_reif(X____00013, 0, BOOL____00093) :: defines_var(BOOL____00093);\n\
@@ -1331,8 +1328,8 @@ constraint int_lin_eq_reif([-1, 1], [X____00046, X____00047], 1, BOOL____00536) 
 constraint int_lin_eq_reif([-1, 1], [X____00046, X____00054], 1, BOOL____00565) :: defines_var(BOOL____00565);\n\
 constraint int_lin_eq_reif([-1, 1], [X____00047, X____00055], 1, BOOL____00569) :: defines_var(BOOL____00569);\n\
 constraint int_lin_eq_reif([-1, 1], [X____00048, X____00049], 1, BOOL____00544) :: defines_var(BOOL____00544);\n\
-constraint int_lin_eq_reif([-1, 1], [X____00048, X____00056], 1, BOOL____00573) :: defines_var(BOOL____00573);\n"+
-"constraint int_lin_eq_reif([-1, 1], [X____00049, X____00057], 1, BOOL____00577) :: defines_var(BOOL____00577);\n\
+constraint int_lin_eq_reif([-1, 1], [X____00048, X____00056], 1, BOOL____00573) :: defines_var(BOOL____00573);\n" +
+                    "constraint int_lin_eq_reif([-1, 1], [X____00049, X____00057], 1, BOOL____00577) :: defines_var(BOOL____00577);\n\
 constraint int_lin_eq_reif([-1, 1], [X____00050, X____00051], 1, BOOL____00551) :: defines_var(BOOL____00551);\n\
 constraint int_lin_eq_reif([-1, 1], [X____00050, X____00059], 1, BOOL____00585) :: defines_var(BOOL____00585);\n\
 constraint int_lin_eq_reif([-1, 1], [X____00051, X____00052], 1, BOOL____00555) :: defines_var(BOOL____00555);\n\
@@ -1486,15 +1483,14 @@ constraint int_lt_reif(X____00072, X____00071, BOOL____00359) :: defines_var(BOO
 constraint int_lt_reif(X____00073, X____00064, BOOL____00255) :: defines_var(BOOL____00255);\n\
 constraint int_lt_reif(X____00073, X____00072, BOOL____00360) :: defines_var(BOOL____00360);\n\
 solve  :: int_search(a_flat, first_fail, indomain_max, complete) satisfy;\n\
-", "a = array2d(0..10, 0..10, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 3, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 2, 3, 4, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);\n\
+",
+                "a = array2d(0..10, 0..10, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 3, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 2, 3, 4, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

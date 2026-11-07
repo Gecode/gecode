@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,18 +32,8 @@
 
 namespace Gecode {
 
-  forceinline
-  FloatCHB::FloatCHB(void) {}
+    forceinline FloatCHB& FloatCHB::operator=(const FloatCHB& chb) = default;
 
-  forceinline
-  FloatCHB::FloatCHB(const FloatCHB& chb)
-    : CHB(chb) {}
-
-  forceinline FloatCHB&
-  FloatCHB::operator =(const FloatCHB& chb) {
-    return static_cast<FloatCHB&>(CHB::operator =(chb));
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: float-branch

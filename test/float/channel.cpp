@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,64 +36,59 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Test { namespace Float {
+/// %Tests for channel constraints
+namespace Test::Float::Channel {
 
-   /// %Tests for channel constraints
-   namespace Channel {
+    /// %Test channel between float and integer
+    class Int : public Test {
+    public:
+        /// Construct and register test
+        Int(Gecode::FloatNum st) : Test("Channel::Int", 2, -1, 2, st, COMPLETE_ASSIGNMENT, false) {}
+        /// Check whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            Gecode::FloatNum tmp;
+            return (((modf(x[0].min(), &tmp) == 0) || (modf(x[0].max(), &tmp) == 0)) && (x[0] == x[1])) ? MT_TRUE
+                                                                                                        : MT_FALSE;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            using namespace Gecode;
+            IntVar iv(home, -1000, 1000);
+            channel(home, x[0], iv);
+            channel(home, iv, x[1]);
+        }
+    };
 
-     /// %Test channel between float and integer
-     class Int : public Test {
-     public:
-       /// Construct and register test
-       Int(Gecode::FloatNum st)
-         : Test("Channel::Int",2,-1,2,st,CPLT_ASSIGNMENT,false) {}
-       /// Check whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatNum tmp;
-         return (((modf(x[0].min(),&tmp)==0) ||
-                  (modf(x[0].max(),&tmp)==0))
-                 && (x[0]==x[1])) ? MT_TRUE : MT_FALSE;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         using namespace Gecode;
-         IntVar iv(home,-1000,1000);
-         channel(home, x[0], iv);
-         channel(home, iv, x[1]);
-       }
-     };
+    /// %Test channel between float and Boolean
+    class Bool : public Test {
+    public:
+        /// Construct and register test
+        Bool(Gecode::FloatNum st) : Test("Channel::Bool", 2, 0, 1, st, COMPLETE_ASSIGNMENT, false) {}
+        /// Check whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            Gecode::FloatNum tmp;
+            return (((modf(x[0].min(), &tmp) == 0) || (modf(x[0].max(), &tmp) == 0)) && (x[0] == x[1])) ? MT_TRUE
+                                                                                                        : MT_FALSE;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            using namespace Gecode;
+            BoolVar bv(home, 0, 1);
+            channel(home, x[0], bv);
+            channel(home, bv, x[1]);
+        }
+    };
 
-     /// %Test channel between float and Boolean
-     class Bool : public Test {
-     public:
-       /// Construct and register test
-       Bool(Gecode::FloatNum st)
-         : Test("Channel::Bool",2,0,1,st,CPLT_ASSIGNMENT,false) {}
-       /// Check whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatNum tmp;
-         return (((modf(x[0].min(),&tmp)==0) ||
-                  (modf(x[0].max(),&tmp)==0))
-                 && (x[0]==x[1])) ? MT_TRUE : MT_FALSE;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         using namespace Gecode;
-         BoolVar bv(home,0,1);
-         channel(home, x[0], bv);
-         channel(home, bv, x[1]);
-       }
-     };
+    Gecode::FloatNum step1 = 0.7;
+    Gecode::FloatNum step2 = 0.1;
 
-     Gecode::FloatNum step1 = 0.7;
-     Gecode::FloatNum step2 = 0.1;
+    Int ci(step1);
+    Bool cb(step2);
+    //@}
 
-     Int ci(step1);
-     Bool cb(step2);
-     //@}
-
-   }
-}}
-
+} // namespace Test::Float::Channel
 // STATISTICS: test-float
-

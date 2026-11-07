@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,529 +36,545 @@
 
 #include <sstream>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
-  template<class View>
-  forceinline
-  ComplementView<View>::ComplementView(void) {}
+    template <class View>
+    forceinline
+    ComplementView<View>::ComplementView(View& y)
+        : DerivedView<View>(y) {}
 
-  template<class View>
-  forceinline
-  ComplementView<View>::ComplementView(View& y)
-    : DerivedView<View>(y) {}
-
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::me_negateset(ModEvent me) {
-    switch(me) {
-    case ME_SET_LUB : return ME_SET_GLB;
-    case ME_SET_GLB : return ME_SET_LUB;
-    case ME_SET_CLUB : return ME_SET_CGLB;
-    case ME_SET_CGLB : return ME_SET_CLUB;
-    default: return me;
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::me_negateset(ModEvent me) {
+        switch (me) {
+        case ME_SET_LUB:
+            return ME_SET_GLB;
+        case ME_SET_GLB:
+            return ME_SET_LUB;
+        case ME_SET_CLUB:
+            return ME_SET_CGLB;
+        case ME_SET_CGLB:
+            return ME_SET_CLUB;
+        default:
+            return me;
+        }
     }
-  }
 
-  template<class View>
-  forceinline PropCond
-  ComplementView<View>::pc_negateset(PropCond pc) {
-    switch(pc) {
-    case PC_SET_CLUB  : return PC_SET_CGLB;
-    case PC_SET_CGLB  : return PC_SET_CLUB;
-    default: return pc;
+    template <class View>
+    forceinline PropCond
+    ComplementView<View>::pc_negateset(PropCond pc) {
+        switch (pc) {
+        case PC_SET_CLUB:
+            return PC_SET_CGLB;
+        case PC_SET_CGLB:
+            return PC_SET_CLUB;
+        default:
+            return pc;
+        }
     }
-  }
 
-  template<class View>
-  forceinline unsigned int
-  ComplementView<View>::glbSize(void) const {
-    return Limits::card - x.lubSize();
-  }
-
-  template<class View>
-  forceinline unsigned int
-  ComplementView<View>::lubSize(void) const {
-    return Limits::card - x.glbSize();
-  }
-
-  template<class View>
-  forceinline unsigned int
-  ComplementView<View>::unknownSize(void) const {
-    return lubSize() - glbSize();
-  }
-
-  template<class View>
-  forceinline bool
-  ComplementView<View>::contains(int n) const { return x.notContains(n); }
-
-  template<class View>
-  forceinline bool
-  ComplementView<View>::notContains(int n) const { return x.contains(n); }
-
-  template<class View>
-  forceinline unsigned int
-  ComplementView<View>::cardMin(void) const {
-    return Limits::card - x.cardMax();
-  }
-
-  template<class View>
-  forceinline unsigned int
-  ComplementView<View>::cardMax(void) const {
-    return Limits::card - x.cardMin();
-  }
-
-  template<class View>
-  forceinline int
-  ComplementView<View>::lubMin(void) const {
-    GlbRanges<View> lb(x);
-    RangesCompl<GlbRanges<View> > lbc(lb);
-    if (lbc()) {
-      return lbc.min();
-    } else {
-      return BndSet::MIN_OF_EMPTY;
+    template <class View>
+    forceinline unsigned int
+    ComplementView<View>::glb_size() const {
+        return Limits::card - x.lub_size();
     }
-  }
 
-  template<class View>
-  forceinline int
-  ComplementView<View>::lubMax(void) const {
-    GlbRanges<View> lb(x);
-    RangesCompl<GlbRanges<View> > lbc(lb);
-    if (lbc()) {
-      while(lbc()) ++lbc;
-      return lbc.max();
-    } else {
-      return BndSet::MAX_OF_EMPTY;
+    template <class View>
+    forceinline unsigned int
+    ComplementView<View>::lub_size() const {
+        return Limits::card - x.glb_size();
     }
-  }
 
-  template<class View>
-  forceinline int
-  ComplementView<View>::glbMin(void) const {
-    LubRanges<View> ub(x);
-    RangesCompl<LubRanges<View> > ubc(ub);
-    if (ubc()) {
-      return ubc.min();
-    } else {
-      return BndSet::MIN_OF_EMPTY;
+    template <class View>
+    forceinline unsigned int
+    ComplementView<View>::unknown_size() const {
+        return lub_size() - glb_size();
     }
-  }
 
-  template<class View>
-  forceinline int
-  ComplementView<View>::glbMax(void) const {
-    LubRanges<View> ub(x);
-    RangesCompl<LubRanges<View> > ubc(ub);
-    if (ubc()) {
-      while (ubc()) ++ubc;
-      return ubc.max();
-    } else {
-      return BndSet::MAX_OF_EMPTY;
+    template <class View>
+    forceinline bool
+    ComplementView<View>::contains(int n) const {
+        return x.not_contains(n);
     }
-  }
 
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::cardMin(Space& home, unsigned int c) {
-    if (c < Limits::card)
-      return me_negateset(x.cardMax(home, Limits::card - c));
-    return ME_SET_NONE;
-  }
+    template <class View>
+    forceinline bool
+    ComplementView<View>::not_contains(int n) const {
+        return x.contains(n);
+    }
 
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::cardMax(Space& home, unsigned int c) {
-    if (c < Limits::card)
-      return me_negateset(x.cardMin(home, Limits::card - c));
-    return ME_SET_NONE;
-  }
+    template <class View>
+    forceinline unsigned int
+    ComplementView<View>::card_min() const {
+        return Limits::card - x.card_max();
+    }
 
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::include(Space& home, int c) {
-    return me_negateset((x.exclude(home, c)));
-  }
+    template <class View>
+    forceinline unsigned int
+    ComplementView<View>::card_max() const {
+        return Limits::card - x.card_min();
+    }
 
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::exclude(Space& home, int c) {
-    return me_negateset((x.include(home, c)));
-  }
+    template <class View>
+    forceinline int
+    ComplementView<View>::lub_min() const {
+        GlbRanges<View> lb(x);
+        RangesCompl<GlbRanges<View>> lbc(lb);
+        if (lbc()) {
+            return lbc.min();
+        }
+        return BndSet::MIN_OF_EMPTY;
+    }
 
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::intersect(Space& home, int c) {
-    Iter::Ranges::Singleton si(c,c);
-    RangesCompl<Iter::Ranges::Singleton> csi(si);
-    return me_negateset((x.includeI(home, csi)));
-  }
+    template <class View>
+    forceinline int
+    ComplementView<View>::lub_max() const {
+        GlbRanges<View> lb(x);
+        RangesCompl<GlbRanges<View>> lbc(lb);
+        if (lbc()) {
+            while (lbc())
+                ++lbc;
+            return lbc.max();
+        }
+        return BndSet::MAX_OF_EMPTY;
+    }
 
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::intersect(Space& home, int i, int j) {
-    Iter::Ranges::Singleton si(i,j);
-    RangesCompl<Iter::Ranges::Singleton> csi(si);
-    return me_negateset((x.includeI(home, csi)));
-  }
+    template <class View>
+    forceinline int
+    ComplementView<View>::glb_min() const {
+        LubRanges<View> ub(x);
+        RangesCompl<LubRanges<View>> ubc(ub);
+        if (ubc()) {
+            return ubc.min();
+        }
+        return BndSet::MIN_OF_EMPTY;
+    }
 
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::include(Space& home, int j, int k) {
-    return me_negateset(x.exclude(home,j,k));
-  }
+    template <class View>
+    forceinline int
+    ComplementView<View>::glb_max() const {
+        LubRanges<View> ub(x);
+        RangesCompl<LubRanges<View>> ubc(ub);
+        if (ubc()) {
+            while (ubc())
+                ++ubc;
+            return ubc.max();
+        }
+        return BndSet::MAX_OF_EMPTY;
+    }
 
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::exclude(Space& home, int j, int k) {
-    return me_negateset(x.include(home,j,k));
-  }
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::card_min(Space& home, unsigned int c) {
+        if (c < Limits::card)
+            return me_negateset(x.card_max(home, Limits::card - c));
+        return ME_SET_NONE;
+    }
 
-  template<class View>
-  template<class I> ModEvent
-  ComplementView<View>::excludeI(Space& home,I& iter) {
-    return me_negateset(x.includeI(home,iter));
-  }
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::card_max(Space& home, unsigned int c) {
+        if (c < Limits::card)
+            return me_negateset(x.card_min(home, Limits::card - c));
+        return ME_SET_NONE;
+    }
 
-  template<class View>
-  template<class I> ModEvent
-  ComplementView<View>::includeI(Space& home,I& iter) {
-    return me_negateset(x.excludeI(home,iter));
-  }
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::include(Space& home, int c) {
+        return me_negateset((x.exclude(home, c)));
+    }
 
-  template<class View>
-  template<class I> ModEvent
-  ComplementView<View>::intersectI(Space& home,I& iter) {
-    RangesCompl<I> c(iter);
-    return me_negateset(x.includeI(home,c));
-  }
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::exclude(Space& home, int c) {
+        return me_negateset((x.include(home, c)));
+    }
 
-  template<class View>
-  forceinline void
-  ComplementView<View>::subscribe(Space& home, Propagator& p, PropCond pc,
-                                  bool schedule) {
-    x.subscribe(home,p, pc_negateset(pc),schedule);
-  }
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::intersect(Space& home, int c) {
+        Iter::Ranges::Singleton si(c, c);
+        RangesCompl<Iter::Ranges::Singleton> csi(si);
+        return me_negateset((x.include_i(home, csi)));
+    }
 
-  template<class View>
-  forceinline void
-  ComplementView<View>::cancel(Space& home, Propagator& p, PropCond pc) {
-    x.cancel(home,p, pc_negateset(pc));
-  }
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::intersect(Space& home, int i, int j) {
+        Iter::Ranges::Singleton si(i, j);
+        RangesCompl<Iter::Ranges::Singleton> csi(si);
+        return me_negateset((x.include_i(home, csi)));
+    }
 
-  template<class View>
-  forceinline void
-  ComplementView<View>::subscribe(Space& home, Advisor& a) {
-    x.subscribe(home,a);
-  }
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::include(Space& home, int j, int k) {
+        return me_negateset(x.exclude(home, j, k));
+    }
 
-  template<class View>
-  forceinline void
-  ComplementView<View>::cancel(Space& home, Advisor& a) {
-    x.cancel(home,a);
-  }
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::exclude(Space& home, int j, int k) {
+        return me_negateset(x.include(home, j, k));
+    }
 
-  template<class View>
-  forceinline void
-  ComplementView<View>::schedule(Space& home, Propagator& p, ModEvent me) {
-    return View::schedule(home,p,me_negateset(me));
-  }
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::me(const ModEventDelta& med) {
-    return me_negateset(View::me(med));
-  }
+    template <class View>
+    template <class I>
+    ModEvent
+    ComplementView<View>::exclude_i(Space& home, I& iter) {
+        return me_negateset(x.include_i(home, iter));
+    }
 
-  template<class View>
-  forceinline ModEventDelta
-  ComplementView<View>::med(ModEvent me) {
-    return me_negateset(View::med(me));
-  }
+    template <class View>
+    template <class I>
+    ModEvent
+    ComplementView<View>::include_i(Space& home, I& iter) {
+        return me_negateset(x.exclude_i(home, iter));
+    }
 
-  /*
-   * Delta information for advisors
-   *
-   */
+    template <class View>
+    template <class I>
+    ModEvent
+    ComplementView<View>::intersect_i(Space& home, I& iter) {
+        RangesCompl<I> c(iter);
+        return me_negateset(x.include_i(home, c));
+    }
 
-  template<class View>
-  forceinline ModEvent
-  ComplementView<View>::modevent(const Delta& d) {
-    return me_negateset(View::modevent(d));
-  }
+    template <class View>
+    forceinline void
+    ComplementView<View>::subscribe(Space& home, Propagator& p, PropCond pc, bool schedule) {
+        x.subscribe(home, p, pc_negateset(pc), schedule);
+    }
 
-  template<class View>
-  forceinline int
-  ComplementView<View>::glbMin(const Delta& d) const {
-    return x.lubMin(d);
-  }
+    template <class View>
+    forceinline void
+    ComplementView<View>::cancel(Space& home, Propagator& p, PropCond pc) {
+        x.cancel(home, p, pc_negateset(pc));
+    }
 
-  template<class View>
-  forceinline int
-  ComplementView<View>::glbMax(const Delta& d) const {
-    return x.lubMax(d);
-  }
+    template <class View>
+    forceinline void
+    ComplementView<View>::subscribe(Space& home, Advisor& a) {
+        x.subscribe(home, a);
+    }
 
-  template<class View>
-  forceinline bool
-  ComplementView<View>::glbAny(const Delta& d) const {
-    return x.lubAny(d);
-  }
+    template <class View>
+    forceinline void
+    ComplementView<View>::cancel(Space& home, Advisor& a) {
+        x.cancel(home, a);
+    }
 
-  template<class View>
-  forceinline int
-  ComplementView<View>::lubMin(const Delta& d) const {
-    return x.glbMin(d);
-  }
+    template <class View>
+    forceinline void
+    ComplementView<View>::schedule(Space& home, Propagator& p, ModEvent me) {
+        return View::schedule(home, p, me_negateset(me));
+    }
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::me(const ModEventDelta& med) {
+        return me_negateset(View::me(med));
+    }
 
-  template<class View>
-  forceinline int
-  ComplementView<View>::lubMax(const Delta& d) const {
-    return x.glbMax(d);
-  }
+    template <class View>
+    forceinline ModEventDelta
+    ComplementView<View>::med(ModEvent me) {
+        return me_negateset(View::med(me));
+    }
 
-  template<class View>
-  forceinline bool
-  ComplementView<View>::lubAny(const Delta& d) const {
-    return x.glbAny(d);
-  }
+    /*
+     * Delta information for advisors
+     *
+     */
 
+    template <class View>
+    forceinline ModEvent
+    ComplementView<View>::modification_event(const Delta& d) {
+        return me_negateset(View::modification_event(d));
+    }
 
-  /**
-   * \brief %Range iterator for least upper bound of complement set views
-   * \ingroup TaskActorSetView
-   */
-  template<class View>
-  class LubRanges<ComplementView<View> > {
-  private:
-    GlbRanges<View> lb;
-    RangesCompl<GlbRanges<View> > lbc;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    LubRanges(void) {}
-    /// Initialize with ranges for view \a x
-    LubRanges(const ComplementView<View>& x);
-    /// Initialize with ranges for view \a x
-    void init(const ComplementView<View>& x);
-    //@}
+    template <class View>
+    forceinline int
+    ComplementView<View>::glb_min(const Delta& d) const {
+        return x.lub_min(d);
+    }
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a range or done
-    bool operator ()(void) const;
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    //@}
+    template <class View>
+    forceinline int
+    ComplementView<View>::glb_max(const Delta& d) const {
+        return x.lub_max(d);
+    }
 
-    /// \name Range access
-    //@{
-    /// Return smallest value of range
-    int min(void) const;
-    /// Return largest value of range
-    int max(void) const;
-    /// Return width of ranges (distance between minimum and maximum)
-    unsigned int width(void) const;
-    //@}
-  };
+    template <class View>
+    forceinline bool
+    ComplementView<View>::glb_any(const Delta& d) const {
+        return x.lub_any(d);
+    }
 
-  template<class View>
-  forceinline
-  LubRanges<ComplementView<View> >::LubRanges(const ComplementView<View>& s)
-    : lb(s.base()), lbc(lb) {}
+    template <class View>
+    forceinline int
+    ComplementView<View>::lub_min(const Delta& d) const {
+        return x.glb_min(d);
+    }
 
-  template<class View>
-  forceinline void
-  LubRanges<ComplementView<View> >::init(const ComplementView<View>& s) {
-    lb.init(s.base());
-    lbc.init(lb);
-  }
+    template <class View>
+    forceinline int
+    ComplementView<View>::lub_max(const Delta& d) const {
+        return x.glb_max(d);
+    }
 
-  template<class View>
-  forceinline bool
-  LubRanges<ComplementView<View> >::operator ()(void) const { return lbc(); }
+    template <class View>
+    forceinline bool
+    ComplementView<View>::lub_any(const Delta& d) const {
+        return x.glb_any(d);
+    }
 
-  template<class View>
-  forceinline void
-  LubRanges<ComplementView<View> >::operator ++(void) { return ++lbc; }
+    /**
+     * \brief %Range iterator for least upper bound of complement set views
+     * \ingroup TaskActorSetView
+     */
+    template <class View>
+    class LubRanges<ComplementView<View>> {
+    private:
+        GlbRanges<View> lb;
+        RangesCompl<GlbRanges<View>> lbc;
 
-  template<class View>
-  forceinline int
-  LubRanges<ComplementView<View> >::min(void) const { return lbc.min(); }
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        LubRanges() = default;
+        /// Initialize with ranges for view \a s
+        LubRanges(const ComplementView<View>& s);
+        /// Initialize with ranges for view \a s
+        void init(const ComplementView<View>& s);
+        //@}
 
-  template<class View>
-  forceinline int
-  LubRanges<ComplementView<View> >::max(void) const { return lbc.max(); }
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a range or done
+        bool operator()() const;
+        /// Move iterator to next range (if possible)
+        void operator++();
+        //@}
 
-  template<class View>
-  forceinline unsigned int
-  LubRanges<ComplementView<View> >::width(void) const { return lbc.width(); }
+        /// \name Range access
+        //@{
+        /// Return smallest value of range
+        int min() const;
+        /// Return largest value of range
+        int max() const;
+        /// Return width of ranges (distance between minimum and maximum)
+        unsigned int width() const;
+        //@}
+    };
 
-  /**
-   * \brief Range iterator for the least upper bound of double-complement-views
-   *
-   * This class provides (by specialization) a range iterator
-   * for the least upper bounds of complements of complement set views.
-   *
-   * \ingroup TaskActorSet
-   */
-  template<class View>
-  class LubRanges<ComplementView<ComplementView<View> > > :
-    public LubRanges<View> {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    LubRanges(void) {}
-    /// Initialize with ranges for view \a x
-    LubRanges(const ComplementView<ComplementView<View> >& x);
-    /// Initialize with ranges for view \a x
-    void init(const ComplementView<ComplementView<View> >& x);
-    //@}
-  };
+    template <class View>
+    forceinline
+    LubRanges<ComplementView<View>>::LubRanges(const ComplementView<View>& s)
+        : lb(s.base()), lbc(lb) {}
 
-  template<class View>
-  forceinline
-  LubRanges<ComplementView<ComplementView<View> > >::
-  LubRanges(const ComplementView<ComplementView<View> >& x) :
-    LubRanges<View>(x) {}
+    template <class View>
+    forceinline void
+    LubRanges<ComplementView<View>>::init(const ComplementView<View>& s) {
+        lb.init(s.base());
+        lbc.init(lb);
+    }
 
-  template<class View>
-  forceinline void
-  LubRanges<ComplementView<ComplementView<View> > >::
-  init(const ComplementView<ComplementView<View> >& x) {
-    LubRanges<View>::init(x);
-  }
+    template <class View>
+    forceinline bool
+    LubRanges<ComplementView<View>>::operator()() const {
+        return lbc();
+    }
 
-  /**
-   * \brief %Range iterator for greatest lower bound of complement set views
-   * \ingroup TaskActorSetView
-   */
-  template<class View>
-  class GlbRanges<ComplementView<View> > {
-  private:
-    LubRanges<View> ub;
-    RangesCompl<LubRanges<View> > ubc;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    GlbRanges(void) {}
-    /// Initialize with ranges for view \a x
-    GlbRanges(const ComplementView<View> & x);
-    /// Initialize with ranges for view \a x
-    void init(const ComplementView<View> & x);
-    //@}
+    template <class View>
+    forceinline void
+    LubRanges<ComplementView<View>>::operator++() {
+        return ++lbc;
+    }
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a range or done
-    bool operator ()(void) const;
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    //@}
+    template <class View>
+    forceinline int
+    LubRanges<ComplementView<View>>::min() const {
+        return lbc.min();
+    }
 
-    /// \name Range access
-    //@{
-    /// Return smallest value of range
-    int min(void) const;
-    /// Return largest value of range
-    int max(void) const;
-    /// Return width of ranges (distance between minimum and maximum)
-    unsigned int width(void) const;
-    //@}
-  };
+    template <class View>
+    forceinline int
+    LubRanges<ComplementView<View>>::max() const {
+        return lbc.max();
+    }
 
-  template<class View>
-  forceinline
-  GlbRanges<ComplementView<View> >::GlbRanges(const ComplementView<View> & s)
-    : ub(s.base()), ubc(ub) {}
+    template <class View>
+    forceinline unsigned int
+    LubRanges<ComplementView<View>>::width() const {
+        return lbc.width();
+    }
 
-  template<class View>
-  forceinline void
-  GlbRanges<ComplementView<View> >::init(const ComplementView<View> & s) {
-    ub.init(s.base());
-    ubc.init(ub);
-  }
+    /**
+     * \brief Range iterator for the least upper bound of double-complement-views
+     *
+     * This class provides (by specialization) a range iterator
+     * for the least upper bounds of complements of complement set views.
+     *
+     * \ingroup TaskActorSet
+     */
+    template <class View>
+    class LubRanges<ComplementView<ComplementView<View>>> : public LubRanges<View> {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        LubRanges() = default;
+        /// Initialize with ranges for view \a x
+        LubRanges(const ComplementView<ComplementView<View>>& x);
+        /// Initialize with ranges for view \a x
+        void init(const ComplementView<ComplementView<View>>& x);
+        //@}
+    };
 
-  template<class View>
-  forceinline bool
-  GlbRanges<ComplementView<View> >::operator ()(void) const { return ubc(); }
+    template <class View>
+    forceinline
+    LubRanges<ComplementView<ComplementView<View>>>::LubRanges(const ComplementView<ComplementView<View>>& x)
+        : LubRanges<View>(x) {}
 
-  template<class View>
-  forceinline void
-  GlbRanges<ComplementView<View> >::operator ++(void) { return ++ubc; }
+    template <class View>
+    forceinline void
+    LubRanges<ComplementView<ComplementView<View>>>::init(const ComplementView<ComplementView<View>>& x) {
+        LubRanges<View>::init(x);
+    }
 
-  template<class View>
-  forceinline int
-  GlbRanges<ComplementView<View> >::min(void) const { return ubc.min(); }
+    /**
+     * \brief %Range iterator for greatest lower bound of complement set views
+     * \ingroup TaskActorSetView
+     */
+    template <class View>
+    class GlbRanges<ComplementView<View>> {
+    private:
+        LubRanges<View> ub;
+        RangesCompl<LubRanges<View>> ubc;
 
-  template<class View>
-  forceinline int
-  GlbRanges<ComplementView<View> >::max(void) const { return ubc.max(); }
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        GlbRanges() = default;
+        /// Initialize with ranges for view \a s
+        GlbRanges(const ComplementView<View>& s);
+        /// Initialize with ranges for view \a s
+        void init(const ComplementView<View>& s);
+        //@}
 
-  template<class View>
-  forceinline unsigned int
-  GlbRanges<ComplementView<View> >::width(void) const { return ubc.width(); }
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a range or done
+        bool operator()() const;
+        /// Move iterator to next range (if possible)
+        void operator++();
+        //@}
 
-  /**
-   * \brief Range iterator for the greatest lower bound of double-complement-views
-   *
-   * This class provides (by specialization) a range iterator
-   * for the greatest lower bounds of complements of complement set views.
-   *
-   * \ingroup TaskActorSet
-   */
-  template<class View>
-  class GlbRanges<ComplementView<ComplementView<View> > > :
-    public GlbRanges<View> {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    GlbRanges(void) {}
-    /// Initialize with ranges for view \a x
-    GlbRanges(const ComplementView<ComplementView<View> >& x);
-    /// Initialize with ranges for view \a x
-    void init(const ComplementView<ComplementView<View> >& x);
-    //@}
-  };
+        /// \name Range access
+        //@{
+        /// Return smallest value of range
+        int min() const;
+        /// Return largest value of range
+        int max() const;
+        /// Return width of ranges (distance between minimum and maximum)
+        unsigned int width() const;
+        //@}
+    };
 
-  template<class View>
-  forceinline
-  GlbRanges<ComplementView<ComplementView<View> > >::
-  GlbRanges(const ComplementView<ComplementView<View> >& x) :
-    GlbRanges<View>(x) {}
+    template <class View>
+    forceinline
+    GlbRanges<ComplementView<View>>::GlbRanges(const ComplementView<View>& s)
+        : ub(s.base()), ubc(ub) {}
 
-  template<class View>
-  forceinline void
-  GlbRanges<ComplementView<ComplementView<View> > >::
-  init(const ComplementView<ComplementView<View> >& x) {
-    GlbRanges<View>::init(x);
-  }
+    template <class View>
+    forceinline void
+    GlbRanges<ComplementView<View>>::init(const ComplementView<View>& s) {
+        ub.init(s.base());
+        ubc.init(ub);
+    }
 
-  template<class Char, class Traits, class View>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os,
-              const ComplementView<View>& x) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << "(" << x.base() << ")^C";
-    return os << s.str();
-  }
+    template <class View>
+    forceinline bool
+    GlbRanges<ComplementView<View>>::operator()() const {
+        return ubc();
+    }
 
+    template <class View>
+    forceinline void
+    GlbRanges<ComplementView<View>>::operator++() {
+        return ++ubc;
+    }
 
-  template<class View>
-  forceinline bool
-  operator ==(const ComplementView<View>& x, const ComplementView<View>& y) {
-    return x.base() == y.base();
-  }
+    template <class View>
+    forceinline int
+    GlbRanges<ComplementView<View>>::min() const {
+        return ubc.min();
+    }
 
-  template<class View>
-  forceinline bool
-  operator !=(const ComplementView<View>& x, const ComplementView<View>& y) {
-    return x.base() != y.base();
-  }
+    template <class View>
+    forceinline int
+    GlbRanges<ComplementView<View>>::max() const {
+        return ubc.max();
+    }
 
-}}
+    template <class View>
+    forceinline unsigned int
+    GlbRanges<ComplementView<View>>::width() const {
+        return ubc.width();
+    }
+
+    /**
+     * \brief Range iterator for the greatest lower bound of double-complement-views
+     *
+     * This class provides (by specialization) a range iterator
+     * for the greatest lower bounds of complements of complement set views.
+     *
+     * \ingroup TaskActorSet
+     */
+    template <class View>
+    class GlbRanges<ComplementView<ComplementView<View>>> : public GlbRanges<View> {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        GlbRanges() = default;
+        /// Initialize with ranges for view \a x
+        GlbRanges(const ComplementView<ComplementView<View>>& x);
+        /// Initialize with ranges for view \a x
+        void init(const ComplementView<ComplementView<View>>& x);
+        //@}
+    };
+
+    template <class View>
+    forceinline
+    GlbRanges<ComplementView<ComplementView<View>>>::GlbRanges(const ComplementView<ComplementView<View>>& x)
+        : GlbRanges<View>(x) {}
+
+    template <class View>
+    forceinline void
+    GlbRanges<ComplementView<ComplementView<View>>>::init(const ComplementView<ComplementView<View>>& x) {
+        GlbRanges<View>::init(x);
+    }
+
+    template <class Char, class Traits, class View>
+    std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const ComplementView<View>& x) {
+        std::basic_ostringstream<Char, Traits> s;
+        s.copyfmt(os);
+        s.width(0);
+        s << "(" << x.base() << ")^C";
+        return os << s.str();
+    }
+
+    template <class View>
+    forceinline bool
+    operator==(const ComplementView<View>& x, const ComplementView<View>& y) {
+        return x.base() == y.base();
+    }
+
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,34 +34,88 @@
 
 #ifdef GECODE_HAS_SET_VARS
 
-namespace Test { namespace Assign {
+#include <gecode/search.hh>
 
-  /// %Test assignment with disjoint union propagator
-  class Set : public SetTest {
-  public:
-    /// Create and register test
-    Set(const std::string& s, const Gecode::IntSet& d, int n)
-      : SetTest(s,n,d) {}
-    /// Post propagators on variables \a x
-    virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) {
-      Gecode::SetVarArgs y(x.size()-1);
-      for (int i=0; i<x.size()-1; i++)
-        y[i]=x[i];
-      Gecode::rel(home, Gecode::SOT_UNION, y, x[x.size()-1]);
+namespace Test::Assign {
+
+    /// %Test assignment with disjoint union propagator
+    class Set : public SetTest {
+    public:
+        /// Create and register test
+        Set(const std::string& s, const Gecode::IntSet& d, int n) : SetTest(s, n, d) {}
+        /// Post propagators on variables \a x
+        void
+        post(Gecode::Space& home, Gecode::SetVarArray& x) override {
+            Gecode::SetVarArgs y(x.size() - 1);
+            for (int i = 0; i < x.size() - 1; i++)
+                y[i] = x[i];
+            Gecode::rel(home, Gecode::SOT_UNION, y, x[x.size() - 1]);
+        }
+    };
+
+    namespace {
+        Gecode::IntArgs s({-100, -10, 0, 10, 100});
+        Set d_3("Dense::3", Gecode::IntSet(-2, 2), 3);
+        Set d_4("Dense::4", Gecode::IntSet(-2, 2), 4);
+        Set s_3("Sparse::3", Gecode::IntSet(s), 3);
+        Set s_4("Sparse::4", Gecode::IntSet(s), 4);
+    } // namespace
+
+    /// Merit that prefers the last of five variables
+    static double
+    set_merit_last(const Gecode::Space&, Gecode::SetVar, int i) {
+        return (i == 4) ? 1.0 : 0.0;
     }
-  };
 
-  namespace {
-    Gecode::IntArgs s({-100,-10,0,10,100});
-    Set d_3("Dense::3",Gecode::IntSet(-2,2),3);
-    Set d_4("Dense::4",Gecode::IntSet(-2,2),4);
-    Set s_3("Sparse::3",Gecode::IntSet(s),3);
-    Set s_4("Sparse::4",Gecode::IntSet(s),4);
-  }
+    /// Space with five sets of which exactly one contains zero
+    class SetOrderSpace : public Gecode::Space {
+    public:
+        /// Variables to be assigned
+        Gecode::SetVarArray x;
+        /// Initialize test space
+        SetOrderSpace() : x(*this, 5, Gecode::IntSet::empty, Gecode::IntSet(0, 0)) {
+            Gecode::SetVar zero(*this, Gecode::IntSet(0, 0), Gecode::IntSet(0, 0));
+            Gecode::rel(*this, Gecode::SOT_DISJOINT_UNION, x, zero);
+        }
+        /// Constructor for cloning \a s
+        SetOrderSpace(SetOrderSpace& s) : Gecode::Space(s) {
+            x.update(*this, s.x);
+        }
+        /// Copy space during cloning
+        Gecode::Space*
+        copy() override {
+            return new SetOrderSpace(*this);
+        }
+    };
 
-}}
+    /// %Test that assignment follows a single variable selection
+    class SetVarSelection : public Base {
+    public:
+        /// Create and register test
+        SetVarSelection() : Base("Set::Assign::VarSelection") {}
+        /// Perform test
+        bool
+        run() override {
+            using namespace Gecode;
+            SetOrderSpace* s = new SetOrderSpace;
+            assign(*s, s->x, SET_VAR_MERIT_MAX(&set_merit_last), SET_ASSIGN_MIN_INC());
+            DFS<SetOrderSpace> e(s);
+            delete s;
+            SetOrderSpace* solution = e.next();
+            bool ok = solution != nullptr;
+            for (int i = 0; ok && (i < solution->x.size()); i++)
+                ok = solution->x[i].glb_size() == ((i == 4) ? 1U : 0U);
+            delete solution;
+            return ok;
+        }
+    };
+
+    namespace {
+        SetVarSelection var_selection;
+    } // namespace
+
+} // namespace Test::Assign
 
 #endif
 
 // STATISTICS: test-branch
-

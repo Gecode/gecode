@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -48,796 +47,785 @@
  * \brief %Int for unary resources
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
-  /// %Unary (mandatory) task with fixed processing time
-  class ManFixPTask {
-  protected:
-    /// Start time
-    Int::IntView _s;
-    /// Processing time
-    int _p;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    ManFixPTask(void);
-    /// Initialize with start time \a s and processing time \a p
-    ManFixPTask(IntVar s, int p);
-    /// Initialize with start time \a s and processing time \a p
-    void init(IntVar s, int p);
-    /// Initialize from task \a t
-    void init(const ManFixPTask& t);
-    //@}
+    /// %Unary (mandatory) task with fixed processing time
+    class ManFixPTask {
+    protected:
+        /// Start time
+        Int::IntView _s;
+        /// Processing time
+        int _p;
 
-    /// \name Value access
-    //@{
-    /// Return earliest start time
-    int est(void) const;
-    /// Return earliest completion time
-    int ect(void) const;
-    /// Return latest start time
-    int lst(void) const;
-    /// Return latest completion time
-    int lct(void) const;
-    /// Return minimum processing time
-    int pmin(void) const;
-    /// Return maximum processing time
-    int pmax(void) const;
-    /// Return start time
-    IntVar st(void) const;
-    /// Whether task is mandatory
-    bool mandatory(void) const;
-    /// Whether task is excluded
-    bool excluded(void) const;
-    /// Whether task can still be optional
-    bool optional(void) const;
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        ManFixPTask();
+        /// Initialize with start time \a s and processing time \a p
+        ManFixPTask(IntVar s, int p);
+        /// Initialize with start time \a s and processing time \a p
+        void init(IntVar s, int p);
+        /// Initialize from task \a t
+        void init(const ManFixPTask& t);
+        //@}
 
-    /// \name Domain tests
-    //@{
-    /// Test whether task is assigned
-    bool assigned(void) const;
-    //@}
+        /// \name Value access
+        //@{
+        /// Return earliest start time
+        int est() const;
+        /// Return earliest completion time
+        int ect() const;
+        /// Return latest start time
+        int lst() const;
+        /// Return latest completion time
+        int lct() const;
+        /// Return minimum processing time
+        int pmin() const;
+        /// Return maximum processing time
+        int pmax() const;
+        /// Return start time
+        IntVar st() const;
+        /// Whether task is mandatory
+        bool mandatory() const;
+        /// Whether task is excluded
+        bool excluded() const;
+        /// Whether task can still be optional
+        bool optional() const;
+        //@}
 
-    /// \name Value update
-    //@{
-    /// Update earliest start time to \a n
-    ModEvent est(Space& home, int n);
-    /// Update earliest completion time to \a n
-    ModEvent ect(Space& home, int n);
-    /// Update latest start time to \a n
-    ModEvent lst(Space& home, int n);
-    /// Update latest completion time to \a n
-    ModEvent lct(Space& home, int n);
-    /// Update such that task cannot run from \a e to \a l
-    ModEvent norun(Space& home, int e, int l);
-    /// Mark task as mandatory
-    ModEvent mandatory(Space& home);
-    /// Mark task as excluded
-    ModEvent excluded(Space& home);
-    //@}
+        /// \name Domain tests
+        //@{
+        /// Test whether task is assigned
+        bool assigned() const;
+        //@}
 
-    /// \name Cloning
-    //@{
-    /// Update this task to be a clone of task \a t
-    void update(Space& home, ManFixPTask& t);
-    //@}
+        /// \name Value update
+        //@{
+        /// Update earliest start time to \a n
+        ModEvent est(Space& home, int n);
+        /// Update earliest completion time to \a n
+        ModEvent ect(Space& home, int n);
+        /// Update latest start time to \a n
+        ModEvent lst(Space& home, int n);
+        /// Update latest completion time to \a n
+        ModEvent lct(Space& home, int n);
+        /// Update such that task cannot run from \a e to \a l
+        ModEvent norun(Space& home, int e, int l);
+        /// Mark task as mandatory
+        ModEvent mandatory(Space& home);
+        /// Mark task as excluded
+        ModEvent excluded(Space& home);
+        //@}
 
-    /// \name Dependencies
-    //@{
-    /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p, PropCond pc);
-    /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Schedule propagator \a p
-    void reschedule(Space& home, Propagator& p, PropCond pc);
-    //@}
+        /// \name Cloning
+        //@{
+        /// Update this task to be a clone of task \a t
+        void update(Space& home, ManFixPTask& t);
+        //@}
 
-  };
+        /// \name Dependencies
+        //@{
+        /// Subscribe propagator \a p to task
+        void subscribe(Space& home, Propagator& p, PropCond pc);
+        /// Cancel subscription of propagator \a p for task
+        void cancel(Space& home, Propagator& p, PropCond pc);
+        /// Schedule propagator \a p
+        void reschedule(Space& home, Propagator& p, PropCond pc);
+        //@}
+    };
 
-  /**
-   * \brief Print task in format est:p:lct
-   * \relates ManFixPTask
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixPTask& t);
-
-  /// %Unary (mandatory) task with fixed processing, start or end time
-  class ManFixPSETask : public ManFixPTask {
-  protected:
-    /// Task type
-    TaskType _t;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    ManFixPSETask(void);
     /**
-     * \brief Initialize task
-     *
-     * Depending on \a t, \a s is either the end time (if \a t is TT_FIXS)
-     * or the start time of the task, and \a p is the fixed parameter.
+     * \brief Print task in format est:p:lct
+     * \relates ManFixPTask
      */
-    ManFixPSETask(TaskType t, IntVar s, int p);
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const ManFixPTask& t);
+
+    /// %Unary (mandatory) task with fixed processing, start or end time
+    class ManFixPSETask : public ManFixPTask {
+    protected:
+        /// Task type
+        TaskType _t;
+
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        ManFixPSETask();
+        /**
+         * \brief Initialize task
+         *
+         * Depending on \a t, \a s is either the end time (if \a t is TT_FIXED_START)
+         * or the start time of the task, and \a p is the fixed parameter.
+         */
+        ManFixPSETask(TaskType t, IntVar s, int p);
+        /**
+         * \brief Initialize task
+         *
+         * Depending on \a t, \a s is either the end time (if \a t is FIXS)
+         * or the start time of the task, and \a p is the fixed parameter.
+         */
+        void init(TaskType t, IntVar s, int p);
+        /// Initialize from task \a t
+        void init(const ManFixPSETask& t);
+        //@}
+
+        /// \name Value access
+        //@{
+        /// Return earliest start time
+        int est() const;
+        /// Return earliest completion time
+        int ect() const;
+        /// Return latest start time
+        int lst() const;
+        /// Return latest completion time
+        int lct() const;
+        /// Return minimum processing time
+        int pmin() const;
+        /// Return maximum processing time
+        int pmax() const;
+        //@}
+
+        /// \name Value update
+        //@{
+        /// Update earliest start time to \a n
+        ModEvent est(Space& home, int n);
+        /// Update earliest completion time to \a n
+        ModEvent ect(Space& home, int n);
+        /// Update latest start time to \a n
+        ModEvent lst(Space& home, int n);
+        /// Update latest completion time to \a n
+        ModEvent lct(Space& home, int n);
+        /// Update such that task cannot run from \a e to \a l
+        ModEvent norun(Space& home, int e, int l);
+        //@}
+
+        /// \name Cloning
+        //@{
+        /// Update this task to be a clone of task \a t
+        void update(Space& home, ManFixPSETask& t);
+        //@}
+    };
+
     /**
-     * \brief Initialize task
-     *
-     * Depending on \a t, \a s is either the end time (if \a t is FIXS)
-     * or the start time of the task, and \a p is the fixed parameter.
+     * \brief Print task in format est:[p,c]:lct
+     * \relates ManFixPSETask
      */
-    void init(TaskType t, IntVar s, int p);
-    /// Initialize from task \a t
-    void init(const ManFixPSETask& t);
-    //@}
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const ManFixPSETask& t);
 
-    /// \name Value access
-    //@{
-    /// Return earliest start time
-    int est(void) const;
-    /// Return earliest completion time
-    int ect(void) const;
-    /// Return latest start time
-    int lst(void) const;
-    /// Return latest completion time
-    int lct(void) const;
-    /// Return minimum processing time
-    int pmin(void) const;
-    /// Return maximum processing time
-    int pmax(void) const;
-    //@}
+    /// %Unary optional task with fixed processing time
+    class OptFixPTask : public ManToOptTask<ManFixPTask> {
+    protected:
+        using ManToOptTask<ManFixPTask>::_m;
 
-    /// \name Value update
-    //@{
-    /// Update earliest start time to \a n
-    ModEvent est(Space& home, int n);
-    /// Update earliest completion time to \a n
-    ModEvent ect(Space& home, int n);
-    /// Update latest start time to \a n
-    ModEvent lst(Space& home, int n);
-    /// Update latest completion time to \a n
-    ModEvent lct(Space& home, int n);
-    /// Update such that task cannot run from \a e to \a l
-    ModEvent norun(Space& home, int e, int l);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        OptFixPTask();
+        /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
+        OptFixPTask(IntVar s, int p, BoolVar m);
+        /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
+        void init(IntVar s, int p, BoolVar m);
+        //@}
+    };
 
-    /// \name Cloning
-    //@{
-    /// Update this task to be a clone of task \a t
-    void update(Space& home, ManFixPSETask& t);
-    //@}
+    /**
+     * \brief Print optional task in format est:p:lct:m
+     * \relates OptFixPTask
+     */
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFixPTask& t);
 
-  };
+    /// Unary optional task with fixed processing, start or end time
+    class OptFixPSETask : public ManToOptTask<ManFixPSETask> {
+    protected:
+        using ManToOptTask<ManFixPSETask>::_m;
 
-  /**
-   * \brief Print task in format est:[p,c]:lct
-   * \relates ManFixPSETask
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixPSETask& t);
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        OptFixPSETask();
+        /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
+        OptFixPSETask(TaskType t, IntVar s, int p, BoolVar m);
+        /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
+        void init(TaskType t, IntVar s, int p, BoolVar m);
+        //@}
+    };
 
-  /// %Unary optional task with fixed processing time
-  class OptFixPTask : public ManToOptTask<ManFixPTask> {
-  protected:
-    using ManToOptTask<ManFixPTask>::_m;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    OptFixPTask(void);
-    /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
-    OptFixPTask(IntVar s, int p, BoolVar m);
-    /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
-    void init(IntVar s, int p, BoolVar m);
-    //@}
-  };
+    /**
+     * \brief Print optional task in format est:p:lct:m
+     * \relates OptFixPSETask
+     */
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFixPSETask& t);
 
-  /**
-   * \brief Print optional task in format est:p:lct:m
-   * \relates OptFixPTask
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPTask& t);
+    /// %Unary (mandatory) task with flexible processing time
+    class ManFlexTask {
+    protected:
+        /// Start time
+        Int::IntView _s;
+        /// Processing time
+        Int::IntView _p;
+        /// End time
+        Int::IntView _e;
 
-  /// Unary optional task with fixed processing, start or end time
-  class OptFixPSETask : public ManToOptTask<ManFixPSETask> {
-  protected:
-    using ManToOptTask<ManFixPSETask>::_m;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    OptFixPSETask(void);
-    /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
-    OptFixPSETask(TaskType t, IntVar s, int p, BoolVar m);
-    /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
-    void init(TaskType t, IntVar s, int p, BoolVar m);
-    //@}
-  };
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        ManFlexTask() = default;
+        /// Initialize with start time \a s, processing time \a p, end time \a e
+        ManFlexTask(IntVar s, IntVar p, IntVar e);
+        /// Initialize with start time \a s, processing time \a p, end time \a e
+        void init(IntVar s, IntVar p, IntVar e);
+        /// Initialize from task \a t
+        void init(const ManFlexTask& t);
+        //@}
 
-  /**
-   * \brief Print optional task in format est:p:lct:m
-   * \relates OptFixPSETask
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPSETask& t);
+        /// \name Value access
+        //@{
+        /// Return earliest start time
+        int est() const;
+        /// Return earliest completion time
+        int ect() const;
+        /// Return latest start time
+        int lst() const;
+        /// Return latest completion time
+        int lct() const;
+        /// Return minimum processing time
+        int pmin() const;
+        /// Return maximum processing time
+        int pmax() const;
+        /// Return start time
+        IntVar st() const;
+        /// Return processing time
+        IntVar p() const;
+        /// Return end time
+        IntVar e() const;
+        /// Whether task is mandatory
+        bool mandatory() const;
+        /// Whether task is excluded
+        bool excluded() const;
+        /// Whether task can still be optional
+        bool optional() const;
+        //@}
 
-  /// %Unary (mandatory) task with flexible processing time
-  class ManFlexTask {
-  protected:
-    /// Start time
-    Int::IntView _s;
-    /// Processing time
-    Int::IntView _p;
-    /// End time
-    Int::IntView _e;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    ManFlexTask(void);
-    /// Initialize with start time \a s, processing time \a p, end time \a e
-    ManFlexTask(IntVar s, IntVar p, IntVar e);
-    /// Initialize with start time \a s, processing time \a p, end time \a e
-    void init(IntVar s, IntVar p, IntVar e);
-    /// Initialize from task \a t
-    void init(const ManFlexTask& t);
-    //@}
+        /// \name Domain tests
+        //@{
+        /// Test whether task is assigned
+        bool assigned() const;
+        //@}
 
-    /// \name Value access
-    //@{
-    /// Return earliest start time
-    int est(void) const;
-    /// Return earliest completion time
-    int ect(void) const;
-    /// Return latest start time
-    int lst(void) const;
-    /// Return latest completion time
-    int lct(void) const;
-    /// Return minimum processing time
-    int pmin(void) const;
-    /// Return maximum processing time
-    int pmax(void) const;
-    /// Return start time
-    IntVar st(void) const;
-    /// Return processing time
-    IntVar p(void) const;
-    /// Return end time
-    IntVar e(void) const;
-    /// Whether task is mandatory
-    bool mandatory(void) const;
-    /// Whether task is excluded
-    bool excluded(void) const;
-    /// Whether task can still be optional
-    bool optional(void) const;
-    //@}
+        /// \name Value update
+        //@{
+        /// Update earliest start time to \a n
+        ModEvent est(Space& home, int n);
+        /// Update earliest completion time to \a n
+        ModEvent ect(Space& home, int n);
+        /// Update latest start time to \a n
+        ModEvent lst(Space& home, int n);
+        /// Update latest completion time to \a n
+        ModEvent lct(Space& home, int n);
+        /// Update such that task cannot run from \a e to \a l
+        ModEvent norun(Space& home, int e, int l);
+        /// Mark task as mandatory
+        ModEvent mandatory(Space& home);
+        /// Mark task as excluded
+        ModEvent excluded(Space& home);
+        //@}
 
-    /// \name Domain tests
-    //@{
-    /// Test whether task is assigned
-    bool assigned(void) const;
-    //@}
+        /// \name Cloning
+        //@{
+        /// Update this task to be a clone of task \a t
+        void update(Space& home, ManFlexTask& t);
+        //@}
 
-    /// \name Value update
-    //@{
-    /// Update earliest start time to \a n
-    ModEvent est(Space& home, int n);
-    /// Update earliest completion time to \a n
-    ModEvent ect(Space& home, int n);
-    /// Update latest start time to \a n
-    ModEvent lst(Space& home, int n);
-    /// Update latest completion time to \a n
-    ModEvent lct(Space& home, int n);
-    /// Update such that task cannot run from \a e to \a l
-    ModEvent norun(Space& home, int e, int l);
-    /// Mark task as mandatory
-    ModEvent mandatory(Space& home);
-    /// Mark task as excluded
-    ModEvent excluded(Space& home);
-    //@}
+        /// \name Dependencies
+        //@{
+        /// Subscribe propagator \a p to task
+        void subscribe(Space& home, Propagator& p, PropCond pc);
+        /// Cancel subscription of propagator \a p for task
+        void cancel(Space& home, Propagator& p, PropCond pc);
+        /// Schedule propagator \a p
+        void reschedule(Space& home, Propagator& p, PropCond pc);
+        //@}
+    };
 
-    /// \name Cloning
-    //@{
-    /// Update this task to be a clone of task \a t
-    void update(Space& home, ManFlexTask& t);
-    //@}
+    /**
+     * \brief Print task in format est:lst:pmin:pmax:ect:lct
+     * \relates ManFlexTask
+     */
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const ManFlexTask& t);
 
-    /// \name Dependencies
-    //@{
-    /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p, PropCond pc);
-    /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Schedule propagator \a p
-    void reschedule(Space& home, Propagator& p, PropCond pc);
-    //@}
+    /// %Unary optional task with flexible processing time
+    class OptFlexTask : public ManToOptTask<ManFlexTask> {
+    protected:
+        using ManToOptTask<ManFlexTask>::_m;
 
-  };
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        OptFlexTask() = default;
+        /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
+        OptFlexTask(IntVar s, IntVar p, IntVar e, BoolVar m);
+        /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
+        void init(IntVar s, IntVar p, IntVar e, BoolVar m);
+        //@}
+    };
 
-  /**
-   * \brief Print task in format est:lst:pmin:pmax:ect:lct
-   * \relates ManFlexTask
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFlexTask& t);
+    /**
+     * \brief Print optional task in format est:lst:pmin:pmax:ect:lct:m
+     * \relates OptFlexTask
+     */
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFlexTask& t);
 
-  /// %Unary optional task with flexible processing time
-  class OptFlexTask : public ManToOptTask<ManFlexTask> {
-  protected:
-    using ManToOptTask<ManFlexTask>::_m;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    OptFlexTask(void);
-    /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
-    OptFlexTask(IntVar s, IntVar p, IntVar e, BoolVar m);
-    /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
-    void init(IntVar s, IntVar p, IntVar e, BoolVar m);
-    //@}
-  };
-
-  /**
-   * \brief Print optional task in format est:lst:pmin:pmax:ect:lct:m
-   * \relates OptFlexTask
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlexTask& t);
-
-}}}
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/task.hpp>
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
-  /// Forward mandatory fixed task view
-  typedef ManFixPTask ManFixPTaskFwd;
+    /// Forward mandatory fixed task view
+    using ManFixPTaskFwd = ManFixPTask;
 
-  /// Backward (dual) mandatory fixed task view
-  typedef FwdToBwd<ManFixPTaskFwd> ManFixPTaskBwd;
+    /// Backward (dual) mandatory fixed task view
+    using ManFixPTaskBwd = FwdToBwd<ManFixPTaskFwd>;
 
-  /// Forward mandatory fixed task view
-  typedef ManFixPSETask ManFixPSETaskFwd;
+    /// Forward mandatory fixed task view
+    using ManFixPSETaskFwd = ManFixPSETask;
 
-  /// Backward (dual) mandatory fixed task view
-  typedef FwdToBwd<ManFixPSETaskFwd> ManFixPSETaskBwd;
+    /// Backward (dual) mandatory fixed task view
+    using ManFixPSETaskBwd = FwdToBwd<ManFixPSETaskFwd>;
 
-  /// Forward optional fixed task view
-  typedef OptFixPTask OptFixPTaskFwd;
+    /// Forward optional fixed task view
+    using OptFixPTaskFwd = OptFixPTask;
 
-  /// Backward (dual) optional fixed task view
-  typedef FwdToBwd<OptFixPTaskFwd> OptFixPTaskBwd;
+    /// Backward (dual) optional fixed task view
+    using OptFixPTaskBwd = FwdToBwd<OptFixPTaskFwd>;
 
-  /// Forward optional fixed task view
-  typedef OptFixPSETask OptFixPSETaskFwd;
+    /// Forward optional fixed task view
+    using OptFixPSETaskFwd = OptFixPSETask;
 
-  /// Backward (dual) optional fixed task view
-  typedef FwdToBwd<OptFixPSETaskFwd> OptFixPSETaskBwd;
+    /// Backward (dual) optional fixed task view
+    using OptFixPSETaskBwd = FwdToBwd<OptFixPSETaskFwd>;
 
-  /// Forward mandatory flexible task view
-  typedef ManFlexTask ManFlexTaskFwd;
+    /// Forward mandatory flexible task view
+    using ManFlexTaskFwd = ManFlexTask;
 
-  /// Backward (dual) mandatory flexible task view
-  typedef FwdToBwd<ManFlexTaskFwd> ManFlexTaskBwd;
+    /// Backward (dual) mandatory flexible task view
+    using ManFlexTaskBwd = FwdToBwd<ManFlexTaskFwd>;
 
-  /// Forward optional flexible task view
-  typedef OptFlexTask OptFlexTaskFwd;
+    /// Forward optional flexible task view
+    using OptFlexTaskFwd = OptFlexTask;
 
-  /// Backward (dual) optional flexible task view
-  typedef FwdToBwd<OptFlexTaskFwd> OptFlexTaskBwd;
+    /// Backward (dual) optional flexible task view
+    using OptFlexTaskBwd = FwdToBwd<OptFlexTaskFwd>;
 
+    /**
+     * \brief Print backward task view in format est:p:lct
+     * \relates ManFixPTaskBwd
+     */
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const ManFixPTaskBwd& t);
 
-  /**
-   * \brief Print backward task view in format est:p:lct
-   * \relates ManFixPTaskBwd
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixPTaskBwd& t);
+    /**
+     * \brief Print backward task view in format est:p:lct
+     * \relates ManFixPSETaskBwd
+     */
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const ManFixPSETaskBwd& t);
 
-  /**
-   * \brief Print backward task view in format est:p:lct
-   * \relates ManFixPSETaskBwd
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFixPSETaskBwd& t);
+    /**
+     * \brief Print optional backward task view in format est:p:lct:m
+     * \relates OptFixPTaskBwd
+     */
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFixPTaskBwd& t);
 
-  /**
-   * \brief Print optional backward task view in format est:p:lct:m
-   * \relates OptFixPTaskBwd
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPTaskBwd& t);
+    /**
+     * \brief Print optional backward task view in format est:p:lct:m
+     * \relates OptFixPSETaskBwd
+     */
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFixPSETaskBwd& t);
 
-  /**
-   * \brief Print optional backward task view in format est:p:lct:m
-   * \relates OptFixPSETaskBwd
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPSETaskBwd& t);
+    /**
+     * \brief Print backward task view in format est:lst:pmin:pmax:ect:lct
+     * \relates ManFlexTaskBwd
+     */
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const ManFlexTaskBwd& t);
 
-  /**
-   * \brief Print backward task view in format est:lst:pmin:pmax:ect:lct
-   * \relates ManFlexTaskBwd
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const ManFlexTaskBwd& t);
+    /**
+     * \brief Print optional backward task view in format
+     * est:lst:pmin:pmax:ect:lct:m
+     *
+     * \relates OptFlexTaskBwd
+     */
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFlexTaskBwd& t);
 
-  /**
-   * \brief Print optional backward task view in format
-   * est:lst:pmin:pmax:ect:lct:m
-   *
-   * \relates OptFlexTaskBwd
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const OptFlexTaskBwd& t);
-
-}}}
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/task-view.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
-  /// Task view traits for forward task views
-  template<>
-  class TaskViewTraits<Unary::ManFixPTaskFwd> {
-  public:
-    /// The task type
-    typedef Unary::ManFixPTask Task;
-  };
+    /// Task view traits for forward task views
+    template <>
+    class TaskViewTraits<Unary::ManFixPTaskFwd> {
+    public:
+        /// The task type
+        using Task = Unary::ManFixPTask;
+    };
 
-  /// Task view traits for backward task views
-  template<>
-  class TaskViewTraits<Unary::ManFixPTaskBwd> {
-  public:
-    /// The task type
-    typedef Unary::ManFixPTask Task;
-  };
+    /// Task view traits for backward task views
+    template <>
+    class TaskViewTraits<Unary::ManFixPTaskBwd> {
+    public:
+        /// The task type
+        using Task = Unary::ManFixPTask;
+    };
 
-  /// Task view traits for forward task views
-  template<>
-  class TaskViewTraits<Unary::ManFixPSETaskFwd> {
-  public:
-    /// The task type
-    typedef Unary::ManFixPSETask Task;
-  };
+    /// Task view traits for forward task views
+    template <>
+    class TaskViewTraits<Unary::ManFixPSETaskFwd> {
+    public:
+        /// The task type
+        using Task = Unary::ManFixPSETask;
+    };
 
-  /// Task view traits for backward task views
-  template<>
-  class TaskViewTraits<Unary::ManFixPSETaskBwd> {
-  public:
-    /// The task type
-    typedef Unary::ManFixPSETask Task;
-  };
+    /// Task view traits for backward task views
+    template <>
+    class TaskViewTraits<Unary::ManFixPSETaskBwd> {
+    public:
+        /// The task type
+        using Task = Unary::ManFixPSETask;
+    };
 
-  /// Task view traits for forward optional task views
-  template<>
-  class TaskViewTraits<Unary::OptFixPTaskFwd> {
-  public:
-    /// The task type
-    typedef Unary::OptFixPTask Task;
-  };
+    /// Task view traits for forward optional task views
+    template <>
+    class TaskViewTraits<Unary::OptFixPTaskFwd> {
+    public:
+        /// The task type
+        using Task = Unary::OptFixPTask;
+    };
 
-  /// Task view traits for backward task views
-  template<>
-  class TaskViewTraits<Unary::OptFixPTaskBwd> {
-  public:
-    /// The task type
-    typedef Unary::OptFixPTask Task;
-  };
+    /// Task view traits for backward task views
+    template <>
+    class TaskViewTraits<Unary::OptFixPTaskBwd> {
+    public:
+        /// The task type
+        using Task = Unary::OptFixPTask;
+    };
 
-  /// Task view traits for forward optional task views
-  template<>
-  class TaskViewTraits<Unary::OptFixPSETaskFwd> {
-  public:
-    /// The task type
-    typedef Unary::OptFixPSETask Task;
-  };
+    /// Task view traits for forward optional task views
+    template <>
+    class TaskViewTraits<Unary::OptFixPSETaskFwd> {
+    public:
+        /// The task type
+        using Task = Unary::OptFixPSETask;
+    };
 
-  /// Task view traits for backward task views
-  template<>
-  class TaskViewTraits<Unary::OptFixPSETaskBwd> {
-  public:
-    /// The task type
-    typedef Unary::OptFixPSETask Task;
-  };
+    /// Task view traits for backward task views
+    template <>
+    class TaskViewTraits<Unary::OptFixPSETaskBwd> {
+    public:
+        /// The task type
+        using Task = Unary::OptFixPSETask;
+    };
 
-  /// Task view traits for forward task views
-  template<>
-  class TaskViewTraits<Unary::ManFlexTaskFwd> {
-  public:
-    /// The task type
-    typedef Unary::ManFlexTask Task;
-  };
+    /// Task view traits for forward task views
+    template <>
+    class TaskViewTraits<Unary::ManFlexTaskFwd> {
+    public:
+        /// The task type
+        using Task = Unary::ManFlexTask;
+    };
 
-  /// Task view traits for backward task views
-  template<>
-  class TaskViewTraits<Unary::ManFlexTaskBwd> {
-  public:
-    /// The task type
-    typedef Unary::ManFlexTask Task;
-  };
+    /// Task view traits for backward task views
+    template <>
+    class TaskViewTraits<Unary::ManFlexTaskBwd> {
+    public:
+        /// The task type
+        using Task = Unary::ManFlexTask;
+    };
 
-  /// Task view traits for forward optional task views
-  template<>
-  class TaskViewTraits<Unary::OptFlexTaskFwd> {
-  public:
-    /// The task type
-    typedef Unary::OptFlexTask Task;
-  };
+    /// Task view traits for forward optional task views
+    template <>
+    class TaskViewTraits<Unary::OptFlexTaskFwd> {
+    public:
+        /// The task type
+        using Task = Unary::OptFlexTask;
+    };
 
-  /// Task view traits for backward task views
-  template<>
-  class TaskViewTraits<Unary::OptFlexTaskBwd> {
-  public:
-    /// The task type
-    typedef Unary::OptFlexTask Task;
-  };
+    /// Task view traits for backward task views
+    template <>
+    class TaskViewTraits<Unary::OptFlexTaskBwd> {
+    public:
+        /// The task type
+        using Task = Unary::OptFlexTask;
+    };
 
+    /// Task traits for mandatory fixed tasks
+    template <>
+    class TaskTraits<Unary::ManFixPTask> {
+    public:
+        /// The forward task view type
+        using TaskViewFwd = Unary::ManFixPTaskFwd;
+        /// The backward task view type
+        using TaskViewBwd = Unary::ManFixPTaskBwd;
+    };
 
-  /// Task traits for mandatory fixed tasks
-  template<>
-  class TaskTraits<Unary::ManFixPTask> {
-  public:
-    /// The forward task view type
-    typedef Unary::ManFixPTaskFwd TaskViewFwd;
-    /// The backward task view type
-    typedef Unary::ManFixPTaskBwd TaskViewBwd;
-  };
+    /// Task traits for mandatory fixed tasks
+    template <>
+    class TaskTraits<Unary::ManFixPSETask> {
+    public:
+        /// The forward task view type
+        using TaskViewFwd = Unary::ManFixPSETaskFwd;
+        /// The backward task view type
+        using TaskViewBwd = Unary::ManFixPSETaskBwd;
+    };
 
-  /// Task traits for mandatory fixed tasks
-  template<>
-  class TaskTraits<Unary::ManFixPSETask> {
-  public:
-    /// The forward task view type
-    typedef Unary::ManFixPSETaskFwd TaskViewFwd;
-    /// The backward task view type
-    typedef Unary::ManFixPSETaskBwd TaskViewBwd;
-  };
+    /// Task traits for optional fixed tasks
+    template <>
+    class TaskTraits<Unary::OptFixPTask> {
+    public:
+        /// The forward task view type
+        using TaskViewFwd = Unary::OptFixPTaskFwd;
+        /// The backward task view type
+        using TaskViewBwd = Unary::OptFixPTaskBwd;
+        /// The corresponding mandatory task
+        using ManTask = Unary::ManFixPTask;
+    };
 
-  /// Task traits for optional fixed tasks
-  template<>
-  class TaskTraits<Unary::OptFixPTask> {
-  public:
-    /// The forward task view type
-    typedef Unary::OptFixPTaskFwd TaskViewFwd;
-    /// The backward task view type
-    typedef Unary::OptFixPTaskBwd TaskViewBwd;
-    /// The corresponding mandatory task
-    typedef Unary::ManFixPTask ManTask;
-  };
+    /// Task traits for optional fixed tasks
+    template <>
+    class TaskTraits<Unary::OptFixPSETask> {
+    public:
+        /// The forward task view type
+        using TaskViewFwd = Unary::OptFixPSETaskFwd;
+        /// The backward task view type
+        using TaskViewBwd = Unary::OptFixPSETaskBwd;
+        /// The corresponding mandatory task
+        using ManTask = Unary::ManFixPTask;
+    };
 
-  /// Task traits for optional fixed tasks
-  template<>
-  class TaskTraits<Unary::OptFixPSETask> {
-  public:
-    /// The forward task view type
-    typedef Unary::OptFixPSETaskFwd TaskViewFwd;
-    /// The backward task view type
-    typedef Unary::OptFixPSETaskBwd TaskViewBwd;
-    /// The corresponding mandatory task
-    typedef Unary::ManFixPTask ManTask;
-  };
+    /// Task traits for mandatory flexible tasks
+    template <>
+    class TaskTraits<Unary::ManFlexTask> {
+    public:
+        /// The forward task view type
+        using TaskViewFwd = Unary::ManFlexTaskFwd;
+        /// The backward task view type
+        using TaskViewBwd = Unary::ManFlexTaskBwd;
+    };
 
-  /// Task traits for mandatory flexible tasks
-  template<>
-  class TaskTraits<Unary::ManFlexTask> {
-  public:
-    /// The forward task view type
-    typedef Unary::ManFlexTaskFwd TaskViewFwd;
-    /// The backward task view type
-    typedef Unary::ManFlexTaskBwd TaskViewBwd;
-  };
+    /// Task traits for optional flexible tasks
+    template <>
+    class TaskTraits<Unary::OptFlexTask> {
+    public:
+        /// The forward task view type
+        using TaskViewFwd = Unary::OptFlexTaskFwd;
+        /// The backward task view type
+        using TaskViewBwd = Unary::OptFlexTaskBwd;
+        /// The corresponding mandatory task
+        using ManTask = Unary::ManFlexTask;
+    };
 
-  /// Task traits for optional flexible tasks
-  template<>
-  class TaskTraits<Unary::OptFlexTask> {
-  public:
-    /// The forward task view type
-    typedef Unary::OptFlexTaskFwd TaskViewFwd;
-    /// The backward task view type
-    typedef Unary::OptFlexTaskBwd TaskViewBwd;
-    /// The corresponding mandatory task
-    typedef Unary::ManFlexTask ManTask;
-  };
+} // namespace Gecode::Int
 
-}}
+namespace Gecode::Int::Unary {
 
-namespace Gecode { namespace Int { namespace Unary {
+    /// Node for an omega tree
+    class OmegaNode {
+    public:
+        /// Processing time for subtree
+        int p;
+        /// Earliest completion time for subtree
+        int ect;
+        /// Initialize node from left child \a l and right child \a r
+        void init(const OmegaNode& l, const OmegaNode& r);
+        /// Update node from left child \a l and right child \a r
+        void update(const OmegaNode& l, const OmegaNode& r);
+    };
 
-  /// Node for an omega tree
-  class OmegaNode {
-  public:
-    /// Processing time for subtree
-    int p;
-    /// Earliest completion time for subtree
-    int ect;
-    /// Initialize node from left child \a l and right child \a r
-    void init(const OmegaNode& l, const OmegaNode& r);
-    /// Update node from left child \a l and right child \a r
-    void update(const OmegaNode& l, const OmegaNode& r);
-  };
+    /// Omega trees for computing ect of task sets
+    template <class TaskView>
+    class OmegaTree : public TaskTree<TaskView, OmegaNode> {
+    protected:
+        using TaskTree<TaskView, OmegaNode>::tasks;
+        using TaskTree<TaskView, OmegaNode>::leaf;
+        using TaskTree<TaskView, OmegaNode>::root;
+        using TaskTree<TaskView, OmegaNode>::init;
+        using TaskTree<TaskView, OmegaNode>::update;
 
-  /// Omega trees for computing ect of task sets
-  template<class TaskView>
-  class OmegaTree : public TaskTree<TaskView,OmegaNode> {
-  protected:
-    using TaskTree<TaskView,OmegaNode>::tasks;
-    using TaskTree<TaskView,OmegaNode>::leaf;
-    using TaskTree<TaskView,OmegaNode>::root;
-    using TaskTree<TaskView,OmegaNode>::init;
-    using TaskTree<TaskView,OmegaNode>::update;
-  public:
-    /// Initialize tree for tasks \a t
-    OmegaTree(Region& r, const TaskViewArray<TaskView>& t);
-    /// Insert task with index \a i
-    void insert(int i);
-    /// Remove task with index \a i
-    void remove(int i);
-    /// Return earliest completion time of all tasks
-    int ect(void) const;
-    /// Return earliest completion time of all tasks but \a i
-    int ect(int i) const;
-  };
+    public:
+        /// Initialize tree for tasks \a t
+        OmegaTree(Region& r, const TaskViewArray<TaskView>& t);
+        /// Insert task with index \a i
+        void insert(int i);
+        /// Remove task with index \a i
+        void remove(int i);
+        /// Return earliest completion time of all tasks
+        int ect() const;
+        /// Return earliest completion time of all tasks but \a i
+        int ect(int i) const;
+    };
 
-  /// Node for an omega lambda tree
-  class OmegaLambdaNode : public OmegaNode {
-  public:
-    /// Undefined task
-    static const int undef = -1;
-    /// Processing times for subtree
-    int lp;
-    /// Earliest completion times for subtree
-    int lect;
-    /// Node which is responsible for lect
-    int resEct;
-    /// Node which is responsible for lp
-    int resLp;
-    /// Initialize node from left child \a l and right child \a r
-    void init(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
-    /// Update node from left child \a l and right child \a r
-    void update(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
-  };
+    /// Node for an omega lambda tree
+    class OmegaLambdaNode : public OmegaNode {
+    public:
+        /// Undefined task
+        static const int undef = -1;
+        /// Processing times for subtree
+        int lp;
+        /// Earliest completion times for subtree
+        int lect;
+        /// Node which is responsible for lect
+        int res_ect;
+        /// Node which is responsible for lp
+        int res_lp;
+        /// Initialize node from left child \a l and right child \a r
+        void init(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
+        /// Update node from left child \a l and right child \a r
+        void update(const OmegaLambdaNode& l, const OmegaLambdaNode& r);
+    };
 
-  /// Omega-lambda trees for computing ect of task sets
-  template<class TaskView>
-  class OmegaLambdaTree : public TaskTree<TaskView,OmegaLambdaNode> {
-  protected:
-    using TaskTree<TaskView,OmegaLambdaNode>::tasks;
-    using TaskTree<TaskView,OmegaLambdaNode>::leaf;
-    using TaskTree<TaskView,OmegaLambdaNode>::root;
-    using TaskTree<TaskView,OmegaLambdaNode>::init;
-    using TaskTree<TaskView,OmegaLambdaNode>::update;
-  public:
-    /// Initialize tree for tasks \a t with all tasks included, if \a inc is true
-    OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t,
-                    bool inc=true);
-    /// Shift task with index \a i from omega to lambda
-    void shift(int i);
-    /// Insert task with index \a i to omega
-    void oinsert(int i);
-    /// Insert task with index \a i to lambda
-    void linsert(int i);
-    /// Remove task with index \a i from lambda
-    void lremove(int i);
-    /// Whether has responsible task
-    bool lempty(void) const;
-    /// Return responsible task
-    int responsible(void) const;
-    /// Return earliest completion time of all tasks
-    int ect(void) const;
-    /// Return earliest completion time of all tasks excluding lambda tasks
-    int lect(void) const;
-  };
+    /// Omega-lambda trees for computing ect of task sets
+    template <class TaskView>
+    class OmegaLambdaTree : public TaskTree<TaskView, OmegaLambdaNode> {
+    protected:
+        using TaskTree<TaskView, OmegaLambdaNode>::tasks;
+        using TaskTree<TaskView, OmegaLambdaNode>::leaf;
+        using TaskTree<TaskView, OmegaLambdaNode>::root;
+        using TaskTree<TaskView, OmegaLambdaNode>::init;
+        using TaskTree<TaskView, OmegaLambdaNode>::update;
 
-}}}
+    public:
+        /// Initialize tree for tasks \a t with all tasks included, if \a inc is true
+        OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t, bool inc = true);
+        /// Shift task with index \a i from omega to lambda
+        void shift(int i);
+        /// Insert task with index \a i to omega
+        void insert_omega(int i);
+        /// Insert task with index \a i to lambda
+        void insert_lambda(int i);
+        /// Remove task with index \a i from lambda
+        void remove_lambda(int i);
+        /// Whether has responsible task
+        bool lempty() const;
+        /// Return responsible task
+        int responsible() const;
+        /// Return earliest completion time of all tasks
+        int ect() const;
+        /// Return earliest completion time of all tasks excluding lambda tasks
+        int lect() const;
+    };
+
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/tree.hpp>
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
-  /// Check mandatory tasks \a t for overload
-  template<class ManTask>
-  ExecStatus overload(TaskArray<ManTask>& t);
-  /// Check optional tasks \a t for overload
-  template<class OptTask, class PL>
-  ExecStatus overload(Space& home, Propagator& p, TaskArray<OptTask>& t);
+    /// Check mandatory tasks \a t for overload
+    template <class ManTask>
+    ExecStatus overload(TaskArray<ManTask>& t);
+    /// Check optional tasks \a t for overload
+    template <class OptTask, class PL>
+    ExecStatus overload(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
-  /// Perform time-tabling propagation
-  template<class Task>
-  ExecStatus timetabling(Space& home, Propagator& p, TaskArray<Task>& t);
+    /// Perform time-tabling propagation
+    template <class Task>
+    ExecStatus timetabling(Space& home, Propagator& p, TaskArray<Task>& t);
 
-  /// Check tasks \a t for subsumption
-  template<class Task>
-  ExecStatus subsumed(Space& home, Propagator& p, TaskArray<Task>& t);
+    /// Check tasks \a t for subsumption
+    template <class Task>
+    ExecStatus subsumed(Space& home, Propagator& p, TaskArray<Task>& t);
 
-  /// Propagate detectable precedences
-  template<class ManTask>
-  ExecStatus detectable(Space& home, TaskArray<ManTask>& t);
-  /// Propagate detectable precedences
-  template<class OptTask, class PL>
-  ExecStatus detectable(Space& home, Propagator& p, TaskArray<OptTask>& t);
+    /// Propagate detectable precedences
+    template <class ManTask>
+    ExecStatus detectable(Space& home, TaskArray<ManTask>& t);
+    /// Propagate detectable precedences
+    template <class OptTask, class PL>
+    ExecStatus detectable(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
-  /// Propagate not-first and not-last
-  template<class ManTask>
-  ExecStatus notfirstnotlast(Space& home, TaskArray<ManTask>& t);
-  /// Propagate not-first and not-last
-  template<class OptTask, class PL>
-  ExecStatus notfirstnotlast(Space& home, Propagator& p, TaskArray<OptTask>& t);
+    /// Propagate not-first and not-last
+    template <class ManTask>
+    ExecStatus not_first_not_last(Space& home, TaskArray<ManTask>& t);
+    /// Propagate not-first and not-last
+    template <class OptTask, class PL>
+    ExecStatus not_first_not_last(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
-  /// Propagate by edge-finding
-  template<class Task>
-  ExecStatus edgefinding(Space& home, TaskArray<Task>& t);
+    /// Propagate by edge-finding
+    template <class Task>
+    ExecStatus edge_finding(Space& home, TaskArray<Task>& t);
 
+    /**
+     * \brief %Scheduling propagator for unary resource with mandatory tasks
+     *
+     * Requires \code #include <gecode/int/unary.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class ManTask, class PL>
+    class ManProp : public TaskProp<ManTask, PL> {
+    protected:
+        using TaskProp<ManTask, PL>::t;
+        /// Constructor for creation
+        ManProp(Home home, TaskArray<ManTask>& t);
+        /// Constructor for cloning \a p
+        ManProp(Space& home, ManProp& p);
 
-  /**
-   * \brief %Scheduling propagator for unary resource with mandatory tasks
-   *
-   * Requires \code #include <gecode/int/unary.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class ManTask, class PL>
-  class ManProp : public TaskProp<ManTask,PL> {
-  protected:
-    using TaskProp<ManTask,PL>::t;
-    /// Constructor for creation
-    ManProp(Home home, TaskArray<ManTask>& t);
-    /// Constructor for cloning \a p
-    ManProp(Space& home, ManProp& p);
-  public:
-    /// Perform copying during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator that schedules tasks on unary resource
-    static ExecStatus post(Home home, TaskArray<ManTask>& t);
-  };
+    public:
+        /// Perform copying during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator that schedules tasks on unary resource
+        static ExecStatus post(Home home, TaskArray<ManTask>& t);
+    };
 
-  /**
-   * \brief %Scheduling propagator for unary resource with optional tasks
-   *
-   * Requires \code #include <gecode/int/unary.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class OptTask, class PL>
-  class OptProp : public TaskProp<OptTask,PL> {
-  protected:
-    using TaskProp<OptTask,PL>::t;
-    /// Constructor for creation
-    OptProp(Home home, TaskArray<OptTask>& t);
-    /// Constructor for cloning \a p
-    OptProp(Space& home, OptProp& p);
-  public:
-    /// Perform copying during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator that schedules tasks on unary resource
-    static ExecStatus post(Home home, TaskArray<OptTask>& t);
-  };
+    /**
+     * \brief %Scheduling propagator for unary resource with optional tasks
+     *
+     * Requires \code #include <gecode/int/unary.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class OptTask, class PL>
+    class OptProp : public TaskProp<OptTask, PL> {
+    protected:
+        using TaskProp<OptTask, PL>::t;
+        /// Constructor for creation
+        OptProp(Home home, TaskArray<OptTask>& t);
+        /// Constructor for cloning \a p
+        OptProp(Space& home, OptProp& p);
 
-  /// Post mandatory task propagator according to propagation level
-  template<class ManTask>
-  ExecStatus
-  manpost(Home home, TaskArray<ManTask>& t, IntPropLevel ipl);
+    public:
+        /// Perform copying during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator that schedules tasks on unary resource
+        static ExecStatus post(Home home, TaskArray<OptTask>& t);
+    };
 
-  /// Post optional task propagator according to propagation level
-  template<class OptTask>
-  ExecStatus
-  optpost(Home home, TaskArray<OptTask>& t, IntPropLevel ipl);
+    /// Post mandatory task propagator according to propagation level
+    template <class ManTask>
+    ExecStatus post_mandatory(Home home, TaskArray<ManTask>& t, IntPropLevel ipl);
 
-}}}
+    /// Post optional task propagator according to propagation level
+    template <class OptTask>
+    ExecStatus post_optional(Home home, TaskArray<OptTask>& t, IntPropLevel ipl);
+
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/overload.hpp>
 #include <gecode/int/unary/time-tabling.hpp>

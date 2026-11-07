@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -47,371 +46,370 @@
  * \brief %Set branchings
  */
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
-  /**
-   * \defgroup FuncSetViewSel Merit-based set view selection for branchers
-   *
-   * Contains merit-based view selection strategies on set
-   * views that can be used together with the generic view/value
-   * brancher classes.
-   *
-   * All merit-based set view selection classes require
-   * \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup Other
-   */
+    /**
+     * \defgroup FuncSetViewSel Merit-based set view selection for branchers
+     *
+     * Contains merit-based view selection strategies on set
+     * views that can be used together with the generic view/value
+     * brancher classes.
+     *
+     * All merit-based set view selection classes require
+     * \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup Other
+     */
 
-  /**
-   * \brief Merit class for minimum of set views
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetViewSel
-   */
-  class MeritMin : public MeritBase<SetView,int> {
-  public:
-    /// Constructor for initialization
-    MeritMin(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritMin(Space& home, MeritMin& m);
-    /// Return minimum as merit for view \a x at position \a i
-    int operator ()(const Space& home, SetView x, int i);
-  };
+    /**
+     * \brief Merit class for minimum of set views
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetViewSel
+     */
+    class MeritMin : public MeritBase<SetView, int> {
+    public:
+        /// Constructor for initialization
+        MeritMin(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritMin(Space& home, MeritMin& m);
+        /// Return minimum as merit for view \a x at position \a i
+        int operator()(const Space& home, SetView x, int i);
+    };
 
-  /**
-   * \brief Merit class for maximum of set view
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetViewSel
-   */
-  class MeritMax : public MeritBase<SetView,int> {
-  public:
-    /// Constructor for initialization
-    MeritMax(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritMax(Space& home, MeritMax& m);
-    /// Return maximum as merit for view \a x at position \a i
-    int operator ()(const Space& home, SetView x, int i);
-  };
+    /**
+     * \brief Merit class for maximum of set view
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetViewSel
+     */
+    class MeritMax : public MeritBase<SetView, int> {
+    public:
+        /// Constructor for initialization
+        MeritMax(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritMax(Space& home, MeritMax& m);
+        /// Return maximum as merit for view \a x at position \a i
+        int operator()(const Space& home, SetView x, int i);
+    };
 
-  /**
-   * \brief Merit class for size of set view
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetViewSel
-   */
-  class MeritSize : public MeritBase<SetView,unsigned int> {
-  public:
-    /// Constructor for initialization
-    MeritSize(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritSize(Space& home, MeritSize& m);
-    /// Return size as merit for view \a x at position \a i
-    unsigned int operator ()(const Space& home, SetView x, int i);
-  };
+    /**
+     * \brief Merit class for size of set view
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetViewSel
+     */
+    class MeritSize : public MeritBase<SetView, unsigned int> {
+    public:
+        /// Constructor for initialization
+        MeritSize(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritSize(Space& home, MeritSize& m);
+        /// Return size as merit for view \a x at position \a i
+        unsigned int operator()(const Space& home, SetView x, int i);
+    };
 
-  /**
-   * \brief Merit class for degree over size
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetViewSel
-   */
-  class MeritDegreeSize : public MeritBase<SetView,double> {
-  public:
-    /// Constructor for initialization
-    MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritDegreeSize(Space& home, MeritDegreeSize& m);
-    /// Return degree over size as merit for view \a x at position \a i
-    double operator ()(const Space& home, SetView x, int i);
-  };
+    /**
+     * \brief Merit class for degree over size
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetViewSel
+     */
+    class MeritDegreeSize : public MeritBase<SetView, double> {
+    public:
+        /// Constructor for initialization
+        MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritDegreeSize(Space& home, MeritDegreeSize& m);
+        /// Return degree over size as merit for view \a x at position \a i
+        double operator()(const Space& home, SetView x, int i);
+    };
 
-  /**
-   * \brief Merit class for AFC over size
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetViewSel
-   */
-  class MeritAFCSize : public MeritBase<SetView,double> {
-  protected:
-    /// AFC information
-    AFC afc;
-  public:
-    /// Constructor for initialization
-    MeritAFCSize(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritAFCSize(Space& home, MeritAFCSize& m);
-    /// Return AFC over size as merit for view \a x at position \a i
-    double operator ()(const Space& home, SetView x, int i);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Dispose view selection
-    void dispose(Space& home);
-  };
+    /**
+     * \brief Merit class for AFC over size
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetViewSel
+     */
+    class MeritAFCSize : public MeritBase<SetView, double> {
+    protected:
+        /// AFC information
+        AFC afc;
 
-  /**
-   * \brief Merit class for action over size
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetViewSel
-   */
-  class MeritActionSize : public MeritBase<SetView,double> {
-  protected:
-    /// Action information
-    Action action;
-  public:
-    /// Constructor for initialization
-    MeritActionSize(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritActionSize(Space& home, MeritActionSize& m);
-    /// Return action over size as merit for view \a x at position \a i
-    double operator ()(const Space& home, SetView x, int i);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Dispose view selection
-    void dispose(Space& home);
-  };
+    public:
+        /// Constructor for initialization
+        MeritAFCSize(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritAFCSize(Space& home, MeritAFCSize& m);
+        /// Return AFC over size as merit for view \a x at position \a i
+        double operator()(const Space& home, SetView x, int i);
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Dispose view selection
+        void dispose(Space& home);
+    };
 
-  /**
-   * \brief Merit class for CHB Q-score over size
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetViewSel
-   */
-  class MeritCHBSize : public MeritBase<SetView,double> {
-  protected:
-    /// CHB information
-    CHB chb;
-  public:
-    /// Constructor for initialization
-    MeritCHBSize(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritCHBSize(Space& home, MeritCHBSize& m);
-    /// Return CHB Q-score over size as merit for view \a x at position \a i
-    double operator ()(const Space& home, SetView x, int i);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Dispose view selection
-    void dispose(Space& home);
-  };
+    /**
+     * \brief Merit class for action over size
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetViewSel
+     */
+    class MeritActionSize : public MeritBase<SetView, double> {
+    protected:
+        /// Action information
+        Action action;
 
-}}}
+    public:
+        /// Constructor for initialization
+        MeritActionSize(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritActionSize(Space& home, MeritActionSize& m);
+        /// Return action over size as merit for view \a x at position \a i
+        double operator()(const Space& home, SetView x, int i);
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Dispose view selection
+        void dispose(Space& home);
+    };
+
+    /**
+     * \brief Merit class for CHB Q-score over size
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetViewSel
+     */
+    class MeritCHBSize : public MeritBase<SetView, double> {
+    protected:
+        /// CHB information
+        CHB chb;
+
+    public:
+        /// Constructor for initialization
+        MeritCHBSize(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritCHBSize(Space& home, MeritCHBSize& m);
+        /// Return CHB Q-score over size as merit for view \a x at position \a i
+        double operator()(const Space& home, SetView x, int i);
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Dispose view selection
+        void dispose(Space& home);
+    };
+
+} // namespace Gecode::Set::Branch
 
 #include <gecode/set/branch/merit.hpp>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
-  /// Return view selectors for set views
-  GECODE_SET_EXPORT
-  ViewSel<SetView>* viewsel(Space& home, const SetVarBranch& svb);
+    /// Return view selectors for set views
+    GECODE_SET_EXPORT
+    ViewSel<SetView>* view_selection(Space& home, const SetVarBranch& svb);
 
-}}}
+} // namespace Gecode::Set::Branch
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
-  /**
-   * \defgroup FuncSetValSel Set value selection for brancher
-   *
-   * Contains a description of value selection strategies on set
-   * views that can be used together with the generic view/value
-   * branchers.
-   *
-   * All value selection classes require
-   * \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup Other
-   */
+    /**
+     * \defgroup FuncSetValSel Set value selection for brancher
+     *
+     * Contains a description of value selection strategies on set
+     * views that can be used together with the generic view/value
+     * branchers.
+     *
+     * All value selection classes require
+     * \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup Other
+     */
 
-  /**
-   * \brief Value selection class for minimum of view
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetValSel
-   */
-  class ValSelMin : public ValSel<SetView,int> {
-  public:
-    /// Constructor for initialization
-    ValSelMin(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelMin(Space& home, ValSelMin& vs);
-    /// Return value of view \a x at position \a i
-    int val(const Space& home, SetView x, int i);
-  };
+    /**
+     * \brief Value selection class for minimum of view
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetValSel
+     */
+    class ValSelMin : public ValSel<SetView, int> {
+    public:
+        /// Constructor for initialization
+        ValSelMin(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValSelMin(Space& home, ValSelMin& vs);
+        /// Return value of view \a x at position \a i
+        int val(const Space& home, SetView x, int i);
+    };
 
-  /**
-   * \brief Value selection class for maximum of view
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetValSel
-   */
-  class ValSelMax : public ValSel<SetView,int> {
-  public:
-    /// Constructor for initialization
-    ValSelMax(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelMax(Space& home, ValSelMax& vs);
-    /// Return value of view \a x at position \a i
-    int val(const Space& home, SetView x, int i);
-  };
+    /**
+     * \brief Value selection class for maximum of view
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetValSel
+     */
+    class ValSelMax : public ValSel<SetView, int> {
+    public:
+        /// Constructor for initialization
+        ValSelMax(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValSelMax(Space& home, ValSelMax& vs);
+        /// Return value of view \a x at position \a i
+        int val(const Space& home, SetView x, int i);
+    };
 
-  /**
-   * \brief Value selection class for median of view
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetValSel
-   */
-  class ValSelMed : public ValSel<SetView,int> {
-  public:
-    /// Constructor for initialization
-    ValSelMed(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelMed(Space& home, ValSelMed& vs);
-    /// Return value of view \a x at position \a i
-    int val(const Space& home, SetView x, int i);
-  };
+    /**
+     * \brief Value selection class for median of view
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetValSel
+     */
+    class ValSelMed : public ValSel<SetView, int> {
+    public:
+        /// Constructor for initialization
+        ValSelMed(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValSelMed(Space& home, ValSelMed& vs);
+        /// Return value of view \a x at position \a i
+        int val(const Space& home, SetView x, int i);
+    };
 
-  /**
-   * \brief Value selection class for random value of view
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetValSel
-   */
-  class ValSelRnd : public ValSel<SetView,int> {
-  protected:
-    /// The used random number generator
-    Rnd r;
-  public:
-    /// Constructor for initialization
-    ValSelRnd(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelRnd(Space& home, ValSelRnd& vs);
-    /// Return value of view \a x at position \a i
-    int val(const Space& home, SetView x, int i);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete value selection
-    void dispose(Space& home);
-  };
+    /**
+     * \brief Value selection class for random value of view
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetValSel
+     */
+    class ValSelRnd : public ValSel<SetView, int> {
+    protected:
+        /// The used random number generator
+        Rnd r;
 
-}}}
+    public:
+        /// Constructor for initialization
+        ValSelRnd(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValSelRnd(Space& home, ValSelRnd& vs);
+        /// Return value of view \a x at position \a i
+        int val(const Space& home, SetView x, int i);
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Delete value selection
+        void dispose(Space& home);
+    };
+
+} // namespace Gecode::Set::Branch
 
 #include <gecode/set/branch/val-sel.hpp>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
-  /// No-good literal for inclusion
-  class IncNGL : public ViewValNGL<SetView,int,PC_SET_ANY> {
-  public:
-    /// Constructor for creation
-    IncNGL(Space& home, SetView x, int n);
-    /// Constructor for cloning \a ngl
-    IncNGL(Space& home, IncNGL& ngl);
-    /// Test the status of the no-good literal
-    GECODE_SET_EXPORT
-    virtual NGL::Status status(const Space& home) const;
-    /// Propagate the negation of the no-good literal
-    GECODE_SET_EXPORT
-    virtual ExecStatus prune(Space& home);
-    /// Create copy
-    GECODE_SET_EXPORT
-    virtual NGL* copy(Space& home);
-  };
+    /// No-good literal for inclusion
+    class IncNGL : public ViewValNGL<SetView, int, PC_SET_ANY> {
+    public:
+        /// Constructor for creation
+        IncNGL(Space& home, SetView x, int n);
+        /// Constructor for cloning \a ngl
+        IncNGL(Space& home, IncNGL& ngl);
+        /// Test the status of the no-good literal
+        GECODE_SET_EXPORT
+        NGL::Status status(const Space& home) const override;
+        /// Propagate the negation of the no-good literal
+        GECODE_SET_EXPORT
+        ExecStatus prune(Space& home) override;
+        /// Create copy
+        GECODE_SET_EXPORT
+        NGL* copy(Space& home) override;
+    };
 
-  /// No-good literal for exclusion
-  class ExcNGL : public ViewValNGL<SetView,int,PC_SET_ANY> {
-  public:
-    /// Constructor for creation
-    ExcNGL(Space& home, SetView x, int n);
-    /// Constructor for cloning \a ngl
-    ExcNGL(Space& home, ExcNGL& ngl);
-    /// Test the status of the no-good literal
-    GECODE_SET_EXPORT
-    virtual NGL::Status status(const Space& home) const;
-    /// Propagate the negation of the no-good literal
-    GECODE_SET_EXPORT
-    virtual ExecStatus prune(Space& home);
-    /// Create copy
-    GECODE_SET_EXPORT
-    virtual NGL* copy(Space& home);
-  };
+    /// No-good literal for exclusion
+    class ExcNGL : public ViewValNGL<SetView, int, PC_SET_ANY> {
+    public:
+        /// Constructor for creation
+        ExcNGL(Space& home, SetView x, int n);
+        /// Constructor for cloning \a ngl
+        ExcNGL(Space& home, ExcNGL& ngl);
+        /// Test the status of the no-good literal
+        GECODE_SET_EXPORT
+        NGL::Status status(const Space& home) const override;
+        /// Propagate the negation of the no-good literal
+        GECODE_SET_EXPORT
+        ExecStatus prune(Space& home) override;
+        /// Create copy
+        GECODE_SET_EXPORT
+        NGL* copy(Space& home) override;
+    };
 
-}}}
+} // namespace Gecode::Set::Branch
 
 #include <gecode/set/branch/ngl.hpp>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
-  /**
-   * \defgroup FuncSetValCommit Set value commit classes
-   *
-   * Contains the value commit classes for set
-   * views that can be used together with the generic view/value
-   * branchers.
-   *
-   * All value commit classes require
-   * \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup Other
-   */
+    /**
+     * \defgroup FuncSetValCommit Set value commit classes
+     *
+     * Contains the value commit classes for set
+     * views that can be used together with the generic view/value
+     * branchers.
+     *
+     * All value commit classes require
+     * \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup Other
+     */
 
-  /**
-   * \brief Value commit class for inclusion
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetValCommit
-   */
-  class ValCommitInc : public ValCommit<SetView,int> {
-  public:
-    /// Constructor for initialization
-    ValCommitInc(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValCommitInc(Space& home, ValCommitInc& vc);
-    /// Commit view \a x at position \a i to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
-    /// Create no-good literal for alternative \a a
-    NGL* ngl(Space& home, unsigned int a, View x, int n) const;
-    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
-    void print(const Space& home, unsigned int a, SetView x, int i, int n,
-               std::ostream& o) const;
-  };
+    /**
+     * \brief Value commit class for inclusion
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetValCommit
+     */
+    class ValCommitInc : public ValCommit<SetView, int> {
+    public:
+        /// Constructor for initialization
+        ValCommitInc(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValCommitInc(Space& home, ValCommitInc& vc);
+        /// Commit view \a x at position \a i to value \a n for alternative \a a
+        ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
+        /// Create no-good literal for alternative \a a
+        NGL* ngl(Space& home, unsigned int a, View x, int n) const;
+        /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+        void print(const Space& home, unsigned int a, SetView x, int i, int n, std::ostream& o) const;
+    };
 
-  /**
-   * \brief Value commit class for exclusion
-   *
-   * Requires \code #include <gecode/set/branch.hh> \endcode
-   * \ingroup FuncSetValCommit
-   */
-  class ValCommitExc : public ValCommit<SetView,int> {
-  public:
-    /// Constructor for initialization
-    ValCommitExc(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValCommitExc(Space& home, ValCommitExc& vc);
-    /// Commit view \a x at position \a i to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
-    /// Create no-good literal for alternative \a a
-    NGL* ngl(Space& home, unsigned int a, View x, int n) const;
-    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
-    void print(const Space& home, unsigned int a, SetView x, int i, int n,
-               std::ostream& o) const;
-  };
+    /**
+     * \brief Value commit class for exclusion
+     *
+     * Requires \code #include <gecode/set/branch.hh> \endcode
+     * \ingroup FuncSetValCommit
+     */
+    class ValCommitExc : public ValCommit<SetView, int> {
+    public:
+        /// Constructor for initialization
+        ValCommitExc(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValCommitExc(Space& home, ValCommitExc& vc);
+        /// Commit view \a x at position \a i to value \a n for alternative \a a
+        ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
+        /// Create no-good literal for alternative \a a
+        NGL* ngl(Space& home, unsigned int a, View x, int n) const;
+        /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+        void print(const Space& home, unsigned int a, SetView x, int i, int n, std::ostream& o) const;
+    };
 
-}}}
+} // namespace Gecode::Set::Branch
 
 #include <gecode/set/branch/val-commit.hpp>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
-  /// Return value and commit for set views
-  GECODE_SET_EXPORT
-  ValSelCommitBase<SetView,int>*
-  valselcommit(Space& home, const SetValBranch& svb);
+    /// Return value and commit for set views
+    GECODE_SET_EXPORT
+    ValSelCommitBase<SetView, int>* value_selection_commit(Space& home, const SetValBranch& svb);
 
-  /// Return value and commit for set views
-  GECODE_SET_EXPORT
-  ValSelCommitBase<SetView,int>*
-  valselcommit(Space& home, const SetAssign& ia);
+    /// Return value and commit for set views
+    GECODE_SET_EXPORT
+    ValSelCommitBase<SetView, int>* value_selection_commit(Space& home, const SetAssign& ia);
 
-}}}
+} // namespace Gecode::Set::Branch
 
 #endif
 
 // STATISTICS: set-branch
-

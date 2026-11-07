@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -31,36 +30,31 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  forceinline bool
-  LayoutCursor::mayMoveDownwards(void) {
-    return NodeCursor<VisualNode>::mayMoveDownwards() &&
-           node()->isDirty();
-  }
-
-  inline
-  LayoutCursor::LayoutCursor(VisualNode* theNode,
-                             const VisualNode::NodeAllocator& na)
-   : NodeCursor<VisualNode>(theNode,na) {}
-
-  forceinline void
-  LayoutCursor::processCurrentNode(void) {
-    VisualNode* currentNode = node();
-    if (currentNode->isDirty()) {
-      if (currentNode->isHidden()) {
-        // do nothing
-      } else if (false && currentNode->getNumberOfChildren() < 1) {
-        currentNode->setShape(Shape::leaf);
-      } else {
-        currentNode->computeShape(na);
-      }
-      currentNode->setDirty(false);
+    forceinline bool
+    LayoutCursor::may_move_downwards() {
+        return NodeCursor<VisualNode>::may_move_downwards() && node()->is_dirty();
     }
-    if (currentNode->getNumberOfChildren() >= 1)
-      currentNode->setChildrenLayoutDone(true);
-  }
 
-}}
+    inline LayoutCursor::LayoutCursor(VisualNode* the_node, const VisualNode::NodeAllocator& na)
+        : NodeCursor<VisualNode>(the_node, na) {}
+
+    forceinline void
+    LayoutCursor::process_current_node() {
+        VisualNode* current_node = node();
+        if (current_node->is_dirty()) {
+            if (current_node->is_hidden()) {
+                // do nothing
+            } else {
+                current_node->compute_shape(na);
+            }
+            current_node->set_dirty(false);
+        }
+        if (current_node->get_number_of_children() >= 1)
+            current_node->set_children_layout_done(true);
+    }
+
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

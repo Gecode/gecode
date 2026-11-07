@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,45 +30,44 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  forceinline
-  Builder::Builder(const Options& opt0, bool b0)
-    : opt(opt0.expand()), b(b0) {}
-  forceinline Options&
-  Builder::options(void) {
-    return opt;
-  }
-  forceinline const Options&
-  Builder::options(void) const {
-    return opt;
-  }
-  forceinline bool
-  Builder::best(void) const {
-    return b;
-  }
+    forceinline
+    Builder::Builder(const Options& opt0, bool b0)
+        : opt(opt0.expand()), b(b0) {}
+    forceinline Options&
+    Builder::options() {
+        return opt;
+    }
+    forceinline const Options&
+    Builder::options() const {
+        return opt;
+    }
+    forceinline bool
+    Builder::best() const {
+        return b;
+    }
 
+    template <class T, class E>
+    forceinline Engine*
+    build(Space* s, const Options& opt) {
+        E engine(dynamic_cast<T*>(s), opt);
+        Base<T>* eb = &engine;
+        Engine* e = eb->e;
+        eb->e = nullptr;
+        return e;
+    }
 
-  template<class T, class E>
-  forceinline Engine*
-  build(Space* s, const Options& opt) {
-    E engine(dynamic_cast<T*>(s),opt);
-    Base<T>* eb = &engine;
-    Engine* e = eb->e;
-    eb->e = nullptr;
-    return e;
-  }
+    template <class T, template <class> class E>
+    forceinline Engine*
+    build(Space* s, const Options& opt) {
+        E<T> engine(dynamic_cast<T*>(s), opt);
+        Base<T>* eb = &engine;
+        Engine* e = eb->e;
+        eb->e = nullptr;
+        return e;
+    }
 
-  template<class T, template<class> class E>
-  forceinline Engine*
-  build(Space* s, const Options& opt) {
-    E<T> engine(dynamic_cast<T*>(s),opt);
-    Base<T>* eb = &engine;
-    Engine* e = eb->e;
-    eb->e = nullptr;
-    return e;
-  }
-
-}}
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

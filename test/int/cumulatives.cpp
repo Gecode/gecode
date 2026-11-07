@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -41,284 +40,292 @@
 #include <string>
 #include <sstream>
 
-namespace Test { namespace Int {
+/// %Tests for scheduling constraints
+namespace Test::Int::Cumulatives {
 
-   /// %Tests for scheduling constraints
-   namespace Cumulatives {
+    /**
+     * \defgroup TaskTestIntCumulatives Cumnulatives scheduling constraint
+     * \ingroup TaskTestInt
+     */
+    //@{
+    /**
+     * \brief Script for generating assignments.
+     *
+     * We are only interested in assignments that represent tasks (s_i,
+     * d_i, e_i, h_i) such that the following hold:
+     *   - The task starts at a positive time and has some extension.
+     *   - The equation s_i + d_i = e_i holds.
+     *   - The tasks are ordered to remove some symmetries, i.e.,
+     *     s_i <= s_{i+1}
+     */
+    class Ass : public Gecode::Space {
+    public:
+        /// Store task information
+        Gecode::IntVarArray x;
+        /// Initialize model for assignments
+        Ass(int n, const Gecode::IntSet& d) : x(*this, n, d) {
+            using namespace Gecode;
+            for (int i = 0; i < n; i += 4) {
+                rel(*this, x[i + 0] >= 0);
+                rel(*this, x[i + 1] >= 0);
+                rel(*this, x[i + 2] >= 0);
+                rel(*this, x[i] + x[i + 1] == x[i + 2]);
+                branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
+            }
+        }
+        /// Constructor for cloning \a s
+        Ass(Ass& s) : Gecode::Space(s) {
+            x.update(*this, s.x);
+        }
+        /// Create copy during cloning
+        Gecode::Space*
+        copy() override {
+            return new Ass(*this);
+        }
+    };
 
-     /**
-      * \defgroup TaskTestIntCumulatives Cumnulatives scheduling constraint
-      * \ingroup TaskTestInt
-      */
-     //@{
-     /**
-      * \brief Script for generating assignments.
-      *
-      * We are only interested in assignments that represent tasks (s_i,
-      * d_i, e_i, h_i) such that the following hold:
-      *   - The task starts at a positive time and has some extension.
-      *   - The equation s_i + d_i = e_i holds.
-      *   - The tasks are ordered to remove some symmetries, i.e.,
-      *     s_i <= s_{i+1}
-      */
-     class Ass : public Gecode::Space {
-     public:
-       /// Store task information
-       Gecode::IntVarArray x;
-       /// Initialize model for assignments
-       Ass(int n, const Gecode::IntSet& d) : x(*this, n, d) {
-         using namespace Gecode;
-         for (int i = 0; i < n; i += 4) {
-           rel(*this, x[i+0] >= 0);
-           rel(*this, x[i+1] >= 0);
-           rel(*this, x[i+2] >= 0);
-           rel(*this, x[i] + x[i+1] == x[i+2]);
-           branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-         }
-       }
-       /// Constructor for cloning \a s
-       Ass(Ass& s) : Gecode::Space(s) {
-         x.update(*this, s.x);
-       }
-       /// Create copy during cloning
-       virtual Gecode::Space* copy(void) {
-         return new Ass(*this);
-       }
-     };
+    /// Class for generating reasonable assignments
+    class CumulativeAssignment : public Assignment {
+        /// Current assignment
+        Ass* cur;
+        /// Next assignment
+        Ass* nxt;
+        /// Search engine to find assignments
+        Gecode::DFS<Ass>* e;
 
-     /// Class for generating reasonable assignments
-     class CumulativeAssignment : public Assignment {
-       /// Current assignment
-       Ass* cur;
-       /// Next assignment
-       Ass* nxt;
-       /// Search engine to find assignments
-       Gecode::DFS<Ass>* e;
-     public:
-       /// Initialize assignments for \a n0 variables and values \a d0
-       CumulativeAssignment(int n, const Gecode::IntSet& d) : Assignment(n,d) {
-         Ass* a = new Ass(n, d);
-         e = new Gecode::DFS<Ass>(a);
-         delete a;
-         nxt = cur = e->next();
-         if (cur != nullptr)
-           nxt = e->next();
-       }
-       /// %Test whether all assignments have been iterated
-       virtual bool has_more(void) const {
-         return nxt != nullptr;
-       }
-       /// Move to next assignment
-       virtual void next(Gecode::Support::RandomGenerator&) {
-         delete cur;
-         cur = nxt;
-         if (cur != nullptr) nxt = e->next();
-       }
-       /// Return value for variable \a i
-       virtual int operator[](int i) const {
-         assert((i>=0) && (i<n) && (cur != nullptr));
-         return cur->x[i].val();
-       }
-       /// Destructor
-       virtual ~CumulativeAssignment(void) {
-         delete cur; delete nxt; delete e;
-       }
-     };
+    public:
+        /// Initialize assignments for \a n0 variables and values \a d0
+        CumulativeAssignment(int n, const Gecode::IntSet& d) : Assignment(n, d) {
+            Ass* a = new Ass(n, d);
+            e = new Gecode::DFS<Ass>(a);
+            delete a;
+            nxt = cur = e->next();
+            if (cur != nullptr)
+                nxt = e->next();
+        }
+        /// %Test whether all assignments have been iterated
+        bool
+        has_more() const override {
+            return nxt != nullptr;
+        }
+        /// Move to next assignment
+        void
+        next(Gecode::Support::RandomGenerator&) override {
+            delete cur;
+            cur = nxt;
+            if (cur != nullptr)
+                nxt = e->next();
+        }
+        /// Return value for variable \a i
+        int
+        operator[](int i) const override {
+            assert((i >= 0) && (i < n) && (cur != nullptr));
+            return cur->x[i].val();
+        }
+        /// Destructor
+        ~CumulativeAssignment() override {
+            delete cur;
+            delete nxt;
+            delete e;
+        }
+    };
 
-     /// %Event to be scheduled
-     class Event {
-     public:
-       int p, h; ///< Position and height of event
-       bool start; ///< Whether event has just started
-       /// Initialize event
-       Event(int pos, int height, bool s) : p(pos), h(height), start(s) {}
-       /// %Test whether this event is before event \a e
-       bool operator<(const Event& e) const {
-         return p<e.p;
-       }
-     };
+    /// %Event to be scheduled
+    class Event {
+    public:
+        int p, h;   ///< Position and height of event
+        bool start; ///< Whether event has just started
+        /// Initialize event
+        Event(int pos, int height, bool s) : p(pos), h(height), start(s) {}
+    };
 
-     /// Describe that event is below a certain limit
-     class Below {
-     public:
-       int limit; ///< limit
-       /// Initialize
-       Below(int l) : limit(l) {}
-       /// %Test whether \a val is below limit
-       bool operator()(int val) {
-         return val <= limit;
-       }
-     };
-     /// Describe that event is above a certain limit
-     class Above {
-     public:
-       int limit; ///< limit
-       /// Initialize
-       Above(int l) : limit(l) {}
-       /// %Test whether \a val is above limit
-       bool operator()(int val) {
-         return val >= limit;
-       }
-     };
+    /// Describe that event is below a certain limit
+    class Below {
+    public:
+        int limit; ///< limit
+        /// Initialize
+        Below(int l) : limit(l) {}
+        /// %Test whether \a val is below limit
+        bool
+        operator()(int val) {
+            return val <= limit;
+        }
+    };
+    /// Describe that event is above a certain limit
+    class Above {
+    public:
+        int limit; ///< limit
+        /// Initialize
+        Above(int l) : limit(l) {}
+        /// %Test whether \a val is above limit
+        bool
+        operator()(int val) {
+            return val >= limit;
+        }
+    };
 
-     /// Check whether event \a e is valid
-     template<class C>
-     bool valid(std::vector<Event> e, C comp) {
-       std::sort(e.begin(), e.end());
-       unsigned int i = 0;
-       int p = 0;
-       int h = 0;
-       int n = 0;
-       while (i < e.size()) {
-         p = e[i].p;
-         while (i < e.size() && e[i].p == p) {
-           h += e[i].h;
-           n += (e[i].start ? +1 : -1);
-           ++i;
-         }
-         if (n && !comp(h))
-           return false;
-       }
-       return true;
-     }
+    /// Check whether event \a e is valid
+    template <class C>
+    static bool
+    valid(std::vector<Event> e, C comp) {
+        std::ranges::sort(e, {}, &Event::p);
+        unsigned int i = 0;
+        int p = 0;
+        int h = 0;
+        int n = 0;
+        while (i < e.size()) {
+            p = e[i].p;
+            while (i < e.size() && e[i].p == p) {
+                h += e[i].h;
+                n += (e[i].start ? +1 : -1);
+                ++i;
+            }
+            if (n && !comp(h))
+                return false;
+        }
+        return true;
+    }
 
-     /// %Test for cumulatives constraint
-     class Cumulatives : public Test {
-     protected:
-       int ntasks;   ///< Number of tasks
-       bool at_most; ///< Whether to use atmost reasoning
-       int limit;    ///< Limit
-     public:
-       /// Create and register test
-       Cumulatives(const std::string& s, int nt, bool am, int l)
-         : Test("Cumulatives::"+s,nt*4,-1,2), ntasks(nt), at_most(am), limit(l) {
-         testsearch = false;
-       }
-       /// Create first assignment
-       virtual Assignment* assignment(void) const {
-         assert(arity == 4*ntasks);
-         return new CumulativeAssignment(arity, dom);
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         std::vector<Event> e;
-         for (int i = 0; i < ntasks; ++i) {
-           int p = i*4;
-           // Positive start, duration and end
-           if (x[p+0] < 0 || x[p+1] < 1 || x[p+2] < 1) return false;
-           // Start + Duration == End
-           if (x[p+0] + x[p+1] != x[p+2]) {
-             return false;
-           }
-         }
-         for (int i = 0; i < ntasks; ++i) {
-           int p = i*4;
-           // Up at start, down at end.
-           e.push_back(Event(x[p+0], +x[p+3],  true));
-           e.push_back(Event(x[p+2], -x[p+3], false));
-         }
-         if (at_most) {
-           return valid(e, Below(limit));
-         } else {
-           return valid(e, Above(limit));
-         }
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         IntArgs m(ntasks), l({limit});
-         IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);
-         for (int i = 0; i < ntasks; ++i) {
-           int p = i*4;
-           m[i] = 0;
-           s[i] = x[p+0]; rel(home, x[p+0], Gecode::IRT_GQ, 0);
-           d[i] = x[p+1]; rel(home, x[p+1], Gecode::IRT_GQ, 1);
-           e[i] = x[p+2]; rel(home, x[p+2], Gecode::IRT_GQ, 1);
-           h[i] = x[p+3];
-         }
-         cumulatives(home, m, s, d, e, h, l, at_most);
-       }
-     };
+    /// %Test for cumulatives constraint
+    class Cumulatives : public Test {
+    protected:
+        int ntasks;   ///< Number of tasks
+        bool at_most; ///< Whether to use at_most reasoning
+        int limit;    ///< Limit
+    public:
+        /// Create and register test
+        Cumulatives(const std::string& s, int nt, bool am, int l)
+            : Test("Cumulatives::" + s, nt * 4, -1, 2), ntasks(nt), at_most(am), limit(l) {
+            test_search = false;
+        }
+        /// Create first assignment
+        Assignment*
+        assignment() const override {
+            assert(arity == 4 * ntasks);
+            return new CumulativeAssignment(arity, dom);
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            std::vector<Event> e;
+            for (int i = 0; i < ntasks; ++i) {
+                int p = i * 4;
+                // Positive start, duration and end
+                if (x[p + 0] < 0 || x[p + 1] < 1 || x[p + 2] < 1)
+                    return false;
+                // Start + Duration == End
+                if (x[p + 0] + x[p + 1] != x[p + 2]) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < ntasks; ++i) {
+                int p = i * 4;
+                // Up at start, down at end.
+                e.emplace_back(x[p + 0], +x[p + 3], true);
+                e.emplace_back(x[p + 2], -x[p + 3], false);
+            }
+            if (at_most) {
+                return valid(e, Below(limit));
+            }
+            return valid(e, Above(limit));
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            IntArgs m(ntasks), l({limit});
+            IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);
+            for (int i = 0; i < ntasks; ++i) {
+                int p = i * 4;
+                m[i] = 0;
+                s[i] = x[p + 0];
+                rel(home, x[p + 0], Gecode::IRT_GQ, 0);
+                d[i] = x[p + 1];
+                rel(home, x[p + 1], Gecode::IRT_GQ, 1);
+                e[i] = x[p + 2];
+                rel(home, x[p + 2], Gecode::IRT_GQ, 1);
+                h[i] = x[p + 3];
+            }
+            cumulatives(home, m, s, d, e, h, l, at_most);
+        }
+    };
 
-     /// Signed profile contributions must tighten the producer's usage
-     class ProfileContribution : public Test::Base {
-     private:
-       class Fixture : public Gecode::Space {
-       public:
-         Gecode::IntVar producer;
-         Fixture(bool at_most)
-           : producer(*this,at_most ? -10 : 0,at_most ? 0 : 10) {
-           using namespace Gecode;
-           const int sign = at_most ? 1 : -1;
-           IntVarArgs usage({IntVar(*this,3*sign,3*sign),
-                             IntVar(*this,5*sign,5*sign),producer});
-           cumulatives(*this,IntArgs({0,0,0}),
-                       IntVarArgs(*this,3,0,0),IntVarArgs(*this,3,1,1),
-                       IntVarArgs(*this,3,1,1),usage,IntArgs({0}),at_most);
-         }
-         Fixture(Fixture& fixture) : Gecode::Space(fixture) {
-           producer.update(*this,fixture.producer);
-         }
-         virtual Gecode::Space* copy(void) {
-           return new Fixture(*this);
-         }
-       };
-     public:
-       ProfileContribution(void)
-         : Test::Base("Cumulatives::ProfileContribution",TestTags::check()) {}
-       virtual bool run(void) {
-         Fixture upper(true), lower(false);
-         return (upper.status() != Gecode::SS_FAILED) &&
-           (lower.status() != Gecode::SS_FAILED) &&
-           (upper.producer.min() == -10) && (upper.producer.max() == -8) &&
-           (lower.producer.min() == 8) && (lower.producer.max() == 10);
-       }
-     } profile_contribution;
+    /// Signed profile contributions must tighten the producer's usage
+    class ProfileContribution : public Test::Base {
+    private:
+        class Fixture : public Gecode::Space {
+        public:
+            Gecode::IntVar producer;
+            Fixture(bool at_most) : producer(*this, at_most ? -10 : 0, at_most ? 0 : 10) {
+                using namespace Gecode;
+                const int sign = at_most ? 1 : -1;
+                IntVarArgs usage({IntVar(*this, 3 * sign, 3 * sign), IntVar(*this, 5 * sign, 5 * sign), producer});
+                cumulatives(*this, IntArgs({0, 0, 0}), IntVarArgs(*this, 3, 0, 0), IntVarArgs(*this, 3, 1, 1),
+                            IntVarArgs(*this, 3, 1, 1), usage, IntArgs({0}), at_most);
+            }
+            Fixture(Fixture& fixture) : Gecode::Space(fixture) {
+                producer.update(*this, fixture.producer);
+            }
+            Gecode::Space*
+            copy() override {
+                return new Fixture(*this);
+            }
+        };
 
-     /// An empty producer must cancel before it can affect another task
-     class EmptyProfile : public Test {
-     public:
-       EmptyProfile(void)
-         : Test(TestTags::check(),"Cumulatives::EmptyProfile",1,-2,-1) {}
-       virtual bool solution(const Assignment&) const {
-         return true;
-       }
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         cumulatives(home,IntArgs({0,0}),IntVarArgs(home,2,0,0),
-                     IntVarArgs({IntVar(home,1,1),IntVar(home,0,0)}),
-                     IntVarArgs({IntVar(home,1,1),IntVar(home,0,0)}),
-                     IntVarArgs({IntVar(home,1,1),x[0]}),IntArgs({1}),true);
-       }
-     } empty_profile;
+    public:
+        ProfileContribution() : Test::Base("Cumulatives::ProfileContribution", TestTags::check()) {}
+        bool
+        run() override {
+            Fixture upper(true), lower(false);
+            return (upper.status() != Gecode::SS_FAILED) && (lower.status() != Gecode::SS_FAILED) &&
+                   (upper.producer.min() == -10) && (upper.producer.max() == -8) && (lower.producer.min() == 8) &&
+                   (lower.producer.max() == 10);
+        }
+    } profile_contribution;
 
-     Cumulatives c1t1("1t1", 1,  true, 1);
-     Cumulatives c1f1("1f1", 1, false, 1);
-     Cumulatives c1t2("1t2", 1,  true, 2);
-     Cumulatives c1f2("1f2", 1, false, 2);
-     Cumulatives c1t3("1t3", 1,  true, 3);
-     Cumulatives c1f3("1f3", 1, false, 3);
-     Cumulatives c2t1("2t1", 2,  true, 1);
-     Cumulatives c2f1("2f1", 2, false, 1);
-     Cumulatives c2t2("2t2", 2,  true, 2);
-     Cumulatives c2f2("2f2", 2, false, 2);
-     Cumulatives c2t3("2t3", 2,  true, 3);
-     Cumulatives c2f3("2f3", 2, false, 3);
-     Cumulatives c3t1("3t1", 3,  true, 1);
-     Cumulatives c3f1("3f1", 3, false, 1);
-     Cumulatives c3t2("3t2", 3,  true, 2);
-     Cumulatives c3f2("3f2", 3, false, 2);
-     Cumulatives c3t3("3t3", 3,  true, 3);
-     Cumulatives c3f3("3f3", 3, false, 3);
-     Cumulatives c3t_1("3t-1", 3,  true, -1);
-     Cumulatives c3f_1("3f-1", 3, false, -1);
-     Cumulatives c3t_2("3t-2", 3,  true, -2);
-     Cumulatives c3f_2("3f-2", 3, false, -2);
-     Cumulatives c3t_3("3t-3", 3,  true, -3);
-     Cumulatives c3f_3("3f-3", 3, false, -3);
-     //@}
+    /// An empty producer must cancel before it can affect another task
+    class EmptyProfile : public Test {
+    public:
+        EmptyProfile() : Test(TestTags::check(), "Cumulatives::EmptyProfile", 1, -2, -1) {}
+        bool
+        solution(const Assignment&) const override {
+            return true;
+        }
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            cumulatives(home, IntArgs({0, 0}), IntVarArgs(home, 2, 0, 0),
+                        IntVarArgs({IntVar(home, 1, 1), IntVar(home, 0, 0)}),
+                        IntVarArgs({IntVar(home, 1, 1), IntVar(home, 0, 0)}), IntVarArgs({IntVar(home, 1, 1), x[0]}),
+                        IntArgs({1}), true);
+        }
+    } empty_profile;
 
-   }
-}}
+    Cumulatives c1t1("1t1", 1, true, 1);
+    Cumulatives c1f1("1f1", 1, false, 1);
+    Cumulatives c1t2("1t2", 1, true, 2);
+    Cumulatives c1f2("1f2", 1, false, 2);
+    Cumulatives c1t3("1t3", 1, true, 3);
+    Cumulatives c1f3("1f3", 1, false, 3);
+    Cumulatives c2t1("2t1", 2, true, 1);
+    Cumulatives c2f1("2f1", 2, false, 1);
+    Cumulatives c2t2("2t2", 2, true, 2);
+    Cumulatives c2f2("2f2", 2, false, 2);
+    Cumulatives c2t3("2t3", 2, true, 3);
+    Cumulatives c2f3("2f3", 2, false, 3);
+    Cumulatives c3t1("3t1", 3, true, 1);
+    Cumulatives c3f1("3f1", 3, false, 1);
+    Cumulatives c3t2("3t2", 3, true, 2);
+    Cumulatives c3f2("3f2", 3, false, 2);
+    Cumulatives c3t3("3t3", 3, true, 3);
+    Cumulatives c3f3("3f3", 3, false, 3);
+    Cumulatives c3t_1("3t-1", 3, true, -1);
+    Cumulatives c3f_1("3f-1", 3, false, -1);
+    Cumulatives c3t_2("3t-2", 3, true, -2);
+    Cumulatives c3f_2("3f-2", 3, false, -2);
+    Cumulatives c3t_3("3t-3", 3, true, -3);
+    Cumulatives c3f_3("3f-3", 3, false, -3);
+    //@}
 
+} // namespace Test::Int::Cumulatives
 // STATISTICS: test-int

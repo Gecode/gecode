@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,22 +30,19 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  forceinline
-  Options::Options(void)
-    : clone(Config::clone),
-      threads(Config::threads),
-      worker_control(),
-      c_d(Config::c_d), a_d(Config::a_d),
-      d_l(Config::d_l),
-      assets(0), slice(Config::slice), nogoods_limit(0),
-      stop(nullptr), cutoff(nullptr), tracer(nullptr)
+    forceinline
+    Options::Options()
+        : clone(Config::clone), threads(Config::threads), c_d(Config::c_d), a_d(Config::a_d), d_l(Config::d_l),
+          assets(0), slice(Config::slice), nogoods_limit(0), stop(nullptr), cutoff(nullptr), tracer(nullptr)
 #ifdef GECODE_HAS_EXPERIMENTAL
-    , guidance(nullptr), max_width(0), frontier_limit(0)
+          ,
+          guidance(nullptr), max_width(0), frontier_limit(0)
 #endif
-  {}
+    {
+    }
 
-}}
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

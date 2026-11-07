@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,24 +34,22 @@
 
 namespace Gecode {
 
-  void
-  trace(Home home, const IntVarArgs& x,
-        TraceFilter tf, int te, IntTracer& t) {
-    using namespace Gecode::Int;
-    GECODE_POST;
-    ViewArray<IntView> xv(home,x);
-    GECODE_ES_FAIL(IntTraceRecorder::post(home,xv,tf,te,t));
-  }
+    void
+    trace(Home home, const IntVarArgs& x, const TraceFilter& tf, int te, IntTracer& t) {
+        using namespace Gecode::Int;
+        GECODE_POST;
+        ViewArray<IntView> xv(home, x);
+        GECODE_ES_FAIL(IntTraceRecorder::post(home, xv, tf, te, t));
+    }
 
-  void
-  trace(Home home, const BoolVarArgs& x,
-        TraceFilter tf, int te, BoolTracer& t) {
-    using namespace Gecode::Int;
-    GECODE_POST;
-    ViewArray<BoolView> xv(home,x);
-    GECODE_ES_FAIL(BoolTraceRecorder::post(home,xv,tf,te,t));
-  }
+    void
+    trace(Home home, const BoolVarArgs& x, const TraceFilter& tf, int te, BoolTracer& t) {
+        using namespace Gecode::Int;
+        GECODE_POST;
+        ViewArray<BoolView> xv(home, x);
+        GECODE_ES_FAIL(BoolTraceRecorder::post(home, xv, tf, te, t));
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-trace

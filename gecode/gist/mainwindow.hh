@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,87 +36,86 @@
 #include <gecode/gist.hh>
 #include <gecode/gist/qtgist.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  /// Display information about %Gist
-  class AboutGist : public QDialog {
-  public:
-    /// Constructor
-    AboutGist(QWidget* parent = 0);
-  };
+    /// Display information about %Gist
+    class AboutGist : public QDialog {
+    public:
+        /// Constructor
+        AboutGist(QWidget* parent = nullptr);
+    };
 
-  /**
-   * \brief Main window for stand-alone %Gist
-   *
-   * \ingroup TaskGist
-   */
-  class GECODE_GIST_EXPORT GistMainWindow : public QMainWindow {
-    Q_OBJECT
-  private:
-    /// Options
-    Options opt;
-    /// Whether search is currently running
-    bool isSearching;
-    /// Measure search time
-    Support::Timer searchTimer;
-    /// Status bar label for maximum depth indicator
-    QLabel* depthLabel;
-    /// Status bar label for number of solutions
-    QLabel* solvedLabel;
-    /// Status bar label for number of failures
-    QLabel* failedLabel;
-    /// Status bar label for number of choices
-    QLabel* choicesLabel;
-    /// Status bar label for number of open nodes
-    QLabel* openLabel;
-    /// Menu for solution inspectors
-    QMenu* solutionInspectorsMenu;
-    /// Menu for double click inspectors
-    QMenu* doubleClickInspectorsMenu;
-    /// Menu for move inspectors
-    QMenu* moveInspectorsMenu;
-    /// Menu for comparators
-    QMenu* comparatorsMenu;
-    /// Menu for bookmarks
-    QMenu* bookmarksMenu;
-    /// Menu for direct node inspection
-    QMenu* inspectNodeMenu;
-    /// Menu for direct node inspection before fixpoint
-    QMenu* inspectNodeBeforeFPMenu;
-    /// Action for activating the preferences menu
-    QAction* prefAction;
-  protected:
-    /// The contained %Gist object
-    Gist* c;
-    /// A menu bar
-    QMenuBar* menuBar;
-    /// About dialog
-    AboutGist aboutGist;
+    /**
+     * \brief Main window for stand-alone %Gist
+     *
+     * \ingroup TaskGist
+     */
+    class GECODE_GIST_EXPORT GistMainWindow : public QMainWindow {
+        Q_OBJECT
+    private:
+        /// Options
+        Options opt;
+        /// Whether search is currently running
+        bool is_searching;
+        /// Status bar label for maximum depth indicator
+        QLabel* depth_label;
+        /// Status bar label for number of solutions
+        QLabel* solved_label;
+        /// Status bar label for number of failures
+        QLabel* failed_label;
+        /// Status bar label for number of choices
+        QLabel* choices_label;
+        /// Status bar label for number of open nodes
+        QLabel* open_label;
+        /// Menu for solution inspectors
+        QMenu* solution_inspectors_menu;
+        /// Menu for double click inspectors
+        QMenu* double_click_inspectors_menu;
+        /// Menu for move inspectors
+        QMenu* move_inspectors_menu;
+        /// Menu for comparators
+        QMenu* comparators_menu;
+        /// Menu for bookmarks
+        QMenu* bookmarks_menu;
+        /// Menu for direct node inspection
+        QMenu* inspect_node_menu;
+        /// Menu for direct node inspection before fixpoint
+        QMenu* inspect_node_before_fp_menu;
+        /// Action for activating the preferences menu
+        QAction* pref_action;
 
-  protected Q_SLOTS:
-    /// The status has changed (e.g., new solutions have been found)
-    void statusChanged(const Statistics& stats, bool finished);
-    /// Open the about dialog
-    void about(void);
-    /// Open the preferences dialog
-    void preferences(bool setup=false);
-    /// Populate the inspector menus from the actions found in Gist
-    void populateInspectorSelection(void);
-    /// Populate the inspector menus from the actions found in Gist
-    void populateInspectors(void);
-    /// Populate the bookmarks menus from the actions found in Gist
-    void populateBookmarks(void);
-  public:
-    /// Constructor
-    GistMainWindow(Space* root, bool bab, const Options& opt);
-  protected:
-    /// Close Gist
-    void closeEvent(QCloseEvent* event);
-  };
+    protected:
+        /// The contained %Gist object
+        Gist* c;
+        /// A menu bar
+        QMenuBar* menu_bar;
+        /// About dialog
+        AboutGist about_gist;
 
-}}
+        /// The status has changed (e.g., new solutions have been found)
+        void status_changed(const Statistics& stats, bool finished);
+        /// Open the about dialog
+        void about();
+        /// Open the preferences dialog
+        void preferences(bool setup = false);
+        /// Populate the inspector menus from the actions found in Gist
+        void populate_inspector_selection();
+        /// Populate the inspector menus from the actions found in Gist
+        void populate_inspectors();
+        /// Populate the bookmarks menus from the actions found in Gist
+        void populate_bookmarks();
+
+    public:
+        /// Constructor
+        GistMainWindow(Space* root, bool bab, const Options& opt);
+
+    protected:
+        /// Close Gist
+        void closeEvent(QCloseEvent* event) override;
+    };
+
+} // namespace Gecode::Gist
 
 #endif
-
 
 // STATISTICS: gist-any

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -31,184 +30,176 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  template<class S>
-  VarComparator<S>::VarComparator(std::string name)
-    : TextOutput(name) {}
+    template <class S>
+    VarComparator<S>::VarComparator(const std::string& name) : TextOutput(name) {}
 
-  template<class S>
-  void
-  VarComparator<S>::compare(const Space& s0, const Space& s1) {
-    std::ostringstream result;
-    dynamic_cast<const S&>(s0).compare(s1,result);
-    if (result.str() != "") {
-      init();
-      addHtml("<pre>\n");
-      getStream() << result.str() << std::endl;
-      addHtml("</pre><hr />");
+    template <class S>
+    void
+    VarComparator<S>::compare(const Space& s0, const Space& s1) {
+        std::ostringstream result;
+        dynamic_cast<const S&>(s0).compare(s1, result);
+        if (!result.str().empty()) {
+            init();
+            add_html("<pre>\n");
+            get_stream() << result.str() << '\n';
+            add_html("</pre><hr />");
+        }
     }
-  }
 
-  template<class S>
-  std::string
-  VarComparator<S>::name(void) {
-    return TextOutput::name();
-  }
-
-  template<class S>
-  void
-  VarComparator<S>::finalize(void) {
-    TextOutput::finalize();
-  }
-
-  inline std::string
-  Comparator::compare(std::string x_n, IntVar x, IntVar y) {
-    IntVarRanges xr(x), yr(y);
-    if (!Iter::Ranges::equal(xr,yr)) {
-      std::ostringstream ret;
-      ret << x_n << "=" << x << " -> " << y;
-      return ret.str();
+    template <class S>
+    std::string
+    VarComparator<S>::name() {
+        return TextOutput::name();
     }
-    return "";
-  }
-  inline std::string
-  Comparator::compare(std::string x_n, BoolVar x, BoolVar y) {
-    if (! (x.min() == y.min() && x.max() == y.max()) ) {
-      std::ostringstream ret;
-      ret << x_n << "=" << x << " -> " << y;
-      return ret.str();
+
+    template <class S>
+    void
+    VarComparator<S>::finalize() {
+        TextOutput::finalize();
     }
-    return "";
-  }
+
+    inline std::string
+    Comparator::compare(const std::string& x_n, IntVar x, IntVar y) {
+        IntVarRanges xr(x), yr(y);
+        if (!Iter::Ranges::equal(xr, yr)) {
+            std::ostringstream ret;
+            ret << x_n << "=" << x << " -> " << y;
+            return ret.str();
+        }
+        return "";
+    }
+    inline std::string
+    Comparator::compare(const std::string& x_n, BoolVar x, BoolVar y) {
+        if (!(x.min() == y.min() && x.max() == y.max())) {
+            std::ostringstream ret;
+            ret << x_n << "=" << x << " -> " << y;
+            return ret.str();
+        }
+        return "";
+    }
 #ifdef GECODE_HAS_SET_VARS
-  inline std::string
-  Comparator::compare(std::string x_n, SetVar x, SetVar y) {
-    SetVarGlbRanges xglbr(x), yglbr(y);
-    SetVarLubRanges xlubr(x), ylubr(y);
-    if (! (Iter::Ranges::equal(xglbr,yglbr) &&
-           Iter::Ranges::equal(xlubr,ylubr) &&
-           x.cardMin() == y.cardMin() &&
-           y.cardMax() == y.cardMax()) ) {
-      std::ostringstream ret;
-      ret << x_n << "=" << x << " -> " << y;
-      return ret.str();
+    inline std::string
+    Comparator::compare(const std::string& x_n, SetVar x, SetVar y) {
+        SetVarGlbRanges xglbr(x), yglbr(y);
+        SetVarLubRanges xlubr(x), ylubr(y);
+        if (!(Iter::Ranges::equal(xglbr, yglbr) && Iter::Ranges::equal(xlubr, ylubr) && x.card_min() == y.card_min() &&
+              y.card_max() == y.card_max())) {
+            std::ostringstream ret;
+            ret << x_n << "=" << x << " -> " << y;
+            return ret.str();
+        }
+        return "";
     }
-    return "";
-  }
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-  inline std::string
-  Comparator::compare(std::string x_n, FloatVar x, FloatVar y) {
-    if (! (x.min() == y.min() && x.max() == y.max()) ) {
-      std::ostringstream ret;
-      ret << x_n << "=" << x << " -> " << y;
-      return ret.str();
-    }
-    return "";
-  }
-#endif
-  template<class Var>
-  std::string
-  Comparator::compare(std::string x_n, const VarArgArray<Var>& x,
-    const VarArgArray<Var>& y) {
-    if (x.size() != y.size())
-      return "Error: array size mismatch";
-    std::ostringstream ret;
-    bool first = true;
-    for (int i=0; i<x.size(); i++) {
-      std::ostringstream xni;
-      xni << x_n << "[" << i << "]";
-      std::string cmp = compare(xni.str(),x[i],y[i]);
-      if (cmp != "") {
-        if (!first) {
-          ret << ", ";
-        } else {
-          first = false;
+    inline std::string
+    Comparator::compare(const std::string& x_n, FloatVar x, FloatVar y) {
+        if (!(x.min() == y.min() && x.max() == y.max())) {
+            std::ostringstream ret;
+            ret << x_n << "=" << x << " -> " << y;
+            return ret.str();
         }
-        ret << cmp;
-      }
+        return "";
     }
-    return ret.str();
-  }
+#endif
+    template <class Var>
+    std::string
+    Comparator::compare(const std::string& x_n, const VarArgArray<Var>& x, const VarArgArray<Var>& y) {
+        if (x.size() != y.size())
+            return "Error: array size mismatch";
+        std::ostringstream ret;
+        bool first = true;
+        for (int i = 0; i < x.size(); i++) {
+            std::ostringstream xni;
+            xni << x_n << "[" << i << "]";
+            std::string cmp = compare(xni.str(), x[i], y[i]);
+            if (!cmp.empty()) {
+                if (!first) {
+                    ret << ", ";
+                } else {
+                    first = false;
+                }
+                ret << cmp;
+            }
+        }
+        return ret.str();
+    }
 
-  template<class S>
-  Print<S>::Print(const std::string& name)
-    : TextOutput(name) {}
+    template <class S>
+    Print<S>::Print(const std::string& name) : TextOutput(name) {}
 
-  template<class S>
-  void
-  Print<S>::inspect(const Space& node) {
-    init();
-    addHtml("<pre>\n");
-    dynamic_cast<const S&>(node).print(getStream());
-    flush();
-    addHtml("</pre><hr />");
-  }
+    template <class S>
+    void
+    Print<S>::inspect(const Space& node) {
+        init();
+        add_html("<pre>\n");
+        dynamic_cast<const S&>(node).print(get_stream());
+        flush();
+        add_html("</pre><hr />");
+    }
 
-  template<class S>
-  std::string
-  Print<S>::name(void) {
-    return TextOutput::name();
-  }
+    template <class S>
+    std::string
+    Print<S>::name() {
+        return TextOutput::name();
+    }
 
-  template<class S>
-  void
-  Print<S>::finalize(void) {
-    TextOutput::finalize();
-  }
+    template <class S>
+    void
+    Print<S>::finalize() {
+        TextOutput::finalize();
+    }
 
-  forceinline
-  Options::Options(void) {}
+    forceinline
+    Options::I_::I_()
+        : _click(heap, 1), n_click(0), _solution(heap, 1), n_solution(0), _move(heap, 1), n_move(0), _compare(heap, 1),
+          n_compare(0) {}
 
-  forceinline
-  Options::I_::I_(void) : _click(heap,1), n_click(0),
-    _solution(heap,1), n_solution(0),
-    _move(heap,1), n_move(0), _compare(heap,1), n_compare(0) {}
+    forceinline void
+    Options::I_::click(Inspector* i) {
+        _click[static_cast<int>(n_click++)] = i;
+    }
+    forceinline void
+    Options::I_::solution(Inspector* i) {
+        _solution[static_cast<int>(n_solution++)] = i;
+    }
+    forceinline void
+    Options::I_::move(Inspector* i) {
+        _move[static_cast<int>(n_move++)] = i;
+    }
+    forceinline void
+    Options::I_::compare(Comparator* c) {
+        _compare[static_cast<int>(n_compare++)] = c;
+    }
+    forceinline Inspector*
+    Options::I_::click(unsigned int i) const {
+        return (i < n_click) ? _click[i] : nullptr;
+    }
+    forceinline Inspector*
+    Options::I_::solution(unsigned int i) const {
+        return (i < n_solution) ? _solution[i] : nullptr;
+    }
+    forceinline Inspector*
+    Options::I_::move(unsigned int i) const {
+        return (i < n_move) ? _move[i] : nullptr;
+    }
+    forceinline Comparator*
+    Options::I_::compare(unsigned int i) const {
+        return (i < n_compare) ? _compare[i] : nullptr;
+    }
 
-  forceinline void
-  Options::I_::click(Inspector* i) {
-    _click[static_cast<int>(n_click++)] = i;
-  }
-  forceinline void
-  Options::I_::solution(Inspector* i) {
-    _solution[static_cast<int>(n_solution++)] = i;
-  }
-  forceinline void
-  Options::I_::move(Inspector* i) {
-    _move[static_cast<int>(n_move++)] = i;
-  }
-  forceinline void
-  Options::I_::compare(Comparator* c) {
-    _compare[static_cast<int>(n_compare++)] = c;
-  }
-  forceinline Inspector*
-  Options::I_::click(unsigned int i) const {
-    return (i < n_click) ? _click[i] : nullptr;
-  }
-  forceinline Inspector*
-  Options::I_::solution(unsigned int i) const {
-    return (i < n_solution) ? _solution[i] : nullptr;
-  }
-  forceinline Inspector*
-  Options::I_::move(unsigned int i) const {
-    return (i < n_move) ? _move[i] : nullptr;
-  }
-  forceinline Comparator*
-  Options::I_::compare(unsigned int i) const {
-    return (i < n_compare) ? _compare[i] : nullptr;
-  }
+    inline int
+    dfs(Space* root, const Gist::Options& opt) {
+        return explore(root, false, opt);
+    }
 
-  inline int
-  dfs(Space* root, const Gist::Options& opt) {
-    return explore(root, false, opt);
-  }
+    inline int
+    bab(Space* root, const Gist::Options& opt) {
+        return Gist::explore(root, true, opt);
+    }
 
-  inline int
-  bab(Space* root, const Gist::Options& opt) {
-    return Gist::explore(root, true, opt);
-  }
-
-}}
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

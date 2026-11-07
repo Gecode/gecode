@@ -73,7 +73,635 @@
 Version: 7.0.0
 Date: unreleased
 [DESCRIPTION]
-This is the development changelog for the next Gecode release.
+This release contains breaking changes. See the entries below for the
+changes downstream code needs.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Derive FlatZinc::Error and FlatZinc::AST::TypeError from std::exception, so that
+a handler for std::exception also catches them. AST::TypeError::what now returns
+const char* instead of std::string.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Give FlatZinc::BranchPlugin a virtual destructor, so that a plugin deleted
+through its interface is destroyed correctly.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Give abbreviated constants descriptive names, and remove the old spellings
+without compatibility aliases. Values and semantics are unchanged, as are the
+command-line option values and the "AOE" that StdSearchTracer prints.
+[MORE]
+The public renames are:
+RestartMode: RM_NONE, RM_CONSTANT, RM_LINEAR, RM_LUBY, and RM_GEOMETRIC to
+RESTART_NONE, RESTART_CONSTANT, RESTART_LINEAR, RESTART_LUBY, and
+RESTART_GEOMETRIC, because ReifyMode also uses the prefix RM_.
+ReifyMode: RM_PMI to RM_RIMP.
+TaskType: TT_FIXP, TT_FIXS, and TT_FIXE to TT_FIXED_PROCESSING, TT_FIXED_START,
+and TT_FIXED_END.
+SetRelType: SRT_DISJ and SRT_CMPL to SRT_DISJOINT and SRT_COMPLEMENT.
+SetOpType: SOT_DUNION and SOT_INTER to SOT_DISJOINT_UNION and SOT_INTERSECTION.
+ScriptMode: SM_STAT to SM_STATISTICS.
+MetaInfo::RestartReason: RR_NO, RR_SOL, RR_CMPL, and RR_LIM to RR_NONE,
+RR_SOLUTION, RR_COMPLETE, and RR_LIMIT.
+SearchTracer::EngineType: AOE to OTHER.
+The test component renames are:
+Test::Float::AssignmentType: CPLT_ASSIGNMENT to COMPLETE_ASSIGNMENT.
+Test::MatchType: MT_ANY, MT_NOT, and MT_FIRST to MATCH_ANY, MATCH_NOT, and
+MATCH_FIRST.
+The internal renames are:
+Int::GCC::Edge::EdgeFlag: EF_MRKLB, EF_MRKUB, EF_LM, EF_UM, and EF_DEL to
+EF_MARKED_LBC, EF_MARKED_UBC, EF_MATCHED_LBC, EF_MATCHED_UBC, and EF_DELETED.
+Int::NValues::RangeEventType: RET_FST and RET_LST to RET_START and RET_FINISH.
+Support::IntType: IT_SHRT to IT_SHORT.
+Int::BoolTest: BT_COMP to BT_COMPLEMENT.
+Int::Cumulatives::EventType: EVENT_CHCK and EVENT_PRUN to EVENT_CHECK and
+EVENT_PRUNE.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Make 68 enums enum class, with using enum at their scope or, in class templates,
+static constexpr aliases, so existing spellings such as IRT_EQ,
+Gecode::SS_FAILED, and IntVarBranch::SEL_RND still compile. Their values stop converting to int and stop mixing with other enums.
+Code that stores such a value in an int, does arithmetic or bitwise operations
+on it, streams it, uses it as an array index or a bit position such as
+1 << RM_EQV, or compares it with an integer no longer compiles. Convert
+explicitly with std::to_underlying or static_cast. Installed headers now use
+std::to_underlying, so code that does not build through the exported CMake
+targets needs C++23 as well.
+[MORE]
+The scoped enums are:
+Kernel: ExecStatus, SpaceStatus, ActorProperty, PropCost::ActualCost,
+PropCost::Mod, ViewTraceInfo::What, PropagateTraceInfo::Status,
+PostTraceInfo::Status, NGL::Status, MetaInfo::Type, MetaInfo::RestartReason,
+TFE::NodeType.
+Search: SearchTracer::EngineType, SearchTracer::NodeType,
+Search::HeuristicGuidance::Sense, Search::Beam::Offer,
+Search::Seq::ExpansionStep::State, Search::Par::Engine::Cmd,
+CPProfiler::NodeStatus, CPProfiler::MessageMarshalling::Field.
+Integer: ReifyMode, IntRelType, BoolOpType, IntPropLevel, TaskType,
+TupleSet::Data::State, IntVarBranch::Select, BoolVarBranch::Select,
+IntValBranch::Select, BoolValBranch::Select, IntAssign::Select,
+BoolAssign::Select, Int::Cumulatives::EventType (formerly the typedef ev_t),
+Int::Extensional::CompactStatus::StatusType, Int::GCC::BC,
+Int::NValues::RangeEventType, Int::Sequence::TakesStatus, Int::SortTaskOrder,
+Int::Event::Type, Int::RelTest, Int::BoolTest.
+Set: SetRelType, SetOpType, SetVarBranch::Select, SetValBranch::Select,
+SetAssign::Select.
+Float: FloatRelType, FloatVarBranch::Select, FloatValBranch::Select,
+FloatAssign::Select, Float::RelTest.
+MiniModel: LinIntExpr::NodeType, LinFloatExpr::NodeType, SetExpr::NodeType,
+BoolExpr::NodeType.
+Driver: ScriptMode, RestartMode.
+FlatZinc: FlatZinc::FlatZincSpace::Meth, FlatZinc::IntBoolVarBranch::Select,
+FlatZinc::SymbolType.
+Gist, support, and iterators: Gist::NodeStatus, Support::BitSetStatus,
+Support::IntType, Iter::Ranges::CompareStatus.
+Test component: Test::MatchType, Test::Int::ConTestLevel,
+Test::Float::MaybeType, Test::Float::AssignmentType.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+IntPropLevel is enum class with underlying type unsigned int and gains
+operator|, operator&, and operator|=, so levels combine without casts. Test a
+bit with (ipl & IPL_BASIC) != IPL_DEF, since the result no longer converts to
+bool. Remove IPL_BITS_, which was a bit-field width rather than a level.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The Rnd constructor taking a seed is explicit. Code that passes a number where
+a Rnd is expected, such as INT_VAR_RND(1U), must now write Rnd(1U). The implicit
+conversion also accepted floating-point values, which hid the bug in
+IntBoolVarBranch fixed in this release.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+IntBoolVarBranch keeps its decay factor, which was discarded so that AFC and
+action used a decay of 1. The default branchers follow the -decay option, which
+only search annotations honoured before.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Choices from set_search and set_default_search print the relations of their
+value selection. Before, set_search printed none, and set_default_search printed
+"in" and "not in" the wrong way round for outdomain_min and outdomain_max.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Searching for an extension to introduced variables follows the default search
+annotations after the space has been cloned, and no longer leaks the random
+number generator of a random selection.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The assign overloads for integer and Boolean variables with tie-breaking
+variable selection link. The Boolean overload now takes BoolBranchFilter and
+BoolVarValPrint arguments, as the overload without tie-breaking does.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Assigning integer and Boolean variables follows the variable selection, which
+was ignored unless a tie-breaking selection was also in effect. Models that
+pass a selection to assign, such as the job-shop example, now assign variables
+in that order and can find different solutions first.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Assigning set variables follows the variable selection, which was ignored
+unless a tie-breaking selection was also in effect.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Assigning float variables follows the variable selection, which was ignored
+unless a tie-breaking selection was also in effect.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+values_reflect for the domain of an integer variable links.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The default constructors of SetVarGlbValues, SetVarLubValues, and
+SetVarUnknownValues link.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Constructing FloatValArgs from an initializer list links.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The declaration of the pbs engine builder takes the engine as a template
+argument, as its definition does. Calling it with only the space type failed
+to link and is now a compile error.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Multi-dimensional bin_packing throws Int::OutOfLimits for fewer than one
+dimension. It divided by zero for zero dimensions, and a negative number of
+dimensions now gives Int::OutOfLimits instead of Int::ArgumentSizeMismatch.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Two-dimensional element throws Int::TooFewArguments for an empty array, as
+one-dimensional element does, instead of Int::VariableEmptyDomain from an
+internal variable or Int::ArgumentSizeMismatch. It throws
+Int::ArgumentSizeMismatch for a width or height that is not positive and when
+the product overflows, where it could post a failing or wrong constraint.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Two-dimensional element throws Set::ArgumentSizeMismatch for a width or height
+that is not positive and when the product overflows, where it could post a
+failing or wrong constraint.
+
+[ENTRY]
+Module: set
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Document the exceptions that sequence and element with an integer index throw
+for an empty array and for sets outside the limits.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Make Home, the groups, Pos, Reify, LocalHandle, the variables, the variable
+arrays, ViewArray, the open variable and view lists, and AFC with its
+subclasses trivially copyable. Their copy constructors and copy assignments
+are now implicit or defaulted, and the AFC classes and LocalHandle no longer
+declare a destructor. Copies behave as before, but the ABI changes, and the
+compiler may now pass these types in registers.
+[MORE]
+VarArray::operator= and ViewArray::operator= now return a non-const
+reference.
+
+[ENTRY]
+Module: kernel
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Delete the copy assignment of Home and of Space. Assigning one Home to
+another copy-assigned the whole Space that the home refers to. A Home never
+changes its space; construct a new Home instead. To copy a Space, clone it.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Default special members that only construct, copy, or destroy members, and
+delete with = delete the members that must not be called. Across the
+library, default constructors, copy constructors, copy assignments, and
+destructors with empty or member-wise bodies are now defaulted on their first
+declaration; among them are those of the variables, most views, FloatVal,
+IntSet, TupleSet, DFA, Action, CHB, the argument arrays, and the range and
+value iterators. Behaviour is unchanged, but the ABI changes: several
+members that the libraries exported, such as the copy constructors of
+TupleSet, Action, and CHB, are now inline.
+[MORE]
+Copy members that were private and undefined, such as those of Search::Base,
+Support::BitSetBase, Set::GLBndSet, and FlatZinc::Printer, are now public
+and deleted, so copying one is reported as a call to a deleted function.
+
+A defaulted default constructor is no longer user-provided. A class with
+such a constructor and a field without an initializer can no longer be
+default-initialized as a const object: `const Gecode::IntSetRanges r;` no
+longer compiles. Initialize the object, or drop the const. This affects
+most range and value iterators: IntSetRanges, IntSetValues, IntVarValues,
+SetVarGlbRanges, SetVarLubRanges, SetVarUnknownRanges, the iterators in
+Iter::Ranges and Iter::Values, and the range and value iterators of views
+such as Int::ViewRanges and Set::UnknownRanges. It also affects SetRel,
+FreeList, Float::OffsetView, and Search::TraceRecorder::ID.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Remove operator!= where it only negated operator==, and replace the
+operator< of Int::LDSB::Literal with a defaulted operator<=>. C++20 rewrites
+`a != b` as `!(a == b)` and `a < b` through operator<=>, so these expressions
+keep their results. A call that names the operator, such as
+`operator!=(a, b)` or `a.operator<(b)`, no longer compiles; write the
+expression instead.
+[MORE]
+operator!= is removed from PropagatorGroup, BrancherGroup, IntSet, DFA,
+Support::BitSetData, space_allocator, region_allocator,
+Int::BinPacking::Item, and the integer, set, and float views. The kernel's
+ConstView, VarImpView, and DerivedView templates keep theirs, and so does
+TupleSet: without it, `true != t` would be ambiguous between its int
+constructor and its bool conversion.
+Support::BitSetData::operator== is now defaulted and takes its argument by
+const reference. Int::LDSB::Literal now also has ==, !=, <=, >, and >=.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix shrinking with Space::realloc and Region::realloc. The size of the removed
+tail was computed with the wrong sign, so shrinking destroyed objects past the
+block and handed memory outside it to the space. Space::realloc for pointers
+also used the size of the pointed-to type, which lost pointers on growing.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fail the space in relax when a variable cannot take its value from the
+solution. The space stayed unfailed, so search continued from it.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix operator== of Int::CachedView. It used a member that the view does not
+have, so comparing two cached integer views did not compile. It now compares
+the base views, like Set::CachedView.
+
+[ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Remove the Autoconf leftovers PACKAGE_BUGREPORT, PACKAGE_NAME,
+PACKAGE_STRING, PACKAGE_TARNAME, PACKAGE_URL, and PACKAGE_VERSION from the
+installed gecode/support/config.hpp. Use GECODE_VERSION or
+GECODE_VERSION_NUMBER instead, or Gecode_VERSION from the CMake package.
+[MORE]
+CMake now generates config.hpp with configure_file. Feature macros that were
+defined as empty, such as GECODE_HAS_FLOAT_VARS, are now defined as 1; tests
+of whether they are defined behave as before.
+
+[ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Remove GECODE_HAS_BUILTIN_FFSLL and GECODE_HAS_BUILTIN_POPCOUNTLL from the
+installed gecode/support/config.hpp. Bitsets now use std::countr_zero and
+std::popcount.
+
+[ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Remove MSVC auto-linking, together with the header gecode/support/auto-link.hpp
+and the macros GECODE_NO_AUTOLINK, GECODE_LIBRARY_NAME, GECODE_DLL_USERPREFIX,
+GECODE_DLL_USERSUFFIX, and GECODE_LIBRARY_VERSION. CMake builds always
+disabled it. Consumers link through the Gecode:: CMake targets.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Define the GECODE_FREELIST32_SIZE_MAX and GECODE_FREELIST64_SIZE_MAX build
+options as numbers in config.hpp. A quoted value broke compilation.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Post nothing for no_overlap with zero rectangles. Debug builds aborted with a
+failed assertion in the memory manager.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Decide count with an array of counts (global cardinality) and bin_packing
+with no variables or items when posting: every count and load becomes 0.
+Count with variables but no values fails. Branching with LDSB symmetries,
+for integer, Boolean, and set variables, ignores symmetries over no
+variables or values and accepts an empty Symmetries. Debug builds aborted
+with failed assertions. Distinct over an open list with maximum length 0
+also posts nothing.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Post nothing for channel_sorted, channel with Boolean variables, and union
+or disjoint-union element over constant sets when the array is empty, and
+make the set variables empty. Debug builds aborted with failed assertions.
+Element over set variables, rel with union or disjoint union and a constant
+set, and weights also post nothing for empty arrays.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Keep directed rounding sound under compiler optimization. Float::Rounding
+and FloatVal arithmetic could return a bound on the wrong side of the exact
+result: optimizers folded constants in round-to-nearest, shared one square
+root or quotient between both bounds, and fused the negated multiplication,
+even in Clang Debug builds. Each operand and result now passes through an
+optimization barrier, so neither Gecode nor applications need floating-point
+compiler flags.
+[MORE]
+The barrier is an empty volatile asm statement with GCC and Clang, and a
+volatile store and reload with other compilers. Integer rounding uses floor
+and ceil, which do not depend on the rounding mode. The even-root bounds of
+pow and nroot use the same rounding operations.
+
+[ENTRY]
+Module: float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Implement interval arithmetic in Gecode itself, as the new type
+Float::Interval with its free functions in namespace Gecode::Float. Gecode
+no longer contains, or installs, its renamed copy of the Boost interval
+library and Boost's LICENSE_1_0.txt, and it takes on no external dependency in
+their place. Bounds, comparison results, and search behave exactly as
+before. The empty-interval exception is still a std::runtime_error, but its
+message is now "Gecode::Float::Interval: empty interval".
+[MORE]
+The interval code is Gecode code under Gecode's MIT license.
+
+[ENTRY]
+Module: float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Make Float::RoundingBase and Float::Rounding plain Gecode classes. Their
+arithmetic members are unchanged. RoundingBase no longer derives from a Boost
+rounding class: init, upward, downward, and to_nearest are now protected,
+and toward_zero, get_rounding_mode, set_rounding_mode, to_int, conv_down,
+conv_up, force_rounding, and rounding_mode are gone. Rounding is a scope that
+saves the caller's rounding mode and restores it; it cannot be copied and no
+longer has the mode member or unprotected_rounding typedef of Boost's
+save_state. The typedef RoundingControl is gone, FloatVal::FloatValImpType is
+now Float::Interval, and FloatVal's protected typedefs R and P are gone.
+
+[ENTRY]
+Module: float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Make FloatVal trivially copyable. Its layout is unchanged, but on AArch64 and
+SysV x86-64 it is now passed and returned by value in registers instead of
+through memory. A program built against older headers must be rebuilt: the
+symbol names are unchanged, so the dynamic linker does not catch the
+mismatch. Two exported functions take a FloatVal by value and are affected:
+FloatValArgs::create and Float::Linear::post.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Post nothing for relax with empty variable arrays. Debug builds aborted with
+a failed assertion.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Action and CHB information over an empty array, including branching with
+ACTION or CHB merits on no variables, requests no heap memory for its values
+and posts no recorder propagator. It previously requested zero bytes, which
+the C library may answer with a null pointer and thus a MemoryExhausted
+exception.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Copying or assigning an empty Archive requests no heap memory, and growing
+space memory with Space::realloc from an empty block copies nothing. They
+previously requested zero bytes or passed a null pointer to memcpy.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Tuple sets of arity zero request no heap memory for tuples and values, also
+when they grow or are finalized with a dense representation. They previously
+requested zero bytes, which the C library may answer with a null pointer and
+thus a MemoryExhausted exception. An IntSet built from an empty initializer
+list is the empty set; Debug builds aborted with a failed assertion.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Integer and set variables declared with an empty set literal, such as var {}
+or var set of {}, request no heap memory. The final states of a regular
+constraint given as an interval with a maximum below its minimum are treated
+as empty; such an interval previously requested zero bytes or a huge size and
+could write before the allocated block.
+
+[ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+A dictionary file holding no accepted word and no final newline requests no
+heap memory in the crossword and word-square examples.
+
+[ENTRY]
+Module: support
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Every request for heap memory must ask for more than zero bytes. Code that
+asks the heap for zero bytes, through Heap::ralloc, Heap::rrealloc, or the
+typed alloc and realloc, now fails an assertion in Debug builds. Reallocating
+from zero objects to a positive number stays valid. Heap::rrealloc no longer
+returns a null pointer for size zero; free the block with rfree instead.
+[MORE]
+The C library may answer a request for zero bytes with a null pointer, which
+the heap reports as MemoryExhausted, and reallocating to zero bytes is
+implementation-defined in C17. Heap::copy also needs non-null pointers, even
+for zero objects, because it passes them to memcpy.
+
+[ENTRY]
+Module: other
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Move owned branching and open-variable-list callbacks through constructors
+instead of copying them repeatedly. Avoid copying read-only argument arrays
+in examples, reserve worker-control thread storage, and buffer multi-line
+output while flushing complete solutions, progress, and protocol messages.
+[MORE]
+Expand clang-tidy checks for hidden copies, container operations, missed moves,
+stream flushing, and correctness errors.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Pass owned and reference-counted parameters, and FloatVal, by const
+reference instead of by value. Values that a function keeps and whose type
+has a real move constructor, such as callbacks and branching configurations,
+stay by value and are moved into place. This changes the exact signatures
+and the ABI of many public functions: branch and assign with their
+value-selection arguments, the variable- and value-selection functions and
+constructors taking Rnd, AFC, Action, CHB, or merit functions, the Action
+and CHB constructors taking merit functions, relax, trace, extensional with
+a DFA, element with an IntSharedArray, and floating-point posting functions
+and expressions taking a FloatVal. Calls compile unchanged, except that an
+argument passed by value and moved must now be movable: a type with a
+deleted move constructor no longer compiles there. Propagators that override
+solution_distribution or domain_size_sum must take their SendMarginal or
+InDecision argument by const reference.
+[MORE]
+Enable clang-tidy's performance-unnecessary-value-param check. Variables,
+views, variable arrays, and other shallow handles stay passed by value.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Rename the strict-less relation constants IRT_LE, FRT_LE, and SRT_LE to
+IRT_LT, FRT_LT, and SRT_LT. Remove the old spellings without compatibility
+aliases to avoid confusion with less-or-equal. Relation values and semantics
+are unchanged; the less-or-equal constants retain the _LQ suffix.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Require C++23 and adopt four-space indentation and a 120-column limit with
+clang-format 22.
+Functions, variables, and members use snake_case; types retain PascalCase.
+Constants and functions that stand for constant values, such as ME_INT_VAL,
+ES_SUBSUMED, and INT_VAR_SIZE_MIN, retain UPPER_CASE. Public API names
+change, including no_overlap, bin_packing, and modification_event_delta.
+Update downstream source code before recompiling.
+[MORE]
+Add formatting, clang-tidy, and extended repository check commands. Extended
+checks include generated sources, CTest suites, installed-package consumers,
+and documentation. EditorConfig replaces per-file indentation headers.
+
+[ENTRY]
+Module: other
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Remove the Autoconf and maintained Makefile build systems. Build, install,
+and regenerate Gecode with CMake. Generated-source checks continue to cover
+variable headers and the FlatZinc parser and lexer.
 
 [RELEASE]
 Version: 6.5.0

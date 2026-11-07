@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,85 +35,76 @@
 
 namespace Gecode {
 
-  StdFloatTracer::StdFloatTracer(std::ostream& os0)
-    : os(os0) {}
+    StdFloatTracer::StdFloatTracer(std::ostream& os0) : os(os0) {}
 
-  void
-  StdFloatTracer::init(const Space&, const FloatTraceRecorder& t) {
-    os << "trace<Float>::init(id:" << t.id();
-    if (t.group().in())
-      os << ",g:" << t.group().id();
-    os << ") slack: 100.00% (" << t.slack().initial() << " width)"
-       << std::endl;
-  }
+    void
+    StdFloatTracer::init(const Space&, const FloatTraceRecorder& t) {
+        os << "trace<Float>::init(id:" << t.id();
+        if (t.group().in())
+            os << ",g:" << t.group().id();
+        os << ") slack: 100.00% (" << t.slack().initial() << " width)" << '\n' << std::flush;
+    }
 
-  void
-  StdFloatTracer::prune(const Space&, const FloatTraceRecorder& t,
-                        const ViewTraceInfo& vti, int i, FloatTraceDelta& d) {
-    os << "trace<Float>::prune(id:" << t.id();
-    if (t.group().in())
-      os << ",g:" << t.group().id();
-    os << "): [" << i << "] = " << t[i] << " - ["
-       << d.min() << ".." << d.max()
-       << "] by " << vti << std::endl;
-  }
+    void
+    StdFloatTracer::prune(const Space&, const FloatTraceRecorder& t, const ViewTraceInfo& vti, int i,
+                          FloatTraceDelta& d) {
+        os << "trace<Float>::prune(id:" << t.id();
+        if (t.group().in())
+            os << ",g:" << t.group().id();
+        os << "): [" << i << "] = " << t[i] << " - [" << d.min() << ".." << d.max() << "] by " << vti << '\n'
+           << std::flush;
+    }
 
-  void
-  StdFloatTracer::fix(const Space&, const FloatTraceRecorder& t) {
-    os << "trace<Float>::fix(id:" << t.id();
-    if (t.group().in())
-      os << ",g:" << t.group().id();
-    os << ") slack: ";
-    double sl_i = static_cast<double>(t.slack().initial());
-    double sl_p = static_cast<double>(t.slack().previous());
-    double sl_c = static_cast<double>(t.slack().current());
-    double p_c = 100.0 * (sl_c / sl_i);
-    double p_d = 100.0 * (sl_p / sl_i) - p_c;
-    os << std::showpoint << std::setprecision(4)
-       << p_c << "% - "
-       << std::showpoint << std::setprecision(4)
-       << p_d << '%'
-       << std::endl;
-  }
+    void
+    StdFloatTracer::fix(const Space&, const FloatTraceRecorder& t) {
+        os << "trace<Float>::fix(id:" << t.id();
+        if (t.group().in())
+            os << ",g:" << t.group().id();
+        os << ") slack: ";
+        double sl_i = static_cast<double>(t.slack().initial());
+        double sl_p = static_cast<double>(t.slack().previous());
+        double sl_c = static_cast<double>(t.slack().current());
+        double p_c = 100.0 * (sl_c / sl_i);
+        double p_d = 100.0 * (sl_p / sl_i) - p_c;
+        os << std::showpoint << std::setprecision(4) << p_c << "% - " << std::showpoint << std::setprecision(4) << p_d
+           << '%' << '\n'
+           << std::flush;
+    }
 
-  void
-  StdFloatTracer::fail(const Space&, const FloatTraceRecorder& t) {
-    os << "trace<Float>::fail(id:" << t.id();
-    if (t.group().in())
-      os << ",g:" << t.group().id();
-    os << ") slack: ";
-    double sl_i = static_cast<double>(t.slack().initial());
-    double sl_p = static_cast<double>(t.slack().previous());
-    double sl_c = static_cast<double>(t.slack().current());
-    double p_c = 100.0 * (sl_c / sl_i);
-    double p_d = 100.0 * (sl_p / sl_i) - p_c;
-    os << std::showpoint << std::setprecision(4)
-       << p_c << "% - "
-       << std::showpoint << std::setprecision(4)
-       << p_d << '%'
-       << std::endl;
-  }
+    void
+    StdFloatTracer::fail(const Space&, const FloatTraceRecorder& t) {
+        os << "trace<Float>::fail(id:" << t.id();
+        if (t.group().in())
+            os << ",g:" << t.group().id();
+        os << ") slack: ";
+        double sl_i = static_cast<double>(t.slack().initial());
+        double sl_p = static_cast<double>(t.slack().previous());
+        double sl_c = static_cast<double>(t.slack().current());
+        double p_c = 100.0 * (sl_c / sl_i);
+        double p_d = 100.0 * (sl_p / sl_i) - p_c;
+        os << std::showpoint << std::setprecision(4) << p_c << "% - " << std::showpoint << std::setprecision(4) << p_d
+           << '%' << '\n'
+           << std::flush;
+    }
 
-  void
-  StdFloatTracer::done(const Space&, const FloatTraceRecorder& t) {
-    os << "trace<Float>::done(id:" << t.id();
-    if (t.group().in())
-      os << ",g:" << t.group().id();
-    os << ") slack: ";
-    double sl_i = static_cast<double>(t.slack().initial());
-    double sl_p = static_cast<double>(t.slack().previous());
-    double sl_c = static_cast<double>(t.slack().current());
-    double p_c = 100.0 * (sl_c / sl_i);
-    double p_d = 100.0 * (sl_p / sl_i) - p_c;
-    os << std::showpoint << std::setprecision(4)
-       << p_c << "% - "
-       << std::showpoint << std::setprecision(4)
-       << p_d << '%'
-       << std::endl;
-  }
+    void
+    StdFloatTracer::done(const Space&, const FloatTraceRecorder& t) {
+        os << "trace<Float>::done(id:" << t.id();
+        if (t.group().in())
+            os << ",g:" << t.group().id();
+        os << ") slack: ";
+        double sl_i = static_cast<double>(t.slack().initial());
+        double sl_p = static_cast<double>(t.slack().previous());
+        double sl_c = static_cast<double>(t.slack().current());
+        double p_c = 100.0 * (sl_c / sl_i);
+        double p_d = 100.0 * (sl_p / sl_i) - p_c;
+        os << std::showpoint << std::setprecision(4) << p_c << "% - " << std::showpoint << std::setprecision(4) << p_d
+           << '%' << '\n'
+           << std::flush;
+    }
 
-  StdFloatTracer StdFloatTracer::def;
+    StdFloatTracer StdFloatTracer::def;
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-trace

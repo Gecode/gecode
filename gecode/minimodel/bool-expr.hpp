@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,27 +32,22 @@
 
 namespace Gecode {
 
-  /*
-   * Operations for expressions
-   *
-   */
+    /*
+     * Operations for expressions
+     *
+     */
 
-  template<class Bool,
-           std::enable_if_t<std::is_same<Bool,bool>::value,int>>
-  forceinline
-  BoolExpr::BoolExpr(Bool value)
-    : n(constant(value)) {}
+    template <std::same_as<bool> Bool>
+    forceinline
+    BoolExpr::BoolExpr(Bool value)
+        : n(constant(value)) {}
 
-  template<class Bool,
-           std::enable_if_t<std::is_same<Bool,bool>::value,int>>
-  forceinline IntVar
-  expr(Home home, Bool value, const IntPropLevels& ipls) {
-    return expr(home,LinIntExpr(static_cast<int>(value)),ipls);
-  }
+    template <std::same_as<bool> Bool>
+    forceinline IntVar
+    expr(Home home, Bool value, const IntPropLevels& ipls) {
+        return expr(home, LinIntExpr(static_cast<int>(value)), ipls);
+    }
 
-  forceinline
-  BoolExpr::Misc::Misc(void) {}
-
-}
+} // namespace Gecode
 
 // STATISTICS: minimodel-any

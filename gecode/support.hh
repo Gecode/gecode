@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -46,21 +45,20 @@
  * Linking and compiler workarounds
  *
  */
-#if !defined(GECODE_STATIC_LIBS) && \
-    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
+#if !defined(GECODE_STATIC_LIBS) && (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
 /**
-  * \brief Workaround for a bug in the Microsoft C++ compiler
-  *
-  * Details for the bug can be found at
-  * http://support.microsoft.com/?scid=kb%3Ben-us%3B122675&x=9&y=13
-  */
+ * \brief Workaround for a bug in the Microsoft C++ compiler
+ *
+ * Details for the bug can be found at
+ * http://support.microsoft.com/?scid=kb%3Ben-us%3B122675&x=9&y=13
+ */
 #define GECODE_MSC_VIRTUAL virtual
 
 #ifdef GECODE_BUILD_SUPPORT
-#define GECODE_SUPPORT_EXPORT __declspec( dllexport )
+#define GECODE_SUPPORT_EXPORT __declspec(dllexport)
 #else
-#define GECODE_SUPPORT_EXPORT __declspec( dllimport )
+#define GECODE_SUPPORT_EXPORT __declspec(dllimport)
 #endif
 #define GECODE_VTABLE_EXPORT
 
@@ -69,19 +67,13 @@
 #define GECODE_MSC_VIRTUAL
 
 #ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
-#define GECODE_SUPPORT_EXPORT __attribute__ ((visibility("default")))
-#define GECODE_VTABLE_EXPORT __attribute__ ((visibility("default")))
+#define GECODE_SUPPORT_EXPORT __attribute__((visibility("default")))
+#define GECODE_VTABLE_EXPORT __attribute__((visibility("default")))
 #else
 #define GECODE_SUPPORT_EXPORT
 #define GECODE_VTABLE_EXPORT
 #endif
 
-#endif
-
-// Configure auto-linking
-#ifndef GECODE_BUILD_SUPPORT
-#define GECODE_LIBRARY_NAME "Support"
-#include <gecode/support/auto-link.hpp>
 #endif
 
 /*
@@ -117,7 +109,6 @@
 #include <gecode/support/random.hpp>
 #include <gecode/support/sort.hpp>
 #include <gecode/support/static-stack.hpp>
-
 
 /*
  * Operating system support

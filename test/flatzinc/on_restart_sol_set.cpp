@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("on_restart::sol_set",
-R"FZN(predicate int_eq_imp(var int: a,var int: b,var bool: r);
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("on_restart::sol_set",
+                                   R"FZN(predicate int_eq_imp(var int: a,var int: b,var bool: r);
 predicate gecode_on_restart_status(var int: s);
 predicate gecode_on_restart_sol_set(var set of int: input,var set of int: out);
 var set of 1..3: x:: output_var;
@@ -86,7 +82,7 @@ constraint set_eq_reif(y,1..0,X_INTRODUCED_41_):: defines_var(X_INTRODUCED_41_);
 constraint set_eq_reif(y,X_INTRODUCED_34_,X_INTRODUCED_42_):: defines_var(X_INTRODUCED_42_);
 solve :: set_search(X_INTRODUCED_31_,input_order,indomain_min,complete) minimize X_INTRODUCED_0_;
 )FZN",
-R"OUT(x = 1..3;
+                                   R"OUT(x = 1..3;
 y = {};
 ----------
 x = 1..2;
@@ -99,13 +95,12 @@ x = {};
 y = 1..1;
 ----------
 ==========
-)OUT", true, {"--restart", "constant", "--restart-base", "100"});
-      }
+)OUT",
+                                   true, {"--restart", "constant", "--restart-base", "100"});
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

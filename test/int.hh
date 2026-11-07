@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -41,23 +40,20 @@
 #include <gecode/int.hh>
 
 /* Configure linking, as for the Gecode variable libraries. */
-#if !defined(GECODE_STATIC_LIBS) && \
-    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
+#if !defined(GECODE_STATIC_LIBS) && (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 #ifdef GECODE_BUILD_TESTINT
-#define GECODE_TESTINT_EXPORT __declspec( dllexport )
+#define GECODE_TESTINT_EXPORT __declspec(dllexport)
 #else
-#define GECODE_TESTINT_EXPORT __declspec( dllimport )
+#define GECODE_TESTINT_EXPORT __declspec(dllimport)
 #endif
-#elif defined(GECODE_GCC_HAS_CLASS_VISIBILITY)
-#define GECODE_TESTINT_EXPORT __attribute__ ((visibility("default")))
+#elifdef GECODE_GCC_HAS_CLASS_VISIBILITY
+#define GECODE_TESTINT_EXPORT __attribute__((visibility("default")))
 #else
 #define GECODE_TESTINT_EXPORT
 #endif
 
-namespace Test {
-
-  /// Testing finite domain integers
-  namespace Int {
+/// Testing finite domain integers
+namespace Test::Int {
 
     /**
      * \defgroup TaskTestInt Testing finite domain integers
@@ -72,162 +68,166 @@ namespace Test {
     /// %Base class for assignments
     class GECODE_TESTINT_EXPORT Assignment {
     protected:
-      int n;            ///< Number of variables
-      Gecode::IntSet d; ///< Domain for each variable
+        int n;            ///< Number of variables
+        Gecode::IntSet d; ///< Domain for each variable
     public:
-      /// Initialize assignments for \a n0 variables and values \a d0
-      Assignment(int n0, const Gecode::IntSet& d0);
-      /// Test whether all assignments have been iterated
-      virtual bool has_more(void) const = 0;
-      /// Move to next assignment
-      virtual void next(Gecode::Support::RandomGenerator& rand) = 0;
-      /// Return value for variable \a i
-      virtual int operator[](int i) const = 0;
-      /// Return number of variables
-      int size(void) const;
-      /// Destructor
-      virtual ~Assignment(void);
+        /// Initialize assignments for \a n0 variables and values \a d0
+        Assignment(int n0, const Gecode::IntSet& d0);
+        /// Test whether all assignments have been iterated
+        virtual bool has_more() const = 0;
+        /// Move to next assignment
+        virtual void next(Gecode::Support::RandomGenerator& rand) = 0;
+        /// Return value for variable \a i
+        virtual int operator[](int i) const = 0;
+        /// Return number of variables
+        int size() const;
+        /// Destructor
+        virtual ~Assignment();
     };
 
     /// Generate all assignments
     class GECODE_TESTINT_EXPORT CpltAssignment : public Assignment {
     protected:
-      Gecode::IntSetValues* dsv; ///< Iterator for each variable
+        Gecode::IntSetValues* dsv; ///< Iterator for each variable
     public:
-      /// Initialize assignments for \a n0 variables and values \a d0
-      CpltAssignment(int n, const Gecode::IntSet& d);
-      /// Test whether all assignments have been iterated
-      virtual bool has_more(void) const;
-      /// Move to next assignment
-      virtual void next(Gecode::Support::RandomGenerator& rand);
-      /// Return value for variable \a i
-      virtual int operator[](int i) const;
-      /// Destructor
-      virtual ~CpltAssignment(void);
+        /// Initialize assignments for \a n0 variables and values \a d0
+        CpltAssignment(int n, const Gecode::IntSet& d);
+        /// Test whether all assignments have been iterated
+        bool has_more() const override;
+        /// Move to next assignment
+        void next(Gecode::Support::RandomGenerator& rand) override;
+        /// Return value for variable \a i
+        int operator[](int i) const override;
+        /// Destructor
+        ~CpltAssignment() override;
     };
 
     /// Generate random selection of assignments
     class GECODE_TESTINT_EXPORT RandomAssignment : public Assignment {
     protected:
-      int* vals; ///< The current values for the variables
-      int  a;    ///< How many assignments still to be generated
-      /// Generate new value according to domain
-      int randval(Gecode::Support::RandomGenerator& rand);
+        int* vals; ///< The current values for the variables
+        int a;     ///< How many assignments still to be generated
+        /// Generate new value according to domain
+        int random_value(Gecode::Support::RandomGenerator& rand);
+
     public:
-      /// Initialize for \a a assignments for \a n0 variables and values \a d0
-      RandomAssignment(int n, const Gecode::IntSet& d, int a0, Gecode::Support::RandomGenerator& rand);
-      /// Test whether all assignments have been iterated
-      virtual bool has_more(void) const;
-      /// Move to next assignment
-      virtual void next(Gecode::Support::RandomGenerator& rand);
-      /// Return value for variable \a i
-      virtual int operator[](int i) const;
-      /// Destructor
-      virtual ~RandomAssignment(void);
+        /// Initialize for \a a assignments for \a n0 variables and values \a d0
+        RandomAssignment(int n, const Gecode::IntSet& d, int a0, Gecode::Support::RandomGenerator& rand);
+        /// Test whether all assignments have been iterated
+        bool has_more() const override;
+        /// Move to next assignment
+        void next(Gecode::Support::RandomGenerator& rand) override;
+        /// Return value for variable \a i
+        int operator[](int i) const override;
+        /// Destructor
+        ~RandomAssignment() override;
     };
 
     /// Generate random selection of assignments
     class GECODE_TESTINT_EXPORT RandomMixAssignment : public Assignment {
     protected:
-      int* vals; ///< The current values for the variables
-      int  a;    ///< How many assignments still to be generated
-      int _n1;   ///< How many variables in the second set
-      Gecode::IntSet _d1; ///< Domain for second set of variables
-      /// Generate new value according to domain \a d
-      int randval(const Gecode::IntSet& d, Gecode::Support::RandomGenerator& rand);
+        int* vals;          ///< The current values for the variables
+        int a;              ///< How many assignments still to be generated
+        int _n1;            ///< How many variables in the second set
+        Gecode::IntSet _d1; ///< Domain for second set of variables
+        /// Generate new value according to domain \a d
+        int random_value(const Gecode::IntSet& d, Gecode::Support::RandomGenerator& rand);
+
     public:
-      /// Initialize for \a a assignments for \a n0 variables and values \a d0
-      RandomMixAssignment(int n0, const Gecode::IntSet& d0, int n1, const Gecode::IntSet& d1, int a0,
-                          Gecode::Support::RandomGenerator& rand);
-      /// Test whether all assignments have been iterated
-      virtual bool has_more(void) const;
-      /// Move to next assignment
-      virtual void next(Gecode::Support::RandomGenerator& rand);
-      /// Return value for variable \a i
-      virtual int operator[](int i) const;
-      /// Destructor
-      virtual ~RandomMixAssignment(void);
+        /// Initialize for \a a assignments for \a n0 variables and values \a d0
+        RandomMixAssignment(int n0, const Gecode::IntSet& d0, int n1, const Gecode::IntSet& d1, int a0,
+                            Gecode::Support::RandomGenerator& rand);
+        /// Test whether all assignments have been iterated
+        bool has_more() const override;
+        /// Move to next assignment
+        void next(Gecode::Support::RandomGenerator& rand) override;
+        /// Return value for variable \a i
+        int operator[](int i) const override;
+        /// Destructor
+        ~RandomMixAssignment() override;
     };
 
     /// Level of consistency to test for
-    enum ConTestLevel {
-      CTL_NONE,     ///< No consistency-test
-      CTL_DOMAIN,   ///< Test for domain-consistency
-      CTL_BOUNDS_D, ///< Test for bounds(d)-consistency
-      CTL_BOUNDS_Z, ///< Test for bounds(z)-consistency
+    enum class ConTestLevel {
+        CTL_NONE,     ///< No consistency-test
+        CTL_DOMAIN,   ///< Test for domain-consistency
+        CTL_BOUNDS_D, ///< Test for bounds(d)-consistency
+        CTL_BOUNDS_Z, ///< Test for bounds(z)-consistency
     };
+    using enum ConTestLevel;
 
     class GECODE_TESTINT_EXPORT Test;
 
     /// Space for executing tests
     class GECODE_TESTINT_EXPORT TestSpace : public Gecode::Space {
     public:
-      /// Initial domain
-      Gecode::IntSet d;
-      /// Variables to be tested
-      Gecode::IntVarArray x;
-      /// Reification information
-      Gecode::Reify r;
-      /// The test currently run
-      Test* test;
-      /// Whether the test is for a reified propagator
-      bool reified;
+        /// Initial domain
+        Gecode::IntSet d;
+        /// Variables to be tested
+        Gecode::IntVarArray x;
+        /// Reification information
+        Gecode::Reify r;
+        /// The test currently run
+        Test* test;
+        /// Whether the test is for a reified propagator
+        bool reified;
 
-      /**
-       * \brief Create test space without reification
-       *
-       * Creates \a n variables with domain \a d for test \a t.
-       *
-       */
-      TestSpace(int n, Gecode::IntSet& d, Test* t);
-      /**
-       * \brief Create test space with reification
-       *
-       * Creates \a n variables with domain \a d for test \a t and stores
-       * the reification mode \a rm.
-       *
-       */
-      TestSpace(int n, Gecode::IntSet& d, Test* t, Gecode::ReifyMode rm);
-      /// Constructor for cloning \a s
-      TestSpace(TestSpace& s);
-      /// Copy space during cloning
-      virtual Gecode::Space* copy(void);
-      /// Test whether all variables are assigned
-      bool assigned(void) const;
-      /// Post propagator
-      void post(void);
-      /// Compute a fixpoint and check for failure
-      bool failed(void);
-      /// Randomly select an unassigned variable
-      int rndvar(Gecode::Support::RandomGenerator& rand);
-      /// Randomly select a pruning rel for variable \a i
-      void rndrel(const Assignment& a, int i, Gecode::IntRelType& irt, int& v, Gecode::Support::RandomGenerator& rand);
-      /// Perform integer tell operation on \a x[i]
-      void rel(int i, Gecode::IntRelType irt, int n);
-      /// Perform Boolean tell on \a b
-      void rel(bool sol);
-      /// Assign all (or all but one, if \a skip is true) variables to values in \a a
-      void assign(const Assignment& a, bool skip, Gecode::Support::RandomGenerator& rand);
-      /// Assign a random variable to a random bound
-      void bound(Gecode::Support::RandomGenerator& rand);
-      /** \brief Prune some random values from variable \a i
-       *
-       * If \a bounds_only is true, then the pruning is only done on the
-       * bounds of the variable.
-       */
-      void prune(int i, bool bounds_only, Gecode::Support::RandomGenerator& rand);
-      /// Prune some random values for some random variable
-      void prune(Gecode::Support::RandomGenerator& rand);
-      /// Prune values but not those in assignment \a a
-      bool prune(const Assignment& a, bool testfix, Gecode::Support::RandomGenerator& rand);
-      /// Disable propagators in space and compute fixpoint (make all idle)
-      void disable(void);
-      /// Enable propagators in space
-      void enable(void);
-      /// Prune values also in a space \a c with disabled propagators, but not those in assignment \a a
-      bool disabled(const Assignment& a, TestSpace& c, bool testfix, Gecode::Support::RandomGenerator& rand);
-      /// Return the number of propagators
-      unsigned int propagators(void);
+        /**
+         * \brief Create test space without reification
+         *
+         * Creates \a n variables with domain \a d for test \a t.
+         *
+         */
+        TestSpace(int n, Gecode::IntSet& d, Test* t);
+        /**
+         * \brief Create test space with reification
+         *
+         * Creates \a n variables with domain \a d for test \a t and stores
+         * the reification mode \a rm.
+         *
+         */
+        TestSpace(int n, Gecode::IntSet& d, Test* t, Gecode::ReifyMode rm);
+        /// Constructor for cloning \a s
+        TestSpace(TestSpace& s);
+        /// Copy space during cloning
+        Gecode::Space* copy() override;
+        /// Test whether all variables are assigned
+        bool assigned() const;
+        /// Post propagator
+        void post();
+        /// Compute a fixpoint and check for failure
+        bool failed();
+        /// Randomly select an unassigned variable
+        int rndvar(Gecode::Support::RandomGenerator& rand);
+        /// Randomly select a pruning rel for variable \a i
+        void rndrel(const Assignment& a, int i, Gecode::IntRelType& irt, int& v,
+                    Gecode::Support::RandomGenerator& rand);
+        /// Perform integer tell operation on \a x[i]
+        void rel(int i, Gecode::IntRelType irt, int n);
+        /// Perform Boolean tell on \a b
+        void rel(bool sol);
+        /// Assign all (or all but one, if \a skip is true) variables to values in \a a
+        void assign(const Assignment& a, bool skip, Gecode::Support::RandomGenerator& rand);
+        /// Assign a random variable to a random bound
+        void bound(Gecode::Support::RandomGenerator& rand);
+        /** \brief Prune some random values from variable \a i
+         *
+         * If \a bounds_only is true, then the pruning is only done on the
+         * bounds of the variable.
+         */
+        void prune(int i, bool bounds_only, Gecode::Support::RandomGenerator& rand);
+        /// Prune some random values for some random variable
+        void prune(Gecode::Support::RandomGenerator& rand);
+        /// Prune values but not those in assignment \a a
+        bool prune(const Assignment& a, bool test_fixpoint, Gecode::Support::RandomGenerator& rand);
+        /// Disable propagators in space and compute fixpoint (make all idle)
+        void disable();
+        /// Enable propagators in space
+        void enable();
+        /// Prune values also in a space \a c with disabled propagators, but not those in assignment \a a
+        bool disabled(const Assignment& a, TestSpace& c, bool test_fixpoint, Gecode::Support::RandomGenerator& rand);
+        /// Return the number of propagators
+        unsigned int propagators();
     };
 
     /**
@@ -261,137 +261,128 @@ namespace Test {
      * include them in solution(). Use the complete assignment generator
      * when checking the full relation.
      *
-     * IPL_DOM initializes contest to CTL_DOMAIN; other levels initialize
-     * it to CTL_NONE. Set contest to CTL_BOUNDS_D or CTL_BOUNDS_Z only when
+     * IPL_DOM initializes consistency_test_level to CTL_DOMAIN; other levels initialize
+     * it to CTL_NONE. Set consistency_test_level to CTL_BOUNDS_D or CTL_BOUNDS_Z only when
      * the propagator promises that consistency. For reified constraints,
      * enable reification in the constructor and override the reified post().
      * \see Test::run_registered_tests
      */
     class GECODE_TESTINT_EXPORT Test : public Base {
     protected:
-      /// Number of variables
-      int arity;
-      /// Domain of variables
-      Gecode::IntSet dom;
-      /// Does the constraint also exist as reified constraint
-      bool reified;
-      /// Supported reification modes, encoded as a bit mask of 1 << Gecode::RM_*
-      int rms;
-      /// Propagation level
-      Gecode::IntPropLevel ipl;
-      /// Whether to test for certain consistency
-      ConTestLevel contest;
-      /// Whether to perform search test
-      bool testsearch;
-      /// Whether to perform fixpoint test
-      bool testfix;
-      /// \name Test for reification modes
-      //@{
-      /// Test whether equivalence as reification mode is supported
-      bool eqv(void) const;
-      /// Test whether implication as reification mode is supported
-      bool imp(void) const;
-      /// Test whether reverse implication as reification mode is supported
-      bool pmi(void) const;
-      //@}
+        /// Number of variables
+        int arity;
+        /// Domain of variables
+        Gecode::IntSet dom;
+        /// Does the constraint also exist as reified constraint
+        bool reified;
+        /// Supported reification modes, encoded as a bit mask of 1 << Gecode::RM_*
+        int rms;
+        /// Propagation level
+        Gecode::IntPropLevel ipl;
+        /// Whether to test for certain consistency
+        ConTestLevel consistency_test_level;
+        /// Whether to perform search test
+        bool test_search;
+        /// Whether to perform fixpoint test
+        bool test_fixpoint;
+        /// \name Test for reification modes
+        //@{
+        /// Test whether equivalence as reification mode is supported
+        bool eqv() const;
+        /// Test whether implication as reification mode is supported
+        bool imp() const;
+        /// Test whether reverse implication as reification mode is supported
+        bool pmi() const;
+        //@}
     public:
-      /**
-       * \brief Constructor
-       *
-       * Constructs a test with prefix \a p, name \a s, arity \a a,
-       * and variable domain \a d. Also tests for a reified
-       * constraint, if \a r is true. The propagation level
-       * also selects the initial consistency check (see class documentation).
-       */
-      Test(const std::string& p, const std::string& s,
-           int a, const Gecode::IntSet& d, bool r=false,
-           Gecode::IntPropLevel i=Gecode::IPL_DEF);
-      /// Construct and register a test with explicitly assigned tags
-      Test(TestTags tags, const std::string& p, const std::string& s,
-           int a, const Gecode::IntSet& d, bool r=false,
-           Gecode::IntPropLevel i=Gecode::IPL_DEF);
-      /**
-       * \brief Constructor
-       *
-       * Constructs a test with name \a s, arity \a a, and variable
-       * domain \a d. Also tests for a reified constraint,
-       * if \a r is true. The propagation level
-       * also selects the initial consistency check (see class documentation).
-       */
-      Test(const std::string& s,
-           int a, const Gecode::IntSet& d, bool r=false,
-           Gecode::IntPropLevel i=Gecode::IPL_DEF);
-      /// Construct and register a test with explicitly assigned tags
-      Test(TestTags tags, const std::string& s,
-           int a, const Gecode::IntSet& d, bool r=false,
-           Gecode::IntPropLevel i=Gecode::IPL_DEF);
-      /**
-       * \brief Constructor
-       *
-       * Constructs a test with prefix \a p, name \a s, arity \a a,
-       * and variable domain \a min ... \a max. Also tests for
-       * a reified constraint, if \a r is true. The propagation
-       * level also selects the initial consistency check (see class documentation).
-       */
-      Test(const std::string& p, const std::string& s,
-           int a, int min, int max, bool r=false,
-           Gecode::IntPropLevel i=Gecode::IPL_DEF);
-      /// Construct and register a test with explicitly assigned tags
-      Test(TestTags tags, const std::string& p, const std::string& s,
-           int a, int min, int max, bool r=false,
-           Gecode::IntPropLevel i=Gecode::IPL_DEF);
-      /**
-       * \brief Constructor
-       *
-       * Constructs a test with name \a s, arity \a a, variable
-       * domain \a min ... \a max. Also tests for a reified constraint,
-       * if \a r is true. The propagation level
-       * also selects the initial consistency check (see class documentation).
-       */
-      Test(const std::string& s,
-           int a, int min, int max, bool r=false,
-           Gecode::IntPropLevel i=Gecode::IPL_DEF);
-      /// Construct and register a test with explicitly assigned tags
-      Test(TestTags tags, const std::string& s,
-           int a, int min, int max, bool r=false,
-           Gecode::IntPropLevel i=Gecode::IPL_DEF);
-      /** \brief Create the assignment generator (complete by default)
-       *
-       * An override changes the assignments checked, not the variable
-       * domains in the test space.
-       */
-      virtual Assignment* assignment(void) const;
-      /// Check for solution
-      virtual bool solution(const Assignment&) const = 0;
-      /// Whether to ignore assignment for reification
-      virtual bool ignore(const Assignment&) const;
-      /// Post constraint
-      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
-      /// Post reified constraint
-      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                        Gecode::Reify r);
-      /// Perform test
-      virtual bool run(void);
-      /// \name Mapping scalar values to strings
-      //@{
-      /// Map bool to string
-      static std::string str(bool b);
-      /// Map integer to string
-      static std::string str(int i);
-      /// Map integer array to string
-      static std::string str(const Gecode::IntArgs& i);
-      /// Map integer propagation level to string
-      static std::string str(Gecode::IntPropLevel ipl);
-      /// Map integer relation to string
-      static std::string str(Gecode::IntRelType irl);
-      /// Map Boolean operation to string
-      static std::string str(Gecode::BoolOpType bot);
-      //@}
-      /// \name General support
-      //@{
-      /// Compare \a x and \a y with respect to \a r
-      template<class T> static bool cmp(T x, Gecode::IntRelType r, T y);
-      //@}
+        /**
+         * \brief Constructor
+         *
+         * Constructs a test with prefix \a p, name \a s, arity \a a,
+         * and variable domain \a d. Also tests for a reified
+         * constraint, if \a r is true. The propagation level
+         * also selects the initial consistency check (see class documentation).
+         */
+        Test(const std::string& p, const std::string& s, int a, const Gecode::IntSet& d, bool r = false,
+             Gecode::IntPropLevel i = Gecode::IPL_DEF);
+        /// Construct and register a test with explicitly assigned tags
+        Test(TestTags tags, const std::string& p, const std::string& s, int a, const Gecode::IntSet& d, bool r = false,
+             Gecode::IntPropLevel i = Gecode::IPL_DEF);
+        /**
+         * \brief Constructor
+         *
+         * Constructs a test with name \a s, arity \a a, and variable
+         * domain \a d. Also tests for a reified constraint,
+         * if \a r is true. The propagation level
+         * also selects the initial consistency check (see class documentation).
+         */
+        Test(const std::string& s, int a, const Gecode::IntSet& d, bool r = false,
+             Gecode::IntPropLevel i = Gecode::IPL_DEF);
+        /// Construct and register a test with explicitly assigned tags
+        Test(TestTags tags, const std::string& s, int a, const Gecode::IntSet& d, bool r = false,
+             Gecode::IntPropLevel i = Gecode::IPL_DEF);
+        /**
+         * \brief Constructor
+         *
+         * Constructs a test with prefix \a p, name \a s, arity \a a,
+         * and variable domain \a min ... \a max. Also tests for
+         * a reified constraint, if \a r is true. The propagation
+         * level also selects the initial consistency check (see class documentation).
+         */
+        Test(const std::string& p, const std::string& s, int a, int min, int max, bool r = false,
+             Gecode::IntPropLevel i = Gecode::IPL_DEF);
+        /// Construct and register a test with explicitly assigned tags
+        Test(TestTags tags, const std::string& p, const std::string& s, int a, int min, int max, bool r = false,
+             Gecode::IntPropLevel i = Gecode::IPL_DEF);
+        /**
+         * \brief Constructor
+         *
+         * Constructs a test with name \a s, arity \a a, variable
+         * domain \a min ... \a max. Also tests for a reified constraint,
+         * if \a r is true. The propagation level
+         * also selects the initial consistency check (see class documentation).
+         */
+        Test(const std::string& s, int a, int min, int max, bool r = false, Gecode::IntPropLevel i = Gecode::IPL_DEF);
+        /// Construct and register a test with explicitly assigned tags
+        Test(TestTags tags, const std::string& s, int a, int min, int max, bool r = false,
+             Gecode::IntPropLevel i = Gecode::IPL_DEF);
+        /** \brief Create the assignment generator (complete by default)
+         *
+         * An override changes the assignments checked, not the variable
+         * domains in the test space.
+         */
+        virtual Assignment* assignment() const;
+        /// Check for solution
+        virtual bool solution(const Assignment&) const = 0;
+        /// Whether to ignore assignment for reification
+        virtual bool ignore(const Assignment&) const;
+        /// Post constraint
+        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
+        /// Post reified constraint
+        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r);
+        /// Perform test
+        bool run() override;
+        /// \name Mapping scalar values to strings
+        //@{
+        /// Map bool to string
+        static std::string str(bool b);
+        /// Map integer to string
+        static std::string str(int i);
+        /// Map integer array to string
+        static std::string str(const Gecode::IntArgs& x);
+        /// Map integer propagation level to string
+        static std::string str(Gecode::IntPropLevel ipl);
+        /// Map integer relation to string
+        static std::string str(Gecode::IntRelType irt);
+        /// Map Boolean operation to string
+        static std::string str(Gecode::BoolOpType bot);
+        //@}
+        /// \name General support
+        //@{
+        /// Compare \a x and \a y with respect to \a r
+        template <class T>
+        static bool cmp(T x, Gecode::IntRelType r, T y);
+        //@}
     };
 
     /**
@@ -409,99 +400,101 @@ namespace Test {
      */
     class GECODE_TESTINT_EXPORT OpenTest : public Test {
     protected:
-      /// Number of items in the completed list
-      int items;
+        /// Number of items in the completed list
+        int items;
+
     public:
-      /// Initialize item and auxiliary variables with the common domain
-      OpenTest(const std::string& name, int items, int extra,
-               const Gecode::IntSet& domain,
-               Gecode::IntPropLevel ipl=Gecode::IPL_DEF);
-      /// Post the tested relation on an open list and its variable array
-      virtual void post(Gecode::Space& home, Gecode::OpenIntVarList list,
-                        Gecode::IntVarArray& x) = 0;
-      /// Adapt the relation to the ordinary closed-list tests
-      void post(Gecode::Space& home, Gecode::IntVarArray& x) override;
-      /// Run closed-list tests and incremental histories
-      bool run(void) override;
+        /// Initialize item and auxiliary variables with the common domain
+        OpenTest(const std::string& name, int items, int extra, const Gecode::IntSet& domain,
+                 Gecode::IntPropLevel ipl = Gecode::IPL_DEF);
+        /// Post the tested relation on an open list and its variable array
+        virtual void post(Gecode::Space& home, Gecode::OpenIntVarList list, Gecode::IntVarArray& x) = 0;
+        /// Adapt the relation to the ordinary closed-list tests
+        void post(Gecode::Space& home, Gecode::IntVarArray& x) override;
+        /// Run closed-list tests and incremental histories
+        bool run() override;
     };
     //@}
 
     /// Iterator for simple integer propagation levels
     class GECODE_TESTINT_EXPORT IntPropLevels {
     private:
-      /// Array of propagation levels
-      static const Gecode::IntPropLevel ipls[3];
-      /// Current position in level array
-      int i;
+        /// Array of propagation levels
+        static const Gecode::IntPropLevel ipls[3];
+        /// Current position in level array
+        int i;
+
     public:
-      /// Initialize iterator
-      IntPropLevels(void);
-      /// Test whether iterator is done
-      bool operator()(void) const;
-      /// Increment to next level
-      void operator++(void);
-      /// Return current level
-      Gecode::IntPropLevel ipl(void) const;
+        /// Initialize iterator
+        IntPropLevels();
+        /// Test whether iterator is done
+        bool operator()() const;
+        /// Increment to next level
+        void operator++();
+        /// Return current level
+        Gecode::IntPropLevel ipl() const;
     };
 
     /// Iterator for basic and advanced integer propagation levels
     class GECODE_TESTINT_EXPORT IntPropBasicAdvanced {
     private:
-      /// Array of propagation levels
-      static const Gecode::IntPropLevel ipls[3];
-      /// Current position in level array
-      int i;
+        /// Array of propagation levels
+        static const Gecode::IntPropLevel ipls[3];
+        /// Current position in level array
+        int i;
+
     public:
-      /// Initialize iterator
-      IntPropBasicAdvanced(void);
-      /// Test whether iterator is done
-      bool operator()(void) const;
-      /// Increment to next level
-      void operator++(void);
-      /// Return current level
-      Gecode::IntPropLevel ipl(void) const;
+        /// Initialize iterator
+        IntPropBasicAdvanced();
+        /// Test whether iterator is done
+        bool operator()() const;
+        /// Increment to next level
+        void operator++();
+        /// Return current level
+        Gecode::IntPropLevel ipl() const;
     };
 
     /// Iterator for integer relation types
     class GECODE_TESTINT_EXPORT IntRelTypes {
     private:
-      /// Array of relation types
-      static const Gecode::IntRelType irts[6];
-      /// Current position in relation type array
-      int i;
+        /// Array of relation types
+        static const Gecode::IntRelType irts[6];
+        /// Current position in relation type array
+        int i;
+
     public:
-      /// Initialize iterator
-      IntRelTypes(void);
-      /// Reset iterator
-      void reset(void);
-      /// Test whether iterator is done
-      bool operator()(void) const;
-      /// Increment to next relation type
-      void operator++(void);
-      /// Return current relation type
-      Gecode::IntRelType irt(void) const;
+        /// Initialize iterator
+        IntRelTypes();
+        /// Reset iterator
+        void reset();
+        /// Test whether iterator is done
+        bool operator()() const;
+        /// Increment to next relation type
+        void operator++();
+        /// Return current relation type
+        Gecode::IntRelType irt() const;
     };
 
     /// Iterator for Boolean operation types
     class GECODE_TESTINT_EXPORT BoolOpTypes {
     private:
-      /// Array of operation types
-      static const Gecode::BoolOpType bots[5];
-      /// Current position in operation type array
-      int i;
+        /// Array of operation types
+        static const Gecode::BoolOpType bots[5];
+        /// Current position in operation type array
+        int i;
+
     public:
-      /// Initialize iterator
-      BoolOpTypes(void);
-      /// Test whether iterator is done
-      bool operator()(void) const;
-      /// Increment to next operation type
-      void operator++(void);
-      /// Return current operation type
-      Gecode::BoolOpType bot(void) const;
+        /// Initialize iterator
+        BoolOpTypes();
+        /// Test whether iterator is done
+        bool operator()() const;
+        /// Increment to next operation type
+        void operator++();
+        /// Return current operation type
+        Gecode::BoolOpType bot() const;
     };
 
-  }
-}
+} // namespace Test::Int
 
 /**
  * \brief Print assignment \a

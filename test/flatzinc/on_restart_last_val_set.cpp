@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("on_restart::last_val_set",
-R"FZN(
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("on_restart::last_val_set",
+                                   R"FZN(
 predicate gecode_on_restart_status(var int: s);
 predicate gecode_on_restart_last_val_set(var set of int: input,var set of int: out);
 predicate array_int_maximum(var int: m,array [int] of var int: x);
@@ -134,7 +130,7 @@ constraint set_eq_reif(y,1..1,X_INTRODUCED_60_):: defines_var(X_INTRODUCED_60_);
 constraint set_eq_reif(y,X_INTRODUCED_53_,X_INTRODUCED_61_):: defines_var(X_INTRODUCED_61_);
 solve :: int_search(X_INTRODUCED_2_,input_order,indomain_min,complete) maximize X_INTRODUCED_1_;
 )FZN",
-R"OUT(x = -1;
+                                   R"OUT(x = -1;
 y = 1..1;
 ----------
 x = 2;
@@ -147,13 +143,12 @@ x = 4;
 y = {1, 2, 4, 8};
 ----------
 ==========
-)OUT", true, {"--restart", "constant", "--restart-base", "100"});
-      }
+)OUT",
+                                   true, {"--restart", "constant", "--restart-base", "100"});
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

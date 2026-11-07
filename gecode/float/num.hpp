@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,31 +32,35 @@
 
 namespace Gecode {
 
-  forceinline FloatNum
-  pi_half_lower(void) {
-    return gecode_boost::numeric::interval_lib::constants::pi_half_lower<FloatNum>();
-  }
-  forceinline FloatNum
-  pi_half_upper(void) {
-    return gecode_boost::numeric::interval_lib::constants::pi_half_upper<FloatNum>();
-  }
-  forceinline FloatNum
-  pi_lower(void) {
-    return gecode_boost::numeric::interval_lib::constants::pi_lower<FloatNum>();
-  }
-  forceinline FloatNum
-  pi_upper(void) {
-    return gecode_boost::numeric::interval_lib::constants::pi_upper<FloatNum>();
-  }
-  forceinline FloatNum
-  pi_twice_lower(void) {
-    return gecode_boost::numeric::interval_lib::constants::pi_twice_lower<FloatNum>();
-  }
-  forceinline FloatNum
-  pi_twice_upper(void) {
-    return gecode_boost::numeric::interval_lib::constants::pi_twice_upper<FloatNum>();
-  }
-}
+    /*
+     * The binary64 neighbours of pi, and their exact halves and doubles
+     *
+     */
+
+    forceinline FloatNum
+    pi_half_lower() {
+        return 0x1.921fb54442d18p+0;
+    }
+    forceinline FloatNum
+    pi_half_upper() {
+        return 0x1.921fb54442d19p+0;
+    }
+    forceinline FloatNum
+    pi_lower() {
+        return 0x1.921fb54442d18p+1;
+    }
+    forceinline FloatNum
+    pi_upper() {
+        return 0x1.921fb54442d19p+1;
+    }
+    forceinline FloatNum
+    pi_twice_lower() {
+        return 0x1.921fb54442d18p+2;
+    }
+    forceinline FloatNum
+    pi_twice_upper() {
+        return 0x1.921fb54442d19p+2;
+    }
+} // namespace Gecode
 
 // STATISTICS: float-var
-

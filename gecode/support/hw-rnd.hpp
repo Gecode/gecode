@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,12 +30,11 @@
  *
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
-  /// Return hardware generated random number
-  GECODE_SUPPORT_EXPORT unsigned int hwrnd(void);
+    /// Return hardware generated random number
+    GECODE_SUPPORT_EXPORT unsigned int hwrnd();
 
-}}
+} // namespace Gecode::Support
 
 // STATISTICS: support-any
-

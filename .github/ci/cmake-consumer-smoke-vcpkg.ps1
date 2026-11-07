@@ -49,7 +49,7 @@ target_link_libraries(consumer_a PRIVATE Gecode::gecode)
 '@ | Set-Content -Encoding utf8 (Join-Path $work "a\CMakeLists.txt")
 @'
 #include <gecode/support/config.hpp>
-int main(void) { return 0; }
+int main() { return 0; }
 '@ | Set-Content -Encoding utf8 (Join-Path $work "a\main.cpp")
 
 @'
@@ -61,7 +61,7 @@ target_link_libraries(consumer_b PRIVATE Gecode::gecodedriver)
 '@ | Set-Content -Encoding utf8 (Join-Path $work "b\CMakeLists.txt")
 @'
 #include <gecode/driver.hh>
-int main(void) {
+int main() {
   Gecode::Options options("consumer_b");
   return options.model();
 }
@@ -103,7 +103,7 @@ target_link_libraries(consumer_d PRIVATE Gecode::gecodefloat)
 #error "Expected installed Gecode package to enable MPFR"
 #endif
 #include <gecode/float.hh>
-int main(void) {
+int main() {
   Gecode::Float::Rounding rounding;
   return rounding.exp_down(1.0) > 0.0 ? 0 : 1;
 }

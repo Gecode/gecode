@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -38,35 +37,35 @@
 
 namespace {
 
-  int abs_runs = 0;
+    int abs_runs = 0;
 
-  class AbsSmokeTest : public Test::Int::Test {
-  public:
-    AbsSmokeTest(void)
-      : ::Test::Int::Test("Public::Smoke::Abs",2,-2,2) {}
+    class AbsSmokeTest : public Test::Int::Test {
+    public:
+        AbsSmokeTest() : ::Test::Int::Test("Public::Smoke::Abs", 2, -2, 2) {}
 
-    bool solution(const ::Test::Int::Assignment& x) const override {
-      const int abs_x0 = (x[0] < 0) ? -x[0] : x[0];
-      return abs_x0 == x[1];
-    }
+        bool
+        solution(const ::Test::Int::Assignment& x) const override {
+            const int abs_x0 = (x[0] < 0) ? -x[0] : x[0];
+            return abs_x0 == x[1];
+        }
 
-    void post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-      abs_runs++;
-      Gecode::abs(home, x[0], x[1]);
-    }
-  } abs_smoke_test;
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            abs_runs++;
+            Gecode::abs(home, x[0], x[1]);
+        }
+    } abs_smoke_test;
 
-}
+} // namespace
 
 int
 main(int argc, char* argv[]) {
-  const int result = Test::run_registered_tests(argc,argv);
-  if ((result != EXIT_SUCCESS) || (abs_runs == 0)) {
-    std::cerr << "public-int-smoke: helper-backed test did not run"
-              << std::endl;
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+    const int result = Test::run_registered_tests(argc, argv);
+    if ((result != EXIT_SUCCESS) || (abs_runs == 0)) {
+        std::cerr << "public-int-smoke: helper-backed test did not run" << '\n' << std::flush;
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
 }
 
 // STATISTICS: test-int

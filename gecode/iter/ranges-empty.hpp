@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,77 +30,72 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
-  /**
-   * \brief Range iterator for empty range
-   *
-   * \ingroup FuncIterRanges
-   */
+    /**
+     * \brief Range iterator for empty range
+     *
+     * \ingroup FuncIterRanges
+     */
 
-  class Empty {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Empty(void);
-    /// Initialize
-    void init(void);
-    //@}
+    class Empty {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Empty() = default;
+        /// Initialize
+        void init();
+        //@}
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a range or done
-    bool operator ()(void) const;
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    //@}
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a range or done
+        bool operator()() const;
+        /// Move iterator to next range (if possible)
+        void operator++();
+        //@}
 
-    /// \name Range access
-    //@{
-    /// Return smallest value of range
-    int min(void) const;
-    /// Return largest value of range
-    int max(void) const;
-    /// Return width of range (distance between minimum and maximum)
-    unsigned int width(void) const;
-    //@}
-  };
+        /// \name Range access
+        //@{
+        /// Return smallest value of range
+        int min() const;
+        /// Return largest value of range
+        int max() const;
+        /// Return width of range (distance between minimum and maximum)
+        unsigned int width() const;
+        //@}
+    };
 
+    forceinline void
+    Empty::init() {}
 
-  forceinline
-  Empty::Empty(void) {}
+    forceinline void
+    Empty::operator++() {
+        GECODE_NEVER;
+    }
 
-  forceinline void
-  Empty::init(void) {}
+    forceinline bool
+    Empty::operator()() const {
+        return false;
+    }
 
-  forceinline void
-  Empty::operator ++(void) {
-    GECODE_NEVER;
-  }
+    forceinline int
+    Empty::min() const {
+        GECODE_NEVER;
+        return 0;
+    }
+    forceinline int
+    Empty::max() const {
+        GECODE_NEVER;
+        return 0;
+    }
+    forceinline unsigned int
+    Empty::width() const {
+        GECODE_NEVER;
+        return 0;
+    }
 
-  forceinline bool
-  Empty::operator ()(void) const {
-    return false;
-  }
-
-  forceinline int
-  Empty::min(void) const {
-    GECODE_NEVER;
-    return 0;
-  }
-  forceinline int
-  Empty::max(void) const {
-    GECODE_NEVER;
-    return 0;
-  }
-  forceinline unsigned int
-  Empty::width(void) const {
-    GECODE_NEVER;
-    return 0;
-  }
-
-}}}
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,72 +30,61 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
-  /**
-   * \brief %Range iterator cache
-   *
-   * Allows to iterate the ranges as defined by the input iterator
-   * several times provided the Cache is %reset by the reset member
-   * function.
-   *
-   * \ingroup FuncIterRanges
-   */
-  class Cache : public RangeListIter {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Cache(void);
-    /// Copy constructor
-    Cache(const Cache& m);
-    /// Initialize with ranges from \a i
-    template<class I>
-    Cache(Region& r, I& i);
-    /// Initialize with ranges from \a i
-    template<class I>
-    void init(Region& r, I& i);
-    /// Assignment operator (both caches must be allocated from the same region)
-    Cache& operator =(const Cache& m);
-    //@}
-  };
+    /**
+     * \brief %Range iterator cache
+     *
+     * Allows to iterate the ranges as defined by the input iterator
+     * several times provided the Cache is %reset by the reset member
+     * function.
+     *
+     * \ingroup FuncIterRanges
+     */
+    class Cache : public RangeListIter {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Cache() = default;
+        /// Copy constructor
+        Cache(const Cache& m) = default;
+        /// Initialize with ranges from \a i
+        template <class I>
+        Cache(Region& r, I& i);
+        /// Initialize with ranges from \a i
+        template <class I>
+        void init(Region& r, I& i);
+        /// Assignment operator (both caches must be allocated from the same region)
+        Cache& operator=(const Cache& m);
+        //@}
+    };
 
-
-  forceinline
-  Cache::Cache(void) {}
-
-  forceinline
-  Cache::Cache(const Cache& m)
-    : RangeListIter(m) {}
-
-  template<class I>
-  void
-  Cache::init(Region& r, I& i) {
-    RangeListIter::init(r);
-    RangeList* h = nullptr;
-    RangeList** p = &h;
-    for (; i(); ++i) {
-      RangeList* t = new (*rlio) RangeList;
-      *p = t; p = &t->next;
-      t->min = i.min();
-      t->max = i.max();
+    template <class I>
+    void
+    Cache::init(Region& r, I& i) {
+        RangeListIter::init(r);
+        RangeList* h = nullptr;
+        RangeList** p = &h;
+        for (; i(); ++i) {
+            RangeList* t = new (*rlio) RangeList;
+            *p = t;
+            p = &t->next;
+            t->min = i.min();
+            t->max = i.max();
+        }
+        *p = nullptr;
+        RangeListIter::set(h);
     }
-    *p = nullptr;
-    RangeListIter::set(h);
-  }
 
-  template<class I>
-  forceinline
-  Cache::Cache(Region& r, I& i) {
-    init(r,i);
-  }
+    template <class I>
+    forceinline
+    Cache::Cache(Region& r, I& i) {
+        init(r, i);
+    }
 
-  forceinline Cache&
-  Cache::operator =(const Cache& m) {
-    return static_cast<Cache&>(RangeListIter::operator =(m));
-  }
+    forceinline Cache& Cache::operator=(const Cache& m) = default;
 
-}}}
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any
-

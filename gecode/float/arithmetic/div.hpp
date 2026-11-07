@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,49 +32,49 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Arithmetic {
+namespace Gecode::Float::Arithmetic {
 
-  /*
-   * Bounds consistent division operator
-   *
-   */
-  template<class A, class B, class C>
-  forceinline
-  Div<A,B,C>::Div(Home home, A x0, B x1, C x2)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,x0,x1,x2) {}
+    /*
+     * Bounds consistent division operator
+     *
+     */
+    template <class A, class B, class C>
+    forceinline
+    Div<A, B, C>::Div(Home home, A x0, B x1, C x2)
+        : MixTernaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND, C, PC_FLOAT_BND>(home, x0, x1, x2) {}
 
-  template<class A, class B, class C>
-  forceinline
-  Div<A,B,C>::Div(Space& home, Div<A,B,C>& p)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,p) {}
+    template <class A, class B, class C>
+    forceinline
+    Div<A, B, C>::Div(Space& home, Div<A, B, C>& p)
+        : MixTernaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND, C, PC_FLOAT_BND>(home, p) {}
 
-  template<class A, class B, class C>
-  Actor*
-  Div<A,B,C>::copy(Space& home) {
-    return new (home) Div<A,B,C>(home,*this);
-  }
+    template <class A, class B, class C>
+    Actor*
+    Div<A, B, C>::copy(Space& home) {
+        return new (home) Div<A, B, C>(home, *this);
+    }
 
-  template<class A, class B, class C>
-  ExecStatus
-  Div<A,B,C>::post(Home home, A x0, B x1, C x2) {
-    GECODE_ME_CHECK(x2.eq(home,x0.domain() / x1.domain()));
-    GECODE_ME_CHECK(x0.eq(home,x2.domain() * x1.domain()));
-    (void) new (home) Div<A,B,C>(home,x0,x1,x2);
-    return ES_OK;
-  }
+    template <class A, class B, class C>
+    ExecStatus
+    Div<A, B, C>::post(Home home, A x0, B x1, C x2) {
+        GECODE_ME_CHECK(x2.eq(home, x0.domain() / x1.domain()));
+        GECODE_ME_CHECK(x0.eq(home, x2.domain() * x1.domain()));
+        (void)new (home) Div<A, B, C>(home, x0, x1, x2);
+        return ES_OK;
+    }
 
-  template<class A, class B, class C>
-  ExecStatus
-  Div<A,B,C>::propagate(Space& home, const ModEventDelta&) {
-    if (x1.assigned() && (x1.val() == 0)) return ES_FAILED;
-    GECODE_ME_CHECK(x2.eq(home,x0.domain() / x1.domain()));
-    GECODE_ME_CHECK(x0.eq(home,x2.domain() * x1.domain()));
-    if (!x2.assigned() || (x2.val() != 0.0))
-      GECODE_ME_CHECK(x1.eq(home,x0.domain() / x2.domain()));
-    return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
-  }
+    template <class A, class B, class C>
+    ExecStatus
+    Div<A, B, C>::propagate(Space& home, const ModEventDelta&) {
+        if (x1.assigned() && (x1.val() == 0))
+            return ES_FAILED;
+        GECODE_ME_CHECK(x2.eq(home, x0.domain() / x1.domain()));
+        GECODE_ME_CHECK(x0.eq(home, x2.domain() * x1.domain()));
+        if (!x2.assigned() || (x2.val() != 0.0))
+            GECODE_ME_CHECK(x1.eq(home, x0.domain() / x2.domain()));
+        return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
+    }
 
-}}}
+} // namespace Gecode::Float::Arithmetic
 
 // STATISTICS: float-prop
-

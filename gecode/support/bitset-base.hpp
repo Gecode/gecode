@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -37,599 +36,525 @@
  *
  */
 
+#include <bit>
 #include <climits>
 
-#ifdef _MSC_VER
+namespace Gecode::Support {
 
-#include <intrin.h>
+    class RawBitSetBase;
 
-#if defined(_M_IX86)
-#pragma intrinsic(_BitScanForward)
-#pragma intrinsic(__popcnt)
-#define GECODE_SUPPORT_MSVC_32
-#endif
+    /// Date item for bitsets
+    class BitSetData {
+        friend class RawBitSetBase;
 
-#if defined(_M_X64) || defined(_M_IA64)
-#pragma intrinsic(_BitScanForward64)
-#pragma intrinsic(__popcnt64)
-#define GECODE_SUPPORT_MSVC_64
-#endif
-
-#endif
-
-namespace Gecode { namespace Support {
-
-  class RawBitSetBase;
-
-  /// Date item for bitsets
-  class BitSetData {
-    friend class RawBitSetBase;
-  protected:
-#if defined(GECODE_SUPPORT_MSVC_32)
-    /// Basetype for bits
-    typedef unsigned long int Base;
+    protected:
+#if defined(_MSC_VER) && defined(_M_IX86)
+        /// Basetype for bits
+        using Base = unsigned long int;
 #else
-    /// Basetype for bits
-    typedef unsigned long long int Base;
+        /// Basetype for bits
+        using Base = unsigned long long int;
 #endif
-    /// The bits
-    Base bits;
-  public:
-    /// Bits per base
-    static const unsigned int bpb =
-      static_cast<unsigned int>(CHAR_BIT * sizeof(Base));
-    /// Initialize with all bits set if \a setbits
-    void init(bool setbits=false);
-    /// Get number of data elements for \a s bits
-    static unsigned int data(unsigned int s);
-    /// Test whether any bit with position greater or equal to \a i is set
-    bool operator ()(unsigned int i=0U) const;
-    /// Access value at bit \a i
-    bool get(unsigned int i) const;
-    /// Set bit \a i
-    void set(unsigned int i);
-    /// Clear bit \a i
-    void clear(unsigned int i);
-    /// Return next set bit with position greater or equal to \a i (there must be a bit)
-    unsigned int next(unsigned int i=0U) const;
-    /// Whether all bits are set
-    bool all(void) const;
-    /// Whether all bits from bit 0 to bit \a i are set
-    bool all(unsigned int i) const;
-    /// Whether no bits are set
-    bool none(void) const;
-    /// Whether no bits from bit 0 to bit \a i are set
-    bool none(unsigned int i) const;
-    /// Return the number of bits set
-    unsigned int ones(void) const;
-    /// Return the number of bits not set
-    unsigned int zeroes(void) const;
-    /// Check whether exactly one bit is set
-    bool one(void) const;
-    /// Perform "and" with \a a
-    void a(BitSetData a);
-    /// Perform "and" with \a a for bits 0 to \a i
-    void a(BitSetData a, unsigned int i);
-    /// Return "and" of \a a and \a b
-    static BitSetData a(BitSetData a, BitSetData b);
-    /// Perform "or" with \a a
-    void o(BitSetData a);
-    /// Perform "or" with \a a for bits 0 to \a i
-    void o(BitSetData a, unsigned int i);
-    /// Return "or" of \a a and \a b
-    static BitSetData o(BitSetData a, BitSetData b);
-    /// Check if bits are the same as for \a a
-    bool operator ==(BitSetData a) const;
-    /// Check if bits are not the same as for \a a
-    bool operator !=(BitSetData a) const;
-    /// Invert all bits in \a b
-    BitSetData operator ~(void) const;
-  };
+        /// The bits
+        Base bits;
 
-  /// Status of a bitset
-  enum BitSetStatus {
-    BSS_NONE, ///< No bits set
-    BSS_ALL,  ///< All bits set
-    BSS_SOME  ///< Some but not all bits set
-  };
+    public:
+        /// Bits per base
+        static const unsigned int bpb = static_cast<unsigned int>(CHAR_BIT * sizeof(Base));
+        /// Initialize with all bits set if \a set_bits
+        void init(bool set_bits = false);
+        /// Get number of data elements for \a s bits
+        static unsigned int data(unsigned int s);
+        /// Test whether any bit with position greater or equal to \a i is set
+        bool operator()(unsigned int i = 0U) const;
+        /// Access value at bit \a i
+        bool get(unsigned int i) const;
+        /// Set bit \a i
+        void set(unsigned int i);
+        /// Clear bit \a i
+        void clear(unsigned int i);
+        /// Return next set bit with position greater or equal to \a i (there must be a bit)
+        unsigned int next(unsigned int i = 0U) const;
+        /// Whether all bits are set
+        bool all() const;
+        /// Whether all bits from bit 0 to bit \a i are set
+        bool all(unsigned int i) const;
+        /// Whether no bits are set
+        bool none() const;
+        /// Whether no bits from bit 0 to bit \a i are set
+        bool none(unsigned int i) const;
+        /// Return the number of bits set
+        unsigned int ones() const;
+        /// Return the number of bits not set
+        unsigned int zeroes() const;
+        /// Check whether exactly one bit is set
+        bool one() const;
+        /// Perform "and" with \a a
+        void a(BitSetData a);
+        /// Perform "and" with \a a for bits 0 to \a i
+        void a(BitSetData a, unsigned int i);
+        /// Return "and" of \a a and \a b
+        static BitSetData a(BitSetData a, BitSetData b);
+        /// Perform "or" with \a a
+        void o(BitSetData a);
+        /// Perform "or" with \a a for bits 0 to \a i
+        void o(BitSetData a, unsigned int i);
+        /// Return "or" of \a a and \a b
+        static BitSetData o(BitSetData a, BitSetData b);
+        /// Whether both hold the same bits
+        bool operator==(const BitSetData&) const = default;
+        /// Invert all bits in \a b
+        BitSetData operator~() const;
+    };
 
-  /// Basic bitset support  (without stored size information)
-  class RawBitSetBase {
-  protected:
-    /// Bits per base
-    static const unsigned int bpb = BitSetData::bpb;
-    /// Stored bits
-    BitSetData* data;
-  private:
-    /// Copy constructor (disabled)
-    RawBitSetBase(const RawBitSetBase&);
-    /// Assignment operator (disabled)
-    RawBitSetBase& operator =(const RawBitSetBase&);
-  public:
-    /// Default constructor (yields empty set)
-    RawBitSetBase(void);
-    /// Initialize for \a sz bits and allocator \a a
-    template<class A>
-    RawBitSetBase(A& a, unsigned int sz, bool setbits=false);
-    /// Copy from bitset \a bs with allocator \a a
-    template<class A>
-    RawBitSetBase(A& a, unsigned int sz, const RawBitSetBase& bs);
-    /// Allocate for \a sz bits and allocator \a a (only after default constructor)
-    template<class A>
-    void allocate(A& a, unsigned int sz);
-    /// Initialize for \a sz bits and allocator \a a (only after default constructor)
-    template<class A>
-    void init(A& a, unsigned int sz, bool setbits=false);
-    /// Clear \a sz bits
-    void clearall(unsigned int sz, bool setbits=false);
-    /// Copy \a sz bits from \a bs
-    void copy(unsigned int sz, const RawBitSetBase& bs);
-    /// Access value at bit \a i
-    bool get(unsigned int i) const;
-    /// Set bit \a i
-    void set(unsigned int i);
-    /// Clear bit \a i
-    void clear(unsigned int i);
-    /// Return position greater or equal \a i of next set bit (\a i is allowed to be equal to size)
-    unsigned int next(unsigned int i) const;
-    /// Return status of bitset
-    BitSetStatus status(unsigned int sz) const;
-    /// Test whether all bits are set
-    bool all(unsigned int sz) const;
-    /// Test whether no bits are set
-    bool none(unsigned int sz) const;
-    /// Resize bitset from \a sz to \a n elememts
-    template<class A>
-    void resize(A& a, unsigned int sz, unsigned int n, bool setbits=false);
-    /// Dispose memory for bit set
-    template<class A>
-    void dispose(A& a, unsigned int sz);
-  };
+    /// Status of a bitset
+    enum class BitSetStatus {
+        BSS_NONE, ///< No bits set
+        BSS_ALL,  ///< All bits set
+        BSS_SOME  ///< Some but not all bits set
+    };
+    using enum BitSetStatus;
 
-  /// Basic bitset support
-  class BitSetBase : public RawBitSetBase {
-  protected:
-    /// Size of bitset (number of bits)
-    unsigned int sz;
-  private:
-    /// Copy constructor (disabled)
-    BitSetBase(const BitSetBase&);
-    /// Assignment operator (disabled)
-    BitSetBase& operator =(const BitSetBase&);
-  public:
-    /// Default constructor (yields empty set)
-    BitSetBase(void);
-    /// Initialize for \a s bits and allocator \a a
-    template<class A>
-    BitSetBase(A& a, unsigned int s, bool setbits=false);
-    /// Copy from bitset \a bs with allocator \a a
-    template<class A>
-    BitSetBase(A& a, const BitSetBase& bs);
-    /// Initialize for \a s bits and allocator \a a (only after default constructor)
-    template<class A>
-    void init(A& a, unsigned int s, bool setbits=false);
-    /// Clear \a sz bits
-    void clearall(bool setbits=false);
-    /// Copy \a sz bits from \a bs
-    void copy(const BitSetBase& bs);
-    /// Return size of bitset (number of bits)
-    unsigned int size(void) const;
-    /// Access value at bit \a i
-    bool get(unsigned int i) const;
-    /// Set bit \a i
-    void set(unsigned int i);
-    /// Clear bit \a i
-    void clear(unsigned int i);
-    /// Return position greater or equal \a i of next set bit (\a i is allowed to be equal to size)
-    unsigned int next(unsigned int i) const;
-    /// Return status of bitset
-    BitSetStatus status(void) const;
-    /// Test whether all bits are set
-    bool all(void) const;
-    /// Test whether no bits are set
-    bool none(void) const;
-    /// Resize bitset to \a n elememts
-    template<class A>
-    void resize(A& a, unsigned int n, bool setbits=false);
-    /// Dispose memory for bit set
-    template<class A>
-    void dispose(A& a);
-  };
+    /// Basic bitset support  (without stored size information)
+    class RawBitSetBase {
+    protected:
+        /// Bits per base
+        static const unsigned int bpb = BitSetData::bpb;
+        /// Stored bits
+        BitSetData* data;
 
+    public:
+        /// Copy constructor (disabled)
+        RawBitSetBase(const RawBitSetBase&) = delete;
+        /// Assignment operator (disabled)
+        RawBitSetBase& operator=(const RawBitSetBase&) = delete;
+        /// Default constructor (yields empty set)
+        RawBitSetBase();
+        /// Initialize for \a sz bits and allocator \a a
+        template <class A>
+        RawBitSetBase(A& a, unsigned int sz, bool set_bits = false);
+        /// Copy from bitset \a bs with allocator \a a
+        template <class A>
+        RawBitSetBase(A& a, unsigned int sz, const RawBitSetBase& bs);
+        /// Allocate for \a sz bits and allocator \a a (only after default constructor)
+        template <class A>
+        void allocate(A& a, unsigned int sz);
+        /// Initialize for \a sz bits and allocator \a a (only after default constructor)
+        template <class A>
+        void init(A& a, unsigned int sz, bool set_bits = false);
+        /// Clear \a sz bits
+        void fill_bits(unsigned int sz, bool set_bits = false);
+        /// Copy \a sz bits from \a bs
+        void copy(unsigned int sz, const RawBitSetBase& bs);
+        /// Access value at bit \a i
+        bool get(unsigned int i) const;
+        /// Set bit \a i
+        void set(unsigned int i);
+        /// Clear bit \a i
+        void clear(unsigned int i);
+        /// Return position greater or equal \a i of next set bit (\a i is allowed to be equal to size)
+        unsigned int next(unsigned int i) const;
+        /// Return status of bitset
+        BitSetStatus status(unsigned int sz) const;
+        /// Test whether all bits are set
+        bool all(unsigned int sz) const;
+        /// Test whether no bits are set
+        bool none(unsigned int sz) const;
+        /// Resize bitset from \a sz to \a n elememts
+        template <class A>
+        void resize(A& a, unsigned int sz, unsigned int n, bool set_bits = false);
+        /// Dispose memory for bit set
+        template <class A>
+        void dispose(A& a, unsigned int sz);
+    };
 
-  /*
-   * Bitset data
-   *
-   */
+    /// Basic bitset support
+    class BitSetBase : public RawBitSetBase {
+    protected:
+        /// Size of bitset (number of bits)
+        unsigned int sz;
 
-  forceinline void
-  BitSetData::init(bool setbits) {
-    bits = setbits ? ~static_cast<Base>(0) : static_cast<Base>(0);
-  }
-  forceinline unsigned int
-  BitSetData::data(unsigned int s) {
-    return s == 0 ? 0 : ((s-1) / bpb + 1);
-  }
-  forceinline bool
-  BitSetData::operator ()(unsigned int i) const {
-    return (bits >> i) != static_cast<Base>(0U);
-  }
-  forceinline bool
-  BitSetData::get(unsigned int i) const {
-    return (bits & (static_cast<Base>(1U) << i)) != static_cast<Base>(0U);
-  }
-  forceinline void
-  BitSetData::set(unsigned int i) {
-    bits |= (static_cast<Base>(1U) << i);
-  }
-  forceinline void
-  BitSetData::clear(unsigned int i) {
-    bits &= ~(static_cast<Base>(1U) << i);
-  }
-  forceinline unsigned int
-  BitSetData::next(unsigned int i) const {
-    assert(bits != static_cast<Base>(0));
-#if defined(GECODE_SUPPORT_MSVC_32)
-    assert(bpb == 32);
-    unsigned long int p;
-    _BitScanForward(&p,bits >> i);
-    return static_cast<unsigned int>(p)+i;
-#elif defined(GECODE_SUPPORT_MSVC_64)
-    assert(bpb == 64);
-    unsigned long int p;
-    _BitScanForward64(&p,bits >> i);
-    return static_cast<unsigned int>(p)+i;
-#elif defined(GECODE_HAS_BUILTIN_FFSLL)
-    if (bpb == 64) {
-      int p = __builtin_ffsll(bits >> i);
-      assert(p > 0);
-      return static_cast<unsigned int>(p-1)+i;
+    public:
+        /// Copy constructor (disabled)
+        BitSetBase(const BitSetBase&) = delete;
+        /// Assignment operator (disabled)
+        BitSetBase& operator=(const BitSetBase&) = delete;
+        /// Default constructor (yields empty set)
+        BitSetBase();
+        /// Initialize for \a s bits and allocator \a a
+        template <class A>
+        BitSetBase(A& a, unsigned int s, bool set_bits = false);
+        /// Copy from bitset \a bs with allocator \a a
+        template <class A>
+        BitSetBase(A& a, const BitSetBase& bs);
+        /// Initialize for \a s bits and allocator \a a (only after default constructor)
+        template <class A>
+        void init(A& a, unsigned int s, bool set_bits = false);
+        /// Clear \a sz bits
+        void fill_bits(bool set_bits = false);
+        /// Copy \a sz bits from \a bs
+        void copy(const BitSetBase& bs);
+        /// Return size of bitset (number of bits)
+        unsigned int size() const;
+        /// Access value at bit \a i
+        bool get(unsigned int i) const;
+        /// Set bit \a i
+        void set(unsigned int i);
+        /// Clear bit \a i
+        void clear(unsigned int i);
+        /// Return position greater or equal \a i of next set bit (\a i is allowed to be equal to size)
+        unsigned int next(unsigned int i) const;
+        /// Return status of bitset
+        BitSetStatus status() const;
+        /// Test whether all bits are set
+        bool all() const;
+        /// Test whether no bits are set
+        bool none() const;
+        /// Resize bitset to \a n elememts
+        template <class A>
+        void resize(A& a, unsigned int n, bool set_bits = false);
+        /// Dispose memory for bit set
+        template <class A>
+        void dispose(A& a);
+    };
+
+    /*
+     * Bitset data
+     *
+     */
+
+    forceinline void
+    BitSetData::init(bool set_bits) {
+        bits = set_bits ? ~static_cast<Base>(0) : static_cast<Base>(0);
     }
-#else
-    while (!get(i)) i++;
-    return i;
-#endif
-  }
-  forceinline bool
-  BitSetData::all(void) const {
-    return bits == ~static_cast<Base>(0U);
-  }
-  forceinline bool
-  BitSetData::all(unsigned int i) const {
-    const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
-    return (bits & mask) == mask;
-  }
-  forceinline bool
-  BitSetData::none(void) const {
-    return bits == static_cast<Base>(0U);
-  }
-  forceinline bool
-  BitSetData::none(unsigned int i) const {
-    const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
-    return (bits & mask) == static_cast<Base>(0U);
-  }
-
-  forceinline unsigned int
-  BitSetData::ones(void) const {
-#if defined(GECODE_SUPPORT_MSVC_32)
-    assert(bpb == 32);
-    return static_cast<unsigned int>(__popcnt(bits));
-#elif defined(GECODE_SUPPORT_MSVC_64)
-    assert(bpb == 64);
-    return static_cast<unsigned int>(__popcnt64(bits));
-#elif defined(GECODE_HAS_BUILTIN_POPCOUNTLL)
-    if (bpb == 64)
-      return static_cast<unsigned int>(__builtin_popcountll(bits));
-#else
-    const unsigned long long int m1 = 0x5555555555555555;
-    const unsigned long long int m2 = 0x3333333333333333;
-    const unsigned long long int m4 = 0x0f0f0f0f0f0f0f0f;
-    unsigned long long int b = bits;
-    b -= (b >> 1) & m1;
-    b = (b & m2) + ((b >> 2) & m2);
-    b = (b + (b >> 4)) & m4;
-    b += b >>  8; b += b >> 16; b += b >> 32;
-    return static_cast<unsigned int>(b & 0x7f);
-#endif
-  }
-  forceinline unsigned int
-  BitSetData::zeroes(void) const {
-    return bpb - ones();
-  }
-  forceinline bool
-  BitSetData::one(void) const {
-    return (bits & (bits - static_cast<Base>(1U))) ==
-      static_cast<Base>(0U);
-  }
-
-  forceinline void
-  BitSetData::a(BitSetData a) {
-    bits &= a.bits;
-  }
-  forceinline void
-  BitSetData::a(BitSetData a, unsigned int i) {
-    const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
-    bits &= (a.bits & mask);
-  }
-  forceinline BitSetData
-  BitSetData::a(BitSetData a, BitSetData b) {
-    BitSetData ab;
-    ab.bits = a.bits & b.bits;
-    return ab;
-  }
-
-  forceinline void
-  BitSetData::o(BitSetData a) {
-    bits |= a.bits;
-  }
-  forceinline void
-  BitSetData::o(BitSetData a, unsigned int i) {
-    const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
-    bits |= (a.bits & mask);
-  }
-  forceinline BitSetData
-  BitSetData::o(BitSetData a, BitSetData b) {
-    BitSetData ab;
-    ab.bits = a.bits | b.bits;
-    return ab;
-  }
-
-  forceinline BitSetData
-  BitSetData::operator ~(void) const {
-    BitSetData iv;
-    iv.bits = ~bits;
-    return iv;
-  }
-  forceinline bool
-  BitSetData::operator ==(BitSetData a) const {
-    return bits == a.bits;
-  }
-  forceinline bool
-  BitSetData::operator !=(BitSetData a) const {
-    return bits != a.bits;
-  }
-
-
-  /*
-   * Basic bit sets
-   *
-   */
-
-  forceinline bool
-  RawBitSetBase::get(unsigned int i) const {
-    return data[i / bpb].get(i % bpb);
-  }
-  forceinline void
-  RawBitSetBase::set(unsigned int i) {
-    data[i / bpb].set(i % bpb);
-  }
-  forceinline void
-  RawBitSetBase::clear(unsigned int i) {
-    data[i / bpb].clear(i % bpb);
-  }
-
-  template<class A>
-  void
-  RawBitSetBase::resize(A& a, unsigned int sz, unsigned int n, bool setbits) {
-    if (n>sz) {
-      data = a.template realloc<BitSetData>(data,BitSetData::data(sz+1),
-                                            BitSetData::data(n+1));
-      for (unsigned int i=BitSetData::data(sz)+1;
-           i<BitSetData::data(n+1); i++) {
-        data[i].init(setbits);
-      }
-      for (unsigned int i=(sz%bpb); i<bpb; i++)
-        if (setbits)
-          data[sz / bpb].set(i);
-        else
-          data[sz / bpb].clear(i);
+    forceinline unsigned int
+    BitSetData::data(unsigned int s) {
+        return s == 0 ? 0 : ((s - 1) / bpb + 1);
     }
-    set(n);
-  }
+    forceinline bool
+    BitSetData::operator()(unsigned int i) const {
+        return (bits >> i) != static_cast<Base>(0U);
+    }
+    forceinline bool
+    BitSetData::get(unsigned int i) const {
+        return (bits & (static_cast<Base>(1U) << i)) != static_cast<Base>(0U);
+    }
+    forceinline void
+    BitSetData::set(unsigned int i) {
+        bits |= (static_cast<Base>(1U) << i);
+    }
+    forceinline void
+    BitSetData::clear(unsigned int i) {
+        bits &= ~(static_cast<Base>(1U) << i);
+    }
+    forceinline unsigned int
+    BitSetData::next(unsigned int i) const {
+        assert((bits >> i) != static_cast<Base>(0));
+        return static_cast<unsigned int>(std::countr_zero(bits >> i)) + i;
+    }
+    forceinline bool
+    BitSetData::all() const {
+        return bits == ~static_cast<Base>(0U);
+    }
+    forceinline bool
+    BitSetData::all(unsigned int i) const {
+        const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
+        return (bits & mask) == mask;
+    }
+    forceinline bool
+    BitSetData::none() const {
+        return bits == static_cast<Base>(0U);
+    }
+    forceinline bool
+    BitSetData::none(unsigned int i) const {
+        const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
+        return (bits & mask) == static_cast<Base>(0U);
+    }
 
-  template<class A>
-  forceinline void
-  RawBitSetBase::dispose(A& a, unsigned int sz) {
-    a.template free<BitSetData>(data,BitSetData::data(sz+1));
-  }
+    forceinline unsigned int
+    BitSetData::ones() const {
+        return static_cast<unsigned int>(std::popcount(bits));
+    }
+    forceinline unsigned int
+    BitSetData::zeroes() const {
+        return bpb - ones();
+    }
+    forceinline bool
+    BitSetData::one() const {
+        return (bits & (bits - static_cast<Base>(1U))) == static_cast<Base>(0U);
+    }
 
-  forceinline
-  RawBitSetBase::RawBitSetBase(void)
-    : data(nullptr) {}
+    forceinline void
+    BitSetData::a(BitSetData a) {
+        bits &= a.bits;
+    }
+    forceinline void
+    BitSetData::a(BitSetData a, unsigned int i) {
+        const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
+        bits &= (a.bits & mask);
+    }
+    forceinline BitSetData
+    BitSetData::a(BitSetData a, BitSetData b) {
+        BitSetData ab;
+        ab.bits = a.bits & b.bits;
+        return ab;
+    }
 
-  template<class A>
-  forceinline
-  RawBitSetBase::RawBitSetBase(A& a, unsigned int sz, bool setbits)
-    : data(a.template alloc<BitSetData>(BitSetData::data(sz+1))) {
-    for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
-      data[i].init(setbits);
-    // Set a bit at position sz as sentinel (for efficient next)
-    set(sz);
-  }
+    forceinline void
+    BitSetData::o(BitSetData a) {
+        bits |= a.bits;
+    }
+    forceinline void
+    BitSetData::o(BitSetData a, unsigned int i) {
+        const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
+        bits |= (a.bits & mask);
+    }
+    forceinline BitSetData
+    BitSetData::o(BitSetData a, BitSetData b) {
+        BitSetData ab;
+        ab.bits = a.bits | b.bits;
+        return ab;
+    }
 
-  template<class A>
-  forceinline
-  RawBitSetBase::RawBitSetBase(A& a, unsigned int sz, const RawBitSetBase& bs)
-    : data(a.template alloc<BitSetData>(BitSetData::data(sz+1))) {
-    for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
-      data[i] = bs.data[i];
-    // Set a bit at position sz as sentinel (for efficient next)
-    set(sz);
-  }
+    forceinline BitSetData
+    BitSetData::operator~() const {
+        BitSetData iv;
+        iv.bits = ~bits;
+        return iv;
+    }
 
-  template<class A>
-  forceinline void
-  RawBitSetBase::allocate(A& a, unsigned int sz) {
-    assert(data == nullptr);
-    data=a.template alloc<BitSetData>(BitSetData::data(sz+1));
-  }
+    /*
+     * Basic bit sets
+     *
+     */
 
-  template<class A>
-  forceinline void
-  RawBitSetBase::init(A& a, unsigned int sz, bool setbits) {
-    assert(data == nullptr);
-    data=a.template alloc<BitSetData>(BitSetData::data(sz+1));
-    for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
-      data[i].init(setbits);
-    // Set a bit at position sz as sentinel (for efficient next)
-    set(sz);
-  }
+    forceinline bool
+    RawBitSetBase::get(unsigned int i) const {
+        return data[i / bpb].get(i % bpb);
+    }
+    forceinline void
+    RawBitSetBase::set(unsigned int i) {
+        data[i / bpb].set(i % bpb);
+    }
+    forceinline void
+    RawBitSetBase::clear(unsigned int i) {
+        data[i / bpb].clear(i % bpb);
+    }
 
-  forceinline void
-  RawBitSetBase::copy(unsigned int sz, const RawBitSetBase& bs) {
-    for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
-      data[i] = bs.data[i];
-  }
+    template <class A>
+    void
+    RawBitSetBase::resize(A& a, unsigned int sz, unsigned int n, bool set_bits) {
+        if (n > sz) {
+            data = a.template realloc<BitSetData>(data, BitSetData::data(sz + 1), BitSetData::data(n + 1));
+            for (unsigned int i = BitSetData::data(sz) + 1; i < BitSetData::data(n + 1); i++) {
+                data[i].init(set_bits);
+            }
+            for (unsigned int i = (sz % bpb); i < bpb; i++)
+                if (set_bits)
+                    data[sz / bpb].set(i);
+                else
+                    data[sz / bpb].clear(i);
+        }
+        set(n);
+    }
 
-  forceinline void
-  RawBitSetBase::clearall(unsigned int sz, bool setbits) {
-    for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
-      data[i].init(setbits);
-  }
+    template <class A>
+    forceinline void
+    RawBitSetBase::dispose(A& a, unsigned int sz) {
+        a.template free<BitSetData>(data, BitSetData::data(sz + 1));
+    }
 
-  forceinline unsigned int
-  RawBitSetBase::next(unsigned int i) const {
-    unsigned int pos = i / bpb;
-    unsigned int bit = i % bpb;
-    if (data[pos](bit))
-      return pos * bpb + data[pos].next(bit);
-    // The sentinel bit guarantees that this loop always terminates
-    do {
-      pos++;
-    } while (!data[pos]());
-    return pos * bpb + data[pos].next();
-  }
+    forceinline
+    RawBitSetBase::RawBitSetBase()
+        : data(nullptr) {}
 
-  forceinline BitSetStatus
-  RawBitSetBase::status(unsigned int sz) const {
-    unsigned int pos = sz / bpb;
-    unsigned int bits = sz % bpb;
-    if (pos > 0) {
-      if (data[0].all()) {
-        for (unsigned int i=1; i<pos; i++)
-          if (!data[i].all())
+    template <class A>
+    forceinline
+    RawBitSetBase::RawBitSetBase(A& a, unsigned int sz, bool set_bits)
+        : data(a.template alloc<BitSetData>(BitSetData::data(sz + 1))) {
+        for (unsigned int i = 0U; i < BitSetData::data(sz + 1); i++)
+            data[i].init(set_bits);
+        // Set a bit at position sz as sentinel (for efficient next)
+        set(sz);
+    }
+
+    template <class A>
+    forceinline
+    RawBitSetBase::RawBitSetBase(A& a, unsigned int sz, const RawBitSetBase& bs)
+        : data(a.template alloc<BitSetData>(BitSetData::data(sz + 1))) {
+        for (unsigned int i = 0U; i < BitSetData::data(sz + 1); i++)
+            data[i] = bs.data[i];
+        // Set a bit at position sz as sentinel (for efficient next)
+        set(sz);
+    }
+
+    template <class A>
+    forceinline void
+    RawBitSetBase::allocate(A& a, unsigned int sz) {
+        assert(data == nullptr);
+        data = a.template alloc<BitSetData>(BitSetData::data(sz + 1));
+    }
+
+    template <class A>
+    forceinline void
+    RawBitSetBase::init(A& a, unsigned int sz, bool set_bits) {
+        assert(data == nullptr);
+        data = a.template alloc<BitSetData>(BitSetData::data(sz + 1));
+        for (unsigned int i = 0U; i < BitSetData::data(sz + 1); i++)
+            data[i].init(set_bits);
+        // Set a bit at position sz as sentinel (for efficient next)
+        set(sz);
+    }
+
+    forceinline void
+    RawBitSetBase::copy(unsigned int sz, const RawBitSetBase& bs) {
+        for (unsigned int i = 0U; i < BitSetData::data(sz + 1); i++)
+            data[i] = bs.data[i];
+    }
+
+    forceinline void
+    RawBitSetBase::fill_bits(unsigned int sz, bool set_bits) {
+        for (unsigned int i = 0U; i < BitSetData::data(sz + 1); i++)
+            data[i].init(set_bits);
+    }
+
+    forceinline unsigned int
+    RawBitSetBase::next(unsigned int i) const {
+        unsigned int pos = i / bpb;
+        unsigned int bit = i % bpb;
+        if (data[pos](bit))
+            return pos * bpb + data[pos].next(bit);
+        // The sentinel bit guarantees that this loop always terminates
+        do {
+            pos++;
+        } while (!data[pos]());
+        return pos * bpb + data[pos].next();
+    }
+
+    forceinline BitSetStatus
+    RawBitSetBase::status(unsigned int sz) const {
+        unsigned int pos = sz / bpb;
+        unsigned int bits = sz % bpb;
+        if (pos > 0) {
+            if (data[0].all()) {
+                for (unsigned int i = 1; i < pos; i++)
+                    if (!data[i].all())
+                        return BSS_SOME;
+                return data[pos].all(bits) ? BSS_ALL : BSS_SOME;
+            }
+            if (data[0].none()) {
+                for (unsigned int i = 1; i < pos; i++)
+                    if (!data[i].none())
+                        return BSS_SOME;
+                return data[pos].none(bits) ? BSS_NONE : BSS_SOME;
+            }
             return BSS_SOME;
-        return data[pos].all(bits) ? BSS_ALL : BSS_SOME;
-      } else if (data[0].none()) {
-        for (unsigned int i=1; i<pos; i++)
-          if (!data[i].none())
-            return BSS_SOME;
-        return data[pos].none(bits) ? BSS_NONE : BSS_SOME;
-      } else {
+        }
+        if (data[0].all(bits))
+            return BSS_ALL;
+        if (data[0].none(bits))
+            return BSS_NONE;
         return BSS_SOME;
-      }
     }
-    if (data[0].all(bits))
-      return BSS_ALL;
-    if (data[0].none(bits))
-      return BSS_NONE;
-    return BSS_SOME;
-  }
 
-  forceinline bool
-  RawBitSetBase::all(unsigned int sz) const {
-    return status(sz) == BSS_ALL;
-  }
+    forceinline bool
+    RawBitSetBase::all(unsigned int sz) const {
+        return status(sz) == BSS_ALL;
+    }
 
-  forceinline bool
-  RawBitSetBase::none(unsigned int sz) const {
-    return status(sz) == BSS_NONE;
-  }
+    forceinline bool
+    RawBitSetBase::none(unsigned int sz) const {
+        return status(sz) == BSS_NONE;
+    }
 
+    template <class A>
+    void
+    BitSetBase::resize(A& a, unsigned int n, bool set_bits) {
+        RawBitSetBase::resize(a, sz, n, set_bits);
+        sz = n;
+    }
 
-  template<class A>
-  void
-  BitSetBase::resize(A& a, unsigned int n, bool setbits) {
-    RawBitSetBase::resize(a,sz,n,setbits); sz=n;
-  }
+    template <class A>
+    forceinline void
+    BitSetBase::dispose(A& a) {
+        RawBitSetBase::dispose(a, sz);
+    }
 
-  template<class A>
-  forceinline void
-  BitSetBase::dispose(A& a) {
-    RawBitSetBase::dispose(a,sz);
-  }
+    forceinline
+    BitSetBase::BitSetBase()
+        : sz(0U) {}
 
-  forceinline
-  BitSetBase::BitSetBase(void)
-    : sz(0U) {}
+    template <class A>
+    forceinline
+    BitSetBase::BitSetBase(A& a, unsigned int s, bool set_bits)
+        : RawBitSetBase(a, s, set_bits), sz(s) {}
 
-  template<class A>
-  forceinline
-  BitSetBase::BitSetBase(A& a, unsigned int s, bool setbits)
-    : RawBitSetBase(a,s,setbits), sz(s) {}
+    template <class A>
+    forceinline
+    BitSetBase::BitSetBase(A& a, const BitSetBase& bs)
+        : RawBitSetBase(a, bs.sz, bs), sz(bs.sz) {}
 
-  template<class A>
-  forceinline
-  BitSetBase::BitSetBase(A& a, const BitSetBase& bs)
-    : RawBitSetBase(a,bs.sz,bs), sz(bs.sz) {}
+    template <class A>
+    forceinline void
+    BitSetBase::init(A& a, unsigned int s, bool set_bits) {
+        assert(sz == 0);
+        RawBitSetBase::init(a, s, set_bits);
+        sz = s;
+    }
 
-  template<class A>
-  forceinline void
-  BitSetBase::init(A& a, unsigned int s, bool setbits) {
-    assert(sz == 0);
-    RawBitSetBase::init(a,s,setbits); sz=s;
-  }
+    forceinline void
+    BitSetBase::copy(const BitSetBase& bs) {
+        assert(sz == bs.sz);
+        RawBitSetBase::copy(sz, bs);
+    }
 
-  forceinline void
-  BitSetBase::copy(const BitSetBase& bs) {
-    assert(sz == bs.sz);
-    RawBitSetBase::copy(sz,bs);
-  }
+    forceinline void
+    BitSetBase::fill_bits(bool set_bits) {
+        RawBitSetBase::fill_bits(sz, set_bits);
+    }
 
-  forceinline void
-  BitSetBase::clearall(bool setbits) {
-    RawBitSetBase::clearall(sz,setbits);
-  }
+    forceinline unsigned int
+    BitSetBase::size() const {
+        return sz;
+    }
 
-  forceinline unsigned int
-  BitSetBase::size(void) const {
-    return sz;
-  }
+    forceinline bool
+    BitSetBase::get(unsigned int i) const {
+        assert(i < sz);
+        return RawBitSetBase::get(i);
+    }
+    forceinline void
+    BitSetBase::set(unsigned int i) {
+        assert(i < sz);
+        RawBitSetBase::set(i);
+    }
+    forceinline void
+    BitSetBase::clear(unsigned int i) {
+        assert(i < sz);
+        RawBitSetBase::clear(i);
+    }
 
-  forceinline bool
-  BitSetBase::get(unsigned int i) const {
-    assert(i < sz);
-    return RawBitSetBase::get(i);
-  }
-  forceinline void
-  BitSetBase::set(unsigned int i) {
-    assert(i < sz);
-    RawBitSetBase::set(i);
-  }
-  forceinline void
-  BitSetBase::clear(unsigned int i) {
-    assert(i < sz);
-    RawBitSetBase::clear(i);
-  }
+    forceinline unsigned int
+    BitSetBase::next(unsigned int i) const {
+        assert(i <= sz);
+        return RawBitSetBase::next(i);
+    }
 
-  forceinline unsigned int
-  BitSetBase::next(unsigned int i) const {
-    assert(i <= sz);
-    return RawBitSetBase::next(i);
-  }
+    forceinline BitSetStatus
+    BitSetBase::status() const {
+        return RawBitSetBase::status(sz);
+    }
 
-  forceinline BitSetStatus
-  BitSetBase::status(void) const {
-    return RawBitSetBase::status(sz);
-  }
+    forceinline bool
+    BitSetBase::all() const {
+        return RawBitSetBase::all(sz);
+    }
 
-  forceinline bool
-  BitSetBase::all(void) const {
-    return RawBitSetBase::all(sz);
-  }
+    forceinline bool
+    BitSetBase::none() const {
+        return RawBitSetBase::none(sz);
+    }
 
-  forceinline bool
-  BitSetBase::none(void) const {
-    return RawBitSetBase::none(sz);
-  }
-
-}}
-
-#ifdef GECODE_SUPPORT_MSVC_32
-#undef GECODE_SUPPORT_MSVC_32
-#endif
-#ifdef GECODE_SUPPORT_MSVC_64
-#undef GECODE_SUPPORT_MSVC_64
-#endif
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

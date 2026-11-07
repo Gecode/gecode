@@ -63,16 +63,16 @@ cat > "$work/main.cpp" <<'EOF'
 #include <string>
 
 #ifdef GECODE_HAS_SET_VARS
-using SetCompare = std::string (*)(std::string, Gecode::SetVar, Gecode::SetVar);
+using SetCompare = std::string (*)(const std::string&, Gecode::SetVar, Gecode::SetVar);
 SetCompare set_compare = &Gecode::Gist::Comparator::compare;
 #endif
 
 #ifdef GECODE_HAS_FLOAT_VARS
-using FloatCompare = std::string (*)(std::string, Gecode::FloatVar, Gecode::FloatVar);
+using FloatCompare = std::string (*)(const std::string&, Gecode::FloatVar, Gecode::FloatVar);
 FloatCompare float_compare = &Gecode::Gist::Comparator::compare;
 #endif
 
-int main(void) {
+int main() {
 #ifdef GECODE_HAS_SET_VARS
   if (set_compare == nullptr)
     return 1;

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,129 +34,139 @@
 
 namespace Gecode {
 
-  /// Function type for branch filter functions
-  template<class Var>
-  using BranchFilter = std::function<bool(const Space& home, 
-                                          Var x, int i)>;
- 
-  /// Class storing a branch filter function
-  template<class View>
-  class BrancherFilter {
-  public:
-    /// The corresponding variable type
-    typedef typename View::VarType Var;
-  protected:
-    SharedData<BranchFilter<Var>> f;
-  public:
-    /// Initialize
-    BrancherFilter(BranchFilter<Var> bf);
-    /// Initialize during cloning
-    BrancherFilter(BrancherFilter& bf);
-    /// Whether filtering is enabled
-    operator bool(void) const;
-    /// Invoke filter function
-    bool operator ()(const Space& home, View x, int i) const;
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete object
-    void dispose(Space& home);
-  };
+    /// Function type for branch filter functions
+    template <class Var>
+    using BranchFilter = std::function<bool(const Space& home, Var x, int i)>;
 
-  /// Class without a branch filter function
-  template<class View>
-  class BrancherNoFilter {
-  public:
-    /// The corresponding variable type
-    typedef typename View::VarType Var;
-  public:
-    /// Initialize
-    BrancherNoFilter(BranchFilter<Var> bf);
-    /// Initialize during cloning
-    BrancherNoFilter(BrancherNoFilter& bf);
-    /// Whether filtering is enabled
-    operator bool(void) const;
-    /// Invoke filter function
-    bool operator ()(const Space& home, View x, int i) const;
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete object
-    void dispose(Space& home);
-  };
+    /// Class storing a branch filter function
+    template <class View>
+    class BrancherFilter {
+    public:
+        /// The corresponding variable type
+        using Var = View::VarType;
 
+    protected:
+        SharedData<BranchFilter<Var>> f;
 
-  template<class View>
-  forceinline
-  BrancherFilter<View>::BrancherFilter(BranchFilter<Var> bf) : f(bf) {
-    if (!bf)
-      throw Gecode::InvalidFunction("BrancherFilter::BrancherFilter");
-  }
-  
-  template<class View>
-  forceinline
-  BrancherFilter<View>::BrancherFilter(BrancherFilter<View>& bf)
-    : f(bf.f) {
-  }
+    public:
+        /// Initialize
+        BrancherFilter(BranchFilter<Var> bf);
+        /// Initialize during cloning
+        BrancherFilter(BrancherFilter& bf);
+        /// Whether filtering is enabled
+        operator bool() const;
+        /// Invoke filter function
+        bool operator()(const Space& home, View x, int i) const;
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Delete object
+        void dispose(Space& home);
+    };
 
-  template<class View>
-  forceinline
-  BrancherFilter<View>::operator bool(void) const {
-    return true;
-  }
+    /// Class without a branch filter function
+    template <class View>
+    class BrancherNoFilter {
+    public:
+        /// The corresponding variable type
+        using Var = View::VarType;
 
-  template<class View>
-  forceinline bool
-  BrancherFilter<View>::operator ()(const Space& home, View x, int i) const {
-    GECODE_VALID_FUNCTION(f());
-    Var xv(x.varimp());
-    return f()(home,xv,i);
-  }
+        /// Initialize from the empty filter \a bf
+        BrancherNoFilter(const BranchFilter<Var>& bf);
+        /// Initialize from the empty filter \a bf, moved in as for BrancherFilter
+        // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty filter holds nothing to move
+        BrancherNoFilter(BranchFilter<Var>&& bf);
+        /// Initialize during cloning
+        BrancherNoFilter(BrancherNoFilter& bf);
+        /// Whether filtering is enabled
+        operator bool() const;
+        /// Invoke filter function
+        bool operator()(const Space& home, View x, int i) const;
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Delete object
+        void dispose(Space& home);
+    };
 
-  template<class View>
-  forceinline bool
-  BrancherFilter<View>::notice(void) const {
-    return true;
-  }
+    template <class View>
+    forceinline
+    BrancherFilter<View>::BrancherFilter(BranchFilter<Var> bf)
+        : f(std::move(bf)) {
+        if (!f())
+            throw Gecode::InvalidFunction("BrancherFilter::BrancherFilter");
+    }
 
-  template<class View>
-  forceinline void
-  BrancherFilter<View>::dispose(Space&) {
-    f.~SharedData<BranchFilter<Var>>();
-  }
+    template <class View>
+    forceinline
+    BrancherFilter<View>::BrancherFilter(BrancherFilter& bf)
+        : f(bf.f) {}
 
+    template <class View>
+    forceinline BrancherFilter<View>::
+    operator bool() const {
+        return true;
+    }
 
-  template<class View>
-  forceinline
-  BrancherNoFilter<View>::BrancherNoFilter(BranchFilter<Var> bf) {
-    assert(!bf);
-    (void) bf;
-  }
-  
-  template<class View>
-  forceinline
-  BrancherNoFilter<View>::BrancherNoFilter(BrancherNoFilter<View>&) {}
+    template <class View>
+    forceinline bool
+    BrancherFilter<View>::operator()(const Space& home, View x, int i) const {
+        GECODE_VALID_FUNCTION(f());
+        Var xv(x.varimp());
+        return f()(home, xv, i);
+    }
 
-  template<class View>
-  forceinline
-  BrancherNoFilter<View>::operator bool(void) const {
-    return false;
-  }
+    template <class View>
+    forceinline bool
+    BrancherFilter<View>::notice() const {
+        return true;
+    }
 
-  template<class View>
-  forceinline bool
-  BrancherNoFilter<View>::operator ()(const Space&, View, int) const {
-    return true;
-  }
-  template<class View>
-  forceinline bool
-  BrancherNoFilter<View>::notice(void) const {
-    return false;
-  }
+    template <class View>
+    forceinline void
+    BrancherFilter<View>::dispose(Space&) {
+        f.~SharedData<BranchFilter<Var>>();
+    }
 
-  template<class View>
-  forceinline void
-  BrancherNoFilter<View>::dispose(Space&) {
-  }
+    template <class View>
+    forceinline
+    BrancherNoFilter<View>::BrancherNoFilter(const BranchFilter<Var>& bf) {
+        assert(!bf);
+        (void)bf;
+    }
 
-}
+    template <class View>
+    forceinline
+    // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty filter holds nothing to move
+    BrancherNoFilter<View>::BrancherNoFilter(BranchFilter<Var>&& bf) {
+        assert(!bf);
+        (void)bf;
+    }
+
+    template <class View>
+    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
+    BrancherNoFilter<View>::BrancherNoFilter(BrancherNoFilter&) {}
+
+    template <class View>
+    forceinline BrancherNoFilter<View>::
+    operator bool() const {
+        return false;
+    }
+
+    template <class View>
+    forceinline bool
+    BrancherNoFilter<View>::operator()(const Space&, View, int) const {
+        return true;
+    }
+    template <class View>
+    forceinline bool
+    BrancherNoFilter<View>::notice() const {
+        return false;
+    }
+
+    template <class View>
+    forceinline void
+    BrancherNoFilter<View>::dispose(Space&) {}
+
+} // namespace Gecode
 
 // STATISTICS: kernel-branch

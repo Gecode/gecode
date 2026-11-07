@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,61 +30,62 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
-  template<class Box>
-  forceinline
-  Base<Box>::Base(Home home, Box* b0, int n0)
-    : Propagator(home), b(b0), n(n0) {
-    for (int i=0; i<n; i++)
-      b[i].subscribe(home,*this);
-  }
-
-  template<class Box>
-  forceinline int
-  Base<Box>::partition(Box* b, int i, int n) {
-    int j = n-1;
-    while (true) {
-      while (!b[j].mandatory() && (--j >= 0)) {}
-      while (b[i].mandatory() && (++i < n)) {}
-      if (j <= i) break;
-      std::swap(b[i],b[j]);
+    template <class Box>
+    forceinline
+    Base<Box>::Base(Home home, Box* b0, int n0)
+        : Propagator(home), b(b0), n(n0) {
+        for (int i = 0; i < n; i++)
+            b[i].subscribe(home, *this);
     }
-    return i;
-  }
 
-  template<class Box>
-  forceinline size_t
-  Base<Box>::dispose(Space& home) {
-    for (int i=0; i<n; i++)
-      b[i].cancel(home,*this);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
+    template <class Box>
+    forceinline int
+    Base<Box>::partition(Box* b, int i, int n) {
+        int j = n - 1;
+        while (true) {
+            while (!b[j].mandatory() && (--j >= 0)) {
+            }
+            while (b[i].mandatory() && (++i < n)) {
+            }
+            if (j <= i)
+                break;
+            std::swap(b[i], b[j]);
+        }
+        return i;
+    }
 
+    template <class Box>
+    forceinline size_t
+    Base<Box>::dispose(Space& home) {
+        for (int i = 0; i < n; i++)
+            b[i].cancel(home, *this);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
 
-  template<class Box>
-  forceinline
-  Base<Box>::Base(Space& home, Base<Box>& p, int m)
-    : Propagator(home,p), b(home.alloc<Box>(m)), n(p.n) {
-    for (int i=0; i<m; i++)
-      b[i].update(home,p.b[i]);
-  }
+    template <class Box>
+    forceinline
+    Base<Box>::Base(Space& home, Base<Box>& p, int m)
+        : Propagator(home, p), b(home.alloc<Box>(m)), n(p.n) {
+        for (int i = 0; i < m; i++)
+            b[i].update(home, p.b[i]);
+    }
 
-  template<class Box>
-  PropCost
-  Base<Box>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::HI,Box::dim()*n);
-  }
+    template <class Box>
+    PropCost
+    Base<Box>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::quadratic(PropCost::HI, Box::dim() * n);
+    }
 
-  template<class Box>
-  void
-  Base<Box>::reschedule(Space& home) {
-    for (int i=0; i<n; i++)
-      b[i].reschedule(home,*this);
-  }
+    template <class Box>
+    void
+    Base<Box>::reschedule(Space& home) {
+        for (int i = 0; i < n; i++)
+            b[i].reschedule(home, *this);
+    }
 
-}}}
+} // namespace Gecode::Int::NoOverlap
 
 // STATISTICS: int-prop
-

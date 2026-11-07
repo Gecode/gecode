@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,215 +34,216 @@
 
 #include <cmath>
 
-namespace Gecode { namespace Float { namespace Arithmetic {
+namespace Gecode::Float::Arithmetic {
 
-  /*
-   * Bounds consistent min propagator
-   *
-   */
-  template<class A, class B, class C>
-  forceinline
-  Min<A,B,C>::Min(Home home, A x0, B x1, C x2)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,x0,x1,x2) {}
+    /*
+     * Bounds consistent min propagator
+     *
+     */
+    template <class A, class B, class C>
+    forceinline
+    Min<A, B, C>::Min(Home home, A x0, B x1, C x2)
+        : MixTernaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND, C, PC_FLOAT_BND>(home, x0, x1, x2) {}
 
-  template<class A, class B, class C>
-  forceinline
-  Min<A,B,C>::Min(Space& home, Min<A,B,C>& p)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,p) {}
+    template <class A, class B, class C>
+    forceinline
+    Min<A, B, C>::Min(Space& home, Min<A, B, C>& p)
+        : MixTernaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND, C, PC_FLOAT_BND>(home, p) {}
 
-  template<class A, class B, class C>
-  forceinline
-  Min<A,B,C>::Min(Space& home, Propagator& p,
-                  A x0, B x1, C x2)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,p,x0,x1,x2) {}
+    template <class A, class B, class C>
+    forceinline
+    Min<A, B, C>::Min(Space& home, Propagator& p, A x0, B x1, C x2)
+        : MixTernaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND, C, PC_FLOAT_BND>(home, p, x0, x1, x2) {}
 
-  template<class A, class B, class C>
-  Actor*
-  Min<A,B,C>::copy(Space& home) {
-    return new (home) Min<A,B,C>(home,*this);
-  }
-
-  template<class A, class B, class C>
-  ExecStatus
-  Min<A,B,C>::post(Home home, A x0, B x1, C x2) {
-    GECODE_ME_CHECK(x2.eq(home,min(x0.domain(),x1.domain())));
-    GECODE_ME_CHECK(x0.gq(home,x2.min()));
-    GECODE_ME_CHECK(x1.gq(home,x2.min()));
-    (void) new (home) Min<A,B,C>(home,x0,x1,x2);
-    return ES_OK;
-  }
-
-  template<class A, class B, class C>
-  ExecStatus
-  Min<A,B,C>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x2.eq(home,min(x0.domain(),x1.domain())));
-    GECODE_ME_CHECK(x0.gq(home,x2.min()));
-    GECODE_ME_CHECK(x1.gq(home,x2.min()));
-    if (x0 == x1) {
-      GECODE_ME_CHECK(x0.lq(home,x2.max()));
-    } else {
-      if (!overlap(x1.val(),x2.val())) GECODE_ME_CHECK(x0.lq(home,x2.max()));
-      if (!overlap(x0.val(),x2.val())) GECODE_ME_CHECK(x1.lq(home,x2.max()));
+    template <class A, class B, class C>
+    Actor*
+    Min<A, B, C>::copy(Space& home) {
+        return new (home) Min<A, B, C>(home, *this);
     }
-    return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
-  }
 
-  /*
-   * Bounds consistent max propagator
-   *
-   */
-
-  template<class A, class B, class C>
-  forceinline
-  Max<A,B,C>::Max(Home home, A x0, B x1, C x2)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,x0,x1,x2) {}
-
-  template<class A, class B, class C>
-  forceinline
-  Max<A,B,C>::Max(Space& home, Max<A,B,C>& p)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,p) {}
-
-  template<class A, class B, class C>
-  forceinline
-  Max<A,B,C>::Max(Space& home, Propagator& p,
-                  A x0, B x1, C x2)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,p,x0,x1,x2) {}
-
-  template<class A, class B, class C>
-  Actor*
-  Max<A,B,C>::copy(Space& home) {
-    return new (home) Max<A,B,C>(home,*this);
-  }
-
-  template<class A, class B, class C>
-  ExecStatus
-  Max<A,B,C>::post(Home home, A x0, B x1, C x2) {
-    GECODE_ME_CHECK(x2.eq(home,max(x0.domain(),x1.domain())));
-    GECODE_ME_CHECK(x0.lq(home,x2.max()));
-    GECODE_ME_CHECK(x1.lq(home,x2.max()));
-    (void) new (home) Max<A,B,C>(home,x0,x1,x2);
-    return ES_OK;
-  }
-
-  template<class A, class B, class C>
-  ExecStatus
-  Max<A,B,C>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x2.eq(home,max(x0.domain(),x1.domain())));
-    GECODE_ME_CHECK(x0.lq(home,x2.max()));
-    GECODE_ME_CHECK(x1.lq(home,x2.max()));
-    if (x0 == x1) {
-      GECODE_ME_CHECK(x0.gq(home,x2.min()));
-    } else {
-      if (!overlap(x1.val(),x2.val())) GECODE_ME_CHECK(x0.gq(home,x2.min()));
-      if (!overlap(x0.val(),x2.val())) GECODE_ME_CHECK(x1.gq(home,x2.min()));
+    template <class A, class B, class C>
+    ExecStatus
+    Min<A, B, C>::post(Home home, A x0, B x1, C x2) {
+        GECODE_ME_CHECK(x2.eq(home, min(x0.domain(), x1.domain())));
+        GECODE_ME_CHECK(x0.gq(home, x2.min()));
+        GECODE_ME_CHECK(x1.gq(home, x2.min()));
+        (void)new (home) Min<A, B, C>(home, x0, x1, x2);
+        return ES_OK;
     }
-    return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
-  }
 
-  /*
-   * Nary bounds consistent maximum
-   *
-   */
-
-  template<class View>
-  forceinline
-  NaryMax<View>::NaryMax(Home home, ViewArray<View>& x, View y)
-    : NaryOnePropagator<View,PC_FLOAT_BND>(home,x,y) {}
-
-  template<class View>
-  ExecStatus
-  NaryMax<View>::post(Home home, ViewArray<View>& x, View y) {
-    assert(x.size() > 0);
-    x.unique();
-    if (x.size() == 1)
-      return Rel::Eq<View,View>::post(home,x[0],y);
-    if (x.size() == 2)
-      return Max<View,View,View>::post(home,x[0],x[1],y);
-    FloatNum l = Float::Limits::min;
-    FloatNum u = Float::Limits::min;
-    for (int i=x.size(); i--; ) {
-      l = std::max(l,x[i].min());
-      u = std::max(u,x[i].max());
+    template <class A, class B, class C>
+    ExecStatus
+    Min<A, B, C>::propagate(Space& home, const ModEventDelta&) {
+        GECODE_ME_CHECK(x2.eq(home, min(x0.domain(), x1.domain())));
+        GECODE_ME_CHECK(x0.gq(home, x2.min()));
+        GECODE_ME_CHECK(x1.gq(home, x2.min()));
+        if (x0 == x1) {
+            GECODE_ME_CHECK(x0.lq(home, x2.max()));
+        } else {
+            if (!overlap(x1.val(), x2.val()))
+                GECODE_ME_CHECK(x0.lq(home, x2.max()));
+            if (!overlap(x0.val(), x2.val()))
+                GECODE_ME_CHECK(x1.lq(home, x2.max()));
+        }
+        return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
-    GECODE_ME_CHECK(y.gq(home,l));
-    GECODE_ME_CHECK(y.lq(home,u));
-    if (x.same(y)) {
-      // Check whether y occurs in x
-      for (int i=x.size(); i--; )
-        GECODE_ES_CHECK((Rel::Lq<View>::post(home,x[i],y)));
-    } else {
-      (void) new (home) NaryMax<View>(home,x,y);
+
+    /*
+     * Bounds consistent max propagator
+     *
+     */
+
+    template <class A, class B, class C>
+    forceinline
+    Max<A, B, C>::Max(Home home, A x0, B x1, C x2)
+        : MixTernaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND, C, PC_FLOAT_BND>(home, x0, x1, x2) {}
+
+    template <class A, class B, class C>
+    forceinline
+    Max<A, B, C>::Max(Space& home, Max<A, B, C>& p)
+        : MixTernaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND, C, PC_FLOAT_BND>(home, p) {}
+
+    template <class A, class B, class C>
+    forceinline
+    Max<A, B, C>::Max(Space& home, Propagator& p, A x0, B x1, C x2)
+        : MixTernaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND, C, PC_FLOAT_BND>(home, p, x0, x1, x2) {}
+
+    template <class A, class B, class C>
+    Actor*
+    Max<A, B, C>::copy(Space& home) {
+        return new (home) Max<A, B, C>(home, *this);
     }
-    return ES_OK;
-  }
 
-  template<class View>
-  forceinline
-  NaryMax<View>::NaryMax(Space& home, NaryMax<View>& p)
-    : NaryOnePropagator<View,PC_FLOAT_BND>(home,p) {}
-
-  template<class View>
-  Actor*
-  NaryMax<View>::copy(Space& home) {
-    if (x.size() == 1)
-      return new (home) Rel::Eq<View,View>(home,*this,x[0],y);
-    if (x.size() == 2)
-      return new (home) Max<View,View,View>(home,*this,x[0],x[1],y);
-    return new (home) NaryMax<View>(home,*this);
-  }
-
-  /// Status of propagation for nary max
-  enum MaxPropStatus {
-    MPS_ASSIGNED  = 1<<0, ///< All views are assigned
-    MPS_REMOVED   = 1<<1, ///< A view is removed
-    MPS_NEW_BOUND = 1<<2  ///< Telling has found a new upper bound
-  };
-
-  template<class View>
-  forceinline ExecStatus
-  prop_nary_max(Space& home, Propagator& p,
-                ViewArray<View>& x, View y, PropCond pc) {
-  rerun:
-    assert(x.size() > 0);
-    FloatNum maxmax = x[x.size()-1].max();
-    FloatNum maxmin = x[x.size()-1].min();
-    for (int i = x.size()-1; i--; ) {
-      maxmax = std::max(x[i].max(),maxmax);
-      maxmin = std::max(x[i].min(),maxmin);
+    template <class A, class B, class C>
+    ExecStatus
+    Max<A, B, C>::post(Home home, A x0, B x1, C x2) {
+        GECODE_ME_CHECK(x2.eq(home, max(x0.domain(), x1.domain())));
+        GECODE_ME_CHECK(x0.lq(home, x2.max()));
+        GECODE_ME_CHECK(x1.lq(home, x2.max()));
+        (void)new (home) Max<A, B, C>(home, x0, x1, x2);
+        return ES_OK;
     }
-    GECODE_ME_CHECK(y.lq(home,maxmax));
-    GECODE_ME_CHECK(y.gq(home,maxmin));
-    maxmin = y.min();
-    maxmax = y.max();
-    int status = MPS_ASSIGNED;
-    for (int i = x.size(); i--; ) {
-      ModEvent me = x[i].lq(home,maxmax);
-      if (me == ME_FLOAT_FAILED)
-        return ES_FAILED;
-      if (me_modified(me) && (x[i].max() != maxmax))
-        status |= MPS_NEW_BOUND;
-      if (x[i].max() < maxmin) {
-        x.move_lst(i,home,p,pc);
-        status |= MPS_REMOVED;
-      } else if (!x[i].assigned())
-        status &= ~MPS_ASSIGNED;
+
+    template <class A, class B, class C>
+    ExecStatus
+    Max<A, B, C>::propagate(Space& home, const ModEventDelta&) {
+        GECODE_ME_CHECK(x2.eq(home, max(x0.domain(), x1.domain())));
+        GECODE_ME_CHECK(x0.lq(home, x2.max()));
+        GECODE_ME_CHECK(x1.lq(home, x2.max()));
+        if (x0 == x1) {
+            GECODE_ME_CHECK(x0.gq(home, x2.min()));
+        } else {
+            if (!overlap(x1.val(), x2.val()))
+                GECODE_ME_CHECK(x0.gq(home, x2.min()));
+            if (!overlap(x0.val(), x2.val()))
+                GECODE_ME_CHECK(x1.gq(home, x2.min()));
+        }
+        return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
-    if (x.size() == 0)
-      return ES_FAILED;
-    if ((status & MPS_REMOVED) != 0)
-      goto rerun;
-    if (((status & MPS_ASSIGNED) != 0) && y.assigned())
-      return home.ES_SUBSUMED(p);
-    return ((status & MPS_NEW_BOUND) != 0) ? ES_NOFIX : ES_FIX;
-  }
 
-  template<class View>
-  ExecStatus
-  NaryMax<View>::propagate(Space& home, const ModEventDelta&) {
-    return prop_nary_max(home,*this,x,y,PC_FLOAT_BND);
-  }
+    /*
+     * Nary bounds consistent maximum
+     *
+     */
 
-}}}
+    template <class View>
+    forceinline
+    NaryMax<View>::NaryMax(Home home, ViewArray<View>& x, View y)
+        : NaryOnePropagator<View, PC_FLOAT_BND>(home, x, y) {}
+
+    template <class View>
+    ExecStatus
+    NaryMax<View>::post(Home home, ViewArray<View>& x, View y) {
+        assert(x.size() > 0);
+        x.unique();
+        if (x.size() == 1)
+            return Rel::Eq<View, View>::post(home, x[0], y);
+        if (x.size() == 2)
+            return Max<View, View, View>::post(home, x[0], x[1], y);
+        FloatNum l = Float::Limits::min;
+        FloatNum u = Float::Limits::min;
+        for (int i = x.size(); i--;) {
+            l = std::max(l, x[i].min());
+            u = std::max(u, x[i].max());
+        }
+        GECODE_ME_CHECK(y.gq(home, l));
+        GECODE_ME_CHECK(y.lq(home, u));
+        if (x.same(y)) {
+            // Check whether y occurs in x
+            for (int i = x.size(); i--;)
+                GECODE_ES_CHECK((Rel::Lq<View>::post(home, x[i], y)));
+        } else {
+            (void)new (home) NaryMax<View>(home, x, y);
+        }
+        return ES_OK;
+    }
+
+    template <class View>
+    forceinline
+    NaryMax<View>::NaryMax(Space& home, NaryMax& p)
+        : NaryOnePropagator<View, PC_FLOAT_BND>(home, p) {}
+
+    template <class View>
+    Actor*
+    NaryMax<View>::copy(Space& home) {
+        if (x.size() == 1)
+            return new (home) Rel::Eq<View, View>(home, *this, x[0], y);
+        if (x.size() == 2)
+            return new (home) Max<View, View, View>(home, *this, x[0], x[1], y);
+        return new (home) NaryMax<View>(home, *this);
+    }
+
+    /// Status of propagation for nary max
+    enum MaxPropStatus {
+        MPS_ASSIGNED = 1 << 0, ///< All views are assigned
+        MPS_REMOVED = 1 << 1,  ///< A view is removed
+        MPS_NEW_BOUND = 1 << 2 ///< Telling has found a new upper bound
+    };
+
+    template <class View>
+    forceinline ExecStatus
+    prop_nary_max(Space& home, Propagator& p, ViewArray<View>& x, View y, PropCond pc) {
+    rerun:
+        assert(x.size() > 0);
+        FloatNum maxmax = x[x.size() - 1].max();
+        FloatNum maxmin = x[x.size() - 1].min();
+        for (int i = x.size() - 1; i--;) {
+            maxmax = std::max(x[i].max(), maxmax);
+            maxmin = std::max(x[i].min(), maxmin);
+        }
+        GECODE_ME_CHECK(y.lq(home, maxmax));
+        GECODE_ME_CHECK(y.gq(home, maxmin));
+        maxmin = y.min();
+        maxmax = y.max();
+        int status = MPS_ASSIGNED;
+        for (int i = x.size(); i--;) {
+            ModEvent me = x[i].lq(home, maxmax);
+            if (me == ME_FLOAT_FAILED)
+                return ES_FAILED;
+            if (me_modified(me) && (x[i].max() != maxmax))
+                status |= MPS_NEW_BOUND;
+            if (x[i].max() < maxmin) {
+                x.move_lst(i, home, p, pc);
+                status |= MPS_REMOVED;
+            } else if (!x[i].assigned()) {
+                status &= ~MPS_ASSIGNED;
+            }
+        }
+        if (x.size() == 0)
+            return ES_FAILED;
+        if ((status & MPS_REMOVED) != 0)
+            goto rerun;
+        if (((status & MPS_ASSIGNED) != 0) && y.assigned())
+            return home.ES_SUBSUMED(p);
+        return ((status & MPS_NEW_BOUND) != 0) ? ES_NOFIX : ES_FIX;
+    }
+
+    template <class View>
+    ExecStatus
+    NaryMax<View>::propagate(Space& home, const ModEventDelta&) {
+        return prop_nary_max(home, *this, x, y, PC_FLOAT_BND);
+    }
+
+} // namespace Gecode::Float::Arithmetic
 
 // STATISTICS: float-prop
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,15 +34,14 @@
 
 namespace Gecode {
 
-  void
-  trace(Home home, const FloatVarArgs& x,
-        TraceFilter tf, int te, FloatTracer& t) {
-    using namespace Gecode::Float;
-    GECODE_POST;
-    ViewArray<FloatView> xv(home,x);
-    GECODE_ES_FAIL(FloatTraceRecorder::post(home,xv,tf,te,t));
-  }
+    void
+    trace(Home home, const FloatVarArgs& x, const TraceFilter& tf, int te, FloatTracer& t) {
+        using namespace Gecode::Float;
+        GECODE_POST;
+        ViewArray<FloatView> xv(home, x);
+        GECODE_ES_FAIL(FloatTraceRecorder::post(home, xv, tf, te, t));
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-trace

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,176 +30,172 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
-  /*
-   * Mandatory boxes
-   *
-   */
-  template<class Dim, int n>
-  forceinline const Dim&
-  ManBox<Dim,n>::operator [](int i) const {
-    assert((i >= 0) && (i < n));
-    return d[i];
-  }
-  template<class Dim, int n>
-  forceinline Dim&
-  ManBox<Dim,n>::operator [](int i) {
-    assert((i >= 0) && (i < n));
-    return d[i];
-  }
-  template<class Dim, int n>
-  forceinline int
-  ManBox<Dim,n>::dim(void) {
-    return n;
-  }
+    /*
+     * Mandatory boxes
+     *
+     */
+    template <class Dim, int n>
+    forceinline const Dim&
+    ManBox<Dim, n>::operator[](int i) const {
+        assert((i >= 0) && (i < n));
+        return d[i];
+    }
+    template <class Dim, int n>
+    forceinline Dim&
+    ManBox<Dim, n>::operator[](int i) {
+        assert((i >= 0) && (i < n));
+        return d[i];
+    }
+    template <class Dim, int n>
+    forceinline int
+    ManBox<Dim, n>::dim() {
+        return n;
+    }
 
-  template<class Dim, int n>
-  forceinline bool
-  ManBox<Dim,n>::mandatory(void) const {
-    return true;
-  }
-  template<class Dim, int n>
-  forceinline bool
-  ManBox<Dim,n>::excluded(void) const {
-    return false;
-  }
-  template<class Dim, int n>
-  forceinline bool
-  ManBox<Dim,n>::optional(void) const {
-    return false;
-  }
-
-  template<class Dim, int n>
-  forceinline ExecStatus
-  ManBox<Dim,n>::exclude(Space&) {
-    return ES_FAILED;
-  }
-
-  template<class Dim, int n>
-  forceinline bool
-  ManBox<Dim,n>::nooverlap(const ManBox<Dim,n>& box) const {
-    for (int i=0; i<n; i++)
-      if ((d[i].lec() <= box.d[i].ssc()) || (box.d[i].lec() <= d[i].ssc()))
+    template <class Dim, int n>
+    forceinline bool
+    ManBox<Dim, n>::mandatory() const {
         return true;
-    return false;
-  }
-
-  template<class Dim, int n>
-  forceinline bool
-  ManBox<Dim,n>::overlap(const ManBox<Dim,n>& box) const {
-    for (int i=0; i<n; i++)
-      if ((d[i].sec() <= box.d[i].lsc()) || (box.d[i].sec() <= d[i].lsc()))
+    }
+    template <class Dim, int n>
+    forceinline bool
+    ManBox<Dim, n>::excluded() const {
         return false;
-    return true;
-  }
+    }
+    template <class Dim, int n>
+    forceinline bool
+    ManBox<Dim, n>::optional() const {
+        return false;
+    }
 
-  template<class Dim, int n>
-  forceinline ExecStatus
-  ManBox<Dim,n>::nooverlap(Space& home, ManBox<Dim,n>& box) {
-    for (int i=0; i<n; i++)
-      if ((d[i].sec() <= box.d[i].lsc()) ||
-          (box.d[i].sec() <= d[i].lsc())) {
-        // Does not overlap for dimension i
-        for (int j=i+1; j<n; j++)
-          if ((d[j].sec() <= box.d[j].lsc()) ||
-              (box.d[j].sec() <= d[j].lsc()))
-            return ES_OK;
-        // Does not overlap for only dimension i, hence propagate
-        d[i].nooverlap(home, box.d[i]);
-        box.d[i].nooverlap(home, d[i]);
+    template <class Dim, int n>
+    forceinline ExecStatus
+    ManBox<Dim, n>::exclude(Space&) {
+        return ES_FAILED;
+    }
+
+    template <class Dim, int n>
+    forceinline bool
+    ManBox<Dim, n>::no_overlap(const ManBox<Dim, n>& box) const {
+        for (int i = 0; i < n; i++)
+            if ((d[i].lec() <= box.d[i].ssc()) || (box.d[i].lec() <= d[i].ssc()))
+                return true;
+        return false;
+    }
+
+    template <class Dim, int n>
+    forceinline bool
+    ManBox<Dim, n>::overlap(const ManBox<Dim, n>& box) const {
+        for (int i = 0; i < n; i++)
+            if ((d[i].sec() <= box.d[i].lsc()) || (box.d[i].sec() <= d[i].lsc()))
+                return false;
+        return true;
+    }
+
+    template <class Dim, int n>
+    forceinline ExecStatus
+    ManBox<Dim, n>::no_overlap(Space& home, ManBox<Dim, n>& box) {
+        for (int i = 0; i < n; i++)
+            if ((d[i].sec() <= box.d[i].lsc()) || (box.d[i].sec() <= d[i].lsc())) {
+                // Does not overlap for dimension i
+                for (int j = i + 1; j < n; j++)
+                    if ((d[j].sec() <= box.d[j].lsc()) || (box.d[j].sec() <= d[j].lsc()))
+                        return ES_OK;
+                // Does not overlap for only dimension i, hence propagate
+                d[i].no_overlap(home, box.d[i]);
+                box.d[i].no_overlap(home, d[i]);
+                return ES_OK;
+            }
+        // Overlaps in all dimensions
+        return ES_FAILED;
+    }
+
+    template <class Dim, int n>
+    forceinline void
+    ManBox<Dim, n>::update(Space& home, ManBox<Dim, n>& b) {
+        for (int i = 0; i < n; i++)
+            d[i].update(home, b.d[i]);
+    }
+
+    template <class Dim, int n>
+    forceinline void
+    ManBox<Dim, n>::subscribe(Space& home, Propagator& p) {
+        for (int i = 0; i < n; i++)
+            d[i].subscribe(home, p);
+    }
+    template <class Dim, int n>
+    forceinline void
+    ManBox<Dim, n>::cancel(Space& home, Propagator& p) {
+        for (int i = 0; i < n; i++)
+            d[i].cancel(home, p);
+    }
+    template <class Dim, int n>
+    forceinline void
+    ManBox<Dim, n>::reschedule(Space& home, Propagator& p) {
+        for (int i = 0; i < n; i++)
+            d[i].reschedule(home, p);
+    }
+
+    /*
+     * Optional boxes
+     *
+     */
+    template <class Dim, int n>
+    forceinline void
+    OptBox<Dim, n>::optional(BoolView o0) {
+        o = o0;
+    }
+    template <class Dim, int n>
+    forceinline bool
+    OptBox<Dim, n>::mandatory() const {
+        return o.one();
+    }
+    template <class Dim, int n>
+    forceinline bool
+    OptBox<Dim, n>::excluded() const {
+        return o.zero();
+    }
+    template <class Dim, int n>
+    forceinline bool
+    OptBox<Dim, n>::optional() const {
+        return o.none();
+    }
+
+    template <class Dim, int n>
+    forceinline ExecStatus
+    OptBox<Dim, n>::exclude(Space& home) {
+        GECODE_ME_CHECK(o.zero(home));
         return ES_OK;
-      }
-    // Overlaps in all dimensions
-    return ES_FAILED;
-  }
+    }
 
-  template<class Dim, int n>
-  forceinline void
-  ManBox<Dim,n>::update(Space& home, ManBox<Dim,n>& b) {
-    for (int i=0; i<n; i++)
-      d[i].update(home,b.d[i]);
-  }
+    template <class Dim, int n>
+    forceinline void
+    OptBox<Dim, n>::update(Space& home, OptBox<Dim, n>& b) {
+        ManBox<Dim, n>::update(home, b);
+        o.update(home, b.o);
+    }
 
-  template<class Dim, int n>
-  forceinline void
-  ManBox<Dim,n>::subscribe(Space& home, Propagator& p) {
-    for (int i=0; i<n; i++)
-      d[i].subscribe(home,p);
-  }
-  template<class Dim, int n>
-  forceinline void
-  ManBox<Dim,n>::cancel(Space& home, Propagator& p) {
-    for (int i=0; i<n; i++)
-      d[i].cancel(home,p);
-  }
-  template<class Dim, int n>
-  forceinline void
-  ManBox<Dim,n>::reschedule(Space& home, Propagator& p) {
-    for (int i=0; i<n; i++)
-      d[i].reschedule(home,p);
-  }
+    template <class Dim, int n>
+    forceinline void
+    OptBox<Dim, n>::subscribe(Space& home, Propagator& p) {
+        ManBox<Dim, n>::subscribe(home, p);
+        o.subscribe(home, p, PC_BOOL_VAL);
+    }
+    template <class Dim, int n>
+    forceinline void
+    OptBox<Dim, n>::cancel(Space& home, Propagator& p) {
+        ManBox<Dim, n>::cancel(home, p);
+        o.cancel(home, p, PC_BOOL_VAL);
+    }
+    template <class Dim, int n>
+    forceinline void
+    OptBox<Dim, n>::reschedule(Space& home, Propagator& p) {
+        ManBox<Dim, n>::reschedule(home, p);
+        o.reschedule(home, p, PC_BOOL_VAL);
+    }
 
-
-  /*
-   * Optional boxes
-   *
-   */
-  template<class Dim, int n>
-  forceinline void
-  OptBox<Dim,n>::optional(BoolView o0) {
-    o = o0;
-  }
-  template<class Dim, int n>
-  forceinline bool
-  OptBox<Dim,n>::mandatory(void) const {
-    return o.one();
-  }
-  template<class Dim, int n>
-  forceinline bool
-  OptBox<Dim,n>::excluded(void) const {
-    return o.zero();
-  }
-  template<class Dim, int n>
-  forceinline bool
-  OptBox<Dim,n>::optional(void) const {
-    return o.none();
-  }
-
-  template<class Dim, int n>
-  forceinline ExecStatus
-  OptBox<Dim,n>::exclude(Space& home) {
-    GECODE_ME_CHECK(o.zero(home));
-    return ES_OK;
-  }
-
-  template<class Dim, int n>
-  forceinline void
-  OptBox<Dim,n>::update(Space& home, OptBox<Dim,n>& b) {
-    ManBox<Dim,n>::update(home, b);
-    o.update(home, b.o);
-  }
-
-  template<class Dim, int n>
-  forceinline void
-  OptBox<Dim,n>::subscribe(Space& home, Propagator& p) {
-    ManBox<Dim,n>::subscribe(home,p);
-    o.subscribe(home, p, PC_BOOL_VAL);
-  }
-  template<class Dim, int n>
-  forceinline void
-  OptBox<Dim,n>::cancel(Space& home, Propagator& p) {
-    ManBox<Dim,n>::cancel(home,p);
-    o.cancel(home, p, PC_BOOL_VAL);
-  }
-  template<class Dim, int n>
-  forceinline void
-  OptBox<Dim,n>::reschedule(Space& home, Propagator& p) {
-    ManBox<Dim,n>::reschedule(home,p);
-    o.reschedule(home, p, PC_BOOL_VAL);
-  }
-
-}}}
+} // namespace Gecode::Int::NoOverlap
 
 // STATISTICS: int-prop
-

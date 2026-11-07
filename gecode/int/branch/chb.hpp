@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,31 +32,10 @@
 
 namespace Gecode {
 
-  forceinline
-  IntCHB::IntCHB(void) {}
+    forceinline IntCHB& IntCHB::operator=(const IntCHB& chb) = default;
 
-  forceinline
-  IntCHB::IntCHB(const IntCHB& chb)
-    : CHB(chb) {}
+    forceinline BoolCHB& BoolCHB::operator=(const BoolCHB& chb) = default;
 
-  forceinline IntCHB&
-  IntCHB::operator =(const IntCHB& chb) {
-    return static_cast<IntCHB&>(CHB::operator =(chb));
-  }
-
-
-  forceinline
-  BoolCHB::BoolCHB(void) {}
-
-  forceinline
-  BoolCHB::BoolCHB(const BoolCHB& chb)
-    : CHB(chb) {}
-
-  forceinline BoolCHB&
-  BoolCHB::operator =(const BoolCHB& chb) {
-    return static_cast<BoolCHB&>(CHB::operator =(chb));
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-branch

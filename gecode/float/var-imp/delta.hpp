@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Filip Konvicka <filip.konvicka@logis.cz>
@@ -38,23 +37,23 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
-  forceinline
-  FloatDelta::FloatDelta(void)
-    : _min(1), _max(0) {}
-  forceinline
-  FloatDelta::FloatDelta(FloatNum min, FloatNum max)
-    : _min(min), _max(max) {}
-  forceinline FloatNum
-  FloatDelta::min(void) const {
-    return _min;
-  }
-  forceinline FloatNum
-  FloatDelta::max(void) const {
-    return _max;
-  }
+    forceinline
+    FloatDelta::FloatDelta()
+        : _min(1), _max(0) {}
+    forceinline
+    FloatDelta::FloatDelta(FloatNum min, FloatNum max)
+        : _min(min), _max(max) {}
+    forceinline FloatNum
+    FloatDelta::min() const {
+        return _min;
+    }
+    forceinline FloatNum
+    FloatDelta::max() const {
+        return _max;
+    }
 
-}}
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

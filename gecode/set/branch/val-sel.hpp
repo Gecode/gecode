@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,87 +36,85 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
-  forceinline
-  ValSelMin::ValSelMin(Space& home, const ValBranch<Var>& vb)
-    : ValSel<SetView,int>(home,vb) {}
-  forceinline
-  ValSelMin::ValSelMin(Space& home, ValSelMin& vs)
-    : ValSel<SetView,int>(home,vs) {}
-  forceinline int
-  ValSelMin::val(const Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    return u.min();
-  }
-
-  forceinline
-  ValSelMax::ValSelMax(Space& home, const ValBranch<Var>& vb)
-    : ValSel<SetView,int>(home,vb) {}
-  forceinline
-  ValSelMax::ValSelMax(Space& home, ValSelMax& vs)
-    : ValSel<SetView,int>(home,vs) {}
-  forceinline int
-  ValSelMax::val(const Space&, SetView x, int) {
-    int max = 0;
-    for (UnknownRanges<SetView> u(x); u(); ++u)
-      max = u.max();
-    return max;
-  }
-
-  forceinline
-  ValSelMed::ValSelMed(Space& home, const ValBranch<Var>& vb)
-    : ValSel<SetView,int>(home,vb) {}
-  forceinline
-  ValSelMed::ValSelMed(Space& home, ValSelMed& vs)
-    : ValSel<SetView,int>(home,vs) {}
-  forceinline int
-  ValSelMed::val(const Space&, SetView x, int) {
-    UnknownRanges<SetView> u1(x);
-    unsigned int i = Iter::Ranges::size(u1) / 2;
-    UnknownRanges<SetView> u2(x);
-    int med = (u2.min()+u2.max()) / 2;
-    ++u2;
-    if (!u2()) {
-      return med;
+    forceinline
+    ValSelMin::ValSelMin(Space& home, const ValBranch<Var>& vb)
+        : ValSel<SetView, int>(home, vb) {}
+    forceinline
+    ValSelMin::ValSelMin(Space& home, ValSelMin& vs)
+        : ValSel<SetView, int>(home, vs) {}
+    forceinline int
+    ValSelMin::val(const Space&, SetView x, int) {
+        UnknownRanges<SetView> u(x);
+        return u.min();
     }
-    UnknownRanges<SetView> u3(x);
-    while (i >= u3.width()) {
-      i -= u3.width();
-      ++u3;
-    }
-    return u3.min() + static_cast<int>(i);
-  }
 
-  forceinline
-  ValSelRnd::ValSelRnd(Space& home, const ValBranch<Var>& vb)
-    : ValSel<SetView,int>(home,vb), r(vb.rnd()) {}
-  forceinline
-  ValSelRnd::ValSelRnd(Space& home, ValSelRnd& vs)
-    : ValSel<SetView,int>(home,vs), r(vs.r) {
-  }
-  forceinline int
-  ValSelRnd::val(const Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    unsigned int p = r(Iter::Ranges::size(u));
-    for (UnknownRanges<SetView> i(x); i(); ++i) {
-      if (i.width() > p)
-        return i.min() + static_cast<int>(p);
-      p -= i.width();
+    forceinline
+    ValSelMax::ValSelMax(Space& home, const ValBranch<Var>& vb)
+        : ValSel<SetView, int>(home, vb) {}
+    forceinline
+    ValSelMax::ValSelMax(Space& home, ValSelMax& vs)
+        : ValSel<SetView, int>(home, vs) {}
+    forceinline int
+    ValSelMax::val(const Space&, SetView x, int) {
+        int max = 0;
+        for (UnknownRanges<SetView> u(x); u(); ++u)
+            max = u.max();
+        return max;
     }
-    GECODE_NEVER;
-    return 0;
-  }
-  forceinline bool
-  ValSelRnd::notice(void) const {
-    return true;
-  }
-  forceinline void
-  ValSelRnd::dispose(Space&) {
-    r.~Rnd();
-  }
 
-}}}
+    forceinline
+    ValSelMed::ValSelMed(Space& home, const ValBranch<Var>& vb)
+        : ValSel<SetView, int>(home, vb) {}
+    forceinline
+    ValSelMed::ValSelMed(Space& home, ValSelMed& vs)
+        : ValSel<SetView, int>(home, vs) {}
+    forceinline int
+    ValSelMed::val(const Space&, SetView x, int) {
+        UnknownRanges<SetView> u1(x);
+        unsigned int i = Iter::Ranges::size(u1) / 2;
+        UnknownRanges<SetView> u2(x);
+        int med = (u2.min() + u2.max()) / 2;
+        ++u2;
+        if (!u2()) {
+            return med;
+        }
+        UnknownRanges<SetView> u3(x);
+        while (i >= u3.width()) {
+            i -= u3.width();
+            ++u3;
+        }
+        return u3.min() + static_cast<int>(i);
+    }
+
+    forceinline
+    ValSelRnd::ValSelRnd(Space& home, const ValBranch<Var>& vb)
+        : ValSel<SetView, int>(home, vb), r(vb.rnd()) {}
+    forceinline
+    ValSelRnd::ValSelRnd(Space& home, ValSelRnd& vs)
+        : ValSel<SetView, int>(home, vs), r(vs.r) {}
+    forceinline int
+    ValSelRnd::val(const Space&, SetView x, int) {
+        UnknownRanges<SetView> u(x);
+        unsigned int p = r(Iter::Ranges::size(u));
+        for (UnknownRanges<SetView> i(x); i(); ++i) {
+            if (i.width() > p)
+                return i.min() + static_cast<int>(p);
+            p -= i.width();
+        }
+        GECODE_NEVER;
+        return 0;
+    }
+    forceinline bool
+    ValSelRnd::notice() const {
+        return true;
+    }
+    forceinline void
+    ValSelRnd::dispose(Space&) {
+        r.~Rnd();
+    }
+
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch
-

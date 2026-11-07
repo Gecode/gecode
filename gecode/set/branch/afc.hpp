@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,28 +32,16 @@
 
 namespace Gecode {
 
-  forceinline
-  SetAFC::SetAFC(void) {}
+    forceinline
+    SetAFC::SetAFC(Home home, const SetVarArgs& x, double d, bool share) {
+        AFC::init(home, x, d, share);
+    }
 
-  forceinline
-  SetAFC::SetAFC(const SetAFC& a)
-    : AFC(a) {}
+    forceinline void
+    SetAFC::init(Home home, const SetVarArgs& x, double d, bool share) {
+        AFC::init(home, x, d, share);
+    }
 
-  forceinline SetAFC&
-  SetAFC::operator =(const SetAFC& a) {
-    return static_cast<SetAFC&>(AFC::operator =(a));
-  }
-
-  forceinline
-  SetAFC::SetAFC(Home home, const SetVarArgs& x, double d, bool share) {
-    AFC::init(home,x,d,share);
-  }
-
-  forceinline void
-  SetAFC::init(Home home, const SetVarArgs& x, double d, bool share) {
-    AFC::init(home,x,d,share);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: set-branch

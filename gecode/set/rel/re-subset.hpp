@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,136 +32,131 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
-  template<class View0, class View1, class CtrlView, ReifyMode rm>
-  forceinline
-  ReSubset<View0,View1,CtrlView,rm>::ReSubset(Home home, View0 y0,
-                                              View1 y1, CtrlView b0)
-    : Propagator(home), x0(y0), x1(y1), b(b0) {
-    b.subscribe(home,*this, Gecode::Int::PC_INT_VAL);
-    x0.subscribe(home,*this, PC_SET_ANY);
-    x1.subscribe(home,*this, PC_SET_ANY);
-  }
-
-  template<class View0, class View1, class CtrlView, ReifyMode rm>
-  forceinline
-  ReSubset<View0,View1,CtrlView,rm>::ReSubset(Space& home, 
-                                              ReSubset& p)
-    : Propagator(home,p) {
-    x0.update(home,p.x0);
-    x1.update(home,p.x1);
-    b.update(home,p.b);
-  }
-
-  template<class View0, class View1, class CtrlView, ReifyMode rm>
-  PropCost
-  ReSubset<View0,View1,CtrlView,rm>::cost(const Space&,
-                                          const ModEventDelta&) const {
-    return PropCost::ternary(PropCost::LO);
-  }
-
-  template<class View0, class View1, class CtrlView, ReifyMode rm>
-  void
-  ReSubset<View0,View1,CtrlView,rm>::reschedule(Space& home) {
-    b.reschedule(home,*this, Gecode::Int::PC_INT_VAL);
-    x0.reschedule(home,*this, PC_SET_ANY);
-    x1.reschedule(home,*this, PC_SET_ANY);
-  }
-
-  template<class View0, class View1, class CtrlView, ReifyMode rm>
-  forceinline size_t
-  ReSubset<View0,View1,CtrlView,rm>::dispose(Space& home) {
-    b.cancel(home,*this, Gecode::Int::PC_INT_VAL);
-    x0.cancel(home,*this, PC_SET_ANY);
-    x1.cancel(home,*this, PC_SET_ANY);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-  template<class View0, class View1, class CtrlView, ReifyMode rm>
-  ExecStatus
-  ReSubset<View0,View1,CtrlView,rm>::post(Home home, View0 x0, View1 x1,
-                                          CtrlView b) {
-    if (!same(x0,x1)) {
-      (void) new (home) ReSubset<View0,View1,CtrlView,rm>(home,x0,x1,b);
-    } else if (rm != RM_IMP) {
-      GECODE_ME_CHECK(b.one(home));
-    }
-    return ES_OK;
-  }
-
-  template<class View0, class View1, class CtrlView, ReifyMode rm>
-  Actor*
-  ReSubset<View0,View1,CtrlView,rm>::copy(Space& home) {
-    return new (home) ReSubset<View0,View1,CtrlView,rm>(home,*this);
-  }
-
-  template<class View0, class View1, class CtrlView, ReifyMode rm>
-  ExecStatus
-  ReSubset<View0,View1,CtrlView,rm>::propagate(Space& home,
-                                               const ModEventDelta&) {
-    if (b.one()) {
-      if (rm == RM_PMI)
-        return home.ES_SUBSUMED(*this);
-      GECODE_REWRITE(*this,(Subset<View0,View1>::post(home(*this),x0,x1)));
-    }
-    if (b.zero()) {
-      if (rm == RM_IMP)
-        return home.ES_SUBSUMED(*this);
-      GECODE_REWRITE(*this,(NoSubset<View0,View1>::post(home(*this),x0,x1)));
+    template <class View0, class View1, class CtrlView, ReifyMode rm>
+    forceinline
+    ReSubset<View0, View1, CtrlView, rm>::ReSubset(Home home, View0 y0, View1 y1, CtrlView b0)
+        : Propagator(home), x0(y0), x1(y1), b(b0) {
+        b.subscribe(home, *this, Gecode::Int::PC_INT_VAL);
+        x0.subscribe(home, *this, PC_SET_ANY);
+        x1.subscribe(home, *this, PC_SET_ANY);
     }
 
-    // check whether cardinalities still allow subset
-    if (x0.cardMin() > x1.cardMax()) {
-      if (rm != RM_PMI)
-        GECODE_ME_CHECK(b.zero_none(home));
-      return home.ES_SUBSUMED(*this);
+    template <class View0, class View1, class CtrlView, ReifyMode rm>
+    forceinline
+    ReSubset<View0, View1, CtrlView, rm>::ReSubset(Space& home, ReSubset& p)
+        : Propagator(home, p) {
+        x0.update(home, p.x0);
+        x1.update(home, p.x1);
+        b.update(home, p.b);
     }
 
-    // check lub(x0) subset glb(x1)
-    {
-      LubRanges<View0> x0ub(x0);
-      GlbRanges<View1> x1lb(x1);
-      Iter::Ranges::Diff<LubRanges<View0>,GlbRanges<View1> > d(x0ub,x1lb);
-      if (!d()) {
-        if (rm != RM_IMP)
-          GECODE_ME_CHECK(b.one_none(home));
-        return home.ES_SUBSUMED(*this);
-      }
+    template <class View0, class View1, class CtrlView, ReifyMode rm>
+    PropCost
+    ReSubset<View0, View1, CtrlView, rm>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::ternary(PropCost::LO);
     }
 
-    // check glb(x0) subset lub(x1)
-    {
-      GlbRanges<View0> x0lb(x0);
-      LubRanges<View1> x1ub(x1);
-      Iter::Ranges::Diff<GlbRanges<View0>,LubRanges<View1> > d(x0lb,x1ub);
-      if (d()) {
-        if (rm != RM_PMI)
-          GECODE_ME_CHECK(b.zero_none(home));
-        return home.ES_SUBSUMED(*this);
-      } else if (x0.assigned() && x1.assigned()) {
-        if (rm != RM_IMP)
-          GECODE_ME_CHECK(b.one_none(home));
-        return home.ES_SUBSUMED(*this);
-      }
+    template <class View0, class View1, class CtrlView, ReifyMode rm>
+    void
+    ReSubset<View0, View1, CtrlView, rm>::reschedule(Space& home) {
+        b.reschedule(home, *this, Gecode::Int::PC_INT_VAL);
+        x0.reschedule(home, *this, PC_SET_ANY);
+        x1.reschedule(home, *this, PC_SET_ANY);
     }
 
-    if (x0.cardMin() > 0) {
-      LubRanges<View0> x0ub(x0);
-      LubRanges<View1> x1ub(x1);
-      Iter::Ranges::Inter<LubRanges<View0>,LubRanges<View1> >
-        i(x0ub,x1ub);
-      if (!i()) {
-        if (rm != RM_PMI)
-          GECODE_ME_CHECK(b.zero_none(home));
-        return home.ES_SUBSUMED(*this);
-      }
+    template <class View0, class View1, class CtrlView, ReifyMode rm>
+    forceinline size_t
+    ReSubset<View0, View1, CtrlView, rm>::dispose(Space& home) {
+        b.cancel(home, *this, Gecode::Int::PC_INT_VAL);
+        x0.cancel(home, *this, PC_SET_ANY);
+        x1.cancel(home, *this, PC_SET_ANY);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
     }
 
-    return ES_FIX;
-  }
+    template <class View0, class View1, class CtrlView, ReifyMode rm>
+    ExecStatus
+    ReSubset<View0, View1, CtrlView, rm>::post(Home home, View0 x0, View1 x1, CtrlView b) {
+        if (!same(x0, x1)) {
+            (void)new (home) ReSubset<View0, View1, CtrlView, rm>(home, x0, x1, b);
+        } else if (rm != RM_IMP) {
+            GECODE_ME_CHECK(b.one(home));
+        }
+        return ES_OK;
+    }
 
-}}}
+    template <class View0, class View1, class CtrlView, ReifyMode rm>
+    Actor*
+    ReSubset<View0, View1, CtrlView, rm>::copy(Space& home) {
+        return new (home) ReSubset<View0, View1, CtrlView, rm>(home, *this);
+    }
+
+    template <class View0, class View1, class CtrlView, ReifyMode rm>
+    ExecStatus
+    ReSubset<View0, View1, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
+        if (b.one()) {
+            if (rm == RM_RIMP)
+                return home.ES_SUBSUMED(*this);
+            GECODE_REWRITE(*this, (Subset<View0, View1>::post(home(*this), x0, x1)));
+        }
+        if (b.zero()) {
+            if (rm == RM_IMP)
+                return home.ES_SUBSUMED(*this);
+            GECODE_REWRITE(*this, (NoSubset<View0, View1>::post(home(*this), x0, x1)));
+        }
+
+        // check whether cardinalities still allow subset
+        if (x0.card_min() > x1.card_max()) {
+            if (rm != RM_RIMP)
+                GECODE_ME_CHECK(b.zero_none(home));
+            return home.ES_SUBSUMED(*this);
+        }
+
+        // check lub(x0) subset glb(x1)
+        {
+            LubRanges<View0> x0ub(x0);
+            GlbRanges<View1> x1lb(x1);
+            Iter::Ranges::Diff<LubRanges<View0>, GlbRanges<View1>> d(x0ub, x1lb);
+            if (!d()) {
+                if (rm != RM_IMP)
+                    GECODE_ME_CHECK(b.one_none(home));
+                return home.ES_SUBSUMED(*this);
+            }
+        }
+
+        // check glb(x0) subset lub(x1)
+        {
+            GlbRanges<View0> x0lb(x0);
+            LubRanges<View1> x1ub(x1);
+            Iter::Ranges::Diff<GlbRanges<View0>, LubRanges<View1>> d(x0lb, x1ub);
+            if (d()) {
+                if (rm != RM_RIMP)
+                    GECODE_ME_CHECK(b.zero_none(home));
+                return home.ES_SUBSUMED(*this);
+            }
+            if (x0.assigned() && x1.assigned()) {
+                if (rm != RM_IMP)
+                    GECODE_ME_CHECK(b.one_none(home));
+                return home.ES_SUBSUMED(*this);
+            }
+        }
+
+        if (x0.card_min() > 0) {
+            LubRanges<View0> x0ub(x0);
+            LubRanges<View1> x1ub(x1);
+            Iter::Ranges::Inter<LubRanges<View0>, LubRanges<View1>> i(x0ub, x1ub);
+            if (!i()) {
+                if (rm != RM_RIMP)
+                    GECODE_ME_CHECK(b.zero_none(home));
+                return home.ES_SUBSUMED(*this);
+            }
+        }
+
+        return ES_FIX;
+    }
+
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

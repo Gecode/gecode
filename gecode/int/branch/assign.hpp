@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,89 +32,85 @@
 
 namespace Gecode {
 
-  forceinline
-  IntAssign::IntAssign(Select s0)
-    : s(s0) {}
+    forceinline
+    IntAssign::IntAssign(Select s0)
+        : s(s0) {}
 
-  forceinline
-  IntAssign::IntAssign(Rnd r)
-    : ValBranch<IntVar>(r), s(SEL_RND) {}
+    forceinline
+    IntAssign::IntAssign(const Rnd& r)
+        : ValBranch<IntVar>(r), s(SEL_RND) {}
 
-  forceinline
-  IntAssign::IntAssign(IntBranchVal v, IntBranchCommit c)
-    : ValBranch<IntVar>(v,c), s(SEL_VAL_COMMIT) {}
+    forceinline
+    IntAssign::IntAssign(IntBranchVal v, IntBranchCommit c)
+        : ValBranch<IntVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
-  forceinline IntAssign::Select
-  IntAssign::select(void) const {
-    return s;
-  }
+    forceinline IntAssign::Select
+    IntAssign::select() const {
+        return s;
+    }
 
+    inline IntAssign
+    INT_ASSIGN_MIN() {
+        return IntAssign(IntAssign::SEL_MIN);
+    }
 
-  inline IntAssign
-  INT_ASSIGN_MIN(void) {
-    return IntAssign(IntAssign::SEL_MIN);
-  }
+    inline IntAssign
+    INT_ASSIGN_MED() {
+        return IntAssign(IntAssign::SEL_MED);
+    }
 
-  inline IntAssign
-  INT_ASSIGN_MED(void) {
-    return IntAssign(IntAssign::SEL_MED);
-  }
+    inline IntAssign
+    INT_ASSIGN_MAX() {
+        return IntAssign(IntAssign::SEL_MAX);
+    }
 
-  inline IntAssign
-  INT_ASSIGN_MAX(void) {
-    return IntAssign(IntAssign::SEL_MAX);
-  }
+    inline IntAssign
+    INT_ASSIGN_RND(const Rnd& r) {
+        return IntAssign(r);
+    }
 
-  inline IntAssign
-  INT_ASSIGN_RND(Rnd r) {
-    return IntAssign(r);
-  }
+    inline IntAssign
+    INT_ASSIGN(IntBranchVal v, IntBranchCommit c) {
+        return IntAssign(std::move(v), std::move(c));
+    }
 
-  inline IntAssign
-  INT_ASSIGN(IntBranchVal v, IntBranchCommit c) {
-    return IntAssign(v,c);
-  }
+    forceinline
+    BoolAssign::BoolAssign(Select s0)
+        : s(s0) {}
 
+    forceinline
+    BoolAssign::BoolAssign(const Rnd& r)
+        : ValBranch<BoolVar>(r), s(SEL_RND) {}
 
+    forceinline
+    BoolAssign::BoolAssign(BoolBranchVal v, BoolBranchCommit c)
+        : ValBranch<BoolVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
-  forceinline
-  BoolAssign::BoolAssign(Select s0)
-    : s(s0) {}
+    forceinline BoolAssign::Select
+    BoolAssign::select() const {
+        return s;
+    }
 
-  forceinline
-  BoolAssign::BoolAssign(Rnd r)
-    : ValBranch<BoolVar>(r), s(SEL_RND) {}
+    inline BoolAssign
+    BOOL_ASSIGN_MIN() {
+        return BoolAssign(BoolAssign::SEL_MIN);
+    }
 
-  forceinline
-  BoolAssign::BoolAssign(BoolBranchVal v, BoolBranchCommit c)
-    : ValBranch<BoolVar>(v,c), s(SEL_VAL_COMMIT) {}
+    inline BoolAssign
+    BOOL_ASSIGN_MAX() {
+        return BoolAssign(BoolAssign::SEL_MAX);
+    }
 
-  forceinline BoolAssign::Select
-  BoolAssign::select(void) const {
-    return s;
-  }
+    inline BoolAssign
+    BOOL_ASSIGN_RND(const Rnd& r) {
+        return BoolAssign(r);
+    }
 
+    inline BoolAssign
+    BOOL_ASSIGN(BoolBranchVal v, BoolBranchCommit c) {
+        return BoolAssign(std::move(v), std::move(c));
+    }
 
-  inline BoolAssign
-  BOOL_ASSIGN_MIN(void) {
-    return BoolAssign(BoolAssign::SEL_MIN);
-  }
-
-  inline BoolAssign
-  BOOL_ASSIGN_MAX(void) {
-    return BoolAssign(BoolAssign::SEL_MAX);
-  }
-
-  inline BoolAssign
-  BOOL_ASSIGN_RND(Rnd r) {
-    return BoolAssign(r);
-  }
-
-  inline BoolAssign
-  BOOL_ASSIGN(BoolBranchVal v, BoolBranchCommit c) {
-    return BoolAssign(v,c);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-branch

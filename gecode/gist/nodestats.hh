@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -41,39 +40,39 @@
 #include <QtWidgets>
 #endif
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  /**
-   * \brief Display information about nodes
-   */
-  class NodeStatInspector : public QWidget {
-    Q_OBJECT
-  private:
-    /// Label for node depth indicator
-    QGraphicsTextItem* nodeDepthLabel;
-    /// Label for subtree depth indicator
-    QGraphicsTextItem* subtreeDepthLabel;
-    /// Label for number of solutions
-    QGraphicsTextItem* solvedLabel;
-    /// Label for number of failures
-    QGraphicsTextItem* failedLabel;
-    /// Label for number of choices
-    QGraphicsTextItem* choicesLabel;
-    /// Label for number of open nodes
-    QGraphicsTextItem* openLabel;
-    /// Layout
-    QVBoxLayout* boxLayout;
-  public:
-    NodeStatInspector(QWidget* parent);
-    /// Update display to reflect information about \a n
-    void node(const VisualNode::NodeAllocator&, VisualNode* n,
-              const Statistics& stat, bool finished);
-  public Q_SLOTS:
-    /// Show this window and bring it to the front
-    void showStats(void);
-  };
+    /**
+     * \brief Display information about nodes
+     */
+    class NodeStatInspector : public QWidget {
+        Q_OBJECT
+    private:
+        /// Label for node depth indicator
+        QGraphicsTextItem* node_depth_label;
+        /// Label for subtree depth indicator
+        QGraphicsTextItem* subtree_depth_label;
+        /// Label for number of solutions
+        QGraphicsTextItem* solved_label;
+        /// Label for number of failures
+        QGraphicsTextItem* failed_label;
+        /// Label for number of choices
+        QGraphicsTextItem* choices_label;
+        /// Label for number of open nodes
+        QGraphicsTextItem* open_label;
+        /// Layout
+        QVBoxLayout* box_layout;
 
-}}
+    public:
+        NodeStatInspector(QWidget* parent);
+        /// Update display to reflect information about \a n
+        void node(const VisualNode::NodeAllocator&, VisualNode* n, const Statistics& stat, bool finished);
+
+        /// Show this window and bring it to the front
+        void show_stats();
+    };
+
+} // namespace Gecode::Gist
 
 #endif
 

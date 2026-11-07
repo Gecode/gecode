@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -31,81 +30,83 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
-  /**
-   * \brief %Range iterator for range lists
-   *
-   * Allows to iterate the ranges of a RangeList where the
-   * ranges must be increasing and non-overlapping.
-   *
-   * \ingroup FuncIterRanges
-   */
-  class RangeList  {
-  protected:
-    /// Current range
-    const Gecode::RangeList* c;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    RangeList(void);
-    /// Initialize with range list \a s
-    RangeList(const Gecode::RangeList* s);
-    /// Initialize with range list \a s
-    void init(const Gecode::RangeList* s);
-    //@}
+    /**
+     * \brief %Range iterator for range lists
+     *
+     * Allows to iterate the ranges of a RangeList where the
+     * ranges must be increasing and non-overlapping.
+     *
+     * \ingroup FuncIterRanges
+     */
+    class RangeList {
+    protected:
+        /// Current range
+        const Gecode::RangeList* c;
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a range or done
-    bool operator ()(void) const;
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        RangeList() = default;
+        /// Initialize with range list \a s
+        RangeList(const Gecode::RangeList* s);
+        /// Initialize with range list \a s
+        void init(const Gecode::RangeList* s);
+        //@}
 
-    /// \name Range access
-    //@{
-    /// Return smallest value of range
-    int min(void) const;
-    /// Return largest value of range
-    int max(void) const;
-    /// Return width of range (distance between minimum and maximum)
-    unsigned int width(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a range or done
+        bool operator()() const;
+        /// Move iterator to next range (if possible)
+        void operator++();
+        //@}
 
+        /// \name Range access
+        //@{
+        /// Return smallest value of range
+        int min() const;
+        /// Return largest value of range
+        int max() const;
+        /// Return width of range (distance between minimum and maximum)
+        unsigned int width() const;
+        //@}
+    };
 
-  forceinline
-  RangeList::RangeList(void) {}
+    forceinline
+    RangeList::RangeList(const Gecode::RangeList* s)
+        : c(s) {}
 
-  forceinline
-  RangeList::RangeList(const Gecode::RangeList* s) : c(s) {}
+    forceinline void
+    RangeList::init(const Gecode::RangeList* s) {
+        c = s;
+    }
 
-  forceinline void
-  RangeList::init(const Gecode::RangeList* s) { c = s; }
+    forceinline bool
+    RangeList::operator()() const {
+        return c != nullptr;
+    }
 
-  forceinline bool
-  RangeList::operator ()(void) const { return c != nullptr; }
+    forceinline void
+    RangeList::operator++() {
+        c = c->next();
+    }
 
-  forceinline void
-  RangeList::operator ++(void) {
-    c = c->next();
-  }
+    forceinline int
+    RangeList::min() const {
+        return c->min();
+    }
+    forceinline int
+    RangeList::max() const {
+        return c->max();
+    }
+    forceinline unsigned int
+    RangeList::width() const {
+        return c->width();
+    }
 
-  forceinline int
-  RangeList::min(void) const {
-    return c->min();
-  }
-  forceinline int
-  RangeList::max(void) const {
-    return c->max();
-  }
-  forceinline unsigned int
-  RangeList::width(void) const {
-    return c->width();
-  }
-
-}}}
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

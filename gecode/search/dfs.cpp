@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -39,31 +38,29 @@
 #include <gecode/search/par/dfs.hh>
 #endif
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  Engine*
-  dfsengine(Space* s, const Options& o) {
-    Options to = o.expand();
+    Engine*
+    make_dfs_engine(Space* s, const Options& o) {
+        Options to = o.expand();
 #ifdef GECODE_HAS_THREADS
-    if (to.threads == 1.0) {
-      if (to.tracer)
-        return new WorkerToEngine<Seq::DFS<TraceRecorder>>(s,to);
-      else
-        return new WorkerToEngine<Seq::DFS<NoTraceRecorder>>(s,to);
-    } else {
-      if (to.tracer)
-        return new Par::DFS<EdgeTraceRecorder>(s,to);
-      else
-        return new Par::DFS<NoTraceRecorder>(s,to);
-    }
-#else
-    if (to.tracer)
-      return new WorkerToEngine<Seq::DFS<TraceRecorder>>(s,to);
-    else
-      return new WorkerToEngine<Seq::DFS<NoTraceRecorder>>(s,to);
-#endif
-  }
+        if (to.threads == 1.0) {
+            if (to.tracer)
+                return new WorkerToEngine<Seq::DFS<TraceRecorder>>(s, to);
+            return new WorkerToEngine<Seq::DFS<NoTraceRecorder>>(s, to);
+        }
+        if (to.tracer)
+            return new Par::DFS<EdgeTraceRecorder>(s, to);
+        return new Par::DFS<NoTraceRecorder>(s, to);
 
-}}
+#else
+        if (to.tracer)
+            return new WorkerToEngine<Seq::DFS<TraceRecorder>>(s, to);
+        else
+            return new WorkerToEngine<Seq::DFS<NoTraceRecorder>>(s, to);
+#endif
+    }
+
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

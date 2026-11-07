@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,113 +30,115 @@
  *
  */
 
-namespace Gecode { namespace Support {
+#include <utility>
 
-  /**
-   * \brief Stack with fixed number of elements
-   *
-   * \ingroup FuncSupport
-   */
-  template<class T, class A>
-  class StaticStack {
-  private:
-    /// Allocator
-    A& a;
-    /// Number of elements
-    int n;
-    /// Top of stack
-    unsigned int tos;
-    /// Stack space
-    T* stack;
-  public:
-    /// Initialize for \a n elements
-    StaticStack(A& a, int n);
-    /// Release memory
-    ~StaticStack(void);
+namespace Gecode::Support {
 
-    /// Reset stack (pop all elements)
-    void reset(void);
-    /// Test whether stack is empty
-    bool empty(void) const;
-    /// Return number of entries currently on stack
-    int entries(void) const;
+    /**
+     * \brief Stack with fixed number of elements
+     *
+     * \ingroup FuncSupport
+     */
+    template <class T, class A>
+    class StaticStack {
+    private:
+        /// Allocator
+        A& a;
+        /// Number of elements
+        int n;
+        /// Top of stack
+        unsigned int tos;
+        /// Stack space
+        T* stack;
 
-    /// Pop topmost element from stack and return it
-    T pop(void);
-    /// Return element on top of stack
-    T& top(void) const;
-    /// Return element that has just been popped
-    T& last(void) const;
-    /// Push element \a x on top of stack
-    void push(const T& x);
+    public:
+        /// Initialize for \a n elements
+        StaticStack(A& a, int n);
+        /// Release memory
+        ~StaticStack();
 
-    /// Allocate memory from heap (disabled)
-    static void* operator new(size_t s) = delete;
-    /// Free memory allocated from heap (disabled)
-    static void  operator delete(void* p) = delete;
-    /// Copy constructor (disabled)
-    StaticStack(const StaticStack& s) = delete;
-    /// Assignment operator (disabled)
-    const StaticStack& operator =(const StaticStack&) = delete;
-  };
+        /// Reset stack (pop all elements)
+        void reset();
+        /// Test whether stack is empty
+        bool empty() const;
+        /// Return number of entries currently on stack
+        int entries() const;
 
-  template<class T, class A>
-  forceinline
-  StaticStack<T,A>::StaticStack(A& a0, int n0)
-    : a(a0), n(n0), tos(0), stack(a.template alloc<T>(n)) {}
+        /// Pop topmost element from stack and return it
+        T pop();
+        /// Return element on top of stack
+        T& top() const;
+        /// Return element that has just been popped
+        T& last() const;
+        /// Push element \a x on top of stack
+        void push(const T& x);
 
-  template<class T, class A>
-  forceinline
-  StaticStack<T,A>::~StaticStack(void) {
-    a.free(stack,n);
-  }
+        /// Allocate memory from heap (disabled)
+        static void* operator new(size_t s) = delete;
+        /// Free memory allocated from heap (disabled)
+        static void operator delete(void* p) = delete;
+        /// Copy constructor (disabled)
+        StaticStack(const StaticStack& s) = delete;
+        /// Assignment operator (disabled)
+        const StaticStack& operator=(const StaticStack&) = delete;
+    };
 
-  template<class T, class A>
-  forceinline bool
-  StaticStack<T,A>::empty(void) const {
-    return tos==0;
-  }
+    template <class T, class A>
+    forceinline
+    StaticStack<T, A>::StaticStack(A& a0, int n0)
+        : a(a0), n(n0), tos(0), stack(a.template alloc<T>(n)) {}
 
-  template<class T, class A>
-  forceinline int
-  StaticStack<T,A>::entries(void) const {
-    return tos;
-  }
+    template <class T, class A>
+    forceinline StaticStack<T, A>::~StaticStack() {
+        a.free(stack, n);
+    }
 
-  template<class T, class A>
-  forceinline void
-  StaticStack<T,A>::reset(void) {
-    tos = 0;
-  }
+    template <class T, class A>
+    forceinline bool
+    StaticStack<T, A>::empty() const {
+        return tos == 0;
+    }
 
-  template<class T, class A>
-  forceinline T
-  StaticStack<T,A>::pop(void) {
-    assert((tos > 0) && (tos <= static_cast<unsigned int>(n)));
-    return stack[--tos];
-  }
+    template <class T, class A>
+    forceinline int
+    StaticStack<T, A>::entries() const {
+        return tos;
+    }
 
-  template<class T, class A>
-  forceinline T&
-  StaticStack<T,A>::top(void) const {
-    assert((tos > 0) && (tos <= static_cast<unsigned int>(n)));
-    return stack[tos-1];
-  }
+    template <class T, class A>
+    forceinline void
+    StaticStack<T, A>::reset() {
+        tos = 0;
+    }
 
-  template<class T, class A>
-  forceinline T&
-  StaticStack<T,A>::last(void) const {
-    assert((tos >= 0) && (tos < static_cast<unsigned int>(n)));
-    return stack[tos];
-  }
+    template <class T, class A>
+    forceinline T
+    StaticStack<T, A>::pop() {
+        assert((tos > 0) && std::cmp_less_equal(tos, n));
+        return stack[--tos];
+    }
 
-  template<class T, class A>
-  forceinline void
-  StaticStack<T,A>::push(const T& x) {
-    assert(tos < static_cast<unsigned int>(n));
-    stack[tos++] = x;
-  }
+    template <class T, class A>
+    forceinline T&
+    StaticStack<T, A>::top() const {
+        assert((tos > 0) && std::cmp_less_equal(tos, n));
+        return stack[tos - 1];
+    }
 
-}}
+    template <class T, class A>
+    forceinline T&
+    StaticStack<T, A>::last() const {
+        assert((tos >= 0) && std::cmp_less(tos, n));
+        return stack[tos];
+    }
+
+    template <class T, class A>
+    forceinline void
+    StaticStack<T, A>::push(const T& x) {
+        assert(std::cmp_less(tos, n));
+        stack[tos++] = x;
+    }
+
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

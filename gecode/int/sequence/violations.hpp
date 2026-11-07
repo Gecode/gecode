@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,67 +30,71 @@
  *
  */
 
+#include <algorithm>
 #include <climits>
 #include <cmath>
 
-namespace Gecode { namespace Int { namespace Sequence {
+namespace Gecode::Int::Sequence {
 
-  /// Simple bitsets for recording violations
-  class Violations : public Support::BitSetBase {
-  protected:
-    /// The (possibly) first set bit (set is empty if fst == sz)
-    mutable unsigned int fst;
-  public:
-    /// Default constructor
-    Violations(void);
-    /// Initialize violation set for \a n violations
-    void init(Space& home, unsigned int n);
-    /// Update violation set during cloning
-    void update(Space& home, Violations& v);
-    /// Return whether set is empty
-    bool empty(void) const;
-    /// Add \a i to violation set
-    void add(unsigned int i);
-    /// Get first element from violation set and remove it
-    unsigned int get(void);
-  };
+    /// Simple bitsets for recording violations
+    class Violations : public Support::BitSetBase {
+    protected:
+        /// The (possibly) first set bit (set is empty if fst == sz)
+        mutable unsigned int fst;
 
+    public:
+        /// Default constructor
+        Violations();
+        /// Initialize violation set for \a n violations
+        void init(Space& home, unsigned int n);
+        /// Update violation set during cloning
+        void update(Space& home, Violations& v);
+        /// Return whether set is empty
+        bool empty() const;
+        /// Add \a i to violation set
+        void add(unsigned int i);
+        /// Get first element from violation set and remove it
+        unsigned int get();
+    };
 
-  forceinline
-  Violations::Violations(void) : fst(0) {}
+    forceinline
+    Violations::Violations()
+        : fst(0) {}
 
-  forceinline void
-  Violations::init(Space& home, unsigned int n) {
-    Support::BitSetBase::init(home,n);
-    fst=size();
-  }
+    forceinline void
+    Violations::init(Space& home, unsigned int n) {
+        Support::BitSetBase::init(home, n);
+        fst = size();
+    }
 
-  forceinline bool
-  Violations::empty(void) const {
-    fst = next(fst);
-    return fst >= size();
-  }
+    forceinline bool
+    Violations::empty() const {
+        fst = next(fst);
+        return fst >= size();
+    }
 
-  forceinline void
-  Violations::update(Space& home, Violations& v) {
-    assert(v.empty());
-    init(home,v.size());
-  }
+    forceinline void
+    Violations::update(Space& home, Violations& v) {
+        assert(v.empty());
+        init(home, v.size());
+    }
 
-  forceinline void
-  Violations::add(unsigned int i) {
-    set(i); if (i < fst) fst = i;
-  }
+    forceinline void
+    Violations::add(unsigned int i) {
+        set(i);
+        fst = std::min(i, fst);
+    }
 
-  forceinline unsigned int
-  Violations::get(void) {
-    assert(!empty());
-    fst = next(fst);
-    assert(Support::BitSetBase::get(fst));
-    clear(fst); fst++;
-    return fst-1;
-  }
+    forceinline unsigned int
+    Violations::get() {
+        assert(!empty());
+        fst = next(fst);
+        assert(Support::BitSetBase::get(fst));
+        clear(fst);
+        fst++;
+        return fst - 1;
+    }
 
-}}}
+} // namespace Gecode::Int::Sequence
 
 // STATISTICS: int-prop

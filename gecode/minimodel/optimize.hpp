@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,60 +32,46 @@
 
 namespace Gecode {
 
-  forceinline
-  IntMinimizeSpace::IntMinimizeSpace(void) {}
+    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
+    IntMinimizeSpace::IntMinimizeSpace(IntMinimizeSpace& s)
+        : Space(s) {}
 
-  forceinline
-  IntMinimizeSpace::IntMinimizeSpace(IntMinimizeSpace& s)
-    : Space(s) {}
+    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
+    IntMaximizeSpace::IntMaximizeSpace(IntMaximizeSpace& s)
+        : Space(s) {}
 
+    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
+    IntLexMinimizeSpace::IntLexMinimizeSpace(IntLexMinimizeSpace& s)
+        : Space(s) {}
 
-  forceinline
-  IntMaximizeSpace::IntMaximizeSpace(void) {}
-
-  forceinline
-  IntMaximizeSpace::IntMaximizeSpace(IntMaximizeSpace& s)
-    : Space(s) {}
-
-
-  forceinline
-  IntLexMinimizeSpace::IntLexMinimizeSpace(void) {}
-
-  forceinline
-  IntLexMinimizeSpace::IntLexMinimizeSpace(IntLexMinimizeSpace& s)
-    : Space(s) {}
-
-
-  forceinline
-  IntLexMaximizeSpace::IntLexMaximizeSpace(void) {}
-
-  forceinline
-  IntLexMaximizeSpace::IntLexMaximizeSpace(IntLexMaximizeSpace& s)
-    : Space(s) {}
-
+    forceinline
+    IntLexMaximizeSpace::IntLexMaximizeSpace(IntLexMaximizeSpace& s)
+        : Space(s) {}
 
 #ifdef GECODE_HAS_FLOAT_VARS
 
-  forceinline
-  FloatMinimizeSpace::FloatMinimizeSpace(FloatNum s)
-    : step(s) {}
+    forceinline
+    FloatMinimizeSpace::FloatMinimizeSpace(FloatNum s)
+        : step(s) {}
 
-  forceinline
-  FloatMinimizeSpace::FloatMinimizeSpace(FloatMinimizeSpace& s)
-    : Space(s), step(s.step) {}
+    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
+    FloatMinimizeSpace::FloatMinimizeSpace(FloatMinimizeSpace& s)
+        : Space(s), step(s.step) {}
 
+    forceinline
+    FloatMaximizeSpace::FloatMaximizeSpace(FloatNum s)
+        : step(s) {}
 
-  forceinline
-  FloatMaximizeSpace::FloatMaximizeSpace(FloatNum s)
-    : step(s) {}
-
-  forceinline
-  FloatMaximizeSpace::FloatMaximizeSpace(FloatMaximizeSpace& s)
-    : Space(s), step(s.step) {}
+    forceinline
+    FloatMaximizeSpace::FloatMaximizeSpace(FloatMaximizeSpace& s)
+        : Space(s), step(s.step) {}
 
 #endif
 
-}
+} // namespace Gecode
 
 // STATISTICS: minimodel-search
-

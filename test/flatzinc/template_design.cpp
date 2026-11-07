@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest(TestTags::sweep(),"template_design",
-"predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest(TestTags::sweep(), "template_design",
+                                   "predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -160,18 +156,17 @@ constraint int_times(p[12], R[2], INT____00014) :: defines_var(INT____00014);\n\
 constraint int_times(p[13], R[1], INT____00015) :: defines_var(INT____00015);\n\
 constraint int_times(p[14], R[2], INT____00016) :: defines_var(INT____00016);\n\
 solve  :: int_search([p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], R[1], R[2]], input_order, indomain_min, complete) minimize INT____00017;\n\
-", "Production = 442;\n\
+",
+                                   "Production = 442;\n\
 R = array1d(1..2, [167, 275]);\n\
 p = array2d(1..7, 1..2, [0, 1, 2, 0, 1, 1, 3, 0, 3, 0, 0, 3, 0, 4]);\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
@@ -31,108 +30,106 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Trigonometric {
+namespace Gecode::Float::Trigonometric {
 
-  /*
-   * Bounds consistent arc sinus operator
-   *
-   */
+    /*
+     * Bounds consistent arc sinus operator
+     *
+     */
 
-  template<class A, class B>
-  forceinline
-  ASin<A,B>::ASin(Home home, A x0, B x1)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,x0,x1) {}
+    template <class A, class B>
+    forceinline
+    ASin<A, B>::ASin(Home home, A x0, B x1)
+        : MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>(home, x0, x1) {}
 
-  template<class A, class B>
-  ExecStatus
-  ASin<A,B>::post(Home home, A x0, B x1) {
-    if (x0 == x1) {
-      GECODE_ME_CHECK(x0.eq(home,0.0));
-    } else {
-      GECODE_ME_CHECK(x0.gq(home,-1.0));
-      GECODE_ME_CHECK(x0.lq(home,1.0));
-      GECODE_ME_CHECK(x1.eq(home,asin(x0.domain())));
-      GECODE_ME_CHECK(x0.eq(home,sin(x1.domain())));
-      (void) new (home) ASin<A,B>(home,x0,x1);
+    template <class A, class B>
+    ExecStatus
+    ASin<A, B>::post(Home home, A x0, B x1) {
+        if (x0 == x1) {
+            GECODE_ME_CHECK(x0.eq(home, 0.0));
+        } else {
+            GECODE_ME_CHECK(x0.gq(home, -1.0));
+            GECODE_ME_CHECK(x0.lq(home, 1.0));
+            GECODE_ME_CHECK(x1.eq(home, asin(x0.domain())));
+            GECODE_ME_CHECK(x0.eq(home, sin(x1.domain())));
+            (void)new (home) ASin<A, B>(home, x0, x1);
+        }
+        return ES_OK;
     }
-    return ES_OK;
-  }
 
+    template <class A, class B>
+    forceinline
+    ASin<A, B>::ASin(Space& home, ASin<A, B>& p)
+        : MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>(home, p) {}
 
-  template<class A, class B>
-  forceinline
-  ASin<A,B>::ASin(Space& home, ASin<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p) {}
-
-  template<class A, class B>
-  Actor*
-  ASin<A,B>::copy(Space& home) {
-    return new (home) ASin<A,B>(home,*this);
-  }
-
-  template<class A, class B>
-  ExecStatus
-  ASin<A,B>::propagate(Space& home, const ModEventDelta&) {
-    if ((x0.max() < -1) || (x0.min() > 1)) return ES_FAILED;
-    GECODE_ME_CHECK(x1.eq(home,asin(x0.domain())));
-    GECODE_ME_CHECK(x0.eq(home,sin(x1.domain())));
-    return (x0.assigned() || x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
-  }
-
-
-  /*
-   * Bounds consistent arc cosinus operator
-   *
-   */
-
-  template<class A, class B>
-  forceinline
-  ACos<A,B>::ACos(Home home, A x0, B x1)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,x0,x1) {}
-
-  template<class A, class B>
-  ExecStatus
-  ACos<A,B>::post(Home home, A x0, B x1) {
-    if (x0 == x1) {
-      GECODE_ME_CHECK(x0.gq(home,0.7390851332151));
-      GECODE_ME_CHECK(x0.lq(home,0.7390851332152));
-      bool mod;
-      do {
-        mod = false;
-        GECODE_ME_CHECK_MODIFIED(mod,x0.eq(home,acos(x0.val())));
-      } while (mod);
-    } else {
-      GECODE_ME_CHECK(x0.gq(home,-1.0));
-      GECODE_ME_CHECK(x0.lq(home,1.0));
-      GECODE_ME_CHECK(x1.eq(home,acos(x0.domain())));
-      GECODE_ME_CHECK(x0.eq(home,cos(x1.domain())));
-      (void) new (home) ACos<A,B>(home,x0,x1);
+    template <class A, class B>
+    Actor*
+    ASin<A, B>::copy(Space& home) {
+        return new (home) ASin<A, B>(home, *this);
     }
-    return ES_OK;
-  }
 
+    template <class A, class B>
+    ExecStatus
+    ASin<A, B>::propagate(Space& home, const ModEventDelta&) {
+        if ((x0.max() < -1) || (x0.min() > 1))
+            return ES_FAILED;
+        GECODE_ME_CHECK(x1.eq(home, asin(x0.domain())));
+        GECODE_ME_CHECK(x0.eq(home, sin(x1.domain())));
+        return (x0.assigned() || x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    }
 
-  template<class A, class B>
-  forceinline
-  ACos<A,B>::ACos(Space& home, ACos<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p) {}
+    /*
+     * Bounds consistent arc cosinus operator
+     *
+     */
 
-  template<class A, class B>
-  Actor*
-  ACos<A,B>::copy(Space& home) {
-    return new (home) ACos<A,B>(home,*this);
-  }
+    template <class A, class B>
+    forceinline
+    ACos<A, B>::ACos(Home home, A x0, B x1)
+        : MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>(home, x0, x1) {}
 
-  template<class A, class B>
-  ExecStatus
-  ACos<A,B>::propagate(Space& home, const ModEventDelta&) {
-    if ((x0.max() < -1) || (x0.min() > 1)) return ES_FAILED;
-    GECODE_ME_CHECK(x1.eq(home,acos(x0.domain())));
-    GECODE_ME_CHECK(x0.eq(home,cos(x1.domain())));
-    return (x0.assigned() || x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
-  }
+    template <class A, class B>
+    ExecStatus
+    ACos<A, B>::post(Home home, A x0, B x1) {
+        if (x0 == x1) {
+            GECODE_ME_CHECK(x0.gq(home, 0.7390851332151));
+            GECODE_ME_CHECK(x0.lq(home, 0.7390851332152));
+            bool mod;
+            do {
+                mod = false;
+                GECODE_ME_CHECK_MODIFIED(mod, x0.eq(home, acos(x0.val())));
+            } while (mod);
+        } else {
+            GECODE_ME_CHECK(x0.gq(home, -1.0));
+            GECODE_ME_CHECK(x0.lq(home, 1.0));
+            GECODE_ME_CHECK(x1.eq(home, acos(x0.domain())));
+            GECODE_ME_CHECK(x0.eq(home, cos(x1.domain())));
+            (void)new (home) ACos<A, B>(home, x0, x1);
+        }
+        return ES_OK;
+    }
 
-}}}
+    template <class A, class B>
+    forceinline
+    ACos<A, B>::ACos(Space& home, ACos<A, B>& p)
+        : MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>(home, p) {}
+
+    template <class A, class B>
+    Actor*
+    ACos<A, B>::copy(Space& home) {
+        return new (home) ACos<A, B>(home, *this);
+    }
+
+    template <class A, class B>
+    ExecStatus
+    ACos<A, B>::propagate(Space& home, const ModEventDelta&) {
+        if ((x0.max() < -1) || (x0.min() > 1))
+            return ES_FAILED;
+        GECODE_ME_CHECK(x1.eq(home, acos(x0.domain())));
+        GECODE_ME_CHECK(x0.eq(home, cos(x1.domain())));
+        return (x0.assigned() || x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    }
+
+} // namespace Gecode::Float::Trigonometric
 
 // STATISTICS: float-prop
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,71 +30,71 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  /**
-   * \defgroup FuncThrowSearch %Search exceptions
-   * \ingroup FuncThrow
-   */
-  //@{
-  /// %Exception: Uninitialized cutoff for restart-based search
-  class GECODE_SEARCH_EXPORT UninitializedCutoff : public Exception {
-  public:
-    /// Initialize with location \a l
-    UninitializedCutoff(const char* l);
-  };
-  /// %Exception: No assets requested for portfolio-based search
-  class GECODE_SEARCH_EXPORT NoAssets : public Exception {
-  public:
-    /// Initialize with location \a l
-    NoAssets(const char* l);
-  };
-  /// %Exception: Mixed non-best and best solution search requested
-  class GECODE_SEARCH_EXPORT MixedBest : public Exception {
-  public:
-    /// Initialize with location \a l
-    MixedBest(const char* l);
-  };
-  /// %Exception: Best solution search is not supported
-  class GECODE_SEARCH_EXPORT NoBest : public Exception {
-  public:
-    /// Initialize with location \a l
-    NoBest(const char* l);
-  };
-  /// %Exception: Invalid requested number of search workers
-  class GECODE_SEARCH_EXPORT InvalidWorkerRequest : public Exception {
-  public:
-    /// Initialize with location \a l
-    InvalidWorkerRequest(const char* l);
-  };
-  /// %Exception: Request through an empty worker control
-  class GECODE_SEARCH_EXPORT UninitializedWorkerControl : public Exception {
-  public:
-    /// Initialize with location \a l
-    UninitializedWorkerControl(const char* l);
-  };
-  /// %Exception: Worker control is already bound or used in an unsupported engine
-  class GECODE_SEARCH_EXPORT WorkerControlInUse : public Exception {
-  public:
-    /// Initialize with location \a l
-    WorkerControlInUse(const char* l);
-  };
+    /**
+     * \defgroup FuncThrowSearch %Search exceptions
+     * \ingroup FuncThrow
+     */
+    //@{
+    /// %Exception: Uninitialized cutoff for restart-based search
+    class GECODE_SEARCH_EXPORT UninitializedCutoff : public Exception {
+    public:
+        /// Initialize with location \a l
+        UninitializedCutoff(const char* l);
+    };
+    /// %Exception: No assets requested for portfolio-based search
+    class GECODE_SEARCH_EXPORT NoAssets : public Exception {
+    public:
+        /// Initialize with location \a l
+        NoAssets(const char* l);
+    };
+    /// %Exception: Mixed non-best and best solution search requested
+    class GECODE_SEARCH_EXPORT MixedBest : public Exception {
+    public:
+        /// Initialize with location \a l
+        MixedBest(const char* l);
+    };
+    /// %Exception: Best solution search is not supported
+    class GECODE_SEARCH_EXPORT NoBest : public Exception {
+    public:
+        /// Initialize with location \a l
+        NoBest(const char* l);
+    };
+    /// %Exception: Invalid requested number of search workers
+    class GECODE_SEARCH_EXPORT InvalidWorkerRequest : public Exception {
+    public:
+        /// Initialize with location \a l
+        InvalidWorkerRequest(const char* l);
+    };
+    /// %Exception: Request through an empty worker control
+    class GECODE_SEARCH_EXPORT UninitializedWorkerControl : public Exception {
+    public:
+        /// Initialize with location \a l
+        UninitializedWorkerControl(const char* l);
+    };
+    /// %Exception: Worker control is already bound or used in an unsupported engine
+    class GECODE_SEARCH_EXPORT WorkerControlInUse : public Exception {
+    public:
+        /// Initialize with location \a l
+        WorkerControlInUse(const char* l);
+    };
 #ifdef GECODE_HAS_EXPERIMENTAL
-  /// %Exception: Missing guidance for heuristic search
-  class GECODE_SEARCH_EXPORT UninitializedGuidance : public Exception {
-  public:
-    /// Initialize with location \a l
-    UninitializedGuidance(const char* l);
-  };
-  /// %Exception: Search engine does not support tracing
-  class GECODE_SEARCH_EXPORT UnsupportedTracer : public Exception {
-  public:
-    /// Initialize with location \a l
-    UnsupportedTracer(const char* l);
-  };
+    /// %Exception: Missing guidance for heuristic search
+    class GECODE_SEARCH_EXPORT UninitializedGuidance : public Exception {
+    public:
+        /// Initialize with location \a l
+        UninitializedGuidance(const char* l);
+    };
+    /// %Exception: Search engine does not support tracing
+    class GECODE_SEARCH_EXPORT UnsupportedTracer : public Exception {
+    public:
+        /// Initialize with location \a l
+        UnsupportedTracer(const char* l);
+    };
 #endif
 
-  //@}
-}}
+    //@}
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

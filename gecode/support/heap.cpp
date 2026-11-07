@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,14 +34,8 @@
 
 namespace Gecode {
 
-  Heap::Heap(void)
-#ifdef GECODE_PEAKHEAP
-  : _peak(0), _cur(0)
-#endif
-  {}
+    Heap heap;
 
-  Heap heap;
-
-}
+} // namespace Gecode
 
 // STATISTICS: support-any

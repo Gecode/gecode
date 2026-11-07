@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,18 +32,8 @@
 
 namespace Gecode {
 
-  forceinline
-  FloatAction::FloatAction(void) {}
+    forceinline FloatAction& FloatAction::operator=(const FloatAction& a) = default;
 
-  forceinline
-  FloatAction::FloatAction(const FloatAction& a)
-    : Action(a) {}
-
-  forceinline FloatAction&
-  FloatAction::operator =(const FloatAction& a) {
-    return static_cast<FloatAction&>(Action::operator =(a));
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: float-branch

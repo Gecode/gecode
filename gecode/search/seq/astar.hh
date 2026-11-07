@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -31,7 +30,6 @@
  *
  */
 
-
 #ifndef GECODE_SEARCH_SEQ_ASTAR_HH
 #define GECODE_SEARCH_SEQ_ASTAR_HH
 
@@ -40,53 +38,54 @@
 #include <gecode/search/seq/choice-expansion.hh>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
-  /// Sequential A* search
-  class AStar : public Worker {
-  private:
-    /// Search options
-    Options opt;
-    /// Guidance
-    HeuristicGuidance guidance;
-    /// Open nodes
-    Queue queue;
-    /// Number of created entries
-    unsigned long long int order;
-    /// Node being expanded
-    ChoiceExpansion expansion;
-    /// Status of the root node before it is counted
-    SpaceStatus status;
-    /// Depth of the node being expanded
-    unsigned long int depth;
-    /// Incumbent revision the node being expanded is constrained with
-    unsigned long long int revision;
-    /// Whether the node being expanded has been counted
-    bool counted;
-    /// Best solution so far
-    Incumbent best;
-    /// Add node \a s at depth \a d if it can improve the incumbent
-    void enqueue(std::unique_ptr<Space> s, unsigned long int d);
-    /// Make \a s the incumbent and return a copy, if it improves
-    Space* publish(std::unique_ptr<Space> s);
-    /// Start search from root \a s
-    void initialize(Space* s, bool clone);
-  public:
-    /// Initialize for space \a s with options \a o
-    AStar(Space* s, const Options& o);
-    /// Return next better solution (nullptr if none or stopped)
-    Space* next(void);
-    /// Return statistics
-    Statistics statistics(void) const;
-    /// Constrain future solutions to be better than \a b
-    void constrain(const Space& b);
-    /// Reset engine to restart at space \a s
-    void reset(Space* s);
-    /// Return no-goods (none)
-    NoGoods& nogoods(void);
-  };
+    /// Sequential A* search
+    class AStar : public Worker {
+    private:
+        /// Search options
+        Options opt;
+        /// Guidance
+        HeuristicGuidance guidance;
+        /// Open nodes
+        Queue queue;
+        /// Number of created entries
+        unsigned long long int order;
+        /// Node being expanded
+        ChoiceExpansion expansion;
+        /// Status of the root node before it is counted
+        SpaceStatus status;
+        /// Depth of the node being expanded
+        unsigned long int depth;
+        /// Incumbent revision the node being expanded is constrained with
+        unsigned long long int revision;
+        /// Whether the node being expanded has been counted
+        bool counted;
+        /// Best solution so far
+        Incumbent best;
+        /// Add node \a s at depth \a d if it can improve the incumbent
+        void enqueue(std::unique_ptr<Space> s, unsigned long int d);
+        /// Make \a s the incumbent and return a copy, if it improves
+        Space* publish(std::unique_ptr<Space> s);
+        /// Start search from root \a s
+        void initialize(Space* s, bool clone);
 
-}}}
+    public:
+        /// Initialize for space \a s with options \a o
+        AStar(Space* s, const Options& o);
+        /// Return next better solution (nullptr if none or stopped)
+        Space* next();
+        /// Return statistics
+        Statistics statistics() const;
+        /// Constrain future solutions to be better than \a s
+        void constrain(const Space& s);
+        /// Reset engine to restart at space \a s
+        void reset(Space* s);
+        /// Return no-goods (none)
+        NoGoods& nogoods();
+    };
+
+} // namespace Gecode::Search::Seq
 
 #endif
 

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,290 +34,277 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
-  /*
-   * Constructors and initialization
-   *
-   */
-  forceinline
-  BoolView::BoolView(void) {}
-  forceinline
-  BoolView::BoolView(const BoolVar& y)
-    : VarImpView<BoolVar>(y.varimp()) {}
-  forceinline
-  BoolView::BoolView(BoolVarImp* y)
-    : VarImpView<BoolVar>(y) {}
+    /*
+     * Constructors and initialization
+     *
+     */
+    forceinline
+    BoolView::BoolView(const BoolVar& y)
+        : VarImpView<BoolVar>(y.varimp()) {}
+    forceinline
+    BoolView::BoolView(BoolVarImp* y)
+        : VarImpView<BoolVar>(y) {}
 
-  /*
-   * Value access
-   *
-   */
-  forceinline BoolStatus
-  BoolView::status(void) const {
-    return x->status();
-  }
-  forceinline int
-  BoolView::min(void) const {
-    return x->min();
-  }
-  forceinline int
-  BoolView::max(void) const {
-    return x->max();
-  }
-  forceinline int
-  BoolView::med(void) const {
-    return x->med();
-  }
-  forceinline int
-  BoolView::val(void) const {
-    return x->val();
-  }
+    /*
+     * Value access
+     *
+     */
+    forceinline BoolStatus
+    BoolView::status() const {
+        return x->status();
+    }
+    forceinline int
+    BoolView::min() const {
+        return x->min();
+    }
+    forceinline int
+    BoolView::max() const {
+        return x->max();
+    }
+    forceinline int
+    BoolView::med() const {
+        return x->med();
+    }
+    forceinline int
+    BoolView::val() const {
+        return x->val();
+    }
 #ifdef GECODE_HAS_CBS
-  forceinline int
-  BoolView::baseval(int val) const {
-    return val;
-  }
+    forceinline int
+    BoolView::base_value(int val) const {
+        return val;
+    }
 #endif
 
-  forceinline unsigned int
-  BoolView::size(void) const {
-    return x->size();
-  }
-  forceinline unsigned int
-  BoolView::width(void) const {
-    return x->width();
-  }
-  forceinline unsigned int
-  BoolView::regret_min(void) const {
-    return x->regret_min();
-  }
-  forceinline unsigned int
-  BoolView::regret_max(void) const {
-    return x->regret_max();
-  }
+    forceinline unsigned int
+    BoolView::size() const {
+        return x->size();
+    }
+    forceinline unsigned int
+    BoolView::width() const {
+        return x->width();
+    }
+    forceinline unsigned int
+    BoolView::regret_min() const {
+        return x->regret_min();
+    }
+    forceinline unsigned int
+    BoolView::regret_max() const {
+        return x->regret_max();
+    }
 
+    /*
+     * Domain tests
+     *
+     */
+    forceinline bool
+    BoolView::range() const {
+        return x->range();
+    }
+    forceinline bool
+    BoolView::in(int n) const {
+        return x->in(n);
+    }
+    forceinline bool
+    BoolView::in(long long int n) const {
+        return x->in(n);
+    }
 
-  /*
-   * Domain tests
-   *
-   */
-  forceinline bool
-  BoolView::range(void) const {
-    return x->range();
-  }
-  forceinline bool
-  BoolView::in(int n) const {
-    return x->in(n);
-  }
-  forceinline bool
-  BoolView::in(long long int n) const {
-    return x->in(n);
-  }
+    /*
+     * Domain update by value
+     *
+     */
+    forceinline ModEvent
+    BoolView::lq(Space& home, int n) {
+        return x->lq(home, n);
+    }
+    forceinline ModEvent
+    BoolView::lq(Space& home, long long int n) {
+        return x->lq(home, n);
+    }
 
+    forceinline ModEvent
+    BoolView::le(Space& home, int n) {
+        return x->lq(home, n - 1);
+    }
+    forceinline ModEvent
+    BoolView::le(Space& home, long long int n) {
+        return x->lq(home, n - 1);
+    }
 
-  /*
-   * Domain update by value
-   *
-   */
-  forceinline ModEvent
-  BoolView::lq(Space& home, int n) {
-    return x->lq(home,n);
-  }
-  forceinline ModEvent
-  BoolView::lq(Space& home, long long int n) {
-    return x->lq(home,n);
-  }
+    forceinline ModEvent
+    BoolView::gq(Space& home, int n) {
+        return x->gq(home, n);
+    }
+    forceinline ModEvent
+    BoolView::gq(Space& home, long long int n) {
+        return x->gq(home, n);
+    }
 
-  forceinline ModEvent
-  BoolView::le(Space& home, int n) {
-    return x->lq(home,n-1);
-  }
-  forceinline ModEvent
-  BoolView::le(Space& home, long long int n) {
-    return x->lq(home,n-1);
-  }
+    forceinline ModEvent
+    BoolView::gr(Space& home, int n) {
+        return x->gq(home, n + 1);
+    }
+    forceinline ModEvent
+    BoolView::gr(Space& home, long long int n) {
+        return x->gq(home, n + 1);
+    }
 
-  forceinline ModEvent
-  BoolView::gq(Space& home, int n) {
-    return x->gq(home,n);
-  }
-  forceinline ModEvent
-  BoolView::gq(Space& home, long long int n) {
-    return x->gq(home,n);
-  }
+    forceinline ModEvent
+    BoolView::nq(Space& home, int n) {
+        return x->nq(home, n);
+    }
+    forceinline ModEvent
+    BoolView::nq(Space& home, long long int n) {
+        return x->nq(home, n);
+    }
 
-  forceinline ModEvent
-  BoolView::gr(Space& home, int n) {
-    return x->gq(home,n+1);
-  }
-  forceinline ModEvent
-  BoolView::gr(Space& home, long long int n) {
-    return x->gq(home,n+1);
-  }
+    forceinline ModEvent
+    BoolView::eq(Space& home, int n) {
+        return x->eq(home, n);
+    }
+    forceinline ModEvent
+    BoolView::eq(Space& home, long long int n) {
+        return x->eq(home, n);
+    }
 
-  forceinline ModEvent
-  BoolView::nq(Space& home, int n) {
-    return x->nq(home,n);
-  }
-  forceinline ModEvent
-  BoolView::nq(Space& home, long long int n) {
-    return x->nq(home,n);
-  }
+    /*
+     * Iterator-based domain update
+     *
+     */
+    template <class I>
+    forceinline ModEvent
+    BoolView::narrow_r(Space& home, I& i, bool depend) {
+        return x->narrow_r(home, i, depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    BoolView::inter_r(Space& home, I& i, bool depend) {
+        return x->inter_r(home, i, depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    BoolView::minus_r(Space& home, I& i, bool depend) {
+        return x->minus_r(home, i, depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    BoolView::narrow_v(Space& home, I& i, bool depend) {
+        return x->narrow_v(home, i, depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    BoolView::inter_v(Space& home, I& i, bool depend) {
+        return x->inter_v(home, i, depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    BoolView::minus_v(Space& home, I& i, bool depend) {
+        return x->minus_v(home, i, depend);
+    }
 
-  forceinline ModEvent
-  BoolView::eq(Space& home, int n) {
-    return x->eq(home,n);
-  }
-  forceinline ModEvent
-  BoolView::eq(Space& home, long long int n) {
-    return x->eq(home,n);
-  }
+    /*
+     * Boolean domain tests
+     *
+     */
+    forceinline bool
+    BoolView::zero() const {
+        return x->zero();
+    }
+    forceinline bool
+    BoolView::one() const {
+        return x->one();
+    }
+    forceinline bool
+    BoolView::none() const {
+        return x->none();
+    }
 
+    /*
+     * Boolean assignment operations
+     *
+     */
+    forceinline ModEvent
+    BoolView::zero_none(Space& home) {
+        return x->zero_none(home);
+    }
+    forceinline ModEvent
+    BoolView::one_none(Space& home) {
+        return x->one_none(home);
+    }
 
-  /*
-   * Iterator-based domain update
-   *
-   */
-  template<class I>
-  forceinline ModEvent
-  BoolView::narrow_r(Space& home, I& i, bool depend) {
-    return x->narrow_r(home,i,depend);
-  }
-  template<class I>
-  forceinline ModEvent
-  BoolView::inter_r(Space& home, I& i, bool depend) {
-    return x->inter_r(home,i,depend);
-  }
-  template<class I>
-  forceinline ModEvent
-  BoolView::minus_r(Space& home, I& i, bool depend) {
-    return x->minus_r(home,i,depend);
-  }
-  template<class I>
-  forceinline ModEvent
-  BoolView::narrow_v(Space& home, I& i, bool depend) {
-    return x->narrow_v(home,i,depend);
-  }
-  template<class I>
-  forceinline ModEvent
-  BoolView::inter_v(Space& home, I& i, bool depend) {
-    return x->inter_v(home,i,depend);
-  }
-  template<class I>
-  forceinline ModEvent
-  BoolView::minus_v(Space& home, I& i, bool depend) {
-    return x->minus_v(home,i,depend);
-  }
+    forceinline ModEvent
+    BoolView::zero(Space& home) {
+        return x->zero(home);
+    }
+    forceinline ModEvent
+    BoolView::one(Space& home) {
+        return x->one(home);
+    }
 
+    /*
+     * Delta information for advisors
+     *
+     */
+    forceinline int
+    BoolView::min(const Delta& d) const {
+        return BoolVarImp::min(d);
+    }
+    forceinline int
+    BoolView::max(const Delta& d) const {
+        return BoolVarImp::max(d);
+    }
+    forceinline unsigned int
+    BoolView::width(const Delta& d) const {
+        return BoolVarImp::width(d);
+    }
+    forceinline bool
+    BoolView::any(const Delta& d) const {
+        return BoolVarImp::any(d);
+    }
+    forceinline bool
+    BoolView::zero(const Delta& d) {
+        return BoolVarImp::zero(d);
+    }
+    forceinline bool
+    BoolView::one(const Delta& d) {
+        return BoolVarImp::one(d);
+    }
 
-  /*
-   * Boolean domain tests
-   *
-   */
-  forceinline bool
-  BoolView::zero(void) const {
-    return x->zero();
-  }
-  forceinline bool
-  BoolView::one(void) const {
-    return x->one();
-  }
-  forceinline bool
-  BoolView::none(void) const {
-    return x->none();
-  }
+    forceinline ModEventDelta
+    BoolView::med(ModEvent me) {
+        return VarImpView<BoolVar>::med(me);
+    }
 
+    /**
+     * \brief %Range iterator for Boolean variable views
+     * \ingroup TaskActorIntView
+     */
+    template <>
+    class ViewRanges<BoolView> : public Iter::Ranges::Singleton {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        ViewRanges() = default;
+        /// Initialize with ranges for view \a x
+        ViewRanges(const BoolView& x);
+        /// Initialize with ranges for view \a x
+        void init(const BoolView& x);
+        //@}
+    };
 
-  /*
-   * Boolean assignment operations
-   *
-   */
-  forceinline ModEvent
-  BoolView::zero_none(Space& home) {
-    return x->zero_none(home);
-  }
-  forceinline ModEvent
-  BoolView::one_none(Space& home) {
-    return x->one_none(home);
-  }
+    forceinline
+    ViewRanges<BoolView>::ViewRanges(const BoolView& x)
+        : Iter::Ranges::Singleton(x.min(), x.max()) {}
 
-  forceinline ModEvent
-  BoolView::zero(Space& home) {
-    return x->zero(home);
-  }
-  forceinline ModEvent
-  BoolView::one(Space& home) {
-    return x->one(home);
-  }
+    forceinline void
+    ViewRanges<BoolView>::init(const BoolView& x) {
+        Iter::Ranges::Singleton::init(x.min(), x.max());
+    }
 
-
-  /*
-   * Delta information for advisors
-   *
-   */
-  forceinline int
-  BoolView::min(const Delta& d) const {
-    return BoolVarImp::min(d);
-  }
-  forceinline int
-  BoolView::max(const Delta& d) const {
-    return BoolVarImp::max(d);
-  }
-  forceinline unsigned int
-  BoolView::width(const Delta& d) const {
-    return BoolVarImp::width(d);
-  }
-  forceinline bool
-  BoolView::any(const Delta& d) const {
-    return BoolVarImp::any(d);
-  }
-  forceinline bool
-  BoolView::zero(const Delta& d) {
-    return BoolVarImp::zero(d);
-  }
-  forceinline bool
-  BoolView::one(const Delta& d) {
-    return BoolVarImp::one(d);
-  }
-
-
-
-  forceinline ModEventDelta
-  BoolView::med(ModEvent me) {
-    return VarImpView<BoolVar>::med(me);
-  }
-
-  /**
-   * \brief %Range iterator for Boolean variable views
-   * \ingroup TaskActorIntView
-   */
-  template<>
-  class ViewRanges<BoolView> : public Iter::Ranges::Singleton {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    ViewRanges(void);
-    /// Initialize with ranges for view \a x
-    ViewRanges(const BoolView& x);
-    /// Initialize with ranges for view \a x
-    void init(const BoolView& x);
-    //@}
-  };
-
-  forceinline
-  ViewRanges<BoolView>::ViewRanges(void) {}
-
-  forceinline
-  ViewRanges<BoolView>::ViewRanges(const BoolView& x)
-    : Iter::Ranges::Singleton(x.min(),x.max()) {}
-
-  forceinline void
-  ViewRanges<BoolView>::init(const BoolView& x) {
-    Iter::Ranges::Singleton::init(x.min(),x.max());
-  }
-
-}}
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

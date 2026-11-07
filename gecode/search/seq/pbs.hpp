@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,153 +32,148 @@
 
 #include <climits>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
+    forceinline
+    PortfolioStop::PortfolioStop(Stop* so0)
+        : so(so0) {}
+    forceinline void
+    PortfolioStop::share(SharedStopInfo* ssi0) {
+        ssi = ssi0;
+    }
 
-  forceinline
-  PortfolioStop::PortfolioStop(Stop* so0)
-    : so(so0) {}
-  forceinline void
-  PortfolioStop::share(SharedStopInfo* ssi0) {
-    ssi = ssi0;
-  }
-
-
-  forceinline
-  Slave::Slave(void)
-    : slave(nullptr), stop(nullptr) {}
-  forceinline void
-  Slave::init(Engine* e, Stop* s) {
-    slave = e; stop = s;
-  }
-  forceinline Space*
-  Slave::next(void) {
-    return slave->next();
-  }
-  forceinline Statistics
-  Slave::statistics(void) const {
-    return slave->statistics();
-  }
-  forceinline bool
-  Slave::stopped(void) const {
-    return slave->stopped();
-  }
-  forceinline bool
-  Slave::limited(void) const {
+    forceinline
+    Slave::Slave()
+        : slave(nullptr), stop(nullptr) {}
+    forceinline void
+    Slave::init(Engine* e, Stop* s) {
+        slave = e;
+        stop = s;
+    }
+    forceinline Space*
+    Slave::next() {
+        return slave->next();
+    }
+    forceinline Statistics
+    Slave::statistics() const {
+        return slave->statistics();
+    }
+    forceinline bool
+    Slave::stopped() const {
+        return slave->stopped();
+    }
+    forceinline bool
+    Slave::limited() const {
 #ifdef GECODE_HAS_EXPERIMENTAL
-    return slave->limited();
+        return slave->limited();
 #else
-    return false;
+        return false;
 #endif
-  }
-  forceinline void
-  Slave::constrain(const Space& b) {
-    slave->constrain(b);
-  }
-  forceinline
-  Slave::~Slave(void) {
-    delete slave;
-    delete stop;
-  }
-
-
-  template<bool best>
-  forceinline
-  PBS<best>::PBS(Engine** e, Stop** s, unsigned int n,
-                 const Statistics& stat0,
-                 const Search::Options& opt)
-    : stat(stat0), slice(opt.slice),
-      slaves(heap.alloc<Slave>(n)), n_slaves(n), cur(0),
-      slave_stop(false), incomplete(false) {
-    ssi.done = false;
-    ssi.l = opt.slice;
-
-    for (unsigned int i=0U; i<n; i++) {
-      slaves[i].init(e[i],static_cast<PortfolioStop*>(s[i]));
-      static_cast<PortfolioStop*>(s[i])->share(&ssi);
     }
-  }
+    forceinline void
+    Slave::constrain(const Space& b) {
+        slave->constrain(b);
+    }
+    forceinline Slave::~Slave() {
+        delete slave;
+        delete stop;
+    }
 
-  template<bool best>
-  Space*
-  PBS<best>::next(void) {
-    slave_stop = false;
-    unsigned int n_exhausted = 0;
-    while (n_slaves > 0) {
-      ssi.done = false;
-      if (Space* s = slaves[cur].next()) {
-        // Constrain other slaves
-        if (best) {
-          for (unsigned int i=0U; i<cur; i++)
-            slaves[i].constrain(*s);
-          for (unsigned int i=cur+1; i<n_slaves; i++)
-            slaves[i].constrain(*s);
+    template <bool best>
+    forceinline
+    PBS<best>::PBS(Engine** e, Stop** s, unsigned int n, const Statistics& stat0, const Search::Options& opt)
+        : stat(stat0), slice(opt.slice), slaves(heap.alloc<Slave>(n)), n_slaves(n), cur(0), slave_stop(false),
+          incomplete(false) {
+        ssi.done = false;
+        ssi.l = opt.slice;
+
+        for (unsigned int i = 0U; i < n; i++) {
+            slaves[i].init(e[i], static_cast<PortfolioStop*>(s[i]));
+            static_cast<PortfolioStop*>(s[i])->share(&ssi);
         }
+    }
+
+    template <bool best>
+    Space*
+    PBS<best>::next() {
+        slave_stop = false;
+        unsigned int n_exhausted = 0;
+        while (n_slaves > 0) {
+            ssi.done = false;
+            if (Space* s = slaves[cur].next()) {
+                // Constrain other slaves
+                if (best) {
+                    for (unsigned int i = 0U; i < cur; i++)
+                        slaves[i].constrain(*s);
+                    for (unsigned int i = cur + 1; i < n_slaves; i++)
+                        slaves[i].constrain(*s);
+                }
+                return s;
+            }
+            if (slaves[cur].stopped() && !slaves[cur].limited()) {
+                if (ssi.done) {
+                    cur++;
+                    n_exhausted++;
+                } else {
+                    slave_stop = true;
+                    return nullptr;
+                }
+            } else {
+                // The slave is done or stopped at a local limit (then search is incomplete)
+                if (slaves[cur].limited())
+                    incomplete = true;
+                // Kill the slave after saving the statistics
+                stat += slaves[cur].statistics();
+                slaves[cur].~Slave();
+                slaves[cur] = slaves[--n_slaves];
+                if (n_slaves == 1)
+                    // Disable stopping by setting a high limit
+                    ssi.l = ULONG_MAX;
+            }
+            if (n_exhausted == n_slaves) {
+                n_exhausted = 0;
+                // Increment by one slice
+                ssi.l += slice;
+            }
+            if (cur == n_slaves)
+                cur = 0;
+        }
+        slave_stop = incomplete;
+        return nullptr;
+    }
+
+    template <bool best>
+    bool
+    PBS<best>::stopped() const {
+        return slave_stop;
+    }
+
+    template <bool best>
+    Statistics
+    PBS<best>::statistics() const {
+        Statistics s(stat);
+        for (unsigned int i = 0U; i < n_slaves; i++)
+            s += slaves[i].statistics();
         return s;
-      }
-      if (slaves[cur].stopped() && !slaves[cur].limited()) {
-        if (ssi.done) {
-          cur++; n_exhausted++;
-        } else {
-          slave_stop = true;
-          return nullptr;
-        }
-      } else {
-        // The slave is done or stopped at a local limit (then search is incomplete)
-        if (slaves[cur].limited())
-          incomplete = true;
-        // Kill the slave after saving the statistics
-        stat += slaves[cur].statistics();
-        slaves[cur].~Slave();
-        slaves[cur] = slaves[--n_slaves];
-        if (n_slaves == 1)
-          // Disable stopping by setting a high limit
-          ssi.l = ULONG_MAX;
-      }
-      if (n_exhausted == n_slaves) {
-        n_exhausted = 0;
-        // Increment by one slice
-        ssi.l += slice;
-      }
-      if (cur == n_slaves)
-        cur = 0;
     }
-    slave_stop = incomplete;
-    return nullptr;
-  }
 
-  template<bool best>
-  bool
-  PBS<best>::stopped(void) const {
-    return slave_stop;
-  }
+    template <bool best>
+    void
+    PBS<best>::constrain(const Space& b) {
+        if (!best)
+            throw NoBest("PBS::constrain");
+        for (unsigned int i = 0U; i < n_slaves; i++)
+            slaves[i].constrain(b);
+    }
 
-  template<bool best>
-  Statistics
-  PBS<best>::statistics(void) const {
-    Statistics s(stat);
-    for (unsigned int i=0U; i<n_slaves; i++)
-      s += slaves[i].statistics();
-    return s;
-  }
+    template <bool best>
+    PBS<best>::~PBS() {
+        for (unsigned int i = 0U; i < n_slaves; i++)
+            slaves[i].~Slave();
+        // Note that n_slaves might be different now!
+        heap.rfree(slaves);
+    }
 
-  template<bool best>
-  void
-  PBS<best>::constrain(const Space& b) {
-    if (!best)
-      throw NoBest("PBS::constrain");
-    for (unsigned int i=0U; i<n_slaves; i++)
-      slaves[i].constrain(b);
-  }
-
-  template<bool best>
-  PBS<best>::~PBS(void) {
-    for (unsigned int i=0U; i<n_slaves; i++)
-      slaves[i].~Slave();
-    // Note that n_slaves might be different now!
-    heap.rfree(slaves);
-  }
-
-}}}
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

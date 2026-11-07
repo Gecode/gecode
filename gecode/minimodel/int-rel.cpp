@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,376 +34,376 @@
 
 namespace Gecode {
 
-  /*
-   * Construction of linear relations
-   *
-   */
-  LinIntRel
-  operator ==(int l, const IntVar& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(int l, const BoolVar& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(int l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const IntVar& l, int r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const BoolVar& l, int r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const LinIntExpr& l, int r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const IntVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const IntVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const BoolVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const BoolVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const IntVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const BoolVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const LinIntExpr& l, const IntVar& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const LinIntExpr& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
-  LinIntRel
-  operator ==(const LinIntExpr& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_EQ,r);
-  }
+    /*
+     * Construction of linear relations
+     *
+     */
+    LinIntRel
+    operator==(int l, const IntVar& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(int l, const BoolVar& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(int l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const IntVar& l, int r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const BoolVar& l, int r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const LinIntExpr& l, int r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const IntVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const IntVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const BoolVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const BoolVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const IntVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const BoolVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const LinIntExpr& l, const IntVar& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const LinIntExpr& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
+    LinIntRel
+    operator==(const LinIntExpr& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_EQ, r);
+    }
 
-  LinIntRel
-  operator !=(int l, const IntVar& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(int l, const BoolVar& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(int l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const IntVar& l, int r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const BoolVar& l, int r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const LinIntExpr& l, int r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const IntVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const IntVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const BoolVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const BoolVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const IntVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const BoolVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const LinIntExpr& l, const IntVar& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const LinIntExpr& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
-  LinIntRel
-  operator !=(const LinIntExpr& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_NQ,r);
-  }
+    LinIntRel
+    operator!=(int l, const IntVar& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(int l, const BoolVar& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(int l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const IntVar& l, int r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const BoolVar& l, int r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const LinIntExpr& l, int r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const IntVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const IntVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const BoolVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const BoolVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const IntVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const BoolVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const LinIntExpr& l, const IntVar& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const LinIntExpr& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
+    LinIntRel
+    operator!=(const LinIntExpr& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_NQ, r);
+    }
 
-  LinIntRel
-  operator <(int l, const IntVar& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(int l, const BoolVar& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(int l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const IntVar& l, int r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const BoolVar& l, int r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const LinIntExpr& l, int r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const IntVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const IntVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const BoolVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const BoolVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const IntVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const BoolVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const LinIntExpr& l, const IntVar& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const LinIntExpr& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
-  LinIntRel
-  operator <(const LinIntExpr& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_LE,r);
-  }
+    LinIntRel
+    operator<(int l, const IntVar& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(int l, const BoolVar& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(int l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const IntVar& l, int r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const BoolVar& l, int r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const LinIntExpr& l, int r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const IntVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const IntVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const BoolVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const BoolVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const IntVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const BoolVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const LinIntExpr& l, const IntVar& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const LinIntExpr& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
+    LinIntRel
+    operator<(const LinIntExpr& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_LT, r);
+    }
 
-  LinIntRel
-  operator <=(int l, const IntVar& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(int l, const BoolVar& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(int l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const IntVar& l, int r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const BoolVar& l, int r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const LinIntExpr& l, int r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const IntVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const IntVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const BoolVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const BoolVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const IntVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const BoolVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const LinIntExpr& l, const IntVar& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const LinIntExpr& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
-  LinIntRel
-  operator <=(const LinIntExpr& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_LQ,r);
-  }
+    LinIntRel
+    operator<=(int l, const IntVar& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(int l, const BoolVar& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(int l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const IntVar& l, int r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const BoolVar& l, int r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const LinIntExpr& l, int r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const IntVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const IntVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const BoolVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const BoolVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const IntVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const BoolVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const LinIntExpr& l, const IntVar& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const LinIntExpr& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
+    LinIntRel
+    operator<=(const LinIntExpr& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_LQ, r);
+    }
 
-  LinIntRel
-  operator >(int l, const IntVar& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(int l, const BoolVar& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(int l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const IntVar& l, int r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const BoolVar& l, int r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const LinIntExpr& l, int r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const IntVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const IntVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const BoolVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const BoolVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const IntVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const BoolVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const LinIntExpr& l, const IntVar& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const LinIntExpr& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
-  LinIntRel
-  operator >(const LinIntExpr& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_GR,r);
-  }
+    LinIntRel
+    operator>(int l, const IntVar& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(int l, const BoolVar& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(int l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const IntVar& l, int r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const BoolVar& l, int r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const LinIntExpr& l, int r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const IntVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const IntVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const BoolVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const BoolVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const IntVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const BoolVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const LinIntExpr& l, const IntVar& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const LinIntExpr& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
+    LinIntRel
+    operator>(const LinIntExpr& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_GR, r);
+    }
 
-  LinIntRel
-  operator >=(int l, const IntVar& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(int l, const BoolVar& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(int l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const IntVar& l, int r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const BoolVar& l, int r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const LinIntExpr& l, int r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const IntVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const IntVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const BoolVar& l, const IntVar& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const BoolVar& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const IntVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const BoolVar& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const LinIntExpr& l, const IntVar& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const LinIntExpr& l, const BoolVar& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
-  LinIntRel
-  operator >=(const LinIntExpr& l, const LinIntExpr& r) {
-    return LinIntRel(l,IRT_GQ,r);
-  }
+    LinIntRel
+    operator>=(int l, const IntVar& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(int l, const BoolVar& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(int l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const IntVar& l, int r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const BoolVar& l, int r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const LinIntExpr& l, int r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const IntVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const IntVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const BoolVar& l, const IntVar& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const BoolVar& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const IntVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const BoolVar& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const LinIntExpr& l, const IntVar& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const LinIntExpr& l, const BoolVar& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
+    LinIntRel
+    operator>=(const LinIntExpr& l, const LinIntExpr& r) {
+        return LinIntRel(l, IRT_GQ, r);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: minimodel-any

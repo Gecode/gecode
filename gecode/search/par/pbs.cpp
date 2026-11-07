@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,19 +37,18 @@
 #include <gecode/search/par/pbs.hh>
 #include <gecode/search/worker-control.hh>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
-  bool
-  PortfolioStop::stop(const Statistics& s, const Options& o) {
-    return tostop->load(std::memory_order_acquire) ||
-      ((so != nullptr) && so->stop(s,o));
-  }
+    bool
+    PortfolioStop::stop(const Statistics& s, const Options& o) {
+        return tostop->load(std::memory_order_acquire) || ((so != nullptr) && so->stop(s, o));
+    }
 
-  void
-  PortfolioStop::wake(void) {
-    WorkerControlAccess::signal_all(worker_control);
-  }
+    void
+    PortfolioStop::wake() {
+        WorkerControlAccess::signal_all(worker_control);
+    }
 
-}}}
+} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

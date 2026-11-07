@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -40,58 +39,58 @@
 #endif
 #include <gecode/gist.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  /**
-   * \brief Preferences dialog for %Gist
-   */
-  class PreferencesDialog : public QDialog {
-    Q_OBJECT
+    /**
+     * \brief Preferences dialog for %Gist
+     */
+    class PreferencesDialog : public QDialog {
+        Q_OBJECT
 
-  protected:
-    QCheckBox* hideCheck;
-    QCheckBox* zoomCheck;
-    QCheckBox* smoothCheck;
-    QCheckBox* copiesCheck;
-    QSpinBox*  refreshBox;
-    QCheckBox* slowBox;
-    QCheckBox* moveDuringSearchBox;
-    QSpinBox*  cdBox;
-    QSpinBox*  adBox;
-  protected Q_SLOTS:
-    /// Write settings
-    void writeBack(void);
-    /// Reset to defaults
-    void defaults(void);
-    /// Toggle slow down setting
-    void toggleSlow(int state);
-  public:
-    /// Constructor
-    PreferencesDialog(const Options& opt, QWidget* parent = 0);
+    protected:
+        QCheckBox* hide_check;
+        QCheckBox* zoom_check;
+        QCheckBox* smooth_check;
+        QCheckBox* copies_check;
+        QSpinBox* refresh_box;
+        QCheckBox* slow_box;
+        QCheckBox* move_during_search_box;
+        QSpinBox* cd_box;
+        QSpinBox* ad_box;
 
-    /// Whether to automatically hide failed subtrees during search
-    bool hideFailed;
-    /// Whether to automatically zoom during search
-    bool zoom;
-    /// Whether to show where copies are in the tree
-    bool copies;
-    /// How often to refresh the display during search
-    int refresh;
-    /// Milliseconds to wait after each refresh (to slow down search)
-    int refreshPause;
-    /// Whether to use smooth scrolling and zooming
-    bool smoothScrollAndZoom;
-    /// Whether to move cursor during search
-    bool moveDuringSearch;
+        /// Write settings
+        void write_back();
+        /// Reset to defaults
+        void defaults();
+        /// Toggle slow down setting
+        void toggle_slow(int state);
 
-    /// The copying distance
-    int c_d;
-    /// The adaptive recomputation distance
-    int a_d;
+    public:
+        /// Constructor
+        PreferencesDialog(const Options& opt, QWidget* parent = nullptr);
 
-  };
+        /// Whether to automatically hide failed subtrees during search
+        bool hide_failed;
+        /// Whether to automatically zoom during search
+        bool zoom;
+        /// Whether to show where copies are in the tree
+        bool copies;
+        /// How often to refresh the display during search
+        int refresh;
+        /// Milliseconds to wait after each refresh (to slow down search)
+        int refresh_pause;
+        /// Whether to use smooth scrolling and zooming
+        bool smooth_scroll_and_zoom;
+        /// Whether to move cursor during search
+        bool move_during_search;
 
-}}
+        /// The copying distance
+        int c_d;
+        /// The adaptive recomputation distance
+        int a_d;
+    };
+
+} // namespace Gecode::Gist
 
 #endif
 

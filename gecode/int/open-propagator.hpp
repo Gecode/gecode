@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -36,57 +35,54 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
-  /// Follow list growth and remember which positions have been incorporated
-  template<class View>
-  class OpenListPropagator : public Propagator {
-  protected:
-    OpenViewList<View> list;
-    IntView length;
-    int processed;
+    /// Follow list growth and remember which positions have been incorporated
+    template <class View>
+    class OpenListPropagator : public Propagator {
+    protected:
+        OpenViewList<View> list;
+        IntView length;
+        int processed;
 
-    OpenListPropagator(Home home, OpenViewList<View> list0)
-      : Propagator(home), list(list0),
-        length(list0.length()),
-        processed(0) {
-      length.subscribe(home,*this,PC_INT_BND);
-      list.subscribe(home,*this);
-    }
+        OpenListPropagator(Home home, OpenViewList<View> list0)
+            : Propagator(home), list(list0), length(list0.length()), processed(0) {
+            length.subscribe(home, *this, PC_INT_BND);
+            list.subscribe(home, *this);
+        }
 
-    OpenListPropagator(Space& home, OpenListPropagator& p)
-      : Propagator(home,p), processed(p.processed) {
-      list.update(home,p.list);
-      length.update(home,p.length);
-    }
+        OpenListPropagator(Space& home, OpenListPropagator& p) : Propagator(home, p), processed(p.processed) {
+            list.update(home, p.list);
+            length.update(home, p.length);
+        }
 
-    bool
-    closed(void) const {
-      return length.max() == list.known_length();
-    }
+        bool
+        closed() const {
+            return length.max() == list.known_length();
+        }
 
-    void
-    dispose_base(Space& home) {
-      length.cancel(home,*this,PC_INT_BND);
-      list.cancel(home,*this);
-      list.~OpenViewList();
-      (void) Propagator::dispose(home);
-    }
+        void
+        dispose_base(Space& home) {
+            length.cancel(home, *this, PC_INT_BND);
+            list.cancel(home, *this);
+            list.~OpenViewList();
+            (void)Propagator::dispose(home);
+        }
 
-  public:
-    virtual PropCost
-    cost(const Space&, const ModEventDelta&) const {
-      return PropCost::linear(PropCost::LO,list.known_length()-processed);
-    }
+    public:
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
+            return PropCost::linear(PropCost::LO, list.known_length() - processed);
+        }
 
-    virtual void
-    reschedule(Space& home) {
-      length.reschedule(home,*this,PC_INT_BND);
-      list.reschedule(home,*this);
-    }
-  };
+        void
+        reschedule(Space& home) override {
+            length.reschedule(home, *this, PC_INT_BND);
+            list.reschedule(home, *this);
+        }
+    };
 
-}}
+} // namespace Gecode::Int
 
 #endif
 

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -38,7 +37,7 @@
 
 // This is a workaround for a bug in flex that only shows up
 // with the Microsoft C++ compiler
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 #define YY_NO_UNISTD_H
 #ifdef __cplusplus
 extern "C" int isatty(int);
@@ -47,7 +46,7 @@ extern "C" int isatty(int);
 
 // The Microsoft C++ compiler marks certain functions as deprecated,
 // so let's take the alternative definitions
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 #define strdup _strdup
 #define fileno _fileno
 #endif
@@ -65,214 +64,231 @@ extern "C" int isatty(int);
 #include <gecode/flatzinc/parser.tab.hpp>
 #include <gecode/flatzinc/symboltable.hh>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
-  typedef std::pair<std::string,Option<std::vector<int>* > > intvartype;
+    class VarSpec;
+    using NamedVarSpec = std::pair<std::string, VarSpec*>;
 
-  class VarSpec;
-  typedef std::pair<std::string, VarSpec*> varspec;
+    /// Strict weak ordering for output items
+    class OutputOrder {
+    public:
+        /// Return if \a x is less than \a y, based on first component
+        bool
+        operator()(const std::pair<std::string, AST::Node*>& x, const std::pair<std::string, AST::Node*>& y) {
+            return x.first < y.first;
+        }
+    };
 
-  /// Strict weak ordering for output items
-  class OutputOrder {
-  public:
-    /// Return if \a x is less than \a y, based on first component
-    bool operator ()(const std::pair<std::string,AST::Node*>& x,
-                     const std::pair<std::string,AST::Node*>& y) {
-      return x.first < y.first;
+    /// Types of symbols
+    enum class SymbolType {
+        ST_INTVAR,        //< Integer variable
+        ST_BOOLVAR,       //< Boolean variable
+        ST_FLOATVAR,      //< Float variable
+        ST_SETVAR,        //< Set variable
+        ST_INTVARARRAY,   //< Integer variable array
+        ST_BOOLVARARRAY,  //< Boolean variable array
+        ST_SETVARARRAY,   //< Set variable array
+        ST_FLOATVARARRAY, //< Float variable array
+        ST_INTVALARRAY,   //< Integer array
+        ST_BOOLVALARRAY,  //< Boolean array
+        ST_SETVALARRAY,   //< Set array
+        ST_FLOATVALARRAY, //< Float array
+        ST_INT,           //< Integer
+        ST_BOOL,          //< Boolean
+        ST_SET,           //< Set
+        ST_FLOAT          //< Float
+    };
+    using enum SymbolType;
+
+    /// Entries in the symbol table
+    class SymbolEntry {
+    public:
+        SymbolType t; //< Type of entry
+        int i;        //< Value of entry or array start index
+        /// Default constructor
+        // NOLINTNEXTLINE(modernize-use-equals-default)
+        SymbolEntry() {}
+        /// Constructor
+        SymbolEntry(SymbolType t0, int i0) : t(t0), i(i0) {}
+    };
+
+    /// Construct integer variable entry
+    forceinline SymbolEntry
+    se_iv(int i) {
+        return SymbolEntry(ST_INTVAR, i);
     }
-  };
+    /// Construct Boolean variable entry
+    forceinline SymbolEntry
+    se_bv(int i) {
+        return SymbolEntry(ST_BOOLVAR, i);
+    }
+    /// Construct float variable entry
+    forceinline SymbolEntry
+    se_fv(int i) {
+        return SymbolEntry(ST_FLOATVAR, i);
+    }
+    /// Construct set variable entry
+    forceinline SymbolEntry
+    se_sv(int i) {
+        return SymbolEntry(ST_SETVAR, i);
+    }
 
-  /// Types of symbols
-  enum SymbolType {
-    ST_INTVAR,        //< Integer variable
-    ST_BOOLVAR,       //< Boolean variable
-    ST_FLOATVAR,      //< Float variable
-    ST_SETVAR,        //< Set variable
-    ST_INTVARARRAY,   //< Integer variable array
-    ST_BOOLVARARRAY,  //< Boolean variable array
-    ST_SETVARARRAY,   //< Set variable array
-    ST_FLOATVARARRAY, //< Float variable array
-    ST_INTVALARRAY,   //< Integer array
-    ST_BOOLVALARRAY,  //< Boolean array
-    ST_SETVALARRAY,   //< Set array
-    ST_FLOATVALARRAY, //< Float array
-    ST_INT,           //< Integer
-    ST_BOOL,          //< Boolean
-    ST_SET,           //< Set
-    ST_FLOAT          //< Float
-  };
+    /// Construct integer variable array entry
+    forceinline SymbolEntry
+    se_iva(int i) {
+        return SymbolEntry(ST_INTVARARRAY, i);
+    }
+    /// Construct Boolean variable array entry
+    forceinline SymbolEntry
+    se_bva(int i) {
+        return SymbolEntry(ST_BOOLVARARRAY, i);
+    }
+    /// Construct float variable array entry
+    forceinline SymbolEntry
+    se_fva(int i) {
+        return SymbolEntry(ST_FLOATVARARRAY, i);
+    }
+    /// Construct set variable array entry
+    forceinline SymbolEntry
+    se_sva(int i) {
+        return SymbolEntry(ST_SETVARARRAY, i);
+    }
 
-  /// Entries in the symbol table
-  class SymbolEntry {
-  public:
-    SymbolType t; //< Type of entry
-    int i;        //< Value of entry or array start index
-    /// Default constructor
-    SymbolEntry(void) {}
-    /// Constructor
-    SymbolEntry(SymbolType t0, int i0) : t(t0), i(i0) {}
-  };
+    /// Construct integer entry
+    forceinline SymbolEntry
+    se_i(int i) {
+        return SymbolEntry(ST_INT, i);
+    }
+    /// Construct Boolean entry
+    forceinline SymbolEntry
+    se_b(bool b) {
+        return SymbolEntry(ST_BOOL, b);
+    }
+    /// Construct set entry
+    forceinline SymbolEntry
+    se_s(int i) {
+        return SymbolEntry(ST_SET, i);
+    }
+    /// Construct float entry
+    forceinline SymbolEntry
+    se_f(int i) {
+        return SymbolEntry(ST_FLOAT, i);
+    }
 
-  /// Construct integer variable entry
-  forceinline SymbolEntry se_iv(int i) {
-    return SymbolEntry(ST_INTVAR, i);
-  }
-  /// Construct Boolean variable entry
-  forceinline SymbolEntry se_bv(int i) {
-    return SymbolEntry(ST_BOOLVAR, i);
-  }
-  /// Construct float variable entry
-  forceinline SymbolEntry se_fv(int i) {
-    return SymbolEntry(ST_FLOATVAR, i);
-  }
-  /// Construct set variable entry
-  forceinline SymbolEntry se_sv(int i) {
-    return SymbolEntry(ST_SETVAR, i);
-  }
+    /// Construct integer array entry
+    forceinline SymbolEntry
+    se_ia(int i) {
+        return SymbolEntry(ST_INTVALARRAY, i);
+    }
+    /// Construct Boolean array entry
+    forceinline SymbolEntry
+    se_ba(int i) {
+        return SymbolEntry(ST_BOOLVALARRAY, i);
+    }
+    /// Construct set array entry
+    forceinline SymbolEntry
+    se_sa(int i) {
+        return SymbolEntry(ST_SETVALARRAY, i);
+    }
+    /// Construct float array entry
+    forceinline SymbolEntry
+    se_fa(int i) {
+        return SymbolEntry(ST_FLOATVALARRAY, i);
+    }
 
-  /// Construct integer variable array entry
-  forceinline SymbolEntry se_iva(int i) {
-    return SymbolEntry(ST_INTVARARRAY, i);
-  }
-  /// Construct Boolean variable array entry
-  forceinline SymbolEntry se_bva(int i) {
-    return SymbolEntry(ST_BOOLVARARRAY, i);
-  }
-  /// Construct float variable array entry
-  forceinline SymbolEntry se_fva(int i) {
-    return SymbolEntry(ST_FLOATVARARRAY, i);
-  }
-  /// Construct set variable array entry
-  forceinline SymbolEntry se_sva(int i) {
-    return SymbolEntry(ST_SETVARARRAY, i);
-  }
+    /// %State of the %FlatZinc parser
+    class ParserState {
+    public:
+        ParserState(const std::string& b, std::ostream& err0, Gecode::FlatZinc::FlatZincSpace* fg0)
+            : yyscanner(nullptr), buf(b.c_str()), pos(0), length(b.size()), fg(fg0), had_error(false), err(err0) {}
 
-  /// Construct integer entry
-  forceinline SymbolEntry se_i(int i) {
-    return SymbolEntry(ST_INT, i);
-  }
-  /// Construct Boolean entry
-  forceinline SymbolEntry se_b(bool b) {
-    return SymbolEntry(ST_BOOL, b);
-  }
-  /// Construct set entry
-  forceinline SymbolEntry se_s(int i) {
-    return SymbolEntry(ST_SET, i);
-  }
-  /// Construct float entry
-  forceinline SymbolEntry se_f(int i) {
-    return SymbolEntry(ST_FLOAT, i);
-  }
+        ParserState(const char* buf0, int length0, std::ostream& err0, Gecode::FlatZinc::FlatZincSpace* fg0)
+            : yyscanner(nullptr), buf(buf0), pos(0), length(length0), fg(fg0), had_error(false), err(err0) {}
 
-  /// Construct integer array entry
-  forceinline SymbolEntry se_ia(int i) {
-    return SymbolEntry(ST_INTVALARRAY, i);
-  }
-  /// Construct Boolean array entry
-  forceinline SymbolEntry se_ba(int i) {
-    return SymbolEntry(ST_BOOLVALARRAY, i);
-  }
-  /// Construct set array entry
-  forceinline SymbolEntry se_sa(int i) {
-    return SymbolEntry(ST_SETVALARRAY, i);
-  }
-  /// Construct float array entry
-  forceinline SymbolEntry se_fa(int i) {
-    return SymbolEntry(ST_FLOATVALARRAY, i);
-  }
+        ~ParserState();
 
-  /// %State of the %FlatZinc parser
-  class ParserState {
-  public:
-    ParserState(const std::string& b, std::ostream& err0,
-                Gecode::FlatZinc::FlatZincSpace* fg0)
-    : yyscanner(nullptr), buf(b.c_str()), pos(0), length(b.size()), fg(fg0),
-      hadError(false), err(err0) {}
+        void* yyscanner;
+        const char* buf;
+        unsigned int pos, length;
+        Gecode::FlatZinc::FlatZincSpace* fg;
+        std::vector<std::pair<std::string, AST::Node*>> output_items;
 
-    ParserState(char* buf0, int length0, std::ostream& err0,
-                Gecode::FlatZinc::FlatZincSpace* fg0)
-    : yyscanner(nullptr), buf(buf0), pos(0), length(length0), fg(fg0),
-      hadError(false), err(err0) {}
+        SymbolTable<SymbolEntry> symbols;
 
-    ~ParserState(void);
+        std::vector<NamedVarSpec> int_vars;
+        std::vector<NamedVarSpec> bool_vars;
+        std::vector<NamedVarSpec> set_vars;
+        std::vector<NamedVarSpec> float_vars;
+        std::vector<int> arrays;
+        std::vector<AST::SetLit> set_values;
+        std::vector<double> float_values;
+        std::vector<ConExpr*> constraints;
 
-    void* yyscanner;
-    const char* buf;
-    unsigned int pos, length;
-    Gecode::FlatZinc::FlatZincSpace* fg;
-    std::vector<std::pair<std::string,AST::Node*> > _output;
+        std::vector<ConExpr*> domain_constraints;
 
-    SymbolTable<SymbolEntry> symbols;
-
-    std::vector<varspec> intvars;
-    std::vector<varspec> boolvars;
-    std::vector<varspec> setvars;
-    std::vector<varspec> floatvars;
-    std::vector<int> arrays;
-    std::vector<AST::SetLit> setvals;
-    std::vector<double> floatvals;
-    std::vector<ConExpr*> constraints;
-
-    std::vector<ConExpr*> domainConstraints;
-
-    int status_idx = -1;
-    int complete_idx = -1;
-    std::vector<std::array<int, 2>> last_val_int;
-    std::vector<std::array<int, 2>> sol_int;
-    std::vector<std::array<int, 3>> uniform_int;
-    std::vector<std::array<int, 2>> sol_bool;
-    std::vector<std::array<int, 2>> last_val_bool;
+        int status_idx = -1;
+        int complete_idx = -1;
+        std::vector<std::array<int, 2>> last_val_int;
+        std::vector<std::array<int, 2>> sol_int;
+        std::vector<std::array<int, 3>> uniform_int;
+        std::vector<std::array<int, 2>> sol_bool;
+        std::vector<std::array<int, 2>> last_val_bool;
 #ifdef GECODE_HAS_SET_VARS
-    std::vector<std::array<int, 2>> sol_set;
-    std::vector<std::array<int, 2>> last_val_set;
+        std::vector<std::array<int, 2>> sol_set;
+        std::vector<std::array<int, 2>> last_val_set;
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-    std::vector<std::array<int, 2>> last_val_float;
-    std::vector<std::array<int, 2>> sol_float;
-    std::vector<std::tuple<FloatVal, FloatVal, int>> uniform_float;
+        std::vector<std::array<int, 2>> last_val_float;
+        std::vector<std::array<int, 2>> sol_float;
+        std::vector<std::tuple<FloatVal, FloatVal, int>> uniform_float;
 #endif
 
-    bool hadError;
-    std::ostream& err;
+        bool had_error;
+        std::ostream& err;
 
-    int fillBuffer(char* lexBuf, unsigned int lexBufSize) {
-      if (pos >= length)
-        return 0;
-      int num = std::min(length - pos, lexBufSize);
-      memcpy(lexBuf,buf+pos,num);
-      pos += num;
-      return num;
-    }
-
-    void output(std::string x, AST::Node* n) {
-      _output.push_back(std::pair<std::string,AST::Node*>(x,n));
-    }
-
-    AST::Array* getOutput(void) {
-      OutputOrder oo;
-      std::sort(_output.begin(),_output.end(),oo);
-      AST::Array* a = new AST::Array();
-      for (unsigned int i=0; i<_output.size(); i++) {
-        a->a.push_back(new AST::String(_output[i].first+" = "));
-        if (_output[i].second->isArray()) {
-          AST::Array* oa = _output[i].second->getArray();
-          for (unsigned int j=0; j<oa->a.size(); j++) {
-            a->a.push_back(oa->a[j]);
-            oa->a[j] = nullptr;
-          }
-          delete _output[i].second;
-        } else {
-          a->a.push_back(_output[i].second);
+        int
+        fill_buffer(char* lex_buffer, unsigned int lex_buffer_size) {
+            if (pos >= length)
+                return 0;
+            int num = std::min(length - pos, lex_buffer_size);
+            memcpy(lex_buffer, buf + pos, num);
+            pos += num;
+            return num;
         }
-        _output[i].second = nullptr;
-        a->a.push_back(new AST::String(";\n"));
-      }
-      return a;
-    }
 
-  };
+        void
+        output(std::string x, AST::Node* n) {
+            output_items.emplace_back(std::move(x), n);
+        }
 
-}}
+        AST::Array*
+        get_output() {
+            OutputOrder oo;
+            std::ranges::sort(output_items, oo);
+            AST::Array* a = new AST::Array();
+            for (std::pair<std::string, AST::Node*>& item : output_items) {
+                a->a.push_back(new AST::String(item.first + " = "));
+                if (item.second->is_array()) {
+                    AST::Array* oa = item.second->get_array();
+                    for (AST::Node*& element : oa->a) {
+                        a->a.push_back(element);
+                        element = nullptr;
+                    }
+                    delete item.second;
+                } else {
+                    a->a.push_back(item.second);
+                }
+                item.second = nullptr;
+                a->a.push_back(new AST::String(";\n"));
+            }
+            return a;
+        }
+    };
+
+} // namespace Gecode::FlatZinc
+
+/// Report error \a str for the parser state \a parm, called by the lexer too
+void yyerror(void* parm, const char* str);
 
 #endif
 

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,28 +32,16 @@
 
 namespace Gecode {
 
-  forceinline
-  FloatAFC::FloatAFC(void) {}
+    forceinline
+    FloatAFC::FloatAFC(Home home, const FloatVarArgs& x, double d, bool share) {
+        AFC::init(home, x, d, share);
+    }
 
-  forceinline
-  FloatAFC::FloatAFC(const FloatAFC& a)
-    : AFC(a) {}
+    forceinline void
+    FloatAFC::init(Home home, const FloatVarArgs& x, double d, bool share) {
+        AFC::init(home, x, d, share);
+    }
 
-  forceinline FloatAFC&
-  FloatAFC::operator =(const FloatAFC& a) {
-    return static_cast<FloatAFC&>(AFC::operator =(a));
-  }
-
-  forceinline
-  FloatAFC::FloatAFC(Home home, const FloatVarArgs& x, double d, bool share) {
-    AFC::init(home,x,d,share);
-  }
-
-  forceinline void
-  FloatAFC::init(Home home, const FloatVarArgs& x, double d, bool share) {
-    AFC::init(home,x,d,share);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: float-branch

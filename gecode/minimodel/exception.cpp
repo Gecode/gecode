@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,17 +34,14 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Gecode { namespace MiniModel {
+namespace Gecode::MiniModel {
 
-  TooFewArguments::TooFewArguments(const char* l)
-    : Exception(l,"Passed argument array has too few elements") {}
+    TooFewArguments::TooFewArguments(const char* l) : Exception(l, "Passed argument array has too few elements") {}
 
-  ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
-    : Exception(l,"Sizes of argument arrays mismatch") {}
+    ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l) : Exception(l, "Sizes of argument arrays mismatch") {}
 
-  ArgumentOutOfRange::ArgumentOutOfRange(const char* l)
-    : Exception(l,"Argument out of range") {}
+    ArgumentOutOfRange::ArgumentOutOfRange(const char* l) : Exception(l, "Argument out of range") {}
 
-}}
+} // namespace Gecode::MiniModel
 
 // STATISTICS: minimodel-any

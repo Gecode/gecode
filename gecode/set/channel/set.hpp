@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Denys Duchier <denys.duchier@univ-orleans.fr>
@@ -31,130 +30,126 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Channel {
+namespace Gecode::Set::Channel {
 
-  template <typename View>
-  forceinline
-  ChannelSet<View>::ChannelSet(Home home,
-                               ViewArray<CachedView<View> >& xs0,
-                               ViewArray<CachedView<View> >& ys0)
-    : Propagator(home), xs(xs0), ys(ys0) {
-    for (int i=xs.size(); i--;)
-      xs[i].initCache(home,IntSet::empty,IntSet(0,ys.size()-1));
-    for (int i=ys.size(); i--;)
-      ys[i].initCache(home,IntSet::empty,IntSet(0,xs.size()-1));
-    xs.subscribe(home,*this, PC_SET_ANY);
-    ys.subscribe(home,*this, PC_SET_ANY);
-  }
-
-  template <typename View>
-  forceinline
-  ChannelSet<View>::ChannelSet(Space& home, ChannelSet& p)
-    : Propagator(home, p) {
-    xs.update(home, p.xs);
-    ys.update(home, p.ys);
-  }
-
-  template <typename View>
-  forceinline ExecStatus
-  ChannelSet<View>::post(Home home,
-                         ViewArray<CachedView<View> >& xs,
-                         ViewArray<CachedView<View> >& ys) {
-    int xssize = xs.size();
-    for (int i=ys.size(); i--;) {
-        GECODE_ME_CHECK(ys[i].exclude(home, xssize, Limits::max));
-        GECODE_ME_CHECK(ys[i].exclude(home, Limits::min, -1));
-      }
-    int yssize = ys.size();
-    for (int i=xs.size(); i--;) {
-        GECODE_ME_CHECK(xs[i].exclude(home, yssize, Limits::max));
-        GECODE_ME_CHECK(xs[i].exclude(home, Limits::min, -1));
-      }
-    (void) new (home) ChannelSet(home,xs,ys);
-    return ES_OK;
-  }
-
-  template <typename View>
-  PropCost
-  ChannelSet<View>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::HI, xs.size()+ys.size());
-  }
-
-  template <typename View>
-  void
-  ChannelSet<View>::reschedule(Space& home) {
-    xs.reschedule(home,*this, PC_SET_ANY);
-    ys.reschedule(home,*this, PC_SET_ANY);
-  }
-
-  template <typename View>
-  forceinline size_t
-  ChannelSet<View>::dispose(Space& home) {
-    xs.cancel(home, *this, PC_SET_ANY);
-    ys.cancel(home, *this, PC_SET_ANY);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-  template <typename View>
-  Actor*
-  ChannelSet<View>::copy(Space& home) {
-    return new (home) ChannelSet(home,*this);
-  }
-
-  template <typename View>
-  ExecStatus
-  ChannelSet<View>::propagate(Space& home, const ModEventDelta&) {
-    int assigned = 0;
-    bool again = true;
-    while (again) {
-      assigned = 0;
-      again = false;
-      for (int i=xs.size(); i--;) {
-        if (xs[i].assigned())
-          ++assigned;
-        if (xs[i].glbModified()) {
-          GlbDiffRanges<View> xilb(xs[i]);
-          Iter::Ranges::ToValues<GlbDiffRanges<View> > dv(xilb);
-          for (;dv();++dv)
-            GECODE_ME_CHECK(ys[dv.val()].include(home,i));
-          xs[i].cacheGlb(home);
-          again = true;
-        }
-        if (xs[i].lubModified()) {
-          LubDiffRanges<View> xiub(xs[i]);
-          Iter::Ranges::ToValues<LubDiffRanges<View> > dv(xiub);
-          for (;dv();++dv)
-            GECODE_ME_CHECK(ys[dv.val()].exclude(home,i));
-          xs[i].cacheLub(home);
-          again = true;
-        }
-      }
-      for (int i=ys.size(); i--;) {
-        if (ys[i].assigned())
-          ++assigned;
-        if (ys[i].glbModified()) {
-          GlbDiffRanges<View> yilb(ys[i]);
-          Iter::Ranges::ToValues<GlbDiffRanges<View> > dv(yilb);
-          for (;dv();++dv)
-            GECODE_ME_CHECK(xs[dv.val()].include(home,i));
-          ys[i].cacheGlb(home);
-          again = true;
-        }
-        if (ys[i].lubModified()) {
-          LubDiffRanges<View> yiub(ys[i]);
-          Iter::Ranges::ToValues<LubDiffRanges<View> > dv(yiub);
-          for (;dv();++dv)
-            GECODE_ME_CHECK(xs[dv.val()].exclude(home,i));
-          ys[i].cacheLub(home);
-          again = true;
-        }
-      }
+    template <typename View>
+    forceinline
+    ChannelSet<View>::ChannelSet(Home home, ViewArray<CachedView<View>>& xs0, ViewArray<CachedView<View>>& ys0)
+        : Propagator(home), xs(xs0), ys(ys0) {
+        for (int i = xs.size(); i--;)
+            xs[i].init_cache(home, IntSet::empty, IntSet(0, ys.size() - 1));
+        for (int i = ys.size(); i--;)
+            ys[i].init_cache(home, IntSet::empty, IntSet(0, xs.size() - 1));
+        xs.subscribe(home, *this, PC_SET_ANY);
+        ys.subscribe(home, *this, PC_SET_ANY);
     }
 
-    return (assigned == xs.size()+ys.size()) ? home.ES_SUBSUMED(*this) : ES_FIX;
-  }
+    template <typename View>
+    forceinline
+    ChannelSet<View>::ChannelSet(Space& home, ChannelSet& p)
+        : Propagator(home, p) {
+        xs.update(home, p.xs);
+        ys.update(home, p.ys);
+    }
 
-}}}
+    template <typename View>
+    forceinline ExecStatus
+    ChannelSet<View>::post(Home home, ViewArray<CachedView<View>>& xs, ViewArray<CachedView<View>>& ys) {
+        int xssize = xs.size();
+        for (int i = ys.size(); i--;) {
+            GECODE_ME_CHECK(ys[i].exclude(home, xssize, Limits::max));
+            GECODE_ME_CHECK(ys[i].exclude(home, Limits::min, -1));
+        }
+        int yssize = ys.size();
+        for (int i = xs.size(); i--;) {
+            GECODE_ME_CHECK(xs[i].exclude(home, yssize, Limits::max));
+            GECODE_ME_CHECK(xs[i].exclude(home, Limits::min, -1));
+        }
+        (void)new (home) ChannelSet(home, xs, ys);
+        return ES_OK;
+    }
+
+    template <typename View>
+    PropCost
+    ChannelSet<View>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::quadratic(PropCost::HI, xs.size() + ys.size());
+    }
+
+    template <typename View>
+    void
+    ChannelSet<View>::reschedule(Space& home) {
+        xs.reschedule(home, *this, PC_SET_ANY);
+        ys.reschedule(home, *this, PC_SET_ANY);
+    }
+
+    template <typename View>
+    forceinline size_t
+    ChannelSet<View>::dispose(Space& home) {
+        xs.cancel(home, *this, PC_SET_ANY);
+        ys.cancel(home, *this, PC_SET_ANY);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
+
+    template <typename View>
+    Actor*
+    ChannelSet<View>::copy(Space& home) {
+        return new (home) ChannelSet(home, *this);
+    }
+
+    template <typename View>
+    ExecStatus
+    ChannelSet<View>::propagate(Space& home, const ModEventDelta&) {
+        int assigned = 0;
+        bool again = true;
+        while (again) {
+            assigned = 0;
+            again = false;
+            for (int i = xs.size(); i--;) {
+                if (xs[i].assigned())
+                    ++assigned;
+                if (xs[i].glb_modified()) {
+                    GlbDiffRanges<View> xilb(xs[i]);
+                    Iter::Ranges::ToValues<GlbDiffRanges<View>> dv(xilb);
+                    for (; dv(); ++dv)
+                        GECODE_ME_CHECK(ys[dv.val()].include(home, i));
+                    xs[i].cache_glb(home);
+                    again = true;
+                }
+                if (xs[i].lub_modified()) {
+                    LubDiffRanges<View> xiub(xs[i]);
+                    Iter::Ranges::ToValues<LubDiffRanges<View>> dv(xiub);
+                    for (; dv(); ++dv)
+                        GECODE_ME_CHECK(ys[dv.val()].exclude(home, i));
+                    xs[i].cache_lub(home);
+                    again = true;
+                }
+            }
+            for (int i = ys.size(); i--;) {
+                if (ys[i].assigned())
+                    ++assigned;
+                if (ys[i].glb_modified()) {
+                    GlbDiffRanges<View> yilb(ys[i]);
+                    Iter::Ranges::ToValues<GlbDiffRanges<View>> dv(yilb);
+                    for (; dv(); ++dv)
+                        GECODE_ME_CHECK(xs[dv.val()].include(home, i));
+                    ys[i].cache_glb(home);
+                    again = true;
+                }
+                if (ys[i].lub_modified()) {
+                    LubDiffRanges<View> yiub(ys[i]);
+                    Iter::Ranges::ToValues<LubDiffRanges<View>> dv(yiub);
+                    for (; dv(); ++dv)
+                        GECODE_ME_CHECK(xs[dv.val()].exclude(home, i));
+                    ys[i].cache_lub(home);
+                    again = true;
+                }
+            }
+        }
+
+        return (assigned == xs.size() + ys.size()) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    }
+
+} // namespace Gecode::Set::Channel
 
 // STATISTICS: set-prop

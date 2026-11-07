@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,50 +34,50 @@
 
 namespace Gecode {
 
-  /**
-   * \brief %Exception: Base-class for exceptions
-   * \ingroup FuncThrow
-   */
-  class GECODE_SUPPORT_EXPORT Exception : public std::exception {
-  private:
-    /// Maximal length of information string
-    static const int li_max = 127;
-    /// Information string
-    char li[li_max+1];
-  public:
-    /// Initialize with location \a l and information \a i
-    Exception(const char* l, const char* i) noexcept;
-    /// Return information
-    virtual const char* what(void) const noexcept;
-  };
+    /**
+     * \brief %Exception: Base-class for exceptions
+     * \ingroup FuncThrow
+     */
+    class GECODE_SUPPORT_EXPORT Exception : public std::exception {
+    private:
+        /// Maximal length of information string
+        static const int li_max = 127;
+        /// Information string
+        char li[li_max + 1];
 
+    public:
+        /// Initialize with location \a l and information \a i
+        Exception(const char* l, const char* i) noexcept;
+        /// Return information
+        const char* what() const noexcept override;
+    };
 
-  /**
-   * \defgroup FuncThrowSupport Support exceptions
-   * \ingroup FuncThrow
-   */
+    /**
+     * \defgroup FuncThrowSupport Support exceptions
+     * \ingroup FuncThrow
+     */
 
-  //@{
-  /// %Exception: %Memory exhausted
-  class GECODE_SUPPORT_EXPORT MemoryExhausted : public Exception {
-  public:
-    /// Initialize
-    MemoryExhausted(void);
-  };
-  /// %Exception: dynamic cast failed
-  class GECODE_SUPPORT_EXPORT DynamicCastFailed : public Exception {
-  public:
-    /// Initialize with location \a l
-    DynamicCastFailed(const char* l);
-  };
-  /// %Exception: operating system error
-  class GECODE_SUPPORT_EXPORT OperatingSystemError : public Exception {
-  public:
-    /// Initialize with location \a l
-    OperatingSystemError(const char* l);
-  };
-  //@}
+    //@{
+    /// %Exception: %Memory exhausted
+    class GECODE_SUPPORT_EXPORT MemoryExhausted : public Exception {
+    public:
+        /// Initialize
+        MemoryExhausted();
+    };
+    /// %Exception: dynamic cast failed
+    class GECODE_SUPPORT_EXPORT DynamicCastFailed : public Exception {
+    public:
+        /// Initialize with location \a l
+        DynamicCastFailed(const char* l);
+    };
+    /// %Exception: operating system error
+    class GECODE_SUPPORT_EXPORT OperatingSystemError : public Exception {
+    public:
+        /// Initialize with location \a l
+        OperatingSystemError(const char* l);
+    };
+    //@}
 
-}
+} // namespace Gecode
 
 // STATISTICS: support-any

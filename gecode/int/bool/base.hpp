@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,117 +30,113 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Bool {
+namespace Gecode::Int::Bool {
 
-  /*
-   * Binary Boolean propagators
-   *
-   */
-  template<class BVA, class BVB>
-  forceinline
-  BoolBinary<BVA,BVB>::BoolBinary(Home home, BVA b0, BVB b1)
-    : Propagator(home), x0(b0), x1(b1) {
-    x0.subscribe(home,*this,PC_BOOL_VAL);
-    x1.subscribe(home,*this,PC_BOOL_VAL);
-  }
+    /*
+     * Binary Boolean propagators
+     *
+     */
+    template <class BVA, class BVB>
+    forceinline
+    BoolBinary<BVA, BVB>::BoolBinary(Home home, BVA b0, BVB b1)
+        : Propagator(home), x0(b0), x1(b1) {
+        x0.subscribe(home, *this, PC_BOOL_VAL);
+        x1.subscribe(home, *this, PC_BOOL_VAL);
+    }
 
-  template<class BVA, class BVB>
-  forceinline
-  BoolBinary<BVA,BVB>::BoolBinary(Space& home, BoolBinary<BVA,BVB>& p)
-    : Propagator(home,p) {
-    x0.update(home,p.x0);
-    x1.update(home,p.x1);
-  }
+    template <class BVA, class BVB>
+    forceinline
+    BoolBinary<BVA, BVB>::BoolBinary(Space& home, BoolBinary<BVA, BVB>& p)
+        : Propagator(home, p) {
+        x0.update(home, p.x0);
+        x1.update(home, p.x1);
+    }
 
-  template<class BVA, class BVB>
-  forceinline
-  BoolBinary<BVA,BVB>::BoolBinary(Space& home, Propagator& p,
-                                  BVA b0, BVB b1)
-    : Propagator(home,p) {
-    x0.update(home,b0);
-    x1.update(home,b1);
-  }
+    template <class BVA, class BVB>
+    forceinline
+    BoolBinary<BVA, BVB>::BoolBinary(Space& home, Propagator& p, BVA b0, BVB b1)
+        : Propagator(home, p) {
+        x0.update(home, b0);
+        x1.update(home, b1);
+    }
 
-  template<class BVA, class BVB>
-  PropCost
-  BoolBinary<BVA,BVB>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::unary(PropCost::LO);
-  }
+    template <class BVA, class BVB>
+    PropCost
+    BoolBinary<BVA, BVB>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::unary(PropCost::LO);
+    }
 
-  template<class BVA, class BVB>
-  void
-  BoolBinary<BVA,BVB>::reschedule(Space& home) {
-    x0.reschedule(home,*this,PC_BOOL_VAL);
-    x1.reschedule(home,*this,PC_BOOL_VAL);
-  }
+    template <class BVA, class BVB>
+    void
+    BoolBinary<BVA, BVB>::reschedule(Space& home) {
+        x0.reschedule(home, *this, PC_BOOL_VAL);
+        x1.reschedule(home, *this, PC_BOOL_VAL);
+    }
 
-  template<class BVA, class BVB>
-  forceinline size_t
-  BoolBinary<BVA,BVB>::dispose(Space& home) {
-    x0.cancel(home,*this,PC_BOOL_VAL);
-    x1.cancel(home,*this,PC_BOOL_VAL);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
+    template <class BVA, class BVB>
+    forceinline size_t
+    BoolBinary<BVA, BVB>::dispose(Space& home) {
+        x0.cancel(home, *this, PC_BOOL_VAL);
+        x1.cancel(home, *this, PC_BOOL_VAL);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
 
-  /*
-   * Ternary Boolean propagators
-   *
-   */
-  template<class BVA, class BVB, class BVC>
-  forceinline
-  BoolTernary<BVA,BVB,BVC>::BoolTernary
-  (Home home, BVA b0, BVB b1, BVC b2)
-    : Propagator(home), x0(b0), x1(b1), x2(b2) {
-    x0.subscribe(home,*this,PC_BOOL_VAL);
-    x1.subscribe(home,*this,PC_BOOL_VAL);
-    x2.subscribe(home,*this,PC_BOOL_VAL);
-  }
+    /*
+     * Ternary Boolean propagators
+     *
+     */
+    template <class BVA, class BVB, class BVC>
+    forceinline
+    BoolTernary<BVA, BVB, BVC>::BoolTernary(Home home, BVA b0, BVB b1, BVC b2)
+        : Propagator(home), x0(b0), x1(b1), x2(b2) {
+        x0.subscribe(home, *this, PC_BOOL_VAL);
+        x1.subscribe(home, *this, PC_BOOL_VAL);
+        x2.subscribe(home, *this, PC_BOOL_VAL);
+    }
 
-  template<class BVA, class BVB, class BVC>
-  forceinline
-  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space& home,
-                                        BoolTernary<BVA,BVB,BVC>& p)
-    : Propagator(home,p) {
-    x0.update(home,p.x0);
-    x1.update(home,p.x1);
-    x2.update(home,p.x2);
-  }
+    template <class BVA, class BVB, class BVC>
+    forceinline
+    BoolTernary<BVA, BVB, BVC>::BoolTernary(Space& home, BoolTernary<BVA, BVB, BVC>& p)
+        : Propagator(home, p) {
+        x0.update(home, p.x0);
+        x1.update(home, p.x1);
+        x2.update(home, p.x2);
+    }
 
-  template<class BVA, class BVB, class BVC>
-  forceinline
-  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space& home, Propagator& p,
-                                        BVA b0, BVB b1, BVC b2)
-    : Propagator(home,p) {
-    x0.update(home,b0);
-    x1.update(home,b1);
-    x2.update(home,b2);
-  }
+    template <class BVA, class BVB, class BVC>
+    forceinline
+    BoolTernary<BVA, BVB, BVC>::BoolTernary(Space& home, Propagator& p, BVA b0, BVB b1, BVC b2)
+        : Propagator(home, p) {
+        x0.update(home, b0);
+        x1.update(home, b1);
+        x2.update(home, b2);
+    }
 
-  template<class BVA, class BVB, class BVC>
-  PropCost
-  BoolTernary<BVA,BVB,BVC>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::binary(PropCost::LO);
-  }
+    template <class BVA, class BVB, class BVC>
+    PropCost
+    BoolTernary<BVA, BVB, BVC>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::binary(PropCost::LO);
+    }
 
-  template<class BVA, class BVB, class BVC>
-  void
-  BoolTernary<BVA,BVB,BVC>::reschedule(Space& home) {
-    x0.reschedule(home,*this,PC_BOOL_VAL);
-    x1.reschedule(home,*this,PC_BOOL_VAL);
-    x2.reschedule(home,*this,PC_BOOL_VAL);
-  }
+    template <class BVA, class BVB, class BVC>
+    void
+    BoolTernary<BVA, BVB, BVC>::reschedule(Space& home) {
+        x0.reschedule(home, *this, PC_BOOL_VAL);
+        x1.reschedule(home, *this, PC_BOOL_VAL);
+        x2.reschedule(home, *this, PC_BOOL_VAL);
+    }
 
-  template<class BVA, class BVB, class BVC>
-  forceinline size_t
-  BoolTernary<BVA,BVB,BVC>::dispose(Space& home) {
-    x0.cancel(home,*this,PC_BOOL_VAL);
-    x1.cancel(home,*this,PC_BOOL_VAL);
-    x2.cancel(home,*this,PC_BOOL_VAL);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
+    template <class BVA, class BVB, class BVC>
+    forceinline size_t
+    BoolTernary<BVA, BVB, BVC>::dispose(Space& home) {
+        x0.cancel(home, *this, PC_BOOL_VAL);
+        x1.cancel(home, *this, PC_BOOL_VAL);
+        x2.cancel(home, *this, PC_BOOL_VAL);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
 
-}}}
+} // namespace Gecode::Int::Bool
 
 // STATISTICS: int-prop

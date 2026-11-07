@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,127 +30,139 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
-  forceinline void
-  Event::init(Event::Type e0, int t0, int i0) {
-    ei=static_cast<unsigned int>(e0 | (i0 << 3)); t=t0;
-  }
-
-  forceinline Event::Type
-  Event::type(void) const {
-    return static_cast<Type>(ei & 7);
-  }
-  forceinline int
-  Event::time(void) const {
-    return t;
-  }
-  forceinline int
-  Event::idx(void) const {
-    return static_cast<int>(ei >> 3);;
-  }
-
-  forceinline bool
-  Event::operator <(const Event& e) const {
-    if (time() == e.time())
-      return type() < e.type();
-    return time() < e.time();
-  }
-
-
-  template<class Char, class Traits>
-  inline std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const Event& e) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << '[';
-    switch (e.type()) {
-    case Event::LRT: s << "LRT"; break;
-    case Event::LCT: s << "LCT"; break;
-    case Event::EST: s << "EST"; break;
-    case Event::ZRO: s << "ZRO"; break;
-    case Event::ERT: s << "ERT"; break;
-    default: GECODE_NEVER;
+    forceinline void
+    Event::init(Event::Type e0, int t0, int i0) {
+        ei = static_cast<unsigned int>(std::to_underlying(e0) | (i0 << 3));
+        t = t0;
     }
-    s << ',' << e.time() << ',' << e.idx() << ']';
-    return os << s.str();
-  }
 
+    forceinline Event::Type
+    Event::type() const {
+        return static_cast<Type>(ei & 7);
+    }
+    forceinline int
+    Event::time() const {
+        return t;
+    }
+    forceinline int
+    Event::idx() const {
+        return static_cast<int>(ei >> 3);
+        ;
+    }
 
-  template<class Task>
-  forceinline Event*
-  Event::events(Region& r, const TaskArray<Task>& t, bool& assigned) {
-    Event* e = r.alloc<Event>(4*t.size()+1);
+    forceinline bool
+    Event::operator<(const Event& e) const {
+        if (time() == e.time())
+            return type() < e.type();
+        return time() < e.time();
+    }
 
-    // Initialize events
-    assigned=true;
-    bool required=false;
-
-    int n=0;
-    for (int i=0; i<t.size(); i++)
-      if (t[i].assigned()) {
-        // Only add required part
-        if (t[i].pmin() > 0) {
-          required = true;
-          e[n++].init(Event::ERT,t[i].lst(),i);
-          e[n++].init(Event::LRT,t[i].ect(),i);
-        } else if (t[i].pmax() == 0) {
-          required = true;
-          e[n++].init(Event::ZRO,t[i].lst(),i);
+    template <class Char, class Traits>
+    inline std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const Event& e) {
+        std::basic_ostringstream<Char, Traits> s;
+        s.copyfmt(os);
+        s.width(0);
+        s << '[';
+        switch (e.type()) {
+        case Event::LRT:
+            s << "LRT";
+            break;
+        case Event::LCT:
+            s << "LCT";
+            break;
+        case Event::EST:
+            s << "EST";
+            break;
+        case Event::ZRO:
+            s << "ZRO";
+            break;
+        case Event::ERT:
+            s << "ERT";
+            break;
+        default:
+            GECODE_NEVER;
         }
-      } else {
-        assigned = false;
-        e[n++].init(Event::EST,t[i].est(),i);
-        e[n++].init(Event::LCT,t[i].lct(),i);
-        // Check whether task has required part
-        if (t[i].lst() < t[i].ect()) {
-          required = true;
-          e[n++].init(Event::ERT,t[i].lst(),i);
-          e[n++].init(Event::LRT,t[i].ect(),i);
-        }
-      }
+        s << ',' << e.time() << ',' << e.idx() << ']';
+        return os << s.str();
+    }
 
-    if (!required)
-      return nullptr;
+    template <class Task>
+    forceinline Event*
+    Event::events(Region& r, const TaskArray<Task>& t, bool& assigned) {
+        Event* e = r.alloc<Event>(4 * t.size() + 1);
 
-    // Sort events
-    Support::quicksort(e, n);
+        // Initialize events
+        assigned = true;
+        bool required = false;
 
-    // Write end marker
-    e[n++].init(Event::END,Limits::infinity,0);
+        int n = 0;
+        for (int i = 0; i < t.size(); i++)
+            if (t[i].assigned()) {
+                // Only add required part
+                if (t[i].pmin() > 0) {
+                    required = true;
+                    e[n++].init(Event::ERT, t[i].lst(), i);
+                    e[n++].init(Event::LRT, t[i].ect(), i);
+                } else if (t[i].pmax() == 0) {
+                    required = true;
+                    e[n++].init(Event::ZRO, t[i].lst(), i);
+                }
+            } else {
+                assigned = false;
+                e[n++].init(Event::EST, t[i].est(), i);
+                e[n++].init(Event::LCT, t[i].lct(), i);
+                // Check whether task has required part
+                if (t[i].lst() < t[i].ect()) {
+                    required = true;
+                    e[n++].init(Event::ERT, t[i].lst(), i);
+                    e[n++].init(Event::LRT, t[i].ect(), i);
+                }
+            }
 
-    return e;
-  }
+        if (!required)
+            return nullptr;
 
-  template<class Task>
-  forceinline Event*
-  Event::events(Region& r, const TaskArray<Task>& t) {
-    Event* e = r.alloc<Event>(2*t.size()+1);
+        // Sort events
+        Support::quicksort(e, n);
 
-    // Only add assigned and mandatory tasks
-    int n=0;
-    for (int i=0; i<t.size(); i++)
-      if (t[i].assigned() && t[i].mandatory()) {
-        if (t[i].pmin() > 0) {
-          e[n++].init(Event::ERT,t[i].lst(),i);
-          e[n++].init(Event::LRT,t[i].ect(),i);
-        } else if (t[i].pmax() == 0) {
-          e[n++].init(Event::ZRO,t[i].lst(),i);
-        }
-      } else {
-        assert(!t[i].excluded());
-        return nullptr;
-      }
+        // Write end marker
+        e[n++].init(Event::END, Limits::infinity, 0);
 
-    // Sort events
-    Support::quicksort(e, n);
+        return e;
+    }
 
-    // Write end marker
-    e[n++].init(Event::END,Limits::infinity,0);
+    template <class Task>
+    forceinline Event*
+    Event::events(Region& r, const TaskArray<Task>& t) {
+        Event* e = r.alloc<Event>(2 * t.size() + 1);
 
-    return e;
-  }
+        // Only add assigned and mandatory tasks
+        int n = 0;
+        for (int i = 0; i < t.size(); i++)
+            if (t[i].assigned() && t[i].mandatory()) {
+                if (t[i].pmin() > 0) {
+                    e[n++].init(Event::ERT, t[i].lst(), i);
+                    e[n++].init(Event::LRT, t[i].ect(), i);
+                } else if (t[i].pmax() == 0) {
+                    e[n++].init(Event::ZRO, t[i].lst(), i);
+                }
+            } else {
+                assert(!t[i].excluded());
+                return nullptr;
+            }
 
-}}
+        // Sort events
+        Support::quicksort(e, n);
+
+        // Write end marker
+        e[n++].init(Event::END, Limits::infinity, 0);
+
+        return e;
+    }
+
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

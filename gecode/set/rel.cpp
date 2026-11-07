@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -38,215 +37,198 @@
 #include <gecode/set/rel-op.hh>
 #include <gecode/set/int.hh>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
-  template<class View0, class View1>
-  forceinline void
-  rel_post(Home home, View0 x0, SetRelType r, View1 x1) {
-    using namespace Set::Rel;
-    using namespace Set::RelOp;
-    GECODE_POST;
-    switch (r) {
-    case SRT_EQ:
-      GECODE_ES_FAIL((Eq<View0,View1>::post(home,x0,x1)));
-      break;
-    case SRT_NQ:
-      GECODE_ES_FAIL((Distinct<View0,View1>::post(home,x0,x1)));
-      break;
-    case SRT_SUB:
-      GECODE_ES_FAIL((Subset<View0,View1>::post(home, x0,x1)));
-      break;
-    case SRT_SUP:
-      GECODE_ES_FAIL((Subset<View1,View0>::post(home, x1,x0)));
-      break;
-    case SRT_DISJ:
-      {
-        EmptyView emptyset;
-        GECODE_ES_FAIL((SuperOfInter<View0,View1,EmptyView>
-                        ::post(home, x0, x1, emptyset)));
-      }
-      break;
-    case SRT_CMPL:
-      {
-        ComplementView<View0> cx0(x0);
-        GECODE_ES_FAIL((Eq<ComplementView<View0>, View1>
-                        ::post(home, cx0, x1)));
-      }
-      break;
-    case SRT_LQ:
-      GECODE_ES_FAIL((Lq<View0,View1,false>::post(home,x0,x1)));
-      break;
-    case SRT_LE:
-      GECODE_ES_FAIL((Lq<View0,View1,true>::post(home,x0,x1)));
-      break;
-    case SRT_GQ:
-      GECODE_ES_FAIL((Lq<View1,View0,false>::post(home,x1,x0)));
-      break;
-    case SRT_GR:
-      GECODE_ES_FAIL((Lq<View1,View0,true>::post(home,x1,x0)));
-      break;
-    default:
-      throw UnknownRelation("Set::rel");
-    }
-  }
-
-  template<class View0, class View1, ReifyMode rm>
-  forceinline void
-  rel_re(Home home, View0 x, SetRelType r, View1 y, BoolVar b) {
-    using namespace Set::Rel;
-    using namespace Set::RelOp;
-    GECODE_POST;
-    switch (r) {
-    case SRT_EQ:
-      GECODE_ES_FAIL((ReEq<View0,View1,Gecode::Int::BoolView,rm>
-                      ::post(home, x,y,b)));
-      break;
-    case SRT_NQ:
-      {
-        Gecode::Int::NegBoolView notb(b);
-        switch (rm) {
-        case RM_EQV:
-          GECODE_ES_FAIL((ReEq<View0,View1,Gecode::Int::NegBoolView,RM_EQV>
-                         ::post(home,x,y,notb)));
-          break;
-        case RM_IMP:
-          GECODE_ES_FAIL((ReEq<View0,View1,Gecode::Int::NegBoolView,RM_PMI>
-                         ::post(home,x,y,notb)));
-          break;
-        case RM_PMI:
-          GECODE_ES_FAIL((ReEq<View0,View1,Gecode::Int::NegBoolView,RM_IMP>
-                         ::post(home,x,y,notb)));
-          break;
-        default: throw Gecode::Int::UnknownReifyMode("Set::rel");
+    template <class View0, class View1>
+    static forceinline void
+    rel_post(Home home, View0 x0, SetRelType r, View1 x1) {
+        using namespace Set::Rel;
+        using namespace Set::RelOp;
+        GECODE_POST;
+        switch (r) {
+        case SRT_EQ:
+            GECODE_ES_FAIL((Eq<View0, View1>::post(home, x0, x1)));
+            break;
+        case SRT_NQ:
+            GECODE_ES_FAIL((Distinct<View0, View1>::post(home, x0, x1)));
+            break;
+        case SRT_SUB:
+            GECODE_ES_FAIL((Subset<View0, View1>::post(home, x0, x1)));
+            break;
+        case SRT_SUP:
+            GECODE_ES_FAIL((Subset<View1, View0>::post(home, x1, x0)));
+            break;
+        case SRT_DISJOINT: {
+            EmptyView emptyset;
+            GECODE_ES_FAIL((SuperOfInter<View0, View1, EmptyView>::post(home, x0, x1, emptyset)));
+        } break;
+        case SRT_COMPLEMENT: {
+            ComplementView<View0> cx0(x0);
+            GECODE_ES_FAIL((Eq<ComplementView<View0>, View1>::post(home, cx0, x1)));
+        } break;
+        case SRT_LQ:
+            GECODE_ES_FAIL((Lq<View0, View1, false>::post(home, x0, x1)));
+            break;
+        case SRT_LT:
+            GECODE_ES_FAIL((Lq<View0, View1, true>::post(home, x0, x1)));
+            break;
+        case SRT_GQ:
+            GECODE_ES_FAIL((Lq<View1, View0, false>::post(home, x1, x0)));
+            break;
+        case SRT_GR:
+            GECODE_ES_FAIL((Lq<View1, View0, true>::post(home, x1, x0)));
+            break;
+        default:
+            throw UnknownRelation("Set::rel");
         }
-      }
-      break;
-    case SRT_SUB:
-      GECODE_ES_FAIL((ReSubset<View0,View1,Gecode::Int::BoolView,rm>::post(home, x,y,b)));
-      break;
-    case SRT_SUP:
-      GECODE_ES_FAIL((ReSubset<View1,View0,Gecode::Int::BoolView,rm>::post(home, y,x,b)));
-      break;
-    case SRT_DISJ:
-      {
-        // x||y <=> b is equivalent to
-        // ( y <= complement(x) ) <=> b
-
-        ComplementView<View0> xc(x);
-        GECODE_ES_FAIL((ReSubset<View1,ComplementView<View0>,
-                        Gecode::Int::BoolView,rm>
-                        ::post(home, y, xc, b)));
-      }
-      break;
-    case SRT_CMPL:
-      {
-        ComplementView<View0> xc(x);
-        GECODE_ES_FAIL((ReEq<ComplementView<View0>,View1,
-                        Gecode::Int::BoolView,rm>
-                        ::post(home, xc, y, b)));
-      }
-      break;
-    case SRT_LQ:
-      GECODE_ES_FAIL((ReLq<View0,View1,rm,false>::post(home,x,y,b)));
-      break;
-    case SRT_LE:
-      GECODE_ES_FAIL((ReLq<View0,View1,rm,true>::post(home,x,y,b)));
-      break;
-    case SRT_GQ:
-      GECODE_ES_FAIL((ReLq<View1,View0,rm,false>::post(home,y,x,b)));
-      break;
-    case SRT_GR:
-      GECODE_ES_FAIL((ReLq<View1,View0,rm,true>::post(home,y,x,b)));
-      break;
-    default:
-      throw UnknownRelation("Set::rel");
     }
-  }
 
-}}
+    template <class View0, class View1, ReifyMode rm>
+    static forceinline void
+    rel_re(Home home, View0 x, SetRelType r, View1 y, BoolVar b) {
+        using namespace Set::Rel;
+        using namespace Set::RelOp;
+        GECODE_POST;
+        switch (r) {
+        case SRT_EQ:
+            GECODE_ES_FAIL((ReEq<View0, View1, Gecode::Int::BoolView, rm>::post(home, x, y, b)));
+            break;
+        case SRT_NQ: {
+            Gecode::Int::NegBoolView notb(b);
+            switch (rm) {
+            case RM_EQV:
+                GECODE_ES_FAIL((ReEq<View0, View1, Gecode::Int::NegBoolView, RM_EQV>::post(home, x, y, notb)));
+                break;
+            case RM_IMP:
+                GECODE_ES_FAIL((ReEq<View0, View1, Gecode::Int::NegBoolView, RM_RIMP>::post(home, x, y, notb)));
+                break;
+            case RM_RIMP:
+                GECODE_ES_FAIL((ReEq<View0, View1, Gecode::Int::NegBoolView, RM_IMP>::post(home, x, y, notb)));
+                break;
+            default:
+                throw Gecode::Int::UnknownReifyMode("Set::rel");
+            }
+        } break;
+        case SRT_SUB:
+            GECODE_ES_FAIL((ReSubset<View0, View1, Gecode::Int::BoolView, rm>::post(home, x, y, b)));
+            break;
+        case SRT_SUP:
+            GECODE_ES_FAIL((ReSubset<View1, View0, Gecode::Int::BoolView, rm>::post(home, y, x, b)));
+            break;
+        case SRT_DISJOINT: {
+            // x||y <=> b is equivalent to
+            // ( y <= complement(x) ) <=> b
+
+            ComplementView<View0> xc(x);
+            GECODE_ES_FAIL((ReSubset<View1, ComplementView<View0>, Gecode::Int::BoolView, rm>::post(home, y, xc, b)));
+        } break;
+        case SRT_COMPLEMENT: {
+            ComplementView<View0> xc(x);
+            GECODE_ES_FAIL((ReEq<ComplementView<View0>, View1, Gecode::Int::BoolView, rm>::post(home, xc, y, b)));
+        } break;
+        case SRT_LQ:
+            GECODE_ES_FAIL((ReLq<View0, View1, rm, false>::post(home, x, y, b)));
+            break;
+        case SRT_LT:
+            GECODE_ES_FAIL((ReLq<View0, View1, rm, true>::post(home, x, y, b)));
+            break;
+        case SRT_GQ:
+            GECODE_ES_FAIL((ReLq<View1, View0, rm, false>::post(home, y, x, b)));
+            break;
+        case SRT_GR:
+            GECODE_ES_FAIL((ReLq<View1, View0, rm, true>::post(home, y, x, b)));
+            break;
+        default:
+            throw UnknownRelation("Set::rel");
+        }
+    }
+
+} // namespace Gecode::Set
 
 namespace Gecode {
 
-  void
-  rel(Home home, SetVar x, SetRelType r, SetVar y) {
-    using namespace Set;
-    rel_post<SetView,SetView>(home,x,r,y);
-  }
-
-  void
-  rel(Home home, SetVar s, SetRelType r, IntVar x) {
-    using namespace Set;
-    Gecode::Int::IntView xv(x);
-    SingletonView xsingle(xv);
-    rel_post<SetView,SingletonView>(home,s,r,xv);
-  }
-
-  void
-  rel(Home home, IntVar x, SetRelType r, SetVar s) {
-    using namespace Set;
-    switch (r) {
-    case SRT_SUB:
-      rel(home, s, SRT_SUP, x);
-      break;
-    case SRT_SUP:
-      rel(home, s, SRT_SUB, x);
-      break;
-    default:
-      rel(home, s, r, x);
+    void
+    rel(Home home, SetVar x, SetRelType r, SetVar y) {
+        using namespace Set;
+        rel_post<SetView, SetView>(home, x, r, y);
     }
-  }
 
-  void
-  rel(Home home, SetVar x, SetRelType rt, SetVar y, Reify r) {
-    using namespace Set;
-    switch (r.mode()) {
-    case RM_EQV:
-      rel_re<SetView,SetView,RM_EQV>(home,x,rt,y,r.var());
-      break;
-    case RM_IMP:
-      rel_re<SetView,SetView,RM_IMP>(home,x,rt,y,r.var());
-      break;
-    case RM_PMI:
-      rel_re<SetView,SetView,RM_PMI>(home,x,rt,y,r.var());
-      break;
-    default: throw Gecode::Int::UnknownReifyMode("Set::rel");
+    void
+    rel(Home home, SetVar s, SetRelType r, IntVar x) {
+        using namespace Set;
+        Gecode::Int::IntView xv(x);
+        SingletonView x_singleton(xv);
+        rel_post<SetView, SingletonView>(home, s, r, xv);
     }
-  }
 
-  void
-  rel(Home home, SetVar s, SetRelType rt, IntVar x, Reify r) {
-    using namespace Set;
-    Gecode::Int::IntView xv(x);
-    SingletonView xsingle(xv);
-    switch (r.mode()) {
-    case RM_EQV:
-      rel_re<SetView,SingletonView,RM_EQV>(home,s,rt,xsingle,r.var());
-      break;
-    case RM_IMP:
-      rel_re<SetView,SingletonView,RM_IMP>(home,s,rt,xsingle,r.var());
-      break;
-    case RM_PMI:
-      rel_re<SetView,SingletonView,RM_PMI>(home,s,rt,xsingle,r.var());
-      break;
-    default: throw Gecode::Int::UnknownReifyMode("Set::rel");
+    void
+    rel(Home home, IntVar x, SetRelType r, SetVar s) {
+        using namespace Set;
+        switch (r) {
+        case SRT_SUB:
+            rel(home, s, SRT_SUP, x);
+            break;
+        case SRT_SUP:
+            rel(home, s, SRT_SUB, x);
+            break;
+        default:
+            rel(home, s, r, x);
+        }
     }
-  }
 
-  void
-  rel(Home home, IntVar x, SetRelType rt, SetVar s, Reify r) {
-    using namespace Set;
-    switch (rt) {
-    case SRT_SUB:
-      rel(home, s, SRT_SUP, x, r);
-      break;
-    case SRT_SUP:
-      rel(home, s, SRT_SUB, x, r);
-      break;
-    default:
-      rel(home, s, rt, x, r);
+    void
+    rel(Home home, SetVar x, SetRelType rt, SetVar y, Reify r) {
+        using namespace Set;
+        switch (r.mode()) {
+        case RM_EQV:
+            rel_re<SetView, SetView, RM_EQV>(home, x, rt, y, r.var());
+            break;
+        case RM_IMP:
+            rel_re<SetView, SetView, RM_IMP>(home, x, rt, y, r.var());
+            break;
+        case RM_RIMP:
+            rel_re<SetView, SetView, RM_RIMP>(home, x, rt, y, r.var());
+            break;
+        default:
+            throw Gecode::Int::UnknownReifyMode("Set::rel");
+        }
     }
-  }
 
-}
+    void
+    rel(Home home, SetVar s, SetRelType rt, IntVar x, Reify r) {
+        using namespace Set;
+        Gecode::Int::IntView xv(x);
+        SingletonView x_singleton(xv);
+        switch (r.mode()) {
+        case RM_EQV:
+            rel_re<SetView, SingletonView, RM_EQV>(home, s, rt, x_singleton, r.var());
+            break;
+        case RM_IMP:
+            rel_re<SetView, SingletonView, RM_IMP>(home, s, rt, x_singleton, r.var());
+            break;
+        case RM_RIMP:
+            rel_re<SetView, SingletonView, RM_RIMP>(home, s, rt, x_singleton, r.var());
+            break;
+        default:
+            throw Gecode::Int::UnknownReifyMode("Set::rel");
+        }
+    }
+
+    void
+    rel(Home home, IntVar x, SetRelType rt, SetVar s, Reify r) {
+        using namespace Set;
+        switch (rt) {
+        case SRT_SUB:
+            rel(home, s, SRT_SUP, x, r);
+            break;
+        case SRT_SUP:
+            rel(home, s, SRT_SUB, x, r);
+            break;
+        default:
+            rel(home, s, rt, x, r);
+        }
+    }
+
+} // namespace Gecode
 
 // STATISTICS: set-post

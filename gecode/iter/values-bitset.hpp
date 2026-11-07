@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,80 +30,77 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
-  /**
-   * \brief Value iterator for values in a bitset
-   *
-   * \ingroup FuncIterValues
-   */
-  template<class BS>
-  class BitSet {
-  protected:
-    /// Bitset
-    const BS& bs;
-    /// Current value
-    unsigned int cur;
-    /// Limit value
-    unsigned int limit;
-    /// Move to next set bit
-    void move(void);
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Initialize with bitset \a bs
-    BitSet(const BS& bs);
-    /// Initialize with bitset \a bs and start \a n and stop \a m
-    BitSet(const BS& bs, int n, int m);
-    //@}
+    /**
+     * \brief Value iterator for values in a bitset
+     *
+     * \ingroup FuncIterValues
+     */
+    template <class BS>
+    class BitSet {
+    protected:
+        /// Bitset
+        const BS& bs;
+        /// Current value
+        unsigned int cur;
+        /// Limit value
+        unsigned int limit;
+        /// Move to next set bit
+        void move();
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator ++(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Initialize with bitset \a bs
+        BitSet(const BS& bs);
+        /// Initialize with bitset \a bs and start \a n and stop \a m
+        BitSet(const BS& bs, int n, int m);
+        //@}
 
-    /// \name Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a value or done
+        bool operator()() const;
+        /// Move iterator to next value (if possible)
+        void operator++();
+        //@}
 
+        /// \name Value access
+        //@{
+        /// Return current value
+        int val() const;
+        //@}
+    };
 
-  template<class BS>
-  forceinline
-  BitSet<BS>::BitSet(const BS& bs0)
-    : bs(bs0), cur(bs.next(0)), limit(bs.size()) {
-  }
+    template <class BS>
+    forceinline
+    BitSet<BS>::BitSet(const BS& bs0)
+        : bs(bs0), cur(bs.next(0)), limit(bs.size()) {}
 
-  template<class BS>
-  forceinline
-  BitSet<BS>::BitSet(const BS& bs0, int n, int m)
-    : bs(bs0),
-      cur(bs.next(static_cast<unsigned int>(n))),
-      limit(std::min(bs.size(),static_cast<unsigned int>(m)+1)) {
-  }
+    template <class BS>
+    forceinline
+    BitSet<BS>::BitSet(const BS& bs0, int n, int m)
+        : bs(bs0), cur(bs.next(static_cast<unsigned int>(n))),
+          limit(std::min(bs.size(), static_cast<unsigned int>(m) + 1)) {}
 
-  template<class BS>
-  forceinline void
-  BitSet<BS>::operator ++(void) {
-    cur=bs.next(cur+1);
-  }
-  template<class BS>
-  forceinline bool
-  BitSet<BS>::operator ()(void) const {
-    return cur < limit;
-  }
+    template <class BS>
+    forceinline void
+    BitSet<BS>::operator++() {
+        cur = bs.next(cur + 1);
+    }
+    template <class BS>
+    forceinline bool
+    BitSet<BS>::operator()() const {
+        return cur < limit;
+    }
 
-  template<class BS>
-  forceinline int
-  BitSet<BS>::val(void) const {
-    return static_cast<int>(cur);
-  }
+    template <class BS>
+    forceinline int
+    BitSet<BS>::val() const {
+        return static_cast<int>(cur);
+    }
 
-}}}
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

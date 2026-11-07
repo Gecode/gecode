@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("warehouses::large",
-std::string("predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("warehouses::large",
+                                   std::string("predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -242,7 +238,8 @@ constraint int_eq_reif(5, supplier[6], BOOL____00050) :: defines_var(BOOL____000
 constraint int_eq_reif(5, supplier[7], BOOL____00051) :: defines_var(BOOL____00051);\n\
 constraint int_eq_reif(5, supplier[8], BOOL____00052) :: defines_var(BOOL____00052);\n\
 constraint int_eq_reif(5, supplier[9], BOOL____00053) :: defines_var(BOOL____00053);\n\
-constraint int_eq_reif(5, supplier[10], BOOL____00054) :: defines_var(BOOL____00054);\n")+"\
+constraint int_eq_reif(5, supplier[10], BOOL____00054) :: defines_var(BOOL____00054);\n") +
+                                       "\
 constraint int_le(use____00081, 1);\n\
 constraint int_le(use____00082, 4);\n\
 constraint int_le(use____00083, 2);\n\
@@ -259,19 +256,18 @@ constraint int_lin_eq([-1, 1], [INT____00071, supplier[9]], -40) :: defines_var(
 constraint int_lin_eq([-1, 1], [INT____00073, supplier[10]], -45) :: defines_var(INT____00073) :: domain;\n\
 constraint int_lin_eq([-1, 30, 30, 30, 30, 30, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [INT____00080, INT____00075, INT____00076, INT____00077, INT____00078, INT____00079, cost[1], cost[2], cost[3], cost[4], cost[5], cost[6], cost[7], cost[8], cost[9], cost[10]], 0) :: defines_var(INT____00080);\n\
 solve  :: int_search([supplier[1], supplier[2], supplier[3], supplier[4], supplier[5], supplier[6], supplier[7], supplier[8], supplier[9], supplier[10], cost[1], cost[2], cost[3], cost[4], cost[5], cost[6], cost[7], cost[8], cost[9], cost[10], INT____00075, INT____00076, INT____00077, INT____00078, INT____00079], first_fail, indomain_split, complete) minimize INT____00080;\n\
-", "Total = 383;\n\
+",
+                                   "Total = 383;\n\
 cost = array1d(1..10, [30, 27, 70, 2, 4, 22, 5, 13, 35, 55]);\n\
 open = array1d(1..5, [true, true, true, false, true]);\n\
 supplier = array1d(1..10, [5, 2, 5, 1, 5, 2, 2, 3, 2, 3]);\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

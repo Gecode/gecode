@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
@@ -42,50 +41,49 @@
 #include <gmp.h>
 #include <mpfr.h>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
-  /// Type signature of mpfr function
-  typedef int mpfr_func(mpfr_t, const __mpfr_struct*, mp_rnd_t);
+    /// Type signature of mpfr function
+    using mpfr_func = int(mpfr_t, const __mpfr_struct*, mp_rnd_t);
 
-  /// Routine to call mpfr function with proper rounding
-  forceinline double
-  invoke_mpfr(FloatNum x, mpfr_func f, mp_rnd_t r) {
-    mpfr_t xx;
-    mpfr_init_set_d(xx, x, GMP_RNDN);
-    f(xx, xx, r);
-    FloatNum res = mpfr_get_d(xx, r);
-    mpfr_clear(xx);
-    return res;
-  }
+    /// Routine to call mpfr function with proper rounding
+    static forceinline double
+    invoke_mpfr(FloatNum x, mpfr_func f, mp_rnd_t r) {
+        mpfr_t xx;
+        mpfr_init_set_d(xx, x, GMP_RNDN);
+        f(xx, xx, r);
+        FloatNum res = mpfr_get_d(xx, r);
+        mpfr_clear(xx);
+        return res;
+    }
 
-  /// Define mpfr functions with proper rounding
-#define GECODE_GENR_FUNC(name) \
-  FloatNum RoundingBase::name##_down(FloatNum x) { \
-    return invoke_mpfr(x, mpfr_##name, GMP_RNDD); \
-  } \
-  FloatNum RoundingBase::name##_up(FloatNum x) { \
-    return invoke_mpfr(x, mpfr_##name, GMP_RNDU); \
-  }
-  GECODE_GENR_FUNC(exp)
-  GECODE_GENR_FUNC(log)
-  GECODE_GENR_FUNC(sin)
-  GECODE_GENR_FUNC(cos)
-  GECODE_GENR_FUNC(tan)
-  GECODE_GENR_FUNC(asin)
-  GECODE_GENR_FUNC(acos)
-  GECODE_GENR_FUNC(atan)
-  GECODE_GENR_FUNC(sinh)
-  GECODE_GENR_FUNC(cosh)
-  GECODE_GENR_FUNC(tanh)
-  GECODE_GENR_FUNC(asinh)
-  GECODE_GENR_FUNC(acosh)
-  GECODE_GENR_FUNC(atanh)
+    /// Define mpfr functions with proper rounding
+#define GECODE_GENR_FUNC(name)                                                                                         \
+    FloatNum RoundingBase::name##_down(FloatNum x) {                                                                   \
+        return invoke_mpfr(x, mpfr_##name, GMP_RNDD);                                                                  \
+    }                                                                                                                  \
+    FloatNum RoundingBase::name##_up(FloatNum x) {                                                                     \
+        return invoke_mpfr(x, mpfr_##name, GMP_RNDU);                                                                  \
+    }
+    GECODE_GENR_FUNC(exp)
+    GECODE_GENR_FUNC(log)
+    GECODE_GENR_FUNC(sin)
+    GECODE_GENR_FUNC(cos)
+    GECODE_GENR_FUNC(tan)
+    GECODE_GENR_FUNC(asin)
+    GECODE_GENR_FUNC(acos)
+    GECODE_GENR_FUNC(atan)
+    GECODE_GENR_FUNC(sinh)
+    GECODE_GENR_FUNC(cosh)
+    GECODE_GENR_FUNC(tanh)
+    GECODE_GENR_FUNC(asinh)
+    GECODE_GENR_FUNC(acosh)
+    GECODE_GENR_FUNC(atanh)
 
 #undef GECODE_GENR_FUNC
 
-}}
+} // namespace Gecode::Float
 
 #endif
 
 // STATISTICS: float-var
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,85 +30,87 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
-  template<class Box>
-  forceinline
-  ManProp<Box>::ManProp(Home home, Box* b, int n)
-    : Base<Box>(home, b, n) {}
+    template <class Box>
+    forceinline
+    ManProp<Box>::ManProp(Home home, Box* b, int n)
+        : Base<Box>(home, b, n) {}
 
-  template<class Box>
-  inline ExecStatus
-  ManProp<Box>::post(Home home, Box* b, int n) {
-    if (n > 1)
-      (void) new (home) ManProp<Box>(home,b,n);
-    return ES_OK;
-  }
-
-  template<class Box>
-  forceinline size_t
-  ManProp<Box>::dispose(Space& home) {
-    (void) Base<Box>::dispose(home);
-    return sizeof(*this);
-  }
-
-
-  template<class Box>
-  forceinline
-  ManProp<Box>::ManProp(Space& home, ManProp<Box>& p)
-    : Base<Box>(home, p, p.n) {}
-
-  template<class Box>
-  Actor*
-  ManProp<Box>::copy(Space& home) {
-    return new (home) ManProp<Box>(home,*this);
-  }
-
-  template<class Box>
-  ExecStatus
-  ManProp<Box>::propagate(Space& home, const ModEventDelta&) {
-    Region r;
-
-    // Number of disjoint boxes
-    int* db = r.alloc<int>(n);
-    for (int i=0; i<n; i++)
-      db[i] = n-1;
-
-    // Number of boxes to be eliminated
-    int e = 0;
-
-    for (int i=0; i<n; i++)
-      for (int j=0; j<i; j++)
-        if (b[i].nooverlap(b[j])) {
-          assert(db[i] > 0); assert(db[j] > 0);
-          if (--db[i] == 0) e++;
-          if (--db[j] == 0) e++;
-          continue;
-        } else {
-          GECODE_ES_CHECK(b[i].nooverlap(home,b[j]));
-        }
-
-    if (e == n)
-      return home.ES_SUBSUMED(*this);
-
-    {
-      int i = n-1;
-      while (e > 0) {
-        // Eliminate boxes that do not overlap
-        while (db[i] > 0)
-          i--;
-        b[i].cancel(home, *this);
-        b[i] = b[--n];
-        e--; i--;
-      }
-      if (n < 2)
-        return home.ES_SUBSUMED(*this);
+    template <class Box>
+    inline ExecStatus
+    ManProp<Box>::post(Home home, Box* b, int n) {
+        if (n > 1)
+            (void)new (home) ManProp<Box>(home, b, n);
+        return ES_OK;
     }
 
-    return ES_NOFIX;
-  }
+    template <class Box>
+    forceinline size_t
+    ManProp<Box>::dispose(Space& home) {
+        (void)Base<Box>::dispose(home);
+        return sizeof(*this);
+    }
 
-}}}
+    template <class Box>
+    forceinline
+    ManProp<Box>::ManProp(Space& home, ManProp<Box>& p)
+        : Base<Box>(home, p, p.n) {}
+
+    template <class Box>
+    Actor*
+    ManProp<Box>::copy(Space& home) {
+        return new (home) ManProp<Box>(home, *this);
+    }
+
+    template <class Box>
+    ExecStatus
+    ManProp<Box>::propagate(Space& home, const ModEventDelta&) {
+        Region r;
+
+        // Number of disjoint boxes
+        int* db = r.alloc<int>(n);
+        for (int i = 0; i < n; i++)
+            db[i] = n - 1;
+
+        // Number of boxes to be eliminated
+        int e = 0;
+
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < i; j++)
+                if (b[i].no_overlap(b[j])) {
+                    assert(db[i] > 0);
+                    assert(db[j] > 0);
+                    if (--db[i] == 0)
+                        e++;
+                    if (--db[j] == 0)
+                        e++;
+                    continue;
+                } else {
+                    GECODE_ES_CHECK(b[i].no_overlap(home, b[j]));
+                }
+
+        if (e == n)
+            return home.ES_SUBSUMED(*this);
+
+        {
+            int i = n - 1;
+            while (e > 0) {
+                // Eliminate boxes that do not overlap
+                while (db[i] > 0)
+                    i--;
+                b[i].cancel(home, *this);
+                b[i] = b[--n];
+                e--;
+                i--;
+            }
+            if (n < 2)
+                return home.ES_SUBSUMED(*this);
+        }
+
+        return ES_NOFIX;
+    }
+
+} // namespace Gecode::Int::NoOverlap
 
 // STATISTICS: int-prop
-

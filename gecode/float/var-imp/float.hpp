@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Filip Konvicka <filip.konvicka@logis.cz>
@@ -38,197 +37,197 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
-  /*
-   * Creation of new variable implementations
-   *
-   */
+    /*
+     * Creation of new variable implementations
+     *
+     */
 
-  forceinline
-  FloatVarImp::FloatVarImp(Space& home, const FloatVal& d)
-    : FloatVarImpBase(home), dom(d) {}
+    forceinline
+    FloatVarImp::FloatVarImp(Space& home, const FloatVal& d)
+        : FloatVarImpBase(home), dom(d) {}
 
-  forceinline
-  FloatVarImp::FloatVarImp(Space& home, FloatVarImp& x)
-    : FloatVarImpBase(home, x), dom(x.dom) {}
+    forceinline
+    FloatVarImp::FloatVarImp(Space& home, FloatVarImp& x)
+        : FloatVarImpBase(home, x), dom(x.dom) {}
 
+    /*
+     * Operations on float variable implementations
+     *
+     */
 
-  /*
-   * Operations on float variable implementations
-   *
-   */
+    forceinline FloatVal
+    FloatVarImp::domain() const {
+        return dom;
+    }
+    forceinline FloatNum
+    FloatVarImp::min() const {
+        return dom.min();
+    }
+    forceinline FloatNum
+    FloatVarImp::max() const {
+        return dom.max();
+    }
+    forceinline FloatVal
+    FloatVarImp::val() const {
+        return dom;
+    }
+    forceinline FloatNum
+    FloatVarImp::med() const {
+        return dom.med();
+    }
 
-  forceinline FloatVal
-  FloatVarImp::domain(void) const {
-    return dom;
-  }
-  forceinline FloatNum
-  FloatVarImp::min(void) const {
-    return dom.min();
-  }
-  forceinline FloatNum
-  FloatVarImp::max(void) const {
-    return dom.max();
-  }
-  forceinline FloatVal
-  FloatVarImp::val(void) const {
-    return dom;
-  }
-  forceinline FloatNum
-  FloatVarImp::med(void) const {
-    return dom.med();
-  }
+    forceinline bool
+    FloatVarImp::assigned() const {
+        return dom.tight();
+    }
 
-  forceinline bool
-  FloatVarImp::assigned(void) const {
-    return dom.tight();
-  }
+    forceinline FloatNum
+    FloatVarImp::size() const {
+        return dom.size();
+    }
 
-  forceinline FloatNum
-  FloatVarImp::size(void) const {
-    return dom.size();
-  }
+    /*
+     * Tests
+     *
+     */
 
+    forceinline bool
+    FloatVarImp::zero_in() const {
+        return dom.zero_in();
+    }
+    forceinline bool
+    FloatVarImp::in(FloatNum n) const {
+        return dom.in(n);
+    }
+    forceinline bool
+    FloatVarImp::in(const FloatVal& n) const {
+        return subset(n, dom);
+    }
 
-  /*
-   * Tests
-   *
-   */
+    /*
+     * Support for delta information
+     *
+     */
+    forceinline FloatNum
+    FloatVarImp::min(const Delta& d) {
+        return static_cast<const FloatDelta&>(d).min();
+    }
+    forceinline FloatNum
+    FloatVarImp::max(const Delta& d) {
+        return static_cast<const FloatDelta&>(d).max();
+    }
 
-  forceinline bool
-  FloatVarImp::zero_in(void) const {
-    return dom.zero_in();
-  }
-  forceinline bool
-  FloatVarImp::in(FloatNum n) const {
-    return dom.in(n);
-  }
-  forceinline bool
-  FloatVarImp::in(const FloatVal& n) const {
-    return subset(n,dom);
-  }
+    /*
+     * Tell operations (to be inlined: performing bounds checks first)
+     *
+     */
 
+    forceinline ModEvent
+    FloatVarImp::gq(Space& home, FloatNum n) {
+        if (n > dom.max())
+            return fail(home);
+        if ((n <= dom.min()) || assigned())
+            return ME_FLOAT_NONE;
+        FloatDelta d(dom.min(), n);
+        ModEvent me = ME_FLOAT_BND;
+        dom = intersect(dom, FloatVal(n, dom.max()));
+        if (assigned())
+            me = ME_FLOAT_VAL;
+        GECODE_ASSUME((me == ME_FLOAT_VAL) | (me == ME_FLOAT_BND));
+        return notify(home, me, d);
+    }
+    forceinline ModEvent
+    FloatVarImp::gq(Space& home, const FloatVal& n) {
+        if (n.min() > dom.max())
+            return fail(home);
+        if ((n.min() <= dom.min()) || assigned())
+            return ME_FLOAT_NONE;
+        FloatDelta d(dom.min(), n.min());
+        ModEvent me = ME_FLOAT_BND;
+        dom = intersect(dom, FloatVal(n.min(), dom.max()));
+        if (assigned())
+            me = ME_FLOAT_VAL;
+        GECODE_ASSUME((me == ME_FLOAT_VAL) | (me == ME_FLOAT_BND));
+        return notify(home, me, d);
+    }
 
-  /*
-   * Support for delta information
-   *
-   */
-  forceinline FloatNum
-  FloatVarImp::min(const Delta& d) {
-    return static_cast<const FloatDelta&>(d).min();
-  }
-  forceinline FloatNum
-  FloatVarImp::max(const Delta& d) {
-    return static_cast<const FloatDelta&>(d).max();
-  }
+    forceinline ModEvent
+    FloatVarImp::lq(Space& home, FloatNum n) {
+        if (n < dom.min())
+            return fail(home);
+        if ((n >= dom.max()) || assigned())
+            return ME_FLOAT_NONE;
+        FloatDelta d(n, dom.max());
+        ModEvent me = ME_FLOAT_BND;
+        dom = intersect(dom, FloatVal(dom.min(), n));
+        if (assigned())
+            me = ME_FLOAT_VAL;
+        GECODE_ASSUME((me == ME_FLOAT_VAL) | (me == ME_FLOAT_BND));
+        return notify(home, me, d);
+    }
+    forceinline ModEvent
+    FloatVarImp::lq(Space& home, const FloatVal& n) {
+        if (n.max() < dom.min())
+            return fail(home);
+        if ((n.max() >= dom.max()) || assigned())
+            return ME_FLOAT_NONE;
+        FloatDelta d(n.max(), dom.max());
+        ModEvent me = ME_FLOAT_BND;
+        dom = intersect(dom, FloatVal(dom.min(), n.max()));
+        if (assigned())
+            me = ME_FLOAT_VAL;
+        GECODE_ASSUME((me == ME_FLOAT_VAL) | (me == ME_FLOAT_BND));
+        return notify(home, me, d);
+    }
 
+    forceinline ModEvent
+    FloatVarImp::eq(Space& home, FloatNum n) {
+        if (!dom.in(n))
+            return fail(home);
+        if (assigned())
+            return ME_FLOAT_NONE;
+        FloatDelta d;
+        dom = n;
+        return notify(home, ME_FLOAT_VAL, d);
+    }
+    forceinline ModEvent
+    FloatVarImp::eq(Space& home, const FloatVal& n) {
+        if (!overlap(dom, n))
+            return fail(home);
+        if (assigned() || subset(dom, n))
+            return ME_FLOAT_NONE;
+        FloatDelta d;
+        ModEvent me = ME_FLOAT_BND;
+        dom = intersect(dom, n);
+        if (assigned())
+            me = ME_FLOAT_VAL;
+        GECODE_ASSUME((me == ME_FLOAT_VAL) | (me == ME_FLOAT_BND));
+        return notify(home, me, d);
+    }
 
-  /*
-   * Tell operations (to be inlined: performing bounds checks first)
-   *
-   */
+    /*
+     * Copying a variable
+     *
+     */
 
-  forceinline ModEvent
-  FloatVarImp::gq(Space& home, FloatNum n) {
-    if (n > dom.max())  return fail(home);
-    if ((n <= dom.min()) || assigned()) return ME_FLOAT_NONE;
-    FloatDelta d(dom.min(),n);
-    ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,FloatVal(n,dom.max()));
-    if (assigned()) me = ME_FLOAT_VAL;
-    GECODE_ASSUME((me == ME_FLOAT_VAL) |
-                  (me == ME_FLOAT_BND));
-    return notify(home,me,d);
-  }
-  forceinline ModEvent
-  FloatVarImp::gq(Space& home, const FloatVal& n) {
-    if (n.min() > dom.max())  return fail(home);
-    if ((n.min() <= dom.min()) || assigned()) return ME_FLOAT_NONE;
-    FloatDelta d(dom.min(),n.min());
-    ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,FloatVal(n.min(),dom.max()));
-    if (assigned()) me = ME_FLOAT_VAL;
-    GECODE_ASSUME((me == ME_FLOAT_VAL) |
-                  (me == ME_FLOAT_BND));
-    return notify(home,me,d);
-  }
+    forceinline FloatVarImp*
+    FloatVarImp::copy(Space& home) {
+        return copied() ? static_cast<FloatVarImp*>(forward()) : perform_copy(home);
+    }
 
+    /// Return copy of not-yet copied variable
+    forceinline FloatVarImp*
+    FloatVarImp::perform_copy(Space& home) {
+        return new (home) FloatVarImp(home, *this);
+    }
 
-  forceinline ModEvent
-  FloatVarImp::lq(Space& home, FloatNum n) {
-    if (n < dom.min())  return fail(home);
-    if ((n >= dom.max()) || assigned()) return ME_FLOAT_NONE;
-    FloatDelta d(n,dom.max());
-    ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,FloatVal(dom.min(),n));
-    if (assigned()) me = ME_FLOAT_VAL;
-    GECODE_ASSUME((me == ME_FLOAT_VAL) |
-                  (me == ME_FLOAT_BND));
-    return notify(home,me,d);
-  }
-  forceinline ModEvent
-  FloatVarImp::lq(Space& home, const FloatVal& n) {
-    if (n.max() < dom.min())  return fail(home);
-    if ((n.max() >= dom.max()) || assigned()) return ME_FLOAT_NONE;
-    FloatDelta d(n.max(),dom.max());
-    ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,FloatVal(dom.min(),n.max()));
-    if (assigned()) me = ME_FLOAT_VAL;
-    GECODE_ASSUME((me == ME_FLOAT_VAL) |
-                  (me == ME_FLOAT_BND));
-    return notify(home,me,d);
-  }
+    forceinline ModEventDelta
+    FloatVarImp::med(ModEvent me) {
+        return FloatVarImpBase::med(me);
+    }
 
-
-  forceinline ModEvent
-  FloatVarImp::eq(Space& home, FloatNum n) {
-    if (!dom.in(n))
-      return fail(home);
-    if (assigned())
-      return ME_FLOAT_NONE;
-    FloatDelta d;
-    dom = n;
-    return notify(home,ME_FLOAT_VAL,d);
-  }
-  forceinline ModEvent
-  FloatVarImp::eq(Space& home, const FloatVal& n) {
-    if (!overlap(dom,n))
-      return fail(home);
-    if (assigned() || subset(dom,n))
-      return ME_FLOAT_NONE;
-    FloatDelta d;
-    ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,n);
-    if (assigned()) me = ME_FLOAT_VAL;
-    GECODE_ASSUME((me == ME_FLOAT_VAL) |
-                  (me == ME_FLOAT_BND));
-    return notify(home,me,d);
-  }
-
-
-  /*
-   * Copying a variable
-   *
-   */
-
-  forceinline FloatVarImp*
-  FloatVarImp::copy(Space& home) {
-    return copied() ? static_cast<FloatVarImp*>(forward())
-      : perform_copy(home);
-  }
-
-  /// Return copy of not-yet copied variable
-  forceinline FloatVarImp*
-  FloatVarImp::perform_copy(Space& home) {
-    return new (home) FloatVarImp(home, *this);
-  }
-
-  forceinline ModEventDelta
-  FloatVarImp::med(ModEvent me) {
-    return FloatVarImpBase::med(me);
-  }
-
-}}
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

@@ -34,7 +34,7 @@ target_link_libraries(consumer_a PRIVATE Gecode::gecode)
 '@ | Set-Content -Encoding utf8 (Join-Path $work "a\CMakeLists.txt")
 @'
 #include <gecode/support/config.hpp>
-int main(void) { return 0; }
+int main() { return 0; }
 '@ | Set-Content -Encoding utf8 (Join-Path $work "a\main.cpp")
 
 @'
@@ -46,7 +46,7 @@ target_link_libraries(consumer_b PRIVATE Gecode::gecodedriver)
 '@ | Set-Content -Encoding utf8 (Join-Path $work "b\CMakeLists.txt")
 @'
 #include <gecode/driver.hh>
-int main(void) {
+int main() {
   Gecode::Options options("consumer_b");
   return options.model();
 }
@@ -125,15 +125,13 @@ find_library(GECODE_SUPPORT_LIBRARY
   NO_DEFAULT_PATH
   REQUIRED)
 add_executable(manual_consumer main.cpp)
+target_compile_features(manual_consumer PRIVATE cxx_std_23)
 target_include_directories(manual_consumer PRIVATE "${GECODE_INCLUDE_DIR}")
 target_link_libraries(manual_consumer PRIVATE "${GECODE_SUPPORT_LIBRARY}")
 '@ | Set-Content -Encoding utf8 (Join-Path $work "manual\CMakeLists.txt")
 @'
 #include <gecode/support.hh>
-#ifndef GECODE_NO_AUTOLINK
-#error "CMake-installed headers must disable legacy MSVC auto-linking"
-#endif
-int main(void) {
+int main() {
   (void) Gecode::Support::hwrnd();
   return 0;
 }

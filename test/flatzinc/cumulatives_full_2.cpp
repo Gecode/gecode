@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jason Nguyen <jason.nguyen@monash.edu>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("cumulatives_full::2",
-R"FZN(
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("cumulatives_full::2",
+                                   R"FZN(
 var 1..2: d1;
 var 1..2: d2;
 var 3..4: r1 :: output_var;
@@ -52,16 +48,14 @@ var 2..3: r2 :: output_var;
 constraint gecode_cumulatives([0, 0], [d1, d2], [r1, r2], [0, 1], [3, 2], true);
 solve satisfy;
 )FZN",
-R"OUT(r1 = 3;
+                                   R"OUT(r1 = 3;
 r2 = 2;
 ----------
 )OUT");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

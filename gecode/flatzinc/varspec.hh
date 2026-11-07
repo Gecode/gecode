@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,130 +38,134 @@
 #include <vector>
 #include <iostream>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
-  /// %Alias for a variable specification
-  class Alias {
-  public:
-    const int v;
-    Alias(int v0) : v(v0) {}
-  };
+    /// %Alias for a variable specification
+    class Alias {
+    public:
+        const int v;
+        Alias(int v0) : v(v0) {}
+    };
 
-  /// Base class for variable specifications
-  class VarSpec {
-  public:
-    /// Destructor
-    virtual ~VarSpec(void) {}
-    /// Variable index
-    int i;
-    /// Whether the variable aliases another variable
-    bool alias;
-    /// Whether the variable is assigned
-    bool assigned;
-    /// Whether the variable was introduced in the mzn2fzn translation
-    bool introduced;
-    /// Whether the variable functionally depends on another variable
-    bool funcDep;
-    /// Constructor
-    VarSpec(bool introduced0, bool funcDep0)
-    : introduced(introduced0), funcDep(funcDep0) {}
-  };
+    /// Base class for variable specifications
+    class VarSpec {
+    public:
+        /// Destructor
+        virtual ~VarSpec() = default;
+        /// Variable index
+        int i;
+        /// Whether the variable aliases another variable
+        bool alias;
+        /// Whether the variable is assigned
+        bool assigned;
+        /// Whether the variable was introduced in the mzn2fzn translation
+        bool introduced;
+        /// Whether the variable functionally depends on another variable
+        bool func_dep;
+        /// Constructor
+        VarSpec(bool introduced0, bool func_dep0) : introduced(introduced0), func_dep(func_dep0) {}
+    };
 
-  /// Specification for integer variables
-  class IntVarSpec : public VarSpec {
-  public:
-    Option<AST::SetLit* > domain;
-    IntVarSpec(const Option<AST::SetLit* >& d,
-               bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = false;
-      assigned = false;
-      domain = d;
-    }
-    IntVarSpec(int i0, bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = false; assigned = true; i = i0; domain = Option<AST::SetLit* >::none();
-    }
-    IntVarSpec(const Alias& eq, bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = true; i = eq.v;
-    }
-    ~IntVarSpec(void) {
-      if (!alias && !assigned && domain())
-        delete domain.some();
-    }
-  };
+    /// Specification for integer variables
+    class IntVarSpec : public VarSpec {
+    public:
+        Option<AST::SetLit*> domain;
+        IntVarSpec(const Option<AST::SetLit*>& d, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = false;
+            assigned = false;
+            domain = d;
+        }
+        IntVarSpec(int i0, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = false;
+            assigned = true;
+            i = i0;
+            domain = Option<AST::SetLit*>::none();
+        }
+        IntVarSpec(const Alias& eq, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = true;
+            i = eq.v;
+        }
+        ~IntVarSpec() override {
+            if (!alias && !assigned && domain())
+                delete domain.some();
+        }
+    };
 
-  /// Specification for Boolean variables
-  class BoolVarSpec : public VarSpec {
-  public:
-    Option<AST::SetLit* > domain;
-    BoolVarSpec(Option<AST::SetLit* >& d, bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = false; assigned = false; domain = d;
-    }
-    BoolVarSpec(bool b, bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = false; assigned = true; i = b; domain = Option<AST::SetLit* >::none();
-    }
-    BoolVarSpec(const Alias& eq, bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = true; i = eq.v;
-    }
-    ~BoolVarSpec(void) {
-      if (!alias && !assigned && domain())
-        delete domain.some();
-    }
-  };
+    /// Specification for Boolean variables
+    class BoolVarSpec : public VarSpec {
+    public:
+        Option<AST::SetLit*> domain;
+        BoolVarSpec(Option<AST::SetLit*>& d, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = false;
+            assigned = false;
+            domain = d;
+        }
+        BoolVarSpec(bool b, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = false;
+            assigned = true;
+            i = b;
+            domain = Option<AST::SetLit*>::none();
+        }
+        BoolVarSpec(const Alias& eq, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = true;
+            i = eq.v;
+        }
+        ~BoolVarSpec() override {
+            if (!alias && !assigned && domain())
+                delete domain.some();
+        }
+    };
 
-  /// Specification for floating point variables
-  class FloatVarSpec : public VarSpec {
-  public:
-    Option<std::pair<double,double> > domain;
-    FloatVarSpec(Option<std::pair<double,double> >& d,
-                 bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep), domain(d) {
-      alias = false; assigned = false;
-    }
-    FloatVarSpec(double d, bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = false; assigned = true;
-      domain = Option<std::pair<double,double> >::some(std::pair<double,double>(d,d));
-    }
-    FloatVarSpec(const Alias& eq, bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = true; i = eq.v;
-    }
-  };
+    /// Specification for floating point variables
+    class FloatVarSpec : public VarSpec {
+    public:
+        Option<std::pair<double, double>> domain;
+        FloatVarSpec(Option<std::pair<double, double>>& d, bool introduced, bool func_dep)
+            : VarSpec(introduced, func_dep), domain(d) {
+            alias = false;
+            assigned = false;
+        }
+        FloatVarSpec(double d, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = false;
+            assigned = true;
+            domain = Option<std::pair<double, double>>::some(std::pair<double, double>(d, d));
+        }
+        FloatVarSpec(const Alias& eq, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = true;
+            i = eq.v;
+        }
+    };
 
-  /// Specification for set variables
-  class SetVarSpec : public VarSpec {
-  public:
-    Option<AST::SetLit*> upperBound;
-    SetVarSpec(bool introduced, bool funcDep) : VarSpec(introduced,funcDep) {
-      alias = false; assigned = false;
-      upperBound = Option<AST::SetLit* >::none();
-    }
-    SetVarSpec(const Option<AST::SetLit* >& v, bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = false; assigned = false; upperBound = v;
-    }
-    SetVarSpec(AST::SetLit* v, bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = false; assigned = true;
-      upperBound = Option<AST::SetLit*>::some(v);
-    }
-    SetVarSpec(const Alias& eq, bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = true; i = eq.v;
-    }
-    ~SetVarSpec(void) {
-      if (!alias && upperBound())
-        delete upperBound.some();
-    }
-  };
+    /// Specification for set variables
+    class SetVarSpec : public VarSpec {
+    public:
+        Option<AST::SetLit*> upper_bound;
+        SetVarSpec(bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = false;
+            assigned = false;
+            upper_bound = Option<AST::SetLit*>::none();
+        }
+        SetVarSpec(const Option<AST::SetLit*>& v, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = false;
+            assigned = false;
+            upper_bound = v;
+        }
+        SetVarSpec(AST::SetLit* v, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = false;
+            assigned = true;
+            upper_bound = Option<AST::SetLit*>::some(v);
+        }
+        SetVarSpec(const Alias& eq, bool introduced, bool func_dep) : VarSpec(introduced, func_dep) {
+            alias = true;
+            i = eq.v;
+        }
+        ~SetVarSpec() override {
+            if (!alias && upper_bound())
+                delete upper_bound.some();
+        }
+    };
 
-}}
+} // namespace Gecode::FlatZinc
 
 #endif
 

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,41 +32,40 @@
 
 #include <gecode/int/channel.hh>
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
-  forceinline
-  LinkSingle::LinkSingle(Space& home, LinkSingle& p)
-    : MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>
-  (home,p) {}
+    forceinline
+    LinkSingle::LinkSingle(Space& home, LinkSingle& p)
+        : MixBinaryPropagator<BoolView, PC_BOOL_VAL, IntView, PC_INT_VAL>(home, p) {}
 
-  Actor*
-  LinkSingle::copy(Space& home) {
-    return new (home) LinkSingle(home,*this);
-  }
-
-  PropCost
-  LinkSingle::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::unary(PropCost::LO);
-  }
-
-  ExecStatus
-  LinkSingle::propagate(Space& home, const ModEventDelta&) {
-    if (x0.zero()) {
-      GECODE_ME_CHECK(x1.eq(home,0));
-    } else if (x0.one()) {
-      GECODE_ME_CHECK(x1.eq(home,1));
-    } else {
-      assert(x0.none() && x1.assigned());
-      if (x1.val() == 0) {
-        GECODE_ME_CHECK(x0.zero_none(home));
-      } else {
-        assert(x1.val() == 1);
-        GECODE_ME_CHECK(x0.one_none(home));
-      }
+    Actor*
+    LinkSingle::copy(Space& home) {
+        return new (home) LinkSingle(home, *this);
     }
-    return home.ES_SUBSUMED(*this);
-  }
 
-}}}
+    PropCost
+    LinkSingle::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::unary(PropCost::LO);
+    }
+
+    ExecStatus
+    LinkSingle::propagate(Space& home, const ModEventDelta&) {
+        if (x0.zero()) {
+            GECODE_ME_CHECK(x1.eq(home, 0));
+        } else if (x0.one()) {
+            GECODE_ME_CHECK(x1.eq(home, 1));
+        } else {
+            assert(x0.none() && x1.assigned());
+            if (x1.val() == 0) {
+                GECODE_ME_CHECK(x0.zero_none(home));
+            } else {
+                assert(x1.val() == 1);
+                GECODE_ME_CHECK(x0.one_none(home));
+            }
+        }
+        return home.ES_SUBSUMED(*this);
+    }
+
+} // namespace Gecode::Int::Channel
 
 // STATISTICS: int-prop

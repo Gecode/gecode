@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christopher Mears <chris.mears@monash.edu>
@@ -34,77 +33,69 @@
 #include <gecode/int/ldsb.hh>
 
 namespace Gecode {
-  SymmetryHandle::SymmetryHandle(void)
-    : ref(nullptr) {}
-  SymmetryHandle::SymmetryHandle(Int::LDSB::SymmetryObject* o)
-    : ref(o) {}
-  SymmetryHandle::SymmetryHandle(const SymmetryHandle& h)
-    : ref(h.ref) {
-    if (ref != nullptr)
-      increment();
-  }
-  const SymmetryHandle&
-  SymmetryHandle::operator=(const SymmetryHandle& h) {
-    if (h.ref == ref)
-      return *this;
-    if (ref != nullptr)
-      decrement();
-    ref = h.ref;
-    if (ref != nullptr)
-      increment();
-    return *this;
-  }
-  SymmetryHandle::~SymmetryHandle(void) {
-    if (ref != nullptr)
-      decrement();
-  }
-  void
-  SymmetryHandle::increment(void) {
-    (ref->nrefs)++;
-  }
-  void
-  SymmetryHandle::decrement(void) {
-    (ref->nrefs)--;
-    if (ref->nrefs == 0)
-      delete ref;
-    ref = nullptr;
-  }
-}
+    SymmetryHandle::SymmetryHandle() : ref(nullptr) {}
+    SymmetryHandle::SymmetryHandle(Int::LDSB::SymmetryObject* o) : ref(o) {}
+    SymmetryHandle::SymmetryHandle(const SymmetryHandle& h) : ref(h.ref) {
+        if (ref != nullptr)
+            increment();
+    }
+    SymmetryHandle&
+    SymmetryHandle::operator=(const SymmetryHandle& h) {
+        if ((this == &h) || (h.ref == ref))
+            return *this;
+        if (ref != nullptr)
+            decrement();
+        ref = h.ref;
+        if (ref != nullptr)
+            increment();
+        return *this;
+    }
+    SymmetryHandle::~SymmetryHandle() {
+        if (ref != nullptr)
+            decrement();
+    }
+    void
+    SymmetryHandle::increment() {
+        (ref->nrefs)++;
+    }
+    void
+    SymmetryHandle::decrement() {
+        (ref->nrefs)--;
+        if (ref->nrefs == 0)
+            delete ref;
+        ref = nullptr;
+    }
+} // namespace Gecode
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
-  SymmetryObject::SymmetryObject(void)
-    : nrefs(1) {}
-  SymmetryObject::~SymmetryObject(void) {}
+    SymmetryObject::SymmetryObject() : nrefs(1) {}
+    SymmetryObject::~SymmetryObject() = default;
 
-  VariableSymmetryObject::VariableSymmetryObject(ArgArray<VarImpBase*> vars) {
-    nxs = vars.size();
-    xs = new VarImpBase*[nxs];
-    for (int i = 0 ; i < nxs ; i++)
-      xs[i] = vars[i];
-  }
-  VariableSymmetryObject::~VariableSymmetryObject(void) {
-    delete [] xs;
-  }
+    VariableSymmetryObject::VariableSymmetryObject(ArgArray<VarImpBase*> vars) {
+        nxs = vars.size();
+        xs = new VarImpBase*[nxs];
+        for (int i = 0; i < nxs; i++)
+            xs[i] = vars[i];
+    }
+    VariableSymmetryObject::~VariableSymmetryObject() {
+        delete[] xs;
+    }
 
-  ValueSymmetryObject::ValueSymmetryObject(IntSet vs)
-    : values(vs) {}
+    ValueSymmetryObject::ValueSymmetryObject(IntSet vs) : values(vs) {}
 
-  VariableSequenceSymmetryObject::
-  VariableSequenceSymmetryObject(ArgArray<VarImpBase*> x, int ss)
-    : seq_size(ss) {
-    nxs = x.size();
-    xs = new VarImpBase*[nxs];
-    for (int i = 0 ; i < nxs ; i++)
-      xs[i] = x[i];
-  }
-  VariableSequenceSymmetryObject::~VariableSequenceSymmetryObject(void) {
-    delete [] xs;
-  }
+    VariableSequenceSymmetryObject::VariableSequenceSymmetryObject(ArgArray<VarImpBase*> vars, int ss) : seq_size(ss) {
+        nxs = vars.size();
+        xs = new VarImpBase*[nxs];
+        for (int i = 0; i < nxs; i++)
+            xs[i] = vars[i];
+    }
+    VariableSequenceSymmetryObject::~VariableSequenceSymmetryObject() {
+        delete[] xs;
+    }
 
-  ValueSequenceSymmetryObject::ValueSequenceSymmetryObject(IntArgs vs, int ss)
-      : values(vs), seq_size(ss) {}
+    ValueSequenceSymmetryObject::ValueSequenceSymmetryObject(const IntArgs& vs, int ss) : values(vs), seq_size(ss) {}
 
-}}}
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: int-branch

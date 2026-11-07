@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -58,54 +57,53 @@ using namespace Gecode;
  */
 class MagicSequence : public Script {
 private:
-  /// Length of sequence
-  const int n;
-  /// Sequence
-  IntVarArray s;
+    /// Length of sequence
+    const int n;
+    /// Sequence
+    IntVarArray s;
+
 public:
-  /// Propagation to use for model
-  enum {
-    PROP_COUNT,   ///< Use count constraints
-    PROP_GCC      ///< Use single global cardinality constraint
-  };
-  /// The actual model
-  MagicSequence(const SizeOptions& opt)
-    : Script(opt), n(opt.size()), s(*this,n,0,n-1) {
-    switch (opt.propagation()) {
-    case PROP_COUNT:
-      for (int i=n; i--; )
-        count(*this, s, i, IRT_EQ, s[i]);
-      linear(*this, s, IRT_EQ, n);
-      break;
-    case PROP_GCC:
-      count(*this, s, s, opt.ipl());
-      break;
+    /// Propagation to use for model
+    enum {
+        PROP_COUNT, ///< Use count constraints
+        PROP_GCC    ///< Use single global cardinality constraint
+    };
+    /// The actual model
+    MagicSequence(const SizeOptions& opt) : Script(opt), n(opt.size()), s(*this, n, 0, n - 1) {
+        switch (opt.propagation()) {
+        case PROP_COUNT:
+            for (int i = n; i--;)
+                count(*this, s, i, IRT_EQ, s[i]);
+            linear(*this, s, IRT_EQ, n);
+            break;
+        case PROP_GCC:
+            count(*this, s, s, opt.ipl());
+            break;
+        }
+        linear(*this, IntArgs::create(n, -1, 1), s, IRT_EQ, 0);
+        branch(*this, s, INT_VAR_NONE(), INT_VAL_MAX());
     }
-    linear(*this, IntArgs::create(n,-1,1), s, IRT_EQ, 0);
-    branch(*this, s, INT_VAR_NONE(), INT_VAL_MAX());
-  }
 
-  /// Constructor for cloning \a e
-  MagicSequence(MagicSequence& e) : Script(e), n(e.n) {
-    s.update(*this, e.s);
-  }
-  /// Copy during cloning
-  virtual Space*
-  copy(void) {
-    return new MagicSequence(*this);
-  }
-  /// Print sequence
-  virtual
-  void print(std::ostream& os) const {
-    os << "\t";
-    for (int i = 0; i<n; i++) {
-      os << s[i] << ", ";
-      if ((i+1) % 20 == 0)
-        os << std::endl << "\t";
+    /// Constructor for cloning \a e
+    MagicSequence(MagicSequence& e) : Script(e), n(e.n) {
+        s.update(*this, e.s);
     }
-    os << std::endl;
-  }
-
+    /// Copy during cloning
+    Space*
+    copy() override {
+        return new MagicSequence(*this);
+    }
+    /// Print sequence
+    void
+    print(std::ostream& os) const override {
+        os << "\t";
+        for (int i = 0; i < n; i++) {
+            os << s[i] << ", ";
+            if ((i + 1) % 20 == 0)
+                os << '\n' << "\t";
+        }
+        os << '\n';
+    }
 };
 
 /** \brief Main-function
@@ -113,17 +111,16 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("MagicSequence");
-  opt.solutions(0);
-  opt.iterations(4);
-  opt.size(500);
-  opt.propagation(MagicSequence::PROP_COUNT);
-  opt.propagation(MagicSequence::PROP_COUNT,   "count");
-  opt.propagation(MagicSequence::PROP_GCC,     "gcc");
-  opt.parse(argc,argv);
-  Script::run<MagicSequence,DFS,SizeOptions>(opt);
-  return 0;
+    SizeOptions opt("MagicSequence");
+    opt.solutions(0);
+    opt.iterations(4);
+    opt.size(500);
+    opt.propagation(MagicSequence::PROP_COUNT);
+    opt.propagation(MagicSequence::PROP_COUNT, "count");
+    opt.propagation(MagicSequence::PROP_GCC, "gcc");
+    opt.parse(argc, argv);
+    Script::run<MagicSequence, DFS, SizeOptions>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,31 +32,31 @@
 
 namespace Gecode {
 
-  forceinline
-  SEBs::SEBs(void)
-    : ArgArray<SEB>(0) {}
+    forceinline
+    SEBs::SEBs()
+        : ArgArray<SEB>(0) {}
 
-  forceinline
-  SEBs::SEBs(int n)
-    : ArgArray<SEB>(n) {}
+    forceinline
+    SEBs::SEBs(int n)
+        : ArgArray<SEB>(n) {}
 
-  forceinline
-  SEBs::SEBs(const std::vector<SEB>& x)
-    : ArgArray<SEB>(x) {}
+    forceinline
+    SEBs::SEBs(const std::vector<SEB>& x)
+        : ArgArray<SEB>(x) {}
 
-  forceinline
-  SEBs::SEBs(std::initializer_list<SEB> x)
-    : ArgArray<SEB>(x) {}
+    forceinline
+    SEBs::SEBs(std::initializer_list<SEB> x)
+        : ArgArray<SEB>(x) {}
 
-  template<class InputIterator>
-  forceinline
-  SEBs::SEBs(InputIterator first, InputIterator last)
-    : ArgArray<SEB>(first,last) {}
+    template <class InputIterator>
+    forceinline
+    SEBs::SEBs(InputIterator first, InputIterator last)
+        : ArgArray<SEB>(first, last) {}
 
-  forceinline
-  SEBs::SEBs(const ArgArray<SEB>& a)
-    : ArgArray<SEB>(a) {}
+    forceinline
+    SEBs::SEBs(const ArgArray<SEB>& a)
+        : ArgArray<SEB>(a) {}
 
-}
+} // namespace Gecode
 
 // STATISTICS: search-other

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -39,16 +38,15 @@
 
 #include <gecode/search/seq/lds.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  Engine*
-  ldsengine(Space* s, const Options& o) {
-    if (o.tracer)
-      return new Seq::LDS<EdgeTraceRecorder>(s,o);
-    else
-      return new Seq::LDS<NoTraceRecorder>(s,o);
-  }
+    Engine*
+    make_lds_engine(Space* s, const Options& o) {
+        if (o.tracer)
+            return new Seq::LDS<EdgeTraceRecorder>(s, o);
+        return new Seq::LDS<NoTraceRecorder>(s, o);
+    }
 
-}}
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

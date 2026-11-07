@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,78 +34,71 @@
 
 using namespace Gecode;
 
-namespace Test { namespace Set {
-
-  /// %Tests for distinctness constraints
-  namespace Distinct {
+/// %Tests for distinctness constraints
+namespace Test::Set::Distinct {
 
     /**
-      * \defgroup TaskTestSetDistinct Distinctness constraints
-      * \ingroup TaskTestSet
-      */
+     * \defgroup TaskTestSetDistinct Distinctness constraints
+     * \ingroup TaskTestSet
+     */
     //@{
 
-    static IntSet ds_33(-2,2);
-    static IntSet ds_44(-4,4);
+    static IntSet ds_33(-2, 2);
+    static IntSet ds_44(-4, 4);
 
-    /// %Test for the atmostone propagator
+    /// %Test for the at_most_one propagator
     class AtmostOne : public SetTest {
     public:
-      /// Create and register test
-      AtmostOne(const char* t)
-        : SetTest(t,3,ds_33,false) {}
-      /// %Test whether \a x is solution
-      virtual bool solution(const SetAssignment& x) const {
-        {
-          CountableSetRanges xr0(x.lub, x[0]);
-          CountableSetRanges xr1(x.lub, x[1]);
-          Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges>
-            i(xr0,xr1);
-          if (Iter::Ranges::size(i)>1)
-            return false;
+        /// Create and register test
+        AtmostOne(const char* t) : SetTest(t, 3, ds_33, false) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            {
+                CountableSetRanges xr0(x.lub, x[0]);
+                CountableSetRanges xr1(x.lub, x[1]);
+                Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> i(xr0, xr1);
+                if (Iter::Ranges::size(i) > 1)
+                    return false;
+            }
+            {
+                CountableSetRanges xr0(x.lub, x[0]);
+                CountableSetRanges xr2(x.lub, x[2]);
+                Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> i(xr0, xr2);
+                if (Iter::Ranges::size(i) > 1)
+                    return false;
+            }
+            {
+                CountableSetRanges xr1(x.lub, x[1]);
+                CountableSetRanges xr2(x.lub, x[2]);
+                Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> i(xr1, xr2);
+                if (Iter::Ranges::size(i) > 1)
+                    return false;
+            }
+            {
+                CountableSetRanges xr0(x.lub, x[0]);
+                CountableSetRanges xr1(x.lub, x[1]);
+                CountableSetRanges xr2(x.lub, x[2]);
+                if (Iter::Ranges::size(xr0) != 3 || Iter::Ranges::size(xr1) != 3 || Iter::Ranges::size(xr2) != 3)
+                    return false;
+            }
+            return true;
         }
-        {
-          CountableSetRanges xr0(x.lub, x[0]);
-          CountableSetRanges xr2(x.lub, x[2]);
-          Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges>
-            i(xr0,xr2);
-          if (Iter::Ranges::size(i)>1)
-            return false;
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray&) override {
+            SetVar s1(home, IntSet::empty, -2, 2, 0U, 1U);
+            Gecode::rel(home, x[0], SOT_INTERSECTION, x[1], SRT_EQ, s1);
+            SetVar s2(home, IntSet::empty, -2, 2, 0U, 1U);
+            Gecode::rel(home, x[0], SOT_INTERSECTION, x[2], SRT_EQ, s2);
+            SetVar s3(home, IntSet::empty, -2, 2, 0U, 1U);
+            Gecode::rel(home, x[1], SOT_INTERSECTION, x[2], SRT_EQ, s3);
+            Gecode::atmost_one(home, x, 3);
         }
-        {
-          CountableSetRanges xr1(x.lub, x[1]);
-          CountableSetRanges xr2(x.lub, x[2]);
-          Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges>
-            i(xr1,xr2);
-          if (Iter::Ranges::size(i)>1)
-            return false;
-        }
-        {
-          CountableSetRanges xr0(x.lub, x[0]);
-          CountableSetRanges xr1(x.lub, x[1]);
-          CountableSetRanges xr2(x.lub, x[2]);
-          if (Iter::Ranges::size(xr0)!=3 ||
-              Iter::Ranges::size(xr1)!=3 ||
-              Iter::Ranges::size(xr2)!=3)
-            return false;
-        }
-        return true;
-      }
-      /// Post constraint on \a x
-      virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
-        SetVar s1(home, IntSet::empty, -2, 2, 0U, 1U);
-        Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_EQ, s1);
-        SetVar s2(home, IntSet::empty, -2, 2, 0U, 1U);
-        Gecode::rel(home, x[0], SOT_INTER, x[2], SRT_EQ, s2);
-        SetVar s3(home, IntSet::empty, -2, 2, 0U, 1U);
-        Gecode::rel(home, x[1], SOT_INTER, x[2], SRT_EQ, s3);
-        Gecode::atmostOne(home, x, 3);
-      }
     };
     AtmostOne _atmostone("Distinct::AtmostOne");
 
     //@}
 
-}}}
-
+} // namespace Test::Set::Distinct
 // STATISTICS: test-set

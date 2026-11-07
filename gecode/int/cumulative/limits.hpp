@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,21 +30,20 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
-  inline void
-  mul_check(long long int x, long long int y) {
-    if (Limits::overflow_mul(x,y))
-      throw OutOfLimits("cumulative");
-  }
+    inline void
+    mul_check(long long int x, long long int y) {
+        if (Limits::overflow_mul(x, y))
+            throw OutOfLimits("cumulative");
+    }
 
-  inline void
-  mul_check(long long int x, long long int y, long long int z) {
-    if (Limits::overflow_mul(x,y) ||
-        Limits::overflow_mul(x*y,z))
-      throw OutOfLimits("cumulative");
-  }
+    inline void
+    mul_check(long long int x, long long int y, long long int z) {
+        if (Limits::overflow_mul(x, y) || Limits::overflow_mul(x * y, z))
+            throw OutOfLimits("cumulative");
+    }
 
-}}}
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

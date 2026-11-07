@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,214 +36,237 @@
 
 namespace Gecode {
 
-  /*
-   * Constructors and access
-   *
-   */
+    /*
+     * Constructors and access
+     *
+     */
 
-  forceinline
-  SetVar::SetVar(void) {}
+    forceinline
+    SetVar::SetVar(const Set::SetView& y)
+        : VarImpVar<Set::SetVarImp>(y.varimp()) {}
 
-  forceinline
-  SetVar::SetVar(const SetVar& y)
-    : VarImpVar<Set::SetVarImp>(y.varimp()) {}
+    /*
+     * Variable information
+     *
+     */
 
-  forceinline
-  SetVar::SetVar(const Set::SetView& y)
-    : VarImpVar<Set::SetVarImp>(y.varimp()) {}
+    forceinline unsigned int
+    SetVar::glb_size() const {
+        return x->glb_size();
+    }
 
+    forceinline unsigned int
+    SetVar::lub_size() const {
+        return x->lub_size();
+    }
 
-  /*
-   * Variable information
-   *
-   */
+    forceinline unsigned int
+    SetVar::unknown_size() const {
+        return x->lub_size() - x->glb_size();
+    }
 
-  forceinline unsigned int
-  SetVar::glbSize(void) const { return x->glbSize(); }
+    forceinline bool
+    SetVar::contains(int i) const {
+        return x->known_in(i);
+    }
 
-  forceinline unsigned int
-  SetVar::lubSize(void) const { return x->lubSize(); }
+    forceinline bool
+    SetVar::not_contains(int i) const {
+        return x->known_out(i);
+    }
 
-  forceinline unsigned int
-  SetVar::unknownSize(void) const { return x->lubSize()-x->glbSize(); }
+    forceinline unsigned int
+    SetVar::card_min() const {
+        return x->card_min();
+    }
 
-  forceinline bool
-  SetVar::contains(int i) const { return x->knownIn(i); }
+    forceinline unsigned int
+    SetVar::card_max() const {
+        return x->card_max();
+    }
 
-  forceinline bool
-  SetVar::notContains(int i) const { return x->knownOut(i); }
+    forceinline int
+    SetVar::lub_min() const {
+        return x->lub_min();
+    }
 
-  forceinline unsigned int
-  SetVar::cardMin(void) const { return x->cardMin(); }
+    forceinline int
+    SetVar::lub_max() const {
+        return x->lub_max();
+    }
 
-  forceinline unsigned int
-  SetVar::cardMax(void) const { return x->cardMax(); }
+    forceinline int
+    SetVar::glb_min() const {
+        return x->glb_min();
+    }
 
-  forceinline int
-  SetVar::lubMin(void) const { return x->lubMin(); }
+    forceinline int
+    SetVar::glb_max() const {
+        return x->glb_max();
+    }
 
-  forceinline int
-  SetVar::lubMax(void) const { return x->lubMax(); }
+    /*
+     * Range and value iterators for set variables
+     *
+     */
 
-  forceinline int
-  SetVar::glbMin(void) const { return x->glbMin(); }
+    forceinline
+    SetVarGlbRanges::SetVarGlbRanges(const SetVar& s)
+        : iter(s.varimp()) {}
 
-  forceinline int
-  SetVar::glbMax(void) const { return x->glbMax(); }
+    forceinline bool
+    SetVarGlbRanges::operator()() const {
+        return iter();
+    }
 
+    forceinline void
+    SetVarGlbRanges::operator++() {
+        ++iter;
+    }
 
+    forceinline int
+    SetVarGlbRanges::min() const {
+        return iter.min();
+    }
 
-  /*
-   * Range and value iterators for set variables
-   *
-   */
+    forceinline int
+    SetVarGlbRanges::max() const {
+        return iter.max();
+    }
 
-  forceinline
-  SetVarGlbRanges::SetVarGlbRanges(void) {}
+    forceinline unsigned int
+    SetVarGlbRanges::width() const {
+        return iter.width();
+    }
 
-  forceinline
-  SetVarGlbRanges::SetVarGlbRanges(const SetVar& s)
-    : iter(s.varimp()) {}
+    forceinline
+    SetVarLubRanges::SetVarLubRanges(const SetVar& s)
+        : iter(s.varimp()) {}
 
-  forceinline
-  bool
-  SetVarGlbRanges::operator ()(void) const { return iter(); }
+    forceinline bool
+    SetVarLubRanges::operator()() const {
+        return iter();
+    }
 
-  forceinline
-  void
-  SetVarGlbRanges::operator ++(void) { ++iter; }
+    forceinline void
+    SetVarLubRanges::operator++() {
+        ++iter;
+    }
 
-  forceinline
-  int
-  SetVarGlbRanges::min(void) const { return iter.min(); }
+    forceinline int
+    SetVarLubRanges::min() const {
+        return iter.min();
+    }
 
-  forceinline
-  int
-  SetVarGlbRanges::max(void) const { return iter.max(); }
+    forceinline int
+    SetVarLubRanges::max() const {
+        return iter.max();
+    }
 
-  forceinline
-  unsigned int
-  SetVarGlbRanges::width(void) const { return iter.width(); }
+    forceinline unsigned int
+    SetVarLubRanges::width() const {
+        return iter.width();
+    }
 
-  forceinline
-  SetVarLubRanges::SetVarLubRanges(void) {}
+    forceinline
+    SetVarUnknownRanges::SetVarUnknownRanges(const SetVar& s) {
+        iter.init(s.varimp());
+    }
 
-  forceinline
-  SetVarLubRanges::SetVarLubRanges(const SetVar& s)
-    : iter(s.varimp()) {}
+    forceinline bool
+    SetVarUnknownRanges::operator()() const {
+        return iter();
+    }
 
-  forceinline
-  bool
-  SetVarLubRanges::operator ()(void) const { return iter(); }
+    forceinline void
+    SetVarUnknownRanges::operator++() {
+        ++iter;
+    }
 
-  forceinline
-  void
-  SetVarLubRanges::operator ++(void) { ++iter; }
+    forceinline int
+    SetVarUnknownRanges::min() const {
+        return iter.min();
+    }
 
-  forceinline
-  int
-  SetVarLubRanges::min(void) const { return iter.min(); }
+    forceinline int
+    SetVarUnknownRanges::max() const {
+        return iter.max();
+    }
 
-  forceinline
-  int
-  SetVarLubRanges::max(void) const { return iter.max(); }
+    forceinline unsigned int
+    SetVarUnknownRanges::width() const {
+        return iter.width();
+    }
 
-  forceinline
-  unsigned int
-  SetVarLubRanges::width(void) const { return iter.width(); }
+    forceinline SetVarGlbValues::SetVarGlbValues() = default;
 
-  forceinline
-  SetVarUnknownRanges::SetVarUnknownRanges(void) {}
+    forceinline
+    SetVarGlbValues::SetVarGlbValues(const SetVar& x) {
+        SetVarGlbRanges ivr(x);
+        iter.init(ivr);
+    }
 
-  forceinline
-  SetVarUnknownRanges::SetVarUnknownRanges(const SetVar& s) {
-    iter.init(s.varimp());
-  }
+    forceinline bool
+    SetVarGlbValues::operator()() const {
+        return iter();
+    }
 
-  forceinline
-  bool
-  SetVarUnknownRanges::operator ()(void) const { return iter(); }
+    forceinline void
+    SetVarGlbValues::operator++() {
+        ++iter;
+    }
 
-  forceinline
-  void
-  SetVarUnknownRanges::operator ++(void) { ++iter; }
+    forceinline int
+    SetVarGlbValues::val() const {
+        return iter.val();
+    }
 
-  forceinline
-  int
-  SetVarUnknownRanges::min(void) const { return iter.min(); }
+    forceinline SetVarLubValues::SetVarLubValues() = default;
 
-  forceinline
-  int
-  SetVarUnknownRanges::max(void) const { return iter.max(); }
+    forceinline
+    SetVarLubValues::SetVarLubValues(const SetVar& x) {
+        SetVarLubRanges ivr(x);
+        iter.init(ivr);
+    }
 
-  forceinline
-  unsigned int
-  SetVarUnknownRanges::width(void) const { return iter.width(); }
+    forceinline bool
+    SetVarLubValues::operator()() const {
+        return iter();
+    }
 
-  forceinline
-  SetVarGlbValues::SetVarGlbValues(const SetVar& x) {
-    SetVarGlbRanges ivr(x);
-    iter.init(ivr);
-  }
+    forceinline void
+    SetVarLubValues::operator++() {
+        ++iter;
+    }
 
-  forceinline bool
-  SetVarGlbValues::operator ()(void) const {
-    return iter();
-  }
+    forceinline int
+    SetVarLubValues::val() const {
+        return iter.val();
+    }
 
-  forceinline void
-  SetVarGlbValues::operator ++(void) {
-    ++iter;
-  }
+    forceinline SetVarUnknownValues::SetVarUnknownValues() = default;
 
-  forceinline int
-  SetVarGlbValues::val(void) const {
-    return iter.val();
-  }
+    forceinline
+    SetVarUnknownValues::SetVarUnknownValues(const SetVar& x) {
+        SetVarUnknownRanges ivr(x);
+        iter.init(ivr);
+    }
 
-  forceinline
-  SetVarLubValues::SetVarLubValues(const SetVar& x) {
-    SetVarLubRanges ivr(x);
-    iter.init(ivr);
-  }
+    forceinline bool
+    SetVarUnknownValues::operator()() const {
+        return iter();
+    }
 
-  forceinline bool
-  SetVarLubValues::operator ()(void) const {
-    return iter();
-  }
+    forceinline void
+    SetVarUnknownValues::operator++() {
+        ++iter;
+    }
 
-  forceinline void
-  SetVarLubValues::operator ++(void) {
-    ++iter;
-  }
+    forceinline int
+    SetVarUnknownValues::val() const {
+        return iter.val();
+    }
 
-  forceinline int
-  SetVarLubValues::val(void) const {
-    return iter.val();
-  }
-
-  forceinline
-  SetVarUnknownValues::SetVarUnknownValues(const SetVar& x) {
-    SetVarUnknownRanges ivr(x);
-    iter.init(ivr);
-  }
-
-  forceinline bool
-  SetVarUnknownValues::operator ()(void) const {
-    return iter();
-  }
-
-  forceinline void
-  SetVarUnknownValues::operator ++(void) {
-    ++iter;
-  }
-
-  forceinline int
-  SetVarUnknownValues::val(void) const {
-    return iter.val();
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: set-var
-

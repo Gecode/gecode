@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,19 +32,19 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     inline bool
     Limits::valid(const FloatVal&) {
-      return true;
+        return true;
     }
 
     inline void
     Limits::check(const FloatVal& n, const char* l) {
-      if (!valid(n))
-        throw OutOfLimits(l);
+        if (!valid(n))
+            throw OutOfLimits(l);
     }
 
-}}
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

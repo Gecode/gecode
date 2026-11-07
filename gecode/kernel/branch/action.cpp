@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,43 +34,39 @@
 
 namespace Gecode {
 
-  Support::Mutex Action::Storage::m;
+    Support::Mutex Action::Storage::m;
 
-  Action::Storage::~Storage(void) {
-    heap.free<double>(a,n);
-  }
+    Action::Storage::~Storage() {
+        if (n > 0)
+            heap.free<double>(a, n);
+    }
 
-  const Action Action::def;
+    const Action Action::def;
 
-  Action::Action(const Action& a)
-    : SharedHandle(a) {}
+    Action&
+    Action::operator=(const Action& a) {
+        (void)SharedHandle::operator=(a);
+        return *this;
+    }
 
-  Action&
-  Action::operator =(const Action& a) {
-    (void) SharedHandle::operator =(a);
-    return *this;
-  }
+    void
+    Action::decay(Space&, double d) {
+        if ((d < 0.0) || (d > 1.0))
+            throw IllegalDecay("Action");
+        acquire();
+        object().invd = 1.0 / d;
+        release();
+    }
 
-  Action::~Action(void) {}
+    double
+    Action::decay(const Space&) const {
+        double d;
+        const_cast<Action*>(this)->acquire();
+        d = 1.0 / object().invd;
+        const_cast<Action*>(this)->release();
+        return d;
+    }
 
-  void
-  Action::decay(Space&, double d) {
-    if ((d < 0.0) || (d > 1.0))
-      throw IllegalDecay("Action");
-    acquire();
-    object().invd = 1.0 / d;
-    release();
-  }
-
-  double
-  Action::decay(const Space&) const {
-    double d;
-    const_cast<Action*>(this)->acquire();
-    d = 1.0 / object().invd;
-    const_cast<Action*>(this)->release();
-    return d;
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-branch

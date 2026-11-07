@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
@@ -47,61 +46,50 @@
 #include <gecode/float.hh>
 #endif
 
-namespace Gecode {
-namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
-class BlackBoxContext;
+    class BlackBoxContext;
 
-/// Model-local context shared by blackbox propagators and search support.
-class BlackBoxContextHandle : public SharedHandle {
-public:
-  BlackBoxContextHandle(void) : SharedHandle() {}
-  BlackBoxContextHandle(const BlackBoxContextHandle& handle)
-    : SharedHandle(handle) {}
-  BlackBoxContextHandle& operator=(const BlackBoxContextHandle& handle) {
-    return static_cast<BlackBoxContextHandle&>(
-      SharedHandle::operator=(handle));
-  }
+    /// Model-local context shared by blackbox propagators and search support.
+    class BlackBoxContextHandle : public SharedHandle {
+    public:
+        BlackBoxContextHandle() = default;
+        BlackBoxContextHandle(const BlackBoxContextHandle& handle) = default;
+        BlackBoxContextHandle& operator=(const BlackBoxContextHandle& handle) = default;
 
-  /// Initialize this context if it is empty.
-  void init(void);
-  /// Return the backend selected for one constraint as an opaque handle.
-  SharedHandle backendForConstraint(const std::string& mode,
-                                    const std::string& target,
-                                    const std::vector<std::string>& args) const;
-  /// Record the first exception raised during blackbox propagation.
-  void fail(std::exception_ptr e) const;
-  /// Whether blackbox propagation raised an exception.
-  bool failed(void) const;
-  /// Rethrow the first recorded propagation exception.
-  void rethrow(void) const;
-};
+        /// Initialize this context if it is empty.
+        void init();
+        /// Return the backend selected for one constraint as an opaque handle.
+        SharedHandle backend_for_constraint(const std::string& mode, const std::string& target,
+                                            const std::vector<std::string>& args) const;
+        /// Record the first exception raised during blackbox propagation.
+        void fail(std::exception_ptr e) const;
+        /// Whether blackbox propagation raised an exception.
+        bool failed() const;
+        /// Rethrow the first recorded propagation exception.
+        void rethrow() const;
+    };
 
-/// Access to the model-local blackbox context while posting and searching.
-class BlackBoxAccess {
-public:
-  static BlackBoxContextHandle& context(FlatZincSpace& s);
-};
+    /// Access to the model-local blackbox context while posting and searching.
+    class BlackBoxAccess {
+    public:
+        static BlackBoxContextHandle& context(FlatZincSpace& s);
+    };
 
-void blackbox(Home home, BlackBoxContextHandle& context,
-              const IntVarArgs& int_in, const IntVarArgs& int_out,
+    void blackbox(Home home, BlackBoxContextHandle& context, const IntVarArgs& int_in, const IntVarArgs& int_out,
 #ifdef GECODE_HAS_FLOAT_VARS
-              const FloatVarArgs& float_in, const FloatVarArgs& float_out,
+                  const FloatVarArgs& float_in, const FloatVarArgs& float_out,
 #endif
-              const std::string& mode, const std::string& target,
-              const std::vector<std::string>& args);
+                  const std::string& mode, const std::string& target, const std::vector<std::string>& args);
 
-void blackbox_bounds(Home home, BlackBoxContextHandle& context,
-                     const IntVarArgs& ivar,
+    void blackbox_bounds(Home home, BlackBoxContextHandle& context, const IntVarArgs& ivar,
 #ifdef GECODE_HAS_FLOAT_VARS
-                     const FloatVarArgs& fvar,
+                         const FloatVarArgs& fvar,
 #endif
-                     const std::string& mode, const std::string& target,
-                     const std::vector<std::string>& args,
-                     const std::vector<int>& reason);
+                         const std::string& mode, const std::string& target, const std::vector<std::string>& args,
+                         const std::vector<int>& reason);
 
-} // namespace FlatZinc
-} // namespace Gecode
+} // namespace Gecode::FlatZinc
 
 #endif // GECODE_FLATZINC_BLACKBOX_HH
 

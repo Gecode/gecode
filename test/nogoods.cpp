@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -40,265 +39,287 @@
 
 #include "test/test.hh"
 
-namespace Test {
-
-  /// Tests for search using no-goods
-  namespace NoGoods {
+/// Tests for search using no-goods
+namespace Test::NoGoods {
 
     using namespace Gecode;
 
     /// A dummy function for branching
-    void dummy(Space&) {
-    }
+    static void
+    dummy(Space&) {}
 
     /// Example for testing integer no-goods
     class Queens : public Space {
     public:
-      /// Number of queens (must be even)
-      const static int n = 18;
-      /// Position of queens on boards
-      IntVarArray q;
-      /// The actual problem
-      Queens(IntValBranch ivb, bool assign, bool null)
-        : q(*this,n,0,n-1) {
-        distinct(*this, IntArgs::create(n,0,1), q, IPL_VAL);
-        distinct(*this, IntArgs::create(n,0,-1), q, IPL_VAL);
-        distinct(*this, q, IPL_VAL);
-        if (assign) {
-          IntVar x(*this,0,1); Gecode::assign(*this, x, INT_ASSIGN_MIN());
+        /// Number of queens (must be even)
+        const static int n = 18;
+        /// Position of queens on boards
+        IntVarArray q;
+        /// The actual problem
+        Queens(const IntValBranch& ivb, bool assign, bool null) : q(*this, n, 0, n - 1) {
+            distinct(*this, IntArgs::create(n, 0, 1), q, IPL_VAL);
+            distinct(*this, IntArgs::create(n, 0, -1), q, IPL_VAL);
+            distinct(*this, q, IPL_VAL);
+            if (assign) {
+                IntVar x(*this, 0, 1);
+                Gecode::assign(*this, x, INT_ASSIGN_MIN());
+            }
+            {
+                IntVarArgs q1(n / 2), q2(n / 2);
+                for (int i = 0; i < n / 2; i++) {
+                    q1[i] = q[i];
+                    q2[i] = q[n / 2 + i];
+                }
+                branch(*this, q1, INT_VAR_NONE(), ivb);
+                if (null)
+                    branch(*this, &dummy);
+                branch(*this, q2, INT_VAR_NONE(), ivb);
+            }
+            if (assign) {
+                IntVar x(*this, 0, 1);
+                Gecode::assign(*this, x, INT_ASSIGN_MIN());
+            }
         }
-        {
-          IntVarArgs q1(n/2), q2(n/2);
-          for (int i=0; i<n/2; i++) {
-            q1[i] = q[i]; q2[i] = q[n/2 + i];
-          }
-          branch(*this, q1, INT_VAR_NONE(), ivb);
-          if (null)
-            branch(*this, &dummy);
-          branch(*this, q2, INT_VAR_NONE(), ivb);
+        /// Constructor for cloning \a s
+        Queens(Queens& s) : Space(s) {
+            q.update(*this, s.q);
         }
-        if (assign) {
-          IntVar x(*this,0,1); Gecode::assign(*this, x, INT_ASSIGN_MIN());
+        /// Perform copying during cloning
+        Space*
+        copy() override {
+            return new Queens(*this);
         }
-      }
-      /// Constructor for cloning \a s
-      Queens(Queens& s) : Space(s) {
-        q.update(*this, s.q);
-      }
-      /// Perform copying during cloning
-      virtual Space* copy(void) {
-        return new Queens(*this);
-      }
-      /// Check whether two solutions are the same
-      bool same(const Queens& s) const {
-        for (int i=0; i<q.size(); i++)
-          if (q[i].val() != s.q[i].val())
-            return false;
-        return true;
-      }
-      /// Return increment for node stop
-      static unsigned int nodeinc(void) {
-        return 500;
-      }
-      /// Return name
-      static std::string name(void) {
-        return "Queens";
-      }
-      /// Return name for branching
-      static std::string val(IntValBranch ivb) {
-        switch (ivb.select()) {
-        case IntValBranch::SEL_MIN: return "INT_VAL_MIN";
-        case IntValBranch::SEL_MAX: return "INT_VAL_MAX";
-        case IntValBranch::SEL_SPLIT_MIN: return "INT_VAL_SPLIT_MIN";
-        case IntValBranch::SEL_SPLIT_MAX: return "INT_VAL_SPLIT_MAX";
-        case IntValBranch::SEL_VALUES_MIN: return "INT_VALUES_MIN";
-        case IntValBranch::SEL_VALUES_MAX: return "INT_VALUES_MAX";
-        default: GECODE_NEVER;
+        /// Check whether two solutions are the same
+        bool
+        same(const Queens& s) const {
+            for (int i = 0; i < q.size(); i++)
+                if (q[i].val() != s.q[i].val())
+                    return false;
+            return true;
         }
-        return "";
-      }
+        /// Return increment for node stop
+        static unsigned int
+        node_increment() {
+            return 500;
+        }
+        /// Return name
+        static std::string
+        name() {
+            return "Queens";
+        }
+        /// Return name for branching
+        static std::string
+        val(const IntValBranch& ivb) {
+            switch (ivb.select()) {
+            case IntValBranch::SEL_MIN:
+                return "INT_VAL_MIN";
+            case IntValBranch::SEL_MAX:
+                return "INT_VAL_MAX";
+            case IntValBranch::SEL_SPLIT_MIN:
+                return "INT_VAL_SPLIT_MIN";
+            case IntValBranch::SEL_SPLIT_MAX:
+                return "INT_VAL_SPLIT_MAX";
+            case IntValBranch::SEL_VALUES_MIN:
+                return "INT_VALUES_MIN";
+            case IntValBranch::SEL_VALUES_MAX:
+                return "INT_VALUES_MAX";
+            default:
+                GECODE_NEVER;
+            }
+            return "";
+        }
     };
 
 #ifdef GECODE_HAS_SET_VARS
     /// Example for testing set no-goods
     class Hamming : public Space {
     private:
-      /// Number of symbols (must be even)
-      static const int size = 16;
-      /// Minimal Hamming-distance
-      static const int distance = 4;
-      /// Number of bits
-      static const int bits = 8;
-      /// The hamming code
-      SetVarArray x;
+        /// Number of symbols (must be even)
+        static const int size = 16;
+        /// Minimal Hamming-distance
+        static const int distance = 4;
+        /// Number of bits
+        static const int bits = 8;
+        /// The hamming code
+        SetVarArray x;
+
     public:
-      /// Actual model
-      Hamming(SetValBranch svb, bool assign, bool null) :
-        x(*this,size,IntSet::empty,1,bits) {
-        SetVarArgs cx(x.size());
-        for (int i=x.size(); i--;)
-          cx[i] = expr(*this, -x[i]);
+        /// Actual model
+        Hamming(const SetValBranch& svb, bool assign, bool null) : x(*this, size, IntSet::empty, 1, bits) {
+            SetVarArgs cx(x.size());
+            for (int i = x.size(); i--;)
+                cx[i] = expr(*this, -x[i]);
 
-        for (int i=0; i<x.size(); i++)
-          for (int j=i+1; j<x.size(); j++)
-            rel(*this,
-                cardinality(x[j] & cx[i]) +
-                cardinality(x[i] & cx[j]) >= distance);
+            for (int i = 0; i < x.size(); i++)
+                for (int j = i + 1; j < x.size(); j++)
+                    rel(*this, cardinality(x[j] & cx[i]) + cardinality(x[i] & cx[j]) >= distance);
 
-        if (assign) {
-          IntVar x(*this,0,1); Gecode::assign(*this, x, INT_ASSIGN_MIN());
+            if (assign) {
+                IntVar x(*this, 0, 1);
+                Gecode::assign(*this, x, INT_ASSIGN_MIN());
+            }
+            {
+                SetVarArgs x1(size / 2), x2(size / 2);
+                for (int i = 0; i < size / 2; i++) {
+                    x1[i] = x[i];
+                    x2[i] = x[size / 2 + i];
+                }
+                branch(*this, x1, SET_VAR_NONE(), svb);
+                if (null)
+                    branch(*this, &dummy);
+                branch(*this, x2, SET_VAR_NONE(), svb);
+            }
+            if (assign) {
+                IntVar x(*this, 0, 1);
+                Gecode::assign(*this, x, INT_ASSIGN_MIN());
+            }
         }
-        {
-          SetVarArgs x1(size/2), x2(size/2);
-          for (int i=0; i<size/2; i++) {
-            x1[i] = x[i]; x2[i] = x[size/2 + i];
-          }
-          branch(*this, x1, SET_VAR_NONE(), svb);
-          if (null)
-            branch(*this, &dummy);
-          branch(*this, x2, SET_VAR_NONE(), svb);
+        /// Constructor for copying \a s
+        Hamming(Hamming& s) : Space(s) {
+            x.update(*this, s.x);
         }
-        if (assign) {
-          IntVar x(*this,0,1); Gecode::assign(*this, x, INT_ASSIGN_MIN());
+        /// Copy during cloning
+        Space*
+        copy() override {
+            return new Hamming(*this);
         }
-      }
-      /// Constructor for copying \a s
-      Hamming(Hamming& s) : Space(s) {
-        x.update(*this, s.x);
-      }
-      /// Copy during cloning
-      virtual Space* copy(void) {
-        return new Hamming(*this);
-      }
-      /// Check whether two solutions are the same
-      bool same(const Hamming& s) const {
-        for (int i=0; i<x.size(); i++) {
-          SetVarGlbRanges a(x[i]), b(s.x[i]);
-          if (!Iter::Ranges::equal(a,b))
-            return false;
+        /// Check whether two solutions are the same
+        bool
+        same(const Hamming& s) const {
+            for (int i = 0; i < x.size(); i++) {
+                SetVarGlbRanges a(x[i]), b(s.x[i]);
+                if (!Iter::Ranges::equal(a, b))
+                    return false;
+            }
+            return true;
         }
-        return true;
-      }
-      /// Return increment for node stop
-      static unsigned int nodeinc(void) {
-        return 35;
-      }
-      /// Return name
-      static std::string name(void) {
-        return "Hamming";
-      }
-      /// Return name for branching
-      static std::string val(SetValBranch svb) {
-        switch (svb.select()) {
-        case SetValBranch::SEL_MIN_INC: return "SET_VAL_MIN_INC";
-        case SetValBranch::SEL_MAX_INC: return "SET_VAL_MAX_INC";
-        case SetValBranch::SEL_MIN_EXC: return "SET_VAL_MIN_EXC";
-        case SetValBranch::SEL_MAX_EXC: return "SET_VAL_MAX_EXC";
-        default: GECODE_NEVER;
+        /// Return increment for node stop
+        static unsigned int
+        node_increment() {
+            return 35;
         }
-        return "";
-      }
+        /// Return name
+        static std::string
+        name() {
+            return "Hamming";
+        }
+        /// Return name for branching
+        static std::string
+        val(const SetValBranch& svb) {
+            switch (svb.select()) {
+            case SetValBranch::SEL_MIN_INC:
+                return "SET_VAL_MIN_INC";
+            case SetValBranch::SEL_MAX_INC:
+                return "SET_VAL_MAX_INC";
+            case SetValBranch::SEL_MIN_EXC:
+                return "SET_VAL_MIN_EXC";
+            case SetValBranch::SEL_MAX_EXC:
+                return "SET_VAL_MAX_EXC";
+            default:
+                GECODE_NEVER;
+            }
+            return "";
+        }
     };
 #endif
 
     /// %Base class for no-good tests
-    template<class Model, class ValBranch>
+    template <class Model, class ValBranch>
     class NoGoods : public Base {
     protected:
-      /// How to branch
-      ValBranch vb;
-      /// Number of threads to use
-      unsigned int t;
-      /// Whether to also assign some variables
-      bool a;
-      /// Whether to also create branchers without no-good literals
-      bool n;
+        /// How to branch
+        ValBranch vb;
+        /// Number of threads to use
+        unsigned int t;
+        /// Whether to also assign some variables
+        bool a;
+        /// Whether to also create branchers without no-good literals
+        bool n;
+
     public:
-      /// Map unsigned integer to string
-      static std::string str(unsigned int i) {
-        std::stringstream s;
-        s << i;
-        return s.str();
-      }
-      /// Initialize test
-      NoGoods(TestTags tags, ValBranch vb0,
-              unsigned int t0, bool a0, bool n0)
-        : Base("NoGoods::"+Model::name()+"::"+Model::val(vb0)+"::"+str(t0)+
-               "::"+(a0 ? "+" : "-")+"::"+(n0 ? "+" : "-"),tags),
-          vb(vb0), t(t0), a(a0), n(n0) {}
-      /// Run test
-      virtual bool run(void) {
-        Model* m = new Model(vb,a,n);
-        // Solution without no-goods
-        Model* s_plain = dfs(m);
-        // Stop and re-start for a while to collect no-goods
-        {
-          Search::NodeStop ns(Model::nodeinc());
-          Search::Options o;
-          o.stop = &ns;
-          o.threads = t;
-          o.nogoods_limit = 256U;
-          Search::Engine* e = Search::dfsengine(m,o);
-          while (true) {
-            Model* s = static_cast<Model*>(e->next());
-            delete s;
-            if (!e->stopped())
-              break;
-            // Add no-goods
-            e->nogoods().post(*m);
-            ns.limit(ns.limit()+Model::nodeinc());
-          }
-          delete e;
+        /// Map unsigned integer to string
+        static std::string
+        str(unsigned int i) {
+            std::stringstream s;
+            s << i;
+            return s.str();
         }
-        // Compare whether the a or the same solution is found with no-goods
-        Model* s_nogoods = dfs(m);
+        /// Initialize test
+        NoGoods(TestTags tags, ValBranch vb0, unsigned int t0, bool a0, bool n0)
+            : Base("NoGoods::" + Model::name() + "::" + Model::val(vb0) + "::" + str(t0) + "::" + (a0 ? "+" : "-") +
+                       "::" + (n0 ? "+" : "-"),
+                   tags),
+              vb(std::move(vb0)), t(t0), a(a0), n(n0) {}
+        /// Run test
+        bool
+        run() override {
+            Model* m = new Model(vb, a, n);
+            // Solution without no-goods
+            Model* s_plain = dfs(m);
+            // Stop and re-start for a while to collect no-goods
+            {
+                Search::NodeStop ns(Model::node_increment());
+                Search::Options o;
+                o.stop = &ns;
+                o.threads = t;
+                o.nogoods_limit = 256U;
+                Search::Engine* e = Search::make_dfs_engine(m, o);
+                while (true) {
+                    Model* s = static_cast<Model*>(e->next());
+                    delete s;
+                    if (!e->stopped())
+                        break;
+                    // Add no-goods
+                    e->nogoods().post(*m);
+                    ns.limit(ns.limit() + Model::node_increment());
+                }
+                delete e;
+            }
+            // Compare whether the a or the same solution is found with no-goods
+            Model* s_nogoods = dfs(m);
 
-        bool ok = ((s_nogoods != nullptr) &&
-                   ((t != 1) || s_plain->same(*s_nogoods)));
+            bool ok = ((s_nogoods != nullptr) && ((t != 1) || s_plain->same(*s_nogoods)));
 
-        delete m;
-        delete s_nogoods;
-        delete s_plain;
+            delete m;
+            delete s_nogoods;
+            delete s_plain;
 
-        return ok;
-      }
+            return ok;
+        }
     };
-
 
     /// Help class to create and register tests
     class Create {
     public:
-      /// Perform creation and registration
-      Create(void) {
-        bool a = false;
-        do {
-          bool n = false;
-          do {
-            for (unsigned int t = 1; t<=4; t++) {
-              TestTags queens = TestTags::check();
-              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VAL_MIN(),t,a,n);
-              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VAL_MAX(),t,a,n);
-              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VAL_SPLIT_MIN(),t,a,n);
-              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VAL_SPLIT_MAX(),t,a,n);
-              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VALUES_MIN(),t,a,n);
-              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VALUES_MAX(),t,a,n);
+        /// Perform creation and registration
+        Create() {
+            bool a = false;
+            do {
+                bool n = false;
+                do {
+                    for (unsigned int t = 1; t <= 4; t++) {
+                        TestTags queens = TestTags::check();
+                        (void)new NoGoods<Queens, IntValBranch>(queens, INT_VAL_MIN(), t, a, n);
+                        (void)new NoGoods<Queens, IntValBranch>(queens, INT_VAL_MAX(), t, a, n);
+                        (void)new NoGoods<Queens, IntValBranch>(queens, INT_VAL_SPLIT_MIN(), t, a, n);
+                        (void)new NoGoods<Queens, IntValBranch>(queens, INT_VAL_SPLIT_MAX(), t, a, n);
+                        (void)new NoGoods<Queens, IntValBranch>(queens, INT_VALUES_MIN(), t, a, n);
+                        (void)new NoGoods<Queens, IntValBranch>(queens, INT_VALUES_MAX(), t, a, n);
 #ifdef GECODE_HAS_SET_VARS
-              (void) new NoGoods<Hamming,SetValBranch>(TestTags::standard(),SET_VAL_MIN_INC(),t,a,n);
-              (void) new NoGoods<Hamming,SetValBranch>(TestTags::standard(),SET_VAL_MIN_EXC(),t,a,n);
-              (void) new NoGoods<Hamming,SetValBranch>(TestTags::standard(),SET_VAL_MAX_INC(),t,a,n);
-              (void) new NoGoods<Hamming,SetValBranch>(TestTags::standard(),SET_VAL_MAX_EXC(),t,a,n);
+                        (void)new NoGoods<Hamming, SetValBranch>(TestTags::standard(), SET_VAL_MIN_INC(), t, a, n);
+                        (void)new NoGoods<Hamming, SetValBranch>(TestTags::standard(), SET_VAL_MIN_EXC(), t, a, n);
+                        (void)new NoGoods<Hamming, SetValBranch>(TestTags::standard(), SET_VAL_MAX_INC(), t, a, n);
+                        (void)new NoGoods<Hamming, SetValBranch>(TestTags::standard(), SET_VAL_MAX_EXC(), t, a, n);
 #endif
-            }
-            n = !n;
-          } while (n);
-          a = !a;
-        } while (a);
-      }
+                    }
+                    n = !n;
+                } while (n);
+                a = !a;
+            } while (a);
+        }
     };
 
     Create c;
-  }
-
-}
+} // namespace Test::NoGoods
 
 // STATISTICS: test-search

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,51 +38,36 @@
 
 namespace Gecode {
 
-  /*
-   * Implementation
-   *
-   */
+    /*
+     * Implementation
+     *
+     */
 
-  forceinline
-  SetVarArgs::SetVarArgs(void) {}
+    forceinline
+    SetVarArgs::SetVarArgs(int n)
+        : VarArgArray<SetVar>(n) {}
 
-  forceinline
-  SetVarArgs::SetVarArgs(int n)
-    : VarArgArray<SetVar>(n) {}
+    forceinline
+    SetVarArgs::SetVarArgs(const VarArray<SetVar>& a)
+        : VarArgArray<SetVar>(a) {}
 
-  forceinline
-  SetVarArgs::SetVarArgs(const SetVarArgs& a)
-    : VarArgArray<SetVar>(a) {}
+    forceinline
+    SetVarArgs::SetVarArgs(const std::vector<SetVar>& a)
+        : VarArgArray<SetVar>(a) {}
 
-  forceinline
-  SetVarArgs::SetVarArgs(const VarArray<SetVar>& a)
-    : VarArgArray<SetVar>(a) {}
+    forceinline
+    SetVarArgs::SetVarArgs(std::initializer_list<SetVar> a)
+        : VarArgArray<SetVar>(a) {}
 
-  forceinline
-  SetVarArgs::SetVarArgs(const std::vector<SetVar>& a)
-    : VarArgArray<SetVar>(a) {}
+    template <class InputIterator>
+    forceinline
+    SetVarArgs::SetVarArgs(InputIterator first, InputIterator last)
+        : VarArgArray<SetVar>(first, last) {}
 
-  forceinline
-  SetVarArgs::SetVarArgs(std::initializer_list<SetVar> a)
-    : VarArgArray<SetVar>(a) {}
+    forceinline
+    SetVarArray::SetVarArray(Space& home, const SetVarArgs& a)
+        : VarArray<SetVar>(home, a) {}
 
-  template<class InputIterator>
-  forceinline
-  SetVarArgs::SetVarArgs(InputIterator first, InputIterator last)
-    : VarArgArray<SetVar>(first,last) {}
-
-
-  forceinline
-  SetVarArray::SetVarArray(void) {}
-
-  forceinline
-  SetVarArray::SetVarArray(const SetVarArray& a)
-    : VarArray<SetVar>(a) {}
-
-  forceinline
-  SetVarArray::SetVarArray(Space& home, const SetVarArgs& a)
-    : VarArray<SetVar>(home,a) {}
-
-}
+} // namespace Gecode
 
 // STATISTICS: set-other

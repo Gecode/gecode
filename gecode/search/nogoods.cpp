@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,190 +32,200 @@
 
 #include <gecode/search/nogoods.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  /// Help function to cancel and dispose a no-good literal
-  forceinline NGL*
-  disposenext(NGL* ngl, Space& home, Propagator& p, bool c) {
-    NGL* n = ngl->next();
-    if (c)
-      ngl->cancel(home,p);
-    home.rfree(ngl,ngl->dispose(home));
-    return n;
-  }
-
-  void
-  NoNGL::subscribe(Space&, Propagator&) {
-    GECODE_NEVER;
-  }
-  void
-  NoNGL::cancel(Space&, Propagator&) {
-    GECODE_NEVER;
-  }
-  void
-  NoNGL::reschedule(Space&, Propagator&) {
-    GECODE_NEVER;
-  }
-  NGL::Status
-  NoNGL::status(const Space&) const {
-    GECODE_NEVER;
-    return NGL::NONE;
-  }
-  ExecStatus
-  NoNGL::prune(Space&) {
-    GECODE_NEVER;
-    return ES_OK;
-  }
-  NGL*
-  NoNGL::copy(Space&) {
-    GECODE_NEVER;
-    return nullptr;
-  }
-
-  Actor*
-  NoGoodsProp::copy(Space& home) {
-    return new (home) NoGoodsProp(home,*this);
-  }
-
-  PropCost
-  NoGoodsProp::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LO,n);
-  }
-
-  void
-  NoGoodsProp::reschedule(Space& home) {
-    root->reschedule(home,*this);
-    NGL* l = root->next();
-    while ((l != nullptr) && l->leaf()) {
-      l->reschedule(home,*this);
-      l = l->next();
-    }
-    if (l != nullptr)
-      l->reschedule(home,*this);
-  }
-
-
-  ExecStatus
-  NoGoodsProp::propagate(Space& home, const ModEventDelta&) {
-  restart:
-    // Start with checking the first literal
-    switch (root->status(home)) {
-    case NGL::FAILED:
-      // All no-goods are dead, let dispose() clean up
-      return home.ES_SUBSUMED(*this);
-    case NGL::SUBSUMED:
-      {
-        NGL* l = disposenext(root,home,*this,true); n--;
-        // Prune leaf-literals
-        while ((l != nullptr) && l->leaf()) {
-          l->cancel(home,*this); n--;
-          GECODE_ES_CHECK(l->prune(home));
-          l = disposenext(l,home,*this,false);
-        }
-        root = l;
-        // Is there anything left?
-        if (l == nullptr)
-          return home.ES_SUBSUMED(*this);
-        // Skip literal that already has a subscription
-        l = l->next();
-        // Create subscriptions for leaves
-        while ((l != nullptr) && l->leaf()) {
-          l->subscribe(home,*this); n++;
-          l = l->next();
-        }
-        // Create subscription for possible non-leaf literal
-        if (l != nullptr) {
-          l->subscribe(home,*this); n++;
-        }
-        goto restart;
-      }
-    case NGL::NONE:
-      break;
-    default: GECODE_NEVER;
+    /// Help function to cancel and dispose a no-good literal
+    static forceinline NGL*
+    dispose_and_next(NGL* ngl, Space& home, Propagator& p, bool c) {
+        NGL* n = ngl->next();
+        if (c)
+            ngl->cancel(home, p);
+        home.rfree(ngl, ngl->dispose(home));
+        return n;
     }
 
-    {
-      NGL* p = root;
-      NGL* l = p->next();
+    void
+    NoNGL::subscribe(Space&, Propagator&) {
+        GECODE_NEVER;
+    }
+    void
+    NoNGL::cancel(Space&, Propagator&) {
+        GECODE_NEVER;
+    }
+    void
+    NoNGL::reschedule(Space&, Propagator&) {
+        GECODE_NEVER;
+    }
+    NGL::Status
+    NoNGL::status(const Space&) const {
+        GECODE_NEVER;
+        return NGL::NONE;
+    }
+    ExecStatus
+    NoNGL::prune(Space&) {
+        GECODE_NEVER;
+        return ES_OK;
+    }
+    NGL*
+    NoNGL::copy(Space&) {
+        GECODE_NEVER;
+        return nullptr;
+    }
 
-      // Check the leaves
-      while ((l != nullptr) && l->leaf()) {
-        switch (l->status(home)) {
-        case NGL::SUBSUMED:
-          l = disposenext(l,home,*this,true); n--;
-          p->next(l);
-          GECODE_ES_CHECK(root->prune(home));
-          if (root->status(home) == NGL::FAILED)
+    Actor*
+    NoGoodsProp::copy(Space& home) {
+        return new (home) NoGoodsProp(home, *this);
+    }
+
+    PropCost
+    NoGoodsProp::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::linear(PropCost::LO, n);
+    }
+
+    void
+    NoGoodsProp::reschedule(Space& home) {
+        root->reschedule(home, *this);
+        NGL* l = root->next();
+        while ((l != nullptr) && l->leaf()) {
+            l->reschedule(home, *this);
+            l = l->next();
+        }
+        if (l != nullptr)
+            l->reschedule(home, *this);
+    }
+
+    ExecStatus
+    NoGoodsProp::propagate(Space& home, const ModEventDelta&) {
+    restart:
+        // Start with checking the first literal
+        switch (root->status(home)) {
+        case NGL::FAILED:
+            // All no-goods are dead, let dispose() clean up
             return home.ES_SUBSUMED(*this);
-          break;
-        case NGL::FAILED:
-          l = disposenext(l,home,*this,true); n--;
-          p->next(l);
-          break;
-        case NGL::NONE:
-          p = l; l = l->next();
-          break;
-        default: GECODE_NEVER;
-        }
-      }
-
-      // Check the next subtree
-      if (l != nullptr) {
-        switch (l->status(home)) {
-        case NGL::FAILED:
-          (void) disposenext(l,home,*this,true); n--;
-          // Prune entire subtree
-          p->next(nullptr);
-          break;
-        case NGL::SUBSUMED:
-          {
-            // Unlink node
-            l = disposenext(l,home,*this,true); n--;
-            p->next(l);
-            // Create subscriptions
+        case NGL::SUBSUMED: {
+            NGL* l = dispose_and_next(root, home, *this, true);
+            n--;
+            // Prune leaf-literals
             while ((l != nullptr) && l->leaf()) {
-              l->subscribe(home,*this); n++;
-              l = l->next();
+                l->cancel(home, *this);
+                n--;
+                GECODE_ES_CHECK(l->prune(home));
+                l = dispose_and_next(l, home, *this, false);
             }
+            root = l;
+            // Is there anything left?
+            if (l == nullptr)
+                return home.ES_SUBSUMED(*this);
+            // Skip literal that already has a subscription
+            l = l->next();
+            // Create subscriptions for leaves
+            while ((l != nullptr) && l->leaf()) {
+                l->subscribe(home, *this);
+                n++;
+                l = l->next();
+            }
+            // Create subscription for possible non-leaf literal
             if (l != nullptr) {
-              l->subscribe(home,*this); n++;
+                l->subscribe(home, *this);
+                n++;
             }
-          }
-          break;
-        case NGL::NONE:
-          break;
-        default: GECODE_NEVER;
+            goto restart;
         }
-      }
-    }
-    return ES_NOFIX;
-  }
+        case NGL::NONE:
+            break;
+        default:
+            GECODE_NEVER;
+        }
 
-  size_t
-  NoGoodsProp::dispose(Space& home) {
-    if (home.failed()) {
-      // This will be executed when one ngl returned true for notice()
-      NGL* l = root;
-      while (l != nullptr) {
-        NGL* t = l->next();
-        (void) l->dispose(home);
-        l = t;
-      }
-    } else if (root != nullptr) {
-      // This will be executed for subsumption
-      NGL* l = disposenext(root,home,*this,true);
-      while ((l != nullptr) && l->leaf())
-        l = disposenext(l,home,*this,true);
-      if (l != nullptr)
-        l = disposenext(l,home,*this,true);
-      while (l != nullptr)
-        l = disposenext(l,home,*this,false);
-    }
-    home.ignore(*this,AP_DISPOSE,true);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
+        {
+            NGL* p = root;
+            NGL* l = p->next();
 
-}}
+            // Check the leaves
+            while ((l != nullptr) && l->leaf()) {
+                switch (l->status(home)) {
+                case NGL::SUBSUMED:
+                    l = dispose_and_next(l, home, *this, true);
+                    n--;
+                    p->next(l);
+                    GECODE_ES_CHECK(root->prune(home));
+                    if (root->status(home) == NGL::FAILED)
+                        return home.ES_SUBSUMED(*this);
+                    break;
+                case NGL::FAILED:
+                    l = dispose_and_next(l, home, *this, true);
+                    n--;
+                    p->next(l);
+                    break;
+                case NGL::NONE:
+                    p = l;
+                    l = l->next();
+                    break;
+                default:
+                    GECODE_NEVER;
+                }
+            }
+
+            // Check the next subtree
+            if (l != nullptr) {
+                switch (l->status(home)) {
+                case NGL::FAILED:
+                    (void)dispose_and_next(l, home, *this, true);
+                    n--;
+                    // Prune entire subtree
+                    p->next(nullptr);
+                    break;
+                case NGL::SUBSUMED: {
+                    // Unlink node
+                    l = dispose_and_next(l, home, *this, true);
+                    n--;
+                    p->next(l);
+                    // Create subscriptions
+                    while ((l != nullptr) && l->leaf()) {
+                        l->subscribe(home, *this);
+                        n++;
+                        l = l->next();
+                    }
+                    if (l != nullptr) {
+                        l->subscribe(home, *this);
+                        n++;
+                    }
+                } break;
+                case NGL::NONE:
+                    break;
+                default:
+                    GECODE_NEVER;
+                }
+            }
+        }
+        return ES_NOFIX;
+    }
+
+    size_t
+    NoGoodsProp::dispose(Space& home) {
+        if (home.failed()) {
+            // This will be executed when one ngl returned true for notice()
+            NGL* l = root;
+            while (l != nullptr) {
+                NGL* t = l->next();
+                (void)l->dispose(home);
+                l = t;
+            }
+        } else if (root != nullptr) {
+            // This will be executed for subsumption
+            NGL* l = dispose_and_next(root, home, *this, true);
+            while ((l != nullptr) && l->leaf())
+                l = dispose_and_next(l, home, *this, true);
+            if (l != nullptr)
+                l = dispose_and_next(l, home, *this, true);
+            while (l != nullptr)
+                l = dispose_and_next(l, home, *this, false);
+        }
+        home.ignore(*this, AP_DISPOSE, true);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
+
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

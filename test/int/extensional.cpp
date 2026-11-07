@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -43,2449 +42,2453 @@
 #include <iostream>
 #include <string>
 
-namespace Test { namespace Int {
-
-   /// %Tests for extensional (relation) constraints
-   namespace Extensional {
-
-     /**
-      * \defgroup TaskTestIntExtensional Extensional (relation) constraints
-      * \ingroup TaskTestInt
-      */
-     //@{
-     std::string
-     extensional_kind_name(Gecode::ExtensionalPropKind epk) {
-       switch (epk) {
-       case Gecode::EPK_DENSE:
-         return "Dense";
-       case Gecode::EPK_SPARSE:
-         return "Sparse";
-       case Gecode::EPK_DENSE_COMPRESSED:
-         return "DenseCompressed";
-       case Gecode::EPK_AUTO:
-         return "Auto";
-       default:
-         GECODE_NEVER;
-         return "Unknown";
-       }
-     }
-
-     /// %Test with simple regular expression
-     class RegSimpleA : public Test {
-     public:
-       /// Create and register test
-       RegSimpleA(void) : Test("Extensional::Reg::Simple::A",4,2,2) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (((x[0] == 0) || (x[0] == 2)) &&
-                 ((x[1] == -1) || (x[1] == 1)) &&
-                 ((x[2] == 0) || (x[2] == 1)) &&
-                 ((x[3] == 0) || (x[3] == 1)));
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         extensional(home, x,
-                     (REG(0) | REG(2)) +
-                     (REG(-1) | REG(1)) +
-                     (REG(7) | REG(0) | REG(1)) +
-                     (REG(0) | REG(1)));
-       }
-     };
-
-     /// %Test with simple regular expression
-     class RegSimpleB : public Test {
-     public:
-       /// Create and register test
-       RegSimpleB(void) : Test("Extensional::Reg::Simple::B",4,2,2) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         extensional(home, x,
-                     (REG(-2) + REG(-1) + REG(0) + REG(1)) |
-                     (REG(-2) + REG(-1) + REG(0) + REG(2)) |
-                     (REG(-2) + REG(-1) + REG(1) + REG(2)) |
-                     (REG(-2) + REG(0) + REG(1) + REG(2)) |
-                     (REG(-1) + REG(0) + REG(1) + REG(2)));
-         }
-     };
-
-     /// %Test with simple regular expression
-     class RegSimpleC : public Test {
-     public:
-       /// Create and register test
-       RegSimpleC(void) : Test("Extensional::Reg::Simple::C",6,0,1) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int pos = 0;
-         int s = x.size();
-
-         while (pos < s && x[pos] == 0) ++pos;
-         if (pos + 4 > s) return false;
-
-         for (int i = 0; i < 2; ++i, ++pos)
-           if (x[pos] != 1) return false;
-         if (pos + 2 > s) return false;
-
-         for (int i = 0; i < 1; ++i, ++pos)
-           if (x[pos] != 0) return false;
-         while (pos < s && x[pos] == 0) ++pos;
-         if (pos + 1 > s) return false;
-
-         for (int i = 0; i < 1; ++i, ++pos)
-           if (x[pos] != 1) return false;
-         while (pos < s) if (x[pos++] != 0) return false;
-         return true;
-
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         extensional(home, x,
-                     *REG(0) + REG(1)(2,2) + +REG(0) + REG(1)(1,1) + *REG(0));
-       }
-     };
-
-     /// %Test with regular expression for distinct constraint
-     class RegDistinct : public Test {
-     public:
-       /// Create and register test
-       RegDistinct(void) : Test("Extensional::Reg::Distinct",4,-1,4) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         for (int i=0; i<x.size(); i++) {
-           if ((x[i] < 0) || (x[i] > 3))
-             return false;
-           for (int j=i+1; j<x.size(); j++)
-             if (x[i]==x[j])
-               return false;
-         }
-         return true;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         extensional(home, x,
-                     (REG(0)+REG(1)+REG(2)+REG(3)) |
-                     (REG(0)+REG(1)+REG(3)+REG(2)) |
-                     (REG(0)+REG(2)+REG(1)+REG(3)) |
-                     (REG(0)+REG(2)+REG(3)+REG(1)) |
-                     (REG(0)+REG(3)+REG(1)+REG(2)) |
-                     (REG(0)+REG(3)+REG(2)+REG(1)) |
-                     (REG(1)+REG(0)+REG(2)+REG(3)) |
-                     (REG(1)+REG(0)+REG(3)+REG(2)) |
-                     (REG(1)+REG(2)+REG(0)+REG(3)) |
-                     (REG(1)+REG(2)+REG(3)+REG(0)) |
-                     (REG(1)+REG(3)+REG(0)+REG(2)) |
-                     (REG(1)+REG(3)+REG(2)+REG(0)) |
-                     (REG(2)+REG(0)+REG(1)+REG(3)) |
-                     (REG(2)+REG(0)+REG(3)+REG(1)) |
-                     (REG(2)+REG(1)+REG(0)+REG(3)) |
-                     (REG(2)+REG(1)+REG(3)+REG(0)) |
-                     (REG(2)+REG(3)+REG(0)+REG(1)) |
-                     (REG(2)+REG(3)+REG(1)+REG(0)) |
-                     (REG(3)+REG(0)+REG(1)+REG(2)) |
-                     (REG(3)+REG(0)+REG(2)+REG(1)) |
-                     (REG(3)+REG(1)+REG(0)+REG(2)) |
-                     (REG(3)+REG(1)+REG(2)+REG(0)) |
-                     (REG(3)+REG(2)+REG(0)+REG(1)) |
-                     (REG(3)+REG(2)+REG(1)+REG(0)));
-       }
-     };
-
-     /// %Test with simple regular expression from Roland Yap
-     class RegRoland : public Test {
-     public:
-       /// Create and register test
-       RegRoland(int n)
-         : Test("Extensional::Reg::Roland::"+str(n),n,0,1) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int n = x.size();
-         return
-           ((n > 1) && (x[n-2] == 0)) ||
-           ((n > 0) && (x[n-1] == 0));
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         REG r0(0), r1(1);
-         REG r01 = r0 | r1;
-         extensional(home, x, *r01 + r0 + r01(0,1));
-       }
-     };
-
-     /// %Test with simple regular expression and shared variables (uses unsharing)
-     class RegSharedA : public Test {
-     public:
-       /// Create and register test
-       RegSharedA(void) : Test("Extensional::Reg::Shared::A",4,2,2) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (((x[0] == 0) || (x[0] == 2)) &&
-                 ((x[1] == -1) || (x[1] == 1)) &&
-                 ((x[2] == 0) || (x[2] == 1)) &&
-                 ((x[3] == 0) || (x[3] == 1)));
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         IntVarArgs y(8);
-         for (int i=0; i<4; i++)
-           y[i]=y[i+4]=x[i];
-         unshare(home,y);
-         extensional(home, y,
-                     ((REG(0) | REG(2)) +
-                      (REG(-1) | REG(1)) +
-                      (REG(7) | REG(0) | REG(1)) +
-                      (REG(0) | REG(1)))(2,2));
-       }
-     };
-
-     /// %Test with simple regular expression and shared variables (uses unsharing)
-     class RegSharedB : public Test {
-     public:
-       /// Create and register test
-       RegSharedB(void) : Test("Extensional::Reg::Shared::B",4,2,2) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (((x[0] == 0) || (x[0] == 2)) &&
-                 ((x[1] == -1) || (x[1] == 1)) &&
-                 ((x[2] == 0) || (x[2] == 1)) &&
-                 ((x[3] == 0) || (x[3] == 1)));
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         IntVarArgs y(12);
-         for (int i=0; i<4; i++)
-           y[i]=y[i+4]=y[i+8]=x[i];
-         unshare(home,y);
-         extensional(home, y,
-                     ((REG(0) | REG(2)) +
-                      (REG(-1) | REG(1)) +
-                      (REG(7) | REG(0) | REG(1)) +
-                      (REG(0) | REG(1)))(3,3));
-       }
-     };
-
-     /// %Test with simple regular expression and shared variables (uses unsharing)
-     class RegSharedC : public Test {
-     public:
-       /// Create and register test
-       RegSharedC(void) : Test("Extensional::Reg::Shared::C",4,0,1) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (x[1]==1) && (x[2]==0) && (x[3]==1);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         Gecode::BoolVarArgs y(8);
-         for (int i=0; i<4; i++)
-           y[i]=y[i+4]=channel(home,x[i]);
-         unshare(home,y);
-         extensional(home,y,
-                     ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(2,2));
-       }
-     };
-
-     /// %Test with simple regular expression and shared variables (uses unsharing)
-     class RegSharedD : public Test {
-     public:
-       /// Create and register test
-       RegSharedD(void) : Test("Extensional::Reg::Shared::D",4,0,1) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (x[1]==1) && (x[2]==0) && (x[3]==1);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         Gecode::BoolVarArgs y(12);
-         for (int i=0; i<4; i++)
-           y[i]=y[i+4]=y[i+8]=channel(home,x[i]);
-         unshare(home, y);
-         extensional(home, y,
-                     ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(3,3));
-       }
-     };
-
-     /// %Test for empty DFA
-     class RegEmptyDFA : public Test {
-     public:
-       /// Create and register test
-       RegEmptyDFA(void) : Test("Extensional::Reg::Empty::DFA",1,0,0) {
-         testsearch = false;
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         (void)x;
-         return false;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::DFA d;
-         Gecode::extensional(home, x, d);
-       }
-     };
-
-     /// %Test for empty regular expression
-     class RegEmptyREG : public Test {
-     public:
-       /// Create and register test
-       RegEmptyREG(void) : Test("Extensional::Reg::Empty::REG",1,0,0) {
-         testsearch = false;
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         (void)x;
-         return false;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::REG r;
-         Gecode::extensional(home, x, r);
-       }
-     };
-
-     /// %Test for optimizations
-     class RegOpt : public Test {
-     protected:
-       /// DFA size characteristic
-       int n;
-     public:
-       /// Create and register test
-       RegOpt(int n0)
-         : Test("Extensional::Reg::Opt::"+str(n0),1,0,15), n(n0) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (x[0] < n) && ((x[0] & 1) == 0);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         DFA::Transition* t = new DFA::Transition[n+1];
-         DFA::Transition* ti = t;
-         int* f = new int[n+1];
-         int* fi = f;
-         for (int i=0; i<n; i++) {
-           ti->i_state = 0;
-           ti->symbol  = i;
-           ti->o_state = i+1;
-           ti++;
-           if ((i & 1) == 0) {
-             *fi = i+1; fi++;
-           }
-         }
-         ti->i_state = -1;
-         *fi = -1;
-         DFA d(0, t, f, false);
-         delete [] t;
-         delete [] f;
-         extensional(home, x, d);
-       }
-
-     };
-
-     /// %Test an acyclic DFA whose states can occur at different depths
-     class RegAcyclicReconvergence : public Test {
-     public:
-       /// Create and register test
-       RegAcyclicReconvergence(void)
-         : Test("Extensional::Reg::Sparse::AcyclicReconvergence",
-                4,0,3,false,Gecode::IPL_DOM) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return
-           ((x[0] == 0) && (x[1] == 2) &&
-            (x[2] == 2) && (x[3] == 2)) ||
-           ((x[0] == 1) && (x[1] == 0) &&
-            (x[2] == 3) && (x[3] == 3));
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         // State 1 is reached at depth one by 0 and at depth two by 1,0.
-         // Its two acyclic suffixes have the corresponding lengths.
-         DFA d(0,
-               {
-                 {0,0,1}, {0,1,2}, {2,0,1},
-                 {1,2,3}, {3,2,4}, {4,2,7},
-                 {1,3,5}, {5,3,7}
-               },
-               {7},false);
-         extensional(home,x,d);
-       }
-     };
-
-     /// %Test a cyclic DFA whose frontier states recur across many layers
-     class RegCyclicFrontier : public Test {
-     public:
-       /// Create and register test
-       RegCyclicFrontier(void)
-         : Test("Extensional::Reg::Sparse::CyclicFrontier",
-                7,0,1,false,Gecode::IPL_DOM) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int parity = 0;
-         for (int i=0; i<x.size(); i++)
-           parity ^= x[i];
-         return parity == 0;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         DFA d(0,
-               {
-                 {0,0,0}, {0,1,1},
-                 {1,0,1}, {1,1,0}
-               },
-               {0},false);
-         extensional(home,x,d);
-       }
-     };
-
-     /// %Test compacting sparse external DFA state identifiers
-     class RegSparseStateNumbering : public Test {
-     public:
-       /// Create and register test
-       RegSparseStateNumbering(void)
-         : Test("Extensional::Reg::Sparse::StateNumbering",
-                2,0,1,false,Gecode::IPL_DOM) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (x[0] == 0) && (x[1] == 1);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         DFA d(1000000,
-               {
-                 {1000000,0,2000000},
-                 {2000000,1,3000000}
-               },
-               {3000000},false);
-         extensional(home,x,d);
-       }
-     };
-
-     /// %Test repeated final states in dense and sparse DFA specifications
-     class RegDuplicateFinals : public Test {
-     protected:
-       bool minimize;
-       bool sparse;
-     public:
-       RegDuplicateFinals(bool minimize0, bool sparse0)
-         : Test(std::string("Extensional::Reg::DuplicateFinals::")+
-                (sparse0 ? "Sparse::" : "Dense::")+
-                (minimize0 ? "Minimize" : "Keep"),
-                1,0,1,false,Gecode::IPL_DOM),
-           minimize(minimize0), sparse(sparse0) {}
-
-       virtual bool
-       solution(const Assignment& x) const {
-         return x[0] == 0;
-       }
-
-       virtual void
-       post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         const int start = sparse ? 100 : 0;
-         const int final = sparse ? 200 : 1;
-         DFA d(start,{{start,0,final}},
-               {final,final,final,final,final,final,final,final},minimize);
-         extensional(home,x,d);
-       }
-     };
-
-     /// %Test the Boolean-view regular posting route
-     class RegBoolCyclicFrontier : public Test {
-     public:
-       /// Create and register test
-       RegBoolCyclicFrontier(void)
-         : Test("Extensional::Reg::Sparse::BoolCyclicFrontier",
-                7,0,1,false,Gecode::IPL_DOM) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int parity = 0;
-         for (int i=0; i<x.size(); i++)
-           parity ^= x[i];
-         return parity == 0;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         BoolVarArgs b(x.size());
-         for (int i=0; i<x.size(); i++)
-           b[i] = channel(home,x[i]);
-         DFA d(0,
-               {
-                 {0,0,0}, {0,1,1},
-                 {1,0,1}, {1,1,0}
-               },
-               {0},false);
-         extensional(home,b,d);
-       }
-     };
-
-     /// %Test deterministic generated DFAs against a reference runner
-     class RegRandomDifferential : public Test {
-     protected:
-       /// Number of DFA states
-       static const int n_dfa_states = 4;
-       /// Number of symbols
-       static const int n_symbols = 3;
-       /// Transition table, with -1 denoting no transition
-       int next[n_dfa_states][n_symbols];
-       /// Allowed-symbol bit masks for each position
-       unsigned int allowed[5];
-       /// Final-state bit mask
-       unsigned int finals;
-     public:
-       /// Create and register test
-       RegRandomDifferential(unsigned int seed)
-         : Test("Extensional::Reg::Sparse::RandomDifferential::" +
-                Test::str(static_cast<int>(seed)),
-                5,0,n_symbols-1,false,Gecode::IPL_DOM),
-           finals(0) {
-         unsigned int random = seed;
-         for (int state=0; state<n_dfa_states; state++)
-           for (int symbol=0; symbol<n_symbols; symbol++) {
-             random = 1664525U * random + 1013904223U;
-             next[state][symbol] =
-               ((random & 7U) == 0U) ? -1 :
-               static_cast<int>((random >> 8) % n_dfa_states);
-           }
-         for (int i=0; i<5; i++) {
-           random = 1664525U * random + 1013904223U;
-           allowed[i] = 1U + ((random >> 12) % 7U);
-         }
-         random = 1664525U * random + 1013904223U;
-         finals = 1U + ((random >> 16) % 15U);
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int state = 0;
-         for (int i=0; i<x.size(); i++) {
-           const int symbol = x[i];
-           if (((allowed[i] & (1U << symbol)) == 0U) ||
-               (next[state][symbol] < 0))
-             return false;
-           state = next[state][symbol];
-         }
-         return (finals & (1U << state)) != 0U;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         DFA::Transition transitions[n_dfa_states*n_symbols+1];
-         int n_transitions = 0;
-         for (int state=0; state<n_dfa_states; state++)
-           for (int symbol=0; symbol<n_symbols; symbol++)
-             if (next[state][symbol] >= 0)
-               transitions[n_transitions++] =
-                 DFA::Transition(state,symbol,next[state][symbol]);
-         transitions[n_transitions].i_state = -1;
-         int final_states[n_dfa_states+1];
-         int n_final_states = 0;
-         for (int state=0; state<n_dfa_states; state++)
-           if ((finals & (1U << state)) != 0U)
-             final_states[n_final_states++] = state;
-         final_states[n_final_states] = -1;
-         DFA d(0,transitions,final_states,false);
-         for (int i=0; i<x.size(); i++)
-           for (int symbol=0; symbol<n_symbols; symbol++)
-             if ((allowed[i] & (1U << symbol)) == 0U)
-               rel(home,x[i],IRT_NQ,symbol);
-         extensional(home,x,d);
-       }
-     };
-
-     /// %Test nondeterministic generated automata against a reference runner
-     class RegRandomNFADifferential : public Test {
-     protected:
-       /// Number of automaton states
-       static const int n_fa_states = 4;
-       /// Number of symbols
-       static const int n_symbols = 3;
-       /// Transition relation
-       bool next[n_fa_states][n_symbols][n_fa_states];
-       /// Allowed-symbol bit masks for each position
-       unsigned int allowed[5];
-     public:
-       /// Create and register test
-       RegRandomNFADifferential(unsigned int seed)
-         : Test(TestTags::check(),
-                "Extensional::Reg::Sparse::RandomNFADifferential::" +
-                Test::str(static_cast<int>(seed)),
-                5,0,n_symbols-1,false,Gecode::IPL_DOM) {
-         unsigned int random = seed;
-         for (int state=0; state<n_fa_states; state++)
-           for (int symbol=0; symbol<n_symbols; symbol++)
-             for (int output=0; output<n_fa_states; output++) {
-               random = 1664525U * random + 1013904223U;
-               next[state][symbol][output] = ((random >> 29) == 0U);
-             }
-         // Keep a nondeterministic fork and both of its branches relevant.
-         next[0][0][1] = true;
-         next[0][0][2] = true;
-         next[1][1][3] = true;
-         next[2][2][3] = true;
-         for (int symbol=0; symbol<n_symbols; symbol++)
-           next[3][symbol][3] = true;
-         for (int i=0; i<5; i++) {
-           random = 1664525U * random + 1013904223U;
-           allowed[i] = 1U + ((random >> 12) % 7U);
-         }
-         // Ensure both branches of the fixed fork can occur.
-         allowed[0] |= 1U;
-         allowed[1] |= 6U;
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         unsigned int states = 1U;
-         for (int i=0; i<x.size(); i++) {
-           const int symbol = x[i];
-           if ((allowed[i] & (1U << symbol)) == 0U)
-             return false;
-           unsigned int outputs = 0U;
-           for (int state=0; state<n_fa_states; state++)
-             if ((states & (1U << state)) != 0U)
-               for (int output=0; output<n_fa_states; output++)
-                 if (next[state][symbol][output])
-                   outputs |= 1U << output;
-           states = outputs;
-         }
-         return (states & (1U << 3)) != 0U;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         DFA::Transition
-           transitions[n_fa_states*n_symbols*n_fa_states+1];
-         int n_transitions = 0;
-         for (int state=0; state<n_fa_states; state++)
-           for (int symbol=0; symbol<n_symbols; symbol++)
-             for (int output=0; output<n_fa_states; output++)
-               if (next[state][symbol][output])
-                 transitions[n_transitions++] =
-                   DFA::Transition(state,symbol,output);
-         transitions[n_transitions].i_state = -1;
-         int final_states[] = {3,-1};
-         DFA d = DFA::nfa(0,transitions,final_states);
-         for (int i=0; i<x.size(); i++)
-           for (int symbol=0; symbol<n_symbols; symbol++)
-             if ((allowed[i] & (1U << symbol)) == 0U)
-               rel(home,x[i],IRT_NQ,symbol);
-         extensional(home,x,d);
-       }
-     };
-
-     /// %Test cloning an assigned NFA prefix with branching and reconvergence
-     class RegNFAPrefix : public Test {
-     protected:
-       /// Whether to post through Boolean views
-       bool boolean;
-     public:
-       /// Create and register test
-       RegNFAPrefix(bool b)
-         : Test(TestTags::check(),
-                "Extensional::Reg::Sparse::NFAPrefix::" +
-                std::string(b ? "Bool" : "Int"),
-                5,0,1,false,Gecode::IPL_DOM), boolean(b) {}
-       /// %Test whether \a x is a solution
-       virtual bool solution(const Assignment& x) const {
-         return (x[0] == 0) && (x[1] == 0) && (x[2] == x[3]);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         // The first assigned layer has one edge and can be discarded on
-         // cloning. The second has two edges and must be retained. Two
-         // paths read the prefix 0,0,0,0, while only one reads 0,0,1,1.
-         DFA d = DFA::nfa(0,
-                         {
-                           {0,0,1}, {1,0,2}, {1,0,3},
-                           {2,0,4}, {3,0,4}, {3,1,5},
-                           {4,0,6}, {5,1,6}, {6,0,7}, {6,1,7}
-                         },
-                         {7});
-         if (boolean) {
-           BoolVarArgs b(x.size());
-           for (int i=0; i<x.size(); i++)
-             b[i] = channel(home,x[i]);
-           extensional(home,b,d);
-         } else {
-           extensional(home,x,d);
-         }
-       }
-     };
-
-     /// %Test backward pruning caused by a position-specific domain
-     class RegPositionDomainPruning : public Test {
-     public:
-       /// Create and register test
-       RegPositionDomainPruning(void)
-         : Test("Extensional::Reg::Sparse::PositionDomainPruning",
-                3,0,1,false,Gecode::IPL_DOM) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return (x[0] == 0) && (x[1] == 0) && (x[2] == 0);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         DFA d(0,
-               {
-                 {0,0,1}, {0,1,2},
-                 {1,0,3}, {2,1,4},
-                 {3,0,5}, {4,1,6}
-               },
-               {5,6},false);
-         rel(home,x[2],IRT_EQ,0);
-         extensional(home,x,d);
-       }
-     };
-
-     /// %Test failure when the forward frontier misses the terminal boundary
-     class RegNoAcceptingPath : public Test {
-     public:
-       /// Create and register test
-       RegNoAcceptingPath(void)
-         : Test("Extensional::Reg::Sparse::NoAcceptingPath",
-                3,0,0,false,Gecode::IPL_DOM) {
-         testsearch = false;
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         (void)x;
-         return false;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         // Every position has a forward transition, but the sole final state
-         // is only reached after four symbols.
-         DFA d(0,
-               {
-                 {0,0,1}, {1,0,2}, {2,0,3}, {3,0,4}
-               },
-               {4},false);
-         extensional(home,x,d);
-       }
-     };
-
-     /// %Test merging several reached DFA final states
-     class RegTerminalMerged : public Test {
-     public:
-       /// Create and register test
-       RegTerminalMerged(void)
-         : Test("Extensional::Reg::Sparse::TerminalMerged",
-                1,0,2,false,Gecode::IPL_DOM) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         (void)x;
-         return true;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         DFA d(0,
-               {
-                 {0,0,1}, {0,1,2}, {0,2,3}
-               },
-               {1,2,3},false);
-         extensional(home,x,d);
-       }
-     };
-
-     /// %Test retaining separate terminal states when merging would overflow
-     class RegTerminalUnmerged : public Test {
-     public:
-       /// Create and register test
-       RegTerminalUnmerged(void)
-         : Test("Extensional::Reg::Sparse::TerminalUnmerged",
-                8,0,1,false,Gecode::IPL_DOM) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return x[7] == 0;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         // Symbols are unique per level. No symbol labels more than 128
-         // transitions, selecting the smallest Degree type, but 256 edges
-         // enter final states.
-         const int n_states = 511;
-         const int n_transitions = n_states - 1;
-         DFA::Transition* t = new DFA::Transition[n_transitions+1];
-         int ti = 0;
-         for (int depth=0; depth<8; depth++) {
-           const int first = (1 << depth) - 1;
-           const int width = 1 << depth;
-           for (int j=0; j<width; j++) {
-             const int i = first+j;
-             t[ti++] = DFA::Transition(i,2*depth,2*i+1);
-             t[ti++] = DFA::Transition(i,2*depth+1,2*i+2);
-           }
-         }
-         t[ti].i_state = -1;
-         int* f = new int[257];
-         for (int i=0; i<256; i++)
-           f[i] = 255+i;
-         f[256] = -1;
-         DFA d(0,t,f,false);
-         delete [] t;
-         delete [] f;
-         // Every word reaches the final layer, where only the even symbol
-         // has a transition into a final state.
-         IntVarArgs symbols(x.size());
-         for (int i=0; i<x.size()-1; i++)
-           symbols[i] = expr(home,2*i+x[i]);
-         symbols[7] = expr(home,14+2*x[7]);
-         extensional(home,symbols,d);
-       }
-     };
-
-     /// Space used by open regular tests
-     class OpenRegularSpace : public Gecode::Space {
-     public:
-       Gecode::IntVarArray x;
-       Gecode::OpenIntVarList list;
-
-       OpenRegularSpace(Gecode::DFA d, int max=8)
-         : x(*this,3,0,2), list(*this,max) {
-         Gecode::extensional(*this,list,d);
-       }
-
-       OpenRegularSpace(OpenRegularSpace& s)
-         : Gecode::Space(s) {
-         x.update(*this,s.x);
-         list.update(*this,s.list);
-       }
-
-       virtual Gecode::Space*
-       copy(void) {
-         return new OpenRegularSpace(*this);
-       }
-     };
-
-     /// Test appending and closing an open regular list
-     class OpenRegularIncremental : public ::Test::Base {
-     public:
-       OpenRegularIncremental(void)
-         : ::Test::Base("Int::Extensional::OpenReg::Incremental",
-                        TestTags::check()) {}
-
-       virtual bool
-       run(void) {
-         using namespace Gecode;
-         DFA d(0,{{0,0,1},{1,1,2}},{2},false);
-         OpenRegularSpace s(d);
-
-         if (s.status() == SS_FAILED)
-           return false;
-         s.list.append(s,s.x[0]);
-         if ((s.status() == SS_FAILED) ||
-             !s.x[0].assigned() || (s.x[0].val() != 0))
-           return false;
-         s.list.append(s,s.x[1]);
-         if ((s.status() == SS_FAILED) ||
-             !s.x[1].assigned() || (s.x[1].val() != 1))
-           return false;
-         s.list.close(s);
-         if ((s.status() == SS_FAILED) ||
-             !s.list.length().assigned() ||
-             (s.list.length().val() != 2))
-           return false;
-
-         // Pruning the first item to 1 also closes its aliased length.
-         DFA alias_dfa(0,{{0,1,1},{1,2,2}},{2},false);
-         OpenRegularSpace alias(alias_dfa,2);
-         alias.list.append(alias,alias.list.length());
-         return alias.status() == SS_FAILED;
-       }
-     };
-
-     /// Materializing required positions wakes regular filtering
-     class OpenRegularLengthWake : public ::Test::Base {
-     public:
-       OpenRegularLengthWake(void)
-         : ::Test::Base("Int::Extensional::OpenReg::LengthWake") {}
-
-       virtual bool
-       run(void) {
-         using namespace Gecode;
-         DFA d(0,{{0,0,1},{1,1,2}},{2},false);
-         OpenRegularSpace s(d,3);
-         rel(s,s.list.length(),IRT_GQ,2);
-         if (s.status() == SS_FAILED)
-           return false;
-         return (s.list.known_length() == 2) &&
-                s.list[0].assigned() &&
-                (s.list[0].val() == 0) &&
-                s.list[1].assigned() &&
-                (s.list[1].val() == 1);
-       }
-     };
-
-     /// Filter prefixes whose accepting continuations exceed the length bound
-     class OpenRegularMaxLength : public ::Test::Base {
-     public:
-       OpenRegularMaxLength(void)
-         : ::Test::Base("Int::Extensional::OpenReg::MaxLength",
-                        TestTags::check()) {}
-
-       virtual bool
-       run(void) {
-         using namespace Gecode;
-         // Accept 00 or 1000: only the first word fits a maximum of three.
-         DFA d(0,{{0,0,1},{1,0,5},{0,1,2},{2,0,3},{3,0,4},{4,0,5}},
-               {5},false);
-         OpenRegularSpace short_list(d,1);
-         if (short_list.status() != SS_FAILED)
-           return false;
-         OpenRegularSpace initial(d,3);
-         initial.list.append(initial,initial.x[0]);
-         if ((initial.status() == SS_FAILED) ||
-             !initial.x[0].assigned() || (initial.x[0].val() != 0))
-           return false;
-
-         OpenRegularSpace source(d,4);
-         source.list.append(source,source.x[0]);
-         if ((source.status() == SS_FAILED) || (source.x[0].size() != 2))
-           return false;
-         OpenRegularSpace* clone =
-           static_cast<OpenRegularSpace*>(source.clone());
-         rel(*clone,clone->list.length(),IRT_LQ,3);
-         const bool clone_ok = (clone->status() != SS_FAILED) &&
-           clone->x[0].assigned() && (clone->x[0].val() == 0);
-         delete clone;
-         if (!clone_ok || (source.x[0].size() != 2))
-           return false;
-
-         // A bound reduction also checks an already consumed prefix.
-         rel(source,source.x[0],IRT_EQ,1);
-         if (source.status() == SS_FAILED)
-           return false;
-         rel(source,source.list.length(),IRT_LQ,3);
-         if (source.status() != SS_FAILED)
-           return false;
-
-         // Keep the shorter nondeterministic path, even with a cycle.
-         DFA nfa = DFA::nfa(0,
-           {{0,0,1},{0,0,2},{1,0,3},{3,0,4},{4,0,5},{2,1,2},{2,0,5}},
-           {5});
-         OpenRegularSpace nondeterministic(nfa,2);
-         nondeterministic.list.append(nondeterministic,nondeterministic.x[0]);
-         if (nondeterministic.status() == SS_FAILED)
-           return false;
-         nondeterministic.list.append(nondeterministic,nondeterministic.x[1]);
-         if ((nondeterministic.status() == SS_FAILED) ||
-             !nondeterministic.x[1].assigned() ||
-             (nondeterministic.x[1].val() != 0))
-           return false;
-
-         // Pruning an item aliased with length lowers the maximum while open.
-         DFA alias_dfa(0,
-           {{0,2,1},{1,0,2},{2,0,3},{3,0,4},{0,3,5},{5,0,6},{6,0,4}},
-           {4},false);
-         OpenRegularSpace alias(alias_dfa,5);
-         alias.list.append(alias,alias.list.length());
-         alias.list.append(alias,alias.x[0]);
-         return (alias.status() != SS_FAILED) &&
-                alias.list.length().assigned() &&
-                (alias.list.length().val() == 3);
-       }
-     };
-
-     /// Test backward pruning after appending a restricted variable
-     class OpenRegularBackward : public ::Test::Base {
-     public:
-       OpenRegularBackward(void)
-         : ::Test::Base("Int::Extensional::OpenReg::Backward") {}
-
-       virtual bool
-       run(void) {
-         using namespace Gecode;
-         DFA d(0,
-               {
-                 {0,0,1}, {0,1,2},
-                 {1,0,3}, {2,1,4},
-                 {3,2,5}, {4,2,5}
-               },
-               {5},false);
-         OpenRegularSpace s(d);
-         rel(s,s.x[1],IRT_EQ,0);
-         s.list.append(s,s.x[0]);
-         if ((s.status() == SS_FAILED) ||
-             (s.x[0].min() != 0) || (s.x[0].max() != 1))
-           return false;
-         s.list.append(s,s.x[1]);
-         return (s.status() != SS_FAILED) &&
-                s.x[0].assigned() && (s.x[0].val() == 0);
-       }
-     };
-
-     /// Test domain notification on an appended variable
-     class OpenRegularDomainWake : public ::Test::Base {
-     public:
-       OpenRegularDomainWake(void)
-         : ::Test::Base("Int::Extensional::OpenReg::DomainWake") {}
-
-       virtual bool
-       run(void) {
-         using namespace Gecode;
-         DFA d(0,
-               {
-                 {0,0,1}, {0,1,2},
-                 {1,0,3}, {2,1,4},
-                 {3,2,5}, {4,2,5}
-               },
-               {5},false);
-         OpenRegularSpace s(d);
-         s.list.append(s,s.x[0]);
-         s.list.append(s,s.x[1]);
-         if ((s.status() == SS_FAILED) || s.x[0].assigned())
-           return false;
-         rel(s,s.x[1],IRT_EQ,0);
-         return (s.status() != SS_FAILED) &&
-                s.x[0].assigned() && (s.x[0].val() == 0);
-       }
-     };
-
-     /// Test independent extension after cloning
-     class OpenRegularClone : public ::Test::Base {
-     public:
-       OpenRegularClone(void)
-         : ::Test::Base("Int::Extensional::OpenReg::Clone",TestTags::check()) {}
-
-       virtual bool
-       run(void) {
-         using namespace Gecode;
-         DFA d(0,{{0,0,1},{1,1,2}},{2},false);
-         OpenRegularSpace source(d);
-         source.list.append(source,source.x[0]);
-         if (source.status() == SS_FAILED)
-           return false;
-
-         OpenRegularSpace* clone =
-           static_cast<OpenRegularSpace*>(source.clone());
-         clone->list.append(*clone,clone->x[1]);
-         clone->list.close(*clone);
-         const bool clone_ok =
-           (clone->status() != SS_FAILED) &&
-           (clone->list.known_length() == 2);
-         delete clone;
-
-         source.list.close(source);
-         const bool source_failed = source.status() == SS_FAILED;
-         return clone_ok && source_failed &&
-                (source.list.known_length() == 1);
-       }
-     };
-
-     /// Test empty words and automata without accepting states
-     class OpenRegularEmpty : public Test {
-     public:
-       enum class Kind { ACCEPT, REJECT, NO_FINALS };
-     protected:
-       Kind kind;
-     public:
-       OpenRegularEmpty(Kind k)
-         : Test("Extensional::OpenReg::Empty::"+str(static_cast<int>(k)),1,0,0),
-           kind(k) {}
-       virtual bool solution(const Assignment&) const {
-         return kind == Kind::ACCEPT;
-       }
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray&) {
-         using namespace Gecode;
-         OpenIntVarList list(home,8);
-         if (kind == Kind::ACCEPT) {
-           extensional(home,list,DFA());
-         } else if (kind == Kind::REJECT) {
-           extensional(home,list,DFA(0,{{0,0,1}},{1},false));
-         } else {
-           extensional(home,list,
-                       DFA(0,{{0,0,0}},std::initializer_list<int>{},false));
-         }
-         if (kind != Kind::NO_FINALS)
-           list.close(home);
-       }
-     };
-
-     /// Check domain consistency of the regular constraint on a closed open list
-     class OpenRegularClosed : public Test {
-     public:
-       OpenRegularClosed(void)
-         : Test("Extensional::OpenReg::Closed",3,0,2,false,Gecode::IPL_DOM) {}
-       virtual bool solution(const Assignment& x) const {
-         int parity = 0;
-         for (int i=0; i<x.size(); i++) {
-           if (x[i] == 2)
-             return false;
-           parity ^= x[i];
-         }
-         return parity == 0;
-       }
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         OpenIntVarList list(home,x.size());
-         for (int i=0; i<x.size(); i++)
-           list.append(home,x[i]);
-         list.close(home);
-         DFA d(0,{{0,0,0},{0,1,1},{1,0,1},{1,1,0}},{0},false);
-         extensional(home,list,d);
-       }
-     };
-
-     ///% Transform a TupleSet into a DFA
-     Gecode::DFA tupleset2dfa(Gecode::TupleSet ts) {
-       using namespace Gecode;
-       REG expression;
-       for (int i = 0; i<ts.tuples(); i++) {
-         REG r;
-         for (int j = 0; j<ts.arity(); j++) {
-           r += REG(ts[i][j]);
-         }
-         expression |= r;
-       }
-       DFA dfa(expression);
-       return dfa;
-     }
-
-     /// %Test with tuple set
-     class TupleSetBase : public Test {
-     protected:
-       /// Simple test tupleset
-       Gecode::TupleSet t;
-       /// Whether the table is positive or negative
-       bool pos;
-       /// Support representation
-       Gecode::ExtensionalPropKind epk;
-     public:
-       /// Create and register test
-       TupleSetBase(bool p, Gecode::ExtensionalPropKind epk0)
-         : Test(TestTags::sweep(),
-                "Extensional::TupleSet::" + extensional_kind_name(epk0) +
-                "::" + str(p) + "::Base",
-                4,1,5,true,Gecode::IPL_DOM),
-           t(4), pos(p), epk(epk0) {
-         using namespace Gecode;
-         IntArgs t1({2, 1, 2, 4});
-         IntArgs t2({2, 2, 1, 4});
-         IntArgs t3({4, 3, 4, 1});
-         IntArgs t4({1, 3, 2, 3});
-         IntArgs t5({3, 3, 3, 2});
-         t.add(t1).add(t1).add(t2).add(t2)
-          .add(t3).add(t3).add(t4).add(t4)
-          .add(t5).add(t5).add(t5).add(t5)
-          .add(t5).add(t5).add(t5).add(t5)
-          .add(t1).add(t1).add(t2).add(t2)
-          .add(t3).add(t3).add(t4).add(t4)
-          .add(t5).add(t5).add(t5).add(t5)
-          .add(t5).add(t5).add(t5).add(t5)
-          .finalize(epk);
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return pos == ((x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
-                        (x[0] == 2 && x[1] == 1 && x[2] == 2 && x[3] == 4) ||
-                        (x[0] == 2 && x[1] == 2 && x[2] == 1 && x[3] == 4) ||
-                        (x[0] == 3 && x[1] == 3 && x[2] == 3 && x[3] == 2) ||
-                        (x[0] == 4 && x[1] == 3 && x[2] == 4 && x[3] == 1));
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         TupleSet ts = TupleSet(t.arity(),tupleset2dfa(t),epk);
-         assert(t == ts);
-         assert(ts.representation() == epk);
-         extensional(home, x, t, pos, ipl);
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::Reify r) {
-         extensional(home, x, t, pos, r, ipl);
-       }
-     };
-
-     /// %Test with tuple set
-     class TupleSetTest : public Test {
-     protected:
-       /// Whether the table is positive or negative
-       bool pos;
-       /// Support representation
-       Gecode::ExtensionalPropKind epk;
-       /// The tuple set to use
-       Gecode::TupleSet ts;
-       /// Whether to validate dfa2tupleset
-       bool toDFA;
-     public:
-       /// Create and register test
-       TupleSetTest(const std::string& s, bool p,
-                    Gecode::IntSet d0, Gecode::TupleSet ts0, bool td,
-                    Gecode::ExtensionalPropKind epk0,
-                    TestTags tags=TestTags::sweep())
-         : Test(tags,
-                "Extensional::TupleSet::" + extensional_kind_name(epk0) +
-                "::" + str(p) + "::" + s,
-                ts0.arity(),d0,true,Gecode::IPL_DOM),
-           pos(p), epk(epk0), ts(ts0), toDFA(td) {
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         using namespace Gecode;
-         for (int i=ts.tuples(); i--; ) {
-           TupleSet::Tuple t = ts[i];
-           bool same = true;
-           for (int j=0; (j < ts.arity()) && same; j++)
-             if (t[j] != x[j])
-               same = false;
-           if (same)
-             return pos;
-         }
-         return !pos;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         if (toDFA) {
-           TupleSet t = TupleSet(ts.arity(),tupleset2dfa(ts),epk);
-           assert(ts == t);
-           assert(t.representation() == epk);
-         }
-         extensional(home, x, ts, pos, ipl);
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::Reify r) {
-         using namespace Gecode;
-         extensional(home, x, ts, pos, r, ipl);
-       }
-     };
-
-     class RandomTupleSetTest : public TupleSetTest {
-     public:
-       /// Create and register test
-       RandomTupleSetTest(const std::string& s, bool p,
-                          Gecode::IntSet d0, Gecode::TupleSet ts0,
-                          Gecode::ExtensionalPropKind epk0)
-         : TupleSetTest(s,p,d0,ts0,false,epk0) {
-         testsearch = false;
-       }
-       /// Create and register initial assignment
-       virtual Assignment* assignment(void) const {
-         using namespace Gecode;
-         return new RandomAssignment(arity, dom, 1000, _rand);
-       }
-     };
-
-     /// Sample both table tuples and arbitrary assignments in large domains.
-     class SparseAssignment : public RandomAssignment {
-       Gecode::TupleSet t;
-       void tuple(Gecode::Support::RandomGenerator& rand) {
-         if ((a % 2) == 0) {
-           int row = rand(t.tuples());
-           for (int i=0; i<n; i++)
-             vals[i] = t[row][i];
-         }
-       }
-     public:
-       SparseAssignment(const Gecode::TupleSet& t0, const Gecode::IntSet& d,
-                        Gecode::Support::RandomGenerator& rand)
-         : RandomAssignment(t0.arity(),d,32,rand), t(t0) {
-         tuple(rand);
-       }
-       virtual void next(Gecode::Support::RandomGenerator& rand) {
-         RandomAssignment::next(rand);
-         tuple(rand);
-       }
-     };
-
-     /// Sparse tables with the original large support counts and arities.
-     class SparseTupleSet : public Test {
-       Gecode::TupleSet t;
-     public:
-       SparseTupleSet(const std::string& name, int arity, int size)
-         : Test("Extensional::TupleSet::Sparse::"+name,
-                arity,0,size-1,false,Gecode::IPL_DOM), t(arity) {
-         const int factors[] = {1,arity == 3 ? 7 : 3,
-                                arity == 3 ? 11 : 5,7,11,13};
-         for (int i=0; i<size; i++) {
-           Gecode::IntArgs row(arity);
-           for (int j=0; j<arity; j++)
-             row[j] = (i*factors[j]) % size;
-           t.add(row);
-         }
-         t.finalize(Gecode::EPK_SPARSE);
-         testsearch = false;
-         contest = CTL_NONE;
-       }
-       virtual Assignment* assignment(void) const {
-         return new SparseAssignment(t,dom,_rand);
-       }
-       virtual bool solution(const Assignment& x) const {
-         const int size = dom.max()+1;
-         const int factors[] = {1,arity == 3 ? 7 : 3,
-                                arity == 3 ? 11 : 5,7,11,13};
-         for (int i=1; i<arity; i++)
-           if (x[i] != (x[0]*factors[i]) % size)
-             return false;
-         return true;
-       }
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::extensional(home,x,t,true,ipl);
-       }
-     };
-
-     /// The assignment harness needs one variable even for a nullary table.
-     class SparseTupleSetNullary : public Test {
-       bool nonempty;
-       Gecode::TupleSet t;
-     public:
-       SparseTupleSetNullary(bool n)
-         : Test("Extensional::TupleSet::Sparse::Nullary::"+str(n),
-                1,0,0), nonempty(n), t(0) {
-         if (nonempty)
-           t.add(Gecode::IntArgs(0));
-         t.finalize(Gecode::EPK_SPARSE);
-       }
-       virtual bool solution(const Assignment&) const {
-         return nonempty;
-       }
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray&) {
-         Gecode::extensional(home,Gecode::IntVarArgs(),t,true,Gecode::IPL_DOM);
-       }
-     };
-
-     /// Tells issued after posting exercise sparse advisor updates.
-     class SparseTupleSetIncremental : public Test {
-       int kind;
-       Gecode::TupleSet t;
-     public:
-       SparseTupleSetIncremental(const std::string& name, int k)
-         : Test("Extensional::TupleSet::Sparse::Incremental"+name,
-                2,0,k == 2 ? 1 : 3,false,Gecode::IPL_DOM), kind(k), t(2) {
-         using namespace Gecode;
-         if (kind == 2)
-           t.add(IntArgs({0,1})).add(IntArgs({1,0}));
-         else
-           t.add(IntArgs({0,0})).add(IntArgs({1,1}))
-             .add(IntArgs({2,kind == 1 ? 1 : 2})).add(IntArgs({3,3}));
-         t.finalize(EPK_SPARSE);
-       }
-       virtual bool solution(const Assignment& x) const {
-         if (kind == 0)
-           return (x[0] == 2) && (x[1] == 2);
-         if (kind == 1)
-           return false;
-         return (x[0] == 1) && (x[1] == 0);
-       }
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         if (kind == 2) {
-           BoolVarArgs b(2);
-           for (int i=0; i<2; i++)
-             b[i] = channel(home,x[i]);
-           extensional(home,b,t,true,ipl);
-           rel(home,b[0],IRT_NQ,0);
-         } else {
-           extensional(home,x,t,true,ipl);
-           if (kind == 0) {
-             rel(home,x[0],IRT_NQ,0);
-             rel(home,x[0],IRT_NQ,1);
-             rel(home,x[1],IRT_NQ,3);
-           } else {
-             rel(home,x[0],IRT_EQ,2);
-             rel(home,x[1],IRT_NQ,1);
-           }
-         }
-       }
-     };
-
-     /// Disabled sparse propagators must defer failure until re-enabled
-     class SparseTupleSetDisabledFailure : public ::Test::Base {
-     public:
-       SparseTupleSetDisabledFailure(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::DisabledFailure") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         class DisabledSpace : public Space {
-         public:
-           IntVarArray x;
-           DisabledSpace(const TupleSet& t)
-             : x(*this,2,0,1) {
-             extensional(*this,x,t,true,IPL_DOM);
-           }
-           DisabledSpace(DisabledSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space* copy(void) {
-             return new DisabledSpace(*this);
-           }
-         };
-
-         TupleSet ts(2);
-         ts.add(IntArgs({0,0})).add(IntArgs({1,1}));
-         ts.finalize(EPK_SPARSE);
-
-         DisabledSpace* s = new DisabledSpace(ts);
-         if (s->status() == SS_FAILED) {
-           delete s;
-           return false;
-         }
-         PropagatorGroup::all.disable(*s);
-         rel(*s,s->x[0],IRT_EQ,0);
-         rel(*s,s->x[1],IRT_EQ,1);
-         if (s->status() == SS_FAILED) {
-           delete s;
-           return false;
-         }
-
-         PropagatorGroup::all.enable(*s);
-         const bool failed = (s->status() == SS_FAILED);
-         delete s;
-         return failed;
-       }
-     };
-
-     /// Sparse delta processing must depend on supports, not numeric width
-     class SparseTupleSetWideDelta : public ::Test::Base {
-     public:
-       SparseTupleSetWideDelta(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::WideDelta") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         const int gap = 1000000000;
-         const int lower = gap / 2;
-         TupleSet ts(1);
-         ts.add(IntArgs({0})).add(IntArgs({gap}));
-         ts.finalize(EPK_SPARSE);
-
-         class NegativeSpace : public Space {
-         public:
-           IntVar x;
-           NegativeSpace(const TupleSet& t, int gap0, int lower0)
-             : x(*this,0,gap0) {
-             extensional(*this,IntVarArgs({x}),t,false,IPL_DOM);
-             rel(*this,x,IRT_GQ,lower0);
-           }
-           NegativeSpace(NegativeSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space* copy(void) {
-             return new NegativeSpace(*this);
-           }
-         };
-
-         NegativeSpace* n = new NegativeSpace(ts,gap,lower);
-         if ((n->status() == SS_FAILED) ||
-             (n->x.min() != lower) || (n->x.max() != gap-1)) {
-           delete n;
-           return false;
-         }
-         delete n;
-
-         class ReifiedSpace : public Space {
-         public:
-           IntVar x;
-           BoolVar b;
-           ReifiedSpace(const TupleSet& t, int gap0, int lower0)
-             : x(*this,0,gap0), b(*this,0,1) {
-             extensional(*this,IntVarArgs({x}),t,true,
-                         Reify(b,RM_EQV),IPL_DOM);
-             rel(*this,x,IRT_GQ,lower0);
-           }
-           ReifiedSpace(ReifiedSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-             b.update(*this,s.b);
-           }
-           virtual Space* copy(void) {
-             return new ReifiedSpace(*this);
-           }
-         };
-
-         ReifiedSpace* r = new ReifiedSpace(ts,gap,lower);
-         const bool ok = (r->status() != SS_FAILED) &&
-           (r->x.min() == lower) && (r->x.max() == gap) &&
-           !r->b.assigned();
-         delete r;
-         return ok;
-       }
-     };
-
-     /// Sparse/compressed tuplesets should materialize only requested support
-     class TupleSetSingleRepresentation : public ::Test::Base {
-     public:
-       TupleSetSingleRepresentation(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::Support::SingleRepresentation") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-         TupleSet ts(2);
-         for (int i=0; i<100; i++)
-           ts.add(IntArgs({i, (i*3) % 100}));
-         ts.finalize(EPK_SPARSE);
-         if (ts.representation() != EPK_SPARSE) {
-           std::cerr << "ERROR: Sparse support not available" << std::endl;
-           return false;
-         }
-         if (ts.fst(0)->supports(ts.words(),ts.fst(0)->min) != nullptr) {
-           std::cerr << "ERROR: Sparse range exposed dense support"
-                     << std::endl;
-           return false;
-         }
-
-         TupleSet tc(2);
-         for (int i=0; i<100; i++)
-           tc.add(IntArgs({i, (i*7) % 100}));
-         tc.finalize(EPK_DENSE_COMPRESSED);
-         if (tc.representation() != EPK_DENSE_COMPRESSED) {
-           std::cerr << "ERROR: Compressed support not available" << std::endl;
-           return false;
-         }
-         if (tc.fst(0)->supports(tc.words(),tc.fst(0)->min) != nullptr) {
-           std::cerr << "ERROR: Compressed range exposed dense support"
-                     << std::endl;
-           return false;
-         }
-
-         TupleSet td(2);
-         for (int i=0; i<100; i++)
-           td.add(IntArgs({i, (i*11) % 100}));
-         td.finalize();
-         if (td.representation() != EPK_DENSE) {
-           std::cerr << "ERROR: Default finalize did not keep dense support"
-                     << std::endl;
-           return false;
-         }
-         if (td.fst(0)->supports(td.words(),td.fst(0)->min) == nullptr) {
-           std::cerr << "ERROR: Dense range lost support data" << std::endl;
-           return false;
-         }
-
-         TupleSet empty_sparse(2);
-         empty_sparse.finalize(EPK_SPARSE);
-         if (empty_sparse.representation() != EPK_SPARSE) {
-           std::cerr << "ERROR: Empty sparse table forgot representation"
-                     << std::endl;
-           return false;
-         }
-         TupleSet empty_compressed(2);
-         empty_compressed.finalize(EPK_DENSE_COMPRESSED);
-         if (empty_compressed.representation() != EPK_DENSE_COMPRESSED) {
-           std::cerr << "ERROR: Empty compressed table forgot representation"
-                     << std::endl;
-           return false;
-         }
-         return true;
-       }
-     };
-
-     /// Sparse offset arrays need a representable terminal entry
-     class TupleSetSupportOffsetBoundary : public ::Test::Base {
-     public:
-       TupleSetSupportOffsetBoundary(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::Support::OffsetBoundary") {}
-
-       virtual bool run(void) {
-         using Gecode::Int::Extensional::support_offsets_size;
-         const unsigned long long max =
-           static_cast<unsigned long long>
-           (std::numeric_limits<unsigned int>::max());
-         unsigned int n_offsets = 0U;
-         if (!support_offsets_size(max-1ULL,n_offsets) ||
-             (n_offsets != std::numeric_limits<unsigned int>::max()))
-           return false;
-         if (support_offsets_size(max,n_offsets))
-           return false;
-         return !support_offsets_size(max+1ULL,n_offsets);
-       }
-     };
-
-     /// Failed finalization is terminal and cannot expose partial support data
-     class TupleSetTerminalFinalizationFailure : public ::Test::Base {
-     public:
-       TupleSetTerminalFinalizationFailure(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::Support::TerminalFailure") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         const int n = 371000;
-         TupleSet ts(2);
-         for (int i=0; i<n; i++)
-           ts.add(IntArgs({i,n+i}));
-
-         bool rejected = false;
-         try {
-           ts.finalize(EPK_DENSE);
-         } catch (const Gecode::Int::OutOfLimits&) {
-           rejected = true;
-         }
-         if (!rejected || !ts.failed() || ts.finalized())
-           return false;
-
-         try {
-           (void) ts.representation();
-           return false;
-         } catch (const Gecode::Int::NotYetFinalized&) {
-         }
-
-         try {
-           ts.finalize(EPK_SPARSE);
-           return false;
-         } catch (const Gecode::Int::AlreadyFinalized&) {
-         }
-
-         try {
-           ts.add(IntArgs({0,0}));
-           return false;
-         } catch (const Gecode::Int::AlreadyFinalized&) {
-         }
-
-         class PostingSpace : public Space {
-         public:
-           IntVarArray x;
-           PostingSpace(const TupleSet& t)
-             : x(*this,2,0,1) {
-             extensional(*this,x,t);
-           }
-           PostingSpace(PostingSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space* copy(void) {
-             return new PostingSpace(*this);
-           }
-         };
-
-         try {
-           PostingSpace* s = new PostingSpace(ts);
-           delete s;
-           return false;
-         } catch (const Gecode::Int::NotYetFinalized&) {
-         }
-         return true;
-       }
-     };
-
-     /// DFA-derived tuple sets preserve the requested support representation
-     class TupleSetDFARepresentation : public ::Test::Base {
-     public:
-       TupleSetDFARepresentation(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::Support::DFARepresentation") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         DFA dfa((REG(0) + REG(1)) | (REG(2) + REG(3)));
-         TupleSet sparse(2,dfa,EPK_SPARSE);
-         if ((sparse.representation() != EPK_SPARSE) ||
-             (sparse.tuples() != 2))
-           return false;
-
-         TupleSet compressed(2,dfa,EPK_DENSE_COMPRESSED);
-         if ((compressed.representation() != EPK_DENSE_COMPRESSED) ||
-             (compressed.tuples() != 2))
-           return false;
-
-         TupleSet dense(2,dfa);
-         if ((dense.representation() != EPK_DENSE) || (dense.tuples() != 2))
-           return false;
-
-         TupleSet empty(3,dfa,EPK_SPARSE);
-         return (empty.representation() == EPK_SPARSE) &&
-           (empty.tuples() == 0);
-       }
-     };
-
-     /// Disabled compact propagators preserve pending work when cloned
-     class TupleSetDisabledClone : public ::Test::Base {
-     public:
-       TupleSetDisabledClone(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::Support::DisabledClone") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         enum Mode {
-           MODE_POSITIVE,
-           MODE_NEGATIVE,
-           MODE_REIFIED
-         };
-
-         class CloneSpace : public Space {
-         public:
-           IntVarArray x;
-           BoolVar b;
-           CloneSpace(const TupleSet& t, Mode mode)
-             : x(*this,2,0,2), b(*this,0,1) {
-             if (mode == MODE_REIFIED)
-               extensional(*this,x,t,true,Reify(b,RM_EQV),IPL_DOM);
-             else
-               extensional(*this,x,t,mode == MODE_POSITIVE,IPL_DOM);
-           }
-           CloneSpace(CloneSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-             b.update(*this,s.b);
-           }
-           virtual Space* copy(void) {
-             return new CloneSpace(*this);
-           }
-         };
-
-         auto check = [](ExtensionalPropKind epk) {
-           TupleSet ts(2);
-           ts.add(IntArgs({0,0})).add(IntArgs({1,1})).add(IntArgs({2,2}));
-           ts.finalize(epk);
-
-           CloneSpace* source = new CloneSpace(ts,MODE_POSITIVE);
-           if (source->status() == SS_FAILED) {
-             delete source;
-             return false;
-           }
-           PropagatorGroup::all.disable(*source);
-           rel(*source,source->x[0],IRT_EQ,1);
-           if ((source->status() == SS_FAILED) ||
-               !source->x[0].assigned() || (source->x[0].val() != 1) ||
-               (source->x[1].size() != 3)) {
-             delete source;
-             return false;
-           }
-
-           CloneSpace* clone = static_cast<CloneSpace*>(source->clone());
-           PropagatorGroup::all.enable(*clone);
-           const bool clone_ok = (clone->status() != SS_FAILED) &&
-             clone->x[1].assigned() && (clone->x[1].val() == 1);
-           delete clone;
-
-           PropagatorGroup::all.enable(*source);
-           const bool source_ok = (source->status() != SS_FAILED) &&
-             source->x[1].assigned() && (source->x[1].val() == 1);
-           delete source;
-           return clone_ok && source_ok;
-         };
-
-         auto check_empty = [](ExtensionalPropKind epk, Mode mode) {
-           TupleSet ts(2);
-           ts.add(IntArgs({0,0})).add(IntArgs({1,1}));
-           ts.finalize(epk);
-
-           CloneSpace* source = new CloneSpace(ts,mode);
-           if (source->status() == SS_FAILED) {
-             delete source;
-             return false;
-           }
-           PropagatorGroup::all.disable(*source);
-           if (mode == MODE_NEGATIVE) {
-             rel(*source,source->x[0],IRT_EQ,2);
-           } else {
-             rel(*source,source->x[0],IRT_EQ,0);
-             rel(*source,source->x[1],IRT_EQ,1);
-           }
-           if (source->status() == SS_FAILED) {
-             delete source;
-             return false;
-           }
-
-           auto verify = [mode](CloneSpace& s) {
-             const SpaceStatus status = s.status();
-             if (mode == MODE_POSITIVE)
-               return status == SS_FAILED;
-             if (status == SS_FAILED)
-               return false;
-             if (mode == MODE_REIFIED)
-               return s.b.assigned() && (s.b.val() == 0);
-             return s.x[1].size() == 3;
-           };
-
-           CloneSpace* clone = static_cast<CloneSpace*>(source->clone());
-           PropagatorGroup::all.enable(*clone);
-           const bool clone_ok = verify(*clone);
-           delete clone;
-
-           PropagatorGroup::all.enable(*source);
-           const bool source_ok = verify(*source);
-           delete source;
-           return clone_ok && source_ok;
-         };
-
-         for (ExtensionalPropKind epk :
-                {EPK_DENSE,EPK_DENSE_COMPRESSED}) {
-           if (!check(epk))
-             return false;
-           for (Mode mode : {MODE_POSITIVE,MODE_NEGATIVE,MODE_REIFIED})
-             if (!check_empty(epk,mode))
-               return false;
-         }
-         return true;
-       }
-     };
-
-     /// AUTO finalization should work with default tuple-set posting overloads
-     class TupleSetAutoDefaultDispatch : public ::Test::Base {
-     public:
-       TupleSetAutoDefaultDispatch(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::Auto::DefaultDispatch",
-             TestTags::check()) {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         TupleSet dense(2);
-         dense.add(IntArgs({0,0})).add(IntArgs({1,1}));
-         dense.finalize(EPK_AUTO);
-         if (dense.representation() != EPK_DENSE) {
-           std::cerr << "ERROR: Small AUTO table did not select dense"
-                     << std::endl;
-           return false;
-         }
-
-         class PositiveSpace : public Space {
-         public:
-           IntVarArray x;
-           PositiveSpace(const TupleSet& t) : x(*this,2,0,1) {
-             extensional(*this, x, t);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           PositiveSpace(PositiveSpace& s) : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space* copy(void) {
-             return new PositiveSpace(*this);
-           }
-         };
-
-         PositiveSpace* dense_root = new PositiveSpace(dense);
-         DFS<PositiveSpace> dense_engine(dense_root);
-         delete dense_root;
-         int dense_solutions = 0;
-         while (PositiveSpace* sol = dense_engine.next()) {
-           if (sol->x[0].val() != sol->x[1].val()) {
-             delete sol;
-             return false;
-           }
-           dense_solutions++;
-           delete sol;
-         }
-         if (dense_solutions != 2)
-           return false;
-
-         const int n = 5000;
-         TupleSet compressed(2);
-         for (int i=0; i<n; i++)
-           compressed.add(IntArgs({i, (i*7) % n}));
-         compressed.finalize(EPK_AUTO);
-         if (compressed.representation() != EPK_DENSE_COMPRESSED) {
-           std::cerr << "ERROR: Large AUTO table did not select compressed"
-                     << std::endl;
-           return false;
-         }
-
-         class ReifiedSpace : public Space {
-         public:
-           IntVarArray x;
-           BoolVar b;
-           ReifiedSpace(const TupleSet& t, int n0)
-             : x(*this,2,0,n0-1), b(*this,0,1) {
-             extensional(*this, x, t, Reify(b,RM_EQV));
-             rel(*this, b, IRT_EQ, 1);
-             rel(*this, x[0], IRT_EQ, 3);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           ReifiedSpace(ReifiedSpace& s) : Space(s) {
-             x.update(*this,s.x);
-             b.update(*this,s.b);
-           }
-           virtual Space* copy(void) {
-             return new ReifiedSpace(*this);
-           }
-         };
-
-         ReifiedSpace* compressed_root = new ReifiedSpace(compressed,n);
-         DFS<ReifiedSpace> compressed_engine(compressed_root);
-         delete compressed_root;
-         ReifiedSpace* compressed_sol = compressed_engine.next();
-         if (compressed_sol == nullptr)
-           return false;
-         const bool ok =
-           (compressed_sol->x[0].val() == 3) &&
-           (compressed_sol->x[1].val() == ((3*7) % n));
-         delete compressed_sol;
-         ReifiedSpace* extra = compressed_engine.next();
-         const bool no_extra = (extra == nullptr);
-         delete extra;
-         return ok && no_extra;
-       }
-     };
-
-     /// Dense-compressed iterators should skip unsupported value gaps
-     class DenseCompressedTupleSetWideGap : public ::Test::Base {
-     public:
-       DenseCompressedTupleSetWideGap(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::DenseCompressed::WideGap") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         const int gap = 1000000000;
-         TupleSet ts(1);
-         ts.add(IntArgs({0})).add(IntArgs({gap}));
-         ts.finalize(EPK_DENSE_COMPRESSED);
-
-         class NegativeSpace : public Space {
-         public:
-           IntVar x;
-           NegativeSpace(const TupleSet& t, int gap0)
-             : x(*this,0,gap0) {
-             extensional(*this, IntVarArgs({x}), t, false, IPL_DOM);
-           }
-           NegativeSpace(NegativeSpace& s) : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space* copy(void) {
-             return new NegativeSpace(*this);
-           }
-         };
-
-         NegativeSpace* ns = new NegativeSpace(ts,gap);
-         if (ns->status() == SS_FAILED) {
-           delete ns;
-           return false;
-         }
-         if (ns->x.in(0) || ns->x.in(gap)) {
-           delete ns;
-           return false;
-         }
-         delete ns;
-
-         class ReifiedSpace : public Space {
-         public:
-           IntVar x;
-           BoolVar b;
-           ReifiedSpace(const TupleSet& t, int gap0, bool force)
-             : x(*this,0,gap0), b(*this,0,1) {
-             extensional(*this, IntVarArgs({x}), t, true,
-                         Reify(b,RM_EQV), IPL_DOM);
-             if (force) {
-               rel(*this, b, IRT_EQ, 1);
-               rel(*this, x, IRT_EQ, 0);
-             }
-           }
-           ReifiedSpace(ReifiedSpace& s) : Space(s) {
-             x.update(*this,s.x);
-             b.update(*this,s.b);
-           }
-           virtual Space* copy(void) {
-             return new ReifiedSpace(*this);
-           }
-         };
-
-         ReifiedSpace* rs = new ReifiedSpace(ts,gap,false);
-         if (rs->status() == SS_FAILED) {
-           delete rs;
-           return false;
-         }
-         delete rs;
-
-         ReifiedSpace* rfs = new ReifiedSpace(ts,gap,true);
-         if (rfs->status() == SS_FAILED) {
-           delete rfs;
-           return false;
-         }
-         if (!rfs->x.assigned() || (rfs->x.val() != 0) ||
-             !rfs->b.assigned() || (rfs->b.val() != 1)) {
-           delete rfs;
-           return false;
-         }
-         delete rfs;
-
-         class PositiveDeltaSpace : public Space {
-         public:
-           IntVar x;
-           PositiveDeltaSpace(const TupleSet& t, int gap0)
-             : x(*this,0,gap0) {
-             extensional(*this, IntVarArgs({x}), t, true, IPL_DOM);
-             rel(*this, x, IRT_NQ, 0);
-           }
-           PositiveDeltaSpace(PositiveDeltaSpace& s) : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space* copy(void) {
-             return new PositiveDeltaSpace(*this);
-           }
-         };
-
-         PositiveDeltaSpace* ps = new PositiveDeltaSpace(ts,gap);
-         if (ps->status() == SS_FAILED) {
-           delete ps;
-           return false;
-         }
-         if (!ps->x.assigned() || (ps->x.val() != gap)) {
-           delete ps;
-           return false;
-         }
-         delete ps;
-
-         return true;
-       }
-     };
-
-     /// %Test with large tuple set
-     class TupleSetLarge : public Test {
-     protected:
-       /// Whether the table is positive or negative
-       bool pos;
-       /// Support representation
-       Gecode::ExtensionalPropKind epk;
-       /// Tupleset used for testing
-       mutable Gecode::TupleSet t;
-     public:
-       /// Create and register test
-       TupleSetLarge(double prob, bool p, Gecode::ExtensionalPropKind epk0)
-         : Test(TestTags::sweep(),
-                "Extensional::TupleSet::" + extensional_kind_name(epk0) +
-                "::" + str(p) + "::Large",
-                5,1,5,true,Gecode::IPL_DOM),
-           pos(p), epk(epk0), t(5) {
-         using namespace Gecode;
-
-         CpltAssignment ass(5, IntSet(1, 5));
-         while (ass.has_more()) {
-           if (_rand(100) <= prob*100) {
-             IntArgs tuple(5);
-             for (int i = 5; i--; ) tuple[i] = ass[i];
-             t.add(tuple);
-           }
-           ass.next(_rand);
-         }
-         t.finalize(epk);
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         using namespace Gecode;
-         for (int i = 0; i < t.tuples(); ++i) {
-           TupleSet::Tuple l = t[i];
-           bool same = true;
-           for (int j = 0; j < t.arity() && same; ++j)
-             if (l[j] != x[j]) same = false;
-           if (same)
-             return pos;
-         }
-         return !pos;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         extensional(home, x, t, pos, ipl);
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::Reify r) {
-         using namespace Gecode;
-         extensional(home, x, t, pos, r, ipl);
-       }
-     };
-
-     /// %Test with bool tuple set
-     class TupleSetBool : public Test {
-     protected:
-       /// Whether the table is positive or negative
-       bool pos;
-       /// Support representation
-       Gecode::ExtensionalPropKind epk;
-       /// Tupleset used for testing
-       mutable Gecode::TupleSet t;
-     public:
-       /// Create and register test
-       TupleSetBool(double prob, bool p, Gecode::ExtensionalPropKind epk0)
-         : Test(TestTags::sweep(),
-                "Extensional::TupleSet::" + extensional_kind_name(epk0) +
-                "::" + str(p) + "::Bool",
-                5,0,1,true), pos(p), epk(epk0), t(5) {
-         using namespace Gecode;
-
-         CpltAssignment ass(5, IntSet(0, 1));
-         while (ass.has_more()) {
-           if (_rand(100) <= prob*100) {
-             IntArgs tuple(5);
-             for (int i = 5; i--; ) tuple[i] = ass[i];
-             t.add(tuple);
-           }
-           ass.next(_rand);
-         }
-         t.finalize(epk);
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         using namespace Gecode;
-         for (int i = 0; i < t.tuples(); ++i) {
-           TupleSet::Tuple l = t[i];
-           bool same = true;
-           for (int j = 0; j < t.arity() && same; ++j)
-             if (l[j] != x[j])
-               same = false;
-           if (same)
-             return pos;
-         }
-         return !pos;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         BoolVarArgs y(x.size());
-         for (int i = x.size(); i--; )
-           y[i] = channel(home, x[i]);
-         extensional(home, y, t, pos, ipl);
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::Reify r) {
-         using namespace Gecode;
-         BoolVarArgs y(x.size());
-         for (int i = x.size(); i--; )
-           y[i] = channel(home, x[i]);
-         extensional(home, y, t, pos, r, ipl);
-       }
-     };
-
-     /// Help class to create and register tests with a fixed table size
-     class TupleSetTestSize {
-     public:
-       /// Perform creation and registration
-       TupleSetTestSize(int size, bool pos, Gecode::ExtensionalPropKind epk,
-                        Gecode::Support::RandomGenerator& rand) {
-         using namespace Gecode;
-         /// Find the arity needed for creating sufficient number of tuples
-         int arity = 2;
-         int n_tuples = 5*5;
-         while (n_tuples < size) {
-           arity++;
-           n_tuples*=5;
-         }
-         /// Build TupleSet
-         TupleSet ts(arity);
-         CpltAssignment ass(arity, IntSet(0, 4));
-         for (int i = size; i--; ) {
-           assert(ass.has_more());
-           IntArgs tuple(arity);
-           for (int j = arity; j--; ) tuple[j] = ass[j];
-           ts.add(tuple);
-           ass.next(rand);
-         }
-         ts.finalize(epk);
-         assert(ts.tuples() == size);
-         // Create and register test
-         (void) new TupleSetTest(std::to_string(size),pos,IntSet(0,4),ts,
-                                 size <= 128, epk);
-       }
-     };
-
-     Gecode::TupleSet randomTupleSet(int n, int min, int max, double prob,
-                                     Gecode::ExtensionalPropKind epk,
-                                     Gecode::Support::RandomGenerator& rand) {
-       using namespace Gecode;
-       TupleSet t(n);
-       CpltAssignment ass(n, IntSet(min, max));
-       while (ass.has_more()) {
-         if (rand(100) <= prob*100) {
-           IntArgs tuple(n);
-           for (int i = n; i--; ) tuple[i] = ass[i];
-           t.add(tuple);
-         }
-         ass.next(rand);
-       }
-       t.finalize(epk);
-       return t;
-     }
-
-     /// Help class to create and register tests
-     class Create {
-     public:
-       /// Perform creation and registration
-       Create(void) {
-         // This code is executed on load, and thus a random number generator source from the supplied
-         // seed is not available.
-         // In order to get interesting data her, but still have deterministic and repeatable execution, a fixed seed
-         // is used for a local random number generator.
-         // TODO: Make this code later on test run, and use the supplied seed/random number generator.
-         Gecode::Support::RandomGenerator rand(42);
-
-         using namespace Gecode;
-         for (ExtensionalPropKind epk :
-                { EPK_DENSE, EPK_SPARSE, EPK_DENSE_COMPRESSED }) {
-           for (bool pos : { false, true }) {
-           {
-             TupleSet ts(4);
-             ts.add({2, 1, 2, 4}).add({2, 2, 1, 4})
-               .add({4, 3, 4, 1}).add({1, 3, 2, 3})
-               .add({3, 3, 3, 2}).add({5, 1, 4, 4})
-               .add({2, 5, 1, 5}).add({4, 3, 5, 1})
-               .add({1, 5, 2, 5}).add({5, 3, 3, 2})
-               .finalize(epk);
-             (void) new TupleSetTest("A",pos,IntSet(0,6),ts,true,epk);
-           }
-           {
-             TupleSet ts(4);
-             ts.finalize(epk);
-             (void) new TupleSetTest("Empty",pos,IntSet(1,2),ts,true,epk);
-           }
-           {
-             TupleSet ts(4);
-             for (int n=1024*16; n--; )
-               ts.add({1,2,3,4});
-             ts.finalize(epk);
-             (void) new TupleSetTest("Assigned",pos,IntSet(1,4),ts,true,epk);
-           }
-           {
-             TupleSet ts(1);
-             ts.add({1}).add({2}).add({3}).finalize(epk);
-             (void) new TupleSetTest("Single",pos,IntSet(-4,4),ts,true,epk);
-           }
-           {
-             int m = Gecode::Int::Limits::min;
-             TupleSet ts(3);
-             ts.add({m+0,m+1,m+2}).add({m+4,m+1,m+3})
-               .add({m+2,m+3,m+0}).add({m+2,m+3,m+0})
-               .add({m+1,m+2,m+5}).add({m+2,m+3,m+0})
-               .add({m+3,m+6,m+5}).finalize(epk);
-             (void) new TupleSetTest("Min",pos,IntSet(m,m+7),ts,true,epk);
-           }
-           {
-             int M = Gecode::Int::Limits::max;
-             TupleSet ts(3);
-             ts.add({M-0,M-1,M-2}).add({M-4,M-1,M-3})
-               .add({M-2,M-3,M-0}).add({M-2,M-3,M-0})
-               .add({M-1,M-2,M-5}).add({M-2,M-3,M-0})
-               .add({M-3,M-6,M-5}).finalize(epk);
-             (void) new TupleSetTest("Max",pos,IntSet(M-7,M),ts,true,epk);
-           }
-           {
-             int m = Gecode::Int::Limits::min;
-             int M = Gecode::Int::Limits::max;
-             TupleSet ts(3);
-             ts.add({M-0,m+1,M-2}).add({m+4,M-1,M-3})
-               .add({m+2,M-3,m+0}).add({M-2,M-3,M-0})
-               .finalize(epk);
-             (void) new TupleSetTest("MinMax",pos,
-                                     IntSet(IntArgs({m,m+1,m+4,M-3,M-2,M})),
-                                     ts,true,epk);
-           }
-           {
-             TupleSet ts(7);
-             const int triangle_tuples =
-               (epk == EPK_DENSE) ? 10000 : 1000;
-             for (int i = 0; i < triangle_tuples; i++) {
-               IntArgs tuple(7);
-               for (int j = 0; j < 7; j++) {
-                 tuple[j] = rand(j+1);
-               }
-               ts.add(tuple);
-             }
-             ts.finalize(epk);
-             (void) new RandomTupleSetTest("Triangle",pos,IntSet(0,6),ts,epk);
-           }
-           {
-             for (int i = 0; i <= 64*6; i+=32)
-               (void) TupleSetTestSize(i, pos, epk, rand);
-           }
-           {
-             const double prob_small =
-               (epk == EPK_DENSE) ? 0.05 : 0.01;
-             (void) new RandomTupleSetTest("Rand(10,-1,2)", pos,
-                                           IntSet(-1,2),
-                                           randomTupleSet(10, -1, 2, prob_small,
-                                                          epk, rand),
-                                           epk);
-             if (epk == EPK_DENSE)
-               (void) new RandomTupleSetTest("Rand(5,-10,10)", pos,
-                                             IntSet(-10,10),
-                                             randomTupleSet(5, -10, 10, 0.05,
-                                                            epk, rand),
-                                             epk);
-           }
-           {
-             TupleSet t(5);
-             CpltAssignment ass(4, IntSet(1, 4));
-             while (ass.has_more()) {
-               IntArgs tuple(5);
-               tuple[4] = 1;
-               for (int i = 4; i--; ) tuple[i] = ass[i];
-               t.add(tuple);
-               ass.next(rand);
-             }
-             t.add({2,2,4,3,4});
-             t.finalize(epk);
-             (void) new TupleSetTest("FewLast",pos,IntSet(1,4),t,false,epk);
-           }
-           {
-             TupleSet t(4);
-             CpltAssignment ass(4, IntSet(1, 6));
-             while (ass.has_more()) {
-               t.add({ass[0],0,ass[1],ass[2]});
-               ass.next(rand);
-             }
-             t.add({2,-1,3,4});
-             t.finalize(epk);
-             (void) new TupleSetTest("FewMiddle",pos,IntSet(-1,6),t,false,epk);
-           }
-           if (epk == EPK_DENSE) {
-             TupleSet t(10);
-             CpltAssignment ass(9, IntSet(1, 4));
-             while (ass.has_more()) {
-               if (rand(100) <= 0.25*100) {
-                 IntArgs tuple(10);
-                 tuple[0] = 2;
-                 for (int i = 9; i--; )
-                   tuple[i+1] = ass[i];
-                 t.add(tuple);
-               }
-               ass.next(rand);
-             }
-             t.add({1,1,1,1,1,1,1,1,1,1});
-             t.add({1,2,3,4,4,2,1,2,3,3});
-             t.finalize(epk);
-             (void) new RandomTupleSetTest("FewHuge",pos,IntSet(1,4),t,epk);
-           }
-           (void) new TupleSetBase(pos,epk);
-           (void) new TupleSetLarge(0.05,pos,epk);
-           (void) new TupleSetBool(0.3,pos,epk);
-           }
-         }
-       }
-     };
-
-     Create c;
-
-     RegSimpleA ra;
-     RegSimpleB rb;
-     RegSimpleC rc;
-
-     RegDistinct rd;
-
-     RegRoland rr1(1);
-     RegRoland rr2(2);
-     RegRoland rr3(3);
-     RegRoland rr4(4);
-
-     RegSharedA rsa;
-     RegSharedB rsb;
-     RegSharedC rsc;
-     RegSharedD rsd;
-
-     RegEmptyDFA redfa;
-     RegEmptyREG rereg;
-
-     RegOpt ro0(CHAR_MAX-1);
-     RegOpt ro1(CHAR_MAX);
-     RegOpt ro2(static_cast<int>(UCHAR_MAX-1));
-     RegOpt ro3(static_cast<int>(UCHAR_MAX));
-     RegOpt ro4(SHRT_MAX-1);
-     RegOpt ro5(SHRT_MAX);
-     RegOpt ro6(static_cast<int>(USHRT_MAX-1));
-     RegOpt ro7(static_cast<int>(USHRT_MAX));
-
-     RegAcyclicReconvergence reg_sparse_acyclic_reconvergence;
-     RegCyclicFrontier reg_sparse_cyclic_frontier;
-     RegSparseStateNumbering reg_sparse_state_numbering;
-     RegDuplicateFinals reg_duplicate_finals_dense_minimize(true,false);
-     RegDuplicateFinals reg_duplicate_finals_dense_keep(false,false);
-     RegDuplicateFinals reg_duplicate_finals_sparse_minimize(true,true);
-     RegDuplicateFinals reg_duplicate_finals_sparse_keep(false,true);
-     RegBoolCyclicFrontier reg_sparse_bool_cyclic_frontier;
-     RegRandomDifferential reg_sparse_random_differential_1(1);
-     RegRandomDifferential reg_sparse_random_differential_2(2);
-     RegRandomDifferential reg_sparse_random_differential_3(3);
-     RegRandomDifferential reg_sparse_random_differential_4(4);
-     RegRandomNFADifferential reg_sparse_random_nfa_differential_1(1);
-     RegRandomNFADifferential reg_sparse_random_nfa_differential_2(2);
-     RegRandomNFADifferential reg_sparse_random_nfa_differential_3(3);
-     RegRandomNFADifferential reg_sparse_random_nfa_differential_4(4);
-     RegNFAPrefix reg_sparse_nfa_prefix_int(false);
-     RegNFAPrefix reg_sparse_nfa_prefix_bool(true);
-     RegPositionDomainPruning reg_sparse_position_domain_pruning;
-     RegNoAcceptingPath reg_sparse_no_accepting_path;
-     RegTerminalMerged reg_sparse_terminal_merged;
-     RegTerminalUnmerged reg_sparse_terminal_unmerged;
-     OpenRegularIncremental open_regular_incremental;
-     OpenRegularLengthWake open_regular_length_wake;
-     OpenRegularMaxLength open_regular_max_length;
-     OpenRegularBackward open_regular_backward;
-     OpenRegularDomainWake open_regular_domain_wake;
-     OpenRegularClone open_regular_clone;
-     OpenRegularEmpty open_regular_empty_accept(OpenRegularEmpty::Kind::ACCEPT);
-     OpenRegularEmpty open_regular_empty_reject(OpenRegularEmpty::Kind::REJECT);
-     OpenRegularEmpty open_regular_no_finals(OpenRegularEmpty::Kind::NO_FINALS);
-     OpenRegularClosed open_regular_closed;
-
-     /// Exhaustive positive, negative, and reified sparse-table semantics.
-     class CreateSparse {
-     public:
-       CreateSparse(void) {
-         using namespace Gecode;
-         TupleSet equal(2), zero(2), full(2), first_zero(2);
-         equal.add(IntArgs({0,0})).add(IntArgs({1,1})).finalize(EPK_SPARSE);
-         zero.add(IntArgs({0,0})).finalize(EPK_SPARSE);
-         full.add(IntArgs({0,0})).add(IntArgs({0,1}))
-           .add(IntArgs({1,0})).add(IntArgs({1,1})).finalize(EPK_SPARSE);
-         first_zero.add(IntArgs({0,0})).add(IntArgs({0,1}))
-           .finalize(EPK_SPARSE);
-         for (bool positive : {false,true}) {
-           (void) new TupleSetTest("Equal",positive,IntSet(0,1),equal,
-                                  false,EPK_SPARSE,TestTags::standard());
-           (void) new TupleSetTest("Zero",positive,IntSet(0,1),zero,
-                                  false,EPK_SPARSE,TestTags::standard());
-           (void) new TupleSetTest("Full",positive,IntSet(0,1),full,
-                                  false,EPK_SPARSE,TestTags::standard());
-           (void) new TupleSetTest("FirstZero",positive,IntSet(0,1),first_zero,
-                                  false,EPK_SPARSE,TestTags::standard());
-         }
-       }
-     } create_sparse;
-
-     SparseTupleSet sparse_tuple_set_unary("Unary",1,2000);
-     SparseTupleSet sparse_tuple_set_ternary("Ternary",3,1500);
-     SparseTupleSet sparse_tuple_set_high_arity("HighArity",6,1000);
-     SparseTupleSetNullary sparse_tuple_set_nullary(true);
-     SparseTupleSetNullary sparse_tuple_set_empty(false);
-     SparseTupleSetIncremental sparse_tuple_set_incremental_delta("Delta",0);
-     SparseTupleSetIncremental sparse_tuple_set_incremental_assign("Assign",1);
-     SparseTupleSetIncremental sparse_tuple_set_incremental_bool("Bool",2);
-     SparseTupleSetDisabledFailure sparse_tuple_set_disabled_failure;
-     SparseTupleSetWideDelta sparse_tuple_set_wide_delta;
-     TupleSetSingleRepresentation tuple_set_single_representation;
-     TupleSetSupportOffsetBoundary tuple_set_support_offset_boundary;
-     TupleSetTerminalFinalizationFailure tuple_set_terminal_failure;
-     TupleSetDFARepresentation tuple_set_dfa_representation;
-     TupleSetDisabledClone tuple_set_disabled_clone;
-     TupleSetAutoDefaultDispatch tuple_set_auto_default_dispatch;
-     DenseCompressedTupleSetWideGap dense_compressed_tuple_set_wide_gap;
-     //@}
-
-   }
-}}
-
-
+/// %Tests for extensional (relation) constraints
+namespace Test::Int::Extensional {
+
+    /**
+     * \defgroup TaskTestIntExtensional Extensional (relation) constraints
+     * \ingroup TaskTestInt
+     */
+    //@{
+    static std::string
+    extensional_kind_name(Gecode::ExtensionalPropKind epk) {
+        switch (epk) {
+        case Gecode::EPK_DENSE:
+            return "Dense";
+        case Gecode::EPK_SPARSE:
+            return "Sparse";
+        case Gecode::EPK_DENSE_COMPRESSED:
+            return "DenseCompressed";
+        case Gecode::EPK_AUTO:
+            return "Auto";
+        default:
+            GECODE_NEVER;
+            return "Unknown";
+        }
+    }
+
+    /// %Test with simple regular expression
+    class RegSimpleA : public Test {
+    public:
+        /// Create and register test
+        RegSimpleA() : Test("Extensional::Reg::Simple::A", 4, 2, 2) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return (((x[0] == 0) || (x[0] == 2)) && ((x[1] == -1) || (x[1] == 1)) && ((x[2] == 0) || (x[2] == 1)) &&
+                    ((x[3] == 0) || (x[3] == 1)));
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            extensional(home, x,
+                        (REG(0) | REG(2)) + (REG(-1) | REG(1)) + (REG(7) | REG(0) | REG(1)) + (REG(0) | REG(1)));
+        }
+    };
+
+    /// %Test with simple regular expression
+    class RegSimpleB : public Test {
+    public:
+        /// Create and register test
+        RegSimpleB() : Test("Extensional::Reg::Simple::B", 4, 2, 2) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return (x[0] < x[1]) && (x[1] < x[2]) && (x[2] < x[3]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            extensional(home, x,
+                        (REG(-2) + REG(-1) + REG(0) + REG(1)) | (REG(-2) + REG(-1) + REG(0) + REG(2)) |
+                            (REG(-2) + REG(-1) + REG(1) + REG(2)) | (REG(-2) + REG(0) + REG(1) + REG(2)) |
+                            (REG(-1) + REG(0) + REG(1) + REG(2)));
+        }
+    };
+
+    /// %Test with simple regular expression
+    class RegSimpleC : public Test {
+    public:
+        /// Create and register test
+        RegSimpleC() : Test("Extensional::Reg::Simple::C", 6, 0, 1) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int pos = 0;
+            int s = x.size();
+
+            while (pos < s && x[pos] == 0)
+                ++pos;
+            if (pos + 4 > s)
+                return false;
+
+            for (int i = 0; i < 2; ++i, ++pos)
+                if (x[pos] != 1)
+                    return false;
+            if (pos + 2 > s)
+                return false;
+
+            for (int i = 0; i < 1; ++i, ++pos)
+                if (x[pos] != 0)
+                    return false;
+            while (pos < s && x[pos] == 0)
+                ++pos;
+            if (pos + 1 > s)
+                return false;
+
+            for (int i = 0; i < 1; ++i, ++pos)
+                if (x[pos] != 1)
+                    return false;
+            while (pos < s)
+                if (x[pos++] != 0)
+                    return false;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            extensional(home, x, *REG(0) + REG(1)(2, 2) + +REG(0) + REG(1)(1, 1) + *REG(0));
+        }
+    };
+
+    /// %Test with regular expression for distinct constraint
+    class RegDistinct : public Test {
+    public:
+        /// Create and register test
+        RegDistinct() : Test("Extensional::Reg::Distinct", 4, -1, 4) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            for (int i = 0; i < x.size(); i++) {
+                if ((x[i] < 0) || (x[i] > 3))
+                    return false;
+                for (int j = i + 1; j < x.size(); j++)
+                    if (x[i] == x[j])
+                        return false;
+            }
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            extensional(home, x,
+                        (REG(0) + REG(1) + REG(2) + REG(3)) | (REG(0) + REG(1) + REG(3) + REG(2)) |
+                            (REG(0) + REG(2) + REG(1) + REG(3)) | (REG(0) + REG(2) + REG(3) + REG(1)) |
+                            (REG(0) + REG(3) + REG(1) + REG(2)) | (REG(0) + REG(3) + REG(2) + REG(1)) |
+                            (REG(1) + REG(0) + REG(2) + REG(3)) | (REG(1) + REG(0) + REG(3) + REG(2)) |
+                            (REG(1) + REG(2) + REG(0) + REG(3)) | (REG(1) + REG(2) + REG(3) + REG(0)) |
+                            (REG(1) + REG(3) + REG(0) + REG(2)) | (REG(1) + REG(3) + REG(2) + REG(0)) |
+                            (REG(2) + REG(0) + REG(1) + REG(3)) | (REG(2) + REG(0) + REG(3) + REG(1)) |
+                            (REG(2) + REG(1) + REG(0) + REG(3)) | (REG(2) + REG(1) + REG(3) + REG(0)) |
+                            (REG(2) + REG(3) + REG(0) + REG(1)) | (REG(2) + REG(3) + REG(1) + REG(0)) |
+                            (REG(3) + REG(0) + REG(1) + REG(2)) | (REG(3) + REG(0) + REG(2) + REG(1)) |
+                            (REG(3) + REG(1) + REG(0) + REG(2)) | (REG(3) + REG(1) + REG(2) + REG(0)) |
+                            (REG(3) + REG(2) + REG(0) + REG(1)) | (REG(3) + REG(2) + REG(1) + REG(0)));
+        }
+    };
+
+    /// %Test with simple regular expression from Roland Yap
+    class RegRoland : public Test {
+    public:
+        /// Create and register test
+        RegRoland(int n) : Test("Extensional::Reg::Roland::" + str(n), n, 0, 1) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int n = x.size();
+            return ((n > 1) && (x[n - 2] == 0)) || ((n > 0) && (x[n - 1] == 0));
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            REG r0(0), r1(1);
+            REG r01 = r0 | r1;
+            extensional(home, x, *r01 + r0 + r01(0, 1));
+        }
+    };
+
+    /// %Test with simple regular expression and shared variables (uses unsharing)
+    class RegSharedA : public Test {
+    public:
+        /// Create and register test
+        RegSharedA() : Test("Extensional::Reg::Shared::A", 4, 2, 2) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return (((x[0] == 0) || (x[0] == 2)) && ((x[1] == -1) || (x[1] == 1)) && ((x[2] == 0) || (x[2] == 1)) &&
+                    ((x[3] == 0) || (x[3] == 1)));
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            IntVarArgs y(8);
+            for (int i = 0; i < 4; i++)
+                y[i] = y[i + 4] = x[i];
+            unshare(home, y);
+            extensional(
+                home, y,
+                ((REG(0) | REG(2)) + (REG(-1) | REG(1)) + (REG(7) | REG(0) | REG(1)) + (REG(0) | REG(1)))(2, 2));
+        }
+    };
+
+    /// %Test with simple regular expression and shared variables (uses unsharing)
+    class RegSharedB : public Test {
+    public:
+        /// Create and register test
+        RegSharedB() : Test("Extensional::Reg::Shared::B", 4, 2, 2) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return (((x[0] == 0) || (x[0] == 2)) && ((x[1] == -1) || (x[1] == 1)) && ((x[2] == 0) || (x[2] == 1)) &&
+                    ((x[3] == 0) || (x[3] == 1)));
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            IntVarArgs y(12);
+            for (int i = 0; i < 4; i++)
+                y[i] = y[i + 4] = y[i + 8] = x[i];
+            unshare(home, y);
+            extensional(
+                home, y,
+                ((REG(0) | REG(2)) + (REG(-1) | REG(1)) + (REG(7) | REG(0) | REG(1)) + (REG(0) | REG(1)))(3, 3));
+        }
+    };
+
+    /// %Test with simple regular expression and shared variables (uses unsharing)
+    class RegSharedC : public Test {
+    public:
+        /// Create and register test
+        RegSharedC() : Test("Extensional::Reg::Shared::C", 4, 0, 1) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return (x[1] == 1) && (x[2] == 0) && (x[3] == 1);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            Gecode::BoolVarArgs y(8);
+            for (int i = 0; i < 4; i++)
+                y[i] = y[i + 4] = channel(home, x[i]);
+            unshare(home, y);
+            extensional(home, y, ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(2, 2));
+        }
+    };
+
+    /// %Test with simple regular expression and shared variables (uses unsharing)
+    class RegSharedD : public Test {
+    public:
+        /// Create and register test
+        RegSharedD() : Test("Extensional::Reg::Shared::D", 4, 0, 1) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return (x[1] == 1) && (x[2] == 0) && (x[3] == 1);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            Gecode::BoolVarArgs y(12);
+            for (int i = 0; i < 4; i++)
+                y[i] = y[i + 4] = y[i + 8] = channel(home, x[i]);
+            unshare(home, y);
+            extensional(home, y, ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(3, 3));
+        }
+    };
+
+    /// %Test for empty DFA
+    class RegEmptyDFA : public Test {
+    public:
+        /// Create and register test
+        RegEmptyDFA() : Test("Extensional::Reg::Empty::DFA", 1, 0, 0) {
+            test_search = false;
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            (void)x;
+            return false;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::DFA d;
+            Gecode::extensional(home, x, d);
+        }
+    };
+
+    /// %Test for empty regular expression
+    class RegEmptyREG : public Test {
+    public:
+        /// Create and register test
+        RegEmptyREG() : Test("Extensional::Reg::Empty::REG", 1, 0, 0) {
+            test_search = false;
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            (void)x;
+            return false;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::REG r;
+            Gecode::extensional(home, x, r);
+        }
+    };
+
+    /// %Test for optimizations
+    class RegOpt : public Test {
+    protected:
+        /// DFA size characteristic
+        int n;
+
+    public:
+        /// Create and register test
+        RegOpt(int n0) : Test("Extensional::Reg::Opt::" + str(n0), 1, 0, 15), n(n0) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return (x[0] < n) && ((x[0] & 1) == 0);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            DFA::Transition* t = new DFA::Transition[n + 1];
+            DFA::Transition* ti = t;
+            int* f = new int[n + 1];
+            int* fi = f;
+            for (int i = 0; i < n; i++) {
+                ti->i_state = 0;
+                ti->symbol = i;
+                ti->o_state = i + 1;
+                ti++;
+                if ((i & 1) == 0) {
+                    *fi = i + 1;
+                    fi++;
+                }
+            }
+            ti->i_state = -1;
+            *fi = -1;
+            DFA d(0, t, f, false);
+            delete[] t;
+            delete[] f;
+            extensional(home, x, d);
+        }
+    };
+
+    /// %Test an acyclic DFA whose states can occur at different depths
+    class RegAcyclicReconvergence : public Test {
+    public:
+        /// Create and register test
+        RegAcyclicReconvergence()
+            : Test("Extensional::Reg::Sparse::AcyclicReconvergence", 4, 0, 3, false, Gecode::IPL_DOM) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return ((x[0] == 0) && (x[1] == 2) && (x[2] == 2) && (x[3] == 2)) ||
+                   ((x[0] == 1) && (x[1] == 0) && (x[2] == 3) && (x[3] == 3));
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            // State 1 is reached at depth one by 0 and at depth two by 1,0.
+            // Its two acyclic suffixes have the corresponding lengths.
+            DFA d(0, {{0, 0, 1}, {0, 1, 2}, {2, 0, 1}, {1, 2, 3}, {3, 2, 4}, {4, 2, 7}, {1, 3, 5}, {5, 3, 7}}, {7},
+                  false);
+            extensional(home, x, d);
+        }
+    };
+
+    /// %Test a cyclic DFA whose frontier states recur across many layers
+    class RegCyclicFrontier : public Test {
+    public:
+        /// Create and register test
+        RegCyclicFrontier() : Test("Extensional::Reg::Sparse::CyclicFrontier", 7, 0, 1, false, Gecode::IPL_DOM) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int parity = 0;
+            for (int i = 0; i < x.size(); i++)
+                parity ^= x[i];
+            return parity == 0;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            DFA d(0, {{0, 0, 0}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0}}, {0}, false);
+            extensional(home, x, d);
+        }
+    };
+
+    /// %Test compacting sparse external DFA state identifiers
+    class RegSparseStateNumbering : public Test {
+    public:
+        /// Create and register test
+        RegSparseStateNumbering() : Test("Extensional::Reg::Sparse::StateNumbering", 2, 0, 1, false, Gecode::IPL_DOM) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return (x[0] == 0) && (x[1] == 1);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            DFA d(1000000, {{1000000, 0, 2000000}, {2000000, 1, 3000000}}, {3000000}, false);
+            extensional(home, x, d);
+        }
+    };
+
+    /// %Test repeated final states in dense and sparse DFA specifications
+    class RegDuplicateFinals : public Test {
+    protected:
+        bool minimize;
+        bool sparse;
+
+    public:
+        RegDuplicateFinals(bool minimize0, bool sparse0)
+            : Test(std::string("Extensional::Reg::DuplicateFinals::") + (sparse0 ? "Sparse::" : "Dense::") +
+                       (minimize0 ? "Minimize" : "Keep"),
+                   1, 0, 1, false, Gecode::IPL_DOM),
+              minimize(minimize0), sparse(sparse0) {}
+
+        bool
+        solution(const Assignment& x) const override {
+            return x[0] == 0;
+        }
+
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            const int start = sparse ? 100 : 0;
+            const int final = sparse ? 200 : 1;
+            DFA d(start, {{start, 0, final}}, {final, final, final, final, final, final, final, final}, minimize);
+            extensional(home, x, d);
+        }
+    };
+
+    /// %Test the Boolean-view regular posting route
+    class RegBoolCyclicFrontier : public Test {
+    public:
+        /// Create and register test
+        RegBoolCyclicFrontier()
+            : Test("Extensional::Reg::Sparse::BoolCyclicFrontier", 7, 0, 1, false, Gecode::IPL_DOM) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int parity = 0;
+            for (int i = 0; i < x.size(); i++)
+                parity ^= x[i];
+            return parity == 0;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            BoolVarArgs b(x.size());
+            for (int i = 0; i < x.size(); i++)
+                b[i] = channel(home, x[i]);
+            DFA d(0, {{0, 0, 0}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0}}, {0}, false);
+            extensional(home, b, d);
+        }
+    };
+
+    /// %Test deterministic generated DFAs against a reference runner
+    class RegRandomDifferential : public Test {
+    protected:
+        /// Number of DFA states
+        static const int n_dfa_states = 4;
+        /// Number of symbols
+        static const int n_symbols = 3;
+        /// Transition table, with -1 denoting no transition
+        int next[n_dfa_states][n_symbols];
+        /// Allowed-symbol bit masks for each position
+        unsigned int allowed[5];
+        /// Final-state bit mask
+        unsigned int finals;
+
+    public:
+        /// Create and register test
+        RegRandomDifferential(unsigned int seed)
+            : Test("Extensional::Reg::Sparse::RandomDifferential::" + Test::str(static_cast<int>(seed)), 5, 0,
+                   n_symbols - 1, false, Gecode::IPL_DOM),
+              finals(0) {
+            unsigned int random = seed;
+            for (auto& state : next)
+                for (int& symbol : state) {
+                    random = 1664525U * random + 1013904223U;
+                    symbol = ((random & 7U) == 0U) ? -1 : static_cast<int>((random >> 8) % n_dfa_states);
+                }
+            for (unsigned int& word : allowed) {
+                random = 1664525U * random + 1013904223U;
+                word = 1U + ((random >> 12) % 7U);
+            }
+            random = 1664525U * random + 1013904223U;
+            finals = 1U + ((random >> 16) % 15U);
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int state = 0;
+            for (int i = 0; i < x.size(); i++) {
+                const int symbol = x[i];
+                if (((allowed[i] & (1U << symbol)) == 0U) || (next[state][symbol] < 0))
+                    return false;
+                state = next[state][symbol];
+            }
+            return (finals & (1U << state)) != 0U;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            DFA::Transition transitions[n_dfa_states * n_symbols + 1];
+            int n_transitions = 0;
+            for (int state = 0; state < n_dfa_states; state++)
+                for (int symbol = 0; symbol < n_symbols; symbol++)
+                    if (next[state][symbol] >= 0)
+                        transitions[n_transitions++] = DFA::Transition(state, symbol, next[state][symbol]);
+            transitions[n_transitions].i_state = -1;
+            int final_states[n_dfa_states + 1];
+            int n_final_states = 0;
+            for (int state = 0; state < n_dfa_states; state++)
+                if ((finals & (1U << state)) != 0U)
+                    final_states[n_final_states++] = state;
+            final_states[n_final_states] = -1;
+            DFA d(0, transitions, final_states, false);
+            for (int i = 0; i < x.size(); i++)
+                for (int symbol = 0; symbol < n_symbols; symbol++)
+                    if ((allowed[i] & (1U << symbol)) == 0U)
+                        rel(home, x[i], IRT_NQ, symbol);
+            extensional(home, x, d);
+        }
+    };
+
+    /// %Test nondeterministic generated automata against a reference runner
+    class RegRandomNFADifferential : public Test {
+    protected:
+        /// Number of automaton states
+        static const int n_fa_states = 4;
+        /// Number of symbols
+        static const int n_symbols = 3;
+        /// Transition relation
+        bool next[n_fa_states][n_symbols][n_fa_states];
+        /// Allowed-symbol bit masks for each position
+        unsigned int allowed[5];
+
+    public:
+        /// Create and register test
+        RegRandomNFADifferential(unsigned int seed)
+            : Test(TestTags::check(),
+                   "Extensional::Reg::Sparse::RandomNFADifferential::" + Test::str(static_cast<int>(seed)), 5, 0,
+                   n_symbols - 1, false, Gecode::IPL_DOM) {
+            unsigned int random = seed;
+            for (auto& state : next)
+                for (auto& symbol : state)
+                    for (bool& output : symbol) {
+                        random = 1664525U * random + 1013904223U;
+                        output = ((random >> 29) == 0U);
+                    }
+            // Keep a nondeterministic fork and both of its branches relevant.
+            next[0][0][1] = true;
+            next[0][0][2] = true;
+            next[1][1][3] = true;
+            next[2][2][3] = true;
+            for (int symbol = 0; symbol < n_symbols; symbol++)
+                next[3][symbol][3] = true;
+            for (unsigned int& word : allowed) {
+                random = 1664525U * random + 1013904223U;
+                word = 1U + ((random >> 12) % 7U);
+            }
+            // Ensure both branches of the fixed fork can occur.
+            allowed[0] |= 1U;
+            allowed[1] |= 6U;
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            unsigned int states = 1U;
+            for (int i = 0; i < x.size(); i++) {
+                const int symbol = x[i];
+                if ((allowed[i] & (1U << symbol)) == 0U)
+                    return false;
+                unsigned int outputs = 0U;
+                for (int state = 0; state < n_fa_states; state++)
+                    if ((states & (1U << state)) != 0U)
+                        for (int output = 0; output < n_fa_states; output++)
+                            if (next[state][symbol][output])
+                                outputs |= 1U << output;
+                states = outputs;
+            }
+            return (states & (1U << 3)) != 0U;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            DFA::Transition transitions[n_fa_states * n_symbols * n_fa_states + 1];
+            int n_transitions = 0;
+            for (int state = 0; state < n_fa_states; state++)
+                for (int symbol = 0; symbol < n_symbols; symbol++)
+                    for (int output = 0; output < n_fa_states; output++)
+                        if (next[state][symbol][output])
+                            transitions[n_transitions++] = DFA::Transition(state, symbol, output);
+            transitions[n_transitions].i_state = -1;
+            int final_states[] = {3, -1};
+            DFA d = DFA::nfa(0, transitions, final_states);
+            for (int i = 0; i < x.size(); i++)
+                for (int symbol = 0; symbol < n_symbols; symbol++)
+                    if ((allowed[i] & (1U << symbol)) == 0U)
+                        rel(home, x[i], IRT_NQ, symbol);
+            extensional(home, x, d);
+        }
+    };
+
+    /// %Test cloning an assigned NFA prefix with branching and reconvergence
+    class RegNFAPrefix : public Test {
+    protected:
+        /// Whether to post through Boolean views
+        bool boolean;
+
+    public:
+        /// Create and register test
+        RegNFAPrefix(bool b)
+            : Test(TestTags::check(), "Extensional::Reg::Sparse::NFAPrefix::" + std::string(b ? "Bool" : "Int"), 5, 0,
+                   1, false, Gecode::IPL_DOM),
+              boolean(b) {}
+        /// %Test whether \a x is a solution
+        bool
+        solution(const Assignment& x) const override {
+            return (x[0] == 0) && (x[1] == 0) && (x[2] == x[3]);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            // The first assigned layer has one edge and can be discarded on
+            // cloning. The second has two edges and must be retained. Two
+            // paths read the prefix 0,0,0,0, while only one reads 0,0,1,1.
+            DFA d = DFA::nfa(0,
+                             {{0, 0, 1},
+                              {1, 0, 2},
+                              {1, 0, 3},
+                              {2, 0, 4},
+                              {3, 0, 4},
+                              {3, 1, 5},
+                              {4, 0, 6},
+                              {5, 1, 6},
+                              {6, 0, 7},
+                              {6, 1, 7}},
+                             {7});
+            if (boolean) {
+                BoolVarArgs b(x.size());
+                for (int i = 0; i < x.size(); i++)
+                    b[i] = channel(home, x[i]);
+                extensional(home, b, d);
+            } else {
+                extensional(home, x, d);
+            }
+        }
+    };
+
+    /// %Test backward pruning caused by a position-specific domain
+    class RegPositionDomainPruning : public Test {
+    public:
+        /// Create and register test
+        RegPositionDomainPruning()
+            : Test("Extensional::Reg::Sparse::PositionDomainPruning", 3, 0, 1, false, Gecode::IPL_DOM) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return (x[0] == 0) && (x[1] == 0) && (x[2] == 0);
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            DFA d(0, {{0, 0, 1}, {0, 1, 2}, {1, 0, 3}, {2, 1, 4}, {3, 0, 5}, {4, 1, 6}}, {5, 6}, false);
+            rel(home, x[2], IRT_EQ, 0);
+            extensional(home, x, d);
+        }
+    };
+
+    /// %Test failure when the forward frontier misses the terminal boundary
+    class RegNoAcceptingPath : public Test {
+    public:
+        /// Create and register test
+        RegNoAcceptingPath() : Test("Extensional::Reg::Sparse::NoAcceptingPath", 3, 0, 0, false, Gecode::IPL_DOM) {
+            test_search = false;
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            (void)x;
+            return false;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            // Every position has a forward transition, but the sole final state
+            // is only reached after four symbols.
+            DFA d(0, {{0, 0, 1}, {1, 0, 2}, {2, 0, 3}, {3, 0, 4}}, {4}, false);
+            extensional(home, x, d);
+        }
+    };
+
+    /// %Test merging several reached DFA final states
+    class RegTerminalMerged : public Test {
+    public:
+        /// Create and register test
+        RegTerminalMerged() : Test("Extensional::Reg::Sparse::TerminalMerged", 1, 0, 2, false, Gecode::IPL_DOM) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            (void)x;
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            DFA d(0, {{0, 0, 1}, {0, 1, 2}, {0, 2, 3}}, {1, 2, 3}, false);
+            extensional(home, x, d);
+        }
+    };
+
+    /// %Test retaining separate terminal states when merging would overflow
+    class RegTerminalUnmerged : public Test {
+    public:
+        /// Create and register test
+        RegTerminalUnmerged() : Test("Extensional::Reg::Sparse::TerminalUnmerged", 8, 0, 1, false, Gecode::IPL_DOM) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return x[7] == 0;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            // Symbols are unique per level. No symbol labels more than 128
+            // transitions, selecting the smallest Degree type, but 256 edges
+            // enter final states.
+            const int n_states = 511;
+            const int n_transitions = n_states - 1;
+            DFA::Transition* t = new DFA::Transition[n_transitions + 1];
+            int ti = 0;
+            for (int depth = 0; depth < 8; depth++) {
+                const int first = (1 << depth) - 1;
+                const int width = 1 << depth;
+                for (int j = 0; j < width; j++) {
+                    const int i = first + j;
+                    t[ti++] = DFA::Transition(i, 2 * depth, 2 * i + 1);
+                    t[ti++] = DFA::Transition(i, 2 * depth + 1, 2 * i + 2);
+                }
+            }
+            t[ti].i_state = -1;
+            int* f = new int[257];
+            for (int i = 0; i < 256; i++)
+                f[i] = 255 + i;
+            f[256] = -1;
+            DFA d(0, t, f, false);
+            delete[] t;
+            delete[] f;
+            // Every word reaches the final layer, where only the even symbol
+            // has a transition into a final state.
+            IntVarArgs symbols(x.size());
+            for (int i = 0; i < x.size() - 1; i++)
+                symbols[i] = expr(home, 2 * i + x[i]);
+            symbols[7] = expr(home, 14 + 2 * x[7]);
+            extensional(home, symbols, d);
+        }
+    };
+
+    /// %Test for comparing DFAs
+    class DFACompare : public ::Test::Base {
+    public:
+        DFACompare() : ::Test::Base("Int::Extensional::DFA::Compare") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+            DFA d(REG(0) + REG(1));
+            DFA same(REG(0) + REG(1));
+            DFA other(REG(1) + REG(0));
+            // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
+            DFA d_copy(d);
+            DFA empty, other_empty;
+            return compares_equal(d, same) && compares_equal(d, d_copy) && compares_unequal(d, other) &&
+                   compares_equal(empty, other_empty) && compares_unequal(d, empty);
+        }
+    };
+
+    /// Space used by open regular tests
+    class OpenRegularSpace : public Gecode::Space {
+    public:
+        Gecode::IntVarArray x;
+        Gecode::OpenIntVarList list;
+
+        OpenRegularSpace(const Gecode::DFA& d, int max = 8) : x(*this, 3, 0, 2), list(*this, max) {
+            Gecode::extensional(*this, list, d);
+        }
+
+        OpenRegularSpace(OpenRegularSpace& s) : Gecode::Space(s) {
+            x.update(*this, s.x);
+            list.update(*this, s.list);
+        }
+
+        Gecode::Space*
+        copy() override {
+            return new OpenRegularSpace(*this);
+        }
+    };
+
+    /// Test appending and closing an open regular list
+    class OpenRegularIncremental : public ::Test::Base {
+    public:
+        OpenRegularIncremental() : ::Test::Base("Int::Extensional::OpenReg::Incremental", TestTags::check()) {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+            DFA d(0, {{0, 0, 1}, {1, 1, 2}}, {2}, false);
+            OpenRegularSpace s(d);
+
+            if (s.status() == SS_FAILED)
+                return false;
+            s.list.append(s, s.x[0]);
+            if ((s.status() == SS_FAILED) || !s.x[0].assigned() || (s.x[0].val() != 0))
+                return false;
+            s.list.append(s, s.x[1]);
+            if ((s.status() == SS_FAILED) || !s.x[1].assigned() || (s.x[1].val() != 1))
+                return false;
+            s.list.close(s);
+            if ((s.status() == SS_FAILED) || !s.list.length().assigned() || (s.list.length().val() != 2))
+                return false;
+
+            // Pruning the first item to 1 also closes its aliased length.
+            DFA alias_dfa(0, {{0, 1, 1}, {1, 2, 2}}, {2}, false);
+            OpenRegularSpace alias(alias_dfa, 2);
+            alias.list.append(alias, alias.list.length());
+            return alias.status() == SS_FAILED;
+        }
+    };
+
+    /// Materializing required positions wakes regular filtering
+    class OpenRegularLengthWake : public ::Test::Base {
+    public:
+        OpenRegularLengthWake() : ::Test::Base("Int::Extensional::OpenReg::LengthWake") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+            DFA d(0, {{0, 0, 1}, {1, 1, 2}}, {2}, false);
+            OpenRegularSpace s(d, 3);
+            rel(s, s.list.length(), IRT_GQ, 2);
+            if (s.status() == SS_FAILED)
+                return false;
+            return (s.list.known_length() == 2) && s.list[0].assigned() && (s.list[0].val() == 0) &&
+                   s.list[1].assigned() && (s.list[1].val() == 1);
+        }
+    };
+
+    /// Filter prefixes whose accepting continuations exceed the length bound
+    class OpenRegularMaxLength : public ::Test::Base {
+    public:
+        OpenRegularMaxLength() : ::Test::Base("Int::Extensional::OpenReg::MaxLength", TestTags::check()) {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+            // Accept 00 or 1000: only the first word fits a maximum of three.
+            DFA d(0, {{0, 0, 1}, {1, 0, 5}, {0, 1, 2}, {2, 0, 3}, {3, 0, 4}, {4, 0, 5}}, {5}, false);
+            OpenRegularSpace short_list(d, 1);
+            if (short_list.status() != SS_FAILED)
+                return false;
+            OpenRegularSpace initial(d, 3);
+            initial.list.append(initial, initial.x[0]);
+            if ((initial.status() == SS_FAILED) || !initial.x[0].assigned() || (initial.x[0].val() != 0))
+                return false;
+
+            OpenRegularSpace source(d, 4);
+            source.list.append(source, source.x[0]);
+            if ((source.status() == SS_FAILED) || (source.x[0].size() != 2))
+                return false;
+            OpenRegularSpace* clone = static_cast<OpenRegularSpace*>(source.clone());
+            rel(*clone, clone->list.length(), IRT_LQ, 3);
+            const bool clone_ok = (clone->status() != SS_FAILED) && clone->x[0].assigned() && (clone->x[0].val() == 0);
+            delete clone;
+            if (!clone_ok || (source.x[0].size() != 2))
+                return false;
+
+            // A bound reduction also checks an already consumed prefix.
+            rel(source, source.x[0], IRT_EQ, 1);
+            if (source.status() == SS_FAILED)
+                return false;
+            rel(source, source.list.length(), IRT_LQ, 3);
+            if (source.status() != SS_FAILED)
+                return false;
+
+            // Keep the shorter nondeterministic path, even with a cycle.
+            DFA nfa = DFA::nfa(0, {{0, 0, 1}, {0, 0, 2}, {1, 0, 3}, {3, 0, 4}, {4, 0, 5}, {2, 1, 2}, {2, 0, 5}}, {5});
+            OpenRegularSpace nondeterministic(nfa, 2);
+            nondeterministic.list.append(nondeterministic, nondeterministic.x[0]);
+            if (nondeterministic.status() == SS_FAILED)
+                return false;
+            nondeterministic.list.append(nondeterministic, nondeterministic.x[1]);
+            if ((nondeterministic.status() == SS_FAILED) || !nondeterministic.x[1].assigned() ||
+                (nondeterministic.x[1].val() != 0))
+                return false;
+
+            // Pruning an item aliased with length lowers the maximum while open.
+            DFA alias_dfa(0, {{0, 2, 1}, {1, 0, 2}, {2, 0, 3}, {3, 0, 4}, {0, 3, 5}, {5, 0, 6}, {6, 0, 4}}, {4}, false);
+            OpenRegularSpace alias(alias_dfa, 5);
+            alias.list.append(alias, alias.list.length());
+            alias.list.append(alias, alias.x[0]);
+            return (alias.status() != SS_FAILED) && alias.list.length().assigned() && (alias.list.length().val() == 3);
+        }
+    };
+
+    /// Test backward pruning after appending a restricted variable
+    class OpenRegularBackward : public ::Test::Base {
+    public:
+        OpenRegularBackward() : ::Test::Base("Int::Extensional::OpenReg::Backward") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+            DFA d(0, {{0, 0, 1}, {0, 1, 2}, {1, 0, 3}, {2, 1, 4}, {3, 2, 5}, {4, 2, 5}}, {5}, false);
+            OpenRegularSpace s(d);
+            rel(s, s.x[1], IRT_EQ, 0);
+            s.list.append(s, s.x[0]);
+            if ((s.status() == SS_FAILED) || (s.x[0].min() != 0) || (s.x[0].max() != 1))
+                return false;
+            s.list.append(s, s.x[1]);
+            return (s.status() != SS_FAILED) && s.x[0].assigned() && (s.x[0].val() == 0);
+        }
+    };
+
+    /// Test domain notification on an appended variable
+    class OpenRegularDomainWake : public ::Test::Base {
+    public:
+        OpenRegularDomainWake() : ::Test::Base("Int::Extensional::OpenReg::DomainWake") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+            DFA d(0, {{0, 0, 1}, {0, 1, 2}, {1, 0, 3}, {2, 1, 4}, {3, 2, 5}, {4, 2, 5}}, {5}, false);
+            OpenRegularSpace s(d);
+            s.list.append(s, s.x[0]);
+            s.list.append(s, s.x[1]);
+            if ((s.status() == SS_FAILED) || s.x[0].assigned())
+                return false;
+            rel(s, s.x[1], IRT_EQ, 0);
+            return (s.status() != SS_FAILED) && s.x[0].assigned() && (s.x[0].val() == 0);
+        }
+    };
+
+    /// Test independent extension after cloning
+    class OpenRegularClone : public ::Test::Base {
+    public:
+        OpenRegularClone() : ::Test::Base("Int::Extensional::OpenReg::Clone", TestTags::check()) {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+            DFA d(0, {{0, 0, 1}, {1, 1, 2}}, {2}, false);
+            OpenRegularSpace source(d);
+            source.list.append(source, source.x[0]);
+            if (source.status() == SS_FAILED)
+                return false;
+
+            OpenRegularSpace* clone = static_cast<OpenRegularSpace*>(source.clone());
+            clone->list.append(*clone, clone->x[1]);
+            clone->list.close(*clone);
+            const bool clone_ok = (clone->status() != SS_FAILED) && (clone->list.known_length() == 2);
+            delete clone;
+
+            source.list.close(source);
+            const bool source_failed = source.status() == SS_FAILED;
+            return clone_ok && source_failed && (source.list.known_length() == 1);
+        }
+    };
+
+    /// Test empty words and automata without accepting states
+    class OpenRegularEmpty : public Test {
+    public:
+        enum class Kind { ACCEPT, REJECT, NO_FINALS };
+
+    protected:
+        Kind kind;
+
+    public:
+        OpenRegularEmpty(Kind k) : Test("Extensional::OpenReg::Empty::" + str(static_cast<int>(k)), 1, 0, 0), kind(k) {}
+        bool
+        solution(const Assignment&) const override {
+            return kind == Kind::ACCEPT;
+        }
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray&) override {
+            using namespace Gecode;
+            OpenIntVarList list(home, 8);
+            if (kind == Kind::ACCEPT) {
+                extensional(home, list, DFA());
+            } else if (kind == Kind::REJECT) {
+                extensional(home, list, DFA(0, {{0, 0, 1}}, {1}, false));
+            } else {
+                extensional(home, list, DFA(0, {{0, 0, 0}}, std::initializer_list<int>{}, false));
+            }
+            if (kind != Kind::NO_FINALS)
+                list.close(home);
+        }
+    };
+
+    /// Check domain consistency of the regular constraint on a closed open list
+    class OpenRegularClosed : public Test {
+    public:
+        OpenRegularClosed() : Test("Extensional::OpenReg::Closed", 3, 0, 2, false, Gecode::IPL_DOM) {}
+        bool
+        solution(const Assignment& x) const override {
+            int parity = 0;
+            for (int i = 0; i < x.size(); i++) {
+                if (x[i] == 2)
+                    return false;
+                parity ^= x[i];
+            }
+            return parity == 0;
+        }
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            OpenIntVarList list(home, x.size());
+            for (auto xi : x)
+                list.append(home, xi);
+            list.close(home);
+            DFA d(0, {{0, 0, 0}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0}}, {0}, false);
+            extensional(home, list, d);
+        }
+    };
+
+    ///% Transform a TupleSet into a DFA
+    static Gecode::DFA
+    tuple_set_to_dfa(const Gecode::TupleSet& ts) {
+        using namespace Gecode;
+        REG expression;
+        for (int i = 0; i < ts.tuples(); i++) {
+            REG r;
+            for (int j = 0; j < ts.arity(); j++) {
+                r += REG(ts[i][j]);
+            }
+            expression |= r;
+        }
+        DFA dfa(expression);
+        return dfa;
+    }
+
+    /// %Test with tuple set
+    class TupleSetBase : public Test {
+    protected:
+        /// Simple test tupleset
+        Gecode::TupleSet t;
+        /// Whether the table is positive or negative
+        bool pos;
+        /// Support representation
+        Gecode::ExtensionalPropKind epk;
+
+    public:
+        /// Create and register test
+        TupleSetBase(bool p, Gecode::ExtensionalPropKind epk0)
+            : Test(TestTags::sweep(),
+                   "Extensional::TupleSet::" + extensional_kind_name(epk0) + "::" + str(p) + "::Base", 4, 1, 5, true,
+                   Gecode::IPL_DOM),
+              t(4), pos(p), epk(epk0) {
+            using namespace Gecode;
+            IntArgs t1({2, 1, 2, 4});
+            IntArgs t2({2, 2, 1, 4});
+            IntArgs t3({4, 3, 4, 1});
+            IntArgs t4({1, 3, 2, 3});
+            IntArgs t5({3, 3, 3, 2});
+            t.add(t1)
+                .add(t1)
+                .add(t2)
+                .add(t2)
+                .add(t3)
+                .add(t3)
+                .add(t4)
+                .add(t4)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t1)
+                .add(t1)
+                .add(t2)
+                .add(t2)
+                .add(t3)
+                .add(t3)
+                .add(t4)
+                .add(t4)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .add(t5)
+                .finalize(epk);
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            return pos == ((x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
+                           (x[0] == 2 && x[1] == 1 && x[2] == 2 && x[3] == 4) ||
+                           (x[0] == 2 && x[1] == 2 && x[2] == 1 && x[3] == 4) ||
+                           (x[0] == 3 && x[1] == 3 && x[2] == 3 && x[3] == 2) ||
+                           (x[0] == 4 && x[1] == 3 && x[2] == 4 && x[3] == 1));
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            TupleSet ts = TupleSet(t.arity(), tuple_set_to_dfa(t), epk);
+            assert(t == ts);
+            assert(ts.representation() == epk);
+            extensional(home, x, t, pos, ipl);
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
+            extensional(home, x, t, pos, r, ipl);
+        }
+    };
+
+    /// %Test with tuple set
+    class TupleSetTest : public Test {
+    protected:
+        /// Whether the table is positive or negative
+        bool pos;
+        /// Support representation
+        Gecode::ExtensionalPropKind epk;
+        /// The tuple set to use
+        Gecode::TupleSet ts;
+        /// Whether to validate dfa2tupleset
+        bool to_dfa;
+
+    public:
+        /// Create and register test
+        TupleSetTest(const std::string& s, bool p, const Gecode::IntSet& d0, const Gecode::TupleSet& ts0, bool td,
+                     Gecode::ExtensionalPropKind epk0, TestTags tags = TestTags::sweep())
+            : Test(tags, "Extensional::TupleSet::" + extensional_kind_name(epk0) + "::" + str(p) + "::" + s,
+                   ts0.arity(), d0, true, Gecode::IPL_DOM),
+              pos(p), epk(epk0), ts(ts0), to_dfa(td) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            using namespace Gecode;
+            for (int i = ts.tuples(); i--;) {
+                TupleSet::Tuple t = ts[i];
+                bool same = true;
+                for (int j = 0; (j < ts.arity()) && same; j++)
+                    if (t[j] != x[j])
+                        same = false;
+                if (same)
+                    return pos;
+            }
+            return !pos;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            if (to_dfa) {
+                TupleSet t = TupleSet(ts.arity(), tuple_set_to_dfa(ts), epk);
+                assert(ts == t);
+                assert(t.representation() == epk);
+            }
+            extensional(home, x, ts, pos, ipl);
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
+            using namespace Gecode;
+            extensional(home, x, ts, pos, r, ipl);
+        }
+    };
+
+    class RandomTupleSetTest : public TupleSetTest {
+    public:
+        /// Create and register test
+        RandomTupleSetTest(const std::string& s, bool p, const Gecode::IntSet& d0, const Gecode::TupleSet& ts0,
+                           Gecode::ExtensionalPropKind epk0)
+            : TupleSetTest(s, p, d0, ts0, false, epk0) {
+            test_search = false;
+        }
+        /// Create and register initial assignment
+        Assignment*
+        assignment() const override {
+            using namespace Gecode;
+            return new RandomAssignment(arity, dom, 1000, _rand);
+        }
+    };
+
+    /// Sample both table tuples and arbitrary assignments in large domains.
+    class SparseAssignment : public RandomAssignment {
+        Gecode::TupleSet t;
+        void
+        tuple(Gecode::Support::RandomGenerator& rand) {
+            if ((a % 2) == 0) {
+                int row = rand(t.tuples());
+                for (int i = 0; i < n; i++)
+                    vals[i] = t[row][i];
+            }
+        }
+
+    public:
+        SparseAssignment(const Gecode::TupleSet& t0, const Gecode::IntSet& d, Gecode::Support::RandomGenerator& rand)
+            : RandomAssignment(t0.arity(), d, 32, rand), t(t0) {
+            tuple(rand);
+        }
+        void
+        next(Gecode::Support::RandomGenerator& rand) override {
+            RandomAssignment::next(rand);
+            tuple(rand);
+        }
+    };
+
+    /// Sparse tables with the original large support counts and arities.
+    class SparseTupleSet : public Test {
+        Gecode::TupleSet t;
+
+    public:
+        SparseTupleSet(const std::string& name, int arity, int size)
+            : Test("Extensional::TupleSet::Sparse::" + name, arity, 0, size - 1, false, Gecode::IPL_DOM), t(arity) {
+            const int factors[] = {1, arity == 3 ? 7 : 3, arity == 3 ? 11 : 5, 7, 11, 13};
+            for (int i = 0; i < size; i++) {
+                Gecode::IntArgs row(arity);
+                for (int j = 0; j < arity; j++)
+                    row[j] = (i * factors[j]) % size;
+                t.add(row);
+            }
+            t.finalize(Gecode::EPK_SPARSE);
+            test_search = false;
+            consistency_test_level = CTL_NONE;
+        }
+        Assignment*
+        assignment() const override {
+            return new SparseAssignment(t, dom, _rand);
+        }
+        bool
+        solution(const Assignment& x) const override {
+            const int size = dom.max() + 1;
+            const int factors[] = {1, arity == 3 ? 7 : 3, arity == 3 ? 11 : 5, 7, 11, 13};
+            for (int i = 1; i < arity; i++)
+                if (x[i] != (x[0] * factors[i]) % size)
+                    return false;
+            return true;
+        }
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::extensional(home, x, t, true, ipl);
+        }
+    };
+
+    /// The assignment harness needs one variable even for a nullary table.
+    class TupleSetNullary : public Test {
+        bool nonempty;
+        Gecode::TupleSet t;
+
+    public:
+        TupleSetNullary(Gecode::ExtensionalPropKind epk, bool n)
+            : Test("Extensional::TupleSet::" + extensional_kind_name(epk) + "::Nullary::" + str(n), 1, 0, 0),
+              nonempty(n), t(0) {
+            // More copies of the empty tuple than the initial capacity of
+            // 1024 tuples, so that the tuple storage grows
+            if (nonempty)
+                for (int i = 0; i < 1025; i++)
+                    t.add(Gecode::IntArgs(0));
+            t.finalize(epk);
+        }
+        bool
+        solution(const Assignment&) const override {
+            return nonempty;
+        }
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray&) override {
+            Gecode::extensional(home, Gecode::IntVarArgs(), t, true, Gecode::IPL_DOM);
+        }
+    };
+
+    /// Tells issued after posting exercise sparse advisor updates.
+    class SparseTupleSetIncremental : public Test {
+        int kind;
+        Gecode::TupleSet t;
+
+    public:
+        SparseTupleSetIncremental(const std::string& name, int k)
+            : Test("Extensional::TupleSet::Sparse::Incremental" + name, 2, 0, k == 2 ? 1 : 3, false, Gecode::IPL_DOM),
+              kind(k), t(2) {
+            using namespace Gecode;
+            if (kind == 2)
+                t.add(IntArgs({0, 1})).add(IntArgs({1, 0}));
+            else
+                t.add(IntArgs({0, 0})).add(IntArgs({1, 1})).add(IntArgs({2, kind == 1 ? 1 : 2})).add(IntArgs({3, 3}));
+            t.finalize(EPK_SPARSE);
+        }
+        bool
+        solution(const Assignment& x) const override {
+            if (kind == 0)
+                return (x[0] == 2) && (x[1] == 2);
+            if (kind == 1)
+                return false;
+            return (x[0] == 1) && (x[1] == 0);
+        }
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            if (kind == 2) {
+                BoolVarArgs b(2);
+                for (int i = 0; i < 2; i++)
+                    b[i] = channel(home, x[i]);
+                extensional(home, b, t, true, ipl);
+                rel(home, b[0], IRT_NQ, 0);
+            } else {
+                extensional(home, x, t, true, ipl);
+                if (kind == 0) {
+                    rel(home, x[0], IRT_NQ, 0);
+                    rel(home, x[0], IRT_NQ, 1);
+                    rel(home, x[1], IRT_NQ, 3);
+                } else {
+                    rel(home, x[0], IRT_EQ, 2);
+                    rel(home, x[1], IRT_NQ, 1);
+                }
+            }
+        }
+    };
+
+    /// Disabled sparse propagators must defer failure until re-enabled
+    class SparseTupleSetDisabledFailure : public ::Test::Base {
+    public:
+        SparseTupleSetDisabledFailure() : ::Test::Base("Int::Extensional::TupleSet::Sparse::DisabledFailure") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+
+            class DisabledSpace : public Space {
+            public:
+                IntVarArray x;
+                DisabledSpace(const TupleSet& t) : x(*this, 2, 0, 1) {
+                    extensional(*this, x, t, true, IPL_DOM);
+                }
+                DisabledSpace(DisabledSpace& s) : Space(s) {
+                    x.update(*this, s.x);
+                }
+                Space*
+                copy() override {
+                    return new DisabledSpace(*this);
+                }
+            };
+
+            TupleSet ts(2);
+            ts.add(IntArgs({0, 0})).add(IntArgs({1, 1}));
+            ts.finalize(EPK_SPARSE);
+
+            DisabledSpace* s = new DisabledSpace(ts);
+            if (s->status() == SS_FAILED) {
+                delete s;
+                return false;
+            }
+            PropagatorGroup::all.disable(*s);
+            rel(*s, s->x[0], IRT_EQ, 0);
+            rel(*s, s->x[1], IRT_EQ, 1);
+            if (s->status() == SS_FAILED) {
+                delete s;
+                return false;
+            }
+
+            PropagatorGroup::all.enable(*s);
+            const bool failed = (s->status() == SS_FAILED);
+            delete s;
+            return failed;
+        }
+    };
+
+    /// Sparse delta processing must depend on supports, not numeric width
+    class SparseTupleSetWideDelta : public ::Test::Base {
+    public:
+        SparseTupleSetWideDelta() : ::Test::Base("Int::Extensional::TupleSet::Sparse::WideDelta") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+
+            const int gap = 1000000000;
+            const int lower = gap / 2;
+            TupleSet ts(1);
+            ts.add(IntArgs({0})).add(IntArgs({gap}));
+            ts.finalize(EPK_SPARSE);
+
+            class NegativeSpace : public Space {
+            public:
+                IntVar x;
+                NegativeSpace(const TupleSet& t, int gap0, int lower0) : x(*this, 0, gap0) {
+                    extensional(*this, IntVarArgs({x}), t, false, IPL_DOM);
+                    rel(*this, x, IRT_GQ, lower0);
+                }
+                NegativeSpace(NegativeSpace& s) : Space(s) {
+                    x.update(*this, s.x);
+                }
+                Space*
+                copy() override {
+                    return new NegativeSpace(*this);
+                }
+            };
+
+            NegativeSpace* n = new NegativeSpace(ts, gap, lower);
+            if ((n->status() == SS_FAILED) || (n->x.min() != lower) || (n->x.max() != gap - 1)) {
+                delete n;
+                return false;
+            }
+            delete n;
+
+            class ReifiedSpace : public Space {
+            public:
+                IntVar x;
+                BoolVar b;
+                ReifiedSpace(const TupleSet& t, int gap0, int lower0) : x(*this, 0, gap0), b(*this, 0, 1) {
+                    extensional(*this, IntVarArgs({x}), t, true, Reify(b, RM_EQV), IPL_DOM);
+                    rel(*this, x, IRT_GQ, lower0);
+                }
+                ReifiedSpace(ReifiedSpace& s) : Space(s) {
+                    x.update(*this, s.x);
+                    b.update(*this, s.b);
+                }
+                Space*
+                copy() override {
+                    return new ReifiedSpace(*this);
+                }
+            };
+
+            ReifiedSpace* r = new ReifiedSpace(ts, gap, lower);
+            const bool ok =
+                (r->status() != SS_FAILED) && (r->x.min() == lower) && (r->x.max() == gap) && !r->b.assigned();
+            delete r;
+            return ok;
+        }
+    };
+
+    /// Sparse/compressed tuplesets should materialize only requested support
+    class TupleSetSingleRepresentation : public ::Test::Base {
+    public:
+        TupleSetSingleRepresentation() : ::Test::Base("Int::Extensional::TupleSet::Support::SingleRepresentation") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+            TupleSet ts(2);
+            for (int i = 0; i < 100; i++)
+                ts.add(IntArgs({i, (i * 3) % 100}));
+            ts.finalize(EPK_SPARSE);
+            if (ts.representation() != EPK_SPARSE) {
+                std::cerr << "ERROR: Sparse support not available" << '\n' << std::flush;
+                return false;
+            }
+            if (ts.fst(0)->supports(ts.words(), ts.fst(0)->min) != nullptr) {
+                std::cerr << "ERROR: Sparse range exposed dense support" << '\n' << std::flush;
+                return false;
+            }
+
+            TupleSet tc(2);
+            for (int i = 0; i < 100; i++)
+                tc.add(IntArgs({i, (i * 7) % 100}));
+            tc.finalize(EPK_DENSE_COMPRESSED);
+            if (tc.representation() != EPK_DENSE_COMPRESSED) {
+                std::cerr << "ERROR: Compressed support not available" << '\n' << std::flush;
+                return false;
+            }
+            if (tc.fst(0)->supports(tc.words(), tc.fst(0)->min) != nullptr) {
+                std::cerr << "ERROR: Compressed range exposed dense support" << '\n' << std::flush;
+                return false;
+            }
+
+            TupleSet td(2);
+            for (int i = 0; i < 100; i++)
+                td.add(IntArgs({i, (i * 11) % 100}));
+            td.finalize();
+            if (td.representation() != EPK_DENSE) {
+                std::cerr << "ERROR: Default finalize did not keep dense support" << '\n' << std::flush;
+                return false;
+            }
+            if (td.fst(0)->supports(td.words(), td.fst(0)->min) == nullptr) {
+                std::cerr << "ERROR: Dense range lost support data" << '\n' << std::flush;
+                return false;
+            }
+
+            TupleSet empty_sparse(2);
+            empty_sparse.finalize(EPK_SPARSE);
+            if (empty_sparse.representation() != EPK_SPARSE) {
+                std::cerr << "ERROR: Empty sparse table forgot representation" << '\n' << std::flush;
+                return false;
+            }
+            TupleSet empty_compressed(2);
+            empty_compressed.finalize(EPK_DENSE_COMPRESSED);
+            if (empty_compressed.representation() != EPK_DENSE_COMPRESSED) {
+                std::cerr << "ERROR: Empty compressed table forgot representation" << '\n' << std::flush;
+                return false;
+            }
+            return true;
+        }
+    };
+
+    /// Sparse offset arrays need a representable terminal entry
+    class TupleSetSupportOffsetBoundary : public ::Test::Base {
+    public:
+        TupleSetSupportOffsetBoundary() : ::Test::Base("Int::Extensional::TupleSet::Support::OffsetBoundary") {}
+
+        bool
+        run() override {
+            using Gecode::Int::Extensional::support_offsets_size;
+            const unsigned long long max = static_cast<unsigned long long>(std::numeric_limits<unsigned int>::max());
+            unsigned int n_offsets = 0U;
+            if (!support_offsets_size(max - 1ULL, n_offsets) || (n_offsets != std::numeric_limits<unsigned int>::max()))
+                return false;
+            if (support_offsets_size(max, n_offsets))
+                return false;
+            return !support_offsets_size(max + 1ULL, n_offsets);
+        }
+    };
+
+    /// Failed finalization is terminal and cannot expose partial support data
+    class TupleSetTerminalFinalizationFailure : public ::Test::Base {
+    public:
+        TupleSetTerminalFinalizationFailure() : ::Test::Base("Int::Extensional::TupleSet::Support::TerminalFailure") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+
+            const int n = 371000;
+            TupleSet ts(2);
+            for (int i = 0; i < n; i++)
+                ts.add(IntArgs({i, n + i}));
+
+            bool rejected = false;
+            try {
+                ts.finalize(EPK_DENSE);
+            } catch (const Gecode::Int::OutOfLimits&) {
+                rejected = true;
+            }
+            if (!rejected || !ts.failed() || ts.finalized())
+                return false;
+
+            try {
+                (void)ts.representation();
+                return false;
+            } catch (const Gecode::Int::NotYetFinalized&) {
+                // Expected
+            }
+
+            try {
+                ts.finalize(EPK_SPARSE);
+                return false;
+            } catch (const Gecode::Int::AlreadyFinalized&) {
+                // Expected
+            }
+
+            try {
+                ts.add(IntArgs({0, 0}));
+                return false;
+            } catch (const Gecode::Int::AlreadyFinalized&) {
+                // Expected
+            }
+
+            class PostingSpace : public Space {
+            public:
+                IntVarArray x;
+                PostingSpace(const TupleSet& t) : x(*this, 2, 0, 1) {
+                    extensional(*this, x, t);
+                }
+                PostingSpace(PostingSpace& s) : Space(s) {
+                    x.update(*this, s.x);
+                }
+                Space*
+                copy() override {
+                    return new PostingSpace(*this);
+                }
+            };
+
+            try {
+                PostingSpace* s = new PostingSpace(ts);
+                delete s;
+                return false;
+            } catch (const Gecode::Int::NotYetFinalized&) {
+                // Expected
+            }
+            return true;
+        }
+    };
+
+    /// DFA-derived tuple sets preserve the requested support representation
+    class TupleSetDFARepresentation : public ::Test::Base {
+    public:
+        TupleSetDFARepresentation() : ::Test::Base("Int::Extensional::TupleSet::Support::DFARepresentation") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+
+            DFA dfa((REG(0) + REG(1)) | (REG(2) + REG(3)));
+            TupleSet sparse(2, dfa, EPK_SPARSE);
+            if ((sparse.representation() != EPK_SPARSE) || (sparse.tuples() != 2))
+                return false;
+
+            TupleSet compressed(2, dfa, EPK_DENSE_COMPRESSED);
+            if ((compressed.representation() != EPK_DENSE_COMPRESSED) || (compressed.tuples() != 2))
+                return false;
+
+            TupleSet dense(2, dfa);
+            if ((dense.representation() != EPK_DENSE) || (dense.tuples() != 2))
+                return false;
+
+            TupleSet empty(3, dfa, EPK_SPARSE);
+            return (empty.representation() == EPK_SPARSE) && (empty.tuples() == 0);
+        }
+    };
+
+    /// %Test for comparing finalized tuple sets
+    class TupleSetCompare : public ::Test::Base {
+    public:
+        TupleSetCompare() : ::Test::Base("Int::Extensional::TupleSet::Compare") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+            TupleSet t(2), same(2), other(2);
+            t.add(IntArgs({0, 1})).add(IntArgs({1, 0})).finalize();
+            same.add(IntArgs({0, 1})).add(IntArgs({1, 0})).finalize();
+            other.add(IntArgs({0, 1})).finalize();
+            TupleSet t_copy(t);
+            if (!compares_equal(t, same) || !compares_equal(t, t_copy) || !compares_unequal(t, other))
+                return false;
+            // A bool on the left compares with the tuple set's bool
+            // conversion; TupleSet::operator!= keeps these unambiguous.
+            // NOLINTNEXTLINE(readability-simplify-boolean-expr)
+            return (true == t) && !(true != t);
+        }
+    };
+
+    /// %Test for comparing the bit-set words that tuple-set supports use
+    class BitSetDataCompare : public ::Test::Base {
+    public:
+        BitSetDataCompare() : ::Test::Base("Int::Extensional::BitSetData::Compare") {}
+
+        bool
+        run() override {
+            using Gecode::Support::BitSetData;
+            BitSetData b, other;
+            b.init(false);
+            other.init(false);
+            BitSetData b_copy(b);
+            if (!compares_equal(b, other) || !compares_equal(b, b_copy))
+                return false;
+            other.set(3);
+            return compares_unequal(b, other);
+        }
+    };
+
+    /// Disabled compact propagators preserve pending work when cloned
+    class TupleSetDisabledClone : public ::Test::Base {
+    public:
+        TupleSetDisabledClone() : ::Test::Base("Int::Extensional::TupleSet::Support::DisabledClone") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+
+            enum Mode { MODE_POSITIVE, MODE_NEGATIVE, MODE_REIFIED };
+
+            class CloneSpace : public Space {
+            public:
+                IntVarArray x;
+                BoolVar b;
+                CloneSpace(const TupleSet& t, Mode mode) : x(*this, 2, 0, 2), b(*this, 0, 1) {
+                    if (mode == MODE_REIFIED)
+                        extensional(*this, x, t, true, Reify(b, RM_EQV), IPL_DOM);
+                    else
+                        extensional(*this, x, t, mode == MODE_POSITIVE, IPL_DOM);
+                }
+                CloneSpace(CloneSpace& s) : Space(s) {
+                    x.update(*this, s.x);
+                    b.update(*this, s.b);
+                }
+                Space*
+                copy() override {
+                    return new CloneSpace(*this);
+                }
+            };
+
+            auto check = [](ExtensionalPropKind epk) {
+                TupleSet ts(2);
+                ts.add(IntArgs({0, 0})).add(IntArgs({1, 1})).add(IntArgs({2, 2}));
+                ts.finalize(epk);
+
+                CloneSpace* source = new CloneSpace(ts, MODE_POSITIVE);
+                if (source->status() == SS_FAILED) {
+                    delete source;
+                    return false;
+                }
+                PropagatorGroup::all.disable(*source);
+                rel(*source, source->x[0], IRT_EQ, 1);
+                if ((source->status() == SS_FAILED) || !source->x[0].assigned() || (source->x[0].val() != 1) ||
+                    (source->x[1].size() != 3)) {
+                    delete source;
+                    return false;
+                }
+
+                CloneSpace* clone = static_cast<CloneSpace*>(source->clone());
+                PropagatorGroup::all.enable(*clone);
+                const bool clone_ok =
+                    (clone->status() != SS_FAILED) && clone->x[1].assigned() && (clone->x[1].val() == 1);
+                delete clone;
+
+                PropagatorGroup::all.enable(*source);
+                const bool source_ok =
+                    (source->status() != SS_FAILED) && source->x[1].assigned() && (source->x[1].val() == 1);
+                delete source;
+                return clone_ok && source_ok;
+            };
+
+            auto check_empty = [](ExtensionalPropKind epk, Mode mode) {
+                TupleSet ts(2);
+                ts.add(IntArgs({0, 0})).add(IntArgs({1, 1}));
+                ts.finalize(epk);
+
+                CloneSpace* source = new CloneSpace(ts, mode);
+                if (source->status() == SS_FAILED) {
+                    delete source;
+                    return false;
+                }
+                PropagatorGroup::all.disable(*source);
+                if (mode == MODE_NEGATIVE) {
+                    rel(*source, source->x[0], IRT_EQ, 2);
+                } else {
+                    rel(*source, source->x[0], IRT_EQ, 0);
+                    rel(*source, source->x[1], IRT_EQ, 1);
+                }
+                if (source->status() == SS_FAILED) {
+                    delete source;
+                    return false;
+                }
+
+                auto verify = [mode](CloneSpace& s) {
+                    const SpaceStatus status = s.status();
+                    if (mode == MODE_POSITIVE)
+                        return status == SS_FAILED;
+                    if (status == SS_FAILED)
+                        return false;
+                    if (mode == MODE_REIFIED)
+                        return s.b.assigned() && (s.b.val() == 0);
+                    return s.x[1].size() == 3;
+                };
+
+                CloneSpace* clone = static_cast<CloneSpace*>(source->clone());
+                PropagatorGroup::all.enable(*clone);
+                const bool clone_ok = verify(*clone);
+                delete clone;
+
+                PropagatorGroup::all.enable(*source);
+                const bool source_ok = verify(*source);
+                delete source;
+                return clone_ok && source_ok;
+            };
+
+            for (ExtensionalPropKind epk : {EPK_DENSE, EPK_DENSE_COMPRESSED}) {
+                if (!check(epk))
+                    return false;
+                for (Mode mode : {MODE_POSITIVE, MODE_NEGATIVE, MODE_REIFIED})
+                    if (!check_empty(epk, mode))
+                        return false;
+            }
+            return true;
+        }
+    };
+
+    /// AUTO finalization should work with default tuple-set posting overloads
+    class TupleSetAutoDefaultDispatch : public ::Test::Base {
+    public:
+        TupleSetAutoDefaultDispatch()
+            : ::Test::Base("Int::Extensional::TupleSet::Auto::DefaultDispatch", TestTags::check()) {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+
+            TupleSet dense(2);
+            dense.add(IntArgs({0, 0})).add(IntArgs({1, 1}));
+            dense.finalize(EPK_AUTO);
+            if (dense.representation() != EPK_DENSE) {
+                std::cerr << "ERROR: Small AUTO table did not select dense" << '\n' << std::flush;
+                return false;
+            }
+
+            class PositiveSpace : public Space {
+            public:
+                IntVarArray x;
+                PositiveSpace(const TupleSet& t) : x(*this, 2, 0, 1) {
+                    extensional(*this, x, t);
+                    branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
+                }
+                PositiveSpace(PositiveSpace& s) : Space(s) {
+                    x.update(*this, s.x);
+                }
+                Space*
+                copy() override {
+                    return new PositiveSpace(*this);
+                }
+            };
+
+            PositiveSpace* dense_root = new PositiveSpace(dense);
+            DFS<PositiveSpace> dense_engine(dense_root);
+            delete dense_root;
+            int dense_solutions = 0;
+            while (PositiveSpace* sol = dense_engine.next()) {
+                if (sol->x[0].val() != sol->x[1].val()) {
+                    delete sol;
+                    return false;
+                }
+                dense_solutions++;
+                delete sol;
+            }
+            if (dense_solutions != 2)
+                return false;
+
+            const int n = 5000;
+            TupleSet compressed(2);
+            for (int i = 0; i < n; i++)
+                compressed.add(IntArgs({i, (i * 7) % n}));
+            compressed.finalize(EPK_AUTO);
+            if (compressed.representation() != EPK_DENSE_COMPRESSED) {
+                std::cerr << "ERROR: Large AUTO table did not select compressed" << '\n' << std::flush;
+                return false;
+            }
+
+            class ReifiedSpace : public Space {
+            public:
+                IntVarArray x;
+                BoolVar b;
+                ReifiedSpace(const TupleSet& t, int n0) : x(*this, 2, 0, n0 - 1), b(*this, 0, 1) {
+                    extensional(*this, x, t, Reify(b, RM_EQV));
+                    rel(*this, b, IRT_EQ, 1);
+                    rel(*this, x[0], IRT_EQ, 3);
+                    branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
+                }
+                ReifiedSpace(ReifiedSpace& s) : Space(s) {
+                    x.update(*this, s.x);
+                    b.update(*this, s.b);
+                }
+                Space*
+                copy() override {
+                    return new ReifiedSpace(*this);
+                }
+            };
+
+            ReifiedSpace* compressed_root = new ReifiedSpace(compressed, n);
+            DFS<ReifiedSpace> compressed_engine(compressed_root);
+            delete compressed_root;
+            ReifiedSpace* compressed_sol = compressed_engine.next();
+            if (compressed_sol == nullptr)
+                return false;
+            const bool ok = (compressed_sol->x[0].val() == 3) && (compressed_sol->x[1].val() == ((3 * 7) % n));
+            delete compressed_sol;
+            ReifiedSpace* extra = compressed_engine.next();
+            const bool no_extra = (extra == nullptr);
+            delete extra;
+            return ok && no_extra;
+        }
+    };
+
+    /// Dense-compressed iterators should skip unsupported value gaps
+    class DenseCompressedTupleSetWideGap : public ::Test::Base {
+    public:
+        DenseCompressedTupleSetWideGap() : ::Test::Base("Int::Extensional::TupleSet::DenseCompressed::WideGap") {}
+
+        bool
+        run() override {
+            using namespace Gecode;
+
+            const int gap = 1000000000;
+            TupleSet ts(1);
+            ts.add(IntArgs({0})).add(IntArgs({gap}));
+            ts.finalize(EPK_DENSE_COMPRESSED);
+
+            class NegativeSpace : public Space {
+            public:
+                IntVar x;
+                NegativeSpace(const TupleSet& t, int gap0) : x(*this, 0, gap0) {
+                    extensional(*this, IntVarArgs({x}), t, false, IPL_DOM);
+                }
+                NegativeSpace(NegativeSpace& s) : Space(s) {
+                    x.update(*this, s.x);
+                }
+                Space*
+                copy() override {
+                    return new NegativeSpace(*this);
+                }
+            };
+
+            NegativeSpace* ns = new NegativeSpace(ts, gap);
+            if (ns->status() == SS_FAILED) {
+                delete ns;
+                return false;
+            }
+            if (ns->x.in(0) || ns->x.in(gap)) {
+                delete ns;
+                return false;
+            }
+            delete ns;
+
+            class ReifiedSpace : public Space {
+            public:
+                IntVar x;
+                BoolVar b;
+                ReifiedSpace(const TupleSet& t, int gap0, bool force) : x(*this, 0, gap0), b(*this, 0, 1) {
+                    extensional(*this, IntVarArgs({x}), t, true, Reify(b, RM_EQV), IPL_DOM);
+                    if (force) {
+                        rel(*this, b, IRT_EQ, 1);
+                        rel(*this, x, IRT_EQ, 0);
+                    }
+                }
+                ReifiedSpace(ReifiedSpace& s) : Space(s) {
+                    x.update(*this, s.x);
+                    b.update(*this, s.b);
+                }
+                Space*
+                copy() override {
+                    return new ReifiedSpace(*this);
+                }
+            };
+
+            ReifiedSpace* rs = new ReifiedSpace(ts, gap, false);
+            if (rs->status() == SS_FAILED) {
+                delete rs;
+                return false;
+            }
+            delete rs;
+
+            ReifiedSpace* rfs = new ReifiedSpace(ts, gap, true);
+            if (rfs->status() == SS_FAILED) {
+                delete rfs;
+                return false;
+            }
+            if (!rfs->x.assigned() || (rfs->x.val() != 0) || !rfs->b.assigned() || (rfs->b.val() != 1)) {
+                delete rfs;
+                return false;
+            }
+            delete rfs;
+
+            class PositiveDeltaSpace : public Space {
+            public:
+                IntVar x;
+                PositiveDeltaSpace(const TupleSet& t, int gap0) : x(*this, 0, gap0) {
+                    extensional(*this, IntVarArgs({x}), t, true, IPL_DOM);
+                    rel(*this, x, IRT_NQ, 0);
+                }
+                PositiveDeltaSpace(PositiveDeltaSpace& s) : Space(s) {
+                    x.update(*this, s.x);
+                }
+                Space*
+                copy() override {
+                    return new PositiveDeltaSpace(*this);
+                }
+            };
+
+            PositiveDeltaSpace* ps = new PositiveDeltaSpace(ts, gap);
+            if (ps->status() == SS_FAILED) {
+                delete ps;
+                return false;
+            }
+            if (!ps->x.assigned() || (ps->x.val() != gap)) {
+                delete ps;
+                return false;
+            }
+            delete ps;
+
+            return true;
+        }
+    };
+
+    /// %Test with large tuple set
+    class TupleSetLarge : public Test {
+    protected:
+        /// Whether the table is positive or negative
+        bool pos;
+        /// Support representation
+        Gecode::ExtensionalPropKind epk;
+        /// Tupleset used for testing
+        mutable Gecode::TupleSet t;
+
+    public:
+        /// Create and register test
+        TupleSetLarge(double prob, bool p, Gecode::ExtensionalPropKind epk0)
+            : Test(TestTags::sweep(),
+                   "Extensional::TupleSet::" + extensional_kind_name(epk0) + "::" + str(p) + "::Large", 5, 1, 5, true,
+                   Gecode::IPL_DOM),
+              pos(p), epk(epk0), t(5) {
+            using namespace Gecode;
+
+            CpltAssignment ass(5, IntSet(1, 5));
+            while (ass.has_more()) {
+                if (_rand(100) <= prob * 100) {
+                    IntArgs tuple(5);
+                    for (int i = 5; i--;)
+                        tuple[i] = ass[i];
+                    t.add(tuple);
+                }
+                ass.next(_rand);
+            }
+            t.finalize(epk);
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            using namespace Gecode;
+            for (int i = 0; i < t.tuples(); ++i) {
+                TupleSet::Tuple l = t[i];
+                bool same = true;
+                for (int j = 0; j < t.arity() && same; ++j)
+                    if (l[j] != x[j])
+                        same = false;
+                if (same)
+                    return pos;
+            }
+            return !pos;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            extensional(home, x, t, pos, ipl);
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
+            using namespace Gecode;
+            extensional(home, x, t, pos, r, ipl);
+        }
+    };
+
+    /// %Test with bool tuple set
+    class TupleSetBool : public Test {
+    protected:
+        /// Whether the table is positive or negative
+        bool pos;
+        /// Support representation
+        Gecode::ExtensionalPropKind epk;
+        /// Tupleset used for testing
+        mutable Gecode::TupleSet t;
+
+    public:
+        /// Create and register test
+        TupleSetBool(double prob, bool p, Gecode::ExtensionalPropKind epk0)
+            : Test(TestTags::sweep(),
+                   "Extensional::TupleSet::" + extensional_kind_name(epk0) + "::" + str(p) + "::Bool", 5, 0, 1, true),
+              pos(p), epk(epk0), t(5) {
+            using namespace Gecode;
+
+            CpltAssignment ass(5, IntSet(0, 1));
+            while (ass.has_more()) {
+                if (_rand(100) <= prob * 100) {
+                    IntArgs tuple(5);
+                    for (int i = 5; i--;)
+                        tuple[i] = ass[i];
+                    t.add(tuple);
+                }
+                ass.next(_rand);
+            }
+            t.finalize(epk);
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            using namespace Gecode;
+            for (int i = 0; i < t.tuples(); ++i) {
+                TupleSet::Tuple l = t[i];
+                bool same = true;
+                for (int j = 0; j < t.arity() && same; ++j)
+                    if (l[j] != x[j])
+                        same = false;
+                if (same)
+                    return pos;
+            }
+            return !pos;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            using namespace Gecode;
+            BoolVarArgs y(x.size());
+            for (int i = x.size(); i--;)
+                y[i] = channel(home, x[i]);
+            extensional(home, y, t, pos, ipl);
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
+            using namespace Gecode;
+            BoolVarArgs y(x.size());
+            for (int i = x.size(); i--;)
+                y[i] = channel(home, x[i]);
+            extensional(home, y, t, pos, r, ipl);
+        }
+    };
+
+    /// Help class to create and register tests with a fixed table size
+    class TupleSetTestSize {
+    public:
+        /// Perform creation and registration
+        TupleSetTestSize(int size, bool pos, Gecode::ExtensionalPropKind epk, Gecode::Support::RandomGenerator& rand) {
+            using namespace Gecode;
+            /// Find the arity needed for creating sufficient number of tuples
+            int arity = 2;
+            int n_tuples = 5 * 5;
+            while (n_tuples < size) {
+                arity++;
+                n_tuples *= 5;
+            }
+            /// Build TupleSet
+            TupleSet ts(arity);
+            CpltAssignment ass(arity, IntSet(0, 4));
+            for (int i = size; i--;) {
+                assert(ass.has_more());
+                IntArgs tuple(arity);
+                for (int j = arity; j--;)
+                    tuple[j] = ass[j];
+                ts.add(tuple);
+                ass.next(rand);
+            }
+            ts.finalize(epk);
+            assert(ts.tuples() == size);
+            // Create and register test
+            (void)new TupleSetTest(std::to_string(size), pos, IntSet(0, 4), ts, size <= 128, epk);
+        }
+    };
+
+    static Gecode::TupleSet
+    random_tuple_set(int n, int min, int max, double prob, Gecode::ExtensionalPropKind epk,
+                     Gecode::Support::RandomGenerator& rand) {
+        using namespace Gecode;
+        TupleSet t(n);
+        CpltAssignment ass(n, IntSet(min, max));
+        while (ass.has_more()) {
+            if (rand(100) <= prob * 100) {
+                IntArgs tuple(n);
+                for (int i = n; i--;)
+                    tuple[i] = ass[i];
+                t.add(tuple);
+            }
+            ass.next(rand);
+        }
+        t.finalize(epk);
+        return t;
+    }
+
+    /// Help class to create and register tests
+    class Create {
+    public:
+        /// Perform creation and registration
+        Create() {
+            // This code is executed on load, and thus a random number generator source from the supplied
+            // seed is not available.
+            // In order to get interesting data her, but still have deterministic and repeatable execution, a fixed seed
+            // is used for a local random number generator.
+            // TODO: Make this code later on test run, and use the supplied seed/random number generator.
+            Gecode::Support::RandomGenerator rand(42);
+
+            using namespace Gecode;
+            for (ExtensionalPropKind epk : {EPK_DENSE, EPK_SPARSE, EPK_DENSE_COMPRESSED}) {
+                for (bool pos : {false, true}) {
+                    {
+                        TupleSet ts(4);
+                        ts.add({2, 1, 2, 4})
+                            .add({2, 2, 1, 4})
+                            .add({4, 3, 4, 1})
+                            .add({1, 3, 2, 3})
+                            .add({3, 3, 3, 2})
+                            .add({5, 1, 4, 4})
+                            .add({2, 5, 1, 5})
+                            .add({4, 3, 5, 1})
+                            .add({1, 5, 2, 5})
+                            .add({5, 3, 3, 2})
+                            .finalize(epk);
+                        (void)new TupleSetTest("A", pos, IntSet(0, 6), ts, true, epk);
+                    }
+                    {
+                        TupleSet ts(4);
+                        ts.finalize(epk);
+                        (void)new TupleSetTest("Empty", pos, IntSet(1, 2), ts, true, epk);
+                    }
+                    {
+                        TupleSet ts(4);
+                        for (int n = 1024 * 16; n--;)
+                            ts.add({1, 2, 3, 4});
+                        ts.finalize(epk);
+                        (void)new TupleSetTest("Assigned", pos, IntSet(1, 4), ts, true, epk);
+                    }
+                    {
+                        TupleSet ts(1);
+                        ts.add({1}).add({2}).add({3}).finalize(epk);
+                        (void)new TupleSetTest("Single", pos, IntSet(-4, 4), ts, true, epk);
+                    }
+                    {
+                        int m = Gecode::Int::Limits::min;
+                        TupleSet ts(3);
+                        ts.add({m + 0, m + 1, m + 2})
+                            .add({m + 4, m + 1, m + 3})
+                            .add({m + 2, m + 3, m + 0})
+                            .add({m + 2, m + 3, m + 0})
+                            .add({m + 1, m + 2, m + 5})
+                            .add({m + 2, m + 3, m + 0})
+                            .add({m + 3, m + 6, m + 5})
+                            .finalize(epk);
+                        (void)new TupleSetTest("Min", pos, IntSet(m, m + 7), ts, true, epk);
+                    }
+                    {
+                        int m = Gecode::Int::Limits::max;
+                        TupleSet ts(3);
+                        ts.add({m - 0, m - 1, m - 2})
+                            .add({m - 4, m - 1, m - 3})
+                            .add({m - 2, m - 3, m - 0})
+                            .add({m - 2, m - 3, m - 0})
+                            .add({m - 1, m - 2, m - 5})
+                            .add({m - 2, m - 3, m - 0})
+                            .add({m - 3, m - 6, m - 5})
+                            .finalize(epk);
+                        (void)new TupleSetTest("Max", pos, IntSet(m - 7, m), ts, true, epk);
+                    }
+                    {
+                        int lower_limit = Gecode::Int::Limits::min;
+                        int upper_limit = Gecode::Int::Limits::max;
+                        TupleSet ts(3);
+                        ts.add({upper_limit - 0, lower_limit + 1, upper_limit - 2})
+                            .add({lower_limit + 4, upper_limit - 1, upper_limit - 3})
+                            .add({lower_limit + 2, upper_limit - 3, lower_limit + 0})
+                            .add({upper_limit - 2, upper_limit - 3, upper_limit - 0})
+                            .finalize(epk);
+                        (void)new TupleSetTest("MinMax", pos,
+                                               IntSet(IntArgs({lower_limit, lower_limit + 1, lower_limit + 4,
+                                                               upper_limit - 3, upper_limit - 2, upper_limit})),
+                                               ts, true, epk);
+                    }
+                    {
+                        TupleSet ts(7);
+                        const int triangle_tuples = (epk == EPK_DENSE) ? 10000 : 1000;
+                        for (int i = 0; i < triangle_tuples; i++) {
+                            IntArgs tuple(7);
+                            for (int j = 0; j < 7; j++) {
+                                tuple[j] = rand(j + 1);
+                            }
+                            ts.add(tuple);
+                        }
+                        ts.finalize(epk);
+                        (void)new RandomTupleSetTest("Triangle", pos, IntSet(0, 6), ts, epk);
+                    }
+                    {
+                        for (int i = 0; i <= 64 * 6; i += 32)
+                            (void)TupleSetTestSize(i, pos, epk, rand);
+                    }
+                    {
+                        const double prob_small = (epk == EPK_DENSE) ? 0.05 : 0.01;
+                        (void)new RandomTupleSetTest("Rand(10,-1,2)", pos, IntSet(-1, 2),
+                                                     random_tuple_set(10, -1, 2, prob_small, epk, rand), epk);
+                        if (epk == EPK_DENSE)
+                            (void)new RandomTupleSetTest("Rand(5,-10,10)", pos, IntSet(-10, 10),
+                                                         random_tuple_set(5, -10, 10, 0.05, epk, rand), epk);
+                    }
+                    {
+                        TupleSet t(5);
+                        CpltAssignment ass(4, IntSet(1, 4));
+                        while (ass.has_more()) {
+                            IntArgs tuple(5);
+                            tuple[4] = 1;
+                            for (int i = 4; i--;)
+                                tuple[i] = ass[i];
+                            t.add(tuple);
+                            ass.next(rand);
+                        }
+                        t.add({2, 2, 4, 3, 4});
+                        t.finalize(epk);
+                        (void)new TupleSetTest("FewLast", pos, IntSet(1, 4), t, false, epk);
+                    }
+                    {
+                        TupleSet t(4);
+                        CpltAssignment ass(4, IntSet(1, 6));
+                        while (ass.has_more()) {
+                            t.add({ass[0], 0, ass[1], ass[2]});
+                            ass.next(rand);
+                        }
+                        t.add({2, -1, 3, 4});
+                        t.finalize(epk);
+                        (void)new TupleSetTest("FewMiddle", pos, IntSet(-1, 6), t, false, epk);
+                    }
+                    if (epk == EPK_DENSE) {
+                        TupleSet t(10);
+                        CpltAssignment ass(9, IntSet(1, 4));
+                        while (ass.has_more()) {
+                            if (rand(100) <= 0.25 * 100) {
+                                IntArgs tuple(10);
+                                tuple[0] = 2;
+                                for (int i = 9; i--;)
+                                    tuple[i + 1] = ass[i];
+                                t.add(tuple);
+                            }
+                            ass.next(rand);
+                        }
+                        t.add({1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
+                        t.add({1, 2, 3, 4, 4, 2, 1, 2, 3, 3});
+                        t.finalize(epk);
+                        (void)new RandomTupleSetTest("FewHuge", pos, IntSet(1, 4), t, epk);
+                    }
+                    (void)new TupleSetBase(pos, epk);
+                    (void)new TupleSetLarge(0.05, pos, epk);
+                    (void)new TupleSetBool(0.3, pos, epk);
+                }
+            }
+        }
+    };
+
+    Create c;
+
+    RegSimpleA ra;
+    RegSimpleB rb;
+    RegSimpleC rc;
+
+    RegDistinct rd;
+
+    RegRoland rr1(1);
+    RegRoland rr2(2);
+    RegRoland rr3(3);
+    RegRoland rr4(4);
+
+    RegSharedA rsa;
+    RegSharedB rsb;
+    RegSharedC rsc;
+    RegSharedD rsd;
+
+    RegEmptyDFA redfa;
+    RegEmptyREG rereg;
+
+    RegOpt ro0(CHAR_MAX - 1);
+    RegOpt ro1(CHAR_MAX);
+    RegOpt ro2((UCHAR_MAX - 1));
+    RegOpt ro3((UCHAR_MAX));
+    RegOpt ro4(SHRT_MAX - 1);
+    RegOpt ro5(SHRT_MAX);
+    RegOpt ro6((USHRT_MAX - 1));
+    RegOpt ro7((USHRT_MAX));
+
+    RegAcyclicReconvergence reg_sparse_acyclic_reconvergence;
+    RegCyclicFrontier reg_sparse_cyclic_frontier;
+    RegSparseStateNumbering reg_sparse_state_numbering;
+    RegDuplicateFinals reg_duplicate_finals_dense_minimize(true, false);
+    RegDuplicateFinals reg_duplicate_finals_dense_keep(false, false);
+    RegDuplicateFinals reg_duplicate_finals_sparse_minimize(true, true);
+    RegDuplicateFinals reg_duplicate_finals_sparse_keep(false, true);
+    RegBoolCyclicFrontier reg_sparse_bool_cyclic_frontier;
+    RegRandomDifferential reg_sparse_random_differential_1(1);
+    RegRandomDifferential reg_sparse_random_differential_2(2);
+    RegRandomDifferential reg_sparse_random_differential_3(3);
+    RegRandomDifferential reg_sparse_random_differential_4(4);
+    RegRandomNFADifferential reg_sparse_random_nfa_differential_1(1);
+    RegRandomNFADifferential reg_sparse_random_nfa_differential_2(2);
+    RegRandomNFADifferential reg_sparse_random_nfa_differential_3(3);
+    RegRandomNFADifferential reg_sparse_random_nfa_differential_4(4);
+    RegNFAPrefix reg_sparse_nfa_prefix_int(false);
+    RegNFAPrefix reg_sparse_nfa_prefix_bool(true);
+    RegPositionDomainPruning reg_sparse_position_domain_pruning;
+    RegNoAcceptingPath reg_sparse_no_accepting_path;
+    RegTerminalMerged reg_sparse_terminal_merged;
+    RegTerminalUnmerged reg_sparse_terminal_unmerged;
+    OpenRegularIncremental open_regular_incremental;
+    OpenRegularLengthWake open_regular_length_wake;
+    OpenRegularMaxLength open_regular_max_length;
+    OpenRegularBackward open_regular_backward;
+    OpenRegularDomainWake open_regular_domain_wake;
+    OpenRegularClone open_regular_clone;
+    OpenRegularEmpty open_regular_empty_accept(OpenRegularEmpty::Kind::ACCEPT);
+    OpenRegularEmpty open_regular_empty_reject(OpenRegularEmpty::Kind::REJECT);
+    OpenRegularEmpty open_regular_no_finals(OpenRegularEmpty::Kind::NO_FINALS);
+    OpenRegularClosed open_regular_closed;
+    DFACompare dfa_compare;
+
+    /// Exhaustive positive, negative, and reified sparse-table semantics.
+    class CreateSparse {
+    public:
+        CreateSparse() {
+            using namespace Gecode;
+            TupleSet equal(2), zero(2), full(2), first_zero(2);
+            equal.add(IntArgs({0, 0})).add(IntArgs({1, 1})).finalize(EPK_SPARSE);
+            zero.add(IntArgs({0, 0})).finalize(EPK_SPARSE);
+            full.add(IntArgs({0, 0}))
+                .add(IntArgs({0, 1}))
+                .add(IntArgs({1, 0}))
+                .add(IntArgs({1, 1}))
+                .finalize(EPK_SPARSE);
+            first_zero.add(IntArgs({0, 0})).add(IntArgs({0, 1})).finalize(EPK_SPARSE);
+            for (bool positive : {false, true}) {
+                (void)new TupleSetTest("Equal", positive, IntSet(0, 1), equal, false, EPK_SPARSE, TestTags::standard());
+                (void)new TupleSetTest("Zero", positive, IntSet(0, 1), zero, false, EPK_SPARSE, TestTags::standard());
+                (void)new TupleSetTest("Full", positive, IntSet(0, 1), full, false, EPK_SPARSE, TestTags::standard());
+                (void)new TupleSetTest("FirstZero", positive, IntSet(0, 1), first_zero, false, EPK_SPARSE,
+                                       TestTags::standard());
+            }
+        }
+    } create_sparse;
+
+    SparseTupleSet sparse_tuple_set_unary("Unary", 1, 2000);
+    SparseTupleSet sparse_tuple_set_ternary("Ternary", 3, 1500);
+    SparseTupleSet sparse_tuple_set_high_arity("HighArity", 6, 1000);
+    TupleSetNullary sparse_tuple_set_nullary(Gecode::EPK_SPARSE, true);
+    TupleSetNullary sparse_tuple_set_empty(Gecode::EPK_SPARSE, false);
+    TupleSetNullary dense_tuple_set_nullary(Gecode::EPK_DENSE, true);
+    TupleSetNullary dense_tuple_set_empty(Gecode::EPK_DENSE, false);
+    TupleSetNullary dense_compressed_tuple_set_nullary(Gecode::EPK_DENSE_COMPRESSED, true);
+    TupleSetNullary dense_compressed_tuple_set_empty(Gecode::EPK_DENSE_COMPRESSED, false);
+    SparseTupleSetIncremental sparse_tuple_set_incremental_delta("Delta", 0);
+    SparseTupleSetIncremental sparse_tuple_set_incremental_assign("Assign", 1);
+    SparseTupleSetIncremental sparse_tuple_set_incremental_bool("Bool", 2);
+    SparseTupleSetDisabledFailure sparse_tuple_set_disabled_failure;
+    SparseTupleSetWideDelta sparse_tuple_set_wide_delta;
+    TupleSetSingleRepresentation tuple_set_single_representation;
+    TupleSetSupportOffsetBoundary tuple_set_support_offset_boundary;
+    TupleSetTerminalFinalizationFailure tuple_set_terminal_failure;
+    TupleSetDFARepresentation tuple_set_dfa_representation;
+    TupleSetCompare tuple_set_compare;
+    BitSetDataCompare bit_set_data_compare;
+    TupleSetDisabledClone tuple_set_disabled_clone;
+    TupleSetAutoDefaultDispatch tuple_set_auto_default_dispatch;
+    DenseCompressedTupleSetWideGap dense_compressed_tuple_set_wide_gap;
+    //@}
+
+} // namespace Test::Int::Extensional
 // STATISTICS: test-int

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,676 +30,647 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
-  /*
-   * Array of scale Boolean views
-   *
-   */
-  forceinline
-  ScaleBoolArray::ScaleBoolArray(void) {}
-  forceinline
-  ScaleBoolArray::ScaleBoolArray(Space& home, int n) {
-    if (n > 0) {
-      _fst = home.alloc<ScaleBool>(n);
-      _lst = _fst+n;
-    } else {
-      _fst = _lst = nullptr;
-    }
-  }
-  forceinline void
-  ScaleBoolArray::subscribe(Space& home, Propagator& p) {
-    for (ScaleBool* f = _fst; f < _lst; f++)
-      f->x.subscribe(home,p,PC_BOOL_VAL);
-  }
-  forceinline void
-  ScaleBoolArray::cancel(Space& home, Propagator& p) {
-    for (ScaleBool* f = _fst; f < _lst; f++)
-      f->x.cancel(home,p,PC_BOOL_VAL);
-  }
-  forceinline void
-  ScaleBoolArray::reschedule(Space& home, Propagator& p) {
-    for (ScaleBool* f = _fst; f < _lst; f++)
-      f->x.reschedule(home,p,PC_BOOL_VAL);
-  }
-  forceinline void
-  ScaleBoolArray::update(Space& home, ScaleBoolArray& sba) {
-    int n = static_cast<int>(sba._lst - sba._fst);
-    if (n > 0) {
-      _fst = home.alloc<ScaleBool>(n);
-      _lst = _fst+n;
-      for (int i=0; i<n; i++) {
-        _fst[i].a = sba._fst[i].a;
-        _fst[i].x.update(home,sba._fst[i].x);
-      }
-    } else {
-      _fst = _lst = nullptr;
-    }
-  }
-  forceinline ScaleBool*
-  ScaleBoolArray::fst(void) const {
-    return _fst;
-  }
-  forceinline ScaleBool*
-  ScaleBoolArray::lst(void) const {
-    return _lst;
-  }
-  forceinline void
-  ScaleBoolArray::fst(ScaleBool* f) {
-    _fst = f;
-  }
-  forceinline void
-  ScaleBoolArray::lst(ScaleBool* l) {
-    _lst = l;
-  }
-  forceinline bool
-  ScaleBoolArray::empty(void) const {
-    return _fst == _lst;
-  }
-  forceinline int
-  ScaleBoolArray::size(void) const {
-    return static_cast<int>(_lst - _fst);
-  }
-  forceinline bool
-  ScaleBoolArray::ScaleDec::operator ()(const ScaleBool& x,
-                                       const ScaleBool& y) {
-    return x.a > y.a;
-  }
-
-  inline void
-  ScaleBoolArray::sort(void) {
-    ScaleDec scale_dec;
-    Support::quicksort<ScaleBool,ScaleDec>(fst(), size(), scale_dec);
-  }
-
-
-  /*
-   * Empty array of scale Boolean views
-   *
-   */
-  forceinline
-  EmptyScaleBoolArray::EmptyScaleBoolArray(void) {}
-  forceinline
-  EmptyScaleBoolArray::EmptyScaleBoolArray(Space&, int) {}
-  forceinline void
-  EmptyScaleBoolArray::subscribe(Space&, Propagator&) {}
-  forceinline void
-  EmptyScaleBoolArray::cancel(Space&, Propagator&) {}
-  forceinline void
-  EmptyScaleBoolArray::reschedule(Space&, Propagator&) {}
-  forceinline void
-  EmptyScaleBoolArray::update(Space&, EmptyScaleBoolArray&) {}
-  forceinline ScaleBool*
-  EmptyScaleBoolArray::fst(void) const { return nullptr; }
-  forceinline ScaleBool*
-  EmptyScaleBoolArray::lst(void) const { return nullptr; }
-  forceinline void
-  EmptyScaleBoolArray::fst(ScaleBool*) {}
-  forceinline void
-  EmptyScaleBoolArray::lst(ScaleBool*) {}
-  forceinline bool
-  EmptyScaleBoolArray::empty(void) const { return true; }
-  forceinline int
-  EmptyScaleBoolArray::size(void) const { return 0; }
-  forceinline void
-  EmptyScaleBoolArray::sort(void) {}
-
-
-  /*
-   * Base-class for Boolean constraints with coefficients
-   *
-   */
-
-  template<class SBAP, class SBAN, class VX, PropCond pcx>
-  forceinline
-  LinBoolScale<SBAP,SBAN,VX,pcx>::LinBoolScale(Home home,
-                                               SBAP& p0, SBAN& n0,
-                                               VX x0, int c0)
-    : Propagator(home), p(p0), n(n0), x(x0), c(c0) {
-    x.subscribe(home,*this,pcx);
-    p.subscribe(home,*this);
-    n.subscribe(home,*this);
-  }
-
-  template<class SBAP, class SBAN, class VX, PropCond pcx>
-  PropCost
-  LinBoolScale<SBAP,SBAN,VX,pcx>::cost(const Space&,
-                                       const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LO, p.size() + n.size());
-  }
-
-  template<class SBAP, class SBAN, class VX, PropCond pcx>
-  void
-  LinBoolScale<SBAP,SBAN,VX,pcx>::reschedule(Space& home) {
-    x.reschedule(home,*this,pcx);
-    p.reschedule(home,*this);
-    n.reschedule(home,*this);
-  }
-
-  template<class SBAP, class SBAN, class VX, PropCond pcx>
-  forceinline size_t
-  LinBoolScale<SBAP,SBAN,VX,pcx>::dispose(Space& home) {
-    x.cancel(home,*this,pcx);
-    p.cancel(home,*this);
-    n.cancel(home,*this);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-  template<class SBAP, class SBAN, class VX, PropCond pcx>
-  forceinline
-  LinBoolScale<SBAP,SBAN,VX,pcx>::LinBoolScale(Space& home,
-                                               Propagator& pr,
-                                               SBAP& p0, SBAN& n0,
-                                               VX x0, int c0)
-    : Propagator(home,pr), c(c0) {
-    x.update(home,x0);
-    p.update(home,p0);
-    n.update(home,n0);
-  }
-
-  /*
-   * Boolean equality with coefficients
-   *
-   */
-
-  template<class SBAP, class SBAN, class VX>
-  forceinline
-  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Home home,
-                                         SBAP& p, SBAN& n,
-                                         VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,p,n,x,c) {}
-
-  template<class SBAP, class SBAN, class VX>
-  forceinline
-  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space& home,
-                                         Propagator& pr,
-                                         SBAP& p, SBAN& n,
-                                         VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,pr,p,n,x,c) {}
-
-  template<class SBAP, class SBAN, class VX>
-  Actor*
-  EqBoolScale<SBAP,SBAN,VX>::copy(Space& home) {
-    if (p.empty()) {
-      EmptyScaleBoolArray ep;
-      if (x.assigned()) {
-        ZeroIntView z;
-        return new (home) EqBoolScale<EmptyScaleBoolArray,SBAN,ZeroIntView>
-          (home,*this,ep,n,z,c+x.val());
-      } else {
-        return new (home) EqBoolScale<EmptyScaleBoolArray,SBAN,VX>
-          (home,*this,ep,n,x,c);
-      }
-    } else if (n.empty()) {
-      EmptyScaleBoolArray en;
-      if (x.assigned()) {
-        ZeroIntView z;
-        return new (home) EqBoolScale<SBAP,EmptyScaleBoolArray,ZeroIntView>
-          (home,*this,p,en,z,c+x.val());
-      } else {
-        return new (home) EqBoolScale<SBAP,EmptyScaleBoolArray,VX>
-          (home,*this,p,en,x,c);
-      }
-    } else {
-      return new (home) EqBoolScale<SBAP,SBAN,VX>(home,*this,p,n,x,c);
-    }
-  }
-
-  template<class SBAP, class SBAN, class VX>
-  ExecStatus
-  EqBoolScale<SBAP,SBAN,VX>::propagate(Space& home, const ModEventDelta& med) {
-    int sl_p = 0; // Lower bound, computed positive
-    int su_n = 0; // Upper bound, computed negative
-    if (BoolView::me(med) == ME_BOOL_VAL) {
-      // Eliminate assigned positive views while keeping order
-      {
-        // Skip not assigned views
-        ScaleBool* f = p.fst();
-        ScaleBool* l = p.lst();
-        while ((f < l) && f->x.none()) {
-          su_n += f->a; f++;
+    /*
+     * Array of scale Boolean views
+     *
+     */
+    forceinline
+    ScaleBoolArray::ScaleBoolArray(Space& home, int n) {
+        if (n > 0) {
+            _fst = home.alloc<ScaleBool>(n);
+            _lst = _fst + n;
+        } else {
+            _fst = _lst = nullptr;
         }
-        // Copy unassigned views to t
-        ScaleBool* t = f;
-        while (f < l) {
-          if (f->x.one()) {
-            c -= f->a;
-          } else if (f->x.none()) {
-            su_n += f->a; *t = *f; t++;
-          }
-          f++;
+    }
+    forceinline void
+    ScaleBoolArray::subscribe(Space& home, Propagator& p) {
+        for (ScaleBool* f = _fst; f < _lst; f++)
+            f->x.subscribe(home, p, PC_BOOL_VAL);
+    }
+    forceinline void
+    ScaleBoolArray::cancel(Space& home, Propagator& p) {
+        for (ScaleBool* f = _fst; f < _lst; f++)
+            f->x.cancel(home, p, PC_BOOL_VAL);
+    }
+    forceinline void
+    ScaleBoolArray::reschedule(Space& home, Propagator& p) {
+        for (ScaleBool* f = _fst; f < _lst; f++)
+            f->x.reschedule(home, p, PC_BOOL_VAL);
+    }
+    forceinline void
+    ScaleBoolArray::update(Space& home, ScaleBoolArray& sba) {
+        int n = static_cast<int>(sba._lst - sba._fst);
+        if (n > 0) {
+            _fst = home.alloc<ScaleBool>(n);
+            _lst = _fst + n;
+            for (int i = 0; i < n; i++) {
+                _fst[i].a = sba._fst[i].a;
+                _fst[i].x.update(home, sba._fst[i].x);
+            }
+        } else {
+            _fst = _lst = nullptr;
         }
-        p.lst(t);
-      }
-      // Eliminate assigned negative views while keeping order
-      {
-        // Skip not assigned views
-        ScaleBool* f = n.fst();
-        ScaleBool* l = n.lst();
-        while ((f < l) && f->x.none()) {
-          sl_p += f->a; f++;
-        }
-        // Copy unassigned views to t
-        ScaleBool* t = f;
-        while (f < l) {
-          if (f->x.one()) {
-            c += f->a;
-          } else if (f->x.none()) {
-            sl_p += f->a; *t = *f; t++;
-          }
-          f++;
-        }
-        n.lst(t);
-      }
-    } else {
-      for (ScaleBool* f=p.fst(); f<p.lst(); f++)
-        su_n += f->a;
-      for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-        sl_p += f->a;
+    }
+    forceinline ScaleBool*
+    ScaleBoolArray::fst() const {
+        return _fst;
+    }
+    forceinline ScaleBool*
+    ScaleBoolArray::lst() const {
+        return _lst;
+    }
+    forceinline void
+    ScaleBoolArray::fst(ScaleBool* f) {
+        _fst = f;
+    }
+    forceinline void
+    ScaleBoolArray::lst(ScaleBool* l) {
+        _lst = l;
+    }
+    forceinline bool
+    ScaleBoolArray::empty() const {
+        return _fst == _lst;
+    }
+    forceinline int
+    ScaleBoolArray::size() const {
+        return static_cast<int>(_lst - _fst);
+    }
+    forceinline bool
+    ScaleBoolArray::ScaleDec::operator()(const ScaleBool& x, const ScaleBool& y) {
+        return x.a > y.a;
     }
 
-    if (p.empty() && n.empty()) {
-      GECODE_ME_CHECK(x.eq(home,-c));
-      return home.ES_SUBSUMED(*this);
+    inline void
+    ScaleBoolArray::sort() {
+        ScaleDec scale_dec;
+        Support::quicksort<ScaleBool, ScaleDec>(fst(), size(), scale_dec);
     }
 
-    sl_p += x.max() + c;
-    su_n -= x.min() + c;
+    /*
+     * Empty array of scale Boolean views
+     *
+     */
+    forceinline
+    EmptyScaleBoolArray::EmptyScaleBoolArray(Space&, int) {}
+    forceinline void
+    EmptyScaleBoolArray::subscribe(Space&, Propagator&) {}
+    forceinline void
+    EmptyScaleBoolArray::cancel(Space&, Propagator&) {}
+    forceinline void
+    EmptyScaleBoolArray::reschedule(Space&, Propagator&) {}
+    forceinline void
+    EmptyScaleBoolArray::update(Space&, EmptyScaleBoolArray&) {}
+    forceinline ScaleBool*
+    EmptyScaleBoolArray::fst() const {
+        return nullptr;
+    }
+    forceinline ScaleBool*
+    EmptyScaleBoolArray::lst() const {
+        return nullptr;
+    }
+    forceinline void
+    EmptyScaleBoolArray::fst(ScaleBool*) {}
+    forceinline void
+    EmptyScaleBoolArray::lst(ScaleBool*) {}
+    forceinline bool
+    EmptyScaleBoolArray::empty() const {
+        return true;
+    }
+    forceinline int
+    EmptyScaleBoolArray::size() const {
+        return 0;
+    }
+    forceinline void
+    EmptyScaleBoolArray::sort() {}
 
-    const int MOD_SL = 1 << 0;
-    const int MOD_SU = 1 << 1;
+    /*
+     * Base-class for Boolean constraints with coefficients
+     *
+     */
 
-    int mod = MOD_SL | MOD_SU;
+    template <class SBAP, class SBAN, class VX, PropCond pcx>
+    forceinline
+    LinBoolScale<SBAP, SBAN, VX, pcx>::LinBoolScale(Home home, SBAP& p0, SBAN& n0, VX x0, int c0)
+        : Propagator(home), p(p0), n(n0), x(x0), c(c0) {
+        x.subscribe(home, *this, pcx);
+        p.subscribe(home, *this);
+        n.subscribe(home, *this);
+    }
 
-    do {
-      if ((mod & MOD_SL) != 0) {
-        mod -= MOD_SL;
-        // Propagate lower bound for positive Boolean views
+    template <class SBAP, class SBAN, class VX, PropCond pcx>
+    PropCost
+    LinBoolScale<SBAP, SBAN, VX, pcx>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::linear(PropCost::LO, p.size() + n.size());
+    }
+
+    template <class SBAP, class SBAN, class VX, PropCond pcx>
+    void
+    LinBoolScale<SBAP, SBAN, VX, pcx>::reschedule(Space& home) {
+        x.reschedule(home, *this, pcx);
+        p.reschedule(home, *this);
+        n.reschedule(home, *this);
+    }
+
+    template <class SBAP, class SBAN, class VX, PropCond pcx>
+    forceinline size_t
+    LinBoolScale<SBAP, SBAN, VX, pcx>::dispose(Space& home) {
+        x.cancel(home, *this, pcx);
+        p.cancel(home, *this);
+        n.cancel(home, *this);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
+
+    template <class SBAP, class SBAN, class VX, PropCond pcx>
+    forceinline
+    LinBoolScale<SBAP, SBAN, VX, pcx>::LinBoolScale(Space& home, Propagator& pr, SBAP& p0, SBAN& n0, VX x0, int c0)
+        : Propagator(home, pr), c(c0) {
+        x.update(home, x0);
+        p.update(home, p0);
+        n.update(home, n0);
+    }
+
+    /*
+     * Boolean equality with coefficients
+     *
+     */
+
+    template <class SBAP, class SBAN, class VX>
+    forceinline
+    EqBoolScale<SBAP, SBAN, VX>::EqBoolScale(Home home, SBAP& p, SBAN& n, VX x, int c)
+        : LinBoolScale<SBAP, SBAN, VX, PC_INT_BND>(home, p, n, x, c) {}
+
+    template <class SBAP, class SBAN, class VX>
+    forceinline
+    EqBoolScale<SBAP, SBAN, VX>::EqBoolScale(Space& home, Propagator& pr, SBAP& p, SBAN& n, VX x, int c)
+        : LinBoolScale<SBAP, SBAN, VX, PC_INT_BND>(home, pr, p, n, x, c) {}
+
+    template <class SBAP, class SBAN, class VX>
+    Actor*
+    EqBoolScale<SBAP, SBAN, VX>::copy(Space& home) {
+        if (p.empty()) {
+            EmptyScaleBoolArray ep;
+            if (x.assigned()) {
+                ZeroIntView z;
+                return new (home)
+                    EqBoolScale<EmptyScaleBoolArray, SBAN, ZeroIntView>(home, *this, ep, n, z, c + x.val());
+            }
+            return new (home) EqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
+        }
+        if (n.empty()) {
+            EmptyScaleBoolArray en;
+            if (x.assigned()) {
+                ZeroIntView z;
+                return new (home)
+                    EqBoolScale<SBAP, EmptyScaleBoolArray, ZeroIntView>(home, *this, p, en, z, c + x.val());
+            }
+            return new (home) EqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
+        }
+        return new (home) EqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
+    }
+
+    template <class SBAP, class SBAN, class VX>
+    ExecStatus
+    EqBoolScale<SBAP, SBAN, VX>::propagate(Space& home, const ModEventDelta& med) {
+        int sl_p = 0; // Lower bound, computed positive
+        int su_n = 0; // Upper bound, computed negative
+        if (BoolView::me(med) == ME_BOOL_VAL) {
+            // Eliminate assigned positive views while keeping order
+            {
+                // Skip not assigned views
+                ScaleBool* f = p.fst();
+                ScaleBool* l = p.lst();
+                while ((f < l) && f->x.none()) {
+                    su_n += f->a;
+                    f++;
+                }
+                // Copy unassigned views to t
+                ScaleBool* t = f;
+                while (f < l) {
+                    if (f->x.one()) {
+                        c -= f->a;
+                    } else if (f->x.none()) {
+                        su_n += f->a;
+                        *t = *f;
+                        t++;
+                    }
+                    f++;
+                }
+                p.lst(t);
+            }
+            // Eliminate assigned negative views while keeping order
+            {
+                // Skip not assigned views
+                ScaleBool* f = n.fst();
+                ScaleBool* l = n.lst();
+                while ((f < l) && f->x.none()) {
+                    sl_p += f->a;
+                    f++;
+                }
+                // Copy unassigned views to t
+                ScaleBool* t = f;
+                while (f < l) {
+                    if (f->x.one()) {
+                        c += f->a;
+                    } else if (f->x.none()) {
+                        sl_p += f->a;
+                        *t = *f;
+                        t++;
+                    }
+                    f++;
+                }
+                n.lst(t);
+            }
+        } else {
+            for (ScaleBool* f = p.fst(); f < p.lst(); f++)
+                su_n += f->a;
+            for (ScaleBool* f = n.fst(); f < n.lst(); f++)
+                sl_p += f->a;
+        }
+
+        if (p.empty() && n.empty()) {
+            GECODE_ME_CHECK(x.eq(home, -c));
+            return home.ES_SUBSUMED(*this);
+        }
+
+        sl_p += x.max() + c;
+        su_n -= x.min() + c;
+
+        const int mod_sl = 1 << 0;
+        const int mod_su = 1 << 1;
+
+        int mod = mod_sl | mod_su;
+
+        do {
+            if ((mod & mod_sl) != 0) {
+                mod -= mod_sl;
+                // Propagate lower bound for positive Boolean views
+                {
+                    ScaleBool* f = p.fst();
+                    for (ScaleBool* l = p.lst(); (f < l) && (f->a > sl_p); f++) {
+                        GECODE_ME_CHECK(f->x.zero_none(home));
+                        su_n -= f->a;
+                    }
+                    if (f > p.fst()) {
+                        p.fst(f);
+                        mod |= mod_su;
+                    }
+                }
+                // Propagate lower bound for negative Boolean views
+                {
+                    ScaleBool* f = n.fst();
+                    for (ScaleBool* l = n.lst(); (f < l) && (f->a > sl_p); f++) {
+                        GECODE_ME_CHECK(f->x.one_none(home));
+                        c += f->a;
+                        su_n -= f->a;
+                    }
+                    if (f > n.fst()) {
+                        n.fst(f);
+                        mod |= mod_su;
+                    }
+                }
+                // Propagate lower bound for integer view
+                {
+                    const int x_min = x.min();
+                    ModEvent me = x.gq(home, x.max() - sl_p);
+                    if (me_failed(me))
+                        return ES_FAILED;
+                    if (me_modified(me)) {
+                        su_n -= x.min() - x_min;
+                        mod |= mod_su;
+                    }
+                }
+            }
+            if ((mod & mod_su) != 0) {
+                mod -= mod_su;
+                // Propagate upper bound for positive Boolean views
+                {
+                    ScaleBool* f = p.fst();
+                    for (ScaleBool* l = p.lst(); (f < l) && (f->a > su_n); f++) {
+                        GECODE_ME_CHECK(f->x.one_none(home));
+                        c -= f->a;
+                        sl_p -= f->a;
+                    }
+                    if (f > p.fst()) {
+                        p.fst(f);
+                        mod |= mod_sl;
+                        ;
+                    }
+                }
+                // Propagate upper bound for negative Boolean views
+                {
+                    ScaleBool* f = n.fst();
+                    for (ScaleBool* l = n.lst(); (f < l) && (f->a > su_n); f++) {
+                        GECODE_ME_CHECK(f->x.zero_none(home));
+                        sl_p -= f->a;
+                    }
+                    if (f > n.fst()) {
+                        n.fst(f);
+                        mod |= mod_sl;
+                        ;
+                    }
+                }
+                // Propagate upper bound for integer view
+                {
+                    const int x_max = x.max();
+                    ModEvent me = x.lq(home, x.min() + su_n);
+                    if (me_failed(me))
+                        return ES_FAILED;
+                    if (me_modified(me)) {
+                        sl_p += x.max() - x_max;
+                        mod |= mod_sl;
+                        ;
+                    }
+                }
+            }
+        } while (mod != 0);
+
+        return (sl_p == -su_n) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    }
+
+    template <class SBAP, class SBAN, class VX>
+    ExecStatus
+    EqBoolScale<SBAP, SBAN, VX>::post(Home home, SBAP& p, SBAN& n, VX x, int c) {
+        p.sort();
+        n.sort();
+        if (p.empty()) {
+            EmptyScaleBoolArray ep;
+            (void)new (home) EqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, ep, n, x, c);
+        } else if (n.empty()) {
+            EmptyScaleBoolArray en;
+            (void)new (home) EqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, p, en, x, c);
+        } else {
+            (void)new (home) EqBoolScale<SBAP, SBAN, VX>(home, p, n, x, c);
+        }
+        return ES_OK;
+    }
+
+    /*
+     * Boolean inequality with coefficients
+     *
+     */
+
+    template <class SBAP, class SBAN, class VX>
+    forceinline
+    LqBoolScale<SBAP, SBAN, VX>::LqBoolScale(Home home, SBAP& p, SBAN& n, VX x, int c)
+        : LinBoolScale<SBAP, SBAN, VX, PC_INT_BND>(home, p, n, x, c) {}
+
+    template <class SBAP, class SBAN, class VX>
+    forceinline
+    LqBoolScale<SBAP, SBAN, VX>::LqBoolScale(Space& home, Propagator& pr, SBAP& p, SBAN& n, VX x, int c)
+        : LinBoolScale<SBAP, SBAN, VX, PC_INT_BND>(home, pr, p, n, x, c) {}
+
+    template <class SBAP, class SBAN, class VX>
+    Actor*
+    LqBoolScale<SBAP, SBAN, VX>::copy(Space& home) {
+        if (p.empty()) {
+            EmptyScaleBoolArray ep;
+            if (x.assigned()) {
+                ZeroIntView z;
+                return new (home)
+                    LqBoolScale<EmptyScaleBoolArray, SBAN, ZeroIntView>(home, *this, ep, n, z, c + x.val());
+            }
+            return new (home) LqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
+        }
+        if (n.empty()) {
+            EmptyScaleBoolArray en;
+            if (x.assigned()) {
+                ZeroIntView z;
+                return new (home)
+                    LqBoolScale<SBAP, EmptyScaleBoolArray, ZeroIntView>(home, *this, p, en, z, c + x.val());
+            }
+            return new (home) LqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
+        }
+        return new (home) LqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
+    }
+
+    template <class SBAP, class SBAN, class VX>
+    ExecStatus
+    LqBoolScale<SBAP, SBAN, VX>::propagate(Space& home, const ModEventDelta& med) {
+        int sl = 0;
+        if (BoolView::me(med) == ME_BOOL_VAL) {
+            // Eliminate assigned positive views while keeping order
+            {
+                // Skip not assigned views
+                ScaleBool* f = p.fst();
+                ScaleBool* l = p.lst();
+                while ((f < l) && f->x.none())
+                    f++;
+                // Copy unassigned views to t
+                ScaleBool* t = f;
+                while (f < l) {
+                    if (f->x.one()) {
+                        c -= f->a;
+                    } else if (f->x.none()) {
+                        *t = *f;
+                        t++;
+                    }
+                    f++;
+                }
+                p.lst(t);
+            }
+            // Eliminate assigned negative views while keeping order
+            {
+                // Skip not assigned views
+                ScaleBool* f = n.fst();
+                ScaleBool* l = n.lst();
+                while ((f < l) && f->x.none()) {
+                    sl += f->a;
+                    f++;
+                }
+                // Copy unassigned views to t
+                ScaleBool* t = f;
+                while (f < l) {
+                    if (f->x.one()) {
+                        c += f->a;
+                    } else if (f->x.none()) {
+                        sl += f->a;
+                        *t = *f;
+                        t++;
+                    }
+                    f++;
+                }
+                n.lst(t);
+            }
+        } else {
+            for (ScaleBool* f = n.fst(); f < n.lst(); f++)
+                sl += f->a;
+        }
+
+        sl += x.max() + c;
+
+        // Propagate upper bound for positive Boolean views
         {
-          ScaleBool* f=p.fst();
-          for (ScaleBool* l=p.lst(); (f < l) && (f->a > sl_p); f++) {
-            GECODE_ME_CHECK(f->x.zero_none(home));
-            su_n -= f->a;
-          }
-          if (f > p.fst()) {
-            p.fst(f); mod |= MOD_SU;
-          }
+            ScaleBool* f = p.fst();
+            for (ScaleBool* l = p.lst(); (f < l) && (f->a > sl); f++)
+                GECODE_ME_CHECK(f->x.zero_none(home));
+            p.fst(f);
         }
         // Propagate lower bound for negative Boolean views
         {
-          ScaleBool* f=n.fst();
-          for (ScaleBool* l=n.lst(); (f < l) && (f->a > sl_p); f++) {
-            GECODE_ME_CHECK(f->x.one_none(home)); c += f->a;
-            su_n -= f->a;
-          }
-          if (f > n.fst()) {
-            n.fst(f); mod |= MOD_SU;
-          }
+            ScaleBool* f = n.fst();
+            for (ScaleBool* l = n.lst(); (f < l) && (f->a > sl); f++) {
+                c += f->a;
+                GECODE_ME_CHECK(f->x.one_none(home));
+            }
+            n.fst(f);
         }
+        ExecStatus es = ES_FIX;
         // Propagate lower bound for integer view
         {
-          const int x_min = x.min();
-          ModEvent me = x.gq(home,x.max() - sl_p);
-          if (me_failed(me))
-            return ES_FAILED;
-          if (me_modified(me)) {
-            su_n -= x.min() - x_min;
-            mod |= MOD_SU;
-          }
+            const int slx = x.max() - sl;
+            ModEvent me = x.gq(home, slx);
+            if (me_failed(me))
+                return ES_FAILED;
+            if (me_modified(me) && (slx != x.min()))
+                es = ES_NOFIX;
         }
-      }
-      if ((mod & MOD_SU) != 0) {
-        mod -= MOD_SU;
-        // Propagate upper bound for positive Boolean views
-        {
-          ScaleBool* f=p.fst();
-          for (ScaleBool* l=p.lst(); (f < l) && (f->a > su_n); f++) {
-            GECODE_ME_CHECK(f->x.one_none(home)); c -= f->a;
-            sl_p -= f->a;
-          }
-          if (f > p.fst()) {
-            p.fst(f); mod |= MOD_SL;;
-          }
+
+        if (p.empty() && n.empty())
+            return home.ES_SUBSUMED(*this);
+
+        return es;
+    }
+
+    template <class SBAP, class SBAN, class VX>
+    ExecStatus
+    LqBoolScale<SBAP, SBAN, VX>::post(Home home, SBAP& p, SBAN& n, VX x, int c) {
+        p.sort();
+        n.sort();
+        if (p.empty()) {
+            EmptyScaleBoolArray ep;
+            (void)new (home) LqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, ep, n, x, c);
+        } else if (n.empty()) {
+            EmptyScaleBoolArray en;
+            (void)new (home) LqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, p, en, x, c);
+        } else {
+            (void)new (home) LqBoolScale<SBAP, SBAN, VX>(home, p, n, x, c);
         }
-        // Propagate upper bound for negative Boolean views
-        {
-          ScaleBool* f=n.fst();
-          for (ScaleBool* l=n.lst(); (f < l) && (f->a > su_n); f++) {
-            GECODE_ME_CHECK(f->x.zero_none(home));
-            sl_p -= f->a;
-          }
-          if (f > n.fst()) {
-            n.fst(f); mod |= MOD_SL;;
-          }
+        return ES_OK;
+    }
+
+    /*
+     * Boolean disequality with coefficients
+     *
+     */
+
+    template <class SBAP, class SBAN, class VX>
+    forceinline
+    NqBoolScale<SBAP, SBAN, VX>::NqBoolScale(Home home, SBAP& p, SBAN& n, VX x, int c)
+        : LinBoolScale<SBAP, SBAN, VX, PC_INT_VAL>(home, p, n, x, c) {}
+
+    template <class SBAP, class SBAN, class VX>
+    forceinline
+    NqBoolScale<SBAP, SBAN, VX>::NqBoolScale(Space& home, Propagator& pr, SBAP& p, SBAN& n, VX x, int c)
+        : LinBoolScale<SBAP, SBAN, VX, PC_INT_VAL>(home, pr, p, n, x, c) {}
+
+    template <class SBAP, class SBAN, class VX>
+    Actor*
+    NqBoolScale<SBAP, SBAN, VX>::copy(Space& home) {
+        if (p.empty()) {
+            EmptyScaleBoolArray ep;
+            if (x.assigned()) {
+                ZeroIntView z;
+                return new (home)
+                    NqBoolScale<EmptyScaleBoolArray, SBAN, ZeroIntView>(home, *this, ep, n, z, c + x.val());
+            }
+            return new (home) NqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
         }
-        // Propagate upper bound for integer view
-        {
-          const int x_max = x.max();
-          ModEvent me = x.lq(home,x.min() + su_n);
-          if (me_failed(me))
-            return ES_FAILED;
-          if (me_modified(me)) {
-            sl_p += x.max() - x_max;
-            mod |= MOD_SL;;
-          }
+        if (n.empty()) {
+            EmptyScaleBoolArray en;
+            if (x.assigned()) {
+                ZeroIntView z;
+                return new (home)
+                    NqBoolScale<SBAP, EmptyScaleBoolArray, ZeroIntView>(home, *this, p, en, z, c + x.val());
+            }
+            return new (home) NqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
         }
-      }
-    } while (mod != 0);
-
-    return (sl_p == -su_n) ? home.ES_SUBSUMED(*this) : ES_FIX;
-  }
-
-
-
-  template<class SBAP, class SBAN, class VX>
-  ExecStatus
-  EqBoolScale<SBAP,SBAN,VX>::post(Home home,
-                                  SBAP& p, SBAN& n, VX x, int c) {
-    p.sort(); n.sort();
-    if (p.empty()) {
-      EmptyScaleBoolArray ep;
-      (void) new (home) EqBoolScale<EmptyScaleBoolArray,SBAN,VX>
-        (home,ep,n,x,c);
-    } else if (n.empty()) {
-      EmptyScaleBoolArray en;
-      (void) new (home) EqBoolScale<SBAP,EmptyScaleBoolArray,VX>
-        (home,p,en,x,c);
-    } else {
-      (void) new (home) EqBoolScale<SBAP,SBAN,VX>
-        (home,p,n,x,c);
+        return new (home) NqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
     }
-    return ES_OK;
-  }
 
-
-  /*
-   * Boolean inequality with coefficients
-   *
-   */
-
-  template<class SBAP, class SBAN, class VX>
-  forceinline
-  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Home home,
-                                         SBAP& p, SBAN& n,
-                                         VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,p,n,x,c) {}
-
-  template<class SBAP, class SBAN, class VX>
-  forceinline
-  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space& home,
-                                         Propagator& pr,
-                                         SBAP& p, SBAN& n,
-                                         VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,pr,p,n,x,c) {}
-
-  template<class SBAP, class SBAN, class VX>
-  Actor*
-  LqBoolScale<SBAP,SBAN,VX>::copy(Space& home) {
-    if (p.empty()) {
-      EmptyScaleBoolArray ep;
-      if (x.assigned()) {
-        ZeroIntView z;
-        return new (home) LqBoolScale<EmptyScaleBoolArray,SBAN,ZeroIntView>
-          (home,*this,ep,n,z,c+x.val());
-      } else {
-        return new (home) LqBoolScale<EmptyScaleBoolArray,SBAN,VX>
-          (home,*this,ep,n,x,c);
-      }
-    } else if (n.empty()) {
-      EmptyScaleBoolArray en;
-      if (x.assigned()) {
-        ZeroIntView z;
-        return new (home) LqBoolScale<SBAP,EmptyScaleBoolArray,ZeroIntView>
-          (home,*this,p,en,z,c+x.val());
-      } else {
-        return new (home) LqBoolScale<SBAP,EmptyScaleBoolArray,VX>
-          (home,*this,p,en,x,c);
-      }
-    } else {
-      return new (home) LqBoolScale<SBAP,SBAN,VX>(home,*this,p,n,x,c);
-    }
-  }
-
-  template<class SBAP, class SBAN, class VX>
-  ExecStatus
-  LqBoolScale<SBAP,SBAN,VX>::propagate(Space& home, const ModEventDelta& med) {
-    int sl = 0;
-    if (BoolView::me(med) == ME_BOOL_VAL) {
-      // Eliminate assigned positive views while keeping order
-      {
-        // Skip not assigned views
-        ScaleBool* f = p.fst();
-        ScaleBool* l = p.lst();
-        while ((f < l) && f->x.none())
-          f++;
-        // Copy unassigned views to t
-        ScaleBool* t = f;
-        while (f < l) {
-          if (f->x.one()) {
-            c -= f->a;
-          } else if (f->x.none()) {
-            *t = *f; t++;
-          }
-          f++;
+    template <class SBAP, class SBAN, class VX>
+    ExecStatus
+    NqBoolScale<SBAP, SBAN, VX>::propagate(Space& home, const ModEventDelta& med) {
+        if (BoolView::me(med) == ME_BOOL_VAL) {
+            // Eliminate assigned positive views
+            {
+                ScaleBool* f = p.fst();
+                ScaleBool* t = f;
+                ScaleBool* l = p.lst();
+                while (f < l) {
+                    if (f->x.one()) {
+                        c -= f->a;
+                        *f = *(t++);
+                    } else if (f->x.zero()) {
+                        *f = *(t++);
+                    }
+                    f++;
+                }
+                p.fst(t);
+            }
+            // Eliminate assigned negative views
+            {
+                ScaleBool* f = n.fst();
+                ScaleBool* t = f;
+                ScaleBool* l = n.lst();
+                while (f < l) {
+                    if (f->x.one()) {
+                        c += f->a;
+                        *f = *(t++);
+                    } else if (f->x.zero()) {
+                        *f = *(t++);
+                    }
+                    f++;
+                }
+                n.fst(t);
+            }
         }
-        p.lst(t);
-      }
-      // Eliminate assigned negative views while keeping order
-      {
-        // Skip not assigned views
-        ScaleBool* f = n.fst();
-        ScaleBool* l = n.lst();
-        while ((f < l) && f->x.none()) {
-          sl += f->a; f++;
+
+        if (p.empty() && n.empty()) {
+            GECODE_ME_CHECK(x.nq(home, -c));
+            return home.ES_SUBSUMED(*this);
         }
-        // Copy unassigned views to t
-        ScaleBool* t = f;
-        while (f < l) {
-          if (f->x.one()) {
-            c += f->a;
-          } else if (f->x.none()) {
-            sl += f->a; *t = *f; t++;
-          }
-          f++;
+
+        if (x.assigned()) {
+            int r = x.val() + c;
+            if (p.empty() && (n.size() == 1)) {
+                if (r == -n.fst()->a) {
+                    GECODE_ME_CHECK(n.fst()->x.zero_none(home));
+                } else if (r == 0) {
+                    GECODE_ME_CHECK(n.fst()->x.one_none(home));
+                }
+                return home.ES_SUBSUMED(*this);
+            }
+            if ((p.size() == 1) && n.empty()) {
+                if (r == p.fst()->a) {
+                    GECODE_ME_CHECK(p.fst()->x.zero_none(home));
+                } else if (r == 0) {
+                    GECODE_ME_CHECK(p.fst()->x.one_none(home));
+                }
+                return home.ES_SUBSUMED(*this);
+            }
         }
-        n.lst(t);
-      }
-    } else {
-      for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-        sl += f->a;
+        return ES_FIX;
     }
 
-    sl += x.max() + c;
-
-    // Propagate upper bound for positive Boolean views
-    {
-      ScaleBool* f=p.fst();
-      for (ScaleBool* l=p.lst(); (f < l) && (f->a > sl); f++)
-        GECODE_ME_CHECK(f->x.zero_none(home));
-      p.fst(f);
-    }
-    // Propagate lower bound for negative Boolean views
-    {
-      ScaleBool* f=n.fst();
-      for (ScaleBool* l=n.lst(); (f < l) && (f->a > sl); f++) {
-        c += f->a;
-        GECODE_ME_CHECK(f->x.one_none(home));
-      }
-      n.fst(f);
-    }
-    ExecStatus es = ES_FIX;
-    // Propagate lower bound for integer view
-    {
-      const int slx = x.max() - sl;
-      ModEvent me = x.gq(home,slx);
-      if (me_failed(me))
-        return ES_FAILED;
-      if (me_modified(me) && (slx != x.min()))
-        es = ES_NOFIX;
-    }
-
-    if (p.empty() && n.empty())
-      return home.ES_SUBSUMED(*this);
-
-    return es;
-  }
-
-
-
-  template<class SBAP, class SBAN, class VX>
-  ExecStatus
-  LqBoolScale<SBAP,SBAN,VX>::post(Home home,
-                                  SBAP& p, SBAN& n, VX x, int c) {
-    p.sort(); n.sort();
-    if (p.empty()) {
-      EmptyScaleBoolArray ep;
-      (void) new (home) LqBoolScale<EmptyScaleBoolArray,SBAN,VX>
-        (home,ep,n,x,c);
-    } else if (n.empty()) {
-      EmptyScaleBoolArray en;
-      (void) new (home) LqBoolScale<SBAP,EmptyScaleBoolArray,VX>
-        (home,p,en,x,c);
-    } else {
-      (void) new (home) LqBoolScale<SBAP,SBAN,VX>
-        (home,p,n,x,c);
-    }
-    return ES_OK;
-  }
-
-  /*
-   * Boolean disequality with coefficients
-   *
-   */
-
-  template<class SBAP, class SBAN, class VX>
-  forceinline
-  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Home home,
-                                         SBAP& p, SBAN& n,
-                                         VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>(home,p,n,x,c) {}
-
-  template<class SBAP, class SBAN, class VX>
-  forceinline
-  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space& home,
-                                         Propagator& pr,
-                                         SBAP& p, SBAN& n,
-                                         VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>(home,pr,p,n,x,c) {}
-
-  template<class SBAP, class SBAN, class VX>
-  Actor*
-  NqBoolScale<SBAP,SBAN,VX>::copy(Space& home) {
-    if (p.empty()) {
-      EmptyScaleBoolArray ep;
-      if (x.assigned()) {
-        ZeroIntView z;
-        return new (home) NqBoolScale<EmptyScaleBoolArray,SBAN,ZeroIntView>
-          (home,*this,ep,n,z,c+x.val());
-      } else {
-        return new (home) NqBoolScale<EmptyScaleBoolArray,SBAN,VX>
-          (home,*this,ep,n,x,c);
-      }
-    } else if (n.empty()) {
-      EmptyScaleBoolArray en;
-      if (x.assigned()) {
-        ZeroIntView z;
-        return new (home) NqBoolScale<SBAP,EmptyScaleBoolArray,ZeroIntView>
-          (home,*this,p,en,z,c+x.val());
-      } else {
-        return new (home) NqBoolScale<SBAP,EmptyScaleBoolArray,VX>
-          (home,*this,p,en,x,c);
-      }
-    } else {
-      return new (home) NqBoolScale<SBAP,SBAN,VX>(home,*this,p,n,x,c);
-    }
-  }
-
-  template<class SBAP, class SBAN, class VX>
-  ExecStatus
-  NqBoolScale<SBAP,SBAN,VX>::propagate(Space& home, const ModEventDelta& med) {
-    if (BoolView::me(med) == ME_BOOL_VAL) {
-      // Eliminate assigned positive views
-      {
-        ScaleBool* f = p.fst();
-        ScaleBool* t = f;
-        ScaleBool* l = p.lst();
-        while (f < l) {
-          if (f->x.one()) {
-            c -= f->a; *f = *(t++);
-          } else if (f->x.zero()) {
-            *f = *(t++);
-          }
-          f++;
+    template <class SBAP, class SBAN, class VX>
+    ExecStatus
+    NqBoolScale<SBAP, SBAN, VX>::post(Home home, SBAP& p, SBAN& n, VX x, int c) {
+        if (p.empty()) {
+            EmptyScaleBoolArray ep;
+            (void)new (home) NqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, ep, n, x, c);
+        } else if (n.empty()) {
+            EmptyScaleBoolArray en;
+            (void)new (home) NqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, p, en, x, c);
+        } else {
+            (void)new (home) NqBoolScale<SBAP, SBAN, VX>(home, p, n, x, c);
         }
-        p.fst(t);
-      }
-      // Eliminate assigned negative views
-      {
-        ScaleBool* f = n.fst();
-        ScaleBool* t = f;
-        ScaleBool* l = n.lst();
-        while (f < l) {
-          if (f->x.one()) {
-            c += f->a; *f = *(t++);
-          } else if (f->x.zero()) {
-            *f = *(t++);
-          }
-          f++;
-        }
-        n.fst(t);
-      }
+        return ES_OK;
     }
 
-    if (p.empty() && n.empty()) {
-      GECODE_ME_CHECK(x.nq(home,-c));
-      return home.ES_SUBSUMED(*this);
-    }
-
-    if (x.assigned()) {
-      int r = x.val()+c;
-      if (p.empty() && (n.size() == 1)) {
-        if (r == -n.fst()->a) {
-          GECODE_ME_CHECK(n.fst()->x.zero_none(home));
-        } else if (r == 0) {
-          GECODE_ME_CHECK(n.fst()->x.one_none(home));
-        }
-        return home.ES_SUBSUMED(*this);
-      }
-      if ((p.size() == 1) && n.empty()) {
-        if (r == p.fst()->a) {
-          GECODE_ME_CHECK(p.fst()->x.zero_none(home));
-        } else if (r == 0) {
-          GECODE_ME_CHECK(p.fst()->x.one_none(home));
-        }
-        return home.ES_SUBSUMED(*this);
-      }
-    }
-    return ES_FIX;
-  }
-
-
-
-  template<class SBAP, class SBAN, class VX>
-  ExecStatus
-  NqBoolScale<SBAP,SBAN,VX>::post(Home home,
-                                  SBAP& p, SBAN& n, VX x, int c) {
-    if (p.empty()) {
-      EmptyScaleBoolArray ep;
-      (void) new (home) NqBoolScale<EmptyScaleBoolArray,SBAN,VX>
-        (home,ep,n,x,c);
-    } else if (n.empty()) {
-      EmptyScaleBoolArray en;
-      (void) new (home) NqBoolScale<SBAP,EmptyScaleBoolArray,VX>
-        (home,p,en,x,c);
-    } else {
-      (void) new (home) NqBoolScale<SBAP,SBAN,VX>
-        (home,p,n,x,c);
-    }
-    return ES_OK;
-  }
-
-}}}
+} // namespace Gecode::Int::Linear
 
 // STATISTICS: int-prop
-

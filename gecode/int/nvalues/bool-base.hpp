@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,70 +30,69 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode::Int::NValues {
 
-  template<class VY>
-  forceinline
-  BoolBase<VY>::BoolBase(Home home,
-                         int status0, ViewArray<BoolView>& x, VY y0)
-    : Propagator(home), status(status0), c(home), y(y0) {
-    y.subscribe(home,*this,PC_INT_BND);
-    for (int i=0; i<x.size(); i++) {
-      assert(!x[i].assigned());
-      (void) new (home) ViewAdvisor<BoolView>(home, *this, c, x[i]);
+    template <class VY>
+    forceinline
+    BoolBase<VY>::BoolBase(Home home, int status0, ViewArray<BoolView>& x, VY y0)
+        : Propagator(home), status(status0), c(home), y(y0) {
+        y.subscribe(home, *this, PC_INT_BND);
+        for (auto& xi : x) {
+            assert(!xi.assigned());
+            (void)new (home) ViewAdvisor<BoolView>(home, *this, c, xi);
+        }
     }
-  }
 
-  template<class VY>
-  forceinline
-  BoolBase<VY>::BoolBase(Space& home, BoolBase<VY>& p)
-    : Propagator(home,p), status(p.status) {
-    c.update(home,p.c);
-    y.update(home,p.y);
-  }
-
-  template<class VY>
-  PropCost
-  BoolBase<VY>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::unary(PropCost::LO);
-  }
-
-  template<class VY>
-  void
-  BoolBase<VY>::reschedule(Space& home) {
-    y.reschedule(home,*this,PC_INT_BND);
-  }
-
-  template<class VY>
-  ExecStatus
-  BoolBase<VY>::advise(Space& home, Advisor& _a, const Delta&) {
-    ViewAdvisor<BoolView>& a(static_cast<ViewAdvisor<BoolView>&>(_a));
-    ExecStatus es;
-    if (status == (VS_ZERO | VS_ONE)) {
-      // Everything is already decided
-      es = ES_FIX;
-    } else {
-      if (a.view().zero())
-        status |= VS_ZERO;
-      else
-        status |= VS_ONE;
-      es = ES_NOFIX;
+    template <class VY>
+    forceinline
+    BoolBase<VY>::BoolBase(Space& home, BoolBase<VY>& p)
+        : Propagator(home, p), status(p.status) {
+        c.update(home, p.c);
+        y.update(home, p.y);
     }
-    a.dispose(home,c);
-    if (c.empty())
-      es = ES_NOFIX;
-    return es;
-  }
 
-  template<class VY>
-  forceinline size_t
-  BoolBase<VY>::dispose(Space& home) {
-    c.dispose(home);
-    y.cancel(home,*this,PC_INT_BND);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
+    template <class VY>
+    PropCost
+    BoolBase<VY>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::unary(PropCost::LO);
+    }
 
-}}}
+    template <class VY>
+    void
+    BoolBase<VY>::reschedule(Space& home) {
+        y.reschedule(home, *this, PC_INT_BND);
+    }
+
+    template <class VY>
+    ExecStatus
+    BoolBase<VY>::advise(Space& home, Advisor& _a, const Delta&) {
+        ViewAdvisor<BoolView>& a(static_cast<ViewAdvisor<BoolView>&>(_a));
+        ExecStatus es;
+        if (status == (VS_ZERO | VS_ONE)) {
+            // Everything is already decided
+            es = ES_FIX;
+        } else {
+            if (a.view().zero())
+                status |= VS_ZERO;
+            else
+                status |= VS_ONE;
+            es = ES_NOFIX;
+        }
+        a.dispose(home, c);
+        if (c.empty())
+            es = ES_NOFIX;
+        return es;
+    }
+
+    template <class VY>
+    forceinline size_t
+    BoolBase<VY>::dispose(Space& home) {
+        c.dispose(home);
+        y.cancel(home, *this, PC_INT_BND);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
+
+} // namespace Gecode::Int::NValues
 
 // STATISTICS: int-prop

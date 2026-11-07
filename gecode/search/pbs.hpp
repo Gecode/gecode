@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,426 +35,394 @@
 #include <memory>
 #include <gecode/search/worker-control.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  /// Dispose partially constructed portfolio assets
-  forceinline void
-  pbscleanup(Engine** slaves, Stop** stops, unsigned int n_slaves,
-             Space* master) {
-    for (unsigned int i=0U; i<n_slaves; i++) {
-      delete slaves[i];
-      delete stops[i];
+    /// Dispose partially constructed portfolio assets
+    forceinline void
+    pbs_cleanup(Engine** slaves, Stop** stops, unsigned int n_slaves, Space* master) {
+        for (unsigned int i = 0U; i < n_slaves; i++) {
+            delete slaves[i];
+            delete stops[i];
+        }
+        delete master;
     }
-    delete master;
-  }
 
-  /// Dispose builders consumed by an explicit portfolio
-  forceinline void
-  pbscleanup(SEBs& sebs) {
-    for (int i=0; i<sebs.size(); i++)
-      delete sebs[i];
-  }
+    /// Dispose builders consumed by an explicit portfolio
+    forceinline void
+    pbs_cleanup(SEBs& sebs) {
+        for (auto& seb : sebs)
+            delete seb;
+    }
 
-  /// Validate worker-control placement for a homogeneous portfolio
-  forceinline void
-  pbscontrol(const Options& opt) {
-    if ((opt.assets > 1U) &&
-        opt.worker_control.engaged())
-      throw WorkerControlInUse("PBS::PBS");
-  }
+    /// Validate worker-control placement for a homogeneous portfolio
+    forceinline void
+    validate_pbs_control(const Options& opt) {
+        if ((opt.assets > 1U) && opt.worker_control.engaged())
+            throw WorkerControlInUse("PBS::PBS");
+    }
 
-  /// Return the number of explicit builders admitted by this portfolio
-  forceinline int
-  pbsadmitted(const SEBs& sebs, const Options& opt) {
+    /// Return the number of explicit builders admitted by this portfolio
+    forceinline int
+    admitted_pbs_builders(const SEBs& sebs, const Options& opt) {
 #ifdef GECODE_HAS_THREADS
-    if (opt.threads > 1.0)
-      return std::min(static_cast<int>(opt.threads),sebs.size());
+        if (opt.threads > 1.0)
+            return std::min(static_cast<int>(opt.threads), sebs.size());
 #endif
-    return sebs.size();
-  }
+        return sebs.size();
+    }
 
-  /// Validate worker-control placement for an explicit portfolio
-  forceinline void
-  pbscontrol(const SEBs& sebs, const Options& opt) {
-    if (opt.worker_control.engaged())
-      throw WorkerControlInUse("PBS::PBS");
+    /// Validate worker-control placement for an explicit portfolio
+    forceinline void
+    validate_pbs_control(const SEBs& sebs, const Options& opt) {
+        if (opt.worker_control.engaged())
+            throw WorkerControlInUse("PBS::PBS");
 #ifdef GECODE_HAS_THREADS
-    const bool parallel = opt.threads > 1.0;
+        const bool parallel = opt.threads > 1.0;
 #else
-    const bool parallel = false;
+        const bool parallel = false;
 #endif
-    int admitted = pbsadmitted(sebs,opt);
-    for (int i=0; i<admitted; i++) {
-      const WorkerControl& x = sebs[i]->options().worker_control;
-      if (!x.engaged())
-        continue;
-      // Sequential PBS cannot move past an asset blocked by a pause request.
-      if (!parallel)
-        throw WorkerControlInUse("PBS::PBS");
-      for (int j=0; j<i; j++) {
-        const WorkerControl& y = sebs[j]->options().worker_control;
-        if (y.engaged() &&
-            WorkerControlAccess::same_identity(x,y))
-          throw WorkerControlInUse("PBS::PBS");
-      }
+        int admitted = admitted_pbs_builders(sebs, opt);
+        for (int i = 0; i < admitted; i++) {
+            const WorkerControl& x = sebs[i]->options().worker_control;
+            if (!x.engaged())
+                continue;
+            // Sequential PBS cannot move past an asset blocked by a pause request.
+            if (!parallel)
+                throw WorkerControlInUse("PBS::PBS");
+            for (int j = 0; j < i; j++) {
+                const WorkerControl& y = sebs[j]->options().worker_control;
+                if (y.engaged() && WorkerControlAccess::same_identity(x, y))
+                    throw WorkerControlInUse("PBS::PBS");
+            }
+        }
     }
-  }
 
-  /// A PBS engine builder
-  template<class T, template<class> class E>
-  class PbsBuilder : public Builder {
-    using Builder::opt;
-  public:
-    /// The constructor
-    PbsBuilder(const Options& opt);
-    /// The actual build function
-    virtual Engine* operator() (Space* s) const;
-  };
+    /// A PBS engine builder
+    template <class T, template <class> class E>
+    class PbsBuilder : public Builder {
+        using Builder::opt;
 
-  template<class T, template<class> class E>
-  inline
-  PbsBuilder<T,E>::PbsBuilder(const Options& opt)
-    : Builder(opt,E<T>::best) {}
+    public:
+        /// The constructor
+        PbsBuilder(const Options& opt);
+        /// The actual build function
+        Engine* operator()(Space* s) const override;
+    };
 
-  template<class T, template<class> class E>
-  Engine*
-  PbsBuilder<T,E>::operator() (Space* s) const {
-    return build<T,PBS<T,E> >(s,opt);
-  }
+    template <class T, template <class> class E>
+    inline PbsBuilder<T, E>::PbsBuilder(const Options& opt) : Builder(opt, E<T>::best) {}
 
-}}
+    template <class T, template <class> class E>
+    Engine*
+    PbsBuilder<T, E>::operator()(Space* s) const {
+        return build<T, PBS<T, E>>(s, opt);
+    }
+
+} // namespace Gecode::Search
 
 #include <gecode/search/seq/dead.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
-  /// Create stop object
-  GECODE_SEARCH_EXPORT Stop*
-  pbsstop(Stop* so);
+    /// Create stop object
+    GECODE_SEARCH_EXPORT Stop* pbs_stop(Stop* so);
 
-  /// Create sequential portfolio engine
-  GECODE_SEARCH_EXPORT Engine*
-  pbsengine(Engine** slaves, Stop** stops, unsigned int n_slaves,
-            const Statistics& stat, const Search::Options& opt, bool best);
+    /// Create sequential portfolio engine
+    GECODE_SEARCH_EXPORT Engine* make_pbs_engine(Engine** slaves, Stop** stops, unsigned int n_slaves,
+                                                 const Statistics& stat, const Search::Options& opt, bool best);
 
-}}}
+} // namespace Gecode::Search::Seq
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
-  /// Create stop object
-  GECODE_SEARCH_EXPORT Stop*
-  pbsstop(Stop* so, const WorkerControl& control);
+    /// Create stop object
+    GECODE_SEARCH_EXPORT Stop* pbs_stop(Stop* so, const WorkerControl& control);
 
-  /// Create parallel portfolio engine
-  GECODE_SEARCH_EXPORT Engine*
-  pbsengine(Engine** slaves, Stop** stops, unsigned int n_slaves,
-            const Statistics& stat, bool best);
+    /// Create parallel portfolio engine
+    GECODE_SEARCH_EXPORT Engine* make_pbs_engine(Engine** slaves, Stop** stops, unsigned int n_slaves,
+                                                 const Statistics& stat, bool best);
 
-}}}
+} // namespace Gecode::Search::Par
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  template<class T, template<class> class E>
-  Engine*
-  pbsseq(T* master, const Search::Statistics& stat, Options& opt) {
-    Stop* stop = opt.stop;
-    // Retain each seed: a throwing nested builder may consume its own clone.
-    opt.clone = true;
-    Region r;
+    template <class T, template <class> class E>
+    Engine*
+    pbsseq(T* master, const Search::Statistics& stat, Options& opt) {
+        Stop* stop = opt.stop;
+        // Retain each seed: a throwing nested builder may consume its own clone.
+        opt.clone = true;
+        Region r;
 
-    // In case there are more threads than assets requested
-    opt.threads = std::max(floor(opt.threads /
-                                 static_cast<double>(opt.assets)),1.0);
+        // In case there are more threads than assets requested
+        opt.threads = std::max(floor(opt.threads / static_cast<double>(opt.assets)), 1.0);
 
-    unsigned int n_slaves = opt.assets;
-    Engine** slaves = r.alloc<Engine*>(n_slaves);
-    Stop** stops = r.alloc<Stop*>(n_slaves);
-    for (unsigned int i=0U; i<n_slaves; i++) {
-      slaves[i] = nullptr;
-      stops[i] = nullptr;
+        unsigned int n_slaves = opt.assets;
+        Engine** slaves = r.alloc<Engine*>(n_slaves);
+        Stop** stops = r.alloc<Stop*>(n_slaves);
+        for (unsigned int i = 0U; i < n_slaves; i++) {
+            slaves[i] = nullptr;
+            stops[i] = nullptr;
+        }
+
+        WrapTraceRecorder::engine(opt.tracer, SearchTracer::EngineType::PBS, n_slaves);
+
+        Space* unowned_master = master;
+        try {
+            for (unsigned int i = 0U; i < n_slaves; i++) {
+                opt.stop = stops[i] = Seq::pbs_stop(stop);
+                std::unique_ptr<Space> slave((i == n_slaves - 1) ? master : master->clone());
+                if (slave.get() == master)
+                    unowned_master = nullptr;
+                (void)slave->slave(i);
+                slaves[i] = build<T, E>(slave.get(), opt);
+            }
+            return Seq::make_pbs_engine(slaves, stops, n_slaves, stat, opt, E<T>::best);
+        } catch (...) {
+            pbs_cleanup(slaves, stops, n_slaves, unowned_master);
+            throw;
+        }
     }
 
-    WrapTraceRecorder::engine(opt.tracer,
-                              SearchTracer::EngineType::PBS, n_slaves);
+    template <class T, template <class> class E>
+    Engine*
+    pbsseq(T* master, SEBs& sebs, const Search::Statistics& stat, Options& opt, bool best) {
+        Region r;
 
-    Space* unowned_master = master;
-    try {
-      for (unsigned int i=0U; i<n_slaves; i++) {
-        opt.stop = stops[i] = Seq::pbsstop(stop);
-        std::unique_ptr<Space> slave((i == n_slaves-1) ?
-                                     master : master->clone());
-        if (slave.get() == master)
-          unowned_master = nullptr;
-        (void) slave->slave(i);
-        slaves[i] = build<T,E>(slave.get(),opt);
-      }
-      return Seq::pbsengine(
-        slaves,stops,n_slaves,stat,opt,E<T>::best);
-    } catch (...) {
-      pbscleanup(slaves,stops,n_slaves,unowned_master);
-      throw;
+        int n_slaves = sebs.size();
+        Engine** slaves = r.alloc<Engine*>(n_slaves);
+        Stop** stops = r.alloc<Stop*>(n_slaves);
+        for (int i = 0; i < n_slaves; i++) {
+            slaves[i] = nullptr;
+            stops[i] = nullptr;
+        }
+
+        WrapTraceRecorder::engine(opt.tracer, SearchTracer::EngineType::PBS, static_cast<unsigned int>(n_slaves));
+
+        Space* unowned_master = master;
+        bool builders_owned = true;
+        try {
+            for (int i = 0; i < n_slaves; i++) {
+                // Re-configure slave options
+                stops[i] = Seq::pbs_stop(sebs[i]->options().stop);
+                sebs[i]->options().stop = stops[i];
+                sebs[i]->options().clone = true;
+                std::unique_ptr<Space> slave((i == n_slaves - 1) ? master : master->clone());
+                if (slave.get() == master)
+                    unowned_master = nullptr;
+                (void)slave->slave(static_cast<unsigned int>(i));
+                slaves[i] = (*sebs[i])(slave.get());
+            }
+            pbs_cleanup(sebs);
+            builders_owned = false;
+            return Seq::make_pbs_engine(slaves, stops, static_cast<unsigned int>(n_slaves), stat, opt, best);
+        } catch (...) {
+            if (builders_owned)
+                pbs_cleanup(sebs);
+            pbs_cleanup(slaves, stops, static_cast<unsigned int>(n_slaves), unowned_master);
+            throw;
+        }
     }
-  }
-
-  template<class T, template<class> class E>
-  Engine*
-  pbsseq(T* master, SEBs& sebs,
-             const Search::Statistics& stat, Options& opt, bool best) {
-    Region r;
-
-    int n_slaves = sebs.size();
-    Engine** slaves = r.alloc<Engine*>(n_slaves);
-    Stop** stops = r.alloc<Stop*>(n_slaves);
-    for (int i=0; i<n_slaves; i++) {
-      slaves[i] = nullptr;
-      stops[i] = nullptr;
-    }
-
-    WrapTraceRecorder::engine(opt.tracer,
-                              SearchTracer::EngineType::PBS,
-                              static_cast<unsigned int>(n_slaves));
-
-    Space* unowned_master = master;
-    bool builders_owned = true;
-    try {
-      for (int i=0; i<n_slaves; i++) {
-        // Re-configure slave options
-        stops[i] = Seq::pbsstop(sebs[i]->options().stop);
-        sebs[i]->options().stop  = stops[i];
-        sebs[i]->options().clone = true;
-        std::unique_ptr<Space> slave((i == n_slaves-1) ?
-                                     master : master->clone());
-        if (slave.get() == master)
-          unowned_master = nullptr;
-        (void) slave->slave(static_cast<unsigned int>(i));
-        slaves[i] = (*sebs[i])(slave.get());
-      }
-      pbscleanup(sebs);
-      builders_owned = false;
-      return Seq::pbsengine(
-        slaves,stops,static_cast<unsigned int>(n_slaves),stat,opt,best);
-    } catch (...) {
-      if (builders_owned)
-        pbscleanup(sebs);
-      pbscleanup(slaves,stops,static_cast<unsigned int>(n_slaves),
-                 unowned_master);
-      throw;
-    }
-  }
 
 #ifdef GECODE_HAS_THREADS
 
-  template<class T, template<class> class E>
-  Engine*
-  pbspar(T* master, const Search::Statistics& stat, Options& opt) {
-    Stop* stop = opt.stop;
-    // Retain each seed: a throwing nested builder may consume its own clone.
-    opt.clone = true;
-    Region r;
+    template <class T, template <class> class E>
+    Engine*
+    pbspar(T* master, const Search::Statistics& stat, Options& opt) {
+        Stop* stop = opt.stop;
+        // Retain each seed: a throwing nested builder may consume its own clone.
+        opt.clone = true;
+        Region r;
 
-    // Limit the number of slaves to the number of threads
-    unsigned int n_slaves = std::min(static_cast<unsigned int>(opt.threads),
-                                       opt.assets);
-    // Redistribute additional threads to slaves
-    opt.threads = floor(opt.threads / static_cast<double>(n_slaves));
+        // Limit the number of slaves to the number of threads
+        unsigned int n_slaves = std::min(static_cast<unsigned int>(opt.threads), opt.assets);
+        // Redistribute additional threads to slaves
+        opt.threads = floor(opt.threads / static_cast<double>(n_slaves));
 
-    WrapTraceRecorder::engine(opt.tracer,
-                              SearchTracer::EngineType::PBS, n_slaves);
+        WrapTraceRecorder::engine(opt.tracer, SearchTracer::EngineType::PBS, n_slaves);
 
-    Engine** slaves = r.alloc<Engine*>(n_slaves);
-    Stop** stops = r.alloc<Stop*>(n_slaves);
-    for (unsigned int i=0U; i<n_slaves; i++) {
-      slaves[i] = nullptr;
-      stops[i] = nullptr;
+        Engine** slaves = r.alloc<Engine*>(n_slaves);
+        Stop** stops = r.alloc<Stop*>(n_slaves);
+        for (unsigned int i = 0U; i < n_slaves; i++) {
+            slaves[i] = nullptr;
+            stops[i] = nullptr;
+        }
+
+        Space* unowned_master = master;
+        try {
+            for (unsigned int i = 0U; i < n_slaves; i++) {
+                opt.stop = stops[i] = Par::pbs_stop(stop, opt.worker_control);
+                std::unique_ptr<Space> slave((i == n_slaves - 1) ? master : master->clone());
+                if (slave.get() == master)
+                    unowned_master = nullptr;
+                (void)slave->slave(i);
+                slaves[i] = build<T, E>(slave.get(), opt);
+            }
+            return Par::make_pbs_engine(slaves, stops, n_slaves, stat, E<T>::best);
+        } catch (...) {
+            pbs_cleanup(slaves, stops, n_slaves, unowned_master);
+            throw;
+        }
     }
 
-    Space* unowned_master = master;
-    try {
-      for (unsigned int i=0U; i<n_slaves; i++) {
-        opt.stop = stops[i] = Par::pbsstop(stop,opt.worker_control);
-        std::unique_ptr<Space> slave((i == n_slaves-1) ?
-                                     master : master->clone());
-        if (slave.get() == master)
-          unowned_master = nullptr;
-        (void) slave->slave(static_cast<unsigned int>(i));
-        slaves[i] = build<T,E>(slave.get(),opt);
-      }
-      return Par::pbsengine(slaves,stops,n_slaves,stat,E<T>::best);
-    } catch (...) {
-      pbscleanup(slaves,stops,n_slaves,unowned_master);
-      throw;
+    template <class T, template <class> class E>
+    Engine*
+    pbspar(T* master, SEBs& sebs, const Search::Statistics& stat, Options& opt, bool best) {
+        Region r;
+
+        // Limit the number of slaves to the number of threads
+        int n_slaves = std::min(static_cast<int>(opt.threads), sebs.size());
+
+        WrapTraceRecorder::engine(opt.tracer, SearchTracer::EngineType::PBS, static_cast<unsigned int>(n_slaves));
+
+        Engine** slaves = r.alloc<Engine*>(n_slaves);
+        Stop** stops = r.alloc<Stop*>(n_slaves);
+        for (int i = 0; i < n_slaves; i++) {
+            slaves[i] = nullptr;
+            stops[i] = nullptr;
+        }
+
+        Space* unowned_master = master;
+        bool builders_owned = true;
+        try {
+            for (int i = 0; i < n_slaves; i++) {
+                // Re-configure slave options
+                stops[i] = Par::pbs_stop(sebs[i]->options().stop, sebs[i]->options().worker_control);
+                sebs[i]->options().stop = stops[i];
+                sebs[i]->options().clone = true;
+                std::unique_ptr<Space> slave((i == n_slaves - 1) ? master : master->clone());
+                if (slave.get() == master)
+                    unowned_master = nullptr;
+                (void)slave->slave(static_cast<unsigned int>(i));
+                slaves[i] = (*sebs[i])(slave.get());
+            }
+            pbs_cleanup(sebs);
+            builders_owned = false;
+            return Par::make_pbs_engine(slaves, stops, static_cast<unsigned int>(n_slaves), stat, best);
+        } catch (...) {
+            if (builders_owned)
+                pbs_cleanup(sebs);
+            pbs_cleanup(slaves, stops, static_cast<unsigned int>(n_slaves), unowned_master);
+            throw;
+        }
     }
-  }
-
-  template<class T, template<class> class E>
-  Engine*
-  pbspar(T* master, SEBs& sebs,
-         const Search::Statistics& stat, Options& opt, bool best) {
-    Region r;
-
-    // Limit the number of slaves to the number of threads
-    int n_slaves = std::min(static_cast<int>(opt.threads),
-                              sebs.size());
-
-    WrapTraceRecorder::engine(opt.tracer,
-                              SearchTracer::EngineType::PBS,
-                              static_cast<unsigned int>(n_slaves));
-
-    Engine** slaves = r.alloc<Engine*>(n_slaves);
-    Stop** stops = r.alloc<Stop*>(n_slaves);
-    for (int i=0; i<n_slaves; i++) {
-      slaves[i] = nullptr;
-      stops[i] = nullptr;
-    }
-
-    Space* unowned_master = master;
-    bool builders_owned = true;
-    try {
-      for (int i=0; i<n_slaves; i++) {
-        // Re-configure slave options
-        stops[i] = Par::pbsstop(sebs[i]->options().stop,
-                                sebs[i]->options().worker_control);
-        sebs[i]->options().stop  = stops[i];
-        sebs[i]->options().clone = true;
-        std::unique_ptr<Space> slave((i == n_slaves-1) ?
-                                     master : master->clone());
-        if (slave.get() == master)
-          unowned_master = nullptr;
-        (void) slave->slave(static_cast<unsigned int>(i));
-        slaves[i] = (*sebs[i])(slave.get());
-      }
-      pbscleanup(sebs);
-      builders_owned = false;
-      return Par::pbsengine(
-        slaves,stops,static_cast<unsigned int>(n_slaves),stat,best);
-    } catch (...) {
-      if (builders_owned)
-        pbscleanup(sebs);
-      pbscleanup(slaves,stops,static_cast<unsigned int>(n_slaves),
-                 unowned_master);
-      throw;
-    }
-  }
 
 #endif
 
-}}
+} // namespace Gecode::Search
 
 namespace Gecode {
 
-  template<class T, template<class> class E>
-  PBS<T,E>::PBS(T* s, const Search::Options& o) {
-    Search::Options opt(o.expand());
+    template <class T, template <class> class E>
+    PBS<T, E>::PBS(T* s, const Search::Options& o) {
+        Search::Options opt(o.expand());
 
-    if (opt.assets == 0)
-      throw Search::NoAssets("PBS::PBS");
-    Search::pbscontrol(opt);
+        if (opt.assets == 0)
+            throw Search::NoAssets("PBS::PBS");
+        Search::validate_pbs_control(opt);
 
-    Search::Statistics stat;
+        Search::Statistics stat;
 
-    if (s->status(stat) == SS_FAILED) {
-      stat.fail++;
-      if (!opt.clone)
-        delete s;
-      e = Search::Seq::dead(opt,stat);
-      return;
-    }
+        if (s->status(stat) == SS_FAILED) {
+            stat.fail++;
+            if (!opt.clone)
+                delete s;
+            e = Search::Seq::dead(opt, stat);
+            return;
+        }
 
-    // Check whether a clone must be used
-    T* master = opt.clone ?
-      dynamic_cast<T*>(s->clone()) : s;
-    opt.clone = false;
+        // Check whether a clone must be used
+        T* master = opt.clone ? dynamic_cast<T*>(s->clone()) : s;
+        opt.clone = false;
 
-    // Always execute master function
-    (void) master->master(0);
+        // Always execute master function
+        (void)master->master(0);
 
-    // No need to create a portfolio engine but must run slave function
-    if (o.assets == 1) {
-      std::unique_ptr<T> seed(master);
-      (void) master->slave(0);
-      // Retain the seed if a nested builder rejects its worker control.
-      opt.clone = true;
-      e = Search::build<T,E>(seed.get(),opt);
-      return;
-    }
-
-#ifdef GECODE_HAS_THREADS
-    if (opt.threads > 1.0)
-      e = Search::pbspar<T,E>(master,stat,opt);
-    else
-#endif
-      e = Search::pbsseq<T,E>(master,stat,opt);
-  }
-
-  template<class T, template<class> class E>
-  void
-  PBS<T,E>::build(T* s, SEBs& sebs, const Search::Options& o) {
-    Search::Options opt(o.expand());
-    Search::pbscontrol(sebs,opt);
-
-    // Check whether all sebs do either best solution search or not
-    bool best;
-    {
-      int b = 0;
-      for (int i=0; i<sebs.size(); i++)
-        b += sebs[i]->best() ? 1 : 0;
-      if ((b > 0) && (b < sebs.size()))
-        throw Search::MixedBest("PBS::PBS");
-      best = (b == sebs.size());
-    }
-
-    Search::Statistics stat;
-
-    if (s->status(stat) == SS_FAILED) {
-      stat.fail++;
-      if (!opt.clone)
-        delete s;
-      Search::pbscleanup(sebs);
-      e = Search::Seq::dead(opt,stat);
-      return;
-    }
-
-    // Check whether a clone must be used
-    T* master = opt.clone ?
-      dynamic_cast<T*>(s->clone()) : s;
-    opt.clone = false;
-
-    // Always execute master function
-    (void) master->master(0);
+        // No need to create a portfolio engine but must run slave function
+        if (o.assets == 1) {
+            std::unique_ptr<T> seed(master);
+            (void)master->slave(0);
+            // Retain the seed if a nested builder rejects its worker control.
+            opt.clone = true;
+            e = Search::build<T, E>(seed.get(), opt);
+            return;
+        }
 
 #ifdef GECODE_HAS_THREADS
-    if (opt.threads > 1.0)
-      e = Search::pbspar<T,E>(master,sebs,stat,opt,best);
-    else
+        if (opt.threads > 1.0)
+            e = Search::pbspar<T, E>(master, stat, opt);
+        else
 #endif
-      e = Search::pbsseq<T,E>(master,sebs,stat,opt,best);
-  }
+            e = Search::pbsseq<T, E>(master, stat, opt);
+    }
 
-  template<class T, template<class> class E>
-  inline
-  PBS<T,E>::PBS(T* s, SEBs& sebs, const Search::Options& o) {
-    build(s,sebs,o);
-  }
+    template <class T, template <class> class E>
+    void
+    PBS<T, E>::build(T* s, SEBs& sebs, const Search::Options& o) {
+        Search::Options opt(o.expand());
+        Search::validate_pbs_control(sebs, opt);
 
-  template<class T, template<class> class E>
-  inline void
-  PBS<T,E>::constrain(const T& b) {
-    e->constrain(b);
-  }
+        // Check whether all sebs do either best solution search or not
+        bool best;
+        {
+            int b = 0;
+            for (auto& seb : sebs)
+                b += seb->best() ? 1 : 0;
+            if ((b > 0) && (b < sebs.size()))
+                throw Search::MixedBest("PBS::PBS");
+            best = (b == sebs.size());
+        }
 
-  template<class T, template<class> class E>
-  inline T*
-  pbs(T* s, const Search::Options& o) {
-    PBS<T,E> r(s,o);
-    return r.next();
-  }
+        Search::Statistics stat;
 
-  template<class T, template<class> class E>
-  inline SEB
-  pbs(const Search::Options& o) {
-    return new Search::PbsBuilder<T,E>(o);
-  }
+        if (s->status(stat) == SS_FAILED) {
+            stat.fail++;
+            if (!opt.clone)
+                delete s;
+            Search::pbs_cleanup(sebs);
+            e = Search::Seq::dead(opt, stat);
+            return;
+        }
 
-}
+        // Check whether a clone must be used
+        T* master = opt.clone ? dynamic_cast<T*>(s->clone()) : s;
+        opt.clone = false;
+
+        // Always execute master function
+        (void)master->master(0);
+
+#ifdef GECODE_HAS_THREADS
+        if (opt.threads > 1.0)
+            e = Search::pbspar<T, E>(master, sebs, stat, opt, best);
+        else
+#endif
+            e = Search::pbsseq<T, E>(master, sebs, stat, opt, best);
+    }
+
+    template <class T, template <class> class E>
+    inline PBS<T, E>::PBS(T* s, SEBs& sebs, const Search::Options& o) {
+        build(s, sebs, o);
+    }
+
+    template <class T, template <class> class E>
+    inline void
+    PBS<T, E>::constrain(const T& b) {
+        e->constrain(b);
+    }
+
+    template <class T, template <class> class E>
+    inline T*
+    pbs(T* s, const Search::Options& o) {
+        PBS<T, E> r(s, o);
+        return r.next();
+    }
+
+    template <class T, template <class> class E>
+    inline SEB
+    pbs(const Search::Options& o) {
+        return new Search::PbsBuilder<T, E>(o);
+    }
+
+} // namespace Gecode
 
 // STATISTICS: search-other

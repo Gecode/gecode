@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -36,96 +35,91 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int { namespace Cumulatives {
+#include <functional>
 
-  /** \namespace Gecode::Int::Cumulatives
-   *  \brief %Cumulatives propagators
-   *
-   * This namespace contains a propagator for the
-   * cumulatives constraint as presented in
-   \verbatim
-   @inproceedings{DBLP:conf/cp/BeldiceanuC02,
-     author    = {Nicolas Beldiceanu and Mats Carlsson},
-     title     = {A New Multi-resource cumulatives Constraint
-                  with Negative Heights.},
-     booktitle = {CP},
-     year      = {2002},
-     pages     = {63-79},
-     ee        = {http://link.springer.de/link/service/series/0558/
-                  bibs/2470/24700063.htm},
-     crossref  = {DBLP:conf/cp/2002},
-     bibsource = {DBLP, http://dblp.uni-trier.de}
-   }
-   @proceedings{DBLP:conf/cp/2002,
-     editor    = {Pascal Van Hentenryck},
-     title     = {Principles and Practice of Constraint Programming -
-                  CP 2002, 8th International Conference, CP 2002,
-                  Ithaca, NY, USA, September 9-13, 2002, Proceedings},
-     booktitle = {CP},
-     publisher = {Springer},
-     series    = {Lecture Notes in Computer Science},
-     volume    = {2470},
-     year      = {2002},
-     isbn      = {3-540-44120-4},
-     bibsource = {DBLP, http://dblp.uni-trier.de}
-   }
-   \endverbatim
-   */
+namespace Gecode::Int::Cumulatives {
 
+    /** \namespace Gecode::Int::Cumulatives
+     *  \brief %Cumulatives propagators
+     *
+     * This namespace contains a propagator for the
+     * cumulatives constraint as presented in
+     \verbatim
+     @inproceedings{DBLP:conf/cp/BeldiceanuC02,
+       author    = {Nicolas Beldiceanu and Mats Carlsson},
+       title     = {A New Multi-resource cumulatives Constraint
+                    with Negative Heights.},
+       booktitle = {CP},
+       year      = {2002},
+       pages     = {63-79},
+       ee        = {http://link.springer.de/link/service/series/0558/
+                    bibs/2470/24700063.htm},
+       crossref  = {DBLP:conf/cp/2002},
+       bibsource = {DBLP, http://dblp.uni-trier.de}
+     }
+     @proceedings{DBLP:conf/cp/2002,
+       editor    = {Pascal Van Hentenryck},
+       title     = {Principles and Practice of Constraint Programming -
+                    CP 2002, 8th International Conference, CP 2002,
+                    Ithaca, NY, USA, September 9-13, 2002, Proceedings},
+       booktitle = {CP},
+       publisher = {Springer},
+       series    = {Lecture Notes in Computer Science},
+       volume    = {2470},
+       year      = {2002},
+       isbn      = {3-540-44120-4},
+       bibsource = {DBLP, http://dblp.uni-trier.de}
+     }
+     \endverbatim
+     */
 
-  /**
-   * \brief %Propagator for the cumulatives constraint
-   *
-   * This class implements Beldiceanu's and Carlsson's sweep-line
-   * propagation algorithm for the cumulatives constraint.
-   *
-   * Requires \code #include <gecode/int/cumulatives.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class ViewM, class ViewP, class ViewU, class View>
-  class Val : public Propagator {
-  protected:
-    ViewArray<ViewM>  m;
-    ViewArray<View>   s;
-    ViewArray<ViewP>  p;
-    ViewArray<View>   e;
-    ViewArray<ViewU>  u;
-    SharedArray<int>  c;
-    const bool        at_most;
+    /**
+     * \brief %Propagator for the cumulatives constraint
+     *
+     * This class implements Beldiceanu's and Carlsson's sweep-line
+     * propagation algorithm for the cumulatives constraint.
+     *
+     * Requires \code #include <gecode/int/cumulatives.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class ViewM, class ViewP, class ViewU, class View>
+    class Val : public Propagator {
+    protected:
+        ViewArray<ViewM> m;
+        ViewArray<View> s;
+        ViewArray<ViewP> p;
+        ViewArray<View> e;
+        ViewArray<ViewU> u;
+        SharedArray<int> c;
+        const bool at_most;
 
-    Val(Space& home, Val<ViewM, ViewP, ViewU, View>& p);
-    Val(Home home, const ViewArray<ViewM>&, const ViewArray<View>&,
-        const ViewArray<ViewP>&, const ViewArray<View>&,
-        const ViewArray<ViewU>&, const SharedArray<int>&, bool);
+        Val(Space& home, Val<ViewM, ViewP, ViewU, View>& p);
+        Val(Home home, const ViewArray<ViewM>&, const ViewArray<View>&, const ViewArray<ViewP>&, const ViewArray<View>&,
+            const ViewArray<ViewU>&, const SharedArray<int>&, bool);
 
-    ExecStatus prune(Space& home, int low, int up, int r,
-                     int ntask, int su,
-                     int* contribution,
-                     int* prune_tasks, int& prune_tasks_size);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function (defined as low quadratic)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator
-    static ExecStatus post(Home home, const ViewArray<ViewM>&,
-                           const ViewArray<View>&, const ViewArray<ViewP>&,
-                           const ViewArray<View>&, const ViewArray<ViewU>&,
-                           const SharedArray<int>&, bool);
-    /// Dispose propagator
-    virtual size_t dispose(Space& home);
-  };
+        ExecStatus prune(Space& home, int low, int up, int r, int ntask, int su, int* contribution, int* prune_tasks,
+                         int& prune_tasks_size);
 
+    public:
+        /// Create copy during cloning
+        Actor* copy(Space& home) override;
+        /// Cost function (defined as low quadratic)
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
+        /// Schedule function
+        void reschedule(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator
+        static ExecStatus post(Home home, const ViewArray<ViewM>&, const ViewArray<View>&, const ViewArray<ViewP>&,
+                               const ViewArray<View>&, const ViewArray<ViewU>&, const SharedArray<int>&, bool);
+        /// Dispose propagator
+        size_t dispose(Space& home) override;
+    };
 
-}}}
+} // namespace Gecode::Int::Cumulatives
 
 #include <gecode/int/cumulatives/val.hpp>
 
 #endif
 
 // STATISTICS: int-prop
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,13 +32,12 @@
 
 namespace Gecode {
 
-  forceinline
-  IntTraceDelta::IntTraceDelta(Int::IntTraceView o, Int::IntView n,
-                               const Delta&)
-    : rn(n), ro(o.ranges()) {
-    init(ro,rn);
-  }
+    forceinline
+    IntTraceDelta::IntTraceDelta(Int::IntTraceView o, Int::IntView n, const Delta&)
+        : rn(n), ro(o.ranges()) {
+        init(ro, rn);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-trace

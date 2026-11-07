@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,125 +36,120 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Set { namespace Channel {
+namespace Gecode::Set::Channel {
 
-  template<class View>
-  forceinline
-  ChannelInt<View>::ChannelInt(Home home,
-                               ViewArray<Gecode::Int::CachedView<
-                                Gecode::Int::IntView> >& xs0,
-                               ViewArray<CachedView<View> >& ys0)
-    : Propagator(home), xs(xs0), ys(ys0) {
-    for (int i=xs.size(); i--;)
-      xs[i].initCache(home,IntSet(0,ys.size()-1));
-    for (int i=ys.size(); i--;)
-      ys[i].initCache(home,IntSet::empty,IntSet(0,xs.size()-1));
-    xs.subscribe(home,*this, Gecode::Int::PC_INT_DOM);
-    ys.subscribe(home,*this, PC_SET_ANY);
-  }
-
-  template<class View>
-  forceinline
-  ChannelInt<View>::ChannelInt(Space& home, ChannelInt& p)
-    : Propagator(home,p) {
-    xs.update(home,p.xs);
-    ys.update(home,p.ys);
-  }
-
-  template<class View>
-  forceinline ExecStatus
-  ChannelInt<View>::post(Home home,
-                         ViewArray<Gecode::Int::CachedView<
-                          Gecode::Int::IntView> >& xs,
-                         ViewArray<CachedView<View> >& ys) {
-    // Sharing of ys is taken care of in the propagator:
-    // The ys are propagated to be disjoint, so shared variables
-    // result in failure.
-    int xssize = xs.size();
-    for (int i=ys.size(); i--;) {
-      GECODE_ME_CHECK(ys[i].exclude(home, xssize, Limits::max));
-      GECODE_ME_CHECK(ys[i].exclude(home, Limits::min, -1));
-    }
-    int yssize = ys.size();
-    if (yssize > Gecode::Int::Limits::max)
-      return ES_FAILED;
-    for (int i=xs.size(); i--;) {
-      GECODE_ME_CHECK(xs[i].gq(home, 0));
-      GECODE_ME_CHECK(xs[i].le(home, static_cast<int>(yssize)));
+    template <class View>
+    forceinline
+    ChannelInt<View>::ChannelInt(Home home, ViewArray<Gecode::Int::CachedView<Gecode::Int::IntView>>& xs0,
+                                 ViewArray<CachedView<View>>& ys0)
+        : Propagator(home), xs(xs0), ys(ys0) {
+        for (int i = xs.size(); i--;)
+            xs[i].init_cache(home, IntSet(0, ys.size() - 1));
+        for (int i = ys.size(); i--;)
+            ys[i].init_cache(home, IntSet::empty, IntSet(0, xs.size() - 1));
+        xs.subscribe(home, *this, Gecode::Int::PC_INT_DOM);
+        ys.subscribe(home, *this, PC_SET_ANY);
     }
 
-    (void) new (home) ChannelInt(home,xs,ys);
-    return ES_OK;
-  }
-
-  template<class View>
-  PropCost
-  ChannelInt<View>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::LO, xs.size()+ys.size());
-  }
-
-  template<class View>
-  void
-  ChannelInt<View>::reschedule(Space& home) {
-    xs.reschedule(home,*this, Gecode::Int::PC_INT_DOM);
-    ys.reschedule(home,*this, PC_SET_ANY);
-  }
-
-  template<class View>
-  forceinline size_t
-  ChannelInt<View>::dispose(Space& home) {
-    xs.cancel(home,*this, Gecode::Int::PC_INT_DOM);
-    ys.cancel(home,*this, PC_SET_ANY);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-  template<class View>
-  Actor*
-  ChannelInt<View>::copy(Space& home) {
-    return new (home) ChannelInt(home,*this);
-  }
-
-  template<class View>
-  ExecStatus
-  ChannelInt<View>::propagate(Space& home, const ModEventDelta&) {
-    int assigned = 0;
-    for (int v=xs.size(); v--;) {
-      if (xs[v].assigned()) {
-        assigned++;
-        if (xs[v].modified())
-          GECODE_ME_CHECK(ys[xs[v].val()].include(home,v));
-      }
-      if (xs[v].modified()) {
-        Gecode::Int::ViewDiffRanges<Gecode::Int::IntView> d(xs[v]);
-        Iter::Ranges::ToValues<Gecode::Int::ViewDiffRanges<
-          Gecode::Int::IntView> > dv(d);
-        for (; dv(); ++dv)
-          GECODE_ME_CHECK(ys[dv.val()].exclude(home, v));
-        xs[v].cache(home);
-      }
+    template <class View>
+    forceinline
+    ChannelInt<View>::ChannelInt(Space& home, ChannelInt& p)
+        : Propagator(home, p) {
+        xs.update(home, p.xs);
+        ys.update(home, p.ys);
     }
 
-    for (int i=ys.size(); i--;) {
-      if (ys[i].glbModified()) {
-        GlbDiffRanges<View> yilb(ys[i]);
-        Iter::Ranges::ToValues<GlbDiffRanges<View> > dv(yilb);
-        for (;dv();++dv)
-          GECODE_ME_CHECK(xs[dv.val()].eq(home,i));
-        ys[i].cacheGlb(home);
-      }
-      if (ys[i].lubModified()) {
-        LubDiffRanges<View> yiub(ys[i]);
-        Iter::Ranges::ToValues<LubDiffRanges<View> > dv(yiub);
-        for (;dv();++dv)
-          GECODE_ME_CHECK(xs[dv.val()].nq(home,i));
-        ys[i].cacheLub(home);
-      }
+    template <class View>
+    forceinline ExecStatus
+    ChannelInt<View>::post(Home home, ViewArray<Gecode::Int::CachedView<Gecode::Int::IntView>>& xs,
+                           ViewArray<CachedView<View>>& ys) {
+        // Sharing of ys is taken care of in the propagator:
+        // The ys are propagated to be disjoint, so shared variables
+        // result in failure.
+        int xssize = xs.size();
+        for (int i = ys.size(); i--;) {
+            GECODE_ME_CHECK(ys[i].exclude(home, xssize, Limits::max));
+            GECODE_ME_CHECK(ys[i].exclude(home, Limits::min, -1));
+        }
+        int yssize = ys.size();
+        if (yssize > Gecode::Int::Limits::max)
+            return ES_FAILED;
+        for (int i = xs.size(); i--;) {
+            GECODE_ME_CHECK(xs[i].gq(home, 0));
+            GECODE_ME_CHECK(xs[i].le(home, static_cast<int>(yssize)));
+        }
+
+        (void)new (home) ChannelInt(home, xs, ys);
+        return ES_OK;
     }
 
-    return (assigned==xs.size()) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
-  }
+    template <class View>
+    PropCost
+    ChannelInt<View>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::quadratic(PropCost::LO, xs.size() + ys.size());
+    }
 
-}}}
+    template <class View>
+    void
+    ChannelInt<View>::reschedule(Space& home) {
+        xs.reschedule(home, *this, Gecode::Int::PC_INT_DOM);
+        ys.reschedule(home, *this, PC_SET_ANY);
+    }
+
+    template <class View>
+    forceinline size_t
+    ChannelInt<View>::dispose(Space& home) {
+        xs.cancel(home, *this, Gecode::Int::PC_INT_DOM);
+        ys.cancel(home, *this, PC_SET_ANY);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
+
+    template <class View>
+    Actor*
+    ChannelInt<View>::copy(Space& home) {
+        return new (home) ChannelInt(home, *this);
+    }
+
+    template <class View>
+    ExecStatus
+    ChannelInt<View>::propagate(Space& home, const ModEventDelta&) {
+        int assigned = 0;
+        for (int v = xs.size(); v--;) {
+            if (xs[v].assigned()) {
+                assigned++;
+                if (xs[v].modified())
+                    GECODE_ME_CHECK(ys[xs[v].val()].include(home, v));
+            }
+            if (xs[v].modified()) {
+                Gecode::Int::ViewDiffRanges<Gecode::Int::IntView> d(xs[v]);
+                Iter::Ranges::ToValues<Gecode::Int::ViewDiffRanges<Gecode::Int::IntView>> dv(d);
+                for (; dv(); ++dv)
+                    GECODE_ME_CHECK(ys[dv.val()].exclude(home, v));
+                xs[v].cache(home);
+            }
+        }
+
+        for (int i = ys.size(); i--;) {
+            if (ys[i].glb_modified()) {
+                GlbDiffRanges<View> yilb(ys[i]);
+                Iter::Ranges::ToValues<GlbDiffRanges<View>> dv(yilb);
+                for (; dv(); ++dv)
+                    GECODE_ME_CHECK(xs[dv.val()].eq(home, i));
+                ys[i].cache_glb(home);
+            }
+            if (ys[i].lub_modified()) {
+                LubDiffRanges<View> yiub(ys[i]);
+                Iter::Ranges::ToValues<LubDiffRanges<View>> dv(yiub);
+                for (; dv(); ++dv)
+                    GECODE_ME_CHECK(xs[dv.val()].nq(home, i));
+                ys[i].cache_lub(home);
+            }
+        }
+
+        return (assigned == xs.size()) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
+    }
+
+} // namespace Gecode::Set::Channel
 
 // STATISTICS: set-prop

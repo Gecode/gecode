@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,22 +30,22 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
-  forceinline
-  IncNGL::IncNGL(Space& home, SetView x, int n)
-    : ViewValNGL<SetView,int,PC_SET_ANY>(home,x,n) {}
-  forceinline
-  IncNGL::IncNGL(Space& home, IncNGL& ngl)
-    : ViewValNGL<SetView,int,PC_SET_ANY>(home,ngl) {}
+    forceinline
+    IncNGL::IncNGL(Space& home, SetView x, int n)
+        : ViewValNGL<SetView, int, PC_SET_ANY>(home, x, n) {}
+    forceinline
+    IncNGL::IncNGL(Space& home, IncNGL& ngl)
+        : ViewValNGL<SetView, int, PC_SET_ANY>(home, ngl) {}
 
-  forceinline
-  ExcNGL::ExcNGL(Space& home, SetView x, int n)
-    : ViewValNGL<SetView,int,PC_SET_ANY>(home,x,n) {}
-  forceinline
-  ExcNGL::ExcNGL(Space& home, ExcNGL& ngl)
-    : ViewValNGL<SetView,int,PC_SET_ANY>(home,ngl) {}
+    forceinline
+    ExcNGL::ExcNGL(Space& home, SetView x, int n)
+        : ViewValNGL<SetView, int, PC_SET_ANY>(home, x, n) {}
+    forceinline
+    ExcNGL::ExcNGL(Space& home, ExcNGL& ngl)
+        : ViewValNGL<SetView, int, PC_SET_ANY>(home, ngl) {}
 
-}}}
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

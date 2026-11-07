@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
@@ -66,58 +65,59 @@ using namespace Gecode;
  */
 class ArchimedeanSpiral : public FloatMaximizeScript {
 protected:
-  /// The numbers
-  FloatVarArray f;
+    /// The numbers
+    FloatVarArray f;
+
 public:
-  /// Actual model
-  ArchimedeanSpiral(const Options& opt)
-    : FloatMaximizeScript(opt), f(*this,4,-20,20) {
-    // Post equation
-    FloatVar theta = f[0];
-    FloatVar r = f[3];
-    FloatVar x = f[1];
-    FloatVar y = f[2];
+    /// Actual model
+    ArchimedeanSpiral(const Options& opt) : FloatMaximizeScript(opt), f(*this, 4, -20, 20) {
+        // Post equation
+        FloatVar theta = f[0];
+        FloatVar r = f[3];
+        FloatVar x = f[1];
+        FloatVar y = f[2];
 
-    rel(*this, theta >= 0);
-    rel(*this, theta <= 6*FloatVal::pi());
-    rel(*this, r >= 0);
-    rel(*this, r*cos(theta) == x);
-    rel(*this, r*sin(theta) == y);
-    rel(*this, r == theta);
+        rel(*this, theta >= 0);
+        rel(*this, theta <= 6 * FloatVal::pi());
+        rel(*this, r >= 0);
+        rel(*this, r * cos(theta) == x);
+        rel(*this, r * sin(theta) == y);
+        rel(*this, r == theta);
 
-    branch(*this,f[0],FLOAT_VAL_SPLIT_MIN());
-  }
-  /// Constructor for cloning \a p
-  ArchimedeanSpiral(ArchimedeanSpiral& p)
-    : FloatMaximizeScript(p) {
-    f.update(*this, p.f);
-  }
-  /// Copy during cloning
-  virtual Space* copy(void) {
-    return new ArchimedeanSpiral(*this);
-  }
-  /// Cost function
-  virtual FloatVar cost(void) const {
-    return f[0];
-  }
-  /// Print solution coordinates
-  virtual void print(std::ostream& os) const {
-    os << "XY " << f[1].med() << " " << f[2].med()
-       << std::endl;
-  }
-
+        branch(*this, f[0], FLOAT_VAL_SPLIT_MIN());
+    }
+    /// Constructor for cloning \a p
+    ArchimedeanSpiral(ArchimedeanSpiral& p) : FloatMaximizeScript(p) {
+        f.update(*this, p.f);
+    }
+    /// Copy during cloning
+    Space*
+    copy() override {
+        return new ArchimedeanSpiral(*this);
+    }
+    /// Cost function
+    FloatVar
+    cost() const override {
+        return f[0];
+    }
+    /// Print solution coordinates
+    void
+    print(std::ostream& os) const override {
+        os << "XY " << f[1].med() << " " << f[2].med() << '\n';
+    }
 };
 
 /** \brief Main-function
  *  \relates ArchimedeanSpiral
  */
-int main(int argc, char* argv[]) {
-  Options opt("ArchimedeanSpiral");
-  opt.solutions(0);
-  opt.step(0.1);
-  opt.parse(argc,argv);
-  FloatMaximizeScript::run<ArchimedeanSpiral,BAB,Options>(opt);
-  return 0;
+int
+main(int argc, char* argv[]) {
+    Options opt("ArchimedeanSpiral");
+    opt.solutions(0);
+    opt.step(0.1);
+    opt.parse(argc, argv);
+    FloatMaximizeScript::run<ArchimedeanSpiral, BAB, Options>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any

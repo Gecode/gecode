@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,94 +32,92 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Rel {
+namespace Gecode::Float::Rel {
 
-  /*
-   * Disequality
-   *
-   */
-  template<class View0, class View1>
-  forceinline
-  Nq<View0,View1>::Nq(Home home, View0 x0, View1 x1)
-    : MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>(home,x0,x1) {}
+    /*
+     * Disequality
+     *
+     */
+    template <class View0, class View1>
+    forceinline
+    Nq<View0, View1>::Nq(Home home, View0 x0, View1 x1)
+        : MixBinaryPropagator<View0, PC_FLOAT_VAL, View1, PC_FLOAT_VAL>(home, x0, x1) {}
 
-  template<class View0, class View1>
-  ExecStatus
-  Nq<View0,View1>::post(Home home, View0 x0, View1 x1){
-    if (x0.assigned() && x1.assigned()) {
-      if (overlap(x0.val(),x1.val()))
-        return ES_FAILED;
-    } else if (x0 == x1) {
-      return ES_FAILED;
-    } else {
-      (void) new (home) Nq<View0,View1>(home,x0,x1);
+    template <class View0, class View1>
+    ExecStatus
+    Nq<View0, View1>::post(Home home, View0 x0, View1 x1) {
+        if (x0.assigned() && x1.assigned()) {
+            if (overlap(x0.val(), x1.val()))
+                return ES_FAILED;
+        } else if (x0 == x1) {
+            return ES_FAILED;
+        } else {
+            (void)new (home) Nq<View0, View1>(home, x0, x1);
+        }
+        return ES_OK;
     }
-    return ES_OK;
-  }
 
-  template<class View0, class View1>
-  forceinline
-  Nq<View0,View1>::Nq(Space& home, Nq<View0,View1>& p)
-    : MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>(home,p) {}
+    template <class View0, class View1>
+    forceinline
+    Nq<View0, View1>::Nq(Space& home, Nq<View0, View1>& p)
+        : MixBinaryPropagator<View0, PC_FLOAT_VAL, View1, PC_FLOAT_VAL>(home, p) {}
 
-  template<class View0, class View1>
-  Actor*
-  Nq<View0,View1>::copy(Space& home) {
-    return new (home) Nq<View0,View1>(home,*this);
-  }
-
-  template<class View0, class View1>
-  ExecStatus
-  Nq<View0,View1>::propagate(Space& home, const ModEventDelta&) {
-    if (x0.assigned() && x1.assigned()) {
-      return overlap(x0.val(),x1.val()) ? ES_FAILED : home.ES_SUBSUMED(*this);
+    template <class View0, class View1>
+    Actor*
+    Nq<View0, View1>::copy(Space& home) {
+        return new (home) Nq<View0, View1>(home, *this);
     }
-    return ES_FIX;
-  }
 
-  /*
-   * Disequality with float value
-   *
-   */
-  template<class View>
-  forceinline
-  NqFloat<View>::NqFloat(Home home, View x, FloatVal _c)
-    : UnaryPropagator<View,PC_FLOAT_VAL>(home,x), c(_c) {}
-
-  template<class View>
-  ExecStatus
-  NqFloat<View>::post(Home home, View x, FloatVal c){
-    if (x.assigned()) {
-      if (overlap(x.val(),c))
-        return ES_FAILED;
-    } else {
-      (void) new (home) NqFloat<View>(home,x,c);
+    template <class View0, class View1>
+    ExecStatus
+    Nq<View0, View1>::propagate(Space& home, const ModEventDelta&) {
+        if (x0.assigned() && x1.assigned()) {
+            return overlap(x0.val(), x1.val()) ? ES_FAILED : home.ES_SUBSUMED(*this);
+        }
+        return ES_FIX;
     }
-    return ES_OK;
-  }
 
-  template<class View>
-  forceinline
-  NqFloat<View>::NqFloat(Space& home, NqFloat<View>& p)
-    : UnaryPropagator<View,PC_FLOAT_VAL>(home,p), c(p.c) {}
+    /*
+     * Disequality with float value
+     *
+     */
+    template <class View>
+    forceinline
+    NqFloat<View>::NqFloat(Home home, View x, const FloatVal& _c)
+        : UnaryPropagator<View, PC_FLOAT_VAL>(home, x), c(_c) {}
 
-  template<class View>
-  Actor*
-  NqFloat<View>::copy(Space& home) {
-    return new (home) NqFloat<View>(home,*this);
-  }
-
-  template<class View>
-  ExecStatus
-  NqFloat<View>::propagate(Space& home, const ModEventDelta&) {
-    if (x0.assigned()) {
-      return (overlap(x0.val(),c)) ? ES_FAILED : home.ES_SUBSUMED(*this);
+    template <class View>
+    ExecStatus
+    NqFloat<View>::post(Home home, View x, const FloatVal& c) {
+        if (x.assigned()) {
+            if (overlap(x.val(), c))
+                return ES_FAILED;
+        } else {
+            (void)new (home) NqFloat<View>(home, x, c);
+        }
+        return ES_OK;
     }
-    return ES_FIX;
-  }
 
+    template <class View>
+    forceinline
+    NqFloat<View>::NqFloat(Space& home, NqFloat<View>& p)
+        : UnaryPropagator<View, PC_FLOAT_VAL>(home, p), c(p.c) {}
 
+    template <class View>
+    Actor*
+    NqFloat<View>::copy(Space& home) {
+        return new (home) NqFloat<View>(home, *this);
+    }
 
-}}}
+    template <class View>
+    ExecStatus
+    NqFloat<View>::propagate(Space& home, const ModEventDelta&) {
+        if (x0.assigned()) {
+            return (overlap(x0.val(), c)) ? ES_FAILED : home.ES_SUBSUMED(*this);
+        }
+        return ES_FIX;
+    }
+
+} // namespace Gecode::Float::Rel
 
 // STATISTICS: float-prop

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,103 +32,99 @@
 
 #include <climits>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
-  template<class View>
-  forceinline
-  Dom<View>::Dom(Home home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_DOM>(home,x) {}
+    template <class View>
+    forceinline
+    Dom<View>::Dom(Home home, ViewArray<View>& x)
+        : NaryPropagator<View, PC_INT_DOM>(home, x) {}
 
-  template<class View>
-  ExecStatus
-  Dom<View>::post(Home home, ViewArray<View>& x) {
-    if (x.size() == 2)
-      return Rel::Nq<View,View>::post(home,x[0],x[1]);
-    if (x.size() == 3)
-      return TerDom<View>::post(home,x[0],x[1],x[2]);
-    if (x.size() > 3) {
-      // Do bounds propagation to make view-value graph smaller
-      GECODE_ES_CHECK(prop_bnd<View>(home,x));
-      (void) new (home) Dom<View>(home,x);
+    template <class View>
+    ExecStatus
+    Dom<View>::post(Home home, ViewArray<View>& x) {
+        if (x.size() == 2)
+            return Rel::Nq<View, View>::post(home, x[0], x[1]);
+        if (x.size() == 3)
+            return TerDom<View>::post(home, x[0], x[1], x[2]);
+        if (x.size() > 3) {
+            // Do bounds propagation to make view-value graph smaller
+            GECODE_ES_CHECK(prop_bnd<View>(home, x));
+            (void)new (home) Dom<View>(home, x);
+        }
+        return ES_OK;
     }
-    return ES_OK;
-  }
 
-  template<class View>
-  forceinline
-  Dom<View>::Dom(Space& home, Dom<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,p) {}
+    template <class View>
+    forceinline
+    Dom<View>::Dom(Space& home, Dom<View>& p)
+        : NaryPropagator<View, PC_INT_DOM>(home, p) {}
 
-  template<class View>
-  PropCost
-  Dom<View>::cost(const Space&, const ModEventDelta& med) const {
-    if (View::me(med) == ME_INT_VAL)
-      return PropCost::linear(PropCost::LO, x.size());
-    else
-      return PropCost::quadratic(PropCost::HI, x.size());
-  }
+    template <class View>
+    PropCost
+    Dom<View>::cost(const Space&, const ModEventDelta& med) const {
+        if (View::me(med) == ME_INT_VAL)
+            return PropCost::linear(PropCost::LO, x.size());
+        return PropCost::quadratic(PropCost::HI, x.size());
+    }
 
-  template<class View>
-  Actor*
-  Dom<View>::copy(Space& home) {
-    return new (home) Dom<View>(home,*this);
-  }
+    template <class View>
+    Actor*
+    Dom<View>::copy(Space& home) {
+        return new (home) Dom<View>(home, *this);
+    }
 
 #ifdef GECODE_HAS_CBS
-  template<class View>
-  void
-  Dom<View>::solndistrib(Space& home, Propagator::SendMarginal send) const {
-    cbsdistinct(home,this->id(),x,send);
-  }
+    template <class View>
+    void
+    Dom<View>::solution_distribution(Space& home, const Propagator::SendMarginal& send) const {
+        cbs_distinct(home, this->id(), x, send);
+    }
 
-  template<class View>
-  void
-  Dom<View>::domainsizesum(Propagator::InDecision in, unsigned int& size,
-                           unsigned int& size_b) const {
-    cbssize(x,in,size,size_b);
-  }
+    template <class View>
+    void
+    Dom<View>::domain_size_sum(const Propagator::InDecision& in, unsigned int& size, unsigned int& size_b) const {
+        cbs_size(x, in, size, size_b);
+    }
 #endif
 
+    template <class View>
+    ExecStatus
+    Dom<View>::propagate(Space& home, const ModEventDelta& med) {
+        if (View::me(med) == ME_INT_VAL) {
+            ExecStatus es = prop_val<View, false>(home, x);
+            GECODE_ES_CHECK(es);
+            if (x.size() < 2)
+                return home.ES_SUBSUMED(*this);
+            if (es == ES_FIX)
+                return home.ES_FIX_PARTIAL(*this, View::med(ME_INT_DOM));
+            es = prop_bnd<View>(home, x);
+            GECODE_ES_CHECK(es);
+            if (x.size() < 2)
+                return home.ES_SUBSUMED(*this);
+            es = prop_val<View, true>(home, x);
+            GECODE_ES_CHECK(es);
+            if (x.size() < 2)
+                return home.ES_SUBSUMED(*this);
+            return home.ES_FIX_PARTIAL(*this, View::med(ME_INT_DOM));
+        }
 
-  template<class View>
-  ExecStatus
-  Dom<View>::propagate(Space& home, const ModEventDelta& med) {
-    if (View::me(med) == ME_INT_VAL) {
-      ExecStatus es = prop_val<View,false>(home,x);
-      GECODE_ES_CHECK(es);
-      if (x.size() < 2)
-        return home.ES_SUBSUMED(*this);
-      if (es == ES_FIX)
-        return home.ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
-      es = prop_bnd<View>(home,x);
-      GECODE_ES_CHECK(es);
-      if (x.size() < 2)
-        return home.ES_SUBSUMED(*this);
-      es = prop_val<View,true>(home,x);
-      GECODE_ES_CHECK(es);
-      if (x.size() < 2)
-        return home.ES_SUBSUMED(*this);
-      return home.ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
+        if (x.size() == 2)
+            GECODE_REWRITE(*this, (Rel::Nq<View, View>::post(home(*this), x[0], x[1])));
+        if (x.size() == 3)
+            GECODE_REWRITE(*this, TerDom<View>::post(home(*this), x[0], x[1], x[2]));
+
+        if (dc.available()) {
+            GECODE_ES_CHECK(dc.sync());
+        } else {
+            GECODE_ES_CHECK(dc.init(home, x));
+        }
+
+        bool assigned;
+        GECODE_ES_CHECK(dc.propagate(home, assigned));
+
+        return ES_FIX;
     }
 
-    if (x.size() == 2)
-      GECODE_REWRITE(*this,(Rel::Nq<View,View>::post(home(*this),x[0],x[1])));
-    if (x.size() == 3)
-      GECODE_REWRITE(*this,TerDom<View>::post(home(*this),x[0],x[1],x[2]));
-
-    if (dc.available()) {
-      GECODE_ES_CHECK(dc.sync());
-    } else {
-      GECODE_ES_CHECK(dc.init(home,x));
-    }
-
-    bool assigned;
-    GECODE_ES_CHECK(dc.propagate(home,assigned));
-
-    return ES_FIX;
-  }
-
-}}}
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop
-

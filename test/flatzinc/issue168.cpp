@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -32,28 +31,24 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Check that propagation terminates after finding all solutions
-    bool check(const std::string& output) {
-      const std::string separator = "----------\n";
-      int solutions = 0;
-      for (std::string::size_type p = 0;
-           (p = output.find(separator,p)) != std::string::npos;
-           p += separator.size())
-        solutions++;
-      return (solutions == 3) &&
-        (output.find("==========\n") != std::string::npos);
+    bool
+    check(const std::string& output) {
+        const std::string separator = "----------\n";
+        int solutions = 0;
+        for (std::string::size_type p = 0; (p = output.find(separator, p)) != std::string::npos; p += separator.size())
+            solutions++;
+        return (solutions == 3) && (output.contains("==========\n"));
     }
 
     /// Helper class to create and register test
     class Create {
     public:
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("Issue168",
-"predicate fzn_sort(array [int] of var int: x, array [int] of var int: y);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("Issue168",
+                                   "predicate fzn_sort(array [int] of var int: x, array [int] of var int: y);\n\
 var 2..4: D :: output_var;\n\
 var {2,4}: E :: output_var;\n\
 var {1,4}: F :: output_var;\n\
@@ -63,13 +58,11 @@ var 3..4: J :: output_var;\n\
 var {1,4}: K :: output_var;\n\
 constraint fzn_sort([F,K,G,D],[F,E,H,J]);\n\
 solve :: int_search([1,D,F,K,F,E,G,H,J],input_order,indomain,complete) satisfy;\n",
-          "", true, {"-a"}, check);
-      }
+                                   "", true, {"-a"}, check);
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

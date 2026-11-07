@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christopher Mears <chris.mears@monash.edu>
@@ -34,128 +33,124 @@
 #include <gecode/int/ldsb.hh>
 #include <gecode/int/branch.hh>
 
-namespace Gecode { namespace Int { namespace LDSB {
-  /// Compute symmetric literals
-  template <>
-  ArgArray<Literal>
-  VariableSymmetryImp<IntView>
-  ::symmetric(Literal l, const ViewArray<IntView>& x) const {
-    (void) x;
-    if (indices.valid(l._variable) && indices.get(l._variable)) {
-      int n = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(indices) ; i() ; ++i)
-        n++;
-      ArgArray<Literal> lits(n);
-      int j = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(indices) ; i() ; ++i)
-        lits[j++] = Literal(i.val(), l._value);
-      return lits;
-    } else {
-      return ArgArray<Literal>(0);
+namespace Gecode::Int::LDSB {
+    /// Compute symmetric literals
+    template <>
+    ArgArray<Literal>
+    VariableSymmetryImp<IntView>::symmetric(Literal l, const ViewArray<IntView>& x) const {
+        (void)x;
+        if (indices.valid(l._variable) && indices.get(l._variable)) {
+            int n = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(indices); i(); ++i)
+                n++;
+            ArgArray<Literal> lits(n);
+            int j = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(indices); i(); ++i)
+                lits[j++] = Literal(i.val(), l._value);
+            return lits;
+        }
+        return ArgArray<Literal>(0);
     }
-  }
-  /// Compute symmetric literals
-  template <>
-  ArgArray<Literal>
-  VariableSymmetryImp<BoolView>
-  ::symmetric(Literal l, const ViewArray<BoolView>& x) const {
-    (void) x;
-    if (indices.valid(l._variable) && indices.get(l._variable)) {
-      int n = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(indices) ; i() ; ++i)
-        n++;
-      ArgArray<Literal> lits(n);
-      int j = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(indices) ; i() ; ++i)
-        lits[j++] = Literal(i.val(), l._value);
-      return lits;
-    } else {
-      return ArgArray<Literal>(0);
+    /// Compute symmetric literals
+    template <>
+    ArgArray<Literal>
+    VariableSymmetryImp<BoolView>::symmetric(Literal l, const ViewArray<BoolView>& x) const {
+        (void)x;
+        if (indices.valid(l._variable) && indices.get(l._variable)) {
+            int n = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(indices); i(); ++i)
+                n++;
+            ArgArray<Literal> lits(n);
+            int j = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(indices); i(); ++i)
+                lits[j++] = Literal(i.val(), l._value);
+            return lits;
+        }
+        return ArgArray<Literal>(0);
     }
-  }
 
-  /// Compute symmetric literals
-  template <>
-  ArgArray<Literal>
-  ValueSymmetryImp<IntView>
-  ::symmetric(Literal l, const ViewArray<IntView>& x) const {
-    (void) x;
-    if (values.valid(l._value) && values.get(l._value)) {
-      int n = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(values) ; i() ; ++i)
-        n++;
-      ArgArray<Literal> lits(n);
-      int j = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(values) ; i() ; ++i)
-        lits[j++] = Literal(l._variable, i.val());
-      return lits;
-    } else {
-      return ArgArray<Literal>(0);
+    /// Compute symmetric literals
+    template <>
+    ArgArray<Literal>
+    ValueSymmetryImp<IntView>::symmetric(Literal l, const ViewArray<IntView>& x) const {
+        (void)x;
+        if (values.valid(l._value) && values.get(l._value)) {
+            int n = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(values); i(); ++i)
+                n++;
+            ArgArray<Literal> lits(n);
+            int j = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(values); i(); ++i)
+                lits[j++] = Literal(l._variable, i.val());
+            return lits;
+        }
+        return ArgArray<Literal>(0);
     }
-  }
-  /// Compute symmetric literals
-  template <>
-  ArgArray<Literal>
-  ValueSymmetryImp<BoolView>
-  ::symmetric(Literal l, const ViewArray<BoolView>& x) const {
-    (void) x;
-    if (values.valid(l._value) && values.get(l._value)) {
-      int n = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(values) ; i() ; ++i)
-        n++;
-      ArgArray<Literal> lits(n);
-      int j = 0;
-      for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space> > i(values) ; i() ; ++i)
-        lits[j++] = Literal(l._variable, i.val());
-      return lits;
-    } else {
-      return ArgArray<Literal>(0);
+    /// Compute symmetric literals
+    template <>
+    ArgArray<Literal>
+    ValueSymmetryImp<BoolView>::symmetric(Literal l, const ViewArray<BoolView>& x) const {
+        (void)x;
+        if (values.valid(l._value) && values.get(l._value)) {
+            int n = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(values); i(); ++i)
+                n++;
+            ArgArray<Literal> lits(n);
+            int j = 0;
+            for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(values); i(); ++i)
+                lits[j++] = Literal(l._variable, i.val());
+            return lits;
+        }
+        return ArgArray<Literal>(0);
     }
-  }
 
-  /// Compute symmetric literals
-  template <>
-  ArgArray<Literal>
-  ValueSequenceSymmetryImp<Int::IntView>
-  ::symmetric(Literal l, const ViewArray<IntView>& x) const {
-    (void) x;
-    Region region;
-    Support::DynamicStack<Literal,Region> s(region);
-    std::pair<int,int> location = findVar(values, n_values, seq_size, l._value);
-    if (location.first == -1) return dynamicStackToArgArray(s);
-    unsigned int seqNum = location.first;
-    unsigned int seqPos = location.second;
-    if (! dead_sequences.get(seqNum)) {
-      for (unsigned int seq = 0 ; seq < n_seqs ; seq++) {
-        if (seq == seqNum) continue;
-        if (dead_sequences.get(seq)) continue;
-        s.push(Literal(l._variable, getVal(seq,seqPos)));
-      }
+    /// Compute symmetric literals
+    template <>
+    ArgArray<Literal>
+    ValueSequenceSymmetryImp<Int::IntView>::symmetric(Literal l, const ViewArray<IntView>& x) const {
+        (void)x;
+        Region region;
+        Support::DynamicStack<Literal, Region> s(region);
+        std::pair<int, int> location = find_var(values, n_values, seq_size, l._value);
+        if (location.first == -1)
+            return dynamic_stack_to_arg_array(s);
+        unsigned int seq_num = location.first;
+        unsigned int seq_pos = location.second;
+        if (!dead_sequences.get(seq_num)) {
+            for (unsigned int seq = 0; seq < n_seqs; seq++) {
+                if (seq == seq_num)
+                    continue;
+                if (dead_sequences.get(seq))
+                    continue;
+                s.push(Literal(l._variable, get_val(seq, seq_pos)));
+            }
+        }
+        return dynamic_stack_to_arg_array(s);
     }
-    return dynamicStackToArgArray(s);
-  }
-  /// Compute symmetric literals
-  template <>
-  ArgArray<Literal>
-  ValueSequenceSymmetryImp<BoolView>
-  ::symmetric(Literal l, const ViewArray<BoolView>& x) const {
-    (void) x;
-    Region region;
-    Support::DynamicStack<Literal,Region> s(region);
-    std::pair<int,int> location = findVar(values, n_values, seq_size, l._value);
-    if (location.first == -1) return dynamicStackToArgArray(s);
-    unsigned int seqNum = location.first;
-    unsigned int seqPos = location.second;
-    if (! dead_sequences.get(seqNum)) {
-      for (unsigned int seq = 0 ; seq < n_seqs ; seq++) {
-        if (seq == seqNum) continue;
-        if (dead_sequences.get(seq)) continue;
-        s.push(Literal(l._variable, getVal(seq,seqPos)));
-      }
+    /// Compute symmetric literals
+    template <>
+    ArgArray<Literal>
+    ValueSequenceSymmetryImp<BoolView>::symmetric(Literal l, const ViewArray<BoolView>& x) const {
+        (void)x;
+        Region region;
+        Support::DynamicStack<Literal, Region> s(region);
+        std::pair<int, int> location = find_var(values, n_values, seq_size, l._value);
+        if (location.first == -1)
+            return dynamic_stack_to_arg_array(s);
+        unsigned int seq_num = location.first;
+        unsigned int seq_pos = location.second;
+        if (!dead_sequences.get(seq_num)) {
+            for (unsigned int seq = 0; seq < n_seqs; seq++) {
+                if (seq == seq_num)
+                    continue;
+                if (dead_sequences.get(seq))
+                    continue;
+                s.push(Literal(l._variable, get_val(seq, seq_pos)));
+            }
+        }
+        return dynamic_stack_to_arg_array(s);
     }
-    return dynamicStackToArgArray(s);
-  }
 
-}}}
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: int-branch

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,116 +32,119 @@
 
 namespace Test {
 
-  /*
-   * Test tags
-   *
-   */
-  inline
-  TestTags::TestTags(void)
-    : _mask(0) {}
-  inline
-  TestTags::TestTags(TestTag t)
-    : _mask(static_cast<unsigned int>(t)) {}
-  inline
-  TestTags::TestTags(TestTag t0, TestTag t1)
-    : _mask(static_cast<unsigned int>(t0) |
-            static_cast<unsigned int>(t1)) {}
-  inline TestTags
-  TestTags::check(void) {
-    return TestTags(TestTag::standard,TestTag::check);
-  }
-  inline TestTags
-  TestTags::standard(void) {
-    return TestTags(TestTag::standard);
-  }
-  inline TestTags
-  TestTags::sweep(void) {
-    return TestTags(TestTag::sweep);
-  }
-  inline bool
-  TestTags::empty(void) const {
-    return _mask == 0;
-  }
-  inline bool
-  TestTags::overlaps(TestTags t) const {
-    return (_mask & t._mask) != 0;
-  }
-  inline void
-  TestTags::add(TestTags t) {
-    _mask |= t._mask;
-  }
+    /*
+     * Test tags
+     *
+     */
+    inline TestTags::TestTags() : _mask(0) {}
+    inline TestTags::TestTags(TestTag t) : _mask(static_cast<unsigned int>(t)) {}
+    inline TestTags::TestTags(TestTag t0, TestTag t1)
+        : _mask(static_cast<unsigned int>(t0) | static_cast<unsigned int>(t1)) {}
+    inline TestTags
+    TestTags::check() {
+        return TestTags(TestTag::STANDARD, TestTag::CHECK);
+    }
+    inline TestTags
+    TestTags::standard() {
+        return TestTags(TestTag::STANDARD);
+    }
+    inline TestTags
+    TestTags::sweep() {
+        return TestTags(TestTag::SWEEP);
+    }
+    inline bool
+    TestTags::empty() const {
+        return _mask == 0;
+    }
+    inline bool
+    TestTags::overlaps(TestTags t) const {
+        return (_mask & t._mask) != 0;
+    }
+    inline void
+    TestTags::add(TestTags t) {
+        _mask |= t._mask;
+    }
 
-  /*
-   * Commandline options
-   *
-   */
-  inline
-  Options::Options(void)
-    : threads(1), seed(0), replay(false), iter(defiter), fixprob(deffixprob),
-      stop(true), log(false), testpat(), testtags(),
-      start_from(nullptr), list(false), list_tags(false), list_with_tags(false)
-  {}
+    /*
+     * Commandline options
+     *
+     */
+    inline Options::Options()
+        : threads(1), seed(0), replay(false), iter(default_iterations),
+          fixpoint_probability_denominator(default_fixpoint_probability_denominator), stop(true), log(false),
+          start_from(nullptr), list(false), list_tags(false), list_with_tags(false) {}
 
-  /*
-   * Base class for tests
-   *
-   */
-  inline const std::string&
-  Base::name(void) const {
-    return _name;
-  }
-  inline TestTags
-  Base::tags(void) const {
-    return _tags;
-  }
-  inline Base*
-  Base::tests(void) {
-    return _tests;
-  }
-  inline Base*
-  Base::next(void) const {
-    return _next;
-  }
-  inline void
-  Base::next(Base* n) {
-    _next=n;
-  }
-  inline bool
-  Base::fixpoint(void) {
-    return fixpoint(_rand);
-  }
+    /*
+     * Base class for tests
+     *
+     */
+    inline const std::string&
+    Base::name() const {
+        return _name;
+    }
+    inline TestTags
+    Base::tags() const {
+        return _tags;
+    }
+    inline Base*
+    Base::tests() {
+        return _tests;
+    }
+    inline Base*
+    Base::next() const {
+        return _next;
+    }
+    inline void
+    Base::next(Base* n) {
+        _next = n;
+    }
+    inline bool
+    Base::fixpoint() {
+        return fixpoint(_rand);
+    }
 
-  inline bool
-  Base::fixpoint(Gecode::Support::RandomGenerator& rand) {
-    return rand(opt.fixprob) == 0;
-  }
+    inline bool
+    Base::fixpoint(Gecode::Support::RandomGenerator& rand) {
+        return rand(opt.fixpoint_probability_denominator) == 0;
+    }
 
-  inline std::string
-  Base::str(bool b) {
-    std::stringstream s;
-    if (b)
-      s << "+";
-    else
-      s << "-";
-    return s.str();
-  }
+    inline std::string
+    Base::str(bool b) {
+        std::stringstream s;
+        if (b)
+            s << "+";
+        else
+            s << "-";
+        return s.str();
+    }
 
-  inline std::string
-  Base::str(int i) {
-    std::stringstream s;
-    s << i;
-    return s.str();
-  }
+    inline std::string
+    Base::str(int i) {
+        std::stringstream s;
+        s << i;
+        return s.str();
+    }
 
-  inline std::string
-  Base::str(const Gecode::IntArgs& x) {
-    std::string s = "";
-    for (int i=0; i<x.size()-1; i++)
-      s += str(x[i]) + ",";
-    return "[" + s + str(x[x.size()-1]) + "]";
-  }
+    inline std::string
+    Base::str(const Gecode::IntArgs& x) {
+        std::string s;
+        for (int i = 0; i < x.size() - 1; i++)
+            s += str(x[i]) + ",";
+        return "[" + s + str(x[x.size() - 1]) + "]";
+    }
 
+    template <class T1, class T2>
+    inline bool
+    Base::compares_equal(const T1& x, const T2& y) {
+        return (x == y) && (y == x) && !(x != y) && !(y != x);
+    }
 
-}
+    template <class T1, class T2>
+    inline bool
+    Base::compares_unequal(const T1& x, const T2& y) {
+        return !(x == y) && !(y == x) && (x != y) && (y != x);
+    }
+
+} // namespace Test
 
 // STATISTICS: test-core

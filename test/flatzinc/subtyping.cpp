@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jason Nguyen <jason.nguyen@monash.edu>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("subtyping::1",
-R"FZN(
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("subtyping::1",
+                                   R"FZN(
 bool: pb = true;
 int: pi = 1;
 float: pf = 1.5;
@@ -60,18 +56,16 @@ constraint bool_eq(vb, pb);
 constraint set_card(vs, pi);
 solve satisfy;
 )FZN",
-R"OUT(vb = true;
+                                   R"OUT(vb = true;
 vf = 1.5;
 vi = 1;
 vs = 1..1;
 ----------
 )OUT");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

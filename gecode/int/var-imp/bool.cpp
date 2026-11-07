@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,47 +32,46 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
-  BoolVarImp BoolVarImp::s_one(1);
-  BoolVarImp BoolVarImp::s_zero(0);
+    BoolVarImp BoolVarImp::s_one(1);
+    BoolVarImp BoolVarImp::s_zero(0);
 
-  ModEvent
-  BoolVarImp::one_none(Space& home) {
-    assert(none());
-    bits() ^= (NONE ^ ONE);
-    assert(one());
-    IntDelta d(0);
-    return notify(home,ME_BOOL_VAL,d);
-  }
+    ModEvent
+    BoolVarImp::one_none(Space& home) {
+        assert(none());
+        bits() ^= (unassigned_status ^ one_status);
+        assert(one());
+        IntDelta d(0);
+        return notify(home, ME_BOOL_VAL, d);
+    }
 
-  ModEvent
-  BoolVarImp::zero_none(Space& home) {
-    assert(none());
-    bits() ^= (NONE ^ ZERO);
-    assert(zero());
-    IntDelta d(1);
-    return notify(home,ME_BOOL_VAL,d);
-  }
+    ModEvent
+    BoolVarImp::zero_none(Space& home) {
+        assert(none());
+        bits() ^= (unassigned_status ^ zero_status);
+        assert(zero());
+        IntDelta d(1);
+        return notify(home, ME_BOOL_VAL, d);
+    }
 
-  void
-  BoolVarImp::subscribe(Space& home, Propagator& p, PropCond,
-                        bool schedule) {
-    // Subscription can be used with integer propagation conditions,
-    // which must be remapped to the single Boolean propagation condition.
-    BoolVarImpBase::subscribe(home,p,PC_BOOL_VAL,assigned(),schedule);
-  }
+    void
+    BoolVarImp::subscribe(Space& home, Propagator& p, PropCond, bool schedule) {
+        // Subscription can be used with integer propagation conditions,
+        // which must be remapped to the single Boolean propagation condition.
+        BoolVarImpBase::subscribe(home, p, PC_BOOL_VAL, assigned(), schedule);
+    }
 
-  void
-  BoolVarImp::reschedule(Space& home, Propagator& p, PropCond) {
-    BoolVarImpBase::reschedule(home,p,PC_BOOL_VAL,assigned());
-  }
+    void
+    BoolVarImp::reschedule(Space& home, Propagator& p, PropCond) {
+        BoolVarImpBase::reschedule(home, p, PC_BOOL_VAL, assigned());
+    }
 
-  void
-  BoolVarImp::subscribe(Space& home, Advisor& a, bool fail) {
-    BoolVarImpBase::subscribe(home,a,assigned(),fail);
-  }
+    void
+    BoolVarImp::subscribe(Space& home, Advisor& a, bool fail) {
+        BoolVarImpBase::subscribe(home, a, assigned(), fail);
+    }
 
-}}
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

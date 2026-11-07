@@ -1,0 +1,125 @@
+# Use clang-tidy 22. Each group below is enabled as a whole, and a line that
+# starts with a minus excludes a check that was tried and does not fit. The
+# reasons are in docs/code-style.md. Checks from other groups are named one by
+# one, because most of those groups are aliases of checks enabled here.
+Checks: >-
+  -*,
+  clang-analyzer-core.*,
+  clang-analyzer-cplusplus.*,
+  -clang-analyzer-cplusplus.NewDeleteLeaks,
+  clang-analyzer-deadcode.*,
+  clang-analyzer-nullability.*,
+  clang-analyzer-optin.*,
+  -clang-analyzer-optin.core.EnumCastOutOfRange,
+  -clang-analyzer-optin.cplusplus.UninitializedObject,
+  -clang-analyzer-optin.performance.Padding,
+  clang-analyzer-security.*,
+  -clang-analyzer-security.ArrayBound,
+  clang-analyzer-unix.*,
+  -clang-analyzer-unix.Malloc,
+  clang-analyzer-valist.*,
+  cert-err33-c,
+  google-default-arguments,
+  cppcoreguidelines-no-malloc,
+  cppcoreguidelines-rvalue-reference-param-not-moved,
+  cppcoreguidelines-misleading-capture-default-by-value,
+  cppcoreguidelines-missing-std-forward,
+  google-build-explicit-make-pair,
+  google-global-names-in-headers,
+  hicpp-exception-baseclass,
+  bugprone-*,
+  -bugprone-branch-clone,
+  -bugprone-derived-method-shadowing-base-method,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-inc-dec-in-conditions,
+  -bugprone-macro-parentheses,
+  -bugprone-multi-level-implicit-pointer-conversion,
+  -bugprone-narrowing-conversions,
+  -bugprone-signed-char-misuse,
+  -bugprone-switch-missing-default-case,
+  -bugprone-throwing-static-initialization,
+  -bugprone-unchecked-string-to-number-conversion,
+  concurrency-*,
+  -concurrency-mt-unsafe,
+  misc-*,
+  -misc-confusable-identifiers,
+  -misc-const-correctness,
+  -misc-header-include-cycle,
+  -misc-include-cleaner,
+  -misc-multiple-inheritance,
+  -misc-new-delete-overloads,
+  -misc-no-recursion,
+  -misc-non-private-member-variables-in-classes,
+  -misc-static-assert,
+  -misc-use-anonymous-namespace,
+  modernize-*,
+  -modernize-avoid-c-arrays,
+  -modernize-pass-by-value,
+  -modernize-return-braced-init-list,
+  -modernize-use-auto,
+  -modernize-use-default-member-init,
+  -modernize-use-designated-initializers,
+  -modernize-use-nodiscard,
+  -modernize-use-std-numbers,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  -performance-enum-size,
+  -performance-no-int-to-ptr,
+  portability-*,
+  -portability-template-virtual-member-function,
+  readability-*,
+  -readability-avoid-nested-conditional-operator,
+  -readability-braces-around-statements,
+  -readability-convert-member-functions-to-static,
+  -readability-function-cognitive-complexity,
+  -readability-function-size,
+  -readability-identifier-length,
+  -readability-implicit-bool-conversion,
+  -readability-isolate-declaration,
+  -readability-magic-numbers,
+  -readability-make-member-function-const,
+  -readability-math-missing-parentheses,
+  -readability-named-parameter,
+  -readability-redundant-declaration,
+  -readability-use-anyofallof
+WarningsAsErrors: '*'
+HeaderFilterRegex: '(gecode|test|examples|tools)/'
+ExcludeHeaderFilterRegex: 'gecode/flatzinc/(parser\.tab\.(cpp|hpp)|lexer\.yy\.cpp)$'
+FormatStyle: file
+
+CheckOptions:
+  # Explicit discards document intentional ownership handoffs.
+  bugprone-unused-return-value.AllowCastToVoid: true
+  bugprone-empty-catch.IgnoreCatchWithKeywords: 'Expected;Ignored'
+  # main reports nothing useful by catching, and the move members this
+  # reports are implicit ones of value types and lambdas.
+  bugprone-exception-escape.CheckMain: false
+  bugprone-exception-escape.CheckMoveMemberFunctions: false
+  # glibc needs this feature macro defined before any system header.
+  bugprone-reserved-identifier.AllowedIdentifiers: '_GNU_SOURCE'
+  cert-err33-c.AllowCastToVoid: true
+  # Checking functions finds the real cases; classes and test registration
+  # objects in .cpp files would only need wrapping in anonymous namespaces.
+  misc-use-internal-linkage.AnalyzeTypes: false
+  misc-use-internal-linkage.AnalyzeVariables: false
+  # De Morgan rewrites do not make these conditions easier to read.
+  readability-simplify-boolean-expr.SimplifyDeMorgan: false
+  # Sites without a fix-it declare variables in the condition.
+  readability-else-after-return.WarnOnUnfixable: false
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.MethodCase: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
+  readability-identifier-naming.ConstantCase: lower_case
+  # Constants and functions standing for constant values, such as
+  # ME_INT_VAL, ES_SUBSUMED, and INT_VAR_SIZE_MIN, may use UPPER_CASE.
+  readability-identifier-naming.ConstantIgnoredRegexp: '^(_?[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_|[A-Z][A-Z0-9_]*)$'
+  readability-identifier-naming.FunctionIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[A-Z][A-Z0-9_]*)$'
+  readability-identifier-naming.MethodIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[A-Z][A-Z0-9_]*)$'
+  readability-identifier-naming.VariableIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_)$'
+  readability-identifier-naming.MemberIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_)$'
+  readability-identifier-naming.ParameterIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_)$'
+  readability-identifier-naming.EnumConstantIgnoredRegexp: '^[A-Z][A-Z0-9_]*_$'

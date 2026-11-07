@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -31,7 +30,6 @@
  *
  */
 
-
 #include "test/float.hh"
 
 #include <cstdlib>
@@ -39,35 +37,34 @@
 
 namespace {
 
-  int float_runs = 0;
+    int float_runs = 0;
 
-  class FloatSmokeTest : public Test::Float::Test {
-  public:
-    FloatSmokeTest(void)
-      : ::Test::Float::Test("Public::Smoke",1,0.0,1.0,1.0,
-                            ::Test::Float::CPLT_ASSIGNMENT,false) {}
+    class FloatSmokeTest : public Test::Float::Test {
+    public:
+        FloatSmokeTest()
+            : ::Test::Float::Test("Public::Smoke", 1, 0.0, 1.0, 1.0, ::Test::Float::COMPLETE_ASSIGNMENT, false) {}
 
-    ::Test::Float::MaybeType
-    solution(const ::Test::Float::Assignment&) const override {
-      return ::Test::Float::MT_TRUE;
-    }
+        ::Test::Float::MaybeType
+        solution(const ::Test::Float::Assignment&) const override {
+            return ::Test::Float::MT_TRUE;
+        }
 
-    void post(Gecode::Space&, Gecode::FloatVarArray&) override {
-      float_runs++;
-    }
-  } float_smoke_test;
+        void
+        post(Gecode::Space&, Gecode::FloatVarArray&) override {
+            float_runs++;
+        }
+    } float_smoke_test;
 
-}
+} // namespace
 
 int
 main(int argc, char* argv[]) {
-  const int result = Test::run_registered_tests(argc,argv);
-  if ((result != EXIT_SUCCESS) || (float_runs == 0)) {
-    std::cerr << "public-float-smoke: helper-backed test did not run"
-              << std::endl;
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+    const int result = Test::run_registered_tests(argc, argv);
+    if ((result != EXIT_SUCCESS) || (float_runs == 0)) {
+        std::cerr << "public-float-smoke: helper-backed test did not run" << '\n' << std::flush;
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
 }
 
 // STATISTICS: test-float

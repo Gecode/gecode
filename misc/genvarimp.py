@@ -5,7 +5,11 @@
 
 """Generate kernel var-type.hpp or var-imp.hpp from variable implementation specs."""
 
+import os
+from pathlib import Path
 import re
+import shutil
+import subprocess
 import sys
 from typing import Dict, List, Optional
 
@@ -300,14 +304,8 @@ def parse_vis_file(path: str) -> Dict:
     data["conf"] = f"{data['name']}VarImpConf"
     data["base"] = f"Gecode::VarImp<{data['namespace']}::{data['conf']}>"
 
-    hdr = ""
-    ftr = ""
-    for ns in data["namespace"].split("::"):
-        hdr = f"{hdr}namespace {ns} {{ "
-        ftr = f"{ftr}}}"
-    hdr = re.sub(r" $", "", hdr)
-    data["hdr"] = hdr + "\n"
-    data["ftr"] = ftr + "\n"
+    data["hdr"] = f"namespace {data['namespace']} {{\n"
+    data["ftr"] = "}\n"
 
     me_n = len(data["men"])
     if me_n == 3:
@@ -589,13 +587,14 @@ def generate_typehpp(files: List[Dict], out: List[str]) -> None:
                     out.append("      {\n")
                     if d["me_max_n"] <= 8:
                         out.append("        static const Gecode::ModEvent me_c = (\n")
+                        terms = []
                         for j, n2 in enumerate(d["val2me"]):
                             n3 = d["mec"][n1][n2]
-                            shift = j << 2
-                            shift_s = f" {shift}" if shift < 10 else f"{shift}"
-                            out.append(f"          (({d['me_a'][n2]} ^ {d['me_a'][n3]}) << {shift_s})")
-                            if j + 1 != d["me_max_n"]:
-                                out.append(" |\n")
+                            if d["me_a"][n2] != d["me_a"][n3]:
+                                shift = j << 2
+                                shift_s = f" {shift}" if shift < 10 else f"{shift}"
+                                terms.append(f"          (({d['me_a'][n2]} ^ {d['me_a'][n3]}) << {shift_s})")
+                        out.append(" |\n".join(terms) if terms else "          0")
                         out.append("\n        );\n")
                         out.append("        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;\n")
                         out.append("        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);\n")
@@ -607,7 +606,10 @@ def generate_typehpp(files: List[Dict], out: List[str]) -> None:
                         out.append(f"        static const Gecode::ModEventDelta me_c[{d['me_max']}] = {{\n")
                         for j, n2 in enumerate(d["val2me"]):
                             n3 = d["mec"][n1][n2]
-                            out.append(f"          ({d['me_a'][n2]} ^ {d['me_a'][n3]}) << med_fst")
+                            if d["me_a"][n2] == d["me_a"][n3]:
+                                out.append("          0")
+                            else:
+                                out.append(f"          ({d['me_a'][n2]} ^ {d['me_a'][n3]}) << med_fst")
                             if j + 1 != d["me_max_n"]:
                                 out.append(",\n")
                         out.append("\n        };\n")
@@ -660,7 +662,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
     {d['class']}(Gecode::Space& home, {d['class']}& x);
   public:
     /// Constructor for creating static instance of variable
-    {d['class']}(void);
+    {d['class']}() = default;
     /// Constructor for creating variable
     {d['class']}(Gecode::Space& home);
     /// \\name Dependencies
@@ -700,7 +702,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
         if d["dispose"]:
             out.append(
                 f"""    /// Return link to next variable to be disposed
-    {d['class']}* next_d(void) const;
+    {d['class']}* next_d() const;
 """
             )
 
@@ -716,9 +718,6 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
             out.append(
                 f"""
   forceinline
-  {d['class']}::{d['class']}(void) {{}}
-
-  forceinline
   {d['class']}::{d['class']}(Gecode::Space& home)
     : {d['base']}(home) {{
      _next_d = static_cast<{d['class']}*>(vars_d(home)); vars_d(home,this);
@@ -731,7 +730,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
   }}
 
   forceinline {d['class']}*
-  {d['class']}::next_d(void) const {{
+  {d['class']}::next_d() const {{
     return _next_d;
   }}
 
@@ -740,9 +739,6 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
         else:
             out.append(
                 f"""
-  forceinline
-  {d['class']}::{d['class']}(void) {{}}
-
   forceinline
   {d['class']}::{d['class']}(Gecode::Space& home)
     : {d['base']}(home) {{}}
@@ -864,7 +860,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
         """namespace Gecode {
 
   forceinline void
-  Space::recover_noidx(void) {
+  Space::recover_noidx() {
     VarImp<NoIdxVarImpConf>* x =
       static_cast<VarImp<NoIdxVarImpConf>*>(pc.c.vars_noidx);
     while (x != nullptr) {
@@ -892,8 +888,7 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
   forceinline void
   Space::recover(Space& source) {
     ActorLink* clone_lists[2] = {&pl, &bl};
-    for (int i=0; i<2; i++) {
-      ActorLink* l = clone_lists[i];
+    for (auto* l : clone_lists) {
       ActorLink* c = l->next();
       while (c != l) {
         ActorLink* n = c->next();
@@ -954,6 +949,33 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
     )
 
 
+def format_cpp(source: str) -> str:
+    executable = (
+        os.environ.get("CLANG_FORMAT")
+        or shutil.which("clang-format-22")
+        or shutil.which("clang-format")
+    )
+    if not executable:
+        raise SystemExit("clang-format 22 is required to generate variable headers; set CLANG_FORMAT or add it to PATH")
+    try:
+        version = subprocess.run(
+            [executable, "--version"], check=True, capture_output=True, text=True
+        ).stdout
+        if not re.search(r"clang-format version 22\.", version):
+            raise SystemExit(f"clang-format 22 is required; found {version.strip()}")
+        config = Path(__file__).resolve().parents[1] / ".clang-format"
+        return subprocess.run(
+            [executable, f"--style=file:{config}", "--assume-filename=var-imp.hpp"],
+            input=source,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError) as error:
+        detail = error.stderr if isinstance(error, subprocess.CalledProcessError) else str(error)
+        raise SystemExit(f"Could not format generated variable header: {detail}") from error
+
+
 def main() -> int:
     gen_header, gen_typehpp, files = parse_args(sys.argv[1:])
 
@@ -972,7 +994,7 @@ def main() -> int:
         generate_header(parsed, out)
 
     out.append("// STATISTICS: kernel-var\n")
-    sys.stdout.write("".join(out))
+    sys.stdout.write(format_cpp("".join(out)))
     return 0
 
 

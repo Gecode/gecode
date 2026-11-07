@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -42,276 +41,279 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
-  /**
-   * \namespace Gecode::Set::Rel
-   * \brief Standard set relation propagators
-   */
+    /**
+     * \namespace Gecode::Set::Rel
+     * \brief Standard set relation propagators
+     */
 
-  /// Test whether two views are in fact the same
-  template<class VX, class VY>
-  bool same(VX c, VY y);
+    /// Test whether two views are in fact the same
+    template <class VX, class VY>
+    bool same(VX x, VY y);
 
-  /**
-   * \brief %Propagator for the subset constraint
-   *
-   * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp
-   */
+    /**
+     * \brief %Propagator for the subset constraint
+     *
+     * Requires \code #include <gecode/set/rel.hh> \endcode
+     * \ingroup FuncSetProp
+     */
 
-  template<class View0, class View1>
-  class Subset :
-    public MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB> {
-  protected:
-    using MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>::x0;
-    using MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>::x1;
-    /// Constructor for cloning \a p
-    Subset(Space& home, Subset& p);
-    /// Constructor for posting
-    Subset(Home home, View0 x0, View1 x1);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ x\subseteq y\f$
-    static  ExecStatus post(Home home, View0 x, View1 y);
-  };
+    template <class View0, class View1>
+    class Subset : public MixBinaryPropagator<View0, PC_SET_CGLB, View1, PC_SET_CLUB> {
+    protected:
+        using MixBinaryPropagator<View0, PC_SET_CGLB, View1, PC_SET_CLUB>::x0;
+        using MixBinaryPropagator<View0, PC_SET_CGLB, View1, PC_SET_CLUB>::x1;
+        /// Constructor for cloning \a p
+        Subset(Space& home, Subset& p);
+        /// Constructor for posting
+        Subset(Home home, View0 y0, View1 y1);
 
-  /**
-   * \brief %Propagator for the negated subset constraint
-   *
-   * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp
-   */
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator \f$ x\subseteq y\f$
+        static ExecStatus post(Home home, View0 x, View1 y);
+    };
 
-  template<class View0, class View1>
-  class NoSubset :
-    public MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB> {
-  protected:
-    using MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>::x0;
-    using MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>::x1;
-    /// Constructor for cloning \a p
-    NoSubset(Space& home, NoSubset& p);
-    /// Constructor for posting
-    NoSubset(Home home, View0 x0, View1 x1);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ x\subseteq y\f$
-    static  ExecStatus post(Home home,View0 x,View1 y);
-  };
+    /**
+     * \brief %Propagator for the negated subset constraint
+     *
+     * Requires \code #include <gecode/set/rel.hh> \endcode
+     * \ingroup FuncSetProp
+     */
 
-  /**
-   * \brief %Reified subset propagator
-   *
-   * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View0, class View1, class CtrlView, ReifyMode rm>
-  class ReSubset : public Propagator {
-  protected:
-    /// Variable view
-    View0 x0;
-    /// Variable view
-    View1 x1;
-    /// Boolean control view
-    CtrlView b;
-    /// Constructor for cloning \a p
-    ReSubset(Space& home, ReSubset& p);
-    /// Constructor for posting
-    ReSubset(Home home, View0 x0, View1 x1, CtrlView b);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function (defined as ternary low)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$
-    static ExecStatus post(Home home, View0 x, View1 y,
-                           CtrlView b);
-  };
+    template <class View0, class View1>
+    class NoSubset : public MixBinaryPropagator<View0, PC_SET_CLUB, View1, PC_SET_CGLB> {
+    protected:
+        using MixBinaryPropagator<View0, PC_SET_CLUB, View1, PC_SET_CGLB>::x0;
+        using MixBinaryPropagator<View0, PC_SET_CLUB, View1, PC_SET_CGLB>::x1;
+        /// Constructor for cloning \a p
+        NoSubset(Space& home, NoSubset& p);
+        /// Constructor for posting
+        NoSubset(Home home, View0 y0, View1 y1);
 
-  /**
-   * \brief %Propagator for set equality
-   *
-   * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View0, class View1>
-  class Eq : public MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
-  protected:
-    using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x0;
-    using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x1;
-    /// Constructor for cloning \a p
-    Eq(Space& home, Eq& p);
-    /// Constructor for posting
-    Eq(Home home, View0 x0, View1 x1);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ x=y \f$
-    static  ExecStatus  post(Home home, View0 x, View1 y);
-  };
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator \f$ x\subseteq y\f$
+        static ExecStatus post(Home home, View0 x, View1 y);
+    };
 
-  /**
-   * \brief %Reified equality propagator
-   *
-   * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View0, class View1, class CtrlView, ReifyMode rm>
-  class ReEq : public Propagator {
-  protected:
-    View0 x0;
-    View1 x1;
-    CtrlView b;
-    /// Constructor for cloning \a p
-    ReEq(Space& home, ReEq&);
-    /// Constructor for posting
-    ReEq(Home home, View0 x0, View1 x1, CtrlView b);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function (defined as PC_TERNARY_LO)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$
-    static ExecStatus post(Home home, View0 x, View1 y,
-                           CtrlView b);
-  };
+    /**
+     * \brief %Reified subset propagator
+     *
+     * Requires \code #include <gecode/set/rel.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View0, class View1, class CtrlView, ReifyMode rm>
+    class ReSubset : public Propagator {
+    protected:
+        /// Variable view
+        View0 x0;
+        /// Variable view
+        View1 x1;
+        /// Boolean control view
+        CtrlView b;
+        /// Constructor for cloning \a p
+        ReSubset(Space& home, ReSubset& p);
+        /// Constructor for posting
+        ReSubset(Home home, View0 y0, View1 y1, CtrlView b);
 
-  /**
-   * \brief %Propagator for set less than or equal
-   *
-   * Propagates strict inequality if \a strict is true.
-   *
-   * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View0, class View1, bool strict=false>
-  class Lq : public MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
-  protected:
-    using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x0;
-    using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x1;
-    /// Constructor for cloning \a p
-    Lq(Space& home, Lq& p);
-    /// Constructor for posting
-    Lq(Home home, View0 x0, View1 x1);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ x\leq y \f$
-    static  ExecStatus  post(Home home, View0 x, View1 y);
-  };
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Cost function (defined as ternary low)
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
+        /// Schedule function
+        void reschedule(Space& home) override;
+        /// Delete propagator and return its size
+        size_t dispose(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$
+        static ExecStatus post(Home home, View0 x, View1 x1, CtrlView b);
+    };
 
-  /**
-   * \brief %Reified propagator for set less than or equal
-   *
-   * Propagates strict inequality if \a strict is true.
-   *
-   * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View0, class View1, ReifyMode rm, bool strict=false>
-  class ReLq : public Propagator {
-  protected:
-    View0 x0;
-    View1 x1;
-    Gecode::Int::BoolView b;
-    /// Constructor for cloning \a p
-    ReLq(Space& home, ReLq& p);
-    /// Constructor for posting
-    ReLq(Home home, View0 x0, View1 x1, Gecode::Int::BoolView b);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function (defined as PC_TERNARY_LO)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ (x\leq y) \Leftrightarrow b\f$
-    static ExecStatus post(Home home, View0 x, View1 y,
-                           Gecode::Int::BoolView b);
-  };
+    /**
+     * \brief %Propagator for set equality
+     *
+     * Requires \code #include <gecode/set/rel.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View0, class View1>
+    class Eq : public MixBinaryPropagator<View0, PC_SET_ANY, View1, PC_SET_ANY> {
+    protected:
+        using MixBinaryPropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>::x0;
+        using MixBinaryPropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>::x1;
+        /// Constructor for cloning \a p
+        Eq(Space& home, Eq& p);
+        /// Constructor for posting
+        Eq(Home home, View0 x0, View1 y);
 
-  /**
-   * \brief %Propagator for negated equality
-   *
-   * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp
-   */
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator \f$ x=y \f$
+        static ExecStatus post(Home home, View0 x, View1 y);
+    };
 
-  template<class View0, class View1>
-  class Distinct :
-    public MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL> {
-  protected:
-    using MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL>::x0;
-    using MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL>::x1;
-    /// Constructor for cloning \a p
-    Distinct(Space& home, Distinct& p);
-    /// Constructor for posting
-    Distinct(Home home, View0 x0, View1 x1);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ x\neq y \f$
-    static  ExecStatus  post(Home home, View0 x, View1 y);
-  };
+    /**
+     * \brief %Reified equality propagator
+     *
+     * Requires \code #include <gecode/set/rel.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View0, class View1, class CtrlView, ReifyMode rm>
+    class ReEq : public Propagator {
+    protected:
+        View0 x0;
+        View1 x1;
+        CtrlView b;
+        /// Constructor for cloning \a p
+        ReEq(Space& home, ReEq&);
+        /// Constructor for posting
+        ReEq(Home home, View0 y0, View1 y1, CtrlView y2);
 
-  /**
-   * \brief %Propagator for negated equality
-   *
-   * This propagator actually propagates the distinctness, after the
-   * Distinct propagator waited for one variable to become
-   * assigned.
-   *
-   * Requires \code #include <gecode/set/rel.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View0>
-  class DistinctDoit : public UnaryPropagator<View0,PC_SET_ANY> {
-  protected:
-    using UnaryPropagator<View0,PC_SET_ANY>::x0;
-    /// The view that is already assigned
-    ConstSetView y;
-    /// Constructor for cloning \a p
-    DistinctDoit(Space& home, DistinctDoit&);
-    /// Constructor for posting
-    DistinctDoit(Home home, View0 x0, ConstSetView y);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$ x\neq y \f$
-    static ExecStatus post(Home home, View0 x, ConstSetView y);
-  };
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Cost function (defined as PC_TERNARY_LO)
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
+        /// Schedule function
+        void reschedule(Space& home) override;
+        /// Delete propagator and return its size
+        size_t dispose(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$
+        static ExecStatus post(Home home, View0 x, View1 x1, CtrlView b);
+    };
 
-}}}
+    /**
+     * \brief %Propagator for set less than or equal
+     *
+     * Propagates strict inequality if \a strict is true.
+     *
+     * Requires \code #include <gecode/set/rel.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View0, class View1, bool strict = false>
+    class Lq : public MixBinaryPropagator<View0, PC_SET_ANY, View1, PC_SET_ANY> {
+    protected:
+        using MixBinaryPropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>::x0;
+        using MixBinaryPropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>::x1;
+        /// Constructor for cloning \a p
+        Lq(Space& home, Lq& p);
+        /// Constructor for posting
+        Lq(Home home, View0 x0, View1 y);
+
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator \f$ x\leq y \f$
+        static ExecStatus post(Home home, View0 x, View1 y);
+    };
+
+    /**
+     * \brief %Reified propagator for set less than or equal
+     *
+     * Propagates strict inequality if \a strict is true.
+     *
+     * Requires \code #include <gecode/set/rel.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View0, class View1, ReifyMode rm, bool strict = false>
+    class ReLq : public Propagator {
+    protected:
+        View0 x0;
+        View1 x1;
+        Gecode::Int::BoolView b;
+        /// Constructor for cloning \a p
+        ReLq(Space& home, ReLq& p);
+        /// Constructor for posting
+        ReLq(Home home, View0 y0, View1 y1, Gecode::Int::BoolView y2);
+
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Cost function (defined as PC_TERNARY_LO)
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
+        /// Schedule function
+        void reschedule(Space& home) override;
+        /// Delete propagator and return its size
+        size_t dispose(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$ (x\leq y) \Leftrightarrow b\f$
+        static ExecStatus post(Home home, View0 x, View1 x1, Gecode::Int::BoolView b);
+    };
+
+    /**
+     * \brief %Propagator for negated equality
+     *
+     * Requires \code #include <gecode/set/rel.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+
+    template <class View0, class View1>
+    class Distinct : public MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL> {
+    protected:
+        using MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>::x0;
+        using MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>::x1;
+        /// Constructor for cloning \a p
+        Distinct(Space& home, Distinct& p);
+        /// Constructor for posting
+        Distinct(Home home, View0 x0, View1 y);
+
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator \f$ x\neq y \f$
+        static ExecStatus post(Home home, View0 x, View1 y);
+    };
+
+    /**
+     * \brief %Propagator for negated equality
+     *
+     * This propagator actually propagates the distinctness, after the
+     * Distinct propagator waited for one variable to become
+     * assigned.
+     *
+     * Requires \code #include <gecode/set/rel.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class View0>
+    class DistinctDoit : public UnaryPropagator<View0, PC_SET_ANY> {
+    protected:
+        using UnaryPropagator<View0, PC_SET_ANY>::x0;
+        /// The view that is already assigned
+        ConstSetView y;
+        /// Constructor for cloning \a p
+        DistinctDoit(Space& home, DistinctDoit&);
+        /// Constructor for posting
+        DistinctDoit(Home home, View0 _x, ConstSetView y);
+
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator \f$ x\neq y \f$
+        static ExecStatus post(Home home, View0 x, ConstSetView y);
+    };
+
+} // namespace Gecode::Set::Rel
 
 #include <gecode/set/rel/common.hpp>
 #include <gecode/set/rel/subset.hpp>

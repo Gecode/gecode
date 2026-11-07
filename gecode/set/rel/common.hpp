@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,97 +36,103 @@
  *
  */
 
-#define GECODE_SET_ME_CHECK_VAL(p,f) {                   \
-    ModEvent gecode_me_ ## __LINE__ = (p);                   \
-    if (me_failed(gecode_me_ ## __LINE__)) return ES_FAILED; \
-    if (ME_GEN_ASSIGNED==(gecode_me_ ## __LINE__))f=true; }
+#define GECODE_SET_ME_CHECK_VAL(p, f)                                                                                  \
+    {                                                                                                                  \
+        ModEvent gecode_me_##__LINE__ = (p);                                                                           \
+        if (me_failed(gecode_me_##__LINE__))                                                                           \
+            return ES_FAILED;                                                                                          \
+        if (ME_GEN_ASSIGNED == (gecode_me_##__LINE__))                                                                 \
+            f = true;                                                                                                  \
+    }
 
-#define GECODE_SET_ME_CHECK_VAL_B(modified, tell, f) \
-  {                                                  \
-    ModEvent me = (tell);                            \
-    modified |= me_modified(me);                     \
-    if (ME_GEN_ASSIGNED==(me)) f=true;               \
-    GECODE_ME_CHECK(me);                             \
-  }
+#define GECODE_SET_ME_CHECK_VAL_B(modified, tell, f)                                                                   \
+    {                                                                                                                  \
+        ModEvent me = (tell);                                                                                          \
+        modified |= me_modified(me);                                                                                   \
+        if (ME_GEN_ASSIGNED == (me))                                                                                   \
+            f = true;                                                                                                  \
+        GECODE_ME_CHECK(me);                                                                                           \
+    }
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
-  template<class VX, class VY>
-  forceinline bool
-  same(VX, VY) {
-    return false;
-  }
+    template <class VX, class VY>
+    forceinline bool
+    same(VX, VY) {
+        return false;
+    }
 
-  template<>
-  forceinline bool
-  same(SetView x, SetView y) {
-    return x == y;
-  }
+    template <>
+    forceinline bool
+    same(SetView x, SetView y) {
+        return x == y;
+    }
 
-  forceinline bool
-  subsumesME(ModEvent me0, ModEvent me1, ModEvent me2, ModEvent me) {
-    ModEvent cme = SetVarImp::me_combine(me0,SetVarImp::me_combine(me1, me2));
-    return SetVarImp::me_combine(cme, me)==cme;
-  }
-  forceinline bool
-  subsumesME(ModEvent me0, ModEvent me1, ModEvent me) {
-    ModEvent cme = SetVarImp::me_combine(me0, me1);
-    return SetVarImp::me_combine(cme, me)==cme;
-  }
-  forceinline bool
-  subsumesME(ModEvent me0, ModEvent me) {
-    return SetVarImp::me_combine(me0, me)==me0;
-  }
+    forceinline bool
+    subsumes_me(ModEvent me0, ModEvent me1, ModEvent me2, ModEvent me) {
+        ModEvent cme = SetVarImp::me_combine(me0, SetVarImp::me_combine(me1, me2));
+        return SetVarImp::me_combine(cme, me) == cme;
+    }
+    forceinline bool
+    subsumes_me(ModEvent me0, ModEvent me1, ModEvent me) {
+        // NOLINTNEXTLINE(readability-suspicious-call-argument): combining is symmetric
+        ModEvent cme = SetVarImp::me_combine(me0, me1);
+        return SetVarImp::me_combine(cme, me) == cme;
+    }
+    forceinline bool
+    subsumes_me(ModEvent me0, ModEvent me) {
+        return SetVarImp::me_combine(me0, me) == me0;
+    }
 
-  forceinline bool
-  testSetEventLB(ModEvent me0, ModEvent me1, ModEvent me2) {
-    return subsumesME(me0, me1, me2, ME_SET_GLB);
-  }
-  forceinline bool
-  testSetEventUB(ModEvent me0, ModEvent me1, ModEvent me2) {
-    return subsumesME(me0, me1, me2, ME_SET_LUB);
-  }
-  forceinline bool
-  testSetEventAnyB(ModEvent me0, ModEvent me1, ModEvent me2) {
-    return ( me0!=ME_SET_CARD || me1!=ME_SET_CARD || me2!=ME_SET_CARD );
-  }
-  forceinline bool
-  testSetEventCard(ModEvent me0, ModEvent me1, ModEvent me2) {
-    return subsumesME(me0, me1, me2, ME_SET_CARD);
-  }
-  forceinline bool
-  testSetEventLB(ModEvent me0, ModEvent me1) {
-    return subsumesME(me0, me1, ME_SET_GLB);
-  }
-  forceinline bool
-  testSetEventUB(ModEvent me0, ModEvent me1) {
-    return subsumesME(me0, me1, ME_SET_LUB);
-  }
-  forceinline bool
-  testSetEventAnyB(ModEvent me0, ModEvent me1) {
-    return ( me0!=ME_SET_CARD || me1!=ME_SET_CARD );
-  }
-  forceinline bool
-  testSetEventCard(ModEvent me0, ModEvent me1) {
-    return subsumesME(me0, me1, ME_SET_CARD);
-  }
-  forceinline bool
-  testSetEventLB(ModEvent me0) {
-    return subsumesME(me0, ME_SET_GLB);
-  }
-  forceinline bool
-  testSetEventUB(ModEvent me0) {
-    return subsumesME(me0, ME_SET_LUB);
-  }
-  forceinline bool
-  testSetEventAnyB(ModEvent me0) {
-    return ( me0!=ME_SET_CARD );
-  }
-  forceinline bool
-  testSetEventCard(ModEvent me0) {
-    return subsumesME(me0, ME_SET_CARD);
-  }
+    forceinline bool
+    test_set_event_lb(ModEvent me0, ModEvent me1, ModEvent me2) {
+        return subsumes_me(me0, me1, me2, ME_SET_GLB);
+    }
+    forceinline bool
+    test_set_event_ub(ModEvent me0, ModEvent me1, ModEvent me2) {
+        return subsumes_me(me0, me1, me2, ME_SET_LUB);
+    }
+    forceinline bool
+    test_set_event_any_b(ModEvent me0, ModEvent me1, ModEvent me2) {
+        return (me0 != ME_SET_CARD || me1 != ME_SET_CARD || me2 != ME_SET_CARD);
+    }
+    forceinline bool
+    test_set_event_card(ModEvent me0, ModEvent me1, ModEvent me2) {
+        return subsumes_me(me0, me1, me2, ME_SET_CARD);
+    }
+    forceinline bool
+    test_set_event_lb(ModEvent me0, ModEvent me1) {
+        return subsumes_me(me0, me1, ME_SET_GLB);
+    }
+    forceinline bool
+    test_set_event_ub(ModEvent me0, ModEvent me1) {
+        return subsumes_me(me0, me1, ME_SET_LUB);
+    }
+    forceinline bool
+    test_set_event_any_b(ModEvent me0, ModEvent me1) {
+        return (me0 != ME_SET_CARD || me1 != ME_SET_CARD);
+    }
+    forceinline bool
+    test_set_event_card(ModEvent me0, ModEvent me1) {
+        return subsumes_me(me0, me1, ME_SET_CARD);
+    }
+    forceinline bool
+    test_set_event_lb(ModEvent me0) {
+        return subsumes_me(me0, ME_SET_GLB);
+    }
+    forceinline bool
+    test_set_event_ub(ModEvent me0) {
+        return subsumes_me(me0, ME_SET_LUB);
+    }
+    forceinline bool
+    test_set_event_any_b(ModEvent me0) {
+        return (me0 != ME_SET_CARD);
+    }
+    forceinline bool
+    test_set_event_card(ModEvent me0) {
+        return subsumes_me(me0, ME_SET_CARD);
+    }
 
-}}}
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

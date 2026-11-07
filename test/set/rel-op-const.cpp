@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,342 +34,365 @@
 
 using namespace Gecode;
 
-namespace Test { namespace Set {
-
-  /// %Tests for relation/operation constraints with constants
-  namespace RelOpConst {
+/// %Tests for relation/operation constraints with constants
+namespace Test::Set::RelOpConst {
 
     /**
-      * \defgroup TaskTestSetRelOpConst Relation/operation constraints with constants
-      * \ingroup TaskTestSet
-      */
+     * \defgroup TaskTestSetRelOpConst Relation/operation constraints with constants
+     * \ingroup TaskTestSet
+     */
     //@{
 
-    static IntSet ds_33(-3,3);
-    static IntSet ds_22(-2,2);
-    static IntSet ds_12(-1,2);
+    static IntSet ds_33(-3, 3);
+    static IntSet ds_22(-2, 2);
+    static IntSet ds_12(-1, 2);
 
-    static IntSet iss[] = {IntSet(-1,1), IntSet(-4,-4), IntSet(0,2)};
+    static IntSet iss[] = {IntSet(-1, 1), IntSet(-4, -4), IntSet(0, 2)};
 
     /// %Test for set relation constraint with constants
     class RelSIS : public SetTest {
     private:
-      IntSet is;
-      Gecode::SetOpType sot;
-      Gecode::SetRelType srt;
-      bool inverse;
+        IntSet is;
+        Gecode::SetOpType sot;
+        Gecode::SetRelType srt;
+        bool inverse;
 
-      template<class I, class J>
-      bool
-      sol(I& i, J& j) const {
-        switch (srt) {
-        case SRT_EQ: return Iter::Ranges::equal(i,j);
-        case SRT_NQ: return !Iter::Ranges::equal(i,j);
-        case SRT_SUB: return Iter::Ranges::subset(i,j);
-        case SRT_SUP: return Iter::Ranges::subset(j,i);
-        case SRT_DISJ:
-          {
-            Gecode::Iter::Ranges::Inter<I,J> inter(i,j);
-            return !inter();
-          }
-        case SRT_CMPL:
-          {
-            Gecode::Set::RangesCompl<J> jc(j);
-            return Iter::Ranges::equal(i,jc);
-          }
-        default: GECODE_NEVER;
+        template <class I, class J>
+        bool
+        sol(I& i, J& j) const {
+            switch (srt) {
+            case SRT_EQ:
+                return Iter::Ranges::equal(i, j);
+            case SRT_NQ:
+                return !Iter::Ranges::equal(i, j);
+            case SRT_SUB:
+                return Iter::Ranges::subset(i, j);
+            case SRT_SUP:
+                return Iter::Ranges::subset(j, i);
+            case SRT_DISJOINT: {
+                Gecode::Iter::Ranges::Inter<I, J> inter(i, j);
+                return !inter();
+            }
+            case SRT_COMPLEMENT: {
+                Gecode::Set::RangesCompl<J> jc(j);
+                return Iter::Ranges::equal(i, jc);
+            }
+            default:
+                GECODE_NEVER;
+            }
+            return false;
         }
-        return false;
-      }
 
     public:
-      /// Create and register test
-      RelSIS(Gecode::SetOpType sot0, Gecode::SetRelType srt0,
-             int intSet, bool inverse0)
-       : SetTest(TestTags::sweep(),"RelOp::ConstSIS::"+str(sot0)+"::"+str(srt0)+"::"+
-                 str(intSet)+(inverse0 ? "i" :""),2,ds_22,false)
-       , is(iss[intSet]), sot(sot0), srt(srt0), inverse(inverse0) {}
-      /// %Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        IntSetRanges isr(is);
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        switch (sot) {
-        case SOT_UNION:
-          {
-            Iter::Ranges::Union<IntSetRanges, CountableSetRanges>
-              u(isr, xr0);
-            return sol(u,xr1);
-          }
-          break;
-        case SOT_DUNION:
-          {
-            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges>
-              inter(isr, xr0);
-            if (inter())
-              return false;
-            Iter::Ranges::Union<IntSetRanges, CountableSetRanges>
-              u(isr,xr0);
-            return sol(u,xr1);
-          }
-          break;
-        case SOT_INTER:
-          {
-            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges>
-              u(isr,xr0);
-            return sol(u,xr1);
-          }
-          break;
-        case SOT_MINUS:
-          {
-            if (!inverse) {
-              Iter::Ranges::Diff<IntSetRanges, CountableSetRanges>
-                u(isr,xr0);
-              return sol(u,xr1);
-            } else {
-              Iter::Ranges::Diff<CountableSetRanges, IntSetRanges>
-                u(xr0,isr);
-              return sol(u,xr1);
+        /// Create and register test
+        RelSIS(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int int_set, bool inverse0)
+            : SetTest(TestTags::sweep(),
+                      "RelOp::ConstSIS::" + str(sot0) + "::" + str(srt0) + "::" + str(int_set) + (inverse0 ? "i" : ""),
+                      2, ds_22, false),
+              is(iss[int_set]), sot(sot0), srt(srt0), inverse(inverse0) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            IntSetRanges isr(is);
+            CountableSetRanges xr0(x.lub, x[0]);
+            CountableSetRanges xr1(x.lub, x[1]);
+            switch (sot) {
+            case SOT_UNION: {
+                Iter::Ranges::Union<IntSetRanges, CountableSetRanges> u(isr, xr0);
+                return sol(u, xr1);
+            } break;
+            case SOT_DISJOINT_UNION: {
+                Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> inter(isr, xr0);
+                if (inter())
+                    return false;
+                Iter::Ranges::Union<IntSetRanges, CountableSetRanges> u(isr, xr0);
+                return sol(u, xr1);
+            } break;
+            case SOT_INTERSECTION: {
+                Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> u(isr, xr0);
+                return sol(u, xr1);
+            } break;
+            case SOT_MINUS: {
+                if (!inverse) {
+                    Iter::Ranges::Diff<IntSetRanges, CountableSetRanges> u(isr, xr0);
+                    return sol(u, xr1);
+                }
+                Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> u(xr0, isr);
+                return sol(u, xr1);
 
+            } break;
+            default:
+                GECODE_NEVER;
             }
-          }
-          break;
-        default: GECODE_NEVER;
+            GECODE_NEVER;
+            return false;
         }
-        GECODE_NEVER;
-        return false;
-      }
-      /// Post constraint on \a x
-      void post(Space& home, SetVarArray& x, IntVarArray&) {
-        if (!inverse)
-          Gecode::rel(home, is, sot, x[0], srt, x[1]);
-        else
-          Gecode::rel(home, x[0], sot, is, srt, x[1]);
-      }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray&) override {
+            if (!inverse)
+                Gecode::rel(home, is, sot, x[0], srt, x[1]);
+            else
+                Gecode::rel(home, x[0], sot, is, srt, x[1]);
+        }
     };
 
     /// %Test for set relation constraint with constants
     class RelSSI : public SetTest {
     private:
-      IntSet is;
-      Gecode::SetOpType sot;
-      Gecode::SetRelType srt;
+        IntSet is;
+        Gecode::SetOpType sot;
+        Gecode::SetRelType srt;
 
-      template<class I, class J>
-      bool
-      sol(I& i, J& j) const {
-        switch (srt) {
-        case SRT_EQ: return Iter::Ranges::equal(i,j);
-        case SRT_NQ: return !Iter::Ranges::equal(i,j);
-        case SRT_SUB: return Iter::Ranges::subset(i,j);
-        case SRT_SUP: return Iter::Ranges::subset(j,i);
-        case SRT_DISJ:
-          {
-            Gecode::Iter::Ranges::Inter<I,J> inter(i,j);
-            return !inter();
-          }
-        case SRT_CMPL:
-          {
-            Gecode::Set::RangesCompl<J> jc(j);
-            return Iter::Ranges::equal(i,jc);
-          }
-        default: GECODE_NEVER;
+        template <class I, class J>
+        bool
+        sol(I& i, J& j) const {
+            switch (srt) {
+            case SRT_EQ:
+                return Iter::Ranges::equal(i, j);
+            case SRT_NQ:
+                return !Iter::Ranges::equal(i, j);
+            case SRT_SUB:
+                return Iter::Ranges::subset(i, j);
+            case SRT_SUP:
+                return Iter::Ranges::subset(j, i);
+            case SRT_DISJOINT: {
+                Gecode::Iter::Ranges::Inter<I, J> inter(i, j);
+                return !inter();
+            }
+            case SRT_COMPLEMENT: {
+                Gecode::Set::RangesCompl<J> jc(j);
+                return Iter::Ranges::equal(i, jc);
+            }
+            default:
+                GECODE_NEVER;
+            }
+            GECODE_NEVER;
+            return false;
         }
-        GECODE_NEVER;
-        return false;
-      }
 
     public:
-      /// Create and register test
-      RelSSI(Gecode::SetOpType sot0, Gecode::SetRelType srt0,
-             int intSet)
-       : SetTest(sot0 == Gecode::SOT_UNION
-                 ? TestTags::check()
-                 : TestTags(TestTags::sweep()),
-                 "RelOp::ConstSSI::"+str(sot0)+"::"+str(srt0)+"::"+
-                 str(intSet),2,ds_22,false)
-      , is(iss[intSet]), sot(sot0), srt(srt0) {}
-      /// %Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        CountableSetRanges xr1(x.lub, x[1]);
-        IntSetRanges isr(is);
-        switch (sot) {
-        case SOT_UNION:
-          {
-            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges>
-              u(xr0, xr1);
-            return sol(u,isr);
-          }
-          break;
-        case SOT_DUNION:
-          {
-            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges>
-              inter(xr0, xr1);
-            if (inter())
-              return false;
-            Iter::Ranges::Union<CountableSetRanges, CountableSetRanges>
-              u(xr0, xr1);
-            return sol(u,isr);
-          }
-          break;
-        case SOT_INTER:
-          {
-            Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges>
-              u(xr0,xr1);
-            return sol(u,isr);
-          }
-          break;
-        case SOT_MINUS:
-          {
-            Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges>
-              u(xr0,xr1);
-            return sol(u,isr);
-          }
-          break;
-        default: GECODE_NEVER;
+        /// Create and register test
+        RelSSI(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int int_set)
+            : SetTest(sot0 == Gecode::SOT_UNION ? TestTags::check() : TestTags(TestTags::sweep()),
+                      "RelOp::ConstSSI::" + str(sot0) + "::" + str(srt0) + "::" + str(int_set), 2, ds_22, false),
+              is(iss[int_set]), sot(sot0), srt(srt0) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            CountableSetRanges xr0(x.lub, x[0]);
+            CountableSetRanges xr1(x.lub, x[1]);
+            IntSetRanges isr(is);
+            switch (sot) {
+            case SOT_UNION: {
+                Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0, xr1);
+                return sol(u, isr);
+            } break;
+            case SOT_DISJOINT_UNION: {
+                Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> inter(xr0, xr1);
+                if (inter())
+                    return false;
+                Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0, xr1);
+                return sol(u, isr);
+            } break;
+            case SOT_INTERSECTION: {
+                Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> u(xr0, xr1);
+                return sol(u, isr);
+            } break;
+            case SOT_MINUS: {
+                Iter::Ranges::Diff<CountableSetRanges, CountableSetRanges> u(xr0, xr1);
+                return sol(u, isr);
+            } break;
+            default:
+                GECODE_NEVER;
+            }
+            GECODE_NEVER;
+            return false;
         }
-        GECODE_NEVER;
-        return false;
-      }
-      /// Post constraint on \a x
-      void post(Space& home, SetVarArray& x, IntVarArray&) {
-        Gecode::rel(home, x[0], sot, x[1], srt, is);
-      }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray&) override {
+            Gecode::rel(home, x[0], sot, x[1], srt, is);
+        }
     };
 
     /// %Test for set relation constraint with constants
     class RelISI : public SetTest {
     private:
-      IntSet is0;
-      IntSet is1;
-      Gecode::SetOpType sot;
-      Gecode::SetRelType srt;
-      bool inverse;
+        IntSet is0;
+        IntSet is1;
+        Gecode::SetOpType sot;
+        Gecode::SetRelType srt;
+        bool inverse;
 
-      template<class I, class J>
-      bool
-      sol(I& i, J& j) const {
-        switch (srt) {
-        case SRT_EQ: return Iter::Ranges::equal(i,j);
-        case SRT_NQ: return !Iter::Ranges::equal(i,j);
-        case SRT_SUB: return Iter::Ranges::subset(i,j);
-        case SRT_SUP: return Iter::Ranges::subset(j,i);
-        case SRT_DISJ:
-          {
-            Gecode::Iter::Ranges::Inter<I,J> inter(i,j);
-            return !inter();
-          }
-        case SRT_CMPL:
-          {
-            Gecode::Set::RangesCompl<J> jc(j);
-            return Iter::Ranges::equal(i,jc);
-          }
-        default: GECODE_NEVER;
+        template <class I, class J>
+        bool
+        sol(I& i, J& j) const {
+            switch (srt) {
+            case SRT_EQ:
+                return Iter::Ranges::equal(i, j);
+            case SRT_NQ:
+                return !Iter::Ranges::equal(i, j);
+            case SRT_SUB:
+                return Iter::Ranges::subset(i, j);
+            case SRT_SUP:
+                return Iter::Ranges::subset(j, i);
+            case SRT_DISJOINT: {
+                Gecode::Iter::Ranges::Inter<I, J> inter(i, j);
+                return !inter();
+            }
+            case SRT_COMPLEMENT: {
+                Gecode::Set::RangesCompl<J> jc(j);
+                return Iter::Ranges::equal(i, jc);
+            }
+            default:
+                GECODE_NEVER;
+            }
+            GECODE_NEVER;
+            return false;
         }
-        GECODE_NEVER;
-        return false;
-      }
 
     public:
-      /// Create and register test
-      RelISI(Gecode::SetOpType sot0, Gecode::SetRelType srt0,
-             int intSet0, int intSet1, bool inverse0)
-       : SetTest((sot0 == Gecode::SOT_DUNION) &&
-                 (srt0 == Gecode::SRT_CMPL) &&
-                 (intSet0 == 0) && (intSet1 == 0)
-                 ? TestTags::standard() : TestTags::sweep(),
-                 "RelOp::ConstISI::"+str(sot0)+"::"+str(srt0)+"::"+
-                 str(intSet0)+"::"+str(intSet1)+
-                 (inverse0 ? "i" : ""),1,ds_33,false)
-       , is0(iss[intSet0]), is1(iss[intSet1]), sot(sot0), srt(srt0)
-       , inverse(inverse0) {}
-      /// %Test whether \a x is solution
-      bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr0(x.lub, x[0]);
-        IntSetRanges isr0(is0);
-        IntSetRanges isr1(is1);
-        switch (sot) {
-        case SOT_UNION:
-          {
-            Iter::Ranges::Union<IntSetRanges, CountableSetRanges>
-              u(isr0, xr0);
-            return sol(u,isr1);
-          }
-          break;
-        case SOT_DUNION:
-          {
-            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges>
-              inter(isr0, xr0);
-            if (inter())
-              return false;
-            Iter::Ranges::Union<IntSetRanges, CountableSetRanges>
-              u(isr0, xr0);
-            return sol(u,isr1);
-          }
-          break;
-        case SOT_INTER:
-          {
-            Iter::Ranges::Inter<IntSetRanges, CountableSetRanges>
-              u(isr0,xr0);
-            return sol(u,isr1);
-          }
-          break;
-        case SOT_MINUS:
-          {
-            if (!inverse) {
-              Iter::Ranges::Diff<IntSetRanges, CountableSetRanges>
-                u(isr0,xr0);
-              return sol(u,isr1);
-            } else {
-              Iter::Ranges::Diff<CountableSetRanges, IntSetRanges>
-                u(xr0,isr0);
-              return sol(u,isr1);
+        /// Create and register test
+        RelISI(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int int_set0, int int_set1, bool inverse0)
+            : SetTest((sot0 == Gecode::SOT_DISJOINT_UNION) && (srt0 == Gecode::SRT_COMPLEMENT) && (int_set0 == 0) &&
+                              (int_set1 == 0)
+                          ? TestTags::standard()
+                          : TestTags::sweep(),
+                      "RelOp::ConstISI::" + str(sot0) + "::" + str(srt0) + "::" + str(int_set0) + "::" + str(int_set1) +
+                          (inverse0 ? "i" : ""),
+                      1, ds_33, false),
+              is0(iss[int_set0]), is1(iss[int_set1]), sot(sot0), srt(srt0), inverse(inverse0) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            CountableSetRanges xr0(x.lub, x[0]);
+            IntSetRanges isr0(is0);
+            IntSetRanges isr1(is1);
+            switch (sot) {
+            case SOT_UNION: {
+                Iter::Ranges::Union<IntSetRanges, CountableSetRanges> u(isr0, xr0);
+                return sol(u, isr1);
+            } break;
+            case SOT_DISJOINT_UNION: {
+                Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> inter(isr0, xr0);
+                if (inter())
+                    return false;
+                Iter::Ranges::Union<IntSetRanges, CountableSetRanges> u(isr0, xr0);
+                return sol(u, isr1);
+            } break;
+            case SOT_INTERSECTION: {
+                Iter::Ranges::Inter<IntSetRanges, CountableSetRanges> u(isr0, xr0);
+                return sol(u, isr1);
+            } break;
+            case SOT_MINUS: {
+                if (!inverse) {
+                    Iter::Ranges::Diff<IntSetRanges, CountableSetRanges> u(isr0, xr0);
+                    return sol(u, isr1);
+                }
+                Iter::Ranges::Diff<CountableSetRanges, IntSetRanges> u(xr0, isr0);
+                return sol(u, isr1);
+
+            } break;
+            default:
+                GECODE_NEVER;
             }
-          }
-          break;
-        default: GECODE_NEVER;
+            GECODE_NEVER;
+            return false;
         }
-        GECODE_NEVER;
-        return false;
-      }
-      /// Post constraint on \a x
-      void post(Space& home, SetVarArray& x, IntVarArray&) {
-        if (!inverse)
-          Gecode::rel(home, is0, sot, x[0], srt, is1);
-        else
-          Gecode::rel(home, x[0], sot, is0, srt, is1);
-      }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray& x, IntVarArray&) override {
+            if (!inverse)
+                Gecode::rel(home, is0, sot, x[0], srt, is1);
+            else
+                Gecode::rel(home, x[0], sot, is0, srt, is1);
+        }
     };
+
+    /// Space with one set variable for tests without operands
+    class EmptyFixture : public Gecode::Space {
+    public:
+        /// Result set
+        SetVar y;
+        /// Create fixture, where \a glb is the greatest lower bound of \a y
+        EmptyFixture(const IntSet& glb = IntSet::empty) : y(*this, glb, ds_33) {}
+        /// Constructor for cloning \a fixture
+        EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
+            y.update(*this, fixture.y);
+        }
+        /// Copy during cloning
+        Gecode::Space*
+        copy() override {
+            return new EmptyFixture(*this);
+        }
+        /// Test whether the space is solved with \a y equal to \a result
+        bool
+        is_solved(const IntSet& result) {
+            if ((status() != SS_SOLVED) || !y.assigned())
+                return false;
+            SetVarGlbRanges yr(y);
+            IntSetRanges rr(result);
+            return Iter::Ranges::equal(yr, rr);
+        }
+    };
+
+    /// Test whether the operation \a op on empty \a Args and a constant \a z gives \a z
+    template <class Args>
+    static bool
+    is_result_constant(SetOpType op) {
+        Args x;
+        IntSet z(-1, 1);
+        EmptyFixture equal, larger(IntSet(2, 2));
+        rel(equal, op, x, z, equal.y);
+        rel(larger, op, x, z, larger.y);
+        return equal.is_solved(z) && (larger.status() == SS_FAILED);
+    }
+
+    /// %Test operations with a constant and no variables
+    class Empty : public Base {
+    public:
+        /// Create and register test
+        Empty() : Base("Set::RelOpConst::Empty") {}
+        /// Perform test
+        bool
+        run() override {
+            for (SetOpType op : {SOT_UNION, SOT_DISJOINT_UNION, SOT_INTERSECTION}) {
+                if (!is_result_constant<SetVarArgs>(op) || !is_result_constant<IntVarArgs>(op))
+                    return false;
+            }
+            return true;
+        }
+    };
+    Empty _empty;
 
     /// Help class to create and register tests
     class Create {
     public:
-      /// Perform creation and registration
-      Create(void) {
-        using namespace Gecode;
-        for (SetRelTypes srts; srts(); ++srts) {
-          for (SetOpTypes sots; sots(); ++sots) {
-            for (int i=0; i<=2; i++) {
-              (void) new RelSIS(sots.sot(),srts.srt(),i,false);
-              (void) new RelSIS(sots.sot(),srts.srt(),i,true);
-              (void) new RelSSI(sots.sot(),srts.srt(),i);
-              (void) new RelISI(sots.sot(),srts.srt(),i,0,false);
-              (void) new RelISI(sots.sot(),srts.srt(),i,1,false);
-              (void) new RelISI(sots.sot(),srts.srt(),i,2,false);
-              (void) new RelISI(sots.sot(),srts.srt(),i,0,true);
-              (void) new RelISI(sots.sot(),srts.srt(),i,1,true);
-              (void) new RelISI(sots.sot(),srts.srt(),i,2,true);
+        /// Perform creation and registration
+        Create() {
+            using namespace Gecode;
+            for (SetRelTypes srts; srts(); ++srts) {
+                for (SetOpTypes sots; sots(); ++sots) {
+                    for (int i = 0; i <= 2; i++) {
+                        (void)new RelSIS(sots.sot(), srts.srt(), i, false);
+                        (void)new RelSIS(sots.sot(), srts.srt(), i, true);
+                        (void)new RelSSI(sots.sot(), srts.srt(), i);
+                        (void)new RelISI(sots.sot(), srts.srt(), i, 0, false);
+                        (void)new RelISI(sots.sot(), srts.srt(), i, 1, false);
+                        (void)new RelISI(sots.sot(), srts.srt(), i, 2, false);
+                        (void)new RelISI(sots.sot(), srts.srt(), i, 0, true);
+                        (void)new RelISI(sots.sot(), srts.srt(), i, 1, true);
+                        (void)new RelISI(sots.sot(), srts.srt(), i, 2, true);
+                    }
+                }
             }
-          }
         }
-      }
     };
 
     Create c;
 
     //@}
 
-}}}
-
+} // namespace Test::Set::RelOpConst
 // STATISTICS: test-set

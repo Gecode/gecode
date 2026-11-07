@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -41,22 +40,20 @@
 #define GECODE_FREELIST_SIZE_MAX64 3
 #endif
 
-namespace Gecode { namespace Kernel {
-
-  /**
-   * \brief Parameters defining memory management policy for spaces
-   * \ingroup FuncMemSpace
-   */
-  namespace MemoryConfig {
+/**
+ * \brief Parameters defining memory management policy for spaces
+ * \ingroup FuncMemSpace
+ */
+namespace Gecode::Kernel::MemoryConfig {
     /**
      * \brief How many heap chunks should be cached at most
      */
-    const unsigned int n_hc_cache = 4*4;
+    const unsigned int n_hc_cache = 4 * 4;
 
     /**
      * \brief Minimal size of a heap chunk requested from the OS
      */
-    const size_t hcsz_min =  1024;
+    const size_t hcsz_min = 1024;
     /**
      * \brief Maximal size of a heap chunk requested from the OS
      *
@@ -103,7 +100,7 @@ namespace Gecode { namespace Kernel {
      * Currently, for 32 bit machines, the minimal size is 8 bytes.
      * For 64 bit machines, it is 16 bytes.
      */
-    const int fl_size_min  = ((sizeof(void*) == 4) ? 2 : 2);
+    const int fl_size_min = 2;
     /**
      * \brief Maximal size for free list element
      *
@@ -112,7 +109,7 @@ namespace Gecode { namespace Kernel {
      * Currently, for 32 bit machines, the maximal size is 12 bytes.
      * For 64 bit machines, it is 24 bytes.
      */
-    const int fl_size_max  = ((sizeof(void*) == 4) ? GECODE_FREELIST_SIZE_MAX32 : GECODE_FREELIST_SIZE_MAX64);
+    const int fl_size_max = ((sizeof(void*) == 4) ? GECODE_FREELIST_SIZE_MAX32 : GECODE_FREELIST_SIZE_MAX64);
     /**
      * \brief Number of free lists elements to allocate
      *
@@ -149,11 +146,9 @@ namespace Gecode { namespace Kernel {
      */
     forceinline void
     align(size_t& s, size_t a) {
-      s += ((a - (s & (a - 1))) & (a - 1));
+        s += ((a - (s & (a - 1))) & (a - 1));
     }
 
-  }
-
-}}
+} // namespace Gecode::Kernel::MemoryConfig
 
 // STATISTICS: kernel-memory

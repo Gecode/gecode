@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,105 +30,105 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Count {
+namespace Gecode::Int::Count {
 
-  template<class VX, class VY, class VZ>
-  forceinline
-  ViewBase<VX,VY,VZ>::ViewBase(Home home,
-                               ViewArray<VX>& x0, VY y0, VZ z0, int c0)
-    : Propagator(home), x(x0), y(y0), z(z0), c(c0) {
-    if (isintset(y))
-      home.notice(*this,AP_DISPOSE);
-    x.subscribe(home,*this,PC_INT_DOM);
-    subscribe(home,*this,y);
-    z.subscribe(home,*this,PC_INT_BND);
-  }
+    template <class VX, class VY, class VZ>
+    forceinline
+    ViewBase<VX, VY, VZ>::ViewBase(Home home, ViewArray<VX>& x0, const VY& y0, VZ z0, int c0)
+        : Propagator(home), x(x0), y(y0), z(z0), c(c0) {
+        if (is_int_set(y))
+            home.notice(*this, AP_DISPOSE);
+        x.subscribe(home, *this, PC_INT_DOM);
+        subscribe(home, *this, y);
+        z.subscribe(home, *this, PC_INT_BND);
+    }
 
-  template<class VX, class VY, class VZ>
-  forceinline
-  ViewBase<VX,VY,VZ>::ViewBase(Space& home, ViewBase<VX,VY,VZ>& p)
-    : Propagator(home,p), c(p.c) {
-    x.update(home,p.x);
-    update(y,home,p.y);
-    z.update(home,p.z);
-  }
+    template <class VX, class VY, class VZ>
+    forceinline
+    ViewBase<VX, VY, VZ>::ViewBase(Space& home, ViewBase<VX, VY, VZ>& p)
+        : Propagator(home, p), c(p.c) {
+        x.update(home, p.x);
+        update(y, home, p.y);
+        z.update(home, p.z);
+    }
 
-  template<class VX, class VY, class VZ>
-  PropCost
-  ViewBase<VX,VY,VZ>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::LO,x.size()+1);
-  }
+    template <class VX, class VY, class VZ>
+    PropCost
+    ViewBase<VX, VY, VZ>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::linear(PropCost::LO, x.size() + 1);
+    }
 
-  template<class VX, class VY, class VZ>
-  void
-  ViewBase<VX,VY,VZ>::reschedule(Space& home) {
-    x.reschedule(home,*this,PC_INT_DOM);
-    Gecode::Int::Count::reschedule(home,*this,y);
-    z.reschedule(home,*this,PC_INT_BND);
-  }
+    template <class VX, class VY, class VZ>
+    void
+    ViewBase<VX, VY, VZ>::reschedule(Space& home) {
+        x.reschedule(home, *this, PC_INT_DOM);
+        Gecode::Int::Count::reschedule(home, *this, y);
+        z.reschedule(home, *this, PC_INT_BND);
+    }
 
-  template<class VX, class VY, class VZ>
-  forceinline size_t
-  ViewBase<VX,VY,VZ>::dispose(Space& home) {
-    if (isintset(y))
-      home.ignore(*this,AP_DISPOSE);
-    x.cancel(home,*this,PC_INT_DOM);
-    cancel(home,*this,y);
-    z.cancel(home,*this,PC_INT_BND);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
+    template <class VX, class VY, class VZ>
+    forceinline size_t
+    ViewBase<VX, VY, VZ>::dispose(Space& home) {
+        if (is_int_set(y))
+            home.ignore(*this, AP_DISPOSE);
+        x.cancel(home, *this, PC_INT_DOM);
+        cancel(home, *this, y);
+        z.cancel(home, *this, PC_INT_BND);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
 
-  template<class VX, class VY, class VZ>
-  forceinline void
-  ViewBase<VX,VY,VZ>::count(Space& home) {
-    int n = x.size();
-    for (int i=n; i--; )
-      switch (holds(x[i],y)) {
-      case RT_FALSE:
-        x[i].cancel(home,*this,PC_INT_DOM); x[i]=x[--n];
-        break;
-      case RT_TRUE:
-        x[i].cancel(home,*this,PC_INT_DOM); x[i]=x[--n];
-        c--;
-        break;
-      case RT_MAYBE:
-        break;
-      default:
-        GECODE_NEVER;
-      }
-    x.size(n);
-  }
+    template <class VX, class VY, class VZ>
+    forceinline void
+    ViewBase<VX, VY, VZ>::count(Space& home) {
+        int n = x.size();
+        for (int i = n; i--;)
+            switch (holds(x[i], y)) {
+            case RT_FALSE:
+                x[i].cancel(home, *this, PC_INT_DOM);
+                x[i] = x[--n];
+                break;
+            case RT_TRUE:
+                x[i].cancel(home, *this, PC_INT_DOM);
+                x[i] = x[--n];
+                c--;
+                break;
+            case RT_MAYBE:
+                break;
+            default:
+                GECODE_NEVER;
+            }
+        x.size(n);
+    }
 
-  template<class VX, class VY, class VZ>
-  forceinline int
-  ViewBase<VX,VY,VZ>::atleast(void) const {
-    return -c;
-  }
+    template <class VX, class VY, class VZ>
+    forceinline int
+    ViewBase<VX, VY, VZ>::at_least() const {
+        return -c;
+    }
 
-  template<class VX, class VY, class VZ>
-  forceinline int
-  ViewBase<VX,VY,VZ>::atmost(void) const {
-    return x.size()-c;
-  }
+    template <class VX, class VY, class VZ>
+    forceinline int
+    ViewBase<VX, VY, VZ>::at_most() const {
+        return x.size() - c;
+    }
 
-  template<class VX>
-  forceinline bool
-  shared(const IntSet&, VX) {
-    return false;
-  }
-  template<class VX, class VY, class VZ>
-  forceinline bool
-  ViewBase<VX,VY,VZ>::sharing(const ViewArray<VX>& x,
-                              const VY& y, const VZ& z) {
-    if (shared(y,z))
-      return true;
-    for (int i=0; i<x.size(); i++)
-      if (shared(x[i],z))
-        return true;
-    return false;
-  }
+    template <class VX>
+    forceinline bool
+    shared(const IntSet&, VX) {
+        return false;
+    }
+    template <class VX, class VY, class VZ>
+    forceinline bool
+    ViewBase<VX, VY, VZ>::sharing(const ViewArray<VX>& x, const VY& y, const VZ& z) {
+        if (shared(y, z))
+            return true;
+        for (int i = 0; i < x.size(); i++)
+            if (shared(x[i], z))
+                return true;
+        return false;
+    }
 
-}}}
+} // namespace Gecode::Int::Count
 
 // STATISTICS: int-prop

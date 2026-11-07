@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,31 +32,30 @@
 
 namespace Gecode {
 
-  forceinline
-  BoolTraceDelta::BoolTraceDelta(Int::BoolTraceView, Int::BoolView n,
-                                 const Delta&)
-    : delta(1-n.val()) {}
-  forceinline bool
-  BoolTraceDelta::operator ()(void) const {
-    return delta >= 0;
-  }
-  forceinline void
-  BoolTraceDelta::operator ++(void) {
-    delta = -1;
-  }
-  forceinline int
-  BoolTraceDelta::min(void) const {
-    return delta;
-  }
-  forceinline int
-  BoolTraceDelta::max(void) const {
-    return delta;
-  }
-  forceinline unsigned int
-  BoolTraceDelta::width(void) const {
-    return 1U;
-  }
+    forceinline
+    BoolTraceDelta::BoolTraceDelta(Int::BoolTraceView, Int::BoolView n, const Delta&)
+        : delta(1 - n.val()) {}
+    forceinline bool
+    BoolTraceDelta::operator()() const {
+        return delta >= 0;
+    }
+    forceinline void
+    BoolTraceDelta::operator++() {
+        delta = -1;
+    }
+    forceinline int
+    BoolTraceDelta::min() const {
+        return delta;
+    }
+    forceinline int
+    BoolTraceDelta::max() const {
+        return delta;
+    }
+    forceinline unsigned int
+    BoolTraceDelta::width() const {
+        return 1U;
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-trace

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,117 +32,126 @@
 
 namespace Gecode {
 
-  /**
-   * \brief The shared handle
-   *
-   * A shared handle provides access to an object that lives outside a space,
-   * and is shared between entities that possibly reside inside different
-   * spaces.
-   *
-   * This is the base class that all shared handles must inherit from.
-   *
-   */
-  class SharedHandle {
-  public:
     /**
-     * \brief The shared object
+     * \brief The shared handle
      *
-     * Shared objects must inherit from this base class.
+     * A shared handle provides access to an object that lives outside a space,
+     * and is shared between entities that possibly reside inside different
+     * spaces.
+     *
+     * This is the base class that all shared handles must inherit from.
+     *
      */
-    class GECODE_KERNEL_EXPORT Object : public HeapAllocated {
-      friend class SharedHandle;
-    private:
-      /// The counter used for reference counting
-      Support::RefCount rc;
+    class SharedHandle {
     public:
-      /// Initialize
-      Object(void);
-      /// Delete shared object
-      virtual ~Object(void);
+        /**
+         * \brief The shared object
+         *
+         * Shared objects must inherit from this base class.
+         */
+        class GECODE_KERNEL_EXPORT Object : public HeapAllocated {
+            friend class SharedHandle;
+
+        private:
+            /// The counter used for reference counting
+            Support::RefCount rc;
+
+        public:
+            /// Initialize
+            Object();
+            /// Delete shared object
+            virtual ~Object();
+        };
+
+    private:
+        /// The shared object
+        Object* o;
+        /// Subscribe handle to object
+        void subscribe();
+        /// Cancel subscription of handle to object
+        void cancel();
+
+    public:
+        /// Create shared handle with no object pointing to
+        SharedHandle();
+        /// Create shared handle that points to shared object \a so
+        SharedHandle(SharedHandle::Object* so);
+        /// Copy constructor maintaining reference count
+        SharedHandle(const SharedHandle& sh);
+        /// Assignment operator maintaining reference count
+        SharedHandle& operator=(const SharedHandle& sh);
+        /// Destructor that maintains reference count
+        ~SharedHandle();
+        /// Whether handle points to an object
+        explicit operator bool() const;
+
+    protected:
+        /// Access to the shared object
+        SharedHandle::Object* object() const;
+        /// Modify shared object
+        void object(SharedHandle::Object* n);
     };
-  private:
-    /// The shared object
-    Object* o;
-    /// Subscribe handle to object
-    void subscribe(void);
-    /// Cancel subscription of handle to object
-    void cancel(void);
-  public:
-    /// Create shared handle with no object pointing to
-    SharedHandle(void);
-    /// Create shared handle that points to shared object \a so
-    SharedHandle(SharedHandle::Object* so);
-    /// Copy constructor maintaining reference count
-    SharedHandle(const SharedHandle& sh);
-    /// Assignment operator maintaining reference count
-    SharedHandle& operator =(const SharedHandle& sh);
-    /// Destructor that maintains reference count
-    ~SharedHandle(void);
-    /// Whether handle points to an object
-    explicit operator bool(void) const;
-  protected:
-    /// Access to the shared object
-    SharedHandle::Object* object(void) const;
-    /// Modify shared object
-    void object(SharedHandle::Object* n);
-  };
 
-
-  forceinline
-  SharedHandle::Object::Object(void)
-    : rc(0) {}
-  forceinline
-  SharedHandle::Object::~Object(void) {
-    assert(!rc);
-  }
-
-
-  forceinline SharedHandle::Object*
-  SharedHandle::object(void) const {
-    return o;
-  }
-  forceinline void
-  SharedHandle::subscribe(void) {
-    if (o != nullptr) o->rc.inc();
-  }
-  forceinline void
-  SharedHandle::cancel(void) {
-    if ((o != nullptr) && o->rc.dec())
-      delete o;
-    o=nullptr;
-  }
-  forceinline void
-  SharedHandle::object(SharedHandle::Object* n) {
-    if (n != o) {
-      cancel(); o=n; subscribe();
+    forceinline
+    SharedHandle::Object::Object()
+        : rc(0) {}
+    forceinline SharedHandle::Object::~Object() {
+        assert(!rc);
     }
-  }
-  forceinline
-  SharedHandle::SharedHandle(void) : o(nullptr) {}
-  forceinline
-  SharedHandle::SharedHandle(SharedHandle::Object* so) : o(so) {
-    subscribe();
-  }
-  forceinline
-  SharedHandle::SharedHandle(const SharedHandle& sh) : o(sh.o) {
-    subscribe();
-  }
-  forceinline SharedHandle&
-  SharedHandle::operator =(const SharedHandle& sh) {
-    if (&sh != this) {
-      cancel(); o=sh.o; subscribe();
-    }
-    return *this;
-  }
-  forceinline
-  SharedHandle::operator bool(void) const {
-    return o != nullptr;
-  }
-  forceinline
-  SharedHandle::~SharedHandle(void) {
-    cancel();
-  }
 
-}
+    forceinline SharedHandle::Object*
+    SharedHandle::object() const {
+        return o;
+    }
+    forceinline void
+    SharedHandle::subscribe() {
+        if (o != nullptr)
+            o->rc.inc();
+    }
+    forceinline void
+    SharedHandle::cancel() {
+        if ((o != nullptr) && o->rc.dec())
+            delete o;
+        o = nullptr;
+    }
+    forceinline void
+    SharedHandle::object(SharedHandle::Object* n) {
+        if (n != o) {
+            cancel();
+            o = n;
+            subscribe();
+        }
+    }
+    forceinline
+    SharedHandle::SharedHandle()
+        : o(nullptr) {}
+    forceinline
+    SharedHandle::SharedHandle(SharedHandle::Object* so)
+        : o(so) {
+        subscribe();
+    }
+    forceinline
+    SharedHandle::SharedHandle(const SharedHandle& sh)
+        : o(sh.o) {
+        subscribe();
+    }
+    forceinline SharedHandle&
+    SharedHandle::operator=(const SharedHandle& sh) {
+        if (&sh != this) {
+            cancel();
+            o = sh.o;
+            subscribe();
+        }
+        return *this;
+    }
+    forceinline SharedHandle::
+    operator bool() const {
+        return o != nullptr;
+    }
+    forceinline SharedHandle::~SharedHandle() {
+        cancel();
+    }
+
+} // namespace Gecode
 
 // STATISTICS: kernel-memory

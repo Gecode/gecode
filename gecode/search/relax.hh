@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,40 +36,35 @@
 #include <gecode/kernel.hh>
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  /// Relax variables in \a x from solution \a sx with probability \a p
-  template<class VarArgs, class Post>
-  forceinline void
-  relax(Home home, const VarArgs& x, const VarArgs& sx, Rnd r,
-        double p, Post& post);
+    /// Relax variables in \a x from solution \a sx with probability \a p
+    template <class VarArgs, class Post>
+    forceinline void relax(Home home, const VarArgs& x, const VarArgs& sx, Rnd r, double p, Post& post);
 
+    template <class VarArgs, class Post>
+    forceinline void
+    relax(Home home, const VarArgs& x, const VarArgs& sx, Rnd r, double p, Post& post) {
+        if (home.failed())
+            return;
+        Region reg;
+        // Which variables to assign
+        Support::BitSet<Region> ax(reg, static_cast<unsigned int>(x.size()));
+        // Select randomly with probability p to relax value
+        for (int i = 0; i < x.size(); i++)
+            if (r(UINT_MAX) >= static_cast<unsigned int>(p * static_cast<double>(UINT_MAX)))
+                ax.set(static_cast<unsigned int>(i));
+        if (ax.all())
+            // Choose one variable uniformly and unset it
+            ax.clear(r(static_cast<unsigned int>(x.size())));
+        for (Iter::Values::BitSet<Support::BitSet<Region>> i(ax); i(); ++i)
+            if (post(home, x[i.val()], sx[i.val()]) != ES_OK) {
+                home.fail();
+                return;
+            }
+    }
 
-  template<class VarArgs, class Post>
-  forceinline void
-  relax(Home home, const VarArgs& x, const VarArgs& sx, Rnd r,
-        double p, Post& post) {
-    if (home.failed())
-      return;
-    Region reg;
-    // Which variables to assign
-    Support::BitSet<Region> ax(reg, static_cast<unsigned int>(x.size()));
-    // Select randomly with probability p to relax value
-    for (int i=0; i<x.size(); i++)
-      if (r(UINT_MAX) >=
-          static_cast<unsigned int>(p * static_cast<double>(UINT_MAX)))
-        ax.set(static_cast<unsigned int>(i));
-    if (ax.all())
-      // Choose one variable uniformly and unset it
-      ax.clear(r(static_cast<unsigned int>(x.size())));
-    for (Iter::Values::BitSet<Support::BitSet<Region> > i(ax); i(); ++i)
-      if (post(home, x[i.val()], sx[i.val()]) != ES_OK) {
-        home.failed();
-        return;
-      }
-  }
-
-}}
+} // namespace Gecode::Search
 
 #endif
 

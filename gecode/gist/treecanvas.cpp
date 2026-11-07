@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,6 +34,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 
+#include <algorithm>
 #include <stack>
 #include <fstream>
 
@@ -47,1447 +47,1357 @@
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  TreeCanvas::TreeCanvas(Space* rootSpace, bool bab,
-                         QWidget* parent, const Options& opt)
-    : QWidget(parent)
+    TreeCanvas::TreeCanvas(Space* root_space, bool bab, QWidget* parent, const Options& opt)
+        : QWidget(parent)
 #if QT_VERSION < 0x060000
-    , mutex(QMutex::Recursive)
-    , layoutMutex(QMutex::Recursive)
+          ,
+          mutex(QMutex::Recursive), layout_mutex(QMutex::Recursive)
 #endif
-    , finishedFlag(false)
-    , compareNodes(false), compareNodesBeforeFP(false)
-    , autoHideFailed(true), autoZoom(false)
-    , refresh(500), refreshPause(0), smoothScrollAndZoom(false)
-    , moveDuringSearch(false)
-    , zoomTimeLine(500)
-    , scrollTimeLine(1000), targetX(0), sourceX(0), targetY(0), sourceY(0)
-    , targetW(0), targetH(0), targetScale(0)
-    , layoutDoneTimerId(0) {
-      QMutexLocker locker(&mutex);
-      curBest = (bab ? new BestNode(nullptr) : nullptr);
-      if (rootSpace->status() == SS_FAILED) {
-        if (!opt.clone)
-          delete rootSpace;
-        rootSpace = nullptr;
-      } else {
-        rootSpace = Gecode::Search::snapshot(rootSpace,opt);
-      }
-      na = new Node::NodeAllocator(bab);
-      int rootIdx = na->allocate(rootSpace);
-      assert(rootIdx == 0); (void) rootIdx;
-      root = (*na)[0];
-      root->layout(*na);
-      root->setMarked(true);
-      currentNode = root;
-      pathHead = root;
-      scale = LayoutConfig::defScale / 100.0;
-
-      setAutoFillBackground(true);
-
-      connect(&searcher, SIGNAL(update(int,int,int)), this,
-                         SLOT(layoutDone(int,int,int)));
-      connect(&searcher, SIGNAL(statusChanged(bool)), this,
-              SLOT(statusChanged(bool)));
-
-      connect(&searcher, SIGNAL(solution(const Space*)),
-              this, SIGNAL(solution(const Space*)),
-              Qt::BlockingQueuedConnection);
-      connect(this, SIGNAL(solution(const Space*)),
-              this, SLOT(inspectSolution(const Space*)));
-
-      connect(&searcher, SIGNAL(moveToNode(VisualNode*,bool)),
-              this, SLOT(setCurrentNode(VisualNode*,bool)),
-              Qt::BlockingQueuedConnection);
-
-      connect(&searcher, SIGNAL(searchFinished(void)), this, SIGNAL(searchFinished(void)));
-
-      connect(&scrollTimeLine, SIGNAL(frameChanged(int)),
-              this, SLOT(scroll(int)));
-#if QT_VERSION >= 0x060000
-      scrollTimeLine.setEasingCurve(QEasingCurve::InOutSine);
-#else
-      scrollTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
-#endif
-
-      scaleBar = new QSlider(Qt::Vertical, this);
-      scaleBar->setObjectName("scaleBar");
-      scaleBar->setMinimum(LayoutConfig::minScale);
-      scaleBar->setMaximum(LayoutConfig::maxScale);
-      scaleBar->setValue(LayoutConfig::defScale);
-      connect(scaleBar, SIGNAL(valueChanged(int)),
-              this, SLOT(scaleTree(int)));
-      connect(this, SIGNAL(scaleChanged(int)), scaleBar, SLOT(setValue(int)));
-      connect(&searcher, SIGNAL(scaleChanged(int)),
-              scaleBar, SLOT(setValue(int)));
-
-      connect(&zoomTimeLine, SIGNAL(frameChanged(int)),
-              scaleBar, SLOT(setValue(int)));
-#if QT_VERSION >= 0x060000
-      zoomTimeLine.setEasingCurve(QEasingCurve::InOutSine);
-#else
-      zoomTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
-#endif
-
-      qRegisterMetaType<Statistics>("Statistics");
-      update();
-  }
-
-  TreeCanvas::~TreeCanvas(void) {
-    if (root) {
-      DisposeCursor dc(root,*na);
-      PreorderNodeVisitor<DisposeCursor>(dc).run();
-    }
-    delete na;
-  }
-
-  void
-  TreeCanvas::addDoubleClickInspector(Inspector* i) {
-    doubleClickInspectors.append(QPair<Inspector*,bool>(i,false));
-  }
-
-  void
-  TreeCanvas::activateDoubleClickInspector(int i, bool active) {
-    assert(i < doubleClickInspectors.size());
-    doubleClickInspectors[i].second = active;
-  }
-
-  void
-  TreeCanvas::addSolutionInspector(Inspector* i) {
-    solutionInspectors.append(QPair<Inspector*,bool>(i,false));
-  }
-
-  void
-  TreeCanvas::activateSolutionInspector(int i, bool active) {
-    assert(i < solutionInspectors.size());
-    solutionInspectors[i].second = active;
-  }
-
-  void
-  TreeCanvas::addMoveInspector(Inspector* i) {
-    moveInspectors.append(QPair<Inspector*,bool>(i,false));
-  }
-
-  void
-  TreeCanvas::activateMoveInspector(int i, bool active) {
-    assert(i < moveInspectors.size());
-    moveInspectors[i].second = active;
-  }
-
-  void
-  TreeCanvas::addComparator(Comparator* c) {
-    comparators.append(QPair<Comparator*,bool>(c,false));
-  }
-
-  void
-  TreeCanvas::activateComparator(int i, bool active) {
-    assert(i < comparators.size());
-    comparators[i].second = active;
-  }
-
-  void
-  TreeCanvas::scaleTree(int scale0, int zoomx, int zoomy) {
-    QMutexLocker locker(&layoutMutex);
-
-    QSize viewport_size = size();
-    QAbstractScrollArea* sa =
-      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
-
-    if (zoomx==-1)
-      zoomx = viewport_size.width()/2;
-    if (zoomy==-1)
-      zoomy = viewport_size.height()/2;
-
-    int xoff = (sa->horizontalScrollBar()->value()+zoomx)/scale;
-    int yoff = (sa->verticalScrollBar()->value()+zoomy)/scale;
-
-    BoundingBox bb;
-    scale0 = std::min(std::max(scale0, LayoutConfig::minScale),
-                      LayoutConfig::maxScale);
-    scale = (static_cast<double>(scale0)) / 100.0;
-    bb = root->getBoundingBox();
-    int w =
-      static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
-    int h =
-      static_cast<int>(2*Layout::extent+
-        root->getShape()->depth()*Layout::dist_y*scale);
-
-    sa->horizontalScrollBar()->setRange(0,w-viewport_size.width());
-    sa->verticalScrollBar()->setRange(0,h-viewport_size.height());
-    sa->horizontalScrollBar()->setPageStep(viewport_size.width());
-    sa->verticalScrollBar()->setPageStep(viewport_size.height());
-    sa->horizontalScrollBar()->setSingleStep(Layout::extent);
-    sa->verticalScrollBar()->setSingleStep(Layout::extent);
-
-    xoff *= scale;
-    yoff *= scale;
-
-    sa->horizontalScrollBar()->setValue(xoff-zoomx);
-    sa->verticalScrollBar()->setValue(yoff-zoomy);
-
-    emit scaleChanged(scale0);
-    QWidget::update();
-  }
-
-  void
-  TreeCanvas::update(void) {
-    QMutexLocker locker(&mutex);
-    layoutMutex.lock();
-    if (root != nullptr) {
-      root->layout(*na);
-      BoundingBox bb = root->getBoundingBox();
-
-      int w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
-      int h =
-        static_cast<int>(2*Layout::extent+
-          root->getShape()->depth()*Layout::dist_y*scale);
-      xtrans = -bb.left+(Layout::extent / 2);
-
-      QSize viewport_size = size();
-      QAbstractScrollArea* sa =
-        static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
-      sa->horizontalScrollBar()->setRange(0,w-viewport_size.width());
-      sa->verticalScrollBar()->setRange(0,h-viewport_size.height());
-      sa->horizontalScrollBar()->setPageStep(viewport_size.width());
-      sa->verticalScrollBar()->setPageStep(viewport_size.height());
-      sa->horizontalScrollBar()->setSingleStep(Layout::extent);
-      sa->verticalScrollBar()->setSingleStep(Layout::extent);
-    }
-    if (autoZoom)
-      zoomToFit();
-    layoutMutex.unlock();
-    QWidget::update();
-  }
-
-  void
-  TreeCanvas::scroll(void) {
-    QWidget::update();
-  }
-
-  void
-  TreeCanvas::layoutDone(int w, int h, int scale0) {
-    targetW = w; targetH = h; targetScale = scale0;
-
-    QSize viewport_size = size();
-    QAbstractScrollArea* sa =
-      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
-    sa->horizontalScrollBar()->setRange(0,w-viewport_size.width());
-    sa->verticalScrollBar()->setRange(0,h-viewport_size.height());
-
-    if (layoutDoneTimerId == 0)
-      layoutDoneTimerId = startTimer(15);
-  }
-
-  void
-  TreeCanvas::statusChanged(bool finished) {
-    if (finished) {
-      update();
-      centerCurrentNode();
-    }
-    emit statusChanged(currentNode, stats, finished);
-  }
-
-  void
-  SearcherThread::search(VisualNode* n, bool all, TreeCanvas* ti) {
-    node = n;
-
-    depth = -1;
-    for (VisualNode* p = n; p != nullptr; p = p->getParent(*ti->na))
-      depth++;
-
-    a = all;
-    t = ti;
-    start();
-  }
-
-  void
-  SearcherThread::updateCanvas(void) {
-    t->layoutMutex.lock();
-    if (t->root == nullptr)
-      return;
-
-    if (t->autoHideFailed) {
-      t->root->hideFailed(*t->na,true);
-    }
-    for (VisualNode* n = t->currentNode; n != nullptr; n=n->getParent(*t->na)) {
-      if (n->isHidden()) {
-        t->currentNode->setMarked(false);
-        t->currentNode = n;
-        t->currentNode->setMarked(true);
-        break;
-      }
-    }
-
-    t->root->layout(*t->na);
-    BoundingBox bb = t->root->getBoundingBox();
-
-    int w = static_cast<int>((bb.right-bb.left+Layout::extent)*t->scale);
-    int h = static_cast<int>(2*Layout::extent+
-                             t->root->getShape()->depth()
-                              *Layout::dist_y*t->scale);
-    t->xtrans = -bb.left+(Layout::extent / 2);
-
-    int scale0 = static_cast<int>(t->scale*100);
-    if (t->autoZoom) {
-      QWidget* p = t->parentWidget();
-      if (p) {
-        double newXScale =
-          static_cast<double>(p->width()) / (bb.right - bb.left +
-                                             Layout::extent);
-        double newYScale =
-          static_cast<double>(p->height()) /
-          (t->root->getShape()->depth() * Layout::dist_y + 2*Layout::extent);
-
-        scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
-        if (scale0<LayoutConfig::minScale)
-          scale0 = LayoutConfig::minScale;
-        if (scale0>LayoutConfig::maxAutoZoomScale)
-          scale0 = LayoutConfig::maxAutoZoomScale;
-        double scale = (static_cast<double>(scale0)) / 100.0;
-
-        w = static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
-        h = static_cast<int>(2*Layout::extent+
-                             t->root->getShape()->depth()*Layout::dist_y*scale);
-      }
-    }
-
-    t->layoutMutex.unlock();
-    emit update(w,h,scale0);
-  }
-
-  /// A stack item for depth first search
-  class SearchItem {
-  public:
-    /// The node
-    VisualNode* n;
-    /// The currently explored child
-    int i;
-    /// The number of children
-    int noOfChildren;
-    /// Constructor
-    SearchItem(VisualNode* n0, int noOfChildren0)
-      : n(n0), i(-1), noOfChildren(noOfChildren0) {}
-  };
-
-  void
-  SearcherThread::run(void) {
-    {
-      if (!node->isOpen())
-        return;
-      t->mutex.lock();
-      emit statusChanged(false);
-
-      unsigned int kids =
-        node->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
-                                    t->c_d, t->a_d);
-      if (kids == 0 || node->getStatus() == STOP) {
-        t->mutex.unlock();
-        updateCanvas();
-        emit statusChanged(true);
-        return;
-      }
-
-      std::stack<SearchItem> stck;
-      stck.push(SearchItem(node,kids));
-      t->stats.maxDepth =
-        std::max(static_cast<long unsigned int>(t->stats.maxDepth),
-                 static_cast<long unsigned int>(depth+stck.size()));
-
-      VisualNode* sol = nullptr;
-      int nodeCount = 0;
-      t->stopSearchFlag = false;
-      while (!stck.empty() && !t->stopSearchFlag) {
-        if (t->refresh > 0 && nodeCount >= t->refresh) {
-          node->dirtyUp(*t->na);
-          updateCanvas();
-          emit statusChanged(false);
-          nodeCount = 0;
-          if (t->refreshPause > 0)
-            msleep(t->refreshPause);
-        }
-        SearchItem& si = stck.top();
-        si.i++;
-        if (si.i == si.noOfChildren) {
-          stck.pop();
+          ,
+          finished_flag(false), compare_nodes(false), compare_nodes_before_fp(false), auto_hide_failed(true),
+          auto_zoom(false), refresh(500), refresh_pause(0), smooth_scroll_and_zoom(false), move_during_search(false),
+          zoom_time_line(500), scroll_time_line(1000), target_x(0), source_x(0), target_y(0), source_y(0), target_w(0),
+          target_h(0), target_scale(0), layout_done_timer_id(0) {
+        QMutexLocker locker(&mutex);
+        cur_best = (bab ? new BestNode(nullptr) : nullptr);
+        if (root_space->status() == SS_FAILED) {
+            if (!opt.clone)
+                delete root_space;
+            root_space = nullptr;
         } else {
-          VisualNode* n = si.n->getChild(*t->na,si.i);
-          if (n->isOpen()) {
-            if (n->getStatus() == UNDETERMINED)
-              nodeCount++;
-            kids = n->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
-                                            t->c_d, t->a_d);
-            if (t->moveDuringSearch)
-              emit moveToNode(n,false);
-            if (kids == 0) {
-              if (n->getStatus() == SOLVED) {
-                assert(n->hasCopy());
-                emit solution(n->getWorkingSpace());
-                n->purge(*t->na);
-                sol = n;
-                if (!a)
-                  break;
-              }
-            } else {
-              if ( n->getStatus() != STOP )
-                stck.push(SearchItem(n,kids));
-              else if (!a)
-                break;
-              t->stats.maxDepth =
-                std::max(static_cast<long unsigned int>(t->stats.maxDepth),
-                         static_cast<long unsigned int>(depth+stck.size()));
-            }
-          }
+            root_space = Gecode::Search::snapshot(root_space, opt);
         }
-      }
-      node->dirtyUp(*t->na);
-      t->stopSearchFlag = false;
-      t->mutex.unlock();
-      if (sol != nullptr) {
-        t->setCurrentNode(sol,true,false);
-      } else {
-        t->setCurrentNode(node,true,false);
-      }
-    }
-    updateCanvas();
-    emit statusChanged(true);
-    if (t->finishedFlag)
-      emit searchFinished();
-  }
+        na = new Node::NodeAllocator(bab);
+        int root_idx = na->allocate(root_space);
+        assert(root_idx == 0);
+        (void)root_idx;
+        root = (*na)[0];
+        root->layout(*na);
+        root->set_marked(true);
+        current_node = root;
+        path_head = root;
+        scale = LayoutConfig::def_scale / 100.0;
 
-  void
-  TreeCanvas::searchAll(void) {
-    QMutexLocker locker(&mutex);
-    searcher.search(currentNode, true, this);
-  }
+        setAutoFillBackground(true);
 
-  void
-  TreeCanvas::searchOne(void) {
-    QMutexLocker locker(&mutex);
-    searcher.search(currentNode, false, this);
-  }
+        connect(&searcher, SIGNAL(update(int, int, int)), this, SLOT(layout_done(int, int, int)));
+        connect(&searcher, SIGNAL(status_changed(bool)), this, SLOT(status_changed(bool)));
 
-  void
-  TreeCanvas::toggleHidden(void) {
-    QMutexLocker locker(&mutex);
-    currentNode->toggleHidden(*na);
-    update();
-    centerCurrentNode();
-    emit statusChanged(currentNode, stats, true);
-  }
+        connect(&searcher, SIGNAL(solution(const Space*)), this, SIGNAL(solution(const Space*)),
+                Qt::BlockingQueuedConnection);
+        connect(this, SIGNAL(solution(const Space*)), this, SLOT(inspect_solution(const Space*)));
 
-  void
-  TreeCanvas::hideFailed(void) {
-    QMutexLocker locker(&mutex);
-    currentNode->hideFailed(*na);
-    update();
-    centerCurrentNode();
-    emit statusChanged(currentNode, stats, true);
-  }
+        connect(&searcher, SIGNAL(move_to_node(VisualNode*, bool)), this, SLOT(set_current_node(VisualNode*, bool)),
+                Qt::BlockingQueuedConnection);
 
-  void
-  TreeCanvas::unhideAll(void) {
-    QMutexLocker locker(&mutex);
-    QMutexLocker layoutLocker(&layoutMutex);
-    currentNode->unhideAll(*na);
-    update();
-    centerCurrentNode();
-    emit statusChanged(currentNode, stats, true);
-  }
+        connect(&searcher, SIGNAL(search_finished()), this, SIGNAL(search_finished()));
 
-  void
-  TreeCanvas::toggleStop(void) {
-    QMutexLocker locker(&mutex);
-    currentNode->toggleStop(*na);
-    update();
-    centerCurrentNode();
-    emit statusChanged(currentNode, stats, true);
-  }
-
-  void
-  TreeCanvas::unstopAll(void) {
-    QMutexLocker locker(&mutex);
-    QMutexLocker layoutLocker(&layoutMutex);
-    currentNode->unstopAll(*na);
-    update();
-    centerCurrentNode();
-    emit statusChanged(currentNode, stats, true);
-  }
-
-  void
-  TreeCanvas::timerEvent(QTimerEvent* e) {
-    if (e->timerId() == layoutDoneTimerId) {
-      if (!smoothScrollAndZoom) {
-        scaleTree(targetScale);
-      } else {
-        zoomTimeLine.stop();
-        int zoomCurrent = static_cast<int>(scale*100);
-        int targetZoom = targetScale;
-        targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale),
-                              LayoutConfig::maxAutoZoomScale);
-        zoomTimeLine.setFrameRange(zoomCurrent,targetZoom);
-        zoomTimeLine.start();
-      }
-      QWidget::update();
-      killTimer(layoutDoneTimerId);
-      layoutDoneTimerId = 0;
-    }
-  }
-
-  void
-  TreeCanvas::zoomToFit(void) {
-    QMutexLocker locker(&layoutMutex);
-    if (root != nullptr) {
-      BoundingBox bb;
-      bb = root->getBoundingBox();
-      QWidget* p = parentWidget();
-      if (p) {
-        double newXScale =
-          static_cast<double>(p->width()) / (bb.right - bb.left +
-                                             Layout::extent);
-        double newYScale =
-          static_cast<double>(p->height()) / (root->getShape()->depth() *
-                                              Layout::dist_y +
-                                              2*Layout::extent);
-        int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
-        if (scale0<LayoutConfig::minScale)
-          scale0 = LayoutConfig::minScale;
-        if (scale0>LayoutConfig::maxAutoZoomScale)
-          scale0 = LayoutConfig::maxAutoZoomScale;
-
-        if (!smoothScrollAndZoom) {
-          scaleTree(scale0);
-        } else {
-          zoomTimeLine.stop();
-          int zoomCurrent = static_cast<int>(scale*100);
-          int targetZoom = scale0;
-          targetZoom = std::min(std::max(targetZoom, LayoutConfig::minScale),
-                                LayoutConfig::maxAutoZoomScale);
-          zoomTimeLine.setFrameRange(zoomCurrent,targetZoom);
-          zoomTimeLine.start();
-        }
-      }
-    }
-  }
-
-  void
-  TreeCanvas::centerCurrentNode(void) {
-    QMutexLocker locker(&mutex);
-    int x=0;
-    int y=0;
-
-    VisualNode* c = currentNode;
-    while (c != nullptr) {
-      x += c->getOffset();
-      y += Layout::dist_y;
-      c = c->getParent(*na);
-    }
-
-    x = static_cast<int>((xtrans+x)*scale); y = static_cast<int>(y*scale);
-
-    QAbstractScrollArea* sa =
-      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
-
-    x -= sa->viewport()->width() / 2;
-    y -= sa->viewport()->height() / 2;
-
-    sourceX = sa->horizontalScrollBar()->value();
-    targetX = std::max(sa->horizontalScrollBar()->minimum(), x);
-    targetX = std::min(sa->horizontalScrollBar()->maximum(),
-                       targetX);
-    sourceY = sa->verticalScrollBar()->value();
-    targetY = std::max(sa->verticalScrollBar()->minimum(), y);
-    targetY = std::min(sa->verticalScrollBar()->maximum(),
-                       targetY);
-    if (!smoothScrollAndZoom) {
-      sa->horizontalScrollBar()->setValue(targetX);
-      sa->verticalScrollBar()->setValue(targetY);
-    } else {
-      scrollTimeLine.stop();
-      scrollTimeLine.setFrameRange(0,100);
-      scrollTimeLine.setDuration(std::max(200,
-        std::min(1000,
-        std::min(std::abs(sourceX-targetX),
-                 std::abs(sourceY-targetY)))));
-      scrollTimeLine.start();
-    }
-  }
-
-  void
-  TreeCanvas::scroll(int i) {
-    QAbstractScrollArea* sa =
-      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
-    double p = static_cast<double>(i)/100.0;
-    double xdiff = static_cast<double>(targetX-sourceX)*p;
-    double ydiff = static_cast<double>(targetY-sourceY)*p;
-    sa->horizontalScrollBar()->setValue(sourceX+static_cast<int>(xdiff));
-    sa->verticalScrollBar()->setValue(sourceY+static_cast<int>(ydiff));
-  }
-
-  void
-  TreeCanvas::inspectCurrentNode(bool fix, int inspectorNo) {
-    QMutexLocker locker(&mutex);
-
-    if (currentNode->isHidden()) {
-      toggleHidden();
-      return;
-    }
-
-    int failedInspectorType = -1;
-    int failedInspector = -1;
-    bool needCentering = false;
-    try {
-      switch (currentNode->getStatus()) {
-      case UNDETERMINED:
-          {
-            unsigned int kids =
-              currentNode->getNumberOfChildNodes(*na,curBest,stats,c_d,a_d);
-            int depth = -1;
-            for (VisualNode* p = currentNode; p != nullptr; p=p->getParent(*na))
-              depth++;
-            if (kids > 0) {
-              needCentering = true;
-              depth++;
-            }
-            stats.maxDepth =
-              std::max(stats.maxDepth, depth);
-            if (currentNode->getStatus() == SOLVED) {
-              assert(currentNode->hasCopy());
-              emit solution(currentNode->getWorkingSpace());
-            }
-            emit statusChanged(currentNode,stats,true);
-            for (int i=0; i<moveInspectors.size(); i++) {
-              if (moveInspectors[i].second) {
-                failedInspectorType = 0;
-                failedInspector = i;
-                if (currentNode->getStatus() == FAILED) {
-                  if (!currentNode->isRoot()) {
-                    Space* curSpace =
-                      currentNode->getSpace(*na,curBest,c_d,a_d);
-                    moveInspectors[i].first->inspect(*curSpace);
-                    delete curSpace;
-                  }
-                } else {
-                  moveInspectors[i].first->
-                    inspect(*currentNode->getWorkingSpace());
-                }
-                failedInspectorType = -1;
-              }
-            }
-            if (currentNode->getStatus() == SOLVED) {
-              currentNode->purge(*na);
-            }
-          }
-          break;
-      case FAILED:
-      case STOP:
-      case UNSTOP:
-      case BRANCH:
-      case SOLVED:
-        {
-          Space* curSpace;
-
-          if (fix) {
-            if (currentNode->isRoot() && currentNode->getStatus() == FAILED)
-              break;
-            curSpace = currentNode->getSpace(*na,curBest,c_d,a_d);
-            if (currentNode->getStatus() == SOLVED &&
-                curSpace->status() != SS_SOLVED) {
-              // in the presence of weakly monotonic propagators, we may have
-              // to use search to find the solution here
-              assert(curSpace->status() == SS_BRANCH &&
-                     "Something went wrong - probably an incorrect brancher");
-              Space* dfsSpace = Gecode::dfs(curSpace);
-              delete curSpace;
-              curSpace = dfsSpace;
-            }
-          } else {
-            if (currentNode->isRoot())
-              break;
-            VisualNode* p = currentNode->getParent(*na);
-            curSpace = p->getSpace(*na,curBest,c_d,a_d);
-            switch (curSpace->status()) {
-            case SS_SOLVED:
-            case SS_FAILED:
-              break;
-            case SS_BRANCH:
-              curSpace->commit(*p->getChoice(),
-                               currentNode->getAlternative(*na));
-              break;
-            default:
-              GECODE_NEVER;
-            }
-          }
-
-          if (inspectorNo==-1) {
-            for (int i=0; i<doubleClickInspectors.size(); i++) {
-              if (doubleClickInspectors[i].second) {
-                failedInspectorType = 1;
-                failedInspector = i;
-                doubleClickInspectors[i].first->inspect(*curSpace);
-                failedInspectorType = -1;
-              }
-            }
-          } else {
-            failedInspectorType = 1;
-            failedInspector = inspectorNo;
-            doubleClickInspectors[inspectorNo].first->inspect(*curSpace);
-            failedInspectorType = -1;
-          }
-          delete curSpace;
-        }
-        break;
-      }
-    } catch (Exception& e) {
-      switch (failedInspectorType) {
-      case 0:
-        qFatal("Exception in move inspector %d: %s.\n Stopping.",
-               failedInspector, e.what());
-        break;
-      case 1:
-        qFatal("Exception in double click inspector %d: %s.\n Stopping.",
-               failedInspector, e.what());
-        break;
-      default:
-        qFatal("Exception: %s.\n Stopping.", e.what());
-        break;
-      }
-    }
-
-    currentNode->dirtyUp(*na);
-    update();
-    if (needCentering)
-      centerCurrentNode();
-  }
-
-  void
-  TreeCanvas::inspectBeforeFP(void) {
-    inspectCurrentNode(false);
-  }
-
-  void
-  TreeCanvas::labelBranches(void) {
-    QMutexLocker locker(&mutex);
-    currentNode->labelBranches(*na,curBest,c_d,a_d);
-    update();
-    centerCurrentNode();
-    emit statusChanged(currentNode, stats, true);
-  }
-  void
-  TreeCanvas::labelPath(void) {
-    QMutexLocker locker(&mutex);
-    currentNode->labelPath(*na,curBest,c_d,a_d);
-    update();
-    centerCurrentNode();
-    emit statusChanged(currentNode, stats, true);
-  }
-
-  void
-  TreeCanvas::inspectSolution(const Space* s) {
-    int failedInspectorType = -1;
-    int failedInspector = -1;
-    try {
-      Space* c = nullptr;
-      for (int i=0; i<solutionInspectors.size(); i++) {
-        if (solutionInspectors[i].second) {
-          if (c == nullptr)
-            c = s->clone();
-          failedInspectorType = 1;
-          failedInspector = i;
-          solutionInspectors[i].first->inspect(*c);
-          failedInspectorType = -1;
-        }
-      }
-      delete c;
-    } catch (Exception& e) {
-      switch (failedInspectorType) {
-      case 0:
-        qFatal("Exception in move inspector %d: %s.\n Stopping.",
-               failedInspector, e.what());
-        break;
-      case 1:
-        qFatal("Exception in solution inspector %d: %s.\n Stopping.",
-               failedInspector, e.what());
-        break;
-      default:
-        qFatal("Exception: %s.\n Stopping.", e.what());
-        break;
-      }
-    }
-  }
-
-  void
-  TreeCanvas::stopSearch(void) {
-    stopSearchFlag = true;
-    layoutDoneTimerId = startTimer(15);
-  }
-
-  void
-  TreeCanvas::reset(void) {
-    QMutexLocker locker(&mutex);
-    Space* rootSpace =
-      root->getStatus() == FAILED ? nullptr :
-                           root->getSpace(*na,curBest,c_d,a_d);
-    if (curBest != nullptr) {
-      delete curBest;
-      curBest = new BestNode(nullptr);
-    }
-    if (root) {
-      DisposeCursor dc(root,*na);
-      PreorderNodeVisitor<DisposeCursor>(dc).run();
-    }
-    delete na;
-    na = new Node::NodeAllocator(curBest != nullptr);
-    int rootIdx = na->allocate(rootSpace);
-    assert(rootIdx == 0); (void) rootIdx;
-    root = (*na)[0];
-    root->setMarked(true);
-    currentNode = root;
-    pathHead = root;
-    scale = 1.0;
-    stats = Statistics();
-    for (int i=bookmarks.size(); i--;)
-      emit removedBookmark(i);
-    bookmarks.clear();
-    root->layout(*na);
-
-    emit statusChanged(currentNode, stats, true);
-    update();
-  }
-
-  void
-  TreeCanvas::bookmarkNode(void) {
-    QMutexLocker locker(&mutex);
-    if (!currentNode->isBookmarked()) {
-      bool ok;
-      QString text =
-        QInputDialog::getText(this, "Add bookmark", "Name:",
-                              QLineEdit::Normal,"",&ok);
-      if (ok) {
-        currentNode->setBookmarked(true);
-        bookmarks.append(currentNode);
-        if (text == "")
-          text = QString("Node ")+QString().setNum(bookmarks.size());
-        emit addedBookmark(text);
-      }
-    } else {
-      currentNode->setBookmarked(false);
-      int idx = bookmarks.indexOf(currentNode);
-      bookmarks.remove(idx);
-      emit removedBookmark(idx);
-    }
-    currentNode->dirtyUp(*na);
-    update();
-  }
-
-  void
-  TreeCanvas::setPath(void) {
-    QMutexLocker locker(&mutex);
-    if(currentNode == pathHead)
-      return;
-
-    pathHead->unPathUp(*na);
-    pathHead = currentNode;
-
-    currentNode->pathUp(*na);
-    currentNode->dirtyUp(*na);
-    update();
-  }
-
-  void
-  TreeCanvas::inspectPath(void) {
-    QMutexLocker locker(&mutex);
-    setCurrentNode(root);
-    if (currentNode->isOnPath()) {
-      inspectCurrentNode();
-      int nextAlt = currentNode->getPathAlternative(*na);
-      while (nextAlt >= 0) {
-        setCurrentNode(currentNode->getChild(*na,nextAlt));
-        inspectCurrentNode();
-        nextAlt = currentNode->getPathAlternative(*na);
-      }
-    }
-    update();
-  }
-
-  void
-  TreeCanvas::startCompareNodes(void) {
-    QMutexLocker locker(&mutex);
-    compareNodes = true;
-    compareNodesBeforeFP = false;
-    setCursor(QCursor(Qt::CrossCursor));
-  }
-
-  void
-  TreeCanvas::startCompareNodesBeforeFP(void) {
-    QMutexLocker locker(&mutex);
-    compareNodes = true;
-    compareNodesBeforeFP = true;
-    setCursor(QCursor(Qt::CrossCursor));
-  }
-
-  void
-  TreeCanvas::emitStatusChanged(void) {
-    emit statusChanged(currentNode, stats, true);
-  }
-
-  void
-  TreeCanvas::navUp(void) {
-    QMutexLocker locker(&mutex);
-
-    VisualNode* p = currentNode->getParent(*na);
-
-    setCurrentNode(p);
-
-    if (p != nullptr) {
-      centerCurrentNode();
-    }
-  }
-
-  void
-  TreeCanvas::navDown(void) {
-    QMutexLocker locker(&mutex);
-    if (!currentNode->isHidden()) {
-      switch (currentNode->getStatus()) {
-      case STOP:
-      case UNSTOP:
-      case BRANCH:
-          {
-            int alt = std::max(0, currentNode->getPathAlternative(*na));
-            VisualNode* n = currentNode->getChild(*na,alt);
-            setCurrentNode(n);
-            centerCurrentNode();
-            break;
-          }
-      case SOLVED:
-      case FAILED:
-      case UNDETERMINED:
-        break;
-      }
-    }
-  }
-
-  void
-  TreeCanvas::navLeft(void) {
-    QMutexLocker locker(&mutex);
-    VisualNode* p = currentNode->getParent(*na);
-    if (p != nullptr) {
-      int alt = currentNode->getAlternative(*na);
-      if (alt > 0) {
-        VisualNode* n = p->getChild(*na,alt-1);
-        setCurrentNode(n);
-        centerCurrentNode();
-      }
-    }
-  }
-
-  void
-  TreeCanvas::navRight(void) {
-    QMutexLocker locker(&mutex);
-    VisualNode* p = currentNode->getParent(*na);
-    if (p != nullptr) {
-      unsigned int alt = currentNode->getAlternative(*na);
-      if (alt + 1 < p->getNumberOfChildren()) {
-        VisualNode* n = p->getChild(*na,alt+1);
-        setCurrentNode(n);
-        centerCurrentNode();
-      }
-    }
-  }
-
-  void
-  TreeCanvas::navRoot(void) {
-    QMutexLocker locker(&mutex);
-    setCurrentNode(root);
-    centerCurrentNode();
-  }
-
-  void
-  TreeCanvas::navNextSol(bool back) {
-    QMutexLocker locker(&mutex);
-    NextSolCursor nsc(currentNode,back,*na);
-    PreorderNodeVisitor<NextSolCursor> nsv(nsc);
-    nsv.run();
-    VisualNode* n = nsv.getCursor().node();
-    if (n != root) {
-      setCurrentNode(n);
-      centerCurrentNode();
-    }
-  }
-
-  void
-  TreeCanvas::navPrevSol(void) {
-    navNextSol(true);
-  }
-
-  void
-  TreeCanvas::exportNodePDF(VisualNode* n) {
-#if QT_VERSION >= 0x040400
-    QString filename = QFileDialog::getSaveFileName(this, tr("Export tree as pdf"), "", tr("PDF (*.pdf)"));
-    if (filename != "") {
-      QPrinter printer(QPrinter::ScreenResolution);
-      QMutexLocker locker(&mutex);
-
-      BoundingBox bb = n->getBoundingBox();
-      printer.setFullPage(true);
+        connect(&scroll_time_line, SIGNAL(frameChanged(int)), this, SLOT(scroll(int)));
 #if QT_VERSION >= 0x060000
-      printer.setPageSize(QPageSize(QSizeF(bb.right-bb.left+Layout::extent,
-                                           n->getShape()->depth() * Layout::dist_y +
-                                           Layout::extent), QPageSize::Point));
+        scroll_time_line.setEasingCurve(QEasingCurve::InOutSine);
 #else
-      printer.setPaperSize(QSizeF(bb.right-bb.left+Layout::extent,
-                                  n->getShape()->depth() * Layout::dist_y +
-                                  Layout::extent), QPrinter::Point);
+        scroll_time_line.setCurveShape(QTimeLine::EaseInOutCurve);
 #endif
-      printer.setOutputFileName(filename);
-      QPainter painter(&printer);
 
-      painter.setRenderHint(QPainter::Antialiasing);
+        scale_bar = new QSlider(Qt::Vertical, this);
+        scale_bar->setObjectName("scaleBar");
+        scale_bar->setMinimum(LayoutConfig::min_scale);
+        scale_bar->setMaximum(LayoutConfig::max_scale);
+        scale_bar->setValue(LayoutConfig::def_scale);
+        connect(scale_bar, SIGNAL(valueChanged(int)), this, SLOT(scale_tree(int)));
+        connect(this, SIGNAL(scale_changed(int)), scale_bar, SLOT(setValue(int)));
+        connect(&searcher, SIGNAL(scale_changed(int)), scale_bar, SLOT(setValue(int)));
+
+        connect(&zoom_time_line, SIGNAL(frameChanged(int)), scale_bar, SLOT(setValue(int)));
 #if QT_VERSION >= 0x060000
-      QRect pageRect = printer.pageLayout().paintRectPixels(printer.resolution());
+        zoom_time_line.setEasingCurve(QEasingCurve::InOutSine);
 #else
-      QRect pageRect = printer.pageRect();
+        zoom_time_line.setCurveShape(QTimeLine::EaseInOutCurve);
 #endif
-      double newXScale =
-        static_cast<double>(pageRect.width()) / (bb.right - bb.left +
-                                                 Layout::extent);
-      double newYScale =
-        static_cast<double>(pageRect.height()) /
-                            (n->getShape()->depth() * Layout::dist_y +
-                             Layout::extent);
-      double printScale = std::min(newXScale, newYScale);
-      painter.scale(printScale,printScale);
 
-      int printxtrans = -bb.left+(Layout::extent / 2);
-
-      painter.translate(printxtrans, Layout::dist_y / 2);
-      QRect clip(0,0,0,0);
-      DrawingCursor dc(n, *na, curBest, painter, clip, showCopies);
-      currentNode->setMarked(false);
-      PreorderNodeVisitor<DrawingCursor>(dc).run();
-      currentNode->setMarked(true);
+        qRegisterMetaType<Statistics>("Statistics");
+        update();
     }
-#else
-    (void) n;
-#endif
-  }
 
-  void
-  TreeCanvas::exportWholeTreePDF(void) {
-#if QT_VERSION >= 0x040400
-    exportNodePDF(root);
-#endif
-  }
-
-  void
-  TreeCanvas::exportPDF(void) {
-#if QT_VERSION >= 0x040400
-    exportNodePDF(currentNode);
-#endif
-  }
-
-  void
-  TreeCanvas::print(void) {
-    QPrinter printer;
-    if (QPrintDialog(&printer, this).exec() == QDialog::Accepted) {
-      QMutexLocker locker(&mutex);
-
-      BoundingBox bb = root->getBoundingBox();
-#if QT_VERSION >= 0x060000
-      QRect pageRect = printer.pageLayout().paintRectPixels(printer.resolution());
-#else
-      QRect pageRect = printer.pageRect();
-#endif
-      double newXScale =
-        static_cast<double>(pageRect.width()) / (bb.right - bb.left +
-                                                 Layout::extent);
-      double newYScale =
-        static_cast<double>(pageRect.height()) /
-                            (root->getShape()->depth() * Layout::dist_y +
-                             2*Layout::extent);
-      double printScale = std::min(newXScale, newYScale)*100;
-      if (printScale<1.0)
-        printScale = 1.0;
-      if (printScale > 400.0)
-        printScale = 400.0;
-      printScale = printScale / 100.0;
-
-      QPainter painter(&printer);
-      painter.setRenderHint(QPainter::Antialiasing);
-      painter.scale(printScale,printScale);
-      painter.translate(xtrans, 0);
-      QRect clip(0,0,0,0);
-      DrawingCursor dc(root, *na, curBest, painter, clip, showCopies);
-      PreorderNodeVisitor<DrawingCursor>(dc).run();
-    }
-  }
-
-  VisualNode*
-  TreeCanvas::eventNode(QEvent* event) {
-    int x = 0;
-    int y = 0;
-    switch (event->type()) {
-    case QEvent::ToolTip:
-        {
-          QHelpEvent* he = static_cast<QHelpEvent*>(event);
-          x = he->x();
-          y = he->y();
-          break;
+    TreeCanvas::~TreeCanvas() {
+        if (root) {
+            DisposeCursor dc(root, *na);
+            PreorderNodeVisitor<DisposeCursor>(dc).run();
         }
-    case QEvent::MouseButtonDblClick:
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease:
-    case QEvent::MouseMove:
-        {
-          QMouseEvent* me = static_cast<QMouseEvent*>(event);
-#if QT_VERSION >= 0x060000
-          x = me->position().x();
-          y = me->position().y();
-#else
-          x = me->x();
-          y = me->y();
-#endif
-          break;
-        }
-    case QEvent::ContextMenu:
-        {
-          QContextMenuEvent* ce = static_cast<QContextMenuEvent*>(event);
-          x = ce->x();
-          y = ce->y();
-          break;
-        }
-    default:
-      return nullptr;
+        delete na;
     }
-    QAbstractScrollArea* sa =
-      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
-    int xoff = sa->horizontalScrollBar()->value()/scale;
-    int yoff = sa->verticalScrollBar()->value()/scale;
 
-    BoundingBox bb = root->getBoundingBox();
-    int w =
-      static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
-    if (w < sa->viewport()->width())
-      xoff -= (sa->viewport()->width()-w)/2;
-
-    VisualNode* n;
-    n = root->findNode(*na,
-                       static_cast<int>(x/scale-xtrans+xoff),
-                       static_cast<int>((y-30)/scale+yoff));
-    return n;
-  }
-
-  bool
-  TreeCanvas::event(QEvent* event) {
-    if (mutex.tryLock()) {
-      if (event->type() == QEvent::ToolTip) {
-        VisualNode* n = eventNode(event);
-        if (n != nullptr) {
-          QHelpEvent* he = static_cast<QHelpEvent*>(event);
-          QToolTip::showText(he->globalPos(),
-                             QString(n->toolTip(*na,curBest,
-                                                c_d,a_d).c_str()));
-        } else {
-          QToolTip::hideText();
-        }
-      }
-      mutex.unlock();
+    void
+    TreeCanvas::add_double_click_inspector(Inspector* i) {
+        double_click_inspectors.append(QPair<Inspector*, bool>(i, false));
     }
-    return QWidget::event(event);
-  }
 
-  void
-  TreeCanvas::resizeToOuter(void) {
-    if (autoZoom)
-      zoomToFit();
-  }
-
-  void
-  TreeCanvas::paintEvent(QPaintEvent* event) {
-    QMutexLocker locker(&layoutMutex);
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-
-    QAbstractScrollArea* sa =
-      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
-    int xoff = sa->horizontalScrollBar()->value()/scale;
-    int yoff = sa->verticalScrollBar()->value()/scale;
-
-    BoundingBox bb = root->getBoundingBox();
-    int w =
-      static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
-    if (w < sa->viewport()->width())
-      xoff -= (sa->viewport()->width()-w)/2;
-
-    QRect origClip = event->rect();
-    painter.translate(0, 30);
-    painter.scale(scale,scale);
-    painter.translate(xtrans-xoff, -yoff);
-    QRect clip(static_cast<int>(origClip.x()/scale-xtrans+xoff),
-               static_cast<int>(origClip.y()/scale+yoff),
-               static_cast<int>(origClip.width()/scale),
-               static_cast<int>(origClip.height()/scale));
-    DrawingCursor dc(root, *na, curBest, painter, clip, showCopies);
-    PreorderNodeVisitor<DrawingCursor>(dc).run();
-
-    // int nodesLayouted = 1;
-    // clock_t t0 = clock();
-    // while (v.next()) { nodesLayouted++; }
-    // double t = (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
-    // double nps = static_cast<double>(nodesLayouted) /
-    //   (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC);
-    // std::cout << "Drawing done. " << nodesLayouted << " nodes in "
-    //   << t << " ms. " << nps << " nodes/s." << std::endl;
-
-  }
-
-  void
-  TreeCanvas::mouseDoubleClickEvent(QMouseEvent* event) {
-    if (mutex.tryLock()) {
-      if(event->button() == Qt::LeftButton) {
-        VisualNode* n = eventNode(event);
-        if(n == currentNode) {
-          inspectCurrentNode();
-          event->accept();
-          mutex.unlock();
-          return;
-        }
-      }
-      mutex.unlock();
+    void
+    TreeCanvas::activate_double_click_inspector(int i, bool active) {
+        assert(i < double_click_inspectors.size());
+        double_click_inspectors[i].second = active;
     }
-    event->ignore();
-  }
 
-  void
-  TreeCanvas::contextMenuEvent(QContextMenuEvent* event) {
-    if (mutex.tryLock()) {
-      VisualNode* n = eventNode(event);
-      if (n != nullptr) {
-        setCurrentNode(n);
-        emit contextMenu(event);
-        event->accept();
-        mutex.unlock();
-        return;
-      }
-      mutex.unlock();
+    void
+    TreeCanvas::add_solution_inspector(Inspector* i) {
+        solution_inspectors.append(QPair<Inspector*, bool>(i, false));
     }
-    event->ignore();
-  }
 
-  void
-  TreeCanvas::resizeEvent(QResizeEvent* e) {
-    QAbstractScrollArea* sa =
-      static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
-
-    int w = sa->horizontalScrollBar()->maximum()+e->oldSize().width();
-    int h = sa->verticalScrollBar()->maximum()+e->oldSize().height();
-
-    sa->horizontalScrollBar()->setRange(0,w-e->size().width());
-    sa->verticalScrollBar()->setRange(0,h-e->size().height());
-    sa->horizontalScrollBar()->setPageStep(e->size().width());
-    sa->verticalScrollBar()->setPageStep(e->size().height());
-  }
-
-  void
-  TreeCanvas::wheelEvent(QWheelEvent* event) {
-    if (event->modifiers() & Qt::ShiftModifier) {
-      event->accept();
-#if QT_VERSION >= 0x060000
-      if (event->angleDelta().y() != 0 && !autoZoom)
-        scaleTree(scale*100+ceil(static_cast<double>(event->angleDelta().y())/4.0),
-                  event->position().x(), event->position().y());
-#else
-      if (event->orientation() == Qt::Vertical && !autoZoom)
-        scaleTree(scale*100+ceil(static_cast<double>(event->delta())/4.0),
-                  event->x(), event->y());
-#endif
-    } else {
-      event->ignore();
+    void
+    TreeCanvas::activate_solution_inspector(int i, bool active) {
+        assert(i < solution_inspectors.size());
+        solution_inspectors[i].second = active;
     }
-  }
 
-  bool
-  TreeCanvas::finish(void) {
-    if (finishedFlag)
-      return true;
-    stopSearchFlag = true;
-    finishedFlag = true;
-    for (int i=0; i<doubleClickInspectors.size(); i++)
-      doubleClickInspectors[i].first->finalize();
-    for (int i=0; i<solutionInspectors.size(); i++)
-      solutionInspectors[i].first->finalize();
-    for (int i=0; i<moveInspectors.size(); i++)
-      moveInspectors[i].first->finalize();
-    for (int i=0; i<comparators.size(); i++)
-      comparators[i].first->finalize();
-    return !searcher.isRunning();
-  }
-
-  void
-  TreeCanvas::setCurrentNode(VisualNode* n, bool finished, bool update) {
-    if (finished)
-      mutex.lock();
-    if (update && n != nullptr && n != currentNode &&
-        n->getStatus() != UNDETERMINED && !n->isHidden()) {
-      Space* curSpace = nullptr;
-      for (int i=0; i<moveInspectors.size(); i++) {
-        if (moveInspectors[i].second) {
-          if (curSpace == nullptr)
-            curSpace = n->getSpace(*na,curBest,c_d,a_d);
-          try {
-            moveInspectors[i].first->inspect(*curSpace);
-          } catch (Exception& e) {
-            qFatal("Exception in move inspector %d: %s.\n Stopping.",
-                   i, e.what());
-          }
-        }
-      }
+    void
+    TreeCanvas::add_move_inspector(Inspector* i) {
+        move_inspectors.append(QPair<Inspector*, bool>(i, false));
     }
-    if (n != nullptr) {
-      currentNode->setMarked(false);
-      currentNode = n;
-      currentNode->setMarked(true);
-      emit statusChanged(currentNode,stats,finished);
-      if (update) {
-        compareNodes = false;
-        setCursor(QCursor(Qt::ArrowCursor));
+
+    void
+    TreeCanvas::activate_move_inspector(int i, bool active) {
+        assert(i < move_inspectors.size());
+        move_inspectors[i].second = active;
+    }
+
+    void
+    TreeCanvas::add_comparator(Comparator* c) {
+        comparators.append(QPair<Comparator*, bool>(c, false));
+    }
+
+    void
+    TreeCanvas::activate_comparator(int i, bool active) {
+        assert(i < comparators.size());
+        comparators[i].second = active;
+    }
+
+    void
+    TreeCanvas::scale_tree(int scale0, int zoomx, int zoomy) {
+        QMutexLocker locker(&layout_mutex);
+
+        QSize viewport_size = size();
+        QAbstractScrollArea* sa = static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+
+        if (zoomx == -1)
+            zoomx = viewport_size.width() / 2;
+        if (zoomy == -1)
+            zoomy = viewport_size.height() / 2;
+
+        int xoff = (sa->horizontalScrollBar()->value() + zoomx) / scale;
+        int yoff = (sa->verticalScrollBar()->value() + zoomy) / scale;
+
+        BoundingBox bb;
+        scale0 = std::min(std::max(scale0, LayoutConfig::min_scale), LayoutConfig::max_scale);
+        scale = (static_cast<double>(scale0)) / 100.0;
+        bb = root->get_bounding_box();
+        int w = static_cast<int>((bb.right - bb.left + Layout::extent) * scale);
+        int h = static_cast<int>(2 * Layout::extent + root->get_shape()->depth() * Layout::dist_y * scale);
+
+        sa->horizontalScrollBar()->setRange(0, w - viewport_size.width());
+        sa->verticalScrollBar()->setRange(0, h - viewport_size.height());
+        sa->horizontalScrollBar()->setPageStep(viewport_size.width());
+        sa->verticalScrollBar()->setPageStep(viewport_size.height());
+        sa->horizontalScrollBar()->setSingleStep(Layout::extent);
+        sa->verticalScrollBar()->setSingleStep(Layout::extent);
+
+        xoff *= scale;
+        yoff *= scale;
+
+        sa->horizontalScrollBar()->setValue(xoff - zoomx);
+        sa->verticalScrollBar()->setValue(yoff - zoomy);
+
+        emit scale_changed(scale0);
         QWidget::update();
-      }
     }
-    if (finished)
-      mutex.unlock();
-  }
 
-  void
-  TreeCanvas::mousePressEvent(QMouseEvent* event) {
-    if (mutex.tryLock()) {
-      if (event->button() == Qt::LeftButton) {
-        VisualNode* n = eventNode(event);
-        if (compareNodes) {
-          if (n != nullptr && n->getStatus() != UNDETERMINED &&
-              currentNode != nullptr &&
-              currentNode->getStatus() != UNDETERMINED) {
-            Space* curSpace = nullptr;
-            Space* compareSpace = nullptr;
-            for (int i=0; i<comparators.size(); i++) {
-              if (comparators[i].second) {
-                if (curSpace == nullptr) {
-                  curSpace = currentNode->getSpace(*na,curBest,c_d,a_d);
+    void
+    TreeCanvas::update() {
+        QMutexLocker locker(&mutex);
+        layout_mutex.lock();
+        if (root != nullptr) {
+            root->layout(*na);
+            BoundingBox bb = root->get_bounding_box();
 
-                  if (!compareNodesBeforeFP || n->isRoot()) {
-                    compareSpace = n->getSpace(*na,curBest,c_d,a_d);
-                  } else {
-                    VisualNode* p = n->getParent(*na);
-                    compareSpace = p->getSpace(*na,curBest,c_d,a_d);
-                    switch (compareSpace->status()) {
+            int w = static_cast<int>((bb.right - bb.left + Layout::extent) * scale);
+            int h = static_cast<int>(2 * Layout::extent + root->get_shape()->depth() * Layout::dist_y * scale);
+            xtrans = -bb.left + (Layout::extent / 2);
+
+            QSize viewport_size = size();
+            QAbstractScrollArea* sa = static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+            sa->horizontalScrollBar()->setRange(0, w - viewport_size.width());
+            sa->verticalScrollBar()->setRange(0, h - viewport_size.height());
+            sa->horizontalScrollBar()->setPageStep(viewport_size.width());
+            sa->verticalScrollBar()->setPageStep(viewport_size.height());
+            sa->horizontalScrollBar()->setSingleStep(Layout::extent);
+            sa->verticalScrollBar()->setSingleStep(Layout::extent);
+        }
+        if (auto_zoom)
+            zoom_to_fit();
+        layout_mutex.unlock();
+        QWidget::update();
+    }
+
+    void
+    TreeCanvas::scroll() {
+        QWidget::update();
+    }
+
+    void
+    TreeCanvas::layout_done(int w, int h, int scale0) {
+        target_w = w;
+        target_h = h;
+        target_scale = scale0;
+
+        QSize viewport_size = size();
+        QAbstractScrollArea* sa = static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+        sa->horizontalScrollBar()->setRange(0, w - viewport_size.width());
+        sa->verticalScrollBar()->setRange(0, h - viewport_size.height());
+
+        if (layout_done_timer_id == 0)
+            layout_done_timer_id = startTimer(15);
+    }
+
+    void
+    TreeCanvas::status_changed(bool finished) {
+        if (finished) {
+            update();
+            center_current_node();
+        }
+        emit status_changed(current_node, stats, finished);
+    }
+
+    void
+    SearcherThread::search(VisualNode* n, bool all, TreeCanvas* ti) {
+        node = n;
+
+        depth = -1;
+        for (VisualNode* p = n; p != nullptr; p = p->get_parent(*ti->na))
+            depth++;
+
+        a = all;
+        t = ti;
+        start();
+    }
+
+    void
+    SearcherThread::update_canvas() {
+        t->layout_mutex.lock();
+        if (t->root == nullptr)
+            return;
+
+        if (t->auto_hide_failed) {
+            t->root->hide_failed(*t->na, true);
+        }
+        for (VisualNode* n = t->current_node; n != nullptr; n = n->get_parent(*t->na)) {
+            if (n->is_hidden()) {
+                t->current_node->set_marked(false);
+                t->current_node = n;
+                t->current_node->set_marked(true);
+                break;
+            }
+        }
+
+        t->root->layout(*t->na);
+        BoundingBox bb = t->root->get_bounding_box();
+
+        int w = static_cast<int>((bb.right - bb.left + Layout::extent) * t->scale);
+        int h = static_cast<int>(2 * Layout::extent + t->root->get_shape()->depth() * Layout::dist_y * t->scale);
+        t->xtrans = -bb.left + (Layout::extent / 2);
+
+        int scale0 = static_cast<int>(t->scale * 100);
+        if (t->auto_zoom) {
+            QWidget* p = t->parentWidget();
+            if (p) {
+                double new_x_scale = static_cast<double>(p->width()) / (bb.right - bb.left + Layout::extent);
+                double new_y_scale = static_cast<double>(p->height()) /
+                                     (t->root->get_shape()->depth() * Layout::dist_y + 2 * Layout::extent);
+
+                scale0 = static_cast<int>(std::min(new_x_scale, new_y_scale) * 100);
+                scale0 = std::max(scale0, LayoutConfig::min_scale);
+                scale0 = std::min(scale0, LayoutConfig::max_auto_zoom_scale);
+                double scale = (static_cast<double>(scale0)) / 100.0;
+
+                w = static_cast<int>((bb.right - bb.left + Layout::extent) * scale);
+                h = static_cast<int>(2 * Layout::extent + t->root->get_shape()->depth() * Layout::dist_y * scale);
+            }
+        }
+
+        t->layout_mutex.unlock();
+        emit update(w, h, scale0);
+    }
+
+    /// A stack item for depth first search
+    class SearchItem {
+    public:
+        /// The node
+        VisualNode* n;
+        /// The currently explored child
+        int i;
+        /// The number of children
+        int no_of_children;
+        /// Constructor
+        SearchItem(VisualNode* n0, int no_of_children0) : n(n0), i(-1), no_of_children(no_of_children0) {}
+    };
+
+    void
+    SearcherThread::run() {
+        {
+            if (!node->is_open())
+                return;
+            t->mutex.lock();
+            emit status_changed(false);
+
+            unsigned int kids = node->get_number_of_child_nodes(*t->na, t->cur_best, t->stats, t->c_d, t->a_d);
+            if (kids == 0 || node->get_status() == STOP) {
+                t->mutex.unlock();
+                update_canvas();
+                emit status_changed(true);
+                return;
+            }
+
+            std::stack<SearchItem> stck;
+            stck.emplace(node, kids);
+            t->stats.max_depth = std::max(static_cast<long unsigned int>(t->stats.max_depth),
+                                          static_cast<long unsigned int>(depth + stck.size()));
+
+            VisualNode* sol = nullptr;
+            int node_count = 0;
+            t->stop_search_flag = false;
+            while (!stck.empty() && !t->stop_search_flag) {
+                if (t->refresh > 0 && node_count >= t->refresh) {
+                    node->dirty_up(*t->na);
+                    update_canvas();
+                    emit status_changed(false);
+                    node_count = 0;
+                    if (t->refresh_pause > 0)
+                        msleep(t->refresh_pause);
+                }
+                SearchItem& si = stck.top();
+                si.i++;
+                if (si.i == si.no_of_children) {
+                    stck.pop();
+                } else {
+                    VisualNode* n = si.n->get_child(*t->na, si.i);
+                    if (n->is_open()) {
+                        if (n->get_status() == UNDETERMINED)
+                            node_count++;
+                        kids = n->get_number_of_child_nodes(*t->na, t->cur_best, t->stats, t->c_d, t->a_d);
+                        if (t->move_during_search)
+                            emit move_to_node(n, false);
+                        if (kids == 0) {
+                            if (n->get_status() == SOLVED) {
+                                assert(n->has_copy());
+                                emit solution(n->get_working_space());
+                                n->purge(*t->na);
+                                sol = n;
+                                if (!a)
+                                    break;
+                            }
+                        } else {
+                            if (n->get_status() != STOP)
+                                stck.emplace(n, kids);
+                            else if (!a)
+                                break;
+                            t->stats.max_depth = std::max(static_cast<long unsigned int>(t->stats.max_depth),
+                                                          static_cast<long unsigned int>(depth + stck.size()));
+                        }
+                    }
+                }
+            }
+            node->dirty_up(*t->na);
+            t->stop_search_flag = false;
+            t->mutex.unlock();
+            if (sol != nullptr) {
+                t->set_current_node(sol, true, false);
+            } else {
+                t->set_current_node(node, true, false);
+            }
+        }
+        update_canvas();
+        emit status_changed(true);
+        if (t->finished_flag)
+            emit search_finished();
+    }
+
+    void
+    TreeCanvas::search_all() {
+        QMutexLocker locker(&mutex);
+        searcher.search(current_node, true, this);
+    }
+
+    void
+    TreeCanvas::search_one() {
+        QMutexLocker locker(&mutex);
+        searcher.search(current_node, false, this);
+    }
+
+    void
+    TreeCanvas::toggle_hidden() {
+        QMutexLocker locker(&mutex);
+        current_node->toggle_hidden(*na);
+        update();
+        center_current_node();
+        emit status_changed(current_node, stats, true);
+    }
+
+    void
+    TreeCanvas::hide_failed() {
+        QMutexLocker locker(&mutex);
+        current_node->hide_failed(*na);
+        update();
+        center_current_node();
+        emit status_changed(current_node, stats, true);
+    }
+
+    void
+    TreeCanvas::unhide_all() {
+        QMutexLocker locker(&mutex);
+        QMutexLocker layout_locker(&layout_mutex);
+        current_node->unhide_all(*na);
+        update();
+        center_current_node();
+        emit status_changed(current_node, stats, true);
+    }
+
+    void
+    TreeCanvas::toggle_stop() {
+        QMutexLocker locker(&mutex);
+        current_node->toggle_stop(*na);
+        update();
+        center_current_node();
+        emit status_changed(current_node, stats, true);
+    }
+
+    void
+    TreeCanvas::unstop_all() {
+        QMutexLocker locker(&mutex);
+        QMutexLocker layout_locker(&layout_mutex);
+        current_node->unstop_all(*na);
+        update();
+        center_current_node();
+        emit status_changed(current_node, stats, true);
+    }
+
+    void
+    TreeCanvas::timerEvent(QTimerEvent* e) {
+        if (e->timerId() == layout_done_timer_id) {
+            if (!smooth_scroll_and_zoom) {
+                scale_tree(target_scale);
+            } else {
+                zoom_time_line.stop();
+                int zoom_current = static_cast<int>(scale * 100);
+                int target_zoom = target_scale;
+                target_zoom =
+                    std::min(std::max(target_zoom, LayoutConfig::min_scale), LayoutConfig::max_auto_zoom_scale);
+                zoom_time_line.setFrameRange(zoom_current, target_zoom);
+                zoom_time_line.start();
+            }
+            QWidget::update();
+            killTimer(layout_done_timer_id);
+            layout_done_timer_id = 0;
+        }
+    }
+
+    void
+    TreeCanvas::zoom_to_fit() {
+        QMutexLocker locker(&layout_mutex);
+        if (root != nullptr) {
+            BoundingBox bb;
+            bb = root->get_bounding_box();
+            QWidget* p = parentWidget();
+            if (p) {
+                double new_x_scale = static_cast<double>(p->width()) / (bb.right - bb.left + Layout::extent);
+                double new_y_scale = static_cast<double>(p->height()) /
+                                     (root->get_shape()->depth() * Layout::dist_y + 2 * Layout::extent);
+                int scale0 = static_cast<int>(std::min(new_x_scale, new_y_scale) * 100);
+                scale0 = std::max(scale0, LayoutConfig::min_scale);
+                scale0 = std::min(scale0, LayoutConfig::max_auto_zoom_scale);
+
+                if (!smooth_scroll_and_zoom) {
+                    scale_tree(scale0);
+                } else {
+                    zoom_time_line.stop();
+                    int zoom_current = static_cast<int>(scale * 100);
+                    int target_zoom = scale0;
+                    target_zoom =
+                        std::min(std::max(target_zoom, LayoutConfig::min_scale), LayoutConfig::max_auto_zoom_scale);
+                    zoom_time_line.setFrameRange(zoom_current, target_zoom);
+                    zoom_time_line.start();
+                }
+            }
+        }
+    }
+
+    void
+    TreeCanvas::center_current_node() {
+        QMutexLocker locker(&mutex);
+        int x = 0;
+        int y = 0;
+
+        VisualNode* c = current_node;
+        while (c != nullptr) {
+            x += c->get_offset();
+            y += Layout::dist_y;
+            c = c->get_parent(*na);
+        }
+
+        x = static_cast<int>((xtrans + x) * scale);
+        y = static_cast<int>(y * scale);
+
+        QAbstractScrollArea* sa = static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+
+        x -= sa->viewport()->width() / 2;
+        y -= sa->viewport()->height() / 2;
+
+        source_x = sa->horizontalScrollBar()->value();
+        target_x = std::max(sa->horizontalScrollBar()->minimum(), x);
+        target_x = std::min(sa->horizontalScrollBar()->maximum(), target_x);
+        source_y = sa->verticalScrollBar()->value();
+        target_y = std::max(sa->verticalScrollBar()->minimum(), y);
+        target_y = std::min(sa->verticalScrollBar()->maximum(), target_y);
+        if (!smooth_scroll_and_zoom) {
+            sa->horizontalScrollBar()->setValue(target_x);
+            sa->verticalScrollBar()->setValue(target_y);
+        } else {
+            scroll_time_line.stop();
+            scroll_time_line.setFrameRange(0, 100);
+            scroll_time_line.setDuration(
+                std::max(200, std::min({1000, std::abs(source_x - target_x), std::abs(source_y - target_y)})));
+            scroll_time_line.start();
+        }
+    }
+
+    void
+    TreeCanvas::scroll(int i) {
+        QAbstractScrollArea* sa = static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+        double p = static_cast<double>(i) / 100.0;
+        double xdiff = static_cast<double>(target_x - source_x) * p;
+        double ydiff = static_cast<double>(target_y - source_y) * p;
+        sa->horizontalScrollBar()->setValue(source_x + static_cast<int>(xdiff));
+        sa->verticalScrollBar()->setValue(source_y + static_cast<int>(ydiff));
+    }
+
+    void
+    TreeCanvas::inspect_current_node(bool fix, int inspector_no) {
+        QMutexLocker locker(&mutex);
+
+        if (current_node->is_hidden()) {
+            toggle_hidden();
+            return;
+        }
+
+        int failed_inspector_type = -1;
+        int failed_inspector = -1;
+        bool need_centering = false;
+        try {
+            switch (current_node->get_status()) {
+            case UNDETERMINED: {
+                unsigned int kids = current_node->get_number_of_child_nodes(*na, cur_best, stats, c_d, a_d);
+                int depth = -1;
+                for (VisualNode* p = current_node; p != nullptr; p = p->get_parent(*na))
+                    depth++;
+                if (kids > 0) {
+                    need_centering = true;
+                    depth++;
+                }
+                stats.max_depth = std::max(stats.max_depth, depth);
+                if (current_node->get_status() == SOLVED) {
+                    assert(current_node->has_copy());
+                    emit solution(current_node->get_working_space());
+                }
+                emit status_changed(current_node, stats, true);
+                for (int i = 0; i < move_inspectors.size(); i++) {
+                    if (move_inspectors[i].second) {
+                        failed_inspector_type = 0;
+                        failed_inspector = i;
+                        if (current_node->get_status() == FAILED) {
+                            if (!current_node->is_root()) {
+                                Space* cur_space = current_node->get_space(*na, cur_best, c_d, a_d);
+                                move_inspectors[i].first->inspect(*cur_space);
+                                delete cur_space;
+                            }
+                        } else {
+                            move_inspectors[i].first->inspect(*current_node->get_working_space());
+                        }
+                        failed_inspector_type = -1;
+                    }
+                }
+                if (current_node->get_status() == SOLVED) {
+                    current_node->purge(*na);
+                }
+            } break;
+            case FAILED:
+            case STOP:
+            case UNSTOP:
+            case BRANCH:
+            case SOLVED: {
+                Space* cur_space;
+
+                if (fix) {
+                    if (current_node->is_root() && current_node->get_status() == FAILED)
+                        break;
+                    cur_space = current_node->get_space(*na, cur_best, c_d, a_d);
+                    if (current_node->get_status() == SOLVED && cur_space->status() != SS_SOLVED) {
+                        // in the presence of weakly monotonic propagators, we may have
+                        // to use search to find the solution here
+                        assert(cur_space->status() == SS_BRANCH &&
+                               "Something went wrong - probably an incorrect brancher");
+                        Space* dfs_space = Gecode::dfs(cur_space);
+                        delete cur_space;
+                        cur_space = dfs_space;
+                    }
+                } else {
+                    if (current_node->is_root())
+                        break;
+                    VisualNode* p = current_node->get_parent(*na);
+                    cur_space = p->get_space(*na, cur_best, c_d, a_d);
+                    switch (cur_space->status()) {
                     case SS_SOLVED:
                     case SS_FAILED:
-                      break;
+                        break;
                     case SS_BRANCH:
-                      compareSpace->commit(*p->getChoice(),
-                                           n->getAlternative(*na));
-                      break;
+                        cur_space->commit(*p->get_choice(), current_node->get_alternative(*na));
+                        break;
                     default:
-                      GECODE_NEVER;
+                        GECODE_NEVER;
                     }
-                  }
                 }
-                try {
-                  comparators[i].first->compare(*curSpace,*compareSpace);
-                } catch (Exception& e) {
-                  qFatal("Exception in comparator %d: %s.\n Stopping.",
-                    i, e.what());
+
+                if (inspector_no == -1) {
+                    for (int i = 0; i < double_click_inspectors.size(); i++) {
+                        if (double_click_inspectors[i].second) {
+                            failed_inspector_type = 1;
+                            failed_inspector = i;
+                            double_click_inspectors[i].first->inspect(*cur_space);
+                            failed_inspector_type = -1;
+                        }
+                    }
+                } else {
+                    failed_inspector_type = 1;
+                    failed_inspector = inspector_no;
+                    double_click_inspectors[inspector_no].first->inspect(*cur_space);
+                    failed_inspector_type = -1;
                 }
-              }
+                delete cur_space;
+            } break;
             }
-          }
+        } catch (Exception& e) {
+            switch (failed_inspector_type) {
+            case 0:
+                qFatal("Exception in move inspector %d: %s.\n Stopping.", failed_inspector, e.what());
+                break;
+            case 1:
+                qFatal("Exception in double click inspector %d: %s.\n Stopping.", failed_inspector, e.what());
+                break;
+            default:
+                qFatal("Exception: %s.\n Stopping.", e.what());
+                break;
+            }
+        }
+
+        current_node->dirty_up(*na);
+        update();
+        if (need_centering)
+            center_current_node();
+    }
+
+    void
+    TreeCanvas::inspect_before_fp() {
+        inspect_current_node(false);
+    }
+
+    void
+    TreeCanvas::label_branches() {
+        QMutexLocker locker(&mutex);
+        current_node->label_branches(*na, cur_best, c_d, a_d);
+        update();
+        center_current_node();
+        emit status_changed(current_node, stats, true);
+    }
+    void
+    TreeCanvas::label_path() {
+        QMutexLocker locker(&mutex);
+        current_node->label_path(*na, cur_best, c_d, a_d);
+        update();
+        center_current_node();
+        emit status_changed(current_node, stats, true);
+    }
+
+    void
+    TreeCanvas::inspect_solution(const Space* s) {
+        int failed_inspector_type = -1;
+        int failed_inspector = -1;
+        try {
+            Space* c = nullptr;
+            for (int i = 0; i < solution_inspectors.size(); i++) {
+                if (solution_inspectors[i].second) {
+                    if (c == nullptr)
+                        c = s->clone();
+                    failed_inspector_type = 1;
+                    failed_inspector = i;
+                    solution_inspectors[i].first->inspect(*c);
+                    failed_inspector_type = -1;
+                }
+            }
+            delete c;
+        } catch (Exception& e) {
+            switch (failed_inspector_type) {
+            case 0:
+                qFatal("Exception in move inspector %d: %s.\n Stopping.", failed_inspector, e.what());
+                break;
+            case 1:
+                qFatal("Exception in solution inspector %d: %s.\n Stopping.", failed_inspector, e.what());
+                break;
+            default:
+                qFatal("Exception: %s.\n Stopping.", e.what());
+                break;
+            }
+        }
+    }
+
+    void
+    TreeCanvas::stop_search() {
+        stop_search_flag = true;
+        layout_done_timer_id = startTimer(15);
+    }
+
+    void
+    TreeCanvas::reset() {
+        QMutexLocker locker(&mutex);
+        Space* root_space = root->get_status() == FAILED ? nullptr : root->get_space(*na, cur_best, c_d, a_d);
+        if (cur_best != nullptr) {
+            delete cur_best;
+            cur_best = new BestNode(nullptr);
+        }
+        if (root) {
+            DisposeCursor dc(root, *na);
+            PreorderNodeVisitor<DisposeCursor>(dc).run();
+        }
+        delete na;
+        na = new Node::NodeAllocator(cur_best != nullptr);
+        int root_idx = na->allocate(root_space);
+        assert(root_idx == 0);
+        (void)root_idx;
+        root = (*na)[0];
+        root->set_marked(true);
+        current_node = root;
+        path_head = root;
+        scale = 1.0;
+        stats = Statistics();
+        for (int i = bookmarks.size(); i--;)
+            emit removed_bookmark(i);
+        bookmarks.clear();
+        root->layout(*na);
+
+        emit status_changed(current_node, stats, true);
+        update();
+    }
+
+    void
+    TreeCanvas::bookmark_node() {
+        QMutexLocker locker(&mutex);
+        if (!current_node->is_bookmarked()) {
+            bool ok;
+            QString text = QInputDialog::getText(this, "Add bookmark", "Name:", QLineEdit::Normal, "", &ok);
+            if (ok) {
+                current_node->set_bookmarked(true);
+                bookmarks.append(current_node);
+                if (text == "")
+                    text = QString("Node ") + QString().setNum(bookmarks.size());
+                emit added_bookmark(text);
+            }
         } else {
-          setCurrentNode(n);
+            current_node->set_bookmarked(false);
+            int idx = bookmarks.indexOf(current_node);
+            bookmarks.remove(idx);
+            emit removed_bookmark(idx);
         }
-        compareNodes = false;
-        setCursor(QCursor(Qt::ArrowCursor));
+        current_node->dirty_up(*na);
+        update();
+    }
+
+    void
+    TreeCanvas::set_path() {
+        QMutexLocker locker(&mutex);
+        if (current_node == path_head)
+            return;
+
+        path_head->un_path_up(*na);
+        path_head = current_node;
+
+        current_node->path_up(*na);
+        current_node->dirty_up(*na);
+        update();
+    }
+
+    void
+    TreeCanvas::inspect_path() {
+        QMutexLocker locker(&mutex);
+        set_current_node(root);
+        if (current_node->is_on_path()) {
+            inspect_current_node();
+            int next_alt = current_node->get_path_alternative(*na);
+            while (next_alt >= 0) {
+                set_current_node(current_node->get_child(*na, next_alt));
+                inspect_current_node();
+                next_alt = current_node->get_path_alternative(*na);
+            }
+        }
+        update();
+    }
+
+    void
+    TreeCanvas::start_compare_nodes() {
+        QMutexLocker locker(&mutex);
+        compare_nodes = true;
+        compare_nodes_before_fp = false;
+        setCursor(QCursor(Qt::CrossCursor));
+    }
+
+    void
+    TreeCanvas::start_compare_nodes_before_fp() {
+        QMutexLocker locker(&mutex);
+        compare_nodes = true;
+        compare_nodes_before_fp = true;
+        setCursor(QCursor(Qt::CrossCursor));
+    }
+
+    void
+    TreeCanvas::emit_status_changed() {
+        emit status_changed(current_node, stats, true);
+    }
+
+    void
+    TreeCanvas::nav_up() {
+        QMutexLocker locker(&mutex);
+
+        VisualNode* p = current_node->get_parent(*na);
+
+        set_current_node(p);
+
+        if (p != nullptr) {
+            center_current_node();
+        }
+    }
+
+    void
+    TreeCanvas::nav_down() {
+        QMutexLocker locker(&mutex);
+        if (!current_node->is_hidden()) {
+            switch (current_node->get_status()) {
+            case STOP:
+            case UNSTOP:
+            case BRANCH: {
+                int alt = std::max(0, current_node->get_path_alternative(*na));
+                VisualNode* n = current_node->get_child(*na, alt);
+                set_current_node(n);
+                center_current_node();
+                break;
+            }
+            case SOLVED:
+            case FAILED:
+            case UNDETERMINED:
+                break;
+            }
+        }
+    }
+
+    void
+    TreeCanvas::nav_left() {
+        QMutexLocker locker(&mutex);
+        VisualNode* p = current_node->get_parent(*na);
+        if (p != nullptr) {
+            int alt = current_node->get_alternative(*na);
+            if (alt > 0) {
+                VisualNode* n = p->get_child(*na, alt - 1);
+                set_current_node(n);
+                center_current_node();
+            }
+        }
+    }
+
+    void
+    TreeCanvas::nav_right() {
+        QMutexLocker locker(&mutex);
+        VisualNode* p = current_node->get_parent(*na);
+        if (p != nullptr) {
+            unsigned int alt = current_node->get_alternative(*na);
+            if (alt + 1 < p->get_number_of_children()) {
+                VisualNode* n = p->get_child(*na, alt + 1);
+                set_current_node(n);
+                center_current_node();
+            }
+        }
+    }
+
+    void
+    TreeCanvas::nav_root() {
+        QMutexLocker locker(&mutex);
+        set_current_node(root);
+        center_current_node();
+    }
+
+    void
+    TreeCanvas::nav_next_sol(bool back) {
+        QMutexLocker locker(&mutex);
+        NextSolCursor nsc(current_node, back, *na);
+        PreorderNodeVisitor<NextSolCursor> nsv(nsc);
+        nsv.run();
+        VisualNode* n = nsv.get_cursor().node();
+        if (n != root) {
+            set_current_node(n);
+            center_current_node();
+        }
+    }
+
+    void
+    TreeCanvas::nav_prev_sol() {
+        nav_next_sol(true);
+    }
+
+    void
+    TreeCanvas::export_node_pdf(VisualNode* n) {
+#if QT_VERSION >= 0x040400
+        QString filename = QFileDialog::getSaveFileName(this, tr("Export tree as pdf"), "", tr("PDF (*.pdf)"));
+        if (filename != "") {
+            QPrinter printer(QPrinter::ScreenResolution);
+            QMutexLocker locker(&mutex);
+
+            BoundingBox bb = n->get_bounding_box();
+            printer.setFullPage(true);
+#if QT_VERSION >= 0x060000
+            printer.setPageSize(QPageSize(
+                QSizeF(bb.right - bb.left + Layout::extent, n->get_shape()->depth() * Layout::dist_y + Layout::extent),
+                QPageSize::Point));
+#else
+            printer.setPaperSize(
+                QSizeF(bb.right - bb.left + Layout::extent, n->get_shape()->depth() * Layout::dist_y + Layout::extent),
+                QPrinter::Point);
+#endif
+            printer.setOutputFileName(filename);
+            QPainter painter(&printer);
+
+            painter.setRenderHint(QPainter::Antialiasing);
+#if QT_VERSION >= 0x060000
+            QRect page_rect = printer.pageLayout().paintRectPixels(printer.resolution());
+#else
+            QRect page_rect = printer.pageRect();
+#endif
+            double new_x_scale = static_cast<double>(page_rect.width()) / (bb.right - bb.left + Layout::extent);
+            double new_y_scale =
+                static_cast<double>(page_rect.height()) / (n->get_shape()->depth() * Layout::dist_y + Layout::extent);
+            double print_scale = std::min(new_x_scale, new_y_scale);
+            painter.scale(print_scale, print_scale);
+
+            int printxtrans = -bb.left + (Layout::extent / 2);
+            const int print_y_translation = Layout::dist_y / 2;
+
+            painter.translate(printxtrans, print_y_translation);
+            QRect clip(0, 0, 0, 0);
+            DrawingCursor dc(n, *na, cur_best, painter, clip, show_copies);
+            current_node->set_marked(false);
+            PreorderNodeVisitor<DrawingCursor>(dc).run();
+            current_node->set_marked(true);
+        }
+#else
+        (void)n;
+#endif
+    }
+
+    void
+    TreeCanvas::export_whole_tree_pdf() {
+#if QT_VERSION >= 0x040400
+        export_node_pdf(root);
+#endif
+    }
+
+    void
+    TreeCanvas::export_pdf() {
+#if QT_VERSION >= 0x040400
+        export_node_pdf(current_node);
+#endif
+    }
+
+    void
+    TreeCanvas::print() {
+        QPrinter printer;
+        if (QPrintDialog(&printer, this).exec() == QDialog::Accepted) {
+            QMutexLocker locker(&mutex);
+
+            BoundingBox bb = root->get_bounding_box();
+#if QT_VERSION >= 0x060000
+            QRect page_rect = printer.pageLayout().paintRectPixels(printer.resolution());
+#else
+            QRect page_rect = printer.pageRect();
+#endif
+            double new_x_scale = static_cast<double>(page_rect.width()) / (bb.right - bb.left + Layout::extent);
+            double new_y_scale = static_cast<double>(page_rect.height()) /
+                                 (root->get_shape()->depth() * Layout::dist_y + 2 * Layout::extent);
+            double print_scale = std::min(new_x_scale, new_y_scale) * 100;
+            print_scale = std::max(print_scale, 1.0);
+            print_scale = std::min(print_scale, 400.0);
+            print_scale = print_scale / 100.0;
+
+            QPainter painter(&printer);
+            painter.setRenderHint(QPainter::Antialiasing);
+            painter.scale(print_scale, print_scale);
+            painter.translate(xtrans, 0);
+            QRect clip(0, 0, 0, 0);
+            DrawingCursor dc(root, *na, cur_best, painter, clip, show_copies);
+            PreorderNodeVisitor<DrawingCursor>(dc).run();
+        }
+    }
+
+    VisualNode*
+    TreeCanvas::event_node(QEvent* event) {
+        int x = 0;
+        int y = 0;
+        switch (event->type()) {
+        case QEvent::ToolTip: {
+            QHelpEvent* he = static_cast<QHelpEvent*>(event);
+            x = he->x();
+            y = he->y();
+            break;
+        }
+        case QEvent::MouseButtonDblClick:
+        case QEvent::MouseButtonPress:
+        case QEvent::MouseButtonRelease:
+        case QEvent::MouseMove: {
+            QMouseEvent* me = static_cast<QMouseEvent*>(event);
+#if QT_VERSION >= 0x060000
+            x = me->position().x();
+            y = me->position().y();
+#else
+            x = me->x();
+            y = me->y();
+#endif
+            break;
+        }
+        case QEvent::ContextMenu: {
+            QContextMenuEvent* ce = static_cast<QContextMenuEvent*>(event);
+            x = ce->x();
+            y = ce->y();
+            break;
+        }
+        default:
+            return nullptr;
+        }
+        QAbstractScrollArea* sa = static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+        int xoff = sa->horizontalScrollBar()->value() / scale;
+        int yoff = sa->verticalScrollBar()->value() / scale;
+
+        BoundingBox bb = root->get_bounding_box();
+        int w = static_cast<int>((bb.right - bb.left + Layout::extent) * scale);
+        if (w < sa->viewport()->width())
+            xoff -= (sa->viewport()->width() - w) / 2;
+
+        VisualNode* n;
+        n = root->find_node(*na, static_cast<int>(x / scale - xtrans + xoff),
+                            static_cast<int>((y - 30) / scale + yoff));
+        return n;
+    }
+
+    bool
+    TreeCanvas::event(QEvent* event) {
+        if (mutex.tryLock()) {
+            if (event->type() == QEvent::ToolTip) {
+                VisualNode* n = event_node(event);
+                if (n != nullptr) {
+                    QHelpEvent* he = static_cast<QHelpEvent*>(event);
+                    QToolTip::showText(he->globalPos(), QString(n->tool_tip(*na, cur_best, c_d, a_d).c_str()));
+                } else {
+                    QToolTip::hideText();
+                }
+            }
+            mutex.unlock();
+        }
+        return QWidget::event(event);
+    }
+
+    void
+    TreeCanvas::resize_to_outer() {
+        if (auto_zoom)
+            zoom_to_fit();
+    }
+
+    void
+    TreeCanvas::paintEvent(QPaintEvent* event) {
+        QMutexLocker locker(&layout_mutex);
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+
+        QAbstractScrollArea* sa = static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+        int xoff = sa->horizontalScrollBar()->value() / scale;
+        int yoff = sa->verticalScrollBar()->value() / scale;
+
+        BoundingBox bb = root->get_bounding_box();
+        int w = static_cast<int>((bb.right - bb.left + Layout::extent) * scale);
+        if (w < sa->viewport()->width())
+            xoff -= (sa->viewport()->width() - w) / 2;
+
+        QRect orig_clip = event->rect();
+        painter.translate(0, 30);
+        painter.scale(scale, scale);
+        painter.translate(xtrans - xoff, -yoff);
+        QRect clip(static_cast<int>(orig_clip.x() / scale - xtrans + xoff),
+                   static_cast<int>(orig_clip.y() / scale + yoff), static_cast<int>(orig_clip.width() / scale),
+                   static_cast<int>(orig_clip.height() / scale));
+        DrawingCursor dc(root, *na, cur_best, painter, clip, show_copies);
+        PreorderNodeVisitor<DrawingCursor>(dc).run();
+
+        // int nodesLayouted = 1;
+        // clock_t t0 = clock();
+        // while (v.next()) { nodesLayouted++; }
+        // double t = (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
+        // double nps = static_cast<double>(nodesLayouted) /
+        //   (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC);
+        // std::cout << "Drawing done. " << nodesLayouted << " nodes in "
+        //   << t << " ms. " << nps << " nodes/s." << std::endl;
+    }
+
+    void
+    TreeCanvas::mouseDoubleClickEvent(QMouseEvent* event) {
+        if (mutex.tryLock()) {
+            if (event->button() == Qt::LeftButton) {
+                VisualNode* n = event_node(event);
+                if (n == current_node) {
+                    inspect_current_node();
+                    event->accept();
+                    mutex.unlock();
+                    return;
+                }
+            }
+            mutex.unlock();
+        }
+        event->ignore();
+    }
+
+    void
+    TreeCanvas::contextMenuEvent(QContextMenuEvent* event) {
+        if (mutex.tryLock()) {
+            VisualNode* n = event_node(event);
+            if (n != nullptr) {
+                set_current_node(n);
+                emit context_menu(event);
+                event->accept();
+                mutex.unlock();
+                return;
+            }
+            mutex.unlock();
+        }
+        event->ignore();
+    }
+
+    void
+    TreeCanvas::resizeEvent(QResizeEvent* e) {
+        QAbstractScrollArea* sa = static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
+
+        int w = sa->horizontalScrollBar()->maximum() + e->oldSize().width();
+        int h = sa->verticalScrollBar()->maximum() + e->oldSize().height();
+
+        sa->horizontalScrollBar()->setRange(0, w - e->size().width());
+        sa->verticalScrollBar()->setRange(0, h - e->size().height());
+        sa->horizontalScrollBar()->setPageStep(e->size().width());
+        sa->verticalScrollBar()->setPageStep(e->size().height());
+    }
+
+    void
+    TreeCanvas::wheelEvent(QWheelEvent* event) {
+        if (event->modifiers() & Qt::ShiftModifier) {
+            event->accept();
+#if QT_VERSION >= 0x060000
+            if (event->angleDelta().y() != 0 && !auto_zoom)
+                scale_tree(scale * 100 + ceil(static_cast<double>(event->angleDelta().y()) / 4.0),
+                           event->position().x(), event->position().y());
+#else
+            if (event->orientation() == Qt::Vertical && !auto_zoom)
+                scale_tree(scale * 100 + ceil(static_cast<double>(event->delta()) / 4.0), event->x(), event->y());
+#endif
+        } else {
+            event->ignore();
+        }
+    }
+
+    bool
+    TreeCanvas::finish() {
+        if (finished_flag)
+            return true;
+        stop_search_flag = true;
+        finished_flag = true;
+        for (auto& double_click_inspector : double_click_inspectors)
+            double_click_inspector.first->finalize();
+        for (auto& solution_inspector : solution_inspectors)
+            solution_inspector.first->finalize();
+        for (auto& move_inspector : move_inspectors)
+            move_inspector.first->finalize();
+        for (auto& comparator : comparators)
+            comparator.first->finalize();
+        return !searcher.isRunning();
+    }
+
+    void
+    TreeCanvas::set_current_node(VisualNode* n, bool finished, bool update) {
+        if (finished)
+            mutex.lock();
+        if (update && n != nullptr && n != current_node && n->get_status() != UNDETERMINED && !n->is_hidden()) {
+            Space* cur_space = nullptr;
+            for (int i = 0; i < move_inspectors.size(); i++) {
+                if (move_inspectors[i].second) {
+                    if (cur_space == nullptr)
+                        cur_space = n->get_space(*na, cur_best, c_d, a_d);
+                    try {
+                        move_inspectors[i].first->inspect(*cur_space);
+                    } catch (Exception& e) {
+                        qFatal("Exception in move inspector %d: %s.\n Stopping.", i, e.what());
+                    }
+                }
+            }
+        }
         if (n != nullptr) {
-          event->accept();
-          mutex.unlock();
-          return;
+            current_node->set_marked(false);
+            current_node = n;
+            current_node->set_marked(true);
+            emit status_changed(current_node, stats, finished);
+            if (update) {
+                compare_nodes = false;
+                setCursor(QCursor(Qt::ArrowCursor));
+                QWidget::update();
+            }
         }
-      }
-      mutex.unlock();
+        if (finished)
+            mutex.unlock();
     }
-    event->ignore();
-  }
 
-  void
-  TreeCanvas::setRecompDistances(int c_d0, int a_d0) {
-    c_d = c_d0; a_d = a_d0;
-  }
+    void
+    TreeCanvas::mousePressEvent(QMouseEvent* event) {
+        if (mutex.tryLock()) {
+            if (event->button() == Qt::LeftButton) {
+                VisualNode* n = event_node(event);
+                if (compare_nodes) {
+                    if (n != nullptr && n->get_status() != UNDETERMINED && current_node != nullptr &&
+                        current_node->get_status() != UNDETERMINED) {
+                        Space* cur_space = nullptr;
+                        Space* compare_space = nullptr;
+                        for (int i = 0; i < comparators.size(); i++) {
+                            if (comparators[i].second) {
+                                if (cur_space == nullptr) {
+                                    cur_space = current_node->get_space(*na, cur_best, c_d, a_d);
 
-  void
-  TreeCanvas::setAutoHideFailed(bool b) {
-    autoHideFailed = b;
-  }
-
-  void
-  TreeCanvas::setAutoZoom(bool b) {
-    autoZoom = b;
-    if (autoZoom) {
-      zoomToFit();
+                                    if (!compare_nodes_before_fp || n->is_root()) {
+                                        compare_space = n->get_space(*na, cur_best, c_d, a_d);
+                                    } else {
+                                        VisualNode* p = n->get_parent(*na);
+                                        compare_space = p->get_space(*na, cur_best, c_d, a_d);
+                                        switch (compare_space->status()) {
+                                        case SS_SOLVED:
+                                        case SS_FAILED:
+                                            break;
+                                        case SS_BRANCH:
+                                            compare_space->commit(*p->get_choice(), n->get_alternative(*na));
+                                            break;
+                                        default:
+                                            GECODE_NEVER;
+                                        }
+                                    }
+                                }
+                                try {
+                                    comparators[i].first->compare(*cur_space, *compare_space);
+                                } catch (Exception& e) {
+                                    qFatal("Exception in comparator %d: %s.\n Stopping.", i, e.what());
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    set_current_node(n);
+                }
+                compare_nodes = false;
+                setCursor(QCursor(Qt::ArrowCursor));
+                if (n != nullptr) {
+                    event->accept();
+                    mutex.unlock();
+                    return;
+                }
+            }
+            mutex.unlock();
+        }
+        event->ignore();
     }
-    emit autoZoomChanged(b);
-    scaleBar->setEnabled(!b);
-  }
 
-  void
-  TreeCanvas::setShowCopies(bool b) {
-    showCopies = b;
-  }
-  bool
-  TreeCanvas::getShowCopies(void) {
-    return showCopies;
-  }
+    void
+    TreeCanvas::set_recomp_distances(int c_d0, int a_d0) {
+        c_d = c_d0;
+        a_d = a_d0;
+    }
 
-  bool
-  TreeCanvas::getAutoHideFailed(void) {
-    return autoHideFailed;
-  }
+    void
+    TreeCanvas::set_auto_hide_failed(bool b) {
+        auto_hide_failed = b;
+    }
 
-  bool
-  TreeCanvas::getAutoZoom(void) {
-    return autoZoom;
-  }
+    void
+    TreeCanvas::set_auto_zoom(bool b) {
+        auto_zoom = b;
+        if (auto_zoom) {
+            zoom_to_fit();
+        }
+        emit auto_zoom_changed(b);
+        scale_bar->setEnabled(!b);
+    }
 
-  void
-  TreeCanvas::setRefresh(int i) {
-    refresh = i;
-  }
+    void
+    TreeCanvas::set_show_copies(bool b) {
+        show_copies = b;
+    }
+    bool
+    TreeCanvas::get_show_copies() {
+        return show_copies;
+    }
 
-  void
-  TreeCanvas::setRefreshPause(int i) {
-    refreshPause = i;
-    if (refreshPause > 0)
-      refresh = 1;
-  }
+    bool
+    TreeCanvas::get_auto_hide_failed() {
+        return auto_hide_failed;
+    }
 
-  bool
-  TreeCanvas::getSmoothScrollAndZoom(void) {
-    return smoothScrollAndZoom;
-  }
+    bool
+    TreeCanvas::get_auto_zoom() {
+        return auto_zoom;
+    }
 
-  void
-  TreeCanvas::setSmoothScrollAndZoom(bool b) {
-    smoothScrollAndZoom = b;
-  }
+    void
+    TreeCanvas::set_refresh(int i) {
+        refresh = i;
+    }
 
-  bool
-  TreeCanvas::getMoveDuringSearch(void) {
-    return moveDuringSearch;
-  }
+    void
+    TreeCanvas::set_refresh_pause(int i) {
+        refresh_pause = i;
+        if (refresh_pause > 0)
+            refresh = 1;
+    }
 
-  void
-  TreeCanvas::setMoveDuringSearch(bool b) {
-    moveDuringSearch = b;
-  }
+    bool
+    TreeCanvas::get_smooth_scroll_and_zoom() {
+        return smooth_scroll_and_zoom;
+    }
 
-}}
+    void
+    TreeCanvas::set_smooth_scroll_and_zoom(bool b) {
+        smooth_scroll_and_zoom = b;
+    }
+
+    bool
+    TreeCanvas::get_move_during_search() {
+        return move_during_search;
+    }
+
+    void
+    TreeCanvas::set_move_during_search(bool b) {
+        move_during_search = b;
+    }
+
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

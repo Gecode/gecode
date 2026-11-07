@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,44 +32,43 @@
 
 namespace Gecode {
 
-  forceinline
-  FloatAssign::FloatAssign(Select s0)
-    : s(s0) {}
+    forceinline
+    FloatAssign::FloatAssign(Select s0)
+        : s(s0) {}
 
-  forceinline
-  FloatAssign::FloatAssign(Rnd r)
-    : ValBranch<FloatVar>(r), s(SEL_RND) {}
+    forceinline
+    FloatAssign::FloatAssign(const Rnd& r)
+        : ValBranch<FloatVar>(r), s(SEL_RND) {}
 
-  forceinline
-  FloatAssign::FloatAssign(FloatBranchVal v, FloatBranchCommit c)
-    : ValBranch<FloatVar>(v,c), s(SEL_VAL_COMMIT) {}
+    forceinline
+    FloatAssign::FloatAssign(FloatBranchVal v, FloatBranchCommit c)
+        : ValBranch<FloatVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
-  forceinline FloatAssign::Select
-  FloatAssign::select(void) const {
-    return s;
-  }
+    forceinline FloatAssign::Select
+    FloatAssign::select() const {
+        return s;
+    }
 
+    inline FloatAssign
+    FLOAT_ASSIGN_MIN() {
+        return FloatAssign(FloatAssign::SEL_MIN);
+    }
 
-  inline FloatAssign
-  FLOAT_ASSIGN_MIN(void) {
-    return FloatAssign(FloatAssign::SEL_MIN);
-  }
+    inline FloatAssign
+    FLOAT_ASSIGN_MAX() {
+        return FloatAssign(FloatAssign::SEL_MAX);
+    }
 
-  inline FloatAssign
-  FLOAT_ASSIGN_MAX(void) {
-    return FloatAssign(FloatAssign::SEL_MAX);
-  }
+    inline FloatAssign
+    FLOAT_ASSIGN_RND(const Rnd& r) {
+        return FloatAssign(r);
+    }
 
-  inline FloatAssign
-  FLOAT_ASSIGN_RND(Rnd r) {
-    return FloatAssign(r);
-  }
+    inline FloatAssign
+    FLOAT_ASSIGN(FloatBranchVal v, FloatBranchCommit c) {
+        return FloatAssign(std::move(v), std::move(c));
+    }
 
-  inline FloatAssign
-  FLOAT_ASSIGN(FloatBranchVal v, FloatBranchCommit c) {
-    return FloatAssign(v,c);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: float-branch

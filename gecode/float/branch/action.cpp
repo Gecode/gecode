@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,19 +34,17 @@
 
 namespace Gecode {
 
-  FloatAction::FloatAction(Home home, const FloatVarArgs& x, double d,
-                           bool p, bool f, FloatBranchMerit bm) {
-    ViewArray<Float::FloatView> y(home,x);
-    Action::init(home,y,d,p,f,bm);
-  }
+    FloatAction::FloatAction(Home home, const FloatVarArgs& x, double d, bool p, bool f, const FloatBranchMerit& bm) {
+        ViewArray<Float::FloatView> y(home, x);
+        Action::init(home, y, d, p, f, bm);
+    }
 
-  void
-  FloatAction::init(Home home, const FloatVarArgs& x, double d,
-                    bool p, bool f, FloatBranchMerit bm) {
-    ViewArray<Float::FloatView> y(home,x);
-    Action::init(home,y,d,p,f,bm);
-  }
+    void
+    FloatAction::init(Home home, const FloatVarArgs& x, double d, bool p, bool f, const FloatBranchMerit& bm) {
+        ViewArray<Float::FloatView> y(home, x);
+        Action::init(home, y, d, p, f, bm);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-branch

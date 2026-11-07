@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
@@ -19,37 +18,39 @@
 #include <thread>
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
-/// Platform process session used by the executable blackbox backend.
-class BlackBoxProcessSession {
-protected:
+    /// Platform process session used by the executable blackbox backend.
+    class BlackBoxProcessSession {
+    protected:
 #ifdef GECODE_HAS_THREADS
-  std::thread::id owner;
+        std::thread::id owner;
 #endif
-  BlackBoxProcessSession(void)
+        // NOLINTNEXTLINE(modernize-use-equals-default)
+        BlackBoxProcessSession()
 #ifdef GECODE_HAS_THREADS
-    : owner(std::this_thread::get_id())
+            : owner(std::this_thread::get_id())
 #endif
-  {}
-public:
-  virtual ~BlackBoxProcessSession(void) {}
-  bool owned_by_current_thread(void) const {
+        {
+        }
+
+    public:
+        virtual ~BlackBoxProcessSession() = default;
+        bool
+        owned_by_current_thread() const {
 #ifdef GECODE_HAS_THREADS
-    return owner == std::this_thread::get_id();
+            return owner == std::this_thread::get_id();
 #else
-    return true;
+            return true;
 #endif
-  }
-  virtual std::string exchange(const std::string& request) = 0;
-};
+        }
+        virtual std::string exchange(const std::string& request) = 0;
+    };
 
-/// Create the process implementation selected for the target platform.
-BlackBoxProcessSession*
-create_blackbox_process(const std::string& program,
-                        const std::vector<std::string>& args);
+    /// Create the process implementation selected for the target platform.
+    BlackBoxProcessSession* create_blackbox_process(const std::string& program, const std::vector<std::string>& args);
 
-}}
+} // namespace Gecode::FlatZinc
 
 #endif
 

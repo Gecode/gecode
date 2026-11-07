@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -40,21 +39,21 @@
 
 #include <gecode/flatzinc/registry.hh>
 
-namespace Gecode { namespace FlatZinc { namespace RegistryDetail {
+namespace Gecode::FlatZinc::RegistryDetail {
 
-  void post_cumulatives(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann);
+    void post_cumulatives(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann);
 
-  void post_int_in_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann);
-  void post_int_in_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann);
+    void post_int_in_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann);
+    void post_int_in_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann);
 
 #ifdef GECODE_HAS_SET_VARS
-  void register_set(Registry& r);
+    void register_set(Registry& r);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-  void register_float(Registry& r);
+    void register_float(Registry& r);
 #endif
 
-}}}
+} // namespace Gecode::FlatZinc::RegistryDetail
 
 #endif
 

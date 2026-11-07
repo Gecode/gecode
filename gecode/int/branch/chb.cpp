@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,29 +34,28 @@
 
 namespace Gecode {
 
-  IntCHB::IntCHB(Home home, const IntVarArgs& x, IntBranchMerit bm) {
-    ViewArray<Int::IntView> y(home,x);
-    CHB::init(home,y,bm);
-  }
+    IntCHB::IntCHB(Home home, const IntVarArgs& x, const IntBranchMerit& bm) {
+        ViewArray<Int::IntView> y(home, x);
+        CHB::init(home, y, bm);
+    }
 
-  void
-  IntCHB::init(Home home, const IntVarArgs& x, IntBranchMerit bm) {
-    ViewArray<Int::IntView> y(home,x);
-    CHB::init(home,y,bm);
-  }
+    void
+    IntCHB::init(Home home, const IntVarArgs& x, const IntBranchMerit& bm) {
+        ViewArray<Int::IntView> y(home, x);
+        CHB::init(home, y, bm);
+    }
 
+    BoolCHB::BoolCHB(Home home, const BoolVarArgs& x, const BoolBranchMerit& bm) {
+        ViewArray<Int::BoolView> y(home, x);
+        CHB::init(home, y, bm);
+    }
 
-  BoolCHB::BoolCHB(Home home, const BoolVarArgs& x, BoolBranchMerit bm) {
-    ViewArray<Int::BoolView> y(home,x);
-    CHB::init(home,y,bm);
-  }
+    void
+    BoolCHB::init(Home home, const BoolVarArgs& x, const BoolBranchMerit& bm) {
+        ViewArray<Int::BoolView> y(home, x);
+        CHB::init(home, y, bm);
+    }
 
-  void
-  BoolCHB::init(Home home, const BoolVarArgs& x, BoolBranchMerit bm) {
-    ViewArray<Int::BoolView> y(home,x);
-    CHB::init(home,y,bm);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-branch

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -38,182 +37,176 @@
 
 #include <memory>
 
-namespace Test { namespace Branch {
+namespace Test::Branch {
 
-  /// Space for testing filtered random tie selection
-  class FilteredRndTiesSpace : public Gecode::Space {
-  public:
-    /// Variables to branch on
-    Gecode::IntVarArray x;
+    /// Space for testing filtered random tie selection
+    class FilteredRndTiesSpace : public Gecode::Space {
+    public:
+        /// Variables to branch on
+        Gecode::IntVarArray x;
 
-    /// Initialize space
-    FilteredRndTiesSpace(Gecode::Rnd r)
-      : x(*this, 4, 0, 1) {
-      Gecode::IntVarArgs xa(x);
-      Gecode::ViewArray<Gecode::Int::IntView> xv(*this, xa);
-      Gecode::ViewSel<Gecode::Int::IntView>* vs[2] = {
-        Gecode::Int::Branch::viewsel(*this, Gecode::INT_VAR_RND(r)),
-        Gecode::Int::Branch::viewsel(*this, Gecode::INT_VAR_SIZE_MIN())
-      };
-      // Post directly so the random selector remains first in the tie chain.
-      Gecode::postviewvalbrancher<Gecode::Int::IntView,2,int,2>(
-        *this, xv, vs,
-        Gecode::Int::Branch::valselcommit(*this, Gecode::INT_VAL_MIN()),
-        [](const Gecode::Space&, Gecode::IntVar, int i) {
-          return (i == 0) || (i == 2);
-        }, nullptr);
-    }
-
-    /// Constructor for cloning
-    FilteredRndTiesSpace(FilteredRndTiesSpace& s)
-      : Gecode::Space(s) {
-      x.update(*this, s.x);
-    }
-
-    /// Copy space during cloning
-    virtual Gecode::Space* copy(void) {
-      return new FilteredRndTiesSpace(*this);
-    }
-  };
-
-  /// Test filtered random tie selection with accepted and rejected views
-  class FilteredRndTies : public Base {
-  public:
-    /// Create and register test
-    FilteredRndTies(void)
-      : Base("Int::Branch::FilteredRndTies") {}
-
-    /// Run test
-    virtual bool run(void) {
-      bool selected[2] = {false, false};
-
-      for (unsigned int seed = 1; seed <= 16; seed++) {
-        FilteredRndTiesSpace* probe =
-          new FilteredRndTiesSpace(Gecode::Rnd(seed));
-        if (probe->status() != Gecode::SS_BRANCH) {
-          delete probe;
-          return false;
+        /// Initialize space
+        FilteredRndTiesSpace(const Gecode::Rnd& r) : x(*this, 4, 0, 1) {
+            Gecode::IntVarArgs xa(x);
+            Gecode::ViewArray<Gecode::Int::IntView> xv(*this, xa);
+            Gecode::ViewSel<Gecode::Int::IntView>* vs[2] = {
+                Gecode::Int::Branch::view_selection(*this, Gecode::INT_VAR_RND(r)),
+                Gecode::Int::Branch::view_selection(*this, Gecode::INT_VAR_SIZE_MIN())};
+            // Post directly so the random selector remains first in the tie chain.
+            Gecode::post_view_value_brancher<Gecode::Int::IntView, 2, int, 2>(
+                *this, xv, vs, Gecode::Int::Branch::value_selection_commit(*this, Gecode::INT_VAL_MIN()),
+                [](const Gecode::Space&, Gecode::IntVar, int i) { return (i == 0) || (i == 2); }, nullptr);
         }
-        const Gecode::Choice* c = probe->choice();
-        const Gecode::PosChoice& pc
-          = static_cast<const Gecode::PosChoice&>(*c);
-        const int p = pc.pos().pos;
-        delete c;
-        delete probe;
-        if ((p != 0) && (p != 2))
-          return false;
-        selected[p == 2] = true;
 
-        FilteredRndTiesSpace* root =
-          new FilteredRndTiesSpace(Gecode::Rnd(seed));
-        Gecode::Search::Options o;
-        o.c_d = 2;
-        o.a_d = 1;
-        Gecode::DFS<FilteredRndTiesSpace> e(root, o);
-        delete root;
-
-        int n = 0;
-        while (Gecode::Space* s = e.next()) {
-          FilteredRndTiesSpace* solution =
-            static_cast<FilteredRndTiesSpace*>(s);
-          if (solution->x[1].assigned() || solution->x[3].assigned()) {
-            delete solution;
-            return false;
-          }
-          delete solution;
-          n++;
+        /// Constructor for cloning
+        FilteredRndTiesSpace(FilteredRndTiesSpace& s) : Gecode::Space(s) {
+            x.update(*this, s.x);
         }
-        if (n != 4)
-          return false;
-      }
 
-      return selected[0] && selected[1];
-    }
-  };
+        /// Copy space during cloning
+        Gecode::Space*
+        copy() override {
+            return new FilteredRndTiesSpace(*this);
+        }
+    };
 
-  FilteredRndTies filtered_rnd_ties;
+    /// Test filtered random tie selection with accepted and rejected views
+    class FilteredRndTies : public Base {
+    public:
+        /// Create and register test
+        FilteredRndTies() : Base("Int::Branch::FilteredRndTies") {}
+
+        /// Run test
+        bool
+        run() override {
+            bool selected[2] = {false, false};
+
+            for (unsigned int seed = 1; seed <= 16; seed++) {
+                FilteredRndTiesSpace* probe = new FilteredRndTiesSpace(Gecode::Rnd(seed));
+                if (probe->status() != Gecode::SS_BRANCH) {
+                    delete probe;
+                    return false;
+                }
+                const Gecode::Choice* c = probe->choice();
+                const Gecode::PosChoice& pc = static_cast<const Gecode::PosChoice&>(*c);
+                const int p = pc.pos().pos;
+                delete c;
+                delete probe;
+                if ((p != 0) && (p != 2))
+                    return false;
+                selected[p == 2] = true;
+
+                FilteredRndTiesSpace* root = new FilteredRndTiesSpace(Gecode::Rnd(seed));
+                Gecode::Search::Options o;
+                o.c_d = 2;
+                o.a_d = 1;
+                Gecode::DFS<FilteredRndTiesSpace> e(root, o);
+                delete root;
+
+                int n = 0;
+                while (Gecode::Space* s = e.next()) {
+                    FilteredRndTiesSpace* solution = static_cast<FilteredRndTiesSpace*>(s);
+                    if (solution->x[1].assigned() || solution->x[3].assigned()) {
+                        delete solution;
+                        return false;
+                    }
+                    delete solution;
+                    n++;
+                }
+                if (n != 4)
+                    return false;
+            }
+
+            return selected[0] && selected[1];
+        }
+    };
+
+    FilteredRndTies filtered_rnd_ties;
 
 #ifdef GECODE_HAS_CBS
-  /// Independent permutations leave one CBS cache entry after another expires
-  class CBSSpace : public Gecode::Space {
-  public:
-    Gecode::IntVarArray x;
-    CBSSpace(bool local) : x(*this,8,0,3) {
-      if (local) {
-        NoGPI suppress(*this);
-        post();
-      } else {
-        post();
-      }
-      Gecode::cbsbranch(*this,x);
-    }
-    void post(void) {
-      using namespace Gecode;
-      distinct(*this,IntVarArgs() << x[0] << x[1] << x[2] << x[3],IPL_VAL);
-      distinct(*this,IntVarArgs() << x[4] << x[5] << x[6] << x[7],IPL_VAL);
-    }
-    CBSSpace(CBSSpace& s) : Space(s) {
-      x.update(*this,s.x);
-    }
-    virtual Space* copy(void) {
-      return new CBSSpace(*this);
-    }
-  };
-
-  /// Cache removal must preserve choices from surviving propagators
-  class CBS : public Base {
-  public:
-    CBS(void) : Base("Int::Branch::CBS",TestTags::check()) {}
-    virtual bool run(void) {
-      using namespace Gecode;
-      for (bool local : {false,true}) {
-        CBSSpace root(local);
-        Search::Options o;
-        o.c_d = 2;
-        o.a_d = 1;
-        DFS<CBSSpace> engine(&root,o);
-        int n = 0;
-        while (std::unique_ptr<CBSSpace> s{engine.next()}) {
-          for (int i=0; i<s->x.size(); i++)
-            if (!s->x[i].assigned())
-              return false;
-          n++;
+    /// Independent permutations leave one CBS cache entry after another expires
+    class CBSSpace : public Gecode::Space {
+    public:
+        Gecode::IntVarArray x;
+        CBSSpace(bool local) : x(*this, 8, 0, 3) {
+            if (local) {
+                NoGPI suppress(*this);
+                post();
+            } else {
+                post();
+            }
+            Gecode::cbs_branch(*this, x);
         }
-        if (n != 24*24)
-          return false;
-      }
-      return true;
-    }
-  };
+        void
+        post() {
+            using namespace Gecode;
+            distinct(*this, IntVarArgs() << x[0] << x[1] << x[2] << x[3], IPL_VAL);
+            distinct(*this, IntVarArgs() << x[4] << x[5] << x[6] << x[7], IPL_VAL);
+        }
+        CBSSpace(CBSSpace& s) : Space(s) {
+            x.update(*this, s.x);
+        }
+        Space*
+        copy() override {
+            return new CBSSpace(*this);
+        }
+    };
 
-  CBS cbs;
+    /// Cache removal must preserve choices from surviving propagators
+    class CBS : public Base {
+    public:
+        CBS() : Base("Int::Branch::CBS", TestTags::check()) {}
+        bool
+        run() override {
+            using namespace Gecode;
+            for (bool local : {false, true}) {
+                CBSSpace root(local);
+                Search::Options o;
+                o.c_d = 2;
+                o.a_d = 1;
+                DFS<CBSSpace> engine(&root, o);
+                int n = 0;
+                while (std::unique_ptr<CBSSpace> s{engine.next()}) {
+                    for (auto& var : s->x)
+                        if (!var.assigned())
+                            return false;
+                    n++;
+                }
+                if (n != 24 * 24)
+                    return false;
+            }
+            return true;
+        }
+    };
+
+    CBS cbs;
 #endif
 
-  /// %Test brancher with distinct propagator
-  class Int : public IntTest {
-  public:
-    /// Create and register test
-    Int(const std::string& s, const Gecode::IntSet& d, int n)
-      : IntTest(s,n,d) {}
-    /// Post propagators on variables \a x
-    virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-      Gecode::distinct(home, x);
-    }
-  };
+    /// %Test brancher with distinct propagator
+    class Int : public IntTest {
+    public:
+        /// Create and register test
+        Int(const std::string& s, const Gecode::IntSet& d, int n) : IntTest(s, n, d) {}
+        /// Post propagators on variables \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::distinct(home, x);
+        }
+    };
 
-  Gecode::IntSet d_dense(-2,2);
-  const int v_sparse[5] = {-100,-10,0,10,100};
-  Gecode::IntSet d_sparse(v_sparse,5);
+    Gecode::IntSet d_dense(-2, 2);
+    const int v_sparse[5] = {-100, -10, 0, 10, 100};
+    Gecode::IntSet d_sparse(v_sparse, 5);
 
-  Gecode::IntSet d_large(-2,10);
+    Gecode::IntSet d_large(-2, 10);
 
-  Int d_3("Dense::3",d_dense,3);
-  Int d_5("Dense::5",d_dense,5);
-  Int s_3("Sparse::3",d_sparse,3);
-  Int s_5("Sparse::5",d_sparse,5);
-  Int l_2("Large::2",d_large,2);
-  Int l_3("Large::3",d_large,3);
+    Int d_3("Dense::3", d_dense, 3);
+    Int d_5("Dense::5", d_dense, 5);
+    Int s_3("Sparse::3", d_sparse, 3);
+    Int s_5("Sparse::5", d_sparse, 5);
+    Int l_2("Large::2", d_large, 2);
+    Int l_3("Large::3", d_large, 3);
 
-}}
+} // namespace Test::Branch
 
 // STATISTICS: test-branch

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,141 +34,142 @@
 
 namespace Gecode {
 
-  /// Function type for printing variable and value selection
-  template<class Var, class Val>
-  using VarValPrint = std::function<void(const Space& home, const Brancher& b,
-                                         unsigned int a,
-                                         Var x, int i, const Val& m,
-                                         std::ostream& o)>;
- 
-  /// Class storing a print function
-  template<class View, class Val>
-  class BrancherPrint {
-  public:
-    /// The corresponding variable type
-    typedef typename View::VarType Var;
-  protected:
-    SharedData<VarValPrint<Var,Val>> p;
-  public:
-    /// Initialize
-    BrancherPrint(VarValPrint<Var,Val> vvp);
-    /// Initialize during cloning
-    BrancherPrint(BrancherPrint& bp);
-    /// Whether printing is enabled
-    operator bool(void) const;
-    /// Invoke print function
-    void operator ()(const Space& home, const Brancher& b,
-                     unsigned int a,
-                     View x, int i, const Val& m,
-                     std::ostream& o) const;
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete
-    void dispose(Space& home);
-  };
+    /// Function type for printing variable and value selection
+    template <class Var, class Val>
+    using VarValPrint = std::function<void(const Space& home, const Brancher& b, unsigned int a, Var x, int i,
+                                           const Val& m, std::ostream& o)>;
 
-  /// Class without print function
-  template<class View, class Val>
-  class BrancherNoPrint {
-  public:
-    /// The corresponding variable type
-    typedef typename View::VarType Var;
-  public:
-    /// Initialize
-    BrancherNoPrint(VarValPrint<Var,Val> vvp);
-    /// Initialize during cloning
-    BrancherNoPrint(BrancherNoPrint& bp);
-    /// Whether printing is enabled
-    operator bool(void) const;
-    /// Invoke print function
-    void operator ()(const Space& home, const Brancher& b,
-                     unsigned int a,
-                     View x, int i, const Val& m,
-                     std::ostream& o) const;
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete
-    void dispose(Space& home);
-  };
+    /// Class storing a print function
+    template <class View, class Val>
+    class BrancherPrint {
+    public:
+        /// The corresponding variable type
+        using Var = View::VarType;
 
+    protected:
+        SharedData<VarValPrint<Var, Val>> p;
 
+    public:
+        /// Initialize
+        BrancherPrint(VarValPrint<Var, Val> vvp);
+        /// Initialize during cloning
+        BrancherPrint(BrancherPrint& bp);
+        /// Whether printing is enabled
+        operator bool() const;
+        /// Invoke print function
+        void operator()(const Space& home, const Brancher& b, unsigned int a, View x, int i, const Val& m,
+                        std::ostream& o) const;
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Delete
+        void dispose(Space& home);
+    };
 
-  template<class View, class Val>
-  forceinline
-  BrancherPrint<View,Val>::BrancherPrint(VarValPrint<Var,Val> vvp) : p(vvp) {
-    if (!vvp)
-      throw Gecode::InvalidFunction("BrancherPrint::BrancherPrint");
-  }
-  
-  template<class View, class Val>
-  forceinline
-  BrancherPrint<View,Val>::BrancherPrint(BrancherPrint<View,Val>& bp)
-    : p(bp.p) {
-  }
+    /// Class without print function
+    template <class View, class Val>
+    class BrancherNoPrint {
+    public:
+        /// The corresponding variable type
+        using Var = View::VarType;
 
-  template<class View, class Val>
-  forceinline
-  BrancherPrint<View,Val>::operator bool(void) const {
-    return true;
-  }
+        /// Initialize from the empty print function \a vvp
+        BrancherNoPrint(const VarValPrint<Var, Val>& vvp);
+        /// Initialize from the empty print function \a vvp, moved in as for BrancherPrint
+        // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty print function holds nothing to move
+        BrancherNoPrint(VarValPrint<Var, Val>&& vvp);
+        /// Initialize during cloning
+        BrancherNoPrint(BrancherNoPrint& bp);
+        /// Whether printing is enabled
+        operator bool() const;
+        /// Invoke print function
+        void operator()(const Space& home, const Brancher& b, unsigned int a, View x, int i, const Val& m,
+                        std::ostream& o) const;
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Delete
+        void dispose(Space& home);
+    };
 
-  template<class View, class Val>
-  forceinline void
-  BrancherPrint<View,Val>::operator ()(const Space& home, const Brancher& b,
-                                       unsigned int a,
-                                       View x, int i, const Val& m,
-                                       std::ostream& o) const {
-    GECODE_VALID_FUNCTION(p());
-    Var xv(x.varimp());
-    p()(home,b,a,xv,i,m,o);
-  }
+    template <class View, class Val>
+    forceinline
+    BrancherPrint<View, Val>::BrancherPrint(VarValPrint<Var, Val> vvp)
+        : p(std::move(vvp)) {
+        if (!p())
+            throw Gecode::InvalidFunction("BrancherPrint::BrancherPrint");
+    }
 
-  template<class View, class Val>
-  forceinline bool
-  BrancherPrint<View,Val>::notice(void) const {
-    return true;
-  }
+    template <class View, class Val>
+    forceinline
+    BrancherPrint<View, Val>::BrancherPrint(BrancherPrint& bp)
+        : p(bp.p) {}
 
-  template<class View, class Val>
-  forceinline void
-  BrancherPrint<View,Val>::dispose(Space&) {
-    p.~SharedData<VarValPrint<Var,Val>>();
-  }
+    template <class View, class Val>
+    forceinline BrancherPrint<View, Val>::
+    operator bool() const {
+        return true;
+    }
 
+    template <class View, class Val>
+    forceinline void
+    BrancherPrint<View, Val>::operator()(const Space& home, const Brancher& b, unsigned int a, View x, int i,
+                                         const Val& m, std::ostream& o) const {
+        GECODE_VALID_FUNCTION(p());
+        Var xv(x.varimp());
+        p()(home, b, a, xv, i, m, o);
+    }
 
-  template<class View, class Val>
-  forceinline
-  BrancherNoPrint<View,Val>::BrancherNoPrint(VarValPrint<Var,Val> vvp) {
-    assert(!vvp);
-    (void) vvp;
-  }
-  
-  template<class View, class Val>
-  forceinline
-  BrancherNoPrint<View,Val>::BrancherNoPrint(BrancherNoPrint<View,Val>&) {}
+    template <class View, class Val>
+    forceinline bool
+    BrancherPrint<View, Val>::notice() const {
+        return true;
+    }
 
-  template<class View, class Val>
-  forceinline
-  BrancherNoPrint<View,Val>::operator bool(void) const {
-    return false;
-  }
+    template <class View, class Val>
+    forceinline void
+    BrancherPrint<View, Val>::dispose(Space&) {
+        p.~SharedData<VarValPrint<Var, Val>>();
+    }
 
-  template<class View, class Val>
-  forceinline void
-  BrancherNoPrint<View,Val>::operator ()(const Space&, const Brancher&,
-                                         unsigned int,
-                                         View, int, const Val&,
-                                         std::ostream&) const {}
-  template<class View, class Val>
-  forceinline bool
-  BrancherNoPrint<View,Val>::notice(void) const {
-    return false;
-  }
+    template <class View, class Val>
+    forceinline
+    BrancherNoPrint<View, Val>::BrancherNoPrint(const VarValPrint<Var, Val>& vvp) {
+        assert(!vvp);
+        (void)vvp;
+    }
 
-  template<class View, class Val>
-  forceinline void
-  BrancherNoPrint<View,Val>::dispose(Space&) {}
+    template <class View, class Val>
+    forceinline
+    // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty print function holds nothing to move
+    BrancherNoPrint<View, Val>::BrancherNoPrint(VarValPrint<Var, Val>&& vvp) {
+        assert(!vvp);
+        (void)vvp;
+    }
 
-}
+    template <class View, class Val>
+    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
+    BrancherNoPrint<View, Val>::BrancherNoPrint(BrancherNoPrint&) {}
+
+    template <class View, class Val>
+    forceinline BrancherNoPrint<View, Val>::
+    operator bool() const {
+        return false;
+    }
+
+    template <class View, class Val>
+    forceinline void
+    BrancherNoPrint<View, Val>::operator()(const Space&, const Brancher&, unsigned int, View, int, const Val&,
+                                           std::ostream&) const {}
+    template <class View, class Val>
+    forceinline bool
+    BrancherNoPrint<View, Val>::notice() const {
+        return false;
+    }
+
+    template <class View, class Val>
+    forceinline void
+    BrancherNoPrint<View, Val>::dispose(Space&) {}
+
+} // namespace Gecode
 
 // STATISTICS: kernel-branch

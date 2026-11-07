@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,67 +32,64 @@
 
 #include "test/set.hh"
 
-namespace Test { namespace Set {
+/// %Tests for synchronized execution
+namespace Test::Set::Exec {
 
-   /// %Tests for synchronized execution
-   namespace Exec {
+    /**
+     * \defgroup TaskTestSetExec Synchronized execution
+     * \ingroup TaskTestSet
+     */
+    //@{
+    /// Simple test for wait (set variables)
+    class Wait : public SetTest {
+    protected:
+        /// Whether to use std::function
+        bool sf;
 
-     /**
-      * \defgroup TaskTestSetExec Synchronized execution
-      * \ingroup TaskTestSet
-      */
-     //@{
-     /// Simple test for wait (set variables)
-     class Wait : public SetTest {
-     protected:
-       /// Whether to use std::function
-       bool sf;
-     public:
-       /// Create and register test
-       Wait(int n, bool sf0)
-         : SetTest(TestTags::check(),
-                   "Wait::"+str(n)+"::"+
-                   (sf0 ? "std::function" : "funptr"),n,
-                   Gecode::IntSet(0,n),false), sf(sf0) {}
-       /// Check whether \a x is solution
-       virtual bool solution(const SetAssignment& x) const {
-         (void) x;
-         return true;
-       }
-       /// Post wait on \a x
-       virtual void post(Gecode::Space& home, Gecode::SetVarArray& x,
-                         Gecode::IntVarArray&) {
-         using namespace Gecode;
-         auto f = static_cast<std::function<void(Space&)>>
-           ([](Space& home) { c(home); });
-         if (x.size() > 1) {
-           if (sf)
-             Gecode::wait(home, x, f);
-           else
-             Gecode::wait(home, x, &c);
-         } else {
-           if (sf)
-             Gecode::wait(home, x[0], f);
-           else
-             Gecode::wait(home, x[0], &c);
-         }
-       }
-       /// Continuation to be executed
-       static void c(Gecode::Space& _home) {
-         SetTestSpace& home = static_cast<SetTestSpace&>(_home);
-         for (int i=0; i<home.x.size(); i++)
-           if (!home.x[i].assigned())
-             home.fail();
-       }
-     };
+    public:
+        /// Create and register test
+        Wait(int n, bool sf0)
+            : SetTest(TestTags::check(), "Wait::" + str(n) + "::" + (sf0 ? "std::function" : "funptr"), n,
+                      Gecode::IntSet(0, n), false),
+              sf(sf0) {}
+        /// Check whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            (void)x;
+            return true;
+        }
+        /// Post wait on \a x
+        void
+        post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray&) override {
+            using namespace Gecode;
+            auto f = static_cast<std::function<void(Space&)>>([](Space& home) { c(home); });
+            if (x.size() > 1) {
+                if (sf)
+                    Gecode::wait(home, x, f);
+                else
+                    Gecode::wait(home, x, &c);
+            } else {
+                if (sf)
+                    Gecode::wait(home, x[0], f);
+                else
+                    Gecode::wait(home, x[0], &c);
+            }
+        }
+        /// Continuation to be executed
+        static void
+        c(Gecode::Space& _home) {
+            SetTestSpace& home = static_cast<SetTestSpace&>(_home);
+            for (int i = 0; i < home.x.size(); i++)
+                if (!home.x[i].assigned())
+                    home.fail();
+        }
+    };
 
-     Wait w1t(1,true), w2t(2,true);
-     Wait w1f(1,false), w2f(2,false);
+    Wait w1t(1, true), w2t(2, true);
+    Wait w1f(1, false), w2f(2, false);
 
-     //@}
+    //@}
 
-   }
-
-}}
+} // namespace Test::Set::Exec
 
 // STATISTICS: test-int

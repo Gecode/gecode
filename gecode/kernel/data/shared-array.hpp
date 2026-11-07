@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -42,340 +41,335 @@
 
 namespace Gecode {
 
-  /**
-   * \brief Shared array with arbitrary number of elements
-   *
-   * Sharing is implemented by reference counting: the same elements
-   * are shared among several objects.
-   *
-   */
-  template<class T>
-  class SharedArray : public SharedHandle {
-  protected:
-    /// Implementation of object for shared arrays
-    class SAO : public SharedHandle::Object {
-    private:
-      /// Elements
-      T*  a;
-      /// Number of elements
-      int n;
+    /**
+     * \brief Shared array with arbitrary number of elements
+     *
+     * Sharing is implemented by reference counting: the same elements
+     * are shared among several objects.
+     *
+     */
+    template <class T>
+    class SharedArray : public SharedHandle {
+    protected:
+        /// Implementation of object for shared arrays
+        class SAO : public SharedHandle::Object {
+        private:
+            /// Elements
+            T* a;
+            /// Number of elements
+            int n;
+
+        public:
+            /// Allocate for \a n elements
+            SAO(int n);
+            /// Delete object
+            ~SAO() override;
+
+            /// Access element at position \a i
+            T& operator[](int i);
+            /// Access element at position \a i
+            const T& operator[](int i) const;
+
+            /// Return number of elements
+            int size() const;
+
+            /// Return beginning of array (for iterators)
+            T* begin();
+            /// Return beginning of array (for iterators)
+            const T* begin() const;
+            /// Return end of array (for iterators)
+            T* end();
+            /// Return end of array (for iterators)
+            const T* end() const;
+        };
+
     public:
-      /// Allocate for \a n elements
-      SAO(int n);
-      /// Delete object
-      virtual ~SAO(void);
+        /// \name Associated types
+        //@{
+        /// Type of the view stored in this array
+        using value_type = T;
+        /// Type of a reference to the value type
+        using reference = T&;
+        /// Type of a constant reference to the value type
+        using const_reference = const T&;
+        /// Type of a pointer to the value type
+        using pointer = T*;
+        /// Type of a read-only pointer to the value type
+        using const_pointer = const T*;
+        /// Type of the iterator used to iterate through this array's elements
+        using iterator = T*;
+        /// Type of the iterator used to iterate read-only through this array's elements
+        using const_iterator = const T*;
+        /// Type of the iterator used to iterate backwards through this array's elements
+        using reverse_iterator = std::reverse_iterator<T*>;
+        /// Type of the iterator used to iterate backwards and read-only through this array's elements
+        using const_reverse_iterator = std::reverse_iterator<const T*>;
+        //@}
 
-      /// Access element at position \a i
-      T& operator [](int i);
-      /// Access element at position \a i
-      const T& operator [](int i) const;
+        /**
+         * \brief Construct as not yet initialized
+         *
+         * The only member functions that can be used on a constructed but not
+         * yet initialized shared array is init and the assignment operator .
+         *
+         */
+        SharedArray() = default;
+        /// Initialize as array with \a n elements
+        SharedArray(int n);
+        /**
+         * \brief Initialize as array with \a n elements
+         *
+         * This member function can only be used once and only if the shared
+         * array has been constructed with the default constructor.
+         *
+         */
+        void init(int n);
+        /// Initialize from shared array \a a (share elements)
+        SharedArray(const SharedArray& a);
+        /// Initialize from argument array \a a
+        SharedArray(const ArgArrayBase<T>& a);
 
-      /// Return number of elements
-      int size(void) const;
+        /// Access element at position \a i
+        T& operator[](int i);
+        /// Access element at position \a i
+        const T& operator[](int i) const;
 
-      /// Return beginning of array (for iterators)
-      T* begin(void);
-      /// Return beginning of array (for iterators)
-      const T* begin(void) const;
-      /// Return end of array (for iterators)
-      T* end(void);
-      /// Return end of array (for iterators)
-      const T* end(void) const;
+        /// Return number of elements
+        int size() const;
+
+        /// Test equality with \a sa
+        bool operator==(const SharedArray<T>& sa) const;
+
+        /// \name Array iteration
+        //@{
+        /// Return an iterator at the beginning of the array
+        iterator begin();
+        /// Return a read-only iterator at the beginning of the array
+        const_iterator begin() const;
+        /// Return an iterator past the end of the array
+        iterator end();
+        /// Return a read-only iterator past the end of the array
+        const_iterator end() const;
+        /// Return a reverse iterator at the end of the array
+        reverse_iterator rbegin();
+        /// Return a reverse and read-only iterator at the end of the array
+        const_reverse_iterator rbegin() const;
+        /// Return a reverse iterator past the beginning of the array
+        reverse_iterator rend();
+        /// Return a reverse and read-only iterator past the beginning of the array
+        const_reverse_iterator rend() const;
+        //@}
+
+        /// Assignment operator
+        SharedArray& operator=(const SharedArray&) = default;
     };
-  public:
-    /// \name Associated types
-    //@{
-    /// Type of the view stored in this array
-    typedef T value_type;
-    /// Type of a reference to the value type
-    typedef T& reference;
-    /// Type of a constant reference to the value type
-    typedef const T& const_reference;
-    /// Type of a pointer to the value type
-    typedef T* pointer;
-    /// Type of a read-only pointer to the value type
-    typedef const T* const_pointer;
-    /// Type of the iterator used to iterate through this array's elements
-    typedef T* iterator;
-    /// Type of the iterator used to iterate read-only through this array's elements
-    typedef const T* const_iterator;
-    /// Type of the iterator used to iterate backwards through this array's elements
-    typedef std::reverse_iterator<T*> reverse_iterator;
-    /// Type of the iterator used to iterate backwards and read-only through this array's elements
-    typedef std::reverse_iterator<const T*> const_reverse_iterator;
-    //@}
 
     /**
-     * \brief Construct as not yet initialized
-     *
-     * The only member functions that can be used on a constructed but not
-     * yet initialized shared array is init and the assignment operator .
+     * \brief Print array elements enclosed in curly brackets
+     * \relates SharedArray
+     */
+    template <class Char, class Traits, class T>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const SharedArray<T>& x);
+
+    /*
+     * Implementation
      *
      */
-    SharedArray(void);
-    /// Initialize as array with \a n elements
-    SharedArray(int n);
-    /**
-     * \brief Initialize as array with \a n elements
-     *
-     * This member function can only be used once and only if the shared
-     * array has been constructed with the default constructor.
+
+    /*
+     * Shared arrays
      *
      */
-    void init(int n);
-    /// Initialize from shared array \a a (share elements)
-    SharedArray(const SharedArray& a);
-    /// Initialize from argument array \a a
-    SharedArray(const ArgArrayBase<T>& a);
-
-    /// Access element at position \a i
-    T& operator [](int i);
-    /// Access element at position \a i
-    const T& operator [](int i) const;
-
-    /// Return number of elements
-    int size(void) const;
-
-    /// Test equality with \a sa
-    bool operator ==(const SharedArray<T>& sa) const;
-
-    /// \name Array iteration
-    //@{
-    /// Return an iterator at the beginning of the array
-    iterator begin(void);
-    /// Return a read-only iterator at the beginning of the array
-    const_iterator begin(void) const;
-    /// Return an iterator past the end of the array
-    iterator end(void);
-    /// Return a read-only iterator past the end of the array
-    const_iterator end(void) const;
-    /// Return a reverse iterator at the end of the array
-    reverse_iterator rbegin(void);
-    /// Return a reverse and read-only iterator at the end of the array
-    const_reverse_iterator rbegin(void) const;
-    /// Return a reverse iterator past the beginning of the array
-    reverse_iterator rend(void);
-    /// Return a reverse and read-only iterator past the beginning of the array
-    const_reverse_iterator rend(void) const;
-    //@}
-
-    /// Assignment operator
-    SharedArray& operator =(const SharedArray&) = default;
-  };
-
-  /**
-   * \brief Print array elements enclosed in curly brackets
-   * \relates SharedArray
-   */
-  template<class Char, class Traits, class T>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os,
-             const SharedArray<T>& x);
-
-
-  /*
-   * Implementation
-   *
-   */
-
-  /*
-   * Shared arrays
-   *
-   */
-  template<class T>
-  forceinline
-  SharedArray<T>::SAO::SAO(int n0) : n(n0) {
-    a = (n>0) ? heap.alloc<T>(n) : nullptr;
-  }
-
-  template<class T>
-  SharedArray<T>::SAO::~SAO(void) {
-    if (n>0) {
-      heap.free<T>(a,n);
+    template <class T>
+    forceinline
+    SharedArray<T>::SAO::SAO(int n0)
+        : n(n0) {
+        a = (n > 0) ? heap.alloc<T>(n) : nullptr;
     }
-  }
 
-  template<class T>
-  forceinline T&
-  SharedArray<T>::SAO::operator [](int i) {
-    assert((i>=0) && (i<n));
-    return a[i];
-  }
-
-  template<class T>
-  forceinline const T&
-  SharedArray<T>::SAO::operator [](int i) const {
-    assert((i>=0) && (i<n));
-    return a[i];
-  }
-
-  template<class T>
-  forceinline int
-  SharedArray<T>::SAO::size(void) const {
-    return n;
-  }
-
-  template<class T>
-  forceinline T*
-  SharedArray<T>::SAO::begin(void) {
-    return a;
-  }
-
-  template<class T>
-  forceinline const T*
-  SharedArray<T>::SAO::begin(void) const {
-    return a;
-  }
-
-  template<class T>
-  forceinline T*
-  SharedArray<T>::SAO::end(void) {
-    return a+n;
-  }
-
-  template<class T>
-  forceinline const T*
-  SharedArray<T>::SAO::end(void) const {
-    return a+n;
-  }
-
-
-  template<class T>
-  forceinline
-  SharedArray<T>::SharedArray(void) {}
-
-  template<class T>
-  forceinline
-  SharedArray<T>::SharedArray(int n)
-    : SharedHandle(new SAO(n)) {}
-
-  template<class T>
-  forceinline
-  SharedArray<T>::SharedArray(const SharedArray<T>& sa)
-    : SharedHandle(sa) {}
-
-  template<class T>
-  forceinline void
-  SharedArray<T>::init(int n) {
-    assert(object() == nullptr);
-    object(new SAO(n));
-  }
-
-  template<class T>
-  forceinline T&
-  SharedArray<T>::operator [](int i) {
-    assert(object() != nullptr);
-    return (*static_cast<SAO*>(object()))[i];
-  }
-
-  template<class T>
-  forceinline const T&
-  SharedArray<T>::operator [](int i) const {
-    assert(object() != nullptr);
-    return (*static_cast<SAO*>(object()))[i];
-  }
-
-  template<class T>
-  inline bool
-  SharedArray<T>::operator ==(const SharedArray<T>& sa) const {
-    if (size() != sa.size())
-      return false;
-    if (object()==sa.object())
-      return true;
-    for (int i=0; i<size(); i++) {
-      if ((*this)[i] != sa[i])
-        return false;
+    template <class T>
+    SharedArray<T>::SAO::~SAO() {
+        if (n > 0) {
+            heap.free<T>(a, n);
+        }
     }
-    return true;
-  }
 
-  template<class T>
-  forceinline
-  SharedArray<T>::SharedArray(const ArgArrayBase<T>& a)
-    : SharedHandle(new SAO(a.size())) {
-    for (int i=0; i<a.size(); i++)
-      operator [](i)=a[i];
-  }
-
-  template<class T>
-  forceinline int
-  SharedArray<T>::size(void) const {
-    assert(object() != nullptr);
-    return static_cast<SAO*>(object())->size();
-  }
-
-  template<class T>
-  forceinline typename SharedArray<T>::iterator
-  SharedArray<T>::begin(void) {
-    assert(object() != nullptr);
-    return static_cast<SAO*>(object())->begin();
-  }
-
-  template<class T>
-  forceinline typename SharedArray<T>::const_iterator
-  SharedArray<T>::begin(void) const {
-    assert(object() != nullptr);
-    return static_cast<SAO*>(object())->begin();
-  }
-
-  template<class T>
-  forceinline typename SharedArray<T>::iterator
-  SharedArray<T>::end(void) {
-    assert(object() != nullptr);
-    return static_cast<SAO*>(object())->end();
-  }
-
-  template<class T>
-  forceinline typename SharedArray<T>::const_iterator
-  SharedArray<T>::end(void) const {
-    assert(object() != nullptr);
-    return static_cast<SAO*>(object())->end();
-  }
-
-  template<class T>
-  forceinline typename SharedArray<T>::reverse_iterator
-  SharedArray<T>::rbegin(void) {
-    assert(object() != nullptr);
-    return reverse_iterator(static_cast<SAO*>(object())->end());
-  }
-
-  template<class T>
-  forceinline typename SharedArray<T>::const_reverse_iterator
-  SharedArray<T>::rbegin(void) const {
-    assert(object() != nullptr);
-    return const_reverse_iterator(static_cast<SAO*>(object())->end());
-  }
-
-  template<class T>
-  forceinline typename SharedArray<T>::reverse_iterator
-  SharedArray<T>::rend(void) {
-    assert(object() != nullptr);
-    return reverse_iterator(static_cast<SAO*>(object())->begin());
-  }
-
-  template<class T>
-  forceinline typename SharedArray<T>::const_reverse_iterator
-  SharedArray<T>::rend(void) const {
-    assert(object() != nullptr);
-    return const_reverse_iterator(static_cast<SAO*>(object())->begin());
-  }
-
-  template<class Char, class Traits, class T>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os,
-             const SharedArray<T>& x) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    s << '{';
-    if (x.size() > 0) {
-      s << x[0];
-      for (int i=1; i<x.size(); i++)
-        s << ", " << x[i];
+    template <class T>
+    forceinline T&
+    SharedArray<T>::SAO::operator[](int i) {
+        assert((i >= 0) && (i < n));
+        return a[i];
     }
-    s << '}';
-    return os << s.str();
-  }
 
-}
+    template <class T>
+    forceinline const T&
+    SharedArray<T>::SAO::operator[](int i) const {
+        assert((i >= 0) && (i < n));
+        return a[i];
+    }
+
+    template <class T>
+    forceinline int
+    SharedArray<T>::SAO::size() const {
+        return n;
+    }
+
+    template <class T>
+    forceinline T*
+    SharedArray<T>::SAO::begin() {
+        return a;
+    }
+
+    template <class T>
+    forceinline const T*
+    SharedArray<T>::SAO::begin() const {
+        return a;
+    }
+
+    template <class T>
+    forceinline T*
+    SharedArray<T>::SAO::end() {
+        return a + n;
+    }
+
+    template <class T>
+    forceinline const T*
+    SharedArray<T>::SAO::end() const {
+        return a + n;
+    }
+
+    template <class T>
+    forceinline
+    SharedArray<T>::SharedArray(int n)
+        : SharedHandle(new SAO(n)) {}
+
+    template <class T>
+    forceinline
+    SharedArray<T>::SharedArray(const SharedArray<T>& sa)
+        : SharedHandle(sa) {}
+
+    template <class T>
+    forceinline void
+    SharedArray<T>::init(int n) {
+        assert(object() == nullptr);
+        object(new SAO(n));
+    }
+
+    template <class T>
+    forceinline T&
+    SharedArray<T>::operator[](int i) {
+        assert(object() != nullptr);
+        return (*static_cast<SAO*>(object()))[i];
+    }
+
+    template <class T>
+    forceinline const T&
+    SharedArray<T>::operator[](int i) const {
+        assert(object() != nullptr);
+        return (*static_cast<SAO*>(object()))[i];
+    }
+
+    template <class T>
+    inline bool
+    SharedArray<T>::operator==(const SharedArray<T>& sa) const {
+        if (size() != sa.size())
+            return false;
+        if (object() == sa.object())
+            return true;
+        for (int i = 0; i < size(); i++) {
+            if ((*this)[i] != sa[i])
+                return false;
+        }
+        return true;
+    }
+
+    template <class T>
+    forceinline
+    SharedArray<T>::SharedArray(const ArgArrayBase<T>& a)
+        : SharedHandle(new SAO(a.size())) {
+        for (int i = 0; i < a.size(); i++)
+            operator[](i) = a[i];
+    }
+
+    template <class T>
+    forceinline int
+    SharedArray<T>::size() const {
+        assert(object() != nullptr);
+        return static_cast<SAO*>(object())->size();
+    }
+
+    template <class T>
+    forceinline SharedArray<T>::iterator
+    SharedArray<T>::begin() {
+        assert(object() != nullptr);
+        return static_cast<SAO*>(object())->begin();
+    }
+
+    template <class T>
+    forceinline SharedArray<T>::const_iterator
+    SharedArray<T>::begin() const {
+        assert(object() != nullptr);
+        return static_cast<SAO*>(object())->begin();
+    }
+
+    template <class T>
+    forceinline SharedArray<T>::iterator
+    SharedArray<T>::end() {
+        assert(object() != nullptr);
+        return static_cast<SAO*>(object())->end();
+    }
+
+    template <class T>
+    forceinline SharedArray<T>::const_iterator
+    SharedArray<T>::end() const {
+        assert(object() != nullptr);
+        return static_cast<SAO*>(object())->end();
+    }
+
+    template <class T>
+    forceinline SharedArray<T>::reverse_iterator
+    SharedArray<T>::rbegin() {
+        assert(object() != nullptr);
+        return reverse_iterator(static_cast<SAO*>(object())->end());
+    }
+
+    template <class T>
+    forceinline SharedArray<T>::const_reverse_iterator
+    SharedArray<T>::rbegin() const {
+        assert(object() != nullptr);
+        return const_reverse_iterator(static_cast<SAO*>(object())->end());
+    }
+
+    template <class T>
+    forceinline SharedArray<T>::reverse_iterator
+    SharedArray<T>::rend() {
+        assert(object() != nullptr);
+        return reverse_iterator(static_cast<SAO*>(object())->begin());
+    }
+
+    template <class T>
+    forceinline SharedArray<T>::const_reverse_iterator
+    SharedArray<T>::rend() const {
+        assert(object() != nullptr);
+        return const_reverse_iterator(static_cast<SAO*>(object())->begin());
+    }
+
+    template <class Char, class Traits, class T>
+    std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const SharedArray<T>& x) {
+        std::basic_ostringstream<Char, Traits> s;
+        s.copyfmt(os);
+        s.width(0);
+        s << '{';
+        if (x.size() > 0) {
+            s << x[0];
+            for (int i = 1; i < x.size(); i++)
+                s << ", " << x[i];
+        }
+        s << '}';
+        return os << s.str();
+    }
+
+} // namespace Gecode
 
 // STATISTICS: kernel-other

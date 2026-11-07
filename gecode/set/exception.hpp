@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,73 +32,72 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
-  /**
-   * \defgroup FuncThrowSet Set exceptions
-   * \ingroup FuncThrow
-   */
+    /**
+     * \defgroup FuncThrowSet Set exceptions
+     * \ingroup FuncThrow
+     */
 
-  /// %Exception: Value out of limits
-  class GECODE_SET_EXPORT OutOfLimits : public Exception {
-  public:
-    /// Initialize with location \a l
-    OutOfLimits(const char* l);
-  };
+    /// %Exception: Value out of limits
+    class GECODE_SET_EXPORT OutOfLimits : public Exception {
+    public:
+        /// Initialize with location \a l
+        OutOfLimits(const char* l);
+    };
 
-  //@{
-  /// %Exception: %Variable created with empty domain
-  class GECODE_SET_EXPORT VariableEmptyDomain : public Exception {
-  public:
-    /// Initialize with location \a l
-    VariableEmptyDomain(const char* l);
-  };
+    //@{
+    /// %Exception: %Variable created with empty domain
+    class GECODE_SET_EXPORT VariableEmptyDomain : public Exception {
+    public:
+        /// Initialize with location \a l
+        VariableEmptyDomain(const char* l);
+    };
 
-  /// %Exception: No arguments available in argument array
-  class GECODE_SET_EXPORT TooFewArguments : public Exception {
-  public:
-    /// Initialize with location \a l
-    TooFewArguments(const char* l);
-  };
+    /// %Exception: No arguments available in argument array
+    class GECODE_SET_EXPORT TooFewArguments : public Exception {
+    public:
+        /// Initialize with location \a l
+        TooFewArguments(const char* l);
+    };
 
-  /// %Exception: Arguments are of different size
-  class GECODE_SET_EXPORT ArgumentSizeMismatch : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentSizeMismatch(const char* l);
-  };
+    /// %Exception: Arguments are of different size
+    class GECODE_SET_EXPORT ArgumentSizeMismatch : public Exception {
+    public:
+        /// Initialize with location \a l
+        ArgumentSizeMismatch(const char* l);
+    };
 
-  /// %Exception: Unknown value or variable selection passed as argument
-  class GECODE_SET_EXPORT UnknownBranching : public Exception {
-  public:
-    /// Initialize with location \a l
-    UnknownBranching(const char* l);
-  };
+    /// %Exception: Unknown value or variable selection passed as argument
+    class GECODE_SET_EXPORT UnknownBranching : public Exception {
+    public:
+        /// Initialize with location \a l
+        UnknownBranching(const char* l);
+    };
 
-  /// %Exception: Unknown relation type passed as argument
-  class GECODE_SET_EXPORT UnknownRelation : public Exception {
-  public:
-    /// Initialize with location \a l
-    UnknownRelation(const char* l);
-  };
+    /// %Exception: Unknown relation type passed as argument
+    class GECODE_SET_EXPORT UnknownRelation : public Exception {
+    public:
+        /// Initialize with location \a l
+        UnknownRelation(const char* l);
+    };
 
-  /// %Exception: Unknown operation type passed as argument
-  class GECODE_SET_EXPORT UnknownOperation : public Exception {
-  public:
-    /// Initialize with location \a l
-    UnknownOperation(const char* l);
-  };
+    /// %Exception: Unknown operation type passed as argument
+    class GECODE_SET_EXPORT UnknownOperation : public Exception {
+    public:
+        /// Initialize with location \a l
+        UnknownOperation(const char* l);
+    };
 
-  /// %Exception: Illegal operation passed as argument
-  class GECODE_SET_EXPORT IllegalOperation : public Exception  {
-  public:
-    /// Initialize with location \a l
-    IllegalOperation(const char* l);
-  };
+    /// %Exception: Illegal operation passed as argument
+    class GECODE_SET_EXPORT IllegalOperation : public Exception {
+    public:
+        /// Initialize with location \a l
+        IllegalOperation(const char* l);
+    };
 
-  //@}
+    //@}
 
-}}
+} // namespace Gecode::Set
 
 // STATISTICS: set-other
-

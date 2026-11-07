@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,100 +37,103 @@
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
-  /// %Probe engine for %LDS
-  template<class Tracer>
-  class Probe : public Worker {
-  protected:
-    /// Node identity type
-    typedef typename Tracer::ID ID;
-    /// %Node in the search tree for %LDS
-    class Node {
-    private:
-      /// %Space of current node
-      Space* _space;
-      /// Choice
-      const Choice* _choice;
-      /// Next alternative to try
-      unsigned int _alt;
-      /// Node identifier
-      ID _nid;
+    /// %Probe engine for %LDS
+    template <class Tracer>
+    class Probe : public Worker {
+    protected:
+        /// Node identity type
+        using ID = Tracer::ID;
+        /// %Node in the search tree for %LDS
+        class Node {
+        private:
+            /// %Space of current node
+            Space* _space;
+            /// Choice
+            const Choice* _choice;
+            /// Next alternative to try
+            unsigned int _alt;
+            /// Node identifier
+            ID _nid;
+
+        public:
+            /// Default constructor
+            Node();
+            /// Initialize with node \a s, choice \a c, and alternative \a a
+            Node(Space* s, const Choice* c, unsigned int a, unsigned int nid);
+            /// Return space
+            Space* space() const;
+            /// Return choice
+            const Choice* choice() const;
+            /// Return next alternative
+            unsigned int alt() const;
+            /// Return node identifier
+            unsigned int nid() const;
+            /// %Set next alternative
+            void next();
+        };
+        /// Search tracer
+        Tracer tracer;
+        /// %Stack storing current path in search tree
+        Support::DynamicStack<Node, Heap> ds;
+        /// Current space
+        Space* cur;
+        /// Current discrepancy
+        unsigned int d;
+        /// Whether entire search space has been exhausted
+        bool exhausted;
+
     public:
-      /// Default constructor
-      Node(void);
-      /// Initialize with node \a s, choice \a c, and alternative \a a
-      Node(Space* s, const Choice* c, unsigned int a, unsigned int nid);
-      /// Return space
-      Space* space(void) const;
-      /// Return choice
-      const Choice* choice(void) const;
-      /// Return next alternative
-      unsigned int alt(void) const;
-      /// Return node identifier
-      unsigned int nid(void) const;
-      /// %Set next alternative
-      void next(void);
+        /// Initialize
+        Probe(const Options& opt);
+        /// Initialize with space \a s
+        void init(Space* s);
+        /// Reset with space \a s and discrepancy \a d
+        void reset(Space* s, unsigned int d);
+        /// Return statistics
+        Statistics statistics() const;
+        /// Destructor
+        ~Probe();
+        /// %Search for next solution
+        Space* next(const Options& o);
+        /// Test whether probing is done
+        bool done() const;
     };
-    /// Search tracer
-    Tracer tracer;
-    /// %Stack storing current path in search tree
-    Support::DynamicStack<Node,Heap> ds;
-    /// Current space
-    Space* cur;
-    /// Current discrepancy
-    unsigned int d;
-    /// Whether entire search space has been exhausted
-    bool exhausted;
-  public:
-    /// Initialize
-    Probe(const Options& opt);
-    /// Initialize with space \a s
-    void init(Space* s);
-    /// Reset with space \a s and discrepancy \a d
-    void reset(Space* s, unsigned int d);
-    /// Return statistics
-    Statistics statistics(void) const;
-    /// Destructor
-    ~Probe(void);
-    /// %Search for next solution
-    Space* next(const Options& o);
-    /// Test whether probing is done
-    bool done(void) const;
-  };
 
-  /// Limited discrepancy search engine implementation
-  template<class Tracer>
-  class LDS : public Engine {
-  protected:
-    /// Search options
-    Options opt;
-    /// The probe engine
-    Probe<Tracer> e;
-    /// Root node for problem
-    Space* root;
-    /// Current discrepancy
-    unsigned int d;
-    /// Solution found for current discrepancy
-    bool no_solution;
-  public:
-    /// Initialize for space \a s with options \a o
-    LDS(Space* s, const Options& o);
-    /// Return next solution (nullptr, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Statistics statistics(void) const;
-    /// Constrain future solutions to be better than \a b (should never be called)
-    void constrain(const Space& b);
-    /// Reset engine to restart at space \a s
-    void reset(Space* s);
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
-    /// Destructor
-    virtual ~LDS(void);
-  };
+    /// Limited discrepancy search engine implementation
+    template <class Tracer>
+    class LDS : public Engine {
+    protected:
+        /// Search options
+        Options opt;
+        /// The probe engine
+        Probe<Tracer> e;
+        /// Root node for problem
+        Space* root;
+        /// Current discrepancy
+        unsigned int d;
+        /// Solution found for current discrepancy
+        bool no_solution;
 
-}}}
+    public:
+        /// Initialize for space \a s with options \a o
+        LDS(Space* s, const Options& o);
+        /// Return next solution (nullptr, if none exists or search has been stopped)
+        Space* next() override;
+        /// Return statistics
+        Statistics statistics() const override;
+        /// Constrain future solutions to be better than \a b (should never be called)
+        void constrain(const Space& b) override;
+        /// Reset engine to restart at space \a s
+        void reset(Space* s) override;
+        /// Check whether engine has been stopped
+        bool stopped() const override;
+        /// Destructor
+        ~LDS() override;
+    };
+
+} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/lds.hpp>
 

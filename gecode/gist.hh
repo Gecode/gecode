@@ -48,45 +48,37 @@
  *
  */
 
-#if !defined(GECODE_STATIC_LIBS) && !defined(GIST_STATIC_LIBS) && \
+#if !defined(GECODE_STATIC_LIBS) && !defined(GIST_STATIC_LIBS) &&                                                      \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
 #ifdef GECODE_BUILD_GIST
-#define GECODE_GIST_EXPORT __declspec( dllexport )
+#define GECODE_GIST_EXPORT __declspec(dllexport)
 #else
-#define GECODE_GIST_EXPORT __declspec( dllimport )
+#define GECODE_GIST_EXPORT __declspec(dllimport)
 #endif
 
 #else
 
 #ifdef GECODE_GCC_HAS_CLASS_VISIBILITY
-#define GECODE_GIST_EXPORT __attribute__ ((visibility("default")))
+#define GECODE_GIST_EXPORT __attribute__((visibility("default")))
 #else
 #define GECODE_GIST_EXPORT
 #endif
 
 #endif
 
-// Configure auto-linking
-#ifndef GECODE_BUILD_GIST
-#define GECODE_LIBRARY_NAME "Gist"
-#include <gecode/support/auto-link.hpp>
-#endif
-
 #include <string>
 #include <sstream>
 
-namespace Gecode {
-
-  /**
-   * \namespace Gecode::Gist
-   * \brief The %Gecode Interactive %Search Tool
-   *
-   * The Gecode::Gist namespace contains the %Gecode Interactive %Search Tool,
-   * a Qt-based graphical search engine.
-   *
-   */
-  namespace Gist {
+/**
+ * \namespace Gecode::Gist
+ * \brief The %Gecode Interactive %Search Tool
+ *
+ * The Gecode::Gist namespace contains the %Gecode Interactive %Search Tool,
+ * a Qt-based graphical search engine.
+ *
+ */
+namespace Gecode::Gist {
 
     /** \brief Abstract base class for inspectors
      *
@@ -98,14 +90,14 @@ namespace Gecode {
      */
     class GECODE_GIST_EXPORT Inspector {
     public:
-      /// Call-back function
-      virtual void inspect(const Space& s) = 0;
-      /// Name of the inspector
-      virtual std::string name(void);
-      /// Clean up when Gist exits
-      virtual void finalize(void);
-      /// Destructor
-      virtual ~Inspector(void);
+        /// Call-back function
+        virtual void inspect(const Space& s) = 0;
+        /// Name of the inspector
+        virtual std::string name();
+        /// Clean up when Gist exits
+        virtual void finalize();
+        /// Destructor
+        virtual ~Inspector();
     };
 
     /** \brief Abstract base class for comparators
@@ -118,40 +110,39 @@ namespace Gecode {
      */
     class GECODE_GIST_EXPORT Comparator {
     public:
-      //@{
-      ///\name Comparator interface
+        //@{
+        ///\name Comparator interface
 
-      /// Call-back function
-      virtual void compare(const Space& s0, const Space& s1) = 0;
-      /// Name of the comparator
-      virtual std::string name(void);
-      /// Clean up when Gist exits
-      virtual void finalize(void);
-      /// Destructor
-      virtual ~Comparator(void);
+        /// Call-back function
+        virtual void compare(const Space& s0, const Space& s1) = 0;
+        /// Name of the comparator
+        virtual std::string name();
+        /// Clean up when Gist exits
+        virtual void finalize();
+        /// Destructor
+        virtual ~Comparator();
 
-      //@}
+        //@}
 
-      //@{
-      ///\name Helper methods
+        //@{
+        ///\name Helper methods
 
-      /// Return string representation of difference between arrays \a x and \a y, which are called \a x_n
-      template<class Var>
-      static std::string compare(std::string x_n, const VarArgArray<Var>& x,
-        const VarArgArray<Var>& y);
-      /// Return string representation of difference between \a x and \a y, which are called \a x_n
-      static std::string compare(std::string x_n, IntVar x, IntVar y);
-      /// Return string representation of difference between \a x and \a y, which are called \a x_n
-      static std::string compare(std::string x_n, BoolVar x, BoolVar y);
+        /// Return string representation of difference between arrays \a x and \a y, which are called \a x_n
+        template <class Var>
+        static std::string compare(const std::string& x_n, const VarArgArray<Var>& x, const VarArgArray<Var>& y);
+        /// Return string representation of difference between \a x and \a y, which are called \a x_n
+        static std::string compare(const std::string& x_n, IntVar x, IntVar y);
+        /// Return string representation of difference between \a x and \a y, which are called \a x_n
+        static std::string compare(const std::string& x_n, BoolVar x, BoolVar y);
 #ifdef GECODE_HAS_SET_VARS
-      /// Return string representation of difference between \a x and \a y, which are called \a x_n
-      static std::string compare(std::string x_n, SetVar x, SetVar y);
+        /// Return string representation of difference between \a x and \a y, which are called \a x_n
+        static std::string compare(const std::string& x_n, SetVar x, SetVar y);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-      /// Return string representation of difference between \a x and \a y, which are called \a x_n
-      static std::string compare(std::string x_n, FloatVar x, FloatVar y);
+        /// Return string representation of difference between \a x and \a y, which are called \a x_n
+        static std::string compare(const std::string& x_n, FloatVar x, FloatVar y);
 #endif
-      //@}
+        //@}
     };
 
     class TextOutputI;
@@ -159,42 +150,44 @@ namespace Gecode {
     /// An window for simple text output
     class GECODE_GIST_EXPORT TextOutput {
     private:
-      /// The implementation object
-      TextOutputI *t;
-      /// The name of the window
-      std::string n;
+        /// The implementation object
+        TextOutputI* t;
+        /// The name of the window
+        std::string n;
+
     protected:
-      /// Initialize the implementation object
-      void init(void);
-      /// Get the stream that is used to output text
-      std::ostream& getStream(void);
-      /// Flush stream
-      void flush(void);
-      /// Add html text \a s to the output
-      void addHtml(const char* s);
+        /// Initialize the implementation object
+        void init();
+        /// Get the stream that is used to output text
+        std::ostream& get_stream();
+        /// Flush stream
+        void flush();
+        /// Add html text \a s to the output
+        void add_html(const char* s);
+
     public:
-      /// Constructor
-      TextOutput(const std::string& name);
-      /// Clean up when Gist exits
-      void finalize(void);
-      /// Destructor
-      virtual ~TextOutput(void);
-      /// Name of the inspector
-      virtual std::string name(void);
+        /// Constructor
+        TextOutput(const std::string& name);
+        /// Clean up when Gist exits
+        void finalize();
+        /// Destructor
+        virtual ~TextOutput();
+        /// Name of the inspector
+        virtual std::string name();
     };
 
     /// An inspector for printing simple text output
-    template<class S>
+    template <class S>
     class Print : public TextOutput, public Inspector {
     public:
-      /// Constructor
-      Print(const std::string& name);
-      /// Use the print method of the template class S to print a space
-      virtual void inspect(const Space& node);
-      /// Return name
-      virtual std::string name(void);
-      /// Clean up when Gist exits
-      virtual void finalize(void);
+        /// Constructor
+        Print(const std::string& name);
+        /// Use the print method of the template class S to print a space
+        void inspect(const Space& node) override;
+        /// Return name
+        std::string name() override;
+        /// Clean up when Gist exits
+        void finalize() override;
     };
 
     /**
@@ -207,22 +200,22 @@ namespace Gecode {
      * the script to output the differences between two spaces.
      *
      */
-    template<class S>
+    template <class S>
     class VarComparator : public TextOutput, public Comparator {
     public:
-      /// Constructor
-      VarComparator(std::string name);
-      /// Compare \a s0 to \a s1
-      virtual void compare(const Space& s0, const Space& s1);
-      /// Return name
-      virtual std::string name(void);
-      /// Finalize when Gist exits
-      virtual void finalize(void);
+        /// Constructor
+        VarComparator(const std::string& name);
+        /// Compare \a s0 to \a s1
+        void compare(const Space& s0, const Space& s1) override;
+        /// Return name
+        std::string name() override;
+        /// Finalize when Gist exits
+        void finalize() override;
     };
 
     /// A branching that stops exploration
     GECODE_GIST_EXPORT
-    void stopBranch(Space& home);
+    void stop_branch(Space& home);
 
     /**
      * \brief %Options for %Gist
@@ -233,66 +226,61 @@ namespace Gecode {
      */
     class Options : public Search::Options {
     public:
-      /// Helper class storing inspectors
-      class I_ {
-      private:
-        Support::DynamicArray<Inspector*,Heap> _click;
-        unsigned int n_click;
-        Support::DynamicArray<Inspector*,Heap> _solution;
-        unsigned int n_solution;
-        Support::DynamicArray<Inspector*,Heap> _move;
-        unsigned int n_move;
-        Support::DynamicArray<Comparator*,Heap> _compare;
-        unsigned int n_compare;
-      public:
-        /// Constructor
-        I_(void);
-        /// Add inspector that reacts on node double clicks
-        void click(Inspector* i);
-        /// Add inspector that reacts on each new solution that is found
-        void solution(Inspector* i);
-        /// Add inspector that reacts on each move of the cursor
-        void move(Inspector* i);
-        /// Add comparator
-        void compare(Comparator* c);
+        /// Helper class storing inspectors
+        class I_ {
+        private:
+            Support::DynamicArray<Inspector*, Heap> _click;
+            unsigned int n_click;
+            Support::DynamicArray<Inspector*, Heap> _solution;
+            unsigned int n_solution;
+            Support::DynamicArray<Inspector*, Heap> _move;
+            unsigned int n_move;
+            Support::DynamicArray<Comparator*, Heap> _compare;
+            unsigned int n_compare;
 
-        /// Return click inspector number \a i, or nullptr if it does not exist
-        Inspector* click(unsigned int i) const;
-        /// Return solution inspector number \a i, or nullptr if it does not exist
-        Inspector* solution(unsigned int i) const;
-        /// Return move inspector number \a i, or nullptr if it does not exist
-        Inspector* move(unsigned int i) const;
-        /// Return comparator number \a i, or nullptr if it does not exist
-        Comparator* compare(unsigned int i) const;
-      } inspect;
-      /// Default options
-      GECODE_GIST_EXPORT static const Options def;
-      /// Initialize with default values
-      Options(void);
+        public:
+            /// Constructor
+            I_();
+            /// Add inspector that reacts on node double clicks
+            void click(Inspector* i);
+            /// Add inspector that reacts on each new solution that is found
+            void solution(Inspector* i);
+            /// Add inspector that reacts on each move of the cursor
+            void move(Inspector* i);
+            /// Add comparator
+            void compare(Comparator* c);
+
+            /// Return click inspector number \a i, or nullptr if it does not exist
+            Inspector* click(unsigned int i) const;
+            /// Return solution inspector number \a i, or nullptr if it does not exist
+            Inspector* solution(unsigned int i) const;
+            /// Return move inspector number \a i, or nullptr if it does not exist
+            Inspector* move(unsigned int i) const;
+            /// Return comparator number \a i, or nullptr if it does not exist
+            Comparator* compare(unsigned int i) const;
+        } inspect;
+        /// Default options
+        GECODE_GIST_EXPORT static const Options def;
+        /// Initialize with default values
+        Options() = default;
     };
 
-
     /// Create a new stand-alone Gist for \a root using \a bab
-    GECODE_GIST_EXPORT int
-    explore(Space* root, bool bab, const Options& opt);
+    GECODE_GIST_EXPORT int explore(Space* root, bool bab, const Options& opt);
 
     /**
      * \brief Create a new stand-alone Gist for \a root
      * \ingroup TaskGist
      */
-    int
-    dfs(Space* root, const Gist::Options& opt = Gist::Options::def);
+    int dfs(Space* root, const Gist::Options& opt = Gist::Options::def);
 
     /**
      * \brief Create a new stand-alone Gist for branch-and-bound search of \a root
      * \ingroup TaskGist
      */
-    int
-    bab(Space* root, const Gist::Options& opt = Gist::Options::def);
+    int bab(Space* root, const Gist::Options& opt = Gist::Options::def);
 
-  }
-
-}
+} // namespace Gecode::Gist
 
 #include <gecode/gist/gist.hpp>
 

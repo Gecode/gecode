@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,123 +30,130 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
-  /**
-   * \defgroup FuncIterRangesOp Operations on range iterators
-   *
-   * \ingroup FuncIterRanges
-   */
+    /**
+     * \defgroup FuncIterRangesOp Operations on range iterators
+     *
+     * \ingroup FuncIterRanges
+     */
 
-  //@{
-  /// Size of all ranges of range iterator \a i
-  template<class I>
-  unsigned int size(I& i);
+    //@{
+    /// Size of all ranges of range iterator \a i
+    template <class I>
+    unsigned int size(I& i);
 
-  /// Check whether range iterators \a i and \a j are equal
-  template<class I, class J>
-  bool equal(I& i, J& j);
+    /// Check whether range iterators \a i and \a j are equal
+    template <class I, class J>
+    bool equal(I& i, J& j);
 
-  /// Check whether range iterator \a i is subset of range iterator \a j
-  template<class I, class J>
-  bool subset(I& i, J& j);
+    /// Check whether range iterator \a i is subset of range iterator \a j
+    template <class I, class J>
+    bool subset(I& i, J& j);
 
-  /// Check whether range iterators \a i and \a j are disjoint
-  template<class I, class J>
-  bool disjoint(I& i, J& j);
+    /// Check whether range iterators \a i and \a j are disjoint
+    template <class I, class J>
+    bool disjoint(I& i, J& j);
 
-  /// Compare two iterators with each other
-  enum CompareStatus {
-    CS_SUBSET,   ///< First is subset of second iterator
-    CS_DISJOINT, ///< Intersection is empty
-    CS_NONE      ///< Neither of the above
-  };
+    /// Compare two iterators with each other
+    enum class CompareStatus {
+        CS_SUBSET,   ///< First is subset of second iterator
+        CS_DISJOINT, ///< Intersection is empty
+        CS_NONE      ///< Neither of the above
+    };
+    using enum CompareStatus;
 
-  /// Check whether range iterator \a i is a subset of \a j, or whether they are disjoint
-  template<class I, class J>
-  CompareStatus compare(I& i, J& j);
-  //@}
+    /// Check whether range iterator \a i is a subset of \a j, or whether they are disjoint
+    template <class I, class J>
+    CompareStatus compare(I& i, J& j);
+    //@}
 
-
-  template<class I>
-  inline unsigned int
-  size(I& i) {
-    unsigned int s = 0;
-    while (i()) {
-      s += i.width(); ++i;
+    template <class I>
+    inline unsigned int
+    size(I& i) {
+        unsigned int s = 0;
+        while (i()) {
+            s += i.width();
+            ++i;
+        }
+        return s;
     }
-    return s;
-  }
 
-  template<class I, class J>
-  forceinline bool
-  equal(I& i, J& j) {
-    // Are i and j equal?
-    while (i() && j())
-      if ((i.min() == j.min()) && (i.max() == j.max())) {
-        ++i; ++j;
-      } else {
-        return false;
-      }
-    return !i() && !j();
-  }
-
-  template<class I, class J>
-  forceinline bool
-  subset(I& i, J& j) {
-    // Is i subset of j?
-    while (i() && j())
-      if (j.max() < i.min()) {
-        ++j;
-      } else if ((i.min() >= j.min()) && (i.max() <= j.max())) {
-        ++i;
-      } else {
-        return false;
-      }
-    return !i();
-  }
-
-  template<class I, class J>
-  forceinline bool
-  disjoint(I& i, J& j) {
-    // Are i and j disjoint?
-    while (i() && j())
-      if (j.max() < i.min()) {
-        ++j;
-      } else if (i.max() < j.min()) {
-        ++i;
-      } else {
-        return false;
-      }
-    return true;
-  }
-
-  template<class I, class J>
-  forceinline CompareStatus
-  compare(I& i, J& j) {
-    bool subset = true;
-    bool disjoint = true;
-    while (i() && j()) {
-      if (j.max() < i.min()) {
-        ++j;
-      } else if (i.max() < j.min()) {
-        ++i; subset = false;
-      } else if ((i.min() >= j.min()) && (i.max() <= j.max())) {
-        ++i; disjoint = false;
-      } else if (i.max() <= j.max()) {
-        ++i; disjoint = false; subset = false;
-      } else if (j.max() <= i.max()) {
-        ++j; disjoint = false; subset = false;
-      }
+    template <class I, class J>
+    forceinline bool
+    equal(I& i, J& j) {
+        // Are i and j equal?
+        while (i() && j())
+            if ((i.min() == j.min()) && (i.max() == j.max())) {
+                ++i;
+                ++j;
+            } else {
+                return false;
+            }
+        return !i() && !j();
     }
-    if (i())
-      subset = false;
-    if (subset)
-      return CS_SUBSET;
-    return disjoint ? CS_DISJOINT : CS_NONE;
-  }
 
-}}}
+    template <class I, class J>
+    forceinline bool
+    subset(I& i, J& j) {
+        // Is i subset of j?
+        while (i() && j())
+            if (j.max() < i.min()) {
+                ++j;
+            } else if ((i.min() >= j.min()) && (i.max() <= j.max())) {
+                ++i;
+            } else {
+                return false;
+            }
+        return !i();
+    }
+
+    template <class I, class J>
+    forceinline bool
+    disjoint(I& i, J& j) {
+        // Are i and j disjoint?
+        while (i() && j())
+            if (j.max() < i.min()) {
+                ++j;
+            } else if (i.max() < j.min()) {
+                ++i;
+            } else {
+                return false;
+            }
+        return true;
+    }
+
+    template <class I, class J>
+    forceinline CompareStatus
+    compare(I& i, J& j) {
+        bool subset = true;
+        bool disjoint = true;
+        while (i() && j()) {
+            if (j.max() < i.min()) {
+                ++j;
+            } else if (i.max() < j.min()) {
+                ++i;
+                subset = false;
+            } else if ((i.min() >= j.min()) && (i.max() <= j.max())) {
+                ++i;
+                disjoint = false;
+            } else if (i.max() <= j.max()) {
+                ++i;
+                disjoint = false;
+                subset = false;
+            } else if (j.max() <= i.max()) {
+                ++j;
+                disjoint = false;
+                subset = false;
+            }
+        }
+        if (i())
+            subset = false;
+        if (subset)
+            return CS_SUBSET;
+        return disjoint ? CS_DISJOINT : CS_NONE;
+    }
+
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any
-

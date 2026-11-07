@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,17 +34,17 @@
 
 namespace Gecode {
 
-  SetCHB::SetCHB(Home home, const SetVarArgs& x, SetBranchMerit bm) {
-    ViewArray<Set::SetView> y(home,x);
-    CHB::init(home,y,bm);
-  }
+    SetCHB::SetCHB(Home home, const SetVarArgs& x, const SetBranchMerit& bm) {
+        ViewArray<Set::SetView> y(home, x);
+        CHB::init(home, y, bm);
+    }
 
-  void
-  SetCHB::init(Home home, const SetVarArgs& x, SetBranchMerit bm) {
-    ViewArray<Set::SetView> y(home,x);
-    CHB::init(home,y,bm);
-  }
+    void
+    SetCHB::init(Home home, const SetVarArgs& x, const SetBranchMerit& bm) {
+        ViewArray<Set::SetView> y(home, x);
+        CHB::init(home, y, bm);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-branch

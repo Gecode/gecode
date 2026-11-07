@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Maxim Shishmarev <maxim.shishmarev@monash.edu>
@@ -48,116 +47,102 @@
 
 namespace Gecode {
 
-  CPProfilerSearchTracer::GetInfo::GetInfo(void) {}
+    CPProfilerSearchTracer::GetInfo::~GetInfo() = default;
 
-  CPProfilerSearchTracer::GetInfo::~GetInfo(void) {}
-
-
-  CPProfilerSearchTracer::CPProfilerSearchTracer(int eid, std::string name0,
-                                                 unsigned int port,
-                                                 const GetInfo* pgetinfo) :
-    connector(new CPProfiler::Connector(port)), execution_id(eid), name(name0), restart(0), 
-    pgi(pgetinfo) {
-  }
-
-  void
-  CPProfilerSearchTracer::init(void) {
-    // Try to find out whether engine is a restart engine
-    bool restarts = ((engines() == 2U) &&
-                     (engine(0U).type() == EngineType::RBS));
-    connector->connect();
-    connector->start(name, execution_id, restarts);
-  }
-
-  void
-  CPProfilerSearchTracer::round(unsigned int) {
-    restart++;
-    connector->restart(restart);
-  }
-
-  void
-  CPProfilerSearchTracer::skip(const EdgeInfo& ei) {
-    CPProfiler::NodeUID dummy_node{-1, restart, -1};
-    CPProfiler::NodeUID parent{-1,restart,-1};
-
-    int alt = 0;
-    std::string label;
-    if (ei) {
-      parent.nid = static_cast<int>(ei.nid());
-      parent.tid = static_cast<int>(ei.wid());
-      dummy_node.tid = static_cast<int>(ei.wid());
-      alt = static_cast<int>(ei.alternative());
-      label = ei.string();
+    CPProfilerSearchTracer::CPProfilerSearchTracer(int eid, std::string name0, unsigned int port, const GetInfo* pgi0)
+        : connector(new CPProfiler::Connector(port)), execution_id(eid), name(std::move(name0)), restart(0), pgi(pgi0) {
     }
 
-    auto node = connector->createNode(dummy_node, parent,
-                                     alt, 0, CPProfiler::NodeStatus::SKIPPED)
-      .set_label(label)
-      .set_info("");
-    connector->sendNode(node);
-  }
-
-  void
-  CPProfilerSearchTracer::node(const EdgeInfo& ei, const NodeInfo& ni) {
-    CPProfiler::NodeUID this_node{static_cast<int>(ni.nid()),
-        restart,
-        static_cast<int>(ni.wid())};
-    CPProfiler::NodeUID parent {-1,restart,-1};
-
-    int alt = 0;
-    int alts = 0;
-
-    CPProfiler::NodeStatus ns = CPProfiler::NodeStatus::FAILED;
-    switch(ni.type()) {
-    case NodeType::SOLVED:
-      ns = CPProfiler::NodeStatus::SOLVED;
-      break;
-    case NodeType::BRANCH:
-      ns = CPProfiler::NodeStatus::BRANCH;
-      alts = static_cast<int>(ni.choice().alternatives());
-      break;
-    case NodeType::FAILED:
-      ns = CPProfiler::NodeStatus::FAILED;
-      break;
-    default:
-      GECODE_NEVER;
+    void
+    CPProfilerSearchTracer::init() {
+        // Try to find out whether engine is a restart engine
+        bool restarts = ((engines() == 2U) && (engine(0U).type() == EngineType::RBS));
+        connector->connect();
+        connector->start(name, execution_id, restarts);
     }
 
-    std::string label;
-    if(ei) {
-      parent = {static_cast<int>(ei.nid()),
-                restart,
-                static_cast<int>(ei.wid())};
-
-      alt = static_cast<int>(ei.alternative());
-      label = ei.string();
-    } else {
-      alt = restart;
+    void
+    CPProfilerSearchTracer::round(unsigned int) {
+        restart++;
+        connector->restart(restart);
     }
 
-    std::string info;
-    if(pgi) {
-      info = pgi->getInfo(ni.space());
+    void
+    CPProfilerSearchTracer::skip(const EdgeInfo& ei) {
+        CPProfiler::NodeUID dummy_node{-1, restart, -1};
+        CPProfiler::NodeUID parent{-1, restart, -1};
+
+        int alt = 0;
+        std::string label;
+        if (ei) {
+            parent.nid = static_cast<int>(ei.nid());
+            parent.tid = static_cast<int>(ei.wid());
+            dummy_node.tid = static_cast<int>(ei.wid());
+            alt = static_cast<int>(ei.alternative());
+            label = ei.string();
+        }
+
+        auto node = connector->create_node(dummy_node, parent, alt, 0, CPProfiler::NodeStatus::SKIPPED)
+                        .set_label(label)
+                        .set_info("");
+        connector->send_node(node);
     }
 
-    auto node = connector->createNode(this_node, parent, alt, alts, ns)
-      .set_label(label)
-      .set_info(info);
-    connector->sendNode(node);
-  }
+    void
+    CPProfilerSearchTracer::node(const EdgeInfo& ei, const NodeInfo& ni) {
+        CPProfiler::NodeUID this_node{static_cast<int>(ni.nid()), restart, static_cast<int>(ni.wid())};
+        CPProfiler::NodeUID parent{-1, restart, -1};
 
-  void
-  CPProfilerSearchTracer::done(void) {
-    connector->done();
-    connector->disconnect();
-  }
+        int alt = 0;
+        int alts = 0;
 
-  CPProfilerSearchTracer::~CPProfilerSearchTracer(void) {
-    delete connector;
-    delete pgi;
-  }
+        CPProfiler::NodeStatus ns = CPProfiler::NodeStatus::FAILED;
+        switch (ni.type()) {
+        case NodeType::SOLVED:
+            ns = CPProfiler::NodeStatus::SOLVED;
+            break;
+        case NodeType::BRANCH:
+            ns = CPProfiler::NodeStatus::BRANCH;
+            alts = static_cast<int>(ni.choice().alternatives());
+            break;
+        case NodeType::FAILED:
+            ns = CPProfiler::NodeStatus::FAILED;
+            break;
+        default:
+            GECODE_NEVER;
+        }
 
-}
+        std::string label;
+        if (ei) {
+            parent = {static_cast<int>(ei.nid()), restart, static_cast<int>(ei.wid())};
+
+            alt = static_cast<int>(ei.alternative());
+            label = ei.string();
+        } else {
+            alt = restart;
+        }
+
+        std::string info;
+        if (pgi) {
+            info = pgi->get_info(ni.space());
+        }
+
+        auto node = connector->create_node(this_node, parent, alt, alts, ns).set_label(label).set_info(info);
+        connector->send_node(node);
+    }
+
+    void
+    CPProfilerSearchTracer::done() {
+        connector->done();
+        connector->disconnect();
+    }
+
+    CPProfilerSearchTracer::~CPProfilerSearchTracer() {
+        delete connector;
+        delete pgi;
+    }
+
+} // namespace Gecode
 
 #endif
 

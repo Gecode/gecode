@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -61,72 +60,68 @@ using namespace Gecode;
  */
 class AllInterval : public Script {
 private:
-  /// The numbers
-  IntVarArray x;
-  /// The differences
-  IntVarArray d;
+    /// The numbers
+    IntVarArray x;
+    /// The differences
+    IntVarArray d;
+
 public:
-  /// Actual model
-  AllInterval(const SizeOptions& opt) :
-    Script(opt),
-    x(*this, opt.size(), 0, opt.size()-1),
-    d(*this, opt.size()-1, 1, opt.size()-1) {
-    const int n = x.size();
+    /// Actual model
+    AllInterval(const SizeOptions& opt)
+        : Script(opt), x(*this, opt.size(), 0, opt.size() - 1), d(*this, opt.size() - 1, 1, opt.size() - 1) {
+        const int n = x.size();
 
-    // Set up variables for distance
-    for (int i=0; i<n-1; i++)
-      rel(*this, d[i] == abs(x[i+1]-x[i]), opt.ipl());
+        // Set up variables for distance
+        for (int i = 0; i < n - 1; i++)
+            rel(*this, d[i] == abs(x[i + 1] - x[i]), opt.ipl());
 
-    distinct(*this, x, opt.ipl());
-    distinct(*this, d, opt.ipl());
+        distinct(*this, x, opt.ipl());
+        distinct(*this, d, opt.ipl());
 
-    // Break mirror symmetry
-    rel(*this, x[0], IRT_LE, x[1]);
-    // Break symmetry of dual solution
-    rel(*this, d[0], IRT_GR, d[n-2]);
+        // Break mirror symmetry
+        rel(*this, x[0], IRT_LT, x[1]);
+        // Break symmetry of dual solution
+        rel(*this, d[0], IRT_GR, d[n - 2]);
 
-    branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
-  }
-  /// Constructor for cloning \a e
-  AllInterval(AllInterval& s)
-    : Script(s) {
-    x.update(*this, s.x);
-    d.update(*this, s.d);
-  }
-  /// Copy during cloning
-  virtual Space*
-  copy(void) {
-    return new AllInterval(*this);
-  }
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    const int n = x.size();
-    os << "\tx[" << n << "] = {";
-    for (int i = 0; i < n-1; i++)
-      os << x[i] << "(" << d[i] << "),";
-    os << x[n-1] << "}" << std::endl;
-  }
+        branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
+    }
+    /// Constructor for cloning \a e
+    AllInterval(AllInterval& s) : Script(s) {
+        x.update(*this, s.x);
+        d.update(*this, s.d);
+    }
+    /// Copy during cloning
+    Space*
+    copy() override {
+        return new AllInterval(*this);
+    }
+    /// Print solution
+    void
+    print(std::ostream& os) const override {
+        const int n = x.size();
+        os << "\tx[" << n << "] = {";
+        for (int i = 0; i < n - 1; i++)
+            os << x[i] << "(" << d[i] << "),";
+        os << x[n - 1] << "}" << '\n';
+    }
 };
-
 
 /** \brief Main-function
  *  \relates AllInterval
  */
 int
-main(int argc, char* argv[]){
-  SizeOptions opt("AllInterval");
-  opt.size(1000);
-  opt.iterations(5);
-  opt.ipl(IPL_BND);
-  opt.parse(argc, argv);
-  if (opt.size() < 2) {
-    std::cerr << "size must be at least 2!" << std::endl;
-    return -1;
-  }
-  Script::run<AllInterval,DFS,SizeOptions>(opt);
-  return 0;
+main(int argc, char* argv[]) {
+    SizeOptions opt("AllInterval");
+    opt.size(1000);
+    opt.iterations(5);
+    opt.ipl(IPL_BND);
+    opt.parse(argc, argv);
+    if (opt.size() < 2) {
+        std::cerr << "size must be at least 2!" << '\n';
+        return -1;
+    }
+    Script::run<AllInterval, DFS, SizeOptions>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any
-

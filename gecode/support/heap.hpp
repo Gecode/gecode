@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -49,641 +48,679 @@
 
 namespace Gecode {
 
-  /**
-   * \defgroup FuncMemHeap %Heap memory management
-   *
-   * \ingroup FuncMem
-   */
+    /**
+     * \defgroup FuncMemHeap %Heap memory management
+     *
+     * \ingroup FuncMem
+     */
 
-
-  /**
-   * \brief %Heap memory management class
-   *
-   * All routines throw an exception of MemoryExhausted, if a request
-   * cannot be fulfilled.
-   * \ingroup FuncMemHeap
-   */
-  class Heap {
-  public:
-    /// Default constructor (ensuring that only a single instance is created)
-    Heap(void);
-    /// \name Typed allocation routines
-    //@{
     /**
-     * \brief Allocate block of \a n objects of type \a T from heap
+     * \brief %Heap memory management class
      *
-     * Note that this function implements C++ semantics: the default
-     * constructor of \a T is run for all \a n objects.
+     * All routines throw an exception of MemoryExhausted, if a request
+     * cannot be fulfilled.
+     * \ingroup FuncMemHeap
      */
-    template<class T>
-    T* alloc(long unsigned int n);
-    /**
-     * \brief Allocate block of \a n objects of type \a T from heap
-     *
-     * Note that this function implements C++ semantics: the default
-     * constructor of \a T is run for all \a n objects.
-     */
-    template<class T>
-    T* alloc(long int n);
-    /**
-     * \brief Allocate block of \a n objects of type \a T from heap
-     *
-     * Note that this function implements C++ semantics: the default
-     * constructor of \a T is run for all \a n objects.
-     */
-    template<class T>
-    T* alloc(unsigned int n);
-    /**
-     * \brief Allocate block of \a n objects of type \a T from heap
-     *
-     * Note that this function implements C++ semantics: the default
-     * constructor of \a T is run for all \a n objects.
-     */
-    template<class T>
-    T* alloc(int n);
-    /**
-     * \brief Delete \a n objects starting at \a b
-     *
-     * Note that this function implements C++ semantics: the destructor
-     * of \a T is run for all \a n objects.
-     */
-    template<class T>
-    void free(T* b, long unsigned int n);
-    /**
-     * \brief Delete \a n objects starting at \a b
-     *
-     * Note that this function implements C++ semantics: the destructor
-     * of \a T is run for all \a n objects.
-     */
-    template<class T>
-    void free(T* b, long int n);
-    /**
-     * \brief Delete \a n objects starting at \a b
-     *
-     * Note that this function implements C++ semantics: the destructor
-     * of \a T is run for all \a n objects.
-     */
-    template<class T>
-    void free(T* b, unsigned int n);
-    /**
-     * \brief Delete \a n objects starting at \a b
-     *
-     * Note that this function implements C++ semantics: the destructor
-     * of \a T is run for all \a n objects.
-     */
-    template<class T>
-    void free(T* b, int n);
-    /**
-     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
-     *
-     * Note that this function implements C++ semantics: the copy constructor
-     * of \a T is run for all \f$\min(n,m)\f$ objects, the default
-     * constructor of \a T is run for all remaining
-     * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
-     * run for all \a n objects in \a b.
-     *
-     * Returns the address of the new block.
-     */
-    template<class T>
-    T* realloc(T* b, long unsigned int n, long unsigned int m);
-    /**
-     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
-     *
-     * Note that this function implements C++ semantics: the copy constructor
-     * of \a T is run for all \f$\min(n,m)\f$ objects, the default
-     * constructor of \a T is run for all remaining
-     * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
-     * run for all \a n objects in \a b.
-     *
-     * Returns the address of the new block.
-     */
-    template<class T>
-    T* realloc(T* b, long int n, long int m);
-    /**
-     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
-     *
-     * Note that this function implements C++ semantics: the copy constructor
-     * of \a T is run for all \f$\min(n,m)\f$ objects, the default
-     * constructor of \a T is run for all remaining
-     * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
-     * run for all \a n objects in \a b.
-     *
-     * Returns the address of the new block.
-     */
-    template<class T>
-    T* realloc(T* b, unsigned int n, unsigned int m);
-    /**
-     * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
-     *
-     * Note that this function implements C++ semantics: the copy constructor
-     * of \a T is run for all \f$\min(n,m)\f$ objects, the default
-     * constructor of \a T is run for all remaining
-     * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
-     * run for all \a n objects in \a b.
-     *
-     * Returns the address of the new block.
-     */
-    template<class T>
-    T* realloc(T* b, int n, int m);
-    /**
-     * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
-     *
-     * Returns the address of the new block.
-     *
-     * This is a specialization for performance.
-     */
-    template<class T>
-    T** realloc(T** b, long unsigned int n, long unsigned int m);
-    /**
-     * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
-     *
-     * Returns the address of the new block.
-     *
-     * This is a specialization for performance.
-     */
-    template<class T>
-    T** realloc(T** b, long int n, long int m);
-    /**
-     * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
-     *
-     * Returns the address of the new block.
-     *
-     * This is a specialization for performance.
-     */
-    template<class T>
-    T** realloc(T** b, unsigned int n, unsigned int m);
-    /**
-     * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
-     *
-     * Returns the address of the new block.
-     *
-     * This is a specialization for performance.
-     */
-    template<class T>
-    T** realloc(T** b, int n, int m);
-    /**
-     * \brief Copy \a n objects starting at \a s to \a d
-     *
-     * Note that this function implements C++ semantics: the assignment
-     * operator of \a T is run for all \a n objects.
-     *
-     * Returns \a d.
-     */
-    template<class T>
-    static T* copy(T* d, const T* s, long unsigned int n);
-    /**
-     * \brief Copy \a n objects starting at \a s to \a d
-     *
-     * Note that this function implements C++ semantics: the assignment
-     * operator of \a T is run for all \a n objects.
-     *
-     * Returns \a d.
-     */
-    template<class T>
-    static T* copy(T* d, const T* s, long int n);
-    /**
-     * \brief Copy \a n objects starting at \a s to \a d
-     *
-     * Note that this function implements C++ semantics: the assignment
-     * operator of \a T is run for all \a n objects.
-     *
-     * Returns \a d.
-     */
-    template<class T>
-    static T* copy(T* d, const T* s, unsigned int n);
-    /**
-     * \brief Copy \a n objects starting at \a s to \a d
-     *
-     * Note that this function implements C++ semantics: the assignment
-     * operator of \a T is run for all \a n objects.
-     *
-     * Returns \a d.
-     */
-    template<class T>
-    static T* copy(T* d, const T* s, int n);
-    /**
-     * \brief Copy \a n pointers starting at \a s to \a d
-     *
-     * Returns \a d.
-     *
-     * This is a specialization for performance.
-     */
-    template<class T>
-    static T** copy(T** d, const T** s, long unsigned int n);
-    /**
-     * \brief Copy \a n pointers starting at \a s to \a d
-     *
-     * Returns \a d.
-     *
-     * This is a specialization for performance.
-     */
-    template<class T>
-    static T** copy(T** d, const T** s, long int n);
-    /**
-     * \brief Copy \a n pointers starting at \a s to \a d
-     *
-     * Returns \a d.
-     *
-     * This is a specialization for performance.
-     */
-    template<class T>
-    static T** copy(T** d, const T** s, unsigned int n);
-    /**
-     * \brief Copy \a n pointers starting at \a s to \a d
-     *
-     * Returns \a d.
-     *
-     * This is a specialization for performance.
-     */
-    template<class T>
-    static T** copy(T** d, const T** s, int n);
-    //@}
-    /// \name Raw allocation routines
-    //@{
-    /// Allocate \a s bytes from heap
-    void* ralloc(size_t s);
-    /// Free memory block starting at \a p
-    void  rfree(void* p);
-    /// Free memory block starting at \a p with size \a s
-    void  rfree(void* p, size_t s);
-    /// Change memory block starting at \a p to size \a s
-    void* rrealloc(void* p, size_t s);
-    //@}
+    class Heap {
+    public:
+        /// Default constructor (ensuring that only a single instance is created)
+        Heap() = default;
+        /// \name Typed allocation routines
+        //@{
+        /**
+         * \brief Allocate block of \a n objects of type \a T from heap
+         *
+         * Note that this function implements C++ semantics: the default
+         * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
+         */
+        template <class T>
+        T* alloc(long unsigned int n);
+        /**
+         * \brief Allocate block of \a n objects of type \a T from heap
+         *
+         * Note that this function implements C++ semantics: the default
+         * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
+         */
+        template <class T>
+        T* alloc(long int n);
+        /**
+         * \brief Allocate block of \a n objects of type \a T from heap
+         *
+         * Note that this function implements C++ semantics: the default
+         * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
+         */
+        template <class T>
+        T* alloc(unsigned int n);
+        /**
+         * \brief Allocate block of \a n objects of type \a T from heap
+         *
+         * Note that this function implements C++ semantics: the default
+         * constructor of \a T is run for all \a n objects.
+         *
+         * The number of objects \a n must be greater than zero.
+         */
+        template <class T>
+        T* alloc(int n);
+        /**
+         * \brief Delete \a n objects starting at \a b
+         *
+         * Note that this function implements C++ semantics: the destructor
+         * of \a T is run for all \a n objects.
+         */
+        template <class T>
+        void free(T* b, long unsigned int n);
+        /**
+         * \brief Delete \a n objects starting at \a b
+         *
+         * Note that this function implements C++ semantics: the destructor
+         * of \a T is run for all \a n objects.
+         */
+        template <class T>
+        void free(T* b, long int n);
+        /**
+         * \brief Delete \a n objects starting at \a b
+         *
+         * Note that this function implements C++ semantics: the destructor
+         * of \a T is run for all \a n objects.
+         */
+        template <class T>
+        void free(T* b, unsigned int n);
+        /**
+         * \brief Delete \a n objects starting at \a b
+         *
+         * Note that this function implements C++ semantics: the destructor
+         * of \a T is run for all \a n objects.
+         */
+        template <class T>
+        void free(T* b, int n);
+        /**
+         * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
+         *
+         * Note that this function implements C++ semantics: the copy constructor
+         * of \a T is run for all \f$\min(n,m)\f$ objects, the default
+         * constructor of \a T is run for all remaining
+         * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
+         * run for all \a n objects in \a b.
+         *
+         * The new number of objects \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
+         * Returns the address of the new block.
+         */
+        template <class T>
+        T* realloc(T* b, long unsigned int n, long unsigned int m);
+        /**
+         * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
+         *
+         * Note that this function implements C++ semantics: the copy constructor
+         * of \a T is run for all \f$\min(n,m)\f$ objects, the default
+         * constructor of \a T is run for all remaining
+         * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
+         * run for all \a n objects in \a b.
+         *
+         * The new number of objects \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
+         * Returns the address of the new block.
+         */
+        template <class T>
+        T* realloc(T* b, long int n, long int m);
+        /**
+         * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
+         *
+         * Note that this function implements C++ semantics: the copy constructor
+         * of \a T is run for all \f$\min(n,m)\f$ objects, the default
+         * constructor of \a T is run for all remaining
+         * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
+         * run for all \a n objects in \a b.
+         *
+         * The new number of objects \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
+         * Returns the address of the new block.
+         */
+        template <class T>
+        T* realloc(T* b, unsigned int n, unsigned int m);
+        /**
+         * \brief Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
+         *
+         * Note that this function implements C++ semantics: the copy constructor
+         * of \a T is run for all \f$\min(n,m)\f$ objects, the default
+         * constructor of \a T is run for all remaining
+         * \f$\max(n,m)-\min(n,m)\f$ objects, and the destrucor of \a T is
+         * run for all \a n objects in \a b.
+         *
+         * The new number of objects \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
+         * Returns the address of the new block.
+         */
+        template <class T>
+        T* realloc(T* b, int n, int m);
+        /**
+         * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
+         *
+         * The new number of pointers \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
+         * Returns the address of the new block.
+         *
+         * This is a specialization for performance.
+         */
+        template <class T>
+        T** realloc(T** b, long unsigned int n, long unsigned int m);
+        /**
+         * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
+         *
+         * The new number of pointers \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
+         * Returns the address of the new block.
+         *
+         * This is a specialization for performance.
+         */
+        template <class T>
+        T** realloc(T** b, long int n, long int m);
+        /**
+         * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
+         *
+         * The new number of pointers \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
+         * Returns the address of the new block.
+         *
+         * This is a specialization for performance.
+         */
+        template <class T>
+        T** realloc(T** b, unsigned int n, unsigned int m);
+        /**
+         * \brief Reallocate block of \a n pointers starting at \a b to \a m objects of type \a T* from heap
+         *
+         * The new number of pointers \a m must be greater than zero. The old
+         * number \a n may be zero.
+         *
+         * Returns the address of the new block.
+         *
+         * This is a specialization for performance.
+         */
+        template <class T>
+        T** realloc(T** b, int n, int m);
+        /**
+         * \brief Copy \a n objects starting at \a s to \a d
+         *
+         * Note that this function implements C++ semantics: the assignment
+         * operator of \a T is run for all \a n objects.
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
+         * Returns \a d.
+         */
+        template <class T>
+        static T* copy(T* d, const T* s, long unsigned int n);
+        /**
+         * \brief Copy \a n objects starting at \a s to \a d
+         *
+         * Note that this function implements C++ semantics: the assignment
+         * operator of \a T is run for all \a n objects.
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
+         * Returns \a d.
+         */
+        template <class T>
+        static T* copy(T* d, const T* s, long int n);
+        /**
+         * \brief Copy \a n objects starting at \a s to \a d
+         *
+         * Note that this function implements C++ semantics: the assignment
+         * operator of \a T is run for all \a n objects.
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
+         * Returns \a d.
+         */
+        template <class T>
+        static T* copy(T* d, const T* s, unsigned int n);
+        /**
+         * \brief Copy \a n objects starting at \a s to \a d
+         *
+         * Note that this function implements C++ semantics: the assignment
+         * operator of \a T is run for all \a n objects.
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
+         * Returns \a d.
+         */
+        template <class T>
+        static T* copy(T* d, const T* s, int n);
+        /**
+         * \brief Copy \a n pointers starting at \a s to \a d
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
+         * Returns \a d.
+         *
+         * This is a specialization for performance.
+         */
+        template <class T>
+        static T** copy(T** d, const T** s, long unsigned int n);
+        /**
+         * \brief Copy \a n pointers starting at \a s to \a d
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
+         * Returns \a d.
+         *
+         * This is a specialization for performance.
+         */
+        template <class T>
+        static T** copy(T** d, const T** s, long int n);
+        /**
+         * \brief Copy \a n pointers starting at \a s to \a d
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
+         * Returns \a d.
+         *
+         * This is a specialization for performance.
+         */
+        template <class T>
+        static T** copy(T** d, const T** s, unsigned int n);
+        /**
+         * \brief Copy \a n pointers starting at \a s to \a d
+         *
+         * Neither \a d nor \a s may be null, even when \a n is zero.
+         *
+         * Returns \a d.
+         *
+         * This is a specialization for performance.
+         */
+        template <class T>
+        static T** copy(T** d, const T** s, int n);
+        //@}
+        /// \name Raw allocation routines
+        //@{
+        /**
+         * \brief Allocate \a s bytes from heap
+         *
+         * The size \a s must be greater than zero. Debug builds check this
+         * with an assertion.
+         */
+        void* ralloc(size_t s);
+        /// Free memory block starting at \a p
+        void rfree(void* p);
+        /// Free memory block starting at \a p with size \a s
+        void rfree(void* p, size_t s);
+        /**
+         * \brief Change memory block starting at \a p to size \a s
+         *
+         * The size \a s must be greater than zero. Debug builds check this
+         * with an assertion. To release a block, use rfree instead.
+         */
+        void* rrealloc(void* p, size_t s);
+        //@}
 #ifdef GECODE_PEAKHEAP
-  private:
-    /// Mutex for accessing heap size
-    Support::Mutex _m;
-    /// Peak heap size
-    size_t _peak;
-    /// Current heap size
-    size_t _cur;
-public:
-    size_t peak(void);
+    private:
+        /// Mutex for accessing heap size
+        Support::Mutex _m;
+        /// Peak heap size
+        size_t _peak = 0;
+        /// Current heap size
+        size_t _cur = 0;
+
+    public:
+        size_t peak();
 #endif
-    /// Allocate memory from heap (disabled)
-    static void* operator new(size_t s) = delete;
-    /// Free memory allocated from heap (disabled)
-    static void  operator delete(void* p) = delete;
-    /// Copy constructor (disabled)
-    Heap(const Heap&) = delete;
-    /// Assignment operator (disabled)
-    const Heap& operator =(const Heap&) = delete;
-  };
+        /// Allocate memory from heap (disabled)
+        static void* operator new(size_t s) = delete;
+        /// Free memory allocated from heap (disabled)
+        static void operator delete(void* p) = delete;
+        /// Copy constructor (disabled)
+        Heap(const Heap&) = delete;
+        /// Assignment operator (disabled)
+        const Heap& operator=(const Heap&) = delete;
+    };
 
-  /**
-   * \brief The single global heap
-   * \ingroup FuncMemHeap
-   */
-  extern GECODE_SUPPORT_EXPORT
-  Heap heap;
+    /**
+     * \brief The single global heap
+     * \ingroup FuncMemHeap
+     */
+    extern GECODE_SUPPORT_EXPORT Heap heap;
 
-  /**
-   * \brief Base class for heap allocated objects
-   * \ingroup FuncMemHeap
-   */
-  class GECODE_SUPPORT_EXPORT HeapAllocated {
-  public:
-    /// Memory management
-    //@{
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
-    //@}
-  };
+    /**
+     * \brief Base class for heap allocated objects
+     * \ingroup FuncMemHeap
+     */
+    class GECODE_SUPPORT_EXPORT HeapAllocated {
+    public:
+        /// Memory management
+        //@{
+        /// Allocate memory from heap
+        static void* operator new(size_t s);
+        /// Free memory allocated from heap
+        static void operator delete(void* p);
+        //@}
+    };
 
-
-  /*
-   * Wrappers for raw allocation routines
-   *
-   */
-  forceinline void*
-  Heap::ralloc(size_t s) {
+    /*
+     * Wrappers for raw allocation routines
+     *
+     */
+    forceinline void*
+    Heap::ralloc(size_t s) {
+        assert(s > 0);
 #ifdef GECODE_HAS_FAULT_INJECTION
-    Support::FailPoint::check(Support::FailPoint::Phase::Heap);
+        Support::FailPoint::check(Support::FailPoint::Phase::HEAP);
 #endif
-    void* p = Support::allocator.alloc(s);
+        void* p = Support::allocator.alloc(s);
 #ifdef GECODE_PEAKHEAP
-    _m.acquire();
-    _cur += GECODE_MSIZE(p);
-    _peak = std::max(_peak,_cur);
-    _m.release();
+        _m.acquire();
+        _cur += GECODE_MSIZE(p);
+        _peak = std::max(_peak, _cur);
+        _m.release();
 #endif
-    if (p != nullptr)
-      return p;
-    throw MemoryExhausted();
-  }
+        if (p != nullptr)
+            return p;
+        throw MemoryExhausted();
+    }
 
-  forceinline void
-  Heap::rfree(void* p) {
+    forceinline void
+    Heap::rfree(void* p) {
 #ifdef GECODE_PEAKHEAP
-    _m.acquire();
-    _cur -= GECODE_MSIZE(p);
-    _m.release();
+        _m.acquire();
+        _cur -= GECODE_MSIZE(p);
+        _m.release();
 #endif
-    Support::allocator.free(p);
-  }
+        Support::allocator.free(p);
+    }
 
-  forceinline void
-  Heap::rfree(void* p, size_t) {
+    forceinline void
+    Heap::rfree(void* p, size_t) {
 #ifdef GECODE_PEAKHEAP
-    _m.acquire();
-    _cur -= GECODE_MSIZE(p);
-    _m.release();
+        _m.acquire();
+        _cur -= GECODE_MSIZE(p);
+        _m.release();
 #endif
-    Support::allocator.free(p);
-  }
+        Support::allocator.free(p);
+    }
 
-  forceinline void*
-  Heap::rrealloc(void* p, size_t s) {
+    forceinline void*
+    Heap::rrealloc(void* p, size_t s) {
+        assert(s > 0);
 #ifdef GECODE_HAS_FAULT_INJECTION
-    Support::FailPoint::check(Support::FailPoint::Phase::Heap);
+        Support::FailPoint::check(Support::FailPoint::Phase::HEAP);
 #endif
 #ifdef GECODE_PEAKHEAP
-    _m.acquire();
-    _cur -= GECODE_MSIZE(p);
-    _m.release();
+        _m.acquire();
+        _cur -= GECODE_MSIZE(p);
+        _m.release();
 #endif
-    p = Support::allocator.realloc(p,s);
+        p = Support::allocator.realloc(p, s);
 #ifdef GECODE_PEAKHEAP
-    _m.acquire();
-    _cur += GECODE_MSIZE(p);
-    _peak = std::max(_peak,_cur);
-    _m.release();
+        _m.acquire();
+        _cur += GECODE_MSIZE(p);
+        _peak = std::max(_peak, _cur);
+        _m.release();
 #endif
-    if (p != nullptr || s == 0)
-      return p;
-    throw MemoryExhausted();
-  }
+        if (p != nullptr)
+            return p;
+        throw MemoryExhausted();
+    }
 
+    /*
+     * Heap allocated objects
+     *
+     */
+    forceinline void*
+    HeapAllocated::operator new(size_t s) {
+        return heap.ralloc(s);
+    }
+    forceinline void
+    HeapAllocated::operator delete(void* p) {
+        heap.rfree(p);
+    }
 
-  /*
-   * Heap allocated objects
-   *
-   */
-  forceinline void*
-  HeapAllocated::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-  forceinline void
-  HeapAllocated::operator delete(void* p) {
-    heap.rfree(p);
-  }
+    /*
+     * Typed allocation routines
+     *
+     */
+    template <class T>
+    forceinline T*
+    Heap::alloc(long unsigned int n) {
+        T* p = static_cast<T*>(ralloc(sizeof(T) * n));
+        for (long unsigned int i = 0U; i < n; i++)
+            (void)new (p + i) T();
+        return p;
+    }
+    template <class T>
+    forceinline T*
+    Heap::alloc(long int n) {
+        assert(n >= 0);
+        return alloc<T>(static_cast<long unsigned int>(n));
+    }
+    template <class T>
+    forceinline T*
+    Heap::alloc(unsigned int n) {
+        return alloc<T>(static_cast<long unsigned int>(n));
+    }
+    template <class T>
+    forceinline T*
+    Heap::alloc(int n) {
+        assert(n >= 0);
+        return alloc<T>(static_cast<long unsigned int>(n));
+    }
 
+    template <class T>
+    forceinline void
+    Heap::free(T* b, long unsigned int n) {
+        for (long unsigned int i = 0U; i < n; i++)
+            b[i].~T();
+        rfree(b);
+    }
+    template <class T>
+    forceinline void
+    Heap::free(T* b, long int n) {
+        assert(n >= 0);
+        free<T>(b, static_cast<long unsigned int>(n));
+    }
+    template <class T>
+    forceinline void
+    Heap::free(T* b, unsigned int n) {
+        free<T>(b, static_cast<long unsigned int>(n));
+    }
+    template <class T>
+    forceinline void
+    Heap::free(T* b, int n) {
+        assert(n >= 0);
+        free<T>(b, static_cast<long unsigned int>(n));
+    }
 
+    template <class T>
+    forceinline T*
+    Heap::realloc(T* b, long unsigned int n, long unsigned int m) {
+        if (n == m)
+            return b;
+        T* p = static_cast<T*>(ralloc(sizeof(T) * m));
+        for (long unsigned int i = 0U; i < std::min(n, m); i++)
+            (void)new (p + i) T(b[i]);
+        for (long unsigned int i = n; i < m; i++)
+            (void)new (p + i) T();
+        free<T>(b, n);
+        return p;
+    }
+    template <class T>
+    forceinline T*
+    Heap::realloc(T* b, long int n, long int m) {
+        assert((n >= 0) && (m >= 0));
+        return realloc<T>(b, static_cast<long unsigned int>(n), static_cast<long unsigned int>(m));
+    }
+    template <class T>
+    forceinline T*
+    Heap::realloc(T* b, unsigned int n, unsigned int m) {
+        return realloc<T>(b, static_cast<long unsigned int>(n), static_cast<long unsigned int>(m));
+    }
+    template <class T>
+    forceinline T*
+    Heap::realloc(T* b, int n, int m) {
+        assert((n >= 0) && (m >= 0));
+        return realloc<T>(b, static_cast<long unsigned int>(n), static_cast<long unsigned int>(m));
+    }
 
-  /*
-   * Typed allocation routines
-   *
-   */
-  template<class T>
-  forceinline T*
-  Heap::alloc(long unsigned int n) {
-    T* p = static_cast<T*>(ralloc(sizeof(T)*n));
-    for (long unsigned int i=0U; i<n; i++)
-      (void) new (p+i) T();
-    return p;
-  }
-  template<class T>
-  forceinline T*
-  Heap::alloc(long int n) {
-    assert(n >= 0);
-    return alloc<T>(static_cast<long unsigned int>(n));
-  }
-  template<class T>
-  forceinline T*
-  Heap::alloc(unsigned int n) {
-    return alloc<T>(static_cast<long unsigned int>(n));
-  }
-  template<class T>
-  forceinline T*
-  Heap::alloc(int n) {
-    assert(n >= 0);
-    return alloc<T>(static_cast<long unsigned int>(n));
-  }
+#define GECODE_SUPPORT_REALLOC(T)                                                                                      \
+    template <>                                                                                                        \
+    forceinline T* Heap::realloc<T>(T * b, long unsigned int, long unsigned int m) {                                   \
+        return static_cast<T*>(rrealloc(b, m * sizeof(T)));                                                            \
+    }                                                                                                                  \
+    template <>                                                                                                        \
+    forceinline T* Heap::realloc<T>(T * b, long int n, long int m) {                                                   \
+        assert((n >= 0) && (m >= 0));                                                                                  \
+        return realloc<T>(b, static_cast<long unsigned int>(n), static_cast<long unsigned int>(m));                    \
+    }                                                                                                                  \
+    template <>                                                                                                        \
+    forceinline T* Heap::realloc<T>(T * b, unsigned int n, unsigned int m) {                                           \
+        return realloc<T>(b, static_cast<long unsigned int>(n), static_cast<long unsigned int>(m));                    \
+    }                                                                                                                  \
+    template <>                                                                                                        \
+    forceinline T* Heap::realloc<T>(T * b, int n, int m) {                                                             \
+        assert((n >= 0) && (m >= 0));                                                                                  \
+        return realloc<T>(b, static_cast<long unsigned int>(n), static_cast<long unsigned int>(m));                    \
+    }
 
-  template<class T>
-  forceinline void
-  Heap::free(T* b, long unsigned int n) {
-    for (long unsigned int i=0U; i<n; i++)
-      b[i].~T();
-    rfree(b);
-  }
-  template<class T>
-  forceinline void
-  Heap::free(T* b, long int n) {
-    assert(n >= 0);
-    free<T>(b, static_cast<long unsigned int>(n));
-  }
-  template<class T>
-  forceinline void
-  Heap::free(T* b, unsigned int n) {
-    free<T>(b, static_cast<long unsigned int>(n));
-  }
-  template<class T>
-  forceinline void
-  Heap::free(T* b, int n) {
-    assert(n >= 0);
-    free<T>(b, static_cast<long unsigned int>(n));
-  }
-
-  template<class T>
-  forceinline T*
-  Heap::realloc(T* b, long unsigned int n, long unsigned int m) {
-    if (n == m)
-      return b;
-    T* p = static_cast<T*>(ralloc(sizeof(T)*m));
-    for (long unsigned int i=0U; i<std::min(n,m); i++)
-      (void) new (p+i) T(b[i]);
-    for (long unsigned int i=n; i<m; i++)
-      (void) new (p+i) T();
-    free<T>(b,n);
-    return p;
-  }
-  template<class T>
-  forceinline T*
-  Heap::realloc(T* b, long int n, long int m) {
-    assert((n >= 0) && (m >= 0));
-    return realloc<T>(b,static_cast<long unsigned int>(n),
-                      static_cast<long unsigned int>(m));
-  }
-  template<class T>
-  forceinline T*
-  Heap::realloc(T* b, unsigned int n, unsigned int m) {
-    return realloc<T>(b,static_cast<long unsigned int>(n),
-                      static_cast<long unsigned int>(m));
-  }
-  template<class T>
-  forceinline T*
-  Heap::realloc(T* b, int n, int m) {
-    assert((n >= 0) && (m >= 0));
-    return realloc<T>(b,static_cast<long unsigned int>(n),
-                      static_cast<long unsigned int>(m));
-  }
-
-#define GECODE_SUPPORT_REALLOC(T)                                       \
-  template<>                                                            \
-  forceinline T*                                                        \
-  Heap::realloc<T>(T* b, long unsigned int, long unsigned int m) {      \
-    return static_cast<T*>(rrealloc(b,m*sizeof(T)));                    \
-  }                                                                     \
-  template<>                                                            \
-  forceinline T*                                                        \
-  Heap::realloc<T>(T* b, long int n, long int m) {                      \
-    assert((n >= 0) && (m >= 0));                                       \
-    return realloc<T>(b,static_cast<long unsigned int>(n),              \
-                      static_cast<long unsigned int>(m));               \
-  }                                                                     \
-  template<>                                                            \
-  forceinline T*                                                        \
-  Heap::realloc<T>(T* b, unsigned int n, unsigned int m) {              \
-    return realloc<T>(b,static_cast<long unsigned int>(n),              \
-                      static_cast<long unsigned int>(m));               \
-  }                                                                     \
-  template<>                                                            \
-  forceinline T*                                                        \
-  Heap::realloc<T>(T* b, int n, int m) {                                \
-    assert((n >= 0) && (m >= 0));                                       \
-    return realloc<T>(b,static_cast<long unsigned int>(n),              \
-                      static_cast<long unsigned int>(m));               \
-  }
-
-  GECODE_SUPPORT_REALLOC(bool)
-  GECODE_SUPPORT_REALLOC(signed char)
-  GECODE_SUPPORT_REALLOC(unsigned char)
-  GECODE_SUPPORT_REALLOC(signed short int)
-  GECODE_SUPPORT_REALLOC(unsigned short int)
-  GECODE_SUPPORT_REALLOC(signed int)
-  GECODE_SUPPORT_REALLOC(unsigned int)
-  GECODE_SUPPORT_REALLOC(signed long int)
-  GECODE_SUPPORT_REALLOC(unsigned long int)
-  GECODE_SUPPORT_REALLOC(float)
-  GECODE_SUPPORT_REALLOC(double)
+    GECODE_SUPPORT_REALLOC(bool)
+    GECODE_SUPPORT_REALLOC(signed char)
+    GECODE_SUPPORT_REALLOC(unsigned char)
+    GECODE_SUPPORT_REALLOC(signed short int)
+    GECODE_SUPPORT_REALLOC(unsigned short int)
+    GECODE_SUPPORT_REALLOC(signed int)
+    GECODE_SUPPORT_REALLOC(unsigned int)
+    GECODE_SUPPORT_REALLOC(signed long int)
+    GECODE_SUPPORT_REALLOC(unsigned long int)
+    GECODE_SUPPORT_REALLOC(float)
+    GECODE_SUPPORT_REALLOC(double)
 
 #undef GECODE_SUPPORT_REALLOC
 
-  template<class T>
-  forceinline T**
-  Heap::realloc(T** b, long unsigned int, long unsigned int m) {
-    return static_cast<T**>(rrealloc(b,m*sizeof(T*)));
-  }
-  template<class T>
-  forceinline T**
-  Heap::realloc(T** b, long int n, long int m) {
-    assert((n >= 0) && (m >= 0));
-    return realloc<T*>(b,static_cast<long unsigned int>(n),
-                       static_cast<long unsigned int>(m));
-  }
-  template<class T>
-  forceinline T**
-  Heap::realloc(T** b, unsigned int n, unsigned int m) {
-    return realloc<T*>(b,static_cast<long unsigned int>(n),
-                       static_cast<long unsigned int>(m));
-  }
-  template<class T>
-  forceinline T**
-  Heap::realloc(T** b, int n, int m) {
-    assert((n >= 0) && (m >= 0));
-    return realloc<T*>(b,static_cast<long unsigned int>(n),
-                       static_cast<long unsigned int>(m));
-  }
+    template <class T>
+    forceinline T**
+    Heap::realloc(T** b, long unsigned int, long unsigned int m) {
+        return static_cast<T**>(rrealloc(b, m * sizeof(T*)));
+    }
+    template <class T>
+    forceinline T**
+    Heap::realloc(T** b, long int n, long int m) {
+        assert((n >= 0) && (m >= 0));
+        return realloc<T*>(b, static_cast<long unsigned int>(n), static_cast<long unsigned int>(m));
+    }
+    template <class T>
+    forceinline T**
+    Heap::realloc(T** b, unsigned int n, unsigned int m) {
+        return realloc<T*>(b, static_cast<long unsigned int>(n), static_cast<long unsigned int>(m));
+    }
+    template <class T>
+    forceinline T**
+    Heap::realloc(T** b, int n, int m) {
+        assert((n >= 0) && (m >= 0));
+        return realloc<T*>(b, static_cast<long unsigned int>(n), static_cast<long unsigned int>(m));
+    }
 
-  template<class T>
-  forceinline T*
-  Heap::copy(T* d, const T* s, long unsigned int n) {
-    for (long unsigned int i=0U; i<n; i++)
-      d[i]=s[i];
-    return d;
-  }
-  template<class T>
-  forceinline T*
-  Heap::copy(T* d, const T* s, long int n) {
-    assert(n >= 0);
-    return copy<T>(d,s,static_cast<long unsigned int>(n));
-  }
-  template<class T>
-  forceinline T*
-  Heap::copy(T* d, const T* s, unsigned int n) {
-    return copy<T>(d,s,static_cast<long unsigned int>(n));
-  }
-  template<class T>
-  forceinline T*
-  Heap::copy(T* d, const T* s, int n) {
-    assert(n >= 0);
-    return copy<T>(d,s,static_cast<long unsigned int>(n));
-  }
+    template <class T>
+    forceinline T*
+    Heap::copy(T* d, const T* s, long unsigned int n) {
+        for (long unsigned int i = 0U; i < n; i++)
+            d[i] = s[i];
+        return d;
+    }
+    template <class T>
+    forceinline T*
+    Heap::copy(T* d, const T* s, long int n) {
+        assert(n >= 0);
+        return copy<T>(d, s, static_cast<long unsigned int>(n));
+    }
+    template <class T>
+    forceinline T*
+    Heap::copy(T* d, const T* s, unsigned int n) {
+        return copy<T>(d, s, static_cast<long unsigned int>(n));
+    }
+    template <class T>
+    forceinline T*
+    Heap::copy(T* d, const T* s, int n) {
+        assert(n >= 0);
+        return copy<T>(d, s, static_cast<long unsigned int>(n));
+    }
 
-#define GECODE_SUPPORT_COPY(T)                                          \
-  template<>                                                            \
-  forceinline T*                                                        \
-  Heap::copy(T* d, const T* s, long unsigned int n) {                   \
-    return static_cast<T*>(Support::allocator.memcpy(d,s,n*sizeof(T))); \
-  }                                                                     \
-  template<>                                                            \
-  forceinline T*                                                        \
-  Heap::copy(T* d, const T* s, long int n) {                            \
-    assert(n >= 0);                                                     \
-    return copy<T>(d,s,static_cast<long unsigned int>(n));              \
-  }                                                                     \
-  template<>                                                            \
-  forceinline T*                                                        \
-  Heap::copy(T* d, const T* s, unsigned int n) {                        \
-    return copy<T>(d,s,static_cast<long unsigned int>(n));              \
-  }                                                                     \
-  template<>                                                            \
-  forceinline T*                                                        \
-  Heap::copy(T* d, const T* s, int n) {                                 \
-    assert(n >= 0);                                                     \
-    return copy<T>(d,s,static_cast<long unsigned int>(n));              \
-  }
+#define GECODE_SUPPORT_COPY(T)                                                                                         \
+    template <>                                                                                                        \
+    forceinline T* Heap::copy(T* d, const T* s, long unsigned int n) {                                                 \
+        return static_cast<T*>(Support::allocator.memcpy(d, s, n * sizeof(T)));                                        \
+    }                                                                                                                  \
+    template <>                                                                                                        \
+    forceinline T* Heap::copy(T* d, const T* s, long int n) {                                                          \
+        assert(n >= 0);                                                                                                \
+        return copy<T>(d, s, static_cast<long unsigned int>(n));                                                       \
+    }                                                                                                                  \
+    template <>                                                                                                        \
+    forceinline T* Heap::copy(T* d, const T* s, unsigned int n) {                                                      \
+        return copy<T>(d, s, static_cast<long unsigned int>(n));                                                       \
+    }                                                                                                                  \
+    template <>                                                                                                        \
+    forceinline T* Heap::copy(T* d, const T* s, int n) {                                                               \
+        assert(n >= 0);                                                                                                \
+        return copy<T>(d, s, static_cast<long unsigned int>(n));                                                       \
+    }
 
-  GECODE_SUPPORT_COPY(bool)
-  GECODE_SUPPORT_COPY(signed char)
-  GECODE_SUPPORT_COPY(unsigned char)
-  GECODE_SUPPORT_COPY(signed short int)
-  GECODE_SUPPORT_COPY(unsigned short int)
-  GECODE_SUPPORT_COPY(signed int)
-  GECODE_SUPPORT_COPY(unsigned int)
-  GECODE_SUPPORT_COPY(signed long int)
-  GECODE_SUPPORT_COPY(unsigned long int)
-  GECODE_SUPPORT_COPY(float)
-  GECODE_SUPPORT_COPY(double)
+    GECODE_SUPPORT_COPY(bool)
+    GECODE_SUPPORT_COPY(signed char)
+    GECODE_SUPPORT_COPY(unsigned char)
+    GECODE_SUPPORT_COPY(signed short int)
+    GECODE_SUPPORT_COPY(unsigned short int)
+    GECODE_SUPPORT_COPY(signed int)
+    GECODE_SUPPORT_COPY(unsigned int)
+    GECODE_SUPPORT_COPY(signed long int)
+    GECODE_SUPPORT_COPY(unsigned long int)
+    GECODE_SUPPORT_COPY(float)
+    GECODE_SUPPORT_COPY(double)
 
 #undef GECODE_SUPPORT_COPY
 
-  template<class T>
-  forceinline T**
-  Heap::copy(T** d, const T** s, long unsigned int n) {
-    return static_cast<T**>(Support::allocator.memcpy(d,s,n*sizeof(T*)));
-  }
-  template<class T>
-  forceinline T**
-  Heap::copy(T** d, const T** s, long int n) {
-    assert(n >= 0);
-    return copy<T*>(d,s,static_cast<long unsigned int>(n));
-  }
-  template<class T>
-  forceinline T**
-  Heap::copy(T** d, const T** s, unsigned int n) {
-    return copy<T*>(d,s,static_cast<long unsigned int>(n));
-  }
-  template<class T>
-  forceinline T**
-  Heap::copy(T** d, const T** s, int n) {
-    assert(n >= 0);
-    return copy<T*>(d,s,static_cast<long unsigned int>(n));
-  }
+    template <class T>
+    forceinline T**
+    Heap::copy(T** d, const T** s, long unsigned int n) {
+        return static_cast<T**>(Support::allocator.memcpy(d, s, n * sizeof(T*)));
+    }
+    template <class T>
+    forceinline T**
+    Heap::copy(T** d, const T** s, long int n) {
+        assert(n >= 0);
+        return copy<T*>(d, s, static_cast<long unsigned int>(n));
+    }
+    template <class T>
+    forceinline T**
+    Heap::copy(T** d, const T** s, unsigned int n) {
+        return copy<T*>(d, s, static_cast<long unsigned int>(n));
+    }
+    template <class T>
+    forceinline T**
+    Heap::copy(T** d, const T** s, int n) {
+        assert(n >= 0);
+        return copy<T*>(d, s, static_cast<long unsigned int>(n));
+    }
 
 #ifdef GECODE_PEAKHEAP
-  forceinline size_t
-  Heap::peak(void) {
-    _m.acquire();
-    size_t ret = _peak;
-    _m.release();
-    return ret;
-  }
+    forceinline size_t
+    Heap::peak() {
+        _m.acquire();
+        size_t ret = _peak;
+        _m.release();
+        return ret;
+    }
 #endif
 
-}
+} // namespace Gecode
 
 // STATISTICS: support-any

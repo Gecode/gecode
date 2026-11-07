@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -34,27 +33,26 @@
 #ifndef GECODE_GIST_GECODELOGO_HH
 #define GECODE_GIST_GECODELOGO_HH
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  /// Class holding %Gecode and %Gist logo icons
-  class Logos {
-  public:
-    /// The Gecode logo
-    const unsigned char* logo;
-    /// Size of the Gecode logo
-    const unsigned int logoSize;
+    /// Class holding %Gecode and %Gist logo icons
+    class Logos {
+    public:
+        /// The Gecode logo
+        const unsigned char* logo;
+        /// Size of the Gecode logo
+        const unsigned int logo_size;
 
-    /// A smaller logo used as a window icon
-    const unsigned char* gistLogo;
-    /// Size of the smaller logo
-    const unsigned int gistLogoSize;
+        /// A smaller logo used as a window icon
+        const unsigned char* gist_logo;
+        /// Size of the smaller logo
+        const unsigned int gist_logo_size;
 
-    /// Constructor
-    Logos(void);
-  };
+        /// Constructor
+        Logos();
+    };
 
-
-}}
+} // namespace Gecode::Gist
 
 #endif
 

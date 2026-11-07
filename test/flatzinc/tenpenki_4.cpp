@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,15 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest(TestTags::sweep(),"tenpenki::4",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest(
+                TestTags::sweep(), "tenpenki::4",
+                "predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -85,15 +82,14 @@ constraint int_lin_le_reif([-1], [s____00014[1]], -3, a[9]);\n\
 constraint int_lin_le_reif([-1], [s____00014[1]], -2, BOOL____00017) :: defines_var(BOOL____00017);\n\
 constraint int_lin_le_reif([-1], [s____00020[1]], -2, a[6]);\n\
 solve satisfy;\n\
-", "a = array2d(1..3, 1..3, [true, true, true, true, true, false, true, false, false]);\n\
+",
+                "a = array2d(1..3, 1..3, [true, true, true, true, true, false, true, false, false]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

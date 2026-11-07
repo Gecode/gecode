@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,79 +30,75 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
+    /*
+     * Ternary domain consistent distinct
+     *
+     */
 
-  /*
-   * Ternary domain consistent distinct
-   *
-   */
+    template <class View>
+    forceinline
+    TerDom<View>::TerDom(Home home, View x0, View x1, View x2)
+        : TernaryPropagator<View, PC_INT_DOM>(home, x0, x1, x2) {}
 
-  template<class View>
-  forceinline
-  TerDom<View>::TerDom(Home home, View x0, View x1, View x2)
-    : TernaryPropagator<View,PC_INT_DOM>(home,x0,x1,x2) {}
+    template <class View>
+    ExecStatus
+    TerDom<View>::post(Home home, View x0, View x1, View x2) {
+        (void)new (home) TerDom<View>(home, x0, x1, x2);
+        return ES_OK;
+    }
 
-  template<class View>
-  ExecStatus
-  TerDom<View>::post(Home home, View x0, View x1, View x2) {
-    (void) new (home) TerDom<View>(home,x0,x1,x2);
-    return ES_OK;
-  }
+    template <class View>
+    forceinline
+    TerDom<View>::TerDom(Space& home, TerDom<View>& p)
+        : TernaryPropagator<View, PC_INT_DOM>(home, p) {}
 
-  template<class View>
-  forceinline
-  TerDom<View>::TerDom(Space& home, TerDom<View>& p)
-    : TernaryPropagator<View,PC_INT_DOM>(home,p) {}
+    template <class View>
+    Actor*
+    TerDom<View>::copy(Space& home) {
+        return new (home) TerDom<View>(home, *this);
+    }
 
-  template<class View>
-  Actor*
-  TerDom<View>::copy(Space& home) {
-    return new (home) TerDom<View>(home,*this);
-  }
+    /// Check whether x0 forms a Hall set of cardinality one
+#define GECODE_INT_HALL_ONE(x0, x1, x2)                                                                                \
+    if (x0.assigned()) {                                                                                               \
+        GECODE_ME_CHECK(x1.nq(home, x0.val()));                                                                        \
+        GECODE_ME_CHECK(x2.nq(home, x0.val()));                                                                        \
+        if (x1.assigned()) {                                                                                           \
+            GECODE_ME_CHECK(x2.nq(home, x1.val()));                                                                    \
+            return home.ES_SUBSUMED(*this);                                                                            \
+        }                                                                                                              \
+        if (x2.assigned()) {                                                                                           \
+            GECODE_ME_CHECK(x1.nq(home, x2.val()));                                                                    \
+            return home.ES_SUBSUMED(*this);                                                                            \
+        }                                                                                                              \
+        return ES_FIX;                                                                                                 \
+    }
 
-  /// Check whether x0 forms a Hall set of cardinality one
-#define GECODE_INT_HALL_ONE(x0,x1,x2)           \
-  if (x0.assigned()) {                          \
-    GECODE_ME_CHECK(x1.nq(home,x0.val()));      \
-    GECODE_ME_CHECK(x2.nq(home,x0.val()));      \
-    if (x1.assigned()) {                        \
-      GECODE_ME_CHECK(x2.nq(home,x1.val()));    \
-      return home.ES_SUBSUMED(*this);            \
-    }                                           \
-    if (x2.assigned()) {                        \
-      GECODE_ME_CHECK(x1.nq(home,x2.val()));    \
-      return home.ES_SUBSUMED(*this);            \
-    }                                           \
-    return ES_FIX;                              \
-  }
+    /// Check whether x0 and x1 form a Hall set of cardinality two
+#define GECODE_INT_HALL_TWO(x0, x1, x2)                                                                                \
+    if ((x0.size() == 2) && (x1.size() == 2) && (x0.min() == x1.min()) && (x0.max() == x1.max())) {                    \
+        GECODE_ME_CHECK(x2.nq(home, x0.min()));                                                                        \
+        GECODE_ME_CHECK(x2.nq(home, x0.max()));                                                                        \
+        return ES_FIX;                                                                                                 \
+    }
 
-
-  /// Check whether x0 and x1 form a Hall set of cardinality two
-#define GECODE_INT_HALL_TWO(x0,x1,x2)                           \
-  if ((x0.size() == 2) && (x1.size() == 2) &&                   \
-      (x0.min() == x1.min()) && (x0.max() == x1.max())) {       \
-    GECODE_ME_CHECK(x2.nq(home,x0.min()));                      \
-    GECODE_ME_CHECK(x2.nq(home,x0.max()));                      \
-    return ES_FIX;                                              \
-  }
-
-  template<class View>
-  ExecStatus
-  TerDom<View>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_INT_HALL_ONE(x0,x1,x2);
-    GECODE_INT_HALL_ONE(x1,x0,x2);
-    GECODE_INT_HALL_ONE(x2,x0,x1);
-    GECODE_INT_HALL_TWO(x0,x1,x2);
-    GECODE_INT_HALL_TWO(x0,x2,x1);
-    GECODE_INT_HALL_TWO(x1,x2,x0);
-    return ES_FIX;
-  }
+    template <class View>
+    ExecStatus
+    TerDom<View>::propagate(Space& home, const ModEventDelta&) {
+        GECODE_INT_HALL_ONE(x0, x1, x2);
+        GECODE_INT_HALL_ONE(x1, x0, x2);
+        GECODE_INT_HALL_ONE(x2, x0, x1);
+        GECODE_INT_HALL_TWO(x0, x1, x2);
+        GECODE_INT_HALL_TWO(x0, x2, x1);
+        GECODE_INT_HALL_TWO(x1, x2, x0);
+        return ES_FIX;
+    }
 
 #undef GECODE_INT_HALL_ONE
 #undef GECODE_INT_HALL_TWO
 
-}}}
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,17 +34,16 @@
 
 namespace Gecode {
 
-  /// Combine hash value \a h into \a seed
-  template<class T>
-  void cmb_hash(std::size_t& seed, const T h);
+    /// Combine hash value \a h into \a seed
+    template <class T>
+    void cmb_hash(std::size_t& seed, T h);
 
-  template<class T>
-  forceinline void
-  cmb_hash(std::size_t& seed, const T h) {
-    seed ^= static_cast<std::size_t>(h) 
-      + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-  }
+    template <class T>
+    forceinline void
+    cmb_hash(std::size_t& seed, const T h) {
+        seed ^= static_cast<std::size_t>(h) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: support-any

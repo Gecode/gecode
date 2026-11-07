@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,84 +30,84 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
-  template<class ManTaskView>
-  forceinline ExecStatus
-  detectable(Space& home, TaskViewArray<ManTaskView>& t) {
-    sort<ManTaskView,STO_ECT,true>(t);
+    template <class ManTaskView>
+    forceinline ExecStatus
+    detectable(Space& home, TaskViewArray<ManTaskView>& t) {
+        sort<ManTaskView, STO_ECT, true>(t);
 
-    Region r;
+        Region r;
 
-    OmegaTree<ManTaskView> o(r,t);
-    TaskViewIter<ManTaskView,STO_LST,true> q(r,t);
-    int* est = r.alloc<int>(t.size());
+        OmegaTree<ManTaskView> o(r, t);
+        TaskViewIter<ManTaskView, STO_LST, true> q(r, t);
+        int* est = r.alloc<int>(t.size());
 
-    for (int i=0; i<t.size(); i++) {
-      while (q() && (t[i].ect() > t[q.task()].lst())) {
-        o.insert(q.task()); ++q;
-      }
-      est[i] = o.ect(i);
+        for (int i = 0; i < t.size(); i++) {
+            while (q() && (t[i].ect() > t[q.task()].lst())) {
+                o.insert(q.task());
+                ++q;
+            }
+            est[i] = o.ect(i);
+        }
+
+        for (int i = 0; i < t.size(); i++)
+            GECODE_ME_CHECK(t[i].est(home, est[i]));
+
+        return ES_OK;
     }
 
-    for (int i=0; i<t.size(); i++)
-      GECODE_ME_CHECK(t[i].est(home,est[i]));
-
-    return ES_OK;
-  }
-
-  template<class ManTask>
-  ExecStatus
-  detectable(Space& home, TaskArray<ManTask>& t) {
-    TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
-    GECODE_ES_CHECK(detectable(home,f));
-    TaskViewArray<typename TaskTraits<ManTask>::TaskViewBwd> b(t);
-    return detectable(home,b);
-  }
-
-
-  template<class OptTaskView, class PL>
-  forceinline ExecStatus
-  detectable(Space& home, Propagator& p, TaskViewArray<OptTaskView>& t) {
-    sort<OptTaskView,STO_ECT,true>(t);
-
-    Region r;
-
-    OmegaTree<OptTaskView> o(r,t);
-    ManTaskViewIter<OptTaskView,STO_LST,true> q(r,t);
-    int* est = r.alloc<int>(t.size());
-
-    for (int i=0; i<t.size(); i++) {
-      while (q() && (t[i].ect() > t[q.task()].lst())) {
-        o.insert(q.task()); ++q;
-      }
-      est[i] = o.ect(i);
+    template <class ManTask>
+    ExecStatus
+    detectable(Space& home, TaskArray<ManTask>& t) {
+        TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
+        GECODE_ES_CHECK(detectable(home, f));
+        TaskViewArray<typename TaskTraits<ManTask>::TaskViewBwd> b(t);
+        return detectable(home, b);
     }
 
-    int n = t.size();
-    for (int i=n; i--; )
-      if (t[i].mandatory()) {
-        GECODE_ME_CHECK(t[i].est(home,est[i]));
-      } else if (est[i] > t[i].lst()) {
-        GECODE_ME_CHECK(t[i].excluded(home));
-        t[i].cancel(home,p,PL::pc); t[i]=t[--n];
-      }
-    t.size(n);
+    template <class OptTaskView, class PL>
+    forceinline ExecStatus
+    detectable(Space& home, Propagator& p, TaskViewArray<OptTaskView>& t) {
+        sort<OptTaskView, STO_ECT, true>(t);
 
-    return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
-  }
+        Region r;
 
-  template<class OptTask, class PL>
-  ExecStatus
-  detectable(Space& home, Propagator& p, TaskArray<OptTask>& t) {
-    TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
-    GECODE_ES_CHECK((detectable<typename TaskTraits<OptTask>::TaskViewFwd,PL>
-                     (home,p,f)));
-    TaskViewArray<typename TaskTraits<OptTask>::TaskViewBwd> b(t);
-    return detectable<typename TaskTraits<OptTask>::TaskViewBwd,PL>
-      (home,p,b);
-  }
+        OmegaTree<OptTaskView> o(r, t);
+        ManTaskViewIter<OptTaskView, STO_LST, true> q(r, t);
+        int* est = r.alloc<int>(t.size());
 
-}}}
+        for (int i = 0; i < t.size(); i++) {
+            while (q() && (t[i].ect() > t[q.task()].lst())) {
+                o.insert(q.task());
+                ++q;
+            }
+            est[i] = o.ect(i);
+        }
+
+        int n = t.size();
+        for (int i = n; i--;)
+            if (t[i].mandatory()) {
+                GECODE_ME_CHECK(t[i].est(home, est[i]));
+            } else if (est[i] > t[i].lst()) {
+                GECODE_ME_CHECK(t[i].excluded(home));
+                t[i].cancel(home, p, PL::pc);
+                t[i] = t[--n];
+            }
+        t.size(n);
+
+        return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
+    }
+
+    template <class OptTask, class PL>
+    ExecStatus
+    detectable(Space& home, Propagator& p, TaskArray<OptTask>& t) {
+        TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
+        GECODE_ES_CHECK((detectable<typename TaskTraits<OptTask>::TaskViewFwd, PL>(home, p, f)));
+        TaskViewArray<typename TaskTraits<OptTask>::TaskViewBwd> b(t);
+        return detectable<typename TaskTraits<OptTask>::TaskViewBwd, PL>(home, p, b);
+    }
+
+} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-prop

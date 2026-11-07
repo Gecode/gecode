@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,85 +32,79 @@
 
 namespace Gecode {
 
-  forceinline void
-  BoolVar::_init(Space& home, int min, int max) {
-    assert((min >= 0) && (max <= 1) && (min <= max));
-    if (min > 0)
-      x = &Int::BoolVarImp::s_one;
-    else if (max == 0)
-      x = &Int::BoolVarImp::s_zero;
-    else
-      x = new (home) Int::BoolVarImp(home,0,1);
-  }
+    forceinline void
+    BoolVar::_init(Space& home, int min, int max) {
+        assert((min >= 0) && (max <= 1) && (min <= max));
+        if (min > 0)
+            x = &Int::BoolVarImp::s_one;
+        else if (max == 0)
+            x = &Int::BoolVarImp::s_zero;
+        else
+            x = new (home) Int::BoolVarImp(home, 0, 1);
+    }
 
-  forceinline
-  BoolVar::BoolVar(void) {}
-  forceinline
-  BoolVar::BoolVar(const BoolVar& y)
-    : VarImpVar<Int::BoolVarImp>(y.varimp()) {}
-  forceinline
-  BoolVar::BoolVar(const Int::BoolView& y)
-    : VarImpVar<Int::BoolVarImp>(y.varimp()) {}
+    forceinline
+    BoolVar::BoolVar(const Int::BoolView& y)
+        : VarImpVar<Int::BoolVarImp>(y.varimp()) {}
 
-  forceinline int
-  BoolVar::val(void) const {
-    if (!x->assigned())
-      throw Int::ValOfUnassignedVar("BoolVar::val");
-    return x->val();
-  }
-  forceinline int
-  BoolVar::min(void) const {
-    return x->min();
-  }
-  forceinline int
-  BoolVar::med(void) const {
-    return x->med();
-  }
-  forceinline int
-  BoolVar::max(void) const {
-    return x->max();
-  }
+    forceinline int
+    BoolVar::val() const {
+        if (!x->assigned())
+            throw Int::ValOfUnassignedVar("BoolVar::val");
+        return x->val();
+    }
+    forceinline int
+    BoolVar::min() const {
+        return x->min();
+    }
+    forceinline int
+    BoolVar::med() const {
+        return x->med();
+    }
+    forceinline int
+    BoolVar::max() const {
+        return x->max();
+    }
 
+    forceinline unsigned int
+    BoolVar::width() const {
+        return x->width();
+    }
+    forceinline unsigned int
+    BoolVar::size() const {
+        return x->size();
+    }
+    forceinline unsigned int
+    BoolVar::regret_min() const {
+        return x->regret_min();
+    }
+    forceinline unsigned int
+    BoolVar::regret_max() const {
+        return x->regret_max();
+    }
 
-  forceinline unsigned int
-  BoolVar::width(void) const {
-    return x->width();
-  }
-  forceinline unsigned int
-  BoolVar::size(void) const {
-    return x->size();
-  }
-  forceinline unsigned int
-  BoolVar::regret_min(void) const {
-    return x->regret_min();
-  }
-  forceinline unsigned int
-  BoolVar::regret_max(void) const {
-    return x->regret_max();
-  }
+    forceinline bool
+    BoolVar::range() const {
+        return x->range();
+    }
+    forceinline bool
+    BoolVar::in(int n) const {
+        return x->in(n);
+    }
 
-  forceinline bool
-  BoolVar::range(void) const {
-    return x->range();
-  }
-  forceinline bool
-  BoolVar::in(int n) const {
-    return x->in(n);
-  }
+    forceinline bool
+    BoolVar::zero() const {
+        return x->zero();
+    }
+    forceinline bool
+    BoolVar::one() const {
+        return x->one();
+    }
+    forceinline bool
+    BoolVar::none() const {
+        return x->none();
+    }
 
-  forceinline bool
-  BoolVar::zero(void) const {
-    return x->zero();
-  }
-  forceinline bool
-  BoolVar::one(void) const {
-    return x->one();
-  }
-  forceinline bool
-  BoolVar::none(void) const {
-    return x->none();
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-var

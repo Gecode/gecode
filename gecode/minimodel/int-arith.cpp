@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -39,533 +38,496 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Gecode { namespace MiniModel {
+namespace Gecode::MiniModel {
 
-  /// Non-linear arithmetic expressions over integer variables
-  class GECODE_MINIMODEL_EXPORT ArithNonLinIntExpr : public NonLinIntExpr {
-  public:
-    /// The expression type
-    enum ArithNonLinIntExprType {
-      ANLE_ABS,   ///< Absolute value expression
-      ANLE_MIN,   ///< Minimum expression
-      ANLE_MAX,   ///< Maximum expression
-      ANLE_MULT,  ///< Multiplication expression
-      ANLE_DIV,   ///< Division expression
-      ANLE_MOD,   ///< Modulo expression
-      ANLE_SQR,   ///< Square expression
-      ANLE_SQRT,  ///< Square root expression
-      ANLE_POW,   ///< Pow expression
-      ANLE_NROOT, ///< Nroot expression
-      ANLE_ELMNT, ///< Element expression
-      ANLE_ITE    ///< If-then-else expression
-    } t;
-    /// Boolean expression argument (used in ite for example)
-    BoolExpr b;
-    /// Size of variable array
-    int n;
-    /// Integer argument (used in nroot for example)
-    int aInt;
-    /// Expressions
-    LinIntExpr* a;
-    /// Allocate internal expression slots without public default nodes
-    static LinIntExpr* allocate(int n) {
-      if (n == 0)
-        return nullptr;
-      LinIntExpr* a = static_cast<LinIntExpr*>
-        (heap.ralloc(sizeof(LinIntExpr)*n));
-      for (int i=0; i<n; i++)
-        (void) new (a+i) LinIntExpr(LinIntExpr::NoNode());
-      return a;
-    }
-    /// Constructor
-    ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0)
-      : t(t0), b(), n(n0), aInt(0), a(allocate(n0)) {}
-    /// Constructor
-    ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, int a0)
-      : t(t0), b(), n(n0), aInt(a0), a(allocate(n0)) {}
-    /// Constructor
-    ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, const BoolExpr& b0)
-      : t(t0), b(b0), n(n0), aInt(0), a(allocate(n0)) {}
-    /// Destructor
-    ~ArithNonLinIntExpr(void) {
-      if (a != nullptr)
-        heap.free<LinIntExpr>(a,n);
-    }
-    /// Post expression
-    virtual IntVar post(Home home, IntVar* ret,
-                        const IntPropLevels& ipls) const {
-      IntVar y;
-      switch (t) {
-      case ANLE_ABS:
-        {
-          IntVar x = a[0].post(home, ipls);
-          if (x.min() >= 0)
-            y = result(home,ret,x);
-          else {
-            y = result(home,ret);
-            abs(home, x, y, ipls.abs());
-          }
+    /// Non-linear arithmetic expressions over integer variables
+    class GECODE_MINIMODEL_EXPORT ArithNonLinIntExpr : public NonLinIntExpr {
+    public:
+        /// The expression type
+        enum ArithNonLinIntExprType {
+            ANLE_ABS,   ///< Absolute value expression
+            ANLE_MIN,   ///< Minimum expression
+            ANLE_MAX,   ///< Maximum expression
+            ANLE_MULT,  ///< Multiplication expression
+            ANLE_DIV,   ///< Division expression
+            ANLE_MOD,   ///< Modulo expression
+            ANLE_SQR,   ///< Square expression
+            ANLE_SQRT,  ///< Square root expression
+            ANLE_POW,   ///< Pow expression
+            ANLE_NROOT, ///< Nroot expression
+            ANLE_ELMNT, ///< Element expression
+            ANLE_ITE    ///< If-then-else expression
+        } t;
+        /// Boolean expression argument (used in ite for example)
+        BoolExpr b;
+        /// Size of variable array
+        int n;
+        /// Integer argument (used in nroot for example)
+        int a_int;
+        /// Expressions
+        LinIntExpr* a;
+        /// Allocate internal expression slots without public default nodes
+        static LinIntExpr*
+        allocate(int n) {
+            if (n == 0)
+                return nullptr;
+            LinIntExpr* a = static_cast<LinIntExpr*>(heap.ralloc(sizeof(LinIntExpr) * n));
+            for (int i = 0; i < n; i++)
+                (void)new (a + i) LinIntExpr(LinIntExpr::NoNode());
+            return a;
         }
-        break;
-      case ANLE_MIN:
-        if (n==1) {
-          y = result(home,ret, a[0].post(home, ipls));
-        } else if (n==2) {
-          IntVar x0 = a[0].post(home, ipls);
-          IntVar x1 = a[1].post(home, ipls);
-          if (x0.max() <= x1.min())
-            y = result(home,ret,x0);
-          else if (x1.max() <= x0.min())
-            y = result(home,ret,x1);
-          else {
-            y = result(home,ret);
-            min(home, x0, x1, y, ipls.min2());
-          }
-        } else {
-          IntVarArgs x(n);
-          for (int i=n; i--;)
-            x[i] = a[i].post(home, ipls);
-          y = result(home,ret);
-          min(home, x, y, ipls.min());
+        /// Constructor
+        ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0) : t(t0), b(), n(n0), a_int(0), a(allocate(n0)) {}
+        /// Constructor
+        ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, int a0) : t(t0), b(), n(n0), a_int(a0), a(allocate(n0)) {}
+        /// Constructor
+        ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, const BoolExpr& b0)
+            : t(t0), b(b0), n(n0), a_int(0), a(allocate(n0)) {}
+        /// Destructor
+        ~ArithNonLinIntExpr() override {
+            if (a != nullptr)
+                heap.free<LinIntExpr>(a, n);
         }
-        break;
-      case ANLE_MAX:
-        if (n==1) {
-          y = result(home,ret,a[0].post(home, ipls));
-        } else if (n==2) {
-          IntVar x0 = a[0].post(home, ipls);
-          IntVar x1 = a[1].post(home, ipls);
-          if (x0.max() <= x1.min())
-            y = result(home,ret,x1);
-          else if (x1.max() <= x0.min())
-            y = result(home,ret,x0);
-          else {
-            y = result(home,ret);
-            max(home, x0, x1, y, ipls.max2());
-          }
-        } else {
-          IntVarArgs x(n);
-          for (int i=n; i--;)
-            x[i] = a[i].post(home, ipls);
-          y = result(home,ret);
-          max(home, x, y, ipls.max());
-        }
-        break;
-      case ANLE_MULT:
-        {
-          assert(n == 2);
-          IntVar x0 = a[0].post(home, ipls);
-          IntVar x1 = a[1].post(home, ipls);
-          if (x0.assigned() && (x0.val() == 0))
-            y = result(home,ret,x0);
-          else if (x0.assigned() && (x0.val() == 1))
-            y = result(home,ret,x1);
-          else if (x1.assigned() && (x1.val() == 0))
-            y = result(home,ret,x1);
-          else if (x1.assigned() && (x1.val() == 1))
-            y = result(home,ret,x0);
-          else {
-            y = result(home,ret);
-            mult(home, x0, x1, y, ipls.mult());
-          }
-        }
-        break;
-      case ANLE_DIV:
-        {
-          assert(n == 2);
-          IntVar x0 = a[0].post(home, ipls);
-          IntVar x1 = a[1].post(home, ipls);
-          rel(home, x1, IRT_NQ, 0);
-          if (x1.assigned() && (x1.val() == 1))
-            y = result(home,ret,x0);
-          else if (x0.assigned() && (x0.val() == 0))
-            y = result(home,ret,x0);
-          else {
-            y = result(home,ret);
-            div(home, x0, x1, y, ipls.div());
-          }
-        }
-        break;
-      case ANLE_MOD:
-        {
-          assert(n == 2);
-          IntVar x0 = a[0].post(home, ipls);
-          IntVar x1 = a[1].post(home, ipls);
-          y = result(home,ret);
-          mod(home, x0, x1, y, ipls.mod());
-        }
-        break;
-      case ANLE_SQR:
-        {
-          assert(n == 1);
-          IntVar x = a[0].post(home, ipls);
-          if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
-            y = result(home,ret,x);
-          else {
-            y = result(home,ret);
-            sqr(home, x, y, ipls.sqr());
-          }
-        }
-        break;
-      case ANLE_SQRT:
-        {
-          assert(n == 1);
-          IntVar x = a[0].post(home, ipls);
-          if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
-            y = result(home,ret,x);
-          else {
-            y = result(home,ret);
-            sqrt(home, x, y, ipls.sqrt());
-          }
-        }
-        break;
-      case ANLE_POW:
-        {
-          assert(n == 1);
-          IntVar x = a[0].post(home, ipls);
-          if (x.assigned() && (aInt > 0) &&
-              ((x.val() == 0) || (x.val() == 1)))
-            y = result(home,ret,x);
-          else {
-            y = result(home,ret);
-            pow(home, x, aInt, y, ipls.pow());
-          }
-        }
-        break;
-      case ANLE_NROOT:
-        {
-          assert(n == 1);
-          IntVar x = a[0].post(home, ipls);
-          if (x.assigned() && (aInt > 0) &&
-              ((x.val() == 0) || (x.val() == 1)))
-            y = result(home,ret,x);
-          else {
-            y = result(home,ret);
-            nroot(home, x, aInt, y, ipls.nroot());
-          }
-        }
-        break;
-      case ANLE_ELMNT:
-        {
-          IntVar z = a[n-1].post(home, ipls);
-          if (z.assigned() && z.val() >= 0 && z.val() < n-1) {
-            y = result(home,ret,a[z.val()].post(home, ipls));
-          } else {
-            IntVarArgs x(n-1);
-            bool assigned = true;
-            for (int i=n-1; i--;) {
-              x[i] = a[i].post(home, ipls);
-              if (!x[i].assigned())
-                assigned = false;
+        /// Post expression
+        IntVar
+        post(Home home, IntVar* ret, const IntPropLevels& ipls) const override {
+            IntVar y;
+            switch (t) {
+            case ANLE_ABS: {
+                IntVar x = a[0].post(home, ipls);
+                if (x.min() >= 0) {
+                    y = result(home, ret, x);
+                } else {
+                    y = result(home, ret);
+                    abs(home, x, y, ipls.abs());
+                }
+            } break;
+            case ANLE_MIN:
+                if (n == 1) {
+                    y = result(home, ret, a[0].post(home, ipls));
+                } else if (n == 2) {
+                    IntVar x0 = a[0].post(home, ipls);
+                    IntVar x1 = a[1].post(home, ipls);
+                    if (x0.max() <= x1.min()) {
+                        y = result(home, ret, x0);
+                    } else if (x1.max() <= x0.min()) {
+                        y = result(home, ret, x1);
+                    } else {
+                        y = result(home, ret);
+                        min(home, x0, x1, y, ipls.min2());
+                    }
+                } else {
+                    IntVarArgs x(n);
+                    for (int i = n; i--;)
+                        x[i] = a[i].post(home, ipls);
+                    y = result(home, ret);
+                    min(home, x, y, ipls.min());
+                }
+                break;
+            case ANLE_MAX:
+                if (n == 1) {
+                    y = result(home, ret, a[0].post(home, ipls));
+                } else if (n == 2) {
+                    IntVar x0 = a[0].post(home, ipls);
+                    IntVar x1 = a[1].post(home, ipls);
+                    if (x0.max() <= x1.min()) {
+                        y = result(home, ret, x1);
+                    } else if (x1.max() <= x0.min()) {
+                        y = result(home, ret, x0);
+                    } else {
+                        y = result(home, ret);
+                        max(home, x0, x1, y, ipls.max2());
+                    }
+                } else {
+                    IntVarArgs x(n);
+                    for (int i = n; i--;)
+                        x[i] = a[i].post(home, ipls);
+                    y = result(home, ret);
+                    max(home, x, y, ipls.max());
+                }
+                break;
+            case ANLE_MULT: {
+                assert(n == 2);
+                IntVar x0 = a[0].post(home, ipls);
+                IntVar x1 = a[1].post(home, ipls);
+                if (x0.assigned() && (x0.val() == 0)) {
+                    y = result(home, ret, x0);
+                } else if (x0.assigned() && (x0.val() == 1)) {
+                    y = result(home, ret, x1);
+                } else if (x1.assigned() && (x1.val() == 0)) {
+                    y = result(home, ret, x1);
+                } else if (x1.assigned() && (x1.val() == 1)) {
+                    y = result(home, ret, x0);
+                } else {
+                    y = result(home, ret);
+                    mult(home, x0, x1, y, ipls.mult());
+                }
+            } break;
+            case ANLE_DIV: {
+                assert(n == 2);
+                IntVar x0 = a[0].post(home, ipls);
+                IntVar x1 = a[1].post(home, ipls);
+                rel(home, x1, IRT_NQ, 0);
+                if (x1.assigned() && (x1.val() == 1)) {
+                    y = result(home, ret, x0);
+                } else if (x0.assigned() && (x0.val() == 0)) {
+                    y = result(home, ret, x0);
+                } else {
+                    y = result(home, ret);
+                    div(home, x0, x1, y, ipls.div());
+                }
+            } break;
+            case ANLE_MOD: {
+                assert(n == 2);
+                IntVar x0 = a[0].post(home, ipls);
+                IntVar x1 = a[1].post(home, ipls);
+                y = result(home, ret);
+                mod(home, x0, x1, y, ipls.mod());
+            } break;
+            case ANLE_SQR: {
+                assert(n == 1);
+                IntVar x = a[0].post(home, ipls);
+                if (x.assigned() && ((x.val() == 0) || (x.val() == 1))) {
+                    y = result(home, ret, x);
+                } else {
+                    y = result(home, ret);
+                    sqr(home, x, y, ipls.sqr());
+                }
+            } break;
+            case ANLE_SQRT: {
+                assert(n == 1);
+                IntVar x = a[0].post(home, ipls);
+                if (x.assigned() && ((x.val() == 0) || (x.val() == 1))) {
+                    y = result(home, ret, x);
+                } else {
+                    y = result(home, ret);
+                    sqrt(home, x, y, ipls.sqrt());
+                }
+            } break;
+            case ANLE_POW: {
+                assert(n == 1);
+                IntVar x = a[0].post(home, ipls);
+                if (x.assigned() && (a_int > 0) && ((x.val() == 0) || (x.val() == 1))) {
+                    y = result(home, ret, x);
+                } else {
+                    y = result(home, ret);
+                    pow(home, x, a_int, y, ipls.pow());
+                }
+            } break;
+            case ANLE_NROOT: {
+                assert(n == 1);
+                IntVar x = a[0].post(home, ipls);
+                if (x.assigned() && (a_int > 0) && ((x.val() == 0) || (x.val() == 1))) {
+                    y = result(home, ret, x);
+                } else {
+                    y = result(home, ret);
+                    nroot(home, x, a_int, y, ipls.nroot());
+                }
+            } break;
+            case ANLE_ELMNT: {
+                IntVar z = a[n - 1].post(home, ipls);
+                if (z.assigned() && z.val() >= 0 && z.val() < n - 1) {
+                    y = result(home, ret, a[z.val()].post(home, ipls));
+                } else {
+                    IntVarArgs x(n - 1);
+                    bool assigned = true;
+                    for (int i = n - 1; i--;) {
+                        x[i] = a[i].post(home, ipls);
+                        if (!x[i].assigned())
+                            assigned = false;
+                    }
+                    y = result(home, ret);
+                    if (assigned) {
+                        IntArgs xa(n - 1);
+                        for (int i = n - 1; i--;)
+                            xa[i] = x[i].val();
+                        element(home, xa, z, y, ipls.element());
+                    } else {
+                        element(home, x, z, y, ipls.element());
+                    }
+                }
+            } break;
+            case ANLE_ITE: {
+                assert(n == 2);
+                BoolVar c = b.expr(home, ipls);
+                IntVar x0 = a[0].post(home, ipls);
+                IntVar x1 = a[1].post(home, ipls);
+                y = result(home, ret);
+                ite(home, c, x0, x1, y, ipls.ite());
+            } break;
+            default:
+                GECODE_NEVER;
             }
-            y = result(home,ret);
-            if (assigned) {
-              IntArgs xa(n-1);
-              for (int i=n-1; i--;)
-                xa[i] = x[i].val();
-              element(home, xa, z, y, ipls.element());
+            return y;
+        }
+        void
+        post(Home home, IntRelType irt, int c, const IntPropLevels& ipls) const override {
+            if ((t == ANLE_MIN && (irt == IRT_GQ || irt == IRT_GR)) ||
+                (t == ANLE_MAX && (irt == IRT_LQ || irt == IRT_LT))) {
+                IntVarArgs x(n);
+                for (int i = n; i--;)
+                    x[i] = a[i].post(home, ipls);
+                rel(home, x, irt, c);
             } else {
-              element(home, x, z, y, ipls.element());
+                rel(home, post(home, nullptr, ipls), irt, c);
             }
-          }
         }
-        break;
-      case ANLE_ITE:
-        {
-          assert(n == 2);
-          BoolVar c = b.expr(home, ipls);
-          IntVar x0 = a[0].post(home, ipls);
-          IntVar x1 = a[1].post(home, ipls);
-          y = result(home,ret);
-          ite(home, c, x0, x1, y, ipls.ite());
+        void
+        post(Home home, IntRelType irt, int c, BoolVar b, const IntPropLevels& ipls) const override {
+            rel(home, post(home, nullptr, ipls), irt, c, b);
         }
-        break;
-      default:
-        GECODE_NEVER;
-      }
-      return y;
+    };
+    /// Check if \a e is of type \a t
+    static bool
+    has_type(const LinIntExpr& e, ArithNonLinIntExpr::ArithNonLinIntExprType t) {
+        return e.nle() && dynamic_cast<ArithNonLinIntExpr*>(e.nle()) != nullptr &&
+               dynamic_cast<ArithNonLinIntExpr*>(e.nle())->t == t;
     }
-    virtual void post(Home home, IntRelType irt, int c,
-                      const IntPropLevels& ipls) const {
-      if ((t == ANLE_MIN && (irt == IRT_GQ || irt == IRT_GR)) ||
-          (t == ANLE_MAX && (irt == IRT_LQ || irt == IRT_LE)) ) {
-        IntVarArgs x(n);
-        for (int i=n; i--;)
-          x[i] = a[i].post(home, ipls);
-        rel(home, x, irt, c);
-      } else {
-        rel(home, post(home,nullptr,ipls), irt, c);
-      }
-    }
-    virtual void post(Home home, IntRelType irt, int c, BoolVar b,
-                      const IntPropLevels& ipls) const {
-      rel(home, post(home,nullptr,ipls), irt, c, b);
-    }
-  };
-  /// Check if \a e is of type \a t
-  bool hasType(const LinIntExpr& e, ArithNonLinIntExpr::ArithNonLinIntExprType t) {
-    return e.nle() &&
-      dynamic_cast<ArithNonLinIntExpr*>(e.nle()) != nullptr &&
-      dynamic_cast<ArithNonLinIntExpr*>(e.nle())->t == t;
-  }
 
-  class ArithNonLinIntExprGuard {
-  private:
-    ArithNonLinIntExpr* e;
-  public:
-    ArithNonLinIntExprGuard(ArithNonLinIntExpr* e0) : e(e0) {}
-    ~ArithNonLinIntExprGuard(void) {
-      delete e;
-    }
-    void release(void) {
-      e = nullptr;
-    }
-  };
+    class ArithNonLinIntExprGuard {
+    private:
+        ArithNonLinIntExpr* e;
 
-}}
+    public:
+        ArithNonLinIntExprGuard(ArithNonLinIntExpr* e0) : e(e0) {}
+        ~ArithNonLinIntExprGuard() {
+            delete e;
+        }
+        void
+        release() {
+            e = nullptr;
+        }
+    };
+
+} // namespace Gecode::MiniModel
 
 namespace Gecode {
 
-  LinIntExpr
-  abs(const LinIntExpr& e) {
-    using namespace MiniModel;
-    if (hasType(e, ArithNonLinIntExpr::ANLE_ABS))
-      return e;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ABS,1);
-    ArithNonLinIntExprGuard g(ae);
-    ae->a[0] = e;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
-
-  LinIntExpr
-  min(const LinIntExpr& e0, const LinIntExpr& e1) {
-    using namespace MiniModel;
-    int n = 0;
-    if (hasType(e0, ArithNonLinIntExpr::ANLE_MIN))
-      n += static_cast<ArithNonLinIntExpr*>(e0.nle())->n;
-    else
-      n += 1;
-    if (hasType(e1, ArithNonLinIntExpr::ANLE_MIN))
-      n += static_cast<ArithNonLinIntExpr*>(e1.nle())->n;
-    else
-      n += 1;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MIN,n);
-    ArithNonLinIntExprGuard g(ae);
-    int i=0;
-    if (hasType(e0, ArithNonLinIntExpr::ANLE_MIN)) {
-      ArithNonLinIntExpr* e0e = static_cast<ArithNonLinIntExpr*>(e0.nle());
-      for (; i<e0e->n; i++)
-        ae->a[i] = e0e->a[i];
-    } else {
-      ae->a[i++] = e0;
+    LinIntExpr
+    abs(const LinIntExpr& e) {
+        using namespace MiniModel;
+        if (has_type(e, ArithNonLinIntExpr::ANLE_ABS))
+            return e;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ABS, 1);
+        ArithNonLinIntExprGuard g(ae);
+        ae->a[0] = e;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
     }
-    if (hasType(e1, ArithNonLinIntExpr::ANLE_MIN)) {
-      ArithNonLinIntExpr* e1e = static_cast<ArithNonLinIntExpr*>(e1.nle());
-      int curN = i;
-      for (; i<curN+e1e->n; i++)
-        ae->a[i] = e1e->a[i-curN];
-    } else {
-      ae->a[i++] = e1;
+
+    LinIntExpr
+    min(const LinIntExpr& e0, const LinIntExpr& e1) {
+        using namespace MiniModel;
+        int n = 0;
+        if (has_type(e0, ArithNonLinIntExpr::ANLE_MIN))
+            n += static_cast<ArithNonLinIntExpr*>(e0.nle())->n;
+        else
+            n += 1;
+        if (has_type(e1, ArithNonLinIntExpr::ANLE_MIN))
+            n += static_cast<ArithNonLinIntExpr*>(e1.nle())->n;
+        else
+            n += 1;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MIN, n);
+        ArithNonLinIntExprGuard g(ae);
+        int i = 0;
+        if (has_type(e0, ArithNonLinIntExpr::ANLE_MIN)) {
+            ArithNonLinIntExpr* e0e = static_cast<ArithNonLinIntExpr*>(e0.nle());
+            for (; i < e0e->n; i++)
+                ae->a[i] = e0e->a[i];
+        } else {
+            ae->a[i++] = e0;
+        }
+        if (has_type(e1, ArithNonLinIntExpr::ANLE_MIN)) {
+            ArithNonLinIntExpr* e1e = static_cast<ArithNonLinIntExpr*>(e1.nle());
+            int cur_n = i;
+            for (; i < cur_n + e1e->n; i++)
+                ae->a[i] = e1e->a[i - cur_n];
+        } else {
+            ae->a[i++] = e1;
+        }
+        g.release();
+        LinIntExpr r(ae);
+        return r;
     }
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
 
-  LinIntExpr
-  max(const LinIntExpr& e0, const LinIntExpr& e1) {
-    using namespace MiniModel;
-    int n = 0;
-    if (hasType(e0, ArithNonLinIntExpr::ANLE_MAX))
-      n += static_cast<ArithNonLinIntExpr*>(e0.nle())->n;
-    else
-      n += 1;
-    if (hasType(e1, ArithNonLinIntExpr::ANLE_MAX))
-      n += static_cast<ArithNonLinIntExpr*>(e1.nle())->n;
-    else
-      n += 1;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MAX,n);
-    ArithNonLinIntExprGuard g(ae);
-    int i=0;
-    if (hasType(e0, ArithNonLinIntExpr::ANLE_MAX)) {
-      ArithNonLinIntExpr* e0e = static_cast<ArithNonLinIntExpr*>(e0.nle());
-      for (; i<e0e->n; i++)
-        ae->a[i] = e0e->a[i];
-    } else {
-      ae->a[i++] = e0;
+    LinIntExpr
+    max(const LinIntExpr& e0, const LinIntExpr& e1) {
+        using namespace MiniModel;
+        int n = 0;
+        if (has_type(e0, ArithNonLinIntExpr::ANLE_MAX))
+            n += static_cast<ArithNonLinIntExpr*>(e0.nle())->n;
+        else
+            n += 1;
+        if (has_type(e1, ArithNonLinIntExpr::ANLE_MAX))
+            n += static_cast<ArithNonLinIntExpr*>(e1.nle())->n;
+        else
+            n += 1;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MAX, n);
+        ArithNonLinIntExprGuard g(ae);
+        int i = 0;
+        if (has_type(e0, ArithNonLinIntExpr::ANLE_MAX)) {
+            ArithNonLinIntExpr* e0e = static_cast<ArithNonLinIntExpr*>(e0.nle());
+            for (; i < e0e->n; i++)
+                ae->a[i] = e0e->a[i];
+        } else {
+            ae->a[i++] = e0;
+        }
+        if (has_type(e1, ArithNonLinIntExpr::ANLE_MAX)) {
+            ArithNonLinIntExpr* e1e = static_cast<ArithNonLinIntExpr*>(e1.nle());
+            int cur_n = i;
+            for (; i < cur_n + e1e->n; i++)
+                ae->a[i] = e1e->a[i - cur_n];
+        } else {
+            ae->a[i++] = e1;
+        }
+        g.release();
+        LinIntExpr r(ae);
+        return r;
     }
-    if (hasType(e1, ArithNonLinIntExpr::ANLE_MAX)) {
-      ArithNonLinIntExpr* e1e = static_cast<ArithNonLinIntExpr*>(e1.nle());
-      int curN = i;
-      for (; i<curN+e1e->n; i++)
-        ae->a[i] = e1e->a[i-curN];
-    } else {
-      ae->a[i++] = e1;
+
+    LinIntExpr
+    min(const IntVarArgs& x) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MIN, x.size());
+        ArithNonLinIntExprGuard g(ae);
+        for (int i = x.size(); i--;)
+            ae->a[i] = x[i];
+        g.release();
+        LinIntExpr r(ae);
+        return r;
     }
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
 
-  LinIntExpr
-  min(const IntVarArgs& x) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MIN,x.size());
-    ArithNonLinIntExprGuard g(ae);
-    for (int i=x.size(); i--;)
-      ae->a[i] = x[i];
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    max(const IntVarArgs& x) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MAX, x.size());
+        ArithNonLinIntExprGuard g(ae);
+        for (int i = x.size(); i--;)
+            ae->a[i] = x[i];
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  max(const IntVarArgs& x) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MAX,x.size());
-    ArithNonLinIntExprGuard g(ae);
-    for (int i=x.size(); i--;)
-      ae->a[i] = x[i];
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    operator*(const LinIntExpr& e0, const LinIntExpr& e1) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MULT, 2);
+        ArithNonLinIntExprGuard g(ae);
+        ae->a[0] = e0;
+        ae->a[1] = e1;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  operator *(const LinIntExpr& e0, const LinIntExpr& e1) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MULT,2);
-    ArithNonLinIntExprGuard g(ae);
-    ae->a[0] = e0;
-    ae->a[1] = e1;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    sqr(const LinIntExpr& e) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_SQR, 1);
+        ArithNonLinIntExprGuard g(ae);
+        ae->a[0] = e;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  sqr(const LinIntExpr& e) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_SQR,1);
-    ArithNonLinIntExprGuard g(ae);
-    ae->a[0] = e;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    sqrt(const LinIntExpr& e) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_SQRT, 1);
+        ArithNonLinIntExprGuard g(ae);
+        ae->a[0] = e;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  sqrt(const LinIntExpr& e) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_SQRT,1);
-    ArithNonLinIntExprGuard g(ae);
-    ae->a[0] = e;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    pow(const LinIntExpr& e, int n) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_POW, 1, n);
+        ArithNonLinIntExprGuard g(ae);
+        ae->a[0] = e;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  pow(const LinIntExpr& e, int n) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_POW,1,n);
-    ArithNonLinIntExprGuard g(ae);
-    ae->a[0] = e;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    nroot(const LinIntExpr& e, int n) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_NROOT, 1, n);
+        ArithNonLinIntExprGuard g(ae);
+        ae->a[0] = e;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  nroot(const LinIntExpr& e, int n) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_NROOT,1,n);
-    ArithNonLinIntExprGuard g(ae);
-    ae->a[0] = e;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    operator/(const LinIntExpr& e0, const LinIntExpr& e1) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_DIV, 2);
+        ArithNonLinIntExprGuard g(ae);
+        ae->a[0] = e0;
+        ae->a[1] = e1;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  operator /(const LinIntExpr& e0, const LinIntExpr& e1) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_DIV,2);
-    ArithNonLinIntExprGuard g(ae);
-    ae->a[0] = e0;
-    ae->a[1] = e1;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    operator%(const LinIntExpr& e0, const LinIntExpr& e1) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MOD, 2);
+        ArithNonLinIntExprGuard g(ae);
+        ae->a[0] = e0;
+        ae->a[1] = e1;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  operator %(const LinIntExpr& e0, const LinIntExpr& e1) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MOD,2);
-    ArithNonLinIntExprGuard g(ae);
-    ae->a[0] = e0;
-    ae->a[1] = e1;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    element(const IntVarArgs& x, const LinIntExpr& e) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ELMNT, x.size() + 1);
+        ArithNonLinIntExprGuard g(ae);
+        for (int i = x.size(); i--;)
+            ae->a[i] = x[i];
+        ae->a[x.size()] = e;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  element(const IntVarArgs& x, const LinIntExpr& e) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ELMNT,x.size()+1);
-    ArithNonLinIntExprGuard g(ae);
-    for (int i=x.size(); i--;)
-      ae->a[i] = x[i];
-    ae->a[x.size()] = e;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    element(const IntArgs& x, const LinIntExpr& e) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ELMNT, x.size() + 1);
+        ArithNonLinIntExprGuard g(ae);
+        for (int i = x.size(); i--;)
+            ae->a[i] = x[i];
+        ae->a[x.size()] = e;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  element(const IntArgs& x, const LinIntExpr& e) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ELMNT,x.size()+1);
-    ArithNonLinIntExprGuard g(ae);
-    for (int i=x.size(); i--;)
-      ae->a[i] = x[i];
-    ae->a[x.size()] = e;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
+    LinIntExpr
+    ite(const BoolExpr& b, const LinIntExpr& e0, const LinIntExpr& e1) {
+        using namespace MiniModel;
+        ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ITE, 2, b);
+        ArithNonLinIntExprGuard g(ae);
+        ae->a[0] = e0;
+        ae->a[1] = e1;
+        g.release();
+        LinIntExpr r(ae);
+        return r;
+    }
 
-  LinIntExpr
-  ite(const BoolExpr& b, const LinIntExpr& e0, const LinIntExpr& e1) {
-    using namespace MiniModel;
-    ArithNonLinIntExpr* ae =
-      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ITE,2,b);
-    ArithNonLinIntExprGuard g(ae);
-    ae->a[0] = e0;
-    ae->a[1] = e1;
-    g.release();
-    LinIntExpr r(ae);
-    return r;
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: minimodel-any

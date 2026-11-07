@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,56 +32,53 @@
 
 #include <gecode/gist/stopbrancher.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  StopChoice::StopChoice(const Brancher& b) : Choice(b,1) {}
-  void
-  StopChoice::archive(Archive& e) const {
-    Choice::archive(e);
-  }
+    StopChoice::StopChoice(const Brancher& b) : Choice(b, 1) {}
+    void
+    StopChoice::archive(Archive& e) const {
+        Choice::archive(e);
+    }
 
-  StopBrancher::StopBrancher(Home home) : Brancher(home), done(false) {}
+    StopBrancher::StopBrancher(Home home) : Brancher(home), done(false) {}
 
-  StopBrancher::StopBrancher(Space& home, StopBrancher& b)
-    : Brancher(home,b), done(b.done) {}
+    StopBrancher::StopBrancher(Space& home, StopBrancher& b) : Brancher(home, b), done(b.done) {}
 
-  bool
-  StopBrancher::status(const Space&) const {
-    return !done;
-  }
+    bool
+    StopBrancher::status(const Space&) const {
+        return !done;
+    }
 
-  Choice*
-  StopBrancher::choice(Space&) {
-    return new StopChoice(*this);
-  }
-  Choice*
-  StopBrancher::choice(const Space&, Archive&) {
-    return new StopChoice(*this);
-  }
-  ExecStatus
-  StopBrancher::commit(Space&, const Choice&, unsigned int) {
-    done = true;
-    return ES_OK;
-  }
+    Choice*
+    StopBrancher::choice(Space&) {
+        return new StopChoice(*this);
+    }
+    Choice*
+    StopBrancher::choice(const Space&, Archive&) {
+        return new StopChoice(*this);
+    }
+    ExecStatus
+    StopBrancher::commit(Space&, const Choice&, unsigned int) {
+        done = true;
+        return ES_OK;
+    }
 
-  void
-  StopBrancher::print(const Space&, const Gecode::Choice&,
-                      unsigned int, std::ostream&) const {
-  }
+    void
+    StopBrancher::print(const Space&, const Gecode::Choice&, unsigned int, std::ostream&) const {}
 
-  Actor*
-  StopBrancher::copy(Space& home) {
-    return new (home) StopBrancher(home, *this);
-  }
-  void
-  StopBrancher::post(Home home) {
-    (void) new (home) StopBrancher(home);
-  }
-  size_t
-  StopBrancher::dispose(Space&) {
-    return sizeof(*this);
-  }
+    Actor*
+    StopBrancher::copy(Space& home) {
+        return new (home) StopBrancher(home, *this);
+    }
+    void
+    StopBrancher::post(Home home) {
+        (void)new (home) StopBrancher(home);
+    }
+    size_t
+    StopBrancher::dispose(Space&) {
+        return sizeof(*this);
+    }
 
-}}
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

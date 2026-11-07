@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,146 +30,144 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  forceinline
-  NoNGL::NoNGL(void) {}
+    forceinline
+    NoNGL::NoNGL(Space& home)
+        : NGL(home) {}
 
-  forceinline
-  NoNGL::NoNGL(Space& home)
-    : NGL(home) {}
+    forceinline
+    NoNGL::NoNGL(Space& home, NoNGL& ngl)
+        : NGL(home, ngl) {}
 
-  forceinline
-  NoNGL::NoNGL(Space& home, NoNGL& ngl)
-    : NGL(home,ngl) {}
-
-
-
-  forceinline
-  NoGoodsProp::NoGoodsProp(Space& home, NGL* root0)
-    : Propagator(Home(home)), root(root0), n(0U) {
-    // Create subscriptions
-    root->subscribe(home,*this); n++;
-    bool notice = root->notice();
-    NGL* l = root->next();
-    while ((l != nullptr) && l->leaf()) {
-      l->subscribe(home,*this); n++;
-      notice = notice || l->notice();
-      l = l->next();
+    forceinline
+    NoGoodsProp::NoGoodsProp(Space& home, NGL* root0)
+        : Propagator(Home(home)), root(root0), n(0U) {
+        // Create subscriptions
+        root->subscribe(home, *this);
+        n++;
+        bool notice = root->notice();
+        NGL* l = root->next();
+        while ((l != nullptr) && l->leaf()) {
+            l->subscribe(home, *this);
+            n++;
+            notice = notice || l->notice();
+            l = l->next();
+        }
+        if (l != nullptr) {
+            l->subscribe(home, *this);
+            n++;
+        }
+        while (!notice && (l != nullptr)) {
+            notice = notice || l->notice();
+            l = l->next();
+        }
+        if (notice)
+            home.notice(*this, AP_DISPOSE);
     }
-    if (l != nullptr) {
-      l->subscribe(home,*this); n++;
+
+    forceinline
+    NoGoodsProp::NoGoodsProp(Space& home, NoGoodsProp& p)
+        : Propagator(home, p), n(p.n) {
+        assert(p.root != nullptr);
+        NoNGL s;
+        NGL* c = &s;
+        for (NGL* pc = p.root; pc != nullptr; pc = pc->next()) {
+            NGL* n = pc->copy(home);
+            n->leaf(pc->leaf());
+            c->next(n);
+            c = n;
+        }
+        root = s.next();
     }
-    while (!notice && (l != nullptr)) {
-      notice = notice || l->notice();
-      l = l->next();
-    }
-    if (notice)
-      home.notice(*this,AP_DISPOSE);
-  }
 
-  forceinline
-  NoGoodsProp::NoGoodsProp(Space& home, NoGoodsProp& p)
-    : Propagator(home,p), n(p.n) {
-    assert(p.root != nullptr);
-    NoNGL s;
-    NGL* c = &s;
-    for (NGL* pc = p.root; pc != nullptr; pc = pc->next()) {
-      NGL* n = pc->copy(home);
-      n->leaf(pc->leaf());
-      c->next(n); c=n;
-    }
-    root = s.next();
-  }
+    template <class Path>
+    forceinline ExecStatus
+    NoGoodsProp::post(Space& home, const Path& p) {
+        int s = 0;
+        int n = std::min(p.ds.entries(), static_cast<int>(p.ngdl()));
 
+        unsigned long int n_nogood = 0;
 
+        // Eliminate the alternatives which are not no-goods at the end
+        while ((n > s) && (p.ds[n - 1].true_alternative() == 0U))
+            n--;
 
-  template<class Path>
-  forceinline ExecStatus
-  NoGoodsProp::post(Space& home, const Path& p) {
-    int s = 0;
-    int n = std::min(p.ds.entries(),static_cast<int>(p.ngdl()));
+        // A sentinel element
+        NoNGL nn;
+        // Current no-good literal
+        NGL* c = &nn;
 
-    unsigned long int n_nogood = 0;
+        // Commit no-goods at the beginning
+        while ((s < n) && (p.ds[s].true_alternative() > 0U))
+            // Try whether this is a rightmost alternative
+            if (p.ds[s].rightmost()) {
+                // No literal needed, directly try to commit
+                home.try_commit(*p.ds[s].choice(), p.ds[s].true_alternative());
+                s++;
+            } else {
+                // Prune using no-good literals
+                for (unsigned int a = 0U; a < p.ds[s].true_alternative(); a++) {
+                    NGL* l = home.ngl(*p.ds[s].choice(), a);
+                    // Does the brancher support no-good literals?
+                    if (l == nullptr)
+                        return ES_OK;
+                    GECODE_ES_CHECK(l->prune(home));
+                }
+                // Add literal as root if needed and stop
+                if (NGL* l = home.ngl(*p.ds[s].choice(), p.ds[s].true_alternative())) {
+                    c = c->add(l, false);
+                    s++;
+                    break;
+                }
+            }
 
-    // Eliminate the alternatives which are not no-goods at the end
-    while ((n > s) && (p.ds[n-1].truealt() == 0U))
-      n--;
-
-    // A sentinel element
-    NoNGL nn;
-    // Current no-good literal
-    NGL* c = &nn;
-
-    // Commit no-goods at the beginning
-    while ((s < n) && (p.ds[s].truealt() > 0U))
-      // Try whether this is a rightmost alternative
-      if (p.ds[s].rightmost()) {
-        // No literal needed, directly try to commit
-        home.trycommit(*p.ds[s].choice(),p.ds[s].truealt());
-        s++;
-      } else {
-        // Prune using no-good literals
-        for (unsigned int a=0U; a<p.ds[s].truealt(); a++) {
-          NGL* l = home.ngl(*p.ds[s].choice(),a);
-          // Does the brancher support no-good literals?
-          if (l == nullptr)
+        // There are no literals
+        if (home.failed())
+            return ES_FAILED;
+        if (s >= n)
             return ES_OK;
-          GECODE_ES_CHECK(l->prune(home));
+
+        // There must be at least two literals
+        assert((n - s > 1) || ((n - s == 1) && (c != &nn)));
+
+        // Remember the last leaf
+        NGL* ll = nullptr;
+
+        // Create literals
+        for (int i = s; i < n; i++) {
+            // Add leaves
+            for (unsigned int a = 0U; a < p.ds[i].true_alternative(); a++) {
+                NGL* l = home.ngl(*p.ds[i].choice(), a);
+                if (l == nullptr) {
+                    // The brancher does not support no-goods
+                    if (ll == nullptr)
+                        return ES_OK;
+                    ll->next(nullptr);
+                    break;
+                }
+                c = c->add(l, true);
+                ll = c;
+                n_nogood++;
+            }
+            // Check whether to add an additional subtree
+            if (NGL* l = home.ngl(*p.ds[i].choice(), p.ds[i].true_alternative())) {
+                c = c->add(l, false);
+            } else if (!p.ds[i].rightmost()) {
+                // The brancher does not support no-goods
+                if (ll == nullptr)
+                    return ES_OK;
+                ll->next(nullptr);
+                break;
+            }
         }
-        // Add literal as root if needed and stop
-        if (NGL* l = home.ngl(*p.ds[s].choice(),p.ds[s].truealt())) {
-          c = c->add(l,false);
-          s++; break;
-        }
-      }
 
-    // There are no literals
-    if (home.failed())
-      return ES_FAILED;
-    if (s >= n)
-      return ES_OK;
+        const_cast<Path&>(p).ng(n_nogood);
 
-    // There must be at least two literals
-    assert((n-s > 1) ||
-           ((n-s == 1) && (c != &nn)));
-
-    // Remember the last leaf
-    NGL* ll = nullptr;
-
-    // Create literals
-    for (int i=s; i<n; i++) {
-      // Add leaves
-      for (unsigned int a=0U; a<p.ds[i].truealt(); a++) {
-        NGL* l = home.ngl(*p.ds[i].choice(),a);
-        if (l == nullptr) {
-          // The brancher does not support no-goods
-          if (ll == nullptr)
-            return ES_OK;
-          ll->next(nullptr);
-          break;
-        }
-        c = c->add(l,true); ll = c;
-        n_nogood++;
-      }
-      // Check whether to add an additional subtree
-      if (NGL* l = home.ngl(*p.ds[i].choice(),p.ds[i].truealt())) {
-        c = c->add(l,false);
-      } else if (!p.ds[i].rightmost()) {
-        // The brancher does not support no-goods
-        if (ll == nullptr)
-          return ES_OK;
-        ll->next(nullptr);
-        break;
-      }
+        (void)new (home) NoGoodsProp(home, nn.next());
+        return ES_OK;
     }
 
-    const_cast<Path&>(p).ng(n_nogood);
-
-    (void) new (home) NoGoodsProp(home,nn.next());
-    return ES_OK;
-  }
-
-}}
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

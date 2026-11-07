@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -42,63 +41,62 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set { namespace Sequence {
+namespace Gecode::Set::Sequence {
 
-  /**
-   * \namespace Gecode::Set::Sequence
-   * \brief Propagators for ordered sequences of sets
-   */
+    /**
+     * \namespace Gecode::Set::Sequence
+     * \brief Propagators for ordered sequences of sets
+     */
 
-  /**
-   * \brief %Propagator for the sequence constraint
-   *
-   * Requires \code #include <gecode/set/sequence.hh> \endcode
-   * \ingroup FuncSetProp
-   */
+    /**
+     * \brief %Propagator for the sequence constraint
+     *
+     * Requires \code #include <gecode/set/sequence.hh> \endcode
+     * \ingroup FuncSetProp
+     */
 
-  class Seq : public NaryPropagator<SetView, PC_SET_ANY> {
-  protected:
-    /// Constructor for cloning \a p
-    Seq(Space& home, Seq& p);
-    /// Constructor for posting
-    Seq(Home home, ViewArray<SetView>&);
-  public:
-    /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor* copy(Space& home);
-    /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
-    static ExecStatus post(Home home,ViewArray<SetView>);
-  };
+    class Seq : public NaryPropagator<SetView, PC_SET_ANY> {
+    protected:
+        /// Constructor for cloning \a p
+        Seq(Space& home, Seq& p);
+        /// Constructor for posting
+        Seq(Home home, ViewArray<SetView>&);
 
-  /**
-   * \brief %Propagator for the sequenced union constraint
-   *
-   * Requires \code #include <gecode/set/sequence.hh> \endcode
-   * \ingroup FuncSetProp
-   */
+    public:
+        /// Copy propagator during cloning
+        GECODE_SET_EXPORT Actor* copy(Space& home) override;
+        /// Perform propagation
+        GECODE_SET_EXPORT ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
+        static ExecStatus post(Home home, ViewArray<SetView>);
+    };
 
-  class SeqU : public NaryOnePropagator<SetView,PC_SET_ANY> {
-  protected:
-    GLBndSet unionOfDets; //Union of determined variables dropped form x.
-    /// Constructor for cloning \a p
-    SeqU(Space& home, SeqU& p);
-    /// Constructor for posting
-    SeqU(Home home, ViewArray<SetView>&, SetView);
-    ExecStatus propagateSeqUnion(Space& home,
-                                 bool& modified, ViewArray<SetView>& x,
-                                 SetView& y);
-  public:
-    /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor* copy(Space& home);
-    /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
-    static ExecStatus post(Home home,ViewArray<SetView>, SetView);
-  };
+    /**
+     * \brief %Propagator for the sequenced union constraint
+     *
+     * Requires \code #include <gecode/set/sequence.hh> \endcode
+     * \ingroup FuncSetProp
+     */
 
+    class SeqU : public NaryOnePropagator<SetView, PC_SET_ANY> {
+    protected:
+        GLBndSet union_of_dets; // Union of determined variables dropped form x.
+        /// Constructor for cloning \a p
+        SeqU(Space& home, SeqU& p);
+        /// Constructor for posting
+        SeqU(Home home, ViewArray<SetView>&, SetView);
+        ExecStatus propagate_seq_union(Space& home, bool& modified, ViewArray<SetView>& x, SetView& y);
 
-}}}
+    public:
+        /// Copy propagator during cloning
+        GECODE_SET_EXPORT Actor* copy(Space& home) override;
+        /// Perform propagation
+        GECODE_SET_EXPORT ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
+        static ExecStatus post(Home home, ViewArray<SetView>, SetView);
+    };
+
+} // namespace Gecode::Set::Sequence
 
 #include <gecode/set/rel.hh>
 #include <gecode/set/rel-op/common.hpp>

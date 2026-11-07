@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,69 +34,70 @@
 
 namespace Gecode {
 
-  forceinline Archive&
-  operator <<(Archive& e, FloatNumBranch nl) {
-    return e << nl.n << nl.l;
-  }
+    forceinline Archive&
+    operator<<(Archive& e, FloatNumBranch nl) {
+        return e << nl.n << nl.l;
+    }
 
-  forceinline Archive&
-  operator >>(Archive& e, FloatNumBranch& nl) {
-    return e >> nl.n >> nl.l;
-  }
+    forceinline Archive&
+    operator>>(Archive& e, FloatNumBranch& nl) {
+        return e >> nl.n >> nl.l;
+    }
 
-}
+} // namespace Gecode
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
-  forceinline
-  ValSelLq::ValSelLq(Space& home, const ValBranch<Var>& vb)
-    : ValSel<FloatView,FloatNumBranch>(home,vb) {}
-  forceinline
-  ValSelLq::ValSelLq(Space& home, ValSelLq& vs)
-    : ValSel<FloatView,FloatNumBranch>(home,vs) {}
-  forceinline FloatNumBranch
-  ValSelLq::val(const Space&, FloatView x, int) {
-    FloatNumBranch nl;
-    nl.n = x.med(); nl.l = true;
-    return nl;
-  }
+    forceinline
+    ValSelLq::ValSelLq(Space& home, const ValBranch<Var>& vb)
+        : ValSel<FloatView, FloatNumBranch>(home, vb) {}
+    forceinline
+    ValSelLq::ValSelLq(Space& home, ValSelLq& vs)
+        : ValSel<FloatView, FloatNumBranch>(home, vs) {}
+    forceinline FloatNumBranch
+    ValSelLq::val(const Space&, FloatView x, int) {
+        FloatNumBranch nl;
+        nl.n = x.med();
+        nl.l = true;
+        return nl;
+    }
 
-  forceinline
-  ValSelGq::ValSelGq(Space& home, const ValBranch<Var>& vb)
-    : ValSel<FloatView,FloatNumBranch>(home,vb) {}
-  forceinline
-  ValSelGq::ValSelGq(Space& home, ValSelGq& vs)
-    : ValSel<FloatView,FloatNumBranch>(home,vs) {}
-  forceinline FloatNumBranch
-  ValSelGq::val(const Space&, FloatView x, int) {
-    FloatNumBranch nl;
-    nl.n = x.med(); nl.l = false;
-    return nl;
-  }
+    forceinline
+    ValSelGq::ValSelGq(Space& home, const ValBranch<Var>& vb)
+        : ValSel<FloatView, FloatNumBranch>(home, vb) {}
+    forceinline
+    ValSelGq::ValSelGq(Space& home, ValSelGq& vs)
+        : ValSel<FloatView, FloatNumBranch>(home, vs) {}
+    forceinline FloatNumBranch
+    ValSelGq::val(const Space&, FloatView x, int) {
+        FloatNumBranch nl;
+        nl.n = x.med();
+        nl.l = false;
+        return nl;
+    }
 
-  forceinline
-  ValSelRnd::ValSelRnd(Space& home, const ValBranch<Var>& vb)
-    : ValSel<FloatView,FloatNumBranch>(home,vb), r(vb.rnd()) {}
-  forceinline
-  ValSelRnd::ValSelRnd(Space& home, ValSelRnd& vs)
-    : ValSel<FloatView,FloatNumBranch>(home,vs), r(vs.r) {
-  }
-  forceinline FloatNumBranch
-  ValSelRnd::val(const Space&, FloatView x, int) {
-    FloatNumBranch nl;
-    nl.n = x.med(); nl.l = (r(2U) == 0U);
-    return nl;
-  }
-  forceinline bool
-  ValSelRnd::notice(void) const {
-    return true;
-  }
-  forceinline void
-  ValSelRnd::dispose(Space&) {
-    r.~Rnd();
-  }
+    forceinline
+    ValSelRnd::ValSelRnd(Space& home, const ValBranch<Var>& vb)
+        : ValSel<FloatView, FloatNumBranch>(home, vb), r(vb.rnd()) {}
+    forceinline
+    ValSelRnd::ValSelRnd(Space& home, ValSelRnd& vs)
+        : ValSel<FloatView, FloatNumBranch>(home, vs), r(vs.r) {}
+    forceinline FloatNumBranch
+    ValSelRnd::val(const Space&, FloatView x, int) {
+        FloatNumBranch nl;
+        nl.n = x.med();
+        nl.l = (r(2U) == 0U);
+        return nl;
+    }
+    forceinline bool
+    ValSelRnd::notice() const {
+        return true;
+    }
+    forceinline void
+    ValSelRnd::dispose(Space&) {
+        r.~Rnd();
+    }
 
-}}}
+} // namespace Gecode::Float::Branch
 
 // STATISTICS: float-branch
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -35,44 +34,42 @@
 
 namespace Gecode {
 
-  void
-  sorted(Home home, const IntVarArgs& x, const IntVarArgs& y,
-         const IntVarArgs& z, IntPropLevel) {
-    using namespace Int;
-    if ((x.size() != y.size()) || (x.size() != z.size()))
-      throw ArgumentSizeMismatch("Int::Sorted");
-    if (same(x,y) || same(x,z) || same(y,z))
-      throw ArgumentSame("Int::Sorted");
+    void
+    sorted(Home home, const IntVarArgs& x, const IntVarArgs& y, const IntVarArgs& z, IntPropLevel) {
+        using namespace Int;
+        if ((x.size() != y.size()) || (x.size() != z.size()))
+            throw ArgumentSizeMismatch("Int::Sorted");
+        if (same(x, y) || same(x, z) || same(y, z))
+            throw ArgumentSame("Int::Sorted");
 
-    GECODE_POST;
+        GECODE_POST;
 
-    if (x.size()==0) return;
+        if (x.size() == 0)
+            return;
 
-    ViewArray<IntView> x0(home,x), y0(home,y), z0(home,z);
+        ViewArray<IntView> x0(home, x), y0(home, y), z0(home, z);
 
-    GECODE_ES_FAIL(
-                   (Sorted::Sorted<IntView,true>::post(home,x0,y0,z0)));
-  }
+        GECODE_ES_FAIL((Sorted::Sorted<IntView, true>::post(home, x0, y0, z0)));
+    }
 
-  void
-  sorted(Home home, const IntVarArgs& x, const IntVarArgs& y,
-         IntPropLevel) {
-    using namespace Int;
-    if (x.size() != y.size())
-      throw ArgumentSizeMismatch("Int::Sorted");
-    if (same(x,y))
-      throw ArgumentSame("Int::Sorted");
+    void
+    sorted(Home home, const IntVarArgs& x, const IntVarArgs& y, IntPropLevel) {
+        using namespace Int;
+        if (x.size() != y.size())
+            throw ArgumentSizeMismatch("Int::Sorted");
+        if (same(x, y))
+            throw ArgumentSame("Int::Sorted");
 
-    GECODE_POST;
+        GECODE_POST;
 
-    if (x.size()==0) return;
+        if (x.size() == 0)
+            return;
 
-    ViewArray<IntView> x0(home,x), y0(home,y), z0(home,0);
+        ViewArray<IntView> x0(home, x), y0(home, y), z0(home, 0);
 
-    GECODE_ES_FAIL(
-                   (Sorted::Sorted<IntView,false>::post(home,x0,y0,z0)));
-  }
+        GECODE_ES_FAIL((Sorted::Sorted<IntView, false>::post(home, x0, y0, z0)));
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-post

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,42 +34,32 @@
 
 #include <gecode/float.hh>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
-  OutOfLimits::OutOfLimits(const char* l)
-    : Exception(l,"Number out of limits") {}
+    OutOfLimits::OutOfLimits(const char* l) : Exception(l, "Number out of limits") {}
 
-  ValueMixedSign::ValueMixedSign(const char* l)
-    : Exception(l,"Value with mixed sign not allowed") {}
+    ValueMixedSign::ValueMixedSign(const char* l) : Exception(l, "Value with mixed sign not allowed") {}
 
-  VariableEmptyDomain::VariableEmptyDomain(const char* l)
-    : Exception(l,"Attempt to create variable with empty domain") {}
+    VariableEmptyDomain::VariableEmptyDomain(const char* l)
+        : Exception(l, "Attempt to create variable with empty domain") {}
 
-  TooFewArguments::TooFewArguments(const char* l)
-    : Exception(l,"Passed argument array has too few elements") {}
+    TooFewArguments::TooFewArguments(const char* l) : Exception(l, "Passed argument array has too few elements") {}
 
-  ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
-    : Exception(l,"Sizes of argument arrays mismatch") {}
+    ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l) : Exception(l, "Sizes of argument arrays mismatch") {}
 
-  ArgumentSame::ArgumentSame(const char* l)
-    : Exception(l,"Argument array contains same variable multiply") {}
+    ArgumentSame::ArgumentSame(const char* l) : Exception(l, "Argument array contains same variable multiply") {}
 
-  UnknownRelation::UnknownRelation(const char* l)
-    : Exception(l,"Unknown relation type") {}
+    UnknownRelation::UnknownRelation(const char* l) : Exception(l, "Unknown relation type") {}
 
-  UnknownOperation::UnknownOperation(const char* l)
-    : Exception(l,"Unknown operation type") {}
+    UnknownOperation::UnknownOperation(const char* l) : Exception(l, "Unknown operation type") {}
 
-  IllegalOperation::IllegalOperation(const char* l)
-    : Exception(l,"Illegal operation type") {}
+    IllegalOperation::IllegalOperation(const char* l) : Exception(l, "Illegal operation type") {}
 
-  UnknownBranching::UnknownBranching(const char* l)
-    : Exception(l,"Unknown branching type") {}
+    UnknownBranching::UnknownBranching(const char* l) : Exception(l, "Unknown branching type") {}
 
-  ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
-    : Exception(l,"Attempt to access value of unassigned variable") {}
+    ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
+        : Exception(l, "Attempt to access value of unassigned variable") {}
 
-}}
+} // namespace Gecode::Float
 
 // STATISTICS: float-other
-

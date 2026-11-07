@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -42,76 +41,78 @@
  * \brief Membership propagators
  */
 
-namespace Gecode { namespace Int { namespace Member {
+namespace Gecode::Int::Member {
 
-  /**
-   * \brief Membership propagator
-   *
-   * Requires \code #include <gecode/int/member.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class View>
-  class Prop : public NaryOnePropagator<View,PC_INT_DOM> {
-  protected:
-    using NaryOnePropagator<View,PC_INT_DOM>::x;
-    using NaryOnePropagator<View,PC_INT_DOM>::y;
-    /// Value set storing the values of already assigned views
-    ValSet vs;
-    /// Add values of assigned views in \a x to value set \a va
-    static void add(Space& home, ValSet& vs, ViewArray<View>& x);
-    /// Eliminate views from \a x that are not equal to \a y or ar subsumed by \a vs
-    void eliminate(Space& home);
-    /// Constructor for posting
-    Prop(Home home, ValSet& vs, ViewArray<View>& x, View y);
-    /// Constructor for cloning \a p
-    Prop(Space& home, Prop<View>& p);
-  public:
-    /// Cost function
-    virtual PropCost cost(const Space&, const ModEventDelta& med) const;
-    /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
-    static ExecStatus post(Home home, ViewArray<View>& x, View y);
-    /// Post propagator for \f$y\in vs\cup \{x_0,\ldots,x_{|x|-1}\}\f$
-    static ExecStatus post(Home home, ValSet& vs, ViewArray<View>& x, View y);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
+    /**
+     * \brief Membership propagator
+     *
+     * Requires \code #include <gecode/int/member.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class View>
+    class Prop : public NaryOnePropagator<View, PC_INT_DOM> {
+    protected:
+        using NaryOnePropagator<View, PC_INT_DOM>::x;
+        using NaryOnePropagator<View, PC_INT_DOM>::y;
+        /// Value set storing the values of already assigned views
+        ValSet vs;
+        /// Add values of assigned views in \a x to value set \a va
+        static void add(Space& home, ValSet& vs, ViewArray<View>& x);
+        /// Eliminate views from \a x that are not equal to \a y or ar subsumed by \a vs
+        void eliminate(Space& home);
+        /// Constructor for posting
+        Prop(Home home, ValSet& vs, ViewArray<View>& x, View y);
+        /// Constructor for cloning \a p
+        Prop(Space& home, Prop<View>& p);
 
-  /**
-   * \brief Reified membership propagator
-   *
-   * Requires \code #include <gecode/int/member.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class View, ReifyMode rm>
-  class ReProp : public Prop<View> {
-  protected:
-    using Prop<View>::x;
-    using Prop<View>::y;
-    using Prop<View>::vs;
-    using Prop<View>::add;
-    using Prop<View>::eliminate;
-    /// Boolean control variable
-    BoolView b;
-    /// Constructor for posting
-    ReProp(Home home, ValSet& vs, ViewArray<View>& x, View y, BoolView b);
-    /// Constructor for cloning \a p
-    ReProp(Space& home, ReProp<View,rm>& p);
-  public:
-    /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
-    static ExecStatus post(Home home, ViewArray<View>& x, View y, BoolView b);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
+    public:
+        /// Cost function
+        PropCost cost(const Space&, const ModEventDelta& med) const override;
+        /// Copy propagator during cloning
+        Propagator* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
+        static ExecStatus post(Home home, ViewArray<View>& x, View y);
+        /// Post propagator for \f$y\in vs\cup \{x_0,\ldots,x_{|x|-1}\}\f$
+        static ExecStatus post(Home home, ValSet& vs, ViewArray<View>& x, View y);
+        /// Delete propagator and return its size
+        size_t dispose(Space& home) override;
+    };
 
-}}}
+    /**
+     * \brief Reified membership propagator
+     *
+     * Requires \code #include <gecode/int/member.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class View, ReifyMode rm>
+    class ReProp : public Prop<View> {
+    protected:
+        using Prop<View>::x;
+        using Prop<View>::y;
+        using Prop<View>::vs;
+        using Prop<View>::add;
+        using Prop<View>::eliminate;
+        /// Boolean control variable
+        BoolView b;
+        /// Constructor for posting
+        ReProp(Home home, ValSet& vs, ViewArray<View>& x, View y, BoolView b);
+        /// Constructor for cloning \a p
+        ReProp(Space& home, ReProp<View, rm>& p);
+
+    public:
+        /// Copy propagator during cloning
+        Propagator* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
+        static ExecStatus post(Home home, ViewArray<View>& x, View y, BoolView b);
+        /// Delete propagator and return its size
+        size_t dispose(Space& home) override;
+    };
+
+} // namespace Gecode::Int::Member
 
 #include <gecode/int/member/prop.hpp>
 #include <gecode/int/member/re-prop.hpp>

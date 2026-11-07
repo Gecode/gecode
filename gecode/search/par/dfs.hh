@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,89 +35,90 @@
 
 #include <gecode/search/par/engine.hh>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
-  /// %Parallel depth-first search engine
-  template<class Tracer>
-  class DFS : public Engine<Tracer> {
-  protected:
-    using Engine<Tracer>::idle;
-    using Engine<Tracer>::busy;
-    using Engine<Tracer>::stop;
-    using Engine<Tracer>::block;
-    using Engine<Tracer>::e_search;
-    using Engine<Tracer>::e_reset_ack_start;
-    using Engine<Tracer>::e_reset_ack_stop;
-    using Engine<Tracer>::n_busy;
-    using Engine<Tracer>::m_search;
-    using Engine<Tracer>::m_wait_reset;
-    using Engine<Tracer>::opt;
-    using Engine<Tracer>::release;
-    using Engine<Tracer>::signal;
-    using Engine<Tracer>::solutions;
-    using Engine<Tracer>::terminate;
-    using Engine<Tracer>::workers;
-    using Engine<Tracer>::C_WAIT;
-    using Engine<Tracer>::C_RESET;
-    using Engine<Tracer>::C_TERMINATE;
-    using Engine<Tracer>::C_WORK;
-    /// %Parallel depth-first search worker
-    class Worker : public Engine<Tracer>::Worker {
+    /// %Parallel depth-first search engine
+    template <class Tracer>
+    class DFS : public Engine<Tracer> {
+    protected:
+        using Engine<Tracer>::idle;
+        using Engine<Tracer>::busy;
+        using Engine<Tracer>::stop;
+        using Engine<Tracer>::block;
+        using Engine<Tracer>::e_search;
+        using Engine<Tracer>::e_reset_ack_start;
+        using Engine<Tracer>::e_reset_ack_stop;
+        using Engine<Tracer>::n_busy;
+        using Engine<Tracer>::m_search;
+        using Engine<Tracer>::m_wait_reset;
+        using Engine<Tracer>::opt;
+        using Engine<Tracer>::release;
+        using Engine<Tracer>::signal;
+        using Engine<Tracer>::solutions;
+        using Engine<Tracer>::terminate;
+        using Engine<Tracer>::workers;
+        using Engine<Tracer>::C_WAIT;
+        using Engine<Tracer>::C_RESET;
+        using Engine<Tracer>::C_TERMINATE;
+        using Engine<Tracer>::C_WORK;
+        /// %Parallel depth-first search worker
+        class Worker : public Engine<Tracer>::Worker {
+        public:
+            using Engine<Tracer>::Worker::_engine;
+            using Engine<Tracer>::Worker::m;
+            using Engine<Tracer>::Worker::path;
+            using Engine<Tracer>::Worker::cur;
+            using Engine<Tracer>::Worker::d;
+            using Engine<Tracer>::Worker::idle;
+            using Engine<Tracer>::Worker::node;
+            using Engine<Tracer>::Worker::fail;
+            using Engine<Tracer>::Worker::start;
+            using Engine<Tracer>::Worker::tracer;
+            using Engine<Tracer>::Worker::stop;
+            /// Fixed worker index
+            unsigned int index;
+            /// Initialize for space \a s with engine \a e
+            Worker(Space* s, DFS& e, unsigned int index);
+            /// Provide access to engine
+            DFS& engine() const;
+            /// Start execution of worker
+            void run() override;
+            /// Try to find some work
+            bool find();
+            /// Reset worker to restart at space \a s
+            void reset(Space* s, unsigned int ngdl);
+            /// Whether this worker currently owns local search
+            bool owns_work() const;
+        };
+        /// Array of worker references
+        Worker** _worker;
+
     public:
-      using Engine<Tracer>::Worker::_engine;
-      using Engine<Tracer>::Worker::m;
-      using Engine<Tracer>::Worker::path;
-      using Engine<Tracer>::Worker::cur;
-      using Engine<Tracer>::Worker::d;
-      using Engine<Tracer>::Worker::idle;
-      using Engine<Tracer>::Worker::node;
-      using Engine<Tracer>::Worker::fail;
-      using Engine<Tracer>::Worker::start;
-      using Engine<Tracer>::Worker::tracer;
-      using Engine<Tracer>::Worker::stop;
-      /// Fixed worker index
-      unsigned int index;
-      /// Initialize for space \a s with engine \a e
-      Worker(Space* s, DFS& e, unsigned int index);
-      /// Provide access to engine
-      DFS& engine(void) const;
-      /// Start execution of worker
-      virtual void run(void);
-      /// Try to find some work
-      bool find(void);
-      /// Reset worker to restart at space \a s
-      void reset(Space* s, unsigned int ngdl);
-      /// Whether this worker currently owns local search
-      bool owns_work(void) const;
+        /// Provide access to worker \a i
+        Worker* worker(unsigned int i) const;
+
+        /// \name Search control
+        //@{
+        /// Report solution \a s
+        void solution(Space* s);
+        //@}
+
+        /// \name Engine interface
+        //@{
+        /// Initialize for space \a s with options \a o
+        DFS(Space* s, const Options& o);
+        /// Return statistics
+        Statistics statistics() const override;
+        /// Reset engine to restart at space \a s
+        void reset(Space* s) override;
+        /// Return no-goods
+        NoGoods& nogoods() override;
+        /// Destructor
+        ~DFS() override;
+        //@}
     };
-    /// Array of worker references
-    Worker** _worker;
-  public:
-    /// Provide access to worker \a i
-    Worker* worker(unsigned int i) const;
 
-    /// \name Search control
-    //@{
-    /// Report solution \a s
-    void solution(Space* s);
-    //@}
-
-    /// \name Engine interface
-    //@{
-    /// Initialize for space \a s with options \a o
-    DFS(Space* s, const Options& o);
-    /// Return statistics
-    virtual Statistics statistics(void) const;
-    /// Reset engine to restart at space \a s
-    virtual void reset(Space* s);
-    /// Return no-goods
-    virtual NoGoods& nogoods(void);
-    /// Destructor
-    virtual ~DFS(void);
-    //@}
-  };
-
-}}}
+} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/dfs.hpp>
 

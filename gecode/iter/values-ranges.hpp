@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,72 +30,71 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
-  /**
-   * \brief Range iterator from value iterator
-   *
-   * The iterator only requires that the value iterator
-   * iterates values in increasing order. Duplicates in the
-   * iterated value sequence are okay.
-   *
-   * \ingroup FuncIterValues
-   */
-  template<class I>
-  class ToRanges : public Ranges::MinMax {
-  protected:
-    /// Value iterator used
-    I i;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    ToRanges(void);
-    /// Initialize with value iterator \a i
-    ToRanges(I& i);
-    /// Initialize with value iterator \a i
-    void init(I& i);
-    //@}
+    /**
+     * \brief Range iterator from value iterator
+     *
+     * The iterator only requires that the value iterator
+     * iterates values in increasing order. Duplicates in the
+     * iterated value sequence are okay.
+     *
+     * \ingroup FuncIterValues
+     */
+    template <class I>
+    class ToRanges : public Ranges::MinMax {
+    protected:
+        /// Value iterator used
+        I i;
 
-    /// \name Iteration control
-    //@{
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    //@}
-  };
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        ToRanges() = default;
+        /// Initialize with value iterator \a i
+        ToRanges(I& i);
+        /// Initialize with value iterator \a i
+        void init(I& i);
+        //@}
 
-  template<class I>
-  forceinline
-  ToRanges<I>::ToRanges(void) {}
+        /// \name Iteration control
+        //@{
+        /// Move iterator to next range (if possible)
+        void operator++();
+        //@}
+    };
 
-  template<class I>
-  forceinline void
-  ToRanges<I>::operator ++(void) {
-    if (!i()) {
-      finish(); return;
+    template <class I>
+    forceinline void
+    ToRanges<I>::operator++() {
+        if (!i()) {
+            finish();
+            return;
+        }
+        mi = i.val();
+        ma = i.val();
+        ++i;
+        while (i() && (ma + 1 >= i.val())) {
+            ma = i.val();
+            ++i;
+        }
     }
-    mi = i.val(); ma = i.val();
-    ++i;
-    while (i() && (ma+1 >= i.val())) {
-      ma = i.val(); ++i;
+
+    template <class I>
+    forceinline
+    ToRanges<I>::ToRanges(I& i0)
+        : i(i0) {
+        operator++();
     }
-  }
 
-  template<class I>
-  forceinline
-  ToRanges<I>::ToRanges(I& i0)
-    : i(i0) {
-    operator ++();
-  }
+    template <class I>
+    forceinline void
+    ToRanges<I>::init(I& i0) {
+        i = i0;
+        operator++();
+    }
 
-  template<class I>
-  forceinline void
-  ToRanges<I>::init(I& i0) {
-    i = i0;
-    operator ++();
-  }
-
-}}}
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any
-

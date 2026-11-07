@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,98 +36,95 @@
 #include <gecode/gist/nodevisitor.hh>
 #include <gecode/gist/drawingcursor.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  NodeStatInspector::NodeStatInspector(QWidget* parent)
-    : QWidget(parent) {
-    setWindowFlags(Qt::Tool);
-    QGraphicsScene* scene = new QGraphicsScene();
+    NodeStatInspector::NodeStatInspector(QWidget* parent) : QWidget(parent) {
+        setWindowFlags(Qt::Tool);
+        QGraphicsScene* scene = new QGraphicsScene();
 
-    scene->addEllipse(70,10,16,16,QPen(),QBrush(DrawingCursor::white));
-    scene->addEllipse(70,60,16,16,QPen(),QBrush(DrawingCursor::blue));
-    scene->addRect(32,100,12,12,QPen(),QBrush(DrawingCursor::red));
+        scene->addEllipse(70, 10, 16, 16, QPen(), QBrush(DrawingCursor::white));
+        scene->addEllipse(70, 60, 16, 16, QPen(), QBrush(DrawingCursor::blue));
+        scene->addRect(32, 100, 12, 12, QPen(), QBrush(DrawingCursor::red));
 
-    QPolygonF poly;
-    poly << QPointF(78,100) << QPointF(78+8,100+8)
-         << QPointF(78,100+16) << QPointF(78-8,100+8);
-    scene->addPolygon(poly,QPen(),QBrush(DrawingCursor::green));
+        QPolygonF poly;
+        poly << QPointF(78, 100) << QPointF(78 + 8, 100 + 8) << QPointF(78, 100 + 16) << QPointF(78 - 8, 100 + 8);
+        scene->addPolygon(poly, QPen(), QBrush(DrawingCursor::green));
 
-    scene->addEllipse(110,100,16,16,QPen(),QBrush(DrawingCursor::white));
+        scene->addEllipse(110, 100, 16, 16, QPen(), QBrush(DrawingCursor::white));
 
-    QPen pen;
-    pen.setStyle(Qt::DotLine);
-    pen.setWidth(0);
-    scene->addLine(78,26,78,60,pen);
-    scene->addLine(78,76,38,100,pen);
-    scene->addLine(78,76,78,100,pen);
-    scene->addLine(78,76,118,100,pen);
+        QPen pen;
+        pen.setStyle(Qt::DotLine);
+        pen.setWidth(0);
+        scene->addLine(78, 26, 78, 60, pen);
+        scene->addLine(78, 76, 38, 100, pen);
+        scene->addLine(78, 76, 78, 100, pen);
+        scene->addLine(78, 76, 118, 100, pen);
 
-    scene->addLine(135,10,145,10);
-    scene->addLine(145,10,145,110);
-    scene->addLine(145,60,135,60);
-    scene->addLine(145,110,135,110);
+        scene->addLine(135, 10, 145, 10);
+        scene->addLine(145, 10, 145, 110);
+        scene->addLine(145, 60, 135, 60);
+        scene->addLine(145, 110, 135, 110);
 
-    nodeDepthLabel = scene->addText("0");
-    nodeDepthLabel->setPos(150,20);
-    subtreeDepthLabel = scene->addText("0");
-    subtreeDepthLabel->setPos(150,75);
+        node_depth_label = scene->addText("0");
+        node_depth_label->setPos(150, 20);
+        subtree_depth_label = scene->addText("0");
+        subtree_depth_label->setPos(150, 75);
 
-    choicesLabel = scene->addText("0");
-    choicesLabel->setPos(45,57);
+        choices_label = scene->addText("0");
+        choices_label->setPos(45, 57);
 
-    solvedLabel = scene->addText("0");
-    solvedLabel->setPos(78-solvedLabel->document()->size().width()/2,120);
-    failedLabel = scene->addText("0");
-    failedLabel->setPos(30,120);
-    openLabel = scene->addText("0");
-    openLabel->setPos(110,120);
+        solved_label = scene->addText("0");
+        solved_label->setPos(78 - solved_label->document()->size().width() / 2, 120);
+        failed_label = scene->addText("0");
+        failed_label->setPos(30, 120);
+        open_label = scene->addText("0");
+        open_label->setPos(110, 120);
 
-    QGraphicsView* view = new QGraphicsView(scene);
-    view->setRenderHints(view->renderHints() | QPainter::Antialiasing);
-    view->show();
+        QGraphicsView* view = new QGraphicsView(scene);
+        view->setRenderHints(view->renderHints() | QPainter::Antialiasing);
+        view->show();
 
-    scene->setBackgroundBrush(Qt::white);
+        scene->setBackgroundBrush(Qt::white);
 
-    boxLayout = new QVBoxLayout();
-    boxLayout->setContentsMargins(0,0,0,0);
-    boxLayout->addWidget(view);
-    setLayout(boxLayout);
+        box_layout = new QVBoxLayout();
+        box_layout->setContentsMargins(0, 0, 0, 0);
+        box_layout->addWidget(view);
+        setLayout(box_layout);
 
-    setWindowTitle("Gist node statistics");
-    setAttribute(Qt::WA_QuitOnClose, false);
-    setAttribute(Qt::WA_DeleteOnClose, false);
-  }
-
-  void
-  NodeStatInspector::node(const VisualNode::NodeAllocator& na,
-                          VisualNode* n, const Statistics&, bool) {
-    if (isVisible()) {
-      int nd = -1;
-      for (VisualNode* p = n; p != nullptr; p = p->getParent(na))
-        nd++;
-      nodeDepthLabel->setPlainText(QString("%1").arg(nd));;
-      StatCursor sc(n,na);
-      PreorderNodeVisitor<StatCursor> pnv(sc);
-      pnv.run();
-
-      subtreeDepthLabel->setPlainText(
-        QString("%1").arg(pnv.getCursor().depth));
-      solvedLabel->setPlainText(QString("%1").arg(pnv.getCursor().solved));
-      solvedLabel->setPos(78-solvedLabel->document()->size().width()/2,120);
-      failedLabel->setPlainText(QString("%1").arg(pnv.getCursor().failed));
-      failedLabel->setPos(44-failedLabel->document()->size().width(),120);
-      choicesLabel->setPlainText(QString("%1").arg(pnv.getCursor().choice));
-      choicesLabel->setPos(66-choicesLabel->document()->size().width(),57);
-      openLabel->setPlainText(QString("%1").arg(pnv.getCursor().open));
+        setWindowTitle("Gist node statistics");
+        setAttribute(Qt::WA_QuitOnClose, false);
+        setAttribute(Qt::WA_DeleteOnClose, false);
     }
-  }
 
-  void
-  NodeStatInspector::showStats(void) {
-    show();
-    activateWindow();
-  }
+    void
+    NodeStatInspector::node(const VisualNode::NodeAllocator& na, VisualNode* n, const Statistics&, bool) {
+        if (isVisible()) {
+            int nd = -1;
+            for (VisualNode* p = n; p != nullptr; p = p->get_parent(na))
+                nd++;
+            node_depth_label->setPlainText(QString("%1").arg(nd));
+            ;
+            StatCursor sc(n, na);
+            PreorderNodeVisitor<StatCursor> pnv(sc);
+            pnv.run();
 
-}}
+            subtree_depth_label->setPlainText(QString("%1").arg(pnv.get_cursor().depth));
+            solved_label->setPlainText(QString("%1").arg(pnv.get_cursor().solved));
+            solved_label->setPos(78 - solved_label->document()->size().width() / 2, 120);
+            failed_label->setPlainText(QString("%1").arg(pnv.get_cursor().failed));
+            failed_label->setPos(44 - failed_label->document()->size().width(), 120);
+            choices_label->setPlainText(QString("%1").arg(pnv.get_cursor().choice));
+            choices_label->setPos(66 - choices_label->document()->size().width(), 57);
+            open_label->setPlainText(QString("%1").arg(pnv.get_cursor().open));
+        }
+    }
+
+    void
+    NodeStatInspector::show_stats() {
+        show();
+        activateWindow();
+    }
+
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

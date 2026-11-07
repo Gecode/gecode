@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -41,49 +40,49 @@
 
 namespace Gecode {
 
-  void
-  asin(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::ASin<FloatView,FloatView>::post(home,x0,x1)));
-  }
+    void
+    asin(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Trigonometric::ASin<FloatView, FloatView>::post(home, x0, x1)));
+    }
 
-  void
-  sin(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::Sin<FloatView,FloatView>::post(home,x0,x1)));
-  }
+    void
+    sin(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Trigonometric::Sin<FloatView, FloatView>::post(home, x0, x1)));
+    }
 
-  void
-  acos(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::ACos<FloatView,FloatView>::post(home,x0,x1)));
-  }
+    void
+    acos(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Trigonometric::ACos<FloatView, FloatView>::post(home, x0, x1)));
+    }
 
-  void
-  cos(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::Cos<FloatView,FloatView>::post(home,x0,x1)));
-  }
+    void
+    cos(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Trigonometric::Cos<FloatView, FloatView>::post(home, x0, x1)));
+    }
 
-  void
-  atan(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::ATan<FloatView,FloatView>::post(home,x0,x1)));
-  }
+    void
+    atan(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Trigonometric::ATan<FloatView, FloatView>::post(home, x0, x1)));
+    }
 
-  void
-  tan(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::Tan<FloatView,FloatView>::post(home,x0,x1)));
-  }
+    void
+    tan(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Trigonometric::Tan<FloatView, FloatView>::post(home, x0, x1)));
+    }
 
-}
+} // namespace Gecode
 
 #endif
 

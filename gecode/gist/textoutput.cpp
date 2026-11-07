@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -40,135 +39,134 @@
 #include <gecode/gist/textoutput.hh>
 #include <gecode/gist/gecodelogo.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
-  /// \brief An outputstream that prints on a QTextEdit
-  class GistOutputStream
-  : public std::basic_ostream<char, std::char_traits<char> > {
-    /// \brief Buffer for printing on a QTextEdit
-    class Buf
-    : public std::basic_streambuf<char, std::char_traits<char> > {
-      QString buffer;
-      QTextEdit* editor;
+    /// \brief An outputstream that prints on a QTextEdit
+    class GistOutputStream : public std::basic_ostream<char, std::char_traits<char>> {
+        /// \brief Buffer for printing on a QTextEdit
+        class Buf : public std::basic_streambuf<char, std::char_traits<char>> {
+            QString buffer;
+            QTextEdit* editor;
+
+        public:
+            void
+            flush() {
+                QTextBlockFormat bf = editor->textCursor().blockFormat();
+                bf.setBottomMargin(0);
+                editor->textCursor().setBlockFormat(bf);
+                editor->append(buffer);
+                buffer.clear();
+            }
+            Buf(QTextEdit* e) : editor(e) {}
+
+        protected:
+            int
+            overflow(int v) override {
+                if (v == '\n') {
+                    flush();
+                } else {
+                    buffer += static_cast<char>(v);
+                }
+                return v;
+            }
+        };
+
+        Buf _buf;
+
     public:
-      void flush(void) {
+        GistOutputStream(QTextEdit* editor) : std::basic_ostream<char, std::char_traits<char>>(&_buf), _buf(editor) {
+            clear();
+        }
+        void
+        flush() {
+            _buf.flush();
+        }
+    };
+
+    TextOutputI::TextOutputI(const std::string& name, QWidget* parent) : QMainWindow(parent) {
+        Logos logos;
+
+        QPixmap my_pic;
+        my_pic.loadFromData(logos.gist_logo, logos.gist_logo_size);
+        setWindowIcon(my_pic);
+
+        QFont font;
+        QString font_family("Courier");
+        font.setFamily(font_family);
+        font.setFixedPitch(true);
+        font.setPointSize(12);
+
+        editor = new QTextEdit;
+        editor->setFont(font);
+        editor->setReadOnly(true);
+        editor->setLineWrapMode(QTextEdit::FixedColumnWidth);
+        editor->setLineWrapColumnOrWidth(80);
+        os = new GistOutputStream(editor);
+
+        QAction* clear_text = new QAction("Clear", this);
+        clear_text->setShortcut(QKeySequence("Ctrl+K"));
+        this->addAction(clear_text);
+        connect(clear_text, SIGNAL(triggered()), editor, SLOT(clear()));
+
+        QAction* close_window = new QAction("Close window", this);
+        close_window->setShortcut(QKeySequence("Ctrl+W"));
+        this->addAction(close_window);
+        connect(close_window, SIGNAL(triggered()), this, SLOT(close()));
+
+        QToolBar* t = addToolBar("Tools");
+        t->setFloatable(false);
+        t->setMovable(false);
+        t->addAction(clear_text);
+
+        stay_on_top = new QAction("Stay on top", this);
+        stay_on_top->setCheckable(true);
+        t->addAction(stay_on_top);
+        connect(stay_on_top, SIGNAL(changed()), this, SLOT(change_stay_on_top()));
+
+        change_stay_on_top();
+        setCentralWidget(editor);
+        setWindowTitle(QString((std::string("Gist Console: ") + name).c_str()));
+
+        setAttribute(Qt::WA_QuitOnClose, false);
+        setAttribute(Qt::WA_DeleteOnClose, false);
+        resize(600, 300);
+    }
+
+    TextOutputI::~TextOutputI() {
+        delete os;
+    }
+
+    std::ostream&
+    TextOutputI::get_stream() {
+        return *os;
+    }
+
+    void
+    TextOutputI::flush() {
+        static_cast<GistOutputStream*>(os)->flush();
+    }
+
+    void
+    TextOutputI::insert_html(const QString& s) {
         QTextBlockFormat bf = editor->textCursor().blockFormat();
         bf.setBottomMargin(0);
         editor->textCursor().setBlockFormat(bf);
-        editor->append(buffer);
-        buffer.clear();
-      }
-      virtual int overflow(int v = std::char_traits<char>::eof()) {
-        if (v == '\n') {
-          flush();
+        editor->insertHtml(s);
+        editor->ensureCursorVisible();
+    }
+
+    void
+    TextOutputI::change_stay_on_top() {
+        QPoint p = pos();
+        if (stay_on_top->isChecked()) {
+            setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
         } else {
-          buffer += (char)v;
+            setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);
         }
-        return v;
-      }
-      Buf(QTextEdit* e) : editor(e) {}
-    };
-
-    Buf _buf;
-  public:
-    GistOutputStream(QTextEdit* editor)
-    : std::basic_ostream<char, std::char_traits<char> >(&_buf),
-      _buf(editor) {
-      clear();
+        move(p);
+        show();
     }
-    void flush(void) {
-      _buf.flush();
-    }
-  };
 
-  TextOutputI::TextOutputI(const std::string& name, QWidget *parent)
-  : QMainWindow(parent) {
-    Logos logos;
-
-    QPixmap myPic;
-    myPic.loadFromData(logos.gistLogo, logos.gistLogoSize);
-    setWindowIcon(myPic);
-
-    QFont font;
-    QString fontFamily("Courier");
-    font.setFamily(fontFamily);
-    font.setFixedPitch(true);
-    font.setPointSize(12);
-
-
-    editor = new QTextEdit;
-    editor->setFont(font);
-    editor->setReadOnly(true);
-    editor->setLineWrapMode(QTextEdit::FixedColumnWidth);
-    editor->setLineWrapColumnOrWidth(80);
-    os = new GistOutputStream(editor);
-
-    QAction* clearText = new QAction("Clear", this);
-    clearText->setShortcut(QKeySequence("Ctrl+K"));
-    this->addAction(clearText);
-    connect(clearText, SIGNAL(triggered()), editor,
-                       SLOT(clear()));
-
-    QAction* closeWindow = new QAction("Close window", this);
-    closeWindow->setShortcut(QKeySequence("Ctrl+W"));
-    this->addAction(closeWindow);
-    connect(closeWindow, SIGNAL(triggered()), this,
-                         SLOT(close()));
-
-    QToolBar* t = addToolBar("Tools");
-    t->setFloatable(false);
-    t->setMovable(false);
-    t->addAction(clearText);
-
-    stayOnTop = new QAction("Stay on top", this);
-    stayOnTop->setCheckable(true);
-    t->addAction(stayOnTop);
-    connect(stayOnTop, SIGNAL(changed()), this,
-                         SLOT(changeStayOnTop()));
-
-    changeStayOnTop();
-    setCentralWidget(editor);
-    setWindowTitle(QString((std::string("Gist Console: ") + name).c_str()));
-
-    setAttribute(Qt::WA_QuitOnClose, false);
-    setAttribute(Qt::WA_DeleteOnClose, false);
-    resize(600,300);
-  }
-
-  TextOutputI::~TextOutputI(void) {
-    delete os;
-  }
-
-  std::ostream&
-  TextOutputI::getStream(void) {
-    return *os;
-  }
-
-  void
-  TextOutputI::flush(void) {
-    static_cast<GistOutputStream*>(os)->flush();
-  }
-
-  void
-  TextOutputI::insertHtml(const QString& s) {
-    QTextBlockFormat bf = editor->textCursor().blockFormat();
-    bf.setBottomMargin(0);
-    editor->textCursor().setBlockFormat(bf);
-    editor->insertHtml(s);
-    editor->ensureCursorVisible();
-  }
-
-  void TextOutputI::changeStayOnTop(void) {
-    QPoint p = pos();
-    if (stayOnTop->isChecked()) {
-      setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
-    } else {
-      setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);
-    }
-    move(p);
-    show();
-  }
-
-}}
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

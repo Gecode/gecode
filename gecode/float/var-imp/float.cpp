@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Filip Konvicka <filip.konvicka@logis.cz>
@@ -40,28 +39,27 @@
 
 #include <gecode/float.hh>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
-  /*
-   * Dependencies
-   *
-   */
-  void
-  FloatVarImp::subscribe(Space& home, Propagator& p, PropCond pc,
-                         bool schedule) {
-    FloatVarImpBase::subscribe(home,p,pc,assigned(),schedule);
-  }
+    /*
+     * Dependencies
+     *
+     */
+    void
+    FloatVarImp::subscribe(Space& home, Propagator& p, PropCond pc, bool schedule) {
+        FloatVarImpBase::subscribe(home, p, pc, assigned(), schedule);
+    }
 
-  void
-  FloatVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
-    FloatVarImpBase::reschedule(home,p,pc,assigned());
-  }
+    void
+    FloatVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
+        FloatVarImpBase::reschedule(home, p, pc, assigned());
+    }
 
-  void
-  FloatVarImp::subscribe(Space& home, Advisor& a, bool fail) {
-    FloatVarImpBase::subscribe(home,a,assigned(),fail);
-  }
+    void
+    FloatVarImp::subscribe(Space& home, Advisor& a, bool fail) {
+        FloatVarImpBase::subscribe(home, a, assigned(), fail);
+    }
 
-}}
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

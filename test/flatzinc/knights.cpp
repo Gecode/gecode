@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("knights",
-"predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest(
+                "knights", "predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -204,15 +200,14 @@ constraint set_in(p[34], SET____00033);\n\
 constraint set_in(p[35], SET____00034);\n\
 constraint set_in(p[36], SET____00035);\n\
 solve  :: int_search(p, input_order, indomain_min, complete) satisfy;\n\
-", "p = array1d(1..36, [1, 9, 5, 16, 3, 7, 15, 2, 10, 6, 17, 30, 34, 26, 13, 21, 32, 19, 8, 4, 12, 23, 36, 28, 20, 31, 27, 35, 24, 11, 22, 18, 29, 33, 25, 14]);\n\
+",
+                "p = array1d(1..36, [1, 9, 5, 16, 3, 7, 15, 2, 10, 6, 17, 30, 34, 26, 13, 21, 32, 19, 8, 4, 12, 23, 36, 28, 20, 31, 27, 35, 24, 11, 22, 18, 29, 33, 25, 14]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

@@ -31,7 +31,7 @@ or
 
 ## Building Gecode
 
-Gecode builds with CMake or Autoconf. The
+Gecode builds with CMake. The
 [CMake build and package reference](docs/cmake-build.md) describes the build
 options, installation, and how downstream projects use the installed package
 with `find_package(Gecode)`.

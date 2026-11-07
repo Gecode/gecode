@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christopher Mears <Chris.Mears@monash.edu>
@@ -41,92 +40,92 @@
 
 using namespace Gecode;
 
-namespace Test { namespace Set {
+/// %Tests for value precedence constraints
+namespace Test::Set::Precede {
 
-   /// %Tests for value precedence constraints
-   namespace Precede {
+    static IntSet ds(-1, 3);
 
-     static IntSet ds(-1,3);
+    /// %Test for single value precedence constraint
+    class Single : public SetTest {
+    private:
+        /// The values for precedence
+        int s, t;
 
-     /// %Test for single value precedence constraint
-     class Single : public SetTest {
-     private:
-       /// The values for precedence
-       int s, t;
+        /// Check if \a i is a member of set \a x
+        bool
+        in(int i, int x) const {
+            CountableSetRanges xr(ds, x);
+            Iter::Ranges::Singleton ir(i, i);
+            return Iter::Ranges::subset(ir, xr);
+        }
 
-       /// Check if \a i is a member of set \a x
-       bool in(int i, int x) const {
-         CountableSetRanges xr(ds,x);
-         Iter::Ranges::Singleton ir(i,i);
-         return Iter::Ranges::subset(ir,xr);
-       }
+    public:
+        /// Create and register test
+        Single(int s0, int t0)
+            : SetTest(TestTags::sweep(), "Precede::Single::" + str(s0) + "<" + str(t0), 4, ds, false), s(s0), t(t0) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            int n = x.size();
+            for (int i = 0; i < n; i++) {
+                if (!in(s, x[i]) && in(t, x[i]))
+                    return false;
+                if (in(s, x[i]) && !in(t, x[i]))
+                    return true;
+            }
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray&) override {
+            Gecode::precede(home, x, s, t);
+        }
+    };
 
-     public:
-       /// Create and register test
-       Single(int s0, int t0)
-         : SetTest(TestTags::sweep(),"Precede::Single::"+str(s0)+"<"+str(t0),4,ds,false),
-           s(s0), t(t0) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const SetAssignment& x) const {
-         int n = x.size();
-         for (int i = 0 ; i < n ; i++) {
-           if (!in(s,x[i]) && in(t,x[i]))
-             return false;
-           if (in(s,x[i]) && !in(t,x[i]))
-             return true;
-         }
-         return true;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::SetVarArray& x,
-                         Gecode::IntVarArray&) {
-         Gecode::precede(home, x, s, t);
-       }
-     };
+    /// %Test for multiple value precedence constraint
+    class Multi : public SetTest {
+    private:
+        /// The values for precedence
+        Gecode::IntArgs c;
 
-     /// %Test for multiple value precedence constraint
-     class Multi : public SetTest {
-     private:
-       /// The values for precedence
-       Gecode::IntArgs c;
+        /// Check if \a i is a member of set \a x
+        bool
+        in(int i, int x) const {
+            CountableSetRanges xr(ds, x);
+            Iter::Ranges::Singleton ir(i, i);
+            return Iter::Ranges::subset(ir, xr);
+        }
 
-       /// Check if \a i is a member of set \a x
-       bool in(int i, int x) const {
-         CountableSetRanges xr(ds,x);
-         Iter::Ranges::Singleton ir(i,i);
-         return Iter::Ranges::subset(ir,xr);
-       }
-     public:
-       /// Create and register test
-       Multi(TestTags tags, const Gecode::IntArgs& c0)
-         : SetTest(tags,"Precede::Multi::"+str(c0),4,ds,false), c(c0) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const SetAssignment& x) const {
-         for (int j=0; j<c.size()-1; j++)
-           for (int i=0; i<x.size(); i++) {
-             if (!in(c[j],x[i]) && in(c[j+1],x[i]))
-               return false;
-             if (in(c[j],x[i]) && !in(c[j+1],x[i]))
-               break;
-           }
-         return true;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::SetVarArray& x,
-                         Gecode::IntVarArray&) {
-         Gecode::precede(home, x, c);
-       }
-     };
+    public:
+        /// Create and register test
+        Multi(TestTags tags, const Gecode::IntArgs& c0)
+            : SetTest(tags, "Precede::Multi::" + str(c0), 4, ds, false), c(c0) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment& x) const override {
+            for (int j = 0; j < c.size() - 1; j++)
+                for (int i = 0; i < x.size(); i++) {
+                    if (!in(c[j], x[i]) && in(c[j + 1], x[i]))
+                        return false;
+                    if (in(c[j], x[i]) && !in(c[j + 1], x[i]))
+                        break;
+                }
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray&) override {
+            Gecode::precede(home, x, c);
+        }
+    };
 
-     Single _a(2, 3);
-     Single _b(0, 3);
+    Single _a(2, 3);
+    Single _b(0, 3);
 
-     Multi _c(TestTags::standard(),Gecode::IntArgs({1,2,3}));
-     Multi _d(TestTags::sweep(),Gecode::IntArgs({3,2,1}));
-     Multi _e(TestTags::sweep(),Gecode::IntArgs({4,2,3,1}));
+    Multi _c(TestTags::standard(), Gecode::IntArgs({1, 2, 3}));
+    Multi _d(TestTags::sweep(), Gecode::IntArgs({3, 2, 1}));
+    Multi _e(TestTags::sweep(), Gecode::IntArgs({4, 2, 3, 1}));
 
-   }
-
-}}
+} // namespace Test::Set::Precede
 
 // STATISTICS: test-set

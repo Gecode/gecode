@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,75 +30,71 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
-  /**
-   * \brief Value iterator for single value
-   *
-   * \ingroup FuncIterValues
-   */
+    /**
+     * \brief Value iterator for single value
+     *
+     * \ingroup FuncIterValues
+     */
 
-  class Singleton {
-  protected:
-    /// Whether the iterator is done
-    bool done;
-    /// The single value
-    int v;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Singleton(void);
-    /// Initialize with value \a v
-    Singleton(int v);
-    /// Initialize with value \a v
-    void init(int v);
-    //@}
+    class Singleton {
+    protected:
+        /// Whether the iterator is done
+        bool done;
+        /// The single value
+        int v;
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator ++(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Singleton() = default;
+        /// Initialize with value \a v
+        Singleton(int v);
+        /// Initialize with value \a v
+        void init(int v);
+        //@}
 
-    /// \name %Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a value or done
+        bool operator()() const;
+        /// Move iterator to next value (if possible)
+        void operator++();
+        //@}
 
+        /// \name %Value access
+        //@{
+        /// Return current value
+        int val() const;
+        //@}
+    };
 
-  forceinline
-  Singleton::Singleton(void) {}
+    forceinline
+    Singleton::Singleton(int v0)
+        : done(false), v(v0) {}
 
-  forceinline
-  Singleton::Singleton(int v0)
-    : done(false), v(v0) {}
+    forceinline void
+    Singleton::init(int v0) {
+        done = false;
+        v = v0;
+    }
 
-  forceinline void
-  Singleton::init(int v0) {
-    done=false; v=v0;
-  }
+    forceinline void
+    Singleton::operator++() {
+        done = true;
+    }
+    forceinline bool
+    Singleton::operator()() const {
+        return !done;
+    }
 
-  forceinline void
-  Singleton::operator ++(void) {
-    done=true;
-  }
-  forceinline bool
-  Singleton::operator ()(void) const {
-    return !done;
-  }
+    forceinline int
+    Singleton::val() const {
+        return v;
+    }
 
-  forceinline int
-  Singleton::val(void) const {
-    return v;
-  }
-
-
-}}}
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -54,10 +53,8 @@
 
 #include "test/test.hh"
 
-namespace Test {
-
-  /// Tests for branchings
-  namespace Branch {
+/// Tests for branchings
+namespace Test::Branch {
 
     /**
      * \brief %Base class for tests for branching on integer variables
@@ -65,17 +62,18 @@ namespace Test {
      */
     class IntTest : public Base {
     protected:
-      /// Number of variables
-      int arity;
-      /// Domain of variables
-      Gecode::IntSet dom;
+        /// Number of variables
+        int arity;
+        /// Domain of variables
+        Gecode::IntSet dom;
+
     public:
-      /// Construct and register test
-      IntTest(const std::string& s, int a, const Gecode::IntSet& d);
-      /// Perform test
-      virtual bool run(void);
-      /// Post propagators on variables \a x
-      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
+        /// Construct and register test
+        IntTest(const std::string& s, int a, const Gecode::IntSet& d);
+        /// Perform test
+        bool run() override;
+        /// Post propagators on variables \a x
+        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
     };
 
     /**
@@ -84,15 +82,16 @@ namespace Test {
      */
     class BoolTest : public Base {
     protected:
-      /// Number of variables
-      int arity;
+        /// Number of variables
+        int arity;
+
     public:
-      /// Construct and register test
-      BoolTest(const std::string& s, int a);
-      /// Perform test
-      virtual bool run(void);
-      /// Post propagators on variables \a x
-      virtual void post(Gecode::Space& home, Gecode::BoolVarArray& x) = 0;
+        /// Construct and register test
+        BoolTest(const std::string& s, int a);
+        /// Perform test
+        bool run() override;
+        /// Post propagators on variables \a x
+        virtual void post(Gecode::Space& home, Gecode::BoolVarArray& x) = 0;
     };
 
 #ifdef GECODE_HAS_SET_VARS
@@ -102,20 +101,20 @@ namespace Test {
      */
     class SetTest : public Base {
     protected:
-      /// Number of variables
-      int arity;
-      /// Domain of variables
-      Gecode::IntSet dom;
+        /// Number of variables
+        int arity;
+        /// Domain of variables
+        Gecode::IntSet dom;
+
     public:
-      /// Construct and register test with explicitly assigned tags
-      SetTest(TestTags tags, const std::string& s, int a,
-              const Gecode::IntSet& d);
-      /// Construct and register test
-      SetTest(const std::string& s, int a, const Gecode::IntSet& d);
-      /// Perform test
-      virtual bool run(void);
-      /// Post propagators on variables \a x
-      virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) = 0;
+        /// Construct and register test with explicitly assigned tags
+        SetTest(TestTags tags, const std::string& s, int a, const Gecode::IntSet& d);
+        /// Construct and register test
+        SetTest(const std::string& s, int a, const Gecode::IntSet& d);
+        /// Perform test
+        bool run() override;
+        /// Post propagators on variables \a x
+        virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) = 0;
     };
 #endif
 
@@ -126,25 +125,24 @@ namespace Test {
      */
     class FloatTest : public Base {
     protected:
-      /// Number of variables
-      int arity;
-      /// Domain of variables
-      Gecode::FloatVal dom;
-      /// Maximum number of solutions searched during solving
-      int nbSols;
+        /// Number of variables
+        int arity;
+        /// Domain of variables
+        Gecode::FloatVal dom;
+        /// Maximum number of solutions searched during solving
+        int nb_sols;
+
     public:
-      /// Construct and register test
-      FloatTest(const std::string& s, int a, const Gecode::FloatVal& d, int nbs);
-      /// Perform test
-      virtual bool run(void);
-      /// Post propagators on variables \a x
-      virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) = 0;
+        /// Construct and register test
+        FloatTest(const std::string& s, int a, const Gecode::FloatVal& d, int nbs);
+        /// Perform test
+        bool run() override;
+        /// Post propagators on variables \a x
+        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) = 0;
     };
 #endif
 
-  }
-
-}
+} // namespace Test::Branch
 
 #endif
 

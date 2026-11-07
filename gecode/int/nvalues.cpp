@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,205 +35,172 @@
 
 namespace Gecode {
 
-  void
-  nvalues(Home home, const IntVarArgs& x, IntRelType irt, int y,
-          IntPropLevel) {
-    using namespace Int;
-    Limits::check(y,"Int::nvalues");
-    // Due to the quadratic Boolean matrix used in propagation
-    long long int n = x.size();
-    Limits::check(n*n,"Int::nvalues");
+    void
+    nvalues(Home home, const IntVarArgs& x, IntRelType irt, int y, IntPropLevel) {
+        using namespace Int;
+        Limits::check(y, "Int::nvalues");
+        // Due to the quadratic Boolean matrix used in propagation
+        long long int n = x.size();
+        Limits::check(n * n, "Int::nvalues");
 
-    GECODE_POST;
+        GECODE_POST;
 
-    ViewArray<IntView> xv(home,x);
+        ViewArray<IntView> xv(home, x);
 
-    switch (irt) {
-    case IRT_EQ:
-      {
-        ConstIntView yv(y);
-        GECODE_ES_FAIL(NValues::EqInt<ConstIntView>::post(home,xv,yv));
-      }
-      break;
-    case IRT_NQ:
-      {
-        IntVar z(home,0,x.size());
-        GECODE_ME_FAIL(IntView(z).nq(home,y));
-        GECODE_ES_FAIL(NValues::EqInt<IntView>::post(home,xv,z));
-      }
-      break;
-    case IRT_LE:
-      y--;
-      // Fall through
-    case IRT_LQ:
-      {
-        ConstIntView yv(y);
-        GECODE_ES_FAIL(NValues::LqInt<ConstIntView>::post(home,xv,yv));
-      }
-      break;
-    case IRT_GR:
-      y++;
-      // Fall through
-    case IRT_GQ:
-      {
-        ConstIntView yv(y);
-        GECODE_ES_FAIL(NValues::GqInt<ConstIntView>::post(home,xv,yv));
-      }
-      break;
-    default:
-      throw UnknownRelation("Int::nvalues");
-    }
-  }
-
-  void
-  nvalues(Home home, const IntVarArgs& x, IntRelType irt, IntVar y,
-          IntPropLevel) {
-    using namespace Int;
-    // Due to the quadratic Boolean matrix used in propagation
-    long long int n = x.size();
-    Limits::check(n*n,"Int::nvalues");
-
-    GECODE_POST;
-
-    if (y.assigned()) {
-      nvalues(home, x, irt, y.val());
-      return;
+        switch (irt) {
+        case IRT_EQ: {
+            ConstIntView yv(y);
+            GECODE_ES_FAIL(NValues::EqInt<ConstIntView>::post(home, xv, yv));
+        } break;
+        case IRT_NQ: {
+            IntVar z(home, 0, x.size());
+            GECODE_ME_FAIL(IntView(z).nq(home, y));
+            GECODE_ES_FAIL(NValues::EqInt<IntView>::post(home, xv, z));
+        } break;
+        case IRT_LT:
+            y--;
+            // Fall through
+        case IRT_LQ: {
+            ConstIntView yv(y);
+            GECODE_ES_FAIL(NValues::LqInt<ConstIntView>::post(home, xv, yv));
+        } break;
+        case IRT_GR:
+            y++;
+            // Fall through
+        case IRT_GQ: {
+            ConstIntView yv(y);
+            GECODE_ES_FAIL(NValues::GqInt<ConstIntView>::post(home, xv, yv));
+        } break;
+        default:
+            throw UnknownRelation("Int::nvalues");
+        }
     }
 
-    ViewArray<IntView> xv(home,x);
+    void
+    nvalues(Home home, const IntVarArgs& x, IntRelType irt, IntVar y, IntPropLevel) {
+        using namespace Int;
+        // Due to the quadratic Boolean matrix used in propagation
+        long long int n = x.size();
+        Limits::check(n * n, "Int::nvalues");
 
-    switch (irt) {
-    case IRT_EQ:
-      GECODE_ES_FAIL(NValues::EqInt<IntView>::post(home,xv,y));
-      break;
-    case IRT_NQ:
-      {
-        IntVar z(home,0,x.size());
-        GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,y,z)));
-        GECODE_ES_FAIL(NValues::EqInt<IntView>::post(home,xv,z));
-      }
-      break;
-    case IRT_LE:
-      {
-        OffsetView z(y,-1);
-        GECODE_ES_FAIL(NValues::LqInt<OffsetView>::post(home,xv,z));
-      }
-      break;
-    case IRT_LQ:
-      GECODE_ES_FAIL(NValues::LqInt<IntView>::post(home,xv,y));
-      break;
-    case IRT_GR:
-      {
-        OffsetView z(y,1);
-        GECODE_ES_FAIL(NValues::GqInt<OffsetView>::post(home,xv,z));
-      }
-      break;
-    case IRT_GQ:
-      GECODE_ES_FAIL(NValues::GqInt<IntView>::post(home,xv,y));
-      break;
-    default:
-      throw UnknownRelation("Int::nvalues");
-    }
-  }
+        GECODE_POST;
 
-  void
-  nvalues(Home home, const BoolVarArgs& x, IntRelType irt, int y,
-          IntPropLevel) {
-    using namespace Int;
-    Limits::check(y,"Int::nvalues");
+        if (y.assigned()) {
+            nvalues(home, x, irt, y.val());
+            return;
+        }
 
-    GECODE_POST;
+        ViewArray<IntView> xv(home, x);
 
-    Region region;
-    ViewArray<BoolView> xv(region,x);
-
-    switch (irt) {
-    case IRT_EQ:
-      {
-        ConstIntView yv(y);
-        GECODE_ES_FAIL(NValues::EqBool<ConstIntView>::post(home,xv,yv));
-      }
-      break;
-    case IRT_NQ:
-      {
-        IntVar z(home,0,2);
-        GECODE_ME_FAIL(IntView(z).nq(home,y));
-        GECODE_ES_FAIL(NValues::EqBool<IntView>::post(home,xv,z));
-      }
-      break;
-    case IRT_LE:
-      y--;
-      // Fall through
-    case IRT_LQ:
-      {
-        ConstIntView yv(y);
-        GECODE_ES_FAIL(NValues::LqBool<ConstIntView>::post(home,xv,yv));
-      }
-      break;
-    case IRT_GR:
-      y++;
-      // Fall through
-    case IRT_GQ:
-      {
-        ConstIntView yv(y);
-        GECODE_ES_FAIL(NValues::GqBool<ConstIntView>::post(home,xv,yv));
-      }
-      break;
-    default:
-      throw UnknownRelation("Int::nvalues");
-    }
-  }
-
-  void
-  nvalues(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y,
-          IntPropLevel) {
-    using namespace Int;
-
-    GECODE_POST;
-
-    if (y.assigned()) {
-      nvalues(home, x, irt, y.val());
-      return;
+        switch (irt) {
+        case IRT_EQ:
+            GECODE_ES_FAIL(NValues::EqInt<IntView>::post(home, xv, y));
+            break;
+        case IRT_NQ: {
+            IntVar z(home, 0, x.size());
+            GECODE_ES_FAIL((Rel::Nq<IntView, IntView>::post(home, y, z)));
+            GECODE_ES_FAIL(NValues::EqInt<IntView>::post(home, xv, z));
+        } break;
+        case IRT_LT: {
+            OffsetView z(y, -1);
+            GECODE_ES_FAIL(NValues::LqInt<OffsetView>::post(home, xv, z));
+        } break;
+        case IRT_LQ:
+            GECODE_ES_FAIL(NValues::LqInt<IntView>::post(home, xv, y));
+            break;
+        case IRT_GR: {
+            OffsetView z(y, 1);
+            GECODE_ES_FAIL(NValues::GqInt<OffsetView>::post(home, xv, z));
+        } break;
+        case IRT_GQ:
+            GECODE_ES_FAIL(NValues::GqInt<IntView>::post(home, xv, y));
+            break;
+        default:
+            throw UnknownRelation("Int::nvalues");
+        }
     }
 
-    Region region;
-    ViewArray<BoolView> xv(region,x);
+    void
+    nvalues(Home home, const BoolVarArgs& x, IntRelType irt, int y, IntPropLevel) {
+        using namespace Int;
+        Limits::check(y, "Int::nvalues");
 
-    switch (irt) {
-    case IRT_EQ:
-      GECODE_ES_FAIL(NValues::EqBool<IntView>::post(home,xv,y));
-      break;
-    case IRT_NQ:
-      {
-        IntVar z(home,0,2);
-        GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,y,z)));
-        GECODE_ES_FAIL(NValues::EqBool<IntView>::post(home,xv,z));
-      }
-      break;
-    case IRT_LE:
-      {
-        OffsetView z(y,-1);
-        GECODE_ES_FAIL(NValues::LqBool<OffsetView>::post(home,xv,z));
-      }
-      break;
-    case IRT_LQ:
-      GECODE_ES_FAIL(NValues::LqBool<IntView>::post(home,xv,y));
-      break;
-    case IRT_GR:
-      {
-        OffsetView z(y,1);
-        GECODE_ES_FAIL(NValues::GqBool<OffsetView>::post(home,xv,z));
-      }
-      break;
-    case IRT_GQ:
-      GECODE_ES_FAIL(NValues::GqBool<IntView>::post(home,xv,y));
-      break;
-    default:
-      throw UnknownRelation("Int::nvalues");
+        GECODE_POST;
+
+        Region region;
+        ViewArray<BoolView> xv(region, x);
+
+        switch (irt) {
+        case IRT_EQ: {
+            ConstIntView yv(y);
+            GECODE_ES_FAIL(NValues::EqBool<ConstIntView>::post(home, xv, yv));
+        } break;
+        case IRT_NQ: {
+            IntVar z(home, 0, 2);
+            GECODE_ME_FAIL(IntView(z).nq(home, y));
+            GECODE_ES_FAIL(NValues::EqBool<IntView>::post(home, xv, z));
+        } break;
+        case IRT_LT:
+            y--;
+            // Fall through
+        case IRT_LQ: {
+            ConstIntView yv(y);
+            GECODE_ES_FAIL(NValues::LqBool<ConstIntView>::post(home, xv, yv));
+        } break;
+        case IRT_GR:
+            y++;
+            // Fall through
+        case IRT_GQ: {
+            ConstIntView yv(y);
+            GECODE_ES_FAIL(NValues::GqBool<ConstIntView>::post(home, xv, yv));
+        } break;
+        default:
+            throw UnknownRelation("Int::nvalues");
+        }
     }
-  }
 
-}
+    void
+    nvalues(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y, IntPropLevel) {
+        using namespace Int;
+
+        GECODE_POST;
+
+        if (y.assigned()) {
+            nvalues(home, x, irt, y.val());
+            return;
+        }
+
+        Region region;
+        ViewArray<BoolView> xv(region, x);
+
+        switch (irt) {
+        case IRT_EQ:
+            GECODE_ES_FAIL(NValues::EqBool<IntView>::post(home, xv, y));
+            break;
+        case IRT_NQ: {
+            IntVar z(home, 0, 2);
+            GECODE_ES_FAIL((Rel::Nq<IntView, IntView>::post(home, y, z)));
+            GECODE_ES_FAIL(NValues::EqBool<IntView>::post(home, xv, z));
+        } break;
+        case IRT_LT: {
+            OffsetView z(y, -1);
+            GECODE_ES_FAIL(NValues::LqBool<OffsetView>::post(home, xv, z));
+        } break;
+        case IRT_LQ:
+            GECODE_ES_FAIL(NValues::LqBool<IntView>::post(home, xv, y));
+            break;
+        case IRT_GR: {
+            OffsetView z(y, 1);
+            GECODE_ES_FAIL(NValues::GqBool<OffsetView>::post(home, xv, z));
+        } break;
+        case IRT_GQ:
+            GECODE_ES_FAIL(NValues::GqBool<IntView>::post(home, xv, y));
+            break;
+        default:
+            throw UnknownRelation("Int::nvalues");
+        }
+    }
+
+} // namespace Gecode
 
 // STATISTICS: int-post
-

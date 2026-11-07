@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,15 +37,16 @@
 
 #include <gecode/support.hh>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
-  unsigned int hwrnd(void) {
-    unsigned int r;
-    (void) rand_s(&r);
-    return r;
-  }
+    unsigned int
+    hwrnd() {
+        unsigned int r;
+        (void)rand_s(&r);
+        return r;
+    }
 
-}}
+} // namespace Gecode::Support
 
 #else
 
@@ -54,20 +54,20 @@ namespace Gecode { namespace Support {
 
 #include <fstream>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
-  unsigned int hwrnd(void) {
-    std::fstream devrandom;
-    devrandom.open("/dev/random", std::fstream::in);
-    unsigned int rnd;
-    devrandom.read(reinterpret_cast<char*>(&rnd),sizeof(unsigned int));
-    devrandom.close();
-    return rnd;
-  }
+    unsigned int
+    hwrnd() {
+        std::fstream devrandom;
+        devrandom.open("/dev/random", std::fstream::in);
+        unsigned int rnd;
+        devrandom.read(reinterpret_cast<char*>(&rnd), sizeof(unsigned int));
+        devrandom.close();
+        return rnd;
+    }
 
-}}
+} // namespace Gecode::Support
 
 #endif
 
 // STATISTICS: support-any
-

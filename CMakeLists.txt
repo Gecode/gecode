@@ -4,7 +4,12 @@
 
 cmake_minimum_required(VERSION 3.21)
 
-project(GECODE LANGUAGES C CXX)
+project(GECODE VERSION 6.5.0 LANGUAGES C CXX)
+
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Shared-library ABI version, updated separately from the release version.
+set(GECODE_SOVERSION 52)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake_modules)
@@ -21,7 +26,7 @@ endif()
 set(OpenGL_GL_PREFERENCE LEGACY)
 
 # ---------------------------------------------------------------------------
-# Build options (configure/autoconf parity-oriented)
+# Build options
 # ---------------------------------------------------------------------------
 # Legacy aliases are translated after option() initialization so they also
 # override stale cache values from previous configure runs.
@@ -243,7 +248,7 @@ if(GECODE_SANITIZER_NORMALIZED)
   endif()
 endif()
 
-# Keep dependency closure behavior similar to configure.
+# Enable the dependencies required by higher-level modules.
 if(GECODE_ENABLE_SET_VARS)
   gecode_force_option_on(GECODE_ENABLE_INT_VARS "Set variables require int variables")
 endif()
@@ -608,125 +613,60 @@ endif()
 # ---------------------------------------------------------------------------
 # Configure-time metadata and config.hpp generation
 # ---------------------------------------------------------------------------
-file(READ gecode/support/config.hpp.in CONFIG)
-string(REGEX REPLACE "^/\\*([^*]|\\*[^/])*\\*/" "" CONFIG ${CONFIG})
-string(REGEX MATCHALL "[^\n]*\n" CONFIG
-"${CONFIG}
-/* Define to 1 if you have a working `mmap' system call. */
-#undef HAVE_MMAP
-
-/* Whether legacy MSVC automatic library selection is disabled. */
-#undef GECODE_NO_AUTOLINK
-
-/* Define to the address where bug reports for this package should be sent. */
-#undef PACKAGE_BUGREPORT
-
-/* Define to the full name of this package. */
-#undef PACKAGE_NAME
-
-/* Define to the full name and version of this package. */
-#undef PACKAGE_STRING
-
-/* Define to the one symbol short name of this package. */
-#undef PACKAGE_TARNAME
-
-/* Define to the home page for this package. */
-#undef PACKAGE_URL
-
-/* Define to the version of this package. */
-#undef PACKAGE_VERSION
-")
-
-set(GECODE_VERSION_METADATA_FILE "${CMAKE_CURRENT_SOURCE_DIR}/gecode-version.m4")
-if(NOT EXISTS "${GECODE_VERSION_METADATA_FILE}")
-  message(FATAL_ERROR "Missing version metadata file: ${GECODE_VERSION_METADATA_FILE}")
-endif()
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-  "${GECODE_VERSION_METADATA_FILE}")
-file(READ "${GECODE_VERSION_METADATA_FILE}" GECODE_VERSION_METADATA)
-
-function(gecode_extract_version_metadata macro_name output_var)
-  string(REGEX MATCH "m4_define\\(\\[${macro_name}\\], *\\[([^]]+)\\]\\)" _match
-    "${GECODE_VERSION_METADATA}")
-  if(NOT _match)
-    message(FATAL_ERROR
-      "Could not parse ${macro_name} from ${GECODE_VERSION_METADATA_FILE}")
-  endif()
-  set(${output_var} "${CMAKE_MATCH_1}" PARENT_SCOPE)
-endfunction()
-
-gecode_extract_version_metadata("GECODE_M4_VERSION" VERSION)
-gecode_extract_version_metadata("GECODE_M4_SOVERSION" GECODE_SOVERSION)
-
-set(PACKAGE "GECODE")
-set(PACKAGE_BUGREPORT "users@gecode.dev")
-
-set(PACKAGE_NAME ${PACKAGE})
-string(TOLOWER ${PACKAGE} PACKAGE_TARNAME)
-set(PACKAGE_URL "")
-set(PACKAGE_VERSION ${VERSION})
-set(${PACKAGE}_VERSION ${VERSION})
+set(VERSION "${PROJECT_VERSION}")
 set(GECODE_PROJECT_VERSION ${VERSION})
-string(REPLACE "." "-" GECODE_LIBRARY_VERSION "${VERSION}")
-set(PACKAGE_STRING "${PACKAGE} ${VERSION}")
 if(VERSION MATCHES "(.*)\\.(.*)\\.(.*)")
   math(EXPR GECODE_VERSION_NUMBER
     "${CMAKE_MATCH_1} * 100000 + ${CMAKE_MATCH_2} * 100 + ${CMAKE_MATCH_3}")
 endif()
 
-set(GECODE_DLL_USERPREFIX "${GECODE_LIB_PREFIX}")
-set(GECODE_DLL_USERSUFFIX "${GECODE_LIB_SUFFIX}")
-# CMake consumers link explicitly, either through the exported targets or by
-# naming the installed libraries.  Keep the installed headers from also
-# injecting the legacy, Autoconf-specific MSVC library names.
-set(GECODE_NO_AUTOLINK 1)
 if(GECODE_ENABLE_INT_VARS)
-  set(GECODE_HAS_INT_VARS "/**/")
+  set(GECODE_HAS_INT_VARS 1)
 endif()
 if(GECODE_ENABLE_SET_VARS)
-  set(GECODE_HAS_SET_VARS "/**/")
+  set(GECODE_HAS_SET_VARS 1)
 endif()
 if(GECODE_ENABLE_FLOAT_VARS)
-  set(GECODE_HAS_FLOAT_VARS "/**/")
+  set(GECODE_HAS_FLOAT_VARS 1)
 endif()
 if(GECODE_BUILD_STATIC)
   set(GECODE_STATIC_LIBS 1)
 endif()
 if(GECODE_ENABLE_ALLOCATOR)
-  set(GECODE_ALLOCATOR "/**/")
+  set(GECODE_ALLOCATOR 1)
 endif()
 if(GECODE_ENABLE_AUDIT)
-  set(GECODE_AUDIT "/**/")
+  set(GECODE_AUDIT 1)
 endif()
 if(GECODE_ENABLE_FAULT_INJECTION)
   set(GECODE_HAS_FAULT_INJECTION 1)
 endif()
 if(GECODE_ENABLE_CPPROFILER)
-  set(GECODE_HAS_CPPROFILER "/**/")
+  set(GECODE_HAS_CPPROFILER 1)
 endif()
 if(GECODE_ENABLE_EXPERIMENTAL)
-  set(GECODE_HAS_EXPERIMENTAL "/**/")
+  set(GECODE_HAS_EXPERIMENTAL 1)
 endif()
 if(GECODE_ENABLE_CBS)
-  set(GECODE_HAS_CBS "/**/")
+  set(GECODE_HAS_CBS 1)
 endif()
 if(GECODE_ENABLE_MPFR AND MPFR_FOUND AND GECODE_ENABLE_FLOAT_VARS)
-  set(GECODE_HAS_MPFR "/**/")
+  set(GECODE_HAS_MPFR 1)
 endif()
 if(GECODE_EFFECTIVE_ENABLE_GCC_VISIBILITY AND HAVE_VISIBILITY_HIDDEN_FLAG)
-  set(GECODE_GCC_HAS_CLASS_VISIBILITY "/**/")
+  set(GECODE_GCC_HAS_CLASS_VISIBILITY 1)
 endif()
 if(GECODE_ENABLE_THREAD)
   set(GECODE_HAS_THREADS 1)
 endif()
 if(APPLE AND GECODE_ENABLE_THREAD AND GECODE_ENABLE_OSX_UNFAIR_MUTEX)
-  set(GECODE_USE_OSX_UNFAIR_MUTEX "/**/")
+  set(GECODE_USE_OSX_UNFAIR_MUTEX 1)
 endif()
 if(GECODE_HAS_QT_RUNTIME)
-  set(GECODE_HAS_QT "/**/")
+  set(GECODE_HAS_QT 1)
 endif()
 if(GECODE_BUILD_GIST_TARGET)
-  set(GECODE_HAS_GIST "/**/")
+  set(GECODE_HAS_GIST 1)
 endif()
 if(GECODE_FREELIST32_SIZE_MAX)
   set(GECODE_FREELIST_SIZE_MAX32 ${GECODE_FREELIST32_SIZE_MAX})
@@ -737,17 +677,6 @@ endif()
 
 include(CheckSymbolExists)
 check_symbol_exists(mmap sys/mman.h HAVE_MMAP)
-
-include(CheckCSourceCompiles)
-check_c_source_compiles("inline __attribute__ ((__always_inline__)) void foo(void) {}\nint main() {}" HAVE_ALWAYS_INLINE)
-check_c_source_compiles("__forceinline void foo(void) {}\nint main() {}" HAVE_FORCE_INLINE)
-set(forceinline inline)
-if(HAVE_ALWAYS_INLINE)
-  set(forceinline "inline __attribute__ ((__always_inline__))")
-endif()
-if(HAVE_FORCE_INLINE)
-  set(forceinline "__forceinline")
-endif()
 
 include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("#include <spawn.h>
@@ -781,15 +710,6 @@ if((GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT AND
   set(GECODE_HAS_POSIX_BLACKBOX_EXEC 1)
 endif()
 
-check_c_source_compiles("int main() { return __builtin_ffsll(0); }" HAVE_BUILTIN_FFSLL)
-if(HAVE_BUILTIN_FFSLL)
-  set(GECODE_HAS_BUILTIN_FFSLL "/**/")
-endif()
-check_c_source_compiles("int main() { return __builtin_popcountll(0); }" HAVE_BUILTIN_POPCOUNTLL)
-if(HAVE_BUILTIN_POPCOUNTLL)
-  set(GECODE_HAS_BUILTIN_POPCOUNTLL "/**/")
-endif()
-
 if(GECODE_ENABLE_MIMALLOC)
   if(NOT GECODE_ENABLE_ALLOCATOR)
     message(FATAL_ERROR "GECODE_ENABLE_MIMALLOC requires GECODE_ENABLE_ALLOCATOR=ON")
@@ -799,48 +719,14 @@ if(GECODE_ENABLE_MIMALLOC)
   endif()
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/GecodeMimalloc.cmake)
   gecode_configure_mimalloc()
+  set(GECODE_MIMALLOC 1)
 endif()
 
-# Process config.hpp using autoconf-like undef handling.
-list(LENGTH CONFIG length)
-math(EXPR length "${length} - 1")
-foreach(i RANGE ${length})
-  list(GET CONFIG ${i} line)
-  if(line MATCHES "^#( *)undef (.*)\n")
-    set(space "${CMAKE_MATCH_1}")
-    set(var ${CMAKE_MATCH_2})
-    if(NOT DEFINED ${var} OR (var MATCHES "HAVE_.*" AND NOT ${var}))
-      set(line "/* #${space}undef ${var} */\n")
-    else()
-      if("${${var}}" STREQUAL "/**/" OR "${var}" STREQUAL "GECODE_VERSION_NUMBER" OR
-         "${var}" STREQUAL "forceinline" OR var MATCHES "SIZEOF_.*")
-        set(value ${${var}})
-      elseif(NOT (var MATCHES ^HAVE OR ${var} EQUAL 0 OR ${var} EQUAL 1))
-        set(value \"${${var}}\")
-      elseif(${var})
-        set(value 1)
-      else()
-        set(value 0)
-      endif()
-      set(line "#${space}define ${var} ${value}\n")
-    endif()
-  endif()
-  string(REPLACE "<semi>" ";" line "${line}")
-  set(CONFIG_OUT "${CONFIG_OUT}${line}")
-endforeach()
-
-if(GECODE_ENABLE_MIMALLOC)
-  string(APPEND CONFIG_OUT "\n/* Use the private mimalloc backend (CMake only). */\n#define GECODE_MIMALLOC 1\n")
-endif()
-
-file(CONFIGURE OUTPUT "${GECODE_BINARY_DIR}/gecode/support/config.hpp" CONTENT
-"/* gecode/support/config.hpp.  Generated from config.hpp.in by configure.  */
-/* gecode/support/config.hpp.in.  Generated from configure.ac by autoheader.  */
-
-${CONFIG_OUT}")
+# Fill the configuration template with detected features and build options.
+configure_file(gecode/support/config.hpp.in "${GECODE_BINARY_DIR}/gecode/support/config.hpp" @ONLY)
 
 # ---------------------------------------------------------------------------
-# Native source inventory for CMake (decoupled from Makefile.in).
+# Source inventory
 # ---------------------------------------------------------------------------
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/GecodeSources.cmake)
 if(GECODE_ENABLE_FAULT_INJECTION)
@@ -849,7 +735,7 @@ if(GECODE_ENABLE_FAULT_INJECTION)
 endif()
 
 # ---------------------------------------------------------------------------
-# Generated variable implementations (in-source, matching Makefile behavior)
+# Variable implementation headers (regenerated in the build directory)
 # ---------------------------------------------------------------------------
 set(GECODE_VIS_FILES)
 if(GECODE_ENABLE_INT_VARS)
@@ -928,7 +814,7 @@ if(GECODE_REGENERATE_VARIMP)
       -DOUT_FILE=${GECODE_VAR_TYPE_HPP}
       -DVIS_FILES_SERIALIZED=${GECODE_VIS_FILES_SERIALIZED}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateVarImp.cmake
-    DEPENDS ${GECODE_VIS_DEPENDS} ${CMAKE_CURRENT_SOURCE_DIR}/misc/genvarimp.py ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt ${CMAKE_CURRENT_SOURCE_DIR}/configure.ac
+    DEPENDS ${GECODE_VIS_DEPENDS} ${CMAKE_CURRENT_SOURCE_DIR}/misc/genvarimp.py ${CMAKE_CURRENT_SOURCE_DIR}/.clang-format ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
   )
@@ -941,7 +827,7 @@ if(GECODE_REGENERATE_VARIMP)
       -DOUT_FILE=${GECODE_VAR_IMP_HPP}
       -DVIS_FILES_SERIALIZED=${GECODE_VIS_FILES_SERIALIZED}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateVarImp.cmake
-    DEPENDS ${GECODE_VIS_DEPENDS} ${CMAKE_CURRENT_SOURCE_DIR}/misc/genvarimp.py ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt ${CMAKE_CURRENT_SOURCE_DIR}/configure.ac
+    DEPENDS ${GECODE_VIS_DEPENDS} ${CMAKE_CURRENT_SOURCE_DIR}/misc/genvarimp.py ${CMAKE_CURRENT_SOURCE_DIR}/.clang-format ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
   )
@@ -949,6 +835,18 @@ if(GECODE_REGENERATE_VARIMP)
 else()
   add_custom_target(gecode-varimp-gen)
 endif()
+
+if(PROJECT_IS_TOP_LEVEL)
+  include(cmake/GecodeChecks.cmake)
+endif()
+
+# Regenerate the checked-in parser and variable headers with pinned tools.
+add_custom_target(regenerate
+  COMMAND bash "${CMAKE_CURRENT_SOURCE_DIR}/.github/ci/generated-source-freshness.sh" --update
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  USES_TERMINAL
+  VERBATIM
+)
 
 # ---------------------------------------------------------------------------
 # Doxygen documentation
@@ -1022,7 +920,7 @@ foreach(input ${GECODE_DOC_SOURCE_INPUTS})
   endif()
 endforeach()
 list(APPEND GECODE_DOC_HELPER_INPUTS ${GECODE_VAR_TYPE_HPP} ${GECODE_VAR_IMP_HPP})
-list(FILTER GECODE_DOC_HELPER_INPUTS EXCLUDE REGEX "/gecode/(third-party|gist/standalone-example|flatzinc/exampleplugin)/")
+list(FILTER GECODE_DOC_HELPER_INPUTS EXCLUDE REGEX "/gecode/(gist/standalone-example|flatzinc/exampleplugin)/")
 list(FILTER GECODE_DOC_HELPER_INPUTS EXCLUDE REGEX "/gecode/flatzinc/(parser\\.tab|lexer\\.)")
 list(REMOVE_DUPLICATES GECODE_DOC_HELPER_INPUTS)
 
@@ -1169,7 +1067,7 @@ function(add_gecode_component_library lib)
   endif()
   set(component_output_name "${GECODE_LIB_PREFIX}gecode${lib}${GECODE_LIB_SUFFIX}")
   if(lib STREQUAL "float" AND NOT (GECODE_ENABLE_MPFR AND MPFR_FOUND))
-    # Keep in sync with Make behavior: skip empty MPFR-only source when MPFR is absent.
+    # Skip the MPFR-only source when MPFR is absent.
     list(REMOVE_ITEM sources "gecode/float/rounding.cpp")
   endif()
 
@@ -1179,10 +1077,8 @@ function(add_gecode_component_library lib)
 
   if(GECODE_BUILD_SHARED)
     add_library(gecode${lib}_shared SHARED ${sources})
-    target_compile_definitions(gecode${lib}_shared
-      PUBLIC GECODE_NO_AUTOLINK
-      PRIVATE GECODE_BUILD_${libupper})
-    target_compile_features(gecode${lib}_shared PUBLIC cxx_std_17)
+    target_compile_definitions(gecode${lib}_shared PRIVATE GECODE_BUILD_${libupper})
+    target_compile_features(gecode${lib}_shared PUBLIC cxx_std_23)
     target_include_directories(gecode${lib}_shared
       PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
@@ -1211,10 +1107,8 @@ function(add_gecode_component_library lib)
 
   if(GECODE_BUILD_STATIC)
     add_library(gecode${lib}_static STATIC ${sources})
-    target_compile_definitions(gecode${lib}_static
-      PUBLIC GECODE_NO_AUTOLINK
-      PRIVATE GECODE_BUILD_${libupper})
-    target_compile_features(gecode${lib}_static PUBLIC cxx_std_17)
+    target_compile_definitions(gecode${lib}_static PRIVATE GECODE_BUILD_${libupper})
+    target_compile_features(gecode${lib}_static PUBLIC cxx_std_23)
     target_include_directories(gecode${lib}_static
       PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
@@ -1496,11 +1390,11 @@ if(BUILD_TESTING)
   if(GECODE_ENABLE_FLATZINC)
     add_executable(gecode-test-blackbox-exec
       ${GECODE_TEST_BLACKBOX_EXEC_SOURCE})
-    target_compile_features(gecode-test-blackbox-exec PRIVATE cxx_std_17)
+    target_compile_features(gecode-test-blackbox-exec PRIVATE cxx_std_23)
 
     add_library(gecode-test-blackbox-dll SHARED
       ${GECODE_TEST_BLACKBOX_DLL_SOURCE})
-    target_compile_features(gecode-test-blackbox-dll PRIVATE cxx_std_17)
+    target_compile_features(gecode-test-blackbox-dll PRIVATE cxx_std_23)
   endif()
 
   set(GECODE_TEST_SOURCES_SELECTED ${GECODE_TEST_SOURCES})
@@ -1708,6 +1602,12 @@ endif()
 
 if(GECODE_ENABLE_EXAMPLES)
   add_subdirectory(examples)
+  if(GECODE_BUILD_GIST_TARGET)
+    add_subdirectory(gecode/gist/standalone-example)
+  endif()
+  if(GECODE_ENABLE_FLATZINC AND GECODE_HAS_QT_RUNTIME AND GECODE_BUILD_SHARED)
+    add_subdirectory(gecode/flatzinc/exampleplugin)
+  endif()
 endif()
 
 # ---------------------------------------------------------------------------
@@ -1741,7 +1641,6 @@ if(GECODE_INSTALL)
     FILES_MATCHING
       PATTERN "**.hh"
       PATTERN "**.hpp"
-      PATTERN "LICENSE_1_0.txt"
       PATTERN "mznlib" EXCLUDE
       PATTERN "flatzinc/registry-internal.hh" EXCLUDE
       PATTERN "flatzinc/blackbox.hh" EXCLUDE

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -43,292 +42,291 @@
  * \brief Float branchers
  */
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
-  /**
-   * \defgroup FuncFloatViewSel Merit-based float view selection for branchers
-   *
-   * Contains merit-based view selection strategies on float
-   * views that can be used together with the generic view/value
-   * brancher classes.
-   *
-   * All merit-based float view selection classes require
-   * \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup Other
-   */
+    /**
+     * \defgroup FuncFloatViewSel Merit-based float view selection for branchers
+     *
+     * Contains merit-based view selection strategies on float
+     * views that can be used together with the generic view/value
+     * brancher classes.
+     *
+     * All merit-based float view selection classes require
+     * \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup Other
+     */
 
-  /**
-   * \brief Merit class for minimum
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatViewSel
-   */
-  class MeritMin : public MeritBase<FloatView,double> {
-  public:
-    /// Constructor for initialization
-    MeritMin(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritMin(Space& home, MeritMin& m);
-    /// Return minimum as merit for view \a x at position \a i
-    double operator ()(const Space& home, FloatView x, int i);
-  };
+    /**
+     * \brief Merit class for minimum
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatViewSel
+     */
+    class MeritMin : public MeritBase<FloatView, double> {
+    public:
+        /// Constructor for initialization
+        MeritMin(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritMin(Space& home, MeritMin& m);
+        /// Return minimum as merit for view \a x at position \a i
+        double operator()(const Space& home, FloatView x, int i);
+    };
 
-  /**
-   * \brief Merit class for maximum of float view
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatViewSel
-   */
-  class MeritMax : public MeritBase<FloatView,double> {
-  public:
-    /// Constructor for initialization
-    MeritMax(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritMax(Space& home, MeritMax& m);
-    /// Return maximum as merit for view \a x at position \a i
-    double operator ()(const Space& home, FloatView x, int i);
-  };
+    /**
+     * \brief Merit class for maximum of float view
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatViewSel
+     */
+    class MeritMax : public MeritBase<FloatView, double> {
+    public:
+        /// Constructor for initialization
+        MeritMax(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritMax(Space& home, MeritMax& m);
+        /// Return maximum as merit for view \a x at position \a i
+        double operator()(const Space& home, FloatView x, int i);
+    };
 
-  /**
-   * \brief Merit class for size of float view
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatViewSel
-   */
-  class MeritSize : public MeritBase<FloatView,double> {
-  public:
-    /// Constructor for initialization
-    MeritSize(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritSize(Space& home, MeritSize& m);
-    /// Return size as merit for view \a x at position \a i
-    double operator ()(const Space& home, FloatView x, int i);
-  };
+    /**
+     * \brief Merit class for size of float view
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatViewSel
+     */
+    class MeritSize : public MeritBase<FloatView, double> {
+    public:
+        /// Constructor for initialization
+        MeritSize(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritSize(Space& home, MeritSize& m);
+        /// Return size as merit for view \a x at position \a i
+        double operator()(const Space& home, FloatView x, int i);
+    };
 
-  /**
-   * \brief Merit class for degree over size
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatViewSel
-   */
-  class MeritDegreeSize : public MeritBase<FloatView,double> {
-  public:
-    /// Constructor for initialization
-    MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritDegreeSize(Space& home, MeritDegreeSize& m);
-    /// Return degree over size as merit for view \a x at position \a i
-    double operator ()(const Space& home, FloatView x, int i);
-  };
+    /**
+     * \brief Merit class for degree over size
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatViewSel
+     */
+    class MeritDegreeSize : public MeritBase<FloatView, double> {
+    public:
+        /// Constructor for initialization
+        MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritDegreeSize(Space& home, MeritDegreeSize& m);
+        /// Return degree over size as merit for view \a x at position \a i
+        double operator()(const Space& home, FloatView x, int i);
+    };
 
-  /**
-   * \brief Merit class for AFC over size
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatViewSel
-   */
-  class MeritAFCSize : public MeritBase<FloatView,double> {
-  protected:
-    /// AFC information
-    AFC afc;
-  public:
-    /// Constructor for initialization
-    MeritAFCSize(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritAFCSize(Space& home, MeritAFCSize& m);
-    /// Return AFC over size as merit for view \a x at position \a i
-    double operator ()(const Space& home, FloatView x, int i);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Dispose view selection
-    void dispose(Space& home);
-  };
+    /**
+     * \brief Merit class for AFC over size
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatViewSel
+     */
+    class MeritAFCSize : public MeritBase<FloatView, double> {
+    protected:
+        /// AFC information
+        AFC afc;
 
-  /**
-   * \brief Merit class for action over size
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatViewSel
-   */
-  class MeritActionSize : public MeritBase<FloatView,double> {
-  protected:
-    /// Action information
-    Action action;
-  public:
-    /// Constructor for initialization
-    MeritActionSize(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritActionSize(Space& home, MeritActionSize& m);
-    /// Return action over size as merit for view \a x at position \a i
-    double operator ()(const Space& home, FloatView x, int i);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Dispose view selection
-    void dispose(Space& home);
-  };
+    public:
+        /// Constructor for initialization
+        MeritAFCSize(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritAFCSize(Space& home, MeritAFCSize& m);
+        /// Return AFC over size as merit for view \a x at position \a i
+        double operator()(const Space& home, FloatView x, int i);
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Dispose view selection
+        void dispose(Space& home);
+    };
 
-  /**
-   * \brief Merit class for CHB Q-score over size
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatViewSel
-   */
-  class MeritCHBSize : public MeritBase<FloatView,double> {
-  protected:
-    /// CHB information
-    CHB chb;
-  public:
-    /// Constructor for initialization
-    MeritCHBSize(Space& home, const VarBranch<Var>& vb);
-    /// Constructor for cloning
-    MeritCHBSize(Space& home, MeritCHBSize& m);
-    /// Return CHB Q-score over size as merit for view \a x at position \a i
-    double operator ()(const Space& home, FloatView x, int i);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Dispose view selection
-    void dispose(Space& home);
-  };
+    /**
+     * \brief Merit class for action over size
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatViewSel
+     */
+    class MeritActionSize : public MeritBase<FloatView, double> {
+    protected:
+        /// Action information
+        Action action;
 
-}}}
+    public:
+        /// Constructor for initialization
+        MeritActionSize(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritActionSize(Space& home, MeritActionSize& m);
+        /// Return action over size as merit for view \a x at position \a i
+        double operator()(const Space& home, FloatView x, int i);
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Dispose view selection
+        void dispose(Space& home);
+    };
+
+    /**
+     * \brief Merit class for CHB Q-score over size
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatViewSel
+     */
+    class MeritCHBSize : public MeritBase<FloatView, double> {
+    protected:
+        /// CHB information
+        CHB chb;
+
+    public:
+        /// Constructor for initialization
+        MeritCHBSize(Space& home, const VarBranch<Var>& vb);
+        /// Constructor for cloning
+        MeritCHBSize(Space& home, MeritCHBSize& m);
+        /// Return CHB Q-score over size as merit for view \a x at position \a i
+        double operator()(const Space& home, FloatView x, int i);
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Dispose view selection
+        void dispose(Space& home);
+    };
+
+} // namespace Gecode::Float::Branch
 
 #include <gecode/float/branch/merit.hpp>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
-  /// Return view selectors for float views
-  GECODE_FLOAT_EXPORT
-  ViewSel<FloatView>* viewsel(Space& home, const FloatVarBranch& fvb);
+    /// Return view selectors for float views
+    GECODE_FLOAT_EXPORT
+    ViewSel<FloatView>* view_selection(Space& home, const FloatVarBranch& fvb);
 
-}}}
+} // namespace Gecode::Float::Branch
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
-  /**
-   * \defgroup FuncFloatValSel Float value selection for brancher
-   *
-   * Contains a description of value selection strategies on float
-   * views that can be used together with the generic view/value
-   * branchers.
-   *
-   * All value selection classes require
-   * \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup Other
-   */
+    /**
+     * \defgroup FuncFloatValSel Float value selection for brancher
+     *
+     * Contains a description of value selection strategies on float
+     * views that can be used together with the generic view/value
+     * branchers.
+     *
+     * All value selection classes require
+     * \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup Other
+     */
 
-  /**
-   * \brief Value selection class for values smaller than median of view
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatValSel
-   */
-  class ValSelLq : public ValSel<FloatView,FloatNumBranch> {
-  public:
-    /// Constructor for initialization
-    ValSelLq(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelLq(Space& home, ValSelLq& vs);
-    /// Return value of view \a x at position \a i
-    FloatNumBranch val(const Space& home, FloatView x, int i);
-  };
+    /**
+     * \brief Value selection class for values smaller than median of view
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatValSel
+     */
+    class ValSelLq : public ValSel<FloatView, FloatNumBranch> {
+    public:
+        /// Constructor for initialization
+        ValSelLq(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValSelLq(Space& home, ValSelLq& vs);
+        /// Return value of view \a x at position \a i
+        FloatNumBranch val(const Space& home, FloatView x, int i);
+    };
 
-  /**
-   * \brief Value selection class for values smaller than median of view
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatValSel
-   */
-  class ValSelGq : public ValSel<FloatView,FloatNumBranch> {
-  public:
-    /// Constructor for initialization
-    ValSelGq(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelGq(Space& home, ValSelGq& vs);
-    /// Return value of view \a x at position \a i
-    FloatNumBranch val(const Space& home, FloatView x, int i);
-  };
+    /**
+     * \brief Value selection class for values smaller than median of view
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatValSel
+     */
+    class ValSelGq : public ValSel<FloatView, FloatNumBranch> {
+    public:
+        /// Constructor for initialization
+        ValSelGq(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValSelGq(Space& home, ValSelGq& vs);
+        /// Return value of view \a x at position \a i
+        FloatNumBranch val(const Space& home, FloatView x, int i);
+    };
 
-  /**
-   * \brief Value selection class for random value of view
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatValSel
-   */
-  class ValSelRnd : public ValSel<FloatView,FloatNumBranch> {
-  protected:
-    /// The used random number generator
-    Rnd r;
-  public:
-    /// Constructor for initialization
-    ValSelRnd(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelRnd(Space& home, ValSelRnd& vs);
-    /// Return value of view \a x at position \a i
-    FloatNumBranch val(const Space& home, FloatView x, int i);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete value selection
-    void dispose(Space& home);
-  };
+    /**
+     * \brief Value selection class for random value of view
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatValSel
+     */
+    class ValSelRnd : public ValSel<FloatView, FloatNumBranch> {
+    protected:
+        /// The used random number generator
+        Rnd r;
 
-}}}
+    public:
+        /// Constructor for initialization
+        ValSelRnd(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValSelRnd(Space& home, ValSelRnd& vs);
+        /// Return value of view \a x at position \a i
+        FloatNumBranch val(const Space& home, FloatView x, int i);
+        /// Whether dispose must always be called (that is, notice is needed)
+        bool notice() const;
+        /// Delete value selection
+        void dispose(Space& home);
+    };
+
+} // namespace Gecode::Float::Branch
 
 #include <gecode/float/branch/val-sel.hpp>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
-  /**
-   * \defgroup FuncFloatValCommit Float value commit classes
-   *
-   * Contains the value commit classes for float
-   * views that can be used together with the generic view/value
-   * branchers.
-   *
-   * All value commit classes require
-   * \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup Other
-   */
+    /**
+     * \defgroup FuncFloatValCommit Float value commit classes
+     *
+     * Contains the value commit classes for float
+     * views that can be used together with the generic view/value
+     * branchers.
+     *
+     * All value commit classes require
+     * \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup Other
+     */
 
-  /**
-   * \brief Value commit class for less or equal or greater or equal
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatValCommit
-   */
-  class ValCommitLqGq  : public ValCommit<FloatView,FloatVal> {
-  public:
-    /// Constructor for initialization
-    ValCommitLqGq(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValCommitLqGq(Space& home, ValCommitLqGq& vc);
-    /// Commit view \a x at position \a i to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, FloatView x, int i,
-                    FloatNumBranch n);
-    /// Create no-good literal for alternative \a a
-    NGL* ngl(Space& home, unsigned int a, FloatView x, FloatNumBranch n) const;
-    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
-    void print(const Space& home, unsigned int a, FloatView x, int i,
-               FloatNumBranch n,
-               std::ostream& o) const;
-  };
+    /**
+     * \brief Value commit class for less or equal or greater or equal
+     *
+     * Requires \code #include <gecode/float/branch.hh> \endcode
+     * \ingroup FuncFloatValCommit
+     */
+    class ValCommitLqGq : public ValCommit<FloatView, FloatVal> {
+    public:
+        /// Constructor for initialization
+        ValCommitLqGq(Space& home, const ValBranch<Var>& vb);
+        /// Constructor for cloning
+        ValCommitLqGq(Space& home, ValCommitLqGq& vc);
+        /// Commit view \a x at position \a i to value \a n for alternative \a a
+        ModEvent commit(Space& home, unsigned int a, FloatView x, int i, FloatNumBranch n);
+        /// Create no-good literal for alternative \a a
+        NGL* ngl(Space& home, unsigned int a, FloatView x, FloatNumBranch n) const;
+        /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+        void print(const Space& home, unsigned int a, FloatView x, int i, FloatNumBranch n, std::ostream& o) const;
+    };
 
-}}}
+} // namespace Gecode::Float::Branch
 
 #include <gecode/float/branch/val-commit.hpp>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
-  /// Return value and commit for float views
-  GECODE_FLOAT_EXPORT
-  ValSelCommitBase<FloatView,FloatNumBranch>*
-  valselcommit(Space& home, const FloatValBranch& svb);
+    /// Return value and commit for float views
+    GECODE_FLOAT_EXPORT
+    ValSelCommitBase<FloatView, FloatNumBranch>* value_selection_commit(Space& home, const FloatValBranch& svb);
 
-  /// Return value and commit for float views
-  GECODE_FLOAT_EXPORT
-  ValSelCommitBase<FloatView,FloatNumBranch>*
-  valselcommit(Space& home, const FloatAssign& ia);
+    /// Return value and commit for float views
+    GECODE_FLOAT_EXPORT
+    ValSelCommitBase<FloatView, FloatNumBranch>* value_selection_commit(Space& home, const FloatAssign& ia);
 
-}}}
+} // namespace Gecode::Float::Branch
 
 #endif
 

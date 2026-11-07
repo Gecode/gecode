@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,187 +34,250 @@
 
 using namespace Gecode;
 
-namespace Test { namespace Set {
+/// %Tests for set variable conors
+namespace Test::Set::Var {
 
-  /// %Tests for set variable conors
-  namespace Var {
-
-        /// %Test for cardinality constraint
+    /// %Test for cardinality constraint
     class Construct : public SetTest {
     public:
-      /// Create and register test
-      Construct(void)
-        : SetTest("Var::Construct",1,IntSet(0,0),false,0) {}
-      /// %Test whether \a x is solution
-      virtual bool solution(const SetAssignment&) const {
-        return true;
-      }
-      void con(Space& home, int glbMin, int glbMax,
-               int lubMin, int lubMax,
-               unsigned int minCard = 0,
-               unsigned int maxCard = Gecode::Set::Limits::card,
-               bool fail=true) {
-        bool ok = false;
-        try {
-          SetVar x(home, glbMin, glbMax, lubMin, lubMax, minCard, maxCard);
-          ok = true;
-        } catch (Gecode::Set::VariableEmptyDomain&) {
-          if (!fail) {
-            home.fail();
-            return;
-          }
-          ok = true;
+        /// Create and register test
+        Construct() : SetTest("Var::Construct", 1, IntSet(0, 0), false, 0) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const SetAssignment&) const override {
+            return true;
         }
-
-        if (ok) {
-          try {
-            SetVarArray xs(home, 1,
-                           glbMin, glbMax, lubMin, lubMax, minCard, maxCard);
-          } catch (Gecode::Set::VariableEmptyDomain&) {
-            if (!fail) {
-              home.fail();
-              return;
-            } else {
-              return;
+        void
+        con(Space& home, int glb_min, int glb_max, int lub_min, int lub_max, unsigned int min_card = 0,
+            unsigned int max_card = Gecode::Set::Limits::card, bool fail = true) {
+            bool ok = false;
+            try {
+                SetVar x(home, glb_min, glb_max, lub_min, lub_max, min_card, max_card);
+                ok = true;
+            } catch (Gecode::Set::VariableEmptyDomain&) {
+                if (!fail) {
+                    home.fail();
+                    return;
+                }
+                ok = true;
             }
-          }
-          if (fail) {
-            home.fail();
-          }
-        }
-      }
-      void con(Space& home, const IntSet& glb, int lubMin, int lubMax,
-               unsigned int minCard = 0,
-               unsigned int maxCard = Gecode::Set::Limits::card,
-               bool fail=true) {
-        bool ok = false;
-        try {
-          SetVar x(home, glb, lubMin, lubMax, minCard, maxCard);
-          ok = true;
-        } catch (Gecode::Set::VariableEmptyDomain&) {
-          if (!fail) {
-            home.fail();
-            return;
-          }
-          ok = true;
-        }
-        if (ok) {
-          try {
-            SetVarArray xs(home, 1,
-                           glb, lubMin, lubMax, minCard, maxCard);
-          } catch (Gecode::Set::VariableEmptyDomain&) {
-            if (!fail) {
-              home.fail();
-              return;
-            } else {
-              return;
+
+            if (ok) {
+                try {
+                    SetVarArray xs(home, 1, glb_min, glb_max, lub_min, lub_max, min_card, max_card);
+                } catch (Gecode::Set::VariableEmptyDomain&) {
+                    if (!fail) {
+                        home.fail();
+                        return;
+                    }
+                    return;
+                }
+                if (fail) {
+                    home.fail();
+                }
             }
-          }
-          if (fail) {
-            home.fail();
-          }
         }
-      }
-      void con(Space& home, int glbMin, int glbMax, const IntSet& lub,
-               unsigned int minCard = 0,
-               unsigned int maxCard = Gecode::Set::Limits::card,
-               bool fail=true) {
-        bool ok = false;
-        try {
-          SetVar x(home, glbMin, glbMax, lub, minCard, maxCard);
-          ok = true;
-        } catch (Gecode::Set::VariableEmptyDomain&) {
-          if (!fail) {
-            home.fail();
-            return;
-          }
-          ok = true;
-        }
-        if (ok) {
-          try {
-            SetVarArray xs(home, 1,
-                           glbMin, glbMax, lub, minCard, maxCard);
-          } catch (Gecode::Set::VariableEmptyDomain&) {
-            if (!fail) {
-              home.fail();
-              return;
-            } else {
-              return;
+        void
+        con(Space& home, const IntSet& glb, int lub_min, int lub_max, unsigned int min_card = 0,
+            unsigned int max_card = Gecode::Set::Limits::card, bool fail = true) {
+            bool ok = false;
+            try {
+                SetVar x(home, glb, lub_min, lub_max, min_card, max_card);
+                ok = true;
+            } catch (Gecode::Set::VariableEmptyDomain&) {
+                if (!fail) {
+                    home.fail();
+                    return;
+                }
+                ok = true;
             }
-          }
-          if (fail) {
-            home.fail();
-          }
-        }
-      }
-      void con(Space& home, const IntSet& glb, const IntSet& lub,
-               unsigned int minCard = 0,
-               unsigned int maxCard = Gecode::Set::Limits::card,
-               bool fail=true) {
-        bool ok = false;
-        try {
-          SetVar x(home, glb, lub, minCard, maxCard);
-          ok = true;
-        } catch (Gecode::Set::VariableEmptyDomain&) {
-          if (!fail) {
-            home.fail();
-            return;
-          }
-          ok = true;
-        }
-        if (ok) {
-          try {
-            SetVarArray xs(home, 1,
-                           glb, lub, minCard, maxCard);
-          } catch (Gecode::Set::VariableEmptyDomain&) {
-            if (!fail) {
-              home.fail();
-              return;
-            } else {
-              return;
+            if (ok) {
+                try {
+                    SetVarArray xs(home, 1, glb, lub_min, lub_max, min_card, max_card);
+                } catch (Gecode::Set::VariableEmptyDomain&) {
+                    if (!fail) {
+                        home.fail();
+                        return;
+                    }
+                    return;
+                }
+                if (fail) {
+                    home.fail();
+                }
             }
-          }
-          if (fail) {
-            home.fail();
-          }
         }
-      }
-      /// Post constraint on \a x
-      virtual void post(Space& home, SetVarArray&, IntVarArray&) {
-        // Check non-empty lower, empty upper bound
-        con(home, 1,1, 1,0);
-        con(home, IntSet(1,1), 1,0);
-        con(home, 1,1, IntSet(1,0));
-        con(home, IntSet(1,1), IntSet(1,0));
+        void
+        con(Space& home, int glb_min, int glb_max, const IntSet& lub, unsigned int min_card = 0,
+            unsigned int max_card = Gecode::Set::Limits::card, bool fail = true) {
+            bool ok = false;
+            try {
+                SetVar x(home, glb_min, glb_max, lub, min_card, max_card);
+                ok = true;
+            } catch (Gecode::Set::VariableEmptyDomain&) {
+                if (!fail) {
+                    home.fail();
+                    return;
+                }
+                ok = true;
+            }
+            if (ok) {
+                try {
+                    SetVarArray xs(home, 1, glb_min, glb_max, lub, min_card, max_card);
+                } catch (Gecode::Set::VariableEmptyDomain&) {
+                    if (!fail) {
+                        home.fail();
+                        return;
+                    }
+                    return;
+                }
+                if (fail) {
+                    home.fail();
+                }
+            }
+        }
+        void
+        con(Space& home, const IntSet& glb, const IntSet& lub, unsigned int min_card = 0,
+            unsigned int max_card = Gecode::Set::Limits::card, bool fail = true) {
+            bool ok = false;
+            try {
+                SetVar x(home, glb, lub, min_card, max_card);
+                ok = true;
+            } catch (Gecode::Set::VariableEmptyDomain&) {
+                if (!fail) {
+                    home.fail();
+                    return;
+                }
+                ok = true;
+            }
+            if (ok) {
+                try {
+                    SetVarArray xs(home, 1, glb, lub, min_card, max_card);
+                } catch (Gecode::Set::VariableEmptyDomain&) {
+                    if (!fail) {
+                        home.fail();
+                        return;
+                    }
+                    return;
+                }
+                if (fail) {
+                    home.fail();
+                }
+            }
+        }
+        /// Post constraint on \a x
+        void
+        post(Space& home, SetVarArray&, IntVarArray&) override {
+            // Check non-empty lower, empty upper bound
+            con(home, 1, 1, 1, 0);
+            con(home, IntSet(1, 1), 1, 0);
+            con(home, 1, 1, IntSet(1, 0));
+            con(home, IntSet(1, 1), IntSet(1, 0));
 
-        // Check min cardinality
-        con(home, 1,0, 1,1, 2,3);
-        con(home, IntSet(1,0), 1,1, 2U,3U);
-        con(home, 1,0, IntSet(1,1), 2U,3U);
-        con(home, IntSet(1,0), IntSet(1,1), 2U,3U);
+            // Check min cardinality
+            con(home, 1, 0, 1, 1, 2, 3);
+            con(home, IntSet(1, 0), 1, 1, 2U, 3U);
+            con(home, 1, 0, IntSet(1, 1), 2U, 3U);
+            con(home, IntSet(1, 0), IntSet(1, 1), 2U, 3U);
 
-        // Check max cardinality
-        con(home, 1,3, 1,4, 0,2);
-        con(home, IntSet(1,3), 1,4, 0U,2U);
-        con(home, 1,3, IntSet(1,4), 0U,2U);
-        con(home, IntSet(1,3), IntSet(1,4), 0U,2U);
+            // Check max cardinality
+            con(home, 1, 3, 1, 4, 0, 2);
+            con(home, IntSet(1, 3), 1, 4, 0U, 2U);
+            con(home, 1, 3, IntSet(1, 4), 0U, 2U);
+            con(home, IntSet(1, 3), IntSet(1, 4), 0U, 2U);
 
-        // Check non-subset bounds
-        con(home, 1,3, 2,4);
-        con(home, IntSet(1,3), 2,4);
-        con(home, 1,3, IntSet(2,4));
-        con(home, IntSet(1,3), IntSet(2,4));
-        con(home, 1,4, 1,3);
-        con(home, IntSet(1,4), 1,3);
-        con(home, 1,4, IntSet(1,3));
-        con(home, IntSet(1,4), IntSet(1,3));
+            // Check non-subset bounds
+            con(home, 1, 3, 2, 4);
+            con(home, IntSet(1, 3), 2, 4);
+            con(home, 1, 3, IntSet(2, 4));
+            con(home, IntSet(1, 3), IntSet(2, 4));
+            con(home, 1, 4, 1, 3);
+            con(home, IntSet(1, 4), 1, 3);
+            con(home, 1, 4, IntSet(1, 3));
+            con(home, IntSet(1, 4), IntSet(1, 3));
 
-        con(home, IntSet::empty, 2, 4, 0U, 10U, false);
-      }
+            con(home, IntSet::empty, 2, 4, 0U, 10U, false);
+        }
     };
     Construct _con;
 
+    /// %Test for comparing set views
+    class ViewCompare : public ::Test::Base {
+    private:
+        /// Space for the variables behind the views
+        class Fixture : public Gecode::Space {
+        public:
+            Fixture() = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
+            Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+            Gecode::Space*
+            copy() override {
+                return new Fixture(*this);
+            }
+        };
 
-}}}
+    public:
+        /// Create and register test
+        ViewCompare() : ::Test::Base("Set::Var::View::Compare") {}
+        /// Perform test
+        bool
+        run() override {
+            using namespace Gecode::Set;
+            Fixture home;
+            SetView x(SetVar(home, IntSet::empty, 0, 5));
+            SetView y(SetVar(home, IntSet::empty, 0, 5));
+            IntVar i(home, 0, 5);
+            IntVar j(home, 0, 5);
+            ConstSetView c(home, IntSet(1, 3));
+            ComplementView<SetView> cx(x);
+            ComplementView<SetView> cy(y);
+            return compares_equal(c, ConstSetView(home, IntSet(1, 3))) &&
+                   compares_unequal(c, ConstSetView(home, IntSet(1, 4))) && compares_equal(EmptyView(), EmptyView()) &&
+                   compares_equal(UniverseView(), UniverseView()) &&
+                   compares_equal(SingletonView(i), SingletonView(i)) &&
+                   compares_unequal(SingletonView(i), SingletonView(j)) &&
+                   compares_equal(cx, ComplementView<SetView>(x)) && compares_unequal(cx, cy) &&
+                   compares_equal(CachedView<SetView>(x), CachedView<SetView>(x)) &&
+                   compares_unequal(CachedView<SetView>(x), CachedView<SetView>(y));
+        }
+    };
 
+    ViewCompare view_compare;
+
+    /// %Test default construction of value iterators
+    class DefaultValues : public ::Test::Base {
+    private:
+        /// Space for the variable behind the iterators
+        class Fixture : public Gecode::Space {
+        public:
+            Fixture() = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
+            Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+            Gecode::Space*
+            copy() override {
+                return new Fixture(*this);
+            }
+        };
+
+    public:
+        /// Create and register test
+        DefaultValues() : ::Test::Base("Set::Var::DefaultValues") {}
+        /// Perform test
+        bool
+        run() override {
+            using namespace Gecode;
+            Fixture home;
+            SetVar x(home, IntSet(1, 1), IntSet(1, 2));
+            SetVarGlbValues glb;
+            SetVarLubValues lub;
+            SetVarUnknownValues unknown;
+            glb = SetVarGlbValues(x);
+            lub = SetVarLubValues(x);
+            unknown = SetVarUnknownValues(x);
+            return glb() && (glb.val() == 1) && lub() && (lub.val() == 1) && unknown() && (unknown.val() == 2);
+        }
+    };
+
+    DefaultValues default_values;
+
+} // namespace Test::Set::Var
 // STATISTICS: test-set

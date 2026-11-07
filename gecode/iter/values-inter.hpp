@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,96 +30,97 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
-  /**
-   * \brief Value iterator for the intersection of two value iterators
-   *
-   * \ingroup FuncIterValues
-   */
+    /**
+     * \brief Value iterator for the intersection of two value iterators
+     *
+     * \ingroup FuncIterValues
+     */
 
-  template<class I, class J>
-  class Inter  {
-  protected:
-    /// First iterator
-    I i;
-    /// Second iterator
-    J j;
-    /// Find next element from intersection
-    void next(void);
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Inter(void);
-    /// Initialize with values from \a i and \a j
-    Inter(I& i, J& j);
-    /// Initialize with values from \a i and \a j
-    void init(I& i, J& j);
-    //@}
+    template <class I, class J>
+    class Inter {
+    protected:
+        /// First iterator
+        I i;
+        /// Second iterator
+        J j;
+        /// Find next element from intersection
+        void next();
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator ++(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Inter() = default;
+        /// Initialize with values from \a i and \a j
+        Inter(I& i, J& j);
+        /// Initialize with values from \a i and \a j
+        void init(I& i, J& j);
+        //@}
 
-    /// \name Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a value or done
+        bool operator()() const;
+        /// Move iterator to next value (if possible)
+        void operator++();
+        //@}
 
+        /// \name Value access
+        //@{
+        /// Return current value
+        int val() const;
+        //@}
+    };
 
-  template<class I, class J>
-  forceinline
-  Inter<I,J>::Inter(void) {}
+    template <class I, class J>
+    forceinline void
+    Inter<I, J>::next() {
+        do {
+            while (i() && j() && (i.val() < j.val()))
+                ++i;
+            while (i() && j() && (j.val() < i.val()))
+                ++j;
+        } while (i() && j() && (i.val() != j.val()));
+    }
 
-  template<class I, class J>
-  forceinline void
-  Inter<I,J>::next(void) {
-    do {
-      while (i() && j() && (i.val() < j.val()))
+    template <class I, class J>
+    inline void
+    Inter<I, J>::init(I& i0, J& j0) {
+        i = i0;
+        j = j0;
+        next();
+    }
+
+    template <class I, class J>
+    forceinline
+    Inter<I, J>::Inter(I& i0, J& j0)
+        : i(i0), j(j0) {
+        next();
+    }
+
+    template <class I, class J>
+    forceinline void
+    Inter<I, J>::operator++() {
         ++i;
-      while (i() && j() && (j.val() < i.val()))
         ++j;
-    } while (i() && j() && (i.val() != j.val()));
-  }
+        next();
+    }
 
-  template<class I, class J>
-  inline void
-  Inter<I,J>::init(I& i0, J& j0) {
-    i=i0; j=j0; next();
-  }
+    template <class I, class J>
+    forceinline bool
+    Inter<I, J>::operator()() const {
+        return i() && j();
+    }
 
-  template<class I, class J>
-  forceinline
-  Inter<I,J>::Inter(I& i0, J& j0) : i(i0), j(j0) {
-    next();
-  }
+    template <class I, class J>
+    forceinline int
+    Inter<I, J>::val() const {
+        assert(i.val() == j.val());
+        return i.val();
+    }
 
-  template<class I, class J>
-  forceinline void
-  Inter<I,J>::operator ++(void) {
-    ++i; ++j; next();
-  }
-
-  template<class I, class J>
-  forceinline bool
-  Inter<I,J>::operator ()(void) const {
-    return i() && j();
-  }
-
-  template<class I, class J>
-  forceinline int
-  Inter<I,J>::val(void) const {
-    assert(i.val() == j.val());
-    return i.val();
-  }
-
-}}}
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

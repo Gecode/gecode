@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,19 +34,17 @@
 
 namespace Gecode {
 
-  SetAction::SetAction(Home home, const SetVarArgs& x, double d,
-                       bool p, bool f, SetBranchMerit bm) {
-    ViewArray<Set::SetView> y(home,x);
-    Action::init(home,y,d,p,f,bm);
-  }
+    SetAction::SetAction(Home home, const SetVarArgs& x, double d, bool p, bool f, const SetBranchMerit& bm) {
+        ViewArray<Set::SetView> y(home, x);
+        Action::init(home, y, d, p, f, bm);
+    }
 
-  void
-  SetAction::init(Home home, const SetVarArgs& x, double d,
-                  bool p, bool f, SetBranchMerit bm) {
-    ViewArray<Set::SetView> y(home,x);
-    Action::init(home,y,d,p,f,bm);
-  }
+    void
+    SetAction::init(Home home, const SetVarArgs& x, double d, bool p, bool f, const SetBranchMerit& bm) {
+        ViewArray<Set::SetView> y(home, x);
+        Action::init(home, y, d, p, f, bm);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-branch

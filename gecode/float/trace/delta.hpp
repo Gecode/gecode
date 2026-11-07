@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,23 +32,22 @@
 
 namespace Gecode {
 
-  forceinline
-  FloatTraceDelta::FloatTraceDelta(Float::FloatTraceView o,
-                                   Float::FloatView n0,
-                                   const Delta& d0) : n(n0), d(d0) {
-    (void)o;
-  }
+    forceinline
+    FloatTraceDelta::FloatTraceDelta(Float::FloatTraceView o, Float::FloatView n0, const Delta& d0)
+        : n(n0), d(d0) {
+        (void)o;
+    }
 
-  forceinline FloatNum
-  FloatTraceDelta::min(void) const {
-    return n.min(d);
-  }
+    forceinline FloatNum
+    FloatTraceDelta::min() const {
+        return n.min(d);
+    }
 
-  forceinline FloatNum
-  FloatTraceDelta::max(void) const {
-    return n.max(d);
-  }
+    forceinline FloatNum
+    FloatTraceDelta::max() const {
+        return n.max(d);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-trace

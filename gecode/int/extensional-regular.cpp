@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,43 +34,38 @@
 
 namespace Gecode {
 
-  void
-  extensional(Home home, const IntVarArgs& x, DFA dfa,
-              IntPropLevel) {
-    using namespace Int;
-    if (same(x))
-      throw ArgumentSame("Int::extensional");
-    GECODE_POST;
-    GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
-  }
+    void
+    extensional(Home home, const IntVarArgs& x, const DFA& dfa, IntPropLevel) {
+        using namespace Int;
+        if (same(x))
+            throw ArgumentSame("Int::extensional");
+        GECODE_POST;
+        GECODE_ES_FAIL(Extensional::post_lgp(home, x, dfa));
+    }
 
-  void
-  extensional(Home home, const BoolVarArgs& x, DFA dfa,
-              IntPropLevel) {
-    using namespace Int;
-    if (same(x))
-      throw ArgumentSame("Int::extensional");
-    GECODE_POST;
-    GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
-  }
+    void
+    extensional(Home home, const BoolVarArgs& x, const DFA& dfa, IntPropLevel) {
+        using namespace Int;
+        if (same(x))
+            throw ArgumentSame("Int::extensional");
+        GECODE_POST;
+        GECODE_ES_FAIL(Extensional::post_lgp(home, x, dfa));
+    }
 
-  void
-  extensional(Home home, OpenIntVarList list, DFA dfa,
-              IntPropLevel) {
-    GECODE_POST;
-    GECODE_ES_FAIL((Int::Extensional::OpenRegular<Int::IntView,Int::PC_INT_DOM>
-                    ::post(home,OpenViewList<Int::IntView>(list),dfa)));
-  }
+    void
+    extensional(Home home, OpenIntVarList list, const DFA& dfa, IntPropLevel) {
+        GECODE_POST;
+        GECODE_ES_FAIL((Int::Extensional::OpenRegular<Int::IntView, Int::PC_INT_DOM>::post(
+            home, OpenViewList<Int::IntView>(list), dfa)));
+    }
 
-  void
-  extensional(Home home, OpenBoolVarList list, DFA dfa,
-              IntPropLevel) {
-    GECODE_POST;
-    GECODE_ES_FAIL((Int::Extensional::OpenRegular<Int::BoolView,Int::PC_BOOL_VAL>
-                    ::post(home,OpenViewList<Int::BoolView>(list),dfa)));
-  }
+    void
+    extensional(Home home, OpenBoolVarList list, const DFA& dfa, IntPropLevel) {
+        GECODE_POST;
+        GECODE_ES_FAIL((Int::Extensional::OpenRegular<Int::BoolView, Int::PC_BOOL_VAL>::post(
+            home, OpenViewList<Int::BoolView>(list), dfa)));
+    }
 
-}
-
+} // namespace Gecode
 
 // STATISTICS: int-post

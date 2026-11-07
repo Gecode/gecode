@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -49,328 +48,334 @@
  * \namespace Gecode::Float::Rel
  * \brief Simple relation propagators
  */
-namespace Gecode { namespace Float { namespace Rel {
+namespace Gecode::Float::Rel {
 
-  /*
-   * Equality propagators
-   *
-   */
-
-  /**
-   * \brief Binary bounds consistent equality propagator
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class View0, class View1>
-  class Eq :
-    public MixBinaryPropagator<View0,PC_FLOAT_BND,View1,PC_FLOAT_BND> {
-  protected:
-    using MixBinaryPropagator<View0,PC_FLOAT_BND,View1,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<View0,PC_FLOAT_BND,View1,PC_FLOAT_BND>::x1;
-
-    /// Constructor for cloning \a p
-    Eq(Space& home, Eq<View0,View1>& p);
-  public:
-    /// Constructor for posting
-    Eq(Home home, View0 x0, View1 x1);
-    /// Constructor for rewriting \a p during cloning
-    Eq(Space& home, Propagator& p, View0 x0, View1 x1);
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post bounds consistent propagator \f$ x_0 = x_1\f$
-    static  ExecStatus post(Home home, View0 x0, View1 x1);
-  };
-
-  /**
-   * \brief n-ary bounds consistent equality propagator
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class View>
-  class NaryEq : public NaryPropagator<View,PC_FLOAT_BND> {
-  protected:
-    using NaryPropagator<View,PC_FLOAT_BND>::x;
-
-    /// Constructor for cloning \a p
-    NaryEq(Space& home, NaryEq<View>& p);
-    /// Constructor for posting
-    NaryEq(Home home, ViewArray<View>&);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /**
-     * \brief Cost function
+    /*
+     * Equality propagators
      *
-     * If a view has been assigned, the cost is low unary.
-     * Otherwise it is low linear.
      */
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post bounds consistent propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
-    static  ExecStatus post(Home home, ViewArray<View>& x);
-  };
 
-  /**
-   * \brief Reified binary bounds consistent equality propagator
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class View, class CtrlView, ReifyMode rm>
-  class ReEq : public Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView> {
-  protected:
-    using Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView>::x0;
-    using Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView>::x1;
-    using Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView>::b;
+    /**
+     * \brief Binary bounds consistent equality propagator
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class View0, class View1>
+    class Eq : public MixBinaryPropagator<View0, PC_FLOAT_BND, View1, PC_FLOAT_BND> {
+    protected:
+        using MixBinaryPropagator<View0, PC_FLOAT_BND, View1, PC_FLOAT_BND>::x0;
+        using MixBinaryPropagator<View0, PC_FLOAT_BND, View1, PC_FLOAT_BND>::x1;
 
-    /// Constructor for cloning \a p
-    ReEq(Space& home, ReEq& p);
-    /// Constructor for posting
-    ReEq(Home home, View x0, View x1, CtrlView b);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor*     copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post bounds consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
-    static  ExecStatus post(Home home, View x0, View x1, CtrlView b);
-  };
+        /// Constructor for cloning \a p
+        Eq(Space& home, Eq<View0, View1>& p);
 
-  /**
-   * \brief Reified bounds consistent equality with float propagator
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class View, class CtrlView, ReifyMode rm>
-  class ReEqFloat : public Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView> {
-  protected:
-    using Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView>::x0;
-    using Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView>::b;
+    public:
+        /// Constructor for posting
+        Eq(Home home, View0 x0, View1 x1);
+        /// Constructor for rewriting \a p during cloning
+        Eq(Space& home, Propagator& p, View0 x0, View1 x1);
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post bounds consistent propagator \f$ x_0 = x_1\f$
+        static ExecStatus post(Home home, View0 x0, View1 x1);
+    };
 
-    /// Float constant to check
-    FloatVal c;
-    /// Constructor for cloning \a p
-    ReEqFloat(Space& home, ReEqFloat& p);
-    /// Constructor for posting
-    ReEqFloat(Home home, View x, FloatVal c, CtrlView b);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post bounds consistent propagator \f$ (x = c)\Leftrightarrow b\f$
-    static  ExecStatus post(Home home, View x, FloatVal c, CtrlView b);
-  };
+    /**
+     * \brief n-ary bounds consistent equality propagator
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class View>
+    class NaryEq : public NaryPropagator<View, PC_FLOAT_BND> {
+    protected:
+        using NaryPropagator<View, PC_FLOAT_BND>::x;
 
+        /// Constructor for cloning \a p
+        NaryEq(Space& home, NaryEq<View>& p);
+        /// Constructor for posting
+        NaryEq(Home home, ViewArray<View>&);
 
-  /**
-   * \brief Binary bounds consistent disequality propagator
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class View0, class View1>
-  class Nq :
-    public MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL> {
-  protected:
-    using MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>::x0;
-    using MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>::x1;
+    public:
+        /// Copy propagator during cloning
+        virtual Actor* copy(Space& home);
+        /**
+         * \brief Cost function
+         *
+         * If a view has been assigned, the cost is low unary.
+         * Otherwise it is low linear.
+         */
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post bounds consistent propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
+        static ExecStatus post(Home home, ViewArray<View>& x);
+    };
 
-    /// Constructor for cloning \a p
-    Nq(Space& home, Nq<View0,View1>& p);
-  public:
-    /// Constructor for posting
-    Nq(Home home, View0 x0, View1 x1);
-    /// Constructor for rewriting \a p during cloning
-    Nq(Space& home, Propagator& p, View0 x0, View1 x1);
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post bounds consistent propagator \f$ x_0 \neq x_1\f$
-    static  ExecStatus post(Home home, View0 x0, View1 x1);
-  };
+    /**
+     * \brief Reified binary bounds consistent equality propagator
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class View, class CtrlView, ReifyMode rm>
+    class ReEq : public Int::ReBinaryPropagator<View, PC_FLOAT_BND, CtrlView> {
+    protected:
+        using Int::ReBinaryPropagator<View, PC_FLOAT_BND, CtrlView>::x0;
+        using Int::ReBinaryPropagator<View, PC_FLOAT_BND, CtrlView>::x1;
+        using Int::ReBinaryPropagator<View, PC_FLOAT_BND, CtrlView>::b;
 
-  /**
-   * \brief Binary bounds consistent disequality propagator with float value
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class View>
-  class NqFloat :
-    public UnaryPropagator<View,PC_FLOAT_VAL> {
-  protected:
-    using UnaryPropagator<View,PC_FLOAT_VAL>::x0;
+        /// Constructor for cloning \a p
+        ReEq(Space& home, ReEq& p);
+        /// Constructor for posting
+        ReEq(Home home, View x0, View x1, CtrlView b);
 
-    /// Float constant to check
-    FloatVal c;
-    /// Constructor for cloning \a p
-    NqFloat(Space& home, NqFloat<View>& p);
-  public:
-    /// Constructor for posting
-    NqFloat(Home home, View x, FloatVal c);
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post bounds consistent propagator \f$ x_0 \neq c\f$
-    static  ExecStatus post(Home home, View x0, FloatVal c);
-  };
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post bounds consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
+        static ExecStatus post(Home home, View x0, View x1, CtrlView b);
+    };
 
+    /**
+     * \brief Reified bounds consistent equality with float propagator
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class View, class CtrlView, ReifyMode rm>
+    class ReEqFloat : public Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView> {
+    protected:
+        using Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView>::x0;
+        using Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView>::b;
 
-  /*
-   * Order propagators
-   *
-   */
+        /// Float constant to check
+        FloatVal c;
+        /// Constructor for cloning \a p
+        ReEqFloat(Space& home, ReEqFloat& p);
+        /// Constructor for posting
+        ReEqFloat(Home home, View x, const FloatVal& c, CtrlView b);
 
-  /**
-   * \brief Less or equal propagator
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post bounds consistent propagator \f$ (x = c)\Leftrightarrow b\f$
+        static ExecStatus post(Home home, View x, const FloatVal& c, CtrlView b);
+    };
 
-  template<class View>
-  class Lq : public BinaryPropagator<View,PC_FLOAT_BND> {
-  protected:
-    using BinaryPropagator<View,PC_FLOAT_BND>::x0;
-    using BinaryPropagator<View,PC_FLOAT_BND>::x1;
+    /**
+     * \brief Binary bounds consistent disequality propagator
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class View0, class View1>
+    class Nq : public MixBinaryPropagator<View0, PC_FLOAT_VAL, View1, PC_FLOAT_VAL> {
+    protected:
+        using MixBinaryPropagator<View0, PC_FLOAT_VAL, View1, PC_FLOAT_VAL>::x0;
+        using MixBinaryPropagator<View0, PC_FLOAT_VAL, View1, PC_FLOAT_VAL>::x1;
 
-    /// Constructor for cloning \a p
-    Lq(Space& home, Lq& p);
-    /// Constructor for posting
-    Lq(Home home, View x0, View x1);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor*     copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$x_0 \leq x_1\f$
-    static  ExecStatus post(Home home, View x0, View x1);
-  };
+        /// Constructor for cloning \a p
+        Nq(Space& home, Nq<View0, View1>& p);
 
-  /**
-   * \brief Less propagator
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
+    public:
+        /// Constructor for posting
+        Nq(Home home, View0 x0, View1 x1);
+        /// Constructor for rewriting \a p during cloning
+        Nq(Space& home, Propagator& p, View0 x0, View1 x1);
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post bounds consistent propagator \f$ x_0 \neq x_1\f$
+        static ExecStatus post(Home home, View0 x0, View1 x1);
+    };
 
-  template<class View>
-  class Le : public BinaryPropagator<View,PC_FLOAT_BND> {
-  protected:
-    using BinaryPropagator<View,PC_FLOAT_BND>::x0;
-    using BinaryPropagator<View,PC_FLOAT_BND>::x1;
+    /**
+     * \brief Binary bounds consistent disequality propagator with float value
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class View>
+    class NqFloat : public UnaryPropagator<View, PC_FLOAT_VAL> {
+    protected:
+        using UnaryPropagator<View, PC_FLOAT_VAL>::x0;
 
-    /// Constructor for cloning \a p
-    Le(Space& home, Le& p);
-    /// Constructor for posting
-    Le(Home home, View x0, View x1);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor*     copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator \f$x_0 \le x_1\f$
-    static  ExecStatus post(Home home, View x0, View x1);
-  };
+        /// Float constant to check
+        FloatVal c;
+        /// Constructor for cloning \a p
+        NqFloat(Space& home, NqFloat<View>& p);
 
-  /*
-   * Reified order propagators
-   *
-   */
+    public:
+        /// Constructor for posting
+        NqFloat(Home home, View x, const FloatVal& c);
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post bounds consistent propagator \f$ x_0 \neq c\f$
+        static ExecStatus post(Home home, View x0, const FloatVal& c);
+    };
 
-  /**
-   * \brief Reified less or equal with float propagator
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
+    /*
+     * Order propagators
+     *
+     */
 
-  template<class View, class CtrlView, ReifyMode rm>
-  class ReLqFloat : public Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView> {
-  protected:
-    using Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView>::x0;
-    using Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView>::b;
+    /**
+     * \brief Less or equal propagator
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
 
-    /// Float constant to check
-    FloatVal c;
-    /// Constructor for cloning \a p
-    ReLqFloat(Space& home, ReLqFloat& p);
-    /// Constructor for posting
-    ReLqFloat(Home home, View x, FloatVal c, CtrlView b);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ (x \leq c)\Leftrightarrow b\f$
-    static  ExecStatus post(Home home, View x, FloatVal c, CtrlView b);
-   };
+    template <class View>
+    class Lq : public BinaryPropagator<View, PC_FLOAT_BND> {
+    protected:
+        using BinaryPropagator<View, PC_FLOAT_BND>::x0;
+        using BinaryPropagator<View, PC_FLOAT_BND>::x1;
 
-  /**
-   * \brief Reified less with float propagator
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
+        /// Constructor for cloning \a p
+        Lq(Space& home, Lq& p);
+        /// Constructor for posting
+        Lq(Home home, View x0, View x1);
 
-  template<class View, class CtrlView, ReifyMode rm>
-  class ReLeFloat : public Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView> {
-  protected:
-    using Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView>::x0;
-    using Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView>::b;
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator \f$x_0 \leq x_1\f$
+        static ExecStatus post(Home home, View x0, View x1);
+    };
 
-    /// Float constant to check
-    FloatVal c;
-    /// Constructor for cloning \a p
-    ReLeFloat(Space& home, ReLeFloat& p);
-    /// Constructor for posting
-    ReLeFloat(Home home, View x, FloatVal c, CtrlView b);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ (x < c)\Leftrightarrow b\f$
-    static  ExecStatus post(Home home, View x, FloatVal c, CtrlView b);
-   };
+    /**
+     * \brief Less propagator
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
 
-  /**
-   * \brief Reified less or equal propagator
-   *
-   * Requires \code #include <gecode/float/rel.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
+    template <class View>
+    class Le : public BinaryPropagator<View, PC_FLOAT_BND> {
+    protected:
+        using BinaryPropagator<View, PC_FLOAT_BND>::x0;
+        using BinaryPropagator<View, PC_FLOAT_BND>::x1;
 
-  template<class View, class CtrlView, ReifyMode rm>
-  class ReLq : public Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView> {
-  protected:
-    using Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView>::x0;
-    using Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView>::x1;
-    using Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView>::b;
+        /// Constructor for cloning \a p
+        Le(Space& home, Le& p);
+        /// Constructor for posting
+        Le(Home home, View x0, View x1);
 
-    /// Constructor for cloning \a p
-    ReLq(Space& home, ReLq& p);
-    /// Constructor for posting
-    ReLq(Home home, View x0, View x1, CtrlView b);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ (x_0 \leq x_1)\Leftrightarrow b\f$
-    static  ExecStatus post(Home home, View x0, View x1, CtrlView b);
-  };
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator \f$x_0 \le x_1\f$
+        static ExecStatus post(Home home, View x0, View x1);
+    };
 
-}}}
+    /*
+     * Reified order propagators
+     *
+     */
+
+    /**
+     * \brief Reified less or equal with float propagator
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+
+    template <class View, class CtrlView, ReifyMode rm>
+    class ReLqFloat : public Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView> {
+    protected:
+        using Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView>::x0;
+        using Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView>::b;
+
+        /// Float constant to check
+        FloatVal c;
+        /// Constructor for cloning \a p
+        ReLqFloat(Space& home, ReLqFloat& p);
+        /// Constructor for posting
+        ReLqFloat(Home home, View x, const FloatVal& c, CtrlView b);
+
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$ (x \leq c)\Leftrightarrow b\f$
+        static ExecStatus post(Home home, View x, const FloatVal& c, CtrlView b);
+    };
+
+    /**
+     * \brief Reified less with float propagator
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+
+    template <class View, class CtrlView, ReifyMode rm>
+    class ReLeFloat : public Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView> {
+    protected:
+        using Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView>::x0;
+        using Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView>::b;
+
+        /// Float constant to check
+        FloatVal c;
+        /// Constructor for cloning \a p
+        ReLeFloat(Space& home, ReLeFloat& p);
+        /// Constructor for posting
+        ReLeFloat(Home home, View x, const FloatVal& c, CtrlView b);
+
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$ (x < c)\Leftrightarrow b\f$
+        static ExecStatus post(Home home, View x, const FloatVal& c, CtrlView b);
+    };
+
+    /**
+     * \brief Reified less or equal propagator
+     *
+     * Requires \code #include <gecode/float/rel.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+
+    template <class View, class CtrlView, ReifyMode rm>
+    class ReLq : public Int::ReBinaryPropagator<View, PC_FLOAT_BND, CtrlView> {
+    protected:
+        using Int::ReBinaryPropagator<View, PC_FLOAT_BND, CtrlView>::x0;
+        using Int::ReBinaryPropagator<View, PC_FLOAT_BND, CtrlView>::x1;
+        using Int::ReBinaryPropagator<View, PC_FLOAT_BND, CtrlView>::b;
+
+        /// Constructor for cloning \a p
+        ReLq(Space& home, ReLq& p);
+        /// Constructor for posting
+        ReLq(Home home, View x0, View x1, CtrlView b);
+
+    public:
+        /// Copy propagator during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$ (x_0 \leq x_1)\Leftrightarrow b\f$
+        static ExecStatus post(Home home, View x0, View x1, CtrlView b);
+    };
+
+} // namespace Gecode::Float::Rel
 
 #include <gecode/float/rel/eq.hpp>
 #include <gecode/float/rel/nq.hpp>
@@ -378,6 +383,4 @@ namespace Gecode { namespace Float { namespace Rel {
 
 #endif
 
-
 // STATISTICS: float-prop
-

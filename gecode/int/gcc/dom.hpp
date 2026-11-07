@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -37,282 +36,279 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace GCC {
+namespace Gecode::Int::GCC {
 
-  /*
-   * Analogously to "gcc/bnd.hpp" we split the algorithm
-   * in two parts:
-   *   1) the UBC (Upper Bound Constraint) stating that there are
-   *      at most k[i].max() occurrences of the value v_i
-   *   2) the LBC (Lower Bound Constraint) stating that there are
-   *      at least k[i].min() occurrences of the value v_i
-   *
-   * The algorithm proceeds in 5 STEPS:
-   *
-   * STEP 1:
-   *    Build the bipartite value-graph G=(<X,D>,E),
-   *    with X = all variable nodes (each variable forms a node)
-   *         D = all value nodes (union over all domains of the variables)
-   *    and (x_i,v) is an edge in G iff value v is in the domain D_i of x_i
-   *
-   * STEP 2:   Compute a matching in the value graph.
-   * STEP 3:   Compute all even alternating paths from unmatched  nodes
-   * STEP 4:   Compute strongly connected components in the merged graph
-   * STEP 5:   Update the Domains according to the computed edges
-   *
-   */
+    /*
+     * Analogously to "gcc/bnd.hpp" we split the algorithm
+     * in two parts:
+     *   1) the UBC (Upper Bound Constraint) stating that there are
+     *      at most k[i].max() occurrences of the value v_i
+     *   2) the LBC (Lower Bound Constraint) stating that there are
+     *      at least k[i].min() occurrences of the value v_i
+     *
+     * The algorithm proceeds in 5 STEPS:
+     *
+     * STEP 1:
+     *    Build the bipartite value-graph G=(<X,D>,E),
+     *    with X = all variable nodes (each variable forms a node)
+     *         D = all value nodes (union over all domains of the variables)
+     *    and (x_i,v) is an edge in G iff value v is in the domain D_i of x_i
+     *
+     * STEP 2:   Compute a matching in the value graph.
+     * STEP 3:   Compute all even alternating paths from unmatched  nodes
+     * STEP 4:   Compute strongly connected components in the merged graph
+     * STEP 5:   Update the Domains according to the computed edges
+     *
+     */
 
-  template<class Card>
-  inline
-  Dom<Card>::Dom(Home home, ViewArray<IntView>& x0,
-                 ViewArray<Card>& k0, bool cf)
-    : Propagator(home), x(x0),  y(home, x0),
-      k(k0), vvg(nullptr), card_fixed(cf){
-    // y is used for bounds propagation since prop_bnd needs all variables
-    // values within the domain bounds
-    x.subscribe(home, *this, PC_INT_DOM);
-    k.subscribe(home, *this, PC_INT_DOM);
-  }
-
-  template<class Card>
-  forceinline
-  Dom<Card>::Dom(Space& home, Dom<Card>& p)
-    : Propagator(home, p), vvg(nullptr), card_fixed(p.card_fixed) {
-    x.update(home, p.x);
-    y.update(home, p.y);
-    k.update(home, p.k);
-  }
-
-  template<class Card>
-  forceinline size_t
-  Dom<Card>::dispose(Space& home) {
-    x.cancel(home,*this, PC_INT_DOM);
-    k.cancel(home,*this, PC_INT_DOM);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-  template<class Card>
-  Actor*
-  Dom<Card>::copy(Space& home) {
-    return new (home) Dom<Card>(home, *this);
-  }
-
-  template<class Card>
-  PropCost
-  Dom<Card>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::cubic(PropCost::LO, x.size());
-  }
-
-  template<class Card>
-  void
-  Dom<Card>::reschedule(Space& home) {
-    x.reschedule(home, *this, PC_INT_DOM);
-    k.reschedule(home, *this, PC_INT_DOM);
-  }
-
-  template<class Card>
-  ExecStatus
-  Dom<Card>::propagate(Space& home, const ModEventDelta&) {
-    Region r;
-
-    int* count = r.alloc<int>(k.size());
-    for (int i = k.size(); i--; )
-      count[i] = 0;
-
-    // total number of assigned views
-    int noa = 0;
-    for (int i = y.size(); i--; )
-      if (y[i].assigned()) {
-        noa++;
-        int idx;
-        if (!lookupValue(k,y[i].val(),idx))
-          return ES_FAILED;
-        count[idx]++;
-        if (Card::propagate && (k[idx].max() == 0))
-          return ES_FAILED;
-      }
-
-    if (noa == y.size()) {
-      // All views are assigned
-      for (int i = k.size(); i--; ) {
-        if ((k[i].min() > count[i]) || (count[i] > k[i].max()))
-          return ES_FAILED;
-        // the solution contains ci occurrences of value k[i].card();
-        if (Card::propagate)
-          GECODE_ME_CHECK(k[i].eq(home, count[i]));
-      }
-      return home.ES_SUBSUMED(*this);
+    template <class Card>
+    inline Dom<Card>::Dom(Home home, ViewArray<IntView>& x0, ViewArray<Card>& k0, bool cf)
+        : Propagator(home), x(x0), y(home, x0), k(k0), vvg(nullptr), card_fixed(cf) {
+        // y is used for bounds propagation since prop_bnd needs all variables
+        // values within the domain bounds
+        x.subscribe(home, *this, PC_INT_DOM);
+        k.subscribe(home, *this, PC_INT_DOM);
     }
 
-    // before propagation performs inferences on cardinality variables:
-    if (Card::propagate) {
-      if (noa > 0)
-        for (int i = k.size(); i--; )
-          if (!k[i].assigned()) {
-            GECODE_ME_CHECK(k[i].lq(home, y.size() - (noa - count[i])));
-            GECODE_ME_CHECK(k[i].gq(home, count[i]));
-          }
-
-      GECODE_ES_CHECK(prop_card<Card>(home,y,k));
-      if (!card_consistent<Card>(y,k))
-        return ES_FAILED;
+    template <class Card>
+    forceinline
+    Dom<Card>::Dom(Space& home, Dom<Card>& p)
+        : Propagator(home, p), vvg(nullptr), card_fixed(p.card_fixed) {
+        x.update(home, p.x);
+        y.update(home, p.y);
+        k.update(home, p.k);
     }
 
-    if (x.size() == 0) {
-      for (int j = k.size(); j--; )
-        if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
-          return ES_FAILED;
-      return home.ES_SUBSUMED(*this);
-    } else if ((x.size() == 1) && (x[0].assigned())) {
-      int idx;
-      if (!lookupValue(k,x[0].val(),idx))
-        return ES_FAILED;
-      GECODE_ME_CHECK(k[idx].inc());
-      for (int j = k.size(); j--; )
-        if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
-          return ES_FAILED;
-      return home.ES_SUBSUMED(*this);
+    template <class Card>
+    forceinline size_t
+    Dom<Card>::dispose(Space& home) {
+        x.cancel(home, *this, PC_INT_DOM);
+        k.cancel(home, *this, PC_INT_DOM);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
     }
 
-    if (vvg == nullptr) {
-      int smin = 0;
-      int smax = 0;
-      for (int i=k.size(); i--; )
-        if (k[i].counter() > k[i].max() ) {
-          return ES_FAILED;
-        } else {
-          smax += (k[i].max() - k[i].counter());
-          if (k[i].counter() < k[i].min())
-            smin += (k[i].min() - k[i].counter());
+    template <class Card>
+    Actor*
+    Dom<Card>::copy(Space& home) {
+        return new (home) Dom<Card>(home, *this);
+    }
+
+    template <class Card>
+    PropCost
+    Dom<Card>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::cubic(PropCost::LO, x.size());
+    }
+
+    template <class Card>
+    void
+    Dom<Card>::reschedule(Space& home) {
+        x.reschedule(home, *this, PC_INT_DOM);
+        k.reschedule(home, *this, PC_INT_DOM);
+    }
+
+    template <class Card>
+    ExecStatus
+    Dom<Card>::propagate(Space& home, const ModEventDelta&) {
+        Region r;
+
+        int* count = r.alloc<int>(k.size());
+        for (int i = k.size(); i--;)
+            count[i] = 0;
+
+        // total number of assigned views
+        int noa = 0;
+        for (int i = y.size(); i--;)
+            if (y[i].assigned()) {
+                noa++;
+                int idx;
+                if (!lookup_value(k, y[i].val(), idx))
+                    return ES_FAILED;
+                count[idx]++;
+                if (Card::propagate && (k[idx].max() == 0))
+                    return ES_FAILED;
+            }
+
+        if (noa == y.size()) {
+            // All views are assigned
+            for (int i = k.size(); i--;) {
+                if ((k[i].min() > count[i]) || (count[i] > k[i].max()))
+                    return ES_FAILED;
+                // the solution contains ci occurrences of value k[i].card();
+                if (Card::propagate)
+                    GECODE_ME_CHECK(k[i].eq(home, count[i]));
+            }
+            return home.ES_SUBSUMED(*this);
         }
 
-      if ((x.size() < smin) || (smax < x.size()))
-        return ES_FAILED;
+        // before propagation performs inferences on cardinality variables:
+        if (Card::propagate) {
+            if (noa > 0)
+                for (int i = k.size(); i--;)
+                    if (!k[i].assigned()) {
+                        GECODE_ME_CHECK(k[i].lq(home, y.size() - (noa - count[i])));
+                        GECODE_ME_CHECK(k[i].gq(home, count[i]));
+                    }
 
-      vvg = new (home) VarValGraph<Card>(home, x, k, smin, smax);
-      GECODE_ES_CHECK(vvg->min_require(home,x,k));
-      GECODE_ES_CHECK(vvg->template maximum_matching<UBC>());
-      if (!card_fixed)
-        GECODE_ES_CHECK(vvg->template maximum_matching<LBC>());
-    } else {
-      GECODE_ES_CHECK(vvg->sync(x,k));
-    }
+            GECODE_ES_CHECK(prop_card<Card>(home, y, k));
+            if (!card_consistent<Card>(y, k))
+                return ES_FAILED;
+        }
 
-    vvg->template free_alternating_paths<UBC>();
-    vvg->template strongly_connected_components<UBC>();
-
-    GECODE_ES_CHECK(vvg->template narrow<UBC>(home,x,k));
-
-    if (!card_fixed) {
-      if (Card::propagate)
-        GECODE_ES_CHECK(vvg->sync(x,k));
-
-      vvg->template free_alternating_paths<LBC>();
-      vvg->template strongly_connected_components<LBC>();
-
-      GECODE_ES_CHECK(vvg->template narrow<LBC>(home,x,k));
-    }
-
-    {
-      bool card_assigned = true;
-      if (Card::propagate) {
-        GECODE_ES_CHECK(prop_card<Card>(home, y, k));
-        card_assigned = k.assigned();
-      }
-
-      if (card_assigned) {
         if (x.size() == 0) {
-          for (int j=k.size(); j--; )
-            if ((k[j].min() > k[j].counter()) ||
-                (k[j].max() < k[j].counter()))
-              return ES_FAILED;
-          return home.ES_SUBSUMED(*this);
-        } else if ((x.size() == 1) && x[0].assigned()) {
-          int idx;
-          if (!lookupValue(k,x[0].val(),idx))
-            return ES_FAILED;
-          GECODE_ME_CHECK(k[idx].inc());
-
-          for (int j = k.size(); j--; )
-            if ((k[j].min() > k[j].counter()) ||
-                (k[j].max() < k[j].counter()))
-              return ES_FAILED;
-          return home.ES_SUBSUMED(*this);
+            for (int j = k.size(); j--;)
+                if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
+                    return ES_FAILED;
+            return home.ES_SUBSUMED(*this);
         }
-      }
-    }
+        if ((x.size() == 1) && (x[0].assigned())) {
+            int idx;
+            if (!lookup_value(k, x[0].val(), idx))
+                return ES_FAILED;
+            GECODE_ME_CHECK(k[idx].inc());
+            for (int j = k.size(); j--;)
+                if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
+                    return ES_FAILED;
+            return home.ES_SUBSUMED(*this);
+        }
 
-    for (int i = k.size(); i--; )
-      count[i] = 0;
+        if (vvg == nullptr) {
+            int smin = 0;
+            int smax = 0;
+            for (int i = k.size(); i--;)
+                if (k[i].counter() > k[i].max()) {
+                    return ES_FAILED;
+                } else {
+                    smax += (k[i].max() - k[i].counter());
+                    if (k[i].counter() < k[i].min())
+                        smin += (k[i].min() - k[i].counter());
+                }
 
-    bool all_assigned = true;
-    // total number of assigned views
-    for (int i = y.size(); i--; )
-      if (y[i].assigned()) {
-        int idx;
-        if (!lookupValue(k,y[i].val(),idx))
-          return ES_FAILED;
-        count[idx]++;
-        if (Card::propagate && (k[idx].max() == 0))
-          return ES_FAILED;
-      } else {
-        all_assigned = false;
-      }
+            if ((x.size() < smin) || (smax < x.size()))
+                return ES_FAILED;
 
-    if (Card::propagate)
-      GECODE_ES_CHECK(prop_card<Card>(home, y, k));
+            vvg = new (home) VarValGraph<Card>(home, x, k, smin, smax);
+            GECODE_ES_CHECK(vvg->min_require(home, x, k));
+            GECODE_ES_CHECK(vvg->template maximum_matching<UBC>());
+            if (!card_fixed)
+                GECODE_ES_CHECK(vvg->template maximum_matching<LBC>());
+        } else {
+            GECODE_ES_CHECK(vvg->sync(x, k));
+        }
 
-    if (all_assigned) {
-      for (int i = k.size(); i--; ) {
-        if ((k[i].min() > count[i]) || (count[i] > k[i].max()))
-          return ES_FAILED;
-        // the solution contains count[i] occurrences of value k[i].card();
+        vvg->template free_alternating_paths<UBC>();
+        vvg->template strongly_connected_components<UBC>();
+
+        GECODE_ES_CHECK(vvg->template narrow<UBC>(home, x, k));
+
+        if (!card_fixed) {
+            if (Card::propagate)
+                GECODE_ES_CHECK(vvg->sync(x, k));
+
+            vvg->template free_alternating_paths<LBC>();
+            vvg->template strongly_connected_components<LBC>();
+
+            GECODE_ES_CHECK(vvg->template narrow<LBC>(home, x, k));
+        }
+
+        {
+            bool card_assigned = true;
+            if (Card::propagate) {
+                GECODE_ES_CHECK(prop_card<Card>(home, y, k));
+                card_assigned = k.assigned();
+            }
+
+            if (card_assigned) {
+                if (x.size() == 0) {
+                    for (int j = k.size(); j--;)
+                        if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
+                            return ES_FAILED;
+                    return home.ES_SUBSUMED(*this);
+                }
+                if ((x.size() == 1) && x[0].assigned()) {
+                    int idx;
+                    if (!lookup_value(k, x[0].val(), idx))
+                        return ES_FAILED;
+                    GECODE_ME_CHECK(k[idx].inc());
+
+                    for (int j = k.size(); j--;)
+                        if ((k[j].min() > k[j].counter()) || (k[j].max() < k[j].counter()))
+                            return ES_FAILED;
+                    return home.ES_SUBSUMED(*this);
+                }
+            }
+        }
+
+        for (int i = k.size(); i--;)
+            count[i] = 0;
+
+        bool all_assigned = true;
+        // total number of assigned views
+        for (int i = y.size(); i--;)
+            if (y[i].assigned()) {
+                int idx;
+                if (!lookup_value(k, y[i].val(), idx))
+                    return ES_FAILED;
+                count[idx]++;
+                if (Card::propagate && (k[idx].max() == 0))
+                    return ES_FAILED;
+            } else {
+                all_assigned = false;
+            }
+
         if (Card::propagate)
-          GECODE_ME_CHECK(k[i].eq(home,count[i]));
-      }
-      return home.ES_SUBSUMED(*this);
+            GECODE_ES_CHECK(prop_card<Card>(home, y, k));
+
+        if (all_assigned) {
+            for (int i = k.size(); i--;) {
+                if ((k[i].min() > count[i]) || (count[i] > k[i].max()))
+                    return ES_FAILED;
+                // the solution contains count[i] occurrences of value k[i].card();
+                if (Card::propagate)
+                    GECODE_ME_CHECK(k[i].eq(home, count[i]));
+            }
+            return home.ES_SUBSUMED(*this);
+        }
+
+        if (Card::propagate) {
+            int ysmax = y.size();
+            for (int i = k.size(); i--;)
+                ysmax -= k[i].max();
+            int smax = 0;
+            bool card_ass = true;
+            for (int i = k.size(); i--;) {
+                GECODE_ME_CHECK(k[i].gq(home, ysmax + k[i].max()));
+                smax += k[i].max();
+                GECODE_ME_CHECK(k[i].lq(home, y.size() + k[i].min()));
+                if (!k[i].assigned())
+                    card_ass = false;
+            }
+            if (card_ass && (smax != y.size()))
+                return ES_FAILED;
+        }
+
+        return Card::propagate ? ES_NOFIX : ES_FIX;
     }
 
-    if (Card::propagate) {
-      int ysmax = y.size();
-      for (int i=k.size(); i--; )
-        ysmax -= k[i].max();
-      int smax = 0;
-      bool card_ass = true;
-      for (int i = k.size(); i--; ) {
-        GECODE_ME_CHECK(k[i].gq(home, ysmax + k[i].max()));
-        smax += k[i].max();
-        GECODE_ME_CHECK(k[i].lq(home, y.size() + k[i].min()));
-        if (!k[i].assigned())
-          card_ass = false;
-      }
-      if (card_ass && (smax != y.size()))
-        return ES_FAILED;
+    template <class Card>
+    inline ExecStatus
+    Dom<Card>::post(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
+        GECODE_ES_CHECK((post_side_constraints<Card>(home, x, k)));
+
+        if (is_distinct<Card>(x, k))
+            return Distinct::Dom<IntView>::post(home, x);
+
+        bool cardfix = true;
+        for (int i = k.size(); i--;)
+            if (!k[i].assigned()) {
+                cardfix = false;
+                break;
+            }
+
+        (void)new (home) Dom<Card>(home, x, k, cardfix);
+        return ES_OK;
     }
 
-    return Card::propagate ? ES_NOFIX : ES_FIX;
-  }
-
-  template<class Card>
-  inline ExecStatus
-  Dom<Card>::post(Home home,
-                  ViewArray<IntView>& x, ViewArray<Card>& k) {
-    GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
-
-    if (isDistinct<Card>(x,k))
-      return Distinct::Dom<IntView>::post(home,x);
-
-    bool cardfix = true;
-    for (int i = k.size(); i--; )
-      if (!k[i].assigned()) {
-        cardfix = false; break;
-      }
-
-    (void) new (home) Dom<Card>(home,x,k,cardfix);
-    return ES_OK;
-  }
-
-}}}
+} // namespace Gecode::Int::GCC
 
 // STATISTICS: int-prop

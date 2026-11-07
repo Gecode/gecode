@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,93 +30,88 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
-  /**
-   * \brief Range iterator for pointwise offset (by some constant)
-   *
-   * \ingroup FuncIterRanges
-   */
-  template<class I>
-  class Offset {
-  protected:
-    /// Input range
-    I i;
-    /// Offset for ranges
-    int c;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Offset(void);
-    /// Initialize with ranges from \a i and offset \a c
-    Offset(I& i, int c);
-    /// Initialize with ranges from \a i and offset \a c
-    void init(I& i, int c);
-    //@}
+    /**
+     * \brief Range iterator for pointwise offset (by some constant)
+     *
+     * \ingroup FuncIterRanges
+     */
+    template <class I>
+    class Offset {
+    protected:
+        /// Input range
+        I i;
+        /// Offset for ranges
+        int c;
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a range or done
-    bool operator ()(void) const;
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Offset() = default;
+        /// Initialize with ranges from \a i and offset \a c
+        Offset(I& i, int c);
+        /// Initialize with ranges from \a i and offset \a c
+        void init(I& i, int c);
+        //@}
 
-    /// \name Range access
-    //@{
-    /// Return smallest value of range
-    int min(void) const;
-    /// Return largest value of range
-    int max(void) const;
-    /// Return width of range (distance between minimum and maximum)
-    unsigned int width(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a range or done
+        bool operator()() const;
+        /// Move iterator to next range (if possible)
+        void operator++();
+        //@}
 
+        /// \name Range access
+        //@{
+        /// Return smallest value of range
+        int min() const;
+        /// Return largest value of range
+        int max() const;
+        /// Return width of range (distance between minimum and maximum)
+        unsigned int width() const;
+        //@}
+    };
 
-  template<class I>
-  forceinline
-  Offset<I>::Offset(void) {}
+    template <class I>
+    inline void
+    Offset<I>::init(I& i0, int c0) {
+        i = i0;
+        c = c0;
+    }
 
-  template<class I>
-  inline void
-  Offset<I>::init(I& i0, int c0) {
-    i = i0; c = c0;
-  }
+    template <class I>
+    inline Offset<I>::Offset(I& i0, int c0) : i(i0), c(c0) {}
 
-  template<class I>
-  inline
-  Offset<I>::Offset(I& i0, int c0) : i(i0), c(c0) {}
+    template <class I>
+    forceinline void
+    Offset<I>::operator++() {
+        ++i;
+    }
+    template <class I>
+    forceinline bool
+    Offset<I>::operator()() const {
+        return i();
+    }
 
-  template<class I>
-  forceinline void
-  Offset<I>::operator ++(void) {
-    ++i;
-  }
-  template<class I>
-  forceinline bool
-  Offset<I>::operator ()(void) const {
-    return i();
-  }
+    template <class I>
+    forceinline int
+    Offset<I>::min() const {
+        return i.min() + c;
+    }
+    template <class I>
+    forceinline int
+    Offset<I>::max() const {
+        return i.max() + c;
+    }
+    template <class I>
+    forceinline unsigned int
+    Offset<I>::width() const {
+        return i.width();
+    }
 
-  template<class I>
-  forceinline int
-  Offset<I>::min(void) const {
-    return i.min()+c;
-  }
-  template<class I>
-  forceinline int
-  Offset<I>::max(void) const {
-    return i.max()+c;
-  }
-  template<class I>
-  forceinline unsigned int
-  Offset<I>::width(void) const {
-    return i.width();
-  }
-
-}}}
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any
-

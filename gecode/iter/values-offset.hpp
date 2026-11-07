@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,79 +30,76 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
-  /**
-   * \brief Value iterator for pointwise offset (by some constant)
-   *
-   * \ingroup FuncIterValues
-   */
-  template<class I>
-  class Offset {
-  protected:
-    /// Input iterator
-    I i;
-    /// Offset for ranges
-    int c;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Offset(void);
-    /// Initialize with values from \a i and offset \a c
-    Offset(I& i, int c);
-    /// Initialize with values from \a i and offset \a c
-    void init(I& i, int c);
-    //@}
+    /**
+     * \brief Value iterator for pointwise offset (by some constant)
+     *
+     * \ingroup FuncIterValues
+     */
+    template <class I>
+    class Offset {
+    protected:
+        /// Input iterator
+        I i;
+        /// Offset for ranges
+        int c;
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator ++(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Offset() = default;
+        /// Initialize with values from \a i and offset \a c
+        Offset(I& i, int c);
+        /// Initialize with values from \a i and offset \a c
+        void init(I& i, int c);
+        //@}
 
-    /// \name Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a value or done
+        bool operator()() const;
+        /// Move iterator to next value (if possible)
+        void operator++();
+        //@}
 
+        /// \name Value access
+        //@{
+        /// Return current value
+        int val() const;
+        //@}
+    };
 
-  template<class I>
-  forceinline
-  Offset<I>::Offset(void) {}
+    template <class I>
+    forceinline void
+    Offset<I>::init(I& i0, int c0) {
+        i = i0;
+        c = c0;
+    }
 
-  template<class I>
-  forceinline void
-  Offset<I>::init(I& i0, int c0) {
-    i = i0; c = c0;
-  }
+    template <class I>
+    forceinline
+    Offset<I>::Offset(I& i0, int c0)
+        : i(i0), c(c0) {}
 
-  template<class I>
-  forceinline
-  Offset<I>::Offset(I& i0, int c0) : i(i0), c(c0) {}
+    template <class I>
+    forceinline void
+    Offset<I>::operator++() {
+        ++i;
+    }
+    template <class I>
+    forceinline bool
+    Offset<I>::operator()() const {
+        return i();
+    }
 
-  template<class I>
-  forceinline void
-  Offset<I>::operator ++(void) {
-    ++i;
-  }
-  template<class I>
-  forceinline bool
-  Offset<I>::operator ()(void) const {
-    return i();
-  }
+    template <class I>
+    forceinline int
+    Offset<I>::val() const {
+        return i.val() + c;
+    }
 
-  template<class I>
-  forceinline int
-  Offset<I>::val(void) const {
-    return i.val()+c;
-  }
-
-}}}
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any
-

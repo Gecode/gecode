@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
@@ -40,175 +39,179 @@
  * \namespace Gecode::Float::Trigonometric
  * \brief %Trigonometric propagators
  */
-namespace Gecode { namespace Float { namespace Trigonometric {
+namespace Gecode::Float::Trigonometric {
 
-  /**
-   * \brief %Propagator for bounds consistent sinus operator
-   *
-   * The types \a A and \a B give the types of the views.
-   *
-   * Requires \code #include <gecode/float/trigonometric.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class Sin : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
-    /// Perform actual propagation
-    static ExecStatus dopropagate(Space& home, A x0, B x1);
-    /// Constructor for cloning \a p
-    Sin(Space& home, Sin& p);
-    /// Constructor for creation
-    Sin(Home home, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$sin(x_0) = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
-  };
+    /**
+     * \brief %Propagator for bounds consistent sinus operator
+     *
+     * The types \a A and \a B give the types of the views.
+     *
+     * Requires \code #include <gecode/float/trigonometric.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class A, class B>
+    class Sin : public MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND> {
+    protected:
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
+        /// Perform actual propagation
+        static ExecStatus propagate_bounds(Space& home, A x0, B x1);
+        /// Constructor for cloning \a p
+        Sin(Space& home, Sin& p);
+        /// Constructor for creation
+        Sin(Home home, A x0, B x1);
 
+    public:
+        /// Create copy during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$sin(x_0) = x_1\f$
+        static ExecStatus post(Home home, A x0, B x1);
+    };
 
-  /**
-   * \brief %Propagator for bounds consistent cosinus operator
-   *
-   * The types \a A and \a B give the types of the views.
-   *
-   * Requires \code #include <gecode/float/trigonometric.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class Cos : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
-    /// Perform actual propagation
-    static ExecStatus dopropagate(Space& home, A x0, B x1);
-    /// Constructor for cloning \a p
-    Cos(Space& home, Cos& p);
-    /// Constructor for creation
-    Cos(Home home, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$cos(x_0) = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
-  };
+    /**
+     * \brief %Propagator for bounds consistent cosinus operator
+     *
+     * The types \a A and \a B give the types of the views.
+     *
+     * Requires \code #include <gecode/float/trigonometric.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class A, class B>
+    class Cos : public MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND> {
+    protected:
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
+        /// Perform actual propagation
+        static ExecStatus propagate_bounds(Space& home, A x0, B x1);
+        /// Constructor for cloning \a p
+        Cos(Space& home, Cos& p);
+        /// Constructor for creation
+        Cos(Home home, A x0, B x1);
 
-  /**
-   * \brief %Propagator for bounds consistent arc sinus operator
-   *
-   * The types \a A and \a B give the types of the views.
-   *
-   * Requires \code #include <gecode/float/trigonometric.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class ASin : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
+    public:
+        /// Create copy during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$cos(x_0) = x_1\f$
+        static ExecStatus post(Home home, A x0, B x1);
+    };
 
-    /// Constructor for cloning \a p
-    ASin(Space& home, ASin& p);
-    /// Constructor for creation
-    ASin(Home home, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$asin(x_0) = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
-  };
+    /**
+     * \brief %Propagator for bounds consistent arc sinus operator
+     *
+     * The types \a A and \a B give the types of the views.
+     *
+     * Requires \code #include <gecode/float/trigonometric.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class A, class B>
+    class ASin : public MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND> {
+    protected:
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
 
+        /// Constructor for cloning \a p
+        ASin(Space& home, ASin& p);
+        /// Constructor for creation
+        ASin(Home home, A x0, B x1);
 
-  /**
-   * \brief %Propagator for bounds consistent arc cosinus operator
-   *
-   * The types \a A and \a B give the types of the views.
-   *
-   * Requires \code #include <gecode/float/trigonometric.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class ACos : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
+    public:
+        /// Create copy during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$asin(x_0) = x_1\f$
+        static ExecStatus post(Home home, A x0, B x1);
+    };
 
-    /// Constructor for cloning \a p
-    ACos(Space& home, ACos& p);
-    /// Constructor for creation
-    ACos(Home home, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$acos(x_0) = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
-  };
+    /**
+     * \brief %Propagator for bounds consistent arc cosinus operator
+     *
+     * The types \a A and \a B give the types of the views.
+     *
+     * Requires \code #include <gecode/float/trigonometric.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class A, class B>
+    class ACos : public MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND> {
+    protected:
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
 
-  /**
-   * \brief %Propagator for bounds consistent tangent operator
-   *
-   * The types \a A and \a B give the types of the views.
-   *
-   * Requires \code #include <gecode/float/trigonometric.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class Tan : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
-    /// Perform actual propagation
-    static ExecStatus dopropagate(Space& home, A x0, B x1);
-    /// Constructor for cloning \a p
-    Tan(Space& home, Tan& p);
-    /// Constructor for creation
-    Tan(Home home, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$tan(x_0) = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
-  };
+        /// Constructor for cloning \a p
+        ACos(Space& home, ACos& p);
+        /// Constructor for creation
+        ACos(Home home, A x0, B x1);
 
-  /**
-   * \brief %Propagator for bounds consistent arc tangent operator
-   *
-   * The types \a A and \a B give the types of the views.
-   *
-   * Requires \code #include <gecode/float/trigonometric.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class ATan : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
+    public:
+        /// Create copy during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$acos(x_0) = x_1\f$
+        static ExecStatus post(Home home, A x0, B x1);
+    };
 
-    /// Constructor for cloning \a p
-    ATan(Space& home, ATan& p);
-    /// Constructor for creation
-    ATan(Home home, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$atan(x_0) = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
-  };
-}}}
+    /**
+     * \brief %Propagator for bounds consistent tangent operator
+     *
+     * The types \a A and \a B give the types of the views.
+     *
+     * Requires \code #include <gecode/float/trigonometric.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class A, class B>
+    class Tan : public MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND> {
+    protected:
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
+        /// Perform actual propagation
+        static ExecStatus propagate_bounds(Space& home, A x0, B x1);
+        /// Constructor for cloning \a p
+        Tan(Space& home, Tan& p);
+        /// Constructor for creation
+        Tan(Home home, A x0, B x1);
+
+    public:
+        /// Create copy during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$tan(x_0) = x_1\f$
+        static ExecStatus post(Home home, A x0, B x1);
+    };
+
+    /**
+     * \brief %Propagator for bounds consistent arc tangent operator
+     *
+     * The types \a A and \a B give the types of the views.
+     *
+     * Requires \code #include <gecode/float/trigonometric.hh> \endcode
+     * \ingroup FuncFloatProp
+     */
+    template <class A, class B>
+    class ATan : public MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND> {
+    protected:
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x0;
+        using MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>::x1;
+
+        /// Constructor for cloning \a p
+        ATan(Space& home, ATan& p);
+        /// Constructor for creation
+        ATan(Home home, A x0, B x1);
+
+    public:
+        /// Create copy during cloning
+        Actor* copy(Space& home) override;
+        /// Perform propagation
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
+        /// Post propagator for \f$atan(x_0) = x_1\f$
+        static ExecStatus post(Home home, A x0, B x1);
+    };
+} // namespace Gecode::Float::Trigonometric
 
 #include <gecode/float/trigonometric/sincos.hpp>
 #include <gecode/float/trigonometric/asinacos.hpp>

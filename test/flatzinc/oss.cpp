@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,15 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest(TestTags::sweep(),"oss",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest(
+                TestTags::sweep(), "oss",
+                "predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -150,17 +147,16 @@ constraint int_lin_le_reif([1, -1], [start[7], start[8]], -171, BOOL____00046) :
 constraint int_lin_le_reif([1, -1], [start[7], start[9]], -171, BOOL____00048) :: defines_var(BOOL____00048);\n\
 constraint int_lin_le_reif([1, -1], [start[8], start[9]], -505, BOOL____00050) :: defines_var(BOOL____00050);\n\
 solve minimize makespan;\n\
-", "makespan = 1168;\n\
+",
+                "makespan = 1168;\n\
 start = array2d(1..3, 1..3, [0, 1162, 829, 1000, 505, 0, 829, 0, 505]);\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

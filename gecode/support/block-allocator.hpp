@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,135 +30,134 @@
  *
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
-  /**
-   * \brief Manage memory organized into block lists (allocator)
-   *
-   * The allocation policy is to free all memory allocated when
-   * the block allocator is deleted.
-   *
-   * \ingroup FuncSupport
-   */
-  template<class T, class A, int blocksize = 512>
-  class BlockAllocator {
-  private:
-    /// Memory allocator
-    A& a;
-    /// One block of memory
-    class Block {
+    /**
+     * \brief Manage memory organized into block lists (allocator)
+     *
+     * The allocation policy is to free all memory allocated when
+     * the block allocator is deleted.
+     *
+     * \ingroup FuncSupport
+     */
+    template <class T, class A, int blocksize = 512>
+    class BlockAllocator {
+    private:
+        /// Memory allocator
+        A& a;
+        /// One block of memory
+        class Block {
+        public:
+            T b[blocksize];
+            Block* next;
+        };
+        /// Pointer to current block
+        Block* b;
+        /// Pointer to next part of block (decreasing)
+        T* n;
+        /// Size of allocated blocks
+        size_t _size;
+        /// Allocate additional block
+        void allocate();
+
     public:
-      T      b[blocksize];
-      Block* next;
+        /// Initialize
+        BlockAllocator(A& a);
+        /// Free all allocated blocks
+        ~BlockAllocator();
+        /// Return allocator used
+        A& allocator();
+        /// Return memory of size required by \a T
+        T* operator()();
+        /// Return size of memory required by allocator
+        size_t size() const;
     };
-    /// Pointer to current block
-    Block* b;
-    /// Pointer to next part of block (decreasing)
-    T*     n;
-    /// Size of allocated blocks
-    size_t _size;
-    /// Allocate additional block
-    void allocate(void);
-  public:
-    /// Initialize
-    BlockAllocator(A& a);
-    /// Free all allocated blocks
-    ~BlockAllocator(void);
-    /// Return allocator used
-    A& allocator(void);
-    /// Return memory of size required by \a T
-    T* operator ()(void);
-    /// Return size of memory required by allocator
-    size_t size(void) const;
-  };
 
-  /**
-   * \brief Client for block allocator of type \a T
-   *
-   * Provides memory management for objects of type \a T.
-   *
-   * \ingroup FuncSupport
-   */
-  template<class T, class A, int blocksize = 512>
-  class BlockClient {
-  public:
-    /// Allocate memory from block allocator \a ba
-    static void* operator new(size_t s, BlockAllocator<T,A,blocksize>& ba);
-    /// Noop (memory freed only when block allocator deleted)
-    static void  operator delete(void*, BlockAllocator<T,A,blocksize>& ba);
-    /// Noop (memory freed only when block allocator deleted)
-    static void  operator delete(void*);
-  };
+    /**
+     * \brief Client for block allocator of type \a T
+     *
+     * Provides memory management for objects of type \a T.
+     *
+     * \ingroup FuncSupport
+     */
+    template <class T, class A, int blocksize = 512>
+    class BlockClient {
+        friend T;
+        /// Default constructor, for the derived class \a T only
+        BlockClient() = default;
 
+    public:
+        /// Allocate memory from block allocator \a ba
+        static void* operator new(size_t s, BlockAllocator<T, A, blocksize>& ba);
+        /// Noop (memory freed only when block allocator deleted)
+        static void operator delete(void*, BlockAllocator<T, A, blocksize>& ba);
+        /// Noop (memory freed only when block allocator deleted)
+        static void operator delete(void*);
+    };
 
-
-  template<class T, class A, int blocksize>
-  forceinline
-  BlockAllocator<T,A,blocksize>::BlockAllocator(A& a0) : a(a0) {
-    b = static_cast<Block*>(a.ralloc(sizeof(Block)));
-    b->next = nullptr;
-    n       = &b->b[blocksize];
-    _size = sizeof(Block);
-  }
-
-  template<class T, class A, int blocksize>
-  forceinline
-  BlockAllocator<T,A,blocksize>::~BlockAllocator(void) {
-    while (b != nullptr) {
-      Block* f = b; b = b->next;
-      a.rfree(f,sizeof(Block));
+    template <class T, class A, int blocksize>
+    forceinline
+    BlockAllocator<T, A, blocksize>::BlockAllocator(A& a0)
+        : a(a0) {
+        b = static_cast<Block*>(a.ralloc(sizeof(Block)));
+        b->next = nullptr;
+        n = &b->b[blocksize];
+        _size = sizeof(Block);
     }
-  }
 
-  template<class T, class A, int blocksize>
-  forceinline A&
-  BlockAllocator<T,A,blocksize>::allocator(void) {
-    return a;
-  }
+    template <class T, class A, int blocksize>
+    forceinline BlockAllocator<T, A, blocksize>::~BlockAllocator() {
+        while (b != nullptr) {
+            Block* f = b;
+            b = b->next;
+            a.rfree(f, sizeof(Block));
+        }
+    }
 
-  template<class T, class A, int blocksize>
-  forceinline T*
-  BlockAllocator<T,A,blocksize>::operator ()(void) {
-    T* t = --n;
-    if (t == &b->b[0])
-      allocate();
-    return t;
-  }
+    template <class T, class A, int blocksize>
+    forceinline A&
+    BlockAllocator<T, A, blocksize>::allocator() {
+        return a;
+    }
 
-  template<class T, class A, int blocksize>
-  void
-  BlockAllocator<T,A,blocksize>::allocate(void) {
-    // Allocate another block
-    Block* nb = static_cast<Block*>(a.ralloc(sizeof(Block)));
-    nb->next = b; b = nb;
-    n = &nb->b[blocksize];
-    _size += sizeof(Block);
-  }
+    template <class T, class A, int blocksize>
+    forceinline T*
+    BlockAllocator<T, A, blocksize>::operator()() {
+        T* t = --n;
+        if (t == &b->b[0])
+            allocate();
+        return t;
+    }
 
-  template<class T, class A, int blocksize>
-  forceinline size_t
-  BlockAllocator<T,A,blocksize>::size(void) const {
-    return _size;
-  }
+    template <class T, class A, int blocksize>
+    void
+    BlockAllocator<T, A, blocksize>::allocate() {
+        // Allocate another block
+        Block* nb = static_cast<Block*>(a.ralloc(sizeof(Block)));
+        nb->next = b;
+        b = nb;
+        n = &nb->b[blocksize];
+        _size += sizeof(Block);
+    }
 
+    template <class T, class A, int blocksize>
+    forceinline size_t
+    BlockAllocator<T, A, blocksize>::size() const {
+        return _size;
+    }
 
+    template <class T, class A, int blocksize>
+    forceinline void
+    BlockClient<T, A, blocksize>::operator delete(void*, BlockAllocator<T, A, blocksize>&) {}
+    template <class T, class A, int blocksize>
+    forceinline void
+    BlockClient<T, A, blocksize>::operator delete(void*) {}
+    template <class T, class A, int blocksize>
+    forceinline void*
+    BlockClient<T, A, blocksize>::operator new(size_t, BlockAllocator<T, A, blocksize>& ba) {
+        return ba();
+    }
 
-  template<class T, class A, int blocksize>
-  forceinline void
-  BlockClient<T,A,blocksize>::operator
-  delete(void*,BlockAllocator<T,A,blocksize>&) {
-  }
-  template<class T, class A, int blocksize>
-  forceinline void
-  BlockClient<T,A,blocksize>::operator delete(void*) {
-  }
-  template<class T, class A, int blocksize>
-  forceinline void*
-  BlockClient<T,A,blocksize>::operator new(size_t,
-                                           BlockAllocator<T,A,blocksize>& ba) {
-    return ba();
-  }
-
-}}
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

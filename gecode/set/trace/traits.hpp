@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,15 +32,15 @@
 
 namespace Gecode {
 
-  /// Trace traits for set views
-  template<>
-  class TraceTraits<Set::SetView> {
-  public:
-    typedef Set::SetTraceView      TraceView;
-    typedef SetTraceDelta          TraceDelta;
-    typedef unsigned long long int SlackValue;
-  };
+    /// Trace traits for set views
+    template <>
+    class TraceTraits<Set::SetView> {
+    public:
+        using TraceView = Set::SetTraceView;
+        using TraceDelta = SetTraceDelta;
+        using SlackValue = unsigned long long int;
+    };
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-trace

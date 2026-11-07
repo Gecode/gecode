@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,233 +36,232 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
-  /*
-   * Constructors and access
-   *
-   */
+    /*
+     * Constructors and access
+     *
+     */
 
-  forceinline
-  SetView::SetView(void) {}
-  forceinline
-  SetView::SetView(const SetVar& y)
-    : VarImpView<SetVar>(y.varimp()) {}
-  forceinline
-  SetView::SetView(SetVarImp* y)
-    : VarImpView<SetVar>(y) {}
+    forceinline
+    SetView::SetView(const SetVar& y)
+        : VarImpView<SetVar>(y.varimp()) {}
+    forceinline
+    SetView::SetView(SetVarImp* y)
+        : VarImpView<SetVar>(y) {}
 
-  /*
-   * Variable information
-   *
-   */
+    /*
+     * Variable information
+     *
+     */
 
-  forceinline unsigned int
-  SetView::glbSize(void) const {
-    return x->glbSize();
-  }
-  forceinline unsigned int
-  SetView::lubSize(void) const {
-    return x->lubSize();
-  }
-  forceinline unsigned int
-  SetView::unknownSize(void) const {
-    return x->lubSize() - x->glbSize();
-  }
-  forceinline bool
-  SetView::contains(int i) const {
-    return x->knownIn(i);
-  }
-  forceinline bool
-  SetView::notContains(int i) const {
-    return x->knownOut(i);
-  }
-  forceinline unsigned int
-  SetView::cardMin(void) const {
-    return x->cardMin();
-  }
-  forceinline unsigned int
-  SetView::cardMax(void) const {
-    return x->cardMax();
-  }
-  forceinline int
-  SetView::lubMin(void) const {
-    return x->lubMin();
-  }
-  forceinline int
-  SetView::lubMax(void) const {
-    return x->lubMax();
-  }
-  forceinline int
-  SetView::lubMinN(unsigned int n) const {
-    return x->lubMinN(n);
-  }
-  forceinline int
-  SetView::glbMin(void) const {
-    return x->glbMin();
-  }
-  forceinline int
-  SetView::glbMax(void) const {
-    return x->glbMax();
-  }
+    forceinline unsigned int
+    SetView::glb_size() const {
+        return x->glb_size();
+    }
+    forceinline unsigned int
+    SetView::lub_size() const {
+        return x->lub_size();
+    }
+    forceinline unsigned int
+    SetView::unknown_size() const {
+        return x->lub_size() - x->glb_size();
+    }
+    forceinline bool
+    SetView::contains(int i) const {
+        return x->known_in(i);
+    }
+    forceinline bool
+    SetView::not_contains(int i) const {
+        return x->known_out(i);
+    }
+    forceinline unsigned int
+    SetView::card_min() const {
+        return x->card_min();
+    }
+    forceinline unsigned int
+    SetView::card_max() const {
+        return x->card_max();
+    }
+    forceinline int
+    SetView::lub_min() const {
+        return x->lub_min();
+    }
+    forceinline int
+    SetView::lub_max() const {
+        return x->lub_max();
+    }
+    forceinline int
+    SetView::lub_min_n(unsigned int n) const {
+        return x->lub_min_n(n);
+    }
+    forceinline int
+    SetView::glb_min() const {
+        return x->glb_min();
+    }
+    forceinline int
+    SetView::glb_max() const {
+        return x->glb_max();
+    }
 
-  /*
-   * Tells
-   *
-   */
+    /*
+     * Tells
+     *
+     */
 
-  forceinline ModEvent
-  SetView::cardMin(Space& home, unsigned int m) {
-    return x->cardMin(home, m);
-  }
+    forceinline ModEvent
+    SetView::card_min(Space& home, unsigned int m) {
+        return x->card_min(home, m);
+    }
 
-  forceinline ModEvent
-  SetView::cardMax(Space& home, unsigned int m) {
-    return x->cardMax(home, m);
-  }
+    forceinline ModEvent
+    SetView::card_max(Space& home, unsigned int m) {
+        return x->card_max(home, m);
+    }
 
-  forceinline ModEvent
-  SetView::include(Space& home, int from, int to) {
-    return x->include(home,from,to);
-  }
+    forceinline ModEvent
+    SetView::include(Space& home, int from, int to) {
+        return x->include(home, from, to);
+    }
 
-  forceinline ModEvent
-  SetView::include(Space& home, int n) {
-    return x->include(home,n);
-  }
+    forceinline ModEvent
+    SetView::include(Space& home, int n) {
+        return x->include(home, n);
+    }
 
-  forceinline ModEvent
-  SetView::exclude(Space& home, int n) {
-    return x->exclude(home, n);
-  }
+    forceinline ModEvent
+    SetView::exclude(Space& home, int n) {
+        return x->exclude(home, n);
+    }
 
-  forceinline ModEvent
-  SetView::intersect(Space& home, int from, int to) {
-    return x->intersect(home,from,to);
-  }
+    forceinline ModEvent
+    SetView::intersect(Space& home, int from, int to) {
+        return x->intersect(home, from, to);
+    }
 
-  forceinline ModEvent
-  SetView::intersect(Space& home, int n) {
-    return x->intersect(home,n);
-  }
+    forceinline ModEvent
+    SetView::intersect(Space& home, int n) {
+        return x->intersect(home, n);
+    }
 
-  template<class I> ModEvent
-  SetView::includeI(Space& home, I& iter) {
-    return x->includeI(home, iter);
-  }
+    template <class I>
+    ModEvent
+    SetView::include_i(Space& home, I& iter) {
+        return x->include_i(home, iter);
+    }
 
-  forceinline ModEvent
-  SetView::exclude(Space& home, int from, int to) {
-    return x->exclude(home,from,to);
-  }
-  template<class I> ModEvent
-  SetView::excludeI(Space& home, I& iter) {
-    return x->excludeI(home, iter);
-  }
-  template<class I> ModEvent
-  SetView::intersectI(Space& home, I& iter) {
-    return x->intersectI(home, iter);
-  }
+    forceinline ModEvent
+    SetView::exclude(Space& home, int from, int to) {
+        return x->exclude(home, from, to);
+    }
+    template <class I>
+    ModEvent
+    SetView::exclude_i(Space& home, I& iter) {
+        return x->exclude_i(home, iter);
+    }
+    template <class I>
+    ModEvent
+    SetView::intersect_i(Space& home, I& iter) {
+        return x->intersect_i(home, iter);
+    }
 
+    /*
+     * Delta information for advisors
+     *
+     */
 
-  /*
-   * Delta information for advisors
-   *
-   */
+    forceinline ModEvent
+    SetView::modification_event(const Delta& d) {
+        return SetVarImp::modification_event(d);
+    }
 
-  forceinline ModEvent
-  SetView::modevent(const Delta& d) {
-    return SetVarImp::modevent(d);
-  }
+    forceinline int
+    SetView::glb_min(const Delta& d) const {
+        return SetVarImp::glb_min(d);
+    }
+    forceinline int
+    SetView::glb_max(const Delta& d) const {
+        return SetVarImp::glb_max(d);
+    }
+    forceinline bool
+    SetView::glb_any(const Delta& d) const {
+        return SetVarImp::glb_any(d);
+    }
 
-  forceinline int
-  SetView::glbMin(const Delta& d) const {
-    return SetVarImp::glbMin(d);
-  }
-  forceinline int
-  SetView::glbMax(const Delta& d) const {
-    return SetVarImp::glbMax(d);
-  }
-  forceinline bool
-  SetView::glbAny(const Delta& d) const {
-    return SetVarImp::glbAny(d);
-  }
+    forceinline int
+    SetView::lub_min(const Delta& d) const {
+        return SetVarImp::lub_min(d);
+    }
+    forceinline int
+    SetView::lub_max(const Delta& d) const {
+        return SetVarImp::lub_max(d);
+    }
+    forceinline bool
+    SetView::lub_any(const Delta& d) const {
+        return SetVarImp::lub_any(d);
+    }
 
-  forceinline int
-  SetView::lubMin(const Delta& d) const {
-    return SetVarImp::lubMin(d);
-  }
-  forceinline int
-  SetView::lubMax(const Delta& d) const {
-    return SetVarImp::lubMax(d);
-  }
-  forceinline bool
-  SetView::lubAny(const Delta& d) const {
-    return SetVarImp::lubAny(d);
-  }
+    /**
+     * \brief %Range iterator for least upper bound of set variable views
+     * \ingroup TaskActorSetView
+     */
+    template <>
+    class LubRanges<SetView> : public LubRanges<SetVarImp*> {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        LubRanges();
+        /// Initialize with ranges for view \a x
+        LubRanges(const SetView& x);
+        /// Initialize with ranges for view \a x
+        void init(const SetView& x);
+        //@}
+    };
 
+    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
+    LubRanges<SetView>::LubRanges() {}
 
-  /**
-   * \brief %Range iterator for least upper bound of set variable views
-   * \ingroup TaskActorSetView
-   */
-  template<>
-  class LubRanges<SetView> : public LubRanges<SetVarImp*> {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    LubRanges(void);
-    /// Initialize with ranges for view \a x
-    LubRanges(const SetView& x);
-    /// Initialize with ranges for view \a x
-    void init(const SetView& x);
-    //@}
-  };
+    forceinline
+    LubRanges<SetView>::LubRanges(const SetView& x)
+        : LubRanges<SetVarImp*>(x.varimp()) {}
 
-  forceinline
-  LubRanges<SetView>::LubRanges(void) {}
+    forceinline void
+    LubRanges<SetView>::init(const SetView& x) {
+        LubRanges<SetVarImp*>::init(x.varimp());
+    }
 
-  forceinline
-  LubRanges<SetView>::LubRanges(const SetView& x)
-    : LubRanges<SetVarImp*>(x.varimp()) {}
+    /**
+     * \brief %Range iterator for greatest lower bound of set variable views
+     * \ingroup TaskActorSetView
+     */
+    template <>
+    class GlbRanges<SetView> : public GlbRanges<SetVarImp*> {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        GlbRanges();
+        /// Initialize with ranges for view \a x
+        GlbRanges(const SetView& x);
+        /// Initialize with ranges for view \a x
+        void init(const SetView& x);
+    };
 
-  forceinline void
-  LubRanges<SetView>::init(const SetView& x) {
-    LubRanges<SetVarImp*>::init(x.varimp());
-  }
+    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
+    GlbRanges<SetView>::GlbRanges() {}
 
+    forceinline
+    GlbRanges<SetView>::GlbRanges(const SetView& x)
+        : GlbRanges<SetVarImp*>(x.varimp()) {}
 
-  /**
-   * \brief %Range iterator for greatest lower bound of set variable views
-   * \ingroup TaskActorSetView
-   */
-  template<>
-  class GlbRanges<SetView> : public GlbRanges<SetVarImp*> {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    GlbRanges(void);
-    /// Initialize with ranges for view \a x
-    GlbRanges(const SetView& x);
-    /// Initialize with ranges for view \a x
-    void init(const SetView& x);
-  };
+    forceinline void
+    GlbRanges<SetView>::init(const SetView& x) {
+        GlbRanges<SetVarImp*>::init(x.varimp());
+    }
 
-  forceinline
-  GlbRanges<SetView>::GlbRanges(void) {}
-
-  forceinline
-  GlbRanges<SetView>::GlbRanges(const SetView& x)
-    : GlbRanges<SetVarImp*>(x.varimp()) {}
-
-  forceinline void
-  GlbRanges<SetView>::init(const SetView& x) {
-    GlbRanges<SetVarImp*>::init(x.varimp());
-  }
-
-}}
+} // namespace Gecode::Set
 
 // STATISTICS: set-var
-

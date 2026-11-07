@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -47,103 +46,101 @@ using namespace Gecode;
  */
 class Steiner : public Script {
 public:
-  /// Model variants
-  enum {
-    MODEL_NONE,   ///< Use simple relation constraint
-    MODEL_MATCHING, ///< Use matching constraints
-    MODEL_SEQ ///< Use sequence constraints
-  };
-  /// Order of the Steiner problem
-  int n;
-  /// Number of Steiner triples
-  int noOfTriples;
+    /// Model variants
+    enum {
+        MODEL_NONE,     ///< Use simple relation constraint
+        MODEL_MATCHING, ///< Use matching constraints
+        MODEL_SEQ       ///< Use sequence constraints
+    };
+    /// Order of the Steiner problem
+    int n;
+    /// Number of Steiner triples
+    int no_of_triples;
 
-  /// The steiner triples
-  SetVarArray triples;
+    /// The steiner triples
+    SetVarArray triples;
 
-  /// Actual model
-  Steiner(const SizeOptions& opt)
-    : Script(opt), n(opt.size()), noOfTriples((n*(n-1))/6),
-      triples(*this, noOfTriples, IntSet::empty, 1, n, 3U, 3U) {
+    /// Actual model
+    Steiner(const SizeOptions& opt)
+        : Script(opt), n(opt.size()), no_of_triples((n * (n - 1)) / 6),
+          triples(*this, no_of_triples, IntSet::empty, 1, n, 3U, 3U) {
 
-    for (int i=0; i<noOfTriples; i++) {
-      for (int j=i+1; j<noOfTriples; j++) {
-        SetVar x = triples[i];
-        SetVar y = triples[j];
+        for (int i = 0; i < no_of_triples; i++) {
+            for (int j = i + 1; j < no_of_triples; j++) {
+                SetVar x = triples[i];
+                SetVar y = triples[j];
 
-        SetVar atmostOne(*this,IntSet::empty,1,n,0U,1U);
-        rel(*this, (x & y) == atmostOne);
+                SetVar atmost_one(*this, IntSet::empty, 1, n, 0U, 1U);
+                rel(*this, (x & y) == atmost_one);
 
-        IntVar x1(*this,1,n);
-        IntVar x2(*this,1,n);
-        IntVar x3(*this,1,n);
-        IntVar y1(*this,1,n);
-        IntVar y2(*this,1,n);
-        IntVar y3(*this,1,n);
+                IntVar x1(*this, 1, n);
+                IntVar x2(*this, 1, n);
+                IntVar x3(*this, 1, n);
+                IntVar y1(*this, 1, n);
+                IntVar y2(*this, 1, n);
+                IntVar y3(*this, 1, n);
 
-        if (opt.model() == MODEL_NONE) {
-          /* Naive alternative:
-           * just including the ints in the set
-           */
-          rel(*this, singleton(x1) <= x);
-          rel(*this, singleton(x2) <= x);
-          rel(*this, singleton(x3) <= x);
-          rel(*this, singleton(y1) <= y);
-          rel(*this, singleton(y2) <= y);
-          rel(*this, singleton(y3) <= y);
+                if (opt.model() == MODEL_NONE) {
+                    /* Naive alternative:
+                     * just including the ints in the set
+                     */
+                    rel(*this, singleton(x1) <= x);
+                    rel(*this, singleton(x2) <= x);
+                    rel(*this, singleton(x3) <= x);
+                    rel(*this, singleton(y1) <= y);
+                    rel(*this, singleton(y2) <= y);
+                    rel(*this, singleton(y3) <= y);
 
-        } else if (opt.model() == MODEL_MATCHING) {
-          /* Smart alternative:
-           * Using matching constraints
-           */
+                } else if (opt.model() == MODEL_MATCHING) {
+                    /* Smart alternative:
+                     * Using matching constraints
+                     */
 
-          channelSorted(*this, {x1,x2,x3}, x);
-          channelSorted(*this, {y1,y2,y3}, y);
-        } else if (opt.model() == MODEL_SEQ) {
-          SetVar sx1 = expr(*this, singleton(x1));
-          SetVar sx2 = expr(*this, singleton(x2));
-          SetVar sx3 = expr(*this, singleton(x3));
-          SetVar sy1 = expr(*this, singleton(y1));
-          SetVar sy2 = expr(*this, singleton(y2));
-          SetVar sy3 = expr(*this, singleton(y3));
-          sequence(*this,{sx1,sx2,sx3},x);
-          sequence(*this,{sy1,sy2,sy3},y);
+                    channel_sorted(*this, {x1, x2, x3}, x);
+                    channel_sorted(*this, {y1, y2, y3}, y);
+                } else if (opt.model() == MODEL_SEQ) {
+                    SetVar sx1 = expr(*this, singleton(x1));
+                    SetVar sx2 = expr(*this, singleton(x2));
+                    SetVar sx3 = expr(*this, singleton(x3));
+                    SetVar sy1 = expr(*this, singleton(y1));
+                    SetVar sy2 = expr(*this, singleton(y2));
+                    SetVar sy3 = expr(*this, singleton(y3));
+                    sequence(*this, {sx1, sx2, sx3}, x);
+                    sequence(*this, {sy1, sy2, sy3}, y);
+                }
+
+                /* Breaking symmetries */
+                rel(*this, x1 < x2);
+                rel(*this, x2 < x3);
+                rel(*this, x1 < x3);
+
+                rel(*this, y1 < y2);
+                rel(*this, y2 < y3);
+                rel(*this, y1 < y3);
+
+                linear(*this, {(n + 1) * (n + 1), n + 1, 1, -(n + 1) * (n + 1), -(n + 1), -1}, {x1, x2, x3, y1, y2, y3},
+                       IRT_LT, 0);
+            }
         }
 
-        /* Breaking symmetries */
-        rel(*this, x1 < x2);
-        rel(*this, x2 < x3);
-        rel(*this, x1 < x3);
-
-        rel(*this, y1 < y2);
-        rel(*this, y2 < y3);
-        rel(*this, y1 < y3);
-
-        linear(*this,
-               {(n+1)*(n+1), n+1, 1,  -(n+1)*(n+1), -(n+1), -1},
-               {x1,          x2,  x3, y1,           y2,     y3},
-               IRT_LE, 0);
-      }
+        branch(*this, triples, SET_VAR_NONE(), SET_VAL_MIN_INC());
     }
-
-    branch(*this, triples, SET_VAR_NONE(), SET_VAL_MIN_INC());
-  }
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    for (int i=0; i<noOfTriples; i++) {
-      os << "\t[" << i << "] = " << triples[i] << std::endl;
+    /// Print solution
+    void
+    print(std::ostream& os) const override {
+        for (int i = 0; i < no_of_triples; i++) {
+            os << "\t[" << i << "] = " << triples[i] << '\n';
+        }
     }
-  }
-  /// Constructor for copying \a s
-  Steiner(Steiner& s) : Script(s), n(s.n), noOfTriples(s.noOfTriples) {
-    triples.update(*this, s.triples);
-  }
-  /// Copy during cloning
-  virtual Space*
-  copy(void) {
-    return new Steiner(*this);
-  }
+    /// Constructor for copying \a s
+    Steiner(Steiner& s) : Script(s), n(s.n), no_of_triples(s.no_of_triples) {
+        triples.update(*this, s.triples);
+    }
+    /// Copy during cloning
+    Space*
+    copy() override {
+        return new Steiner(*this);
+    }
 };
 
 /** \brief Main-function
@@ -151,18 +148,16 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("Steiner");
-  opt.model(Steiner::MODEL_NONE);
-  opt.model(Steiner::MODEL_NONE, "rel", "Use simple relation constraints");
-  opt.model(Steiner::MODEL_MATCHING, "matching", "Use matching constraints");
-  opt.model(Steiner::MODEL_SEQ, "sequence", "Use sequence constraints");
-  opt.size(9);
-  opt.iterations(20);
-  opt.parse(argc,argv);
-  Script::run<Steiner,DFS,SizeOptions>(opt);
-  return 0;
+    SizeOptions opt("Steiner");
+    opt.model(Steiner::MODEL_NONE);
+    opt.model(Steiner::MODEL_NONE, "rel", "Use simple relation constraints");
+    opt.model(Steiner::MODEL_MATCHING, "matching", "Use matching constraints");
+    opt.model(Steiner::MODEL_SEQ, "sequence", "Use sequence constraints");
+    opt.size(9);
+    opt.iterations(20);
+    opt.parse(argc, argv);
+    Script::run<Steiner, DFS, SizeOptions>(opt);
+    return 0;
 }
 
-
 // STATISTICS: example-any
-

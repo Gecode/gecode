@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -34,47 +33,45 @@
 #include <gecode/search.hh>
 #include <gecode/search/worker-control.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-  Engine::Engine(void)
-    : worker_control() {}
+    Engine::Engine() = default;
 
-  Engine::Engine(const Options& o, unsigned int capacity)
-    : worker_control(o.worker_control) {
-    WorkerControlAccess::attach(worker_control,capacity);
-  }
+    Engine::Engine(const Options& o, unsigned int capacity) : worker_control(o.worker_control) {
+        WorkerControlAccess::attach(worker_control, capacity);
+    }
 
-  void
-  Engine::constrain(const Space& b) {
-    (void) b;
-    throw NoBest("Engine::constrain");
-  }
+    void
+    Engine::constrain(const Space& b) {
+        (void)b;
+        throw NoBest("Engine::constrain");
+    }
 #ifdef GECODE_HAS_EXPERIMENTAL
-  bool
-  Engine::limited(void) const {
-    return false;
-  }
+    bool
+    Engine::limited() const {
+        return false;
+    }
 
 #endif
-  void
-  Engine::reset(Space* s) {
-    (void) s;
-  }
-  NoGoods&
-  Engine::nogoods(void) {
-    return NoGoods::eng;
-  }
+    void
+    Engine::reset(Space* s) {
+        (void)s;
+    }
+    NoGoods&
+    Engine::nogoods() {
+        return NoGoods::eng;
+    }
 
-  Engine::~Engine(void) {
-    WorkerControlAccess::detach(worker_control);
-  }
+    Engine::~Engine() {
+        WorkerControlAccess::detach(worker_control);
+    }
 
-  /*
-   * Defined out of line so that the vtable, and with it the destructor of
-   * the options, is only emitted in the search library.
-   */
-  Builder::~Builder(void) {}
+    /*
+     * Defined out of line so that the vtable, and with it the destructor of
+     * the options, is only emitted in the search library.
+     */
+    Builder::~Builder() = default;
 
-}}
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

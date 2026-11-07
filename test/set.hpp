@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -31,87 +30,93 @@
  *
  */
 
-namespace Test { namespace Set {
+namespace Test::Set {
 
-  inline
-  std::string
-  SetTest::str(int i) {
-    std::stringstream s;
-    s << i;
-    return s.str();
-  }
-
-  inline
-  std::string
-  SetTest::str(Gecode::SetRelType srt) {
-    switch (srt) {
-    case Gecode::SRT_EQ: return "Eq";
-    case Gecode::SRT_LQ: return "Lq";
-    case Gecode::SRT_LE: return "Le";
-    case Gecode::SRT_GQ: return "Gq";
-    case Gecode::SRT_GR: return "Gr";
-    case Gecode::SRT_NQ: return "Nq";
-    case Gecode::SRT_SUB: return "Sub";
-    case Gecode::SRT_SUP: return "Sup";
-    case Gecode::SRT_DISJ: return "Disj";
-    case Gecode::SRT_CMPL: return "Cmpl";
+    inline std::string
+    SetTest::str(int i) {
+        std::stringstream s;
+        s << i;
+        return s.str();
     }
-    return "";
-  }
 
-  inline
-  std::string
-  SetTest::str(Gecode::SetOpType sot) {
-    switch (sot) {
-    case Gecode::SOT_UNION: return "Union";
-    case Gecode::SOT_DUNION: return "DUnion";
-    case Gecode::SOT_INTER: return "Inter";
-    case Gecode::SOT_MINUS: return "Minus";
+    inline std::string
+    SetTest::str(Gecode::SetRelType srt) {
+        switch (srt) {
+        case Gecode::SRT_EQ:
+            return "Eq";
+        case Gecode::SRT_LQ:
+            return "Lq";
+        case Gecode::SRT_LT:
+            return "Lt";
+        case Gecode::SRT_GQ:
+            return "Gq";
+        case Gecode::SRT_GR:
+            return "Gr";
+        case Gecode::SRT_NQ:
+            return "Nq";
+        case Gecode::SRT_SUB:
+            return "Sub";
+        case Gecode::SRT_SUP:
+            return "Sup";
+        case Gecode::SRT_DISJOINT:
+            return "Disj";
+        case Gecode::SRT_COMPLEMENT:
+            return "Cmpl";
+        }
+        return "";
     }
-    return "";
-  }
 
-  inline
-  std::string
-  SetTest::str(const Gecode::IntArgs& x) {
-    std::string s = "";
-    for (int i=0; i<x.size()-1; i++)
-      s += str(x[i]) + ",";
-    return "[" + s + str(x[x.size()-1]) + "]";
-  }
+    inline std::string
+    SetTest::str(Gecode::SetOpType sot) {
+        switch (sot) {
+        case Gecode::SOT_UNION:
+            return "Union";
+        case Gecode::SOT_DISJOINT_UNION:
+            return "DUnion";
+        case Gecode::SOT_INTERSECTION:
+            return "Inter";
+        case Gecode::SOT_MINUS:
+            return "Minus";
+        }
+        return "";
+    }
 
-  inline
-  SetRelTypes::SetRelTypes(void)
-    : i(sizeof(srts)/sizeof(Gecode::SetRelType)-1) {}
-  inline bool
-  SetRelTypes::operator()(void) const {
-    return i>=0;
-  }
-  inline void
-  SetRelTypes::operator++(void) {
-    i--;
-  }
-  inline Gecode::SetRelType
-  SetRelTypes::srt(void) const {
-    return srts[i];
-  }
+    inline std::string
+    SetTest::str(const Gecode::IntArgs& x) {
+        std::string s;
+        for (int i = 0; i < x.size() - 1; i++)
+            s += str(x[i]) + ",";
+        return "[" + s + str(x[x.size() - 1]) + "]";
+    }
 
-  inline
-  SetOpTypes::SetOpTypes(void)
-    : i(sizeof(sots)/sizeof(Gecode::SetOpType)-1) {}
-  inline bool
-  SetOpTypes::operator()(void) const {
-    return i>=0;
-  }
-  inline void
-  SetOpTypes::operator++(void) {
-    i--;
-  }
-  inline Gecode::SetOpType
-  SetOpTypes::sot(void) const {
-    return sots[i];
-  }
+    inline SetRelTypes::SetRelTypes() : i(sizeof(srts) / sizeof(Gecode::SetRelType) - 1) {}
+    inline bool
+    SetRelTypes::operator()() const {
+        return i >= 0;
+    }
+    inline void
+    SetRelTypes::operator++() {
+        i--;
+    }
+    inline Gecode::SetRelType
+    SetRelTypes::srt() const {
+        return srts[i];
+    }
 
-}}
+    inline SetOpTypes::SetOpTypes() : i(sizeof(sots) / sizeof(Gecode::SetOpType) - 1) {}
+    inline bool
+    SetOpTypes::operator()() const {
+        return i >= 0;
+    }
+    inline void
+    SetOpTypes::operator++() {
+        i--;
+    }
+    inline Gecode::SetOpType
+    SetOpTypes::sot() const {
+        return sots[i];
+    }
+
+} // namespace Test::Set
 
 // STATISTICS: test-set

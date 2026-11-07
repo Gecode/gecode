@@ -25,7 +25,9 @@ solution so far.
 
 ## Code conventions
 
-New code follows these rules, even where older code does not:
+Formatting, naming, and the format and lint commands are described in
+[the code style guide](docs/code-style.md). New code follows these rules, even
+where older code does not:
 
 - Name functions and variables in snake_case (`read_file`, `parse_int`).
 - Use `enum class`, unless an existing API requires a plain `enum`.
@@ -41,7 +43,7 @@ minimodel modules) stores data in Gecode's own containers and memory:
 `Region`, and heap or space allocation. Other standard library facilities, such
 as `std::optional`, `std::unique_ptr`, and `<algorithm>`, are fine there. The
 instance and FlatZinc modules, tools, examples, and tests may use STL containers
-when that is clearer. Gecode builds as C++17.
+when that is clearer. Gecode builds as C++23.
 
 Add abstractions only when they solve a concrete maintenance or correctness
 problem.
@@ -87,13 +89,12 @@ timing are nondeterministic; shared stop state is atomic.
 ## Testing
 
 Tests use the native framework and run in its shared executable
-(`bin/gecode-test` with CMake, `test/test` with Autoconf). Add a test next to
-the most similar existing one and use its fixture: `Test::Int::Test`,
-`Test::Set::SetTest`, or `Test::Float::Test` for constraints, `Test::Branch` and
-`Test::Assign` for branching, `Test::FlatZinc::FlatZincTest` for FlatZinc, and
-`Test::Base` for search and kernel behaviour. Keep to the existing executable,
-CTest setup, and CI jobs; if the framework cannot test something, explain why
-and ask.
+`bin/gecode-test`. Add a test next to the most similar existing one and use its
+fixture: `Test::Int::Test`, `Test::Set::SetTest`, or `Test::Float::Test` for
+constraints, `Test::Branch` and `Test::Assign` for branching,
+`Test::FlatZinc::FlatZincTest` for FlatZinc, and `Test::Base` for search and
+kernel behaviour. Keep to the existing executable, CTest setup, and CI jobs;
+if the framework cannot test something, explain why and ask.
 
 A constraint test gives an independent `solution()` predicate over assignments
 and a `post()` that calls the public posting function. The harness enumerates
@@ -122,18 +123,13 @@ crosses their feature guard, build the default configuration too. The
 [CMake build reference](docs/cmake-build.md) covers dependency and sanitizer
 options.
 
-When adding or removing sources, update both `Makefile.in` and
-`cmake/GecodeSources.cmake`, plus `examples/CMakeLists.txt` for examples.
+When adding or removing sources, update `cmake/GecodeSources.cmake`, plus
+`examples/CMakeLists.txt` for examples. CMake tracks include dependencies.
 
-When include dependencies change, regenerate `Makefile.dep` with `make depend`
-in an Autoconf build. It needs Bison 3.8 and Flex 2.6 on `PATH`; the macOS
-system Bison is too old. The checked-in paths are relative to the source root
-(`./gecode/...`), so an out-of-tree build's `../../` prefixes must be rewritten.
-The rules for the changed includes should be the only differences.
-
-`configure.ac` is the source for `configure`. After changing a generator input,
-run `make regenerate` in a configured Autoconf build. Ordinary C++ edits need no
-regeneration. `.github/ci/generated-source-freshness.sh` checks freshness.
+After changing a generator input, build the CMake `regenerate` target. It needs
+Bison 3.8 and Flex 2.6 on `PATH`; the macOS system Bison is too old. Ordinary
+C++ edits need no regeneration. `.github/ci/generated-source-freshness.sh`
+checks freshness.
 
 ## Documentation
 
@@ -153,5 +149,5 @@ mark preview APIs with `Experimental: true`. Validate it with
 `uv run misc/tidy.py --check`.
 
 The changelog release and the build version are separate. The build version
-and library ABI live in `gecode-version.m4`, and change only when preparing a
+and library ABI live in `CMakeLists.txt`, and change only when preparing a
 release.

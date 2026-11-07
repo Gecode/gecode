@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,44 +36,47 @@
 #include <string>
 #include <gecode/flatzinc/ast.hh>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
-  /// Abstract representation of a constraint
-  class ConExpr {
-  public:
-    /// Identifier for the constraint
-    std::string id;
-    /// Constraint arguments
-    AST::Array* args;
-    /// Constraint annotations
-    AST::Array* ann;
-    /// Constructor
-    ConExpr(const std::string& id0, AST::Array* args0, AST::Array* ann0);
-    /// Return argument \a i
-    AST::Node* operator[](int i) const;
-    /// Return number of arguments
-    int size(void) const;
-    /// Destructor
-    ~ConExpr(void);
-  };
+    /// Abstract representation of a constraint
+    class ConExpr {
+    public:
+        /// Identifier for the constraint
+        std::string id;
+        /// Constraint arguments
+        AST::Array* args;
+        /// Constraint annotations
+        AST::Array* ann;
+        /// Constructor
+        ConExpr(const std::string& id0, AST::Array* args0, AST::Array* ann0);
+        /// Return argument \a i
+        AST::Node* operator[](int i) const;
+        /// Return number of arguments
+        int size() const;
+        /// Destructor
+        ~ConExpr();
+    };
 
-  forceinline
-  ConExpr::ConExpr(const std::string& id0, AST::Array* args0, AST::Array* ann0)
-    : id(id0), args(args0), ann(ann0) {}
+    forceinline
+    ConExpr::ConExpr(const std::string& id0, AST::Array* args0, AST::Array* ann0)
+        : id(id0), args(args0), ann(ann0) {}
 
-  forceinline AST::Node*
-  ConExpr::operator[](int i) const { return args->a[i]; }
+    forceinline AST::Node*
+    ConExpr::operator[](int i) const {
+        return args->a[i];
+    }
 
-  forceinline int
-  ConExpr::size(void) const { return args->a.size(); }
+    forceinline int
+    ConExpr::size() const {
+        return args->a.size();
+    }
 
-  forceinline
-  ConExpr::~ConExpr(void) {
-    delete args;
-    delete ann;
-  }
+    forceinline ConExpr::~ConExpr() {
+        delete args;
+        delete ann;
+    }
 
-}}
+} // namespace Gecode::FlatZinc
 
 #endif
 

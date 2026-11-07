@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,55 +32,57 @@
 
 #include <gecode/int/bin-packing.hh>
 
-namespace Gecode { namespace Int { namespace BinPacking {
+namespace Gecode::Int::BinPacking {
 
-  ExecStatus
-  ConflictGraph::bk(NodeSet& p, NodeSet& x) {
-    assert(!(p.none(nodes()) && x.none(nodes())));
-    // Iterate over neighbors of pivot node
-    Nodes n(node[pivot(p,x)].n);
-    // Iterate over elements of p
-    Nodes i(p);
-    // The loop iterates over elements in i - n
-    while (i() < nodes()) {
-      int iv = i(), nv = n();
-      if ((n() < nodes()) && (iv == nv)) {
-        ++i; ++n;
-      } else if ((n() < nodes()) && (iv > nv)) {
-        ++n;
-      } else {
-        ++i; ++n;
+    ExecStatus
+    ConflictGraph::bk(NodeSet& p, NodeSet& x) {
+        assert(!(p.none(nodes()) && x.none(nodes())));
+        // Iterate over neighbors of pivot node
+        Nodes n(node[pivot(p, x)].n);
+        // Iterate over elements of p
+        Nodes i(p);
+        // The loop iterates over elements in i - n
+        while (i() < nodes()) {
+            int iv = i(), nv = n();
+            if ((n() < nodes()) && (iv == nv)) {
+                ++i;
+                ++n;
+            } else if ((n() < nodes()) && (iv > nv)) {
+                ++n;
+            } else {
+                ++i;
+                ++n;
 
-        Region reg;
+                Region reg;
 
-        // Found i.val() to be in i - n
+                // Found i.val() to be in i - n
 
-        NodeSet np, nx;
-        np.allocate(reg,nodes());
-        nx.allocate(reg,nodes());
+                NodeSet np, nx;
+                np.allocate(reg, nodes());
+                nx.allocate(reg, nodes());
 
-        bool empty = NodeSet::iwn(np,p,nx,x,node[iv].n,nodes());
+                bool empty = NodeSet::iwn(np, p, nx, x, node[iv].n, nodes());
 
-        p.excl(iv); x.incl(iv);
+                p.excl(iv);
+                x.incl(iv);
 
-        // Update current clique
-        cur.incl(iv,node[iv].w);
+                // Update current clique
+                cur.incl(iv, node[iv].w);
 
-        if (empty) {
-          // Found a max clique
-          GECODE_ES_CHECK(clique());
-        } else {
-          GECODE_ES_CHECK(bk(np,nx));
+                if (empty) {
+                    // Found a max clique
+                    GECODE_ES_CHECK(clique());
+                } else {
+                    GECODE_ES_CHECK(bk(np, nx));
+                }
+
+                // Reset current clique
+                cur.excl(iv, node[iv].w);
+            }
         }
-
-        // Reset current clique
-        cur.excl(iv,node[iv].w);
-      }
+        return ES_OK;
     }
-    return ES_OK;
-  }
 
-}}}
+} // namespace Gecode::Int::BinPacking
 
 // STATISTICS: int-prop
-

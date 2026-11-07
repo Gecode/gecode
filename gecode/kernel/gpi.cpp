@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,10 +32,10 @@
 
 #include <gecode/kernel.hh>
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
-  Support::Mutex GPI::m;
+    Support::Mutex GPI::m;
 
-}}
+} // namespace Gecode::Kernel
 
 // STATISTICS: kernel-prop

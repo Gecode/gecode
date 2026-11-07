@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,77 +36,77 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
-  template<class View0, class View1>
-  forceinline
-  Eq<View0,View1>::Eq(Home home, View0 x, View1 y)
-    : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {}
+    template <class View0, class View1>
+    forceinline
+    Eq<View0, View1>::Eq(Home home, View0 x, View1 y)
+        : MixBinaryPropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, x, y) {}
 
-  template<class View0, class View1>
-  forceinline
-  Eq<View0,View1>::Eq(Space& home, Eq& p)
-    : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,p) {}
+    template <class View0, class View1>
+    forceinline
+    Eq<View0, View1>::Eq(Space& home, Eq& p)
+        : MixBinaryPropagator<View0, PC_SET_ANY, View1, PC_SET_ANY>(home, p) {}
 
-  template<class View0, class View1>
-  ExecStatus
-  Eq<View0,View1>::post(Home home, View0 x, View1 y) {
-    if (!same(x,y))
-      (void) new (home) Eq(home,x,y);
-    return ES_OK;
-  }
-
-  template<class View0, class View1>
-  Actor*
-  Eq<View0,View1>::copy(Space& home) {
-    return new (home) Eq(home,*this);
-  }
-
-  template<class View0, class View1>
-  ExecStatus
-  Eq<View0,View1>::propagate(Space& home, const ModEventDelta& med) {
-
-    ModEvent me0 = View0::me(med);
-    ModEvent me1 = View1::me(med);
-
-    Region r;
-
-    if (testSetEventLB(me0,me1)) {
-      GlbRanges<View0> x0lb(x0);
-      GlbRanges<View1> x1lb(x1);
-      Iter::Ranges::Union<GlbRanges<View0>,GlbRanges<View1> > lbu(x0lb,x1lb);
-      Iter::Ranges::Cache lbuc(r,lbu);
-      GECODE_ME_CHECK(x0.includeI(home,lbuc));
-      lbuc.reset();
-      GECODE_ME_CHECK(x1.includeI(home,lbuc));
+    template <class View0, class View1>
+    ExecStatus
+    Eq<View0, View1>::post(Home home, View0 x, View1 y) {
+        if (!same(x, y))
+            (void)new (home) Eq(home, x, y);
+        return ES_OK;
     }
 
-    if (testSetEventUB(me0,me1)) {
-      LubRanges<View0> x0ub(x0);
-      LubRanges<View1> x1ub(x1);
-      Iter::Ranges::Inter<LubRanges<View0>,LubRanges<View1> > ubi(x0ub,x1ub);
-      Iter::Ranges::Cache ubic(r,ubi);
-      GECODE_ME_CHECK(x0.intersectI(home,ubic));
-      ubic.reset();
-      GECODE_ME_CHECK(x1.intersectI(home,ubic));
+    template <class View0, class View1>
+    Actor*
+    Eq<View0, View1>::copy(Space& home) {
+        return new (home) Eq(home, *this);
     }
 
-    if (testSetEventCard(me0,me1)) {
-      unsigned int max = std::min(x0.cardMax(),x1.cardMax());
-      unsigned int min = std::max(x0.cardMin(),x1.cardMin());
-      GECODE_ME_CHECK(x0.cardMax(home,max));
-      GECODE_ME_CHECK(x1.cardMax(home,max));
-      GECODE_ME_CHECK(x0.cardMin(home,min));
-      GECODE_ME_CHECK(x1.cardMin(home,min));
+    template <class View0, class View1>
+    ExecStatus
+    Eq<View0, View1>::propagate(Space& home, const ModEventDelta& med) {
+
+        ModEvent me0 = View0::me(med);
+        ModEvent me1 = View1::me(med);
+
+        Region r;
+
+        if (test_set_event_lb(me0, me1)) {
+            GlbRanges<View0> x0lb(x0);
+            GlbRanges<View1> x1lb(x1);
+            Iter::Ranges::Union<GlbRanges<View0>, GlbRanges<View1>> lbu(x0lb, x1lb);
+            Iter::Ranges::Cache lbuc(r, lbu);
+            GECODE_ME_CHECK(x0.include_i(home, lbuc));
+            lbuc.reset();
+            GECODE_ME_CHECK(x1.include_i(home, lbuc));
+        }
+
+        if (test_set_event_ub(me0, me1)) {
+            LubRanges<View0> x0ub(x0);
+            LubRanges<View1> x1ub(x1);
+            Iter::Ranges::Inter<LubRanges<View0>, LubRanges<View1>> ubi(x0ub, x1ub);
+            Iter::Ranges::Cache ubic(r, ubi);
+            GECODE_ME_CHECK(x0.intersect_i(home, ubic));
+            ubic.reset();
+            GECODE_ME_CHECK(x1.intersect_i(home, ubic));
+        }
+
+        if (test_set_event_card(me0, me1)) {
+            unsigned int max = std::min(x0.card_max(), x1.card_max());
+            unsigned int min = std::max(x0.card_min(), x1.card_min());
+            GECODE_ME_CHECK(x0.card_max(home, max));
+            GECODE_ME_CHECK(x1.card_max(home, max));
+            GECODE_ME_CHECK(x0.card_min(home, min));
+            GECODE_ME_CHECK(x1.card_min(home, min));
+        }
+
+        if (x0.assigned()) {
+            assert(x1.assigned());
+            return home.ES_SUBSUMED(*this);
+        }
+        return shared(x0, x1) ? ES_NOFIX : ES_FIX;
     }
 
-    if (x0.assigned()) {
-      assert (x1.assigned());
-      return home.ES_SUBSUMED(*this);
-    }
-    return shared(x0,x1) ? ES_NOFIX : ES_FIX;
-  }
-
-}}}
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

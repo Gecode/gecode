@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,13 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("zebra",
-"predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create() {
+            (void)new FlatZincTest("zebra", "predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -129,19 +124,18 @@ constraint int_lin_eq_reif([1, -1], [animal[2], smoke[3]], -1, BOOL____00001) ::
 constraint int_lin_eq_reif([1, -1], [animal[3], smoke[2]], -1, BOOL____00004) :: defines_var(BOOL____00004);\n\
 constraint int_lin_eq_reif([1, -1], [colour[5], nation[4]], -1, BOOL____00007) :: defines_var(BOOL____00007);\n\
 solve satisfy;\n\
-", "animal = array1d(0..4, [4, 1, 2, 5, 3]);\n\
+",
+                                   "animal = array1d(0..4, [4, 1, 2, 5, 3]);\n\
 colour = array1d(0..4, [3, 5, 4, 1, 2]);\n\
 drink = array1d(0..4, [5, 2, 3, 4, 1]);\n\
 nation = array1d(0..4, [3, 4, 2, 1, 5]);\n\
 smoke = array1d(0..4, [3, 1, 2, 4, 5]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

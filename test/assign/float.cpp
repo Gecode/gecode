@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,34 +36,87 @@
 
 #ifdef GECODE_HAS_FLOAT_VARS
 
-namespace Test { namespace Assign {
+#include <gecode/search.hh>
 
-  /// %Test assignment with distinct propagator
-  class Float : public FloatTest {
-  public:
-    /// Create and register test
-    Float(const std::string& s, const Gecode::FloatVal& d, int n)
-      : FloatTest(s,n,d) {}
-    /// Post propagators on variables \a x
-    virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-      for (int i=0; i<x.size()-1; i++)
-        Gecode::rel(home, x[i], Gecode::FRT_LQ, x[i+1]);
+namespace Test::Assign {
+
+    /// %Test assignment with distinct propagator
+    class Float : public FloatTest {
+    public:
+        /// Create and register test
+        Float(const std::string& s, const Gecode::FloatVal& d, int n) : FloatTest(s, n, d) {}
+        /// Post propagators on variables \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            for (int i = 0; i < x.size() - 1; i++)
+                Gecode::rel(home, x[i], Gecode::FRT_LQ, x[i + 1]);
+        }
+    };
+
+    namespace {
+        Gecode::FloatVal d_dense(-2, 2);
+        Gecode::FloatVal d_large(-2, 10);
+
+        Float d_3("Dense::3", d_dense, 3);
+        Float d_5("Dense::5", d_dense, 5);
+        Float l_2("Large::2", d_large, 2);
+        Float l_3("Large::3", d_large, 3);
+    } // namespace
+
+    /// Merit that prefers the last of five variables
+    static double
+    float_merit_last(const Gecode::Space&, Gecode::FloatVar, int i) {
+        return (i == 4) ? 1.0 : 0.0;
     }
-  };
 
-  namespace {
-    Gecode::FloatVal d_dense(-2,2);
-    Gecode::FloatVal d_large(-2,10);
+    /// Space with five variables in [0,1] whose sum is at most one
+    class FloatOrderSpace : public Gecode::Space {
+    public:
+        /// Variables to be assigned
+        Gecode::FloatVarArray x;
+        /// Initialize test space
+        FloatOrderSpace() : x(*this, 5, 0.0, 1.0) {
+            Gecode::linear(*this, x, Gecode::FRT_LQ, 1.0);
+        }
+        /// Constructor for cloning \a s
+        FloatOrderSpace(FloatOrderSpace& s) : Gecode::Space(s) {
+            x.update(*this, s.x);
+        }
+        /// Copy space during cloning
+        Gecode::Space*
+        copy() override {
+            return new FloatOrderSpace(*this);
+        }
+    };
 
-    Float d_3("Dense::3",d_dense,3);
-    Float d_5("Dense::5",d_dense,5);
-    Float l_2("Large::2",d_large,2);
-    Float l_3("Large::3",d_large,3);
-  }
+    /// %Test that assignment follows a single variable selection
+    class FloatVarSelection : public Base {
+    public:
+        /// Create and register test
+        FloatVarSelection() : Base("Float::Assign::VarSelection") {}
+        /// Perform test
+        bool
+        run() override {
+            using namespace Gecode;
+            FloatOrderSpace* s = new FloatOrderSpace;
+            assign(*s, s->x, FLOAT_VAR_MERIT_MAX(&float_merit_last), FLOAT_ASSIGN_MAX());
+            DFS<FloatOrderSpace> e(s);
+            delete s;
+            FloatOrderSpace* solution = e.next();
+            bool ok = solution != nullptr;
+            for (int i = 0; ok && (i < solution->x.size()); i++)
+                ok = (i == 4) ? (solution->x[i].min() > 0.5) : (solution->x[i].max() < 0.5);
+            delete solution;
+            return ok;
+        }
+    };
 
-}}
+    namespace {
+        FloatVarSelection var_selection;
+    } // namespace
+
+} // namespace Test::Assign
 
 #endif
 
 // STATISTICS: test-branch
-

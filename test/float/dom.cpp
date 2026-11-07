@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,112 +36,113 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Test { namespace Float {
+/// %Tests for domain constraints
+namespace Test::Float::Dom {
 
-   /// %Tests for domain constraints
-   namespace Dom {
+    /**
+     * \defgroup TaskTestFloatDom Domain constraints
+     * \ingroup TaskTestFloat
+     */
+    //@{
+    /// %Test for domain constraints with a float value
+    class Val : public Test {
+    protected:
+        /// Float constant
+        Gecode::FloatVal c;
 
-     /**
-      * \defgroup TaskTestFloatDom Domain constraints
-      * \ingroup TaskTestFloat
-      */
-     //@{
-     /// %Test for domain constraints with a float value
-     class Val : public Test {
-     protected:
-       /// Float constant
-       Gecode::FloatVal c;
-     public:
-       /// Create and register test
-       Val(int n, Gecode::FloatVal c0, Gecode::FloatNum st)
-         : Test("Dom::Val::"+str(n)+"::"+str(c0),
-                n,-3,3,st,CPLT_ASSIGNMENT,n==1), c(c0) {
-         testsubsumed = false;
-       }
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         for (int i=x.size(); i--; )
-           if ((x[i].max() > c.max()) || (x[i].min() < c.min()))
-             return MT_FALSE;
-         return MT_TRUE;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         if (x.size() == 1)
-           Gecode::dom(home, x[0], c);
-         else
-           Gecode::dom(home, x, c);
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x,
-                         Gecode::Reify r) {
-         assert(x.size() == 1);
-         Gecode::dom(home, x[0], c, r);
-       }
-     };
+    public:
+        /// Create and register test
+        Val(int n, const Gecode::FloatVal& c0, Gecode::FloatNum st)
+            : Test("Dom::Val::" + str(n) + "::" + str(c0), n, -3, 3, st, COMPLETE_ASSIGNMENT, n == 1), c(c0) {
+            test_subsumption = false;
+        }
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            for (int i = x.size(); i--;)
+                if ((x[i].max() > c.max()) || (x[i].min() < c.min()))
+                    return MT_FALSE;
+            return MT_TRUE;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            if (x.size() == 1)
+                Gecode::dom(home, x[0], c);
+            else
+                Gecode::dom(home, x, c);
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
+            assert(x.size() == 1);
+            Gecode::dom(home, x[0], c, r);
+        }
+    };
 
-     /// %Test for domain constraints with float numbers
-     class Num : public Test {
-     protected:
-       /// Float number
-       Gecode::FloatNum min;
-       /// Float number
-       Gecode::FloatNum max;
-     public:
-       /// Create and register test
-       Num(int n, Gecode::FloatNum min0, Gecode::FloatNum max0,
-           Gecode::FloatNum st)
-         : Test("Dom::Num::"+str(n)+"::"+str(min0)+"::"+str(max0),
-                n,-3,3,st,CPLT_ASSIGNMENT,n==1), min(min0), max(max0) {
-         testsubsumed = false;
-       }
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         if (max < min)
-           return MT_FALSE;
-         for (int i=x.size(); i--; )
-           if ((x[i].max() > max) || (x[i].min() < min))
-             return MT_FALSE;
-         return MT_TRUE;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         if (x.size() == 1)
-           Gecode::dom(home, x[0], min, max);
-         else
-           Gecode::dom(home, x, min, max);
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x,
-                         Gecode::Reify r) {
-         assert(x.size() == 1);
-         Gecode::dom(home, x[0], min, max, r);
-       }
-     };
+    /// %Test for domain constraints with float numbers
+    class Num : public Test {
+    protected:
+        /// Float number
+        Gecode::FloatNum min;
+        /// Float number
+        Gecode::FloatNum max;
 
-     /// Help class to create and register tests
-     class Create {
-     public:
-       /// Perform creation and registration
-       Create(void) {
-         using namespace Gecode;
-         FloatNum step = 0.7;
-         for (int c=-4; c<=4; c++) {
-           (void) new Val(1,c,step);
-           (void) new Val(2,c,step);
-           for (int d=-3; d<=3; d++) {
-             (void) new Num(1,c,d,step);
-             (void) new Num(2,c,d,step);
-           }
-         }
-       }
-     };
+    public:
+        /// Create and register test
+        Num(int n, Gecode::FloatNum min0, Gecode::FloatNum max0, Gecode::FloatNum st)
+            : Test("Dom::Num::" + str(n) + "::" + str(min0) + "::" + str(max0), n, -3, 3, st, COMPLETE_ASSIGNMENT,
+                   n == 1),
+              min(min0), max(max0) {
+            test_subsumption = false;
+        }
+        /// %Test whether \a x is solution
+        MaybeType
+        solution(const Assignment& x) const override {
+            if (max < min)
+                return MT_FALSE;
+            for (int i = x.size(); i--;)
+                if ((x[i].max() > max) || (x[i].min() < min))
+                    return MT_FALSE;
+            return MT_TRUE;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
+            if (x.size() == 1)
+                Gecode::dom(home, x[0], min, max);
+            else
+                Gecode::dom(home, x, min, max);
+        }
+        /// Post reified constraint on \a x for \a r
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) override {
+            assert(x.size() == 1);
+            Gecode::dom(home, x[0], min, max, r);
+        }
+    };
 
-     Create c;
-     //@}
+    /// Help class to create and register tests
+    class Create {
+    public:
+        /// Perform creation and registration
+        Create() {
+            using namespace Gecode;
+            FloatNum step = 0.7;
+            for (int c = -4; c <= 4; c++) {
+                (void)new Val(1, c, step);
+                (void)new Val(2, c, step);
+                for (int d = -3; d <= 3; d++) {
+                    (void)new Num(1, c, d, step);
+                    (void)new Num(2, c, d, step);
+                }
+            }
+        }
+    };
 
-   }
+    Create c;
+    //@}
 
-}}
+} // namespace Test::Float::Dom
 
 // STATISTICS: test-float

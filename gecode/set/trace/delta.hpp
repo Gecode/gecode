@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,30 +32,29 @@
 
 namespace Gecode {
 
-  forceinline
-  SetTraceDelta::Glb::Glb(RangeList* o0, Set::SetView n0)
-    : o(o0), n(n0) {
-    init(n,o);
-  }
-  forceinline
-  SetTraceDelta::Lub::Lub(RangeList* o0, Set::SetView n0)
-    : o(o0), n(n0) {
-    init(o,n);
-  }
+    forceinline
+    SetTraceDelta::Glb::Glb(RangeList* o0, Set::SetView n0)
+        : o(o0), n(n0) {
+        init(n, o);
+    }
+    forceinline
+    SetTraceDelta::Lub::Lub(RangeList* o0, Set::SetView n0)
+        : o(o0), n(n0) {
+        init(o, n);
+    }
 
-  forceinline
-  SetTraceDelta::SetTraceDelta(Set::SetTraceView o, Set::SetView n,
-                               const Delta&)
-    : _glb(o.glb(),n), _lub(o.lub(),n) {}
-  forceinline SetTraceDelta::Glb&
-  SetTraceDelta::glb(void) {
-    return _glb;
-  }
-  forceinline SetTraceDelta::Lub&
-  SetTraceDelta::lub(void) {
-    return _lub;
-  }
+    forceinline
+    SetTraceDelta::SetTraceDelta(Set::SetTraceView o, Set::SetView n, const Delta&)
+        : _glb(o.glb(), n), _lub(o.lub(), n) {}
+    forceinline SetTraceDelta::Glb&
+    SetTraceDelta::glb() {
+        return _glb;
+    }
+    forceinline SetTraceDelta::Lub&
+    SetTraceDelta::lub() {
+        return _lub;
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-trace

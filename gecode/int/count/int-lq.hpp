@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,102 +30,115 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Count {
+namespace Gecode::Int::Count {
 
-  template<class VX, class VY>
-  forceinline
-  LqInt<VX,VY>::LqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c)
-    : IntBase<VX,VY>(home,x,n_s,y,c) {}
+    template <class VX, class VY>
+    forceinline
+    LqInt<VX, VY>::LqInt(Home home, ViewArray<VX>& x, int n_s, const VY& y, int c)
+        : IntBase<VX, VY>(home, x, n_s, y, c) {}
 
-  template<class VX, class VY>
-  ExecStatus
-  LqInt<VX,VY>::post(Home home, ViewArray<VX>& x, VY y, int c) {
-    // Eliminate decided views
-    int n_x = x.size();
-    for (int i=n_x; i--; )
-      switch (holds(x[i],y)) {
-      case RT_FALSE:
-        x[i] = x[--n_x]; break;
-      case RT_TRUE:
-        x[i] = x[--n_x]; c--; break;
-      case RT_MAYBE:
-        break;
-      default:
-        GECODE_NEVER;
-      }
-    x.size(n_x);
-    if (c < 0)
-      return ES_FAILED;
-    if (c >= n_x)
-      return ES_OK;
-    // All views must be different
-    if (c == 0)
-      return post_false(home,x,y);
-    (void) new (home) LqInt<VX,VY>(home,x,n_x-c+1,y,c);
-    return ES_OK;
-  }
-
-  template<class VX, class VY>
-  forceinline
-  LqInt<VX,VY>::LqInt(Space& home, LqInt<VX,VY>& p)
-    : IntBase<VX,VY>(home,p) {}
-
-  template<class VX, class VY>
-  Actor*
-  LqInt<VX,VY>::copy(Space& home) {
-    return new (home) LqInt<VX,VY>(home,*this);
-  }
-
-  template<class VX, class VY>
-  ExecStatus
-  LqInt<VX,VY>::propagate(Space& home, const ModEventDelta&) {
-    // Eliminate decided views from subscribed views
-    int n_x = x.size();
-    for (int i=n_s; i--; )
-      switch (holds(x[i],y)) {
-      case RT_FALSE:
-        x[i].cancel(home,*this,PC_INT_DOM);
-        x[i]=x[--n_s]; x[n_s]=x[--n_x];
-        break;
-      case RT_TRUE:
-        x[i].cancel(home,*this,PC_INT_DOM);
-        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
-        break;
-      case RT_MAYBE:
-        break;
-      default:
-        GECODE_NEVER;
-      }
-    x.size(n_x);
-    if (c < 0)
-      return ES_FAILED;
-    if (c >= n_x)
-      return home.ES_SUBSUMED(*this);
-    // Eliminate decided views from unsubscribed views
-    for (int i=n_x; i-- > n_s; )
-      switch (holds(x[i],y)) {
-      case RT_FALSE: x[i]=x[--n_x]; break;
-      case RT_TRUE:  x[i]=x[--n_x]; c--; break;
-      case RT_MAYBE: break;
-      default:       GECODE_NEVER;
-      }
-    x.size(n_x);
-    if (c < 0)
-      return ES_FAILED;
-    if (c >= n_x)
-      return home.ES_SUBSUMED(*this);
-    if (c == 0) {
-      // All views must be different
-      GECODE_ES_CHECK(post_false(home,x,y));
-      return home.ES_SUBSUMED(*this);
+    template <class VX, class VY>
+    ExecStatus
+    LqInt<VX, VY>::post(Home home, ViewArray<VX>& x, const VY& y, int c) {
+        // Eliminate decided views
+        int n_x = x.size();
+        for (int i = n_x; i--;)
+            switch (holds(x[i], y)) {
+            case RT_FALSE:
+                x[i] = x[--n_x];
+                break;
+            case RT_TRUE:
+                x[i] = x[--n_x];
+                c--;
+                break;
+            case RT_MAYBE:
+                break;
+            default:
+                GECODE_NEVER;
+            }
+        x.size(n_x);
+        if (c < 0)
+            return ES_FAILED;
+        if (c >= n_x)
+            return ES_OK;
+        // All views must be different
+        if (c == 0)
+            return post_false(home, x, y);
+        (void)new (home) LqInt<VX, VY>(home, x, n_x - c + 1, y, c);
+        return ES_OK;
     }
-    // Now, there must be new subscriptions from x[n_s] up to x[n_x-c+1]
-    int m = n_x-c;
-    while (n_s <= m)
-      x[n_s++].subscribe(home,*this,PC_INT_DOM,false);
-    return ES_FIX;
-  }
 
-}}}
+    template <class VX, class VY>
+    forceinline
+    LqInt<VX, VY>::LqInt(Space& home, LqInt<VX, VY>& p)
+        : IntBase<VX, VY>(home, p) {}
+
+    template <class VX, class VY>
+    Actor*
+    LqInt<VX, VY>::copy(Space& home) {
+        return new (home) LqInt<VX, VY>(home, *this);
+    }
+
+    template <class VX, class VY>
+    ExecStatus
+    LqInt<VX, VY>::propagate(Space& home, const ModEventDelta&) {
+        // Eliminate decided views from subscribed views
+        int n_x = x.size();
+        for (int i = n_s; i--;)
+            switch (holds(x[i], y)) {
+            case RT_FALSE:
+                x[i].cancel(home, *this, PC_INT_DOM);
+                x[i] = x[--n_s];
+                x[n_s] = x[--n_x];
+                break;
+            case RT_TRUE:
+                x[i].cancel(home, *this, PC_INT_DOM);
+                x[i] = x[--n_s];
+                x[n_s] = x[--n_x];
+                c--;
+                break;
+            case RT_MAYBE:
+                break;
+            default:
+                GECODE_NEVER;
+            }
+        x.size(n_x);
+        if (c < 0)
+            return ES_FAILED;
+        if (c >= n_x)
+            return home.ES_SUBSUMED(*this);
+        // Eliminate decided views from unsubscribed views
+        for (int i = n_x; i-- > n_s;)
+            switch (holds(x[i], y)) {
+            case RT_FALSE:
+                x[i] = x[--n_x];
+                break;
+            case RT_TRUE:
+                x[i] = x[--n_x];
+                c--;
+                break;
+            case RT_MAYBE:
+                break;
+            default:
+                GECODE_NEVER;
+            }
+        x.size(n_x);
+        if (c < 0)
+            return ES_FAILED;
+        if (c >= n_x)
+            return home.ES_SUBSUMED(*this);
+        if (c == 0) {
+            // All views must be different
+            GECODE_ES_CHECK(post_false(home, x, y));
+            return home.ES_SUBSUMED(*this);
+        }
+        // Now, there must be new subscriptions from x[n_s] up to x[n_x-c+1]
+        int m = n_x - c;
+        while (n_s <= m)
+            x[n_s++].subscribe(home, *this, PC_INT_DOM, false);
+        return ES_FIX;
+    }
+
+} // namespace Gecode::Int::Count
 
 // STATISTICS: int-prop

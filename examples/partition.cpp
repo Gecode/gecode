@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -44,84 +43,85 @@ using namespace Gecode;
  */
 class Partition : public Script {
 protected:
-  /// First group of numbers
-  IntVarArray x;
-  /// Second group of numbers
-  IntVarArray y;
+    /// First group of numbers
+    IntVarArray x;
+    /// Second group of numbers
+    IntVarArray y;
+
 public:
-  /// Actual model
-  Partition(const SizeOptions& opt)
-    : Script(opt),
-      x(*this,opt.size(),1,2*opt.size()),
-      y(*this,opt.size(),1,2*opt.size()) {
-    const int n = opt.size();
+    /// Actual model
+    Partition(const SizeOptions& opt)
+        : Script(opt), x(*this, opt.size(), 1, 2 * opt.size()), y(*this, opt.size(), 1, 2 * opt.size()) {
+        const int n = opt.size();
 
-    // Break symmetries by ordering numbers in each group
-    rel(*this, x, IRT_LE);
-    rel(*this, y, IRT_LE);
+        // Break symmetries by ordering numbers in each group
+        rel(*this, x, IRT_LT);
+        rel(*this, y, IRT_LT);
 
-    rel(*this, x[0], IRT_LE, y[0]);
+        rel(*this, x[0], IRT_LT, y[0]);
 
-    IntVarArgs xy(2*n);
-    for (int i = n; i--; ) {
-      xy[i] = x[i]; xy[n+i] = y[i];
+        IntVarArgs xy(2 * n);
+        for (int i = n; i--;) {
+            xy[i] = x[i];
+            xy[n + i] = y[i];
+        }
+        distinct(*this, xy, opt.ipl());
+
+        IntArgs c(2 * n);
+        for (int i = n; i--;) {
+            c[i] = 1;
+            c[n + i] = -1;
+        }
+        linear(*this, c, xy, IRT_EQ, 0);
+
+        // Array of products
+        IntVarArgs sxy(2 * n), sx(n), sy(n);
+
+        for (int i = n; i--;) {
+            sx[i] = sxy[i] = expr(*this, sqr(x[i]));
+            sy[i] = sxy[n + i] = expr(*this, sqr(y[i]));
+        }
+        linear(*this, c, sxy, IRT_EQ, 0);
+
+        // Redundant constraints
+        linear(*this, x, IRT_EQ, 2 * n * (2 * n + 1) / 4);
+        linear(*this, y, IRT_EQ, 2 * n * (2 * n + 1) / 4);
+        linear(*this, sx, IRT_EQ, 2 * n * (2 * n + 1) * (4 * n + 1) / 12);
+        linear(*this, sy, IRT_EQ, 2 * n * (2 * n + 1) * (4 * n + 1) / 12);
+
+        branch(*this, xy, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
     }
-    distinct(*this, xy, opt.ipl());
 
-    IntArgs c(2*n);
-    for (int i = n; i--; ) {
-      c[i] = 1; c[n+i] = -1;
+    /// Constructor used during cloning \a s
+    Partition(Partition& s) : Script(s) {
+        x.update(*this, s.x);
+        y.update(*this, s.y);
     }
-    linear(*this, c, xy, IRT_EQ, 0);
-
-    // Array of products
-    IntVarArgs sxy(2*n), sx(n), sy(n);
-
-    for (int i = n; i--; ) {
-      sx[i] = sxy[i] =   expr(*this, sqr(x[i]));
-      sy[i] = sxy[n+i] = expr(*this, sqr(y[i]));
+    /// Copying during cloning
+    Space*
+    copy() override {
+        return new Partition(*this);
     }
-    linear(*this, c, sxy, IRT_EQ, 0);
-
-    // Redundant constraints
-    linear(*this, x, IRT_EQ, 2*n*(2*n+1)/4);
-    linear(*this, y, IRT_EQ, 2*n*(2*n+1)/4);
-    linear(*this, sx, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);
-    linear(*this, sy, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);
-
-    branch(*this, xy, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
-  }
-
-  /// Constructor used during cloning \a s
-  Partition(Partition& s) : Script(s) {
-    x.update(*this, s.x);
-    y.update(*this, s.y);
-  }
-  /// Copying during cloning
-  virtual Space*
-  copy(void) {
-    return new Partition(*this);
-  }
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    os << "\t";
-    int a, b;
-    a = b = 0;
-    for (int i = 0; i < x.size(); i++) {
-      a += x[i].val();
-      b += x[i].val()*x[i].val();
-      os << x[i] << ", ";
+    /// Print solution
+    void
+    print(std::ostream& os) const override {
+        os << "\t";
+        int a, b;
+        a = b = 0;
+        for (auto xi : x) {
+            a += xi.val();
+            b += xi.val() * xi.val();
+            os << xi << ", ";
+        }
+        os << " = " << a << ", " << b << '\n' << "\t";
+        a = b = 0;
+        for (auto yi : y) {
+            a += yi.val();
+            b += yi.val() * yi.val();
+            os << yi << ", ";
+        }
+        os << " = " << a << ", " << b << '\n';
     }
-    os << " = " << a << ", " << b << std::endl << "\t";
-    a = b = 0;
-    for (int i = 0; i < y.size(); i++) {
-      a += y[i].val();
-      b += y[i].val()*y[i].val();
-      os << y[i] << ", ";
-    }
-    os << " = " << a << ", " << b << std::endl;
-  }
 };
 
 /**
@@ -130,14 +130,12 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("Partition");
-  opt.size(32);
-  opt.ipl(IPL_BND);
-  opt.parse(argc,argv);
-  Script::run<Partition,DFS,SizeOptions>(opt);
-  return 0;
+    SizeOptions opt("Partition");
+    opt.size(32);
+    opt.ipl(IPL_BND);
+    opt.parse(argc, argv);
+    Script::run<Partition, DFS, SizeOptions>(opt);
+    return 0;
 }
 
-
 // STATISTICS: example-any
-

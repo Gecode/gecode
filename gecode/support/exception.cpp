@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,40 +34,37 @@
 
 namespace Gecode {
 
-  /*
-   * Base class for exceptions
-   *
-   */
-  Exception::Exception(const char* l, const char* i) noexcept {
-    int j = 0;
-    while ((*l != 0) && (j < li_max))
-      li[j++] = *(l++);
-    if (j < li_max)
-      li[j++] = ':';
-    if (j < li_max)
-      li[j++] = ' ';
-    while ((*i != 0) && (j < li_max))
-      li[j++] = *(i++);
-    li[j] = 0;
-  }
-  const char*
-  Exception::what(void) const noexcept {
-    return &li[0];
-  }
+    /*
+     * Base class for exceptions
+     *
+     */
+    Exception::Exception(const char* l, const char* i) noexcept {
+        int j = 0;
+        while ((*l != 0) && (j < li_max))
+            li[j++] = *(l++);
+        if (j < li_max)
+            li[j++] = ':';
+        if (j < li_max)
+            li[j++] = ' ';
+        while ((*i != 0) && (j < li_max))
+            li[j++] = *(i++);
+        li[j] = 0;
+    }
+    const char*
+    Exception::what() const noexcept {
+        return &li[0];
+    }
 
-  /*
-   * Classes for exceptions
-   *
-   */
-  MemoryExhausted::MemoryExhausted(void)
-    : Exception("Memory","Heap memory exhausted") {}
+    /*
+     * Classes for exceptions
+     *
+     */
+    MemoryExhausted::MemoryExhausted() : Exception("Memory", "Heap memory exhausted") {}
 
-  DynamicCastFailed::DynamicCastFailed(const char* l)
-    : Exception(l,"Attempt to perform dynamic_cast failed") {}
+    DynamicCastFailed::DynamicCastFailed(const char* l) : Exception(l, "Attempt to perform dynamic_cast failed") {}
 
-  OperatingSystemError::OperatingSystemError(const char* l)
-    : Exception(l,"Operating system error") {}
+    OperatingSystemError::OperatingSystemError(const char* l) : Exception(l, "Operating system error") {}
 
-}
+} // namespace Gecode
 
 // STATISTICS: support-any
