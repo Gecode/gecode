@@ -472,8 +472,8 @@ namespace Test::Float {
     bool
     Test::run() {
         using namespace Gecode;
-        const char* test = "NONE";
-        const char* problem = "NONE";
+        const char* test = nullptr;
+        const char* problem = nullptr;
 
         // Set up assignments
         Assignment* ap = assignment();

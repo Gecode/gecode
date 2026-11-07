@@ -77,7 +77,7 @@ namespace Test::Float {
         using namespace Gecode;
         for (int i = n - 1; i--;)
             dsv[i] = FloatVal(d.min(), nextafter(d.min(), d.max()));
-        (*this).next(rand);
+        ExtAssignment::next(rand);
     }
     inline bool
     ExtAssignment::has_more() const {

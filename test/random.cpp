@@ -219,13 +219,13 @@ namespace Test::Random {
                  {"splitmix-v1:0000000000000000:0000000000000000", "splitmix-v1:0000000000000000:0000000000000002",
                   "splitmix-v1:000000000000000g:9e3779b97f4a7c15", "splitmix-v1:0:9e3779b97f4a7c15",
                   "other-v1:0000000000000000:9e3779b97f4a7c15"}) {
+                bool rejected = false;
                 try {
                     r.state(std::string(invalid));
-                    return false;
                 } catch (const std::invalid_argument&) {
-                    // Expected
+                    rejected = true;
                 }
-                if (r.state() != saved)
+                if (!rejected || (r.state() != saved))
                     return false;
             }
             Gecode::Support::Random<Xorshift64Star> x(0);

@@ -193,7 +193,6 @@ namespace Gecode::Set {
             newlst = c;
             RangeList* nc = c->next();
             c->next(nullptr);
-            p = c;
             c = nc;
         } else if (p != nullptr) {
             p->next(nullptr);
@@ -270,7 +269,6 @@ namespace Gecode::Set {
                     }
                     RangeList* nc = cend->next(); // performs loop step!
                     c->dispose(home, cend);
-                    p = cend;
                     c = nc;
                     if (c != nullptr && c->min() <= ma) {
                         // start of range clipped, end remains
