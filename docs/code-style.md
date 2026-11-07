@@ -257,9 +257,114 @@ for the derived-class reason: its two bodies duplicate a range check, but a
 merged member would reject a privately derived matrix. No clang-tidy check
 enforces this rule.
 
-Other performance checks need focused review: `performance-enum-size` changes
-layouts and ABI, and `performance-no-int-to-ptr` conflicts with deliberate
-pointer tagging. Review `noexcept` guarantees, destructor triviality, and math
-promotion against allocation-failure handling and interval-rounding semantics
-before adopting those checks. Never add `noexcept` to a potentially throwing
-operation just to satisfy a diagnostic.
+Never add `noexcept` to a potentially throwing operation just to satisfy a
+diagnostic. Review `noexcept` guarantees, destructor triviality, and math
+promotion against allocation-failure handling and interval-rounding semantics.
+
+## Clang-tidy check selection
+
+`.clang-tidy` enables the `bugprone`, `concurrency`, `misc`, `modernize`,
+`performance`, `portability`, and `readability` groups as a whole, and the
+analyzer groups `core`, `cplusplus`, `deadcode`, `nullability`, `optin`,
+`security`, `unix`, and `valist`. Checks from `cert`, `cppcoreguidelines`,
+`google`, and `hicpp` are named one by one. When a new diagnostic appears, fix
+the code. Use a `NOLINT` naming the check and the reason only for a false
+positive or a deliberate exception. Add an exclusion only for a reason like
+those below.
+
+Review fix-its before committing them, and build the tests with them.
+`modernize-use-using` drops `const` from aliases such as `const_iterator`.
+`modernize-use-integer-sign-comparison` turns `x != static_cast<size_t>(-1)`
+into a comparison that is always true. `readability-simplify-boolean-expr`
+rewrites tests that exercise the comparison operators themselves.
+`modernize-loop-convert` calls the element of every loop `i`; give it a name
+that fits.
+
+These checks are excluded because the code is deliberately written the way they
+reject:
+
+- `bugprone-derived-method-shadowing-base-method`: static polymorphism.
+- `bugprone-multi-level-implicit-pointer-conversion`: allocator templates.
+- `bugprone-signed-char-misuse`: `signed char` is a small integer here.
+- `bugprone-throwing-static-initialization`: tests register through statics.
+- `concurrency-mt-unsafe`: `exit` and `getenv` run before threads start.
+- `misc-confusable-identifiers`: `I` as a template parameter next to `l`.
+- `misc-multiple-inheritance`, `misc-no-recursion`,
+  `misc-non-private-member-variables-in-classes`: common and intended.
+- `misc-new-delete-overloads`: delete-only overloads are intended.
+- `misc-use-anonymous-namespace`: `static` is allowed.
+- `modernize-avoid-c-arrays`: fixed tables and space-allocated arrays.
+- `modernize-use-std-numbers`: rounded or specification-defined constants, such
+  as the TSPLIB value of pi.
+- `performance-enum-size`: would change layouts and ABI.
+- `performance-no-int-to-ptr`: pointer tagging.
+- `portability-template-virtual-member-function`: reports every virtual member
+  that a translation unit leaves uninstantiated, and the MSVC builds compile
+  them anyway.
+- `readability-convert-member-functions-to-static`,
+  `readability-make-member-function-const`: views implement a shared interface
+  whose members mutate in some views only.
+- `readability-implicit-bool-conversion`: `if (p)` is the local idiom.
+
+These checks are excluded because following them makes the code worse or their
+reports are mostly noise:
+
+- `bugprone-branch-clone`: parallel cases read better, and none of its reports
+  was a bug.
+- `bugprone-easily-swappable-parameters`: nearly every posting function.
+- `bugprone-implicit-widening-of-multiplication-result`: values are int-sized by
+  design.
+- `bugprone-inc-dec-in-conditions`: reports sequenced `&&` conditions.
+- `bugprone-macro-parentheses`: macro arguments are names or types.
+- `bugprone-narrowing-conversions`: casts would silence the reports, not verify
+  them.
+- `bugprone-switch-missing-default-case`: option values and tests.
+- `bugprone-unchecked-string-to-number-conversion`: command-line parsing, where
+  a change would alter behaviour.
+- `misc-const-correctness`: `const` on shallow handles misleads.
+- `misc-header-include-cycle`, `misc-include-cleaner`: umbrella headers and
+  `.hpp` files that are not self-contained by design.
+- `misc-static-assert`: only reports `GECODE_NEVER`, which is `assert(false)`.
+- `modernize-pass-by-value`: most parameters are handles and views with no
+  cheaper move, and the rest are strings on setup paths.
+- `modernize-return-braced-init-list`, `modernize-use-auto`,
+  `modernize-use-designated-initializers`,
+  `modernize-use-trailing-return-type`: the written types and forms are useful
+  at the declaration.
+- `modernize-use-default-member-init`: constructor lists keep all of an actor's
+  state in one place, and a default initializer adds stores to clone
+  constructors that leave members unset on purpose.
+- `modernize-use-nodiscard`: applies to nearly every accessor.
+- `readability-avoid-nested-conditional-operator`: compact view code.
+- `readability-braces-around-statements`, `readability-identifier-length`,
+  `readability-isolate-declaration`, `readability-magic-numbers`,
+  `readability-math-missing-parentheses`, `readability-named-parameter`: these
+  contradict the existing style.
+- `readability-function-cognitive-complexity`, `readability-function-size`:
+  propagators are long by nature.
+- `readability-redundant-declaration`: documented repeats, and its fix-it breaks
+  templates.
+- `readability-use-anyofallof`: the loops are clearer.
+
+These analyzer checks are excluded after review of their reports:
+
+- `clang-analyzer-cplusplus.NewDeleteLeaks`: tests register self-owning objects
+  with `(void)new`.
+- `clang-analyzer-optin.core.EnumCastOutOfRange`: flag combinations.
+- `clang-analyzer-optin.cplusplus.UninitializedObject`: `Delta` and similar
+  types leave fields unset on purpose.
+- `clang-analyzer-optin.performance.Padding`: its one report is a small static
+  table whose field order follows the table's columns.
+- `clang-analyzer-security.ArrayBound`: cannot see loop invariants or trailing
+  arrays.
+- `clang-analyzer-unix.Malloc`: cannot see reference counts.
+
+`cppcoreguidelines-prefer-member-initializer` is not enabled: it moves
+statements across side effects, such as `e >> n` before an allocation of size
+`n`, and into initializer lists guarded by `#ifdef`. The other checks of
+`cppcoreguidelines`, `cert`, `google`, and `hicpp` are not enabled because they
+are aliases of enabled checks, restate a rejected check, or forbid techniques
+that the kernel depends on, such as raw memory and pointer arithmetic. The
+`abseil`, `altera`, `android`, `boost`, `darwin`, `fuchsia`, `linuxkernel`,
+`llvm`, `llvmlibc`, `mpi`, `objc`, `openmp`, and `zircon` groups target other
+projects and platforms.
