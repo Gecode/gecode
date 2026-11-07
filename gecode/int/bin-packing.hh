@@ -210,7 +210,7 @@ namespace Gecode::Int::BinPacking {
         /// Lower bound
         template <int (*f)(int, int, int)>
         static int calc_dff_lower_bound_single_lambda(const int* weights, int n_weights, int capacity, int lambda);
-        template <int (*f)(int, int, int), LambdaRange (*l)(int)>
+        template <int (*f)(int, int, int), LambdaRange (*range)(int)>
         static int calc_dff_lower_bound(const int* weights, int n_weights, int capacity, int n_not_zero_weights,
                                         int max_weight, bool sanitize = false);
     };

@@ -369,11 +369,11 @@ namespace Gecode::Int::BinPacking {
         return static_cast<int>(ceil_div_pp(sum_transformed_weights, static_cast<long long int>(transformed_capacity)));
     }
 
-    template <int (*f)(int, int, int), LambdaRange (*l)(int)>
+    template <int (*f)(int, int, int), LambdaRange (*range)(int)>
     forceinline int
     Pack::calc_dff_lower_bound(const int* weights, int n_weights, int capacity, int n_not_zero_weights, int max_weight,
                                bool sanitize) {
-        LambdaRange lambda_range = l(capacity);
+        LambdaRange lambda_range = range(capacity);
         lambda_range = sanitize ? sanitize_lambda_range(lambda_range, n_not_zero_weights, max_weight) : lambda_range;
         if (lambda_range.min >= lambda_range.max)
             return 0;
