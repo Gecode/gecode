@@ -48,7 +48,7 @@
 using namespace Gecode::Int;
 
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// VarArg type for %Set views
     template <>
@@ -57,10 +57,10 @@ namespace Gecode { namespace Int {
         using argtype = Gecode::FloatVarArgs;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     template <class View, class SetLastVal>
     class LastVal : public Propagator {
@@ -189,7 +189,7 @@ namespace Gecode { namespace FlatZinc {
     using LastValSet = LastVal<Set::SetView, SetIntSetLastVal>;
 #endif
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif //__FLATZINC_LASTVAL_HH__
 
