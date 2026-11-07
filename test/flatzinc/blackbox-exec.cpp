@@ -40,6 +40,9 @@
 #include <string>
 
 #ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX 1 // Ensure the words min/max remain available
+#endif
 #include <windows.h>
 #else
 #include <fcntl.h>
