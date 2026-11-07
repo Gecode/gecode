@@ -57,8 +57,6 @@ namespace Gecode::Gist {
         Options opt;
         /// Whether search is currently running
         bool is_searching;
-        /// Measure search time
-        Support::Timer search_timer;
         /// Status bar label for maximum depth indicator
         QLabel* depth_label;
         /// Status bar label for number of solutions

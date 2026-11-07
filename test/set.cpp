@@ -727,8 +727,8 @@ namespace Test::Set {
     bool
     SetTest::run() {
         using namespace Gecode;
-        const char* test = "NONE";
-        const char* problem = "NONE";
+        const char* test = nullptr;
+        const char* problem = nullptr;
 
         SetAssignment* ap = new SetAssignment(arity, lub, with_int);
         SetAssignment& a = *ap;
