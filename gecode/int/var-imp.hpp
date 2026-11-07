@@ -261,7 +261,7 @@ namespace Gecode::Int {
 
     private:
         /// Test whether \a n is closer to the minimum or maximum
-        bool closer_min(int b) const;
+        bool closer_min(int n) const;
         /// \name Domain update by value (full domain)
         //@{
         /// Restrict domain values to be less or equal than \a n

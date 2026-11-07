@@ -35,6 +35,7 @@
 #include <gecode/minimodel.hh>
 
 #include <memory>
+#include <vector>
 
 /// Tests for cumulative scheduling constraints
 namespace Test::Int::Cumulative {
@@ -97,16 +98,13 @@ namespace Test::Int::Cumulative {
             for (int i = 0; i < n; i++)
                 t = std::max(t, x[i] + std::max(1, p[i]));
             // Compute resource usage (including at start times)
-            int* used = new int[t];
-            for (int i = 0; i < t; i++)
-                used[i] = 0;
+            std::vector<int> used(t, 0);
             for (int i = 0; i < n; i++)
                 for (int t = 0; t < p[i]; t++)
                     used[x[i] + t] += u[i];
             // Check resource usage
             for (int i = 0; i < t; i++)
                 if (used[i] > cmax) {
-                    delete[] used;
                     return false;
                 }
             // Compute resource usage (only internal)
@@ -120,10 +118,8 @@ namespace Test::Int::Cumulative {
             // Check resource usage at start times
             for (int i = 0; i < n; i++)
                 if (used[x[i]] + u[i] > cmax) {
-                    delete[] used;
                     return false;
                 }
-            delete[] used;
             return true;
         }
         /// Post constraint on \a x
@@ -204,9 +200,7 @@ namespace Test::Int::Cumulative {
             for (int i = 0; i < n; i++)
                 t = std::max(t, x[i] + std::max(1, p[i]));
             // Compute resource usage (including at start times)
-            int* used = new int[t];
-            for (int i = 0; i < t; i++)
-                used[i] = 0;
+            std::vector<int> used(t, 0);
             for (int i = 0; i < n; i++)
                 if (x[n + i] > l)
                     for (int t = 0; t < p[i]; t++)
@@ -214,7 +208,6 @@ namespace Test::Int::Cumulative {
             // Check resource usage
             for (int i = 0; i < t; i++) {
                 if (used[i] > cmax) {
-                    delete[] used;
                     return false;
                 }
             }
@@ -230,10 +223,8 @@ namespace Test::Int::Cumulative {
             for (int i = 0; i < n; i++)
                 if (x[n + i] > l)
                     if (used[x[i]] + u[i] > cmax) {
-                        delete[] used;
                         return false;
                     }
-            delete[] used;
             return true;
         }
         /// Post constraint on \a x
@@ -315,16 +306,13 @@ namespace Test::Int::Cumulative {
                 t = std::max(t, x[i] + std::max(1, x[pstart + i]));
             }
             // Compute resource usage (including at start times)
-            int* used = new int[t];
-            for (int i = 0; i < t; i++)
-                used[i] = 0;
+            std::vector<int> used(t, 0);
             for (int i = 0; i < n; i++)
                 for (int t = 0; t < x[pstart + i]; t++)
                     used[x[i] + t] += u[i];
             // Check resource usage
             for (int i = 0; i < t; i++)
                 if (used[i] > cmax) {
-                    delete[] used;
                     return false;
                 }
             // Compute resource usage (only internal)
@@ -337,10 +325,8 @@ namespace Test::Int::Cumulative {
             // Check resource usage at start times
             for (int i = 0; i < n; i++)
                 if (used[x[i]] + u[i] > cmax) {
-                    delete[] used;
                     return false;
                 }
-            delete[] used;
             return true;
         }
         /// Post constraint on \a x
@@ -428,9 +414,7 @@ namespace Test::Int::Cumulative {
             for (int i = 0; i < n; i++)
                 t = std::max(t, x[i] + std::max(1, x[pstart + i]));
             // Compute resource usage (including at start times)
-            int* used = new int[t];
-            for (int i = 0; i < t; i++)
-                used[i] = 0;
+            std::vector<int> used(t, 0);
             for (int i = 0; i < n; i++)
                 if (x[n + i] > l)
                     for (int t = 0; t < x[pstart + i]; t++)
@@ -438,7 +422,6 @@ namespace Test::Int::Cumulative {
             // Check resource usage
             for (int i = 0; i < t; i++)
                 if (used[i] > cmax) {
-                    delete[] used;
                     return false;
                 }
             // Compute resource usage (only internal)
@@ -451,10 +434,8 @@ namespace Test::Int::Cumulative {
             // Check resource usage at start times
             for (int i = 0; i < n; i++)
                 if (x[n + i] > l && used[x[i]] + u[i] > cmax) {
-                    delete[] used;
                     return false;
                 }
-            delete[] used;
             return true;
         }
         /// Post constraint on \a x

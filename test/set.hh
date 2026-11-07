@@ -176,8 +176,8 @@ namespace Test::Set {
         Gecode::IntSet lub;
         /// How many integer variables to iterate
         int with_int;
-        /// Initialize with \a n set variables, initial bound \a d and \a i int variables
-        SetAssignment(int n, const Gecode::IntSet& d, int i = 0);
+        /// Initialize with \a n set variables, initial bound \a d and \a with_int int variables
+        SetAssignment(int n, const Gecode::IntSet& d, int with_int = 0);
         /// Test whether all assignments have been iterated
         bool
         operator()() const {

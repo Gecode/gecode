@@ -275,7 +275,7 @@ namespace Gecode::Int::Cumulatives {
             }
 
             // Sort the events according to date
-            std::less<Event> less;
+            std::less<> less;
             Support::insertion(&events[0], events_size, less);
 
             // Sweep line along d, starting at 0

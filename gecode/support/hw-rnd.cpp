@@ -38,7 +38,7 @@
 
 #include <gecode/support.hh>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     unsigned int
     hwrnd() {
@@ -48,7 +48,7 @@ namespace Gecode { namespace Support {
         return r;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 #else
 
