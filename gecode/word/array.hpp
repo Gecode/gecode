@@ -1,0 +1,98 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
+ *  Copyright:
+ *     Mikael Zayenz Lagerkvist, 2026
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.dev
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+namespace Gecode { namespace Word {
+  /// Reject invalid counts before the kernel array allocates its storage
+  forceinline int require_array_count(int count, const char* location) {
+    if (count < 0)
+      throw OutOfLimits(location);
+    return count;
+  }
+
+  /** \brief Return \a values, each fitted to \a width by fit_to_width()
+   *
+   * Throws OutOfLimits at \a location for an entry that does not fit, and
+   * VariableEmptyDomain for an empty list.
+   */
+  forceinline WordValArgs prepare_values(unsigned int width,
+                                         const WordValArgs& values,
+                                         const char* location) {
+    if (values.size() == 0)
+      throw VariableEmptyDomain(location);
+    WordValArgs fitted(values.size());
+    for (int i = 0; i < values.size(); i++)
+      fitted[i] = fit_to_width(width,values[i],location);
+    return fitted;
+  }
+}}
+
+namespace Gecode {
+  forceinline WordValArgs::WordValArgs(void) : ArgArray<WordValue>(0) {}
+  forceinline WordValArgs::WordValArgs(int n) : ArgArray<WordValue>(n) {}
+  forceinline WordValArgs::WordValArgs(const SharedArray<WordValue>& x)
+    : ArgArray<WordValue>(x.size()) {
+    for (int i=0; i<x.size(); i++)
+      a[i]=x[i];
+  }
+  forceinline WordValArgs::WordValArgs(const std::vector<WordValue>& x)
+    : ArgArray<WordValue>(x) {}
+  forceinline WordValArgs::WordValArgs(std::initializer_list<WordValue> x)
+    : ArgArray<WordValue>(x) {}
+  template<class InputIterator>
+  forceinline WordValArgs::WordValArgs(InputIterator first, InputIterator last)
+    : ArgArray<WordValue>(first,last) {}
+  forceinline WordValArgs::WordValArgs(int n, const WordValue* e)
+    : ArgArray<WordValue>(n,e) {}
+  forceinline WordValArgs::WordValArgs(const ArgArray<WordValue>& a)
+    : ArgArray<WordValue>(a) {}
+
+  forceinline WordVarArgs::WordVarArgs(void) {}
+  forceinline WordVarArgs::WordVarArgs(int n)
+    : VarArgArray<WordVar>(
+        Word::require_array_count(n,"WordVarArgs::WordVarArgs")) {}
+  forceinline WordVarArgs::WordVarArgs(const WordVarArgs& a) : VarArgArray<WordVar>(a) {}
+  forceinline WordVarArgs::WordVarArgs(const VarArray<WordVar>& a) : VarArgArray<WordVar>(a) {}
+  forceinline WordVarArgs::WordVarArgs(const std::vector<WordVar>& a) : VarArgArray<WordVar>(a) {}
+  forceinline WordVarArgs::WordVarArgs(std::initializer_list<WordVar> a) : VarArgArray<WordVar>(a) {}
+  template<class InputIterator>
+  forceinline WordVarArgs::WordVarArgs(InputIterator first, InputIterator last)
+    : VarArgArray<WordVar>(first,last) {}
+  forceinline WordVarArray::WordVarArray(void) {}
+  forceinline WordVarArray::WordVarArray(Space& home, int n)
+    : VarArray<WordVar>(
+        home,Word::require_array_count(n,"WordVarArray::WordVarArray")) {}
+  forceinline WordVarArray::WordVarArray(const WordVarArray& a) : VarArray<WordVar>(a) {}
+  forceinline WordVarArray::WordVarArray(Space& home, const WordVarArgs& a) : VarArray<WordVar>(home,a) {}
+}
+
+// STATISTICS: word-other

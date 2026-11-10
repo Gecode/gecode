@@ -702,6 +702,8 @@ enable_set_vars
 LINKSET
 enable_float_vars
 LINKFLOAT
+enable_word_vars
+LINKWORD
 GECODE_DOXYGEN_TAGFILE
 ENABLEDOCSEARCH
 GECODE_DOXYGEN_DOT
@@ -712,6 +714,7 @@ INSTANCE
 FLATZINC
 GIST
 MM
+WORD
 SET
 FLOAT
 INT
@@ -741,6 +744,7 @@ GECODE_BUILD_INSTANCE_FLAG
 GECODE_BUILD_FLATZINC_FLAG
 GECODE_BUILD_GIST_FLAG
 GECODE_BUILD_MINIMODEL_FLAG
+GECODE_BUILD_WORD_FLAG
 GECODE_BUILD_SET_FLAG
 GECODE_BUILD_FLOAT_FLAG
 GECODE_BUILD_INT_FLAG
@@ -853,6 +857,7 @@ enable_doc_dot
 enable_doc_search
 enable_doc_tagfile
 with_vis
+enable_word_vars
 enable_float_vars
 enable_set_vars
 enable_int_vars
@@ -1528,6 +1533,8 @@ Optional Features:
   --enable-doc-dot        enable graphs in documentation [default=yes]
   --enable-doc-search     enable documentation search engine [default=no]
   --enable-doc-tagfile    generate doxygen tagfile [default=yes]
+  --enable-word-vars      build word variable library (implies
+                          --enable-int-vars) [default=yes]
   --enable-float-vars     build float variable library (implies
                           --enable-int-vars) [default=yes]
   --enable-set-vars       build finite set library (implies --enable-int-vars)
@@ -7545,6 +7552,8 @@ gnu)
 
    GECODE_BUILD_SET_FLAG=""
 
+   GECODE_BUILD_WORD_FLAG=""
+
    GECODE_BUILD_MINIMODEL_FLAG=""
 
    GECODE_BUILD_GIST_FLAG=""
@@ -7591,6 +7600,8 @@ gnu)
 
    GECODE_BUILD_SET_FLAG="-DGECODE_BUILD_SET"
 
+   GECODE_BUILD_WORD_FLAG="-DGECODE_BUILD_WORD"
+
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
@@ -7627,6 +7638,8 @@ gnu)
    GECODE_BUILD_FLOAT_FLAG=""
 
    GECODE_BUILD_SET_FLAG=""
+
+   GECODE_BUILD_WORD_FLAG=""
 
    GECODE_BUILD_MINIMODEL_FLAG=""
 
@@ -8726,6 +8739,8 @@ fi
   FLOAT="float"
 
   SET="set"
+
+  WORD="word"
 
   MM="minimodel"
 
@@ -10449,6 +10464,8 @@ fi
 
    GECODE_BUILD_SET_FLAG="-DGECODE_BUILD_SET"
 
+   GECODE_BUILD_WORD_FLAG="-DGECODE_BUILD_WORD"
+
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
@@ -10488,6 +10505,8 @@ fi
   FLOAT="Float"
 
   SET="Set"
+
+  WORD="Word"
 
   MM="Minimodel"
 
@@ -10620,6 +10639,8 @@ printf "%s\n" "no" >&6; }
 
    GECODE_BUILD_SET_FLAG=""
 
+   GECODE_BUILD_WORD_FLAG=""
+
    GECODE_BUILD_MINIMODEL_FLAG=""
 
    GECODE_BUILD_GIST_FLAG=""
@@ -10666,6 +10687,8 @@ printf "%s\n" "no" >&6; }
 
    GECODE_BUILD_SET_FLAG="-DGECODE_BUILD_SET"
 
+   GECODE_BUILD_WORD_FLAG="-DGECODE_BUILD_WORD"
+
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
@@ -10702,6 +10725,8 @@ printf "%s\n" "no" >&6; }
    GECODE_BUILD_FLOAT_FLAG=""
 
    GECODE_BUILD_SET_FLAG=""
+
+   GECODE_BUILD_WORD_FLAG=""
 
    GECODE_BUILD_MINIMODEL_FLAG=""
 
@@ -11802,6 +11827,8 @@ fi
 
   SET="set"
 
+  WORD="word"
+
   MM="minimodel"
 
   GIST="gist"
@@ -12606,6 +12633,8 @@ fi
 
    GECODE_BUILD_SET_FLAG="-DGECODE_BUILD_SET"
 
+   GECODE_BUILD_WORD_FLAG="-DGECODE_BUILD_WORD"
+
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
@@ -12645,6 +12674,8 @@ fi
   FLOAT="Float"
 
   SET="Set"
+
+  WORD="Word"
 
   MM="Minimodel"
 
@@ -12873,6 +12904,36 @@ fi
       with_vis=`printf '%s\n' "$with_vis" | sed 's/,/ /g'`
       ac_gecode_vis="${with_vis}${ac_gecode_vis:+ }${ac_gecode_vis}"
     fi
+
+
+   # Check whether --enable-word-vars was given.
+if test ${enable_word_vars+y}
+then :
+  enableval=$enable_word_vars;
+fi
+
+   ac_gecode_vis="\$(top_srcdir)/gecode/word/var-imp/word.vis${ac_gecode_vis:+ }${ac_gecode_vis}"
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether to build the word variables library" >&5
+printf %s "checking whether to build the word variables library... " >&6; }
+   if test "${enable_word_vars:-yes}" = "yes"; then
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+     enable_word_vars="yes";
+     enable_int_vars="yes";
+	 LINKWORD=${LINKLIBDIR}${LINKPREFIX}${WORD}${DLL_ARCH}${LINKSUFFIX}
+
+
+printf "%s\n" "#define GECODE_HAS_WORD_VARS /**/" >>confdefs.h
+
+   else
+     enable_word_vars="no";
+
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+   fi
+   enable_word_vars=${enable_word_vars}
+
+
 
 
    # Check whether --enable-float-vars was given.
