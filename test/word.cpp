@@ -153,6 +153,16 @@ namespace Test { namespace Word {
            position <= float_order_position(width,maximum);
   }
 
+  void
+  float_bounds(Gecode::Space& home, Gecode::WordVar x,
+               Gecode::WordValue minimum, Gecode::WordValue maximum) {
+    Gecode::Word::WordView view(x);
+    if (Gecode::me_failed(view.narrow_rank_range(
+            home,float_order_position(x.width(),minimum),
+            float_order_position(x.width(),maximum))))
+      home.fail();
+  }
+
   Gecode::WordVar
   float_window(Gecode::Space& home, Gecode::WordDomainType format,
                Gecode::WordValue minimum, Gecode::WordValue maximum,
@@ -166,6 +176,188 @@ namespace Test { namespace Word {
                  Gecode::WordValue code) {
     return Gecode::WordVar(home,Gecode::Word::float_domain_width(type),type,
                            code,code);
+  }
+
+  namespace {
+    /// A space with the words of a FloatPosting
+    class FloatPostingSpace : public Gecode::Space {
+    public:
+      Gecode::WordVar x[4];
+      Gecode::IntVar flags;
+      /// The runs of the watcher
+      unsigned int runs;
+      FloatPostingSpace(void) : runs(0) {}
+      FloatPostingSpace(FloatPostingSpace& s) : Gecode::Space(s), runs(s.runs) {
+        for (int i=0; i<4; i++)
+          x[i].update(*this,s.x[i]);
+        flags.update(*this,s.flags);
+      }
+      Gecode::Space* copy(void) override {
+        return new FloatPostingSpace(*this);
+      }
+    };
+
+    /// Fails its space after a number of runs, each after a change of a word
+    class FloatWatcher : public Gecode::Propagator {
+      Gecode::Word::WordView v[4];
+      int n;
+      unsigned int limit;
+    public:
+      FloatWatcher(Gecode::Home home, const Gecode::WordVar* x, int count,
+                   unsigned int limit0)
+        : Gecode::Propagator(home), n(0), limit(limit0) {
+        for (int i=0; i<count; i++) {
+          const Gecode::Word::WordView view(x[i]);
+          bool repeated = false;
+          for (int j=0; j<n; j++)
+            repeated |= view == v[j];
+          if (repeated)
+            continue;
+          v[n] = view;
+          v[n].subscribe(home,*this,Gecode::Word::PC_WORD_DOM);
+          n++;
+        }
+      }
+      FloatWatcher(Gecode::Space& home, FloatWatcher& p)
+        : Gecode::Propagator(home,p), n(p.n), limit(p.limit) {
+        for (int i=0; i<n; i++)
+          v[i].update(home,p.v[i]);
+      }
+      Gecode::Actor* copy(Gecode::Space& home) override {
+        return new (home) FloatWatcher(home,*this);
+      }
+      size_t dispose(Gecode::Space& home) override {
+        for (int i=0; i<n; i++)
+          v[i].cancel(home,*this,Gecode::Word::PC_WORD_DOM);
+        (void) Gecode::Propagator::dispose(home);
+        return sizeof(*this);
+      }
+      Gecode::PropCost cost(const Gecode::Space&,
+                            const Gecode::ModEventDelta&) const override {
+        return Gecode::PropCost::unary(Gecode::PropCost::LO);
+      }
+      void reschedule(Gecode::Space& home) override {
+        for (int i=0; i<n; i++)
+          v[i].reschedule(home,*this,Gecode::Word::PC_WORD_DOM);
+      }
+      Gecode::ExecStatus propagate(Gecode::Space& home,
+                                   const Gecode::ModEventDelta&) override {
+        unsigned int& runs = static_cast<FloatPostingSpace&>(home).runs;
+        return ++runs > limit ? Gecode::ES_FAILED : Gecode::ES_FIX;
+      }
+    };
+
+    // Post the operation of posting on the words and flags of s
+    void post_float_operation(FloatPostingSpace& s,
+                              const FloatPosting& posting) {
+      Gecode::WordVar* x = s.x;
+      const Gecode::FloatWordPolicy& p = posting.policy;
+      switch (posting.operation) {
+      case FloatOperation::Add:
+        if (posting.status)
+          Gecode::fp_add(s,x[0],x[1],x[3],s.flags,p);
+        else
+          Gecode::fp_add(s,x[0],x[1],x[3],p);
+        break;
+      case FloatOperation::Subtract:
+        if (posting.status)
+          Gecode::fp_subtract(s,x[0],x[1],x[3],s.flags,p);
+        else
+          Gecode::fp_subtract(s,x[0],x[1],x[3],p);
+        break;
+      case FloatOperation::Multiply:
+        if (posting.status)
+          Gecode::fp_multiply(s,x[0],x[1],x[3],s.flags,p);
+        else
+          Gecode::fp_multiply(s,x[0],x[1],x[3],p);
+        break;
+      case FloatOperation::Divide:
+        if (posting.status)
+          Gecode::fp_divide(s,x[0],x[1],x[3],s.flags,p);
+        else
+          Gecode::fp_divide(s,x[0],x[1],x[3],p);
+        break;
+      case FloatOperation::Fma:
+        if (posting.status)
+          Gecode::fp_fma(s,x[0],x[1],x[2],x[3],s.flags,p);
+        else
+          Gecode::fp_fma(s,x[0],x[1],x[2],x[3],p);
+        break;
+      }
+    }
+
+    // The space of posting, with the words given by word(i), and the
+    // operation posted
+    template<class Word>
+    FloatPostingSpace* post_float_posting(const FloatPosting& posting,
+                                          Word word) {
+      FloatPostingSpace* s = new FloatPostingSpace;
+      const bool fma = posting.operation == FloatOperation::Fma;
+      for (int i=0; i<4; i++)
+        if (posting.aliased && i == 1)
+          s->x[i] = s->x[0];
+        else if (fma || i != 2)
+          s->x[i] = word(*s,i);
+      s->flags = Gecode::IntVar(*s,0,31);
+      post_float_operation(*s,posting);
+      return s;
+    }
+
+    // The domains of the words of s (the addend only for an fma)
+    void float_domains(const FloatPostingSpace& s, bool fma,
+                       FloatWordDomain domains[4]) {
+      for (int i=0; i<4; i++)
+        if (fma || i != 2)
+          domains[i] = {s.x[i].minimum(),s.x[i].maximum(),s.x[i].lo(),
+                        s.x[i].hi()};
+        else
+          domains[i] = {0,0,0,0};
+    }
+
+    bool same_float_domain(const FloatWordDomain& d,
+                           const FloatWordDomain& e) {
+      return d.minimum == e.minimum && d.maximum == e.maximum &&
+        d.lo == e.lo && d.hi == e.hi;
+    }
+  }
+
+  FloatReplay
+  replay_float_posting(const FloatPosting& posting, unsigned int limit) {
+    const unsigned int width = Gecode::float_word_width(posting.format);
+    std::unique_ptr<FloatPostingSpace> s(post_float_posting(
+      posting,[&](Gecode::Space& home, int i) {
+        const FloatWord& w = posting.words[i];
+        return Gecode::WordVar(home,static_cast<int>(width),posting.format,
+                               w.minimum,w.maximum,
+                               Gecode::known_bits(w.mask,w.value));
+      }));
+    const bool fma = posting.operation == FloatOperation::Fma;
+    Gecode::WordVar watched[4];
+    int count = 0;
+    for (int i=0; i<4; i++)
+      if (fma || i != 2)
+        watched[count++] = s->x[i];
+    (void) new (*s) FloatWatcher(*s,watched,count,limit);
+    Gecode::StatusStatistics statistics;
+    FloatReplay r;
+    r.failed = s->status(statistics) == Gecode::SS_FAILED;
+    r.finished = s->runs <= limit;
+    r.propagations = statistics.propagate;
+    r.fixpoint = false;
+    for (int i=0; i<4; i++)
+      r.domains[i] = {0,0,0,0};
+    if (r.failed)
+      return r;
+    float_domains(*s,fma,r.domains);
+    post_float_operation(*s,posting);
+    if (s->status() == Gecode::SS_FAILED)
+      return r;
+    FloatWordDomain again[4];
+    float_domains(*s,fma,again);
+    r.fixpoint = true;
+    for (int i=0; i<4; i++)
+      r.fixpoint &= same_float_domain(r.domains[i],again[i]);
+    return r;
   }
 
   void
@@ -212,6 +404,21 @@ namespace Test { namespace Word {
       (code & domain.lo) == domain.lo && (code & ~domain.hi) == 0;
   }
 
+  bool
+  float_posting_result(const FloatPosting& posting,
+                       const Gecode::WordValue values[3],
+                       Gecode::WordValue& result) {
+    std::unique_ptr<FloatPostingSpace> s(post_float_posting(
+      posting,[&](Gecode::Space& home, int i) {
+        return i < 3 ? float_code(home,posting.format,values[i])
+                     : Gecode::WordVar(home,posting.format);
+      }));
+    if (s->status() == Gecode::SS_FAILED || !s->x[3].assigned())
+      return false;
+    result = s->x[3].val();
+    return true;
+  }
+
   Gecode::FloatWordPolicy
   float_dump_policy(int rounding, int input, int output, int overflow,
                     int zeros, int nan, int tininess) {
@@ -225,6 +432,77 @@ namespace Test { namespace Word {
     p.nan = static_cast<P::Nan>(nan);
     p.tininess = static_cast<P::Tininess>(tininess);
     return p;
+  }
+
+  bool
+  check_float_regression(const FloatRegression& regression,
+                         unsigned int limit) {
+    const FloatPosting& posting = regression.posting;
+    const unsigned int width = Gecode::float_word_width(posting.format);
+    const FloatReplay r = replay_float_posting(posting,limit);
+    if (regression.fails) {
+      if (r.finished && r.failed && r.propagations <= 2 * limit)
+        return true;
+      if (opt.log)
+        olog << ind(3) << regression.name << ": "
+             << (r.finished ? (r.failed ? "" : "not failed") : "over the limit")
+             << " after " << r.propagations << " propagations" << std::endl;
+      return false;
+    }
+    if (!r.finished || r.failed || r.propagations > 2 * limit ||
+        !r.fixpoint) {
+      if (opt.log)
+        olog << ind(3) << regression.name << ": "
+             << (r.finished ? (r.failed ? "failed" : "") : "over the limit")
+             << (!r.finished || r.fixpoint ? "" : " not at a fixpoint") << " after "
+             << r.propagations << " propagations" << std::endl;
+      return false;
+    }
+    const bool fma = posting.operation == FloatOperation::Fma;
+    for (const auto& w : regression.witnesses) {
+      Gecode::WordValue result;
+      if (!float_posting_result(posting,w.data(),result) || result != w[3])
+        return false;
+      for (int i=0; i<4; i++)
+        if ((fma || i != 2) &&
+            !float_domain_contains(width,r.domains[i],w[i])) {
+          if (opt.log)
+            olog << ind(3) << regression.name << ": witness lost in word "
+                 << i << std::endl;
+          return false;
+        }
+    }
+    for (int i=0; i<4; i++) {
+      if ((!fma && i == 2) || (posting.aliased && i == 1))
+        continue;
+      const FloatWordDomain& d = r.domains[i];
+      const FloatWord& w = posting.words[i];
+      bool supported = true;
+      if (regression.points[i]) {
+        supported = d.minimum == *regression.points[i] &&
+          d.maximum == *regression.points[i];
+      } else if (regression.moved_bounds == FloatMovedBounds::Witnesses) {
+        for (Gecode::WordValue bound : {d.minimum, d.maximum})
+          if (bound != w.minimum && bound != w.maximum &&
+              std::none_of(regression.witnesses.begin(),
+                           regression.witnesses.end(),
+                           [&](const std::array<Gecode::WordValue,4>& v) {
+                             return v[i] == bound;
+                           }))
+            supported = false;
+      }
+      if (!supported) {
+        if (opt.log)
+          olog << ind(3) << regression.name << ": word " << i << std::hex
+               << " [" << d.minimum << ".." << d.maximum << "] ("
+               << d.lo << "," << d.hi << ")" << std::dec
+               << (regression.points[i] ? " is not its point"
+                                        : " has an unsupported bound")
+               << std::endl;
+        return false;
+      }
+    }
+    return true;
   }
 
   CpltAssignment::CpltAssignment(int n0, const Domain& d0)

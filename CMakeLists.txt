@@ -1785,6 +1785,7 @@ if(GECODE_INSTALL)
       PATTERN "minimodel/word-post.hh" EXCLUDE
       PATTERN "word/float.hpp" EXCLUDE
       PATTERN "word/float-tiny.hpp" EXCLUDE
+      PATTERN "word/float-wide.hpp" EXCLUDE
       PATTERN "word/float" EXCLUDE
       PATTERN "flatzinc/registry-internal.hh" EXCLUDE
       PATTERN "flatzinc/blackbox.hh" EXCLUDE

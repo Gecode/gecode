@@ -157,6 +157,15 @@ namespace Test {
                               Gecode::WordValue maximum,
                               Gecode::WordValue code);
 
+    /** \brief Narrow the bounds of the float-typed word \a x to the
+     * total-order window from encoding \a minimum to encoding \a maximum
+     *
+     * The word keeps its variable, so aliases of it stay intact. Fails
+     * \a home if no value remains.
+     */
+    void float_bounds(Gecode::Space& home, Gecode::WordVar x,
+                      Gecode::WordValue minimum, Gecode::WordValue maximum);
+
     /** \brief Return a word of float domain type \a format restricted to
      * the total-order window from \a minimum to \a maximum
      *
@@ -173,10 +182,59 @@ namespace Test {
     float_code(Gecode::Space& home, Gecode::WordDomainType type,
                    Gecode::WordValue code);
 
+    /// The operation of a float word posting
+    enum class FloatOperation { Add, Subtract, Multiply, Divide, Fma };
+
+    /// A word of a posting: its total-order window and its known bits
+    struct FloatWord {
+      Gecode::WordValue minimum, maximum, mask, value;
+    };
+
     /// The domain of a word: its total-order window and its cube
     struct FloatWordDomain {
       Gecode::WordValue minimum, maximum, lo, hi;
     };
+
+    /** \brief A posting of a float word operation
+     *
+     * The words are a, b, the addend c (fma only) and the result, in this
+     * order. With \a status the posting
+     * has a status-flag variable. With \a aliased, b is the variable a, as
+     * in fp_add(a, a, result), and words[1] is unused.
+     */
+    struct FloatPosting {
+      FloatOperation operation;
+      Gecode::WordDomainType format;
+      Gecode::FloatWordPolicy policy;
+      bool status;
+      FloatWord words[4];
+      bool aliased = false;
+    };
+
+    /// The result of propagating a FloatPosting
+    struct FloatReplay {
+      /// Whether status() ended within the execution limit
+      bool finished;
+      /// Whether the space failed
+      bool failed;
+      /// The propagations that status() reports
+      unsigned long int propagations;
+      /// The domains of the words (the addend only for an fma)
+      FloatWordDomain domains[4];
+      /** \brief Whether the domains are a fixpoint: posting the operation
+       * once more on the same variables and propagating changes nothing
+       */
+      bool fixpoint;
+    };
+
+    /** \brief Propagate \a posting with at most \a limit executions
+     *
+     * A watcher that runs after every change of a word fails the space
+     * after \a limit runs, so a posting that walks one step per execution
+     * ends there instead of after its walk.
+     */
+    FloatReplay replay_float_posting(const FloatPosting& posting,
+                                     unsigned int limit);
 
     /** \brief Draw a window of at most \a size codes of \a format in the
      * total order, around a code from the regions where float word
@@ -189,9 +247,47 @@ namespace Test {
                            Gecode::WordValue& minimum,
                            Gecode::WordValue& maximum);
 
+    /** \brief Whether status() of \a s settles in one execution at a
+     * fixpoint
+     *
+     * \a s holds the words x[0], x[1] and x[2] and the status flags of a
+     * posting of an operation on three words, and s.post(\a p) posts that
+     * operation on them. At the fixpoint, posting it once more on a clone
+     * changes nothing. A space that fails settles.
+     */
+    template<class Posting>
+    bool settles_in_one_execution(Posting& s,
+                                  const Gecode::FloatWordPolicy& p) {
+      Gecode::StatusStatistics statistics;
+      if (s.status(statistics) == Gecode::SS_FAILED)
+        return true;
+      if (statistics.propagate > 1)
+        return false;
+      std::unique_ptr<Posting> clone(static_cast<Posting*>(s.clone()));
+      clone->post(p);
+      if (clone->status() == Gecode::SS_FAILED)
+        return false;
+      for (int i = 0; i < 3; ++i)
+        if (clone->x[i].minimum() != s.x[i].minimum() ||
+            clone->x[i].maximum() != s.x[i].maximum() ||
+            clone->x[i].lo() != s.x[i].lo() ||
+            clone->x[i].hi() != s.x[i].hi())
+          return false;
+      return clone->flags.size() == s.flags.size();
+    }
+
     /// Test whether \a code of width \a width lies in \a domain
     bool float_domain_contains(unsigned int width, const FloatWordDomain& domain,
                                Gecode::WordValue code);
+
+    /** \brief The result of the operation of \a posting on the codes \a
+     * values (a, b and, for an fma, c), by propagation of assigned words
+     *
+     * Return false when the space fails or the result is not assigned.
+     */
+    bool float_posting_result(const FloatPosting& posting,
+                              const Gecode::WordValue values[3],
+                              Gecode::WordValue& result);
 
     /** \brief The policy with the fields rounding, input and output
      * subnormals, overflow, zeros, NaN and tininess, given as the numbers
@@ -201,6 +297,43 @@ namespace Test {
                                               int output, int overflow,
                                               int zeros, int nan,
                                               int tininess);
+
+    /// What a FloatRegression requires of the bounds that propagation moves
+    enum class FloatMovedBounds {
+      Witnesses, ///< Each is the value of its word in a witness
+      Free       ///< Any value
+    };
+
+    /** \brief A posting regression: the words that propagation must assign
+     * and full assignments (a, b, c, result) that it must keep
+     *
+     * points[i] is the value that propagation must assign to word i, if
+     * any. Every other bound that propagation moves must be the value of
+     * that word in a witness, so that the witnesses support it. For
+     * operations other than an fma, c, its point and its witness values are
+     * unused. With \a fails the posting has no solution, and propagation
+     * must fail it. With \a moved_bounds FloatMovedBounds::Free, moved
+     * bounds need not be witness values: the step rule of the wide
+     * products, quotients and fma can end at the bounds of the widened
+     * projection, which are admitted codes next to the real projection.
+     */
+    struct FloatRegression {
+      const char* name;
+      FloatPosting posting;
+      std::array<std::optional<Gecode::WordValue>,4> points;
+      std::vector<std::array<Gecode::WordValue,4>> witnesses;
+      bool fails = false;
+      FloatMovedBounds moved_bounds = FloatMovedBounds::Witnesses;
+    };
+
+    /** \brief Check \a regression: status() ends within \a limit executions
+     * (counting at most 2*\a limit propagations), failed if it fails and
+     * otherwise at a fixpoint that assigns the points and keeps each
+     * witness, which gives its result, and whose moved bounds are witness
+     * values
+     */
+    bool check_float_regression(const FloatRegression& regression,
+                                unsigned int limit);
 
     /// Base class for concrete assignments
     class Assignment {

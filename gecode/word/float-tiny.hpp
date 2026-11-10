@@ -156,6 +156,81 @@ namespace Gecode {
         return status.inter_v(home, allowed, false);
       }
 
+      /** \brief Layout of E2M1 or E4M3FN encodings
+       *
+       * Finite magnitudes count units of the minimum subnormal, so every
+       * finite value is an integer number of units and one is
+       * units_per_one units. E4M3FN has the NaNs 0x7f and 0xff and no
+       * infinities; E2M1 has neither.
+       */
+      class TinyFormat {
+        /// Canonical NaN code, or 0 for a format without NaNs
+        int nan_code;
+
+      public:
+        unsigned int fraction_bits;
+        int sign_bit, maximum_code;
+        uint64_t units_per_one;
+        explicit TinyFormat(WordDomainType format)
+            : TinyFormat(format_facts(format)) {
+          assert(format == WDT_E2M1 || format == WDT_E4M3FN);
+        }
+        explicit TinyFormat(const FormatFacts& f)
+            : nan_code(f.has_nan() ? static_cast<int>(f.canonical_nan()) : 0),
+              fraction_bits(f.fraction_bits),
+              sign_bit(static_cast<int>(f.sign())),
+              maximum_code(static_cast<int>(f.maximum)),
+              units_per_one(uint64_t(1)
+                            << (f.bias - 1 + static_cast<int>(f.fraction_bits))) {}
+
+        /// Test whether the format has NaNs
+        bool has_nan(void) const { return nan_code != 0; }
+        /// Return the canonical NaN code of a format with NaNs
+        int canonical_nan(void) const {
+          assert(has_nan());
+          return nan_code;
+        }
+
+        /// Return the units of the finite magnitude code \a magnitude
+        uint64_t units(int magnitude) const {
+          const unsigned int exponent =
+              static_cast<unsigned int>(magnitude) >> fraction_bits;
+          const unsigned int trailing = static_cast<unsigned int>(magnitude) &
+                                        ((1U << fraction_bits) - 1);
+          return exponent == 0 ? trailing
+                               : uint64_t((1U << fraction_bits) + trailing)
+                                     << (exponent - 1);
+        }
+        /// Return the magnitude code of the smallest normal number
+        int normal(void) const { return 1 << fraction_bits; }
+        /// Test whether \a code is a NaN
+        bool is_nan(WordValue code) const {
+          return has_nan() &&
+                 (code & static_cast<WordValue>(sign_bit - 1)) ==
+                     static_cast<WordValue>(nan_code);
+        }
+        /** \brief Return the signed units of the number \a code after input
+         * subnormal treatment
+         */
+        int64_t value(WordValue code, const FloatWordPolicy& policy) const {
+          int magnitude = static_cast<int>(code) & (sign_bit - 1);
+          if (policy.input_subnormals == FloatWordPolicy::SignedZero &&
+              magnitude < normal())
+            magnitude = 0;
+          const int64_t units = static_cast<int64_t>(this->units(magnitude));
+          return (static_cast<int>(code) & sign_bit) != 0 ? -units : units;
+        }
+      };
+
+      // Private rounder for E2M1/E4M3FN. Arguments denote a
+      // nonnegative rational: numerator < 2^36, 0 < denominator <= 2^18;
+      // nonzero magnitudes have floor(log2(numerator/denominator)) in
+      // [-18,17]. The sign also applies to exact zero. No intermediate
+      // product rounding or status is implied.
+      TinyResult round_tiny(const TinyFormat& format,
+                            const FloatWordPolicy& policy, uint64_t numerator,
+                            uint64_t denominator, bool negative);
+
       /** \brief Status of an operation posted without a status variable
        *
        * Every flag value is admitted and no narrowing has an effect, so the
@@ -173,6 +248,221 @@ namespace Gecode {
           return Int::ME_INT_NONE;
         }
       };
+
+      /// Return the flag values that \a status admits, one bit per value
+      template<class StatusView>
+      unsigned int admitted_flags(const StatusView& status) {
+        unsigned int flags = 0;
+        for (int flag = 0; flag < 32; ++flag)
+          if (status.in(flag))
+            flags |= 1U << flag;
+        return flags;
+      }
+
+      /** \brief Exact rational number with a positive denominator
+       *
+       * Tiny bound reasoning keeps numerators below 2^37 in magnitude and
+       * denominators at most 2^18, so comparisons by cross multiplication
+       * stay below 2^55.
+       */
+      struct TinyRational {
+        int64_t numerator, denominator;
+      };
+      inline bool operator<(TinyRational a, TinyRational b) {
+        return a.numerator * b.denominator < b.numerator * a.denominator;
+      }
+      inline bool operator<=(TinyRational a, TinyRational b) {
+        return !(b < a);
+      }
+
+      /** \brief Closed interval of reals, possibly unbounded on either side
+       *
+       * An unbounded side ignores its bound. preimage() uses this to give
+       * the overflow rays beyond the largest finite value M with crossed
+       * bounds least = M > greatest = -M: unbounded above alone is the ray
+       * [M, +inf), unbounded below alone the ray (-inf, -M], and both
+       * together their hull, every real.
+       */
+      struct TinyInterval {
+        TinyRational least, greatest;
+        bool unbounded_below = false, unbounded_above = false;
+        /// Test whether the bounded interval from \a lo to \a hi meets this
+        bool meets(TinyRational lo, TinyRational hi) const {
+          return (unbounded_above || lo <= greatest) &&
+                 (unbounded_below || least <= hi);
+        }
+      };
+      /// Return the hull of the \a count values in \a values
+      inline TinyInterval hull(const TinyRational* values, unsigned int count) {
+        TinyInterval h = {values[0], values[0]};
+        for (unsigned int i = 1; i < count; ++i) {
+          h.least = std::min(h.least, values[i]);
+          h.greatest = std::max(h.greatest, values[i]);
+        }
+        return h;
+      }
+
+      /** \brief Numbers and NaNs among the effective values of a tiny word
+       *
+       * Numbers are signed units after input subnormal treatment, decoded
+       * from each code; rank bounds never serve as numerical bounds.
+       */
+      struct TinySummary {
+        WordValueSet nans = {{0, 0, 0, 0}};
+        bool has_number = false, has_zero = false;
+        bool has_negative = false, has_positive = false;
+        /// Least and greatest number
+        int64_t least = 0, greatest = 0;
+        /// Nonzero numbers closest to zero, for divisors
+        int64_t greatest_negative = 0, least_positive = 0;
+      };
+      TinySummary summarise(const TinyFormat& format,
+                            const FloatWordPolicy& policy,
+                            const TinyValues& values);
+
+      /** \brief Rounded results of the exact results in an interval
+       *
+       * Rounding is monotone in the exact result, so the rounded least and
+       * greatest exact results bound every numerical result in between.
+       */
+      struct TinyRounding {
+        /// Number codes that rounding can give
+        WordValueSet numbers = {{0, 0, 0, 0}};
+        /// Flag values of the number results, one bit per value
+        unsigned int number_flags = 0;
+        /// NaN that negative or positive overflow gives, with flags O and X
+        std::optional<WordValue> nan_below, nan_above;
+        /// Return the NaN codes of overflow
+        WordValueSet overflow_nans(void) const {
+          WordValueSet codes = {{0, 0, 0, 0}};
+          if (nan_below)
+            codes = with_value(codes, *nan_below);
+          if (nan_above)
+            codes = with_value(codes, *nan_above);
+          return codes;
+        }
+      };
+      TinyRounding round_interval(const TinyFormat& format,
+                                  const FloatWordPolicy& policy,
+                                  const TinyInterval& exact);
+
+      /** \brief Return the hull of the exact results that round to a code
+       * in \a numbers, or nothing for an empty set
+       *
+       * A result with the greatest magnitude makes its side unbounded, and
+       * so does overflow to a NaN on the sides in \a rounding when \a nans
+       * contains that NaN.
+       */
+      std::optional<TinyInterval> preimage(const TinyFormat& format,
+                                           const FloatWordPolicy& policy,
+                                           WordValueSet numbers,
+                                           const TinyRounding& rounding,
+                                           WordValueSet nans);
+
+      /** \brief Outcomes of a tiny operation that a result and a status
+       * admit
+       *
+       * Each class of outcomes has candidate result codes and flag values.
+       * A class keeps its admitted codes when the status admits one of its
+       * flag values, and the outcomes collect the kept codes and admitted
+       * flag values of all classes.
+       */
+      class TinyOutcomes {
+        WordValueSet admitted_results;
+        unsigned int admitted_statuses;
+        WordValueSet kept_results = {{0, 0, 0, 0}};
+        unsigned int kept_statuses = 0;
+
+      public:
+        TinyOutcomes(WordValueSet results, unsigned int statuses)
+            : admitted_results(results), admitted_statuses(statuses) {}
+        /// Keep the class of \a codes with flags \a statuses; return its codes
+        WordValueSet keep(WordValueSet codes, unsigned int statuses) {
+          const unsigned int flags = statuses & admitted_statuses;
+          const WordValueSet kept =
+              flags == 0 ? WordValueSet{{0, 0, 0, 0}}
+                         : intersect_value_sets(codes, admitted_results);
+          if (is_empty_value_set(kept))
+            return kept;
+          for (unsigned int b = 0; b < 4; ++b)
+            kept_results.blocks[b] |= kept.blocks[b];
+          kept_statuses |= flags;
+          return kept;
+        }
+        WordValueSet results(void) const { return kept_results; }
+        unsigned int statuses(void) const { return kept_statuses; }
+      };
+
+      /** \brief Pairings of tiny operands with a kept NaN result
+       *
+       * The NaN result of a tuple comes from its first NaN operand, or is
+       * 0x7f under the canonical NaN policy. Every check over-approximates:
+       * a number of one operand pairs with a NaN of any other operand, and
+       * a NaN with any earlier operand's NaN.
+       */
+      class TinyNans {
+        /// The canonical NaN of E4M3FN, the only tiny format with NaNs
+        static constexpr WordValue canonical_nan =
+            format_facts(WDT_E4M3FN).canonical_nan();
+        const FloatWordPolicy policy;
+        WordValueSet kept;
+        bool pairs[3] = {false, false, false};
+        unsigned int count;
+
+      public:
+        /// The NaN result of a tuple whose first NaN operand is \a code
+        static WordValue result(const FloatWordPolicy& policy,
+                                WordValue code) {
+          return policy.nan == FloatWordPolicy::Canonical ? canonical_nan : code;
+        }
+        /// Return the NaN results of the \a n operands in \a operands
+        static WordValueSet results(const FloatWordPolicy& policy,
+                                    const TinySummary* operands,
+                                    unsigned int n) {
+          WordValueSet codes = {{0, 0, 0, 0}};
+          for (unsigned int i = 0; i < n; ++i)
+            for (WordValue code : {WordValue(127), WordValue(255)})
+              if (value_set_contains(operands[i].nans, code))
+                codes = with_value(codes, result(policy, code));
+          return codes;
+        }
+        /// Pair the \a n operands with the NaN results in \a nan_results
+        TinyNans(const FloatWordPolicy& p, const TinySummary* operands,
+                 unsigned int n, WordValueSet nan_results)
+            : policy(p), kept(nan_results), count(n) {
+          assert(n <= 3);
+          for (unsigned int i = 0; i < n; ++i)
+            for (WordValue code : {WordValue(127), WordValue(255)})
+              pairs[i] = pairs[i] ||
+                         (value_set_contains(operands[i].nans, code) &&
+                          value_set_contains(kept, result(policy, code)));
+        }
+        /// Test whether the NaN \a code of operand \a i has a kept result
+        bool keeps_nan(unsigned int i, WordValue code) const {
+          bool earlier = false;
+          for (unsigned int j = 0; j < i; ++j)
+            earlier = earlier || pairs[j];
+          return earlier || value_set_contains(kept, result(policy, code));
+        }
+        /// Test whether a number of operand \a i meets a kept NaN result
+        bool keeps_number(unsigned int i) const {
+          for (unsigned int j = 0; j < count; ++j)
+            if (j != i && pairs[j])
+              return true;
+          return false;
+        }
+      };
+
+      /// Narrow \a x to its values in \a values that \a keeps accepts
+      template<class Keeps>
+      ModEvent narrow_kept(Space& home, WordView x, const TinyValues& values,
+                           Keeps keeps) {
+        WordValueSet kept = {{0, 0, 0, 0}};
+        for (unsigned int i = 0; i < values.size(); ++i)
+          if (keeps(values[i]))
+            kept = with_value(kept, values[i]);
+        return x.narrow_values(home, kept);
+      }
 
       /** \brief Exact projection of a unary operation on tiny encodings
        *
@@ -576,6 +866,191 @@ namespace Gecode {
                          entailed(operation, x0, x1, result, status)
                      ? home.ES_SUBSUMED(*this)
                      : ES_FIX;
+        }
+      };
+
+      /** \brief Projection of a ternary operation on tiny encodings
+       *
+       * Relates operands a, b and c and a result, words of width at most 8,
+       * to a status. An operation without a status variable passes
+       * OmittedStatus. Operation holds only space-independent data and
+       * provides
+       *  - `TinyOutcome operator()(WordValue a, WordValue b, WordValue c)
+       *    const`, the exact outcome of one triple of operand encodings, and
+       *  - `ExecStatus narrow_bounds(Space&, WordView, WordView, WordView,
+       *    WordView, StatusView) const`, the default reasoning, which may
+       *    fail and returns ES_NOFIX after changing a view and ES_FIX
+       *    otherwise.
+       *
+       * The exact pass enumerates the remaining values of the distinct
+       * operand views and keeps exactly the values of the supported tuples:
+       * exactly on value-set words, otherwise as their tightest cube and
+       * bounds. Operands that are one view take one value per tuple, so a
+       * fully aliased triple costs 256 evaluations, and only three distinct
+       * views cost the full product of their sizes. A domain-consistent
+       * propagator runs the exact pass every time, with no limit. Otherwise
+       * the default reasoning runs until at most one distinct operand view
+       * is unassigned, and from then on the exact pass, which then visits at
+       * most 256 tuples. The exact pass checks a result aliased with an
+       * operand per tuple; the default reasoning treats aliased views as
+       * independent, which is sound.
+       *
+       * The exact pass uses no outcome table. Measured on E4M3FN fma
+       * (default policy), an evaluation costs about 45 ns, so a pass costs
+       * about 0.85 s on three full operands, 3 ms with one operand assigned
+       * and 0.012 ms with two. A table of all triples would take 32 MiB per
+       * posting and cost as much as the full pass to build, and a table per
+       * assigned operand value would only serve the 3 ms case.
+       */
+      template<class Operation, class StatusView>
+      class TinyTernary : public Propagator {
+        WordView a, b, c, result;
+        StatusView status;
+        const Operation operation;
+        const Consistency consistency;
+
+        TinyTernary(Home home, WordView x, WordView y, WordView z, WordView r,
+                    StatusView s, const Operation& op, Consistency level)
+            : Propagator(home), a(x), b(y), c(z), result(r), status(s),
+              operation(op), consistency(level) {
+          a.subscribe(home, *this, PC_WORD_DOM);
+          b.subscribe(home, *this, PC_WORD_DOM);
+          c.subscribe(home, *this, PC_WORD_DOM);
+          result.subscribe(home, *this, PC_WORD_DOM);
+          status.subscribe(home, *this, Int::PC_INT_DOM);
+        }
+        TinyTernary(Space& home, TinyTernary& other)
+            : Propagator(home, other), operation(other.operation),
+              consistency(other.consistency) {
+          a.update(home, other.a);
+          b.update(home, other.b);
+          c.update(home, other.c);
+          result.update(home, other.result);
+          status.update(home, other.status);
+        }
+
+        /// Return the number of distinct unassigned operand views
+        static unsigned int unassigned_operands(WordView a, WordView b,
+                                                WordView c) {
+          unsigned int count = a.assigned() ? 0 : 1;
+          if (b != a && !b.assigned())
+            ++count;
+          if (c != a && c != b && !c.assigned())
+            ++count;
+          return count;
+        }
+        /// Test whether propagation enumerates all operand tuples
+        bool enumerates_tuples(void) const {
+          return consistency == Consistency::Domain ||
+                 unassigned_operands(a, b, c) <= 1;
+        }
+
+        /// Keep the values of the tuples that \a operation supports.
+        static ExecStatus narrow_to_supports(Space& home, WordView a,
+                                             WordView b, WordView c,
+                                             WordView result,
+                                             StatusView status,
+                                             const Operation& operation) {
+          const TinyValues as(a), bs(b), cs(c);
+          const bool b_is_a = b == a, c_is_a = c == a, c_is_b = c == b;
+          WordSupports a_supports(a), b_supports(b), c_supports(c),
+              result_supports(result);
+          unsigned int flags = 0;
+          for (unsigned int i = 0; i < as.size(); ++i) {
+            const unsigned int j_begin = b_is_a ? i : 0;
+            const unsigned int j_end = b_is_a ? i + 1 : bs.size();
+            for (unsigned int j = j_begin; j < j_end; ++j) {
+              const unsigned int k_begin = c_is_a ? i : c_is_b ? j : 0;
+              const unsigned int k_end = c_is_a || c_is_b ? k_begin + 1
+                                                          : cs.size();
+              for (unsigned int k = k_begin; k < k_end; ++k) {
+                const WordValue u = as[i], v = bs[j], w = cs[k];
+                const TinyOutcome outcome = operation(u, v, w);
+                assert(outcome.status >= 0 && outcome.status < 32);
+                if (!result.in(outcome.value) ||
+                    !status.in(outcome.status) ||
+                    (result == a && outcome.value != u) ||
+                    (result == b && outcome.value != v) ||
+                    (result == c && outcome.value != w))
+                  continue;
+                a_supports.add(u);
+                b_supports.add(v);
+                c_supports.add(w);
+                result_supports.add(outcome.value);
+                flags |= 1U << outcome.status;
+              }
+            }
+          }
+          if (a_supports.empty())
+            return ES_FAILED;
+          GECODE_ME_CHECK(a_supports.publish(home, a));
+          GECODE_ME_CHECK(b_supports.publish(home, b));
+          GECODE_ME_CHECK(c_supports.publish(home, c));
+          GECODE_ME_CHECK(result_supports.publish(home, result));
+          GECODE_ME_CHECK(narrow_flags(home, status, flags));
+          return ES_OK;
+        }
+
+      public:
+        /// Post unless assigned operands decide result and status.
+        static ExecStatus post(Home home, WordView a, WordView b, WordView c,
+                               WordView result, StatusView status,
+                               const Operation& operation,
+                               Consistency level) {
+          assert(a.width() <= 8 && b.width() <= 8 && c.width() <= 8 &&
+                 result.width() <= 8);
+          if (unassigned_operands(a, b, c) == 0)
+            return narrow_to_supports(home, a, b, c, result, status,
+                                      operation);
+          (void)new (home) TinyTernary(home, a, b, c, result, status,
+                                       operation, level);
+          return ES_OK;
+        }
+        Actor* copy(Space& home) override {
+          return new (home) TinyTernary(home, *this);
+        }
+        PropCost cost(const Space&, const ModEventDelta&) const override {
+          return consistency == Consistency::Domain
+                     ? PropCost::cubic(PropCost::HI, 256)
+                     : PropCost::ternary(PropCost::HI);
+        }
+        void reschedule(Space& home) override {
+          a.reschedule(home, *this, PC_WORD_DOM);
+          b.reschedule(home, *this, PC_WORD_DOM);
+          c.reschedule(home, *this, PC_WORD_DOM);
+          result.reschedule(home, *this, PC_WORD_DOM);
+          status.reschedule(home, *this, Int::PC_INT_DOM);
+        }
+        size_t dispose(Space& home) override {
+          a.cancel(home, *this, PC_WORD_DOM);
+          b.cancel(home, *this, PC_WORD_DOM);
+          c.cancel(home, *this, PC_WORD_DOM);
+          result.cancel(home, *this, PC_WORD_DOM);
+          status.cancel(home, *this, Int::PC_INT_DOM);
+          (void)Propagator::dispose(home);
+          return sizeof(*this);
+        }
+        // The exact pass is a fixpoint for the reasons given at
+        // TinyBinary::propagate: the published supports are exactly the
+        // supported values or their tightest cube and bounds, which closure
+        // never shrinks below them, and a second pass finds every earlier
+        // supported tuple again and none outside the published domains.
+        // Aliased operands take one value per tuple and alias checks with
+        // the result hold per tuple, so aliased views receive equal
+        // supports. Once the exact pass runs, every later propagation runs
+        // it too, because assignment and aliasing persist, so the default
+        // reasoning never prunes after an exact pass reported ES_FIX.
+        ExecStatus propagate(Space& home, const ModEventDelta&) override {
+          if (!enumerates_tuples()) {
+            const ExecStatus bounds =
+                operation.narrow_bounds(home, a, b, c, result, status);
+            if (bounds == ES_FAILED || !enumerates_tuples())
+              return bounds;
+          }
+          GECODE_ES_CHECK(
+              narrow_to_supports(home, a, b, c, result, status, operation));
+          return unassigned_operands(a, b, c) == 0 ? home.ES_SUBSUMED(*this)
+                                                   : ES_FIX;
         }
       };
     } // namespace Float

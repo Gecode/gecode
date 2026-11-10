@@ -431,6 +431,9 @@ namespace Test {
           BoolVar truth = s.classes[0];
           return rejects([&] { fp_compare(s, a, FWRT_EQ, b, truth, p); }) &&
                  rejects([&] { fp_minimum(s, a, b, r, p); }) &&
+                 rejects([&] { fp_add(s, a, b, r, p); }) &&
+                 rejects([&] { fp_fma(s, a, b, a, r, p); }) &&
+                 rejects([&] { fp_sqrt(s, a, r, p); }) &&
                  s.status() != SS_FAILED;
         }
         // A posting keeps its own policy copy.
@@ -743,6 +746,35 @@ namespace Test {
               return false;
           return true;
         }
+        /// Solutions of x + c = y and the truth of x <= c in \a root
+        static std::set<std::array<WordValue, 3>> sum_and_comparison(UnarySpace& root, WordVar c) {
+          fp_add(root, root.x, c, root.y);
+          fp_compare(root, root.x, FWRT_LQ, c, root.truth);
+          branch(root, WordVarArgs{root.x, root.y}, WORD_VAL_LSB());
+          branch(root, BoolVarArgs{root.truth}, BOOL_VAL_MIN());
+          DFS<UnarySpace> search(&root);
+          std::set<std::array<WordValue, 3>> found;
+          while (std::unique_ptr<UnarySpace> s{search.next()})
+            found.insert({s->x.val(), s->y.val(), static_cast<WordValue>(s->truth.val())});
+          return found;
+        }
+        /// A constant of -1.5 from float_constant() gives the same
+        /// solutions as its encoding
+        bool posts_as_operand(void) {
+          for (WordDomainType format : {WDT_E2M1, WDT_E4M3FN}) {
+            UnarySpace by_code(format, WVS_EXACT), by_value(format, WVS_EXACT);
+            const WordValue code = format == WDT_E2M1 ? 0xb : 0xbc;
+            const auto expected = sum_and_comparison(by_code, float_code(by_code, format, code));
+            if (expected.size() != (WordValue(1) << float_word_width(format)) ||
+                sum_and_comparison(by_value, float_constant(by_value, format, -1.5)) != expected) {
+              if (opt.log)
+                olog << ind(2) << "float_constant operand " << format << '\n';
+              return false;
+            }
+          }
+          return true;
+        }
+
       public:
         Constants(void) : Base("Word::Float::Constants") {}
         virtual bool run(void) {
@@ -760,7 +792,7 @@ namespace Test {
           for (const SpecialCodes& s : specials)
             if (!special_values(s))
               return false;
-          return encodes_fp32() && rejects_non_float_types();
+          return encodes_fp32() && rejects_non_float_types() && posts_as_operand();
         }
       };
 
@@ -783,15 +815,18 @@ namespace Test {
 
       /// Float operations with word operands, checked by Formats
       enum class Operation {
-        convert, classify, negate, abs, compare, minimum, maximum,
-        minimum_number, maximum_number
+        convert, classify, negate, abs, sqrt, compare, minimum, maximum,
+        minimum_number, maximum_number, add, subtract, multiply, divide, fma
       };
       const Operation operations[] = {
           Operation::convert,        Operation::classify,
           Operation::negate,         Operation::abs,
-          Operation::compare,        Operation::minimum,
-          Operation::maximum,        Operation::minimum_number,
-          Operation::maximum_number};
+          Operation::sqrt,           Operation::compare,
+          Operation::minimum,        Operation::maximum,
+          Operation::minimum_number, Operation::maximum_number,
+          Operation::add,            Operation::subtract,
+          Operation::multiply,       Operation::divide,
+          Operation::fma};
 
       /// Return the number of word operands of \a operation, results included
       int arity(Operation operation) {
@@ -801,8 +836,11 @@ namespace Test {
         case Operation::convert:
         case Operation::negate:
         case Operation::abs:
+        case Operation::sqrt:
         case Operation::compare:
           return 2;
+        case Operation::fma:
+          return 4;
         default:
           return 3;
         }
@@ -876,6 +914,9 @@ namespace Test {
         case Operation::abs:
           fp_abs(home, w[0], w[1]);
           break;
+        case Operation::sqrt:
+          fp_sqrt(home, w[0], w[1]);
+          break;
         case Operation::compare:
           fp_compare(home, w[0], FWRT_LE, w[1], truth);
           break;
@@ -890,6 +931,21 @@ namespace Test {
           break;
         case Operation::maximum_number:
           fp_maximum_number(home, w[0], w[1], w[2]);
+          break;
+        case Operation::add:
+          fp_add(home, w[0], w[1], w[2]);
+          break;
+        case Operation::subtract:
+          fp_subtract(home, w[0], w[1], w[2]);
+          break;
+        case Operation::multiply:
+          fp_multiply(home, w[0], w[1], w[2]);
+          break;
+        case Operation::divide:
+          fp_divide(home, w[0], w[1], w[2]);
+          break;
+        case Operation::fma:
+          fp_fma(home, w[0], w[1], w[2], w[3]);
           break;
         }
       }
@@ -1014,7 +1070,12 @@ namespace Test {
             for (WordDomainType format : formats)
               if (!operand_checks(operation, format))
                 return false;
-          return expect(Operation::convert, {WDT_BINARY16, WDT_E2M1}, 16,
+          // The mixed signature: BF16 * BF16 + FP32 with an FP32 result.
+          return expect(Operation::fma, {WDT_BF16, WDT_BF16, WDT_FP32, WDT_FP32},
+                        16, Outcome::posted) &&
+                 expect(Operation::fma, {WDT_BF16, WDT_BF16, WDT_FP32, WDT_BF16},
+                        16, Outcome::format_mismatch) &&
+                 expect(Operation::convert, {WDT_BINARY16, WDT_E2M1}, 16,
                         Outcome::posted) &&
                  reference_checks();
         }
@@ -1107,7 +1168,7 @@ namespace Test {
                        StatusArgument status_argument,
                        PolicyArgument policy_argument, WordVarArgs& w,
                        IntVarArgs& n, BoolVarArgs& t) {
-          const WordVar a = w[0], b = w[1];
+          const WordVar a = w[0], b = w[1], c = w[2];
           const WordVar r = word(format, value_set);
           const IntVar status(*this, 0, 31);
           const BoolVar truth(*this, 0, 1);
@@ -1124,6 +1185,10 @@ namespace Test {
             break;
           case Operation::abs:
             fp_abs(*this, a, r);
+            break;
+          case Operation::sqrt:
+            post_trailing([&](auto... trailing) { fp_sqrt(*this, a, r, trailing...); },
+                          status, status_argument, policy_argument);
             break;
           case Operation::compare:
             post_trailing([&](auto... trailing) { fp_compare(*this, a, FWRT_LE, b, truth, trailing...); },
@@ -1143,6 +1208,26 @@ namespace Test {
             break;
           case Operation::maximum_number:
             post_trailing([&](auto... trailing) { fp_maximum_number(*this, a, b, r, trailing...); },
+                          status, status_argument, policy_argument);
+            break;
+          case Operation::add:
+            post_trailing([&](auto... trailing) { fp_add(*this, a, b, r, trailing...); },
+                          status, status_argument, policy_argument);
+            break;
+          case Operation::subtract:
+            post_trailing([&](auto... trailing) { fp_subtract(*this, a, b, r, trailing...); },
+                          status, status_argument, policy_argument);
+            break;
+          case Operation::multiply:
+            post_trailing([&](auto... trailing) { fp_multiply(*this, a, b, r, trailing...); },
+                          status, status_argument, policy_argument);
+            break;
+          case Operation::divide:
+            post_trailing([&](auto... trailing) { fp_divide(*this, a, b, r, trailing...); },
+                          status, status_argument, policy_argument);
+            break;
+          case Operation::fma:
+            post_trailing([&](auto... trailing) { fp_fma(*this, a, b, c, r, trailing...); },
                           status, status_argument, policy_argument);
             break;
           }
@@ -1210,6 +1295,11 @@ namespace Test {
       namespace PolicyPosition {
         using Policy = const FloatWordPolicy&;
         using Rounding = FloatWordPolicy::Rounding;
+        struct Add {
+          template<class... Args>
+          auto operator()(Args&&... args) const
+              -> decltype(Gecode::fp_add(std::forward<Args>(args)...));
+        };
         struct Compare {
           template<class... Args>
           auto operator()(Args&&... args) const
@@ -1223,6 +1313,22 @@ namespace Test {
         /// Whether \a Posting accepts a space followed by \a Args
         template<class Posting, class... Args>
         constexpr bool accepts = std::is_invocable_v<Posting, Space&, Args...>;
+
+        static_assert(accepts<Add, WordVar, WordVar, WordVar>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, IntPropLevel>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, IntVar>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, IntVar, IntPropLevel>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, Policy>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, Policy, IntPropLevel>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, IntVar, Policy>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, IntVar, Policy, IntPropLevel>);
+        static_assert(!accepts<Add, Policy, WordVar, WordVar, WordVar>);
+        static_assert(!accepts<Add, Policy, WordVar, WordVar, WordVar, IntPropLevel>);
+        static_assert(!accepts<Add, Policy, WordVar, WordVar, WordVar, IntVar>);
+        static_assert(!accepts<Add, Policy, WordVar, WordVar, WordVar, IntVar, IntPropLevel>);
+        static_assert(!accepts<Add, WordVar, WordVar, WordVar, IntPropLevel, Policy>);
+        static_assert(!accepts<Add, WordVar, WordVar, WordVar, Policy, IntVar>);
+        static_assert(!accepts<Add, WordVar, WordVar, WordVar, Rounding>);
 
         static_assert(accepts<Compare, WordVar, FloatWordRelType, WordVar, BoolVar>);
         static_assert(accepts<Compare, WordVar, FloatWordRelType, WordVar, BoolVar, IntPropLevel>);
@@ -1256,6 +1362,22 @@ namespace Test {
       class DefaultPolicy : public Base {
         /// Result or truth, then status, of an assigned posting
         using Observed = std::array<long long, 2>;
+        /// Return the outcome of the tie E2M1 3 + 0.5 under \a policy, or
+        /// without a policy when it is absent
+        static Observed tie_sum(const std::optional<FloatWordPolicy>& policy) {
+          PostingSpace home;
+          const WordVar three = float_constant(home, WDT_E2M1, 3.0);
+          const WordVar half = float_constant(home, WDT_E2M1, 0.5);
+          const WordVar r(home, WDT_E2M1);
+          const IntVar status(home, 0, 31);
+          if (policy)
+            fp_add(home, three, half, r, status, *policy, IPL_DOM);
+          else
+            fp_add(home, three, half, r, status, IPL_DOM);
+          if (home.status() == SS_FAILED || !r.assigned() || !status.assigned())
+            return {-1, -1};
+          return {static_cast<long long>(r.val()), status.val()};
+        }
         /// Return the outcome of the subnormal E2M1 0.5 == +0 under
         /// \a policy, or without a policy when it is absent
         static Observed half_equals_zero(const std::optional<FloatWordPolicy>& policy) {
@@ -1298,10 +1420,602 @@ namespace Test {
       public:
         DefaultPolicy(void) : Base("Word::Float::DefaultPolicy") {}
         virtual bool run(void) {
+          FloatWordPolicy rtz;
+          rtz.rounding = FloatWordPolicy::RTZ;
           FloatWordPolicy flush_inputs;
           flush_inputs.input_subnormals = FloatWordPolicy::SignedZero;
-          return omitted_matches_default() && half_equals_zero(std::nullopt) == Observed{0, 0} &&
+          // RNE rounds the tie 3.5 to 4 (0x6), RTZ to 3 (0x5), both inexact.
+          return omitted_matches_default() && tie_sum(std::nullopt) == Observed{0x6, 16} &&
+                 tie_sum(rtz) == Observed{0x5, 16} && half_equals_zero(std::nullopt) == Observed{0, 0} &&
                  half_equals_zero(flush_inputs) == Observed{1, 0};
+        }
+      };
+
+      /// Numerical float operations that take a status and a policy
+      const Operation numerical_operations[] = {
+          Operation::convert,        Operation::sqrt,
+          Operation::compare,        Operation::minimum,
+          Operation::maximum,        Operation::minimum_number,
+          Operation::maximum_number, Operation::add,
+          Operation::subtract,       Operation::multiply,
+          Operation::divide,         Operation::fma};
+
+      /// Return the public name that postings of \a operation report
+      const char* posting_name(Operation operation) {
+        switch (operation) {
+        case Operation::convert:
+          return "Word::fp_convert";
+        case Operation::classify:
+          return "Word::fp_classify";
+        case Operation::negate:
+          return "Word::fp_negate";
+        case Operation::abs:
+          return "Word::fp_abs";
+        case Operation::sqrt:
+          return "Word::fp_sqrt";
+        case Operation::compare:
+          return "Word::fp_compare";
+        case Operation::minimum:
+          return "Word::fp_minimum";
+        case Operation::maximum:
+          return "Word::fp_maximum";
+        case Operation::minimum_number:
+          return "Word::fp_minimum_number";
+        case Operation::maximum_number:
+          return "Word::fp_maximum_number";
+        case Operation::add:
+          return "Word::fp_add";
+        case Operation::subtract:
+          return "Word::fp_subtract";
+        case Operation::multiply:
+          return "Word::fp_multiply";
+        case Operation::divide:
+          return "Word::fp_divide";
+        case Operation::fma:
+          return "Word::fp_fma";
+        default:
+          return "";
+        }
+      }
+
+      /// Call \a post with the status, unless \a status is null, and \a policy
+      template<class Post>
+      void post_status_policy(Post post, IntVar* status,
+                              const FloatWordPolicy& policy) {
+        if (status != nullptr)
+          post(*status, policy);
+        else
+          post(policy);
+      }
+
+      /** \brief Post \a operation on \a w, with the status unless \a status is
+       * null, under \a policy
+       *
+       * A comparison relates its operands to \a truth by FWRT_LE.
+       */
+      void post_numerical(Space& home, Operation operation,
+                          const WordVarArgs& w, BoolVar truth, IntVar* status,
+                          const FloatWordPolicy& policy) {
+        switch (operation) {
+        case Operation::convert:
+          post_status_policy([&](auto&&... s) { fp_convert(home, w[0], w[1], s...); },
+                             status, policy);
+          break;
+        case Operation::sqrt:
+          post_status_policy([&](auto&&... s) { fp_sqrt(home, w[0], w[1], s...); },
+                             status, policy);
+          break;
+        case Operation::compare:
+          post_status_policy(
+              [&](auto&&... s) { fp_compare(home, w[0], FWRT_LE, w[1], truth, s...); },
+              status, policy);
+          break;
+        case Operation::minimum:
+          post_status_policy([&](auto&&... s) { fp_minimum(home, w[0], w[1], w[2], s...); },
+                             status, policy);
+          break;
+        case Operation::maximum:
+          post_status_policy([&](auto&&... s) { fp_maximum(home, w[0], w[1], w[2], s...); },
+                             status, policy);
+          break;
+        case Operation::minimum_number:
+          post_status_policy(
+              [&](auto&&... s) { fp_minimum_number(home, w[0], w[1], w[2], s...); },
+              status, policy);
+          break;
+        case Operation::maximum_number:
+          post_status_policy(
+              [&](auto&&... s) { fp_maximum_number(home, w[0], w[1], w[2], s...); },
+              status, policy);
+          break;
+        case Operation::add:
+          post_status_policy([&](auto&&... s) { fp_add(home, w[0], w[1], w[2], s...); },
+                             status, policy);
+          break;
+        case Operation::subtract:
+          post_status_policy([&](auto&&... s) { fp_subtract(home, w[0], w[1], w[2], s...); },
+                             status, policy);
+          break;
+        case Operation::multiply:
+          post_status_policy([&](auto&&... s) { fp_multiply(home, w[0], w[1], w[2], s...); },
+                             status, policy);
+          break;
+        case Operation::divide:
+          post_status_policy([&](auto&&... s) { fp_divide(home, w[0], w[1], w[2], s...); },
+                             status, policy);
+          break;
+        case Operation::fma:
+          post_status_policy([&](auto&&... s) { fp_fma(home, w[0], w[1], w[2], w[3], s...); },
+                             status, policy);
+          break;
+        default:
+          GECODE_NEVER;
+        }
+      }
+
+      /** \brief Space memory that \a post allocates in \a home, in bytes
+       *
+       * Space memory is handed out downwards from the current heap chunk,
+       * so the distance between allocations made before and after \a post
+       * counts what \a post allocated.
+       */
+      long allocated_bytes(Space& home, const std::function<void()>& post) {
+        char* const first = static_cast<char*>(home.ralloc(8));
+        char* const second = static_cast<char*>(home.ralloc(8));
+        post();
+        char* const third = static_cast<char*>(home.ralloc(8));
+        return static_cast<long>((second - third) - (first - second));
+      }
+
+      /// Return \a count words of \a format whose domains are full
+      WordVarArgs float_words(Space& home, WordDomainType format, int count) {
+        WordVarArgs w;
+        for (int i = 0; i < count; ++i)
+          w << WordVar(home, format);
+        return w;
+      }
+
+      /// Posting hygiene of the float operations
+      class Hygiene : public Base {
+        // A word of each type, non-float types with the given width.
+        static WordVarArgs typed_words(Space& home,
+                                       const std::vector<WordDomainType>& types,
+                                       unsigned int width) {
+          WordVarArgs w;
+          for (WordDomainType type : types)
+            w << (is_float_format(type) ? WordVar(home, type) : WordVar(home, width, type));
+          return w;
+        }
+        // An invalid posting throws expected at the operation's name and
+        // leaves the space without a new propagator or a new variable.
+        bool rejects(Operation operation, const std::vector<WordDomainType>& types,
+                     unsigned int width, StatusArgument status_argument, bool invalid_policy,
+                     Outcome expected) {
+          PostingSpace home;
+          const WordVarArgs w = typed_words(home, types, width);
+          BoolVar truth(home, 0, 1);
+          IntVar status(home, 0, 31);
+          FloatWordPolicy policy;
+          if (invalid_policy)
+            policy.tininess = static_cast<FloatWordPolicy::Tininess>(99);
+          const unsigned int propagators = PropagatorGroup::all.size(home);
+          Outcome actual = Outcome::posted;
+          std::string message;
+          // Space memory is handed out downwards from the current heap
+          // chunk, so equal steps between three allocations around the
+          // posting show that it allocated nothing.
+          char* const first = static_cast<char*>(home.ralloc(8));
+          char* const second = static_cast<char*>(home.ralloc(8));
+          try {
+            switch (operation) {
+            case Operation::classify:
+              fp_classify(home, w[0], FWC_NAN, truth);
+              break;
+            case Operation::negate:
+              fp_negate(home, w[0], w[1]);
+              break;
+            case Operation::abs:
+              fp_abs(home, w[0], w[1]);
+              break;
+            default:
+              post_numerical(home, operation, w, truth,
+                             status_argument == StatusArgument::posted ? &status : nullptr,
+                             policy);
+            }
+          } catch (const Gecode::Word::OutOfLimits& e) {
+            actual = Outcome::out_of_limits;
+            message = e.what();
+          } catch (const Gecode::Word::FormatMismatch& e) {
+            actual = Outcome::format_mismatch;
+            message = e.what();
+          } catch (const Gecode::Exception& e) {
+            actual = Outcome::other;
+            message = e.what();
+          }
+          char* const third = static_cast<char*>(home.ralloc(8));
+          const long bytes = static_cast<long>((second - third) - (first - second));
+          const std::string prefix = std::string(posting_name(operation)) + ": ";
+          if (actual == expected && PropagatorGroup::all.size(home) == propagators &&
+              bytes == 0 && message.compare(0, prefix.size(), prefix) == 0)
+            return true;
+          if (opt.log) {
+            olog << ind(2) << posting_name(operation) << " on";
+            for (WordDomainType type : types)
+              olog << ind(2) << ' ' << type;
+            olog << ind(2) << (status_argument == StatusArgument::posted ? " with" : " without")
+                 << " status, " << (invalid_policy ? "invalid" : "valid") << " policy: "
+                 << outcome_name(actual) << " (" << message << "), expected "
+                 << outcome_name(expected) << "; " << bytes << " bytes, "
+                 << PropagatorGroup::all.size(home) - propagators << " propagators\n";
+          }
+          return false;
+        }
+        // Invalid postings of operation with words of format.
+        bool invalid_postings(Operation operation, WordDomainType format,
+                              StatusArgument status_argument) {
+          const int n = arity(operation);
+          const unsigned int width = float_word_width(format);
+          const std::vector<WordDomainType> uniform(n, format);
+          const bool policy = takes_policy(operation);
+          for (bool invalid_policy : {false, true}) {
+            if (invalid_policy && !policy)
+              continue;
+            for (int i = 0; i < n; ++i) {
+              std::vector<WordDomainType> types = uniform;
+              types[i] = WDT_UNSIGNED;
+              if (!rejects(operation, types, width, status_argument, invalid_policy,
+                           Outcome::out_of_limits))
+                return false;
+              if (n > 1 && same_format(operation)) {
+                types[i] = format == WDT_E4M3FN ? WDT_E2M1 : WDT_E4M3FN;
+                if (!rejects(operation, types, width, status_argument, invalid_policy,
+                             Outcome::format_mismatch))
+                  return false;
+              }
+            }
+            if (!supports_binary16(operation) &&
+                !rejects(operation, std::vector<WordDomainType>(n, WDT_BINARY16), 16,
+                         status_argument, invalid_policy, Outcome::out_of_limits))
+              return false;
+          }
+          return !policy || rejects(operation, uniform, width, status_argument, true,
+                                    Outcome::out_of_limits);
+        }
+
+        /// Propagators and space memory of a posting
+        struct Footprint {
+          unsigned int propagators;
+          long bytes;
+        };
+        // Footprint of operation on unassigned words of format.
+        static Footprint footprint(Operation operation, WordDomainType format,
+                                   StatusArgument status_argument) {
+          PostingSpace home;
+          const WordVarArgs w = float_words(home, format, arity(operation));
+          BoolVar truth(home, 0, 1);
+          IntVar status(home, 0, 31);
+          const long bytes = allocated_bytes(home, [&] {
+            post_numerical(home, operation, w, truth,
+                           status_argument == StatusArgument::posted ? &status : nullptr,
+                           FloatWordPolicy());
+          });
+          return {PropagatorGroup::all.size(home), bytes};
+        }
+        // Omitting the status allocates no status variable and no actor
+        // for it: no more propagators than posting a status, fewer for a
+        // wide decomposition that relates the flags to the status, and a
+        // single actor on tiny words and for a square root. A single actor
+        // takes no more memory without the status; larger postings can
+        // cross heap chunks, so their memory is not compared.
+        bool omitted_status(Operation operation, WordDomainType format) {
+          const Footprint with = footprint(operation, format, StatusArgument::posted);
+          const Footprint without = footprint(operation, format, StatusArgument::omitted);
+          const bool tiny = float_word_width(format) <= 8;
+          const bool decomposed =
+              !tiny && operation != Operation::convert && operation != Operation::sqrt &&
+              operation != Operation::add && operation != Operation::subtract &&
+              operation != Operation::multiply && operation != Operation::divide &&
+              operation != Operation::fma;
+          const bool compares_memory = with.propagators == 1;
+          const bool ok = without.propagators <= with.propagators &&
+                          (!decomposed || without.propagators < with.propagators) &&
+                          ((!tiny && operation != Operation::sqrt) || without.propagators == 1) &&
+                          (!compares_memory || without.bytes <= with.bytes);
+          if (ok)
+            return true;
+          if (opt.log)
+            olog << ind(2) << posting_name(operation) << " on " << format << ": "
+                 << without.propagators << " propagators and " << without.bytes
+                 << " bytes without status, " << with.propagators << " and " << with.bytes
+                 << " with status\n";
+          return false;
+        }
+
+        // A wide class extracts the magnitude and posts only the relations
+        // it needs on it: one for finiteness, zero, infinity and the NaN
+        // classes, two and their conjunction for the others. It used to
+        // post 7 to 11 propagators.
+        static bool wide_classify_size(void) {
+          for (int cls = 0; cls < 9; ++cls) {
+            const FloatWordClass c = static_cast<FloatWordClass>(cls);
+            PostingSpace home;
+            WordVar x(home, WDT_FP32);
+            BoolVar truth(home, 0, 1);
+            fp_classify(home, x, c, truth);
+            const unsigned int limit =
+                c == FWC_SIGN ? 1U
+                : c == FWC_SUBNORMAL || c == FWC_NORMAL || c == FWC_SIGNALING_NAN
+                    ? 4U
+                    : 2U;
+            if (PropagatorGroup::all.size(home) > limit)
+              return false;
+          }
+          return true;
+        }
+
+      public:
+        Hygiene(void) : Base("Word::Float::Hygiene") {}
+        virtual bool run(void) {
+          for (Operation operation : operations) {
+            for (WordDomainType format : {WDT_E2M1, WDT_FP32})
+              for (StatusArgument status_argument :
+                   {StatusArgument::omitted, StatusArgument::posted})
+                if ((status_argument == StatusArgument::omitted || takes_policy(operation)) &&
+                    !invalid_postings(operation, format, status_argument))
+                  return false;
+          }
+          for (Operation operation : numerical_operations)
+            for (WordDomainType format : {WDT_E2M1, WDT_E4M3FN, WDT_BF16, WDT_FP32})
+              if (!omitted_status(operation, format))
+                return false;
+          return wide_classify_size();
+        }
+      };
+
+      /// Wide postings with assigned inputs decide at posting
+      class AssignedWide : public Base {
+        // Encodings of 1.5, 3, the least subnormal, infinity, a signaling
+        // NaN, -1 and the greatest finite value.
+        static std::vector<WordValue> codes(WordDomainType format) {
+          const std::vector<WordValue> fp32 = {0x3fc00000, 0x40400000, 0x00000001, 0x7f800000,
+                                               0x7fa00000, 0xbf800000, 0x7f7fffff};
+          std::vector<WordValue> result;
+          for (WordValue code : fp32)
+            result.push_back(format == WDT_FP32 ? code : code >> 16 | (code & 0xffff ? 1 : 0));
+          return result;
+        }
+        /// Values of result and status after propagation
+        struct Observed {
+          bool failed;
+          WordValue result;
+          int status;
+        };
+        // Post operation on words of formats with the inputs assigned to
+        // inputs before posting (decide) or after posting (reference).
+        static Observed observe(Operation operation, const std::vector<WordDomainType>& formats,
+                                const std::vector<WordValue>& inputs, StatusArgument status_argument,
+                                const FloatWordPolicy& policy, bool decide, bool& posted_actor) {
+          PostingSpace home;
+          WordVarArgs w;
+          for (WordDomainType format : formats)
+            w << WordVar(home, format);
+          BoolVar truth(home, 0, 1);
+          IntVar status(home, 0, 31);
+          IntVar* s = status_argument == StatusArgument::posted ? &status : nullptr;
+          const int n = static_cast<int>(inputs.size());
+          if (decide)
+            for (int i = 0; i < n; ++i)
+              dom(home, w[i], inputs[static_cast<size_t>(i)]);
+          post_numerical(home, operation, w, truth, s, policy);
+          posted_actor = PropagatorGroup::all.size(home) != 0;
+          if (!decide)
+            for (int i = 0; i < n; ++i)
+              dom(home, w[i], inputs[static_cast<size_t>(i)]);
+          else if (!home.failed() &&
+                   (!w[n].assigned() || (s != nullptr && !status.assigned())))
+            return {true, 0, -1};
+          if (home.status() == SS_FAILED)
+            return {true, 0, 0};
+          return {false, w[n].val(), s != nullptr ? status.val() : 0};
+        }
+        bool decides(Operation operation, const std::vector<WordDomainType>& formats,
+                     const std::vector<WordValue>& inputs, StatusArgument status_argument,
+                     const FloatWordPolicy& policy) {
+          bool posted_actor = false, reference_actor = false;
+          const Observed decided =
+              observe(operation, formats, inputs, status_argument, policy, true, posted_actor);
+          const Observed reference = observe(operation, formats, inputs, StatusArgument::posted,
+                                             policy, false, reference_actor);
+          const bool status_matches =
+              status_argument == StatusArgument::omitted || decided.status == reference.status;
+          if (!posted_actor && !decided.failed && !reference.failed &&
+              decided.result == reference.result && status_matches)
+            return true;
+          if (opt.log) {
+            olog << ind(2) << posting_name(operation) << " on " << formats[0];
+            for (WordValue input : inputs)
+              olog << ind(2) << " 0x" << std::hex << input << std::dec;
+            olog << ind(2) << (posted_actor ? ": posted an actor" : "") << ", decided "
+                 << (decided.failed ? "failed " : "") << std::hex << decided.result << std::dec
+                 << '/' << decided.status << ", reference " << std::hex << reference.result
+                 << std::dec << '/' << reference.status << '\n';
+          }
+          return false;
+        }
+        // A result that excludes the decided value fails at posting.
+        static bool fails_excluded(void) {
+          PostingSpace home;
+          WordVar a(home, WDT_FP32), b(home, WDT_FP32), r(home, WDT_FP32);
+          dom(home, a, WordValue(0x3fc00000));
+          dom(home, b, WordValue(0x40400000));
+          // 1.5 + 3 is 4.5 (0x40900000), not 4.
+          dom(home, r, WordValue(0x40800000));
+          fp_add(home, a, b, r);
+          return home.failed() && PropagatorGroup::all.size(home) == 0;
+        }
+        // A status that excludes the decided flags fails at posting.
+        static bool convert_fails_excluded(void) {
+          PostingSpace home;
+          WordVar source(home, WDT_FP32), result(home, WDT_BF16);
+          IntVar status(home, 16, 16);
+          dom(home, source, WordValue(0x3fc00000));
+          // 1.5 is exact in BF16, so the status is 0, not inexact.
+          fp_convert(home, source, result, status);
+          return home.failed() && PropagatorGroup::all.size(home) == 0;
+        }
+
+      public:
+        AssignedWide(void) : Base("Word::Float::AssignedWide") {}
+        virtual bool run(void) {
+          FloatWordPolicy flushing;
+          flushing.rounding = FloatWordPolicy::RTZ;
+          flushing.input_subnormals = FloatWordPolicy::SignedZero;
+          flushing.output_subnormals = FloatWordPolicy::SignedZero;
+          flushing.nan = FloatWordPolicy::Canonical;
+          const Operation binary[] = {Operation::add, Operation::subtract, Operation::multiply,
+                                      Operation::divide};
+          for (WordDomainType format : {WDT_FP32, WDT_BF16}) {
+            const std::vector<WordValue> c = codes(format);
+            const std::vector<WordDomainType> two(2, format), three(3, format), four(4, format);
+            for (const FloatWordPolicy& policy : {FloatWordPolicy(), flushing})
+              for (StatusArgument s : {StatusArgument::omitted, StatusArgument::posted})
+                for (WordValue x : c) {
+                  if (!decides(Operation::sqrt, two, {x}, s, policy))
+                    return false;
+                  for (WordValue y : c) {
+                    for (Operation operation : binary)
+                      if (!decides(operation, three, {x, y}, s, policy))
+                        return false;
+                    for (WordValue z : {c[0], c[2], c[3], c[4]})
+                      if (!decides(Operation::fma, four, {x, y, z}, s, policy))
+                        return false;
+                  }
+                }
+          }
+          // BF16 * BF16 + FP32 with an FP32 result.
+          const std::vector<WordValue> bf16 = codes(WDT_BF16), fp32 = codes(WDT_FP32);
+          for (StatusArgument s : {StatusArgument::omitted, StatusArgument::posted})
+            for (WordValue x : bf16)
+              for (WordValue z : fp32)
+                if (!decides(Operation::fma, {WDT_BF16, WDT_BF16, WDT_FP32, WDT_FP32},
+                             {x, bf16[1], z}, s, FloatWordPolicy()))
+                  return false;
+          // Conversions between wide formats, rounding, overflowing and
+          // underflowing among the codes.
+          const std::vector<WordValue> binary16 = {0x3e00, 0x4200, 0x0001, 0x7c00, 0x7d00, 0xbc00, 0x7bff};
+          const std::vector<std::vector<WordDomainType>> conversions = {
+              {WDT_FP32, WDT_FP32}, {WDT_FP32, WDT_BF16}, {WDT_FP32, WDT_BINARY16}, {WDT_BF16, WDT_FP32},
+              {WDT_BINARY16, WDT_BF16}};
+          for (const std::vector<WordDomainType>& formats : conversions)
+            for (const FloatWordPolicy& policy : {FloatWordPolicy(), flushing})
+              for (StatusArgument s : {StatusArgument::omitted, StatusArgument::posted})
+                for (WordValue x : formats[0] == WDT_BINARY16 ? binary16 : codes(formats[0]))
+                  if (!decides(Operation::convert, formats, {x}, s, policy))
+                    return false;
+          return fails_excluded() && convert_fails_excluded();
+        }
+      };
+
+      /// Wide square roots without status prune as with a free status
+      class OmittedSqrt : public Base {
+        /// Total-order bounds and cube of a word
+        struct Domain {
+          WordValue minimum, maximum, lo, hi;
+        };
+        /// Domains of the source and result, and whether they are one word
+        struct Case {
+          Domain source, result;
+          bool aliased;
+        };
+        // The domain of a word of format.
+        static WordVar word(Space& home, WordDomainType format, const Domain& d) {
+          const unsigned int width = float_word_width(format);
+          return WordVar(home, width, format, d.minimum, d.maximum, cube_bits(width, d.lo, d.hi));
+        }
+        /// Domain of a word after propagation
+        struct Observed {
+          bool failed;
+          WordValue minimum, maximum, lo, hi;
+          bool operator==(const Observed& other) const {
+            return failed == other.failed &&
+                   (failed || (minimum == other.minimum && maximum == other.maximum &&
+                               lo == other.lo && hi == other.hi));
+          }
+        };
+        static Observed observed(bool failed, const WordVar& x) {
+          if (failed)
+            return {true, 0, 0, 0, 0};
+          return {false, x.minimum(), x.maximum(), x.lo(), x.hi()};
+        }
+        // Source and result after propagating the square root of the case,
+        // with a free status when posted.
+        static std::pair<Observed, Observed> propagate(WordDomainType format, const Case& c,
+                                                       StatusArgument status_argument,
+                                                       const FloatWordPolicy& policy) {
+          PostingSpace home;
+          WordVar x = word(home, format, c.source);
+          WordVar y = c.aliased ? x : word(home, format, c.result);
+          IntVar status(home, 0, 31);
+          if (status_argument == StatusArgument::posted)
+            fp_sqrt(home, x, y, status, policy);
+          else
+            fp_sqrt(home, x, y, policy);
+          const bool failed = home.status() == SS_FAILED;
+          return {observed(failed, x), observed(failed, y)};
+        }
+        // The cases on FP32, scaled to BF16 by dropping the low half.
+        static std::vector<Case> cases(WordDomainType format) {
+          const Domain full = {0xffffffff, 0x7fffffff, 0, 0xffffffff};
+          const std::vector<Case> fp32 = {
+              // 1 to 4, and the root bounded by 1.5 and 2.
+              {{0x3f800000, 0x40800000, 0, 0xffffffff}, full, false},
+              {full, {0x3fc00000, 0x40000000, 0, 0xffffffff}, false},
+              // -4 to 1, and infinity through the positive NaNs.
+              {{0xc0800000, 0x3f800000, 0, 0xffffffff}, full, false},
+              {{0x7f800000, 0x7fffffff, 0, 0xffffffff}, full, false},
+              // A sparse cube near 2 inside bounds, and a cube on the root.
+              {{0x40000000, 0x40100000, 0x40000000, 0x40150015}, full, false},
+              {full, {0x3f800000, 0x3fc00000, 0x3f800000, 0x3f8f00ff}, false},
+              // Aliased: the fixed points 0, 1 and infinity.
+              {{0x00000000, 0x3f800000, 0, 0xffffffff}, full, true},
+              {full, full, true},
+              {{0x3f000000, 0x7f800000, 0x3f000000, 0x7fffffff}, full, true}};
+          if (format == WDT_FP32)
+            return fp32;
+          std::vector<Case> result;
+          for (Case c : fp32) {
+            for (Domain* d : {&c.source, &c.result}) {
+              d->minimum >>= 16;
+              d->maximum >>= 16;
+              d->lo >>= 16;
+              d->hi >>= 16;
+            }
+            result.push_back(c);
+          }
+          return result;
+        }
+
+      public:
+        OmittedSqrt(void) : Base("Word::Float::OmittedSqrt") {}
+        virtual bool run(void) {
+          FloatWordPolicy flushing;
+          flushing.rounding = FloatWordPolicy::RUP;
+          flushing.input_subnormals = FloatWordPolicy::SignedZero;
+          flushing.nan = FloatWordPolicy::Canonical;
+          for (WordDomainType format : {WDT_FP32, WDT_BF16})
+            for (const FloatWordPolicy& policy : {FloatWordPolicy(), flushing})
+              for (const Case& c : cases(format)) {
+                const auto with = propagate(format, c, StatusArgument::posted, policy);
+                const auto without = propagate(format, c, StatusArgument::omitted, policy);
+                if (with.first == without.first && with.second == without.second)
+                  continue;
+                if (opt.log)
+                  olog << ind(2) << "fp_sqrt on " << format << " from 0x" << std::hex << c.source.minimum
+                       << " to 0x" << c.source.maximum << std::dec
+                       << (c.aliased ? " aliased" : "") << " prunes differently without status\n";
+                return false;
+              }
+          return true;
         }
       };
 
@@ -1312,6 +2026,9 @@ namespace Test {
       Formats formats;
       TinyDefaults tiny_defaults;
       DefaultPolicy default_policy;
+      Hygiene hygiene;
+      AssignedWide assigned_wide;
+      OmittedSqrt omitted_sqrt;
     } // namespace Float
   } // namespace Word
 } // namespace Test

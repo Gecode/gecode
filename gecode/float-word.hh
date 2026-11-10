@@ -47,7 +47,7 @@ namespace Gecode {
    *
    * The word's bits encode \a value exactly, so it can serve as a constant
    * operand of the float operations, for example
-   * <tt>fp_minimum(home, x, float_constant(home, WDT_FP32, 1.5), y)</tt>.
+   * <tt>fp_add(home, x, float_constant(home, WDT_FP32, 1.5), y)</tt>.
    * It has the format's default value-set option (WVS_DEFAULT).
    *
    * No rounding takes place: \a value must be a finite value of \a format,
@@ -516,6 +516,238 @@ namespace Gecode {
                                             WordVar result, IntVar status,
                                             const FloatWordPolicy& policy,
                                             IntPropLevel ipl = IPL_DEF);
+  /** \brief Exact encoded arithmetic with optional correlated status
+   *
+   * All words must have the same format: E2M1, E4M3FN, BF16 or FP32.
+   * Every policy field combination is supported. The status and policy
+   * arguments follow \ref FloatWordStatus and \ref FloatWordPolicyArgument.
+   * Subtraction selects a NaN from the original operands before it negates
+   * b. Assigned operands always give the exact result and flags.
+   *
+   * On tiny words, with or without value sets, \a ipl selects the
+   * propagation:
+   *  - IPL_DOM is domain consistent on value-set words: every
+   *    propagation enumerates the remaining operand pairs and keeps
+   *    exactly the supported operand and result encodings and flags. A
+   *    word without a value set keeps the tightest cube and bounds of
+   *    its supported encodings.
+   *  - The default level, also for IPL_VAL and IPL_BND, reads each word
+   *    once. The result keeps the encodings between the rounded least and
+   *    greatest exact results of the operands' numerical bounds, the NaNs
+   *    of NaN operands and of overflow, and for division the results of
+   *    division by zero. Each operand keeps the encodings that the other
+   *    operand's numerical bounds can combine into an exact result that
+   *    rounds to an admitted result, and the encodings that pair with an
+   *    admitted NaN or division by zero. The status keeps the flags that
+   *    these outcomes allow. Once an operand is assigned, or both operands
+   *    are the same word, it filters as IPL_DOM.
+   *
+   * FP32 and BF16 keep their propagation at every level: it is sound,
+   * exact on assigned operands, and can retain unsupported values. NaN and
+   * infinite operands propagate by class beside the finite values, and the
+   * status keeps the flags that the remaining pairs of operand classes can
+   * give with an admitted result.
+   *
+   * For fp_multiply() and fp_divide() on three distinct words, one
+   * propagation reaches a fixpoint of the projection of the real relation
+   * in which each word is read from the nearest admitted encoding below its
+   * bounds to the nearest above, so it is bounds consistent on that widened
+   * box. Beyond that, it keeps repeating
+   * interval projections on the bounds while each one halves the range of
+   * some word or fixes a further leading bit of it. Its work is bounded by
+   * the format, not by the domain sizes. It can be weaker than repeated
+   * interval projections where those move bounds a few encodings at a time.
+   * fp_fma() follows the same rule on the shapes its documentation lists,
+   * including results that alias an input.
+   */
+  GECODE_WORD_EXPORT void fp_add(Home home, WordVar a, WordVar b,
+                                 WordVar result,
+                                 IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_add(Home home, WordVar a, WordVar b,
+                                 WordVar result, IntVar status,
+                                 IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_add(Home home, WordVar a, WordVar b,
+                                 WordVar result,
+                                 const FloatWordPolicy& policy,
+                                 IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_add(Home home, WordVar a, WordVar b,
+                                 WordVar result, IntVar status,
+                                 const FloatWordPolicy& policy,
+                                 IntPropLevel ipl = IPL_DEF);
+  /// Subtraction a-b, propagated as fp_add().
+  GECODE_WORD_EXPORT void fp_subtract(Home home, WordVar a, WordVar b,
+                                      WordVar result,
+                                      IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_subtract(Home home, WordVar a, WordVar b,
+                                      WordVar result, IntVar status,
+                                      IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_subtract(Home home, WordVar a, WordVar b,
+                                      WordVar result,
+                                      const FloatWordPolicy& policy,
+                                      IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_subtract(Home home, WordVar a, WordVar b,
+                                      WordVar result, IntVar status,
+                                      const FloatWordPolicy& policy,
+                                      IntPropLevel ipl = IPL_DEF);
+  /** \brief Multiplication a*b, propagated as fp_add()
+   *
+   * On three distinct FP32 or BF16 words, each propagation reaches the
+   * fixpoint of the widened projection described at fp_add(), with the
+   * interval projections repeated only while they halve the range of a
+   * word or fix a further leading bit of it.
+   */
+  GECODE_WORD_EXPORT void fp_multiply(Home home, WordVar a, WordVar b,
+                                      WordVar result,
+                                      IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_multiply(Home home, WordVar a, WordVar b,
+                                      WordVar result, IntVar status,
+                                      IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_multiply(Home home, WordVar a, WordVar b,
+                                      WordVar result,
+                                      const FloatWordPolicy& policy,
+                                      IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_multiply(Home home, WordVar a, WordVar b,
+                                      WordVar result, IntVar status,
+                                      const FloatWordPolicy& policy,
+                                      IntPropLevel ipl = IPL_DEF);
+  /** \brief Division a/b, propagated as fp_add()
+   *
+   * On three distinct FP32 or BF16 words, each propagation reaches the
+   * fixpoint of the widened projection described at fp_add(), with the
+   * interval projections repeated only while they halve the range of a
+   * word or fix a further leading bit of it.
+   */
+  GECODE_WORD_EXPORT void fp_divide(Home home, WordVar a, WordVar b,
+                                    WordVar result,
+                                    IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_divide(Home home, WordVar a, WordVar b,
+                                    WordVar result, IntVar status,
+                                    IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_divide(Home home, WordVar a, WordVar b,
+                                    WordVar result,
+                                    const FloatWordPolicy& policy,
+                                    IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_divide(Home home, WordVar a, WordVar b,
+                                    WordVar result, IntVar status,
+                                    const FloatWordPolicy& policy,
+                                    IntPropLevel ipl = IPL_DEF);
+
+  /** \brief Exact single-rounding fused multiply-add
+   *
+   * Supports matching E2M1, E4M3FN, BF16 or FP32 words and
+   * BF16*BF16+FP32 with FP32 result. The status and policy arguments follow
+   * \ref FloatWordStatus and \ref FloatWordPolicyArgument. Aliases
+   * preserve variable identities. Assigned inputs always receive exact
+   * checking. No intermediate product rounding or full ternary table is
+   * used.
+   *
+   * On tiny words, with or without value sets, \a ipl selects the
+   * propagation:
+   *  - IPL_DOM is domain consistent on value-set words: every
+   *    propagation enumerates the remaining triples of distinct input
+   *    words, with no limit, and keeps exactly the supported operand and
+   *    result encodings and flags. A word without a value set keeps the
+   *    tightest cube and bounds of its supported encodings.
+   *  - The default level, also for IPL_VAL and IPL_BND, reads each word
+   *    once. The result keeps the encodings between the rounded least and
+   *    greatest exact results of the operands' numerical bounds and the
+   *    NaNs of NaN operands and of overflow. Each operand keeps the
+   *    encodings that the other operands' numerical bounds can combine
+   *    into an exact result that rounds to an admitted result, and the
+   *    encodings that pair with an admitted NaN. The status keeps the flags
+   *    that these outcomes allow. Once at most one distinct input word is
+   *    unassigned, it filters as IPL_DOM.
+   *
+   * FP32 and BF16 keep their propagation at every level. It checks assigned
+   * inputs exactly and, once no input admits a NaN or an infinity, projects
+   * the finite intervals of the words onto each other at every domain size.
+   * It is sound and can retain unsupported values. As extra work on top, a
+   * propagation whose distinct wide inputs admit at most 2,048 assignments,
+   * counted before any enumeration, scans them all and keeps the tightest
+   * cube and bounds of the supported encodings and exactly the supported
+   * flags.
+   *
+   * Otherwise, with no input admitting a NaN or an infinity and for every
+   * shape but those below, one propagation reaches a fixpoint of the
+   * projection of the real relation in which each word is read from the
+   * nearest admitted encoding below its bounds to the nearest above, so on
+   * four distinct words it is bounds consistent on that widened box. A word
+   * that plays several roles, such as a result that aliases an input, is
+   * read once for all of them as if each role were a word of its own, and
+   * each of its bounds is supported in at least one role. Beyond that, it
+   * keeps repeating interval projections on the bounds (for a result
+   * aliasing a multiplicand, projections onto the classes of the result
+   * that hold supports) while each one halves the range of some word or
+   * fixes a further leading bit of it. Its work is bounded by the format,
+   * not by the domain sizes. It can be weaker than repeated interval
+   * projections where those move bounds a few encodings at a time.
+   *
+   * For a == c, b == c, a == b == c and a == b, each with a result that
+   * aliases no input, these projections are those of the real relaxation
+   * x*(y + 1), x*(x + 1) or x*x + c, with each word read at most one
+   * admitted encoding beyond its bounds and the bounds rounded inward to
+   * encodings. Known bits are used only within each word.
+   *
+   * A finite product above the largest finite value is not an infinity:
+   * FP32 max*2-max is max with no flag. The mixed signature decodes and
+   * flushes each operand in its own format and rounds the exact a*b+c once
+   * to FP32. A selected BF16 NaN keeps the high bits of its payload in FP32,
+   * as in fp_convert(), without a conversion flag.
+   */
+  GECODE_WORD_EXPORT void fp_fma(Home home, WordVar a, WordVar b,
+                                 WordVar c, WordVar result,
+                                 IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_fma(Home home, WordVar a, WordVar b,
+                                 WordVar c, WordVar result,
+                                 IntVar status, IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_fma(Home home, WordVar a, WordVar b,
+                                 WordVar c, WordVar result,
+                                 const FloatWordPolicy& policy,
+                                 IntPropLevel ipl = IPL_DEF);
+  /// \overload
+  GECODE_WORD_EXPORT void fp_fma(Home home, WordVar a, WordVar b,
+                                 WordVar c, WordVar result,
+                                 IntVar status,
+                                 const FloatWordPolicy& policy,
+                                 IntPropLevel ipl = IPL_DEF);
+
+  /** \brief Same-format exact square root, with optional correlated flags
+   *
+   * Supports E2M1, E4M3FN, BF16 and FP32. On tiny words, one exact pass
+   * keeps the encodings and flags of supported combinations: exactly with
+   * value sets, otherwise their cube and bounds; the operation takes no
+   * propagation level. Wide filtering uses rounding regions and may retain
+   * unsupported interior encodings until assignment. The overflow and
+   * comparison fields have no effect, since a finite square root in the
+   * same format cannot overflow. The square root of a zero is that zero,
+   * and of a negative nonzero value, including negative infinity, it is
+   * invalid. In E2M1, sqrt(0.5) sets U and X under every rounding direction
+   * and both tininess rules, also when RUP rounds it to the normal 1.
+   * The status and policy arguments follow \ref FloatWordStatus and
+   * \ref FloatWordPolicyArgument.
+   */
+  GECODE_WORD_EXPORT void
+  fp_sqrt(Home home, WordVar source, WordVar result,
+          const FloatWordPolicy& policy = FloatWordPolicy());
+  /// \overload
+  GECODE_WORD_EXPORT void
+  fp_sqrt(Home home, WordVar source, WordVar result, IntVar status,
+          const FloatWordPolicy& policy = FloatWordPolicy());
+
 } // namespace Gecode
 #endif
 
