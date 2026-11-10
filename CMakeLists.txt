@@ -111,6 +111,7 @@ option(GECODE_ENABLE_EXPERIMENTAL "Enable experimental preview APIs" OFF)
 option(GECODE_ENABLE_CBS "Enable counting-based search support" OFF)
 set(GECODE_ENABLE_EXAMPLES_DEFAULT ${PROJECT_IS_TOP_LEVEL})
 option(GECODE_ENABLE_EXAMPLES "Build examples" ${GECODE_ENABLE_EXAMPLES_DEFAULT})
+option(GECODE_ENABLE_WORD_BENCHMARKS "Build optional Word benchmark and SMT tools (not installed)" OFF)
 set(GECODE_INSTALL_DEFAULT ${PROJECT_IS_TOP_LEVEL})
 option(GECODE_INSTALL "Enable install/export rules" ${GECODE_INSTALL_DEFAULT})
 
@@ -245,6 +246,11 @@ if(GECODE_SANITIZER_NORMALIZED)
 endif()
 
 # Keep dependency closure behavior similar to configure.
+if(GECODE_ENABLE_WORD_BENCHMARKS)
+  gecode_force_option_on(GECODE_ENABLE_WORD_VARS "Word benchmarks require word variables")
+  gecode_force_option_on(GECODE_ENABLE_MINIMODEL "Word benchmarks require minimodel")
+  gecode_force_option_on(GECODE_ENABLE_DRIVER "Word benchmarks require driver")
+endif()
 if(GECODE_ENABLE_SET_VARS)
   gecode_force_option_on(GECODE_ENABLE_INT_VARS "Set variables require int variables")
 endif()
@@ -1737,6 +1743,10 @@ endif()
 
 if(GECODE_ENABLE_EXAMPLES)
   add_subdirectory(examples)
+endif()
+
+if(GECODE_ENABLE_WORD_BENCHMARKS)
+  add_subdirectory(benchmarks/word)
 endif()
 
 # ---------------------------------------------------------------------------

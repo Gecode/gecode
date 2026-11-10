@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {"id":"crc-base","family":"crc16","goal":"enumerate","expected_status":"sat","decision_variables":["message"],"parameters":{"width":8,"rounds":8,"known_mask":240,"known_value":80,"output_mask":255,"output_value":35,"exclude_projection":null}},
+    {"id":"crc-unknown-bits","family":"crc16","goal":"enumerate","expected_status":"sat","decision_variables":["message"],"parameters":{"width":8,"rounds":8,"known_mask":252,"known_value":88,"output_mask":255,"output_value":35,"exclude_projection":null}},
+    {"id":"crc-observation","family":"crc16","goal":"unique","expected_status":"sat","decision_variables":["message"],"parameters":{"width":8,"rounds":8,"known_mask":240,"known_value":80,"output_mask":65535,"output_value":14115,"exclude_projection":null}},
+    {"id":"crc-rounds","family":"crc16","goal":"enumerate","expected_status":"sat","decision_variables":["message"],"parameters":{"width":8,"rounds":4,"known_mask":240,"known_value":80,"output_mask":255,"output_value":116,"exclude_projection":null}},
+    {"id":"crc-excluded-unique","family":"crc16","goal":"unsat","expected_status":"unsat","decision_variables":["message"],"parameters":{"width":8,"rounds":8,"known_mask":255,"known_value":90,"output_mask":65535,"output_value":14115,"exclude_projection":[90]}},
+
+    {"id":"xorshift-base","family":"xorshift32","goal":"enumerate","expected_status":"sat","decision_variables":["state"],"parameters":{"rounds":1,"known_mask":4294967280,"known_value":305419888,"output_mask":255,"output_value":165,"exclude_projection":null}},
+    {"id":"xorshift-unknown-bits","family":"xorshift32","goal":"enumerate","expected_status":"sat","decision_variables":["state"],"parameters":{"rounds":1,"known_mask":4294967292,"known_value":305419896,"output_mask":255,"output_value":165,"exclude_projection":null}},
+    {"id":"xorshift-observation","family":"xorshift32","goal":"unique","expected_status":"sat","decision_variables":["state"],"parameters":{"rounds":1,"known_mask":4294967280,"known_value":305419888,"output_mask":4294967295,"output_value":2274908837,"exclude_projection":null}},
+    {"id":"xorshift-rounds","family":"xorshift32","goal":"unique","expected_status":"sat","decision_variables":["state"],"parameters":{"rounds":3,"known_mask":4294967280,"known_value":305419888,"output_mask":255,"output_value":196,"exclude_projection":null}},
+    {"id":"xorshift-excluded-unique","family":"xorshift32","goal":"unsat","expected_status":"unsat","decision_variables":["state"],"parameters":{"rounds":2,"known_mask":4294967295,"known_value":305419896,"output_mask":4294967295,"output_value":358294691,"exclude_projection":[305419896]}},
+
+    {"id":"speck-base","family":"speck32_64","goal":"enumerate","expected_status":"sat","decision_variables":["key0","key1","key2","key3"],"parameters":{"rounds":2,"known_masks":[65520,65535,65535,65535],"known_values":[256,2312,4368,6424],"output_mask":255,"output_value":64,"exclude_projection":null}},
+    {"id":"speck-unknown-bits","family":"speck32_64","goal":"enumerate","expected_status":"sat","decision_variables":["key0","key1","key2","key3"],"parameters":{"rounds":2,"known_masks":[65532,65535,65535,65535],"known_values":[256,2312,4368,6424],"output_mask":255,"output_value":64,"exclude_projection":null}},
+    {"id":"speck-observation","family":"speck32_64","goal":"unique","expected_status":"sat","decision_variables":["key0","key1","key2","key3"],"parameters":{"rounds":2,"known_masks":[65520,65535,65535,65535],"known_values":[256,2312,4368,6424],"output_mask":4294967295,"output_value":937422656,"exclude_projection":null}},
+    {"id":"speck-rounds","family":"speck32_64","goal":"unique","expected_status":"sat","decision_variables":["key0","key1","key2","key3"],"parameters":{"rounds":4,"known_masks":[65520,65535,65535,65535],"known_values":[256,2312,4368,6424],"output_mask":255,"output_value":119,"exclude_projection":null}},
+    {"id":"speck-excluded-unique","family":"speck32_64","goal":"unsat","expected_status":"unsat","decision_variables":["key0","key1","key2","key3"],"parameters":{"rounds":3,"known_masks":[65535,65535,65535,65535],"known_values":[256,2312,4368,6424],"output_mask":4294967295,"output_value":3436343761,"exclude_projection":[256,2312,4368,6424]}}
+  ]
+}
