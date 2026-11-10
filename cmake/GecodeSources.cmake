@@ -205,6 +205,7 @@ set(GECODE_FLOAT_SOURCES
 )
 
 set(GECODE_WORD_SOURCES
+  gecode/word/arithmetic-globals.cpp
   gecode/word/arithmetic.cpp
   gecode/word/array.cpp
   gecode/word/branch.cpp
@@ -500,6 +501,7 @@ set(GECODE_TEST_SOURCES
   test/support.cpp
   test/word.cpp
   test/word/arithmetic.cpp
+  test/word/arithmetic-globals.cpp
   test/word/rewriting.cpp
   test/word/bounded.cpp
   test/word/sparse-wide.cpp

@@ -1388,6 +1388,140 @@ namespace Gecode {
   /// Post signed modulus with a left constant of the width of \a y
   GECODE_WORD_EXPORT void signed_mod(Home home, WordValue value, WordVar y,
                                      WordVar result);
+
+  /// One row in a joint exact-integer linear Word relation
+  class WordLinearRow {
+  public:
+    /// Kind of linear relation represented by the row
+    enum class Type {
+      EQUAL,     ///< Linear equality
+      RANGE,     ///< Linear relation between a lower and an upper bound
+      CONGRUENCE ///< Linear congruence modulo a fixed modulus
+    };
+    /// Linear equality
+    static constexpr Type EQUAL = Type::EQUAL;
+    /// Linear relation between a lower and an upper bound
+    static constexpr Type RANGE = Type::RANGE;
+    /// Linear congruence modulo a fixed modulus
+    static constexpr Type CONGRUENCE = Type::CONGRUENCE;
+  private:
+    Type _type;
+    IntArgs _coefficients;
+    int _lower, _upper;
+    WordValue _modulus;
+    WordLinearRow(Type type, const IntArgs& a, int lower, int upper,
+                  WordValue modulus);
+  public:
+    /// Construct the tautology 0=0
+    WordLinearRow(void);
+    /// Construct sum(a[i]*x[i])=b
+    static WordLinearRow equal(const IntArgs& a, int b);
+    /// Construct l<=sum(a[i]*x[i])<=u
+    static WordLinearRow range(const IntArgs& a, int l, int u);
+    /// Construct sum(a[i]*x[i])=r (mod modulus)
+    static WordLinearRow congruence(const IntArgs& a, int r,
+                                    WordValue modulus);
+    /// Return the relation kind
+    Type type(void) const;
+    /// Return the coefficients
+    const IntArgs& coefficients(void) const;
+    /// Return the lower bound, equality value, or congruence residue
+    int lower(void) const;
+    /// Return the upper bound (equal to lower except for a range)
+    int upper(void) const;
+    /// Return the modulus for a congruence and zero otherwise
+    WordValue modulus(void) const;
+  };
+
+  /// Passing rows for a joint exact-integer linear Word relation
+  class WordLinearRowArgs : public ArgArray<WordLinearRow> {
+  public:
+    using ArgArray<WordLinearRow>::ArgArray;
+    WordLinearRowArgs(void) : ArgArray<WordLinearRow>(0) {}
+  };
+
+  /** \brief Exact integer product balance
+   *
+   * Enforces \f$c\prod x=d\prod y\f$ without intermediate wrapping.
+   * WDT_SIGNED operands use two's-complement signed values; all other operands
+   * use unsigned values. Assigned tuples are checked exactly. Propagation
+   * does not guarantee bounds or domain consistency, and all values of
+   * \a ipl select the same propagation.
+   */
+  GECODE_WORD_EXPORT void
+  product_balance(Home home, const WordVarArgs& x, WordValue c,
+                  const WordVarArgs& y, WordValue d,
+                  IntPropLevel ipl=IPL_DEF);
+  /** \brief Enforce product(x)=d*q+r, d>0 and 0<=r<d, without intermediate
+   * wrapping
+   *
+   * Propagation does not guarantee bounds or domain consistency, and all
+   * values of \a ipl select the same propagation.
+   */
+  GECODE_WORD_EXPORT void
+  product_divmod(Home home, const WordVarArgs& x, WordVar d, WordVar q,
+                 WordVar r, IntPropLevel ipl=IPL_DEF);
+  /** \brief Enforce c+sum(a[i]*x[i])=d*q+r, d>0 and 0<=r<d
+   *
+   * Each propagation filters the bounds of all words by interval reasoning
+   * on the identity, and the weighted sum as a row of linear_system().
+   * IPL_ADVANCED adds the extra subset-sum filtering of linear_system() for
+   * that row.
+   */
+  GECODE_WORD_EXPORT void
+  linear_divmod(Home home, const IntArgs& a, const WordVarArgs& x, int c,
+                WordVar d, WordVar q, WordVar r,
+                IntPropLevel ipl=IPL_DEF);
+  /** \brief Constrain y to the least value not below x congruent to phase
+   * modulo spacing
+   *
+   * Propagation follows linear_system() for the rows x<=y<=x+spacing-1 and
+   * y=phase (mod spacing), including the extra filtering of IPL_ADVANCED.
+   */
+  GECODE_WORD_EXPORT void
+  quantize_up(Home home, WordVar x, WordValue spacing, WordValue phase,
+              WordVar y, IntPropLevel ipl=IPL_DEF);
+  /** \brief Enforce a joint system of exact integer equalities, ranges, and
+   * congruences
+   *
+   * Each propagation filters every row at every domain size: an equality or
+   * range row by interval reasoning on the bounds of its words, and an
+   * equality or congruence row by divisibility and the known low bits of its
+   * words. Assigned tuples are checked exactly. Propagation does not
+   * guarantee bounds or domain consistency. As extra work on top, posting
+   * combines a bounded number of pairs of equality rows that share a word
+   * and fails on a contradictory pair. IPL_ADVANCED adds a second stage of
+   * extra work: subset-sum filtering of each row whose unknown bits have a
+   * small total normalized weight, and filtering with a bounded number of
+   * rows derived from the combined pairs.
+   */
+  GECODE_WORD_EXPORT void
+  linear_system(Home home, const WordVarArgs& x,
+                const WordLinearRowArgs& rows,
+                IntPropLevel ipl=IPL_DEF);
+  /** \brief Relate fixed-radix digits, last digit fastest, to their exact
+   * integer rank
+   *
+   * Propagation follows linear_system() for the single rank row, including
+   * the extra filtering of IPL_ADVANCED. It also bounds every digit below its
+   * radix and links the bits of the fastest digits to the rank while their
+   * radices are powers of two.
+   */
+  GECODE_WORD_EXPORT void
+  mixed_radix(Home home, const WordVarArgs& digits,
+              const WordValArgs& radices, WordVar rank,
+              IntPropLevel ipl=IPL_DEF);
+  /** \brief Enforce outputs=A*coordinates+offset with explicit coordinates
+   *
+   * Matrix \a a is row-major with one row per output and one column per
+   * coordinate. Propagation follows linear_system() for one equality row
+   * per output, including the extra work of posting and IPL_ADVANCED.
+   */
+  GECODE_WORD_EXPORT void
+  bounded_image(Home home, const WordVarArgs& coordinates,
+                const IntArgs& a, const IntArgs& offset,
+                const WordVarArgs& outputs,
+                IntPropLevel ipl=IPL_DEF);
   /** @} */
 
   /** \addtogroup TaskModelWordBranch
