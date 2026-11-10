@@ -978,6 +978,31 @@ namespace Gecode { namespace Word {
                                location);
   }
 
+  /** \brief Return the encoding of \a value in float \a format
+   *
+   * Throws OutOfLimits at \a location if \a format is not a float type,
+   * \a value is a NaN, or \a format cannot represent \a value exactly.
+   * -0.0 encodes as the negative zero.
+   */
+  GECODE_WORD_EXPORT WordValue
+  float_encoding(WordDomainType format, double value, const char* location);
+
+  /** \brief Prepare the domain of float \a format with the values
+   * \a minimum through \a maximum
+   *
+   * Throws OutOfLimits as float_encoding() does, and VariableEmptyDomain if
+   * \a minimum lies above \a maximum in the total order of \a format.
+   */
+  forceinline PreparedWordDomain
+  prepare_float_interval(WordDomainType format, double minimum,
+                         double maximum, const char* location) {
+    const WordValue first = float_encoding(format,minimum,location);
+    const WordValue last = float_encoding(format,maximum,location);
+    const unsigned int width = float_domain_width(format);
+    return prepare_bounded_domain(width,0,width_mask(width),format,first,last,
+                                  location);
+  }
+
   /** \brief Return the least rank at or above \a r that \a cube admits in
    * the order of \a domain_type
    *

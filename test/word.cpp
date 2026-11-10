@@ -33,6 +33,8 @@
 
 #include "test/word.hh"
 
+#include <algorithm>
+
 #include <limits>
 #include <memory>
 
@@ -97,10 +99,57 @@ namespace Test { namespace Word {
     return result;
   }
 
+  std::vector<Gecode::WordValue>
+  float_order_range(unsigned int width, Gecode::WordValue minimum,
+                    Gecode::WordValue maximum) {
+    const Gecode::WordValue sign = Gecode::WordValue(1) << (width-1);
+    std::vector<Gecode::WordValue> result;
+    for (Gecode::WordValue v = minimum; ; ) {
+      result.push_back(v);
+      if (v == maximum)
+        return result;
+      if ((v & sign) == 0)
+        v++;
+      else if (v == sign)
+        v = 0;
+      else
+        v--;
+    }
+  }
+
+  std::pair<Gecode::WordValue,Gecode::WordValue>
+  float_order_extremes(unsigned int width,
+                       const std::set<Gecode::WordValue>& values) {
+    assert(!values.empty());
+    const Gecode::WordValue sign = Gecode::WordValue(1) << (width-1);
+    // Encodings with the sign bit set order by descending code, then the
+    // others by ascending code.
+    std::vector<Gecode::WordValue> negative, positive;
+    for (Gecode::WordValue v : values)
+      ((v & sign) != 0 ? negative : positive).push_back(v);
+    return {negative.empty() ? positive.front() : negative.back(),
+            positive.empty() ? negative.front() : positive.back()};
+  }
+
   Gecode::WordBits
   cube_bits(unsigned int width, Gecode::WordValue lo, Gecode::WordValue hi) {
     Gecode::Word::check_domain(width,lo,hi,"Test::Word::cube_bits");
     return Gecode::known_bits(lo | (~hi & Gecode::Word::width_mask(width)),lo);
+  }
+
+  Gecode::WordVar
+  float_window(Gecode::Space& home, Gecode::WordDomainType format,
+               Gecode::WordValue minimum, Gecode::WordValue maximum,
+               Gecode::WordValueSetOption value_set) {
+    return Gecode::WordVar(home,Gecode::float_word_width(format),format,
+                           minimum,maximum,value_set);
+  }
+
+  Gecode::WordVar
+  float_code(Gecode::Space& home, Gecode::WordDomainType type,
+                 Gecode::WordValue code) {
+    return Gecode::WordVar(home,Gecode::Word::float_domain_width(type),type,
+                           code,code);
   }
 
   CpltAssignment::CpltAssignment(int n0, const Domain& d0)
@@ -259,6 +308,72 @@ operator<<(std::ostream& os, Gecode::WordDomainType t) {
   }
   GECODE_NEVER;
   return os;
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Rounding r) {
+  switch (r) {
+  case Gecode::FloatWordPolicy::RNE: return os << "RNE";
+  case Gecode::FloatWordPolicy::RTZ: return os << "RTZ";
+  case Gecode::FloatWordPolicy::RDN: return os << "RDN";
+  case Gecode::FloatWordPolicy::RUP: return os << "RUP";
+  }
+  return os << static_cast<int>(r);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Subnormals s) {
+  switch (s) {
+  case Gecode::FloatWordPolicy::Preserve: return os << "Preserve";
+  case Gecode::FloatWordPolicy::SignedZero: return os << "SignedZero";
+  }
+  return os << static_cast<int>(s);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Overflow o) {
+  switch (o) {
+  case Gecode::FloatWordPolicy::Format: return os << "Format";
+  case Gecode::FloatWordPolicy::SaturateFinite: return os << "SaturateFinite";
+  }
+  return os << static_cast<int>(o);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Zeros z) {
+  switch (z) {
+  case Gecode::FloatWordPolicy::Signed: return os << "Signed";
+  case Gecode::FloatWordPolicy::Positive: return os << "Positive";
+  }
+  return os << static_cast<int>(z);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Nan n) {
+  switch (n) {
+  case Gecode::FloatWordPolicy::SignalFirst: return os << "SignalFirst";
+  case Gecode::FloatWordPolicy::OperandFirst: return os << "OperandFirst";
+  case Gecode::FloatWordPolicy::Canonical: return os << "Canonical";
+  }
+  return os << static_cast<int>(n);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Tininess t) {
+  switch (t) {
+  case Gecode::FloatWordPolicy::AfterPrecision: return os << "AfterPrecision";
+  case Gecode::FloatWordPolicy::BeforeRounding: return os << "BeforeRounding";
+  }
+  return os << static_cast<int>(t);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Comparison c) {
+  switch (c) {
+  case Gecode::FloatWordPolicy::Quiet: return os << "Quiet";
+  case Gecode::FloatWordPolicy::Signaling: return os << "Signaling";
+  }
+  return os << static_cast<int>(c);
 }
 
 namespace Test { namespace Word {

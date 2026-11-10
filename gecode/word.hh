@@ -36,6 +36,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <type_traits>
 #include <vector>
 #include <gecode/int.hh>
 
@@ -183,7 +184,8 @@ namespace Gecode {
    * A word is created from its width, which allows every value, from known
    * bits (known_bits()), from a list of values, or from endpoints in the
    * order of its domain type: <tt>WordVar(home, 8, WDT_SIGNED, -3, 5)</tt>
-   * holds -3 through 5. A constant is a one-value list, as in
+   * holds -3 through 5, and <tt>WordVar(home, WDT_BF16, -1.0, 1.0)</tt> the
+   * bfloat16 values from -1 to 1. A constant is a one-value list, as in
    * <tt>WordVar(home, 32, {0xffffffff})</tt>.
    *
    * A constant operand of a same-width constraint has the width of its word
@@ -214,8 +216,9 @@ namespace Gecode {
    * For expression syntax and domain policies, see \ref TaskModelMiniModelWord.
    * Propagator implementation notes are in \ref FuncWordProp.
    * A float domain type such as WDT_FP32 makes a word a floating-point
-   * encoding. To read the bits of a word in another domain type, see
-   * reinterpret().
+   * encoding. For floating-point operations on such float-typed words,
+   * include gecode/float-word.hh and see \ref TaskModelWordFloat; to read
+   * the bits of a word in another domain type, see reinterpret().
    *
    * \ingroup TaskModel
    */
@@ -278,9 +281,9 @@ namespace Gecode {
    * known bits; a list of values; a domain type; or a domain type with
    * minimum and maximum endpoints, which may be combined with known bits.
    * Endpoints are values in the order of the domain type, so negative values
-   * are written as such for WDT_SIGNED. A float format alone gives the
-   * width. WordVarArgs and WordVarArray have the same forms after the
-   * number of words.
+   * are written as such for WDT_SIGNED. A float format alone gives the width,
+   * and its endpoints are then floating-point values. WordVarArgs and
+   * WordVarArray have the same forms after the number of words.
    * \ingroup TaskModelWordVars
    */
   class WordVar : public VarImpVar<Word::WordVarImp> {
@@ -349,6 +352,24 @@ namespace Gecode {
     GECODE_WORD_EXPORT WordVar(Space& home, WordDomainType format,
                               WordValueSetOption value_set=WVS_DEFAULT);
     /**
+     * \brief Construct a word of float \a format with the values
+     * \a minimum through \a maximum
+     *
+     * The endpoints are encoded exactly in \a format and ordered by its
+     * total order, in which -0.0 lies below +0.0. Integer arguments are
+     * values too: <tt>WordVar(home, WDT_FP32, 1, 2)</tt> holds 1.0 through
+     * 2.0. The width is the width of the format. A NaN endpoint needs its
+     * bit pattern, given to the bounded constructor with a width.
+     *
+     * Throws Word::OutOfLimits if \a format is not a float type, an
+     * endpoint is a NaN or not exactly representable in \a format, or
+     * \a value_set is WVS_EXACT and the format is wider than 8. Throws
+     * Word::VariableEmptyDomain if \a minimum lies above \a maximum.
+     */
+    GECODE_WORD_EXPORT WordVar(Space& home, WordDomainType format,
+                              double minimum, double maximum,
+                              WordValueSetOption value_set=WVS_DEFAULT);
+    /**
      * \brief Construct a bounded word with the endpoints \a minimum and
      * \a maximum
      *
@@ -358,7 +379,8 @@ namespace Gecode {
      * endpoints are thus numbers in the word's interpretation:
      * <tt>WordVar(home, 8, WDT_SIGNED, -3, 5)</tt> holds -3 through 5, and
      * 0xfd is the same endpoint as -3. For a float \a domain_type they are
-     * bit patterns, which can also name a NaN.
+     * bit patterns, which can also name a NaN; the constructor for a float
+     * format without a width takes values instead.
      *
      * Throws Word::OutOfLimits if \a width or \a domain_type is invalid,
      * including a width that differs from that of a float \a domain_type,
@@ -389,6 +411,20 @@ namespace Gecode {
                               WordValue minimum, WordValue maximum,
                               WordBits known,
                               WordValueSetOption value_set=WVS_DEFAULT);
+    /// Floating-point endpoints need the constructor for a float format
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVar(Space& home, unsigned int width, WordDomainType domain_type,
+            T minimum, U maximum,
+            WordValueSetOption value_set=WVS_DEFAULT) = delete;
+    /// Floating-point endpoints need the constructor for a float format
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVar(Space& home, unsigned int width, WordDomainType domain_type,
+            T minimum, U maximum, WordBits known,
+            WordValueSetOption value_set=WVS_DEFAULT) = delete;
     /// Return the immutable width
     unsigned int width(void) const;
     /// Return the mask containing all significant bits
@@ -533,6 +569,18 @@ namespace Gecode {
      */
     GECODE_WORD_EXPORT WordVarArgs(Space& home, int n, WordDomainType format,
                                   WordValueSetOption value_set=WVS_DEFAULT);
+    /** \brief Construct \a n words of float \a format with the values
+     * \a minimum through \a maximum
+     *
+     * The endpoints are values, as for the corresponding WordVar
+     * constructor. Throws Word::OutOfLimits for a negative count, a
+     * \a format that is not a float type, an endpoint that is a NaN or not
+     * exact in \a format, or WVS_EXACT with a format wider than 8, and
+     * Word::VariableEmptyDomain if \a minimum lies above \a maximum.
+     */
+    GECODE_WORD_EXPORT WordVarArgs(Space& home, int n, WordDomainType format,
+                                  double minimum, double maximum,
+                                  WordValueSetOption value_set=WVS_DEFAULT);
     /** \brief Construct \a n bounded words with the endpoints \a minimum
      * and \a maximum
      *
@@ -560,6 +608,21 @@ namespace Gecode {
                                   WordValue minimum, WordValue maximum,
                                   WordBits known,
                                   WordValueSetOption value_set=WVS_DEFAULT);
+    /// Floating-point endpoints need the constructor for a float format
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVarArgs(Space& home, int n, unsigned int width,
+               WordDomainType domain_type, T minimum, U maximum,
+               WordValueSetOption value_set=WVS_DEFAULT) = delete;
+    /// Floating-point endpoints need the constructor for a float format
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVarArgs(Space& home, int n, unsigned int width,
+               WordDomainType domain_type, T minimum, U maximum,
+               WordBits known,
+               WordValueSetOption value_set=WVS_DEFAULT) = delete;
     WordVarArgs& operator=(const WordVarArgs&) = default;
   };
   /// Word variable array
@@ -619,6 +682,18 @@ namespace Gecode {
      */
     GECODE_WORD_EXPORT WordVarArray(Space& home, int n, WordDomainType format,
                                    WordValueSetOption value_set=WVS_DEFAULT);
+    /** \brief Construct \a n words of float \a format with the values
+     * \a minimum through \a maximum
+     *
+     * The endpoints are values, as for the corresponding WordVar
+     * constructor. Throws Word::OutOfLimits for a negative count, a
+     * \a format that is not a float type, an endpoint that is a NaN or not
+     * exact in \a format, or WVS_EXACT with a format wider than 8, and
+     * Word::VariableEmptyDomain if \a minimum lies above \a maximum.
+     */
+    GECODE_WORD_EXPORT WordVarArray(Space& home, int n, WordDomainType format,
+                                   double minimum, double maximum,
+                                   WordValueSetOption value_set=WVS_DEFAULT);
     /** \brief Construct \a n bounded words with the endpoints \a minimum
      * and \a maximum
      *
@@ -646,6 +721,21 @@ namespace Gecode {
                                    WordValue minimum, WordValue maximum,
                                    WordBits known,
                                    WordValueSetOption value_set=WVS_DEFAULT);
+    /// Floating-point endpoints need the constructor for a float format
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVarArray(Space& home, int n, unsigned int width,
+                WordDomainType domain_type, T minimum, U maximum,
+                WordValueSetOption value_set=WVS_DEFAULT) = delete;
+    /// Floating-point endpoints need the constructor for a float format
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVarArray(Space& home, int n, unsigned int width,
+                WordDomainType domain_type, T minimum, U maximum,
+                WordBits known,
+                WordValueSetOption value_set=WVS_DEFAULT) = delete;
     WordVarArray& operator=(const WordVarArray&) = default;
   };
 

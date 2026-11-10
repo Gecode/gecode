@@ -165,6 +165,15 @@ namespace Gecode {
     _init(home,domain,Word::checked_value_set(domain.width,domain.domain_type,
                                               value_set,"WordVar::WordVar"));
   }
+  WordVar::WordVar(Space& home, WordDomainType format,
+                   double minimum, double maximum,
+                   WordValueSetOption value_set)
+    : VarImpVar<Word::WordVarImp>(nullptr) {
+    const Word::PreparedWordDomain domain = Word::prepare_float_interval(
+      format,minimum,maximum,"WordVar::WordVar");
+    _init(home,domain,Word::checked_value_set(domain.width,domain.domain_type,
+                                              value_set,"WordVar::WordVar"));
+  }
   WordVar::WordVar(Space& home, unsigned int width,
                    WordDomainType domain_type,
                    WordValue minimum, WordValue maximum,

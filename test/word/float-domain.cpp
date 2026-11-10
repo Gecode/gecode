@@ -36,6 +36,7 @@
 #include <gecode/search.hh>
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <memory>
 #include <vector>
@@ -191,7 +192,7 @@ namespace Test { namespace Word { namespace FloatDomain {
           olog << f.name << std::endl;
           return false;
         }
-      return bounded_e2m1() && errors();
+      return bounded_e2m1() && float_values() && errors();
     }
 
   private:
@@ -276,6 +277,46 @@ namespace Test { namespace Word { namespace FloatDomain {
         return false;
       } catch (const Gecode::Word::VariableEmptyDomain&) {}
       return true;
+    }
+
+    /// Bounds given as floating-point values of a format
+    static bool float_values(void) {
+      WordSpace home;
+      const Gecode::WordVar unit(home,WDT_BF16,-1.0,1.0);
+      const Gecode::WordVar fp(home,WDT_FP32,1,2);
+      const Gecode::WordVar small(home,WDT_E2M1,-1.5,3.0);
+      const Gecode::WordVarArray array(home,2,WDT_BF16,-1.0,1.0,WVS_NONE);
+      if ((unit.width() != 16) || (unit.domain_type() != WDT_BF16) ||
+          (unit.minimum() != 0xbf80) || (unit.maximum() != 0x3f80) ||
+          (fp.minimum() != 0x3f800000) || (fp.maximum() != 0x40000000) ||
+          !small.has_value_set() || (small.minimum() != 0xb) ||
+          (small.maximum() != 0x5))
+        return false;
+      for (int i=0; i<array.size(); i++)
+        if ((array[i].minimum() != 0xbf80) || (array[i].maximum() != 0x3f80) ||
+            array[i].has_value_set())
+          return false;
+      try {
+        Gecode::WordVar(home,WDT_BF16,1.0,-1.0);
+        return false;
+      } catch (const Gecode::Word::VariableEmptyDomain&) {}
+      try {
+        Gecode::WordVar(home,WDT_FP32,0.0,-0.0);
+        return false;
+      } catch (const Gecode::Word::VariableEmptyDomain&) {}
+      return
+        throws_out_of_limits([](WordSpace& s) {
+          Gecode::WordVar(s,WDT_FP32,0.1,1.0);
+        }) &&
+        throws_out_of_limits([](WordSpace& s) {
+          Gecode::WordVar(s,WDT_FP32,0.0,std::nan(""));
+        }) &&
+        throws_out_of_limits([](WordSpace& s) {
+          Gecode::WordVar(s,WDT_UNSIGNED,0.0,1.0);
+        }) &&
+        throws_out_of_limits([](WordSpace& s) {
+          Gecode::WordVarArgs(s,2,WDT_CUBE,0.0,1.0);
+        });
     }
 
     static bool errors(void) {

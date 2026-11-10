@@ -37,7 +37,10 @@
 #include "test/test.hh"
 
 #include <gecode/word.hh>
+#include <gecode/float-word.hh>
 
+#include <set>
+#include <utility>
 #include <vector>
 
 namespace Test {
@@ -113,6 +116,42 @@ namespace Test {
      */
     Gecode::WordBits cube_bits(unsigned int width, Gecode::WordValue lo,
                                Gecode::WordValue hi);
+
+    /** \brief Return the encodings of width \a width from \a minimum to
+     * \a maximum in IEEE total order
+     *
+     * The walk follows the sign bit alone, independently of the library's
+     * rank map: negative encodings descend to negative zero, then positive
+     * encodings ascend.
+     */
+    std::vector<Gecode::WordValue>
+    float_order_range(unsigned int width, Gecode::WordValue minimum,
+                      Gecode::WordValue maximum);
+
+    /** \brief Return the least and the greatest of the nonempty encodings
+     * \a values of width \a width in IEEE total order
+     *
+     * Like float_order_range(), the comparison follows the sign bit alone.
+     */
+    std::pair<Gecode::WordValue,Gecode::WordValue>
+    float_order_extremes(unsigned int width,
+                         const std::set<Gecode::WordValue>& values);
+
+    /** \brief Return a word of float domain type \a format restricted to
+     * the total-order window from \a minimum to \a maximum
+     *
+     * The endpoints are encodings. The word has a value set per
+     * \a value_set.
+     */
+    Gecode::WordVar
+    float_window(Gecode::Space& home, Gecode::WordDomainType format,
+                 Gecode::WordValue minimum, Gecode::WordValue maximum,
+                 Gecode::WordValueSetOption value_set=Gecode::WVS_DEFAULT);
+
+    /// Return a word of float domain type \a type assigned to encoding \a code
+    Gecode::WordVar
+    float_code(Gecode::Space& home, Gecode::WordDomainType type,
+                   Gecode::WordValue code);
 
     /// Base class for concrete assignments
     class Assignment {
@@ -316,6 +355,20 @@ std::ostream& operator<<(std::ostream& os, const Test::Word::Domain& d);
 std::ostream& operator<<(std::ostream& os, const Test::Word::Assignment& a);
 /// Print the name of domain representation \a t
 std::ostream& operator<<(std::ostream& os, Gecode::WordDomainType t);
+/// Print the name of rounding direction \a r
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Rounding r);
+/// Print the name of subnormal treatment \a s
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Subnormals s);
+/// Print the name of overflow result \a o
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Overflow o);
+/// Print the name of zero sign treatment \a z
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Zeros z);
+/// Print the name of NaN selection \a n
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Nan n);
+/// Print the name of tininess detection \a t
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Tininess t);
+/// Print the name of comparison signaling \a c
+std::ostream& operator<<(std::ostream& os, Gecode::FloatWordPolicy::Comparison c);
 
 #include "test/word.hpp"
 

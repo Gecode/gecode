@@ -54,6 +54,8 @@ namespace Gecode { namespace Word {
     : Exception(l,"Word tuple set already finalized") {}
   BitAlreadyKnown::BitAlreadyKnown(const char* l)
     : Exception(l,"Branching bit is already known") {}
+  FormatMismatch::FormatMismatch(const char* l)
+      : Exception(l, "Floating word formats do not match") {}
   UnknownRelation::UnknownRelation(const char* l)
     : Exception(l,"Unknown word relation") {}
   UnknownOperation::UnknownOperation(const char* l)

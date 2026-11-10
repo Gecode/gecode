@@ -93,6 +93,18 @@ namespace Gecode {
     for (int i = size(); i--; )
       a[i]._init(home,domain,resolved);
   }
+  WordVarArgs::WordVarArgs(Space& home, int n, WordDomainType format,
+                           double minimum, double maximum,
+                           WordValueSetOption value_set)
+    : VarArgArray<WordVar>(
+        Word::require_array_count(n,"WordVarArgs::WordVarArgs")) {
+    const Word::PreparedWordDomain domain =
+      Word::prepare_float_interval(format,minimum,maximum,"WordVarArgs::WordVarArgs");
+    const WordValueSetOption resolved = Word::checked_value_set(
+      domain.width,domain.domain_type,value_set,"WordVarArgs::WordVarArgs");
+    for (int i = size(); i--; )
+      a[i]._init(home,domain,resolved);
+  }
   WordVarArgs::WordVarArgs(Space& home, int n, unsigned int width,
                            WordDomainType domain_type,
                            WordValue minimum, WordValue maximum,
@@ -179,6 +191,18 @@ namespace Gecode {
         Word::require_array_count(n,"WordVarArray::WordVarArray")) {
     const Word::PreparedWordDomain domain =
       Word::prepare_float_domain(format,"WordVarArray::WordVarArray");
+    const WordValueSetOption resolved = Word::checked_value_set(
+      domain.width,domain.domain_type,value_set,"WordVarArray::WordVarArray");
+    for (int i = size(); i--; )
+      x[i]._init(home,domain,resolved);
+  }
+  WordVarArray::WordVarArray(Space& home, int n, WordDomainType format,
+                             double minimum, double maximum,
+                             WordValueSetOption value_set)
+    : VarArray<WordVar>(home,
+        Word::require_array_count(n,"WordVarArray::WordVarArray")) {
+    const Word::PreparedWordDomain domain =
+      Word::prepare_float_interval(format,minimum,maximum,"WordVarArray::WordVarArray");
     const WordValueSetOption resolved = Word::checked_value_set(
       domain.width,domain.domain_type,value_set,"WordVarArray::WordVarArray");
     for (int i = size(); i--; )
