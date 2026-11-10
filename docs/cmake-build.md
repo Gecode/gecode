@@ -130,6 +130,7 @@ CMake exposes options aligned with the Autoconf switches:
 | `--enable-int-vars` | `GECODE_ENABLE_INT_VARS` | Supported directly | Default `ON` |
 | `--enable-set-vars` | `GECODE_ENABLE_SET_VARS` | Supported directly | Default `ON` |
 | `--enable-float-vars` | `GECODE_ENABLE_FLOAT_VARS` | Supported directly | Default `ON` |
+| `--enable-word-vars` | `GECODE_ENABLE_WORD_VARS` | Supported directly | Default `ON`; implies integer variables |
 | `--enable-minimodel` | `GECODE_ENABLE_MINIMODEL` | Supported directly | Default `ON` |
 | `--enable-instance` | `GECODE_ENABLE_INSTANCE` | Supported directly | Default `ON`; enabled with the driver |
 | `--enable-driver` | `GECODE_ENABLE_DRIVER` | Supported directly | Default `ON` |
@@ -160,10 +161,11 @@ CMake exposes options aligned with the Autoconf switches:
 | `--enable-peakheap` | None | Not supported in CMake | No CMake option defines the peak-heap tracking macros |
 | `--enable-doc-dot`, `--enable-doc-search`, `--enable-doc-tagfile` | `GECODE_DOC_DOT`, `GECODE_DOC_SEARCH`, `GECODE_DOC_TAGFILE` | Supported by `doc` target | Requires Doxygen 1.18.0 or newer; helper pages require `uv` |
 | None | `GECODE_ENABLE_MIMALLOC` | CMake-only | Default `OFF`; private allocator backend |
+| None | `GECODE_ENABLE_WORD_BENCHMARKS` | CMake-only | Default `OFF`; never installed; see [Word benchmarks](#word-benchmarks) |
 
 Higher-level modules enable the lower-level modules they require. Examples
 and FlatZinc require the core modelling modules; minimodel requires int and
-search support.
+search support; word variables require int variables.
 
 `GECODE_ENABLE_QT` and `GECODE_ENABLE_GIST` accept `AUTO`, `ON`, and `OFF`.
 `ON` requires their dependencies; `AUTO` uses them when available. Enabling
@@ -240,6 +242,24 @@ cmake -S . -B build/asan-ubsan \
 cmake --build build/asan-ubsan --target check
 ```
 
+### Word benchmarks
+
+The Word benchmark drivers, comparison tools, and SMT reader in
+`benchmarks/word` build only with CMake. Autoconf does not build them.
+`GECODE_ENABLE_WORD_BENCHMARKS` is `OFF` by default. Turning it on enables the
+Word, MiniModel, and driver modules. CMake never installs the benchmark
+tools. With `BUILD_TESTING=ON`, the option also adds the SMT reader
+tests to `gecode-test` and registers the `word-smt2-reader` and
+`word-benchmark-runners` CTest checks when Python 3.11 or newer is available:
+
+```bash
+cmake -S . -B build/word-bench -DGECODE_ENABLE_WORD_BENCHMARKS=ON
+cmake --build build/word-bench
+ctest --test-dir build/word-bench --output-on-failure -R 'word-smt2-reader|word-benchmark-runners'
+```
+
+See `benchmarks/word/README.md` for the benchmark runners.
+
 ## Using Gecode From Other CMake Projects
 
 ### Recommended aggregate target
@@ -257,7 +277,7 @@ target_link_libraries(app PRIVATE Gecode::gecode)
 
 Canonical component names:
 
-- `support`, `kernel`, `search`, `int`, `set`, `float`, `minimodel`, `instance`, `driver`,
+- `support`, `kernel`, `search`, `int`, `set`, `float`, `word`, `minimodel`, `instance`, `driver`,
   `flatzinc`, `gist`, `test`
 
 Example:
@@ -314,8 +334,20 @@ also require their corresponding Gecode libraries.
 Legacy component spellings are also accepted in `COMPONENTS`:
 
 - `gecodesupport`, `gecodekernel`, `gecodesearch`, `gecodeint`, `gecodeset`,
-  `gecodefloat`, `gecodeminimodel`, `gecodeinstance`, `gecodedriver`, `gecodeflatzinc`,
+  `gecodefloat`, `gecodeword`, `gecodeminimodel`, `gecodeinstance`, `gecodedriver`, `gecodeflatzinc`,
   `gecodegist`
+
+The Word component is available in Gecode 7.0.0 and later. A consumer that
+uses Word variables can request it directly:
+
+```cmake
+find_package(Gecode 7.0 CONFIG REQUIRED COMPONENTS word)
+target_link_libraries(app PRIVATE Gecode::gecodeword)
+```
+
+Word branch archives and trace/event layouts are implementation ABI, not a
+cross-version serialization format. Rebuild and relink Word consumers when
+upgrading the Gecode libraries; use `Gecode_VERSION` for the package check.
 
 ### Package location hints
 

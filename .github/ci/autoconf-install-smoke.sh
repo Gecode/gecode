@@ -1,6 +1,50 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+write_word_consumer() {
+  cat > "$1" <<'EOF'
+#include <gecode/word/arithmetic.hh>
+/** Exercise the installed Word headers and library. */
+class Model : public Gecode::Space {
+public:
+  Model(void) : x(*this,4) {
+    Gecode::dom(*this,x,6U);
+  }
+  Model(Model& s) : Gecode::Space(s) {
+    x.update(*this,s.x);
+  }
+  Gecode::Space* copy(void) override {
+    return new Model(*this);
+  }
+private:
+  Gecode::WordVar x;
+};
+int main(void) {
+  Model model;
+  return model.status() == Gecode::SS_SOLVED ? 0 : 1;
+}
+EOF
+}
+
+compile_word_consumer() {
+  local prefix="$1" source="$2" executable="$3"
+  "${CXX:-c++}" -std=c++17 \
+    -I"$prefix/include" -L"$prefix/lib" \
+    "$source" -lgecodeword -lgecodeint -lgecodekernel \
+    -lgecodesupport -lpthread -o "$executable"
+}
+
+check_word_consumer() {
+  local prefix="$1" directory="$2"
+  local source="$directory/main.cpp" executable="$directory/word-consumer"
+  mkdir -p "$directory"
+  write_word_consumer "$source"
+  compile_word_consumer "$prefix" "$source" "$executable"
+  env DYLD_LIBRARY_PATH="$prefix/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}" \
+    LD_LIBRARY_PATH="$prefix/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+    "$executable"
+}
+
 destdir="${1:?usage: autoconf-install-smoke.sh <destdir> [logical-prefix] [examples-enabled] [flatzinc-enabled]}"
 logical_prefix="${2:-/usr/local}"
 examples_enabled="${3:-yes}"
@@ -25,6 +69,17 @@ solver_config="$solver_dir/gecode.msc"
 mznlib_dir="$install_prefix/share/minizinc/gecode"
 
 test -f "$install_prefix/include/gecode/support/config.hpp"
+
+if grep -q '^#define GECODE_HAS_WORD_VARS' \
+    "$install_prefix/include/gecode/support/config.hpp"; then
+  test -f "$install_prefix/include/gecode/word.hh"
+  test -f "$install_prefix/include/gecode/word/arithmetic/bounded-product-mod.hpp"
+  find "$install_prefix/lib" -maxdepth 1 -name '*gecodeword*' -print -quit | \
+    grep -q .
+  check_word_consumer "$install_prefix" "$destdir/word-consumer"
+else
+  test -z "$(find "$install_prefix/lib" -maxdepth 1 -name '*gecodeword*' -print -quit)"
+fi
 
 case "$examples_enabled" in
   yes)

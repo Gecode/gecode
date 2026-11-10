@@ -4,9 +4,9 @@ Gecode is a C++ toolkit for constraint programming. Applications use it to
 model and solve combinatorial problems, and extend it with their own
 propagators, branchers, variable types, and search engines. This repository
 holds the library modules under `gecode/` (support, kernel, search, the int,
-set, and float variables, minimodel, driver, instance, FlatZinc, and Gist),
-example models in `examples/`, the test suite in `test/`, and the FlatZinc and
-instance tools in `tools/`.
+set, float, and word variables, minimodel, driver, instance, FlatZinc, and
+Gist), example models in `examples/`, the test suite in `test/`, and the
+FlatZinc and instance tools in `tools/`.
 
 ## Constraint programming
 
@@ -35,8 +35,8 @@ New code follows these rules, even where older code does not:
 - Lines are up to 120 columns. Keep comment and Doxygen prose to about 80
   characters, measured from where the text starts.
 
-The core library (support, kernel, search, and the int, set, float, and
-minimodel modules) stores data in Gecode's own containers and memory:
+The core library (support, kernel, search, and the int, set, float, word,
+and minimodel modules) stores data in Gecode's own containers and memory:
 `Support::DynamicArray`, `DynamicStack` and `DynamicQueue`, `SharedArray`,
 `Region`, and heap or space allocation. Other standard library facilities, such
 as `std::optional`, `std::unique_ptr`, and `<algorithm>`, are fine there. The
@@ -89,18 +89,19 @@ timing are nondeterministic; shared stop state is atomic.
 Tests use the native framework and run in its shared executable
 (`bin/gecode-test` with CMake, `test/test` with Autoconf). Add a test next to
 the most similar existing one and use its fixture: `Test::Int::Test`,
-`Test::Set::SetTest`, or `Test::Float::Test` for constraints, `Test::Branch` and
-`Test::Assign` for branching, `Test::FlatZinc::FlatZincTest` for FlatZinc, and
-`Test::Base` for search and kernel behaviour. Keep to the existing executable,
-CTest setup, and CI jobs; if the framework cannot test something, explain why
-and ask.
+`Test::Set::SetTest`, `Test::Float::Test`, or `Test::Word::Test` for
+constraints, `Test::Branch` and `Test::Assign` for branching,
+`Test::FlatZinc::FlatZincTest` for FlatZinc, and `Test::Base` for search and
+kernel behaviour. Keep to the existing executable, CTest setup, and CI jobs; if
+the framework cannot test something, explain why and ask.
 
 A constraint test gives an independent `solution()` predicate over assignments
 and a `post()` that calls the public posting function. The harness enumerates
 assignments and checks propagation, cloning, reification, failure, and
 subsumption against that predicate. Keep the arity and domains small, and set
 `contest` only for a consistency the propagator promises. The contracts are in
-`test/test.hh`, `test/int.hh`, `test/set.hh`, and `test/float.hh`.
+`test/test.hh`, `test/int.hh`, `test/set.hh`, `test/float.hh`, and
+`test/word.hh`.
 
 Add the smallest test that fails without the fix. Documentation-only changes
 need none.
