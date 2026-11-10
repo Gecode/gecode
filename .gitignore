@@ -113,3 +113,10 @@ test/test
 build/
 CMakeUserPresets.json
 CMakePresets.json.user
+
+# Word benchmarking writes reproducible metadata under a caller-selected root.
+# Private corpora always remain external; these conventional local paths are
+# ignored as a final packaging safeguard.
+/results/
+/benchmarks/word/private-corpus/
+/benchmarks/word/private-results/

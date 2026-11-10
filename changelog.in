@@ -52,7 +52,7 @@
 # An entry is described as follows:
 #   [ENTRY]
 #   Module:
-#     kernel|search|int|set|float|cpltset|scheduling|graph|minimodel|
+#     kernel|search|int|set|float|word|cpltset|scheduling|graph|minimodel|
 #     driver|instance|iter|support|example|test|gist|flatzinc|other
 #   What:   bug|documentation|performance|new|removed|change
 #   Rank:   minor|major
@@ -68,6 +68,74 @@
 #    ... If a more section is included, then it will be displayed as an
 #    optional section in the html page.
 #
+
+[RELEASE]
+Version: 7.0.0
+Date: unreleased
+[DESCRIPTION]
+This release adds WordVar, a native fixed-width bit-vector variable type.
+
+[ENTRY]
+Module: word
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add the optional GecodeWord module with fixed-width WordVar variables,
+direct posting and MiniModel expressions, standard search and tracing, and
+word-level logical, relational, structural, counting, and modular arithmetic
+constraints. Arithmetic follows SMT-LIB total semantics, including
+zero-divisor and signed-overflow edge cases. WordVar can optionally
+combine its bit cube with an immutable unsigned or signed interval, with
+ranked branching, tracing, explicit MiniModel result lowering, and native
+bounded equality and ordering, including reification.
+A WordVar is created from its width, from known bits given by known_bits(),
+from a list of values, or from endpoints in the order of its domain type,
+such as -3 to 5 for a signed word.
+In MiniModel Word expressions, a plain integer constant takes the width of
+the other operand, as in div(x + y, 2) or x != 0.
+A WordVar of width at most eight can also store its exact set of values
+inline, so removing a single value leaves a hole that the cube and interval
+cannot express. Ranked assignment and splitting then choose values of that
+set, and printing and tracing show its holes. Disequality with a constant and
+dom() with a list of values remove exactly the values they exclude from such
+a word.
+A WordVar can also take an IEEE float format (FP32, BF16, binary16, E4M3FN
+or E2M1) as its domain type, so that its interval, branching, printing and
+tracing follow the IEEE total order of the format; E4M3FN and E2M1 words
+carry a value set by default.
+WordVar also has a direct unsigned or signed bounds channel to IntVar, so a
+compact word can use established integer constraints without per-bit Boolean
+decomposition.
+Matching bounded domains also use selectively dispatched non-wrapping binary
+addition, subtraction, multiplication, signed negation, unsigned carry and
+borrow, unsigned and signed division families, and unsigned left-shift bounds.
+Actors that combine numeric bounds with a width-dependent cube algorithm stage
+bound-only propagation at low cost, batch local synchronization, and reschedule
+the cube stage only when interval propagation fixes bits.
+Mixed kinds, wrapping or unsettled arithmetic regimes, aliases not supported
+by a bounded actor, and the remaining logical, structural, and mixed
+constraints deliberately retain their complete cube propagation path.
+
+[ENTRY]
+Module: word
+What:   new
+Rank:   minor
+Experimental: true
+[DESCRIPTION]
+Add reinterpret(), which returns a new WordVar with the bits of a word read
+in another domain type, such as the binary16 reading of a BF16 word or the
+unsigned reading of a float word. The two words stay linked in both
+directions.
+
+[ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add Word examples that patch a firmware record so that it keeps its CRC-32,
+check bit-twiddling routines against their reference by finding a
+counterexample or proving agreement, and recover a message block for a
+reduced-round SHA-1 digest.
 
 [RELEASE]
 Version: 6.5.0

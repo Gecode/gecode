@@ -4,9 +4,9 @@ Gecode is a C++ toolkit for constraint programming. Applications use it to
 model and solve combinatorial problems, and extend it with their own
 propagators, branchers, variable types, and search engines. This repository
 holds the library modules under `gecode/` (support, kernel, search, the int,
-set, and float variables, minimodel, driver, instance, FlatZinc, and Gist),
-example models in `examples/`, the test suite in `test/`, and the FlatZinc and
-instance tools in `tools/`.
+set, float, and word variables, minimodel, driver, instance, FlatZinc, and
+Gist), example models in `examples/`, the test suite in `test/`, and the
+FlatZinc and instance tools in `tools/`.
 
 ## Constraint programming
 
@@ -35,8 +35,8 @@ New code follows these rules, even where older code does not:
 - Lines are up to 120 columns. Keep comment and Doxygen prose to about 80
   characters, measured from where the text starts.
 
-The core library (support, kernel, search, and the int, set, float, and
-minimodel modules) stores data in Gecode's own containers and memory:
+The core library (support, kernel, search, and the int, set, float, word,
+and minimodel modules) stores data in Gecode's own containers and memory:
 `Support::DynamicArray`, `DynamicStack` and `DynamicQueue`, `SharedArray`,
 `Region`, and heap or space allocation. Other standard library facilities, such
 as `std::optional`, `std::unique_ptr`, and `<algorithm>`, are fine there. The
