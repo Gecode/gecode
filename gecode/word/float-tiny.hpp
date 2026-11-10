@@ -78,6 +78,89 @@ namespace Gecode {
         WordValue operator[](unsigned int i) const { return items[i]; }
       };
 
+      /// Least and greatest unsigned value of a word
+      struct UnsignedInterval {
+        WordValue least, greatest;
+      };
+
+      /** \brief Return the unsigned values that the cube and bounds of \a x
+       * admit
+       *
+       * The bounds of a signed word count only when its rank interval lies
+       * within one sign half, where signed and unsigned order agree. The
+       * bounds of a float word do not count.
+       */
+      inline UnsignedInterval unsigned_interval(const WordView& x) {
+        const UnsignedInterval cube = {x.lo(), x.hi()};
+        WordValue sign = 0;
+        switch (x.domain_type()) {
+        case WDT_CUBE:
+        case WDT_FP32:
+        case WDT_BF16:
+        case WDT_BINARY16:
+        case WDT_E4M3FN:
+        case WDT_E2M1:
+          return cube;
+        case WDT_UNSIGNED:
+          break;
+        case WDT_SIGNED:
+          sign = sign_bit(x.width());
+          if (((x.rank_minimum() ^ x.rank_maximum()) & sign) != 0)
+            return cube;
+          break;
+        }
+        return {std::max(cube.least, x.rank_minimum() ^ sign),
+                std::min(cube.greatest, x.rank_maximum() ^ sign)};
+      }
+
+      /** \brief Narrow \a x exactly to the unsigned values from \a least to
+       * \a greatest
+       *
+       * A word of width at most 8 narrows to exactly these values. A wider
+       * word fixes the common prefix of the endpoints in its cube, and its
+       * bounds narrow where their order agrees with the unsigned order:
+       * always for an unsigned word, and for a signed word when the interval
+       * lies within one sign half, but never for a float word.
+       */
+      inline ModEvent narrow_unsigned_interval(Space& home, WordView x,
+                                               WordValue least,
+                                               WordValue greatest) {
+        assert(least <= greatest);
+        if (x.width() <= 8)
+          return x.narrow_values(
+              home, domain_values(x.width(), WDT_UNSIGNED,
+                                  {{0, x.mask()}, {least, greatest}}));
+        const WordValue differing = least ^ greatest;
+        const WordValue free_bits =
+            differing == 0
+                ? 0
+                : width_mask(64 - Support::count_leading_zeros_64(differing));
+        const ModEvent cube =
+            x.narrow(home, least & ~free_bits, least | free_bits);
+        if (me_failed(cube))
+          return cube;
+        WordValue sign = 0;
+        switch (x.domain_type()) {
+        case WDT_CUBE:
+        case WDT_FP32:
+        case WDT_BF16:
+        case WDT_BINARY16:
+        case WDT_E4M3FN:
+        case WDT_E2M1:
+          return cube;
+        case WDT_UNSIGNED:
+          break;
+        case WDT_SIGNED:
+          sign = sign_bit(x.width());
+          if ((differing & sign) != 0)
+            return cube;
+          break;
+        }
+        const ModEvent bounds =
+            x.narrow_rank_range(home, least ^ sign, greatest ^ sign);
+        return bounds == ME_WORD_NONE ? cube : bounds;
+      }
+
       /** \brief Supported values of one view, published as tightly as its
        * domain can express them
        *

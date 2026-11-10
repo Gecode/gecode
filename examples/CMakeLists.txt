@@ -83,6 +83,7 @@ set(GECODE_MPFR_FLOAT_EXAMPLES
 set(GECODE_WORD_EXAMPLES
   word-bit-trick
   word-crc-patch
+  word-float-error
   word-sha1-preimage)
 
 foreach(example_name IN LISTS GECODE_WORD_EXAMPLES)

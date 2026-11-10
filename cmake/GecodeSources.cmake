@@ -214,6 +214,7 @@ set(GECODE_WORD_SOURCES
   gecode/word/float-rel.cpp
   gecode/word/float-arithmetic.cpp
   gecode/word/float-fma.cpp
+  gecode/word/float-ulp.cpp
   gecode/word/float-sqrt.cpp
   gecode/word/channel.cpp
   gecode/word/channel/bit.cpp
@@ -522,6 +523,7 @@ set(GECODE_TEST_SOURCES
   test/word/float-wide-divide.cpp
   test/word/float-wide-fma.cpp
   test/word/float-fma.cpp
+  test/word/float-ulp.cpp
   test/word/float-sqrt.cpp
   test/word/channel.cpp
   test/word/conditional.cpp
