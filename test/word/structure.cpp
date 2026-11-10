@@ -34,6 +34,7 @@
 #include "test/word.hh"
 
 #include <gecode/search.hh>
+#include <gecode/minimodel.hh>
 
 namespace Test { namespace Word {
 
@@ -53,14 +54,14 @@ namespace Test { namespace Word {
 
     class Rotation : public Test {
     private:
-      bool right;
+      bool right, mini;
       int input, count, result;
     public:
-      Rotation(bool right0, int partition)
+      Rotation(bool right0, int partition, bool mini0=false)
         : Test("Structure::VariableRotation::"+str(right0)+"::"+
-               str(partition),
+               str(partition)+(mini0 ? "::MiniModel" : ""),
                partition == 0 ? 3 : partition == 4 ? 1 : 2,Domain(3,0,7)),
-          right(right0), input(0),
+          right(right0), mini(mini0), input(0),
           count(partition == 1 || partition == 4 ? 0 : 1),
           result(partition == 0 ? 2 : partition == 2 || partition == 4 ? 0 : 1) {}
       virtual bool solution(const Assignment& a) const {
@@ -68,7 +69,11 @@ namespace Test { namespace Word {
       }
       virtual void post(Gecode::Space& home, Gecode::WordVarArray& x) {
         using namespace Gecode;
-        if (right) {
+        if (mini) {
+          WordExpr e=right ? rotate_right(WordExpr(x[input]),WordExpr(x[count])) :
+            rotate_left(WordExpr(x[input]),WordExpr(x[count]));
+          rel(home,e == WordExpr(x[result]));
+        } else if (right) {
           rotate_right(home,x[input],x[count],x[result]);
         } else {
           rotate_left(home,x[input],x[count],x[result]);
@@ -116,6 +121,7 @@ namespace Test { namespace Word {
       rotate_l3(false,3), rotate_l4(false,4);
     Rotation rotate_r0(true,0), rotate_r1(true,1), rotate_r2(true,2),
       rotate_r3(true,3), rotate_r4(true,4);
+    Rotation rotate_mini_l(false,0,true), rotate_mini_r(true,0,true);
 
     class StructureSpace : public Gecode::Space {
     public:
