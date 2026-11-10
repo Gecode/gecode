@@ -241,6 +241,7 @@ set(GECODE_MINIMODEL_SOURCES
   gecode/minimodel/reg.cpp
   gecode/minimodel/set-expr.cpp
   gecode/minimodel/set-rel.cpp
+  gecode/minimodel/word-expr.cpp
 )
 
 set(GECODE_INSTANCE_SOURCES
@@ -513,6 +514,7 @@ set(GECODE_TEST_SOURCES
   test/word/extensional.cpp
   test/word/element.cpp
   test/word/logic.cpp
+  test/word/minimodel.cpp
   test/word/number.cpp
   test/word/overflow.cpp
   test/word/product-mod.cpp

@@ -31,6 +31,7 @@
  */
 
 #include "test/word.hh"
+#include <gecode/minimodel.hh>
 #include <gecode/search.hh>
 
 namespace Test { namespace Word { namespace Overflow {
@@ -494,10 +495,18 @@ namespace Test { namespace Word { namespace Overflow {
       return solutions == 16U;
     }
 
+    static bool minimodel(void) {
+      S s;
+      Gecode::BoolExpr e = Gecode::overflow(Gecode::WordExpr(s.x),
+        Gecode::WOF_ADD_SIGNED,Gecode::WordExpr(s.y));
+      Gecode::rel(s,e);
+      Gecode::dom(s,s.x,7U); Gecode::dom(s,s.y,1U);
+      return s.status() != Gecode::SS_FAILED;
+    }
   public:
     Lifecycle(void) : Base("Word::Overflow::Lifecycle") {}
     virtual bool run(void) {
-      return backward_and_clone() && seams_alias_failure() &&
+      return backward_and_clone() && seams_alias_failure() && minimodel() &&
         recomputation() && bounded();
     }
   };
