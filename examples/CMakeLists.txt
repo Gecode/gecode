@@ -80,6 +80,15 @@ set(GECODE_MPFR_FLOAT_EXAMPLES
   archimedean-spiral
   golden-spiral)
 
+set(GECODE_WORD_EXAMPLES
+  word-bit-trick
+  word-crc-patch
+  word-sha1-preimage)
+
+foreach(example_name IN LISTS GECODE_WORD_EXAMPLES)
+  list(APPEND GECODE_EXAMPLE_SOURCES "${example_name}.cpp")
+endforeach()
+
 function(gecode_add_example source_file)
   get_filename_component(example_name "${source_file}" NAME_WE)
 
@@ -96,6 +105,11 @@ function(gecode_add_example source_file)
   if(example_name IN_LIST GECODE_MPFR_FLOAT_EXAMPLES AND
      (NOT GECODE_ENABLE_FLOAT_VARS OR NOT GECODE_ENABLE_MPFR OR NOT MPFR_FOUND))
     message(STATUS "Skipping example: ${example_name} (requires MPFR float support)")
+    return()
+  endif()
+
+  if(example_name IN_LIST GECODE_WORD_EXAMPLES AND NOT GECODE_ENABLE_WORD_VARS)
+    message(STATUS "Skipping example: ${example_name} (requires word variables)")
     return()
   endif()
 
