@@ -22,7 +22,7 @@ grep -q '^tsp:' "$build_root/int-targets.txt"
 if grep -q '^crew:' "$build_root/int-targets.txt"; then exit 1; fi
 if grep -q '^cartesian-heart:' "$build_root/int-targets.txt"; then exit 1; fi
 if grep -q '^archimedean-spiral:' "$build_root/int-targets.txt"; then exit 1; fi
-for example in word-bit-trick word-crc-patch word-sha1-preimage; do
+for example in word-bit-trick word-crc-patch word-float-error word-sha1-preimage; do
   if grep -q "^$example:" "$build_root/int-targets.txt"; then
     echo "Unexpected Word target: $example" >&2
     exit 1
@@ -44,6 +44,6 @@ cmake --build "$build_root/optional" --target help > "$build_root/optional-targe
 grep -q '^crew:' "$build_root/optional-targets.txt"
 grep -q '^cartesian-heart:' "$build_root/optional-targets.txt"
 if grep -q '^archimedean-spiral:' "$build_root/optional-targets.txt"; then exit 1; fi
-for example in word-bit-trick word-crc-patch word-sha1-preimage; do
+for example in word-bit-trick word-crc-patch word-float-error word-sha1-preimage; do
   grep -q "^$example:" "$build_root/optional-targets.txt"
 done

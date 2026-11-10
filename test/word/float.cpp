@@ -816,7 +816,8 @@ namespace Test {
       /// Float operations with word operands, checked by Formats
       enum class Operation {
         convert, classify, negate, abs, sqrt, compare, minimum, maximum,
-        minimum_number, maximum_number, add, subtract, multiply, divide, fma
+        minimum_number, maximum_number, add, subtract, multiply, divide, fma,
+        fp_ulp_spacing, fp_ulp_steps, fp_ulp_error
       };
       const Operation operations[] = {
           Operation::convert,        Operation::classify,
@@ -826,18 +827,21 @@ namespace Test {
           Operation::minimum_number, Operation::maximum_number,
           Operation::add,            Operation::subtract,
           Operation::multiply,       Operation::divide,
-          Operation::fma};
+          Operation::fma,            Operation::fp_ulp_spacing,
+          Operation::fp_ulp_steps,   Operation::fp_ulp_error};
 
       /// Return the number of word operands of \a operation, results included
       int arity(Operation operation) {
         switch (operation) {
         case Operation::classify:
+        case Operation::fp_ulp_spacing:
           return 1;
         case Operation::convert:
         case Operation::negate:
         case Operation::abs:
         case Operation::sqrt:
         case Operation::compare:
+        case Operation::fp_ulp_steps:
           return 2;
         case Operation::fma:
           return 4;
@@ -850,6 +854,9 @@ namespace Test {
         switch (operation) {
         case Operation::convert:
         case Operation::classify:
+        case Operation::fp_ulp_spacing:
+        case Operation::fp_ulp_steps:
+        case Operation::fp_ulp_error:
           return false;
         default:
           return true;
@@ -875,6 +882,9 @@ namespace Test {
         case Operation::classify:
         case Operation::negate:
         case Operation::abs:
+        case Operation::fp_ulp_spacing:
+        case Operation::fp_ulp_steps:
+        case Operation::fp_ulp_error:
           return true;
         default:
           return false;
@@ -887,6 +897,9 @@ namespace Test {
         case Operation::classify:
         case Operation::negate:
         case Operation::abs:
+        case Operation::fp_ulp_spacing:
+        case Operation::fp_ulp_steps:
+        case Operation::fp_ulp_error:
           return false;
         default:
           return true;
@@ -898,8 +911,14 @@ namespace Test {
         return type != WDT_CUBE && type != WDT_UNSIGNED && type != WDT_SIGNED;
       }
 
-      /// Post \a operation on the words \a w
-      void post(Space& home, Operation operation, const WordVarArgs& w) {
+      /** \brief Post \a operation on the words \a w, read against
+       * \a reference_format by the ULP observations
+       *
+       * The ULP distance word has the width of \a reference_format, or 32
+       * bits for a format that is not a float format.
+       */
+      void post(Space& home, Operation operation, const WordVarArgs& w,
+                WordDomainType reference_format = WDT_FP32) {
         BoolVar truth(home, 0, 1);
         switch (operation) {
         case Operation::convert:
@@ -947,6 +966,26 @@ namespace Test {
         case Operation::fma:
           fp_fma(home, w[0], w[1], w[2], w[3]);
           break;
+        case Operation::fp_ulp_spacing:
+          fp_ulp_spacing(home, reference_format, w[0], IntVar(home, -300, 300));
+          break;
+        case Operation::fp_ulp_steps: {
+          const unsigned int width = is_float_format(reference_format)
+                                         ? float_word_width(reference_format)
+                                         : 32;
+          fp_ulp_steps(home, reference_format, w[0], w[1],
+                       WordVar(home, width, WDT_UNSIGNED));
+          break;
+        }
+        case Operation::fp_ulp_error: {
+          // The digits follow FP32 when reference_format is not a float
+          // format, so that only the reference format is wrong.
+          const WordDomainType digits_format =
+              is_float_format(reference_format) ? reference_format : WDT_FP32;
+          fp_ulp_error(home, reference_format, w[0], w[1], w[2],
+                       fp_ulp_error_digits(home, digits_format));
+          break;
+        }
         }
       }
 
@@ -977,21 +1016,22 @@ namespace Test {
         // Post operation on words of the given domain types and compare
         // the outcome with expected.
         bool expect(Operation operation, std::vector<WordDomainType> types,
-                    unsigned int width, Outcome expected) {
+                    unsigned int width, Outcome expected,
+                    WordDomainType reference_format = WDT_FP32) {
           PostingSpace home;
           WordVarArgs w;
           for (WordDomainType type : types)
             w << (is_float_format(type) ? WordVar(home, type)
                                         : WordVar(home, width, type));
           const Outcome actual = outcome_of(
-              home, [&] { post(home, operation, w); });
+              home, [&] { post(home, operation, w, reference_format); });
           if (actual == expected)
             return true;
           if (opt.log) {
             olog << ind(2) << "operation " << static_cast<int>(operation) << " on";
             for (WordDomainType type : types)
               olog << ind(2) << ' ' << type;
-            olog << ind(2) << ": "
+            olog << ind(2) << " reference " << reference_format << ": "
                  << outcome_name(actual) << ", expected "
                  << outcome_name(expected) << '\n';
           }
@@ -1052,12 +1092,25 @@ namespace Test {
           }
           return true;
         }
-        // Format-taking functions reject a type that is not a float format.
+        // Reference formats and format-taking functions reject a type that
+        // is not a float format.
         bool reference_checks(void) {
           for (WordDomainType type : {WDT_CUBE, WDT_UNSIGNED, WDT_SIGNED}) {
+            for (Operation operation : {Operation::fp_ulp_spacing,
+                                        Operation::fp_ulp_steps,
+                                        Operation::fp_ulp_error})
+              if (!expect(operation,
+                          std::vector<WordDomainType>(arity(operation),
+                                                      WDT_E4M3FN),
+                          8, Outcome::out_of_limits, type))
+                return false;
             PostingSpace home;
-            if (outcome_of(home, [&] { (void)float_word_width(type); }) !=
-                Outcome::out_of_limits)
+            if (outcome_of(home, [&] { (void)fp_ulp_error_digits(home, type); }) !=
+                    Outcome::out_of_limits ||
+                outcome_of(home, [&] { (void)fp_ulp_error_scale(type); }) !=
+                    Outcome::out_of_limits ||
+                outcome_of(home, [&] { (void)float_word_width(type); }) !=
+                    Outcome::out_of_limits)
               return false;
           }
           return true;
@@ -1070,11 +1123,20 @@ namespace Test {
             for (WordDomainType format : formats)
               if (!operand_checks(operation, format))
                 return false;
-          // The mixed signature: BF16 * BF16 + FP32 with an FP32 result.
+          // The mixed signatures: BF16 * BF16 + FP32 with an FP32 result,
+          // and ULP observations whose values and reference differ in
+          // format.
           return expect(Operation::fma, {WDT_BF16, WDT_BF16, WDT_FP32, WDT_FP32},
                         16, Outcome::posted) &&
                  expect(Operation::fma, {WDT_BF16, WDT_BF16, WDT_FP32, WDT_BF16},
                         16, Outcome::format_mismatch) &&
+                 expect(Operation::fp_ulp_spacing, {WDT_FP32}, 32,
+                        Outcome::posted, WDT_E2M1) &&
+                 expect(Operation::fp_ulp_steps, {WDT_E2M1, WDT_FP32}, 32,
+                        Outcome::posted, WDT_E4M3FN) &&
+                 expect(Operation::fp_ulp_error,
+                        {WDT_FP32, WDT_E4M3FN, WDT_BINARY16}, 32,
+                        Outcome::posted, WDT_BF16) &&
                  expect(Operation::convert, {WDT_BINARY16, WDT_E2M1}, 16,
                         Outcome::posted) &&
                  reference_checks();
@@ -1091,7 +1153,7 @@ namespace Test {
       public:
         /// Operands a, b and c, then results
         WordVarArray words;
-        /// Status
+        /// Status, spacing exponent or error digits
         IntVarArray numbers;
         /// Classification or comparison truth
         BoolVarArray truths;
@@ -1230,6 +1292,25 @@ namespace Test {
             post_trailing([&](auto... trailing) { fp_fma(*this, a, b, c, r, trailing...); },
                           status, status_argument, policy_argument);
             break;
+          case Operation::fp_ulp_spacing: {
+            const IntVar exponent(*this, -20, 20);
+            fp_ulp_spacing(*this, format, a, exponent);
+            n << exponent;
+            return;
+          }
+          case Operation::fp_ulp_steps: {
+            const WordVar distance(*this, float_word_width(format),
+                                   WDT_UNSIGNED);
+            fp_ulp_steps(*this, format, a, b, distance);
+            w << distance;
+            return;
+          }
+          case Operation::fp_ulp_error: {
+            const IntVarArray digits = fp_ulp_error_digits(*this, format);
+            fp_ulp_error(*this, format, a, b, c, digits);
+            n << IntVarArgs(digits);
+            return;
+          }
           }
           if (operation == Operation::classify ||
               operation == Operation::compare)
@@ -1757,6 +1838,9 @@ namespace Test {
         Hygiene(void) : Base("Word::Float::Hygiene") {}
         virtual bool run(void) {
           for (Operation operation : operations) {
+            if (operation == Operation::fp_ulp_spacing || operation == Operation::fp_ulp_steps ||
+                operation == Operation::fp_ulp_error)
+              continue;
             for (WordDomainType format : {WDT_E2M1, WDT_FP32})
               for (StatusArgument status_argument :
                    {StatusArgument::omitted, StatusArgument::posted})
@@ -1863,6 +1947,39 @@ namespace Test {
           fp_convert(home, source, result, status);
           return home.failed() && PropagatorGroup::all.size(home) == 0;
         }
+        /// Exponent of fp_ulp_spacing in \a reference on a word of \a format,
+        /// assigned to \a code before posting (decide) or after posting
+        /// (reference), or no exponent when the space fails
+        static std::optional<int> spacing(WordDomainType reference, WordDomainType format, WordValue code,
+                                          bool decide, bool& posted_actor) {
+          PostingSpace home;
+          WordVar x(home, format);
+          IntVar q(home, -200, 200);
+          if (decide)
+            dom(home, x, code);
+          fp_ulp_spacing(home, reference, x, q);
+          posted_actor = PropagatorGroup::all.size(home) != 0;
+          if (!decide)
+            dom(home, x, code);
+          else if (!home.failed() && !q.assigned())
+            return 1000;
+          if (home.status() == SS_FAILED)
+            return std::nullopt;
+          return q.val();
+        }
+        bool spacing_decides(WordDomainType reference, WordDomainType format, WordValue code) {
+          bool posted_actor = false, reference_actor = false;
+          const std::optional<int> decided = spacing(reference, format, code, true, posted_actor);
+          const std::optional<int> expected = spacing(reference, format, code, false, reference_actor);
+          if (!posted_actor && decided == expected)
+            return true;
+          if (opt.log)
+            olog << ind(2) << "Word::fp_ulp_spacing in " << reference << " on " << format << " 0x"
+                 << std::hex << code << std::dec << (posted_actor ? ": posted an actor" : "")
+                 << ", decided " << decided.value_or(-1000) << ", reference " << expected.value_or(-1000)
+                 << '\n';
+          return false;
+        }
 
       public:
         AssignedWide(void) : Base("Word::Float::AssignedWide") {}
@@ -1901,7 +2018,7 @@ namespace Test {
                              {x, bf16[1], z}, s, FloatWordPolicy()))
                   return false;
           // Conversions between wide formats, rounding, overflowing and
-          // underflowing among the codes.
+          // underflowing among the codes, and the spacing of wide words.
           const std::vector<WordValue> binary16 = {0x3e00, 0x4200, 0x0001, 0x7c00, 0x7d00, 0xbc00, 0x7bff};
           const std::vector<std::vector<WordDomainType>> conversions = {
               {WDT_FP32, WDT_FP32}, {WDT_FP32, WDT_BF16}, {WDT_FP32, WDT_BINARY16}, {WDT_BF16, WDT_FP32},
@@ -1912,6 +2029,11 @@ namespace Test {
                 for (WordValue x : formats[0] == WDT_BINARY16 ? binary16 : codes(formats[0]))
                   if (!decides(Operation::convert, formats, {x}, s, policy))
                     return false;
+          for (WordDomainType reference : {WDT_FP32, WDT_BF16, WDT_E2M1})
+            for (WordDomainType format : {WDT_FP32, WDT_BF16, WDT_BINARY16})
+              for (WordValue x : format == WDT_BINARY16 ? binary16 : codes(format))
+                if (!spacing_decides(reference, format, x))
+                  return false;
           return fails_excluded() && convert_fails_excluded();
         }
       };

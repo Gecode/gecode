@@ -748,6 +748,158 @@ namespace Gecode {
   fp_sqrt(Home home, WordVar source, WordVar result, IntVar status,
           const FloatWordPolicy& policy = FloatWordPolicy());
 
+  /** \brief Exact local spacing 2^exponent in a named reference format
+   *
+   * Finite values use max(floor(log2(abs(reference))), emin) - (p-1).
+   * Both zeros use emin-(p-1). A power of two belongs to the binade that
+   * starts at it. Values need not belong to the reference lattice, and the
+   * spacing above its maximum finite value is not capped: FP32 512 has
+   * exponent 6 in E4M3FN. The observation reads encoded values only and
+   * takes no policy. Non-float formats throw Word::OutOfLimits, and nonfinite
+   * inputs fail. On a tiny reference, with or without a value set, one pass
+   * over its encodings keeps exactly the finite encodings whose exponent
+   * remains, or their tightest cube and bounds without a set, and exactly
+   * their exponents, so the observation takes no propagation level. Wide
+   * filtering is sound but can be incomplete.
+   */
+  GECODE_WORD_EXPORT void fp_ulp_spacing(Home home, WordDomainType reference_format,
+                                         WordVar reference, IntVar exponent);
+  /** \brief Exact unsigned distance between finite representable values
+   *
+   * Endpoints must belong exactly to reference_format, without rounding.
+   * Without its sign bit an encoding is a magnitude code m; its rank is -m
+   * when negative and m otherwise, and the distance is the absolute
+   * difference of the ranks. BF16 1 to 4 is 256 steps and -1 to 1 is 32512.
+   * Both zero signs have rank zero; original encodings keep their signs.
+   * The distance is unsigned whatever its domain type: the span between the
+   * finite extremes is 4278190078 in FP32, 65278 in BF16, 63486 in binary16,
+   * 252 in E4M3FN and 14 in E2M1.
+   * distance has float_word_width(reference_format) bits, including all 32 bits
+   * for FP32, and may have domain type WDT_CUBE, WDT_UNSIGNED or WDT_SIGNED.
+   * Non-float formats throw Word::OutOfLimits; wrong result width throws
+   * Word::WidthMismatch. Nonfinite or unrepresentable fixed endpoints fail.
+   * Input/result aliases are allowed.
+   *
+   * When a and b are both tiny, with or without value sets, \a ipl selects
+   * the propagation:
+   *  - IPL_DOM is domain consistent on value-set endpoints: every
+   *    propagation enumerates the remaining endpoint pairs and keeps
+   *    exactly the supported endpoint encodings, and the supported
+   *    distances exactly for a distance of at most 8 bits with a value set,
+   *    otherwise as their tightest cube and the bounds that the distance's
+   *    domain type can express. An endpoint without a value set keeps the
+   *    tightest cube and bounds of its supported encodings.
+   *  - The default level, also for IPL_VAL and IPL_BND, keeps the
+   *    representable endpoint encodings whose rank lies within the
+   *    distance's unsigned interval of the other endpoint's rank interval,
+   *    and narrows the distance to the interval those rank intervals span.
+   *    It reads a distance aliased with an endpoint as a separate word.
+   *    Once an endpoint is assigned, or both endpoints are the same word,
+   *    it filters as IPL_DOM.
+   *
+   * With a wide endpoint, filtering is sound but can be incomplete at every
+   * level.
+   */
+  GECODE_WORD_EXPORT void fp_ulp_steps(Home home, WordDomainType reference_format,
+                                       WordVar a, WordVar b,
+                                       WordVar distance,
+                                       IntPropLevel ipl = IPL_DEF);
+  /** \brief Exact normalized absolute error abs(a-b)/ulp(reference)
+   * (experimental)
+   *
+   * Each value retains its own format and must be finite. No value needs to
+   * belong to reference_format's lattice. The error is
+   * Q * 2^-fp_ulp_error_scale(reference_format), where the
+   * unsigned numerator Q is written as most-significant-first base-2^30
+   * digits, with leading zeros retained. Create the digit array with
+   * fp_ulp_error_digits(); the relation also bounds every digit. Non-float
+   * formats or a digit array of another size throw Word::OutOfLimits.
+   * Nonfinite inputs or incompatible digit bounds fail. Aliases are
+   * allowed. Ordinary lexical array relations and IntLexMaximizeSpace
+   * consume the digits without rounding the objective.
+   *
+   * Tiny values are read with or without value sets. With IPL_DOM and tiny a, b
+   * and reference, every propagation enumerates the remaining pairs of a and b
+   * and the spacing exponents of the references: it is domain consistent on
+   * value-set words, keeps the tightest cube and bounds of the supported
+   * encodings on a word without a value set, and keeps exactly the supported
+   * values of every digit. At every other level, and with IPL_DOM when a value
+   * is wide, a single propagator reasons on bounds: it removes nonfinite
+   * values, bounds the digits by the numerators that the value intervals of a
+   * and b and the spacing exponents of the reference span, and narrows those
+   * intervals from the digit bounds. It also bounds the reference by the lowest
+   * set bit that the digits leave the numerator, removes the binades of a and b
+   * whose low digits no value of the other word meets, also through the known
+   * bits of their encodings, and, when the reference is also a or b, removes
+   * its binades whose own spacing admits no numerator within the digit bounds.
+   * Each execution repeats these passes until nothing changes, and the number
+   * of passes can grow with the size of the domains. It is sound but can be
+   * incomplete, and it computes the digits exactly once a, b and reference are
+   * assigned. At the default level with tiny a, b and reference, it filters as
+   * IPL_DOM once one of them is assigned.
+   *
+   * The posting performs no rounding, conversion or flushing, and both zero
+   * signs denote zero. With BF16 as reference format and reference 1, FP32 1
+   * and 1+2^-8 have error 1/2, although 1+2^-8 is not a BF16 value; BF16 1
+   * and 4 have error 384. To compare the error E with a rational threshold
+   * t, compare Q with a constant digit array of the same size, for example
+   * with rel() and IRT_LQ, where S is fp_ulp_error_scale(reference_format):
+   *
+   * | Error condition | Condition on Q                 |
+   * | --------------- | ------------------------------ |
+   * | E <= t          | Q <= floor(t*2^S)              |
+   * | E < t           | Q <= ceil(t*2^S)-1             |
+   * | E >= t          | Q >= ceil(t*2^S)               |
+   * | E > t           | Q >= floor(t*2^S)+1            |
+   *
+   * A negative threshold, or one outside the digits' range, makes the
+   * condition fail or always hold; it must not wrap. Costs with different
+   * reference formats need aligned scales before comparison. The example
+   * \ref WordFloatError "examples/word-float-error.cpp" maximizes this
+   * error.
+   */
+  GECODE_WORD_EXPORT void fp_ulp_error(Home home, WordDomainType reference_format,
+                                       WordVar a, WordVar b,
+                                       WordVar reference,
+                                       const IntVarArgs& numerator_digits,
+                                       IntPropLevel ipl = IPL_DEF);
+  /** \brief Fresh fp_ulp_error numerator digits for reference_format
+   * (experimental)
+   *
+   * The array has the size fp_ulp_error requires, and each digit has the range
+   * of its position. Non-float formats throw Word::OutOfLimits.
+   */
+  GECODE_WORD_EXPORT IntVarArray
+  fp_ulp_error_digits(Space& home, WordDomainType reference_format);
+  /** \brief Return S in error = Q * 2^-S (experimental)
+   *
+   * Non-float formats throw Word::OutOfLimits.
+   */
+  GECODE_WORD_EXPORT int fp_ulp_error_scale(WordDomainType reference_format);
+  /** \brief Constant fp_ulp_error digits of the error
+   * numerator * 2^exponent (experimental)
+   *
+   * Return the digits of Q = \a numerator * 2^(S + \a exponent), where S is
+   * fp_ulp_error_scale(reference_format), with the size, base-2^30 digits
+   * and most-significant-first order of fp_ulp_error_digits(). The error
+   * 0.5 ULP is fp_ulp_error_threshold(reference_format, 1, -1), and 1 ULP is
+   * fp_ulp_error_threshold(reference_format, 1, 0).
+   *
+   * rel() on an integer variable array and an integer array of the same
+   * size compares them lexicographically from the first, most significant,
+   * digit, which is the numerical order of Q. So, with error digits d from
+   * fp_ulp_error, the error is at most half an ULP by
+   * \code
+   * rel(home, d, IRT_LQ, fp_ulp_error_threshold(reference_format, 1, -1));
+   * \endcode
+   *
+   * Throws Word::OutOfLimits if \a numerator is negative, if \a exponent is
+   * below -S, if Q exceeds the largest value the digits hold, or if
+   * \a reference_format is not a float format.
+   */
+  GECODE_WORD_EXPORT IntArgs
+  fp_ulp_error_threshold(WordDomainType reference_format, long long numerator,
+                         int exponent);
 } // namespace Gecode
 #endif
 
