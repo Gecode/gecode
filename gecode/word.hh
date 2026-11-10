@@ -36,6 +36,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <type_traits>
 #include <vector>
 #include <gecode/int.hh>
 
@@ -183,7 +184,10 @@ namespace Gecode {
    * A word is created from its width, which allows every value, from known
    * bits (known_bits()), from a list of values, or from endpoints in the
    * order of its domain type: <tt>WordVar(home, 8, WDT_SIGNED, -3, 5)</tt>
-   * holds -3 through 5. A constant is a one-value list, as in
+   * holds -3 through 5. A word with floating-point endpoints is created by
+   * name: <tt>float_word(home, WDT_BF16, -1.0, 1.0)</tt>, from
+   * gecode/float-word.hh, holds the bfloat16 values from -1 to 1. A constant
+   * is a one-value list, as in
    * <tt>WordVar(home, 32, {0xffffffff})</tt>.
    *
    * A constant operand of a same-width constraint has the width of its word
@@ -214,8 +218,9 @@ namespace Gecode {
    * For expression syntax and domain policies, see \ref TaskModelMiniModelWord.
    * Propagator implementation notes are in \ref FuncWordProp.
    * A float domain type such as WDT_FP32 makes a word a floating-point
-   * encoding. To read the bits of a word in another domain type, see
-   * reinterpret().
+   * encoding. For floating-point operations on such float-typed words,
+   * include gecode/float-word.hh and see \ref TaskModelWordFloat; to read
+   * the bits of a word in another domain type, see reinterpret().
    *
    * \ingroup TaskModel
    */
@@ -278,9 +283,11 @@ namespace Gecode {
    * known bits; a list of values; a domain type; or a domain type with
    * minimum and maximum endpoints, which may be combined with known bits.
    * Endpoints are values in the order of the domain type, so negative values
-   * are written as such for WDT_SIGNED. A float format alone gives the
-   * width. WordVarArgs and WordVarArray have the same forms after the
-   * number of words.
+   * are written as such for WDT_SIGNED. A float format alone gives the width
+   * of a word with every encoding of the format. WordVarArgs and
+   * WordVarArray have the same forms after the number of words. A word from
+   * floating-point endpoints is created by float_word(), and an array of
+   * them by float_word_array().
    * \ingroup TaskModelWordVars
    */
   class WordVar : public VarImpVar<Word::WordVarImp> {
@@ -358,7 +365,8 @@ namespace Gecode {
      * endpoints are thus numbers in the word's interpretation:
      * <tt>WordVar(home, 8, WDT_SIGNED, -3, 5)</tt> holds -3 through 5, and
      * 0xfd is the same endpoint as -3. For a float \a domain_type they are
-     * bit patterns, which can also name a NaN.
+     * bit patterns, which can also name a NaN; float_word() takes values
+     * instead.
      *
      * Throws Word::OutOfLimits if \a width or \a domain_type is invalid,
      * including a width that differs from that of a float \a domain_type,
@@ -389,6 +397,20 @@ namespace Gecode {
                               WordValue minimum, WordValue maximum,
                               WordBits known,
                               WordValueSetOption value_set=WVS_DEFAULT);
+    /// Floating-point endpoints need float_word()
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVar(Space& home, unsigned int width, WordDomainType domain_type,
+            T minimum, U maximum,
+            WordValueSetOption value_set=WVS_DEFAULT) = delete;
+    /// Floating-point endpoints need float_word()
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVar(Space& home, unsigned int width, WordDomainType domain_type,
+            T minimum, U maximum, WordBits known,
+            WordValueSetOption value_set=WVS_DEFAULT) = delete;
     /// Return the immutable width
     unsigned int width(void) const;
     /// Return the mask containing all significant bits
@@ -560,6 +582,21 @@ namespace Gecode {
                                   WordValue minimum, WordValue maximum,
                                   WordBits known,
                                   WordValueSetOption value_set=WVS_DEFAULT);
+    /// Floating-point endpoints need float_word_array()
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVarArgs(Space& home, int n, unsigned int width,
+               WordDomainType domain_type, T minimum, U maximum,
+               WordValueSetOption value_set=WVS_DEFAULT) = delete;
+    /// Floating-point endpoints need float_word_array()
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVarArgs(Space& home, int n, unsigned int width,
+               WordDomainType domain_type, T minimum, U maximum,
+               WordBits known,
+               WordValueSetOption value_set=WVS_DEFAULT) = delete;
     WordVarArgs& operator=(const WordVarArgs&) = default;
   };
   /// Word variable array
@@ -646,6 +683,21 @@ namespace Gecode {
                                    WordValue minimum, WordValue maximum,
                                    WordBits known,
                                    WordValueSetOption value_set=WVS_DEFAULT);
+    /// Floating-point endpoints need float_word_array()
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVarArray(Space& home, int n, unsigned int width,
+                WordDomainType domain_type, T minimum, U maximum,
+                WordValueSetOption value_set=WVS_DEFAULT) = delete;
+    /// Floating-point endpoints need float_word_array()
+    template<class T, class U,
+             std::enable_if_t<std::is_floating_point_v<T> ||
+                              std::is_floating_point_v<U>, int> = 0>
+    WordVarArray(Space& home, int n, unsigned int width,
+                WordDomainType domain_type, T minimum, U maximum,
+                WordBits known,
+                WordValueSetOption value_set=WVS_DEFAULT) = delete;
     WordVarArray& operator=(const WordVarArray&) = default;
   };
 

@@ -1780,7 +1780,9 @@ namespace Gecode {
    * Word expressions operate on bit patterns whatever the domain type of
    * their operands: `<` compares the unsigned encodings, `==` is bit
    * identity, and a constant always denotes a bit pattern of the operand's
-   * width, also when the operand is a float-typed WordVar.
+   * width, also when the operand is a float-typed WordVar. IEEE comparisons
+   * of float-typed words are posted with fp_compare() and the other fp_*
+   * functions in gecode/float-word.hh.
    *
    * Ordinary Word comparisons and Boolean factories without a domain policy
    * use WDT_CUBE for temporaries. An explicit WordDomainType belongs to its

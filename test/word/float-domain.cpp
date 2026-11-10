@@ -31,13 +31,16 @@
  *
  */
 
-#include "test/word.hh"
+#include "test/word/float-oracle.hh"
 
 #include <gecode/search.hh>
 
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
 #include <memory>
+#include <string>
+#include <type_traits>
 #include <vector>
 
 namespace Test { namespace Word { namespace FloatDomain {
@@ -67,32 +70,38 @@ namespace Test { namespace Word { namespace FloatDomain {
   using Gecode::Word::ME_WORD_DOM;
   using Gecode::Word::ME_WORD_HOLE;
 
-  /// Layout of a float format, written down independently of the library
+  /// A float format with encodings in its total order
   struct Format {
     const char* name;
     WordDomainType type;
-    unsigned int width;
-    bool is_tiny;
     /// Encodings in strictly increasing IEEE total order
     std::vector<WordValue> ordered_samples;
+    /// Return the width, from the shared format layout
+    unsigned int width(void) const {
+      return Float::float_format(type).width;
+    }
+    /// Test whether the format keeps a value set by default
+    bool is_tiny(void) const {
+      return width() <= 8;
+    }
   };
 
   static const std::vector<Format>&
   formats(void) {
     static const std::vector<Format> all = {
-      {"FP32",WDT_FP32,32,false,
+      {"FP32",WDT_FP32,
        {0xffffffff,0xffc00000,0xffbfffff,0xff800001,0xff800000,0xff7fffff,
         0xbf800000,0x80000001,0x80000000,0x00000000,0x00000001,0x3f800000,
         0x7f7fffff,0x7f800000,0x7f800001,0x7fbfffff,0x7fc00000,0x7fffffff}},
-      {"BF16",WDT_BF16,16,false,
+      {"BF16",WDT_BF16,
        {0xffff,0xffc0,0xffbf,0xff81,0xff80,0xff7f,0xbf80,0x8001,0x8000,
         0x0000,0x0001,0x3f80,0x7f7f,0x7f80,0x7f81,0x7fbf,0x7fc0,0x7fff}},
-      {"BINARY16",WDT_BINARY16,16,false,
+      {"BINARY16",WDT_BINARY16,
        {0xffff,0xfe00,0xfdff,0xfc01,0xfc00,0xfbff,0xbc00,0x8001,0x8000,
         0x0000,0x0001,0x3c00,0x7bff,0x7c00,0x7c01,0x7dff,0x7e00,0x7fff}},
-      {"E4M3FN",WDT_E4M3FN,8,true,
+      {"E4M3FN",WDT_E4M3FN,
        {0xff,0xfe,0xb8,0x81,0x80,0x00,0x01,0x38,0x7e,0x7f}},
-      {"E2M1",WDT_E2M1,4,true,
+      {"E2M1",WDT_E2M1,
        {0xf,0xa,0x9,0x8,0x0,0x1,0x2,0x7}}
     };
     return all;
@@ -108,15 +117,6 @@ namespace Test { namespace Word { namespace FloatDomain {
     return WordValue(1) << (width-1);
   }
 
-  /// Return the position of \a v in the IEEE total order of a \a width format
-  static WordValue
-  total_order_position(unsigned int width, WordValue v) {
-    // Negative encodings come first, ordered by decreasing magnitude.
-    const WordValue s = sign_of(width);
-    const WordValue magnitude = v & ~s;
-    return ((v & s) != 0) ? (s-1-magnitude) : (s+magnitude);
-  }
-
   /// Return the position of \a v in the order of a \a type word
   static WordValue
   order_position(WordDomainType type, unsigned int width, WordValue v) {
@@ -127,7 +127,7 @@ namespace Test { namespace Word { namespace FloatDomain {
       return v ^ sign_of(width);
     case WDT_FP32: case WDT_BF16: case WDT_BINARY16: case WDT_E4M3FN:
     case WDT_E2M1:
-      return total_order_position(width,v);
+      return float_order_position(width,v);
     }
     GECODE_NEVER;
     return v;
@@ -188,7 +188,7 @@ namespace Test { namespace Word { namespace FloatDomain {
     virtual bool run(void) {
       for (const Format& f : formats())
         if (!create(f)) {
-          olog << f.name << std::endl;
+          olog << ind(2) << f.name << std::endl;
           return false;
         }
       return bounded_e2m1() && errors();
@@ -198,8 +198,8 @@ namespace Test { namespace Word { namespace FloatDomain {
     /// Test whether \a x is a full word of format \a f
     static bool full(const Format& f, const Gecode::WordVar& x,
                      bool has_value_set) {
-      const WordValue mask = mask_of(f.width);
-      return (x.width() == f.width) && (x.domain_type() == f.type) &&
+      const WordValue mask = mask_of(f.width());
+      return (x.width() == f.width()) && (x.domain_type() == f.type) &&
         x.bounded() && (x.has_value_set() == has_value_set) &&
         (x.lo() == 0) && (x.hi() == mask) &&
         (x.minimum() == mask) && (x.maximum() == (mask >> 1));
@@ -208,26 +208,26 @@ namespace Test { namespace Word { namespace FloatDomain {
     static bool create(const Format& f) {
       WordSpace home;
       const Gecode::WordVar inferred(home,f.type);
-      const Gecode::WordVar explicit_width(home,f.width,f.type);
+      const Gecode::WordVar explicit_width(home,f.width(),f.type);
       const Gecode::WordVar opted_out(home,f.type,WVS_NONE);
       const Gecode::WordVarArgs args(home,3,f.type);
       const Gecode::WordVarArray array(home,2,f.type,WVS_NONE);
-      if (!full(f,inferred,f.is_tiny) || !full(f,explicit_width,f.is_tiny) ||
+      if (!full(f,inferred,f.is_tiny()) || !full(f,explicit_width,f.is_tiny()) ||
           !full(f,opted_out,false))
         return false;
       for (int i=0; i<args.size(); i++)
-        if (!full(f,args[i],f.is_tiny))
+        if (!full(f,args[i],f.is_tiny()))
           return false;
       for (int i=0; i<array.size(); i++)
         if (!full(f,array[i],false))
           return false;
-      if (f.is_tiny) {
+      if (f.is_tiny()) {
         const Gecode::WordVar exact(home,f.type,WVS_EXACT);
         if (!full(f,exact,true))
           return false;
       }
       // A width-inferring constructor is the same as the explicit width.
-      const unsigned int wrong = (f.width == 32) ? 16 : 2*f.width;
+      const unsigned int wrong = (f.width() == 32) ? 16 : 2*f.width();
       const Gecode::WordDomainType type = f.type;
       return
         throws_out_of_limits([wrong,type](WordSpace& s) {
@@ -245,7 +245,7 @@ namespace Test { namespace Word { namespace FloatDomain {
         throws_out_of_limits([wrong,type](WordSpace& s) {
           Gecode::WordVarArray(s,2,wrong,type);
         }) &&
-        (f.is_tiny ||
+        (f.is_tiny() ||
          (throws_out_of_limits([type](WordSpace& s) {
             Gecode::WordVar(s,type,WVS_EXACT);
           }) &&
@@ -297,6 +297,200 @@ namespace Test { namespace Word { namespace FloatDomain {
     }
   } creation;
 
+  /** \brief Return the double with the binary64 bit pattern \a bits
+   *
+   * Infinities and NaNs are built this way, and negated by their sign bit,
+   * because the Autoconf build compiles with -ffinite-math-only, under which
+   * std::numeric_limits<double>::infinity(), std::nan and negation of a
+   * non-finite value are not reliable.
+   */
+  static double
+  double_from_bits(std::uint64_t bits) {
+    double value;
+    std::memcpy(&value,&bits,sizeof(value));
+    return value;
+  }
+
+  /// Test whether \a create throws an exception of type \a E at \a location
+  template<class E, class Create>
+  static bool
+  throws_at(const char* location, Create create) {
+    WordSpace home;
+    try {
+      create(home);
+    } catch (const E& e) {
+      const std::string prefix = std::string(location) + ": ";
+      return std::string(e.what()).compare(0,prefix.size(),prefix) == 0;
+    }
+    return false;
+  }
+
+  /// Test whether a word or array constructor takes \a Endpoint after a format
+  template<class Endpoint>
+  constexpr bool
+  takes_endpoints_after_format(void) {
+    using Gecode::Space;
+    return
+      std::is_constructible_v<Gecode::WordVar,Space&,WordDomainType,
+                              Endpoint,Endpoint> ||
+      std::is_constructible_v<Gecode::WordVar,Space&,WordDomainType,
+                              Endpoint,Endpoint,WordValueSetOption> ||
+      std::is_constructible_v<Gecode::WordVarArgs,Space&,int,WordDomainType,
+                              Endpoint,Endpoint> ||
+      std::is_constructible_v<Gecode::WordVarArgs,Space&,int,WordDomainType,
+                              Endpoint,Endpoint,WordValueSetOption> ||
+      std::is_constructible_v<Gecode::WordVarArray,Space&,int,WordDomainType,
+                              Endpoint,Endpoint> ||
+      std::is_constructible_v<Gecode::WordVarArray,Space&,int,WordDomainType,
+                              Endpoint,Endpoint,WordValueSetOption>;
+  }
+
+  // A float range is asked for by name with float_word(). Endpoints after a
+  // format alone would read WordVar(home, WDT_FP32, 0x3f800000, 0x40000000)
+  // as the values 1065353216.0 through 1073741824.0, so no constructor takes
+  // them; endpoints after a width are bit patterns.
+  static_assert(!takes_endpoints_after_format<int>() &&
+                !takes_endpoints_after_format<unsigned int>() &&
+                !takes_endpoints_after_format<long long>() &&
+                !takes_endpoints_after_format<WordValue>() &&
+                !takes_endpoints_after_format<float>() &&
+                !takes_endpoints_after_format<double>(),
+                "no word constructor takes endpoints after a float format");
+  static_assert(std::is_constructible_v<Gecode::WordVar,Gecode::Space&,
+                                        unsigned int,WordDomainType,int,int>,
+                "endpoints after a width remain bit patterns");
+
+  /// Float words created from floating-point values of their format
+  class FloatWord : public Test::Base {
+  public:
+    FloatWord(void) : Test::Base("Word::FloatDomain::FloatWord") {}
+
+    virtual bool run(void) {
+      return values() && zeros_and_infinities() && bit_patterns() && errors();
+    }
+
+  private:
+    static bool values(void) {
+      WordSpace home;
+      const Gecode::WordVar unit = Gecode::float_word(home,WDT_BF16,-1.0,1.0);
+      const Gecode::WordVar fp = Gecode::float_word(home,WDT_FP32,1,2);
+      const Gecode::WordVar small = Gecode::float_word(home,WDT_E2M1,-1.5,3.0);
+      const Gecode::WordVar plain =
+        Gecode::float_word(home,WDT_E2M1,-1.5,3.0,WVS_NONE);
+      const Gecode::WordVarArray array =
+        Gecode::float_word_array(home,2,WDT_BF16,-1.0,1.0,WVS_NONE);
+      const Gecode::WordVarArray tiny =
+        Gecode::float_word_array(home,3,WDT_E4M3FN,-448.0,448.0);
+      if ((unit.width() != 16) || (unit.domain_type() != WDT_BF16) ||
+          (unit.minimum() != 0xbf80) || (unit.maximum() != 0x3f80) ||
+          unit.has_value_set() ||
+          (fp.width() != 32) || (fp.domain_type() != WDT_FP32) ||
+          (fp.minimum() != 0x3f800000) || (fp.maximum() != 0x40000000) ||
+          !small.has_value_set() || (small.minimum() != 0xb) ||
+          (small.maximum() != 0x5) || plain.has_value_set() ||
+          (plain.minimum() != 0xb) || (plain.maximum() != 0x5) ||
+          (array.size() != 2) || (tiny.size() != 3))
+        return false;
+      for (int i=0; i<array.size(); i++)
+        if ((array[i].domain_type() != WDT_BF16) ||
+            (array[i].minimum() != 0xbf80) || (array[i].maximum() != 0x3f80) ||
+            array[i].has_value_set())
+          return false;
+      // E4M3FN carries a value set by default; its NaNs lie outside +-448.
+      for (int i=0; i<tiny.size(); i++)
+        if (!tiny[i].has_value_set() || (tiny[i].minimum() != 0xfe) ||
+            (tiny[i].maximum() != 0x7e) || tiny[i].in(0x7f) ||
+            tiny[i].in(0xff))
+          return false;
+      return Gecode::float_word_array(home,0,WDT_FP32,0.0,1.0).size() == 0;
+    }
+
+    static bool zeros_and_infinities(void) {
+      WordSpace home;
+      const Gecode::WordVar both = Gecode::float_word(home,WDT_FP32,-0.0,0.0);
+      const Gecode::WordVar positive =
+        Gecode::float_word(home,WDT_FP32,0.0,0.0);
+      const Gecode::WordVar negative =
+        Gecode::float_word(home,WDT_BF16,-0.0,-0.0);
+      const double infinity = double_from_bits(0x7ff0000000000000);
+      const double negative_infinity = double_from_bits(0xfff0000000000000);
+      const Gecode::WordVar all =
+        Gecode::float_word(home,WDT_FP32,negative_infinity,infinity);
+      return
+        both.in(0x80000000) && both.in(0) && !both.in(1) &&
+        !both.in(0x80000001) &&
+        positive.assigned() && (positive.val() == 0) &&
+        negative.assigned() && (negative.val() == 0x8000) &&
+        (all.minimum() == 0xff800000) && (all.maximum() == 0x7f800000) &&
+        all.in(0xff7fffff) && !all.in(0x7fc00000) && !all.in(0xffc00000);
+    }
+
+    /// Endpoints after a width are bit patterns, here those of 1.0 and 2.0
+    static bool bit_patterns(void) {
+      WordSpace home;
+      const Gecode::WordVar x(home,32,WDT_FP32,0x3f800000,0x40000000);
+      const Gecode::WordVarArray a(home,2,32,WDT_FP32,0x3f800000,0x40000000);
+      return (x.minimum() == 0x3f800000) && (x.maximum() == 0x40000000) &&
+        (a[1].minimum() == 0x3f800000) && (a[1].maximum() == 0x40000000);
+    }
+
+    static bool errors(void) {
+      using Gecode::Word::OutOfLimits;
+      using Gecode::Word::VariableEmptyDomain;
+      const char* word = "Word::float_word";
+      const char* array = "Word::float_word_array";
+      const double infinity = double_from_bits(0x7ff0000000000000);
+      const double negative_infinity = double_from_bits(0xfff0000000000000);
+      const double nan = double_from_bits(0x7ff8000000000000);
+      return
+        throws_at<VariableEmptyDomain>(word,[](WordSpace& s) {
+          Gecode::float_word(s,WDT_BF16,1.0,-1.0);
+        }) &&
+        throws_at<VariableEmptyDomain>(word,[](WordSpace& s) {
+          Gecode::float_word(s,WDT_FP32,0.0,-0.0);
+        }) &&
+        throws_at<OutOfLimits>(word,[](WordSpace& s) {
+          Gecode::float_word(s,WDT_FP32,0.1,1.0);
+        }) &&
+        throws_at<OutOfLimits>(word,[nan](WordSpace& s) {
+          Gecode::float_word(s,WDT_FP32,0.0,nan);
+        }) &&
+        throws_at<OutOfLimits>(word,[](WordSpace& s) {
+          Gecode::float_word(s,WDT_BF16,1.0,1e300);
+        }) &&
+        throws_at<OutOfLimits>(word,[infinity](WordSpace& s) {
+          Gecode::float_word(s,WDT_E4M3FN,0.0,infinity);
+        }) &&
+        throws_at<OutOfLimits>(word,[negative_infinity](WordSpace& s) {
+          Gecode::float_word(s,WDT_E2M1,negative_infinity,0.0);
+        }) &&
+        throws_at<OutOfLimits>(word,[](WordSpace& s) {
+          Gecode::float_word(s,WDT_UNSIGNED,0.0,1.0);
+        }) &&
+        throws_at<OutOfLimits>(word,[](WordSpace& s) {
+          Gecode::float_word(s,WDT_CUBE,0.0,1.0);
+        }) &&
+        throws_at<OutOfLimits>(word,[](WordSpace& s) {
+          Gecode::float_word(s,WDT_FP32,0.0,1.0,WVS_EXACT);
+        }) &&
+        throws_at<OutOfLimits>(array,[](WordSpace& s) {
+          Gecode::float_word_array(s,-1,WDT_FP32,0.0,1.0);
+        }) &&
+        throws_at<OutOfLimits>(array,[](WordSpace& s) {
+          Gecode::float_word_array(s,2,WDT_CUBE,0.0,1.0);
+        }) &&
+        throws_at<OutOfLimits>(array,[](WordSpace& s) {
+          Gecode::float_word_array(s,2,WDT_FP32,0.0,0.3);
+        }) &&
+        throws_at<OutOfLimits>(array,[](WordSpace& s) {
+          Gecode::float_word_array(s,2,WDT_BF16,0.0,1.0,WVS_EXACT);
+        }) &&
+        throws_at<VariableEmptyDomain>(array,[](WordSpace& s) {
+          Gecode::float_word_array(s,2,WDT_E2M1,2.0,1.0);
+        });
+    }
+  } float_words;
+
   /// Rank encoding and decoding agree with the IEEE total order
   class RoundTrip : public Test::Base {
   public:
@@ -305,7 +499,7 @@ namespace Test { namespace Word { namespace FloatDomain {
     virtual bool run(void) {
       for (const Format& f : formats())
         if (!samples_in_order(f) || !round_trips(f)) {
-          olog << f.name << std::endl;
+          olog << ind(2) << f.name << std::endl;
           return false;
         }
       return true;
@@ -314,33 +508,33 @@ namespace Test { namespace Word { namespace FloatDomain {
   private:
     static bool samples_in_order(const Format& f) {
       for (std::size_t i=1; i<f.ordered_samples.size(); i++)
-        if (Gecode::Word::rank(f.type,f.width,f.ordered_samples[i-1]) >=
-            Gecode::Word::rank(f.type,f.width,f.ordered_samples[i]))
+        if (Gecode::Word::rank(f.type,f.width(),f.ordered_samples[i-1]) >=
+            Gecode::Word::rank(f.type,f.width(),f.ordered_samples[i]))
           return false;
       return true;
     }
 
     /// Test one encoding \a v, also read as the rank \a v
     static bool round_trips(const Format& f, WordValue v) {
-      const WordValue mask = mask_of(f.width);
-      const WordValue r = Gecode::Word::rank(f.type,f.width,v);
-      const WordValue e = Gecode::Word::encode_rank(f.type,f.width,v);
+      const WordValue mask = mask_of(f.width());
+      const WordValue r = Gecode::Word::rank(f.type,f.width(),v);
+      const WordValue e = Gecode::Word::encode_rank(f.type,f.width(),v);
       return (r <= mask) && (e <= mask) &&
-        (r == total_order_position(f.width,v)) &&
-        (Gecode::Word::encode_rank(f.type,f.width,r) == v) &&
-        (Gecode::Word::rank(f.type,f.width,e) == v);
+        (r == float_order_position(f.width(),v)) &&
+        (Gecode::Word::encode_rank(f.type,f.width(),r) == v) &&
+        (Gecode::Word::rank(f.type,f.width(),e) == v);
     }
 
     bool round_trips(const Format& f) {
-      if (f.width <= 16) {
-        for (WordValue v=0; v<=mask_of(f.width); v++)
+      if (f.width() <= 16) {
+        for (WordValue v=0; v<=mask_of(f.width()); v++)
           if (!round_trips(f,v))
             return false;
         return true;
       }
-      const WordValue s = sign_of(f.width);
-      const WordValue boundaries[] = {0,1,s-1,s,s+1,mask_of(f.width),
-                                      mask_of(f.width)-1};
+      const WordValue s = sign_of(f.width());
+      const WordValue boundaries[] = {0,1,s-1,s,s+1,mask_of(f.width()),
+                                      mask_of(f.width())-1};
       for (WordValue v : boundaries)
         if (!round_trips(f,v))
           return false;
@@ -373,7 +567,7 @@ namespace Test { namespace Word { namespace FloatDomain {
 
     WordValue mask(void) const { return mask_of(width); }
     WordValue position(WordValue v) const {
-      return total_order_position(width,v);
+      return float_order_position(width,v);
     }
   };
 
@@ -510,11 +704,11 @@ namespace Test { namespace Word { namespace FloatDomain {
         format(f) {}
 
     virtual bool run(void) {
-      const unsigned int sequences = format.is_tiny ? 40 : 30;
+      const unsigned int sequences = format.is_tiny() ? 40 : 30;
       for (unsigned int i=0; i<sequences; i++) {
-        const bool has_value_set = format.is_tiny && ((i % 2) == 0);
+        const bool has_value_set = format.is_tiny() && ((i % 2) == 0);
         if (!run_sequence(has_value_set)) {
-          olog << "sequence " << i << std::endl;
+          olog << ind(2) << "sequence " << i << std::endl;
           return false;
         }
       }
@@ -528,7 +722,7 @@ namespace Test { namespace Word { namespace FloatDomain {
       std::vector<Run> runs;
       runs.push_back(create(has_value_set));
       if (!agrees(runs[0].space->x,runs[0].reference)) {
-        olog << "creation" << std::endl;
+        olog << ind(2) << "creation" << std::endl;
         return false;
       }
       for (unsigned int step=0; (step < 30) && !runs.empty(); step++) {
@@ -543,7 +737,7 @@ namespace Test { namespace Word { namespace FloatDomain {
         const Gecode::ModEvent me = apply(tell,runs[i]);
         const Summary after = summarize(runs[i].reference);
         if (me != expected_event(before,after)) {
-          olog << "tell " << static_cast<int>(tell) << " event " << me
+          olog << ind(2) << "tell " << static_cast<int>(tell) << " event " << me
                << std::endl;
           return false;
         }
@@ -551,7 +745,7 @@ namespace Test { namespace Word { namespace FloatDomain {
           runs.erase(runs.begin()+i);
         for (const Run& r : runs)
           if (!agrees(r.space->x,r.reference)) {
-            olog << "tell " << static_cast<int>(tell) << " domain"
+            olog << ind(2) << "tell " << static_cast<int>(tell) << " domain"
                  << std::endl;
             return false;
           }
@@ -575,8 +769,8 @@ namespace Test { namespace Word { namespace FloatDomain {
     void wide_cube(WordValue& lo, WordValue& hi) {
       const unsigned int fraction_bits =
         (format.type == WDT_FP32) ? 23 : ((format.type == WDT_BF16) ? 7 : 10);
-      const WordValue mask = mask_of(format.width);
-      const WordValue s = sign_of(format.width);
+      const WordValue mask = mask_of(format.width());
+      const WordValue s = sign_of(format.width());
       const WordValue exponent = (mask & ~s) & ~mask_of(fraction_bits);
       const WordValue lowest_exponent = WordValue(1) << fraction_bits;
       const WordValue quiet = WordValue(1) << (fraction_bits-1);
@@ -595,7 +789,7 @@ namespace Test { namespace Word { namespace FloatDomain {
         WordValue unknown = (_rand(2U) == 0) ? s : 0;
         const unsigned int count = 3 + _rand(7U);
         for (unsigned int k=0; k<count; k++)
-          unknown |= WordValue(1) << _rand(format.width);
+          unknown |= WordValue(1) << _rand(format.width());
         lo &= ~unknown;
         hi = lo | unknown;
         return;
@@ -607,21 +801,21 @@ namespace Test { namespace Word { namespace FloatDomain {
       Run run;
       run.space.reset(new WordSpace);
       WordSpace& home = *run.space;
-      const unsigned int width = format.width;
+      const unsigned int width = format.width();
       WordValue lo = 0, hi = mask_of(width);
-      if (!format.is_tiny)
+      if (!format.is_tiny())
         wide_cube(lo,hi);
       Reference& r = run.reference;
       r = {width,format.type,has_value_set,
-           format.is_tiny ? cube_values(0,mask_of(width)) : cube_values(lo,hi),
+           format.is_tiny() ? cube_values(0,mask_of(width)) : cube_values(lo,hi),
            {}};
       r.member.assign(r.universe.size(),true);
       const WordValueSetOption option = has_value_set ? WVS_DEFAULT : WVS_NONE;
-      if (format.is_tiny && (_rand(3U) == 0)) {
+      if (format.is_tiny() && (_rand(3U) == 0)) {
         home.x = Gecode::WordVar(home,format.type,option);
         return run;
       }
-      if (format.is_tiny && (_rand(2U) == 0)) {
+      if (format.is_tiny() && (_rand(2U) == 0)) {
         lo = 0; hi = mask_of(width);
         const WordValue bit = WordValue(1) << _rand(width);
         if (_rand(2U) == 0) lo |= bit; else hi &= ~bit;
@@ -651,7 +845,7 @@ namespace Test { namespace Word { namespace FloatDomain {
       const Tell tells[] = {Tell::CUBE,Tell::CUBE_AND_RANKS,Tell::RANKS,
                             Tell::RANKS,Tell::EQ,Tell::NQ,Tell::NQ,
                             Tell::VALUES};
-      return tells[_rand(format.is_tiny ? 8U : 7U)];
+      return tells[_rand(format.is_tiny() ? 8U : 7U)];
     }
 
     /// Return a member of \a r most of the time, otherwise any value
@@ -1338,7 +1532,7 @@ namespace Test { namespace Word { namespace FloatDomain {
         const std::vector<Solution> found = search_solutions(c);
         const std::vector<Solution> expected = oracle_solutions(c);
         if (found != expected) {
-          olog << "constraint " << static_cast<int>(c.constraint)
+          olog << ind(2) << "constraint " << static_cast<int>(c.constraint)
                << " width " << c.words[0].width << " found " << found.size()
                << " expected " << expected.size() << std::endl;
           return false;

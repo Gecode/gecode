@@ -32,6 +32,9 @@
  */
 
 #include "test/word.hh"
+#include "test/word/float-oracle.hh"
+
+#include <algorithm>
 
 #include <limits>
 #include <memory>
@@ -97,10 +100,131 @@ namespace Test { namespace Word {
     return result;
   }
 
+  std::vector<Gecode::WordValue>
+  float_order_range(unsigned int width, Gecode::WordValue minimum,
+                    Gecode::WordValue maximum) {
+    const Gecode::WordValue sign = Gecode::WordValue(1) << (width-1);
+    std::vector<Gecode::WordValue> result;
+    for (Gecode::WordValue v = minimum; ; ) {
+      result.push_back(v);
+      if (v == maximum)
+        return result;
+      if ((v & sign) == 0)
+        v++;
+      else if (v == sign)
+        v = 0;
+      else
+        v--;
+    }
+  }
+
+  std::pair<Gecode::WordValue,Gecode::WordValue>
+  float_order_extremes(unsigned int width,
+                       const std::set<Gecode::WordValue>& values) {
+    assert(!values.empty());
+    const Gecode::WordValue sign = Gecode::WordValue(1) << (width-1);
+    // Encodings with the sign bit set order by descending code, then the
+    // others by ascending code.
+    std::vector<Gecode::WordValue> negative, positive;
+    for (Gecode::WordValue v : values)
+      ((v & sign) != 0 ? negative : positive).push_back(v);
+    return {negative.empty() ? positive.front() : negative.back(),
+            positive.empty() ? negative.front() : positive.back()};
+  }
+
   Gecode::WordBits
   cube_bits(unsigned int width, Gecode::WordValue lo, Gecode::WordValue hi) {
     Gecode::Word::check_domain(width,lo,hi,"Test::Word::cube_bits");
     return Gecode::known_bits(lo | (~hi & Gecode::Word::width_mask(width)),lo);
+  }
+
+  Gecode::WordValue
+  float_order_position(unsigned int width, Gecode::WordValue code) {
+    const Gecode::WordValue sign = Gecode::WordValue(1) << (width-1);
+    const Gecode::WordValue mask = sign | (sign-1);
+    return (code & sign) != 0 ? ~code & mask : code | sign;
+  }
+
+  bool
+  float_order_contains(unsigned int width, Gecode::WordValue minimum,
+                       Gecode::WordValue maximum, Gecode::WordValue code) {
+    const Gecode::WordValue position = float_order_position(width,code);
+    return float_order_position(width,minimum) <= position &&
+           position <= float_order_position(width,maximum);
+  }
+
+  Gecode::WordVar
+  float_window(Gecode::Space& home, Gecode::WordDomainType format,
+               Gecode::WordValue minimum, Gecode::WordValue maximum,
+               Gecode::WordValueSetOption value_set) {
+    return Gecode::WordVar(home,Gecode::float_word_width(format),format,
+                           minimum,maximum,value_set);
+  }
+
+  Gecode::WordVar
+  float_code(Gecode::Space& home, Gecode::WordDomainType type,
+                 Gecode::WordValue code) {
+    return Gecode::WordVar(home,Gecode::Word::float_domain_width(type),type,
+                           code,code);
+  }
+
+  void
+  draw_float_window(Gecode::Support::RandomGenerator& rand,
+                    Gecode::WordDomainType format, unsigned int size,
+                    Gecode::WordValue& minimum, Gecode::WordValue& maximum) {
+    const unsigned int width = Gecode::float_word_width(format);
+    const unsigned int precision = Float::float_format(format).fraction;
+    const unsigned int exponent_bits = width - 1 - precision;
+    const Gecode::WordValue sign = Gecode::WordValue(1) << (width - 1);
+    const Gecode::WordValue top = (Gecode::WordValue(1) << exponent_bits) - 1;
+    const Gecode::WordValue bias = top / 2;
+    Gecode::WordValue exponent;
+    switch (rand(8)) {
+    case 0: case 1: exponent = 0; break;
+    case 2: exponent = 1 + rand(2); break;
+    case 3: case 4: case 5: exponent = bias - 4 + rand(9); break;
+    case 6: exponent = top - 1 - rand(2); break;
+    default:
+      exponent = rand(4) == 0 ? top : 1 + rand(static_cast<unsigned int>(top - 1));
+      break;
+    }
+    const Gecode::WordValue fraction =
+      rand(4) == 0 ? (rand(2) ? 0 : (Gecode::WordValue(1) << precision) - 1 - rand(3))
+                   : rand(1U << std::min(precision, 30U));
+    const Gecode::WordValue code =
+      (rand(2) ? sign : 0) | (exponent << precision) | fraction;
+    // Ranks in the total order: the negative codes descend below sign
+    const Gecode::WordValue rank =
+      (code & sign) ? sign - 1 - (code & (sign - 1)) : sign + code;
+    const Gecode::WordValue last = 2 * sign - 1;
+    const Gecode::WordValue count = 1 + rand(size);
+    const Gecode::WordValue below = rand(static_cast<unsigned int>(count));
+    const Gecode::WordValue low = rank >= below ? rank - below : 0;
+    const Gecode::WordValue high = std::min(last, low + count - 1);
+    minimum = low >= sign ? low - sign : sign | (sign - 1 - low);
+    maximum = high >= sign ? high - sign : sign | (sign - 1 - high);
+  }
+
+  bool
+  float_domain_contains(unsigned int width, const FloatWordDomain& domain,
+                        Gecode::WordValue code) {
+    return float_order_contains(width,domain.minimum,domain.maximum,code) &&
+      (code & domain.lo) == domain.lo && (code & ~domain.hi) == 0;
+  }
+
+  Gecode::FloatWordPolicy
+  float_dump_policy(int rounding, int input, int output, int overflow,
+                    int zeros, int nan, int tininess) {
+    using P = Gecode::FloatWordPolicy;
+    P p;
+    p.rounding = static_cast<P::Rounding>(rounding);
+    p.input_subnormals = static_cast<P::Subnormals>(input);
+    p.output_subnormals = static_cast<P::Subnormals>(output);
+    p.overflow = static_cast<P::Overflow>(overflow);
+    p.zeros = static_cast<P::Zeros>(zeros);
+    p.nan = static_cast<P::Nan>(nan);
+    p.tininess = static_cast<P::Tininess>(tininess);
+    return p;
   }
 
   CpltAssignment::CpltAssignment(int n0, const Domain& d0)
@@ -259,6 +383,72 @@ operator<<(std::ostream& os, Gecode::WordDomainType t) {
   }
   GECODE_NEVER;
   return os;
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Rounding r) {
+  switch (r) {
+  case Gecode::FloatWordPolicy::RNE: return os << "RNE";
+  case Gecode::FloatWordPolicy::RTZ: return os << "RTZ";
+  case Gecode::FloatWordPolicy::RDN: return os << "RDN";
+  case Gecode::FloatWordPolicy::RUP: return os << "RUP";
+  }
+  return os << static_cast<int>(r);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Subnormals s) {
+  switch (s) {
+  case Gecode::FloatWordPolicy::Preserve: return os << "Preserve";
+  case Gecode::FloatWordPolicy::SignedZero: return os << "SignedZero";
+  }
+  return os << static_cast<int>(s);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Overflow o) {
+  switch (o) {
+  case Gecode::FloatWordPolicy::FormatDefault: return os << "FormatDefault";
+  case Gecode::FloatWordPolicy::SaturateFinite: return os << "SaturateFinite";
+  }
+  return os << static_cast<int>(o);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Zeros z) {
+  switch (z) {
+  case Gecode::FloatWordPolicy::Signed: return os << "Signed";
+  case Gecode::FloatWordPolicy::Positive: return os << "Positive";
+  }
+  return os << static_cast<int>(z);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Nan n) {
+  switch (n) {
+  case Gecode::FloatWordPolicy::SignalFirst: return os << "SignalFirst";
+  case Gecode::FloatWordPolicy::OperandFirst: return os << "OperandFirst";
+  case Gecode::FloatWordPolicy::Canonical: return os << "Canonical";
+  }
+  return os << static_cast<int>(n);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Tininess t) {
+  switch (t) {
+  case Gecode::FloatWordPolicy::AfterPrecision: return os << "AfterPrecision";
+  case Gecode::FloatWordPolicy::BeforeRounding: return os << "BeforeRounding";
+  }
+  return os << static_cast<int>(t);
+}
+
+std::ostream&
+operator<<(std::ostream& os, Gecode::FloatWordPolicy::Comparison c) {
+  switch (c) {
+  case Gecode::FloatWordPolicy::QuietComparison: return os << "QuietComparison";
+  case Gecode::FloatWordPolicy::SignalingComparison: return os << "SignalingComparison";
+  }
+  return os << static_cast<int>(c);
 }
 
 namespace Test { namespace Word {

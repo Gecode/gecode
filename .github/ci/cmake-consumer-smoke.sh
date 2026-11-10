@@ -5,11 +5,13 @@ write_word_model() {
   local value="$1"
   cat <<EOF
 #include <gecode/word.hh>
+#include <gecode/float-word.hh>
 /** Exercise the installed Word APIs from an external consumer. */
 class Model : public Gecode::Space {
 public:
   Model(void) : x(*this,4) {
     Gecode::dom(*this,x,${value}U);
+    Gecode::float_constant(*this,Gecode::WDT_FP32,1.5);
   }
   Model(Model& s) : Gecode::Space(s) {
     x.update(*this,s.x);
@@ -76,6 +78,9 @@ EOF
 check_word_component() {
   local directory="$1" prefix="$2" include="$3"
   if grep -q '^#define GECODE_HAS_WORD_VARS' "$include/gecode/support/config.hpp"; then
+    test -f "$include/gecode/float-word.hh"
+    test ! -e "$include/gecode/word/float.hpp"
+    test ! -e "$include/gecode/word/float"
     cmake -S "$directory" -B "$directory/build" -DCMAKE_PREFIX_PATH="$prefix"
     cmake --build "$directory/build" -j4
     "$directory/build/word_component"

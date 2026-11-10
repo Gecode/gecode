@@ -87,6 +87,11 @@ namespace Gecode { namespace Word {
   public:
     BitAlreadyKnown(const char* l);
   };
+  /// Floating encoding handles have different named formats
+  class GECODE_WORD_EXPORT FormatMismatch : public Exception {
+  public:
+    FormatMismatch(const char* l);
+  };
   /// Unknown word relation
   class GECODE_WORD_EXPORT UnknownRelation : public Exception {
   public:

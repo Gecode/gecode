@@ -4,11 +4,13 @@ set -euxo pipefail
 write_word_consumer() {
   cat > "$1" <<'EOF'
 #include <gecode/word/arithmetic.hh>
+#include <gecode/float-word.hh>
 /** Exercise the installed Word headers and library. */
 class Model : public Gecode::Space {
 public:
   Model(void) : x(*this,4) {
     Gecode::dom(*this,x,6U);
+    Gecode::float_constant(*this,Gecode::WDT_FP32,1.5);
   }
   Model(Model& s) : Gecode::Space(s) {
     x.update(*this,s.x);
@@ -74,6 +76,9 @@ if grep -q '^#define GECODE_HAS_WORD_VARS' \
     "$install_prefix/include/gecode/support/config.hpp"; then
   test -f "$install_prefix/include/gecode/word.hh"
   test -f "$install_prefix/include/gecode/word/arithmetic/bounded-product-mod.hpp"
+  test -f "$install_prefix/include/gecode/float-word.hh"
+  test ! -e "$install_prefix/include/gecode/word/float.hpp"
+  test ! -e "$install_prefix/include/gecode/word/float"
   find "$install_prefix/lib" -maxdepth 1 -name '*gecodeword*' -print -quit | \
     grep -q .
   check_word_consumer "$install_prefix" "$destdir/word-consumer"

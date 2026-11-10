@@ -978,6 +978,15 @@ namespace Gecode { namespace Word {
                                location);
   }
 
+  /** \brief Return the encoding of \a value in float \a format
+   *
+   * Throws OutOfLimits at \a location if \a format is not a float type,
+   * \a value is a NaN, or \a format cannot represent \a value exactly.
+   * -0.0 encodes as the negative zero.
+   */
+  GECODE_WORD_EXPORT WordValue
+  float_encoding(WordDomainType format, double value, const char* location);
+
   /** \brief Return the least rank at or above \a r that \a cube admits in
    * the order of \a domain_type
    *

@@ -1059,6 +1059,24 @@ namespace Test { namespace Word { namespace Bounded {
   static_assert(!constructs<WordVarArray,Space&,int,unsigned int,WordValue,
                             WordValue,WordDomainType,WordValue,WordValue>);
 
+  static_assert(!constructs<WordVar,Space&,int,WordDomainType,double,double>);
+  static_assert(!constructs<WordVar,Space&,int,WordDomainType,int,double>);
+  static_assert(!constructs<WordVar,Space&,int,WordDomainType,float,int>);
+  static_assert(!constructs<WordVar,Space&,int,WordDomainType,double,double,
+                            WordValueSetOption>);
+  static_assert(!constructs<WordVar,Space&,int,WordDomainType,double,double,
+                            WordBits>);
+  static_assert(!constructs<WordVar,Space&,int,WordDomainType,int,double,
+                            WordBits,WordValueSetOption>);
+  static_assert(!constructs<WordVarArgs,Space&,int,int,WordDomainType,double,
+                            double>);
+  static_assert(!constructs<WordVarArgs,Space&,int,int,WordDomainType,double,
+                            int,WordBits>);
+  static_assert(!constructs<WordVarArray,Space&,int,int,WordDomainType,double,
+                            double>);
+  static_assert(!constructs<WordVarArray,Space&,int,int,WordDomainType,int,
+                            double,WordBits>);
+
   static_assert(constructs<WordVar,Space&,int,WordDomainType,int,int>);
   static_assert(constructs<WordVar,Space&,int,WordDomainType,int,int,WordBits>);
   static_assert(constructs<WordVarArgs,Space&,int,int,WordDomainType,int,int>);

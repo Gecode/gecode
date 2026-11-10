@@ -1783,6 +1783,9 @@ if(GECODE_INSTALL)
       PATTERN "LICENSE_1_0.txt"
       PATTERN "mznlib" EXCLUDE
       PATTERN "minimodel/word-post.hh" EXCLUDE
+      PATTERN "word/float.hpp" EXCLUDE
+      PATTERN "word/float-tiny.hpp" EXCLUDE
+      PATTERN "word/float" EXCLUDE
       PATTERN "flatzinc/registry-internal.hh" EXCLUDE
       PATTERN "flatzinc/blackbox.hh" EXCLUDE
       PATTERN "flatzinc/blackbox-backend.hh" EXCLUDE
