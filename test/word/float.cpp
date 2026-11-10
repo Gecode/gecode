@@ -436,6 +436,9 @@ namespace Test {
           BoolVar truth = s.classes[0];
           return rejects([&] { fp_compare(s, a, FWRT_EQ, b, truth, p); }) &&
                  rejects([&] { fp_minimum(s, a, b, r, p); }) &&
+                 rejects([&] { fp_add(s, a, b, r, p); }) &&
+                 rejects([&] { fp_fma(s, a, b, a, r, p); }) &&
+                 rejects([&] { fp_sqrt(s, a, r, p); }) &&
                  s.status() != SS_FAILED;
         }
         // A posting keeps its own policy copy.
@@ -717,6 +720,35 @@ namespace Test {
               return false;
           return true;
         }
+        /// Solutions of x + c = y and the truth of x <= c in \a root
+        static std::set<std::array<WordValue, 3>> sum_and_comparison(UnarySpace& root, WordVar c) {
+          fp_add(root, root.x, c, root.y);
+          fp_compare(root, root.x, FWRT_LQ, c, root.truth);
+          branch(root, WordVarArgs{root.x, root.y}, WORD_VAL_LSB());
+          branch(root, BoolVarArgs{root.truth}, BOOL_VAL_MIN());
+          DFS<UnarySpace> search(&root);
+          std::set<std::array<WordValue, 3>> found;
+          while (std::unique_ptr<UnarySpace> s{search.next()})
+            found.insert({s->x.val(), s->y.val(), static_cast<WordValue>(s->truth.val())});
+          return found;
+        }
+        /// A constant of -1.5 from float_constant() gives the same
+        /// solutions as its encoding
+        bool posts_as_operand(void) {
+          for (WordDomainType format : {WDT_E2M1, WDT_E4M3FN}) {
+            UnarySpace by_code(format, WVS_EXACT), by_value(format, WVS_EXACT);
+            const WordValue code = format == WDT_E2M1 ? 0xb : 0xbc;
+            const auto expected = sum_and_comparison(by_code, float_code(by_code, format, code));
+            if (expected.size() != (WordValue(1) << float_word_width(format)) ||
+                sum_and_comparison(by_value, float_constant(by_value, format, -1.5)) != expected) {
+              if (opt.log)
+                olog << "float_constant operand " << format << '\n';
+              return false;
+            }
+          }
+          return true;
+        }
+
       public:
         Constants(void) : Base("Word::Float::Constants") {}
         virtual bool run(void) {
@@ -726,7 +758,7 @@ namespace Test {
           for (WordDomainType format : {WDT_FP32, WDT_BF16, WDT_BINARY16, WDT_E4M3FN, WDT_E2M1})
             if (!rejects_unrepresentable(format))
               return false;
-          return encodes_fp32() && rejects_non_float_types();
+          return encodes_fp32() && rejects_non_float_types() && posts_as_operand();
         }
       };
 
@@ -749,15 +781,18 @@ namespace Test {
 
       /// Float operations with word operands, checked by Formats
       enum class Operation {
-        convert, classify, negate, abs, compare, minimum, maximum,
-        minimum_number, maximum_number
+        convert, classify, negate, abs, sqrt, compare, minimum, maximum,
+        minimum_number, maximum_number, add, subtract, multiply, divide, fma
       };
       const Operation operations[] = {
           Operation::convert,        Operation::classify,
           Operation::negate,         Operation::abs,
-          Operation::compare,        Operation::minimum,
-          Operation::maximum,        Operation::minimum_number,
-          Operation::maximum_number};
+          Operation::sqrt,           Operation::compare,
+          Operation::minimum,        Operation::maximum,
+          Operation::minimum_number, Operation::maximum_number,
+          Operation::add,            Operation::subtract,
+          Operation::multiply,       Operation::divide,
+          Operation::fma};
 
       /// Return the number of word operands of \a operation, results included
       int arity(Operation operation) {
@@ -767,8 +802,11 @@ namespace Test {
         case Operation::convert:
         case Operation::negate:
         case Operation::abs:
+        case Operation::sqrt:
         case Operation::compare:
           return 2;
+        case Operation::fma:
+          return 4;
         default:
           return 3;
         }
@@ -842,6 +880,9 @@ namespace Test {
         case Operation::abs:
           fp_abs(home, w[0], w[1]);
           break;
+        case Operation::sqrt:
+          fp_sqrt(home, w[0], w[1]);
+          break;
         case Operation::compare:
           fp_compare(home, w[0], FWRT_LE, w[1], truth);
           break;
@@ -856,6 +897,21 @@ namespace Test {
           break;
         case Operation::maximum_number:
           fp_maximum_number(home, w[0], w[1], w[2]);
+          break;
+        case Operation::add:
+          fp_add(home, w[0], w[1], w[2]);
+          break;
+        case Operation::subtract:
+          fp_subtract(home, w[0], w[1], w[2]);
+          break;
+        case Operation::multiply:
+          fp_multiply(home, w[0], w[1], w[2]);
+          break;
+        case Operation::divide:
+          fp_divide(home, w[0], w[1], w[2]);
+          break;
+        case Operation::fma:
+          fp_fma(home, w[0], w[1], w[2], w[3]);
           break;
         }
       }
@@ -980,7 +1036,12 @@ namespace Test {
             for (WordDomainType format : formats)
               if (!operand_checks(operation, format))
                 return false;
-          return expect(Operation::convert, {WDT_BINARY16, WDT_E2M1}, 16,
+          // The mixed signature: BF16 * BF16 + FP32 with an FP32 result.
+          return expect(Operation::fma, {WDT_BF16, WDT_BF16, WDT_FP32, WDT_FP32},
+                        16, Outcome::posted) &&
+                 expect(Operation::fma, {WDT_BF16, WDT_BF16, WDT_FP32, WDT_BF16},
+                        16, Outcome::format_mismatch) &&
+                 expect(Operation::convert, {WDT_BINARY16, WDT_E2M1}, 16,
                         Outcome::posted) &&
                  reference_checks();
         }
@@ -1073,7 +1134,7 @@ namespace Test {
                        StatusArgument status_argument,
                        PolicyArgument policy_argument, WordVarArgs& w,
                        IntVarArgs& n, BoolVarArgs& t) {
-          const WordVar a = w[0], b = w[1];
+          const WordVar a = w[0], b = w[1], c = w[2];
           const WordVar r = word(format, value_set);
           const IntVar status(*this, 0, 31);
           const BoolVar truth(*this, 0, 1);
@@ -1090,6 +1151,10 @@ namespace Test {
             break;
           case Operation::abs:
             fp_abs(*this, a, r);
+            break;
+          case Operation::sqrt:
+            post_trailing([&](auto... trailing) { fp_sqrt(*this, a, r, trailing...); },
+                          status, status_argument, policy_argument);
             break;
           case Operation::compare:
             post_trailing([&](auto... trailing) { fp_compare(*this, a, FWRT_LE, b, truth, trailing...); },
@@ -1109,6 +1174,26 @@ namespace Test {
             break;
           case Operation::maximum_number:
             post_trailing([&](auto... trailing) { fp_maximum_number(*this, a, b, r, trailing...); },
+                          status, status_argument, policy_argument);
+            break;
+          case Operation::add:
+            post_trailing([&](auto... trailing) { fp_add(*this, a, b, r, trailing...); },
+                          status, status_argument, policy_argument);
+            break;
+          case Operation::subtract:
+            post_trailing([&](auto... trailing) { fp_subtract(*this, a, b, r, trailing...); },
+                          status, status_argument, policy_argument);
+            break;
+          case Operation::multiply:
+            post_trailing([&](auto... trailing) { fp_multiply(*this, a, b, r, trailing...); },
+                          status, status_argument, policy_argument);
+            break;
+          case Operation::divide:
+            post_trailing([&](auto... trailing) { fp_divide(*this, a, b, r, trailing...); },
+                          status, status_argument, policy_argument);
+            break;
+          case Operation::fma:
+            post_trailing([&](auto... trailing) { fp_fma(*this, a, b, c, r, trailing...); },
                           status, status_argument, policy_argument);
             break;
           }
@@ -1176,6 +1261,11 @@ namespace Test {
       namespace PolicyPosition {
         using Policy = const FloatWordPolicy&;
         using Rounding = FloatWordPolicy::Rounding;
+        struct Add {
+          template<class... Args>
+          auto operator()(Args&&... args) const
+              -> decltype(Gecode::fp_add(std::forward<Args>(args)...));
+        };
         struct Compare {
           template<class... Args>
           auto operator()(Args&&... args) const
@@ -1189,6 +1279,22 @@ namespace Test {
         /// Whether \a Posting accepts a space followed by \a Args
         template<class Posting, class... Args>
         constexpr bool accepts = std::is_invocable_v<Posting, Space&, Args...>;
+
+        static_assert(accepts<Add, WordVar, WordVar, WordVar>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, IntPropLevel>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, IntVar>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, IntVar, IntPropLevel>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, Policy>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, Policy, IntPropLevel>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, IntVar, Policy>);
+        static_assert(accepts<Add, WordVar, WordVar, WordVar, IntVar, Policy, IntPropLevel>);
+        static_assert(!accepts<Add, Policy, WordVar, WordVar, WordVar>);
+        static_assert(!accepts<Add, Policy, WordVar, WordVar, WordVar, IntPropLevel>);
+        static_assert(!accepts<Add, Policy, WordVar, WordVar, WordVar, IntVar>);
+        static_assert(!accepts<Add, Policy, WordVar, WordVar, WordVar, IntVar, IntPropLevel>);
+        static_assert(!accepts<Add, WordVar, WordVar, WordVar, IntPropLevel, Policy>);
+        static_assert(!accepts<Add, WordVar, WordVar, WordVar, Policy, IntVar>);
+        static_assert(!accepts<Add, WordVar, WordVar, WordVar, Rounding>);
 
         static_assert(accepts<Compare, WordVar, FloatWordRelType, WordVar, BoolVar>);
         static_assert(accepts<Compare, WordVar, FloatWordRelType, WordVar, BoolVar, IntPropLevel>);
@@ -1222,6 +1328,22 @@ namespace Test {
       class DefaultPolicy : public Base {
         /// Result or truth, then status, of an assigned posting
         using Observed = std::array<long long, 2>;
+        /// Return the outcome of the tie E2M1 3 + 0.5 under \a policy, or
+        /// without a policy when it is absent
+        static Observed tie_sum(const std::optional<FloatWordPolicy>& policy) {
+          PostingSpace home;
+          const WordVar three = float_constant(home, WDT_E2M1, 3.0);
+          const WordVar half = float_constant(home, WDT_E2M1, 0.5);
+          const WordVar r(home, WDT_E2M1);
+          const IntVar status(home, 0, 31);
+          if (policy)
+            fp_add(home, three, half, r, status, *policy, IPL_DOM);
+          else
+            fp_add(home, three, half, r, status, IPL_DOM);
+          if (home.status() == SS_FAILED || !r.assigned() || !status.assigned())
+            return {-1, -1};
+          return {static_cast<long long>(r.val()), status.val()};
+        }
         /// Return the outcome of the subnormal E2M1 0.5 == +0 under
         /// \a policy, or without a policy when it is absent
         static Observed half_equals_zero(const std::optional<FloatWordPolicy>& policy) {
@@ -1264,9 +1386,13 @@ namespace Test {
       public:
         DefaultPolicy(void) : Base("Word::Float::DefaultPolicy") {}
         virtual bool run(void) {
+          FloatWordPolicy rtz;
+          rtz.rounding = FloatWordPolicy::RTZ;
           FloatWordPolicy flush_inputs;
           flush_inputs.input_subnormals = FloatWordPolicy::SignedZero;
-          return omitted_matches_default() && half_equals_zero(std::nullopt) == Observed{0, 0} &&
+          // RNE rounds the tie 3.5 to 4 (0x6), RTZ to 3 (0x5), both inexact.
+          return omitted_matches_default() && tie_sum(std::nullopt) == Observed{0x6, 16} &&
+                 tie_sum(rtz) == Observed{0x5, 16} && half_equals_zero(std::nullopt) == Observed{0, 0} &&
                  half_equals_zero(flush_inputs) == Observed{1, 0};
         }
       };

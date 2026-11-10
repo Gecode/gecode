@@ -137,6 +137,31 @@ namespace Test { namespace Word {
     return Gecode::known_bits(lo | (~hi & Gecode::Word::width_mask(width)),lo);
   }
 
+  Gecode::WordValue
+  float_order_position(unsigned int width, Gecode::WordValue code) {
+    const Gecode::WordValue sign = Gecode::WordValue(1) << (width-1);
+    const Gecode::WordValue mask = sign | (sign-1);
+    return (code & sign) != 0 ? ~code & mask : code | sign;
+  }
+
+  bool
+  float_order_contains(unsigned int width, Gecode::WordValue minimum,
+                       Gecode::WordValue maximum, Gecode::WordValue code) {
+    const Gecode::WordValue position = float_order_position(width,code);
+    return float_order_position(width,minimum) <= position &&
+           position <= float_order_position(width,maximum);
+  }
+
+  void
+  float_bounds(Gecode::Space& home, Gecode::WordVar x,
+               Gecode::WordValue minimum, Gecode::WordValue maximum) {
+    Gecode::Word::WordView view(x);
+    if (Gecode::me_failed(view.narrow_rank_range(
+            home,float_order_position(x.width(),minimum),
+            float_order_position(x.width(),maximum))))
+      home.fail();
+  }
+
   Gecode::WordVar
   float_window(Gecode::Space& home, Gecode::WordDomainType format,
                Gecode::WordValue minimum, Gecode::WordValue maximum,

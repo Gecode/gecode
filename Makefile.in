@@ -569,12 +569,12 @@ FLOATBUILDDIRS	= \
 #
 
 WORDSRC0 = \
-	arithmetic-globals.cpp float.cpp float-convert.cpp float-rel.cpp \
+	arithmetic-globals.cpp float.cpp float-convert.cpp float-rel.cpp float-arithmetic.cpp float-fma.cpp float-sqrt.cpp \
 	arithmetic.cpp array.cpp branch.cpp channel.cpp channel/bit.cpp count.cpp exception.cpp \
 	conditional.cpp distinct.cpp element.cpp extensional.cpp logic.cpp rel.cpp structure.cpp trace.cpp trace/tracer.cpp \
 	var/word.cpp var-imp/word.cpp
 WORDHDR0 = \
-	float-tiny.hpp \
+	float-tiny.hpp float-wide.hpp \
 	arithmetic/global-integer.hpp \
 	arithmetic/global-domain.hpp arithmetic/global-filter.hpp \
 	arithmetic/global-propagator.hpp \
@@ -1288,7 +1288,7 @@ else
 FLOATTESTOBJ=
 endif
 
-WORDTESTSRC00 = float float-convert float-rel arithmetic arithmetic-globals bounded branch channel conditional count distinct element extensional logic minimodel number overflow product-mod reduction rel rewriting sparse-wide structure structure-rewriting trace value-set float-domain
+WORDTESTSRC00 = float float-convert float-rel float-arithmetic float-wide-arithmetic float-wide-multiply float-wide-divide float-wide-fma float-fma float-sqrt arithmetic arithmetic-globals bounded branch channel conditional count distinct element extensional logic minimodel number overflow product-mod reduction rel rewriting sparse-wide structure structure-rewriting trace value-set float-domain
 WORDTESTSRC0 = test/word.cpp $(WORDTESTSRC00:%=test/word/%.cpp)
 
 ifeq "@enable_word_vars@" "yes"

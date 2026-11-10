@@ -137,6 +137,32 @@ namespace Test {
     float_order_extremes(unsigned int width,
                          const std::set<Gecode::WordValue>& values);
 
+    /** \brief Return the position of encoding \a code of width \a width in
+     * IEEE total order
+     *
+     * Like float_order_range(), the position follows the sign bit alone: an
+     * encoding with the sign bit set maps to its complement, any other
+     * encoding to itself with the sign bit set.
+     */
+    Gecode::WordValue float_order_position(unsigned int width,
+                                           Gecode::WordValue code);
+
+    /** \brief Test whether encoding \a code of width \a width lies in the
+     * total-order window from \a minimum to \a maximum
+     */
+    bool float_order_contains(unsigned int width, Gecode::WordValue minimum,
+                              Gecode::WordValue maximum,
+                              Gecode::WordValue code);
+
+    /** \brief Narrow the bounds of the float-typed word \a x to the
+     * total-order window from encoding \a minimum to encoding \a maximum
+     *
+     * The word keeps its variable, so aliases of it stay intact. Fails
+     * \a home if no value remains.
+     */
+    void float_bounds(Gecode::Space& home, Gecode::WordVar x,
+                      Gecode::WordValue minimum, Gecode::WordValue maximum);
+
     /** \brief Return a word of float domain type \a format restricted to
      * the total-order window from \a minimum to \a maximum
      *
