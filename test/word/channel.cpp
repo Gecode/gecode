@@ -437,6 +437,441 @@ namespace Test { namespace Word {
       }
     };
 
+    /// A word and integer whose restrictions can be posted before the channel
+    class EncodingSpace : public Gecode::Space {
+    public:
+      Gecode::WordVar x;
+      Gecode::IntVar y;
+      EncodingSpace(unsigned int width, Gecode::WordDomainType kind,
+                    Gecode::WordValue minimum, Gecode::WordValue maximum,
+                    const Gecode::IntSet& integers,
+                    Gecode::WordValueSetOption value_set = Gecode::WVS_NONE)
+          : x((kind == Gecode::WDT_CUBE)
+                  ? Gecode::WordVar(*this, width, value_set)
+                  : Gecode::WordVar(*this, width, kind, minimum, maximum,
+                                    value_set)),
+            y(*this, integers) {}
+      EncodingSpace(EncodingSpace& s) : Gecode::Space(s) {
+        x.update(*this, s.x);
+        y.update(*this, s.y);
+      }
+      virtual Gecode::Space*
+      copy(void) {
+        return new EncodingSpace(*this);
+      }
+    };
+
+    /** \brief Compare complete encoding pairs with a concrete mask/interval
+     * oracle
+     *
+     * Each case runs with a plain word and with a value-set word, which must
+     * keep exactly the encodings that the integer keeps.
+     */
+    class EncodingSolutions : public Base {
+    public:
+      EncodingSolutions(void) : Base("Word::Channel::Encoding::Solutions") {}
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        const WordDomainType kinds[] = {WDT_CUBE, WDT_UNSIGNED, WDT_SIGNED};
+        for (unsigned int width = 1; width <= 4; width++) {
+          const int limit = 1 << width;
+          const int mask = limit - 1;
+          for (WordDomainType kind : kinds)
+            for (int interval = 0; interval < 2; interval++) {
+              const int first = (interval == 0) ? 0 : mask / 3;
+              const int last = mask - first;
+              const int sign = (kind == WDT_SIGNED) ? limit / 2 : 0;
+              for (PartialDomains domains(width); domains(); ++domains)
+                for (WordValueSetOption value_set : {WVS_NONE, WVS_EXACT}) {
+                  const Domain bits = domains.domain();
+                  for (int subset = 0; subset < 3; subset++) {
+                    std::vector<int> integers;
+                    for (int value = -1; value <= limit; value++)
+                      if ((subset == 0) ||
+                          ((subset == 1) && (value % 3 != 1)) ||
+                          ((subset == 2) && ((value < 0) || (value >= limit))))
+                        integers.push_back(value);
+                    std::set<std::pair<WordValue, int>> expected;
+                    for (int code = 0; code < limit; code++) {
+                      const int numeric =
+                          ((kind == WDT_SIGNED) && (code >= limit / 2))
+                              ? code - limit
+                              : code;
+                      if (((static_cast<WordValue>(code) & bits.lo()) ==
+                           bits.lo()) &&
+                          ((static_cast<WordValue>(code) & ~bits.hi()) == 0) &&
+                          ((kind == WDT_CUBE) || ((numeric >= first - sign) &&
+                                                  (numeric <= last - sign))) &&
+                          (std::find(integers.begin(), integers.end(), code) !=
+                           integers.end()))
+                        expected.insert(std::make_pair(WordValue(code), code));
+                    }
+
+                    EncodingSpace root(
+                        width, kind, WordValue(first ^ sign),
+                        WordValue(last ^ sign),
+                        IntSet(integers.data(),
+                               static_cast<int>(integers.size())),
+                        value_set);
+                    dom(root, root.x, bits.lo(), bits.hi());
+                    channel_encoding(root, root.x, root.y);
+                    const bool failed = root.status() == SS_FAILED;
+                    if (failed != expected.empty())
+                      return false;
+                    if (!failed) {
+                      if (root.y.size() != expected.size())
+                        return false;
+                      for (const auto& pair : expected)
+                        if (!root.y.in(pair.second))
+                          return false;
+                      if (value_set == WVS_EXACT)
+                        for (int code = 0; code < limit; code++)
+                          if (root.x.in(WordValue(code)) !=
+                              (expected.count(std::make_pair(WordValue(code),
+                                                             code)) != 0))
+                            return false;
+                    }
+                    branch(root, root.x, WORD_VAL_LSB());
+                    branch(root, root.y, INT_VAL_MIN());
+                    Search::Options options;
+                    options.c_d = 3;
+                    options.a_d = 8;
+                    DFS<EncodingSpace> dfs(&root, options);
+                    std::set<std::pair<WordValue, int>> actual;
+                    while (
+                        std::unique_ptr<EncodingSpace> solution{dfs.next()}) {
+                      if (!solution->x.assigned() || !solution->y.assigned() ||
+                          (PropagatorGroup::all.size(*solution) != 0U))
+                        return false;
+                      actual.insert(
+                          std::make_pair(solution->x.val(), solution->y.val()));
+                    }
+                    if (actual != expected)
+                      return false;
+                  }
+                }
+            }
+        }
+        return true;
+      }
+    };
+
+    /// Domain-only events, signed order, aliases, assignment, and cloning
+    class EncodingLifecycle : public Base {
+    private:
+      static bool
+      events(void) {
+        using namespace Gecode;
+        const int holes[] = {0, 1, 254};
+        EncodingSpace interior(8, WDT_UNSIGNED, 0, 255, IntSet(holes, 3));
+        channel_encoding(interior, interior.x, interior.y);
+        if (interior.status() == SS_FAILED)
+          return false;
+        rel(interior, interior.y, IRT_NQ, 1);
+        if ((interior.y.min() != 0) || (interior.y.max() != 254) ||
+            (interior.status() == SS_FAILED) || (interior.x.hi() != 254U))
+          return false;
+
+        EncodingSpace bits(8, WDT_UNSIGNED, 0, 254, IntSet(0, 255));
+        channel_encoding(bits, bits.x, bits.y);
+        if (bits.status() == SS_FAILED)
+          return false;
+        channel(bits, bits.x, 0, 0);
+        if ((bits.x.minimum() != 0U) || (bits.x.maximum() != 254U) ||
+            (bits.status() == SS_FAILED) || (bits.y.size() != 128U))
+          return false;
+        for (int code = 0; code < 256; code++)
+          if (bits.y.in(code) != ((code % 2) == 0))
+            return false;
+
+        EncodingSpace bounds(8, WDT_UNSIGNED, 0, 255, IntSet(0, 255));
+        channel_encoding(bounds, bounds.x, bounds.y);
+        if (bounds.status() == SS_FAILED)
+          return false;
+        if (Gecode::Word::WordView(bounds.x).narrow_rank_range(
+                bounds, 1, 254) != Gecode::Word::ME_WORD_BND)
+          return false;
+        if ((bounds.x.lo() != 0U) || (bounds.x.hi() != 255U) ||
+            (bounds.status() == SS_FAILED) || (bounds.y.min() != 1) ||
+            (bounds.y.max() != 254))
+          return false;
+
+        EncodingSpace signed_bounds(8, WDT_SIGNED, 254, 1, IntSet(0, 255));
+        channel_encoding(signed_bounds, signed_bounds.x, signed_bounds.y);
+        if ((signed_bounds.status() == SS_FAILED) ||
+            (signed_bounds.y.size() != 4U) || !signed_bounds.y.in(0) ||
+            !signed_bounds.y.in(1) || !signed_bounds.y.in(254) ||
+            !signed_bounds.y.in(255))
+          return false;
+        rel(signed_bounds, signed_bounds.y, IRT_NQ, 254);
+        rel(signed_bounds, signed_bounds.y, IRT_NQ, 1);
+        return (signed_bounds.status() != SS_FAILED) &&
+               (signed_bounds.x.minimum() == 255U) &&
+               (signed_bounds.x.maximum() == 0U) &&
+               (signed_bounds.y.size() == 2U);
+      }
+
+      static bool
+      assignment_and_failure(void) {
+        using namespace Gecode;
+        for (WordDomainType kind : {WDT_CUBE, WDT_UNSIGNED, WDT_SIGNED})
+          for (int from_word = 0; from_word < 2; from_word++)
+            for (int delayed = 0; delayed < 2; delayed++) {
+              EncodingSpace s(8, kind, (kind == WDT_SIGNED) ? 128 : 0,
+                              (kind == WDT_SIGNED) ? 127 : 255,
+                              IntSet(0, 255));
+              if (delayed) {
+                channel_encoding(s, s.x, s.y);
+                if (s.status() == SS_FAILED)
+                  return false;
+              }
+              if (from_word)
+                dom(s, s.x, 193U);
+              else
+                rel(s, s.y, IRT_EQ, 193);
+              if (!delayed)
+                channel_encoding(s, s.x, s.y);
+              if ((s.status() == SS_FAILED) || !s.x.assigned() ||
+                  !s.y.assigned() || (s.x.val() != 193U) ||
+                  (s.y.val() != 193) || (PropagatorGroup::all.size(s) != 0U))
+                return false;
+            }
+        EncodingSpace empty(8, WDT_CUBE, 0, 255, IntSet(1, 1));
+        channel(empty, empty.x, 0, 0);
+        channel_encoding(empty, empty.x, empty.y);
+        if (empty.status() != SS_FAILED)
+          return false;
+        const int holes[] = {0, 3, 5};
+        EncodingSpace delayed_empty(8, WDT_CUBE, 0, 255, IntSet(holes, 3));
+        channel_encoding(delayed_empty, delayed_empty.x, delayed_empty.y);
+        if (delayed_empty.status() == SS_FAILED)
+          return false;
+        dom(delayed_empty, delayed_empty.x, 1U);
+        if (delayed_empty.status() != SS_FAILED)
+          return false;
+        for (unsigned int width : {9U, 64U}) {
+          EncodingSpace invalid(width, WDT_CUBE, 0, 0, IntSet(0, 255));
+          try {
+            channel_encoding(invalid, invalid.x, invalid.y);
+            return false;
+          } catch (const Gecode::Word::OutOfLimits&) {
+          }
+          invalid.fail();
+          try {
+            channel_encoding(invalid, invalid.x, invalid.y);
+            return false;
+          } catch (const Gecode::Word::OutOfLimits&) {
+          }
+        }
+        return true;
+      }
+
+      static bool
+      aliases_and_clone(void) {
+        using namespace Gecode;
+        const int holes[] = {0, 1, 254};
+        EncodingSpace source(8, WDT_UNSIGNED, 0, 255, IntSet(holes, 3));
+        WordVar alias = source.x;
+        IntVar shared = source.y;
+        WordVar other(source, 8);
+        channel_encoding(source, source.x, source.y);
+        channel_encoding(source, alias, shared);
+        channel_encoding(source, other, shared);
+        if (source.status() == SS_FAILED)
+          return false;
+        std::unique_ptr<EncodingSpace> clone{
+            static_cast<EncodingSpace*>(source.clone())};
+        rel(*clone, clone->y, IRT_NQ, 1);
+        if ((clone->status() == SS_FAILED) || (clone->x.hi() != 254U) ||
+            !source.y.in(1) || (source.x.hi() != 255U))
+          return false;
+        rel(source, shared, IRT_EQ, 1);
+        if ((source.status() == SS_FAILED) || !alias.assigned() ||
+            (alias.val() != 1U) || !other.assigned() || (other.val() != 1U) ||
+            (PropagatorGroup::all.size(source) != 0U) ||
+            (clone->y.size() != 2U))
+          return false;
+        dom(*clone, clone->x, 254U);
+        return (clone->status() != SS_FAILED) && clone->y.assigned() &&
+               (clone->y.val() == 254) &&
+               (PropagatorGroup::all.size(*clone) == 0U);
+      }
+
+      /// Test that \a x is a value-set word with exactly the values of \a y
+      static bool
+      same_values(const Gecode::WordVar& x, const Gecode::IntVar& y) {
+        for (int code = 0; code < 256; code++)
+          if (x.in(Gecode::WordValue(code)) != y.in(code))
+            return false;
+        return true;
+      }
+
+      /// Holes, including values-only changes, pass in both directions
+      static bool
+      holes(void) {
+        using namespace Gecode;
+        for (WordDomainType kind : {WDT_CUBE, WDT_UNSIGNED, WDT_SIGNED}) {
+          const WordValue minimum = (kind == WDT_SIGNED) ? 128 : 0;
+          const WordValue maximum = (kind == WDT_SIGNED) ? 127 : 255;
+          const int initial[] = {0, 5, 9, 200, 255};
+          EncodingSpace before(8, kind, minimum, maximum, IntSet(initial, 5),
+                               WVS_EXACT);
+          channel_encoding(before, before.x, before.y);
+          if ((before.status() == SS_FAILED) ||
+              !same_values(before.x, before.y) || (before.x.lo() != 0U) ||
+              (before.x.hi() != 255U))
+            return false;
+
+          EncodingSpace s(8, kind, minimum, maximum, IntSet(0, 255),
+                          WVS_EXACT);
+          channel_encoding(s, s.x, s.y);
+          if (s.status() == SS_FAILED)
+            return false;
+          rel(s, s.y, IRT_NQ, 100);
+          if ((s.status() == SS_FAILED) || s.x.in(100U) ||
+              (s.x.lo() != 0U) || (s.x.hi() != 255U) ||
+              (s.x.bounded() && ((s.x.minimum() != minimum) ||
+                                 (s.x.maximum() != maximum))) ||
+              !same_values(s.x, s.y))
+            return false;
+          rel(s, s.x, WRT_NQ, WordValue(50));
+          if ((s.status() == SS_FAILED) || s.y.in(50) ||
+              (s.y.size() != 254U) || !same_values(s.x, s.y))
+            return false;
+          std::unique_ptr<EncodingSpace> clone{
+              static_cast<EncodingSpace*>(s.clone())};
+          const int odd[] = {1, 3, 77};
+          IntSet odd_set(odd, 3);
+          dom(*clone, clone->y, odd_set);
+          if ((clone->status() == SS_FAILED) || !same_values(clone->x, clone->y) ||
+              (clone->y.size() != 3U) || (s.y.size() != 254U))
+            return false;
+          rel(*clone, clone->x, WRT_NQ, WordValue(3));
+          rel(*clone, clone->x, WRT_NQ, WordValue(77));
+          if ((clone->status() == SS_FAILED) || !clone->y.assigned() ||
+              (clone->y.val() != 1) || !clone->x.assigned() ||
+              (PropagatorGroup::all.size(*clone) != 0U))
+            return false;
+        }
+        return true;
+      }
+
+    public:
+      EncodingLifecycle(void) : Base("Word::Channel::Encoding::Lifecycle") {}
+      virtual bool
+      run(void) {
+        return events() && assignment_and_failure() && aliases_and_clone() &&
+               holes();
+      }
+    };
+
+    /// Float words in bit, bounds and encoding channels
+    class FloatWords : public Base {
+    private:
+      /// A float word with a Boolean and an integer
+      class FloatSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x;
+        Gecode::BoolVar b;
+        Gecode::IntVar y;
+        FloatSpace(Gecode::WordDomainType type,
+                   Gecode::WordValueSetOption value_set,
+                   const Gecode::IntSet& integers)
+          : x(*this,type,value_set), b(*this,0,1), y(*this,integers) {}
+        FloatSpace(FloatSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+          b.update(*this,s.b);
+          y.update(*this,s.y);
+        }
+        virtual Gecode::Space* copy(void) { return new FloatSpace(*this); }
+      };
+
+      static bool bounds_channel_throws(Gecode::WordDomainType type,
+                                        Gecode::WordInterpretation wi) {
+        FloatSpace s(type,Gecode::WVS_NONE,Gecode::IntSet(0,15));
+        try {
+          Gecode::channel(s,s.x,s.y,wi);
+        } catch (const Gecode::Word::OutOfLimits&) {
+          return true;
+        }
+        return false;
+      }
+
+      /// Fixing the FP32 sign bit through a Boolean leaves negative values
+      static bool bits(void) {
+        using namespace Gecode;
+        FloatSpace fp32(WDT_FP32,WVS_NONE,IntSet(0,0));
+        channel(fp32,fp32.x,31,fp32.b);
+        rel(fp32,fp32.b,IRT_EQ,1);
+        if ((fp32.status() == SS_FAILED) || (fp32.x.minimum() != 0xffffffff) ||
+            (fp32.x.maximum() != 0x80000000))
+          return false;
+        FloatSpace e4m3fn(WDT_E4M3FN,WVS_DEFAULT,IntSet(0,0));
+        channel(e4m3fn,e4m3fn.x,7,0);
+        channel(e4m3fn,e4m3fn.x,0,e4m3fn.b);
+        if ((e4m3fn.status() == SS_FAILED) || (e4m3fn.x.minimum() != 0x00) ||
+            (e4m3fn.x.maximum() != 0x7f) || e4m3fn.b.assigned())
+          return false;
+        rel(e4m3fn,e4m3fn.b,IRT_EQ,0);
+        return (e4m3fn.status() != SS_FAILED) && (e4m3fn.x.maximum() == 0x7e);
+      }
+
+      /** \brief A value-set word and its encoding keep the same holes
+       *
+       * Holes posted before the channel and removed afterwards pass both
+       * ways.
+       */
+      static bool holes(Gecode::WordDomainType type) {
+        using namespace Gecode;
+        const int limit = (type == WDT_E2M1) ? 16 : 256;
+        const int before_word = 0x5, before_integer = 0x6;
+        const int after_word = 0x2, after_integer = 0x3;
+        std::vector<int> integers;
+        for (int v=0; v<limit; v++)
+          if (v != before_integer)
+            integers.push_back(v);
+        FloatSpace s(type,WVS_DEFAULT,
+                     IntSet(integers.data(),static_cast<int>(integers.size())));
+        Gecode::Word::WordView xv(s.x);
+        if (!s.x.has_value_set() || me_failed(xv.nq(s,before_word)))
+          return false;
+        channel_encoding(s,s.x,s.y);
+        if ((s.status() == SS_FAILED) || s.y.in(before_word) ||
+            s.x.in(before_integer))
+          return false;
+        if (me_failed(xv.nq(s,after_word)))
+          return false;
+        rel(s,s.y,IRT_NQ,after_integer);
+        return (s.status() != SS_FAILED) && !s.y.in(after_word) &&
+          !s.x.in(after_integer) && s.x.in(0x4) && s.y.in(0x4) &&
+          (s.y.size() == static_cast<unsigned int>(limit-4));
+      }
+
+      /// Without a value set, the word keeps the hull of the integers
+      static bool hull(void) {
+        using namespace Gecode;
+        const int values[] = {2,3,5,6};
+        FloatSpace s(WDT_E2M1,WVS_NONE,IntSet(values,4));
+        channel_encoding(s,s.x,s.y);
+        return (s.status() != SS_FAILED) && (s.x.lo() == 0) &&
+          (s.x.hi() == 0x7) && s.x.in(0x4) && !s.x.in(0x9) && !s.y.in(4);
+      }
+
+    public:
+      FloatWords(void) : Base("Word::Channel::FloatWords") {}
+      virtual bool run(void) {
+        using namespace Gecode;
+        const WordDomainType types[] = {WDT_FP32,WDT_BF16,WDT_BINARY16,
+                                        WDT_E4M3FN,WDT_E2M1};
+        for (WordDomainType type : types)
+          if (!bounds_channel_throws(type,WI_UNSIGNED) ||
+              !bounds_channel_throws(type,WI_SIGNED))
+            return false;
+        return bits() && holes(WDT_E4M3FN) && holes(WDT_E2M1) && hull();
+      }
+    };
+
     /** \brief A word \a x and the word \a y that link() reinterprets it as
      *
      * Clone only after link(), which initializes \a y.
@@ -866,6 +1301,9 @@ namespace Test { namespace Word {
       }
     };
 
+    EncodingSolutions encoding_solutions;
+    EncodingLifecycle encoding_lifecycle;
+    FloatWords float_words;
     ReinterpretSolutions reinterpret_solutions;
     ReinterpretValueSets reinterpret_value_sets;
     ReinterpretBounds reinterpret_bounds;

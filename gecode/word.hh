@@ -819,6 +819,23 @@ namespace Gecode {
    */
   GECODE_WORD_EXPORT void channel(Home home, WordVar x, IntVar y,
                                   WordInterpretation interpretation);
+  /** \brief Channel the unsigned encoding of word \a x to integer \a y
+   *
+   * Widths from 1 through 8 are supported with any Word domain type.
+   * The channel retains exactly the encodings common to both domains in
+   * \a y. A word with a value set also retains exactly those encodings, so
+   * holes pass in both directions, including changes that remove values
+   * without changing cube or bounds. Another word receives their bit hull
+   * and, when bounded, their endpoint hull, and interior holes remain in
+   * \a y only. Signed Word storage still maps to unsigned encoding IDs, not
+   * signed integer values.
+   *
+   * Without a value set, adjacent constraints must share the same IntVar to
+   * communicate encoding holes through this channel: separate IntVars linked
+   * only through such a WordVar can lose that information.
+   * Throws Word::OutOfLimits if the word is wider than eight bits.
+   */
+  GECODE_WORD_EXPORT void channel_encoding(Home home, WordVar x, IntVar y);
   /** \brief Return a new word with the bits of \a x, read in \a domain_type
    *
    * The result has the width of \a x, and \a domain_type decides the order
