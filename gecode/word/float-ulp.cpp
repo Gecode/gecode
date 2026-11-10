@@ -558,6 +558,10 @@ namespace Gecode {
     }
 
     /// Numerator digits of ulp_error and its fixed scale S.
+    /// With A = a*2^149, B = b*2^149 and the spacing exponent q of the
+    /// reference, Q = abs(A-B)*2^(qmax-q) and S = 149+qmax. qmax = 127-(p-1)
+    /// is the spacing exponent of the largest finite FP32 reference, so the
+    /// shift is never negative and the digits hold every finite input.
     struct ErrorLayout {
       int qmin, qmax;
       int digits, leading_bits;

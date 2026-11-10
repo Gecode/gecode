@@ -90,15 +90,15 @@ ranked branching, tracing, explicit MiniModel result lowering, and native
 bounded equality and ordering, including reification.
 A WordVar is created from its width, from known bits given by known_bits(),
 from a list of values, or from endpoints in the order of its domain type,
-such as -3 to 5 for a signed word.
+such as -3 to 5 for a signed word or -1.0 to 1.0 for a BF16 word.
 In MiniModel Word expressions, a plain integer constant takes the width of
 the other operand, as in div(x + y, 2) or x != 0.
 A WordVar of width at most eight can also store its exact set of values
 inline, so removing a single value leaves a hole that the cube and interval
 cannot express. Ranked assignment and splitting then choose values of that
-set, and printing and tracing show its holes. Disequality with a constant and
-dom() with a list of values remove exactly the values they exclude from such
-a word.
+set, and printing and tracing show its holes. Disequality with a constant,
+dom() with a list of values, and channel_encoding() remove exactly the values
+they exclude from such a word.
 A WordVar can also take an IEEE float format (FP32, BF16, binary16, E4M3FN
 or E2M1) as its domain type, so that its interval, branching, printing and
 tracing follow the IEEE total order of the format; E4M3FN and E2M1 words
@@ -119,6 +119,31 @@ constraints deliberately retain their complete cube propagation path.
 [ENTRY]
 Module: word
 What:   new
+Rank:   major
+[DESCRIPTION]
+Add bit-exact floating-point constraints on float-typed WordVars, whose
+domain type is FP32, BF16, FP8 E4M3FN, or FP4 E2M1, and conversion to and
+from binary16. Each operation reads the formats of its operands from their
+domain types and rejects words of any other domain type. Constraints cover
+classification, negation and absolute value, numerical comparison, minimum
+and maximum, format conversion, addition, subtraction, multiplication,
+division, fused multiply-add, square root, and ULP distance and error.
+Rounding direction, subnormal, overflow, and NaN handling are selected by an
+optional policy argument after the operands and the optional status, which
+defaults to IEEE 754 round-to-nearest-even, and the IEEE exception flags can
+be observed as a status variable.
+float_constant() creates a constant operand from a double that the format
+represents exactly. E4M3FN and E2M1 words carry a value set by default, and every operation
+accepts them with or without one. Classification, negation, absolute value,
+conversion, and square root of such words with a value set remove exactly
+the encodings they exclude. Comparison, minimum, maximum, ULP distance,
+arithmetic, and fused multiply-add reason on numerical bounds by default and
+are domain consistent with IPL_DOM, as is the ULP error when all three of
+its values are tiny.
+
+[ENTRY]
+Module: word
+What:   new
 Rank:   minor
 Experimental: true
 [DESCRIPTION]
@@ -134,8 +159,9 @@ Rank:   minor
 [DESCRIPTION]
 Add Word examples that patch a firmware record so that it keeps its CRC-32,
 check bit-twiddling routines against their reference by finding a
-counterexample or proving agreement, and recover a message block for a
-reduced-round SHA-1 digest.
+counterexample or proving agreement, recover a message block for a
+reduced-round SHA-1 digest, and prove the worst-case error of an FP8
+multiply-accumulate against FP32.
 
 [RELEASE]
 Version: 6.5.0
