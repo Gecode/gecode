@@ -119,6 +119,71 @@ constraints deliberately retain their complete cube propagation path.
 [ENTRY]
 Module: word
 What:   new
+Rank:   major
+[DESCRIPTION]
+Add bit-exact floating-point constraints on float-typed WordVars:
+classification, negation and absolute value, numerical comparison, minimum
+and maximum, format conversion, addition, subtraction, multiplication,
+division, fused multiply-add, square root, and ULP spacing and distance.
+Each operation reads the formats of its operands from their domain types
+and rejects words of any other domain type. Arithmetic, fused multiply-add,
+square root, comparison, minimum, and maximum take FP32, BF16, FP8 E4M3FN,
+or FP4 E2M1 words of one format, or for fused multiply-add BF16 factors
+with an FP32 addend and result, and throw Word::OutOfLimits for binary16.
+Conversion between any two of the five formats, classification, negation,
+absolute value, and ULP spacing and distance also accept binary16.
+Rounding direction, subnormal, overflow, and NaN handling are selected by an
+optional policy argument after the operands and the optional status, which
+defaults to IEEE 754 round-to-nearest-even, and the IEEE exception flags can
+be observed as a status variable.
+float_constant() creates a constant operand from a double that the format
+represents exactly, and float_word() and float_word_array() create words
+from such endpoints, such as -1.0 to 1.0 for a BF16 word.
+Every operation accepts E4M3FN and E2M1 words with or without a value set.
+Classification, negation, absolute value, conversion, square root, and ULP
+spacing keep exactly the supported encodings of such words with a value
+set. With IPL_DOM, comparison, minimum, maximum, ULP distance, arithmetic,
+and fused multiply-add of E4M3FN and E2M1 words enumerate the remaining
+operand combinations and are domain consistent on words with a value set.
+At the default level they reason on the numerical bounds of the operands,
+and filter as with IPL_DOM once an operand is assigned, or for fused
+multiply-add once at most one input is unassigned.
+FP32, BF16, and binary16 words carry no value set: at every level, their
+propagation narrows bounds in the total order of the format and cubes of
+known bits. It is sound and exact once the operands are assigned, and
+promises no further consistency than each operation documents.
+Wide multiplication and division of three distinct words, and fused
+multiply-add of four distinct words or with a result that aliases an
+input, settle each propagation with a number of projections bounded by the
+format instead of by the domain sizes. Each propagation
+reaches a fixpoint of the real relation read one admitted encoding beyond
+the bounds of each word, and repeats interval projections only while they
+halve the range of a word or fix a further leading bit of it. The result is
+bounds consistent on that widened box, and can be weaker than repeating
+interval projections that move bounds one encoding at a time until none
+moves, which can take thousands of propagations on FP32 words.
+
+[ENTRY]
+Module: word
+What:   new
+Rank:   minor
+Experimental: true
+[DESCRIPTION]
+Add fp_ulp_error(), the exact error abs(a-b)/ulp(reference) of float words
+in units of the spacing of a reference format. The error is a fixed-point
+array of integer digits that a lexicographic objective maximizes without
+rounding. fp_ulp_error_digits() creates the digits, fp_ulp_error_scale()
+returns their scale, and fp_ulp_error_threshold() returns the digits of a
+constant error, such as half an ULP, for comparison with rel().
+With IPL_DOM and E4M3FN or E2M1 words as both values and the reference,
+the error is domain consistent on words with a value set. Otherwise a
+single propagator narrows the words and digits from their bounds and known
+bits, soundly but possibly incompletely, and computes the digits exactly
+once the words are assigned.
+
+[ENTRY]
+Module: word
+What:   new
 Rank:   minor
 Experimental: true
 [DESCRIPTION]
@@ -134,8 +199,9 @@ Rank:   minor
 [DESCRIPTION]
 Add Word examples that patch a firmware record so that it keeps its CRC-32,
 check bit-twiddling routines against their reference by finding a
-counterexample or proving agreement, and recover a message block for a
-reduced-round SHA-1 digest.
+counterexample or proving agreement, recover a message block for a
+reduced-round SHA-1 digest, and prove the worst-case error of an FP8
+multiply-accumulate against FP32.
 [RELEASE]
 Version: 6.6.0
 Date: 2026-11-16
