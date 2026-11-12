@@ -58,14 +58,24 @@ namespace Gecode { namespace Search { namespace Seq {
     return false;
   }
 
+  NoGoods&
+  RBS::master_nogoods(void) {
+    // The no-goods of an incomplete slave search only hold in its restricted
+    // search space, not in the master.
+    if (!nogoods_valid)
+      return NoGoods::eng;
+    NoGoods& ng = e->nogoods();
+    // Reset number of no-goods found
+    ng.ng(0);
+    return ng;
+  }
+
   Space*
   RBS::next(void) {
     if (restart) {
       restart = false;
       sslr++;
-      NoGoods& ng = e->nogoods();
-      // Reset number of no-goods found
-      ng.ng(0);
+      NoGoods& ng = master_nogoods();
       MetaInfo mi(stop->restarts(),MetaInfo::RR_SOL,sslr,e->statistics().fail,last,ng);
       bool r = master->master(mi);
       stop->nogood(ng.ng());
@@ -80,6 +90,7 @@ namespace Gecode { namespace Search { namespace Seq {
         Space* slave = master;
         master = master->clone();
         complete = slave->slave(mi);
+        nogoods_valid = complete;
         e->reset(slave);
         sslr = 0;
         stop->restart();
@@ -100,8 +111,7 @@ namespace Gecode { namespace Search { namespace Seq {
         if (!complete && !e->stopped())
           stop->restart();
         sslr = 0;
-        NoGoods& ng = e->nogoods();
-        ng.ng(0);
+        NoGoods& ng = master_nogoods();
         MetaInfo mi(stop->restarts(),e->stopped() ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
         (void) master->master(mi);
         stop->nogood(ng.ng());
@@ -112,6 +122,7 @@ namespace Gecode { namespace Search { namespace Seq {
         Space* slave = master;
         master = master->clone();
         complete = slave->slave(mi);
+        nogoods_valid = complete;
         e->reset(slave);
       } else {
         return nullptr;

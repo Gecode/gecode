@@ -78,6 +78,17 @@ This is the development changelog for the next Gecode release.
 [ENTRY]
 Module: search
 What:   bug
+Rank:   major
+[DESCRIPTION]
+Do not post no-goods from an incomplete slave search in the master of
+restart-based search. When the slave configuration function returned
+false, for example in large neighbourhood search, the no-goods recorded in
+the restricted search space were posted in the master. Search could then
+miss better solutions and report a solution as optimal when it was not.
+
+[ENTRY]
+Module: search
+What:   bug
 Rank:   minor
 [DESCRIPTION]
 Fail the space in relax when a variable cannot take its value from the

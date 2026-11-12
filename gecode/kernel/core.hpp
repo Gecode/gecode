@@ -1704,7 +1704,12 @@ namespace Gecode {
     unsigned long long int fail(void) const;
     /// Return last solution found (possibly nullptr)
     const Space* last(void) const;
-    /// Return no-goods recorded from restart
+    /**
+     * \brief Return no-goods recorded from restart
+     *
+     * The no-goods are empty if the search on the slave space was
+     * incomplete, as they only hold in the slave's search space.
+     */
     const NoGoods& nogoods(void) const;
     //@}
     /// \name Portfolio-based information
@@ -2180,8 +2185,9 @@ namespace Gecode {
      * portfolio meta search engines.
      *
      * \li A restart meta search engine calls this function on its
-     *     slave space whenever it finds a solution or exploration
-     *     restarts.  \a mi contains information about the current restart.
+     *     slave space when search starts and whenever it finds a solution or
+     *     exploration restarts.  \a mi contains information about the
+     *     current restart.
      *
      *     If the function returns true, the search on the slave space is
      *     considered complete, i.e., if it fails or exhaustively explores the
@@ -2189,6 +2195,11 @@ namespace Gecode {
      *     function returns false, the search on the slave space is considered
      *     incomplete, and the meta engine will restart the search regardless
      *     of whether the search on the slave space finishes or times out.
+     *     The no-goods recorded by an incomplete search only hold in the
+     *     slave's search space, so the meta engine does not pass them to the
+     *     master configuration function. When search starts, the result only
+     *     determines whether no-goods are passed: the meta engine treats the
+     *     first search on a slave space as complete.
      *
      * \li A portfolio meta engine calls this function once on each asset
      *     (that is, on each slave) and passes the number of the asset,
