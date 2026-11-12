@@ -150,6 +150,14 @@ namespace Test { namespace FlatZinc {
           (void) one->compare(*high);
           return false;
         } catch (const DynamicCastFailed&) {}
+        std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> sat =
+          model("var 1..1: x; solve satisfy;\n");
+        if (!sat)
+          return false;
+        try {
+          (void) sat->compare(*sat);
+          return false;
+        } catch (const SpaceNoComparison&) {}
         return true;
       }
     };
