@@ -119,6 +119,64 @@ namespace Test { namespace Float {
        }
      } rounding_scope;
 
+     /// Regression test for downward rounding of negating operations
+     class DirectedRounding : public Base {
+     protected:
+       /// Space posting an NthRoot constraint on a positive source
+       class RootSpace : public Gecode::Space {
+       public:
+         /// Source and root variables
+         Gecode::FloatVar source, root;
+         /// Post the square root of the source interval [lo,hi]
+         RootSpace(Gecode::FloatNum lo, Gecode::FloatNum hi)
+           : source(*this,lo,hi), root(*this,0.0,1.0) {
+           Gecode::nroot(*this,source,2,root);
+         }
+         /// Clone constructor
+         RootSpace(RootSpace& s) : Gecode::Space(s) {
+           source.update(*this,s.source);
+           root.update(*this,s.root);
+         }
+         /// Copy space during cloning
+         virtual Gecode::Space* copy(void) {
+           return new RootSpace(*this);
+         }
+       };
+     public:
+       DirectedRounding(void)
+         : Base("Float::Arithmetic::DirectedRounding", TestTags::check()) {}
+       virtual bool run(void) {
+         bool result = true;
+         {
+           // Each exact result lies strictly between two adjacent doubles.
+           const volatile Gecode::FloatNum root_two = 0x1.6a09e667f3bccp+0;
+           const volatile Gecode::FloatNum one = 1.0;
+           const volatile Gecode::FloatNum three = 3.0;
+           const volatile Gecode::FloatNum quarter_ulp = std::ldexp(1.0,-54);
+           Gecode::Float::Rounding r;
+           if ((r.mul_down(root_two,root_two) != 0x1.ffffffffffffep+0) ||
+               (r.mul_up(root_two,root_two) != 0x1.fffffffffffffp+0) ||
+               (r.div_down(one,three) != 0x1.5555555555555p-2) ||
+               (r.div_up(one,three) != 0x1.5555555555556p-2) ||
+               (r.add_down(one,-quarter_ulp) != 0x1.fffffffffffffp-1) ||
+               (r.add_up(one,-quarter_ulp) != 1.0)) {
+             olog << "Rounding operation was not directed" << std::endl;
+             result = false;
+           }
+         }
+         // Parallel search on examples/cartesian-heart reached this domain.
+         // A wrong mul_down made the root iteration create an empty interval.
+         RootSpace s(0x1p-1016,0x1p-1015);
+         if ((s.status() == Gecode::SS_FAILED) ||
+             (s.root.min() > 0x1p-508) ||
+             (s.root.max() < 0x1.6a09e667f3bcdp-508)) {
+           olog << "NthRoot removed the root of " << s.source << std::endl;
+           result = false;
+         }
+         return result;
+       }
+     } directed_rounding;
+
      /// Median queries preserve the caller's floating-point rounding mode
      class MedianRoundingMode : public Base {
      public:

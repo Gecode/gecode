@@ -120,6 +120,18 @@ assigned. A new solution must now improve by at least the step, without the
 rounding of the step subtraction admitting a smaller improvement. With step 0,
 assigned costs are accepted exactly as before.
 
+[ENTRY]
+Module: float
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Round the lower bound of float multiplication downward on AArch64. The
+compiler fused the negation in the downward-rounded product into an fnmul
+instruction, so the lower bound was rounded upward and could exclude the
+exact product. Propagators could remove solutions, and nroot could throw an
+empty-interval exception. For example, parallel search on the cartesian-heart
+example aborted. Addition and division get the same protection.
+
 [RELEASE]
 Version: 6.5.0
 Date: 2026-10-31

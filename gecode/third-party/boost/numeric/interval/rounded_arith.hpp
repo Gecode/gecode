@@ -92,10 +92,28 @@ struct rounded_arith_opp: Rounding {
 # define GECODE_BOOST_UP_NEG(EXPR) return -this->force_rounding(EXPR)
   template<class U> T conv_down(U const &v) { GECODE_BOOST_UP_NEG(-v); }
   template<class U> T conv_up  (U const &v) { GECODE_BOOST_UP(v); }
-  T add_down(const T& x, const T& y) { GECODE_BOOST_UP_NEG((-x) - y); }
+  // Gecode: the negated operand passes through negate_opaque.  Otherwise
+  // the compiler may fuse the negation into the rounded operation, which is
+  // only valid under round-to-nearest.  For example, clang on AArch64 turns
+  // x * (-y) into fnmul, which negates after rounding, so mul_down returned
+  // the upward-rounded product.
+  T negate_opaque(const T& x) {
+#if defined(__GNUC__) && defined(__aarch64__)
+    // An empty asm hides the value without a memory round trip.
+    T r = -x;
+    __asm__("" : "+w"(r));
+    return r;
+#else
+    return this->force_rounding(-x);
+#endif
+  }
+  T add_down(const T& x, const T& y)
+  { GECODE_BOOST_UP_NEG(negate_opaque(x) - y); }
   T sub_down(const T& x, const T& y) { GECODE_BOOST_UP_NEG(y - x); }
-  T mul_down(const T& x, const T& y) { GECODE_BOOST_UP_NEG(x * (-y)); }
-  T div_down(const T& x, const T& y) { GECODE_BOOST_UP_NEG(x / (-y)); }
+  T mul_down(const T& x, const T& y)
+  { GECODE_BOOST_UP_NEG(x * negate_opaque(y)); }
+  T div_down(const T& x, const T& y)
+  { GECODE_BOOST_UP_NEG(x / negate_opaque(y)); }
   T add_up  (const T& x, const T& y) { GECODE_BOOST_UP(x + y); }
   T sub_up  (const T& x, const T& y) { GECODE_BOOST_UP(x - y); }
   T mul_up  (const T& x, const T& y) { GECODE_BOOST_UP(x * y); }
