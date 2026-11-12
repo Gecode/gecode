@@ -65,7 +65,7 @@ namespace Gecode { namespace Search {
       ax.clear(r(static_cast<unsigned int>(x.size())));
     for (Iter::Values::BitSet<Support::BitSet<Region> > i(ax); i(); ++i)
       if (post(home, x[i.val()], sx[i.val()]) != ES_OK) {
-        home.failed();
+        home.fail();
         return;
       }
   }
