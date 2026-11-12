@@ -94,6 +94,21 @@ public:
         (f[1] >= (b.f[1].max()+step)) ||
         (f[1] <= (b.f[1].min()-step)));
   }
+  /**
+   * \brief Compare with solution \a other
+   *
+   * This model has no objective: constrain only keeps later solutions apart
+   * from earlier ones. A solution counts as better than \a other when it
+   * is far enough from \a other to satisfy constrain, so parallel search keeps
+   * the same kind of solutions as sequential search. This is not an order.
+   */
+  virtual SpaceComparison compare(const Space& _other) const {
+    const CartesianHeart& b = static_cast<const CartesianHeart&>(_other);
+    bool apart = (f[0].min() >= (b.f[0].max()+step)) ||
+      (f[1].min() >= (b.f[1].max()+step)) ||
+      (f[1].max() <= (b.f[1].min()-step));
+    return apart ? SC_BETTER : SC_WORSE;
+  }
   /// Print solution coordinates
   virtual void print(std::ostream& os) const {
     os << "XY " << f[0].med() << " " << f[1].med()
