@@ -1305,6 +1305,33 @@ namespace Test {
       }
     };
 
+    /// Space for relaxing
+    class RelaxSpace : public Gecode::Space {
+    public:
+      RelaxSpace(void) = default;
+      RelaxSpace(RelaxSpace& s) : Gecode::Space(s) {}
+      Gecode::Space* copy(void) override {
+        return new RelaxSpace(*this);
+      }
+    };
+
+    /// Relaxing fails the space when a value cannot be kept
+    class RelaxFailed : public Base {
+    public:
+      RelaxFailed(void) : Base("Search::Relax::Failed") {}
+      bool run(void) override {
+        RelaxSpace s;
+        // The kept value lies in a hole of the domain
+        Gecode::IntVarArgs x(s,2,Gecode::IntSet({0,2}));
+        Gecode::IntVarArgs sx(s,2,1,1);
+        // Probability zero keeps one of the two values
+        Gecode::relax(s,x,sx,Gecode::Rnd(1U),0.0);
+        return s.failed();
+      }
+    };
+
+    RelaxFailed relax_failed;
+
     /// %Test for portfolio-based search
     template<class Model, template<class> class Engine>
     class PBS : public Test {

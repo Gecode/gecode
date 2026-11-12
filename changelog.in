@@ -76,6 +76,17 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fail the space in relax when a variable cannot take its value from the
+solution. The space stayed unfailed, and an integer variable could be left
+assigned without its propagators being notified. Restart-based search with
+relaxation, such as large neighbourhood search with no-goods, could then
+propagate incorrectly or crash.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
