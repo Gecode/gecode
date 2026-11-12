@@ -80,6 +80,12 @@ namespace Gecode { namespace Search {
     /// Initialize with location \a l
     WorkerControlInUse(const char* l);
   };
+  /// %Exception: Incomparable objectives are unsupported by best search
+  class GECODE_SEARCH_EXPORT Incomparable : public Exception {
+  public:
+    /// Initialize with location \a l
+    Incomparable(const char* l);
+  };
 #ifdef GECODE_HAS_EXPERIMENTAL
   /// %Exception: Missing guidance for heuristic search
   class GECODE_SEARCH_EXPORT UninitializedGuidance : public Exception {

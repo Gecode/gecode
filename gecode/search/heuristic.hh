@@ -35,6 +35,7 @@
 #define GECODE_SEARCH_HEURISTIC_HH
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
 #include <algorithm>
 #include <climits>
 #include <memory>
@@ -45,8 +46,8 @@ namespace Gecode { namespace Search {
 
   /// Whether bound \a a is better than bound \a b for objective direction \a s
   forceinline bool
-  better(HeuristicGuidance::Sense s, std::int64_t a, std::int64_t b) {
-    return (s == HeuristicGuidance::MINIMIZE) ? (a < b) : (a > b);
+  better(Sense s, std::int64_t a, std::int64_t b) {
+    return (s == Sense::minimize) ? (a < b) : (a > b);
   }
 
   /// Open node of a heuristic search engine
@@ -70,7 +71,7 @@ namespace Gecode { namespace Search {
   class Priority {
   public:
     /// Objective direction
-    HeuristicGuidance::Sense sense;
+    Sense sense;
     /// Whether to order by rank only (CABS with rank)
     bool rank_only;
     /// Test whether \a a is preferred to \a b
@@ -83,11 +84,16 @@ namespace Gecode { namespace Search {
     }
   };
 
-  /// Best solution found so far
+  /**
+   * \brief Best solution found so far
+   *
+   * Solutions are ranked with Space::compare, like in the other best-solution
+   * engines. The bound of the incumbent prunes open nodes.
+   */
   class Incumbent {
   public:
     /// Objective direction
-    HeuristicGuidance::Sense sense;
+    Sense sense;
     /// The solution (if any)
     std::unique_ptr<Space> space;
     /// Its objective value
@@ -95,11 +101,15 @@ namespace Gecode { namespace Search {
     /// Incremented for every new incumbent
     unsigned long long int revision;
     /// Initialize without incumbent
-    Incumbent(HeuristicGuidance::Sense s)
+    Incumbent(Sense s)
       : sense(s), bound(0), revision(0) {}
     /// Whether a node with bound \a b can improve the incumbent
     bool improves(std::int64_t b) const {
       return !space || better(sense,b,bound);
+    }
+    /// Whether solution \a s should replace the incumbent (location \a l)
+    bool replaced_by(const Space& s, const char* l) const {
+      return !space || Search::better(s,*space,l);
     }
     /// Make \a s with objective value \a b the incumbent
     void update(Space* s, std::int64_t b) {

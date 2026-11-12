@@ -143,7 +143,7 @@ namespace Gecode { namespace Search { namespace Par {
     void push(Task* t);
     /// Stop all workers (must be called by subclass destructors)
     void terminate(void);
-    /// Make \a s with bound \a b the incumbent, if it improves
+    /// Make \a s with bound \a b the incumbent, if it compares better
     void publish(Space* s, std::int64_t b);
     /// Start the threads
     void launch(void);

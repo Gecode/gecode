@@ -46,6 +46,14 @@ namespace Gecode {
     rel(*this, cost(), IRT_LE, best->cost().val());
   }
 
+  SpaceComparison
+  IntMinimizeSpace::compare(const Space& other) const {
+    const IntMinimizeSpace* s = dynamic_cast<const IntMinimizeSpace*>(&other);
+    if (s == nullptr)
+      throw DynamicCastFailed("IntMinimizeSpace::compare");
+    return compare_int(cost().val(),s->cost().val(),Sense::minimize);
+  }
+
 
   void
   IntMaximizeSpace::constrain(const Space& _best) {
@@ -54,6 +62,14 @@ namespace Gecode {
     if (best == nullptr)
       throw DynamicCastFailed("IntMaximizeSpace::constrain");
     rel(*this, cost(), IRT_GR, best->cost().val());
+  }
+
+  SpaceComparison
+  IntMaximizeSpace::compare(const Space& other) const {
+    const IntMaximizeSpace* s = dynamic_cast<const IntMaximizeSpace*>(&other);
+    if (s == nullptr)
+      throw DynamicCastFailed("IntMaximizeSpace::compare");
+    return compare_int(cost().val(),s->cost().val(),Sense::maximize);
   }
 
 
@@ -70,6 +86,23 @@ namespace Gecode {
     rel(*this, cx, IRT_LE, bn);
   }
 
+  SpaceComparison
+  IntLexMinimizeSpace::compare(const Space& other) const {
+    const IntLexMinimizeSpace* s =
+      dynamic_cast<const IntLexMinimizeSpace*>(&other);
+    if (s == nullptr)
+      throw DynamicCastFailed("IntLexMinimizeSpace::compare");
+    IntVarArgs a(cost()), b(s->cost());
+    if (a.size() != b.size())
+      throw MiniModel::ArgumentSizeMismatch("IntLexMinimizeSpace::compare");
+    for (int i=0; i<a.size(); i++) {
+      int av=a[i].val(), bv=b[i].val();
+      if (av != bv)
+        return compare_int(av,bv,Sense::minimize);
+    }
+    return SC_EQUIVALENT;
+  }
+
   void
   IntLexMaximizeSpace::constrain(const Space& _best) {
     const IntLexMaximizeSpace* best =
@@ -81,6 +114,23 @@ namespace Gecode {
     for (int i=bn.size(); i--; )
       bn[i] = bx[i].val();
     rel(*this, cx, IRT_GR, bn);
+  }
+
+  SpaceComparison
+  IntLexMaximizeSpace::compare(const Space& other) const {
+    const IntLexMaximizeSpace* s =
+      dynamic_cast<const IntLexMaximizeSpace*>(&other);
+    if (s == nullptr)
+      throw DynamicCastFailed("IntLexMaximizeSpace::compare");
+    IntVarArgs a(cost()), b(s->cost());
+    if (a.size() != b.size())
+      throw MiniModel::ArgumentSizeMismatch("IntLexMaximizeSpace::compare");
+    for (int i=0; i<a.size(); i++) {
+      int av=a[i].val(), bv=b[i].val();
+      if (av != bv)
+        return compare_int(av,bv,Sense::maximize);
+    }
+    return SC_EQUIVALENT;
   }
 
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -102,6 +152,18 @@ namespace Gecode {
       rel(*this, cost(), FRT_LQ, std::nextafter(n, Float::Limits::min));
   }
 
+  SpaceComparison
+  FloatMinimizeSpace::compare(const Space& other) const {
+    const FloatMinimizeSpace* s =
+      dynamic_cast<const FloatMinimizeSpace*>(&other);
+    if ((s == nullptr) || (step != s->step))
+      throw DynamicCastFailed("FloatMinimizeSpace::compare");
+    FloatNum a=cost().val().max(), b=s->cost().val().max();
+    if (a == b)
+      return SC_EQUIVALENT;
+    return (a < b) ? SC_BETTER : SC_WORSE;
+  }
+
 
   void
   FloatMaximizeSpace::constrain(const Space& _best) {
@@ -116,9 +178,20 @@ namespace Gecode {
       rel(*this, cost(), FRT_GQ, std::nextafter(n, Float::Limits::max));
   }
 
+  SpaceComparison
+  FloatMaximizeSpace::compare(const Space& other) const {
+    const FloatMaximizeSpace* s =
+      dynamic_cast<const FloatMaximizeSpace*>(&other);
+    if ((s == nullptr) || (step != s->step))
+      throw DynamicCastFailed("FloatMaximizeSpace::compare");
+    FloatNum a=cost().val().min(), b=s->cost().val().min();
+    if (a == b)
+      return SC_EQUIVALENT;
+    return (a > b) ? SC_BETTER : SC_WORSE;
+  }
+
 #endif
 
 }
 
 // STATISTICS: minimodel-search
-

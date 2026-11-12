@@ -130,14 +130,9 @@ namespace Gecode { namespace Search { namespace Seq {
   RBS::constrain(const Space& b) {
     if (!best)
       throw NoBest("RBS::constrain");
-    if (last != nullptr) {
-      last->constrain(b);
-      if (last->status() == SS_FAILED) {
-        delete last;
-      } else {
-        return;
-      }
-    }
+    if ((last != nullptr) && !Search::better(b,*last,"RBS::constrain"))
+      return;
+    delete last;
     last = b.clone();
     master->constrain(b);
     e->constrain(b);
