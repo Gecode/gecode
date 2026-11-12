@@ -96,10 +96,11 @@ namespace Gecode { namespace Search { namespace Seq {
   forceinline
   RBS::RBS(Space* s, RestartStop* stop0,
            Engine* e0, const Search::Statistics& stat, const Options& opt,
-           bool best0)
+           bool best0, bool complete0)
     : e(e0), master(s), last(nullptr), co(opt.cutoff), stop(stop0),
       sslr(0),
-      complete(true), restart(false), best(best0) {
+      complete(true), nogoods_valid(complete0), restart(false),
+      best(best0) {
     stop->limit(stat,(*co)());
   }
 

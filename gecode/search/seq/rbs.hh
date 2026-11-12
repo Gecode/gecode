@@ -99,14 +99,26 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned long int sslr;
     /// Whether search for the next solution will be complete
     bool complete;
+    /// Whether the no-goods of the current slave search hold in the master
+    bool nogoods_valid;
     /// Whether a restart must be performed when next is called
     bool restart;
     /// Whether the engine performs best solution search
     bool best;
+    /// Return the no-goods of the last slave search, valid in the master
+    NoGoods& master_nogoods(void);
   public:
-    /// Constructor
+    /**
+     * \brief Constructor
+     *
+     * The value \a complete is the result of the slave configuration of the
+     * space explored by the first engine \a e0. It only determines whether
+     * the no-goods of that search hold in the master: the meta engine treats
+     * the first search as complete.
+     */
     RBS(Space* s, RestartStop* stop0, Engine* e0,
-        const Search::Statistics& stat, const Options& o, bool best);
+        const Search::Statistics& stat, const Options& o, bool best,
+        bool complete);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics

@@ -1305,6 +1305,59 @@ namespace Test {
       }
     };
 
+    /// Space whose first slave search is restricted to x2, x3 in {0,1}
+    class RestrictedFirstSlave : public Gecode::IntMinimizeSpace {
+    public:
+      /// Distinct variables, the cost is x0
+      Gecode::IntVarArray x;
+      RestrictedFirstSlave(void) : x(*this,4,0,3) {
+        Gecode::distinct(*this,x);
+        Gecode::branch(*this,x,Gecode::INT_VAR_NONE(),Gecode::INT_VAL_MIN());
+      }
+      RestrictedFirstSlave(RestrictedFirstSlave& s)
+        : Gecode::IntMinimizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      Gecode::Space* copy(void) override {
+        return new RestrictedFirstSlave(*this);
+      }
+      Gecode::IntVar cost(void) const override {
+        return x[0];
+      }
+      bool slave(const Gecode::MetaInfo& mi) override {
+        if ((mi.type() == Gecode::MetaInfo::RESTART) &&
+            (mi.reason() == Gecode::MetaInfo::RR_INIT)) {
+          Gecode::dom(*this,x[2],0,1);
+          Gecode::dom(*this,x[3],0,1);
+          return false;
+        }
+        return true;
+      }
+    };
+
+    /// No-goods from an incomplete slave search are not posted in the master
+    class RBSIncompleteNoGoods : public Base {
+    public:
+      RBSIncompleteNoGoods(void) : Base("Search::RBS::IncompleteNoGoods") {}
+      bool run(void) override {
+        RestrictedFirstSlave* m = new RestrictedFirstSlave;
+        Gecode::Search::Options o;
+        o.nogoods_limit = 128U;
+        o.cutoff = Gecode::Search::Cutoff::constant(100);
+        Gecode::RBS<RestrictedFirstSlave,Gecode::BAB> rbs(m,o);
+        delete m;
+        // The restricted search finds x0 = 2 and rules out x0 in {0,1}
+        int best = -1;
+        while (RestrictedFirstSlave* s = rbs.next()) {
+          best = s->x[0].val();
+          delete s;
+        }
+        return !rbs.stopped() && (best == 0);
+      }
+    };
+
+    RBSIncompleteNoGoods rbs_incomplete_nogoods;
+
     /// Space for relaxing
     class RelaxSpace : public Gecode::Space {
     public:

@@ -43,11 +43,23 @@ namespace Gecode { namespace Search { namespace Seq {
   GECODE_SEARCH_EXPORT Stop*
   rbsstop(Stop* so);
 
-  /// Create restart engine
+  /// Create restart engine whose first slave search yields valid no-goods
   GECODE_SEARCH_EXPORT Engine*
   rbsengine(Space* master, Stop* stop, Engine* slave,
             const Search::Statistics& stat, const Options& opt,
             bool best);
+
+  /**
+   * \brief Create restart engine
+   *
+   * The value \a complete is the result of the slave configuration of the
+   * space explored by the first engine \a slave. It only determines whether
+   * the no-goods of that search hold in the master.
+   */
+  GECODE_SEARCH_EXPORT Engine*
+  rbsengine(Space* master, Stop* stop, Engine* slave,
+            const Search::Statistics& stat, const Options& opt,
+            bool best, bool complete);
 
 }}}
 
@@ -103,11 +115,11 @@ namespace Gecode {
       std::unique_ptr<Space> master(m_opt.clone ? s->clone() : s);
       std::unique_ptr<Space> slave(master->clone());
       MetaInfo mi(0,MetaInfo::RR_INIT,0,0,nullptr,NoGoods::eng);
-      slave->slave(mi);
+      bool complete = slave->slave(mi);
       std::unique_ptr<Search::Engine> leaf(
         Search::build<T,E>(slave.get(),e_opt));
       e = Search::Seq::rbsengine(master.get(),stop.get(),leaf.get(),
-                                stat,m_opt,E<T>::best);
+                                stat,m_opt,E<T>::best,complete);
       master.release();
       stop.release();
       leaf.release();
