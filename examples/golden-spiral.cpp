@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
   Options opt("GoldenSpiral");
   opt.solutions(0);
   opt.step(0.1);
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   FloatMaximizeScript::run<GoldenSpiral,BAB,Options>(opt);
   return 0;
 }

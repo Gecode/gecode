@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
   Options opt("DescartesFolium");
   opt.solutions(0);
   opt.step(0.1);
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   FloatMaximizeScript::run<DescartesFolium,BAB,Options>(opt);
   return 0;
 }

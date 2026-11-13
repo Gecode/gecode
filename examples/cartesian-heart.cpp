@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
   Options opt("CartesianHeart");
   opt.solutions(0);
   opt.step(0.01);
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   Script::run<CartesianHeart,BAB,Options>(opt);
   return 0;
 }

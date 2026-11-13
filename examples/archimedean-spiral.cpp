@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
   Options opt("ArchimedeanSpiral");
   opt.solutions(0);
   opt.step(0.1);
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   FloatMaximizeScript::run<ArchimedeanSpiral,BAB,Options>(opt);
   return 0;
 }

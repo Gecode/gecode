@@ -104,7 +104,7 @@ int
 main(int argc, char* argv[]) {
   Options opt("Grocery");
   opt.iterations(20);
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   Script::run<Grocery,DFS,Options>(opt);
   return 0;
 }

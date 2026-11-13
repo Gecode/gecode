@@ -112,7 +112,7 @@ main(int argc, char* argv[]) {
   Options opt("Eq20");
   opt.solutions(0);
   opt.iterations(1000);
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   Script::run<Eq20,DFS,Options>(opt);
   return 0;
 }

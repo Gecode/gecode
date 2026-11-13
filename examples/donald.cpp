@@ -122,7 +122,7 @@ main(int argc, char* argv[]) {
   opt.model(Donald::MODEL_CARRY, "carry", "use carry");
   opt.solutions(0);
   opt.iterations(1500);
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   Script::run<Donald,DFS,Options>(opt);
   return 0;
 }

@@ -407,6 +407,10 @@ namespace Gecode {
      * The options are parsed from position one onwards until no more options
      * are detected. After parsing, the parsed arguments have been removed.
      *
+     * Strict parsing will become the default in a future major release.
+     * Use the three-argument overload with \c false to explicitly retain
+     * partial parsing.
+     *
      */
     void parse(int& argc, char* argv[]);
 

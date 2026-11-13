@@ -439,7 +439,7 @@ run(PuzzleOptions& opt) {
 int
 main(int argc, char* argv[]) {
   PuzzleOptions opt;
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   if (opt.mode() == SM_SOLUTION) {
     std::cout << "Initial board (seed " << opt.seed() << "):\n";
     print_board(std::cout,initial_board(opt));

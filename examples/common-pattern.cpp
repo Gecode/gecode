@@ -251,7 +251,7 @@ main(int argc, char* argv[]) {
   opt.search(CommonPattern::SEARCH_DFS);
   opt.search(CommonPattern::SEARCH_BAB,"bab","find a longest pattern");
   opt.search(CommonPattern::SEARCH_DFS,"dfs","enumerate frequent patterns");
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   try {
     opt.read();
   } catch (const std::invalid_argument& error) {

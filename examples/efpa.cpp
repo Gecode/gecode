@@ -68,7 +68,6 @@ public:
     add(_q);
     add(_v);
     add(_permutation);
-    add(_symmetry);
 
     // Add permutation options
     _permutation.add(true,  "full" );
@@ -79,7 +78,7 @@ public:
   }
   /// Parse options from arguments \a argv (number is \a argc)
   void parse(int& argc, char* argv[]) {
-    Options::parse(argc,argv);
+    Options::parse(argc,argv,true);
   }
   /// Get v, number of sequences
   int v(void) const { return _v.value(); }

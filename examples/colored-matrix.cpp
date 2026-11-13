@@ -68,7 +68,7 @@ public:
 
   /// Parse options from arguments \a argv (number is \a argc)
   void parse(int& argc, char* argv[]) {
-    Options::parse(argc,argv);
+    Options::parse(argc,argv,true);
   }
 
   /// Return height

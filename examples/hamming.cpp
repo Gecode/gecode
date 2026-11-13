@@ -136,7 +136,7 @@ public:
 int
 main(int argc, char* argv[]) {
   HammingOptions opt("Hamming",20,3,32);
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   Script::run<Hamming,DFS,HammingOptions>(opt);
   return 0;
 }
