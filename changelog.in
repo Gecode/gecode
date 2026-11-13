@@ -132,6 +132,19 @@ exact product. Propagators could remove solutions, and nroot could throw an
 empty-interval exception. For example, parallel search on the cartesian-heart
 example aborted. Addition and division get the same protection.
 
+[ENTRY]
+Module: float
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Keep the upward rounding mode between float operations also with MSVC on
+x64 and on x86 with SSE, as with all other compilers.  MSVC switched the
+rounding mode for every single operation, because MSVC 2015 and 2017 fused
+the negation in the downward-rounded product and quotient the same way as
+fnmul above.  The opaque negation prevents that, and the float examples run
+two to four times faster with MSVC.  With GCC and clang on x86-64 the opaque
+negation is an empty asm barrier instead of a volatile round trip.
+
 [RELEASE]
 Version: 6.5.0
 Date: 2026-10-31
