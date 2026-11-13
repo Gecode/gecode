@@ -128,23 +128,15 @@ namespace Gecode {
 namespace Gecode { namespace Float {
 
 
-#if defined(_MSC_VER) && (defined(_M_X64) || (defined(_M_IX86_FP) && (_M_IX86_FP > 0)))
-
   /*
-   * This is used for the MSVC compiler for x64 or x86 with SSE enabled.
+   * All compilers, MSVC included, keep upward mode between calls.  The
+   * downward operations negate an operand, which negate_opaque in
+   * rounded_arith.hpp keeps from being folded into the rounded operation.
    *
    */
-  /// Rounding operations with explicit direction changes (MSVC/SSE)
-  typedef gecode_boost::numeric::interval_lib::rounded_arith_std<FloatNum>
-    RoundingControl;
-
-#else
-
   /// Rounding operations that keep upward mode between calls
   typedef gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum>
     RoundingControl;
-
-#endif
 
   /**
    * \brief Floating point rounding operations without state saving

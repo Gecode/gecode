@@ -96,14 +96,22 @@ struct rounded_arith_opp: Rounding {
   // the compiler may fuse the negation into the rounded operation, which is
   // only valid under round-to-nearest.  For example, clang on AArch64 turns
   // x * (-y) into fnmul, which negates after rounding, so mul_down returned
-  // the upward-rounded product.
+  // the upward-rounded product.  MSVC 2015 and 2017 on x64 did the same
+  // for x * (-y) and x / (-y).
   T negate_opaque(const T& x) {
 #if defined(__GNUC__) && defined(__aarch64__)
     // An empty asm hides the value without a memory round trip.
     T r = -x;
     __asm__("" : "+w"(r));
     return r;
+#elif defined(__GNUC__) && defined(__x86_64__)
+    // The same barrier on an SSE register.
+    T r = -x;
+    __asm__("" : "+x"(r));
+    return r;
 #else
+    // Elsewhere, MSVC included (no inline asm on x64), the volatile round
+    // trip is the barrier.
     return this->force_rounding(-x);
 #endif
   }
