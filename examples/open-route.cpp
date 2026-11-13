@@ -121,7 +121,7 @@ main(int argc, char* argv[]) {
                 "Assign the current prefix before extending the route");
   opt.branching(OpenRoute::BRANCH_LENGTH,"length",
                 "Choose the complete route length first");
-  opt.parse(argc,argv,true);
+  opt.parse_strict(argc,argv);
   Script::run<OpenRoute,DFS,Options>(opt);
   return 0;
 }

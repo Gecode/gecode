@@ -408,8 +408,7 @@ namespace Gecode {
      * are detected. After parsing, the parsed arguments have been removed.
      *
      * Strict parsing will become the default in a future major release.
-     * Use the three-argument overload with \c false to explicitly retain
-     * partial parsing.
+     * Use parse_permissive() to explicitly retain partial parsing.
      *
      */
     void parse(int& argc, char* argv[]);
@@ -425,6 +424,11 @@ namespace Gecode {
      * overload.
      */
     void parse(int& argc, char* argv[], bool strict);
+
+    /// Parse options with strict checking (equivalent to parse() with \c true)
+    void parse_strict(int& argc, char* argv[]);
+    /// Parse options partially (equivalent to parse() with \c false)
+    void parse_permissive(int& argc, char* argv[]);
 
     /// Return name of script
     const char* name(void) const;

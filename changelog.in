@@ -81,9 +81,11 @@ What:   new
 Rank:   minor
 Issue:  144
 [DESCRIPTION]
-Options support opt-in strict parsing, which reports unrecognised arguments,
-prints help, and exits with failure. Existing parsing calls retain their
-behaviour. Examples that accept only named options use strict parsing.
+Options support opt-in strict parsing through parse_strict(), which reports
+unrecognised arguments, prints help, and exits with failure. The named methods
+parse_strict() and parse_permissive() select the strictness of parse(). Existing
+parsing calls retain their behaviour. Examples that accept only named options
+use strict parsing.
 Strict parsing will become the default in a future major release.
 
 [ENTRY]

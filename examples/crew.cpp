@@ -180,7 +180,7 @@ int
 main(int argc, char* argv[]) {
   Options o("Crew");
   o.iterations(100);
-  o.parse(argc,argv,true);
+  o.parse_strict(argc,argv);
   Script::run<Crew,DFS,Options>(o);
   return 0;
 }

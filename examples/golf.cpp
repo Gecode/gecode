@@ -234,7 +234,7 @@ main(int argc, char* argv[]) {
   opt.propagation(Golf::PROP_MIXED, "mixed", "Use set intersection cardinality and integer distinct for pair play constraints");
   opt.ipl(IPL_DOM);
   opt.solutions(1);
-  opt.parse(argc,argv,true);
+  opt.parse_strict(argc,argv);
   Script::run<Golf,DFS,GolfOptions>(opt);
   return 0;
 }

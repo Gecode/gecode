@@ -630,7 +630,7 @@ namespace Test { namespace Instance {
     char unknown[] = "--typo", help[] = "--help", positional[] = "instance.txt";
     char* valid_argv[] = {name, iterations, value, nullptr};
     int valid_argc = 3;
-    options.parse(valid_argc, valid_argv, true);
+    options.parse_strict(valid_argc, valid_argv);
     CHECK(valid_argc == 1 && options.iterations() == 200);
 
     // Both the original overload and explicit non-strict parsing leave
@@ -639,7 +639,7 @@ namespace Test { namespace Instance {
     int remaining_argc = 3;
     options.parse(remaining_argc, remaining_argv);
     CHECK(remaining_argc == 3 && remaining_argv[1] == unknown);
-    options.parse(remaining_argc, remaining_argv, false);
+    options.parse_permissive(remaining_argc, remaining_argv);
     CHECK(remaining_argc == 3 && remaining_argv[2] == positional);
 
     HelpOptions strict;
@@ -649,7 +649,7 @@ namespace Test { namespace Instance {
     std::ostringstream output;
     std::streambuf* previous = std::cerr.rdbuf(output.rdbuf());
     try {
-      strict.parse(invalid_argc, invalid_argv, true);
+      strict.parse_strict(invalid_argc, invalid_argv);
     } catch (const HelpOptions::HelpShown&) {
       help_shown = true;
     } catch (...) {
