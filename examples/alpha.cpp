@@ -139,7 +139,7 @@ main(int argc, char* argv[]) {
   opt.branching(Alpha::BRANCH_NONE, "none");
   opt.branching(Alpha::BRANCH_INVERSE, "inverse");
   opt.branching(Alpha::BRANCH_SIZE, "size");
-  opt.parse(argc,argv);
+  opt.parse(argc,argv,true);
   Script::run<Alpha,DFS,Options>(opt);
   return 0;
 }

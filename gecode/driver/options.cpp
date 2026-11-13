@@ -631,6 +631,17 @@ namespace Gecode {
     return;
   }
 
+  void
+  BaseOptions::parse(int& argc, char* argv[], bool strict) {
+    parse(argc,argv);
+    if (strict && (argc > 1)) {
+      std::cerr << "Unrecognised argument \"" << argv[1] << "\""
+                << std::endl;
+      help();
+      exit(EXIT_FAILURE);
+    }
+  }
+
   BaseOptions::~BaseOptions(void) {
     Driver::BaseOption::strdel(_name);
   }

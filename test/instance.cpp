@@ -613,6 +613,56 @@ namespace Test { namespace Instance {
     return true;
   });
 
+  /// Observe help requests without terminating the test runner
+  class HelpOptions : public Gecode::Options {
+  public:
+    struct HelpShown {};
+    HelpOptions(void) : Gecode::Options("Strict parsing test") {}
+    void help(void) override {
+      Gecode::Options::help();
+      throw HelpShown();
+    }
+  };
+
+  Case strict_options("Driver::Options::Strict", [](void) {
+    Gecode::Options options("Test");
+    char name[] = "test", iterations[] = "-iterations", value[] = "200";
+    char unknown[] = "--typo", help[] = "--help", positional[] = "instance.txt";
+    char* valid_argv[] = {name, iterations, value, nullptr};
+    int valid_argc = 3;
+    options.parse(valid_argc, valid_argv, true);
+    CHECK(valid_argc == 1 && options.iterations() == 200);
+
+    // Both the original overload and explicit non-strict parsing leave
+    // arguments for callers to interpret.
+    char* remaining_argv[] = {name, unknown, positional, nullptr};
+    int remaining_argc = 3;
+    options.parse(remaining_argc, remaining_argv);
+    CHECK(remaining_argc == 3 && remaining_argv[1] == unknown);
+    options.parse(remaining_argc, remaining_argv, false);
+    CHECK(remaining_argc == 3 && remaining_argv[2] == positional);
+
+    HelpOptions strict;
+    char* invalid_argv[] = {name, iterations, value, unknown, help, nullptr};
+    int invalid_argc = 5;
+    bool help_shown = false;
+    std::ostringstream output;
+    std::streambuf* previous = std::cerr.rdbuf(output.rdbuf());
+    try {
+      strict.parse(invalid_argc, invalid_argv, true);
+    } catch (const HelpOptions::HelpShown&) {
+      help_shown = true;
+    } catch (...) {
+      std::cerr.rdbuf(previous);
+      throw;
+    }
+    std::cerr.rdbuf(previous);
+    CHECK(help_shown);
+    CHECK(output.str().find("Unrecognised argument \"--typo\"") != std::string::npos);
+    CHECK(output.str().find("Options for Strict parsing test:") != std::string::npos);
+    return true;
+  });
+
   Case options("Driver::InstanceOptions", [](void) {
     // Unique names in the temporary directory
     const char* tmp = std::getenv("TMPDIR");

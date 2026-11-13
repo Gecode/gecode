@@ -76,6 +76,16 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+Issue:  144
+[DESCRIPTION]
+Options support opt-in strict parsing, which reports unrecognised arguments,
+prints help, and exits with failure. Existing parsing calls retain their
+behaviour. The Alpha example uses strict parsing.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   major
