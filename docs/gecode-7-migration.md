@@ -31,10 +31,9 @@ bool hub(const Gecode::MetaInfo& mi) override;
 bool spoke(const Gecode::MetaInfo& mi) override;
 ```
 
-There are no compatibility aliases. Keeping `override` on model hooks makes
-the compiler identify every model that still uses a Gecode 6 signature. A
-`master` or `slave` member declared without `override` still compiles, but
-no search engine calls it.
+There are no compatibility aliases. `Space` declares `master()` and
+`slave()` as deleted, so an old override fails to compile whether or not it
+is marked `override`.
 
 The build-checked
 [Hub and Spoke migration example](../examples/hub-spoke.cpp)

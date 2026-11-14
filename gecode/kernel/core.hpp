@@ -2249,6 +2249,21 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     virtual bool spoke(const MetaInfo& mi);
 
+    /**
+     * \brief Renamed to hub() in Gecode 7
+     *
+     * Deleted so that a Gecode 6 override, with or without
+     * \c override, fails to compile instead of never being called.
+     */
+    virtual bool master(const MetaInfo& mi) = delete;
+    /**
+     * \brief Renamed to spoke() in Gecode 7
+     *
+     * Deleted so that a Gecode 6 override, with or without
+     * \c override, fails to compile instead of never being called.
+     */
+    virtual bool slave(const MetaInfo& mi) = delete;
+
     /*
      * Member functions for search engines
      *
