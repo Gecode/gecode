@@ -1103,8 +1103,10 @@ namespace Gecode { namespace Search {
    * ended without such a proof.
    *
    * A meta engine (restart-based or portfolio search) reports Limit
-   * only for a stop object installed above it, not for its own
-   * cutoffs, slices, or the stop objects of its assets.
+   * for a stop object installed above it, not for its own cutoffs or
+   * slices. A portfolio also reports Limit when the stop objects of
+   * its assets have parked every asset that remains (see PBS), and
+   * calling next() again resumes them.
    *
    * \ingroup TaskModelSearch
    */
@@ -1657,7 +1659,11 @@ namespace Gecode {
      *
      * The stop object of \a o is checked with the statistics of the whole
      * portfolio, the stop object of a builder with the statistics of the
-     * engine it builds.
+     * engine it builds. When the stop object of a builder stops its
+     * engine, that asset is parked while the other assets continue. When
+     * only parked assets remain, end_reason() returns
+     * Search::EndReason::Limit, and the parked assets resume with the
+     * next call to next().
      *
      * The outer options must not contain a worker control. Each builder can
      * instead supply a distinct control for its underlying engine.

@@ -47,7 +47,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   forceinline
   Asset::Asset(void)
-    : engine(nullptr), stop(nullptr) {}
+    : engine(nullptr), stop(nullptr), _parked(false) {}
   forceinline void
   Asset::init(Engine* e, Stop* so) {
     engine = e; stop = so;
@@ -68,8 +68,19 @@ namespace Gecode { namespace Search { namespace Seq {
   Asset::constrain(const Space& b) {
     engine->constrain(b);
   }
-  forceinline
-  Asset::~Asset(void) {
+  forceinline void
+  Asset::park(void) {
+    _parked = true;
+  }
+  forceinline void
+  Asset::resume(void) {
+    _parked = false;
+  }
+  forceinline bool
+  Asset::parked(void) const {
+    return _parked;
+  }
+  forceinline Asset::~Asset(void) {
     delete engine;
     delete stop;
   }
@@ -83,7 +94,7 @@ namespace Gecode { namespace Search { namespace Seq {
     : stat(stat0), slice(opt.slice),
       assets(heap.alloc<Asset>(n)), n_assets(n), cur(0),
       end(EndReason::NotEnded) {
-    ssi.done = false;
+    ssi.cause = PortfolioStopCause::None;
     ssi.l = opt.slice;
 
     for (unsigned int i=0U; i<n; i++) {
@@ -98,9 +109,19 @@ namespace Gecode { namespace Search { namespace Seq {
     // An asset has proven that no further solution exists
     if (end == EndReason::Exhausted)
       return nullptr;
-    unsigned int n_exhausted = 0;
+    // Resume the assets that their own stop objects stopped
+    for (unsigned int i=0U; i<n_assets; i++)
+      assets[i].resume();
+    // Number of assets that used up their slice or are parked
+    unsigned int n_sliced = 0;
+    unsigned int n_parked = 0;
     while (n_assets > 0) {
-      ssi.done = false;
+      if (assets[cur].parked()) {
+        if (++cur == n_assets)
+          cur = 0;
+        continue;
+      }
+      ssi.cause = PortfolioStopCause::None;
       ssi.others = stat;
       for (unsigned int i=0U; i<n_assets; i++)
         if (i != cur)
@@ -123,12 +144,17 @@ namespace Gecode { namespace Search { namespace Seq {
       }
       EndReason asset_end = assets[cur].end_reason();
       if (asset_end == EndReason::Limit) {
-        if (ssi.done) {
-          cur++; n_exhausted++;
-        } else {
+        if (ssi.cause == PortfolioStopCause::Slice) {
+          n_sliced++;
+        } else if (ssi.cause == PortfolioStopCause::Portfolio) {
           end = EndReason::Limit;
           return nullptr;
+        } else {
+          // The stop object of the asset stopped it, the others continue
+          assets[cur].park();
+          n_parked++;
         }
+        cur++;
       } else if (pbs_asset_proof(asset_end)) {
         end = EndReason::Exhausted;
         return nullptr;
@@ -141,13 +167,18 @@ namespace Gecode { namespace Search { namespace Seq {
           // Disable stopping by setting a high limit
           ssi.l = ULONG_MAX;
       }
-      if (n_exhausted == n_assets) {
-        n_exhausted = 0;
+      if (cur == n_assets)
+        cur = 0;
+      if ((n_assets > 0) && (n_parked == n_assets)) {
+        // Only parked assets remain, they resume with the next call
+        end = EndReason::Limit;
+        return nullptr;
+      }
+      if (n_sliced + n_parked == n_assets) {
+        n_sliced = 0;
         // Increment by one slice
         ssi.l += slice;
       }
-      if (cur == n_assets)
-        cur = 0;
     }
     // All assets ended without a proof
     end = EndReason::Incomplete;

@@ -91,6 +91,8 @@ namespace Gecode { namespace Search { namespace Par {
     PortfolioStatistics* ps;
     /// Index of the asset
     unsigned int asset;
+    /// Which stop object stopped the asset
+    std::atomic<PortfolioStopCause> _cause;
   public:
     /// Initialize with asset stop \a so, portfolio stop \a po, and \a control
     PortfolioStop(Stop* so, Stop* po, const WorkerControl& control);
@@ -101,6 +103,10 @@ namespace Gecode { namespace Search { namespace Par {
     virtual bool stop(const Statistics& s, const Options& o);
     /// Wake workers so that a paused asset can observe the portfolio stop
     void wake(void);
+    /// Forget which stop object stopped the asset
+    void reset(void);
+    /// Return which stop object stopped the asset
+    PortfolioStopCause cause(void) const;
     /// Signal whether search must be stopped
     void stop(bool s);
     /// Whether search must be stopped
@@ -134,6 +140,8 @@ namespace Gecode { namespace Search { namespace Par {
     Engine* engine;
     /// Stop object
     Stop* stop;
+    /// Whether the stop object of the asset stopped it during the current call to next()
+    bool _parked;
   public:
     /// Initialize with portfolio \a p, engine \a e, and its stop object \a so
     Asset(PBS<Collect>* p, Engine* e, Stop* so);
@@ -149,6 +157,12 @@ namespace Gecode { namespace Search { namespace Par {
     void wake(void);
     /// Constrain with better solution \a b
     void constrain(const Space& b);
+    /// Return which stop object stopped the asset
+    PortfolioStopCause cause(void) const;
+    /// Set whether the asset is parked
+    void parked(bool p);
+    /// Whether the asset is parked
+    bool parked(void) const;
     /// Perform one run
     virtual void run(void);
     /// Delete asset
@@ -216,8 +230,8 @@ namespace Gecode { namespace Search { namespace Par {
     unsigned int n_assets;
     /// Number of active asset engines
     unsigned int n_active;
-    /// Whether an asset has been stopped
-    std::atomic<bool> asset_stop;
+    /// Whether the stop object of the portfolio has stopped an asset
+    std::atomic<bool> portfolio_stop;
     /// Whether an asset has proven that no further solution exists
     bool exhausted;
     /// Why the last call to next() returned no solution
@@ -243,7 +257,8 @@ namespace Gecode { namespace Search { namespace Par {
      *  - n_busy is always zero outside the next() function.
      *  - that entails, that locking is only needed inside next().
      *  - the assets 0..n_active-1 still might not have exhausted their
-     *    search space.
+     *    search space, the parked ones among them are not run until the
+     *    next call to next().
      *  - the assets n_active..n_assets-1 have ended without a proof.
      */
   public:
