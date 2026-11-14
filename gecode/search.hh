@@ -1460,10 +1460,9 @@ namespace Gecode {
    * and
    * \code virtual bool spoke(const MetaInfo& mi) \endcode
    *
-   * Whenever exploration restarts or a solution is found, the
-   * engine executes the functions on the hub and spoke
-   * spaces. For more details, consult "Modeling and Programming
-   * with Gecode".
+   * The engine calls hub() on its hub after solutions and at restarts,
+   * and spoke() on each spoke it clones from the hub. See Space::hub()
+   * and Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1488,10 +1487,9 @@ namespace Gecode {
    * and
    * \code virtual bool spoke(const MetaInfo& mi) \endcode
    *
-   * Whenever exploration restarts or a solution is found, the
-   * engine executes the functions on the hub and spoke
-   * spaces. For more details, consult "Modeling and Programming
-   * with Gecode".
+   * The engine calls hub() on its hub after solutions and at restarts,
+   * and spoke() on each spoke it clones from the hub. See Space::hub()
+   * and Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1556,8 +1554,9 @@ namespace Gecode {
    * and
    * \code virtual bool spoke(const MetaInfo& mi) \endcode
    *
-   * When the assets are created, these functions are executed.
-   * For more details, consult "Modeling and Programming with Gecode".
+   * The engine calls hub() once on its hub and then spoke() on the
+   * spoke of each asset. See Space::hub() and Space::spoke() for
+   * details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1605,8 +1604,9 @@ namespace Gecode {
    * and
    * \code virtual bool spoke(const MetaInfo& mi) \endcode
    *
-   * When the assets are created, these functions are executed.
-   * For more details, consult "Modeling and Programming with Gecode".
+   * The engine calls hub() once on its hub and then spoke() on the
+   * spoke of each asset. See Space::hub() and Space::spoke() for
+   * details.
    *
    * \ingroup TaskModelSearch
    */
