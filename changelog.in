@@ -78,6 +78,13 @@ This is the development changelog for the next Gecode release.
 [ENTRY]
 Module: search
 What:   change
+Rank:   minor
+[DESCRIPTION]
+Report limited discrepancy search at its discrepancy limit as incomplete.
+
+[ENTRY]
+Module: search
+What:   change
 Rank:   major
 [DESCRIPTION]
 Replace stopped() of search engines by end_reason().

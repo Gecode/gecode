@@ -303,8 +303,13 @@ namespace Gecode { namespace Search { namespace Seq {
         end = EndReason::Limit;
         break;
       }
-      if ((++d > opt.d_l) || e.done()) {
+      if (e.done()) {
         end = EndReason::Exhausted;
+        break;
+      }
+      // Choices with more discrepancies than the limit were not explored
+      if (++d > opt.d_l) {
+        end = EndReason::Incomplete;
         break;
       }
       if (d == opt.d_l) {

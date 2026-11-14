@@ -1115,8 +1115,8 @@ namespace Gecode { namespace Search {
     Exhausted,
     /**
      * Search finished without exhausting its search space, for example
-     * at the width limit of CABS. There may be further solutions, but
-     * calling next() again finds none.
+     * at the discrepancy limit of LDS or the width limit of CABS. There
+     * may be further solutions, but calling next() again finds none.
      */
     Incomplete,
     /// A stop object stopped search, calling next() again resumes it
@@ -1472,13 +1472,9 @@ namespace Gecode {
    * Search::Options::d_l discrepancies, allowing more discrepancies in each
    * iteration, starting from none.
    *
-   * When next() returns nullptr and end_reason() returns
-   * Search::EndReason::Exhausted, either the search tree has been explored
-   * completely, or the discrepancy limit has been reached while parts of
-   * the tree are still unexplored. The engine
-   * does not report which: a search that finds no (further) solution only
-   * proves that none exists if no path of the tree has more discrepancies
-   * than the limit.
+   * When the search tree has choices that need more discrepancies than
+   * the limit in Search::Options::d_l, end_reason() returns
+   * Search::EndReason::Incomplete once the search ends.
    *
    * \ingroup TaskModelSearch
    */
