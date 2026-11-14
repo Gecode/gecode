@@ -28,20 +28,25 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
+ *  This file must compile: it overrides the Gecode 7 meta-search hooks
+ *  hub() and spoke(). The files hub-spoke-api-fail-master.cpp and
+ *  hub-spoke-api-fail-slave.cpp differ from it only in this comment and
+ *  in one hook.
+ *
  */
 
 #include <gecode/kernel.hh>
 
 namespace Test { namespace Search {
 
-  /// Compile-pass fixture for the Gecode 7 meta-search hooks
-  class HubSpokeApiPass : public Gecode::Space {
+  /// Space overriding the meta-search hooks
+  class HookSpace : public Gecode::Space {
   public:
-    HubSpokeApiPass(void) {}
-    HubSpokeApiPass(HubSpokeApiPass& s) : Gecode::Space(s) {}
+    HookSpace(void) {}
+    HookSpace(HookSpace& s) : Gecode::Space(s) {}
     Gecode::Space*
     copy(void) override {
-      return new HubSpokeApiPass(*this);
+      return new HookSpace(*this);
     }
     bool
     hub(const Gecode::MetaInfo&) override {

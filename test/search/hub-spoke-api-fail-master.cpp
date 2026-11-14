@@ -28,31 +28,37 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- *  This file must not compile: it overrides the Gecode 6 meta-search
- *  hooks that Gecode 7 renamed to hub() and spoke() and deletes in
- *  Space. Successful compilation means that an old override would
- *  again compile and silently never be called.
+ *  This file must not compile: it is hub-spoke-api-pass.cpp with the
+ *  hub() override replaced by a Gecode 6 master() override without
+ *  override. Space deletes master(), and a non-deleted function cannot
+ *  override a deleted one. Successful compilation means that an old
+ *  override would again compile and silently never be called.
  *
  */
 
 #include <gecode/kernel.hh>
 
-class HubSpokeApiFail : public Gecode::Space {
-public:
-  HubSpokeApiFail(void) {}
-  HubSpokeApiFail(HubSpokeApiFail& s) : Gecode::Space(s) {}
-  Gecode::Space*
-  copy(void) override {
-    return new HubSpokeApiFail(*this);
-  }
-  virtual bool
-  slave(const Gecode::MetaInfo&) {
-    return true;
-  }
-  bool
-  master(const Gecode::MetaInfo&) override {
-    return true;
-  }
-};
+namespace Test { namespace Search {
+
+  /// Space overriding the meta-search hooks
+  class HookSpace : public Gecode::Space {
+  public:
+    HookSpace(void) {}
+    HookSpace(HookSpace& s) : Gecode::Space(s) {}
+    Gecode::Space*
+    copy(void) override {
+      return new HookSpace(*this);
+    }
+    bool
+    master(const Gecode::MetaInfo&) {
+      return true;
+    }
+    bool
+    spoke(const Gecode::MetaInfo&) override {
+      return true;
+    }
+  };
+
+}} // namespace Test::Search
 
 // STATISTICS: test-search
