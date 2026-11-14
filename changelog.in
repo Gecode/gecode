@@ -99,6 +99,17 @@ command-line options.
 [ENTRY]
 Module: search
 What:   bug
+Rank:   minor
+[DESCRIPTION]
+Do not report restart-based search as stopped when the master fails at a
+restart.
+[MORE]
+Failing the master, for example by posting no-goods, proves that no further
+solution exists. FlatZinc reported an unknown result instead.
+
+[ENTRY]
+Module: search
+What:   bug
 Rank:   major
 [DESCRIPTION]
 Do not post no-goods from an incomplete slave search in the master of
