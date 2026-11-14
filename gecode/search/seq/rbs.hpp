@@ -98,9 +98,9 @@ namespace Gecode { namespace Search { namespace Seq {
            Engine* e0, const Search::Statistics& stat, const Options& opt,
            bool best0, bool complete0)
     : e(e0), master(s), last(nullptr), co(opt.cutoff), stop(stop0),
-      sslr(0),
+      m_opt(opt.expand()), sslr(0),
       complete(true), nogoods_valid(complete0), restart(false),
-      best(best0) {
+      best(best0), m_stopped(false) {
     stop->limit(stat,(*co)());
   }
 

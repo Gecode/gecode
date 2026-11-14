@@ -1415,6 +1415,76 @@ namespace Test {
 
     RBSFailedMaster rbs_failed_master;
 
+    /// Space without solutions whose restricted slaves fail at the root
+    class FailingSlave : public Gecode::IntMinimizeSpace {
+    public:
+      /// Four variables that must be distinct with three values
+      Gecode::IntVarArray x;
+      FailingSlave(void) : x(*this,4,0,2) {
+        for (int i=0; i<x.size(); i++)
+          for (int j=i+1; j<x.size(); j++)
+            Gecode::rel(*this,x[i],Gecode::IRT_NQ,x[j]);
+        Gecode::branch(*this,x,Gecode::INT_VAR_NONE(),Gecode::INT_VAL_MIN());
+      }
+      FailingSlave(FailingSlave& s) : Gecode::IntMinimizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      Gecode::Space* copy(void) override {
+        return new FailingSlave(*this);
+      }
+      Gecode::IntVar cost(void) const override {
+        return x[0];
+      }
+      bool slave(const Gecode::MetaInfo& mi) override {
+        if ((mi.type() == Gecode::MetaInfo::RESTART) && (mi.restart() > 0)) {
+          fail();
+          return false;
+        }
+        return true;
+      }
+    };
+
+    /// Stop after five failures, or after many checks as a safeguard
+    class FiveFailures : public Gecode::Search::Stop {
+    public:
+      /// Number of checks
+      unsigned long int checks = 0;
+      bool stop(const Gecode::Search::Statistics& s,
+                const Gecode::Search::Options&) override {
+        return (s.fail >= 5) || (++checks > 1000);
+      }
+    };
+
+    /// Slave searches failing at the root count as failures
+    class RBSRootFailure : public Base {
+      template<template<class> class Engine>
+      static bool test(unsigned int threads) {
+        FailingSlave* m = new FailingSlave;
+        FiveFailures f;
+        Gecode::Search::Options o;
+        o.threads = threads;
+        o.stop = &f;
+        o.cutoff = Gecode::Search::Cutoff::constant(1);
+        Gecode::RBS<FailingSlave,Engine> rbs(m,o);
+        delete m;
+        if (FailingSlave* s = rbs.next()) {
+          delete s;
+          return false;
+        }
+        return rbs.stopped() && (f.checks <= 1000) &&
+          (rbs.statistics().fail >= 5);
+      }
+    public:
+      RBSRootFailure(void) : Base("Search::RBS::RootFailure") {}
+      bool run(void) override {
+        return test<Gecode::DFS>(1U) && test<Gecode::DFS>(2U) &&
+          test<Gecode::BAB>(1U) && test<Gecode::BAB>(2U) &&
+          test<Gecode::LDS>(1U);
+      }
+    };
+
+    RBSRootFailure rbs_root_failure;
+
     /// Space for relaxing
     class RelaxSpace : public Gecode::Space {
     public:

@@ -58,6 +58,12 @@ namespace Gecode { namespace Search { namespace Seq {
     return false;
   }
 
+  bool
+  RestartStop::meta_stop(const Statistics& s, const Options& o) {
+    Support::Lock lock(m);
+    return (m_stop != nullptr) && m_stop->stop(m_stat+s,o);
+  }
+
   NoGoods&
   RBS::master_nogoods(void) {
     // The no-goods of an incomplete slave search only hold in its restricted
@@ -75,6 +81,7 @@ namespace Gecode { namespace Search { namespace Seq {
     // A failed master proves that no further solution exists
     if (master == nullptr)
       return nullptr;
+    m_stopped = false;
     if (restart) {
       restart = false;
       sslr++;
@@ -111,8 +118,18 @@ namespace Gecode { namespace Search { namespace Seq {
                   (e->stopped() && stop->enginestopped()) ) {
         // The engine must perform a true restart
         // The number of the restart has been incremented in the stop object
-        if (!complete && !e->stopped())
+        if (!complete && !e->stopped()) {
+          /*
+           * The engine might not have checked its stop object, for example
+           * when the slave failed at the root or a parallel engine had no
+           * work. Without this check, the restarts might never stop.
+           */
+          if (stop->meta_stop(e->statistics(),m_opt)) {
+            m_stopped = true;
+            return nullptr;
+          }
           stop->restart();
+        }
         sslr = 0;
         NoGoods& ng = master_nogoods();
         MetaInfo mi(stop->restarts(),e->stopped() ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
@@ -176,7 +193,7 @@ namespace Gecode { namespace Search { namespace Seq {
      * The engine may still report a stop when the master failed during a
      * restart after a limit. A failed master is a proof, not a stop.
      */
-    return (master != nullptr) && e->stopped();
+    return (master != nullptr) && (m_stopped || e->stopped());
   }
 
   RBS::~RBS(void) {

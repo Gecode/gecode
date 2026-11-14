@@ -64,6 +64,8 @@ namespace Gecode { namespace Search { namespace Seq {
     RestartStop(Stop* s);
     /// Return true if meta engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
+    /// Return true if the stop object for the meta engine says so
+    bool meta_stop(const Statistics& s, const Options& o);
     /// Return current restart count
     unsigned long int restarts(void) const;
     /// Increment current restart count
@@ -95,6 +97,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Cutoff* co;
     /// The stop control object
     RestartStop* stop;
+    /// The options for the stop object of the meta engine
+    Options m_opt;
     /// How many solutions since the last restart
     unsigned long int sslr;
     /// Whether search for the next solution will be complete
@@ -105,6 +109,8 @@ namespace Gecode { namespace Search { namespace Seq {
     bool restart;
     /// Whether the engine performs best solution search
     bool best;
+    /// Whether the stop object for the meta engine stopped a restart
+    bool m_stopped;
     /// Return the no-goods of the last slave search, valid in the master
     NoGoods& master_nogoods(void);
   public:

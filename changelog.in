@@ -101,6 +101,19 @@ Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Count a failed root as a failure when a search engine is reset.
+[MORE]
+Restart-based search resets its engine at every restart, so failure limits
+did not advance when the slave space failed right away, as it can in large
+neighbourhood search. Restart-based search now also checks its stop object
+before restarting after an incomplete slave search, so a parallel engine
+cannot restart forever.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Do not report restart-based search as stopped when the master fails at a
 restart.
 [MORE]

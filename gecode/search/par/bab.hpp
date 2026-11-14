@@ -62,13 +62,17 @@ namespace Gecode { namespace Search { namespace Par {
     d = 0;
     mark = 0;
     idle = false;
-    if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
+    // Reset the statistics first, so that a failed root is counted
+    Search::Worker::reset();
+    if (s == nullptr) {
+      cur = nullptr;
+    } else if (s->status(*this) == SS_FAILED) {
+      fail++;
       delete s;
       cur = nullptr;
     } else {
       cur = s;
     }
-    Search::Worker::reset();
   }
 
   template<class Tracer>
