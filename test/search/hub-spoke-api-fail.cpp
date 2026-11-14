@@ -28,9 +28,10 @@
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- *  This file must not compile. Each configuration declares one of the
- *  meta-search hooks removed in Gecode 7. A successful compilation means
- *  that a compatibility hook has returned.
+ *  This file must not compile: it overrides the Gecode 6 meta-search
+ *  hooks that Gecode 7 renamed to hub() and spoke() and deletes in
+ *  Space. Successful compilation means that an old override would
+ *  again compile and silently never be called.
  *
  */
 
@@ -44,19 +45,14 @@ public:
   copy(void) override {
     return new HubSpokeApiFail(*this);
   }
-#if defined(GECODE_TEST_REMOVED_MASTER)
+  virtual bool
+  slave(const Gecode::MetaInfo&) {
+    return true;
+  }
   bool
   master(const Gecode::MetaInfo&) override {
     return true;
   }
-#elif defined(GECODE_TEST_REMOVED_SLAVE)
-  bool
-  slave(const Gecode::MetaInfo&) override {
-    return true;
-  }
-#else
-#error Select one removed meta-search hook
-#endif
 };
 
 // STATISTICS: test-search

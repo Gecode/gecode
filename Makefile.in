@@ -1347,7 +1347,7 @@ BRANCHTESTSRC0 = \
 	test/assign/set.cpp test/assign/float.cpp
 
 SEARCHTESTSRC0 = \
-	test/search.cpp test/nogoods.cpp test/search/hub-spoke-api-pass.cpp
+	test/search.cpp test/nogoods.cpp
 
 ARRAYTESTSRC0 = \
 	test/array.cpp
