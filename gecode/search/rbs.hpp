@@ -45,7 +45,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   /// Create restart engine whose first spoke search yields valid no-goods
   GECODE_SEARCH_EXPORT Engine*
-  rbsengine(Space* hub, Stop* stop, Engine* spoke,
+  rbsengine(Space* hub, Stop* stop, Engine* engine,
             const Search::Statistics& stat, const Options& opt,
             bool best);
 
@@ -53,11 +53,11 @@ namespace Gecode { namespace Search { namespace Seq {
    * \brief Create restart engine
    *
    * The value \a complete is the result of the spoke configuration of the
-   * space explored by the first engine \a spoke. It only determines whether
+   * space explored by the first \a engine. It only determines whether
    * the no-goods of that search hold in the hub.
    */
   GECODE_SEARCH_EXPORT Engine*
-  rbsengine(Space* hub, Stop* stop, Engine* spoke,
+  rbsengine(Space* hub, Stop* stop, Engine* engine,
             const Search::Statistics& stat, const Options& opt,
             bool best, bool complete);
 
