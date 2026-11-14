@@ -632,6 +632,15 @@ namespace Gecode {
    *
    */
   inline void
+  SizeOptions::parse_strict(int& argc, char* argv[]) {
+    parse(argc,argv,true);
+  }
+  inline void
+  SizeOptions::parse_permissive(int& argc, char* argv[]) {
+    parse(argc,argv,false);
+  }
+
+  inline void
   SizeOptions::size(unsigned int s) {
     _size = s;
   }
@@ -644,6 +653,15 @@ namespace Gecode {
    * Options with additional string argument
    *
    */
+  inline void
+  InstanceOptions::parse_strict(int& argc, char* argv[]) {
+    parse(argc,argv,true);
+  }
+  inline void
+  InstanceOptions::parse_permissive(int& argc, char* argv[]) {
+    parse(argc,argv,false);
+  }
+
   inline const char*
   InstanceOptions::instance(void) const {
     return _inst;

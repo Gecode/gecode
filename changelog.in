@@ -98,8 +98,10 @@ Issue:  144
 Options support opt-in strict parsing through parse_strict(), which reports
 unrecognised arguments, prints help, and exits with failure. The named methods
 parse_strict() and parse_permissive() select the strictness of parse(). Existing
-parsing calls retain their behaviour. Examples that accept only named options
-use strict parsing.
+parsing calls retain their behaviour. SizeOptions and InstanceOptions accept
+their size or instance as the only remaining argument; with SizeOptions it must
+be a number, and with InstanceOptions it must not start with a hyphen. Examples
+that accept only named options use strict parsing.
 Strict parsing will become the default in a future major release.
 
 [ENTRY]

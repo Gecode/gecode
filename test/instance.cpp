@@ -40,9 +40,11 @@
 #include <climits>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <functional>
 #include <sstream>
+#include <string>
 
 namespace Test { namespace Instance {
 
@@ -613,16 +615,41 @@ namespace Test { namespace Instance {
     return true;
   });
 
-  /// Observe help requests without terminating the test runner
-  class HelpOptions : public Gecode::Options {
+  /// Signals that help was shown
+  struct HelpShown {};
+
+  /// Observe help requests of options \a Opt without terminating the test runner
+  template<class Opt>
+  class HelpOptions : public Opt {
   public:
-    struct HelpShown {};
-    HelpOptions(void) : Gecode::Options("Strict parsing test") {}
+    HelpOptions(void) : Opt("Strict parsing test") {}
     void help(void) override {
-      Gecode::Options::help();
+      Opt::help();
       throw HelpShown();
     }
   };
+
+  /// Test whether strict parsing of \a argv rejects argument \a arg
+  template<class Opt>
+  bool rejects(HelpOptions<Opt>& options, int argc, char* argv[],
+               const char* arg) {
+    bool help_shown = false;
+    std::ostringstream output;
+    std::streambuf* previous = std::cerr.rdbuf(output.rdbuf());
+    try {
+      options.parse_strict(argc, argv);
+    } catch (const HelpShown&) {
+      help_shown = true;
+    } catch (...) {
+      std::cerr.rdbuf(previous);
+      throw;
+    }
+    std::cerr.rdbuf(previous);
+    std::string expected = std::string("Unrecognised argument \"") + arg + "\"";
+    return help_shown &&
+      (output.str().find(expected) != std::string::npos) &&
+      (output.str().find("Options for Strict parsing test:") != std::string::npos);
+  }
 
   Case strict_options("Driver::Options::Strict", [](void) {
     Gecode::Options options("Test");
@@ -642,24 +669,67 @@ namespace Test { namespace Instance {
     options.parse_permissive(remaining_argc, remaining_argv);
     CHECK(remaining_argc == 3 && remaining_argv[2] == positional);
 
-    HelpOptions strict;
+    HelpOptions<Gecode::Options> strict;
     char* invalid_argv[] = {name, iterations, value, unknown, help, nullptr};
-    int invalid_argc = 5;
-    bool help_shown = false;
-    std::ostringstream output;
-    std::streambuf* previous = std::cerr.rdbuf(output.rdbuf());
-    try {
-      strict.parse_strict(invalid_argc, invalid_argv);
-    } catch (const HelpOptions::HelpShown&) {
-      help_shown = true;
-    } catch (...) {
-      std::cerr.rdbuf(previous);
-      throw;
-    }
-    std::cerr.rdbuf(previous);
-    CHECK(help_shown);
-    CHECK(output.str().find("Unrecognised argument \"--typo\"") != std::string::npos);
-    CHECK(output.str().find("Options for Strict parsing test:") != std::string::npos);
+    CHECK(rejects(strict, 5, invalid_argv, "--typo"));
+    char* positional_argv[] = {name, positional, nullptr};
+    CHECK(rejects(strict, 2, positional_argv, "instance.txt"));
+    return true;
+  });
+
+  Case strict_size_options("Driver::SizeOptions::Strict", [](void) {
+    char name[] = "test", iterations[] = "-iterations", value[] = "200";
+    char size[] = "7", other[] = "8", unknown[] = "--typo", word[] = "seven";
+
+    // The size is the only argument that may remain
+    HelpOptions<Gecode::SizeOptions> options;
+    char* valid_argv[] = {name, iterations, value, size, nullptr};
+    int valid_argc = 4;
+    options.parse_strict(valid_argc, valid_argv);
+    CHECK(options.size() == 7 && options.iterations() == 200);
+    char* options_argv[] = {name, iterations, value, nullptr};
+    int options_argc = 3;
+    options.parse_strict(options_argc, options_argv);
+    CHECK(options_argc == 1 && options.size() == 7);
+
+    char* unknown_argv[] = {name, unknown, size, nullptr};
+    CHECK(rejects(options, 3, unknown_argv, "--typo"));
+    char* extra_argv[] = {name, size, other, nullptr};
+    CHECK(rejects(options, 3, extra_argv, "8"));
+    char* word_argv[] = {name, word, nullptr};
+    CHECK(rejects(options, 2, word_argv, "seven"));
+
+    // Permissive parsing still reads the size and keeps the rest
+    char* permissive_argv[] = {name, other, size, nullptr};
+    int permissive_argc = 3;
+    options.parse_permissive(permissive_argc, permissive_argv);
+    CHECK(permissive_argc == 3 && options.size() == 8);
+    return true;
+  });
+
+  Case strict_instance_options("Driver::InstanceOptions::Strict", [](void) {
+    char name[] = "test", iterations[] = "-iterations", value[] = "200";
+    char inst[] = "instance.txt", other[] = "other.txt", unknown[] = "--typo";
+
+    // The instance is the only argument that may remain
+    HelpOptions<Gecode::InstanceOptions> options;
+    char* valid_argv[] = {name, iterations, value, inst, nullptr};
+    int valid_argc = 4;
+    options.parse_strict(valid_argc, valid_argv);
+    CHECK(std::strcmp(options.instance(), "instance.txt") == 0 &&
+          options.iterations() == 200);
+
+    char* unknown_argv[] = {name, unknown, inst, nullptr};
+    CHECK(rejects(options, 3, unknown_argv, "--typo"));
+    char* extra_argv[] = {name, inst, other, nullptr};
+    CHECK(rejects(options, 3, extra_argv, "other.txt"));
+
+    // Permissive parsing takes the first remaining argument as instance
+    char* permissive_argv[] = {name, other, inst, nullptr};
+    int permissive_argc = 3;
+    options.parse_permissive(permissive_argc, permissive_argv);
+    CHECK(permissive_argc == 3 &&
+          std::strcmp(options.instance(), "other.txt") == 0);
     return true;
   });
 
