@@ -1551,6 +1551,9 @@ namespace Gecode {
     /**
      * Initialize with engine builders \a sebs
      *
+     * The stop object of \a o is checked for each builder's engine with the
+     * statistics of that engine, as is the stop object of the builder.
+     *
      * The outer options must not contain a worker control. Each builder can
      * instead supply a distinct control for its underlying engine.
      * In parallel PBS, the outer thread count limits how many builders run,

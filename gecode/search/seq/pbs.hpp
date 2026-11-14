@@ -37,8 +37,8 @@ namespace Gecode { namespace Search { namespace Seq {
 
 
   forceinline
-  PortfolioStop::PortfolioStop(Stop* so0)
-    : so(so0) {}
+  PortfolioStop::PortfolioStop(Stop* so0, Stop* po0)
+    : so(so0), po(po0) {}
   forceinline void
   PortfolioStop::share(SharedStopInfo* ssi0) {
     ssi = ssi0;

@@ -52,11 +52,13 @@ namespace Gecode { namespace Search { namespace Seq {
   private:
     /// The stop object for the slaves
     Stop* so;
+    /// The stop object for the portfolio (possibly nullptr)
+    Stop* po;
     /// Pointer to shared stop information
     SharedStopInfo* ssi;
   public:
-    /// Initialize
-    PortfolioStop(Stop* so);
+    /// Initialize with slave stop \a so and portfolio stop \a po
+    PortfolioStop(Stop* so, Stop* po=nullptr);
     /// Initialize shared stop information
     void share(SharedStopInfo* ssi);
     /// Return true if portfolio engine must be stopped

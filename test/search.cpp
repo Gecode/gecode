@@ -1378,6 +1378,12 @@ namespace Test {
       Gecode::IntVar cost(void) const override {
         return x[0];
       }
+      bool master(const Gecode::MetaInfo& mi) override {
+        // Keep the branchers for the assets of a portfolio
+        if (mi.type() == Gecode::MetaInfo::PORTFOLIO)
+          return true;
+        return Gecode::IntMinimizeSpace::master(mi);
+      }
     };
 
     /// Space without solutions whose master fails at a restart after a limit
@@ -1705,6 +1711,36 @@ namespace Test {
         }
       }
     };
+
+    /// The stop object of a portfolio built from builders stops the builders
+    class PBSBuilderStop : public Base {
+      /// Function returning an engine builder
+      typedef Gecode::SEB (*Builder)(const Gecode::Search::Options&);
+      template<template<class> class Engine>
+      static bool test(unsigned int threads, Builder builder) {
+        NoSolution root;
+        FailureLimit l(1);
+        Gecode::Search::Options o;
+        o.threads = threads;
+        o.stop = &l;
+        Gecode::SEBs sebs(2);
+        sebs[0] = builder(Gecode::Search::Options::def);
+        sebs[1] = builder(Gecode::Search::Options::def);
+        Gecode::PBS<NoSolution,Engine> pbs(&root,sebs,o);
+        return (pbs.next() == nullptr) && pbs.stopped() && (l.checks <= 1000);
+      }
+    public:
+      PBSBuilderStop(void) : Base("Search::PBS::SEB::Stop") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U})
+          if (!test<Gecode::DFS>(t,&Gecode::dfs<NoSolution>) ||
+              !test<Gecode::BAB>(t,&Gecode::bab<NoSolution>))
+            return false;
+        return true;
+      }
+    };
+
+    PBSBuilderStop pbs_builder_stop;
 
     /// Iterator for branching types
     class BranchTypes {
