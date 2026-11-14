@@ -101,6 +101,16 @@ Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Fix a crash when deleting a portfolio of restart-based engines.
+[MORE]
+Every asset took ownership of the same cutoff and deleted it. The assets now
+share one cutoff sequence, which the portfolio deletes once.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Honour the stop object of a portfolio built from engine builders.
 [MORE]
 The stop object is checked with the statistics of each asset, so a node or
