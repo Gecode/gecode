@@ -1600,8 +1600,11 @@ namespace Gecode {
    * \brief Meta engine using a portfolio of search engines
    *
    * The engine will run a portfolio with a number of assets as defined
-   * by the options \a o. The engine supports parallel execution of
-   * assets by using the number of threads as defined by the options.
+   * by the options \a o. With more than one thread in \a o, every asset
+   * runs in its own thread, also when there are more assets than threads,
+   * and the threads are divided evenly among the assets, with at least
+   * one thread for each asset. With one thread, the assets take turns in
+   * slices of failures (see Search::Options::slice).
    * For best-solution assets, a solution replaces the incumbent only if
    * Space::compare reports SpaceComparison::Better.
    * An external worker control in \a o is supported only for a single
@@ -1649,8 +1652,9 @@ namespace Gecode {
      *
      * The outer options must not contain a worker control. Each builder can
      * instead supply a distinct control for its underlying engine.
-     * In parallel PBS, the outer thread count limits how many builders run,
-     * in array order; each builder's options set its own engine's thread count.
+     * In parallel PBS, the engine of every builder runs in its own thread,
+     * also when there are more builders than outer threads; each builder's
+     * options set its own engine's thread count.
      *
      * With experimental search, AStar and CABS builders can be used
      * together with BAB builders.
@@ -1666,8 +1670,8 @@ namespace Gecode {
    * \brief Run a portfolio of search engines
    *
    * The engine will run a portfolio with a number of assets as defined
-   * by the options \a o. The engine supports parallel execution of
-   * assets by using the number of threads as defined by the options.
+   * by the options \a o. See PBS for how the assets use the threads in
+   * \a o.
    * An external worker control is supported only when \a o selects one
    * asset. PBS does not implement worker-allocation policy.
    *

@@ -64,16 +64,6 @@ namespace Gecode { namespace Search {
       throw WorkerControlInUse("PBS::PBS");
   }
 
-  /// Return the number of explicit builders admitted by this portfolio
-  forceinline int
-  pbsadmitted(const SEBs& sebs, const Options& opt) {
-#ifdef GECODE_HAS_THREADS
-    if (opt.threads > 1.0)
-      return std::min(static_cast<int>(opt.threads),sebs.size());
-#endif
-    return sebs.size();
-  }
-
   /// Validate worker-control placement for an explicit portfolio
   forceinline void
   pbscontrol(const SEBs& sebs, const Options& opt) {
@@ -84,8 +74,7 @@ namespace Gecode { namespace Search {
 #else
     const bool parallel = false;
 #endif
-    int admitted = pbsadmitted(sebs,opt);
-    for (int i=0; i<admitted; i++) {
+    for (int i=0; i<sebs.size(); i++) {
       const WorkerControl& x = sebs[i]->options().worker_control;
       if (!x.engaged())
         continue;
@@ -327,11 +316,10 @@ namespace Gecode { namespace Search {
     opt.clone = true;
     Region r;
 
-    // Limit the number of assets to the number of threads
-    unsigned int n_assets = std::min(static_cast<unsigned int>(opt.threads),
-                                       opt.assets);
+    // Run every asset in its own thread, even with fewer threads than assets
+    unsigned int n_assets = opt.assets;
     // Redistribute additional threads to assets
-    opt.threads = floor(opt.threads / static_cast<double>(n_assets));
+    opt.threads = std::max(floor(opt.threads / static_cast<double>(n_assets)), 1.0);
 
     WrapTraceRecorder::engine(opt.tracer,
                               SearchTracer::EngineType::PBS, n_assets);
@@ -375,9 +363,8 @@ namespace Gecode { namespace Search {
          const Search::Statistics& stat, Options& opt, bool best) {
     Region r;
 
-    // Limit the number of assets to the number of threads
-    int n_assets = std::min(static_cast<int>(opt.threads),
-                              sebs.size());
+    // Run every asset in its own thread, even with fewer threads than assets
+    int n_assets = sebs.size();
 
     WrapTraceRecorder::engine(opt.tracer,
                               SearchTracer::EngineType::PBS,

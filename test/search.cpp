@@ -1245,8 +1245,8 @@ namespace Test {
         case Scenario::PbsParallel:
           return pbs<HubSpokeDispatchSpace>(3, 3, 1, 3, 7);
         case Scenario::PbsParallelThreadLimit:
-          // Parallel PBS runs only as many assets as it has threads.
-          return pbs<HubSpokeDispatchSpace>(3, 2, 1, 2, 3);
+          // Parallel PBS runs all assets, also with fewer threads.
+          return pbs<HubSpokeDispatchSpace>(3, 2, 1, 3, 7);
         case Scenario::PbsDefaultHubRemovesBranchers:
           return pbs_default_hub_removes_branchers();
         case Scenario::RbsNoGoodsResetOwnership:
@@ -3242,7 +3242,7 @@ namespace Test {
           delete b;
           return ok;
         } else {
-          int n = ((t > 1) ? std::min(a,t) : a) * m->solutions();
+          int n = a * m->solutions();
           delete m;
           while (true) {
             Model* s = pbs.next();
