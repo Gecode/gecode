@@ -98,6 +98,16 @@ command-line options.
 
 [ENTRY]
 Module: search
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Document that LDS does not report reaching its discrepancy limit as a stop.
+[MORE]
+Finding no solution proves that none exists only if the discrepancy limit
+covers every path of the search tree.
+
+[ENTRY]
+Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]

@@ -863,7 +863,7 @@ namespace Gecode { namespace Search {
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
       unsigned int a_d;
-      /// Discrepancy limit (for LDS)
+      /// Discrepancy limit (for LDS, reaching it does not stop the engine)
       unsigned int d_l;
       /// Number of assets (engines) in a portfolio
       unsigned int assets;
@@ -1405,6 +1405,18 @@ namespace Gecode {
 
   /**
    * \brief Limited discrepancy search engine
+   *
+   * The engine explores the paths of the search tree with at most
+   * Search::Options::d_l discrepancies, allowing more discrepancies in each
+   * iteration, starting from none.
+   *
+   * When next() returns nullptr and stopped() returns false, either the
+   * search tree has been explored completely, or the discrepancy limit has
+   * been reached while parts of the tree are still unexplored. The engine
+   * does not report which: a search that finds no (further) solution only
+   * proves that none exists if no path of the tree has more discrepancies
+   * than the limit.
+   *
    * \ingroup TaskModelSearch
    */
   template<class T>
@@ -1418,6 +1430,10 @@ namespace Gecode {
 
   /**
    * \brief Invoke limited-discrepancy search for \a s as root node and options\a o
+   *
+   * Returning nullptr does not prove that there is no solution when the
+   * discrepancy limit has been reached, see LDS.
+   *
    * \ingroup TaskModelSearch
    */
   template<class T>
