@@ -80,6 +80,17 @@ Module: search
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Keep the other assets of a portfolio running when the stop object of an
+engine builder stops its engine.
+[MORE]
+The whole portfolio stopped instead. The stopped asset is now parked until
+the next call to next().
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
 Check the stop object of a portfolio with the statistics of the whole
 portfolio.
 [MORE]

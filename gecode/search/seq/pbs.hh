@@ -42,8 +42,8 @@ namespace Gecode { namespace Search { namespace Seq {
   /// Shared stop information
   class SharedStopInfo {
   public:
-    /// Whether search stopped because the slice is done
-    bool done;
+    /// Which stop object stopped the running asset
+    PortfolioStopCause cause;
     /// The current failure limit, incremented for each slice
     unsigned long long int l;
     /// Statistics of the portfolio except for the running asset
@@ -81,6 +81,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Engine* engine;
     /// Stop object
     Stop* stop;
+    /// Whether the stop object of the asset stopped it during the current call to next()
+    bool _parked;
   public:
     /// Default constructor
     Asset(void);
@@ -98,8 +100,12 @@ namespace Gecode { namespace Search { namespace Seq {
     EndReason end_reason(void) const;
     /// Constrain with better solution \a b
     void constrain(const Space& b);
-    /// Perform one run
-    void run(void);
+    /// Park the asset after its stop object stopped it
+    void park(void);
+    /// Resume a parked asset
+    void resume(void);
+    /// Whether the asset is parked
+    bool parked(void) const;
     /// Delete asset
     ~Asset(void);
   };

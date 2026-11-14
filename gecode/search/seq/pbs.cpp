@@ -37,13 +37,16 @@ namespace Gecode { namespace Search { namespace Seq {
 
   bool
   PortfolioStop::stop(const Statistics& s, const Options& o) {
-    if (((so != nullptr) && so->stop(s,o)) ||
-        ((po != nullptr) && po->stop(ssi->others + s,o))) {
-      ssi->done = false;
+    if ((po != nullptr) && po->stop(ssi->others + s,o)) {
+      ssi->cause = PortfolioStopCause::Portfolio;
+      return true;
+    }
+    if ((so != nullptr) && so->stop(s,o)) {
+      ssi->cause = PortfolioStopCause::Asset;
       return true;
     }
     if (s.fail >= ssi->l) {
-      ssi->done = true;
+      ssi->cause = PortfolioStopCause::Slice;
       return true;
     }
     return false;
