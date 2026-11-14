@@ -72,6 +72,9 @@ namespace Gecode { namespace Search { namespace Seq {
 
   Space*
   RBS::next(void) {
+    // A failed master proves that no further solution exists
+    if (master == nullptr)
+      return nullptr;
     if (restart) {
       restart = false;
       sslr++;
@@ -117,8 +120,13 @@ namespace Gecode { namespace Search { namespace Seq {
         stop->nogood(ng.ng());
         unsigned long long int nl = ++(*co);
         stop->limit(e->statistics(),nl);
-        if (stop->status(master) == SS_FAILED)
+        if (stop->status(master) == SS_FAILED) {
+          // The statistics of the engine have been added by limit()
+          delete master;
+          master = nullptr;
+          e->reset(nullptr);
           return nullptr;
+        }
         Space* slave = master;
         master = master->clone();
         complete = slave->slave(mi);
@@ -141,6 +149,8 @@ namespace Gecode { namespace Search { namespace Seq {
   RBS::constrain(const Space& b) {
     if (!best)
       throw NoBest("RBS::constrain");
+    if (master == nullptr)
+      return;
     if (last != nullptr) {
       last->constrain(b);
       if (last->status() == SS_FAILED) {
@@ -162,8 +172,11 @@ namespace Gecode { namespace Search { namespace Seq {
      * the meta engine does not perform a restart. However the
      * invocation of next will do so and no restart will be
      * missed.
+     *
+     * The engine may still report a stop when the master failed during a
+     * restart after a limit. A failed master is a proof, not a stop.
      */
-    return e->stopped();
+    return (master != nullptr) && e->stopped();
   }
 
   RBS::~RBS(void) {

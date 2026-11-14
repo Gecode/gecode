@@ -1358,6 +1358,63 @@ namespace Test {
 
     RBSIncompleteNoGoods rbs_incomplete_nogoods;
 
+    /// Space without solutions whose master fails at a restart after a limit
+    class FailingMaster : public Gecode::Space {
+    public:
+      /// Four variables that must be distinct with three values
+      Gecode::IntVarArray x;
+      FailingMaster(void) : x(*this,4,0,2) {
+        for (int i=0; i<x.size(); i++)
+          for (int j=i+1; j<x.size(); j++)
+            Gecode::rel(*this,x[i],Gecode::IRT_NQ,x[j]);
+        Gecode::branch(*this,x,Gecode::INT_VAR_NONE(),Gecode::INT_VAL_MIN());
+      }
+      FailingMaster(FailingMaster& s) : Gecode::Space(s) {
+        x.update(*this,s.x);
+      }
+      Gecode::Space* copy(void) override {
+        return new FailingMaster(*this);
+      }
+      bool master(const Gecode::MetaInfo& mi) override {
+        if ((mi.type() == Gecode::MetaInfo::RESTART) &&
+            (mi.reason() == Gecode::MetaInfo::RR_LIM))
+          fail();
+        return true;
+      }
+    };
+
+    /// A master failing at a restart after a limit proves exhaustion
+    class RBSFailedMaster : public Base {
+    public:
+      RBSFailedMaster(void) : Base("Search::RBS::FailedMaster") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U}) {
+          FailingMaster* m = new FailingMaster;
+          Gecode::Search::Options o;
+          o.threads = t;
+          o.cutoff = Gecode::Search::Cutoff::constant(1);
+          Gecode::RBS<FailingMaster,Gecode::DFS> rbs(m,o);
+          delete m;
+          if (FailingMaster* s = rbs.next()) {
+            delete s;
+            return false;
+          }
+          Gecode::Search::Statistics s = rbs.statistics();
+          // The failures of the last slave search are counted once
+          if (rbs.stopped() || (s.restart != 1U) || (s.fail < 2U) ||
+              ((t == 1U) && (s.fail != 2U)))
+            return false;
+          if ((rbs.next() != nullptr) || rbs.stopped() ||
+              (rbs.statistics().fail != s.fail) ||
+              (rbs.statistics().node != s.node))
+            return false;
+        }
+        return true;
+      }
+    };
+
+    RBSFailedMaster rbs_failed_master;
+
     /// Space for relaxing
     class RelaxSpace : public Gecode::Space {
     public:
