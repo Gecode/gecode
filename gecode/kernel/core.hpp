@@ -2201,6 +2201,8 @@ namespace Gecode {
      *     continues the current search without calling spoke(). At a
      *     restart caused by the cutoff or by an incomplete spoke being
      *     exhausted, the result is ignored and search restarts.
+     *     Whatever the result, if the hub fails after the call, RBS
+     *     ends.
      *
      *     The default function constrains the hub with the last
      *     solution, if any, posts the no-goods from \a mi, and
@@ -2230,8 +2232,8 @@ namespace Gecode {
      *     holds for the first search when search starts.
      *
      * \li PBS calls this function once on the spoke of each asset,
-     *     a clone of the hub, and passes the asset number, starting
-     *     from zero. The result is ignored.
+     *     the hub or a clone of it, and passes the asset number,
+     *     starting from zero. The result is ignored.
      *
      * The default function does nothing and returns true.
      *
