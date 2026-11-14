@@ -79,6 +79,9 @@ namespace Gecode { namespace Search { namespace Seq {
      */
     start();
     while (true) {
+      // An exhausted search is complete, even when a limit has been reached
+      if ((cur == nullptr) && path.empty())
+        return nullptr;
       if (stop_seq(opt))
         return nullptr;
       // Recompute and add constraint if necessary

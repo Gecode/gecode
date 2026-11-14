@@ -101,6 +101,17 @@ Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Do not report DFS and BAB as stopped when the search tree is exhausted at
+the same failure that reaches a limit.
+[MORE]
+Restart-based search with no-goods then restarted without new no-goods, and
+could repeat the same search forever on unsatisfiable models.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Count a failed root as a failure when a search engine is reset.
 [MORE]
 Restart-based search resets its engine at every restart, so failure limits
