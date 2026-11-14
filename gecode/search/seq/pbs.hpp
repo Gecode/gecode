@@ -82,7 +82,7 @@ namespace Gecode { namespace Search { namespace Seq {
                  const Search::Options& opt)
     : stat(stat0), slice(opt.slice),
       assets(heap.alloc<Asset>(n)), n_assets(n), cur(0),
-      incomplete(false), end(EndReason::NotEnded) {
+      end(EndReason::NotEnded) {
     ssi.done = false;
     ssi.l = opt.slice;
 
@@ -95,6 +95,9 @@ namespace Gecode { namespace Search { namespace Seq {
   template<bool best>
   Space*
   PBS<best>::next(void) {
+    // An asset has proven that no further solution exists
+    if (end == EndReason::Exhausted)
+      return nullptr;
     unsigned int n_exhausted = 0;
     while (n_assets > 0) {
       ssi.done = false;
@@ -122,11 +125,11 @@ namespace Gecode { namespace Search { namespace Seq {
           end = EndReason::Limit;
           return nullptr;
         }
+      } else if (pbs_asset_proof(asset_end)) {
+        end = EndReason::Exhausted;
+        return nullptr;
       } else {
-        // The asset is done, without a proof if it is incomplete
-        if (asset_end == EndReason::Incomplete)
-          incomplete = true;
-        // Kill the asset after saving the statistics
+        // The asset ended without a proof, kill it after saving the statistics
         stat += assets[cur].statistics();
         assets[cur].~Asset();
         assets[cur] = assets[--n_assets];
@@ -142,7 +145,8 @@ namespace Gecode { namespace Search { namespace Seq {
       if (cur == n_assets)
         cur = 0;
     }
-    end = incomplete ? EndReason::Incomplete : EndReason::Exhausted;
+    // All assets ended without a proof
+    end = EndReason::Incomplete;
     return nullptr;
   }
 
