@@ -672,11 +672,6 @@ namespace Test {
         }
         return false;
       }
-      /// Use the default completeness contract for each derived exploration
-      bool
-      spoke(const MetaInfo&) override {
-        return true;
-      }
     };
 
     /// Return a bit for restart reason \a r
@@ -705,17 +700,23 @@ namespace Test {
       bool solution_spoke_complete = true;
       bool fail_solution_spoke = false;
       bool nogood_model = false;
+      /// Whether a PBS spoke() posts the branching for its asset
+      bool spoke_branching = true;
+      /// Whether the first RBS spoke reaches the cutoff without a solution
+      bool limit_first_spoke = false;
     };
 
     /// Common implementation for meta-search dispatch test spaces
     class MetaDispatchSpace : public Space {
     protected:
       /// RBS role of a space
-      enum class RestartRole { HUB, SPOKE };
+      enum class RestartRole { Hub, Spoke };
       /// Variable used to provide two solutions
       IntVar x;
       /// Optional queens model used to force restart no-good extraction
       IntVarArray q;
+      /// Optional variables without a solution, used to reach the cutoff
+      IntVarArray y;
       /// Shared hook observations and configuration
       MetaDispatchState* state;
       /// RBS role retained across cloning
@@ -730,7 +731,7 @@ namespace Test {
         if (mi.type() == MetaInfo::PORTFOLIO)
           // PBS must ignore the callback result.
           return false;
-        restart_role = RestartRole::HUB;
+        restart_role = RestartRole::Hub;
         state->hub_reasons.fetch_or(reason_bit(mi.reason()), std::memory_order_relaxed);
         bool default_result = Space::hub(mi);
         if ((mi.type() == MetaInfo::RESTART) && (mi.nogoods().ng() > 0))
@@ -744,11 +745,20 @@ namespace Test {
         if (mi.type() == MetaInfo::PORTFOLIO) {
           portfolio_asset = static_cast<int>(mi.asset());
           state->assets.fetch_or(1U << mi.asset(), std::memory_order_relaxed);
+          // The default hub() removes the model's branching. A hub()
+          // override keeps it, and then this branching is redundant.
+          if (state->spoke_branching)
+            Gecode::branch(*this, x, INT_VAL_MIN());
           // PBS must ignore the callback result.
           return false;
         }
         state->spoke_reasons.fetch_or(reason_bit(mi.reason()), std::memory_order_relaxed);
-        restart_role = RestartRole::SPOKE;
+        restart_role = RestartRole::Spoke;
+        if ((mi.reason() == MetaInfo::RR_INIT) && state->limit_first_spoke) {
+          // Four distinct values from three fail only during search.
+          distinct(*this, y, IPL_VAL);
+          Gecode::branch(*this, y, INT_VAR_NONE(), INT_VAL_MIN());
+        }
         if ((mi.reason() == MetaInfo::RR_SOL) && state->fail_solution_spoke)
           fail();
         return (mi.reason() == MetaInfo::RR_SOL) ? state->solution_spoke_complete : true;
@@ -757,8 +767,8 @@ namespace Test {
     public:
       /// Initialize with shared observations \a s
       MetaDispatchSpace(MetaDispatchState& s)
-        : x(*this, 0, 1), q(*this, s.nogood_model ? 8 : 0, 0, 7), state(&s), restart_role(RestartRole::HUB),
-          portfolio_asset(-1) {
+        : x(*this, 0, 1), q(*this, s.nogood_model ? 8 : 0, 0, 7), y(*this, s.limit_first_spoke ? 4 : 0, 0, 2),
+          state(&s), restart_role(RestartRole::Hub), portfolio_asset(-1) {
         state->live_spaces.fetch_add(1, std::memory_order_relaxed);
         if (state->nogood_model) {
           distinct(*this, IntArgs::create(q.size(), 0, 1), q, IPL_VAL);
@@ -775,6 +785,7 @@ namespace Test {
         state->copies.fetch_add(1, std::memory_order_relaxed);
         x.update(*this, s.x);
         q.update(*this, s.q);
+        y.update(*this, s.y);
       }
       /// Record destruction for clone-ownership checks
       ~MetaDispatchSpace(void) override {
@@ -784,14 +795,14 @@ namespace Test {
       void
       constrain(const Space& s) override {
         state->constrain_calls.fetch_add(1, std::memory_order_relaxed);
-        if (restart_role == RestartRole::HUB)
+        if (restart_role == RestartRole::Hub)
           state->constrain_hub_calls.fetch_add(1, std::memory_order_relaxed);
         else
           state->constrain_spoke_calls.fetch_add(1, std::memory_order_relaxed);
         if (portfolio_asset >= 0) {
           const unsigned int asset = 1U << static_cast<unsigned int>(portfolio_asset);
           state->constrain_asset_mask.fetch_or(asset, std::memory_order_relaxed);
-          if (restart_role == RestartRole::HUB)
+          if (restart_role == RestartRole::Hub)
             state->constrain_hub_asset_mask.fetch_or(asset, std::memory_order_relaxed);
           else
             state->constrain_spoke_asset_mask.fetch_or(asset, std::memory_order_relaxed);
@@ -807,6 +818,11 @@ namespace Test {
       int
       value(void) const {
         return x.val();
+      }
+      /// Return whether the solution variable is assigned
+      bool
+      assigned(void) const {
+        return x.assigned();
       }
     };
 
@@ -877,24 +893,27 @@ namespace Test {
     public:
       /// Dispatch scenario
       enum class Scenario {
-        RBS_HUB_ONLY,
-        RBS_SPOKE_ONLY,
-        RBS_HUB_CONTINUE,
-        RBS_HUB_RESTART,
-        RBS_SPOKE_COMPLETE,
-        RBS_SPOKE_INCOMPLETE,
-        PBS_HUB_ONLY,
-        PBS_SPOKE_ONLY,
-        PBS_SINGLE,
-        PBS_SEQUENTIAL_HUB_ONLY,
-        PBS_SEQUENTIAL_SPOKE_ONLY,
-        PBS_SEQUENTIAL,
-        PBS_PARALLEL_HUB_ONLY,
-        PBS_PARALLEL_SPOKE_ONLY,
-        PBS_PARALLEL,
-        RBS_NOGOODS_RESET_OWNERSHIP,
-        META_STOP_OWNERSHIP,
-        BAB_INCUMBENT
+        RbsHubOnly,
+        RbsSpokeOnly,
+        RbsHubContinue,
+        RbsHubRestart,
+        RbsSpokeComplete,
+        RbsSpokeIncomplete,
+        RbsLimit,
+        PbsHubOnly,
+        PbsSpokeOnly,
+        PbsSingle,
+        PbsSequentialHubOnly,
+        PbsSequentialSpokeOnly,
+        PbsSequential,
+        PbsParallelHubOnly,
+        PbsParallelSpokeOnly,
+        PbsParallel,
+        PbsParallelThreadLimit,
+        PbsDefaultHubRemovesBranchers,
+        RbsNoGoodsResetOwnership,
+        MetaStopOwnership,
+        BabIncumbent
       };
 
     protected:
@@ -979,8 +998,47 @@ namespace Test {
         delete m;
 
         Model* solution = search.next();
-        bool ok = (solution != nullptr) && holds(state.hub_calls, hub_calls) &&
+        bool ok = (solution != nullptr) && solution->assigned() && holds(state.hub_calls, hub_calls) &&
                   holds(state.spoke_calls, spoke_calls) && holds(state.assets, asset_mask);
+        delete solution;
+        return ok;
+      }
+      /// Check that the default PBS hub() removes the model's branching
+      static bool
+      pbs_default_hub_removes_branchers(void) {
+        MetaDispatchState state;
+        state.spoke_branching = false;
+        SpokeDispatchSpace* m = new SpokeDispatchSpace(state);
+        Gecode::Search::Options o;
+        o.assets = 3;
+        o.threads = 1;
+        Gecode::PBS<SpokeDispatchSpace, Gecode::DFS> search(m, o);
+        delete m;
+
+        // A spoke without branching is a solution as soon as it is stable.
+        SpokeDispatchSpace* solution = search.next();
+        bool ok = (solution != nullptr) && !solution->assigned() && holds(state.spoke_calls, 3U);
+        delete solution;
+        return ok;
+      }
+      /// Check RBS dispatch when the first spoke reaches the cutoff
+      static bool
+      rbs_limit(void) {
+        MetaDispatchState state;
+        state.limit_first_spoke = true;
+        HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(state);
+        Gecode::Search::Options o;
+        o.threads = 1;
+        // No-goods from the first spoke would refer to its own brancher.
+        o.nogoods_limit = 0;
+        o.cutoff = Gecode::Search::Cutoff::constant(1);
+        Gecode::RBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
+        delete m;
+
+        HubSpokeDispatchSpace* solution = search.next();
+        bool ok = (solution != nullptr) && solution->assigned() && holds(state.hub_calls, 1U) &&
+                  holds(state.spoke_calls, 2U) && holds(state.hub_reasons, reason_bit(MetaInfo::RR_LIM)) &&
+                  holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) | reason_bit(MetaInfo::RR_LIM));
         delete solution;
         return ok;
       }
@@ -1108,14 +1166,14 @@ namespace Test {
           outer.assets = 3;
           outer.threads = 1;
           Gecode::Search::Options inner[3];
-          SEBs spokes(3);
+          SEBs assets(3);
           for (int i = 0; i < 3; i++) {
             inner[i].threads = 1;
             // Each RBS engine owns and deletes its cutoff.
             inner[i].cutoff = Gecode::Search::Cutoff::constant(100);
-            spokes[i] = Gecode::rbs<HubSpokeDispatchSpace, Gecode::BAB>(inner[i]);
+            assets[i] = Gecode::rbs<HubSpokeDispatchSpace, Gecode::BAB>(inner[i]);
           }
-          Gecode::PBS<HubSpokeDispatchSpace, Gecode::BAB> search(m, spokes, outer);
+          Gecode::PBS<HubSpokeDispatchSpace, Gecode::BAB> search(m, assets, outer);
           delete m;
           HubSpokeDispatchSpace* best = nullptr;
           while (HubSpokeDispatchSpace* solution = search.next()) {
@@ -1137,41 +1195,48 @@ namespace Test {
       bool
       run(void) override {
         switch (scenario) {
-        case Scenario::RBS_HUB_ONLY:
+        case Scenario::RbsHubOnly:
           return rbs_dispatch<HubDispatchSpace>(1, 0);
-        case Scenario::RBS_SPOKE_ONLY:
+        case Scenario::RbsSpokeOnly:
           return rbs_dispatch<SpokeDispatchSpace>(0, 2);
-        case Scenario::RBS_HUB_CONTINUE:
+        case Scenario::RbsHubContinue:
           return rbs(false, false, true);
-        case Scenario::RBS_HUB_RESTART:
+        case Scenario::RbsHubRestart:
           return rbs(true, false, true);
-        case Scenario::RBS_SPOKE_COMPLETE:
+        case Scenario::RbsSpokeComplete:
           return rbs(true, true, true);
-        case Scenario::RBS_SPOKE_INCOMPLETE:
+        case Scenario::RbsSpokeIncomplete:
           return rbs(true, true, false);
-        case Scenario::PBS_HUB_ONLY:
+        case Scenario::RbsLimit:
+          return rbs_limit();
+        case Scenario::PbsHubOnly:
           return pbs<HubDispatchSpace>(1, 1, 1, 0, 0);
-        case Scenario::PBS_SPOKE_ONLY:
+        case Scenario::PbsSpokeOnly:
           return pbs<SpokeDispatchSpace>(1, 1, 0, 1, 1);
-        case Scenario::PBS_SINGLE:
+        case Scenario::PbsSingle:
           return pbs<HubSpokeDispatchSpace>(1, 1, 1, 1, 1);
-        case Scenario::PBS_SEQUENTIAL_HUB_ONLY:
+        case Scenario::PbsSequentialHubOnly:
           return pbs<HubDispatchSpace>(3, 1, 1, 0, 0);
-        case Scenario::PBS_SEQUENTIAL_SPOKE_ONLY:
+        case Scenario::PbsSequentialSpokeOnly:
           return pbs<SpokeDispatchSpace>(3, 1, 0, 3, 7);
-        case Scenario::PBS_SEQUENTIAL:
+        case Scenario::PbsSequential:
           return pbs<HubSpokeDispatchSpace>(3, 1, 1, 3, 7);
-        case Scenario::PBS_PARALLEL_HUB_ONLY:
+        case Scenario::PbsParallelHubOnly:
           return pbs<HubDispatchSpace>(3, 3, 1, 0, 0);
-        case Scenario::PBS_PARALLEL_SPOKE_ONLY:
+        case Scenario::PbsParallelSpokeOnly:
           return pbs<SpokeDispatchSpace>(3, 3, 0, 3, 7);
-        case Scenario::PBS_PARALLEL:
+        case Scenario::PbsParallel:
           return pbs<HubSpokeDispatchSpace>(3, 3, 1, 3, 7);
-        case Scenario::RBS_NOGOODS_RESET_OWNERSHIP:
+        case Scenario::PbsParallelThreadLimit:
+          // Parallel PBS runs only as many assets as it has threads.
+          return pbs<HubSpokeDispatchSpace>(3, 2, 1, 2, 3);
+        case Scenario::PbsDefaultHubRemovesBranchers:
+          return pbs_default_hub_removes_branchers();
+        case Scenario::RbsNoGoodsResetOwnership:
           return rbs_nogoods_reset_ownership();
-        case Scenario::META_STOP_OWNERSHIP:
+        case Scenario::MetaStopOwnership:
           return meta_stop_ownership();
-        case Scenario::BAB_INCUMBENT:
+        case Scenario::BabIncumbent:
           return bab_incumbent();
         default:
           GECODE_NEVER;
@@ -3032,35 +3097,36 @@ namespace Test {
       /// Whether best solution search is used
       bool best;
       /// Number of portfolio threads
-      unsigned int mt;
-      /// Number of spoke threads
-      unsigned int st;
+      unsigned int portfolio_threads;
+      /// Number of threads of each asset
+      unsigned int asset_threads;
     public:
       /// Initialize test
-      SEBPBS(const std::string& e, bool b, unsigned int mt0, unsigned int st0)
-        : Test("PBS::SEB::"+e+"::"+Model::name()+"::"+str(mt0)+"::"+str(st0),
-               HTB_BINARY,HTB_BINARY,HTB_BINARY), best(b), mt(mt0), st(st0) {}
+      SEBPBS(const std::string& e, bool b, unsigned int portfolio_threads0, unsigned int asset_threads0)
+        : Test("PBS::SEB::"+e+"::"+Model::name()+"::"+str(portfolio_threads0)+"::"+str(asset_threads0),
+               HTB_BINARY,HTB_BINARY,HTB_BINARY), best(b),
+          portfolio_threads(portfolio_threads0), asset_threads(asset_threads0) {}
       /// Run test
       virtual bool run(void) {
         using namespace Gecode;
         Model* m = new Model(htb1,htb2,htb3);
         Gecode::Search::FailStop f(2);
 
-        Gecode::Search::Options mo;
-        mo.threads = mt;
-        mo.d_l = 100;
-        mo.stop = &f;
+        Gecode::Search::Options portfolio_options;
+        portfolio_options.threads = portfolio_threads;
+        portfolio_options.d_l = 100;
+        portfolio_options.stop = &f;
 
-        Gecode::Search::Options so;
-        so.threads = st;
-        so.d_l = 100;
-        so.cutoff = Gecode::Search::Cutoff::constant(1000000);
+        Gecode::Search::Options asset_options;
+        asset_options.threads = asset_threads;
+        asset_options.d_l = 100;
+        asset_options.cutoff = Gecode::Search::Cutoff::constant(1000000);
         if (best) {
           SEBs sebs(3);
-          sebs[0] = bab<Model>(so);
-          sebs[1] = bab<Model>(so);
-          sebs[2] = rbs<Model,Gecode::BAB>(so);
-          Gecode::PBS<Model,Gecode::BAB> pbs(m, sebs, mo);
+          sebs[0] = bab<Model>(asset_options);
+          sebs[1] = bab<Model>(asset_options);
+          sebs[2] = rbs<Model,Gecode::BAB>(asset_options);
+          Gecode::PBS<Model,Gecode::BAB> pbs(m, sebs, portfolio_options);
           delete m;
 
           Model* b = nullptr;
@@ -3078,10 +3144,10 @@ namespace Test {
           return ok;
         } else {
           SEBs sebs(3);
-          sebs[0] = dfs<Model>(so);
-          sebs[1] = lds<Model>(so);
-          sebs[2] = rbs<Model,Gecode::DFS>(so);
-          Gecode::PBS<Model,Gecode::DFS> pbs(m, sebs, mo);
+          sebs[0] = dfs<Model>(asset_options);
+          sebs[1] = lds<Model>(asset_options);
+          sebs[2] = rbs<Model,Gecode::DFS>(asset_options);
+          Gecode::PBS<Model,Gecode::DFS> pbs(m, sebs, portfolio_options);
 
           int n = 3 * m->solutions();
           delete m;
@@ -3355,16 +3421,17 @@ namespace Test {
                  c_d,a_d,t);
             }
         // Restart-based search
-        (void)new MetaDispatch("RBS::HubOnly", MetaDispatch::Scenario::RBS_HUB_ONLY);
-        (void)new MetaDispatch("RBS::SpokeOnly", MetaDispatch::Scenario::RBS_SPOKE_ONLY);
-        (void)new MetaDispatch("RBS::HubContinue", MetaDispatch::Scenario::RBS_HUB_CONTINUE);
-        (void)new MetaDispatch("RBS::HubRestart", MetaDispatch::Scenario::RBS_HUB_RESTART);
-        (void)new MetaDispatch("RBS::SpokeComplete", MetaDispatch::Scenario::RBS_SPOKE_COMPLETE);
-        (void)new MetaDispatch("RBS::SpokeIncomplete", MetaDispatch::Scenario::RBS_SPOKE_INCOMPLETE);
+        (void)new MetaDispatch("RBS::HubOnly", MetaDispatch::Scenario::RbsHubOnly);
+        (void)new MetaDispatch("RBS::SpokeOnly", MetaDispatch::Scenario::RbsSpokeOnly);
+        (void)new MetaDispatch("RBS::HubContinue", MetaDispatch::Scenario::RbsHubContinue);
+        (void)new MetaDispatch("RBS::HubRestart", MetaDispatch::Scenario::RbsHubRestart);
+        (void)new MetaDispatch("RBS::SpokeComplete", MetaDispatch::Scenario::RbsSpokeComplete);
+        (void)new MetaDispatch("RBS::SpokeIncomplete", MetaDispatch::Scenario::RbsSpokeIncomplete);
+        (void)new MetaDispatch("RBS::Limit", MetaDispatch::Scenario::RbsLimit);
         (void)new MetaDispatch("RBS::NoGoodsResetOwnership",
-                               MetaDispatch::Scenario::RBS_NOGOODS_RESET_OWNERSHIP);
-        (void)new MetaDispatch("Lifecycle::StopOwnership", MetaDispatch::Scenario::META_STOP_OWNERSHIP);
-        (void)new MetaDispatch("BAB::Incumbent", MetaDispatch::Scenario::BAB_INCUMBENT);
+                               MetaDispatch::Scenario::RbsNoGoodsResetOwnership);
+        (void)new MetaDispatch("Lifecycle::StopOwnership", MetaDispatch::Scenario::MetaStopOwnership);
+        (void)new MetaDispatch("BAB::Incumbent", MetaDispatch::Scenario::BabIncumbent);
         for (unsigned int t=1; t<=4; t++) {
           (void) new RBS<HasSolutions,Gecode::DFS>("DFS",t);
           (void) new RBS<HasSolutions,Gecode::LDS>("LDS",t);
@@ -3377,16 +3444,19 @@ namespace Test {
           (void) new RBS<SolveImmediate,Gecode::BAB>("BAB",t);
         }
         // Portfolio-based search
-        (void)new MetaDispatch("PBS::HubOnly", MetaDispatch::Scenario::PBS_HUB_ONLY);
-        (void)new MetaDispatch("PBS::SpokeOnly", MetaDispatch::Scenario::PBS_SPOKE_ONLY);
-        (void)new MetaDispatch("PBS::Single", MetaDispatch::Scenario::PBS_SINGLE);
-        (void)new MetaDispatch("PBS::SequentialHubOnly", MetaDispatch::Scenario::PBS_SEQUENTIAL_HUB_ONLY);
-        (void)new MetaDispatch("PBS::SequentialSpokeOnly", MetaDispatch::Scenario::PBS_SEQUENTIAL_SPOKE_ONLY);
-        (void)new MetaDispatch("PBS::Sequential", MetaDispatch::Scenario::PBS_SEQUENTIAL);
+        (void)new MetaDispatch("PBS::HubOnly", MetaDispatch::Scenario::PbsHubOnly);
+        (void)new MetaDispatch("PBS::SpokeOnly", MetaDispatch::Scenario::PbsSpokeOnly);
+        (void)new MetaDispatch("PBS::Single", MetaDispatch::Scenario::PbsSingle);
+        (void)new MetaDispatch("PBS::SequentialHubOnly", MetaDispatch::Scenario::PbsSequentialHubOnly);
+        (void)new MetaDispatch("PBS::SequentialSpokeOnly", MetaDispatch::Scenario::PbsSequentialSpokeOnly);
+        (void)new MetaDispatch("PBS::Sequential", MetaDispatch::Scenario::PbsSequential);
+        (void)new MetaDispatch("PBS::DefaultHubRemovesBranchers",
+                               MetaDispatch::Scenario::PbsDefaultHubRemovesBranchers);
 #ifdef GECODE_HAS_THREADS
-        (void)new MetaDispatch("PBS::ParallelHubOnly", MetaDispatch::Scenario::PBS_PARALLEL_HUB_ONLY);
-        (void)new MetaDispatch("PBS::ParallelSpokeOnly", MetaDispatch::Scenario::PBS_PARALLEL_SPOKE_ONLY);
-        (void)new MetaDispatch("PBS::Parallel", MetaDispatch::Scenario::PBS_PARALLEL);
+        (void)new MetaDispatch("PBS::ParallelHubOnly", MetaDispatch::Scenario::PbsParallelHubOnly);
+        (void)new MetaDispatch("PBS::ParallelSpokeOnly", MetaDispatch::Scenario::PbsParallelSpokeOnly);
+        (void)new MetaDispatch("PBS::Parallel", MetaDispatch::Scenario::PbsParallel);
+        (void)new MetaDispatch("PBS::ParallelThreadLimit", MetaDispatch::Scenario::PbsParallelThreadLimit);
 #endif
         for (unsigned int a=1; a<=4; a++)
           for (unsigned int t=1; t<=2*a; t++) {
@@ -3401,14 +3471,14 @@ namespace Test {
             (void) new PBS<SolveImmediate,Gecode::BAB>("BAB",true,a,t);
           }
         // Portfolio-based search using SEBs
-        for (unsigned int mt=1; mt<=3; mt += 2)
-          for (unsigned int st=1; st<=8; st++) {
-            (void) new SEBPBS<HasSolutions>("BAB",true,mt,st);
-            (void) new SEBPBS<FailImmediate>("BAB",true,mt,st);
-            (void) new SEBPBS<SolveImmediate>("BAB",true,mt,st);
-            (void) new SEBPBS<HasSolutions>("DFS+LDS",false,mt,st);
-            (void) new SEBPBS<FailImmediate>("DFS+LDS",false,mt,st);
-            (void) new SEBPBS<SolveImmediate>("DFS+LDS",false,mt,st);
+        for (unsigned int pt=1; pt<=3; pt += 2)
+          for (unsigned int at=1; at<=8; at++) {
+            (void) new SEBPBS<HasSolutions>("BAB",true,pt,at);
+            (void) new SEBPBS<FailImmediate>("BAB",true,pt,at);
+            (void) new SEBPBS<SolveImmediate>("BAB",true,pt,at);
+            (void) new SEBPBS<HasSolutions>("DFS+LDS",false,pt,at);
+            (void) new SEBPBS<FailImmediate>("DFS+LDS",false,pt,at);
+            (void) new SEBPBS<SolveImmediate>("DFS+LDS",false,pt,at);
           }
       }
     };
