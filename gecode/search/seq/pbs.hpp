@@ -46,26 +46,26 @@ namespace Gecode { namespace Search { namespace Seq {
 
 
   forceinline
-  Spoke::Spoke(void)
+  Asset::Asset(void)
     : engine(nullptr), stop(nullptr) {}
   forceinline void
-  Spoke::init(Engine* e, Stop* s) {
-    engine = e; stop = s;
+  Asset::init(Engine* e, Stop* so) {
+    engine = e; stop = so;
   }
   forceinline Space*
-  Spoke::next(void) {
+  Asset::next(void) {
     return engine->next();
   }
   forceinline Statistics
-  Spoke::statistics(void) const {
+  Asset::statistics(void) const {
     return engine->statistics();
   }
   forceinline bool
-  Spoke::stopped(void) const {
+  Asset::stopped(void) const {
     return engine->stopped();
   }
   forceinline bool
-  Spoke::limited(void) const {
+  Asset::limited(void) const {
 #ifdef GECODE_HAS_EXPERIMENTAL
     return engine->limited();
 #else
@@ -73,11 +73,11 @@ namespace Gecode { namespace Search { namespace Seq {
 #endif
   }
   forceinline void
-  Spoke::constrain(const Space& b) {
+  Asset::constrain(const Space& b) {
     engine->constrain(b);
   }
   forceinline
-  Spoke::~Spoke(void) {
+  Asset::~Asset(void) {
     delete engine;
     delete stop;
   }
@@ -89,13 +89,13 @@ namespace Gecode { namespace Search { namespace Seq {
                  const Statistics& stat0,
                  const Search::Options& opt)
     : stat(stat0), slice(opt.slice),
-      spokes(heap.alloc<Spoke>(n)), n_spokes(n), cur(0),
-      spoke_stop(false), incomplete(false) {
+      assets(heap.alloc<Asset>(n)), n_assets(n), cur(0),
+      asset_stop(false), incomplete(false) {
     ssi.done = false;
     ssi.l = opt.slice;
 
     for (unsigned int i=0U; i<n; i++) {
-      spokes[i].init(e[i],static_cast<PortfolioStop*>(s[i]));
+      assets[i].init(e[i],static_cast<PortfolioStop*>(s[i]));
       static_cast<PortfolioStop*>(s[i])->share(&ssi);
     }
   }
@@ -103,18 +103,18 @@ namespace Gecode { namespace Search { namespace Seq {
   template<bool best>
   Space*
   PBS<best>::next(void) {
-    spoke_stop = false;
+    asset_stop = false;
     unsigned int n_exhausted = 0;
-    while (n_spokes > 0) {
+    while (n_assets > 0) {
       ssi.done = false;
-      if (Space* s = spokes[cur].next()) {
-        // Constrain other spokes
+      if (Space* s = assets[cur].next()) {
+        // Constrain other assets
         if (best) {
           try {
             for (unsigned int i=0U; i<cur; i++)
-              spokes[i].constrain(*s);
-            for (unsigned int i=cur+1; i<n_spokes; i++)
-              spokes[i].constrain(*s);
+              assets[i].constrain(*s);
+            for (unsigned int i=cur+1; i<n_assets; i++)
+              assets[i].constrain(*s);
           } catch (...) {
             delete s;
             throw;
@@ -122,49 +122,49 @@ namespace Gecode { namespace Search { namespace Seq {
         }
         return s;
       }
-      if (spokes[cur].stopped() && !spokes[cur].limited()) {
+      if (assets[cur].stopped() && !assets[cur].limited()) {
         if (ssi.done) {
           cur++; n_exhausted++;
         } else {
-          spoke_stop = true;
+          asset_stop = true;
           return nullptr;
         }
       } else {
-        // The spoke is done or stopped at a local limit (then search is incomplete)
-        if (spokes[cur].limited())
+        // The asset is done or stopped at a local limit (then search is incomplete)
+        if (assets[cur].limited())
           incomplete = true;
-        // Kill the spoke after saving the statistics
-        stat += spokes[cur].statistics();
-        spokes[cur].~Spoke();
-        spokes[cur] = spokes[--n_spokes];
-        if (n_spokes == 1)
+        // Kill the asset after saving the statistics
+        stat += assets[cur].statistics();
+        assets[cur].~Asset();
+        assets[cur] = assets[--n_assets];
+        if (n_assets == 1)
           // Disable stopping by setting a high limit
           ssi.l = ULONG_MAX;
       }
-      if (n_exhausted == n_spokes) {
+      if (n_exhausted == n_assets) {
         n_exhausted = 0;
         // Increment by one slice
         ssi.l += slice;
       }
-      if (cur == n_spokes)
+      if (cur == n_assets)
         cur = 0;
     }
-    spoke_stop = incomplete;
+    asset_stop = incomplete;
     return nullptr;
   }
 
   template<bool best>
   bool
   PBS<best>::stopped(void) const {
-    return spoke_stop;
+    return asset_stop;
   }
 
   template<bool best>
   Statistics
   PBS<best>::statistics(void) const {
     Statistics s(stat);
-    for (unsigned int i=0U; i<n_spokes; i++)
-      s += spokes[i].statistics();
+    for (unsigned int i=0U; i<n_assets; i++)
+      s += assets[i].statistics();
     return s;
   }
 
@@ -173,16 +173,16 @@ namespace Gecode { namespace Search { namespace Seq {
   PBS<best>::constrain(const Space& b) {
     if (!best)
       throw NoBest("PBS::constrain");
-    for (unsigned int i=0U; i<n_spokes; i++)
-      spokes[i].constrain(b);
+    for (unsigned int i=0U; i<n_assets; i++)
+      assets[i].constrain(b);
   }
 
   template<bool best>
   PBS<best>::~PBS(void) {
-    for (unsigned int i=0U; i<n_spokes; i++)
-      spokes[i].~Spoke();
-    // Note that n_spokes might be different now!
-    heap.rfree(spokes);
+    for (unsigned int i=0U; i<n_assets; i++)
+      assets[i].~Asset();
+    // Note that n_assets might be different now!
+    heap.rfree(assets);
   }
 
 }}}
