@@ -3453,6 +3453,66 @@ namespace Test {
 
     PBSPortfolioStop pbs_portfolio_stop;
 
+    /// An asset stopped by its own stop object is parked while the others continue
+    class PBSParkedAsset : public Base {
+      /// Stop object that always stops
+      class AlwaysStop : public Gecode::Search::Stop {
+      public:
+        bool stop(const Gecode::Search::Statistics&,
+                  const Gecode::Search::Options&) override {
+          return true;
+        }
+      };
+      /// Whether the other asset continues and exhausts the search space
+      static bool others_continue(unsigned int threads) {
+        NoSolution root;
+        AlwaysStop always;
+        Gecode::Search::Options a;
+        a.stop = &always;
+        Gecode::SEBs sebs(2);
+        sebs[0] = Gecode::dfs<NoSolution>(a);
+        sebs[1] = Gecode::dfs<NoSolution>();
+        Gecode::Search::Options o;
+        o.threads = threads;
+        Gecode::PBS<NoSolution,Gecode::DFS> pbs(&root,sebs,o);
+        return (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Exhausted);
+      }
+      /// Whether parked assets resume with the next call
+      static bool resume(unsigned int threads) {
+        NoSolution root;
+        Gecode::Search::FailStop f0(0), f1(0);
+        Gecode::Search::Options a0, a1;
+        a0.stop = &f0;
+        a1.stop = &f1;
+        Gecode::SEBs sebs(2);
+        sebs[0] = Gecode::dfs<NoSolution>(a0);
+        sebs[1] = Gecode::lds<NoSolution>(a1);
+        Gecode::Search::Options o;
+        o.threads = threads;
+        Gecode::PBS<NoSolution,Gecode::DFS> pbs(&root,sebs,o);
+        unsigned int limits = 0;
+        while ((pbs.next() == nullptr) &&
+               (pbs.end_reason() == EndReason::Limit)) {
+          if (++limits > 1000)
+            return false;
+          f0.limit(f0.limit() + 1);
+          f1.limit(f1.limit() + 1);
+        }
+        return (limits > 0) && (pbs.end_reason() == EndReason::Exhausted);
+      }
+    public:
+      PBSParkedAsset(void) : Base("Search::PBS::ParkedAsset") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U})
+          if (!others_continue(t) || !resume(t))
+            return false;
+        return true;
+      }
+    };
+
+    PBSParkedAsset pbs_parked_asset;
+
     /// A copy of a cutoff generator continues its sequence independently
     class CutoffCopy : public Base {
       /// Check that a copy of \a c continues as \a c, then delete \a c

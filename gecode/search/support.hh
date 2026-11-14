@@ -75,6 +75,15 @@ namespace Gecode { namespace Search {
     return r == EndReason::Exhausted;
   }
 
+  /// Which stop object stopped an asset of a portfolio
+  enum class PortfolioStopCause : unsigned char {
+    None,      ///< No stop object has stopped the asset
+    Slice,     ///< The asset used up its slice of a sequential portfolio
+    Interrupt, ///< Another asset of a parallel portfolio interrupted the asset
+    Asset,     ///< The stop object of the asset
+    Portfolio, ///< The stop object of the portfolio
+  };
+
   /// Virtualize a worker to an engine
   template<class Worker>
   class WorkerToEngine : public Engine {

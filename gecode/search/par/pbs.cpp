@@ -52,9 +52,19 @@ namespace Gecode { namespace Search { namespace Par {
 
   bool
   PortfolioStop::stop(const Statistics& s, const Options& o) {
-    return tostop->load(std::memory_order_acquire) ||
-      ((so != nullptr) && so->stop(s,o)) ||
-      ((po != nullptr) && po->stop(ps->update(asset,s),o));
+    if (tostop->load(std::memory_order_acquire)) {
+      _cause.store(PortfolioStopCause::Interrupt, std::memory_order_relaxed);
+      return true;
+    }
+    if ((po != nullptr) && po->stop(ps->update(asset,s),o)) {
+      _cause.store(PortfolioStopCause::Portfolio, std::memory_order_relaxed);
+      return true;
+    }
+    if ((so != nullptr) && so->stop(s,o)) {
+      _cause.store(PortfolioStopCause::Asset, std::memory_order_relaxed);
+      return true;
+    }
+    return false;
   }
 
   void
