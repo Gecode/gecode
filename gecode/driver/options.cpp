@@ -631,15 +631,21 @@ namespace Gecode {
     return;
   }
 
+  namespace {
+    /// Report unrecognised argument \a a, print help of \a o, and exit
+    void
+    unrecognised(BaseOptions& o, const char* a) {
+      std::cerr << "Unrecognised argument \"" << a << "\"" << std::endl;
+      o.help();
+      exit(EXIT_FAILURE);
+    }
+  }
+
   void
   BaseOptions::parse(int& argc, char* argv[], bool strict) {
     parse(argc,argv);
-    if (strict && (argc > 1)) {
-      std::cerr << "Unrecognised argument \"" << argv[1] << "\""
-                << std::endl;
-      help();
-      exit(EXIT_FAILURE);
-    }
+    if (strict && (argc > 1))
+      unrecognised(*this,argv[1]);
   }
 
   BaseOptions::~BaseOptions(void) {
@@ -750,6 +756,28 @@ namespace Gecode {
     size(static_cast<unsigned int>(atoi(argv[1])));
   }
 
+  void
+  SizeOptions::parse(int& argc, char* argv[], bool strict) {
+    if (!strict) {
+      parse(argc,argv);
+      return;
+    }
+    Options::parse(argc,argv);
+    if (argc < 2)
+      return;
+    // The only remaining argument must be the size
+    const char* s = argv[1];
+    bool number = (*s != 0);
+    for (const char* c = s; *c != 0; c++)
+      if (!isdigit(static_cast<unsigned char>(*c)))
+        number = false;
+    if (!number)
+      unrecognised(*this,argv[1]);
+    if (argc > 2)
+      unrecognised(*this,argv[2]);
+    size(static_cast<unsigned int>(atoi(argv[1])));
+  }
+
 
 
   InstanceOptions::InstanceOptions(const char* e)
@@ -808,6 +836,25 @@ namespace Gecode {
     forget();
     if (argc < 2)
       return;
+    instance(argv[1]);
+  }
+
+  void
+  InstanceOptions::parse(int& argc, char* argv[], bool strict) {
+    if (!strict) {
+      parse(argc,argv);
+      return;
+    }
+    Options::parse(argc,argv);
+    // The spec file and parameters may have changed
+    forget();
+    if (argc < 2)
+      return;
+    // The only remaining argument must be the instance, not an option
+    if ((argv[1][0] == '-') && (argv[1][1] != 0))
+      unrecognised(*this,argv[1]);
+    if (argc > 2)
+      unrecognised(*this,argv[2]);
     instance(argv[1]);
   }
 
