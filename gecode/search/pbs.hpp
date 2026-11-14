@@ -237,7 +237,7 @@ namespace Gecode { namespace Search {
     Space* unowned_hub = hub;
     try {
       for (unsigned int i=0U; i<n_assets; i++) {
-        opt.stop = stops[i] = Seq::pbsstop(stop);
+        opt.stop = stops[i] = Seq::pbsstop(nullptr,stop);
         std::unique_ptr<Space> spoke((i == n_assets-1) ?
                                      hub : hub->clone());
         if (spoke.get() == hub)
@@ -335,7 +335,7 @@ namespace Gecode { namespace Search {
     Space* unowned_hub = hub;
     try {
       for (unsigned int i=0U; i<n_assets; i++) {
-        opt.stop = stops[i] = Par::pbsstop(stop,opt.worker_control);
+        opt.stop = stops[i] = Par::pbsstop(nullptr,stop,opt.worker_control);
         std::unique_ptr<Space> spoke((i == n_assets-1) ?
                                      hub : hub->clone());
         if (spoke.get() == hub)

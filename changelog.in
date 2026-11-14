@@ -80,6 +80,17 @@ Module: search
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Check the stop object of a portfolio with the statistics of the whole
+portfolio.
+[MORE]
+It was checked for each asset with the statistics of that asset. See
+docs/gecode-7-migration.md.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
 Run every asset of a parallel portfolio, also when there are more assets
 than threads.
 [MORE]
