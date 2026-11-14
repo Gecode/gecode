@@ -1358,20 +1358,33 @@ namespace Test {
 
     RBSIncompleteNoGoods rbs_incomplete_nogoods;
 
-    /// Space without solutions whose master fails at a restart after a limit
-    class FailingMaster : public Gecode::Space {
+    /// Space without solutions whose search tree has several failures
+    class NoSolution : public Gecode::IntMinimizeSpace {
     public:
       /// Four variables that must be distinct with three values
       Gecode::IntVarArray x;
-      FailingMaster(void) : x(*this,4,0,2) {
+      NoSolution(void) : x(*this,4,0,2) {
         for (int i=0; i<x.size(); i++)
           for (int j=i+1; j<x.size(); j++)
             Gecode::rel(*this,x[i],Gecode::IRT_NQ,x[j]);
         Gecode::branch(*this,x,Gecode::INT_VAR_NONE(),Gecode::INT_VAL_MIN());
       }
-      FailingMaster(FailingMaster& s) : Gecode::Space(s) {
+      NoSolution(NoSolution& s) : Gecode::IntMinimizeSpace(s) {
         x.update(*this,s.x);
       }
+      Gecode::Space* copy(void) override {
+        return new NoSolution(*this);
+      }
+      Gecode::IntVar cost(void) const override {
+        return x[0];
+      }
+    };
+
+    /// Space without solutions whose master fails at a restart after a limit
+    class FailingMaster : public NoSolution {
+    public:
+      FailingMaster(void) = default;
+      FailingMaster(FailingMaster& s) : NoSolution(s) {}
       Gecode::Space* copy(void) override {
         return new FailingMaster(*this);
       }
@@ -1416,24 +1429,12 @@ namespace Test {
     RBSFailedMaster rbs_failed_master;
 
     /// Space without solutions whose restricted slaves fail at the root
-    class FailingSlave : public Gecode::IntMinimizeSpace {
+    class FailingSlave : public NoSolution {
     public:
-      /// Four variables that must be distinct with three values
-      Gecode::IntVarArray x;
-      FailingSlave(void) : x(*this,4,0,2) {
-        for (int i=0; i<x.size(); i++)
-          for (int j=i+1; j<x.size(); j++)
-            Gecode::rel(*this,x[i],Gecode::IRT_NQ,x[j]);
-        Gecode::branch(*this,x,Gecode::INT_VAR_NONE(),Gecode::INT_VAL_MIN());
-      }
-      FailingSlave(FailingSlave& s) : Gecode::IntMinimizeSpace(s) {
-        x.update(*this,s.x);
-      }
+      FailingSlave(void) = default;
+      FailingSlave(FailingSlave& s) : NoSolution(s) {}
       Gecode::Space* copy(void) override {
         return new FailingSlave(*this);
-      }
-      Gecode::IntVar cost(void) const override {
-        return x[0];
       }
       bool slave(const Gecode::MetaInfo& mi) override {
         if ((mi.type() == Gecode::MetaInfo::RESTART) && (mi.restart() > 0)) {
@@ -1484,6 +1485,67 @@ namespace Test {
     };
 
     RBSRootFailure rbs_root_failure;
+
+    /// Stop after a number of failures, or after many checks as a safeguard
+    class FailureLimit : public Gecode::Search::Stop {
+    public:
+      /// Failure limit
+      unsigned long long int limit;
+      /// Number of checks, parallel engines can check concurrently
+      std::atomic<unsigned long int> checks{0};
+      FailureLimit(unsigned long long int l) : limit(l) {}
+      bool stop(const Gecode::Search::Statistics& s,
+                const Gecode::Search::Options&) override {
+        return (s.fail > limit) || (++checks > 1000);
+      }
+    };
+
+    /// A search exhausted when it reaches a failure limit is not stopped
+    class ExhaustedAtLimit : public Base {
+      template<template<class> class Engine>
+      static bool test(void) {
+        NoSolution root;
+        unsigned long long int f;
+        {
+          Engine<NoSolution> e(&root);
+          if (NoSolution* s = e.next()) {
+            delete s;
+            return false;
+          }
+          f = e.statistics().fail;
+        }
+        if (f < 2)
+          return false;
+        // The search is exhausted at the failure that exceeds the limit
+        {
+          FailureLimit l(f-1);
+          Gecode::Search::Options o;
+          o.stop = &l;
+          Engine<NoSolution> e(&root,o);
+          if ((e.next() != nullptr) || e.stopped())
+            return false;
+        }
+        // Restarts at that limit post no no-goods and would repeat forever
+        {
+          FailureLimit l(1000);
+          Gecode::Search::Options o;
+          o.stop = &l;
+          o.nogoods_limit = 128U;
+          o.cutoff = Gecode::Search::Cutoff::constant(f-1);
+          Gecode::RBS<NoSolution,Engine> rbs(&root,o);
+          if ((rbs.next() != nullptr) || rbs.stopped())
+            return false;
+        }
+        return true;
+      }
+    public:
+      ExhaustedAtLimit(void) : Base("Search::ExhaustedAtLimit") {}
+      bool run(void) override {
+        return test<Gecode::DFS>() && test<Gecode::BAB>();
+      }
+    };
+
+    ExhaustedAtLimit exhausted_at_limit;
 
     /// Space for relaxing
     class RelaxSpace : public Gecode::Space {
