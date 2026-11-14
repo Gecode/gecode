@@ -420,8 +420,9 @@ namespace Gecode {
      * overload. With \a strict set to true, any remaining argument causes
      * an error message and help text to be printed, followed by exit with
      * failure. Use strict parsing when no positional arguments or further
-     * parsing are expected. Help options are handled as in the two-argument
-     * overload.
+     * parsing are expected. SizeOptions and InstanceOptions accept their
+     * size or instance as the only remaining argument. Help options are
+     * handled as in the two-argument overload.
      */
     void parse(int& argc, char* argv[], bool strict);
 
@@ -780,6 +781,19 @@ namespace Gecode {
     virtual void help(void);
     /// Parse options from arguments \a argv (number is \a argc)
     void parse(int& argc, char* argv[]);
+    /**
+     * \brief Parse options, optionally rejecting unrecognised arguments
+     *
+     * With \a strict set to true, the only argument that may remain after
+     * the options is the size, which must be a decimal number. Any other
+     * argument causes an error message and help text to be printed,
+     * followed by exit with failure.
+     */
+    void parse(int& argc, char* argv[], bool strict);
+    /// Parse options with strict checking (equivalent to parse() with \c true)
+    void parse_strict(int& argc, char* argv[]);
+    /// Parse options partially (equivalent to parse() with \c false)
+    void parse_permissive(int& argc, char* argv[]);
 
     /// Set default size
     void size(unsigned int s);
@@ -843,6 +857,20 @@ namespace Gecode {
     virtual void help(void);
     /// Parse options from arguments \a argv (number is \a argc)
     void parse(int& argc, char* argv[]);
+    /**
+     * \brief Parse options, optionally rejecting unrecognised arguments
+     *
+     * With \a strict set to true, the only argument that may remain after
+     * the options is the instance. An argument that starts with a hyphen
+     * is an unrecognised option rather than an instance. Any other
+     * remaining argument causes an error message and help text to be
+     * printed, followed by exit with failure.
+     */
+    void parse(int& argc, char* argv[], bool strict);
+    /// Parse options with strict checking (equivalent to parse() with \c true)
+    void parse_strict(int& argc, char* argv[]);
+    /// Parse options partially (equivalent to parse() with \c false)
+    void parse_permissive(int& argc, char* argv[]);
 
     /// Set default instance name
     void instance(const char* s);

@@ -70,10 +70,24 @@
 #
 
 [RELEASE]
-Version: 7.0.0
-Date: unreleased
+Version: 6.6.0
+Date: 2026-11-16
 [DESCRIPTION]
-This is the development changelog for the next Gecode release.
+This release fixes errors in restart-based search and float propagation.
+Restart-based search with incomplete slave searches, such as large
+neighbourhood search, posted no-goods that only hold in the restricted search
+space. It could then miss better solutions and report a solution as optimal
+when it was not. On AArch64, float multiplication could round its lower bound
+upward, so float propagators could remove solutions.
+
+Optimization over float objectives now finishes in cases where proving
+optimality used to split variables down to single ulps, both in FlatZinc and
+with FloatMinimizeSpace and FloatMaximizeSpace. Float propagation with MSVC is
+two to four times faster.
+
+Options can report unrecognised commandline arguments with parse_strict(),
+which the examples now use. Existing calls to parse() keep their behaviour;
+strict parsing will become the default in a future major release.
 
 [ENTRY]
 Module: driver
@@ -84,8 +98,10 @@ Issue:  144
 Options support opt-in strict parsing through parse_strict(), which reports
 unrecognised arguments, prints help, and exits with failure. The named methods
 parse_strict() and parse_permissive() select the strictness of parse(). Existing
-parsing calls retain their behaviour. Examples that accept only named options
-use strict parsing.
+parsing calls retain their behaviour. SizeOptions and InstanceOptions accept
+their size or instance as the only remaining argument; with SizeOptions it must
+be a number, and with InstanceOptions it must not start with a hyphen. Examples
+that accept only named options use strict parsing.
 Strict parsing will become the default in a future major release.
 
 [ENTRY]
