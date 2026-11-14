@@ -20,20 +20,17 @@ is marked `override`. Restart-based search (RBS) and portfolio-based search
 (PBS) call the renamed hooks at the same points and with the same defaults
 as before.
 
-The names come from a wheel. The hub is the persistent centre: in RBS it
-carries the last solution and the no-goods from one restart to the next,
-and in PBS it is the common model. Each spoke is a disposable clone of the
-hub: RBS searches one spoke per restart, and PBS searches one spoke per
-asset. A spoke is not a long-lived peer that exchanges information with the
-hub, which is what hub and spoke means in some other solvers, such as
-mpi-sppy.
+The hooks run on these spaces:
 
-- RBS calls `hub()` after each solution and at each restart, and `spoke()`
-  on each new spoke, including the first. The default `hub()` constrains
-  the hub with the last solution, if any, and posts the no-goods.
-- PBS calls `hub()` once, then clones one spoke per asset and calls
-  `spoke()` on it with the asset number. The default `hub()` removes all
-  branchers, so `spoke()` must post the branching of each asset.
+- RBS calls `hub()` after each solution and at each restart. The hub
+  carries the last solution and the no-goods from one restart to the next.
+  RBS calls `spoke()` on each new spoke, a clone of the hub, including the
+  first. The default `hub()` constrains the hub with the last solution, if
+  any, and posts the no-goods.
+- PBS calls `hub()` once, then calls `spoke()` with the asset number on the
+  spoke of each asset, the hub or a clone of it. The default `hub()`
+  removes all branchers, so `spoke()` must post the branching of each
+  asset.
 
 The examples show typical overrides:
 
