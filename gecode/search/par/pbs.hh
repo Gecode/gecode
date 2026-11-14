@@ -39,6 +39,7 @@
 #define GECODE_SEARCH_PAR_PBS_HH
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
 #include <atomic>
 #include <exception>
 
@@ -179,8 +180,8 @@ namespace Gecode { namespace Search { namespace Par {
     unsigned int n_active;
     /// Whether an asset has been stopped
     std::atomic<bool> asset_stop;
-    /// Whether an asset finished without exhausting its search space
-    bool incomplete;
+    /// Whether an asset has proven that no further solution exists
+    bool exhausted;
     /// Why the last call to next() returned no solution
     EndReason end;
     /// Shared stop flag
@@ -205,7 +206,7 @@ namespace Gecode { namespace Search { namespace Par {
      *  - that entails, that locking is only needed inside next().
      *  - the assets 0..n_active-1 still might not have exhausted their
      *    search space.
-     *  - the assets n_active..n_assets-1 have exhausted their search space.
+     *  - the assets n_active..n_assets-1 have ended without a proof.
      */
   public:
     /// Initialize

@@ -1614,6 +1614,13 @@ namespace Gecode {
    * (see Cutoff::copy()). If the constructor throws an exception, the
    * caller keeps the cutoff.
    *
+   * The spoke of each asset is taken to cover the search space of the
+   * hub. When an asset exhausts its search space, the portfolio ends and
+   * end_reason() returns Search::EndReason::Exhausted. An asset that ends
+   * without exhausting its search space, such as LDS at its discrepancy
+   * limit, is dropped while the other assets continue. When every asset
+   * has been dropped, end_reason() returns Search::EndReason::Incomplete.
+   *
    * The class \a T can implement member functions
    * \code virtual bool hub(const MetaInfo& mi) \endcode
    * and
