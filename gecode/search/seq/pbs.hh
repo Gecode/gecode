@@ -46,9 +46,17 @@ namespace Gecode { namespace Search { namespace Seq {
     bool done;
     /// The current failure limit, incremented for each slice
     unsigned long long int l;
+    /// Statistics of the portfolio except for the running asset
+    Statistics others;
   };
 
-  /// Stop object used for controlling assets in a portfolio
+  /**
+   * \brief Stop object used for controlling assets in a portfolio
+   *
+   * The stop object of the asset is checked with the statistics of the
+   * asset, the stop object of the portfolio with the statistics of the
+   * whole portfolio.
+   */
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
     /// The stop object for the assets

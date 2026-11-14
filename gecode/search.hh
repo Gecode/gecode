@@ -1605,6 +1605,14 @@ namespace Gecode {
    * and the threads are divided evenly among the assets, with at least
    * one thread for each asset. With one thread, the assets take turns in
    * slices of failures (see Search::Options::slice).
+   *
+   * The stop object in \a o is checked with the statistics of the whole
+   * portfolio, that is, the sum of the statistics of all assets. With
+   * parallel assets, these are the statistics that the workers pass to
+   * their stop objects. When the stop object stops search, end_reason()
+   * returns Search::EndReason::Limit and calling next() again resumes all
+   * assets.
+   *
    * For best-solution assets, a solution replaces the incumbent only if
    * Space::compare reports SpaceComparison::Better.
    * An external worker control in \a o is supported only for a single
@@ -1647,8 +1655,9 @@ namespace Gecode {
     /**
      * Initialize with engine builders \a sebs
      *
-     * The stop object of \a o is checked for each builder's engine with the
-     * statistics of that engine, as is the stop object of the builder.
+     * The stop object of \a o is checked with the statistics of the whole
+     * portfolio, the stop object of a builder with the statistics of the
+     * engine it builds.
      *
      * The outer options must not contain a worker control. Each builder can
      * instead supply a distinct control for its underlying engine.

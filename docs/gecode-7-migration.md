@@ -98,3 +98,20 @@ engine, and calling `next()` again continues the search.
 Code that used `!stopped()` as a proof, such as reporting optimality, should
 test for `EndReason::Exhausted`. Code that resumes a search after a limit
 should test for `EndReason::Limit`.
+
+## Portfolio stop objects see the whole portfolio
+
+The stop object in the options of `PBS` is now checked with the statistics
+of the whole portfolio, the sum over all assets. In Gecode 6, it was checked
+for each asset with the statistics of that asset, so a failure limit of
+`n` for a portfolio of `k` assets allowed up to `k * n` failures. A stop
+object that should limit each asset on its own belongs in the options of an
+engine builder:
+
+```cpp
+Gecode::Search::Options a, b;
+a.stop = &dfs_stop;
+b.stop = &lds_stop;
+Gecode::SEBs sebs({Gecode::dfs<Model>(a), Gecode::lds<Model>(b)});
+Gecode::PBS<Model> engine(model, sebs, portfolio_options);
+```
