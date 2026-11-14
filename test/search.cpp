@@ -3012,6 +3012,30 @@ namespace Test {
 
     ExhaustedAtLimit exhausted_at_limit;
 
+    /// LDS reports an incomplete search at its discrepancy limit
+    class LDSIncomplete : public Base {
+      static EndReason end_reason(unsigned int d_l) {
+        NoSolution root;
+        Gecode::Search::Options o;
+        o.d_l = d_l;
+        Gecode::LDS<NoSolution> lds(&root,o);
+        if (NoSolution* s = lds.next()) {
+          delete s;
+          return EndReason::NotEnded;
+        }
+        return lds.end_reason();
+      }
+    public:
+      LDSIncomplete(void) : Base("Search::LDS::Incomplete") {}
+      bool run(void) override {
+        return (end_reason(0) == EndReason::Incomplete) &&
+          (end_reason(1) == EndReason::Incomplete) &&
+          (end_reason(100) == EndReason::Exhausted);
+      }
+    };
+
+    LDSIncomplete lds_incomplete;
+
     /// Space for relaxing
     class RelaxSpace : public Gecode::Space {
     public:

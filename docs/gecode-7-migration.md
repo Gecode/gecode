@@ -91,10 +91,10 @@ enum class Gecode::Search::EndReason : unsigned char {
 `Exhausted` means that the engine explored everything it was asked to
 explore: there is no further solution, and the last solution of a
 branch-and-bound search is optimal. `Incomplete` means that the engine ended
-on its own without that proof, for example CABS at its width limit. Calling
-`next()` again does not continue an incomplete search. `Limit` means that a
-stop object stopped the engine, and calling `next()` again continues the
-search.
+on its own without that proof, for example limited discrepancy search at its
+discrepancy limit or CABS at its width limit. Calling `next()` again does not
+continue an incomplete search. `Limit` means that a stop object stopped the
+engine, and calling `next()` again continues the search.
 
 Code that used `!stopped()` as a proof, such as reporting optimality, should
 test for `EndReason::Exhausted`. Code that resumes a search after a limit
