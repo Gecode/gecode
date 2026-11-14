@@ -327,16 +327,19 @@ namespace Gecode { namespace Search { namespace Seq {
   forceinline void
   LDS<Tracer>::reset(Space* s) {
     delete root; root=nullptr; d=0;
+    // Reset the statistics first, so that a failed root is counted
+    e.reset(nullptr,0);
+    if (s == nullptr)
+      return;
     e.node = 1;
-    if ((s == nullptr) || (s->status(e) == SS_FAILED)) {
+    if (s->status(e) == SS_FAILED) {
       delete s;
       e.fail++;
-      e.reset(nullptr,0);
     } else {
       if (opt.d_l > 0) {
         root = s->clone();
       }
-      e.reset(s,0);
+      e.init(s);
     }
   }
 

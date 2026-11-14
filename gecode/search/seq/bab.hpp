@@ -185,13 +185,17 @@ namespace Gecode { namespace Search { namespace Seq {
     d = 0;
     mark = 0;
     delete cur;
-    if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
+    // Reset the statistics first, so that a failed root is counted
+    Worker::reset();
+    if (s == nullptr) {
+      cur = nullptr;
+    } else if (s->status(*this) == SS_FAILED) {
+      fail++;
       delete s;
       cur = nullptr;
     } else {
       cur = s;
     }
-    Worker::reset();
   }
 
   template<class Tracer>
