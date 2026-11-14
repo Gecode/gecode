@@ -191,6 +191,15 @@ namespace Gecode {
    * Options
    *
    */
+  inline void
+  BaseOptions::parse_strict(int& argc, char* argv[]) {
+    parse(argc,argv,true);
+  }
+  inline void
+  BaseOptions::parse_permissive(int& argc, char* argv[]) {
+    parse(argc,argv,false);
+  }
+
   inline const char*
   BaseOptions::name(void) const {
     return _name;

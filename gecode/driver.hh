@@ -407,8 +407,28 @@ namespace Gecode {
      * The options are parsed from position one onwards until no more options
      * are detected. After parsing, the parsed arguments have been removed.
      *
+     * Strict parsing will become the default in a future major release.
+     * Use parse_permissive() to explicitly retain partial parsing.
+     *
      */
     void parse(int& argc, char* argv[]);
+
+    /**
+     * \brief Parse options, optionally rejecting unrecognised arguments
+     *
+     * With \a strict set to false, this behaves like the two-argument
+     * overload. With \a strict set to true, any remaining argument causes
+     * an error message and help text to be printed, followed by exit with
+     * failure. Use strict parsing when no positional arguments or further
+     * parsing are expected. Help options are handled as in the two-argument
+     * overload.
+     */
+    void parse(int& argc, char* argv[], bool strict);
+
+    /// Parse options with strict checking (equivalent to parse() with \c true)
+    void parse_strict(int& argc, char* argv[]);
+    /// Parse options partially (equivalent to parse() with \c false)
+    void parse_permissive(int& argc, char* argv[]);
 
     /// Return name of script
     const char* name(void) const;

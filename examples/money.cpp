@@ -133,7 +133,7 @@ main(int argc, char* argv[]) {
   opt.model(Money::MODEL_CARRY, "carry", "use carry");
   opt.solutions(0);
   opt.iterations(20000);
-  opt.parse(argc,argv);
+  opt.parse_strict(argc,argv);
   Script::run<Money,DFS,Options>(opt);
   return 0;
 }

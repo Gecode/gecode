@@ -232,7 +232,7 @@ main(int argc, char* argv[]) {
   opt.model(MODEL_LEXCOST, "lex", "use lexicographic cost");
   opt.solutions(0);
   opt.iterations(10);
-  opt.parse(argc,argv);
+  opt.parse_strict(argc,argv);
   switch (opt.model()) {
   case MODEL_SUMCOST:    
     IntMinimizeScript::run<SumCostWarehouses,BAB,Options>(opt);
