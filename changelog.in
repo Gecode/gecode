@@ -77,6 +77,17 @@ This is the development changelog for the next Gecode release.
 
 [ENTRY]
 Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Run every asset of a parallel portfolio, also when there are more assets
+than threads.
+[MORE]
+Parallel portfolio search ran only as many assets as it had threads and
+silently dropped the others.
+
+[ENTRY]
+Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]
