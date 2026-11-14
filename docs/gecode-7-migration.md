@@ -1,25 +1,8 @@
 # Gecode 7 migration notes
 
-## Meta-search Space roles
+## Meta-search hooks: master() and slave() are now hub() and spoke()
 
-Gecode 7 names the two `Space` roles used by restart-based search (RBS) and
-portfolio-based search (PBS) **Hub** and **Spoke**.
-The [Hub and Spoke terminology contract](hub-spoke-terminology.md)
-records the lifecycle and naming rationale behind these roles.
-
-A Hub is the persistent or common Space from which an exploration Space
-is derived. A Spoke is the derived Space configured for one RBS restart
-episode or one PBS portfolio asset. These are logical roles. In RBS, the
-prepared object becomes the explored Spoke while its clone becomes the next
-Hub.
-
-The same terms apply to both engines because both use the same derivation:
-prepare common state, derive an exploration Space, and specialize that Space.
-The callback contracts remain engine-specific. RBS uses the return values to
-control restart and completeness behavior, while PBS ignores them during
-one-time Hub and per-asset Spoke configuration.
-
-Gecode 7 makes the following breaking override rename:
+Rename the overrides. Their signatures and return values are unchanged:
 
 ```cpp
 // Gecode 6
@@ -33,25 +16,30 @@ bool spoke(const Gecode::MetaInfo& mi) override;
 
 There are no compatibility aliases. `Space` declares `master()` and
 `slave()` as deleted, so an old override fails to compile whether or not it
-is marked `override`.
+is marked `override`. Restart-based search (RBS) and portfolio-based search
+(PBS) call the renamed hooks at the same points and with the same defaults
+as before.
 
-The build-checked
-[Hub and Spoke migration example](../examples/hub-spoke.cpp)
-contains both current override declarations.
+The names come from a wheel. The hub is the persistent centre: in RBS it
+carries the last solution and the no-goods from one restart to the next,
+and in PBS it is the common model. Each spoke is a disposable clone of the
+hub: RBS searches one spoke per restart, and PBS searches one spoke per
+asset. A spoke is not a long-lived peer that exchanges information with the
+hub, which is what hub and spoke means in some other solvers, such as
+mpi-sppy.
 
-The rename does not change callback timing or behavior:
+- RBS calls `hub()` after each solution and at each restart, and `spoke()`
+  on each new spoke, including the first. The default `hub()` constrains
+  the hub with the last solution, if any, and posts the no-goods.
+- PBS calls `hub()` once, then clones one spoke per asset and calls
+  `spoke()` on it with the asset number. The default `hub()` removes all
+  branchers, so `spoke()` must post the branching of each asset.
 
-- RBS calls `hub` when persistent restart state is updated and calls
-  `spoke` for each derived restart exploration.
-- PBS calls `hub` once before constructing assets and calls `spoke` once
-  per asset, including the single-asset path.
-- The default RBS Hub behavior still constrains against the last solution,
-  posts no-goods, and requests a restart.
-- The default PBS Hub behavior still removes common branchers before
-  asset-specific branching is installed.
-- The default Spoke behavior still performs no additional configuration and
-  returns `true`.
+The examples show typical overrides:
 
-Hub and Spoke describe Spaces. They do not replace runtime terms such as
-portfolio coordinator, wrapped engine, or worker thread where those terms
-describe different objects.
+- `examples/crossword.cpp`: a `hub()` that posts no-goods and continues
+  after a solution instead of restarting.
+- `examples/photo.cpp`: an RBS `spoke()` that relaxes the last solution for
+  large neighbourhood search.
+- `examples/qcp.cpp`: a PBS `spoke()` that posts a different branching for
+  each asset.
