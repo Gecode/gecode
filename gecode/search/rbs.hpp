@@ -108,9 +108,9 @@ namespace Gecode {
       stat.fail++;
       if (!m_opt.clone)
         delete s;
+      e = Search::Seq::dead(e_opt, stat);
       // The engine owns the cutoff, but a dead engine does not take it
       delete m_opt.cutoff;
-      e = Search::Seq::dead(e_opt, stat);
     } else {
       std::unique_ptr<Space> master(m_opt.clone ? s->clone() : s);
       std::unique_ptr<Space> slave(master->clone());

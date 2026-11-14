@@ -1742,6 +1742,104 @@ namespace Test {
 
     PBSBuilderStop pbs_builder_stop;
 
+    /// Restart-based assets of a portfolio share the cutoff sequence
+    class PBSRestartCutoff : public Base {
+      template<template<class> class Engine>
+      static bool test(unsigned int threads) {
+        NoSolution root;
+        Gecode::Search::Options o;
+        o.assets = 2;
+        o.threads = threads;
+        o.cutoff = Gecode::Search::Cutoff::geometric(1,2);
+        Gecode::PBS<NoSolution,Engine> pbs(&root,o);
+        return (pbs.next() == nullptr) && !pbs.stopped();
+      }
+    public:
+      PBSRestartCutoff(void) : Base("Search::PBS::RBS::Cutoff") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U,4U})
+          if (!test<Gecode::RBS>(t) || !test<RestartPortfolio>(t))
+            return false;
+        return true;
+      }
+    };
+
+    PBSRestartCutoff pbs_restart_cutoff;
+
+    /**
+     * \brief Constant cutoff counting its deletions
+     *
+     * The cutoff exceeds the failures of NoSolution, so a restart-based
+     * asset finishes without restarting. Without no-goods, restarts with a
+     * smaller constant cutoff would repeat the same search forever.
+     */
+    class CountingCutoff : public Gecode::Search::CutoffConstant {
+    public:
+      /// Number of deletions, owned by the test
+      std::atomic<unsigned int>& deleted;
+      CountingCutoff(std::atomic<unsigned int>& d)
+        : Gecode::Search::CutoffConstant(1000), deleted(d) {}
+      ~CountingCutoff(void) override {
+        deleted++;
+      }
+    };
+
+    /// Space without solutions whose first portfolio asset fails
+    class FailingAsset : public NoSolution {
+    public:
+      FailingAsset(void) = default;
+      FailingAsset(FailingAsset& s) : NoSolution(s) {}
+      Gecode::Space* copy(void) override {
+        return new FailingAsset(*this);
+      }
+      bool slave(const Gecode::MetaInfo& mi) override {
+        if ((mi.type() == Gecode::MetaInfo::PORTFOLIO) && (mi.asset() == 0U))
+          fail();
+        return true;
+      }
+    };
+
+    /// A portfolio of restart-based assets deletes the cutoff exactly once
+    class PBSRestartCutoffDeleted : public Base {
+      template<class Root, template<class> class Engine>
+      static bool test(Root& root, unsigned int threads) {
+        std::atomic<unsigned int> deleted{0U};
+        {
+          Gecode::Search::Options o;
+          o.assets = 2;
+          o.threads = threads;
+          o.cutoff = new CountingCutoff(deleted);
+          Gecode::PBS<Root,Engine> pbs(&root,o);
+          if (Root* s = pbs.next()) {
+            delete s;
+            return false;
+          }
+          if (pbs.stopped())
+            return false;
+        }
+        return deleted == 1U;
+      }
+    public:
+      PBSRestartCutoffDeleted(void)
+        : Base("Search::PBS::RBS::CutoffDeleted") {}
+      bool run(void) override {
+        // A failed root, also for a portfolio of portfolios
+        NoSolution failed;
+        Gecode::rel(failed,failed.x[0],Gecode::IRT_LE,0);
+        // An asset of a portfolio of portfolios fails at its root
+        FailingAsset failing;
+        for (unsigned int t : {1U,2U,4U})
+          if (!test<NoSolution,Gecode::RBS>(failed,t) ||
+              !test<NoSolution,RestartPortfolio>(failed,t) ||
+              !test<FailingAsset,Gecode::RBS>(failing,t) ||
+              !test<FailingAsset,RestartPortfolio>(failing,t))
+            return false;
+        return true;
+      }
+    };
+
+    PBSRestartCutoffDeleted pbs_restart_cutoff_deleted;
+
     /// Iterator for branching types
     class BranchTypes {
     private:

@@ -1529,6 +1529,10 @@ namespace Gecode {
    * builders, each with its own control and immutable worker capacity.
    * PBS does not allocate workers or adjust those controls.
    *
+   * When the assets are restart-based engines, the portfolio takes
+   * ownership of the cutoff in \a o and the assets share its sequence:
+   * each restart of an asset takes the next value of the sequence.
+   *
    * The class \a T can implement member functions
    * \code virtual bool master(const MetaInfo& mi) \endcode
    * and
