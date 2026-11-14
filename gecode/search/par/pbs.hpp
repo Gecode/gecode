@@ -190,7 +190,7 @@ namespace Gecode { namespace Search { namespace Par {
                     const Statistics& stat0)
     : stat(stat0), assets(heap.alloc<Asset<Collect>*>(n)),
       n_assets(n), n_active(n),
-      asset_stop(false), incomplete(false), end(EndReason::NotEnded), tostop(false), n_busy(0) {
+      asset_stop(false), exhausted(false), end(EndReason::NotEnded), tostop(false), n_busy(0) {
     // Initialize assets
     for (unsigned int i=0U; i<n_assets; i++) {
       assets[i] = new Asset<Collect>(this,engines[i],stops[i]);
@@ -226,11 +226,13 @@ namespace Gecode { namespace Search { namespace Par {
         tostop.store(true, std::memory_order_release);
         wake = true;
       }
+    } else if (pbs_asset_proof(asset->end_reason())) {
+      // Stop the other assets, no further solution exists
+      exhausted = true;
+      tostop.store(true, std::memory_order_release);
+      wake = true;
     } else {
-      // The asset is done , without a proof if it is incomplete
-      if (asset->end_reason() == EndReason::Incomplete)
-        incomplete = true;
-      // Move asset to inactive
+      // The asset ended without a proof, move it to inactive
       unsigned int i=0;
       while (assets[i] != asset)
         i++;
@@ -290,7 +292,7 @@ namespace Gecode { namespace Search { namespace Par {
     if (solutions.empty())
       asset_stop.store(false, std::memory_order_release);
     while (solutions.empty() && (n_active > 0) && (failure == nullptr) &&
-           !asset_stop.load(std::memory_order_acquire)) {
+           !exhausted && !asset_stop.load(std::memory_order_acquire)) {
       // Clear the internal stop used to interrupt sibling assets
       tostop.store(false, std::memory_order_release);
 
@@ -328,10 +330,13 @@ namespace Gecode { namespace Search { namespace Par {
     // Process solutions
     if (solutions.empty()) {
       s = nullptr;
-      if (asset_stop.load(std::memory_order_acquire))
+      if (exhausted)
+        end = EndReason::Exhausted;
+      else if (asset_stop.load(std::memory_order_acquire))
         end = EndReason::Limit;
       else
-        end = incomplete ? EndReason::Incomplete : EndReason::Exhausted;
+        // All assets ended without a proof
+        end = EndReason::Incomplete;
     } else {
       end = EndReason::NotEnded;
       Asset<Collect>* r;

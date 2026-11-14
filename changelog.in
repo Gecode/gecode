@@ -77,6 +77,16 @@ This is the development changelog for the next Gecode release.
 
 [ENTRY]
 Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+End a portfolio when an asset exhausts its search space.
+[MORE]
+The exhausted asset proves that no further solution exists, so the other
+assets no longer run until they are stopped.
+
+[ENTRY]
+Module: search
 What:   change
 Rank:   minor
 [DESCRIPTION]

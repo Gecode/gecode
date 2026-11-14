@@ -364,7 +364,7 @@ namespace Test {
           last = s->node().cost;
           delete s;
         }
-        return (last == 1) && (e.end_reason() == EndReason::Incomplete);
+        return (last == 1) && (e.end_reason() == EndReason::Exhausted);
       }
     } heuristic_portfolio;
 #endif
@@ -3226,6 +3226,44 @@ namespace Test {
     };
 
     PBSBuilderStop pbs_builder_stop;
+
+    /// An exhausted asset ends a portfolio whose other asset never ends
+    class PBSExhaustedAsset : public Base {
+      /// Stop after many checks, in case the portfolio does not end
+      class ManyChecks : public Gecode::Search::Stop {
+      public:
+        /// Number of checks
+        std::atomic<unsigned long int> checks{0UL};
+        bool stop(const Gecode::Search::Statistics&,
+                  const Gecode::Search::Options&) override {
+          return ++checks > 10000000UL;
+        }
+      };
+      static bool test(unsigned int threads) {
+        FailingSpoke root;
+        ManyChecks l;
+        Gecode::Search::Options a;
+        a.cutoff = Gecode::Search::Cutoff::constant(1);
+        Gecode::SEBs sebs(2);
+        sebs[0] = Gecode::rbs<FailingSpoke,Gecode::DFS>(a);
+        sebs[1] = Gecode::dfs<FailingSpoke>();
+        Gecode::Search::Options o;
+        o.threads = threads;
+        o.stop = &l;
+        Gecode::PBS<FailingSpoke,Gecode::DFS> pbs(&root,sebs,o);
+        return (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Exhausted) &&
+          (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Exhausted);
+      }
+    public:
+      PBSExhaustedAsset(void) : Base("Search::PBS::ExhaustedAsset") {}
+      bool run(void) override {
+        return test(1U) && test(2U);
+      }
+    };
+
+    PBSExhaustedAsset pbs_exhausted_asset;
 
     /// A copy of a cutoff generator continues its sequence independently
     class CutoffCopy : public Base {

@@ -35,6 +35,7 @@
 #define GECODE_SEARCH_SEQ_PBS_HH
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
 
 namespace Gecode { namespace Search { namespace Seq {
 
@@ -111,8 +112,6 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned int n_assets;
     /// Current asset to run
     unsigned int cur;
-    /// Whether an asset finished without exhausting its search space
-    bool incomplete;
     /// Why the last call to next() returned no solution
     EndReason end;
   public:
