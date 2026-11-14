@@ -101,6 +101,16 @@ Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Honour the stop object of a portfolio built from engine builders.
+[MORE]
+The stop object is checked with the statistics of each asset, so a node or
+failure limit applies to each asset separately.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Do not report DFS and BAB as stopped when the search tree is exhausted at
 the same failure that reaches a limit.
 [MORE]

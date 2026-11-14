@@ -40,6 +40,11 @@ namespace Gecode { namespace Search { namespace Seq {
     return new PortfolioStop(so);
   }
 
+  Stop*
+  pbsstop(Stop* so, Stop* po) {
+    return new PortfolioStop(so,po);
+  }
+
   Engine*
   pbsengine(Engine** slaves, Stop** stops, unsigned int n_slaves,
             const Statistics& stat, const Search::Options& opt, bool best) {
@@ -59,7 +64,12 @@ namespace Gecode { namespace Search { namespace Par {
 
   Stop*
   pbsstop(Stop* so, const WorkerControl& control) {
-    return new PortfolioStop(so,control);
+    return new PortfolioStop(so,nullptr,control);
+  }
+
+  Stop*
+  pbsstop(Stop* so, Stop* po, const WorkerControl& control) {
+    return new PortfolioStop(so,po,control);
   }
 
   Engine*

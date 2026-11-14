@@ -133,6 +133,10 @@ namespace Gecode { namespace Search { namespace Seq {
   GECODE_SEARCH_EXPORT Stop*
   pbsstop(Stop* so);
 
+  /// Create stop object for builder stop \a so and portfolio stop \a po
+  GECODE_SEARCH_EXPORT Stop*
+  pbsstop(Stop* so, Stop* po);
+
   /// Create sequential portfolio engine
   GECODE_SEARCH_EXPORT Engine*
   pbsengine(Engine** slaves, Stop** stops, unsigned int n_slaves,
@@ -145,6 +149,10 @@ namespace Gecode { namespace Search { namespace Par {
   /// Create stop object
   GECODE_SEARCH_EXPORT Stop*
   pbsstop(Stop* so, const WorkerControl& control);
+
+  /// Create stop object for builder stop \a so and portfolio stop \a po
+  GECODE_SEARCH_EXPORT Stop*
+  pbsstop(Stop* so, Stop* po, const WorkerControl& control);
 
   /// Create parallel portfolio engine
   GECODE_SEARCH_EXPORT Engine*
@@ -219,8 +227,8 @@ namespace Gecode { namespace Search {
     bool builders_owned = true;
     try {
       for (int i=0; i<n_slaves; i++) {
-        // Re-configure slave options
-        stops[i] = Seq::pbsstop(sebs[i]->options().stop);
+        // Re-configure slave options, the portfolio stop applies as well
+        stops[i] = Seq::pbsstop(sebs[i]->options().stop,opt.stop);
         sebs[i]->options().stop  = stops[i];
         sebs[i]->options().clone = true;
         std::unique_ptr<Space> slave((i == n_slaves-1) ?
@@ -312,8 +320,8 @@ namespace Gecode { namespace Search {
     bool builders_owned = true;
     try {
       for (int i=0; i<n_slaves; i++) {
-        // Re-configure slave options
-        stops[i] = Par::pbsstop(sebs[i]->options().stop,
+        // Re-configure slave options, the portfolio stop applies as well
+        stops[i] = Par::pbsstop(sebs[i]->options().stop,opt.stop,
                                 sebs[i]->options().worker_control);
         sebs[i]->options().stop  = stops[i];
         sebs[i]->options().clone = true;

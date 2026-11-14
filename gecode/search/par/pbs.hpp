@@ -139,8 +139,9 @@ namespace Gecode { namespace Search { namespace Par {
 
 
   forceinline
-  PortfolioStop::PortfolioStop(Stop* so0, const WorkerControl& control)
-    : so(so0), worker_control(control), tostop(nullptr) {}
+  PortfolioStop::PortfolioStop(Stop* so0, Stop* po0,
+                               const WorkerControl& control)
+    : so(so0), po(po0), worker_control(control), tostop(nullptr) {}
 
   forceinline void
   PortfolioStop::share(std::atomic<bool>* ts) {
