@@ -132,13 +132,28 @@ namespace Gecode { namespace Search { namespace Par {
 
 
   forceinline
+  PortfolioStatistics::PortfolioStatistics(const Statistics& s, unsigned int n0)
+    : n(n0 + 1), stat(heap.alloc<Statistics>(n0 + 1)) {
+    stat[0] = s;
+  }
+
+  forceinline
+  PortfolioStatistics::~PortfolioStatistics(void) {
+    heap.free<Statistics>(stat, n);
+  }
+
+  forceinline
   PortfolioStop::PortfolioStop(Stop* so0, Stop* po0,
                                const WorkerControl& control)
-    : so(so0), po(po0), worker_control(control), tostop(nullptr) {}
+    : so(so0), po(po0), worker_control(control), tostop(nullptr),
+      ps(nullptr), asset(0U) {}
 
   forceinline void
-  PortfolioStop::share(std::atomic<bool>* ts) {
+  PortfolioStop::share(std::atomic<bool>* ts, PortfolioStatistics* ps0,
+                       unsigned int i) {
     tostop = ts;
+    ps = ps0;
+    asset = i;
   }
 
 
@@ -188,13 +203,14 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline
   PBS<Collect>::PBS(Engine** engines, Stop** stops, unsigned int n,
                     const Statistics& stat0)
-    : stat(stat0), assets(heap.alloc<Asset<Collect>*>(n)),
+    : stat(stat0), portfolio_stat(stat0,n),
+      assets(heap.alloc<Asset<Collect>*>(n)),
       n_assets(n), n_active(n),
       asset_stop(false), exhausted(false), end(EndReason::NotEnded), tostop(false), n_busy(0) {
     // Initialize assets
     for (unsigned int i=0U; i<n_assets; i++) {
       assets[i] = new Asset<Collect>(this,engines[i],stops[i]);
-      static_cast<PortfolioStop*>(stops[i])->share(&tostop);
+      static_cast<PortfolioStop*>(stops[i])->share(&tostop,&portfolio_stat,i);
     }
   }
 

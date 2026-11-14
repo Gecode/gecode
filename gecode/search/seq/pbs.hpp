@@ -101,6 +101,10 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned int n_exhausted = 0;
     while (n_assets > 0) {
       ssi.done = false;
+      ssi.others = stat;
+      for (unsigned int i=0U; i<n_assets; i++)
+        if (i != cur)
+          ssi.others += assets[i].statistics();
       if (Space* s = assets[cur].next()) {
         // Constrain other assets
         if (best) {

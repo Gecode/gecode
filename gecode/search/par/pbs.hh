@@ -45,7 +45,38 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  /// Stop object used for controlling assets in a portfolio
+  /**
+   * \brief Statistics of the assets of a parallel portfolio
+   *
+   * Each asset records the statistics that its engine passes to its stop
+   * object. For an asset with a parallel engine, these are the statistics
+   * of the worker that checks the stop object.
+   */
+  class GECODE_SEARCH_EXPORT PortfolioStatistics {
+  private:
+    /// Mutex for access
+    Support::Mutex m;
+    /// Number of entries: propagating the model and one for each asset
+    unsigned int n;
+    /// Statistics of propagating the model followed by those of each asset
+    Statistics* stat;
+
+  public:
+    /// Initialize with statistics \a s of propagating the model for \a n assets
+    PortfolioStatistics(const Statistics& s, unsigned int n);
+    /// Record statistics \a s of asset \a i and return those of the portfolio
+    Statistics update(unsigned int i, const Statistics& s);
+    /// Delete
+    ~PortfolioStatistics(void);
+  };
+
+  /**
+   * \brief Stop object used for controlling assets in a portfolio
+   *
+   * The stop object of the asset is checked with the statistics of the
+   * asset, the stop object of the portfolio with the statistics of the
+   * whole portfolio.
+   */
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
     /// The stop object for the assets
@@ -56,11 +87,16 @@ namespace Gecode { namespace Search { namespace Par {
     WorkerControl worker_control;
     /// Whether search must be stopped
     std::atomic<bool>* tostop;
+    /// Statistics of the portfolio
+    PortfolioStatistics* ps;
+    /// Index of the asset
+    unsigned int asset;
   public:
     /// Initialize with asset stop \a so, portfolio stop \a po, and \a control
     PortfolioStop(Stop* so, Stop* po, const WorkerControl& control);
-    /// Set pointer to shared \a tostop variable
-    void share(std::atomic<bool>* ts);
+    /// Share stop flag \a ts and statistics \a ps of the portfolio with asset \a i
+    void share(std::atomic<bool>* ts, PortfolioStatistics* ps,
+               unsigned int i);
     /// Return true if portfolio engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
     /// Wake workers so that a paused asset can observe the portfolio stop
@@ -172,6 +208,8 @@ namespace Gecode { namespace Search { namespace Par {
   protected:
     /// Statistics of propagating the model
     Statistics stat;
+    /// Statistics of the portfolio for its stop object
+    PortfolioStatistics portfolio_stat;
     /// Asset engines
     Asset<Collect>** assets;
     /// Number of asset engines

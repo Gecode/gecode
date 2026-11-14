@@ -40,11 +40,21 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
+  Statistics
+  PortfolioStatistics::update(unsigned int i, const Statistics& s) {
+    Support::Lock lock(m);
+    stat[i + 1] = s;
+    Statistics t;
+    for (unsigned int j = 0U; j < n; j++)
+      t += stat[j];
+    return t;
+  }
+
   bool
   PortfolioStop::stop(const Statistics& s, const Options& o) {
     return tostop->load(std::memory_order_acquire) ||
       ((so != nullptr) && so->stop(s,o)) ||
-      ((po != nullptr) && po->stop(s,o));
+      ((po != nullptr) && po->stop(ps->update(asset,s),o));
   }
 
   void

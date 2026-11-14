@@ -3265,6 +3265,56 @@ namespace Test {
 
     PBSExhaustedAsset pbs_exhausted_asset;
 
+    /// The stop object of a portfolio sees the failures of all assets
+    class PBSPortfolioStop : public Base {
+      /// Whether restart-based assets stop at a portfolio-wide failure limit
+      static bool test(unsigned int threads, bool builders) {
+        FailingSpoke root;
+        const unsigned long long int limit = 40U;
+        Gecode::Search::FailStop f(limit);
+        Gecode::Search::Options o;
+        o.threads = threads;
+        o.stop = &f;
+        o.slice = 2;
+        Gecode::Search::Statistics s;
+        if (builders) {
+          // Each restart-based engine takes ownership of its cutoff
+          Gecode::Search::Options a, b;
+          a.cutoff = Gecode::Search::Cutoff::constant(1);
+          b.cutoff = Gecode::Search::Cutoff::constant(1);
+          Gecode::SEBs sebs(2);
+          sebs[0] = Gecode::rbs<FailingSpoke,Gecode::DFS>(a);
+          sebs[1] = Gecode::rbs<FailingSpoke,Gecode::DFS>(b);
+          Gecode::PBS<FailingSpoke,Gecode::DFS> pbs(&root,sebs,o);
+          if ((pbs.next() != nullptr) ||
+              (pbs.end_reason() != EndReason::Limit))
+            return false;
+          s = pbs.statistics();
+        } else {
+          o.assets = 2;
+          o.cutoff = Gecode::Search::Cutoff::constant(1);
+          Gecode::PBS<FailingSpoke,Gecode::RBS> pbs(&root,o);
+          if ((pbs.next() != nullptr) ||
+              (pbs.end_reason() != EndReason::Limit))
+            return false;
+          s = pbs.statistics();
+        }
+        // Checked for each asset, the limit would allow twice the failures
+        return (s.fail > limit) && (s.fail < limit + limit / 2U);
+      }
+    public:
+      PBSPortfolioStop(void) : Base("Search::PBS::PortfolioStop") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U})
+          for (bool builders : {false,true})
+            if (!test(t,builders))
+              return false;
+        return true;
+      }
+    };
+
+    PBSPortfolioStop pbs_portfolio_stop;
+
     /// A copy of a cutoff generator continues its sequence independently
     class CutoffCopy : public Base {
       /// Check that a copy of \a c continues as \a c, then delete \a c
