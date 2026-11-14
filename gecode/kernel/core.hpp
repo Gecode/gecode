@@ -2194,23 +2194,23 @@ namespace Gecode {
     /**
      * \brief Hub configuration function for meta search engines
      *
-     * This configuration function is used by both restart and
-     * portfolio meta search engines.
+     * \li Restart-based search (RBS) calls this function on its hub
+     *     after each solution and before each restart. \a mi
+     *     describes the restart. After a solution, returning true
+     *     restarts search from a new spoke, and returning false
+     *     continues the current search without calling spoke(). At a
+     *     restart caused by the cutoff or by an incomplete spoke being
+     *     exhausted, the result is ignored and search restarts.
      *
-     * \li A restart meta search engine calls this function on its
-     *     hub space whenever it finds a solution or exploration
-     *     restarts. \a mi contains information about the current restart.
+     *     The default function constrains the hub with the last
+     *     solution, if any, posts the no-goods from \a mi, and
+     *     returns true.
      *
-     *     If a solution has been found, then search will continue with
-     *     a restart id the function returns true, otherwise search
-     *     will continue.
+     * \li Portfolio-based search (PBS) calls this function once on
+     *     its hub before creating the assets. The result is ignored.
      *
-     *     The default function posts no-goods obtained from \a mi.
-     *
-     * \li A portfolio meta engine calls this function once on
-     *     the hub space. The return value is ignored.
-     *
-     *     The default function removes all common branchers.
+     *     The default function removes all branchers, so the spoke()
+     *     function must post the branching for each asset.
      *
      * \ingroup TaskModelScript
      */
@@ -2219,28 +2219,19 @@ namespace Gecode {
     /**
      * \brief Spoke configuration function for meta search engines
      *
-     * This configuration function is used by both restart and
-     * portfolio meta search engines.
+     * \li RBS calls this function on each spoke, a clone of the hub,
+     *     before searching it: once when search starts and once at
+     *     each restart. \a mi describes the restart. Returning true
+     *     declares the search of the spoke complete: when it is
+     *     exhausted, RBS finishes. Returning false declares it
+     *     incomplete: when it is exhausted, RBS restarts. The no-goods
+     *     recorded by an incomplete search only hold in the spoke's
+     *     search space, so RBS does not pass them to hub(). This also
+     *     holds for the first search when search starts.
      *
-     * \li A restart meta search engine calls this function on its
-     *     spoke space when search starts and whenever it finds a solution or
-     *     exploration restarts.  \a mi contains information about the
-     *     current restart.
-     *
-     *     If the function returns true, the search on the spoke space is
-     *     considered complete, i.e., if it fails or exhaustively explores the
-     *     entire search space, the meta search engine finishes. If the
-     *     function returns false, the search on the spoke space is considered
-     *     incomplete, and the meta engine will restart the search regardless
-     *     of whether the search on the spoke space finishes or times out.
-     *     The no-goods recorded by an incomplete search only hold in the
-     *     spoke's search space, so the meta engine does not pass them to the
-     *     hub configuration function. This also holds for the first
-     *     search when search starts.
-     *
-     * \li A portfolio meta engine calls this function once on each asset
-     *     (that is, on each spoke) and passes the number of the asset,
-     *     starting from zero.
+     * \li PBS calls this function once on the spoke of each asset,
+     *     a clone of the hub, and passes the asset number, starting
+     *     from zero. The result is ignored.
      *
      * The default function does nothing and returns true.
      *
