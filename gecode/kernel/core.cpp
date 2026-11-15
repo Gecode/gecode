@@ -901,28 +901,24 @@ namespace Gecode {
     throw SpaceNoComparison("Space::compare");
   }
 
-  bool
-  Space::hub(const MetaInfo& mi) {
-    switch (mi.type()) {
-    case MetaInfo::RESTART:
-      if (mi.last() != nullptr)
-        constrain(*mi.last());
-      mi.nogoods().post(*this);
-      // Perform a restart even if a solution has been found
-      return true;
-    case MetaInfo::PORTFOLIO:
+  void
+  Space::hub(HubContext& hc) {
+    switch (hc.engine()) {
+    case MetaEngine::Restart:
+      if (hc.last() != nullptr)
+        constrain(*hc.last());
+      hc.nogoods().post(*this);
+      break;
+    case MetaEngine::Portfolio:
       // Kill all branchers
       BrancherGroup::all.kill(*this);
-      return true;
+      break;
     default: GECODE_NEVER;
-      return true;
     }
   }
 
-  bool
-  Space::spoke(const MetaInfo&) {
-    return true;
-  }
+  void
+  Space::spoke(SpokeContext&) {}
 
 
   void*

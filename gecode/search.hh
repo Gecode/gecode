@@ -1516,10 +1516,10 @@ namespace Gecode {
    * The engine uses the Cutoff sequence supplied in the options \a o to
    * periodically restart the search of engine \a E.
    *
-   * The class \a T can implement member functions
-   * \code virtual bool hub(const MetaInfo& mi) \endcode
+   * The class \a T can override the member functions
+   * \code virtual void hub(HubContext& hc) \endcode
    * and
-   * \code virtual bool spoke(const MetaInfo& mi) \endcode
+   * \code virtual void spoke(SpokeContext& sc) \endcode
    *
    * The engine calls hub() on its hub after solutions and at restarts,
    * and spoke() on each spoke it clones from the hub. See Space::hub()
@@ -1548,10 +1548,10 @@ namespace Gecode {
    * The engine uses the Cutoff sequence supplied in the options \a o to
    * periodically restart the search of engine \a E.
    *
-   * The class \a T can implement member functions
-   * \code virtual bool hub(const MetaInfo& mi) \endcode
+   * The class \a T can override the member functions
+   * \code virtual void hub(HubContext& hc) \endcode
    * and
-   * \code virtual bool spoke(const MetaInfo& mi) \endcode
+   * \code virtual void spoke(SpokeContext& sc) \endcode
    *
    * The engine calls hub() on its hub after solutions and at restarts,
    * and spoke() on each spoke it clones from the hub. See Space::hub()
@@ -1634,14 +1634,14 @@ namespace Gecode {
    * limit, is dropped while the other assets continue. When every asset
    * has been dropped, end_reason() returns Search::EndReason::Incomplete.
    *
-   * The class \a T can implement member functions
-   * \code virtual bool hub(const MetaInfo& mi) \endcode
+   * The class \a T can override the member functions
+   * \code virtual void hub(HubContext& hc) \endcode
    * and
-   * \code virtual bool spoke(const MetaInfo& mi) \endcode
+   * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() once on its hub and then spoke() on the
-   * spoke of each asset. See Space::hub() and Space::spoke() for
-   * details.
+   * The engine calls hub() once on its hub with MetaEvent::Start and then
+   * spoke() on the spoke of each asset. See Space::hub() and
+   * Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1690,14 +1690,14 @@ namespace Gecode {
    * An external worker control is supported only when \a o selects one
    * asset. PBS does not implement worker-allocation policy.
    *
-   * The class \a T can implement member functions
-   * \code virtual bool hub(const MetaInfo& mi) \endcode
+   * The class \a T can override the member functions
+   * \code virtual void hub(HubContext& hc) \endcode
    * and
-   * \code virtual bool spoke(const MetaInfo& mi) \endcode
+   * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() once on its hub and then spoke() on the
-   * spoke of each asset. See Space::hub() and Space::spoke() for
-   * details.
+   * The engine calls hub() once on its hub with MetaEvent::Start and then
+   * spoke() on the spoke of each asset. See Space::hub() and
+   * Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
    */

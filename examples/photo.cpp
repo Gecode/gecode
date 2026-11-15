@@ -128,15 +128,13 @@ public:
       break;
     }
   }
-  /// Spoke function for restarts
-  bool spoke(const MetaInfo& mi) {
-    if ((mi.type() == MetaInfo::RESTART) &&
-        (mi.restart() > 0) && (p > 0.0)) {
-      const Photo& l = static_cast<const Photo&>(*mi.last());
+  /// Relax the last solution for large neighbourhood search
+  void spoke(SpokeContext& sc) {
+    if ((sc.engine() == MetaEngine::Restart) &&
+        (sc.last() != nullptr) && (p > 0.0)) {
+      const Photo& l = static_cast<const Photo&>(*sc.last());
       relax(*this, pos, l.pos, rnd, p);
-      return false;
-    } else {
-      return true;
+      sc.coverage(SpokeCoverage::Partial);
     }
   }
   /// Constructor for cloning \a s
