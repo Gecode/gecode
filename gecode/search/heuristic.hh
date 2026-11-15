@@ -47,7 +47,7 @@ namespace Gecode { namespace Search {
   /// Whether bound \a a is better than bound \a b for objective direction \a s
   forceinline bool
   better(Sense s, std::int64_t a, std::int64_t b) {
-    return (s == Sense::minimize) ? (a < b) : (a > b);
+    return (s == Sense::Minimize) ? (a < b) : (a > b);
   }
 
   /// Open node of a heuristic search engine

@@ -1239,8 +1239,8 @@ namespace Gecode { namespace Search {
    * objective for a solution. It must agree with the model's constrain and
    * compare functions. The bound orders and prunes open nodes, while
    * solutions replace the incumbent only when Space::compare reports
-   * SC_BETTER. The optional rank orders nodes (lower first) but is never
-   * used for pruning.
+   * SpaceComparison::Better. The optional rank orders nodes (lower first)
+   * but is never used for pruning.
    *
    * The optional dominance predicate returns whether every completion of
    * the second space is matched by a completion of the first that is not
@@ -1541,7 +1541,7 @@ namespace Gecode {
    * by the options \a o. The engine supports parallel execution of
    * assets by using the number of threads as defined by the options.
    * For best-solution assets, a solution replaces the incumbent only if
-   * Space::compare reports SC_BETTER.
+   * Space::compare reports SpaceComparison::Better.
    * An external worker control in \a o is supported only for a single
    * homogeneous asset. Multiple controlled assets require explicit engine
    * builders, each with its own control and immutable worker capacity.

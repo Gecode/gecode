@@ -108,7 +108,7 @@ public:
     bool apart = (f[0].min() >= (b.f[0].max()+step)) ||
       (f[1].min() >= (b.f[1].max()+step)) ||
       (f[1].max() <= (b.f[1].min()-step));
-    return apart ? SC_BETTER : SC_WORSE;
+    return apart ? SpaceComparison::Better : SpaceComparison::Worse;
   }
   /// Print solution coordinates
   virtual void print(std::ostream& os) const {

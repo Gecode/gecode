@@ -141,15 +141,15 @@ namespace Test { namespace FlatZinc {
         std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> low =
           model("var 1..1: x; solve maximize x;\n");
         if (!one || !two || !high || !low ||
-            (one->compare(*two) != SC_BETTER) ||
-            (two->compare(*one) != SC_WORSE) ||
-            (one->compare(*one) != SC_EQUIVALENT) ||
-            (high->compare(*low) != SC_BETTER))
+            (one->compare(*two) != SpaceComparison::Better) ||
+            (two->compare(*one) != SpaceComparison::Worse) ||
+            (one->compare(*one) != SpaceComparison::Equivalent) ||
+            (high->compare(*low) != SpaceComparison::Better))
           return false;
         try {
           (void) one->compare(*high);
           return false;
-        } catch (const DynamicCastFailed&) {}
+        } catch (const SpaceIncompatibleObjectives&) {}
         std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> sat =
           model("var 1..1: x; solve satisfy;\n");
         if (!sat)
@@ -217,14 +217,14 @@ namespace Test { namespace FlatZinc {
         if (!m9 || !m10 || !m10b || !x11 || !x10 || !x10b || !adjacent ||
             !adjacent_key ||
             !adjacent_max || !adjacent_max_key ||
-            (m9->compare(*m10) != SC_BETTER) ||
-            (m10->compare(*m9) != SC_WORSE) ||
-            (m10->compare(*m10b) != SC_EQUIVALENT) ||
-            (x11->compare(*x10) != SC_BETTER) ||
-            (x10->compare(*x11) != SC_WORSE) ||
-            (x10->compare(*x10b) != SC_EQUIVALENT) ||
-            (adjacent->compare(*adjacent_key) != SC_EQUIVALENT) ||
-            (adjacent_max->compare(*adjacent_max_key) != SC_EQUIVALENT))
+            (m9->compare(*m10) != SpaceComparison::Better) ||
+            (m10->compare(*m9) != SpaceComparison::Worse) ||
+            (m10->compare(*m10b) != SpaceComparison::Equivalent) ||
+            (x11->compare(*x10) != SpaceComparison::Better) ||
+            (x10->compare(*x11) != SpaceComparison::Worse) ||
+            (x10->compare(*x10b) != SpaceComparison::Equivalent) ||
+            (adjacent->compare(*adjacent_key) != SpaceComparison::Equivalent) ||
+            (adjacent_max->compare(*adjacent_max_key) != SpaceComparison::Equivalent))
           return false;
 
         const FloatVal probes[] = {FloatVal(8.4), FloatVal(8.5),
@@ -265,9 +265,9 @@ namespace Test { namespace FlatZinc {
           return false;
         std::unique_ptr<FlatZincSpace> different_step=model(10.0,true,0.0);
         try { (void) m10->compare(*different_step); return false; }
-        catch (const DynamicCastFailed&) {}
+        catch (const SpaceIncompatibleObjectives&) {}
         try { (void) m10->compare(*x10); return false; }
-        catch (const DynamicCastFailed&) {}
+        catch (const SpaceIncompatibleObjectives&) {}
         return true;
       }
     };

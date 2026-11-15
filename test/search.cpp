@@ -159,13 +159,13 @@ namespace Test {
       SpaceComparison compare(const Space& s) const override {
         int a = node().cost;
         int b = static_cast<const TreeSpace&>(s).node().cost;
-        return (a < b) ? SC_BETTER : ((a > b) ? SC_WORSE : SC_EQUIVALENT);
+        return (a < b) ? SpaceComparison::Better : ((a > b) ? SpaceComparison::Worse : SpaceComparison::Equivalent);
       }
       /// Guidance minimizing cost, or maximizing negated cost
       static Gecode::Search::HeuristicGuidance
       guidance(bool max, bool ranked, bool dominance, bool keyed) {
         using Gecode::Search::HeuristicGuidance;
-        HeuristicGuidance g(max ? Sense::maximize : Sense::minimize,
+        HeuristicGuidance g(max ? Sense::Maximize : Sense::Minimize,
           [](const Space& s) -> std::int64_t {
             const TreeSpace& t = static_cast<const TreeSpace&>(s);
             return t.maximize ? -t.node().bound : t.node().bound;
@@ -474,7 +474,7 @@ namespace Test {
       }
       /// Treat the single solution as equivalent across best-search assets
       virtual SpaceComparison compare(const Space&) const {
-        return SC_EQUIVALENT;
+        return SpaceComparison::Equivalent;
       }
       /// Return number of solutions
       virtual int solutions(void) const {
@@ -574,7 +574,8 @@ namespace Test {
         const HasSolutions& s = dynamic_cast<const HasSolutions&>(_s);
         if (htc != s.htc)
           throw DynamicCastFailed("HasSolutions::compare");
-        int c=0, sc=0;
+        int c=0;
+        int sc=0;
         switch (htc) {
         case HTC_LEX_LE:
         case HTC_LEX_GR:
@@ -583,9 +584,9 @@ namespace Test {
               continue;
             bool better = (htc == HTC_LEX_LE) ?
               (x[i].val() < s.x[i].val()) : (x[i].val() > s.x[i].val());
-            return better ? SC_BETTER : SC_WORSE;
+            return better ? SpaceComparison::Better : SpaceComparison::Worse;
           }
-          return SC_EQUIVALENT;
+          return SpaceComparison::Equivalent;
         case HTC_BAL_LE:
         case HTC_BAL_GR:
           c = std::abs(x[0].val()+x[1].val()+x[2].val()-
@@ -593,15 +594,15 @@ namespace Test {
           sc = std::abs(s.x[0].val()+s.x[1].val()+s.x[2].val()-
                         s.x[3].val()-s.x[4].val()-s.x[5].val());
           if (c == sc)
-            return SC_EQUIVALENT;
+            return SpaceComparison::Equivalent;
           return ((htc == HTC_BAL_LE) ? (c < sc) : (c > sc)) ?
-            SC_BETTER : SC_WORSE;
+            SpaceComparison::Better : SpaceComparison::Worse;
         case HTC_NONE:
-          return SC_EQUIVALENT;
+          return SpaceComparison::Equivalent;
         default:
           GECODE_NEVER;
         }
-        return SC_INCOMPARABLE;
+        return SpaceComparison::Incomparable;
       }
       /// Return number of solutions
       virtual int solutions(void) const {
@@ -1295,7 +1296,7 @@ namespace Test {
           return Space::compare(s);
         if (failure == THROWN)
           throw ComparisonError();
-        return SC_INCOMPARABLE;
+        return SpaceComparison::Incomparable;
       }
       virtual bool master(const MetaInfo& mi) {
         if (mi.type() == MetaInfo::PORTFOLIO)
@@ -1312,7 +1313,7 @@ namespace Test {
       IncomparableObjective(IncomparableObjective& s) : ExternalObjective(s) {}
       virtual Space* copy(void) { return new IncomparableObjective(*this); }
       virtual SpaceComparison compare(const Space&) const {
-        return SC_INCOMPARABLE;
+        return SpaceComparison::Incomparable;
       }
     };
 
@@ -1382,7 +1383,7 @@ namespace Test {
         if (!rejects_incomparable(Gecode::Search::babengine(&im,Gecode::Search::Options())))
           return false;
 #ifdef GECODE_HAS_EXPERIMENTAL
-        Gecode::Search::HeuristicGuidance g(Gecode::Sense::minimize,
+        Gecode::Search::HeuristicGuidance g(Gecode::Sense::Minimize,
           [](const Space& s) -> std::int64_t {
             return static_cast<const ExternalObjective&>(s).x.min();
           });
@@ -1791,14 +1792,14 @@ namespace Test {
           m10b(10.0,1.0), mzero(10.0), madj(FloatVal(1.0,next));
         FloatMaxObjective x11(10.5,1.0), x10(10.0,1.0),
           x10b(10.0,1.0), xadj(FloatVal(1.0,next));
-        if ((m9.compare(m10) != SC_BETTER) ||
-            (m10.compare(m9) != SC_WORSE) ||
-            (m10.compare(m10b) != SC_EQUIVALENT) ||
-            (x11.compare(x10) != SC_BETTER) ||
-            (x10.compare(x11) != SC_WORSE) ||
-            (x10.compare(x10b) != SC_EQUIVALENT) ||
-            (madj.compare(FloatMinObjective(next)) != SC_EQUIVALENT) ||
-            (xadj.compare(FloatMaxObjective(1.0)) != SC_EQUIVALENT))
+        if ((m9.compare(m10) != SpaceComparison::Better) ||
+            (m10.compare(m9) != SpaceComparison::Worse) ||
+            (m10.compare(m10b) != SpaceComparison::Equivalent) ||
+            (x11.compare(x10) != SpaceComparison::Better) ||
+            (x10.compare(x11) != SpaceComparison::Worse) ||
+            (x10.compare(x10b) != SpaceComparison::Equivalent) ||
+            (madj.compare(FloatMinObjective(next)) != SpaceComparison::Equivalent) ||
+            (xadj.compare(FloatMaxObjective(1.0)) != SpaceComparison::Equivalent))
           return false;
 
         // Equal keys give identical cuts; better keys only tighten them.
@@ -1818,8 +1819,10 @@ namespace Test {
             !admitted<FloatMaxObjective>(FloatVal(11.1),1.0,x10))
           return false;
 
-        FloatVal before_m=m9.cost().val(), before_m_other=m10.cost().val(),
-          before_x=x11.cost().val(), before_x_other=x10.cost().val();
+        FloatVal before_m=m9.cost().val();
+        FloatVal before_m_other=m10.cost().val();
+        FloatVal before_x=x11.cost().val();
+        FloatVal before_x_other=x10.cost().val();
         (void) m9.compare(m10); (void) x11.compare(x10);
         if ((m9.cost().val().min() != before_m.min()) ||
             (m9.cost().val().max() != before_m.max()) ||
@@ -1831,7 +1834,7 @@ namespace Test {
             (x10.cost().val().max() != before_x_other.max()))
           return false;
         try { (void) mzero.compare(m10); return false; }
-        catch (const DynamicCastFailed&) {}
+        catch (const SpaceIncompatibleObjectives&) {}
         try { (void) m10.compare(x10); return false; }
         catch (const DynamicCastFailed&) {}
 
@@ -1895,28 +1898,39 @@ namespace Test {
       Comparison(void) : Base("Search::Comparison") {}
       virtual bool run(void) {
         MinObjective one(1,1), two(2,2), one_again(1,1), open(0,2);
-        if ((one.compare(two) != SC_BETTER) ||
-            (two.compare(one) != SC_WORSE) ||
-            (one.compare(one_again) != SC_EQUIVALENT))
+        if ((one.compare(two) != SpaceComparison::Better) ||
+            (two.compare(one) != SpaceComparison::Worse) ||
+            (one.compare(one_again) != SpaceComparison::Equivalent))
           return false;
         MaxObjective high(2), low(1);
-        if ((high.compare(low) != SC_BETTER) ||
-            (low.compare(high) != SC_WORSE))
+        if ((high.compare(low) != SpaceComparison::Better) ||
+            (low.compare(high) != SpaceComparison::Worse))
           return false;
-        if ((compare_int(1,2,Sense::minimize) != SC_BETTER) ||
-            (compare_int(2,1,Sense::minimize) != SC_WORSE) ||
-            (compare_int(1,1,Sense::minimize) != SC_EQUIVALENT) ||
-            (compare_int(2,1,Sense::maximize) != SC_BETTER) ||
-            (compare_int(1,2,Sense::maximize) != SC_WORSE) ||
-            (compare_int(1,1,Sense::maximize) != SC_EQUIVALENT))
+        if ((compare_int(1,2,Sense::Minimize) != SpaceComparison::Better) ||
+            (compare_int(2,1,Sense::Minimize) != SpaceComparison::Worse) ||
+            (compare_int(1,1,Sense::Minimize) != SpaceComparison::Equivalent) ||
+            (compare_int(2,1,Sense::Maximize) != SpaceComparison::Better) ||
+            (compare_int(1,2,Sense::Maximize) != SpaceComparison::Worse) ||
+            (compare_int(1,1,Sense::Maximize) != SpaceComparison::Equivalent))
           return false;
+#ifdef GECODE_HAS_FLOAT_VARS
+        if ((compare_float(0.5,1.0,Sense::Minimize) !=
+             SpaceComparison::Better) ||
+            (compare_float(1.0,0.5,Sense::Minimize) !=
+             SpaceComparison::Worse) ||
+            (compare_float(1.0,0.5,Sense::Maximize) !=
+             SpaceComparison::Better) ||
+            (compare_float(0.5,0.5,Sense::Maximize) !=
+             SpaceComparison::Equivalent))
+          return false;
+#endif
         LexObjective lp(1,0,2), lq(2,0,2);
-        if ((lp.compare(lq) != SC_BETTER) ||
-            (lq.compare(lp) != SC_WORSE))
+        if ((lp.compare(lq) != SpaceComparison::Better) ||
+            (lq.compare(lp) != SpaceComparison::Worse))
           return false;
         LexMaxObjective lmp(2), lmq(1);
-        if ((lmp.compare(lmq) != SC_BETTER) ||
-            (lmq.compare(lmp) != SC_WORSE))
+        if ((lmp.compare(lmq) != SpaceComparison::Better) ||
+            (lmq.compare(lmp) != SpaceComparison::Worse))
           return false;
         try {
           (void) open.compare(one);
@@ -1930,7 +1944,18 @@ namespace Test {
         try {
           (void) lp.compare(short_cost);
           return false;
-        } catch (const MiniModel::ArgumentSizeMismatch&) {}
+        } catch (const SpaceIncompatibleObjectives&) {}
+        {
+          IntVarArgs a;
+          IntVarArgs b;
+          a << IntVar(lp,1,1) << IntVar(lp,3,3);
+          b << IntVar(lp,1,1) << IntVar(lp,2,2);
+          if ((compare_lex(a,b,Sense::Minimize) != SpaceComparison::Worse) ||
+              (compare_lex(a,b,Sense::Maximize) != SpaceComparison::Better) ||
+              (compare_lex(a,a,Sense::Minimize) !=
+               SpaceComparison::Equivalent))
+            return false;
+        }
         PlainSpace plain;
         try {
           (void) plain.compare(plain);
@@ -2100,7 +2125,7 @@ namespace Test {
             if (htc == HTC_NONE) {
               delete s;
             } else {
-              if ((b != nullptr) && (s->compare(*b) != SC_BETTER))
+              if ((b != nullptr) && (s->compare(*b) != SpaceComparison::Better))
                 improving = false;
               delete b; b = s;
             }

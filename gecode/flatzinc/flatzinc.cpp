@@ -2107,20 +2107,19 @@ namespace Gecode { namespace FlatZinc {
       throw SpaceNoComparison("FlatZincSpace::compare");
     if ((_optVarIsInt != other->_optVarIsInt) ||
         (_method != other->_method))
-      throw DynamicCastFailed("FlatZincSpace::compare");
-    if (_optVarIsInt) {
+      throw SpaceIncompatibleObjectives("FlatZincSpace::compare");
+    Sense sense = (_method == MIN) ? Sense::Minimize : Sense::Maximize;
+    if (_optVarIsInt)
       return compare_int(iv[_optVar].val(),other->iv[other->_optVar].val(),
-                         (_method == MIN) ? Sense::minimize : Sense::maximize);
-    }
+                         sense);
 #ifdef GECODE_HAS_FLOAT_VARS
     if (step != other->step)
-      throw DynamicCastFailed("FlatZincSpace::compare");
-    FloatVal a=fv[_optVar].val(), b=other->fv[other->_optVar].val();
+      throw SpaceIncompatibleObjectives("FlatZincSpace::compare");
+    FloatVal a=fv[_optVar].val();
+    FloatVal b=other->fv[other->_optVar].val();
     FloatNum ak=(_method == MIN) ? a.min() : a.max();
     FloatNum bk=(_method == MIN) ? b.min() : b.max();
-    if (ak == bk)
-      return SC_EQUIVALENT;
-    return ((ak < bk) == (_method == MIN)) ? SC_BETTER : SC_WORSE;
+    return compare_float(ak,bk,sense);
 #else
     throw DynamicCastFailed("FlatZincSpace::compare");
 #endif

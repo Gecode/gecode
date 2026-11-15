@@ -84,10 +84,14 @@ Add Space::compare(), which ranks two solutions without modifying them.
 Best-solution search uses it to choose between solutions, for example in
 parallel BAB, portfolios, external incumbents, and the experimental A* and
 CABS engines. constrain() still prunes the search. Optimization models with a
-custom constrain() must now also override compare(). compare_int()
-compares two integer objective values for a given Sense. Search
-engines throw Search::Incomparable when compare() reports incomparable
-solutions.
+custom constrain() must now also override compare(). compare() returns the
+scoped enum SpaceComparison (Better, Equivalent, Worse, Incomparable), and the
+optimization direction is the scoped enum Sense (Minimize, Maximize).
+compare_int(), compare_float(), and compare_lex() compare integer, float, and
+lexicographic objective values for a given Sense. Comparing solutions whose
+objectives differ in direction, float step, or size throws
+SpaceIncompatibleObjectives. Search engines throw Search::Incomparable when
+compare() reports incomparable solutions.
 
 [RELEASE]
 Version: 6.6.0

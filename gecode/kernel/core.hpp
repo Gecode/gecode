@@ -53,26 +53,27 @@
 
 namespace Gecode {
 
-  /// Result of comparing two spaces according to their objectives
-  enum SpaceComparison {
-    SC_BETTER,     ///< The receiver has a better objective
-    SC_EQUIVALENT, ///< Both objectives are equivalent
-    SC_WORSE,      ///< The receiver has a worse objective
-    SC_INCOMPARABLE ///< Neither objective dominates the other
+  /// Result of comparing two solutions according to their objectives
+  enum class SpaceComparison {
+    Better,      ///< The receiver has a better objective
+    Equivalent,  ///< Both objectives are equivalent
+    Worse,       ///< The receiver has a worse objective
+    Incomparable ///< Neither objective dominates the other
   };
 
   /// Optimization direction
   enum class Sense {
-    minimize, ///< Smaller objective values are better
-    maximize  ///< Larger objective values are better
+    Minimize, ///< Smaller objective values are better
+    Maximize  ///< Larger objective values are better
   };
 
   /// Compare objective value \a x with \a y for direction \a s
   forceinline SpaceComparison
   compare_int(int x, int y, Sense s) {
     if (x == y)
-      return SC_EQUIVALENT;
-    return ((x < y) == (s == Sense::minimize)) ? SC_BETTER : SC_WORSE;
+      return SpaceComparison::Equivalent;
+    return ((x < y) == (s == Sense::Minimize)) ?
+      SpaceComparison::Better : SpaceComparison::Worse;
   }
 
   class Space;

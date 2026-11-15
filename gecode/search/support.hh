@@ -42,12 +42,12 @@ namespace Gecode { namespace Search {
   forceinline bool
   better(const Space& s, const Space& b, const char* l) {
     switch (s.compare(b)) {
-    case SC_BETTER:
+    case SpaceComparison::Better:
       return true;
-    case SC_EQUIVALENT:
-    case SC_WORSE:
+    case SpaceComparison::Equivalent:
+    case SpaceComparison::Worse:
       return false;
-    case SC_INCOMPARABLE:
+    case SpaceComparison::Incomparable:
       throw Incomparable(l);
     default:
       GECODE_NEVER;

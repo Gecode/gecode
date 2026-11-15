@@ -2430,6 +2430,16 @@ namespace Gecode {
    */
 
   /**
+   * \brief Compare assigned \a x with \a y lexicographically for \a s
+   *
+   * The first position where the values differ decides the result. Throws
+   * SpaceIncompatibleObjectives if the sizes differ.
+   * \ingroup TaskModelMiniModelOptimize
+   */
+  GECODE_MINIMODEL_EXPORT SpaceComparison
+  compare_lex(const IntVarArgs& x, const IntVarArgs& y, Sense s);
+
+  /**
    * \brief Class for minimizing integer cost
    * \ingroup TaskModelMiniModelOptimize
    */
