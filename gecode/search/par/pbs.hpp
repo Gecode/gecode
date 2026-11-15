@@ -327,6 +327,14 @@ namespace Gecode { namespace Search { namespace Par {
     if (solutions.empty() && (n_active == 0) && incomplete)
       slave_stop.store(true, std::memory_order_release);
 
+    // Report a stored failure before broadcasting a solution, which could
+    // call into the failed asset and replace the original exception.
+    if (failure != nullptr) {
+      std::exception_ptr f = failure;
+      m.release();
+      std::rethrow_exception(f);
+    }
+
     Space* s;
 
     // Process solutions
@@ -348,13 +356,6 @@ namespace Gecode { namespace Search { namespace Par {
           std::rethrow_exception(f);
         }
       }
-    }
-
-    if (failure != nullptr) {
-      delete s;
-      std::exception_ptr f = failure;
-      m.release();
-      std::rethrow_exception(f);
     }
 
     m.release();

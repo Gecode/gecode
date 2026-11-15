@@ -218,11 +218,18 @@ namespace Gecode { namespace Search { namespace Par {
   void
   BAB<Tracer>::constrain(const Space& b) {
     Support::Lock lock(m_search);
+    // Report a worker failure before comparing, so that the original
+    // exception is not replaced by one from the comparison below.
+    if (failure != nullptr)
+      std::rethrow_exception(failure);
+    // Solutions are queued from worst to best. Even a bound weaker than
+    // best can exclude the oldest pending solutions.
+    while (!solutions.empty() &&
+           !Search::better(*solutions.front(),b,"BAB::constrain"))
+      delete solutions.pop();
     if ((best != nullptr) &&
         !Search::better(b,*best,"BAB::constrain"))
       return;
-    while (!solutions.empty())
-      delete solutions.pop();
     if (best != nullptr) {
       delete best;
     }
@@ -480,6 +487,11 @@ namespace Gecode { namespace Search { namespace Par {
     m_wait_reset.release();
     // Wait for reset cycle stopped
     e_reset_ack_stop.wait();
+    // A worker can fail after next() returns. Report that failure before
+    // a restart engine invokes its master callback and resets this engine.
+    Support::Lock lock(m_search);
+    if (failure != nullptr)
+      std::rethrow_exception(failure);
     return *ng;
   }
 
