@@ -2131,14 +2131,13 @@ namespace Gecode { namespace FlatZinc {
 #endif
   }
 
-  bool
-  FlatZincSpace::spoke(const MetaInfo& mi) {
-    if (mi.type() == MetaInfo::RESTART) {
+  void
+  FlatZincSpace::spoke(SpokeContext& sc) {
+    if (sc.engine() == MetaEngine::Restart) {
       if (restart_data.initialized() && restart_data().mark_complete) {
-        // Fail the space
+        // Exhausting the failed spoke of full coverage proves completeness
         this->fail();
-        // Return true to signal we are in the global search space
-        return true;
+        return;
       }
 
       bool ret = false;
@@ -2146,7 +2145,7 @@ namespace Gecode { namespace FlatZinc {
         int base = 0;
 
         // Assign the sol_int values (use lb if no solution is known)
-        const FlatZincSpace* last = static_cast<const FlatZincSpace*>(mi.last());
+        const FlatZincSpace* last = static_cast<const FlatZincSpace*>(sc.last());
         assert(last == nullptr || last->on_restart_iv.size() == restart_data().on_restart_iv_sol);
         for (int i = 0; i < restart_data().on_restart_iv_sol; ++i) {
           IntVar& outVar = on_restart_iv[base + restart_data().on_restart_iv_sol + i];
@@ -2179,20 +2178,20 @@ namespace Gecode { namespace FlatZinc {
         if (restart_data().on_restart_status) {
           assert(base == on_restart_iv.size() - 1);
           IntVar& restart_status = on_restart_iv[base];
-          switch(mi.reason()) {
-            case MetaInfo::RR_INIT:
-              assert(!mi.last());
+          switch(sc.event()) {
+            case MetaEvent::Start:
+              assert(sc.last() == nullptr);
               rel(*this, restart_status, IRT_EQ, 1); // 1: START
               break;
-            case MetaInfo::RR_SOL:
-              assert(mi.solution() > 0);
+            case MetaEvent::Solution:
+              assert(sc.last() != nullptr);
               rel(*this, restart_status, IRT_EQ, 4); // 4: SAT
               break;
-            case MetaInfo::RR_CMPL:
+            case MetaEvent::Exhausted:
               rel(*this, restart_status, IRT_EQ, 3); // 3: UNSAT
               break;
             default:
-              assert(mi.reason() == MetaInfo::RR_LIM);
+              assert((sc.event() == MetaEvent::Limit) || (sc.event() == MetaEvent::Incomplete));
               rel(*this, restart_status, IRT_EQ, 2); // 2: UNKNOWN
               break;
           }
@@ -2213,7 +2212,7 @@ namespace Gecode { namespace FlatZinc {
         int base = 0;
 
         // Assign the sol_bool values (use lb if no solution is known)
-        const FlatZincSpace* last = static_cast<const FlatZincSpace*>(mi.last());
+        const FlatZincSpace* last = static_cast<const FlatZincSpace*>(sc.last());
         assert(last == nullptr || last->on_restart_bv.size() == restart_data().on_restart_bv_sol);
         for (int i = 0; i < restart_data().on_restart_bv_sol; ++i) {
           BoolVar& outVar = on_restart_bv[base + restart_data().on_restart_bv_sol + i];
@@ -2243,7 +2242,7 @@ namespace Gecode { namespace FlatZinc {
         int base = 0;
 
         // Assign the sol_set values (use lb if no solution is known)
-        const FlatZincSpace* last = static_cast<const FlatZincSpace*>(mi.last());
+        const FlatZincSpace* last = static_cast<const FlatZincSpace*>(sc.last());
         assert(last == nullptr || last->on_restart_sv.size() == restart_data().on_restart_sv_sol);
         for (int i = 0; i < restart_data().on_restart_sv_sol; ++i) {
           SetVar& outVar = on_restart_sv[base + restart_data().on_restart_sv_sol + i];
@@ -2275,7 +2274,7 @@ namespace Gecode { namespace FlatZinc {
         int base = 0;
 
         // Assign the sol_float values (use lb if no solution is known)
-        const FlatZincSpace* last = static_cast<const FlatZincSpace*>(mi.last());
+        const FlatZincSpace* last = static_cast<const FlatZincSpace*>(sc.last());
         assert(last == nullptr || last->on_restart_fv.size() == restart_data().on_restart_fv_sol);
         for (int i = 0; i < restart_data().on_restart_fv_sol; ++i) {
           FloatVar& outVar = on_restart_fv[base + restart_data().on_restart_fv_sol + i];
@@ -2314,30 +2313,31 @@ namespace Gecode { namespace FlatZinc {
       }
 #endif
       if (ret) {
-        return false;
+        // The on_restart constraints can restrict the spoke in any way
+        sc.coverage(SpokeCoverage::Partial);
+        return;
       }
     }
 
-    if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) &&
-        (_lns > 0) && (mi.last()==nullptr) && (_lnsInitialSolution.size()>0)) {
+    if ((sc.engine() == MetaEngine::Restart) && (sc.episode() != 0) &&
+        (_lns > 0) && (sc.last()==nullptr) && (_lnsInitialSolution.size()>0)) {
       for (unsigned int i=iv_lns.size(); i--;) {
         if (_random(99U) <= _lns) {
           rel(*this, iv_lns[i], IRT_EQ, _lnsInitialSolution[i]);
         }
       }
-      return false;
-    } else if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) &&
-               (_lns > 0) && mi.last()) {
+      sc.coverage(SpokeCoverage::Partial);
+    } else if ((sc.engine() == MetaEngine::Restart) && (sc.episode() != 0) &&
+               (_lns > 0) && (sc.last() != nullptr)) {
       const FlatZincSpace& last =
-        static_cast<const FlatZincSpace&>(*mi.last());
+        static_cast<const FlatZincSpace&>(*sc.last());
       for (unsigned int i=iv_lns.size(); i--;) {
         if (_random(99U) <= _lns) {
           rel(*this, iv_lns[i], IRT_EQ, last.iv_lns[i]);
         }
       }
-      return false;
+      sc.coverage(SpokeCoverage::Partial);
     }
-    return true;
   }
 
   Space*

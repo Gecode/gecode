@@ -211,11 +211,11 @@ public:
       }
     }
   }
-  /// Spoke function for portfolio search
-  virtual bool spoke(const MetaInfo& mi) {
-    if (mi.type() == MetaInfo::PORTFOLIO) {
+  /// Post a different branching for each asset of portfolio search
+  virtual void spoke(SpokeContext& sc) {
+    if (sc.engine() == MetaEngine::Portfolio) {
       double tbf = opt.tbf();
-      Rnd r(seeds[mi.asset() % n_seeds]);
+      Rnd r(seeds[sc.asset() % n_seeds]);
       switch (opt.branching()) {
       case BRANCH_SIZE:
         {
@@ -244,7 +244,6 @@ public:
       default: ;
       }
     }
-    return true;
   }
   /// Constructor for cloning \a s
   QCP(QCP& s)

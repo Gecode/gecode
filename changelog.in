@@ -154,10 +154,12 @@ Module: search
 What:   change
 Rank:   major
 [DESCRIPTION]
-Rename the meta-search Space hooks master() and slave() to hub() and spoke().
+Replace the meta-search Space hooks master() and slave() and the class
+MetaInfo by hub(HubContext&) and spoke(SpokeContext&).
 [MORE]
-There are no compatibility aliases. An old override marked override fails to
-compile; one without it is never called. See docs/gecode-7-migration.md.
+hub() sets a MetaDecision and spoke() declares a SpokeCoverage instead of
+returning a Boolean. There are no compatibility aliases, also not for the
+FlatZincSpace override of slave(). See docs/gecode-7-migration.md.
 
 [ENTRY]
 Module: search

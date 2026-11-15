@@ -66,14 +66,56 @@ namespace Gecode { namespace Search { namespace Seq {
 
   NoGoods&
   RBS::hub_nogoods(void) {
-    // The no-goods of an incomplete spoke search only hold in its restricted
-    // search space, not in the hub.
-    if (!nogoods_valid)
+    // The no-goods of a partial spoke only hold in its restricted search
+    // space, not in the hub.
+    if (coverage == SpokeCoverage::Partial)
       return NoGoods::eng;
     NoGoods& ng = e->nogoods();
     // Reset number of no-goods found
     ng.ng(0);
     return ng;
+  }
+
+  bool
+  RBS::hub_event(MetaEvent ev) {
+    Search::Statistics episode_stat = e->statistics();
+    NoGoods& ng = hub_nogoods();
+    HubContext hc = MetaContextAccess::hub(MetaEngine::Restart,ev,episode,
+                                           0U,1U,last,episode_stat,ng);
+    hub->hub(hc);
+    stop->nogood(ng.ng());
+    // Only an episode that found a solution can continue
+    bool cont = (ev == MetaEvent::Solution) &&
+      (hc.decision() == MetaDecision::Continue);
+    // Any other episode ends with a restart that takes the next cutoff
+    if (ev != MetaEvent::Solution)
+      stop->limit(e->statistics(),++(*co));
+    if (stop->status(hub) == SS_FAILED) {
+      // A failed hub proves that no further solution exists
+      if (ev == MetaEvent::Solution)
+        stop->update(e->statistics());
+      delete hub;
+      hub = nullptr;
+      e->reset(nullptr);
+      end = EndReason::Exhausted;
+      return false;
+    }
+    if (cont)
+      return true;
+    if (ev == MetaEvent::Solution) {
+      // A restart after a solution keeps the cutoff
+      stop->update(e->statistics());
+      stop->restart();
+    }
+    Space* spoke = hub;
+    hub = hub->clone();
+    episode++;
+    SpokeContext sc = MetaContextAccess::spoke(MetaEngine::Restart,ev,episode,
+                                               0U,1U,last,episode_stat,ng);
+    spoke->spoke(sc);
+    coverage = sc.coverage();
+    e->reset(spoke);
+    return true;
   }
 
   Space*
@@ -83,83 +125,66 @@ namespace Gecode { namespace Search { namespace Seq {
       end = EndReason::Exhausted;
       return nullptr;
     }
-    if (restart) {
-      restart = false;
-      sslr++;
-      NoGoods& ng = hub_nogoods();
-      MetaInfo mi(stop->restarts(),MetaInfo::RR_SOL,sslr,e->statistics().fail,last,ng);
-      bool r = hub->hub(mi);
-      stop->nogood(ng.ng());
-      if (stop->status(hub) == SS_FAILED) {
-        stop->update(e->statistics());
-        delete hub;
-        hub = nullptr;
-        e->reset(nullptr);
-        end = EndReason::Exhausted;
+    if (solution) {
+      solution = false;
+      if (!hub_event(MetaEvent::Solution))
         return nullptr;
-      } else if (r) {
-        stop->update(e->statistics());
-        Space* spoke = hub;
-        hub = hub->clone();
-        complete = spoke->spoke(mi);
-        nogoods_valid = complete;
-        e->reset(spoke);
-        sslr = 0;
-        stop->restart();
-      }
     }
     while (true) {
       Space* n = e->next();
       if (n != nullptr) {
         // The engine found a solution
-        restart = true;
+        solution = true;
         delete last;
         last = n->clone();
         end = EndReason::NotEnded;
         return n;
       }
-      EndReason inner = e->end_reason();
-      bool limit = inner == EndReason::Limit;
-      if ((!complete && !limit) || (limit && stop->enginestopped())) {
-        // The engine must perform a true restart
-        // The number of the restart has been incremented in the stop object
-        if (!complete && !limit) {
-          /*
-           * The engine might not have checked its stop object, for example
-           * when the spoke failed at the root or a parallel engine had no
-           * work. Without this check, the restarts might never stop.
-           */
-          if (stop->meta_stop(e->statistics(),m_opt)) {
-            end = EndReason::Limit;
-            return nullptr;
-          }
-          stop->restart();
+      MetaEvent ev;
+      switch (e->end_reason()) {
+      case EndReason::Limit:
+        if (!stop->enginestopped()) {
+          // A stop from above
+          end = EndReason::Limit;
+          return nullptr;
         }
-        sslr = 0;
-        NoGoods& ng = hub_nogoods();
-        MetaInfo mi(stop->restarts(),limit ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
-        (void) hub->hub(mi);
-        stop->nogood(ng.ng());
-        unsigned long long int nl = ++(*co);
-        stop->limit(e->statistics(),nl);
-        if (stop->status(hub) == SS_FAILED) {
-          // The statistics of the engine have been added by limit()
-          delete hub;
-          hub = nullptr;
-          e->reset(nullptr);
+        // The stop object has counted the restart
+        ev = MetaEvent::Limit;
+        break;
+      case EndReason::Exhausted:
+        if (coverage != SpokeCoverage::Partial) {
+          // The spoke covers the hub, so this is a proof
           end = EndReason::Exhausted;
           return nullptr;
         }
-        Space* spoke = hub;
-        hub = hub->clone();
-        complete = spoke->spoke(mi);
-        nogoods_valid = complete;
-        e->reset(spoke);
-      } else {
-        // A stop from above, or a complete spoke search has ended
-        end = inner;
+        ev = MetaEvent::Exhausted;
+        break;
+      case EndReason::Incomplete:
+        if (coverage != SpokeCoverage::Partial) {
+          // A new spoke would repeat the same incomplete search
+          end = EndReason::Incomplete;
+          return nullptr;
+        }
+        ev = MetaEvent::Incomplete;
+        break;
+      default:
+        GECODE_NEVER;
         return nullptr;
       }
+      if (ev != MetaEvent::Limit) {
+        /*
+         * The engine might not have checked its stop object, for example
+         * when the spoke failed at the root or a parallel engine had no
+         * work. Without this check, the restarts might never stop.
+         */
+        if (stop->meta_stop(e->statistics(),m_opt)) {
+          end = EndReason::Limit;
+          return nullptr;
+        }
+        stop->restart();
+      }
+      if (!hub_event(ev))
+        return nullptr;
     }
     GECODE_NEVER;
     return nullptr;
