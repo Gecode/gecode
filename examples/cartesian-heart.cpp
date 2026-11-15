@@ -94,6 +94,7 @@ public:
         (f[1] >= (b.f[1].max()+step)) ||
         (f[1] <= (b.f[1].min()-step)));
   }
+  using Script::compare;
   /**
    * \brief Compare with solution \a other
    *
