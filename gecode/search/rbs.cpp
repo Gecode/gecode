@@ -43,15 +43,15 @@ namespace Gecode { namespace Search { namespace Seq {
   Engine*
   rbsengine(Space* hub, Stop* stop, Engine* engine,
             const Search::Statistics& stat, const Options& opt, bool best) {
-    return rbsengine(hub,stop,engine,stat,opt,best,true);
+    return rbsengine(hub,stop,engine,stat,opt,best,SpokeCoverage::Full);
   }
 
   Engine*
   rbsengine(Space* hub, Stop* stop, Engine* engine,
             const Search::Statistics& stat, const Options& opt, bool best,
-            bool complete) {
+            SpokeCoverage coverage) {
     return new RBS(hub,static_cast<RestartStop*>(stop), engine,
-                   stat,opt,best,complete);
+                   stat,opt,best,coverage);
   }
 
 

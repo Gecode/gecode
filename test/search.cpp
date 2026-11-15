@@ -152,7 +152,7 @@ namespace Test {
         : Space(s), graph(s.graph), maximize(s.maximize), vertex(s.vertex),
           ceiling(s.ceiling) {}
       Space* copy(void) override { return new TreeSpace(*this); }
-      bool hub(const MetaInfo&) override { return true; }
+      void hub(HubContext&) override {}
       const Node& node(void) const { return (*graph)[vertex]; }
       void constrain(const Space& s) override {
         ceiling = static_cast<const TreeSpace&>(s).node().cost;
@@ -405,14 +405,13 @@ namespace Test {
       virtual int solutions(void) const = 0;
       /// Verify that this is best solution
       virtual bool best(void) const = 0;
-      /// Hub configuration function that does not restart
-      virtual bool hub(const MetaInfo& mi) {
-        if (mi.type() == MetaInfo::RESTART) {
-          if (mi.last() != nullptr)
-            constrain(*mi.last());
-          return false;
-        } else {
-          return false;
+      /// Hub hook that does not restart after a solution and keeps the branchers of a portfolio
+      virtual void hub(HubContext& hc) {
+        if (hc.engine() == MetaEngine::Restart) {
+          if (hc.last() != nullptr)
+            constrain(*hc.last());
+          if (hc.event() == MetaEvent::Solution)
+            hc.decision(MetaDecision::Continue);
         }
       }
     };
@@ -651,43 +650,40 @@ namespace Test {
         return "Sol";
       }
       /// Rule out that solution is found more than once during restarts
-      virtual bool hub(const MetaInfo& mi) {
-        switch (mi.type()) {
-        case MetaInfo::RESTART:
-          // With an objective, restart from a bound improving on the last solution
-          if (htc != HTC_NONE)
-            return Space::hub(mi);
-          if (mi.last() != nullptr) {
-            const HasSolutions* s
-              = static_cast<const HasSolutions*>(mi.last());
-            BoolVarArgs b;
-            for (int i=0; i<x.size(); i++)
-              b << expr(*this, x[i] == s->x[i]);
-            rel(*this, BOT_AND, b, 0);
-          }
-          break;
-        case MetaInfo::PORTFOLIO:
-          // Do not kill the brancher!
-          break;
-        default:
-          break;
+      virtual void hub(HubContext& hc) {
+        // For portfolio search, keep the branchers
+        if (hc.engine() != MetaEngine::Restart)
+          return;
+        // With an objective, restart from a bound improving on the last solution
+        if (htc != HTC_NONE) {
+          Space::hub(hc);
+          return;
         }
-        return false;
+        if (hc.last() != nullptr) {
+          const HasSolutions* s
+            = static_cast<const HasSolutions*>(hc.last());
+          BoolVarArgs b;
+          for (int i=0; i<x.size(); i++)
+            b << expr(*this, x[i] == s->x[i]);
+          rel(*this, BOT_AND, b, 0);
+        }
+        if (hc.event() == MetaEvent::Solution)
+          hc.decision(MetaDecision::Continue);
       }
     };
 
-    /// Return a bit for restart reason \a r
+    /// Return a bit for meta event \a e
     static unsigned int
-    reason_bit(MetaInfo::RestartReason r) {
-      return 1U << static_cast<unsigned int>(r);
+    event_bit(MetaEvent e) {
+      return 1U << static_cast<unsigned int>(e);
     }
 
     /// Observations shared by meta-search dispatch test spaces
     struct MetaDispatchState {
       std::atomic<unsigned int> hub_calls{0};
       std::atomic<unsigned int> spoke_calls{0};
-      std::atomic<unsigned int> hub_reasons{0};
-      std::atomic<unsigned int> spoke_reasons{0};
+      std::atomic<unsigned int> hub_events{0};
+      std::atomic<unsigned int> spoke_events{0};
       std::atomic<unsigned int> assets{0};
       std::atomic<unsigned int> live_spaces{0};
       std::atomic<unsigned int> copies{0};
@@ -698,8 +694,10 @@ namespace Test {
       std::atomic<unsigned int> constrain_hub_asset_mask{0};
       std::atomic<unsigned int> constrain_spoke_asset_mask{0};
       std::atomic<unsigned int> nogood_handoffs{0};
-      bool restart_after_solution = true;
-      bool solution_spoke_complete = true;
+      /// Decision of hub() after a solution
+      MetaDecision solution_decision = MetaDecision::Restart;
+      /// Coverage that spoke() declares after a solution
+      SpokeCoverage solution_spoke_coverage = SpokeCoverage::Full;
       bool fail_solution_spoke = false;
       bool nogood_model = false;
       /// Whether a PBS spoke() posts the branching for its asset
@@ -727,43 +725,45 @@ namespace Test {
       int portfolio_asset;
 
       /// Record and implement a Hub callback
-      bool
-      observe_hub(const MetaInfo& mi) {
+      void
+      observe_hub(HubContext& hc) {
         state->hub_calls.fetch_add(1, std::memory_order_relaxed);
-        if (mi.type() == MetaInfo::PORTFOLIO)
-          // PBS must ignore the callback result.
-          return false;
+        // Keep the branchers of a portfolio hub
+        if (hc.engine() == MetaEngine::Portfolio)
+          return;
         restart_role = RestartRole::Hub;
-        state->hub_reasons.fetch_or(reason_bit(mi.reason()), std::memory_order_relaxed);
-        bool default_result = Space::hub(mi);
-        if ((mi.type() == MetaInfo::RESTART) && (mi.nogoods().ng() > 0))
+        state->hub_events.fetch_or(event_bit(hc.event()), std::memory_order_relaxed);
+        Space::hub(hc);
+        if (hc.nogoods().ng() > 0)
           state->nogood_handoffs.fetch_add(1, std::memory_order_relaxed);
-        return (mi.reason() == MetaInfo::RR_SOL) ? state->restart_after_solution : default_result;
+        if (hc.event() == MetaEvent::Solution)
+          hc.decision(state->solution_decision);
       }
       /// Record and implement a Spoke callback
-      bool
-      observe_spoke(const MetaInfo& mi) {
+      void
+      observe_spoke(SpokeContext& sc) {
         state->spoke_calls.fetch_add(1, std::memory_order_relaxed);
-        if (mi.type() == MetaInfo::PORTFOLIO) {
-          portfolio_asset = static_cast<int>(mi.asset());
-          state->assets.fetch_or(1U << mi.asset(), std::memory_order_relaxed);
+        if (sc.engine() == MetaEngine::Portfolio) {
+          portfolio_asset = static_cast<int>(sc.asset());
+          state->assets.fetch_or(1U << sc.asset(), std::memory_order_relaxed);
           // The default hub() removes the model's branching. A hub()
           // override keeps it, and then this branching is redundant.
           if (state->spoke_branching)
             Gecode::branch(*this, x, INT_VAL_MIN());
-          // PBS must ignore the callback result.
-          return false;
+          return;
         }
-        state->spoke_reasons.fetch_or(reason_bit(mi.reason()), std::memory_order_relaxed);
+        state->spoke_events.fetch_or(event_bit(sc.event()), std::memory_order_relaxed);
         restart_role = RestartRole::Spoke;
-        if ((mi.reason() == MetaInfo::RR_INIT) && state->limit_first_spoke) {
+        if ((sc.event() == MetaEvent::Start) && state->limit_first_spoke) {
           // Four distinct values from three fail only during search.
           distinct(*this, y, IPL_VAL);
           Gecode::branch(*this, y, INT_VAR_NONE(), INT_VAL_MIN());
         }
-        if ((mi.reason() == MetaInfo::RR_SOL) && state->fail_solution_spoke)
-          fail();
-        return (mi.reason() == MetaInfo::RR_SOL) ? state->solution_spoke_complete : true;
+        if (sc.event() == MetaEvent::Solution) {
+          if (state->fail_solution_spoke)
+            fail();
+          sc.coverage(state->solution_spoke_coverage);
+        }
       }
 
     public:
@@ -841,9 +841,9 @@ namespace Test {
         return new HubDispatchSpace(*this);
       }
       /// Observe Hub dispatch
-      bool
-      hub(const MetaInfo& mi) override {
-        return observe_hub(mi);
+      void
+      hub(HubContext& hc) override {
+        observe_hub(hc);
       }
     };
 
@@ -860,9 +860,9 @@ namespace Test {
         return new SpokeDispatchSpace(*this);
       }
       /// Observe Spoke dispatch
-      bool
-      spoke(const MetaInfo& mi) override {
-        return observe_spoke(mi);
+      void
+      spoke(SpokeContext& sc) override {
+        observe_spoke(sc);
       }
     };
 
@@ -879,14 +879,14 @@ namespace Test {
         return new HubSpokeDispatchSpace(*this);
       }
       /// Observe Hub dispatch
-      bool
-      hub(const MetaInfo& mi) override {
-        return observe_hub(mi);
+      void
+      hub(HubContext& hc) override {
+        observe_hub(hc);
       }
       /// Observe Spoke dispatch
-      bool
-      spoke(const MetaInfo& mi) override {
-        return observe_spoke(mi);
+      void
+      spoke(SpokeContext& sc) override {
+        observe_spoke(sc);
       }
     };
 
@@ -899,8 +899,8 @@ namespace Test {
         RbsSpokeOnly,
         RbsHubContinue,
         RbsHubRestart,
-        RbsSpokeComplete,
-        RbsSpokeIncomplete,
+        RbsSpokeFull,
+        RbsSpokePartial,
         RbsLimit,
         PbsHubOnly,
         PbsSpokeOnly,
@@ -949,11 +949,12 @@ namespace Test {
       }
       /// Run one RBS dispatch scenario
       static bool
-      rbs(bool restart_after_solution, bool fail_solution_spoke, bool solution_spoke_complete) {
+      rbs(MetaDecision solution_decision, bool fail_solution_spoke,
+          SpokeCoverage solution_spoke_coverage) {
         MetaDispatchState state;
-        state.restart_after_solution = restart_after_solution;
+        state.solution_decision = solution_decision;
         state.fail_solution_spoke = fail_solution_spoke;
-        state.solution_spoke_complete = solution_spoke_complete;
+        state.solution_spoke_coverage = solution_spoke_coverage;
 
         HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(state);
         Gecode::Search::Options o;
@@ -966,22 +967,27 @@ namespace Test {
         bool ok = first != nullptr;
         delete first;
 
+        const unsigned int start = event_bit(MetaEvent::Start);
+        const unsigned int solution = event_bit(MetaEvent::Solution);
+        const unsigned int exhausted = event_bit(MetaEvent::Exhausted);
         HubSpokeDispatchSpace* second = search.next();
         if (!fail_solution_spoke) {
+          const bool restart = solution_decision == MetaDecision::Restart;
           ok = ok && (second != nullptr) && holds(state.hub_calls, 1U) &&
-               holds(state.spoke_calls, restart_after_solution ? 2U : 1U) &&
-               holds(state.hub_reasons, reason_bit(MetaInfo::RR_SOL)) &&
-               holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) |
-                                              (restart_after_solution ? reason_bit(MetaInfo::RR_SOL) : 0U));
-        } else if (solution_spoke_complete) {
-          ok = ok && (second == nullptr) && holds(state.hub_calls, 1U) && holds(state.spoke_calls, 2U) &&
-               holds(state.hub_reasons, reason_bit(MetaInfo::RR_SOL)) &&
-               holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) | reason_bit(MetaInfo::RR_SOL));
+               holds(state.spoke_calls, restart ? 2U : 1U) &&
+               holds(state.hub_events, solution) &&
+               holds(state.spoke_events, start | (restart ? solution : 0U));
+        } else if (solution_spoke_coverage == SpokeCoverage::Full) {
+          // Exhausting a spoke of full coverage is a proof
+          ok = ok && (second == nullptr) &&
+               (search.end_reason() == EndReason::Exhausted) &&
+               holds(state.hub_calls, 1U) && holds(state.spoke_calls, 2U) &&
+               holds(state.hub_events, solution) &&
+               holds(state.spoke_events, start | solution);
         } else {
           ok = ok && (second != nullptr) && holds(state.hub_calls, 2U) && holds(state.spoke_calls, 3U) &&
-               holds(state.hub_reasons, reason_bit(MetaInfo::RR_SOL) | reason_bit(MetaInfo::RR_CMPL)) &&
-               holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) | reason_bit(MetaInfo::RR_SOL) |
-                                              reason_bit(MetaInfo::RR_CMPL));
+               holds(state.hub_events, solution | exhausted) &&
+               holds(state.spoke_events, start | solution | exhausted);
         }
         delete second;
         return ok;
@@ -1039,8 +1045,8 @@ namespace Test {
 
         HubSpokeDispatchSpace* solution = search.next();
         bool ok = (solution != nullptr) && solution->assigned() && holds(state.hub_calls, 1U) &&
-                  holds(state.spoke_calls, 2U) && holds(state.hub_reasons, reason_bit(MetaInfo::RR_LIM)) &&
-                  holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) | reason_bit(MetaInfo::RR_LIM));
+                  holds(state.spoke_calls, 2U) && holds(state.hub_events, event_bit(MetaEvent::Limit)) &&
+                  holds(state.spoke_events, event_bit(MetaEvent::Start) | event_bit(MetaEvent::Limit));
         delete solution;
         return ok;
       }
@@ -1075,7 +1081,7 @@ namespace Test {
       meta_stop_ownership(void) {
         MetaDispatchState rbs_state;
         // Continue after a solution, so that the spoke engine prunes with it
-        rbs_state.restart_after_solution = false;
+        rbs_state.solution_decision = MetaDecision::Continue;
         bool ok = true;
         {
           Gecode::Search::NodeStop stop(0);
@@ -1117,7 +1123,7 @@ namespace Test {
       bab_incumbent(void) {
         MetaDispatchState rbs_state;
         // Continue after a solution, so that the spoke engine prunes with it
-        rbs_state.restart_after_solution = false;
+        rbs_state.solution_decision = MetaDecision::Continue;
         bool ok = true;
         {
           HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(rbs_state);
@@ -1161,7 +1167,7 @@ namespace Test {
         ok = ok && holds(pbs_state.live_spaces, 0U);
 
         MetaDispatchState nested_state;
-        nested_state.restart_after_solution = false;
+        nested_state.solution_decision = MetaDecision::Continue;
         {
           HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(nested_state);
           Gecode::Search::Options outer;
@@ -1202,13 +1208,13 @@ namespace Test {
         case Scenario::RbsSpokeOnly:
           return rbs_dispatch<SpokeDispatchSpace>(0, 2);
         case Scenario::RbsHubContinue:
-          return rbs(false, false, true);
+          return rbs(MetaDecision::Continue, false, SpokeCoverage::Full);
         case Scenario::RbsHubRestart:
-          return rbs(true, false, true);
-        case Scenario::RbsSpokeComplete:
-          return rbs(true, true, true);
-        case Scenario::RbsSpokeIncomplete:
-          return rbs(true, true, false);
+          return rbs(MetaDecision::Restart, false, SpokeCoverage::Full);
+        case Scenario::RbsSpokeFull:
+          return rbs(MetaDecision::Restart, true, SpokeCoverage::Full);
+        case Scenario::RbsSpokePartial:
+          return rbs(MetaDecision::Restart, true, SpokeCoverage::Partial);
         case Scenario::RbsLimit:
           return rbs_limit();
         case Scenario::PbsHubOnly:
@@ -1828,10 +1834,10 @@ namespace Test {
       }
       virtual Space* copy(void) { return new ParallelObjective(*this); }
       virtual IntVar cost(void) const { return x; }
-      virtual bool hub(const MetaInfo& mi) {
-        if (mi.type() == MetaInfo::PORTFOLIO)
-          return false;
-        return Space::hub(mi);
+      virtual void hub(HubContext& hc) {
+        // Keep the branchers for the assets of a portfolio
+        if (hc.engine() == MetaEngine::Restart)
+          Space::hub(hc);
       }
     };
 
@@ -1871,10 +1877,10 @@ namespace Test {
           throw ComparisonError();
         return SpaceComparison::Incomparable;
       }
-      virtual bool hub(const MetaInfo& mi) {
-        if (mi.type() == MetaInfo::PORTFOLIO)
-          return false;
-        return Space::hub(mi);
+      virtual void hub(HubContext& hc) {
+        // Keep the branchers for the assets of a portfolio
+        if (hc.engine() == MetaEngine::Restart)
+          Space::hub(hc);
       }
     };
 
@@ -2735,14 +2741,13 @@ namespace Test {
       Gecode::IntVar cost(void) const override {
         return x[0];
       }
-      bool spoke(const Gecode::MetaInfo& mi) override {
-        if ((mi.type() == Gecode::MetaInfo::RESTART) &&
-            (mi.reason() == Gecode::MetaInfo::RR_INIT)) {
+      void spoke(Gecode::SpokeContext& sc) override {
+        if ((sc.engine() == Gecode::MetaEngine::Restart) &&
+            (sc.event() == Gecode::MetaEvent::Start)) {
           Gecode::dom(*this,x[2],0,1);
           Gecode::dom(*this,x[3],0,1);
-          return false;
+          sc.coverage(Gecode::SpokeCoverage::Partial);
         }
-        return true;
       }
     };
 
@@ -2789,11 +2794,10 @@ namespace Test {
       Gecode::IntVar cost(void) const override {
         return x[0];
       }
-      bool hub(const Gecode::MetaInfo& mi) override {
+      void hub(Gecode::HubContext& hc) override {
         // Keep the branchers for the assets of a portfolio
-        if (mi.type() == Gecode::MetaInfo::PORTFOLIO)
-          return true;
-        return Gecode::IntMinimizeSpace::hub(mi);
+        if (hc.engine() == Gecode::MetaEngine::Restart)
+          Gecode::IntMinimizeSpace::hub(hc);
       }
     };
 
@@ -2805,11 +2809,9 @@ namespace Test {
       Gecode::Space* copy(void) override {
         return new FailingHub(*this);
       }
-      bool hub(const Gecode::MetaInfo& mi) override {
-        if ((mi.type() == Gecode::MetaInfo::RESTART) &&
-            (mi.reason() == Gecode::MetaInfo::RR_LIM))
+      void hub(Gecode::HubContext& hc) override {
+        if (hc.event() == Gecode::MetaEvent::Limit)
           fail();
-        return true;
       }
     };
 
@@ -2855,12 +2857,12 @@ namespace Test {
       Gecode::Space* copy(void) override {
         return new FailingSpoke(*this);
       }
-      bool spoke(const Gecode::MetaInfo& mi) override {
-        if ((mi.type() == Gecode::MetaInfo::RESTART) && (mi.restart() > 0)) {
+      void spoke(Gecode::SpokeContext& sc) override {
+        if ((sc.engine() == Gecode::MetaEngine::Restart) &&
+            (sc.episode() > 0)) {
           fail();
-          return false;
+          sc.coverage(Gecode::SpokeCoverage::Partial);
         }
-        return true;
       }
     };
 
@@ -2913,13 +2915,12 @@ namespace Test {
       Gecode::Space* copy(void) override {
         return new FailingFirstSpoke(*this);
       }
-      bool spoke(const Gecode::MetaInfo& mi) override {
-        if ((mi.type() == Gecode::MetaInfo::RESTART) &&
-            (mi.reason() == Gecode::MetaInfo::RR_INIT)) {
+      void spoke(Gecode::SpokeContext& sc) override {
+        if ((sc.engine() == Gecode::MetaEngine::Restart) &&
+            (sc.event() == Gecode::MetaEvent::Start)) {
           fail();
-          return false;
+          sc.coverage(Gecode::SpokeCoverage::Partial);
         }
-        return true;
       }
     };
 
@@ -3493,10 +3494,10 @@ namespace Test {
       Gecode::Space* copy(void) override {
         return new FailingAsset(*this);
       }
-      bool spoke(const Gecode::MetaInfo& mi) override {
-        if ((mi.type() == Gecode::MetaInfo::PORTFOLIO) && (mi.asset() == 0U))
+      void spoke(Gecode::SpokeContext& sc) override {
+        if ((sc.engine() == Gecode::MetaEngine::Portfolio) &&
+            (sc.asset() == 0U))
           fail();
-        return true;
       }
     };
 
@@ -3672,8 +3673,8 @@ namespace Test {
         (void)new MetaDispatch("RBS::SpokeOnly", MetaDispatch::Scenario::RbsSpokeOnly);
         (void)new MetaDispatch("RBS::HubContinue", MetaDispatch::Scenario::RbsHubContinue);
         (void)new MetaDispatch("RBS::HubRestart", MetaDispatch::Scenario::RbsHubRestart);
-        (void)new MetaDispatch("RBS::SpokeComplete", MetaDispatch::Scenario::RbsSpokeComplete);
-        (void)new MetaDispatch("RBS::SpokeIncomplete", MetaDispatch::Scenario::RbsSpokeIncomplete);
+        (void)new MetaDispatch("RBS::SpokeFull", MetaDispatch::Scenario::RbsSpokeFull);
+        (void)new MetaDispatch("RBS::SpokePartial", MetaDispatch::Scenario::RbsSpokePartial);
         (void)new MetaDispatch("RBS::Limit", MetaDispatch::Scenario::RbsLimit);
         (void)new MetaDispatch("RBS::NoGoodsResetOwnership",
                                MetaDispatch::Scenario::RbsNoGoodsResetOwnership);

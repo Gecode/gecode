@@ -1651,96 +1651,242 @@ namespace Gecode {
     static NoGoods eng;
   };
 
+  namespace Search {
+    class Statistics;
+    class MetaContextAccess;
+  }
+
   /**
-   * \brief Information passed by meta search engines
+   * \defgroup TaskModelScriptMeta Meta search hooks
    *
+   * A meta search engine keeps a \e hub space and searches clones of it,
+   * the \e spokes, with an inner engine. Restart-based search (RBS) runs
+   * one spoke after the other, each search of a spoke being an
+   * \e episode. Portfolio-based search (PBS) runs one spoke for each of
+   * its assets.
+   *
+   * The engines call Space::hub() on the hub and Space::spoke() on each
+   * spoke. A HubContext or SpokeContext tells the hook why it is called,
+   * and the hook answers through it: hub() with a MetaDecision, spoke()
+   * with a SpokeCoverage.
+   *
+   * \ingroup TaskModelScript
    */
-  class GECODE_VTABLE_EXPORT MetaInfo {
-  public:
-    /// Which type of information is provided
-    enum Type {
-      /// Information is provided by a restart-based engine
-      RESTART,
-      /// Information is provided by a portfolio-based engine
-      PORTFOLIO
-    };
-    /// Reason for restarting
-    enum RestartReason {
-      /// No reason - used for PORTFOLIO
-      RR_NO,
-      /// Restarting after initialisation
-      RR_INIT,
-      /// Restarting after a solution is found
-      RR_SOL,
-      /// Restarting after exhausting search space
-      RR_CMPL,
-      /// Restarting after reaching restart limit
-      RR_LIM
-    };
+  //@{
+
+  /// Meta search engine that calls a hook
+  enum class MetaEngine : unsigned char {
+    Restart,   ///< Restart-based search (RBS)
+    Portfolio, ///< Portfolio-based search (PBS)
+  };
+
+  /**
+   * \brief Why a meta search engine calls a hook
+   *
+   * In Space::hub(), the event that ended the episode, or \c Start before
+   * the first one. In Space::spoke(), the event that ended the previous
+   * episode, or \c Start for the first episode and for the assets of a
+   * portfolio.
+   */
+  enum class MetaEvent : unsigned char {
+    Start,    ///< Search starts: no episode has run yet
+    Solution, ///< The episode found a solution
+    /**
+     * The episode exhausted its spoke. This is a proof only for a spoke
+     * of SpokeCoverage::Full, and then the engine has already ended: a
+     * hook only sees this event after a spoke of SpokeCoverage::Partial.
+     */
+    Exhausted,
+    /**
+     * The inner engine ended without a proof (such as LDS). For a spoke
+     * of SpokeCoverage::Full, the engine has then already ended: a hook
+     * only sees this event after a spoke of SpokeCoverage::Partial.
+     */
+    Incomplete,
+    Limit, ///< The episode reached the cutoff
+  };
+
+  /**
+   * \brief What a meta search engine does after Space::hub() returns
+   *
+   * The default is \c Restart. RBS honours \c Continue only after
+   * MetaEvent::Solution and restarts after any other event. PBS calls
+   * hub() only with MetaEvent::Start and ignores the decision.
+   */
+  enum class MetaDecision : unsigned char {
+    /// Search a new spoke
+    Restart,
+    /// Continue the current episode: search the same spoke for the next solution
+    Continue,
+  };
+
+  /**
+   * \brief How much of the hub's search space a spoke covers
+   *
+   * Space::spoke() declares the coverage of its spoke. It decides whether
+   * exhausting the spoke proves that the hub has no further solution, and
+   * whether the no-goods recorded while searching the spoke hold in the
+   * hub.
+   *
+   * The engine trusts the declaration: a spoke that declares more coverage
+   * than it has, such as a spoke that removes solutions but declares
+   * \c Full, gives undefined results.
+   */
+  enum class SpokeCoverage : unsigned char {
+    /**
+     * The spoke adds only branching and constraints that the hub
+     * implies: exhaustion is a proof
+     */
+    Full,
+    /**
+     * The spoke explores part of the hub's search space, such as a large
+     * neighbourhood search fragment: exhaustion is no proof
+     */
+    Partial,
+  };
+
+  /**
+   * \brief Information that a meta search engine passes to a hook
+   *
+   * Meta search engines create the contexts with
+   * Search::MetaContextAccess, models only read them. All references and
+   * pointers are valid only while the hook runs.
+   */
+  class MetaContext {
   protected:
-    /// Type of information
-    const Type t;
-    /// \name Restart-based information
-    //@{
-    /// Number of restarts
-    const unsigned long int r;
-    /// Reason for restarting
-    const RestartReason rr;
-    /// Number of solutions since last restart
-    const unsigned long long int s;
-    /// Number of failures since last restart
-    const unsigned long long int f;
-    /// Last solution found
-    const Space* l;
-    /// No-goods from restart
-    const NoGoods& ng;
-    //@}
-    /// \name Portfolio-based information
-    //@{
-    /// Number of asset in portfolio
-    const unsigned int a;
-    //@}
+    /// The engine calling the hook
+    MetaEngine _engine;
+    /// Why the hook is called
+    MetaEvent _event;
+    /// The episode
+    unsigned long int _episode;
+    /// The asset
+    unsigned int _asset;
+    /// The number of assets
+    unsigned int _assets;
+    /// The most recent solution (possibly nullptr)
+    const Space* _last;
+    /// The statistics of the finished episode
+    const Search::Statistics& _statistics;
+    /// The no-goods of the finished episode
+    const NoGoods& _nogoods;
+    /// Initialize, the arguments correspond to the access functions
+    MetaContext(MetaEngine engine, MetaEvent event,
+                unsigned long int episode,
+                unsigned int asset, unsigned int assets,
+                const Space* last, const Search::Statistics& statistics,
+                const NoGoods& nogoods);
   public:
-    /// \name Constructors depending on type of engine
-    //@{
-    /// Constructor for restart-based engine
-    MetaInfo(unsigned long int r,
-             RestartReason rr,
-             unsigned long long int s,
-             unsigned long long int f,
-             const Space* l,
-             NoGoods& ng);
-    /// Constructor for portfolio-based engine
-    MetaInfo(unsigned int a);
-    //@}
-    /// Return type of information
-    Type type(void) const;
-    /// \name Restart-based information
-    //@{
-    /// Return number of restarts
-    unsigned long int restart(void) const;
-    /// Return reason for restarting
-    RestartReason reason(void) const;
-    /// Return number of solutions since last restart
-    unsigned long long int solution(void) const;
-    /// Return number of failures since last restart
-    unsigned long long int fail(void) const;
-    /// Return last solution found (possibly nullptr)
+    /// Contexts are not copied
+    MetaContext(const MetaContext&) = delete;
+    /// Contexts are not assigned
+    MetaContext& operator =(const MetaContext&) = delete;
+    /// Return the engine calling the hook
+    MetaEngine engine(void) const;
+    /// Return why the hook is called
+    MetaEvent event(void) const;
+    /**
+     * \brief Return the episode, counting from zero
+     *
+     * Each new spoke of RBS starts a new episode, whatever ended the
+     * previous one. In hub(), this is the episode that ended (zero for
+     * \c Start); in spoke(), the episode that starts. PBS always passes
+     * zero.
+     */
+    unsigned long int episode(void) const;
+    /// Return the asset of a portfolio, counting from zero (zero for RBS)
+    unsigned int asset(void) const;
+    /// Return the number of assets of a portfolio (one for RBS)
+    unsigned int assets(void) const;
+    /**
+     * \brief Return the most recent solution, or nullptr if none
+     *
+     * The engine owns the solution, and the pointer is valid only while
+     * the hook runs: clone the solution to keep it.
+     */
     const Space* last(void) const;
     /**
-     * \brief Return no-goods recorded from restart
+     * \brief Return the statistics of the finished episode
      *
-     * The no-goods are empty if the search on the spoke space was
-     * incomplete, as they only hold in the spoke's search space.
+     * Empty for \c Start. Use the statistics of the engine for totals.
+     */
+    const Search::Statistics& statistics(void) const;
+    /**
+     * \brief Return the no-goods of the finished episode
+     *
+     * The no-goods are empty if the spoke of the episode has
+     * SpokeCoverage::Partial, as they only hold in the spoke's search
+     * space.
      */
     const NoGoods& nogoods(void) const;
-    //@}
-    /// \name Portfolio-based information
-    //@{
-    /// Return number of asset in portfolio
-    unsigned int asset(void) const;
-    //@}
   };
+
+  /// Context passed to Space::hub()
+  class HubContext : public MetaContext {
+    friend class Search::MetaContextAccess;
+  protected:
+    /// The decision
+    MetaDecision _decision;
+  private:
+    /// Initialize with decision MetaDecision::Restart
+    HubContext(MetaEngine engine, MetaEvent event,
+               unsigned long int episode,
+               unsigned int asset, unsigned int assets,
+               const Space* last, const Search::Statistics& statistics,
+               const NoGoods& nogoods);
+  public:
+    /// Return the decision
+    MetaDecision decision(void) const;
+    /// Set the decision to \a d, the last one set counts
+    void decision(MetaDecision d);
+  };
+
+  /// Context passed to Space::spoke()
+  class SpokeContext : public MetaContext {
+    friend class Search::MetaContextAccess;
+  protected:
+    /// The coverage
+    SpokeCoverage _coverage;
+  private:
+    /// Initialize with coverage SpokeCoverage::Full
+    SpokeContext(MetaEngine engine, MetaEvent event,
+                 unsigned long int episode,
+                 unsigned int asset, unsigned int assets,
+                 const Space* last, const Search::Statistics& statistics,
+                 const NoGoods& nogoods);
+  public:
+    /// Return the coverage
+    SpokeCoverage coverage(void) const;
+    /// Set the coverage to \a c, the last one set counts
+    void coverage(SpokeCoverage c);
+  };
+
+  namespace Search {
+    /**
+     * \brief Creation of the contexts of meta search hooks
+     *
+     * For meta search engines, which create the contexts that they pass
+     * to Space::hub() and Space::spoke(). The arguments correspond to the
+     * access functions of MetaContext.
+     */
+    class MetaContextAccess {
+    public:
+      /// Return a context for Space::hub() with decision MetaDecision::Restart
+      static HubContext hub(MetaEngine engine, MetaEvent event,
+                            unsigned long int episode,
+                            unsigned int asset, unsigned int assets,
+                            const Space* last, const Statistics& statistics,
+                            const NoGoods& nogoods);
+      /// Return a context for Space::spoke() with coverage SpokeCoverage::Full
+      static SpokeContext spoke(MetaEngine engine, MetaEvent event,
+                                unsigned long int episode,
+                                unsigned int asset, unsigned int assets,
+                                const Space* last, const Statistics& statistics,
+                                const NoGoods& nogoods);
+    };
+  }
+
+  //@}
 
   /**
    * \brief %Space status
@@ -2192,70 +2338,54 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT virtual SpaceComparison
     compare(const Space& other) const;
     /**
-     * \brief Hub configuration function for meta search engines
+     * \brief Hub hook for meta search engines
      *
-     * \li Restart-based search (RBS) calls this function on its hub
-     *     after each solution and before each restart. \a mi
-     *     describes the restart. After a solution, returning true
-     *     restarts search from a new spoke, and returning false
-     *     continues the current search without calling spoke(). At a
-     *     restart caused by the cutoff or by an incomplete spoke being
-     *     exhausted, the result is ignored and search restarts.
-     *     Whatever the result, if the hub fails after the call, RBS
-     *     ends.
+     * Restart-based search (RBS) calls hub() on its hub whenever an
+     * episode ends with a solution or at the cutoff, and when an episode
+     * that searches a spoke of SpokeCoverage::Partial is exhausted or
+     * ends without a proof (see MetaEvent). Any other episode that ends
+     * this way ends RBS with Search::EndReason::Exhausted or
+     * Search::EndReason::Incomplete instead.
+     * Portfolio-based search (PBS) calls hub() once, with
+     * MetaEvent::Start, before it creates the assets.
      *
-     *     The default function constrains the hub with the last
-     *     solution, if any, posts the no-goods from \a mi, and
-     *     returns true.
+     * The hook may post constraints in the hub and sets what the engine
+     * does next with \a hc.decision() (see MetaDecision). If the hub
+     * fails, RBS ends with Search::EndReason::Exhausted whatever
+     * the decision: failing the hub is how a hook declares that no
+     * further solution exists.
      *
-     * \li Portfolio-based search (PBS) calls this function once on
-     *     its hub before creating the assets. The result is ignored.
-     *
-     *     The default function removes all branchers, so the spoke()
-     *     function must post the branching for each asset.
-     *
-     * \ingroup TaskModelScript
-     */
-    GECODE_KERNEL_EXPORT
-    virtual bool hub(const MetaInfo& mi);
-    /**
-     * \brief Spoke configuration function for meta search engines
-     *
-     * \li RBS calls this function on each spoke, a clone of the hub,
-     *     before searching it: once when search starts and once at
-     *     each restart. \a mi describes the restart. Returning true
-     *     declares the search of the spoke complete: when it is
-     *     exhausted, RBS finishes. Returning false declares it
-     *     incomplete: when it is exhausted, RBS restarts. The no-goods
-     *     recorded by an incomplete search only hold in the spoke's
-     *     search space, so RBS does not pass them to hub(). This also
-     *     holds for the first search when search starts.
-     *
-     * \li PBS calls this function once on the spoke of each asset,
-     *     the hub or a clone of it, and passes the asset number,
-     *     starting from zero. The result is ignored.
-     *
-     * The default function does nothing and returns true.
+     * The default hook constrains the hub with \a hc.last(), if any, and
+     * posts \a hc.nogoods() for RBS. For PBS, it removes all branchers,
+     * so spoke() must post the branching of each asset.
      *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT
-    virtual bool spoke(const MetaInfo& mi);
-
+    virtual void hub(HubContext& hc);
     /**
-     * \brief Renamed to hub() in Gecode 7
+     * \brief Spoke hook for meta search engines
      *
-     * Deleted so that a Gecode 6 override, with or without
-     * \c override, fails to compile instead of never being called.
-     */
-    virtual bool master(const MetaInfo& mi) = delete;
-    /**
-     * \brief Renamed to spoke() in Gecode 7
+     * RBS calls spoke() on each new spoke, a clone of the hub, before
+     * searching it: for the first episode with MetaEvent::Start, and
+     * for each later episode with the event that ended the previous
+     * one. PBS calls spoke() once on the spoke of each asset, the hub
+     * or a clone of it, with MetaEvent::Start and the asset number.
      *
-     * Deleted so that a Gecode 6 override, with or without
-     * \c override, fails to compile instead of never being called.
+     * The hook may post constraints and branching in the spoke and
+     * declares with \a sc.coverage() how much of the hub's search space
+     * the spoke covers (see SpokeCoverage, the default is Full). Large
+     * neighbourhood search, for example, fixes part of \a sc.last() and
+     * declares SpokeCoverage::Partial. The no-goods recorded while
+     * searching a spoke of SpokeCoverage::Partial only hold in its
+     * search space, so RBS does not pass them to hub().
+     *
+     * The default hook does nothing.
+     *
+     * \ingroup TaskModelScript
      */
-    virtual bool slave(const MetaInfo& mi) = delete;
+    GECODE_KERNEL_EXPORT
+    virtual void spoke(SpokeContext& sc);
 
     /*
      * Member functions for search engines
@@ -3259,58 +3389,106 @@ namespace Gecode {
 
 
   /*
-   * Information from meta search engines
+   * Contexts of meta search hooks
    */
   forceinline
-  MetaInfo::MetaInfo(unsigned long int r0,
-                     RestartReason rr0,
-                     unsigned long long int s0,
-                     unsigned long long int f0,
-                     const Space* l0,
-                     NoGoods& ng0)
-    : t(RESTART), r(r0), rr(rr0), s(s0), f(f0), l(l0), ng(ng0), a(0) {}
-
-  forceinline
-  MetaInfo::MetaInfo(unsigned int a0)
-    : t(PORTFOLIO), r(0), rr(RR_NO), s(0), f(0), l(nullptr), ng(NoGoods::eng), a(a0) {}
-
-  forceinline MetaInfo::Type
-  MetaInfo::type(void) const {
-    return t;
+  MetaContext::MetaContext(MetaEngine engine, MetaEvent event,
+                           unsigned long int episode,
+                           unsigned int asset, unsigned int assets,
+                           const Space* last,
+                           const Search::Statistics& statistics,
+                           const NoGoods& nogoods)
+    : _engine(engine), _event(event), _episode(episode),
+      _asset(asset), _assets(assets), _last(last),
+      _statistics(statistics), _nogoods(nogoods) {}
+  forceinline MetaEngine
+  MetaContext::engine(void) const {
+    return _engine;
+  }
+  forceinline MetaEvent
+  MetaContext::event(void) const {
+    return _event;
   }
   forceinline unsigned long int
-  MetaInfo::restart(void) const {
-    assert(type() == RESTART);
-    return r;
-  }
-  forceinline MetaInfo::RestartReason
-  MetaInfo::reason(void) const {
-    return rr;
-  }
-  forceinline unsigned long long int
-  MetaInfo::solution(void) const {
-    assert(type() == RESTART);
-    return s;
-  }
-  forceinline unsigned long long int
-  MetaInfo::fail(void) const {
-    assert(type() == RESTART);
-    return f;
-  }
-  forceinline const Space*
-  MetaInfo::last(void) const {
-    assert(type() == RESTART);
-    return l;
-  }
-  forceinline const NoGoods&
-  MetaInfo::nogoods(void) const {
-    assert(type() == RESTART);
-    return ng;
+  MetaContext::episode(void) const {
+    return _episode;
   }
   forceinline unsigned int
-  MetaInfo::asset(void) const {
-    assert(type() == PORTFOLIO);
-    return a;
+  MetaContext::asset(void) const {
+    return _asset;
+  }
+  forceinline unsigned int
+  MetaContext::assets(void) const {
+    return _assets;
+  }
+  forceinline const Space*
+  MetaContext::last(void) const {
+    return _last;
+  }
+  forceinline const Search::Statistics&
+  MetaContext::statistics(void) const {
+    return _statistics;
+  }
+  forceinline const NoGoods&
+  MetaContext::nogoods(void) const {
+    return _nogoods;
+  }
+
+  forceinline
+  HubContext::HubContext(MetaEngine engine, MetaEvent event,
+                         unsigned long int episode,
+                         unsigned int asset, unsigned int assets,
+                         const Space* last,
+                         const Search::Statistics& statistics,
+                         const NoGoods& nogoods)
+    : MetaContext(engine,event,episode,asset,assets,last,statistics,nogoods),
+      _decision(MetaDecision::Restart) {}
+  forceinline MetaDecision
+  HubContext::decision(void) const {
+    return _decision;
+  }
+  forceinline void
+  HubContext::decision(MetaDecision d) {
+    _decision = d;
+  }
+
+  forceinline
+  SpokeContext::SpokeContext(MetaEngine engine, MetaEvent event,
+                             unsigned long int episode,
+                             unsigned int asset, unsigned int assets,
+                             const Space* last,
+                             const Search::Statistics& statistics,
+                             const NoGoods& nogoods)
+    : MetaContext(engine,event,episode,asset,assets,last,statistics,nogoods),
+      _coverage(SpokeCoverage::Full) {}
+  forceinline SpokeCoverage
+  SpokeContext::coverage(void) const {
+    return _coverage;
+  }
+  forceinline void
+  SpokeContext::coverage(SpokeCoverage c) {
+    _coverage = c;
+  }
+
+  forceinline HubContext
+  Search::MetaContextAccess::hub(MetaEngine engine, MetaEvent event,
+                                 unsigned long int episode,
+                                 unsigned int asset, unsigned int assets,
+                                 const Space* last,
+                                 const Statistics& statistics,
+                                 const NoGoods& nogoods) {
+    return HubContext(engine,event,episode,asset,assets,last,statistics,
+                      nogoods);
+  }
+  forceinline SpokeContext
+  Search::MetaContextAccess::spoke(MetaEngine engine, MetaEvent event,
+                                   unsigned long int episode,
+                                   unsigned int asset, unsigned int assets,
+                                   const Space* last,
+                                   const Statistics& statistics,
+                                   const NoGoods& nogoods) {
+    return SpokeContext(engine,event,episode,asset,assets,last,statistics,
+                        nogoods);
   }
 
 

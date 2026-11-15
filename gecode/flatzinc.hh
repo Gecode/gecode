@@ -682,8 +682,8 @@ namespace Gecode { namespace FlatZinc {
     virtual void constrain(const Space& s);
     /// Copy function
     virtual Gecode::Space* copy(void);
-    /// Spoke function for restarts
-    virtual bool spoke(const MetaInfo& mi);
+    /// Spoke hook for restarts: on_restart and LNS spokes have partial coverage
+    virtual void spoke(SpokeContext& sc);
 
     /// \name AST to variable and value conversion
     //@{

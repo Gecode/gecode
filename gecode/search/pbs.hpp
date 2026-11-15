@@ -148,6 +148,26 @@ namespace Gecode { namespace Search {
       delete c;
   }
 
+  /// Run hub() with MetaEvent::Start on the hub \a hub of a portfolio of \a n assets
+  forceinline void
+  pbs_hub(Space& hub, unsigned int n) {
+    Statistics start;
+    HubContext hc = MetaContextAccess::hub(MetaEngine::Portfolio,
+                                           MetaEvent::Start,0UL,0U,n,
+                                           nullptr,start,NoGoods::eng);
+    hub.hub(hc);
+  }
+
+  /// Run spoke() on the spoke \a s of asset \a i of \a n
+  forceinline void
+  pbs_spoke(Space& s, unsigned int i, unsigned int n) {
+    Statistics start;
+    SpokeContext sc = MetaContextAccess::spoke(MetaEngine::Portfolio,
+                                               MetaEvent::Start,0UL,i,n,
+                                               nullptr,start,NoGoods::eng);
+    s.spoke(sc);
+  }
+
   /// A PBS engine builder
   template<class T, template<class> class E>
   class PbsBuilder : public Builder {
@@ -242,7 +262,7 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        (void) spoke->spoke(i);
+        pbs_spoke(*spoke,i,n_assets);
         std::unique_ptr<Cutoff> c(pbs_cutoff<E<T> >(cutoff));
         if (c != nullptr)
           opt.cutoff = c.get();
@@ -290,7 +310,8 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        (void) spoke->spoke(static_cast<unsigned int>(i));
+        pbs_spoke(*spoke,static_cast<unsigned int>(i),
+                  static_cast<unsigned int>(n_assets));
         assets[i] = (*sebs[i])(spoke.get());
       }
       pbscleanup(sebs);
@@ -340,7 +361,7 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        (void) spoke->spoke(static_cast<unsigned int>(i));
+        pbs_spoke(*spoke,i,n_assets);
         std::unique_ptr<Cutoff> c(pbs_cutoff<E<T> >(cutoff));
         if (c != nullptr)
           opt.cutoff = c.get();
@@ -390,7 +411,8 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        (void) spoke->spoke(static_cast<unsigned int>(i));
+        pbs_spoke(*spoke,static_cast<unsigned int>(i),
+                  static_cast<unsigned int>(n_assets));
         assets[i] = (*sebs[i])(spoke.get());
       }
       pbscleanup(sebs);
@@ -443,12 +465,12 @@ namespace Gecode {
     opt.clone = false;
 
     // Always execute hub function
-    (void) hub->hub(0);
+    Search::pbs_hub(*hub,opt.assets);
 
     // No need to create a portfolio engine but must run spoke function
     if (o.assets == 1) {
       std::unique_ptr<T> seed(hub);
-      (void) hub->spoke(0);
+      Search::pbs_spoke(*hub,0U,1U);
       // Retain the seed if a nested builder rejects its worker control.
       opt.clone = true;
       e = Search::build<T,E>(seed.get(),opt);
@@ -497,7 +519,7 @@ namespace Gecode {
     opt.clone = false;
 
     // Always execute hub function
-    (void) hub->hub(0);
+    Search::pbs_hub(*hub,static_cast<unsigned int>(sebs.size()));
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)

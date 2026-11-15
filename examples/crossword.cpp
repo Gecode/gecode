@@ -281,13 +281,14 @@ public:
        << ((a == 0) ? "<=" : ">") << " "
        << n;
   }
-  /// Do not perform a restart when a solution is found
-  bool hub(const MetaInfo& mi) {
-    if (mi.type() == MetaInfo::RESTART)
-      // Post no-goods
-      mi.nogoods().post(*this);
-    // Do not perform a restart if a solution has been found
-    return false;
+  /// Post no-goods, and do not perform a restart when a solution is found
+  void hub(HubContext& hc) {
+    if (hc.engine() == MetaEngine::Restart) {
+      hc.nogoods().post(*this);
+      if (hc.event() == MetaEvent::Solution)
+        hc.decision(MetaDecision::Continue);
+    }
+    // For portfolio search, keep the branchers
   }
 
   /// Constructor for cloning \a s

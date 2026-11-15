@@ -43,7 +43,7 @@ namespace Gecode { namespace Search { namespace Seq {
   GECODE_SEARCH_EXPORT Stop*
   rbsstop(Stop* so);
 
-  /// Create restart engine whose first spoke search yields valid no-goods
+  /// Create restart engine whose first spoke has SpokeCoverage::Full
   GECODE_SEARCH_EXPORT Engine*
   rbsengine(Space* hub, Stop* stop, Engine* engine,
             const Search::Statistics& stat, const Options& opt,
@@ -52,14 +52,13 @@ namespace Gecode { namespace Search { namespace Seq {
   /**
    * \brief Create restart engine
    *
-   * The value \a complete is the result of the spoke configuration of the
-   * space explored by the first \a engine. It only determines whether
-   * the no-goods of that search hold in the hub.
+   * The value \a coverage is the coverage that the spoke hook declared for
+   * the space explored by the first \a engine.
    */
   GECODE_SEARCH_EXPORT Engine*
   rbsengine(Space* hub, Stop* stop, Engine* engine,
             const Search::Statistics& stat, const Options& opt,
-            bool best, bool complete);
+            bool best, SpokeCoverage coverage);
 
 }}}
 
@@ -114,12 +113,15 @@ namespace Gecode {
     } else {
       std::unique_ptr<Space> hub(m_opt.clone ? s->clone() : s);
       std::unique_ptr<Space> spoke(hub->clone());
-      MetaInfo mi(0,MetaInfo::RR_INIT,0,0,nullptr,NoGoods::eng);
-      bool complete = spoke->spoke(mi);
+      Search::Statistics start;
+      SpokeContext sc = Search::MetaContextAccess::spoke(
+        MetaEngine::Restart,MetaEvent::Start,0UL,0U,1U,nullptr,start,
+        NoGoods::eng);
+      spoke->spoke(sc);
       std::unique_ptr<Search::Engine> leaf(
         Search::build<T,E>(spoke.get(),e_opt));
       e = Search::Seq::rbsengine(hub.get(),stop.get(),leaf.get(),
-                                stat,m_opt,E<T>::best,complete);
+                                stat,m_opt,E<T>::best,sc.coverage());
       hub.release();
       stop.release();
       leaf.release();

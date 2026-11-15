@@ -1,8 +1,8 @@
 # Gecode 7 migration notes
 
-## Meta-search hooks: master() and slave() are now hub() and spoke()
+## Meta-search hooks: hub() and spoke() take contexts
 
-Rename the overrides. Their signatures and return values are unchanged:
+The hooks `master()` and `slave()` and the class `MetaInfo` are replaced:
 
 ```cpp
 // Gecode 6
@@ -10,34 +10,71 @@ bool master(const Gecode::MetaInfo& mi) override;
 bool slave(const Gecode::MetaInfo& mi) override;
 
 // Gecode 7
-bool hub(const Gecode::MetaInfo& mi) override;
-bool spoke(const Gecode::MetaInfo& mi) override;
+void hub(Gecode::HubContext& hc) override;
+void spoke(Gecode::SpokeContext& sc) override;
 ```
 
-There are no compatibility aliases. `Space` declares `master()` and
-`slave()` as deleted, so an old override fails to compile whether or not it
-is marked `override`. Restart-based search (RBS) and portfolio-based search
-(PBS) call the renamed hooks at the same points and with the same defaults
-as before.
+There are no compatibility aliases. `MetaInfo` no longer exists, so an old
+override fails to compile. Restart-based search (RBS) calls `hub()` on its
+hub and `spoke()` on each spoke, a clone of the hub that one episode
+searches. Portfolio-based search (PBS) calls `hub()` once and `spoke()` on
+the spoke of each asset.
 
-The hooks run on these spaces:
+Both contexts provide what `MetaInfo` provided:
 
-- RBS calls `hub()` after each solution and at each restart. The hub
-  carries the last solution and the no-goods from one restart to the next.
-  RBS calls `spoke()` on each new spoke, a clone of the hub, including the
-  first. The default `hub()` constrains the hub with the last solution, if
-  any, and posts the no-goods.
-- PBS calls `hub()` once, then calls `spoke()` with the asset number on the
-  spoke of each asset, the hub or a clone of it. The default `hub()`
-  removes all branchers, so `spoke()` must post the branching of each
-  asset.
+| Gecode 6                               | Gecode 7                                           |
+|----------------------------------------|----------------------------------------------------|
+| `mi.type()`: `RESTART`, `PORTFOLIO`    | `engine()`: `MetaEngine::Restart`, `Portfolio`     |
+| `mi.reason()`: `RR_INIT`               | `event()`: `MetaEvent::Start`                      |
+| `RR_SOL`                               | `MetaEvent::Solution`                              |
+| `RR_LIM`                               | `MetaEvent::Limit`                                 |
+| `RR_CMPL`                              | `MetaEvent::Exhausted`                             |
+| (none)                                 | `MetaEvent::Incomplete`, such as LDS at its limit  |
+| `RR_NO` (portfolio)                    | `MetaEvent::Start`                                 |
+| `mi.restart()`                         | `episode()`                                        |
+| `mi.fail()`                            | `statistics().fail`                                |
+| `mi.solution()`                        | none: `event()` tells whether there was a solution |
+| `mi.last()`                            | `last()`                                           |
+| `mi.nogoods()`                         | `nogoods()`                                        |
+| `mi.asset()`                           | `asset()`, and `assets()` for their number         |
+
+`episode()` counts from zero and increases by one for every new spoke,
+whatever ended the previous episode. In `hub()` it is the episode that
+ended, in `spoke()` the episode that starts. `statistics()` holds the
+statistics of the episode that ended. `last()` is only valid while the hook
+runs; clone the solution to keep it.
+
+The return values become explicit decisions:
+
+| Gecode 6                               | Gecode 7                                               |
+|----------------------------------------|--------------------------------------------------------|
+| `master()` returns `true`              | `hc.decision(MetaDecision::Restart)`, the default      |
+| `master()` returns `false` after a solution | `hc.decision(MetaDecision::Continue)`             |
+| `slave()` returns `true`               | nothing, `SpokeCoverage::Full` is the default          |
+| `slave()` returns `false`              | `sc.coverage(SpokeCoverage::Partial)`                  |
+
+RBS honours `Continue` only after `MetaEvent::Solution`, just as it ignored
+`false` from `master()` after other events. To prove that no further
+solution exists, fail the hub.
+
+The coverage tells the engine what a spoke covers of the hub's search space:
+
+- `Full`: the spoke adds only branching and constraints that the hub
+  implies. Exhausting it is a proof.
+- `Partial`: the spoke searches part of the hub's search space, such as a
+  large neighbourhood. Exhausting it is no proof, and the no-goods
+  recorded while searching it do not reach `hub()`.
+
+The engine trusts the declared coverage. A spoke that declares more than it
+covers, such as `Full` for a spoke that removes solutions, gives undefined
+results.
 
 The examples show typical overrides:
 
 - `examples/crossword.cpp`: a `hub()` that posts no-goods and continues
   after a solution instead of restarting.
 - `examples/photo.cpp`: an RBS `spoke()` that relaxes the last solution for
-  large neighbourhood search.
+  large neighbourhood search and declares `SpokeCoverage::Partial`.
 - `examples/qcp.cpp`: a PBS `spoke()` that posts a different branching for
   each asset.
 
