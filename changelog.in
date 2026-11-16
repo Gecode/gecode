@@ -186,6 +186,19 @@ solution exists. FlatZinc reported an unknown result instead.
 [ENTRY]
 Module: search
 What:   bug
+Rank:   minor
+[DESCRIPTION]
+Treat the first slave search of restart-based search as incomplete when the
+slave configuration function returns false.
+[MORE]
+The first search always counted as complete, so a restricted first slave
+search that found no solution was reported as a proof that none exists. With
+FlatZinc, a model using gecode_on_restart_uniform_int could be reported as
+unsatisfiable when the first random value admitted no solution.
+
+[ENTRY]
+Module: search
+What:   bug
 Rank:   major
 [DESCRIPTION]
 Do not post no-goods from an incomplete slave search in the master of

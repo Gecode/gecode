@@ -99,7 +99,7 @@ namespace Gecode { namespace Search { namespace Seq {
            bool best0, bool complete0)
     : e(e0), master(s), last(nullptr), co(opt.cutoff), stop(stop0),
       m_opt(opt.expand()), sslr(0),
-      complete(true), nogoods_valid(complete0), restart(false),
+      complete(complete0), nogoods_valid(complete0), restart(false),
       best(best0), m_stopped(false) {
     stop->limit(stat,(*co)());
   }

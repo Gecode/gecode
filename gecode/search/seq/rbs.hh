@@ -118,9 +118,8 @@ namespace Gecode { namespace Search { namespace Seq {
      * \brief Constructor
      *
      * The value \a complete is the result of the slave configuration of the
-     * space explored by the first engine \a e0. It only determines whether
-     * the no-goods of that search hold in the master: the meta engine treats
-     * the first search as complete.
+     * space explored by the first engine \a e0, and is used as for the
+     * searches after later restarts.
      */
     RBS(Space* s, RestartStop* stop0, Engine* e0,
         const Search::Statistics& stat, const Options& o, bool best,

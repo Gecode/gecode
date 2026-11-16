@@ -1492,6 +1492,51 @@ namespace Test {
 
     RBSRootFailure rbs_root_failure;
 
+    /// Space with solutions whose first, incomplete slave fails at the root
+    class FailingFirstSlave : public RestrictedFirstSlave {
+    public:
+      FailingFirstSlave(void) = default;
+      FailingFirstSlave(FailingFirstSlave& s) : RestrictedFirstSlave(s) {}
+      Gecode::Space* copy(void) override {
+        return new FailingFirstSlave(*this);
+      }
+      bool slave(const Gecode::MetaInfo& mi) override {
+        if ((mi.type() == Gecode::MetaInfo::RESTART) &&
+            (mi.reason() == Gecode::MetaInfo::RR_INIT)) {
+          fail();
+          return false;
+        }
+        return true;
+      }
+    };
+
+    /// A failed first slave search that is incomplete is not a proof
+    class RBSFailedFirstSlave : public Base {
+      template<template<class> class Engine>
+      static bool test(unsigned int threads) {
+        FailingFirstSlave* m = new FailingFirstSlave;
+        Gecode::Search::Options o;
+        o.threads = threads;
+        o.cutoff = Gecode::Search::Cutoff::constant(1);
+        Gecode::RBS<FailingFirstSlave,Engine> rbs(m,o);
+        delete m;
+        FailingFirstSlave* s = rbs.next();
+        if (s == nullptr)
+          return false;
+        delete s;
+        return rbs.statistics().restart >= 1U;
+      }
+    public:
+      RBSFailedFirstSlave(void) : Base("Search::RBS::FailedFirstSlave") {}
+      bool run(void) override {
+        return test<Gecode::DFS>(1U) && test<Gecode::DFS>(2U) &&
+          test<Gecode::BAB>(1U) && test<Gecode::BAB>(2U) &&
+          test<Gecode::LDS>(1U);
+      }
+    };
+
+    RBSFailedFirstSlave rbs_failed_first_slave;
+
     /// Stop after a number of failures, or after many checks as a safeguard
     class FailureLimit : public Gecode::Search::Stop {
     public:

@@ -2197,9 +2197,8 @@ namespace Gecode {
      *     of whether the search on the slave space finishes or times out.
      *     The no-goods recorded by an incomplete search only hold in the
      *     slave's search space, so the meta engine does not pass them to the
-     *     master configuration function. When search starts, the result only
-     *     determines whether no-goods are passed: the meta engine treats the
-     *     first search on a slave space as complete.
+     *     master configuration function. This also holds for the first
+     *     search when search starts.
      *
      * \li A portfolio meta engine calls this function once on each asset
      *     (that is, on each slave) and passes the number of the asset,
