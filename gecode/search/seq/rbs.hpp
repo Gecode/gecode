@@ -69,6 +69,13 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   forceinline void
+  RestartStop::extend(unsigned long long int l0) {
+    Support::Lock lock(m);
+    l = l0;
+    e_stopped = false;
+  }
+
+  forceinline void
   RestartStop::update(const Search::Statistics& s) {
     Support::Lock lock(m);
     m_stat += s;

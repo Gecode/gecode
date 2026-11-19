@@ -107,13 +107,28 @@ namespace Gecode {
       stat.fail++;
       if (!m_opt.clone)
         delete s;
-      e = Search::Seq::dead(e_opt, stat);
+      e = Search::Seq::dead(e_opt,stat,Search::EndReason::Exhausted);
       // The engine owns the cutoff, but a dead engine does not take it
       delete m_opt.cutoff;
     } else {
       std::unique_ptr<Space> hub(m_opt.clone ? s->clone() : s);
-      std::unique_ptr<Space> spoke(hub->clone());
       Search::Statistics start;
+      HubContext hc = Search::MetaContextAccess::hub(
+        MetaEngine::Restart,MetaEvent::Start,MetaDecision::Restart,0UL,0U,1U,
+        nullptr,start,NoGoods::eng);
+      hub->hub(hc);
+      if ((hub->status(stat) == SS_FAILED) ||
+          (hc.decision() == MetaDecision::Finish)) {
+        // A failed hub is a proof, finishing is not
+        Search::EndReason r = hub->failed() ?
+          Search::EndReason::Exhausted : Search::EndReason::Incomplete;
+        if (r == Search::EndReason::Exhausted)
+          stat.fail++;
+        e = Search::Seq::dead(e_opt,stat,r);
+        delete m_opt.cutoff;
+        return;
+      }
+      std::unique_ptr<Space> spoke(hub->clone());
       SpokeContext sc = Search::MetaContextAccess::spoke(
         MetaEngine::Restart,MetaEvent::Start,0UL,0U,1U,nullptr,start,
         NoGoods::eng);

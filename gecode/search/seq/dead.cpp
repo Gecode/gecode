@@ -35,7 +35,7 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  /// A dead engine (failed root)
+  /// A dead engine (failed root, or a meta engine that has finished)
   template<class Tracer>
   class GECODE_SEARCH_EXPORT Dead : public Engine {
   protected:
@@ -43,12 +43,14 @@ namespace Gecode { namespace Search { namespace Seq {
     Tracer tracer;
     /// Statistics
     Statistics stat;
+    /// Why next() returns no solution
+    EndReason reason;
     /// Why the last call to next() returned no solution
     EndReason end;
 
   public:
-    /// Initialize
-    Dead(const Options& o, const Statistics& stat0);
+    /// Initialize, next() returns no solution for reason \a r
+    Dead(const Options& o, const Statistics& stat0, EndReason r);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
@@ -60,8 +62,9 @@ namespace Gecode { namespace Search { namespace Seq {
   };
 
   template<class Tracer>
-  Dead<Tracer>::Dead(const Options& o, const Statistics& stat0)
-    : tracer(o.tracer), stat(stat0) , end(EndReason::NotEnded) {
+  Dead<Tracer>::Dead(const Options& o, const Statistics& stat0,
+                     EndReason r)
+    : tracer(o.tracer), stat(stat0), reason(r), end(EndReason::NotEnded) {
     tracer.engine(SearchTracer::EngineType::AOE, 1U);
     tracer.worker();
   }
@@ -69,8 +72,7 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   Space*
   Dead<Tracer>::next(void) {
-    // The root has failed
-    end = EndReason::Exhausted;
+    end = reason;
     return nullptr;
   }
 
@@ -92,11 +94,11 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   Engine*
-  dead(const Options& o, const Statistics& stat) {
+  dead(const Options& o, const Statistics& stat, EndReason r) {
     if (o.tracer)
-      return new Dead<TraceRecorder>(o,stat);
+      return new Dead<TraceRecorder>(o,stat,r);
     else
-      return new Dead<NoTraceRecorder>(o,stat);
+      return new Dead<NoTraceRecorder>(o,stat,r);
   }
 
 

@@ -984,20 +984,20 @@ namespace Test {
         HubSpokeDispatchSpace* second = search.next();
         if (!fail_solution_spoke) {
           const bool restart = solution_decision == MetaDecision::Restart;
-          ok = ok && (second != nullptr) && holds(state.hub_calls, 1U) &&
+          ok = ok && (second != nullptr) && holds(state.hub_calls, 2U) &&
                holds(state.spoke_calls, restart ? 2U : 1U) &&
-               holds(state.hub_events, solution) &&
+               holds(state.hub_events, start | solution) &&
                holds(state.spoke_events, start | (restart ? solution : 0U));
         } else if (solution_spoke_coverage != SpokeCoverage::Partial) {
           // Exhausting a spoke that is not partial is a proof
           ok = ok && (second == nullptr) &&
                (search.end_reason() == EndReason::Exhausted) &&
-               holds(state.hub_calls, 1U) && holds(state.spoke_calls, 2U) &&
-               holds(state.hub_events, solution) &&
+               holds(state.hub_calls, 2U) && holds(state.spoke_calls, 2U) &&
+               holds(state.hub_events, start | solution) &&
                holds(state.spoke_events, start | solution);
         } else {
-          ok = ok && (second != nullptr) && holds(state.hub_calls, 2U) && holds(state.spoke_calls, 3U) &&
-               holds(state.hub_events, solution | exhausted) &&
+          ok = ok && (second != nullptr) && holds(state.hub_calls, 3U) && holds(state.spoke_calls, 3U) &&
+               holds(state.hub_events, start | solution | exhausted) &&
                holds(state.spoke_events, start | solution | exhausted);
         }
         delete second;
@@ -1061,9 +1061,10 @@ namespace Test {
         delete m;
 
         HubSpokeDispatchSpace* solution = search.next();
-        bool ok = (solution != nullptr) && solution->assigned() && holds(state.hub_calls, 1U) &&
-                  holds(state.spoke_calls, 2U) && holds(state.hub_events, event_bit(MetaEvent::Limit)) &&
-                  holds(state.spoke_events, event_bit(MetaEvent::Start) | event_bit(MetaEvent::Limit));
+        const unsigned int events = event_bit(MetaEvent::Start) | event_bit(MetaEvent::Limit);
+        bool ok = (solution != nullptr) && solution->assigned() && holds(state.hub_calls, 2U) &&
+                  holds(state.spoke_calls, 2U) && holds(state.hub_events, events) &&
+                  holds(state.spoke_events, events);
         delete solution;
         return ok;
       }
@@ -1232,7 +1233,7 @@ namespace Test {
       run(void) override {
         switch (scenario) {
         case Scenario::RbsHubOnly:
-          return rbs_dispatch<HubDispatchSpace>(1, 0);
+          return rbs_dispatch<HubDispatchSpace>(2, 0);
         case Scenario::RbsSpokeOnly:
           return rbs_dispatch<SpokeDispatchSpace>(0, 2);
         case Scenario::RbsHubContinue:
@@ -3064,7 +3065,7 @@ namespace Test {
           Gecode::Search::Statistics s = rbs.statistics();
           // The failures of the last spoke search are counted once
           if ((rbs.end_reason() != EndReason::Exhausted) ||
-              (s.restart != 1U) || (s.fail < 2U) ||
+              (s.restart != 0U) || (s.fail < 2U) ||
               ((t == 1U) && (s.fail != 2U)))
             return false;
           if ((rbs.next() != nullptr) ||
@@ -3266,6 +3267,72 @@ namespace Test {
     };
 
     LDSIncomplete lds_incomplete;
+
+    /// Space without solutions recording the default decisions after incomplete episodes
+    class IncompleteEpisodes : public NoSolution {
+    public:
+      /// Coverage that spoke() declares
+      Gecode::SpokeCoverage coverage;
+      /// Default decisions of hub() after an incomplete episode
+      std::vector<Gecode::MetaDecision>* defaults;
+      IncompleteEpisodes(Gecode::SpokeCoverage c,
+                         std::vector<Gecode::MetaDecision>& d)
+        : coverage(c), defaults(&d) {}
+      IncompleteEpisodes(IncompleteEpisodes& s)
+        : NoSolution(s), coverage(s.coverage), defaults(s.defaults) {}
+      Gecode::Space* copy(void) override {
+        return new IncompleteEpisodes(*this);
+      }
+      void hub(Gecode::HubContext& hc) override {
+        if (hc.event() == Gecode::MetaEvent::Incomplete) {
+          defaults->push_back(hc.decision());
+          // Finish after the second incomplete episode at the latest
+          if (defaults->size() == 2U)
+            hc.decision(Gecode::MetaDecision::Finish);
+        }
+        NoSolution::hub(hc);
+      }
+      void spoke(Gecode::SpokeContext& sc) override {
+        sc.coverage(coverage);
+      }
+    };
+
+    /// RBS finishes after an incomplete episode unless its spoke is partial
+    class RBSIncompleteDefault : public Base {
+      /// Return the default decisions when spokes of coverage \a c end incomplete
+      static std::vector<Gecode::MetaDecision>
+      defaults(Gecode::SpokeCoverage c) {
+        std::vector<Gecode::MetaDecision> d;
+        IncompleteEpisodes root(c,d);
+        Gecode::Search::Options o;
+        o.d_l = 1;
+        o.cutoff = Gecode::Search::Cutoff::constant(1000);
+        Gecode::RBS<IncompleteEpisodes,Gecode::LDS> rbs(&root,o);
+        for (int i=0; i<2; i++)
+          if (IncompleteEpisodes* s = rbs.next()) {
+            delete s;
+            d.clear();
+          } else if (rbs.end_reason() != EndReason::Incomplete) {
+            d.clear();
+          }
+        return d;
+      }
+    public:
+      RBSIncompleteDefault(void) : Base("Search::RBS::IncompleteDefault") {}
+      bool run(void) override {
+        using Gecode::MetaDecision;
+        using Gecode::SpokeCoverage;
+        using Decisions = std::vector<MetaDecision>;
+        return (defaults(SpokeCoverage::Full) ==
+                Decisions{MetaDecision::Finish}) &&
+          (defaults(SpokeCoverage::Reduced) ==
+           Decisions{MetaDecision::Finish}) &&
+          (defaults(SpokeCoverage::Partial) ==
+           Decisions{MetaDecision::Restart,MetaDecision::Restart});
+      }
+    };
+
+    RBSIncompleteDefault rbs_incomplete_default;
 
     /// Space for relaxing
     class RelaxSpace : public Gecode::Space {
@@ -3700,9 +3767,16 @@ namespace Test {
 
     /// Hook behaviour of ProtocolSpace
     enum class Protocol {
-      Default,    ///< Default hooks
-      EmptyHub,   ///< hub() does nothing
-      BoundInHub, ///< hub() posts c <= 1 at Start and keeps the branchers
+      Default,         ///< Default hooks
+      ContinueAtStart, ///< hub() continues at Start, which is illegal
+      FinishAtStart,   ///< hub() finishes at Start
+      FinishAtLimit,   ///< hub() finishes at Limit
+      FailAtStart,     ///< hub() fails at Start
+      FailAtSolution,  ///< hub() fails at Solution
+      ContinueAtLimit, ///< hub() continues at Limit
+      EmptyHub,        ///< hub() does nothing
+      BoundInHub,      ///< hub() posts c <= 1 at Start and keeps the branchers
+      Alternate,       ///< Episodes alternate between a solution and the cutoff
     };
 
     /// Calls of the hooks of ProtocolSpace
@@ -3761,6 +3835,36 @@ namespace Test {
       void hub(HubContext& hc) override {
         log->hub.emplace_back(hc.event(),hc.episode());
         switch (protocol) {
+        case Protocol::ContinueAtStart:
+          if (hc.event() == MetaEvent::Start)
+            hc.decision(MetaDecision::Continue);
+          break;
+        case Protocol::FinishAtStart:
+          if (hc.event() == MetaEvent::Start) {
+            hc.decision(MetaDecision::Finish);
+            return;
+          }
+          break;
+        case Protocol::FinishAtLimit:
+          if (hc.event() == MetaEvent::Limit)
+            hc.decision(MetaDecision::Finish);
+          break;
+        case Protocol::FailAtStart:
+          if (hc.event() == MetaEvent::Start) {
+            fail();
+            return;
+          }
+          break;
+        case Protocol::FailAtSolution:
+          if (hc.event() == MetaEvent::Solution) {
+            fail();
+            return;
+          }
+          break;
+        case Protocol::ContinueAtLimit:
+          if (hc.event() == MetaEvent::Limit)
+            hc.decision(MetaDecision::Continue);
+          break;
         case Protocol::EmptyHub:
           return;
         case Protocol::BoundInHub:
@@ -3770,12 +3874,19 @@ namespace Test {
           }
           break;
         case Protocol::Default:
+        case Protocol::Alternate:
           break;
         }
         IntMinimizeSpace::hub(hc);
       }
       void spoke(SpokeContext& sc) override {
         log->spoke.emplace_back(sc.event(),sc.episode());
+        if ((protocol == Protocol::Alternate) &&
+            (sc.engine() == MetaEngine::Restart)) {
+          // Odd episodes search only the part without solutions
+          rel(*this,p,IRT_EQ,((sc.episode() % 2U) == 1U) ? 1 : 0);
+          sc.coverage(SpokeCoverage::Partial);
+        }
       }
     };
 
@@ -3784,8 +3895,16 @@ namespace Test {
     public:
       /// Scenario
       enum class Scenario {
+        DecisionLegality,
+        IllegalDecisionInEngine,
+        FinishAtStart,
+        FinishAtLimit,
+        FailAtStart,
+        FailAtSolution,
+        ContinueAtLimit,
         EngineConstrainsHub,
         PortfolioHubConstraint,
+        Episodes,
       };
     protected:
       /// Scenario under test
@@ -3796,6 +3915,167 @@ namespace Test {
         o.threads = 1;
         o.cutoff = Gecode::Search::Cutoff::constant(c);
         return o;
+      }
+      /// Return whether engine \a e has no further solution and ends with \a r
+      template<class Engine>
+      static bool ends(Engine& e, EndReason r) {
+        for (int i=0; i<2; i++) {
+          if (ProtocolSpace* s = e.next()) {
+            delete s;
+            return false;
+          }
+          if (e.end_reason() != r)
+            return false;
+        }
+        return true;
+      }
+      /// Return whether \a d is legal after event \a e
+      static bool legal(MetaEvent e, MetaDecision d) {
+        return (d != MetaDecision::Continue) ||
+          (e == MetaEvent::Solution) || (e == MetaEvent::Limit);
+      }
+      /// Check the legality of each decision for each event
+      static bool decision_legality(void) {
+        const Gecode::Search::Statistics stat;
+        for (MetaEvent e : {MetaEvent::Start,MetaEvent::Solution,
+                            MetaEvent::Exhausted,MetaEvent::Incomplete,
+                            MetaEvent::Limit})
+          for (MetaDecision d : {MetaDecision::Restart,MetaDecision::Continue,
+                                 MetaDecision::Finish}) {
+            HubContext hc = Gecode::Search::MetaContextAccess::hub
+              (MetaEngine::Restart,e,MetaDecision::Restart,0,0,1,nullptr,
+               stat,NoGoods::eng);
+            if (hc.decision() != MetaDecision::Restart)
+              return false;
+            bool thrown = false;
+            try {
+              hc.decision(d);
+            } catch (const IllegalMetaDecision&) {
+              thrown = true;
+            }
+            if ((thrown == legal(e,d)) ||
+                (hc.decision() != (thrown ? MetaDecision::Restart : d)))
+              return false;
+          }
+        // The engine sets the default decision
+        HubContext fc = Gecode::Search::MetaContextAccess::hub
+          (MetaEngine::Restart,MetaEvent::Incomplete,MetaDecision::Finish,
+           0,0,1,nullptr,stat,NoGoods::eng);
+        if (fc.decision() != MetaDecision::Finish)
+          return false;
+        SpokeContext sc = Gecode::Search::MetaContextAccess::spoke
+          (MetaEngine::Restart,MetaEvent::Start,0,0,1,nullptr,stat,
+           NoGoods::eng);
+        if (sc.coverage() != SpokeCoverage::Full)
+          return false;
+        sc.coverage(SpokeCoverage::Partial);
+        sc.coverage(SpokeCoverage::Reduced);
+        return sc.coverage() == SpokeCoverage::Reduced;
+      }
+      /// Check that an illegal decision throws from the engine
+      static bool illegal_decision_in_engine(void) {
+        ProtocolLog log;
+        ProtocolSpace* m = new ProtocolSpace(Protocol::ContinueAtStart,log);
+        Gecode::Search::Options o = rbs_options(10);
+        bool thrown = false;
+        try {
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,o);
+        } catch (const IllegalMetaDecision&) {
+          // The engine owns the cutoff only once it is constructed
+          delete o.cutoff;
+          thrown = true;
+        }
+        delete m;
+        return thrown && log.spoke.empty() && (log.live == 0);
+      }
+      /// Check that RBS and PBS end with \a r when hub() at Start follows \a pr
+      static bool ends_at_start(Protocol pr, EndReason r) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(pr,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(10));
+          delete m;
+          if (!ends(rbs,r))
+            return false;
+        }
+        for (unsigned int t : {1U,2U}) {
+          ProtocolSpace* m = new ProtocolSpace(pr,log);
+          Gecode::Search::Options o;
+          o.assets = 2;
+          o.threads = t;
+          Gecode::PBS<ProtocolSpace,Gecode::DFS> pbs(m,o);
+          delete m;
+          if (!ends(pbs,r))
+            return false;
+        }
+        {
+          ProtocolSpace* m = new ProtocolSpace(pr,log);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          SEBs assets(2);
+          for (int i=0; i<2; i++)
+            assets[i] = Gecode::dfs<ProtocolSpace>(o);
+          Gecode::PBS<ProtocolSpace,Gecode::DFS> pbs(m,assets,o);
+          delete m;
+          if (!ends(pbs,r))
+            return false;
+        }
+        return log.spoke.empty() && (log.hub.size() == 4U) && (log.live == 0);
+      }
+      /// Check that Finish at Limit ends RBS without a proof
+      static bool finish_at_limit(void) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::FinishAtLimit,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(1));
+          delete m;
+          if (!ends(rbs,EndReason::Incomplete) ||
+              (rbs.statistics().restart != 0U))
+            return false;
+        }
+        using Call = std::pair<MetaEvent,unsigned long int>;
+        return (log.hub == std::vector<Call>{{MetaEvent::Start,0},
+                                             {MetaEvent::Limit,0}}) &&
+          (log.spoke == std::vector<Call>{{MetaEvent::Start,0}}) &&
+          (log.live == 0);
+      }
+      /// Check that a hub failing after a solution proves exhaustion
+      static bool fail_at_solution(void) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::FailAtSolution,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(100));
+          delete m;
+          ProtocolSpace* s = rbs.next();
+          if (s == nullptr)
+            return false;
+          delete s;
+          if (!ends(rbs,EndReason::Exhausted))
+            return false;
+        }
+        return (log.spoke.size() == 1U) && (log.live == 0);
+      }
+      /// Check that Continue at Limit resumes the same spoke
+      static bool continue_at_limit(void) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::ContinueAtLimit,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(1));
+          delete m;
+          ProtocolSpace* s = rbs.next();
+          if (s == nullptr)
+            return false;
+          const bool assigned = s->p.assigned() && (s->p.val() == 0);
+          delete s;
+          if (!assigned || (rbs.statistics().restart != 0U))
+            return false;
+        }
+        if ((log.spoke.size() != 1U) || (log.hub.size() < 3U))
+          return false;
+        for (std::size_t i=1; i<log.hub.size(); i++)
+          if (log.hub[i] != std::make_pair(MetaEvent::Limit,0UL))
+            return false;
+        return log.live == 0;
       }
       /// Check that RBS<BAB> constrains the hub when hub() does nothing
       static bool engine_constrains_hub(void) {
@@ -3850,16 +4130,61 @@ namespace Test {
         }
         return log.live == 0;
       }
+      /// Check episode numbering across solution and limit restarts
+      static bool episodes(void) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::Alternate,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(2));
+          delete m;
+          for (int i=0; i<3; i++) {
+            ProtocolSpace* s = rbs.next();
+            if (s == nullptr)
+              return false;
+            delete s;
+          }
+          if (rbs.statistics().restart != 4U)
+            return false;
+        }
+        using Call = std::pair<MetaEvent,unsigned long int>;
+        const std::vector<Call> hub{{MetaEvent::Start,0},
+                                    {MetaEvent::Solution,0},
+                                    {MetaEvent::Limit,1},
+                                    {MetaEvent::Solution,2},
+                                    {MetaEvent::Limit,3}};
+        const std::vector<Call> spoke{{MetaEvent::Start,0},
+                                      {MetaEvent::Solution,1},
+                                      {MetaEvent::Limit,2},
+                                      {MetaEvent::Solution,3},
+                                      {MetaEvent::Limit,4}};
+        return (log.hub == hub) && (log.spoke == spoke) && (log.live == 0);
+      }
     public:
       /// Initialize scenario \a s with name \a n
       MetaProtocol(const std::string& n, Scenario s)
         : Base("Search::Meta::"+n), scenario(s) {}
       bool run(void) override {
         switch (scenario) {
+        case Scenario::DecisionLegality:
+          return decision_legality();
+        case Scenario::IllegalDecisionInEngine:
+          return illegal_decision_in_engine();
+        case Scenario::FinishAtStart:
+          return ends_at_start(Protocol::FinishAtStart,EndReason::Incomplete);
+        case Scenario::FinishAtLimit:
+          return finish_at_limit();
+        case Scenario::FailAtStart:
+          return ends_at_start(Protocol::FailAtStart,EndReason::Exhausted);
+        case Scenario::FailAtSolution:
+          return fail_at_solution();
+        case Scenario::ContinueAtLimit:
+          return continue_at_limit();
         case Scenario::EngineConstrainsHub:
           return engine_constrains_hub();
         case Scenario::PortfolioHubConstraint:
           return portfolio_hub_constraint();
+        case Scenario::Episodes:
+          return episodes();
         default:
           GECODE_NEVER;
         }
@@ -3867,10 +4192,26 @@ namespace Test {
       }
     };
 
+    MetaProtocol meta_decision_legality
+    ("DecisionLegality",MetaProtocol::Scenario::DecisionLegality);
+    MetaProtocol meta_illegal_decision_in_engine
+    ("IllegalDecisionInEngine",
+     MetaProtocol::Scenario::IllegalDecisionInEngine);
+    MetaProtocol meta_finish_at_start
+    ("FinishAtStart",MetaProtocol::Scenario::FinishAtStart);
+    MetaProtocol meta_finish_at_limit
+    ("FinishAtLimit",MetaProtocol::Scenario::FinishAtLimit);
+    MetaProtocol meta_fail_at_start
+    ("FailAtStart",MetaProtocol::Scenario::FailAtStart);
+    MetaProtocol meta_fail_at_solution
+    ("FailAtSolution",MetaProtocol::Scenario::FailAtSolution);
+    MetaProtocol meta_continue_at_limit
+    ("ContinueAtLimit",MetaProtocol::Scenario::ContinueAtLimit);
     MetaProtocol meta_engine_constrains_hub
     ("EngineConstrainsHub",MetaProtocol::Scenario::EngineConstrainsHub);
     MetaProtocol meta_portfolio_hub_constraint
     ("PortfolioHubConstraint",MetaProtocol::Scenario::PortfolioHubConstraint);
+    MetaProtocol meta_episodes("Episodes",MetaProtocol::Scenario::Episodes);
 
     /**
      * \brief Constant cutoff counting its deletions

@@ -166,6 +166,13 @@ namespace Gecode {
     MoreThanOneTracer(const char* l);
   };
 
+  /// %Exception: illegal decision of a meta search hook (see MetaDecision)
+  class GECODE_KERNEL_EXPORT IllegalMetaDecision : public Exception {
+  public:
+    /// Initialize with location \a l
+    IllegalMetaDecision(const char* l);
+  };
+
   //@}
 
 }

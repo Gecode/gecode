@@ -1521,11 +1521,11 @@ namespace Gecode {
    * and
    * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() on its hub after solutions and at restarts,
-   * and spoke() on each spoke it clones from the hub. When \a E is a best
-   * solution engine, the engine constrains the hub by each solution
-   * before it calls hub(). See Space::hub() and Space::spoke() for
-   * details.
+   * The engine calls hub() on its hub when search starts and after each
+   * episode, and spoke() on each spoke it clones from the hub. When \a E
+   * is a best solution engine, the engine constrains the hub by each
+   * solution before it calls hub(). See Space::hub() and Space::spoke()
+   * for details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1555,11 +1555,11 @@ namespace Gecode {
    * and
    * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() on its hub after solutions and at restarts,
-   * and spoke() on each spoke it clones from the hub. When \a E is a best
-   * solution engine, the engine constrains the hub by each solution
-   * before it calls hub(). See Space::hub() and Space::spoke() for
-   * details.
+   * The engine calls hub() on its hub when search starts and after each
+   * episode, and spoke() on each spoke it clones from the hub. When \a E
+   * is a best solution engine, the engine constrains the hub by each
+   * solution before it calls hub(). See Space::hub() and Space::spoke()
+   * for details.
    *
    * \ingroup TaskModelSearch
    */

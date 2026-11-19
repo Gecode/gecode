@@ -50,13 +50,16 @@ The return values become explicit decisions:
 |----------------------------------------|--------------------------------------------------------|
 | `master()` returns `true`              | `hc.decision(MetaDecision::Restart)`, the default      |
 | `master()` returns `false` after a solution | `hc.decision(MetaDecision::Continue)`             |
+| (none)                                 | `hc.decision(MetaDecision::Continue)` after a limit    |
+| (none)                                 | `hc.decision(MetaDecision::Finish)`                    |
 | `slave()` returns `true`               | nothing, `SpokeCoverage::Full` is the default          |
 | `slave()` returns `false`              | `sc.coverage(SpokeCoverage::Partial)`                  |
 | (none)                                 | `sc.coverage(SpokeCoverage::Reduced)`                  |
 
-RBS honours `Continue` only after `MetaEvent::Solution`, just as it ignored
-`false` from `master()` after other events. To prove that no further
-solution exists, fail the hub.
+`Continue` is only legal after `MetaEvent::Solution` and `MetaEvent::Limit`;
+setting it for another event throws `IllegalMetaDecision`. `Finish` ends the
+engine with `EndReason::Incomplete`. To prove that no further solution
+exists, fail the hub.
 
 The coverage tells the engine what a spoke covers of the hub's search space:
 
@@ -80,11 +83,18 @@ exhausts is dropped instead of ending the portfolio.
 
 Other changes to the hooks:
 
+- RBS calls `hub()` with `MetaEvent::Start` before it clones the first
+  spoke. Gecode 6 did not call `master()` then.
 - For a best solution engine such as `RBS<T, BAB>`, the engine constrains
   the hub with the last solution before it calls `hub()`. The default
   `hub()` no longer calls `constrain()`, and an override that does not call
   the default keeps the bound. For other engines, such as `RBS<T, DFS>`,
   RBS no longer calls `constrain()` at all.
+- After an episode that ends without a proof, such as LDS at its
+  discrepancy limit, RBS calls `hub()` with `MetaEvent::Incomplete`. By
+  default, it finishes when the spoke was `Full` or `Reduced`, as a new
+  spoke would repeat the same search, and restarts when it was `Partial`.
+  Both `Restart` and `Finish` are legal.
 - PBS calls `status()` on the hub after `hub()`, so `hub()` can post
   constraints. In Gecode 6, cloning such a hub threw `SpaceNotStable`.
 - The default PBS `hub()` still removes all branchers, so `spoke()` must post
