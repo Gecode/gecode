@@ -74,6 +74,8 @@ namespace Gecode { namespace Search { namespace Seq {
     SpaceStatus status(Space* s);
     /// Add statistics \a s and set the limit for the engine to \a l fails
     void limit(const Statistics& s, unsigned long long int l);
+    /// Set the limit for the engine, which continues its search, to \a l fails
+    void extend(unsigned long long int l);
     /// Update statistics
     void update(const Search::Statistics& s);
     /// Return whether the engine has been stopped

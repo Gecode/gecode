@@ -152,24 +152,28 @@ namespace Gecode { namespace Search {
    * \brief Run hub() with MetaEvent::Start on the hub \a hub of a portfolio
    *        of \a n assets and propagate it
    *
-   * Return whether the portfolio must be built. Otherwise the hub has
-   * failed and \a hub is deleted.
+   * Return EndReason::NotEnded if the portfolio must be built. Otherwise
+   * delete \a hub and return EndReason::Exhausted if the hub failed or
+   * EndReason::Incomplete if hub() decided to finish.
    */
   template<class T>
-  bool
+  EndReason
   pbs_start(T* hub, unsigned int n, Statistics& stat) {
     std::unique_ptr<T> owned(hub);
     Statistics start;
     HubContext hc = MetaContextAccess::hub(MetaEngine::Portfolio,
-                                           MetaEvent::Start,0UL,0U,n,
+                                           MetaEvent::Start,
+                                           MetaDecision::Restart,0UL,0U,n,
                                            nullptr,start,NoGoods::eng);
     hub->hub(hc);
     if (hub->status(stat) == SS_FAILED) {
       stat.fail++;
-      return false;
+      return EndReason::Exhausted;
     }
+    if (hc.decision() == MetaDecision::Finish)
+      return EndReason::Incomplete;
     (void) owned.release();
-    return true;
+    return EndReason::NotEnded;
   }
 
   /**
@@ -484,7 +488,7 @@ namespace Gecode {
       stat.fail++;
       if (!opt.clone)
         delete s;
-      e = Search::Seq::dead(opt,stat);
+      e = Search::Seq::dead(opt,stat,Search::EndReason::Exhausted);
       /*
        * The assets would own the cutoff, but a dead engine does not take
        * it. This includes the cutoff of an outer portfolio when this is
@@ -501,8 +505,9 @@ namespace Gecode {
     opt.clone = false;
 
     bool hub_branchers = BrancherGroup::all.size(*hub) > 0U;
-    if (!Search::pbs_start(hub,opt.assets,stat)) {
-      e = Search::Seq::dead(opt,stat);
+    Search::EndReason r = Search::pbs_start(hub,opt.assets,stat);
+    if (r != Search::EndReason::NotEnded) {
+      e = Search::Seq::dead(opt,stat,r);
       Search::pbs_release_cutoff<E<T> >(opt.cutoff);
       return;
     }
@@ -568,7 +573,7 @@ namespace Gecode {
       if (!opt.clone)
         delete s;
       Search::pbscleanup(sebs);
-      e = Search::Seq::dead(opt,stat);
+      e = Search::Seq::dead(opt,stat,Search::EndReason::Exhausted);
       return;
     }
 
@@ -578,17 +583,16 @@ namespace Gecode {
     opt.clone = false;
 
     bool hub_branchers = BrancherGroup::all.size(*hub) > 0U;
-    bool started;
+    Search::EndReason r;
     try {
-      started = Search::pbs_start(hub,static_cast<unsigned int>(sebs.size()),
-                                  stat);
+      r = Search::pbs_start(hub,static_cast<unsigned int>(sebs.size()),stat);
     } catch (...) {
       Search::pbscleanup(sebs);
       throw;
     }
-    if (!started) {
+    if (r != Search::EndReason::NotEnded) {
       Search::pbscleanup(sebs);
-      e = Search::Seq::dead(opt,stat);
+      e = Search::Seq::dead(opt,stat,r);
       return;
     }
 

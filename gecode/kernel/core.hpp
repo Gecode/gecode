@@ -1698,28 +1698,43 @@ namespace Gecode {
      * spoke of SpokeCoverage::Partial.
      */
     Exhausted,
-    /**
-     * The inner engine ended without a proof (such as LDS). For a spoke
-     * of SpokeCoverage::Full or SpokeCoverage::Reduced, the engine has
-     * then already ended: a hook only sees this event after a spoke of
-     * SpokeCoverage::Partial.
-     */
-    Incomplete,
-    Limit, ///< The episode reached the cutoff
+    Incomplete, ///< The inner engine ended without a proof (such as LDS)
+    Limit,      ///< The episode reached the cutoff
   };
 
   /**
    * \brief What a meta search engine does after Space::hub() returns
    *
-   * The default is \c Restart. RBS honours \c Continue only after
-   * MetaEvent::Solution and restarts after any other event. PBS calls
-   * hub() only with MetaEvent::Start and ignores the decision.
+   * The engine sets the default before it calls hub(). Which decisions are
+   * legal depends on the event:
+   *
+   * | Event         | Restart   | Continue | Finish    |
+   * |---------------|-----------|----------|-----------|
+   * | \c Start      | default   | illegal  | legal     |
+   * | \c Solution   | default   | legal    | legal     |
+   * | \c Limit      | default   | legal    | legal     |
+   * | \c Exhausted  | default   | illegal  | legal     |
+   * | \c Incomplete | see below | illegal  | see below |
+   *
+   * After \c Incomplete, the default is \c Finish when the spoke of the
+   * episode has SpokeCoverage::Full or SpokeCoverage::Reduced, as a new
+   * spoke would repeat the same search, and \c Restart when it has
+   * SpokeCoverage::Partial.
+   *
+   * Setting an illegal decision throws IllegalMetaDecision. PBS calls
+   * hub() only with MetaEvent::Start.
    */
   enum class MetaDecision : unsigned char {
-    /// Search a new spoke
+    /// Search a new spoke (at \c Start: start search)
     Restart,
-    /// Continue the current episode: search the same spoke for the next solution
+    /**
+     * Continue the current episode: after \c Solution, search the same
+     * spoke for the next solution; after \c Limit, resume the same spoke
+     * with the next cutoff as a fresh budget
+     */
     Continue,
+    /// End the engine: next() returns nullptr with EndReason::Incomplete
+    Finish,
   };
 
   /**
@@ -1835,9 +1850,11 @@ namespace Gecode {
   protected:
     /// The decision
     MetaDecision _decision;
+    /// Whether decision \a d is legal for event \a e (see MetaDecision)
+    static bool legal(MetaEvent e, MetaDecision d);
   private:
-    /// Initialize with decision MetaDecision::Restart
-    HubContext(MetaEngine engine, MetaEvent event,
+    /// Initialize with the default decision \a d
+    HubContext(MetaEngine engine, MetaEvent event, MetaDecision d,
                unsigned long int episode,
                unsigned int asset, unsigned int assets,
                const Space* last, const Search::Statistics& statistics,
@@ -1845,7 +1862,12 @@ namespace Gecode {
   public:
     /// Return the decision
     MetaDecision decision(void) const;
-    /// Set the decision to \a d, the last one set counts
+    /**
+     * \brief Set the decision to \a d, the last one set counts
+     *
+     * Throws IllegalMetaDecision if \a d is illegal for the event (see
+     * MetaDecision).
+     */
     void decision(MetaDecision d);
   };
 
@@ -1879,9 +1901,9 @@ namespace Gecode {
      */
     class MetaContextAccess {
     public:
-      /// Return a context for Space::hub() with decision MetaDecision::Restart
+      /// Return a context for Space::hub() with the default decision \a d
       static HubContext hub(MetaEngine engine, MetaEvent event,
-                            unsigned long int episode,
+                            MetaDecision d, unsigned long int episode,
                             unsigned int asset, unsigned int assets,
                             const Space* last, const Statistics& statistics,
                             const NoGoods& nogoods);
@@ -2348,20 +2370,19 @@ namespace Gecode {
     /**
      * \brief Hub hook for meta search engines
      *
-     * Restart-based search (RBS) calls hub() on its hub whenever an
-     * episode ends with a solution or at the cutoff, and when an episode
-     * that searches a spoke of SpokeCoverage::Partial is exhausted or
-     * ends without a proof (see MetaEvent). Any other episode that ends
-     * this way ends RBS with Search::EndReason::Exhausted or
-     * Search::EndReason::Incomplete instead.
+     * Restart-based search (RBS) calls hub() on its hub when search
+     * starts and whenever an episode ends with a solution, at the
+     * cutoff, or without a proof (see MetaEvent). An episode that
+     * exhausts a spoke of SpokeCoverage::Full or SpokeCoverage::Reduced
+     * ends RBS with Search::EndReason::Exhausted instead.
      * Portfolio-based search (PBS) calls hub() once, with
      * MetaEvent::Start, before it creates the assets.
      *
      * The hook may post constraints in the hub and sets what the engine
-     * does next with \a hc.decision() (see MetaDecision). If the hub
-     * fails, the engine ends with Search::EndReason::Exhausted whatever
-     * the decision: failing the hub is how a hook declares that no
-     * further solution exists.
+     * does next with \a hc.decision() (see MetaDecision for the legal
+     * decisions and the default). If the hub fails, the engine ends
+     * with Search::EndReason::Exhausted whatever the decision: failing
+     * the hub is how a hook declares that no further solution exists.
      *
      * In best solution search, RBS constrains the hub with each new
      * solution before it calls hub(), so an override cannot lose the
@@ -3449,21 +3470,31 @@ namespace Gecode {
     return _nogoods;
   }
 
+  forceinline bool
+  HubContext::legal(MetaEvent e, MetaDecision d) {
+    // Only an episode that found a solution or reached the cutoff continues
+    return (d != MetaDecision::Continue) ||
+      (e == MetaEvent::Solution) || (e == MetaEvent::Limit);
+  }
   forceinline
-  HubContext::HubContext(MetaEngine engine, MetaEvent event,
+  HubContext::HubContext(MetaEngine engine, MetaEvent event, MetaDecision d,
                          unsigned long int episode,
                          unsigned int asset, unsigned int assets,
                          const Space* last,
                          const Search::Statistics& statistics,
                          const NoGoods& nogoods)
     : MetaContext(engine,event,episode,asset,assets,last,statistics,nogoods),
-      _decision(MetaDecision::Restart) {}
+      _decision(d) {
+    assert(legal(event,d));
+  }
   forceinline MetaDecision
   HubContext::decision(void) const {
     return _decision;
   }
   forceinline void
   HubContext::decision(MetaDecision d) {
+    if (!legal(_event,d))
+      throw IllegalMetaDecision("HubContext::decision");
     _decision = d;
   }
 
@@ -3487,12 +3518,12 @@ namespace Gecode {
 
   forceinline HubContext
   Search::MetaContextAccess::hub(MetaEngine engine, MetaEvent event,
-                                 unsigned long int episode,
+                                 MetaDecision d, unsigned long int episode,
                                  unsigned int asset, unsigned int assets,
                                  const Space* last,
                                  const Statistics& statistics,
                                  const NoGoods& nogoods) {
-    return HubContext(engine,event,episode,asset,assets,last,statistics,
+    return HubContext(engine,event,d,episode,asset,assets,last,statistics,
                       nogoods);
   }
   forceinline SpokeContext

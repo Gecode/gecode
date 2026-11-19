@@ -40,13 +40,24 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
+  namespace {
+
+    /// Return the default decision of hub() for event \a ev after a spoke of coverage \a c
+    MetaDecision
+    default_decision(MetaEvent ev, SpokeCoverage c) {
+      // A new spoke would repeat an incomplete search of a spoke that is not partial
+      if ((ev == MetaEvent::Incomplete) && (c != SpokeCoverage::Partial))
+        return MetaDecision::Finish;
+      return MetaDecision::Restart;
+    }
+
+  }
+
   bool
   RestartStop::stop(const Statistics& s, const Options& o) {
     Support::Lock lock(m);
     // Stop if the fail limit for the engine says so
     if (s.fail > l) {
-      if (!e_stopped)
-        m_stat.restart++;
       e_stopped = true;
       return true;
     }
@@ -82,33 +93,42 @@ namespace Gecode { namespace Search { namespace Seq {
       hub->constrain(*last);
     Search::Statistics episode_stat = e->statistics();
     NoGoods& ng = hub_nogoods();
-    HubContext hc = MetaContextAccess::hub(MetaEngine::Restart,ev,episode,
-                                           0U,1U,last,episode_stat,ng);
+    HubContext hc = MetaContextAccess::hub(MetaEngine::Restart,ev,
+                                           default_decision(ev,coverage),
+                                           episode,0U,1U,last,episode_stat,
+                                           ng);
     hub->hub(hc);
     stop->nogood(ng.ng());
-    // Only an episode that found a solution can continue
-    bool cont = (ev == MetaEvent::Solution) &&
-      (hc.decision() == MetaDecision::Continue);
-    // Any other episode ends with a restart that takes the next cutoff
-    if (ev != MetaEvent::Solution)
-      stop->limit(e->statistics(),++(*co));
+    MetaDecision d = hc.decision();
     if (stop->status(hub) == SS_FAILED) {
       // A failed hub proves that no further solution exists
-      if (ev == MetaEvent::Solution)
-        stop->update(e->statistics());
+      stop->update(e->statistics());
       delete hub;
       hub = nullptr;
       e->reset(nullptr);
       end = EndReason::Exhausted;
       return false;
     }
-    if (cont)
+    switch (d) {
+    case MetaDecision::Finish:
+      end = EndReason::Incomplete;
+      return false;
+    case MetaDecision::Continue:
+      // After a limit, the episode continues with the next cutoff as budget
+      if (ev == MetaEvent::Limit)
+        stop->extend(e->statistics().fail + ++(*co));
       return true;
-    if (ev == MetaEvent::Solution) {
-      // A restart after a solution keeps the cutoff
-      stop->update(e->statistics());
-      stop->restart();
+    case MetaDecision::Restart:
+      break;
+    default:
+      GECODE_NEVER;
     }
+    stop->restart();
+    // A restart after a solution keeps the cutoff
+    if (ev == MetaEvent::Solution)
+      stop->update(e->statistics());
+    else
+      stop->limit(e->statistics(),++(*co));
     Space* spoke = hub;
     hub = hub->clone();
     episode++;
@@ -122,11 +142,9 @@ namespace Gecode { namespace Search { namespace Seq {
 
   Space*
   RBS::next(void) {
-    // A failed hub proves that no further solution exists
-    if (hub == nullptr) {
-      end = EndReason::Exhausted;
+    // A proof or a decision to finish ends the search
+    if ((end == EndReason::Exhausted) || (end == EndReason::Incomplete))
       return nullptr;
-    }
     if (solution) {
       solution = false;
       if (!hub_event(MetaEvent::Solution))
@@ -150,7 +168,6 @@ namespace Gecode { namespace Search { namespace Seq {
           end = EndReason::Limit;
           return nullptr;
         }
-        // The stop object has counted the restart
         ev = MetaEvent::Limit;
         break;
       case EndReason::Exhausted:
@@ -162,28 +179,21 @@ namespace Gecode { namespace Search { namespace Seq {
         ev = MetaEvent::Exhausted;
         break;
       case EndReason::Incomplete:
-        if (coverage != SpokeCoverage::Partial) {
-          // A new spoke would repeat the same incomplete search
-          end = EndReason::Incomplete;
-          return nullptr;
-        }
         ev = MetaEvent::Incomplete;
         break;
       default:
         GECODE_NEVER;
         return nullptr;
       }
-      if (ev != MetaEvent::Limit) {
-        /*
-         * The engine might not have checked its stop object, for example
-         * when the spoke failed at the root or a parallel engine had no
-         * work. Without this check, the restarts might never stop.
-         */
-        if (stop->meta_stop(e->statistics(),m_opt)) {
-          end = EndReason::Limit;
-          return nullptr;
-        }
-        stop->restart();
+      /*
+       * The engine might not have checked its stop object, for example
+       * when the spoke failed at the root or a parallel engine had no
+       * work. Without this check, the restarts might never stop.
+       */
+      if ((ev != MetaEvent::Limit) &&
+          stop->meta_stop(e->statistics(),m_opt)) {
+        end = EndReason::Limit;
+        return nullptr;
       }
       if (!hub_event(ev))
         return nullptr;
