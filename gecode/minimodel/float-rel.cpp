@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
@@ -37,209 +36,209 @@
 
 namespace Gecode {
 
-  /*
-   * Construction of linear float relations
-   *
-   */
-  LinFloatRel
-  operator ==(const FloatVal& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_EQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator ==(const FloatVal& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_EQ,r);
-  }
-  LinFloatRel
-  operator ==(const FloatVar& l, const FloatVal& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_EQ,r);
-  }
-  LinFloatRel
-  operator ==(const LinFloatExpr& l, const FloatVal& r) {
-    return LinFloatRel(l,FRT_EQ,r);
-  }
-  LinFloatRel
-  operator ==(const FloatVar& l, const FloatVar& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_EQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator ==(const FloatVar& l, const LinFloatExpr& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_EQ,r);
-  }
-  LinFloatRel
-  operator ==(const LinFloatExpr& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_EQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator ==(const LinFloatExpr& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_EQ,r);
-  }
+    /*
+     * Construction of linear float relations
+     *
+     */
+    LinFloatRel
+    operator==(const FloatVal& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_EQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator==(const FloatVal& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_EQ, r);
+    }
+    LinFloatRel
+    operator==(const FloatVar& l, const FloatVal& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_EQ, r);
+    }
+    LinFloatRel
+    operator==(const LinFloatExpr& l, const FloatVal& r) {
+        return LinFloatRel(l, FRT_EQ, r);
+    }
+    LinFloatRel
+    operator==(const FloatVar& l, const FloatVar& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_EQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator==(const FloatVar& l, const LinFloatExpr& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_EQ, r);
+    }
+    LinFloatRel
+    operator==(const LinFloatExpr& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_EQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator==(const LinFloatExpr& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_EQ, r);
+    }
 
-  LinFloatRel
-  operator !=(const FloatVal& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_NQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator !=(const FloatVal& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_NQ,r);
-  }
-  LinFloatRel
-  operator !=(const FloatVar& l, const FloatVal& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_NQ,r);
-  }
-  LinFloatRel
-  operator !=(const LinFloatExpr& l, const FloatVal& r) {
-    return LinFloatRel(l,FRT_NQ,r);
-  }
-  LinFloatRel
-  operator !=(const FloatVar& l, const FloatVar& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_NQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator !=(const FloatVar& l, const LinFloatExpr& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_NQ,r);
-  }
-  LinFloatRel
-  operator !=(const LinFloatExpr& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_NQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator !=(const LinFloatExpr& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_NQ,r);
-  }
+    LinFloatRel
+    operator!=(const FloatVal& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_NQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator!=(const FloatVal& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_NQ, r);
+    }
+    LinFloatRel
+    operator!=(const FloatVar& l, const FloatVal& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_NQ, r);
+    }
+    LinFloatRel
+    operator!=(const LinFloatExpr& l, const FloatVal& r) {
+        return LinFloatRel(l, FRT_NQ, r);
+    }
+    LinFloatRel
+    operator!=(const FloatVar& l, const FloatVar& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_NQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator!=(const FloatVar& l, const LinFloatExpr& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_NQ, r);
+    }
+    LinFloatRel
+    operator!=(const LinFloatExpr& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_NQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator!=(const LinFloatExpr& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_NQ, r);
+    }
 
-  LinFloatRel
-  operator <=(const FloatVal& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_LQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator <=(const FloatVal& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_LQ,r);
-  }
-  LinFloatRel
-  operator <=(const FloatVar& l, const FloatVal& r) {
-    return LinFloatRel(l,FRT_LQ,r);
-  }
-  LinFloatRel
-  operator <=(const LinFloatExpr& l, const FloatVal& r) {
-    return LinFloatRel(l,FRT_LQ,r);
-  }
-  LinFloatRel
-  operator <=(const FloatVar& l, const FloatVar& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_LQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator <=(const FloatVar& l, const LinFloatExpr& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_LQ,r);
-  }
-  LinFloatRel
-  operator <=(const LinFloatExpr& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_LQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator <=(const LinFloatExpr& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_LQ,r);
-  }
+    LinFloatRel
+    operator<=(const FloatVal& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_LQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator<=(const FloatVal& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_LQ, r);
+    }
+    LinFloatRel
+    operator<=(const FloatVar& l, const FloatVal& r) {
+        return LinFloatRel(l, FRT_LQ, r);
+    }
+    LinFloatRel
+    operator<=(const LinFloatExpr& l, const FloatVal& r) {
+        return LinFloatRel(l, FRT_LQ, r);
+    }
+    LinFloatRel
+    operator<=(const FloatVar& l, const FloatVar& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_LQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator<=(const FloatVar& l, const LinFloatExpr& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_LQ, r);
+    }
+    LinFloatRel
+    operator<=(const LinFloatExpr& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_LQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator<=(const LinFloatExpr& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_LQ, r);
+    }
 
-  LinFloatRel
-  operator <(const FloatVal& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_LE,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator <(const FloatVal& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_LE,r);
-  }
-  LinFloatRel
-  operator <(const FloatVar& l, const FloatVal& r) {
-    return LinFloatRel(l,FRT_LE,r);
-  }
-  LinFloatRel
-  operator <(const LinFloatExpr& l, const FloatVal& r) {
-    return LinFloatRel(l,FRT_LE,r);
-  }
-  LinFloatRel
-  operator <(const FloatVar& l, const FloatVar& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_LE,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator <(const FloatVar& l, const LinFloatExpr& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_LE,r);
-  }
-  LinFloatRel
-  operator <(const LinFloatExpr& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_LE,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator <(const LinFloatExpr& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_LE,r);
-  }
+    LinFloatRel
+    operator<(const FloatVal& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_LE, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator<(const FloatVal& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_LE, r);
+    }
+    LinFloatRel
+    operator<(const FloatVar& l, const FloatVal& r) {
+        return LinFloatRel(l, FRT_LE, r);
+    }
+    LinFloatRel
+    operator<(const LinFloatExpr& l, const FloatVal& r) {
+        return LinFloatRel(l, FRT_LE, r);
+    }
+    LinFloatRel
+    operator<(const FloatVar& l, const FloatVar& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_LE, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator<(const FloatVar& l, const LinFloatExpr& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_LE, r);
+    }
+    LinFloatRel
+    operator<(const LinFloatExpr& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_LE, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator<(const LinFloatExpr& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_LE, r);
+    }
 
-  LinFloatRel
-  operator >=(const FloatVal& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_GQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator >=(const FloatVal& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_GQ,r);
-  }
-  LinFloatRel
-  operator >=(const FloatVar& l, const FloatVal& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_GQ,r);
-  }
-  LinFloatRel
-  operator >=(const LinFloatExpr& l, const FloatVal& r) {
-    return LinFloatRel(l,FRT_GQ,r);
-  }
-  LinFloatRel
-  operator >=(const FloatVar& l, const FloatVar& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_GQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator >=(const FloatVar& l, const LinFloatExpr& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_GQ,r);
-  }
-  LinFloatRel
-  operator >=(const LinFloatExpr& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_GQ,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator >=(const LinFloatExpr& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_GQ,r);
-  }
+    LinFloatRel
+    operator>=(const FloatVal& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_GQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator>=(const FloatVal& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_GQ, r);
+    }
+    LinFloatRel
+    operator>=(const FloatVar& l, const FloatVal& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_GQ, r);
+    }
+    LinFloatRel
+    operator>=(const LinFloatExpr& l, const FloatVal& r) {
+        return LinFloatRel(l, FRT_GQ, r);
+    }
+    LinFloatRel
+    operator>=(const FloatVar& l, const FloatVar& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_GQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator>=(const FloatVar& l, const LinFloatExpr& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_GQ, r);
+    }
+    LinFloatRel
+    operator>=(const LinFloatExpr& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_GQ, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator>=(const LinFloatExpr& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_GQ, r);
+    }
 
-  LinFloatRel
-  operator >(const FloatVal& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_GR,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator >(const FloatVal& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_GR,r);
-  }
-  LinFloatRel
-  operator >(const FloatVar& l, const FloatVal& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_GR,r);
-  }
-  LinFloatRel
-  operator >(const LinFloatExpr& l, const FloatVal& r) {
-    return LinFloatRel(l,FRT_GR,r);
-  }
-  LinFloatRel
-  operator >(const FloatVar& l, const FloatVar& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_GR,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator >(const FloatVar& l, const LinFloatExpr& r) {
-    return LinFloatRel((const LinFloatExpr&)l,FRT_GR,r);
-  }
-  LinFloatRel
-  operator >(const LinFloatExpr& l, const FloatVar& r) {
-    return LinFloatRel(l,FRT_GR,(const LinFloatExpr&)r);
-  }
-  LinFloatRel
-  operator >(const LinFloatExpr& l, const LinFloatExpr& r) {
-    return LinFloatRel(l,FRT_GR,r);
-  }
+    LinFloatRel
+    operator>(const FloatVal& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_GR, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator>(const FloatVal& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_GR, r);
+    }
+    LinFloatRel
+    operator>(const FloatVar& l, const FloatVal& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_GR, r);
+    }
+    LinFloatRel
+    operator>(const LinFloatExpr& l, const FloatVal& r) {
+        return LinFloatRel(l, FRT_GR, r);
+    }
+    LinFloatRel
+    operator>(const FloatVar& l, const FloatVar& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_GR, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator>(const FloatVar& l, const LinFloatExpr& r) {
+        return LinFloatRel((const LinFloatExpr&)l, FRT_GR, r);
+    }
+    LinFloatRel
+    operator>(const LinFloatExpr& l, const FloatVar& r) {
+        return LinFloatRel(l, FRT_GR, (const LinFloatExpr&)r);
+    }
+    LinFloatRel
+    operator>(const LinFloatExpr& l, const LinFloatExpr& r) {
+        return LinFloatRel(l, FRT_GR, r);
+    }
 
-}
+} // namespace Gecode
 
 #endif
 

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,50 +32,50 @@
 
 namespace Gecode { namespace Iter { namespace Ranges {
 
-  /**
-   * \brief Range iterator for singleton range
-   *
-   * \ingroup FuncIterRanges
-   */
+    /**
+     * \brief Range iterator for singleton range
+     *
+     * \ingroup FuncIterRanges
+     */
 
-  class Singleton : public MinMax {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Singleton(void);
-    /// Initialize with range \a min to \a max
-    Singleton(int min, int max);
-    /// Initialize with range \a min to \a max
-    void init(int min, int max);
-    //@}
+    class Singleton : public MinMax {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Singleton(void);
+        /// Initialize with range \a min to \a max
+        Singleton(int min, int max);
+        /// Initialize with range \a min to \a max
+        void init(int min, int max);
+        //@}
 
-    /// \name Iteration control
-    //@{
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Move iterator to next range (if possible)
+        void operator++(void);
+        //@}
+    };
 
+    forceinline
+    Singleton::Singleton(void) {}
 
-  forceinline
-  Singleton::Singleton(void) {}
+    forceinline
+    Singleton::Singleton(int min, int max)
+        : MinMax(min, max) {}
 
-  forceinline
-  Singleton::Singleton(int min, int max)
-    : MinMax(min,max) {}
+    forceinline void
+    Singleton::init(int min, int max) {
+        mi = min;
+        ma = max;
+    }
 
-  forceinline void
-  Singleton::init(int min, int max) {
-    mi = min; ma = max;
-  }
+    forceinline void
+    Singleton::operator++(void) {
+        mi = 1;
+        ma = 0;
+    }
 
-  forceinline void
-  Singleton::operator ++(void) {
-    mi=1; ma=0;
-  }
-
-}}}
+}}} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any
-

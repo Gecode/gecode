@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,20 +36,20 @@
 
 namespace Gecode {
 
-  void
-  convex(Home home, SetVar x) {
-    using namespace Gecode::Set;
-    GECODE_POST;
-    GECODE_ES_FAIL(Convex::Convex::post(home, x));
-  }
+    void
+    convex(Home home, SetVar x) {
+        using namespace Gecode::Set;
+        GECODE_POST;
+        GECODE_ES_FAIL(Convex::Convex::post(home, x));
+    }
 
-  void
-  convex(Home home, SetVar x, SetVar y) {
-    using namespace Gecode::Set;
-    GECODE_POST;
-    GECODE_ES_FAIL(Convex::ConvexHull::post(home, x,y));
-  }
+    void
+    convex(Home home, SetVar x, SetVar y) {
+        using namespace Gecode::Set;
+        GECODE_POST;
+        GECODE_ES_FAIL(Convex::ConvexHull::post(home, x, y));
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-post

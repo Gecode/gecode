@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,58 +38,52 @@
 
 namespace Gecode { namespace Set { namespace Sequence {
 
-  inline ExecStatus
-  propagateSeq(Space& home, bool& modified, bool& assigned,
-               ViewArray<SetView>& x) {
-    int lastElem = x.size()-1;
-    int cur_max = BndSet::MAX_OF_EMPTY;
-    int cur_min = BndSet::MIN_OF_EMPTY;
+    inline ExecStatus
+    propagateSeq(Space& home, bool& modified, bool& assigned, ViewArray<SetView>& x) {
+        int lastElem = x.size() - 1;
+        int cur_max = BndSet::MAX_OF_EMPTY;
+        int cur_min = BndSet::MIN_OF_EMPTY;
 
-    Region r;
-    Support::DynamicArray<int,Region> ub(r);
+        Region r;
+        Support::DynamicArray<int, Region> ub(r);
 
-    for (int i=0; i<lastElem; i++) {
-      if (x[i].glbSize() > 0)
-        cur_max = std::max(cur_max, x[i].glbMax());
-      if (x[i].cardMin() > 0)
-        cur_max = std::max(cur_max, x[i].lubMinN(x[i].cardMin()-1));
-      if (cur_max >= Limits::min)
-        GECODE_SET_ME_CHECK_VAL_B(modified,
-                                  x[i+1].exclude(home, Limits::min,
-                                                 cur_max),
-                                  assigned);
+        for (int i = 0; i < lastElem; i++) {
+            if (x[i].glbSize() > 0)
+                cur_max = std::max(cur_max, x[i].glbMax());
+            if (x[i].cardMin() > 0)
+                cur_max = std::max(cur_max, x[i].lubMinN(x[i].cardMin() - 1));
+            if (cur_max >= Limits::min)
+                GECODE_SET_ME_CHECK_VAL_B(modified, x[i + 1].exclude(home, Limits::min, cur_max), assigned);
 
-      if (x[lastElem-i].lubSize() > 0) {
-        cur_min = std::min(cur_min, x[lastElem-i].glbMin());
-        if (x[lastElem-i].cardMin() > 0) {
-          // Compute n-th largest element in x[lastElem-i].lub
-          // for n = x[lastElem-i].cardMin()-1
-          int maxN = BndSet::MAX_OF_EMPTY;
-          int j=0;
-          for (LubRanges<SetView> ubr(x[lastElem-i]); ubr(); ++ubr, ++j) {
-            ub[2*j]=ubr.min(); ub[2*j+1]=ubr.max();
-          }
-          unsigned int xcm = x[lastElem-i].cardMin()-1;
-          while (j--) {
-            unsigned int width = static_cast<unsigned int>(ub[2*j+1]-ub[2*j]+1);
-            if (width > xcm) {
-              maxN = static_cast<int>(ub[2*j+1]-xcm);
-              break;
+            if (x[lastElem - i].lubSize() > 0) {
+                cur_min = std::min(cur_min, x[lastElem - i].glbMin());
+                if (x[lastElem - i].cardMin() > 0) {
+                    // Compute n-th largest element in x[lastElem-i].lub
+                    // for n = x[lastElem-i].cardMin()-1
+                    int maxN = BndSet::MAX_OF_EMPTY;
+                    int j = 0;
+                    for (LubRanges<SetView> ubr(x[lastElem - i]); ubr(); ++ubr, ++j) {
+                        ub[2 * j] = ubr.min();
+                        ub[2 * j + 1] = ubr.max();
+                    }
+                    unsigned int xcm = x[lastElem - i].cardMin() - 1;
+                    while (j--) {
+                        unsigned int width = static_cast<unsigned int>(ub[2 * j + 1] - ub[2 * j] + 1);
+                        if (width > xcm) {
+                            maxN = static_cast<int>(ub[2 * j + 1] - xcm);
+                            break;
+                        }
+                        xcm -= width;
+                    }
+                    cur_min = std::min(cur_min, maxN);
+                }
             }
-            xcm -= width;
-          }
-          cur_min = std::min(cur_min, maxN);
+            if (Limits::max >= cur_min)
+                GECODE_SET_ME_CHECK_VAL_B(modified, x[lastElem - i - 1].exclude(home, cur_min, Limits::max), assigned);
         }
-      }
-      if (Limits::max>=cur_min)
-        GECODE_SET_ME_CHECK_VAL_B(modified,
-                                  x[lastElem-i-1].exclude(home, cur_min,
-                                                          Limits::max),
-                                  assigned);
+        return ES_NOFIX;
     }
-    return ES_NOFIX;
-  }
 
-}}}
+}}} // namespace Gecode::Set::Sequence
 
 // STATISTICS: set-prop

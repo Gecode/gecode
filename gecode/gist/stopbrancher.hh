@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -36,45 +35,44 @@
 
 namespace Gecode { namespace Gist {
 
-  /// %Choice for %StopBrancher
-  class GECODE_GIST_EXPORT StopChoice : public Choice {
-  public:
-    /// Initialize choice for brancher \a b
-    StopChoice(const Brancher& b);
-    /// Archive into \a e
-    virtual void archive(Archive& e) const;
-  };
+    /// %Choice for %StopBrancher
+    class GECODE_GIST_EXPORT StopChoice : public Choice {
+    public:
+        /// Initialize choice for brancher \a b
+        StopChoice(const Brancher& b);
+        /// Archive into \a e
+        virtual void archive(Archive& e) const;
+    };
 
-  /// %Brancher that stops exploration in %Gist
-  class StopBrancher : public Brancher {
-  protected:
-    /// Flag whether brancher has been executed
-    bool done;
-    /// Construct brancher
-    StopBrancher(Home home);
-    /// Copy constructor
-    StopBrancher(Space& home, StopBrancher& b);
-  public:
-    /// Check status of brancher, return true if alternatives left
-    virtual bool status(const Space&) const;
-    /// Return choice
-    virtual Choice* choice(Space&);
-    /// Return choice
-    virtual Choice* choice(const Space& home, Archive&);
-    /// Perform commit for choice \a _c and alternative \a a
-    virtual ExecStatus commit(Space&, const Choice&, unsigned int);
-    /// Print explanation
-    virtual void print(const Space& home, const Gecode::Choice& c,
-                       unsigned int,
-                       std::ostream& o) const;
-    /// Copy brancher
-    virtual Actor* copy(Space& home);
-    /// Post brancher
-    static void post(Home home);
-    /// Delete brancher and return its size
-    virtual size_t dispose(Space&);
-  };
+    /// %Brancher that stops exploration in %Gist
+    class StopBrancher : public Brancher {
+    protected:
+        /// Flag whether brancher has been executed
+        bool done;
+        /// Construct brancher
+        StopBrancher(Home home);
+        /// Copy constructor
+        StopBrancher(Space& home, StopBrancher& b);
 
-}}
+    public:
+        /// Check status of brancher, return true if alternatives left
+        virtual bool status(const Space&) const;
+        /// Return choice
+        virtual Choice* choice(Space&);
+        /// Return choice
+        virtual Choice* choice(const Space& home, Archive&);
+        /// Perform commit for choice \a _c and alternative \a a
+        virtual ExecStatus commit(Space&, const Choice&, unsigned int);
+        /// Print explanation
+        virtual void print(const Space& home, const Gecode::Choice& c, unsigned int, std::ostream& o) const;
+        /// Copy brancher
+        virtual Actor* copy(Space& home);
+        /// Post brancher
+        static void post(Home home);
+        /// Delete brancher and return its size
+        virtual size_t dispose(Space&);
+    };
+
+}} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

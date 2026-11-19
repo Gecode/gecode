@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,34 +34,29 @@
 
 namespace Gecode {
 
-  Support::Mutex TracerBase::m;
+    Support::Mutex TracerBase::m;
 
+    StdTracer::StdTracer(std::ostream& os0) : os(os0) {}
 
-  StdTracer::StdTracer(std::ostream& os0) : os(os0) {}
+    void
+    StdTracer::propagate(const Space&, const PropagateTraceInfo& pti) {
+        os << "trace::" << pti << std::endl;
+    }
 
-  void
-  StdTracer::propagate(const Space&,
-                       const PropagateTraceInfo& pti) {
-    os << "trace::" << pti << std::endl;
-  }
+    void
+    StdTracer::commit(const Space& home, const CommitTraceInfo& cti) {
+        os << "trace::" << cti << std::endl << '\t';
+        cti.brancher().print(home, cti.choice(), cti.alternative(), os);
+        os << std::endl;
+    }
 
-  void
-  StdTracer::commit(const Space& home,
-                    const CommitTraceInfo& cti) {
-    os << "trace::" << cti << std::endl
-       << '\t';
-    cti.brancher().print(home, cti.choice(), cti.alternative(), os);
-    os << std::endl;
-  }
+    void
+    StdTracer::post(const Space&, const PostTraceInfo& pti) {
+        os << "trace::" << pti << std::endl;
+    }
 
-  void
-  StdTracer::post(const Space&,
-                  const PostTraceInfo& pti) {
-    os << "trace::" << pti << std::endl;
-  }
+    StdTracer StdTracer::def;
 
-  StdTracer StdTracer::def;
-
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-trace

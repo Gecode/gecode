@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,40 +35,38 @@
 
 namespace Gecode { namespace Set {
 
-  /// Class for posting equalities for non-relaxed variables
-  class Relax {
-  public:
-    /// Post the actual equality for non-relaxed variables
-    ExecStatus operator ()(Home home, SetVar x, SetVar sx);
-  };
+    /// Class for posting equalities for non-relaxed variables
+    class Relax {
+    public:
+        /// Post the actual equality for non-relaxed variables
+        ExecStatus operator()(Home home, SetVar x, SetVar sx);
+    };
 
-  forceinline ExecStatus
-  Relax::operator ()(Home home, SetVar x, SetVar sx) {
-    SetView xv(x);
-    SetView sxv(sx);
-    SetVarGlbRanges l(sxv);
-    GECODE_ME_CHECK(xv.includeI(home, l));
-    SetVarLubRanges u(sxv);
-    GECODE_ME_CHECK(xv.intersectI(home, u));
-    return ES_OK;
-  }
+    forceinline ExecStatus
+    Relax::operator()(Home home, SetVar x, SetVar sx) {
+        SetView xv(x);
+        SetView sxv(sx);
+        SetVarGlbRanges l(sxv);
+        GECODE_ME_CHECK(xv.includeI(home, l));
+        SetVarLubRanges u(sxv);
+        GECODE_ME_CHECK(xv.intersectI(home, u));
+        return ES_OK;
+    }
 
-}}
+}} // namespace Gecode::Set
 
 namespace Gecode {
 
-  void
-  relax(Home home, const SetVarArgs& x, const SetVarArgs& sx,
-        Rnd r, double p) {
-    if (x.size() != sx.size())
-      throw Set::ArgumentSizeMismatch("Set::relax");
-    if ((p < 0.0) || (p > 1.0))
-      throw Set::OutOfLimits("Set::relax");
-    Set::Relax ir;
-    Search::relax<SetVarArgs,Set::Relax>(home,x,sx,r,p,ir);
-  }
+    void
+    relax(Home home, const SetVarArgs& x, const SetVarArgs& sx, Rnd r, double p) {
+        if (x.size() != sx.size())
+            throw Set::ArgumentSizeMismatch("Set::relax");
+        if ((p < 0.0) || (p > 1.0))
+            throw Set::OutOfLimits("Set::relax");
+        Set::Relax ir;
+        Search::relax<SetVarArgs, Set::Relax>(home, x, sx, r, p, ir);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-other
-

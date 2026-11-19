@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,15 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("blocksworld::2",
-std::string("predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest(
+                "blocksworld::2",
+                std::string("predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -91,8 +88,8 @@ predicate nvalue(var int: n, array [int] of var int: x);\n\
 predicate regular(array [int] of var int: x, int: Q, int: S, array [int, int] of int: d, int: q0, set of int: F);\n\
 predicate sort(array [int] of var int: x, array [int] of var int: y);\n\
 predicate table_bool(array [int] of var bool: x, array [int, int] of bool: t);\n\
-predicate table_int(array [int] of var int: x, array [int, int] of int: t);\n")+
-"array [1..5] of int: final_loc = [2, 3, 4, 5, 0];\n\
+predicate table_int(array [int] of var int: x, array [int, int] of int: t);\n") +
+                    "array [1..5] of int: final_loc = [2, 3, 4, 5, 0];\n\
 array [1..5] of int: initial_loc = [0, 1, 2, 3, 4];\n\
 var bool: BOOL____00001 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00002 :: is_defined_var :: var_is_introduced;\n\
@@ -239,8 +236,8 @@ var bool: BOOL____00142 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00143 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00144 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00145 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00146 :: is_defined_var :: var_is_introduced;\n"+
-"var bool: BOOL____00147 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____00146 :: is_defined_var :: var_is_introduced;\n" +
+                    "var bool: BOOL____00147 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00148 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00149 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00150 :: is_defined_var :: var_is_introduced;\n\
@@ -394,8 +391,8 @@ var bool: BOOL____00297 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00298 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00299 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00300 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00301 :: is_defined_var :: var_is_introduced;\n"+
-"var bool: BOOL____00302 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____00301 :: is_defined_var :: var_is_introduced;\n" +
+                    "var bool: BOOL____00302 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00303 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00304 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00305 :: is_defined_var :: var_is_introduced;\n\
@@ -525,8 +522,8 @@ constraint array_bool_or([BOOL____00292, BOOL____00287], BOOL____00293) :: defin
 constraint array_bool_or([BOOL____00306, BOOL____00301], BOOL____00307) :: defines_var(BOOL____00307);\n\
 constraint array_bool_or([BOOL____00320, BOOL____00315], BOOL____00321) :: defines_var(BOOL____00321);\n\
 constraint array_bool_or([BOOL____00334, BOOL____00329], BOOL____00335) :: defines_var(BOOL____00335);\n\
-constraint array_bool_or([BOOL____00348, BOOL____00343], BOOL____00349) :: defines_var(BOOL____00349);\n"+
-"constraint bool_le(BOOL____00001, BOOL____00014);\n\
+constraint array_bool_or([BOOL____00348, BOOL____00343], BOOL____00349) :: defines_var(BOOL____00349);\n" +
+                    "constraint bool_le(BOOL____00001, BOOL____00014);\n\
 constraint bool_le(BOOL____00015, BOOL____00028);\n\
 constraint bool_le(BOOL____00029, BOOL____00042);\n\
 constraint bool_le(BOOL____00043, BOOL____00056);\n\
@@ -742,8 +739,8 @@ constraint int_ne_reif(on[16], 3, BOOL____00240) :: defines_var(BOOL____00240);\
 constraint int_ne_reif(on[16], 4, BOOL____00254) :: defines_var(BOOL____00254);\n\
 constraint int_ne_reif(on[16], 5, BOOL____00268) :: defines_var(BOOL____00268);\n\
 constraint int_ne_reif(on[16], on[21], BOOL____00211) :: defines_var(BOOL____00211);\n\
-constraint int_ne_reif(on[16], on[22], BOOL____00232) :: defines_var(BOOL____00232);\n"+
-"constraint int_ne_reif(on[16], on[23], BOOL____00246) :: defines_var(BOOL____00246);\n\
+constraint int_ne_reif(on[16], on[22], BOOL____00232) :: defines_var(BOOL____00232);\n" +
+                    "constraint int_ne_reif(on[16], on[23], BOOL____00246) :: defines_var(BOOL____00246);\n\
 constraint int_ne_reif(on[16], on[24], BOOL____00260) :: defines_var(BOOL____00260);\n\
 constraint int_ne_reif(on[16], on[25], BOOL____00274) :: defines_var(BOOL____00274);\n\
 constraint int_ne_reif(on[17], 1, BOOL____00213) :: defines_var(BOOL____00213);\n\
@@ -867,15 +864,14 @@ constraint set_in(on[28], {-3, 1, 2, 4, 5});\n\
 constraint set_in(on[29], {-4, 1, 2, 3, 5});\n\
 constraint set_in(on[30], {-5, 1, 2, 3, 4});\n\
 solve  :: int_search([on[1], on[2], on[3], on[4], on[5], on[6], on[7], on[8], on[9], on[10], on[11], on[12], on[13], on[14], on[15], on[16], on[17], on[18], on[19], on[20], on[21], on[22], on[23], on[24], on[25], on[26], on[27], on[28], on[29], on[30]], first_fail, indomain_split, complete) satisfy;\n\
-", "on = array2d(1..6, 1..5, [-1, 1, 2, 3, 4, -1, 1, 2, 3, -5, -1, 1, 2, -4, -5, -1, 1, -3, -4, -5, -1, -2, -3, -4, -5, 2, 3, 4, 5, -5]);\n\
+",
+                "on = array2d(1..6, 1..5, [-1, 1, 2, 3, 4, -1, 1, 2, 3, -5, -1, 1, 2, -4, -5, -1, 1, -3, -4, -5, -1, -2, -3, -4, -5, 2, 3, 4, 5, -5]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -42,124 +41,125 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template<class Card>
-  /// %Sort by increasing cardinality
-  class CardLess : public Support::Less<Card> {
-  public:
-    bool operator ()(const Card& x, const Card& y) {
-      return x.card() < y.card();
-    }
-  };
-
-  /**
-   * \brief Post side constraints for the GCC
-   *
-   */
-  template<class Card>
-  ExecStatus
-  postSideConstraints(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
-    CardLess<Card> cl;
-    Support::quicksort(&k[0], k.size(), cl);
-    Region r;
-
-    {
-      int smin = 0;
-      int smax = 0;
-      for (int i = k.size(); i--; ) {
-        GECODE_ME_CHECK((k[i].gq(home, 0)));
-        GECODE_ME_CHECK((k[i].lq(home, x.size())));
-        smin += k[i].min();
-        smax += k[i].max();
-      }
-
-      // not enough variables to satisfy min req
-      if ((x.size() < smin) || (smax < x.size()))
-        return ES_FAILED;
-    }
-
-    // Remove all values from the x that are not in v
-    {
-      int* v = r.alloc<int>(k.size());
-      for (int i=k.size(); i--;)
-        v[i]=k[i].card();
-      Support::quicksort(v,k.size());
-      for (int i=x.size(); i--; ) {
-        Iter::Values::Array iv(v,k.size());
-        GECODE_ME_CHECK(x[i].inter_v(home, iv, false));
-      }
-    }
-
-    // Remove all values with 0 max occurrence
-    // and remove corresponding occurrence variables from k
-    {
-      // The number of zeroes
-      int n_z = 0;
-      for (int i=k.size(); i--;)
-        if (k[i].max() == 0)
-          n_z++;
-
-      if (n_z > 0) {
-        int* z = r.alloc<int>(n_z);
-        n_z = 0;
-        int n_k = 0;
-        for (int i=0; i<k.size(); i++)
-          if (k[i].max() == 0) {
-            z[n_z++] = k[i].card();
-          } else {
-            k[n_k++] = k[i];
-          }
-        k.size(n_k);
-        Support::quicksort(z,n_z);
-        for (int i=x.size(); i--;) {
-          Iter::Values::Array zi(z,n_z);
-          GECODE_ME_CHECK(x[i].minus_v(home,zi,false));
+    template <class Card>
+    /// %Sort by increasing cardinality
+    class CardLess : public Support::Less<Card> {
+    public:
+        bool
+        operator()(const Card& x, const Card& y) {
+            return x.card() < y.card();
         }
-      }
+    };
+
+    /**
+     * \brief Post side constraints for the GCC
+     *
+     */
+    template <class Card>
+    ExecStatus
+    postSideConstraints(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
+        CardLess<Card> cl;
+        Support::quicksort(&k[0], k.size(), cl);
+        Region r;
+
+        {
+            int smin = 0;
+            int smax = 0;
+            for (int i = k.size(); i--;) {
+                GECODE_ME_CHECK((k[i].gq(home, 0)));
+                GECODE_ME_CHECK((k[i].lq(home, x.size())));
+                smin += k[i].min();
+                smax += k[i].max();
+            }
+
+            // not enough variables to satisfy min req
+            if ((x.size() < smin) || (smax < x.size()))
+                return ES_FAILED;
+        }
+
+        // Remove all values from the x that are not in v
+        {
+            int* v = r.alloc<int>(k.size());
+            for (int i = k.size(); i--;)
+                v[i] = k[i].card();
+            Support::quicksort(v, k.size());
+            for (int i = x.size(); i--;) {
+                Iter::Values::Array iv(v, k.size());
+                GECODE_ME_CHECK(x[i].inter_v(home, iv, false));
+            }
+        }
+
+        // Remove all values with 0 max occurrence
+        // and remove corresponding occurrence variables from k
+        {
+            // The number of zeroes
+            int n_z = 0;
+            for (int i = k.size(); i--;)
+                if (k[i].max() == 0)
+                    n_z++;
+
+            if (n_z > 0) {
+                int* z = r.alloc<int>(n_z);
+                n_z = 0;
+                int n_k = 0;
+                for (int i = 0; i < k.size(); i++)
+                    if (k[i].max() == 0) {
+                        z[n_z++] = k[i].card();
+                    } else {
+                        k[n_k++] = k[i];
+                    }
+                k.size(n_k);
+                Support::quicksort(z, n_z);
+                for (int i = x.size(); i--;) {
+                    Iter::Values::Array zi(z, n_z);
+                    GECODE_ME_CHECK(x[i].minus_v(home, zi, false));
+                }
+            }
+        }
+
+        if (Card::propagate) {
+            Linear::Term<IntView>* t = r.alloc<Linear::Term<IntView>>(k.size());
+            for (int i = k.size(); i--;) {
+                t[i].a = 1;
+                t[i].x = k[i].base();
+            }
+            Linear::post(home, t, k.size(), IRT_EQ, x.size(), IPL_BND);
+        }
+
+        return ES_OK;
     }
 
-    if (Card::propagate) {
-      Linear::Term<IntView>* t = r.alloc<Linear::Term<IntView> >(k.size());
-      for (int i = k.size(); i--; ) {
-        t[i].a=1; t[i].x=k[i].base();
-      }
-      Linear::post(home,t,k.size(),IRT_EQ,x.size(),IPL_BND);
+    /**
+     * \brief Check if GCC is equivalent to distinct
+     *
+     */
+    template <class Card>
+    inline bool
+    isDistinct(ViewArray<IntView>& x, ViewArray<Card>& k) {
+        if (Card::propagate) {
+            Region r;
+            ViewRanges<IntView>* xrange = r.alloc<ViewRanges<IntView>>(x.size());
+            for (int i = x.size(); i--;) {
+                ViewRanges<IntView> iter(x[i]);
+                xrange[i] = iter;
+            }
+            Iter::Ranges::NaryUnion drl(r, &xrange[0], x.size());
+            if (static_cast<unsigned int>(k.size()) == Iter::Ranges::size(drl)) {
+                for (int i = k.size(); i--;)
+                    if (k[i].min() != 1 || k[i].max() != 1)
+                        return false;
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            for (int i = k.size(); i--;)
+                if (k[i].min() != 0 || k[i].max() != 1)
+                    return false;
+            return true;
+        }
     }
 
-    return ES_OK;
-  }
-
-
-  /**
-   * \brief Check if GCC is equivalent to distinct
-   *
-   */
-  template<class Card>
-  inline bool
-  isDistinct(ViewArray<IntView>& x, ViewArray<Card>& k) {
-    if (Card::propagate) {
-      Region r;
-      ViewRanges<IntView>* xrange = r.alloc<ViewRanges<IntView> >(x.size());
-      for (int i = x.size(); i--; ){
-        ViewRanges<IntView> iter(x[i]);
-        xrange[i] = iter;
-      }
-      Iter::Ranges::NaryUnion drl(r, &xrange[0], x.size());
-      if (static_cast<unsigned int>(k.size()) == Iter::Ranges::size(drl)) {
-        for (int i=k.size(); i--;)
-          if (k[i].min() != 1 || k[i].max() != 1)
-            return false;
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      for (int i=k.size(); i--;)
-        if (k[i].min() != 0 || k[i].max() != 1)
-          return false;
-      return true;
-    }
-  }
-
-}}}
+}}} // namespace Gecode::Int::GCC
 
 // STATISTICS: int-prop

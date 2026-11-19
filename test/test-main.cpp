@@ -1,4 +1,3 @@
-/* -*- mode: c++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -42,9 +41,9 @@
 int
 main(int argc, char* argv[]) {
 #ifdef GECODE_HAS_MTRACE
-  mtrace();
+    mtrace();
 #endif
-  return Test::run_registered_tests(argc, argv);
+    return Test::run_registered_tests(argc, argv);
 }
 
 // STATISTICS: test-core

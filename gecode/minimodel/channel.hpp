@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,45 +34,44 @@
 
 namespace Gecode {
 
-  inline BoolVar
-  channel(Home home, IntVar x, IntPropLevel ipl) {
-    (void) ipl;
-    BoolVar b(home,0,1); channel(home,b,x);
-    return b;
-  }
+    inline BoolVar
+    channel(Home home, IntVar x, IntPropLevel ipl) {
+        (void)ipl;
+        BoolVar b(home, 0, 1);
+        channel(home, b, x);
+        return b;
+    }
 
-  inline IntVar
-  channel(Home home, BoolVar b, IntPropLevel ipl) {
-    (void) ipl;
-    IntVar x(home,0,1); channel(home,b,x);
-    return x;
-  }
+    inline IntVar
+    channel(Home home, BoolVar b, IntPropLevel ipl) {
+        (void)ipl;
+        IntVar x(home, 0, 1);
+        channel(home, b, x);
+        return x;
+    }
 
 #ifdef GECODE_HAS_FLOAT_VARS
-  inline IntVar
-  channel(Home home, FloatVar f) {
-    int min = static_cast<int>(std::max(static_cast<double>(Int::Limits::min),
-                                        std::ceil(f.min())));
-    int max = static_cast<int>(std::min(static_cast<double>(Int::Limits::max),
-                                        std::floor(f.max())));
-    IntVar x(home,min,max);
-    channel(home,f,x);
-    return x;
-  }
+    inline IntVar
+    channel(Home home, FloatVar f) {
+        int min = static_cast<int>(std::max(static_cast<double>(Int::Limits::min), std::ceil(f.min())));
+        int max = static_cast<int>(std::min(static_cast<double>(Int::Limits::max), std::floor(f.max())));
+        IntVar x(home, min, max);
+        channel(home, f, x);
+        return x;
+    }
 #endif
 
 #ifdef GECODE_HAS_SET_VARS
-  inline SetVar
-  channel(Home home, const IntVarArgs& x, IntPropLevel ipl) {
-    (void) ipl;
-    SetVar s(home,IntSet::empty,Set::Limits::min,Set::Limits::max);
-    rel(home,SOT_UNION,x,s);
-    nvalues(home,x,IRT_EQ,expr(home,cardinality(s)));
-    return s;
-  }
+    inline SetVar
+    channel(Home home, const IntVarArgs& x, IntPropLevel ipl) {
+        (void)ipl;
+        SetVar s(home, IntSet::empty, Set::Limits::min, Set::Limits::max);
+        rel(home, SOT_UNION, x, s);
+        nvalues(home, x, IRT_EQ, expr(home, cardinality(s)));
+        return s;
+    }
 #endif
 
-}
+} // namespace Gecode
 
 // STATISTICS: minimodel-any
-

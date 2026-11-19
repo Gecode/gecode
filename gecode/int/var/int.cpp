@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,23 +34,21 @@
 
 namespace Gecode {
 
-  IntVar::IntVar(Space& home, int min, int max)
-    : VarImpVar<Int::IntVarImp>(new (home) Int::IntVarImp(home,min,max)) {
-    Int::Limits::check(min,"IntVar::IntVar");
-    Int::Limits::check(max,"IntVar::IntVar");
-    if (min > max)
-      throw Int::VariableEmptyDomain("IntVar::IntVar");
-  }
+    IntVar::IntVar(Space& home, int min, int max)
+        : VarImpVar<Int::IntVarImp>(new (home) Int::IntVarImp(home, min, max)) {
+        Int::Limits::check(min, "IntVar::IntVar");
+        Int::Limits::check(max, "IntVar::IntVar");
+        if (min > max)
+            throw Int::VariableEmptyDomain("IntVar::IntVar");
+    }
 
-  IntVar::IntVar(Space& home, const IntSet& ds)
-    : VarImpVar<Int::IntVarImp>(new (home) Int::IntVarImp(home,ds)) {
-    Int::Limits::check(ds.min(),"IntVar::IntVar");
-    Int::Limits::check(ds.max(),"IntVar::IntVar");
-    if (ds.size() == 0)
-      throw Int::VariableEmptyDomain("IntVar::IntVar");
-  }
+    IntVar::IntVar(Space& home, const IntSet& ds) : VarImpVar<Int::IntVarImp>(new (home) Int::IntVarImp(home, ds)) {
+        Int::Limits::check(ds.min(), "IntVar::IntVar");
+        Int::Limits::check(ds.max(), "IntVar::IntVar");
+        if (ds.size() == 0)
+            throw Int::VariableEmptyDomain("IntVar::IntVar");
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-var
-

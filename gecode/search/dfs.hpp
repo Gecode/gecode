@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,54 +32,50 @@
 
 namespace Gecode { namespace Search {
 
-  /// Create depth-first engine
-  GECODE_SEARCH_EXPORT Engine*
-  dfsengine(Space* s, const Options& o);
+    /// Create depth-first engine
+    GECODE_SEARCH_EXPORT Engine* dfsengine(Space* s, const Options& o);
 
-  /// A DFS engine builder
-  template<class T>
-  class DfsBuilder : public Builder {
-    using Builder::opt;
-  public:
-    /// The constructor
-    DfsBuilder(const Options& opt);
-    /// The actual build function
-    virtual Engine* operator() (Space* s) const;
-  };
+    /// A DFS engine builder
+    template <class T>
+    class DfsBuilder : public Builder {
+        using Builder::opt;
 
-  template<class T>
-  inline
-  DfsBuilder<T>::DfsBuilder(const Options& opt)
-    : Builder(opt,DFS<T>::best) {}
+    public:
+        /// The constructor
+        DfsBuilder(const Options& opt);
+        /// The actual build function
+        virtual Engine* operator()(Space* s) const;
+    };
 
-  template<class T>
-  Engine*
-  DfsBuilder<T>::operator() (Space* s) const {
-    return build<T,DFS>(s,opt);
-  }
+    template <class T>
+    inline DfsBuilder<T>::DfsBuilder(const Options& opt) : Builder(opt, DFS<T>::best) {}
 
-}}
+    template <class T>
+    Engine*
+    DfsBuilder<T>::operator()(Space* s) const {
+        return build<T, DFS>(s, opt);
+    }
+
+}} // namespace Gecode::Search
 
 namespace Gecode {
 
-  template<class T>
-  inline
-  DFS<T>::DFS(T* s, const Search::Options& o)
-    : Search::Base<T>(Search::dfsengine(s,o)) {}
+    template <class T>
+    inline DFS<T>::DFS(T* s, const Search::Options& o) : Search::Base<T>(Search::dfsengine(s, o)) {}
 
-  template<class T>
-  inline T*
-  dfs(T* s, const Search::Options& o) {
-    DFS<T> d(s,o);
-    return d.next();
-  }
+    template <class T>
+    inline T*
+    dfs(T* s, const Search::Options& o) {
+        DFS<T> d(s, o);
+        return d.next();
+    }
 
-  template<class T>
-  SEB
-  dfs(const Search::Options& o) {
-    return new Search::DfsBuilder<T>(o);
-  }
+    template <class T>
+    SEB
+    dfs(const Search::Options& o) {
+        return new Search::DfsBuilder<T>(o);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: search-other

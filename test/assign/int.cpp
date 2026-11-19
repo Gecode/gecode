@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,32 +34,31 @@
 
 namespace Test { namespace Assign {
 
-  /// %Test assignment with distinct propagator
-  class Int : public IntTest {
-  public:
-    /// Create and register test
-    Int(const std::string& s, const Gecode::IntSet& d, int n)
-      : IntTest(s,n,d) {}
-    /// Post propagators on variables \a x
-    virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-      Gecode::distinct(home, x);
-    }
-  };
+    /// %Test assignment with distinct propagator
+    class Int : public IntTest {
+    public:
+        /// Create and register test
+        Int(const std::string& s, const Gecode::IntSet& d, int n) : IntTest(s, n, d) {}
+        /// Post propagators on variables \a x
+        virtual void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            Gecode::distinct(home, x);
+        }
+    };
 
-  Gecode::IntSet d_dense(-2,2);
-  const int v_sparse[5] = {-100,-10,0,10,100};
-  Gecode::IntSet d_sparse(v_sparse,5);
+    Gecode::IntSet d_dense(-2, 2);
+    const int v_sparse[5] = {-100, -10, 0, 10, 100};
+    Gecode::IntSet d_sparse(v_sparse, 5);
 
-  Gecode::IntSet d_large(-2,10);
+    Gecode::IntSet d_large(-2, 10);
 
-  Int d_3("Dense::3",d_dense,3);
-  Int d_5("Dense::5",d_dense,5);
-  Int s_3("Sparse::3",d_sparse,3);
-  Int s_5("Sparse::5",d_sparse,5);
-  Int l_2("Large::2",d_large,2);
-  Int l_3("Large::3",d_large,3);
+    Int d_3("Dense::3", d_dense, 3);
+    Int d_5("Dense::5", d_dense, 5);
+    Int s_3("Sparse::3", d_sparse, 3);
+    Int s_5("Sparse::5", d_sparse, 5);
+    Int l_2("Large::2", d_large, 2);
+    Int l_3("Large::3", d_large, 3);
 
-}}
+}} // namespace Test::Assign
 
 // STATISTICS: test-branch
-

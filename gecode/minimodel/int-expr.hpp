@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,31 +32,30 @@
 
 namespace Gecode {
 
-  forceinline
-  NonLinIntExpr::~NonLinIntExpr(void) {}
+    forceinline NonLinIntExpr::~NonLinIntExpr(void) {}
 
-  forceinline IntVar
-  NonLinIntExpr::result(Home home, IntVar* x) {
-    if (x == nullptr)
-      return IntVar(home,Int::Limits::min,Int::Limits::max);
-    return *x;
-  }
-  forceinline IntVar
-  NonLinIntExpr::result(Home home, IntVar* x, IntVar y) {
-    if (x != nullptr)
-      rel(home,*x,IRT_EQ,y);
-    return y;
-  }
+    forceinline IntVar
+    NonLinIntExpr::result(Home home, IntVar* x) {
+        if (x == nullptr)
+            return IntVar(home, Int::Limits::min, Int::Limits::max);
+        return *x;
+    }
+    forceinline IntVar
+    NonLinIntExpr::result(Home home, IntVar* x, IntVar y) {
+        if (x != nullptr)
+            rel(home, *x, IRT_EQ, y);
+        return y;
+    }
 
-  forceinline void*
-  NonLinIntExpr::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-  forceinline void
-  NonLinIntExpr::operator delete(void* p, size_t) {
-    heap.rfree(p);
-  }
+    forceinline void*
+    NonLinIntExpr::operator new(size_t s) {
+        return heap.ralloc(s);
+    }
+    forceinline void
+    NonLinIntExpr::operator delete(void* p, size_t) {
+        heap.rfree(p);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: minimodel-any

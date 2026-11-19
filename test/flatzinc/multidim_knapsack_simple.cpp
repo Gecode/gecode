@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,15 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("multidim_knapsack_simple",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest(
+                "multidim_knapsack_simple",
+                "predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -57,16 +54,15 @@ constraint int_lin_le([2, 1, 1, 3, 1], [x[1], x[2], x[3], x[4], x[5]], 5);\n\
 constraint int_lin_le([2, 4, 5, 3, 5], [x[1], x[2], x[3], x[4], x[5]], 15);\n\
 constraint int_lin_le([3, 4, 2, 2, 3], [x[1], x[2], x[3], x[4], x[5]], 10);\n\
 solve maximize INT____00001;\n\
-", "x = array1d(1..5, [0, 1, 0, 1, 1]);\n\
+",
+                "x = array1d(1..5, [0, 1, 0, 1, 1]);\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

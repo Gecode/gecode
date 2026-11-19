@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -43,37 +42,37 @@
 
 namespace Gecode { namespace Gist {
 
-  /**
-   * \brief Display information about nodes
-   */
-  class NodeStatInspector : public QWidget {
-    Q_OBJECT
-  private:
-    /// Label for node depth indicator
-    QGraphicsTextItem* nodeDepthLabel;
-    /// Label for subtree depth indicator
-    QGraphicsTextItem* subtreeDepthLabel;
-    /// Label for number of solutions
-    QGraphicsTextItem* solvedLabel;
-    /// Label for number of failures
-    QGraphicsTextItem* failedLabel;
-    /// Label for number of choices
-    QGraphicsTextItem* choicesLabel;
-    /// Label for number of open nodes
-    QGraphicsTextItem* openLabel;
-    /// Layout
-    QVBoxLayout* boxLayout;
-  public:
-    NodeStatInspector(QWidget* parent);
-    /// Update display to reflect information about \a n
-    void node(const VisualNode::NodeAllocator&, VisualNode* n,
-              const Statistics& stat, bool finished);
-  public Q_SLOTS:
-    /// Show this window and bring it to the front
-    void showStats(void);
-  };
+    /**
+     * \brief Display information about nodes
+     */
+    class NodeStatInspector : public QWidget {
+        Q_OBJECT
+    private:
+        /// Label for node depth indicator
+        QGraphicsTextItem* nodeDepthLabel;
+        /// Label for subtree depth indicator
+        QGraphicsTextItem* subtreeDepthLabel;
+        /// Label for number of solutions
+        QGraphicsTextItem* solvedLabel;
+        /// Label for number of failures
+        QGraphicsTextItem* failedLabel;
+        /// Label for number of choices
+        QGraphicsTextItem* choicesLabel;
+        /// Label for number of open nodes
+        QGraphicsTextItem* openLabel;
+        /// Layout
+        QVBoxLayout* boxLayout;
 
-}}
+    public:
+        NodeStatInspector(QWidget* parent);
+        /// Update display to reflect information about \a n
+        void node(const VisualNode::NodeAllocator&, VisualNode* n, const Statistics& stat, bool finished);
+    public Q_SLOTS:
+        /// Show this window and bring it to the front
+        void showStats(void);
+    };
+
+}} // namespace Gecode::Gist
 
 #endif
 

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -31,7 +30,6 @@
  *
  */
 
-
 #include "test/set.hh"
 
 #include <cstdlib>
@@ -40,34 +38,33 @@
 
 namespace {
 
-  int set_runs = 0;
+    int set_runs = 0;
 
-  class SetSmokeTest : public Test::Set::SetTest {
-  public:
-    SetSmokeTest(void)
-      : Test::Set::SetTest("Public::Smoke",1,Gecode::IntSet(0,1)) {}
+    class SetSmokeTest : public Test::Set::SetTest {
+    public:
+        SetSmokeTest(void) : Test::Set::SetTest("Public::Smoke", 1, Gecode::IntSet(0, 1)) {}
 
-    bool solution(const Test::Set::SetAssignment&) const override {
-      return true;
-    }
+        bool
+        solution(const Test::Set::SetAssignment&) const override {
+            return true;
+        }
 
-    void post(Gecode::Space&, Gecode::SetVarArray&,
-              Gecode::IntVarArray&) override {
-      set_runs++;
-    }
-  } set_smoke_test;
+        void
+        post(Gecode::Space&, Gecode::SetVarArray&, Gecode::IntVarArray&) override {
+            set_runs++;
+        }
+    } set_smoke_test;
 
-}
+} // namespace
 
 int
 main(int argc, char* argv[]) {
-  const int result = Test::run_registered_tests(argc,argv);
-  if ((result != EXIT_SUCCESS) || (set_runs == 0)) {
-    std::cerr << "public-set-smoke: helper-backed test did not run"
-              << std::endl;
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+    const int result = Test::run_registered_tests(argc, argv);
+    if ((result != EXIT_SUCCESS) || (set_runs == 0)) {
+        std::cerr << "public-set-smoke: helper-backed test did not run" << std::endl;
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
 }
 
 // STATISTICS: test-set

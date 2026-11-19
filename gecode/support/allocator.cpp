@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil; -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -40,23 +39,23 @@
 
 namespace Gecode { namespace Support {
 
-  Allocator allocator;
+    Allocator allocator;
 
 #ifdef GECODE_MIMALLOC
-  void*
-  Allocator::alloc(size_t n) {
-    return mi_malloc(n);
-  }
-  void*
-  Allocator::realloc(void* p, size_t n) {
-    return mi_realloc(p,n);
-  }
-  void
-  Allocator::free(void* p) {
-    mi_free(p);
-  }
+    void*
+    Allocator::alloc(size_t n) {
+        return mi_malloc(n);
+    }
+    void*
+    Allocator::realloc(void* p, size_t n) {
+        return mi_realloc(p, n);
+    }
+    void
+    Allocator::free(void* p) {
+        mi_free(p);
+    }
 #endif
 
-}}
+}} // namespace Gecode::Support
 
 // STATISTICS: support-any

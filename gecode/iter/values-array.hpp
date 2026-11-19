@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,97 +32,100 @@
 
 namespace Gecode { namespace Iter { namespace Values {
 
-  /**
-   * \brief %Value iterator for array of integers
-   *
-   * Allows to iterate the integers as defined by an array where the
-   * values in the array must be sorted in increasing order.
-   * The integers can be iterated several times provided the iterator
-   * is %reset by the reset member function.
-   *
-   * \ingroup FuncIterValues
-   */
-  class Array  {
-  protected:
-    /// Array for values
-    int* v;
-    /// Current value
-    unsigned int c;
-    /// Number of values in array
-    unsigned int n;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Array(void);
-    /// Initialize with \a n values from \a v
-    Array(int* v, unsigned int n);
-    /// Initialize with \a n values from \a v
-    Array(int* v, int n);
-    /// Initialize with \a n ranges from \a v
-    void init(int* v, unsigned int n);
-    /// Initialize with \a n ranges from \a v
-    void init(int* v, int n);
-    //@}
+    /**
+     * \brief %Value iterator for array of integers
+     *
+     * Allows to iterate the integers as defined by an array where the
+     * values in the array must be sorted in increasing order.
+     * The integers can be iterated several times provided the iterator
+     * is %reset by the reset member function.
+     *
+     * \ingroup FuncIterValues
+     */
+    class Array {
+    protected:
+        /// Array for values
+        int* v;
+        /// Current value
+        unsigned int c;
+        /// Number of values in array
+        unsigned int n;
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator ++(void);
-    /// Reset iterator to start from beginning
-    void reset(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Array(void);
+        /// Initialize with \a n values from \a v
+        Array(int* v, unsigned int n);
+        /// Initialize with \a n values from \a v
+        Array(int* v, int n);
+        /// Initialize with \a n ranges from \a v
+        void init(int* v, unsigned int n);
+        /// Initialize with \a n ranges from \a v
+        void init(int* v, int n);
+        //@}
 
-    /// \name %Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a value or done
+        bool operator()(void) const;
+        /// Move iterator to next value (if possible)
+        void operator++(void);
+        /// Reset iterator to start from beginning
+        void reset(void);
+        //@}
 
+        /// \name %Value access
+        //@{
+        /// Return current value
+        int val(void) const;
+        //@}
+    };
 
-  forceinline
-  Array::Array(void) {}
+    forceinline
+    Array::Array(void) {}
 
-  forceinline
-  Array::Array(int* v0, unsigned int n0)
-    : v(v0), c(0U), n(n0) {}
+    forceinline
+    Array::Array(int* v0, unsigned int n0)
+        : v(v0), c(0U), n(n0) {}
 
-  forceinline
-  Array::Array(int* v0, int n0)
-    : v(v0), c(0U), n(static_cast<unsigned int>(n0)) {}
+    forceinline
+    Array::Array(int* v0, int n0)
+        : v(v0), c(0U), n(static_cast<unsigned int>(n0)) {}
 
-  forceinline void
-  Array::init(int* v0, unsigned int n0) {
-    v=v0; c=0U; n=n0;
-  }
+    forceinline void
+    Array::init(int* v0, unsigned int n0) {
+        v = v0;
+        c = 0U;
+        n = n0;
+    }
 
-  forceinline void
-  Array::init(int* v0, int n0) {
-    v=v0; c=0U; n=static_cast<unsigned int>(n0);
-  }
+    forceinline void
+    Array::init(int* v0, int n0) {
+        v = v0;
+        c = 0U;
+        n = static_cast<unsigned int>(n0);
+    }
 
-  forceinline void
-  Array::operator ++(void) {
-    c++;
-  }
-  forceinline bool
-  Array::operator ()(void) const {
-    return c<n;
-  }
-  forceinline void
-  Array::reset(void) {
-    c=0;
-  }
+    forceinline void
+    Array::operator++(void) {
+        c++;
+    }
+    forceinline bool
+    Array::operator()(void) const {
+        return c < n;
+    }
+    forceinline void
+    Array::reset(void) {
+        c = 0;
+    }
 
-  forceinline int
-  Array::val(void) const {
-    return v[c];
-  }
+    forceinline int
+    Array::val(void) const {
+        return v[c];
+    }
 
-}}}
+}}} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any
-

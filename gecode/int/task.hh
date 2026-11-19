@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,496 +37,502 @@
 
 namespace Gecode { namespace Int {
 
-  /// Class to define an optional from a mandatory task
-  template<class ManTask>
-  class ManToOptTask : public ManTask {
-  protected:
-    /// Boolean view whether task is mandatory (= 1) or not
-    Int::BoolView _m;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    ManToOptTask(void);
-    //@}
+    /// Class to define an optional from a mandatory task
+    template <class ManTask>
+    class ManToOptTask : public ManTask {
+    protected:
+        /// Boolean view whether task is mandatory (= 1) or not
+        Int::BoolView _m;
 
-    /// \name Value access
-    //@{
-    /// Whether task is mandatory
-    bool mandatory(void) const;
-    /// Whether task is excluded
-    bool excluded(void) const;
-    /// Whether task can still be optional
-    bool optional(void) const;
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        ManToOptTask(void);
+        //@}
 
-    //@{
-    /// Test whether task is assigned
-    bool assigned(void) const;
-    //@}
+        /// \name Value access
+        //@{
+        /// Whether task is mandatory
+        bool mandatory(void) const;
+        /// Whether task is excluded
+        bool excluded(void) const;
+        /// Whether task can still be optional
+        bool optional(void) const;
+        //@}
 
-    /// \name Value update
-    //@{
-    /// Mark task as mandatory
-    ModEvent mandatory(Space& home);
-    /// Mark task as excluded
-    ModEvent excluded(Space& home);
-    //@}
+        //@{
+        /// Test whether task is assigned
+        bool assigned(void) const;
+        //@}
 
-    /// \name Cloning
-    //@{
-    /// Update this task to be a clone of task \a t
-    void update(Space& home, ManToOptTask& t);
-    //@}
+        /// \name Value update
+        //@{
+        /// Mark task as mandatory
+        ModEvent mandatory(Space& home);
+        /// Mark task as excluded
+        ModEvent excluded(Space& home);
+        //@}
 
-    /// \name Dependencies
-    //@{
-    /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p, PropCond pc);
-    /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Schedule propagator \a p
-    void reschedule(Space& home, Propagator& p, PropCond pc);
-    //@}
-  };
+        /// \name Cloning
+        //@{
+        /// Update this task to be a clone of task \a t
+        void update(Space& home, ManToOptTask& t);
+        //@}
 
-}}
+        /// \name Dependencies
+        //@{
+        /// Subscribe propagator \a p to task
+        void subscribe(Space& home, Propagator& p, PropCond pc);
+        /// Cancel subscription of propagator \a p for task
+        void cancel(Space& home, Propagator& p, PropCond pc);
+        /// Schedule propagator \a p
+        void reschedule(Space& home, Propagator& p, PropCond pc);
+        //@}
+    };
+
+}} // namespace Gecode::Int
 
 #include <gecode/int/task/man-to-opt.hpp>
 
 namespace Gecode { namespace Int {
 
-  /// Task mapper: turns a task view into its dual
-  template<class TaskView>
-  class FwdToBwd : public TaskView {
-  public:
-    /// \name Value access
-    //@{
-    /// Return earliest start time
-    int est(void) const;
-    /// Return earliest completion time
-    int ect(void) const;
-    /// Return latest start time
-    int lst(void) const;
-    /// Return latest completion time
-    int lct(void) const;
-    /// Return minimum processing time
-    int pmin(void) const;
-    /// Return maximum processing time
-    int pmax(void) const;
-    //@}
+    /// Task mapper: turns a task view into its dual
+    template <class TaskView>
+    class FwdToBwd : public TaskView {
+    public:
+        /// \name Value access
+        //@{
+        /// Return earliest start time
+        int est(void) const;
+        /// Return earliest completion time
+        int ect(void) const;
+        /// Return latest start time
+        int lst(void) const;
+        /// Return latest completion time
+        int lct(void) const;
+        /// Return minimum processing time
+        int pmin(void) const;
+        /// Return maximum processing time
+        int pmax(void) const;
+        //@}
 
-    /// \name Value update
-    //@{
-    /// Update earliest start time to \a n
-    ModEvent est(Space& home, int n);
-    /// Update earliest completion time to \a n
-    ModEvent ect(Space& home, int n);
-    /// Update latest start time to \a n
-    ModEvent lst(Space& home, int n);
-    /// Update latest completion time to \a n
-    ModEvent lct(Space& home, int n);
-    /// Update such that task cannot run from \a e to \a l
-    ModEvent norun(Space& home, int e, int l);
-    //@}
-  };
+        /// \name Value update
+        //@{
+        /// Update earliest start time to \a n
+        ModEvent est(Space& home, int n);
+        /// Update earliest completion time to \a n
+        ModEvent ect(Space& home, int n);
+        /// Update latest start time to \a n
+        ModEvent lst(Space& home, int n);
+        /// Update latest completion time to \a n
+        ModEvent lct(Space& home, int n);
+        /// Update such that task cannot run from \a e to \a l
+        ModEvent norun(Space& home, int e, int l);
+        //@}
+    };
 
-}}
+}} // namespace Gecode::Int
 
 #include <gecode/int/task/fwd-to-bwd.hpp>
 
 namespace Gecode { namespace Int {
 
-  /**
-   * \brief Traits class for mapping task views to tasks
-   *
-   * Each task view must specialize this traits class and add a \code
-   * typedef \endcode for the task corresponding to this task view.
-   */
-  template<class TaskView>
-  class TaskViewTraits {};
+    /**
+     * \brief Traits class for mapping task views to tasks
+     *
+     * Each task view must specialize this traits class and add a \code
+     * typedef \endcode for the task corresponding to this task view.
+     */
+    template <class TaskView>
+    class TaskViewTraits {};
 
-  /**
-   * \brief Traits class for mapping tasks to task views
-   *
-   * Each task must specialize this traits class and add \code
-   * typedef \endcode for the task views corresponding to this task.
-   */
-  template<class Task>
-  class TaskTraits {};
+    /**
+     * \brief Traits class for mapping tasks to task views
+     *
+     * Each task must specialize this traits class and add \code
+     * typedef \endcode for the task views corresponding to this task.
+     */
+    template <class Task>
+    class TaskTraits {};
 
-}}
+}} // namespace Gecode::Int
 
 namespace Gecode { namespace Int {
 
-  /// Task array
-  template<class Task>
-  class TaskArray {
-  private:
-    /// Number of tasks (size)
-    int n;
-    /// Tasks
-    Task* t;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor (array of size 0)
-    TaskArray(void);
-    /// Allocate memory for \a n tasks (no initialization)
-    TaskArray(Space& home, int n);
-    /// Initialize from task array \a a (share elements)
-    TaskArray(const TaskArray<Task>& a);
-    /// Initialize from task array \a a (share elements)
-    const TaskArray<Task>& operator =(const TaskArray<Task>& a);
-    //@}
+    /// Task array
+    template <class Task>
+    class TaskArray {
+    private:
+        /// Number of tasks (size)
+        int n;
+        /// Tasks
+        Task* t;
 
-    /// \name Array size
-    //@{
-    /// Return size of array (number of elements)
-    int size(void) const;
-    /// Set size of array (number of elements) to \a n, must not be larger
-    void size(int n);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor (array of size 0)
+        TaskArray(void);
+        /// Allocate memory for \a n tasks (no initialization)
+        TaskArray(Space& home, int n);
+        /// Initialize from task array \a a (share elements)
+        TaskArray(const TaskArray<Task>& a);
+        /// Initialize from task array \a a (share elements)
+        const TaskArray<Task>& operator=(const TaskArray<Task>& a);
+        //@}
 
-    /// \name Array elements
-    //@{
-    /// Return task at position \a i
-    Task& operator [](int i);
-    /// Return task at position \a i
-    const Task& operator [](int i) const;
-    //@}
+        /// \name Array size
+        //@{
+        /// Return size of array (number of elements)
+        int size(void) const;
+        /// Set size of array (number of elements) to \a n, must not be larger
+        void size(int n);
+        //@}
 
-    /// \name Dependencies
-    //@{
-    /// Subscribe propagator \a p to all tasks
-    void subscribe(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
-    /// Cancel subscription of propagator \a p for all tasks
-    void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
-    /// Schedule propagator \a p
-    void reschedule(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
-    //@}
+        /// \name Array elements
+        //@{
+        /// Return task at position \a i
+        Task& operator[](int i);
+        /// Return task at position \a i
+        const Task& operator[](int i) const;
+        //@}
 
-    /// \name Cloning
-    //@{
-    /// Update array to be a clone of array \a a
-    void update(Space&, TaskArray& a);
-    //@}
+        /// \name Dependencies
+        //@{
+        /// Subscribe propagator \a p to all tasks
+        void subscribe(Space& home, Propagator& p, PropCond pc = Int::PC_INT_BND);
+        /// Cancel subscription of propagator \a p for all tasks
+        void cancel(Space& home, Propagator& p, PropCond pc = Int::PC_INT_BND);
+        /// Schedule propagator \a p
+        void reschedule(Space& home, Propagator& p, PropCond pc = Int::PC_INT_BND);
+        //@}
 
-  private:
-    static void* operator new(size_t);
-    static void  operator delete(void*,size_t);
-  };
+        /// \name Cloning
+        //@{
+        /// Update array to be a clone of array \a a
+        void update(Space&, TaskArray& a);
+        //@}
 
-  /**
-   * \brief Print array elements enclosed in curly brackets
-   * \relates TaskArray
-   */
-  template<class Char, class Traits, class Task>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os,
-              const TaskArray<Task>& t);
+    private:
+        static void* operator new(size_t);
+        static void operator delete(void*, size_t);
+    };
 
+    /**
+     * \brief Print array elements enclosed in curly brackets
+     * \relates TaskArray
+     */
+    template <class Char, class Traits, class Task>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const TaskArray<Task>& t);
 
-  /// Task view array
-  template<class TaskView>
-  class TaskViewArray {
-  protected:
-    /// The underlying task type
-    typedef typename TaskViewTraits<TaskView>::Task Task;
-    /// Access to task array
-    TaskArray<Task>& t;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Initialize from task array \a a
-    TaskViewArray(TaskArray<Task>& t);
-    //@}
+    /// Task view array
+    template <class TaskView>
+    class TaskViewArray {
+    protected:
+        /// The underlying task type
+        typedef typename TaskViewTraits<TaskView>::Task Task;
+        /// Access to task array
+        TaskArray<Task>& t;
 
-    /// \name Array information
-    //@{
-    /// Return size of array (number of elements)
-    int size(void) const;
-    /// Set size of array (number of elements) to \a n, must not be larger
-    void size(int n);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Initialize from task array \a a
+        TaskViewArray(TaskArray<Task>& t);
+        //@}
 
-    /// \name Array elements
-    //@{
-    /// Return task view at position \a i
-    TaskView& operator [](int i);
-    /// Return task view at position \a i
-    const TaskView& operator [](int i) const;
-    //@}
-  private:
-    static void* operator new(size_t);
-    static void  operator delete(void*,size_t);
-  };
+        /// \name Array information
+        //@{
+        /// Return size of array (number of elements)
+        int size(void) const;
+        /// Set size of array (number of elements) to \a n, must not be larger
+        void size(int n);
+        //@}
 
-  /**
-   * \brief Print array elements enclosed in curly brackets
-   * \relates TaskViewArray
-   */
-  template<class Char, class Traits, class TaskView>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os,
-              const TaskViewArray<TaskView>& t);
+        /// \name Array elements
+        //@{
+        /// Return task view at position \a i
+        TaskView& operator[](int i);
+        /// Return task view at position \a i
+        const TaskView& operator[](int i) const;
+        //@}
+    private:
+        static void* operator new(size_t);
+        static void operator delete(void*, size_t);
+    };
 
-}}
+    /**
+     * \brief Print array elements enclosed in curly brackets
+     * \relates TaskViewArray
+     */
+    template <class Char, class Traits, class TaskView>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os,
+                                                 const TaskViewArray<TaskView>& t);
+
+}} // namespace Gecode::Int
 
 #include <gecode/int/task/array.hpp>
 
 namespace Gecode { namespace Int {
 
-  /// How to sort tasks
-  enum SortTaskOrder {
-    STO_EST, ///< Sort by earliest start times
-    STO_ECT, ///< Sort by earliest completion times
-    STO_LST, ///< Sort by latest start times
-    STO_LCT  ///< Sort by latest completion times
-  };
+    /// How to sort tasks
+    enum SortTaskOrder {
+        STO_EST, ///< Sort by earliest start times
+        STO_ECT, ///< Sort by earliest completion times
+        STO_LST, ///< Sort by latest start times
+        STO_LCT  ///< Sort by latest completion times
+    };
 
-  /// Sort task view array \a t according to \a sto and \a inc (increasing or decreasing)
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  void sort(TaskViewArray<TaskView>& t);
+    /// Sort task view array \a t according to \a sto and \a inc (increasing or decreasing)
+    template <class TaskView, SortTaskOrder sto, bool inc>
+    void sort(TaskViewArray<TaskView>& t);
 
-  /// Initialize and sort \a map for task view array \a t according to \a sto and \a inc (increasing or decreasing)
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  void sort(int* map, const TaskViewArray<TaskView>& t);
+    /// Initialize and sort \a map for task view array \a t according to \a sto and \a inc (increasing or decreasing)
+    template <class TaskView, SortTaskOrder sto, bool inc>
+    void sort(int* map, const TaskViewArray<TaskView>& t);
 
-  /// Sort \a map with size \a n for task view array \a t according to \a sto and \a inc (increasing or decreasing)
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  void sort(int* map, int n, const TaskViewArray<TaskView>& t);
+    /// Sort \a map with size \a n for task view array \a t according to \a sto and \a inc (increasing or decreasing)
+    template <class TaskView, SortTaskOrder sto, bool inc>
+    void sort(int* map, int n, const TaskViewArray<TaskView>& t);
 
-}}
+}} // namespace Gecode::Int
 
 #include <gecode/int/task/sort.hpp>
 
 namespace Gecode { namespace Int {
 
-  /// Allows to iterate over task views according to a specified order
-  template<class TaskView, SortTaskOrder sto, bool inc>
-  class TaskViewIter {
-  protected:
-    /// Map for iteration order
-    int* map;
-    /// Current position
-    int i;
-    /// Default constructor (no initialization)
-    TaskViewIter(void);
-  public:
-    /// Initialize iterator
-    TaskViewIter(Region& r, const TaskViewArray<TaskView>& t);
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a task
-    bool operator ()(void) const;
-    /// How many tasks are left to be iterated
-    int left(void) const;
-    /// Move iterator to next task
-    void operator ++(void);
-    //@}
+    /// Allows to iterate over task views according to a specified order
+    template <class TaskView, SortTaskOrder sto, bool inc>
+    class TaskViewIter {
+    protected:
+        /// Map for iteration order
+        int* map;
+        /// Current position
+        int i;
+        /// Default constructor (no initialization)
+        TaskViewIter(void);
 
-    /// \name %Task access
-    //@{
-    /// Return current task position
-    int task(void) const;
-    //@}
-  };
+    public:
+        /// Initialize iterator
+        TaskViewIter(Region& r, const TaskViewArray<TaskView>& t);
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a task
+        bool operator()(void) const;
+        /// How many tasks are left to be iterated
+        int left(void) const;
+        /// Move iterator to next task
+        void operator++(void);
+        //@}
 
-  /// Allows to iterate over mandatory task views according to a specified order
-  template<class OptTaskView, SortTaskOrder sto, bool inc>
-  class ManTaskViewIter : public TaskViewIter<OptTaskView,sto,inc> {
-  protected:
-    using TaskViewIter<OptTaskView,sto,inc>::map;
-    using TaskViewIter<OptTaskView,sto,inc>::i;
-  public:
-    /// Initialize iterator with mandatory tasks
-    ManTaskViewIter(Region& r, const TaskViewArray<OptTaskView>& t);
-  };
+        /// \name %Task access
+        //@{
+        /// Return current task position
+        int task(void) const;
+        //@}
+    };
 
-}}
+    /// Allows to iterate over mandatory task views according to a specified order
+    template <class OptTaskView, SortTaskOrder sto, bool inc>
+    class ManTaskViewIter : public TaskViewIter<OptTaskView, sto, inc> {
+    protected:
+        using TaskViewIter<OptTaskView, sto, inc>::map;
+        using TaskViewIter<OptTaskView, sto, inc>::i;
+
+    public:
+        /// Initialize iterator with mandatory tasks
+        ManTaskViewIter(Region& r, const TaskViewArray<OptTaskView>& t);
+    };
+
+}} // namespace Gecode::Int
 
 #include <gecode/int/task/iter.hpp>
 
 namespace Gecode { namespace Int {
 
-  /// Safe addition in case \a x is -Int::Limits::infinity
-  int plus(int x, int y);
+    /// Safe addition in case \a x is -Int::Limits::infinity
+    int plus(int x, int y);
 
-  /// Safe addition in case \a x is -Int::Limits::llinfinity
-  long long int plus(long long int x, long long int y);
+    /// Safe addition in case \a x is -Int::Limits::llinfinity
+    long long int plus(long long int x, long long int y);
 
-  /// Safe addition in case \a x is -Int::Limits::double_infinity
-  double plus(double x, double y);
+    /// Safe addition in case \a x is -Int::Limits::double_infinity
+    double plus(double x, double y);
 
-  /// Task trees for task views with node type \a Node
-  template<class TaskView, class Node>
-  class TaskTree {
-    template<class,class> friend class TaskTree;
-  protected:
-    /// The tasks from which the tree is computed
-    const TaskViewArray<TaskView>& tasks;
-    /// Task nodes
-    Node* node;
-    /// Map task number to leaf node number in right order
-    int* _leaf;
+    /// Task trees for task views with node type \a Node
+    template <class TaskView, class Node>
+    class TaskTree {
+        template <class, class>
+        friend class TaskTree;
 
-    /// Return number of inner nodes
-    int n_inner(void) const;
-    /// Return number of nodes for balanced binary tree
-    int n_nodes(void) const;
-    /// Whether node \a i is index of root
-    static bool n_root(int i);
-    /// Whether node \a i is leaf
-    bool n_leaf(int i) const;
-    /// Return index of left child of node \a i
-    static int n_left(int i);
-    /// Test whether node \a i is a left child
-    static bool left(int i);
-    /// Return index of right child of node \a i
-    static int n_right(int i);
-    /// Test whether node \a i is a right child
-    static bool right(int i);
-    /// Return index of parent of node \a i
-    static int n_parent(int i);
-  protected:
-    /// Return leaf for task \a i
-    Node& leaf(int i);
-    /// Return root node
-    const Node& root(void) const;
-    /// Update tree after leaf for task \a i has changed (\a l whether i refers to a leaf)
-    void update(int i, bool l=true);
-    /// Initialize tree after leaves have been initialized
-    void init(void);
-    /// Update all inner nodes of tree after leaves have been initialized
-    void update(void);
-    /// Initialize tree for tasks \a t
-    TaskTree(Region& r, const TaskViewArray<TaskView>& t);
-    /// Initialize tree using tree \a t
-    template<class Node2> TaskTree(Region& r,
-                                   const TaskTree<TaskView,Node2>& t);
-  };
+    protected:
+        /// The tasks from which the tree is computed
+        const TaskViewArray<TaskView>& tasks;
+        /// Task nodes
+        Node* node;
+        /// Map task number to leaf node number in right order
+        int* _leaf;
 
-}}
+        /// Return number of inner nodes
+        int n_inner(void) const;
+        /// Return number of nodes for balanced binary tree
+        int n_nodes(void) const;
+        /// Whether node \a i is index of root
+        static bool n_root(int i);
+        /// Whether node \a i is leaf
+        bool n_leaf(int i) const;
+        /// Return index of left child of node \a i
+        static int n_left(int i);
+        /// Test whether node \a i is a left child
+        static bool left(int i);
+        /// Return index of right child of node \a i
+        static int n_right(int i);
+        /// Test whether node \a i is a right child
+        static bool right(int i);
+        /// Return index of parent of node \a i
+        static int n_parent(int i);
+
+    protected:
+        /// Return leaf for task \a i
+        Node& leaf(int i);
+        /// Return root node
+        const Node& root(void) const;
+        /// Update tree after leaf for task \a i has changed (\a l whether i refers to a leaf)
+        void update(int i, bool l = true);
+        /// Initialize tree after leaves have been initialized
+        void init(void);
+        /// Update all inner nodes of tree after leaves have been initialized
+        void update(void);
+        /// Initialize tree for tasks \a t
+        TaskTree(Region& r, const TaskViewArray<TaskView>& t);
+        /// Initialize tree using tree \a t
+        template <class Node2>
+        TaskTree(Region& r, const TaskTree<TaskView, Node2>& t);
+    };
+
+}} // namespace Gecode::Int
 
 #include <gecode/int/task/tree.hpp>
 
 namespace Gecode { namespace Int {
 
-  /**
-   * \brief %Propagator for tasks
-   *
-   * Requires \code #include <gecode/int/task.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class Task, class PL>
-  class TaskProp : public Propagator {
-  protected:
-    /// Tasks
-    TaskArray<Task> t;
-    /// Constructor for creation
-    TaskProp(Home home, TaskArray<Task>& t);
-    /// Constructor for cloning \a p
-    TaskProp(Space& home, TaskProp<Task,PL>& p);
-  public:
-    /// Cost function (defined as high linear)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
+    /**
+     * \brief %Propagator for tasks
+     *
+     * Requires \code #include <gecode/int/task.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class Task, class PL>
+    class TaskProp : public Propagator {
+    protected:
+        /// Tasks
+        TaskArray<Task> t;
+        /// Constructor for creation
+        TaskProp(Home home, TaskArray<Task>& t);
+        /// Constructor for cloning \a p
+        TaskProp(Space& home, TaskProp<Task, PL>& p);
 
-  /// Purge optional tasks that are excluded and possibly rewrite propagator
-  template<class OptTask, class PL>
-  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
+    public:
+        /// Cost function (defined as high linear)
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+    };
 
-  /// Purge optional tasks that are excluded and possibly rewrite propagator
-  template<class OptTask, class PL, class Cap>
-  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t, Cap c);
+    /// Purge optional tasks that are excluded and possibly rewrite propagator
+    template <class OptTask, class PL>
+    ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
-  /// Class for defining basic propagation level
-  class PLB {
-  public:
-    /// Perform basic propagation
-    static const bool basic = true;
-    /// Do not perform advanced propagation
-    static const bool advanced = false;
-    /// For basic propagation, domain operations are needed
-    static const PropCond pc = PC_INT_DOM;
-  };
+    /// Purge optional tasks that are excluded and possibly rewrite propagator
+    template <class OptTask, class PL, class Cap>
+    ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t, Cap c);
 
-  /// Class for defining advanced propagation level
-  class PLA {
-  public:
-    /// Perform basic propagation
-    static const bool basic = false;
-    /// Do not perform advanced propagation
-    static const bool advanced = true;
-    /// For basic propagation, domain operations are needed
-    static const PropCond pc = PC_INT_BND;
-  };
+    /// Class for defining basic propagation level
+    class PLB {
+    public:
+        /// Perform basic propagation
+        static const bool basic = true;
+        /// Do not perform advanced propagation
+        static const bool advanced = false;
+        /// For basic propagation, domain operations are needed
+        static const PropCond pc = PC_INT_DOM;
+    };
 
-  /// Class for defining basic and advanced propagation level
-  class PLBA {
-  public:
-    /// Perform basic propagation
-    static const bool basic = true;
-    /// Do not perform advanced propagation
-    static const bool advanced = true;
-    /// For basic propagation, domain operations are needed
-    static const PropCond pc = PC_INT_DOM;
-  };
+    /// Class for defining advanced propagation level
+    class PLA {
+    public:
+        /// Perform basic propagation
+        static const bool basic = false;
+        /// Do not perform advanced propagation
+        static const bool advanced = true;
+        /// For basic propagation, domain operations are needed
+        static const PropCond pc = PC_INT_BND;
+    };
 
-}}
+    /// Class for defining basic and advanced propagation level
+    class PLBA {
+    public:
+        /// Perform basic propagation
+        static const bool basic = true;
+        /// Do not perform advanced propagation
+        static const bool advanced = true;
+        /// For basic propagation, domain operations are needed
+        static const PropCond pc = PC_INT_DOM;
+    };
+
+}} // namespace Gecode::Int
 
 #include <gecode/int/task/prop.hpp>
 #include <gecode/int/task/purge.hpp>
 
 namespace Gecode { namespace Int {
 
-  /// Time-tabling event for task
-  class Event {
-  public:
-    /// Event type for task with order in which they are processed
-    enum Type {
-      LRT = 0, ///< Latest required time of task
-      LCT = 1, ///< Latest completion time of task
-      EST = 2, ///< Earliest start time of task
-      ZRO = 3, ///< Zero-length task start time
-      ERT = 4, ///< Earliest required time of task
-      END = 5  ///< End marker
+    /// Time-tabling event for task
+    class Event {
+    public:
+        /// Event type for task with order in which they are processed
+        enum Type {
+            LRT = 0, ///< Latest required time of task
+            LCT = 1, ///< Latest completion time of task
+            EST = 2, ///< Earliest start time of task
+            ZRO = 3, ///< Zero-length task start time
+            ERT = 4, ///< Earliest required time of task
+            END = 5  ///< End marker
+        };
+
+    protected:
+        /// Combines type and number of task
+        unsigned int ei;
+        /// Time of event
+        int t;
+
+    public:
+        /// Initialize event
+        void init(Type e, int t, int i);
+        /// Return event type
+        Type type(void) const;
+        /// Return event time
+        int time(void) const;
+        /// Return event index
+        int idx(void) const;
+        /// Order among events
+        bool operator<(const Event& e) const;
+        /// Allocate from \a r and initialize event array with tasks \a t
+        template <class Task>
+        static Event* events(Region& r, const TaskArray<Task>& t, bool& assigned);
+        /// Allocate from \a r and initialize event array with assigned tasks \a t only
+        template <class Task>
+        static Event* events(Region& r, const TaskArray<Task>& t);
     };
-  protected:
-    /// Combines type and number of task
-    unsigned int ei;
-    /// Time of event
-    int t;
-  public:
-    /// Initialize event
-    void init(Type e, int t, int i);
-    /// Return event type
-    Type type(void) const;
-    /// Return event time
-    int time(void) const;
-    /// Return event index
-    int idx(void) const;
-    /// Order among events
-    bool operator <(const Event& e) const;
-    /// Allocate from \a r and initialize event array with tasks \a t
-    template<class Task>
-    static Event* events(Region& r, const TaskArray<Task>& t, bool& assigned);
-    /// Allocate from \a r and initialize event array with assigned tasks \a t only
-    template<class Task>
-    static Event* events(Region& r, const TaskArray<Task>& t);
-  };
 
-  /// Print event \a e on stream \a os
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const Event& e);
+    /// Print event \a e on stream \a os
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const Event& e);
 
-}}
+}} // namespace Gecode::Int
 
 #include <gecode/int/task/event.hpp>
 

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,51 +32,56 @@
 
 namespace Gecode {
 
-  /*
-   * Operations for linear expressions
-   *
-   */
-  forceinline
-  LinIntRel::LinIntRel(void) {}
+    /*
+     * Operations for linear expressions
+     *
+     */
+    forceinline
+    LinIntRel::LinIntRel(void) {}
 
-  forceinline
-  LinIntRel::LinIntRel(const LinIntExpr& l, IntRelType irt0, const LinIntExpr& r)
-    : e(l-r), irt(irt0) {}
+    forceinline
+    LinIntRel::LinIntRel(const LinIntExpr& l, IntRelType irt0, const LinIntExpr& r)
+        : e(l - r), irt(irt0) {}
 
-  forceinline
-  LinIntRel::LinIntRel(const LinIntExpr& l, IntRelType irt0, int r)
-    : e(l-r), irt(irt0) {}
+    forceinline
+    LinIntRel::LinIntRel(const LinIntExpr& l, IntRelType irt0, int r)
+        : e(l - r), irt(irt0) {}
 
-  forceinline
-  LinIntRel::LinIntRel(int l, IntRelType irt0, const LinIntExpr& r)
-    : e(l-r), irt(irt0) {}
+    forceinline
+    LinIntRel::LinIntRel(int l, IntRelType irt0, const LinIntExpr& r)
+        : e(l - r), irt(irt0) {}
 
-  forceinline IntRelType
-  LinIntRel::neg(IntRelType irt) {
-    switch (irt) {
-    case IRT_EQ: return IRT_NQ;
-    case IRT_NQ: return IRT_EQ;
-    case IRT_LQ: return IRT_GR;
-    case IRT_LE: return IRT_GQ;
-    case IRT_GQ: return IRT_LE;
-    case IRT_GR: return IRT_LQ;
-    default: GECODE_NEVER;
+    forceinline IntRelType
+    LinIntRel::neg(IntRelType irt) {
+        switch (irt) {
+        case IRT_EQ:
+            return IRT_NQ;
+        case IRT_NQ:
+            return IRT_EQ;
+        case IRT_LQ:
+            return IRT_GR;
+        case IRT_LE:
+            return IRT_GQ;
+        case IRT_GQ:
+            return IRT_LE;
+        case IRT_GR:
+            return IRT_LQ;
+        default:
+            GECODE_NEVER;
+        }
+        return IRT_LQ;
     }
-    return IRT_LQ;
-  }
 
-  forceinline void
-  LinIntRel::post(Home home, bool t,
-                  const IntPropLevels& ipls) const {
-    e.post(home,t ? irt : neg(irt),ipls);
-  }
+    forceinline void
+    LinIntRel::post(Home home, bool t, const IntPropLevels& ipls) const {
+        e.post(home, t ? irt : neg(irt), ipls);
+    }
 
-  forceinline void
-  LinIntRel::post(Home home, const BoolVar& b, bool t,
-                  const IntPropLevels& ipls) const {
-    e.post(home,t ? irt : neg(irt),b,ipls);
-  }
+    forceinline void
+    LinIntRel::post(Home home, const BoolVar& b, bool t, const IntPropLevels& ipls) const {
+        e.post(home, t ? irt : neg(irt), b, ipls);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: minimodel-any

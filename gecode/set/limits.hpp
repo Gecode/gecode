@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,24 +34,22 @@ namespace Gecode { namespace Set {
 
     inline void
     Limits::check(int n, const char* l) {
-      if ((n < min) || (n > max))
-        throw OutOfLimits(l);
+        if ((n < min) || (n > max))
+            throw OutOfLimits(l);
     }
 
     inline void
     Limits::check(unsigned int n, const char* l) {
-      if (n > card)
-        throw OutOfLimits(l);
+        if (n > card)
+            throw OutOfLimits(l);
     }
 
     inline void
     Limits::check(const IntSet& s, const char* l) {
-      if ((s.size() > 0) &&
-          ((s.min() < min) || (s.max() > max) ||
-           (s.min() > max) || (s.max() < min)))
-        throw OutOfLimits(l);
+        if ((s.size() > 0) && ((s.min() < min) || (s.max() > max) || (s.min() > max) || (s.max() < min)))
+            throw OutOfLimits(l);
     }
 
-}}
+}} // namespace Gecode::Set
 
 // STATISTICS: set-var

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,35 +35,33 @@
 
 namespace Gecode { namespace Float {
 
-  /// Class for posting equalities for non-relaxed variables
-  class Relax {
-  public:
-    /// Post the actual equality for non-relaxed variables
-    ExecStatus operator ()(Home home, FloatVar x, FloatVar sx);
-  };
+    /// Class for posting equalities for non-relaxed variables
+    class Relax {
+    public:
+        /// Post the actual equality for non-relaxed variables
+        ExecStatus operator()(Home home, FloatVar x, FloatVar sx);
+    };
 
-  forceinline ExecStatus
-  Relax::operator ()(Home home, FloatVar x, FloatVar sx) {
-    FloatView xv(x);
-    return me_failed(xv.eq(home,sx.val())) ? ES_FAILED : ES_OK;
-  }
+    forceinline ExecStatus
+    Relax::operator()(Home home, FloatVar x, FloatVar sx) {
+        FloatView xv(x);
+        return me_failed(xv.eq(home, sx.val())) ? ES_FAILED : ES_OK;
+    }
 
-}}
+}} // namespace Gecode::Float
 
 namespace Gecode {
 
-  void
-  relax(Home home, const FloatVarArgs& x, const FloatVarArgs& sx,
-        Rnd r, double p) {
-    if (x.size() != sx.size())
-      throw Float::ArgumentSizeMismatch("Float::relax");
-    if ((p < 0.0) || (p > 1.0))
-      throw Float::OutOfLimits("Float::relax");
-    Float::Relax fr;
-    Search::relax<FloatVarArgs,Float::Relax>(home,x,sx,r,p,fr);
-  }
+    void
+    relax(Home home, const FloatVarArgs& x, const FloatVarArgs& sx, Rnd r, double p) {
+        if (x.size() != sx.size())
+            throw Float::ArgumentSizeMismatch("Float::relax");
+        if ((p < 0.0) || (p > 1.0))
+            throw Float::OutOfLimits("Float::relax");
+        Float::Relax fr;
+        Search::relax<FloatVarArgs, Float::Relax>(home, x, sx, r, p, fr);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-other
-

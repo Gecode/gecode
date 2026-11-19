@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -40,88 +39,85 @@
 
 namespace Gecode { namespace Int {
 
-  /**
-   * \brief Class for pair of index and view
-   *
-   */
-  template<class View>
-  class IdxView {
-  public:
-    /// The index
-    int idx;
-    /// The view
-    View view;
-    /// Allocate memory for \a n index-view pairs
-    static IdxView* allocate(Space& home, int n);
-  };
+    /**
+     * \brief Class for pair of index and view
+     *
+     */
+    template <class View>
+    class IdxView {
+    public:
+        /// The index
+        int idx;
+        /// The view
+        View view;
+        /// Allocate memory for \a n index-view pairs
+        static IdxView* allocate(Space& home, int n);
+    };
 
-  /// Class to map VarArg type to view
-  template<class View>
-  class ViewToVarArg {};
-
-  /**
-   * \brief An array of IdxView pairs
-   *
-   */
-  template<class View>
-  class IdxViewArray {
-  private:
-    /// The actual array
-    IdxView<View>* xs;
-    /// The size of the array
-    int n;
-  public:
-    /// Default constructor
-    IdxViewArray(void);
-    /// Copy constructor
-    IdxViewArray(const IdxViewArray<View>&);
-    /// Construct an IdxViewArray from \a x
-    IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& x);
-    /// Construct an IdxViewArray of size \a n
-    IdxViewArray(Space& home, int n);
-
-    /// Return the current size
-    int size(void) const;
-    /// Set the size to \a n
-    void size(int n);
-
-    /// Access element \a n
-    IdxView<View>& operator [](int n);
-    /// Access element \a n
-    const IdxView<View>& operator [](int) const;
+    /// Class to map VarArg type to view
+    template <class View>
+    class ViewToVarArg {};
 
     /**
-     * Subscribe propagator \a p with propagation condition \a pc
-     * to all elements of the array.
+     * \brief An array of IdxView pairs
+     *
      */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+    template <class View>
+    class IdxViewArray {
+    private:
+        /// The actual array
+        IdxView<View>* xs;
+        /// The size of the array
+        int n;
+
+    public:
+        /// Default constructor
+        IdxViewArray(void);
+        /// Copy constructor
+        IdxViewArray(const IdxViewArray<View>&);
+        /// Construct an IdxViewArray from \a x
+        IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& x);
+        /// Construct an IdxViewArray of size \a n
+        IdxViewArray(Space& home, int n);
+
+        /// Return the current size
+        int size(void) const;
+        /// Set the size to \a n
+        void size(int n);
+
+        /// Access element \a n
+        IdxView<View>& operator[](int n);
+        /// Access element \a n
+        const IdxView<View>& operator[](int) const;
+
+        /**
+         * Subscribe propagator \a p with propagation condition \a pc
+         * to all elements of the array.
+         */
+        void subscribe(Space& home, Propagator& p, PropCond pc, bool process = true);
+        /**
+         * Cancel subscription of propagator \a p with propagation condition \a pc
+         * for all elements of the array.
+         */
+        void cancel(Space& home, Propagator& p, PropCond pc);
+        /// Schedule propagator \a p
+        void reschedule(Space& home, Propagator& p, PropCond pc);
+
+        /// Cloning
+        void update(Space& home, IdxViewArray<View>& x);
+    };
+
     /**
-     * Cancel subscription of propagator \a p with propagation condition \a pc
-     * for all elements of the array.
+     * \brief Print array elements enclosed in curly brackets
+     * \relates IdxViewArray
      */
-    void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Schedule propagator \a p
-    void reschedule(Space& home, Propagator& p, PropCond pc);
+    template <class Char, class Traits, class View>
+    std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const IdxViewArray<View>& x);
 
-    /// Cloning
-    void update(Space& home, IdxViewArray<View>& x);
-  };
-
-  /**
-   * \brief Print array elements enclosed in curly brackets
-   * \relates IdxViewArray
-   */
-  template<class Char, class Traits, class View>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os,
-              const IdxViewArray<View>& x);
-
-}}
+}} // namespace Gecode::Int
 
 #include <gecode/int/idx-view.hpp>
 
 #endif
 
-
 // STATISTICS: int-prop
-

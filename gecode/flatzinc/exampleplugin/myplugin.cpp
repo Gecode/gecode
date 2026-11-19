@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,11 +34,11 @@
 
 #include "myplugin.hh"
 
-void MyPlugin::branch(Gecode::FlatZinc::FlatZincSpace& s,
-                  Gecode::FlatZinc::AST::Call* c) {
-  std::cerr << "MyPlugin::branch ";
-  c->print(std::cerr);
-  std::cerr << std::endl;
+void
+MyPlugin::branch(Gecode::FlatZinc::FlatZincSpace& s, Gecode::FlatZinc::AST::Call* c) {
+    std::cerr << "MyPlugin::branch ";
+    c->print(std::cerr);
+    std::cerr << std::endl;
 }
 
 Q_EXPORT_PLUGIN2(myplugin, MyPlugin)

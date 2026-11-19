@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,13 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("queens::cp2",
-"predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest("queens::cp2", "predicate all_different_int(array [int] of var int: x);\n\
 predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -81,15 +76,14 @@ constraint int_lin_eq([-1, 1], [INT____00012, q[5]], -3) :: defines_var(INT____0
 constraint int_lin_eq([-1, 1], [INT____00013, q[6]], -2) :: defines_var(INT____00013);\n\
 constraint int_lin_eq([-1, 1], [INT____00014, q[7]], -1) :: defines_var(INT____00014);\n\
 solve  :: int_search(q, first_fail, indomain_min, complete) satisfy;\n\
-", "q = array1d(1..8, [1, 5, 8, 6, 3, 7, 2, 4]);\n\
+",
+                                   "q = array1d(1..8, [1, 5, 8, 6, 3, 7, 2, 4]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

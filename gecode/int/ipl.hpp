@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,18 +32,16 @@
 
 namespace Gecode {
 
-  forceinline IntPropLevel
-  vbd(IntPropLevel ipl) {
-    return static_cast<IntPropLevel>(ipl &
-                                     (IPL_DEF | IPL_VAL | IPL_BND | IPL_DOM));
-  }
+    forceinline IntPropLevel
+    vbd(IntPropLevel ipl) {
+        return static_cast<IntPropLevel>(ipl & (IPL_DEF | IPL_VAL | IPL_BND | IPL_DOM));
+    }
 
-  forceinline IntPropLevel
-  ba(IntPropLevel ipl) {
-    return static_cast<IntPropLevel>(ipl & IPL_BASIC_ADVANCED);
-  }
+    forceinline IntPropLevel
+    ba(IntPropLevel ipl) {
+        return static_cast<IntPropLevel>(ipl & IPL_BASIC_ADVANCED);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-post
-

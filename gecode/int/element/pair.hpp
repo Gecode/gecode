@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,67 +34,68 @@
 
 namespace Gecode { namespace Int { namespace Element {
 
-  forceinline
-  Pair::Pair(Home home, IntView x0, IntView x1, IntView x2, int w0)
-    : TernaryPropagator<IntView,PC_INT_DOM>(home,x0,x1,x2), w(w0) {}
+    forceinline
+    Pair::Pair(Home home, IntView x0, IntView x1, IntView x2, int w0)
+        : TernaryPropagator<IntView, PC_INT_DOM>(home, x0, x1, x2), w(w0) {}
 
-  inline ExecStatus
-  Pair::post(Home home, IntView x0, IntView x1, IntView x2,
-             int w, int h) {
-    GECODE_ME_CHECK(x0.gq(home,0)); GECODE_ME_CHECK(x0.le(home,w));
-    GECODE_ME_CHECK(x1.gq(home,0)); GECODE_ME_CHECK(x1.le(home,h));
-    GECODE_ME_CHECK(x2.gq(home,0)); GECODE_ME_CHECK(x2.le(home,w*h));
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,x0.val()+w*x1.val()));
-    } else if (x1.assigned()) {
-      OffsetView x0x1w(x0,x1.val()*w);
-      return Rel::EqDom<OffsetView,IntView>::post(home,x0x1w,x2);
-    } else if (x2.assigned()) {
-      GECODE_ME_CHECK(x0.eq(home,x2.val() % w));
-      GECODE_ME_CHECK(x1.eq(home,static_cast<int>(x2.val() / w)));
-    } else {
-      assert(!shared(x0,x2) && !shared(x1,x2));
-      (void) new (home) Pair(home,x0,x1,x2,w);
+    inline ExecStatus
+    Pair::post(Home home, IntView x0, IntView x1, IntView x2, int w, int h) {
+        GECODE_ME_CHECK(x0.gq(home, 0));
+        GECODE_ME_CHECK(x0.le(home, w));
+        GECODE_ME_CHECK(x1.gq(home, 0));
+        GECODE_ME_CHECK(x1.le(home, h));
+        GECODE_ME_CHECK(x2.gq(home, 0));
+        GECODE_ME_CHECK(x2.le(home, w * h));
+        if (x0.assigned() && x1.assigned()) {
+            GECODE_ME_CHECK(x2.eq(home, x0.val() + w * x1.val()));
+        } else if (x1.assigned()) {
+            OffsetView x0x1w(x0, x1.val() * w);
+            return Rel::EqDom<OffsetView, IntView>::post(home, x0x1w, x2);
+        } else if (x2.assigned()) {
+            GECODE_ME_CHECK(x0.eq(home, x2.val() % w));
+            GECODE_ME_CHECK(x1.eq(home, static_cast<int>(x2.val() / w)));
+        } else {
+            assert(!shared(x0, x2) && !shared(x1, x2));
+            (void)new (home) Pair(home, x0, x1, x2, w);
+        }
+        return ES_OK;
     }
-    return ES_OK;
-  }
 
-  forceinline
-  Pair::Pair(Space& home, Pair& p)
-    : TernaryPropagator<IntView,PC_INT_DOM>(home,p), w(p.w) {}
+    forceinline
+    Pair::Pair(Space& home, Pair& p)
+        : TernaryPropagator<IntView, PC_INT_DOM>(home, p), w(p.w) {}
 
-  forceinline
-  PairWithOffsets::PairWithOffsets(Home home, OffsetView x0, OffsetView x1,
-                                   IntView x2, int w0)
-    : TernaryPropagator<OffsetView,PC_INT_DOM>(home,x0,x1,OffsetView(x2,0)),
-      w(w0) {}
+    forceinline
+    PairWithOffsets::PairWithOffsets(Home home, OffsetView x0, OffsetView x1, IntView x2, int w0)
+        : TernaryPropagator<OffsetView, PC_INT_DOM>(home, x0, x1, OffsetView(x2, 0)), w(w0) {}
 
-  inline ExecStatus
-  PairWithOffsets::post(Home home, OffsetView x0, OffsetView x1, IntView x2,
-                        int w, int h) {
-    GECODE_ME_CHECK(x0.gq(home,0)); GECODE_ME_CHECK(x0.le(home,w));
-    GECODE_ME_CHECK(x1.gq(home,0)); GECODE_ME_CHECK(x1.le(home,h));
-    GECODE_ME_CHECK(x2.gq(home,0)); GECODE_ME_CHECK(x2.le(home,w*h));
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,x0.val()+w*x1.val()));
-    } else if (x1.assigned()) {
-      OffsetView x0x1w(x0.base(),x0.offset()+x1.val()*w);
-      return Rel::EqDom<OffsetView,IntView>::post(home,x0x1w,x2);
-    } else if (x2.assigned()) {
-      GECODE_ME_CHECK(x0.eq(home,x2.val() % w));
-      GECODE_ME_CHECK(x1.eq(home,static_cast<int>(x2.val() / w)));
-    } else {
-      assert(!shared(x0,x2) && !shared(x1,x2));
-      (void) new (home) PairWithOffsets(home,x0,x1,x2,w);
+    inline ExecStatus
+    PairWithOffsets::post(Home home, OffsetView x0, OffsetView x1, IntView x2, int w, int h) {
+        GECODE_ME_CHECK(x0.gq(home, 0));
+        GECODE_ME_CHECK(x0.le(home, w));
+        GECODE_ME_CHECK(x1.gq(home, 0));
+        GECODE_ME_CHECK(x1.le(home, h));
+        GECODE_ME_CHECK(x2.gq(home, 0));
+        GECODE_ME_CHECK(x2.le(home, w * h));
+        if (x0.assigned() && x1.assigned()) {
+            GECODE_ME_CHECK(x2.eq(home, x0.val() + w * x1.val()));
+        } else if (x1.assigned()) {
+            OffsetView x0x1w(x0.base(), x0.offset() + x1.val() * w);
+            return Rel::EqDom<OffsetView, IntView>::post(home, x0x1w, x2);
+        } else if (x2.assigned()) {
+            GECODE_ME_CHECK(x0.eq(home, x2.val() % w));
+            GECODE_ME_CHECK(x1.eq(home, static_cast<int>(x2.val() / w)));
+        } else {
+            assert(!shared(x0, x2) && !shared(x1, x2));
+            (void)new (home) PairWithOffsets(home, x0, x1, x2, w);
+        }
+        return ES_OK;
     }
-    return ES_OK;
-  }
 
-  forceinline
-  PairWithOffsets::PairWithOffsets(Space& home, PairWithOffsets& p)
-    : TernaryPropagator<OffsetView,PC_INT_DOM>(home,p), w(p.w) {}
+    forceinline
+    PairWithOffsets::PairWithOffsets(Space& home, PairWithOffsets& p)
+        : TernaryPropagator<OffsetView, PC_INT_DOM>(home, p), w(p.w) {}
 
-}}}
+}}} // namespace Gecode::Int::Element
 
 // STATISTICS: int-prop
-

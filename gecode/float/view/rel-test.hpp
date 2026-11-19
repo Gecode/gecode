@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,53 +34,62 @@
 
 namespace Gecode { namespace Float {
 
-  template<class View>
-  forceinline RelTest
-  rtest_eq(View x, View y) {
-    if ((x.min() > y.max()) || (x.max() < y.min())) return RT_FALSE;
-    return (x.assigned() && y.assigned()) ? RT_TRUE : RT_MAYBE;
-  }
+    template <class View>
+    forceinline RelTest
+    rtest_eq(View x, View y) {
+        if ((x.min() > y.max()) || (x.max() < y.min()))
+            return RT_FALSE;
+        return (x.assigned() && y.assigned()) ? RT_TRUE : RT_MAYBE;
+    }
 
-  template<class View>
-  forceinline RelTest
-  rtest_eq(View x, FloatVal n) {
-    if ((x.min() > n.max()) || (x.max() < n.min())) return RT_FALSE;
-    return x.assigned() ? RT_TRUE : RT_MAYBE;
-  }
+    template <class View>
+    forceinline RelTest
+    rtest_eq(View x, FloatVal n) {
+        if ((x.min() > n.max()) || (x.max() < n.min()))
+            return RT_FALSE;
+        return x.assigned() ? RT_TRUE : RT_MAYBE;
+    }
 
-  template<class View>
-  forceinline RelTest
-  rtest_lq(View x, View y) {
-    if (x.max() <= y.min()) return RT_TRUE;
-    if (x.min() > y.max())  return RT_FALSE;
-    return RT_MAYBE;
-  }
+    template <class View>
+    forceinline RelTest
+    rtest_lq(View x, View y) {
+        if (x.max() <= y.min())
+            return RT_TRUE;
+        if (x.min() > y.max())
+            return RT_FALSE;
+        return RT_MAYBE;
+    }
 
-  template<class View>
-  forceinline RelTest
-  rtest_lq(View x, FloatVal n) {
-    if (x.max() <= n.min()) return RT_TRUE;
-    if (x.min() > n.max())  return RT_FALSE;
-    return RT_MAYBE;
-  }
+    template <class View>
+    forceinline RelTest
+    rtest_lq(View x, FloatVal n) {
+        if (x.max() <= n.min())
+            return RT_TRUE;
+        if (x.min() > n.max())
+            return RT_FALSE;
+        return RT_MAYBE;
+    }
 
-  template<class View>
-  forceinline RelTest
-  rtest_le(View x, View y) {
-    if (x.max() < y.min()) return RT_TRUE;
-    if (x.min() >= y.max())  return RT_FALSE;
-    return RT_MAYBE;
-  }
+    template <class View>
+    forceinline RelTest
+    rtest_le(View x, View y) {
+        if (x.max() < y.min())
+            return RT_TRUE;
+        if (x.min() >= y.max())
+            return RT_FALSE;
+        return RT_MAYBE;
+    }
 
-  template<class View>
-  forceinline RelTest
-  rtest_le(View x, FloatVal n) {
-    if (x.max() < n.min()) return RT_TRUE;
-    if (x.min() >= n.max())  return RT_FALSE;
-    return RT_MAYBE;
-  }
+    template <class View>
+    forceinline RelTest
+    rtest_le(View x, FloatVal n) {
+        if (x.max() < n.min())
+            return RT_TRUE;
+        if (x.min() >= n.max())
+            return RT_FALSE;
+        return RT_MAYBE;
+    }
 
-}}
+}} // namespace Gecode::Float
 
 // STATISTICS: float-var
-

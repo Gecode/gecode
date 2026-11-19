@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -40,38 +39,37 @@
 
 namespace Gecode { namespace Support {
 
-  /// Simple bitsets
-  template<class A>
-  class BitSet : public BitSetBase {
-  protected:
-    /// Allocator
-    A& a;
-  public:
-    /// Bit set with space for \a s bits
-    BitSet(A& a, unsigned int s, bool set=false);
-    /// Copy bit set \a bs
-    BitSet(A& a, const BitSet& bs);
-    /// Destructor
-    ~BitSet(void);
-  };
+    /// Simple bitsets
+    template <class A>
+    class BitSet : public BitSetBase {
+    protected:
+        /// Allocator
+        A& a;
 
-  template<class A>
-  forceinline
-  BitSet<A>::BitSet(A& a0, unsigned int s, bool set)
-    : BitSetBase(a0,s,set), a(a0) {}
+    public:
+        /// Bit set with space for \a s bits
+        BitSet(A& a, unsigned int s, bool set = false);
+        /// Copy bit set \a bs
+        BitSet(A& a, const BitSet& bs);
+        /// Destructor
+        ~BitSet(void);
+    };
 
-  template<class A>
-  forceinline
-  BitSet<A>::BitSet(A& a0, const BitSet<A>& bs)
-    : BitSetBase(a0,bs), a(a0) {}
+    template <class A>
+    forceinline
+    BitSet<A>::BitSet(A& a0, unsigned int s, bool set)
+        : BitSetBase(a0, s, set), a(a0) {}
 
-  template<class A>
-  forceinline
-  BitSet<A>::~BitSet(void) {
-    dispose(a);
-  }
+    template <class A>
+    forceinline
+    BitSet<A>::BitSet(A& a0, const BitSet<A>& bs)
+        : BitSetBase(a0, bs), a(a0) {}
 
-}}
+    template <class A>
+    forceinline BitSet<A>::~BitSet(void) {
+        dispose(a);
+    }
+
+}} // namespace Gecode::Support
 
 // STATISTICS: support-any
-

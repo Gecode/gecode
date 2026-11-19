@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("singHoist2",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest(
+                "singHoist2", "predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -127,18 +123,17 @@ constraint int_lin_le_reif([2, 1, -1], [Period, Entry[3], Removal[3]], 0, BOOL__
 constraint int_lin_le_reif([2, 1, -1], [Period, Entry[3], Removal[4]], -2, BOOL____00019) :: defines_var(BOOL____00019);\n\
 constraint int_lin_le_reif([2, 1, -1], [Period, Entry[4], Removal[4]], 0, BOOL____00023) :: defines_var(BOOL____00023);\n\
 solve minimize Period;\n\
-", "Entry = array1d(0..3, [62, 4, 18, 47]);\n\
+",
+                "Entry = array1d(0..3, [62, 4, 18, 47]);\n\
 Period = 25;\n\
 Removal = array1d(0..3, [0, 14, 43, 57]);\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

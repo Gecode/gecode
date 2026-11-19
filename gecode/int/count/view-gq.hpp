@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,72 +32,71 @@
 
 namespace Gecode { namespace Int { namespace Count {
 
-  template<class VX, class VY, class VZ, bool shr, bool dom>
-  forceinline
-  GqView<VX,VY,VZ,shr,dom>::GqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c)
-    : ViewBase<VX,VY,VZ>(home,x,y,z,c) {}
+    template <class VX, class VY, class VZ, bool shr, bool dom>
+    forceinline
+    GqView<VX, VY, VZ, shr, dom>::GqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c)
+        : ViewBase<VX, VY, VZ>(home, x, y, z, c) {}
 
-  template<class VX, class VY, class VZ, bool shr, bool dom>
-  ExecStatus
-  GqView<VX,VY,VZ,shr,dom>::post(Home home,
-                                 ViewArray<VX>& x, VY y, VZ z, int c) {
-    GECODE_ME_CHECK(z.lq(home,x.size()-c));
-    if (isval(y) && z.assigned())
-      return GqInt<VX,VY>::post(home,x,y,z.val()+c);
-    if (sharing(x,y,z))
-      (void) new (home) GqView<VX,VY,VZ,true,dom>(home,x,y,z,c);
-    else
-      (void) new (home) GqView<VX,VY,VZ,false,dom>(home,x,y,z,c);
-    return ES_OK;
-  }
-
-  template<class VX, class VY, class VZ, bool shr, bool dom>
-  forceinline
-  GqView<VX,VY,VZ,shr,dom>::GqView(Space& home, GqView<VX,VY,VZ,shr,dom>& p)
-    : ViewBase<VX,VY,VZ>(home,p) {}
-
-  template<class VX, class VY, class VZ, bool shr, bool dom>
-  Actor*
-  GqView<VX,VY,VZ,shr,dom>::copy(Space& home) {
-    return new (home) GqView<VX,VY,VZ,shr,dom>(home,*this);
-  }
-
-  template<class VX, class VY, class VZ, bool shr, bool dom>
-  ExecStatus
-  GqView<VX,VY,VZ,shr,dom>::propagate(Space& home, const ModEventDelta&) {
-    count(home);
-
-    GECODE_ME_CHECK(z.lq(home,atmost()));
-
-    if (z.min() == atmost()) {
-      GECODE_ES_CHECK(post_true(home,x,y));
-      return home.ES_SUBSUMED(*this);
-    }
-    if (x.size() == 0)
-      return home.ES_SUBSUMED(*this);
-
-    if (z.assigned() && (!dom ||isval(y))) {
-      VY yc(y);
-      GECODE_REWRITE(*this,(GqInt<VX,VY>::post(home(*this),x,yc,z.val()+c)));
+    template <class VX, class VY, class VZ, bool shr, bool dom>
+    ExecStatus
+    GqView<VX, VY, VZ, shr, dom>::post(Home home, ViewArray<VX>& x, VY y, VZ z, int c) {
+        GECODE_ME_CHECK(z.lq(home, x.size() - c));
+        if (isval(y) && z.assigned())
+            return GqInt<VX, VY>::post(home, x, y, z.val() + c);
+        if (sharing(x, y, z))
+            (void)new (home) GqView<VX, VY, VZ, true, dom>(home, x, y, z, c);
+        else
+            (void)new (home) GqView<VX, VY, VZ, false, dom>(home, x, y, z, c);
+        return ES_OK;
     }
 
-    if (dom && !isval(y) && (z.min() > 0)) {
-      /*
-       * Only if the propagator is at fixpoint here, continue
-       * when things are shared: the reason is that prune
-       * requires that the views in x overlap with y!
-       */
-      if (shr && (VX::me(Propagator::modeventdelta()) != ME_INT_NONE))
-        return ES_NOFIX;
+    template <class VX, class VY, class VZ, bool shr, bool dom>
+    forceinline
+    GqView<VX, VY, VZ, shr, dom>::GqView(Space& home, GqView<VX, VY, VZ, shr, dom>& p)
+        : ViewBase<VX, VY, VZ>(home, p) {}
 
-      GECODE_ES_CHECK(prune(home,x,y));
-
-      return ES_NOFIX;
+    template <class VX, class VY, class VZ, bool shr, bool dom>
+    Actor*
+    GqView<VX, VY, VZ, shr, dom>::copy(Space& home) {
+        return new (home) GqView<VX, VY, VZ, shr, dom>(home, *this);
     }
 
-    return shr ? ES_NOFIX : ES_FIX;
-  }
+    template <class VX, class VY, class VZ, bool shr, bool dom>
+    ExecStatus
+    GqView<VX, VY, VZ, shr, dom>::propagate(Space& home, const ModEventDelta&) {
+        count(home);
 
-}}}
+        GECODE_ME_CHECK(z.lq(home, atmost()));
+
+        if (z.min() == atmost()) {
+            GECODE_ES_CHECK(post_true(home, x, y));
+            return home.ES_SUBSUMED(*this);
+        }
+        if (x.size() == 0)
+            return home.ES_SUBSUMED(*this);
+
+        if (z.assigned() && (!dom || isval(y))) {
+            VY yc(y);
+            GECODE_REWRITE(*this, (GqInt<VX, VY>::post(home(*this), x, yc, z.val() + c)));
+        }
+
+        if (dom && !isval(y) && (z.min() > 0)) {
+            /*
+             * Only if the propagator is at fixpoint here, continue
+             * when things are shared: the reason is that prune
+             * requires that the views in x overlap with y!
+             */
+            if (shr && (VX::me(Propagator::modeventdelta()) != ME_INT_NONE))
+                return ES_NOFIX;
+
+            GECODE_ES_CHECK(prune(home, x, y));
+
+            return ES_NOFIX;
+        }
+
+        return shr ? ES_NOFIX : ES_FIX;
+    }
+
+}}} // namespace Gecode::Int::Count
 
 // STATISTICS: int-prop

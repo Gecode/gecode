@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -44,56 +43,57 @@
 
 namespace Gecode { namespace Set { namespace Convex {
 
-  /**
-   * \namespace Gecode::Set::Convex
-   * \brief Propagators for convexity
-   */
+    /**
+     * \namespace Gecode::Set::Convex
+     * \brief Propagators for convexity
+     */
 
-  /**
-   * \brief %Propagator for the convex constraint
-   *
-   * Requires \code #include <gecode/set/convex.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  class Convex : public UnaryPropagator<SetView,PC_SET_ANY> {
-  protected:
-    /// Constructor for cloning \a p
-    Convex(Space& home, Convex& p);
-    /// Constructor for posting
-    Convex(Home home, SetView);
-  public:
-    /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor* copy(Space& home);
-    /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator that propagates that \a x is convex
-    static  ExecStatus  post(Home home,SetView x);
-  };
+    /**
+     * \brief %Propagator for the convex constraint
+     *
+     * Requires \code #include <gecode/set/convex.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    class Convex : public UnaryPropagator<SetView, PC_SET_ANY> {
+    protected:
+        /// Constructor for cloning \a p
+        Convex(Space& home, Convex& p);
+        /// Constructor for posting
+        Convex(Home home, SetView);
 
-  /**
-   * \brief %Propagator for the convex hull constraint
-   *
-   * Requires \code #include <gecode/set/convex.hh> \endcode
-   * \ingroup FuncSetProp
-   */
+    public:
+        /// Copy propagator during cloning
+        GECODE_SET_EXPORT virtual Actor* copy(Space& home);
+        /// Perform propagation
+        GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator that propagates that \a x is convex
+        static ExecStatus post(Home home, SetView x);
+    };
 
-  class ConvexHull : public BinaryPropagator<SetView,PC_SET_ANY> {
-  protected:
-    /// Constructor for cloning \a p
-    ConvexHull(Space& home, ConvexHull&);
-    /// Constructor for posting
-    ConvexHull(Home home, SetView, SetView);
-  public:
-    /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor* copy(Space& home);
-    /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator that propagates that \a y is the convex hull of \a x
-    static  ExecStatus  post(Home home,SetView x,SetView y);
-  };
+    /**
+     * \brief %Propagator for the convex hull constraint
+     *
+     * Requires \code #include <gecode/set/convex.hh> \endcode
+     * \ingroup FuncSetProp
+     */
 
+    class ConvexHull : public BinaryPropagator<SetView, PC_SET_ANY> {
+    protected:
+        /// Constructor for cloning \a p
+        ConvexHull(Space& home, ConvexHull&);
+        /// Constructor for posting
+        ConvexHull(Home home, SetView, SetView);
 
-}}}
+    public:
+        /// Copy propagator during cloning
+        GECODE_SET_EXPORT virtual Actor* copy(Space& home);
+        /// Perform propagation
+        GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator that propagates that \a y is the convex hull of \a x
+        static ExecStatus post(Home home, SetView x, SetView y);
+    };
+
+}}} // namespace Gecode::Set::Convex
 
 #include <gecode/set/convex/conv.hpp>
 #include <gecode/set/convex/hull.hpp>

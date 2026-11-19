@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,111 +34,111 @@
 
 namespace Gecode { namespace Int { namespace NValues {
 
-  template<class VY>
-  forceinline
-  GqBool<VY>::GqBool(Home home, int status, ViewArray<BoolView>& x, VY y)
-    : BoolBase<VY>(home,status,x,y) {}
+    template <class VY>
+    forceinline
+    GqBool<VY>::GqBool(Home home, int status, ViewArray<BoolView>& x, VY y)
+        : BoolBase<VY>(home, status, x, y) {}
 
-  template<class VY>
-  forceinline
-  GqBool<VY>::GqBool(Space& home, GqBool<VY>& p)
-    : BoolBase<VY>(home,p) {}
+    template <class VY>
+    forceinline
+    GqBool<VY>::GqBool(Space& home, GqBool<VY>& p)
+        : BoolBase<VY>(home, p) {}
 
-  template<class VY>
-  Actor*
-  GqBool<VY>::copy(Space& home) {
-    return new (home) GqBool<VY>(home,*this);
-  }
-
-  template<class VY>
-  inline ExecStatus
-  GqBool<VY>::post(Home home, ViewArray<BoolView>& x, VY y) {
-    if (x.size() == 0) {
-      GECODE_ME_CHECK(y.lq(home,0));
-      return ES_OK;
+    template <class VY>
+    Actor*
+    GqBool<VY>::copy(Space& home) {
+        return new (home) GqBool<VY>(home, *this);
     }
 
-    x.unique();
-
-    if (x.size() == 1) {
-      GECODE_ME_CHECK(y.lq(home,1));
-      return ES_OK;
-    }
-
-    GECODE_ME_CHECK(y.lq(home,2));
-
-    if (y.max() <= 1)
-      return ES_OK;
-
-    if (y.min() == 2) {
-      assert(y.assigned());
-      ViewArray<BoolView> xc(home,x);
-      return Rel::NaryNq<BoolView>::post(home,xc);
-    }
-
-    int n = x.size();
-    int status = 0;
-    for (int i=n; i--; )
-      if (x[i].zero()) {
-        if (status & VS_ONE)
-          return ES_OK;
-        x[i] = x[--n];
-        status |= VS_ZERO;
-      } else if (x[i].one()) {
-        if (status & VS_ZERO)
-          return ES_OK;
-        x[i] = x[--n];
-        status |= VS_ONE;
-      }
-
-    assert(status != (VS_ZERO | VS_ONE));
-    if (n == 0) {
-      assert(status != 0);
-      GECODE_ME_CHECK(y.lq(home,1));
-      return ES_OK;
-    }
-    x.size(n);
-
-    (void) new (home) GqBool<VY>(home,status,x,y);
-    return ES_OK;
-  }
-
-  template<class VY>
-  ExecStatus
-  GqBool<VY>::propagate(Space& home, const ModEventDelta&) {
-    if (status == (VS_ZERO | VS_ONE))
-      return home.ES_SUBSUMED(*this);
-
-    if (c.empty()) {
-      assert(status != 0);
-      GECODE_ME_CHECK(y.lq(home,1));
-      return home.ES_SUBSUMED(*this);
-    }
-
-    if (y.max() <= 1)
-      return home.ES_SUBSUMED(*this);
-
-    if (y.min() == 2) {
-      Advisors<ViewAdvisor<BoolView> > as(c);
-      assert(as());
-      ViewAdvisor<BoolView>& a(as.advisor());
-      ++as;
-      if (!as()) {
-        // Only a single view is left
-        if (status == VS_ZERO) {
-          GECODE_ME_CHECK(a.view().one(home));
-        } else if (status == VS_ONE) {
-          GECODE_ME_CHECK(a.view().zero(home));
-        } else {
-          return ES_FAILED;
+    template <class VY>
+    inline ExecStatus
+    GqBool<VY>::post(Home home, ViewArray<BoolView>& x, VY y) {
+        if (x.size() == 0) {
+            GECODE_ME_CHECK(y.lq(home, 0));
+            return ES_OK;
         }
-        return home.ES_SUBSUMED(*this);
-      }
+
+        x.unique();
+
+        if (x.size() == 1) {
+            GECODE_ME_CHECK(y.lq(home, 1));
+            return ES_OK;
+        }
+
+        GECODE_ME_CHECK(y.lq(home, 2));
+
+        if (y.max() <= 1)
+            return ES_OK;
+
+        if (y.min() == 2) {
+            assert(y.assigned());
+            ViewArray<BoolView> xc(home, x);
+            return Rel::NaryNq<BoolView>::post(home, xc);
+        }
+
+        int n = x.size();
+        int status = 0;
+        for (int i = n; i--;)
+            if (x[i].zero()) {
+                if (status & VS_ONE)
+                    return ES_OK;
+                x[i] = x[--n];
+                status |= VS_ZERO;
+            } else if (x[i].one()) {
+                if (status & VS_ZERO)
+                    return ES_OK;
+                x[i] = x[--n];
+                status |= VS_ONE;
+            }
+
+        assert(status != (VS_ZERO | VS_ONE));
+        if (n == 0) {
+            assert(status != 0);
+            GECODE_ME_CHECK(y.lq(home, 1));
+            return ES_OK;
+        }
+        x.size(n);
+
+        (void)new (home) GqBool<VY>(home, status, x, y);
+        return ES_OK;
     }
 
-    return ES_FIX;
-  }
+    template <class VY>
+    ExecStatus
+    GqBool<VY>::propagate(Space& home, const ModEventDelta&) {
+        if (status == (VS_ZERO | VS_ONE))
+            return home.ES_SUBSUMED(*this);
 
-}}}
+        if (c.empty()) {
+            assert(status != 0);
+            GECODE_ME_CHECK(y.lq(home, 1));
+            return home.ES_SUBSUMED(*this);
+        }
+
+        if (y.max() <= 1)
+            return home.ES_SUBSUMED(*this);
+
+        if (y.min() == 2) {
+            Advisors<ViewAdvisor<BoolView>> as(c);
+            assert(as());
+            ViewAdvisor<BoolView>& a(as.advisor());
+            ++as;
+            if (!as()) {
+                // Only a single view is left
+                if (status == VS_ZERO) {
+                    GECODE_ME_CHECK(a.view().one(home));
+                } else if (status == VS_ONE) {
+                    GECODE_ME_CHECK(a.view().zero(home));
+                } else {
+                    return ES_FAILED;
+                }
+                return home.ES_SUBSUMED(*this);
+            }
+        }
+
+        return ES_FIX;
+    }
+
+}}} // namespace Gecode::Int::NValues
 
 // STATISTICS: int-prop

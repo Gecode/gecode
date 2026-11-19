@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,38 +38,39 @@
 
 namespace Gecode { namespace FlatZinc {
 
-  /// Symbol table mapping identifiers (strings) to values
-  template<class Val>
-  class SymbolTable {
-  private:
-    std::unordered_map<std::string,Val> m;
-  public:
-    /// Insert \a val with \a key
-    bool put(const std::string& key, const Val& val);
-    /// Return whether \a key exists, and set \a val if it does exist
-    bool get(const std::string& key, Val& val) const;
-  };
+    /// Symbol table mapping identifiers (strings) to values
+    template <class Val>
+    class SymbolTable {
+    private:
+        std::unordered_map<std::string, Val> m;
 
-  template<class Val>
-  bool
-  SymbolTable<Val>::put(const std::string& key, const Val& val) {
-    const auto& i = m.find(key);
-    bool fresh = (i == m.end());
-    m[key] = val;
-    return fresh;
-  }
+    public:
+        /// Insert \a val with \a key
+        bool put(const std::string& key, const Val& val);
+        /// Return whether \a key exists, and set \a val if it does exist
+        bool get(const std::string& key, Val& val) const;
+    };
 
-  template<class Val>
-  bool
-  SymbolTable<Val>::get(const std::string& key, Val& val) const {
-    const auto& i = m.find(key);
-    if (i == m.end())
-      return false;
-    val = i->second;
-    return true;
-  }
+    template <class Val>
+    bool
+    SymbolTable<Val>::put(const std::string& key, const Val& val) {
+        const auto& i = m.find(key);
+        bool fresh = (i == m.end());
+        m[key] = val;
+        return fresh;
+    }
 
-}}
+    template <class Val>
+    bool
+    SymbolTable<Val>::get(const std::string& key, Val& val) const {
+        const auto& i = m.find(key);
+        if (i == m.end())
+            return false;
+        val = i->second;
+        return true;
+    }
+
+}} // namespace Gecode::FlatZinc
 #endif
 
 // STATISTICS: flatzinc-any

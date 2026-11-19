@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -35,36 +34,36 @@
 
 namespace Gecode { namespace Support {
 
-  /** \brief %Timer
-   *
-   * This class represents a best-effort at measuring wall-clock time
-   * in milliseconds.
-   *
-   * \ingroup FuncSupport
-   */
-  class GECODE_SUPPORT_EXPORT Timer {
-  private:
-    using time_point = std::chrono::time_point<std::chrono::steady_clock>;
-    time_point t0; ///< Start time
+    /** \brief %Timer
+     *
+     * This class represents a best-effort at measuring wall-clock time
+     * in milliseconds.
+     *
+     * \ingroup FuncSupport
+     */
+    class GECODE_SUPPORT_EXPORT Timer {
+    private:
+        using time_point = std::chrono::time_point<std::chrono::steady_clock>;
+        time_point t0; ///< Start time
 
-  public:
-    /// Start timer
-    void start(void);
-    /// Get time since start of timer
-    double stop(void);
-  };
+    public:
+        /// Start timer
+        void start(void);
+        /// Get time since start of timer
+        double stop(void);
+    };
 
-  inline void
-  Timer::start(void) {
-    t0 = std::chrono::steady_clock::now();
-  }
+    inline void
+    Timer::start(void) {
+        t0 = std::chrono::steady_clock::now();
+    }
 
-  inline double
-  Timer::stop(void) {
-    std::chrono::duration<double, std::milli> duration = std::chrono::steady_clock::now() - t0;
-    return duration.count();
-  }
+    inline double
+    Timer::stop(void) {
+        std::chrono::duration<double, std::milli> duration = std::chrono::steady_clock::now() - t0;
+        return duration.count();
+    }
 
-}}
+}} // namespace Gecode::Support
 
 // STATISTICS: support-any

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,13 +34,13 @@
 
 namespace Gecode {
 
-  void
-  ite(Home home, BoolVar b, FloatVar x, FloatVar y, FloatVar z) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL(Bool::Ite<FloatView>::post(home,b,x,y,z));
-  }
+    void
+    ite(Home home, BoolVar b, FloatVar x, FloatVar y, FloatVar z) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL(Bool::Ite<FloatView>::post(home, b, x, y, z));
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-post

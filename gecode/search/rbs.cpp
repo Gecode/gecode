@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,26 +34,22 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  Stop*
-  rbsstop(Stop* stop) {
-    return new RestartStop(stop);
-  }
+    Stop*
+    rbsstop(Stop* stop) {
+        return new RestartStop(stop);
+    }
 
-  Engine*
-  rbsengine(Space* hub, Stop* stop, Engine* engine,
-            const Search::Statistics& stat, const Options& opt, bool best) {
-    return rbsengine(hub,stop,engine,stat,opt,best,SpokeCoverage::Full);
-  }
+    Engine*
+    rbsengine(Space* hub, Stop* stop, Engine* engine, const Search::Statistics& stat, const Options& opt, bool best) {
+        return rbsengine(hub, stop, engine, stat, opt, best, SpokeCoverage::Full);
+    }
 
-  Engine*
-  rbsengine(Space* hub, Stop* stop, Engine* engine,
-            const Search::Statistics& stat, const Options& opt, bool best,
-            SpokeCoverage coverage) {
-    return new RBS(hub,static_cast<RestartStop*>(stop), engine,
-                   stat,opt,best,coverage);
-  }
+    Engine*
+    rbsengine(Space* hub, Stop* stop, Engine* engine, const Search::Statistics& stat, const Options& opt, bool best,
+              SpokeCoverage coverage) {
+        return new RBS(hub, static_cast<RestartStop*>(stop), engine, stat, opt, best, coverage);
+    }
 
-
-}}}
+}}} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

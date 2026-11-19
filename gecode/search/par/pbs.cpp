@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -40,38 +39,38 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  Statistics
-  PortfolioStatistics::update(unsigned int i, const Statistics& s) {
-    Support::Lock lock(m);
-    stat[i + 1] = s;
-    Statistics t;
-    for (unsigned int j = 0U; j < n; j++)
-      t += stat[j];
-    return t;
-  }
-
-  bool
-  PortfolioStop::stop(const Statistics& s, const Options& o) {
-    if (tostop->load(std::memory_order_acquire)) {
-      pbs_record_cause(_cause,PortfolioStopCause::Interrupt);
-      return true;
+    Statistics
+    PortfolioStatistics::update(unsigned int i, const Statistics& s) {
+        Support::Lock lock(m);
+        stat[i + 1] = s;
+        Statistics t;
+        for (unsigned int j = 0U; j < n; j++)
+            t += stat[j];
+        return t;
     }
-    if ((po != nullptr) && po->stop(ps->update(asset,s),o)) {
-      pbs_record_cause(_cause,PortfolioStopCause::Portfolio);
-      return true;
-    }
-    if ((so != nullptr) && so->stop(s,o)) {
-      pbs_record_cause(_cause,PortfolioStopCause::Asset);
-      return true;
-    }
-    return false;
-  }
 
-  void
-  PortfolioStop::wake(void) {
-    WorkerControlAccess::signal_all(worker_control);
-  }
+    bool
+    PortfolioStop::stop(const Statistics& s, const Options& o) {
+        if (tostop->load(std::memory_order_acquire)) {
+            pbs_record_cause(_cause, PortfolioStopCause::Interrupt);
+            return true;
+        }
+        if ((po != nullptr) && po->stop(ps->update(asset, s), o)) {
+            pbs_record_cause(_cause, PortfolioStopCause::Portfolio);
+            return true;
+        }
+        if ((so != nullptr) && so->stop(s, o)) {
+            pbs_record_cause(_cause, PortfolioStopCause::Asset);
+            return true;
+        }
+        return false;
+    }
 
-}}}
+    void
+    PortfolioStop::wake(void) {
+        WorkerControlAccess::signal_all(worker_control);
+    }
+
+}}} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

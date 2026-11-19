@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -47,305 +46,303 @@
 
 namespace Gecode { namespace Int { namespace Element {
 
-  /**
-   * \brief %Element propagator for array of integers
-   *
-   * Requires \code #include <gecode/int/element.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class V0, class V1, class Idx, class Val>
-  class Int : public Propagator {
-  protected:
     /**
-     * \brief Linked index-value pairs
+     * \brief %Element propagator for array of integers
      *
-     * Data structure linking pairs of index and value (index,value)
-     * where pairs are linked in order of both index and
-     * value (to allow for easy removal while keeping both index and
-     * value sorted).
+     * Requires \code #include <gecode/int/element.hh> \endcode
+     * \ingroup FuncIntProp
      */
-    class IdxVal  {
-    public:
-      Idx idx_next; ///< The position of the next pair in index order
-      Idx val_next; ///< The position of the next pair in value order
-      Idx idx; ///< The index
-      Val val; ///< The value
-      /// Mark that this pair should be removed
-      void mark(void);
-      /// Return whether this pair is marked for removal
-      bool marked(void) const;
-    };
-    /**
-     * \brief Value iterator for indices in index-value map
-     *
-     * The iterator also removes marked index-value pairs.
-     *
-     */
-    class IterIdxUnmark {
-    private:
-      IdxVal* iv; ///< The index value data structure
-      Idx i; ///< Current index value pair
-    public:
-      /// Initialize with start
-      IterIdxUnmark(IdxVal* iv);
-      /// Test whether more pairs to be iterated
-      bool operator ()(void) const;
-      /// Move to next index value pair (next index)
-      void operator ++(void);
-      /// Return index of current index value pair
-      Idx val(void) const;
-    };
-    /**
-     * \brief Value iterator for values in index-value map
-     *
-     * Note that the iterated value sequence is not strictly
-     * increasing (might contain duplicates).
-     */
-    class IterVal {
-    private:
-      IdxVal* iv; ///< The index value data structure
-      Idx i; ///< Current index value pair
-    public:
-      /// Initialize with start
-      IterVal(IdxVal* iv);
-      /// Test whether more pairs to be iterated
-      bool operator ()(void) const;
-      /// Move to next index value pair (next value)
-      void operator ++(void);
-      /// Return value of current index value pair
-      Val val(void) const;
-    };
-    /**
-     * \brief Value iterator for values in index-value map
-     *
-     * Note that the iterated value sequence is not strictly
-     * increasing (might contain duplicates).
-     *
-     * The iterator also removes marked index-value pairs.
-     */
-    class IterValUnmark {
-    private:
-      IdxVal* iv; ///< The index value data structure
-      Idx i; ///< Current index value pair
-    public:
-      /// Initialize with start
-      IterValUnmark(IdxVal* iv);
-      /// Test whether more pairs to be iterated
-      bool operator ()(void) const;
-      /// Move to next index value pair (next value)
-      void operator ++(void);
-      /// Return value of current index value pair
-      Val val(void) const;
-    };
-    /// Sorting pointers to (index,value) pairs in value order
-    class ByVal {
+    template <class V0, class V1, class Idx, class Val>
+    class Int : public Propagator {
     protected:
-      const IdxVal* iv; ///< Index-value pairs
+        /**
+         * \brief Linked index-value pairs
+         *
+         * Data structure linking pairs of index and value (index,value)
+         * where pairs are linked in order of both index and
+         * value (to allow for easy removal while keeping both index and
+         * value sorted).
+         */
+        class IdxVal {
+        public:
+            Idx idx_next; ///< The position of the next pair in index order
+            Idx val_next; ///< The position of the next pair in value order
+            Idx idx;      ///< The index
+            Val val;      ///< The value
+            /// Mark that this pair should be removed
+            void mark(void);
+            /// Return whether this pair is marked for removal
+            bool marked(void) const;
+        };
+        /**
+         * \brief Value iterator for indices in index-value map
+         *
+         * The iterator also removes marked index-value pairs.
+         *
+         */
+        class IterIdxUnmark {
+        private:
+            IdxVal* iv; ///< The index value data structure
+            Idx i;      ///< Current index value pair
+        public:
+            /// Initialize with start
+            IterIdxUnmark(IdxVal* iv);
+            /// Test whether more pairs to be iterated
+            bool operator()(void) const;
+            /// Move to next index value pair (next index)
+            void operator++(void);
+            /// Return index of current index value pair
+            Idx val(void) const;
+        };
+        /**
+         * \brief Value iterator for values in index-value map
+         *
+         * Note that the iterated value sequence is not strictly
+         * increasing (might contain duplicates).
+         */
+        class IterVal {
+        private:
+            IdxVal* iv; ///< The index value data structure
+            Idx i;      ///< Current index value pair
+        public:
+            /// Initialize with start
+            IterVal(IdxVal* iv);
+            /// Test whether more pairs to be iterated
+            bool operator()(void) const;
+            /// Move to next index value pair (next value)
+            void operator++(void);
+            /// Return value of current index value pair
+            Val val(void) const;
+        };
+        /**
+         * \brief Value iterator for values in index-value map
+         *
+         * Note that the iterated value sequence is not strictly
+         * increasing (might contain duplicates).
+         *
+         * The iterator also removes marked index-value pairs.
+         */
+        class IterValUnmark {
+        private:
+            IdxVal* iv; ///< The index value data structure
+            Idx i;      ///< Current index value pair
+        public:
+            /// Initialize with start
+            IterValUnmark(IdxVal* iv);
+            /// Test whether more pairs to be iterated
+            bool operator()(void) const;
+            /// Move to next index value pair (next value)
+            void operator++(void);
+            /// Return value of current index value pair
+            Val val(void) const;
+        };
+        /// Sorting pointers to (index,value) pairs in value order
+        class ByVal {
+        protected:
+            const IdxVal* iv; ///< Index-value pairs
+        public:
+            /// Initialize with index value pairs
+            ByVal(const IdxVal* iv);
+            /// Compare pairs at positions \a i and \a j
+            bool operator()(Idx& i, Idx& j);
+        };
+
+        /// View for index
+        V0 x0;
+        /// Type for index size
+        typedef typename Gecode::Support::IntTypeTraits<Idx>::utype IdxSize;
+        /// Size of \a x0 at last execution
+        IdxSize s0;
+        /// View for result
+        V1 x1;
+        /// Type for value size
+        typedef typename Gecode::Support::IntTypeTraits<Val>::utype ValSize;
+        /// Size of \a x1 at last execution
+        ValSize s1;
+        /// Shared array of integer values
+        IntSharedArray c;
+        /// The index-value data structure
+        IdxVal* iv;
+        /// Prune index according to \a x0
+        void prune_idx(void);
+        /// Prune values according to \a x1
+        void prune_val(void);
+        /// Prune when \a x1 is assigned
+        static ExecStatus assigned_val(Space& home, IntSharedArray& c, V0 x0, V1 x1);
+        /// Constructor for cloning \a p
+        Int(Space& home, Int& p);
+        /// Constructor for creation
+        Int(Home home, IntSharedArray& i, V0 x0, V1 x1);
+
     public:
-      /// Initialize with index value pairs
-      ByVal(const IdxVal* iv);
-      /// Compare pairs at positions \a i and \a j
-      bool operator ()(Idx& i, Idx& j);
+        /// Perform copying during cloning
+        virtual Actor* copy(Space& home);
+        /// Cost function (defined as high binary)
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for \f$i_{x_0}=x_1\f$
+        static ExecStatus post(Home home, IntSharedArray& i, V0 x0, V1 x1);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
     };
 
-    /// View for index
-    V0 x0;
-    /// Type for index size
-    typedef typename Gecode::Support::IntTypeTraits<Idx>::utype IdxSize;
-    /// Size of \a x0 at last execution
-    IdxSize s0;
-    /// View for result
-    V1 x1;
-    /// Type for value size
-    typedef typename Gecode::Support::IntTypeTraits<Val>::utype ValSize;
-    /// Size of \a x1 at last execution
-    ValSize s1;
-    /// Shared array of integer values
-    IntSharedArray c;
-    /// The index-value data structure
-    IdxVal* iv;
-    /// Prune index according to \a x0
-    void prune_idx(void);
-    /// Prune values according to \a x1
-    void prune_val(void);
-    /// Prune when \a x1 is assigned
-    static ExecStatus assigned_val(Space& home, IntSharedArray& c,
-                                   V0 x0, V1 x1);
-    /// Constructor for cloning \a p
-    Int(Space& home, Int& p);
-    /// Constructor for creation
-    Int(Home home, IntSharedArray& i, V0 x0, V1 x1);
-  public:
-    /// Perform copying during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function (defined as high binary)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$i_{x_0}=x_1\f$
-    static  ExecStatus post(Home home, IntSharedArray& i, V0 x0, V1 x1);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
+    /// Post propagator with appropriate index and value types
+    template <class V0, class V1>
+    ExecStatus post_int(Home home, IntSharedArray& c, V0 x0, V1 x1);
 
-  /// Post propagator with appropriate index and value types
-  template<class V0, class V1>
-  ExecStatus post_int(Home home, IntSharedArray& c, V0 x0, V1 x1);
-
-
-  /**
-   * \brief Base-class for element propagator for array of views
-   *
-   */
-  template<class VA, class VB, class VC, PropCond pc_ac>
-  class View : public Propagator {
-  protected:
-    /// Current index-view map
-    IdxViewArray<VA> iv;
-    /// View for index
-    VB x0;
-    /// View for result
-    VC x1;
-    /// Constructor for cloning \a p
-    View(Space& home, View& p);
-    /// Constructor for creation
-    View(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
-  public:
-    // Cost function (defined as low linear)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
-
-
-  /**
-   * \brief Bounds consistent element propagator for array of views
-   *
-   * Requires \code #include <gecode/int/element.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class VA, class VB, class VC>
-  class ViewBnd : public View<VA,VB,VC,PC_INT_BND> {
-  protected:
-    using View<VA,VB,VC,PC_INT_BND>::iv;
-    using View<VA,VB,VC,PC_INT_BND>::x0;
-    using View<VA,VB,VC,PC_INT_BND>::x1;
-
-    /// Constructor for cloning \a p
-    ViewBnd(Space& home, ViewBnd& p);
-    /// Constructor for creation
-    ViewBnd(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
-  public:
-    /// Perform copying during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$iv_{x_0}=x_1\f$
-    static  ExecStatus post(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
-  };
-
-  /**
-   * \brief Domain consistent element propagator for array of views
-   *
-   * The propagator uses staging: first it uses
-   * bounds-propagation on the array of views and the uses
-   * domain-propagation on the array of views.
-   *
-   * Requires \code #include <gecode/int/element.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class VA, class VB, class VC>
-  class ViewDom : public View<VA,VB,VC,PC_INT_DOM> {
-  protected:
-    using View<VA,VB,VC,PC_INT_DOM>::iv;
-    using View<VA,VB,VC,PC_INT_DOM>::x0;
-    using View<VA,VB,VC,PC_INT_DOM>::x1;
-
-    /// Constructor for cloning \a p
-    ViewDom(Space& home, ViewDom& p);
-    /// Constructor for creation
-    ViewDom(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
-  public:
-    /// Perform copying during cloning
-    virtual Actor* copy(Space& home);
     /**
-     * \brief Cost function
-     *
-     * If in stage for bounds-propagation defined as low linear,
-     * otherwise as high linear.
+     * \brief Base-class for element propagator for array of views
      *
      */
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$iv_{x_0}=x_1\f$
-    static  ExecStatus post(Home home, IdxViewArray<VA>& iv,
-                            VB x0, VC x1);
-  };
+    template <class VA, class VB, class VC, PropCond pc_ac>
+    class View : public Propagator {
+    protected:
+        /// Current index-view map
+        IdxViewArray<VA> iv;
+        /// View for index
+        VB x0;
+        /// View for result
+        VC x1;
+        /// Constructor for cloning \a p
+        View(Space& home, View& p);
+        /// Constructor for creation
+        View(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
 
-  /**
-   * \brief Domain consistent pair propagator
-   *
-   * Requires \code #include <gecode/int/element.hh> \endcode
-   *
-   * \ingroup FuncIntProp
-   */
-  class GECODE_VTABLE_EXPORT Pair
-    : public TernaryPropagator<IntView,PC_INT_DOM> {
-  protected:
-    using TernaryPropagator<IntView,PC_INT_DOM>::x0;
-    using TernaryPropagator<IntView,PC_INT_DOM>::x1;
-    using TernaryPropagator<IntView,PC_INT_DOM>::x2;
-    /// Width
-    int w;
-    /// Constructor for cloning \a p
-    Pair(Space& home, Pair& p);
-  public:
-    /// Constructor for posting
-    Pair(Home home, IntView x0, IntView x1, IntView x2, int w);
-    /// Post propagator \f$x_0+x_1\cdot w=x_2\f$
-    static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2,
-                           int w, int h);
-    /// Copy propagator during cloning
-    GECODE_INT_EXPORT virtual Actor* copy(Space& home);
-    /// Perform propagation
-    GECODE_INT_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-  };
+    public:
+        // Cost function (defined as low linear)
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+    };
 
- /**
-  * \brief Domain consistent pair-with-offsets propagator
-  *
-  * Requires \code #include <gecode/int/element.hh> \endcode
-  *
-  * \ingroup FuncIntProp
-  */
- class GECODE_VTABLE_EXPORT PairWithOffsets
-   : public TernaryPropagator<OffsetView,PC_INT_DOM> {
- protected:
-   using TernaryPropagator<OffsetView,PC_INT_DOM>::x0;
-   using TernaryPropagator<OffsetView,PC_INT_DOM>::x1;
-   using TernaryPropagator<OffsetView,PC_INT_DOM>::x2;
-   /// Width
-   int w;
-   /// Constructor for cloning \a p
-   PairWithOffsets(Space& home, PairWithOffsets& p);
- public:
-   /// Constructor for posting
-   PairWithOffsets(Home home, OffsetView x0, OffsetView x1, IntView x2, int w);
-   /// Post propagator \f$x_0+x_1\cdot w=x_2\f$
-   static ExecStatus post(Home home, OffsetView x0, OffsetView x1, IntView x2,
-                          int w, int h);
-   /// Copy propagator during cloning
-   GECODE_INT_EXPORT virtual Actor* copy(Space& home);
-   /// Perform propagation
-   GECODE_INT_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
- };
+    /**
+     * \brief Bounds consistent element propagator for array of views
+     *
+     * Requires \code #include <gecode/int/element.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class VA, class VB, class VC>
+    class ViewBnd : public View<VA, VB, VC, PC_INT_BND> {
+    protected:
+        using View<VA, VB, VC, PC_INT_BND>::iv;
+        using View<VA, VB, VC, PC_INT_BND>::x0;
+        using View<VA, VB, VC, PC_INT_BND>::x1;
 
-}}}
+        /// Constructor for cloning \a p
+        ViewBnd(Space& home, ViewBnd& p);
+        /// Constructor for creation
+        ViewBnd(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
+
+    public:
+        /// Perform copying during cloning
+        virtual Actor* copy(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for \f$iv_{x_0}=x_1\f$
+        static ExecStatus post(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
+    };
+
+    /**
+     * \brief Domain consistent element propagator for array of views
+     *
+     * The propagator uses staging: first it uses
+     * bounds-propagation on the array of views and the uses
+     * domain-propagation on the array of views.
+     *
+     * Requires \code #include <gecode/int/element.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class VA, class VB, class VC>
+    class ViewDom : public View<VA, VB, VC, PC_INT_DOM> {
+    protected:
+        using View<VA, VB, VC, PC_INT_DOM>::iv;
+        using View<VA, VB, VC, PC_INT_DOM>::x0;
+        using View<VA, VB, VC, PC_INT_DOM>::x1;
+
+        /// Constructor for cloning \a p
+        ViewDom(Space& home, ViewDom& p);
+        /// Constructor for creation
+        ViewDom(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
+
+    public:
+        /// Perform copying during cloning
+        virtual Actor* copy(Space& home);
+        /**
+         * \brief Cost function
+         *
+         * If in stage for bounds-propagation defined as low linear,
+         * otherwise as high linear.
+         *
+         */
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for \f$iv_{x_0}=x_1\f$
+        static ExecStatus post(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
+    };
+
+    /**
+     * \brief Domain consistent pair propagator
+     *
+     * Requires \code #include <gecode/int/element.hh> \endcode
+     *
+     * \ingroup FuncIntProp
+     */
+    class GECODE_VTABLE_EXPORT Pair : public TernaryPropagator<IntView, PC_INT_DOM> {
+    protected:
+        using TernaryPropagator<IntView, PC_INT_DOM>::x0;
+        using TernaryPropagator<IntView, PC_INT_DOM>::x1;
+        using TernaryPropagator<IntView, PC_INT_DOM>::x2;
+        /// Width
+        int w;
+        /// Constructor for cloning \a p
+        Pair(Space& home, Pair& p);
+
+    public:
+        /// Constructor for posting
+        Pair(Home home, IntView x0, IntView x1, IntView x2, int w);
+        /// Post propagator \f$x_0+x_1\cdot w=x_2\f$
+        static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2, int w, int h);
+        /// Copy propagator during cloning
+        GECODE_INT_EXPORT virtual Actor* copy(Space& home);
+        /// Perform propagation
+        GECODE_INT_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    };
+
+    /**
+     * \brief Domain consistent pair-with-offsets propagator
+     *
+     * Requires \code #include <gecode/int/element.hh> \endcode
+     *
+     * \ingroup FuncIntProp
+     */
+    class GECODE_VTABLE_EXPORT PairWithOffsets : public TernaryPropagator<OffsetView, PC_INT_DOM> {
+    protected:
+        using TernaryPropagator<OffsetView, PC_INT_DOM>::x0;
+        using TernaryPropagator<OffsetView, PC_INT_DOM>::x1;
+        using TernaryPropagator<OffsetView, PC_INT_DOM>::x2;
+        /// Width
+        int w;
+        /// Constructor for cloning \a p
+        PairWithOffsets(Space& home, PairWithOffsets& p);
+
+    public:
+        /// Constructor for posting
+        PairWithOffsets(Home home, OffsetView x0, OffsetView x1, IntView x2, int w);
+        /// Post propagator \f$x_0+x_1\cdot w=x_2\f$
+        static ExecStatus post(Home home, OffsetView x0, OffsetView x1, IntView x2, int w, int h);
+        /// Copy propagator during cloning
+        GECODE_INT_EXPORT virtual Actor* copy(Space& home);
+        /// Perform propagation
+        GECODE_INT_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    };
+
+}}} // namespace Gecode::Int::Element
 
 #include <gecode/int/element/int.hpp>
 #include <gecode/int/element/view.hpp>
@@ -353,6 +350,4 @@ namespace Gecode { namespace Int { namespace Element {
 
 #endif
 
-
 // STATISTICS: int-prop
-

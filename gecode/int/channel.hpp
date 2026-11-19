@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,12 +32,11 @@
 
 namespace Gecode {
 
-  forceinline void
-  channel(Home home, IntVar x0, BoolVar x1,
-          IntPropLevel ipl) {
-    channel(home,x1,x0,ipl);
-  }
+    forceinline void
+    channel(Home home, IntVar x0, BoolVar x1, IntPropLevel ipl) {
+        channel(home, x1, x0, ipl);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-post
