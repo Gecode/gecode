@@ -80,6 +80,17 @@ Module: search
 What:   change
 Rank:   major
 [DESCRIPTION]
+Give each restart-based asset of a portfolio its own copy of the cutoff.
+[MORE]
+Cutoff has a new pure virtual function copy(), which custom cutoff generators
+must implement. Copies of a random cutoff draw different sequences, so the
+assets restart at different times. See docs/gecode-7-migration.md.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
 Rename the meta-search Space hooks master() and slave() to hub() and spoke().
 [MORE]
 There are no compatibility aliases. An old override marked override fails to
