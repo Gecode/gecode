@@ -701,6 +701,8 @@ namespace Test {
       SpokeCoverage solution_spoke_coverage = SpokeCoverage::Full;
       bool fail_solution_spoke = false;
       bool nogood_model = false;
+      /// Whether the model posts a branching on x
+      bool model_branching = true;
       /// Whether a PBS spoke() posts the branching for its asset
       bool spoke_branching = true;
       /// Whether the first RBS spoke reaches the cutoff without a solution
@@ -779,7 +781,8 @@ namespace Test {
           distinct(*this, q, IPL_VAL);
           Gecode::branch(*this, q, INT_VAR_NONE(), INT_VAL_MIN());
         }
-        Gecode::branch(*this, x, INT_VAL_MIN());
+        if (state->model_branching)
+          Gecode::branch(*this, x, INT_VAL_MIN());
       }
       /// Clone \a s
       MetaDispatchSpace(MetaDispatchSpace& s)
@@ -914,7 +917,8 @@ namespace Test {
         PbsParallelSpokeOnly,
         PbsParallel,
         PbsParallelThreadLimit,
-        PbsDefaultHubRemovesBranchers,
+        PbsSpokeWithoutBrancher,
+        PbsNoBrancher,
         RbsNoGoodsResetOwnership,
         MetaStopOwnership,
         BabIncumbent
@@ -1013,23 +1017,29 @@ namespace Test {
         delete solution;
         return ok;
       }
-      /// Check that the default PBS hub() removes the model's branching
+      /// Check that PBS rejects a spoke without branching when the hub had one
       static bool
-      pbs_default_hub_removes_branchers(void) {
+      pbs_spoke_without_brancher(bool model_branching) {
         MetaDispatchState state;
         state.spoke_branching = false;
+        state.model_branching = model_branching;
         SpokeDispatchSpace* m = new SpokeDispatchSpace(state);
         Gecode::Search::Options o;
         o.assets = 3;
         o.threads = 1;
-        Gecode::PBS<SpokeDispatchSpace, Gecode::DFS> search(m, o);
-        delete m;
-
-        // A spoke without branching is a solution as soon as it is stable.
-        SpokeDispatchSpace* solution = search.next();
-        bool ok = (solution != nullptr) && !solution->assigned() && holds(state.spoke_calls, 3U);
-        delete solution;
-        return ok;
+        try {
+          Gecode::PBS<SpokeDispatchSpace, Gecode::DFS> search(m, o);
+          delete m;
+          // A spoke without branching is a solution as soon as it is stable.
+          SpokeDispatchSpace* solution = search.next();
+          bool ok = !model_branching && (solution != nullptr) && !solution->assigned() &&
+                    holds(state.spoke_calls, 3U);
+          delete solution;
+          return ok;
+        } catch (const Gecode::Search::SpokeNoBrancher&) {
+          delete m;
+          return model_branching && holds(state.live_spaces, 0U);
+        }
       }
       /// Check RBS dispatch when the first spoke reaches the cutoff
       static bool
@@ -1243,8 +1253,10 @@ namespace Test {
         case Scenario::PbsParallelThreadLimit:
           // Parallel PBS runs all assets, also with fewer threads.
           return pbs<HubSpokeDispatchSpace>(3, 2, 1, 3, 7);
-        case Scenario::PbsDefaultHubRemovesBranchers:
-          return pbs_default_hub_removes_branchers();
+        case Scenario::PbsSpokeWithoutBrancher:
+          return pbs_spoke_without_brancher(true);
+        case Scenario::PbsNoBrancher:
+          return pbs_spoke_without_brancher(false);
         case Scenario::RbsNoGoodsResetOwnership:
           return rbs_nogoods_reset_ownership();
         case Scenario::MetaStopOwnership:
@@ -1823,6 +1835,11 @@ namespace Test {
         if (constraints != nullptr)
           constraints->fetch_add(1);
         IntMinimizeSpace::constrain(s);
+      }
+      virtual void hub(HubContext& hc) {
+        // Keep the branchers for the assets of a portfolio
+        if (hc.engine() == MetaEngine::Restart)
+          Space::hub(hc);
       }
     };
 
@@ -3545,8 +3562,9 @@ namespace Test {
 
     /// Hook behaviour of ProtocolSpace
     enum class Protocol {
-      Default,  ///< Default hooks
-      EmptyHub, ///< hub() does nothing
+      Default,    ///< Default hooks
+      EmptyHub,   ///< hub() does nothing
+      BoundInHub, ///< hub() posts c <= 1 at Start and keeps the branchers
     };
 
     /// Calls of the hooks of ProtocolSpace
@@ -3607,6 +3625,12 @@ namespace Test {
         switch (protocol) {
         case Protocol::EmptyHub:
           return;
+        case Protocol::BoundInHub:
+          if (hc.event() == MetaEvent::Start) {
+            rel(*this,c,IRT_LQ,1);
+            return;
+          }
+          break;
         case Protocol::Default:
           break;
         }
@@ -3623,6 +3647,7 @@ namespace Test {
       /// Scenario
       enum class Scenario {
         EngineConstrainsHub,
+        PortfolioHubConstraint,
       };
     protected:
       /// Scenario under test
@@ -3654,6 +3679,39 @@ namespace Test {
         }
         return (costs == std::vector<int>{3,2,1,0}) && (log.live == 0);
       }
+      /// Check that a constraint posted by hub() under PBS takes effect
+      static bool portfolio_hub_constraint(void) {
+        ProtocolLog log;
+        for (unsigned int t : {1U,2U}) {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::BoundInHub,log);
+          Gecode::Search::Options o;
+          o.assets = 2;
+          o.threads = t;
+          Gecode::PBS<ProtocolSpace,Gecode::DFS> pbs(m,o);
+          delete m;
+          ProtocolSpace* s = pbs.next();
+          const bool ok = (s != nullptr) && (s->c.val() == 1);
+          delete s;
+          if (!ok)
+            return false;
+        }
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::BoundInHub,log);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          SEBs assets(2);
+          for (int i=0; i<2; i++)
+            assets[i] = Gecode::dfs<ProtocolSpace>(o);
+          Gecode::PBS<ProtocolSpace,Gecode::DFS> pbs(m,assets,o);
+          delete m;
+          ProtocolSpace* s = pbs.next();
+          const bool ok = (s != nullptr) && (s->c.val() == 1);
+          delete s;
+          if (!ok)
+            return false;
+        }
+        return log.live == 0;
+      }
     public:
       /// Initialize scenario \a s with name \a n
       MetaProtocol(const std::string& n, Scenario s)
@@ -3662,6 +3720,8 @@ namespace Test {
         switch (scenario) {
         case Scenario::EngineConstrainsHub:
           return engine_constrains_hub();
+        case Scenario::PortfolioHubConstraint:
+          return portfolio_hub_constraint();
         default:
           GECODE_NEVER;
         }
@@ -3671,6 +3731,8 @@ namespace Test {
 
     MetaProtocol meta_engine_constrains_hub
     ("EngineConstrainsHub",MetaProtocol::Scenario::EngineConstrainsHub);
+    MetaProtocol meta_portfolio_hub_constraint
+    ("PortfolioHubConstraint",MetaProtocol::Scenario::PortfolioHubConstraint);
 
     /**
      * \brief Constant cutoff counting its deletions
@@ -3903,8 +3965,8 @@ namespace Test {
         (void)new MetaDispatch("PBS::SequentialHubOnly", MetaDispatch::Scenario::PbsSequentialHubOnly);
         (void)new MetaDispatch("PBS::SequentialSpokeOnly", MetaDispatch::Scenario::PbsSequentialSpokeOnly);
         (void)new MetaDispatch("PBS::Sequential", MetaDispatch::Scenario::PbsSequential);
-        (void)new MetaDispatch("PBS::DefaultHubRemovesBranchers",
-                               MetaDispatch::Scenario::PbsDefaultHubRemovesBranchers);
+        (void)new MetaDispatch("PBS::SpokeWithoutBrancher", MetaDispatch::Scenario::PbsSpokeWithoutBrancher);
+        (void)new MetaDispatch("PBS::NoBrancher", MetaDispatch::Scenario::PbsNoBrancher);
 #ifdef GECODE_HAS_THREADS
         (void)new MetaDispatch("PBS::ParallelHubOnly", MetaDispatch::Scenario::PbsParallelHubOnly);
         (void)new MetaDispatch("PBS::ParallelSpokeOnly", MetaDispatch::Scenario::PbsParallelSpokeOnly);

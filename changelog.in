@@ -77,6 +77,27 @@ This is the development changelog for the next Gecode release.
 
 [ENTRY]
 Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Throw Search::SpokeNoBrancher when a spoke of portfolio search has no
+brancher but the hub had branchers.
+[MORE]
+The default hub() removes all branchers, so a spoke() that forgot to post
+the branching of its asset returned the unassigned spoke as a solution.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Propagate the hub of portfolio search after hub() and before cloning the
+spokes.
+[MORE]
+A hub() that posted a constraint made the portfolio throw SpaceNotStable.
+
+[ENTRY]
+Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]

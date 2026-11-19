@@ -52,6 +52,10 @@ namespace Gecode { namespace Search {
     : Exception(l,"Illegal combination of best and non-best solution search")
   {}
 
+  SpokeNoBrancher::SpokeNoBrancher(const char* l)
+    : Exception(l,"Spoke of a portfolio has no brancher, but the hub had "
+                "branchers") {}
+
   NoBest::NoBest(const char* l)
     : Exception(l,"Best solution search is not supported") {}
 
