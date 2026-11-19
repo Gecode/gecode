@@ -929,6 +929,7 @@ namespace Gecode { namespace Driver {
   template<class BaseSpace>
   class ScriptBase : public BaseSpace {
   public:
+    using BaseSpace::compare;
     /// Constructor
     ScriptBase(const Options& opt);
     /// Constructor used for cloning
