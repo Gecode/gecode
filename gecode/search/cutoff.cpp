@@ -189,7 +189,7 @@ namespace Gecode { namespace Search {
   CutoffRepeat::operator ++(void) {
     i++;
     if (i == n) {
-      cutoff = (*c)();
+      cutoff = ++(*c);
       i = 0;
     }
     return cutoff;

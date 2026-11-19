@@ -80,6 +80,17 @@ Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Advance the generator that a cutoff generator from Cutoff::repeat()
+repeats.
+[MORE]
+It read the current value of that generator without advancing it, so after
+the first value it repeated the same value forever.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Delete the spoke of restart-based search when spoke() throws an exception at
 a restart.
 
