@@ -50,6 +50,7 @@
 #include <future>
 #include <limits>
 #include <memory>
+#include <stdexcept>
 #include <thread>
 #include <type_traits>
 #include <utility>
@@ -3247,6 +3248,59 @@ namespace Test {
     };
 
     RBSFailedFirstSpoke rbs_failed_first_spoke;
+
+    /// Space without solutions whose spoke() throws after the first episode
+    class ThrowingSpoke : public NoSolution {
+    public:
+      /// Number of spaces alive, shared with the workers of a parallel engine
+      std::atomic<int>* live;
+      ThrowingSpoke(std::atomic<int>& l) : live(&l) {
+        (*live)++;
+      }
+      ThrowingSpoke(ThrowingSpoke& s) : NoSolution(s), live(s.live) {
+        (*live)++;
+      }
+      ~ThrowingSpoke(void) override {
+        (*live)--;
+      }
+      Gecode::Space* copy(void) override {
+        return new ThrowingSpoke(*this);
+      }
+      void spoke(Gecode::SpokeContext& sc) override {
+        if (sc.episode() == 1)
+          throw std::runtime_error("spoke");
+      }
+    };
+
+    /// RBS deletes the spoke when spoke() throws at a restart
+    class RBSSpokeException : public Base {
+    public:
+      RBSSpokeException(void) : Base("Search::RBS::SpokeException") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U}) {
+          std::atomic<int> live{0};
+          bool thrown = false;
+          {
+            ThrowingSpoke root(live);
+            Gecode::Search::Options o;
+            o.threads = t;
+            o.cutoff = Gecode::Search::Cutoff::constant(1);
+            Gecode::RBS<ThrowingSpoke,Gecode::DFS> rbs(&root,o);
+            try {
+              if (ThrowingSpoke* s = rbs.next())
+                delete s;
+            } catch (const std::runtime_error&) {
+              thrown = true;
+            }
+          }
+          if (!thrown || (live != 0))
+            return false;
+        }
+        return true;
+      }
+    };
+
+    RBSSpokeException rbs_spoke_exception;
 
     /// Stop after a number of failures, or after many checks as a safeguard
     class FailureLimit : public Gecode::Search::Stop {
