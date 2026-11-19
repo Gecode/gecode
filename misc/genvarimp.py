@@ -5,7 +5,11 @@
 
 """Generate kernel var-type.hpp or var-imp.hpp from variable implementation specs."""
 
+import os
+from pathlib import Path
 import re
+import shutil
+import subprocess
 import sys
 from typing import Dict, List, Optional
 
@@ -954,6 +958,33 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
     )
 
 
+def format_cpp(source: str) -> str:
+    executable = (
+        os.environ.get("CLANG_FORMAT")
+        or shutil.which("clang-format-22")
+        or shutil.which("clang-format")
+    )
+    if not executable:
+        raise SystemExit("clang-format 22 is required to generate variable headers; set CLANG_FORMAT or add it to PATH")
+    try:
+        version = subprocess.run(
+            [executable, "--version"], check=True, capture_output=True, text=True
+        ).stdout
+        if not re.search(r"clang-format version 22\.", version):
+            raise SystemExit(f"clang-format 22 is required; found {version.strip()}")
+        config = Path(__file__).resolve().parents[1] / ".clang-format"
+        return subprocess.run(
+            [executable, f"--style=file:{config}", "--assume-filename=var-imp.hpp"],
+            input=source,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError) as error:
+        detail = error.stderr if isinstance(error, subprocess.CalledProcessError) else str(error)
+        raise SystemExit(f"Could not format generated variable header: {detail}") from error
+
+
 def main() -> int:
     gen_header, gen_typehpp, files = parse_args(sys.argv[1:])
 
@@ -972,7 +1003,7 @@ def main() -> int:
         generate_header(parsed, out)
 
     out.append("// STATISTICS: kernel-var\n")
-    sys.stdout.write("".join(out))
+    sys.stdout.write(format_cpp("".join(out)))
     return 0
 
 

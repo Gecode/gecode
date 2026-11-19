@@ -1,0 +1,17 @@
+# Use clang-format 22; see docs/code-style.md.
+BasedOnStyle: LLVM
+IndentWidth: 4
+ContinuationIndentWidth: 4
+AccessModifierOffset: -4
+ColumnLimit: 120
+NamespaceIndentation: All
+CompactNamespaces: true
+BreakBeforeBraces: Attach
+BreakAfterReturnType: AllDefinitions
+PointerAlignment: Left
+ReferenceAlignment: Left
+SortIncludes: Never
+ReflowComments: IndentOnly
+AllowShortFunctionsOnASingleLine: Empty
+BreakTemplateDeclarations: Yes
+AttributeMacros: [forceinline]
