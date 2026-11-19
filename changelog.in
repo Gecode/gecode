@@ -80,6 +80,19 @@ Module: search
 What:   change
 Rank:   major
 [DESCRIPTION]
+Replace stopped() of search engines by end_reason().
+[MORE]
+end_reason() tells why next() returned no solution: EndReason::Exhausted is a
+proof, EndReason::Incomplete is an end without one, and EndReason::Limit is a
+stop. stopped() and the experimental limited() are removed. FlatZinc reports
+optimality or unsatisfiability only for an exhausted search. See
+docs/gecode-7-migration.md.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
 Give each restart-based asset of a portfolio its own copy of the cutoff.
 [MORE]
 Cutoff has a new pure virtual function copy(), which custom cutoff generators

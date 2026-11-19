@@ -276,7 +276,7 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline
   LDS<Tracer>::LDS(Space* s, const Options& o)
-    : opt(o), e(opt), root(nullptr), d(0) {
+    : opt(o), e(opt), root(nullptr), d(0) , end(EndReason::NotEnded) {
     e.node = 1;
     if (s->status(e) == SS_FAILED) {
       e.fail++;
@@ -295,10 +295,18 @@ namespace Gecode { namespace Search { namespace Seq {
   LDS<Tracer>::next(void) {
     while (true) {
       Space* s = e.next(opt);
-      if (s != nullptr)
+      if (s != nullptr) {
+        end = EndReason::NotEnded;
         return s;
-      if (((s == nullptr) && e.stopped()) || (++d > opt.d_l) || e.done())
+      }
+      if (e.stopped()) {
+        end = EndReason::Limit;
         break;
+      }
+      if ((++d > opt.d_l) || e.done()) {
+        end = EndReason::Exhausted;
+        break;
+      }
       if (d == opt.d_l) {
         if (root != nullptr)
           e.reset(root,d);
@@ -311,9 +319,9 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   template<class Tracer>
-  bool
-  LDS<Tracer>::stopped(void) const {
-    return e.stopped();
+  EndReason
+  LDS<Tracer>::end_reason(void) const {
+    return end;
   }
 
   template<class Tracer>
@@ -327,6 +335,7 @@ namespace Gecode { namespace Search { namespace Seq {
   forceinline void
   LDS<Tracer>::reset(Space* s) {
     delete root; root=nullptr; d=0;
+    end = EndReason::NotEnded;
     // Reset the statistics first, so that a failed root is counted
     e.reset(nullptr,0);
     if (s == nullptr)

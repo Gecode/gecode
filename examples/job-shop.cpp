@@ -790,11 +790,12 @@ solve(const JobShopOptions& opt) {
           s->print(std::cout);
           u = s->cost().val();
           delete s;
-        } else if (rbs.stopped()) {
+        } else if (rbs.end_reason() == Search::EndReason::Exhausted) {
+          l = m+1;
+        } else {
+          // Stopped, or ended without proving that no solution exists
           stopped = true;
           break;
-        } else {
-          l = m+1;
         }
       }
 
@@ -842,7 +843,7 @@ solve(const JobShopOptions& opt) {
       Driver::stop(t,std::cout);
       std::cout << std::endl;
 
-      if (rbs.stopped()) {
+      if (rbs.end_reason() != Search::EndReason::Exhausted) {
         std::cout << "\t\t\t\tstopped due to time-out..." << std::endl;
         std::cout << std::endl
                   << "\tSolution at most ";

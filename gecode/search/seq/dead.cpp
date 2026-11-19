@@ -43,6 +43,9 @@ namespace Gecode { namespace Search { namespace Seq {
     Tracer tracer;
     /// Statistics
     Statistics stat;
+    /// Why the last call to next() returned no solution
+    EndReason end;
+
   public:
     /// Initialize
     Dead(const Options& o, const Statistics& stat0);
@@ -50,15 +53,15 @@ namespace Gecode { namespace Search { namespace Seq {
     virtual Space* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Delete
     virtual ~Dead(void);
   };
 
   template<class Tracer>
   Dead<Tracer>::Dead(const Options& o, const Statistics& stat0)
-    : tracer(o.tracer), stat(stat0) {
+    : tracer(o.tracer), stat(stat0) , end(EndReason::NotEnded) {
     tracer.engine(SearchTracer::EngineType::AOE, 1U);
     tracer.worker();
   }
@@ -66,13 +69,15 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   Space*
   Dead<Tracer>::next(void) {
+    // The root has failed
+    end = EndReason::Exhausted;
     return nullptr;
   }
 
   template<class Tracer>
-  bool
-  Dead<Tracer>::stopped(void) const {
-    return false;
+  EndReason
+  Dead<Tracer>::end_reason(void) const {
+    return end;
   }
 
   template<class Tracer>

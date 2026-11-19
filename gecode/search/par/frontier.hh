@@ -110,6 +110,8 @@ namespace Gecode { namespace Search { namespace Par {
     unsigned int active;
     /// Whether search is running, being shut down, stopped, or limited
     bool running, shutdown, _stopped, _limited;
+    /// Why the last call to next() returned no solution
+    EndReason end;
     /// First exception thrown by a worker
     std::exception_ptr error;
 
@@ -160,10 +162,8 @@ namespace Gecode { namespace Search { namespace Par {
     Space* next(void) override;
     /// Return statistics
     Search::Statistics statistics(void) const override;
-    /// Whether search has been stopped
-    bool stopped(void) const override;
-    /// Whether search stopped at the width or frontier limit
-    bool limited(void) const override;
+    /// Return why the last call to next() returned no solution
+    EndReason end_reason(void) const override;
     /// Constrain future solutions to be better than \a s
     void constrain(const Space& s) override;
     /// Reset engine to restart at space \a s

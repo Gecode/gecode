@@ -60,6 +60,7 @@ namespace Gecode { namespace Search { namespace Par {
       guidance(*o.guidance), best(guidance.sense), order(0),
       pending(heap), n_pending(0), runners(nullptr), active(0),
       running(false), shutdown(false), _stopped(false), _limited(false),
+      end(EndReason::NotEnded),
       batch(1), keyed(false) {}
 
   void
@@ -335,6 +336,7 @@ namespace Gecode { namespace Search { namespace Par {
         std::rethrow_exception(error);
       if (_limited) {
         _stopped = true;
+        end = EndReason::Incomplete;
         return nullptr;
       }
       _stopped = false;
@@ -348,7 +350,14 @@ namespace Gecode { namespace Search { namespace Par {
         continue;
       if (error)
         std::rethrow_exception(error);
-      return solution.release();
+      Space* s = solution.release();
+      if (s != nullptr)
+        end = EndReason::NotEnded;
+      else if (_limited)
+        end = EndReason::Incomplete;
+      else
+        end = _stopped ? EndReason::Limit : EndReason::Exhausted;
+      return s;
     }
   }
 
@@ -358,16 +367,10 @@ namespace Gecode { namespace Search { namespace Par {
     return stat;
   }
 
-  bool
-  Frontier::stopped(void) const {
+  EndReason
+  Frontier::end_reason(void) const {
     Support::Lock lock(mutex);
-    return _stopped;
-  }
-
-  bool
-  Frontier::limited(void) const {
-    Support::Lock lock(mutex);
-    return _limited;
+    return end;
   }
 
   void
@@ -392,6 +395,7 @@ namespace Gecode { namespace Search { namespace Par {
     solution.reset();
     order = 0;
     _stopped = _limited = false;
+    end = EndReason::NotEnded;
     error = nullptr;
     stat.reset();
     initialize(s,false);

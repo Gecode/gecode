@@ -242,7 +242,7 @@ namespace Test {
           while (true) {
             Model* s = static_cast<Model*>(e->next());
             delete s;
-            if (!e->stopped())
+            if (e->end_reason() != Search::EndReason::Limit)
               break;
             // Add no-goods
             e->nogoods().post(*m);

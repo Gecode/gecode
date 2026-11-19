@@ -427,7 +427,9 @@ namespace Gecode { namespace Driver {
               CombinedStop::installCtrlHandler(false);
             Search::Statistics stat = e.statistics();
             s_out << endl;
-            if (e.stopped()) {
+          if (e.end_reason() == Search::EndReason::Incomplete) {
+            l_out << "Search engine finished without exhausting the search space" << '\n' << '\n';
+          } else if (e.end_reason() == Search::EndReason::Limit) {
               l_out << "Search engine stopped..." << endl
                     << "\treason: ";
               int r = static_cast<CombinedStop*>(so.stop)->reason(stat,so);
@@ -572,7 +574,7 @@ namespace Gecode { namespace Driver {
                   delete ex;
                   s_n++;
                 } while (s_n < s_l);
-                if (e.stopped())
+                if (e.end_reason() == Search::EndReason::Limit)
                   stopped = true;
               }
               delete sok.stop;

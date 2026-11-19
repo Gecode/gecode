@@ -85,10 +85,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Space* next(void);
     /// Return statistics of asset
     Statistics statistics(void) const;
-    /// Check whether asset has been stopped
-    bool stopped(void) const;
-    /// Check whether asset stopped at a local limit
-    bool limited(void) const;
+    /// Return why the last call to next() of the asset returned no solution
+    EndReason end_reason(void) const;
     /// Constrain with better solution \a b
     void constrain(const Space& b);
     /// Perform one run
@@ -113,10 +111,10 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned int n_assets;
     /// Current asset to run
     unsigned int cur;
-    /// Whether an asset has been stopped
-    bool asset_stop;
-    /// Whether an asset stopped at a local limit
+    /// Whether an asset finished without exhausting its search space
     bool incomplete;
+    /// Why the last call to next() returned no solution
+    EndReason end;
   public:
     /// Initialize
     PBS(Engine** assets, Stop** stops, unsigned int n,
@@ -125,8 +123,8 @@ namespace Gecode { namespace Search { namespace Seq {
     virtual Space* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Constrain future solutions to be better than \a b
     virtual void constrain(const Space& b);
     /// Destructor
