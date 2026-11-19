@@ -129,109 +129,34 @@ namespace Gecode { namespace Search {
   };
 
   /**
-   * \brief Cutoff sequence shared by the assets of a portfolio
+   * \brief Return the cutoff for the next asset of a portfolio
    *
-   * A cutoff cannot be copied, so the assets of a portfolio that each take
-   * ownership of a cutoff get a PbsCutoff each, drawing from one sequence.
-   * The sequence is disposed with the last PbsCutoff and the reference held
-   * while the portfolio is built. The original cutoff is disposed as well
-   * only if building has succeeded, otherwise it stays with the caller.
-   *
-   * \internal
-   */
-  class PbsCutoffs : public HeapAllocated {
-  public:
-    /// Mutex protecting the sequence, assets can run in parallel
-    Support::Mutex m;
-    /// The shared cutoff sequence
-    Cutoff* c;
-    /// Number of references
-    unsigned int n;
-    /// Whether the cutoff sequence is disposed with the last reference
-    bool owner;
-    /// Initialize for cutoff \a c0 with the reference held while building
-    PbsCutoffs(Cutoff* c0) : c(c0), n(1U), owner(false) {}
-    /// Release a reference
-    static void release(PbsCutoffs* s) {
-      bool last;
-      {
-        Support::Lock lock(s->m);
-        last = (--s->n == 0U);
-      }
-      if (last) {
-        if (s->owner)
-          delete s->c;
-        delete s;
-      }
-    }
-  };
-
-  /**
-   * \brief Cutoff of a portfolio asset, the assets share the sequence of values
-   * \internal
-   */
-  class PbsCutoff : public Cutoff {
-  protected:
-    /// The shared sequence
-    PbsCutoffs* s;
-    /// The current cutoff value of this asset
-    unsigned long long int v;
-  public:
-    /// Initialize as a new reference to \a s0
-    PbsCutoff(PbsCutoffs* s0) : s(s0) {
-      Support::Lock lock(s->m);
-      v = (*s->c)();
-      s->n++;
-    }
-    /// Return the current cutoff value
-    unsigned long long int operator ()(void) const override {
-      return v;
-    }
-    /// Take the next value of the shared sequence and return it
-    unsigned long long int operator ++(void) override {
-      Support::Lock lock(s->m);
-      v = ++(*s->c);
-      return v;
-    }
-    /// Release the reference to the shared sequence
-    ~PbsCutoff(void) override {
-      PbsCutoffs::release(s);
-    }
-  };
-
-  /**
-   * \brief Return the cutoffs shared by the assets of a portfolio
-   *
-   * Returns nullptr if the assets of engine \a E do not take ownership of
-   * the cutoff in \a opt, or if there are fewer than two assets.
+   * When the assets of engine \a E take ownership of the cutoff \a c,
+   * each asset gets its own copy of \a c, and the portfolio deletes \a c
+   * once it has been built. Otherwise the assets share \a c and the caller
+   * keeps it.
    *
    * \internal
    */
   template<class E>
-  forceinline PbsCutoffs*
-  make_pbs_cutoffs(const Options& opt, unsigned int n_assets) {
-    if (!PbsOwnsCutoff<E>::value || (opt.cutoff == nullptr) ||
-        (n_assets < 2U))
+  forceinline std::unique_ptr<Cutoff>
+  pbs_cutoff(const Cutoff* c) {
+    if (!PbsOwnsCutoff<E>::value || (c == nullptr))
       return nullptr;
-    return new PbsCutoffs(opt.cutoff);
+    return std::unique_ptr<Cutoff>(c->copy());
   }
 
   /**
-   * \brief Release the cutoffs \a cs held while building
-   *
-   * The flag \a built tells whether building has succeeded.
+   * \brief Delete the cutoff \a c of a built portfolio if its assets of
+   * engine \a E own copies
    *
    * \internal
    */
+  template<class E>
   forceinline void
-  release_pbs_cutoffs(PbsCutoffs* cs, bool built) {
-    if (cs == nullptr)
-      return;
-    {
-      Support::Lock lock(cs->m);
-      cs->owner = built;
-    }
-    PbsCutoffs::release(cs);
+  pbs_release_cutoff(Cutoff* c) {
+    if (PbsOwnsCutoff<E>::value)
+      delete c;
   }
 
   /// A PBS engine builder
@@ -319,8 +244,8 @@ namespace Gecode { namespace Search {
     WrapTraceRecorder::engine(opt.tracer,
                               SearchTracer::EngineType::PBS, n_assets);
 
+    Cutoff* cutoff = opt.cutoff;
     Space* unowned_hub = hub;
-    PbsCutoffs* cutoffs = make_pbs_cutoffs<E<T> >(opt,n_assets);
     try {
       for (unsigned int i=0U; i<n_assets; i++) {
         opt.stop = stops[i] = Seq::pbsstop(stop);
@@ -329,22 +254,19 @@ namespace Gecode { namespace Search {
         if (spoke.get() == hub)
           unowned_hub = nullptr;
         (void) spoke->spoke(i);
-        std::unique_ptr<Cutoff> cutoff;
-        if (cutoffs != nullptr) {
-          cutoff.reset(new PbsCutoff(cutoffs));
-          opt.cutoff = cutoff.get();
-        }
+        std::unique_ptr<Cutoff> c(pbs_cutoff<E<T> >(cutoff));
+        if (c != nullptr)
+          opt.cutoff = c.get();
         assets[i] = build<T,E>(spoke.get(),opt);
         // The asset owns its cutoff
-        (void) cutoff.release();
+        (void) c.release();
       }
       Engine* e = Seq::pbsengine(
         assets,stops,n_assets,stat,opt,E<T>::best);
-      release_pbs_cutoffs(cutoffs,true);
+      pbs_release_cutoff<E<T> >(cutoff);
       return e;
     } catch (...) {
       pbscleanup(assets,stops,n_assets,unowned_hub);
-      release_pbs_cutoffs(cutoffs,false);
       throw;
     }
   }
@@ -421,8 +343,8 @@ namespace Gecode { namespace Search {
       stops[i] = nullptr;
     }
 
+    Cutoff* cutoff = opt.cutoff;
     Space* unowned_hub = hub;
-    PbsCutoffs* cutoffs = make_pbs_cutoffs<E<T> >(opt,n_assets);
     try {
       for (unsigned int i=0U; i<n_assets; i++) {
         opt.stop = stops[i] = Par::pbsstop(stop,opt.worker_control);
@@ -431,21 +353,18 @@ namespace Gecode { namespace Search {
         if (spoke.get() == hub)
           unowned_hub = nullptr;
         (void) spoke->spoke(static_cast<unsigned int>(i));
-        std::unique_ptr<Cutoff> cutoff;
-        if (cutoffs != nullptr) {
-          cutoff.reset(new PbsCutoff(cutoffs));
-          opt.cutoff = cutoff.get();
-        }
+        std::unique_ptr<Cutoff> c(pbs_cutoff<E<T> >(cutoff));
+        if (c != nullptr)
+          opt.cutoff = c.get();
         assets[i] = build<T,E>(spoke.get(),opt);
         // The asset owns its cutoff
-        (void) cutoff.release();
+        (void) c.release();
       }
       Engine* e = Par::pbsengine(assets,stops,n_assets,stat,E<T>::best);
-      release_pbs_cutoffs(cutoffs,true);
+      pbs_release_cutoff<E<T> >(cutoff);
       return e;
     } catch (...) {
       pbscleanup(assets,stops,n_assets,unowned_hub);
-      release_pbs_cutoffs(cutoffs,false);
       throw;
     }
   }

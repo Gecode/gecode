@@ -3196,7 +3196,74 @@ namespace Test {
 
     PBSBuilderStop pbs_builder_stop;
 
-    /// Restart-based assets of a portfolio share the cutoff sequence
+    /// A copy of a cutoff generator continues its sequence independently
+    class CutoffCopy : public Base {
+      /// Check that a copy of \a c continues as \a c, then delete \a c
+      static bool same(Gecode::Search::Cutoff* c) {
+        std::unique_ptr<Gecode::Search::Cutoff> o(c);
+        for (int i=0; i<5; i++)
+          (void) ++(*o);
+        std::unique_ptr<Gecode::Search::Cutoff> d(o->copy());
+        if ((*d)() != (*o)())
+          return false;
+        for (int i=0; i<20; i++)
+          if (++(*d) != ++(*o))
+            return false;
+        return true;
+      }
+    public:
+      CutoffCopy(void) : Base("Search::Cutoff::Copy") {}
+      bool run(void) override {
+        using Gecode::Search::Cutoff;
+        return same(Cutoff::constant(3)) && same(Cutoff::linear(2)) &&
+          same(Cutoff::geometric(2,1.5)) && same(Cutoff::luby(2)) &&
+          same(Cutoff::append(Cutoff::linear(1),8,Cutoff::luby(3))) &&
+          same(Cutoff::merge(Cutoff::linear(1),Cutoff::geometric(1,2.0))) &&
+          same(Cutoff::repeat(Cutoff::linear(4),3));
+      }
+    };
+
+    CutoffCopy cutoff_copy;
+
+    /// Copies of a random cutoff generator draw distinct, reproducible sequences
+    class CutoffRandomCopy : public Base {
+      /// Return the first values of \a c, which is deleted
+      static std::vector<unsigned long long int>
+      values(Gecode::Search::Cutoff* c) {
+        std::unique_ptr<Gecode::Search::Cutoff> d(c);
+        std::vector<unsigned long long int> v{(*d)()};
+        for (int i=0; i<20; i++) {
+          v.push_back(++(*d));
+          if ((v.back() < 1U) || (v.back() > 1000U))
+            return {};
+        }
+        return v;
+      }
+      /// Return the values of two copies of a generator with seed \a seed
+      static std::vector<std::vector<unsigned long long int> >
+      copies(unsigned int seed) {
+        std::unique_ptr<Gecode::Search::Cutoff>
+          o(Gecode::Search::Cutoff::rnd(seed,1,1000,1000));
+        (void) ++(*o);
+        std::vector<std::vector<unsigned long long int> > v;
+        v.push_back(values(o->copy()));
+        v.push_back(values(o->copy()));
+        v.push_back(values(o.release()));
+        return v;
+      }
+    public:
+      CutoffRandomCopy(void) : Base("Search::Cutoff::RandomCopy") {}
+      bool run(void) override {
+        std::vector<std::vector<unsigned long long int> > v = copies(7);
+        return !v[0].empty() && !v[1].empty() && !v[2].empty() &&
+          (v[0] != v[1]) && (v[0] != v[2]) && (v[1] != v[2]) &&
+          (copies(7) == v);
+      }
+    };
+
+    CutoffRandomCopy cutoff_random_copy;
+
+    /// Each restart-based asset of a portfolio owns a copy of the cutoff
     class PBSRestartCutoff : public Base {
       template<template<class> class Engine>
       static bool test(unsigned int threads) {

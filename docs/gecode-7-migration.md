@@ -40,3 +40,31 @@ The examples show typical overrides:
   large neighbourhood search.
 - `examples/qcp.cpp`: a PBS `spoke()` that posts a different branching for
   each asset.
+
+## Cutoff generators implement copy()
+
+`Search::Cutoff` has a new pure virtual member function:
+
+```cpp
+virtual Gecode::Search::Cutoff* copy(void) const;
+```
+
+It returns a copy of the generator in its current state that continues the
+sequence on its own. A copy of `Cutoff::rnd()` draws its own random
+sequence, so that the assets restart at different times. A portfolio of
+restart-based engines, `PBS<T, RBS>`, gives each asset its own copy of the
+cutoff in its options and deletes the original once the portfolio is built.
+In Gecode 6.6, the assets drew their values from one shared cutoff sequence.
+
+A custom cutoff generator must implement `copy()`. For a generator whose
+state is plain data, the copy constructor suffices:
+
+```cpp
+Gecode::Search::Cutoff*
+MyCutoff::copy(void) const {
+  return new MyCutoff(*this);
+}
+```
+
+A generator that owns other generators copies them with their own
+`copy()`.
