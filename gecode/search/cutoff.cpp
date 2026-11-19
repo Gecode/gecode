@@ -36,6 +36,7 @@
  */
 
 #include <algorithm>
+#include <memory>
 #include <gecode/search.hh>
 
 namespace Gecode { namespace Search {
@@ -49,6 +50,11 @@ namespace Gecode { namespace Search {
     return c;
   }
 
+  Cutoff*
+  CutoffConstant::copy(void) const {
+    return new CutoffConstant(*this);
+  }
+
 
   unsigned long long int
   CutoffLinear::operator ()(void) const {
@@ -58,6 +64,11 @@ namespace Gecode { namespace Search {
   CutoffLinear::operator ++(void) {
     n += scale;
     return n;
+  }
+
+  Cutoff*
+  CutoffLinear::copy(void) const {
+    return new CutoffLinear(*this);
   }
 
 
@@ -75,6 +86,11 @@ namespace Gecode { namespace Search {
     return scale*luby(i++);
   }
 
+  Cutoff*
+  CutoffLuby::copy(void) const {
+    return new CutoffLuby(*this);
+  }
+
 
   unsigned long long int
   CutoffGeometric::operator ()(void) const {
@@ -86,6 +102,11 @@ namespace Gecode { namespace Search {
     return static_cast<unsigned long long int>(scale * n);
   }
 
+  Cutoff*
+  CutoffGeometric::copy(void) const {
+    return new CutoffGeometric(*this);
+  }
+
 
   unsigned long long int
   CutoffRandom::operator ++(void) {
@@ -95,6 +116,17 @@ namespace Gecode { namespace Search {
   unsigned long long int
   CutoffRandom::operator ()(void) const {
     return cur;
+  }
+
+  Cutoff*
+  CutoffRandom::copy(void) const {
+    CutoffRandom* c = new CutoffRandom(*this);
+    // Derive a distinct seed for each copy, the golden ratio spreads them
+    copies++;
+    c->rnd.seed(rnd.seed() + copies * 0x9e3779b9U);
+    c->copies = 0U;
+    (void) ++(*c);
+    return c;
   }
 
 
@@ -116,6 +148,16 @@ namespace Gecode { namespace Search {
     }
   }
 
+  Cutoff*
+  CutoffAppend::copy(void) const {
+    std::unique_ptr<Cutoff> d1(c1->copy());
+    std::unique_ptr<Cutoff> d2(c2->copy());
+    Cutoff* d = new CutoffAppend(d1.get(),n,d2.get());
+    (void) d1.release();
+    (void) d2.release();
+    return d;
+  }
+
 
   unsigned long long int
   CutoffMerge::operator ()(void) const {
@@ -126,6 +168,16 @@ namespace Gecode { namespace Search {
     (void) ++(*c1);
     std::swap(c1,c2);
     return (*c1)();
+  }
+
+  Cutoff*
+  CutoffMerge::copy(void) const {
+    std::unique_ptr<Cutoff> d1(c1->copy());
+    std::unique_ptr<Cutoff> d2(c2->copy());
+    Cutoff* d = new CutoffMerge(d1.get(),d2.get());
+    (void) d1.release();
+    (void) d2.release();
+    return d;
   }
 
 
@@ -141,6 +193,16 @@ namespace Gecode { namespace Search {
       i = 0;
     }
     return cutoff;
+  }
+
+  Cutoff*
+  CutoffRepeat::copy(void) const {
+    std::unique_ptr<Cutoff> d1(c->copy());
+    CutoffRepeat* d = new CutoffRepeat(d1.get(),n);
+    (void) d1.release();
+    d->cutoff = cutoff;
+    d->i = i;
+    return d;
   }
 
 

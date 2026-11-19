@@ -487,6 +487,15 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const = 0;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void) = 0;
+    /**
+     * \brief Return a copy of this generator in its current state
+     *
+     * The copy continues the sequence independently of this generator,
+     * except that a copy of a random generator draws its own sequence
+     * (see CutoffRandom::copy()). A portfolio of restart-based engines
+     * gives each asset its own copy.
+     */
+    virtual Cutoff* copy(void) const = 0;
     /// Destructor
     virtual ~Cutoff(void);
     //@}
@@ -542,6 +551,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
   };
 
   /**
@@ -561,6 +572,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
   };
 
   /**
@@ -588,6 +601,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
   };
 
   /**
@@ -609,6 +624,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
   };
 
   /**
@@ -627,6 +644,8 @@ namespace Gecode { namespace Search {
     unsigned long long int step;
     /// Current value
     unsigned long long int cur;
+    /// Number of copies made of this generator
+    mutable unsigned int copies;
   public:
     /// Constructor
     CutoffRandom(unsigned int seed,
@@ -636,6 +655,17 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /**
+     * \brief Return a copy of this generator with its own random sequence
+     *
+     * The copy draws its values, starting with its current one, from a
+     * seed that depends on the state of this generator and on how many
+     * copies of it have been made before. Copies made one after the
+     * other thus have different sequences, so that the assets of a
+     * portfolio restart at different times, and the same program
+     * creates the same sequences.
+     */
+    virtual Cutoff* copy(void) const;
   };
 
   /**
@@ -657,6 +687,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
     /// Destructor
     virtual ~CutoffAppend(void);
   };
@@ -678,6 +710,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
     /// Destructor
     virtual ~CutoffMerge(void);
   };
@@ -703,6 +737,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
     /// Destructor
     virtual ~CutoffRepeat(void);
   };
@@ -1470,7 +1506,12 @@ namespace Gecode {
   class RBS : public Search::Base<T> {
     using Search::Base<T>::e;
   public:
-    /// Initialize engine for space \a s and options \a o
+    /**
+     * \brief Initialize engine for space \a s and options \a o
+     *
+     * The engine takes ownership of the cutoff in \a o. If the
+     * constructor throws an exception, the caller keeps the cutoff.
+     */
     RBS(T* s, const Search::Options& o);
     /// Whether engine does best solution search
     static const bool best = E<T>::best;
@@ -1546,8 +1587,9 @@ namespace Gecode {
    * PBS does not allocate workers or adjust those controls.
    *
    * When the assets are restart-based engines, the portfolio takes
-   * ownership of the cutoff in \a o and the assets share its sequence:
-   * each restart of an asset takes the next value of the sequence.
+   * ownership of the cutoff in \a o and gives each asset its own copy
+   * (see Cutoff::copy()). If the constructor throws an exception, the
+   * caller keeps the cutoff.
    *
    * The class \a T can implement member functions
    * \code virtual bool hub(const MetaInfo& mi) \endcode
