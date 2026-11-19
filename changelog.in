@@ -80,6 +80,14 @@ Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Delete the spoke of restart-based search when spoke() throws an exception at
+a restart.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Do not let a brancher that hub() posts take the identity of a brancher that
 spoke() posted earlier.
 [MORE]

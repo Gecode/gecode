@@ -38,6 +38,8 @@
 
 #include <gecode/search/seq/rbs.hh>
 
+#include <memory>
+
 namespace Gecode { namespace Search { namespace Seq {
 
   namespace {
@@ -129,15 +131,17 @@ namespace Gecode { namespace Search { namespace Seq {
       stop->update(e->statistics());
     else
       stop->limit(e->statistics(),++(*co));
-    Space* spoke = hub;
-    hub = hub->clone();
+    // The old hub becomes the spoke, which is deleted if spoke() throws
+    std::unique_ptr<Space> next_hub(hub->clone());
+    std::unique_ptr<Space> spoke(hub);
+    hub = next_hub.release();
     episode++;
     SpokeContext sc = MetaContextAccess::spoke(MetaEngine::Restart,ev,episode,
                                                0U,1U,last,episode_stat,ng);
     spoke->spoke(sc);
     hub->reserve_brancher_ids(*spoke);
     coverage = sc.coverage();
-    e->reset(spoke);
+    e->reset(spoke.release());
     return true;
   }
 
