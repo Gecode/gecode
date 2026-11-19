@@ -133,6 +133,7 @@ namespace Gecode {
         MetaEngine::Restart,MetaEvent::Start,0UL,0U,1U,nullptr,start,
         NoGoods::eng);
       spoke->spoke(sc);
+      hub->reserve_brancher_ids(*spoke);
       std::unique_ptr<Search::Engine> leaf(
         Search::build<T,E>(spoke.get(),e_opt));
       e = Search::Seq::rbsengine(hub.get(),stop.get(),leaf.get(),

@@ -77,6 +77,17 @@ This is the development changelog for the next Gecode release.
 
 [ENTRY]
 Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Do not let a brancher that hub() posts take the identity of a brancher that
+spoke() posted earlier.
+[MORE]
+Restart-based search then posted the no-goods of that spoke for the wrong
+brancher, which could lose solutions.
+
+[ENTRY]
+Module: search
 What:   change
 Rank:   minor
 [DESCRIPTION]

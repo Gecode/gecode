@@ -3005,6 +3005,72 @@ namespace Test {
 
     RBSPartialNoGoods rbs_partial_nogoods;
 
+    /// Space whose hub posts a brancher after a spoke posted one
+    class LateHubBrancher : public Gecode::Space {
+    public:
+      /// Variables branched on by the spokes
+      Gecode::IntVarArray y;
+      /// Variables branched on by the hub after the first episode
+      Gecode::IntVarArray z;
+      /// Whether the hub branches on z
+      bool z_branching;
+      LateHubBrancher(void)
+        : y(*this,5,0,2), z(*this,2,0,1), z_branching(false) {
+        // For y0 = 0 the other y must be distinct, which is impossible
+        Gecode::BoolVar b = Gecode::expr(*this,y[0] == 0);
+        for (int i=1; i<y.size(); i++)
+          for (int j=i+1; j<y.size(); j++)
+            Gecode::rel(*this,y[i],Gecode::IRT_NQ,y[j],
+                        Gecode::Reify(b,Gecode::RM_IMP));
+      }
+      LateHubBrancher(LateHubBrancher& s)
+        : Gecode::Space(s), z_branching(s.z_branching) {
+        y.update(*this,s.y);
+        z.update(*this,s.z);
+      }
+      Gecode::Space* copy(void) override {
+        return new LateHubBrancher(*this);
+      }
+      void hub(Gecode::HubContext& hc) override {
+        if ((hc.event() == Gecode::MetaEvent::Limit) && !z_branching) {
+          Gecode::branch(*this,z,Gecode::INT_VAR_NONE(),
+                         Gecode::INT_VAL_MIN());
+          z_branching = true;
+        }
+        // The no-goods refer to the brancher of the first spoke
+        Gecode::Space::hub(hc);
+      }
+      void spoke(Gecode::SpokeContext& sc) override {
+        // The first episode searches y0 = 0 first and reaches the cutoff
+        Gecode::branch(*this,y,Gecode::INT_VAR_NONE(),
+                       (sc.episode() == 0) ? Gecode::INT_VAL_MIN() :
+                       Gecode::INT_VAL_MAX());
+      }
+    };
+
+    /// A brancher posted by hub() does not take the identity of a spoke brancher
+    class RBSLateHubBrancher : public Base {
+    public:
+      RBSLateHubBrancher(void) : Base("Search::RBS::LateHubBrancher") {}
+      bool run(void) override {
+        LateHubBrancher* m = new LateHubBrancher;
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.nogoods_limit = 128U;
+        o.cutoff = Gecode::Search::Cutoff::constant(3);
+        Gecode::RBS<LateHubBrancher,Gecode::DFS> rbs(m,o);
+        delete m;
+        // A no-good taken for one on z would rule out z = (0,0)
+        LateHubBrancher* s = rbs.next();
+        const bool ok = (s != nullptr) &&
+          (s->z[0].val() == 0) && (s->z[1].val() == 0);
+        delete s;
+        return ok;
+      }
+    };
+
+    RBSLateHubBrancher rbs_late_hub_brancher;
+
     /// Space without solutions whose search tree has several failures
     class NoSolution : public Gecode::IntMinimizeSpace {
     public:
