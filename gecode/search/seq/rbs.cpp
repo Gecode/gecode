@@ -66,9 +66,8 @@ namespace Gecode { namespace Search { namespace Seq {
 
   NoGoods&
   RBS::hub_nogoods(void) {
-    // The no-goods of a partial spoke only hold in its restricted search
-    // space, not in the hub.
-    if (coverage == SpokeCoverage::Partial)
+    // The no-goods hold in the hub only for a spoke of full coverage
+    if (coverage != SpokeCoverage::Full)
       return NoGoods::eng;
     NoGoods& ng = e->nogoods();
     // Reset number of no-goods found

@@ -900,6 +900,7 @@ namespace Test {
         RbsHubContinue,
         RbsHubRestart,
         RbsSpokeFull,
+        RbsSpokeReduced,
         RbsSpokePartial,
         RbsLimit,
         PbsHubOnly,
@@ -977,8 +978,8 @@ namespace Test {
                holds(state.spoke_calls, restart ? 2U : 1U) &&
                holds(state.hub_events, solution) &&
                holds(state.spoke_events, start | (restart ? solution : 0U));
-        } else if (solution_spoke_coverage == SpokeCoverage::Full) {
-          // Exhausting a spoke of full coverage is a proof
+        } else if (solution_spoke_coverage != SpokeCoverage::Partial) {
+          // Exhausting a spoke that is not partial is a proof
           ok = ok && (second == nullptr) &&
                (search.end_reason() == EndReason::Exhausted) &&
                holds(state.hub_calls, 1U) && holds(state.spoke_calls, 2U) &&
@@ -1213,6 +1214,8 @@ namespace Test {
           return rbs(MetaDecision::Restart, false, SpokeCoverage::Full);
         case Scenario::RbsSpokeFull:
           return rbs(MetaDecision::Restart, true, SpokeCoverage::Full);
+        case Scenario::RbsSpokeReduced:
+          return rbs(MetaDecision::Restart, true, SpokeCoverage::Reduced);
         case Scenario::RbsSpokePartial:
           return rbs(MetaDecision::Restart, true, SpokeCoverage::Partial);
         case Scenario::RbsLimit:
@@ -2722,6 +2725,76 @@ namespace Test {
       }
     };
 
+    /// Space whose spokes add constraints that keep some solution
+    class SatPreservingSpoke : public Gecode::Space {
+    public:
+      /// Coverage that spoke() declares
+      Gecode::SpokeCoverage coverage;
+      /// Variable with four values
+      Gecode::IntVar x;
+      /// Four variables with three values
+      Gecode::IntVarArray y;
+      /// Initialize with declared coverage \a c
+      SatPreservingSpoke(Gecode::SpokeCoverage c)
+        : coverage(c), x(*this,0,3), y(*this,4,0,2) {
+        Gecode::branch(*this,x,Gecode::INT_VAL_MIN());
+        Gecode::branch(*this,y,Gecode::INT_VAR_NONE(),Gecode::INT_VAL_MIN());
+      }
+      /// Clone \a s
+      SatPreservingSpoke(SatPreservingSpoke& s)
+        : Gecode::Space(s), coverage(s.coverage) {
+        x.update(*this,s.x);
+        y.update(*this,s.y);
+      }
+      Gecode::Space* copy(void) override {
+        return new SatPreservingSpoke(*this);
+      }
+      void spoke(Gecode::SpokeContext& sc) override {
+        // The y must be distinct, which is impossible, for x < 3 in the
+        // first episode and for x > 0 later: either keeps a solution
+        Gecode::BoolVar b = (sc.episode() == 0) ?
+          Gecode::expr(*this,x < 3) : Gecode::expr(*this,x > 0);
+        for (int i=0; i<y.size(); i++)
+          for (int j=i+1; j<y.size(); j++)
+            Gecode::rel(*this,y[i],Gecode::IRT_NQ,y[j],
+                        Gecode::Reify(b,Gecode::RM_IMP));
+        sc.coverage(coverage);
+      }
+    };
+
+    /// No-goods and proofs of spokes follow their declared coverage
+    class RBSSpokeCoverage : public Base {
+      /// Run RBS with spokes declaring \a c, return the solution or nullptr
+      static SatPreservingSpoke* solve(Gecode::SpokeCoverage c,
+                                       EndReason& r) {
+        SatPreservingSpoke* m = new SatPreservingSpoke(c);
+        Gecode::Search::FailStop stop(10000);
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.nogoods_limit = 128;
+        o.stop = &stop;
+        o.cutoff = Gecode::Search::Cutoff::constant(8);
+        Gecode::RBS<SatPreservingSpoke,Gecode::DFS> rbs(m,o);
+        delete m;
+        SatPreservingSpoke* s = rbs.next();
+        r = rbs.end_reason();
+        return s;
+      }
+    public:
+      RBSSpokeCoverage(void) : Base("Search::RBS::SpokeCoverage") {}
+      bool run(void) override {
+        EndReason r;
+        // Declared Reduced: no-goods stay in their spoke, x = 0 remains.
+        // These spokes are not Full, declaring them so is undefined.
+        SatPreservingSpoke* s = solve(Gecode::SpokeCoverage::Reduced,r);
+        const bool reduced = (s != nullptr) && (s->x.val() == 0);
+        delete s;
+        return reduced;
+      }
+    };
+
+    RBSSpokeCoverage rbs_spoke_coverage;
+
     /// Space whose first spoke search is restricted to x2, x3 in {0,1}
     class RestrictedFirstSpoke : public Gecode::IntMinimizeSpace {
     public:
@@ -2751,10 +2824,10 @@ namespace Test {
       }
     };
 
-    /// No-goods from an incomplete spoke search are not posted in the hub
-    class RBSIncompleteNoGoods : public Base {
+    /// No-goods from a partial spoke search are not posted in the hub
+    class RBSPartialNoGoods : public Base {
     public:
-      RBSIncompleteNoGoods(void) : Base("Search::RBS::IncompleteNoGoods") {}
+      RBSPartialNoGoods(void) : Base("Search::RBS::PartialNoGoods") {}
       bool run(void) override {
         RestrictedFirstSpoke* m = new RestrictedFirstSpoke;
         Gecode::Search::Options o;
@@ -2772,7 +2845,7 @@ namespace Test {
       }
     };
 
-    RBSIncompleteNoGoods rbs_incomplete_nogoods;
+    RBSPartialNoGoods rbs_partial_nogoods;
 
     /// Space without solutions whose search tree has several failures
     class NoSolution : public Gecode::IntMinimizeSpace {
@@ -3674,6 +3747,7 @@ namespace Test {
         (void)new MetaDispatch("RBS::HubContinue", MetaDispatch::Scenario::RbsHubContinue);
         (void)new MetaDispatch("RBS::HubRestart", MetaDispatch::Scenario::RbsHubRestart);
         (void)new MetaDispatch("RBS::SpokeFull", MetaDispatch::Scenario::RbsSpokeFull);
+        (void)new MetaDispatch("RBS::SpokeReduced", MetaDispatch::Scenario::RbsSpokeReduced);
         (void)new MetaDispatch("RBS::SpokePartial", MetaDispatch::Scenario::RbsSpokePartial);
         (void)new MetaDispatch("RBS::Limit", MetaDispatch::Scenario::RbsLimit);
         (void)new MetaDispatch("RBS::NoGoodsResetOwnership",

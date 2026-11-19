@@ -47,10 +47,16 @@ namespace Gecode { namespace Search { namespace Seq {
 
   forceinline
   Asset::Asset(void)
-    : engine(nullptr), stop(nullptr), _parked(false) {}
+    : engine(nullptr), stop(nullptr), _coverage(SpokeCoverage::Full),
+      _parked(false) {}
   forceinline void
-  Asset::init(Engine* e, Stop* so) {
+  Asset::init(Engine* e, Stop* so, SpokeCoverage c) {
     engine = e; stop = so;
+    _coverage = c;
+  }
+  forceinline SpokeCoverage
+  Asset::coverage(void) const {
+    return _coverage;
   }
   forceinline Space*
   Asset::next(void) {
@@ -88,8 +94,8 @@ namespace Gecode { namespace Search { namespace Seq {
 
   template<bool best>
   forceinline
-  PBS<best>::PBS(Engine** e, Stop** s, unsigned int n,
-                 const Statistics& stat0,
+  PBS<best>::PBS(Engine** e, Stop** s, const SpokeCoverage* c,
+                 unsigned int n, const Statistics& stat0,
                  const Search::Options& opt)
     : stat(stat0), slice(opt.slice),
       assets(heap.alloc<Asset>(n)), n_assets(n), cur(0),
@@ -98,7 +104,7 @@ namespace Gecode { namespace Search { namespace Seq {
     ssi.l = opt.slice;
 
     for (unsigned int i=0U; i<n; i++) {
-      assets[i].init(e[i],static_cast<PortfolioStop*>(s[i]));
+      assets[i].init(e[i],static_cast<PortfolioStop*>(s[i]),c[i]);
       static_cast<PortfolioStop*>(s[i])->share(&ssi);
     }
   }
@@ -155,7 +161,7 @@ namespace Gecode { namespace Search { namespace Seq {
           n_parked++;
         }
         cur++;
-      } else if (pbs_asset_proof(asset_end)) {
+      } else if (pbs_asset_proof(asset_end,assets[cur].coverage())) {
         end = EndReason::Exhausted;
         return nullptr;
       } else {

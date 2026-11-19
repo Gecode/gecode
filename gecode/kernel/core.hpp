@@ -1693,14 +1693,16 @@ namespace Gecode {
     Solution, ///< The episode found a solution
     /**
      * The episode exhausted its spoke. This is a proof only for a spoke
-     * of SpokeCoverage::Full, and then the engine has already ended: a
-     * hook only sees this event after a spoke of SpokeCoverage::Partial.
+     * of SpokeCoverage::Full or SpokeCoverage::Reduced, and then the
+     * engine has already ended: a hook only sees this event after a
+     * spoke of SpokeCoverage::Partial.
      */
     Exhausted,
     /**
      * The inner engine ended without a proof (such as LDS). For a spoke
-     * of SpokeCoverage::Full, the engine has then already ended: a hook
-     * only sees this event after a spoke of SpokeCoverage::Partial.
+     * of SpokeCoverage::Full or SpokeCoverage::Reduced, the engine has
+     * then already ended: a hook only sees this event after a spoke of
+     * SpokeCoverage::Partial.
      */
     Incomplete,
     Limit, ///< The episode reached the cutoff
@@ -1725,8 +1727,7 @@ namespace Gecode {
    *
    * Space::spoke() declares the coverage of its spoke. It decides whether
    * exhausting the spoke proves that the hub has no further solution, and
-   * whether the no-goods recorded while searching the spoke hold in the
-   * hub.
+   * whether the no-goods recorded in the spoke hold in the hub.
    *
    * The engine trusts the declaration: a spoke that declares more coverage
    * than it has, such as a spoke that removes solutions but declares
@@ -1735,12 +1736,20 @@ namespace Gecode {
   enum class SpokeCoverage : unsigned char {
     /**
      * The spoke adds only branching and constraints that the hub
-     * implies: exhaustion is a proof
+     * implies: exhaustion is a proof, and its no-goods hold in the hub
      */
     Full,
     /**
+     * The spoke prunes solutions but keeps one, or an optimal one, if
+     * any exists, such as symmetry breaking or dominance: exhaustion is
+     * a proof, but its no-goods do not hold in the hub. Search for all
+     * solutions misses the solutions that the spoke prunes.
+     */
+    Reduced,
+    /**
      * The spoke explores part of the hub's search space, such as a large
-     * neighbourhood search fragment: exhaustion is no proof
+     * neighbourhood search fragment: exhaustion is no proof, and its
+     * no-goods do not hold in the hub
      */
     Partial,
   };
@@ -1814,9 +1823,8 @@ namespace Gecode {
     /**
      * \brief Return the no-goods of the finished episode
      *
-     * The no-goods are empty if the spoke of the episode has
-     * SpokeCoverage::Partial, as they only hold in the spoke's search
-     * space.
+     * Empty unless the spoke of that episode has SpokeCoverage::Full, so
+     * they can always be posted in the hub.
      */
     const NoGoods& nogoods(void) const;
   };
@@ -2377,8 +2385,8 @@ namespace Gecode {
      * the spoke covers (see SpokeCoverage, the default is Full). Large
      * neighbourhood search, for example, fixes part of \a sc.last() and
      * declares SpokeCoverage::Partial. The no-goods recorded while
-     * searching a spoke of SpokeCoverage::Partial only hold in its
-     * search space, so RBS does not pass them to hub().
+     * searching a spoke only hold in the hub for SpokeCoverage::Full, so
+     * RBS passes no no-goods to hub() for any other spoke.
      *
      * The default hook does nothing.
      *

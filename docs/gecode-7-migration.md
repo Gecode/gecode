@@ -52,6 +52,7 @@ The return values become explicit decisions:
 | `master()` returns `false` after a solution | `hc.decision(MetaDecision::Continue)`             |
 | `slave()` returns `true`               | nothing, `SpokeCoverage::Full` is the default          |
 | `slave()` returns `false`              | `sc.coverage(SpokeCoverage::Partial)`                  |
+| (none)                                 | `sc.coverage(SpokeCoverage::Reduced)`                  |
 
 RBS honours `Continue` only after `MetaEvent::Solution`, just as it ignored
 `false` from `master()` after other events. To prove that no further
@@ -60,14 +61,22 @@ solution exists, fail the hub.
 The coverage tells the engine what a spoke covers of the hub's search space:
 
 - `Full`: the spoke adds only branching and constraints that the hub
-  implies. Exhausting it is a proof.
+  implies. Exhausting it is a proof, and its no-goods hold in the hub.
+- `Reduced`: the spoke prunes solutions but keeps one, or an optimal one, if
+  any exists, such as symmetry breaking. Exhausting it is a proof, but its
+  no-goods do not hold in the hub. Search for all solutions misses the
+  solutions that the spoke prunes.
 - `Partial`: the spoke searches part of the hub's search space, such as a
-  large neighbourhood. Exhausting it is no proof, and the no-goods
-  recorded while searching it do not reach `hub()`.
+  large neighbourhood. Exhausting it is no proof, and its no-goods do not
+  hold in the hub.
 
 The engine trusts the declared coverage. A spoke that declares more than it
 covers, such as `Full` for a spoke that removes solutions, gives undefined
 results.
+
+`nogoods()` is empty unless the spoke of the episode that ended was `Full`.
+PBS honours the coverage of each asset: an asset whose `Partial` spoke
+exhausts is dropped instead of ending the portfolio.
 
 The examples show typical overrides:
 
