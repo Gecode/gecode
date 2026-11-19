@@ -1646,9 +1646,11 @@ namespace Gecode {
    * and
    * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() once on its hub with MetaEvent::Start and then
-   * spoke() on the spoke of each asset. See Space::hub() and
-   * Space::spoke() for details.
+   * The engine calls hub() once on its hub with MetaEvent::Start, then
+   * Space::status() on the hub, and then spoke() on the spoke of each
+   * asset. When the hub had branchers before hub() but a spoke has none
+   * after spoke(), the engine throws Search::SpokeNoBrancher. See
+   * Space::hub() and Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1702,9 +1704,11 @@ namespace Gecode {
    * and
    * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() once on its hub with MetaEvent::Start and then
-   * spoke() on the spoke of each asset. See Space::hub() and
-   * Space::spoke() for details.
+   * The engine calls hub() once on its hub with MetaEvent::Start, then
+   * Space::status() on the hub, and then spoke() on the spoke of each
+   * asset. When the hub had branchers before hub() but a spoke has none
+   * after spoke(), the engine throws Search::SpokeNoBrancher. See
+   * Space::hub() and Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
    */

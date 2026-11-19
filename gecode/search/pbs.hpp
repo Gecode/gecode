@@ -148,24 +148,46 @@ namespace Gecode { namespace Search {
       delete c;
   }
 
-  /// Run hub() with MetaEvent::Start on the hub \a hub of a portfolio of \a n assets
-  forceinline void
-  pbs_hub(Space& hub, unsigned int n) {
+  /**
+   * \brief Run hub() with MetaEvent::Start on the hub \a hub of a portfolio
+   *        of \a n assets and propagate it
+   *
+   * Return whether the portfolio must be built. Otherwise the hub has
+   * failed and \a hub is deleted.
+   */
+  template<class T>
+  bool
+  pbs_start(T* hub, unsigned int n, Statistics& stat) {
+    std::unique_ptr<T> owned(hub);
     Statistics start;
     HubContext hc = MetaContextAccess::hub(MetaEngine::Portfolio,
                                            MetaEvent::Start,0UL,0U,n,
                                            nullptr,start,NoGoods::eng);
-    hub.hub(hc);
+    hub->hub(hc);
+    if (hub->status(stat) == SS_FAILED) {
+      stat.fail++;
+      return false;
+    }
+    (void) owned.release();
+    return true;
   }
 
-  /// Run spoke() on the spoke \a s of asset \a i of \a n and return its coverage
+  /**
+   * \brief Run spoke() on the spoke \a s of asset \a i of \a n and return
+   *        its coverage
+   *
+   * Throw SpokeNoBrancher if the hub had branchers (\a hub_branchers) and
+   * \a s has none, as the spoke would then be taken as a solution.
+   */
   forceinline SpokeCoverage
-  pbs_spoke(Space& s, unsigned int i, unsigned int n) {
+  pbs_spoke(Space& s, unsigned int i, unsigned int n, bool hub_branchers) {
     Statistics start;
     SpokeContext sc = MetaContextAccess::spoke(MetaEngine::Portfolio,
                                                MetaEvent::Start,0UL,i,n,
                                                nullptr,start,NoGoods::eng);
     s.spoke(sc);
+    if (hub_branchers && !s.failed() && (BrancherGroup::all.size(s) == 0U))
+      throw SpokeNoBrancher("PBS::PBS");
     return sc.coverage();
   }
 
@@ -234,7 +256,8 @@ namespace Gecode { namespace Search {
 
   template<class T, template<class> class E>
   Engine*
-  pbsseq(T* hub, const Search::Statistics& stat, Options& opt) {
+  pbsseq(T* hub, const Search::Statistics& stat, Options& opt,
+         bool hub_branchers) {
     Stop* stop = opt.stop;
     // Retain each seed: a throwing nested builder may consume its own clone.
     opt.clone = true;
@@ -265,7 +288,7 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        coverage[i] = pbs_spoke(*spoke,i,n_assets);
+        coverage[i] = pbs_spoke(*spoke,i,n_assets,hub_branchers);
         std::unique_ptr<Cutoff> c(pbs_cutoff<E<T> >(cutoff));
         if (c != nullptr)
           opt.cutoff = c.get();
@@ -286,7 +309,8 @@ namespace Gecode { namespace Search {
   template<class T, template<class> class E>
   Engine*
   pbsseq(T* hub, SEBs& sebs,
-             const Search::Statistics& stat, Options& opt, bool best) {
+         const Search::Statistics& stat, Options& opt, bool best,
+         bool hub_branchers) {
     Region r;
 
     int n_assets = sebs.size();
@@ -315,7 +339,8 @@ namespace Gecode { namespace Search {
         if (spoke.get() == hub)
           unowned_hub = nullptr;
         coverage[i] = pbs_spoke(*spoke,static_cast<unsigned int>(i),
-                                static_cast<unsigned int>(n_assets));
+                                static_cast<unsigned int>(n_assets),
+                                hub_branchers);
         assets[i] = (*sebs[i])(spoke.get());
       }
       pbscleanup(sebs);
@@ -336,7 +361,8 @@ namespace Gecode { namespace Search {
 
   template<class T, template<class> class E>
   Engine*
-  pbspar(T* hub, const Search::Statistics& stat, Options& opt) {
+  pbspar(T* hub, const Search::Statistics& stat, Options& opt,
+         bool hub_branchers) {
     Stop* stop = opt.stop;
     // Retain each seed: a throwing nested builder may consume its own clone.
     opt.clone = true;
@@ -367,7 +393,7 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        coverage[i] = pbs_spoke(*spoke,i,n_assets);
+        coverage[i] = pbs_spoke(*spoke,i,n_assets,hub_branchers);
         std::unique_ptr<Cutoff> c(pbs_cutoff<E<T> >(cutoff));
         if (c != nullptr)
           opt.cutoff = c.get();
@@ -388,7 +414,8 @@ namespace Gecode { namespace Search {
   template<class T, template<class> class E>
   Engine*
   pbspar(T* hub, SEBs& sebs,
-         const Search::Statistics& stat, Options& opt, bool best) {
+         const Search::Statistics& stat, Options& opt, bool best,
+         bool hub_branchers) {
     Region r;
 
     // Run every asset in its own thread, even with fewer threads than assets
@@ -420,7 +447,8 @@ namespace Gecode { namespace Search {
         if (spoke.get() == hub)
           unowned_hub = nullptr;
         coverage[i] = pbs_spoke(*spoke,static_cast<unsigned int>(i),
-                                static_cast<unsigned int>(n_assets));
+                                static_cast<unsigned int>(n_assets),
+                                hub_branchers);
         assets[i] = (*sebs[i])(spoke.get());
       }
       pbscleanup(sebs);
@@ -472,13 +500,17 @@ namespace Gecode {
       dynamic_cast<T*>(s->clone()) : s;
     opt.clone = false;
 
-    // Always execute hub function
-    Search::pbs_hub(*hub,opt.assets);
+    bool hub_branchers = BrancherGroup::all.size(*hub) > 0U;
+    if (!Search::pbs_start(hub,opt.assets,stat)) {
+      e = Search::Seq::dead(opt,stat);
+      Search::pbs_release_cutoff<E<T> >(opt.cutoff);
+      return;
+    }
 
     // No need to create a portfolio engine but must run spoke function
     if (o.assets == 1) {
       std::unique_ptr<T> seed(hub);
-      SpokeCoverage c = Search::pbs_spoke(*hub,0U,1U);
+      SpokeCoverage c = Search::pbs_spoke(*hub,0U,1U,hub_branchers);
       // Retain the seed if a nested builder rejects its worker control.
       opt.clone = true;
       if (c != SpokeCoverage::Partial) {
@@ -506,10 +538,10 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::pbspar<T,E>(hub,stat,opt);
+      e = Search::pbspar<T,E>(hub,stat,opt,hub_branchers);
     else
 #endif
-      e = Search::pbsseq<T,E>(hub,stat,opt);
+      e = Search::pbsseq<T,E>(hub,stat,opt,hub_branchers);
   }
 
   template<class T, template<class> class E>
@@ -545,15 +577,27 @@ namespace Gecode {
       dynamic_cast<T*>(s->clone()) : s;
     opt.clone = false;
 
-    // Always execute hub function
-    Search::pbs_hub(*hub,static_cast<unsigned int>(sebs.size()));
+    bool hub_branchers = BrancherGroup::all.size(*hub) > 0U;
+    bool started;
+    try {
+      started = Search::pbs_start(hub,static_cast<unsigned int>(sebs.size()),
+                                  stat);
+    } catch (...) {
+      Search::pbscleanup(sebs);
+      throw;
+    }
+    if (!started) {
+      Search::pbscleanup(sebs);
+      e = Search::Seq::dead(opt,stat);
+      return;
+    }
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::pbspar<T,E>(hub,sebs,stat,opt,best);
+      e = Search::pbspar<T,E>(hub,sebs,stat,opt,best,hub_branchers);
     else
 #endif
-      e = Search::pbsseq<T,E>(hub,sebs,stat,opt,best);
+      e = Search::pbsseq<T,E>(hub,sebs,stat,opt,best,hub_branchers);
   }
 
   template<class T, template<class> class E>
