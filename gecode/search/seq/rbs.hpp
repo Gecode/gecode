@@ -100,7 +100,7 @@ namespace Gecode { namespace Search { namespace Seq {
     : e(e0), hub(s), last(nullptr), co(opt.cutoff), stop(stop0),
       m_opt(opt.expand()), sslr(0),
       complete(complete0), nogoods_valid(complete0), restart(false),
-      best(best0), m_stopped(false) {
+      best(best0), end(EndReason::NotEnded) {
     stop->limit(stat,(*co)());
   }
 

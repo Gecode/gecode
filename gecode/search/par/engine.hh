@@ -242,6 +242,8 @@ namespace Gecode { namespace Search { namespace Par {
     volatile unsigned int n_busy;
     /// Whether a worker had been stopped
     std::atomic<bool> has_stopped;
+    /// Why the last call to next() returned no solution
+    EndReason end;
     /// Number of calls to next() that have started search
     std::atomic<unsigned long long int> n_runs;
     /// Whether search state changed such that signal is needed
@@ -265,8 +267,8 @@ namespace Gecode { namespace Search { namespace Par {
     Engine(const Options& o);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     //@}
 
     /// Destructor

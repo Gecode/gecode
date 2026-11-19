@@ -58,6 +58,8 @@ namespace Gecode { namespace Search {
     bool stop_seq(Options& o);
     /// Check whether engine has been stopped
     bool stopped(void) const;
+    /// Return why next() returned no solution: Limit if stopped, otherwise Exhausted
+    EndReason end_reason(void) const;
     /// Reset statistics with root depth \a d
     void reset(unsigned long int d=0);
     /// Record stack depth \a d
@@ -100,6 +102,11 @@ namespace Gecode { namespace Search {
   forceinline bool
   Worker::stopped(void) const {
     return _stopped;
+  }
+
+  forceinline EndReason
+  Worker::end_reason(void) const {
+    return _stopped ? EndReason::Limit : EndReason::Exhausted;
   }
 
   forceinline void

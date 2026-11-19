@@ -112,8 +112,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Space* root;
     /// Current discrepancy
     unsigned int d;
-    /// Solution found for current discrepancy
-    bool no_solution;
+    /// Why the last call to next() returned no solution
+    EndReason end;
   public:
     /// Initialize for space \a s with options \a o
     LDS(Space* s, const Options& o);
@@ -125,8 +125,8 @@ namespace Gecode { namespace Search { namespace Seq {
     void constrain(const Space& b);
     /// Reset engine to restart at space \a s
     void reset(Space* s);
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Destructor
     virtual ~LDS(void);
   };

@@ -49,13 +49,6 @@ namespace Gecode { namespace Search {
     (void) b;
     throw NoBest("Engine::constrain");
   }
-#ifdef GECODE_HAS_EXPERIMENTAL
-  bool
-  Engine::limited(void) const {
-    return false;
-  }
-
-#endif
   void
   Engine::reset(Space* s) {
     (void) s;

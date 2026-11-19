@@ -123,17 +123,6 @@ namespace Gecode { namespace Search { namespace Par {
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  /// Sequential CABS engine
-  class CABSEngine : public WorkerToEngine<CABS> {
-  public:
-    /// Initialize for space \a s with options \a o
-    CABSEngine(Space* s, const Options& o) : WorkerToEngine<CABS>(s,o) {}
-    /// Whether search stopped at the width or frontier limit
-    bool limited(void) const override {
-      return w.limited();
-    }
-  };
-
 }}}
 
 namespace Gecode { namespace Search {
@@ -149,7 +138,7 @@ namespace Gecode { namespace Search {
     if (e.threads > 1.0)
       return new Par::CABS(s,e);
 #endif
-    return new Seq::CABSEngine(s,e);
+    return new WorkerToEngine< Seq::CABS>(s,e);
   }
 
 }}
@@ -309,9 +298,9 @@ namespace Gecode { namespace Search { namespace Seq {
     return *this;
   }
 
-  bool
-  CABS::limited(void) const {
-    return _limited;
+  EndReason
+  CABS::end_reason(void) const {
+    return _limited ? EndReason::Incomplete : Worker::end_reason();
   }
 
   void

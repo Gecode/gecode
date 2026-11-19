@@ -67,3 +67,34 @@ MyCutoff::copy(void) const {
 
 A generator that owns other generators copies them with their own
 `copy()`.
+
+## stopped() is replaced by end_reason()
+
+`Search::Engine::stopped()` and `Search::Base<T>::stopped()` are removed,
+and so is the experimental `limited()`. After `next()` returns no solution,
+`end_reason()` tells why:
+
+```cpp
+enum class Gecode::Search::EndReason : unsigned char {
+  NotEnded, Exhausted, Incomplete, Limit
+};
+```
+
+| Gecode 6                                      | Gecode 7                                        |
+|-----------------------------------------------|-------------------------------------------------|
+| `stopped()` is true                           | `end_reason() == EndReason::Limit`              |
+| `stopped()` is false after no solution        | `end_reason() == EndReason::Exhausted` or `EndReason::Incomplete` |
+| `limited()` is true (AStar, CABS)             | `end_reason() == EndReason::Incomplete`         |
+| last `next()` returned a solution             | `end_reason() == EndReason::NotEnded`           |
+
+`Exhausted` means that the engine explored everything it was asked to
+explore: there is no further solution, and the last solution of a
+branch-and-bound search is optimal. `Incomplete` means that the engine ended
+on its own without that proof, for example CABS at its width limit. Calling
+`next()` again does not continue an incomplete search. `Limit` means that a
+stop object stopped the engine, and calling `next()` again continues the
+search.
+
+Code that used `!stopped()` as a proof, such as reporting optimality, should
+test for `EndReason::Exhausted`. Code that resumes a search after a limit
+should test for `EndReason::Limit`.

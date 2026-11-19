@@ -60,17 +60,9 @@ namespace Gecode { namespace Search { namespace Seq {
   Asset::statistics(void) const {
     return engine->statistics();
   }
-  forceinline bool
-  Asset::stopped(void) const {
-    return engine->stopped();
-  }
-  forceinline bool
-  Asset::limited(void) const {
-#ifdef GECODE_HAS_EXPERIMENTAL
-    return engine->limited();
-#else
-    return false;
-#endif
+  forceinline EndReason
+  Asset::end_reason(void) const {
+    return engine->end_reason();
   }
   forceinline void
   Asset::constrain(const Space& b) {
@@ -90,7 +82,7 @@ namespace Gecode { namespace Search { namespace Seq {
                  const Search::Options& opt)
     : stat(stat0), slice(opt.slice),
       assets(heap.alloc<Asset>(n)), n_assets(n), cur(0),
-      asset_stop(false), incomplete(false) {
+      incomplete(false), end(EndReason::NotEnded) {
     ssi.done = false;
     ssi.l = opt.slice;
 
@@ -103,7 +95,6 @@ namespace Gecode { namespace Search { namespace Seq {
   template<bool best>
   Space*
   PBS<best>::next(void) {
-    asset_stop = false;
     unsigned int n_exhausted = 0;
     while (n_assets > 0) {
       ssi.done = false;
@@ -120,18 +111,20 @@ namespace Gecode { namespace Search { namespace Seq {
             throw;
           }
         }
+        end = EndReason::NotEnded;
         return s;
       }
-      if (assets[cur].stopped() && !assets[cur].limited()) {
+      EndReason asset_end = assets[cur].end_reason();
+      if (asset_end == EndReason::Limit) {
         if (ssi.done) {
           cur++; n_exhausted++;
         } else {
-          asset_stop = true;
+          end = EndReason::Limit;
           return nullptr;
         }
       } else {
-        // The asset is done or stopped at a local limit (then search is incomplete)
-        if (assets[cur].limited())
+        // The asset is done, without a proof if it is incomplete
+        if (asset_end == EndReason::Incomplete)
           incomplete = true;
         // Kill the asset after saving the statistics
         stat += assets[cur].statistics();
@@ -149,14 +142,14 @@ namespace Gecode { namespace Search { namespace Seq {
       if (cur == n_assets)
         cur = 0;
     }
-    asset_stop = incomplete;
+    end = incomplete ? EndReason::Incomplete : EndReason::Exhausted;
     return nullptr;
   }
 
   template<bool best>
-  bool
-  PBS<best>::stopped(void) const {
-    return asset_stop;
+  EndReason
+  PBS<best>::end_reason(void) const {
+    return end;
   }
 
   template<bool best>

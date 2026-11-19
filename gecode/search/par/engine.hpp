@@ -57,9 +57,9 @@ namespace Gecode { namespace Search { namespace Par {
     return static_cast<unsigned int>(opt().threads);
   }
   template<class Tracer>
-  forceinline bool
-  Engine<Tracer>::stopped(void) const {
-    return has_stopped.load(std::memory_order_acquire);
+  forceinline EndReason
+  Engine<Tracer>::end_reason(void) const {
+    return end;
   }
 
 
@@ -125,8 +125,8 @@ namespace Gecode { namespace Search { namespace Par {
       _opt(o), scheduler_enabled(false),
       scheduler_fast_admit(nullptr),
       scheduler_worker(nullptr), scheduler_requested(workers()),
-      scheduler_leases(0U), scheduler_cursor(0U), scheduler_generation(0U),
-      _cmd(C_WAIT), solutions(heap) {
+     scheduler_leases(0U), scheduler_cursor(0U), scheduler_generation(0U), _cmd(C_WAIT), solutions(heap),
+     end(EndReason::NotEnded) {
     // Initialize termination information
     _n_term_not_ack = workers();
     _n_not_terminated = workers();
@@ -526,6 +526,7 @@ namespace Gecode { namespace Search { namespace Par {
     if (!solutions.empty()) {
       // No search needs to be done, take leftover solution
       Space* s = solutions.pop();
+      end = EndReason::NotEnded;
       m_search.release();
       return s;
     }
@@ -533,6 +534,7 @@ namespace Gecode { namespace Search { namespace Par {
     has_stopped.store(false, std::memory_order_release);
     // No more solutions?
     if (n_busy == 0) {
+      end = EndReason::Exhausted;
       m_search.release();
       return nullptr;
     }
@@ -553,6 +555,7 @@ namespace Gecode { namespace Search { namespace Par {
       if (!solutions.empty()) {
         // Report solution
         Space* s = solutions.pop();
+        end = EndReason::NotEnded;
         m_search.release();
         // Make workers wait again
         block();
@@ -560,6 +563,8 @@ namespace Gecode { namespace Search { namespace Par {
       }
       // No more solutions or stopped?
       if ((n_busy == 0) || has_stopped.load(std::memory_order_acquire)) {
+        // Workers that still have work have been stopped
+        end = (n_busy == 0) ? EndReason::Exhausted : EndReason::Limit;
         m_search.release();
         // Make workers wait again
         block();
