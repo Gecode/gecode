@@ -2121,7 +2121,8 @@ namespace Gecode { namespace FlatZinc {
     FloatNum bk=(_method == MIN) ? b.min() : b.max();
     return compare_float(ak,bk,sense);
 #else
-    throw DynamicCastFailed("FlatZincSpace::compare");
+    GECODE_NEVER;
+    return SpaceComparison::Incomparable;
 #endif
   }
 
