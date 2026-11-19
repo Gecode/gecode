@@ -905,8 +905,6 @@ namespace Gecode {
   Space::hub(HubContext& hc) {
     switch (hc.engine()) {
     case MetaEngine::Restart:
-      if (hc.last() != nullptr)
-        constrain(*hc.last());
       hc.nogoods().post(*this);
       break;
     case MetaEngine::Portfolio:

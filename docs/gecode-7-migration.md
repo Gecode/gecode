@@ -78,6 +78,14 @@ results.
 PBS honours the coverage of each asset: an asset whose `Partial` spoke
 exhausts is dropped instead of ending the portfolio.
 
+Other changes to the hooks:
+
+- For a best solution engine such as `RBS<T, BAB>`, the engine constrains
+  the hub with the last solution before it calls `hub()`. The default
+  `hub()` no longer calls `constrain()`, and an override that does not call
+  the default keeps the bound. For other engines, such as `RBS<T, DFS>`,
+  RBS no longer calls `constrain()` at all.
+
 The examples show typical overrides:
 
 - `examples/crossword.cpp`: a `hub()` that posts no-goods and continues

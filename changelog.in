@@ -77,6 +77,17 @@ This is the development changelog for the next Gecode release.
 
 [ENTRY]
 Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Constrain the hub of restart-based branch-and-bound search with each
+solution in the engine itself.
+[MORE]
+The default hub() did it, so an override that did not call the default lost
+the bound and found the same solutions again.
+
+[ENTRY]
+Module: search
 What:   change
 Rank:   minor
 [DESCRIPTION]
