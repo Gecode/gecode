@@ -52,6 +52,7 @@
 #include <memory>
 #include <thread>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 static_assert(std::is_copy_constructible<Gecode::NoGoods>::value,
@@ -1072,7 +1073,8 @@ namespace Test {
           o.nogoods_limit = 16;
           o.stop = &stop;
           o.cutoff = Gecode::Search::Cutoff::constant(1);
-          Gecode::RBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
+          // The engine constrains the hub by each solution
+          Gecode::RBS<HubSpokeDispatchSpace, Gecode::BAB> search(m, o);
           delete m;
 
           unsigned int solutions = 0;
@@ -3678,6 +3680,135 @@ namespace Test {
     };
 
     PBSRestartCutoff pbs_restart_cutoff;
+
+    /// Hook behaviour of ProtocolSpace
+    enum class Protocol {
+      Default,  ///< Default hooks
+      EmptyHub, ///< hub() does nothing
+    };
+
+    /// Calls of the hooks of ProtocolSpace
+    struct ProtocolLog {
+      /// Event and episode of each hub() call
+      std::vector<std::pair<MetaEvent,unsigned long int> > hub;
+      /// Event and episode of each spoke() call
+      std::vector<std::pair<MetaEvent,unsigned long int> > spoke;
+      /// Number of spaces alive
+      std::atomic<int> live{0};
+    };
+
+    /// Space whose hooks follow a Protocol
+    class ProtocolSpace : public IntMinimizeSpace {
+    public:
+      /// Hook behaviour
+      Protocol protocol;
+      /// Log of hook calls
+      ProtocolLog* log;
+      /// Cost
+      IntVar c;
+      /// Whether the y must be distinct, which is impossible
+      BoolVar p;
+      /// Four variables with three values
+      IntVarArray y;
+      /// Initialize with hook behaviour \a pr and log \a l
+      ProtocolSpace(Protocol pr, ProtocolLog& l)
+        : protocol(pr), log(&l), c(*this,0,3), p(*this,0,1), y(*this,4,0,2) {
+        log->live++;
+        for (int i=0; i<y.size(); i++)
+          for (int j=i+1; j<y.size(); j++)
+            rel(*this,y[i],IRT_NQ,y[j],Reify(p,RM_IMP));
+        // Search fails six times for p = 1, then finds c = 3, 2, 1, 0
+        Gecode::branch(*this,p,BOOL_VAL_MAX());
+        Gecode::branch(*this,y,INT_VAR_NONE(),INT_VAL_MIN());
+        Gecode::branch(*this,c,INT_VAL_MAX());
+      }
+      /// Clone \a s
+      ProtocolSpace(ProtocolSpace& s)
+        : IntMinimizeSpace(s), protocol(s.protocol), log(s.log) {
+        log->live++;
+        c.update(*this,s.c);
+        p.update(*this,s.p);
+        y.update(*this,s.y);
+      }
+      /// Record destruction
+      ~ProtocolSpace(void) override {
+        log->live--;
+      }
+      Space* copy(void) override {
+        return new ProtocolSpace(*this);
+      }
+      IntVar cost(void) const override {
+        return c;
+      }
+      void hub(HubContext& hc) override {
+        log->hub.emplace_back(hc.event(),hc.episode());
+        switch (protocol) {
+        case Protocol::EmptyHub:
+          return;
+        case Protocol::Default:
+          break;
+        }
+        IntMinimizeSpace::hub(hc);
+      }
+      void spoke(SpokeContext& sc) override {
+        log->spoke.emplace_back(sc.event(),sc.episode());
+      }
+    };
+
+    /// Decisions, events, and ends of the meta search protocol
+    class MetaProtocol : public Base {
+    public:
+      /// Scenario
+      enum class Scenario {
+        EngineConstrainsHub,
+      };
+    protected:
+      /// Scenario under test
+      Scenario scenario;
+      /// Return options for RBS with constant cutoff \a c
+      static Gecode::Search::Options rbs_options(unsigned long int c) {
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.cutoff = Gecode::Search::Cutoff::constant(c);
+        return o;
+      }
+      /// Check that RBS<BAB> constrains the hub when hub() does nothing
+      static bool engine_constrains_hub(void) {
+        ProtocolLog log;
+        std::vector<int> costs;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::EmptyHub,log);
+          Gecode::RBS<ProtocolSpace,Gecode::BAB> rbs(m,rbs_options(100));
+          delete m;
+          // Without the bound, every spoke finds c = 3 again
+          while (ProtocolSpace* s = rbs.next()) {
+            costs.push_back(s->c.val());
+            delete s;
+            if (costs.size() > 10U)
+              return false;
+          }
+          if (rbs.end_reason() != EndReason::Exhausted)
+            return false;
+        }
+        return (costs == std::vector<int>{3,2,1,0}) && (log.live == 0);
+      }
+    public:
+      /// Initialize scenario \a s with name \a n
+      MetaProtocol(const std::string& n, Scenario s)
+        : Base("Search::Meta::"+n), scenario(s) {}
+      bool run(void) override {
+        switch (scenario) {
+        case Scenario::EngineConstrainsHub:
+          return engine_constrains_hub();
+        default:
+          GECODE_NEVER;
+        }
+        return false;
+      }
+    };
+
+    MetaProtocol meta_engine_constrains_hub
+    ("EngineConstrainsHub",MetaProtocol::Scenario::EngineConstrainsHub);
 
     /**
      * \brief Constant cutoff counting its deletions

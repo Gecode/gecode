@@ -77,6 +77,9 @@ namespace Gecode { namespace Search { namespace Seq {
 
   bool
   RBS::hub_event(MetaEvent ev) {
+    // Constrain the hub with a new solution, whatever hub() does
+    if ((ev == MetaEvent::Solution) && best)
+      hub->constrain(*last);
     Search::Statistics episode_stat = e->statistics();
     NoGoods& ng = hub_nogoods();
     HubContext hc = MetaContextAccess::hub(MetaEngine::Restart,ev,episode,
