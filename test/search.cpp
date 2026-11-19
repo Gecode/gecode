@@ -3907,6 +3907,33 @@ namespace Test {
 
     CutoffRandomCopy cutoff_random_copy;
 
+    /// A repeating cutoff generator advances the generator it repeats
+    class CutoffRepeat : public Base {
+    public:
+      CutoffRepeat(void) : Base("Search::Cutoff::Repeat") {}
+      bool run(void) override {
+        std::unique_ptr<Gecode::Search::Cutoff> c
+          (Gecode::Search::Cutoff::repeat(Gecode::Search::Cutoff::linear(4),3));
+        std::vector<unsigned long long int> v{(*c)()};
+        for (int i=0; i<6; i++)
+          v.push_back(++(*c));
+        if (v != std::vector<unsigned long long int>{4,4,4,8,8,8,12})
+          return false;
+        // An appended generator returns the value of its first generator
+        // from ++ when it switches to its second one
+        std::unique_ptr<Gecode::Search::Cutoff> a
+          (Gecode::Search::Cutoff::repeat
+           (Gecode::Search::Cutoff::append(Gecode::Search::Cutoff::linear(10),1,
+                                           Gecode::Search::Cutoff::constant(100)),2));
+        std::vector<unsigned long long int> w{(*a)()};
+        for (int i=0; i<3; i++)
+          w.push_back(++(*a));
+        return w == std::vector<unsigned long long int>{10,10,100,100};
+      }
+    };
+
+    CutoffRepeat cutoff_repeat;
+
     /// Each restart-based asset of a portfolio owns a copy of the cutoff
     class PBSRestartCutoff : public Base {
       template<template<class> class Engine>
