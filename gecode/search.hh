@@ -1627,12 +1627,15 @@ namespace Gecode {
    * (see Cutoff::copy()). If the constructor throws an exception, the
    * caller keeps the cutoff.
    *
-   * The spoke of each asset is taken to cover the search space of the
-   * hub. When an asset exhausts its search space, the portfolio ends and
-   * end_reason() returns Search::EndReason::Exhausted. An asset that ends
-   * without exhausting its search space, such as LDS at its discrepancy
-   * limit, is dropped while the other assets continue. When every asset
-   * has been dropped, end_reason() returns Search::EndReason::Incomplete.
+   * The spoke of each asset declares its coverage in Space::spoke() (see
+   * SpokeCoverage). When an asset whose spoke has SpokeCoverage::Full or
+   * SpokeCoverage::Reduced exhausts its search space, the portfolio ends
+   * and end_reason() returns Search::EndReason::Exhausted. An asset that
+   * ends without a proof is dropped while the other assets continue: an
+   * asset whose spoke has SpokeCoverage::Partial and exhausts its search
+   * space, or an engine such as LDS at its discrepancy limit. When every
+   * asset has been dropped, end_reason() returns
+   * Search::EndReason::Incomplete.
    *
    * The class \a T can override the member functions
    * \code virtual void hub(HubContext& hc) \endcode

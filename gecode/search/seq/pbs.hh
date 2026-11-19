@@ -81,6 +81,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Engine* engine;
     /// Stop object
     Stop* stop;
+    /// Coverage of the spoke of the asset
+    SpokeCoverage _coverage;
     /// Whether the stop object of the asset stopped it during the current call to next()
     bool _parked;
   public:
@@ -90,8 +92,10 @@ namespace Gecode { namespace Search { namespace Seq {
     Asset(const Asset& s) = default;
     /// Assignment operator
     Asset& operator =(const Asset& s) = default;
-    /// Initialize with engine \a e and its stop object \a so
-    void init(Engine* e, Stop* so);
+    /// Initialize with engine \a e, its stop object \a so, and the coverage \a c of its spoke
+    void init(Engine* e, Stop* so, SpokeCoverage c);
+    /// Return the coverage of the spoke of the asset
+    SpokeCoverage coverage(void) const;
     /// Return next solution
     Space* next(void);
     /// Return statistics of asset
@@ -129,9 +133,9 @@ namespace Gecode { namespace Search { namespace Seq {
     /// Why the last call to next() returned no solution
     EndReason end;
   public:
-    /// Initialize
-    PBS(Engine** assets, Stop** stops, unsigned int n,
-        const Statistics& stat, const Search::Options& opt);
+    /// Initialize with \a n assets, their stop objects, and the coverage of their spokes
+    PBS(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
+        unsigned int n, const Statistics& stat, const Search::Options& opt);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics

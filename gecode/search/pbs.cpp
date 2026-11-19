@@ -46,12 +46,13 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   Engine*
-  pbsengine(Engine** assets, Stop** stops, unsigned int n_assets,
-            const Statistics& stat, const Search::Options& opt, bool best) {
+  pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
+            unsigned int n_assets, const Statistics& stat,
+            const Search::Options& opt, bool best) {
     if (best)
-      return new PBS<true>(assets,stops,n_assets,stat,opt);
+      return new PBS<true>(assets,stops,coverage,n_assets,stat,opt);
     else
-      return new PBS<false>(assets,stops,n_assets,stat,opt);
+      return new PBS<false>(assets,stops,coverage,n_assets,stat,opt);
   }
 
 }}}
@@ -73,12 +74,12 @@ namespace Gecode { namespace Search { namespace Par {
   }
 
   Engine*
-  pbsengine(Engine** assets, Stop** stops, unsigned int n_assets,
-         const Statistics& stat, bool best) {
+  pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
+            unsigned int n_assets, const Statistics& stat, bool best) {
     if (best)
-      return new PBS<CollectBest>(assets,stops,n_assets,stat);
+      return new PBS<CollectBest>(assets,stops,coverage,n_assets,stat);
     else
-      return new PBS<CollectAll>(assets,stops,n_assets,stat);
+      return new PBS<CollectAll>(assets,stops,coverage,n_assets,stat);
   }
 
 }}}
