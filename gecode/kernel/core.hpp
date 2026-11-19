@@ -2363,9 +2363,13 @@ namespace Gecode {
      * the decision: failing the hub is how a hook declares that no
      * further solution exists.
      *
-     * The default hook constrains the hub with \a hc.last(), if any, and
-     * posts \a hc.nogoods() for RBS. For PBS, it removes all branchers,
-     * so spoke() must post the branching of each asset.
+     * In best solution search, RBS constrains the hub with each new
+     * solution before it calls hub(), so an override cannot lose the
+     * bound by not calling the default.
+     *
+     * The default hook posts \a hc.nogoods() for RBS. For PBS, it
+     * removes all branchers, so spoke() must post the branching of each
+     * asset.
      *
      * \ingroup TaskModelScript
      */
