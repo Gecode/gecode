@@ -2392,6 +2392,14 @@ namespace Gecode {
      * removes all branchers, so spoke() must post the branching of each
      * asset.
      *
+     * No-goods refer to the branchers that created their choices. RBS
+     * keeps a brancher that hub() posts from taking the identity of a
+     * brancher that spoke() posted, so the no-goods of a spoke are never
+     * posted for the wrong brancher. This does not cover branchers that
+     * other branchers post while a spoke is searched: if there are such
+     * branchers and the spoke has SpokeCoverage::Full, hub() must not
+     * post branchers.
+     *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT
@@ -2443,6 +2451,17 @@ namespace Gecode {
     SpaceStatus status(StatusStatistics& stat);
     /// Query space status without collecting statistics
     SpaceStatus status(void);
+    /**
+     * \brief Reserve in this space the brancher ids that clone \a s uses
+     *
+     * A meta search engine calls this on its hub after spoke() has run
+     * on the clone \a s. A brancher that hub() posts later then never
+     * gets the id of a brancher that spoke() posted, so a no-good
+     * recorded in the spoke cannot reach the wrong brancher of the hub.
+     *
+     * \ingroup TaskSearch
+     */
+    void reserve_brancher_ids(const Space& s);
 
     /**
      * \brief Create new choice for current brancher
@@ -3648,6 +3667,13 @@ namespace Gecode {
   Space::status(void) {
     StatusStatistics stat;
     return status(stat);
+  }
+
+  forceinline void
+  Space::reserve_brancher_ids(const Space& s) {
+    unsigned int n = s.pc.p.bid_sc >> sc_bits;
+    if (n > (pc.p.bid_sc >> sc_bits))
+      pc.p.bid_sc = (n << sc_bits) | (pc.p.bid_sc & ((1U << sc_bits) - 1U));
   }
 
   forceinline Space*
