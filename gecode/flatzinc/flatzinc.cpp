@@ -1065,9 +1065,8 @@ namespace Gecode { namespace FlatZinc {
   FlatZincSpace::createBranchers(Printer&p, AST::Node* ann, FlatZincOptions& opt,
                                  bool ignoreUnknown,
                                  std::ostream& err) {
-    int seed = opt.seed();
     double decay = opt.decay();
-    Rnd rnd(static_cast<unsigned int>(seed));
+    Rnd rnd = opt.rnd();
     TieBreak<IntVarBranch> def_int_varsel = INT_VAR_AFC_SIZE_MAX(0.99);
     IntBoolVarBranch def_intbool_varsel = INTBOOL_VAR_AFC_SIZE_MAX(0.99);
     IntValBranch def_int_valsel = INT_VAL_MIN();
@@ -2129,6 +2128,8 @@ namespace Gecode { namespace FlatZinc {
 
   void
   FlatZincSpace::spoke(SpokeContext& sc) {
+    // Each spoke draws from its own stream, derived from its episode or asset
+    _random = _random.split(sc);
     if (sc.engine() == MetaEngine::Restart) {
       if (restart_data.initialized() && restart_data().mark_complete) {
         // Exhausting the failed spoke of full coverage proves completeness

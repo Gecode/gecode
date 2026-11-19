@@ -190,6 +190,7 @@ namespace Gecode { namespace Search {
                                                MetaEvent::Start,0UL,i,n,
                                                nullptr,start,NoGoods::eng);
     s.spoke(sc);
+    s.random_split(sc);
     if (hub_branchers && !s.failed() && (BrancherGroup::all.size(s) == 0U))
       throw SpokeNoBrancher("PBS::PBS");
     return sc.coverage();

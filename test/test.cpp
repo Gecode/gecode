@@ -164,11 +164,18 @@ namespace Test {
   const int Options::defiter;
   const unsigned int Options::deffixprob;
 
-  void report_error(const std::string& name, unsigned int seed, const Options& options, std::ostream& ostream) {
-    ostream << "Options: -replay " << seed;
+  void report_error(const std::string& name, const std::string& state,
+                    const Options& options, std::ostream& ostream) {
+    ostream << "Options: -replay " << state;
     if (options.fixprob != Test::Options::deffixprob)
       ostream << " -fixprob " << options.fixprob;
-    ostream << " -test " << name << std::endl;
+    ostream << " -test '";
+    for (char c : name)
+      if (c == '\'')
+        ostream << "'\\''";
+      else
+        ostream << c;
+    ostream << "'" << std::endl;
     if (options.log)
       ostream << olog.str();
   }
@@ -183,13 +190,13 @@ namespace Test {
                   << "\t\tnumber of threads to use. If 0, as many threads as there are cores are used.\n"
                   << "\t\tThreaded execution and logging can not be used at the same time."
                   << std::endl
-                  << "\t-seed (unsigned int or \"time\") default: "
+                  << "\t-seed (64-bit unsigned integer or \"time\") default: "
                   << seed << std::endl
-                  << "\t\tseed for random number generator (unsigned int),"
+                  << "\t\tseed for random number generator (decimal or hexadecimal),"
                   << std::endl
                   << "\t\tor \"time\" for a random seed based on "
                   << "current time" << std::endl
-                  << "\t-replay (unsigned int)\n"
+                  << "\t-replay (complete random state)\n"
                   << "\t\treplay the exact -test name once, on one thread\n"
                   << "\t-fixprob (unsigned int) default: "
                   << fixprob << std::endl
@@ -236,13 +243,27 @@ namespace Test {
         } else {
           threads = argument;
         }
-      } else if (!strcmp(argv[i],"-seed") || !strcmp(argv[i],"-replay")) {
-        replay = !strcmp(argv[i],"-replay");
+      } else if (!strcmp(argv[i],"-seed")) {
         if (++i == argc) goto missing;
         if (!strcmp(argv[i],"time")) {
-          seed = static_cast<unsigned int>(time(nullptr));
+          seed = static_cast<uint64_t>(time(nullptr));
         } else {
-          seed = static_cast<unsigned int>(atoi(argv[i]));
+          try {
+            seed = Gecode::Support::random_seed(argv[i]);
+          } catch (const std::invalid_argument& e) {
+            std::cerr << e.what() << std::endl;
+            exit(EXIT_FAILURE);
+          }
+        }
+      } else if (!strcmp(argv[i],"-replay")) {
+        if (++i == argc) goto missing;
+        replay = argv[i];
+        try {
+          Gecode::Support::RandomGenerator check;
+          check.state(replay);
+        } catch (const std::invalid_argument& e) {
+          std::cerr << e.what() << std::endl;
+          exit(EXIT_FAILURE);
         }
       } else if (!strcmp(argv[i],"-iter")) {
         if (++i == argc) goto missing;
@@ -289,7 +310,7 @@ namespace Test {
       i++;
     }
 
-    if (replay) {
+    if (!replay.empty()) {
       if (testpat.size() != 1 || testpat[0].first != MT_ANY ||
           start_from != nullptr) {
         std::cerr << "-replay requires one exact -test name." << std::endl;
@@ -312,7 +333,7 @@ namespace Test {
   }
 
   bool Options::is_test_name_matching(const std::string& test_name) const {
-    if (replay)
+    if (!replay.empty())
       return testpat.size() == 1 && test_name == testpat[0].second;
     if (!testpat.empty()) {
       bool positive_patterns = false;
@@ -358,22 +379,22 @@ namespace Test {
   }
 
   /// Run a single test, returning true iff the test succeeded
-  bool run_test(Base* test, unsigned int test_seed, const Options& options, std::ostream& ostream) {
-    unsigned int seed = options.replay ? options.seed : test_seed;
+  bool run_test(Base* test, uint64_t test_seed, const Options& options, std::ostream& ostream) {
+    test->_rand.seed(test_seed);
+    if (!options.replay.empty())
+      test->_rand.state(options.replay);
+    std::string iteration_state = test->_rand.state_string();
     try {
       ostream << test->name() << " ";
       ostream.flush();
-      test->_rand.seed(seed);
       for (unsigned int i = options.iter; i--;) {
-        // Normalize evolved states so the reported seed restores this iteration.
-        test->_rand.seed(test->_rand.seed());
-        seed = test->_rand.seed();
+        iteration_state = test->_rand.state_string();
         if (test->run()) {
           ostream << '+';
           ostream.flush();
         } else {
           ostream << "-" << std::endl;
-          report_error(test->name(), seed, options, ostream);
+          report_error(test->name(), iteration_state, options, ostream);
           return false;
         }
       }
@@ -383,7 +404,11 @@ namespace Test {
       ostream << "Exception in \"Gecode::" << e.what()
               << "." << std::endl
               << "Stopping..." << std::endl;
-      report_error(test->name(), seed, options, ostream);
+      report_error(test->name(), iteration_state, options, ostream);
+      return false;
+    } catch (const std::exception& e) {
+      ostream << "Exception: " << e.what() << std::endl;
+      report_error(test->name(), iteration_state, options, ostream);
       return false;
     }
   }
@@ -403,7 +428,7 @@ namespace Test {
     size_t passed = 0;
     size_t failed = 0;
     for (auto test : tests) {
-      unsigned int test_seed = seed_sequence.next();
+      uint64_t test_seed = seed_sequence.next();
       if (run_test(test, test_seed, options, std::cout)) {
         ++passed;
       } else {
@@ -525,10 +550,10 @@ namespace Test {
     /// The common controller for running tests
     TestExecutionControl& tec;
     /// The initial seed to start with
-    const int initial_seed;
+    const uint64_t initial_seed;
   public:
 
-    TestExecutor(TestExecutionControl& tec, const int initialSeed)
+    TestExecutor(TestExecutionControl& tec, uint64_t initialSeed)
       : tec(tec), initial_seed(initialSeed) {}
 
     void run(void) override {
@@ -551,7 +576,7 @@ namespace Test {
             break;
           }
           auto test = tec.tests[i];
-          unsigned int test_seed = seed_sequence.next();
+          uint64_t test_seed = seed_sequence.next();
           std::ostringstream test_output;
           tec.record_result(run_test(test, test_seed, tec.options, test_output));
           tec.write_output(test_output.str());
@@ -622,7 +647,7 @@ namespace Test {
     }
 
     const std::vector<Base*> tests = select_tests(opt);
-    if (opt.replay && tests.size() != 1) {
+    if (!opt.replay.empty() && tests.size() != 1) {
       std::cerr << "-replay requires exactly one registered test." << std::endl;
       return EXIT_FAILURE;
     }
