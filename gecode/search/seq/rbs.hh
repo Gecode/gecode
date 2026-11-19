@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -42,100 +41,103 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  class RBS;
+    class RBS;
 
-  /// %Stop-object for restart engine
-  class GECODE_SEARCH_EXPORT RestartStop : public Stop {
-    template<class,template<class>class> friend class ::Gecode::RBS;
-    friend class ::Gecode::Search::Seq::RBS;
-  private:
-    /// Mutex protecting restart stop state
-    mutable Support::Mutex m;
-    /// The failure limit for the engine
-    unsigned long long int l;
-    /// The stop object for the meta engine
-    Stop* m_stop;
-    /// Whether the engine was stopped
-    bool e_stopped;
-    /// Accumulated statistics for the meta engine
-    Statistics m_stat;
-  public:
-    /// Stop the meta engine if indicated by the stop object \a s
-    RestartStop(Stop* s);
-    /// Return true if meta engine must be stopped
-    virtual bool stop(const Statistics& s, const Options& o);
-    /// Return true if the stop object for the meta engine says so
-    bool meta_stop(const Statistics& s, const Options& o);
-    /// Increment current restart count
-    void restart(void);
-    /// Add no-goods to meta statistics
-    void nogood(unsigned long int n);
-    /// Test hub status with meta statistics
-    SpaceStatus status(Space* s);
-    /// Add statistics \a s and set the limit for the engine to \a l fails
-    void limit(const Statistics& s, unsigned long long int l);
-    /// Set the limit for the engine, which continues its search, to \a l fails
-    void extend(unsigned long long int l);
-    /// Update statistics
-    void update(const Search::Statistics& s);
-    /// Return whether the engine has been stopped
-    bool enginestopped(void) const;
-    /// Return statistics for the meta engine
-    Statistics metastatistics(void) const;
-  };
+    /// %Stop-object for restart engine
+    class GECODE_SEARCH_EXPORT RestartStop : public Stop {
+        template <class, template <class> class>
+        friend class ::Gecode::RBS;
+        friend class ::Gecode::Search::Seq::RBS;
 
-  /// Engine for restart-based search
-  class GECODE_SEARCH_EXPORT RBS : public Engine {
-  protected:
-    /// The actual engine
-    Engine* e;
-    /// The hub space to restart from
-    Space* hub;
-    /// The last solution space (possibly nullptr)
-    Space* last;
-    /// The cutoff object
-    Cutoff* co;
-    /// The stop control object
-    RestartStop* stop;
-    /// The options for the stop object of the meta engine
-    Options m_opt;
-    /// The current episode
-    unsigned long int episode;
-    /// The coverage of the spoke of the current episode
-    SpokeCoverage coverage;
-    /// Whether the last call to next() returned a solution that hub() has not seen
-    bool solution;
-    /// Whether the engine performs best solution search
-    bool best;
-    /// Why the last call to next() returned no solution
-    EndReason end;
-    /// Return the no-goods of the last spoke search, valid in the hub
-    NoGoods& hub_nogoods(void);
-    /// Call hub() for event \a ev and act on its decision, return whether search continues
-    bool hub_event(MetaEvent ev);
-  public:
-    /**
-     * \brief Constructor
-     *
-     * The value \a coverage is the coverage that the spoke hook declared
-     * for the space explored by the first engine \a e0.
-     */
-    RBS(Space* s, RestartStop* stop0, Engine* e0,
-        const Search::Statistics& stat, const Options& o, bool best,
-        SpokeCoverage coverage);
-    /// Return next solution (nullptr, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Statistics statistics(void) const;
-    /// Return why the last call to next() returned no solution
-    virtual EndReason end_reason(void) const;
-    /// Constrain future solutions to be better than \a b
-    virtual void constrain(const Space& b);
-    /// Destructor
-    virtual ~RBS(void);
-  };
+    private:
+        /// Mutex protecting restart stop state
+        mutable Support::Mutex m;
+        /// The failure limit for the engine
+        unsigned long long int l;
+        /// The stop object for the meta engine
+        Stop* m_stop;
+        /// Whether the engine was stopped
+        bool e_stopped;
+        /// Accumulated statistics for the meta engine
+        Statistics m_stat;
 
-}}}
+    public:
+        /// Stop the meta engine if indicated by the stop object \a s
+        RestartStop(Stop* s);
+        /// Return true if meta engine must be stopped
+        virtual bool stop(const Statistics& s, const Options& o);
+        /// Return true if the stop object for the meta engine says so
+        bool meta_stop(const Statistics& s, const Options& o);
+        /// Increment current restart count
+        void restart(void);
+        /// Add no-goods to meta statistics
+        void nogood(unsigned long int n);
+        /// Test hub status with meta statistics
+        SpaceStatus status(Space* s);
+        /// Add statistics \a s and set the limit for the engine to \a l fails
+        void limit(const Statistics& s, unsigned long long int l);
+        /// Set the limit for the engine, which continues its search, to \a l fails
+        void extend(unsigned long long int l);
+        /// Update statistics
+        void update(const Search::Statistics& s);
+        /// Return whether the engine has been stopped
+        bool enginestopped(void) const;
+        /// Return statistics for the meta engine
+        Statistics metastatistics(void) const;
+    };
+
+    /// Engine for restart-based search
+    class GECODE_SEARCH_EXPORT RBS : public Engine {
+    protected:
+        /// The actual engine
+        Engine* e;
+        /// The hub space to restart from
+        Space* hub;
+        /// The last solution space (possibly nullptr)
+        Space* last;
+        /// The cutoff object
+        Cutoff* co;
+        /// The stop control object
+        RestartStop* stop;
+        /// The options for the stop object of the meta engine
+        Options m_opt;
+        /// The current episode
+        unsigned long int episode;
+        /// The coverage of the spoke of the current episode
+        SpokeCoverage coverage;
+        /// Whether the last call to next() returned a solution that hub() has not seen
+        bool solution;
+        /// Whether the engine performs best solution search
+        bool best;
+        /// Why the last call to next() returned no solution
+        EndReason end;
+        /// Return the no-goods of the last spoke search, valid in the hub
+        NoGoods& hub_nogoods(void);
+        /// Call hub() for event \a ev and act on its decision, return whether search continues
+        bool hub_event(MetaEvent ev);
+
+    public:
+        /**
+         * \brief Constructor
+         *
+         * The value \a coverage is the coverage that the spoke hook declared
+         * for the space explored by the first engine \a e0.
+         */
+        RBS(Space* s, RestartStop* stop0, Engine* e0, const Search::Statistics& stat, const Options& o, bool best,
+            SpokeCoverage coverage);
+        /// Return next solution (nullptr, if none exists or search has been stopped)
+        virtual Space* next(void);
+        /// Return statistics
+        virtual Statistics statistics(void) const;
+        /// Return why the last call to next() returned no solution
+        virtual EndReason end_reason(void) const;
+        /// Constrain future solutions to be better than \a b
+        virtual void constrain(const Space& b);
+        /// Destructor
+        virtual ~RBS(void);
+    };
+
+}}} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/rbs.hpp>
 

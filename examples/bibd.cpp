@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -45,41 +44,41 @@ using namespace Gecode;
  */
 class BIBDOptions : public Options {
 public:
-  int v, k, lambda; ///< Parameters to be given on command line
-  int b, r;         ///< Derived parameters
-  /// Derive additional parameters
-  void derive(void) {
-    b = (v*(v-1)*lambda)/(k*(k-1));
-    r = (lambda*(v-1)) / (k-1);
-  }
-  /// Initialize options for example with name \a s
-  BIBDOptions(const char* s,
-              int v0, int k0, int lambda0)
-    : Options(s), v(v0), k(k0), lambda(lambda0) {
-    derive();
-  }
-  /// Parse options from arguments \a argv (number is \a argc)
-  void parse(int& argc, char* argv[]) {
-    Options::parse(argc,argv);
-    if (argc < 4)
-      return;
-    v = atoi(argv[1]);
-    k = atoi(argv[2]);
-    lambda = atoi(argv[3]);
-    derive();
-  }
-  /// Print help message
-  virtual void help(void) {
-    Options::help();
-    std::cerr << "\t(unsigned int) default: " << v << std::endl
-              << "\t\tparameter v" << std::endl
-              << "\t(unsigned int) default: " << k << std::endl
-              << "\t\tparameter k" << std::endl
-              << "\t(unsigned int) default: " << lambda << std::endl
-              << "\t\tparameter lambda" << std::endl;
-  }
+    int v, k, lambda; ///< Parameters to be given on command line
+    int b, r;         ///< Derived parameters
+    /// Derive additional parameters
+    void
+    derive(void) {
+        b = (v * (v - 1) * lambda) / (k * (k - 1));
+        r = (lambda * (v - 1)) / (k - 1);
+    }
+    /// Initialize options for example with name \a s
+    BIBDOptions(const char* s, int v0, int k0, int lambda0) : Options(s), v(v0), k(k0), lambda(lambda0) {
+        derive();
+    }
+    /// Parse options from arguments \a argv (number is \a argc)
+    void
+    parse(int& argc, char* argv[]) {
+        Options::parse(argc, argv);
+        if (argc < 4)
+            return;
+        v = atoi(argv[1]);
+        k = atoi(argv[2]);
+        lambda = atoi(argv[3]);
+        derive();
+    }
+    /// Print help message
+    virtual void
+    help(void) {
+        Options::help();
+        std::cerr << "\t(unsigned int) default: " << v << std::endl
+                  << "\t\tparameter v" << std::endl
+                  << "\t(unsigned int) default: " << k << std::endl
+                  << "\t\tparameter k" << std::endl
+                  << "\t(unsigned int) default: " << lambda << std::endl
+                  << "\t\tparameter lambda" << std::endl;
+    }
 };
-
 
 /**
  * \brief %Example: Balanced incomplete block design (%BIBD)
@@ -91,85 +90,80 @@ public:
  */
 class BIBD : public Script {
 protected:
-  /// Options providing access to parameters
-  const BIBDOptions& opt;
-  /// Matrix of Boolean variables
-  BoolVarArray _p;
+    /// Options providing access to parameters
+    const BIBDOptions& opt;
+    /// Matrix of Boolean variables
+    BoolVarArray _p;
+
 public:
-  /// Symmetry breaking variants
-  enum {
-    SYMMETRY_NONE,      ///< No symmetry breaking
-    SYMMETRY_LEX,       ///< Lex-constraints on rows/columns
-    SYMMETRY_LDSB       ///< LDSB on rows/columns
-  };
+    /// Symmetry breaking variants
+    enum {
+        SYMMETRY_NONE, ///< No symmetry breaking
+        SYMMETRY_LEX,  ///< Lex-constraints on rows/columns
+        SYMMETRY_LDSB  ///< LDSB on rows/columns
+    };
 
-  /// Actual model
-  BIBD(const BIBDOptions& o)
-    : Script(o), opt(o), _p(*this,opt.v*opt.b,0,1) {
-    Matrix<BoolVarArray> p(_p,opt.b,opt.v);
+    /// Actual model
+    BIBD(const BIBDOptions& o) : Script(o), opt(o), _p(*this, opt.v * opt.b, 0, 1) {
+        Matrix<BoolVarArray> p(_p, opt.b, opt.v);
 
-    // r ones per row
-    for (int i=0; i<opt.v; i++)
-      linear(*this, p.row(i), IRT_EQ, opt.r);
+        // r ones per row
+        for (int i = 0; i < opt.v; i++)
+            linear(*this, p.row(i), IRT_EQ, opt.r);
 
-    // k ones per column
-    for (int j=0; j<opt.b; j++)
-      linear(*this, p.col(j), IRT_EQ, opt.k);
+        // k ones per column
+        for (int j = 0; j < opt.b; j++)
+            linear(*this, p.col(j), IRT_EQ, opt.k);
 
-    // Exactly lambda ones in scalar product between two different rows
-    for (int i1=0; i1<opt.v; i1++)
-      for (int i2=i1+1; i2<opt.v; i2++) {
-        BoolVarArgs row(opt.b);
-        for (int j=0; j<opt.b; j++)
-          row[j] = expr(*this, p(j,i1) && p(j,i2));
-        linear(*this, row, IRT_EQ, opt.lambda);
-      }
+        // Exactly lambda ones in scalar product between two different rows
+        for (int i1 = 0; i1 < opt.v; i1++)
+            for (int i2 = i1 + 1; i2 < opt.v; i2++) {
+                BoolVarArgs row(opt.b);
+                for (int j = 0; j < opt.b; j++)
+                    row[j] = expr(*this, p(j, i1) && p(j, i2));
+                linear(*this, row, IRT_EQ, opt.lambda);
+            }
 
-    if (opt.symmetry() == SYMMETRY_LDSB) {
-      Symmetries s;
-      s << rows_interchange(p);
-      s << columns_interchange(p);
-      branch(*this, _p, BOOL_VAR_NONE(), BOOL_VAL_MIN(), s);
-    } else {
-      if (opt.symmetry() == SYMMETRY_LEX) {
-        for (int i=1; i<opt.v; i++)
-          rel(*this, p.row(i-1), IRT_GQ, p.row(i));
-        for (int j=1; j<opt.b; j++)
-          rel(*this, p.col(j-1), IRT_GQ, p.col(j));
-      }
-      branch(*this, _p, BOOL_VAR_NONE(), BOOL_VAL_MIN());
+        if (opt.symmetry() == SYMMETRY_LDSB) {
+            Symmetries s;
+            s << rows_interchange(p);
+            s << columns_interchange(p);
+            branch(*this, _p, BOOL_VAR_NONE(), BOOL_VAL_MIN(), s);
+        } else {
+            if (opt.symmetry() == SYMMETRY_LEX) {
+                for (int i = 1; i < opt.v; i++)
+                    rel(*this, p.row(i - 1), IRT_GQ, p.row(i));
+                for (int j = 1; j < opt.b; j++)
+                    rel(*this, p.col(j - 1), IRT_GQ, p.col(j));
+            }
+            branch(*this, _p, BOOL_VAR_NONE(), BOOL_VAL_MIN());
+        }
     }
 
-  }
-
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    os << "\tBIBD("
-       << opt.v << "," << opt.k << ","
-       << opt.lambda << ")" << std::endl;
-    Matrix<BoolVarArray> p(_p,opt.b,opt.v);
-    for (int i = 0; i<opt.v; i++) {
-      os << "\t\t";
-      for (int j = 0; j<opt.b; j++)
-        os << p(j,i) << " ";
-      os << std::endl;
+    /// Print solution
+    virtual void
+    print(std::ostream& os) const {
+        os << "\tBIBD(" << opt.v << "," << opt.k << "," << opt.lambda << ")" << std::endl;
+        Matrix<BoolVarArray> p(_p, opt.b, opt.v);
+        for (int i = 0; i < opt.v; i++) {
+            os << "\t\t";
+            for (int j = 0; j < opt.b; j++)
+                os << p(j, i) << " ";
+            os << std::endl;
+        }
+        os << std::endl;
     }
-    os << std::endl;
-  }
 
-  /// Constructor for cloning \a s
-  BIBD(BIBD& s)
-    : Script(s), opt(s.opt) {
-    _p.update(*this, s._p);
-  }
+    /// Constructor for cloning \a s
+    BIBD(BIBD& s) : Script(s), opt(s.opt) {
+        _p.update(*this, s._p);
+    }
 
-  /// Copy during cloning
-  virtual Space*
-  copy(void) {
-    return new BIBD(*this);
-  }
-
+    /// Copy during cloning
+    virtual Space*
+    copy(void) {
+        return new BIBD(*this);
+    }
 };
 
 /** \brief Main-function
@@ -177,23 +171,22 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  BIBDOptions opt("BIBD",7,3,60);
+    BIBDOptions opt("BIBD", 7, 3, 60);
 
-  opt.symmetry(BIBD::SYMMETRY_LEX);
-  opt.symmetry(BIBD::SYMMETRY_NONE,"none");
-  opt.symmetry(BIBD::SYMMETRY_LEX,"lex");
-  opt.symmetry(BIBD::SYMMETRY_LDSB,"ldsb");
+    opt.symmetry(BIBD::SYMMETRY_LEX);
+    opt.symmetry(BIBD::SYMMETRY_NONE, "none");
+    opt.symmetry(BIBD::SYMMETRY_LEX, "lex");
+    opt.symmetry(BIBD::SYMMETRY_LDSB, "ldsb");
 
-  opt.parse(argc,argv);
+    opt.parse(argc, argv);
 
-  /*
-   * Other interesting instances:
-   * BIBD(7,3,1), BIBD(6,3,2), BIBD(7,3,20), ...
-   */
+    /*
+     * Other interesting instances:
+     * BIBD(7,3,1), BIBD(6,3,2), BIBD(7,3,20), ...
+     */
 
-  Script::run<BIBD,DFS,BIBDOptions>(opt);
-  return 0;
+    Script::run<BIBD, DFS, BIBDOptions>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any
-

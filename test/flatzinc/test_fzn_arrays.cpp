@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,13 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("fzn_arrays",
-"var bool: b1;\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest("fzn_arrays", "var bool: b1;\n\
 var 1.0..10.0: f1;\n\
 var 1..10: i1;\n\
 var set of 1..10: s1;\n\
@@ -63,13 +58,12 @@ constraint array_set_element(1, [{1}, {2}, {3}], s1);\n\
 constraint array_var_set_element(2, as1, s1);\n\
 \n\
 solve satisfy;\n\
-", "----------\n");
-      }
+",
+                                   "----------\n");
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

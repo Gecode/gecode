@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,155 +32,152 @@
 
 namespace Gecode { namespace Gist {
 
-  forceinline void
-  SpaceNode::setFlag(int flag, bool value) {
-    if (value)
-      nstatus |= 1<<(flag-1);
-    else
-      nstatus &= ~(1<<(flag-1));
-  }
-
-  forceinline bool
-  SpaceNode::getFlag(int flag) const {
-    return (nstatus & (1<<(flag-1))) != 0;
-  }
-
-  forceinline void
-  SpaceNode::setHasOpenChildren(bool b) {
-    setFlag(HASOPENCHILDREN, b);
-  }
-
-  forceinline void
-  SpaceNode::setHasFailedChildren(bool b) {
-    setFlag(HASFAILEDCHILDREN, b);
-  }
-
-  forceinline void
-  SpaceNode::setHasSolvedChildren(bool b) {
-    setFlag(HASSOLVEDCHILDREN, b);
-  }
-
-  forceinline void
-  SpaceNode::setStatus(NodeStatus s) {
-    nstatus &= ~( STATUSMASK );
-    nstatus |= s << 20;
-  }
-
-  forceinline NodeStatus
-  SpaceNode::getStatus(void) const {
-    return static_cast<NodeStatus>((nstatus & STATUSMASK) >> 20);
-  }
-
-  forceinline void
-  SpaceNode::setDistance(unsigned int d) {
-    if (d > MAXDISTANCE)
-      d = MAXDISTANCE;
-    nstatus &= ~( DISTANCEMASK );
-    nstatus |= d;
-  }
-
-  forceinline unsigned int
-  SpaceNode::getDistance(void) const {
-    return nstatus & DISTANCEMASK;
-  }
-
-  forceinline
-  SpaceNode::SpaceNode(int p)
-  : Node(p), copy(nullptr), nstatus(0) {
-    choice = nullptr;
-    setStatus(UNDETERMINED);
-    setHasSolvedChildren(false);
-    setHasFailedChildren(false);
-  }
-
-  forceinline Space*
-  SpaceNode::getSpace(NodeAllocator& na,
-                      BestNode* curBest, int c_d, int a_d) {
-    acquireSpace(na,curBest,c_d,a_d);
-    Space* ret;
-    if (Support::marked(copy)) {
-      ret = static_cast<Space*>(Support::unmark(copy));
-      copy = nullptr;
-    } else {
-      ret = copy->clone();
+    forceinline void
+    SpaceNode::setFlag(int flag, bool value) {
+        if (value)
+            nstatus |= 1 << (flag - 1);
+        else
+            nstatus &= ~(1 << (flag - 1));
     }
-    return ret;
-  }
 
-  forceinline const Space*
-  SpaceNode::getWorkingSpace(void) const {
-    assert(copy != nullptr);
-    if (Support::marked(copy))
-      return static_cast<Space*>(Support::unmark(copy));
-    return copy;
-  }
-
-  forceinline void
-  SpaceNode::purge(const NodeAllocator& na) {
-    if (!isRoot() && (getStatus() != SOLVED || !na.bab())) {
-      // only delete copies from solutions if we are not in BAB
-      if (Support::marked(copy))
-        delete static_cast<Space*>(Support::unmark(copy));
-      else
-        delete copy;
-      copy = nullptr;
+    forceinline bool
+    SpaceNode::getFlag(int flag) const {
+        return (nstatus & (1 << (flag - 1))) != 0;
     }
-  }
 
+    forceinline void
+    SpaceNode::setHasOpenChildren(bool b) {
+        setFlag(HASOPENCHILDREN, b);
+    }
 
-  forceinline bool
-  SpaceNode::isCurrentBest(BestNode* curBest) {
-    return curBest != nullptr && curBest->s == this;
-  }
+    forceinline void
+    SpaceNode::setHasFailedChildren(bool b) {
+        setFlag(HASFAILEDCHILDREN, b);
+    }
 
-  forceinline bool
-  SpaceNode::isOpen(void) {
-    return ((getStatus() == UNDETERMINED) ||
-            getFlag(HASOPENCHILDREN));
-  }
+    forceinline void
+    SpaceNode::setHasSolvedChildren(bool b) {
+        setFlag(HASSOLVEDCHILDREN, b);
+    }
 
-  forceinline bool
-  SpaceNode::hasFailedChildren(void) {
-    return getFlag(HASFAILEDCHILDREN);
-  }
+    forceinline void
+    SpaceNode::setStatus(NodeStatus s) {
+        nstatus &= ~(STATUSMASK);
+        nstatus |= s << 20;
+    }
 
-  forceinline bool
-  SpaceNode::hasSolvedChildren(void) {
-    return getFlag(HASSOLVEDCHILDREN);
-  }
+    forceinline NodeStatus
+    SpaceNode::getStatus(void) const {
+        return static_cast<NodeStatus>((nstatus & STATUSMASK) >> 20);
+    }
 
-  forceinline bool
-  SpaceNode::hasOpenChildren(void) {
-    return getFlag(HASOPENCHILDREN);
-  }
+    forceinline void
+    SpaceNode::setDistance(unsigned int d) {
+        if (d > MAXDISTANCE)
+            d = MAXDISTANCE;
+        nstatus &= ~(DISTANCEMASK);
+        nstatus |= d;
+    }
 
-  forceinline bool
-  SpaceNode::hasCopy(void) {
-    return copy != nullptr;
-  }
+    forceinline unsigned int
+    SpaceNode::getDistance(void) const {
+        return nstatus & DISTANCEMASK;
+    }
 
-  forceinline bool
-  SpaceNode::hasWorkingSpace(void) {
-    return copy != nullptr && Support::marked(copy);
-  }
+    forceinline
+    SpaceNode::SpaceNode(int p)
+        : Node(p), copy(nullptr), nstatus(0) {
+        choice = nullptr;
+        setStatus(UNDETERMINED);
+        setHasSolvedChildren(false);
+        setHasFailedChildren(false);
+    }
 
-  forceinline int
-  SpaceNode::getAlternative(const NodeAllocator& na) const {
-    SpaceNode* p = getParent(na);
-    if (p == nullptr)
-      return -1;
-    for (int i=static_cast<int>(p->getNumberOfChildren()); i--;)
-      if (p->getChild(na,i) == this)
-        return i;
-    GECODE_NEVER;
-    return -1;
-  }
+    forceinline Space*
+    SpaceNode::getSpace(NodeAllocator& na, BestNode* curBest, int c_d, int a_d) {
+        acquireSpace(na, curBest, c_d, a_d);
+        Space* ret;
+        if (Support::marked(copy)) {
+            ret = static_cast<Space*>(Support::unmark(copy));
+            copy = nullptr;
+        } else {
+            ret = copy->clone();
+        }
+        return ret;
+    }
 
-  forceinline const Choice*
-  SpaceNode::getChoice(void) {
-    return choice;
-  }
+    forceinline const Space*
+    SpaceNode::getWorkingSpace(void) const {
+        assert(copy != nullptr);
+        if (Support::marked(copy))
+            return static_cast<Space*>(Support::unmark(copy));
+        return copy;
+    }
 
-}}
+    forceinline void
+    SpaceNode::purge(const NodeAllocator& na) {
+        if (!isRoot() && (getStatus() != SOLVED || !na.bab())) {
+            // only delete copies from solutions if we are not in BAB
+            if (Support::marked(copy))
+                delete static_cast<Space*>(Support::unmark(copy));
+            else
+                delete copy;
+            copy = nullptr;
+        }
+    }
+
+    forceinline bool
+    SpaceNode::isCurrentBest(BestNode* curBest) {
+        return curBest != nullptr && curBest->s == this;
+    }
+
+    forceinline bool
+    SpaceNode::isOpen(void) {
+        return ((getStatus() == UNDETERMINED) || getFlag(HASOPENCHILDREN));
+    }
+
+    forceinline bool
+    SpaceNode::hasFailedChildren(void) {
+        return getFlag(HASFAILEDCHILDREN);
+    }
+
+    forceinline bool
+    SpaceNode::hasSolvedChildren(void) {
+        return getFlag(HASSOLVEDCHILDREN);
+    }
+
+    forceinline bool
+    SpaceNode::hasOpenChildren(void) {
+        return getFlag(HASOPENCHILDREN);
+    }
+
+    forceinline bool
+    SpaceNode::hasCopy(void) {
+        return copy != nullptr;
+    }
+
+    forceinline bool
+    SpaceNode::hasWorkingSpace(void) {
+        return copy != nullptr && Support::marked(copy);
+    }
+
+    forceinline int
+    SpaceNode::getAlternative(const NodeAllocator& na) const {
+        SpaceNode* p = getParent(na);
+        if (p == nullptr)
+            return -1;
+        for (int i = static_cast<int>(p->getNumberOfChildren()); i--;)
+            if (p->getChild(na, i) == this)
+                return i;
+        GECODE_NEVER;
+        return -1;
+    }
+
+    forceinline const Choice*
+    SpaceNode::getChoice(void) {
+        return choice;
+    }
+
+}} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

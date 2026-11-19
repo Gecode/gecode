@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,89 +34,83 @@
 
 namespace Gecode {
 
-  const char*
-  StdSearchTracer::t2s[SearchTracer::EngineType::AOE + 1] = {
-    "DFS", "BAB", "LDS",
-    "RBS", "PBS",
-    "AOE"
-  };
+    const char* StdSearchTracer::t2s[SearchTracer::EngineType::AOE + 1] = {"DFS", "BAB", "LDS", "RBS", "PBS", "AOE"};
 
-  StdSearchTracer::StdSearchTracer(std::ostream& os0)
-    : os(os0) {}
+    StdSearchTracer::StdSearchTracer(std::ostream& os0) : os(os0) {}
 
-  void
-  StdSearchTracer::init(void) {
-    os << "trace<Search>::init()" << std::endl;
-      for (unsigned int e=0U; e<engines(); e++) {
-        os << "\t" << e << ": " 
-           << t2s[engine(e).type()];
-        if (engine(e).meta()) {
-          os << ", engines: {";
-          for (unsigned int i=engine(e).efst(); i<engine(e).elst(); i++) {
-            os << i; if (i+1 < engine(e).elst()) os << ",";
-          }
-        } else {
-          os << ", workers: {";
-          for (unsigned int i=engine(e).wfst(); i<engine(e).wlst(); i++) {
-            os << i; if (i+1 < engine(e).wlst()) os << ",";
-          }
+    void
+    StdSearchTracer::init(void) {
+        os << "trace<Search>::init()" << std::endl;
+        for (unsigned int e = 0U; e < engines(); e++) {
+            os << "\t" << e << ": " << t2s[engine(e).type()];
+            if (engine(e).meta()) {
+                os << ", engines: {";
+                for (unsigned int i = engine(e).efst(); i < engine(e).elst(); i++) {
+                    os << i;
+                    if (i + 1 < engine(e).elst())
+                        os << ",";
+                }
+            } else {
+                os << ", workers: {";
+                for (unsigned int i = engine(e).wfst(); i < engine(e).wlst(); i++) {
+                    os << i;
+                    if (i + 1 < engine(e).wlst())
+                        os << ",";
+                }
+            }
+            os << "}" << std::endl;
         }
-        os << "}" << std::endl;
-      }
     }
 
-  void
-  StdSearchTracer::round(unsigned int eid) {
-    os << "trace<Search>::round(e:" << eid << ")" << std::endl;
-  }
-
-  void
-  StdSearchTracer::skip(const EdgeInfo& ei) {
-    os << "trace<Search>Search::skip(w:" << ei.wid()
-       << ",n:" << ei.nid()
-       << ",a:" << ei.alternative() << ")" << std::endl;
-  }
-
-  void 
-  StdSearchTracer::node(const EdgeInfo& ei, const NodeInfo& ni) {
-    os << "trace<Search>::node(";
-    switch (ni.type()) {
-    case NodeType::FAILED:
-      os << "FAILED";
-      break;
-    case NodeType::SOLVED:
-      os << "SOLVED";
-      break;
-    case NodeType::BRANCH:
-      os << "BRANCH(" << ni.choice().alternatives() << ")";
-      break;
+    void
+    StdSearchTracer::round(unsigned int eid) {
+        os << "trace<Search>::round(e:" << eid << ")" << std::endl;
     }
-    if (!ei)
-      os << ",root";
-    os << ",w:" << ni.wid() << ',';
-    if (ei)
-      os << "p:" << ei.nid() << ',';
-    os << "n:" << ni.nid() << ')';
-    if (ei) {
-      if (ei.wid() != ni.wid())
-        os << " [stolen from w:" << ei.wid() << "]";
-      os << std::endl
-         << '\t' << ei.string()
-         << std::endl;
-    } else {
-      os << std::endl;
+
+    void
+    StdSearchTracer::skip(const EdgeInfo& ei) {
+        os << "trace<Search>Search::skip(w:" << ei.wid() << ",n:" << ei.nid() << ",a:" << ei.alternative() << ")"
+           << std::endl;
     }
-  }
-  
-  void
-  StdSearchTracer::done(void) {
-    os << "trace<Search>::done()" << std::endl;
-  }
 
-  StdSearchTracer::~StdSearchTracer(void) {}
+    void
+    StdSearchTracer::node(const EdgeInfo& ei, const NodeInfo& ni) {
+        os << "trace<Search>::node(";
+        switch (ni.type()) {
+        case NodeType::FAILED:
+            os << "FAILED";
+            break;
+        case NodeType::SOLVED:
+            os << "SOLVED";
+            break;
+        case NodeType::BRANCH:
+            os << "BRANCH(" << ni.choice().alternatives() << ")";
+            break;
+        }
+        if (!ei)
+            os << ",root";
+        os << ",w:" << ni.wid() << ',';
+        if (ei)
+            os << "p:" << ei.nid() << ',';
+        os << "n:" << ni.nid() << ')';
+        if (ei) {
+            if (ei.wid() != ni.wid())
+                os << " [stolen from w:" << ei.wid() << "]";
+            os << std::endl << '\t' << ei.string() << std::endl;
+        } else {
+            os << std::endl;
+        }
+    }
 
-  StdSearchTracer StdSearchTracer::def;
+    void
+    StdSearchTracer::done(void) {
+        os << "trace<Search>::done()" << std::endl;
+    }
 
-}
+    StdSearchTracer::~StdSearchTracer(void) {}
+
+    StdSearchTracer StdSearchTracer::def;
+
+} // namespace Gecode
 
 // STATISTICS: search-trace

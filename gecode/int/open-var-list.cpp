@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -35,45 +34,37 @@
 
 namespace Gecode {
 
-  OpenIntVarList::OpenIntVarList(void) {}
+    OpenIntVarList::OpenIntVarList(void) {}
 
-  OpenIntVarList::Factory
-  OpenIntVarList::factory(Domain d) {
-    if (!d)
-      throw InvalidFunction("OpenIntVarList");
-    return [d](Space& home, int i) { return IntVar(home,d(i)); };
-  }
+    OpenIntVarList::Factory
+    OpenIntVarList::factory(Domain d) {
+        if (!d)
+            throw InvalidFunction("OpenIntVarList");
+        return [d](Space& home, int i) { return IntVar(home, d(i)); };
+    }
 
-  OpenIntVarList::OpenIntVarList(Space& home, int max)
-    : OpenIntVarList(home,
-        IntSet(Int::Limits::min,Int::Limits::max),max) {}
+    OpenIntVarList::OpenIntVarList(Space& home, int max)
+        : OpenIntVarList(home, IntSet(Int::Limits::min, Int::Limits::max), max) {}
 
-  OpenIntVarList::OpenIntVarList(Space& home, const IntSet& d,
-                               int max)
-    : OpenIntVarList(home,[d](int) { return d; },max) {}
+    OpenIntVarList::OpenIntVarList(Space& home, const IntSet& d, int max)
+        : OpenIntVarList(home, [d](int) { return d; }, max) {}
 
-  OpenIntVarList::OpenIntVarList(Space& home, const IntSet& d,
-                               Transition t, int max)
-    : OpenIntVarList(home,[d](int) { return d; },t,max) {}
+    OpenIntVarList::OpenIntVarList(Space& home, const IntSet& d, Transition t, int max)
+        : OpenIntVarList(home, [d](int) { return d; }, t, max) {}
 
-  OpenIntVarList::OpenIntVarList(Space& home, Domain d, int max)
-    : OpenVarList<IntVar>(home,factory(d),max) {}
+    OpenIntVarList::OpenIntVarList(Space& home, Domain d, int max) : OpenVarList<IntVar>(home, factory(d), max) {}
 
-  OpenIntVarList::OpenIntVarList(Space& home, Domain d,
-                               Transition t, int max)
-    : OpenVarList<IntVar>(home,factory(d),t,max) {}
+    OpenIntVarList::OpenIntVarList(Space& home, Domain d, Transition t, int max)
+        : OpenVarList<IntVar>(home, factory(d), t, max) {}
 
-  OpenBoolVarList::OpenBoolVarList(void) {}
+    OpenBoolVarList::OpenBoolVarList(void) {}
 
-  OpenBoolVarList::OpenBoolVarList(Space& home, int max)
-    : OpenVarList<BoolVar>(home,
-        [](Space& home, int) { return BoolVar(home,0,1); },max) {}
+    OpenBoolVarList::OpenBoolVarList(Space& home, int max)
+        : OpenVarList<BoolVar>(home, [](Space& home, int) { return BoolVar(home, 0, 1); }, max) {}
 
-  OpenBoolVarList::OpenBoolVarList(Space& home, Transition t,
-                                 int max)
-    : OpenVarList<BoolVar>(home,
-        [](Space& home, int) { return BoolVar(home,0,1); },t,max) {}
+    OpenBoolVarList::OpenBoolVarList(Space& home, Transition t, int max)
+        : OpenVarList<BoolVar>(home, [](Space& home, int) { return BoolVar(home, 0, 1); }, t, max) {}
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-other

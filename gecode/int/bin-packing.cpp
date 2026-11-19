@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Stefano Gualandi <stefano.gualandi@gmail.com>
@@ -37,125 +36,120 @@
 
 namespace Gecode {
 
-  void
-  binpacking(Home home,
-             const IntVarArgs& l,
-             const IntVarArgs& b, const IntArgs& s,
-             IntPropLevel ipl) {
-    using namespace Int;
-    if (same(l,b))
-      throw ArgumentSame("Int::binpacking");
-    if (b.size() != s.size())
-      throw ArgumentSizeMismatch("Int::binpacking");
-    for (int i=0; i<s.size(); i++)
-      Limits::nonnegative(s[i],"Int::binpacking");
-    GECODE_POST;
+    void
+    binpacking(Home home, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s, IntPropLevel ipl) {
+        using namespace Int;
+        if (same(l, b))
+            throw ArgumentSame("Int::binpacking");
+        if (b.size() != s.size())
+            throw ArgumentSizeMismatch("Int::binpacking");
+        for (int i = 0; i < s.size(); i++)
+            Limits::nonnegative(s[i], "Int::binpacking");
+        GECODE_POST;
 
-    ViewArray<OffsetView> lv(home,l.size());
-    for (int i=0; i<l.size(); i++)
-      lv[i] = OffsetView(l[i],0);
+        ViewArray<OffsetView> lv(home, l.size());
+        for (int i = 0; i < l.size(); i++)
+            lv[i] = OffsetView(l[i], 0);
 
-    ViewArray<BinPacking::Item> bs(home,b.size());
-    for (int i=0; i<bs.size(); i++)
-      bs[i] = BinPacking::Item(b[i],s[i]);
+        ViewArray<BinPacking::Item> bs(home, b.size());
+        for (int i = 0; i < bs.size(); i++)
+            bs[i] = BinPacking::Item(b[i], s[i]);
 
-    GECODE_ES_FAIL(Int::BinPacking::Pack::post(home,lv,bs,ipl));
-  }
-
-  IntSet
-  binpacking(Home home, int d,
-             const IntVarArgs& l, const IntVarArgs& b,
-             const IntArgs& s, const IntArgs& c,
-             IntPropLevel ipl) {
-    using namespace Int;
-
-    if (same(l,b))
-      throw ArgumentSame("Int::binpacking");
-
-    // The number of items
-    int n = b.size();
-    // The number of bins
-    int m = l.size() / d;
-
-    // Check input sizes
-    if ((n*d != s.size()) || (m*d != l.size()) || (d != c.size()))
-      throw ArgumentSizeMismatch("Int::binpacking");
-    for (int i=0; i<s.size(); i++)
-      Limits::nonnegative(s[i],"Int::binpacking");
-    for (int i=0; i<c.size(); i++)
-      Limits::nonnegative(c[i],"Int::binpacking");
-
-    if (home.failed())
-      return IntSet::empty;
-
-    PostInfo pi(home);
-
-    // Capacity constraint for each dimension
-    for (int k=0; k<d; k++)
-      for (int j=0; j<m; j++) {
-        IntView li(l[j*d+k]);
-        if (me_failed(li.lq(home,c[k]))) {
-          home.fail();
-          return IntSet::empty;
-        }
-      }
-
-    // Post a binpacking constraint for each dimension
-    for (int k=0; k<d; k++) {
-      ViewArray<OffsetView> lv(home,m);
-      for (int j=0; j<m; j++)
-        lv[j] = OffsetView(l[j*d+k],0);
-
-      ViewArray<BinPacking::Item> bv(home,n);
-      for (int i=0; i<n; i++)
-        bv[i] = BinPacking::Item(b[i],s[i*d+k]);
-
-      if (Int::BinPacking::Pack::post(home,lv,bv,ipl) == ES_FAILED) {
-        home.fail();
-        return IntSet::empty;
-      }
+        GECODE_ES_FAIL(Int::BinPacking::Pack::post(home, lv, bs, ipl));
     }
 
+    IntSet
+    binpacking(Home home, int d, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s, const IntArgs& c,
+               IntPropLevel ipl) {
+        using namespace Int;
 
-    // Clique Finding and distinct posting
-    {
-      // First construct the conflict graph
-      Region r;
-      BinPacking::ConflictGraph cg(home,r,b,m);
+        if (same(l, b))
+            throw ArgumentSame("Int::binpacking");
 
-      for (int i=0; i<n-1; i++) {
-        for (int j=i+1; j<n; j++) {
-          unsigned int nl = 0;
-          unsigned int ds = 0;
-          IntVarValues ii(b[i]), jj(b[j]);
-          while (ii() && jj()) {
-            if (ii.val() < jj.val()) {
-              ++ii;
-            } else if (ii.val() > jj.val()) {
-              ++jj;
-            } else {
-              ds++;
-              for (int k=0; k<d; k++)
-                if (s[i*d+k] + s[j*d+k] > c[k]) {
-                  nl++;
-                  break;
+        // The number of items
+        int n = b.size();
+        // The number of bins
+        int m = l.size() / d;
+
+        // Check input sizes
+        if ((n * d != s.size()) || (m * d != l.size()) || (d != c.size()))
+            throw ArgumentSizeMismatch("Int::binpacking");
+        for (int i = 0; i < s.size(); i++)
+            Limits::nonnegative(s[i], "Int::binpacking");
+        for (int i = 0; i < c.size(); i++)
+            Limits::nonnegative(c[i], "Int::binpacking");
+
+        if (home.failed())
+            return IntSet::empty;
+
+        PostInfo pi(home);
+
+        // Capacity constraint for each dimension
+        for (int k = 0; k < d; k++)
+            for (int j = 0; j < m; j++) {
+                IntView li(l[j * d + k]);
+                if (me_failed(li.lq(home, c[k]))) {
+                    home.fail();
+                    return IntSet::empty;
                 }
-              ++ii; ++jj;
             }
-          }
-          if (nl >= ds)
-            cg.edge(i,j);
+
+        // Post a binpacking constraint for each dimension
+        for (int k = 0; k < d; k++) {
+            ViewArray<OffsetView> lv(home, m);
+            for (int j = 0; j < m; j++)
+                lv[j] = OffsetView(l[j * d + k], 0);
+
+            ViewArray<BinPacking::Item> bv(home, n);
+            for (int i = 0; i < n; i++)
+                bv[i] = BinPacking::Item(b[i], s[i * d + k]);
+
+            if (Int::BinPacking::Pack::post(home, lv, bv, ipl) == ES_FAILED) {
+                home.fail();
+                return IntSet::empty;
+            }
         }
-      }
 
-      if (cg.post() == ES_FAILED)
-        home.fail();
+        // Clique Finding and distinct posting
+        {
+            // First construct the conflict graph
+            Region r;
+            BinPacking::ConflictGraph cg(home, r, b, m);
 
-      // The clique can be computed even if home is failed
-      return cg.maxclique();
+            for (int i = 0; i < n - 1; i++) {
+                for (int j = i + 1; j < n; j++) {
+                    unsigned int nl = 0;
+                    unsigned int ds = 0;
+                    IntVarValues ii(b[i]), jj(b[j]);
+                    while (ii() && jj()) {
+                        if (ii.val() < jj.val()) {
+                            ++ii;
+                        } else if (ii.val() > jj.val()) {
+                            ++jj;
+                        } else {
+                            ds++;
+                            for (int k = 0; k < d; k++)
+                                if (s[i * d + k] + s[j * d + k] > c[k]) {
+                                    nl++;
+                                    break;
+                                }
+                            ++ii;
+                            ++jj;
+                        }
+                    }
+                    if (nl >= ds)
+                        cg.edge(i, j);
+                }
+            }
+
+            if (cg.post() == ES_FAILED)
+                home.fail();
+
+            // The clique can be computed even if home is failed
+            return cg.maxclique();
+        }
     }
-  }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-post

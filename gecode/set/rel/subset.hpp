@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,55 +38,54 @@
 
 namespace Gecode { namespace Set { namespace Rel {
 
-  template<class View0, class View1>
-  forceinline
-  Subset<View0,View1>::Subset(Home home, View0 y0, View1 y1)
-    : MixBinaryPropagator<View0,PC_SET_CGLB,
-                            View1,PC_SET_CLUB>(home,y0,y1) {}
+    template <class View0, class View1>
+    forceinline
+    Subset<View0, View1>::Subset(Home home, View0 y0, View1 y1)
+        : MixBinaryPropagator<View0, PC_SET_CGLB, View1, PC_SET_CLUB>(home, y0, y1) {}
 
-  template<class View0, class View1>
-  forceinline
-  Subset<View0,View1>::Subset(Space& home, Subset& p)
-    : MixBinaryPropagator<View0,PC_SET_CGLB,
-                            View1,PC_SET_CLUB>(home,p) {}
+    template <class View0, class View1>
+    forceinline
+    Subset<View0, View1>::Subset(Space& home, Subset& p)
+        : MixBinaryPropagator<View0, PC_SET_CGLB, View1, PC_SET_CLUB>(home, p) {}
 
-  template<class View0, class View1>
-  ExecStatus Subset<View0,View1>::post(Home home, View0 x, View1 y) {
-    if (!same(x,y))
-      (void) new (home) Subset(home,x,y);
-    return ES_OK;
-  }
-
-  template<class View0, class View1>
-  Actor*
-  Subset<View0,View1>::copy(Space& home) {
-    return new (home) Subset(home,*this);
-  }
-
-  template<class View0, class View1>
-  ExecStatus
-  Subset<View0,View1>::propagate(Space& home, const ModEventDelta&) {
-    bool oneassigned = x0.assigned() || x1.assigned();
-    unsigned int x0glbsize;
-    do {
-      GlbRanges<View0> x0lb(x0);
-      GECODE_ME_CHECK ( x1.includeI(home,x0lb) );
-      GECODE_ME_CHECK ( x1.cardMin(home,x0.cardMin()) );
-      LubRanges<View1> x1ub(x1);
-      x0glbsize = x0.glbSize();
-      GECODE_ME_CHECK ( x0.intersectI(home,x1ub) );
-      GECODE_ME_CHECK ( x0.cardMax(home,x1.cardMax()) );
-    } while (x0.glbSize() > x0glbsize);
-
-    if (x0.cardMin() == x1.cardMax())
-      GECODE_REWRITE(*this,(Eq<View0,View1>::post(home(*this),x0,x1)));
-
-    if (shared(x0,x1)) {
-      return oneassigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
+    template <class View0, class View1>
+    ExecStatus
+    Subset<View0, View1>::post(Home home, View0 x, View1 y) {
+        if (!same(x, y))
+            (void)new (home) Subset(home, x, y);
+        return ES_OK;
     }
-    return (x0.assigned() || x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
-  }
 
-}}}
+    template <class View0, class View1>
+    Actor*
+    Subset<View0, View1>::copy(Space& home) {
+        return new (home) Subset(home, *this);
+    }
+
+    template <class View0, class View1>
+    ExecStatus
+    Subset<View0, View1>::propagate(Space& home, const ModEventDelta&) {
+        bool oneassigned = x0.assigned() || x1.assigned();
+        unsigned int x0glbsize;
+        do {
+            GlbRanges<View0> x0lb(x0);
+            GECODE_ME_CHECK(x1.includeI(home, x0lb));
+            GECODE_ME_CHECK(x1.cardMin(home, x0.cardMin()));
+            LubRanges<View1> x1ub(x1);
+            x0glbsize = x0.glbSize();
+            GECODE_ME_CHECK(x0.intersectI(home, x1ub));
+            GECODE_ME_CHECK(x0.cardMax(home, x1.cardMax()));
+        } while (x0.glbSize() > x0glbsize);
+
+        if (x0.cardMin() == x1.cardMax())
+            GECODE_REWRITE(*this, (Eq<View0, View1>::post(home(*this), x0, x1)));
+
+        if (shared(x0, x1)) {
+            return oneassigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
+        }
+        return (x0.assigned() || x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    }
+
+}}} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

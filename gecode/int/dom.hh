@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -46,64 +45,66 @@
 
 namespace Gecode { namespace Int { namespace Dom {
 
-  /**
-   * \brief Reified range dom-propagator
-   *
-   * Requires \code #include <gecode/int/dom.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class View, ReifyMode rm>
-  class ReRange : public ReUnaryPropagator<View,PC_INT_DOM,BoolView> {
-  protected:
-    using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::x0;
-    using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::b;
-    /// Minimum of range
-    int min;
-    /// Maximum of range
-    int max;
-    /// Constructor for cloning \a p
-    ReRange(Space& home, ReRange& p);
-    /// Constructor for creation
-    ReRange(Home home, View x, int min, int max, BoolView b);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
-    static ExecStatus post(Home home, View x, int min, int max, BoolView b);
-  };
+    /**
+     * \brief Reified range dom-propagator
+     *
+     * Requires \code #include <gecode/int/dom.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class View, ReifyMode rm>
+    class ReRange : public ReUnaryPropagator<View, PC_INT_DOM, BoolView> {
+    protected:
+        using ReUnaryPropagator<View, PC_INT_DOM, BoolView>::x0;
+        using ReUnaryPropagator<View, PC_INT_DOM, BoolView>::b;
+        /// Minimum of range
+        int min;
+        /// Maximum of range
+        int max;
+        /// Constructor for cloning \a p
+        ReRange(Space& home, ReRange& p);
+        /// Constructor for creation
+        ReRange(Home home, View x, int min, int max, BoolView b);
 
-  /**
-   * \brief Reified domain dom-propagator
-   *
-   * Requires \code #include <gecode/int/dom.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class View, ReifyMode rm>
-  class ReIntSet : public ReUnaryPropagator<View,PC_INT_DOM,BoolView> {
-  protected:
-    using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::x0;
-    using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::b;
+    public:
+        /// Copy propagator during cloning
+        virtual Actor* copy(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
+        static ExecStatus post(Home home, View x, int min, int max, BoolView b);
+    };
 
-    /// %Domain
-    IntSet is;
-    /// Constructor for cloning \a p
-    ReIntSet(Space& home, ReIntSet& p);
-    /// Constructor for creation
-    ReIntSet(Home home, View x, const IntSet& s, BoolView b);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$
-    static ExecStatus post(Home home, View x, const IntSet& s, BoolView b);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
+    /**
+     * \brief Reified domain dom-propagator
+     *
+     * Requires \code #include <gecode/int/dom.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class View, ReifyMode rm>
+    class ReIntSet : public ReUnaryPropagator<View, PC_INT_DOM, BoolView> {
+    protected:
+        using ReUnaryPropagator<View, PC_INT_DOM, BoolView>::x0;
+        using ReUnaryPropagator<View, PC_INT_DOM, BoolView>::b;
 
-}}}
+        /// %Domain
+        IntSet is;
+        /// Constructor for cloning \a p
+        ReIntSet(Space& home, ReIntSet& p);
+        /// Constructor for creation
+        ReIntSet(Home home, View x, const IntSet& s, BoolView b);
+
+    public:
+        /// Copy propagator during cloning
+        virtual Actor* copy(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$
+        static ExecStatus post(Home home, View x, const IntSet& s, BoolView b);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+    };
+
+}}} // namespace Gecode::Int::Dom
 
 #include <gecode/int/dom/range.hpp>
 #include <gecode/int/dom/set.hpp>
@@ -111,4 +112,3 @@ namespace Gecode { namespace Int { namespace Dom {
 #endif
 
 // STATISTICS: int-prop
-

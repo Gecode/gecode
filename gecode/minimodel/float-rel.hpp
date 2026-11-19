@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
@@ -35,50 +34,57 @@
 
 namespace Gecode {
 
-  /*
-   * Operations for linear float relations
-   *
-   */
-  forceinline
-  LinFloatRel::LinFloatRel(void) {}
+    /*
+     * Operations for linear float relations
+     *
+     */
+    forceinline
+    LinFloatRel::LinFloatRel(void) {}
 
-  forceinline
-  LinFloatRel::LinFloatRel(const LinFloatExpr& l, FloatRelType frt0, const LinFloatExpr& r)
-    : e(l-r), frt(frt0) {}
+    forceinline
+    LinFloatRel::LinFloatRel(const LinFloatExpr& l, FloatRelType frt0, const LinFloatExpr& r)
+        : e(l - r), frt(frt0) {}
 
-  forceinline
-  LinFloatRel::LinFloatRel(const LinFloatExpr& l, FloatRelType frt0, FloatVal r)
-    : e(l-r), frt(frt0) {}
+    forceinline
+    LinFloatRel::LinFloatRel(const LinFloatExpr& l, FloatRelType frt0, FloatVal r)
+        : e(l - r), frt(frt0) {}
 
-  forceinline
-  LinFloatRel::LinFloatRel(FloatVal l, FloatRelType frt0, const LinFloatExpr& r)
-    : e(l-r), frt(frt0) {}
+    forceinline
+    LinFloatRel::LinFloatRel(FloatVal l, FloatRelType frt0, const LinFloatExpr& r)
+        : e(l - r), frt(frt0) {}
 
-  forceinline FloatRelType
-  LinFloatRel::neg(FloatRelType frt) {
-    switch (frt) {
-    case FRT_EQ: return FRT_NQ;
-    case FRT_NQ: return FRT_EQ;
-    case FRT_LQ: return FRT_GR;
-    case FRT_LE: return FRT_GQ;
-    case FRT_GQ: return FRT_LE;
-    case FRT_GR: return FRT_LQ;
-    default: GECODE_NEVER;
+    forceinline FloatRelType
+    LinFloatRel::neg(FloatRelType frt) {
+        switch (frt) {
+        case FRT_EQ:
+            return FRT_NQ;
+        case FRT_NQ:
+            return FRT_EQ;
+        case FRT_LQ:
+            return FRT_GR;
+        case FRT_LE:
+            return FRT_GQ;
+        case FRT_GQ:
+            return FRT_LE;
+        case FRT_GR:
+            return FRT_LQ;
+        default:
+            GECODE_NEVER;
+        }
+        return FRT_LQ;
     }
-    return FRT_LQ;
-  }
 
-  forceinline void
-  LinFloatRel::post(Home home, bool t) const {
-    e.post(home,t ? frt : neg(frt));
-  }
+    forceinline void
+    LinFloatRel::post(Home home, bool t) const {
+        e.post(home, t ? frt : neg(frt));
+    }
 
-  forceinline void
-  LinFloatRel::post(Home home, const BoolVar& b, bool t) const {
-    e.post(home,t ? frt : neg(frt),b);
-  }
+    forceinline void
+    LinFloatRel::post(Home home, const BoolVar& b, bool t) const {
+        e.post(home, t ? frt : neg(frt), b);
+    }
 
-}
+} // namespace Gecode
 
 #endif
 

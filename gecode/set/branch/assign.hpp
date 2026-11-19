@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,69 +32,68 @@
 
 namespace Gecode {
 
-  forceinline
-  SetAssign::SetAssign(Select s0)
-    : s(s0) {}
+    forceinline
+    SetAssign::SetAssign(Select s0)
+        : s(s0) {}
 
-  forceinline
-  SetAssign::SetAssign(Select s0, Rnd r)
-    : ValBranch<SetVar>(r), s(s0) {}
+    forceinline
+    SetAssign::SetAssign(Select s0, Rnd r)
+        : ValBranch<SetVar>(r), s(s0) {}
 
-  forceinline
-  SetAssign::SetAssign(SetBranchVal v, SetBranchCommit c)
-    : ValBranch<SetVar>(v,c), s(SEL_VAL_COMMIT) {}
+    forceinline
+    SetAssign::SetAssign(SetBranchVal v, SetBranchCommit c)
+        : ValBranch<SetVar>(v, c), s(SEL_VAL_COMMIT) {}
 
-  forceinline SetAssign::Select
-  SetAssign::select(void) const {
-    return s;
-  }
+    forceinline SetAssign::Select
+    SetAssign::select(void) const {
+        return s;
+    }
 
+    inline SetAssign
+    SET_ASSIGN_MIN_INC(void) {
+        return SetAssign(SetAssign::SEL_MIN_INC);
+    }
 
-  inline SetAssign
-  SET_ASSIGN_MIN_INC(void) {
-    return SetAssign(SetAssign::SEL_MIN_INC);
-  }
+    inline SetAssign
+    SET_ASSIGN_MIN_EXC(void) {
+        return SetAssign(SetAssign::SEL_MIN_EXC);
+    }
 
-  inline SetAssign
-  SET_ASSIGN_MIN_EXC(void) {
-    return SetAssign(SetAssign::SEL_MIN_EXC);
-  }
+    inline SetAssign
+    SET_ASSIGN_MED_INC(void) {
+        return SetAssign(SetAssign::SEL_MED_INC);
+    }
 
-  inline SetAssign
-  SET_ASSIGN_MED_INC(void) {
-    return SetAssign(SetAssign::SEL_MED_INC);
-  }
+    inline SetAssign
+    SET_ASSIGN_MED_EXC(void) {
+        return SetAssign(SetAssign::SEL_MED_EXC);
+    }
 
-  inline SetAssign
-  SET_ASSIGN_MED_EXC(void) {
-    return SetAssign(SetAssign::SEL_MED_EXC);
-  }
+    inline SetAssign
+    SET_ASSIGN_MAX_INC(void) {
+        return SetAssign(SetAssign::SEL_MAX_INC);
+    }
 
-  inline SetAssign
-  SET_ASSIGN_MAX_INC(void) {
-    return SetAssign(SetAssign::SEL_MAX_INC);
-  }
+    inline SetAssign
+    SET_ASSIGN_MAX_EXC(void) {
+        return SetAssign(SetAssign::SEL_MAX_EXC);
+    }
 
-  inline SetAssign
-  SET_ASSIGN_MAX_EXC(void) {
-    return SetAssign(SetAssign::SEL_MAX_EXC);
-  }
+    inline SetAssign
+    SET_ASSIGN_RND_INC(Rnd r) {
+        return SetAssign(SetAssign::SEL_RND_INC, r);
+    }
 
-  inline SetAssign
-  SET_ASSIGN_RND_INC(Rnd r) {
-    return SetAssign(SetAssign::SEL_RND_INC,r);
-  }
+    inline SetAssign
+    SET_ASSIGN_RND_EXC(Rnd r) {
+        return SetAssign(SetAssign::SEL_RND_EXC, r);
+    }
 
-  inline SetAssign
-  SET_ASSIGN_RND_EXC(Rnd r) {
-    return SetAssign(SetAssign::SEL_RND_EXC,r);
-  }
+    inline SetAssign
+    SET_ASSIGN(SetBranchVal v, SetBranchCommit c) {
+        return SetAssign(v, c);
+    }
 
-  inline SetAssign
-  SET_ASSIGN(SetBranchVal v, SetBranchCommit c) {
-    return SetAssign(v,c);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: set-branch

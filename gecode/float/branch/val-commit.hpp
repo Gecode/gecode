@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,41 +36,36 @@
 
 namespace Gecode { namespace Float { namespace Branch {
 
-  forceinline
-  ValCommitLqGq::ValCommitLqGq(Space& home, const ValBranch<Var>& vb)
-    : ValCommit<FloatView,FloatVal>(home,vb) {}
-  forceinline
-  ValCommitLqGq::ValCommitLqGq(Space& home, ValCommitLqGq& vc)
-    : ValCommit<FloatView,FloatVal>(home,vc) {}
-  forceinline ModEvent
-  ValCommitLqGq::commit(Space& home, unsigned int a, FloatView x, int,
-                        FloatNumBranch nl) {
-    // Should we try the smaller half first?
-    if ((a == 0) == nl.l) {
-      if ((x.min() == nl.n) || (x.max() == nl.n))
-        return x.eq(home,x.min());
-      else
-        return x.lq(home,nl.n);
-    } else {
-      if ((x.min() == nl.n) || (x.max() == nl.n))
-        return x.eq(home,x.max());
-      else
-        return x.gq(home,nl.n);
+    forceinline
+    ValCommitLqGq::ValCommitLqGq(Space& home, const ValBranch<Var>& vb)
+        : ValCommit<FloatView, FloatVal>(home, vb) {}
+    forceinline
+    ValCommitLqGq::ValCommitLqGq(Space& home, ValCommitLqGq& vc)
+        : ValCommit<FloatView, FloatVal>(home, vc) {}
+    forceinline ModEvent
+    ValCommitLqGq::commit(Space& home, unsigned int a, FloatView x, int, FloatNumBranch nl) {
+        // Should we try the smaller half first?
+        if ((a == 0) == nl.l) {
+            if ((x.min() == nl.n) || (x.max() == nl.n))
+                return x.eq(home, x.min());
+            else
+                return x.lq(home, nl.n);
+        } else {
+            if ((x.min() == nl.n) || (x.max() == nl.n))
+                return x.eq(home, x.max());
+            else
+                return x.gq(home, nl.n);
+        }
     }
-  }
-  forceinline NGL*
-  ValCommitLqGq::ngl(Space&, unsigned int, FloatView, FloatNumBranch) const {
-    return nullptr;
-  }
-  forceinline void
-  ValCommitLqGq::print(const Space&, unsigned int a, FloatView, int i,
-                       FloatNumBranch nl,
-                       std::ostream& o) const {
-    o << "var[" << i << "] "
-      << (((a == 0) == nl.l) ? "<=" : ">=") << "(" << nl.n << ")";
-  }
+    forceinline NGL*
+    ValCommitLqGq::ngl(Space&, unsigned int, FloatView, FloatNumBranch) const {
+        return nullptr;
+    }
+    forceinline void
+    ValCommitLqGq::print(const Space&, unsigned int a, FloatView, int i, FloatNumBranch nl, std::ostream& o) const {
+        o << "var[" << i << "] " << (((a == 0) == nl.l) ? "<=" : ">=") << "(" << nl.n << ")";
+    }
 
-}}}
+}}} // namespace Gecode::Float::Branch
 
 // STATISTICS: float-branch
-

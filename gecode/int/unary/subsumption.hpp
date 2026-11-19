@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,19 +32,19 @@
 
 namespace Gecode { namespace Int { namespace Unary {
 
-  template<class Task>
-  ExecStatus
-  subsumed(Space& home, Propagator& p, TaskArray<Task>& t) {
-    TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
-    sort<typename TaskTraits<Task>::TaskViewFwd,STO_EST,true>(f);
+    template <class Task>
+    ExecStatus
+    subsumed(Space& home, Propagator& p, TaskArray<Task>& t) {
+        TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
+        sort<typename TaskTraits<Task>::TaskViewFwd, STO_EST, true>(f);
 
-    for (int i=1; i<f.size(); i++)
-      if (f[i-1].lct() > f[i].est())
-        return ES_OK;
+        for (int i = 1; i < f.size(); i++)
+            if (f[i - 1].lct() > f[i].est())
+                return ES_OK;
 
-    return home.ES_SUBSUMED(p);
-  }
+        return home.ES_SUBSUMED(p);
+    }
 
-}}}
+}}} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-prop

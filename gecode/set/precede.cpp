@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christopher Mears <Chris.Mears@monash.edu>
@@ -41,32 +40,32 @@
 
 namespace Gecode {
 
-  void
-  precede(Home home, const SetVarArgs& x, int s, int t) {
-    using namespace Set;
-    Limits::check(s,"Set::precede");
-    Limits::check(t,"Set::precede");
-    GECODE_POST;
+    void
+    precede(Home home, const SetVarArgs& x, int s, int t) {
+        using namespace Set;
+        Limits::check(s, "Set::precede");
+        Limits::check(t, "Set::precede");
+        GECODE_POST;
 
-    ViewArray<SetView> y(home, x);
-    GECODE_ES_FAIL(Precede::Single<SetView>::post(home, y, s, t));
-  }
-
-  void
-  precede(Home home, const SetVarArgs& x, const IntArgs& c) {
-    using namespace Set;
-    if (c.size() < 2)
-      return;
-    for (int i=c.size(); i--; )
-      Limits::check(c[i],"Set::precede");
-    GECODE_POST;
-
-    for (int i=c.size()-1; i--; ) {
-      ViewArray<SetView> y(home, x);
-      GECODE_ES_FAIL(Precede::Single<SetView>::post(home, y, c[i], c[i+1]));
+        ViewArray<SetView> y(home, x);
+        GECODE_ES_FAIL(Precede::Single<SetView>::post(home, y, s, t));
     }
-  }
 
-}
+    void
+    precede(Home home, const SetVarArgs& x, const IntArgs& c) {
+        using namespace Set;
+        if (c.size() < 2)
+            return;
+        for (int i = c.size(); i--;)
+            Limits::check(c[i], "Set::precede");
+        GECODE_POST;
+
+        for (int i = c.size() - 1; i--;) {
+            ViewArray<SetView> y(home, x);
+            GECODE_ES_FAIL(Precede::Single<SetView>::post(home, y, c[i], c[i + 1]));
+        }
+    }
+
+} // namespace Gecode
 
 // STATISTICS: set-post

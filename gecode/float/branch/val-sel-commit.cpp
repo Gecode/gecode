@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,51 +34,46 @@
 
 namespace Gecode { namespace Float { namespace Branch {
 
-  ValSelCommitBase<FloatView,FloatNumBranch>*
-  valselcommit(Space& home, const FloatValBranch& fvb) {
-    switch (fvb.select()) {
-    case FloatValBranch::SEL_SPLIT_MIN:
-      return new (home) ValSelCommit<ValSelLq,ValCommitLqGq>(home,fvb);
-    case FloatValBranch::SEL_SPLIT_MAX:
-      return new (home) ValSelCommit<ValSelGq,ValCommitLqGq>(home,fvb);
-    case FloatValBranch::SEL_SPLIT_RND:
-      return new (home) ValSelCommit<ValSelRnd,ValCommitLqGq>(home,fvb);
-    case FloatValBranch::SEL_VAL_COMMIT:
-      if (!fvb.commit()) {
-        return new (home)
-          ValSelCommit<ValSelFunction<FloatView>,ValCommitLqGq>(home,fvb);
-      } else {
-        return new (home)
-          ValSelCommit<ValSelFunction<FloatView>,ValCommitFunction<FloatView> >(home,fvb);
-      }
-    default:
-      throw UnknownBranching("Float::branch");
+    ValSelCommitBase<FloatView, FloatNumBranch>*
+    valselcommit(Space& home, const FloatValBranch& fvb) {
+        switch (fvb.select()) {
+        case FloatValBranch::SEL_SPLIT_MIN:
+            return new (home) ValSelCommit<ValSelLq, ValCommitLqGq>(home, fvb);
+        case FloatValBranch::SEL_SPLIT_MAX:
+            return new (home) ValSelCommit<ValSelGq, ValCommitLqGq>(home, fvb);
+        case FloatValBranch::SEL_SPLIT_RND:
+            return new (home) ValSelCommit<ValSelRnd, ValCommitLqGq>(home, fvb);
+        case FloatValBranch::SEL_VAL_COMMIT:
+            if (!fvb.commit()) {
+                return new (home) ValSelCommit<ValSelFunction<FloatView>, ValCommitLqGq>(home, fvb);
+            } else {
+                return new (home) ValSelCommit<ValSelFunction<FloatView>, ValCommitFunction<FloatView>>(home, fvb);
+            }
+        default:
+            throw UnknownBranching("Float::branch");
+        }
     }
-  }
 
-  ValSelCommitBase<FloatView,FloatNumBranch>*
-  valselcommit(Space& home, const FloatAssign& fa) {
-    switch (fa.select()) {
-    case FloatAssign::SEL_MIN:
-      return new (home) ValSelCommit<ValSelLq,ValCommitLqGq>(home,fa);
-    case FloatAssign::SEL_MAX:
-      return new (home) ValSelCommit<ValSelGq,ValCommitLqGq>(home,fa);
-    case FloatAssign::SEL_RND:
-      return new (home) ValSelCommit<ValSelRnd,ValCommitLqGq>(home,fa);
-    case FloatAssign::SEL_VAL_COMMIT:
-      if (!fa.commit()) {
-        return new (home)
-          ValSelCommit<ValSelFunction<FloatView>,ValCommitLqGq>(home,fa);
-      } else {
-        return new (home)
-          ValSelCommit<ValSelFunction<FloatView>,ValCommitFunction<FloatView> >(home,fa);
-      }
-    default:
-      throw UnknownBranching("Float::assign");
+    ValSelCommitBase<FloatView, FloatNumBranch>*
+    valselcommit(Space& home, const FloatAssign& fa) {
+        switch (fa.select()) {
+        case FloatAssign::SEL_MIN:
+            return new (home) ValSelCommit<ValSelLq, ValCommitLqGq>(home, fa);
+        case FloatAssign::SEL_MAX:
+            return new (home) ValSelCommit<ValSelGq, ValCommitLqGq>(home, fa);
+        case FloatAssign::SEL_RND:
+            return new (home) ValSelCommit<ValSelRnd, ValCommitLqGq>(home, fa);
+        case FloatAssign::SEL_VAL_COMMIT:
+            if (!fa.commit()) {
+                return new (home) ValSelCommit<ValSelFunction<FloatView>, ValCommitLqGq>(home, fa);
+            } else {
+                return new (home) ValSelCommit<ValSelFunction<FloatView>, ValCommitFunction<FloatView>>(home, fa);
+            }
+        default:
+            throw UnknownBranching("Float::assign");
+        }
     }
-  }
 
-}}}
+}}} // namespace Gecode::Float::Branch
 
 // STATISTICS: float-branch
-

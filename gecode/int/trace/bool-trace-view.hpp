@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,37 +32,34 @@
 
 namespace Gecode { namespace Int {
 
-  /// Duplicate of a Boolean view
-  class BoolTraceView {
-  public:
-    /// Default constructor (initializes with no view)
-    BoolTraceView(void);
-    /// Duplicate view \a y
-    BoolTraceView(Space& home, BoolView y);
-    /// Update duplicated view from view \a y and modification delta \a d
-    void prune(Space& home, BoolView y, const Delta& d);
-    /// Update duplicate view during copying
-    void update(Space&home, BoolTraceView x);
-    /// Return slack of \a x
-    static unsigned int slack(BoolView x);
-  };
+    /// Duplicate of a Boolean view
+    class BoolTraceView {
+    public:
+        /// Default constructor (initializes with no view)
+        BoolTraceView(void);
+        /// Duplicate view \a y
+        BoolTraceView(Space& home, BoolView y);
+        /// Update duplicated view from view \a y and modification delta \a d
+        void prune(Space& home, BoolView y, const Delta& d);
+        /// Update duplicate view during copying
+        void update(Space& home, BoolTraceView x);
+        /// Return slack of \a x
+        static unsigned int slack(BoolView x);
+    };
 
+    forceinline
+    BoolTraceView::BoolTraceView(void) {}
+    forceinline
+    BoolTraceView::BoolTraceView(Space&, BoolView) {}
+    forceinline void
+    BoolTraceView::prune(Space&, BoolView, const Delta&) {}
+    forceinline void
+    BoolTraceView::update(Space&, BoolTraceView) {}
+    forceinline unsigned int
+    BoolTraceView::slack(BoolView x) {
+        return x.width() - 1;
+    }
 
-  forceinline
-  BoolTraceView::BoolTraceView(void) {}
-  forceinline
-  BoolTraceView::BoolTraceView(Space&, BoolView) {}
-  forceinline void
-  BoolTraceView::prune(Space&, BoolView, const Delta&) {}
-  forceinline void
-  BoolTraceView::update(Space&, BoolTraceView) {}
-  forceinline unsigned int
-  BoolTraceView::slack(BoolView x) {
-    return x.width()-1;
-  }
-
-
-
-}}
+}} // namespace Gecode::Int
 
 // STATISTICS: int-trace

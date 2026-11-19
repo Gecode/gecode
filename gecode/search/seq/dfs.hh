@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -41,38 +40,39 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  /// Depth-first search engine implementation
-  template<class Tracer>
-  class DFS : public Worker {
-  private:
-    /// Search tracer
-    Tracer tracer;
-    /// Search options
-    Options opt;
-    /// Current path ins search tree
-    Path<Tracer> path;
-    /// Current space being explored
-    Space* cur;
-    /// Distance until next clone
-    unsigned int d;
-  public:
-    /// Initialize for space \a s with options \a o
-    DFS(Space* s, const Options& o);
-    /// %Search for next solution
-    Space* next(void);
-    /// Return statistics
-    Statistics statistics(void) const;
-    /// Constrain future solutions to be better than \a b (should never be called)
-    void constrain(const Space& b);
-    /// Reset engine to restart at space \a s
-    void reset(Space* s);
-    /// Return no-goods
-    NoGoods& nogoods(void);
-    /// Destructor
-    ~DFS(void);
-  };
+    /// Depth-first search engine implementation
+    template <class Tracer>
+    class DFS : public Worker {
+    private:
+        /// Search tracer
+        Tracer tracer;
+        /// Search options
+        Options opt;
+        /// Current path ins search tree
+        Path<Tracer> path;
+        /// Current space being explored
+        Space* cur;
+        /// Distance until next clone
+        unsigned int d;
 
-}}}
+    public:
+        /// Initialize for space \a s with options \a o
+        DFS(Space* s, const Options& o);
+        /// %Search for next solution
+        Space* next(void);
+        /// Return statistics
+        Statistics statistics(void) const;
+        /// Constrain future solutions to be better than \a b (should never be called)
+        void constrain(const Space& b);
+        /// Reset engine to restart at space \a s
+        void reset(Space* s);
+        /// Return no-goods
+        NoGoods& nogoods(void);
+        /// Destructor
+        ~DFS(void);
+    };
+
+}}} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/dfs.hpp>
 

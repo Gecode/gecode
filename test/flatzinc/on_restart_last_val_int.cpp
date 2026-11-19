@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
@@ -37,42 +36,37 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Check that reversed uniform integer ranges fail during parsing
     class UniformIntInvalidRange : public Base {
     public:
-      /// Create and register test
-      UniformIntInvalidRange(void)
-        : Base("FlatZinc::on_restart::uniform_int_invalid_range") {}
-      /// Perform test
-      virtual bool run(void) {
-        std::stringstream source(R"FZN(
+        /// Create and register test
+        UniformIntInvalidRange(void) : Base("FlatZinc::on_restart::uniform_int_invalid_range") {}
+        /// Perform test
+        virtual bool
+        run(void) {
+            std::stringstream source(R"FZN(
 predicate gecode_on_restart_uniform_int(int: low,int: high,var int: out);
 var 0..1: y;
 constraint gecode_on_restart_uniform_int(1,0,y);
 solve satisfy;
 )FZN");
-        Gecode::FlatZinc::Printer p;
-        std::ostringstream err;
-        Gecode::FlatZinc::FlatZincSpace* fg =
-          Gecode::FlatZinc::parse(source, p, err);
-        const std::string message = err.str();
-        return fg == nullptr &&
-          message.find("gecode_on_restart_uniform_int") != std::string::npos &&
-          message.find("low (1) <= high (0)") != std::string::npos;
-      }
+            Gecode::FlatZinc::Printer p;
+            std::ostringstream err;
+            Gecode::FlatZinc::FlatZincSpace* fg = Gecode::FlatZinc::parse(source, p, err);
+            const std::string message = err.str();
+            return fg == nullptr && message.find("gecode_on_restart_uniform_int") != std::string::npos &&
+                   message.find("low (1) <= high (0)") != std::string::npos;
+        }
     };
 
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("on_restart::last_val_int",
-R"FZN(
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest("on_restart::last_val_int",
+                                   R"FZN(
 predicate gecode_on_restart_status(var int: s);
 predicate gecode_on_restart_last_val_int(var int: input,var int: out);
 predicate int_lin_eq_imp(array [int] of int: as,array [int] of var int: bs,int: c,var bool: r);
@@ -95,7 +89,7 @@ constraint int_eq_reif(X_INTRODUCED_3_,1,X_INTRODUCED_4_):: defines_var(X_INTROD
 constraint int_lin_eq_imp(X_INTRODUCED_15_,[y,X_INTRODUCED_6_],1,X_INTRODUCED_16_):: defines_var(X_INTRODUCED_16_);
 solve :: int_search(X_INTRODUCED_2_,input_order,indomain_min,complete) maximize X_INTRODUCED_1_;
 )FZN",
-R"OUT(x = -1;
+                                   R"OUT(x = -1;
 y = 0;
 ----------
 x = 2;
@@ -108,26 +102,26 @@ x = 4;
 y = 3;
 ----------
 ==========
-)OUT", true, {"--restart", "constant", "--restart-base", "100"});
+)OUT",
+                                   true, {"--restart", "constant", "--restart-base", "100"});
 
-        (void) new FlatZincTest("on_restart::uniform_int_upper_bound",
-R"FZN(
+            (void)new FlatZincTest("on_restart::uniform_int_upper_bound",
+                                   R"FZN(
 predicate gecode_on_restart_uniform_int(int: low,int: high,var int: out);
 var 0..1: y:: output_var;
 constraint gecode_on_restart_uniform_int(0,1,y);
 constraint int_eq(y,1);
 solve satisfy;
 )FZN",
-R"OUT(y = 1;
+                                   R"OUT(y = 1;
 ----------
-)OUT", true, {"--restart", "constant", "--restart-base", "100", "-r", "2"});
-      }
+)OUT",
+                                   true, {"--restart", "constant", "--restart-base", "100", "-r", "2"});
+        }
     };
 
     Create c;
     UniformIntInvalidRange invalid_range;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

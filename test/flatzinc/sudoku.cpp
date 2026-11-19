@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("sudoku",
-"predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest(
+                "sudoku", "predicate all_different_int(array [int] of var int: x);\n\
 predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -130,15 +126,14 @@ constraint all_different_int([X____00038, X____00039, X____00040, 6, 9, X____000
 constraint all_different_int([X____00041, 3, X____00042, 2, X____00043, 7, 6, 9, X____00044]);\n\
 constraint all_different_int([X____00045, X____00046, X____00047, X____00048, X____00049, X____00050, X____00051, X____00052, X____00053]);\n\
 solve satisfy;\n\
-", "puzzle = array2d(1..9, 1..9, [5, 9, 3, 7, 6, 2, 8, 1, 4, 2, 6, 8, 4, 3, 1, 5, 7, 9, 7, 1, 4, 9, 8, 5, 2, 3, 6, 3, 2, 6, 8, 5, 9, 1, 4, 7, 1, 8, 7, 3, 2, 4, 9, 6, 5, 4, 5, 9, 1, 7, 6, 3, 2, 8, 9, 4, 2, 6, 1, 8, 7, 5, 3, 8, 3, 5, 2, 4, 7, 6, 9, 1, 6, 7, 1, 5, 9, 3, 4, 8, 2]);\n\
+",
+                "puzzle = array2d(1..9, 1..9, [5, 9, 3, 7, 6, 2, 8, 1, 4, 2, 6, 8, 4, 3, 1, 5, 7, 9, 7, 1, 4, 9, 8, 5, 2, 3, 6, 3, 2, 6, 8, 5, 9, 1, 4, 7, 1, 8, 7, 3, 2, 4, 9, 6, 5, 4, 5, 9, 1, 7, 6, 3, 2, 8, 9, 4, 2, 6, 1, 8, 7, 5, 3, 8, 3, 5, 2, 4, 7, 6, 9, 1, 6, 7, 1, 5, 9, 3, 4, 8, 2]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

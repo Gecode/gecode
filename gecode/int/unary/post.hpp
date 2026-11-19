@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,36 +32,38 @@
 
 namespace Gecode { namespace Int { namespace Unary {
 
-  template<class ManTask>
-  forceinline ExecStatus
-  manpost(Home home, TaskArray<ManTask>& t, IntPropLevel ipl) {
-    switch (ba(ipl)) {
-    case IPL_BASIC:
-      return ManProp<ManTask,PLB>::post(home,t);
-    case IPL_ADVANCED:
-      return ManProp<ManTask,PLA>::post(home,t);
-    case IPL_BASIC_ADVANCED: default:
-      return ManProp<ManTask,PLBA>::post(home,t);
+    template <class ManTask>
+    forceinline ExecStatus
+    manpost(Home home, TaskArray<ManTask>& t, IntPropLevel ipl) {
+        switch (ba(ipl)) {
+        case IPL_BASIC:
+            return ManProp<ManTask, PLB>::post(home, t);
+        case IPL_ADVANCED:
+            return ManProp<ManTask, PLA>::post(home, t);
+        case IPL_BASIC_ADVANCED:
+        default:
+            return ManProp<ManTask, PLBA>::post(home, t);
+        }
+        GECODE_NEVER;
+        return ES_OK;
     }
-    GECODE_NEVER;
-    return ES_OK;
-  }
 
-  template<class OptTask>
-  forceinline ExecStatus
-  optpost(Home home, TaskArray<OptTask>& t, IntPropLevel ipl) {
-    switch (ba(ipl)) {
-    case IPL_BASIC:
-      return OptProp<OptTask,PLB>::post(home,t);
-    case IPL_ADVANCED:
-      return OptProp<OptTask,PLA>::post(home,t);
-    case IPL_BASIC_ADVANCED: default:
-      return OptProp<OptTask,PLBA>::post(home,t);
+    template <class OptTask>
+    forceinline ExecStatus
+    optpost(Home home, TaskArray<OptTask>& t, IntPropLevel ipl) {
+        switch (ba(ipl)) {
+        case IPL_BASIC:
+            return OptProp<OptTask, PLB>::post(home, t);
+        case IPL_ADVANCED:
+            return OptProp<OptTask, PLA>::post(home, t);
+        case IPL_BASIC_ADVANCED:
+        default:
+            return OptProp<OptTask, PLBA>::post(home, t);
+        }
+        GECODE_NEVER;
+        return ES_OK;
     }
-    GECODE_NEVER;
-    return ES_OK;
-  }
 
-}}}
+}}} // namespace Gecode::Int::Unary
 
 // STATISTICS: int-post

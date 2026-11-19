@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,111 +32,111 @@
 
 namespace Gecode {
 
-  class IntVarArgs;
-  class IntVarArray;
-  class BoolVarArgs;
-  class BoolVarArray;
-  class IntArgs;
+    class IntVarArgs;
+    class IntVarArray;
+    class BoolVarArgs;
+    class BoolVarArray;
+    class IntArgs;
 
-  /// Traits of %IntVarArgs
-  template<>
-  class ArrayTraits<VarArgArray<IntVar>> {
-  public:
-    typedef IntVarArgs StorageType;
-    typedef IntVar     ValueType;
-    typedef IntVarArgs ArgsType;
-  };
+    /// Traits of %IntVarArgs
+    template <>
+    class ArrayTraits<VarArgArray<IntVar>> {
+    public:
+        typedef IntVarArgs StorageType;
+        typedef IntVar ValueType;
+        typedef IntVarArgs ArgsType;
+    };
 
-  /// Traits of %IntVarArray
-  template<>
-  class ArrayTraits<VarArray<IntVar>> {
-  public:
-    typedef IntVarArray  StorageType;
-    typedef IntVar       ValueType;
-    typedef IntVarArgs   ArgsType;
-  };
+    /// Traits of %IntVarArray
+    template <>
+    class ArrayTraits<VarArray<IntVar>> {
+    public:
+        typedef IntVarArray StorageType;
+        typedef IntVar ValueType;
+        typedef IntVarArgs ArgsType;
+    };
 
-  /// Traits of %BoolVarArgs
-  template<>
-  class ArrayTraits<VarArgArray<BoolVar>> {
-  public:
-    typedef BoolVarArgs StorageType;
-    typedef BoolVar     ValueType;
-    typedef BoolVarArgs ArgsType;
-  };
+    /// Traits of %BoolVarArgs
+    template <>
+    class ArrayTraits<VarArgArray<BoolVar>> {
+    public:
+        typedef BoolVarArgs StorageType;
+        typedef BoolVar ValueType;
+        typedef BoolVarArgs ArgsType;
+    };
 
-  /// Traits of %BoolVarArray
-  template<>
-  class ArrayTraits<VarArray<BoolVar>> {
-  public:
-    typedef BoolVarArray  StorageType;
-    typedef BoolVar       ValueType;
-    typedef BoolVarArgs   ArgsType;
-  };
+    /// Traits of %BoolVarArray
+    template <>
+    class ArrayTraits<VarArray<BoolVar>> {
+    public:
+        typedef BoolVarArray StorageType;
+        typedef BoolVar ValueType;
+        typedef BoolVarArgs ArgsType;
+    };
 
-  /// Traits of %IntArgs
-  template<>
-  class ArrayTraits<ArgArray<int>> {
-  public:
-    typedef IntArgs StorageType;
-    typedef int     ValueType;
-    typedef IntArgs ArgsType;
-  };
+    /// Traits of %IntArgs
+    template <>
+    class ArrayTraits<ArgArray<int>> {
+    public:
+        typedef IntArgs StorageType;
+        typedef int ValueType;
+        typedef IntArgs ArgsType;
+    };
 
-  /// Traits of %IntSetArgs
-  template<>
-  class ArrayTraits<ArgArray<IntSet>> {
-  public:
-    typedef IntSetArgs StorageType;
-    typedef IntSet     ValueType;
-    typedef IntSetArgs ArgsType;
-  };
+    /// Traits of %IntSetArgs
+    template <>
+    class ArrayTraits<ArgArray<IntSet>> {
+    public:
+        typedef IntSetArgs StorageType;
+        typedef IntSet ValueType;
+        typedef IntSetArgs ArgsType;
+    };
 
-  /// Traits of %IntVarArray
-  template<>
-  class ArrayTraits<IntVarArray> {
-  public:
-    typedef IntVarArray  StorageType;
-    typedef IntVar       ValueType;
-    typedef IntVarArgs   ArgsType;
-  };
+    /// Traits of %IntVarArray
+    template <>
+    class ArrayTraits<IntVarArray> {
+    public:
+        typedef IntVarArray StorageType;
+        typedef IntVar ValueType;
+        typedef IntVarArgs ArgsType;
+    };
 
-  /// Traits of %IntVarArgs
-  template<>
-  class ArrayTraits<IntVarArgs> {
-  public:
-    typedef IntVarArgs StorageType;
-    typedef IntVar     ValueType;
-    typedef IntVarArgs ArgsType;
-  };
+    /// Traits of %IntVarArgs
+    template <>
+    class ArrayTraits<IntVarArgs> {
+    public:
+        typedef IntVarArgs StorageType;
+        typedef IntVar ValueType;
+        typedef IntVarArgs ArgsType;
+    };
 
-  /// Traits of %IntArgs
-  template<>
-  class ArrayTraits<IntArgs> {
-  public:
-    typedef IntArgs StorageType;
-    typedef int     ValueType;
-    typedef IntArgs ArgsType;
-  };
+    /// Traits of %IntArgs
+    template <>
+    class ArrayTraits<IntArgs> {
+    public:
+        typedef IntArgs StorageType;
+        typedef int ValueType;
+        typedef IntArgs ArgsType;
+    };
 
-  /// Traits of %BoolVarArray
-  template<>
-  class ArrayTraits<BoolVarArray> {
-  public:
-    typedef BoolVarArray  StorageType;
-    typedef BoolVar       ValueType;
-    typedef BoolVarArgs   ArgsType;
-  };
+    /// Traits of %BoolVarArray
+    template <>
+    class ArrayTraits<BoolVarArray> {
+    public:
+        typedef BoolVarArray StorageType;
+        typedef BoolVar ValueType;
+        typedef BoolVarArgs ArgsType;
+    };
 
-  /// Traits of %BoolVarArgs
-  template<>
-  class ArrayTraits<BoolVarArgs> {
-  public:
-    typedef BoolVarArgs StorageType;
-    typedef BoolVar     ValueType;
-    typedef BoolVarArgs ArgsType;
-  };
+    /// Traits of %BoolVarArgs
+    template <>
+    class ArrayTraits<BoolVarArgs> {
+    public:
+        typedef BoolVarArgs StorageType;
+        typedef BoolVar ValueType;
+        typedef BoolVarArgs ArgsType;
+    };
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-other

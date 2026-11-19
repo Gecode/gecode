@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -41,14 +40,14 @@
 
 namespace Gecode { namespace Search {
 
-  Engine*
-  ldsengine(Space* s, const Options& o) {
-    if (o.tracer)
-      return new Seq::LDS<EdgeTraceRecorder>(s,o);
-    else
-      return new Seq::LDS<NoTraceRecorder>(s,o);
-  }
+    Engine*
+    ldsengine(Space* s, const Options& o) {
+        if (o.tracer)
+            return new Seq::LDS<EdgeTraceRecorder>(s, o);
+        else
+            return new Seq::LDS<NoTraceRecorder>(s, o);
+    }
 
-}}
+}} // namespace Gecode::Search
 
 // STATISTICS: search-other

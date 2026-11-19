@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,23 +34,22 @@
 
 namespace Test { namespace Assign {
 
-  /// %Test branching with distinct propagator
-  class Bool : public BoolTest {
-  public:
-    /// Create and register test
-    Bool(const std::string& s, int n)
-      : BoolTest(s,n) {}
-    /// Post propagators on variables \a x
-    virtual void post(Gecode::Space& home, Gecode::BoolVarArray& x) {
-      Gecode::rel(home, Gecode::BOT_OR, x, 1);
-    }
-  };
+    /// %Test branching with distinct propagator
+    class Bool : public BoolTest {
+    public:
+        /// Create and register test
+        Bool(const std::string& s, int n) : BoolTest(s, n) {}
+        /// Post propagators on variables \a x
+        virtual void
+        post(Gecode::Space& home, Gecode::BoolVarArray& x) {
+            Gecode::rel(home, Gecode::BOT_OR, x, 1);
+        }
+    };
 
-  Bool b_3("3",3);
-  Bool b_5("5",5);
-  Bool b_7("7",7);
+    Bool b_3("3", 3);
+    Bool b_5("5", 5);
+    Bool b_7("7", 7);
 
-}}
+}} // namespace Test::Assign
 
 // STATISTICS: test-branch
-

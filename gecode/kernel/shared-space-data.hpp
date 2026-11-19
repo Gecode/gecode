@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,65 +32,59 @@
 
 namespace Gecode { namespace Kernel {
 
-  /// Class to store data shared among several spaces
-  class SharedSpaceData : public SharedHandle {
-  public:
-    /// The shared data
-    class Data : public SharedHandle::Object {
+    /// Class to store data shared among several spaces
+    class SharedSpaceData : public SharedHandle {
     public:
-      /// The shared memory area
-      SharedMemory sm;
-      /// The global propagator information
-      GPI gpi;
-      /// Default constructor
-      Data(void);
-      /// Destructor
-      virtual ~Data(void);
+        /// The shared data
+        class Data : public SharedHandle::Object {
+        public:
+            /// The shared memory area
+            SharedMemory sm;
+            /// The global propagator information
+            GPI gpi;
+            /// Default constructor
+            Data(void);
+            /// Destructor
+            virtual ~Data(void);
+        };
+        /// Initialize
+        SharedSpaceData(void);
+        /// Initialize from \a ssd
+        SharedSpaceData(const SharedSpaceData& ssd);
+        /// Assignment operator
+        SharedSpaceData& operator=(const SharedSpaceData& r);
+        /// Delete
+        ~SharedSpaceData(void);
+        /// Provide access
+        Data& data(void) const;
     };
-    /// Initialize
-    SharedSpaceData(void);
-    /// Initialize from \a ssd
-    SharedSpaceData(const SharedSpaceData& ssd);
-    /// Assignment operator
-    SharedSpaceData& operator =(const SharedSpaceData& r);
-    /// Delete
-    ~SharedSpaceData(void);
-    /// Provide access
-    Data& data(void) const;
-  };
 
+    forceinline
+    SharedSpaceData::Data::Data(void) {}
 
+    forceinline SharedSpaceData::Data::~Data(void) {}
 
-  forceinline
-  SharedSpaceData::Data::Data(void) {}
+    forceinline
+    SharedSpaceData::SharedSpaceData(void)
+        : SharedHandle(new Data) {}
 
-  forceinline
-  SharedSpaceData::Data::~Data(void) {}
+    forceinline
+    SharedSpaceData::SharedSpaceData(const SharedSpaceData& ssd)
+        : SharedHandle(ssd) {}
 
+    forceinline SharedSpaceData&
+    SharedSpaceData::operator=(const SharedSpaceData& ssd) {
+        (void)SharedHandle::operator=(ssd);
+        return *this;
+    }
 
+    forceinline SharedSpaceData::~SharedSpaceData(void) {}
 
-  forceinline
-  SharedSpaceData::SharedSpaceData(void)
-    : SharedHandle(new Data) {}
+    forceinline SharedSpaceData::Data&
+    SharedSpaceData::data(void) const {
+        return static_cast<Data&>(*object());
+    }
 
-  forceinline
-  SharedSpaceData::SharedSpaceData(const SharedSpaceData& ssd)
-    : SharedHandle(ssd) {}
-
-  forceinline SharedSpaceData&
-  SharedSpaceData::operator =(const SharedSpaceData& ssd) {
-    (void) SharedHandle::operator =(ssd);
-    return *this;
-  }
-
-  forceinline
-  SharedSpaceData::~SharedSpaceData(void) {}
-
-  forceinline SharedSpaceData::Data&
-  SharedSpaceData::data(void) const {
-    return static_cast<Data&>(*object());
-  }
-
-}}
+}} // namespace Gecode::Kernel
 
 // STATISTICS: kernel-memory

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,31 +36,30 @@
 
 namespace Gecode { namespace Search {
 
-  template<class T>
-  forceinline
-  Base<T>::Base(Engine* e0)
-    : e(e0) {}
-  template<class T>
-  forceinline T*
-  Base<T>::next(void) {
-    return dynamic_cast<T*>(e->next());
-  }
-  template<class T>
-  forceinline Statistics
-  Base<T>::statistics(void) const {
-    return e->statistics();
-  }
-  template<class T>
-  forceinline EndReason
-  Base<T>::end_reason(void) const {
-    return e->end_reason();
-  }
-  template<class T>
-  forceinline
-  Base<T>::~Base(void) {
-    delete e;
-  }
+    template <class T>
+    forceinline
+    Base<T>::Base(Engine* e0)
+        : e(e0) {}
+    template <class T>
+    forceinline T*
+    Base<T>::next(void) {
+        return dynamic_cast<T*>(e->next());
+    }
+    template <class T>
+    forceinline Statistics
+    Base<T>::statistics(void) const {
+        return e->statistics();
+    }
+    template <class T>
+    forceinline EndReason
+    Base<T>::end_reason(void) const {
+        return e->end_reason();
+    }
+    template <class T>
+    forceinline Base<T>::~Base(void) {
+        delete e;
+    }
 
-}}
+}} // namespace Gecode::Search
 
 // STATISTICS: search-other

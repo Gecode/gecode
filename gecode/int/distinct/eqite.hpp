@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,25 +34,23 @@
 
 namespace Gecode { namespace Int { namespace Distinct {
 
-  forceinline
-  EqIte::EqIte(Home home, IntView x0, IntView x1, int d0, int d1)
-    : BinaryPropagator<IntView,PC_INT_DOM>(home,x0,x1), c0(d0), c1(d1) {}
+    forceinline
+    EqIte::EqIte(Home home, IntView x0, IntView x1, int d0, int d1)
+        : BinaryPropagator<IntView, PC_INT_DOM>(home, x0, x1), c0(d0), c1(d1) {}
 
-  forceinline
-  EqIte::EqIte(Space& home, EqIte& p)
-    : BinaryPropagator<IntView,PC_INT_DOM>(home,p),
-      c0(p.c0), c1(p.c1) {}
+    forceinline
+    EqIte::EqIte(Space& home, EqIte& p)
+        : BinaryPropagator<IntView, PC_INT_DOM>(home, p), c0(p.c0), c1(p.c1) {}
 
+    inline ExecStatus
+    EqIte::post(Home home, IntView x0, IntView x1, int c0, int c1) {
+        assert(!(x0.assigned() && (x0.val() == c0)) && x0.in(c0));
+        GECODE_ME_CHECK(x1.lq(home, std::max(x0.max(), c1)));
+        GECODE_ME_CHECK(x1.gq(home, std::min(x0.min(), c1)));
+        (void)new (home) EqIte(home, x0, x1, c0, c1);
+        return ES_OK;
+    }
 
-  inline ExecStatus
-  EqIte::post(Home home, IntView x0, IntView x1, int c0, int c1) {
-    assert(!(x0.assigned() && (x0.val() == c0)) && x0.in(c0));
-    GECODE_ME_CHECK(x1.lq(home,std::max(x0.max(),c1)));
-    GECODE_ME_CHECK(x1.gq(home,std::min(x0.min(),c1)));
-    (void) new (home) EqIte(home,x0,x1,c0,c1);
-    return ES_OK;
-  }
-
-}}}
+}}} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -45,179 +44,184 @@
 
 namespace Gecode { namespace Int {
 
-  /// VarArg type for %Set views
-  template<>
-  class ViewToVarArg<Gecode::Set::SetView> {
-  public:
-    typedef Gecode::SetVarArgs argtype;
-  };
+    /// VarArg type for %Set views
+    template <>
+    class ViewToVarArg<Gecode::Set::SetView> {
+    public:
+        typedef Gecode::SetVarArgs argtype;
+    };
 
-  /// VarArg type for singleton views
-  template<>
-  class ViewToVarArg<Gecode::Set::SingletonView> {
-  public:
-    typedef Gecode::IntVarArgs argtype;
-  };
+    /// VarArg type for singleton views
+    template <>
+    class ViewToVarArg<Gecode::Set::SingletonView> {
+    public:
+        typedef Gecode::IntVarArgs argtype;
+    };
 
-}}
+}} // namespace Gecode::Int
 
 namespace Gecode { namespace Set { namespace Element {
 
-  /**
-   * \namespace Gecode::Set::Element
-   * \brief %Set element propagators
-   */
-
-  /**
-   * \brief %Propagator for element with intersection
-   *
-   * Requires \code #include <gecode/set/element.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View, class View0, class View1>
-  class ElementIntersection : public Propagator {
-  public:
-    typedef Gecode::Int::IdxViewArray<View> IdxViewArray;
-  protected:
-    IntSet universe;
-    IdxViewArray iv;
-    View0 x0;
-    View1 x1;
-
-    /// Constructor for cloning \a p
-    ElementIntersection(Space& home, ElementIntersection& p);
-    /// Constructor for posting
-    ElementIntersection(Home home, IdxViewArray&,View0,View1,
-                       const IntSet& universe);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
-     *
-     * If \a y is empty, \a z will be constrained to be the given universe
-     * \a u (as an empty intersection is the universe).
+    /**
+     * \namespace Gecode::Set::Element
+     * \brief %Set element propagators
      */
-    static ExecStatus post(Home home,IdxViewArray& x, View0 y,
-                           View1 z, const IntSet& u);
-  };
 
-  /**
-   * \brief %Propagator for element with union
-   *
-   * Requires \code #include <gecode/set/element.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class View, class View0, class View1>
-  class ElementUnion : public Propagator {
-  public:
-    typedef Gecode::Int::IdxViewArray<View> IdxViewArray;
-  protected:
-    IdxViewArray iv;
-    View0 x0;
-    View1 x1;
-
-    /// Constructor for cloning \a p
-    ElementUnion(Space& home, ElementUnion& p);
-    /// Constructor for posting
-    ElementUnion(Home home,IdxViewArray&,View0,View1);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /** Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
+    /**
+     * \brief %Propagator for element with intersection
      *
-     * If \a y is empty, \a z will be constrained to be empty
-     * (as an empty union is the empty set).
+     * Requires \code #include <gecode/set/element.hh> \endcode
+     * \ingroup FuncSetProp
      */
-    static  ExecStatus post(Home home,IdxViewArray& x,View0 y, View1 z);
-  };
+    template <class View, class View0, class View1>
+    class ElementIntersection : public Propagator {
+    public:
+        typedef Gecode::Int::IdxViewArray<View> IdxViewArray;
 
-  /**
-   * \brief %Propagator for element with union of constant sets
-   *
-   * Requires \code #include <gecode/set/element.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class SView, class RView>
-  class ElementUnionConst : public Propagator {
-  protected:
-    SView x0;
-    IntSet* iv;
-    int n_iv;
-    RView x1;
+    protected:
+        IntSet universe;
+        IdxViewArray iv;
+        View0 x0;
+        View1 x1;
 
-    /// Constructor for cloning \a p
-    ElementUnionConst(Space& home, ElementUnionConst& p);
-    /// Constructor for posting
-    ElementUnionConst(Home home, SView, const IntSetArgs&, RView);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-    /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /** Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y] \f$
+        /// Constructor for cloning \a p
+        ElementIntersection(Space& home, ElementIntersection& p);
+        /// Constructor for posting
+        ElementIntersection(Home home, IdxViewArray&, View0, View1, const IntSet& universe);
+
+    public:
+        /// Copy propagator during cloning
+        virtual Actor* copy(Space& home);
+        /// Cost function
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
+         *
+         * If \a y is empty, \a z will be constrained to be the given universe
+         * \a u (as an empty intersection is the universe).
+         */
+        static ExecStatus post(Home home, IdxViewArray& x, View0 y, View1 z, const IntSet& u);
+    };
+
+    /**
+     * \brief %Propagator for element with union
      *
-     * If \a y is empty, \a z will be constrained to be empty
-     * (as an empty union is the empty set).
+     * Requires \code #include <gecode/set/element.hh> \endcode
+     * \ingroup FuncSetProp
      */
-    static  ExecStatus  post(Home home,SView z,const IntSetArgs& x,RView y);
-  };
+    template <class View, class View0, class View1>
+    class ElementUnion : public Propagator {
+    public:
+        typedef Gecode::Int::IdxViewArray<View> IdxViewArray;
 
-  /**
-   * \brief %Propagator for element with disjointness
-   *
-   * Requires \code #include <gecode/set/element.hh> \endcode
-   * \ingroup FuncSetProp
-   */
-  template<class SView, class RView>
-  class ElementDisjoint : public Propagator {
-  public:
-    typedef Gecode::Int::IdxViewArray<SView> IdxViewArray;
-  protected:
-    IdxViewArray iv;
-    RView x1;
+    protected:
+        IdxViewArray iv;
+        View0 x0;
+        View1 x1;
 
-    /// Constructor for cloning \a p
-    ElementDisjoint(Space& home, ElementDisjoint& p);
-    /// Constructor for posting
-    ElementDisjoint(Home home,IdxViewArray&,RView);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Cost function
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-    /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$
-    static  ExecStatus  post(Home home,IdxViewArray& x,RView y);
-  };
+        /// Constructor for cloning \a p
+        ElementUnion(Space& home, ElementUnion& p);
+        /// Constructor for posting
+        ElementUnion(Home home, IdxViewArray&, View0, View1);
 
-}}}
+    public:
+        /// Copy propagator during cloning
+        virtual Actor* copy(Space& home);
+        /// Cost function
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /** Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
+         *
+         * If \a y is empty, \a z will be constrained to be empty
+         * (as an empty union is the empty set).
+         */
+        static ExecStatus post(Home home, IdxViewArray& x, View0 y, View1 z);
+    };
+
+    /**
+     * \brief %Propagator for element with union of constant sets
+     *
+     * Requires \code #include <gecode/set/element.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class SView, class RView>
+    class ElementUnionConst : public Propagator {
+    protected:
+        SView x0;
+        IntSet* iv;
+        int n_iv;
+        RView x1;
+
+        /// Constructor for cloning \a p
+        ElementUnionConst(Space& home, ElementUnionConst& p);
+        /// Constructor for posting
+        ElementUnionConst(Home home, SView, const IntSetArgs&, RView);
+
+    public:
+        /// Copy propagator during cloning
+        virtual Actor* copy(Space& home);
+        /// Cost function
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /** Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y] \f$
+         *
+         * If \a y is empty, \a z will be constrained to be empty
+         * (as an empty union is the empty set).
+         */
+        static ExecStatus post(Home home, SView z, const IntSetArgs& x, RView y);
+    };
+
+    /**
+     * \brief %Propagator for element with disjointness
+     *
+     * Requires \code #include <gecode/set/element.hh> \endcode
+     * \ingroup FuncSetProp
+     */
+    template <class SView, class RView>
+    class ElementDisjoint : public Propagator {
+    public:
+        typedef Gecode::Int::IdxViewArray<SView> IdxViewArray;
+
+    protected:
+        IdxViewArray iv;
+        RView x1;
+
+        /// Constructor for cloning \a p
+        ElementDisjoint(Space& home, ElementDisjoint& p);
+        /// Constructor for posting
+        ElementDisjoint(Home home, IdxViewArray&, RView);
+
+    public:
+        /// Copy propagator during cloning
+        virtual Actor* copy(Space& home);
+        /// Cost function
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$
+        static ExecStatus post(Home home, IdxViewArray& x, RView y);
+    };
+
+}}} // namespace Gecode::Set::Element
 
 #include <gecode/set/element/inter.hpp>
 #include <gecode/set/element/union.hpp>
@@ -227,4 +231,3 @@ namespace Gecode { namespace Set { namespace Element {
 #endif
 
 // STATISTICS: set-prop
-

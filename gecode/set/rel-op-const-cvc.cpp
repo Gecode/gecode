@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,24 +38,23 @@
 #include <gecode/set/rel-op.hh>
 
 namespace Gecode {
-  using namespace Gecode::Set;
-  using namespace Gecode::Set::Rel;
-  using namespace Gecode::Set::RelOp;
+    using namespace Gecode::Set;
+    using namespace Gecode::Set::Rel;
+    using namespace Gecode::Set::RelOp;
 
-  void
-  rel(Home home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
-      const IntSet& z) {
-    Set::Limits::check(x, "Set::rel");
-    Set::Limits::check(z, "Set::rel");
-    ConstSetView xv(home, x);
-    ConstSetView zv(home, z);
-    if (r == SRT_CMPL) {
-      post_compl(home, xv, op, y, zv);
-    } else {
-      post_nocompl(home, xv, op, y, r, zv);
+    void
+    rel(Home home, const IntSet& x, SetOpType op, SetVar y, SetRelType r, const IntSet& z) {
+        Set::Limits::check(x, "Set::rel");
+        Set::Limits::check(z, "Set::rel");
+        ConstSetView xv(home, x);
+        ConstSetView zv(home, z);
+        if (r == SRT_CMPL) {
+            post_compl(home, xv, op, y, zv);
+        } else {
+            post_nocompl(home, xv, op, y, r, zv);
+        }
     }
-  }
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-post

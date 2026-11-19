@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -40,27 +39,25 @@
 
 namespace Gecode { namespace FlatZinc {
 
-  /// Map from constraint identifier to constraint posting functions
-  class GECODE_FLATZINC_EXPORT Registry {
-  public:
-    /// Type of constraint posting function
-    typedef void (*poster) (FlatZincSpace&,
-                            const ConExpr&,
-                            AST::Node*);
-    /// Add posting function \a p with identifier \a id
-    void add(const std::string& id, poster p);
-    /// Post constraint specified by \a ce
-    void post(FlatZincSpace& s, const ConExpr& ce);
+    /// Map from constraint identifier to constraint posting functions
+    class GECODE_FLATZINC_EXPORT Registry {
+    public:
+        /// Type of constraint posting function
+        typedef void (*poster)(FlatZincSpace&, const ConExpr&, AST::Node*);
+        /// Add posting function \a p with identifier \a id
+        void add(const std::string& id, poster p);
+        /// Post constraint specified by \a ce
+        void post(FlatZincSpace& s, const ConExpr& ce);
 
-  private:
-    /// The actual registry
-    std::map<std::string,poster> r;
-  };
+    private:
+        /// The actual registry
+        std::map<std::string, poster> r;
+    };
 
-  /// Return global registry object
-  GECODE_FLATZINC_EXPORT Registry& registry(void);
+    /// Return global registry object
+    GECODE_FLATZINC_EXPORT Registry& registry(void);
 
-}}
+}} // namespace Gecode::FlatZinc
 
 #endif
 

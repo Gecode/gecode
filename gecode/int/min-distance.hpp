@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -31,31 +30,30 @@
  *
  */
 
-
 #ifndef GECODE_INT_MIN_DISTANCE_HPP
 #define GECODE_INT_MIN_DISTANCE_HPP
 
 namespace Gecode {
 
-  forceinline int
-  IntDistance::size(void) const {
-    return static_cast<const Data*>(object())->n;
-  }
+    forceinline int
+    IntDistance::size(void) const {
+        return static_cast<const Data*>(object())->n;
+    }
 
-  forceinline int
-  IntDistance::operator ()(int a, int b) const {
-    const Data& d = *static_cast<const Data*>(object());
-    assert((a >= 0) && (a < d.n) && (b >= 0) && (b < d.n));
-    if (d.matrix)
-      return d.matrix[a*d.n+b];
-    int v = d.function(a,b);
-    Int::Limits::nonnegative(v,"IntDistance::operator()");
-    if ((a == b) && (v != 0))
-      throw Int::IllegalOperation("IntDistance::operator()");
-    return v;
-  }
+    forceinline int
+    IntDistance::operator()(int a, int b) const {
+        const Data& d = *static_cast<const Data*>(object());
+        assert((a >= 0) && (a < d.n) && (b >= 0) && (b < d.n));
+        if (d.matrix)
+            return d.matrix[a * d.n + b];
+        int v = d.function(a, b);
+        Int::Limits::nonnegative(v, "IntDistance::operator()");
+        if ((a == b) && (v != 0))
+            throw Int::IllegalOperation("IntDistance::operator()");
+        return v;
+    }
 
-}
+} // namespace Gecode
 
 #endif
 

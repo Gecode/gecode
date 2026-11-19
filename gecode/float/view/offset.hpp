@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,172 +34,164 @@
 
 namespace Gecode { namespace Float {
 
-  /*
-   * Constructors and initialization
-   *
-   */
-  forceinline
-  OffsetView::OffsetView(void) {}
-  forceinline
-  OffsetView::OffsetView(const FloatView& y, FloatNum d)
-    : DerivedView<FloatView>(y), c(d) {}
+    /*
+     * Constructors and initialization
+     *
+     */
+    forceinline
+    OffsetView::OffsetView(void) {}
+    forceinline
+    OffsetView::OffsetView(const FloatView& y, FloatNum d)
+        : DerivedView<FloatView>(y), c(d) {}
 
+    /*
+     * Value access
+     *
+     */
+    forceinline FloatNum
+    OffsetView::offset(void) const {
+        return c;
+    }
+    forceinline void
+    OffsetView::offset(FloatNum n) {
+        c = n;
+    }
+    forceinline FloatVal
+    OffsetView::domain(void) const {
+        return x.domain() + c;
+    }
+    forceinline FloatNum
+    OffsetView::min(void) const {
+        return x.min() + c;
+    }
+    forceinline FloatNum
+    OffsetView::max(void) const {
+        return x.max() + c;
+    }
+    forceinline FloatNum
+    OffsetView::med(void) const {
+        return x.med() + c;
+    }
+    forceinline FloatVal
+    OffsetView::val(void) const {
+        return x.val() + c;
+    }
 
-  /*
-   * Value access
-   *
-   */
-  forceinline FloatNum
-  OffsetView::offset(void) const {
-    return c;
-  }
-  forceinline void
-  OffsetView::offset(FloatNum n) {
-    c = n;
-  }
-  forceinline FloatVal
-  OffsetView::domain(void) const {
-    return x.domain()+c;
-  }
-  forceinline FloatNum
-  OffsetView::min(void) const {
-    return x.min()+c;
-  }
-  forceinline FloatNum
-  OffsetView::max(void) const {
-    return x.max()+c;
-  }
-  forceinline FloatNum
-  OffsetView::med(void) const {
-    return x.med()+c;
-  }
-  forceinline FloatVal
-  OffsetView::val(void) const {
-    return x.val()+c;
-  }
+    forceinline FloatNum
+    OffsetView::size(void) const {
+        return x.size();
+    }
 
-  forceinline FloatNum
-  OffsetView::size(void) const {
-    return x.size();
-  }
+    /*
+     * Domain tests
+     *
+     */
+    forceinline bool
+    OffsetView::zero_in(void) const {
+        return x.in(-c);
+    }
+    forceinline bool
+    OffsetView::in(FloatNum n) const {
+        return x.in(n - c);
+    }
+    forceinline bool
+    OffsetView::in(const FloatVal& n) const {
+        return x.in(n - c);
+    }
 
+    /*
+     * Domain update by value
+     *
+     */
+    forceinline ModEvent
+    OffsetView::lq(Space& home, int n) {
+        return x.lq(home, n - c);
+    }
+    forceinline ModEvent
+    OffsetView::lq(Space& home, FloatNum n) {
+        return x.lq(home, n - c);
+    }
+    forceinline ModEvent
+    OffsetView::lq(Space& home, FloatVal n) {
+        return x.lq(home, n - c);
+    }
 
-  /*
-   * Domain tests
-   *
-   */
-  forceinline bool
-  OffsetView::zero_in(void) const {
-    return x.in(-c);
-  }
-  forceinline bool
-  OffsetView::in(FloatNum n) const {
-    return x.in(n-c);
-  }
-  forceinline bool
-  OffsetView::in(const FloatVal& n) const {
-    return x.in(n-c);
-  }
+    forceinline ModEvent
+    OffsetView::gq(Space& home, int n) {
+        return x.gq(home, n - c);
+    }
+    forceinline ModEvent
+    OffsetView::gq(Space& home, FloatNum n) {
+        return x.gq(home, n - c);
+    }
+    forceinline ModEvent
+    OffsetView::gq(Space& home, FloatVal n) {
+        return x.gq(home, n - c);
+    }
 
+    forceinline ModEvent
+    OffsetView::eq(Space& home, int n) {
+        return x.eq(home, n - c);
+    }
+    forceinline ModEvent
+    OffsetView::eq(Space& home, FloatNum n) {
+        return x.eq(home, n - c);
+    }
+    forceinline ModEvent
+    OffsetView::eq(Space& home, const FloatVal& n) {
+        return x.eq(home, n - c);
+    }
 
-  /*
-   * Domain update by value
-   *
-   */
-  forceinline ModEvent
-  OffsetView::lq(Space& home, int n) {
-    return x.lq(home,n-c);
-  }
-  forceinline ModEvent
-  OffsetView::lq(Space& home, FloatNum n) {
-    return x.lq(home,n-c);
-  }
-  forceinline ModEvent
-  OffsetView::lq(Space& home, FloatVal n) {
-    return x.lq(home,n-c);
-  }
+    /*
+     * Delta information for advisors
+     *
+     */
+    forceinline FloatNum
+    OffsetView::min(const Delta& d) const {
+        return x.min(d) + c;
+    }
+    forceinline FloatNum
+    OffsetView::max(const Delta& d) const {
+        return x.max(d) + c;
+    }
 
-  forceinline ModEvent
-  OffsetView::gq(Space& home, int n) {
-    return x.gq(home,n-c);
-  }
-  forceinline ModEvent
-  OffsetView::gq(Space& home, FloatNum n) {
-    return x.gq(home,n-c);
-  }
-  forceinline ModEvent
-  OffsetView::gq(Space& home, FloatVal n) {
-    return x.gq(home,n-c);
-  }
+    forceinline ModEventDelta
+    OffsetView::med(ModEvent me) {
+        return VarImpView<FloatVar>::med(me);
+    }
 
-  forceinline ModEvent
-  OffsetView::eq(Space& home, int n) {
-    return x.eq(home,n-c);
-  }
-  forceinline ModEvent
-  OffsetView::eq(Space& home, FloatNum n) {
-    return x.eq(home,n-c);
-  }
-  forceinline ModEvent
-  OffsetView::eq(Space& home, const FloatVal& n) {
-    return x.eq(home,n-c);
-  }
+    /*
+     * Cloning
+     *
+     */
+    forceinline void
+    OffsetView::update(Space& home, OffsetView& y) {
+        DerivedView<FloatView>::update(home, y);
+        c = y.c;
+    }
 
+    /*
+     * Ordering
+     *
+     */
+    forceinline bool
+    OffsetView::operator<(const OffsetView& y) const {
+        return ((base() < y.base()) || ((base() == y.base()) && (offset() < y.offset())));
+    }
 
-  /*
-   * Delta information for advisors
-   *
-   */
-  forceinline FloatNum
-  OffsetView::min(const Delta& d) const {
-    return x.min(d)+c;
-  }
-  forceinline FloatNum
-  OffsetView::max(const Delta& d) const {
-    return x.max(d)+c;
-  }
+    /*
+     * View comparison
+     *
+     */
+    forceinline bool
+    operator==(const OffsetView& x, const OffsetView& y) {
+        return (x.base() == y.base()) && (x.offset() == y.offset());
+    }
+    forceinline bool
+    operator!=(const OffsetView& x, const OffsetView& y) {
+        return !(x == y);
+    }
 
-  forceinline ModEventDelta
-  OffsetView::med(ModEvent me) {
-    return VarImpView<FloatVar>::med(me);
-  }
-
-
-  /*
-   * Cloning
-   *
-   */
-  forceinline void
-  OffsetView::update(Space& home, OffsetView& y) {
-    DerivedView<FloatView>::update(home,y);
-    c=y.c;
-  }
-
-  /*
-   * Ordering
-   *
-   */
-  forceinline bool
-  OffsetView::operator <(const OffsetView& y) const {
-    return ((base() < y.base())
-            || ((base() == y.base()) && (offset() < y.offset())));
-  }
-
-
-  /*
-   * View comparison
-   *
-   */
-  forceinline bool
-  operator ==(const OffsetView& x, const OffsetView& y) {
-    return (x.base() == y.base()) && (x.offset() == y.offset());
-  }
-  forceinline bool
-  operator !=(const OffsetView& x, const OffsetView& y) {
-    return !(x == y);
-  }
-
-}}
+}} // namespace Gecode::Float
 
 // STATISTICS: float-var
-

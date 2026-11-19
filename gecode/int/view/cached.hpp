@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,377 +36,362 @@
 
 namespace Gecode { namespace Int {
 
-  /*
-   * Constructors and initialization
-   *
-   */
-  template<class View>
-  forceinline
-  CachedView<View>::CachedView(void) : _size(0) {}
-  template<class View>
-  forceinline
-  CachedView<View>::CachedView(const View& y)
-    : DerivedView<View>(y), _firstRange(nullptr), _lastRange(nullptr),
-      _size(0) {}
+    /*
+     * Constructors and initialization
+     *
+     */
+    template <class View>
+    forceinline
+    CachedView<View>::CachedView(void)
+        : _size(0) {}
+    template <class View>
+    forceinline
+    CachedView<View>::CachedView(const View& y)
+        : DerivedView<View>(y), _firstRange(nullptr), _lastRange(nullptr), _size(0) {}
 
-
-  /*
-   * Value access
-   *
-   */
-  template<class View>
-  forceinline int
-  CachedView<View>::min(void) const {
-    return x.min();
-  }
-  template<class View>
-  forceinline int
-  CachedView<View>::max(void) const {
-    return x.max();
-  }
-  template<class View>
-  forceinline int
-  CachedView<View>::med(void) const {
-    return x.med();
-  }
-  template<class View>
-  forceinline int
-  CachedView<View>::val(void) const {
-    return x.val();
-  }
+    /*
+     * Value access
+     *
+     */
+    template <class View>
+    forceinline int
+    CachedView<View>::min(void) const {
+        return x.min();
+    }
+    template <class View>
+    forceinline int
+    CachedView<View>::max(void) const {
+        return x.max();
+    }
+    template <class View>
+    forceinline int
+    CachedView<View>::med(void) const {
+        return x.med();
+    }
+    template <class View>
+    forceinline int
+    CachedView<View>::val(void) const {
+        return x.val();
+    }
 #ifdef GECODE_HAS_CBS
-  template<class View>
-  forceinline int
-  CachedView<View>::baseval(int val) const {
-    return val;
-  }
+    template <class View>
+    forceinline int
+    CachedView<View>::baseval(int val) const {
+        return val;
+    }
 #endif
 
-  template<class View>
-  forceinline unsigned int
-  CachedView<View>::width(void) const {
-    return x.width();
-  }
-  template<class View>
-  forceinline unsigned int
-  CachedView<View>::size(void) const {
-    return x.size();
-  }
-  template<class View>
-  forceinline unsigned int
-  CachedView<View>::regret_min(void) const {
-    return x.regret_min();
-  }
-  template<class View>
-  forceinline unsigned int
-  CachedView<View>::regret_max(void) const {
-    return x.regret_max();
-  }
-
-  /*
-   * Domain tests
-   *
-   */
-  template<class View>
-  forceinline bool
-  CachedView<View>::range(void) const {
-    return x.range();
-  }
-  template<class View>
-  forceinline bool
-  CachedView<View>::in(int n) const {
-    return x.in(n);
-  }
-  template<class View>
-  forceinline bool
-  CachedView<View>::in(long long int n) const {
-    return x.in(n);
-  }
-
-
-  /*
-   * Domain update by value
-   *
-   */
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::lq(Space& home, int n) {
-    return x.lq(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::lq(Space& home, long long int n) {
-    return x.lq(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::le(Space& home, int n) {
-    return x.le(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::le(Space& home, long long int n) {
-    return x.le(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::gq(Space& home, int n) {
-    return x.gq(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::gq(Space& home, long long int n) {
-    return x.gq(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::gr(Space& home, int n) {
-    return x.gr(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::gr(Space& home, long long int n) {
-    return x.gr(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::nq(Space& home, int n) {
-    return x.nq(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::nq(Space& home, long long int n) {
-    return x.nq(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::eq(Space& home, int n) {
-    return x.eq(home,n);
-  }
-  template<class View>
-  forceinline ModEvent
-  CachedView<View>::eq(Space& home, long long int n) {
-    return x.eq(home,n);
-  }
-
-
-  /*
-   * Iterator-based domain update
-   *
-   */
-  template<class View>
-  template<class I>
-  forceinline ModEvent
-  CachedView<View>::narrow_r(Space& home, I& i, bool depend) {
-    return x.narrow_r(home,i,depend);
-  }
-  template<class View>
-  template<class I>
-  forceinline ModEvent
-  CachedView<View>::inter_r(Space& home, I& i, bool depend) {
-    return x.inter_r(home,i,depend);
-  }
-  template<class View>
-  template<class I>
-  forceinline ModEvent
-  CachedView<View>::minus_r(Space& home, I& i, bool depend) {
-    return x.minus_r(home,i,depend);
-  }
-  template<class View>
-  template<class I>
-  forceinline ModEvent
-  CachedView<View>::narrow_v(Space& home, I& i, bool depend) {
-    return x.narrow_v(home,i,depend);
-  }
-  template<class View>
-  template<class I>
-  forceinline ModEvent
-  CachedView<View>::inter_v(Space& home, I& i, bool depend) {
-    return x.inter_v(home,i,depend);
-  }
-  template<class View>
-  template<class I>
-  forceinline ModEvent
-  CachedView<View>::minus_v(Space& home, I& i, bool depend) {
-    return x.minus_v(home,i,depend);
-  }
-
-
-
-  /*
-   * Propagator modification events
-   *
-   */
-  template<class View>
-  forceinline ModEventDelta
-  CachedView<View>::med(ModEvent me) {
-    return View::med(me);
-  }
-
-
-  /*
-   * Delta information for advisors
-   *
-   */
-  template<class View>
-  forceinline int
-  CachedView<View>::min(const Delta& d) const {
-    return x.min(d);
-  }
-  template<class View>
-  forceinline int
-  CachedView<View>::max(const Delta& d) const {
-    return x.max(d);
-  }
-  template<class View>
-  forceinline unsigned int
-  CachedView<View>::width(const Delta& d) const {
-    return x.width(d);
-  }
-  template<class View>
-  forceinline bool
-  CachedView<View>::any(const Delta& d) const {
-    return x.any(d);
-  }
-
-
-
-  /*
-   * Cloning
-   *
-   */
-  template<class View>
-  void
-  CachedView<View>::update(Space& home, CachedView<View>& y) {
-    DerivedView<View>::update(home,y);
-    if (y._firstRange) {
-      _firstRange = new (home) RangeList(y._firstRange->min(),
-                                         y._firstRange->max(),nullptr);
-      RangeList* cur = _firstRange;
-
-      for (RangeList* y_cur = y._firstRange->next(); y_cur != nullptr;
-           y_cur = y_cur->next()) {
-        RangeList* next =
-          new (home) RangeList(y_cur->min(),y_cur->max(),nullptr);
-        cur->next(next);
-        cur = next;
-      }
-      _lastRange = cur;
-      _size = y._size;
+    template <class View>
+    forceinline unsigned int
+    CachedView<View>::width(void) const {
+        return x.width();
     }
-  }
-
-
-  /*
-   * Cache operations
-   *
-   */
-  template<class View>
-  void
-  CachedView<View>::initCache(Space& home, const IntSet& s) {
-    _firstRange = nullptr;
-    for (int i=s.ranges(); i--;) {
-      _firstRange = new (home) RangeList(s.min(i),s.max(i),_firstRange);
-      if (i==s.ranges()-1)
-        _lastRange = _firstRange;
+    template <class View>
+    forceinline unsigned int
+    CachedView<View>::size(void) const {
+        return x.size();
     }
-    _size = s.size();
-  }
-
-  template<class View>
-  void
-  CachedView<View>::cache(Space& home) {
-    _firstRange->dispose(home,_lastRange);
-    ViewRanges<View> xr(x);
-    _firstRange = new (home) RangeList(xr.min(),xr.max(),nullptr);
-    ++xr;
-    RangeList* cur = _firstRange;
-    for (; xr(); ++xr) {
-      RangeList* next = new (home) RangeList(xr.min(),xr.max(),nullptr);
-      cur->next(next);
-      cur = next;
+    template <class View>
+    forceinline unsigned int
+    CachedView<View>::regret_min(void) const {
+        return x.regret_min();
     }
-    _lastRange = cur;
-    _size = x.size();
-  }
+    template <class View>
+    forceinline unsigned int
+    CachedView<View>::regret_max(void) const {
+        return x.regret_max();
+    }
 
-  template<class View>
-  forceinline bool
-  CachedView<View>::modified(void) const {
-    return x.size() != _size;
-  }
+    /*
+     * Domain tests
+     *
+     */
+    template <class View>
+    forceinline bool
+    CachedView<View>::range(void) const {
+        return x.range();
+    }
+    template <class View>
+    forceinline bool
+    CachedView<View>::in(int n) const {
+        return x.in(n);
+    }
+    template <class View>
+    forceinline bool
+    CachedView<View>::in(long long int n) const {
+        return x.in(n);
+    }
 
+    /*
+     * Domain update by value
+     *
+     */
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::lq(Space& home, int n) {
+        return x.lq(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::lq(Space& home, long long int n) {
+        return x.lq(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::le(Space& home, int n) {
+        return x.le(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::le(Space& home, long long int n) {
+        return x.le(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::gq(Space& home, int n) {
+        return x.gq(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::gq(Space& home, long long int n) {
+        return x.gq(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::gr(Space& home, int n) {
+        return x.gr(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::gr(Space& home, long long int n) {
+        return x.gr(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::nq(Space& home, int n) {
+        return x.nq(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::nq(Space& home, long long int n) {
+        return x.nq(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::eq(Space& home, int n) {
+        return x.eq(home, n);
+    }
+    template <class View>
+    forceinline ModEvent
+    CachedView<View>::eq(Space& home, long long int n) {
+        return x.eq(home, n);
+    }
 
-  /**
-   * \brief %Range iterator for offset integer views
-   * \ingroup TaskActorIntView
-   */
-  template<class View>
-  class ViewRanges<CachedView<View> >
-    : public ViewRanges<View> {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    ViewRanges(void);
-    /// Initialize with ranges for view \a x
-    ViewRanges(const CachedView<View>& x);
-    /// Initialize with ranges for view \a x
-    void init(const CachedView<View>& x);
-    //@}
-  };
+    /*
+     * Iterator-based domain update
+     *
+     */
+    template <class View>
+    template <class I>
+    forceinline ModEvent
+    CachedView<View>::narrow_r(Space& home, I& i, bool depend) {
+        return x.narrow_r(home, i, depend);
+    }
+    template <class View>
+    template <class I>
+    forceinline ModEvent
+    CachedView<View>::inter_r(Space& home, I& i, bool depend) {
+        return x.inter_r(home, i, depend);
+    }
+    template <class View>
+    template <class I>
+    forceinline ModEvent
+    CachedView<View>::minus_r(Space& home, I& i, bool depend) {
+        return x.minus_r(home, i, depend);
+    }
+    template <class View>
+    template <class I>
+    forceinline ModEvent
+    CachedView<View>::narrow_v(Space& home, I& i, bool depend) {
+        return x.narrow_v(home, i, depend);
+    }
+    template <class View>
+    template <class I>
+    forceinline ModEvent
+    CachedView<View>::inter_v(Space& home, I& i, bool depend) {
+        return x.inter_v(home, i, depend);
+    }
+    template <class View>
+    template <class I>
+    forceinline ModEvent
+    CachedView<View>::minus_v(Space& home, I& i, bool depend) {
+        return x.minus_v(home, i, depend);
+    }
 
-  template<class View>
-  forceinline
-  ViewRanges<CachedView<View> >::ViewRanges(void) {}
+    /*
+     * Propagator modification events
+     *
+     */
+    template <class View>
+    forceinline ModEventDelta
+    CachedView<View>::med(ModEvent me) {
+        return View::med(me);
+    }
 
-  template<class View>
-  forceinline
-  ViewRanges<CachedView<View> >::ViewRanges(const CachedView<View>& x) {
-    ViewRanges<IntView>::init(x.base());
-  }
+    /*
+     * Delta information for advisors
+     *
+     */
+    template <class View>
+    forceinline int
+    CachedView<View>::min(const Delta& d) const {
+        return x.min(d);
+    }
+    template <class View>
+    forceinline int
+    CachedView<View>::max(const Delta& d) const {
+        return x.max(d);
+    }
+    template <class View>
+    forceinline unsigned int
+    CachedView<View>::width(const Delta& d) const {
+        return x.width(d);
+    }
+    template <class View>
+    forceinline bool
+    CachedView<View>::any(const Delta& d) const {
+        return x.any(d);
+    }
 
-  template<class View>
-  forceinline void
-  ViewRanges<CachedView<View> >::init(const CachedView<View>& x) {
-    ViewRanges<View>::init(x.base());
-  }
+    /*
+     * Cloning
+     *
+     */
+    template <class View>
+    void
+    CachedView<View>::update(Space& home, CachedView<View>& y) {
+        DerivedView<View>::update(home, y);
+        if (y._firstRange) {
+            _firstRange = new (home) RangeList(y._firstRange->min(), y._firstRange->max(), nullptr);
+            RangeList* cur = _firstRange;
 
-  template<class View>
-  forceinline
-  ViewDiffRanges<View>::ViewDiffRanges(void) {}
+            for (RangeList* y_cur = y._firstRange->next(); y_cur != nullptr; y_cur = y_cur->next()) {
+                RangeList* next = new (home) RangeList(y_cur->min(), y_cur->max(), nullptr);
+                cur->next(next);
+                cur = next;
+            }
+            _lastRange = cur;
+            _size = y._size;
+        }
+    }
 
-  template<class View>
-  forceinline
-  ViewDiffRanges<View>::ViewDiffRanges(const CachedView<View>& x)
-    : cr(x._firstRange), dr(x.base()) {
-    Super::init(cr,dr);
-  }
+    /*
+     * Cache operations
+     *
+     */
+    template <class View>
+    void
+    CachedView<View>::initCache(Space& home, const IntSet& s) {
+        _firstRange = nullptr;
+        for (int i = s.ranges(); i--;) {
+            _firstRange = new (home) RangeList(s.min(i), s.max(i), _firstRange);
+            if (i == s.ranges() - 1)
+                _lastRange = _firstRange;
+        }
+        _size = s.size();
+    }
 
-  template<class View>
-  forceinline void
-  ViewDiffRanges<View>::init(const CachedView<View>& x) {
-    cr.init(x._firstRange);
-    dr.init(x.base());
-    Super::init(cr,dr);
-  }
+    template <class View>
+    void
+    CachedView<View>::cache(Space& home) {
+        _firstRange->dispose(home, _lastRange);
+        ViewRanges<View> xr(x);
+        _firstRange = new (home) RangeList(xr.min(), xr.max(), nullptr);
+        ++xr;
+        RangeList* cur = _firstRange;
+        for (; xr(); ++xr) {
+            RangeList* next = new (home) RangeList(xr.min(), xr.max(), nullptr);
+            cur->next(next);
+            cur = next;
+        }
+        _lastRange = cur;
+        _size = x.size();
+    }
 
-  /*
-   * View comparison
-   *
-   */
-  template<class View>
-  forceinline bool
-  operator ==(const CachedView<View>& x, const CachedView<View>& y) {
-    return (x.base() == y.base()) && (x.offset() == y.offset());
-  }
-  template<class View>
-  forceinline bool
-  operator !=(const CachedView<View>& x, const CachedView<View>& y) {
-    return !(x == y);
-  }
+    template <class View>
+    forceinline bool
+    CachedView<View>::modified(void) const {
+        return x.size() != _size;
+    }
 
-}}
+    /**
+     * \brief %Range iterator for offset integer views
+     * \ingroup TaskActorIntView
+     */
+    template <class View>
+    class ViewRanges<CachedView<View>> : public ViewRanges<View> {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        ViewRanges(void);
+        /// Initialize with ranges for view \a x
+        ViewRanges(const CachedView<View>& x);
+        /// Initialize with ranges for view \a x
+        void init(const CachedView<View>& x);
+        //@}
+    };
+
+    template <class View>
+    forceinline
+    ViewRanges<CachedView<View>>::ViewRanges(void) {}
+
+    template <class View>
+    forceinline
+    ViewRanges<CachedView<View>>::ViewRanges(const CachedView<View>& x) {
+        ViewRanges<IntView>::init(x.base());
+    }
+
+    template <class View>
+    forceinline void
+    ViewRanges<CachedView<View>>::init(const CachedView<View>& x) {
+        ViewRanges<View>::init(x.base());
+    }
+
+    template <class View>
+    forceinline
+    ViewDiffRanges<View>::ViewDiffRanges(void) {}
+
+    template <class View>
+    forceinline
+    ViewDiffRanges<View>::ViewDiffRanges(const CachedView<View>& x)
+        : cr(x._firstRange), dr(x.base()) {
+        Super::init(cr, dr);
+    }
+
+    template <class View>
+    forceinline void
+    ViewDiffRanges<View>::init(const CachedView<View>& x) {
+        cr.init(x._firstRange);
+        dr.init(x.base());
+        Super::init(cr, dr);
+    }
+
+    /*
+     * View comparison
+     *
+     */
+    template <class View>
+    forceinline bool
+    operator==(const CachedView<View>& x, const CachedView<View>& y) {
+        return (x.base() == y.base()) && (x.offset() == y.offset());
+    }
+    template <class View>
+    forceinline bool
+    operator!=(const CachedView<View>& x, const CachedView<View>& y) {
+        return !(x == y);
+    }
+
+}} // namespace Gecode::Int
 
 // STATISTICS: int-var
-

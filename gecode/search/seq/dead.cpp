@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,73 +34,71 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  /// A dead engine (failed root, or a meta engine that has finished)
-  template<class Tracer>
-  class GECODE_SEARCH_EXPORT Dead : public Engine {
-  protected:
-    /// Search tracer
-    Tracer tracer;
-    /// Statistics
-    Statistics stat;
-    /// Why next() returns no solution
-    EndReason reason;
-    /// Why the last call to next() returned no solution
-    EndReason end;
+    /// A dead engine (failed root, or a meta engine that has finished)
+    template <class Tracer>
+    class GECODE_SEARCH_EXPORT Dead : public Engine {
+    protected:
+        /// Search tracer
+        Tracer tracer;
+        /// Statistics
+        Statistics stat;
+        /// Why next() returns no solution
+        EndReason reason;
+        /// Why the last call to next() returned no solution
+        EndReason end;
 
-  public:
-    /// Initialize, next() returns no solution for reason \a r
-    Dead(const Options& o, const Statistics& stat0, EndReason r);
-    /// Return next solution (nullptr, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Statistics statistics(void) const;
-    /// Return why the last call to next() returned no solution
-    virtual EndReason end_reason(void) const;
-    /// Delete
-    virtual ~Dead(void);
-  };
+    public:
+        /// Initialize, next() returns no solution for reason \a r
+        Dead(const Options& o, const Statistics& stat0, EndReason r);
+        /// Return next solution (nullptr, if none exists or search has been stopped)
+        virtual Space* next(void);
+        /// Return statistics
+        virtual Statistics statistics(void) const;
+        /// Return why the last call to next() returned no solution
+        virtual EndReason end_reason(void) const;
+        /// Delete
+        virtual ~Dead(void);
+    };
 
-  template<class Tracer>
-  Dead<Tracer>::Dead(const Options& o, const Statistics& stat0,
-                     EndReason r)
-    : tracer(o.tracer), stat(stat0), reason(r), end(EndReason::NotEnded) {
-    tracer.engine(SearchTracer::EngineType::AOE, 1U);
-    tracer.worker();
-  }
+    template <class Tracer>
+    Dead<Tracer>::Dead(const Options& o, const Statistics& stat0, EndReason r)
+        : tracer(o.tracer), stat(stat0), reason(r), end(EndReason::NotEnded) {
+        tracer.engine(SearchTracer::EngineType::AOE, 1U);
+        tracer.worker();
+    }
 
-  template<class Tracer>
-  Space*
-  Dead<Tracer>::next(void) {
-    end = reason;
-    return nullptr;
-  }
+    template <class Tracer>
+    Space*
+    Dead<Tracer>::next(void) {
+        end = reason;
+        return nullptr;
+    }
 
-  template<class Tracer>
-  EndReason
-  Dead<Tracer>::end_reason(void) const {
-    return end;
-  }
+    template <class Tracer>
+    EndReason
+    Dead<Tracer>::end_reason(void) const {
+        return end;
+    }
 
-  template<class Tracer>
-  Statistics
-  Dead<Tracer>::statistics(void) const {
-    return stat;
-  }
+    template <class Tracer>
+    Statistics
+    Dead<Tracer>::statistics(void) const {
+        return stat;
+    }
 
-  template<class Tracer>
-  Dead<Tracer>::~Dead(void) {
-    tracer.done();
-  }
+    template <class Tracer>
+    Dead<Tracer>::~Dead(void) {
+        tracer.done();
+    }
 
-  Engine*
-  dead(const Options& o, const Statistics& stat, EndReason r) {
-    if (o.tracer)
-      return new Dead<TraceRecorder>(o,stat,r);
-    else
-      return new Dead<NoTraceRecorder>(o,stat,r);
-  }
+    Engine*
+    dead(const Options& o, const Statistics& stat, EndReason r) {
+        if (o.tracer)
+            return new Dead<TraceRecorder>(o, stat, r);
+        else
+            return new Dead<NoTraceRecorder>(o, stat, r);
+    }
 
-
-}}}
+}}} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

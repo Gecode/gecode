@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,15 +34,16 @@
 
 namespace Gecode {
 
-  /*
-   * Operations for expressions
-   *
-   */
+    /*
+     * Operations for expressions
+     *
+     */
 
-  forceinline
-  SetExpr::SetExpr(void) : n(nullptr) {}
+    forceinline
+    SetExpr::SetExpr(void)
+        : n(nullptr) {}
 
-}
+} // namespace Gecode
 
 #endif
 

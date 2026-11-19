@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -44,47 +43,46 @@
 
 namespace Gecode { namespace Int { namespace Order {
 
-  /**
-   * \brief %Scheduling propagator for ordering two tasks
-   *
-   * Requires \code #include <gecode/int/order.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  class OrderProp : public Propagator {
-  protected:
-    /// View for start times
-    IntView s0, s1;
-    /// Boolean view for order
-    BoolView b;
-    /// Processing times
-    int p0, p1;
-    /// Constructor for cloning
-    OrderProp(Space& home, OrderProp& p);
-    /// Constructor for creation
-    OrderProp(Home home, IntView s0, int p0, IntView s1, int p1,
-              BoolView b);
-  public:
-    /// Copy propagator during cloning
-    GECODE_INT_EXPORT
-    virtual Actor* copy(Space& home);
-    /// Cost function (defined as low binary)
-    GECODE_INT_EXPORT
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    GECODE_INT_EXPORT
-    virtual void reschedule(Space& home);
-    /// Perform propagation
-    GECODE_INT_EXPORT
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post order propagator
-    static ExecStatus post(Home home, IntView s0, int p0, IntView s1, int p1,
-                           BoolView b);
-    /// Delete propagator and return its size
-    GECODE_INT_EXPORT
-    virtual size_t dispose(Space& home);
-  };
+    /**
+     * \brief %Scheduling propagator for ordering two tasks
+     *
+     * Requires \code #include <gecode/int/order.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    class OrderProp : public Propagator {
+    protected:
+        /// View for start times
+        IntView s0, s1;
+        /// Boolean view for order
+        BoolView b;
+        /// Processing times
+        int p0, p1;
+        /// Constructor for cloning
+        OrderProp(Space& home, OrderProp& p);
+        /// Constructor for creation
+        OrderProp(Home home, IntView s0, int p0, IntView s1, int p1, BoolView b);
 
-}}}
+    public:
+        /// Copy propagator during cloning
+        GECODE_INT_EXPORT
+        virtual Actor* copy(Space& home);
+        /// Cost function (defined as low binary)
+        GECODE_INT_EXPORT
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        GECODE_INT_EXPORT
+        virtual void reschedule(Space& home);
+        /// Perform propagation
+        GECODE_INT_EXPORT
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post order propagator
+        static ExecStatus post(Home home, IntView s0, int p0, IntView s1, int p1, BoolView b);
+        /// Delete propagator and return its size
+        GECODE_INT_EXPORT
+        virtual size_t dispose(Space& home);
+    };
+
+}}} // namespace Gecode::Int::Order
 
 #include <gecode/int/order/propagate.hpp>
 
