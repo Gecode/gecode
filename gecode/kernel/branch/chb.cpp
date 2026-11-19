@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,25 +34,24 @@
 
 namespace Gecode {
 
-  Support::Mutex CHB::Storage::m;
+    Support::Mutex CHB::Storage::m;
 
-  CHB::Storage::~Storage(void) {
-    heap.free<Info>(chb,n);
-  }
+    CHB::Storage::~Storage(void) {
+        heap.free<Info>(chb, n);
+    }
 
-  const CHB CHB::def;
+    const CHB CHB::def;
 
-  CHB::CHB(const CHB& c)
-    : SharedHandle(c) {}
+    CHB::CHB(const CHB& c) : SharedHandle(c) {}
 
-  CHB&
-  CHB::operator =(const CHB& c) {
-    (void) SharedHandle::operator =(c);
-    return *this;
-  }
+    CHB&
+    CHB::operator=(const CHB& c) {
+        (void)SharedHandle::operator=(c);
+        return *this;
+    }
 
-  CHB::~CHB(void) {}
+    CHB::~CHB(void) {}
 
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-branch

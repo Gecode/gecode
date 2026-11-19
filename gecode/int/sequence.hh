@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     David Rijsman <David.Rijsman@quintiq.com>
@@ -39,110 +38,113 @@
 
 namespace Gecode { namespace Int { namespace Sequence {
 
-  /**
-   * \namespace Gecode::Int::Sequence
-   * \brief %Sequence propagators
-   *
-   * This namespace contains a propagator for the
-   * cumulatives constraint as presented in
-   * Willem Jan van Hoeve, Gilles Pesant, Louis-Martin Rousseau, and
-   * Ashish Sabharwal, New filtering algorithms for combinations of
-   * among constraints. Constraints, 14(2), 273-292, 2009.
-   *
-   */
+    /**
+     * \namespace Gecode::Int::Sequence
+     * \brief %Sequence propagators
+     *
+     * This namespace contains a propagator for the
+     * cumulatives constraint as presented in
+     * Willem Jan van Hoeve, Gilles Pesant, Louis-Martin Rousseau, and
+     * Ashish Sabharwal, New filtering algorithms for combinations of
+     * among constraints. Constraints, 14(2), 273-292, 2009.
+     *
+     */
 
-  template<class View>
-  class SupportAdvisor;
+    template <class View>
+    class SupportAdvisor;
 
-  template<class View,class Val,bool iss>
-  class ViewValSupport;
+    template <class View, class Val, bool iss>
+    class ViewValSupport;
 
-  /**
-   * \brief An array of %ViewValSupport data structures
-   *
-   */
-  template<class View, class Val,bool iss>
-  class ViewValSupportArray {
-  private:
-    /// The actual array
-    ViewValSupport<View,Val,iss>* xs;
-    /// The size of the array
-    int n;
-  public:
-    /// Default constructor
-    ViewValSupportArray(void);
-    /// Copy constructor
-    ViewValSupportArray(const ViewValSupportArray<View,Val,iss>&);
-    /// Construct an ViewValSupportArray from \a x
-    ViewValSupportArray(Space& home, ViewArray<View>&, Val s, int q);
-    /// Construct an ViewValSupportArray of size \a n
-    ViewValSupportArray(Space& home, int n);
-    /// Return the current size
-    int size(void) const;
-    /// Access element \a n
-    ViewValSupport<View,Val,iss>& operator [](int n);
-    /// Access element \a n
-    const ViewValSupport<View,Val,iss>& operator [](int) const;
-    /// Cloning
-    void update(Space& home, ViewValSupportArray<View,Val,iss>& x);
-    /// Propagate
-    ExecStatus propagate(Space& home,ViewArray<View>& a,Val s,int q,int l,int u);
-    /// Advise
-    ExecStatus advise(Space& home,ViewArray<View>& a,Val s,int q,int j,const Delta& d);
-  };
+    /**
+     * \brief An array of %ViewValSupport data structures
+     *
+     */
+    template <class View, class Val, bool iss>
+    class ViewValSupportArray {
+    private:
+        /// The actual array
+        ViewValSupport<View, Val, iss>* xs;
+        /// The size of the array
+        int n;
 
-  /**
-   * \brief %Sequence propagator for array of integers
-   *
-   * Requires \code #include <gecode/int/sequence.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class View, class Val>
-  class Sequence : public Propagator {
-  protected:
-    /// Constructor for cloning \a p
-    Sequence(Space& home, Sequence& p);
-    /// Constructor for creation
-    Sequence(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
-  public:
-    /// Perform copying during cloning
-    virtual Actor* copy(Space& home);
-    /// Advise function
-    ExecStatus advise(Space& home, Advisor& _a, const Delta& d);
-    /// Cost function
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for
-    static  ExecStatus post(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
-    /// Check for consistency
-    static  ExecStatus check(ViewArray<View>& x, Val s, int q, int l, int u);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  private:
-    /// Views to sequence
-    ViewArray<View> x;
-    /// Value counted in the sequence
-    Val  s;
-    /// Length of each sequence
-    int  q;
-    /// Lower bound
-    int  l;
-    /// Upper bound
-    int  u;
-    /// Array containing supports for s
-    ViewValSupportArray<View,Val,true>  vvsamax;
-    /// Array containing supports for not s
-    ViewValSupportArray<View,Val,false> vvsamin;
-    /// Council for advisors
-    Council<SupportAdvisor<View> > ac;
-    /// Whether to fail when being rescheduled
-    bool tofail;
-  };
+    public:
+        /// Default constructor
+        ViewValSupportArray(void);
+        /// Copy constructor
+        ViewValSupportArray(const ViewValSupportArray<View, Val, iss>&);
+        /// Construct an ViewValSupportArray from \a x
+        ViewValSupportArray(Space& home, ViewArray<View>&, Val s, int q);
+        /// Construct an ViewValSupportArray of size \a n
+        ViewValSupportArray(Space& home, int n);
+        /// Return the current size
+        int size(void) const;
+        /// Access element \a n
+        ViewValSupport<View, Val, iss>& operator[](int n);
+        /// Access element \a n
+        const ViewValSupport<View, Val, iss>& operator[](int) const;
+        /// Cloning
+        void update(Space& home, ViewValSupportArray<View, Val, iss>& x);
+        /// Propagate
+        ExecStatus propagate(Space& home, ViewArray<View>& a, Val s, int q, int l, int u);
+        /// Advise
+        ExecStatus advise(Space& home, ViewArray<View>& a, Val s, int q, int j, const Delta& d);
+    };
 
-}}}
+    /**
+     * \brief %Sequence propagator for array of integers
+     *
+     * Requires \code #include <gecode/int/sequence.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class View, class Val>
+    class Sequence : public Propagator {
+    protected:
+        /// Constructor for cloning \a p
+        Sequence(Space& home, Sequence& p);
+        /// Constructor for creation
+        Sequence(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
+
+    public:
+        /// Perform copying during cloning
+        virtual Actor* copy(Space& home);
+        /// Advise function
+        ExecStatus advise(Space& home, Advisor& _a, const Delta& d);
+        /// Cost function
+        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator for
+        static ExecStatus post(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
+        /// Check for consistency
+        static ExecStatus check(ViewArray<View>& x, Val s, int q, int l, int u);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+
+    private:
+        /// Views to sequence
+        ViewArray<View> x;
+        /// Value counted in the sequence
+        Val s;
+        /// Length of each sequence
+        int q;
+        /// Lower bound
+        int l;
+        /// Upper bound
+        int u;
+        /// Array containing supports for s
+        ViewValSupportArray<View, Val, true> vvsamax;
+        /// Array containing supports for not s
+        ViewValSupportArray<View, Val, false> vvsamin;
+        /// Council for advisors
+        Council<SupportAdvisor<View>> ac;
+        /// Whether to fail when being rescheduled
+        bool tofail;
+    };
+
+}}} // namespace Gecode::Int::Sequence
 
 #include <gecode/int/sequence/set-op.hpp>
 #include <gecode/int/sequence/violations.hpp>

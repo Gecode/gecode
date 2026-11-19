@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,25 +34,25 @@
 
 namespace Gecode { namespace Int { namespace Cumulative {
 
-  // Overload checking for mandatory tasks
-  template<class ManTask>
-  ExecStatus
-  overload(Space& home, int c, TaskArray<ManTask>& t) {
-    TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
-    sort<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true>(f);
+    // Overload checking for mandatory tasks
+    template <class ManTask>
+    ExecStatus
+    overload(Space& home, int c, TaskArray<ManTask>& t) {
+        TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
+        sort<typename TaskTraits<ManTask>::TaskViewFwd, STO_LCT, true>(f);
 
-    Region r;
-    OmegaTree<typename TaskTraits<ManTask>::TaskViewFwd> o(r,c,f);
+        Region r;
+        OmegaTree<typename TaskTraits<ManTask>::TaskViewFwd> o(r, c, f);
 
-    for (int i=0; i<f.size(); i++) {
-      if (f[i].mandatory())
-        o.insert(i);
-      if (o.env() > static_cast<long long int>(c)*f[i].lct())
-        GECODE_ME_CHECK(f[i].excluded(home));
+        for (int i = 0; i < f.size(); i++) {
+            if (f[i].mandatory())
+                o.insert(i);
+            if (o.env() > static_cast<long long int>(c) * f[i].lct())
+                GECODE_ME_CHECK(f[i].excluded(home));
+        }
+        return ES_OK;
     }
-    return ES_OK;
-  }
 
-}}}
+}}} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

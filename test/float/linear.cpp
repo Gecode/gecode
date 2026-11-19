@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -39,221 +38,221 @@
 
 namespace Test { namespace Float {
 
-   /// %Tests for linear constraints
-   namespace Linear {
+    /// %Tests for linear constraints
+    namespace Linear {
 
-     /// Check whether \a has only one coefficients
-     bool one(const Gecode::FloatValArgs& a) {
-      for (int i=a.size(); i--; )
-        if (a[i] != 1)
-          return false;
-      return true;
-    }
+        /// Check whether \a has only one coefficients
+        bool
+        one(const Gecode::FloatValArgs& a) {
+            for (int i = a.size(); i--;)
+                if (a[i] != 1)
+                    return false;
+            return true;
+        }
 
-     /**
-      * \defgroup TaskTestFloatLinear Linear constraints
-      * \ingroup TaskTestFloat
-      */
-     //@{
-     /// %Test linear relation over float variables
-     class FloatFloat : public Test {
-     protected:
-       /// Coefficients
-       Gecode::FloatValArgs a;
-       /// Float relation type to propagate
-       Gecode::FloatRelType frt;
-       /// Result
-       Gecode::FloatNum c;
-     public:
-       /// Create and register test
-       FloatFloat(TestTags tags, const std::string& s,
-                  const Gecode::FloatVal& d,
-                  const Gecode::FloatValArgs& a0, Gecode::FloatRelType frt0,
-                  Gecode::FloatNum c0, Gecode::FloatNum st)
-         : Test(tags,"Linear::Float::"+
-                str(frt0)+"::"+s+"::"+str(c0)+"::"
-                +str(a0.size()),
-                a0.size(),d,st,CPLT_ASSIGNMENT,true),
-           a(a0), frt(frt0), c(c0) {
-         using namespace Gecode;
-         testfix = false;
-         if ((frt == FRT_NQ) || (frt == FRT_LE) || (frt == FRT_GR) || reified)
-           testsubsumed = false;
-       }
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal e = 0.0;
-         for (int i=x.size(); i--; )
-           e += a[i]*x[i];
-         switch (cmp(e, frt, Gecode::FloatVal(c))) {
-         case MT_FALSE: {
-           Gecode::FloatVal eError = e;
-           for (int i=x.size(); i--; )
-             eError -= a[i]*x[i];
-           if (cmp(e+eError, frt, Gecode::FloatVal(c)) == MT_FALSE)
-             return MT_FALSE;
-           else
-             return MT_MAYBE;
-         }
-         case MT_TRUE:
-           return MT_TRUE;
-         case MT_MAYBE:
-           return MT_MAYBE;
-         }
-         GECODE_NEVER;
-         return MT_FALSE;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         if (one(a))
-           Gecode::linear(home, x, frt, c);
-         else
-           Gecode::linear(home, a, x, frt, c);
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x,
-                         Gecode::Reify r) {
-         if (one(a))
-           Gecode::linear(home, x, frt, c, r);
-         else
-           Gecode::linear(home, a, x, frt, c, r);
-       }
-     };
+        /**
+         * \defgroup TaskTestFloatLinear Linear constraints
+         * \ingroup TaskTestFloat
+         */
+        //@{
+        /// %Test linear relation over float variables
+        class FloatFloat : public Test {
+        protected:
+            /// Coefficients
+            Gecode::FloatValArgs a;
+            /// Float relation type to propagate
+            Gecode::FloatRelType frt;
+            /// Result
+            Gecode::FloatNum c;
 
-     /// %Test linear relation over float variables
-     class FloatVar : public Test {
-     protected:
-       /// Coefficients
-       Gecode::FloatValArgs a;
-       /// Float relation type to propagate
-       Gecode::FloatRelType frt;
-     public:
-       /// Create and register test
-       FloatVar(TestTags tags, const std::string& s,
-                const Gecode::FloatVal& d,
-                const Gecode::FloatValArgs& a0, Gecode::FloatRelType frt0, Gecode::FloatNum st)
-         : Test(tags,"Linear::Var::"+
-                str(frt0)+"::"+s+"::"+str(a0.size()),
-                a0.size()+1,d,st,CPLT_ASSIGNMENT,true),
-           a(a0), frt(frt0) {
-         using namespace Gecode;
-         testfix = false;
-         if ((frt == FRT_NQ) || (frt == FRT_LE) || (frt == FRT_GR) || reified)
-           testsubsumed = false;
-       }
-       /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal e = 0.0;
-         for (int i=a.size(); i--; )
-           e += a[i]*x[i];
-         switch (cmp(e, frt, x[a.size()])) {
-         case MT_FALSE: {
-           Gecode::FloatVal eError = e;
-           for (int i=a.size(); i--; )
-             eError -= a[i]*x[i];
-           if (cmp(e+eError, frt, x[a.size()]) == MT_FALSE)
-             return MT_FALSE;
-           else
-             return MT_MAYBE;
-         }
-         case MT_TRUE:
-           return MT_TRUE;
-         case MT_MAYBE:
-           return MT_MAYBE;
-         }
-         GECODE_NEVER;
-         return MT_FALSE;
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         int n = a.size();
-         Gecode::FloatVarArgs y(n);
-         for (int i=n; i--; )
-           y[i] = x[i];
-         if (one(a))
-           Gecode::linear(home, y, frt, x[n]);
-         else
-           Gecode::linear(home, a, y, frt, x[n]);
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x,
-                         Gecode::Reify r) {
-         int n = a.size();
-         Gecode::FloatVarArgs y(n);
-         for (int i=n; i--; )
-           y[i] = x[i];
-         if (one(a))
-           Gecode::linear(home, y, frt, x[n], r);
-         else
-           Gecode::linear(home, a, y, frt, x[n], r);
-       }
-     };
+        public:
+            /// Create and register test
+            FloatFloat(TestTags tags, const std::string& s, const Gecode::FloatVal& d, const Gecode::FloatValArgs& a0,
+                       Gecode::FloatRelType frt0, Gecode::FloatNum c0, Gecode::FloatNum st)
+                : Test(tags, "Linear::Float::" + str(frt0) + "::" + s + "::" + str(c0) + "::" + str(a0.size()),
+                       a0.size(), d, st, CPLT_ASSIGNMENT, true),
+                  a(a0), frt(frt0), c(c0) {
+                using namespace Gecode;
+                testfix = false;
+                if ((frt == FRT_NQ) || (frt == FRT_LE) || (frt == FRT_GR) || reified)
+                    testsubsumed = false;
+            }
+            /// %Test whether \a x is solution
+            virtual MaybeType
+            solution(const Assignment& x) const {
+                Gecode::FloatVal e = 0.0;
+                for (int i = x.size(); i--;)
+                    e += a[i] * x[i];
+                switch (cmp(e, frt, Gecode::FloatVal(c))) {
+                case MT_FALSE: {
+                    Gecode::FloatVal eError = e;
+                    for (int i = x.size(); i--;)
+                        eError -= a[i] * x[i];
+                    if (cmp(e + eError, frt, Gecode::FloatVal(c)) == MT_FALSE)
+                        return MT_FALSE;
+                    else
+                        return MT_MAYBE;
+                }
+                case MT_TRUE:
+                    return MT_TRUE;
+                case MT_MAYBE:
+                    return MT_MAYBE;
+                }
+                GECODE_NEVER;
+                return MT_FALSE;
+            }
+            /// Post constraint on \a x
+            virtual void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+                if (one(a))
+                    Gecode::linear(home, x, frt, c);
+                else
+                    Gecode::linear(home, a, x, frt, c);
+            }
+            /// Post reified constraint on \a x for \a r
+            virtual void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) {
+                if (one(a))
+                    Gecode::linear(home, x, frt, c, r);
+                else
+                    Gecode::linear(home, a, x, frt, c, r);
+            }
+        };
 
-     /// Help class to create and register tests
-     class Create {
-     public:
-       /// Perform creation and registration
-       Create(void) {
-         using namespace Gecode;
-         {
-           FloatNum step = 0.7;
-           FloatVal f1(-2,2);
-           FloatVal f2(-3,-1);
-           FloatVal f3(3,8);
+        /// %Test linear relation over float variables
+        class FloatVar : public Test {
+        protected:
+            /// Coefficients
+            Gecode::FloatValArgs a;
+            /// Float relation type to propagate
+            Gecode::FloatRelType frt;
 
-           FloatValArgs a1(1);
-           a1[0] = 0.0;
+        public:
+            /// Create and register test
+            FloatVar(TestTags tags, const std::string& s, const Gecode::FloatVal& d, const Gecode::FloatValArgs& a0,
+                     Gecode::FloatRelType frt0, Gecode::FloatNum st)
+                : Test(tags, "Linear::Var::" + str(frt0) + "::" + s + "::" + str(a0.size()), a0.size() + 1, d, st,
+                       CPLT_ASSIGNMENT, true),
+                  a(a0), frt(frt0) {
+                using namespace Gecode;
+                testfix = false;
+                if ((frt == FRT_NQ) || (frt == FRT_LE) || (frt == FRT_GR) || reified)
+                    testsubsumed = false;
+            }
+            /// %Test whether \a x is solution
+            virtual MaybeType
+            solution(const Assignment& x) const {
+                Gecode::FloatVal e = 0.0;
+                for (int i = a.size(); i--;)
+                    e += a[i] * x[i];
+                switch (cmp(e, frt, x[a.size()])) {
+                case MT_FALSE: {
+                    Gecode::FloatVal eError = e;
+                    for (int i = a.size(); i--;)
+                        eError -= a[i] * x[i];
+                    if (cmp(e + eError, frt, x[a.size()]) == MT_FALSE)
+                        return MT_FALSE;
+                    else
+                        return MT_MAYBE;
+                }
+                case MT_TRUE:
+                    return MT_TRUE;
+                case MT_MAYBE:
+                    return MT_MAYBE;
+                }
+                GECODE_NEVER;
+                return MT_FALSE;
+            }
+            /// Post constraint on \a x
+            virtual void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+                int n = a.size();
+                Gecode::FloatVarArgs y(n);
+                for (int i = n; i--;)
+                    y[i] = x[i];
+                if (one(a))
+                    Gecode::linear(home, y, frt, x[n]);
+                else
+                    Gecode::linear(home, a, y, frt, x[n]);
+            }
+            /// Post reified constraint on \a x for \a r
+            virtual void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x, Gecode::Reify r) {
+                int n = a.size();
+                Gecode::FloatVarArgs y(n);
+                for (int i = n; i--;)
+                    y[i] = x[i];
+                if (one(a))
+                    Gecode::linear(home, y, frt, x[n], r);
+                else
+                    Gecode::linear(home, a, y, frt, x[n], r);
+            }
+        };
 
-           for (FloatRelTypes frts; frts(); ++frts) {
-             TestTags tags = frts.frt() == Gecode::FRT_EQ
-               ? TestTags::standard() : TestTags::sweep();
-             (void) new FloatFloat(tags,"11",f1,a1,frts.frt(),0.0,step);
-             (void) new FloatVar(tags,"11",f1,a1,frts.frt(),step);
-             (void) new FloatFloat(TestTags::sweep(),"21",f2,a1,frts.frt(),0.0,step);
-             (void) new FloatVar(TestTags::sweep(),"21",f2,a1,frts.frt(),step);
-             (void) new FloatFloat(TestTags::sweep(),"31",f3,a1,frts.frt(),1.0,step);
-           }
+        /// Help class to create and register tests
+        class Create {
+        public:
+            /// Perform creation and registration
+            Create(void) {
+                using namespace Gecode;
+                {
+                    FloatNum step = 0.7;
+                    FloatVal f1(-2, 2);
+                    FloatVal f2(-3, -1);
+                    FloatVal f3(3, 8);
 
-           const FloatVal av2[4] = {1.0,1.0,1.0,1.0};
-           const FloatVal av3[4] = {1.0,-1.0,-1.0,1.0};
-           const FloatVal av4[4] = {2.0,3.0,5.0,7.0};
-           const FloatVal av5[4] = {-2.0,3.0,-5.0,7.0};
+                    FloatValArgs a1(1);
+                    a1[0] = 0.0;
 
-           for (int i=1; i<=4; i++) {
-             FloatValArgs a2(i, av2);
-             FloatValArgs a3(i, av3);
-             FloatValArgs a4(i, av4);
-             FloatValArgs a5(i, av5);
-             for (FloatRelTypes frts; frts(); ++frts) {
-               (void) new FloatFloat(TestTags::sweep(),"12",f1,a2,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTags::sweep(),"13",f1,a3,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTags::sweep(),"14",f1,a4,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTags::sweep(),"15",f1,a5,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTags::sweep(),"22",f2,a2,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTags::sweep(),"23",f2,a3,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTags::sweep(),"24",f2,a4,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTags::sweep(),"25",f2,a5,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTags::sweep(),"32",f3,a2,frts.frt(),1.0,step);
-               if (i < 4) {
-                 (void) new FloatVar(TestTags::sweep(),"12",f1,a2,frts.frt(),step);
-                 (void) new FloatVar(TestTags::sweep(),"13",f1,a3,frts.frt(),step);
-                 (void) new FloatVar(TestTags::sweep(),"14",f1,a4,frts.frt(),step);
-                 (void) new FloatVar(TestTags::sweep(),"15",f1,a5,frts.frt(),step);
-                 (void) new FloatVar(TestTags::sweep(),"22",f2,a2,frts.frt(),step);
-                 (void) new FloatVar(TestTags::sweep(),"23",f2,a3,frts.frt(),step);
-                 (void) new FloatVar(TestTags::sweep(),"24",f2,a4,frts.frt(),step);
-                 (void) new FloatVar(TestTags::sweep(),"25",f2,a5,frts.frt(),step);
-               }
-             }
-           }
-         }
-       }
-     };
+                    for (FloatRelTypes frts; frts(); ++frts) {
+                        TestTags tags = frts.frt() == Gecode::FRT_EQ ? TestTags::standard() : TestTags::sweep();
+                        (void)new FloatFloat(tags, "11", f1, a1, frts.frt(), 0.0, step);
+                        (void)new FloatVar(tags, "11", f1, a1, frts.frt(), step);
+                        (void)new FloatFloat(TestTags::sweep(), "21", f2, a1, frts.frt(), 0.0, step);
+                        (void)new FloatVar(TestTags::sweep(), "21", f2, a1, frts.frt(), step);
+                        (void)new FloatFloat(TestTags::sweep(), "31", f3, a1, frts.frt(), 1.0, step);
+                    }
 
-     Create c;
-     //@}
+                    const FloatVal av2[4] = {1.0, 1.0, 1.0, 1.0};
+                    const FloatVal av3[4] = {1.0, -1.0, -1.0, 1.0};
+                    const FloatVal av4[4] = {2.0, 3.0, 5.0, 7.0};
+                    const FloatVal av5[4] = {-2.0, 3.0, -5.0, 7.0};
 
-   }
-}}
+                    for (int i = 1; i <= 4; i++) {
+                        FloatValArgs a2(i, av2);
+                        FloatValArgs a3(i, av3);
+                        FloatValArgs a4(i, av4);
+                        FloatValArgs a5(i, av5);
+                        for (FloatRelTypes frts; frts(); ++frts) {
+                            (void)new FloatFloat(TestTags::sweep(), "12", f1, a2, frts.frt(), 0.0, step);
+                            (void)new FloatFloat(TestTags::sweep(), "13", f1, a3, frts.frt(), 0.0, step);
+                            (void)new FloatFloat(TestTags::sweep(), "14", f1, a4, frts.frt(), 0.0, step);
+                            (void)new FloatFloat(TestTags::sweep(), "15", f1, a5, frts.frt(), 0.0, step);
+                            (void)new FloatFloat(TestTags::sweep(), "22", f2, a2, frts.frt(), 0.0, step);
+                            (void)new FloatFloat(TestTags::sweep(), "23", f2, a3, frts.frt(), 0.0, step);
+                            (void)new FloatFloat(TestTags::sweep(), "24", f2, a4, frts.frt(), 0.0, step);
+                            (void)new FloatFloat(TestTags::sweep(), "25", f2, a5, frts.frt(), 0.0, step);
+                            (void)new FloatFloat(TestTags::sweep(), "32", f3, a2, frts.frt(), 1.0, step);
+                            if (i < 4) {
+                                (void)new FloatVar(TestTags::sweep(), "12", f1, a2, frts.frt(), step);
+                                (void)new FloatVar(TestTags::sweep(), "13", f1, a3, frts.frt(), step);
+                                (void)new FloatVar(TestTags::sweep(), "14", f1, a4, frts.frt(), step);
+                                (void)new FloatVar(TestTags::sweep(), "15", f1, a5, frts.frt(), step);
+                                (void)new FloatVar(TestTags::sweep(), "22", f2, a2, frts.frt(), step);
+                                (void)new FloatVar(TestTags::sweep(), "23", f2, a3, frts.frt(), step);
+                                (void)new FloatVar(TestTags::sweep(), "24", f2, a4, frts.frt(), step);
+                                (void)new FloatVar(TestTags::sweep(), "25", f2, a5, frts.frt(), step);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        Create c;
+        //@}
+
+    } // namespace Linear
+}} // namespace Test::Float
 
 // STATISTICS: test-float

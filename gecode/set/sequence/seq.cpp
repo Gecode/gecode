@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -41,32 +40,33 @@
 
 namespace Gecode { namespace Set { namespace Sequence {
 
-  /*
-   * "Sequence" propagator
-   *
-   */
+    /*
+     * "Sequence" propagator
+     *
+     */
 
-  Actor*
-  Seq::copy(Space& home) {
-    return new (home) Seq(home,*this);
-  }
+    Actor*
+    Seq::copy(Space& home) {
+        return new (home) Seq(home, *this);
+    }
 
-  ExecStatus
-  Seq::propagate(Space& home, const ModEventDelta&) {
-    bool modified = false;
-    bool assigned;
-    do {
-      assigned = false; modified = false;
-      GECODE_ES_CHECK(propagateSeq(home, modified, assigned, x));
-    } while (assigned || modified);
+    ExecStatus
+    Seq::propagate(Space& home, const ModEventDelta&) {
+        bool modified = false;
+        bool assigned;
+        do {
+            assigned = false;
+            modified = false;
+            GECODE_ES_CHECK(propagateSeq(home, modified, assigned, x));
+        } while (assigned || modified);
 
-    for (int i=x.size(); i--;)
-      if (!x[i].assigned())
-        return ES_FIX;
+        for (int i = x.size(); i--;)
+            if (!x[i].assigned())
+                return ES_FIX;
 
-    return home.ES_SUBSUMED(*this);
-  }
+        return home.ES_SUBSUMED(*this);
+    }
 
-}}}
+}}} // namespace Gecode::Set::Sequence
 
 // STATISTICS: set-prop

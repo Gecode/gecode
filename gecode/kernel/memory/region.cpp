@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,93 +34,97 @@
 
 namespace Gecode {
 
-  Region::Pool::Pool(void)
-    : c(new Chunk), n_c(2U) {
-    c->next = new Chunk; c->next->next = nullptr;
-  }
-  Region::Chunk*
-  Region::Pool::chunk(void) {
-    Chunk* n;
-    {
-      Support::Lock l(m);
-      if (c != nullptr) {
-        assert(n_c > 0U);
-        n = c; c = c->next; n_c--;
-      } else {
-        n = new Region::Chunk;
-      }
-      n->reset();
+    Region::Pool::Pool(void) : c(new Chunk), n_c(2U) {
+        c->next = new Chunk;
+        c->next->next = nullptr;
     }
-    return n;
-  }
-  void
-  Region::Pool::chunk(Chunk* u) {
-    Support::Lock l(m);
-    if (n_c == Kernel::MemoryConfig::n_hc_cache) {
-      delete u;
-    } else {
-      u->next = c; c = u;
-      n_c++;
+    Region::Chunk*
+    Region::Pool::chunk(void) {
+        Chunk* n;
+        {
+            Support::Lock l(m);
+            if (c != nullptr) {
+                assert(n_c > 0U);
+                n = c;
+                c = c->next;
+                n_c--;
+            } else {
+                n = new Region::Chunk;
+            }
+            n->reset();
+        }
+        return n;
     }
-  }
-  Region::Pool::~Pool(void) {
-    Support::Lock l(m);
-    // If that were the case there would be a memory leak!
-    assert(c != nullptr);
-    do {
-      Chunk* n=c->next;
-      delete c;
-      c=n;
-    } while (c != nullptr);
-  }
-
-  Region::Pool& Region::pool(void) {
-    thread_local static Region::Pool _p;
-    return _p;
-  }
-
-  void*
-  Region::heap_alloc(size_t s) {
-    void* p = heap.ralloc(s);
-    if (hi == nullptr) {
-      hi = p;
-      assert(!Support::marked(hi));
-    } else if (!Support::marked(hi)) {
-      HeapInfo* h = static_cast<HeapInfo*>
-        (heap.ralloc(sizeof(HeapInfo)+(4-1)*sizeof(void*)));
-      h->n=2; h->size=4;
-      h->blocks[0]=hi; h->blocks[1]=p;
-      hi = Support::mark(h);
-    } else {
-      HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
-      if (h->n == h->size) {
-        HeapInfo* n = static_cast<HeapInfo*>
-          (heap.ralloc(sizeof(HeapInfo)+(2*h->n-1)*sizeof(void*)));
-        n->size = 2*h->n;
-        n->n = h->n;
-        memcpy(&n->blocks[0], &h->blocks[0], h->n*sizeof(void*));
-        hi = Support::mark(n);
-        heap.rfree(h);
-        h = n;
-      }
-      h->blocks[h->n++] = p;
+    void
+    Region::Pool::chunk(Chunk* u) {
+        Support::Lock l(m);
+        if (n_c == Kernel::MemoryConfig::n_hc_cache) {
+            delete u;
+        } else {
+            u->next = c;
+            c = u;
+            n_c++;
+        }
     }
-    return p;
-  }
-
-  void
-  Region::heap_free(void) {
-    assert(hi != nullptr);
-    if (Support::marked(hi)) {
-      HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
-      for (unsigned int i=0U; i<h->n; i++)
-        heap.rfree(h->blocks[i]);
-      heap.rfree(h);
-    } else {
-      heap.rfree(hi);
+    Region::Pool::~Pool(void) {
+        Support::Lock l(m);
+        // If that were the case there would be a memory leak!
+        assert(c != nullptr);
+        do {
+            Chunk* n = c->next;
+            delete c;
+            c = n;
+        } while (c != nullptr);
     }
-  }
 
-}
+    Region::Pool&
+    Region::pool(void) {
+        thread_local static Region::Pool _p;
+        return _p;
+    }
+
+    void*
+    Region::heap_alloc(size_t s) {
+        void* p = heap.ralloc(s);
+        if (hi == nullptr) {
+            hi = p;
+            assert(!Support::marked(hi));
+        } else if (!Support::marked(hi)) {
+            HeapInfo* h = static_cast<HeapInfo*>(heap.ralloc(sizeof(HeapInfo) + (4 - 1) * sizeof(void*)));
+            h->n = 2;
+            h->size = 4;
+            h->blocks[0] = hi;
+            h->blocks[1] = p;
+            hi = Support::mark(h);
+        } else {
+            HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
+            if (h->n == h->size) {
+                HeapInfo* n = static_cast<HeapInfo*>(heap.ralloc(sizeof(HeapInfo) + (2 * h->n - 1) * sizeof(void*)));
+                n->size = 2 * h->n;
+                n->n = h->n;
+                memcpy(&n->blocks[0], &h->blocks[0], h->n * sizeof(void*));
+                hi = Support::mark(n);
+                heap.rfree(h);
+                h = n;
+            }
+            h->blocks[h->n++] = p;
+        }
+        return p;
+    }
+
+    void
+    Region::heap_free(void) {
+        assert(hi != nullptr);
+        if (Support::marked(hi)) {
+            HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
+            for (unsigned int i = 0U; i < h->n; i++)
+                heap.rfree(h->blocks[i]);
+            heap.rfree(h);
+        } else {
+            heap.rfree(hi);
+        }
+    }
+
+} // namespace Gecode
 
 // STATISTICS: kernel-memory

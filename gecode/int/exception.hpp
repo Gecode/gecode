@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,136 +32,134 @@
 
 namespace Gecode { namespace Int {
 
-  /**
-   * \defgroup FuncThrowInt Integer exceptions
-   * \ingroup FuncThrow
-   */
+    /**
+     * \defgroup FuncThrowInt Integer exceptions
+     * \ingroup FuncThrow
+     */
 
-  //@{
+    //@{
 
-  /// %Exception: Value out of limits
-  class GECODE_INT_EXPORT OutOfLimits : public Exception {
-  public:
-    /// Initialize with location \a l
-    OutOfLimits(const char* l);
-  };
+    /// %Exception: Value out of limits
+    class GECODE_INT_EXPORT OutOfLimits : public Exception {
+    public:
+        /// Initialize with location \a l
+        OutOfLimits(const char* l);
+    };
 
-  /// %Exception: Not 0/1 integer
-  class GECODE_INT_EXPORT NotZeroOne : public Exception {
-  public:
-    /// Initialize with location \a l
-    NotZeroOne(const char* l);
-  };
+    /// %Exception: Not 0/1 integer
+    class GECODE_INT_EXPORT NotZeroOne : public Exception {
+    public:
+        /// Initialize with location \a l
+        NotZeroOne(const char* l);
+    };
 
+    /// %Exception: %Variable created with empty domain
+    class GECODE_INT_EXPORT VariableEmptyDomain : public Exception {
+    public:
+        /// Initialize with location \a l
+        VariableEmptyDomain(const char* l);
+    };
 
-  /// %Exception: %Variable created with empty domain
-  class GECODE_INT_EXPORT VariableEmptyDomain : public Exception {
-  public:
-    /// Initialize with location \a l
-    VariableEmptyDomain(const char* l);
-  };
+    /// %Exception: Too few arguments available in argument array
+    class GECODE_INT_EXPORT TooFewArguments : public Exception {
+    public:
+        /// Initialize with location \a l
+        TooFewArguments(const char* l);
+    };
 
-  /// %Exception: Too few arguments available in argument array
-  class GECODE_INT_EXPORT TooFewArguments : public Exception  {
-  public:
-    /// Initialize with location \a l
-    TooFewArguments(const char* l);
-  };
+    /// %Exception: Arguments are of different size
+    class GECODE_INT_EXPORT ArgumentSizeMismatch : public Exception {
+    public:
+        /// Initialize with location \a l
+        ArgumentSizeMismatch(const char* l);
+    };
 
-  /// %Exception: Arguments are of different size
-  class GECODE_INT_EXPORT ArgumentSizeMismatch : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentSizeMismatch(const char* l);
-  };
+    /// %Exception: Arguments contain same variable multiply
+    class GECODE_INT_EXPORT ArgumentSame : public Exception {
+    public:
+        /// Initialize with location \a l
+        ArgumentSame(const char* l);
+    };
 
-  /// %Exception: Arguments contain same variable multiply
-  class GECODE_INT_EXPORT ArgumentSame : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentSame(const char* l);
-  };
+    /// %Exception: Unknown relation passed as argument
+    class GECODE_INT_EXPORT UnknownRelation : public Exception {
+    public:
+        /// Initialize with location \a l
+        UnknownRelation(const char* l);
+    };
 
-  /// %Exception: Unknown relation passed as argument
-  class GECODE_INT_EXPORT UnknownRelation : public Exception  {
-  public:
-    /// Initialize with location \a l
-    UnknownRelation(const char* l);
-  };
+    /// %Exception: Unknown operation passed as argument
+    class GECODE_INT_EXPORT UnknownOperation : public Exception {
+    public:
+        /// Initialize with location \a l
+        UnknownOperation(const char* l);
+    };
 
-  /// %Exception: Unknown operation passed as argument
-  class GECODE_INT_EXPORT UnknownOperation : public Exception  {
-  public:
-    /// Initialize with location \a l
-    UnknownOperation(const char* l);
-  };
+    /// %Exception: Illegal operation passed as argument
+    class GECODE_INT_EXPORT IllegalOperation : public Exception {
+    public:
+        /// Initialize with location \a l
+        IllegalOperation(const char* l);
+    };
 
-  /// %Exception: Illegal operation passed as argument
-  class GECODE_INT_EXPORT IllegalOperation : public Exception  {
-  public:
-    /// Initialize with location \a l
-    IllegalOperation(const char* l);
-  };
+    /// %Exception: Unknown value or variable selection passed as argument
+    class GECODE_INT_EXPORT UnknownBranching : public Exception {
+    public:
+        /// Initialize with location \a l
+        UnknownBranching(const char* l);
+    };
 
-  /// %Exception: Unknown value or variable selection passed as argument
-  class GECODE_INT_EXPORT UnknownBranching : public Exception {
-  public:
-    /// Initialize with location \a l
-    UnknownBranching(const char* l);
-  };
+    /// %Exception: Unknown reification mode passed as argument
+    class GECODE_INT_EXPORT UnknownReifyMode : public Exception {
+    public:
+        /// Initialize with location \a l
+        UnknownReifyMode(const char* l);
+    };
 
-  /// %Exception: Unknown reification mode passed as argument
-  class GECODE_INT_EXPORT UnknownReifyMode : public Exception {
-  public:
-    /// Initialize with location \a l
-    UnknownReifyMode(const char* l);
-  };
+    /// %Exception: Attempt to access value of unassigned variable
+    class GECODE_INT_EXPORT ValOfUnassignedVar : public Exception {
+    public:
+        /// Initialize with location \a l
+        ValOfUnassignedVar(const char* l);
+    };
 
-  /// %Exception: Attempt to access value of unassigned variable
-  class GECODE_INT_EXPORT ValOfUnassignedVar : public Exception {
-  public:
-    /// Initialize with location \a l
-    ValOfUnassignedVar(const char* l);
-  };
+    /// %Exception: uninitialized tuple set
+    class GECODE_INT_EXPORT UninitializedTupleSet : public Exception {
+    public:
+        /// Initialize with location \a l
+        UninitializedTupleSet(const char* l);
+    };
 
-  /// %Exception: uninitialized tuple set
-  class GECODE_INT_EXPORT UninitializedTupleSet : public Exception {
-  public:
-    /// Initialize with location \a l
-    UninitializedTupleSet(const char* l);
-  };
+    /// %Exception: Tuple set not yet finalized
+    class GECODE_INT_EXPORT NotYetFinalized : public Exception {
+    public:
+        /// Initialize with location \a l
+        NotYetFinalized(const char* l);
+    };
 
-  /// %Exception: Tuple set not yet finalized
-  class GECODE_INT_EXPORT NotYetFinalized : public Exception {
-  public:
-    /// Initialize with location \a l
-    NotYetFinalized(const char* l);
-  };
+    /// %Exception: Tuple set already finalized
+    class GECODE_INT_EXPORT AlreadyFinalized : public Exception {
+    public:
+        /// Initialize with location \a l
+        AlreadyFinalized(const char* l);
+    };
 
-  /// %Exception: Tuple set already finalized
-  class GECODE_INT_EXPORT AlreadyFinalized : public Exception {
-  public:
-    /// Initialize with location \a l
-    AlreadyFinalized(const char* l);
-  };
+    /// %Exception: Variable in symmetry not branched on
+    class GECODE_INT_EXPORT LDSBUnbranchedVariable : public Exception {
+    public:
+        /// Initialize with location \a l
+        LDSBUnbranchedVariable(const char* l);
+    };
 
-  /// %Exception: Variable in symmetry not branched on
-  class GECODE_INT_EXPORT LDSBUnbranchedVariable : public Exception {
-  public:
-    /// Initialize with location \a l
-    LDSBUnbranchedVariable(const char* l);
-  };
+    /// %Exception: Value selection incompatible with LDSB
+    class GECODE_INT_EXPORT LDSBBadValueSelection : public Exception {
+    public:
+        /// Initialize with location \a l
+        LDSBBadValueSelection(const char* l);
+    };
 
-  /// %Exception: Value selection incompatible with LDSB
-  class GECODE_INT_EXPORT LDSBBadValueSelection : public Exception {
-  public:
-    /// Initialize with location \a l
-    LDSBBadValueSelection(const char* l);
-  };
+    //@}
 
-  //@}
-
-}}
+}} // namespace Gecode::Int
 
 // STATISTICS: int-other
-

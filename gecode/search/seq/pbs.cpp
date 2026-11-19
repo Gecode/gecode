@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,30 +34,30 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  bool
-  PortfolioStop::stop(const Statistics& s, const Options& o) {
-    if (po != nullptr) {
-      Statistics others;
-      {
-        Support::Lock lock(ssi->m);
-        others = ssi->others;
-      }
-      if (po->stop(others + s,o)) {
-        pbs_record_cause(ssi->cause,PortfolioStopCause::Portfolio);
-        return true;
-      }
+    bool
+    PortfolioStop::stop(const Statistics& s, const Options& o) {
+        if (po != nullptr) {
+            Statistics others;
+            {
+                Support::Lock lock(ssi->m);
+                others = ssi->others;
+            }
+            if (po->stop(others + s, o)) {
+                pbs_record_cause(ssi->cause, PortfolioStopCause::Portfolio);
+                return true;
+            }
+        }
+        if ((so != nullptr) && so->stop(s, o)) {
+            pbs_record_cause(ssi->cause, PortfolioStopCause::Asset);
+            return true;
+        }
+        if (s.fail >= ssi->l) {
+            pbs_record_cause(ssi->cause, PortfolioStopCause::Slice);
+            return true;
+        }
+        return false;
     }
-    if ((so != nullptr) && so->stop(s,o)) {
-      pbs_record_cause(ssi->cause,PortfolioStopCause::Asset);
-      return true;
-    }
-    if (s.fail >= ssi->l) {
-      pbs_record_cause(ssi->cause,PortfolioStopCause::Slice);
-      return true;
-    }
-    return false;
-  }
 
-}}}
+}}} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

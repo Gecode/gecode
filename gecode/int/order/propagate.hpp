@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,42 +34,40 @@
 
 namespace Gecode { namespace Int { namespace Order {
 
-  forceinline
-  OrderProp::OrderProp(Home home, IntView _s0, int _p0, IntView _s1, int _p1,
-                       BoolView _b)
-    : Propagator(home), s0(_s0), s1(_s1), b(_b), p0(_p0), p1(_p1) {
-    s0.subscribe(home,*this,PC_INT_BND);
-    s1.subscribe(home,*this,PC_INT_BND);
-    b.subscribe(home,*this,PC_INT_VAL);
-  }
-
-  forceinline ExecStatus
-  OrderProp::post(Home home, IntView s0, int p0, IntView s1, int p1,
-                  BoolView b) {
-    if (s0.max() + p0 <= s1.min()) {
-      GECODE_ME_CHECK(b.zero(home));
-    } else if (s1.max() + p1 <= s0.min()) {
-      GECODE_ME_CHECK(b.one(home));
-    } else if ((s1.min() + p1 > s0.max()) || b.zero()) {
-      GECODE_ME_CHECK(b.zero(home));
-      return Rel::Lq<OffsetView,IntView>::post(home,OffsetView(s0,p0),s1);
-    } else if ((s0.min() + p0 > s1.max()) || b.one()) {
-      GECODE_ME_CHECK(b.one(home));
-      return Rel::Lq<OffsetView,IntView>::post(home,OffsetView(s1,p1),s0);
-    } else {
-      (void) new (home) OrderProp(home,s0,p0,s1,p1,b);
+    forceinline
+    OrderProp::OrderProp(Home home, IntView _s0, int _p0, IntView _s1, int _p1, BoolView _b)
+        : Propagator(home), s0(_s0), s1(_s1), b(_b), p0(_p0), p1(_p1) {
+        s0.subscribe(home, *this, PC_INT_BND);
+        s1.subscribe(home, *this, PC_INT_BND);
+        b.subscribe(home, *this, PC_INT_VAL);
     }
-    return ES_OK;
-  }
 
-  forceinline
-  OrderProp::OrderProp(Space& home, OrderProp& p)
-    : Propagator(home,p), p0(p.p0), p1(p.p1) {
-    s0.update(home,p.s0);
-    s1.update(home,p.s1);
-    b.update(home,p.b);
-  }
+    forceinline ExecStatus
+    OrderProp::post(Home home, IntView s0, int p0, IntView s1, int p1, BoolView b) {
+        if (s0.max() + p0 <= s1.min()) {
+            GECODE_ME_CHECK(b.zero(home));
+        } else if (s1.max() + p1 <= s0.min()) {
+            GECODE_ME_CHECK(b.one(home));
+        } else if ((s1.min() + p1 > s0.max()) || b.zero()) {
+            GECODE_ME_CHECK(b.zero(home));
+            return Rel::Lq<OffsetView, IntView>::post(home, OffsetView(s0, p0), s1);
+        } else if ((s0.min() + p0 > s1.max()) || b.one()) {
+            GECODE_ME_CHECK(b.one(home));
+            return Rel::Lq<OffsetView, IntView>::post(home, OffsetView(s1, p1), s0);
+        } else {
+            (void)new (home) OrderProp(home, s0, p0, s1, p1, b);
+        }
+        return ES_OK;
+    }
 
-}}}
+    forceinline
+    OrderProp::OrderProp(Space& home, OrderProp& p)
+        : Propagator(home, p), p0(p.p0), p1(p.p1) {
+        s0.update(home, p.s0);
+        s1.update(home, p.s1);
+        b.update(home, p.b);
+    }
+
+}}} // namespace Gecode::Int::Order
 
 // STATISTICS: int-prop

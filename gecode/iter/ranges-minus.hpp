@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,71 +32,69 @@
 
 namespace Gecode { namespace Iter { namespace Ranges {
 
-  /**
-   * \brief Range iterator for pointwise minus of a range iterator
-   *
-   * This iterator in effect changes the order of how ranges
-   * are iterated: the first range of the input iterator defines
-   * the last range of the Minus iterator. Upon initialization
-   * all ranges of the input iterator are stored
-   * which later allows iteration in inverse direction.
-   *
-   * \ingroup FuncIterRanges
-   */
-  class Minus : public RangeListIter {
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Minus(void);
-    /// Copy constructor
-    Minus(const Minus& m);
-    /// Initialize with ranges from \a i
-    template<class I>
-    Minus(Region& r, I& i);
-    /// Initialize with ranges from \a i
-    template<class I>
-    void init(Region& r, I& i);
-    /// Assignment operator (both iterators must be allocated from the same region)
-    Minus& operator =(const Minus& m);
-    //@}
-  };
+    /**
+     * \brief Range iterator for pointwise minus of a range iterator
+     *
+     * This iterator in effect changes the order of how ranges
+     * are iterated: the first range of the input iterator defines
+     * the last range of the Minus iterator. Upon initialization
+     * all ranges of the input iterator are stored
+     * which later allows iteration in inverse direction.
+     *
+     * \ingroup FuncIterRanges
+     */
+    class Minus : public RangeListIter {
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Minus(void);
+        /// Copy constructor
+        Minus(const Minus& m);
+        /// Initialize with ranges from \a i
+        template <class I>
+        Minus(Region& r, I& i);
+        /// Initialize with ranges from \a i
+        template <class I>
+        void init(Region& r, I& i);
+        /// Assignment operator (both iterators must be allocated from the same region)
+        Minus& operator=(const Minus& m);
+        //@}
+    };
 
+    forceinline
+    Minus::Minus(void) {}
 
-  forceinline
-  Minus::Minus(void) {}
+    forceinline
+    Minus::Minus(const Minus& m)
+        : RangeListIter(m) {}
 
-  forceinline
-  Minus::Minus(const Minus& m)
-    : RangeListIter(m) {}
-
-  template<class I>
-  void
-  Minus::init(Region& r, I& i) {
-    RangeListIter::init(r);
-    RangeList* p = nullptr;
-    for (; i(); ++i) {
-      RangeList* t = new (*rlio) RangeList;
-      t->next = p;
-      t->min = -i.max();
-      t->max = -i.min();
-      p = t;
+    template <class I>
+    void
+    Minus::init(Region& r, I& i) {
+        RangeListIter::init(r);
+        RangeList* p = nullptr;
+        for (; i(); ++i) {
+            RangeList* t = new (*rlio) RangeList;
+            t->next = p;
+            t->min = -i.max();
+            t->max = -i.min();
+            p = t;
+        }
+        RangeListIter::set(p);
     }
-    RangeListIter::set(p);
-  }
 
-  template<class I>
-  forceinline
-  Minus::Minus(Region& r, I& i) {
-    init(r,i);
-  }
+    template <class I>
+    forceinline
+    Minus::Minus(Region& r, I& i) {
+        init(r, i);
+    }
 
-  forceinline Minus&
-  Minus::operator =(const Minus& m) {
-    return static_cast<Minus&>(RangeListIter::operator =(m));
-  }
+    forceinline Minus&
+    Minus::operator=(const Minus& m) {
+        return static_cast<Minus&>(RangeListIter::operator=(m));
+    }
 
-}}}
+}}} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any
-

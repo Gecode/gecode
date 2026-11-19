@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,13 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("fzn_comparison",
-"var bool: b1;\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest("fzn_comparison", "var bool: b1;\n\
 var bool: b2;\n\
 var bool: b3;\n\
 var bool: b4;\n\
@@ -268,13 +263,11 @@ constraint int_lin_eq_reif([1, 2, 3], ia5, 14, ria5);\n\
 \n\
 solve satisfy;\n\
 ",
-"----------\n");
-      }
+                                   "----------\n");
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

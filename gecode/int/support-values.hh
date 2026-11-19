@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,113 +37,114 @@
 
 namespace Gecode { namespace Int {
 
-  /**
-   * \brief %Support value iterator and recorder
-   *
-   * Requires \code #include <gecode/int/support-values.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class View, class A>
-  class SupportValues {
-  private:
-    /// Memory allocator
-    A& a;
-    /// Range and position information
-    class RangePos {
-    public:
-      int min;          ///< Minimum of range
-      unsigned int pos; ///< Starting position of range
-    };
-    /// Value iterator for unsupported values
-    class Unsupported {
+    /**
+     * \brief %Support value iterator and recorder
+     *
+     * Requires \code #include <gecode/int/support-values.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class View, class A>
+    class SupportValues {
     private:
-      /// Current range
-      RangePos* rp;
-      /// Current position
-      unsigned int p;
-      /// Access to other information
-      SupportValues& sv;
-      /// Find next unsupported value
-      void find(void);
+        /// Memory allocator
+        A& a;
+        /// Range and position information
+        class RangePos {
+        public:
+            int min;          ///< Minimum of range
+            unsigned int pos; ///< Starting position of range
+        };
+        /// Value iterator for unsupported values
+        class Unsupported {
+        private:
+            /// Current range
+            RangePos* rp;
+            /// Current position
+            unsigned int p;
+            /// Access to other information
+            SupportValues& sv;
+            /// Find next unsupported value
+            void find(void);
+
+        public:
+            /// \name Constructors and initialization
+            //@{
+            /// Initialize with values from \a sv
+            Unsupported(SupportValues& sv0);
+            //@}
+
+            /// \name Iteration control
+            //@{
+            /// Test whether iterator is still at a value or done
+            bool operator()(void) const;
+            /// Move iterator to next value (if possible)
+            void operator++(void);
+            //@}
+
+            /// \name Value access
+            //@{
+            /// Return current value
+            int val(void) const;
+            //@}
+        };
+
+        /// The view
+        View x;
+        /// Bit set
+        Gecode::Support::BitSetBase bs;
+        /// Start of range and position information
+        RangePos* rp_fst;
+        /// End of range and position information
+        RangePos* rp_lst;
+        /// Current range
+        RangePos* rp;
+        /// Current value
+        int v;
+        /// Current maximum of range
+        int max;
+
+        /// Mark \a n as supported and return whether value can be supported
+        bool _support(int n);
+
     public:
-      /// \name Constructors and initialization
-      //@{
-      /// Initialize with values from \a sv
-      Unsupported(SupportValues& sv0);
-      //@}
+        /// Initialize for view \a x
+        SupportValues(A& a, View x);
+        /// Destructor
+        ~SupportValues(void);
 
-      /// \name Iteration control
-      //@{
-      /// Test whether iterator is still at a value or done
-      bool operator ()(void) const;
-      /// Move iterator to next value (if possible)
-      void operator ++(void);
-      //@}
+        /// \name Iteration control
+        //@{
+        /// Reset iterator
+        void reset(void);
+        /// Test whether iterator is still at a value or done
+        bool operator()(void) const;
+        /// Move iterator to next value (if possible)
+        void operator++(void);
+        //@}
 
-      /// \name Value access
-      //@{
-      /// Return current value
-      int val(void) const;
-      //@}
+        /// \name Value access
+        //@{
+        /// Return current value
+        int val(void) const;
+        //@}
+
+        /// \name Support control
+        //@{
+        /// Mark current (iterator) value as supported
+        void support(void);
+        /// Mark \a n as supported if possible
+        bool support(int n);
+        /// Mark \a n as supported if possible
+        bool support(long long int n);
+        /// Remove all unsupported values
+        ModEvent tell(Space& home);
+        //@}
     };
 
-    /// The view
-    View x;
-    /// Bit set
-    Gecode::Support::BitSetBase bs;
-    /// Start of range and position information
-    RangePos* rp_fst;
-    /// End of range and position information
-    RangePos* rp_lst;
-    /// Current range
-    RangePos* rp;
-    /// Current value
-    int v;
-    /// Current maximum of range
-    int max;
-
-    /// Mark \a n as supported and return whether value can be supported
-    bool _support(int n);
-  public:
-    /// Initialize for view \a x
-    SupportValues(A& a, View x);
-    /// Destructor
-    ~SupportValues(void);
-
-    /// \name Iteration control
-    //@{
-    /// Reset iterator
-    void reset(void);
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator ++(void);
-    //@}
-
-    /// \name Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-
-    /// \name Support control
-    //@{
-    /// Mark current (iterator) value as supported
-    void support(void);
-    /// Mark \a n as supported if possible
-    bool support(int n);
-    /// Mark \a n as supported if possible
-    bool support(long long int n);
-    /// Remove all unsupported values
-    ModEvent tell(Space& home);
-    //@}
-  };
-
-}}
+}} // namespace Gecode::Int
 
 #include <gecode/int/support-values.hpp>
 
 #endif
 
 // STATISTICS: int-prop
-

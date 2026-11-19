@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,33 +32,32 @@
 
 namespace Gecode {
 
-  /**
-   * \brief Check whether modification event \a me is failed.
-   * \ingroup TaskActor
-   */
-  bool me_failed(ModEvent me);
-  /**
-   * \brief Check whether modification event \a me describes variable modification.
-   * \ingroup TaskActor
-   */
-  bool me_modified(ModEvent me);
+    /**
+     * \brief Check whether modification event \a me is failed.
+     * \ingroup TaskActor
+     */
+    bool me_failed(ModEvent me);
+    /**
+     * \brief Check whether modification event \a me describes variable modification.
+     * \ingroup TaskActor
+     */
+    bool me_modified(ModEvent me);
 
+    /*
+     * Modification events
+     *
+     */
 
-  /*
-   * Modification events
-   *
-   */
+    forceinline bool
+    me_failed(ModEvent me) {
+        return me < ME_GEN_NONE;
+    }
 
-  forceinline bool
-  me_failed(ModEvent me) {
-    return me < ME_GEN_NONE;
-  }
+    forceinline bool
+    me_modified(ModEvent me) {
+        return me > ME_GEN_NONE;
+    }
 
-  forceinline bool
-  me_modified(ModEvent me) {
-    return me > ME_GEN_NONE;
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-other

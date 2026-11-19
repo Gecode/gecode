@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -43,123 +42,123 @@ using namespace Gecode;
  */
 class OrthoLatinSquare : public Script {
 protected:
-  /// Size of squares
-  const int n;
-  /// Fields of first square
-  IntVarArray x1;
-  /// Fields of second square
-  IntVarArray x2;
+    /// Size of squares
+    const int n;
+    /// Fields of first square
+    IntVarArray x1;
+    /// Fields of second square
+    IntVarArray x2;
 
 public:
-  /// Access field at position \a i and \a j in first square
-  IntVar& y1(int i, int j) {
-    return x1[i*n+j];
-  }
-  /// Access field at position \a i and \a j in first square
-  const IntVar& y1(int i, int j) const {
-    return x1[i*n+j];
-  }
-  /// Access field at position \a i and \a j in second square
-  IntVar& y2(int i, int j) {
-    return x2[i*n+j];
-  }
-  /// Access field at position \a i and \a j in second square
-  const IntVar& y2(int i, int j) const {
-    return x2[i*n+j];
-  }
+    /// Access field at position \a i and \a j in first square
+    IntVar&
+    y1(int i, int j) {
+        return x1[i * n + j];
+    }
+    /// Access field at position \a i and \a j in first square
+    const IntVar&
+    y1(int i, int j) const {
+        return x1[i * n + j];
+    }
+    /// Access field at position \a i and \a j in second square
+    IntVar&
+    y2(int i, int j) {
+        return x2[i * n + j];
+    }
+    /// Access field at position \a i and \a j in second square
+    const IntVar&
+    y2(int i, int j) const {
+        return x2[i * n + j];
+    }
 
-  /// Actual model
-  OrthoLatinSquare(const SizeOptions& opt)
-    : Script(opt),
-      n(opt.size()),
-      x1(*this,n*n,1,n), x2(*this,n*n,1,n) {
-    const int nn = n*n;
-    IntVarArgs z(*this,nn,0,n*n-1);
+    /// Actual model
+    OrthoLatinSquare(const SizeOptions& opt)
+        : Script(opt), n(opt.size()), x1(*this, n * n, 1, n), x2(*this, n * n, 1, n) {
+        const int nn = n * n;
+        IntVarArgs z(*this, nn, 0, n * n - 1);
 
-    distinct(*this, z, opt.ipl());
-    // Connect
-    {
-      IntArgs mod(n*n);
-      IntArgs div(n*n);
-      for (int i=0; i<n; i++)
-        for (int j=0; j<n; j++) {
-          mod[i*n+j] = j+1;
-          div[i*n+j] = i+1;
+        distinct(*this, z, opt.ipl());
+        // Connect
+        {
+            IntArgs mod(n * n);
+            IntArgs div(n * n);
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++) {
+                    mod[i * n + j] = j + 1;
+                    div[i * n + j] = i + 1;
+                }
+            for (int i = nn; i--;) {
+                element(*this, div, z[i], x2[i]);
+                element(*this, mod, z[i], x1[i]);
+            }
         }
-      for (int i = nn; i--; ) {
-        element(*this, div, z[i], x2[i]);
-        element(*this, mod, z[i], x1[i]);
-      }
+
+        // Rows
+        for (int i = n; i--;) {
+            IntVarArgs ry(n);
+            for (int j = n; j--;)
+                ry[j] = y1(i, j);
+            distinct(*this, ry, opt.ipl());
+            for (int j = n; j--;)
+                ry[j] = y2(i, j);
+            distinct(*this, ry, opt.ipl());
+        }
+        for (int j = n; j--;) {
+            IntVarArgs cy(n);
+            for (int i = n; i--;)
+                cy[i] = y1(i, j);
+            distinct(*this, cy, opt.ipl());
+            for (int i = n; i--;)
+                cy[i] = y2(i, j);
+            distinct(*this, cy, opt.ipl());
+        }
+
+        for (int i = 1; i < n; i++) {
+            IntVarArgs ry1(n);
+            IntVarArgs ry2(n);
+            for (int j = n; j--;) {
+                ry1[j] = y1(i - 1, j);
+                ry2[j] = y2(i, j);
+            }
+            rel(*this, ry1, IRT_GQ, ry2);
+        }
+
+        branch(*this, z, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
     }
 
-    // Rows
-    for (int i = n; i--; ) {
-      IntVarArgs ry(n);
-      for (int j = n; j--; )
-        ry[j] = y1(i,j);
-      distinct(*this, ry, opt.ipl());
-      for (int j = n; j--; )
-        ry[j] = y2(i,j);
-      distinct(*this, ry, opt.ipl());
-    }
-    for (int j = n; j--; ) {
-      IntVarArgs cy(n);
-      for (int i = n; i--; )
-        cy[i] = y1(i,j);
-      distinct(*this, cy, opt.ipl());
-      for (int i = n; i--; )
-        cy[i] = y2(i,j);
-      distinct(*this, cy, opt.ipl());
+    /// Constructor for cloning \a s
+    OrthoLatinSquare(OrthoLatinSquare& s) : Script(s), n(s.n) {
+        x1.update(*this, s.x1);
+        x2.update(*this, s.x2);
     }
 
-    for (int i = 1; i<n; i++) {
-      IntVarArgs ry1(n);
-      IntVarArgs ry2(n);
-      for (int j = n; j--; ) {
-        ry1[j] = y1(i-1,j);
-        ry2[j] = y2(i,j);
-      }
-      rel(*this, ry1, IRT_GQ, ry2);
+    /// Copy during cloning
+    virtual Space*
+    copy(void) {
+        return new OrthoLatinSquare(*this);
     }
-
-    branch(*this, z, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
-  }
-
-  /// Constructor for cloning \a s
-  OrthoLatinSquare(OrthoLatinSquare& s)
-    : Script(s), n(s.n) {
-      x1.update(*this, s.x1);
-      x2.update(*this, s.x2);
-  }
-
-  /// Copy during cloning
-  virtual Space*
-  copy(void) {
-    return new OrthoLatinSquare(*this);
-  }
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    for (int i = 0; i<n; i++) {
-      os << "\t";
-      for (int j = 0; j<n; j++) {
-        os.width(2);
-        os << y1(i,j) << "  ";
-      }
-      os << std::endl;
+    /// Print solution
+    virtual void
+    print(std::ostream& os) const {
+        for (int i = 0; i < n; i++) {
+            os << "\t";
+            for (int j = 0; j < n; j++) {
+                os.width(2);
+                os << y1(i, j) << "  ";
+            }
+            os << std::endl;
+        }
+        os << std::endl;
+        for (int i = 0; i < n; i++) {
+            os << "\t";
+            for (int j = 0; j < n; j++) {
+                os.width(2);
+                os << y2(i, j) << "  ";
+            }
+            os << std::endl;
+        }
+        os << std::endl;
     }
-    os << std::endl;
-    for (int i = 0; i<n; i++) {
-      os << "\t";
-      for (int j = 0; j<n; j++) {
-        os.width(2);
-        os << y2(i,j) << "  ";
-      }
-      os << std::endl;
-    }
-    os << std::endl;
-  }
-
 };
 
 /**
@@ -168,13 +167,12 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("OrthoLatinSquare");
-  opt.size(7);
-  opt.ipl(IPL_DOM);
-  opt.parse(argc,argv);
-  Script::run<OrthoLatinSquare,DFS,SizeOptions>(opt);
-  return 0;
+    SizeOptions opt("OrthoLatinSquare");
+    opt.size(7);
+    opt.ipl(IPL_DOM);
+    opt.parse(argc, argv);
+    Script::run<OrthoLatinSquare, DFS, SizeOptions>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any
-

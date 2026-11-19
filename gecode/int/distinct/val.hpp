@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,164 +32,165 @@
 
 namespace Gecode { namespace Int { namespace Distinct {
 
-  /*
-   * Eliminating singleton variables
-   *
-   */
-  template<class View, bool complete>
-  ExecStatus
-  prop_val(Space& home, ViewArray<View>& x) {
-    assert(x.size() > 1);
-    int n = x.size();
+    /*
+     * Eliminating singleton variables
+     *
+     */
+    template <class View, bool complete>
+    ExecStatus
+    prop_val(Space& home, ViewArray<View>& x) {
+        assert(x.size() > 1);
+        int n = x.size();
 
-    Region r;
-    int* stack = r.alloc<int>(n);
-    int* c_v = &stack[0];
-    // c_n is the current number of values on stack
-    int c_n = 0;
+        Region r;
+        int* stack = r.alloc<int>(n);
+        int* c_v = &stack[0];
+        // c_n is the current number of values on stack
+        int c_n = 0;
 
-    // Collect all assigned variables on stack
-    for (int i=n; i--; )
-      if (x[i].assigned()) {
-        c_v[c_n++]=x[i].val(); x[i]=x[--n];
-      }
+        // Collect all assigned variables on stack
+        for (int i = n; i--;)
+            if (x[i].assigned()) {
+                c_v[c_n++] = x[i].val();
+                x[i] = x[--n];
+            }
 
-    // The number of trips
-    int t = 0;
-    do {
-      t++;
-      if (!complete && (t > 16)) {
-        // Give up after sixteen iterations, but the values must be
-        // propagated first
-        // Maybe we are lucky in that this iteration does the trick...
-        ExecStatus es = ES_FIX;
-        while (c_n > 0) {
-          int v = c_v[--c_n];
-          // Check whether value is on stack only once
-          for (int i=0; i<c_n; i++)
-            if (c_v[i] == v)
-              goto failed;
-          // Tell and do not collect new values
-          for (int i=0; i<n; i++) {
-            ModEvent me = x[i].nq(home,v);
-            if (me_failed(me))
-              goto failed;
-            if (me == ME_INT_VAL)
-              es = ES_NOFIX;
-          }
-        }
+        // The number of trips
+        int t = 0;
+        do {
+            t++;
+            if (!complete && (t > 16)) {
+                // Give up after sixteen iterations, but the values must be
+                // propagated first
+                // Maybe we are lucky in that this iteration does the trick...
+                ExecStatus es = ES_FIX;
+                while (c_n > 0) {
+                    int v = c_v[--c_n];
+                    // Check whether value is on stack only once
+                    for (int i = 0; i < c_n; i++)
+                        if (c_v[i] == v)
+                            goto failed;
+                    // Tell and do not collect new values
+                    for (int i = 0; i < n; i++) {
+                        ModEvent me = x[i].nq(home, v);
+                        if (me_failed(me))
+                            goto failed;
+                        if (me == ME_INT_VAL)
+                            es = ES_NOFIX;
+                    }
+                }
+                x.size(n);
+                return es;
+            }
+            if (c_n > 31) {
+                // Many values, use full domain operation
+                IntSet d(&c_v[0], c_n);
+                // If the size s of d is different from the number of values,
+                // a value must have appeared multiply: failure
+                if (d.size() != static_cast<unsigned int>(c_n))
+                    goto failed;
+                // We do not need the values on the stack any longer, reset
+                c_n = 0;
+                // Tell and collect new values
+                for (int i = n; i--;)
+                    if ((d.min() <= x[i].max()) && (d.max() >= x[i].min())) {
+                        IntSetRanges dr(d);
+                        ModEvent me = x[i].minus_r(home, dr, false);
+                        if (me_failed(me))
+                            goto failed;
+                        if (me == ME_INT_VAL) {
+                            c_v[c_n++] = x[i].val();
+                            x[i] = x[--n];
+                        }
+                    }
+            } else {
+                // Values for next iteration
+                int* n_v = &c_v[c_n];
+                // Stack top for the next iteration
+                int n_n = 0;
+                while (c_n > 0) {
+                    int v = c_v[--c_n];
+                    // Check whether value is not on current stack
+                    for (int i = 0; i < c_n; i++)
+                        if (c_v[i] == v)
+                            goto failed;
+                    // Check whether value is not on next stack
+                    for (int i = 0; i < n_n; i++)
+                        if (n_v[i] == v)
+                            goto failed;
+                    // Tell and collect new values
+                    for (int i = n; i--;) {
+                        ModEvent me = x[i].nq(home, v);
+                        if (me_failed(me))
+                            goto failed;
+                        if (me == ME_INT_VAL) {
+                            n_v[n_n++] = x[i].val();
+                            x[i] = x[--n];
+                        }
+                    }
+                }
+                c_v = n_v;
+                c_n = n_n;
+            }
+        } while (c_n > 0);
         x.size(n);
-        return es;
-      }
-      if (c_n > 31) {
-        // Many values, use full domain operation
-        IntSet d(&c_v[0],c_n);
-        // If the size s of d is different from the number of values,
-        // a value must have appeared multiply: failure
-        if (d.size() != static_cast<unsigned int>(c_n))
-          goto failed;
-        // We do not need the values on the stack any longer, reset
-        c_n = 0;
-        // Tell and collect new values
-        for (int i = n; i--; )
-          if ((d.min() <= x[i].max()) && (d.max() >= x[i].min())) {
-            IntSetRanges dr(d);
-            ModEvent me = x[i].minus_r(home,dr,false);
-            if (me_failed(me))
-              goto failed;
-            if (me == ME_INT_VAL) {
-              c_v[c_n++]=x[i].val(); x[i]=x[--n];
-            }
-          }
-      } else {
-        // Values for next iteration
-        int* n_v = &c_v[c_n];
-        // Stack top for the next iteration
-        int n_n = 0;
-        while (c_n > 0) {
-          int v = c_v[--c_n];
-          // Check whether value is not on current stack
-          for (int i=0; i<c_n; i++)
-            if (c_v[i] == v)
-              goto failed;
-          // Check whether value is not on next stack
-          for (int i=0; i<n_n; i++)
-            if (n_v[i] == v)
-              goto failed;
-          // Tell and collect new values
-          for (int i = n; i--; ) {
-            ModEvent me = x[i].nq(home,v);
-            if (me_failed(me))
-              goto failed;
-            if (me == ME_INT_VAL) {
-              n_v[n_n++]=x[i].val(); x[i]=x[--n];
-            }
-          }
-        }
-        c_v = n_v; c_n = n_n;
-      }
-    } while (c_n > 0);
-    x.size(n);
-    return ES_FIX;
-  failed:
-    x.size(0);
-    return ES_FAILED;
-  }
+        return ES_FIX;
+    failed:
+        x.size(0);
+        return ES_FAILED;
+    }
 
+    /*
+     * The propagator proper
+     *
+     */
+    template <class View>
+    forceinline
+    Val<View>::Val(Home home, ViewArray<View>& x)
+        : NaryPropagator<View, PC_INT_VAL>(home, x) {}
 
-  /*
-   * The propagator proper
-   *
-   */
-  template<class View>
-  forceinline
-  Val<View>::Val(Home home, ViewArray<View>& x)
-  : NaryPropagator<View,PC_INT_VAL>(home,x) {}
-
-  template<class View>
-  forceinline
-  Val<View>::Val(Space& home, Val<View>& p)
-    : NaryPropagator<View,PC_INT_VAL>(home,p) {}
+    template <class View>
+    forceinline
+    Val<View>::Val(Space& home, Val<View>& p)
+        : NaryPropagator<View, PC_INT_VAL>(home, p) {}
 
 #ifdef GECODE_HAS_CBS
-  template<class View>
-  void
-  Val<View>::solndistrib(Space& home, Propagator::SendMarginal send) const {
-    cbsdistinct(home,this->id(),x,send);
-  }
+    template <class View>
+    void
+    Val<View>::solndistrib(Space& home, Propagator::SendMarginal send) const {
+        cbsdistinct(home, this->id(), x, send);
+    }
 
-  template<class View>
-  void
-  Val<View>::domainsizesum(Propagator::InDecision in, unsigned int& size,
-                           unsigned int& size_b) const {
-    cbssize(x,in,size,size_b);
-  }
+    template <class View>
+    void
+    Val<View>::domainsizesum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const {
+        cbssize(x, in, size, size_b);
+    }
 #endif
 
-  template<class View>
-  Actor*
-  Val<View>::copy(Space& home) {
-    return new (home) Val<View>(home,*this);
-  }
+    template <class View>
+    Actor*
+    Val<View>::copy(Space& home) {
+        return new (home) Val<View>(home, *this);
+    }
 
-  template<class View>
-  ExecStatus
-  Val<View>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ES_CHECK((prop_val<View,true>(home,x)));
-    return (x.size() < 2) ? home.ES_SUBSUMED(*this) : ES_FIX;
-  }
+    template <class View>
+    ExecStatus
+    Val<View>::propagate(Space& home, const ModEventDelta&) {
+        GECODE_ES_CHECK((prop_val<View, true>(home, x)));
+        return (x.size() < 2) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    }
 
-  template<class View>
-  ExecStatus
-  Val<View>::post(Home home, ViewArray<View>& x) {
-    if (x.size() == 2)
-      return Rel::Nq<View,View>::post(home,x[0],x[1]);
-    if (x.size() > 2)
-      (void) new (home) Val<View>(home,x);
-    return ES_OK;
-  }
+    template <class View>
+    ExecStatus
+    Val<View>::post(Home home, ViewArray<View>& x) {
+        if (x.size() == 2)
+            return Rel::Nq<View, View>::post(home, x[0], x[1]);
+        if (x.size() > 2)
+            (void)new (home) Val<View>(home, x);
+        return ES_OK;
+    }
 
-}}}
+}}} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,53 +34,43 @@
 
 namespace Gecode {
 
-  void
-  wait(Home home, IntVar x, std::function<void(Space& home)> c,
-       IntPropLevel) {
-    GECODE_POST;
-    GECODE_ES_FAIL(UnaryWait<Int::IntView>::post(home,x,c));
-  }
+    void
+    wait(Home home, IntVar x, std::function<void(Space& home)> c, IntPropLevel) {
+        GECODE_POST;
+        GECODE_ES_FAIL(UnaryWait<Int::IntView>::post(home, x, c));
+    }
 
-  void
-  wait(Home home, BoolVar x, std::function<void(Space& home)> c,
-       IntPropLevel) {
-    GECODE_POST;
-    GECODE_ES_FAIL(UnaryWait<Int::BoolView>::post(home,x,c));
-  }
+    void
+    wait(Home home, BoolVar x, std::function<void(Space& home)> c, IntPropLevel) {
+        GECODE_POST;
+        GECODE_ES_FAIL(UnaryWait<Int::BoolView>::post(home, x, c));
+    }
 
-  void
-  wait(Home home, const IntVarArgs& x, std::function<void(Space& home)> c,
-       IntPropLevel) {
-    GECODE_POST;
-    ViewArray<Int::IntView> xv(home,x);
-    GECODE_ES_FAIL(NaryWait<Int::IntView>::post(home,xv,c));
-  }
+    void
+    wait(Home home, const IntVarArgs& x, std::function<void(Space& home)> c, IntPropLevel) {
+        GECODE_POST;
+        ViewArray<Int::IntView> xv(home, x);
+        GECODE_ES_FAIL(NaryWait<Int::IntView>::post(home, xv, c));
+    }
 
-  void
-  wait(Home home, const BoolVarArgs& x, std::function<void(Space& home)> c,
-       IntPropLevel) {
-    GECODE_POST;
-    ViewArray<Int::BoolView> xv(home,x);
-    GECODE_ES_FAIL(NaryWait<Int::BoolView>::post(home,xv,c));
-  }
+    void
+    wait(Home home, const BoolVarArgs& x, std::function<void(Space& home)> c, IntPropLevel) {
+        GECODE_POST;
+        ViewArray<Int::BoolView> xv(home, x);
+        GECODE_ES_FAIL(NaryWait<Int::BoolView>::post(home, xv, c));
+    }
 
+    void
+    when(Home home, BoolVar x, std::function<void(Space& home)> t, std::function<void(Space& home)> e, IntPropLevel) {
+        GECODE_POST;
+        GECODE_ES_FAIL(Int::Exec::When::post(home, x, t, e));
+    }
 
-  void
-  when(Home home, BoolVar x,
-       std::function<void(Space& home)> t,
-       std::function<void(Space& home)> e,
-       IntPropLevel) {
-    GECODE_POST;
-    GECODE_ES_FAIL(Int::Exec::When::post(home,x,t,e));
-  }
+    void
+    when(Home home, BoolVar x, std::function<void(Space& home)> t, IntPropLevel) {
+        when(home, x, t, [](Space&) {});
+    }
 
-  void
-  when(Home home, BoolVar x,
-       std::function<void(Space& home)> t,
-       IntPropLevel) {
-    when(home, x, t, [](Space&) {});
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-post

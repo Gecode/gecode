@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Håkan Kjellerstrand <hakank@bonetmail.com>
@@ -58,107 +57,104 @@ using namespace Gecode;
  */
 class WordSquare : public Script {
 protected:
-  /// Length of words
-  const int w_l;
-  /// The array of letters
-  IntVarArray letters;
+    /// Length of words
+    const int w_l;
+    /// The array of letters
+    IntVarArray letters;
+
 public:
-  /// Branching variants
-  enum {
-    BRANCH_WORDS,   ///< Branch on word variables
-    BRANCH_LETTERS, ///< Branch on letter variables
-  };
-  /// Actual model
-  WordSquare(const SizeOptions& opt)
-    : Script(opt), w_l(opt.size()), letters(*this, w_l*w_l) {
+    /// Branching variants
+    enum {
+        BRANCH_WORDS,   ///< Branch on word variables
+        BRANCH_LETTERS, ///< Branch on letter variables
+    };
+    /// Actual model
+    WordSquare(const SizeOptions& opt) : Script(opt), w_l(opt.size()), letters(*this, w_l * w_l) {
 
-    // Initialize letters
-    Matrix<IntVarArray> ml(letters, w_l, w_l);
-    for (int i=0; i<w_l; i++)
-      for (int j=i; j<w_l; j++)
-        ml(i,j) = ml(j,i) = IntVar(*this, 'a','z');
+        // Initialize letters
+        Matrix<IntVarArray> ml(letters, w_l, w_l);
+        for (int i = 0; i < w_l; i++)
+            for (int j = i; j < w_l; j++)
+                ml(i, j) = ml(j, i) = IntVar(*this, 'a', 'z');
 
-    // Number of words with that length
-    const int n_w = dict.words(w_l);
+        // Number of words with that length
+        const int n_w = dict.words(w_l);
 
-    // Initialize word array
-    IntVarArgs words(*this, w_l, 0, n_w-1);
+        // Initialize word array
+        IntVarArgs words(*this, w_l, 0, n_w - 1);
 
-    // All words must be different
-    distinct(*this, words);
+        // All words must be different
+        distinct(*this, words);
 
-    // Link words with letters
-    for (int i=0; i<w_l; i++) {
-      // Map each word to i-th letter in that word
-      IntSharedArray w2l(n_w);
-      for (int n=0; n<n_w; n++)
-        w2l[n]=dict.word(w_l,n)[i];
-      for (int j=0; j<w_l; j++)
-        element(*this, w2l, words[j], ml(i,j));
-    }
-
-    // Symmetry breaking: the last word must be later in the wordlist
-    rel(*this, words[0], IRT_LE, words[w_l-1]);
-
-    switch (opt.branching()) {
-    case BRANCH_WORDS:
-      // Branch by assigning words
-      branch(*this, words, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
-      break;
-    case BRANCH_LETTERS:
-      // Branch by assigning letters
-      branch(*this, letters, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
-      break;
-    }
-  }
-  /// Constructor for cloning \a s
-  WordSquare(WordSquare& s)
-    : Script(s), w_l(s.w_l) {
-    letters.update(*this, s.letters);
-  }
-  /// Copy during cloning
-  virtual Space*
-  copy(void) {
-    return new WordSquare(*this);
-  }
-  /// Print solution
-  virtual void
-  print(std::ostream& os) const {
-    Matrix<IntVarArray> ml(letters, w_l, w_l);
-    for (int i=0; i<w_l; i++) {
-      os << "\t\t";
-      for (int j=0; j<w_l; j++)
-        if (ml(i,j).assigned()) {
-          os << static_cast<char>(ml(i,j).val());
-        } else {
-          os << ".";
+        // Link words with letters
+        for (int i = 0; i < w_l; i++) {
+            // Map each word to i-th letter in that word
+            IntSharedArray w2l(n_w);
+            for (int n = 0; n < n_w; n++)
+                w2l[n] = dict.word(w_l, n)[i];
+            for (int j = 0; j < w_l; j++)
+                element(*this, w2l, words[j], ml(i, j));
         }
-      os << std::endl;
-    }
-    os << std::endl;
-  }
-};
 
+        // Symmetry breaking: the last word must be later in the wordlist
+        rel(*this, words[0], IRT_LE, words[w_l - 1]);
+
+        switch (opt.branching()) {
+        case BRANCH_WORDS:
+            // Branch by assigning words
+            branch(*this, words, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
+            break;
+        case BRANCH_LETTERS:
+            // Branch by assigning letters
+            branch(*this, letters, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
+            break;
+        }
+    }
+    /// Constructor for cloning \a s
+    WordSquare(WordSquare& s) : Script(s), w_l(s.w_l) {
+        letters.update(*this, s.letters);
+    }
+    /// Copy during cloning
+    virtual Space*
+    copy(void) {
+        return new WordSquare(*this);
+    }
+    /// Print solution
+    virtual void
+    print(std::ostream& os) const {
+        Matrix<IntVarArray> ml(letters, w_l, w_l);
+        for (int i = 0; i < w_l; i++) {
+            os << "\t\t";
+            for (int j = 0; j < w_l; j++)
+                if (ml(i, j).assigned()) {
+                    os << static_cast<char>(ml(i, j).val());
+                } else {
+                    os << ".";
+                }
+            os << std::endl;
+        }
+        os << std::endl;
+    }
+};
 
 /** \brief Main-function
  *  \relates WordSquare
  */
 int
 main(int argc, char* argv[]) {
-  FileSizeOptions opt("WordSquare");
-  opt.size(6);
-  opt.branching(WordSquare::BRANCH_LETTERS);
-  opt.branching(WordSquare::BRANCH_WORDS,   "words");
-  opt.branching(WordSquare::BRANCH_LETTERS, "letters");
-  opt.parse(argc,argv);
-  dict.init(opt.file());
-  if (opt.size() > static_cast<unsigned int>(dict.len())) {
-    std::cerr << "Error: size must be between 0 and "
-              << dict.len() << std::endl;
-    return 1;
-  }
-  Script::run<WordSquare,DFS,SizeOptions>(opt);
-  return 0;
+    FileSizeOptions opt("WordSquare");
+    opt.size(6);
+    opt.branching(WordSquare::BRANCH_LETTERS);
+    opt.branching(WordSquare::BRANCH_WORDS, "words");
+    opt.branching(WordSquare::BRANCH_LETTERS, "letters");
+    opt.parse(argc, argv);
+    dict.init(opt.file());
+    if (opt.size() > static_cast<unsigned int>(dict.len())) {
+        std::cerr << "Error: size must be between 0 and " << dict.len() << std::endl;
+        return 1;
+    }
+    Script::run<WordSquare, DFS, SizeOptions>(opt);
+    return 0;
 }
 
 // STATISTICS: example-any

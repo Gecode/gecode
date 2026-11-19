@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,480 +36,463 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  /*
-   * Engine: basic access routines
-   */
-  template<class Tracer>
-  forceinline BAB<Tracer>&
-  BAB<Tracer>::Worker::engine(void) const {
-    return static_cast<BAB&>(_engine);
-  }
-  template<class Tracer>
-  forceinline typename BAB<Tracer>::Worker*
-  BAB<Tracer>::worker(unsigned int i) const {
-    return _worker[i];
-  }
-
-  template<class Tracer>
-  forceinline void
-  BAB<Tracer>::Worker::reset(Space* s, unsigned int ngdl) {
-    tracer.round();
-    delete cur;
-    delete best;
-    best = nullptr;
-    path.reset((s == nullptr) ? 0 : ngdl);
-    d = 0;
-    mark = 0;
-    idle = false;
-    // Reset the statistics first, so that a failed root is counted
-    Search::Worker::reset();
-    if (s == nullptr) {
-      cur = nullptr;
-    } else if (s->status(*this) == SS_FAILED) {
-      fail++;
-      delete s;
-      cur = nullptr;
-    } else {
-      cur = s;
-    }
-  }
-
-  template<class Tracer>
-  forceinline bool
-  BAB<Tracer>::Worker::owns_work(void) const {
-    return (cur != nullptr) || !path.empty();
-  }
-
-
-  /*
-   * Engine: initialization
-   */
-  template<class Tracer>
-  forceinline
-  BAB<Tracer>::Worker::Worker(Space* s, BAB& e, unsigned int index0)
-    : Engine<Tracer>::Worker(s,e), mark(0), best(nullptr), index(index0) {}
-
-  template<class Tracer>
-  forceinline
-  BAB<Tracer>::BAB(Space* s, const Options& o)
-    : Engine<Tracer>(o), best(nullptr), failure(nullptr) {
-    WrapTraceRecorder::engine(o.tracer, SearchTracer::EngineType::DFS,
-                              workers());
-    // Create workers
-    _worker = static_cast<Worker**>
-      (heap.ralloc(workers() * sizeof(Worker*)));
-    // The first worker gets the entire search tree
-    _worker[0] = new Worker(s,*this,0U);
-    // All other workers start with no work
-    for (unsigned int i=1U; i<workers(); i++)
-      _worker[i] = new Worker(nullptr,*this,i);
-    this->scheduler_enable(_worker[0]->owns_work());
-    // Block all workers
-    block();
-    // Create and start threads
-    for (unsigned int i=0U; i<workers(); i++)
-      Support::Thread::run(_worker[i]);
-  }
-
-
-  /*
-   * Engine: search control
-   */
-  template<class Tracer>
-  forceinline void
-  BAB<Tracer>::Worker::better(Space* b) {
-    m.acquire();
-    delete best;
-    best = b->clone();
-    mark = path.entries();
-    if (cur != nullptr)
-      cur->constrain(*best);
-    m.release();
-  }
-  template<class Tracer>
-  forceinline void
-  BAB<Tracer>::solution(Space* s) {
-    Support::Lock lock(m_search);
-    if (failure != nullptr) {
-      delete s;
-      return;
-    }
-    try {
-      if ((best != nullptr) &&
-          !Search::better(*s,*best,"BAB::solution")) {
-        delete s;
-        return;
-      }
-    } catch (...) {
-      delete s;
-      while (!solutions.empty())
-        delete solutions.pop();
-      failure = std::current_exception();
-      // A null entry is private to BAB and only wakes Engine::next.  That
-      // call blocks the workers before BAB::next rethrows the failure.
-      bool bs = signal();
-      solutions.push(nullptr);
-      if (bs)
-        e_search.signal();
-      return;
-    }
-    if (best != nullptr) {
-      delete best;
-      best = s->clone();
-    } else {
-      best = s->clone();
-    }
-    // Announce better solutions
-    for (unsigned int i=0U; i<workers(); i++)
-      worker(i)->better(best);
-    bool bs = signal();
-    solutions.push(s);
-    if (bs)
-      e_search.signal();
-  }
-
-
-  /*
-   * Worker: finding and stealing working
-   */
-  template<class Tracer>
-  forceinline bool
-  BAB<Tracer>::Worker::find(void) {
-    // Try to find new work (even if there is none)
-    for (unsigned int i=0U; i<engine().workers(); i++) {
-      unsigned long int r_d = 0ul;
-      typename Engine<Tracer>::Worker* wi = engine().worker(i);
-      if (Space* s = wi->steal(r_d,wi->tracer,tracer)) {
-        // Reset this guy
-        m.acquire();
-        idle = false;
-        // Not idle but also does not have the root of the tree
-        path.ngdl(0);
-        d = 0;
-        cur = s;
-        mark = 0;
-        if (best != nullptr)
-          cur->constrain(*best);
-        Statistics t = *this;
-        Search::Worker::reset(r_d);
-        (*this) += t;
-        m.release();
-        engine().scheduler_owner(index);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /*
-   * Statistics
-   */
-  template<class Tracer>
-  Statistics
-  BAB<Tracer>::statistics(void) const {
-    Statistics s;
-    for (unsigned int i=0U; i<workers(); i++)
-      s += worker(i)->statistics();
-    return s;
-  }
-
-  template<class Tracer>
-  void
-  BAB<Tracer>::constrain(const Space& b) {
-    Support::Lock lock(m_search);
-    // Report a worker failure before comparing, so that the original
-    // exception is not replaced by one from the comparison below.
-    if (failure != nullptr)
-      std::rethrow_exception(failure);
-    // Solutions are queued from worst to best. Even a bound weaker than
-    // best can exclude the oldest pending solutions.
-    while (!solutions.empty() &&
-           !Search::better(*solutions.front(),b,"BAB::constrain"))
-      delete solutions.pop();
-    if ((best != nullptr) &&
-        !Search::better(b,*best,"BAB::constrain"))
-      return;
-    if (best != nullptr) {
-      delete best;
-    }
-    best = b.clone();
-    // Announce better solutions
-    for (unsigned int i=0U; i<workers(); i++)
-      worker(i)->better(best);
-  }
-
-  template<class Tracer>
-  Space*
-  BAB<Tracer>::next(void) {
-    std::exception_ptr f;
-    {
-      Support::Lock lock(m_search);
-      f = failure;
-    }
-    if (f != nullptr)
-      std::rethrow_exception(f);
-    Space* s = Engine<Tracer>::next();
-    {
-      Support::Lock lock(m_search);
-      f = failure;
-    }
-    if (f != nullptr) {
-      // Engine::next can consume the failure marker through its initial
-      // nonempty-queue path.  Unlike its event-wait path, that path does not
-      // block workers, so finish the normal lifecycle before reporting.
-      if (cmd() != C_WAIT)
-        block();
-      delete s;
-      std::rethrow_exception(f);
-    }
-    return s;
-  }
-
-  /*
-   * Actual work
-   */
-  template<class Tracer>
-  void
-  BAB<Tracer>::Worker::run(void) {
     /*
-     * The engine maintains the following invariant:
-     *  - If the current space (cur) is not nullptr, the path always points
-     *    to exactly that space.
-     *  - If the current space (cur) is nullptr, the path always points
-     *    to the next space (if there is any).
-     *
-     * This invariant is needed so that no-goods can be extracted properly
-     * when the engine is stopped or has found a solution.
-     *
-     * An additional invariant maintained by the engine is:
-     *   For all nodes stored at a depth less than mark, there
-     *   is no guarantee of betterness. For those above the mark,
-     *   betterness is guaranteed.
+     * Engine: basic access routines
+     */
+    template <class Tracer>
+    forceinline BAB<Tracer>&
+    BAB<Tracer>::Worker::engine(void) const {
+        return static_cast<BAB&>(_engine);
+    }
+    template <class Tracer>
+    forceinline typename BAB<Tracer>::Worker*
+    BAB<Tracer>::worker(unsigned int i) const {
+        return _worker[i];
+    }
+
+    template <class Tracer>
+    forceinline void
+    BAB<Tracer>::Worker::reset(Space* s, unsigned int ngdl) {
+        tracer.round();
+        delete cur;
+        delete best;
+        best = nullptr;
+        path.reset((s == nullptr) ? 0 : ngdl);
+        d = 0;
+        mark = 0;
+        idle = false;
+        // Reset the statistics first, so that a failed root is counted
+        Search::Worker::reset();
+        if (s == nullptr) {
+            cur = nullptr;
+        } else if (s->status(*this) == SS_FAILED) {
+            fail++;
+            delete s;
+            cur = nullptr;
+        } else {
+            cur = s;
+        }
+    }
+
+    template <class Tracer>
+    forceinline bool
+    BAB<Tracer>::Worker::owns_work(void) const {
+        return (cur != nullptr) || !path.empty();
+    }
+
+    /*
+     * Engine: initialization
+     */
+    template <class Tracer>
+    forceinline
+    BAB<Tracer>::Worker::Worker(Space* s, BAB& e, unsigned int index0)
+        : Engine<Tracer>::Worker(s, e), mark(0), best(nullptr), index(index0) {}
+
+    template <class Tracer>
+    forceinline
+    BAB<Tracer>::BAB(Space* s, const Options& o)
+        : Engine<Tracer>(o), best(nullptr), failure(nullptr) {
+        WrapTraceRecorder::engine(o.tracer, SearchTracer::EngineType::DFS, workers());
+        // Create workers
+        _worker = static_cast<Worker**>(heap.ralloc(workers() * sizeof(Worker*)));
+        // The first worker gets the entire search tree
+        _worker[0] = new Worker(s, *this, 0U);
+        // All other workers start with no work
+        for (unsigned int i = 1U; i < workers(); i++)
+            _worker[i] = new Worker(nullptr, *this, i);
+        this->scheduler_enable(_worker[0]->owns_work());
+        // Block all workers
+        block();
+        // Create and start threads
+        for (unsigned int i = 0U; i < workers(); i++)
+            Support::Thread::run(_worker[i]);
+    }
+
+    /*
+     * Engine: search control
+     */
+    template <class Tracer>
+    forceinline void
+    BAB<Tracer>::Worker::better(Space* b) {
+        m.acquire();
+        delete best;
+        best = b->clone();
+        mark = path.entries();
+        if (cur != nullptr)
+            cur->constrain(*best);
+        m.release();
+    }
+    template <class Tracer>
+    forceinline void
+    BAB<Tracer>::solution(Space* s) {
+        Support::Lock lock(m_search);
+        if (failure != nullptr) {
+            delete s;
+            return;
+        }
+        try {
+            if ((best != nullptr) && !Search::better(*s, *best, "BAB::solution")) {
+                delete s;
+                return;
+            }
+        } catch (...) {
+            delete s;
+            while (!solutions.empty())
+                delete solutions.pop();
+            failure = std::current_exception();
+            // A null entry is private to BAB and only wakes Engine::next.  That
+            // call blocks the workers before BAB::next rethrows the failure.
+            bool bs = signal();
+            solutions.push(nullptr);
+            if (bs)
+                e_search.signal();
+            return;
+        }
+        if (best != nullptr) {
+            delete best;
+            best = s->clone();
+        } else {
+            best = s->clone();
+        }
+        // Announce better solutions
+        for (unsigned int i = 0U; i < workers(); i++)
+            worker(i)->better(best);
+        bool bs = signal();
+        solutions.push(s);
+        if (bs)
+            e_search.signal();
+    }
+
+    /*
+     * Worker: finding and stealing working
+     */
+    template <class Tracer>
+    forceinline bool
+    BAB<Tracer>::Worker::find(void) {
+        // Try to find new work (even if there is none)
+        for (unsigned int i = 0U; i < engine().workers(); i++) {
+            unsigned long int r_d = 0ul;
+            typename Engine<Tracer>::Worker* wi = engine().worker(i);
+            if (Space* s = wi->steal(r_d, wi->tracer, tracer)) {
+                // Reset this guy
+                m.acquire();
+                idle = false;
+                // Not idle but also does not have the root of the tree
+                path.ngdl(0);
+                d = 0;
+                cur = s;
+                mark = 0;
+                if (best != nullptr)
+                    cur->constrain(*best);
+                Statistics t = *this;
+                Search::Worker::reset(r_d);
+                (*this) += t;
+                m.release();
+                engine().scheduler_owner(index);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * Statistics
+     */
+    template <class Tracer>
+    Statistics
+    BAB<Tracer>::statistics(void) const {
+        Statistics s;
+        for (unsigned int i = 0U; i < workers(); i++)
+            s += worker(i)->statistics();
+        return s;
+    }
+
+    template <class Tracer>
+    void
+    BAB<Tracer>::constrain(const Space& b) {
+        Support::Lock lock(m_search);
+        // Report a worker failure before comparing, so that the original
+        // exception is not replaced by one from the comparison below.
+        if (failure != nullptr)
+            std::rethrow_exception(failure);
+        // Solutions are queued from worst to best. Even a bound weaker than
+        // best can exclude the oldest pending solutions.
+        while (!solutions.empty() && !Search::better(*solutions.front(), b, "BAB::constrain"))
+            delete solutions.pop();
+        if ((best != nullptr) && !Search::better(b, *best, "BAB::constrain"))
+            return;
+        if (best != nullptr) {
+            delete best;
+        }
+        best = b.clone();
+        // Announce better solutions
+        for (unsigned int i = 0U; i < workers(); i++)
+            worker(i)->better(best);
+    }
+
+    template <class Tracer>
+    Space*
+    BAB<Tracer>::next(void) {
+        std::exception_ptr f;
+        {
+            Support::Lock lock(m_search);
+            f = failure;
+        }
+        if (f != nullptr)
+            std::rethrow_exception(f);
+        Space* s = Engine<Tracer>::next();
+        {
+            Support::Lock lock(m_search);
+            f = failure;
+        }
+        if (f != nullptr) {
+            // Engine::next can consume the failure marker through its initial
+            // nonempty-queue path.  Unlike its event-wait path, that path does not
+            // block workers, so finish the normal lifecycle before reporting.
+            if (cmd() != C_WAIT)
+                block();
+            delete s;
+            std::rethrow_exception(f);
+        }
+        return s;
+    }
+
+    /*
+     * Actual work
+     */
+    template <class Tracer>
+    void
+    BAB<Tracer>::Worker::run(void) {
+        /*
+         * The engine maintains the following invariant:
+         *  - If the current space (cur) is not nullptr, the path always points
+         *    to exactly that space.
+         *  - If the current space (cur) is nullptr, the path always points
+         *    to the next space (if there is any).
+         *
+         * This invariant is needed so that no-goods can be extracted properly
+         * when the engine is stopped or has found a solution.
+         *
+         * An additional invariant maintained by the engine is:
+         *   For all nodes stored at a depth less than mark, there
+         *   is no guarantee of betterness. For those above the mark,
+         *   betterness is guaranteed.
+         *
+         */
+        // Perform initial delay, if not first worker
+        if (this != engine().worker(0))
+            Support::Thread::sleep(Config::initial_delay);
+        // Okay, we are in business, start working
+        while (true) {
+            switch (engine().cmd()) {
+            case C_WAIT:
+                // Wait
+                engine().wait();
+                break;
+            case C_TERMINATE:
+                // Acknowledge termination request
+                engine().ack_terminate();
+                // Wait until termination can proceed
+                engine().wait_terminate();
+                // Thread will be terminated by returning from run
+                return;
+            case C_RESET:
+                // Acknowledge reset request
+                engine().ack_reset_start();
+                // Wait until reset has been performed
+                engine().wait_reset();
+                // Acknowledge that reset cycle is over
+                engine().ack_reset_stop();
+                break;
+            case C_WORK:
+                // Perform exploration work
+                {
+                    const unsigned long long int run = engine().run();
+                    if (engine().scheduler_paused()) {
+                        start();
+                        if (stop(engine().opt())) {
+                            engine().stop(run);
+                            break;
+                        }
+                    }
+                    if (!engine().scheduler_admit(index))
+                        break;
+                    m.acquire();
+                    if (idle) {
+                        m.release();
+                        // Try to find new work
+                        if (!find()) {
+                            engine().scheduler_handoff(index, engine().work_remains());
+                        }
+                    } else if (cur != nullptr) {
+                        start();
+                        if (stop(engine().opt())) {
+                            // Report stop
+                            m.release();
+                            engine().stop(run);
+                        } else {
+                            node++;
+                            SearchTracer::EdgeInfo ei;
+                            if (tracer) {
+                                if (path.entries() > 0) {
+                                    typename Path<Tracer>::Edge& top = path.top();
+                                    ei.init(tracer.wid(), top.nid(), top.truealt(), *cur, *top.choice());
+                                } else if (*tracer.ei()) {
+                                    ei = *tracer.ei();
+                                    tracer.invalidate();
+                                }
+                            }
+                            unsigned int nid = tracer.nid();
+                            switch (cur->status(*this)) {
+                            case SS_FAILED:
+                                if (tracer) {
+                                    SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED, tracer.wid(), nid, *cur);
+                                    tracer.node(ei, ni);
+                                }
+                                fail++;
+                                delete cur;
+                                cur = nullptr;
+                                path.next();
+                                m.release();
+                                break;
+                            case SS_SOLVED: {
+                                if (tracer) {
+                                    SearchTracer::NodeInfo ni(SearchTracer::NodeType::SOLVED, tracer.wid(), nid, *cur);
+                                    tracer.node(ei, ni);
+                                }
+                                // Deletes all pending branchers
+                                (void)cur->choice();
+                                Space* s = cur->clone();
+                                delete cur;
+                                cur = nullptr;
+                                path.next();
+                                m.release();
+                                engine().solution(s);
+                            } break;
+                            case SS_BRANCH: {
+                                Space* c;
+                                if ((d == 0) || (d >= engine().opt().c_d)) {
+                                    c = cur->clone();
+                                    d = 1;
+                                } else {
+                                    c = nullptr;
+                                    d++;
+                                }
+                                const Choice* ch = path.push(*this, cur, c, nid);
+                                if (tracer) {
+                                    SearchTracer::NodeInfo ni(SearchTracer::NodeType::BRANCH, tracer.wid(), nid, *cur,
+                                                              ch);
+                                    tracer.node(ei, ni);
+                                }
+                                cur->commit(*ch, 0);
+                                m.release();
+                            } break;
+                            default:
+                                GECODE_NEVER;
+                            }
+                        }
+                    } else if (!path.empty()) {
+                        cur = path.recompute(d, engine().opt().a_d, *this, best, mark, tracer);
+                        if (cur == nullptr)
+                            path.next();
+                        m.release();
+                    } else {
+                        idle = true;
+                        path.ngdl(0);
+                        m.release();
+                        // Report that worker is idle
+                        engine().idle();
+                        engine().scheduler_idle(index);
+                        engine().scheduler_handoff(index, engine().work_remains());
+                    }
+                }
+                break;
+            default:
+                GECODE_NEVER;
+            }
+        }
+    }
+
+    /*
+     * Perform reset
      *
      */
-    // Perform initial delay, if not first worker
-    if (this != engine().worker(0))
-      Support::Thread::sleep(Config::initial_delay);
-    // Okay, we are in business, start working
-    while (true) {
-      switch (engine().cmd()) {
-      case C_WAIT:
-        // Wait
-        engine().wait();
-        break;
-      case C_TERMINATE:
-        // Acknowledge termination request
-        engine().ack_terminate();
-        // Wait until termination can proceed
-        engine().wait_terminate();
-        // Thread will be terminated by returning from run
-        return;
-      case C_RESET:
-        // Acknowledge reset request
-        engine().ack_reset_start();
-        // Wait until reset has been performed
-        engine().wait_reset();
-        // Acknowledge that reset cycle is over
-        engine().ack_reset_stop();
-        break;
-      case C_WORK:
-        // Perform exploration work
+    template <class Tracer>
+    void
+    BAB<Tracer>::reset(Space* s) {
+        // Grab wait lock for reset
+        m_wait_reset.acquire();
+        // Release workers for reset
+        release(C_RESET);
+        // Wait for reset cycle started
+        e_reset_ack_start.wait();
+        // All workers are marked as busy again
         {
-          const unsigned long long int run = engine().run();
-          if (engine().scheduler_paused()) {
-            start();
-            if (stop(engine().opt())) {
-              engine().stop(run);
-              break;
-            }
-          }
-          if (!engine().scheduler_admit(index))
-            break;
-          m.acquire();
-          if (idle) {
-            m.release();
-            // Try to find new work
-            if (!find()) {
-              engine().scheduler_handoff(index,engine().work_remains());
-            }
-          } else if (cur != nullptr) {
-            start();
-            if (stop(engine().opt())) {
-              // Report stop
-              m.release();
-              engine().stop(run);
-            } else {
-              node++;
-              SearchTracer::EdgeInfo ei;
-              if (tracer) {
-                if (path.entries() > 0) {
-                  typename Path<Tracer>::Edge& top = path.top();
-                  ei.init(tracer.wid(), top.nid(), top.truealt(),
-                          *cur, *top.choice());
-                } else if (*tracer.ei()) {
-                  ei = *tracer.ei();
-                  tracer.invalidate();
-                }
-              }
-              unsigned int nid = tracer.nid();
-              switch (cur->status(*this)) {
-              case SS_FAILED:
-                if (tracer) {
-                  SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED,
-                                            tracer.wid(), nid, *cur);
-                  tracer.node(ei,ni);
-                }
-                fail++;
-                delete cur;
-                cur = nullptr;
-                path.next();
-                m.release();
-                break;
-              case SS_SOLVED:
-                {
-                  if (tracer) {
-                    SearchTracer::NodeInfo ni(SearchTracer::NodeType::SOLVED,
-                                              tracer.wid(), nid, *cur);
-                    tracer.node(ei,ni);
-                  }
-                  // Deletes all pending branchers
-                  (void) cur->choice();
-                  Space* s = cur->clone();
-                  delete cur;
-                  cur = nullptr;
-                  path.next();
-                  m.release();
-                  engine().solution(s);
-                }
-                break;
-              case SS_BRANCH:
-                {
-                  Space* c;
-                  if ((d == 0) || (d >= engine().opt().c_d)) {
-                    c = cur->clone();
-                    d = 1;
-                  } else {
-                    c = nullptr;
-                    d++;
-                  }
-                  const Choice* ch = path.push(*this,cur,c,nid);
-                  if (tracer) {
-                    SearchTracer::NodeInfo ni(SearchTracer::NodeType::BRANCH,
-                                              tracer.wid(), nid, *cur, ch);
-                    tracer.node(ei,ni);
-                  }
-                  cur->commit(*ch,0);
-                  m.release();
-                }
-                break;
-              default:
-                GECODE_NEVER;
-              }
-            }
-          } else if (!path.empty()) {
-            cur = path.recompute(d,engine().opt().a_d,*this,best,mark,tracer);
-            if (cur == nullptr)
-              path.next();
-            m.release();
-          } else {
-            idle = true;
-            path.ngdl(0);
-            m.release();
-            // Report that worker is idle
-            engine().idle();
-            engine().scheduler_idle(index);
-            engine().scheduler_handoff(index,engine().work_remains());
-          }
+            Support::Lock lock(m_search);
+            while (!solutions.empty())
+                delete solutions.pop();
+            failure = nullptr;
+            delete best;
+            best = nullptr;
+            n_busy = workers();
+            this->end = EndReason::NotEnded;
         }
-        break;
-      default:
-        GECODE_NEVER;
-      }
+        for (unsigned int i = 1U; i < workers(); i++)
+            worker(i)->reset(nullptr, 0);
+        worker(0)->reset(s, opt().nogoods_limit);
+        // Block workers again to ensure invariant
+        block();
+        // Release reset lock
+        m_wait_reset.release();
+        // Wait for reset cycle stopped
+        e_reset_ack_stop.wait();
+        this->scheduler_reset(worker(0U)->owns_work());
     }
-  }
 
-
-  /*
-   * Perform reset
-   *
-   */
-  template<class Tracer>
-  void
-  BAB<Tracer>::reset(Space* s) {
-    // Grab wait lock for reset
-    m_wait_reset.acquire();
-    // Release workers for reset
-    release(C_RESET);
-    // Wait for reset cycle started
-    e_reset_ack_start.wait();
-    // All workers are marked as busy again
-    {
-      Support::Lock lock(m_search);
-      while (!solutions.empty())
-        delete solutions.pop();
-      failure = nullptr;
-      delete best;
-      best = nullptr;
-      n_busy = workers();
-      this->end = EndReason::NotEnded;
+    /*
+     * Create no-goods
+     *
+     */
+    template <class Tracer>
+    NoGoods&
+    BAB<Tracer>::nogoods(void) {
+        NoGoods* ng;
+        // Grab wait lock for reset
+        m_wait_reset.acquire();
+        // Release workers for reset
+        release(C_RESET);
+        // Wait for reset cycle started
+        e_reset_ack_start.wait();
+        ng = &worker(0)->nogoods();
+        // Block workers again to ensure invariant
+        block();
+        // Release reset lock
+        m_wait_reset.release();
+        // Wait for reset cycle stopped
+        e_reset_ack_stop.wait();
+        // A worker can fail after next() returns. Report that failure before
+        // a restart engine invokes its hub callback and resets this engine.
+        Support::Lock lock(m_search);
+        if (failure != nullptr)
+            std::rethrow_exception(failure);
+        return *ng;
     }
-    for (unsigned int i=1U; i<workers(); i++)
-      worker(i)->reset(nullptr,0);
-    worker(0)->reset(s,opt().nogoods_limit);
-    // Block workers again to ensure invariant
-    block();
-    // Release reset lock
-    m_wait_reset.release();
-    // Wait for reset cycle stopped
-    e_reset_ack_stop.wait();
-    this->scheduler_reset(worker(0U)->owns_work());
-  }
 
+    /*
+     * Termination and deletion
+     */
+    template <class Tracer>
+    BAB<Tracer>::Worker::~Worker(void) {
+        delete best;
+    }
 
-  /*
-   * Create no-goods
-   *
-   */
-  template<class Tracer>
-  NoGoods&
-  BAB<Tracer>::nogoods(void) {
-    NoGoods* ng;
-    // Grab wait lock for reset
-    m_wait_reset.acquire();
-    // Release workers for reset
-    release(C_RESET);
-    // Wait for reset cycle started
-    e_reset_ack_start.wait();
-    ng = &worker(0)->nogoods();
-    // Block workers again to ensure invariant
-    block();
-    // Release reset lock
-    m_wait_reset.release();
-    // Wait for reset cycle stopped
-    e_reset_ack_stop.wait();
-    // A worker can fail after next() returns. Report that failure before
-    // a restart engine invokes its hub callback and resets this engine.
-    Support::Lock lock(m_search);
-    if (failure != nullptr)
-      std::rethrow_exception(failure);
-    return *ng;
-  }
+    template <class Tracer>
+    BAB<Tracer>::~BAB(void) {
+        terminate();
+        delete best;
+        heap.rfree(_worker);
+    }
 
-  /*
-   * Termination and deletion
-   */
-  template<class Tracer>
-  BAB<Tracer>::Worker::~Worker(void) {
-    delete best;
-  }
-
-  template<class Tracer>
-  BAB<Tracer>::~BAB(void) {
-    terminate();
-    delete best;
-    heap.rfree(_worker);
-  }
-
-}}}
+}}} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

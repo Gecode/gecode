@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -39,419 +38,388 @@
 
 namespace Gecode { namespace Int { namespace Element {
 
-  /**
-   * \brief Class for bounds-equality test
-   *
-   */
-  template<class VA, class VC>
-  class RelTestBnd {
-  public:
-    RelTest operator ()(VA,VC);
-  };
-  /**
-   * \brief Class for bounds-equality test (specialized)
-   *
-   */
-  template<class VA>
-  class RelTestBnd<VA,ConstIntView> {
-  public:
-    RelTest operator ()(VA,ConstIntView);
-  };
-
-  /**
-   * \brief Class for domain-equality test
-   *
-   */
-  template<class VA, class VC>
-  class RelTestDom {
-  public:
-    RelTest operator ()(VA,VC);
-  };
-  /**
-   * \brief Class for domain-equality test (specialized)
-   *
-   */
-  template<class VA>
-  class RelTestDom<VA,ConstIntView> {
-  public:
-    RelTest operator ()(VA,ConstIntView);
-  };
-
-
-  template<class VA, class VC>
-  forceinline RelTest
-  RelTestBnd<VA,VC>::operator ()(VA x, VC y) {
-    return rtest_eq_bnd(x,y);
-  }
-  template<class VA>
-  forceinline RelTest
-  RelTestBnd<VA,ConstIntView>::operator ()(VA x, ConstIntView y) {
-    return rtest_eq_bnd(x,y.val());
-  }
-
-  template<class VA, class VC>
-  forceinline RelTest
-  RelTestDom<VA,VC>::operator ()(VA x, VC y) {
-    return rtest_eq_dom(x,y);
-  }
-  template<class VA>
-  forceinline RelTest
-  RelTestDom<VA,ConstIntView>::operator ()(VA x, ConstIntView y) {
-    return rtest_eq_dom(x,y.val());
-  }
-
-
-
-
-  /*
-   * Base class
-   *
-   */
-
-  template<class VA, class VB, class VC, PropCond pc_ac>
-  View<VA,VB,VC,pc_ac>::View(Home home, IdxViewArray<VA>& iv0,
-                             VB y0, VC y1)
-    : Propagator(home), iv(iv0), x0(y0), x1(y1) {
-    x0.subscribe(home,*this,PC_INT_DOM);
-    x1.subscribe(home,*this,pc_ac);
-    iv.subscribe(home,*this,pc_ac);
-  }
-
-  template<class VA, class VB, class VC, PropCond pc_ac>
-  forceinline
-  View<VA,VB,VC,pc_ac>::View(Space& home, View& p)
-    : Propagator(home,p) {
-    x0.update(home,p.x0);
-    x1.update(home,p.x1);
-    iv.update(home,p.iv);
-  }
-
-  template<class VA, class VB, class VC, PropCond pc_ac>
-  PropCost
-  View<VA,VB,VC,pc_ac>::cost(const Space&, const ModEventDelta&) const {
-    // This is required for subscribing to variables in the
-    // above constructor, but this is then the only time this
-    // virtual function is ever used!
-    return PropCost::linear(PropCost::LO,iv.size()+2);
-  }
-
-  template<class VA, class VB, class VC, PropCond pc_ac>
-  void
-  View<VA,VB,VC,pc_ac>::reschedule(Space& home) {
-    x0.reschedule(home,*this,PC_INT_DOM);
-    x1.reschedule(home,*this,pc_ac);
-    iv.reschedule(home,*this,pc_ac);
-  }
-
-  template<class VA, class VB, class VC, PropCond pc_ac>
-  forceinline size_t
-  View<VA,VB,VC,pc_ac>::dispose(Space& home) {
-    x0.cancel(home,*this,PC_INT_DOM);
-    x1.cancel(home,*this,pc_ac);
-    iv.cancel(home,*this,pc_ac);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-
-
-
-  /**
-   * \brief Value iterator for indices in index-view map
-   *
-   */
-  template<class View>
-  class IterIdxView {
-  private:
-    const IdxView<View> *cur, *end;
-  public:
-    IterIdxView(void);
-    IterIdxView(const IdxView<View>*, const IdxView<View>*);
-    void init(const IdxView<View>*, const IdxView<View>*);
-    bool operator ()(void) const;
-    void operator ++(void);
-    int  val(void) const;
-  };
-
-  template<class View>
-  forceinline
-  IterIdxView<View>::IterIdxView(void) {}
-  template<class View>
-  forceinline
-  IterIdxView<View>::IterIdxView(const IdxView<View>* b,
-                                 const IdxView<View>* e)
-    : cur(b), end(e) {}
-  template<class View>
-  forceinline void
-  IterIdxView<View>::init(const IdxView<View>* b,
-                          const IdxView<View>* e) {
-    cur=b; end=e;
-  }
-  template<class View>
-  forceinline bool
-  IterIdxView<View>::operator ()(void) const {
-    return cur < end;
-  }
-  template<class View>
-  forceinline void
-  IterIdxView<View>::operator ++(void) {
-    cur++;
-  }
-  template<class View>
-  forceinline int
-  IterIdxView<View>::val(void) const {
-    return cur->idx;
-  }
-
-
-
-
-  /*
-   * Generic scanning: does all but computing new domain for result
-   * (which is specific to bounds/domain version)
-   *
-   */
-
-  template<class VA, class VB, class VC, PropCond pc_ac, class RelTest>
-  ExecStatus
-  scan(Space& home, IdxViewArray<VA>& iv,
-       VB x0, VC x1, Propagator& p, RelTest rt) {
-    assert(iv.size() > 1);
-    /*
-     * Prunes pairs of index, variable
-     *  - checks for idx value removed
-     *  - checks for disequal variables
+    /**
+     * \brief Class for bounds-equality test
      *
      */
-    ViewValues<VB> vx0(x0);
-    int i = 0;
-    int j = 0;
-    while (vx0() && (i < iv.size())) {
-      if (iv[i].idx < vx0.val()) {
-        iv[i].view.cancel(home,p,pc_ac);
-        ++i;
-      } else if (iv[i].idx > vx0.val()) {
-        ++vx0;
-      } else {
-        assert(iv[i].idx == vx0.val());
-        switch (rt(iv[i].view,x1)) {
-        case RT_FALSE:
-          iv[i].view.cancel(home,p,pc_ac);
-          break;
-        case RT_TRUE:
-        case RT_MAYBE:
-          iv[j++] = iv[i];
-          break;
-        default: GECODE_NEVER;
+    template <class VA, class VC>
+    class RelTestBnd {
+    public:
+        RelTest operator()(VA, VC);
+    };
+    /**
+     * \brief Class for bounds-equality test (specialized)
+     *
+     */
+    template <class VA>
+    class RelTestBnd<VA, ConstIntView> {
+    public:
+        RelTest operator()(VA, ConstIntView);
+    };
+
+    /**
+     * \brief Class for domain-equality test
+     *
+     */
+    template <class VA, class VC>
+    class RelTestDom {
+    public:
+        RelTest operator()(VA, VC);
+    };
+    /**
+     * \brief Class for domain-equality test (specialized)
+     *
+     */
+    template <class VA>
+    class RelTestDom<VA, ConstIntView> {
+    public:
+        RelTest operator()(VA, ConstIntView);
+    };
+
+    template <class VA, class VC>
+    forceinline RelTest
+    RelTestBnd<VA, VC>::operator()(VA x, VC y) {
+        return rtest_eq_bnd(x, y);
+    }
+    template <class VA>
+    forceinline RelTest
+    RelTestBnd<VA, ConstIntView>::operator()(VA x, ConstIntView y) {
+        return rtest_eq_bnd(x, y.val());
+    }
+
+    template <class VA, class VC>
+    forceinline RelTest
+    RelTestDom<VA, VC>::operator()(VA x, VC y) {
+        return rtest_eq_dom(x, y);
+    }
+    template <class VA>
+    forceinline RelTest
+    RelTestDom<VA, ConstIntView>::operator()(VA x, ConstIntView y) {
+        return rtest_eq_dom(x, y.val());
+    }
+
+    /*
+     * Base class
+     *
+     */
+
+    template <class VA, class VB, class VC, PropCond pc_ac>
+    View<VA, VB, VC, pc_ac>::View(Home home, IdxViewArray<VA>& iv0, VB y0, VC y1)
+        : Propagator(home), iv(iv0), x0(y0), x1(y1) {
+        x0.subscribe(home, *this, PC_INT_DOM);
+        x1.subscribe(home, *this, pc_ac);
+        iv.subscribe(home, *this, pc_ac);
+    }
+
+    template <class VA, class VB, class VC, PropCond pc_ac>
+    forceinline
+    View<VA, VB, VC, pc_ac>::View(Space& home, View& p)
+        : Propagator(home, p) {
+        x0.update(home, p.x0);
+        x1.update(home, p.x1);
+        iv.update(home, p.iv);
+    }
+
+    template <class VA, class VB, class VC, PropCond pc_ac>
+    PropCost
+    View<VA, VB, VC, pc_ac>::cost(const Space&, const ModEventDelta&) const {
+        // This is required for subscribing to variables in the
+        // above constructor, but this is then the only time this
+        // virtual function is ever used!
+        return PropCost::linear(PropCost::LO, iv.size() + 2);
+    }
+
+    template <class VA, class VB, class VC, PropCond pc_ac>
+    void
+    View<VA, VB, VC, pc_ac>::reschedule(Space& home) {
+        x0.reschedule(home, *this, PC_INT_DOM);
+        x1.reschedule(home, *this, pc_ac);
+        iv.reschedule(home, *this, pc_ac);
+    }
+
+    template <class VA, class VB, class VC, PropCond pc_ac>
+    forceinline size_t
+    View<VA, VB, VC, pc_ac>::dispose(Space& home) {
+        x0.cancel(home, *this, PC_INT_DOM);
+        x1.cancel(home, *this, pc_ac);
+        iv.cancel(home, *this, pc_ac);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
+
+    /**
+     * \brief Value iterator for indices in index-view map
+     *
+     */
+    template <class View>
+    class IterIdxView {
+    private:
+        const IdxView<View>*cur, *end;
+
+    public:
+        IterIdxView(void);
+        IterIdxView(const IdxView<View>*, const IdxView<View>*);
+        void init(const IdxView<View>*, const IdxView<View>*);
+        bool operator()(void) const;
+        void operator++(void);
+        int val(void) const;
+    };
+
+    template <class View>
+    forceinline
+    IterIdxView<View>::IterIdxView(void) {}
+    template <class View>
+    forceinline
+    IterIdxView<View>::IterIdxView(const IdxView<View>* b, const IdxView<View>* e)
+        : cur(b), end(e) {}
+    template <class View>
+    forceinline void
+    IterIdxView<View>::init(const IdxView<View>* b, const IdxView<View>* e) {
+        cur = b;
+        end = e;
+    }
+    template <class View>
+    forceinline bool
+    IterIdxView<View>::operator()(void) const {
+        return cur < end;
+    }
+    template <class View>
+    forceinline void
+    IterIdxView<View>::operator++(void) {
+        cur++;
+    }
+    template <class View>
+    forceinline int
+    IterIdxView<View>::val(void) const {
+        return cur->idx;
+    }
+
+    /*
+     * Generic scanning: does all but computing new domain for result
+     * (which is specific to bounds/domain version)
+     *
+     */
+
+    template <class VA, class VB, class VC, PropCond pc_ac, class RelTest>
+    ExecStatus
+    scan(Space& home, IdxViewArray<VA>& iv, VB x0, VC x1, Propagator& p, RelTest rt) {
+        assert(iv.size() > 1);
+        /*
+         * Prunes pairs of index, variable
+         *  - checks for idx value removed
+         *  - checks for disequal variables
+         *
+         */
+        ViewValues<VB> vx0(x0);
+        int i = 0;
+        int j = 0;
+        while (vx0() && (i < iv.size())) {
+            if (iv[i].idx < vx0.val()) {
+                iv[i].view.cancel(home, p, pc_ac);
+                ++i;
+            } else if (iv[i].idx > vx0.val()) {
+                ++vx0;
+            } else {
+                assert(iv[i].idx == vx0.val());
+                switch (rt(iv[i].view, x1)) {
+                case RT_FALSE:
+                    iv[i].view.cancel(home, p, pc_ac);
+                    break;
+                case RT_TRUE:
+                case RT_MAYBE:
+                    iv[j++] = iv[i];
+                    break;
+                default:
+                    GECODE_NEVER;
+                }
+                ++vx0;
+                ++i;
+            }
         }
-        ++vx0; ++i;
-      }
+        while (i < iv.size())
+            iv[i++].view.cancel(home, p, pc_ac);
+        bool adjust = (j < iv.size());
+        iv.size(j);
+
+        if (iv.size() == 0)
+            return ES_FAILED;
+
+        if (iv.size() == 1) {
+            GECODE_ME_CHECK(x0.eq(home, iv[0].idx));
+        } else if (adjust) {
+            IterIdxView<VA> v(&iv[0], &iv[0] + iv.size());
+            GECODE_ME_CHECK(x0.narrow_v(home, v, false));
+            assert(x0.size() == static_cast<unsigned int>(iv.size()));
+        }
+        return ES_OK;
     }
-    while (i < iv.size())
-      iv[i++].view.cancel(home,p,pc_ac);
-    bool adjust = (j<iv.size());
-    iv.size(j);
 
-    if (iv.size() == 0)
-      return ES_FAILED;
+    /*
+     * Bounds consistent propagator
+     *
+     */
 
-    if (iv.size() == 1) {
-      GECODE_ME_CHECK(x0.eq(home,iv[0].idx));
-    } else if (adjust) {
-      IterIdxView<VA> v(&iv[0],&iv[0]+iv.size());
-      GECODE_ME_CHECK(x0.narrow_v(home,v,false));
-      assert(x0.size() == static_cast<unsigned int>(iv.size()));
+    template <class VA, class VB, class VC>
+    forceinline
+    ViewBnd<VA, VB, VC>::ViewBnd(Home home, IdxViewArray<VA>& iv, VB x0, VC x1)
+        : View<VA, VB, VC, PC_INT_BND>(home, iv, x0, x1) {}
+
+    template <class VA, class VB, class VC>
+    ExecStatus
+    ViewBnd<VA, VB, VC>::post(Home home, IdxViewArray<VA>& iv, VB x0, VC x1) {
+        GECODE_ME_CHECK(x0.gq(home, 0));
+        GECODE_ME_CHECK(x0.le(home, iv.size()));
+        if (x0.assigned()) {
+            (void)new (home) Rel::EqBnd<VA, VC>(home, iv[x0.val()].view, x1);
+            return ES_OK;
+        } else {
+            assert(iv.size() > 1);
+            (void)new (home) ViewBnd<VA, VB, VC>(home, iv, x0, x1);
+        }
+        return ES_OK;
     }
-    return ES_OK;
-  }
 
+    template <class VA, class VB, class VC>
+    forceinline
+    ViewBnd<VA, VB, VC>::ViewBnd(Space& home, ViewBnd& p)
+        : View<VA, VB, VC, PC_INT_BND>(home, p) {}
 
-
-
-  /*
-   * Bounds consistent propagator
-   *
-   */
-
-  template<class VA, class VB, class VC>
-  forceinline
-  ViewBnd<VA,VB,VC>::ViewBnd(Home home,
-                             IdxViewArray<VA>& iv, VB x0, VC x1)
-    : View<VA,VB,VC,PC_INT_BND>(home,iv,x0,x1) {}
-
-  template<class VA, class VB, class VC>
-  ExecStatus
-  ViewBnd<VA,VB,VC>::post(Home home,
-                          IdxViewArray<VA>& iv, VB x0, VC x1) {
-    GECODE_ME_CHECK(x0.gq(home,0));
-    GECODE_ME_CHECK(x0.le(home,iv.size()));
-    if (x0.assigned()) {
-      (void) new (home) Rel::EqBnd<VA,VC>(home,iv[x0.val()].view,x1);
-      return ES_OK;
-    } else {
-      assert(iv.size()>1);
-      (void) new (home) ViewBnd<VA,VB,VC>(home,iv,x0,x1);
+    template <class VA, class VB, class VC>
+    Actor*
+    ViewBnd<VA, VB, VC>::copy(Space& home) {
+        return new (home) ViewBnd<VA, VB, VC>(home, *this);
     }
-    return ES_OK;
-  }
 
-
-  template<class VA, class VB, class VC>
-  forceinline
-  ViewBnd<VA,VB,VC>::ViewBnd(Space& home, ViewBnd& p)
-    : View<VA,VB,VC,PC_INT_BND>(home,p) {}
-
-  template<class VA, class VB, class VC>
-  Actor*
-  ViewBnd<VA,VB,VC>::copy(Space& home) {
-    return new (home) ViewBnd<VA,VB,VC>(home,*this);
-  }
-
-  template<class VA, class VB, class VC>
-  ExecStatus
-  ViewBnd<VA,VB,VC>::propagate(Space& home, const ModEventDelta&) {
-    assert(iv.size() > 1);
-    RelTestBnd<VA,VC> rt;
-    GECODE_ES_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
-                     (home,iv,x0,x1,*this,rt)));
-    if (iv.size() == 1) {
-      ExecStatus es = home.ES_SUBSUMED(*this);
-      (void) new (home) Rel::EqBnd<VA,VC>(home(*this),iv[0].view,x1);
-      return es;
+    template <class VA, class VB, class VC>
+    ExecStatus
+    ViewBnd<VA, VB, VC>::propagate(Space& home, const ModEventDelta&) {
+        assert(iv.size() > 1);
+        RelTestBnd<VA, VC> rt;
+        GECODE_ES_CHECK((scan<VA, VB, VC, PC_INT_BND, RelTestBnd<VA, VC>>(home, iv, x0, x1, *this, rt)));
+        if (iv.size() == 1) {
+            ExecStatus es = home.ES_SUBSUMED(*this);
+            (void)new (home) Rel::EqBnd<VA, VC>(home(*this), iv[0].view, x1);
+            return es;
+        }
+        assert(iv.size() > 1);
+        // Compute new result
+        int min = iv[0].view.min();
+        int max = iv[0].view.max();
+        for (int i = 1; i < iv.size(); i++) {
+            min = std::min(iv[i].view.min(), min);
+            max = std::max(iv[i].view.max(), max);
+        }
+        ExecStatus es = shared(x0, x1) ? ES_NOFIX : ES_FIX;
+        {
+            ModEvent me = x1.lq(home, max);
+            if (me_failed(me))
+                return ES_FAILED;
+            if (me_modified(me) && (x1.max() != max))
+                es = ES_NOFIX;
+        }
+        {
+            ModEvent me = x1.gq(home, min);
+            if (me_failed(me))
+                return ES_FAILED;
+            if (me_modified(me) && (x1.min() != min))
+                es = ES_NOFIX;
+        }
+        return (x1.assigned() && (min == max)) ? home.ES_SUBSUMED(*this) : es;
     }
-    assert(iv.size() > 1);
-    // Compute new result
-    int min = iv[0].view.min();
-    int max = iv[0].view.max();
-    for (int i=1; i<iv.size(); i++) {
-      min = std::min(iv[i].view.min(),min);
-      max = std::max(iv[i].view.max(),max);
+
+    /*
+     * Domain consistent propagator
+     *
+     */
+
+    template <class VA, class VB, class VC>
+    forceinline
+    ViewDom<VA, VB, VC>::ViewDom(Home home, IdxViewArray<VA>& iv, VB x0, VC x1)
+        : View<VA, VB, VC, PC_INT_DOM>(home, iv, x0, x1) {}
+
+    template <class VA, class VB, class VC>
+    ExecStatus
+    ViewDom<VA, VB, VC>::post(Home home, IdxViewArray<VA>& iv, VB x0, VC x1) {
+        GECODE_ME_CHECK(x0.gq(home, 0));
+        GECODE_ME_CHECK(x0.le(home, iv.size()));
+        if (x0.assigned()) {
+            (void)new (home) Rel::EqDom<VA, VC>(home, iv[x0.val()].view, x1);
+            return ES_OK;
+        } else {
+            assert(iv.size() > 1);
+            (void)new (home) ViewDom<VA, VB, VC>(home, iv, x0, x1);
+        }
+        return ES_OK;
     }
-    ExecStatus es = shared(x0,x1) ? ES_NOFIX : ES_FIX;
-    {
-     ModEvent me = x1.lq(home,max);
-     if (me_failed(me))
-       return ES_FAILED;
-     if (me_modified(me) && (x1.max() != max))
-       es = ES_NOFIX;
+
+    template <class VA, class VB, class VC>
+    forceinline
+    ViewDom<VA, VB, VC>::ViewDom(Space& home, ViewDom& p)
+        : View<VA, VB, VC, PC_INT_DOM>(home, p) {}
+
+    template <class VA, class VB, class VC>
+    Actor*
+    ViewDom<VA, VB, VC>::copy(Space& home) {
+        return new (home) ViewDom<VA, VB, VC>(home, *this);
     }
-    {
-     ModEvent me = x1.gq(home,min);
-     if (me_failed(me))
-       return ES_FAILED;
-     if (me_modified(me) && (x1.min() != min))
-       es = ES_NOFIX;
+
+    template <class VA, class VB, class VC>
+    PropCost
+    ViewDom<VA, VB, VC>::cost(const Space&, const ModEventDelta& med) const {
+        return PropCost::linear((VA::me(med) != ME_INT_DOM) ? PropCost::LO : PropCost::HI, iv.size() + 2);
     }
-    return (x1.assigned() && (min == max)) ?
-      home.ES_SUBSUMED(*this) : es;
-  }
 
+    template <class VA, class VB, class VC>
+    ExecStatus
+    ViewDom<VA, VB, VC>::propagate(Space& home, const ModEventDelta& med) {
+        assert(iv.size() > 1);
+        if (VA::me(med) != ME_INT_DOM) {
+            RelTestBnd<VA, VC> rt;
+            GECODE_ES_CHECK((scan<VA, VB, VC, PC_INT_DOM, RelTestBnd<VA, VC>>(home, iv, x0, x1, *this, rt)));
+            if (iv.size() == 1) {
+                ExecStatus es = home.ES_SUBSUMED(*this);
+                (void)new (home) Rel::EqDom<VA, VC>(home(*this), iv[0].view, x1);
+                return es;
+            }
+            // Compute new result
+            int min = iv[0].view.min();
+            int max = iv[0].view.max();
+            for (int i = 1; i < iv.size(); i++) {
+                min = std::min(iv[i].view.min(), min);
+                max = std::max(iv[i].view.max(), max);
+            }
+            GECODE_ME_CHECK(x1.lq(home, max));
+            GECODE_ME_CHECK(x1.gq(home, min));
+            return (x1.assigned() && (min == max)) ? home.ES_SUBSUMED(*this)
+                                                   : home.ES_NOFIX_PARTIAL(*this, VA::med(ME_INT_DOM));
+        }
+        RelTestDom<VA, VC> rt;
+        GECODE_ES_CHECK((scan<VA, VB, VC, PC_INT_DOM, RelTestDom<VA, VC>>(home, iv, x0, x1, *this, rt)));
+        if (iv.size() == 1) {
+            ExecStatus es = home.ES_SUBSUMED(*this);
+            (void)new (home) Rel::EqDom<VA, VC>(home(*this), iv[0].view, x1);
+            return es;
+        }
+        assert(iv.size() > 1);
 
-
-
-
-  /*
-   * Domain consistent propagator
-   *
-   */
-
-  template<class VA, class VB, class VC>
-  forceinline
-  ViewDom<VA,VB,VC>::ViewDom(Home home,
-                             IdxViewArray<VA>& iv, VB x0, VC x1)
-    : View<VA,VB,VC,PC_INT_DOM>(home,iv,x0,x1) {}
-
-  template<class VA, class VB, class VC>
-  ExecStatus
-  ViewDom<VA,VB,VC>::post(Home home,
-                          IdxViewArray<VA>& iv, VB x0, VC x1){
-    GECODE_ME_CHECK(x0.gq(home,0));
-    GECODE_ME_CHECK(x0.le(home,iv.size()));
-    if (x0.assigned()) {
-      (void) new (home) Rel::EqDom<VA,VC>(home,iv[x0.val()].view,x1);
-      return ES_OK;
-    } else {
-      assert(iv.size()>1);
-      (void) new (home) ViewDom<VA,VB,VC>(home,iv,x0,x1);
+        if (x1.assigned()) {
+            for (int i = 0; i < iv.size(); i++)
+                if (iv[i].view.in(x1.val()))
+                    return shared(x0, x1) ? ES_NOFIX : ES_FIX;
+            return ES_FAILED;
+        } else {
+            Region r;
+            ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA>>(iv.size());
+            for (int i = 0; i < iv.size(); i++)
+                i_view[i].init(iv[i].view);
+            Iter::Ranges::NaryUnion i_val(r, i_view, iv.size());
+            ModEvent me = x1.inter_r(home, i_val);
+            r.free<ViewRanges<VA>>(i_view, iv.size());
+            GECODE_ME_CHECK(me);
+            return (shared(x0, x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
+        }
     }
-    return ES_OK;
-  }
 
-
-  template<class VA, class VB, class VC>
-  forceinline
-  ViewDom<VA,VB,VC>::ViewDom(Space& home, ViewDom& p)
-    : View<VA,VB,VC,PC_INT_DOM>(home,p) {}
-
-  template<class VA, class VB, class VC>
-  Actor*
-  ViewDom<VA,VB,VC>::copy(Space& home) {
-    return new (home) ViewDom<VA,VB,VC>(home,*this);
-  }
-
-
-  template<class VA, class VB, class VC>
-  PropCost
-  ViewDom<VA,VB,VC>::cost(const Space&, const ModEventDelta& med) const {
-    return PropCost::linear((VA::me(med) != ME_INT_DOM) ?
-                            PropCost::LO : PropCost::HI, iv.size()+2);
-  }
-
-  template<class VA, class VB, class VC>
-  ExecStatus
-  ViewDom<VA,VB,VC>::propagate(Space& home, const ModEventDelta& med) {
-    assert(iv.size() > 1);
-    if (VA::me(med) != ME_INT_DOM) {
-      RelTestBnd<VA,VC> rt;
-      GECODE_ES_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
-                       (home,iv,x0,x1,*this,rt)));
-      if (iv.size() == 1) {
-        ExecStatus es = home.ES_SUBSUMED(*this);
-        (void) new (home) Rel::EqDom<VA,VC>(home(*this),iv[0].view,x1);
-        return es;
-      }
-      // Compute new result
-      int min = iv[0].view.min();
-      int max = iv[0].view.max();
-      for (int i=1; i<iv.size(); i++) {
-        min = std::min(iv[i].view.min(),min);
-        max = std::max(iv[i].view.max(),max);
-      }
-      GECODE_ME_CHECK(x1.lq(home,max));
-      GECODE_ME_CHECK(x1.gq(home,min));
-      return (x1.assigned() && (min == max)) ?
-        home.ES_SUBSUMED(*this) :
-        home.ES_NOFIX_PARTIAL(*this,VA::med(ME_INT_DOM));
-    }
-    RelTestDom<VA,VC> rt;
-    GECODE_ES_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >
-                     (home,iv,x0,x1,*this,rt)));
-    if (iv.size() == 1) {
-      ExecStatus es = home.ES_SUBSUMED(*this);
-      (void) new (home) Rel::EqDom<VA,VC>(home(*this),iv[0].view,x1);
-      return es;
-    }
-    assert(iv.size() > 1);
-
-    if (x1.assigned()) {
-      for (int i=0; i<iv.size(); i++)
-        if (iv[i].view.in(x1.val()))
-          return shared(x0,x1) ? ES_NOFIX : ES_FIX;
-      return ES_FAILED;
-    } else {
-      Region r;
-      ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA> >(iv.size());
-      for (int i=0; i<iv.size(); i++)
-        i_view[i].init(iv[i].view);
-      Iter::Ranges::NaryUnion i_val(r, i_view, iv.size());
-      ModEvent me = x1.inter_r(home,i_val);
-      r.free<ViewRanges<VA> >(i_view,iv.size());
-      GECODE_ME_CHECK(me);
-      return (shared(x0,x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
-    }
-  }
-
-}}}
+}}} // namespace Gecode::Int::Element
 
 // STATISTICS: int-prop
-

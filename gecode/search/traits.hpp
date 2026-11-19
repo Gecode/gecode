@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,27 +32,27 @@
 
 namespace Gecode {
 
-  // Forward declaration
-  class SEBs;
+    // Forward declaration
+    class SEBs;
 
-  /// Traits of %SEBs
-  template<>
-  class ArrayTraits<ArgArray<SEB> > {
-  public:
-    typedef SEBs StorageType;
-    typedef SEB  ValueType;
-    typedef SEBs ArgsType;
-  };
+    /// Traits of %SEBs
+    template <>
+    class ArrayTraits<ArgArray<SEB>> {
+    public:
+        typedef SEBs StorageType;
+        typedef SEB ValueType;
+        typedef SEBs ArgsType;
+    };
 
-  /// Traits of %SEBs
-  template<>
-  class ArrayTraits<SEBs> {
-  public:
-    typedef SEBs StorageType;
-    typedef SEB  ValueType;
-    typedef SEBs ArgsType;
-  };
+    /// Traits of %SEBs
+    template <>
+    class ArrayTraits<SEBs> {
+    public:
+        typedef SEBs StorageType;
+        typedef SEB ValueType;
+        typedef SEBs ArgsType;
+    };
 
-}
+} // namespace Gecode
 
 // STATISTICS: search-other

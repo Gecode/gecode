@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christopher Mears <Chris.Mears@monash.edu>
@@ -49,62 +48,63 @@
 
 namespace Gecode { namespace Set { namespace Precede {
 
-  /**
-   * \brief Single value precedence propagator
-   *
-   * The propagator is based on: Yat Chiu Law and Jimmy H.M. Lee,
-   * Global Constraints for Integer and Set Value Precedence,
-   * CP 2004, 362--376.
-   *
-   * Requires \code #include <gecode/set/precede.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class View>
-  class Single : public NaryPropagator<View,PC_SET_NONE> {
-  protected:
-    using NaryPropagator<View,PC_SET_NONE>::x;
-    /// %Advisors for views (by position in array)
-    class Index : public Advisor {
-    public:
-      /// The position of the view in the view array
-      int i;
-      /// Create index advisor
-      Index(Space& home, Propagator& p, Council<Index>& c, int i);
-      /// Clone index advisor \a a
-      Index(Space& home, Index& a);
-    };
-    /// The advisor council
-    Council<Index> c;
-    /// The value \a s must precede \a t
-    int s, t;
-    /// Pointers updated during propagation
-    int alpha, beta, gamma;
-    /// Update the alpha pointer
-    ExecStatus updateAlpha(Space& home);
-    /// Update the beta pointer
-    ExecStatus updateBeta(Space& home);
-    /// Constructor for posting
-    Single(Home home, ViewArray<View>& x, int s, int t, int beta, int gamma);
-    /// Constructor for cloning \a p
-    Single(Space& home, Single<View>& p);
-  public:
-    /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home);
-    /// Cost function
-    virtual PropCost cost(const Space&, const ModEventDelta&) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-    /// Give advice to propagator
-    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator that \a s precedes \a t in \a x
-    static ExecStatus post(Home home, ViewArray<View>& x, int s, int t);
-  };
+    /**
+     * \brief Single value precedence propagator
+     *
+     * The propagator is based on: Yat Chiu Law and Jimmy H.M. Lee,
+     * Global Constraints for Integer and Set Value Precedence,
+     * CP 2004, 362--376.
+     *
+     * Requires \code #include <gecode/set/precede.hh> \endcode
+     * \ingroup FuncIntProp
+     */
+    template <class View>
+    class Single : public NaryPropagator<View, PC_SET_NONE> {
+    protected:
+        using NaryPropagator<View, PC_SET_NONE>::x;
+        /// %Advisors for views (by position in array)
+        class Index : public Advisor {
+        public:
+            /// The position of the view in the view array
+            int i;
+            /// Create index advisor
+            Index(Space& home, Propagator& p, Council<Index>& c, int i);
+            /// Clone index advisor \a a
+            Index(Space& home, Index& a);
+        };
+        /// The advisor council
+        Council<Index> c;
+        /// The value \a s must precede \a t
+        int s, t;
+        /// Pointers updated during propagation
+        int alpha, beta, gamma;
+        /// Update the alpha pointer
+        ExecStatus updateAlpha(Space& home);
+        /// Update the beta pointer
+        ExecStatus updateBeta(Space& home);
+        /// Constructor for posting
+        Single(Home home, ViewArray<View>& x, int s, int t, int beta, int gamma);
+        /// Constructor for cloning \a p
+        Single(Space& home, Single<View>& p);
 
-}}}
+    public:
+        /// Copy propagator during cloning
+        virtual Propagator* copy(Space& home);
+        /// Cost function
+        virtual PropCost cost(const Space&, const ModEventDelta&) const;
+        /// Schedule function
+        virtual void reschedule(Space& home);
+        /// Delete propagator and return its size
+        virtual size_t dispose(Space& home);
+        /// Give advice to propagator
+        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        /// Perform propagation
+        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        /// Post propagator that \a s precedes \a t in \a x
+        static ExecStatus post(Home home, ViewArray<View>& x, int s, int t);
+    };
+
+}}} // namespace Gecode::Set::Precede
 
 #include <gecode/set/precede/single.hpp>
 

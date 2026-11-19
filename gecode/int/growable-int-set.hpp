@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -33,183 +32,178 @@
 
 namespace Gecode { namespace Int {
 
-  forceinline
-  GrowableIntSet::GrowableIntSet(void)
-    : _ranges(nullptr), _count(0), _capacity(0) {}
+    forceinline
+    GrowableIntSet::GrowableIntSet(void)
+        : _ranges(nullptr), _count(0), _capacity(0) {}
 
-  forceinline unsigned int
-  GrowableIntSet::max_capacity(void) {
-    return static_cast<unsigned int>(std::min(
-      static_cast<size_t>(std::numeric_limits<unsigned int>::max()),
-      static_cast<size_t>(std::numeric_limits<ptrdiff_t>::max()) /
-        sizeof(Range)));
-  }
-
-  inline void
-  GrowableIntSet::reserve(Space& home, unsigned int required) {
-    if (required <= _capacity)
-      return;
-    const unsigned int limit = max_capacity();
-    if (required > limit)
-      throw MemoryExhausted();
-    const unsigned int extra = _capacity / 2U + _capacity % 2U;
-    const unsigned int grown = (_capacity == 0) ? 2U :
-      ((_capacity > limit-extra) ? limit : _capacity+extra);
-    const unsigned int capacity = std::max(required,grown);
-    Range* ranges = home.alloc<Range>(capacity);
-    for (unsigned int i=0; i<_count; i++)
-      ranges[i] = _ranges[i];
-    if (_ranges != nullptr)
-      home.free<Range>(_ranges,_capacity);
-    _ranges = ranges;
-    _capacity = capacity;
-  }
-
-  forceinline unsigned int
-  GrowableIntSet::first_max_ge(int value) const {
-    unsigned int first = 0;
-    unsigned int after = _count;
-    while (first < after) {
-      const unsigned int middle = first + (after-first)/2U;
-      if (_ranges[middle].max < value)
-        first = middle+1U;
-      else
-        after = middle;
+    forceinline unsigned int
+    GrowableIntSet::max_capacity(void) {
+        return static_cast<unsigned int>(
+            std::min(static_cast<size_t>(std::numeric_limits<unsigned int>::max()),
+                     static_cast<size_t>(std::numeric_limits<ptrdiff_t>::max()) / sizeof(Range)));
     }
-    return first;
-  }
 
-  forceinline bool
-  GrowableIntSet::in(int value) const {
-    const unsigned int i = first_max_ge(value);
-    return (i < _count) && (_ranges[i].min <= value);
-  }
+    inline void
+    GrowableIntSet::reserve(Space& home, unsigned int required) {
+        if (required <= _capacity)
+            return;
+        const unsigned int limit = max_capacity();
+        if (required > limit)
+            throw MemoryExhausted();
+        const unsigned int extra = _capacity / 2U + _capacity % 2U;
+        const unsigned int grown = (_capacity == 0) ? 2U : ((_capacity > limit - extra) ? limit : _capacity + extra);
+        const unsigned int capacity = std::max(required, grown);
+        Range* ranges = home.alloc<Range>(capacity);
+        for (unsigned int i = 0; i < _count; i++)
+            ranges[i] = _ranges[i];
+        if (_ranges != nullptr)
+            home.free<Range>(_ranges, _capacity);
+        _ranges = ranges;
+        _capacity = capacity;
+    }
 
-  inline void
-  GrowableIntSet::add(Space& home, int min, int max) {
-    const unsigned int first = first_max_ge(min-1);
-    unsigned int after = first;
-    while ((after < _count) && (_ranges[after].min <= max+1))
-      ++after;
-    if (first < after) {
-      _ranges[first].min = std::min(min,_ranges[first].min);
-      _ranges[first].max = std::max(max,_ranges[after-1U].max);
-      if (after > first+1U) {
-        unsigned int out = first+1U;
-        for (unsigned int i=after; i<_count; i++)
-          _ranges[out++] = _ranges[i];
+    forceinline unsigned int
+    GrowableIntSet::first_max_ge(int value) const {
+        unsigned int first = 0;
+        unsigned int after = _count;
+        while (first < after) {
+            const unsigned int middle = first + (after - first) / 2U;
+            if (_ranges[middle].max < value)
+                first = middle + 1U;
+            else
+                after = middle;
+        }
+        return first;
+    }
+
+    forceinline bool
+    GrowableIntSet::in(int value) const {
+        const unsigned int i = first_max_ge(value);
+        return (i < _count) && (_ranges[i].min <= value);
+    }
+
+    inline void
+    GrowableIntSet::add(Space& home, int min, int max) {
+        const unsigned int first = first_max_ge(min - 1);
+        unsigned int after = first;
+        while ((after < _count) && (_ranges[after].min <= max + 1))
+            ++after;
+        if (first < after) {
+            _ranges[first].min = std::min(min, _ranges[first].min);
+            _ranges[first].max = std::max(max, _ranges[after - 1U].max);
+            if (after > first + 1U) {
+                unsigned int out = first + 1U;
+                for (unsigned int i = after; i < _count; i++)
+                    _ranges[out++] = _ranges[i];
+                _count = out;
+            }
+            return;
+        }
+        if (_count == max_capacity())
+            throw MemoryExhausted();
+        reserve(home, _count + 1U);
+        for (unsigned int i = _count; i > first; --i)
+            _ranges[i] = _ranges[i - 1U];
+        _ranges[first].min = min;
+        _ranges[first].max = max;
+        ++_count;
+    }
+
+    template <class I>
+    inline void
+    GrowableIntSet::add_r(Space& home, I added) {
+        if (!added())
+            return;
+        I remaining(added);
+        ++remaining;
+        if (!remaining()) {
+            add(home, added.min(), added.max());
+            return;
+        }
+        const unsigned int limit = max_capacity() - _count;
+        unsigned int n = 1;
+        for (; remaining(); ++remaining) {
+            if (n >= limit)
+                throw MemoryExhausted();
+            ++n;
+        }
+        const unsigned int first = first_max_ge(added.min() - 1);
+        reserve(home, _count + n);
+        // The hole protects unread old ranges while the union is written forward.
+        for (unsigned int i = _count; i > first; --i)
+            _ranges[i + n - 1U] = _ranges[i - 1U];
+        unsigned int read = first + n;
+        const unsigned int end = _count + n;
+        unsigned int out = first;
+        while (added() || (read < end)) {
+            Range next;
+            if (added() && ((read == end) || (added.min() < _ranges[read].min))) {
+                next.min = added.min();
+                next.max = added.max();
+                ++added;
+            } else {
+                next = _ranges[read++];
+            }
+            if ((out > first) && (next.min <= _ranges[out - 1U].max + 1)) {
+                _ranges[out - 1U].max = std::max(_ranges[out - 1U].max, next.max);
+            } else {
+                _ranges[out++] = next;
+            }
+        }
         _count = out;
-      }
-      return;
     }
-    if (_count == max_capacity())
-      throw MemoryExhausted();
-    reserve(home,_count+1U);
-    for (unsigned int i=_count; i>first; --i)
-      _ranges[i] = _ranges[i-1U];
-    _ranges[first].min = min;
-    _ranges[first].max = max;
-    ++_count;
-  }
 
-  template<class I>
-  inline void
-  GrowableIntSet::add_r(Space& home, I added) {
-    if (!added())
-      return;
-    I remaining(added);
-    ++remaining;
-    if (!remaining()) {
-      add(home,added.min(),added.max());
-      return;
+    inline void
+    GrowableIntSet::update(Space& home, const GrowableIntSet& source) {
+        const unsigned int count = source._count;
+        Range* ranges = (count == 0) ? nullptr : home.alloc<Range>(count);
+        for (unsigned int i = 0; i < count; i++)
+            ranges[i] = source._ranges[i];
+        if (_ranges != nullptr)
+            home.free<Range>(_ranges, _capacity);
+        _ranges = ranges;
+        _count = count;
+        _capacity = count;
     }
-    const unsigned int limit = max_capacity()-_count;
-    unsigned int n = 1;
-    for (; remaining(); ++remaining) {
-      if (n >= limit)
-        throw MemoryExhausted();
-      ++n;
+
+    forceinline void
+    GrowableIntSet::dispose(Space& home) {
+        if (_ranges != nullptr)
+            home.free<Range>(_ranges, _capacity);
+        _ranges = nullptr;
+        _count = 0;
+        _capacity = 0;
     }
-    const unsigned int first = first_max_ge(added.min()-1);
-    reserve(home,_count+n);
-    // The hole protects unread old ranges while the union is written forward.
-    for (unsigned int i=_count; i>first; --i)
-      _ranges[i+n-1U] = _ranges[i-1U];
-    unsigned int read = first+n;
-    const unsigned int end = _count+n;
-    unsigned int out = first;
-    while (added() || (read < end)) {
-      Range next;
-      if (added() && ((read == end) ||
-                      (added.min() < _ranges[read].min))) {
-        next.min = added.min();
-        next.max = added.max();
-        ++added;
-      } else {
-        next = _ranges[read++];
-      }
-      if ((out > first) && (next.min <= _ranges[out-1U].max+1)) {
-        _ranges[out-1U].max = std::max(_ranges[out-1U].max,next.max);
-      } else {
-        _ranges[out++] = next;
-      }
+
+    forceinline
+    GrowableIntSetRanges::GrowableIntSetRanges(const GrowableIntSet& set)
+        : current(set._ranges), end((set._count == 0) ? set._ranges : set._ranges + set._count) {}
+
+    forceinline bool
+    GrowableIntSetRanges::operator()(void) const {
+        return current != end;
     }
-    _count = out;
-  }
 
-  inline void
-  GrowableIntSet::update(Space& home, const GrowableIntSet& source) {
-    const unsigned int count = source._count;
-    Range* ranges = (count == 0) ? nullptr : home.alloc<Range>(count);
-    for (unsigned int i=0; i<count; i++)
-      ranges[i] = source._ranges[i];
-    if (_ranges != nullptr)
-      home.free<Range>(_ranges,_capacity);
-    _ranges = ranges;
-    _count = count;
-    _capacity = count;
-  }
+    forceinline void
+    GrowableIntSetRanges::operator++(void) {
+        ++current;
+    }
 
-  forceinline void
-  GrowableIntSet::dispose(Space& home) {
-    if (_ranges != nullptr)
-      home.free<Range>(_ranges,_capacity);
-    _ranges = nullptr;
-    _count = 0;
-    _capacity = 0;
-  }
+    forceinline int
+    GrowableIntSetRanges::min(void) const {
+        return current->min;
+    }
 
-  forceinline
-  GrowableIntSetRanges::GrowableIntSetRanges(const GrowableIntSet& set)
-    : current(set._ranges),
-      end((set._count == 0) ? set._ranges : set._ranges+set._count) {}
+    forceinline int
+    GrowableIntSetRanges::max(void) const {
+        return current->max;
+    }
 
-  forceinline bool
-  GrowableIntSetRanges::operator ()(void) const {
-    return current != end;
-  }
+    forceinline unsigned int
+    GrowableIntSetRanges::width(void) const {
+        return static_cast<unsigned int>(current->max) - static_cast<unsigned int>(current->min) + 1U;
+    }
 
-  forceinline void
-  GrowableIntSetRanges::operator ++(void) {
-    ++current;
-  }
-
-  forceinline int
-  GrowableIntSetRanges::min(void) const {
-    return current->min;
-  }
-
-  forceinline int
-  GrowableIntSetRanges::max(void) const {
-    return current->max;
-  }
-
-  forceinline unsigned int
-  GrowableIntSetRanges::width(void) const {
-    return static_cast<unsigned int>(current->max) -
-      static_cast<unsigned int>(current->min) + 1U;
-  }
-
-}}
+}} // namespace Gecode::Int
 
 // STATISTICS: int-other

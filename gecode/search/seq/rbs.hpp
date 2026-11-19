@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -35,88 +34,83 @@
  *
  */
 
-
 namespace Gecode { namespace Search { namespace Seq {
 
-  forceinline
-  RestartStop::RestartStop(Stop* s)
-    : l(0U), c(0U), m_stop(s), e_stopped(false), e_fail(0U) {}
+    forceinline
+    RestartStop::RestartStop(Stop* s)
+        : l(0U), c(0U), m_stop(s), e_stopped(false), e_fail(0U) {}
 
-  forceinline void
-  RestartStop::restart(void) {
-    Support::Lock lock(m);
-    m_stat.restart++;
-  }
+    forceinline void
+    RestartStop::restart(void) {
+        Support::Lock lock(m);
+        m_stat.restart++;
+    }
 
-  forceinline void
-  RestartStop::nogood(unsigned long int n) {
-    Support::Lock lock(m);
-    m_stat.nogood += n;
-  }
+    forceinline void
+    RestartStop::nogood(unsigned long int n) {
+        Support::Lock lock(m);
+        m_stat.nogood += n;
+    }
 
-  forceinline SpaceStatus
-  RestartStop::status(Space* s) {
-    Support::Lock lock(m);
-    return s->status(m_stat);
-  }
+    forceinline SpaceStatus
+    RestartStop::status(Space* s) {
+        Support::Lock lock(m);
+        return s->status(m_stat);
+    }
 
-  forceinline void
-  RestartStop::limit(const Search::Statistics& s, unsigned long long int c0) {
-    Support::Lock lock(m);
-    l = c = c0;
-    m_stat += s;
-    e_stopped = false;
-    e_fail = 0U;
-  }
+    forceinline void
+    RestartStop::limit(const Search::Statistics& s, unsigned long long int c0) {
+        Support::Lock lock(m);
+        l = c = c0;
+        m_stat += s;
+        e_stopped = false;
+        e_fail = 0U;
+    }
 
-  forceinline void
-  RestartStop::renew(const Search::Statistics& s) {
-    Support::Lock lock(m);
-    l = c;
-    m_stat += s;
-    e_stopped = false;
-    e_fail = 0U;
-  }
+    forceinline void
+    RestartStop::renew(const Search::Statistics& s) {
+        Support::Lock lock(m);
+        l = c;
+        m_stat += s;
+        e_stopped = false;
+        e_fail = 0U;
+    }
 
-  forceinline void
-  RestartStop::extend(unsigned long long int c0) {
-    Support::Lock lock(m);
-    c = c0;
-    l = (e_fail > ULLONG_MAX - c0) ? ULLONG_MAX : e_fail + c0;
-    e_stopped = false;
-    e_fail = 0U;
-  }
+    forceinline void
+    RestartStop::extend(unsigned long long int c0) {
+        Support::Lock lock(m);
+        c = c0;
+        l = (e_fail > ULLONG_MAX - c0) ? ULLONG_MAX : e_fail + c0;
+        e_stopped = false;
+        e_fail = 0U;
+    }
 
-  forceinline void
-  RestartStop::update(const Search::Statistics& s) {
-    Support::Lock lock(m);
-    m_stat += s;
-  }
+    forceinline void
+    RestartStop::update(const Search::Statistics& s) {
+        Support::Lock lock(m);
+        m_stat += s;
+    }
 
-  forceinline bool
-  RestartStop::enginestopped(void) const {
-    Support::Lock lock(m);
-    return e_stopped;
-  }
+    forceinline bool
+    RestartStop::enginestopped(void) const {
+        Support::Lock lock(m);
+        return e_stopped;
+    }
 
-  forceinline Statistics
-  RestartStop::metastatistics(void) const {
-    Support::Lock lock(m);
-    return m_stat;
-  }
+    forceinline Statistics
+    RestartStop::metastatistics(void) const {
+        Support::Lock lock(m);
+        return m_stat;
+    }
 
+    forceinline
+    RBS::RBS(Space* s, RestartStop* stop0, Engine* e0, const Search::Statistics& stat, const Options& opt, bool best0,
+             SpokeCoverage coverage0)
+        : e(e0), hub(s), last(nullptr), co(opt.cutoff), stop(stop0), m_opt(opt.expand()), episode(0UL),
+          coverage(coverage0), solution(false), best(best0), end(EndReason::NotEnded) {
+        stop->limit(stat, (*co)());
+    }
 
-  forceinline
-  RBS::RBS(Space* s, RestartStop* stop0,
-           Engine* e0, const Search::Statistics& stat, const Options& opt,
-           bool best0, SpokeCoverage coverage0)
-    : e(e0), hub(s), last(nullptr), co(opt.cutoff), stop(stop0),
-      m_opt(opt.expand()), episode(0UL), coverage(coverage0),
-      solution(false),
-      best(best0), end(EndReason::NotEnded) {
-    stop->limit(stat,(*co)());
-  }
-
-}}}
+}}} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

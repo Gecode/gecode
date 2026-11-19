@@ -1,8 +1,7 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
-*
+ *
  *  Copyright:
  *     Christian Schulte, 2012
  *
@@ -33,27 +32,27 @@
 
 namespace Gecode {
 
-  /**
-   * \brief Traits for branching
-   *
-   * This class collects the traits for branching, depending on the
-   * variable type.
-   *
-   * The traits used concern various functions:
-   *     - <code>typedef Type Filter</code>  where \c Type is the type
-   *       of an appropriate branch filter function for the variable type.
-   *     - <code>typedef Type Merit</code>  where \c Type is the type
-   *       of an appropriate branch merit function for the variable type.
-   *     - <code>typedef Type Val</code>  where \c Type is the type
-   *       of an appropriate branch value function for the variable type.
-   *     - <code>typedef Type ValType</code>  where \c Type is the return type
-   *       of the branch value function for the variable type.
-   *     - <code>typedef Type Commit</code>  where \c Type is the type
-   *       of an appropriate branch commit function for the variable type.
-   */
-  template<class Var>
-  class BranchTraits {};
+    /**
+     * \brief Traits for branching
+     *
+     * This class collects the traits for branching, depending on the
+     * variable type.
+     *
+     * The traits used concern various functions:
+     *     - <code>typedef Type Filter</code>  where \c Type is the type
+     *       of an appropriate branch filter function for the variable type.
+     *     - <code>typedef Type Merit</code>  where \c Type is the type
+     *       of an appropriate branch merit function for the variable type.
+     *     - <code>typedef Type Val</code>  where \c Type is the type
+     *       of an appropriate branch value function for the variable type.
+     *     - <code>typedef Type ValType</code>  where \c Type is the return type
+     *       of the branch value function for the variable type.
+     *     - <code>typedef Type Commit</code>  where \c Type is the type
+     *       of an appropriate branch commit function for the variable type.
+     */
+    template <class Var>
+    class BranchTraits {};
 
-}
+} // namespace Gecode
 
 // STATISTICS: kernel-branch

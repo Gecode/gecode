@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,34 +34,34 @@
 
 namespace Gecode { namespace MiniModel {
 
-  /**
-   * \defgroup FuncThrowMiniModel MiniModel exceptions
-   * \ingroup FuncThrow
-   */
+    /**
+     * \defgroup FuncThrowMiniModel MiniModel exceptions
+     * \ingroup FuncThrow
+     */
 
-  //@{
-  /// %Exception: Too few arguments available in argument array
-  class GECODE_MINIMODEL_EXPORT TooFewArguments : public Exception  {
-  public:
-    /// Initialize with location \a l
-    TooFewArguments(const char* l);
-  };
+    //@{
+    /// %Exception: Too few arguments available in argument array
+    class GECODE_MINIMODEL_EXPORT TooFewArguments : public Exception {
+    public:
+        /// Initialize with location \a l
+        TooFewArguments(const char* l);
+    };
 
-  /// %Exception: Sizes of arguments does not match
-  class GECODE_MINIMODEL_EXPORT ArgumentSizeMismatch : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentSizeMismatch(const char* l);
-  };
+    /// %Exception: Sizes of arguments does not match
+    class GECODE_MINIMODEL_EXPORT ArgumentSizeMismatch : public Exception {
+    public:
+        /// Initialize with location \a l
+        ArgumentSizeMismatch(const char* l);
+    };
 
-  /// %Exception: Argument out of range
-  class GECODE_MINIMODEL_EXPORT ArgumentOutOfRange : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentOutOfRange(const char* l);
-  };
-  //@}
+    /// %Exception: Argument out of range
+    class GECODE_MINIMODEL_EXPORT ArgumentOutOfRange : public Exception {
+    public:
+        /// Initialize with location \a l
+        ArgumentOutOfRange(const char* l);
+    };
+    //@}
 
-}}
+}} // namespace Gecode::MiniModel
 
 // STATISTICS: minimodel-any

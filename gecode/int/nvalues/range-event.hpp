@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,15 +32,15 @@
 
 namespace Gecode { namespace Int { namespace NValues {
 
-  forceinline bool
-  RangeEvent::operator <(RangeEvent re) const {
-    if (val < re.val)
-      return true;
-    if (val == re.val)
-      return ret < re.ret;
-    return false;
-  }
+    forceinline bool
+    RangeEvent::operator<(RangeEvent re) const {
+        if (val < re.val)
+            return true;
+        if (val == re.val)
+            return ret < re.ret;
+        return false;
+    }
 
-}}}
+}}} // namespace Gecode::Int::NValues
 
 // STATISTICS: int-prop

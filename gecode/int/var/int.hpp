@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,109 +32,106 @@
 
 namespace Gecode {
 
-  forceinline void
-  IntVar::_init(Space& home, int min, int max) {
-    x = new (home) Int::IntVarImp(home,min,max);
-  }
+    forceinline void
+    IntVar::_init(Space& home, int min, int max) {
+        x = new (home) Int::IntVarImp(home, min, max);
+    }
 
-  forceinline void
-  IntVar::_init(Space& home, const IntSet& ds) {
-    x = new (home) Int::IntVarImp(home,ds);
-  }
+    forceinline void
+    IntVar::_init(Space& home, const IntSet& ds) {
+        x = new (home) Int::IntVarImp(home, ds);
+    }
 
-  forceinline
-  IntVar::IntVar(void) {}
-  forceinline
-  IntVar::IntVar(const IntVar& y)
-    : VarImpVar<Int::IntVarImp>(y.varimp()) {}
-  forceinline
-  IntVar::IntVar(const Int::IntView& y)
-    : VarImpVar<Int::IntVarImp>(y.varimp()) {}
+    forceinline
+    IntVar::IntVar(void) {}
+    forceinline
+    IntVar::IntVar(const IntVar& y)
+        : VarImpVar<Int::IntVarImp>(y.varimp()) {}
+    forceinline
+    IntVar::IntVar(const Int::IntView& y)
+        : VarImpVar<Int::IntVarImp>(y.varimp()) {}
 
-  forceinline int
-  IntVar::val(void) const {
-    if (!x->assigned())
-      throw Int::ValOfUnassignedVar("IntVar::val");
-    return x->val();
-  }
-  forceinline int
-  IntVar::min(void) const {
-    return x->min();
-  }
-  forceinline int
-  IntVar::med(void) const {
-    return x->med();
-  }
-  forceinline int
-  IntVar::max(void) const {
-    return x->max();
-  }
+    forceinline int
+    IntVar::val(void) const {
+        if (!x->assigned())
+            throw Int::ValOfUnassignedVar("IntVar::val");
+        return x->val();
+    }
+    forceinline int
+    IntVar::min(void) const {
+        return x->min();
+    }
+    forceinline int
+    IntVar::med(void) const {
+        return x->med();
+    }
+    forceinline int
+    IntVar::max(void) const {
+        return x->max();
+    }
 
+    forceinline unsigned int
+    IntVar::width(void) const {
+        return x->width();
+    }
+    forceinline unsigned int
+    IntVar::size(void) const {
+        return x->size();
+    }
+    forceinline unsigned int
+    IntVar::regret_min(void) const {
+        return x->regret_min();
+    }
+    forceinline unsigned int
+    IntVar::regret_max(void) const {
+        return x->regret_max();
+    }
 
-  forceinline unsigned int
-  IntVar::width(void) const {
-    return x->width();
-  }
-  forceinline unsigned int
-  IntVar::size(void) const {
-    return x->size();
-  }
-  forceinline unsigned int
-  IntVar::regret_min(void) const {
-    return x->regret_min();
-  }
-  forceinline unsigned int
-  IntVar::regret_max(void) const {
-    return x->regret_max();
-  }
+    forceinline bool
+    IntVar::range(void) const {
+        return x->range();
+    }
+    forceinline bool
+    IntVar::in(int n) const {
+        return x->in(n);
+    }
 
-  forceinline bool
-  IntVar::range(void) const {
-    return x->range();
-  }
-  forceinline bool
-  IntVar::in(int n) const {
-    return x->in(n);
-  }
+    /*
+     * Range iterator
+     *
+     */
+    forceinline
+    IntVarRanges::IntVarRanges(void) {}
 
-  /*
-   * Range iterator
-   *
-   */
-  forceinline
-  IntVarRanges::IntVarRanges(void) {}
+    forceinline
+    IntVarRanges::IntVarRanges(const IntVar& x)
+        : Int::IntVarImpFwd(x.varimp()) {}
 
-  forceinline
-  IntVarRanges::IntVarRanges(const IntVar& x)
-    : Int::IntVarImpFwd(x.varimp()) {}
+    forceinline void
+    IntVarRanges::init(const IntVar& x) {
+        Int::IntVarImpFwd::init(x.varimp());
+    }
 
-  forceinline void
-  IntVarRanges::init(const IntVar& x) {
-    Int::IntVarImpFwd::init(x.varimp());
-  }
+    /*
+     * Value iterator
+     *
+     */
 
+    forceinline
+    IntVarValues::IntVarValues(void) {}
 
-  /*
-   * Value iterator
-   *
-   */
+    forceinline
+    IntVarValues::IntVarValues(const IntVar& x) {
+        IntVarRanges r(x);
+        Iter::Ranges::ToValues<IntVarRanges>::init(r);
+    }
 
-  forceinline
-  IntVarValues::IntVarValues(void) {}
+    forceinline void
+    IntVarValues::init(const IntVar& x) {
+        IntVarRanges r(x);
+        Iter::Ranges::ToValues<IntVarRanges>::init(r);
+    }
 
-  forceinline
-  IntVarValues::IntVarValues(const IntVar& x) {
-    IntVarRanges r(x);
-    Iter::Ranges::ToValues<IntVarRanges>::init(r);
-  }
-
-  forceinline void
-  IntVarValues::init(const IntVar& x) {
-    IntVarRanges r(x);
-    Iter::Ranges::ToValues<IntVarRanges>::init(r);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-var
-

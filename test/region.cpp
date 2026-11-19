@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,32 +37,33 @@
 
 namespace Test {
 
-  /// %Test for %Region memory area
-  class Region : public Test::Base {
-  protected:
-    /// How often to repeat
-    static const int n_repeat = 16;
-    /// How many blocks to allocate
-    static const int n_blocks = 64;
-    /// The size of a block
-    static const size_t size =
-      Gecode::Kernel::MemoryConfig::region_area_size * 4;
-  public:
-    /// Initialize test
-    Region(void) : Test::Base("Region") {}
-    /// Perform actual tests
-    bool run(void) {
-      for (int i=n_repeat; i--; ) {
-        Gecode::Region r;
-        for (int j=n_blocks; j--; )
-          (void) r.alloc<char>(static_cast<unsigned long int>(size));
-      }
-      return true;
-    }
-  };
+    /// %Test for %Region memory area
+    class Region : public Test::Base {
+    protected:
+        /// How often to repeat
+        static const int n_repeat = 16;
+        /// How many blocks to allocate
+        static const int n_blocks = 64;
+        /// The size of a block
+        static const size_t size = Gecode::Kernel::MemoryConfig::region_area_size * 4;
 
-  Region r;
+    public:
+        /// Initialize test
+        Region(void) : Test::Base("Region") {}
+        /// Perform actual tests
+        bool
+        run(void) {
+            for (int i = n_repeat; i--;) {
+                Gecode::Region r;
+                for (int j = n_blocks; j--;)
+                    (void)r.alloc<char>(static_cast<unsigned long int>(size));
+            }
+            return true;
+        }
+    };
 
-}
+    Region r;
+
+} // namespace Test
 
 // STATISTICS: test-core

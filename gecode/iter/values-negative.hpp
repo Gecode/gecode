@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,80 +32,80 @@
 
 namespace Gecode { namespace Iter { namespace Values {
 
-  /**
-   * \brief Value iterator for selecting only negative values
-   *
-   * If \a strict is true, zero is excluded.
-   * \ingroup FuncIterValues
-   */
-  template<class I, bool strict=false>
-  class Negative {
-  protected:
-    /// Input iterator
-    I i;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Negative(void);
-    /// Initialize with values from \a i
-    Negative(I& i);
-    /// Initialize with values from \a i
-    void init(I& i);
-    //@}
+    /**
+     * \brief Value iterator for selecting only negative values
+     *
+     * If \a strict is true, zero is excluded.
+     * \ingroup FuncIterValues
+     */
+    template <class I, bool strict = false>
+    class Negative {
+    protected:
+        /// Input iterator
+        I i;
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next value (if possible)
-    void operator ++(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Negative(void);
+        /// Initialize with values from \a i
+        Negative(I& i);
+        /// Initialize with values from \a i
+        void init(I& i);
+        //@}
 
-    /// \name Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a value or done
+        bool operator()(void) const;
+        /// Move iterator to next value (if possible)
+        void operator++(void);
+        //@}
 
+        /// \name Value access
+        //@{
+        /// Return current value
+        int val(void) const;
+        //@}
+    };
 
-  template<class I, bool strict>
-  forceinline
-  Negative<I,strict>::Negative(void) {}
+    template <class I, bool strict>
+    forceinline
+    Negative<I, strict>::Negative(void) {}
 
-  template<class I, bool strict>
-  forceinline void
-  Negative<I,strict>::init(I& i0) {
-    i=i0;
-  }
-
-  template<class I, bool strict>
-  forceinline
-  Negative<I,strict>::Negative(I& i0) : i(i0) {}
-
-  template<class I, bool strict>
-  forceinline void
-  Negative<I,strict>::operator ++(void) {
-    ++i;
-  }
-  template<class I, bool strict>
-  forceinline bool
-  Negative<I,strict>::operator ()(void) const {
-    if (strict) {
-      return i() && (i.val() < 0);
-    } else {
-      return i() && (i.val() <= 0);
+    template <class I, bool strict>
+    forceinline void
+    Negative<I, strict>::init(I& i0) {
+        i = i0;
     }
-  }
 
-  template<class I, bool strict>
-  forceinline int
-  Negative<I,strict>::val(void) const {
-    return i.val();
-  }
+    template <class I, bool strict>
+    forceinline
+    Negative<I, strict>::Negative(I& i0)
+        : i(i0) {}
 
-}}}
+    template <class I, bool strict>
+    forceinline void
+    Negative<I, strict>::operator++(void) {
+        ++i;
+    }
+    template <class I, bool strict>
+    forceinline bool
+    Negative<I, strict>::operator()(void) const {
+        if (strict) {
+            return i() && (i.val() < 0);
+        } else {
+            return i() && (i.val() <= 0);
+        }
+    }
+
+    template <class I, bool strict>
+    forceinline int
+    Negative<I, strict>::val(void) const {
+        return i.val();
+    }
+
+}}} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any
-

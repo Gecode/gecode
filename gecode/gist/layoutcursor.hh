@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,24 +38,22 @@
 
 namespace Gecode { namespace Gist {
 
+    /// \brief A cursor that computes a tree layout for VisualNodes
+    class LayoutCursor : public NodeCursor<VisualNode> {
+    public:
+        /// Constructor
+        LayoutCursor(VisualNode* theNode, const VisualNode::NodeAllocator& na);
 
-  /// \brief A cursor that computes a tree layout for VisualNodes
-  class LayoutCursor : public NodeCursor<VisualNode> {
-  public:
-    /// Constructor
-    LayoutCursor(VisualNode* theNode,
-                 const VisualNode::NodeAllocator& na);
+        /// \name Cursor interface
+        //@{
+        /// Test if the cursor may move to the first child node
+        bool mayMoveDownwards(void);
+        /// Compute layout for current node
+        void processCurrentNode(void);
+        //@}
+    };
 
-    /// \name Cursor interface
-    //@{
-    /// Test if the cursor may move to the first child node
-    bool mayMoveDownwards(void);
-    /// Compute layout for current node
-    void processCurrentNode(void);
-    //@}
-  };
-
-}}
+}} // namespace Gecode::Gist
 
 #include <gecode/gist/layoutcursor.hpp>
 

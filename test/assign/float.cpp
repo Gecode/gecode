@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -39,32 +38,31 @@
 
 namespace Test { namespace Assign {
 
-  /// %Test assignment with distinct propagator
-  class Float : public FloatTest {
-  public:
-    /// Create and register test
-    Float(const std::string& s, const Gecode::FloatVal& d, int n)
-      : FloatTest(s,n,d) {}
-    /// Post propagators on variables \a x
-    virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-      for (int i=0; i<x.size()-1; i++)
-        Gecode::rel(home, x[i], Gecode::FRT_LQ, x[i+1]);
-    }
-  };
+    /// %Test assignment with distinct propagator
+    class Float : public FloatTest {
+    public:
+        /// Create and register test
+        Float(const std::string& s, const Gecode::FloatVal& d, int n) : FloatTest(s, n, d) {}
+        /// Post propagators on variables \a x
+        virtual void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            for (int i = 0; i < x.size() - 1; i++)
+                Gecode::rel(home, x[i], Gecode::FRT_LQ, x[i + 1]);
+        }
+    };
 
-  namespace {
-    Gecode::FloatVal d_dense(-2,2);
-    Gecode::FloatVal d_large(-2,10);
+    namespace {
+        Gecode::FloatVal d_dense(-2, 2);
+        Gecode::FloatVal d_large(-2, 10);
 
-    Float d_3("Dense::3",d_dense,3);
-    Float d_5("Dense::5",d_dense,5);
-    Float l_2("Large::2",d_large,2);
-    Float l_3("Large::3",d_large,3);
-  }
+        Float d_3("Dense::3", d_dense, 3);
+        Float d_5("Dense::5", d_dense, 5);
+        Float l_2("Large::2", d_large, 2);
+        Float l_3("Large::3", d_large, 3);
+    } // namespace
 
-}}
+}} // namespace Test::Assign
 
 #endif
 
 // STATISTICS: test-branch
-

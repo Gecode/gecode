@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,211 +35,217 @@
 
 namespace Test { namespace Int {
 
-   /// %Tests for number of values constraints
-   namespace NValues {
+    /// %Tests for number of values constraints
+    namespace NValues {
 
-     /**
-      * \defgroup TaskTestIntNValues Number of values constraints
-      * \ingroup TaskTestInt
-      */
-     //@{
-     /// %Test number of values of integer variables equal to integer
-     class IntInt : public Test {
-     protected:
-       /// Integer relation type to propagate
-       Gecode::IntRelType irt;
-       /// Number of values
-       int m;
-     public:
-       /// Create and register test
-       IntInt(TestTags tags, int n, int m0, Gecode::IntRelType irt0)
-         : Test(tags,
-                "NValues::Int::Int::"+str(irt0)+"::"+str(n)+"::"+str(m0),
-                n,0,n),
-           irt(irt0), m(m0) {
-         testfix = false;
-         if (arity > 5)
-           testsearch = false;
-       }
-       /// Create and register initial assignment
-       virtual Assignment* assignment(void) const {
-         if (arity > 5)
-           return new RandomAssignment(arity, dom, 500, _rand);
-         else
-           return new CpltAssignment(arity,dom);
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int n = x.size();
-         bool* v = new bool[n+1];
-         for (int i=n+1; i--; )
-           v[i] = false;
-         int k = 0;
-         for (int i=n; i--; )
-           if (!v[x[i]]) {
-             k++;
-             v[x[i]] = true;
-           }
-         delete [] v;
-         return cmp(k,irt,m);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::nvalues(home, x, irt, m);
-       }
-     };
+        /**
+         * \defgroup TaskTestIntNValues Number of values constraints
+         * \ingroup TaskTestInt
+         */
+        //@{
+        /// %Test number of values of integer variables equal to integer
+        class IntInt : public Test {
+        protected:
+            /// Integer relation type to propagate
+            Gecode::IntRelType irt;
+            /// Number of values
+            int m;
 
-     /// %Test number of values of integer variables equal to integer variable
-     class IntVar : public Test {
-     protected:
-       /// Integer relation type to propagate
-       Gecode::IntRelType irt;
-     public:
-       /// Create and register test
-       IntVar(TestTags tags, int n, Gecode::IntRelType irt0)
-         : Test(tags,
-                "NValues::Int::Var::"+str(irt0)+"::"+str(n),n+1,0,n),
-           irt(irt0) {
-         testfix = false;
-       }
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int n = x.size() - 1;
-         bool* v = new bool[n+1];
-         for (int i=n+1; i--; )
-           v[i] = false;
-         int k = 0;
-         for (int i=n; i--; )
-           if (!v[x[i]]) {
-             k++;
-             v[x[i]] = true;
-           }
-         delete [] v;
-         return cmp(k,irt,x[n]);
-       }
-       /// Post constraint on \a xy
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& xy) {
-         int n = xy.size() - 1;
-         Gecode::IntVarArgs x(n);
-         for (int i=n; i--; )
-           x[i] = xy[i];
-         Gecode::nvalues(home, x, irt, xy[n]);
-       }
-     };
+        public:
+            /// Create and register test
+            IntInt(TestTags tags, int n, int m0, Gecode::IntRelType irt0)
+                : Test(tags, "NValues::Int::Int::" + str(irt0) + "::" + str(n) + "::" + str(m0), n, 0, n), irt(irt0),
+                  m(m0) {
+                testfix = false;
+                if (arity > 5)
+                    testsearch = false;
+            }
+            /// Create and register initial assignment
+            virtual Assignment*
+            assignment(void) const {
+                if (arity > 5)
+                    return new RandomAssignment(arity, dom, 500, _rand);
+                else
+                    return new CpltAssignment(arity, dom);
+            }
+            /// %Test whether \a x is solution
+            virtual bool
+            solution(const Assignment& x) const {
+                int n = x.size();
+                bool* v = new bool[n + 1];
+                for (int i = n + 1; i--;)
+                    v[i] = false;
+                int k = 0;
+                for (int i = n; i--;)
+                    if (!v[x[i]]) {
+                        k++;
+                        v[x[i]] = true;
+                    }
+                delete[] v;
+                return cmp(k, irt, m);
+            }
+            /// Post constraint on \a x
+            virtual void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+                Gecode::nvalues(home, x, irt, m);
+            }
+        };
 
-     /// %Test number of values of Boolean variables equal to integer
-     class BoolInt : public Test {
-     protected:
-       /// Integer relation type to propagate
-       Gecode::IntRelType irt;
-       /// Number of values
-       int m;
-     public:
-       /// Create and register test
-       BoolInt(int n, int m0, Gecode::IntRelType irt0)
-         : Test("NValues::Bool::Int::"+str(irt0)+"::"+str(n)+"::"+str(m0),
-                n,0,2),
-           irt(irt0), m(m0) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int n = x.size();
-         for (int i=n; i--; )
-           if (x[i] > 1)
-             return false;
-         bool* v = new bool[n+1];
-         for (int i=n+1; i--; )
-           v[i] = false;
-         int k = 0;
-         for (int i=n; i--; )
-           if (!v[x[i]]) {
-             k++;
-             v[x[i]] = true;
-           }
-         delete [] v;
-         return cmp(k,irt,m);
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         BoolVarArgs y(x.size());
-         for (int i=x.size(); i--; )
-           y[i] = channel(home, x[i]);
-         nvalues(home, y, irt, m);
-       }
-     };
+        /// %Test number of values of integer variables equal to integer variable
+        class IntVar : public Test {
+        protected:
+            /// Integer relation type to propagate
+            Gecode::IntRelType irt;
 
-     /// %Test number of values of Boolean variables equal to integer variable
-     class BoolVar : public Test {
-     protected:
-       /// Integer relation type to propagate
-       Gecode::IntRelType irt;
-     public:
-       /// Create and register test
-       BoolVar(int n, Gecode::IntRelType irt0)
-         : Test("NValues::Bool::Var::"+str(irt0)+"::"+str(n),n+1,0,2),
-           irt(irt0) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         int n = x.size() - 1;
-         for (int i=n; i--; )
-           if (x[i] > 1)
-             return false;
-         bool* v = new bool[n+1];
-         for (int i=n+1; i--; )
-           v[i] = false;
-         int k = 0;
-         for (int i=n; i--; )
-           if (!v[x[i]]) {
-             k++;
-             v[x[i]] = true;
-           }
-         delete [] v;
-         return cmp(k,irt,x[n]);
-       }
-       /// Post constraint on \a xy
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& xy) {
-         using namespace Gecode;
-         int n = xy.size() - 1;
-         BoolVarArgs x(n);
-         for (int i=n; i--; )
-           x[i] = channel(home, xy[i]);
-         nvalues(home, x, irt, xy[n]);
-       }
-     };
+        public:
+            /// Create and register test
+            IntVar(TestTags tags, int n, Gecode::IntRelType irt0)
+                : Test(tags, "NValues::Int::Var::" + str(irt0) + "::" + str(n), n + 1, 0, n), irt(irt0) {
+                testfix = false;
+            }
+            /// %Test whether \a x is solution
+            virtual bool
+            solution(const Assignment& x) const {
+                int n = x.size() - 1;
+                bool* v = new bool[n + 1];
+                for (int i = n + 1; i--;)
+                    v[i] = false;
+                int k = 0;
+                for (int i = n; i--;)
+                    if (!v[x[i]]) {
+                        k++;
+                        v[x[i]] = true;
+                    }
+                delete[] v;
+                return cmp(k, irt, x[n]);
+            }
+            /// Post constraint on \a xy
+            virtual void
+            post(Gecode::Space& home, Gecode::IntVarArray& xy) {
+                int n = xy.size() - 1;
+                Gecode::IntVarArgs x(n);
+                for (int i = n; i--;)
+                    x[i] = xy[i];
+                Gecode::nvalues(home, x, irt, xy[n]);
+            }
+        };
 
-     /// Help class to create and register tests
-     class Create {
-     public:
-       /// Perform creation and registration
-       Create(void) {
-         for (IntRelTypes irts; irts(); ++irts) {
-           for (int i=1; i<=7; i += 3) {
-             for (int m=0; m<=3; m++)
-               (void) new BoolInt(i, m, irts.irt());
-             (void) new BoolVar(i, irts.irt());
-           }
-           for (int i=1; i<=7; i += 2) {
-             for (int m=0; m<=i+1; m++) {
-               TestTags tags = ((i == 3) && (m == 2) &&
-                                (irts.irt() == Gecode::IRT_EQ))
-                 ? TestTags::standard() : TestTags::sweep();
-               (void) new IntInt(tags,i,m,irts.irt());
-             }
-             if (i <= 5) {
-               TestTags tags = ((i == 3) &&
-                                (irts.irt() == Gecode::IRT_EQ))
-                 ? TestTags::standard() : TestTags::sweep();
-               (void) new IntVar(tags,i,irts.irt());
-             }
-           }
-         }
-       }
-     };
+        /// %Test number of values of Boolean variables equal to integer
+        class BoolInt : public Test {
+        protected:
+            /// Integer relation type to propagate
+            Gecode::IntRelType irt;
+            /// Number of values
+            int m;
 
-     Create c;
-     //@}
+        public:
+            /// Create and register test
+            BoolInt(int n, int m0, Gecode::IntRelType irt0)
+                : Test("NValues::Bool::Int::" + str(irt0) + "::" + str(n) + "::" + str(m0), n, 0, 2), irt(irt0), m(m0) {
+            }
+            /// %Test whether \a x is solution
+            virtual bool
+            solution(const Assignment& x) const {
+                int n = x.size();
+                for (int i = n; i--;)
+                    if (x[i] > 1)
+                        return false;
+                bool* v = new bool[n + 1];
+                for (int i = n + 1; i--;)
+                    v[i] = false;
+                int k = 0;
+                for (int i = n; i--;)
+                    if (!v[x[i]]) {
+                        k++;
+                        v[x[i]] = true;
+                    }
+                delete[] v;
+                return cmp(k, irt, m);
+            }
+            /// Post constraint on \a x
+            virtual void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+                using namespace Gecode;
+                BoolVarArgs y(x.size());
+                for (int i = x.size(); i--;)
+                    y[i] = channel(home, x[i]);
+                nvalues(home, y, irt, m);
+            }
+        };
 
-   }
-}}
+        /// %Test number of values of Boolean variables equal to integer variable
+        class BoolVar : public Test {
+        protected:
+            /// Integer relation type to propagate
+            Gecode::IntRelType irt;
+
+        public:
+            /// Create and register test
+            BoolVar(int n, Gecode::IntRelType irt0)
+                : Test("NValues::Bool::Var::" + str(irt0) + "::" + str(n), n + 1, 0, 2), irt(irt0) {}
+            /// %Test whether \a x is solution
+            virtual bool
+            solution(const Assignment& x) const {
+                int n = x.size() - 1;
+                for (int i = n; i--;)
+                    if (x[i] > 1)
+                        return false;
+                bool* v = new bool[n + 1];
+                for (int i = n + 1; i--;)
+                    v[i] = false;
+                int k = 0;
+                for (int i = n; i--;)
+                    if (!v[x[i]]) {
+                        k++;
+                        v[x[i]] = true;
+                    }
+                delete[] v;
+                return cmp(k, irt, x[n]);
+            }
+            /// Post constraint on \a xy
+            virtual void
+            post(Gecode::Space& home, Gecode::IntVarArray& xy) {
+                using namespace Gecode;
+                int n = xy.size() - 1;
+                BoolVarArgs x(n);
+                for (int i = n; i--;)
+                    x[i] = channel(home, xy[i]);
+                nvalues(home, x, irt, xy[n]);
+            }
+        };
+
+        /// Help class to create and register tests
+        class Create {
+        public:
+            /// Perform creation and registration
+            Create(void) {
+                for (IntRelTypes irts; irts(); ++irts) {
+                    for (int i = 1; i <= 7; i += 3) {
+                        for (int m = 0; m <= 3; m++)
+                            (void)new BoolInt(i, m, irts.irt());
+                        (void)new BoolVar(i, irts.irt());
+                    }
+                    for (int i = 1; i <= 7; i += 2) {
+                        for (int m = 0; m <= i + 1; m++) {
+                            TestTags tags = ((i == 3) && (m == 2) && (irts.irt() == Gecode::IRT_EQ))
+                                                ? TestTags::standard()
+                                                : TestTags::sweep();
+                            (void)new IntInt(tags, i, m, irts.irt());
+                        }
+                        if (i <= 5) {
+                            TestTags tags =
+                                ((i == 3) && (irts.irt() == Gecode::IRT_EQ)) ? TestTags::standard() : TestTags::sweep();
+                            (void)new IntVar(tags, i, irts.irt());
+                        }
+                    }
+                }
+            }
+        };
+
+        Create c;
+        //@}
+
+    } // namespace NValues
+}} // namespace Test::Int
 
 // STATISTICS: test-int

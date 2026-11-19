@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -38,36 +37,35 @@
 
 namespace Gecode { namespace Int {
 
-  /// Compute \f$\lceil x/y\rceil\f$ where \a x and \a y are non-negative
-  template<class IntType>
-  IntType ceil_div_pp(IntType x, IntType y);
-  /// Compute \f$\lfloor x/y\rfloor\f$ where \a x and \a y are non-negative
-  template<class IntType>
-  IntType floor_div_pp(IntType x, IntType y);
-  /// Compute \f$\lceil x/y\rceil\f$ where \a x is non-negative
-  template<class IntType>
-  IntType ceil_div_px(IntType x, IntType y);
-  /// Compute \f$\lfloor x/y\rfloor\f$ where \a x is non-negative
-  template<class IntType>
-  IntType floor_div_px(IntType x, IntType y);
-  /// Compute \f$\lceil x/y\rceil\f$ where \a y is non-negative
-  template<class IntType>
-  IntType ceil_div_xp(IntType x, IntType y);
-  /// Compute \f$\lfloor x/y\rfloor\f$ where \a y is non-negative
-  template<class IntType>
-  IntType floor_div_xp(IntType x, IntType y);
-  /// Compute \f$\lceil x/y\rceil\f$
-  template<class IntType>
-  IntType ceil_div_xx(IntType x, IntType y);
-  /// Compute \f$\lfloor x/y\rfloor\f$
-  template<class IntType>
-  IntType floor_div_xx(IntType x, IntType y);
+    /// Compute \f$\lceil x/y\rceil\f$ where \a x and \a y are non-negative
+    template <class IntType>
+    IntType ceil_div_pp(IntType x, IntType y);
+    /// Compute \f$\lfloor x/y\rfloor\f$ where \a x and \a y are non-negative
+    template <class IntType>
+    IntType floor_div_pp(IntType x, IntType y);
+    /// Compute \f$\lceil x/y\rceil\f$ where \a x is non-negative
+    template <class IntType>
+    IntType ceil_div_px(IntType x, IntType y);
+    /// Compute \f$\lfloor x/y\rfloor\f$ where \a x is non-negative
+    template <class IntType>
+    IntType floor_div_px(IntType x, IntType y);
+    /// Compute \f$\lceil x/y\rceil\f$ where \a y is non-negative
+    template <class IntType>
+    IntType ceil_div_xp(IntType x, IntType y);
+    /// Compute \f$\lfloor x/y\rfloor\f$ where \a y is non-negative
+    template <class IntType>
+    IntType floor_div_xp(IntType x, IntType y);
+    /// Compute \f$\lceil x/y\rceil\f$
+    template <class IntType>
+    IntType ceil_div_xx(IntType x, IntType y);
+    /// Compute \f$\lfloor x/y\rfloor\f$
+    template <class IntType>
+    IntType floor_div_xx(IntType x, IntType y);
 
-}}
+}} // namespace Gecode::Int
 
 #include <gecode/int/div.hpp>
 
 #endif
 
 // STATISTICS: int-prop
-

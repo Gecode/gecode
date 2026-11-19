@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,38 +32,50 @@
 
 namespace Gecode {
 
-  forceinline IntRelType
-  swap(IntRelType irt) {
-    switch (irt) {
-    case IRT_EQ: return IRT_EQ;
-    case IRT_NQ: return IRT_NQ;
-    case IRT_LE: return IRT_GR;
-    case IRT_LQ: return IRT_GQ;
-    case IRT_GR: return IRT_LE;
-    case IRT_GQ: return IRT_LQ;
-    default: GECODE_NEVER;
+    forceinline IntRelType
+    swap(IntRelType irt) {
+        switch (irt) {
+        case IRT_EQ:
+            return IRT_EQ;
+        case IRT_NQ:
+            return IRT_NQ;
+        case IRT_LE:
+            return IRT_GR;
+        case IRT_LQ:
+            return IRT_GQ;
+        case IRT_GR:
+            return IRT_LE;
+        case IRT_GQ:
+            return IRT_LQ;
+        default:
+            GECODE_NEVER;
+        }
+        GECODE_NEVER;
+        return IRT_EQ; // Avoid compiler warnings
     }
-    GECODE_NEVER;
-    return IRT_EQ; // Avoid compiler warnings
-  }
 
-  forceinline IntRelType
-  neg(IntRelType irt) {
-    switch (irt) {
-      case IRT_EQ: return IRT_NQ;
-      case IRT_NQ: return IRT_EQ;
-      case IRT_GQ: return IRT_LE;
-      case IRT_LQ: return IRT_GR;
-      case IRT_LE: return IRT_GQ;
-      case IRT_GR: return IRT_LQ;
-      default: GECODE_NEVER;
+    forceinline IntRelType
+    neg(IntRelType irt) {
+        switch (irt) {
+        case IRT_EQ:
+            return IRT_NQ;
+        case IRT_NQ:
+            return IRT_EQ;
+        case IRT_GQ:
+            return IRT_LE;
+        case IRT_LQ:
+            return IRT_GR;
+        case IRT_LE:
+            return IRT_GQ;
+        case IRT_GR:
+            return IRT_LQ;
+        default:
+            GECODE_NEVER;
+        }
+        GECODE_NEVER;
+        return IRT_EQ; // Avoid compiler warnings
     }
-    GECODE_NEVER;
-    return IRT_EQ; // Avoid compiler warnings
-  }
 
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-post
-
