@@ -3793,6 +3793,53 @@ namespace Test {
 
     PBSParkedAsset pbs_parked_asset;
 
+    /// Space without solutions whose hub continues after a partial spoke is exhausted, which is illegal
+    class IllegalContinue : public NoSolution {
+    public:
+      IllegalContinue(void) = default;
+      IllegalContinue(IllegalContinue& s) : NoSolution(s) {}
+      Gecode::Space* copy(void) override {
+        return new IllegalContinue(*this);
+      }
+      void hub(Gecode::HubContext& hc) override {
+        if (hc.event() == Gecode::MetaEvent::Exhausted)
+          hc.decision(Gecode::MetaDecision::Continue);
+        NoSolution::hub(hc);
+      }
+      void spoke(Gecode::SpokeContext& sc) override {
+        if (sc.engine() == Gecode::MetaEngine::Restart)
+          sc.coverage(Gecode::SpokeCoverage::Partial);
+      }
+    };
+
+    /// An exception thrown in an asset of a portfolio is rethrown by next()
+    class PBSAssetException : public Base {
+    public:
+      PBSAssetException(void) : Base("Search::PBS::AssetException") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U,4U}) {
+          IllegalContinue root;
+          Gecode::Search::Options o;
+          o.assets = 2;
+          o.threads = t;
+          o.cutoff = Gecode::Search::Cutoff::constant(1000);
+          Gecode::PBS<IllegalContinue,Gecode::RBS> pbs(&root,o);
+          bool thrown = false;
+          try {
+            if (IllegalContinue* s = pbs.next())
+              delete s;
+          } catch (const Gecode::IllegalMetaDecision&) {
+            thrown = true;
+          }
+          if (!thrown)
+            return false;
+        }
+        return true;
+      }
+    };
+
+    PBSAssetException pbs_asset_exception;
+
     /// A copy of a cutoff generator continues its sequence independently
     class CutoffCopy : public Base {
       /// Check that a copy of \a c continues as \a c, then delete \a c
