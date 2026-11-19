@@ -189,6 +189,8 @@ namespace Gecode { namespace Search {
   CutoffRepeat::operator ++(void) {
     i++;
     if (i == n) {
+      // Read the current value, which ++ need not return for all generators
+      (void) ++(*c);
       cutoff = (*c)();
       i = 0;
     }
