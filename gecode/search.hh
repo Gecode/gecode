@@ -1094,6 +1094,36 @@ namespace Gecode { namespace Search {
 namespace Gecode { namespace Search {
 
   /**
+   * \brief Why the last call to next() of a search engine returned no solution
+   *
+   * A search engine reports the reason with end_reason(). Only
+   * Exhausted is a proof: the space that the engine was given has no
+   * further solutions (no better ones for best solution search). Any
+   * other reason after next() returned nullptr means that the engine
+   * ended without such a proof.
+   *
+   * A meta engine (restart-based or portfolio search) reports Limit
+   * only for a stop object installed above it, not for its own
+   * cutoffs, slices, or the stop objects of its assets.
+   *
+   * \ingroup TaskModelSearch
+   */
+  enum class EndReason : unsigned char {
+    /// next() has not been called, or the last call returned a solution
+    NotEnded,
+    /// The search space is exhausted, calling next() again finds nothing
+    Exhausted,
+    /**
+     * Search finished without exhausting its search space, for example
+     * at the width limit of CABS. There may be further solutions, but
+     * calling next() again finds none.
+     */
+    Incomplete,
+    /// A stop object stopped search, calling next() again resumes it
+    Limit,
+  };
+
+  /**
    * \brief %Search engine implementation interface
    */
   class GECODE_SEARCH_EXPORT Engine : public HeapAllocated {
@@ -1109,12 +1139,8 @@ namespace Gecode { namespace Search {
     virtual Space* next(void) = 0;
     /// Return statistics
     virtual Statistics statistics(void) const = 0;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const = 0;
-#ifdef GECODE_HAS_EXPERIMENTAL
-    /// Whether the engine stopped at a local limit (such as a CABS width limit) and cannot continue
-    virtual bool limited(void) const;
-#endif
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const = 0;
     /// Constrain future solutions to be better than \a b (raises exception)
     virtual void constrain(const Space& b);
     /// Reset engine to restart at space \a s (does nothing)
@@ -1148,8 +1174,8 @@ namespace Gecode { namespace Search {
     virtual T* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Destructor
     virtual ~Base(void);
   private:
@@ -1446,9 +1472,10 @@ namespace Gecode {
    * Search::Options::d_l discrepancies, allowing more discrepancies in each
    * iteration, starting from none.
    *
-   * When next() returns nullptr and stopped() returns false, either the
-   * search tree has been explored completely, or the discrepancy limit has
-   * been reached while parts of the tree are still unexplored. The engine
+   * When next() returns nullptr and end_reason() returns
+   * Search::EndReason::Exhausted, either the search tree has been explored
+   * completely, or the discrepancy limit has been reached while parts of
+   * the tree are still unexplored. The engine
    * does not report which: a search that finds no (further) solution only
    * proves that none exists if no path of the tree has more discrepancies
    * than the limit.

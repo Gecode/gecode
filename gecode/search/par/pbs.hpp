@@ -152,18 +152,9 @@ namespace Gecode { namespace Search { namespace Par {
     return engine->statistics();
   }
   template<class Collect>
-  forceinline bool
-  Asset<Collect>::stopped(void) const {
-    return engine->stopped();
-  }
-  template<class Collect>
-  forceinline bool
-  Asset<Collect>::limited(void) const {
-#ifdef GECODE_HAS_EXPERIMENTAL
-    return engine->limited();
-#else
-    return false;
-#endif
+  forceinline EndReason
+  Asset<Collect>::end_reason(void) const {
+    return engine->end_reason();
   }
   template<class Collect>
   forceinline Support::Terminator*
@@ -199,7 +190,7 @@ namespace Gecode { namespace Search { namespace Par {
                     const Statistics& stat0)
     : stat(stat0), assets(heap.alloc<Asset<Collect>*>(n)),
       n_assets(n), n_active(n),
-      asset_stop(false), incomplete(false), tostop(false), n_busy(0) {
+      asset_stop(false), incomplete(false), end(EndReason::NotEnded), tostop(false), n_busy(0) {
     // Initialize assets
     for (unsigned int i=0U; i<n_assets; i++) {
       assets[i] = new Asset<Collect>(this,engines[i],stops[i]);
@@ -229,15 +220,15 @@ namespace Gecode { namespace Search { namespace Par {
         tostop.store(true, std::memory_order_release);
         wake = true;
       }
-    } else if (asset->stopped() && !asset->limited()) {
+    } else if (asset->end_reason() == EndReason::Limit) {
       if (!tostop.load(std::memory_order_acquire)) {
         asset_stop.store(true, std::memory_order_release);
         tostop.store(true, std::memory_order_release);
         wake = true;
       }
     } else {
-      // The asset is done or stopped at a local limit (then search is incomplete)
-      if (asset->limited())
+      // The asset is done , without a proof if it is incomplete
+      if (asset->end_reason() == EndReason::Incomplete)
         incomplete = true;
       // Move asset to inactive
       unsigned int i=0;
@@ -324,9 +315,6 @@ namespace Gecode { namespace Search { namespace Par {
     // Invariant all assets are idle!
     assert(n_busy == 0);
 
-    if (solutions.empty() && (n_active == 0) && incomplete)
-      asset_stop.store(true, std::memory_order_release);
-
     // Report a stored failure before broadcasting a solution, which could
     // call into the failed asset and replace the original exception.
     if (failure != nullptr) {
@@ -340,7 +328,12 @@ namespace Gecode { namespace Search { namespace Par {
     // Process solutions
     if (solutions.empty()) {
       s = nullptr;
+      if (asset_stop.load(std::memory_order_acquire))
+        end = EndReason::Limit;
+      else
+        end = incomplete ? EndReason::Incomplete : EndReason::Exhausted;
     } else {
+      end = EndReason::NotEnded;
       Asset<Collect>* r;
       s = solutions.get(r);
       if (Collect::best) {
@@ -363,9 +356,9 @@ namespace Gecode { namespace Search { namespace Par {
   }
 
   template<class Collect>
-  bool
-  PBS<Collect>::stopped(void) const {
-    return asset_stop.load(std::memory_order_acquire);
+  EndReason
+  PBS<Collect>::end_reason(void) const {
+    return end;
   }
 
   template<class Collect>

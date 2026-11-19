@@ -79,9 +79,10 @@ namespace Gecode { namespace Search { namespace Seq {
   Space*
   RBS::next(void) {
     // A failed hub proves that no further solution exists
-    if (hub == nullptr)
+    if (hub == nullptr) {
+      end = EndReason::Exhausted;
       return nullptr;
-    m_stopped = false;
+    }
     if (restart) {
       restart = false;
       sslr++;
@@ -94,6 +95,7 @@ namespace Gecode { namespace Search { namespace Seq {
         delete hub;
         hub = nullptr;
         e->reset(nullptr);
+        end = EndReason::Exhausted;
         return nullptr;
       } else if (r) {
         stop->update(e->statistics());
@@ -113,26 +115,29 @@ namespace Gecode { namespace Search { namespace Seq {
         restart = true;
         delete last;
         last = n->clone();
+        end = EndReason::NotEnded;
         return n;
-      } else if ( (!complete && !e->stopped()) ||
-                  (e->stopped() && stop->enginestopped()) ) {
+      }
+      EndReason inner = e->end_reason();
+      bool limit = inner == EndReason::Limit;
+      if ((!complete && !limit) || (limit && stop->enginestopped())) {
         // The engine must perform a true restart
         // The number of the restart has been incremented in the stop object
-        if (!complete && !e->stopped()) {
+        if (!complete && !limit) {
           /*
            * The engine might not have checked its stop object, for example
            * when the spoke failed at the root or a parallel engine had no
            * work. Without this check, the restarts might never stop.
            */
           if (stop->meta_stop(e->statistics(),m_opt)) {
-            m_stopped = true;
+            end = EndReason::Limit;
             return nullptr;
           }
           stop->restart();
         }
         sslr = 0;
         NoGoods& ng = hub_nogoods();
-        MetaInfo mi(stop->restarts(),e->stopped() ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
+        MetaInfo mi(stop->restarts(),limit ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
         (void) hub->hub(mi);
         stop->nogood(ng.ng());
         unsigned long long int nl = ++(*co);
@@ -142,6 +147,7 @@ namespace Gecode { namespace Search { namespace Seq {
           delete hub;
           hub = nullptr;
           e->reset(nullptr);
+          end = EndReason::Exhausted;
           return nullptr;
         }
         Space* spoke = hub;
@@ -150,6 +156,8 @@ namespace Gecode { namespace Search { namespace Seq {
         nogoods_valid = complete;
         e->reset(spoke);
       } else {
+        // A stop from above, or a complete spoke search has ended
+        end = inner;
         return nullptr;
       }
     }
@@ -176,19 +184,16 @@ namespace Gecode { namespace Search { namespace Seq {
     e->constrain(b);
   }
 
-  bool
-  RBS::stopped(void) const {
+  EndReason
+  RBS::end_reason(void) const {
     /*
-     * What might happen during parallel search is that the
-     * engine has been stopped but the meta engine has not, so
-     * the meta engine does not perform a restart. However the
-     * invocation of next will do so and no restart will be
-     * missed.
-     *
-     * The engine may still report a stop when the hub failed during a
-     * restart after a limit. A failed hub is a proof, not a stop.
+     * What might happen during parallel search is that the engine has
+     * been stopped by the cutoff but the meta engine reports a limit,
+     * because the stop object of the meta engine also fired. The next
+     * invocation of next() then performs the restart, and no restart
+     * will be missed.
      */
-    return (hub != nullptr) && (m_stopped || e->stopped());
+    return end;
   }
 
   RBS::~RBS(void) {

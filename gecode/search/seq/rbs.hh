@@ -109,8 +109,8 @@ namespace Gecode { namespace Search { namespace Seq {
     bool restart;
     /// Whether the engine performs best solution search
     bool best;
-    /// Whether the stop object for the meta engine stopped a restart
-    bool m_stopped;
+    /// Why the last call to next() returned no solution
+    EndReason end;
     /// Return the no-goods of the last spoke search, valid in the hub
     NoGoods& hub_nogoods(void);
   public:
@@ -128,8 +128,8 @@ namespace Gecode { namespace Search { namespace Seq {
     virtual Space* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Constrain future solutions to be better than \a b
     virtual void constrain(const Space& b);
     /// Destructor

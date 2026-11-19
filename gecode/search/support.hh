@@ -65,6 +65,9 @@ namespace Gecode { namespace Search {
   protected:
     /// The worker to wrap into an engine
     Worker w;
+    /// Why the last call to next() returned no solution
+    EndReason end;
+
   public:
     /// Initialization
     WorkerToEngine(Space* s, const Options& o);
@@ -72,8 +75,8 @@ namespace Gecode { namespace Search {
     virtual Space* next(void);
     /// Return statistics
     virtual Search::Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Constrain future solutions to be better than \a b
     virtual void constrain(const Space& b);
     /// Reset engine to restart at space \a s
@@ -92,11 +95,13 @@ namespace Gecode { namespace Search {
 
   template<class Worker>
   WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o)
-    : Engine(o,1U), w(s,o) {}
+    : Engine(o,1U), w(s,o) , end(EndReason::NotEnded) {}
   template<class Worker>
   Space*
   WorkerToEngine<Worker>::next(void) {
-    return w.next();
+    Space* s = w.next();
+    end = (s != nullptr) ? EndReason::NotEnded : w.end_reason();
+    return s;
   }
   template<class Worker>
   Search::Statistics
@@ -104,14 +109,15 @@ namespace Gecode { namespace Search {
     return w.statistics();
   }
   template<class Worker>
-  bool
-  WorkerToEngine<Worker>::stopped(void) const {
-    return w.stopped();
+  EndReason
+  WorkerToEngine<Worker>::end_reason(void) const {
+    return end;
   }
   template<class Worker>
   void
   WorkerToEngine<Worker>::reset(Space* s) {
     w.reset(s);
+    end = EndReason::NotEnded;
   }
   template<class Worker>
   void

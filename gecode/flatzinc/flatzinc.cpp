@@ -1941,7 +1941,8 @@ namespace Gecode { namespace FlatZinc {
     bool printAll = _method == SAT || opt.allSolutions() || noOfSolutions != 0;
     int findSol = noOfSolutions;
     bool solution_limit_reached = false;
-    bool engine_stopped = false;
+    // Only an exhausted search proves optimality or unsatisfiability
+    bool proof = false;
     Gecode::Search::Statistics stat;
     std::unique_ptr<FlatZincSpace> sol;
     {
@@ -1962,7 +1963,7 @@ namespace Gecode { namespace FlatZinc {
           break;
         }
       }
-      engine_stopped = se.stopped();
+      proof = se.end_reason() == Search::EndReason::Exhausted;
       if (opt.mode() == SM_STAT) {
         stat = se.statistics();
       }
@@ -1976,7 +1977,7 @@ namespace Gecode { namespace FlatZinc {
       out << "----------" << std::endl;
     }
     if (!solution_limit_reached) {
-      if (!engine_stopped) {
+      if (proof) {
         if (sol) {
           out << "==========" << std::endl;
         } else {

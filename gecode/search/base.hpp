@@ -52,9 +52,9 @@ namespace Gecode { namespace Search {
     return e->statistics();
   }
   template<class T>
-  forceinline bool
-  Base<T>::stopped(void) const {
-    return e->stopped();
+  forceinline EndReason
+  Base<T>::end_reason(void) const {
+    return e->end_reason();
   }
   template<class T>
   forceinline

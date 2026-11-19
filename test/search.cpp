@@ -89,6 +89,8 @@ namespace Test {
     using namespace Gecode;
     using namespace Gecode::Int;
 
+    using Gecode::Search::EndReason;
+
 #ifdef GECODE_HAS_EXPERIMENTAL
     /// Explicit finite tree with prefix costs, admissible bounds, and ranks
     class TreeSpace : public Space {
@@ -255,7 +257,7 @@ namespace Test {
           break;
         }
       }
-      return e.stopped() || (last == (*root.graph)[0].best);
+      return (e.end_reason() != EndReason::Exhausted) || (last == (*root.graph)[0].best);
     }
 
     /// Heuristic search engines on random trees
@@ -287,7 +289,7 @@ namespace Test {
                   E<TreeSpace> e(&root,o);
                   if (!improving(e,root,step > 0U ? &stop : nullptr))
                     return false;
-                  if ((o.max_width == 0UL) && e.stopped())
+                  if ((o.max_width == 0UL) && (e.end_reason() != EndReason::Exhausted))
                     return false;
                 }
         return true;
@@ -362,7 +364,7 @@ namespace Test {
           last = s->node().cost;
           delete s;
         }
-        return (last == 1) && e.stopped();
+        return (last == 1) && (e.end_reason() == EndReason::Incomplete);
       }
     } heuristic_portfolio;
 #endif
@@ -1071,7 +1073,8 @@ namespace Test {
             solutions++;
             delete solution;
           }
-          ok = !search.stopped() && (solutions == 2U) && (state.spoke_calls.load(std::memory_order_relaxed) >= 2U) &&
+          ok = (search.end_reason() == EndReason::Exhausted) && (solutions == 2U) &&
+               (state.spoke_calls.load(std::memory_order_relaxed) >= 2U) &&
                (state.constrain_calls.load(std::memory_order_relaxed) >= 1U) &&
                (state.nogood_handoffs.load(std::memory_order_relaxed) >= 1U);
         }
@@ -1094,7 +1097,7 @@ namespace Test {
           Gecode::RBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
           delete m;
           HubSpokeDispatchSpace* solution = search.next();
-          ok = (solution == nullptr) && search.stopped();
+          ok = (solution == nullptr) && (search.end_reason() == EndReason::Limit);
           delete solution;
         }
         ok = ok && holds(rbs_state.live_spaces, 0U);
@@ -1114,7 +1117,7 @@ namespace Test {
           Gecode::PBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
           delete m;
           HubSpokeDispatchSpace* solution = search.next();
-          ok = ok && (solution == nullptr) && search.stopped();
+          ok = ok && (solution == nullptr) && (search.end_reason() == EndReason::Limit);
           delete solution;
         }
         return ok && holds(pbs_state.live_spaces, 0U);
@@ -1480,7 +1483,7 @@ namespace Test {
         bool complete = E<HasSolutions>::best ?
           (last && last->best() && ((node != 0U) || (solutions >= 2))) :
           (solutions == root.solutions());
-        return ok && !engine.stopped() && complete;
+        return ok && (engine.end_reason() == EndReason::Exhausted) && complete;
       }
 #ifdef GECODE_HAS_EXPERIMENTAL
       template<template<class> class E>
@@ -1509,7 +1512,7 @@ namespace Test {
           std::future_status::timeout;
         control.request(threads);
         result.get();
-        return ok && !engine.stopped() && (last == (*root.graph)[0].best);
+        return ok && (engine.end_reason() == EndReason::Exhausted) && (last == (*root.graph)[0].best);
       }
 #endif
 
@@ -1570,7 +1573,7 @@ namespace Test {
           resizer.join();
         best = (last != nullptr) && last->best();
         delete last;
-        return !engine.stopped();
+        return engine.end_reason() == EndReason::Exhausted;
       }
     public:
       WorkerControlConcurrentResize(void)
@@ -2258,7 +2261,7 @@ namespace Test {
           if (value >= -1)
             return false;
         }
-        if (bounded->stopped())
+        if (bounded->end_reason() != EndReason::Exhausted)
           return false;
         bounded.reset();
         return missingFailure() && thrownFailure() && incomparableFailure();
@@ -2566,7 +2569,8 @@ namespace Test {
             (static_cast<ParallelFloatObjective*>(s)->x.val().max() < 8.5);
           delete s;
         }
-        substep = substep && (found == 1) && !bab->stopped();
+        substep = substep && (found == 1) &&
+          (bab->end_reason() == EndReason::Exhausted);
         if (!substep)
           return false;
 #endif
@@ -2709,11 +2713,11 @@ namespace Test {
           if (s != nullptr) {
             n--; delete s;
           }
-          if ((s == nullptr) && !dfs.stopped())
+          if ((s == nullptr) && (dfs.end_reason() != EndReason::Limit))
             break;
           f.limit(f.limit()+2);
         }
-        return n == 0;
+        return (n == 0) && (dfs.end_reason() == EndReason::Exhausted);
       }
     };
 
@@ -2746,11 +2750,11 @@ namespace Test {
           if (s != nullptr) {
             n--; delete s;
           }
-          if ((s == nullptr) && !lds.stopped())
+          if ((s == nullptr) && (lds.end_reason() != EndReason::Limit))
             break;
           f.limit(f.limit()+2);
         }
-        return n == 0;
+        return (n == 0) && (lds.end_reason() == EndReason::Exhausted);
       }
     };
 
@@ -2790,11 +2794,11 @@ namespace Test {
           if (s != nullptr) {
             delete b; b=s;
           }
-          if ((s == nullptr) && !bab.stopped())
+          if ((s == nullptr) && (bab.end_reason() != EndReason::Limit))
             break;
           f.limit(f.limit()+2);
         }
-        bool ok = (b == nullptr) || b->best();
+        bool ok = ((b == nullptr) || b->best()) && (bab.end_reason() == EndReason::Exhausted);
         delete b;
         return ok;
       }
@@ -2838,12 +2842,12 @@ namespace Test {
               delete b; b = s;
             }
           }
-          if ((s == nullptr) && !rbs.stopped())
+          if ((s == nullptr) && (rbs.end_reason() != EndReason::Limit))
             break;
           f.limit(f.limit()+2);
         }
         if (htc == HTC_NONE)
-          return n == 0;
+          return (n == 0) && (rbs.end_reason() == EndReason::Exhausted);
         bool ok = improving && (b != nullptr) && b->best();
         delete b;
         return ok;
@@ -2897,7 +2901,7 @@ namespace Test {
           best = s->x[0].val();
           delete s;
         }
-        return !rbs.stopped() && (best == 0);
+        return (rbs.end_reason() == EndReason::Exhausted) && (best == 0);
       }
     };
 
@@ -2965,10 +2969,12 @@ namespace Test {
           }
           Gecode::Search::Statistics s = rbs.statistics();
           // The failures of the last spoke search are counted once
-          if (rbs.stopped() || (s.restart != 1U) || (s.fail < 2U) ||
+          if ((rbs.end_reason() != EndReason::Exhausted) ||
+              (s.restart != 1U) || (s.fail < 2U) ||
               ((t == 1U) && (s.fail != 2U)))
             return false;
-          if ((rbs.next() != nullptr) || rbs.stopped() ||
+          if ((rbs.next() != nullptr) ||
+              (rbs.end_reason() != EndReason::Exhausted) ||
               (rbs.statistics().fail != s.fail) ||
               (rbs.statistics().node != s.node))
             return false;
@@ -3023,7 +3029,7 @@ namespace Test {
           delete s;
           return false;
         }
-        return rbs.stopped() && (f.checks <= 1000) &&
+        return (rbs.end_reason() == EndReason::Limit) && (f.checks <= 1000) &&
           (rbs.statistics().fail >= 5);
       }
     public:
@@ -3096,7 +3102,7 @@ namespace Test {
       }
     };
 
-    /// A search exhausted when it reaches a failure limit is not stopped
+    /// A search exhausted when it reaches a failure limit is exhausted
     class ExhaustedAtLimit : public Base {
       template<template<class> class Engine>
       static bool test(void) {
@@ -3118,7 +3124,7 @@ namespace Test {
           Gecode::Search::Options o;
           o.stop = &l;
           Engine<NoSolution> e(&root,o);
-          if ((e.next() != nullptr) || e.stopped())
+          if ((e.next() != nullptr) || (e.end_reason() != EndReason::Exhausted))
             return false;
         }
         // Restarts at that limit post no no-goods and would repeat forever
@@ -3129,7 +3135,8 @@ namespace Test {
           o.nogoods_limit = 128U;
           o.cutoff = Gecode::Search::Cutoff::constant(f-1);
           Gecode::RBS<NoSolution,Engine> rbs(&root,o);
-          if ((rbs.next() != nullptr) || rbs.stopped())
+          if ((rbs.next() != nullptr) ||
+              (rbs.end_reason() != EndReason::Exhausted))
             return false;
         }
         return true;
@@ -3203,7 +3210,7 @@ namespace Test {
             if (s != nullptr) {
               delete b; b=s;
             }
-            if ((s == nullptr) && !pbs.stopped())
+            if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
               break;
             f.limit(f.limit()+2);
           }
@@ -3218,7 +3225,7 @@ namespace Test {
             if (s != nullptr) {
               n--; delete s;
             }
-            if ((s == nullptr) && !pbs.stopped())
+            if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
               break;
             f.limit(f.limit()+2);
           }
@@ -3272,7 +3279,7 @@ namespace Test {
             if (s != nullptr) {
               delete b; b=s;
             }
-            if ((s == nullptr) && !pbs.stopped())
+            if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
               break;
             f.limit(f.limit()+2);
           }
@@ -3294,7 +3301,7 @@ namespace Test {
             if (s != nullptr) {
               n--; delete s;
             }
-            if ((s == nullptr) && !pbs.stopped())
+            if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
               break;
             f.limit(f.limit()+2);
           }
@@ -3318,7 +3325,8 @@ namespace Test {
         sebs[0] = builder(Gecode::Search::Options::def);
         sebs[1] = builder(Gecode::Search::Options::def);
         Gecode::PBS<NoSolution,Engine> pbs(&root,sebs,o);
-        return (pbs.next() == nullptr) && pbs.stopped() && (l.checks <= 1000);
+        return (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Limit) && (l.checks <= 1000);
       }
     public:
       PBSBuilderStop(void) : Base("Search::PBS::SEB::Stop") {}
@@ -3410,7 +3418,8 @@ namespace Test {
         o.threads = threads;
         o.cutoff = Gecode::Search::Cutoff::geometric(1,2);
         Gecode::PBS<NoSolution,Engine> pbs(&root,o);
-        return (pbs.next() == nullptr) && !pbs.stopped();
+        return (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Exhausted);
       }
     public:
       PBSRestartCutoff(void) : Base("Search::PBS::RBS::Cutoff") {}
@@ -3472,7 +3481,7 @@ namespace Test {
             delete s;
             return false;
           }
-          if (pbs.stopped())
+          if (pbs.end_reason() != EndReason::Exhausted)
             return false;
         }
         return deleted == 1U;

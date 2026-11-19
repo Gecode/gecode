@@ -102,10 +102,8 @@ namespace Gecode { namespace Search { namespace Par {
     Asset(PBS<Collect>* p, Engine* e, Stop* so);
     /// Return statistics of asset
     Statistics statistics(void) const;
-    /// Check whether asset has been stopped
-    bool stopped(void) const;
-    /// Check whether asset stopped at a local limit
-    bool limited(void) const;
+    /// Return why the last call to next() of the asset returned no solution
+    EndReason end_reason(void) const;
     /// Return the completion terminator
     virtual Support::Terminator* terminator(void) const;
     /// Wait for the asset to complete its current run
@@ -181,8 +179,10 @@ namespace Gecode { namespace Search { namespace Par {
     unsigned int n_active;
     /// Whether an asset has been stopped
     std::atomic<bool> asset_stop;
-    /// Whether an asset stopped at a local limit
+    /// Whether an asset finished without exhausting its search space
     bool incomplete;
+    /// Why the last call to next() returned no solution
+    EndReason end;
     /// Shared stop flag
     std::atomic<bool> tostop;
     /// Collect solutions in this
@@ -214,8 +214,8 @@ namespace Gecode { namespace Search { namespace Par {
     virtual Space* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Constrain future solutions to be better than \a b
     virtual void constrain(const Space& b);
     /// Destructor
