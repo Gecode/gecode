@@ -56,6 +56,12 @@ namespace Gecode { namespace Search {
     /// Initialize with location \a l
     MixedBest(const char* l);
   };
+  /// %Exception: Portfolio spoke without brancher although the hub had branchers
+  class GECODE_SEARCH_EXPORT SpokeNoBrancher : public Exception {
+  public:
+    /// Initialize with location \a l
+    SpokeNoBrancher(const char* l);
+  };
   /// %Exception: Best solution search is not supported
   class GECODE_SEARCH_EXPORT NoBest : public Exception {
   public:

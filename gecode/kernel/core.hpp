@@ -2359,7 +2359,7 @@ namespace Gecode {
      *
      * The hook may post constraints in the hub and sets what the engine
      * does next with \a hc.decision() (see MetaDecision). If the hub
-     * fails, RBS ends with Search::EndReason::Exhausted whatever
+     * fails, the engine ends with Search::EndReason::Exhausted whatever
      * the decision: failing the hub is how a hook declares that no
      * further solution exists.
      *
@@ -2391,6 +2391,9 @@ namespace Gecode {
      * declares SpokeCoverage::Partial. The no-goods recorded while
      * searching a spoke only hold in the hub for SpokeCoverage::Full, so
      * RBS passes no no-goods to hub() for any other spoke.
+     *
+     * PBS throws Search::SpokeNoBrancher if the hub had branchers before
+     * hub() and a spoke that has not failed has none after spoke().
      *
      * The default hook does nothing.
      *

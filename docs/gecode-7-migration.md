@@ -85,6 +85,12 @@ Other changes to the hooks:
   `hub()` no longer calls `constrain()`, and an override that does not call
   the default keeps the bound. For other engines, such as `RBS<T, DFS>`,
   RBS no longer calls `constrain()` at all.
+- PBS calls `status()` on the hub after `hub()`, so `hub()` can post
+  constraints. In Gecode 6, cloning such a hub threw `SpaceNotStable`.
+- The default PBS `hub()` still removes all branchers, so `spoke()` must post
+  the branching of each asset. When the hub had branchers but a spoke has
+  none after `spoke()`, PBS throws `Search::SpokeNoBrancher` instead of
+  returning the unassigned spoke as a solution.
 
 The examples show typical overrides:
 
