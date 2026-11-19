@@ -168,8 +168,14 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline
-  Asset<Collect>::Asset(PBS<Collect>* p, Engine* e, Stop* so)
-    : Support::Runnable(false), portfolio(p), engine(e), stop(so), _parked(false) {}
+  Asset<Collect>::Asset(PBS<Collect>* p, Engine* e, Stop* so, SpokeCoverage c)
+    : Support::Runnable(false), portfolio(p), engine(e), stop(so),
+      _coverage(c), _parked(false) {}
+  template<class Collect>
+  forceinline SpokeCoverage
+  Asset<Collect>::coverage(void) const {
+    return _coverage;
+  }
   template<class Collect>
   forceinline Statistics
   Asset<Collect>::statistics(void) const {
@@ -225,15 +231,15 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline
-  PBS<Collect>::PBS(Engine** engines, Stop** stops, unsigned int n,
-                    const Statistics& stat0)
+  PBS<Collect>::PBS(Engine** engines, Stop** stops, const SpokeCoverage* c,
+                    unsigned int n, const Statistics& stat0)
     : stat(stat0), portfolio_stat(stat0,n),
       assets(heap.alloc<Asset<Collect>*>(n)),
       n_assets(n), n_active(n),
         portfolio_stop(false), exhausted(false), end(EndReason::NotEnded), tostop(false), n_busy(0) {
     // Initialize assets
     for (unsigned int i=0U; i<n_assets; i++) {
-      assets[i] = new Asset<Collect>(this,engines[i],stops[i]);
+      assets[i] = new Asset<Collect>(this,engines[i],stops[i],c[i]);
       static_cast<PortfolioStop*>(stops[i])->share(&tostop,&portfolio_stat,i);
     }
   }
@@ -275,7 +281,7 @@ namespace Gecode { namespace Search { namespace Par {
         asset->parked(true);
         break;
       }
-    } else if (pbs_asset_proof(asset->end_reason())) {
+    } else if (pbs_asset_proof(asset->end_reason(),asset->coverage())) {
       // Stop the other assets, no further solution exists
       exhausted = true;
       tostop.store(true, std::memory_order_release);

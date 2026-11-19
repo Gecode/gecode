@@ -60,19 +60,17 @@ namespace Gecode { namespace Search {
   snapshot(Space* s, const Options& o);
 
   /**
-   * \brief Whether a portfolio asset that ended for reason \a r proves that
-   *        the hub has no further solution
+   * \brief Whether a portfolio asset whose spoke has coverage \a c and that
+   *        ended for reason \a r proves that the hub has no further solution
    *
-   * The spoke of every asset is taken to cover the search space of the
-   * hub, so an exhausted asset ends the portfolio with a proof. A spoke
-   * that covers only part of the search space, such as a fragment for
-   * large neighbourhood search, must not end the portfolio when it is
-   * exhausted: once spokes can declare their coverage, this is where it is
-   * taken into account.
+   * Only an asset that exhausted a spoke of full or reduced coverage ends
+   * the portfolio with a proof. An asset that exhausted a spoke of partial
+   * coverage, such as a fragment for large neighbourhood search, has proven
+   * nothing about the hub and is dropped.
    */
   forceinline bool
-  pbs_asset_proof(EndReason r) {
-    return r == EndReason::Exhausted;
+  pbs_asset_proof(EndReason r, SpokeCoverage c) {
+    return (r == EndReason::Exhausted) && (c != SpokeCoverage::Partial);
   }
 
   /// Which stop object stopped an asset of a portfolio

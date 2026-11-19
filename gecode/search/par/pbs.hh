@@ -140,11 +140,15 @@ namespace Gecode { namespace Search { namespace Par {
     Engine* engine;
     /// Stop object
     Stop* stop;
+    /// Coverage of the spoke of the asset
+    SpokeCoverage _coverage;
     /// Whether the stop object of the asset stopped it during the current call to next()
     bool _parked;
   public:
-    /// Initialize with portfolio \a p, engine \a e, and its stop object \a so
-    Asset(PBS<Collect>* p, Engine* e, Stop* so);
+    /// Initialize with portfolio \a p, engine \a e, its stop object \a so, and the coverage \a c of its spoke
+    Asset(PBS<Collect>* p, Engine* e, Stop* so, SpokeCoverage c);
+    /// Return the coverage of the spoke of the asset
+    SpokeCoverage coverage(void) const;
     /// Return statistics of asset
     Statistics statistics(void) const;
     /// Return why the last call to next() of the asset returned no solution
@@ -262,8 +266,9 @@ namespace Gecode { namespace Search { namespace Par {
      *  - the assets n_active..n_assets-1 have ended without a proof.
      */
   public:
-    /// Initialize
-    PBS(Engine** s, Stop** so, unsigned int n, const Statistics& stat);
+    /// Initialize with \a n assets, their stop objects, and the coverage of their spokes
+    PBS(Engine** s, Stop** so, const SpokeCoverage* c, unsigned int n,
+        const Statistics& stat);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics

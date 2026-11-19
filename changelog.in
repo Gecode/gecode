@@ -116,7 +116,8 @@ Rank:   minor
 End a portfolio when an asset exhausts its search space.
 [MORE]
 The exhausted asset proves that no further solution exists, so the other
-assets no longer run until they are stopped.
+assets no longer run until they are stopped. An asset whose spoke declares
+SpokeCoverage::Partial is still dropped.
 
 [ENTRY]
 Module: search

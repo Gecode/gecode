@@ -158,14 +158,15 @@ namespace Gecode { namespace Search {
     hub.hub(hc);
   }
 
-  /// Run spoke() on the spoke \a s of asset \a i of \a n
-  forceinline void
+  /// Run spoke() on the spoke \a s of asset \a i of \a n and return its coverage
+  forceinline SpokeCoverage
   pbs_spoke(Space& s, unsigned int i, unsigned int n) {
     Statistics start;
     SpokeContext sc = MetaContextAccess::spoke(MetaEngine::Portfolio,
                                                MetaEvent::Start,0UL,i,n,
                                                nullptr,start,NoGoods::eng);
     s.spoke(sc);
+    return sc.coverage();
   }
 
   /// A PBS engine builder
@@ -206,8 +207,9 @@ namespace Gecode { namespace Search { namespace Seq {
 
   /// Create sequential portfolio engine
   GECODE_SEARCH_EXPORT Engine*
-  pbsengine(Engine** assets, Stop** stops, unsigned int n_assets,
-            const Statistics& stat, const Search::Options& opt, bool best);
+  pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
+            unsigned int n_assets, const Statistics& stat,
+            const Search::Options& opt, bool best);
 
 }}}
 
@@ -223,8 +225,8 @@ namespace Gecode { namespace Search { namespace Par {
 
   /// Create parallel portfolio engine
   GECODE_SEARCH_EXPORT Engine*
-  pbsengine(Engine** assets, Stop** stops, unsigned int n_assets,
-            const Statistics& stat, bool best);
+  pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
+            unsigned int n_assets, const Statistics& stat, bool best);
 
 }}}
 
@@ -245,6 +247,7 @@ namespace Gecode { namespace Search {
     unsigned int n_assets = opt.assets;
     Engine** assets = r.alloc<Engine*>(n_assets);
     Stop** stops = r.alloc<Stop*>(n_assets);
+    SpokeCoverage* coverage = r.alloc<SpokeCoverage>(n_assets);
     for (unsigned int i=0U; i<n_assets; i++) {
       assets[i] = nullptr;
       stops[i] = nullptr;
@@ -262,7 +265,7 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        pbs_spoke(*spoke,i,n_assets);
+        coverage[i] = pbs_spoke(*spoke,i,n_assets);
         std::unique_ptr<Cutoff> c(pbs_cutoff<E<T> >(cutoff));
         if (c != nullptr)
           opt.cutoff = c.get();
@@ -271,7 +274,7 @@ namespace Gecode { namespace Search {
         (void) c.release();
       }
       Engine* e = Seq::pbsengine(
-        assets,stops,n_assets,stat,opt,E<T>::best);
+        assets,stops,coverage,n_assets,stat,opt,E<T>::best);
       pbs_release_cutoff<E<T> >(cutoff);
       return e;
     } catch (...) {
@@ -289,6 +292,7 @@ namespace Gecode { namespace Search {
     int n_assets = sebs.size();
     Engine** assets = r.alloc<Engine*>(n_assets);
     Stop** stops = r.alloc<Stop*>(n_assets);
+    SpokeCoverage* coverage = r.alloc<SpokeCoverage>(n_assets);
     for (int i=0; i<n_assets; i++) {
       assets[i] = nullptr;
       stops[i] = nullptr;
@@ -310,14 +314,15 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        pbs_spoke(*spoke,static_cast<unsigned int>(i),
-                  static_cast<unsigned int>(n_assets));
+        coverage[i] = pbs_spoke(*spoke,static_cast<unsigned int>(i),
+                                static_cast<unsigned int>(n_assets));
         assets[i] = (*sebs[i])(spoke.get());
       }
       pbscleanup(sebs);
       builders_owned = false;
       return Seq::pbsengine(
-        assets,stops,static_cast<unsigned int>(n_assets),stat,opt,best);
+        assets,stops,coverage,static_cast<unsigned int>(n_assets),stat,opt,
+        best);
     } catch (...) {
       if (builders_owned)
         pbscleanup(sebs);
@@ -347,6 +352,7 @@ namespace Gecode { namespace Search {
 
     Engine** assets = r.alloc<Engine*>(n_assets);
     Stop** stops = r.alloc<Stop*>(n_assets);
+    SpokeCoverage* coverage = r.alloc<SpokeCoverage>(n_assets);
     for (unsigned int i=0U; i<n_assets; i++) {
       assets[i] = nullptr;
       stops[i] = nullptr;
@@ -361,7 +367,7 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        pbs_spoke(*spoke,i,n_assets);
+        coverage[i] = pbs_spoke(*spoke,i,n_assets);
         std::unique_ptr<Cutoff> c(pbs_cutoff<E<T> >(cutoff));
         if (c != nullptr)
           opt.cutoff = c.get();
@@ -369,7 +375,8 @@ namespace Gecode { namespace Search {
         // The asset owns its cutoff
         (void) c.release();
       }
-      Engine* e = Par::pbsengine(assets,stops,n_assets,stat,E<T>::best);
+      Engine* e = Par::pbsengine(assets,stops,coverage,n_assets,stat,
+                                 E<T>::best);
       pbs_release_cutoff<E<T> >(cutoff);
       return e;
     } catch (...) {
@@ -393,6 +400,7 @@ namespace Gecode { namespace Search {
 
     Engine** assets = r.alloc<Engine*>(n_assets);
     Stop** stops = r.alloc<Stop*>(n_assets);
+    SpokeCoverage* coverage = r.alloc<SpokeCoverage>(n_assets);
     for (int i=0; i<n_assets; i++) {
       assets[i] = nullptr;
       stops[i] = nullptr;
@@ -411,14 +419,14 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        pbs_spoke(*spoke,static_cast<unsigned int>(i),
-                  static_cast<unsigned int>(n_assets));
+        coverage[i] = pbs_spoke(*spoke,static_cast<unsigned int>(i),
+                                static_cast<unsigned int>(n_assets));
         assets[i] = (*sebs[i])(spoke.get());
       }
       pbscleanup(sebs);
       builders_owned = false;
       return Par::pbsengine(
-        assets,stops,static_cast<unsigned int>(n_assets),stat,best);
+        assets,stops,coverage,static_cast<unsigned int>(n_assets),stat,best);
     } catch (...) {
       if (builders_owned)
         pbscleanup(sebs);
@@ -470,10 +478,29 @@ namespace Gecode {
     // No need to create a portfolio engine but must run spoke function
     if (o.assets == 1) {
       std::unique_ptr<T> seed(hub);
-      Search::pbs_spoke(*hub,0U,1U);
+      SpokeCoverage c = Search::pbs_spoke(*hub,0U,1U);
       // Retain the seed if a nested builder rejects its worker control.
       opt.clone = true;
-      e = Search::build<T,E>(seed.get(),opt);
+      if (c != SpokeCoverage::Partial) {
+        e = Search::build<T,E>(seed.get(),opt);
+        return;
+      }
+      // Only a portfolio engine reports an exhausted partial spoke as incomplete
+      std::unique_ptr<Search::Stop> stop(Search::Seq::pbsstop(nullptr,opt.stop));
+      opt.stop = stop.get();
+      // As for several assets, the asset owns a copy of the cutoff
+      Search::Cutoff* cutoff = opt.cutoff;
+      std::unique_ptr<Search::Cutoff> cc(Search::pbs_cutoff<E<T> >(cutoff));
+      if (cc != nullptr)
+        opt.cutoff = cc.get();
+      std::unique_ptr<Search::Engine> asset(Search::build<T,E>(seed.get(),opt));
+      (void) cc.release();
+      Search::Engine* a = asset.get();
+      Search::Stop* so = stop.get();
+      e = Search::Seq::pbsengine(&a,&so,&c,1U,stat,opt,E<T>::best);
+      (void) asset.release();
+      (void) stop.release();
+      Search::pbs_release_cutoff<E<T> >(cutoff);
       return;
     }
 
